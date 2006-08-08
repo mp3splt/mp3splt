@@ -1,0 +1,17 @@
+Source: libmp3splt
+Section: sound
+Priority: optional
+Maintainer: Munteanu Alexandru (io_alex_2002@yahoo.fr)
+Build-Depends: debhelper (>= 4.0.0), libvorbis-dev, libmad0-dev
+Standards-Version: 3.6.1.1
+
+Package: libmp3splt
+Architecture: any
+Depends: ${shlibs:Depends}
+Enhances: mp3splt
+Description: Library that splits MP3 and Ogg Vorbis files without reencoding
+ Used to split MP3 (VBR supported) and Ogg Vorbis
+ files into smaller files without decoding. Useful for splitting albums, either
+ manually, using freedb.org data, or .cue files ...
+ .
+ Homepage: http://mp3splt.sourceforge.net/

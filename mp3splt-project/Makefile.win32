@@ -1,0 +1,51 @@
+all:
+	cd libmp3splt && \
+	./autogen.sh && \
+	./configure --prefix=/usr --host=mingw32 --disable-shared \
+	--disable-vorbistest \
+	&& make clean && make && make install &&\
+	cd ../newmp3splt && ./autogen.sh && \
+	cp /usr/lib/libmp3splt.a . && cp /usr/lib/libmp3splt.a ./src && \
+	./configure --host=--mingw32 && make clean && make && make install && \
+	cd ../mp3splt-gtk && \
+	cp /usr/lib/libmp3splt.a . && cp /usr/lib/libmp3splt.a ./src \
+	&& ./autogen.sh && \
+	./configure --prefix=/usr --host=mingw32 \
+	&& make clean && make && make install
+
+clean:
+	cd libmp3splt && make clean
+	cd mp3splt-gtk && make clean
+	cd newmp3splt && make clean
+
+dist:
+#compiling locales
+	rm -rf fr_locales
+	mkdir fr_locales
+	msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
+#building installer
+	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
+	cd mp3splt-gtk/other && make && cp mp3splt-gtk*exe ../../ && cd ../../
+	rm -rf fr_locales
+
+#cross compilations
+cross_libmp3splt:
+	cd libmp3splt && \
+	./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-shared --disable-vorbistest\
+	&& make clean && make && make install
+cross_mp3splt-gtk:
+	cd mp3splt-gtk && cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
+	./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-gtktest\
+	&& make clean && make && make install	
+cross_newmp3splt:
+	cd newmp3splt && cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
+	./configure --prefix=`pwd`/../../libs --host=--mingw32 && make clean && make && make install
+
+cross_dist:
+	rm -rf fr_locales
+	mkdir fr_locales
+	wine `pwd`/../libs/bin/msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
+	strip mp3splt-gtk/src/mp3splt-gtk.exe
+	cd mp3splt-gtk/other && make -f Makefile cross \
+	&& cp mp3splt-gtk*exe ../../ && cd ../..
+	rm -rf fr_locales
