@@ -27,3 +27,30 @@ newmp3splt: clean_newmp3splt
 
 clean_newmp3splt:
 	cd newmp3splt && make clean && cd ..
+
+root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
+
+root_libmp3splt:
+	cd libmp3splt && ./autogen.sh && \
+	./configure && make clean && make && make install \
+	&& if [ -z `grep '/usr/local/lib' /etc/ld.so.conf` ];\
+	then `echo '/usr/local/lib' >> /etc/ld.so.conf` && ldconfig;fi
+
+root_newmp3splt:
+	cd newmp3splt && ./autogen.sh && ./configure \
+	&& make && make clean && make install
+
+root_mp3splt-gtk:
+	cd mp3splt-gtk && ./autogen.sh && ./configure \
+	&& make && make clean && make install
+
+root_uninstall: root_unlibmp3splt root_unnewmp3splt root_unmp3splt-gtk
+
+root_unlibmp3splt:
+	cd libmp3splt && make uninstall
+
+root_unnewmp3splt:
+	cd newmp3splt && make uninstall
+
+root_unmp3splt-gtk:
+	cd mp3splt-gtk && make uninstall
