@@ -26,6 +26,7 @@ cd ../mp3splt-project
 
 cd libmp3splt && ./autogen.sh && cd ..
 cd mp3splt-gtk && ./autogen.sh && cd ..
+cd newmp3splt && ./autogen.sh && cd ..
 
 export CFLAGS="-I`pwd`/../libs/include -D_WIN32 -D__MINGW32__"
 export CFLAGS="-mms-bitfields -enable-stdcall-fixup $CFLAGS"
@@ -48,7 +49,7 @@ for f in `pwd`/../libs/lib/pkgconfig/*.pc ; do
      cat $f | sed s+^prefix=/target.*+prefix=$TARGET+ > $f.tmp
      mv $f.tmp $f
    fi
-done  
+done
 
 #build libmp3splt
 make -f Makefile.win32 cross_libmp3splt && \
@@ -59,13 +60,30 @@ mv ./mp3splt-gtk/src/mp3splt-gtk ./mp3splt-gtk/src/mp3splt-gtk.exe
 make -f Makefile.win32 cross_newmp3splt
 mv ./newmp3splt/src/mp3splt ./newmp3splt/src/mp3splt.exe
 
-#create installer
+#create mp3splt-gtk and mp3splt installer
+#mp3splt-gtk
 cd mp3splt-gtk/other
 cp win32_installer.nsi win32_installer.nsi_old
 cat win32_installer.nsi | sed s+.define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ `pwd`/../..+ > win32_installer.nsi2
 mv win32_installer.nsi2 win32_installer.nsi
-cd ../.. && make -f Makefile.win32 cross_dist && cd ./mp3splt-gtk/other
-mv win32_installer.nsi_old win32_installer.nsi
-cp mp3splt-gtk*exe ../..
 cd ../..
-rm -rf mp3splt-gtk_runtime
+
+#mp3splt
+cd newmp3splt/other
+cp win32_installer.nsi win32_installer.nsi_old
+cat win32_installer.nsi | sed s+.define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ `pwd`/../..+ > win32_installer.nsi2
+mv win32_installer.nsi2 win32_installer.nsi
+cd ../..
+
+#cross_dist (run nsis)
+make -f Makefile.win32 cross_dist
+
+#put the old installer file of mp3splt-gtk
+cd ./mp3splt-gtk/other
+mv win32_installer.nsi_old win32_installer.nsi
+cd ../..
+
+#put the old installer file of mp3splt
+cd ./newmp3splt/other
+mv win32_installer.nsi_old win32_installer.nsi
+cd ../..
