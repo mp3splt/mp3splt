@@ -10,19 +10,19 @@ cd ../libs
 tar jxf libmp3splt_mingw_required_libs.tar.bz2
 tar jxf mp3splt-gtk_mingw_required_libs.tar.bz2
 tar jxf mp3splt-gtk_runtime.tar.bz2
-tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../mp3splt
+tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../mp3splt-project
 cp -a mp3splt-gtk_runtime/*.dll ./bin
-cp lib/libz.a ../mp3splt/libmp3splt/
-cp lib/libz.a ../mp3splt/libmp3splt/src/
+cp lib/libz.a ../mp3splt-project/libmp3splt/
+cp lib/libz.a ../mp3splt-project/libmp3splt/src/
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt/mp3splt-gtk/
+    lib/libvorbisfile.a ../mp3splt-project/mp3splt-gtk/
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt/mp3splt-gtk/src
+    lib/libvorbisfile.a ../mp3splt-project/mp3splt-gtk/src
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt/newmp3splt/
+    lib/libvorbisfile.a ../mp3splt-project/newmp3splt/
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt/newmp3splt/src
-cd ../mp3splt
+    lib/libvorbisfile.a ../mp3splt-project/newmp3splt/src
+cd ../mp3splt-project
 
 cd libmp3splt && ./autogen.sh && cd ..
 cd mp3splt-gtk && ./autogen.sh && cd ..
