@@ -12,5 +12,5 @@ rm -rf temp
 mv mp3splt-gtk*exe ./new_dist
 mv *.deb ./new_dist
 mv *.tar.gz ./new_dist
-mv ./newmp3splt/src/mp3splt.exe ./new_dist
+mv mp3splt*exe ./new_dist
 mv ./newmp3splt/mp3splt*.tar.gz ./new_dist
