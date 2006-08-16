@@ -65,7 +65,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\mp3splt-gtk"
   CreateShortCut "$SMPROGRAMS\mp3splt-gtk\Uninstall.lnk" "$INSTDIR\mp3splt-gtk_uninst.exe" "" "$INSTDIR\mp3splt-gtk_uninst.exe" 0
   CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt.ico"
-  CreateShortCut "$DESKTOP\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt.ico"
+ CreateShortCut "$DESKTOP\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt.ico" 
   CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk_doc.lnk" "$INSTDIR\mp3splt-gtk_doc" "" "$INSTDIR\mp3splt-gtk_doc"
   CreateShortCut "$SMPROGRAMS\mp3splt-gtk\libmp3splt_doc.lnk" "$INSTDIR\libmp3splt_doc" "" "$INSTDIR\libmp3splt_doc"
 SectionEnd

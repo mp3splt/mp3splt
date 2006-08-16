@@ -23,6 +23,10 @@ Section ""
 ;copy the main executable
   File ${MP3SPLT_PATH}\newmp3splt\src\mp3splt.exe
 
+  FileOpen $9 mp3splt.bat w
+  FileWrite $9 'cmd /K "cd $INSTDIR & .\mp3splt.exe"'
+  FileClose $9
+
 ;documentation
   CreateDirectory "$INSTDIR\mp3splt_doc"
   SetOutPath $INSTDIR\mp3splt_doc
@@ -33,15 +37,16 @@ Section ""
   File ${MP3SPLT_PATH}\newmp3splt\NEWS
   File ${MP3SPLT_PATH}\newmp3splt\TODO
   File ${MP3SPLT_PATH}\newmp3splt\AUTHORS
-  
+
   WriteUninstaller "mp3splt_uninst.exe"
 SectionEnd
 
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\mp3splt"
+  CreateShortCut "$DESKTOP\Mp3Splt.lnk" "$INSTDIR\mp3splt.bat" "" ""
   CreateShortCut "$SMPROGRAMS\mp3splt\Uninstall.lnk" "$INSTDIR\mp3splt_uninst.exe" "" "$INSTDIR\mp3splt_uninst.exe" 0
-  CreateShortCut "$SMPROGRAMS\mp3splt\mp3splt.lnk" "$INSTDIR\mp3splt.exe" "" ""
+  CreateShortCut "$SMPROGRAMS\mp3splt\mp3splt.lnk" "$INSTDIR\mp3splt.bat" "" ""
   CreateShortCut "$SMPROGRAMS\mp3splt\mp3splt_doc.lnk" "$INSTDIR\mp3splt_doc" "" "$INSTDIR\mp3splt_doc"
 SectionEnd
 
