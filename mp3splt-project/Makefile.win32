@@ -23,10 +23,13 @@ dist:
 	rm -rf fr_locales
 	mkdir fr_locales
 	msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
-#building installer
+#building installer for the gui
 	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
 	cd mp3splt-gtk/other && make && cp mp3splt-gtk*exe ../../ && cd ../../
 	rm -rf fr_locales
+#building installer for the text mode
+	strip newmp3splt/src/mp3splt.exe && \
+	cd newmp3splt/other && make && cp mp3splt*exe ../../ && cd ../../
 
 #cross compilations
 cross_libmp3splt:

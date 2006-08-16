@@ -1,5 +1,5 @@
 !define VERSION "2.2.1"
-!define MP3SPLT_PATH /mnt/personal/hacking/mp3splt/newmp3splt/other/../..
+!define MP3SPLT_PATH c:/mp3splt_mingw/home/admin/mp3splt-project/newmp3splt/other/../..
 
 ;name of the program
 Name "mp3splt ${VERSION}"
