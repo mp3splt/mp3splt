@@ -3,7 +3,7 @@
 	-mp3splt-gtk uses libmp3splt
 	-libmp3splt is based on mp3splt
 
-* Matteo Trotta - <mtrotta@users.sourceforge.net>: Author and main mantainer of Mp3Splt Project
+* Matteo Trotta - <mtrotta@users.sourceforge.net>: Author and main maintainer of Mp3Splt Project
 
 People who contributed to mp3splt development
 
@@ -11,7 +11,6 @@ People who contributed to mp3splt development
   - François Revol <revol@free.fr>: added list option and worked on BeOS porting.
   - Remo Laubacher <laubi@users.sourceforge.net>: ported mp3splt v. 0.4 for Windows.
   - Davide Magatti <gilgamesh@notme.com>: "official" mp3splt beta tester
-  
 
 homepage :
 	http://mp3splt.sourceforge.net/

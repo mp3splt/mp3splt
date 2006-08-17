@@ -38,11 +38,11 @@ root_libmp3splt:
 
 root_newmp3splt:
 	cd newmp3splt && ./autogen.sh && ./configure \
-	&& make && make clean && make install
+	&& make clean && make && make install
 
 root_mp3splt-gtk:
 	cd mp3splt-gtk && ./autogen.sh && ./configure \
-	&& make && make clean && make install
+	&& make clean && make && make install
 
 root_uninstall: root_unlibmp3splt root_unnewmp3splt root_unmp3splt-gtk
 
