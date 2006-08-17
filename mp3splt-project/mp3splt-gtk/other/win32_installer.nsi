@@ -1,4 +1,5 @@
 !define VERSION "0.3.1"
+!define PROGRAM_NAME "mp3splt-gtk"
 !define MP3SPLT_PATH c:/mp3splt_mingw/home/admin/mp3splt-project/mp3splt-gtk/other/../..
 
 ;name of the program
@@ -16,6 +17,25 @@ Page instfiles
 LicenseData ${MP3SPLT_PATH}\mp3splt-gtk\COPYING
 UninstPage uninstConfirm
 UninstPage instfiles
+
+;uninstall the old program if necessary
+Function .onInit
+  ReadRegStr $R0 HKLM "Software\${PROGRAM_NAME}\" "UninstallString"
+  StrCmp $R0 "" done
+ 
+  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+  "${PROGRAM_NAME} is already installed. $\n$\nClick `OK` to remove the \
+  previous version or `Cancel` to cancel this upgrade." \
+  IDOK uninst
+  Abort
+;Run the uninstaller
+uninst:
+  ClearErrors
+  ExecWait '$R0 _?=$INSTDIR'
+  IfErrors no_remove_uninstaller
+  no_remove_uninstaller:
+done:
+FunctionEnd
 
 ;installer
 Section ""
@@ -58,21 +78,27 @@ Section ""
   File ${MP3SPLT_PATH}\mp3splt-gtk\other\mp3splt.ico
   
   WriteUninstaller "mp3splt-gtk_uninst.exe"
+
+  WriteRegStr HKLM "Software\${PROGRAM_NAME}\" "UninstallString" \
+	"$INSTDIR\${PROGRAM_NAME}_uninst.exe"
 SectionEnd
 
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\mp3splt-gtk"
-  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\Uninstall.lnk" "$INSTDIR\mp3splt-gtk_uninst.exe" "" "$INSTDIR\mp3splt-gtk_uninst.exe" 0
-  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt.ico"
- CreateShortCut "$DESKTOP\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt.ico" 
-  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk_doc.lnk" "$INSTDIR\mp3splt-gtk_doc" "" "$INSTDIR\mp3splt-gtk_doc"
+
   CreateShortCut "$SMPROGRAMS\mp3splt-gtk\libmp3splt_doc.lnk" "$INSTDIR\libmp3splt_doc" "" "$INSTDIR\libmp3splt_doc"
+  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt.ico"
+	CreateShortCut "$SMPROGRAMS\mp3splt-gtk\uninstall.lnk" "$INSTDIR\mp3splt-gtk_uninst.exe" "" "$INSTDIR\mp3splt-gtk_uninst.exe" 0
+  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk_doc.lnk" "$INSTDIR\mp3splt-gtk_doc" "" "$INSTDIR\mp3splt-gtk_doc"
+
+  CreateShortCut "$DESKTOP\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt.ico"
 SectionEnd
 
 ;uninstaller
 Section "Uninstall"
-;delete gtk runtimes
+;delete registry
+  DeleteRegKey HKLM "Software\${PROGRAM_NAME}"
 
 ;delete mp3splt-gtk files and directories
   RMDir /r "$INSTDIR"
