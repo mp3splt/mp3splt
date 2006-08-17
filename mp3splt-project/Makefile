@@ -10,7 +10,7 @@ libmp3splt: clean_libmp3splt
 	make dist && debian/rules binary && cd ..
 
 clean_libmp3splt:
-	cd libmp3splt && make clean && cd ..
+	cd libmp3splt;if [ -e Makefile ];then make clean;fi;cd ..
 
 mp3splt-gtk: clean_mp3splt-gtk
 	cd mp3splt-gtk && ./autogen.sh && \
@@ -18,15 +18,15 @@ mp3splt-gtk: clean_mp3splt-gtk
 	make && make dist && debian/rules binary && cd ..
 
 clean_mp3splt-gtk:
-	cd mp3splt-gtk && make clean && cd ..
+	cd mp3splt-gtk;if [ -e Makefile ];then make clean;fi;cd ..
 
 newmp3splt: clean_newmp3splt
 	cd newmp3splt && ./autogen.sh && \
 	./configure --prefix=/usr && make clean && \
-	make && make dist && cd ..
+	make && make dist && debian/rules binary && cd ..
 
 clean_newmp3splt:
-	cd newmp3splt && make clean && cd ..
+	cd newmp3splt;if [ -e Makefile ];then make clean;fi;cd ..
 
 root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
 
