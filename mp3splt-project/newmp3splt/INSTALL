@@ -1,24 +1,25 @@
 
-libmp3splt - INSTALLATION INFORMATION
+mp3splt - INSTALLATION INFORMATION
 
 ====================================================================
 
-	To install the library you need to compile the source code.
+	To install the program, you can to compile the source code.
 
 	Installing the program is made in 3 steps :
 
 		1) Compile the source
 
-		3) Install the binary
+		2) Install the binary
 
 
 --------------------------------------------------------------------
 1) Compiling the source :
 
+        Verify that you have installed libmp3splt.
 	As you are reading this, it is probably that you are already
-in the libmp3splt directory. If not, please go in that directory :
+in the mp3splt directory. If not, please go in that directory.
 
-	Once in the libmp3splt directory type :
+	Once in the mp3splt directory type :
 	
 		./configure
 
@@ -30,22 +31,11 @@ in the libmp3splt directory. If not, please go in that directory :
 
 
 --------------------------------------------------------------------
-3) Install the library :
+2) Install the binary :
 
-	To install the library type :
+	To install the binary type :
 	
 		make install
-
-
----------------------------------------------------------------------
-4) Compilation options :
-	
-	please type  :
-
-	   ./configure --help   
-
-	in the mp3splt directory to get informations about 
-	the compilation options
 
 
 ///////////////////////////////////////////
