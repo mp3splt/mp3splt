@@ -1919,6 +1919,7 @@ int splt_mp3_scan_silence (splt_state *state, off_t begin,
                       double begin_position, end_position;
                       begin_position = (double) (silence_begin / 100.f);
                       end_position = (double) (silence_end / 100.f);
+                      len = (int) (silence_end - silence_begin);
                       
                       if ((end_position - begin_position - min) >= 0.f)
                         {
