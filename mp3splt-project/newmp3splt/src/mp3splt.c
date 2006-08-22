@@ -1,7 +1,7 @@
 /*
  * Mp3Splt -- Utility for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2002-2005 M. Trotta - <matteo.trotta@lib.unimib.it>
+ * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
  * Copyright (c) 2005-2006 Munteanu Alexandru - <io_alex_2002@yahoo.fr>
  *
  * http://mp3splt.sourceforge.net
@@ -38,7 +38,7 @@
 #define MP3SPLT_YEAR "14/04/2006"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Munteanu Alexandru"
-#define MP3SPLT_EMAIL1 "<matteo.trotta@lib.unimib.it>"
+#define MP3SPLT_EMAIL1 "<mtrotta@users.sourceforge.net>"
 #define MP3SPLT_EMAIL2 "<io_alex_2002@yahoo.fr>"
 #define MP3SPLT_CDDBFILE "query.cddb"
 

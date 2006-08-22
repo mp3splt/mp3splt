@@ -3,7 +3,7 @@
  * libmp3splt -- library based on mp3splt,
  *               for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2002-2005 M. Trotta - <matteo.trotta@lib.unimib.it>
+ * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
  * Copyright (c) 2005-2006 Munteanu Alexandru - io_alex_2002@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
@@ -1270,7 +1270,7 @@ typedef enum {
  * @brief Package authors
  */
 #define SPLT_AUTHOR "Matteo Trotta | Munteanu Alexandru"
-#define SPLT_EMAIL "<matteo.trotta@lib.unimib.it> | <io_alex_2002@yahoo.fr>"
+#define SPLT_EMAIL "<mtrotta@users.sourceforge.net> | <io_alex_2002@yahoo.fr>"
 /**
  * @brief Package website
  */
