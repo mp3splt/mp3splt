@@ -3,7 +3,7 @@
 #we move in the current script directory
 script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
-cd $script_dir/
+cd $script_dir/../
 
 mkdir temp
 mkdir -p new_dist
