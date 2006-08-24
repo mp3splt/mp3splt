@@ -1,4 +1,9 @@
-#!/usr/bin/env sh
+#!/bin/bash
+
+#we move in the current script directory
+script_dir=$(readlink -f $0)
+script_dir=${script_dir%\/*.sh}
+cd $script_dir/
 
 tar jxf ../libmp3splt_mingw_required_libs.tar.bz2 -C /
 cp /usr/bin/mingw32-make.exe /usr/bin/make.exe
