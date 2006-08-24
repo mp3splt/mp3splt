@@ -89,6 +89,7 @@ binary-arch: build install
 	fakeroot dh_gencontrol
 	fakeroot dh_md5sums
 	dh_builddeb
+	dh_clean
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install 
