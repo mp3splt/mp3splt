@@ -1,7 +1,7 @@
 Source: libmp3splt
 Section: sound
 Priority: optional
-Maintainer: Munteanu Alexandru (io_alex_2002@yahoo.fr)
+Maintainer: Munteanu Alexandru Ionut (io_alex_2002@yahoo.fr)
 Build-Depends: debhelper (>= 4.0.0), libvorbis-dev, libmad0-dev
 Standards-Version: 3.6.1.1
 

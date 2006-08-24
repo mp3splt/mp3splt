@@ -1,1 +1,0 @@
-shlibs:Depends=libc6 (>= 2.3.6-6), libid3tag0 (>= 0.15.1b), libmad0 (>= 0.15.1b), libogg0 (>= 1.1.3), libvorbis0a (>= 1.1.2), libvorbisfile3 (>= 1.1.2)
