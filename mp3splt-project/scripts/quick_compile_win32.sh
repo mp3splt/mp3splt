@@ -1,12 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
-script_dir=${script_dir%\/*.sh}
-cd $script_dir/
+#!readlink not in mingw
+#script_dir=$(readlink -f $0)
+#script_dir=${script_dir%\/*.sh}
+#cd $script_dir/
 
-cd libmp3splt && make clean && make && make install && cd ..
-cd newmp3splt && make clean && make && make install && cd ..
+cd ../libmp3splt && make clean && make && make install && cd ..
+cd ../newmp3splt && make clean && make && make install && cd ..
 
 #./newmp3splt/src/mp3splt.exe -t 1.0 song.mp3
 
