@@ -1,7 +1,8 @@
-	mp3splt-gtk version 0.3.1
-	     Copyright (C) 2005 Munteanu Alexandru
+	libmp3splt version 0.4
+
+	     Copyright (C) 2005 Munteanu Alexandru Ionut
 	
-Visit http://mp3splt.sourceforge.net for latest releases
+   Visit http://mp3splt.sourceforge.net for latest releases
 
 Note : you have to install libmp3splt for mp3splt-gtk
 -some versions of libmp3splt are not compatible with mp3splt-gtk.

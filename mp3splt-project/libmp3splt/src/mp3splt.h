@@ -197,6 +197,9 @@ void mp3splt_set_oformat(splt_state *state,
 /************************************/
 /* Other utilities                  */
 
+//returns the version of libmp3splt
+void mp3splt_get_version(char *version);
+
 //returns the number of syncerrors
 //puts possible error in error variable
 splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,

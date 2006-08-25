@@ -1048,6 +1048,12 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
   return found_splitpoints;
 }
 
+//returns libmp3splt version, max 20 chars
+void mp3splt_get_version(char *version)
+{
+  snprintf(version,20,"%s",SPLT_PACKAGE_VERSION);
+}
+
 //checks the version
-void mp3splt_v0_3_5()
+void mp3splt_v()
 {}

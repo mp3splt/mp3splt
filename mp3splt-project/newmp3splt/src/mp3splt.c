@@ -33,11 +33,16 @@
 #include "getopt.h"
 
 //constants
-#define MP3SPLT_VER "v2.2rc1"
-#define MP3SPLT_NAME "mp3splt"
-#define MP3SPLT_YEAR "14/04/2006"
+//we include the "config.h" file from the config options
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define VERSION "2.3rc1"
+#define PACKAGE_NAME "mp3splt-gtk"
+#endif
+#define MP3SPLT_DATE "25/08/06"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
-#define MP3SPLT_AUTHOR2 "Munteanu Alexandru"
+#define MP3SPLT_AUTHOR2 "Munteanu Alexandru Ionut"
 #define MP3SPLT_EMAIL1 "<mtrotta@users.sourceforge.net>"
 #define MP3SPLT_EMAIL2 "<io_alex_2002@yahoo.fr>"
 #define MP3SPLT_CDDBFILE "query.cddb"
@@ -121,7 +126,6 @@ void show_small_help_exit(Options *opt,splt_state *state)
   fprintf (stdout, " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n");
   fprintf (stdout, " -q   Quiet mode: do not prompt for anything and print less messages.\n");
   fprintf (stdout, " -D   Debug mode: used to debug the program (by developers).\n");
-  fprintf(stdout,"\n");
   fflush(stdout);
   exit (1);
 }
@@ -957,6 +961,15 @@ Options *new_options()
   return opt;
 }
 
+//output package, version and authors
+void print_package_version_authors()
+{
+  fprintf (stdout, PACKAGE_NAME" version "VERSION", released on "MP3SPLT_DATE", by \n");
+  fprintf (stdout, MP3SPLT_AUTHOR1" "MP3SPLT_EMAIL1"\n"MP3SPLT_AUTHOR2" "MP3SPLT_EMAIL2"\n");
+  fprintf (stdout, "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n");
+  fflush(stdout);
+}
+
 //main program starts here
 int main (int argc, char *argv[])
 {
@@ -1004,8 +1017,7 @@ int main (int argc, char *argv[])
           break;
         case 'V':
           //output package, version and authors
-          fprintf(stdout, MP3SPLT_NAME" "MP3SPLT_VER" "MP3SPLT_YEAR" \n");
-          fflush(stdout);
+          print_package_version_authors();
           //free variables
           free(opt);
           mp3splt_free_state(state,&err);
@@ -1167,11 +1179,7 @@ int main (int argc, char *argv[])
   //if quiet, does not write authors and other
   if (!opt->q_option)
     {
-      //output package, version and authors
-      fprintf (stdout, MP3SPLT_NAME" "MP3SPLT_VER" "MP3SPLT_YEAR" by \n");
-      fprintf (stdout, MP3SPLT_AUTHOR1" "MP3SPLT_EMAIL1", "MP3SPLT_AUTHOR2" "MP3SPLT_EMAIL2"\n");
-      fprintf (stdout, "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n");
-      fflush(stdout);
+      print_package_version_authors();
     }
   
   if (opt->o_option)
