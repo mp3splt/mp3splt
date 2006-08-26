@@ -35,4 +35,5 @@ src_compile() {
 
 src_install() {
 	einstall
+    dodoc AUTHORS ChangeLog COPYING INSTALL NEWS README TODO
 }
