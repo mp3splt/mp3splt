@@ -56,13 +56,6 @@ LIBS="$LIBS -lvorbisfile -lvorbis -logg"
 ]
 ogg=yes)
 
-#checks for ogg symlink
-AC_ARG_ENABLE(oggsplt_symlink,
-AC_HELP_STRING([--enable-oggsplt],
-[Enable symlink of oggsplt to mp3splt [[default=yes]] ]),
-,enable_oggsplt_symlink=yes)
-AM_CONDITIONAL(DO_SYMLINK, test x$enable_oggsplt_symlink = xyes)
-
 #we check for mingw, we add libz
 AC_MSG_CHECKING(for Mingw)
 case $host in
