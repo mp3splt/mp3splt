@@ -69,7 +69,11 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
             sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./src/Doxyfile;
             #update gentoo ebuild
             cd gentoo/media-libs/$PROGRAM
-            mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            if [[ $SUBVERSION ]];then
+                svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            else
+                mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            fi;
             ;;
         #mp3splt settings
         "mp3splt")
@@ -87,7 +91,11 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
             sed -i "s/#define MP3SPLT_DATE \".*\"/#define MP3SPLT_DATE \"$DATE\"/" ./src/mp3splt.c;
             #update gentoo ebuild
             cd gentoo/media-sound/$PROGRAM
-            mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            if [[ $SUBVERSION ]];then
+                svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            else
+                mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            fi;
             sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild;
             ;;
         #mp3splt-gtk settings
@@ -113,19 +121,14 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
             sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_win.c;
             #update gentoo ebuild
             cd gentoo/media-sound/$PROGRAM
-            mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            if [[ $SUBVERSION ]];then
+                svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            else
+                mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            fi;
             sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild;
             ;;
-    esac
-    
-    #post
-    if [[ $SUBVERSION ]];then
-        if [[ $PROGRAM* != $PROGRAM-$VERSION ]]; then
-            echo "removing..";
-            #svn rm --force $PROGRAM* 
-        fi;
-        #svn add $PROGRAM-$VERSION.ebuild 2>/dev/null
-    fi;
+    esac    
 else
     print_usage_exit_error;
 fi;
