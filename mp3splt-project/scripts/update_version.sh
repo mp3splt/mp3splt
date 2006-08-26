@@ -71,6 +71,7 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
             cd gentoo/media-libs/$PROGRAM
             if [[ $SUBVERSION ]];then
                 svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+                svn ci -m "updated gentoo version" &>/dev/null
             else
                 mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
             fi;
@@ -93,6 +94,7 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
             cd gentoo/media-sound/$PROGRAM
             if [[ $SUBVERSION ]];then
                 svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+                svn ci -m "updated gentoo version" &>/dev/null
             else
                 mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
             fi;
@@ -123,6 +125,7 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
             cd gentoo/media-sound/$PROGRAM
             if [[ $SUBVERSION ]];then
                 svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+                svn ci -m "updated gentoo version" &>/dev/null
             else
                 mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
             fi;
