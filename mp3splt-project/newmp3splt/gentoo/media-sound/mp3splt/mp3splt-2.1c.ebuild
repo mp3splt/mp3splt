@@ -18,7 +18,7 @@ KEYWORDS="~x86"
 #we can put the use tags for vorbis and id3tag if we want
 IUSE=""
 
-DEPEND="=media-libs/libmp3splt-0.4_rc1
+DEPEND="=media-libs/libmp3splt-0.4_rc1"
 
 src_compile() {
 	econf --enable-oggsplt || die "configure failed"
