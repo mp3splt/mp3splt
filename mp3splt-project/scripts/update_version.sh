@@ -1,5 +1,7 @@
 #!/bin/sh
 
+SUBVERSION=1;
+
 #print usage and exit function
 function print_usage_exit_error()
 {
@@ -48,7 +50,7 @@ if [[ $1 == "libmp3splt" ]] || [[ $1 == "mp3splt" ]] ||
     sed -i "s/AC_INIT($PROGRAM, .*,/\
 AC_INIT($PROGRAM, $VERSION,/" ./configure.ac;
     sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
-AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
+AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;    
     
     #current date, we need it
     DATE=$(date +%d\\/%m\\/%y);
@@ -65,6 +67,9 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
             sed -i "s/void mp3splt_v.*/void mp3splt_v$NEWVER()/" ./src/mp3splt.c;
             #./src/Doxyfile:PROJECT_NUMBER=0.3.1
             sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./src/Doxyfile;
+            #update gentoo ebuild
+            cd gentoo/media-libs/$PROGRAM
+            mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
             ;;
         #mp3splt settings
         "mp3splt")
@@ -80,6 +85,10 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
             sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/mp3splt.c;
             #./src/mp3splt.c:#define MP3SPLT_DATE "14/04/2006"
             sed -i "s/#define MP3SPLT_DATE \".*\"/#define MP3SPLT_DATE \"$DATE\"/" ./src/mp3splt.c;
+            #update gentoo ebuild
+            cd gentoo/media-sound/$PROGRAM
+            mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild;
             ;;
         #mp3splt-gtk settings
         "mp3splt-gtk")
@@ -102,8 +111,21 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
             #./src/main_win.c:  g_snprintf(b3, 100, "-release of 27/02/06-\n%s libmp3splt...
             sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/main_win.c;
             sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_win.c;
+            #update gentoo ebuild
+            cd gentoo/media-sound/$PROGRAM
+            mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
+            sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild;
             ;;
     esac
+    
+    #post
+    if [[ $SUBVERSION ]];then
+        if [[ $PROGRAM* != $PROGRAM-$VERSION ]]; then
+            echo "removing..";
+            #svn rm --force $PROGRAM* 
+        fi;
+        #svn add $PROGRAM-$VERSION.ebuild 2>/dev/null
+    fi;
 else
     print_usage_exit_error;
 fi;

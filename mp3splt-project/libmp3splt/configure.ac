@@ -15,8 +15,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.53)
-AC_INIT(libmp3splt, 0.4rc1, io_alex_2002@yahoo.fr)
-AM_INIT_AUTOMAKE(libmp3splt, 0.4rc1)
+AC_INIT(libmp3splt, 0.4_rc1, io_alex_2002@yahoo.fr)
+AM_INIT_AUTOMAKE(libmp3splt, 0.4_rc1)
 AM_CONFIG_HEADER(config.h)
 
 AM_PROG_LIBTOOL

@@ -2,10 +2,10 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(mp3splt-gtk, 0.4rc1, io_alex_2002@yahoo.fr)
+AC_INIT(mp3splt-gtk, 0.3.1, io_alex_2002@yahoo.fr)
 
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.4rc1)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.3.1)
 AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
@@ -32,8 +32,8 @@ AM_CONDITIONAL(MINGW, test x$MING = xyes)
 AC_MSG_RESULT($MING)
 
 #checking for libmp3splt
-AC_CHECK_LIB(mp3splt, mp3splt_v0_4rc1,
-        [AC_MSG_ERROR(libmp3splt version 0.4rc1 needed :
+AC_CHECK_LIB(mp3splt, mp3splt_v0_3_1,
+        [AC_MSG_ERROR(libmp3splt version 0.3.1 needed :
 
 You can download it at http://mp3splt.sourceforge.net/
 )])

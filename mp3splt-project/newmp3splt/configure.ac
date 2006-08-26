@@ -2,10 +2,10 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(mp3splt, 2.3rc1, mtrotta@users.sourceforge.net)
+AC_INIT(mp3splt, 2.2_rc1, mtrotta@users.sourceforge.net)
 
 AC_CONFIG_SRCDIR([src/mp3splt.c])
-AM_INIT_AUTOMAKE(mp3splt, 2.3rc1)
+AM_INIT_AUTOMAKE(mp3splt, 2.2_rc1)
 AM_CONFIG_HEADER([config.h])
 
 # Checks for programs.
