@@ -1,4 +1,4 @@
-!define VERSION "0.3.1"
+!define VERSION "0.4_rc1"
 !define PROGRAM_NAME "mp3splt-gtk"
 !define MP3SPLT_PATH c:/mp3splt_mingw/home/admin/mp3splt-project/mp3splt-gtk/other/../..
 

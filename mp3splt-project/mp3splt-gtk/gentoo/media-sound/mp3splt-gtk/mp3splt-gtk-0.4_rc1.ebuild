@@ -20,7 +20,7 @@ KEYWORDS="~x86"
 #audacious? ( >=media-sound/audacious-1.1.0 )
 IUSE=""
 
-DEPEND="=media-libs/libmp3splt-0.3.1
+DEPEND="=media-libs/libmp3splt-0.4_rc1
         >=x11-libs/gtk+-2"
 
 src_compile() {

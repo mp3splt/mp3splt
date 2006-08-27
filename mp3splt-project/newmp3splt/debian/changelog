@@ -1,8 +1,14 @@
+mp3splt (2.3_rc1) unstable; urgency=low
+
+  * version 2.3_rc1
+
+ -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Sun, 27 Aug 2006 12:10:57 +0200
+
 mp3splt (2.3rc1) unstable; urgency=low
 
   * version 2.3rc1
 
- -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Sat, 26 Aug 2006 23:14:35 +0200
+ -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Sun, 27 Aug 2006 11:41:29 +0200
 
 mp3splt (2.2) testing; urgency=low
     

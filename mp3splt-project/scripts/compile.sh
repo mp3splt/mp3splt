@@ -1,11 +1,18 @@
 #!/bin/bash
 
-#program versions
-LIBMP3SPLT_VERSION=0.4rc1;
-MP3SPLT_VERSION=2.3rc1;
-MP3SPLT_GTK_VERSION=0.4rc1;
+################# variables to set ############
 
-DIST_VERSION=$LIBMP3SPLT_VERSION;
+#program versions
+LIBMP3SPLT_VERSION=0.4_rc1;
+MP3SPLT_VERSION=2.2_rc1;
+MP3SPLT_GTK_VERSION=0.4_rc1;
+
+#if we upload to sourceforge or not
+UPLOAD_TO_SOURCEFORGE=0;
+
+################## end variables to set ############
+
+DIST_VERSION=release_$LIBMP3SPLT_VERSION;
 
 #we move in the current script directory
 script_dir=$(readlink -f $0)
@@ -72,3 +79,10 @@ rm -rf gentoo_temp;
 mv ./*.exe ./$DIST_VERSION
 mv ./*.deb ./$DIST_VERSION
 mv ./*.tar.gz ./$DIST_VERSION
+
+#we put the files on the sourceforge ftp
+if [[ $UPLOAD_TO_SOURCEFORGE == 1 ]]; then
+    for a in ls $DIST_VERSION; do
+        lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous, upload.sourceforge.net
+    done
+fi
