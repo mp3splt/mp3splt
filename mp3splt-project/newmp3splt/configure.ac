@@ -31,8 +31,8 @@ AM_CONDITIONAL(MINGW, test x$MING = xyes)
 AC_MSG_RESULT($MING)
 
 #checking for libmp3splt
-AC_CHECK_LIB(mp3splt, mp3splt_split,libmp3splt=yes,
-        [AC_MSG_ERROR(libmp3splt needed :
+AC_CHECK_LIB(mp3splt, mp3splt_v0_4_rc1,
+        [AC_MSG_ERROR(libmp3splt version 0.4_rc1 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 )])

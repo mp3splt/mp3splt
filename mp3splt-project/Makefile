@@ -15,7 +15,8 @@ libmp3splt_dist:
 	./configure --prefix=/usr && make clean && make && \
 	make dist
 libmp3splt_debian:
-	cd libmp3splt && debian/rules binary && cd ..
+	echo;echo "Creating debian packages...";echo;sleep 2;\
+cd libmp3splt && debian/rules binary && cd ..
 
 #we make mp3splt-gtk packages
 mp3splt-gtk: clean_mp3splt-gtk mp3splt-gtk_dist mp3splt-gtk_debian

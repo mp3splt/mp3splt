@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ################# variables to set ############
-
 #program versions
 LIBMP3SPLT_VERSION=0.4_rc1;
 MP3SPLT_VERSION=2.2_rc1;
@@ -10,11 +9,15 @@ MP3SPLT_GTK_VERSION=0.4_rc1;
 #if we upload to sourceforge or not
 UPLOAD_TO_SOURCEFORGE=0;
 
+LIBMP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO LIMITS)
+MP3SPLT_GTK_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
+MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
+
 #if we modify the subversion repository (the ebuild needs renaming)
 SUBVERSION=0;
-
 ################## end variables to set ############
 
+################## confirmation question ############
 #the confirmation question
 echo
 echo "This script is used by the developers to auto-create packages for releases";
@@ -37,7 +40,9 @@ script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
 PROJECT_DIR=$script_dir/../
 cd $PROJECT_DIR
+################## end confirmation question ############
 
+################## update_version function ############
 # echo "Usage: update_version PROGRAM VERSION LIBMP3SPLT_VERSION"
 # echo $PROGRAM can be : libmp3splt, mp3splt or mp3splt-gtk'
 function update_version()
@@ -109,6 +114,13 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
                 #windows installer
                 #./other/win32_installer.nsi:!define VERSION "2.2.1"
                 sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./other/win32_installer.nsi;
+                #configure.ac libmp3splt version check
+                #./configure.ac:AC_CHECK_LIB(mp3splt, mp3splt_v0_3_5,libmp3splt=yes,
+                #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
+                sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,/\
+AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
+                sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
+\[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac;
                 #source code
                 #./src/mp3splt.c:#define VERSION "2.2"
                 sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/mp3splt.c;
@@ -167,8 +179,15 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
         exit 1;
     fi;
     
-    echo "Finished setting up version $PROGRAM for version $VERSION with libmp3splt version $LIBMP3SPLT_VERSION";
+    echo "Finished setting up $PROGRAM for version $VERSION with libmp3splt version $LIBMP3SPLT_VERSION";
 }
+################## end update_version function ############
+
+################## update versions ############
+echo
+echo "Updating versions..."
+echo
+sleep 2;
 
 #we update versions
 update_version "libmp3splt" $LIBMP3SPLT_VERSION $LIBMP3SPLT_VERSION
@@ -176,6 +195,13 @@ update_version "mp3splt-gtk" $MP3SPLT_GTK_VERSION $LIBMP3SPLT_VERSION
 update_version "mp3splt" $MP3SPLT_VERSION $LIBMP3SPLT_VERSION
 
 cd $PROJECT_DIR;
+################## end update versions ############
+
+############# source distribution and debian packages ################
+echo
+echo "Creating source distribution..."
+echo
+sleep 2;
 
 #we do the real compilation of the distribution+debian packages
 BUILD_TEMP=/tmp/temp
@@ -183,17 +209,73 @@ BUILD_TEMP=/tmp/temp
 mkdir -p $BUILD_TEMP
 export CFLAGS="-I$BUILD_TEMP/include"
 export LDFLAGS="-L$BUILD_TEMP/lib"
-make
+make || exit 1
 mv ./mp3splt-gtk/mp3splt-gtk*tar.gz ./
 mv ./libmp3splt/libmp3splt*tar.gz ./
 mv ./newmp3splt/mp3splt*tar.gz ./
 rm -rf $BUILD_TEMP
+############# end source distribution and debian packages ################
 
-#we do the windows executables
-./crosscompile_win32.sh
+############# gnu/linux static build #####
+echo
+echo "Creating static gnu/linux static builds..."
+echo
+sleep 2;
 
-############# ebuilds ################
+STATIC_DIR=/tmp/static_tmp;
+
+rm -rf $STATIC_DIR
+mkdir -p $STATIC_DIR
+
+#static libmp3splt
+LIBMP3SPLT_STATIC_DIR=$STATIC_DIR/libmp3splt
+mkdir -p $LIBMP3SPLT_STATIC_DIR/usr/local/share/doc/libmp3splt
+cd libmp3splt
+./autogen.sh && ./configure --disable-shared --enable-static && make clean && make &&\
+make DESTDIR=$LIBMP3SPLT_STATIC_DIR install || exit 1
+cp "${LIBMP3SPLT_DOC_FILES[@]}" $LIBMP3SPLT_STATIC_DIR/usr/local/share/doc/libmp3splt
+tar -c -z -C $LIBMP3SPLT_STATIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_static.tar.gz .
+mv libmp3splt*.tar.gz ..
+
+#we install libmp3splt shared libs too for mp3splt and mp3splt-gtk
+#configure scripts
+./configure --enable-shared --enable-static && make clean && make &&\
+make DESTDIR=$LIBMP3SPLT_STATIC_DIR install || exit 1
+
+#we put the flags for mp3splt and mp3splt-gtk, to find libmp3splt
+export CFLAGS="-I$LIBMP3SPLT_STATIC_DIR/usr/local/include"
+export LDFLAGS="-L$LIBMP3SPLT_STATIC_DIR/usr/local/lib"
+
+#static mp3splt
+MP3SPLT_STATIC_DIR=$STATIC_DIR/mp3splt
+mkdir -p $MP3SPLT_STATIC_DIR/usr/local/share/doc/mp3splt
+cd ../newmp3splt
+./autogen.sh && ./configure --disable-shared --enable-static &&\
+make clean && make && make DESTDIR=$MP3SPLT_STATIC_DIR install || exit 1
+cp "${MP3SPLT_DOC_FILES[@]}" $MP3SPLT_STATIC_DIR/usr/local/share/doc/mp3splt
+tar -c -z -C $MP3SPLT_STATIC_DIR -f mp3splt-${MP3SPLT_VERSION}_static.tar.gz .
+mv mp3splt*.tar.gz ..
+
+#static mp3splt-gtk
+MP3SPLT_GTK_STATIC_DIR=$STATIC_DIR/mp3splt-gtk
+mkdir -p $MP3SPLT_GTK_STATIC_DIR/usr/local/share/doc/mp3splt-gtk
+cd ../mp3splt-gtk
+./autogen.sh && ./configure --enable-bmp --disable-shared --enable-static && make clean && make &&\
+make DESTDIR=$MP3SPLT_GTK_STATIC_DIR install || exit 1
+cp "${MP3SPLT_GTK_DOC_FILES[@]}" $MP3SPLT_GTK_STATIC_DIR/usr/local/share/doc/mp3splt-gtk
+tar -c -z -C $MP3SPLT_GTK_STATIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static.tar.gz .
+mv mp3splt-gtk*.tar.gz ..
+
+cd ..
+rm -rf $STATIC_DIR
+############# end gnu/linux static build #####
+
+############# gentoo ebuilds ################
 #we do the ebuilds with gentoo in chroot /mnt/gentoo
+echo
+echo "Creating gentoo ebuilds..."
+echo
+sleep 2;
 
 GENTOO_TEMP=/tmp/gentoo_temp;
 
@@ -205,7 +287,7 @@ cp -a ./libmp3splt/gentoo/* $GENTOO_TEMP;
 find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' &>/dev/null \;
 #digest libmp3splt
 dchroot -d -c gentoo "cp *.tar.gz /usr/portage/distfiles;
-ebuild $GENTOO_TEMP/media-libs/libmp3splt/libmp3splt* digest;"
+ebuild $GENTOO_TEMP/media-libs/libmp3splt/libmp3splt* digest;" || exit 1
 tar czf libmp3splt-${LIBMP3SPLT_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-libs;
 rm -rf $GENTOO_TEMP/*;
 
@@ -213,7 +295,8 @@ rm -rf $GENTOO_TEMP/*;
 cp -a ./mp3splt-gtk/gentoo/* $GENTOO_TEMP;
 find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' &>/dev/null \;
 #digest mp3splt-gtk
-dchroot -d -c gentoo "ebuild $GENTOO_TEMP/media-sound/mp3splt-gtk/mp3splt* digest;"
+dchroot -d -c gentoo "ebuild \
+$GENTOO_TEMP/media-sound/mp3splt-gtk/mp3splt* digest;" || exit 1
 tar czf mp3splt-gtk-${MP3SPLT_GTK_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-sound;
 rm -rf $GENTOO_TEMP/*;
 
@@ -221,16 +304,32 @@ rm -rf $GENTOO_TEMP/*;
 cp -a ./newmp3splt/gentoo/* $GENTOO_TEMP;
 find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' &>/dev/null \;
 #digest mp3splt-gtk
-dchroot -d -c gentoo "ebuild $GENTOO_TEMP/media-sound/mp3splt/mp3splt* digest;"
+dchroot -d -c gentoo "ebuild \
+$GENTOO_TEMP/media-sound/mp3splt/mp3splt* digest;" || exit 1
 tar czf mp3splt-${MP3SPLT_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-sound;
 rm -rf $GENTOO_TEMP/*;
 
 #end ebuilds temp directory
 rm -rf $GENTOO_TEMP;
+############# end gentoo ebuilds ################
 
-############# end ebuilds ################
+############# windows installers ################
+echo
+echo "Creating windows installers..."
+echo
+sleep 2;
 
+#we do the windows executables
+./crosscompile_win32.sh || exit 1
+############# end windows installers ################
+
+#slackware packages must be last because we are asked for root
+#password
 ############# slackware packages #########
+echo
+echo "Creating slackware packages..."
+echo
+sleep 2;
 
 USER_ID=`id -u`;
 USER_GROUP=`id -g`;
@@ -244,9 +343,9 @@ rm -rf $SLACK_TEMP;\
 mkdir -p $SLACK_TEMP/libmp3splt/usr/doc/libmp3splt;\
 mkdir -p $SLACK_TEMP/libmp3splt/install;\
 cd libmp3splt; ./autogen.sh && ./configure --prefix=/usr && \
-make clean && make;\
-make DESTDIR=$SLACK_TEMP/libmp3splt install;\
-cp AUTHORS ChangeLog COPYING INSTALL NEWS README TODO LIMITS $SLACK_TEMP/libmp3splt/usr/doc/libmp3splt;\
+make clean && make&&\
+make DESTDIR=$SLACK_TEMP/libmp3splt install || exit 1;\
+cp $LIBMP3SPLT_DOC_FILES $SLACK_TEMP/libmp3splt/usr/doc/libmp3splt;\
 cp slackware/slack-* $SLACK_TEMP/libmp3splt/install;\
 make install;ldconfig;\
 cd $SLACK_TEMP/libmp3splt;\
@@ -255,9 +354,9 @@ mkdir -p $SLACK_TEMP/mp3splt-gtk/usr/doc/mp3splt-gtk;\
 mkdir -p $SLACK_TEMP/mp3splt-gtk/install;\
 cd $PROJECT_DIR/mp3splt-gtk; ./autogen.sh && \
 ./configure --enable-bmp --prefix=/usr &&\
-make clean && make;\
-make DESTDIR=$SLACK_TEMP/mp3splt-gtk install;\
-cp AUTHORS ChangeLog COPYING INSTALL NEWS README TODO $SLACK_TEMP/mp3splt-gtk/usr/doc/mp3splt-gtk;\
+make clean && make&&\
+make DESTDIR=$SLACK_TEMP/mp3splt-gtk install || exit1;\
+cp $MP3SPLT_GTK_DOC_FILES $SLACK_TEMP/mp3splt-gtk/usr/doc/mp3splt-gtk;\
 cp slackware/slack-* $SLACK_TEMP/mp3splt-gtk/install;\
 cd $SLACK_TEMP/mp3splt-gtk;\
 makepkg -c y mp3splt-gtk-$MP3SPLT_GTK_VERSION-i486.tgz;\
@@ -265,9 +364,9 @@ mkdir -p $SLACK_TEMP/mp3splt/usr/doc/mp3splt;\
 mkdir -p $SLACK_TEMP/mp3splt/install;\
 cd $PROJECT_DIR/newmp3splt; ./autogen.sh && \
 ./configure --prefix=/usr && \
-make clean && make;\
-make DESTDIR=$SLACK_TEMP/mp3splt install;\
-cp AUTHORS ChangeLog COPYING INSTALL NEWS README TODO $SLACK_TEMP/mp3splt/usr/doc/mp3splt;\
+make clean && make&&\
+make DESTDIR=$SLACK_TEMP/mp3splt install || exit 1;\
+cp $MP3SPLT_DOC_FILES $SLACK_TEMP/mp3splt/usr/doc/mp3splt;\
 cp slackware/slack-* $SLACK_TEMP/mp3splt/install;\
 cd $SLACK_TEMP/mp3splt;\
 makepkg -c y mp3splt-$MP3SPLT_VERSION-i486.tgz;\
@@ -278,9 +377,14 @@ mv $SLACK_TEMP/mp3splt/mp3splt*.tgz $PROJECT_DIR;\
 mv $SLACK_TEMP/libmp3splt/libmp3splt*.tgz $PROJECT_DIR;\
 mv $SLACK_TEMP/mp3splt-gtk/mp3splt-gtk*.tgz $PROJECT_DIR;\
 chown $USER_ID:$USER_GROUP $PROJECT_DIR*.tgz;\
-rm -rf $SLACK_TEMP;'"
-
+rm -rf $SLACK_TEMP;'" || exit 1
 ############# end slackware packages #####
+
+############# finish packaging #####
+echo
+echo "Finishing packaging..."
+echo
+sleep 2;
 
 #copy packages to the new directory
 #the new release directory
@@ -289,14 +393,27 @@ RELEASE_DIR=release_$LIBMP3SPLT_VERSION;
 mkdir -p $RELEASE_DIR
 rm -rf $RELEASE_DIR/*
 
-mv ./*.exe ./$RELEASE_DIR
-mv ./*.deb ./$RELEASE_DIR
-mv ./*.tar.gz ./$RELEASE_DIR
-mv ./*.tgz ./$RELEASE_DIR
+mv ./*.exe ./$RELEASE_DIR || exit 1
+mv ./*.deb ./$RELEASE_DIR || exit 1
+mv ./*_static.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*.tgz ./$RELEASE_DIR || exit 1
+############# end finish packaging #####
 
+############# uploading to sourceforge.net #####
 #we put the files on the sourceforge ftp
 if [[ $UPLOAD_TO_SOURCEFORGE == 1 ]]; then
+    echo
+    echo "Uploading files to sourceforge.net..."
+    echo
+    sleep 2;
     for a in ls $DIST_VERSION; do
-        lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous, upload.sourceforge.net
+        lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous,\
+upload.sourceforge.net || exit 1
     done
 fi
+############# finish uploading to sourceforge.net #####
+
+echo
+echo "The packaging is finished."
+echo
