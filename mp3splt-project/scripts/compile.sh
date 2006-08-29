@@ -117,8 +117,8 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
                 #configure.ac libmp3splt version check
                 #./configure.ac:AC_CHECK_LIB(mp3splt, mp3splt_v0_3_5,libmp3splt=yes,
                 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
-                sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,/\
-AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
+                sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,l/\
+AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                 sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
 \[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac;
                 #source code
@@ -137,7 +137,7 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
                 sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild;
                 #slackware description
                 cd ../../../slackware/
-                sed -i "s/libmp3splt version .*,/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
+                sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
                 ;;
             #mp3splt-gtk settings
             "mp3splt-gtk")
@@ -151,8 +151,8 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
                 #configure.ac libmp3splt version check
                 #./configure.ac:AC_CHECK_LIB(mp3splt, mp3splt_v0_3_5,libmp3splt=yes,
                 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
-                sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,/\
-AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
+                sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,l/\
+AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                 sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
 \[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac;
                 #source code
@@ -171,7 +171,7 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,/" ./configure.ac;
                 sed -i "s/media-libs\/libmp3splt-.*\"/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION\"/" ./$PROGRAM-$VERSION.ebuild;
                 #slackware description
                 cd ../../../slackware/
-                sed -i "s/libmp3splt version .*,/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
+                sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
                 ;;
         esac
     else
@@ -196,6 +196,11 @@ update_version "mp3splt" $MP3SPLT_VERSION $LIBMP3SPLT_VERSION
 
 cd $PROJECT_DIR;
 ################## end update versions ############
+
+############# RPM packages creation ################
+
+
+############# end RPM packages creation ################
 
 ############# source distribution and debian packages ################
 echo
