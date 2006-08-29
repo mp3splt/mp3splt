@@ -27,7 +27,7 @@ echo
 sleep 3;
 
 select=("I know what I'm doing and I use it at my own risk" "Quit")
-select continue in "${select[@]}";do 
+select continue in "${select[@]}";do
     if [[ $continue = "Quit" ]]; then
         exit 0;
     else
@@ -80,6 +80,8 @@ function update_version()
 AC_INIT($PROGRAM, $VERSION,/" ./configure.ac;
         sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
 AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;    
+        #rpm global Version
+        sed -i "s/Version: .*/Version: $VERSION/" ./rpm/SPECS/$PROGRAM.spec
         
         #current date, we need it
         DATE=$(date +%d\\/%m\\/%y);
@@ -93,7 +95,7 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
                 sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
 #define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./src/mp3splt_types.h;
                 #./src/mp3splt.c:void mp3splt_v0_3_1
-                sed -i "s/void mp3splt_v.*/void mp3splt_v$NEWVER()/" ./src/mp3splt.c;
+                sed -i "s/void mp3splt_v.*/void mp3splt_v$NEW_LIBMP3SPLT_VER()/" ./src/mp3splt.c;
                 #./src/Doxyfile:PROJECT_NUMBER=0.3.1
                 sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./src/Doxyfile;
                 #update gentoo ebuild
@@ -136,8 +138,10 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                 fi;
                 sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild;
                 #slackware description
-                cd ../../../slackware/
+                cd ../../../slackware
                 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
+                #rpm libmp3splt Requires
+                sed -i "s/libmp3splt = .*/libmp3splt = $LIBMP3SPLT_VERSION/" ../rpm/SPECS/$PROGRAM.spec
                 ;;
             #mp3splt-gtk settings
             "mp3splt-gtk")
@@ -170,8 +174,10 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                 fi;
                 sed -i "s/media-libs\/libmp3splt-.*\"/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION\"/" ./$PROGRAM-$VERSION.ebuild;
                 #slackware description
-                cd ../../../slackware/
+                cd ../../../slackware
                 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
+                #rpm libmp3splt Requires
+                sed -i "s/libmp3splt = .*, b/libmp3splt = $LIBMP3SPLT_VERSION, b/" ../rpm/SPECS/$PROGRAM.spec
                 ;;
         esac
     else
@@ -196,11 +202,6 @@ update_version "mp3splt" $MP3SPLT_VERSION $LIBMP3SPLT_VERSION
 
 cd $PROJECT_DIR;
 ################## end update versions ############
-
-############# RPM packages creation ################
-
-
-############# end RPM packages creation ################
 
 ############# source distribution and debian packages ################
 echo
@@ -328,6 +329,60 @@ sleep 2;
 ./crosscompile_win32.sh || exit 1
 ############# end windows installers ################
 
+############# RPM packages creation ################
+echo
+echo "Creating RPMs..."
+echo
+sleep 2;
+
+RPM_TEMP=/tmp/rpm_temp
+
+rm -rf $RPM_TEMP
+mkdir -p $RPM_TEMP
+
+#libmp3splt
+echo "%_topdir $PROJECT_DIR/libmp3splt/rpm" > ~/.rpmmacros
+cd libmp3splt && make dist || exit 1
+mv libmp3splt*tar.gz ./rpm/SOURCES
+cd rpm && rpmbuild -ba ./SPECS/libmp3splt.spec || exit 1
+rm -rf ./BUILD/*
+rm -rf ./SOURCES/*
+mv ./RPMS/i386/*.rpm ../../ || exit 1
+mv ./SRPMS/*.rpm ../../ || exit 1
+
+#mp3splt
+echo "%_topdir $PROJECT_DIR/newmp3splt/rpm" > ~/.rpmmacros
+cd ../../newmp3splt && \
+CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" ./configure && make dist\
+ || exit 1
+mv mp3splt*tar.gz ./rpm/SOURCES
+cd rpm
+CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" \
+rpmbuild -ba ./SPECS/mp3splt.spec || exit 1
+rm -rf ./BUILD/*
+rm -rf ./SOURCES/*
+mv ./RPMS/i386/*.rpm ../../ || exit 1
+mv ./SRPMS/*.rpm ../../ || exit 1
+
+#mp3splt-gtk
+echo "%_topdir $PROJECT_DIR/mp3splt-gtk/rpm" > ~/.rpmmacros
+cd ../../mp3splt-gtk && \
+CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" ./configure && make dist\
+ || exit 1
+mv mp3splt-gtk*tar.gz ./rpm/SOURCES
+cd rpm
+CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" \
+rpmbuild -ba ./SPECS/mp3splt-gtk.spec || exit 1
+rm -rf ./BUILD/*
+rm -rf ./SOURCES/*
+mv ./RPMS/i386/*.rpm ../../ || exit 1
+mv ./SRPMS/*.rpm ../../ || exit 1
+
+rm -rf $RPM_TEMP
+
+cd ../..
+############# end RPM packages creation ################
+
 #slackware packages must be last because we are asked for root
 #password
 ############# slackware packages #########
@@ -398,10 +453,11 @@ RELEASE_DIR=release_$LIBMP3SPLT_VERSION;
 mkdir -p $RELEASE_DIR
 rm -rf $RELEASE_DIR/*
 
-mv ./*.exe ./$RELEASE_DIR || exit 1
 mv ./*.deb ./$RELEASE_DIR || exit 1
+mv ./*.exe ./$RELEASE_DIR || exit 1
 mv ./*_static.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*.rpm ./$RELEASE_DIR || exit 1
 mv ./*.tgz ./$RELEASE_DIR || exit 1
 ############# end finish packaging #####
 

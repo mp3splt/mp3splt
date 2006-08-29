@@ -1055,5 +1055,5 @@ void mp3splt_get_version(char *version)
 }
 
 //checks the version
-void mp3splt_v()
+void mp3splt_v0_4_rc1()
 {}
