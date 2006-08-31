@@ -1,4 +1,4 @@
-Summary: Mp3splt is the command line program from the mp3splt-project, to split mp3 and ogg without deconding
+Summary: Mp3splt is the command line program from the mp3splt-project, to split mp3 and ogg without decoding
 Name: mp3splt
 Version: 2.2_rc1
 Release: 1
@@ -9,6 +9,7 @@ Group: Productivity/Multimedia/Sound/Utilities
 URL: http://mp3splt.sourceforge.net
 BuildRoot: /tmp/rpm_temp/mp3splt
 Requires: libmp3splt = 0.4_rc1
+Provides: mp3splt
 %description
 mp3splt-project common features:
 * split mp3 and ogg files from a begin time to an end time without decoding

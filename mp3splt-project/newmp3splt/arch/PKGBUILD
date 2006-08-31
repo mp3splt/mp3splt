@@ -1,0 +1,20 @@
+# $Id: PKGBUILD $
+# Packager: Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>
+pkgname=mp3splt
+pkgver=2.2_rc1
+pkgrel=1
+pkgdesc="Mp3splt is the command line program from the mp3splt-project, to split mp3 and ogg without decoding"
+arch=(i686)
+url="http://mp3splt.sourceforge.net"
+groups=root
+depends=('libmp3splt=0.4_rc1')
+source=($pkgname-$pkgver.tar.gz)
+
+build() {
+  cd $startdir/src/$pkgname-$pkgver
+  ./configure --prefix=/usr
+  make || return 1
+  mkdir -p $startdir/pkg/usr/share/$pkgname/doc
+  cp AUTHORS ChangeLog COPYING INSTALL NEWS README TODO $startdir/pkg/usr/share/$pkgname/doc/
+  make prefix=$startdir/pkg/usr install
+}
