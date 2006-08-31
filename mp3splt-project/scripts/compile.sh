@@ -82,6 +82,8 @@ AC_INIT($PROGRAM, $VERSION,/" ./configure.ac;
 AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;    
         #rpm global Version
         sed -i "s/Version: .*/Version: $VERSION/" ./rpm/SPECS/$PROGRAM.spec
+        #arch global version
+        sed -i "s/pkgver=.*/pkgver=$VERSION/" ./arch/PKGBUILD
         
         #current date, we need it
         DATE=$(date +%d\\/%m\\/%y);
@@ -140,8 +142,11 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                 #slackware description
                 cd ../../../slackware
                 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
+                cd ..
                 #rpm libmp3splt Requires
-                sed -i "s/libmp3splt = .*/libmp3splt = $LIBMP3SPLT_VERSION/" ../rpm/SPECS/$PROGRAM.spec
+                sed -i "s/libmp3splt = .*/libmp3splt = $LIBMP3SPLT_VERSION/" ./rpm/SPECS/$PROGRAM.spec
+                #arch libmp3splt depends
+                sed -i "s/libmp3splt=.*'/libmp3splt=${LIBMP3SPLT_VERSION}'/" ./arch/PKGBUILD
                 ;;
             #mp3splt-gtk settings
             "mp3splt-gtk")
@@ -176,8 +181,11 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                 #slackware description
                 cd ../../../slackware
                 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
+                cd ..
                 #rpm libmp3splt Requires
-                sed -i "s/libmp3splt = .*, b/libmp3splt = $LIBMP3SPLT_VERSION, b/" ../rpm/SPECS/$PROGRAM.spec
+                sed -i "s/libmp3splt = .*, b/libmp3splt = $LIBMP3SPLT_VERSION, b/" ./rpm/SPECS/$PROGRAM.spec
+                #arch libmp3splt depends
+                sed -i "s/libmp3splt=.*'/libmp3splt=${LIBMP3SPLT_VERSION}'/" ./arch/PKGBUILD
                 ;;
         esac
     else
@@ -224,7 +232,7 @@ rm -rf $BUILD_TEMP
 
 ############# gnu/linux static build #####
 echo
-echo "Creating static gnu/linux static builds..."
+echo "Creating static gnu/linux builds..."
 echo
 sleep 2;
 
@@ -275,6 +283,60 @@ mv mp3splt-gtk*.tar.gz ..
 cd ..
 rm -rf $STATIC_DIR
 ############# end gnu/linux static build #####
+
+############# gnu/linux dynamic build #####
+echo
+echo "Creating dynamic gnu/linux builds..."
+echo
+sleep 2;
+
+DYNAMIC_DIR=/tmp/dynamic_tmp;
+
+rm -rf $DYNAMIC_DIR
+mkdir -p $DYNAMIC_DIR
+
+#dynamic libmp3splt
+LIBMP3SPLT_DYNAMIC_DIR=$DYNAMIC_DIR/libmp3splt
+mkdir -p $LIBMP3SPLT_DYNAMIC_DIR/usr/local/share/doc/libmp3splt
+cd libmp3splt
+./autogen.sh && ./configure --enable-shared --disable-static && make clean && make &&\
+make DESTDIR=$LIBMP3SPLT_DYNAMIC_DIR install || exit 1
+cp "${LIBMP3SPLT_DOC_FILES[@]}" $LIBMP3SPLT_DYNAMIC_DIR/usr/local/share/doc/libmp3splt
+tar -c -z -C $LIBMP3SPLT_DYNAMIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_dynamic.tar.gz .
+mv libmp3splt*.tar.gz ..
+
+#we install libmp3splt shared libs too for mp3splt and mp3splt-gtk
+#configure scripts
+./configure --enable-shared --disable-static && make clean && make &&\
+make DESTDIR=$LIBMP3SPLT_DYNAMIC_DIR install || exit 1
+
+#we put the flags for mp3splt and mp3splt-gtk, to find libmp3splt
+export CFLAGS="-I$LIBMP3SPLT_DYNAMIC_DIR/usr/local/include"
+export LDFLAGS="-L$LIBMP3SPLT_DYNAMIC_DIR/usr/local/lib"
+
+#dynamic mp3splt
+MP3SPLT_DYNAMIC_DIR=$DYNAMIC_DIR/mp3splt
+mkdir -p $MP3SPLT_DYNAMIC_DIR/usr/local/share/doc/mp3splt
+cd ../newmp3splt
+./autogen.sh && ./configure --enable-shared --disable-static &&\
+make clean && make && make DESTDIR=$MP3SPLT_DYNAMIC_DIR install || exit 1
+cp "${MP3SPLT_DOC_FILES[@]}" $MP3SPLT_DYNAMIC_DIR/usr/local/share/doc/mp3splt
+tar -c -z -C $MP3SPLT_DYNAMIC_DIR -f mp3splt-${MP3SPLT_VERSION}_dynamic.tar.gz .
+mv mp3splt*.tar.gz ..
+
+#dynamic mp3splt-gtk
+MP3SPLT_GTK_DYNAMIC_DIR=$DYNAMIC_DIR/mp3splt-gtk
+mkdir -p $MP3SPLT_GTK_DYNAMIC_DIR/usr/local/share/doc/mp3splt-gtk
+cd ../mp3splt-gtk
+./autogen.sh && ./configure --enable-bmp --enable-shared --disable-static && make clean && make &&\
+make DESTDIR=$MP3SPLT_GTK_DYNAMIC_DIR install || exit 1
+cp "${MP3SPLT_GTK_DOC_FILES[@]}" $MP3SPLT_GTK_DYNAMIC_DIR/usr/local/share/doc/mp3splt-gtk
+tar -c -z -C $MP3SPLT_GTK_DYNAMIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_dynamic.tar.gz .
+mv mp3splt-gtk*.tar.gz ..
+
+cd ..
+rm -rf $DYNAMIC_DIR
+############# end gnu/linux dynamic build #####
 
 ############# gentoo ebuilds ################
 #we do the ebuilds with gentoo in chroot /mnt/gentoo
@@ -383,6 +445,48 @@ rm -rf $RPM_TEMP
 cd ../..
 ############# end RPM packages creation ################
 
+############# archlinux packages #########
+echo
+echo "Creating archlinux packages..."
+echo
+sleep 2;
+
+#libmp3splt
+cd libmp3splt
+./autogen.sh && ./configure && make dist || exit 1
+mv libmp3splt*.tar.gz ./arch || exit 1
+cd arch
+dchroot -d -c arch "makepkg" || exit 1
+mv libmp3splt*pkg.tar.gz ../..
+rm -rf ./libmp3splt*.tar.gz
+
+#mp3splt
+cd ../../newmp3splt
+CFLAGS="-I../libmp3splt/arch/pkg/usr/include"
+LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib"
+./autogen.sh && ./configure && make dist || exit 1
+mv mp3splt*.tar.gz ./arch || exit 1
+cd arch
+dchroot -d -c arch "makepkg -d -c;" || exit 1
+mv mp3splt*pkg.tar.gz ../..
+rm -rf ./mp3splt*.tar.gz
+
+#mp3splt-gtk
+cd ../../mp3splt-gtk
+./autogen.sh && ./configure && make dist || exit 1
+mv mp3splt-gtk*.tar.gz ./arch || exit 1
+cd arch
+dchroot -d -c arch "makepkg -d -c;" || exit 1
+mv mp3splt-gtk*pkg.tar.gz ../..
+rm -rf ./mp3splt-gtk*.tar.gz
+
+#remove remaining libmp3splt build
+cd ../../libmp3splt/arch
+rm -rf ./pkg ./src && rm -rf ./filelist
+
+cd $PROJECT_DIR
+############# end archlinux packages #########
+
 #slackware packages must be last because we are asked for root
 #password
 ############# slackware packages #########
@@ -399,6 +503,7 @@ export PATH=$PATH:/sbin && \
 dchroot -d -c slackware "\
 su -c '\
 CFLAGS=\"-O2 -march=i486 -mcpu=i486\";\
+LDFLAGS=\"\";\
 rm -rf $SLACK_TEMP;\
 mkdir -p $SLACK_TEMP/libmp3splt/usr/doc/libmp3splt;\
 mkdir -p $SLACK_TEMP/libmp3splt/install;\
@@ -456,6 +561,8 @@ rm -rf $RELEASE_DIR/*
 mv ./*.deb ./$RELEASE_DIR || exit 1
 mv ./*.exe ./$RELEASE_DIR || exit 1
 mv ./*_static.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*_dynamic.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*.pkg.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*.rpm ./$RELEASE_DIR || exit 1
 mv ./*.tgz ./$RELEASE_DIR || exit 1

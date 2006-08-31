@@ -7,7 +7,7 @@ pkgdesc="Mp3splt-gtk is a GTK2 gui that uses libmp3splt to split mp3 and ogg wit
 arch=(i686)
 url="http://mp3splt.sourceforge.net"
 groups=root
-depends=('libmp3splt=0.4_rc1' 'gtk2>=2.6' 'bmp' 'pkgconfig')
+depends=('libmp3splt=0.4_rc1')
 source=($pkgname-$pkgver.tar.gz)
 
 build() {
