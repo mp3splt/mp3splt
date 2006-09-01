@@ -14,7 +14,7 @@
 
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.53)
+AC_PREREQ(2.59)
 AC_INIT(libmp3splt, 0.4_rc1, io_alex_2002@yahoo.fr)
 AM_INIT_AUTOMAKE(libmp3splt, 0.4_rc1)
 AM_CONFIG_HEADER(config.h)
@@ -57,17 +57,30 @@ LIBS="$LIBS -lvorbisfile -lvorbis -logg"
 ogg=yes)
 
 #we check for mingw, we add libz
-AC_MSG_CHECKING(for Mingw)
+AC_MSG_CHECKING(the host)
 case $host in
-	*-*-mingw*)	MING=yes
-			LIBS="libz.a"
-			;;
-	*)		MING=no
-			LIBS="$LIBS"
-			;;
+	*linux*)
+		HOST="Linux-based system"
+		;;
+	*openbsd*)
+		HOST="OpenBSD"
+		LIBS="$LIBS -lm"
+		;;
+	*netbsd*)
+		HOST="NetBSD"
+		;;
+	*freebsd*)
+		HOST="FreeBSD"
+		;;
+	*mingw*)
+		HOST="Mingw"
+		LIBS="libz.a"
+		;;
+	*)
+		HOST="Other"
+		;;
 esac
-AM_CONDITIONAL(MINGW, test x$MING = xyes)
-AC_MSG_RESULT($MING)
+AC_MSG_RESULT($HOST)
 
 #checks for id3tag
 AC_CHECK_LIB(id3tag, id3_tag_new,

@@ -18,17 +18,29 @@ AC_PROG_CC
 # Checks for library functions.
 
 #we check for mingw
-AC_MSG_CHECKING(for Mingw)
+AC_MSG_CHECKING(the host)
 case $host in
-	*-*-mingw*)	MING=yes
-			LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32"
-			;;
-	*)		MING=no
-			LIBS="$LIBS"
-			;;
+	*linux*)
+		HOST="Linux-based system"
+		;;
+	*openbsd*)
+		HOST="OpenBSD"
+		;;
+	*netbsd*)
+		HOST="NetBSD"
+		;;
+	*freebsd*)
+		HOST="FreeBSD"
+		;;
+	*mingw*)
+		HOST="Mingw"
+		LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32"
+		;;
+	*)
+		LIBS="$LIBS"
+		;;
 esac
-AM_CONDITIONAL(MINGW, test x$MING = xyes)
-AC_MSG_RESULT($MING)
+AC_MSG_RESULT($HOST)
 
 #checking for libmp3splt
 AC_CHECK_LIB(mp3splt, mp3splt_v0_4_rc1,libmp3splt=yes,

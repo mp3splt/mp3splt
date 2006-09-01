@@ -36,7 +36,6 @@
 #include <string.h>
 #include <math.h>
 #include <locale.h>
-#include <values.h>
 
 #include "splt.h"
 

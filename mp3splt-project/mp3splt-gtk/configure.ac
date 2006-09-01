@@ -19,17 +19,31 @@ AM_GNU_GETTEXT_VERSION(0.13.1)
 AM_PATH_GTK_2_0(2.6.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.6.0))
 
 #we check for mingw
-AC_MSG_CHECKING(for Mingw)
+AC_MSG_CHECKING(the host)
 case $host in
-	*-*-mingw*)	MING=yes
-			LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32 -mwindows"
-			;;
-	*)		MING=no
-			LIBS="$LIBS"
-			;;
+	*linux*)
+		HOST="Linux-based system"
+		;;
+	*openbsd*)
+		HOST="OpenBSD"
+		LIBS="$LIBS `pkg-config --libs gtk+-2.0` -lpthread"
+		CFLAGS="$CFLAGS `pkg-config --cflags gtk+-2.0`"
+		;;
+	*netbsd*)
+		HOST="NetBSD"
+		;;
+	*freebsd*)
+		HOST="FreeBSD"
+		;;
+	*mingw*)
+		HOST="Mingw"
+		LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32 -mwindows"
+		;;
+	*)
+		HOST="Other"
+		;;
 esac
-AM_CONDITIONAL(MINGW, test x$MING = xyes)
-AC_MSG_RESULT($MING)
+AC_MSG_RESULT($HOST)
 
 #checking for libmp3splt
 AC_CHECK_LIB(mp3splt, mp3splt_v0_4_rc1,libmp3splt=yes,

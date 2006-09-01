@@ -56,3 +56,14 @@ root_unnewmp3splt:
 	cd newmp3splt && make uninstall
 root_unmp3splt-gtk:
 	cd mp3splt-gtk && make uninstall
+
+#openbsd install
+openbsd_root_install:
+	export CFLAGS="-I/usr/include -I/usr/local/include" \
+export LDFLAGS="-L/usr/lib -L/usr/local/lib" \
+export AUTOMAKE_VERSION=1.9 \
+export AUTOCONF_VERSION=2.59 && cd libmp3splt\
+&& ./autogen.sh && ./configure && make && make install &&\
+cd ../newmp3splt && ./autogen.sh && ./configure && make &&\
+make install && cd ../mp3splt-gtk && ./autogen.sh &&\
+./configure --enable-bmp && make && make install
