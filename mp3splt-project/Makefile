@@ -2,8 +2,6 @@ all: libmp3splt mp3splt-gtk newmp3splt
 
 clean: clean_libmp3splt clean_mp3splt-gtk clean_newmp3splt
 
-#the ebuilds are made in the ./scripts/compile.sh script
-
 #we make libmp3splt packages
 libmp3splt: libmp3splt_dist libmp3splt_debian
 libmp3splt_dist:
@@ -59,11 +57,19 @@ root_unmp3splt-gtk:
 
 #openbsd install
 openbsd_root_install:
-	export CFLAGS="-I/usr/include -I/usr/local/include" \
+	export AUTOMAKE_VERSION=1.9 \
+export AUTOCONF_VERSION=2.59 \
+export CFLAGS="-I/usr/include -I/usr/local/include" \
 export LDFLAGS="-L/usr/lib -L/usr/local/lib" \
-export AUTOMAKE_VERSION=1.9 \
-export AUTOCONF_VERSION=2.59 && cd libmp3splt\
-&& ./autogen.sh && ./configure && make && make install &&\
-cd ../newmp3splt && ./autogen.sh && ./configure && make &&\
-make install && cd ../mp3splt-gtk && ./autogen.sh &&\
-./configure --enable-bmp && make && make install
+&& cd libmp3splt && ./autogen.sh && ./configure \
+&& make clean && make && make install &&\
+cd ../newmp3splt && ./autogen.sh && ./configure \
+&& make clean && make && make install &&\
+cd ../mp3splt-gtk && ./autogen.sh && \
+./configure --enable-bmp && make && make clean && make install
+
+#openbsd uninstall
+openbsd_root_uninstall:
+	cd libmp3splt && make uninstall\
+&& cd ../newmp3splt && make uninstall \
+&& cd ../mp3splt-gtk && make uninstall
