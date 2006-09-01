@@ -73,3 +73,9 @@ openbsd_root_uninstall:
 	cd libmp3splt && make uninstall\
 && cd ../newmp3splt && make uninstall \
 && cd ../mp3splt-gtk && make uninstall
+
+#open bsd packages
+openbsd_packages:
+	cd libmp3splt/openbsd && ./do_pkg.sh &&\
+cd ../../newmp3splt/openbsd && ./do_pkg.sh &&\
+cd ../../mp3splt-gtk/openbsd && ./do_pkg.sh
