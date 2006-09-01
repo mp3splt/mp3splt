@@ -71,9 +71,5 @@ echo "@exec /sbin/ldconfig -m %D/lib
 #erase +CONTENTS
 echo "" > +CONTENTS;
 
-#we uninstall the library
-cd .. && make uninstall && rm -rf /usr/local/share/doc/$NAME
-cd openbsd
-
 #we copy the results
 mv $NAME-obsd*.tgz ../..
