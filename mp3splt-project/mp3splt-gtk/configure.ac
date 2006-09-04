@@ -31,6 +31,7 @@ case $host in
 		;;
 	*netbsd*)
 		HOST="NetBSD"
+		LIBS="$LIBS -D_nl_domain_bindings=libintl_nl_domain_bindings -lintl -lstdc++"
 		;;
 	*freebsd*)
 		HOST="FreeBSD"

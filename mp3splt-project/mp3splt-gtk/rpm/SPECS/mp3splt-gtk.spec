@@ -8,7 +8,7 @@ Packager: Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>
 Group: Productivity/Multimedia/Sound/Utilities
 URL: http://mp3splt.sourceforge.net
 BuildRoot: /tmp/rpm_temp/mp3splt-gtk
-Requires: libmp3splt = 0.4_rc1, beep-media-player, glib2 >= 2.6 gtk2 >= 2.6, pkgconfig
+Requires: libmp3splt = 0.4_rc1, beep-media-player, glib2 >= 2.6, gtk2 >= 2.6, pkgconfig
 Provides: mp3splt-gtk
 %description
 mp3splt-project common features:

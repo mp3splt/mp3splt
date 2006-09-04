@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
-"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2006-08-27 02:10+0200\n"
+"POT-Creation-Date: 2006-09-03 07:42+0200\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
 
 #: src/xmms_control.c:77
 msgid "stereo"
@@ -36,8 +36,8 @@ msgid " error : you already have the splitpoint in table "
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:680 src/tree_tab.c:967 src/freedb_tab.c:557
-#: src/freedb_tab.c:572
+#: src/freedb_tab.c:557 src/freedb_tab.c:572 src/tree_tab.c:680
+#: src/tree_tab.c:967
 msgid "description here"
 msgstr "ici, une description"
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid " cannot preview, not connected to player "
 msgstr ""
 
-#: src/tree_tab.c:1414 src/splitted_files.c:120
+#: src/splitted_files.c:120 src/tree_tab.c:1414
 msgid "Filename"
 msgstr "Nom fichier"
 
@@ -257,8 +257,8 @@ msgstr ""
 
 #: src/preferences_tab.c:1134
 msgid ""
-"Output filename format for cddb files and cue files (includes freedb "
-"search) :\n"
+"Output filename format for cddb files and cue files (includes freedb search) "
+":\n"
 "    @a - artist name\n"
 "    @p - performer of each song (does not always exist)\n"
 "    @b - album title\n"
@@ -288,7 +288,7 @@ msgstr "Coupure"
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1228 src/main_win.c:664
+#: src/main_win.c:664 src/preferences_tab.c:1228
 msgid "Player"
 msgstr "Lecteur"
 
@@ -324,7 +324,7 @@ msgstr "ajouter point de coupure du lecteur"
 msgid "_Connect    "
 msgstr "_Connecter    "
 
-#: src/player_tab.c:701 src/main_win.c:361 src/main_win.c:408
+#: src/main_win.c:361 src/main_win.c:408 src/player_tab.c:701
 msgid "connect to player"
 msgstr "se connecter au lecteur"
 
@@ -332,7 +332,7 @@ msgstr "se connecter au lecteur"
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:711 src/main_win.c:351
+#: src/main_win.c:351 src/player_tab.c:711
 msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
