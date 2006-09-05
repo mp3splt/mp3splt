@@ -82,3 +82,34 @@ cd ../../mp3splt-gtk/openbsd && ./do_pkg.sh &&\
 cd ../../libmp3splt && make uninstall && \
 rm -rf /usr/local/share/doc/libmp3splt
 
+#netbsd packages
+netbsd_packages:
+	export CFLAGS="-I/usr/pkg/include" \
+export LDFLAGS="-L/usr/pkg/lib";\
+rm -f /root/progs_src/mp3splt/mp3splt-project/*mp3splt*nbsd*.tgz;\
+rm -f /usr/pkgsrc/packages/All/*mp3splt*nbsd*.tgz;\
+mkdir -p /usr/pkgsrc/audio/libmp3splt;\
+mkdir -p /usr/pkgsrc/audio/mp3splt;\
+mkdir -p /usr/pkgsrc/audio/mp3splt-gtk;\
+rm -rf /usr/pkgsrc/audio/libmp3splt/*;\
+rm -rf /usr/pkgsrc/audio/mp3splt/*;\
+rm -rf /usr/pkgsrc/audio/mp3splt-gtk/*;\
+cp -r /root/progs_src/mp3splt/mp3splt-project/libmp3splt/netbsd/* /usr/pkgsrc/audio/libmp3splt/;\
+cp -r /root/progs_src/mp3splt/mp3splt-project/newmp3splt/netbsd/* /usr/pkgsrc/audio/mp3splt/;\
+cp -r /root/progs_src/mp3splt/mp3splt-project/mp3splt-gtk/netbsd/* /usr/pkgsrc/audio/mp3splt-gtk/;\
+cd /root/progs_src/mp3splt/mp3splt-project/libmp3splt;\
+./autogen.sh && ./configure && make dist &&\
+mv libmp3splt*.tar.gz /usr/pkgsrc/distfiles/ &&\
+pkg_delete mp3splt-gtk-nbsd;\
+pkg_delete mp3splt-nbsd;\
+pkg_delete libmp3splt-nbsd;\
+cd /usr/pkgsrc/audio/libmp3splt && bmake mdi && bmake package &&\
+cd /root/progs_src/mp3splt/mp3splt-project/newmp3splt && ./autogen.sh && ./configure && make dist &&\
+mv mp3splt*.tar.gz /usr/pkgsrc/distfiles/ &&\
+cd ../mp3splt-gtk && ./autogen.sh && ./configure && make dist &&\
+mv mp3splt-gtk*.tar.gz /usr/pkgsrc/distfiles/ &&\
+cd /usr/pkgsrc/audio/mp3splt && bmake mdi && bmake package &&\
+bmake deinstall && cd /usr/pkgsrc/audio/mp3splt-gtk && bmake mdi &&\
+bmake package && bmake deinstall && cd /usr/pkgsrc/audio/libmp3splt &&\
+bmake deinstall &&\
+mv /usr/pkgsrc/packages/All/*mp3splt*nbsd*.tgz /root/progs_src/mp3splt/mp3splt-project
