@@ -487,6 +487,16 @@ rm -rf ./pkg ./src && rm -rf ./filelist
 cd $PROJECT_DIR
 ############# end archlinux packages #########
 
+############# openbsd packages #####
+cd /mnt/personal/systems/bsd-based/openbsd && ./openbsd
+cd $PROJECT_DIR
+############# end openbsd packages #####
+
+############# netbsd packages #####
+cd /mnt/personal/systems/bsd-based/netbsd && ./netbsd
+cd $PROJECT_DIR
+############# end netbsd packages #####
+
 #slackware packages must be last because we are asked for root
 #password
 ############# slackware packages #########
@@ -560,6 +570,8 @@ rm -rf $RELEASE_DIR/*
 
 mv ./*.deb ./$RELEASE_DIR || exit 1
 mv ./*.exe ./$RELEASE_DIR || exit 1
+mv ./*obsd*.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*nbsd*.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*_static.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*_dynamic.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*.pkg.tar.gz ./$RELEASE_DIR || exit 1
