@@ -1,11 +1,13 @@
 @comment $FreeBSD$
-bin/mp3splt
-man/man1/mp3splt.1
-share/doc/mp3splt/AUTHORS
-share/doc/mp3splt/ChangeLog
-share/doc/mp3splt/COPYING
-share/doc/mp3splt/INSTALL
-share/doc/mp3splt/NEWS
-share/doc/mp3splt/README
-share/doc/mp3splt/TODO
-@dirrm share/doc/mp3splt
+bin/mp3splt-gtk
+share/pixmaps/mp3splt-gtk_ico.png
+share/pixmaps/mp3splt-gtk.png
+share/locale/fr/LC_MESSAGES/mp3splt-gtk.mo
+share/doc/mp3splt-gtk/AUTHORS
+share/doc/mp3splt-gtk/ChangeLog
+share/doc/mp3splt-gtk/COPYING
+share/doc/mp3splt-gtk/INSTALL
+share/doc/mp3splt-gtk/NEWS
+share/doc/mp3splt-gtk/README
+share/doc/mp3splt-gtk/TODO
+@dirrm share/doc/mp3splt-gtk

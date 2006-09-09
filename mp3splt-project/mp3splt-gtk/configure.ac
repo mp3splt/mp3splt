@@ -35,6 +35,7 @@ case $host in
 		;;
 	*freebsd*)
 		HOST="FreeBSD"
+		LIBS="$LIBS -lpthread"
 		;;
 	*mingw*)
 		HOST="Mingw"

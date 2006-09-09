@@ -6,23 +6,24 @@
 #
 
 PORTNAME=	mp3splt-gtk
-PORTVERSION=	2.2.1
+PORTVERSION=	0.4.1
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 MASTER_SITE_SUBDIR=	mp3splt
 PKGNAMESUFFIX=	-fbsd
-DISTNAME=	${PORTNAME}-2.2_rc1
+DISTNAME=	${PORTNAME}-0.4_rc1
 
 MAINTAINER=	io_alex_2002@yahoo.fr
 COMMENT= 	Command line program to split mp3 and ogg without decoding
 
-LIB_DEPENDS=	libmp3splt.0:${PORTSDIR}/audio/libmp3splt \
-		glib-2.0:${PORTSDIR}/devel/glib20 \
+BUILD_DEPENDS=	libmp3splt:${PORTSDIR}/audio/libmp3splt
+USE_GNOME=	gtk20
+LIB_DEPENDS=	glib-2.0:${PORTSDIR}/devel/glib20 \
 		beep.2:${PORTSDIR}/multimedia/beep-media-player
 
 GNU_CONFIGURE=	YES
-USE_GNOME=	gtk20
 USE_GMAKE=	YES
+CONFIGURE_ARGS+=--enable-bmp
 CONFIGURE_ENV+=	LDFLAGS="${LDFLAGS} -L${LOCALBASE}/lib" \
 		CFLAGS="${CFLAGS} -I${LOCALBASE}/include"
 

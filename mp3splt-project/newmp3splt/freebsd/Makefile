@@ -16,14 +16,14 @@ DISTNAME=	${PORTNAME}-2.2_rc1
 MAINTAINER=	io_alex_2002@yahoo.fr
 COMMENT= 	Command line program to split mp3 and ogg without decoding
 
-LIB_DEPENDS=	libmp3splt.0:${PORTSDIR}/audio/libmp3splt
+BUILD_DEPENDS=	libmp3splt:${PORTSDIR}/audio/libmp3splt
 
 GNU_CONFIGURE=	YES
 USE_GMAKE=	YES
 CONFIGURE_ENV+=	LDFLAGS="${LDFLAGS} -L${LOCALBASE}/lib" \
 		CFLAGS="${CFLAGS} -I${LOCALBASE}/include"
 
-WRKSRC=		${WRKDIR}/mp3splt-0.4_rc1
+WRKSRC=		${WRKDIR}/mp3splt-2.2_rc1
 
 #copy documentation
 DOC_DIR=	${PREFIX}/share/doc/mp3splt/
