@@ -1,0 +1,17 @@
+@comment $FreeBSD$
+include/libmp3splt/mp3splt.h
+include/libmp3splt/mp3splt_types.h
+lib/libmp3splt.la
+lib/libmp3splt.a
+lib/libmp3splt.so
+lib/libmp3splt.so.0
+share/doc/libmp3splt/AUTHORS
+share/doc/libmp3splt/ChangeLog
+share/doc/libmp3splt/COPYING
+share/doc/libmp3splt/INSTALL
+share/doc/libmp3splt/NEWS
+share/doc/libmp3splt/README
+share/doc/libmp3splt/TODO
+share/doc/libmp3splt/LIMITS
+@dirrm include/libmp3splt
+@dirrm share/doc/libmp3splt

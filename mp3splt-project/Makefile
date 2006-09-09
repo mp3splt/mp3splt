@@ -113,3 +113,36 @@ bmake deinstall && cd /usr/pkgsrc/audio/mp3splt-gtk && bmake mdi &&\
 bmake package && bmake deinstall && cd /usr/pkgsrc/audio/libmp3splt &&\
 bmake deinstall &&\
 mv /usr/pkgsrc/packages/All/*mp3splt*nbsd*.tgz /root/progs_src/mp3splt/mp3splt-project
+
+freebsd_packages:
+	export ACLOCAL_FLAGS="-I /usr/local/share/aclocal" \
+export CFLAGS="$CFLAGS -I/usr/local/include" \
+export LDFLAGS="$LDFLAGS -L/usr/local/lib";\
+pkg_delete mp3splt-gtk-fbsd;\
+pkg_delete mp3splt-fbsd;\
+pkg_delete libmp3splt-fbsd;\
+cd /root/progs_src/mp3splt-project/libmp3splt &&\
+./autogen.sh && ./configure && make dist &&\
+mv libmp3splt*.tar.gz /usr/ports/distfiles/ &&\
+mkdir -p /usr/ports/audio/libmp3splt &&\
+rm -rf /usr/ports/audio/libmp3splt/* &&\
+cp -r /root/progs_src/mp3splt-project/libmp3splt/freebsd/* /usr/ports/audio/libmp3splt &&\
+cd /usr/ports/audio/libmp3splt && make makesum && make && make install &&\
+make package && mv *fbsd*.tbz /root/progs_src/mp3splt-project/\
+cd /root/progs_src/mp3splt-project/newmp3splt &&\
+./autogen.sh && ./configure && make dist &&\
+mv mp3splt*.tar.gz /usr/ports/distfiles &&\
+mkdir -p /usr/ports/audio/mp3splt &&\
+rm -rf /usr/ports/audio/mp3splt/* &&\
+cp -r /root/progs_src/mp3splt-project/newmp3splt/freebsd/* /usr/ports/audio/mp3splt &&\
+cd /usr/ports/audio/mp3splt && make makesum && make && make install && make package &&  &&\
+mv *fbsd*.tbz /root/progs_src/mp3splt-project/ && make deinstall &&\
+cd /root/progs_src/mp3splt-project/mp3splt-gtk &&\
+./autogen.sh && ./configure && make dist &&\
+mv mp3splt-gtk*.tar.gz /usr/ports/distfiles &&\
+mkdir -p /usr/ports/audio/mp3splt-gtk &&\
+rm -rf /usr/ports/audio/mp3splt-gtk/* &&\
+cp -r /root/progs_src/mp3splt-project/mp3splt-gtk/freebsd/* /usr/ports/audio/mp3splt-gtk &&\
+cd /usr/ports/audio/mp3splt-gtk && make makesum && make && make install && make package &&\
+mv *fbsd*.tbz /root/progs_src/mp3splt-project/ && make deinstall &&\
+cd /usr/ports/audio/libmp3splt && make deinstall
