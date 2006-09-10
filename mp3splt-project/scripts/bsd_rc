@@ -1,3 +1,7 @@
+#!/bin/sh
+echo "This script must not be run (see its content)"
+exit 1
+
 #at the end of the /etc/rc file :
 ########### mp3splt-project packages
 

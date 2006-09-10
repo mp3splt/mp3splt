@@ -497,6 +497,11 @@ cd /mnt/personal/systems/bsd-based/netbsd && ./netbsd
 cd $PROJECT_DIR
 ############# end netbsd packages #####
 
+############# freebsd packages #####
+cd /mnt/personal/systems/bsd-based/freebsd && ./freebsd
+cd $PROJECT_DIR
+############# end freebsd packages #####
+
 #slackware packages must be last because we are asked for root
 #password
 ############# slackware packages #########
