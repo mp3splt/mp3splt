@@ -218,11 +218,6 @@ echo
 sleep 2;
 
 #we do the real compilation of the distribution+debian packages
-BUILD_TEMP=/tmp/temp
-
-mkdir -p $BUILD_TEMP
-export CFLAGS="-I$BUILD_TEMP/include"
-export LDFLAGS="-L$BUILD_TEMP/lib"
 make || exit 1
 mv ./mp3splt-gtk/mp3splt-gtk*tar.gz ./
 mv ./libmp3splt/libmp3splt*tar.gz ./

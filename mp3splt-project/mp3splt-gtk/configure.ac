@@ -41,6 +41,10 @@ case $host in
 		HOST="Mingw"
 		LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32 -mwindows"
 		;;
+	*solaris*)
+		HOST="Solaris"
+		LIBS="$LIBS -lsocket"
+		;;
 	*)
 		HOST="Other"
 		;;

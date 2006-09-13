@@ -36,7 +36,13 @@ case $host in
 		HOST="Mingw"
 		LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32"
 		;;
+	*solaris*)
+		HOST="Solaris"
+		LIBS="$LIBS -lsocket"
+		;;
 	*)
+		AC_MSG_RESULT($host)
+		HOST="Other"
 		LIBS="$LIBS"
 		;;
 esac

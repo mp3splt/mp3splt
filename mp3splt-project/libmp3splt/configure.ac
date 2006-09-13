@@ -76,6 +76,8 @@ case $host in
 		HOST="Mingw"
 		LIBS="libz.a"
 		;;
+	*solaris*)
+		HOST="Solaris"
 	*)
 		HOST="Other"
 		;;

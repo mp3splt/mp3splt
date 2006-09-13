@@ -17,19 +17,27 @@ cd libmp3splt && debian/rules binary && cd ..
 #we make mp3splt-gtk packages
 mp3splt-gtk: mp3splt-gtk_dist mp3splt-gtk_debian
 mp3splt-gtk_dist:
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
 	cd mp3splt-gtk && ./autogen.sh && \
 	./configure --enable-bmp --prefix=/usr && make clean && \
 	make && make dist
 mp3splt-gtk_debian:
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" && \
 	cd mp3splt-gtk && debian/rules binary && cd ..
 
 #we make mp3splt packages
 newmp3splt: newmp3splt_dist newmp3splt_debian
 newmp3splt_dist:
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
 	cd newmp3splt && ./autogen.sh && \
 	./configure --prefix=/usr && make clean && \
 	make && make dist
 newmp3splt_debian:
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
 	cd newmp3splt && debian/rules binary && cd ..
 
 #installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
@@ -146,3 +154,37 @@ cp -r /root/progs_src/mp3splt-project/mp3splt-gtk/freebsd/* /usr/ports/audio/mp3
 cd /usr/ports/audio/mp3splt-gtk && make makesum && make && make install && make package &&\
 mv *fbsd*.tbz /root/progs_src/mp3splt-project/ && make deinstall &&\
 cd /usr/ports/audio/libmp3splt && make deinstall
+
+#opensolaris nexenta packages
+nexenta_packages: libmp3splt_solaris mp3splt-gtk_solaris mp3splt_solaris
+	rm -rf /tmp/temp
+
+#we make libmp3splt packages
+libmp3splt_solaris:
+	cd libmp3splt && ./autogen.sh && \
+	./configure --prefix=/tmp/temp --host=i386-pc-solaris2.11 && make clean && \
+	make && make install && \
+	./configure --prefix=/usr && make clean && make \
+	&& debian/rules binary && cd ..
+
+#we make mp3splt-gtk packages
+mp3splt-gtk_solaris:
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
+	cd mp3splt-gtk && ./autogen.sh && \
+	./configure --enable-bmp --host=i386-pc-solaris2.11 --prefix=/usr && make clean && \
+	make && \
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" && \
+	debian/rules binary && cd ..
+
+#we make mp3splt packages
+newmp3splt_solaris:
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
+	cd newmp3splt && ./autogen.sh && \
+	./configure --host=i386-pc-solaris2.11 --prefix=/usr && make clean && \
+	make && \
+	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
+	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
+	debian/rules binary && cd ..
