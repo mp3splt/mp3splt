@@ -1,8 +1,8 @@
-libmp3splt (0.4_rc1) unstable; urgency=low
+libmp3splt (0.4_rc1.etch) unstable; urgency=low
 
   * version 0.4_rc1
 
- -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Fri, 15 Sep 2006 20:03:20 +0200
+ -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Sat, 16 Sep 2006 02:37:06 +0200
 
 libmp3splt (0.3.1) testing; urgency=low
     

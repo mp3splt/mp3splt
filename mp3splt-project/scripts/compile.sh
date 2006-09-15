@@ -5,6 +5,7 @@
 LIBMP3SPLT_VERSION=0.4_rc1;
 MP3SPLT_VERSION=2.2_rc1;
 MP3SPLT_GTK_VERSION=0.4_rc1;
+ARCH=i386;
 
 #if we upload to sourceforge or not
 UPLOAD_TO_SOURCEFORGE=0;
@@ -293,7 +294,7 @@ cd libmp3splt
 ./autogen.sh && ./configure --disable-shared --enable-static && make clean && make &&\
 make DESTDIR=$LIBMP3SPLT_STATIC_DIR install || exit 1
 cp "${LIBMP3SPLT_DOC_FILES[@]}" $LIBMP3SPLT_STATIC_DIR/usr/local/share/doc/libmp3splt
-tar -c -z -C $LIBMP3SPLT_STATIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_static.tar.gz .
+tar -c -z -C $LIBMP3SPLT_STATIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_static_$ARCH.tar.gz .
 mv libmp3splt*.tar.gz ..
 
 #we install libmp3splt shared libs too for mp3splt and mp3splt-gtk
@@ -312,7 +313,7 @@ cd ../newmp3splt
 ./autogen.sh && ./configure --disable-shared --enable-static &&\
 make clean && make && make DESTDIR=$MP3SPLT_STATIC_DIR install || exit 1
 cp "${MP3SPLT_DOC_FILES[@]}" $MP3SPLT_STATIC_DIR/usr/local/share/doc/mp3splt
-tar -c -z -C $MP3SPLT_STATIC_DIR -f mp3splt-${MP3SPLT_VERSION}_static.tar.gz .
+tar -c -z -C $MP3SPLT_STATIC_DIR -f mp3splt-${MP3SPLT_VERSION}_static_$ARCH.tar.gz .
 mv mp3splt*.tar.gz ..
 
 #static mp3splt-gtk
@@ -322,7 +323,7 @@ cd ../mp3splt-gtk
 ./autogen.sh && ./configure --enable-bmp --disable-shared --enable-static && make clean && make &&\
 make DESTDIR=$MP3SPLT_GTK_STATIC_DIR install || exit 1
 cp "${MP3SPLT_GTK_DOC_FILES[@]}" $MP3SPLT_GTK_STATIC_DIR/usr/local/share/doc/mp3splt-gtk
-tar -c -z -C $MP3SPLT_GTK_STATIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static.tar.gz .
+tar -c -z -C $MP3SPLT_GTK_STATIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static_$ARCH.tar.gz .
 mv mp3splt-gtk*.tar.gz ..
 
 cd ..
@@ -347,7 +348,7 @@ cd libmp3splt
 ./autogen.sh && ./configure --enable-shared --disable-static && make clean && make &&\
 make DESTDIR=$LIBMP3SPLT_DYNAMIC_DIR install || exit 1
 cp "${LIBMP3SPLT_DOC_FILES[@]}" $LIBMP3SPLT_DYNAMIC_DIR/usr/local/share/doc/libmp3splt
-tar -c -z -C $LIBMP3SPLT_DYNAMIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_dynamic.tar.gz .
+tar -c -z -C $LIBMP3SPLT_DYNAMIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_dynamic_$ARCH.tar.gz .
 mv libmp3splt*.tar.gz ..
 
 #we install libmp3splt shared libs too for mp3splt and mp3splt-gtk
@@ -366,7 +367,7 @@ cd ../newmp3splt
 ./autogen.sh && ./configure --enable-shared --disable-static &&\
 make clean && make && make DESTDIR=$MP3SPLT_DYNAMIC_DIR install || exit 1
 cp "${MP3SPLT_DOC_FILES[@]}" $MP3SPLT_DYNAMIC_DIR/usr/local/share/doc/mp3splt
-tar -c -z -C $MP3SPLT_DYNAMIC_DIR -f mp3splt-${MP3SPLT_VERSION}_dynamic.tar.gz .
+tar -c -z -C $MP3SPLT_DYNAMIC_DIR -f mp3splt-${MP3SPLT_VERSION}_dynamic_$ARCH.tar.gz .
 mv mp3splt*.tar.gz ..
 
 #dynamic mp3splt-gtk
@@ -376,7 +377,7 @@ cd ../mp3splt-gtk
 ./autogen.sh && ./configure --enable-bmp --enable-shared --disable-static && make clean && make &&\
 make DESTDIR=$MP3SPLT_GTK_DYNAMIC_DIR install || exit 1
 cp "${MP3SPLT_GTK_DOC_FILES[@]}" $MP3SPLT_GTK_DYNAMIC_DIR/usr/local/share/doc/mp3splt-gtk
-tar -c -z -C $MP3SPLT_GTK_DYNAMIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_dynamic.tar.gz .
+tar -c -z -C $MP3SPLT_GTK_DYNAMIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_dynamic_$ARCH.tar.gz .
 mv mp3splt-gtk*.tar.gz ..
 
 cd ..
@@ -454,7 +455,7 @@ mv libmp3splt*tar.gz ./rpm/SOURCES
 cd rpm && rpmbuild -ba ./SPECS/libmp3splt.spec || exit 1
 rm -rf ./BUILD/*
 rm -rf ./SOURCES/*
-mv ./RPMS/i386/*.rpm ../../ || exit 1
+mv ./RPMS/$ARCH/*.rpm ../../ || exit 1
 mv ./SRPMS/*.rpm ../../ || exit 1
 
 #mp3splt
@@ -468,7 +469,7 @@ CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/
 rpmbuild -ba ./SPECS/mp3splt.spec || exit 1
 rm -rf ./BUILD/*
 rm -rf ./SOURCES/*
-mv ./RPMS/i386/*.rpm ../../ || exit 1
+mv ./RPMS/$ARCH/*.rpm ../../ || exit 1
 mv ./SRPMS/*.rpm ../../ || exit 1
 
 #mp3splt-gtk
@@ -482,7 +483,7 @@ CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/
 rpmbuild -ba ./SPECS/mp3splt-gtk.spec || exit 1
 rm -rf ./BUILD/*
 rm -rf ./SOURCES/*
-mv ./RPMS/i386/*.rpm ../../ || exit 1
+mv ./RPMS/$ARCH/*.rpm ../../ || exit 1
 mv ./SRPMS/*.rpm ../../ || exit 1
 
 rm -rf $RPM_TEMP
@@ -605,10 +606,10 @@ chown $USER_ID:$USER_GROUP $PROJECT_DIR*.tgz;\
 rm -rf $SLACK_TEMP;'" || exit 1
 ############# end slackware packages #####
 
-############# nexente gnu/opensolaris packages #####
+############# nexenta gnu/opensolaris packages #####
 cd /mnt/personal/systems/opensolaris/ && ./nexenta
 cd $PROJECT_DIR
-############# end openbsd packages #####
+############# end nexenta gnu/opensolaris packages #####
 
 ############# finish packaging #####
 echo
@@ -623,22 +624,36 @@ RELEASE_DIR=release_$LIBMP3SPLT_VERSION;
 mkdir -p $RELEASE_DIR
 rm -rf $RELEASE_DIR/*
 
+#debian
 mv ./*sarge*.deb ./$RELEASE_DIR || exit 1
 mv ./*etch*.deb ./$RELEASE_DIR || exit 1
 mv ./*sid*.deb ./$RELEASE_DIR || exit 1
+#ubuntu
 mv ./*breezy*.deb ./$RELEASE_DIR || exit 1
 mv ./*dapper*.deb ./$RELEASE_DIR || exit 1
 mv ./*edgy*.deb ./$RELEASE_DIR || exit 1
+#nexenta
 mv ./*solaris*.deb ./$RELEASE_DIR || exit 1
+#windows
 mv ./*.exe ./$RELEASE_DIR || exit 1
-mv ./*obsd*.tar.gz ./$RELEASE_DIR || exit 1
-mv ./*nbsd*.tar.gz ./$RELEASE_DIR || exit 1
-mv ./*fbsd*.tar.gz ./$RELEASE_DIR || exit 1
-mv ./*_static.tar.gz ./$RELEASE_DIR || exit 1
-mv ./*_dynamic.tar.gz ./$RELEASE_DIR || exit 1
+#openbsd
+mv ./*obsd*.tgz ./$RELEASE_DIR || exit 1
+#netbsd
+mv ./*nbsd*.tgz ./$RELEASE_DIR || exit 1
+#freebsd
+mv ./*fbsd*.tbz ./$RELEASE_DIR || exit 1
+#gnu/linux static+dynamic
+mv ./*_static_$ARCH.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*_dynamic_$ARCH.tar.gz ./$RELEASE_DIR || exit 1
+#arch linux
 mv ./*pkg.tar.gz ./$RELEASE_DIR || exit 1
+#gentoo ebuilds
+mv ./*ebuild*.tar.gz ./$RELEASE_DIR || exit 1
+#source code
 mv ./*.tar.gz ./$RELEASE_DIR || exit 1
+#rpms
 mv ./*.rpm ./$RELEASE_DIR || exit 1
+#slackware
 mv ./*.tgz ./$RELEASE_DIR || exit 1
 ############# end finish packaging #####
 
