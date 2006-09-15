@@ -2,6 +2,15 @@ all: libmp3splt mp3splt-gtk newmp3splt
 
 clean: clean_libmp3splt clean_mp3splt-gtk clean_newmp3splt
 
+clean_libmp3splt:
+	cd libmp3splt && make distclean && cd ..
+
+clean_mp3splt-gtk:
+	cd mp3splt-gtk && make distclean && cd ..
+
+clean_newmp3splt:
+	cd newmp3splt && make distclean && cd ..
+
 #we make libmp3splt packages
 libmp3splt: libmp3splt_dist libmp3splt_debian
 libmp3splt_dist:

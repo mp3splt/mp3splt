@@ -78,6 +78,7 @@ case $host in
 		;;
 	*solaris*)
 		HOST="Solaris"
+		;;
 	*)
 		HOST="Other"
 		;;

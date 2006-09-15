@@ -41,7 +41,6 @@ case $host in
 		LIBS="$LIBS -lsocket"
 		;;
 	*)
-		AC_MSG_RESULT($host)
 		HOST="Other"
 		LIBS="$LIBS"
 		;;
