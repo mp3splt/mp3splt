@@ -1,11 +1,5 @@
-mp3splt (2.3_rc1) unstable; urgency=low
+mp3splt (2.2_rc1) unstable; urgency=low
 
-  * version 2.3_rc1
+  * version 2.2_rc1
 
- -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Fri,  1 Sep 2006 10:15:18 +0200
-
-mp3splt (2.2) testing; urgency=low
-    
-    * debian package
-  
- -- Munteanu Alexandru <io_alex_2002@yahoo.fr>  Mon,  27 Feb 2006 19:39:00 -0400
+ -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Fri, 15 Sep 2006 20:03:21 +0200

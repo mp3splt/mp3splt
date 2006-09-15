@@ -22,7 +22,6 @@ SUBVERSION=0;
 echo
 echo "This script is used by the developers to auto-create packages for releases";
 echo "!!!! Warning !!!! This script may be dangerous and erase data on the computer !!";
-echo "Don't run this script as root !"
 echo
 sleep 3;
 
@@ -34,6 +33,12 @@ select continue in "${select[@]}";do
         break;
     fi;
 done;
+
+#don't run the script as root
+if [[ `id -u` == 0 ]]; then
+    echo "The script must not be run as root"
+    exit 1
+fi;
 
 #we move in the current script directory
 script_dir=$(readlink -f $0)
@@ -211,19 +216,64 @@ update_version "mp3splt" $MP3SPLT_VERSION $LIBMP3SPLT_VERSION
 cd $PROJECT_DIR;
 ################## end update versions ############
 
+#puts .sarge or .etch version
+#$1=.sarge or $1=.etch
+function put_debian_version()
+{
+    sed -i "1,4s/libmp3splt (\(.*\))/libmp3splt (\1.$1)/" libmp3splt/debian/changelog
+    sed -i "1,4s/mp3splt (\(.*\))/mp3splt (\1.$1)/" newmp3splt/debian/changelog
+    sed -i "1,4s/mp3splt-gtk (\(.*\))/mp3splt-gtk (\1.$1)/" mp3splt-gtk/debian/changelog
+}
+
+#cleans .sarge or .etch;
+#$1=.sarge or $1=.etch
+function clean_debian_version()
+{
+    sed -i "1,4s/libmp3splt (\(.*\).$1)/libmp3splt (\1)/" libmp3splt/debian/changelog
+    sed -i "1,4s/mp3splt (\(.*\).$1)/mp3splt (\1)/" newmp3splt/debian/changelog
+    sed -i "1,4s/mp3splt-gtk (\(.*\).$1)/mp3splt-gtk (\1)/" mp3splt-gtk/debian/changelog
+}
+
+#make the chroot debian flavors
+#example : make_debian_flavor "ubuntu" "breezy"
+#example : make_debian_flavor "debian" "sarge"
+function make_debian_flavor()
+{
+    echo
+    echo "Creating $1 $2 packages..."
+    echo
+    sleep 2;
+    
+    put_debian_version "$2"
+    dchroot -d -c $1_$2 "export LC_ALL=\"C\" && make && rm -f libmp3splt/*.tar.gz &&\
+rm -f newmp3splt/*.tar.gz && rm -f mp3splt-gtk/*.tar.gz" || exit 1
+    clean_debian_version "$2"
+    cd $PROJECT_DIR;
+}
+
 ############# source distribution and debian packages ################
 echo
 echo "Creating source distribution..."
 echo
 sleep 2;
 
-#we do the real compilation of the distribution+debian packages
+put_debian_version "etch"
 make || exit 1
 mv ./mp3splt-gtk/mp3splt-gtk*tar.gz ./
 mv ./libmp3splt/libmp3splt*tar.gz ./
 mv ./newmp3splt/mp3splt*tar.gz ./
 rm -rf $BUILD_TEMP
+clean_debian_version "etch"
+
+make_debian_flavor "debian" "sarge"
+make_debian_flavor "debian" "sid"
 ############# end source distribution and debian packages ################
+
+############# ubuntu packages ##########################
+make_debian_flavor "ubuntu" "breezy"
+make_debian_flavor "ubuntu" "dapper"
+make_debian_flavor "ubuntu" "edgy"
+############# end ubuntu packages ##########################
 
 ############# gnu/linux static build #####
 echo
@@ -555,6 +605,11 @@ chown $USER_ID:$USER_GROUP $PROJECT_DIR*.tgz;\
 rm -rf $SLACK_TEMP;'" || exit 1
 ############# end slackware packages #####
 
+############# nexente gnu/opensolaris packages #####
+cd /mnt/personal/systems/opensolaris/ && ./nexenta
+cd $PROJECT_DIR
+############# end openbsd packages #####
+
 ############# finish packaging #####
 echo
 echo "Finishing packaging..."
@@ -568,13 +623,20 @@ RELEASE_DIR=release_$LIBMP3SPLT_VERSION;
 mkdir -p $RELEASE_DIR
 rm -rf $RELEASE_DIR/*
 
-mv ./*.deb ./$RELEASE_DIR || exit 1
+mv ./*sarge*.deb ./$RELEASE_DIR || exit 1
+mv ./*etch*.deb ./$RELEASE_DIR || exit 1
+mv ./*sid*.deb ./$RELEASE_DIR || exit 1
+mv ./*breezy*.deb ./$RELEASE_DIR || exit 1
+mv ./*dapper*.deb ./$RELEASE_DIR || exit 1
+mv ./*edgy*.deb ./$RELEASE_DIR || exit 1
+mv ./*solaris*.deb ./$RELEASE_DIR || exit 1
 mv ./*.exe ./$RELEASE_DIR || exit 1
 mv ./*obsd*.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*nbsd*.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*fbsd*.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*_static.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*_dynamic.tar.gz ./$RELEASE_DIR || exit 1
-mv ./*.pkg.tar.gz ./$RELEASE_DIR || exit 1
+mv ./*pkg.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*.tar.gz ./$RELEASE_DIR || exit 1
 mv ./*.rpm ./$RELEASE_DIR || exit 1
 mv ./*.tgz ./$RELEASE_DIR || exit 1
