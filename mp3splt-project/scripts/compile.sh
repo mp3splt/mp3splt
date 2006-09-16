@@ -23,6 +23,7 @@ SUBVERSION=0;
 echo
 echo "This script is used by the developers to auto-create packages for releases";
 echo "!!!! Warning !!!! This script may be dangerous and erase data on the computer !!";
+echo "Please remember that you are using the script at your own risk !"
 echo
 sleep 3;
 
@@ -203,6 +204,7 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
 }
 ################## end update_version function ############
 
+DATE_START=`date`
 ################## update versions ############
 echo
 echo "Updating versions..."
@@ -268,12 +270,15 @@ clean_debian_version "etch"
 
 make_debian_flavor "debian" "sarge"
 make_debian_flavor "debian" "sid"
+cd $PROJECT_DIR
 ############# end source distribution and debian packages ################
+exit 0;
 
 ############# ubuntu packages ##########################
 make_debian_flavor "ubuntu" "breezy"
 make_debian_flavor "ubuntu" "dapper"
 make_debian_flavor "ubuntu" "edgy"
+cd $PROJECT_DIR
 ############# end ubuntu packages ##########################
 
 ############# gnu/linux static build #####
@@ -328,6 +333,7 @@ mv mp3splt-gtk*.tar.gz ..
 
 cd ..
 rm -rf $STATIC_DIR
+cd $PROJECT_DIR
 ############# end gnu/linux static build #####
 
 ############# gnu/linux dynamic build #####
@@ -382,6 +388,7 @@ mv mp3splt-gtk*.tar.gz ..
 
 cd ..
 rm -rf $DYNAMIC_DIR
+cd $PROJECT_DIR
 ############# end gnu/linux dynamic build #####
 
 ############# gentoo ebuilds ################
@@ -425,6 +432,7 @@ rm -rf $GENTOO_TEMP/*;
 
 #end ebuilds temp directory
 rm -rf $GENTOO_TEMP;
+cd $PROJECT_DIR;
 ############# end gentoo ebuilds ################
 
 ############# windows installers ################
@@ -435,6 +443,7 @@ sleep 2;
 
 #we do the windows executables
 ./crosscompile_win32.sh || exit 1
+cd $PROJECT_DIR
 ############# end windows installers ################
 
 ############# RPM packages creation ################
@@ -488,7 +497,7 @@ mv ./SRPMS/*.rpm ../../ || exit 1
 
 rm -rf $RPM_TEMP
 
-cd ../..
+cd $PROJECT_DIR
 ############# end RPM packages creation ################
 
 ############# archlinux packages #########
@@ -548,6 +557,11 @@ cd /mnt/personal/systems/bsd-based/freebsd && ./freebsd
 cd $PROJECT_DIR
 ############# end freebsd packages #####
 
+############# nexenta gnu/opensolaris packages #####
+cd /mnt/personal/systems/opensolaris/ && ./nexenta
+cd $PROJECT_DIR
+############# end nexenta gnu/opensolaris packages #####
+
 #slackware packages must be last because we are asked for root
 #password
 ############# slackware packages #########
@@ -604,12 +618,8 @@ mv $SLACK_TEMP/libmp3splt/libmp3splt*.tgz $PROJECT_DIR;\
 mv $SLACK_TEMP/mp3splt-gtk/mp3splt-gtk*.tgz $PROJECT_DIR;\
 chown $USER_ID:$USER_GROUP $PROJECT_DIR*.tgz;\
 rm -rf $SLACK_TEMP;'" || exit 1
+cd $PROJECT_DIR;
 ############# end slackware packages #####
-
-############# nexenta gnu/opensolaris packages #####
-cd /mnt/personal/systems/opensolaris/ && ./nexenta
-cd $PROJECT_DIR
-############# end nexenta gnu/opensolaris packages #####
 
 ############# finish packaging #####
 echo
@@ -673,4 +683,11 @@ fi
 
 echo
 echo "The packaging is finished."
+echo
+
+DATE_END=`date`
+
+echo
+echo "Start date : "$DATE_START
+echo "End date : "$DATE_END
 echo
