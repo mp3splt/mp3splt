@@ -262,17 +262,16 @@ sleep 2;
 
 put_debian_version "etch"
 make || exit 1
+clean_debian_version "etch"
 mv ./mp3splt-gtk/mp3splt-gtk*tar.gz ./
 mv ./libmp3splt/libmp3splt*tar.gz ./
 mv ./newmp3splt/mp3splt*tar.gz ./
 rm -rf $BUILD_TEMP
-clean_debian_version "etch"
 
 make_debian_flavor "debian" "sarge"
 make_debian_flavor "debian" "sid"
 cd $PROJECT_DIR
 ############# end source distribution and debian packages ################
-exit 0;
 
 ############# ubuntu packages ##########################
 make_debian_flavor "ubuntu" "breezy"
