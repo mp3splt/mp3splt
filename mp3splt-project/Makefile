@@ -12,42 +12,29 @@ clean_newmp3splt:
 	cd newmp3splt && make distclean && cd ..
 
 #we make libmp3splt packages
-libmp3splt: libmp3splt_dist libmp3splt_debian
+libmp3splt: libmp3splt_dist
 libmp3splt_dist:
 	cd libmp3splt && ./autogen.sh && \
 	./configure --prefix=/tmp/temp && make clean && \
-	make && make install && \
-	./configure --prefix=/usr && make clean && make && \
-	make dist
-libmp3splt_debian:
-	echo;echo "Creating debian packages...";echo;sleep 2;\
-cd libmp3splt && debian/rules binary && cd ..
+	make &&	make dist
 
 #we make mp3splt-gtk packages
-mp3splt-gtk: mp3splt-gtk_dist mp3splt-gtk_debian
+mp3splt-gtk: mp3splt-gtk_dist
 mp3splt-gtk_dist:
 	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
 	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
 	cd mp3splt-gtk && ./autogen.sh && \
 	./configure --enable-bmp --prefix=/usr && make clean && \
 	make && make dist
-mp3splt-gtk_debian:
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" && \
-	cd mp3splt-gtk && debian/rules binary && cd ..
 
 #we make mp3splt packages
-newmp3splt: newmp3splt_dist newmp3splt_debian
+newmp3splt: newmp3splt_dist
 newmp3splt_dist:
 	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
 	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
 	cd newmp3splt && ./autogen.sh && \
 	./configure --prefix=/usr && make clean && \
 	make && make dist
-newmp3splt_debian:
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
-	cd newmp3splt && debian/rules binary && cd ..
 
 #installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
 root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
