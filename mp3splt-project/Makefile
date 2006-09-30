@@ -1,54 +1,48 @@
-all: libmp3splt mp3splt-gtk newmp3splt
+all: 
+	@echo "Usage : ..."
+
+#source distribution creation
+source_packages:
+	./libmp3splt/make_source_package.sh
+	./newmp3splt/make_source_package.sh
+	./mp3splt-gtk/make_source_package.sh
 
 #debian packages creation
 debian_packages:
 	./libmp3splt/debian/make_debian_package.sh
-	./libmp3splt/install_in_tmp.sh
 	./newmp3splt/debian/make_debian_package.sh
 	./mp3splt-gtk/debian/make_debian_package.sh
+
+#gentoo ebuilds creation
+gentoo_ebuilds:
+	./libmp3splt/gentoo/make_gentoo_ebuild.sh
+	./newmp3splt/gentoo/make_gentoo_ebuild.sh
+	./mp3splt-gtk/gentoo/make_gentoo_ebuild.sh
+
+#creates static packages
+static_packages:
+	./libmp3splt/make_static_package.sh
+	./newmp3splt/make_static_package.sh
+	./mp3splt-gtk/make_static_package.sh
+
+#creates dynamic packages
+dynamic_packages:
+	./libmp3splt/make_dynamic_package.sh
+	./newmp3splt/make_dynamic_package.sh
+	./mp3splt-gtk/make_dynamic_package.sh
 
 #debian hurd packages creation
 debian_hurd_packages:
 	./libmp3splt/debian/make_debian_hurd_package.sh
-	./libmp3splt/install_in_tmp.sh
 	./newmp3splt/debian/make_debian_hurd_package.sh
 	./mp3splt-gtk/debian/make_debian_hurd_package.sh
 
-clean: clean_libmp3splt clean_mp3splt-gtk clean_newmp3splt
-
-clean_libmp3splt:
+#clean the builds
+clean: distclean
+distclean:
 	cd libmp3splt && make distclean && cd ..
-
-clean_mp3splt-gtk:
-	cd mp3splt-gtk && make distclean && cd ..
-
-clean_newmp3splt:
 	cd newmp3splt && make distclean && cd ..
-
-#we make libmp3splt packages
-libmp3splt: libmp3splt_dist
-libmp3splt_dist:
-	cd libmp3splt && ./autogen.sh && \
-	./configure --prefix=/tmp/temp && make clean && \
-	make &&	make dist
-
-#we make mp3splt-gtk packages
-mp3splt-gtk: mp3splt-gtk_dist
-mp3splt-gtk_dist:
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
-	cd mp3splt-gtk && ./autogen.sh && \
-	./configure --enable-bmp --prefix=/usr && make clean && \
-	make && make dist
-
-#we make mp3splt packages
-newmp3splt: newmp3splt_dist
-newmp3splt_dist:
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
-	cd newmp3splt && ./autogen.sh && \
-	./configure --prefix=/usr && make clean && \
-	make && make dist
+	cd mp3splt-gtk && make distclean && cd ..
 
 #installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
 root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
@@ -63,14 +57,10 @@ root_newmp3splt:
 root_mp3splt-gtk:
 	cd mp3splt-gtk && ./autogen.sh && ./configure \
 	&& make clean && make && make install
-
 #uninstalls libmp3splt, mp3splt and mp3splt-gtk as root
-root_uninstall: root_unlibmp3splt root_unnewmp3splt root_unmp3splt-gtk
-root_unlibmp3splt:
+root_uninstall:
 	cd libmp3splt && make uninstall
-root_unnewmp3splt:
 	cd newmp3splt && make uninstall
-root_unmp3splt-gtk:
 	cd mp3splt-gtk && make uninstall
 
 #openbsd install

@@ -1,19 +1,20 @@
 #!/bin/bash
 
 ################# variables to set ############
+ARCH=i386;
+
 #program versions
 LIBMP3SPLT_VERSION=0.4_rc1;
 MP3SPLT_VERSION=2.2_rc1;
 MP3SPLT_GTK_VERSION=0.4_rc1;
-ARCH=i386;
 
-#if we upload to sourceforge or not
-UPLOAD_TO_SOURCEFORGE=0;
-
+#program documentation files
 LIBMP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO LIMITS)
 MP3SPLT_GTK_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 
+#if we upload to sourceforge or not
+UPLOAD_TO_SOURCEFORGE=0;
 #if we modify the subversion repository (the ebuild needs renaming)
 SUBVERSION=0;
 ################## end variables to set ############
@@ -22,7 +23,7 @@ SUBVERSION=0;
 #the confirmation question
 echo
 echo "This script is used by the developers to auto-create packages for releases";
-echo "!!!! Warning !!!! This script may be dangerous and erase data on the computer !!";
+echo "!!!! Warning !!!! This script may be dangerous and erase data on your computer !!";
 echo "Please remember that you are using the script at your own risk !"
 echo
 sleep 3;
@@ -248,32 +249,43 @@ function make_debian_flavor()
     sleep 2;
     
     put_debian_version "$2"
-    dchroot -d -c $1_$2 "export LC_ALL=\"C\" && make && rm -f libmp3splt/*.tar.gz &&\
-rm -f newmp3splt/*.tar.gz && rm -f mp3splt-gtk/*.tar.gz" || exit 1
+    dchroot -d -c $1_$2 "export LC_ALL=\"C\" && make debian_packages " || exit 1
     clean_debian_version "$2"
     cd $PROJECT_DIR;
 }
 
-############# source distribution and debian packages ################
+############# source packages ################
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "Creating source distribution..."
+    echo
+    sleep 2;
+    
+    make source_packages
+fi
+############# end source packages ################
+
+############# debian packages ################
 echo
-echo "Creating source distribution..."
+echo "Creating $ARCH debian packages..."
 echo
 sleep 2;
 
 put_debian_version "etch"
-make || exit 1
+make debian_packages || exit 1
 clean_debian_version "etch"
-mv ./mp3splt-gtk/mp3splt-gtk*tar.gz ./
-mv ./libmp3splt/libmp3splt*tar.gz ./
-mv ./newmp3splt/mp3splt*tar.gz ./
-rm -rf $BUILD_TEMP
 
 make_debian_flavor "debian" "sarge"
 make_debian_flavor "debian" "sid"
 cd $PROJECT_DIR
-############# end source distribution and debian packages ################
+############# end debian packages ################
 
 ############# ubuntu packages ##########################
+echo
+echo "Creating $ARCH ubuntu packages..."
+echo
+sleep 2;
+
 make_debian_flavor "ubuntu" "breezy"
 make_debian_flavor "ubuntu" "dapper"
 make_debian_flavor "ubuntu" "edgy"
@@ -282,157 +294,35 @@ cd $PROJECT_DIR
 
 ############# gnu/linux static build #####
 echo
-echo "Creating static gnu/linux builds..."
+echo "Creating $ARCH gnu/linux static builds..."
 echo
 sleep 2;
 
-STATIC_DIR=/tmp/static_tmp;
-
-rm -rf $STATIC_DIR
-mkdir -p $STATIC_DIR
-
-#static libmp3splt
-LIBMP3SPLT_STATIC_DIR=$STATIC_DIR/libmp3splt
-mkdir -p $LIBMP3SPLT_STATIC_DIR/usr/local/share/doc/libmp3splt
-cd libmp3splt
-./autogen.sh && ./configure --disable-shared --enable-static && make clean && make &&\
-make DESTDIR=$LIBMP3SPLT_STATIC_DIR install || exit 1
-cp "${LIBMP3SPLT_DOC_FILES[@]}" $LIBMP3SPLT_STATIC_DIR/usr/local/share/doc/libmp3splt
-tar -c -z -C $LIBMP3SPLT_STATIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_static_$ARCH.tar.gz .
-mv libmp3splt*.tar.gz ..
-
-#we install libmp3splt shared libs too for mp3splt and mp3splt-gtk
-#configure scripts
-./configure --enable-shared --enable-static && make clean && make &&\
-make DESTDIR=$LIBMP3SPLT_STATIC_DIR install || exit 1
-
-#we put the flags for mp3splt and mp3splt-gtk, to find libmp3splt
-export CFLAGS="-I$LIBMP3SPLT_STATIC_DIR/usr/local/include"
-export LDFLAGS="-L$LIBMP3SPLT_STATIC_DIR/usr/local/lib"
-
-#static mp3splt
-MP3SPLT_STATIC_DIR=$STATIC_DIR/mp3splt
-mkdir -p $MP3SPLT_STATIC_DIR/usr/local/share/doc/mp3splt
-cd ../newmp3splt
-./autogen.sh && ./configure --disable-shared --enable-static &&\
-make clean && make && make DESTDIR=$MP3SPLT_STATIC_DIR install || exit 1
-cp "${MP3SPLT_DOC_FILES[@]}" $MP3SPLT_STATIC_DIR/usr/local/share/doc/mp3splt
-tar -c -z -C $MP3SPLT_STATIC_DIR -f mp3splt-${MP3SPLT_VERSION}_static_$ARCH.tar.gz .
-mv mp3splt*.tar.gz ..
-
-#static mp3splt-gtk
-MP3SPLT_GTK_STATIC_DIR=$STATIC_DIR/mp3splt-gtk
-mkdir -p $MP3SPLT_GTK_STATIC_DIR/usr/local/share/doc/mp3splt-gtk
-cd ../mp3splt-gtk
-./autogen.sh && ./configure --enable-bmp --disable-shared --enable-static && make clean && make &&\
-make DESTDIR=$MP3SPLT_GTK_STATIC_DIR install || exit 1
-cp "${MP3SPLT_GTK_DOC_FILES[@]}" $MP3SPLT_GTK_STATIC_DIR/usr/local/share/doc/mp3splt-gtk
-tar -c -z -C $MP3SPLT_GTK_STATIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static_$ARCH.tar.gz .
-mv mp3splt-gtk*.tar.gz ..
-
-cd ..
-rm -rf $STATIC_DIR
+make static_packages
 cd $PROJECT_DIR
 ############# end gnu/linux static build #####
 
 ############# gnu/linux dynamic build #####
 echo
-echo "Creating dynamic gnu/linux builds..."
+echo "Creating $ARCH dynamic gnu/linux builds..."
 echo
 sleep 2;
 
-DYNAMIC_DIR=/tmp/dynamic_tmp;
-
-rm -rf $DYNAMIC_DIR
-mkdir -p $DYNAMIC_DIR
-
-#dynamic libmp3splt
-LIBMP3SPLT_DYNAMIC_DIR=$DYNAMIC_DIR/libmp3splt
-mkdir -p $LIBMP3SPLT_DYNAMIC_DIR/usr/local/share/doc/libmp3splt
-cd libmp3splt
-./autogen.sh && ./configure --enable-shared --disable-static && make clean && make &&\
-make DESTDIR=$LIBMP3SPLT_DYNAMIC_DIR install || exit 1
-cp "${LIBMP3SPLT_DOC_FILES[@]}" $LIBMP3SPLT_DYNAMIC_DIR/usr/local/share/doc/libmp3splt
-tar -c -z -C $LIBMP3SPLT_DYNAMIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_dynamic_$ARCH.tar.gz .
-mv libmp3splt*.tar.gz ..
-
-#we install libmp3splt shared libs too for mp3splt and mp3splt-gtk
-#configure scripts
-./configure --enable-shared --disable-static && make clean && make &&\
-make DESTDIR=$LIBMP3SPLT_DYNAMIC_DIR install || exit 1
-
-#we put the flags for mp3splt and mp3splt-gtk, to find libmp3splt
-export CFLAGS="-I$LIBMP3SPLT_DYNAMIC_DIR/usr/local/include"
-export LDFLAGS="-L$LIBMP3SPLT_DYNAMIC_DIR/usr/local/lib"
-
-#dynamic mp3splt
-MP3SPLT_DYNAMIC_DIR=$DYNAMIC_DIR/mp3splt
-mkdir -p $MP3SPLT_DYNAMIC_DIR/usr/local/share/doc/mp3splt
-cd ../newmp3splt
-./autogen.sh && ./configure --enable-shared --disable-static &&\
-make clean && make && make DESTDIR=$MP3SPLT_DYNAMIC_DIR install || exit 1
-cp "${MP3SPLT_DOC_FILES[@]}" $MP3SPLT_DYNAMIC_DIR/usr/local/share/doc/mp3splt
-tar -c -z -C $MP3SPLT_DYNAMIC_DIR -f mp3splt-${MP3SPLT_VERSION}_dynamic_$ARCH.tar.gz .
-mv mp3splt*.tar.gz ..
-
-#dynamic mp3splt-gtk
-MP3SPLT_GTK_DYNAMIC_DIR=$DYNAMIC_DIR/mp3splt-gtk
-mkdir -p $MP3SPLT_GTK_DYNAMIC_DIR/usr/local/share/doc/mp3splt-gtk
-cd ../mp3splt-gtk
-./autogen.sh && ./configure --enable-bmp --enable-shared --disable-static && make clean && make &&\
-make DESTDIR=$MP3SPLT_GTK_DYNAMIC_DIR install || exit 1
-cp "${MP3SPLT_GTK_DOC_FILES[@]}" $MP3SPLT_GTK_DYNAMIC_DIR/usr/local/share/doc/mp3splt-gtk
-tar -c -z -C $MP3SPLT_GTK_DYNAMIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_dynamic_$ARCH.tar.gz .
-mv mp3splt-gtk*.tar.gz ..
-
-cd ..
-rm -rf $DYNAMIC_DIR
+make dynamic_packages
 cd $PROJECT_DIR
 ############# end gnu/linux dynamic build #####
 
 ############# gentoo ebuilds ################
-#we do the ebuilds with gentoo in chroot /mnt/gentoo
 echo
 echo "Creating gentoo ebuilds..."
 echo
 sleep 2;
 
-GENTOO_TEMP=/tmp/gentoo_temp;
-
-rm -rf $GENTOO_TEMP
-mkdir -p $GENTOO_TEMP
-
-#libmp3splt ebuild
-cp -a ./libmp3splt/gentoo/* $GENTOO_TEMP;
-find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' &>/dev/null \;
-#digest libmp3splt
-dchroot -d -c gentoo "cp *.tar.gz /usr/portage/distfiles;
-ebuild $GENTOO_TEMP/media-libs/libmp3splt/libmp3splt* digest;" || exit 1
-tar czf libmp3splt-${LIBMP3SPLT_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-libs;
-rm -rf $GENTOO_TEMP/*;
-
-#mp3splt-gtk ebuild
-cp -a ./mp3splt-gtk/gentoo/* $GENTOO_TEMP;
-find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' &>/dev/null \;
-#digest mp3splt-gtk
-dchroot -d -c gentoo "ebuild \
-$GENTOO_TEMP/media-sound/mp3splt-gtk/mp3splt* digest;" || exit 1
-tar czf mp3splt-gtk-${MP3SPLT_GTK_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-sound;
-rm -rf $GENTOO_TEMP/*;
-
-#mp3splt ebuild
-cp -a ./newmp3splt/gentoo/* $GENTOO_TEMP;
-find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' &>/dev/null \;
-#digest mp3splt-gtk
-dchroot -d -c gentoo "ebuild \
-$GENTOO_TEMP/media-sound/mp3splt/mp3splt* digest;" || exit 1
-tar czf mp3splt-${MP3SPLT_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-sound;
-rm -rf $GENTOO_TEMP/*;
-
-#end ebuilds temp directory
-rm -rf $GENTOO_TEMP;
+make gentoo_ebuilds
 cd $PROJECT_DIR;
 ############# end gentoo ebuilds ################
+echo "end";
+exit 0;
 
 ############# windows installers ################
 echo
