@@ -7,8 +7,8 @@ PROGRAM_DIR=$script_dir/../
 cd $PROGRAM_DIR
 
 #set necessary flags
-export CFLAGS="$CFLAGS -I/tmp/temp/usr/include"
-export LDFLAGS="$LDFLAGS -L/tmp/temp/usr/lib"
+export CFLAGS="-I/tmp/temp/usr/include $CFLAGS"
+export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS"
 
 #we compile
 ./autogen.sh && \
@@ -16,4 +16,4 @@ export LDFLAGS="$LDFLAGS -L/tmp/temp/usr/lib"
 make clean && \
 make && \
 #we create the debian package
-./debian/rules binary
+fakeroot debian/rules binary

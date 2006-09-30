@@ -49,7 +49,7 @@ endif
 
 clean:
 	dh_testdir
-	fakeroot dh_testroot
+	dh_testroot
 	rm -f build-stamp
 
 	# Add here commands to clean up after the build process.
@@ -60,7 +60,7 @@ clean:
 
 install: build
 	dh_testdir
-	fakeroot dh_testroot
+	dh_testroot
 	dh_clean -k 
 	dh_installdirs
 
@@ -75,19 +75,19 @@ binary-indep: build install
 # Build architecture-dependent files here.
 binary-arch: build install
 	dh_testdir
-	fakeroot dh_testroot
-	fakeroot dh_installchangelogs ChangeLog
-	fakeroot dh_installdocs
-	fakeroot dh_installexamples
-	fakeroot dh_installman
+	dh_testroot
+	dh_installchangelogs ChangeLog
+	dh_installdocs
+	dh_installexamples
+	dh_installman
 	dh_link
 	dh_strip
 	dh_compress
-	fakeroot dh_fixperms
-	fakeroot dh_installdeb
+	dh_fixperms
+	dh_installdeb
 	dh_shlibdeps
-	fakeroot dh_gencontrol
-	fakeroot dh_md5sums
+	dh_gencontrol
+	dh_md5sums
 	dh_builddeb
 	dh_clean
 

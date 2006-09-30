@@ -12,4 +12,4 @@ cd $PROGRAM_DIR
 make clean && \
 make && \
 #we create the debian package
-./debian/rules binary
+fakeroot debian/rules binary

@@ -6,14 +6,10 @@ script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir/../
 cd $PROGRAM_DIR
 
-#set necessary flags
-export CFLAGS="-I/tmp/temp/usr/include $CFLAGS"
-export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS"
-
 #we compile
 ./autogen.sh && \
-./configure --enable-bmp --prefix=/usr && \
+./configure --prefix=/usr && \
 make clean && \
 make && \
 #we create the debian package
-fakeroot debian/rules binary
+./debian/rules binary

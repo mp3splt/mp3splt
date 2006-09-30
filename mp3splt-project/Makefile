@@ -1,5 +1,19 @@
 all: libmp3splt mp3splt-gtk newmp3splt
 
+#debian packages creation
+debian_packages:
+	./libmp3splt/debian/make_debian_package.sh
+	./libmp3splt/install_in_tmp.sh
+	./newmp3splt/debian/make_debian_package.sh
+	./mp3splt-gtk/debian/make_debian_package.sh
+
+#debian hurd packages creation
+debian_hurd_packages:
+	./libmp3splt/debian/make_debian_hurd_package.sh
+	./libmp3splt/install_in_tmp.sh
+	./newmp3splt/debian/make_debian_hurd_package.sh
+	./mp3splt-gtk/debian/make_debian_hurd_package.sh
+
 clean: clean_libmp3splt clean_mp3splt-gtk clean_newmp3splt
 
 clean_libmp3splt:
