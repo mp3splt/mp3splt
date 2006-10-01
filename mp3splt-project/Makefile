@@ -32,6 +32,20 @@ arch_packages:
 	./mp3splt-gtk/arch/make_arch_package.sh
 	cd libmp3splt/arch && rm -rf ./pkg ./src ./filelist
 
+#slackware package creation
+slackware_packages:
+	./libmp3splt/slackware/make_slackware_package.sh
+	./newmp3splt/slackware/make_slackware_package.sh
+	./mp3splt-gtk/slackware/make_slackware_package.sh
+
+#creates slackware packages by using fakeroot
+#-does not work if /usr/lib /usr/include and /etc are not
+#writable by the current user
+slackware_fakeroot_packages:
+	fakeroot ./libmp3splt/slackware/make_slackware_package.sh
+	fakeroot ./newmp3splt/slackware/make_slackware_package.sh
+	fakeroot ./mp3splt-gtk/slackware/make_slackware_package.sh
+
 #creates static packages
 static_packages:
 	./libmp3splt/make_static_package.sh

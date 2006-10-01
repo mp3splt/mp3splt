@@ -351,6 +351,16 @@ sleep 2
 dchroot -d -c arch "make arch_packages" || exit 1
 cd $PROJECT_DIR
 ############# end archlinux packages #########
+
+############# slackware packages #########
+echo
+echo "Creating slackware packages..."
+echo
+sleep 2
+
+dchroot -d -c slackware "make slackware_fakeroot_packages";
+cd $PROJECT_DIR
+############# end slackware packages #####
 exit 0
 
 ############# openbsd packages #####
@@ -372,65 +382,6 @@ cd $PROJECT_DIR
 cd /mnt/personal/systems/opensolaris/ && ./nexenta
 cd $PROJECT_DIR
 ############# end nexenta gnu/opensolaris packages #####
-
-#slackware packages must be last because we are asked for root
-#password
-############# slackware packages #########
-echo
-echo "Creating slackware packages..."
-echo
-sleep 2
-
-USER_ID=`id -u`
-USER_GROUP=`id -g`
-SLACK_TEMP=/tmp/slack_temp
-
-export PATH=$PATH:/sbin && \
-dchroot -d -c slackware "\
-su -c '\
-CFLAGS=\"-O2 -march=i486 -mcpu=i486\";\
-LDFLAGS=\"\";\
-rm -rf $SLACK_TEMP;\
-mkdir -p $SLACK_TEMP/libmp3splt/usr/doc/libmp3splt;\
-mkdir -p $SLACK_TEMP/libmp3splt/install;\
-cd libmp3splt; ./autogen.sh && ./configure --prefix=/usr && \
-make clean && make&&\
-make DESTDIR=$SLACK_TEMP/libmp3splt install || exit 1;\
-cp $LIBMP3SPLT_DOC_FILES $SLACK_TEMP/libmp3splt/usr/doc/libmp3splt;\
-cp slackware/slack-* $SLACK_TEMP/libmp3splt/install;\
-make install;ldconfig;\
-cd $SLACK_TEMP/libmp3splt;\
-makepkg -l y -c y libmp3splt-$LIBMP3SPLT_VERSION-i486.tgz;\
-mkdir -p $SLACK_TEMP/mp3splt-gtk/usr/doc/mp3splt-gtk;\
-mkdir -p $SLACK_TEMP/mp3splt-gtk/install;\
-cd $PROJECT_DIR/mp3splt-gtk; ./autogen.sh && \
-./configure --enable-bmp --prefix=/usr &&\
-make clean && make&&\
-make DESTDIR=$SLACK_TEMP/mp3splt-gtk install || exit1;\
-cp $MP3SPLT_GTK_DOC_FILES $SLACK_TEMP/mp3splt-gtk/usr/doc/mp3splt-gtk;\
-cp slackware/slack-* $SLACK_TEMP/mp3splt-gtk/install;\
-cd $SLACK_TEMP/mp3splt-gtk;\
-makepkg -c y mp3splt-gtk-$MP3SPLT_GTK_VERSION-i486.tgz;\
-mkdir -p $SLACK_TEMP/mp3splt/usr/doc/mp3splt;\
-mkdir -p $SLACK_TEMP/mp3splt/install;\
-cd $PROJECT_DIR/newmp3splt; ./autogen.sh && \
-./configure --prefix=/usr && \
-make clean && make&&\
-make DESTDIR=$SLACK_TEMP/mp3splt install || exit 1;\
-cp $MP3SPLT_DOC_FILES $SLACK_TEMP/mp3splt/usr/doc/mp3splt;\
-cp slackware/slack-* $SLACK_TEMP/mp3splt/install;\
-cd $SLACK_TEMP/mp3splt;\
-makepkg -c y mp3splt-$MP3SPLT_VERSION-i486.tgz;\
-cd $PROJECT_DIR/libmp3splt && make uninstall && make clean;\
-cd $PROJECT_DIR/mp3splt-gtk && make clean;\
-cd $PROJECT_DIR/newmp3splt && make clean;\
-mv $SLACK_TEMP/mp3splt/mp3splt*.tgz $PROJECT_DIR;\
-mv $SLACK_TEMP/libmp3splt/libmp3splt*.tgz $PROJECT_DIR;\
-mv $SLACK_TEMP/mp3splt-gtk/mp3splt-gtk*.tgz $PROJECT_DIR;\
-chown $USER_ID:$USER_GROUP $PROJECT_DIR*.tgz;\
-rm -rf $SLACK_TEMP'" || exit 1
-cd $PROJECT_DIR
-############# end slackware packages #####
 
 ############# finish packaging #####
 echo
