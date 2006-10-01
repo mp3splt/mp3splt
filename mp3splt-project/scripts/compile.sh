@@ -318,7 +318,7 @@ echo "Creating gentoo ebuilds..."
 echo
 sleep 2
 
-make gentoo_ebuilds || exit 1
+dchroot -d -c gentoo "make gentoo_ebuilds" || exit 1
 cd $PROJECT_DIR
 ############# end gentoo ebuilds ################
 
