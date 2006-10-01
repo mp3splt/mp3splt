@@ -7,11 +7,14 @@
 
 ARCH=${ARCH:=i386}
 MP3SPLT_VERSION=2.2_rc1
+LIBMP3SPLT_VERSION=0.4_rc1
 MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 
 ################# end variables to set ############
 
-echo
-echo $'Application :\tmp3splt'
-echo $'Architecture :\t'$ARCH
-echo $'Version :\t'$MP3SPLT_VERSION
+if [[ $1 != "quiet" ]];then
+    echo
+    echo $'Application :\tmp3splt'
+    echo $'Architecture :\t'$ARCH
+    echo $'Version :\t'$MP3SPLT_VERSION
+fi
