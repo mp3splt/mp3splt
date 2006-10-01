@@ -1,20 +1,20 @@
 #!/bin/bash
 
-################# variables to set ############
-
-LIBMP3SPLT_VERSION=0.4_rc1;
-
-################# end variables to set ############
-
 #we move in the current script directory
 script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir/..
 cd $PROGRAM_DIR
 
+. ./include_variables.sh
+
+echo
+echo $'Package :\tgentoo'
+echo
+
 #create the directories we need
 GENTOO_TEMP=/tmp/gentoo_temp
-rm -rf $GENTOO_TEMP/*
+if [[ -d $GENTOO_TEMP ]];then mv $GENTOO_TEMP ${GENTOO_TEMP}_old;fi
 mkdir -p $GENTOO_TEMP
 
 #the ebuild

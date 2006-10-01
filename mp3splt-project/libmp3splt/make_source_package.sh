@@ -6,6 +6,12 @@ script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir
 cd $PROGRAM_DIR
 
+. ./include_variables.sh
+
+echo
+echo $'Package :\tsource'
+echo
+
 #we compile
 ./autogen.sh && \
 ./configure --prefix=/usr && \

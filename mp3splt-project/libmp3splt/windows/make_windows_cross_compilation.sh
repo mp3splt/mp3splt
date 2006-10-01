@@ -13,6 +13,12 @@ script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
 cd $script_dir/../..
 
+. ./libmp3splt/include_variables.sh
+
+echo
+echo $'Package :\tcross_windows'
+echo
+
 #we run autoconf and automake..
 cd libmp3splt && ./autogen.sh && cd .. || exit 1
 

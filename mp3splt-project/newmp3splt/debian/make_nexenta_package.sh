@@ -9,17 +9,19 @@ cd $PROGRAM_DIR
 . ./include_variables.sh
 
 echo
-echo $'Package :\tdebian'
+echo $'Package :\tnexenta'
 echo
 
-#set necessary flags
-export CFLAGS="-I/tmp/temp/usr/include $CFLAGS"
-export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS"
+TEMP_DIR=/tmp/temp
+
+#we set necessary flags
+export CFLAGS="-I/$TEMP_DIR/usr/include $CFLAGS"
+export LDFLAGS="-L/$TEMP_DIR/usr/lib $LDFLAGS"
 
 #we compile
-./autogen.sh && \
-./configure --prefix=/usr && \
-make clean && \
-make && \
+./autogen.sh &&\
+./configure --prefix=/usr --host=i386-pc-solaris2.11 &&\
+make clean &&\
+make &&\
 #we create the debian package
 fakeroot debian/rules binary

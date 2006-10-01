@@ -1,18 +1,6 @@
 #!/bin/bash
 
 ################# variables to set ############
-ARCH=i386
-
-#program versions
-LIBMP3SPLT_VERSION=0.4_rc1
-MP3SPLT_VERSION=2.2_rc1
-MP3SPLT_GTK_VERSION=0.4_rc1
-
-#program documentation files
-LIBMP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO LIMITS)
-MP3SPLT_GTK_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
-MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
-
 #if we upload to sourceforge or not
 UPLOAD_TO_SOURCEFORGE=0
 #if we modify the subversion repository (the ebuild needs renaming)
@@ -46,7 +34,12 @@ fi
 #we move in the current script directory
 script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
-PROJECT_DIR=$script_dir/../
+PROJECT_DIR=$script_dir/..
+
+. ./libmp3splt/include_variables.sh
+. ./newmp3splt/include_variables.sh
+. ./mp3splt-gtk/include_variables.sh
+
 cd $PROJECT_DIR
 ################## end confirmation question ############
 
@@ -313,23 +306,27 @@ cd $PROJECT_DIR
 ############# end gnu/linux dynamic build #####
 
 ############# gentoo ebuilds ################
-echo
-echo "Creating gentoo ebuilds..."
-echo
-sleep 2
-
-dchroot -d -c gentoo "make gentoo_ebuilds" || exit 1
-cd $PROJECT_DIR
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "Creating gentoo ebuilds..."
+    echo
+    sleep 2
+    
+    dchroot -d -c gentoo "make gentoo_ebuilds" || exit 1
+    cd $PROJECT_DIR
+fi
 ############# end gentoo ebuilds ################
 
 ############# windows installers ################
-echo
-echo "Creating windows installers..."
-echo
-sleep 2
-
-make windows_cross_installers || exit 1
-cd $PROJECT_DIR
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "Creating $ARCH windows installers..."
+    echo
+    sleep 2
+    
+    make windows_cross_installers || exit 1
+    cd $PROJECT_DIR
+fi
 ############# end windows installers ################
 
 ############# RPM packages creation ################
@@ -354,102 +351,132 @@ cd $PROJECT_DIR
 
 ############# slackware packages #########
 echo
-echo "Creating slackware packages..."
+echo "Creating $ARCH slackware packages..."
 echo
 sleep 2
 
 dchroot -d -c slackware "make slackware_fakeroot_packages";
 cd $PROJECT_DIR
 ############# end slackware packages #####
-exit 0
-
-############# openbsd packages #####
-cd /mnt/personal/systems/bsd-based/openbsd && ./openbsd
-cd $PROJECT_DIR
-############# end openbsd packages #####
-
-############# netbsd packages #####
-cd /mnt/personal/systems/bsd-based/netbsd && ./netbsd
-cd $PROJECT_DIR
-############# end netbsd packages #####
-
-############# freebsd packages #####
-cd /mnt/personal/systems/bsd-based/freebsd && ./freebsd
-cd $PROJECT_DIR
-############# end freebsd packages #####
-
-############# nexenta gnu/opensolaris packages #####
-cd /mnt/personal/systems/opensolaris/ && ./nexenta
-cd $PROJECT_DIR
-############# end nexenta gnu/opensolaris packages #####
-
-############# finish packaging #####
-echo
-echo "Finishing packaging..."
-echo
-sleep 2
-
-#copy packages to the new directory
-#the new release directory
-RELEASE_DIR=release_$LIBMP3SPLT_VERSION
-
-mkdir -p $RELEASE_DIR
-rm -rf $RELEASE_DIR/*
-
-#debian
-mv ./*sarge*.deb ./$RELEASE_DIR || exit 1
-mv ./*etch*.deb ./$RELEASE_DIR || exit 1
-mv ./*sid*.deb ./$RELEASE_DIR || exit 1
-#ubuntu
-mv ./*breezy*.deb ./$RELEASE_DIR || exit 1
-mv ./*dapper*.deb ./$RELEASE_DIR || exit 1
-mv ./*edgy*.deb ./$RELEASE_DIR || exit 1
-#nexenta
-mv ./*solaris*.deb ./$RELEASE_DIR || exit 1
-#windows
-mv ./*.exe ./$RELEASE_DIR || exit 1
-#openbsd
-mv ./*obsd*.tgz ./$RELEASE_DIR || exit 1
-#netbsd
-mv ./*nbsd*.tgz ./$RELEASE_DIR || exit 1
-#freebsd
-mv ./*fbsd*.tbz ./$RELEASE_DIR || exit 1
-#gnu/linux static+dynamic
-mv ./*_static_$ARCH.tar.gz ./$RELEASE_DIR || exit 1
-mv ./*_dynamic_$ARCH.tar.gz ./$RELEASE_DIR || exit 1
-#arch linux
-mv ./*pkg.tar.gz ./$RELEASE_DIR || exit 1
-#gentoo ebuilds
-mv ./*ebuild*.tar.gz ./$RELEASE_DIR || exit 1
-#source code
-mv ./*.tar.gz ./$RELEASE_DIR || exit 1
-#rpms
-mv ./*.rpm ./$RELEASE_DIR || exit 1
-#slackware
-mv ./*.tgz ./$RELEASE_DIR || exit 1
-############# end finish packaging #####
-
-############# uploading to sourceforge.net #####
-#we put the files on the sourceforge ftp
-if [[ $UPLOAD_TO_SOURCEFORGE == 1 ]]; then
-    echo
-    echo "Uploading files to sourceforge.net..."
-    echo
-    sleep 2
-    for a in ls $DIST_VERSION; do
-        lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous,\
-upload.sourceforge.net || exit 1
-    done
-fi
-############# finish uploading to sourceforge.net #####
-
-echo
-echo "The packaging is finished."
-echo
 
 DATE_END=`date`
-
 echo
 echo "Start date : "$DATE_START
 echo "End date : "$DATE_END
 echo
+exit 0
+
+############# openbsd packages #####
+if [[ $ARCH = "i386" ]];then
+    #cd /mnt/personal/systems/bsd-based/openbsd && ./openbsd
+    cd $PROJECT_DIR
+fi
+############# end openbsd packages #####
+
+############# netbsd packages #####
+if [[ $ARCH = "i386" ]];then
+    #cd /mnt/personal/systems/bsd-based/netbsd && ./netbsd
+    cd $PROJECT_DIR
+fi
+############# end netbsd packages #####
+
+############# freebsd packages #####
+if [[ $ARCH = "i386" ]];then
+    #cd /mnt/personal/systems/bsd-based/freebsd && ./freebsd
+    cd $PROJECT_DIR
+fi
+############# end freebsd packages #####
+
+############# nexenta gnu/opensolaris packages #####
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "Creating $ARCH nexenta gnu/opensolaris packages..."
+    echo
+    sleep 2
+    
+    cd /mnt/personal/systems/opensolaris/ && ./nexenta
+    cd $PROJECT_DIR
+fi
+############# end nexenta gnu/opensolaris packages #####
+
+############# finish packaging #####
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "Finishing packaging..."
+    echo
+    sleep 2
+    
+    #copy packages to the new directory
+    #the new release directory
+    RELEASE_DIR=release_$LIBMP3SPLT_VERSION
+    
+    mkdir -p $RELEASE_DIR
+    rm -rf $RELEASE_DIR/*
+    
+    #debian
+    mv ./*sarge_i386.deb ./$RELEASE_DIR || exit 1
+    mv ./*etch_i386.deb ./$RELEASE_DIR || exit 1
+    mv ./*sid_i386.deb ./$RELEASE_DIR || exit 1
+    #ubuntu
+    mv ./*breezy_i386.deb ./$RELEASE_DIR || exit 1
+    mv ./*dapper_i386.deb ./$RELEASE_DIR || exit 1
+    mv ./*edgy_i386.deb ./$RELEASE_DIR || exit 1
+    #nexenta
+    mv ./*solaris_i386.deb ./$RELEASE_DIR || exit 1
+    #windows
+    mv ./*.exe ./$RELEASE_DIR || exit 1
+    #openbsd
+    #arch ?
+    mv ./*obsd*.tgz ./$RELEASE_DIR || exit 1
+    #netbsd
+    #arch ?
+    mv ./*nbsd*.tgz ./$RELEASE_DIR || exit 1
+    #freebsd
+    #arch ?
+    mv ./*fbsd*.tbz ./$RELEASE_DIR || exit 1
+    #gnu/linux static+dynamic
+    mv ./*_static_i386.tar.gz ./$RELEASE_DIR || exit 1
+    mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR || exit 1
+    #arch linux
+    #arch ?
+    mv ./*pkg.tar.gz ./$RELEASE_DIR || exit 1
+    #gentoo ebuilds
+    mv ./*ebuild.tar.gz ./$RELEASE_DIR || exit 1
+    #source code
+    mv ./*.tar.gz ./$RELEASE_DIR || exit 1
+    #rpms
+    mv ./*.src.rpm ./$RELEASE_DIR || exit 1
+    mv ./*.i386.rpm ./$RELEASE_DIR || exit 1
+    #slackware
+    mv ./*i386.tgz ./$RELEASE_DIR || exit 1
+fi
+############# end finish packaging #####
+
+############# uploading to sourceforge.net #####
+#we put the files on the sourceforge ftp
+if [[ $ARCH = "i386" ]];then
+    if [[ $UPLOAD_TO_SOURCEFORGE == 1 ]]; then
+        echo
+        echo "Uploading files to sourceforge.net..."
+        echo
+        sleep 2
+        for a in ls $DIST_VERSION; do
+            lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous,\
+                upload.sourceforge.net || exit 1
+        done
+    fi
+fi
+############# finish uploading to sourceforge.net #####
+
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "The packaging is finished :)"
+    echo
+    
+    DATE_END=`date`
+    
+    echo
+    echo "Start date : "$DATE_START
+    echo "End date : "$DATE_END
+    echo
+fi

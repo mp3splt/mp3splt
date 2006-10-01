@@ -3,10 +3,16 @@
 #we move in the current script directory
 script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
-cd $script_dir/../../
+cd $script_dir/../..
+
+. ./mp3splt-gtk/include_variables.sh
+
+echo
+echo $'Package :\tcross_windows_installer'
+echo
 
 #we compile the locales
-rm -rf fr_locales
+mv fr_locales fr_locales_old
 mkdir fr_locales
 wine `pwd`/../libs/bin/msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
 

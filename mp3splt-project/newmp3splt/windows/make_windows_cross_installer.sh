@@ -5,6 +5,12 @@ script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
 cd $script_dir/../other
 
+. ../include_variables.sh
+
+echo
+echo $'Package :\tcross_windows_installer'
+echo
+
 #we put the correct installer path
 cp win32_installer.nsi win32_installer.nsi_old
 cat win32_installer.nsi | sed s+.define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ `pwd`/../..+ > win32_installer.nsi2

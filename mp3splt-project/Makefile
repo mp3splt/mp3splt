@@ -2,38 +2,38 @@ all:
 	@echo "Usage : ..."
 
 #source distribution creation
-source_packages:
+source_packages: clean_tmp
 	./libmp3splt/make_source_package.sh
 	./newmp3splt/make_source_package.sh
 	./mp3splt-gtk/make_source_package.sh
 
 #debian packages creation
-debian_packages:
+debian_packages: clean_tmp
 	./libmp3splt/debian/make_debian_package.sh
 	./newmp3splt/debian/make_debian_package.sh
 	./mp3splt-gtk/debian/make_debian_package.sh
 
 #gentoo ebuilds creation
-gentoo_ebuilds:
+gentoo_ebuilds: clean_tmp
 	./libmp3splt/gentoo/make_gentoo_ebuild.sh
 	./newmp3splt/gentoo/make_gentoo_ebuild.sh
 	./mp3splt-gtk/gentoo/make_gentoo_ebuild.sh
 
 #rpm package creation
-rpm_packages:
+rpm_packages: clean_tmp
 	./libmp3splt/rpm/make_rpm_package.sh
 	./newmp3splt/rpm/make_rpm_package.sh
 	./mp3splt-gtk/rpm/make_rpm_package.sh
 
 #arch linux package creation
-arch_packages:
+arch_packages: clean_tmp
 	./libmp3splt/arch/make_arch_package.sh
 	./newmp3splt/arch/make_arch_package.sh
 	./mp3splt-gtk/arch/make_arch_package.sh
 	cd libmp3splt/arch && rm -rf ./pkg ./src ./filelist
 
 #slackware package creation
-slackware_packages:
+slackware_packages: clean_tmp
 	./libmp3splt/slackware/make_slackware_package.sh
 	./newmp3splt/slackware/make_slackware_package.sh
 	./mp3splt-gtk/slackware/make_slackware_package.sh
@@ -41,22 +41,28 @@ slackware_packages:
 #creates slackware packages by using fakeroot
 #-does not work if /usr/lib /usr/include and /etc are not
 #writable by the current user
-slackware_fakeroot_packages:
+slackware_fakeroot_packages: clean_tmp
 	fakeroot ./libmp3splt/slackware/make_slackware_package.sh
 	fakeroot ./newmp3splt/slackware/make_slackware_package.sh
 	fakeroot ./mp3splt-gtk/slackware/make_slackware_package.sh
 
 #creates static packages
-static_packages:
+static_packages: clean_tmp
 	./libmp3splt/make_static_package.sh
 	./newmp3splt/make_static_package.sh
 	./mp3splt-gtk/make_static_package.sh
 
 #creates dynamic packages
-dynamic_packages:
+dynamic_packages: clean_tmp
 	./libmp3splt/make_dynamic_package.sh
 	./newmp3splt/make_dynamic_package.sh
 	./mp3splt-gtk/make_dynamic_package.sh
+
+#opensolaris nexenta packages
+nexenta_packages: clean_tmp
+	./libmp3splt/debian/make_nexenta_package.sh
+	./newmp3splt/debian/make_nexenta_package.sh
+	./mp3splt-gtk/debian/make_nexenta_package.sh
 
 #create windows installer by cross compilation
 windows_cross_installers:
@@ -67,10 +73,23 @@ windows_cross_installers:
 	./mp3splt-gtk/windows/make_windows_cross_installer.sh
 
 #debian hurd packages creation
-debian_hurd_packages:
+debian_hurd_packages: clean_tmp
 	./libmp3splt/debian/make_debian_hurd_package.sh
 	./newmp3splt/debian/make_debian_hurd_package.sh
 	./mp3splt-gtk/debian/make_debian_hurd_package.sh
+
+#cleans the /tmp directories for a good build
+clean_tmp:
+	if [[ -d /tmp/dynamic_tmp ]];then rm -rf /tmp/dynamic_tmp_old2 &&\
+mv /tmp/dynamic_tmp /tmp/dynamic_tmp_old2 &>/dev/null;fi
+	if [[ -d /tmp/static_tmp ]];then rm -rf /tmp/static_tmp_old2 &&\
+mv /tmp/static_tmp /tmp/static_tmp_old2 &>/dev/null;fi
+	if [[ -d /tmp/rpm_tmp ]];then rm -rf /tmp/rpm_temp_old2 &&\
+mv /tmp/rpm_temp /tmp/rpm_temp_old2 &>/dev/null;fi
+	if [[ -d /tmp/slack_temp ]];then rm -rf /tmp/slack_temp_old2 &&\
+mv /tmp/slack_temp /tmp/slack_temp_old2 &>/dev/null;fi
+	if [[ -d /tmp/temp ]];then rm -rf /tmp/temp_old2 &&\
+mv /tmp/temp /tmp/temp_old2 &>/dev/null;fi
 
 #clean the builds
 clean: distclean
@@ -189,37 +208,3 @@ cp -r /root/progs_src/mp3splt-project/mp3splt-gtk/freebsd/* /usr/ports/audio/mp3
 cd /usr/ports/audio/mp3splt-gtk && make makesum && make && make install && make package &&\
 mv *fbsd*.tbz /root/progs_src/mp3splt-project/ && make deinstall &&\
 cd /usr/ports/audio/libmp3splt && make deinstall
-
-#opensolaris nexenta packages
-nexenta_packages: libmp3splt_solaris mp3splt-gtk_solaris mp3splt_solaris
-	rm -rf /tmp/temp
-
-#we make libmp3splt packages
-libmp3splt_solaris:
-	cd libmp3splt && ./autogen.sh && \
-	./configure --prefix=/tmp/temp --host=i386-pc-solaris2.11 && make clean && \
-	make && make install && \
-	./configure --prefix=/usr && make clean && make \
-	&& debian/rules binary && cd ..
-
-#we make mp3splt-gtk packages
-mp3splt-gtk_solaris:
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
-	cd mp3splt-gtk && ./autogen.sh && \
-	./configure --enable-bmp --host=i386-pc-solaris2.11 --prefix=/usr && make clean && \
-	make && \
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" && \
-	debian/rules binary && cd ..
-
-#we make mp3splt packages
-newmp3splt_solaris:
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
-	cd newmp3splt && ./autogen.sh && \
-	./configure --host=i386-pc-solaris2.11 --prefix=/usr && make clean && \
-	make && \
-	export CFLAGS="${CFLAGS} -I/tmp/temp/include" \
-	export LDFLAGS="${LDFLAGS} -L/tmp/temp/lib" &&\
-	debian/rules binary && cd ..

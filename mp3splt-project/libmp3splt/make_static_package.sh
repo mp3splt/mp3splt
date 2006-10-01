@@ -1,22 +1,20 @@
 #!/bin/bash
 
-################# variables to set ############
-
-ARCH=i386;
-LIBMP3SPLT_VERSION=0.4_rc1;
-LIBMP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO LIMITS)
-
-################# end variables to set ############
-
 #we move in the current script directory
 script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir
 cd $PROGRAM_DIR
 
+. ./include_variables.sh
+
+echo
+echo $'Package :\tstatic'
+echo
+
 #create the directories that we need
 STATIC_DIR=/tmp/static_tmp/libmp3splt
-rm -rf $STATIC_DIR/*
+if [[ -d $STATIC_DIR ]];then mv $STATIC_DIR ${STATIC_DIR}_old;fi
 mkdir -p $STATIC_DIR
 mkdir -p $STATIC_DIR/usr/local/share/doc/libmp3splt
 
