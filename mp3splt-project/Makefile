@@ -19,6 +19,19 @@ gentoo_ebuilds:
 	./newmp3splt/gentoo/make_gentoo_ebuild.sh
 	./mp3splt-gtk/gentoo/make_gentoo_ebuild.sh
 
+#rpm package creation
+rpm_packages:
+	./libmp3splt/rpm/make_rpm_package.sh
+	./newmp3splt/rpm/make_rpm_package.sh
+	./mp3splt-gtk/rpm/make_rpm_package.sh
+
+#arch linux package creation
+arch_packages:
+	./libmp3splt/arch/make_arch_package.sh
+	./newmp3splt/arch/make_arch_package.sh
+	./mp3splt-gtk/arch/make_arch_package.sh
+	cd libmp3splt/arch && rm -rf ./pkg ./src ./filelist
+
 #creates static packages
 static_packages:
 	./libmp3splt/make_static_package.sh

@@ -328,108 +328,30 @@ echo "Creating windows installers..."
 echo
 sleep 2
 
-#we do the windows executables
 make windows_cross_installers || exit 1
 cd $PROJECT_DIR
 ############# end windows installers ################
-echo "end"
-exit 0
 
 ############# RPM packages creation ################
 echo
-echo "Creating RPMs..."
+echo "Creating $ARCH RPMs..."
 echo
 sleep 2
 
-RPM_TEMP=/tmp/rpm_temp
-
-rm -rf $RPM_TEMP
-mkdir -p $RPM_TEMP
-
-#libmp3splt
-echo "%_topdir $PROJECT_DIR/libmp3splt/rpm" > ~/.rpmmacros
-cd libmp3splt && make dist || exit 1
-mv libmp3splt*tar.gz ./rpm/SOURCES
-cd rpm && rpmbuild -ba ./SPECS/libmp3splt.spec || exit 1
-rm -rf ./BUILD/*
-rm -rf ./SOURCES/*
-mv ./RPMS/$ARCH/*.rpm ../../ || exit 1
-mv ./SRPMS/*.rpm ../../ || exit 1
-
-#mp3splt
-echo "%_topdir $PROJECT_DIR/newmp3splt/rpm" > ~/.rpmmacros
-cd ../../newmp3splt && \
-CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" ./configure && make dist\
- || exit 1
-mv mp3splt*tar.gz ./rpm/SOURCES
-cd rpm
-CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" \
-rpmbuild -ba ./SPECS/mp3splt.spec || exit 1
-rm -rf ./BUILD/*
-rm -rf ./SOURCES/*
-mv ./RPMS/$ARCH/*.rpm ../../ || exit 1
-mv ./SRPMS/*.rpm ../../ || exit 1
-
-#mp3splt-gtk
-echo "%_topdir $PROJECT_DIR/mp3splt-gtk/rpm" > ~/.rpmmacros
-cd ../../mp3splt-gtk && \
-CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" ./configure && make dist\
- || exit 1
-mv mp3splt-gtk*tar.gz ./rpm/SOURCES
-cd rpm
-CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include" LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib" \
-rpmbuild -ba ./SPECS/mp3splt-gtk.spec || exit 1
-rm -rf ./BUILD/*
-rm -rf ./SOURCES/*
-mv ./RPMS/$ARCH/*.rpm ../../ || exit 1
-mv ./SRPMS/*.rpm ../../ || exit 1
-
-rm -rf $RPM_TEMP
-
+make rpm_packages || exit 1
 cd $PROJECT_DIR
 ############# end RPM packages creation ################
 
 ############# archlinux packages #########
 echo
-echo "Creating archlinux packages..."
+echo "Creating $ARCH archlinux packages..."
 echo
 sleep 2
 
-#libmp3splt
-cd libmp3splt
-./autogen.sh && ./configure && make dist || exit 1
-mv libmp3splt*.tar.gz ./arch || exit 1
-cd arch
-dchroot -d -c arch "makepkg" || exit 1
-mv libmp3splt*pkg.tar.gz ../..
-rm -rf ./libmp3splt*.tar.gz
-
-#mp3splt
-cd ../../newmp3splt
-CFLAGS="-I../libmp3splt/arch/pkg/usr/include"
-LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib"
-./autogen.sh && ./configure && make dist || exit 1
-mv mp3splt*.tar.gz ./arch || exit 1
-cd arch
-dchroot -d -c arch "makepkg -d -c" || exit 1
-mv mp3splt*pkg.tar.gz ../..
-rm -rf ./mp3splt*.tar.gz
-
-#mp3splt-gtk
-cd ../../mp3splt-gtk
-./autogen.sh && ./configure && make dist || exit 1
-mv mp3splt-gtk*.tar.gz ./arch || exit 1
-cd arch
-dchroot -d -c arch "makepkg -d -c" || exit 1
-mv mp3splt-gtk*pkg.tar.gz ../..
-rm -rf ./mp3splt-gtk*.tar.gz
-
-#remove remaining libmp3splt build
-cd ../../libmp3splt/arch
-rm -rf ./pkg ./src && rm -rf ./filelist
-
+dchroot -d -c arch "make arch_packages" || exit 1
 cd $PROJECT_DIR
 ############# end archlinux packages #########
+exit 0
 
 ############# openbsd packages #####
 cd /mnt/personal/systems/bsd-based/openbsd && ./openbsd
