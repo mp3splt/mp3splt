@@ -3,9 +3,9 @@
 ################# variables to set ############
 
 #program versions
-LIBMP3SPLT_REAL_VERSION=0.4rc1
-MP3SPLT_REAL_VERSION=2.2rc1
-MP3SPLT_GTK_REAL_VERSION=0.4rc1
+LIBMP3SPLT_REAL_VERSION=0.4_rc1
+MP3SPLT_REAL_VERSION=2.2_rc1
+MP3SPLT_GTK_REAL_VERSION=0.4_rc1
 
 #if we upload to sourceforge or not
 UPLOAD_TO_SOURCEFORGE=0
@@ -231,6 +231,9 @@ if [[ $ARCH = "i386" ]];then
     echo
     sleep 2
     
+    #we change the architecture
+    
+    
     #cd /mnt/personal/systems/debian_amd64 && ./debian_amd64
     cd $PROJECT_DIR
 fi
@@ -330,8 +333,7 @@ if [[ $ARCH = "i386" ]];then
     mv ./*_static_i386.tar.gz ./$RELEASE_DIR || exit 1
     mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR || exit 1
     #arch linux
-    #arch ?
-    mv ./*pkg.tar.gz ./$RELEASE_DIR || exit 1
+    mv ./*i686.pkg.tar.gz ./$RELEASE_DIR || exit 1
     #gentoo ebuilds
     mv ./*ebuild.tar.gz ./$RELEASE_DIR || exit 1
     #source code

@@ -12,11 +12,17 @@ echo
 echo $'Package :\tarch'
 echo
 
+if [[ $ARCH = "i386" ]];then
+    ARCH=i686
+fi
+
 #we make the distribution file if we don't have it
 if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
     ./make_source_package.sh
 fi &&\
+cd $PROGRAM_DIR &&\
 cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ./arch &&\
 cd arch && makepkg &&\
-mv libmp3splt*pkg.tar.gz ../.. &&\
+mv libmp3splt-${LIBMP3SPLT_VERSION}-1.pkg.tar.gz \
+../../libmp3splt-${LIBMP3SPLT_VERSION}-1-$ARCH.pkg.tar.gz &&\
 rm -rf ./libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz

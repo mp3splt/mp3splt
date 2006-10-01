@@ -12,6 +12,10 @@ echo
 echo $'Package :\tarch'
 echo
 
+if [[ $ARCH = "i386" ]];then
+    ARCH=i686
+fi
+
 #we set the flags to find libmp3splt
 export CFLAGS="-I../libmp3splt/arch/pkg/usr/include $CFLAGS"
 export LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib $LDFLAGS"
@@ -22,5 +26,6 @@ if [[ ! -e ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
 fi &&\
 cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ./arch &&\
 cd arch && makepkg -d -c &&\
-mv mp3splt-gtk*pkg.tar.gz ../.. &&\
+mv mp3splt-gtk-${MP3SPLT_GTK_VERSION}-1.pkg.tar.gz \
+../../mp3splt-gtk-${MP3SPLT_GTK_VERSION}-1-$ARCH.pkg.tar.gz &&\
 rm -rf ./mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz

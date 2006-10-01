@@ -4,7 +4,7 @@ pkgname=mp3splt-gtk
 pkgver=0.4_rc1
 pkgrel=1
 pkgdesc="Mp3splt-gtk is a GTK2 gui that uses libmp3splt to split mp3 and ogg without deconding"
-arch=(i686)
+arch=(i686 x86_64)
 url="http://mp3splt.sourceforge.net"
 groups=root
 depends=('libmp3splt=0.4_rc1')
