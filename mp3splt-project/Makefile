@@ -1,5 +1,28 @@
-all: 
-	@echo "Usage : ..."
+usage: help
+
+#help of this Makefile; explains how this makefile should be used
+help:
+	@echo
+	@echo "The current directory must contain libmp3splt, newmp3splt and mp3splt-gtk."
+	@echo
+	@echo "Usage : "
+	@echo
+	@echo "make root_install : compile and installs the programs (must be root)"
+	@echo "make root_uninstall : uninstalls the programs as root (must be root)"
+	@echo
+	@echo "make source_packages : generate source packages"
+	@echo "make debian_packages : generate debian packages"
+	@echo "make gentoo_ebuilds : generate gentoo ebuilds"
+	@echo "make rpm_packages : generate rpm packages"
+	@echo "make arch_packages : generate archlinux packages"
+	@echo "make slackware_packages : generate slackware packages (must be root)"
+	@echo "make slackware_fakeroot_packages : generate slackware packages by using fakeroot (should be root)"
+	@echo "make static_packages : generates static packages"
+	@echo "make dynamic_packages : generates dynamic packages"
+	@echo "make nexenta_packages : generates nexenta gnu/opensolaris packages"
+	@echo "make windows_cross_installers : generates windows installers with a cross compilation"
+	@echo "make debian_hurd_packages : generates debian_hurd packages (must be root)"
+	@echo
 
 #source distribution creation
 source_packages: clean_tmp
@@ -78,6 +101,25 @@ debian_hurd_packages: clean_tmp
 	./newmp3splt/debian/make_debian_hurd_package.sh
 	./mp3splt-gtk/debian/make_debian_hurd_package.sh
 
+#installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
+root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
+root_libmp3splt:
+	cd libmp3splt && ./autogen.sh && \
+	./configure && make clean && make && make install \
+	&& if [ -z `grep '/usr/local/lib' /etc/ld.so.conf` ];\
+	then `echo '/usr/local/lib' >> /etc/ld.so.conf` && ldconfig;fi
+root_newmp3splt:
+	cd newmp3splt && ./autogen.sh && ./configure \
+	&& make clean && make && make install
+root_mp3splt-gtk:
+	cd mp3splt-gtk && ./autogen.sh && ./configure \
+	&& make clean && make && make install
+#uninstalls libmp3splt, mp3splt and mp3splt-gtk as root
+root_uninstall:
+	cd libmp3splt && make uninstall
+	cd newmp3splt && make uninstall
+	cd mp3splt-gtk && make uninstall
+
 #cleans the /tmp directories for a good build
 clean_tmp:
 	if [[ -d /tmp/dynamic_tmp ]];then rm -rf /tmp/dynamic_tmp_old2 &&\
@@ -97,25 +139,6 @@ distclean:
 	cd libmp3splt && make distclean && cd ..
 	cd newmp3splt && make distclean && cd ..
 	cd mp3splt-gtk && make distclean && cd ..
-
-#installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
-root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
-root_libmp3splt:
-	cd libmp3splt && ./autogen.sh && \
-	./configure && make clean && make && make install \
-	&& if [ -z `grep '/usr/local/lib' /etc/ld.so.conf` ];\
-	then `echo '/usr/local/lib' >> /etc/ld.so.conf` && ldconfig;fi
-root_newmp3splt:
-	cd newmp3splt && ./autogen.sh && ./configure \
-	&& make clean && make && make install
-root_mp3splt-gtk:
-	cd mp3splt-gtk && ./autogen.sh && ./configure \
-	&& make clean && make && make install
-#uninstalls libmp3splt, mp3splt and mp3splt-gtk as root
-root_uninstall:
-	cd libmp3splt && make uninstall
-	cd newmp3splt && make uninstall
-	cd mp3splt-gtk && make uninstall
 
 #openbsd install
 openbsd_root_install:

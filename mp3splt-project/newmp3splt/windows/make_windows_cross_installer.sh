@@ -18,7 +18,7 @@ mv win32_installer.nsi2 win32_installer.nsi
 
 #we create the installer
 make -f Makefile cross
-mv mp3splt*exe ../..
+mv mp3splt_${MP3SPLT_VERSION}.exe ../../mp3splt_${MP3SPLT_VERSION}_${ARCH}.exe
 
 #put the old installer file of mp3splt
 mv win32_installer.nsi_old win32_installer.nsi

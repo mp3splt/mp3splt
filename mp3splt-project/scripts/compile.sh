@@ -319,7 +319,7 @@ if [[ $ARCH = "i386" ]];then
     #nexenta
     mv ./*solaris_i386.deb ./$RELEASE_DIR || exit 1
     #windows
-    mv ./*.exe ./$RELEASE_DIR || exit 1
+    mv ./*_i386.exe ./$RELEASE_DIR || exit 1
     #openbsd
     #arch ?
     mv ./*obsd*.tgz ./$RELEASE_DIR || exit 1
@@ -340,7 +340,7 @@ if [[ $ARCH = "i386" ]];then
     mv ./*.tar.gz ./$RELEASE_DIR || exit 1
     #rpms
     mv ./*.src.rpm ./$RELEASE_DIR || exit 1
-    mv ./*.i386.rpm ./$RELEASE_DIR || exit 1
+    mv ./*i386.rpm ./$RELEASE_DIR || exit 1
     #slackware
     mv ./*i386.tgz ./$RELEASE_DIR || exit 1
 fi

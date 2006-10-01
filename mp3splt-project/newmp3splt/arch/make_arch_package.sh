@@ -27,5 +27,5 @@ fi &&\
 cp ../mp3splt-${MP3SPLT_VERSION}.tar.gz ./arch &&\
 cd arch && makepkg -d -c &&\
 mv mp3splt-${MP3SPLT_VERSION}-1.pkg.tar.gz \
-../../mp3splt-${MP3SPLT_VERSION}-1-$ARCH.pkg.tar.gz &&\
+../../mp3splt-${MP3SPLT_VERSION}-1_${ARCH}.pkg.tar.gz &&\
 rm -rf ./mp3splt-${MP3SPLT_VERSION}.tar.gz

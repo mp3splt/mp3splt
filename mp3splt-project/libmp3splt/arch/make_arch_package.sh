@@ -24,5 +24,5 @@ cd $PROGRAM_DIR &&\
 cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ./arch &&\
 cd arch && makepkg &&\
 mv libmp3splt-${LIBMP3SPLT_VERSION}-1.pkg.tar.gz \
-../../libmp3splt-${LIBMP3SPLT_VERSION}-1-$ARCH.pkg.tar.gz &&\
+../../libmp3splt-${LIBMP3SPLT_VERSION}-1_${ARCH}.pkg.tar.gz &&\
 rm -rf ./libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz

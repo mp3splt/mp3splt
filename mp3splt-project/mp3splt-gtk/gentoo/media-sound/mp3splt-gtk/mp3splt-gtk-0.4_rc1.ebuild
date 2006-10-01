@@ -14,7 +14,7 @@ SRC_URI="mirror://sourceforge/mp3splt/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~x86"
+KEYWORDS="~x86 ~amd64"
 #audacious should be enabled in the future sessions
 #IUSE="audacious"
 #audacious? ( >=media-sound/audacious-1.1.0 )
