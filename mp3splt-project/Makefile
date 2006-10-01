@@ -31,6 +31,14 @@ dynamic_packages:
 	./newmp3splt/make_dynamic_package.sh
 	./mp3splt-gtk/make_dynamic_package.sh
 
+#create windows installer by cross compilation
+windows_cross_installers:
+	./libmp3splt/windows/make_windows_cross_compilation.sh
+	./newmp3splt/windows/make_windows_cross_compilation.sh
+	./newmp3splt/windows/make_windows_cross_installer.sh
+	./mp3splt-gtk/windows/make_windows_cross_compilation.sh
+	./mp3splt-gtk/windows/make_windows_cross_installer.sh
+
 #debian hurd packages creation
 debian_hurd_packages:
 	./libmp3splt/debian/make_debian_hurd_package.sh

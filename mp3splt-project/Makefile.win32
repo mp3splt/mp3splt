@@ -30,33 +30,3 @@ dist:
 #building installer for the text mode
 	strip newmp3splt/src/mp3splt.exe && \
 	cd newmp3splt/other && make && cp mp3splt*exe ../../ && cd ../../
-
-#cross compilations
-cross_libmp3splt:
-	cd libmp3splt &&\
-	./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-shared --disable-vorbistest\
-	&& make clean && make && make install
-cross_mp3splt-gtk:
-	cd mp3splt-gtk && cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
-	./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-gtktest\
-	&& make clean && make && make install
-cross_newmp3splt:
-	cd newmp3splt && cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
-	./configure --prefix=`pwd`/../../libs --host=--mingw32 &&\
-	make clean && make && make install
-
-cross_dist: cross_dist_mp3splt_gtk cross_dist_newmp3splt
-
-cross_dist_mp3splt_gtk:
-	rm -rf fr_locales
-	mkdir fr_locales
-	wine `pwd`/../libs/bin/msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
-	strip mp3splt-gtk/src/mp3splt-gtk.exe
-	cd mp3splt-gtk/other && make -f Makefile cross \
-	&& mv mp3splt-gtk*exe ../../ && cd ../..
-	rm -rf fr_locales && rm -rf mp3splt-gtk_runtime
-
-cross_dist_newmp3splt:
-	strip newmp3splt/src/mp3splt.exe
-	cd newmp3splt/other && make -f Makefile cross \
-	&& mv mp3splt*exe ../../ && cd ../..

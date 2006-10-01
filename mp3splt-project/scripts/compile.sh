@@ -1,12 +1,12 @@
 #!/bin/bash
 
 ################# variables to set ############
-ARCH=i386;
+ARCH=i386
 
 #program versions
-LIBMP3SPLT_VERSION=0.4_rc1;
-MP3SPLT_VERSION=2.2_rc1;
-MP3SPLT_GTK_VERSION=0.4_rc1;
+LIBMP3SPLT_VERSION=0.4_rc1
+MP3SPLT_VERSION=2.2_rc1
+MP3SPLT_GTK_VERSION=0.4_rc1
 
 #program documentation files
 LIBMP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO LIMITS)
@@ -14,34 +14,34 @@ MP3SPLT_GTK_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 
 #if we upload to sourceforge or not
-UPLOAD_TO_SOURCEFORGE=0;
+UPLOAD_TO_SOURCEFORGE=0
 #if we modify the subversion repository (the ebuild needs renaming)
-SUBVERSION=0;
+SUBVERSION=0
 ################## end variables to set ############
 
 ################## confirmation question ############
 #the confirmation question
 echo
-echo "This script is used by the developers to auto-create packages for releases";
-echo "!!!! Warning !!!! This script may be dangerous and erase data on your computer !!";
+echo "This script is used by the developers to auto-create packages for releases"
+echo "!!!! Warning !!!! This script may be dangerous and erase data on your computer !!"
 echo "Please remember that you are using the script at your own risk !"
 echo
-sleep 3;
+sleep 3
 
 select=("I know what I'm doing and I use it at my own risk" "Quit")
 select continue in "${select[@]}";do
     if [[ $continue = "Quit" ]]; then
-        exit 0;
+        exit 0
     else
-        break;
-    fi;
-done;
+        break
+    fi
+done
 
 #don't run the script as root
 if [[ `id -u` == 0 ]]; then
     echo "The script must not be run as root"
     exit 1
-fi;
+fi
 
 #we move in the current script directory
 script_dir=$(readlink -f $0)
@@ -59,9 +59,9 @@ function update_version()
     if [[ $1 == "libmp3splt" ]] || [[ $1 == "mp3splt" ]] || 
         [[ $1 == "mp3splt-gtk" ]];then
         #we get the program and the version
-        PROGRAM=$1;
-        VERSION=$2;
-        LIBMP3SPLT_VERSION=$3;
+        PROGRAM=$1
+        VERSION=$2
+        LIBMP3SPLT_VERSION=$3
         
         #we move in the current script directory
         cd $PROJECT_DIR/scripts
@@ -72,29 +72,29 @@ function update_version()
             cd ../newmp3splt
         else
             cd ../$PROGRAM
-        fi;
+        fi
         if ! debchange --distribution "testing" -v $VERSION "version "$VERSION 2>/dev/null;then
-            rm -f debian/.changelog.dch.swp;
-            debchange -r "version "$VERSION;
+            rm -f debian/.changelog.dch.swp
+            debchange -r "version "$VERSION
         fi
         
         #README
         #./README:       libmp3splt version 0.3.1
-        sed -i "s/\s*$PROGRAM version.*/\t$PROGRAM version $VERSION/" README;
+        sed -i "s/\s*$PROGRAM version.*/\t$PROGRAM version $VERSION/" README
         #configure.ac
         #./configure.ac:AC_INIT(libmp3splt, 0.3.1, io_alex_2002@yahoo.fr)
         #./configure.ac:AM_INIT_AUTOMAKE(libmp3splt, 0.3.1)
         sed -i "s/AC_INIT($PROGRAM, .*,/\
-AC_INIT($PROGRAM, $VERSION,/" ./configure.ac;
+AC_INIT($PROGRAM, $VERSION,/" ./configure.ac
         sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
-AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;    
+AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac    
         #rpm global Version
         sed -i "s/Version: .*/Version: $VERSION/" ./rpm/SPECS/$PROGRAM.spec
         #arch global version
         sed -i "s/pkgver=.*/pkgver=$VERSION/" ./arch/PKGBUILD
         
         #current date, we need it
-        DATE=$(date +%d\\/%m\\/%y);
+        DATE=$(date +%d\\/%m\\/%y)
         NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
         
         case $PROGRAM in
@@ -103,11 +103,11 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
                 #libmp3splt source code
                 #./src/mp3splt_types.h:#define SPLT_PACKAGE_VERSION "0.3.1"
                 sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
-#define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./src/mp3splt_types.h;
+#define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./src/mp3splt_types.h
                 #./src/mp3splt.c:void mp3splt_v0_3_1
-                sed -i "s/void mp3splt_v.*/void mp3splt_v$NEW_LIBMP3SPLT_VER()/" ./src/mp3splt.c;
+                sed -i "s/void mp3splt_v.*/void mp3splt_v$NEW_LIBMP3SPLT_VER()/" ./src/mp3splt.c
                 #./src/Doxyfile:PROJECT_NUMBER=0.3.1
-                sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./src/Doxyfile;
+                sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./src/Doxyfile
                 #update gentoo ebuild
                 cd gentoo/media-libs/$PROGRAM
                 if [[ $SUBVERSION == 1 ]];then
@@ -115,29 +115,29 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac;
                     svn ci -m "updated gentoo version" &>/dev/null
                 else
                     mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
-                fi;
+                fi
                 ;;
             #mp3splt settings
             "mp3splt")
                 #debian control file, libmp3splt dependency
                 #./debian/control:Build-Depends: debhelper (>= 4.0.0), libmp3splt (= 0.3.1)
                 #./debian/control:Depends: ${shlibs:Depends}, libmp3splt (= 0.3.1)
-                sed -i "s/libmp3splt (= .*)/libmp3splt (= $LIBMP3SPLT_VERSION)/" ./debian/control;
+                sed -i "s/libmp3splt (= .*)/libmp3splt (= $LIBMP3SPLT_VERSION)/" ./debian/control
                 #windows installer
                 #./other/win32_installer.nsi:!define VERSION "2.2.1"
-                sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./other/win32_installer.nsi;
+                sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./other/win32_installer.nsi
                 #configure.ac libmp3splt version check
                 #./configure.ac:AC_CHECK_LIB(mp3splt, mp3splt_v0_3_5,libmp3splt=yes,
                 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
                 sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,l/\
-AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
+AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac
                 sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
-\[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac;
+\[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac
                 #source code
                 #./src/mp3splt.c:#define VERSION "2.2"
-                sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/mp3splt.c;
+                sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/mp3splt.c
                 #./src/mp3splt.c:#define MP3SPLT_DATE "14/04/2006"
-                sed -i "s/#define MP3SPLT_DATE \".*\"/#define MP3SPLT_DATE \"$DATE\"/" ./src/mp3splt.c;
+                sed -i "s/#define MP3SPLT_DATE \".*\"/#define MP3SPLT_DATE \"$DATE\"/" ./src/mp3splt.c
                 #update gentoo ebuild
                 cd gentoo/media-sound/$PROGRAM
                 if [[ $SUBVERSION == 1 ]];then
@@ -145,8 +145,8 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                     svn ci -m "updated gentoo version" &>/dev/null
                 else
                     mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
-                fi;
-                sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild;
+                fi
+                sed -i "s/media-libs\/libmp3splt-.*/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION/" ./$PROGRAM-$VERSION.ebuild
                 #slackware description
                 cd ../../../slackware
                 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
@@ -160,23 +160,23 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
             "mp3splt-gtk")
                 #windows installer
                 #./other/win32_installer.nsi:!define VERSION "0.3.1"
-                sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./other/win32_installer.nsi;
+                sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./other/win32_installer.nsi
                 #debian control file, libmp3splt dependency
                 #./debian/control:Build-Depends: debhelper (>= 4.0.0), libmp3splt (= 0.3.1), beep-media-player-dev(>= 0.9.7-1)
                 #./debian/control:Depends: ${shlibs:Depends}, libmp3splt (= 0.3.1), beep-media-player(>= 0.9.7-1)
-                sed -i "s/libmp3splt (= .*)/libmp3splt (= $LIBMP3SPLT_VERSION)/" ./debian/control;
+                sed -i "s/libmp3splt (= .*)/libmp3splt (= $LIBMP3SPLT_VERSION)/" ./debian/control
                 #configure.ac libmp3splt version check
                 #./configure.ac:AC_CHECK_LIB(mp3splt, mp3splt_v0_3_5,libmp3splt=yes,
                 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
                 sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,l/\
-AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
+AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac
                 sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
-\[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac;
+\[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac
                 #source code
                 #./src/main_win.c:#define VERSION "0.3.1"
                 #./src/main_win.c:  g_snprintf(b3, 100, "-release of 27/02/06-\n%s libmp3splt...
-                sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/main_win.c;
-                sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_win.c;
+                sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/main_win.c
+                sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_win.c
                 #update gentoo ebuild
                 cd gentoo/media-sound/$PROGRAM
                 if [[ $SUBVERSION == 1 ]];then
@@ -184,8 +184,8 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                     svn ci -m "updated gentoo version" &>/dev/null
                 else
                     mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
-                fi;
-                sed -i "s/media-libs\/libmp3splt-.*\"/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION\"/" ./$PROGRAM-$VERSION.ebuild;
+                fi
+                sed -i "s/media-libs\/libmp3splt-.*\"/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION\"/" ./$PROGRAM-$VERSION.ebuild
                 #slackware description
                 cd ../../../slackware
                 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
@@ -197,11 +197,11 @@ AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac;
                 ;;
         esac
     else
-        echo "unknown program";
-        exit 1;
-    fi;
+        echo "unknown program"
+        exit 1
+    fi
     
-    echo "Finished setting up $PROGRAM for version $VERSION with libmp3splt version $LIBMP3SPLT_VERSION";
+    echo "Finished setting up $PROGRAM for version $VERSION with libmp3splt version $LIBMP3SPLT_VERSION"
 }
 ################## end update_version function ############
 
@@ -210,14 +210,14 @@ DATE_START=`date`
 echo
 echo "Updating versions..."
 echo
-sleep 2;
+sleep 2
 
 #we update versions
 update_version "libmp3splt" $LIBMP3SPLT_VERSION $LIBMP3SPLT_VERSION
 update_version "mp3splt-gtk" $MP3SPLT_GTK_VERSION $LIBMP3SPLT_VERSION
 update_version "mp3splt" $MP3SPLT_VERSION $LIBMP3SPLT_VERSION
 
-cd $PROJECT_DIR;
+cd $PROJECT_DIR
 ################## end update versions ############
 
 #puts .sarge or .etch version
@@ -229,7 +229,7 @@ function put_debian_version()
     sed -i "1,4s/mp3splt-gtk (\(.*\))/mp3splt-gtk (\1.$1)/" mp3splt-gtk/debian/changelog
 }
 
-#cleans .sarge or .etch;
+#cleans .sarge or .etch
 #$1=.sarge or $1=.etch
 function clean_debian_version()
 {
@@ -246,12 +246,12 @@ function make_debian_flavor()
     echo
     echo "Creating $1 $2 packages..."
     echo
-    sleep 2;
+    sleep 2
     
     put_debian_version "$2"
     dchroot -d -c $1_$2 "export LC_ALL=\"C\" && make debian_packages " || exit 1
     clean_debian_version "$2"
-    cd $PROJECT_DIR;
+    cd $PROJECT_DIR
 }
 
 ############# source packages ################
@@ -259,7 +259,7 @@ if [[ $ARCH = "i386" ]];then
     echo
     echo "Creating source distribution..."
     echo
-    sleep 2;
+    sleep 2
     
     make source_packages
 fi
@@ -269,7 +269,7 @@ fi
 echo
 echo "Creating $ARCH debian packages..."
 echo
-sleep 2;
+sleep 2
 
 put_debian_version "etch"
 make debian_packages || exit 1
@@ -284,7 +284,7 @@ cd $PROJECT_DIR
 echo
 echo "Creating $ARCH ubuntu packages..."
 echo
-sleep 2;
+sleep 2
 
 make_debian_flavor "ubuntu" "breezy"
 make_debian_flavor "ubuntu" "dapper"
@@ -296,9 +296,9 @@ cd $PROJECT_DIR
 echo
 echo "Creating $ARCH gnu/linux static builds..."
 echo
-sleep 2;
+sleep 2
 
-make static_packages
+make static_packages || exit 1
 cd $PROJECT_DIR
 ############# end gnu/linux static build #####
 
@@ -306,9 +306,9 @@ cd $PROJECT_DIR
 echo
 echo "Creating $ARCH dynamic gnu/linux builds..."
 echo
-sleep 2;
+sleep 2
 
-make dynamic_packages
+make dynamic_packages || exit 1
 cd $PROJECT_DIR
 ############# end gnu/linux dynamic build #####
 
@@ -316,30 +316,30 @@ cd $PROJECT_DIR
 echo
 echo "Creating gentoo ebuilds..."
 echo
-sleep 2;
+sleep 2
 
-make gentoo_ebuilds
-cd $PROJECT_DIR;
+make gentoo_ebuilds || exit 1
+cd $PROJECT_DIR
 ############# end gentoo ebuilds ################
-echo "end";
-exit 0;
 
 ############# windows installers ################
 echo
 echo "Creating windows installers..."
 echo
-sleep 2;
+sleep 2
 
 #we do the windows executables
-./crosscompile_win32.sh || exit 1
+make windows_cross_installers || exit 1
 cd $PROJECT_DIR
 ############# end windows installers ################
+echo "end"
+exit 0
 
 ############# RPM packages creation ################
 echo
 echo "Creating RPMs..."
 echo
-sleep 2;
+sleep 2
 
 RPM_TEMP=/tmp/rpm_temp
 
@@ -393,7 +393,7 @@ cd $PROJECT_DIR
 echo
 echo "Creating archlinux packages..."
 echo
-sleep 2;
+sleep 2
 
 #libmp3splt
 cd libmp3splt
@@ -411,7 +411,7 @@ LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib"
 ./autogen.sh && ./configure && make dist || exit 1
 mv mp3splt*.tar.gz ./arch || exit 1
 cd arch
-dchroot -d -c arch "makepkg -d -c;" || exit 1
+dchroot -d -c arch "makepkg -d -c" || exit 1
 mv mp3splt*pkg.tar.gz ../..
 rm -rf ./mp3splt*.tar.gz
 
@@ -420,7 +420,7 @@ cd ../../mp3splt-gtk
 ./autogen.sh && ./configure && make dist || exit 1
 mv mp3splt-gtk*.tar.gz ./arch || exit 1
 cd arch
-dchroot -d -c arch "makepkg -d -c;" || exit 1
+dchroot -d -c arch "makepkg -d -c" || exit 1
 mv mp3splt-gtk*pkg.tar.gz ../..
 rm -rf ./mp3splt-gtk*.tar.gz
 
@@ -457,11 +457,11 @@ cd $PROJECT_DIR
 echo
 echo "Creating slackware packages..."
 echo
-sleep 2;
+sleep 2
 
-USER_ID=`id -u`;
-USER_GROUP=`id -g`;
-SLACK_TEMP=/tmp/slack_temp;
+USER_ID=`id -u`
+USER_GROUP=`id -g`
+SLACK_TEMP=/tmp/slack_temp
 
 export PATH=$PATH:/sbin && \
 dchroot -d -c slackware "\
@@ -506,19 +506,19 @@ mv $SLACK_TEMP/mp3splt/mp3splt*.tgz $PROJECT_DIR;\
 mv $SLACK_TEMP/libmp3splt/libmp3splt*.tgz $PROJECT_DIR;\
 mv $SLACK_TEMP/mp3splt-gtk/mp3splt-gtk*.tgz $PROJECT_DIR;\
 chown $USER_ID:$USER_GROUP $PROJECT_DIR*.tgz;\
-rm -rf $SLACK_TEMP;'" || exit 1
-cd $PROJECT_DIR;
+rm -rf $SLACK_TEMP'" || exit 1
+cd $PROJECT_DIR
 ############# end slackware packages #####
 
 ############# finish packaging #####
 echo
 echo "Finishing packaging..."
 echo
-sleep 2;
+sleep 2
 
 #copy packages to the new directory
 #the new release directory
-RELEASE_DIR=release_$LIBMP3SPLT_VERSION;
+RELEASE_DIR=release_$LIBMP3SPLT_VERSION
 
 mkdir -p $RELEASE_DIR
 rm -rf $RELEASE_DIR/*
@@ -562,7 +562,7 @@ if [[ $UPLOAD_TO_SOURCEFORGE == 1 ]]; then
     echo
     echo "Uploading files to sourceforge.net..."
     echo
-    sleep 2;
+    sleep 2
     for a in ls $DIST_VERSION; do
         lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous,\
 upload.sourceforge.net || exit 1
