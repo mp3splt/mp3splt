@@ -16,9 +16,6 @@ lib/libmp3splt.a \
 lib/libmp3splt.la \
 lib/libmp3splt.so.0.0)
 
-#if we modify the subversion repository (the ebuild needs renaming)
-SUBVERSION=${SUBVERSION:=0}
-
 ################# end variables to set ############
 
 if [[ $1 != "quiet" ]];then

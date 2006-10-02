@@ -1,11 +1,13 @@
-libmp3splt (0.4_rc1) unstable; urgency=low
+libmp3splt (0.4_rc1.sarge) unstable; urgency=low
 
   * version 0.4_rc1
+  * version 0.4_rc1
+  * version 0.4_rc1
 
- -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Sun,  1 Oct 2006 19:27:50 +0200
+ -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Mon,  2 Oct 2006 20:56:47 +0200
 
 libmp3splt (0.3.1) testing; urgency=low
     
     * debian package
   
- -- Munteanu Alexandru <io_alex_2002@yahoo.fr>  Mon,  27 Feb 2006 19:39:00 -0400
+ -- Munteanu Alexandru <io_alex_2002@yahoo.fr>  Mon,  27 Feb 2006 19:39:00 +0200

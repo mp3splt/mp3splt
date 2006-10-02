@@ -30,10 +30,6 @@ sed -i "s/AC_INIT($PROGRAM, .*,/\
 AC_INIT($PROGRAM, $VERSION,/" ./configure.ac
 sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
 AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac    
-#rpm global Version
-sed -i "s/Version: .*/Version: $VERSION/" ./rpm/SPECS/$PROGRAM.spec
-#arch global version
-sed -i "s/pkgver=.*/pkgver=$VERSION/" ./arch/PKGBUILD
 
 #current date, we need it
 DATE=$(date +%d\\/%m\\/%y)
@@ -58,23 +54,10 @@ sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
 #./src/main_win.c:  g_snprintf(b3, 100, "-release of 27/02/06-\n%s libmp3splt...
 sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/main_win.c
 sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_win.c
-#update gentoo ebuild
-cd gentoo/media-sound/$PROGRAM
-if [[ $SUBVERSION == 1 ]];then
-    svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
-    svn ci -m "updated gentoo version" &>/dev/null
-else
-    mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
-fi
-sed -i "s/media-libs\/libmp3splt-.*\"/media-libs\/libmp3splt-$LIBMP3SPLT_VERSION\"/" ./$PROGRAM-$VERSION.ebuild
+
 #slackware description
-cd ../../../slackware
+cd ./slackware
 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc
-cd ..
-#rpm libmp3splt Requires
-sed -i "s/libmp3splt = .*, b/libmp3splt = $LIBMP3SPLT_VERSION, b/" ./rpm/SPECS/$PROGRAM.spec
-#arch libmp3splt depends
-sed -i "s/libmp3splt=.*'/libmp3splt=${LIBMP3SPLT_VERSION}'/" ./arch/PKGBUILD
 
 echo "Finished setting up $PROGRAM to version $VERSION with\
  libmp3splt version $LIBMP3SPLT_VERSION."

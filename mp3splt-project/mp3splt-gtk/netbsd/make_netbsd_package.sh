@@ -68,3 +68,32 @@ for doc in "${MP3SPLT_GTK_DOC_FILES[@]}";do
 done
 
 echo "@dirrm share/doc/mp3splt-gtk" >> PLIST
+
+cd ..
+
+#we set the flags
+export CFLAGS="-I/usr/pkg/include"
+export LDFLAGS="-L/usr/pkg/lib"
+
+#we create the directory
+mkdir -p /usr/pkgsrc/audio/mp3splt-gtk
+#we remove possible remained files
+rm -rf /usr/pkgsrc/audio/mp3splt-gtk/*
+rm -f /usr/pkgsrc/packages/All/mp3splt-gtk*nbsd*.tgz
+#copy netbsd files
+cp ./netbsd/* /usr/pkgsrc/audio/mp3splt-gtk/
+#we make the distribution file if we don't have it
+if [[ ! -e ../mp3splt-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
+    ./make_source_package.sh
+fi &&\
+mv ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/pkgsrc/distfiles
+#remove possible installed package
+pkg_delete mp3splt-gtk-nbsd
+
+#package creation
+cd /usr/pkgsrc/audio/mp3splt-gtk && bmake mdi && bmake package &&\
+bmake deinstall && cd - &&\
+mv /usr/pkgsrc/packages/All/mp3splt-gtk*nbsd*.tgz ../
+
+#uninstall libmp3splt
+cd /usr/pkgsrc/audio/libmp3splt && bmake deinstall

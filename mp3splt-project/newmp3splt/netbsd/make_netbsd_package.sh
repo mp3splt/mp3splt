@@ -64,3 +64,29 @@ for doc in "${MP3SPLT_DOC_FILES[@]}";do
 done
 
 echo "@dirrm share/doc/mp3splt" >> PLIST
+
+cd ..
+
+#we set the flags
+export CFLAGS="-I/usr/pkg/include"
+export LDFLAGS="-L/usr/pkg/lib"
+
+#we create the directory
+mkdir -p /usr/pkgsrc/audio/mp3splt
+#we remove possible remained files
+rm -rf /usr/pkgsrc/audio/mp3splt/*
+rm -f /usr/pkgsrc/packages/All/mp3splt*nbsd*.tgz
+#copy netbsd files
+cp ./netbsd/* /usr/pkgsrc/audio/mp3splt/
+#we make the distribution file if we don't have it
+if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
+    ./make_source_package.sh
+fi &&\
+mv ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles
+#remove possible installed package
+pkg_delete mp3splt-nbsd
+
+#package creation
+cd /usr/pkgsrc/audio/mp3splt && bmake mdi && bmake package &&\
+bmake deinstall && cd -
+mv /usr/pkgsrc/packages/All/mp3splt*nbsd*.tgz ../

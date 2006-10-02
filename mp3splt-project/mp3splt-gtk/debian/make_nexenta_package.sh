@@ -12,6 +12,8 @@ echo
 echo $'Package :\tnexenta'
 echo
 
+./debian/generate_debian_files.sh
+
 TEMP_DIR=/tmp/temp
 
 #we set necessary flags

@@ -11,6 +11,7 @@ help:
 	@echo "make root_uninstall : uninstalls the programs as root (must be root)"
 	@echo
 	@echo "make source_packages : generate source packages"
+	@echo
 	@echo "make debian_packages : generate debian packages"
 	@echo "make gentoo_ebuilds : generate gentoo ebuilds"
 	@echo "make rpm_packages : generate rpm packages"
@@ -19,9 +20,16 @@ help:
 	@echo "make slackware_fakeroot_packages : generate slackware packages by using fakeroot (should be root)"
 	@echo "make static_packages : generates static packages"
 	@echo "make dynamic_packages : generates dynamic packages"
+	@echo
 	@echo "make nexenta_packages : generates nexenta gnu/opensolaris packages"
-	@echo "make windows_cross_installers : generates windows installers with a cross compilation"
+	@echo
+	@echo "make openbsd_packages : generates openbsd packages (must be root)"
+	@echo "make netbsd_packages : generates netbsd packages (must be root)"
+	@echo "make freebsd_packages : generates freebsd packages (must be root)"
+	@echo
 	@echo "make debian_hurd_packages : generates debian_hurd packages (must be root)"
+	@echo 
+	@echo "make windows_cross_installers : generates windows installers with a cross compilation"
 	@echo
 
 #source distribution creation
@@ -101,6 +109,26 @@ debian_hurd_packages: clean_tmp
 	./newmp3splt/debian/make_debian_hurd_package.sh
 	./mp3splt-gtk/debian/make_debian_hurd_package.sh
 
+#openbsd packages
+openbsd_packages:
+	./libmp3splt/openbsd/make_openbsd_package.sh
+	./newmp3splt/openbsd/make_openbsd_package.sh
+	./mp3splt-gtk/openbsd/make_openbsd_package.sh
+	cd ../../libmp3splt && make uninstall
+	rm -rf /usr/local/share/doc/libmp3splt
+
+#netbsd packages
+netbsd_packages:
+	./libmp3splt/netbsd/make_netbsd_package.sh
+	./newmp3splt/netbsd/make_netbsd_package.sh
+	./mp3splt-gtk/netbsd/make_netbsd_package.sh
+
+#generate freebsd packages
+freebsd_packages:
+	./libmp3splt/freebsd/make_freebsd_package.sh
+	./newmp3splt/freebsd/make_freebsd_package.sh
+	./mp3splt-gtk/freebsd/make_freebsd_package.sh
+
 #installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
 root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
 root_libmp3splt:
@@ -139,95 +167,3 @@ distclean:
 	cd libmp3splt && make distclean && cd ..
 	cd newmp3splt && make distclean && cd ..
 	cd mp3splt-gtk && make distclean && cd ..
-
-#openbsd install
-openbsd_root_install:
-	export AUTOMAKE_VERSION=1.9 \
-export AUTOCONF_VERSION=2.59 \
-export CFLAGS="-I/usr/include -I/usr/local/include" \
-export LDFLAGS="-L/usr/lib -L/usr/local/lib" \
-&& cd libmp3splt && ./autogen.sh && ./configure \
-&& make clean && make && make install &&\
-cd ../newmp3splt && ./autogen.sh && ./configure \
-&& make clean && make && make install &&\
-cd ../mp3splt-gtk && ./autogen.sh && \
-./configure --enable-bmp && make && make clean && make install
-
-#openbsd uninstall
-openbsd_root_uninstall:
-	cd libmp3splt && make uninstall\
-&& cd ../newmp3splt && make uninstall \
-&& cd ../mp3splt-gtk && make uninstall
-
-#open bsd packages
-openbsd_packages:
-	cd libmp3splt/openbsd && ./do_pkg.sh &&\
-cd ../../newmp3splt/openbsd && ./do_pkg.sh &&\
-cd ../../mp3splt-gtk/openbsd && ./do_pkg.sh &&\
-cd ../../libmp3splt && make uninstall && \
-rm -rf /usr/local/share/doc/libmp3splt
-
-#netbsd packages
-netbsd_packages:
-	export CFLAGS="-I/usr/pkg/include" \
-export LDFLAGS="-L/usr/pkg/lib";\
-rm -f /root/progs_src/mp3splt/mp3splt-project/*mp3splt*nbsd*.tgz;\
-rm -f /usr/pkgsrc/packages/All/*mp3splt*nbsd*.tgz;\
-mkdir -p /usr/pkgsrc/audio/libmp3splt;\
-mkdir -p /usr/pkgsrc/audio/mp3splt;\
-mkdir -p /usr/pkgsrc/audio/mp3splt-gtk;\
-rm -rf /usr/pkgsrc/audio/libmp3splt/*;\
-rm -rf /usr/pkgsrc/audio/mp3splt/*;\
-rm -rf /usr/pkgsrc/audio/mp3splt-gtk/*;\
-cp -r /root/progs_src/mp3splt/mp3splt-project/libmp3splt/netbsd/* /usr/pkgsrc/audio/libmp3splt/;\
-cp -r /root/progs_src/mp3splt/mp3splt-project/newmp3splt/netbsd/* /usr/pkgsrc/audio/mp3splt/;\
-cp -r /root/progs_src/mp3splt/mp3splt-project/mp3splt-gtk/netbsd/* /usr/pkgsrc/audio/mp3splt-gtk/;\
-cd /root/progs_src/mp3splt/mp3splt-project/libmp3splt;\
-./autogen.sh && ./configure && make dist &&\
-mv libmp3splt*.tar.gz /usr/pkgsrc/distfiles/;\
-pkg_delete mp3splt-gtk-nbsd;\
-pkg_delete mp3splt-nbsd;\
-pkg_delete libmp3splt-nbsd;\
-cd /usr/pkgsrc/audio/libmp3splt && bmake mdi && bmake package &&\
-cd /root/progs_src/mp3splt/mp3splt-project/newmp3splt && ./autogen.sh && ./configure && make dist &&\
-mv mp3splt*.tar.gz /usr/pkgsrc/distfiles/ &&\
-cd ../mp3splt-gtk && ./autogen.sh && ./configure && make dist &&\
-mv mp3splt-gtk*.tar.gz /usr/pkgsrc/distfiles/ &&\
-cd /usr/pkgsrc/audio/mp3splt && bmake mdi && bmake package &&\
-bmake deinstall && cd /usr/pkgsrc/audio/mp3splt-gtk && bmake mdi &&\
-bmake package && bmake deinstall && cd /usr/pkgsrc/audio/libmp3splt &&\
-bmake deinstall &&\
-mv /usr/pkgsrc/packages/All/*mp3splt*nbsd*.tgz /root/progs_src/mp3splt/mp3splt-project
-
-freebsd_packages:
-	export ACLOCAL_FLAGS="-I /usr/local/share/aclocal" \
-export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include" \
-export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib";\
-cd /root/progs_src/mp3splt-project/libmp3splt &&\
-pkg_delete mp3splt-gtk-fbsd;\
-pkg_delete mp3splt-fbsd;\
-pkg_delete libmp3splt-fbsd;\
-./autogen.sh && ./configure && make dist &&\
-mv libmp3splt*.tar.gz /usr/ports/distfiles/ &&\
-mkdir -p /usr/ports/audio/libmp3splt &&\
-rm -rf /usr/ports/audio/libmp3splt/* &&\
-cp -r /root/progs_src/mp3splt-project/libmp3splt/freebsd/* /usr/ports/audio/libmp3splt &&\
-cd /usr/ports/audio/libmp3splt && make makesum && make && make install &&\
-make package && mv *fbsd*.tbz /root/progs_src/mp3splt-project/ &&\
-cd /root/progs_src/mp3splt-project/newmp3splt &&\
-./autogen.sh && ./configure && make dist &&\
-mv mp3splt*.tar.gz /usr/ports/distfiles &&\
-mkdir -p /usr/ports/audio/mp3splt &&\
-rm -rf /usr/ports/audio/mp3splt/* &&\
-cp -r /root/progs_src/mp3splt-project/newmp3splt/freebsd/* /usr/ports/audio/mp3splt &&\
-cd /usr/ports/audio/mp3splt && make makesum && make && make install && make package &&\
-mv *fbsd*.tbz /root/progs_src/mp3splt-project/ && make deinstall &&\
-cd /root/progs_src/mp3splt-project/mp3splt-gtk &&\
-./autogen.sh && ./configure && make dist &&\
-mv mp3splt-gtk*.tar.gz /usr/ports/distfiles &&\
-mkdir -p /usr/ports/audio/mp3splt-gtk &&\
-rm -rf /usr/ports/audio/mp3splt-gtk/* &&\
-cp -r /root/progs_src/mp3splt-project/mp3splt-gtk/freebsd/* /usr/ports/audio/mp3splt-gtk &&\
-cd /usr/ports/audio/mp3splt-gtk && make makesum && make && make install && make package &&\
-mv *fbsd*.tbz /root/progs_src/mp3splt-project/ && make deinstall &&\
-cd /usr/ports/audio/libmp3splt && make deinstall

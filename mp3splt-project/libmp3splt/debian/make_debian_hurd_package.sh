@@ -12,6 +12,9 @@ echo
 echo $'Package :\tdebian_hurd'
 echo
 
+#we generate the debian files
+./debian/generate_debian_files.sh
+
 #we compile
 ./autogen.sh && \
 ./configure --prefix=/usr && \

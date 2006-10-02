@@ -12,6 +12,9 @@ echo
 echo $'Package :\tnexenta'
 echo
 
+#we generate the debian files
+./debian/generate_debian_files.sh
+
 TEMP_DIR=/tmp/temp
 if [[ -d $TEMP_DIR ]];then mv $TEMP_DIR ${TEMP_DIR}_old;fi
 mkdir -p $TEMP_DIR

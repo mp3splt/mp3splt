@@ -97,4 +97,29 @@ BUILDLINK_PKGSRCDIR.libmp3splt?=	../../audio/libmp3splt
 
 BUILDLINK_DEPTH:=		\${BUILDLINK_DEPTH:S/+$//}" > buildlink3.mk
 
-#TODO : do the real compilation
+cd ..
+
+#we set the flags
+export CFLAGS="-I/usr/pkg/include"
+export LDFLAGS="-L/usr/pkg/lib"
+
+#remove possible left files
+rm -rf ../*mp3splt*nbsd*.tgz
+rm -f /usr/pkgsrc/packages/All/libmp3splt*nbsd*.tgz
+#create libmp3splt pkgsrc dir
+mkdir -p /usr/pkgsrc/audio/libmp3splt
+#erase its content
+rm -rf /usr/pkgsrc/audio/libmp3splt/*
+#copy netbsd files
+cp ./netbsd/* /usr/pkgsrc/audio/libmp3splt
+#we make the distribution file if we don't have it
+if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
+    ./make_source_package.sh
+fi &&\
+mv ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles
+#remove possible installed package
+pkg_delete libmp3splt-nbsd
+
+#package creation
+cd /usr/pkgsrc/audio/libmp3splt && bmake mdi && bmake package &&\
+cd - && mv /usr/pkgsrc/packages/All/*libmp3splt*nbsd*.tgz ../

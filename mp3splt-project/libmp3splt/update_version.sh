@@ -17,7 +17,7 @@ PROGRAM="libmp3splt"
 #debian changelog
 if ! debchange --distribution "testing" -v $VERSION "version "$VERSION 2>/dev/null;then
     rm -f debian/.changelog.dch.swp
-    debchange -r "version "$VERSION
+    debchange -a "version "$VERSION
 fi
 
 #README
@@ -30,10 +30,6 @@ sed -i "s/AC_INIT($PROGRAM, .*,/\
 AC_INIT($PROGRAM, $VERSION,/" ./configure.ac
 sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
 AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac    
-#rpm global Version
-sed -i "s/Version: .*/Version: $VERSION/" ./rpm/SPECS/$PROGRAM.spec
-#arch global version
-sed -i "s/pkgver=.*/pkgver=$VERSION/" ./arch/PKGBUILD
 
 NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 
@@ -45,13 +41,5 @@ sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
 sed -i "s/void mp3splt_v.*/void mp3splt_v$NEW_LIBMP3SPLT_VER()/" ./src/mp3splt.c
 #./src/Doxyfile:PROJECT_NUMBER=0.3.1
 sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./src/Doxyfile
-#update gentoo ebuild
-cd gentoo/media-libs/$PROGRAM
-if [[ $SUBVERSION == 1 ]];then
-    svn mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
-    svn ci -m "updated gentoo version" &>/dev/null
-else
-    mv $PROGRAM* $PROGRAM-$VERSION.ebuild 2>/dev/null
-fi
 
 echo "Finished setting up $PROGRAM to version $VERSION."

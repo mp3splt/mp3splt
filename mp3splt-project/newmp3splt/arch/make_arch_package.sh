@@ -16,6 +16,28 @@ if [[ $ARCH = "i386" ]];then
     ARCH=i686
 fi
 
+#we generate the PKGBUILD file
+cd arch && echo "# \$Id: PKGBUILD \$
+# Packager: Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>
+pkgname=mp3splt
+pkgver=${MP3SPLT_VERSION}
+pkgrel=1
+pkgdesc=\"Mp3splt is the command line program from the mp3splt-project, to split mp3 and ogg without decoding\"
+arch=(i686 x86_64)
+url=\"http://mp3splt.sourceforge.net\"
+groups=root
+depends=('libmp3splt=${LIBMP3SPLT_VERSION}')
+source=(\$pkgname-\$pkgver.tar.gz)
+
+build() {
+  cd \$startdir/src/\$pkgname-\$pkgver
+  ./configure --prefix=/usr
+  make || return 1
+  mkdir -p \$startdir/pkg/usr/share/\$pkgname/doc
+  cp ${MP3SPLT_DOC_FILES[@]} \$startdir/pkg/usr/share/\$pkgname/doc/
+  make prefix=\$startdir/pkg/usr install
+}" > PKGBUILD && cd ..
+
 #we set the flags to find libmp3splt
 export CFLAGS="-I../libmp3splt/arch/pkg/usr/include $CFLAGS"
 export LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib $LDFLAGS"

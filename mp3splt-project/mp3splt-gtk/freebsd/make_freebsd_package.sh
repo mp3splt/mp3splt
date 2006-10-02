@@ -75,3 +75,30 @@ for doc in "${MP3SPLT_GTK_DOC_FILES[@]}";do
 done
 
 echo "@dirrm share/doc/mp3splt-gtk" >> pkg-plist
+
+cd ..
+
+#we set the flags
+export ACLOCAL_FLAGS="-I /usr/local/share/aclocal"
+export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include"
+export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
+
+#remove old package
+pkg_delete mp3splt-gtk-fbsd
+#make dist if necessary
+if [[ ! -e ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
+    ./make_source_package.sh
+fi &&\
+mv ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/ports/distfiles/
+#create ports mp3splt-gtk directory
+mkdir -p /usr/ports/audio/mp3splt-gtk
+rm -rf /usr/ports/audio/mp3splt-gtk/*
+cp ./freebsd/* /usr/ports/audio/mp3splt-gtk
+#we create the package
+cd /usr/ports/audio/mp3splt-gtk && make makesum && make && make install\
+&& make package && cd - &&\
+mv /usr/ports/audio/mp3splt-gtk/*fbsd*.tbz ../ &&\
+#uninstall some packages
+cd /usr/ports/audio/mp3splt-gtk && make deinstall && cd - &&\
+#uninstall libmp3splt
+cd /usr/ports/audio/libmp3splt && make deinstall && cd -

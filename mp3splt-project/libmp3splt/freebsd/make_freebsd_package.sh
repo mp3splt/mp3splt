@@ -80,5 +80,25 @@ done
 echo "@dirrm include/libmp3splt" >> pkg-plist
 echo "@dirrm share/doc/libmp3splt" >> pkg-plist
 
-#TODO : do the real compilation
+cd ..
 
+#we set the flags
+export ACLOCAL_FLAGS="-I /usr/local/share/aclocal"
+export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include"
+export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
+
+#remove old package
+pkg_delete libmp3splt-fbsd
+#make dist if necessary
+if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
+    ./make_source_package.sh
+fi &&\
+mv ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz /usr/ports/distfiles/
+#create ports libmp3splt directory
+mkdir -p /usr/ports/audio/libmp3splt
+rm -rf /usr/ports/audio/libmp3splt/*
+cp ./freebsd/* /usr/ports/audio/libmp3splt
+#we create the package
+cd /usr/ports/audio/libmp3splt && make makesum && make && make install &&\
+make package && cd - &&\
+mv /usr/ports/audio/libmp3splt/*fbsd*.tbz ../

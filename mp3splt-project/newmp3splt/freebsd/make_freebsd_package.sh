@@ -74,3 +74,28 @@ for doc in "${MP3SPLT_DOC_FILES[@]}";do
 done
 
 echo "@dirrm share/doc/mp3splt" >> pkg-plist
+
+cd ..
+
+#we set the flags
+export ACLOCAL_FLAGS="-I /usr/local/share/aclocal"
+export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include"
+export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
+
+#remove old package
+pkg_delete mp3splt-fbsd
+#make dist if necessary
+if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
+    ./make_source_package.sh
+fi &&\
+mv ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/ports/distfiles/
+#create ports mp3splt directory
+mkdir -p /usr/ports/audio/mp3splt
+rm -rf /usr/ports/audio/mp3splt/*
+cp ./freebsd/* /usr/ports/audio/mp3splt &&\
+#we create the package
+cd /usr/ports/audio/mp3splt && make makesum && make && make install\
+&& make package && cd - &&\
+mv /usr/ports/audio/mp3splt/*fbsd*.tbz ../ &&\
+#we uninstall the installed package
+cd /usr/ports/audio/mp3splt && make deinstall && cd -

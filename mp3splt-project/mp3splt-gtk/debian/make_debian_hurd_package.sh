@@ -12,6 +12,8 @@ echo
 echo $'Package :\tdebian_hurd'
 echo
 
+./debian/generate_debian_files.sh
+
 #set necessary flags
 export CFLAGS="-I/tmp/temp/usr/include $CFLAGS"
 export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS"
