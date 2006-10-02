@@ -57,8 +57,8 @@ src_install() {
 
 #create the directories we need
 GENTOO_TEMP=/tmp/gentoo_temp
-if [[ -d $GENTOO_TEMP ]];then mv $GENTOO_TEMP ${GENTOO_TEMP}_old;fi
 mkdir -p $GENTOO_TEMP
+rm -rf $GENTOO_TEMP/*
 
 #the ebuild
 cp -a gentoo/* $GENTOO_TEMP

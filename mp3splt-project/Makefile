@@ -160,6 +160,8 @@ mv /tmp/rpm_temp /tmp/rpm_temp_old2 &>/dev/null;fi
 mv /tmp/slack_temp /tmp/slack_temp_old2 &>/dev/null;fi
 	if [[ -d /tmp/temp ]];then rm -rf /tmp/temp_old2 &&\
 mv /tmp/temp /tmp/temp_old2 &>/dev/null;fi
+	if [[ -d /tmp/gentoo_temp ]];then rm -rf /tmp/gentoo_temp2 &&\
+mv /tmp/gentoo_temp /tmp/gentoo_temp2 &>/dev/null;fi
 
 #clean the builds
 clean: distclean
