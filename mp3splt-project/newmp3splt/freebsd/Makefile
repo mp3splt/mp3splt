@@ -1,12 +1,12 @@
 # New ports collection makefile for: mp3splt
-# Date created:	the date
+# Date created:	Mon Oct  2 18:39:44 CEST 2006
 # Whom:		Munteanu Alexandru Ionut
 #
 # $FreeBSD$
 #
 
 PORTNAME=	mp3splt
-PORTVERSION=	2.2.1
+PORTVERSION=	2.2
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 MASTER_SITE_SUBDIR=	mp3splt

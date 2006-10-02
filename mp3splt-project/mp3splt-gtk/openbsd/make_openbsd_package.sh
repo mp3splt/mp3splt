@@ -1,22 +1,27 @@
 #!/usr/local/bin/bash
 
 #this file creates a openbsd package for mp3splt-gtk
-#it must be run from the openbsd directory : ./do_pkg.sh
-###########modify variables###########
 
-files=(bin/mp3splt-gtk \
-share/pixmaps/mp3splt-gtk.png \
-share/pixmaps/mp3splt-gtk_ico.png \
-share/locale/fr/LC_MESSAGES/mp3splt-gtk.mo)
-
-doc_files=(AUTHORS COPYING ChangeLog INSTALL NEWS README TODO);
+################# variables to set ############
 
 export AUTOMAKE_VERSION="1.9";
 export AUTOCONF_VERSION="2.59";
 
-###########end modify variables###########
+################# end variables to set ############
 
-VERSION=0.4_rc1
+#we move in the current script directory
+script_dir=$(readlink -f $0)
+script_dir=${script_dir%\/*.sh}
+PROGRAM_DIR=$script_dir
+cd $PROGRAM_DIR
+
+. ../include_variables.sh
+
+echo
+echo $'Package :\topenbsd'
+echo
+
+VERSION=$MP3SPLT_GTK_VERSION
 NAME="mp3splt-gtk"
 
 #we compile and install the library
@@ -29,16 +34,16 @@ cd openbsd
 #we write the file for the package
 echo $"@comment Mp3splt-gtk is a GTK2 gui that uses libmp3splt to split mp3 and ogg without deconding
 @comment OpenBSD package by Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>
-@name $NAME-obsd-$VERSION
-@arch i386
-@depend audio/libmp3splt:libmp3splt-obsd-*:libmp3splt-obsd-0.4_rc1
+@name ${NAME}-obsd-${VERSION}
+@arch ${ARCH}
+@depend audio/libmp3splt:libmp3splt-obsd-*:libmp3splt-obsd-${LIBMP3SPLT_VERSION}
 @depend audio/bmp:bmp-*:bmp-*
 @depend devel/glib2:glib2-*:glib2-*
 @depend x11/gtk+2:gtk+2-*:gtk+2-*" > +CONTENTS;
 
 echo "@cwd /usr/local" >> +CONTENTS;
 #we put the dist files
-for a in "${files[@]}";
+for a in "${MP3SPLT_GTK_FILES[@]}";
 do
   echo "$a" >> +CONTENTS;
   md5=`md5 /usr/local/$a | cut -d" " -f 4`;
@@ -50,10 +55,10 @@ done;
 #we put the documentation files
 mkdir -p /usr/local/share/doc/$NAME
 cd ..
-cp "${doc_files[@]}" /usr/local/share/doc/$NAME
+cp "${MP3SPLT_GTK_DOC_FILES[@]}" /usr/local/share/doc/$NAME
 chown -R root:wheel /usr/local/share/doc/$NAME
 cd openbsd
-for a in "${doc_files[@]}";
+for a in "${MP3SPLT_GTK_DOC_FILES[@]}";
 do
   echo "share/doc/$NAME/$a" >> +CONTENTS;
   md5=`md5 /usr/local/share/doc/$NAME/$a | cut -d" " -f 4`;

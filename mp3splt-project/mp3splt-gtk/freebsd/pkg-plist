@@ -1,7 +1,7 @@
 @comment $FreeBSD$
 bin/mp3splt-gtk
-share/pixmaps/mp3splt-gtk_ico.png
 share/pixmaps/mp3splt-gtk.png
+share/pixmaps/mp3splt-gtk_ico.png
 share/locale/fr/LC_MESSAGES/mp3splt-gtk.mo
 share/doc/mp3splt-gtk/AUTHORS
 share/doc/mp3splt-gtk/ChangeLog

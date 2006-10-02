@@ -2,11 +2,11 @@
 # Date created:	the date
 # Whom:		Munteanu Alexandru Ionut
 #
-# $FreeBSD$
+# $
 #
 
 PORTNAME=	libmp3splt
-PORTVERSION=	0.4.1
+PORTVERSION=	0.4
 CATEGORIES=	audio devel
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 MASTER_SITE_SUBDIR=	mp3splt

@@ -39,4 +39,4 @@ pre-install:
 .include "../../audio/libvorbis/buildlink3.mk"
 .include "../../audio/libid3tag/buildlink3.mk"
 
-.include "../../mk/bsd.pkg.mk"
+.include "../../mk/bsd.pkg.mk

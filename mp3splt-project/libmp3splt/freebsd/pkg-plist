@@ -1,8 +1,8 @@
 @comment $FreeBSD$
 include/libmp3splt/mp3splt.h
 include/libmp3splt/mp3splt_types.h
-lib/libmp3splt.la
 lib/libmp3splt.a
+lib/libmp3splt.la
 lib/libmp3splt.so
 lib/libmp3splt.so.0
 share/doc/libmp3splt/AUTHORS
