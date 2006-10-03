@@ -18,7 +18,7 @@ echo
 echo "# \$NetBSD\$
 
 DISTNAME=       mp3splt-${MP3SPLT_VERSION}
-PKGNAME=        mp3splt-nbsd-${MP3SPLT_VERSION}
+PKGNAME=        mp3splt_nbsd_$ARCH-${MP3SPLT_VERSION}
 CATEGORIES=     audio
 MASTER_SITES=   \${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 
@@ -30,7 +30,7 @@ PKG_INSTALLATION_TYPES= overwrite pkgviews
 
 GNU_CONFIGURE=          YES
 
-DEPENDS+=       libmp3splt-nbsd-${LIBMP3SPLT_VERSION}:../../audio/libmp3splt
+DEPENDS+=       libmp3splt_nbsd_$ARCH-${LIBMP3SPLT_VERSION}:../../audio/libmp3splt
 
 OBJMACHINE=     YES
 DOC_DIR=\${PREFIX}/share/doc/mp3splt/
@@ -84,7 +84,7 @@ if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
 fi &&\
 mv ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles
 #remove possible installed package
-pkg_delete mp3splt-nbsd
+pkg_delete mp3splt_nbsd_$ARCH
 
 #package creation
 cd /usr/pkgsrc/audio/mp3splt && bmake mdi && bmake package &&\

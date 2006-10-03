@@ -34,9 +34,9 @@ cd openbsd
 #we write the file for the package
 echo $"@comment Mp3splt is the command line program from the mp3splt-project, to split mp3 and ogg without decoding
 @comment OpenBSD package by Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>
-@name ${NAME}-obsd-${VERSION}
+@name ${NAME}_obsd_$ARCH-${VERSION}
 @arch ${ARCH}
-@depend audio/libmp3splt:libmp3splt-obsd-*:libmp3splt-obsd-${LIBMP3SPLT_VERSION}" > +CONTENTS;
+@depend audio/libmp3splt:libmp3splt_obsd_$ARCH-*:libmp3splt_obsd_$ARCH-${LIBMP3SPLT_VERSION}" > +CONTENTS;
 
 echo "@cwd /usr/local" >> +CONTENTS;
 #we put the dist files
@@ -88,4 +88,4 @@ cd .. && make uninstall && rm -rf /usr/local/share/doc/$NAME
 cd openbsd
 
 #we copy the results
-mv $NAME-obsd*.tgz ../..
+mv ${NAME}_obsd_*.tgz ../..

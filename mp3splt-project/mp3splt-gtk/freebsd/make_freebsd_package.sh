@@ -14,7 +14,9 @@ echo
 echo $'Package :\tfreebsd'
 echo
 
-NEW_MP3SPLT_GTK_VERSION=${MP3SPLT_GTK_VERSION%_rc*}
+#we change 0.4_rc1 to 0.4.r1
+TEMP_MP3SPLT_GTK_VERSION=${MP3SPLT_GTK_VERSION/_/.}
+NEW_MP3SPLT_GTK_VERSION=${TEMP_MP3SPLT_GTK_VERSION/rc/r}
 
 DATE=`date`
 #we generate the Makefile
@@ -30,7 +32,7 @@ PORTVERSION=    ${NEW_MP3SPLT_GTK_VERSION}
 CATEGORIES=     audio
 MASTER_SITES=   \${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 MASTER_SITE_SUBDIR=     mp3splt
-PKGNAMESUFFIX=  -fbsd
+PKGNAMESUFFIX=  _fbsd_$ARCH
 DISTNAME=       \${PORTNAME}-${MP3SPLT_GTK_VERSION}
 
 MAINTAINER=     io_alex_2002@yahoo.fr
@@ -84,7 +86,7 @@ export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include"
 export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
 
 #remove old package
-pkg_delete mp3splt-gtk-fbsd
+pkg_delete mp3splt-gtk_fbsd_$ARCH
 #make dist if necessary
 if [[ ! -e ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
     ./make_source_package.sh

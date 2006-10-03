@@ -14,7 +14,9 @@ echo
 echo $'Package :\tfreebsd'
 echo
 
-NEW_MP3SPLT_VERSION=${MP3SPLT_VERSION%_rc*}
+#we change 2.2_rc1 to 2.2.r1
+TEMP_MP3SPLT_VERSION=${MP3SPLT_VERSION/_/.}
+NEW_MP3SPLT_VERSION=${TEMP_MP3SPLT_VERSION/rc/r}
 
 DATE=`date`
 #we generate the Makefile
@@ -30,7 +32,7 @@ PORTVERSION=	${NEW_MP3SPLT_VERSION}
 CATEGORIES=	audio
 MASTER_SITES=	\${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 MASTER_SITE_SUBDIR=	mp3splt
-PKGNAMESUFFIX=	-fbsd
+PKGNAMESUFFIX=	_fbsd_$ARCH
 DISTNAME=	\${PORTNAME}-${MP3SPLT_VERSION}
 
 MAINTAINER=	io_alex_2002@yahoo.fr
@@ -83,7 +85,7 @@ export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include"
 export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
 
 #remove old package
-pkg_delete mp3splt-fbsd
+pkg_delete mp3splt_fbsd_$ARCH
 #make dist if necessary
 if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
     ./make_source_package.sh

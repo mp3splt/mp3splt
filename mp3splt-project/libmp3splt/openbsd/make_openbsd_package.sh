@@ -34,7 +34,7 @@ cd openbsd
 #we write the file for the package
 echo "@comment Libmp3splt is a library created from mp3splt v2.1c to split mp3 and ogg without deconding
 @comment OpenBSD package by Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>
-@name ${NAME}-obsd-${VERSION}
+@name ${NAME}_obsd_$ARCH-${VERSION}
 @arch ${ARCH}
 @depend audio/libmad:libmad-*:libmad-*
 @depend audio/libid3tag:libid3tag-*:libid3tag-*
@@ -77,4 +77,4 @@ echo "@exec /sbin/ldconfig -m %D/lib
 echo "" > +CONTENTS;
 
 #we copy the results
-mv $NAME-obsd*.tgz ../..
+mv ${NAME}_obsd_*.tgz ../..

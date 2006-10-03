@@ -18,7 +18,7 @@ echo
 echo "# \$NetBSD\$
 
 DISTNAME= 	libmp3splt-${LIBMP3SPLT_VERSION}
-PKGNAME=	libmp3splt-nbsd-${LIBMP3SPLT_VERSION}
+PKGNAME=	libmp3splt_nbsd_$ARCH-${LIBMP3SPLT_VERSION}
 CATEGORIES= 	audio devel
 MASTER_SITES= 	\${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 
@@ -86,7 +86,7 @@ BUILDLINK_PACKAGES:=	\${BUILDLINK_PACKAGES:Nlibmp3splt}
 BUILDLINK_PACKAGES+=	libmp3splt
 
 .if \${LIBMP3SPLT_BUILDLINK3_MK} == \"+\"
-BUILDLINK_API_DEPENDS.libmp3splt+=	libmp3splt-nbsd-${LIBMP3SPLT_VERSION}
+BUILDLINK_API_DEPENDS.libmp3splt+=	libmp3splt_nbsd_$ARCH-${LIBMP3SPLT_VERSION}
 BUILDLINK_PKGSRCDIR.libmp3splt?=	../../audio/libmp3splt
 .endif
 
@@ -118,7 +118,7 @@ if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
 fi &&\
 mv ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles
 #remove possible installed package
-pkg_delete libmp3splt-nbsd
+pkg_delete libmp3splt_nbsd_$ARCH
 
 #package creation
 cd /usr/pkgsrc/audio/libmp3splt && bmake mdi && bmake package &&\

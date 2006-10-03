@@ -18,7 +18,7 @@ echo
 echo "# \$NetBSD\$
 
 DISTNAME=       mp3splt-gtk-${MP3SPLT_GTK_VERSION}
-PKGNAME=        mp3splt-gtk-nbsd-${MP3SPLT_GTK_VERSION}
+PKGNAME=        mp3splt-gtk_nbsd_$ARCH-${MP3SPLT_GTK_VERSION}
 CATEGORIES=     audio
 MASTER_SITES=   \${MASTER_SITE_SOURCEFORGE:=mp3splt/}
 
@@ -32,7 +32,7 @@ CONFIGURE_ARGS+=        --enable-bmp
 GNU_CONFIGURE=          YES
 USE_TOOLS+=             pkg-config
 
-DEPENDS+=       libmp3splt-nbsd-${LIBMP3SPLT_VERSION}:../../audio/libmp3splt
+DEPENDS+=       libmp3splt_nbsd_$ARCH-${LIBMP3SPLT_VERSION}:../../audio/libmp3splt
 DEPENDS+=       bmp-[0-9]*:../../audio/bmp
 DEPENDS+=       gtk2+>=2.6:../../x11/gtk2
 DEPENDS+=       glib2>=2.6:../../devel/glib2
@@ -88,7 +88,7 @@ if [[ ! -e ../mp3splt-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
 fi &&\
 mv ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/pkgsrc/distfiles
 #remove possible installed package
-pkg_delete mp3splt-gtk-nbsd
+pkg_delete mp3splt-gtk_nbsd_$ARCH
 
 #package creation
 cd /usr/pkgsrc/audio/mp3splt-gtk && bmake mdi && bmake package &&\
