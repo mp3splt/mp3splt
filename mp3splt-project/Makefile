@@ -114,7 +114,7 @@ openbsd_packages:
 	./libmp3splt/openbsd/make_openbsd_package.sh
 	./newmp3splt/openbsd/make_openbsd_package.sh
 	./mp3splt-gtk/openbsd/make_openbsd_package.sh
-	cd ../../libmp3splt && make uninstall
+	cd ./libmp3splt && make uninstall
 	rm -rf /usr/local/share/doc/libmp3splt
 
 #netbsd packages

@@ -27,7 +27,7 @@ NAME="mp3splt-gtk"
 #we compile and install the library
 export CFLAGS="-I/usr/include -I/usr/local/include"
 export LDFLAGS="-L/usr/lib -L/usr/local/lib"
-cd .. && ./autogen.sh && ./configure && make clean \
+cd .. && ./autogen.sh && ./configure --enable-bmp && make clean \
 && make && make install
 cd openbsd
 
