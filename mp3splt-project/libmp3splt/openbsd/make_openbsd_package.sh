@@ -73,8 +73,5 @@ echo "@exec /sbin/ldconfig -m %D/lib
 #create package
 `pkg_create -f +CONTENTS`
 
-#erase +CONTENTS
-echo "" > +CONTENTS;
-
 #we copy the results
 mv ${NAME}_obsd_*.tgz ../..

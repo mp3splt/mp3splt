@@ -73,9 +73,6 @@ echo "@exec /sbin/ldconfig -m %D/lib
 #create package
 `pkg_create -f +CONTENTS`
 
-#erase +CONTENTS
-echo "" > +CONTENTS;
-
 #we uninstall the library
 cd .. && make uninstall && rm -rf /usr/local/share/doc/$NAME
 cd openbsd
