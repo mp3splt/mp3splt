@@ -114,6 +114,7 @@ openbsd_packages:
 	./libmp3splt/openbsd/make_openbsd_package.sh
 	./newmp3splt/openbsd/make_openbsd_package.sh
 	./mp3splt-gtk/openbsd/make_openbsd_package.sh
+        #uninstall libmp3splt
 	cd ./libmp3splt && make uninstall
 	rm -rf /usr/local/share/doc/libmp3splt
 
@@ -122,12 +123,16 @@ netbsd_packages:
 	./libmp3splt/netbsd/make_netbsd_package.sh
 	./newmp3splt/netbsd/make_netbsd_package.sh
 	./mp3splt-gtk/netbsd/make_netbsd_package.sh
+        #uninstall libmp3splt
+	cd /usr/pkgsrc/audio/libmp3splt && bmake deinstall
 
 #generate freebsd packages
 freebsd_packages:
 	./libmp3splt/freebsd/make_freebsd_package.sh
 	./newmp3splt/freebsd/make_freebsd_package.sh
 	./mp3splt-gtk/freebsd/make_freebsd_package.sh
+        #uninstall libmp3splt
+	cd /usr/ports/audio/libmp3splt && make deinstall && cd -
 
 #installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
 root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
@@ -149,19 +154,20 @@ root_uninstall:
 	cd mp3splt-gtk && make uninstall
 
 #cleans the /tmp directories for a good build
+DATE=`date +-%d_%m_%Y__%H_%M_%S`
 clean_tmp:
-	if [[ -d /tmp/dynamic_tmp ]];then rm -rf /tmp/dynamic_tmp_old2 &&\
-mv /tmp/dynamic_tmp /tmp/dynamic_tmp_old2 &>/dev/null;fi
-	if [[ -d /tmp/static_tmp ]];then rm -rf /tmp/static_tmp_old2 &&\
-mv /tmp/static_tmp /tmp/static_tmp_old2 &>/dev/null;fi
-	if [[ -d /tmp/rpm_tmp ]];then rm -rf /tmp/rpm_temp_old2 &&\
-mv /tmp/rpm_temp /tmp/rpm_temp_old2 &>/dev/null;fi
-	if [[ -d /tmp/slack_temp ]];then rm -rf /tmp/slack_temp_old2 &&\
-mv /tmp/slack_temp /tmp/slack_temp_old2 &>/dev/null;fi
-	if [[ -d /tmp/temp ]];then rm -rf /tmp/temp_old2 &&\
-mv /tmp/temp /tmp/temp_old2 &>/dev/null;fi
-	if [[ -d /tmp/gentoo_temp ]];then rm -rf /tmp/gentoo_temp2 &&\
-mv /tmp/gentoo_temp /tmp/gentoo_temp2 &>/dev/null;fi
+	if [[ -e /tmp/dynamic_tmp ]];then \
+mv /tmp/dynamic_tmp /tmp/dynamic_tmp${DATE}M &>/dev/null;fi
+	if [[ -e /tmp/static_tmp ]];then \
+mv /tmp/static_tmp /tmp/static_tmp${DATE}M &>/dev/null;fi
+	if [[ -e /tmp/rpm_tmp ]];then \
+mv /tmp/rpm_temp /tmp/rpm_temp${DATE}M &>/dev/null;fi
+	if [[ -e /tmp/slack_temp ]];then \
+mv /tmp/slack_temp /tmp/slack_temp${DATE}M &>/dev/null;fi
+	if [[ -e /tmp/temp ]];then \
+mv /tmp/temp /tmp/temp${DATE}M &>/dev/null;fi
+	if [[ -e /tmp/gentoo_temp ]];then \
+mv /tmp/gentoo_temp /tmp/gentoo${DATE}M &>/dev/null;fi
 
 #clean the builds
 clean: distclean

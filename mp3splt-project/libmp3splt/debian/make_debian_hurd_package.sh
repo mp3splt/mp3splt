@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir/..
 cd $PROGRAM_DIR
@@ -13,7 +13,7 @@ echo $'Package :\tdebian_hurd'
 echo
 
 #we generate the debian files
-./debian/generate_debian_files.sh
+./debian/generate_debian_files.sh || exit 1
 
 #we compile
 ./autogen.sh && \
@@ -21,4 +21,4 @@ echo
 make clean && \
 make && \
 #we create the debian package
-./debian/rules binary
+./debian/rules binary || exit 1

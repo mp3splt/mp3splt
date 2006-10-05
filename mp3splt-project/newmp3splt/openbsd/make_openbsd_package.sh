@@ -10,7 +10,7 @@ export AUTOCONF_VERSION="2.59";
 ################# end variables to set ############
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir
 cd $PROGRAM_DIR
@@ -28,7 +28,7 @@ NAME="mp3splt"
 export CFLAGS="-I/usr/include -I/usr/local/include"
 export LDFLAGS="-L/usr/lib -L/usr/local/lib"
 cd .. && ./autogen.sh && ./configure && make clean \
-&& make && make install
+&& make && make install || exit 1
 cd openbsd
 
 #we write the file for the package
@@ -78,11 +78,11 @@ echo "@exec /sbin/ldconfig -m %D/lib
 @unexec /sbin/ldconfig -R" >> +CONTENTS;
 
 #create package
-`pkg_create -f +CONTENTS`
+`pkg_create -f +CONTENTS` || exit 1
 
-#we uninstall the library
+#we uninstall the program
 cd .. && make uninstall && rm -rf /usr/local/share/doc/$NAME
-cd openbsd
 
 #we copy the results
-mv ${NAME}_obsd_*.tgz ../..
+mv ${NAME}_obsd_*.tgz ../.. || exit 1
+

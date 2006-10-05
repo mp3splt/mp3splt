@@ -3,10 +3,9 @@
 #this file creates a freebsd package for mp3splt
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
-PROGRAM_DIR=$script_dir
-cd $PROGRAM_DIR
+cd $script_dir
 
 . ../include_variables.sh
 
@@ -87,20 +86,22 @@ export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
 
 #remove old package
 pkg_delete mp3splt-gtk_fbsd_$ARCH
+
 #make dist if necessary
 if [[ ! -e ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
-    ./make_source_package.sh
+    ./make_source_package.sh || exit 1
 fi &&\
-mv ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/ports/distfiles/
+cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/ports/distfiles/ || exit 1
 #create ports mp3splt-gtk directory
+DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+if [[ -e /usr/ports/audio/mp3splt-gtk ]];then
+    mv /usr/ports/audio/mp3splt-gtk /usr/ports/audio/mp3splt-gtk${DATEMV}
+fi
 mkdir -p /usr/ports/audio/mp3splt-gtk
-rm -rf /usr/ports/audio/mp3splt-gtk/*
 cp ./freebsd/* /usr/ports/audio/mp3splt-gtk
 #we create the package
 cd /usr/ports/audio/mp3splt-gtk && make makesum && make && make install\
 && make package && cd - &&\
 mv /usr/ports/audio/mp3splt-gtk/*fbsd*.tbz ../ &&\
 #uninstall some packages
-cd /usr/ports/audio/mp3splt-gtk && make deinstall && cd - &&\
-#uninstall libmp3splt
-cd /usr/ports/audio/libmp3splt && make deinstall && cd -
+cd /usr/ports/audio/mp3splt-gtk && make deinstall && cd - || exit 1

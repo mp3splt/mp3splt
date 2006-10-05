@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir/..
 cd $PROGRAM_DIR
@@ -19,7 +19,10 @@ export CFLAGS="-O2 -march=$ARCH -mcpu=$ARCH";
 export LDFLAGS="";
 
 #we create the needed directories
-if [[ -d $SLACK_TEMP/mp3splt-gtk ]];then mv $SLACK_TEMP/mp3splt-gtk $SLACK_TEMP/mp3splt-gtk_old;fi
+DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+if [[ -e $SLACK_TEMP/mp3splt-gtk ]];then
+    mv $SLACK_TEMP/mp3splt-gtk $SLACK_TEMP/mp3splt-gtk${DATEMV}
+fi
 mkdir -p $SLACK_TEMP/mp3splt-gtk/usr/doc/mp3splt-gtk
 mkdir -p $SLACK_TEMP/mp3splt-gtk/install
 
@@ -28,9 +31,9 @@ mkdir -p $SLACK_TEMP/mp3splt-gtk/install
 ./configure --enable-bmp --prefix=/usr &&\
 make clean &&\
 make &&\
-fakeroot make DESTDIR=$SLACK_TEMP/mp3splt-gtk install &&\
+make DESTDIR=$SLACK_TEMP/mp3splt-gtk install &&\
 cp $MP3SPLT_GTK_DOC_FILES $SLACK_TEMP/mp3splt-gtk/usr/doc/mp3splt-gtk &&\
 cp slackware/slack-* $SLACK_TEMP/mp3splt-gtk/install &&\
 cd $SLACK_TEMP/mp3splt-gtk &&\
-fakeroot /sbin/makepkg -l y -c y mp3splt-gtk-${MP3SPLT_GTK_VERSION}-$ARCH.tgz &&\
-mv mp3splt-gtk-${MP3SPLT_GTK_VERSION}-$ARCH.tgz $PROGRAM_DIR/..
+/sbin/makepkg -l y -c y mp3splt-gtk-${MP3SPLT_GTK_VERSION}-$ARCH.tgz &&\
+mv mp3splt-gtk-${MP3SPLT_GTK_VERSION}-$ARCH.tgz $PROGRAM_DIR/.. || exit 1

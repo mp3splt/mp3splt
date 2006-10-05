@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir/..
 cd $PROGRAM_DIR
@@ -44,11 +44,10 @@ make
 %install
 make DESTDIR=\$RPM_BUILD_ROOT install
 %clean
-rm -rf \$RPM_BUILD_ROOT/*
 %files
 %defattr(-,root,root)
 /usr/*
-%doc ${MP3SPLT_GTK_DOC[@]}" > ./SPECS/mp3splt-gtk.spec \
+%doc ${MP3SPLT_GTK_DOC[@]}" > ./SPECS/mp3splt-gtk.spec || exit 1 \
 && cd ..
 
 #we need the flags because we told libmp3splt to install in /tmp/rpm
@@ -58,7 +57,7 @@ export LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib $LDFLAGS"
 
 #we make the distribution file if we don't have it
 if [[ ! -e ../mp3splt-gtk-$MP3SPLT_GTK_VERSION.tar.gz ]];then
-    ./make_source_package.sh
+    ./make_source_package.sh || exit 1
 fi && \
 cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ./rpm/SOURCES &&\
 echo "%_topdir $PROGRAM_DIR/rpm" > ~/.rpmmacros &&\
@@ -67,4 +66,4 @@ rpmbuild -ba ./SPECS/mp3splt-gtk.spec &&\
 rm -rf ./BUILD/* &&\
 rm -rf ./SOURCES/* &&\
 mv ./RPMS/$ARCH/*.rpm ../.. &&\
-mv ./SRPMS/*.rpm ../..
+mv ./SRPMS/*.rpm ../.. || exit 1

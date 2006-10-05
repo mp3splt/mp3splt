@@ -1,12 +1,13 @@
-#!/bin/bash
+#!/usr/pkg/bin/bash
 
 #this file creates a netbsd package for mp3splt
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(greadlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
-PROGRAM_DIR=$script_dir
-cd $PROGRAM_DIR
+cd $script_dir
+
+unset PKG_PATH
 
 . ../include_variables.sh
 
@@ -71,22 +72,27 @@ cd ..
 export CFLAGS="-I/usr/pkg/include"
 export LDFLAGS="-L/usr/pkg/lib"
 
-#we create the directory
-mkdir -p /usr/pkgsrc/audio/mp3splt
 #we remove possible remained files
-rm -rf /usr/pkgsrc/audio/mp3splt/*
+rm -f ../mp3splt*nbsd*.tgz
 rm -f /usr/pkgsrc/packages/All/mp3splt*nbsd*.tgz
+#we create the directory
+DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+if [[ -e /usr/pkgsrc/audio/mp3splt ]];then
+    mv /usr/pkgsrc/audio/mp3splt /usr/pkgsrc/audio/mp3splt${DATEMV}
+fi
+mkdir -p /usr/pkgsrc/audio/mp3splt
 #copy netbsd files
 cp ./netbsd/* /usr/pkgsrc/audio/mp3splt/
 #we make the distribution file if we don't have it
 if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
-    ./make_source_package.sh
+    bash ./make_source_package.sh "netbsd" || exit 1
 fi &&\
-mv ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles
+cp ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles || exit 1
+
 #remove possible installed package
 pkg_delete mp3splt_nbsd_$ARCH
 
 #package creation
 cd /usr/pkgsrc/audio/mp3splt && bmake mdi && bmake package &&\
-bmake deinstall && cd -
-mv /usr/pkgsrc/packages/All/mp3splt*nbsd*.tgz ../
+bmake deinstall && cd - &&\
+mv /usr/pkgsrc/packages/All/mp3splt*nbsd*.tgz ../ || exit 1

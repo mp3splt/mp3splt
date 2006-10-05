@@ -44,10 +44,10 @@ export LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib $LDFLAGS"
 
 #we make the distribution file if we don't have it
 if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
-    ./make_source_package.sh
+    ./make_source_package.sh || exit 1
 fi &&\
 cp ../mp3splt-${MP3SPLT_VERSION}.tar.gz ./arch &&\
 cd arch && makepkg -d -c &&\
 mv mp3splt-${MP3SPLT_VERSION}-1.pkg.tar.gz \
 ../../mp3splt-${MP3SPLT_VERSION}-1_${ARCH}.pkg.tar.gz &&\
-rm -rf ./mp3splt-${MP3SPLT_VERSION}.tar.gz
+rm -f ./mp3splt-${MP3SPLT_VERSION}.tar.gz || exit 1

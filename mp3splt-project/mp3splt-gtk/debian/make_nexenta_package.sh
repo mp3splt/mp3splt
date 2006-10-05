@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir/..
 cd $PROGRAM_DIR
@@ -12,7 +12,7 @@ echo
 echo $'Package :\tnexenta'
 echo
 
-./debian/generate_debian_files.sh
+./debian/generate_debian_files.sh || exit 1
 
 TEMP_DIR=/tmp/temp
 
@@ -26,4 +26,4 @@ export LDFLAGS="-L/$TEMP_DIR/usr/lib $LDFLAGS"
 make clean &&\
 make &&\
 #we create the debian package
-fakeroot debian/rules binary
+fakeroot debian/rules binary || exit 1

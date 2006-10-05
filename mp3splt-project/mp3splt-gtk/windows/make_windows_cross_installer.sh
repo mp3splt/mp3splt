@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 cd $script_dir/../..
 
@@ -13,11 +13,11 @@ echo
 
 #we compile the locales
 mv fr_locales fr_locales_old
-mkdir fr_locales
-wine `pwd`/../libs/bin/msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
+mkdir -p fr_locales
+wine `pwd`/../libs/bin/msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po || exit 1
 
 cd ../libs &&\
-tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../mp3splt-project &&\
+tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../mp3splt-project || exit 1 &&\
 cd ../mp3splt-project
 
 cd mp3splt-gtk/other
@@ -27,8 +27,8 @@ cat win32_installer.nsi | sed s+.define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ 
 mv win32_installer.nsi2 win32_installer.nsi
 
 #we create the installer
-make -f Makefile cross
-mv mp3splt-gtk_${MP3SPLT_GTK_VERSION}.exe ../../mp3splt-gtk_${MP3SPLT_GTK_VERSION}_${ARCH}.exe
+make -f Makefile cross || exit 1
+mv mp3splt-gtk_${MP3SPLT_GTK_VERSION}.exe ../../mp3splt-gtk_${MP3SPLT_GTK_VERSION}_${ARCH}.exe || exit 1
 
 #put the old installer file of mp3splt
 mv win32_installer.nsi_old win32_installer.nsi

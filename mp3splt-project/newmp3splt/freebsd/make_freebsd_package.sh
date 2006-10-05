@@ -3,10 +3,9 @@
 #this file creates a freebsd package for mp3splt
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
-PROGRAM_DIR=$script_dir
-cd $PROGRAM_DIR
+cd $script_dir
 
 . ../include_variables.sh
 
@@ -88,16 +87,19 @@ export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
 pkg_delete mp3splt_fbsd_$ARCH
 #make dist if necessary
 if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
-    ./make_source_package.sh
+    ./make_source_package.sh || exit 1
 fi &&\
-mv ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/ports/distfiles/
+cp ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/ports/distfiles/ || exit 1
 #create ports mp3splt directory
+DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+if [[ -e /usr/ports/audio/mp3splt ]];then
+    mv /usr/ports/audio/mp3splt /usr/ports/audio/mp3splt${DATEMV}
+fi
 mkdir -p /usr/ports/audio/mp3splt
-rm -rf /usr/ports/audio/mp3splt/*
 cp ./freebsd/* /usr/ports/audio/mp3splt &&\
 #we create the package
 cd /usr/ports/audio/mp3splt && make makesum && make && make install\
 && make package && cd - &&\
 mv /usr/ports/audio/mp3splt/*fbsd*.tbz ../ &&\
 #we uninstall the installed package
-cd /usr/ports/audio/mp3splt && make deinstall && cd -
+cd /usr/ports/audio/mp3splt && make deinstall && cd - || exit 1

@@ -1,12 +1,13 @@
-#!/bin/bash
+#!/usr/pkg/bin/bash
 
 #this file creates a netbsd package for libmp3splt
 
 #we move in the current script directory
-script_dir=$(readlink -f $0)
+script_dir=$(greadlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
-PROGRAM_DIR=$script_dir
-cd $PROGRAM_DIR
+cd $script_dir
+
+unset PKG_PATH
 
 . ../include_variables.sh
 
@@ -53,7 +54,7 @@ echo "
 .include \"../../audio/libvorbis/buildlink3.mk\"
 .include \"../../audio/libid3tag/buildlink3.mk\"
 
-.include \"../../mk/bsd.pkg.mk" >> Makefile
+.include \"../../mk/bsd.pkg.mk\"" >> Makefile
 
 #we generate the PLIST
 echo "@comment \$NetBSD\$" > PLIST
@@ -104,22 +105,25 @@ export CFLAGS="-I/usr/pkg/include"
 export LDFLAGS="-L/usr/pkg/lib"
 
 #remove possible left files
-rm -rf ../*mp3splt*nbsd*.tgz
+rm -f ../libmp3splt*nbsd*.tgz
 rm -f /usr/pkgsrc/packages/All/libmp3splt*nbsd*.tgz
 #create libmp3splt pkgsrc dir
+DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+if [[ -e /usr/pkgsrc/audio/libmp3splt ]];then
+    mv /usr/pkgsrc/audio/libmp3splt /usr/pkgsrc/audio/libmp3splt${DATEMV}
+fi
 mkdir -p /usr/pkgsrc/audio/libmp3splt
-#erase its content
-rm -rf /usr/pkgsrc/audio/libmp3splt/*
 #copy netbsd files
 cp ./netbsd/* /usr/pkgsrc/audio/libmp3splt
 #we make the distribution file if we don't have it
 if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
-    ./make_source_package.sh
+    bash ./make_source_package.sh "netbsd" || exit 1
 fi &&\
-mv ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles
+cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz /usr/pkgsrc/distfiles || exit 1
+
 #remove possible installed package
 pkg_delete libmp3splt_nbsd_$ARCH
 
 #package creation
 cd /usr/pkgsrc/audio/libmp3splt && bmake mdi && bmake package &&\
-cd - && mv /usr/pkgsrc/packages/All/*libmp3splt*nbsd*.tgz ../
+cd - && mv /usr/pkgsrc/packages/All/*libmp3splt*nbsd*.tgz ../ || exit 1
