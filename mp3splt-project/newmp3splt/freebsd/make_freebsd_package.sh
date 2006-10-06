@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 
 #this file creates a freebsd package for mp3splt
 
 #we move in the current script directory
-script_dir=$(readlink -f $0) || exit 1
+script_dir=$(greadlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 cd $script_dir
 
@@ -80,14 +80,14 @@ cd ..
 
 #we set the flags
 export ACLOCAL_FLAGS="-I /usr/local/share/aclocal"
-export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include"
-export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
+export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include $CFLAGS"
+export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib $LDFLAGS"
 
 #remove old package
 pkg_delete mp3splt_fbsd_$ARCH
 #make dist if necessary
 if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
-    ./make_source_package.sh || exit 1
+    ./make_source_package.sh "netbsd" || exit 1
 fi &&\
 cp ../mp3splt-${MP3SPLT_VERSION}.tar.gz /usr/ports/distfiles/ || exit 1
 #create ports mp3splt directory

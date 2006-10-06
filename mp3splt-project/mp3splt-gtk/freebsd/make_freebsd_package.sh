@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 
 #this file creates a freebsd package for mp3splt
 
 #we move in the current script directory
-script_dir=$(readlink -f $0) || exit 1
+script_dir=$(greadlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 cd $script_dir
 
@@ -35,8 +35,7 @@ PKGNAMESUFFIX=  _fbsd_$ARCH
 DISTNAME=       \${PORTNAME}-${MP3SPLT_GTK_VERSION}
 
 MAINTAINER=     io_alex_2002@yahoo.fr
-COMMENT=        Command line program to split mp3 and ogg without
-decoding
+COMMENT=        Command line program to split mp3 and ogg without decoding
 
 BUILD_DEPENDS=  libmp3splt:\${PORTSDIR}/audio/libmp3splt
 USE_GNOME=      gtk20
@@ -55,7 +54,7 @@ WRKSRC=         \${WRKDIR}/mp3splt-gtk-${MP3SPLT_GTK_VERSION}
 DOC_DIR=        \${PREFIX}/share/doc/mp3splt-gtk/
 
 pre-install:
-        \${MKDIR} \${DOC_DIR}" > Makefile
+	\${MKDIR} \${DOC_DIR}" > Makefile
 
 for doc in "${MP3SPLT_GTK_DOC_FILES[@]}";do
     echo "	\${INSTALL_DATA} \${WRKSRC}/${doc} \${DOC_DIR}" >> Makefile
@@ -81,15 +80,15 @@ cd ..
 
 #we set the flags
 export ACLOCAL_FLAGS="-I /usr/local/share/aclocal"
-export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include"
-export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib"
+export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include $CFLAGS"
+export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib $LDFLAGS"
 
 #remove old package
 pkg_delete mp3splt-gtk_fbsd_$ARCH
 
 #make dist if necessary
 if [[ ! -e ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
-    ./make_source_package.sh || exit 1
+    ./make_source_package.sh "netbsd" || exit 1
 fi &&\
 cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/ports/distfiles/ || exit 1
 #create ports mp3splt-gtk directory

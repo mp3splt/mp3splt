@@ -2,7 +2,7 @@ bin_PROGRAMS = mp3splt
 
 mp3splt_SOURCES = mp3splt.c
 
-INCLUDES = -Wall -g
+INCLUDES = -Wall
 
 mp3splt_LDADD = -lmp3splt
 

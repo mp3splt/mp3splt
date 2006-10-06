@@ -35,7 +35,7 @@ cd ..
 
 #cross compile flags
 export CFLAGS=" -mms-bitfields -enable-stdcall-fixup -I`pwd`/libs/include -D_WIN32 -D__MINGW32__ $CFLAGS"
-export LDFLAGS="-L`pwd`/libs/lib"
+export LDFLAGS="-L`pwd`/libs/lib $LDFLAGS"
 export PKG_CONFIG_PATH="`pwd`/libs/lib/pkgconfig"
 export PATH="`pwd`/libs/bin:$PATH"
 

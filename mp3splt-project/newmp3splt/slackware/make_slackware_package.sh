@@ -15,8 +15,9 @@ echo
 SLACK_TEMP=/tmp/slack_temp
 
 #we set the necessary flags
-export CFLAGS="-O2 -march=$ARCH -mcpu=$ARCH"
-export LDFLAGS=""
+#export CFLAGS="-O2 -march=$ARCH -mcpu=$ARCH"
+export CFLAGS="$CFLAGS"
+export LDFLAGS="$LDFLAGS"
 
 #we create the needed directories
 DATEMV=`date +-%d_%m_%Y__%H_%M_%S`

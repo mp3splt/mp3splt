@@ -16,8 +16,16 @@ echo
 echo $'Package :\tsource'
 echo
 
+#create the directories we need
+TEMPDIR=/tmp/temp
+DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+if [[ -e $TEMPDIR ]];then
+    mv $TEMPDIR ${TEMPDIR}${DATEMV}
+fi
+mkdir -p $TEMPDIR
+
 #we compile
 ./autogen.sh &&\
 ./configure --prefix=/usr &&\
-make dist &&\
+make dist && make install DESTDIR=$TEMPDIR &&\
 mv libmp3splt*.tar.gz ../ || exit 1

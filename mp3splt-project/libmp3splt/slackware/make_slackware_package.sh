@@ -13,8 +13,9 @@ echo $'Package :\tslackware'
 echo
 
 #we set the necessary flags
-export CFLAGS="-O2 -march=$ARCH -mcpu=$ARCH";
-export LDFLAGS="";
+#export CFLAGS="-O2 -march=$ARCH -mcpu=$ARCH";
+export CFLAGS="$CFLAGS";
+export LDFLAGS="$LDFLAGS";
 
 SLACK_TEMP=/tmp/slack_temp
 

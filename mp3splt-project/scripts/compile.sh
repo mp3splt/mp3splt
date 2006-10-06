@@ -2,6 +2,11 @@
 
 ################# variables to set ############
 
+#program directories
+LIBMP3SPLT_DIR=libmp3splt
+MP3SPLT_DIR=newmp3splt
+MP3SPLT_GTK_DIR=mp3splt-gtk
+
 #program versions
 LIBMP3SPLT_REAL_VERSION=0.4_rc1
 MP3SPLT_REAL_VERSION=2.2_rc1
@@ -15,7 +20,7 @@ UPLOAD_TO_SOURCEFORGE=0
 #the confirmation question
 echo
 echo "This script is used by the developers to auto-create packages for releases"
-echo "!!!! Warning !!!! This script may be dangerous and erase data on your computer !!"
+echo "You should modify this script in order to use it on your computer."
 echo "Please remember that you are using the script at your own risk !"
 echo
 sleep 3
@@ -41,9 +46,9 @@ script_dir=${script_dir%\/*.sh}
 PROJECT_DIR=$script_dir/..
 
 #we include the package variables
-. ./libmp3splt/include_variables.sh "quiet"
-. ./newmp3splt/include_variables.sh "quiet"
-. ./mp3splt-gtk/include_variables.sh "quiet"
+. ./${LIBMP3SPLT_DIR}/include_variables.sh "quiet"
+. ./${MP3SPLT_DIR}/include_variables.sh "quiet"
+. ./${MP3SPLT_GTK_DIR}/include_variables.sh "quiet"
 
 cd $PROJECT_DIR
 ################## end confirmation question ############
@@ -58,22 +63,22 @@ sleep 2
 #we update the real versions
 #libmp3splt
 sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
- ./libmp3splt/include_variables.sh
+ ./${LIBMP3SPLT_DIR}/include_variables.sh
 #mp3splt + its libmp3splt library
 sed -i "s/MP3SPLT_VERSION=.*/MP3SPLT_VERSION=$MP3SPLT_REAL_VERSION/"\
- ./libmp3splt/include_variables.sh
+ ./${LIBMP3SPLT_DIR}/include_variables.sh
 sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
- ./libmp3splt/include_variables.sh
+ ./${LIBMP3SPLT_DIR}/include_variables.sh
 #mp3splt-gtk + its libmp3splt library
 sed -i "s/MP3SPLT_GTK_VERSION=.*/MP3SPLT_GTK_VERSION=$MP3SPLT_GTK_REAL_VERSION/"\
- ./mp3splt-gtk/include_variables.sh
+ ./${MP3SPLT_GTK_DIR}/include_variables.sh
 sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
- ./libmp3splt/include_variables.sh
+ ./${LIBMP3SPLT_DIR}/include_variables.sh
 
 #we update the versions
-./libmp3splt/update_version.sh
-./newmp3splt/update_version.sh
-./mp3splt-gtk/update_version.sh
+./${LIBMP3SPLT_DIR}/update_version.sh
+./${MP3SPLT_DIR}/update_version.sh
+./${MP3SPLT_GTK_DIR}/update_version.sh
 
 cd $PROJECT_DIR
 ################## end update versions ############
@@ -82,18 +87,18 @@ cd $PROJECT_DIR
 #$1=.sarge or $1=.etch
 function put_debian_version()
 {
-    sed -i "1,4s/libmp3splt (\(.*\))/libmp3splt (\1.$1)/" libmp3splt/debian/changelog
-    sed -i "1,4s/mp3splt (\(.*\))/mp3splt (\1.$1)/" newmp3splt/debian/changelog
-    sed -i "1,4s/mp3splt-gtk (\(.*\))/mp3splt-gtk (\1.$1)/" mp3splt-gtk/debian/changelog
+    sed -i "1,4s/libmp3splt (\(.*\))/libmp3splt (\1.$1)/" ${LIBMP3SPLT_DIR}/debian/changelog
+    sed -i "1,4s/mp3splt (\(.*\))/mp3splt (\1.$1)/" ${MP3SPLT_DIR}/debian/changelog
+    sed -i "1,4s/mp3splt-gtk (\(.*\))/mp3splt-gtk (\1.$1)/" ${MP3SPLT_GTK_DIR}/debian/changelog
 }
 
 #cleans .sarge or .etch
 #$1=.sarge or $1=.etch
 function clean_debian_version()
 {
-    sed -i "1,4s/libmp3splt (\(.*\).$1)/libmp3splt (\1)/" libmp3splt/debian/changelog
-    sed -i "1,4s/mp3splt (\(.*\).$1)/mp3splt (\1)/" newmp3splt/debian/changelog
-    sed -i "1,4s/mp3splt-gtk (\(.*\).$1)/mp3splt-gtk (\1)/" mp3splt-gtk/debian/changelog
+    sed -i "1,4s/libmp3splt (\(.*\).$1)/libmp3splt (\1)/" ${LIBMP3SPLT_DIR}/debian/changelog
+    sed -i "1,4s/mp3splt (\(.*\).$1)/mp3splt (\1)/" ${MP3SPLT_DIR}/debian/changelog
+    sed -i "1,4s/mp3splt-gtk (\(.*\).$1)/mp3splt-gtk (\1)/" ${MP3SPLT_GTK_DIR}/debian/changelog
 }
 
 #make the chroot debian flavors
@@ -119,7 +124,7 @@ if [[ $ARCH = "i386" ]];then
     echo
     sleep 2
     
-    make source_packages
+    make source_packages || exit 1
 fi
 ############# end source packages ################
 
@@ -220,31 +225,22 @@ echo "Creating $ARCH slackware packages..."
 echo
 sleep 2
 
-dchroot -d -c slackware "make slackware_fakeroot_packages";
+dchroot -d -c slackware "make slackware_fakeroot_packages" || exit 1
 cd $PROJECT_DIR
 ############# end slackware packages #####
 
 ############# amd64 packages #########
+#TODO
 if [[ $ARCH = "i386" ]];then
     echo
     echo "Creating amd64 packages..."
     echo
     sleep 2
     
-    #we change the architecture
-    
-    
     #cd /mnt/personal/systems/debian_amd64 && ./debian_amd64
     cd $PROJECT_DIR
 fi
 ############# end amd64 packages #########
-
-DATE_END=`date`
-echo
-echo "Start date : "$DATE_START
-echo "End date : "$DATE_END
-echo
-exit 0
 
 ############# openbsd packages #####
 if [[ $ARCH = "i386" ]];then
@@ -253,7 +249,7 @@ if [[ $ARCH = "i386" ]];then
     echo
     sleep 2
     
-    #cd /mnt/personal/systems/bsd-based/openbsd && ./openbsd
+    cd /mnt/personal/systems/bsd-based/openbsd && ./openbsd || exit 1
     cd $PROJECT_DIR
 fi
 ############# end openbsd packages #####
@@ -265,7 +261,7 @@ if [[ $ARCH = "i386" ]];then
     echo
     sleep 2
     
-    #cd /mnt/personal/systems/bsd-based/netbsd && ./netbsd
+    cd /mnt/personal/systems/bsd-based/netbsd && ./netbsd || exit 1
     cd $PROJECT_DIR
 fi
 ############# end netbsd packages #####
@@ -277,7 +273,7 @@ if [[ $ARCH = "i386" ]];then
     echo
     sleep 2
     
-    #cd /mnt/personal/systems/bsd-based/freebsd && ./freebsd
+    cd /mnt/personal/systems/bsd-based/freebsd && ./freebsd || exit 1
     cd $PROJECT_DIR
 fi
 ############# end freebsd packages #####
@@ -289,7 +285,7 @@ if [[ $ARCH = "i386" ]];then
     echo
     sleep 2
     
-    cd /mnt/personal/systems/opensolaris/ && ./nexenta
+    cd /mnt/personal/systems/opensolaris/ && ./nexenta || exit 1
     cd $PROJECT_DIR
 fi
 ############# end nexenta gnu/opensolaris packages #####
@@ -305,9 +301,14 @@ if [[ $ARCH = "i386" ]];then
     #the new release directory
     RELEASE_DIR=release_$LIBMP3SPLT_VERSION
     
+    #backup existing directory
+    DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+    if [[ -e $RELEASE_DIR ]];then
+        mv $RELEASE_DIR ${RELEASE_DIR}${DATEMV}
+    fi
     mkdir -p $RELEASE_DIR
-    rm -rf $RELEASE_DIR/*
     
+    ##i386
     #debian
     mv ./*sarge_i386.deb ./$RELEASE_DIR || exit 1
     mv ./*etch_i386.deb ./$RELEASE_DIR || exit 1
@@ -321,14 +322,11 @@ if [[ $ARCH = "i386" ]];then
     #windows
     mv ./*_i386.exe ./$RELEASE_DIR || exit 1
     #openbsd
-    #arch ?
-    mv ./*obsd*.tgz ./$RELEASE_DIR || exit 1
+    mv ./*obsd*i386*.tgz ./$RELEASE_DIR || exit 1
     #netbsd
-    #arch ?
-    mv ./*nbsd*.tgz ./$RELEASE_DIR || exit 1
+    mv ./*nbsd*i386*.tgz ./$RELEASE_DIR || exit 1
     #freebsd
-    #arch ?
-    mv ./*fbsd*.tbz ./$RELEASE_DIR || exit 1
+    mv ./*fbsd*i386*.tbz ./$RELEASE_DIR || exit 1
     #gnu/linux static+dynamic
     mv ./*_static_i386.tar.gz ./$RELEASE_DIR || exit 1
     mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR || exit 1
@@ -336,13 +334,16 @@ if [[ $ARCH = "i386" ]];then
     mv ./*i686.pkg.tar.gz ./$RELEASE_DIR || exit 1
     #gentoo ebuilds
     mv ./*ebuild.tar.gz ./$RELEASE_DIR || exit 1
-    #source code
-    mv ./*.tar.gz ./$RELEASE_DIR || exit 1
-    #rpms
-    mv ./*.src.rpm ./$RELEASE_DIR || exit 1
+    #i386 rpms
     mv ./*i386.rpm ./$RELEASE_DIR || exit 1
     #slackware
     mv ./*i386.tgz ./$RELEASE_DIR || exit 1
+    
+    ##source
+    #source code
+    mv ./*.tar.gz ./$RELEASE_DIR || exit 1
+    #source rpms
+    mv ./*.src.rpm ./$RELEASE_DIR || exit 1
 fi
 ############# end finish packaging #####
 

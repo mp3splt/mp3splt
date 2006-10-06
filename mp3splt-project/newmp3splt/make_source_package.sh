@@ -17,11 +17,11 @@ echo $'Package :\tsource'
 echo
 
 #set necessary flags
-export CFLAGS="-I/tmp/temp/usr/include $CFLAGS"
-export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS"
+export CFLAGS="-I/usr/include -I/usr/local/include -I/tmp/temp/usr/include $CFLAGS"
+export LDFLAGS="-L/usr/lib -L/usr/local/lib -L/tmp/temp/usr/lib $LDFLAGS"
 
 #we compile
-./autogen.sh && \
-./configure --prefix=/usr && \
+./autogen.sh &&\
+./configure --prefix=/usr &&\
 make dist &&\
 mv mp3splt*.tar.gz ../ || exit 1

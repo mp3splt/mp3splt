@@ -101,8 +101,8 @@ BUILDLINK_DEPTH:=		\${BUILDLINK_DEPTH:S/+$//}" > buildlink3.mk
 cd ..
 
 #we set the flags
-export CFLAGS="-I/usr/pkg/include"
-export LDFLAGS="-L/usr/pkg/lib"
+export CFLAGS="-I/usr/pkg/include $CFLAGS"
+export LDFLAGS="-L/usr/pkg/lib $LDFLAGS"
 
 #remove possible left files
 rm -f ../libmp3splt*nbsd*.tgz

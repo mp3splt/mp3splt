@@ -25,8 +25,8 @@ VERSION=$MP3SPLT_VERSION
 NAME="mp3splt"
 
 #we compile and install the library
-export CFLAGS="-I/usr/include -I/usr/local/include"
-export LDFLAGS="-L/usr/lib -L/usr/local/lib"
+export CFLAGS="-I/usr/include -I/usr/local/include $CFLAGS"
+export LDFLAGS="-L/usr/lib -L/usr/local/lib $LDFLAGS"
 cd .. && ./autogen.sh && ./configure && make clean \
 && make && make install || exit 1
 cd openbsd
@@ -80,9 +80,8 @@ echo "@exec /sbin/ldconfig -m %D/lib
 #create package
 `pkg_create -f +CONTENTS` || exit 1
 
-#we uninstall the program
-cd .. && make uninstall && rm -rf /usr/local/share/doc/$NAME
-
 #we copy the results
 mv ${NAME}_obsd_*.tgz ../.. || exit 1
 
+#we uninstall the program
+cd .. && make uninstall && rm -rf /usr/local/share/doc/$NAME

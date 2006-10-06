@@ -43,7 +43,7 @@ DOC_DIR=\${PREFIX}/share/doc/mp3splt-gtk/
 
 #copy documentation
 pre-install:
-        \${INSTALL_DATA_DIR} \${DOC_DIR}" > Makefile
+	\${INSTALL_DATA_DIR} \${DOC_DIR}" > Makefile
 
 for doc in "${MP3SPLT_GTK_DOC_FILES[@]}";do
     echo "	\${INSTALL_DATA} \${WRKSRC}/${doc} \${DOC_DIR}" >> Makefile
@@ -73,8 +73,8 @@ echo "@dirrm share/doc/mp3splt-gtk" >> PLIST
 cd ..
 
 #we set the flags
-export CFLAGS="-I/usr/pkg/include"
-export LDFLAGS="-L/usr/pkg/lib"
+export CFLAGS="-I/usr/pkg/include $CFLAGS"
+export LDFLAGS="-L/usr/pkg/lib $LDFLAGS"
 
 #we remove possible remained files
 rm -f ../mp3splt-gtk*nbsd*.tgz

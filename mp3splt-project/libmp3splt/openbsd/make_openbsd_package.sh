@@ -24,8 +24,8 @@ VERSION=$LIBMP3SPLT_VERSION
 NAME="libmp3splt"
 
 #we compile and install the library
-export CFLAGS="-I/usr/include -I/usr/local/include"
-export LDFLAGS="-L/usr/lib -L/usr/local/lib"
+export CFLAGS="-I/usr/include -I/usr/local/include $CFLAGS"
+export LDFLAGS="-L/usr/lib -L/usr/local/lib $LDFLAGS"
 cd .. && ./autogen.sh && ./configure && make clean \
 && make && make install || exit 1
 cd openbsd
