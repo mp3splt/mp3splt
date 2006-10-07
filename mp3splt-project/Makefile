@@ -136,20 +136,21 @@ freebsd_packages:
 	./${MP3SPLT_DIR}/freebsd/make_freebsd_package.sh
 	./${MP3SPLT_GTK_DIR}/freebsd/make_freebsd_package.sh
         #uninstall libmp3splt
-	cd /usr/ports/audio/libmp3splt && make deinstall && cd -
+	cd /usr/ports/audio/libmp3splt && make deinstall
 
 #installs libmp3splt, mp3splt and mp3splt-gtk (must be run as root)
 root_install: root_libmp3splt root_newmp3splt root_mp3splt-gtk
 root_libmp3splt:
 	cd ${LIBMP3SPLT_DIR} && ./autogen.sh && \
-	./configure && make clean && make && make install \
-	&& if [ -z `grep '/usr/local/lib' /etc/ld.so.conf` ];\
-	then `echo '/usr/local/lib' >> /etc/ld.so.conf` && ldconfig;fi
+	./configure && make clean && make && make install
+# \
+#	&& if [ -z `grep '/usr/local/lib' /etc/ld.so.conf` ];\
+#	then `echo '/usr/local/lib' >> /etc/ld.so.conf` && ldconfig;fi
 root_newmp3splt:
 	cd ${MP3SPLT_DIR} && ./autogen.sh && ./configure \
 	&& make clean && make && make install
 root_mp3splt-gtk:
-	cd ${MP3SPLT_GTK_DIR} && ./autogen.sh && ./configure \
+	cd ${MP3SPLT_GTK_DIR} && ./autogen.sh && ./configure --enable-bmp\
 	&& make clean && make && make install
 #uninstalls libmp3splt, mp3splt and mp3splt-gtk as root
 root_uninstall:
@@ -175,8 +176,11 @@ mv /tmp/gentoo_temp /tmp/gentoo${DATE}M &>/dev/null;fi
 	sleep 1
 
 #clean the builds
-clean: distclean
+clean:
+	cd ${LIBMP3SPLT_DIR} && make clean
+	cd ${MP3SPLT_DIR} && make clean
+	cd ${MP3SPLT_GTK_DIR} && make clean
 distclean:
-	cd ${LIBMP3SPLT_DIR} && make distclean && cd ..
-	cd ${MP3SPLT_DIR} && make distclean && cd ..
-	cd ${MP3SPLT_GTK_DIR} && make distclean && cd ..
+	cd ${LIBMP3SPLT_DIR} && make distclean
+	cd ${MP3SPLT_DIR} && make distclean
+	cd ${MP3SPLT_GTK_DIR} && make distclean

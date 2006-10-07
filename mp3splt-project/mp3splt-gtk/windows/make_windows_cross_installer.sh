@@ -33,5 +33,8 @@ mv mp3splt-gtk_${MP3SPLT_GTK_VERSION}.exe ../../mp3splt-gtk_${MP3SPLT_GTK_VERSIO
 #put the old installer file of mp3splt
 mv win32_installer.nsi_old win32_installer.nsi
 
+#erase the executable
+rm -f ../src/mp3splt-gtk.exe
+
 #remove used dirs
 cd ../.. && rm -rf fr_locales && rm -rf mp3splt-gtk_runtime

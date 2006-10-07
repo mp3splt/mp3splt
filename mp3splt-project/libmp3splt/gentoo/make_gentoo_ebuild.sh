@@ -59,6 +59,7 @@ mkdir -p $GENTOO_TEMP
 
 #the ebuild
 cp -a gentoo/* $GENTOO_TEMP;
+rm -f ./gentoo/media-libs/libmp3splt/libmp3splt-${LIBMP3SPLT_VERSION}.ebuild
 find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' \; &>/dev/null
 #digest libmp3splt
 #if we don't have distribution file, create it

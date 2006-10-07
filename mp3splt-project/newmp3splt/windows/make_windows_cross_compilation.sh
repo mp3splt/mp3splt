@@ -43,3 +43,6 @@ cp ../../libs/lib/libmp3splt.a ./src &&\
 ./configure --prefix=`pwd`/../../libs --host=--mingw32 &&\
 make clean && make &&\
 strip ./src/mp3splt.exe || exit 1
+
+#we clean the remained files
+find . -type f -name "*.a" -exec rm -f {} \;

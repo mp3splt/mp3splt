@@ -290,6 +290,12 @@ if [[ $ARCH = "i386" ]];then
 fi
 ############# end nexenta gnu/opensolaris packages #####
 
+############# cleaning the distribution #####
+if [[ $ARCH = "i386" ]];then
+    make distclean || exit 1
+fi
+############# end cleaning the distribution #####
+
 ############# finish packaging #####
 if [[ $ARCH = "i386" ]];then
     echo
@@ -310,40 +316,40 @@ if [[ $ARCH = "i386" ]];then
     
     ##i386
     #debian
-    mv ./*sarge_i386.deb ./$RELEASE_DIR || exit 1
-    mv ./*etch_i386.deb ./$RELEASE_DIR || exit 1
-    mv ./*sid_i386.deb ./$RELEASE_DIR || exit 1
+    mv ./*sarge_i386.deb ./$RELEASE_DIR || echo "sarge i386 warning"
+    mv ./*etch_i386.deb ./$RELEASE_DIR || echo "etch i386 warning"
+    mv ./*sid_i386.deb ./$RELEASE_DIR || echo "sid i386 warning"
     #ubuntu
-    mv ./*breezy_i386.deb ./$RELEASE_DIR || exit 1
-    mv ./*dapper_i386.deb ./$RELEASE_DIR || exit 1
-    mv ./*edgy_i386.deb ./$RELEASE_DIR || exit 1
+    mv ./*breezy_i386.deb ./$RELEASE_DIR || echo "breezy i386 warning"
+    mv ./*dapper_i386.deb ./$RELEASE_DIR || echo "dapper i386 warning"
+    mv ./*edgy_i386.deb ./$RELEASE_DIR || echo "edgy i386 warning"
     #nexenta
-    mv ./*solaris_i386.deb ./$RELEASE_DIR || exit 1
+    mv ./*solaris-i386.deb ./$RELEASE_DIR || echo "solaris i386 warning"
     #windows
-    mv ./*_i386.exe ./$RELEASE_DIR || exit 1
+    mv ./*_i386.exe ./$RELEASE_DIR || echo "windows i386 warning"
     #openbsd
-    mv ./*obsd*i386*.tgz ./$RELEASE_DIR || exit 1
+    mv ./*obsd*i386*.tgz ./$RELEASE_DIR || echo "openbsd i386 warning"
     #netbsd
-    mv ./*nbsd*i386*.tgz ./$RELEASE_DIR || exit 1
+    mv ./*nbsd*i386*.tgz ./$RELEASE_DIR || echo "netbsd i386 warning"
     #freebsd
-    mv ./*fbsd*i386*.tbz ./$RELEASE_DIR || exit 1
+    mv ./*fbsd*i386*.tbz ./$RELEASE_DIR || echo "freebsd i386 warning"
     #gnu/linux static+dynamic
-    mv ./*_static_i386.tar.gz ./$RELEASE_DIR || exit 1
-    mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR || exit 1
+    mv ./*_static_i386.tar.gz ./$RELEASE_DIR || echo "static i386 warning"
+    mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR || echo "dynamic i386 warning"
     #arch linux
-    mv ./*i686.pkg.tar.gz ./$RELEASE_DIR || exit 1
+    mv ./*i686.pkg.tar.gz ./$RELEASE_DIR || echo "arch i686 warning"
     #gentoo ebuilds
-    mv ./*ebuild.tar.gz ./$RELEASE_DIR || exit 1
+    mv ./*ebuild.tar.gz ./$RELEASE_DIR || echo "ebuild warning"
     #i386 rpms
-    mv ./*i386.rpm ./$RELEASE_DIR || exit 1
+    mv ./*i386.rpm ./$RELEASE_DIR || echo "rpm i386 warning"
     #slackware
-    mv ./*i386.tgz ./$RELEASE_DIR || exit 1
+    mv ./*i386.tgz ./$RELEASE_DIR || echo "slackware i386 warning"
     
     ##source
     #source code
-    mv ./*.tar.gz ./$RELEASE_DIR || exit 1
+    mv ./*.tar.gz ./$RELEASE_DIR || echo "source code warning"
     #source rpms
-    mv ./*.src.rpm ./$RELEASE_DIR || exit 1
+    mv ./*.src.rpm ./$RELEASE_DIR || echo "source code rpm warning"
 fi
 ############# end finish packaging #####
 

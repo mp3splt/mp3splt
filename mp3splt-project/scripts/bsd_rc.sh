@@ -25,13 +25,14 @@ make_packages()
       echo
       echo "Making OpenBSD packages...";
       echo
-      cd /root/progs_src/mp3splt/mp3splt-project &&\
-	  svn up &&\
-	  make openbsd_packages &&\
+      cd /root/progs_src/ &&\
+          scp -P 4422 -r ion@10.0.2.2:\
+          /mnt/personal/hacking/mp3splt/mp3splt-project . &&\
+	  cd mp3splt-project && make openbsd_packages &&\
 	  scp -P 4422 -r *obsd*.tgz \
 	  ion@10.0.2.2:/mnt/personal/hacking/mp3splt/mp3splt-project &&\
 	  rm *obsd*.tgz &&\
-	  halt -p
+	  halt -p || exit 1
       exit 0
 }
 

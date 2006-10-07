@@ -62,3 +62,6 @@ cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
 ./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-gtktest &&\
 make clean && make &&\
 strip ./src/mp3splt-gtk.exe || exit 1
+
+#we clean the remained files
+find . -type f -name "*.a" -exec rm -f {} \;

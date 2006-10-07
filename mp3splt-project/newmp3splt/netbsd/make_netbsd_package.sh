@@ -66,6 +66,12 @@ done
 
 echo "@dirrm share/doc/mp3splt" >> PLIST
 
+#we generate the distinfo file
+echo "\$NetBSD\$" > distinfo
+
+#we generate the DESCR file
+echo $MP3SPLT_DESCRIPTION > DESCR
+
 cd ..
 
 #we set the flags
@@ -83,6 +89,8 @@ fi
 mkdir -p /usr/pkgsrc/audio/mp3splt
 #copy netbsd files
 cp ./netbsd/* /usr/pkgsrc/audio/mp3splt/
+rm -f ./netbsd/DESCR ./netbsd/Makefile ./netbsd/distinfo \
+./netbsd/PLIST
 #we make the distribution file if we don't have it
 if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
     bash ./make_source_package.sh "netbsd" || exit 1

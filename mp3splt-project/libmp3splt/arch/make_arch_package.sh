@@ -48,4 +48,5 @@ cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ./arch &&\
 cd arch && makepkg &&\
 mv libmp3splt-${LIBMP3SPLT_VERSION}-1.pkg.tar.gz \
 ../../libmp3splt-${LIBMP3SPLT_VERSION}-1_${ARCH}.pkg.tar.gz &&\
-rm -f ./libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz || exit 1
+rm -f ./libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz && rm -f PKGBUILD \
+|| exit 1

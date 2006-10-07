@@ -98,6 +98,12 @@ BUILDLINK_PKGSRCDIR.libmp3splt?=	../../audio/libmp3splt
 
 BUILDLINK_DEPTH:=		\${BUILDLINK_DEPTH:S/+$//}" > buildlink3.mk
 
+#we generate the distinfo file
+echo "\$NetBSD\$" > distinfo
+
+#we generate the DESCR file
+echo $LIBMP3SPLT_DESCRIPTION > DESCR
+
 cd ..
 
 #we set the flags
@@ -115,6 +121,8 @@ fi
 mkdir -p /usr/pkgsrc/audio/libmp3splt
 #copy netbsd files
 cp ./netbsd/* /usr/pkgsrc/audio/libmp3splt
+rm -f ./netbsd/DESCR ./netbsd/Makefile ./netbsd/distinfo \
+./netbsd/PLIST ./netbsd/buildlink3.mk
 #we make the distribution file if we don't have it
 if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
     bash ./make_source_package.sh "netbsd" || exit 1

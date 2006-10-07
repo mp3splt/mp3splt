@@ -76,6 +76,15 @@ done
 
 echo "@dirrm share/doc/mp3splt-gtk" >> pkg-plist
 
+#we generate the pkg-descr file
+echo $MP3SPLT_GTK_DESCRIPTION > pkg-descr
+echo "
+WWW: http://mp3splt.sourceforge.net
+" >> pkg-descr
+
+#we generate the distinfo file
+echo "" > distinfo
+
 cd ..
 
 #we set the flags
@@ -94,13 +103,16 @@ cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/ports/distfiles/ || exit 1
 #create ports mp3splt-gtk directory
 DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
 if [[ -e /usr/ports/audio/mp3splt-gtk ]];then
+    #we uninstall mp3splt-gtk from a previous build
+    cd /usr/ports/audio/mp3splt-gtk && make deinstall; cd -
     mv /usr/ports/audio/mp3splt-gtk /usr/ports/audio/mp3splt-gtk${DATEMV}
 fi
 mkdir -p /usr/ports/audio/mp3splt-gtk
 cp ./freebsd/* /usr/ports/audio/mp3splt-gtk
+rm -f ./freebsd/pkg-descr ./freebsd/pkg-plist ./freebsd/distinfo ./freebsd/Makefile
 #we create the package
 cd /usr/ports/audio/mp3splt-gtk && make makesum && make && make install\
 && make package && cd - &&\
 mv /usr/ports/audio/mp3splt-gtk/*fbsd*.tbz ../ &&\
 #uninstall some packages
-cd /usr/ports/audio/mp3splt-gtk && make deinstall && cd - || exit 1
+cd /usr/ports/audio/mp3splt-gtk && make deinstall; cd - || exit 1

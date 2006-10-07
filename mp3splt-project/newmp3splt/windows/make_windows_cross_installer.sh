@@ -22,3 +22,6 @@ mv mp3splt_${MP3SPLT_VERSION}.exe ../../mp3splt_${MP3SPLT_VERSION}_${ARCH}.exe |
 
 #put the old installer file of mp3splt
 mv win32_installer.nsi_old win32_installer.nsi
+
+#erase the executable
+rm -f ../src/mp3splt.exe
