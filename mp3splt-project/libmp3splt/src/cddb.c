@@ -1144,9 +1144,6 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
       //temporary pointer
       char *temp = NULL, *temp2 = NULL;
   
-      //fprintf(stdout,"buffer = %s\n",buf);
-      //fflush(stdout);
-      
       //we find the first result
       buf = strstr(buf, "?fDisc/");
       buf += 7;
@@ -1207,11 +1204,6 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
       int i=0;
       //here we have in album_name the name of the current album      
       splt_t_freedb_append_result(state, full_artist_album, i);
-      
-      //test
-      //fprintf(stdout,"fDisc=_%s_ genre=_%s_ id=_%s_ full_artist_album=_%s_\n", fDisc,
-      //cddb_genre, cddb_id, full_artist_album);
-      //fflush(stdout);
       
       //free memory
       free(freedb_artist);
@@ -1659,9 +1651,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   dest = splt_freedb_useproxy(NULL, dest, 
                               2);//search_type);
   
-  fprintf(stdout,"get host by name...\n");
-  fflush(stdout);
-  
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
     {
@@ -1670,9 +1659,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
     }
   else
     {
-      fprintf(stdout,"prepare socket...\n");
-      fflush(stdout);
-      
       //we prepare socket
       memset(&host, 0x0, sizeof(host));
       host.sin_family=AF_INET;
@@ -1705,9 +1691,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
                    "CDDB READ %s %s\n", cd_category, cd_id);
           host.sin_port=htons(SPLT_FREEDB_PORT2);
           
-          fprintf(stdout,"open socket...\n");
-          fflush(stdout);
-          
           //open socket
           if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
             {
@@ -1717,9 +1700,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
             }
           else
             {
-              fprintf(stdout,"connect to host...\n");
-              fflush(stdout);
-              
               //connect to host
               if ((connect(fd, (void *)&host, sizeof(host)))==-1)
                 {
@@ -1730,9 +1710,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
                 {
                   //possible errors + proxy
                   if (!dest.proxy) {
-                    fprintf(stdout,"waiting...\n");
-                    fflush(stdout);
-                    
                     i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
                     if (i == -1)
                       {
