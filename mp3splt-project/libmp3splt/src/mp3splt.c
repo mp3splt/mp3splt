@@ -790,7 +790,8 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
   if (state != NULL)
     {
       //puts the results in "search_results"
-      *error = splt_freedb_process_search(state, search_string);
+      //for the moment, 1 means search freedb2.org
+      *error = splt_freedb_process_search(state, search_string,1);
       return state->fdb.search_results;
     }
   else

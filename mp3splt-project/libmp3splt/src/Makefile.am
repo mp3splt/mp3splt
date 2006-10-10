@@ -2,7 +2,7 @@ includedir = $(prefix)/include/libmp3splt/
 
 include_HEADERS = mp3splt.h mp3splt_types.h
 
-INCLUDES=-Wall -Wswitch-enum -std=gnu99
+INCLUDES=-Wall -Wswitch-enum -std=gnu99 -g
 
 #shared
 lib_LTLIBRARIES = libmp3splt.la

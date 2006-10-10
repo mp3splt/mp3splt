@@ -1056,82 +1056,175 @@ static int splt_freedb_analyse_cd_buffer (char *buf, int size, splt_state *state
     {
       return 0;
     }
-  else {
-    do {
-      i=0;
-      buf += 4;
+  else 
+    {
+      do {
+        i=0;
+        buf += 4;
       
-      //-1 = continue with the next buffer
-      if ((c=strchr(buf, '&'))==NULL)
-        return -1;
+        //-1 = continue with the next buffer
+        if ((c=strchr(buf, '&'))==NULL)
+          return -1;
       
-      if (c==buf)
-        continue;
+        if (c==buf)
+          continue;
+      
+        //we set the category and the disc id
+        splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state),
+                               buf,c+4,c-buf);
+        buf=c+4;
+        buf = buf + SPLT_DISCIDLEN + 2;
+      
+        //if buf is NULL, get out
+        if (buf == NULL)
+          {
+            return -1;
+          }
+        else
+          {
+            //-1 = continue with the next buffer
+            if ((c=strchr(buf, '<'))==NULL)
+              {
+                return -1;
+              }
+            else 
+              {
+                if (c == buf)
+                  {
+                    if ((buf=strchr(buf, '>'))==NULL)
+                      return -1;
+                    buf++;
+                    if ((c=strchr(buf, '<'))==NULL)
+                      return -1;
+                    i=-1;
+                  }
+              }
+          }
+      
+        album_name = calloc(2,1);
+        //we count the characters for the realloc
+        int count = 2;
+        //we get the name of the album
+        while ( (buf<c) && (buf<add) )
+          {
+            t = *buf;
+            buf++;count++;
+          
+            sprintf(str_temp,"%c",t);
+            strcat(album_name, str_temp);
+            album_name = realloc(album_name, count);
+          }
+      
+        //here we have in album_name the name of the current album      
+        splt_t_freedb_append_result(state, album_name, i);
+      
+        //we free the local variable
+        //for the album name
+        if (album_name)
+          {
+            free(album_name);
+          }
+      
+        splt_t_freedb_found_cds_next(state);
+      
+      } while ((buf<(add-30)) && 
+               (splt_t_freedb_get_found_cds(state) < SPLT_MAXCD) && 
+               ((buf=strstr(buf, "cat="))!=NULL));
+    
+      return splt_t_freedb_get_found_cds(state);
+    }
+}
+
+//we analyse the freedb2 buffer for the CDs results
+static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *state,
+                                           int *error)
+{
+  do
+    {
+      //temporary pointer
+      char *temp = NULL, *temp2 = NULL;
+  
+      //fprintf(stdout,"buffer = %s\n",buf);
+      //fflush(stdout);
+      
+      //we find the first result
+      buf = strstr(buf, "?fDisc/");
+      buf += 7;
+      temp = strchr(buf, '\"');
+      
+      //we get the fDisc
+      //2110456
+      char fDisc[16] = "";
+      snprintf(fDisc, temp-buf+1, "%s", buf);
+  
+      //we find out the <div> that sorrounds the genre/cddbid
+      //blues/1011b914
+      temp = strstr(buf, "<div>");
+      temp2 = strstr(temp, "</div>");
+      temp += 5;
+      char cddb_genre[255] = "";
+      snprintf(cddb_genre,temp2-temp+1,"%s",temp);
+      
+      //we get out the cddb id from the genre
+      //1011b914
+      //and we cut the cddb_genre to
+      //blues
+      temp = strchr(cddb_genre,'/');
+      char cddb_id[16] = "";
+      snprintf(cddb_id,cddb_genre-temp+1,"%s",temp+1);
+      *temp = '\0';
       
       //we set the category and the disc id
       splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state),
-                             buf,c+4,c-buf);
-      buf=c+4;
-      buf = buf + SPLT_DISCIDLEN + 2;
+                             cddb_genre,cddb_id,strlen(cddb_genre));
       
-      //if buf is NULL, get out
-      if (buf == NULL)
-        {
-          return -1;
-        }
-      else
-        {
-          //-1 = continue with the next buffer
-          if ((c=strchr(buf, '<'))==NULL)
-            {
-              return -1;
-            }
-          else 
-            {
-              if (c == buf)
-                {
-                  if ((buf=strchr(buf, '>'))==NULL)
-                    return -1;
-                  buf++;
-                  if ((c=strchr(buf, '<'))==NULL)
-                    return -1;
-                  i=-1;
-                }
-            }
-        }
+      buf = temp2;
+  
+      //we get out the artist 
+      char *freedb_artist;
+      temp = strstr(buf, "<b>");
+      temp2 = strstr(temp, "</b>");
+      freedb_artist = malloc(temp2-temp-2);
+      snprintf(freedb_artist,temp2-temp-2,"%s",temp+3);
       
-      album_name = calloc(2,1);
-      //we count the characters for the realloc
-      int count = 2;
-      //we get the name of the album
-      while ( (buf<c) && (buf<add) )
-        {
-          t = *buf;
-          buf++;count++;
-          
-          sprintf(str_temp,"%c",t);
-          strcat(album_name, str_temp);
-          album_name = realloc(album_name, count);
-        }
+      buf = temp2;
       
+      //we get out the album name
+      char *freedb_album;
+      temp = strstr(buf, "l;&nbsp;");
+      temp2 = strstr(temp, "</div>");
+      freedb_album = malloc(temp2-temp-7);
+      snprintf(freedb_album,temp2-temp-7,"%s",temp+8);
+      
+      //we write :
+      //artist / album
+      char *full_artist_album = 
+        malloc(strlen(freedb_album)+strlen(freedb_artist)+4);
+      snprintf(full_artist_album,strlen(freedb_album)+strlen(freedb_artist)+4,
+               "%s / %s",freedb_artist,freedb_album);
+      
+      //i!=-1 means that it's not a revision
+      int i=0;
       //here we have in album_name the name of the current album      
-      splt_t_freedb_append_result(state, album_name, i);
+      splt_t_freedb_append_result(state, full_artist_album, i);
       
-      //we free the local variable
-      //for the album name
-      if (album_name)
-        {
-          free(album_name);
-        }
+      //test
+      //fprintf(stdout,"fDisc=_%s_ genre=_%s_ id=_%s_ full_artist_album=_%s_\n", fDisc,
+      //cddb_genre, cddb_id, full_artist_album);
+      //fflush(stdout);
       
+      //free memory
+      free(freedb_artist);
+      free(freedb_album);
+      free(full_artist_album);
+      
+      //next cd
       splt_t_freedb_found_cds_next(state);
       
-    } while ((buf<(add-30)) && 
-             (splt_t_freedb_get_found_cds(state) < SPLT_MAXCD) && 
-             ((buf=strstr(buf, "cat="))!=NULL));
-    
-    return splt_t_freedb_get_found_cds(state);
-  }
+    } while ((buf=strstr(buf,"?fDisc"))!= NULL);
+  
+  return -1;
+  //exit(0);
 }
 
 //char *login (char *s)
@@ -1147,7 +1240,7 @@ static int splt_freedb_analyse_cd_buffer (char *buf, int size, splt_state *state
 //      return s;
 //}
 
-static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest)
+static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest, int search_type)
 {
   char line[270];
   //char *ptr;
@@ -1213,8 +1306,17 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest)
         
   if (!dest.proxy) 
     {
-      strncpy(dest.hostname, SPLT_FREEDB_SITE, 255);
-      dest.port = SPLT_FREEDB_PORT1;
+      if (search_type == SPLT_SEARCH_TYPE_FREEDB2)
+        {
+          strncpy(dest.hostname, SPLT_FREEDB2_SITE, 255);
+          dest.port = SPLT_FREEDB_PORT1;
+        }
+      else
+        if (search_type == SPLT_SEARCH_TYPE_FREEDB2)
+          {
+            strncpy(dest.hostname, SPLT_FREEDB_SITE, 255);
+            dest.port = SPLT_FREEDB_PORT1;
+          }
     }
         
   return dest;
@@ -1223,7 +1325,9 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest)
 //search the freedb according to "search"
 //returns possible errors
 //we have possible errors in result
-int splt_freedb_process_search(splt_state *state, char *search)
+//search_type can be SPLT_SEARCH_TYPE_FREEDB2
+int splt_freedb_process_search(splt_state *state, char *search,
+                               int search_type)
 {
   //possible error that we will return
   int error = SPLT_FREEDB_OK;
@@ -1261,7 +1365,7 @@ int splt_freedb_process_search(splt_state *state, char *search)
     }
   
   //null because we dont use proxy for now
-  dest = splt_freedb_useproxy(NULL, dest);
+  dest = splt_freedb_useproxy(NULL, dest, search_type);
   
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
@@ -1304,89 +1408,208 @@ int splt_freedb_process_search(splt_state *state, char *search)
               //                strncat(message, "\n", 1);
               //                }
               //                else 
-              int malloc_number = strlen(SPLT_FREEDB_SEARCH)+strlen(search)+5;
-              if((message = malloc(malloc_number)) == NULL)
+              int malloc_number = 0;
+              //freedb2 html search
+              if (search_type == SPLT_SEARCH_TYPE_FREEDB2)
                 {
-                  error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                }
-              else
-                {
-                  snprintf(message,malloc_number,
-                           "GET "SPLT_FREEDB_SEARCH"\n", search);
-                  
-                  //message sent
-                  if((send(fd, message, strlen(message), 0))==-1)
+                  //POST message sent
+                  if((send(fd,SPLT_FREEDB2_SEARCH"\n", strlen(SPLT_FREEDB2_SEARCH)+1, 0))==-1)
                     {
                       error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-                      goto function_end;
                     }
                   else
                     {
-                      memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
+                      malloc_number = strlen(search)+strlen(SPLT_FREEDB2_SEARCH_STRING)+2;
                       
-                      //we free previous search
-                      splt_t_freedb_free_search(state);
-                      
-                      int init_err = SPLT_OK;
-                      //create cdstate..
-                      init_err = splt_t_freedb_init_search(state);
-                      
-                      if (init_err == SPLT_OK)
+                      //we allocate the memory for the query string
+                      if ((message = malloc(malloc_number)) == NULL)
                         {
-                          //we read what we receive from the server
-                          do {
-                            tot=0;
-                            c = buffer;
-                            
-                            do {
-                              i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
-                              if (i == -1) 
-                                {
-                                  error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
-                                  goto function_end;
-                                }
-                              tot += i;
-                              buffer[tot]='\0';
-                              c += i;
-                            } while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)
-                                     &&((e=strstr(buffer, "</html>"))==NULL));
-                            
-                            //we analyse the buffer
-                            tot = splt_freedb_analyse_cd_buffer(buffer, tot, state,&error);
-                            if (error < 0)
-                              {
-                                goto function_end;
-                              }
-                            
-                            if (tot == -1) continue;
-                            if (tot == -2) break;
-                            
-                          } while ((i>0)&&(e==NULL)&&
-                                   (splt_t_freedb_get_found_cds(state)<SPLT_MAXCD));
+                          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                        }
+                      else
+                        {
+                          //we write the search query
+                          snprintf(message, malloc_number,
+                                   SPLT_FREEDB2_SEARCH_STRING,search);
+                          //we send the Content-Type header
+                          char *content_type = "Content-Type: application/x-www-form-urlencoded\n";
+                          if (send(fd, content_type, strlen(content_type), 0) == -1)
+                          {
+                            error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
+                            goto function_end1;
+                          }
+                          //we send the Content-Length header
+                          char content_length[255];
+                          snprintf(content_length, 255, "Content-Length: %d\n\n", strlen(message));
+                          if (send(fd, content_length, strlen(content_length), 0) == -1)
+                            {
+                              error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
+                              goto function_end1;
+                            }
                           
-                          //no cd found
-                          if (splt_t_freedb_get_found_cds(state)==0) 
+                          //message sent
+                          if((send(fd, message, strlen(message), 0))==-1)
                             {
-                              error = SPLT_FREEDB_NO_CD_FOUND;
-                              goto function_end;
+                              error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
                             }
-                          //erroror occured while getting freedb infos
-                          if (splt_t_freedb_get_found_cds(state)==-1) 
+                          else
                             {
-                              error = SPLT_FREEDB_ERROR_GETTING_INFOS;
-                              goto function_end;
-                            }
-                          //max cd number reached
-                          if (splt_t_freedb_get_found_cds(state)==SPLT_MAXCD) 
-                            {
-                              error = SPLT_FREEDB_MAX_CD_REACHED;
-                              goto function_end;
+                              memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
+                                  
+                              //we free previous search
+                              splt_t_freedb_free_search(state);
+                                  
+                              int init_err = SPLT_OK;
+                              //create cdstate..
+                              init_err = splt_t_freedb_init_search(state);
+                                  
+                              if (init_err == SPLT_OK)
+                                {
+                                  //we read what we receive from the server
+                                  do {
+                                    tot=0;
+                                    c = buffer;
+                                    
+                                    do {
+                                      i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
+                                      if (i == -1) 
+                                        {
+                                          error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
+                                          goto function_end1;
+                                        }
+                                      tot += i;
+                                      buffer[tot]='\0';
+                                      c += i;
+                                    } while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)
+                                             &&((e=strstr(buffer, "</html>"))==NULL));
+                                    
+                                    //we analyse the buffer
+                                    tot = splt_freedb2_analyse_cd_buffer(buffer, tot, state,&error);
+                                    
+                                    if (error < 0)
+                                      {
+                                        goto function_end1;
+                                      }
+                                    
+                                    if (tot == -1) continue;
+                                    if (tot == -2) break;
+                                    
+                                  } while ((i>0)&&(e==NULL)&&
+                                           (splt_t_freedb_get_found_cds(state)<SPLT_MAXCD));
+                                  
+                                  //no cd found
+                                  /*if (splt_t_freedb_get_found_cds(state)==0) 
+                                    {
+                                    error = SPLT_FREEDB_NO_CD_FOUND;
+                                    goto function_end1;
+                                    }
+                                    //erroror occured while getting freedb infos
+                                    if (splt_t_freedb_get_found_cds(state)==-1) 
+                                    {
+                                    error = SPLT_FREEDB_ERROR_GETTING_INFOS;
+                                    goto function_end1;
+                                    }
+                                    //max cd number reached
+                                    if (splt_t_freedb_get_found_cds(state)==SPLT_MAXCD) 
+                                    {
+                                    error = SPLT_FREEDB_MAX_CD_REACHED;
+                                    goto function_end1;
+                                    }*/
+                                }
                             }
                         }
+                    function_end1:
+                      //free memory
+                      free(message);
                     }
-                function_end:
-                  //free memory
-                  free(message);
+                    
+                }
+              //old freedb search
+              else
+                {
+                  malloc_number = strlen(SPLT_FREEDB_SEARCH)+strlen(search)+5;
+                  if((message = malloc(malloc_number)) == NULL)
+                    {
+                      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                    }
+                  else
+                    {
+                      snprintf(message,malloc_number,"GET "SPLT_FREEDB_SEARCH"\n", search);
+                      
+                      //message sent
+                      if((send(fd, message, strlen(message), 0))==-1)
+                        {
+                          error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
+                          goto function_end;
+                        }
+                      else
+                        {
+                          memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
+                      
+                          //we free previous search
+                          splt_t_freedb_free_search(state);
+                      
+                          int init_err = SPLT_OK;
+                          //create cdstate..
+                          init_err = splt_t_freedb_init_search(state);
+                      
+                          if (init_err == SPLT_OK)
+                            {
+                              //we read what we receive from the server
+                              do {
+                                tot=0;
+                                c = buffer;
+                            
+                                do {
+                                  i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
+                                  if (i == -1) 
+                                    {
+                                      error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
+                                      goto function_end;
+                                    }
+                                  tot += i;
+                                  buffer[tot]='\0';
+                                  c += i;
+                                } while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)
+                                         &&((e=strstr(buffer, "</html>"))==NULL));
+                            
+                                //we analyse the buffer
+                                tot = splt_freedb_analyse_cd_buffer(buffer, tot, state,&error);
+                                if (error < 0)
+                                  {
+                                    goto function_end;
+                                  }
+                            
+                                if (tot == -1) continue;
+                                if (tot == -2) break;
+                            
+                              } while ((i>0)&&(e==NULL)&&
+                                       (splt_t_freedb_get_found_cds(state)<SPLT_MAXCD));
+                          
+                              //no cd found
+                              if (splt_t_freedb_get_found_cds(state)==0) 
+                                {
+                                  error = SPLT_FREEDB_NO_CD_FOUND;
+                                  goto function_end;
+                                }
+                              //erroror occured while getting freedb infos
+                              if (splt_t_freedb_get_found_cds(state)==-1) 
+                                {
+                                  error = SPLT_FREEDB_ERROR_GETTING_INFOS;
+                                  goto function_end;
+                                }
+                              //max cd number reached
+                              if (splt_t_freedb_get_found_cds(state)==SPLT_MAXCD) 
+                                {
+                                  error = SPLT_FREEDB_MAX_CD_REACHED;
+                                  goto function_end;
+                                }
+                            }
+                        }
+                    function_end:
+                      //free memory
+                      free(message);
+                    }
                 }
             }
           closesocket(fd);
@@ -1431,7 +1654,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error)
 #endif
   
   //NULL because we dont use proxy for now
-  dest = splt_freedb_useproxy(NULL, dest);
+  dest = splt_freedb_useproxy(NULL, dest,1);
   
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)

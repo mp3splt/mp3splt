@@ -63,19 +63,30 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
 /***********************/
 /* freedb */
 
-int splt_freedb_process_search(splt_state *state, char *search);
+int splt_freedb_process_search(splt_state *state, char *search,int search_type);
 char *splt_freedb_get_file(splt_state *state, int i, int *error);
 
 /**********************/
 /* constants */
 
+/* freedb stuff */
+
 #define SPLT_FREEDB_BUFFERSIZE 8192
 #define SPLT_FREEDB_SITE "freedb.org"
 #define SPLT_FREEDB_PORT1 80
 #define SPLT_FREEDB_PORT2 8880
+#define SPLT_FREEDB_HELLO "CDDB HELLO nouser mp3splt.net "SPLT_PACKAGE_NAME" "SPLT_PACKAGE_VERSION"\n"
 //#define SPLT_FREEDB_HTTP "http://www.freedb.org/~cddb/cddb.cgi?"
 #define SPLT_FREEDB_SEARCH "/freedb_search.php?words=%s&allfields=NO&fields=artist&fields=title&allcats=YES&grouping=none"
-#define SPLT_FREEDB_HELLO "CDDB HELLO nouser mp3splt.net "SPLT_PACKAGE_NAME" "SPLT_PACKAGE_VERSION"\n"
+
+/* freedb2 stuff */
+
+#define SPLT_SEARCH_TYPE_FREEDB2 1
+#define SPLT_FREEDB2_SITE "freedb2.org"
+
+/* freedb 2 html search */
+#define SPLT_FREEDB2_SEARCH "POST /?lDisk HTTP/1.0"
+#define SPLT_FREEDB2_SEARCH_STRING "ifSearch=%s&ifFields=1&iButton=Search"
 
 //the type found in the cue file
 #define SPLT_CUE_NOTHING 0

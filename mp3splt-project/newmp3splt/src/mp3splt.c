@@ -684,7 +684,7 @@ void do_freedb_search(splt_state *state,int *err)
     fprintf (stdout, "\n\t____________________________________________________________]");
     fprintf (stdout, "\r Search: [");
     fgets(freedb_input, 800, stdin);
-    fprintf(stdout, "\nPlease wait, contacting freedb.org ...\n");
+    fprintf(stdout, "\nPlease wait, contacting freedb2.org ...\n");
     fflush(stdout);
     
     freedb_input[strlen(freedb_input)-1]='\0';
