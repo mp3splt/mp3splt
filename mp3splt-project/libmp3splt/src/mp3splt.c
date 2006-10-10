@@ -820,8 +820,9 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
       
           char *freedb_file_content;
           freedb_file_content =
-            splt_freedb_get_file(state, disc_id, err);
-      
+            //1 means to use freedb2.org
+            splt_freedb_get_file(state, disc_id, err,1);
+          
           //if no error, write file
           if (*err == SPLT_FREEDB_FILE_OK)
             {

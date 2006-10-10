@@ -1312,7 +1312,7 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest, int search_type)
           dest.port = SPLT_FREEDB_PORT1;
         }
       else
-        if (search_type == SPLT_SEARCH_TYPE_FREEDB2)
+        if (search_type == SPLT_SEARCH_TYPE_FREEDB)
           {
             strncpy(dest.hostname, SPLT_FREEDB_SITE, 255);
             dest.port = SPLT_FREEDB_PORT1;
@@ -1624,7 +1624,9 @@ int splt_freedb_process_search(splt_state *state, char *search,
 //the disc_id i (parameter of the function)
 //we return possible error in err
 //result must be freed
-char *splt_freedb_get_file(splt_state *state, int i, int *error)
+//search_type can be SPLT_SEARCH_TYPE_FREEDB2
+char *splt_freedb_get_file(splt_state *state, int i, int *error,
+                           int search_type)
 {
   //possible error that we will return
   *error = SPLT_FREEDB_FILE_OK;
@@ -1654,7 +1656,11 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error)
 #endif
   
   //NULL because we dont use proxy for now
-  dest = splt_freedb_useproxy(NULL, dest,1);
+  dest = splt_freedb_useproxy(NULL, dest, 
+                              2);//search_type);
+  
+  fprintf(stdout,"get host by name...\n");
+  fflush(stdout);
   
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
@@ -1664,6 +1670,9 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error)
     }
   else
     {
+      fprintf(stdout,"prepare socket...\n");
+      fflush(stdout);
+      
       //we prepare socket
       memset(&host, 0x0, sizeof(host));
       host.sin_family=AF_INET;
@@ -1696,6 +1705,9 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error)
                    "CDDB READ %s %s\n", cd_category, cd_id);
           host.sin_port=htons(SPLT_FREEDB_PORT2);
           
+          fprintf(stdout,"open socket...\n");
+          fflush(stdout);
+          
           //open socket
           if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
             {
@@ -1705,6 +1717,9 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error)
             }
           else
             {
+              fprintf(stdout,"connect to host...\n");
+              fflush(stdout);
+              
               //connect to host
               if ((connect(fd, (void *)&host, sizeof(host)))==-1)
                 {
@@ -1715,6 +1730,9 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error)
                 {
                   //possible errors + proxy
                   if (!dest.proxy) {
+                    fprintf(stdout,"waiting...\n");
+                    fflush(stdout);
+                    
                     i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
                     if (i == -1)
                       {

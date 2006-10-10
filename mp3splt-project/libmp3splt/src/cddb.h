@@ -63,8 +63,8 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
 /***********************/
 /* freedb */
 
-int splt_freedb_process_search(splt_state *state, char *search,int search_type);
-char *splt_freedb_get_file(splt_state *state, int i, int *error);
+int splt_freedb_process_search(splt_state *state, char *search, int search_type);
+char *splt_freedb_get_file(splt_state *state, int i, int *error, int search_type);
 
 /**********************/
 /* constants */
@@ -82,6 +82,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error);
 /* freedb2 stuff */
 
 #define SPLT_SEARCH_TYPE_FREEDB2 1
+#define SPLT_SEARCH_TYPE_FREEDB 2
 #define SPLT_FREEDB2_SITE "freedb2.org"
 
 /* freedb 2 html search */
