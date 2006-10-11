@@ -362,6 +362,64 @@ void splt_mp3_state_free (splt_state *state)
 /****************************/
 /* mp3 tags */
 
+//return id3 buffer as string (the char *id is filled)
+//return must be freed
+static char *splt_mp3_id3v1 (char *title, char *artist, char *album,
+                             char *year, unsigned char genre, 
+                             char *comment, short track, int *error)
+{
+  char *id = NULL;
+  char buffer[30];
+  int j=3,i;
+  
+  if ((id = malloc(sizeof(char) * 128))
+      != NULL)
+    {
+      memset(id,'\0',128);
+      
+      strncpy(id, SPLT_MP3_TAG, 4);
+      
+      memset(buffer, '\0', 30);
+      if (title!=NULL) strncpy(buffer, title, 30);
+      for (i=0; i<30; i++) id[j++]=buffer[i];
+      
+      memset(buffer, '\0', 30);
+      if (artist!=NULL) strncpy(buffer, artist, 30);
+      for (i=0; i<30; i++) id[j++]=buffer[i];
+  
+      memset(buffer, '\0', 30);
+      if (album!=NULL) strncpy(buffer, album, 30);
+      for (i=0; i<30; i++) id[j++]=buffer[i];
+      
+      memset(buffer, '\0', 30);
+      if (year!=NULL) strncpy(buffer, year, 4);
+      for (i=0; i<4; i++) id[j++]=buffer[i];
+      
+      memset(buffer, '\0', 30);
+      if (comment!=NULL) strncpy(buffer, comment, 30);
+      for (i=0; i<30; i++) 
+        {
+          id[j++]=buffer[i];
+        }
+      //if we have a positive track
+      if (track != -1)
+        {
+          if (track != 0x00)
+            {
+              id[j-1] = (char) track;
+            }
+        }      
+      id[j] = (char) genre;
+    }
+  else
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
+    }
+  
+  return id;
+}
+
 #ifndef NO_ID3TAG
 //puts a original field on id3 conforming to frame_type
 static void splt_mp3_put_original_id3_frame(splt_state *state,
@@ -449,64 +507,6 @@ static void splt_mp3_put_original_id3_frame(splt_state *state,
           free(latin1);
         }
     }
-}
-
-//return id3 buffer as string (the char *id is filled)
-//return must be freed
-static char *splt_mp3_id3v1 (char *title, char *artist, char *album,
-                             char *year, unsigned char genre, 
-                             char *comment, short track, int *error)
-{
-  char *id = NULL;
-  char buffer[30];
-  int j=3,i;
-  
-  if ((id = malloc(sizeof(char) * 128))
-      != NULL)
-    {
-      memset(id,'\0',128);
-      
-      strncpy(id, SPLT_MP3_TAG, 4);
-      
-      memset(buffer, '\0', 30);
-      if (title!=NULL) strncpy(buffer, title, 30);
-      for (i=0; i<30; i++) id[j++]=buffer[i];
-      
-      memset(buffer, '\0', 30);
-      if (artist!=NULL) strncpy(buffer, artist, 30);
-      for (i=0; i<30; i++) id[j++]=buffer[i];
-  
-      memset(buffer, '\0', 30);
-      if (album!=NULL) strncpy(buffer, album, 30);
-      for (i=0; i<30; i++) id[j++]=buffer[i];
-      
-      memset(buffer, '\0', 30);
-      if (year!=NULL) strncpy(buffer, year, 4);
-      for (i=0; i<4; i++) id[j++]=buffer[i];
-      
-      memset(buffer, '\0', 30);
-      if (comment!=NULL) strncpy(buffer, comment, 30);
-      for (i=0; i<30; i++) 
-        {
-          id[j++]=buffer[i];
-        }
-      //if we have a positive track
-      if (track != -1)
-        {
-          if (track != 0x00)
-            {
-              id[j-1] = (char) track;
-            }
-        }      
-      id[j] = (char) genre;
-    }
-  else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
-  
-  return id;
 }
 
 //this function puts the original id3 tags if we had libid3tag enabled

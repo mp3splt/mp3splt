@@ -76,7 +76,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error, int search_type
 #define SPLT_FREEDB_PORT1 80
 #define SPLT_FREEDB_PORT2 8880
 #define SPLT_FREEDB_HELLO "CDDB HELLO nouser mp3splt.net "SPLT_PACKAGE_NAME" "SPLT_PACKAGE_VERSION"\n"
-//#define SPLT_FREEDB_HTTP "http://www.freedb.org/~cddb/cddb.cgi?"
+#define SPLT_FREEDB_HTTP "http://www.freedb.org/~cddb/cddb.cgi?"
 #define SPLT_FREEDB_SEARCH "/freedb_search.php?words=%s&allfields=NO&fields=artist&fields=title&allcats=YES&grouping=none"
 
 /* freedb2 stuff */
@@ -86,8 +86,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error, int search_type
 #define SPLT_FREEDB2_SITE "freedb2.org"
 
 /* freedb 2 html search */
-#define SPLT_FREEDB2_SEARCH "POST /?lDisk HTTP/1.0"
-#define SPLT_FREEDB2_SEARCH_STRING "ifSearch=%s&ifFields=1&iButton=Search"
+#define SPLT_FREEDB2_SEARCH "GET /~cddb/cddb.cgi?cmd=cddb+album+%s&hello=nouser+mp3splt.sf.net+"SPLT_PACKAGE_NAME"+"SPLT_PACKAGE_VERSION"&proto=5"
 
 //the type found in the cue file
 #define SPLT_CUE_NOTHING 0
