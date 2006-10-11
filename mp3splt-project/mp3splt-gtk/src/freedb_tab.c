@@ -347,7 +347,8 @@ void freedb_search(gpointer *data)
   gdk_threads_leave();
   
   search_results = 
-    mp3splt_get_freedb_search(the_state, freedb_search, &err);
+    mp3splt_get_freedb_search(the_state, freedb_search, &err,
+                              SPLT_SEARCH_TYPE_FREEDB2, "\0",-1);
   
   //lock gtk
   gdk_threads_enter();
@@ -469,7 +470,7 @@ void write_freedbfile(int *err)
   
   //we write the freedb file ...
   mp3splt_write_freedb_file_result(the_state, selected_id,
-                                   filename, err);
+                                   filename, err, "\0",-1);
   
   //lock gtk
   gdk_threads_enter();
@@ -643,7 +644,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start (GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 3);
   //top label
   GtkWidget *label;
-  label = gtk_label_new((gchar *)_("Search freedb.org : "));
+  label = gtk_label_new((gchar *)_("Search freedb2.org : "));
   gtk_box_pack_start (GTK_BOX(search_hbox), label , FALSE, FALSE, 0);
   //top entry
   freedb_entry = gtk_entry_new();
