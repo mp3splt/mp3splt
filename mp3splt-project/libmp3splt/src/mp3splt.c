@@ -785,13 +785,22 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
                                                //our search
                                                char *search_string,
                                                //possible errors
-                                               int *error)
+                                               int *error,
+                                               //the type of the search
+                                               //usually SPLT_SEARCH_TYPE_FREEDB2
+                                               int search_type,
+                                               //if strlen(search_server) == 0, we put the default
+                                               char search_server[256],
+                                               //if port=-1, we use 80
+                                               int port)
 {
   if (state != NULL)
     {
       //puts the results in "search_results"
       //for the moment, 1 means search freedb2.org
-      *error = splt_freedb_process_search(state, search_string,1);
+      *error = splt_freedb_process_search(state, search_string,
+                                          search_type,
+                                          search_server, port);
       return state->fdb.search_results;
     }
   else
@@ -810,7 +819,9 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
 //we return possible errors in err
 //the cddb_file is the file to write
 void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
-                                      char *cddb_file, int *err)
+                                      char *cddb_file, int *err,
+                                      char cddb_get_server[256],
+                                      int port)
 {
   if (state != NULL)
     {
@@ -820,8 +831,8 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
       
           char *freedb_file_content;
           freedb_file_content =
-            //1 means to use freedb2.org
-            splt_freedb_get_file(state, disc_id, err,1);
+            splt_freedb_get_file(state, disc_id, err,
+                                 cddb_get_server,port);
           
           //if no error, write file
           if (*err == SPLT_FREEDB_FILE_OK)

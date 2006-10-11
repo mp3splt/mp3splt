@@ -182,12 +182,17 @@ void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
  */
 splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
                                                char *searched_string,
-                                               int *error);
+                                               int *error,
+                                               int search_type,
+                                               char search_server[256],
+                                               int port);
 
 void mp3splt_write_freedb_file_result(splt_state *state,
                                       int disc_id,
                                       char *cddb_file,
-                                      int *error);
+                                      int *error,
+                                      char cddb_get_server[256],
+                                      int port);
 
 //string s is freed, call with strdup for example
 void mp3splt_set_oformat(splt_state *state,

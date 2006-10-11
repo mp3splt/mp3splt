@@ -1253,6 +1253,10 @@ typedef enum {
   SPLT_OPT_PARAM_MIN_LENGTH
 } splt_float_options;
 
+//freedb search type
+#define SPLT_SEARCH_TYPE_FREEDB2 1
+#define SPLT_SEARCH_TYPE_FREEDB 2
+
 //package information constants
 #ifndef SPLT_PACKAGE_NAME
 /**

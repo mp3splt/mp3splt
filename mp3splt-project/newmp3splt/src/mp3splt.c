@@ -695,7 +695,8 @@ void do_freedb_search(splt_state *state,int *err)
   splt_freedb_results *f_results;
   //we search the freedb
   f_results = mp3splt_get_freedb_search(state,freedb_input,
-                                        err);
+                                        err, SPLT_SEARCH_TYPE_FREEDB2,
+                                        "\0",-1);
   print_confirmation_error(*err);
   
   if (*err >= 0)
@@ -800,10 +801,11 @@ void do_freedb_search(splt_state *state,int *err)
     
       } while ((selected_cd >= f_results->number) 
                || (selected_cd < 0));
-  
+      
       //here we have the selected cd in selected_cd
       mp3splt_write_freedb_file_result(state, selected_cd,
-                                       MP3SPLT_CDDBFILE, err);
+                                       MP3SPLT_CDDBFILE, err,
+                                       "\0",-1);
       print_confirmation_error(*err);
   
       //if no error

@@ -370,7 +370,7 @@ void splt_u_set_complete_new_filename(splt_state *state, int *error)
   char *fname = NULL;
   
   //get the filename without the path
-  filename2 = splt_u_get_real_name(filename2);
+  filename2 = strdup(splt_u_get_real_name(filename2));
   fname = splt_u_get_new_filename(filename2, state,
                                   split_begin, split_end,
                                   current_split,error);
