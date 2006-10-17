@@ -956,7 +956,7 @@ Options *new_options()
   opt->p_option = SPLT_FALSE; opt->o_option = SPLT_FALSE;
   opt->d_option = SPLT_FALSE; opt->k_option = SPLT_FALSE;
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
-  opt->q_option = SPLT_FALSE;
+  opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
   opt->param_args = NULL; opt->custom_tags = NULL;
   
@@ -1257,7 +1257,7 @@ int main (int argc, char *argv[])
     }*/
   //end TEST
   
-  //just don't put incompatible options!, rtfm and think pink
+  //just don't put incompatible options!, rtfm
   if (opt->l_option || opt->i_option || opt->c_option ||
       opt->e_option || opt->t_option || opt->w_option ||
       opt->s_option)

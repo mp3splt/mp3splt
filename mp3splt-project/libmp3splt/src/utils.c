@@ -165,7 +165,7 @@ char *splt_u_cleanstring (char *s)
         }
     }
   free(copy);
-      
+  
   // Trim string. I will never stop to be surprised about cddb strings dirtiness! ;-)
   for (i=strlen(s)-1; i >= 0; i--) 
     {
@@ -284,16 +284,18 @@ static char *splt_u_get_new_filename(char *filename,
                           strcat(fname, " ");
                         }
                       else
-                        if ((state->split.points[i].name[j] == '\\') ||
-                            (state->split.points[i].name[j] == '/'))
-                          {
-                            strcat(fname, "-");
-                          }
-                        else
-                          {
-                            snprintf(temp,2,"%c", state->split.points[i].name[j]);
-                            strcat(fname,temp);
-                          }
+			{
+			  if ((state->split.points[i].name[j] == '\\') ||
+			      (state->split.points[i].name[j] == '/'))
+			    {
+			      strcat(fname, "-");
+			    }
+			  else
+			    {
+			      snprintf(temp,2,"%c", state->split.points[i].name[j]);
+			      strcat(fname,temp);
+			    }
+			}
                     }
                 }
               
@@ -302,8 +304,10 @@ static char *splt_u_get_new_filename(char *filename,
               if ((points[i].name == NULL)
                   || (strcmp(points[i].name,"") == 0))
                 {
+                  snprintf(fname,strlen(filename),"%s", filename);
                   //we cut the extension of the original file
-                  snprintf(fname,strlen(filename)-3,"%s", filename);
+		  char *temp = strrchr(fname,'.');
+		  *temp='\0';
                 }
             }
           else
@@ -1012,12 +1016,15 @@ int splt_u_put_output_filename(splt_state *state)
       current_split = 0;
     }
   
+  splt_u_print_debug("The output format is ",0,state->oformat.format_string);
+  
   for (i=0; i<SPLT_OUTNUM; i++)
     {
       if (strlen(state->oformat.format[i])==0)
         {
           break;
         }
+      //if we have some % in the format (@ has been converted to %)
       if (state->oformat.format[i][0]=='%')
         {
           //we allocate memory for the temp variable
@@ -1281,6 +1288,8 @@ int splt_u_put_output_filename(splt_state *state)
   //we change the splitpoint name
   int name_error = SPLT_OK;
   int cur_splt = splt_t_get_current_split(state);
+  
+  splt_u_print_debug("The new output filename is ",0,output_filename);
   
   name_error = 
     splt_t_set_splitpoint_name(state,

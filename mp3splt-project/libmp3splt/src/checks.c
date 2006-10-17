@@ -35,6 +35,11 @@
 
 #include "splt.h"
 
+#ifdef __WIN32__
+#include "windows.h"
+#include "io.h"
+#endif
+
 /****************************/
 /* splitpoints checks */
 
@@ -443,6 +448,9 @@ int splt_check_is_file(char *fname)
 int splt_check_is_the_same_file(char *file1, char *file2,
                                 int *error)
 {
+  splt_u_print_debug("Checking if this file :",0,file1);
+  splt_u_print_debug("is like this file :",0,file2);
+  
   if (splt_check_is_file(file1) &&
       splt_check_is_file(file2))
     {
@@ -470,6 +478,34 @@ int splt_check_is_the_same_file(char *file1, char *file2,
                 }
               else
                 {
+		  //mingw for windows returns 0 as inode and 0 as device
+		  //when using the fstat function.
+#ifdef __WIN32__
+		  //file information structures
+		  BY_HANDLE_FILE_INFORMATION handle_info_file1;
+		  BY_HANDLE_FILE_INFORMATION handle_info_file2;
+		  int file1_d = fileno(file1_);
+		  int file2_d = fileno(file2_);
+		  
+		  //we get the file information for the file1
+		  if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file1_d), &handle_info_file1))
+		    {
+		      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+		      return SPLT_FALSE;
+		    }
+		  //we get the file information for the file2
+		  if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file2_d), &handle_info_file2))
+		    {
+		      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+		      return SPLT_FALSE;
+		    }
+		  //if the files have the same indexes, we have the same files
+		  if ((handle_info_file1.nFileIndexHigh == handle_info_file2.nFileIndexHigh)&&
+		      (handle_info_file1.nFileIndexLow == handle_info_file2.nFileIndexLow))
+		    {
+		      return SPLT_TRUE;
+		    }
+#else
                   int file2_d = fileno(file2_);
                   struct stat file2_stat;
                   if (fstat(file2_d,&file2_stat) == 0)
@@ -491,6 +527,7 @@ int splt_check_is_the_same_file(char *file1, char *file2,
                       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
                       return SPLT_FALSE;
                     }
+#endif
                 }
             }
           else
@@ -505,4 +542,6 @@ int splt_check_is_the_same_file(char *file1, char *file2,
     {
       return SPLT_FALSE;
     }
+  
+  return SPLT_FALSE;
 }
