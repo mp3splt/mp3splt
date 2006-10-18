@@ -42,7 +42,7 @@ case $host in
 		;;
 	*)
 		HOST="Other"
-                LIBS=""
+                LIBS="$LIBS"
 #		LIBS="-lmad -logg -lvorbis -lvorbisfile -lm"
 		;;
 esac
