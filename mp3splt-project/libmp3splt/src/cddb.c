@@ -1061,7 +1061,10 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
 					 buf,temp,temp-buf-1);
 		  
 		  char *full_artist_album = malloc(temp2-(temp+8)-1);
-		  snprintf(full_artist_album,temp2-(temp+8)-1,"%s",temp+9);
+		  int max_chars = temp2-(temp+8)-2;
+		  snprintf(full_artist_album,max_chars,"%s",temp+9);
+		  full_artist_album[max_chars] = '\0';
+		  splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
 		  
 		  //i!=-1 means that it's not a revision
 		  int i=0;

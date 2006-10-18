@@ -704,14 +704,14 @@ void do_freedb_search(splt_state *state,int *err)
       //print the searched informations
       fprintf (stdout, "List of found cd:\n");
       fflush(stdout);
-  
+      
       int cd_number = 0;
       short end = SPLT_FALSE;
       do {
         fprintf (stdout,"%3d) %s\n",
                  f_results->results[cd_number].id,
                  f_results->results[cd_number].name);
-    
+	
         int i;
         for(i = 0; i < f_results->results[cd_number].revision_number; i++)
           {
@@ -877,7 +877,7 @@ void put_splitted_file(char *file, int progress_data)
     }
   temp[counter] = '\0';
   
-  fprintf(stdout,"   File %s created%s\n",file,temp);
+  fprintf(stdout,"   File \"%s\" created%s\n",file,temp);
   fflush(stdout);
 }
 
