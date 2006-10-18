@@ -163,8 +163,7 @@ int splt_t_freedb_init_search(splt_state *state);
 int splt_t_freedb_get_found_cds(splt_state *state);
 void splt_t_freedb_found_cds_next(splt_state *state);
 void splt_t_freedb_set_disc(splt_state *state, int index,
-                            char *category, char *discid,
-                            int category_size);
+                            char *category, char *discid);
 char *splt_t_freedb_get_disc_category(splt_state *state, 
                                       int index);
 char *splt_t_freedb_get_disc_id(splt_state *state,
