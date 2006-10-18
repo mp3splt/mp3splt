@@ -42,7 +42,8 @@ case $host in
 		;;
 	*)
 		HOST="Other"
-		LIBS="-lmad -logg -lvorbis -lvorbisfile -lm"
+                LIBS=""
+#		LIBS="-lmad -logg -lvorbis -lvorbisfile -lm"
 		;;
 esac
 AC_MSG_RESULT($HOST)

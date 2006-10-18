@@ -8,6 +8,10 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
+if [[ $ARCH = "x86_64" ]];
+    ARCH="amd64";
+fi
+
 echo
 echo $'Package :\tdebian'
 echo

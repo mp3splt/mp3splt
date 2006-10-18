@@ -138,7 +138,11 @@ put_debian_version "etch"
 make debian_packages || exit 1
 clean_debian_version "etch"
 
-make_debian_flavor "debian" "sarge"
+#there is no sarge for x86_64
+if [[ $ARCH = "i386" ]];then
+    make_debian_flavor "debian" "sarge"
+fi
+
 make_debian_flavor "debian" "sid"
 cd $PROJECT_DIR
 ############# end debian packages ################
