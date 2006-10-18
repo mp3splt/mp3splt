@@ -2049,11 +2049,15 @@ void splt_t_freedb_set_disc(splt_state *state, int index,
       memset(cdstate->discs[index].category, 0x00, 20);
       snprintf(cdstate->discs[index].category,
                category_size,"%s",category);
+      //win
+      cdstate->discs[index].category[category_size-1] = '\0';
       splt_u_print_debug("Setting disc category ",0,cdstate->discs[index].category);
       
       memset(cdstate->discs[index].discid, 0x00, SPLT_DISCIDLEN+1);
       snprintf(cdstate->discs[index].discid,SPLT_DISCIDLEN+1,
                "%s",discid);
+      //win
+      cdstate->discs[index].discid[SPLT_DISCIDLEN] = '\0';
       splt_u_print_debug("Setting disc id ",0,cdstate->discs[index].discid);
     }
   else

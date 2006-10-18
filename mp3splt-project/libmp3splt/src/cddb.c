@@ -1037,6 +1037,15 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
   //temporary pointer
   char *temp = NULL, *temp2 = NULL;
   
+#ifdef __WIN32__
+  //we replace the \r on windows with \n
+  while ((temp = strchr(buf,'\r')) != NULL)
+    {
+      *temp = '\n';
+    }
+#endif
+  
+  temp = NULL;
   do
     {
       //genre
@@ -1045,25 +1054,37 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
       if (buf != NULL)
 	{
 	  buf += 1;
+#ifdef __WIN32__
+	  buf++;
+#endif
+	  
 	  //disc id
 	  temp = strchr(buf, ' ');
-	  
 	  if (temp != NULL)
 	    {
-	      temp += 1;
+	      temp++;
               
 	      //artist / album
-	      temp2 = strchr(temp+9,'\n');
+	      //temp2 is the end of the line
+	      temp2 = strchr(temp+8,'\n');
 	      if (temp2 != NULL)
 		{
+		  temp2++;
+		  
 		  //we set the category and the disc id
-		  splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state),
-					 buf,temp,temp-buf);
+		  splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), buf,temp,temp-buf);
 		  
 		  char *full_artist_album = malloc(temp2-(temp+8)-1);
 		  int max_chars = temp2-(temp+8)-1;
-		  snprintf(full_artist_album,max_chars,"%s",temp+9);
-		  //full_artist_album[max_chars] = '\0';
+		  //on windows we have \n\n
+		  //because we have replaced \r with \n
+#ifdef __WIN32__
+		  max_chars--;
+		  temp++;
+#endif
+		  snprintf(full_artist_album,max_chars,"%s",temp+8);
+		  //win
+		  full_artist_album[max_chars] = '\0';
 		  splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
 		  
 		  //i!=-1 means that it's not a revision
