@@ -1385,20 +1385,28 @@ int splt_freedb_process_search(splt_state *state, char *search,
 				  goto function_end1;
 				}
 			    }
+			  else
+			    {
+			      error = init_err;
+			      goto function_end1;
+			    }
 			}
+		      
+		    function_end1:
+		      //free memory
+		      free(message);
 		    }
-		function_end1:
-		  //free memory
-		  free(message);
                 }
               //we will put the new web html freedb search
-              else 
-                {
-                  if (search_type == SPLT_SEARCH_TYPE_FREEDB)
+              /* TODO when freedb.org releases the web search */
+	      else 
+		{
+		  error = SPLT_FREEDB_ERROR_GETTING_INFOS;
+		  return error;
+		  /*if (search_type == SPLT_SEARCH_TYPE_FREEDB)
                     {
-                      //TODO when freedb.org releases the web search
-                    }
-                }
+                    }*/
+		}
             }
           closesocket(fd);
         }
@@ -1623,7 +1631,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 		}
 	      
 	      //if we don't have an error
-	      if (*error == SPLT_FREEDB_FILE_OK)
+	      if (*error >= 0)
 		{
 		  if (tot==0) 
 		    {
@@ -1635,7 +1643,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 		    {
 		      buffer[e-buffer+1]='\0';
 		    }
-              
+		  
 		  //if invalid server answer
 		  if ((strstr(buffer, "database entry follows"))==NULL)
 		    {
@@ -1651,6 +1659,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 		      if ((c = strchr (buffer, '#'))==NULL)
 			{
 			  output = NULL;
+			  *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
+			  return NULL;
 			}
 		      else
 			{
@@ -1658,6 +1668,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			  if (output != NULL)
 			    {
 			      sprintf (output,c);
+			      return output;
 			    }
 			  else
 			    {
@@ -1666,6 +1677,10 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			    }
 			}
 		    }
+		}
+	      else
+		{
+		  return NULL;
 		}
 	    }
 	  //cddb.cgi script (usually port 80)
@@ -1697,7 +1712,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			  if((send(fd, message, strlen(message), 0))==-1)
 			    {
 			      *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-			      goto bloc_end;
+			      goto bloc_end2;
 			    }
 			  else
 			    {
@@ -1730,41 +1745,49 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 				  }
 				
 			      } while ((i>0)&&(e==NULL));
-			      
-			      //if we don't have an error
-			      if (*error == SPLT_FREEDB_FILE_OK)
-				{
-				  if (tot==0) 
-				    {
-				      *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
-				      return NULL;
-				    }
-				  
-				  if ((c = strchr (buffer, '#'))==NULL)
-				    {
-				      output = NULL;
-				    }
-				  else
-				    {
-				      output = malloc(strlen(c)+1);
-				      if (output != NULL)
-					{
-					  //we write the output
-					  snprintf (output,strlen(c)+1,c);
-					}
-				      else
-					{
-					  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-					  return NULL;
-					}
-				    }
-				}
 			    }
 			}
 		      
 		    bloc_end2:
 		      free(message);
 		      closesocket(fd);
+		      
+		      //if we don't have an error
+		      if (*error >= 0)
+			{
+			  if (tot==0) 
+			    {
+			      *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
+			      return NULL;
+			    }
+				  
+			  if ((c = strchr (buffer, '#'))==NULL)
+			    {
+			      output = NULL;
+			      *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
+			      return NULL;
+			    }
+			  else
+			    {
+			      output = malloc(strlen(c)+1);
+			      if (output != NULL)
+				{
+				  //we write the output
+				  sprintf (output,c);
+				  //splt_u_print_debug("cddb file = ",0,output);
+				  return output;
+				}
+			      else
+				{
+				  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+				  return NULL;
+				}
+			    }
+			}
+		      else
+			{
+			  return NULL;
+			}
 		    }
 		}
 	    }
@@ -1775,8 +1798,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 	  return NULL;
 	}
     }
-  
-  return output;
 }
 
   //deprecated, and not in use

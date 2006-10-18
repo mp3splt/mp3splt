@@ -790,6 +790,7 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
                                                //usually SPLT_SEARCH_TYPE_FREEDB2
                                                int search_type,
                                                //if strlen(search_server) == 0, we put the default
+					       //or null
                                                char search_server[256],
                                                //if port=-1, we use 80
                                                int port)
@@ -836,7 +837,7 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
         {
           splt_t_lock_library(state);
       
-          char *freedb_file_content;
+          char *freedb_file_content = NULL;
           freedb_file_content =
             splt_freedb_get_file(state, disc_id, err,
                                  cddb_get_type,cddb_get_server,port);
