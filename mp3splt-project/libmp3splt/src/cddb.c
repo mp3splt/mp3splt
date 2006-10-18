@@ -205,7 +205,7 @@ static int splt_cue_set_value(splt_state *state, char *in,
   *ptr_e='\0';
   
   char *out;
-  if ((out = malloc(sizeof(char) * (strlen(ptr_b)+1)))
+  if ((out = malloc(strlen(ptr_b)+1))
       == NULL)
     {
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -1058,7 +1058,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
 		{
 		  //we set the category and the disc id
 		  splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state),
-					 buf,temp,temp-buf);
+					 buf,temp,temp-buf-1);
 		  
 		  char *full_artist_album = malloc(temp2-(temp+8)-1);
 		  snprintf(full_artist_album,temp2-(temp+8)-1,"%s",temp+9);
@@ -1107,10 +1107,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
 
 static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
                                       char search_server[256],
-                                      //if search_or_get = 1, then we
-                                      //are searching
-                                      //else, we are getting
-                                      int port, int search_or_get)
+                                      int port)
 {
   //char line[270];
   //char *ptr;
@@ -1180,14 +1177,8 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
       //we put the hostname
       if (strlen(search_server) == 0)
         {
-          if (search_or_get == 1)
-            {
-              strncpy(dest.hostname, SPLT_FREEDB2_SITE, 255);
-            }
-          else
-            {
-              strncpy(dest.hostname, SPLT_FREEDB_SITE, 255);
-            }
+	  //by default we use freedb2.org
+	  strncpy(dest.hostname, SPLT_FREEDB2_SITE, 255);
         }
       else
         {
@@ -1197,12 +1188,14 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
       //we put the port
       if (port == -1)
         {
-          dest.port = SPLT_FREEDB_PORT1;
+	  //by default we put the port 80
+	  //to use it with cddb.cgi
+	  dest.port = SPLT_FREEDB_PORT1;
         }
       else
         {
           dest.port = port;
-        }
+        }      
     }
         
   return dest;
@@ -1216,6 +1209,8 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
 //search_server is the server on which to search for,
 // if search_server == NULL, it will be freedb2.org by default
 //port is the port where to connect to the server; by default is 80
+//
+//TODO: see when we don't have a valid search_type or port
 int splt_freedb_process_search(splt_state *state, char *search,
                                int search_type, char search_server[256],
                                int port)
@@ -1258,8 +1253,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
   //null because we dont use proxy for now
   dest = splt_freedb_useproxy(NULL, dest,
                               search_server,
-                              //1 means process search
-                              port,1);
+                              port);
   
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
@@ -1317,7 +1311,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
 		    {
 		      //we write the search query
 		      snprintf(message, malloc_number,
-			       SPLT_FREEDB2_SEARCH"\n",search);
+			       SPLT_FREEDB2_SEARCH,search);
 		      
 		      //message sent
 		      if((send(fd, message, strlen(message), 0))==-1)
@@ -1327,7 +1321,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
 		      else
 			{
 			  memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
-                                  
+			  
 			  //we free previous search
 			  splt_t_freedb_free_search(state);
                                   
@@ -1353,8 +1347,8 @@ int splt_freedb_process_search(splt_state *state, char *search,
 				  buffer[tot]='\0';
 				  c += i;
 				} while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)
-					 &&((e=strstr(buffer, "</html>"))==NULL));
-                                    
+					 &&((e=strstr(buffer, "\n."))==NULL));
+				
 				//we analyse the buffer
 				tot = splt_freedb2_analyse_cd_buffer(buffer, tot, state,&error);
                                 
@@ -1365,7 +1359,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
                                     
 				if (tot == -1) continue;
 				if (tot == -2) break;
-                                    
+				
 			      } while ((i>0)&&(e==NULL)&&
 				       (splt_t_freedb_get_found_cds(state)<SPLT_MAXCD));
                                   
@@ -1419,8 +1413,15 @@ int splt_freedb_process_search(splt_state *state, char *search,
 //cddb_get_server is the server from where we get the cddb file
 // -if it's null, we will use freedb2.org
 //the port is 80 by default, is the port where to connect to the server
+//get_type specifies the type of the get 
+// -it can be SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI (that works for both
+//  freedb and freedb2 at the moment - 18_10_06)
+//  or SPLT_FREEDB_GET_FILE_TYPE_CDDB (that only work for freedb at
+//  the moment - 18_10_06)
+//
+//TODO: see when we don't have a valid port or get_type
 char *splt_freedb_get_file(splt_state *state, int i, int *error,
-                           char cddb_get_server[256], int port)
+                           int get_type, char cddb_get_server[256], int port)
 {
   //possible error that we will return
   *error = SPLT_FREEDB_FILE_OK;
@@ -1452,7 +1453,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   //NULL because we dont use proxy for now
   dest = splt_freedb_useproxy(NULL, dest, 
                               cddb_get_server, 
-                              port, 2);
+                              port);
   
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
@@ -1486,234 +1487,350 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
       char *cd_id = 
         splt_t_freedb_get_disc_id(state, i);
       
-      int malloc_number = strlen(cd_category)+strlen(cd_id) + 20;
+      int malloc_number = 0;
+      if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
+	{
+	  malloc_number = strlen(cd_category)+strlen(cd_id)+
+	    strlen(SPLT_FREEDB_GET_FILE);
+	}
+      else
+	{
+	  if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
+	    {
+	      malloc_number = strlen(cd_category)+strlen(cd_id)+
+		strlen(SPLT_FREEDB_CDDB_CGI_GET_FILE);
+	    }
+	}
       message = malloc(malloc_number);
       if (message != NULL)
         {
-          snprintf(message, malloc_number,
-                   "CDDB READ %s %s\n", cd_category, cd_id);
-          host.sin_port=htons(SPLT_FREEDB_PORT2);
+	  //CDDB protocol (usually port 8880)
+	  if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
+	    {
+	      snprintf(message, malloc_number,
+		       SPLT_FREEDB_GET_FILE, cd_category, cd_id);
+	      
+	      //open socket
+	      if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
+		{
+		  *error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
+		  free(message);
+		  return NULL;
+		}
+	      else
+		{
+		  //connect to host
+		  if ((connect(fd, (void *)&host, sizeof(host)))==-1)
+		    {
+		      *error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
+		      goto bloc_end;
+		    }
+		  else
+		    {
+		      //possible errors + proxy
+		      if (!dest.proxy) 
+			{
+			  i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
+			  if (i == -1)
+			    {
+			      *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
+			      goto bloc_end;
+			    }
+			  buffer[i]='\0';
+                      
+			  if (strncmp(buffer,"201",3)!=0)  
+			    {
+			      *error = SPLT_FREEDB_ERROR_SITE_201;
+			      goto bloc_end;
+			    }
+                    
+			  if((send(fd, SPLT_FREEDB_HELLO, strlen(SPLT_FREEDB_HELLO), 0))==-1)
+			    {
+			      *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
+			      goto bloc_end;
+			    }
+			  i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
+			  
+			  if (i == -1)
+			    {
+			      *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
+			      goto bloc_end;
+			    }
+			  buffer[i]='\0';
+                    
+			  if (strncmp(buffer,"200",3)!=0)  
+			    {
+			      *error = SPLT_FREEDB_ERROR_SITE_200;
+			      goto bloc_end;
+			    }
+			}
+		      
+		      //we send the message
+		      if((send(fd, message, strlen(message), 0))==-1)
+			{
+			  *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
+			  goto bloc_end;
+			}
+		      else
+			{
+			  memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
+			  c = buffer;
+			  tot=0;
+			  
+			  //we read 
+			  do {
+			    i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
+			    if (i == -1)
+			      {
+				break;
+			      }
+			    
+			    //if errors
+			    if (tot == 0)
+			      {
+				if ((strncmp(buffer,"50",2) == 0)
+				    || (strncmp(buffer,"40",2) == 0))
+				  {
+				    *error = SPLT_FREEDB_ERROR_SITE;
+				    goto bloc_end;
+				  }
+			      }
+			    
+			    tot += i;
+			    buffer[tot]='\0';
+			    c += i;
+			  } while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)&&
+				   ((e=strstr(buffer, "\n."))==NULL));
+			  
+			  //we quit
+			  if (!dest.proxy)
+			    {
+			      if((send(fd, "quit\n", 5, 0))==-1)
+				{
+				  *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
+				  goto bloc_end;
+				}
+			    }
+			}
+		    }
+		  
+		bloc_end:
+		  free(message);
+		  closesocket(fd);
+		}
+	      
+	      //if we don't have an error
+	      if (*error == SPLT_FREEDB_FILE_OK)
+		{
+		  if (tot==0) 
+		    {
+		      *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
+		      return NULL;
+		    }
           
-          //open socket
-          if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
-            {
-              *error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
-              free(message);
-              return NULL;
-            }
-          else
-            {
-              //connect to host
-              if ((connect(fd, (void *)&host, sizeof(host)))==-1)
-                {
-                  *error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
-                  goto bloc_end;
-                }
-              else
-                {
-                  //possible errors + proxy
-                  if (!dest.proxy) 
-                    {
-                      i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
-                      if (i == -1)
-                        {
-                          *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
-                          goto bloc_end;
-                        }
-                      buffer[i]='\0';
-                      
-                      if (strncmp(buffer,"201",3)!=0)  
-                        {
-                          *error = SPLT_FREEDB_ERROR_SITE_201;
-                          goto bloc_end;
-                        }
-                    
-                      if((send(fd, SPLT_FREEDB_HELLO, strlen(SPLT_FREEDB_HELLO), 0))==-1)
-                        {
-                          *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-                          goto bloc_end;
-                        }
-                      i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
-                    
-                      if (i == -1)
-                        {
-                          *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
-                          goto bloc_end;
-                        }
-                      buffer[i]='\0';
-                    
-                      if (strncmp(buffer,"200",3)!=0)  
-                        {
-                          *error = SPLT_FREEDB_ERROR_SITE_200;
-                          goto bloc_end;
-                        }
-                    }
-                  
-                  //we send the message
-                  if((send(fd, message, strlen(message), 0))==-1)
-                    {
-                      *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-                      goto bloc_end;
-                    }
-                  else
-                    {
-                      memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
-                      c = buffer;
-                      tot=0;
-                      
-                      //we read 
-                      do {
-                        i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
-                        if (i == -1)
-                          {
-                            break;
-                          }
-                        
-                        //if errors
-                        if (tot == 0)
-                          {
-                            if ((strncmp(buffer,"50",2) == 0)
-                                || (strncmp(buffer,"40",2) == 0))
-                              {
-                                *error = SPLT_FREEDB_ERROR_SITE;
-                                goto bloc_end;
-                              }
-                          }
-                        
-                        tot += i;
-                        buffer[tot]='\0';
-                        c += i;
-                      } while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)&&
-                               ((e=strstr(buffer, "\n."))==NULL));
-                      
-                      //we quit
-                      if (!dest.proxy)
-                        {
-                          if((send(fd, "quit\n", 5, 0))==-1)
-                            {
-                              *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-                              goto bloc_end;
-                            }
-                        }
-                    }
-                }
+		  if (e!=NULL)
+		    {
+		      buffer[e-buffer+1]='\0';
+		    }
               
-            bloc_end:
-              free(message);
-              closesocket(fd);
-            }
-          
-          //if we don't have an error
-          if (*error == SPLT_FREEDB_FILE_OK)
-            {
-              if (tot==0) 
-                {
-                  *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
-                  return NULL;
-                }
-          
-              if (e!=NULL)
-                {
-                  buffer[e-buffer+1]='\0';
-                }
-              
-              //if invalid server answer
-              if ((strstr(buffer, "database entry follows"))==NULL)
-                {
-                  if ((c = strchr (buffer, '\n'))!=NULL)
-                    {
-                      buffer[c-buffer]='\0';
-                    }
-                  *error = SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER;
-                  return NULL;
-                }
-              else
-                {
-                  if ((c = strchr (buffer, '#'))==NULL)
-                    {
-                      output = NULL;
-                    }
-                  else
-                    {
-                      output = malloc(sizeof(char)*(strlen(c)+1));
-                      if (output != NULL)
-                        {
-                          sprintf (output,c);
-                        }
-                      else
-                        {
-                          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                          return NULL;
-                        }
-                    }
-                }
-            }
-        }
+		  //if invalid server answer
+		  if ((strstr(buffer, "database entry follows"))==NULL)
+		    {
+		      if ((c = strchr (buffer, '\n'))!=NULL)
+			{
+			  buffer[c-buffer]='\0';
+			}
+		      *error = SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER;
+		      return NULL;
+		    }
+		  else
+		    {
+		      if ((c = strchr (buffer, '#'))==NULL)
+			{
+			  output = NULL;
+			}
+		      else
+			{
+			  output = malloc(strlen(c)+1);
+			  if (output != NULL)
+			    {
+			      sprintf (output,c);
+			    }
+			  else
+			    {
+			      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+			      return NULL;
+			    }
+			}
+		    }
+		}
+	    }
+	  //cddb.cgi script (usually port 80)
+	  else
+	    {
+	      if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
+		{
+		  snprintf(message, malloc_number,
+			   SPLT_FREEDB_CDDB_CGI_GET_FILE, cd_category, cd_id);
+		  
+		  //open socket
+		  if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
+		    {
+		      *error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
+		      free(message);
+		      return NULL;
+		    }
+		  else
+		    {
+		      //connect to host
+		      if ((connect(fd, (void *)&host, sizeof(host)))==-1)
+			{
+			  *error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
+			  goto bloc_end2;
+			}
+		      else
+			{
+			  //we send the message
+			  if((send(fd, message, strlen(message), 0))==-1)
+			    {
+			      *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
+			      goto bloc_end;
+			    }
+			  else
+			    {
+			      memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
+			      c = buffer;
+			      tot=0;
+			      
+			      //we read 
+			      //we read what we receive from the server
+			      do {
+				tot=0;
+				c = buffer;
+				
+				do {
+				  i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
+				  if (i == -1) 
+				    {
+				      *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
+				      goto bloc_end2;
+				    }
+				  tot += i;
+				  buffer[tot]='\0';
+				  c += i;
+				} while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)
+					 &&((e=strstr(buffer, "\n."))==NULL));
+				
+				if (error < 0)
+				  {
+				    goto bloc_end2;
+				  }
+				
+			      } while ((i>0)&&(e==NULL));
+			      
+			      //if we don't have an error
+			      if (*error == SPLT_FREEDB_FILE_OK)
+				{
+				  if (tot==0) 
+				    {
+				      *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
+				      return NULL;
+				    }
+				  
+				  if ((c = strchr (buffer, '#'))==NULL)
+				    {
+				      output = NULL;
+				    }
+				  else
+				    {
+				      output = malloc(strlen(c)+1);
+				      if (output != NULL)
+					{
+					  //we write the output
+					  snprintf (output,strlen(c)+1,c);
+					}
+				      else
+					{
+					  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+					  return NULL;
+					}
+				    }
+				}
+			    }
+			}
+		      
+		    bloc_end2:
+		      free(message);
+		      closesocket(fd);
+		    }
+		}
+	    }
+	}
       else
-        {
-          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-          return NULL;
-        }
+	{
+	  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+	  return NULL;
+	}
     }
   
   return output;
 }
 
-//deprecated, and not in use
-//but may useful for the implementation of the proxy
-/*int search_freedb (splt_state *state)
-  {
-  char *c, *e=NULL;
-  FILE *output = NULL;
-  struct sockaddr_in host;
-  struct hostent *h;
-  struct splt_addr dest;
+  //deprecated, and not in use
+  //but may useful for the implementation of the proxy
+  /*int search_freedb (splt_state *state)
+    {
+    char *c, *e=NULL;
+    FILE *output = NULL;
+    struct sockaddr_in host;
+    struct hostent *h;
+    struct splt_addr dest;
 
-  if ((c=getenv("HOME"))!=NULL) sprintf(message, "%s/"PROXYCONFIG, c);
-  else strncpy(message, PROXYCONFIG, strlen(PROXYCONFIG));
+    if ((c=getenv("HOME"))!=NULL) sprintf(message, "%s/"PROXYCONFIG, c);
+    else strncpy(message, PROXYCONFIG, strlen(PROXYCONFIG));
 
-  if (!(output=fopen(message, "r"))) {
-  if (!(output=fopen(message, "w+"))) {
-  fprintf(stderr, "\nWARNING Can't open config file ");
-  perror(message);
-  }
-  else {
-  fprintf (stderr, "Will you use a proxy? (y/n): ");
-  fgets(junk, 200, stdin);
-  if (junk[0]=='y') {
-  fprintf (stderr, "Proxy Address: ");
-  fgets(junk, 200, stdin);
-  fprintf (output, "PROXYADDR=%s", junk);
-  fprintf (stderr, "Proxy Port: ");
-  fgets(junk, 200, stdin);
-  fprintf (output, "PROXYPORT=%s", junk);
-  fprintf (stderr, "Need authentication? (y/n): ");
-  fgets(junk, 200, stdin);
-  if (junk[0]=='y') {
-  fprintf (output, "PROXYAUTH=1\n");
-  fprintf (stderr, "Would you like to save password (insecure)? (y/n): ");
-  fgets(junk, 200, stdin);
-  if (junk[0]=='y') {
-  login (message);
-  e = b64(message, strlen(message));
-  fprintf (output, "%s\n", e);
-  memset(message, 0x00, strlen(message));
-  memset(e, 0x00, strlen(e));
-  free(e);
-  }
-  }
-  }
-  }
-  }
+    if (!(output=fopen(message, "r"))) {
+    if (!(output=fopen(message, "w+"))) {
+    fprintf(stderr, "\nWARNING Can't open config file ");
+    perror(message);
+    }
+    else {
+    fprintf (stderr, "Will you use a proxy? (y/n): ");
+    fgets(junk, 200, stdin);
+    if (junk[0]=='y') {
+    fprintf (stderr, "Proxy Address: ");
+    fgets(junk, 200, stdin);
+    fprintf (output, "PROXYADDR=%s", junk);
+    fprintf (stderr, "Proxy Port: ");
+    fgets(junk, 200, stdin);
+    fprintf (output, "PROXYPORT=%s", junk);
+    fprintf (stderr, "Need authentication? (y/n): ");
+    fgets(junk, 200, stdin);
+    if (junk[0]=='y') {
+    fprintf (output, "PROXYAUTH=1\n");
+    fprintf (stderr, "Would you like to save password (insecure)? (y/n): ");
+    fgets(junk, 200, stdin);
+    if (junk[0]=='y') {
+    login (message);
+    e = b64(message, strlen(message));
+    fprintf (output, "%s\n", e);
+    memset(message, 0x00, strlen(message));
+    memset(e, 0x00, strlen(e));
+    free(e);
+    }
+    }
+    }
+    }
+    }
         
-  if (splt_t_freedb_get_found_cds(state)<=0) {
-  if (dest.proxy) {
-  if (strstr(buffer, "HTTP/1.0")!=NULL) {
-  if ((c = strchr (buffer, '\n'))!=NULL)
-  buffer[c-buffer]='\0';
-  fprintf (stderr, "Proxy Reply: %s\n", buffer);
-  }
-  }
-  }
-  return 0;
-  }*/
+    if (splt_t_freedb_get_found_cds(state)<=0) {
+    if (dest.proxy) {
+    if (strstr(buffer, "HTTP/1.0")!=NULL) {
+    if ((c = strchr (buffer, '\n'))!=NULL)
+    buffer[c-buffer]='\0';
+    fprintf (stderr, "Proxy Reply: %s\n", buffer);
+    }
+    }
+    }
+    return 0;
+    }*/

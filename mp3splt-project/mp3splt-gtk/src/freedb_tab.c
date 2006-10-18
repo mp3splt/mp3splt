@@ -470,7 +470,10 @@ void write_freedbfile(int *err)
   
   //we write the freedb file ...
   mp3splt_write_freedb_file_result(the_state, selected_id,
-                                   filename, err, "\0",-1);
+                                   filename, err,
+				   //for now cddb.cgi get file type
+				   SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI,
+				   "\0",-1);
   
   //lock gtk
   gdk_threads_enter();

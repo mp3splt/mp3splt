@@ -1253,9 +1253,26 @@ typedef enum {
   SPLT_OPT_PARAM_MIN_LENGTH
 } splt_float_options;
 
-//freedb search type
+/*
+ * freedb2 search type
+ */
 #define SPLT_SEARCH_TYPE_FREEDB2 1
+/*
+ * freedb search type
+ */
 #define SPLT_SEARCH_TYPE_FREEDB 2
+
+/*
+ * freedb get file type
+ * we retrieve the file by using the cddb.cgi script
+ * (usually on port 80)
+ */
+#define SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI 1
+/*
+ * we retrieve the file by using the freedb cddb protocol 
+ * (usually on port 8880)
+ */
+#define SPLT_FREEDB_GET_FILE_TYPE_CDDB 2
 
 //package information constants
 #ifndef SPLT_PACKAGE_NAME

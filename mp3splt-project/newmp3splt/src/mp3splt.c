@@ -805,9 +805,11 @@ void do_freedb_search(splt_state *state,int *err)
       //here we have the selected cd in selected_cd
       mp3splt_write_freedb_file_result(state, selected_cd,
                                        MP3SPLT_CDDBFILE, err,
+				       //for now cddb.cgi get file type
+				       SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI,
                                        "\0",-1);
       print_confirmation_error(*err);
-  
+      
       //if no error
       if (*err >= 0)
         {

@@ -818,8 +818,15 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
 //a cddb file to use it
 //we return possible errors in err
 //the cddb_file is the file to write
+//
+//cddb_get_type specifies the type of the get 
+// -it can be SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI (that works for both
+//  freedb and freedb2 at the moment - 18_10_06)
+//  or SPLT_FREEDB_GET_FILE_TYPE_CDDB (that only work for freedb at
+//  the moment - 18_10_06)
 void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
                                       char *cddb_file, int *err,
+				      int cddb_get_type,
                                       char cddb_get_server[256],
                                       int port)
 {
@@ -832,7 +839,7 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
           char *freedb_file_content;
           freedb_file_content =
             splt_freedb_get_file(state, disc_id, err,
-                                 cddb_get_server,port);
+                                 cddb_get_type,cddb_get_server,port);
           
           //if no error, write file
           if (*err == SPLT_FREEDB_FILE_OK)

@@ -191,6 +191,7 @@ void mp3splt_write_freedb_file_result(splt_state *state,
                                       int disc_id,
                                       char *cddb_file,
                                       int *error,
+				      int cddb_get_type,
                                       char cddb_get_server[256],
                                       int port);
 

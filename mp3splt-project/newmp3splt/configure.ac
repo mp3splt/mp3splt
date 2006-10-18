@@ -42,17 +42,34 @@ case $host in
 		;;
 	*)
 		HOST="Other"
-		LIBS="$LIBS"
+		LIBS="-lmad -logg -lvorbis -lvorbisfile -lm"
 		;;
 esac
 AC_MSG_RESULT($HOST)
 
+#by default we do the libmp3splt test
+LIBMP3SPLT_TEST=1
+#checking for --disable-libmp3splt_test string
+AC_ARG_ENABLE(libmp3splt_test,
+AC_HELP_STRING([--disable-libmp3splt_test],
+	[Disables the libmp3splt test when doing configure)]),
+#action if given
+LIBMP3SPLT_TEST=0
+,
+#action if not given
+LIBMP3SPLT_TEST=1
+)
+
+#only we haven't disabled the libmp3splt test
+#we check for libmp3splt
+if test $LIBMP3SPLT_TEST -eq 1;then
 #checking for libmp3splt
 AC_CHECK_LIB(mp3splt, mp3splt_v0_4_rc1,libmp3splt=yes,
         [AC_MSG_ERROR(libmp3splt version 0.4_rc1 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 )])
+fi
 
 AC_ARG_ENABLE(oggsplt_symlink,
 AC_HELP_STRING([--enable-oggsplt],
