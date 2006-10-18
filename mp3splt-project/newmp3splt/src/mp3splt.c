@@ -485,7 +485,7 @@ void print_confirmation_error(int conf)
               " to site \n");
       break;
     case SPLT_FREEDB_ERROR_SITE :
-      fprintf(stderr," freedb error: unknown error \n");
+      fprintf(stderr," freedb error: unknown error from the website \n");
       break;
     case SPLT_FREEDB_ERROR_BAD_COMMUNICATION :
       fprintf(stderr," error: bad communication with site \n");

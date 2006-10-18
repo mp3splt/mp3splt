@@ -1058,12 +1058,12 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
 		{
 		  //we set the category and the disc id
 		  splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state),
-					 buf,temp,temp-buf-1);
+					 buf,temp,temp-buf);
 		  
 		  char *full_artist_album = malloc(temp2-(temp+8)-1);
-		  int max_chars = temp2-(temp+8)-2;
+		  int max_chars = temp2-(temp+8)-1;
 		  snprintf(full_artist_album,max_chars,"%s",temp+9);
-		  full_artist_album[max_chars] = '\0';
+		  //full_artist_album[max_chars] = '\0';
 		  splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
 		  
 		  //i!=-1 means that it's not a revision
@@ -1593,7 +1593,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			    i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
 			    if (i == -1)
 			      {
-				break;
+                                *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
+                                goto bloc_end;
 			      }
 			    
 			    //if errors
@@ -1638,7 +1639,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 		      *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
 		      return NULL;
 		    }
-          
+                  
 		  if (e!=NULL)
 		    {
 		      buffer[e-buffer+1]='\0';
@@ -1730,9 +1731,23 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 				  i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
 				  if (i == -1) 
 				    {
-				      *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
+ 				      *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
 				      goto bloc_end2;
 				    }
+                                  
+                                  //if errors
+                                  if (tot == 0)
+                                    {
+                                      if ((strncmp(buffer,"50",2) == 0)
+                                          || (strncmp(buffer,"40",2) == 0))
+                                        {
+                                          fprintf(stdout,"buffer = %s\n",buffer);
+                                          fflush(stdout);
+                                          *error = SPLT_FREEDB_ERROR_SITE;
+                                          goto bloc_end2;
+                                        }
+                                    }
+                                  
 				  tot += i;
 				  buffer[tot]='\0';
 				  c += i;
@@ -1760,7 +1775,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			      *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
 			      return NULL;
 			    }
-				  
+                          
 			  if ((c = strchr (buffer, '#'))==NULL)
 			    {
 			      output = NULL;
@@ -1790,6 +1805,12 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			}
 		    }
 		}
+              else
+                {
+                  //invalid get file type
+		  *error = SPLT_FREEDB_ERROR_GETTING_INFOS;
+		  return NULL;
+                }
 	    }
 	}
       else
