@@ -1071,19 +1071,12 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
 		{
 		  temp2++;
 		  
-		  //the disc id
-		  char disc_id[SPLT_DISCIDLEN+1] = "";
-		  snprintf(disc_id,SPLT_DISCIDLEN,"%s",temp);
-		  //the category
-		  char category[20] = "";
-		  snprintf(category,temp-buf-1,"%s",buf);
-		  
 		  //we set the category and the disc id
 		  splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), 
-					 disc_id, category);
+					 temp,buf,temp-buf);
 		  
 		  char *full_artist_album = malloc(temp2-(temp+8)-1);
-		  int max_chars = temp2-(temp+8)-2;
+		  int max_chars = temp2-(temp+8)-1;
 		  snprintf(full_artist_album,max_chars,"%s",temp+9);
 		  splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
 		  
@@ -1575,7 +1568,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			      *error = SPLT_FREEDB_ERROR_SITE_201;
 			      goto bloc_end;
 			    }
-                    
+			  
+			  //send hello message
 			  if((send(fd, SPLT_FREEDB_HELLO, strlen(SPLT_FREEDB_HELLO), 0))==-1)
 			    {
 			      *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
@@ -1589,7 +1583,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 			      goto bloc_end;
 			    }
 			  buffer[i]='\0';
-                    
+			  
 			  if (strncmp(buffer,"200",3)!=0)  
 			    {
 			      *error = SPLT_FREEDB_ERROR_SITE_200;
@@ -1810,7 +1804,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 				{
 				  //we write the output
 				  sprintf (output,c);
-				  //splt_u_print_debug("cddb file = ",0,output);
 				  return output;
 				}
 			      else

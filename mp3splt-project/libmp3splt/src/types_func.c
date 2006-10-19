@@ -2039,14 +2039,15 @@ void splt_t_freedb_found_cds_next(splt_state *state)
 
 //set a disc
 void splt_t_freedb_set_disc(splt_state *state, int index,
-                            char *discid, char *category)
+                            char *discid, char *category,
+			    int category_size)
 {
   splt_cd_state *cdstate = state->fdb.cdstate;
   
   if ((index >= 0) && (index < SPLT_MAXCD))
     {
       memset(cdstate->discs[index].category, '\0', 20);
-      snprintf(cdstate->discs[index].category, 20,"%s",category);
+      snprintf(cdstate->discs[index].category, category_size,"%s",category);
       splt_u_print_debug("Setting disc category ",0,cdstate->discs[index].category);
       
       memset(cdstate->discs[index].discid, '\0', SPLT_DISCIDLEN+1);
