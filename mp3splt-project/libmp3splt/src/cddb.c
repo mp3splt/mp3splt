@@ -1031,82 +1031,86 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
 // End of Base64 Algorithm
 
 //we analyse the freedb2 buffer for the CDs results
-static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *state,
-                                           int *error)
+static int splt_freedb2_analyse_cd_buffer (char *buf, int size, 
+		splt_state *state, int *error)
 {
-  //temporary pointer
-  char *temp = NULL, *temp2 = NULL;
-  
+	//temporary pointer
+	char *temp = NULL, *temp2 = NULL;
+
 #ifdef __WIN32__
-  //we replace the \r on windows with \n
-  while ((temp = strchr(buf,'\r')) != NULL)
-    {
-      *temp = '\n';
-    }
-#endif
-  
-  temp = NULL;
-  do
-    {
-      //genre
-      buf = strchr(buf, '\n');
-      
-      if (buf != NULL)
+	//we replace the \r on windows with \n
+	while ((temp = strchr(buf,'\r')) != NULL)
 	{
-	  buf += 1;
+		*temp = '\n';
+	}
+#endif
+
+	temp = NULL;
+	do
+	{
+		//genre
+		buf = strchr(buf, '\n');
+
+		if (buf != NULL)
+		{
+			buf += 1;
 #ifdef __WIN32__
-	  buf++;
+			buf++;
 #endif
-	  
-	  //disc id
-	  temp = strchr(buf, ' ');
-	  if (temp != NULL)
-	    {
-	      temp++;
-              
-	      //artist / album
-	      //temp2 is the end of the line
-	      temp2 = strchr(temp+8,'\n');
-	      if (temp2 != NULL)
-		{
-		  temp2++;
-		  
-		  //we set the category and the disc id
-		  splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), 
-					 temp,buf,temp-buf);
-		  
-		  char *full_artist_album = malloc(temp2-(temp+8)-1);
-		  int max_chars = temp2-(temp+8)-1;
-		  snprintf(full_artist_album,max_chars,"%s",temp+9);
-		  splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
-		  
-		  //i!=-1 means that it's not a revision
-		  int i=0;
-		  //here we have in album_name the name of the current album      
-		  splt_t_freedb_append_result(state, full_artist_album, i);
-		  
-		  //free memory
-		  free(full_artist_album);
-		  
-		  //next cd
-		  splt_t_freedb_found_cds_next(state);
+
+			//disc id
+			temp = strchr(buf, ' ');
+			if (temp != NULL)
+			{
+				temp++;
+
+				//artist / album
+				//temp2 is the end of the line
+				temp2 = strchr(temp+8,'\n');
+				if (temp2 != NULL)
+				{
+					temp2++;
+
+					//we set the category and the disc id
+					splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), 
+							temp,buf,temp-buf);
+
+					char *full_artist_album = malloc(temp2-(temp+8)-1);
+					int max_chars = temp2-(temp+8)-1;
+					snprintf(full_artist_album,max_chars,"%s",temp+9);
+					//snprintf seems buggy
+#ifdef __WIN32__					
+					full_artist_album[max_chars-1] = '\0';
+#endif
+					splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
+
+					//i!=-1 means that it's not a revision
+					int i=0;
+					//here we have in album_name the name of the current album      
+					splt_t_freedb_append_result(state, full_artist_album, i);
+
+					//free memory
+					free(full_artist_album);
+
+					//next cd
+					splt_t_freedb_found_cds_next(state);
+				}
+				else
+				{
+					return -1;
+				}
+			}
 		}
-	      else
+		else
 		{
-		  return -1;
+			return 0;
 		}
-	    }
-	}
-      else
-	{
-	  return 0;
-	}
-      
-    } while (((strstr(buf,"/"))!= NULL) &&
-	     ((strchr(buf,'\n'))!= NULL) &&
-	     (splt_t_freedb_get_found_cds(state) < SPLT_MAXCD));
-  
-  return splt_t_freedb_get_found_cds(state);
+
+	} while (((strstr(buf,"/"))!= NULL) &&
+			((strchr(buf,'\n'))!= NULL) &&
+			(splt_t_freedb_get_found_cds(state) < SPLT_MAXCD));
+
+	return splt_t_freedb_get_found_cds(state);
 }
 
 //char *login (char *s)
@@ -1123,34 +1127,34 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size, splt_state *stat
 //}
 
 static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
-                                      char search_server[256],
-                                      int port)
+		char search_server[256],
+		int port)
 {
-  //char line[270];
-  //char *ptr;
-  
-  dest.proxy=0;
-  memset(dest.hostname, 0, 256);
-  //memset(line, 0, 270);
-  
-  if (in != NULL)
-    {
-      /*
-      //proxy NOT IMPLEMENTED YET
-            
-      fseek(in, 0, SEEK_SET);
+	//char line[270];
+	//char *ptr;
 
-      if (fgets(line, 266, in)!=NULL) {
-      if (strstr(line, "PROXYADDR")!=NULL) {
-      line[strlen(line)-1]='\0';
-      if ((ptr = strchr(line, '='))!=NULL) {
-      ptr++;
-      strncpy(dest.hostname, ptr, 255);
-      }
+	dest.proxy=0;
+	memset(dest.hostname, 0, 256);
+	//memset(line, 0, 270);
 
-      if (fgets(line, 266, in)!=NULL) {
-      if (strstr(line, "PROXYPORT")!=NULL) {
-      line[strlen(line)-1]='\0';
+	if (in != NULL)
+	{
+		/*
+		//proxy NOT IMPLEMENTED YET
+
+		fseek(in, 0, SEEK_SET);
+
+		if (fgets(line, 266, in)!=NULL) {
+		if (strstr(line, "PROXYADDR")!=NULL) {
+		line[strlen(line)-1]='\0';
+		if ((ptr = strchr(line, '='))!=NULL) {
+		ptr++;
+		strncpy(dest.hostname, ptr, 255);
+		}
+
+		if (fgets(line, 266, in)!=NULL) {
+		if (strstr(line, "PROXYPORT")!=NULL) {
+		line[strlen(line)-1]='\0';
       if ((ptr = strchr(line, '='))!=NULL) {
       ptr++;
       dest.port = atoi (ptr);
