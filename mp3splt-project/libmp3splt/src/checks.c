@@ -176,6 +176,7 @@ char *splt_check_put_dir_of_cur_song(char *filename,
   
   if((filename_path = malloc(length_malloc)) == NULL)
     {
+      free(orig_filename);
       return NULL;
     }
   
@@ -210,7 +211,8 @@ char *splt_check_put_dir_of_cur_song(char *filename,
         {
           snprintf(filename_path, length_malloc,"%s","");
         }
-      
+    
+      free(orig_filename);
       return filename_path;
     }
   

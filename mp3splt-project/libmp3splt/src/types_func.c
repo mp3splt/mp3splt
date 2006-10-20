@@ -1826,25 +1826,22 @@ static void splt_t_free_freedb_search(splt_state *state)
   
   if (state->fdb.search_results)
     {
-      if (search_results->results)
+      int i;
+      for(i = 0; i < search_results->number;i++)
+      {
+        if (search_results->results[i].revisions)
         {
-          int i;
-          for(i = 0; i < search_results->number;i++)
-            {
-              if (search_results->results[i].revisions)
-                {
-                  free(search_results->results[i].revisions);
-                  search_results->results[i].revisions = NULL;
-                }
-              if (search_results->results[i].name)
-                {
-                  free(search_results->results[i].name);
-                  search_results->results[i].name = NULL;
-                }
-            }
-          free(search_results->results);
-          search_results->results = NULL;
+          free(search_results->results[i].revisions);
+          search_results->results[i].revisions = NULL;
         }
+        if (search_results->results[i].name)
+        {
+          free(search_results->results[i].name);
+          search_results->results[i].name = NULL;
+        }
+      }
+      free(search_results->results);
+      search_results->results = NULL;
       
       state->fdb.search_results->number = 0;
       free(state->fdb.search_results);
@@ -1878,7 +1875,7 @@ int splt_t_freedb_append_result(splt_state *state,char *album_name,
   if (state->fdb.search_results->number == 0)
     {
       state->fdb.search_results->results =
-        malloc(2 * sizeof(splt_freedb_one_result));
+        malloc(sizeof(splt_freedb_one_result));
       state->fdb.search_results->results[0].revisions = NULL;
       if (state->fdb.search_results->results == NULL)
         {

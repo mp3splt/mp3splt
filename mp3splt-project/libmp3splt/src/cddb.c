@@ -1035,15 +1035,13 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 		splt_state *state, int *error)
 {
 	//temporary pointer
-	char *temp = NULL, *temp2 = NULL;
+	char *temp = buf, *temp2 = NULL;
 
-#ifdef __WIN32__
-	//we replace the \r on windows with \n
-	while ((temp = strchr(buf,'\r')) != NULL)
+	//we replace the \r with \n
+	while ((temp = strchr(temp,'\r')) != NULL)
 	{
 		*temp = '\n';
 	}
-#endif
 
 	temp = NULL;
 	do
@@ -1054,9 +1052,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 		if (buf != NULL)
 		{
 			buf += 1;
-#ifdef __WIN32__
 			buf++;
-#endif
 
 			//disc id
 			temp = strchr(buf, ' ');
@@ -1078,6 +1074,8 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 					char *full_artist_album = malloc(temp2-(temp+8)-1);
 					int max_chars = temp2-(temp+8)-1;
 					snprintf(full_artist_album,max_chars,"%s",temp+9);
+          fprintf(stdout,"full = _%s_\n",full_artist_album);
+          fflush(stdout);
 					//snprintf seems buggy
 #ifdef __WIN32__					
 					full_artist_album[max_chars-1] = '\0';

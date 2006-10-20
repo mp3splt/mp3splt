@@ -797,11 +797,16 @@ splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
 {
   if (state != NULL)
     {
+      //we copy the search string, in order not to modify the original one
+      char *search = strdup(search_string);
+      
       //puts the results in "search_results"
       //for the moment, 1 means search freedb2.org
-      *error = splt_freedb_process_search(state, search_string,
+      *error = splt_freedb_process_search(state, search,
                                           search_type,
                                           search_server, port);
+      free(search);
+      
       return state->fdb.search_results;
     }
   else
@@ -836,7 +841,7 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
       if (!splt_t_library_locked(state))
         {
           splt_t_lock_library(state);
-      
+	  
           char *freedb_file_content = NULL;
           freedb_file_content =
             splt_freedb_get_file(state, disc_id, err,
