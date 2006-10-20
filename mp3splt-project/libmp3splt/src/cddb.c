@@ -1034,81 +1034,79 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
 static int splt_freedb2_analyse_cd_buffer (char *buf, int size, 
 		splt_state *state, int *error)
 {
-	//temporary pointer
-	char *temp = buf, *temp2 = NULL;
+  //temporary pointer
+  char *temp = buf, *temp2 = NULL;
 
-	//we replace the \r with \n
-	while ((temp = strchr(temp,'\r')) != NULL)
-	{
-		*temp = '\n';
-	}
+  //we replace the \r with \n
+  while ((temp = strchr(temp,'\r')) != NULL)
+    {
+      *temp = '\n';
+    }
 
-	temp = NULL;
-	do
-	{
-		//genre
-		buf = strchr(buf, '\n');
+  temp = NULL;
+  do
+    {
+      //genre
+      buf = strchr(buf, '\n');
 
-		if (buf != NULL)
-		{
-			buf += 1;
-			buf++;
+      if (buf != NULL)
+        {
+          buf += 1;
+          buf++;
 
-			//disc id
-			temp = strchr(buf, ' ');
-			if (temp != NULL)
-			{
-				temp++;
+          //disc id
+          temp = strchr(buf, ' ');
+          if (temp != NULL)
+            {
+              temp++;
 
-				//artist / album
-				//temp2 is the end of the line
-				temp2 = strchr(temp+8,'\n');
-				if (temp2 != NULL)
-				{
-					temp2++;
+              //artist / album
+              //temp2 is the end of the line
+              temp2 = strchr(temp+8,'\n');
+              if (temp2 != NULL)
+                {
+                  temp2++;
 
-					//we set the category and the disc id
-					splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), 
-							temp,buf,temp-buf);
+                  //we set the category and the disc id
+                  splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), 
+                                         temp,buf,temp-buf);
 
-					char *full_artist_album = malloc(temp2-(temp+8)-1);
-					int max_chars = temp2-(temp+8)-1;
-					snprintf(full_artist_album,max_chars,"%s",temp+9);
-          fprintf(stdout,"full = _%s_\n",full_artist_album);
-          fflush(stdout);
-					//snprintf seems buggy
+                  char *full_artist_album = malloc(temp2-(temp+8)-1);
+                  int max_chars = temp2-(temp+8)-1;
+                  snprintf(full_artist_album,max_chars,"%s",temp+9);
+                  //snprintf seems buggy
 #ifdef __WIN32__					
-					full_artist_album[max_chars-1] = '\0';
+                  full_artist_album[max_chars-1] = '\0';
 #endif
-					splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
+                  splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
 
-					//i!=-1 means that it's not a revision
-					int i=0;
-					//here we have in album_name the name of the current album      
-					splt_t_freedb_append_result(state, full_artist_album, i);
+                  //i!=-1 means that it's not a revision
+                  int i=0;
+                  //here we have in album_name the name of the current album      
+                  splt_t_freedb_append_result(state, full_artist_album, i);
 
-					//free memory
-					free(full_artist_album);
+                  //free memory
+                  free(full_artist_album);
 
-					//next cd
-					splt_t_freedb_found_cds_next(state);
-				}
-				else
-				{
-					return -1;
-				}
-			}
-		}
-		else
-		{
-			return 0;
-		}
+                  //next cd
+                  splt_t_freedb_found_cds_next(state);
+                }
+              else
+                {
+                  return -1;
+                }
+            }
+        }
+      else
+        {
+          return 0;
+        }
 
-	} while (((strstr(buf,"/"))!= NULL) &&
-			((strchr(buf,'\n'))!= NULL) &&
-			(splt_t_freedb_get_found_cds(state) < SPLT_MAXCD));
+    } while (((strstr(buf,"/"))!= NULL) &&
+             ((strchr(buf,'\n'))!= NULL) &&
+             (splt_t_freedb_get_found_cds(state) < SPLT_MAXCD));
 
-	return splt_t_freedb_get_found_cds(state);
+  return splt_t_freedb_get_found_cds(state);
 }
 
 //char *login (char *s)

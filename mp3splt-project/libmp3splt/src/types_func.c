@@ -1840,8 +1840,11 @@ static void splt_t_free_freedb_search(splt_state *state)
           search_results->results[i].name = NULL;
         }
       }
-      free(search_results->results);
-      search_results->results = NULL;
+      if (search_results->results)
+        {
+          free(search_results->results);
+          search_results->results = NULL;
+        }
       
       state->fdb.search_results->number = 0;
       free(state->fdb.search_results);
