@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include <ctype.h>
 
@@ -1358,11 +1359,23 @@ int main (int argc, char *argv[])
           {
             for (i=1;i<argc; i++)
               {
-                //we put the splitpoints
-                err = mp3splt_append_splitpoint(state,
-                                                c_hundreths(argv[i]), 
-                                                NULL);
-                print_confirmation_error(err);
+                //we manage the EOF keyword
+                if (strcmp(argv[i],"EOF") == 0)
+                  {
+                    //we put the splitpoints
+                    err = mp3splt_append_splitpoint(state,
+                                                    LONG_MAX,
+                                                    NULL);
+                    print_confirmation_error(err);
+                  }
+                else
+                  {
+                    //we put the splitpoints
+                    err = mp3splt_append_splitpoint(state,
+                                                    c_hundreths(argv[i]), 
+                                                    NULL);
+                    print_confirmation_error(err);
+                  }
               }
           }
       

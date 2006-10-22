@@ -86,7 +86,7 @@ void splt_check_if_splitpoints_in_order(splt_state *state,
   
   int err = SPLT_OK;
   
-  for(i = 0; i < (splt_t_get_splitnumber(state)-2); i++)
+  for(i = 0; i < (splt_t_get_splitnumber(state)-1); i++)
     {
       //check if first splitpoint is positive
       if (splt_t_get_splitpoint_value(state,i,&err) < 0)

@@ -478,12 +478,29 @@ int splt_t_get_splitnumber(splt_state *state)
 
 //puts a splitpoint in the state with an eventual file name
 //split_value is which splitpoint hundreths of seconds
+//if split_value is LONG_MAX, we put the end of the song (EOF)
 int splt_t_append_splitpoint(splt_state *state, long split_value,
                              char *name)
 {
   int error = SPLT_OK;
   
   splt_u_print_debug("Appending splitpoint...",0,NULL);
+  
+  //if we put the EOF
+  if (split_value == LONG_MAX)
+    {
+      //we put the total time
+      splt_s_put_total_time(state, &error);
+      if (error != SPLT_OK)
+        {
+          return error;
+        }
+      else
+        {
+          //we take the total time and assign it to split_value
+          split_value = splt_t_get_total_time(state);
+        }
+    }
   
   if (split_value >= 0)
     {

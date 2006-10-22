@@ -235,6 +235,7 @@ int mp3splt_set_progress_function(splt_state *state,
 
 //puts a splitpoint in the state with an eventual file name
 //split_value is which splitpoint hundreths of seconds
+//if split_value is LONG_MAX, we put the end of the song (EOF)
 int mp3splt_append_splitpoint(splt_state *state,
                               long split_value, char *name)
 {
