@@ -141,10 +141,14 @@ static char *splt_ogg_checkutf(char *s)
 //saves a packet
 static splt_v_packet *splt_ogg_save_packet(ogg_packet *packet)
 {
-  splt_v_packet *p = malloc(sizeof(splt_v_packet));
+  splt_v_packet *p = NULL;
+  
+  //if we have no header, we will have bytes < 0
+  p = malloc(sizeof(splt_v_packet));
   
   p->length = packet->bytes;
   p->packet = malloc(p->length);
+  fflush(stdout);
   memcpy(p->packet, packet->packet, p->length);
   
   return p;
@@ -388,29 +392,87 @@ void splt_ogg_get_original_tags(char *filename,
           vorbis_comment *vc_local;
           vc_local = ov_comment(&state->ostate->vf,-1);
           
-          char *a,*t,*al,*da,*g,*tr,*com;
+          char *a = NULL,*t = NULL,*al = NULL,*da = NULL,
+            *g = NULL,*tr = NULL,*com = NULL;
           
+          int size = 0;
           a = vorbis_comment_query(vc_local, "artist",0);
+          if (a != NULL)
+            {
+              size = strlen(a);
+            }
+          else
+            {
+              size = 0;
+            }
           splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
-                                         0,a,0x0,strlen(a));
+                                         0,a,0x0,size);
           t = vorbis_comment_query(vc_local, "title",0);
+          if (t != NULL)
+            {
+              size = strlen(t);
+            }
+          else
+            {
+              size = 0;
+            }
           splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
-                                         0,t,0x0,strlen(t));
+                                         0,t,0x0,size);
           al = vorbis_comment_query(vc_local, "album",0);
+          if (al != NULL)
+            {
+              size = strlen(al);
+            }
+          else
+            {
+              size = 0;
+            }
           splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
-                                         0,al,0x0,strlen(al));
+                                         0,al,0x0,size);
           da = vorbis_comment_query(vc_local, "date",0);
+          if (da != NULL)
+            {
+              size = strlen(da);
+            }
+          else
+            {
+              size = 0;
+            }
           splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
-                                         0,da,0x0,strlen(da));
+                                         0,da,0x0,size);
           g = vorbis_comment_query(vc_local, "genre",0);
-          //splt_t_set_original_tags_field(state,SPLT_OGG_TAGS_GENRE,
-          //0, g, 0x0,strlen(g));
+          if (g != NULL)
+            {
+              size = strlen(g);
+            }
+          else
+            {
+              size = 0;
+            }
+          splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
+                                         0, g, 0x0,size);
           tr = vorbis_comment_query(vc_local, "tracknumber",0);
-          //splt_t_set_original_tags_field(state,SPLT_OGG_TAGS_TRACK,
-          //0,tr, 0x0,strlen(tr));
+          if (tr != NULL)
+            {
+              size = strlen(tr);
+            }
+          else
+            {
+              size = 0;
+            }
+          splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
+                                         0,tr, 0x0,size);
           com = vorbis_comment_query(vc_local, "comment",0);
+          if (com != NULL)
+            {
+              size = strlen(com);
+            }
+          else
+            {
+              size = 0;
+            }
           splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
-                                         0,com,0x0,strlen(com));
+                                         0,com,0x0,size);
           
 	  splt_ogg_state_free(state);
         }
@@ -546,15 +608,23 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
   vorbis_info_init(oggstate->vi);
   vorbis_comment_init(&oggstate->vc);
   
+  //we read while we don't have a page anymore
   while (ogg_sync_pageout(oggstate->sync_in, &page)!=1)
     {
       buffer = ogg_sync_buffer(oggstate->sync_in, SPLT_OGG_BUFSIZE);
+      if (buffer == NULL)
+        {
+          return -1;
+        }
       bytes = fread(buffer, 1, SPLT_OGG_BUFSIZE, oggstate->in);
       if (bytes <= 0)
         {
           return -1;
         }
-      ogg_sync_wrote(oggstate->sync_in, bytes);
+      if (ogg_sync_wrote(oggstate->sync_in, bytes) == -1)
+        {
+          return -1;
+        }
     }
   
   oggstate->serial = ogg_page_serialno(&page);
@@ -585,7 +655,10 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
             }
           if(res==1)
             {
-              ogg_stream_pagein(oggstate->stream_in, &page);
+              if (ogg_stream_pagein(oggstate->stream_in, &page) < 0)
+                {
+                  return -1;
+                }
               while(i<2)
                 {
                   res = ogg_stream_packetout(oggstate->stream_in, &packet);
@@ -598,20 +671,30 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
                       return -1;
                     }
                   oggstate->headers[i+1] = splt_ogg_save_packet(&packet);
-                  vorbis_synthesis_headerin(oggstate->vi,&oggstate->vc,&packet);
+                  if (vorbis_synthesis_headerin(oggstate->vi,&oggstate->vc,&packet) < 0)
+                    {
+                      return -1;
+                    }
                   i++;
                 }
             }
         }
       
       buffer=ogg_sync_buffer(oggstate->sync_in, SPLT_OGG_BUFSIZE);
+      if (buffer == NULL)
+        {
+          return -1;
+        }
       bytes=fread(buffer,1,SPLT_OGG_BUFSIZE,oggstate->in);
       
       if(bytes==0 && i<2)
         {
           return -1;
         }
-      ogg_sync_wrote(oggstate->sync_in, bytes);
+      if (ogg_sync_wrote(oggstate->sync_in, bytes) == -1)
+        {
+          return -1;
+        }
     }
   
   return 0;
@@ -678,21 +761,34 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate,int *error)
  *     block sizes, and call get_blocksize(), because this updates internal
  *     state needed for sample-accurate block size calculations.
  */
-static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate, FILE *in, ogg_int64_t cutpoint)
+static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate, 
+                                        FILE *in, ogg_int64_t cutpoint)
 {
   int eos=0;
   ogg_page page;
   ogg_packet packet;
   ogg_int64_t granpos, prevgranpos;
   int result;
-
+  
   granpos = prevgranpos = 0;
   
+  //if we are at the first header
+  int first_time = 1;
   while(!eos)
     {
       while(!eos)
         {
           int result = ogg_sync_pageout(oggstate->sync_in, &page);
+          
+          //for streams recorded in the middle
+          //we add the current granpos
+          if (first_time)
+            {
+              granpos = ogg_page_granulepos(&page);
+              //we move the cutpoint
+              cutpoint += granpos;
+              first_time = 0;
+            }
           
           if(result==0) 
             {
@@ -700,11 +796,20 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate, FILE *in, ogg_
             }
           else 
             {
+              //result==1 means that we have a good page
               if(result>0)
                 {
+                  //find the granule pos, that we will compare with
+                  //our cutpoint
                   granpos = ogg_page_granulepos(&page);
-                  ogg_stream_pagein(oggstate->stream_in, &page);
+                  //-1 means failure
+                  if (ogg_stream_pagein(oggstate->stream_in, &page) == -1)
+                    {
+                      break;
+                    }
                   
+                  //for a broken ogg file with no
+                  //header, we have granpos > cutpoint the first time
                   if(granpos < cutpoint)
                     {
                       while(1)
@@ -727,7 +832,9 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate, FILE *in, ogg_
                                    * just in case.
                                    */
                                   if(oggstate->packets[0])
-                                    splt_ogg_free_packet(oggstate->packets[0]);
+                                    {
+                                      splt_ogg_free_packet(oggstate->packets[0]);
+                                    }
                                   oggstate->packets[0] = splt_ogg_save_packet(&packet);
                                 }
                             }
@@ -738,7 +845,7 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate, FILE *in, ogg_
                   else
                     {
                       eos=1; /* First stream ends somewhere in this page.
-                                We break of out this loop here. */
+                             //We break of out this loop here. */
                     }
                   
                   if(ogg_page_eos(&page))
@@ -766,11 +873,17 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate, FILE *in, ogg_
   while((result = ogg_stream_packetout(oggstate->stream_in, &packet))
         !=0)
     {
+      //if == -1; error, invalid ogg file
+      if (result == -1)
+        {
+          return -2;
+        }
+      
       int bs;
       
       bs = splt_ogg_get_blocksize(oggstate, oggstate->vi, &packet);
       prevgranpos += bs;
-
+      
       if(prevgranpos > cutpoint)
         {
           oggstate->packets[1] = splt_ogg_save_packet(&packet);
@@ -858,12 +971,25 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   
   current_granpos = oggstate->initialgranpos;
   
+  //the first iteration
+  int first_time = 1;
   while(!eos)
     {
       while(!eos)
         {
           result=ogg_sync_pageout(oggstate->sync_in, &page);
-          if(result==0) 
+          
+          //for streams recorded in the middle
+          //we add the current granpos
+          if (first_time)
+            {
+              page_granpos = ogg_page_granulepos(&page);
+              //we move the cutpoint
+              cutpoint += page_granpos;
+              first_time = 0;
+            }
+          
+          if(result==0)
             {
               break;
             }
@@ -987,6 +1113,12 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   while((result = ogg_stream_packetout(oggstate->stream_in, &packet))
         !=0)
     {
+      //if == -1; error, invalid ogg file
+      if (result == -1)
+        {
+          return -2;
+        }
+      
       int bs;
       bs = splt_ogg_get_blocksize(oggstate, oggstate->vi, &packet);
       prev_granpos += bs;
@@ -1010,7 +1142,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
           splt_ogg_free_packet(oggstate->packets[0]);
         }
       oggstate->packets[0] = splt_ogg_save_packet(&packet);
-
+      
       ogg_stream_packetin(stream, &packet);
       if(splt_ogg_write_pages_to_file(stream,f, 0))
         {
@@ -1052,7 +1184,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
           *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
           return;
         }
-
+      
       if (adjust)
         {
           if (sec_end != -1)
@@ -1075,26 +1207,37 @@ void splt_ogg_split(char *filename, splt_state *state, double
   // First time we run this, no packets already saved.
   if (oggstate->end == 0)
     {
-      if(splt_ogg_find_begin_cutpoint(oggstate, oggstate->in, begin))   // We must do this before. If an error occurs, we don't want to create empty files!
+      // We must do this before. If an error occurs, we don't want to create empty files!
+      //we find the begin cutpoint
+      int result = splt_ogg_find_begin_cutpoint(oggstate, oggstate->in, begin);
+      //if error
+      if (result < 0)
         {
-          *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
+          if (result == -1)
+            {
+              *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
+            }
+          else
+            {
+              *error = SPLT_ERROR_INVALID_OGG;
+            }
           return;
         }
     }
-
+  
   if (strcmp(filename, "-")==0)
     {
       oggstate->out = stdout;
     }
   else
-  {
-    if (!(oggstate->out=fopen(filename, "wb")))
     {
-      *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
-      return;
+      if (!(oggstate->out=fopen(filename, "wb")))
+        {
+          *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
+          return;
+        }
     }
-  }
-
+  
   /* gets random serial number*/
   ogg_stream_init(&stream_out, rand());
   
@@ -1120,10 +1263,20 @@ void splt_ogg_split(char *filename, splt_state *state, double
       return;
     }
   
-  if(splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
-                                oggstate->out, cutpoint, adjust, threshold))
+  //find end cutpoint
+  int result = splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
+                                          oggstate->out, cutpoint, adjust, threshold);
+  //if errors
+  if(result < 0)
     {
-      *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
+      if (result == -1)
+        {
+          *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
+        }
+      else
+        {
+          *error = SPLT_ERROR_INVALID_OGG;
+        }
       ogg_stream_clear(&stream_out);
       fclose(oggstate->out);
       return;

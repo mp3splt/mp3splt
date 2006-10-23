@@ -1171,7 +1171,7 @@ int splt_t_set_original_tags_field(splt_state *state,
               snprintf(state->original_tags.artist,
                        length+1,"%s", char_data);
             }
-        }      
+        }
       break;
     case SPLT_TAGS_ALBUM:
       if (state->original_tags.album)
