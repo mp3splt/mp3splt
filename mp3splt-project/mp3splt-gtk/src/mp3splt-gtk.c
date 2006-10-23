@@ -335,9 +335,15 @@ gpointer split_it(gpointer data)
   remove_all_splitted_rows();  
   
   gint err = SPLT_OK;
-  //erase previous splitpoints and tags
+  //erase previous splitpoints
   mp3splt_erase_all_splitpoints(the_state,&err);
-  mp3splt_erase_all_tags(the_state,&err);
+  //we erase previous tags if we don't have the option
+  //splt_current_tags
+  if (mp3splt_get_int_option(the_state, SPLT_OPT_TAGS,&err)
+      != SPLT_CURRENT_TAGS)
+    {
+      mp3splt_erase_all_tags(the_state,&err);
+    }
   print_status_bar_confirmation(err);
   
   put_splitpoints_in_the_state(the_state);

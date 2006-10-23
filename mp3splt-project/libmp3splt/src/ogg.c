@@ -412,7 +412,7 @@ void splt_ogg_get_original_tags(char *filename,
           splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
                                          0,com,0x0,strlen(com));
           
-          splt_ogg_state_free(state);
+	  splt_ogg_state_free(state);
         }
       else
         {
@@ -484,7 +484,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
               artist = 
                 splt_t_get_tags_char_field(state,current_split,
                                            SPLT_TAGS_ARTIST);
-          
+	      
               //only if we have the artist or the title
               if (((artist != NULL) && (artist[0] != '\0'))
                   || ((title != NULL) && (title[0] != '\0')))

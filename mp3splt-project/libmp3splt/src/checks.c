@@ -55,24 +55,23 @@ void splt_check_splitpts_inf_song_length(splt_state *state,
   
   int err = SPLT_OK;
   
+  long splitpoint_value = 0;
+  long total_time = 0;
   //check if splitpoints > total time
   for(i = 0; i < initial_splitpoints; i++)
     {
-      //put splitpoints > total_time to 0
-      if (splt_t_get_splitpoint_value(state,i,&err) > 
-          splt_t_get_total_time(state))
+      splitpoint_value = splt_t_get_splitpoint_value(state,i,&err);
+      total_time = splt_t_get_total_time(state);
+      //if the value is superior to the total time
+      if ( splitpoint_value > total_time )
         {
-          if (found_max_splitpoint)
-            {
-              splt_t_set_splitpoint_value(state,i,0);
-              splt_t_set_splitnumber(state, i);
-            }
-          else
-            {
-              found_max_splitpoint = SPLT_TRUE;
-              *error = SPLT_SPLITPOINT_BIGGER_THAN_LENGTH;
-              break;
-            }
+	  found_max_splitpoint = SPLT_TRUE;
+	  splt_t_set_splitnumber(state, i+1);
+	  //we have an error only if different from the
+	  //total time
+	  *error = SPLT_SPLITPOINT_BIGGER_THAN_LENGTH;
+	  splt_t_set_splitpoint_value(state,i,total_time);
+	  break;
         }
     }
 }
@@ -88,30 +87,35 @@ void splt_check_if_splitpoints_in_order(splt_state *state,
   
   for(i = 0; i < (splt_t_get_splitnumber(state)-1); i++)
     {
-      //check if first splitpoint is positive
-      if (splt_t_get_splitpoint_value(state,i,&err) < 0)
-        {
-          *error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
-          return;
-        }
-      
-      //check if splitpoints not in order
-      if (splt_t_get_splitpoint_value(state,i,&err) > 
-          splt_t_get_splitpoint_value(state,i+1,&err))
-        {
-          *error = SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER;
-          return;
-        }
-      else
-        {
-          //check if two consecutive splitpoints are equals
-          if (splt_t_get_splitpoint_value(state,i,&err)
-              == splt_t_get_splitpoint_value(state,i+1,&err))
-            {
-              *error = SPLT_ERROR_EQUAL_SPLITPOINTS;
-              return;
-            }
-        }
+      //if we don't have EOF for the second value <=> != total_time
+      if (splt_t_get_splitpoint_value(state,i+1,&err) != 
+	  splt_t_get_total_time(state))
+	{
+	  //check if first splitpoint is positive
+	  if (splt_t_get_splitpoint_value(state,i,&err) < 0)
+	    {
+	      *error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
+	      return;
+	    }
+	  
+	  //check if splitpoints not in order
+	  if (splt_t_get_splitpoint_value(state,i,&err) > 
+	      splt_t_get_splitpoint_value(state,i+1,&err))
+	    {
+	      *error = SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER;
+	      return;
+	    }
+	  else
+	    {
+	      //check if two consecutive splitpoints are equals
+	      if (splt_t_get_splitpoint_value(state,i,&err)
+		  == splt_t_get_splitpoint_value(state,i+1,&err))
+		{
+		  *error = SPLT_ERROR_EQUAL_SPLITPOINTS;
+		  return;
+		}
+	    }
+	}
     }
 }
 

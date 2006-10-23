@@ -112,23 +112,30 @@ void splt_s_put_total_time(splt_state *state, int *error)
         }
       else
 #endif
-        //if the file is mp3
         {
-          splt_t_lock_messages(state);
+	  //if the file is mp3
+	  if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
+	    {
+	      splt_t_lock_messages(state);
           
-          //if we can read the file
-          //get the mp3 info => this puts the total time in the
-          //state
-          if((state = splt_s_get_mp3_info(state, file_input,error))
-             != NULL)
-            {
-              //we free the mp3 state after the check
-              splt_mp3_state_free(state);
-            }
+	      //if we can read the file
+	      //get the mp3 info => this puts the total time in the
+	      //state
+	      if((state = splt_s_get_mp3_info(state, file_input,error))
+		 != NULL)
+		{
+		  //we free the mp3 state after the check
+		  splt_mp3_state_free(state);
+		}
           
-          splt_t_unlock_messages(state);
+	      splt_t_unlock_messages(state);
           
-          fclose(file_input);
+	      fclose(file_input);
+	    }
+	  else
+	    {
+	      //todo
+	    }
         }
     }
   else
@@ -270,10 +277,9 @@ static void splt_s_real_simple_split(splt_state *state,
 static void splt_s_simple_split(splt_state *state, int *error)
 {
   //begin splitpoint
-  double splt_beg;
+  double splt_beg = 0;
   //end splitpoint
-  double splt_end;
-  long total_time = splt_t_get_total_time(state);
+  double splt_end = 0;
   
   //we get the splitpoints to split
   int get_error = SPLT_OK;
@@ -286,40 +292,28 @@ static void splt_s_simple_split(splt_state *state, int *error)
   
   if (get_error == SPLT_OK)
     {
-      if (split_begin < total_time)
-        {
-          if (split_end > total_time)
-            {
-              split_end = total_time;
-            }
+      splt_u_set_complete_new_filename(state,error);
           
-          splt_u_set_complete_new_filename(state,error);
-          
-          //if no error
-          if (*error >= 0)
-            {
-              //if the first splitpoint different than the end point
-              if (split_begin != split_end)
-                {
-                  //convert to float for hundredth
-                  // 34.6  --> 34 seconds and 6 hundredth
-                  splt_beg = split_begin / 100;
-                  splt_beg += ((split_begin % 100) / 100.);
-                  splt_end = split_end / 100;
-                  splt_end += ((split_end % 100) / 100.);
+      //if no error
+      if (*error >= 0)
+	{
+	  //if the first splitpoint different than the end point
+	  if (split_begin != split_end)
+	    {
+	      //convert to float for hundredth
+	      // 34.6  --> 34 seconds and 6 hundredth
+	      splt_beg = split_begin / 100;
+	      splt_beg += ((split_begin % 100) / 100.);
+	      splt_end = split_end / 100;
+	      splt_end += ((split_end % 100) / 100.);
                   
-                  splt_t_set_i_begin_point(state,splt_beg);
-                  splt_t_set_i_end_point(state,splt_end);
+	      splt_t_set_i_begin_point(state,splt_beg);
+	      splt_t_set_i_end_point(state,splt_end);
                   
-                  //we do the real split, if mp3 or ogg..
-                  splt_s_real_simple_split(state, error);
-                }
-            }
-        }
-      else
-        {
-          *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
-        }
+	      //we do the real split, if mp3 or ogg..
+	      splt_s_real_simple_split(state, error);
+	    }
+	}
     }
   else
     {
@@ -965,7 +959,7 @@ int splt_s_set_silence_splitpoints(splt_state *state,
                   
                   //last splitpoint, end of file
                   append_error = 
-                    splt_t_append_splitpoint(state, 
+                    splt_t_append_splitpoint(state,
                                              splt_t_get_total_time(state), NULL);
                   if (append_error != SPLT_OK)
                     {

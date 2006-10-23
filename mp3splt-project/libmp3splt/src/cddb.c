@@ -1756,8 +1756,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
                                       if ((strncmp(buffer,"50",2) == 0)
                                           || (strncmp(buffer,"40",2) == 0))
                                         {
-                                          fprintf(stdout,"buffer = %s\n",buffer);
-                                          fflush(stdout);
                                           *error = SPLT_FREEDB_ERROR_SITE;
                                           goto bloc_end2;
                                         }

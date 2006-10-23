@@ -479,6 +479,8 @@ int splt_t_get_splitnumber(splt_state *state)
 //puts a splitpoint in the state with an eventual file name
 //split_value is which splitpoint hundreths of seconds
 //if split_value is LONG_MAX, we put the end of the song (EOF)
+//TODO, we need to have the filename in the state here
+//in order to treat LONG_MAX value
 int splt_t_append_splitpoint(splt_state *state, long split_value,
                              char *name)
 {
@@ -489,6 +491,8 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
   //if we put the EOF
   if (split_value == LONG_MAX)
     {
+      //we check if mp3 or ogg
+      splt_check_if_mp3_or_ogg(state, &error);
       //we put the total time
       splt_s_put_total_time(state, &error);
       if (error != SPLT_OK)
@@ -720,6 +724,7 @@ void splt_t_get_original_tags(splt_state *state, int *err)
   
   if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
     {
+      splt_u_print_debug("Putting mp3 original tags...\n",0,NULL);
 #ifndef NO_ID3TAG
       splt_mp3_get_original_tags(filename, state, err);
 #else
@@ -730,10 +735,12 @@ void splt_t_get_original_tags(splt_state *state, int *err)
     {
 #ifndef NO_OGG
       if (splt_t_get_file_format(state) == SPLT_OGG_FORMAT)
-        {
-          splt_ogg_get_original_tags(filename, state, err);
-        }
+	{
+	  splt_u_print_debug("Putting ogg original tags...\n",0,NULL);
+	  splt_ogg_get_original_tags(filename, state, err);
+	}
 #endif
+      //TODO if no mp3 or ogg
     }
 }
 

@@ -633,20 +633,32 @@ long c_hundreths (char *s)
   long hun;
   
   for(i=0; i<strlen(s); i++) // Some checking
-    if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!='.'))
-      return -1;
+    {
+      if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!='.'))
+	{
+	  return -1;
+	}
+    }
   
   if (sscanf(s, "%ld.%ld.%ld", &minutes, &seconds, &hundredths)<2)
-    return -1;
+    {
+      return -1;
+    }
   
   if ((minutes < 0) || (seconds < 0) || (hundredths < 0))
-    return -1;
+    {
+      return -1;
+    }
 
   if ((seconds > 59) || (hundredths > 99))
-    return -1;
+    {
+      return -1;
+    }
   
   if (s[strlen(s)-2]=='.')
-    hundredths *= 10;
+    {
+      hundredths *= 10;
+    }
   
   hun = hundredths;
   hun += (minutes*60 + seconds) * 100;
@@ -728,7 +740,7 @@ void do_freedb_search(splt_state *state,int *err)
                 char junk[18];
                 fprintf (stdout, "-- 'q' to select cd, Enter for more: ");
                 fflush(stdout);
-            
+		
                 fgets(junk, 16, stdin);
                 if (junk[0]=='q')
                   {
@@ -1207,7 +1219,8 @@ int main (int argc, char *argv[])
   //we get out the filename from the arguments
   for (i=1; i < argc; i++)
     {
-      if (c_hundreths(argv[i]) == -1)
+      if ((c_hundreths(argv[i]) == -1) &&
+	  (strcmp(argv[i],"EOF") != 0))
         {
           break;
         }

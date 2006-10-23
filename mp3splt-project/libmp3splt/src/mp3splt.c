@@ -290,9 +290,9 @@ void mp3splt_erase_all_splitpoints(splt_state *state,
       if (!splt_t_library_locked(state))
         {
           splt_t_lock_library(state);
-      
+	  
           splt_t_free_splitpoints(state);
-      
+	  
           splt_t_unlock_library(state);
         }
       else
@@ -370,9 +370,9 @@ int mp3splt_put_tags_from_string(splt_state *state,
       if (!splt_t_library_locked(state))
         {
           splt_t_lock_library(state);
-      
+	  
           error = splt_u_put_tags_from_string(state,tags);
-      
+	  
           splt_t_unlock_library(state);
         }
       else
@@ -530,13 +530,19 @@ int mp3splt_split(splt_state *state)
           //we set default internal options
           splt_t_set_default_iopts(state);
           
+	  //we check if mp3 or ogg
+	  splt_check_if_mp3_or_ogg(state, &error);
+	  if (error < 0)
+	    {
+              splt_t_unlock_library(state);
+	      return error;
+	    }
+	  
           splt_u_print_debug("Setting original tags...",0,NULL);
-          
           //we retrieve the original tags from the file
           //and save them for future use
           // (for use with the output options)
           splt_t_get_original_tags(state,&error);
-          
           if (error < 0)
             {
               splt_t_unlock_library(state);
@@ -554,7 +560,7 @@ int mp3splt_split(splt_state *state)
           //we put the real splitnumber in the splitnumber variable
           //that could be changed (see splitnumber in mp3splt_types.h)
           state->split.splitnumber = state->split.real_splitnumber;
-
+	  
           //we put splitnumber in the state, we will use it later
           splt_t_set_current_split(state,0);
 
@@ -593,17 +599,9 @@ int mp3splt_split(splt_state *state)
                   goto function_end;
                 }
               
-              splt_check_if_mp3_or_ogg(state, &error);
-              
-              if (error < 0)
-                {
-                  goto function_end;
-                }
-              
               //we put the new filename path in the state
               splt_t_set_new_filename_path(state, new_filename_path,
                                            &error);
-              
               if (error < 0)
                 {
                   goto function_end;
@@ -615,14 +613,12 @@ int mp3splt_split(splt_state *state)
               //check means the test is ok
               splt_check_if_new_filename_path_correct(new_filename_path,
                                                       &error);
-              
               if (error < 0)
                 {
                   goto function_end;
                 }
               
               splt_s_put_total_time(state, &error);
-              
               if (error < 0)
                 {
                   goto function_end;
@@ -659,7 +655,6 @@ int mp3splt_split(splt_state *state)
 
                   //we check if the splitpoints are in order
                   splt_check_if_splitpoints_in_order(state, &error);
-
                   if (error < 0)
                     {
                       goto function_end;
@@ -667,7 +662,6 @@ int mp3splt_split(splt_state *state)
 
                   //total time of the song
                   splt_check_splitpts_inf_song_length(state, &error);
-
                   //if no error, continue
                   if (error < 0)
                     {
@@ -705,18 +699,7 @@ void mp3splt_stop_split(splt_state *state, int *error)
 {
   if (state != NULL)
     {
-      if (!splt_t_library_locked(state))
-        {
-          splt_t_lock_library(state);
-      
-          splt_t_set_stop_split(state, SPLT_TRUE);
-      
-          splt_t_unlock_library(state);
-        }
-      else
-        {
-          *error = SPLT_ERROR_LIBRARY_LOCKED;
-        }
+      splt_t_set_stop_split(state, SPLT_TRUE);
     }
   else
     {
@@ -762,9 +745,9 @@ void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
       if (!splt_t_library_locked(state))
         {
           splt_t_lock_library(state);
-      
+	  
           splt_cddb_put_splitpoints(file, state, err);
-      
+	  
           splt_t_unlock_library(state);
         }
       else
@@ -855,8 +838,6 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
               FILE *output;
               if (!(output = fopen(cddb_file, "w")))
                 {
-                  fprintf(stdout,"here1");
-                  fflush(stdout);
                   *err = SPLT_CANNOT_WRITE_CDDB_FILE;
                 }
               else
