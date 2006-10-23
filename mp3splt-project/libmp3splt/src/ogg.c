@@ -516,6 +516,11 @@ void splt_ogg_put_tags(splt_state *state, int *error)
                                          (char *)splt_ogg_genre_list[(int) 
                                                                      tags[current_split].genre],
                                          tags[current_split].comment);
+                      //free memory
+                      if (track_string)
+                        {
+                          free(track_string);
+                        }
                     }
                 }
             }

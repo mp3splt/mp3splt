@@ -738,7 +738,7 @@ void do_freedb_search(splt_state *state,int *err)
               {
                 //duplicate, see below
                 char junk[18];
-                fprintf (stdout, "-- 'q' to select cd, Enter for more: ");
+                fprintf (stdout, "-- 'q' to select cd, Enter for more:");
                 fflush(stdout);
 		
                 fgets(junk, 16, stdin);
