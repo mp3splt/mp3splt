@@ -35,7 +35,7 @@ MP3SPLT_DESCRIPTION="mp3splt-project common features:
 
 #we put i386 if i686 except for archlinux, where we set i686 inside
 #its make_ script
-if [[ $ARCH = "i486" ]] || [[ $ARCH = "i586" ]] || [[ $ARCH = "i686" ]];then
+if [[ $ARCH = "i486" || $ARCH = "i586" || $ARCH = "i686" || $ARCH = "i86pc" ]];then
     ARCH="i386";
 fi
 

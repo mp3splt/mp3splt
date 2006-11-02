@@ -12,9 +12,12 @@ echo
 echo $'Package :\tgentoo'
 echo
 
-#generate mp3splt-gtk ebuild
-cd gentoo && \
-echo "# Copyright 1999-2006 Gentoo Foundation
+#if we don't have the distribution file
+DIST_FILE="../mp3splt-gtk-${MP3SPLT_GTK_VERSION}_ebuild.tar.gz"
+if [[ ! -f $DIST_FILE ]];then
+    #generate mp3splt-gtk ebuild
+    cd gentoo && \
+        echo "# Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # \$Header:  \$
 
@@ -53,25 +56,30 @@ src_install() {
 	einstall
     dodoc AUTHORS ChangeLog COPYING INSTALL NEWS README TODO
 }" > ./media-sound/mp3splt-gtk/mp3splt-gtk-${MP3SPLT_GTK_VERSION}.ebuild  || exit 1\
-&& cd ..
-
-#create the directories we need
-GENTOO_TEMP=/tmp/gentoo_temp
-DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
-if [[ -e $GENTOO_TEMP ]];then
-    mv $GENTOO_TEMP ${GENTOO_TEMP}${DATEMV}
+    && cd ..
+    
+    #create the directories we need
+    GENTOO_TEMP=/tmp/gentoo_temp
+    DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+    if [[ -e $GENTOO_TEMP ]];then
+        mv $GENTOO_TEMP ${GENTOO_TEMP}${DATEMV}
+    fi
+    mkdir -p $GENTOO_TEMP
+    
+    #the ebuild
+    cp -a gentoo/* $GENTOO_TEMP
+    rm -f ./gentoo/media-sound/mp3splt-gtk/mp3splt-gtk-${MP3SPLT_GTK_VERSION}.ebuild
+    find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' \; &>/dev/null
+    #digest mp3splt-gtk
+    #if we don't have distribution file, create it
+    if [[ ! -e ../mp3splt-gtk-$MP3SPLT_GTK_VERSION.tar.gz ]];then
+        ./make_source_package.sh || exit 1
+    fi && \
+        cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/portage/distfiles &&\
+        ebuild $GENTOO_TEMP/media-sound/mp3splt-gtk/mp3splt-gtk* digest &&\
+        tar czf ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-sound || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
 fi
-mkdir -p $GENTOO_TEMP
-
-#the ebuild
-cp -a gentoo/* $GENTOO_TEMP
-rm -f ./gentoo/media-sound/mp3splt-gtk/mp3splt-gtk-${MP3SPLT_GTK_VERSION}.ebuild
-find $GENTOO_TEMP -name \".svn\" -exec rm -rf '{}' \; &>/dev/null
-#digest mp3splt-gtk
-#if we don't have distribution file, create it
-if [[ ! -e ../mp3splt-gtk-$MP3SPLT_GTK_VERSION.tar.gz ]];then
-    ./make_source_package.sh || exit 1
-fi && \
-cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz /usr/portage/distfiles &&\
-ebuild $GENTOO_TEMP/media-sound/mp3splt-gtk/mp3splt-gtk* digest &&\
-tar czf ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-sound || exit 1

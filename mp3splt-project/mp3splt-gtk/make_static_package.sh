@@ -16,20 +16,28 @@ echo
 export CFLAGS="-I/tmp/static_tmp/libmp3splt/usr/local/include $CFLAGS"
 export LDFLAGS="-L/tmp/static_tmp/libmp3splt/usr/local/lib $LDFLAGS"
 
-#we create the /tmp directories
-STATIC_DIR=/tmp/static_tmp/mp3splt-gtk
-DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
-if [[ -e $STATIC_DIR ]];then
-    mv $STATIC_DIR ${STATIC_DIR}${DATEMV}
+#if we don't have the distribution file
+DIST_FILE="../mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static_${ARCH}.tar.gz"
+if [[ ! -f $DIST_FILE ]];then
+    #we create the /tmp directories
+    STATIC_DIR=/tmp/static_tmp/mp3splt-gtk
+    DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+    if [[ -e $STATIC_DIR ]];then
+        mv $STATIC_DIR ${STATIC_DIR}${DATEMV}
+    fi
+    mkdir -p $STATIC_DIR
+    mkdir -p $STATIC_DIR/usr/local/share/doc/mp3splt-gtk
+    
+    #we compile
+    ./autogen.sh && \
+        ./configure --enable-bmp --disable-shared --enable-static && \
+        make clean && \
+        make DESTDIR=$STATIC_DIR install && \
+        cp "${MP3SPLT_GTK_DOC_FILES[@]}" $STATIC_DIR/usr/local/share/doc/mp3splt-gtk &&\
+        tar -c -z -C $STATIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static_$ARCH.tar.gz . &&\
+        mv mp3splt-gtk*.tar.gz ../ || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
 fi
-mkdir -p $STATIC_DIR
-mkdir -p $STATIC_DIR/usr/local/share/doc/mp3splt-gtk
-
-#we compile
-./autogen.sh && \
-./configure --enable-bmp --disable-shared --enable-static && \
-make clean && \
-make DESTDIR=$STATIC_DIR install && \
-cp "${MP3SPLT_GTK_DOC_FILES[@]}" $STATIC_DIR/usr/local/share/doc/mp3splt-gtk &&\
-tar -c -z -C $STATIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static_$ARCH.tar.gz . &&\
-mv mp3splt-gtk*.tar.gz ../ || exit 1

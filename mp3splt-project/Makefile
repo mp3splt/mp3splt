@@ -48,6 +48,18 @@ debian_packages: clean_tmp
 	./${MP3SPLT_DIR}/debian/make_debian_package.sh
 	./${MP3SPLT_GTK_DIR}/debian/make_debian_package.sh
 
+#creates static packages
+static_packages: clean_tmp
+	./${LIBMP3SPLT_DIR}/make_static_package.sh
+	./${MP3SPLT_DIR}/make_static_package.sh
+	./${MP3SPLT_GTK_DIR}/make_static_package.sh
+
+#creates dynamic packages
+dynamic_packages: clean_tmp
+	./${LIBMP3SPLT_DIR}/make_dynamic_package.sh
+	./${MP3SPLT_DIR}/make_dynamic_package.sh
+	./${MP3SPLT_GTK_DIR}/make_dynamic_package.sh
+
 #gentoo ebuilds creation
 gentoo_ebuilds: clean_tmp
 	./${LIBMP3SPLT_DIR}/gentoo/make_gentoo_ebuild.sh
@@ -80,18 +92,6 @@ slackware_fakeroot_packages: clean_tmp
 	fakeroot ./${LIBMP3SPLT_DIR}/slackware/make_slackware_package.sh
 	fakeroot ./${MP3SPLT_DIR}/slackware/make_slackware_package.sh
 	fakeroot ./${MP3SPLT_GTK_DIR}/slackware/make_slackware_package.sh
-
-#creates static packages
-static_packages: clean_tmp
-	./${LIBMP3SPLT_DIR}/make_static_package.sh
-	./${MP3SPLT_DIR}/make_static_package.sh
-	./${MP3SPLT_GTK_DIR}/make_static_package.sh
-
-#creates dynamic packages
-dynamic_packages: clean_tmp
-	./${LIBMP3SPLT_DIR}/make_dynamic_package.sh
-	./${MP3SPLT_DIR}/make_dynamic_package.sh
-	./${MP3SPLT_GTK_DIR}/make_dynamic_package.sh
 
 #opensolaris nexenta packages
 nexenta_packages: clean_tmp
@@ -162,17 +162,17 @@ root_uninstall:
 DATE=`date +-%d_%m_%Y__%H_%M_%S`
 clean_tmp:
 	if [[ -e /tmp/dynamic_tmp ]];then \
-mv /tmp/dynamic_tmp /tmp/dynamic_tmp${DATE}M &>/dev/null;fi
+mv /tmp/dynamic_tmp /tmp/dynamic_tmp${DATE} &>/dev/null;fi
 	if [[ -e /tmp/static_tmp ]];then \
-mv /tmp/static_tmp /tmp/static_tmp${DATE}M &>/dev/null;fi
+mv /tmp/static_tmp /tmp/static_tmp${DATE} &>/dev/null;fi
 	if [[ -e /tmp/rpm_tmp ]];then \
-mv /tmp/rpm_temp /tmp/rpm_temp${DATE}M &>/dev/null;fi
+mv /tmp/rpm_temp /tmp/rpm_temp${DATE} &>/dev/null;fi
 	if [[ -e /tmp/slack_temp ]];then \
-mv /tmp/slack_temp /tmp/slack_temp${DATE}M &>/dev/null;fi
+mv /tmp/slack_temp /tmp/slack_temp${DATE} &>/dev/null;fi
 	if [[ -e /tmp/temp ]];then \
 mv /tmp/temp /tmp/temp${DATE}M &>/dev/null;fi
 	if [[ -e /tmp/gentoo_temp ]];then \
-mv /tmp/gentoo_temp /tmp/gentoo${DATE}M &>/dev/null;fi
+mv /tmp/gentoo_temp /tmp/gentoo${DATE} &>/dev/null;fi
 	sleep 1
 
 #clean the builds

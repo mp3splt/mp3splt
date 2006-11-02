@@ -12,21 +12,29 @@ echo
 echo $'Package :\tdynamic'
 echo
 
-#create the directories we need
-DYNAMIC_DIR=/tmp/dynamic_tmp/libmp3splt
-DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
-if [[ -e $DYNAMIC_DIR ]];then 
-    mv $DYNAMIC_DIR ${DYNAMIC_DIR}${DATEMV}
+#if we don't have the distribution file
+DIST_FILE="../libmp3splt-${LIBMP3SPLT_VERSION}_dynamic_${ARCH}.tar.gz"
+if [[ ! -f $DIST_FILE ]];then
+    #create the directories we need
+    DYNAMIC_DIR=/tmp/dynamic_tmp/libmp3splt
+    DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+    if [[ -e $DYNAMIC_DIR ]];then 
+        mv $DYNAMIC_DIR ${DYNAMIC_DIR}${DATEMV}
+    fi
+    mkdir -p $DYNAMIC_DIR
+    mkdir -p $DYNAMIC_DIR/usr/local/share/doc/libmp3splt
+    
+    #we compile
+    ./autogen.sh && \
+        ./configure --enable-shared --disable-static && \
+        make clean && \
+        make && \
+        make DESTDIR=$DYNAMIC_DIR install && \
+        cp "${LIBMP3SPLT_DOC_FILES[@]}" $DYNAMIC_DIR/usr/local/share/doc/libmp3splt &&\
+        tar -c -z -C $DYNAMIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_dynamic_$ARCH.tar.gz . &&\
+        mv libmp3splt*dynamic*.tar.gz ../ || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
 fi
-mkdir -p $DYNAMIC_DIR
-mkdir -p $DYNAMIC_DIR/usr/local/share/doc/libmp3splt
-
-#we compile
-./autogen.sh && \
-./configure --enable-shared --disable-static && \
-make clean && \
-make && \
-make DESTDIR=$DYNAMIC_DIR install && \
-cp "${LIBMP3SPLT_DOC_FILES[@]}" $DYNAMIC_DIR/usr/local/share/doc/libmp3splt &&\
-tar -c -z -C $DYNAMIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_dynamic_$ARCH.tar.gz . &&\
-mv libmp3splt*dynamic*.tar.gz ../ || exit 1

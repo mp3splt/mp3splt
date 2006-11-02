@@ -17,8 +17,11 @@ if [[ $ARCH = "i386" ]];then
     CFLAGS="-O2 -mtune=${ARCH} $CFLAGS"
 fi
 
-#we generate the PKGBUILD file
-cd arch && echo "# \$Id: PKGBUILD \$
+#if we don't have the distribution file
+DIST_FILE="../mp3splt-${MP3SPLT_VERSION}-1_${ARCH}.pkg.tar.gz"
+if [[ ! -f $DIST_FILE ]];then
+    #we generate the PKGBUILD file
+    cd arch && echo "# \$Id: PKGBUILD \$
 # Packager: Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>
 pkgname=mp3splt
 pkgver=${MP3SPLT_VERSION}
@@ -39,17 +42,22 @@ build() {
   make prefix=\$startdir/pkg/usr install
 }" > PKGBUILD && cd ..
 
-#we set the flags to find libmp3splt
-export CFLAGS="-I../libmp3splt/arch/pkg/usr/include $CFLAGS"
-export LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib $LDFLAGS"
-
-#we make the distribution file if we don't have it
-if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
-    ./make_source_package.sh || exit 1
-fi &&\
-cp ../mp3splt-${MP3SPLT_VERSION}.tar.gz ./arch &&\
-cd arch && makepkg -d -c &&\
-mv mp3splt-${MP3SPLT_VERSION}-1.pkg.tar.gz \
-../../mp3splt-${MP3SPLT_VERSION}-1_${ARCH}.pkg.tar.gz &&\
-rm -f ./mp3splt-${MP3SPLT_VERSION}.tar.gz && rm -f PKGBUILD \
-|| exit 1
+    #we set the flags to find libmp3splt
+    export CFLAGS="-I../libmp3splt/arch/pkg/usr/include $CFLAGS"
+    export LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib $LDFLAGS"
+    
+    #we make the distribution file if we don't have it
+    if [[ ! -e ../mp3splt-${MP3SPLT_VERSION}.tar.gz ]];then
+        ./make_source_package.sh || exit 1
+    fi &&\
+        cp ../mp3splt-${MP3SPLT_VERSION}.tar.gz ./arch &&\
+        cd arch && makepkg -d -c &&\
+        mv mp3splt-${MP3SPLT_VERSION}-1.pkg.tar.gz \
+        ../../mp3splt-${MP3SPLT_VERSION}-1_${ARCH}.pkg.tar.gz &&\
+        rm -f ./mp3splt-${MP3SPLT_VERSION}.tar.gz && rm -f PKGBUILD \
+        || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
+fi

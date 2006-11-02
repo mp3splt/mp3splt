@@ -12,8 +12,12 @@ echo
 echo $'Package :\trpm'
 echo
 
-cd rpm &&\
-echo "Summary: Mp3splt-gtk is a GTK2 gui that uses libmp3splt to split mp3 and ogg without decoding
+#if we don't have the distribution files
+DIST_FILE1="../mp3splt-gtk-${MP3SPLT_GTK_VERSION}-1.${ARCH}.rpm"
+DIST_FILE2="../mp3splt-gtk-${MP3SPLT_GTK_VERSION}-1.src.rpm"
+if [[ ! -f $DIST_FILE1 || ! -f $DIST_FILE2 ]];then
+    cd rpm &&\
+        echo "Summary: Mp3splt-gtk is a GTK2 gui that uses libmp3splt to split mp3 and ogg without decoding
 Name: mp3splt-gtk
 Version: ${MP3SPLT_GTK_VERSION}
 Release: 1
@@ -39,23 +43,29 @@ make DESTDIR=\$RPM_BUILD_ROOT install
 %defattr(-,root,root)
 /usr/*
 %doc ${MP3SPLT_GTK_DOC[@]}" > ./SPECS/mp3splt-gtk.spec || exit 1 \
-&& cd ..
-
-#we need the flags because we told libmp3splt to install in /tmp/rpm
-RPM_TEMP=/tmp/rpm_temp
-export CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include $CFLAGS"
-export LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib $LDFLAGS"
-
-#we make the distribution file if we don't have it
-if [[ ! -e ../mp3splt-gtk-$MP3SPLT_GTK_VERSION.tar.gz ]];then
-    ./make_source_package.sh || exit 1
-fi && \
-cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ./rpm/SOURCES &&\
-echo "%_topdir $PROGRAM_DIR/rpm" > ~/.rpmmacros &&\
-cd rpm &&\
-rpmbuild -ba ./SPECS/mp3splt-gtk.spec &&\
-rm -rf ./BUILD/* &&\
-rm -rf ./SOURCES/* &&\
-rm -f ./SPECS/mp3splt-gtk.spec &&\
-mv ./RPMS/$ARCH/*.rpm ../.. &&\
-mv ./SRPMS/*.rpm ../.. || exit 1
+    && cd ..
+    
+    #we need the flags because we told libmp3splt to install in /tmp/rpm
+    RPM_TEMP=/tmp/rpm_temp
+    export CFLAGS="-I$RPM_TEMP/libmp3splt/usr/include $CFLAGS"
+    export LDFLAGS="-L$RPM_TEMP/libmp3splt/usr/lib $LDFLAGS"
+    
+    #we make the distribution file if we don't have it
+    if [[ ! -e ../mp3splt-gtk-$MP3SPLT_GTK_VERSION.tar.gz ]];then
+        ./make_source_package.sh || exit 1
+    fi && \
+        cp ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ./rpm/SOURCES &&\
+        echo "%_topdir $PROGRAM_DIR/rpm" > ~/.rpmmacros &&\
+        cd rpm &&\
+        rpmbuild -ba ./SPECS/mp3splt-gtk.spec &&\
+        rm -rf ./BUILD/* &&\
+        rm -rf ./SOURCES/* &&\
+        rm -f ./SPECS/mp3splt-gtk.spec &&\
+        mv ./RPMS/$ARCH/*.rpm ../.. &&\
+        mv ./SRPMS/*.rpm ../.. || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE1 distribution file"
+    echo " and the $DIST_FILE2 distribution file !"
+    echo
+fi

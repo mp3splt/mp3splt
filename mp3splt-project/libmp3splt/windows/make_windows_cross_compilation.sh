@@ -37,8 +37,8 @@ export PATH="`pwd`/libs/bin:$PATH"
 
 #we compile and install libmp3splt
 cd mp3splt-project/libmp3splt &&\
-./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-shared --disable-vorbistest\
-&& make clean && make && make install || exit 1
+    ./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-shared --disable-vorbistest\
+    && make clean && make && make install || exit 1
 
 #we clean the remained files
 find . -type f -name "*.a" -exec rm -f {} \;

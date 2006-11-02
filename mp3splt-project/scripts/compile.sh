@@ -18,26 +18,28 @@ UPLOAD_TO_SOURCEFORGE=0
 
 ################## confirmation question ############
 #the confirmation question
-echo
-echo "This script is used by the developers to auto-create packages for releases"
-echo "You should modify this script in order to use it on your computer."
-echo "Please remember that you are using the script at your own risk !"
-echo
-sleep 3
-
-select=("I know what I'm doing and I use it at my own risk" "Quit")
-select continue in "${select[@]}";do
-    if [[ $continue = "Quit" ]]; then
+if [[ $1 != "quiet_root" ]];then
+    echo
+    echo "This script is used by the developers to auto-create packages for releases"
+    echo "You should modify this script in order to use it on your computer."
+    echo "Please remember that you are using the script at your own risk !"
+    echo
+    sleep 3
+    
+    select=("I know what I'm doing and I use it at my own risk" "Quit")
+    select continue in "${select[@]}";do
+        if [[ $continue = "Quit" ]]; then
         exit 0
-    else
-        break
+        else
+            break
+        fi
+    done
+    
+    #don't run the script as root
+    if [[ `id -u` == 0 ]]; then
+        echo "The script must not be run as root"
+        exit 1
     fi
-done
-
-#don't run the script as root
-if [[ `id -u` == 0 ]]; then
-    echo "The script must not be run as root"
-    exit 1
 fi
 
 #we move in the current script directory
@@ -55,33 +57,51 @@ cd $PROJECT_DIR
 
 DATE_START=`date`
 ################## update versions ############
-echo
-echo "Updating versions..."
-echo
-sleep 2
-
-#we update the real versions
-#libmp3splt
-sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
- ./${LIBMP3SPLT_DIR}/include_variables.sh
-#mp3splt + its libmp3splt library
-sed -i "s/MP3SPLT_VERSION=.*/MP3SPLT_VERSION=$MP3SPLT_REAL_VERSION/"\
- ./${LIBMP3SPLT_DIR}/include_variables.sh
-sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
- ./${LIBMP3SPLT_DIR}/include_variables.sh
-#mp3splt-gtk + its libmp3splt library
-sed -i "s/MP3SPLT_GTK_VERSION=.*/MP3SPLT_GTK_VERSION=$MP3SPLT_GTK_REAL_VERSION/"\
- ./${MP3SPLT_GTK_DIR}/include_variables.sh
-sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
- ./${LIBMP3SPLT_DIR}/include_variables.sh
-
-#we update the versions
-./${LIBMP3SPLT_DIR}/update_version.sh
-./${MP3SPLT_DIR}/update_version.sh
-./${MP3SPLT_GTK_DIR}/update_version.sh
-
-cd $PROJECT_DIR
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "Updating versions..."
+    echo
+    sleep 2
+    
+    #we update the real versions
+    #libmp3splt
+    sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
+        ./${LIBMP3SPLT_DIR}/include_variables.sh
+    #mp3splt + its libmp3splt library
+    sed -i "s/MP3SPLT_VERSION=.*/MP3SPLT_VERSION=$MP3SPLT_REAL_VERSION/"\
+        ./${LIBMP3SPLT_DIR}/include_variables.sh
+    sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
+        ./${LIBMP3SPLT_DIR}/include_variables.sh
+    #mp3splt-gtk + its libmp3splt library
+    sed -i "s/MP3SPLT_GTK_VERSION=.*/MP3SPLT_GTK_VERSION=$MP3SPLT_GTK_REAL_VERSION/"\
+        ./${MP3SPLT_GTK_DIR}/include_variables.sh
+    sed -i "s/LIBMP3SPLT_VERSION=.*/LIBMP3SPLT_VERSION=$LIBMP3SPLT_REAL_VERSION/"\
+        ./${LIBMP3SPLT_DIR}/include_variables.sh
+     
+    #we update the versions
+    ./${LIBMP3SPLT_DIR}/update_version.sh || exit 1
+    ./${MP3SPLT_DIR}/update_version.sh || exit 1
+    ./${MP3SPLT_GTK_DIR}/update_version.sh || exit 1
+    
+    cd $PROJECT_DIR
+fi
 ################## end update versions ############
+
+############# source packages ################
+if [[ $ARCH = "i386" ]];then
+    echo
+    echo "Creating source distribution..."
+    echo
+    sleep 2
+    
+    make source_packages || exit 1
+fi
+############# end source packages ################
+
+############# debian packages ################
+echo
+echo "Creating $ARCH debian packages..."
+echo
 
 #puts .sarge or .etch version
 #$1=.sarge or $1=.etch
@@ -109,31 +129,21 @@ function make_debian_flavor()
     echo
     echo "Creating $ARCH $1 $2 packages..."
     echo
-    sleep 2
-    
-    put_debian_version "$2"
-    dchroot -d -c $1_$2 "export LC_ALL=\"C\" && make debian_packages " || exit 1
-    clean_debian_version "$2"
-    cd $PROJECT_DIR
+
+    #if we don't have the distribution files
+    if [[ ! -f "mp3splt-gtk-${MP3SPLT_GTK_REAL_VERSION}.${2}_${ARCH}.deb" ||
+          ! -f "mp3splt-${MP3SPLT_REAL_VERSION}.${2}_${ARCH}.deb" ||
+          ! -f "libmp3splt-${LIBMP3SPLT_REAL_VERSION}.${2}_${ARCH}.deb" ]];then
+        sleep 2
+        
+        put_debian_version "$2"
+        dchroot -d -c $1_$2 "export LC_ALL=\"C\" && make debian_packages " || exit 1
+        clean_debian_version "$2"
+        cd $PROJECT_DIR
+    fi
 }
 
-############# source packages ################
-if [[ $ARCH = "i386" ]];then
-    echo
-    echo "Creating source distribution..."
-    echo
-    sleep 2
-    
-    make source_packages || exit 1
-fi
-############# end source packages ################
-
-############# debian packages ################
-echo
-echo "Creating $ARCH debian packages..."
-echo
 sleep 2
-
 put_debian_version "etch"
 make debian_packages || exit 1
 clean_debian_version "etch"
@@ -153,7 +163,7 @@ echo "Creating $ARCH ubuntu packages..."
 echo
 sleep 2
 
-make_debian_flavor "ubuntu" "breezy"
+#make_debian_flavor "ubuntu" "breezy"
 make_debian_flavor "ubuntu" "dapper"
 make_debian_flavor "ubuntu" "edgy"
 cd $PROJECT_DIR
@@ -198,7 +208,17 @@ if [[ $ARCH = "i386" ]];then
     echo
     sleep 2
     
-    make windows_cross_installers || exit 1
+    #if we don't have the distribution file
+    DIST_FILE1="./mp3splt_${MP3SPLT_VERSION}_${ARCH}.exe"
+    DIST_FILE2="./mp3splt-gtk_${MP3SPLT_GTK_VERSION}_${ARCH}.exe"
+    if [[ ! -f $DIST_FILE1 || ! -f $DIST_FILE2 ]];then
+        make windows_cross_installers || exit 1
+    else
+        echo
+        echo "We already have the $DIST_FILE1 distribution file"
+        echo " and the $DIST_FILE2 distribution file !"
+        echo
+    fi
     cd $PROJECT_DIR
 fi
 ############# end windows installers ################
@@ -295,9 +315,9 @@ fi
 ############# end nexenta gnu/opensolaris packages #####
 
 ############# cleaning the distribution #####
-if [[ $ARCH = "i386" ]];then
-    make distclean || exit 1
-fi
+#if [[ $ARCH = "i386" ]];then
+#    make distclean || exit 1
+#fi
 ############# end cleaning the distribution #####
 
 ############# finish packaging #####
@@ -324,7 +344,7 @@ if [[ $ARCH = "i386" ]];then
     mv ./*etch_i386.deb ./$RELEASE_DIR || echo "etch i386 warning"
     mv ./*sid_i386.deb ./$RELEASE_DIR || echo "sid i386 warning"
     #ubuntu
-    mv ./*breezy_i386.deb ./$RELEASE_DIR || echo "breezy i386 warning"
+    #mv ./*breezy_i386.deb ./$RELEASE_DIR || echo "breezy i386 warning"
     mv ./*dapper_i386.deb ./$RELEASE_DIR || echo "dapper i386 warning"
     mv ./*edgy_i386.deb ./$RELEASE_DIR || echo "edgy i386 warning"
     #nexenta

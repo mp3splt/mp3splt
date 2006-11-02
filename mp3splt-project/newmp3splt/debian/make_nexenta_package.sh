@@ -14,16 +14,24 @@ echo
 
 ./debian/generate_debian_files.sh || exit 1
 
-TEMP_DIR=/tmp/temp
+#if we don't have the distribution file
+DIST_FILE="../mp3splt_${MP3SPLT_VERSION}_solaris-${ARCH}.deb"
+if [[ ! -f $DIST_FILE ]];then
+    TEMP_DIR=/tmp/temp
 
-#we set necessary flags
-export CFLAGS="-I/$TEMP_DIR/usr/include $CFLAGS"
-export LDFLAGS="-L/$TEMP_DIR/usr/lib $LDFLAGS"
-
-#we compile
-./autogen.sh &&\
-./configure --prefix=/usr --host=i386-pc-solaris2.11 &&\
-make clean &&\
-make &&\
-#we create the debian package
-fakeroot debian/rules binary || exit 1
+    #we set necessary flags
+    export CFLAGS="-I/$TEMP_DIR/usr/include $CFLAGS"
+    export LDFLAGS="-L/$TEMP_DIR/usr/lib $LDFLAGS"
+    
+    #we compile
+    ./autogen.sh &&\
+        ./configure --prefix=/usr --host=i386-pc-solaris2.11 &&\
+        make clean &&\
+        make &&\
+        #we create the debian package
+    fakeroot debian/rules binary || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
+fi

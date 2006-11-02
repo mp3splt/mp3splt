@@ -17,9 +17,13 @@ echo
 TEMP_LIBMP3SPLT_VERSION=${LIBMP3SPLT_VERSION/_/.}
 NEW_LIBMP3SPLT_VERSION=${TEMP_LIBMP3SPLT_VERSION/rc/r}
 
-DATE=`date`
-#we generate the Makefile
-echo "# New ports collection makefile for: libmp3splt
+#if we don't have the distribution file
+DIST_FILE="../../libmp3splt_fbsd_${ARCH}-${NEW_LIBMP3SPLT_VERSION}.tbz"
+if [[ ! -f $DIST_FILE ]];then
+    
+    DATE=`date`
+    #we generate the Makefile
+    echo "# New ports collection makefile for: libmp3splt
 # Date created:	$DATE
 # Whom:		Munteanu Alexandru Ionut
 #
@@ -55,66 +59,71 @@ DOC_DIR=	\${PREFIX}/share/doc/libmp3splt/
 pre-install:
 	\${MKDIR} \${DOC_DIR}" > Makefile
 
-for doc in "${LIBMP3SPLT_DOC_FILES[@]}";do
-    echo "	\${INSTALL_DATA} \${WRKSRC}/${doc} \${DOC_DIR}" >> Makefile
-done
+    for doc in "${LIBMP3SPLT_DOC_FILES[@]}";do
+        echo "	\${INSTALL_DATA} \${WRKSRC}/${doc} \${DOC_DIR}" >> Makefile
+    done
 
-echo "
+    echo "
 .include <bsd.port.mk>" >> Makefile
 
-#we generate the pkg-plist
-echo "@comment \$FreeBSD\$" > pkg-plist
+    #we generate the pkg-plist
+    echo "@comment \$FreeBSD\$" > pkg-plist
 
-for file in "${LIBMP3SPLT_FILES[@]}";do
-    if [[ $file != "lib/libmp3splt.so.0.0" ]];then
-        echo "$file" >> pkg-plist
-    else
-        echo "lib/libmp3splt.so" >> pkg-plist
-        echo "lib/libmp3splt.so.0" >> pkg-plist
-    fi
-done
+    for file in "${LIBMP3SPLT_FILES[@]}";do
+        if [[ $file != "lib/libmp3splt.so.0.0" ]];then
+            echo "$file" >> pkg-plist
+        else
+            echo "lib/libmp3splt.so" >> pkg-plist
+            echo "lib/libmp3splt.so.0" >> pkg-plist
+        fi
+    done
 
-for doc in "${LIBMP3SPLT_DOC_FILES[@]}";do
-    echo "share/doc/libmp3splt/${doc}" >> pkg-plist
-done
+    for doc in "${LIBMP3SPLT_DOC_FILES[@]}";do
+        echo "share/doc/libmp3splt/${doc}" >> pkg-plist
+    done
 
-echo "@dirrm include/libmp3splt" >> pkg-plist
-echo "@dirrm share/doc/libmp3splt" >> pkg-plist
+    echo "@dirrm include/libmp3splt" >> pkg-plist
+    echo "@dirrm share/doc/libmp3splt" >> pkg-plist
 
-#we generate the pkg-descr file
-echo $LIBMP3SPLT_DESCRIPTION > pkg-descr
-echo "
+    #we generate the pkg-descr file
+    echo $LIBMP3SPLT_DESCRIPTION > pkg-descr
+    echo "
 WWW: http://mp3splt.sourceforge.net
 " >> pkg-descr
 
-#we generate the distinfo file
-echo "" > distinfo
+    #we generate the distinfo file
+    echo "" > distinfo
 
-cd ..
+    cd ..
 
-#we set the flags
-export ACLOCAL_FLAGS="-I /usr/local/share/aclocal"
-export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include $CFLAGS"
-export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib $LDFLAGS"
+    #we set the flags
+    export ACLOCAL_FLAGS="-I /usr/local/share/aclocal"
+    export CFLAGS="-I/usr/local/include -I/usr/include -I/usr/X11R6/include $CFLAGS"
+    export LDFLAGS="-L/usr/local/lib -L/usr/lib -L/usr/X11R6/lib $LDFLAGS"
 
-#remove old package
-pkg_delete libmp3splt_fbsd_$ARCH
-#make dist if necessary
-if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
-    ./make_source_package.sh "netbsd" || exit 1
-fi &&\
-cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz /usr/ports/distfiles/ || exit 1
-#create ports libmp3splt directory
-DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
-if [[ -e /usr/ports/audio/libmp3splt ]];then
-    #we uninstall libmp3splt from a previous build
-    cd /usr/ports/audio/libmp3splt && make deinstall; cd -
-    mv /usr/ports/audio/libmp3splt /usr/ports/audio/libmp3splt${DATEMV}
+    #remove old package
+    pkg_delete libmp3splt_fbsd_$ARCH
+    #make dist if necessary
+    if [[ ! -e ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ]];then
+        ./make_source_package.sh "netbsd" || exit 1
+    fi &&\
+        cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz /usr/ports/distfiles/ || exit 1
+    #create ports libmp3splt directory
+    DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+    if [[ -e /usr/ports/audio/libmp3splt ]];then
+        #we uninstall libmp3splt from a previous build
+        cd /usr/ports/audio/libmp3splt && make deinstall; cd -
+        mv /usr/ports/audio/libmp3splt /usr/ports/audio/libmp3splt${DATEMV}
+    fi
+    mkdir -p /usr/ports/audio/libmp3splt
+    cp ./freebsd/* /usr/ports/audio/libmp3splt
+    rm -f ./freebsd/pkg-descr ./freebsd/pkg-plist ./freebsd/distinfo ./freebsd/Makefile
+    #we create the package
+    cd /usr/ports/audio/libmp3splt && make makesum && make && make install &&\
+        make package;  cd - &&\
+        mv /usr/ports/audio/libmp3splt/*fbsd*.tbz ../ || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
 fi
-mkdir -p /usr/ports/audio/libmp3splt
-cp ./freebsd/* /usr/ports/audio/libmp3splt
-rm -f ./freebsd/pkg-descr ./freebsd/pkg-plist ./freebsd/distinfo ./freebsd/Makefile
-#we create the package
-cd /usr/ports/audio/libmp3splt && make makesum && make && make install &&\
-make package;  cd - &&\
-mv /usr/ports/audio/libmp3splt/*fbsd*.tbz ../ || exit 1

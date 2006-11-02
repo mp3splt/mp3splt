@@ -16,16 +16,24 @@ echo
 echo $'Package :\tsource'
 echo
 
-#create the directories we need
-TEMPDIR=/tmp/temp
-DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
-if [[ -e $TEMPDIR ]];then
-    mv $TEMPDIR ${TEMPDIR}${DATEMV}
+#if we don't have the distribution file
+DIST_FILE="../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz"
+if [[ ! -f $DIST_FILE ]];then
+    #create the directories we need
+    TEMPDIR=/tmp/temp
+    DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+    if [[ -e $TEMPDIR ]];then
+        mv $TEMPDIR ${TEMPDIR}${DATEMV}
+    fi
+    mkdir -p $TEMPDIR
+    
+    #we compile
+    ./autogen.sh &&\
+        ./configure --prefix=/usr &&\
+        make dist && make install DESTDIR=$TEMPDIR &&\
+        mv libmp3splt*.tar.gz ../ || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
 fi
-mkdir -p $TEMPDIR
-
-#we compile
-./autogen.sh &&\
-./configure --prefix=/usr &&\
-make dist && make install DESTDIR=$TEMPDIR &&\
-mv libmp3splt*.tar.gz ../ || exit 1

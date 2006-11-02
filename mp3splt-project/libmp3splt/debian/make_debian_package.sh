@@ -8,7 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-if [[ $ARCH = "x86_64" ]];
+if [[ $ARCH = "x86_64" ]];then
     ARCH="amd64";
 fi
 
@@ -19,12 +19,22 @@ echo
 #we generate the debian files
 ./debian/generate_debian_files.sh || exit 1
 
-#we compile
-./autogen.sh && \
-./configure --prefix=/usr && \
-make clean && \
-make && \
-#we create the debian package
-fakeroot debian/rules binary &&\
-#we install for mp3splt and mp3splt-gtk
-make install DESTDIR=/tmp/temp || exit 1
+DEBIAN_VERSION=$(sed -n "s/.*(\(${LIBMP3SPLT_VERSION}.*\)).*/\1/ p" ./debian/changelog)
+#if we don't have the distribution file
+DIST_FILE="../libmp3splt_${DEBIAN_VERSION}_${ARCH}.deb"
+if [[ ! -f $DIST_FILE ]];then
+    #we compile
+    ./autogen.sh && \
+        ./configure --prefix=/usr && \
+        make clean && \
+        make && \
+        #we create the debian package
+    fakeroot debian/rules binary &&\
+        #we install for mp3splt and mp3splt-gtk
+    make install DESTDIR=/tmp/temp || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !"
+    echo
+fi
+

@@ -16,12 +16,20 @@ echo
 echo $'Package :\tsource'
 echo
 
-#set necessary flags
-export CFLAGS="-I/usr/include -I/usr/local/include -I/tmp/temp/usr/include $CFLAGS"
-export LDFLAGS="-L/usr/lib -L/usr/local/lib -L/tmp/temp/usr/lib $LDFLAGS"
-
-#we compile
-./autogen.sh &&\
-./configure --prefix=/usr &&\
-make dist &&\
-mv mp3splt*.tar.gz ../ || exit 1
+#if we don't have the distribution file
+DIST_FILE="../mp3splt-${MP3SPLT_VERSION}.tar.gz"
+if [[ ! -f $DIST_FILE ]];then
+    #set necessary flags
+    export CFLAGS="-I/usr/include -I/usr/local/include -I/tmp/temp/usr/include $CFLAGS"
+    export LDFLAGS="-L/usr/lib -L/usr/local/lib -L/tmp/temp/usr/lib $LDFLAGS"
+    
+    #we compile
+    ./autogen.sh &&\
+        ./configure --prefix=/usr &&\
+        make dist &&\
+        mv mp3splt*.tar.gz ../ || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE distribution file !";
+    echo 
+fi

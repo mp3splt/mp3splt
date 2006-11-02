@@ -13,8 +13,12 @@ echo $'Package :\trpm'
 echo
 
 #generate rpm specs
-cd rpm &&\
-echo "Summary: Library created from mp3splt v2.1c to split mp3 and ogg without deconding
+#if we don't have the distribution files
+DIST_FILE1="../libmp3splt-${LIBMP3SPLT_VERSION}-1.${ARCH}.rpm"
+DIST_FILE2="../libmp3splt-${LIBMP3SPLT_VERSION}-1.src.rpm"
+if [[ ! -f $DIST_FILE1 || ! -f $DIST_FILE2 ]];then
+    cd rpm &&\
+        echo "Summary: Library created from mp3splt v2.1c to split mp3 and ogg without deconding
 Name: libmp3splt
 Version: ${LIBMP3SPLT_VERSION}
 Release: 1
@@ -41,18 +45,24 @@ make DESTDIR=\$RPM_BUILD_ROOT install
 /usr/include/*
 %doc ${LIBMP3SPLT_DOC_FILES[@]}
 " > ./SPECS/libmp3splt.spec \
-&& cd ..
-
-#we make the distribution file if we don't have it
-if [[ ! -e ../libmp3splt-$LIBMP3SPLT_VERSION.tar.gz ]];then
-    ./make_source_package.sh || exit 1
-fi && \
-cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ./rpm/SOURCES &&\
-echo "%_topdir $PROGRAM_DIR/rpm" > ~/.rpmmacros &&\
-#this also installs libmp3splt in /tmp/rpm_temp
-cd rpm && rpmbuild -ba ./SPECS/libmp3splt.spec &&\
-rm -rf ./BUILD/* &&\
-rm -rf ./SOURCES/* &&\
-rm -f ./SPECS/libmp3splt.spec &&\
-mv ./RPMS/$ARCH/*.rpm ../.. &&\
-mv ./SRPMS/*.rpm ../.. || exit 1
+    && cd ..
+    
+    #we make the distribution file if we don't have it
+    if [[ ! -e ../libmp3splt-$LIBMP3SPLT_VERSION.tar.gz ]];then
+        ./make_source_package.sh || exit 1
+    fi && \
+        cp ../libmp3splt-${LIBMP3SPLT_VERSION}.tar.gz ./rpm/SOURCES &&\
+        echo "%_topdir $PROGRAM_DIR/rpm" > ~/.rpmmacros &&\
+        #this also installs libmp3splt in /tmp/rpm_temp
+    cd rpm && rpmbuild -ba ./SPECS/libmp3splt.spec &&\
+        rm -rf ./BUILD/* &&\
+        rm -rf ./SOURCES/* &&\
+        rm -f ./SPECS/libmp3splt.spec &&\
+        mv ./RPMS/$ARCH/*.rpm ../.. &&\
+        mv ./SRPMS/*.rpm ../.. || exit 1
+else
+    echo
+    echo "We already have the $DIST_FILE1 distribution file"
+    echo " and the $DIST_FILE2 distribution file !"
+    echo
+fi
