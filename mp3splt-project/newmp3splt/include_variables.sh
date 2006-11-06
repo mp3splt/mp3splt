@@ -40,7 +40,7 @@ if [[ $ARCH = "i486" || $ARCH = "i586" || $ARCH = "i686" || $ARCH = "i86pc" ]];t
 fi
 
 #compilation flags
-if [[ $1 != "noflags" ]];then
+if [[ $1 != "noflags" && $1 != "quiet_noflags" ]];then
     if [[ $ARCH = "i386" ]];then
         CFLAGS="-O2 -march=${ARCH}"
         LDFLAGS=""
@@ -49,9 +49,26 @@ fi
 
 ################# end variables to set ############
 
-if [[ $1 != "quiet" ]];then
+#print cyan color
+function p_cyan
+{
+    echo -e "\033[36m${@}\033[0m"
+}
+#print blue color
+function p_blue
+{
+    echo -e "\033[1;34m${@}\033[0m"
+}
+#print yellow color
+function p_yellow
+{
+    echo -e "\033[1;33m${@}\033[0m"
+}
+
+if [[ $1 != "quiet" && $1 != "quiet_noflags" ]];then
     echo
-    echo $'Application :\tmp3splt'
+    echo -n $'Application :\t'
+    p_blue "mp3splt"
     echo $'Architecture :\t'$ARCH
     echo $'Version :\t'$MP3SPLT_VERSION
 fi

@@ -26,8 +26,8 @@ make_packages()
       echo "Making OpenBSD packages...";
       echo
       cd /root/progs_src/ &&\
-          scp -P 4422 -r ion@10.0.2.2:\
-          /mnt/personal/hacking/mp3splt/mp3splt-project . &&\
+	  rm -rf ./mp3splt-project &&\
+          scp -P 4422 -r ion@10.0.2.2:/mnt/personal/hacking/mp3splt/mp3splt-project . &&\
 	  cd mp3splt-project && make openbsd_packages &&\
 	  scp -P 4422 -r *obsd*.tgz \
 	  ion@10.0.2.2:/mnt/personal/hacking/mp3splt/mp3splt-project &&\

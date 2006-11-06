@@ -8,7 +8,7 @@ script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir
 cd $PROGRAM_DIR
 
-. ./include_variables.sh "quiet"
+. ./include_variables.sh "quiet_noflags"
 
 #the program version, that we have in the $LIBMP3SPLT_VERSION variable
 VERSION=$LIBMP3SPLT_VERSION
