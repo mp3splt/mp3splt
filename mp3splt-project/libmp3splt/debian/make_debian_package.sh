@@ -12,9 +12,7 @@ if [[ $ARCH = "x86_64" ]];then
     ARCH="amd64";
 fi
 
-echo
-echo $'Package :\tdebian'
-echo
+put_package "debian"
 
 #we generate the debian files
 ./debian/generate_debian_files.sh || exit 1
@@ -33,8 +31,6 @@ if [[ ! -f $DIST_FILE ]];then
         #we install for mp3splt and mp3splt-gtk
     make install DESTDIR=/tmp/temp || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi
 

@@ -9,9 +9,7 @@ cd $script_dir
 
 . ../include_variables.sh
 
-echo
-echo $'Package :\tfreebsd'
-echo
+put_package "freebsd"
 
 #we change 2.2_rc1 to 2.2.r1
 TEMP_MP3SPLT_VERSION=${MP3SPLT_VERSION/_/.}
@@ -120,7 +118,5 @@ WWW: http://mp3splt.sourceforge.net
         #we uninstall the installed package
     cd /usr/ports/audio/mp3splt && make deinstall; cd - || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

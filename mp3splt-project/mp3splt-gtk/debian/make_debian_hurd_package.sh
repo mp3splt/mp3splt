@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\tdebian_hurd'
-echo
+put_package "debian_hurd"
 
 ./debian/generate_debian_files.sh || exit 1
 

@@ -15,9 +15,7 @@ cd $script_dir/../..
 
 . ./mp3splt-gtk/include_variables.sh 
 
-echo
-echo $'Package :\tcross_windows'
-echo
+put_package "cross_windows"
 
 #we run autoconf and automake..
 cd mp3splt-gtk && ./autogen.sh || exit 1 && cd ..

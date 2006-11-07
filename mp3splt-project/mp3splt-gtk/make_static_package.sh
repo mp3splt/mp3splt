@@ -8,9 +8,7 @@ cd $script_dir
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\tstatic'
-echo
+put_package "linux_kernel_static"
 
 #we put the flags, to find out libmp3splt headers and libraries
 export CFLAGS="-I/tmp/static_tmp/libmp3splt/usr/local/include $CFLAGS"
@@ -37,7 +35,5 @@ if [[ ! -f $DIST_FILE ]];then
         tar -c -z -C $STATIC_DIR -f mp3splt-gtk-${MP3SPLT_GTK_VERSION}_static_$ARCH.tar.gz . &&\
         mv mp3splt-gtk*.tar.gz ../ || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

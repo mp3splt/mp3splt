@@ -11,9 +11,7 @@ unset PKG_PATH
 
 . ../include_variables.sh
 
-echo
-echo $'Package :\tnetbsd'
-echo
+put_package "netbsd"
 
 #if we don't have the distribution file
 DIST_FILE="../../libmp3splt_nbsd_${ARCH}-${LIBMP3SPLT_VERSION}.tgz"
@@ -139,7 +137,5 @@ BUILDLINK_DEPTH:=		\${BUILDLINK_DEPTH:S/+$//}" > buildlink3.mk
     cd /usr/pkgsrc/audio/libmp3splt && bmake mdi && bmake package &&\
         cd - && mv /usr/pkgsrc/packages/All/*libmp3splt*nbsd*.tgz ../ || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

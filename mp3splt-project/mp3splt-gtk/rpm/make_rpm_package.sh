@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\trpm'
-echo
+put_package "rpm"
 
 #if we don't have the distribution files
 DIST_FILE1="../mp3splt-gtk-${MP3SPLT_GTK_VERSION}-1.${ARCH}.rpm"
@@ -64,8 +62,6 @@ make DESTDIR=\$RPM_BUILD_ROOT install
         mv ./RPMS/$ARCH/*.rpm ../.. &&\
         mv ./SRPMS/*.rpm ../.. || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE1 distribution file"
-    echo " and the $DIST_FILE2 distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE1 distribution file"
+    put_is_package_warning "and the $DIST_FILE2 distribution file !"
 fi

@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\tnexenta'
-echo
+put_package "nexenta"
 
 #we generate the debian files
 ./debian/generate_debian_files.sh || exit 1
@@ -34,7 +32,5 @@ if [[ ! -f $DIST_FILE ]];then
     #we create the debian package
     fakeroot debian/rules binary || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

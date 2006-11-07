@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\tgentoo'
-echo
+put_package "gentoo"
 
 #if we don't have the distribution file
 DIST_FILE="../mp3splt-${MP3SPLT_VERSION}_ebuild.tar.gz"
@@ -71,7 +69,5 @@ src_install() {
         ebuild $GENTOO_TEMP/media-sound/mp3splt/mp3splt* digest &&\
         tar czf ../mp3splt-${MP3SPLT_VERSION}_ebuild.tar.gz $GENTOO_TEMP/media-sound || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

@@ -16,9 +16,7 @@ cd $script_dir
 
 . ../include_variables.sh
 
-echo
-echo $'Package :\topenbsd'
-echo
+put_package "openbsd"
 
 #if we don't have the distribution file
 DIST_FILE="../../libmp3splt_obsd_${ARCH}-${LIBMP3SPLT_VERSION}.tgz"
@@ -78,7 +76,5 @@ if [[ ! -f $DIST_FILE ]];then
     #we copy the results
     mv ${NAME}_obsd_*.tgz ../.. || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

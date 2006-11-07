@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\tstatic'
-echo
+put_package "linux_kernel_static"
 
 #if we don't have the distribution file
 DIST_FILE="../mp3splt-${MP3SPLT_VERSION}_static_${ARCH}.tar.gz"
@@ -37,7 +35,5 @@ if [[ ! -f $DIST_FILE ]];then
         tar -c -z -C $STATIC_DIR -f mp3splt-${MP3SPLT_VERSION}_static_$ARCH.tar.gz . &&\
         mv mp3splt*.tar.gz ../ || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

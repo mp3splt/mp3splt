@@ -63,11 +63,23 @@ function p_yellow
 {
     echo -e "\033[1;33m${@}\033[0m"
 }
+#we put the package name
+function put_package
+{
+    echo -n $'Package\t\t: '
+    p_blue "$1"
+    echo
+}
+#we put the warning
+function put_is_package_warning
+{
+    p_cyan "$1"
+}
 
 if [[ $1 != "quiet" && $1 != "quiet_noflags" ]];then
     echo
-    echo -n $'Application :\t'
-    p_blue "libmp3splt"
-    echo $'Architecture :\t'$ARCH
-    echo $'Version :\t'$LIBMP3SPLT_VERSION
+    echo -n $'Application\t: '
+    p_yellow "libmp3splt"
+    echo $'Architecture\t: '$ARCH
+    echo $'Version\t\t: '$LIBMP3SPLT_VERSION
 fi

@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\tslackware'
-echo
+put_package "slackware"
 
 #if we don't have the distribution file
 DIST_FILE="../mp3splt-gtk-${MP3SPLT_GTK_VERSION}-${ARCH}.tgz"
@@ -42,7 +40,5 @@ if [[ ! -f $DIST_FILE ]];then
         /sbin/makepkg -l y -c y mp3splt-gtk-${MP3SPLT_GTK_VERSION}-$ARCH.tgz &&\
         mv mp3splt-gtk-${MP3SPLT_GTK_VERSION}-$ARCH.tgz $PROGRAM_DIR/.. || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

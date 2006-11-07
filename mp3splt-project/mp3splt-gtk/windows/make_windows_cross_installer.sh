@@ -7,9 +7,7 @@ cd $script_dir/../..
 
 . ./mp3splt-gtk/include_variables.sh
 
-echo
-echo $'Package :\tcross_windows_installer'
-echo
+put_package "cross_windows_installer"
 
 #we compile the locales
 mv fr_locales fr_locales_old

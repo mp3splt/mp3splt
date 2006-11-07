@@ -11,9 +11,7 @@ unset PKG_PATH
 
 . ../include_variables.sh
 
-echo
-echo $'Package :\tnetbsd'
-echo
+put_package "netbsd"
 
 #if we don't have the distribution file
 DIST_FILE="../../mp3splt-gtk_nbsd_${ARCH}-${MP3SPLT_GTK_VERSION}.tgz"
@@ -112,7 +110,5 @@ pre-install:
         bmake deinstall && cd - &&\
         mv /usr/pkgsrc/packages/All/mp3splt-gtk*nbsd*.tgz ../ || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

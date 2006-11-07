@@ -229,7 +229,7 @@ function windows_cross_installers()
         else
             echo
             print_cyan "We already have the $DIST_FILE1 distribution file"
-            print_cyan " and the $DIST_FILE2 distribution file !"
+            print_cyan "and the $DIST_FILE2 distribution file !"
         fi
         cd $PROJECT_DIR
     fi
@@ -406,39 +406,59 @@ function finish_packaging()
         
         ##i386
         #debian
-        mv ./*sarge_i386.deb ./$RELEASE_DIR || print_red "sarge i386 warning"
-        mv ./*etch_i386.deb ./$RELEASE_DIR || print_red "etch i386 warning"
-        mv ./*sid_i386.deb ./$RELEASE_DIR || print_red "sid i386 warning"
+        mv ./*sarge_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) sarge i386 is(are) missing"
+        mv ./*etch_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) etch i386 is(are) missing"
+        mv ./*sid_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) sid i386 is(are) missing"
         #ubuntu
-        mv ./*dapper_i386.deb ./$RELEASE_DIR || print_red "dapper i386 warning"
-        mv ./*edgy_i386.deb ./$RELEASE_DIR || print_red "edgy i386 warning"
+        mv ./*dapper_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) dapper i386 is(are) missing"
+        mv ./*edgy_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) edgy i386 is(are) missing"
         #nexenta
-        mv ./*solaris-i386.deb ./$RELEASE_DIR || print_red "solaris i386 warning"
+        mv ./*solaris-i386.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) solaris i386 is(are) missing"
         #windows
-        mv ./*_i386.exe ./$RELEASE_DIR || print_red "windows i386 warning"
+        mv ./*_i386.exe ./$RELEASE_DIR 2>/dev/null 2>/dev/null ||\
+            print_red "Warning: package(s) windows i386 is(are) missing"
         #openbsd
-        mv ./*obsd*i386*.tgz ./$RELEASE_DIR || print_red "openbsd i386 warning"
+        mv ./*obsd*i386*.tgz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) openbsd i386 is(are) missing"
         #netbsd
-        mv ./*nbsd*i386*.tgz ./$RELEASE_DIR || print_red "netbsd i386 warning"
+        mv ./*nbsd*i386*.tgz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) netbsd i386 is(are) missing"
         #freebsd
-        mv ./*fbsd*i386*.tbz ./$RELEASE_DIR || print_red "freebsd i386 warning"
+        mv ./*fbsd*i386*.tbz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) freebsd i386 is(are) missing"
         #gnu/linux static+dynamic
-        mv ./*_static_i386.tar.gz ./$RELEASE_DIR || print_red "static i386 warning"
-        mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR || print_red "dynamic i386 warning"
+        mv ./*_static_i386.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) static i386 is(are) missing"
+        mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) dynamic i386 is(are) missing"
         #arch linux
-        mv ./*i686.pkg.tar.gz ./$RELEASE_DIR || print_red "arch i686 warning"
+        mv ./*i686.pkg.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) arch i686 is(are) missing"
         #gentoo ebuilds
-        mv ./*ebuild.tar.gz ./$RELEASE_DIR || print_red "ebuild warning"
+        mv ./*ebuild.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) ebuild is(are) missing"
         #i386 rpms
-        mv ./*i386.rpm ./$RELEASE_DIR || print_red "rpm i386 warning"
+        mv ./*i386.rpm ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) rpm i386 is(are) missing"
         #slackware
-        mv ./*i386.tgz ./$RELEASE_DIR || print_red "slackware i386 warning"
+        mv ./*i386.tgz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) slackware i386 is(are) missing"
         
         ##source
         #source code
-        mv ./*.tar.gz ./$RELEASE_DIR || print_red "source code warning"
+        mv ./*.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) source code is(are) missing"
         #source rpms
-        mv ./*.src.rpm ./$RELEASE_DIR || print_red "source code rpm warning"
+        mv ./*.src.rpm ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) source code rpm is(are) missing"
+        
+        echo "All the generated packages can be found in the directory \"$RELEASE_DIR\""
     fi
 }
 ############# end finish packaging #####
@@ -515,12 +535,12 @@ upload_to_sourceforge
 if [[ $ARCH = "i386" ]];then
     echo
     print_green "The packaging is finished :)"
-    
+
     DATE_END=`date`
     
     echo
-    print_green "Start date : "$DATE_START
-    print_green "End date : "$DATE_END
+    echo "Start_date : "$DATE_START
+    echo "End_date : "$DATE_END
     echo
 fi
 

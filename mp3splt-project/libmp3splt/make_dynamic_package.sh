@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh
 
-echo
-echo $'Package :\tdynamic'
-echo
+put_package "linux_kernel_dynamic"
 
 #if we don't have the distribution file
 DIST_FILE="../libmp3splt-${LIBMP3SPLT_VERSION}_dynamic_${ARCH}.tar.gz"
@@ -34,7 +32,5 @@ if [[ ! -f $DIST_FILE ]];then
         tar -c -z -C $DYNAMIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_dynamic_$ARCH.tar.gz . &&\
         mv libmp3splt*dynamic*.tar.gz ../ || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

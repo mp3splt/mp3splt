@@ -7,9 +7,7 @@ cd $script_dir/../other
 
 . ../include_variables.sh
 
-echo
-echo $'Package :\tcross_windows_installer'
-echo
+put_package "cross_windows_installer"
 
 #we put the correct installer path
 cp win32_installer.nsi win32_installer.nsi_old

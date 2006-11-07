@@ -9,9 +9,7 @@ cd $script_dir
 
 . ../include_variables.sh
 
-echo
-echo $'Package :\tfreebsd'
-echo
+put_package "freebsd"
 
 #we change 0.4_rc1 to 0.4.r1
 TEMP_LIBMP3SPLT_VERSION=${LIBMP3SPLT_VERSION/_/.}
@@ -123,7 +121,5 @@ WWW: http://mp3splt.sourceforge.net
         make package;  cd - &&\
         mv /usr/ports/audio/libmp3splt/*fbsd*.tbz ../ || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

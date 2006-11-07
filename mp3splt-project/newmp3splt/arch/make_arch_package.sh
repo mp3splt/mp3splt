@@ -8,9 +8,7 @@ cd $PROGRAM_DIR
 
 . ./include_variables.sh "noflags"
 
-echo
-echo $'Package :\tarch'
-echo
+put_package "arch"
 
 if [[ $ARCH = "i386" ]];then
     ARCH=i686
@@ -57,7 +55,5 @@ build() {
         rm -f ./mp3splt-${MP3SPLT_VERSION}.tar.gz && rm -f PKGBUILD \
         || exit 1
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi

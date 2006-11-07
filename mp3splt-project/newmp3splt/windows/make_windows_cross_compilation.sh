@@ -15,9 +15,7 @@ cd $script_dir/../..
 
 . ./newmp3splt/include_variables.sh
 
-echo
-echo $'Package :\tcross_windows'
-echo
+put_package "cross_windows"
 
 #we run autoconf and automake..
 cd newmp3splt && ./autogen.sh && cd .. || exit 1

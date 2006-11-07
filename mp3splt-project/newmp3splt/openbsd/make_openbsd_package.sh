@@ -17,9 +17,7 @@ cd $PROGRAM_DIR
 
 . ../include_variables.sh
 
-echo
-echo $'Package :\topenbsd'
-echo
+put_package "openbsd"
 
 #if we don't have the distribution file
 DIST_FILE="../../mp3splt_obsd_${ARCH}-${MP3SPLT_VERSION}.tgz"
@@ -89,8 +87,6 @@ if [[ ! -f $DIST_FILE ]];then
     #we uninstall the program
     cd .. && make uninstall && rm -rf /usr/local/share/doc/$NAME
 else
-    echo
-    echo "We already have the $DIST_FILE distribution file !"
-    echo
+    put_is_package_warning "We already have the $DIST_FILE distribution file !"
 fi
 
