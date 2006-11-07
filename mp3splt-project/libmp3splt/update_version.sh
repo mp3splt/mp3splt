@@ -17,7 +17,7 @@ PROGRAM="libmp3splt"
 #debian changelog
 if ! debchange --distribution "testing" -v $VERSION "version "$VERSION 2>/dev/null;then
     rm -f debian/.changelog.dch.swp
-    debchange -a "version "$VERSION || exit 1
+    debchange -r "version "$VERSION || exit 1
 fi
 
 #README
