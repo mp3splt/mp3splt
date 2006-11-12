@@ -170,7 +170,7 @@ mv /tmp/rpm_temp /tmp/rpm_temp${DATE} &>/dev/null;fi
 	if [[ -e /tmp/slack_temp ]];then \
 mv /tmp/slack_temp /tmp/slack_temp${DATE} &>/dev/null;fi
 	if [[ -e /tmp/temp ]];then \
-mv /tmp/temp /tmp/temp${DATE}M &>/dev/null;fi
+mv /tmp/temp /tmp/temp${DATE} &>/dev/null;fi
 	if [[ -e /tmp/gentoo_temp ]];then \
 mv /tmp/gentoo_temp /tmp/gentoo${DATE} &>/dev/null;fi
 	sleep 1
