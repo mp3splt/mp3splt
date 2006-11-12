@@ -63,7 +63,7 @@ function p_blue
 #print yellow color
 function p_yellow
 {
-    echo -e "\033[1;33m${@}\033[0m"
+    echo -e "\033[33m${@}\033[0m"
 }
 #we put the package name
 function put_package

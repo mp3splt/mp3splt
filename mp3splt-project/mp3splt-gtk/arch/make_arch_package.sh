@@ -41,8 +41,8 @@ build() {
 }" > PKGBUILD && cd ..
     
     #we set the flags to find libmp3splt
-    export CFLAGS="-I../libmp3splt/arch/pkg/usr/include $CFLAGS"
-    export LDFLAGS="-L../libmp3splt/arch/pkg/usr/lib $LDFLAGS"
+    export CFLAGS="-I${PROGRAM_DIR}/../libmp3splt/arch/pkg/usr/include $CFLAGS"
+    export LDFLAGS="-L${PROGRAM_DIR}/../libmp3splt/arch/pkg/usr/lib $LDFLAGS"
     
     #we make the distribution file if we don't have it
     if [[ ! -e ../mp3splt-gtk-${MP3SPLT_GTK_VERSION}.tar.gz ]];then
