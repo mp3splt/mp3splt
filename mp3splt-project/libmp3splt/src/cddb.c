@@ -546,6 +546,8 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
                 temp = atof(number);
                 
                 //we append the splitpoint
+                //in cddb_offset*100
+                //we convert them lower to seconds
                 append_error =
                   splt_t_append_splitpoint(state, temp * 100, NULL);
                 //we count the tracks
@@ -598,7 +600,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
               double temp2;
               temp2 = atof(number);
               
-              //we append the splitpoint
+              //we append the splitpoint (in seconds*100)
               append_error =
                 splt_t_append_splitpoint(state, temp2 * 100, NULL);
               if (append_error != SPLT_OK)
@@ -620,7 +622,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
             }
           
           //we convert the points previously found
-          for (i=tracks-1; i>=0; i--) 
+          for (i=tracks-1; i>=0; i--)
             {
               split1 = 
                 splt_t_get_splitpoint_value(state, i, &get_error);
@@ -632,18 +634,12 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
                   goto function_end;
                 }
               
-              change_error = 
+              //we remove the cddb_offset of the first splitpoint
+              //and we divide by 75 (cddb specs)
+              change_error =
                 splt_t_set_splitpoint_value(state,
-                                            i, split1 - split2);
-              if (change_error != SPLT_OK)
-                {
-                  *error = change_error;
-                  goto function_end;
-                }
+                                            i, (split1 - split2)/75);
               
-              change_error = 
-                splt_t_set_splitpoint_value(state,
-                                            i, split1/75);
               if (change_error != SPLT_OK)
                 {
                   *error = change_error;
@@ -769,6 +765,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
                 
                 change_error = 
                   splt_t_set_splitpoint_value(state,j-1, split1);
+                
                 if (change_error != SPLT_OK)
                   {
                     *error = change_error;
