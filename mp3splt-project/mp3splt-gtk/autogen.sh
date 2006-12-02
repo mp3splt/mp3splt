@@ -28,9 +28,9 @@
 }
 
 #we run aclocal, autoconf and automake
-echo -n "Running autopoint... " \
-&& autopoint -f && echo "done" \
-&& echo -n "Running aclocal... " \
+echo -n "Running autopoint... ";
+autopoint -f && echo "done";
+echo -n "Running aclocal... " \
 && aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
 && echo -n "Running autoheader... " \
 && autoheader && echo "done" \

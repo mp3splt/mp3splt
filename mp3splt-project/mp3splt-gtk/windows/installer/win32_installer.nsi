@@ -1,6 +1,6 @@
 !define VERSION "0.4_rc1"
 !define PROGRAM_NAME "mp3splt-gtk"
-!define MP3SPLT_PATH /mnt/personal/hacking/mp3splt/mp3splt-project/mp3splt-gtk/windows/installer/../../..
+!define MP3SPLT_PATH c:/mp3splt_mingw/home/admin/mp3splt-project/mp3splt-gtk/windows/installer/../../..
 
 ;name of the program
 Name "mp3splt-gtk ${VERSION}"
