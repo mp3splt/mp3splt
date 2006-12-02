@@ -1,6 +1,6 @@
 !define VERSION "0.4_rc1"
 !define PROGRAM_NAME "mp3splt-gtk"
-!define MP3SPLT_PATH c:/mp3splt_mingw/home/admin/mp3splt-project/mp3splt-gtk/windows/installer
+!define MP3SPLT_PATH /mnt/personal/hacking/mp3splt/mp3splt-project/mp3splt-gtk/windows/installer/../../..
 
 ;name of the program
 Name "mp3splt-gtk ${VERSION}"
@@ -75,7 +75,7 @@ Section ""
 ;copying the icons
   File ${MP3SPLT_PATH}\mp3splt-gtk\src\mp3splt-gtk.png
   File ${MP3SPLT_PATH}\mp3splt-gtk\src\mp3splt-gtk_ico.png
-  File ${MP3SPLT_PATH}\mp3splt-gtk\other\mp3splt.ico
+  File ${MP3SPLT_PATH}\mp3splt-gtk\windows\installer\mp3splt.ico
   
   WriteUninstaller "mp3splt-gtk_uninst.exe"
 
