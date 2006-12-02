@@ -279,7 +279,7 @@ function amd64_packages()
         echo
         print_yellow "Creating amd64 packages..."
         
-        #cd /mnt/personal/systems/debian_amd64 && ./debian_amd64
+        cd /mnt/personal/systems/debian_amd64 && ./debian_amd64
         cd $PROJECT_DIR
     fi
 }
@@ -388,68 +388,84 @@ function nexenta_packages()
 ############# finish packaging #####
 function finish_packaging()
 {
+    echo
+    print_yellow "Finishing packaging..."
+    echo
+    
+    #local architecture
+    ARCH=$1;
+    
+    #copy packages to the new directory
+    #the new release directory
+    if [[ $GLOBAL_ARCH = "i386" ]];then
+        RELEASE_DIR="release_$LIBMP3SPLT_VERSION/$ARCH";
+    else
+        RELEASE_DIR="release_$ARCH";
+    fi
+    
+    #backup existing directory
+    DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
+    if [[ -e $RELEASE_DIR ]];then
+        mv $RELEASE_DIR ${RELEASE_DIR}${DATEMV}
+    fi
+    mkdir -p $RELEASE_DIR
+    
+    ##$ARCH
+    #debian
+    DEBIAN_ARCH=$ARCH
+    if [[ $DEBIAN_ARCH = "x86_64" ]];then
+        DEBIAN_ARCH="amd64"
+    fi
+    mv ./*sarge_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) sarge $DEBIAN_ARCH is(are) missing"
+    mv ./*etch_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) etch $DEBIAN_ARCH is(are) missing"
+    mv ./*sid_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) sid $DEBIAN_ARCH is(are) missing"
+    #ubuntu
+    mv ./*dapper_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) dapper $DEBIAN_ARCH is(are) missing"
+    mv ./*edgy_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) edgy $DEBIAN_ARCH is(are) missing"
+    #nexenta
+    mv ./*solaris-$ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) solaris $ARCH is(are) missing"
+    #windows
+    mv ./*_$ARCH.exe ./$RELEASE_DIR 2>/dev/null 2>/dev/null ||\
+        print_red "Warning: package(s) windows $ARCH is(are) missing"
+    #openbsd
+    mv ./*obsd*$ARCH*.tgz ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) openbsd $ARCH is(are) missing"
+    #netbsd
+    mv ./*nbsd*$ARCH*.tgz ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) netbsd $ARCH is(are) missing"
+    #freebsd
+    mv ./*fbsd*$ARCH*.tbz ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) freebsd $ARCH is(are) missing"
+    #gnu/linux static+dynamic
+    mv ./*_static_$ARCH.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) static $ARCH is(are) missing"
+    mv ./*_dynamic_$ARCH.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) dynamic $ARCH is(are) missing"
+    #arch linux
+    ARCH_ARCH=$ARCH
     if [[ $ARCH = "i386" ]];then
-        echo
-        print_yellow "Finishing packaging..."
-        echo
-        
-        #copy packages to the new directory
-        #the new release directory
-        RELEASE_DIR=release_$LIBMP3SPLT_VERSION
-        
-        #backup existing directory
-        DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
-        if [[ -e $RELEASE_DIR ]];then
-            mv $RELEASE_DIR ${RELEASE_DIR}${DATEMV}
-        fi
-        mkdir -p $RELEASE_DIR
-        
-        ##i386
-        #debian
-        mv ./*sarge_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) sarge i386 is(are) missing"
-        mv ./*etch_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) etch i386 is(are) missing"
-        mv ./*sid_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) sid i386 is(are) missing"
-        #ubuntu
-        mv ./*dapper_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) dapper i386 is(are) missing"
-        mv ./*edgy_i386.deb ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) edgy i386 is(are) missing"
-        #nexenta
-        mv ./*solaris-i386.deb ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) solaris i386 is(are) missing"
-        #windows
-        mv ./*_i386.exe ./$RELEASE_DIR 2>/dev/null 2>/dev/null ||\
-            print_red "Warning: package(s) windows i386 is(are) missing"
-        #openbsd
-        mv ./*obsd*i386*.tgz ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) openbsd i386 is(are) missing"
-        #netbsd
-        mv ./*nbsd*i386*.tgz ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) netbsd i386 is(are) missing"
-        #freebsd
-        mv ./*fbsd*i386*.tbz ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) freebsd i386 is(are) missing"
-        #gnu/linux static+dynamic
-        mv ./*_static_i386.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) static i386 is(are) missing"
-        mv ./*_dynamic_i386.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) dynamic i386 is(are) missing"
-        #arch linux
-        mv ./*i686.pkg.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) arch i686 is(are) missing"
+        ARCH_ARCH="i686"
+    fi
+    mv ./*$ARCH_ARCH.pkg.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) arch $ARCH_ARCH is(are) missing"
+    #$ARCH rpms
+    mv ./*$ARCH.rpm ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) rpm $ARCH is(are) missing"
+    #slackware
+    mv ./*$ARCH.tgz ./$RELEASE_DIR 2>/dev/null ||\
+        print_red "Warning: package(s) slackware $ARCH is(are) missing"
+    
+    #copy non-binary only if i386
+    if [[ $ARCH = "i386" ]];then
         #gentoo ebuilds
         mv ./*ebuild.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
             print_red "Warning: package(s) ebuild is(are) missing"
-        #i386 rpms
-        mv ./*i386.rpm ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) rpm i386 is(are) missing"
-        #slackware
-        mv ./*i386.tgz ./$RELEASE_DIR 2>/dev/null ||\
-            print_red "Warning: package(s) slackware i386 is(are) missing"
-        
         ##source
         #source code
         mv ./*.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
@@ -457,9 +473,9 @@ function finish_packaging()
         #source rpms
         mv ./*.src.rpm ./$RELEASE_DIR 2>/dev/null ||\
             print_red "Warning: package(s) source code rpm is(are) missing"
-        
-        echo "All the generated packages can be found in the directory \"$RELEASE_DIR\""
     fi
+    
+    echo "All the generated packages can be found in the directory \"$RELEASE_DIR\""
 }
 ############# end finish packaging #####
 
@@ -528,7 +544,13 @@ freebsd_packages
 #i386 gnu/opensolaris packages :
 ##nexenta#nexenta_packages() #slow
 #finish packaging
-finish_packaging
+GLOBAL_ARCH=$ARCH
+if [[ $ARCH = "i386" ]];then
+    finish_packaging "i386"
+    finish_packaging "x86_64"
+else
+    finish_packaging $ARCH
+fi
 upload_to_sourceforge
 
 #date info

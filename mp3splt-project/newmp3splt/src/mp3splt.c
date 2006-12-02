@@ -41,7 +41,7 @@
 #define VERSION "2.2_rc1"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
-#define MP3SPLT_DATE "07/11/06"
+#define MP3SPLT_DATE "02/12/06"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Munteanu Alexandru Ionut"
 #define MP3SPLT_EMAIL1 "<mtrotta@users.sourceforge.net>"
