@@ -25,8 +25,8 @@ dist:
 	msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
 #building installer for the gui
 	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
-	cd mp3splt-gtk/other && make && cp mp3splt-gtk*exe ../../ && cd ../../
+	cd mp3splt-gtk/windows/installer && make && cp mp3splt-gtk*exe ../../ && cd ../../
 	rm -rf fr_locales
 #building installer for the text mode
 	strip newmp3splt/src/mp3splt.exe && \
-	cd newmp3splt/other && make && cp mp3splt*exe ../../ && cd ../../
+	cd newmp3splt/windows/installer && make && cp mp3splt*exe ../../ && cd ../../

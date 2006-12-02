@@ -18,7 +18,7 @@ cd ../libs &&\
 tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../mp3splt-project || exit 1 &&\
 cd ../mp3splt-project
 
-cd mp3splt-gtk/other
+cd mp3splt-gtk/windows/installer
 #we put the correct installer path
 cp win32_installer.nsi win32_installer.nsi_old
 cat win32_installer.nsi | sed s+.define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ `pwd`/../..+ > win32_installer.nsi2

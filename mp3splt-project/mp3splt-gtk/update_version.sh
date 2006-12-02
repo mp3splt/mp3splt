@@ -36,8 +36,8 @@ DATE=$(date +%d\\/%m\\/%y)
 NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 
 #windows installer
-#./other/win32_installer.nsi:!define VERSION "0.3.1"
-sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./other/win32_installer.nsi || exit 1
+#./windows/installer/win32_installer.nsi:!define VERSION "0.3.1"
+sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./windows/installer/win32_installer.nsi || exit 1
 #debian control file, libmp3splt dependency
 #./debian/control:Build-Depends: debhelper (>= 4.0.0), libmp3splt (= 0.3.1), beep-media-player-dev(>= 0.9.7-1)
 #./debian/control:Depends: ${shlibs:Depends}, libmp3splt (= 0.3.1), beep-media-player(>= 0.9.7-1)

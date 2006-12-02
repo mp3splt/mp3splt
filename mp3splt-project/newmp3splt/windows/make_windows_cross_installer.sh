@@ -3,7 +3,7 @@
 #we move in the current script directory
 script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
-cd $script_dir/../other
+cd $script_dir/installer
 
 . ../include_variables.sh
 

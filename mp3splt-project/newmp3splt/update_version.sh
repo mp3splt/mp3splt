@@ -40,8 +40,8 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 #./debian/control:Depends: ${shlibs:Depends}, libmp3splt (= 0.3.1)
 sed -i "s/libmp3splt (= .*)/libmp3splt (= $LIBMP3SPLT_VERSION)/" ./debian/control || exit 1
 #windows installer
-#./other/win32_installer.nsi:!define VERSION "2.2.1"
-sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./other/win32_installer.nsi || exit 1
+#./windows/installer/win32_installer.nsi:!define VERSION "2.2.1"
+sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./windows/installer/win32_installer.nsi || exit 1
 #configure.ac libmp3splt version check
 #./configure.ac:AC_CHECK_LIB(mp3splt, mp3splt_v0_3_5,libmp3splt=yes,
 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :

@@ -36,13 +36,13 @@ make -f Makefile.win32
 
 
 #installer for the gui
-cd mp3splt-gtk/other
+cd mp3splt-gtk/windows/installer
 cp win32_installer.nsi win32_installer.nsi_old
 cat win32_installer.nsi | sed s+!define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ c:/mp3splt_mingw`pwd`/../..+ > win32_installer.nsi2
 mv win32_installer.nsi2 win32_installer.nsi
 cd ../..
 #installer for the text mode
-cd newmp3splt/other
+cd newmp3splt/windows/installer
 cp win32_installer.nsi win32_installer.nsi_old
 cat win32_installer.nsi | sed s+!define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ c:/mp3splt_mingw`pwd`/../..+ > win32_installer.nsi2
 mv win32_installer.nsi2 win32_installer.nsi
