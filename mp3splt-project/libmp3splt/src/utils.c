@@ -1300,7 +1300,7 @@ int splt_u_put_output_filename(splt_state *state)
     {
       error = name_error;
     }
-
+  
  end:
   //free memory
   if (output_filename)

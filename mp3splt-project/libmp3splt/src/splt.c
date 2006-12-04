@@ -292,8 +292,13 @@ static void splt_s_simple_split(splt_state *state, int *error)
   
   if (get_error == SPLT_OK)
     {
-      splt_u_set_complete_new_filename(state,error);
-          
+      //if we put mins and secs
+      if (splt_t_get_int_option(state,
+                                SPLT_OPT_MINS_SECS))
+        {
+          splt_u_set_complete_new_filename(state,error);
+        }
+      
       //if no error
       if (*error >= 0)
 	{
@@ -309,7 +314,7 @@ static void splt_s_simple_split(splt_state *state, int *error)
                   
 	      splt_t_set_i_begin_point(state,splt_beg);
 	      splt_t_set_i_end_point(state,splt_end);
-                  
+              
 	      //we do the real split, if mp3 or ogg..
 	      splt_s_real_simple_split(state, error);
 	    }
@@ -487,6 +492,12 @@ void splt_s_multiple_split(splt_state *state, int *error)
           if (!splt_t_split_is_canceled(state))
             {
               get_error = SPLT_OK;
+              
+              //if we put the output filename
+              if (!old_option_mins)
+                {
+                  splt_u_put_output_filename(state);
+                }
               
               char *temp_name = 
                 splt_t_get_splitpoint_name(state,i,&get_error);
