@@ -12,6 +12,9 @@ LIBMP3SPLT_REAL_VERSION=0.4_rc1
 MP3SPLT_REAL_VERSION=2.2_rc1
 MP3SPLT_GTK_REAL_VERSION=0.4_rc1
 
+#the architecture where we launch the script
+HOST_ARCH="i386"
+
 #if we upload to sourceforge or not
 UPLOAD_TO_SOURCEFORGE=0
 ################## end variables to set ############
@@ -39,8 +42,9 @@ function print_green()
 function confirmation_question()
 {
     echo
-    print_red "This script is used by the developers to auto-create packages for releases"
+    print_red "This script is used by the developers to auto-create packages for releases."
     print_red "You should modify this script in order to use it on your computer."
+    print_red "This script must be run on a i386 system (not x86_64)."
     print_red "Please remember that you are using the script at your own risk !"
     echo
     
@@ -64,7 +68,7 @@ function confirmation_question()
 ################## update versions ############
 function update_versions()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Updating versions..."
         echo
@@ -97,7 +101,7 @@ function update_versions()
 ############# source packages ################
 function source_packages()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating source distribution..."
         
@@ -156,7 +160,7 @@ function debian_packages()
     clean_debian_version "etch"
     
     #there is no sarge for x86_64
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = "i386" ]];then
         make_debian_flavor "debian" "sarge"
     fi
     
@@ -203,7 +207,7 @@ function gnu_linux_dynamic_packages()
 ############# gentoo ebuilds ################
 function gentoo_packages()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating gentoo ebuilds..."
         echo
@@ -217,7 +221,7 @@ function gentoo_packages()
 ############# windows installers ################
 function windows_cross_installers()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating $ARCH windows installers..."
         
@@ -275,7 +279,7 @@ function slackware_packages()
 function amd64_packages()
 {
     #TODO
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating amd64 packages..."
         
@@ -288,7 +292,7 @@ function amd64_packages()
 ############# openbsd packages #####
 function openbsd_packages()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating $ARCH openbsd packages..."
         
@@ -311,7 +315,7 @@ function openbsd_packages()
 ############# netbsd packages #####
 function netbsd_packages()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating $ARCH netbsd packages..."
         
@@ -333,7 +337,7 @@ function netbsd_packages()
 ############# freebsd packages #####
 function freebsd_packages
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating $ARCH freebsd packages..."
         
@@ -365,7 +369,7 @@ function freebsd_packages
 ############# nexenta gnu/opensolaris packages #####
 function nexenta_packages()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         echo
         print_yellow "Creating $ARCH nexenta gnu/opensolaris packages..."
         echo
@@ -397,18 +401,20 @@ function finish_packaging()
     
     #copy packages to the new directory
     #the new release directory
-    if [[ $GLOBAL_ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         RELEASE_DIR="release_$LIBMP3SPLT_VERSION/$ARCH";
+        SOURCE_DIR="release_$LIBMP3SPLT_VERSION/sources";
     else
         RELEASE_DIR="release_$ARCH";
     fi
-    
+
     #backup existing directory
     DATEMV=`date +-%d_%m_%Y__%H_%M_%S`
     if [[ -e $RELEASE_DIR ]];then
         mv $RELEASE_DIR ${RELEASE_DIR}${DATEMV}
     fi
     mkdir -p $RELEASE_DIR
+    mkdir -p $SOURCE_DIR
     
     ##$ARCH
     #debian
@@ -416,8 +422,11 @@ function finish_packaging()
     if [[ $DEBIAN_ARCH = "x86_64" ]];then
         DEBIAN_ARCH="amd64"
     fi
-    mv ./*sarge_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
-        print_red "Warning: package(s) sarge $DEBIAN_ARCH is(are) missing"
+    #only on i386
+    if [[ $DEBIAN_ARCH != "amd64" ]];then
+        mv ./*sarge_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) sarge $DEBIAN_ARCH is(are) missing"
+    fi
     mv ./*etch_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
         print_red "Warning: package(s) etch $DEBIAN_ARCH is(are) missing"
     mv ./*sid_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
@@ -428,11 +437,17 @@ function finish_packaging()
     mv ./*edgy_$DEBIAN_ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
         print_red "Warning: package(s) edgy $DEBIAN_ARCH is(are) missing"
     #nexenta
-    mv ./*solaris-$ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
-        print_red "Warning: package(s) solaris $ARCH is(are) missing"
+    #i386 only for now
+    if [[ $ARCH = "i386" ]];then
+        mv ./*solaris-$ARCH.deb ./$RELEASE_DIR 2>/dev/null ||\
+            print_red "Warning: package(s) solaris $ARCH is(are) missing"
+    fi
     #windows
-    mv ./*_$ARCH.exe ./$RELEASE_DIR 2>/dev/null 2>/dev/null ||\
-        print_red "Warning: package(s) windows $ARCH is(are) missing"
+    #only i386
+    if [[ $ARCH = "i386" ]];then
+        mv ./*_$ARCH.exe ./$RELEASE_DIR 2>/dev/null 2>/dev/null ||\
+            print_red "Warning: package(s) windows $ARCH is(are) missing"
+    fi
     #openbsd
     mv ./*obsd*$ARCH*.tgz ./$RELEASE_DIR 2>/dev/null ||\
         print_red "Warning: package(s) openbsd $ARCH is(are) missing"
@@ -461,21 +476,21 @@ function finish_packaging()
     mv ./*$ARCH.tgz ./$RELEASE_DIR 2>/dev/null ||\
         print_red "Warning: package(s) slackware $ARCH is(are) missing"
     
-    #copy non-binary only if i386
-    if [[ $ARCH = "i386" ]];then
+    #copy non-binary only if on the host arch
+    if [[ $ARCH = $HOST_ARCH ]];then
         #gentoo ebuilds
-        mv ./*ebuild.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+        mv ./*ebuild.tar.gz ./$SOURCE_DIR 2>/dev/null ||\
             print_red "Warning: package(s) ebuild is(are) missing"
         ##source
         #source code
-        mv ./*.tar.gz ./$RELEASE_DIR 2>/dev/null ||\
+        mv ./*.tar.gz ./$SOURCE_DIR 2>/dev/null ||\
             print_red "Warning: package(s) source code is(are) missing"
         #source rpms
-        mv ./*.src.rpm ./$RELEASE_DIR 2>/dev/null ||\
+        mv ./*.src.rpm ./$SOURCE_DIR 2>/dev/null ||\
             print_red "Warning: package(s) source code rpm is(are) missing"
     fi
     
-    echo "All the generated packages can be found in the directory \"$RELEASE_DIR\""
+    echo "The generated packages for $ARCH can be found in the directory \"$RELEASE_DIR\""
 }
 ############# end finish packaging #####
 
@@ -483,7 +498,7 @@ function finish_packaging()
 #we put the files on the sourceforge ftp
 function upload_to_sourceforge()
 {
-    if [[ $ARCH = "i386" ]];then
+    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
         if [[ $UPLOAD_TO_SOURCEFORGE == 1 ]]; then
             echo
             print_yellow "Uploading files to sourceforge.net..."
@@ -520,6 +535,13 @@ cd $PROJECT_DIR
 . ./${MP3SPLT_DIR}/include_variables.sh "quiet_noflags"
 . ./${MP3SPLT_GTK_DIR}/include_variables.sh "quiet_noflags"
 
+GLOBAL_ARCH=$ARCH
+if [[ $GLOBAL_ARCH = "i386" ]];then
+    GUEST_ARCH="x86_64"
+else
+    GUEST_ARCH="i386"
+fi
+
 #update the versions
 update_versions
 
@@ -542,35 +564,26 @@ openbsd_packages
 netbsd_packages
 freebsd_packages
 #i386 gnu/opensolaris packages :
-##nexenta#nexenta_packages() #slow
+#nexenta_packages #slow
 #finish packaging
-GLOBAL_ARCH=$ARCH
-if [[ $ARCH = "i386" ]];then
-    finish_packaging "i386"
-    finish_packaging "x86_64"
+if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
+    finish_packaging $GUEST_ARCH
+    finish_packaging $GLOBAL_ARCH
 else
-    finish_packaging $ARCH
+    finish_packaging $GLOBAL_ARCH
 fi
 upload_to_sourceforge
 
 #date info
-if [[ $ARCH = "i386" ]];then
-    echo
-    print_green "The packaging is finished :)"
+echo
+print_green "The packaging is finished :)"
 
-    DATE_END=`date`
-    
-    echo
-    echo "Start_date : "$DATE_START
-    echo "End_date : "$DATE_END
-    echo
-fi
+DATE_END=`date`
 
-############# cleaning the distribution #####
-#if [[ $ARCH = "i386" ]];then
-#    make -s distclean || exit 1
-#fi
-############# end cleaning the distribution #####
+echo
+echo "Start_date : "$DATE_START
+echo "End_date : "$DATE_END
+echo
 
 ################################
 ######### end main program #####

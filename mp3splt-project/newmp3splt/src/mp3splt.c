@@ -41,11 +41,11 @@
 #define VERSION "2.2_rc1"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
-#define MP3SPLT_DATE "02/12/06"
+#define MP3SPLT_DATE "04/12/06"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Munteanu Alexandru Ionut"
-#define MP3SPLT_EMAIL1 "<mtrotta@users.sourceforge.net>"
-#define MP3SPLT_EMAIL2 "<io_alex_2002@yahoo.fr>"
+#define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
+#define MP3SPLT_EMAIL2 "<io_alex_2002 AT yahoo.fr>"
 #define MP3SPLT_CDDBFILE "query.cddb"
 
 //command line options

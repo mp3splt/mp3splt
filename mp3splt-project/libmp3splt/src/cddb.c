@@ -621,13 +621,14 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
                 }
             }
           
+          split2 = 
+            splt_t_get_splitpoint_value(state, 0, &get_error);
+          
           //we convert the points previously found
           for (i=tracks-1; i>=0; i--)
             {
               split1 = 
                 splt_t_get_splitpoint_value(state, i, &get_error);
-              split2 = 
-                splt_t_get_splitpoint_value(state, 0, &get_error);
               if (get_error != SPLT_OK)
                 {
                   *error = get_error;

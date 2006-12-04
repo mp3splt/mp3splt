@@ -773,7 +773,7 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
   granpos = prevgranpos = 0;
   
   //if we are at the first header
-  int first_time = 1;
+  int first_time = SPLT_TRUE;
   while(!eos)
     {
       while(!eos)
@@ -785,9 +785,10 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
           if (first_time)
             {
               granpos = ogg_page_granulepos(&page);
+              splt_u_print_debug("Ogg first granpos =",(double)granpos,NULL);
               //we move the cutpoint
               cutpoint += granpos;
-              first_time = 0;
+              first_time = SPLT_FALSE;
             }
           
           if(result==0) 
@@ -802,6 +803,8 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
                   //find the granule pos, that we will compare with
                   //our cutpoint
                   granpos = ogg_page_granulepos(&page);
+                  /*splt_u_print_debug("current granpos =",(double)granpos,NULL);*/
+                  
                   //-1 means failure
                   if (ogg_stream_pagein(oggstate->stream_in, &page) == -1)
                     {
@@ -972,21 +975,18 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   current_granpos = oggstate->initialgranpos;
   
   //the first iteration
-  int first_time = 1;
+  int first_time = SPLT_TRUE;
   while(!eos)
     {
       while(!eos)
         {
           result=ogg_sync_pageout(oggstate->sync_in, &page);
           
-          //for streams recorded in the middle
-          //we add the current granpos
           if (first_time)
             {
               page_granpos = ogg_page_granulepos(&page);
-              //we move the cutpoint
-              cutpoint += page_granpos;
-              first_time = 0;
+              splt_u_print_debug("Ogg first end granpos =",(double)page_granpos,NULL);
+              first_time = SPLT_FALSE;
             }
           
           if(result==0)
@@ -998,6 +998,9 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
               if(result!=-1)
                 {
                   page_granpos = ogg_page_granulepos(&page) - oggstate->cutpoint_begin;
+                  /*splt_u_print_debug("cutpoint=",(double)cutpoint,NULL);
+                  splt_u_print_debug("cutpoint_begin=",(double)oggstate->cutpoint_begin,NULL);
+                  splt_u_print_debug("current granpos =",(double)page_granpos,NULL);*/
                   
                   if(ogg_page_eos(&page)) 
                     {
