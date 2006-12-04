@@ -494,10 +494,10 @@ void splt_s_multiple_split(splt_state *state, int *error)
               get_error = SPLT_OK;
               
               //if we put the output filename
-              if (!old_option_mins)
+              /*if (!old_option_mins)
                 {
                   splt_u_put_output_filename(state);
-                }
+                  }*/
               
               char *temp_name = 
                 splt_t_get_splitpoint_name(state,i,&get_error);

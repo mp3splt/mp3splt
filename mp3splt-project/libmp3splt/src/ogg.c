@@ -892,7 +892,7 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
           oggstate->packets[1] = splt_ogg_save_packet(&packet);
           break;
         }
-      
+          
       if(oggstate->packets[0])
         {
           splt_ogg_free_packet(oggstate->packets[0]);
