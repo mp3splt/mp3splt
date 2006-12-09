@@ -1261,10 +1261,8 @@ void split_preview(gpointer *data)
       put_options_from_preferences();
       
       //set the options
-      mp3splt_set_int_option(the_state, SPLT_OPT_MINS_SECS,
-                             SPLT_FALSE);
-      mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST,
-                             SPLT_FALSE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_CUSTOM);
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
                              SPLT_OPTION_NORMAL_MODE);
       

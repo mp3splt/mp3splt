@@ -360,8 +360,22 @@ gpointer split_it(gpointer data)
   mp3splt_set_filename_to_split(the_state,filename_to_split);
   mp3splt_set_path_of_split(the_state,filename_path_of_split);
   
+  //if we have the normal split mode, enable default output
+  gint output_filenames = 
+    mp3splt_get_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,&err);
+  if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,&err)
+      == SPLT_OPTION_NORMAL_MODE)
+    {
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_CUSTOM);
+    }
+  
   //effective split, returns confirmation or error;
   confirmation = mp3splt_split(the_state);
+  
+  //reenable default output if necessary
+  mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                         output_filenames);
   
   //lock gtk
   gdk_threads_enter();
@@ -423,7 +437,6 @@ void sigint_handler(gint sig)
 //prints a message from the library
 void put_message_from_library(gint message)
 {
-  //lock gtk
   gdk_threads_enter();
   switch (message)
     {
@@ -433,7 +446,6 @@ void put_message_from_library(gint message)
     default:
       break;
     }
-  //unlock gtk
   gdk_threads_leave();
 }
 

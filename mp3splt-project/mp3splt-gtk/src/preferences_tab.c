@@ -197,16 +197,16 @@ void output_radio_box_event  (GtkToggleButton *radio_b,
       //we set the type entry available
       gtk_widget_set_sensitive(GTK_WIDGET(output_entry), TRUE);
       //we put default output to false
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_FALSE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_FORMAT);
     }
   else
     {
       //we set the type entry unavailable
       gtk_widget_set_sensitive(GTK_WIDGET(output_entry), FALSE);
       //we put default output to true
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_TRUE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_DEFAULT);
     }
   
   update_save_buttons();

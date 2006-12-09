@@ -484,13 +484,13 @@ void write_freedbfile(int *err)
   //we put the output default option
   if(get_checked_output_radio_box())
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_TRUE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_DEFAULT);
     }
   else
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_FALSE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_FORMAT);
     }
   
   //we get the information from the cddb file

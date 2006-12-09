@@ -279,8 +279,8 @@ void split_button_event (GtkWidget *widget,
   if (!we_are_splitting)
     {
       //set the options
-      mp3splt_set_int_option(the_state, SPLT_OPT_MINS_SECS,
-                             SPLT_FALSE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_DEFAULT);
       //put the options from the preferences
       put_options_from_preferences();
       

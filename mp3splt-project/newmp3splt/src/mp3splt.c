@@ -302,7 +302,7 @@ void check_args(int argc, Options *opt, splt_state *state)
           if (opt->c_option || opt->t_option || 
               opt->s_option || opt->a_option || 
               opt->p_option || opt->f_option ||
-              opt->g_option || opt->n_option)
+              opt->n_option)
             {
               put_error_message_exit("Error: usage is 'mp3splt -e FILE...'\n",opt,state);
             }
@@ -569,7 +569,7 @@ void print_confirmation_error(int conf)
       fprintf(stderr," error: input and output are the same file \n"); 
       break;
     case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
-      fprintf(stdout," no silence splitpoints found \n");
+      fprintf(stdout," no silence splitpoints found     \n");
       break;
     case SPLT_ERROR_CANNOT_ALLOCATE_MEMORY:
       fprintf(stderr," error: unable to allocate"
@@ -1010,13 +1010,10 @@ int main (int argc, char *argv[])
   mp3splt_set_progress_function(state,put_progress_bar);
   
   //default we write mins_secs_hundr for normal split
-  mp3splt_set_int_option(state, SPLT_OPT_MINS_SECS,
-                         SPLT_TRUE);
+  mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
+                         SPLT_OUTPUT_DEFAULT);
   mp3splt_set_int_option(state, SPLT_OPT_TAGS,
                          SPLT_TAGS_ORIGINAL_FILE);
-  //default output is true now
-  mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_DEFAULT,
-                         SPLT_TRUE);
   
   //the index of the file that we are splitting in argv
   int file_arg_position = 0;
@@ -1087,9 +1084,6 @@ int main (int argc, char *argv[])
           opt->i_option = SPLT_TRUE;
           break;
         case 'c':
-          //if output set, mins_secs output false
-          mp3splt_set_int_option(state, SPLT_OPT_MINS_SECS,
-                                 SPLT_FALSE);
           //default tags
           mp3splt_set_int_option(state, SPLT_OPT_TAGS,
                                  SPLT_CURRENT_TAGS);
@@ -1101,12 +1095,9 @@ int main (int argc, char *argv[])
           opt->d_option = SPLT_TRUE;
           break;
         case 'o':
-          //if output set, mins_secs output false
-          mp3splt_set_int_option(state, SPLT_OPT_MINS_SECS,
-                                 SPLT_FALSE);
           //default output is false now
-          mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_DEFAULT,
-                                 SPLT_FALSE);
+          mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
+                                 SPLT_OUTPUT_FORMAT);
           opt->output_format = optarg;
           opt->o_option = SPLT_TRUE;
           break;

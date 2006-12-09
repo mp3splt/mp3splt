@@ -74,7 +74,9 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
   int tags_error = SPLT_OK;
   
   //if we have the defaults for the output,
-  if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_DEFAULT))
+  int output_filenames = 
+    splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+  if (output_filenames == SPLT_OUTPUT_DEFAULT)
     {
       //we put the default output if we have the default output
       splt_t_new_oformat(state, SPLT_DEFAULT_OUTPUT);
@@ -160,7 +162,7 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
           do {      
             int filename_error = SPLT_OK;
             //get output format filename
-            filename_error = splt_u_put_output_filename(state);
+            filename_error = splt_u_put_output_format_filename(state);
             if (filename_error != SPLT_OK)
               {
                 *error = filename_error;

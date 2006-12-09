@@ -1672,8 +1672,6 @@ static void splt_t_state_put_default_options(splt_state *state)
   //options
   state->options.split_mode = SPLT_OPTION_NORMAL_MODE;
   state->options.tags = SPLT_CURRENT_TAGS;
-  state->options.option_mins_secs = SPLT_FALSE;
-  state->options.option_output_is_default = SPLT_TRUE;
   state->options.option_mp3_frame_mode = SPLT_TRUE;
   state->options.option_auto_adjust = SPLT_FALSE;
   state->options.option_input_not_seekable = SPLT_FALSE;
@@ -1704,17 +1702,14 @@ void splt_t_set_int_option(splt_state *state, int option_name,
           global_debug = SPLT_FALSE;
         }
       break;
+    case SPLT_OPT_OUTPUT_FILENAMES:
+      state->options.output_filenames = value;
+      break;
     case SPLT_OPT_SPLIT_MODE:
       state->options.split_mode = value;
       break;
     case SPLT_OPT_TAGS:
       state->options.tags = value;
-      break;
-    case SPLT_OPT_MINS_SECS:
-      state->options.option_mins_secs = value;
-      break;
-    case SPLT_OPT_OUTPUT_DEFAULT:
-      state->options.option_output_is_default = value;
       break;
     case SPLT_OPT_MP3_FRAME_MODE:
       state->options.option_mp3_frame_mode = value;
@@ -1773,17 +1768,14 @@ int splt_t_get_int_option(splt_state *state, int option_name)
   int returned = 0;
   switch (option_name)
     {
+    case SPLT_OPT_OUTPUT_FILENAMES:
+      returned = state->options.output_filenames;
+      break;
     case SPLT_OPT_SPLIT_MODE:
       returned = state->options.split_mode;
       break;
     case SPLT_OPT_TAGS:
       returned = state->options.tags;
-      break;
-    case SPLT_OPT_MINS_SECS:
-      returned = state->options.option_mins_secs;
-      break;
-    case SPLT_OPT_OUTPUT_DEFAULT:
-      returned = state->options.option_output_is_default;
       break;
     case SPLT_OPT_MP3_FRAME_MODE:
       returned = state->options.option_mp3_frame_mode;
@@ -2540,7 +2532,7 @@ static void splt_t_free_files(char **files, int number)
 //sets the stop split value
 void splt_t_set_stop_split(splt_state *state, int bool_value)
 {
-  splt_t_put_message_to_client(state,SPLT_MESS_STOP_SPLIT);
+  //splt_t_put_message_to_client(state,SPLT_MESS_STOP_SPLIT);
   state->cancel_split = bool_value;
 }
 

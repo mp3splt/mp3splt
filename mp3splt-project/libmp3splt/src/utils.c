@@ -230,11 +230,11 @@ char *splt_u_get_real_name(char *filename)
 //state->fn[i]
 //error is the possible error
 //result must be freed
-static char *splt_u_get_new_filename(char *filename, 
-                                     splt_state *state,
-                                     long split_begin,
-                                     long split_end,
-                                     int i, int *error)
+static char *splt_u_get_mins_secs_filename(char *filename, 
+                                           splt_state *state,
+                                           long split_begin,
+                                           long split_end,
+                                           int i, int *error)
 {
   int number_of_splits = 0;
   splt_point *points = 
@@ -315,19 +315,10 @@ static char *splt_u_get_new_filename(char *filename,
               splt_u_error(SPLT_IERROR_INT,__func__, i, NULL);
             }
           
-          //final filename of the file
-          //if we have the option set, put seconds and minutes..
-          if (splt_t_get_int_option(state,SPLT_OPT_MINS_SECS))
-            {
-              snprintf(fname2,fname2_malloc_number,
-                       "%s_%sm_%ss_%sh__%sm_%ss_%sh", 
-                       fname, mins_char, secs_char, hundr_secs_char,
-                       mins_char2, secs_char2,hundr_secs_char2);
-            }
-          else
-            {
-              snprintf(fname2,fname_malloc_number, "%s", fname);
-            }
+          snprintf(fname2,fname2_malloc_number,
+                   "%s_%sm_%ss_%sh__%sm_%ss_%sh", 
+                   fname, mins_char, secs_char, hundr_secs_char,
+                   mins_char2, secs_char2,hundr_secs_char2);
           
           //put the extension according to the file type
           if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
@@ -357,9 +348,8 @@ static char *splt_u_get_new_filename(char *filename,
 }
 
 //puts the complete filename with the correct path
-//put_path is SPLT_TRUE if we also put the path in the splitpoint name
 //error is the possible error
-void splt_u_set_complete_new_filename(splt_state *state, int *error)
+void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
 {
   int current_split = splt_t_get_current_split(state);
   int get_error = SPLT_OK;
@@ -375,9 +365,9 @@ void splt_u_set_complete_new_filename(splt_state *state, int *error)
   
   //get the filename without the path
   char *filename3 = strdup(splt_u_get_real_name(filename2));
-  fname = splt_u_get_new_filename(filename3, state,
-                                  split_begin, split_end,
-                                  current_split,error);
+  fname = splt_u_get_mins_secs_filename(filename3, state,
+                                        split_begin, split_end,
+                                        current_split,error);
   //free memory
   if (filename2)
     {
@@ -986,7 +976,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
 }
 
 //writes the current filename according to the output_filename
-int splt_u_put_output_filename(splt_state *state)
+int splt_u_put_output_format_filename(splt_state *state)
 {
   int error = SPLT_OK;
   
@@ -1173,10 +1163,13 @@ int splt_u_put_output_filename(splt_state *state)
               //we set the track number
               int tracknumber = old_current_split+1;
               
-              //if not time split, we might put the track number from
-              //the tags
-              if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE)
-                  != SPLT_OPTION_TIME_MODE)
+              //if not time split, or normal split, or silence split or error,
+              //we put the track number from the tags
+              int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
+              if ((split_mode != SPLT_OPTION_TIME_MODE) &&
+                  (split_mode != SPLT_OPTION_NORMAL_MODE) &&
+                  (split_mode != SPLT_OPTION_SILENCE_MODE) &&
+                  (split_mode != SPLT_OPTION_MP3_ERROR_MODE))
                 {
                   if (splt_t_tags_exists(state,current_split))
                     {

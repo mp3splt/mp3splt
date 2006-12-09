@@ -294,9 +294,10 @@ static void splt_s_simple_split(splt_state *state, int *error)
     {
       //if we put mins and secs
       if (splt_t_get_int_option(state,
-                                SPLT_OPT_MINS_SECS))
+                                SPLT_OPT_OUTPUT_FILENAMES)
+          == SPLT_OUTPUT_MINS_SECS)
         {
-          splt_u_set_complete_new_filename(state,error);
+          splt_u_set_complete_mins_secs_filename(state,error);
         }
       
       //if no error
@@ -369,7 +370,8 @@ void splt_s_multiple_split(splt_state *state, int *error)
                   //if we have the default output, we put the
                   //default
                   int err = SPLT_OK;
-                  if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_DEFAULT))
+                  if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES)
+                      == SPLT_OUTPUT_DEFAULT)
                     {
                       splt_t_set_oformat(state,
                                          SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
@@ -396,8 +398,16 @@ void splt_s_multiple_split(splt_state *state, int *error)
                               //we append a splitpoint
                               splt_t_append_splitpoint(state, 0, "");
                               
+                              //if we have to put the original tags
+                              if (splt_t_get_int_option(state, SPLT_OPT_TAGS) 
+                                  == SPLT_TAGS_ORIGINAL_FILE)
+                                {
+                                  //we put the original tags to the current split
+                                  splt_t_append_original_tags(state);
+                                }
+                              
                               //we put the output filename
-                              splt_u_put_output_filename(state);
+                              splt_u_put_output_format_filename(state);
                               
                               //we get the final fname
                               final_fname =
@@ -478,8 +488,6 @@ void splt_s_multiple_split(splt_state *state, int *error)
     {
       splt_t_put_message_to_client(state,SPLT_MESS_START_NORMAL_SPLIT);
       
-      int old_option_mins = 
-        splt_t_get_int_option(state,SPLT_OPT_MINS_SECS);
       int get_error = SPLT_OK;
       
       //for every 2 splitpoints, split
@@ -493,15 +501,25 @@ void splt_s_multiple_split(splt_state *state, int *error)
             {
               get_error = SPLT_OK;
               
-              //if we put the output filename
-              /*if (!old_option_mins)
+              //we look what option we have for the output filenames
+              int output_filenames =
+                splt_t_get_int_option(state,
+                                      SPLT_OPT_OUTPUT_FILENAMES);
+              //if we have to put the original tags
+              if (splt_t_get_int_option(state, SPLT_OPT_TAGS) 
+                  == SPLT_TAGS_ORIGINAL_FILE)
                 {
-                  splt_u_put_output_filename(state);
-                  }*/
+                  //we put the original tags to the current split
+                  splt_t_append_original_tags(state);
+                }
+              //we put the output filrnames
+              if (output_filenames == SPLT_OUTPUT_FORMAT)
+                {
+                  splt_u_put_output_format_filename(state);
+                }
               
               char *temp_name = 
                 splt_t_get_splitpoint_name(state,i,&get_error);
-              
               if (get_error == SPLT_OK)
                 {
                   //if we have no filename, we put
@@ -509,13 +527,8 @@ void splt_s_multiple_split(splt_state *state, int *error)
                   if ((temp_name == NULL)
                       || (temp_name[0] == '\0'))
                     {
-                      splt_t_set_int_option(state, SPLT_OPT_MINS_SECS,
-                                            SPLT_TRUE);
-                    }
-                  else
-                    {
-                      splt_t_set_int_option(state, SPLT_OPT_MINS_SECS,
-                                            old_option_mins);
+                      splt_t_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
+                                            SPLT_OUTPUT_MINS_SECS);
                     }
                   
                   splt_s_simple_split(state, error);
@@ -643,33 +656,31 @@ void splt_s_time_split(splt_state *state, int *error)
                     splt_t_set_current_split(state, tracks-1);
                     
                     int current_split = splt_t_get_current_split(state);
-                    //if we have the default output
-                    if (splt_t_get_int_option(state,
-                                              SPLT_OPT_OUTPUT_DEFAULT))
+                    int output_filenames = 
+                      splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+                    //if we have the default output or the mins_secs
+                    if ((output_filenames == SPLT_OUTPUT_DEFAULT)
+                        || (output_filenames == SPLT_OUTPUT_MINS_SECS))
                       {
                         //we put the splitpoints values in the state
                         splt_t_set_splitpoint_value(state,
                                                     current_split,(long)(begin*100));
                         splt_t_set_splitpoint_value(state,
                                                     current_split+1,(long)(end*100));
-                        int old_min_value =
-                          splt_t_get_int_option(state, SPLT_OPT_MINS_SECS);
-                        //we put the names as mins_secs
-                        splt_t_set_int_option(state, SPLT_OPT_MINS_SECS,
-                                              SPLT_TRUE);
-                        //we put the filename
-                        splt_u_set_complete_new_filename(state, &err);
-                        //we put the names as mins_secs
-                        splt_t_set_int_option(state, SPLT_OPT_MINS_SECS,
-                                              old_min_value);
+                        //we put the filename with mins_secs
+                        splt_u_set_complete_mins_secs_filename(state, &err);
                       }
                     else
                       {
-                        //if we have the output option
-                        //we put the output filename
-                        splt_u_put_output_filename(state);
+                        //if we have the output format
+                        if (output_filenames == SPLT_OUTPUT_FORMAT)
+                          {
+                            //if we have the output option
+                            //we put the output filename
+                            splt_u_put_output_format_filename(state);
+                          }
                       }
-                    
+                            
                     //we get the final fname
                     final_fname =
                       splt_u_get_fname_with_path_and_extension(state,&err);
@@ -730,11 +741,13 @@ void splt_s_time_split(splt_state *state, int *error)
                     begin=end;
                     end+= splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
                     tracks++;
-                        
-                    //get out
+                    
+                    //get out if error
                     if ((*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)||
                         (*error==SPLT_MP3_MIGHT_BE_VBR)||
                         (*error==SPLT_OK_SPLITTED_MP3_EOF)||
+                        (*error==SPLT_ERROR_INVALID_OGG)||
+                        (*error==SPLT_ERROR_INVALID_MP3)||
                         (*error==SPLT_OK_SPLITTED_OGG_EOF))
                       {
                         tracks = 0;
@@ -764,9 +777,6 @@ void splt_s_time_split(splt_state *state, int *error)
               //we put the mp3 time split error
               switch (*error)
                 {
-                case SPLT_ERROR_CANNOT_ALLOCATE_MEMORY:
-                  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                  break;
                 case SPLT_MP3_MIGHT_BE_VBR : 
                   *error = SPLT_TIME_SPLIT_OK;
                   break;
@@ -785,9 +795,6 @@ void splt_s_time_split(splt_state *state, int *error)
                 case SPLT_ERROR_BEGIN_OUT_OF_FILE : 
                   *error = SPLT_TIME_SPLIT_OK;
                   break;
-                case SPLT_SPLIT_CANCELLED :
-                  *error = SPLT_SPLIT_CANCELLED;
-                  break;
                 default:
                   break;
                 }
@@ -802,14 +809,15 @@ void splt_s_time_split(splt_state *state, int *error)
       if(file_format == SPLT_MP3_FORMAT)
         {
           splt_mp3_state_free (state);
+          fclose(file_input);
         }
 #ifndef NO_OGG
       else
         {
+          //we also close the file here
           splt_ogg_state_free(state);
         }
 #endif
-      fclose(file_input);
     }
   else
     {
@@ -1040,14 +1048,17 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
           state->mstate->frames = 1;
         }
     }
-      
+  
   //we put the number of tracks found
   splt_t_set_splitnumber(state, found+1);
   
   //if we have the default output, we put the
   //default
   int err = SPLT_OK;
-  if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_DEFAULT))
+  int output_filenames = 
+    splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
+  //if we have the default output
+  if (output_filenames == SPLT_OUTPUT_DEFAULT)
     {
       splt_t_set_oformat(state,"Track @n",&err);
     }
@@ -1060,8 +1071,16 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
         {
           if (!splt_t_split_is_canceled(state))
             {
+              //if we have to put the original tags
+              if (splt_t_get_int_option(state, SPLT_OPT_TAGS) 
+                  == SPLT_TAGS_ORIGINAL_FILE)
+                {
+                  //we put the original tags to the current split
+                  splt_t_append_original_tags(state);
+                }
+              
               //we put the output filename
-              splt_u_put_output_filename(state);
+              splt_u_put_output_format_filename(state);
               
               //we get the output filename+path+extension
               final_fname = 

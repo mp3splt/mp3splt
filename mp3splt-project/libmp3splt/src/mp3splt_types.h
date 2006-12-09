@@ -494,6 +494,24 @@ typedef enum {
 } splt_split_mode_options;
 
 /**
+ * @brief Values for the #SPLT_OPT_OUTPUT_FILENAMES option
+ *
+ * Values for the #SPLT_OPT_OUTPUT_FILENAMES option
+ */
+typedef enum {
+  //output specified by the set_oformat
+  SPLT_OUTPUT_FORMAT,
+  //output filename like song_1m_2s_3h__2m_33s_65h.ogg
+  SPLT_OUTPUT_MINS_SECS,
+  //the default output
+  //it depends of the type of the split
+  SPLT_OUTPUT_DEFAULT,
+  //we don't change anything, must put the filenames with
+  //the functions set_..
+  SPLT_OUTPUT_CUSTOM
+} splt_output_filenames_options;
+
+/**
  * @brief Default value for the #SPLT_OPT_PARAM_THRESHOLD option
  */
 #define SPLT_DEFAULT_PARAM_THRESHOLD -48.0
@@ -560,16 +578,11 @@ typedef struct {
   //SPLT_TAGS_ORIGINAL_FILE - write tags from original file
   //SPLT_NO_TAGS - does not write any tags
   //SPLT_CURRENT_TAGS - tags issued from the cddb or cue for example
+  //or that we set manually with the functions
   splt_tags_options tags;
   
-  //option_mins_secs is to write the splitted filenames with 
-  //mins_secs_hundr instead of the filenames supplied in splt_state->fn
-  short option_mins_secs;
-  
-  //may be TRUE or FALSE. If TRUE, when using cddb or cue, we set the
-  //filename as the default : @a - @n - @t
-  //where @a is the performer @p if we found one on the cddb file
-  short option_output_is_default;
+  //defines the output filenames
+  splt_output_filenames_options output_filenames;
   
   //frame mode (mp3 only). Process all frames, seeking split positions
   //by counting frames and not with bitrate guessing.
@@ -1105,31 +1118,11 @@ typedef enum {
    */
   SPLT_OPT_TAGS,
   /**
-   * If the output filenames should be those set with
-   * #mp3splt_append_splitpoint or like this :\n
-   * if the original song is called "original_song.ogg" and the split
-   * is from min:hun:sec to min2:hun2:sec2, the new splitted filename
-   * will be "original_song_min_hun_sec__min2_hun2_sec2.ogg"
-   *
-   * The option can take the values #SPLT_TRUE or #SPLT_FALSE
+   * The option can take the values from #SPLT_OUTPUT_FILENAMES_OPTIONS
    *
    * Default is #SPLT_FALSE
    */
-  SPLT_OPT_MINS_SECS,
-  /**
-   * If the output format should be the default or not\n
-   * The default output filename is : \@a - \@n - \@t where \@a (the
-   * artist) is the performer if \@p (the performer) is found\n
-   * Another output format can be set with #mp3splt_set_oformat\n
-   * The output format is used to generate the new splitted filenames
-   * from the tags. The tags may have been set manually, with a cddb
-   * file, a cue file or with a freedb search
-   *
-   * The option can take the values #SPLT_TRUE or #SPLT_FALSE
-   *
-   * Default is #SPLT_TRUE
-   */
-  SPLT_OPT_OUTPUT_DEFAULT,
+  SPLT_OPT_OUTPUT_FILENAMES,
   /**
    * If we enable the frame mode or not (mp3 only)\n
    * The frame mode processes the mp3 file frame by frame and

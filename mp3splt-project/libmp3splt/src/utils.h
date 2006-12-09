@@ -51,7 +51,7 @@ char *splt_u_cleanstring (char *s);
 char *splt_u_cut_spaces_at_the_end(char *c);
 char *splt_u_cut_spaces_from_begin(char *c);
 char *splt_u_get_real_name(char *filename);
-void splt_u_set_complete_new_filename(splt_state *state, int *error);
+void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error);
 char *splt_u_get_fname_with_path_and_extension(splt_state *state,
                                                int *error);
 
@@ -69,7 +69,7 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags);
 /* utils for the output format */
 
 int splt_u_parse_outformat(char *s, splt_state *state);
-int splt_u_put_output_filename(splt_state *state);
+int splt_u_put_output_format_filename(splt_state *state);
 
 /******************************/
 /* utils for debug and errors */

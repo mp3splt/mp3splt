@@ -141,13 +141,13 @@ void add_cddb_splitpoints(gpointer *data)
   //we put the output default option
   if(get_checked_output_radio_box())
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_TRUE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_DEFAULT);
     }
   else
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_FALSE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_FORMAT);
     }
   
   //unlock gtk
@@ -180,8 +180,8 @@ void update_output_options()
   //output options
   if (get_checked_output_radio_box() == 0)
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_TRUE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_DEFAULT);
       char *data = (char *)
         gtk_entry_get_text(GTK_ENTRY(output_entry));
       gint error = SPLT_OUTPUT_FORMAT_OK;
@@ -190,8 +190,8 @@ void update_output_options()
     }
   else
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_FALSE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_FORMAT);
     }
 }
 
@@ -222,13 +222,13 @@ void add_cue_splitpoints(gpointer *data)
   //we put the output default option
   if(get_checked_output_radio_box())
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_TRUE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_DEFAULT);
     }
   else
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_DEFAULT,
-                             SPLT_FALSE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                             SPLT_OUTPUT_FORMAT);
     }
   
   //lock gtk
@@ -248,7 +248,7 @@ void add_cue_splitpoints(gpointer *data)
   
   //here we have in err a possible error from the freedb
   print_status_bar_confirmation(err);
-
+  
   gtk_widget_set_sensitive(GTK_WIDGET(add_cue_button),
                            TRUE);
   
