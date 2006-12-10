@@ -2030,6 +2030,7 @@ int splt_t_freedb_init_search(splt_state *state)
       else
         {
           state->fdb.search_results->number = 0;
+          state->fdb.search_results->results = NULL;
         }
     }
   

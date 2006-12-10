@@ -1066,7 +1066,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
               if (temp2 != NULL)
                 {
                   temp2++;
-
+                  
                   //we set the category and the disc id
                   splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), 
                                          temp,buf,temp-buf);
@@ -1345,7 +1345,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
 			  int init_err = SPLT_OK;
 			  //create cdstate..
 			  init_err = splt_t_freedb_init_search(state);
-                                  
+                          
 			  if (init_err == SPLT_OK)
 			    {
 			      //we read what we receive from the server
