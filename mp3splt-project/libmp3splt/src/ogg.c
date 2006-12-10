@@ -782,7 +782,6 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
   short is_stream = SPLT_FALSE;
   //if we are at the first header
   short first_time = SPLT_TRUE;
-  short second_time = SPLT_TRUE;
   while(!eos)
     {
       while(!eos)
@@ -818,16 +817,6 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
                       //find the granule pos, that we will compare with
                       //our cutpoint
                       granpos = ogg_page_granulepos(&page);
-                      //we consider that the first page of the granulepos contains
-                      //the same amount of granulepos as the next page
-                      if (second_time)
-                        {
-                          if (is_stream)
-                            {
-                              cutpoint -= (granpos - prevgranpos)*4;
-                            }
-                          second_time = SPLT_FALSE;
-                        }
                     }
                   
                   //-1 means failure

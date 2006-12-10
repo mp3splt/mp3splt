@@ -484,8 +484,6 @@ int splt_t_get_splitnumber(splt_state *state)
 int splt_t_append_splitpoint(splt_state *state, long split_value,
                              char *name)
 {
-  fprintf(stdout,"appending %ld\n",split_value);
-  fflush(stdout);
   int error = SPLT_OK;
   
   splt_u_print_debug("Appending splitpoint...",0,NULL);

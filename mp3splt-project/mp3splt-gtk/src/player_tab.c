@@ -56,11 +56,15 @@
 #include "main_win.h"
 #include "snackamp_control.h"
 #include "utilities.h"
+#include "splitted_files.h"
+#include "mp3splt-gtk.h"
 
 //filename entry
 GtkWidget *entry;
 //browse button
 GtkWidget *browse_button;
+//fix ogg stream button
+GtkWidget *fix_ogg_stream_button;
 
 //tells us if the file was browsed or not
 gint file_browsed = FALSE;
@@ -72,6 +76,7 @@ GtkWidget *file_handle_box;
 //if we have selected a correct file
 gint incorrect_selected_file = FALSE;
 
+extern splt_state *the_state;
 extern gint preview_start_position;
 extern gint preview_start_splitpoint;
 extern GtkWidget *browse_cddb_button;
@@ -82,6 +87,8 @@ extern GtkWidget *window;
 extern GtkWidget *percent_progress_bar;
 //if we are currently splitting
 extern gint we_are_splitting;
+extern gchar *filename_to_split;
+extern gchar *filename_path_of_split;
 
 //our progress bar
 GtkWidget *progress_bar;
@@ -3160,6 +3167,60 @@ void handle_file_detached_event (GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
+//fix ogg stream action
+//we split from 0 to a big number
+void fix_ogg_stream(gpointer *data)
+{
+  gdk_threads_enter();
+  gtk_widget_set_sensitive(GTK_WIDGET(fix_ogg_stream_button), FALSE);
+  we_are_splitting = TRUE;
+  gint err = 0;
+  //erase previous splitpoints
+  mp3splt_erase_all_splitpoints(the_state,&err);
+  
+  //we put the splitpoints in the state
+  mp3splt_append_splitpoint(the_state, 0, NULL);
+  mp3splt_append_splitpoint(the_state, LONG_MAX-1, NULL);
+  
+  //put the options from the preferences
+  put_options_from_preferences();
+  
+  //set the options
+  mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+                         SPLT_OUTPUT_MINS_SECS);
+  mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
+                         SPLT_OPTION_NORMAL_MODE);
+  
+  //remove old splitted files
+  remove_all_splitted_rows();  
+  
+  filename_to_split = (gchar *)
+    gtk_entry_get_text(GTK_ENTRY(entry));
+  
+  gint confirmation = SPLT_OK;
+  gdk_threads_leave();
+  
+  mp3splt_set_path_of_split(the_state,filename_path_of_split);
+  mp3splt_set_filename_to_split(the_state,filename_to_split);
+  //effective split, returns confirmation or error;
+  confirmation = mp3splt_split(the_state);
+  
+  //lock gtk
+  gdk_threads_enter();
+  //we show infos about the splitted action
+  print_status_bar_confirmation(confirmation);
+  we_are_splitting = FALSE;
+  gtk_widget_set_sensitive(GTK_WIDGET(fix_ogg_stream_button), TRUE);
+  gdk_threads_leave();
+}
+
+//we make a thread with fix_ogg_stream
+void fix_ogg_stream_button_event ( GtkWidget *widget,
+                                   gpointer   data )
+{
+  g_thread_create((GThreadFunc)fix_ogg_stream,
+                  NULL, TRUE, NULL);
+}
 
 //creates the choose file frame
 GtkWidget *create_choose_file_frame()
@@ -3167,13 +3228,20 @@ GtkWidget *create_choose_file_frame()
   //browse button and file entry box
   GtkWidget *choose_file_hbox;
   
+  GtkWidget *main_choose_file_vbox = gtk_vbox_new(FALSE,0);
+  gtk_container_set_border_width (GTK_CONTAINER (main_choose_file_vbox), 5);
+  
   /* file entry and browse button hbox */
   choose_file_hbox = gtk_hbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (choose_file_hbox), 5);
-
+  gtk_container_set_border_width (GTK_CONTAINER (choose_file_hbox), 0);
+  
+  gtk_box_pack_start (GTK_BOX(main_choose_file_vbox), 
+                      choose_file_hbox, FALSE, FALSE, 2);
+  
   /* handle box for detaching */
   file_handle_box = gtk_handle_box_new();
-  gtk_container_add(GTK_CONTAINER (file_handle_box), GTK_WIDGET(choose_file_hbox));
+  gtk_container_add(GTK_CONTAINER (file_handle_box), 
+                    GTK_WIDGET(main_choose_file_vbox));
   //handle event
   g_signal_connect(file_handle_box, "child-detached",
                    G_CALLBACK(handle_file_detached_event),
@@ -3192,11 +3260,25 @@ GtkWidget *create_choose_file_frame()
                     G_CALLBACK (browse_button_event), 
                     (gpointer *)BROWSE_SONG);
   gtk_box_pack_start (GTK_BOX(choose_file_hbox), browse_button, FALSE, FALSE, 7);
-
+  
   GtkTooltips *tooltip;
   tooltip = gtk_tooltips_new();
   gtk_tooltips_set_tip(tooltip, browse_button,(gchar *)_("select file"),"");
-
+  
+  /* bottom buttons hbox */
+  GtkWidget *bottom_buttons_hbox = gtk_hbox_new(FALSE,0);
+  
+  /* fix ogg stream button */
+  fix_ogg_stream_button = (GtkWidget *)
+    create_cool_button(GTK_STOCK_HARDDISK,(gchar *)_("_Fix ogg stream"),
+                       FALSE);
+  g_signal_connect (G_OBJECT (fix_ogg_stream_button), "clicked",
+                    G_CALLBACK (fix_ogg_stream_button_event), NULL);
+  gtk_box_pack_start (GTK_BOX(bottom_buttons_hbox), 
+                      fix_ogg_stream_button, FALSE, FALSE, 7);
+  gtk_box_pack_start (GTK_BOX(main_choose_file_vbox), 
+                      bottom_buttons_hbox, FALSE, FALSE, 0);
+  
   return file_handle_box;
 }
 

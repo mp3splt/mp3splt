@@ -499,8 +499,8 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   mp3splt_set_splitted_filename_function(the_state,put_splitted_filename);
   //put the callback function for miscellaneous messages
   mp3splt_set_message_function(the_state,put_message_from_library);
-  //debug on
-  mp3splt_set_int_option(the_state,SPLT_OPT_DEBUG_MODE,SPLT_TRUE);
+  //debug on or off
+  //mp3splt_set_int_option(the_state,SPLT_OPT_DEBUG_MODE,SPLT_TRUE);
   //main program
   create_all();
   

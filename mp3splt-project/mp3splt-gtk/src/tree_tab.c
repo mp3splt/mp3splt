@@ -136,6 +136,8 @@ extern int selected_player;
 extern GtkWidget *percent_progress_bar;
 extern gfloat current_time;
 extern gchar *filename_to_split;
+extern gchar *filename_path_of_split;
+extern gchar *filename_path_of_split;
 
 //updates add button, wether the spinners splitpoint is already
 //in the table or not
@@ -1278,12 +1280,13 @@ void split_preview(gpointer *data)
       //remove old splitted files
       remove_all_splitted_rows();  
       
+      filename_to_split = (gchar *)
+        gtk_entry_get_text(GTK_ENTRY(entry));
+      
       //unlock gtk
       gdk_threads_leave();
       
       mp3splt_set_path_of_split(the_state,fname_path);
-      filename_to_split = (gchar *)
-        gtk_entry_get_text(GTK_ENTRY(entry));
       mp3splt_set_filename_to_split(the_state,filename_to_split);
       //effective split, returns confirmation or error;
       confirmation = mp3splt_split(the_state);

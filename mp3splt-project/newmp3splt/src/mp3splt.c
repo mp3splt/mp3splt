@@ -102,6 +102,7 @@ void show_small_help_exit(Options *opt,splt_state *state)
   fprintf (stdout, "      mp3splt [SPLIT_MODE] [OPTIONS] FILE [BEGIN_TIME1] [TIME2] ... [END_TIME]\n");
   fprintf (stdout, "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59. \n");
   fprintf (stdout, "\nSPLIT_MODE\n");
+  fprintf (stdout, "\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n");
   fprintf (stdout, " -t + TIME: to split files every fixed time len. (TIME format same as above). \n");
   fprintf (stdout, " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n");
   fprintf (stdout, "      .cddb or .cue file or from Internet (\"query\"). Use -a to auto-adjust.\n");
@@ -1021,7 +1022,7 @@ int main (int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option=getopt(argc, argv, "DVifkwleqnasc:d:o:t:p:g:"))!=-1)
+  while ((option=getopt(argc, argv, "SDVifkwleqnasc:d:o:t:p:g:"))!=-1)
     {
       switch (option)
         {
@@ -1368,8 +1369,7 @@ int main (int argc, char *argv[])
                   {
                     //we put the splitpoints
                     err = mp3splt_append_splitpoint(state,
-                                                    LONG_MAX,
-                                                    NULL);
+                                                    LONG_MAX-1, NULL);
                     print_confirmation_error(err);
                   }
                 else

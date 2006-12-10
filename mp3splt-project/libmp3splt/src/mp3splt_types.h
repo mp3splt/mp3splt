@@ -374,6 +374,8 @@ typedef struct {
   unsigned long n_stat;
   //we cound how many pages we have for the headers
   long header_page_number;
+  //the granpos at the end of the first page of the stream
+  ogg_int64_t stream_granpos;
 } splt_ogg_state;
 #endif
 
