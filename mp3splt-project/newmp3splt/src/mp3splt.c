@@ -110,13 +110,15 @@ void show_small_help_exit(Options *opt,splt_state *state)
   fprintf (stdout, " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n");
   fprintf (stdout, " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n");
   fprintf (stdout, " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)\n");
-  fprintf (stdout, " -i   Count how many silence splitpoints we have with silence detection (Use -p for arguments)\n");
+  fprintf (stdout, " -i   Count how many silence splitpoints we have with silence detection\n");
+  fprintf (stdout, "      (Use -p for arguments)\n");
   fprintf (stdout, "\nOPTIONS\n");
   fprintf (stdout, " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n");
   fprintf (stdout, " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n");
   fprintf (stdout, " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n");
   fprintf (stdout, " -o + FORMAT: output filename pattern. Can contain those variables:\n");
-  fprintf (stdout, "      @a: artist, @p: performer (only CUE), @b: album, @t: title, @n: number\n");
+  fprintf (stdout, "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n");
+  fprintf (stdout, "      @t: title tag, @n: track number tag, @f: original filename\n");
   fprintf (stdout, " -g + TAGS_FORMAT: allows you to put custom tags "
            "to your splitted files.\n"
            "      Example, tags for the first splitted file and all the others like the second one : \n"

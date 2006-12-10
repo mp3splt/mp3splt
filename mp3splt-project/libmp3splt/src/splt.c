@@ -1060,7 +1060,7 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
   //if we have the default output
   if (output_filenames == SPLT_OUTPUT_DEFAULT)
     {
-      splt_t_set_oformat(state,"Track @n",&err);
+      splt_t_set_oformat(state,SPLT_DEFAULT_SILENCE_OUTPUT,&err);
     }
   
   //if no error

@@ -566,7 +566,12 @@ typedef enum {
  * @brief Default output for the syncerror.
  * See #mp3splt_set_oformat
  */
-#define SPLT_DEFAULT_SYNCERROR_OUTPUT "@f_@n"
+#define SPLT_DEFAULT_SYNCERROR_OUTPUT "@f_error_@n"
+/**
+ * @brief Default output for the silence split.
+ * See #mp3splt_set_oformat
+ */
+#define SPLT_DEFAULT_SILENCE_OUTPUT "@f_silence_@n"
 
 //structure with all the options supplied to split the file
 typedef struct {
