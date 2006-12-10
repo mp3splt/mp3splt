@@ -808,8 +808,6 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
                       //if the page number > header_page+1, probably a stream
                       if (page_number > (oggstate->header_page_number+1))
                         {
-                          //fprintf(stdout,"Missing data at the start, considering as stream..\n");
-                          //fflush(stdout);
                           is_stream = SPLT_TRUE;
                           cutpoint += granpos;
                         }

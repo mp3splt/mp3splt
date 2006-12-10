@@ -335,6 +335,8 @@ gpointer split_it(gpointer data)
   remove_all_splitted_rows();  
   
   gint err = SPLT_OK;
+  fprintf(stdout,"erase all splitpoints...\n");
+  fflush(stdout);
   //erase previous splitpoints
   mp3splt_erase_all_splitpoints(the_state,&err);
   //we erase previous tags if we don't have the option
@@ -346,7 +348,12 @@ gpointer split_it(gpointer data)
     }
   print_status_bar_confirmation(err);
   
-  put_splitpoints_in_the_state(the_state);
+  //we put the splitpoints in the state only if the normal mode
+  if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,
+                             &err) == SPLT_OPTION_NORMAL_MODE)
+    {
+      put_splitpoints_in_the_state(the_state);
+    }
   
   //we put the output format
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
