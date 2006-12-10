@@ -51,8 +51,10 @@ void splt_t_set_new_filename_path(splt_state *state,
 char *splt_t_get_new_filename_path(splt_state *state);
 int splt_t_set_filename_to_split(splt_state *state, char *filename);
 int splt_t_set_path_of_split(splt_state *state, char *path);
+int splt_t_set_m3u_filename(splt_state *state, char *filename);
 char *splt_t_get_filename_to_split(splt_state *state);
 char *splt_t_get_path_of_split(splt_state *state);
+char *splt_t_get_m3u_filename(splt_state *state);
 
 /********************************/
 /* types: file format access */

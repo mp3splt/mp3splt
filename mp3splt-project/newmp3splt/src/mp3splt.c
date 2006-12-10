@@ -60,10 +60,12 @@ typedef struct {
   short o_option; short d_option; short k_option;
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
-  //info -i option
-  short i_option;
+  //info -i option, m3u file option
+  short i_option; short m_option;
   //cddb argument, output dir argument, parameters arguments with -p
   char *cddb_arg; char *dir_arg; char *param_args;
+  //the m3u filename
+  char *m3u_arg;
   //custom tags with -g
   char *custom_tags;
   //output format (-o)
@@ -113,6 +115,7 @@ void show_small_help_exit(Options *opt,splt_state *state)
   fprintf (stdout, " -i   Count how many silence splitpoints we have with silence detection\n");
   fprintf (stdout, "      (Use -p for arguments)\n");
   fprintf (stdout, "\nOPTIONS\n");
+  fprintf (stdout, " -m + M3U_FILE: Creates a m3u file with the newly splitted files\n");
   fprintf (stdout, " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n");
   fprintf (stdout, " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n");
   fprintf (stdout, " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n");
@@ -1023,7 +1026,7 @@ int main (int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option=getopt(argc, argv, "SDVifkwleqnasc:d:o:t:p:g:"))!=-1)
+  while ((option=getopt(argc, argv, "m:SDVifkwleqnasc:d:o:t:p:g:"))!=-1)
     {
       switch (option)
         {
@@ -1091,6 +1094,11 @@ int main (int argc, char *argv[])
                                  SPLT_CURRENT_TAGS);
           opt->c_option = SPLT_TRUE;
           opt->cddb_arg = optarg;
+          break;
+        case 'm':
+          opt->m_option = SPLT_TRUE;
+          opt->m3u_arg = optarg;
+          mp3splt_set_m3u_filename(state,opt->m3u_arg);
           break;
         case 'd':
           opt->dir_arg = optarg;

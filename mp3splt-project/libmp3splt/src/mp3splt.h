@@ -83,6 +83,7 @@ int mp3splt_set_path_of_split(splt_state *state, char *path);
 //put the filename to split
 //returns possible error
 int mp3splt_set_filename_to_split(splt_state *state, char *filename);
+int mp3splt_set_m3u_filename(splt_state *state, char *filename);
 
 /************************************/
 /* Set callback functions           */

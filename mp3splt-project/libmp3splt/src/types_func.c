@@ -106,6 +106,11 @@ static void splt_t_free_state_struct(splt_state *state)
           free(state->path_of_split);
           state->path_of_split = NULL;
         }
+      if (state->m3u_filename)
+        {
+          free(state->m3u_filename);
+          state->m3u_filename = NULL;
+        }
       if (state->wrap)
         {
           free(state->wrap);
@@ -267,6 +272,42 @@ int splt_t_set_path_of_split(splt_state *state, char *path)
   return error;
 }
 
+//sets the m3u filename
+//returns possible error
+int splt_t_set_m3u_filename(splt_state *state, char *filename)
+{
+  int error = SPLT_OK;
+  
+  //free previous memory
+  if (splt_t_get_m3u_filename(state))
+    {
+      free(state->m3u_filename);
+      state->m3u_filename = NULL;
+    }
+  
+  splt_u_print_debug("Setting m3u filename...",0,filename);
+  
+  if (filename != NULL)
+    {
+      if((state->m3u_filename = malloc(sizeof(char)*(strlen(filename)+1)))
+         != NULL)
+        {
+          snprintf(state->m3u_filename,(strlen(filename)+1), 
+                   "%s", filename);
+        }
+      else
+        {
+          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        }
+    }
+  else
+    {
+      state->m3u_filename = NULL;
+    }
+  
+  return error;
+}
+
 //sets the filename to split
 int splt_t_set_filename_to_split(splt_state *state, char *filename)
 {
@@ -312,6 +353,12 @@ char *splt_t_get_filename_to_split(splt_state *state)
 char *splt_t_get_path_of_split(splt_state *state)
 {
   return state->path_of_split;
+}
+
+//returns path of split
+char *splt_t_get_m3u_filename(splt_state *state)
+{
+  return state->m3u_filename;
 }
 
 /********************************/
@@ -1711,6 +1758,7 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->split.points = NULL;
   state->fname_to_split = NULL;
   state->path_of_split = NULL;
+  state->m3u_filename = NULL;
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
   state->split.splitnumber = 0;
@@ -2437,6 +2485,30 @@ void splt_t_put_splitted_file(splt_state *state, char *filename)
   if (state->split.file_splitted != NULL)
     {
       state->split.file_splitted(filename,state->split.p_bar->user_data);
+      //if we create a m3u file
+      char *m3u_file = splt_t_get_m3u_filename(state);
+      if (m3u_file != NULL)
+      {
+        //we don't care about the path; we clean the string
+        char *real_name_m3u_file = splt_u_cleanstring(m3u_file);
+        char *path_of_split = splt_t_get_path_of_split(state);
+        char *new_m3u_file = NULL;
+        int malloc_number = strlen(real_name_m3u_file)+strlen(path_of_split)+2;
+        if ((new_m3u_file = malloc(malloc_number)) != NULL)
+          {
+            snprintf(new_m3u_file,malloc_number,"%s%c%s",
+                     path_of_split, SPLT_DIRCHAR,real_name_m3u_file);
+            //we open the m3u file
+            FILE *file_input = NULL;
+            if((file_input = fopen(new_m3u_file, "a+")))
+              {
+                //we don't care about the path of the splitted filename
+                fprintf(file_input,"%s\n",splt_u_get_real_name(filename));
+                fclose(file_input);
+              }
+            free(new_m3u_file);
+          }
+      }
     }
   else
     {

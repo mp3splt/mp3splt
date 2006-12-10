@@ -685,6 +685,9 @@ typedef struct {
   //where the splitted file will be splitted
   char *path_of_split;
   
+  //if this is non null, we write a m3u from the splitted files
+  char *m3u_filename;
+  
   //tags of the original file to split
   splt_tags original_tags;
   
