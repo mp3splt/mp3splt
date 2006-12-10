@@ -109,6 +109,11 @@ int splt_t_append_tags(splt_state *state,
                        char *album, char *performer,
                        char *year, char *comment,
                        int track, unsigned char genre);
+int splt_t_append_only_non_null_previous_tags(splt_state *state, 
+                                              char *title, char *artist,
+                                              char *album, char *performer,
+                                              char *year, char *comment,
+                                              int track, unsigned char genre);
 int splt_t_tags_exists(splt_state *state, int index);
 int splt_t_set_original_tags_field(splt_state *state,
                                    int tags_field, int int_data,

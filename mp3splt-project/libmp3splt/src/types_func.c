@@ -721,7 +721,6 @@ void splt_t_get_original_tags(splt_state *state, int *err)
   splt_t_clean_original_tags(state);
   
   char *filename = splt_t_get_filename_to_split(state);
-  
   if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
     {
       splt_u_print_debug("Putting mp3 original tags...\n",0,NULL);
@@ -806,6 +805,86 @@ int splt_t_append_tags(splt_state *state,
   error = splt_t_set_tags_uchar_field(state,
                                       old_tagsnumber,
                                       SPLT_TAGS_GENRE, genre);
+  
+  return error;
+}
+
+//append tags on the previous song
+//only if char non null and track != -1 and genre != 12
+int splt_t_append_only_non_null_previous_tags(splt_state *state, 
+                                              char *title, char *artist,
+                                              char *album, char *performer,
+                                              char *year, char *comment,
+                                              int track, unsigned char genre)
+{
+  int error = SPLT_OK;
+  int old_tagsnumber = state->split.real_tagsnumber-1;
+  
+  if (old_tagsnumber >= 0)
+    {
+      if (title != NULL)
+        {
+          error = splt_t_set_tags_char_field(state,
+                                             old_tagsnumber,
+                                             SPLT_TAGS_TITLE, title);
+        }
+      if (error != SPLT_OK)
+        return error;
+      if (artist != NULL)
+        {
+          error = splt_t_set_tags_char_field(state,
+                                             old_tagsnumber,
+                                             SPLT_TAGS_ARTIST, artist);
+        }
+      if (error != SPLT_OK)
+        return error;
+      if (album != NULL)
+        {
+          error = splt_t_set_tags_char_field(state,
+                                             old_tagsnumber,
+                                             SPLT_TAGS_ALBUM, album);
+        }
+      if (error != SPLT_OK)
+        return error;
+      if (performer != NULL)
+        {
+          error = splt_t_set_tags_char_field(state,
+                                             old_tagsnumber,
+                                             SPLT_TAGS_PERFORMER, performer);
+        }
+      if (error != SPLT_OK)
+        return error;
+      if (year != NULL)
+        {
+          error = splt_t_set_tags_char_field(state,
+                                             old_tagsnumber,
+                                             SPLT_TAGS_YEAR, year);
+        }
+      if (error != SPLT_OK)
+        return error;
+      if (comment != NULL)
+        {
+          error = splt_t_set_tags_char_field(state,
+                                             old_tagsnumber,
+                                             SPLT_TAGS_COMMENT, comment);
+        }
+      if (error != SPLT_OK)
+        return error;
+      if (track != -1)
+        {
+          error = splt_t_set_tags_int_field(state,
+                                            old_tagsnumber,
+                                            SPLT_TAGS_TRACK, track);
+        }
+      if (error != SPLT_OK)
+        return error;
+      if (genre != 12)
+        {
+          error = splt_t_set_tags_uchar_field(state,
+                                              old_tagsnumber,
+                                              SPLT_TAGS_GENRE, genre);
+        }
+    }
   
   return error;
 }
@@ -1684,7 +1763,7 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
   state->options.split_time = 6000;
   
-  state->options.all_tags_like_first_one = SPLT_FALSE;
+  state->options.tags_after_x_like_x_one = -1;
 }
 
 //set an int option
@@ -1730,8 +1809,8 @@ void splt_t_set_int_option(splt_state *state, int option_name,
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = value;
       break;
-    case SPLT_OPT_ALL_TAGS_LIKE_FIRST_ONE:
-      state->options.all_tags_like_first_one = value;
+    case SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X:
+      state->options.tags_after_x_like_x_one = value;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
@@ -1796,8 +1875,8 @@ int splt_t_get_int_option(splt_state *state, int option_name)
     case SPLT_OPT_PARAM_GAP:
       returned = state->options.parameter_gap;
       break;
-    case SPLT_OPT_ALL_TAGS_LIKE_FIRST_ONE:
-      returned = state->options.all_tags_like_first_one;
+    case SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X:
+      returned = state->options.tags_after_x_like_x_one;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);

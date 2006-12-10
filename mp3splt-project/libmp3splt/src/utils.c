@@ -40,6 +40,12 @@
 
 extern short global_debug;
 
+void splt_i_debug(char *message)
+{
+  fprintf(stdout,"%s\n",message);
+  fflush(stdout);
+}
+
 /****************************/
 /* utils for conversion */
 
@@ -619,18 +625,9 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
     {
       char *cur_pos = NULL;
       int all_tags = SPLT_FALSE;
-
+      
       cur_pos = tags;
-
-      //if we set the tags for all the files
-      if (*(cur_pos) == '%')
-        {
-          splt_t_set_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_FIRST_ONE,
-                                SPLT_TRUE);
-          cur_pos++;
-          all_tags = SPLT_TRUE;
-        }
-
+      
       int ambigous = SPLT_FALSE;
       char *end_paranthesis = NULL;
       //we search for tags
@@ -638,9 +635,22 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
         {
           ambigous = SPLT_TRUE;
         }
-
+      
+      int tags_appended = 0;
       while((cur_pos = strchr(cur_pos,'[')))
         {
+          //if we set the tags for all the files
+          if (cur_pos != tags)
+            {
+              //if we have % before [
+              if (*(cur_pos-1) == '%')
+                {
+                  splt_t_set_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X,
+                                        tags_appended);
+                  all_tags = SPLT_TRUE;
+                }
+            }
+          
           char *title = NULL;
           char *artist = NULL;
           char *album = NULL;
@@ -650,7 +660,7 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
           char *tracknumber = NULL;
           //means "other"
           unsigned char genre = 12;
-
+          
           //how many we have found in one [..]  
           short s_title = 0;
           short s_artist = 0;
@@ -659,9 +669,9 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
           short s_year = 0;
           short s_comment = 0;
           short s_tracknumber = 0;
-
+          
           cur_pos++;
-
+          
           end_paranthesis = strchr(cur_pos,']');
           if (!end_paranthesis)
             {
@@ -669,14 +679,16 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
             }
           else
             {
-              if ((*(end_paranthesis+1) != '[')
-                  && (*(end_paranthesis+1) != '\0'))
+              if ((*(end_paranthesis+1) != '[') &&
+                  (*(end_paranthesis+1) != '%') &&
+                  (*(end_paranthesis+1) != '\0'))
                 {
                   ambigous = SPLT_TRUE;
                 }
             }
 
           char *tag = NULL;
+          int original_tags = SPLT_FALSE;
           while((tag = strchr(cur_pos-1,'@')))
             {
               //if the current position is superior or equal
@@ -688,15 +700,45 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
                 {
                   cur_pos = tag+1;
                 }
-
+              
               char *old_pos = cur_pos;
               //we take the artist, performer,...
               if (*(cur_pos-1) == '@')
                 {
                   switch (*cur_pos)
                     {
+                    case 'o':
+                      //if we have twice @o
+                      if (original_tags)
+                        {
+                          ambigous = SPLT_TRUE;
+                        }
+                      //if we have other thing than @o, or @o]
+                      //then ambigous
+                      if ((*(cur_pos+1) != ',') &&
+                          (*(cur_pos+1) != ']'))
+                        {
+                          ambigous = SPLT_TRUE;
+                        }
+                      int error = SPLT_OK;
+                      splt_t_lock_messages(state);
+                      splt_check_if_mp3_or_ogg(state, &error);
+                      splt_t_unlock_messages(state);
+                      splt_t_get_original_tags(state, &error);
+                      splt_t_append_original_tags(state);
+                      original_tags = SPLT_TRUE;
+                      //if we have a @a,@p,.. before @n
+                      //then ambigous
+                      if ((artist != NULL) || (performer != NULL) ||
+                          (album != NULL) || (title != NULL) ||
+                          (comment != NULL) || (year != NULL) ||
+                          (tracknumber != NULL))
+                        {
+                          ambigous = SPLT_TRUE;
+                        }
+                      break;
                     case 'a':
-                      artist = 
+                      artist =
                         splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
                       if (artist != NULL)
                         {
@@ -798,7 +840,7 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
                 }
             }
 
-          int track = 0;
+          int track = -1;
           //we check that we really have the tracknumber as integer
           if (tracknumber)
             {
@@ -825,12 +867,28 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
             {
               ambigous = SPLT_TRUE;
             }
-
-          //we put the tags
-          splt_t_append_tags(state,title,artist,
-                             album, performer, year, comment,
-                             track, genre);
-
+          
+          //if we don't have already set the original tags,
+          //we set the tags
+          if (!original_tags)
+            {
+              if (track == -1)
+                {
+                  track = 0;
+                }
+              //we put the tags
+              splt_t_append_tags(state, title, artist,
+                                 album, performer, year, comment,
+                                 track, genre);
+            }
+          else
+            {
+              //we put the tags
+              splt_t_append_only_non_null_previous_tags(state, title, artist,
+                                                        album, performer, year, comment,
+                                                        track, genre);
+            }
+          
           //we free the memory
           if (title)
             {
@@ -860,11 +918,16 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
             {
               free(tracknumber);
             }
-
+          
+          tags_appended++;
           //if we put all tags, we break
           if (all_tags)
             {
-              break;
+              if (*(end_paranthesis+1) != '\0')
+                {
+                  ambigous = SPLT_TRUE;
+                  break;
+                }
             }
         }
 
@@ -1000,10 +1063,12 @@ int splt_u_put_output_format_filename(splt_state *state)
   int fm_length = 0;
   
   //if we get the tags from the first file
-  if (splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_FIRST_ONE)
-      == SPLT_TRUE)
+  int tags_after_x_like_x = 
+    splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X);
+  if ((current_split >= tags_after_x_like_x) &&
+      (tags_after_x_like_x != -1))
     {
-      current_split = 0;
+      current_split = tags_after_x_like_x;
     }
   
   splt_u_print_debug("The output format is ",0,state->oformat.format_string);

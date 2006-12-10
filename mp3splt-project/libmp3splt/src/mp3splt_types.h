@@ -630,12 +630,9 @@ typedef struct {
   //splitpoint;default gap is 30 seconds)
   int parameter_gap;
   
-  //To put the tag from the first file to all the files
-  //if #SPLT_OPT_CURRENT_TAGS is set and custom tags are set
-  //with #mp3splt_append_tags
-  //The option can take #SPLT_TRUE or #SPLT_FALSE values
-  //Default is #SPLT_FALSE
-  short all_tags_like_first_one;
+  //if we set all the tags like the x one,
+  //tags_like_x_one must be different of -1
+  int tags_after_x_like_x_one;
 } splt_options;
 
 /**********************************/
@@ -1187,15 +1184,9 @@ typedef enum {
    */
   SPLT_OPT_PARAM_GAP,
   /**
-   * To put the tag from the first file to all the files
-   * if #SPLT_OPT_CURRENT_TAGS is set and custom tags are set
-   * with #mp3splt_append_tags
-   *
-   * The option can take #SPLT_TRUE or #SPLT_FALSE values
-   *
-   * Default is #SPLT_FALSE
+   * if to set all tags like X one
    */
-  SPLT_OPT_ALL_TAGS_LIKE_FIRST_ONE
+  SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X
 } splt_int_options;
 
 //option types : float

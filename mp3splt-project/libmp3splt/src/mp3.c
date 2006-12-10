@@ -593,11 +593,12 @@ char *splt_mp3_get_tags(char *filename,
         {
           int current_split = splt_t_get_current_split(state);
           
-          //if we set all the tags like the first one
-          if (splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_FIRST_ONE)
-              == SPLT_TRUE)
+          //if we set all the tags like the x one
+          int tags_after_x_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X); 
+          if ((current_split >= tags_after_x_like_x)
+              && (tags_after_x_like_x != -1))
             {
-              current_split = 0;
+              current_split = tags_after_x_like_x;
             }
           
           //only if the tags exists for the current split

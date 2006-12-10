@@ -119,10 +119,9 @@ void show_small_help_exit(Options *opt,splt_state *state)
   fprintf (stdout, "      @a: artist, @p: performer (only CUE), @b: album, @t: title, @n: number\n");
   fprintf (stdout, " -g + TAGS_FORMAT: allows you to put custom tags "
            "to your splitted files.\n"
-           "      Tags for all the splitted files : \n\t"
-           "%%[@a=artist,@p=performer,@b=album,@t=title,@c=comment,@y=year,@n=tracknumber]\n"
-           "      Example, tags for the first splitted file and the second one : \n\t"
-           "[@a=artist1,@t=title1][@a=artist2,@t=title2]\n");
+           "      Example, tags for the first splitted file and all the others like the second one : \n"
+           "       @o means that we put the original tags, before replacing artist with \"artist2\"\n\t"
+           "[@a=artist1,@t=title1]%%[@o,@a=artist2]\n");
   fprintf (stdout, " -d + DIRNAME: to put all output files in the directory DIRNAME.\n");
   fprintf (stdout, " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n");
   fprintf (stdout, " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n");
