@@ -484,6 +484,8 @@ int splt_t_get_splitnumber(splt_state *state)
 int splt_t_append_splitpoint(splt_state *state, long split_value,
                              char *name)
 {
+  fprintf(stdout,"appending %ld\n",split_value);
+  fflush(stdout);
   int error = SPLT_OK;
   
   splt_u_print_debug("Appending splitpoint...",0,NULL);
@@ -1670,6 +1672,7 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->iopts.split_begin = 0;
   state->iopts.split_end = 0;
   //options
+  state->options.output_filenames = SPLT_OUTPUT_DEFAULT;
   state->options.split_mode = SPLT_OPTION_NORMAL_MODE;
   state->options.tags = SPLT_CURRENT_TAGS;
   state->options.option_mp3_frame_mode = SPLT_TRUE;

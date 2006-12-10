@@ -135,7 +135,7 @@ extern int selected_player;
 //the percent progress bar
 extern GtkWidget *percent_progress_bar;
 extern gfloat current_time;
-
+extern gchar *filename_to_split;
 
 //updates add button, wether the spinners splitpoint is already
 //in the table or not
@@ -1243,20 +1243,17 @@ void split_preview(gpointer *data)
     {
       gint confirmation;
       
+      int err = 0;
+      //erase previous splitpoints
+      mp3splt_erase_all_splitpoints(the_state,&err);
+      
       //we put the splitpoints in the state
       mp3splt_append_splitpoint(the_state,
                                 preview_start_position / 10,"preview");
-      if (quick_preview_end_splitpoint == -1)
-        {
-          mp3splt_append_splitpoint(the_state,-1,NULL);
-        }
-      else
-        {
-          mp3splt_append_splitpoint(the_state,
-                                    get_splitpoint_time(quick_preview_end_splitpoint)/10,
-                                    NULL);
-        }
-        
+      mp3splt_append_splitpoint(the_state,
+                                get_splitpoint_time(quick_preview_end_splitpoint)/10,
+                                NULL);
+      
       //put the options from the preferences
       put_options_from_preferences();
       
@@ -1268,7 +1265,7 @@ void split_preview(gpointer *data)
       
       gchar *fname;
       gchar *fname_path;
-                        
+      
       //we cut the preferences filename path
       //to find the ~/.mp3splt directory
       fname_path = get_preferences_filename();
@@ -1285,6 +1282,9 @@ void split_preview(gpointer *data)
       gdk_threads_leave();
       
       mp3splt_set_path_of_split(the_state,fname_path);
+      filename_to_split = (gchar *)
+        gtk_entry_get_text(GTK_ENTRY(entry));
+      mp3splt_set_filename_to_split(the_state,filename_to_split);
       //effective split, returns confirmation or error;
       confirmation = mp3splt_split(the_state);
       
@@ -1297,21 +1297,19 @@ void split_preview(gpointer *data)
       gchar *splitted_file; 
       //here the first one
       splitted_file = get_filename_from_splitted_files(1);
-      
       if (splitted_file != NULL)
         {
-          //we play the splitted file
-          //set the entry with the current filename
-          gtk_entry_set_text(GTK_ENTRY(entry),
-                             splitted_file);
-          
-          g_free(splitted_file);
-      
           //only if success
           if (confirmation > 0)
             {
               //connecting to player
               connect_button_event (NULL, NULL);
+              
+              //we play the splitted file
+              //set the entry with the current filename
+              gtk_entry_set_text(GTK_ENTRY(entry), splitted_file);
+              g_free(splitted_file);
+              
               //starts playing, 0 means start playing
               connect_to_player_with_song(0);
             }
@@ -1370,6 +1368,8 @@ void preview_song (GtkTreeView *tree_view,
           //if we have the split preview
           if (number == COL_SPLIT_PREVIEW)
             {
+              preview_start_position = get_splitpoint_time(this_row);
+              quick_preview_end_splitpoint = this_row+1;
               g_thread_create((GThreadFunc)split_preview,
                               NULL, TRUE, NULL);
             }

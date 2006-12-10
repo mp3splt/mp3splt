@@ -824,7 +824,7 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
                         {
                           if (is_stream)
                             {
-                              cutpoint -= (granpos - prevgranpos);
+                              cutpoint -= (granpos - prevgranpos)*4;
                             }
                           second_time = SPLT_FALSE;
                         }
