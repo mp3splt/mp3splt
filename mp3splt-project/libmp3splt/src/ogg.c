@@ -602,6 +602,7 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
   int bytes;
   int i;
   char *buffer;
+  oggstate->header_page_number = 0;
   
   ogg_sync_init(oggstate->sync_in);
   
@@ -609,7 +610,8 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
   vorbis_comment_init(&oggstate->vc);
   
   //we read while we don't have a page anymore
-  while (ogg_sync_pageout(oggstate->sync_in, &page)!=1)
+  int result = 0;
+  while ((result=ogg_sync_pageout(oggstate->sync_in, &page))!=1)
     {
       buffer = ogg_sync_buffer(oggstate->sync_in, SPLT_OGG_BUFSIZE);
       if (buffer == NULL)
@@ -654,7 +656,11 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
               break;
             }
           if(res==1)
-            {
+            {              
+              //we count header page numbers
+              long page_number = ogg_page_pageno(&page);
+              oggstate->header_page_number=page_number;
+              
               if (ogg_stream_pagein(oggstate->stream_in, &page) < 0)
                 {
                   return -1;
@@ -695,8 +701,9 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
         {
           return -1;
         }
-    }
-  
+      
+    }             
+
   return 0;
 }
 
@@ -772,8 +779,10 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
   
   granpos = prevgranpos = 0;
   
+  short is_stream = SPLT_FALSE;
   //if we are at the first header
-  int first_time = SPLT_TRUE;
+  short first_time = SPLT_TRUE;
+  short second_time = SPLT_TRUE;
   while(!eos)
     {
       while(!eos)
@@ -794,11 +803,16 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
                   if (first_time)
                     {
                       granpos = ogg_page_granulepos(&page);
-                      fprintf(stdout,"first granpos = %ld\n",granpos);
-                      fflush(stdout);
-                      //we move the cutpoint only if stream ??
-                      //71872 ??
-                      cutpoint += granpos;
+                      //we take the page number
+                      long page_number = ogg_page_pageno(&page);
+                      //if the page number > header_page+1, probably a stream
+                      if (page_number > (oggstate->header_page_number+1))
+                        {
+                          //fprintf(stdout,"Missing data at the start, considering as stream..\n");
+                          //fflush(stdout);
+                          is_stream = SPLT_TRUE;
+                          cutpoint += granpos;
+                        }
                       first_time = SPLT_FALSE;
                     }
                   else
@@ -806,6 +820,16 @@ static int splt_ogg_find_begin_cutpoint(splt_ogg_state *oggstate,
                       //find the granule pos, that we will compare with
                       //our cutpoint
                       granpos = ogg_page_granulepos(&page);
+                      //we consider that the first page of the granulepos contains
+                      //the same amount of granulepos as the next page
+                      if (second_time)
+                        {
+                          if (is_stream)
+                            {
+                              cutpoint -= (granpos - prevgranpos);
+                            }
+                          second_time = SPLT_FALSE;
+                        }
                     }
                   
                   //-1 means failure
@@ -956,7 +980,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
           fwrite(page.header,1,page.header_len,f);
           fwrite(page.body,1,page.body_len,f);
         }
-
+      
       while(ogg_stream_flush(stream, &page)!=0)
         {
           /* Might this happen for _really_ high bitrate modes, if we're
@@ -975,8 +999,6 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   
   current_granpos = oggstate->initialgranpos;
   
-  //the first iteration
-  int first_time = SPLT_TRUE;
   while(!eos)
     {
       while(!eos)

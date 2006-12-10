@@ -372,6 +372,8 @@ typedef struct {
   double avg_level;
   float temp_level;
   unsigned long n_stat;
+  //we cound how many pages we have for the headers
+  long header_page_number;
 } splt_ogg_state;
 #endif
 
