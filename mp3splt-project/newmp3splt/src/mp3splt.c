@@ -505,6 +505,9 @@ void print_confirmation_error(int conf)
     case SPLT_FREEDB_ERROR_SITE :
       fprintf(stderr," freedb error: unknown error from the website \n");
       break;
+    case SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE :
+      fprintf(stderr," freedb error: No such CD entry in database \n");
+      break;
     case SPLT_FREEDB_ERROR_BAD_COMMUNICATION :
       fprintf(stderr," error: bad communication with site \n");
       break;
@@ -701,8 +704,13 @@ int checkstring (char *s)
   return 0;
 }
 
-//we parse
-//query[get=freedb://freedb2.org:4444,search=freedb2://freedb2.org:3333]
+//for the moment 3 ways of getting the file and one way to search it
+//freedb get type can be : cddb_cgi or cddb_protocol
+//freedb search type can be : cddb_cgi or web_search
+//query[get=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
+//query[get=cddb_protocol://freedb.org:8880,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
+//query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
+//we parse the query arguments
 int parse_query_arg(Options *opt, char *query)
 {
   char *cur_pos = NULL;
@@ -713,15 +721,33 @@ int parse_query_arg(Options *opt, char *query)
   short ambigous = SPLT_FALSE;
   
   //if we have query[
-  if (strcmp(query ,"query[") != 0)
+  if (strstr(query ,"query[") == query)
     {
       cur_pos = strchr(query,'[');
+      
+      //if we don't have ], ambigous
+      if (!(test_pos = strchr(cur_pos,']')))
+        {
+          ambigous = SPLT_TRUE;
+        }
+      else
+        {
+          //if we have something after ], ambigous
+          if (*(test_pos+1) != '\0')
+            {
+              ambigous = SPLT_TRUE;
+            }
+        }
+      
       int search_found = SPLT_FALSE;
       int get_found = SPLT_FALSE;
+      int paranthesis_has_content = SPLT_FALSE;
       //we find "get" or "search"
       while((test_pos = strstr(cur_pos,"get="))||
             (test_pos = strstr(cur_pos,"search=")))
         {
+          paranthesis_has_content = SPLT_TRUE;
+          
           //we find out which one is first
           end_pos = strstr(cur_pos,"get=");
           test_pos = strstr(cur_pos,"search=");
@@ -760,20 +786,6 @@ int parse_query_arg(Options *opt, char *query)
               search_found = SPLT_TRUE;
               get_found = SPLT_FALSE;
               cur_pos += 7;
-            }
-          
-          //if we don't have ], ambigous
-          if (!(test_pos = strchr(cur_pos,']')))
-            {
-              ambigous = SPLT_TRUE;
-            }
-          else
-            {
-              //if we have something after ], ambigous
-              if (*(test_pos+1) != '\0')
-                {
-                  ambigous = SPLT_TRUE;
-                }
             }
           
           //we get out the type of the search
@@ -867,7 +879,7 @@ int parse_query_arg(Options *opt, char *query)
                     }
                   else
                     {
-                      freedb_int_port = 80;
+                      freedb_int_port = SPLT_FREEDB_CDDB_CGI_PORT;
                       fprintf(stderr, "Warning, found non digits in port ! (switched to default)\n");
                       fflush(stderr);
                     }
@@ -901,16 +913,16 @@ int parse_query_arg(Options *opt, char *query)
               else
                 {
                   //search type
-                  if (strcmp(freedb_type,"freedb2") == 0)
+                  if (strcmp(freedb_type,"cddb_cgi") == 0)
                     {
-                      freedb_int_type = SPLT_SEARCH_TYPE_FREEDB2;
+                      freedb_int_type = SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI;
                     }
                   else
                     {
-                      if (strcmp(freedb_type,"freedb") == 0)
+                      if (strcmp(freedb_type,"web_search") == 0)
                         {
-                          freedb_int_type = SPLT_SEARCH_TYPE_FREEDB2;
-                          fprintf(stderr, "Warning, freedb search not implemented yet ! (switched to default)\n");
+                          freedb_int_type = SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI;
+                          fprintf(stderr, "Warning, freedb web search not implemented yet ! (switched to default)\n");
                           fflush(stderr);
                         }
                       else
@@ -926,19 +938,6 @@ int parse_query_arg(Options *opt, char *query)
               ambigous = SPLT_TRUE;
             }
           
-          /*if (search_found)
-            {
-            fprintf(stdout,"search :\n");
-            }
-            else
-            {
-            fprintf(stdout,"get :\n");
-            }
-            fprintf(stdout,"\ttype = _%s_\n",freedb_type);
-            fprintf(stdout,"\turl = _%s_\n",freedb_server);
-            fprintf(stdout,"\tport = _%d_\n",freedb_int_port);
-            fflush(stdout);*/
-          
           //if we have found search
           if (search_found)
             {
@@ -952,7 +951,7 @@ int parse_query_arg(Options *opt, char *query)
                 }
               else
                 {
-                  snprintf(opt->freedb_search_server,255, SPLT_FREEDB2_SITE);
+                  snprintf(opt->freedb_search_server,255, SPLT_FREEDB2_CGI_SITE);
                 }
               if (freedb_int_port != -1)
                 {
@@ -974,7 +973,7 @@ int parse_query_arg(Options *opt, char *query)
                     }
                   else
                     {
-                      snprintf(opt->freedb_get_server,255, SPLT_FREEDB2_SITE);
+                      snprintf(opt->freedb_get_server,255, SPLT_FREEDB2_CGI_SITE);
                     }
                   if (freedb_int_port != -1)
                     {
@@ -991,6 +990,12 @@ int parse_query_arg(Options *opt, char *query)
               ambigous = SPLT_TRUE;
             }
         }
+      //if we don't have anything inside the paranthesis,
+      //ambigous
+      if (!paranthesis_has_content)
+        {
+          ambigous = SPLT_TRUE;
+        }
     }
   
   return ambigous;
@@ -1002,21 +1007,21 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
   //we find out what search and get type we have
   char search_type[30] = "";
   char get_type[30] = "";
-  if (opt->freedb_search_type == SPLT_SEARCH_TYPE_FREEDB2)
+  if (opt->freedb_search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI)
     {
-      snprintf(search_type,30,"%s","freedb2");
+      snprintf(search_type,30,"%s","cddb.cgi");
     }
   else
     {
-      snprintf(search_type,30,"%s","freedb");
+      snprintf(search_type,30,"%s","web_search");
     }
   if (opt->freedb_get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
     {
-      snprintf(get_type,30,"%s","http/cddb.cgi");
+      snprintf(get_type,30,"%s","cddb.cgi");
     }
   else
     {
-      snprintf(get_type,30,"%s","socket/cddb_protocol");
+      snprintf(get_type,30,"%s","cddb_protocol");
     }
   
   //print out infos about the servers
@@ -1051,8 +1056,9 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
   } while ((strlen(freedb_input)==0)||
            (checkstring(freedb_input)!=0));
   
-  fprintf(stdout, "\nSearching started : contacting %s on port %d ...\n",
-          opt->freedb_search_server,opt->freedb_search_port);
+  fprintf(stdout, "\nSearching from %s on port %d using %s ...\n",
+          opt->freedb_search_server,opt->freedb_search_port,
+          search_type);
   fflush(stdout);
   
   //the freedb results
@@ -1167,8 +1173,9 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
       } while ((selected_cd >= f_results->number) 
                || (selected_cd < 0));
       
-      fprintf(stdout, "\nGetting file from %s on port %d ...\n",
-              opt->freedb_get_server,opt->freedb_get_port);
+      fprintf(stdout, "\nGetting file from %s on port %d using %s ...\n",
+              opt->freedb_get_server,opt->freedb_get_port,
+              get_type);
       fflush(stdout);
       
       //here we have the selected cd in selected_cd
@@ -1335,14 +1342,14 @@ Options *new_options()
   
   //we put the default values for freedb search
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
-  opt->freedb_search_type = SPLT_SEARCH_TYPE_FREEDB2;
-  snprintf(opt->freedb_search_server,255, SPLT_FREEDB2_SITE);
-  opt->freedb_search_port = 80;
+  opt->freedb_search_type = SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI;
+  snprintf(opt->freedb_search_server,255, SPLT_FREEDB2_CGI_SITE);
+  opt->freedb_search_port = SPLT_FREEDB_CDDB_CGI_PORT;
   //we put the default values for the freedb cddb file get
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
   opt->freedb_get_type = SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI;
-  snprintf(opt->freedb_get_server,255, SPLT_FREEDB2_SITE);
-  opt->freedb_get_port = 80;
+  snprintf(opt->freedb_get_server,255, SPLT_FREEDB2_CGI_SITE);
+  opt->freedb_get_port = SPLT_FREEDB_CDDB_CGI_PORT;
   
   return opt;
 }

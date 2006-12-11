@@ -1207,7 +1207,7 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
         {
 	  //by default we put the port 80
 	  //to use it with cddb.cgi
-	  dest.port = SPLT_FREEDB_PORT1;
+	  dest.port = SPLT_FREEDB_CDDB_CGI_PORT;
         }
       else
         {
@@ -1221,7 +1221,7 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
 //search the freedb according to "search"
 //returns possible errors
 //we have possible errors in result
-//search_type can be SPLT_SEARCH_TYPE_FREEDB2
+//search_type can be SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI
 // - it is the search type to perform on the server
 //search_server is the server on which to search for,
 // if search_server == NULL, it will be freedb2.org by default
@@ -1232,6 +1232,19 @@ int splt_freedb_process_search(splt_state *state, char *search,
                                int search_type, char search_server[256],
                                int port)
 {
+  //we take the cgi path of the search_server
+  //if we have one
+  char cgi_path[256] = "";
+  if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI)
+    {
+      char *temp = strchr(search_server,'/');
+      if (temp != NULL)
+        {
+          snprintf(cgi_path,256,"%s",temp);
+          *temp = '\0';
+        }
+    }
+  
   //possible error that we will return
   int error = SPLT_FREEDB_OK;
   //socket and internet structures
@@ -1315,9 +1328,10 @@ int splt_freedb_process_search(splt_state *state, char *search,
               //                else 
               int malloc_number = 0;
               //freedb2 search
-              if (search_type == SPLT_SEARCH_TYPE_FREEDB2)
+              if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI)
                 {
-		  malloc_number = strlen(search)+strlen(SPLT_FREEDB2_SEARCH)+2;
+		  malloc_number = strlen(search)+
+                    strlen(SPLT_FREEDB2_SEARCH)+strlen(cgi_path)+3;
 		  
 		  //we allocate the memory for the query string
 		  if ((message = malloc(malloc_number)) == NULL)
@@ -1328,7 +1342,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
 		    {
 		      //we write the search query
 		      snprintf(message, malloc_number,
-			       SPLT_FREEDB2_SEARCH,search);
+			       SPLT_FREEDB2_SEARCH,cgi_path,search);
 		      
 		      //message sent
 		      if((send(fd, message, strlen(message), 0))==-1)
@@ -1417,7 +1431,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
 		{
 		  error = SPLT_FREEDB_ERROR_GETTING_INFOS;
 		  return error;
-		  /*if (search_type == SPLT_SEARCH_TYPE_FREEDB)
+		  /*if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB)
                     {
                     }*/
 		}
@@ -1434,7 +1448,6 @@ int splt_freedb_process_search(splt_state *state, char *search,
 //the disc_id i (parameter of the function)
 //we return possible error in err
 //result must be freed
-//search_type can be SPLT_SEARCH_TYPE_FREEDB2
 //cddb_get_server is the server from where we get the cddb file
 // -if it's null, we will use freedb2.org
 //the port is 80 by default, is the port where to connect to the server
@@ -1446,8 +1459,22 @@ int splt_freedb_process_search(splt_state *state, char *search,
 //
 //TODO: see when we don't have a valid port or get_type
 char *splt_freedb_get_file(splt_state *state, int i, int *error,
-                           int get_type, char cddb_get_server[256], int port)
+                           int get_type, char cddb_get_server[256], 
+                           int port)
 {
+  //we take the cgi path of the search_server
+  //if we have one
+  char cgi_path[256] = "";
+  if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
+    {
+      char *temp = strchr(cddb_get_server,'/');
+      if (temp != NULL)
+        {
+          snprintf(cgi_path,256,"%s",temp);
+          *temp = '\0';
+        }
+    }
+  
   //possible error that we will return
   *error = SPLT_FREEDB_FILE_OK;
   //the freedb file that we will return
@@ -1523,7 +1550,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 	  if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
 	    {
 	      malloc_number = strlen(cd_category)+strlen(cd_id)+
-		strlen(SPLT_FREEDB_CDDB_CGI_GET_FILE);
+		strlen(SPLT_FREEDB_CDDB_CGI_GET_FILE)+
+                strlen(cgi_path);
 	    }
 	}
       message = malloc(malloc_number);
@@ -1532,8 +1560,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 	  //CDDB protocol (usually port 8880)
 	  if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
 	    {
-	      snprintf(message, malloc_number,
-		       SPLT_FREEDB_GET_FILE, cd_category, cd_id);
+	      snprintf(message, malloc_number, SPLT_FREEDB_GET_FILE,
+                       cd_category, cd_id);
 	      
 	      //open socket
 	      if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
@@ -1618,7 +1646,15 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 				if ((strncmp(buffer,"50",2) == 0)
 				    || (strncmp(buffer,"40",2) == 0))
 				  {
-				    *error = SPLT_FREEDB_ERROR_SITE;
+                                    //if "No such CD entry in database"
+                                    if (strncmp(buffer,"401",3) == 0)
+                                      {
+                                        *error = SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE;
+                                      }
+                                    else
+                                      {
+                                        *error = SPLT_FREEDB_ERROR_SITE;
+                                      }
 				    goto bloc_end;
 				  }
 			      }
@@ -1705,7 +1741,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 	      if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
 		{
 		  snprintf(message, malloc_number,
-			   SPLT_FREEDB_CDDB_CGI_GET_FILE, cd_category, cd_id);
+                           SPLT_FREEDB_CDDB_CGI_GET_FILE, 
+                           cgi_path, cd_category, cd_id);
 		  
 		  //open socket
 		  if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
@@ -1756,7 +1793,15 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
                                       if ((strncmp(buffer,"50",2) == 0)
                                           || (strncmp(buffer,"40",2) == 0))
                                         {
-                                          *error = SPLT_FREEDB_ERROR_SITE;
+                                          //if "No such CD entry in database"
+                                          if (strncmp(buffer,"401",3) == 0)
+                                            {
+                                              *error = SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE;
+                                            }
+                                          else
+                                            {
+                                              *error = SPLT_FREEDB_ERROR_SITE;
+                                            }
                                           goto bloc_end2;
                                         }
                                     }

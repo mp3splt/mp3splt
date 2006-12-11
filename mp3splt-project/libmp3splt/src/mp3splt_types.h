@@ -831,9 +831,13 @@ typedef struct {
  */
 #define SPLT_CANNOT_WRITE_CDDB_FILE -117
 /**
+ * @brief Error, freedb : No such CD entry in database
+ */
+#define SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE -118
+/**
  * @brief Error, freedb : site returned an unknown error
  */
-#define SPLT_FREEDB_ERROR_SITE -118
+#define SPLT_FREEDB_ERROR_SITE -119
 
 //wrap
 /**
@@ -1249,14 +1253,27 @@ typedef enum {
   SPLT_OPT_PARAM_MIN_LENGTH
 } splt_float_options;
 
+/**
+ * Freedb constants
+ */
+
 /*
  * freedb2 search type
  */
-#define SPLT_SEARCH_TYPE_FREEDB2 1
+#define SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI 1
 /*
  * freedb search type
  */
-#define SPLT_SEARCH_TYPE_FREEDB 2
+#define SPLT_FREEDB_SEARCH_TYPE_CDDB 2
+
+/**
+ * default port
+ */
+#define SPLT_FREEDB_CDDB_CGI_PORT 80
+/**
+ * default port
+ */
+#define SPLT_FREEDB_CDDB_PORT 8880
 
 /*
  * freedb get file type
@@ -1273,8 +1290,8 @@ typedef enum {
 /**
  * urls of freedb2.org and freedb.org
  */
-#define SPLT_FREEDB_SITE "freedb.org"
-#define SPLT_FREEDB2_SITE "freedb2.org"
+#define SPLT_FREEDB_CGI_SITE "freedb.org/~cddb/cddb.cgi"
+#define SPLT_FREEDB2_CGI_SITE "freedb2.org/~cddb/cddb.cgi"
 
 //package information constants
 #ifndef SPLT_PACKAGE_NAME
