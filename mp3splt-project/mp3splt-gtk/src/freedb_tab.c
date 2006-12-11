@@ -348,7 +348,7 @@ void freedb_search(gpointer *data)
   
   search_results = 
     mp3splt_get_freedb_search(the_state, freedb_search, &err,
-                              SPLT_SEARCH_TYPE_FREEDB2, "\0",-1);
+                              SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0",-1);
   
   //lock gtk
   gdk_threads_enter();
