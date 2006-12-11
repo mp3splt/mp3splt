@@ -1265,7 +1265,17 @@ typedef enum {
  * freedb search type
  */
 #define SPLT_FREEDB_SEARCH_TYPE_CDDB 2
-
+/*
+ * freedb get file type
+ * we retrieve the file by using the cddb.cgi script
+ * (usually on port 80)
+ */
+#define SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI 3
+/*
+ * we retrieve the file by using the freedb cddb protocol 
+ * (usually on port 8880)
+ */
+#define SPLT_FREEDB_GET_FILE_TYPE_CDDB 4
 /**
  * default port
  */
@@ -1274,19 +1284,6 @@ typedef enum {
  * default port
  */
 #define SPLT_FREEDB_CDDB_PORT 8880
-
-/*
- * freedb get file type
- * we retrieve the file by using the cddb.cgi script
- * (usually on port 80)
- */
-#define SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI 1
-/*
- * we retrieve the file by using the freedb cddb protocol 
- * (usually on port 8880)
- */
-#define SPLT_FREEDB_GET_FILE_TYPE_CDDB 2
-
 /**
  * urls of freedb2.org and freedb.org
  */

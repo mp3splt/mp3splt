@@ -1123,8 +1123,8 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 //}
 
 static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
-		char search_server[256],
-		int port)
+                                      char search_server[256],
+                                      int port)
 {
 	//char line[270];
 	//char *ptr;
@@ -1194,8 +1194,8 @@ static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
       //we put the hostname
       if (strlen(search_server) == 0)
         {
-	  //by default we use freedb2.org
-	  strncpy(dest.hostname, SPLT_FREEDB2_SITE, 255);
+          //by default we use freedb2.org
+          strncpy(dest.hostname, SPLT_FREEDB2_SITE, 255);
         }
       else
         {
@@ -1240,9 +1240,14 @@ int splt_freedb_process_search(splt_state *state, char *search,
       char *temp = strchr(search_server,'/');
       if (temp != NULL)
         {
-          snprintf(cgi_path,256,"%s",temp);
+          snprintf(cgi_path,255,"%s",temp);
           *temp = '\0';
         }
+    }
+  //default cgi path
+  if (strlen(search_server) == 0)
+    {
+      snprintf(cgi_path,255,"/~cddb/cddb.cgi");
     }
   
   //possible error that we will return
@@ -1473,6 +1478,11 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
           snprintf(cgi_path,256,"%s",temp);
           *temp = '\0';
         }
+    }
+  //default cgi path
+  if (strlen(cddb_get_server) == 0)
+    {
+      snprintf(cgi_path,255,"/~cddb/cddb.cgi");
     }
   
   //possible error that we will return
