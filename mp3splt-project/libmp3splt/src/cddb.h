@@ -88,10 +88,6 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 #define SPLT_FREEDB_HELLO_PROTO "&hello=nouser+mp3splt.sf.net+"SPLT_PACKAGE_NAME"+"SPLT_PACKAGE_VERSION"&proto=5\n"
 #define SPLT_FREEDB_CDDB_CGI_GET_FILE "GET /~cddb/cddb.cgi?cmd=cddb+read+%s+%s"SPLT_FREEDB_HELLO_PROTO
 
-#define SPLT_FREEDB_SITE "freedb.org"
-
-#define SPLT_FREEDB2_SITE "freedb2.org"
-
 //the type found in the cue file
 #define SPLT_CUE_NOTHING 0
 #define SPLT_CUE_TRACK 1

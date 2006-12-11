@@ -1270,6 +1270,12 @@ typedef enum {
  */
 #define SPLT_FREEDB_GET_FILE_TYPE_CDDB 2
 
+/**
+ * urls of freedb2.org and freedb.org
+ */
+#define SPLT_FREEDB_SITE "freedb.org"
+#define SPLT_FREEDB2_SITE "freedb2.org"
+
 //package information constants
 #ifndef SPLT_PACKAGE_NAME
 /**
