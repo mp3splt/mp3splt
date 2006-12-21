@@ -88,11 +88,25 @@ typedef struct {
 //sigint_handler
 splt_state *state;
 
+//prints a message
+void print_message(char *m)
+{
+  fprintf(stdout,"%s\n",m);
+  fflush(stdout);
+}
+
+//prints a warning
+void print_warning(char *w)
+{
+  fprintf(stderr,"Warning, %s\n",w);
+  fflush(stderr);
+}
+
 //puts an error message and exists the program with error 1
 void put_error_message_exit(char *message, Options *opt,
                             splt_state *state)
 {
-  fprintf(stderr,message);
+  fprintf(stderr,"%s\n",message);
   fflush(stderr);
   //we free options
   free(opt);
@@ -111,41 +125,42 @@ void show_small_help_exit(Options *opt,splt_state *state)
   //we free left variables in the state
   mp3splt_free_state(state,&err);
   
-  fprintf(stdout,"\n");
-  fprintf (stdout, "USAGE (Please read man page for complete documentation)\n");
-  fprintf (stdout, "      mp3splt [SPLIT_MODE] [OPTIONS] FILE [BEGIN_TIME1] [TIME2] ... [END_TIME]\n");
-  fprintf (stdout, "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59. \n");
-  fprintf (stdout, "\nSPLIT_MODE\n");
-  fprintf (stdout, "\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n");
-  fprintf (stdout, " -t + TIME: to split files every fixed time len. (TIME format same as above). \n");
-  fprintf (stdout, " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n");
-  fprintf (stdout, "      .cddb or .cue file or from Internet (\"query\"). Use -a to auto-adjust.\n");
-  fprintf (stdout, " -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n");
-  fprintf (stdout, " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n");
-  fprintf (stdout, " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n");
-  fprintf (stdout, " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)\n");
-  fprintf (stdout, " -i   Count how many silence splitpoints we have with silence detection\n");
-  fprintf (stdout, "      (Use -p for arguments)\n");
-  fprintf (stdout, "\nOPTIONS\n");
-  fprintf (stdout, " -m + M3U_FILE: Creates a m3u file with the newly splitted files\n");
-  fprintf (stdout, " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n");
-  fprintf (stdout, " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n");
-  fprintf (stdout, " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n");
-  fprintf (stdout, " -o + FORMAT: output filename pattern. Can contain those variables:\n");
-  fprintf (stdout, "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n");
-  fprintf (stdout, "      @t: title tag, @n: track number tag, @f: original filename\n");
-  fprintf (stdout, " -g + TAGS_FORMAT: allows you to put custom tags "
-           "to your splitted files.\n"
-           "      Example, tags for the first splitted file and all the others like the second one : \n"
-           "       @o means that we put the original tags, before replacing artist with \"artist2\"\n\t"
-           "[@a=artist1,@t=title1]%%[@o,@a=artist2]\n");
-  fprintf (stdout, " -d + DIRNAME: to put all output files in the directory DIRNAME.\n");
-  fprintf (stdout, " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n");
-  fprintf (stdout, " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n");
-  fprintf (stdout, " -q   Quiet mode: do not prompt for anything and print less messages.\n");
-  fprintf (stdout, " -D   Debug mode: used to debug the program (by developers).\n");
+  fprintf(stdout,
+          "\n"
+          "USAGE (Please read man page for complete documentation)\n"
+          "      mp3splt [SPLIT_MODE] [OPTIONS] FILE [BEGIN_TIME1] [TIME2] ... [END_TIME]\n"
+          "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59. \n"
+          "\nSPLIT_MODE\n"
+          "\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n"
+          " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
+          " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n"
+          "      .cddb or .cue file or from Internet (\"query\"). Use -a to auto-adjust.\n"
+          " -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n"
+          " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
+          " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
+          " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)\n"
+          " -i   Count how many silence splitpoints we have with silence detection\n"
+          "      (Use -p for arguments)\n"
+          "\nOPTIONS\n"
+          " -m + M3U_FILE: Creates a m3u file with the newly splitted files\n"
+          " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
+          " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n"
+          " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
+          " -o + FORMAT: output filename pattern. Can contain those variables:\n"
+          "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
+          "      @t: title tag, @n: track number tag, @f: original filename\n"
+          " -g + TAGS_FORMAT: allows you to put custom tags "
+          "to your splitted files.\n"
+          "      Example, tags for the first splitted file and all the others like the second one : \n"
+          "       @o means that we put the original tags, before replacing artist with \"artist2\"\n\t"
+          "[@a=artist1,@t=title1]%%[@o,@a=artist2]\n"
+          " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
+          " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
+          " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
+          " -q   Quiet mode: do not prompt for anything and print less messages.\n"
+          " -D   Debug mode: used to debug the program (by developers).\n");
   fflush(stdout);
-  exit (1);
+  exit(0);
 }
 
 //removes options until offset
@@ -192,11 +207,12 @@ int parse_arg(char *arg, float *th, int *gap, int *nt,
       if ((ptr=strchr(ptr, '='))!=NULL)
         {
           if (sscanf(ptr+1, "%d", gap)==1)
-            found++;
+            {
+              found++;
+            }
           else 
             {
-              fprintf(stderr, "Warning: bad gap argument. It will be ignored!\n");
-              fflush(stderr);
+              print_warning("bad gap argument. It will be ignored!");
             }
         }
     }
@@ -205,11 +221,12 @@ int parse_arg(char *arg, float *th, int *gap, int *nt,
       if ((ptr=strchr(ptr, '='))!=NULL)
         {
           if (sscanf(ptr+1, "%f", th)==1)
-            found++;
+            {
+              found++;
+            }
           else 
             {
-              fprintf(stderr, "Warning: bad threshold argument. It will be ignored!\n");
-              fflush(stderr);
+              print_warning("bad threshold argument. It will be ignored!");
             }
         }
     }
@@ -218,11 +235,12 @@ int parse_arg(char *arg, float *th, int *gap, int *nt,
       if ((ptr=strchr(ptr, '='))!=NULL)
         {
           if (sscanf(ptr+1, "%d", nt)==1)
-            found++;
+            {
+              found++;
+            }
           else 
             {
-              fprintf(stderr, "Warning: bad tracknumber argument. It will be ignored!\n");
-              fflush(stderr);
+              print_warning("bad tracknumber argument. It will be ignored!");
             }
         }
     }
@@ -238,11 +256,12 @@ int parse_arg(char *arg, float *th, int *gap, int *nt,
       if ((ptr=strchr(ptr, '='))!=NULL)
         {
           if (sscanf(ptr+1, "%f", off)==1)
-            found++;
+            {
+              found++;
+            }
           else 
             {
-              fprintf(stderr, "Warning: bad offset argument. It will be ignored!\n");
-              fflush(stderr);
+              print_warning("bad offset argument. It will be ignored!");
             }
         }
     }
@@ -251,11 +270,12 @@ int parse_arg(char *arg, float *th, int *gap, int *nt,
       if ((ptr=strchr(ptr, '='))!=NULL)
         {
           if (sscanf(ptr+1, "%f", min)==1)
-            found++;
+            {
+              found++;
+            }
           else 
             {
-              fprintf(stderr, "Warning: bad minimum silence length argument. It will be ignored!\n");
-              fflush(stderr);
+              print_warning("bad minimum silence length argument. It will be ignored!");
             }
         }
     }
@@ -281,7 +301,7 @@ void check_args(int argc, Options *opt, splt_state *state)
               opt->e_option || opt->w_option)
             {
               put_error_message_exit("Error: can't use -k option with\
- -s -a -e -w -l (input must be seekable)\n",opt,state);
+ -s -a -e -w -l (input must be seekable)",opt,state);
             }
         }
       
@@ -295,7 +315,7 @@ void check_args(int argc, Options *opt, splt_state *state)
               opt->o_option || opt->n_option ||
               opt->g_option)
             {
-              put_error_message_exit("Error: usage is 'mp3splt -w FILE...'\n",opt,state);
+              put_error_message_exit("Error: usage is 'mp3splt -w FILE...'",opt,state);
             }
         }
       
@@ -309,7 +329,7 @@ void check_args(int argc, Options *opt, splt_state *state)
               opt->a_option || opt->g_option ||
               opt->n_option)
             {
-              put_error_message_exit("Error: usage is 'mp3splt -l FILE...'\n",opt,state);
+              put_error_message_exit("Error: usage is 'mp3splt -l FILE...'",opt,state);
             }
         }
       
@@ -321,7 +341,7 @@ void check_args(int argc, Options *opt, splt_state *state)
               opt->p_option || opt->f_option ||
               opt->n_option)
             {
-              put_error_message_exit("Error: usage is 'mp3splt -e FILE...'\n",opt,state);
+              put_error_message_exit("Error: usage is 'mp3splt -e FILE...'",opt,state);
             }
         }
       
@@ -337,7 +357,7 @@ void check_args(int argc, Options *opt, splt_state *state)
               opt->g_option)
             {
               put_error_message_exit("Error: usage is 'mp3splt -c \
-SOURCE FILE...''\n",opt,state);
+SOURCE FILE...''",opt,state);
             }
         }
       
@@ -347,7 +367,7 @@ SOURCE FILE...''\n",opt,state);
           if (opt->s_option || opt->e_option ||
               opt->p_option)
             {
-              put_error_message_exit("Error: usage is 'mp3splt -t TIME FILE...'\n",opt,state);
+              put_error_message_exit("Error: usage is 'mp3splt -t TIME FILE...'",opt,state);
             }
         }
       
@@ -357,7 +377,7 @@ SOURCE FILE...''\n",opt,state);
           if (opt->e_option || opt->a_option)
             {
               put_error_message_exit("Error: usage is 'mp3splt \
--s [-p th=THRESHOLD,nt=NUMBER,off=OFFSET,rm] FILE...'\n",opt,state);
+-s [-p th=THRESHOLD,nt=NUMBER,off=OFFSET,rm] FILE...'",opt,state);
             }
         }
       
@@ -373,7 +393,7 @@ SOURCE FILE...''\n",opt,state);
               && !opt->i_option)
             {
               put_error_message_exit("Error : cannot use '-p' without \
-'-a' or '-s'\n",opt,state);
+'-a' or '-s'",opt,state);
             }
         }
       
@@ -414,234 +434,224 @@ SOURCE FILE...''\n",opt,state);
 }
 
 //prints a confirmation error that comes from the library
-void print_confirmation_error(int conf)
+void print_confirmation_error(int conf, Options *opt, 
+                              splt_state *state)
 {
   switch (conf)
     {
     case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
-      fprintf(stdout," file splitted, splitpoints bigger than length \n");
+      print_message(" file splitted, splitpoints bigger than length");
       break;
     case SPLT_OK_SPLITTED_OGG :
-      fprintf(stdout," ogg splitted \n");
+      print_message(" ogg splitted");
       break;
     case SPLT_OK_SPLITTED_MP3 :
-      fprintf(stdout," mp3 splitted \n");
+      print_message(" mp3 splitted");
       break;
     case SPLT_OK_SPLITTED_OGG_EOF :
-      fprintf(stdout," ogg splitted \n");
+      print_message(" ogg splitted");
       break;
     case SPLT_OK_SPLITTED_MP3_EOF :
-      fprintf(stdout," mp3 splitted \n");
+      print_message(" mp3 splitted");
       break;
     case SPLT_OK :
-      //fprintf(stderr," bug in the program, please report it \n");
+      //fprintf(stderr," bug in the program, please report it");
       break;
     case SPLT_ERROR_SPLITPOINTS :
-      fprintf(stderr," error: not enough splitpoints (<2) \n");
+      put_error_message_exit(" error: not enough splitpoints (<2)",opt,state);
       break;
     case SPLT_ERROR_CANNOT_OPEN_FILE :
-      fprintf(stderr," error: cannot open file \n");
+      put_error_message_exit(" error: cannot open file",opt,state);
       break;
     case SPLT_ERROR_INVALID_MP3 :
-      fprintf(stderr," error: invalid mp3 file or libmp3splt "
-              "compiled without ogg support\n");
+      put_error_message_exit(" error: invalid mp3 file or libmp3splt "
+                             "compiled without ogg support",opt,state);
       break;
     case SPLT_ERROR_INVALID_OGG :
-      fprintf(stderr," error: invalid ogg file \n");
+      put_error_message_exit(" error: invalid ogg file",opt,state);
       break;
     case SPLT_ERROR_EQUAL_SPLITPOINTS :
-      fprintf(stderr," error: equal splitpoints \n");
+      put_error_message_exit(" error: equal splitpoints",opt,state);
       break;
     case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER :
-      fprintf(stderr," error: splitpoints not in order \n");
+      put_error_message_exit(" error: splitpoints not in order",opt,state);
       break;
     case SPLT_ERROR_NEGATIVE_SPLITPOINT :
-      fprintf(stderr," error: negative splitpoint \n");
+      put_error_message_exit(" error: negative splitpoint",opt,state);
       break;
     case SPLT_ERROR_INCORRECT_PATH :
-      fprintf(stderr," error: incorrect destination folder \n");
+      put_error_message_exit(" error: incorrect destination folder",opt,state);
       break;
     case SPLT_ERROR_INVALID_FORMAT :
-      fprintf(stderr," error: invalid format \n");
+      put_error_message_exit(" error: invalid format",opt,state);
       break;
     case SPLT_FREEDB_OK :
-      fprintf(stdout," freedb search processed ok \n");
+      print_message(" freedb search processed ok");
       break;
     case SPLT_FREEDB_FILE_OK :
-      fprintf(stdout," freedb processed ok \n");
+      print_message(" freedb processed ok");
       break;
     case SPLT_FREEDB_CDDB_OK :
-      fprintf(stdout," cddb file processed ok \n");
+      print_message(" cddb file processed ok");
       break;
     case SPLT_FREEDB_CUE_OK :
-      fprintf(stdout," cue file processed ok \n");
+      print_message(" cue file processed ok");
       break;
     case SPLT_FREEDB_ERROR_INITIALISE_SOCKET :
-      fprintf(stderr," error: cannot initialise socket \n");
+      put_error_message_exit(" error: cannot initialise socket",opt,state);
       break;
     case SPLT_FREEDB_ERROR_CANNOT_GET_HOST :
-      fprintf(stderr," error: cannot get host by name \n");
+      put_error_message_exit(" error: cannot get host by name",opt,state);
       break;
     case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET :
-      fprintf(stderr," error: cannot open socket \n");
+      put_error_message_exit(" error: cannot open socket",opt,state);
       break;
     case SPLT_FREEDB_ERROR_CANNOT_CONNECT :
-      fprintf(stderr," error: cannot connect to host \n");
+      put_error_message_exit(" error: cannot connect to host",opt,state);
       break;
     case SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE :
-      fprintf(stderr," error: cannot send message to host \n");
+      put_error_message_exit(" error: cannot send message to host",opt,state);
       break;
     case SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER :
-      fprintf(stderr," error: invalid server answer \n");
+      put_error_message_exit(" error: invalid server answer",opt,state);
       break;
     case SPLT_FREEDB_ERROR_SITE_201 :
-      fprintf(stderr," error: error 201 while connecting"
-              " to site \n");
+      put_error_message_exit(" error: error 201 while connecting"
+                             " to site",opt,state);
       break;
     case SPLT_FREEDB_ERROR_SITE_200 :
-      fprintf(stderr," error: error 200 while connecting"
-              " to site \n");
+      put_error_message_exit(" error: error 200 while connecting"
+                             " to site",opt,state);
       break;
     case SPLT_FREEDB_ERROR_SITE :
-      fprintf(stderr," freedb error: unknown error from the website \n");
+      put_error_message_exit(" freedb error: unknown error from the website",opt,state);
       break;
     case SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE :
-      fprintf(stderr," freedb error: No such CD entry in database \n");
+      put_error_message_exit(" freedb error: No such CD entry in database",opt,state);
       break;
     case SPLT_FREEDB_ERROR_BAD_COMMUNICATION :
-      fprintf(stderr," error: bad communication with site \n");
+      put_error_message_exit(" error: bad communication with site",opt,state);
       break;
     case SPLT_FREEDB_ERROR_GETTING_INFOS :
-      fprintf(stderr," error: could not get infos from site \n");
+      put_error_message_exit(" error: could not get infos from site",opt,state);
       break;
     case SPLT_FREEDB_NO_CD_FOUND :
-      fprintf(stdout," no cd found for this search \n");
+      print_message(" no cd found for this search");
       break;
     case SPLT_FREEDB_MAX_CD_REACHED :
-      fprintf(stdout," maximum number of found"
-              " CD reached \n");
+      print_message(" maximum number of found"
+                    " CD reached");
       break;
     case SPLT_CUE_ERROR_CANNOT_OPEN_FILE_READING:
-      fprintf(stderr," cue error: cannot read "
-              " file\n");
+      put_error_message_exit(" cue error: cannot read file",opt,state);
       break;
     case SPLT_CDDB_ERROR_CANNOT_OPEN_FILE_READING:
-      fprintf(stderr," cddb error: cannot read "
-              "file\n");
+      put_error_message_exit(" cddb error: cannot read file",opt,state);
       break;
     case SPLT_INVALID_CUE_FILE:
-      fprintf(stderr," cue error: invalid "
-              "cue file\n");
+      put_error_message_exit(" cue error: invalid cue file",opt,state);
       break;
     case SPLT_INVALID_CDDB_FILE:
-      fprintf(stderr," cddb error: invalid "
-              "cddb file\n");
+      put_error_message_exit(" cddb error: invalid cddb file",opt,state);
       break;
     case SPLT_SILENCE_OK:
-      fprintf(stdout," silence split ok \n");
+      print_message(" silence split ok");
       break;
     case SPLT_ERROR_CANNOT_SYNC_OGG:
-      fprintf(stderr," sync error: cannot sync ogg files \n");
+      put_error_message_exit(" sync error: cannot sync ogg files",opt,state);
       break;
     case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
-      fprintf(stderr," error: incompatible options \n");
+      put_error_message_exit(" error: incompatible options",opt,state);
       break;
     case SPLT_ERROR_SILENCE:
-      fprintf(stderr," error for the silence split \n");
+      put_error_message_exit(" error for the silence split",opt,state);
       break;
     case SPLT_MP3_SYNC_OK:
-      fprintf(stdout," mp3 error mode ok \n");
+      print_message(" mp3 error mode ok");
       break;
     case SPLT_MP3_ERR_SYNC:
-      fprintf(stderr," error: mp3 sync \n");
+      put_error_message_exit(" error: mp3 sync",opt,state);
       break;
     case SPLT_MP3_ERR_NO_SYNC_FOUND:
-      fprintf(stdout," no sync errors found                 \n");
+      print_message(" no sync errors found                ");
       break;
     case SPLT_MP3_ERR_TOO_MANY_SYNC_ERR:
-      fprintf(stderr," sync error: too many sync errors \n");
+      put_error_message_exit(" sync error: too many sync errors",opt,state);
       break;
     case SPLT_DEWRAP_OK:
-      fprintf(stdout," wrap split ok \n");
+      print_message(" wrap split ok");
       break;
     case SPLT_DEWRAP_ERR_FILE_LENGTH:
-      fprintf(stderr," wrap error: file length \n");
+      put_error_message_exit(" wrap error: file length",opt,state);
       break;
     case SPLT_DEWRAP_ERR_VERSION_OLD:
-      fprintf(stderr," wrap error: version too old \n");
+      put_error_message_exit(" wrap error: version too old",opt,state);
       break;
     case SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX:
-      fprintf(stderr," wrap error: no file or bad "
-              "index\n");
+      put_error_message_exit(" wrap error: no file or bad index",opt,state);
       break;
     case SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE:
-      fprintf(stderr," wrap error: file damaged or "
-              "incomplete\n");
+      put_error_message_exit(" wrap error: file damaged or incomplete",opt,state);
       break;
     case SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED:
-      fprintf(stderr," wrap error: maybe not a wrapped"
-              " file or wrap file damaged\n"); 
+      put_error_message_exit(" wrap error: maybe not a wrapped"
+                             " file or wrap file damaged",opt,state); 
       break;
     case SPLT_TIME_SPLIT_OK:
-      fprintf(stdout," time split ok \n"); 
+      print_message(" time split ok");
       break;
     case SPLT_ERROR_INPUT_OUTPUT_SAME_FILE:
-      fprintf(stderr," error: input and output are the same file \n"); 
+      put_error_message_exit(" error: input and output are the same file",opt,state); 
       break;
     case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
-      fprintf(stdout," no silence splitpoints found     \n");
+      print_message(" no silence splitpoints found    ");
       break;
     case SPLT_ERROR_CANNOT_ALLOCATE_MEMORY:
-      fprintf(stderr," error: unable to allocate"
-              " memory \n");
+      put_error_message_exit(" error: unable to allocate"
+                             " memory",opt,state);
       break;
     case SPLT_MP3_MIGHT_BE_VBR:
-      fprintf(stdout," warning: mp3 might be VBR,"
-              " use frame mode \n");
+      print_message(" warning: mp3 might be VBR,"
+                    " use frame mode");
       break;
     case SPLT_ERROR_CANNOT_OPEN_DEST_FILE:
-      fprintf(stderr," error: cannot open"
-              " destination file \n");
+      put_error_message_exit(" error: cannot open"
+                             " destination file",opt,state);
       break;
     case SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE:
-      fprintf(stderr," error: cannot write"
-              " to output file \n");
+      put_error_message_exit(" error: cannot write"
+                             " to output file",opt,state);
       break;
     case SPLT_ERROR_WHILE_READING_FILE:
-      fprintf(stderr," error: cannot read"
-              " file \n");
+      put_error_message_exit(" error: cannot read file",opt,state);
       break;
     case SPLT_ERROR_SEEKING_FILE:
-      fprintf(stderr," error: cannot seek"
-              " file \n");
+      put_error_message_exit(" error: cannot seek file",opt,state);
       break;
     case SPLT_ERROR_BEGIN_OUT_OF_FILE:
-      fprintf(stderr," error: begin point out"
-              " of file \n");
+      put_error_message_exit(" error: begin point out of file",opt,state);
       break;
     case SPLT_ERROR_INEXISTENT_FILE:
-      fprintf(stderr," error: inexistent file \n");
+      put_error_message_exit(" error: inexistent file",opt,state);
       break;
     case SPLT_SPLIT_CANCELLED:
-      fprintf(stdout," split process cancelled \n");
+      print_message(" split process cancelled");
       break;
     case SPLT_ERROR_WRAP_NOT_IMPLEMENTED:
-      fprintf(stderr," wrap error: wrap not implemented for this format\n");
+      put_error_message_exit(" wrap error: wrap not implemented for this format",opt,state);
       break;
     case SPLT_OUTPUT_FORMAT_OK:
-    
+      
       break;
     case SPLT_OUTPUT_FORMAT_ERROR:
-      fprintf(stdout," warning: output format error \n");
+      print_message(" warning: output format error");
       break;
     case SPLT_OUTPUT_FORMAT_AMBIGUOUS:
-      fprintf(stdout," warning: output format ambiguous\n");
+      print_message(" warning: output format ambiguous");
       break;
     default:
       break;
     }
-  fflush(stdout);
-  fflush(stderr);
 }
 
 //converts string s in hundredth
@@ -650,7 +660,7 @@ void print_confirmation_error(int conf)
 long c_hundreths (char *s)
 {
   long minutes=0, seconds=0, hundredths=0, i;
-  long hun;
+  long hun = -1;
   
   for(i=0; i<strlen(s); i++) // Some checking
     {
@@ -827,7 +837,7 @@ int parse_query_arg(Options *opt, char *query)
             {
               snprintf(freedb_server,end_pos-cur_pos+1,"%s",cur_pos);
               freedb_server[end_pos-cur_pos+1] = '\0';
-              if (*(end_pos+1) == ']' || *(end_pos)+1 == ',')
+              if (*(end_pos+1) == ']' || *(end_pos+1) == ',')
                 {
                   cur_pos = end_pos+1;
                 }
@@ -880,8 +890,7 @@ int parse_query_arg(Options *opt, char *query)
                   else
                     {
                       freedb_int_port = SPLT_FREEDB_CDDB_CGI_PORT;
-                      fprintf(stderr, "Warning, found non digits in port ! (switched to default)\n");
-                      fflush(stderr);
+                      print_warning("found non digits in port ! (switched to default)");
                     }
                 }
             }
@@ -905,8 +914,7 @@ int parse_query_arg(Options *opt, char *query)
                         }
                       else
                         {
-                          fprintf(stderr, "Warning, unknown search type ! (switched to default)\n");
-                          fflush(stderr);
+                          print_warning("unknown search type ! (switched to default)");
                         }
                     }
                 }
@@ -922,13 +930,11 @@ int parse_query_arg(Options *opt, char *query)
                       if (strcmp(freedb_type,"web_search") == 0)
                         {
                           freedb_int_type = SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI;
-                          fprintf(stderr, "Warning, freedb web search not implemented yet ! (switched to default)\n");
-                          fflush(stderr);
+                          print_warning("freedb web search not implemented yet ! (switched to default)");
                         }
                       else
                         {
-                          fprintf(stderr, "Warning, unknown get type ! (switched to default)\n");
-                          fflush(stderr);
+                          print_warning("unknown get type ! (switched to default)");
                         }
                     }
                 }
@@ -1033,8 +1039,7 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
   fflush(stdout);
   
   //freedb search
-  fprintf (stdout, "CDDB QUERY. Insert album and artist informations to find cd.\n");
-  fflush(stdout);
+  print_message("CDDB QUERY. Insert album and artist informations to find cd.");
   
   char freedb_input[1024];
   short first_time = SPLT_TRUE;
@@ -1042,8 +1047,7 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
   do {
     if (!first_time)
       {
-        fprintf(stdout, "\nPlease search something ...\n");
-        fflush(stdout);
+        print_message("\nPlease search something ...");
       }
     
     fprintf (stdout, "\n\t____________________________________________________________]");
@@ -1068,13 +1072,12 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
                                         err, opt->freedb_search_type,
                                         opt->freedb_search_server,
                                         opt->freedb_search_port);
-  print_confirmation_error(*err);
+  print_confirmation_error(*err,opt,state);
   
   if (*err >= 0)
     {
       //print the searched informations
-      fprintf (stdout, "List of found cd:\n");
-      fflush(stdout);
+      print_message("List of found cd:");
       
       int cd_number = 0;
       short end = SPLT_FALSE;
@@ -1184,7 +1187,7 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
                                        opt->freedb_get_type,
                                        opt->freedb_get_server,
                                        opt->freedb_get_port);
-      print_confirmation_error(*err);
+      print_confirmation_error(*err,opt,state);
       
       //if no error
       if (*err >= 0)
@@ -1192,7 +1195,7 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
           //we get the splitpoints from the file
           mp3splt_put_cddb_splitpoints_from_file(state, MP3SPLT_CDDBFILE,
                                                  err);
-          print_confirmation_error(*err);
+          print_confirmation_error(*err,opt,state);
         }
     }
 }
@@ -1203,40 +1206,39 @@ void put_library_message(int message)
   switch (message)
     {
     case SPLT_MESS_FRAME_MODE_ENABLED:
-      fprintf(stdout," info: frame mode enabled\n");
+      print_message(" info: frame mode enabled");
       break;
     case SPLT_MESS_START_WRAP_SPLIT:
-      fprintf(stdout," info: starting wrap mode split\n");
+      print_message(" info: starting wrap mode split");
       break;
     case SPLT_MESS_START_SILENCE_SPLIT:
-      fprintf(stdout," info: starting silence mode split\n");
+      print_message(" info: starting silence mode split");
       break;
     case SPLT_MESS_START_ERROR_SPLIT:
-      fprintf(stdout," info: starting error mode split\n");
+      print_message(" info: starting error mode split");
       break;
     case SPLT_MESS_START_NORMAL_SPLIT:
-      fprintf(stdout," info: starting normal split\n");
+      print_message(" info: starting normal split");
       break;
     case SPLT_MESS_START_TIME_SPLIT:
-      fprintf(stdout," info: starting time mode split\n");
+      print_message(" info: starting time mode split");
       break;
     case SPLT_MESS_DETECTED_MP3:
-      fprintf(stdout," info: mp3 format detected\n");
+      print_message(" info: mp3 format detected");
       break;
     case SPLT_MESS_DETECTED_OGG:
-      fprintf(stdout," info: ogg format detected\n");
+      print_message(" info: ogg format detected");
       break;
     case SPLT_MESS_DETECTED_INVALID:
-      fprintf(stderr," info error: invalid format detected\n");
+      fprintf(stderr," info error: invalid format detected");
+      fflush(stderr);
       break;
     case SPLT_MESS_STOP_SPLIT:
-      fprintf(stdout,"\n info: stopping split...\n");
+      print_message("\n info: stopping split...");
       break;
     default:
       break;
     }
-  
-  fflush(stdout);
 }
 
 //prints the splitted file
@@ -1496,7 +1498,7 @@ int main (int argc, char *argv[])
           else
             {
               put_error_message_exit("Error: bad time expression for the time split.\n"
-                                     "Must be min.sec, read man page for details.\n",opt,state);
+                                     "Must be min.sec, read man page for details.",opt,state);
             }
           opt->t_option = SPLT_TRUE;
           break;
@@ -1511,7 +1513,7 @@ int main (int argc, char *argv[])
           opt->g_option = SPLT_TRUE;
           break;
         default:
-          put_error_message_exit("Read man page for complete documentation\n",opt,state);
+          put_error_message_exit("Read man page for complete documentation",opt,state);
           break;
         }
     }
@@ -1523,8 +1525,7 @@ int main (int argc, char *argv[])
       int gap = -200,nt = -200,rm = -200;
       if (parse_arg(opt->param_args,&th,&gap,&nt,&off,&rm,&min) < -1)
         {
-          fprintf(stderr,"Warning: bad argument for -p option\n");
-          fflush(stderr);
+          print_warning("bad argument for -p option");
         }
       
       //threshold
@@ -1575,7 +1576,7 @@ int main (int argc, char *argv[])
     {
       //we set our output format
       mp3splt_set_oformat(state, opt->output_format,&err);
-      print_confirmation_error(err);
+      print_confirmation_error(err,opt,state);
     }
   
   if (optind > 1)
@@ -1617,7 +1618,7 @@ int main (int argc, char *argv[])
   err = SPLT_OK;
   //we put the filename
   err = mp3splt_set_filename_to_split(state,argv[file_arg_position]);
-  print_confirmation_error(err);
+  print_confirmation_error(err,opt,state);
   
   //if error
   if (err != SPLT_OK)
@@ -1632,18 +1633,6 @@ int main (int argc, char *argv[])
   
   //here we have all the trash or the splitpoints from
   //argv[1] to argv[argc-1] and argv[0] = program_command
-  
-  //TEST
-  /*fprintf(stdout,"argc = %d\n",
-    argc);
-  
-    int kk=0;
-    for (kk=0;kk<argc;kk++)
-    {
-    fprintf(stdout,"arg %d = %s\n",kk,
-    argv[kk]);
-    }*/
-  //end TEST
   
   //just don't put incompatible options!, rtfm
   if (opt->l_option || opt->i_option || opt->c_option ||
@@ -1683,7 +1672,7 @@ int main (int argc, char *argv[])
             }
           else
             {
-              print_confirmation_error(err);
+              print_confirmation_error(err,opt,state);
             }
         }
     }
@@ -1696,13 +1685,14 @@ int main (int argc, char *argv[])
         
         int silence_number =
           mp3splt_count_silence_points(state, &err);
-        print_confirmation_error(err);
+        print_confirmation_error(err,opt,state);
             
         if (err >= 0)
           {
             fprintf(stdout,"%d silence splitpoints detected"
                     "            \n",
                     silence_number);
+            fflush(stdout);
           }
       }
     else
@@ -1719,7 +1709,7 @@ int main (int argc, char *argv[])
                 //here we get cue splitpoints
                 mp3splt_put_cue_splitpoints_from_file(state, opt->cddb_arg,
                                                       &err);
-                print_confirmation_error(err);
+                print_confirmation_error(err,opt,state);
               }
             else
               {
@@ -1730,8 +1720,7 @@ int main (int argc, char *argv[])
                     int ambigous = parse_query_arg(opt,opt->cddb_arg);
                     if (ambigous)
                       {
-                        fprintf(stderr, "Warning, freedb server format ambigous !\n");
-                        fflush(stderr);
+                        print_warning("freedb server format ambigous !");
                       }
                     do_freedb_search(opt,state,&err);
                   }
@@ -1741,7 +1730,7 @@ int main (int argc, char *argv[])
                     mp3splt_put_cddb_splitpoints_from_file(state,
                                                            opt->cddb_arg,
                                                            &err);
-                    print_confirmation_error(err);
+                    print_confirmation_error(err,opt,state);
                   }
               }
           }
@@ -1756,16 +1745,18 @@ int main (int argc, char *argv[])
                   {
                     //we put the splitpoints
                     err = mp3splt_append_splitpoint(state,
-                                                    LONG_MAX-1, NULL);
-                    print_confirmation_error(err);
+                                                    LONG_MAX, NULL);
+                    print_confirmation_error(err,opt,state);
                   }
                 else
                   {
+                    long hundr_of_seconds = c_hundreths(argv[i]);
+                    
                     //we put the splitpoints
                     err = mp3splt_append_splitpoint(state,
-                                                    c_hundreths(argv[i]), 
+                                                    hundr_of_seconds, 
                                                     NULL);
-                    print_confirmation_error(err);
+                    print_confirmation_error(err,opt,state);
                   }
               }
           }
@@ -1775,20 +1766,19 @@ int main (int argc, char *argv[])
           {
             //we set the path of split
             err = mp3splt_set_path_of_split(state, opt->dir_arg);
-            print_confirmation_error(err);
+            print_confirmation_error(err,opt,state);
             
             if (err >= 0)
               {
                 //if custom tags, we put the tags
                 if(mp3splt_put_tags_from_string(state,opt->custom_tags))
                   {
-                    fprintf(stderr, "Warning, tags format ambigous !\n");
-                    fflush(stderr);
+                    print_warning("tags format ambigous !");
                   }
                 
                 //we do the effective split
                 err = mp3splt_split(state);
-                print_confirmation_error(err);
+                print_confirmation_error(err,opt,state);
               }
           }
       }

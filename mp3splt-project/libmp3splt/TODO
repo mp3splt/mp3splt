@@ -1,3 +1,12 @@
+LIBMP3SPLT, urgent :
+***make 0001 when using @n other than time split
+***ameliorate progress bar on ogg split
+***fix ogg bugs from here : http://sourceforge.net/tracker/index.php?func=detail&aid=1078018&group_id=55130&atid=476061
+***output to STDOUT
+***do proxy
+***make more general error messages and less (if possible)
+***
+
 *custom tags with cddb&cue&freedb
 *output @a @t..@X for error mode, wrap and normal split
 

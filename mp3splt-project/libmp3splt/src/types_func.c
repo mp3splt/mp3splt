@@ -606,6 +606,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
     }
   else
     {
+      splt_u_print_debug("Negative splitpoint.. ",(double)split_value,NULL);
       error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
       return error;
     }
