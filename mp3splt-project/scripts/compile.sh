@@ -15,8 +15,6 @@ MP3SPLT_GTK_REAL_VERSION=0.4_rc1
 #the architecture where we launch the script
 HOST_ARCH="i386"
 
-#if we upload to sourceforge or not
-UPLOAD_TO_SOURCEFORGE=0
 ################## end variables to set ############
 
 #print functions
@@ -494,25 +492,6 @@ function finish_packaging()
 }
 ############# end finish packaging #####
 
-############# uploading to sourceforge.net #####
-#we put the files on the sourceforge ftp
-function upload_to_sourceforge()
-{
-    if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
-        if [[ $UPLOAD_TO_SOURCEFORGE == 1 ]]; then
-            echo
-            print_yellow "Uploading files to sourceforge.net..."
-            echo
-            
-            for a in ls $DIST_VERSION; do
-                lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous,\
-                    upload.sourceforge.net || exit 1
-            done
-        fi
-    fi
-}
-############# finish uploading to sourceforge.net #####
-
 ################################
 ############# main program #####
 ################################
@@ -564,7 +543,7 @@ openbsd_packages
 netbsd_packages
 freebsd_packages
 #i386 gnu/opensolaris packages :
-#nexenta_packages #slow
+nexenta_packages #slow
 #finish packaging
 if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
     finish_packaging $GUEST_ARCH
@@ -572,7 +551,6 @@ if [[ $GLOBAL_ARCH = $HOST_ARCH ]];then
 else
     finish_packaging $GLOBAL_ARCH
 fi
-upload_to_sourceforge
 
 #date info
 echo
