@@ -12,7 +12,7 @@ function upload_to_sourceforge()
   echo;
 
   for a in $DIR/*; do
-    lftp -e "cd /incoming;put $DIST_VERSION/$a;quit" -u anonymous,\
+    lftp -e "cd /incoming;put $a;quit" -u anonymous,\
              upload.sourceforge.net || exit 1;
   done;
 }

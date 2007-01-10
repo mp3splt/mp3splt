@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2006-11-05 22:48+0100\n"
+"POT-Creation-Date: 2006-12-21 21:10+0100\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -31,84 +31,84 @@ msgstr "Kbps"
 msgid "Khz"
 msgstr "Khz"
 
-#: src/tree_tab.c:620 src/tree_tab.c:962
+#: src/tree_tab.c:622 src/tree_tab.c:964
 msgid " error : you already have the splitpoint in table "
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:680 src/tree_tab.c:967 src/freedb_tab.c:561
+#: src/tree_tab.c:682 src/tree_tab.c:969 src/freedb_tab.c:561
 #: src/freedb_tab.c:576
 msgid "description here"
 msgstr "ici, une description"
 
-#: src/tree_tab.c:1130
+#: src/tree_tab.c:1132
 msgid "Minutes:"
 msgstr "Minutes:"
 
-#: src/tree_tab.c:1135
+#: src/tree_tab.c:1137
 msgid "Seconds:"
 msgstr "Secondes:"
 
-#: src/tree_tab.c:1141
+#: src/tree_tab.c:1143
 msgid "Hundredths:"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:1150
+#: src/tree_tab.c:1152
 msgid "_Add"
 msgstr "_Ajouter"
 
-#: src/tree_tab.c:1156
+#: src/tree_tab.c:1158
 msgid "add splitpoint"
 msgstr "ajouter un point de coupure"
 
-#: src/tree_tab.c:1160
+#: src/tree_tab.c:1162
 msgid "_Remove"
 msgstr "_Effacer"
 
-#: src/tree_tab.c:1167
+#: src/tree_tab.c:1169
 msgid "remove rows"
 msgstr "effacer les lignes"
 
-#: src/tree_tab.c:1171
+#: src/tree_tab.c:1173
 msgid "Remove all"
 msgstr "Effacer tout"
 
-#: src/tree_tab.c:1178
+#: src/tree_tab.c:1180
 msgid "remove all rows"
 msgstr "effacer toutes les lignes"
 
-#: src/tree_tab.c:1331
+#: src/tree_tab.c:1330
 msgid " finished "
 msgstr ""
 
-#: src/tree_tab.c:1340
+#: src/tree_tab.c:1339
 msgid " cannot split preview last splitpoint"
 msgstr ""
 
-#: src/tree_tab.c:1383
+#: src/tree_tab.c:1384
 msgid " cannot preview, not connected to player "
 msgstr ""
 
-#: src/tree_tab.c:1414 src/splitted_files.c:120
+#: src/tree_tab.c:1415 src/splitted_files.c:120
 msgid "Filename"
 msgstr "Nom fichier"
 
-#: src/tree_tab.c:1429
+#: src/tree_tab.c:1430
 #, fuzzy
 msgid "Secs"
 msgstr "Secondes"
 
-#: src/tree_tab.c:1444
+#: src/tree_tab.c:1445
 #, fuzzy
 msgid "Mins"
 msgstr "Minutes"
 
-#: src/tree_tab.c:1459
+#: src/tree_tab.c:1460
 #, fuzzy
 msgid "Hundr"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:1469
+#: src/tree_tab.c:1470
 #, fuzzy
 msgid "Length"
 msgstr "anglais"
@@ -292,113 +292,117 @@ msgstr ""
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/player_tab.c:626
+#: src/player_tab.c:633
 msgid "previous"
 msgstr "précédent"
 
-#: src/player_tab.c:639
+#: src/player_tab.c:646
 msgid "play"
 msgstr "lecture"
 
-#: src/player_tab.c:651
+#: src/player_tab.c:658
 msgid "pause"
 msgstr "pause"
 
-#: src/player_tab.c:664
+#: src/player_tab.c:671
 msgid "stop"
 msgstr "stop"
 
-#: src/player_tab.c:677
+#: src/player_tab.c:684
 msgid "next"
 msgstr "suivant"
 
-#: src/player_tab.c:681
+#: src/player_tab.c:688
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/player_tab.c:690
+#: src/player_tab.c:697
 msgid "add splitpoint from player"
 msgstr "ajouter point de coupure du lecteur"
 
-#: src/player_tab.c:694
+#: src/player_tab.c:701
 msgid "_Connect    "
 msgstr "_Connecter    "
 
-#: src/player_tab.c:701 src/main_win.c:361 src/main_win.c:408
+#: src/player_tab.c:708 src/main_win.c:361 src/main_win.c:408
 msgid "connect to player"
 msgstr "se connecter au lecteur"
 
-#: src/player_tab.c:704
+#: src/player_tab.c:711
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:711 src/main_win.c:351
+#: src/player_tab.c:718 src/main_win.c:351
 msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
-#: src/player_tab.c:2215
+#: src/player_tab.c:2222
 msgid " left button on splitpoint selects it, right button erases it"
 msgstr ""
 
-#: src/player_tab.c:2228
+#: src/player_tab.c:2235
 msgid ""
 " left button + move changes song position \n"
 " right button + move changes zoom"
 msgstr ""
 
-#: src/player_tab.c:2242
+#: src/player_tab.c:2249
 #, fuzzy
 msgid " left button on splitpoint + move changes splitpoint position"
 msgstr "mettre les points cue au tableau des points de coupure"
 
-#: src/player_tab.c:2252
+#: src/player_tab.c:2259
 msgid " right button on splitpoint play preview"
 msgstr ""
 
-#: src/player_tab.c:2447
+#: src/player_tab.c:2454
 msgid " quick preview... "
 msgstr ""
 
-#: src/player_tab.c:2913
+#: src/player_tab.c:2920
 msgid " quick preview finished, song paused"
 msgstr ""
 
-#: src/player_tab.c:3038
+#: src/player_tab.c:3045
 msgid "Choose File"
 msgstr "Choisir fichier"
 
-#: src/player_tab.c:3051
+#: src/player_tab.c:3058
 msgid "mp3 and ogg files(*.mp3 *.ogg)"
 msgstr "fichiers mp3 et ogg(*.mp3 *.ogg)"
 
-#: src/player_tab.c:3057
+#: src/player_tab.c:3064
 msgid "mp3 files(*.mp3)"
 msgstr "fichiers mp3(*.mp3)"
 
-#: src/player_tab.c:3062
+#: src/player_tab.c:3069
 msgid "ogg files(*.ogg)"
 msgstr "fichiers ogg(*.ogg)"
 
-#: src/player_tab.c:3071
+#: src/player_tab.c:3078
 msgid "cddb files(*.cddb)"
 msgstr "fichier cddb(*.cddb)"
 
-#: src/player_tab.c:3081
+#: src/player_tab.c:3088
 msgid "cue files(*.cue)"
 msgstr "fichiers cue(*.cue)"
 
-#: src/player_tab.c:3089
+#: src/player_tab.c:3096
 #, fuzzy
 msgid "All Files"
 msgstr "Fichier"
 
-#: src/player_tab.c:3189
+#: src/player_tab.c:3257
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:3198
+#: src/player_tab.c:3266
 msgid "select file"
 msgstr "sélection fichier"
+
+#: src/player_tab.c:3273
+msgid "_Fix ogg stream"
+msgstr ""
 
 #: src/main_win.c:125
 msgid " info: stopping the split process before exiting"
