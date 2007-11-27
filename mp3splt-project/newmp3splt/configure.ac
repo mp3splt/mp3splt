@@ -11,6 +11,11 @@ AM_CONFIG_HEADER([config.h])
 # Checks for programs.
 AC_PROG_CC
 
+CFLAGS="$CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
+-I../libmp3splt/include/libmp3splt/ -I../../libmp3splt/include/libmp3splt/"
+LDFLAGS="$LDFLAGS -L../libmp3splt/src -L../libmp3splt/src/.libs \
+-L../../libmp3splt/src/.libs/ -L../../libmp3splt/src/"
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -34,7 +39,7 @@ case $host in
 		;;
 	*mingw*)
 		HOST="Mingw"
-		LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32"
+		LIBS="$LIBS libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32"
 		;;
 	*solaris*)
 		HOST="Solaris"
@@ -42,7 +47,7 @@ case $host in
 		;;
 	*)
 		HOST="Other"
-                LIBS="$LIBS"
+    LIBS="$LIBS"
 #		LIBS="-lmad -logg -lvorbis -lvorbisfile -lm"
 		;;
 esac
