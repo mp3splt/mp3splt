@@ -36,8 +36,8 @@ echo -n "Running aclocal... " \
 && autoheader && echo "done" \
 && echo -n "Running autoconf... " \
 && autoconf && echo "done" \
-&& echo -n "Running automake... " && echo "done" \
-&& automake -a -c
+&& echo -n "Running automake... " \
+&& automake -a -c && echo "done"
 
 #we format the language files
 echo -n "Formatting language files with msgfmt... " && \

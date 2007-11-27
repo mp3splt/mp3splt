@@ -18,6 +18,11 @@ AM_GNU_GETTEXT_VERSION(0.13.1)
 # Checks for libraries.
 AM_PATH_GTK_2_0(2.6.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.6.0))
 
+CFLAGS="$CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
+-I../libmp3splt/include/libmp3splt/ -I../../libmp3splt/include/libmp3splt/"
+LDFLAGS="$LDFLAGS -L../libmp3splt/src -L../libmp3splt/src/.libs \
+-L../../libmp3splt/src/.libs/ -L../../libmp3splt/src/"
+
 #we check for mingw
 AC_MSG_CHECKING(the host)
 case $host in
