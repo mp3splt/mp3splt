@@ -25,5 +25,9 @@ echo -n "Running aclocal... " \
 && autoheader && echo "done" \
 && echo -n "Running autoconf... " \
 && autoconf && echo "done" \
-&& echo -n "Running automake... " && echo "done" \
-&& automake -a -c
+&& echo -n "Running automake... " \
+&& automake -a -c && echo "done" \
+&& echo -n "Running libtoolize... " \
+&& libtoolize -c 2>/dev/null && echo "done"
+
+

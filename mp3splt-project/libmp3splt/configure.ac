@@ -21,6 +21,8 @@ AM_CONFIG_HEADER(config.h)
 
 AM_PROG_LIBTOOL
 
+CFLAGS="$CFLAGS -I../include/libmp3splt"
+
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
