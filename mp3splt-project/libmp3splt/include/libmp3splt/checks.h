@@ -34,17 +34,17 @@
 /* splitpoints checks */
 
 void splt_check_splitpts_inf_song_length(splt_state *state,
-                                         int *error);
+    int *error);
 void splt_check_if_splitpoints_in_order(splt_state *state,
-                                        int *error);
+    int *error);
 
 /****************************/
 /* path check */
 
 void splt_check_if_new_filename_path_correct(char *new_filename_path,
-                                             int *error);
+    int *error);
 char *splt_check_put_dir_of_cur_song(char *filename,
-                                     char *the_filename_path);
+    char *the_filename_path);
 
 /****************************/
 /* options check */
@@ -58,4 +58,4 @@ void splt_check_set_correct_options(splt_state *state);
 void splt_check_if_mp3_or_ogg(splt_state *state, int *error);
 int splt_check_is_file(char *fname);
 int splt_check_is_the_same_file(char *file1, char *file2,
-                                int *error);
+    int *error);

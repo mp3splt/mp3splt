@@ -41,7 +41,7 @@ double splt_u_convertfromdB(float input);
 /* utils for file infos */
 
 int splt_u_getword (FILE *in, off_t offset, int mode,
-                    unsigned long *headw);
+    unsigned long *headw);
 off_t splt_u_flength (FILE *in);
 
 /*****************************************************/
@@ -53,7 +53,7 @@ char *splt_u_cut_spaces_from_begin(char *c);
 char *splt_u_get_real_name(char *filename);
 void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error);
 char *splt_u_get_fname_with_path_and_extension(splt_state *state,
-                                               int *error);
+    int *error);
 
 /****************************/
 /* utils for splitpoints */
@@ -75,7 +75,7 @@ int splt_u_put_output_format_filename(splt_state *state);
 /* utils for debug and errors */
 
 void splt_u_error(int error_type, const char *function,
-                  int arg_int, char *arg_char);
+    int arg_int, char *arg_char);
 
 /****************************/
 /* utils miscellaneous */

@@ -435,12 +435,12 @@ typedef struct {
   off_t bytes;
   int first;
   unsigned long headw;
-  
+
   //see the mp3 structure
   struct splt_mp3 mp3file;
   //see the ssplit structure
   struct splt_ssplit *silence_list;
-  
+
   //used internally, libmad structures
   struct mad_stream stream;
   struct mad_frame frame;
@@ -582,17 +582,17 @@ typedef struct {
   //SPLT_OPTION_MP3_ERROR_MODE
   //SPLT_OPTION_TIME_MODE
   splt_split_mode_options split_mode;
-  
+
   //might be :
   //SPLT_TAGS_ORIGINAL_FILE - write tags from original file
   //SPLT_NO_TAGS - does not write any tags
   //SPLT_CURRENT_TAGS - tags issued from the cddb or cue for example
   //or that we set manually with the functions
   splt_tags_options tags;
-  
+
   //defines the output filenames
   splt_output_filenames_options output_filenames;
-  
+
   //frame mode (mp3 only). Process all frames, seeking split positions
   //by counting frames and not with bitrate guessing.
   short option_mp3_frame_mode;
@@ -605,7 +605,7 @@ typedef struct {
   //WARNING!
   //if you don't know what this means, set it to FALSE
   short option_input_not_seekable;
-  
+
   //PARAMETERS---------------------------------------
   //PARAMETERS for option_auto_adjust and option_silence_mode :
   //the sound level to be considered silence
@@ -616,7 +616,7 @@ typedef struct {
   //of cutpoint in silence time.0 is the begin of silence, and 1 the
   //end;default is 0.8. 
   float parameter_offset;
-  
+
   //PARAMETERS for option_silence_mode :
   //the desired number of tracks
   //(positive integer number of tracks to be splitted;by default all
@@ -628,13 +628,13 @@ typedef struct {
   float parameter_minimum_length;
   //allows you to remove the silence between splitted tracks
   short parameter_remove_silence;
-  
+
   //PARAMETERS for option_auto_adjust :
   //the gap value around splitpoint to search for silence
   //(positive integer for the time to decode before and after
   //splitpoint;default gap is 30 seconds)
   int parameter_gap;
-  
+
   //if we set all the tags like the x one,
   //tags_like_x_one must be different of -1
   int tags_after_x_like_x_one;
@@ -684,13 +684,13 @@ typedef struct {
   char *fname_to_split;
   //where the splitted file will be splitted
   char *path_of_split;
-  
+
   //if this is non null, we write a m3u from the splitted files
   char *m3u_filename;
-  
+
   //tags of the original file to split
   splt_tags original_tags;
-  
+
   //options for the split
   splt_options options;
   //split related
@@ -703,10 +703,10 @@ typedef struct {
   splt_syncerrors *serrors;
   //freedb related
   splt_freedb fdb;
-  
+
   //internal options
   splt_internal iopts;
-  
+
   //file format states, mp3,ogg..
   splt_mp3_state *mstate;
 #ifndef NO_OGG

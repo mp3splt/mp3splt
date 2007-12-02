@@ -53,9 +53,9 @@
 /* splt utils */
 
 splt_state *splt_s_get_mp3_info(splt_state *state, FILE *file_input,
-                                int *error);
+    int *error);
 splt_state *splt_s_get_ogg_info(splt_state *state, FILE *file_input,
-                                int *error);
+    int *error);
 void splt_s_put_total_time(splt_state *state, int *error);
 
 /**********************************/
@@ -72,9 +72,9 @@ void splt_s_time_split(splt_state *state, int *error);
 /* splt silence detection and split */
 
 int splt_s_set_silence_splitpoints(splt_state *state,
-                                   int write_tracks, int *error);
+    int write_tracks, int *error);
 void splt_s_write_silence_tracks(int found, splt_state *state,
-                                 int *error);
+    int *error);
 void splt_s_silence_split(splt_state *state, int *error);
 
 /****************************/

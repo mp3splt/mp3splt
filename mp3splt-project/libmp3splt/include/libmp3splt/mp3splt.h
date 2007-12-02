@@ -89,11 +89,11 @@ int mp3splt_set_m3u_filename(splt_state *state, char *filename);
 /* Set callback functions           */
 
 int mp3splt_set_message_function(splt_state *state,
-                                 void (*put_message)(int));
+    void (*put_message)(int));
 int mp3splt_set_splitted_filename_function(splt_state *state,
-                                           void (*file_cb)(char *,int));
+    void (*file_cb)(char *,int));
 int mp3splt_set_progress_function(splt_state *state,
-                                  void (*progress_cb)(splt_progress *p_bar));
+    void (*progress_cb)(splt_progress *p_bar));
 
 /************************************/
 /* Splitpoints                      */
@@ -101,53 +101,53 @@ int mp3splt_set_progress_function(splt_state *state,
 //puts a splitpoint
 //returns possible error
 int mp3splt_append_splitpoint(splt_state *state,
-                              long split_value, char *name);
+    long split_value, char *name);
 
 //returns a pointer to all the current splitpoints
 splt_point *mp3splt_get_splitpoints(splt_state *state,
-                                    int *splitpoints_number,
-                                    int *error);
+    int *splitpoints_number,
+    int *error);
 
 //erase all the splitpoints
 void mp3splt_erase_all_splitpoints(splt_state *state,
-                                   int *error);
+    int *error);
 
 /************************************/
 /* Tags                             */
 
 //puts a tag
 int mp3splt_append_tags(splt_state *state, 
-                        char *title, char *artist,
-                        char *album, char *performer,
-                        char *year, char *comment,
-                        int track, unsigned char genre);
+    char *title, char *artist,
+    char *album, char *performer,
+    char *year, char *comment,
+    int track, unsigned char genre);
 
 //returns a pointer to all the current tags
 splt_tags *mp3splt_get_tags(splt_state *state,
-                            int *tags_number,
-                            int *error);
+    int *tags_number,
+    int *error);
 
 //puts tags from a string
 int mp3splt_put_tags_from_string(splt_state *state, 
-                                 char *tags);
+    char *tags);
 
 void mp3splt_erase_all_tags(splt_state *state,
-                            int *error);
+    int *error);
 
 /************************************/
 /* Options                          */
 
 int mp3splt_set_int_option(splt_state *state, int option_name,
-                           int value);
+    int value);
 
 int mp3splt_set_float_option(splt_state *state, int option_name,
-                              float value);
+    float value);
 
 int mp3splt_get_int_option(splt_state *state, int option_name,
-                           int *error);
+    int *error);
 
 float mp3splt_get_float_option(splt_state *state, int option_name,
-                               int *error);
+    int *error);
 
 /************************************/
 /* Split functions                  */
@@ -159,20 +159,20 @@ int mp3splt_split(splt_state *state);
 //cancel split function
 //returns possible error
 void mp3splt_stop_split(splt_state *state,
-                        int *error);
+    int *error);
 
 /************************************/
 /*    Cddb and Cue functions        */
 
 //get the cue splitpoints from a file and puts them in the state
 void mp3splt_put_cue_splitpoints_from_file(splt_state *state,
-                                           char *cue_file,
-                                           int *error);
+    char *cue_file,
+    int *error);
 
 //read cddb splitpoints from file and puts them in the state
 void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
-                                            char *cddb_file,
-                                            int *error);
+    char *cddb_file,
+    int *error);
 
 /************************************/
 /*    Freedb functions              */
@@ -182,24 +182,24 @@ void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
  * @brief test
  */
 splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
-                                               char *searched_string,
-                                               int *error,
-                                               int search_type,
-                                               char search_server[256],
-                                               int port);
+    char *searched_string,
+    int *error,
+    int search_type,
+    char search_server[256],
+    int port);
 
 void mp3splt_write_freedb_file_result(splt_state *state,
-                                      int disc_id,
-                                      char *cddb_file,
-                                      int *error,
-				      int cddb_get_type,
-                                      char cddb_get_server[256],
-                                      int port);
+    int disc_id,
+    char *cddb_file,
+    int *error,
+    int cddb_get_type,
+    char cddb_get_server[256],
+    int port);
 
 //string s is freed, call with strdup for example
 void mp3splt_set_oformat(splt_state *state,
-                         char *format_string,
-                         int *error);
+    char *format_string,
+    int *error);
 
 /************************************/
 /* Other utilities                  */
@@ -210,11 +210,11 @@ void mp3splt_get_version(char *version);
 //returns the number of syncerrors
 //puts possible error in error variable
 splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
-                                        int *error);
+    int *error);
 
 //returns the wrapped files found
 splt_wrap *mp3splt_get_wrap_files(splt_state *state,
-                                  int *error);
+    int *error);
 
 //count how many silence splitpoints we have with silence detection
 int mp3splt_count_silence_points(splt_state *state, int *error);

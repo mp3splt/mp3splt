@@ -41,7 +41,7 @@ void splt_ogg_state_free (splt_state *state);
 /* ogg tags */
 
 void splt_ogg_get_original_tags(char *filename,
-                                splt_state *state, int *tag_error);
+    splt_state *state, int *tag_error);
 
 void splt_ogg_put_tags(splt_state *state, int *error);
 
@@ -49,21 +49,21 @@ void splt_ogg_put_tags(splt_state *state, int *error);
 /* ogg infos */
 
 splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate, 
-                              int *error);
+    int *error);
 
 /****************************/
 /* ogg split */
 
 void splt_ogg_split(char *filename, splt_state *state, double
-                    sec_begin, double sec_end, short seekable, 
-                    short adjust, float threshold, int *error);
+    sec_begin, double sec_end, short seekable, 
+    short adjust, float threshold, int *error);
 
 /****************************/
 /* ogg scan for silence */
 
 int splt_ogg_scan_silence (splt_state *sp_state, short seconds, 
-                           float threshold, float min, 
-                           short output, ogg_page *page, ogg_int64_t granpos);
+    float threshold, float min, 
+    short output, ogg_page *page, ogg_int64_t granpos);
 
 #define SPLT_OGG_BUFSIZE 4096
 

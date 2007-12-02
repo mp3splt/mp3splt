@@ -56,26 +56,26 @@ long splt_u_convert_hundreths (char *s)
 {
   long minutes=0, seconds=0, hundredths=0, i;
   long hun;
-  
+
   for(i=0; i<strlen(s); i++) // Some checking
     if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!='.'))
       return -1;
-  
+
   if (sscanf(s, "%ld.%ld.%ld", &minutes, &seconds, &hundredths)<2)
     return -1;
-  
+
   if ((minutes < 0) || (seconds < 0) || (hundredths < 0))
     return -1;
 
   if ((seconds > 59) || (hundredths > 99))
     return -1;
-  
+
   if (s[strlen(s)-2]=='.')
     hundredths *= 10;
-  
+
   hun = hundredths;
   hun += (minutes*60 + seconds) * 100;
-  
+
   return hun;
 }
 
@@ -84,14 +84,14 @@ float splt_u_convert2dB(double input)
 {
   float level;
   if (input<=0.0)
-    {
-      level = -96.0;
-    }
+  {
+    level = -96.0;
+  }
   else 
-    {
-      level = 20 * log10(input);
-    }
-  
+  {
+    level = 20 * log10(input);
+  }
+
   return level;
 }
 
@@ -100,14 +100,14 @@ double splt_u_convertfromdB(float input)
 {
   double amp;
   if (input<-96.0)
-    {
-      amp = 0.0;
-    }
+  {
+    amp = 0.0;
+  }
   else 
-    {
-      amp = pow(10.0, input/20.0);
-    }
-  
+  {
+    amp = pow(10.0, input/20.0);
+  }
+
   return amp;
 }
 
@@ -117,26 +117,26 @@ double splt_u_convertfromdB(float input)
 //returns -1 is the file is damaged
 //0 otherwise
 int splt_u_getword (FILE *in, off_t offset, int mode, 
-                    unsigned long *headw)
+    unsigned long *headw)
 {
   int i;
   *headw = 0;
-  
+
   if (fseeko(in, offset, mode)==-1)
+  {
+    return -1;
+  }
+
+  for (i=0; i<4; i++)
+  {
+    if (feof(in)) 
     {
       return -1;
     }
-  
-  for (i=0; i<4; i++)
-    {
-      if (feof(in)) 
-        {
-          return -1;
-        }
-      *headw = *headw << 8;
-      *headw |= fgetc(in);
-    }
-  
+    *headw = *headw << 8;
+    *headw |= fgetc(in);
+  }
+
   return 0;
 }
 
@@ -145,9 +145,9 @@ off_t splt_u_flength (FILE *in)
 {
   struct stat info;
   if (fstat(fileno(in), &info)==-1)
-    {
-      return -1;
-    }
+  {
+    return -1;
+  }
   return info.st_size;
 }
 
@@ -161,30 +161,30 @@ char *splt_u_cleanstring (char *s)
   char *copy;
   copy = strdup(s);
   for (i=0; i<=strlen(copy); i++)
+  {
+    if ((copy[i]!='\\')&&(copy[i]!='/')&&(copy[i]!='?')
+        &&(copy[i]!='*')&&(copy[i]!=':')&&(copy[i]!='"')
+        &&(copy[i]!='>')&&(copy[i]!='<')&&(copy[i]!='|')
+        &&(copy[i]!='\r'))
     {
-      if ((copy[i]!='\\')&&(copy[i]!='/')&&(copy[i]!='?')
-          &&(copy[i]!='*')&&(copy[i]!=':')&&(copy[i]!='"')
-          &&(copy[i]!='>')&&(copy[i]!='<')&&(copy[i]!='|')
-          &&(copy[i]!='\r'))
-        {
-          s[j++] = copy[i];
-        }
+      s[j++] = copy[i];
     }
+  }
   free(copy);
-  
+
   // Trim string. I will never stop to be surprised about cddb strings dirtiness! ;-)
   for (i=strlen(s)-1; i >= 0; i--) 
+  {
+    if (s[i]==' ')
     {
-      if (s[i]==' ')
-        {
-          s[i] = '\0';
-        }
-      else 
-        {
-          break;
-        }
+      s[i] = '\0';
     }
-  
+    else 
+    {
+      break;
+    }
+  }
+
   return s;
 }
 
@@ -193,13 +193,13 @@ char *splt_u_cut_spaces_from_begin(char *c)
 {
   //cut spaces from the begin
   if (*c == ' ')
+  {
+    while (*c == ' ')
     {
-      while (*c == ' ')
-        {
-          c++;
-        }
+      c++;
     }
-  
+  }
+
   return c;
 }
 
@@ -208,11 +208,11 @@ char *splt_u_cut_spaces_at_the_end(char *c)
 {
   //we cut spaces at the end
   while (*c == ' ')
-    {
-      *c = '\0';
-      c--;
-    }
-  
+  {
+    *c = '\0';
+    c--;
+  }
+
   return c;
 }
 
@@ -221,11 +221,11 @@ char *splt_u_get_real_name(char *filename)
 {
   char *c = NULL;
   while ((c = strchr(filename, SPLT_DIRCHAR))
-         !=NULL)
-    {
-      filename = c + 1;
-    }
-  
+      !=NULL)
+  {
+    filename = c + 1;
+  }
+
   return filename;
 }
 
@@ -237,119 +237,119 @@ char *splt_u_get_real_name(char *filename)
 //error is the possible error
 //result must be freed
 static char *splt_u_get_mins_secs_filename(char *filename, 
-                                           splt_state *state,
-                                           long split_begin,
-                                           long split_end,
-                                           int i, int *error)
+    splt_state *state,
+    long split_begin,
+    long split_end,
+    int i, int *error)
 {
   int number_of_splits = 0;
   splt_point *points = 
     splt_t_get_splitpoints(state, &number_of_splits);
-  
+
   //calculating minutes and seconds to modify filename
   char mins_char[16], secs_char[16], hundr_secs_char[16],
-    mins_char2[16], secs_char2[16], hundr_secs_char2[16];
-  
+       mins_char2[16], secs_char2[16], hundr_secs_char2[16];
+
   char *fname = NULL, *fname2 = NULL;
   int fname2_malloc_number = 0,fname_malloc_number = 0;
-  
+
   fname2_malloc_number = fname_malloc_number = 
     strlen(filename) + 256;
-  
+
   if((fname = calloc(fname_malloc_number*sizeof(char),1))
-     != NULL)
+      != NULL)
+  {
+    if((fname2 = calloc(fname2_malloc_number*sizeof(char),1))
+        != NULL)
     {
-      if((fname2 = calloc(fname2_malloc_number*sizeof(char),1))
-         != NULL)
+      //hundreds of seconds
+      snprintf(hundr_secs_char,16, "%ld", split_begin % 100);
+      snprintf(hundr_secs_char2,16, "%ld", split_end % 100);
+      //transform to seconds
+      split_begin = split_begin / 100;
+      split_end = split_end / 100;
+      //calculating seconds
+      snprintf(secs_char,16, "%ld", split_begin % 60);
+      snprintf(secs_char2,16, "%ld", split_end % 60);
+      //calculating minutes
+      snprintf(mins_char,16, "%ld", split_begin / 60);
+      snprintf(mins_char2,16, "%ld", split_end / 60);
+
+      //if we have this splitpoint
+      if (splt_t_splitpoint_exists(state, i))
+      {
+        if (points[i].name != NULL)
         {
-          //hundreds of seconds
-          snprintf(hundr_secs_char,16, "%ld", split_begin % 100);
-          snprintf(hundr_secs_char2,16, "%ld", split_end % 100);
-          //transform to seconds
-          split_begin = split_begin / 100;
-          split_end = split_end / 100;
-          //calculating seconds
-          snprintf(secs_char,16, "%ld", split_begin % 60);
-          snprintf(secs_char2,16, "%ld", split_end % 60);
-          //calculating minutes
-          snprintf(mins_char,16, "%ld", split_begin / 60);
-          snprintf(mins_char2,16, "%ld", split_end / 60);
-          
-          //if we have this splitpoint
-          if (splt_t_splitpoint_exists(state, i))
+          char temp[3];
+          //transform " " to "\ "
+          int j;
+          for (j = 0; j < strlen(points[i].name); j++)
+          {
+            if ((state->split.points[i].name[j] == ' '))
             {
-              if (points[i].name != NULL)
-                {
-                  char temp[3];
-                  //transform " " to "\ "
-                  int j;
-                  for (j = 0; j < strlen(points[i].name); j++)
-                    {
-                      if ((state->split.points[i].name[j] == ' '))
-                        {
-                          strcat(fname, " ");
-                        }
-                      else
-			{
-			  if ((state->split.points[i].name[j] == '\\') ||
-			      (state->split.points[i].name[j] == '/'))
-			    {
-			      strcat(fname, "-");
-			    }
-			  else
-			    {
-			      snprintf(temp,2,"%c", state->split.points[i].name[j]);
-			      strcat(fname,temp);
-			    }
-			}
-                    }
-                }
-              
-              //if fn[i] is "", we put the same name as the
-              //original file
-              if ((points[i].name == NULL)
-                  || (strcmp(points[i].name,"") == 0))
-                {
-                  snprintf(fname,strlen(filename),"%s", filename);
-                  //we cut the extension of the original file
-		  char *temp = strrchr(fname,'.');
-		  *temp='\0';
-                }
+              strcat(fname, " ");
             }
-          else
+            else
             {
-              splt_u_error(SPLT_IERROR_INT,__func__, i, NULL);
+              if ((state->split.points[i].name[j] == '\\') ||
+                  (state->split.points[i].name[j] == '/'))
+              {
+                strcat(fname, "-");
+              }
+              else
+              {
+                snprintf(temp,2,"%c", state->split.points[i].name[j]);
+                strcat(fname,temp);
+              }
             }
-          
-          snprintf(fname2,fname2_malloc_number,
-                   "%s_%sm_%ss_%sh__%sm_%ss_%sh", 
-                   fname, mins_char, secs_char, hundr_secs_char,
-                   mins_char2, secs_char2,hundr_secs_char2);
-          
-          //put the extension according to the file type
-          if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-            {
-              strcat(fname2, SPLT_MP3EXT);
-            }
-#ifndef NO_OGG
-          else 
-            {
-              strcat(fname2, SPLT_OGGEXT);
-            }
-#endif
+          }
         }
+
+        //if fn[i] is "", we put the same name as the
+        //original file
+        if ((points[i].name == NULL)
+            || (strcmp(points[i].name,"") == 0))
+        {
+          snprintf(fname,strlen(filename),"%s", filename);
+          //we cut the extension of the original file
+          char *temp = strrchr(fname,'.');
+          *temp='\0';
+        }
+      }
       else
-        {
-          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-      //freeing memory
-      free(fname);
+      {
+        splt_u_error(SPLT_IERROR_INT,__func__, i, NULL);
+      }
+
+      snprintf(fname2,fname2_malloc_number,
+          "%s_%sm_%ss_%sh__%sm_%ss_%sh", 
+          fname, mins_char, secs_char, hundr_secs_char,
+          mins_char2, secs_char2,hundr_secs_char2);
+
+      //put the extension according to the file type
+      if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
+      {
+        strcat(fname2, SPLT_MP3EXT);
+      }
+#ifndef NO_OGG
+      else 
+      {
+        strcat(fname2, SPLT_OGGEXT);
+      }
+#endif
     }
-  else
+    else
     {
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
-  
+    //freeing memory
+    free(fname);
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+
   return fname2;
 }
 
@@ -365,128 +365,128 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
     splt_t_get_splitpoint_value(state, current_split+1, &get_error);
   char *filename = splt_t_get_filename_to_split(state);
   char *filename2 = strdup(filename);
-  
+
   //filename of the new created file
   char *fname = NULL;
-  
+
   //get the filename without the path
   char *filename3 = strdup(splt_u_get_real_name(filename2));
   fname = splt_u_get_mins_secs_filename(filename3, state,
-                                        split_begin, split_end,
-                                        current_split,error);
+      split_begin, split_end,
+      current_split,error);
   //free memory
   if (filename2)
-    {
-      free(filename2);
-    }
+  {
+    free(filename2);
+  }
   if (filename3)
-    {
-      free(filename3);
-    }
-  
+  {
+    free(filename3);
+  }
+
   if ((*error >= 0) && (get_error == SPLT_OK))
-    {
-      //we cut the extension
-      char *fname2 = strdup(fname);
-      fname2[strlen(fname2)-4]='\0';
-      //we put the filename in the state
-      splt_t_set_splitpoint_name(state, current_split, fname2);
-      free(fname2);
-    }
+  {
+    //we cut the extension
+    char *fname2 = strdup(fname);
+    fname2[strlen(fname2)-4]='\0';
+    //we put the filename in the state
+    splt_t_set_splitpoint_name(state, current_split, fname2);
+    free(fname2);
+  }
   else
     //if error, put NULL ?
+  {
+    //we put the name in the state
+    int change_error = SPLT_OK;
+    change_error = splt_t_set_splitpoint_name(state,current_split,NULL);
+    if (change_error != SPLT_OK)
     {
-      //we put the name in the state
-      int change_error = SPLT_OK;
-      change_error = splt_t_set_splitpoint_name(state,current_split,NULL);
-      if (change_error != SPLT_OK)
-        {
-          *error = change_error;
-        }
+      *error = change_error;
     }
-  
+  }
+
   free(fname);
 }
 
 //the result must be freed
 //returns the new_filename_path + filename + extension
 char *splt_u_get_fname_with_path_and_extension(splt_state *state,
-                                               int *error)
+    int *error)
 {
   char *output_fname_with_path = NULL;
   char *new_filename_path = splt_t_get_new_filename_path(state);
   int current_split = splt_t_get_current_split(state);
   char *output_fname = splt_t_get_splitpoint_name(state, current_split,
-                                                  error);
+      error);
   int malloc_number = strlen(output_fname)+
     strlen(new_filename_path) + 10;
   int file_format = splt_t_get_file_format(state);
-  
+
   if ((output_fname_with_path = malloc(malloc_number)) != NULL)
+  {
+    //we put the full output filename (with the path)
+    //construct full filename with path
+    switch (file_format) 
     {
-      //we put the full output filename (with the path)
-      //construct full filename with path
-      switch (file_format) 
+      case SPLT_MP3_FORMAT:
+        if (strcmp(new_filename_path,"") == 0)
         {
-        case SPLT_MP3_FORMAT:
-          if (strcmp(new_filename_path,"") == 0)
-            {
-              snprintf(output_fname_with_path, malloc_number,
-                       "%s"SPLT_MP3EXT,output_fname);
-            }
-          else
-            {
-              snprintf(output_fname_with_path, malloc_number,
-                       "%s%c%s"SPLT_MP3EXT,new_filename_path,
-                       SPLT_DIRCHAR, output_fname);
-            }
-          break;
-        case SPLT_OGG_FORMAT:
-          if (strcmp(new_filename_path,"") == 0)
-            {
-              snprintf(output_fname_with_path, malloc_number,
-                       "%s"SPLT_OGGEXT,output_fname);
-            }
-          else
-            {
-              snprintf(output_fname_with_path, malloc_number,
-                       "%s%c%s"SPLT_OGGEXT,new_filename_path,
-                       SPLT_DIRCHAR, output_fname);
-            }
-          break;
-        default:
-          *error = SPLT_ERROR_INVALID_FORMAT;
-          break;
+          snprintf(output_fname_with_path, malloc_number,
+              "%s"SPLT_MP3EXT,output_fname);
         }
+        else
+        {
+          snprintf(output_fname_with_path, malloc_number,
+              "%s%c%s"SPLT_MP3EXT,new_filename_path,
+              SPLT_DIRCHAR, output_fname);
+        }
+        break;
+      case SPLT_OGG_FORMAT:
+        if (strcmp(new_filename_path,"") == 0)
+        {
+          snprintf(output_fname_with_path, malloc_number,
+              "%s"SPLT_OGGEXT,output_fname);
+        }
+        else
+        {
+          snprintf(output_fname_with_path, malloc_number,
+              "%s%c%s"SPLT_OGGEXT,new_filename_path,
+              SPLT_DIRCHAR, output_fname);
+        }
+        break;
+      default:
+        *error = SPLT_ERROR_INVALID_FORMAT;
+        break;
     }
+  }
   else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
-  
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
   char *filename = splt_t_get_filename_to_split(state);
-  
+
   //if the output file exists
   if (splt_check_is_file(output_fname_with_path))
+  {
+    //if input and output are the same file
+    if (splt_check_is_the_same_file(filename,output_fname_with_path,
+          error))
     {
-      //if input and output are the same file
-      if (splt_check_is_the_same_file(filename,output_fname_with_path,
-                                      error))
-        {
-          *error = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
-        }
-      else
-        {
-          //if no error from the check_is_the_same..
-          if (*error >= 0)
-            {
-              //TODO
-              //warning that a file already exists
-            }
-        }
+      *error = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
     }
-  
+    else
+    {
+      //if no error from the check_is_the_same..
+      if (*error >= 0)
+      {
+        //TODO
+        //warning that a file already exists
+      }
+    }
+  }
+
   return output_fname_with_path;
 }
 
@@ -497,34 +497,34 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
 int splt_u_cut_splitpoint_extension(splt_state *state, int index)
 {
   int change_error = SPLT_OK;
-  
+
   if (splt_t_splitpoint_exists(state,index))
+  {
+    int get_error = SPLT_OK;
+    char *temp_name =
+      splt_t_get_splitpoint_name(state,index,&get_error);
+
+    if (get_error != SPLT_OK)
     {
-      int get_error = SPLT_OK;
-      char *temp_name =
-        splt_t_get_splitpoint_name(state,index,&get_error);
-      
-      if (get_error != SPLT_OK)
-        {
-          return get_error;
-        }
-      else
-        {
-          char *new_name = strdup(temp_name);
-          if (new_name == NULL)
-            {
-              return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-            }
-          else
-            {
-              new_name[strlen(new_name)-4] = '\0';
-              change_error = splt_t_set_splitpoint_name(state,index,
-                                                        new_name);
-              free(new_name);
-            }
-        }
+      return get_error;
     }
-  
+    else
+    {
+      char *new_name = strdup(temp_name);
+      if (new_name == NULL)
+      {
+        return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      }
+      else
+      {
+        new_name[strlen(new_name)-4] = '\0';
+        change_error = splt_t_set_splitpoint_name(state,index,
+            new_name);
+        free(new_name);
+      }
+    }
+  }
+
   return change_error;
 }
 
@@ -533,24 +533,24 @@ int splt_u_cut_splitpoint_extension(splt_state *state, int index)
 void splt_u_order_splitpoints(splt_state *state, int len)
 {
   long temp = 0;
-  
+
   int err = SPLT_OK;
-  
+
   int i, j;
   float key;
   for (j=1; j < len; j++)
+  {
+    key = splt_t_get_splitpoint_value(state,j,&err);
+    i = j -1;
+    while ((i >= 0) && 
+        (splt_t_get_splitpoint_value(state,i,&err) > key))
     {
-      key = splt_t_get_splitpoint_value(state,j,&err);
-      i = j -1;
-      while ((i >= 0) && 
-             (splt_t_get_splitpoint_value(state,i,&err) > key))
-        {
-          temp = splt_t_get_splitpoint_value(state,i,&err);
-          splt_t_set_splitpoint_value(state,i+1,temp);
-          i--;
-        }
-      splt_t_set_splitpoint_value(state,i+1,key);
+      temp = splt_t_get_splitpoint_value(state,i,&err);
+      splt_t_set_splitpoint_value(state,i+1,temp);
+      i--;
     }
+    splt_t_set_splitpoint_value(state,i+1,key);
+  }
 }
 
 /****************************/
@@ -558,62 +558,62 @@ void splt_u_order_splitpoints(splt_state *state, int len)
 
 //parse the word, returns a allocated string with the recognised word
 char *splt_u_parse_tag_word(char *cur_pos, char *end_paranthesis,
-                            int *ambigous)
+    int *ambigous)
 {
   char *word = NULL;
   char *word_end = NULL;
   char *word_end2 = NULL;
   char *equal_sign = NULL;
   if ((word_end = strchr(cur_pos,',')))
+  {
+    if ((word_end2 = strchr(cur_pos,']')) < word_end)
     {
-      if ((word_end2 = strchr(cur_pos,']')) < word_end)
-        {
-          word_end = word_end2;
-          if ((strchr(word_end+1,']') && !strchr(word_end+1,'['))
-              || (strchr(word_end+1,']') < strchr(word_end+1,'[')))
-            {
-              *ambigous = SPLT_TRUE;
-            }
-        }
-      
-      if (*word_end == ',')
-        {
-          if (*(word_end+1) != '@')
-            {
-              *ambigous = SPLT_TRUE;
-            }
-        }
+      word_end = word_end2;
+      if ((strchr(word_end+1,']') && !strchr(word_end+1,'['))
+          || (strchr(word_end+1,']') < strchr(word_end+1,'[')))
+      {
+        *ambigous = SPLT_TRUE;
+      }
     }
+
+    if (*word_end == ',')
+    {
+      if (*(word_end+1) != '@')
+      {
+        *ambigous = SPLT_TRUE;
+      }
+    }
+  }
   else
-    {
-      word_end = strchr(cur_pos,']');
-    }
-  
+  {
+    word_end = strchr(cur_pos,']');
+  }
+
   if (word_end <= end_paranthesis)
+  {
+    if (*(cur_pos+1) == '=')
     {
-      if (*(cur_pos+1) == '=')
-        {
-          equal_sign = cur_pos+1;
-          int string_length = word_end-(equal_sign+1);
-          if (string_length > 0)
-            {
-              word = malloc(string_length*sizeof(char));
-              memcpy(word,equal_sign+1,string_length);
-              word[string_length] = '\0';
-            }
-          else
-            {
-              *ambigous = SPLT_TRUE;
-            }
-        }
+      equal_sign = cur_pos+1;
+      int string_length = word_end-(equal_sign+1);
+      if (string_length > 0)
+      {
+        word = malloc(string_length*sizeof(char));
+        memcpy(word,equal_sign+1,string_length);
+        word[string_length] = '\0';
+      }
       else
-        {
-          *ambigous = SPLT_TRUE;
-        }
+      {
+        *ambigous = SPLT_TRUE;
+      }
     }
-  
+    else
+    {
+      *ambigous = SPLT_TRUE;
+    }
+  }
+
   cur_pos = word_end;
-  
+
   return word;
 }
 
@@ -622,317 +622,317 @@ char *splt_u_parse_tag_word(char *cur_pos, char *end_paranthesis,
 int splt_u_put_tags_from_string(splt_state *state, char *tags)
 {
   if (tags != NULL)
+  {
+    char *cur_pos = NULL;
+    int all_tags = SPLT_FALSE;
+
+    cur_pos = tags;
+
+    int ambigous = SPLT_FALSE;
+    char *end_paranthesis = NULL;
+    //we search for tags
+    if (!strchr(cur_pos,'['))
     {
-      char *cur_pos = NULL;
-      int all_tags = SPLT_FALSE;
-      
-      cur_pos = tags;
-      
-      int ambigous = SPLT_FALSE;
-      char *end_paranthesis = NULL;
-      //we search for tags
-      if (!strchr(cur_pos,'['))
+      ambigous = SPLT_TRUE;
+    }
+
+    int tags_appended = 0;
+    while((cur_pos = strchr(cur_pos,'[')))
+    {
+      //if we set the tags for all the files
+      if (cur_pos != tags)
+      {
+        //if we have % before [
+        if (*(cur_pos-1) == '%')
+        {
+          splt_t_set_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X,
+              tags_appended);
+          all_tags = SPLT_TRUE;
+        }
+      }
+
+      char *title = NULL;
+      char *artist = NULL;
+      char *album = NULL;
+      char *performer = NULL;
+      char *year = NULL;
+      char *comment = NULL;
+      char *tracknumber = NULL;
+      //means "other"
+      unsigned char genre = 12;
+
+      //how many we have found in one [..]  
+      short s_title = 0;
+      short s_artist = 0;
+      short s_album = 0;
+      short s_performer = 0;
+      short s_year = 0;
+      short s_comment = 0;
+      short s_tracknumber = 0;
+
+      cur_pos++;
+
+      end_paranthesis = strchr(cur_pos,']');
+      if (!end_paranthesis)
+      {
+        ambigous = SPLT_TRUE;
+      }
+      else
+      {
+        if ((*(end_paranthesis+1) != '[') &&
+            (*(end_paranthesis+1) != '%') &&
+            (*(end_paranthesis+1) != '\0'))
         {
           ambigous = SPLT_TRUE;
         }
-      
-      int tags_appended = 0;
-      while((cur_pos = strchr(cur_pos,'[')))
+      }
+
+      char *tag = NULL;
+      int original_tags = SPLT_FALSE;
+      while((tag = strchr(cur_pos-1,'@')))
+      {
+        //if the current position is superior or equal
+        if (tag >= end_paranthesis)
         {
-          //if we set the tags for all the files
-          if (cur_pos != tags)
-            {
-              //if we have % before [
-              if (*(cur_pos-1) == '%')
-                {
-                  splt_t_set_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X,
-                                        tags_appended);
-                  all_tags = SPLT_TRUE;
-                }
-            }
-          
-          char *title = NULL;
-          char *artist = NULL;
-          char *album = NULL;
-          char *performer = NULL;
-          char *year = NULL;
-          char *comment = NULL;
-          char *tracknumber = NULL;
-          //means "other"
-          unsigned char genre = 12;
-          
-          //how many we have found in one [..]  
-          short s_title = 0;
-          short s_artist = 0;
-          short s_album = 0;
-          short s_performer = 0;
-          short s_year = 0;
-          short s_comment = 0;
-          short s_tracknumber = 0;
-          
-          cur_pos++;
-          
-          end_paranthesis = strchr(cur_pos,']');
-          if (!end_paranthesis)
-            {
-              ambigous = SPLT_TRUE;
-            }
-          else
-            {
-              if ((*(end_paranthesis+1) != '[') &&
-                  (*(end_paranthesis+1) != '%') &&
-                  (*(end_paranthesis+1) != '\0'))
-                {
-                  ambigous = SPLT_TRUE;
-                }
-            }
-
-          char *tag = NULL;
-          int original_tags = SPLT_FALSE;
-          while((tag = strchr(cur_pos-1,'@')))
-            {
-              //if the current position is superior or equal
-              if (tag >= end_paranthesis)
-                {
-                  break;
-                }
-              else
-                {
-                  cur_pos = tag+1;
-                }
-              
-              char *old_pos = cur_pos;
-              //we take the artist, performer,...
-              if (*(cur_pos-1) == '@')
-                {
-                  switch (*cur_pos)
-                    {
-                    case 'o':
-                      //if we have twice @o
-                      if (original_tags)
-                        {
-                          ambigous = SPLT_TRUE;
-                        }
-                      //if we have other thing than @o, or @o]
-                      //then ambigous
-                      if ((*(cur_pos+1) != ',') &&
-                          (*(cur_pos+1) != ']'))
-                        {
-                          ambigous = SPLT_TRUE;
-                        }
-                      int error = SPLT_OK;
-                      splt_t_lock_messages(state);
-                      splt_check_if_mp3_or_ogg(state, &error);
-                      splt_t_unlock_messages(state);
-                      splt_t_get_original_tags(state, &error);
-                      splt_t_append_original_tags(state);
-                      original_tags = SPLT_TRUE;
-                      //if we have a @a,@p,.. before @n
-                      //then ambigous
-                      if ((artist != NULL) || (performer != NULL) ||
-                          (album != NULL) || (title != NULL) ||
-                          (comment != NULL) || (year != NULL) ||
-                          (tracknumber != NULL))
-                        {
-                          ambigous = SPLT_TRUE;
-                        }
-                      break;
-                    case 'a':
-                      artist =
-                        splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
-                      if (artist != NULL)
-                        {
-                          cur_pos += strlen(artist)+2;
-                          s_artist++;
-                        }
-                      else
-                        {
-                          cur_pos++;
-                        }
-                      break;
-                    case 'p':
-                      performer = 
-                        splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
-                      if (performer != NULL)
-                        {
-                          cur_pos += strlen(performer)+2;
-                          s_performer++;
-                        }
-                      else
-                        {
-                          cur_pos++;
-                        }
-                      break;
-                    case 'b':
-                      album =
-                        splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
-                      if (album != NULL)
-                        {
-                          cur_pos += strlen(album)+2;
-                          s_album++;
-                        }
-                      else
-                        {
-                          cur_pos++;
-                        }
-                      break;
-                    case 't':
-                      title =
-                        splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
-                      if (title != NULL)
-                        {
-                          cur_pos += strlen(title)+2;
-                          s_title++;
-                        }
-                      else
-                        {
-                          cur_pos++;
-                        }
-                      break;
-                    case 'c':
-                      comment =
-                        splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
-                      if (comment != NULL)
-                        {
-                          cur_pos += strlen(comment)+2;
-                          s_comment++;
-                        }
-                      else
-                        {
-                          cur_pos++;
-                        }
-                      break;
-                    case 'y':
-                      year =
-                        splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
-                      if (year != NULL)
-                        {
-                          cur_pos += strlen(year)+2;
-                          s_year++;
-                        }
-                      else
-                        {
-                          cur_pos++;
-                        }
-                      break;
-                    case 'n':
-                      tracknumber = 
-                        splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
-                      if (tracknumber != NULL)
-                        {
-                          cur_pos += strlen(tracknumber)+2;
-                          s_tracknumber++;
-                        }
-                      else
-                        {
-                          cur_pos++;
-                        }
-                      break;
-                    default:
-                      ambigous = SPLT_TRUE;
-                      break;
-                    }
-                }
-
-              if (cur_pos <= old_pos)
-                {
-                  cur_pos++;
-                }
-            }
-
-          int track = -1;
-          //we check that we really have the tracknumber as integer
-          if (tracknumber)
-            {
-              int is_number = SPLT_TRUE;
-              int i = 0;
-              for (i = 0;i < strlen(tracknumber);i++)
-                {
-                  if (!isdigit(tracknumber[i]))
-                    {
-                      is_number = SPLT_FALSE;
-                      ambigous = SPLT_TRUE;
-                    }
-                }
-              if (is_number)
-                {
-                  track = atoi(tracknumber);
-                }
-            }
-
-          if ((s_title > 1) || (s_artist > 1)
-              || (s_album > 1) || (s_performer > 1)
-              || (s_year > 1) || (s_comment > 1)
-              || (s_tracknumber > 1))
-            {
-              ambigous = SPLT_TRUE;
-            }
-          
-          //if we don't have already set the original tags,
-          //we set the tags
-          if (!original_tags)
-            {
-              if (track == -1)
-                {
-                  track = 0;
-                }
-              //we put the tags
-              splt_t_append_tags(state, title, artist,
-                                 album, performer, year, comment,
-                                 track, genre);
-            }
-          else
-            {
-              //we put the tags
-              splt_t_append_only_non_null_previous_tags(state, title, artist,
-                                                        album, performer, year, comment,
-                                                        track, genre);
-            }
-          
-          //we free the memory
-          if (title)
-            {
-              free(title);
-            }
-          if (artist)
-            {
-              free(artist);
-            }
-          if (album)
-            {
-              free(album);
-            }
-          if (performer)
-            {
-              free(performer);
-            }
-          if (year)
-            {
-              free(year);
-            }
-          if (comment)
-            {
-              free(comment);
-            }
-          if (tracknumber)
-            {
-              free(tracknumber);
-            }
-          
-          tags_appended++;
-          //if we put all tags, we break
-          if (all_tags)
-            {
-              if (*(end_paranthesis+1) != '\0')
-                {
-                  ambigous = SPLT_TRUE;
-                  break;
-                }
-            }
+          break;
+        }
+        else
+        {
+          cur_pos = tag+1;
         }
 
-      return ambigous;
+        char *old_pos = cur_pos;
+        //we take the artist, performer,...
+        if (*(cur_pos-1) == '@')
+        {
+          switch (*cur_pos)
+          {
+            case 'o':
+              //if we have twice @o
+              if (original_tags)
+              {
+                ambigous = SPLT_TRUE;
+              }
+              //if we have other thing than @o, or @o]
+              //then ambigous
+              if ((*(cur_pos+1) != ',') &&
+                  (*(cur_pos+1) != ']'))
+              {
+                ambigous = SPLT_TRUE;
+              }
+              int error = SPLT_OK;
+              splt_t_lock_messages(state);
+              splt_check_if_mp3_or_ogg(state, &error);
+              splt_t_unlock_messages(state);
+              splt_t_get_original_tags(state, &error);
+              splt_t_append_original_tags(state);
+              original_tags = SPLT_TRUE;
+              //if we have a @a,@p,.. before @n
+              //then ambigous
+              if ((artist != NULL) || (performer != NULL) ||
+                  (album != NULL) || (title != NULL) ||
+                  (comment != NULL) || (year != NULL) ||
+                  (tracknumber != NULL))
+              {
+                ambigous = SPLT_TRUE;
+              }
+              break;
+            case 'a':
+              artist =
+                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              if (artist != NULL)
+              {
+                cur_pos += strlen(artist)+2;
+                s_artist++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            case 'p':
+              performer = 
+                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              if (performer != NULL)
+              {
+                cur_pos += strlen(performer)+2;
+                s_performer++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            case 'b':
+              album =
+                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              if (album != NULL)
+              {
+                cur_pos += strlen(album)+2;
+                s_album++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            case 't':
+              title =
+                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              if (title != NULL)
+              {
+                cur_pos += strlen(title)+2;
+                s_title++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            case 'c':
+              comment =
+                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              if (comment != NULL)
+              {
+                cur_pos += strlen(comment)+2;
+                s_comment++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            case 'y':
+              year =
+                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              if (year != NULL)
+              {
+                cur_pos += strlen(year)+2;
+                s_year++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            case 'n':
+              tracknumber = 
+                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              if (tracknumber != NULL)
+              {
+                cur_pos += strlen(tracknumber)+2;
+                s_tracknumber++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            default:
+              ambigous = SPLT_TRUE;
+              break;
+          }
+        }
+
+        if (cur_pos <= old_pos)
+        {
+          cur_pos++;
+        }
+      }
+
+      int track = -1;
+      //we check that we really have the tracknumber as integer
+      if (tracknumber)
+      {
+        int is_number = SPLT_TRUE;
+        int i = 0;
+        for (i = 0;i < strlen(tracknumber);i++)
+        {
+          if (!isdigit(tracknumber[i]))
+          {
+            is_number = SPLT_FALSE;
+            ambigous = SPLT_TRUE;
+          }
+        }
+        if (is_number)
+        {
+          track = atoi(tracknumber);
+        }
+      }
+
+      if ((s_title > 1) || (s_artist > 1)
+          || (s_album > 1) || (s_performer > 1)
+          || (s_year > 1) || (s_comment > 1)
+          || (s_tracknumber > 1))
+      {
+        ambigous = SPLT_TRUE;
+      }
+
+      //if we don't have already set the original tags,
+      //we set the tags
+      if (!original_tags)
+      {
+        if (track == -1)
+        {
+          track = 0;
+        }
+        //we put the tags
+        splt_t_append_tags(state, title, artist,
+            album, performer, year, comment,
+            track, genre);
+      }
+      else
+      {
+        //we put the tags
+        splt_t_append_only_non_null_previous_tags(state, title, artist,
+            album, performer, year, comment,
+            track, genre);
+      }
+
+      //we free the memory
+      if (title)
+      {
+        free(title);
+      }
+      if (artist)
+      {
+        free(artist);
+      }
+      if (album)
+      {
+        free(album);
+      }
+      if (performer)
+      {
+        free(performer);
+      }
+      if (year)
+      {
+        free(year);
+      }
+      if (comment)
+      {
+        free(comment);
+      }
+      if (tracknumber)
+      {
+        free(tracknumber);
+      }
+
+      tags_appended++;
+      //if we put all tags, we break
+      if (all_tags)
+      {
+        if (*(end_paranthesis+1) != '\0')
+        {
+          ambigous = SPLT_TRUE;
+          break;
+        }
+      }
     }
+
+    return ambigous;
+  }
 
   return SPLT_FALSE;
 }
@@ -948,93 +948,93 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   int i=0, amb=SPLT_OUTPUT_FORMAT_AMBIGUOUS, len=0;
 
   for (i=0; i<strlen(s); i++)
+  {
+    if (s[i]=='+') 
     {
-      if (s[i]=='+') 
-        {
-          s[i]=' ';
-        }
-      else 
-        {
-          if (s[i]==SPLT_VARCHAR) 
-            {
-              s[i]='%';
-            }
-        }
+      s[i]=' ';
     }
-  
+    else 
+    {
+      if (s[i]==SPLT_VARCHAR) 
+      {
+        s[i]='%';
+      }
+    }
+  }
+
   splt_u_cleanstring(s);
   ptrs = s;
   i=0;
   ptre=strchr(ptrs+1, '%');
   if (s[0]!='%')
+  {
+    if (ptre==NULL)
     {
-      if (ptre==NULL)
-        {
-          len=strlen(ptrs);
-        }
-      else
-        {
-          len = ptre-ptrs;
-        }
-      if (len > SPLT_MAXOLEN)
-        {
-          len = SPLT_MAXOLEN;
-        }
-      strncpy(state->oformat.format[i++], ptrs, len);
+      len=strlen(ptrs);
     }
-  else
+    else
     {
-      ptre=s;
-    }
-  
-  if (ptre==NULL)
-    {
-      return SPLT_OUTPUT_FORMAT_AMBIGUOUS;
-    }
-  ptrs = ptre;
-  
-  while (((ptre=strchr(ptrs+1, '%'))!=NULL) && 
-         (i < SPLT_OUTNUM))
-    {
-      char cf = *(ptrs+1);
-      
       len = ptre-ptrs;
-      if (len > SPLT_MAXOLEN)
-        {
-          len = SPLT_MAXOLEN;
-        }
-      
-      switch (cf)
-        {
-        case 'a':
-          break;
-        case 'b':
-          break;
-        case 't':
-          break;
-        case 'n':
-          amb = SPLT_OUTPUT_FORMAT_OK;
-          break;
-        case 'f':
-          break;
-        case 'p':
-          break;
-        default:
-          return SPLT_OUTPUT_FORMAT_ERROR;
-        }
-      
-      strncpy(state->oformat.format[i++], ptrs, len);
-      ptrs = ptre;
     }
-  
+    if (len > SPLT_MAXOLEN)
+    {
+      len = SPLT_MAXOLEN;
+    }
+    strncpy(state->oformat.format[i++], ptrs, len);
+  }
+  else
+  {
+    ptre=s;
+  }
+
+  if (ptre==NULL)
+  {
+    return SPLT_OUTPUT_FORMAT_AMBIGUOUS;
+  }
+  ptrs = ptre;
+
+  while (((ptre=strchr(ptrs+1, '%'))!=NULL) && 
+      (i < SPLT_OUTNUM))
+  {
+    char cf = *(ptrs+1);
+
+    len = ptre-ptrs;
+    if (len > SPLT_MAXOLEN)
+    {
+      len = SPLT_MAXOLEN;
+    }
+
+    switch (cf)
+    {
+      case 'a':
+        break;
+      case 'b':
+        break;
+      case 't':
+        break;
+      case 'n':
+        amb = SPLT_OUTPUT_FORMAT_OK;
+        break;
+      case 'f':
+        break;
+      case 'p':
+        break;
+      default:
+        return SPLT_OUTPUT_FORMAT_ERROR;
+    }
+
+    strncpy(state->oformat.format[i++], ptrs, len);
+    ptrs = ptre;
+  }
+
   strncpy(state->oformat.format[i], ptrs, strlen(ptrs));
-  
+
   if (ptrs[1]=='t')
     amb = SPLT_OUTPUT_FORMAT_OK;
-  
+
   if (ptrs[1]=='n')
     amb = SPLT_OUTPUT_FORMAT_OK;
-  
+
   return amb;
 }
 
@@ -1042,341 +1042,341 @@ int splt_u_parse_outformat(char *s, splt_state *state)
 int splt_u_put_output_format_filename(splt_state *state)
 {
   int error = SPLT_OK;
-  
+
   char *temp = NULL;
   char *fm = NULL;
   int i = 0;
   char *output_filename = NULL;
   int output_filename_size = 0;
-  
+
   char *title = NULL;
   char *artist = NULL;
   char *album = NULL;
   char *performer = NULL;
   char *original_filename = NULL;
-  
+
   int old_current_split =
     splt_t_get_current_split(state);
-  
+
   int current_split = old_current_split;
-  
+
   int fm_length = 0;
-  
+
   //if we get the tags from the first file
   int tags_after_x_like_x = 
     splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X);
   if ((current_split >= tags_after_x_like_x) &&
       (tags_after_x_like_x != -1))
-    {
-      current_split = tags_after_x_like_x;
-    }
-  
+  {
+    current_split = tags_after_x_like_x;
+  }
+
   splt_u_print_debug("The output format is ",0,state->oformat.format_string);
-  
+
   for (i=0; i<SPLT_OUTNUM; i++)
+  {
+    if (strlen(state->oformat.format[i])==0)
     {
-      if (strlen(state->oformat.format[i])==0)
-        {
-          break;
-        }
-      //if we have some % in the format (@ has been converted to %)
-      if (state->oformat.format[i][0]=='%')
-        {
-          //we allocate memory for the temp variable
-          if (temp)
-            {
-              free(temp);
-              temp = NULL;
-            }
-          
-          int temp_len = strlen(state->oformat.format[i])+10;
-          if ((temp = malloc(temp_len * sizeof(char))) == NULL)
+      break;
+    }
+    //if we have some % in the format (@ has been converted to %)
+    if (state->oformat.format[i][0]=='%')
+    {
+      //we allocate memory for the temp variable
+      if (temp)
+      {
+        free(temp);
+        temp = NULL;
+      }
+
+      int temp_len = strlen(state->oformat.format[i])+10;
+      if ((temp = malloc(temp_len * sizeof(char))) == NULL)
+      {
+        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        goto end;
+      }
+      memset(temp, 0x0, temp_len);
+
+      temp[0]='%';
+      temp[1]='s';
+      switch (state->oformat.format[i][1])
+      {
+        case 'a':
+          if (splt_t_tags_exists(state,current_split))
+          {
+            //we get the artist
+            artist =
+              splt_t_get_tags_char_field(state,current_split,
+                  SPLT_TAGS_ARTIST);
+          }
+          else
+          {
+            artist = NULL;
+          }
+
+          if (artist != NULL)
+          {
+            snprintf(temp+2,temp_len, state->oformat.format[i]+2);
+
+            int artist_length = 0;
+            artist_length = strlen(artist);
+            fm_length = strlen(temp)+artist_length;
+            if ((fm = malloc(fm_length
+                    * sizeof(char))) == NULL)
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
             }
-          memset(temp, 0x0, temp_len);
-          
-          temp[0]='%';
-          temp[1]='s';
-          switch (state->oformat.format[i][1])
+
+            snprintf(fm, fm_length, temp, artist);
+          }
+          break;
+        case 'b':
+          if (splt_t_tags_exists(state,current_split))
+          {
+            //we get the album
+            album =
+              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ALBUM);
+          }
+          else
+          {
+            album = NULL;
+          }
+
+          if (album != NULL)
+          {
+            int album_length = 0;
+            album_length = strlen(album);
+            snprintf(temp+2, temp_len, state->oformat.format[i]+2);
+
+            fm_length = strlen(temp)+album_length;
+            if ((fm = malloc(fm_length
+                    * sizeof(char))) == NULL)
             {
-            case 'a':
-              if (splt_t_tags_exists(state,current_split))
-                {
-                  //we get the artist
-                  artist =
-                    splt_t_get_tags_char_field(state,current_split,
-                                               SPLT_TAGS_ARTIST);
-                }
-              else
-                {
-                  artist = NULL;
-                }
-              
-              if (artist != NULL)
-                {
-                  snprintf(temp+2,temp_len, state->oformat.format[i]+2);
-                  
-                  int artist_length = 0;
-                  artist_length = strlen(artist);
-                  fm_length = strlen(temp)+artist_length;
-                  if ((fm = malloc(fm_length
-                                   * sizeof(char))) == NULL)
-                    {
-                      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                      goto end;
-                    }
-                  
-                  snprintf(fm, fm_length, temp, artist);
-                }
-              break;
-            case 'b':
-              if (splt_t_tags_exists(state,current_split))
-                {
-                  //we get the album
-                  album =
-                    splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ALBUM);
-                }
-              else
-                {
-                  album = NULL;
-                }
-              
-              if (album != NULL)
-                {
-                  int album_length = 0;
-                  album_length = strlen(album);
-                  snprintf(temp+2, temp_len, state->oformat.format[i]+2);
-                  
-                  fm_length = strlen(temp)+album_length;
-                  if ((fm = malloc(fm_length
-                                   * sizeof(char))) == NULL)
-                    {
-                      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                      goto end;
-                    }
-                  
-                  snprintf(fm, fm_length, temp, album);
-                }               
-              break;
-            case 't':
-              if (splt_t_tags_exists(state,current_split))
-                {
-                  //we get the title
-                  title =
-                    splt_t_get_tags_char_field(state,current_split,
-                                               SPLT_TAGS_TITLE);
-                }
-              else
-                {
-                  title = NULL;
-                }
-              
-              if (title != NULL)
-                {
-                  int title_length = 0;
-                  title_length = strlen(title);
-                  snprintf(temp+2, temp_len, state->oformat.format[i]+2);
-
-                  fm_length = strlen(temp)+title_length;
-                  if ((fm = malloc(fm_length
-                                   * sizeof(char))) == NULL)
-                    {
-                      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                      goto end;
-                    }
-                  
-                  snprintf(fm, fm_length, temp, title);
-                }
-              break;
-            case 'p':
-              if (splt_t_tags_exists(state,current_split))
-                {
-                  //we get the performer
-                  performer =
-                    splt_t_get_tags_char_field(state,current_split,
-                                               SPLT_TAGS_PERFORMER);
-                }
-              else
-                {
-                  performer = NULL;
-                }
-              
-              if (performer != NULL)
-                {
-                  int performer_length = 0;
-                  performer_length = strlen(performer);
-                  snprintf(temp+2, temp_len, state->oformat.format[i]+2);
-
-                  fm_length = strlen(temp)+performer_length;
-                  if ((fm = malloc(fm_length
-                                   * sizeof(char))) == NULL)
-                    {
-                      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                      goto end;
-                    }
-              
-                  snprintf(fm, fm_length, temp, performer);
-                }
-              break;
-            case 'n':
-              temp[1]='0';
-              temp[2]=state->oformat.output_format_digits;
-              temp[3]='d';
-              
-              //we set the track number
-              int tracknumber = old_current_split+1;
-              
-              //if not time split, or normal split, or silence split or error,
-              //we put the track number from the tags
-              int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
-              if ((split_mode != SPLT_OPTION_TIME_MODE) &&
-                  (split_mode != SPLT_OPTION_NORMAL_MODE) &&
-                  (split_mode != SPLT_OPTION_SILENCE_MODE) &&
-                  (split_mode != SPLT_OPTION_MP3_ERROR_MODE))
-                {
-                  if (splt_t_tags_exists(state,current_split))
-                    {
-                      int tags_track = 
-                        splt_t_get_tags_int_field(state,
-                                                  current_split,SPLT_TAGS_TRACK);
-                      if (tags_track > 0)
-                        {
-                          tracknumber = tags_track;
-                        }
-                    }
-                }
-              snprintf(temp+4, temp_len, state->oformat.format[i]+2);
-              
-              fm_length = strlen(temp);
-              if ((fm = malloc(fm_length * sizeof(char)))
-                  == NULL)
-                {
-                  error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                  goto end;
-                }
-              
-              snprintf(fm, fm_length, temp, tracknumber);
-              break;
-            case 'f':
-              if (splt_t_get_filename_to_split(state) != NULL)
-                {
-                  //we get the filename
-                  original_filename = strdup(splt_u_get_real_name(splt_t_get_filename_to_split(state)));
-                  snprintf(temp+2,temp_len, state->oformat.format[i]+2);
-                  
-                  //we cut extension
-                  original_filename[strlen(original_filename)-4] = '\0';
-                  
-                  int filename_length = strlen(original_filename);
-                  
-                  fm_length = strlen(temp) + filename_length;
-                  if ((fm = malloc(fm_length
-                                   * sizeof(char))) == NULL)
-                    {
-                      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                      goto end;
-                    }
-                  
-                  snprintf(fm, fm_length, temp, original_filename);
-                  free(original_filename);
-                  original_filename = NULL;
-                }
-              break;
+              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+              goto end;
             }
-        }
-      else
-        {
-          fm_length = SPLT_MAXOLEN;
+
+            snprintf(fm, fm_length, temp, album);
+          }               
+          break;
+        case 't':
+          if (splt_t_tags_exists(state,current_split))
+          {
+            //we get the title
+            title =
+              splt_t_get_tags_char_field(state,current_split,
+                  SPLT_TAGS_TITLE);
+          }
+          else
+          {
+            title = NULL;
+          }
+
+          if (title != NULL)
+          {
+            int title_length = 0;
+            title_length = strlen(title);
+            snprintf(temp+2, temp_len, state->oformat.format[i]+2);
+
+            fm_length = strlen(temp)+title_length;
+            if ((fm = malloc(fm_length
+                    * sizeof(char))) == NULL)
+            {
+              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+              goto end;
+            }
+
+            snprintf(fm, fm_length, temp, title);
+          }
+          break;
+        case 'p':
+          if (splt_t_tags_exists(state,current_split))
+          {
+            //we get the performer
+            performer =
+              splt_t_get_tags_char_field(state,current_split,
+                  SPLT_TAGS_PERFORMER);
+          }
+          else
+          {
+            performer = NULL;
+          }
+
+          if (performer != NULL)
+          {
+            int performer_length = 0;
+            performer_length = strlen(performer);
+            snprintf(temp+2, temp_len, state->oformat.format[i]+2);
+
+            fm_length = strlen(temp)+performer_length;
+            if ((fm = malloc(fm_length
+                    * sizeof(char))) == NULL)
+            {
+              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+              goto end;
+            }
+
+            snprintf(fm, fm_length, temp, performer);
+          }
+          break;
+        case 'n':
+          temp[1]='0';
+          temp[2]=state->oformat.output_format_digits;
+          temp[3]='d';
+
+          //we set the track number
+          int tracknumber = old_current_split+1;
+
+          //if not time split, or normal split, or silence split or error,
+          //we put the track number from the tags
+          int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
+          if ((split_mode != SPLT_OPTION_TIME_MODE) &&
+              (split_mode != SPLT_OPTION_NORMAL_MODE) &&
+              (split_mode != SPLT_OPTION_SILENCE_MODE) &&
+              (split_mode != SPLT_OPTION_MP3_ERROR_MODE))
+          {
+            if (splt_t_tags_exists(state,current_split))
+            {
+              int tags_track = 
+                splt_t_get_tags_int_field(state,
+                    current_split,SPLT_TAGS_TRACK);
+              if (tags_track > 0)
+              {
+                tracknumber = tags_track;
+              }
+            }
+          }
+          snprintf(temp+4, temp_len, state->oformat.format[i]+2);
+
+          fm_length = strlen(temp);
           if ((fm = malloc(fm_length * sizeof(char)))
               == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          snprintf(fm, fm_length, temp, tracknumber);
+          break;
+        case 'f':
+          if (splt_t_get_filename_to_split(state) != NULL)
+          {
+            //we get the filename
+            original_filename = strdup(splt_u_get_real_name(splt_t_get_filename_to_split(state)));
+            snprintf(temp+2,temp_len, state->oformat.format[i]+2);
+
+            //we cut extension
+            original_filename[strlen(original_filename)-4] = '\0';
+
+            int filename_length = strlen(original_filename);
+
+            fm_length = strlen(temp) + filename_length;
+            if ((fm = malloc(fm_length
+                    * sizeof(char))) == NULL)
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
             }
-          
-          strncpy(fm, state->oformat.format[i], SPLT_MAXOLEN);
-        }
-      
-      int fm_size = 7;
-      if (fm != NULL)
-        {
-          fm_size = strlen(fm);
-        }
-      
-      //allocate memory for the output filename
-      if (!output_filename)
-        {
-          if ((output_filename = malloc((1+fm_size)*sizeof(char)))
-              == NULL)
-            {
-              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              goto end;
-            }
-          output_filename_size = fm_size;
-          output_filename[0] = '\0';
-        }
-      else
-        {
-          output_filename_size += fm_size+1;
-          if ((output_filename = realloc(output_filename,
-                                         output_filename_size
-                                         * sizeof(char)))
-              == NULL)
-            {
-              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              goto end;
-            }
-        }
-      
-      if (fm != NULL)
-        {
-          strcat(output_filename, fm);
-        }
-      
-      //we free fm
-      if (fm)
-        {
-          free(fm);
-          fm = NULL;
-        }
+
+            snprintf(fm, fm_length, temp, original_filename);
+            free(original_filename);
+            original_filename = NULL;
+          }
+          break;
+      }
     }
-  
-  //we change the splitpoint name
-  int name_error = SPLT_OK;
-  int cur_splt = splt_t_get_current_split(state);
-  
-  splt_u_print_debug("The new output filename is ",0,output_filename);
-  
-  name_error = 
-    splt_t_set_splitpoint_name(state,
-                               cur_splt,
-                               output_filename);
-  
-  if (name_error != SPLT_OK)
+    else
     {
-      error = name_error;
+      fm_length = SPLT_MAXOLEN;
+      if ((fm = malloc(fm_length * sizeof(char)))
+          == NULL)
+      {
+        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        goto end;
+      }
+
+      strncpy(fm, state->oformat.format[i], SPLT_MAXOLEN);
     }
-  
- end:
-  //free memory
-  if (output_filename)
+
+    int fm_size = 7;
+    if (fm != NULL)
     {
-      free(output_filename);
-      output_filename = NULL;
+      fm_size = strlen(fm);
     }
-  if (fm)
+
+    //allocate memory for the output filename
+    if (!output_filename)
+    {
+      if ((output_filename = malloc((1+fm_size)*sizeof(char)))
+          == NULL)
+      {
+        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        goto end;
+      }
+      output_filename_size = fm_size;
+      output_filename[0] = '\0';
+    }
+    else
+    {
+      output_filename_size += fm_size+1;
+      if ((output_filename = realloc(output_filename,
+              output_filename_size
+              * sizeof(char)))
+          == NULL)
+      {
+        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        goto end;
+      }
+    }
+
+    if (fm != NULL)
+    {
+      strcat(output_filename, fm);
+    }
+
+    //we free fm
+    if (fm)
     {
       free(fm);
       fm = NULL;
     }
+  }
+
+  //we change the splitpoint name
+  int name_error = SPLT_OK;
+  int cur_splt = splt_t_get_current_split(state);
+
+  splt_u_print_debug("The new output filename is ",0,output_filename);
+
+  name_error = 
+    splt_t_set_splitpoint_name(state,
+        cur_splt,
+        output_filename);
+
+  if (name_error != SPLT_OK)
+  {
+    error = name_error;
+  }
+
+end:
+  //free memory
+  if (output_filename)
+  {
+    free(output_filename);
+    output_filename = NULL;
+  }
+  if (fm)
+  {
+    free(fm);
+    fm = NULL;
+  }
   if (temp)
-    {
-      free(temp);
-      temp = NULL;
-    }
-  
+  {
+    free(temp);
+    temp = NULL;
+  }
+
   return error;
 }
 
@@ -1386,25 +1386,25 @@ int splt_u_put_output_format_filename(splt_state *state)
 //prints an error message
 //if such error messages appear, there are coding errors
 void splt_u_error(int error_type, const char *function,
-                int arg_int, char *arg_char)
+    int arg_int, char *arg_char)
 {
   switch (error_type)
-    {
+  {
     case SPLT_IERROR_INT:
       fprintf(stderr,
-              "libmp3splt: error in %s with value %d\n",
-              function, arg_int);
+          "libmp3splt: error in %s with value %d\n",
+          function, arg_int);
       break;
     case SPLT_IERROR_SET_ORIGINAL_TAGS:
       fprintf(stderr,
-              "libmp3splt: cannot set original file tags, "
-              "libmp3splt not compiled with libid3tag\n");
+          "libmp3splt: cannot set original file tags, "
+          "libmp3splt not compiled with libid3tag\n");
       break;
     default:
       fprintf(stderr,
-              "libmp3splt: unknown error in %s\n", function);
+          "libmp3splt: unknown error in %s\n", function);
       break;
-    }
+  }
 }
 
 /****************************/
@@ -1414,7 +1414,7 @@ void splt_u_error(int error_type, const char *function,
 float splt_u_silence_position(struct splt_ssplit *temp, float off)
 {
   float position = (temp->end_position - 
-                    temp->begin_position);
+      temp->begin_position);
 
   position = temp->begin_position + (position*off);
 
@@ -1423,35 +1423,35 @@ float splt_u_silence_position(struct splt_ssplit *temp, float off)
 
 //debug messages
 void splt_u_print_debug(char *message,double optional,
-                        char *optional2)
+    char *optional2)
 {
   if (global_debug)
+  {
+    if (optional != 0)
     {
-      if (optional != 0)
-        {
-          if (optional2 != NULL)
-            {
-              fprintf(stdout,"%s %f _%s_\n",message,optional,
-                      optional2);
-            }
-          else
-            {
-              fprintf(stdout,"%s %f\n",message,optional);
-            }
-        }
+      if (optional2 != NULL)
+      {
+        fprintf(stdout,"%s %f _%s_\n",message,optional,
+            optional2);
+      }
       else
-        {
-          if (optional2 != NULL)
-            {
-              fprintf(stdout,"%s _%s_\n",message, optional2);
-            }
-          else
-            {
-              fprintf(stdout,"%s\n",message);
-            }
-        }
-      fflush(stdout);
+      {
+        fprintf(stdout,"%s %f\n",message,optional);
+      }
     }
+    else
+    {
+      if (optional2 != NULL)
+      {
+        fprintf(stdout,"%s _%s_\n",message, optional2);
+      }
+      else
+      {
+        fprintf(stdout,"%s\n",message);
+      }
+    }
+    fflush(stdout);
+  }
 }
 
 //convert to float for hundredth

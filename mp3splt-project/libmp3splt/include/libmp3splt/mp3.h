@@ -43,32 +43,32 @@ void splt_mp3_state_free(splt_state *state);
 /* mp3 tags */
 
 void splt_mp3_get_original_tags(char *filename,splt_state *state,
-                                int *tag_error);
+    int *tag_error);
 
 char *splt_mp3_get_tags(char *filename,splt_state *state,
-                        int *error);
+    int *error);
 
 /****************************/
 /* mp3 infos */
 
 splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
-                              int framemode, int *error);
+    int framemode, int *error);
 
 /****************************/
 /* mp3 split */
 
 int splt_mp3_simple_split (splt_state *state, char *filename,
-                           off_t begin, off_t end, char *id3buffer);
+    off_t begin, off_t end, char *id3buffer);
 void splt_mp3_split (char *filename, splt_state *state, char *id3,
-                     double fbegin_sec, double fend_sec, int *error);
+    double fbegin_sec, double fend_sec, int *error);
 
 /****************************/
 /* mp3 scan for silence */
 
 int splt_mp3_silence(splt_mp3_state *mp3state, 
-                     int channels, mad_fixed_t threshold);
+    int channels, mad_fixed_t threshold);
 int splt_mp3_scan_silence (splt_state *sp_state, off_t begin, 
-                           unsigned long length, float threshold, float min, short output);
+    unsigned long length, float threshold, float min, short output);
 
 /****************************/
 /* mp3 syncerror */
@@ -79,19 +79,19 @@ void splt_mp3_syncerror_search (splt_state *state, int *error);
 /* mp3 dewrap */
 
 void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
-                      int *error, splt_state *state);
+    int *error, splt_state *state);
 
 /****************************/
 /* mp3 constants */
 
 /*
-  Frame per second:
-  Each MPEG1 frame decodes to 1152 PCM
-  samples, 576 with MPEG2.
-  32000/1152 = 27.77778 = 16000/576
-  44100/1152 = 38.28125 = 22050/576
-  48000/1152 = 41.66667 = 24000/576
-*/
+   Frame per second:
+   Each MPEG1 frame decodes to 1152 PCM
+   samples, 576 with MPEG2.
+   32000/1152 = 27.77778 = 16000/576
+   44100/1152 = 38.28125 = 22050/576
+   48000/1152 = 41.66667 = 24000/576
+   */
 
 #define SPLT_MP3_TAG "TAG"
 #define SPLT_MP3_GENRENUM 82

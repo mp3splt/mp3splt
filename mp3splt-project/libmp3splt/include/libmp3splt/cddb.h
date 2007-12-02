@@ -52,22 +52,22 @@ typedef struct {
 /* cue */
 
 int splt_cue_put_splitpoints(char *file, splt_state *state, 
-                             int *error);
+    int *error);
 
 /***********************/
 /* cddb */
 
 int splt_cddb_put_splitpoints (char *file, splt_state *state,
-                               int *error);
+    int *error);
 
 /***********************/
 /* freedb */
 
 int splt_freedb_process_search(splt_state *state, char *search, 
-                               int search_type, char cddb_get_server[256],
-                               int port);
+    int search_type, char cddb_get_server[256],
+    int port);
 char *splt_freedb_get_file(splt_state *state, int i, int *error,
-                           int get_type, char cddb_get_server[256], int port);
+    int get_type, char cddb_get_server[256], int port);
 
 /**********************/
 /* constants */
