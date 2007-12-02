@@ -48,7 +48,10 @@ case $host in
 	*)
 		HOST="Other"
     LIBS="$LIBS"
-#		LIBS="-lmad -logg -lvorbis -lvorbisfile -lm"
+
+#static build require this :
+#    CFLAGS="$CFLAGS -static"
+#    LIBS="$LIBS -lvorbisfile -lvorbis -logg -lm -lmad -lid3tag -lz"
 		;;
 esac
 AC_MSG_RESULT($HOST)
