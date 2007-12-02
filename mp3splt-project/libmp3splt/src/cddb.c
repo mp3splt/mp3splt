@@ -806,7 +806,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
                             i++;
                           }
                         
-                        char ttemp[i+1] = { '\0' };
+                        char ttemp[i+1];
                         int i_temp = 0;
                         for (i_temp = 0; i_temp < i;i_temp++)
                           {

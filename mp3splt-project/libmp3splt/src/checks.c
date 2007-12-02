@@ -209,7 +209,7 @@ char *splt_check_put_dir_of_cur_song(char *filename, char *the_filename_path)
     //otherwise we set the path as ""
     else
     {
-      snprintf(filename_path, length_malloc,"");
+      snprintf(filename_path, length_malloc,"%s","");
     }
 
     free(orig_filename);
