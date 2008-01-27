@@ -1,6 +1,6 @@
 PROJECT_NAME=libmp3splt
 PROJECT_NUMBER=0.4_rc1
-OUTPUT_DIRECTORY=../doc
+OUTPUT_DIRECTORY=doc
 OUTPUT_LANGUAGE=English
 BRIEF_MEMBER_DESC=YES
 REPEAT_BRIEF=NO
@@ -22,4 +22,4 @@ GENERATE_LATEX=NO
 GENERATE_MAN=YES
 DISABLE_INDEX=NO
 SEARCHENGINE=YES
-INPUT=mp3splt.h mp3splt_types.h
+INPUT=../include/libmp3splt/mp3splt.h ../include/libmp3splt/mp3splt_types.h

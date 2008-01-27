@@ -40,8 +40,10 @@ short global_debug = SPLT_FALSE;
 /************************************/
 /* Initialisation and free          */
 
-//create new state
-//error is the possible error
+/**
+ * Creates and returns the new mp3splt state
+ * \param error A possible error.
+ */
 splt_state *mp3splt_new_state(int *error)
 {
   splt_state *state = NULL;

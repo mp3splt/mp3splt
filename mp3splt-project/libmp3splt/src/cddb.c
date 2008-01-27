@@ -52,12 +52,10 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
 {
   int i = 0;
   char *artist0 = NULL;
-  if (splt_t_get_tags_char_field(state, 0, 
+  if (splt_t_get_tags_char_field(state, 0,
                                  SPLT_TAGS_ARTIST) != NULL)
     {
-      artist0 = 
-        strdup(splt_t_get_tags_char_field(state, 0, 
-                                          SPLT_TAGS_ARTIST));
+      artist0 = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST);
     }
   else
     {
@@ -80,12 +78,11 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
     {
       //we put the default output if we have the default output
       splt_t_new_oformat(state, SPLT_DEFAULT_OUTPUT);
-      
+ 
       //we put the real performer in the artist
       for(i = 0; i < tracks;i++)
         {
-          performer = 
-            splt_t_get_tags_char_field(state, i,
+          performer = splt_t_get_tags_char_field(state, i,
                                        SPLT_TAGS_PERFORMER);
           //we put performer if found
           if ((performer != NULL) && (performer[0] != '\0'))
@@ -104,7 +101,7 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
               tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
                                                       artist0);
             }
-          
+
           //we put the same album, year and genre everywhere
           if (i != 0)
             {
@@ -160,7 +157,7 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
         {
           //we set the current split to 0
           splt_t_set_current_split(state,0);
-          do {      
+          do {
             int filename_error = SPLT_OK;
             //get output format filename
             filename_error = splt_u_put_output_format_filename(state);
@@ -176,12 +173,6 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
         {
           *error = err_format;
         }
-    }
-  
-  if (artist0)
-    {
-      free(artist0);
-      artist0 = NULL;
     }
 }
 
@@ -246,7 +237,7 @@ int splt_cue_put_splitpoints(char *file, splt_state *state,
   //our file
   FILE *file_input = NULL;
   //the line we read from the file
-  char line[1024] = { '\0' };
+  char line[2048] = { '\0' };
   char *ptr = NULL, *dot = NULL;
   ptr = dot = NULL;
   //tracks = number of tracks found
@@ -478,7 +469,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
   //our file
   FILE *file_input = NULL;
   //the line we read
-  char line[1024] = { '\0' };
+  char line[2048] = { '\0' };
   char prev[10] = { '\0' };
   //performer_title_split is where we split if we have
   //performer / title on cddb
