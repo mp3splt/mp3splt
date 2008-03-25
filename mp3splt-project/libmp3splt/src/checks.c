@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2006 Munteanu Alexandru - io_alex_2002@yahoo.fr
+ * Copyright (c) 2005-2008 Munteanu Alexandru - io_alex_2002@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -250,7 +250,6 @@ char *splt_check_put_dir_of_cur_song(char *filename, char *the_filename_path)
 //the implementation of this function is not essential
 int splt_check_compatible_options(splt_state *state)
 {
-  //TODO
   
   return SPLT_TRUE;
 }
@@ -324,90 +323,29 @@ void splt_check_set_correct_options(splt_state *state)
 
 //checks if mp3 file or ogg file
 //returns possible error
-void splt_check_if_mp3_or_ogg(splt_state *state, int *error)
+void splt_check_file_type(splt_state *state, int *error)
 {
   int err = SPLT_OK;
   char *filename = splt_t_get_filename_to_split(state);
 
   splt_u_print_debug("Detecting file format...",0,NULL);
-
-#ifndef NO_OGG
-  //the file to open
-  FILE *file_input;
-  OggVorbis_File ogg_file;
-
   splt_u_print_debug("Checking the format of",0,filename);
 
-  if(!(file_input = fopen(filename, "rb")))
+  //parse each plugin until we find out a plugin for the file
+  splt_plugins *pl = state->plug;
+  int i = 0;
+  for (i = 0;i < pl->number_of_plugins_found;i++)
   {
-    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-    return;
-  }
-  //if we can open the file, check if ogg or mp3
-  else 
-  {
-    //supposing that if not ogg then mp3 (mp3 <=> ogg = 0)
-    if ((ov_test(file_input, &ogg_file, NULL, 0) + 1) != 1)
+    splt_t_set_current_plugin(state, i);
+    if (splt_p_check_plugin_is_for_file(state, filename, &err))
     {
-      //if we can get mp3 info, we set the file as mp3
-      if (splt_s_get_mp3_info(state, file_input,&err) != NULL)
+      if (err == SPLT_OK)
       {
-        splt_t_set_file_format(state,SPLT_MP3_FORMAT);
-        splt_t_put_message_to_client(state,SPLT_MESS_DETECTED_MP3);
-        splt_u_print_debug("File detected as mp3",0,NULL);
-        splt_mp3_state_free(state);
-      }
-      else
-      {
-        splt_t_set_file_format(state,SPLT_INVALID_FORMAT);
-        splt_t_put_message_to_client(state,SPLT_MESS_DETECTED_INVALID);
-        splt_u_print_debug("File detected as invalid",0,NULL);
-        *error = SPLT_ERROR_INVALID_FORMAT;
+        //get out
+        break;
       }
     }
-    else
-    {
-      splt_u_print_debug("File detected as ogg",0,NULL);
-      splt_t_put_message_to_client(state,SPLT_MESS_DETECTED_OGG);
-      splt_t_set_file_format(state,SPLT_OGG_FORMAT);
-    }
-
-    //if the file was opened, we close it
-    //properly with ov_clear
-    if(splt_t_get_file_format(state) == SPLT_OGG_FORMAT)
-    {
-      ov_clear(&ogg_file);
-    }
   }
-
-  //if file is not ogg, closing the file normally
-  if (splt_t_get_file_format(state) != SPLT_OGG_FORMAT)
-  {
-    fclose(file_input);
-    file_input = NULL;
-  }
-#else
-  FILE *file_input = NULL;
-  if(!(file_input = fopen(filename, "rb")))
-  {
-    if (splt_s_get_mp3_info(state, file_input,&err) != NULL)
-    {
-      splt_t_set_file_format(state,SPLT_MP3_FORMAT);
-      splt_t_put_message_to_client(state,SPLT_MESS_DETECTED_MP3);
-      splt_u_print_debug("File detected as mp3",0,NULL);
-      splt_mp3_state_free(state);
-    }
-    else
-    {
-      splt_t_set_file_format(state,SPLT_INVALID_FORMAT);
-      splt_t_put_message_to_client(state,SPLT_MESS_DETECTED_INVALID);
-      splt_u_print_debug("File detected as invalid",0,NULL);
-    }
-
-    fclose(file_input);
-    file_input = NULL;
-  }
-#endif
 }
 
 //check if its a file

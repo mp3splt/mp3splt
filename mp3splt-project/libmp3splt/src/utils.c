@@ -482,7 +482,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
       if (*error >= 0)
       {
         //TODO
-        //warning that a file already exists
+        //warning if a file already exists
       }
     }
   }
@@ -722,7 +722,7 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
               }
               int error = SPLT_OK;
               splt_t_lock_messages(state);
-              splt_check_if_mp3_or_ogg(state, &error);
+              splt_check_file_type(state, &error);
               splt_t_unlock_messages(state);
               splt_t_get_original_tags(state, &error);
               splt_t_append_original_tags(state);
@@ -1527,3 +1527,4 @@ int splt_u_create_directory(char *dir)
   
   return result;
 }
+

@@ -22,4 +22,4 @@ GENERATE_LATEX=NO
 GENERATE_MAN=YES
 DISABLE_INDEX=NO
 SEARCHENGINE=YES
-INPUT=../include/libmp3splt/mp3splt.h ../include/libmp3splt/mp3splt_types.h
+INPUT=include/libmp3splt/mp3splt.h

@@ -39,106 +39,10 @@
 /****************************/
 /* splt utils */
 
-//get the mp3 info and put it in the state
-//error is the possible error
-splt_state *splt_s_get_mp3_info(splt_state *state, 
-    FILE *file_input, int *error)
-{
-  //checks if valid mp3 file
-  //before last argument, if framemode or not
-  //last argument if we put messages to clients or not
-  state->mstate = splt_mp3_info(file_input, state, 
-        splt_t_get_int_option(state,SPLT_OPT_MP3_FRAME_MODE), error);
-  //if error
-  if ((*error < 0) || 
-      (state->mstate == NULL))
-  {
-    return NULL;
-  }
-
-  return state;
-}
-
-#ifndef NO_OGG
-//get ogg info and put it in the state
-//error is the possible error
-splt_state *splt_s_get_ogg_info(splt_state *state, 
-    FILE *file_input, int *error)
-{
-  //checks if valid ogg file
-  state->ostate = 
-    splt_ogg_info(file_input, state->ostate, error);
-
-  //if error
-  if ((*error < 0) ||
-      (state->ostate == NULL))
-  {
-    return NULL;
-  }
-
-  return state;
-}
-#endif
-
 //put the total time in state->split.total_time
 void splt_s_put_total_time(splt_state *state, int *error)
 {
-  FILE *file_input = NULL;
-  char *filename = splt_t_get_filename_to_split(state);
-
-  //if we can open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
-  {
-#ifndef NO_OGG
-    //if the file is ogg
-    if (splt_t_get_file_format(state) == SPLT_OGG_FORMAT)
-    {
-      OggVorbis_File ogg_file;
-
-      //if we can open file
-      if(ov_open(file_input, &ogg_file, NULL, 0) >= 0)
-      {
-        long temp = ov_time_total(&ogg_file, -1) * 100;
-        splt_t_set_total_time(state,temp);
-        ov_clear(&ogg_file);
-      }
-      else
-      {
-        *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-      }
-    }
-    else
-#endif
-    {
-      //if the file is mp3
-      if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-      {
-        splt_t_lock_messages(state);
-
-        //if we can read the file
-        //get the mp3 info => this puts the total time in the
-        //state
-        if((state = splt_s_get_mp3_info(state, file_input,error))
-            != NULL)
-        {
-          //we free the mp3 state after the check
-          splt_mp3_state_free(state);
-        }
-
-        splt_t_unlock_messages(state);
-
-        fclose(file_input);
-      }
-      else
-      {
-        //TODO
-      }
-    }
-  }
-  else
-  {
-    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-  }
+  splt_p_set_total_time(state, error);
 }
 
 /****************************/
@@ -147,9 +51,7 @@ void splt_s_put_total_time(splt_state *state, int *error)
 //the real split of the file
 static void splt_s_real_simple_split(splt_state *state, int *error)
 {
-  FILE *file_input;
   int split_error = *error;
-  char *filename = splt_t_get_filename_to_split(state);
   double splt_beg = splt_t_get_i_begin_point(state);
   double splt_end = splt_t_get_i_end_point(state);
   char *final_fname = NULL;
@@ -158,104 +60,16 @@ static void splt_s_real_simple_split(splt_state *state, int *error)
 
   if (error >= 0)
   {
-    //if we can open the file
-    if ((file_input = fopen(filename, "rb")) != NULL)
+    splt_p_simple_split(state, final_fname, splt_beg, splt_end, error);
+
+    //if no error
+    if (*error >= 0)
     {
-#ifndef NO_OGG
-      //if the file is ogg
-      if (splt_t_get_file_format(state) == SPLT_OGG_FORMAT)
-      {
-        if((state = splt_s_get_ogg_info(state, file_input,error))
-            != NULL)
-        {
-          state->ostate->off = 
-            splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
+      //automatically set progress callback to 100%
+      splt_t_update_progress(state,1.0,1.0,1,1,1);
 
-          splt_ogg_put_tags(state, &split_error);
-
-          if (split_error >= 0)
-          {
-            //effective ogg split
-            splt_ogg_split(final_fname, state,
-                splt_beg, splt_end,
-                !state->options.option_input_not_seekable,
-                state->options.parameter_gap,
-                state->options.parameter_threshold,
-                &split_error);
-          }
-
-          splt_ogg_state_free(state);
-        }
-        else
-        {
-          fclose(file_input);
-        }
-      }
-      else
-#endif
-        //if the file is mp3
-      {
-        if((state = splt_s_get_mp3_info(state, file_input, error))
-            != NULL)
-        {     
-          state->mstate->off = 
-            splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
-
-          //we initialise frames to 1
-          if (splt_t_get_total_time(state) > 0)
-          {
-            state->mstate->frames = 1;
-          }
-
-          //put id3v1 tags
-          char *id3_data = NULL;
-          id3_data = splt_mp3_get_tags(filename,
-              state, &split_error);
-
-          if (split_error >= 0)
-          {
-            //effective mp3 split
-            splt_mp3_split(final_fname, state, id3_data,
-                splt_beg, splt_end, &split_error);
-            if (id3_data)
-            {
-              free(id3_data);
-            }
-          }
-
-          //we free the mp3 state after the check
-          splt_mp3_state_free (state);
-        }
-
-        fclose(file_input);
-      }
-
-      //if no error
-      if (*error >= 0)
-      {
-        //automatically set progress callback to 100%
-        splt_t_update_progress(state,1.0,1.0,1,1,1);
-
-        //we treat the split error
-        if (split_error < 0)
-        {
-          *error = split_error;
-        }
-        else
-        {
-          //we put the splitted file
-          splt_t_put_splitted_file(state, final_fname);
-
-          if (*error != SPLT_SPLITPOINT_BIGGER_THAN_LENGTH)
-          {
-            *error = split_error;
-          }
-        }
-      }
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+      //we put the splitted file
+      splt_t_put_splitted_file(state, final_fname);
     }
   }
 
@@ -340,142 +154,126 @@ void splt_s_multiple_split(splt_state *state, int *error)
     //mp3,ogg, or..
     int file_format = splt_t_get_file_format(state);
 
-#ifndef NO_OGG
-    if (file_format == SPLT_OGG_FORMAT)
+    char *filename = splt_t_get_filename_to_split(state);
+    FILE *file_input;
+    //we try to open the file
+    if ((file_input = fopen(filename, "rb")) != NULL)
     {
-      *error = SPLT_ERROR_CANNOT_SYNC_OGG;
-    }
-    else
-#endif
-    {
-      char *filename = splt_t_get_filename_to_split(state);
-      FILE *file_input;
-      //we try to open the file
-      if ((file_input = fopen(filename, "rb")) != NULL)
+      //we get the infos for the file
       {
-        //we get the infos for the file
-        if((state = splt_s_get_mp3_info(state, file_input, error))
-            != NULL)
+        //we detect sync errors
+        splt_p_search_syncerrors(state, error);
+
+        //automatically set progress callback to 100% after
+        //the error detection
+        splt_t_update_progress(state,1.0,1.0,1,1,1);
+
+        //if we have the default output, we put the
+        //default
+        int err = SPLT_OK;
+        if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES)
+            == SPLT_OUTPUT_DEFAULT)
         {
-          //we detect sync errors
-          splt_mp3_syncerror_search(state, error);
-          //automatically set progress callback to 100% after
-          //the error detection
-          splt_t_update_progress(state,1.0,1.0,1,1,1);
+          splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
+        }
 
-          //if we have the default output, we put the
-          //default
-          int err = SPLT_OK;
-          if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES)
-              == SPLT_OUTPUT_DEFAULT)
+        //if no error
+        if (*error >= 0)
+        {
+          //we put the number of sync errors
+          splt_t_set_splitnumber(state, state->syncerrors+1);
+
+          //we split all sync errors
+          for (i = 0; i < state->syncerrors; i++)
           {
-            splt_t_set_oformat(state,
-                SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
-          }
-
-          //if no error
-          if (*error >= 0)
-          {
-            //we put the number of sync errors
-            splt_t_set_splitnumber(state, state->mstate->syncerrors+1);
-
-            //we split all sync errors
-            for (i = 0; i < state->mstate->syncerrors; i++)
+            //if we don't cancel the split
+            if (!splt_t_split_is_canceled(state))
             {
-              //if we don't cancel the split
-              if (!splt_t_split_is_canceled(state))
+              if (i == 0)
               {
-                if (i == 0)
-                {
-                  //we put the current file to split
-                  splt_t_set_current_split(state, i);
-                }
-
-                //we append a splitpoint
-                splt_t_append_splitpoint(state, 0, "");
-
-                //if we have to put the original tags
-                if (splt_t_get_int_option(state, SPLT_OPT_TAGS) 
-                    == SPLT_TAGS_ORIGINAL_FILE)
-                {
-                  //we put the original tags to the current split
-                  splt_t_append_original_tags(state);
-                }
-
-                //we put the output filename
-                splt_u_put_output_format_filename(state);
-
-                //we get the final fname
-                final_fname =
-                  splt_u_get_fname_with_path_and_extension(state,error);
-
-                if(*error >= 0)
-                {
-                  splt_t_current_split_next(state);
-
-                  //we split with the detected splitpoints
-                  split_result =
-                    splt_mp3_simple_split(state,final_fname, state->serrors->serrors_points[i],
-                        state->serrors->serrors_points[i+1], NULL);
-
-                  //automatically set progress callback to 100%
-                  splt_t_update_progress(state,1.0,1.0,1,1,1);
-
-                  //if the split has been a success
-                  if (split_result >= 0)
-                  {
-                    splt_t_put_splitted_file(state, final_fname);
-                  }
-
-                  //we put the real error
-                  switch (split_result)
-                  {
-                    case SPLT_OK_SPLITTED_MP3:
-                      *error = SPLT_MP3_SYNC_OK;
-                      break;
-                    case SPLT_ERROR_BEGIN_OUT_OF_FILE:
-                      *error = SPLT_MP3_SYNC_OK;
-                      break;
-                    default:
-                      *error = SPLT_MP3_ERR_SYNC;
-                      goto bloc_end;
-                      break;
-                  }
-                }
-                else
-                {
-                  //error
-                  goto bloc_end;
-                }
-                //free memory
-                free(final_fname);
-                final_fname = NULL;
+                //we put the current file to split
+                splt_t_set_current_split(state, i);
               }
-              //if we cancel the split
+
+              //we append a splitpoint
+              splt_t_append_splitpoint(state, 0, "");
+
+              //if we have to put the original tags
+              if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
+              {
+                //we put the original tags to the current split
+                splt_t_append_original_tags(state);
+              }
+
+              //we put the output filename
+              splt_u_put_output_format_filename(state);
+
+              //we get the final fname
+              final_fname =
+                splt_u_get_fname_with_path_and_extension(state,error);
+
+              if(*error >= 0)
+              {
+                splt_t_current_split_next(state);
+
+                //we split with the detected splitpoints
+                splt_p_simple_split(state, final_fname, state->serrors->serrors_points[i], state->serrors->serrors_points[i+1], &split_result);
+
+                //automatically set progress callback to 100%
+                splt_t_update_progress(state,1.0,1.0,1,1,1);
+
+                //if the split has been a success
+                if (split_result >= 0)
+                {
+                  splt_t_put_splitted_file(state, final_fname);
+                }
+
+                //we put the real error
+                switch (split_result)
+                {
+                  case SPLT_OK_SPLITTED_MP3:
+                    *error = SPLT_MP3_SYNC_OK;
+                    break;
+                  case SPLT_ERROR_BEGIN_OUT_OF_FILE:
+                    *error = SPLT_MP3_SYNC_OK;
+                    break;
+                  default:
+                    *error = SPLT_MP3_ERR_SYNC;
+                    goto bloc_end;
+                    break;
+                }
+              }
               else
               {
-                *error = SPLT_SPLIT_CANCELLED;
+                //error
                 goto bloc_end;
               }
             }
+            //if we cancel the split
+            else
+            {
+              *error = SPLT_SPLIT_CANCELLED;
+              goto bloc_end;
+            }
           }
+        }
 
 bloc_end:
-          if (final_fname)
-          {
-            free(final_fname);
-          }
-          //we put the syncerrors to 0
-          state->mstate->syncerrors = 0;
-          //we free the mp3 state after the split
-          splt_mp3_state_free (state);
+        if (final_fname)
+        {
+          free(final_fname);
+          final_fname = NULL;
         }
-        fclose(file_input);
+        //we put the syncerrors to 0
+        state->syncerrors = 0;
+        //we free the state after the split
+        splt_p_free_plugin_state(state);
       }
-      else
-      {
-        *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-      }
+      fclose(file_input);
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
   else
@@ -558,8 +356,6 @@ void splt_s_time_split(splt_state *state, int *error)
 
   char *final_fname = NULL;
   //if the state has an error
-  int state_null = SPLT_FALSE;
-  FILE *file_input;
   int j=0,tracks=1;
   //the begin split
   double begin = 0.f;
@@ -568,256 +364,151 @@ void splt_s_time_split(splt_state *state, int *error)
   //mp3,ogg, or..
   int file_format = splt_t_get_file_format(state);
 
-  //we check if we can open the file in check_if_mp3_or_ogg
-  //we open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  //if no state error
+  if (state->options.split_time >= 0)
   {
-    //if the file is mp3 (not ogg)
-    if(file_format == SPLT_MP3_FORMAT)
-    {
-      //we get the infos for the file
-      if((state = splt_s_get_mp3_info(state, file_input, error))
-          == NULL)
+    int err = SPLT_OK;
+
+    int temp_int = 
+      (int)floor(((state->split.total_time/100.0) /
+            (state->options.split_time))+1) + 1;
+    splt_t_set_splitnumber(state,temp_int);
+
+    splt_t_set_oformat_digits(state);
+
+    //we append a splitpoint
+    splt_t_append_splitpoint(state, 0, "");
+
+    //while we have tracks
+    do {
+      //if we don't cancel the split
+      if (!splt_t_split_is_canceled(state))
       {
-        state_null = SPLT_TRUE;
-      }
-
-      //for the progress bar
-      struct stat file_statistics;
-      if(stat(filename, &file_statistics) == 0)
-      {
-        state->mstate->end2 = file_statistics.st_size;
-      }
-      else
-      {
-        *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-      }
-    }
-#ifndef NO_OGG
-    else
-      //if ogg
-    {
-      //we get the infos for the file
-      if((state = splt_s_get_ogg_info(state, file_input,error))
-          == NULL)
-      {
-        state_null = SPLT_TRUE;
-      }
-    }
-#endif
-
-    //if no state error
-    if (!state_null)
-    {
-      if (state->options.split_time >= 0)
-      {
-        int err = SPLT_OK;
-
-        //initialise frames to 1 after the get_mp3_info
-        if (file_format == SPLT_MP3_FORMAT)
-        {
-          if (splt_t_get_total_time(state) > 0)
-          {
-            state->mstate->frames = 1;
-          }
-        }
-
-        int temp_int = 
-          (int)floor(((state->split.total_time/100.0) /
-                (state->options.split_time))+1) + 1;
-        splt_t_set_splitnumber(state,temp_int);
-
-        splt_t_set_oformat_digits(state);
-
         //we append a splitpoint
         splt_t_append_splitpoint(state, 0, "");
 
-        //while we have tracks
-        do {
-          //if we don't cancel the split
-          if (!splt_t_split_is_canceled(state))
+        //if we have to put the original tags
+        if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
+        {
+          //we put the original tags to the current split
+          splt_t_append_original_tags(state);
+        }
+
+        //we set the current split
+        splt_t_set_current_split(state, tracks-1);
+
+        int current_split = splt_t_get_current_split(state);
+        int output_filenames = 
+          splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+        //if we have the default output or the mins_secs
+        if ((output_filenames == SPLT_OUTPUT_DEFAULT)
+            || (output_filenames == SPLT_OUTPUT_MINS_SECS))
+        {
+          //we put the splitpoints values in the state
+          splt_t_set_splitpoint_value(state,
+              current_split,(long)(begin*100));
+          splt_t_set_splitpoint_value(state,
+              current_split+1,(long)(end*100));
+          //we put the filename with mins_secs
+          splt_u_set_complete_mins_secs_filename(state, &err);
+        }
+        else
+        {
+          //if we have the output format
+          if (output_filenames == SPLT_OUTPUT_FORMAT)
           {
-            //we append a splitpoint
-            splt_t_append_splitpoint(state, 0, "");
-
-            //if we have to put the original tags
-            if (splt_t_get_int_option(state, SPLT_OPT_TAGS) 
-                == SPLT_TAGS_ORIGINAL_FILE)
-            {
-              //we put the original tags to the current split
-              splt_t_append_original_tags(state);
-            }
-
-            //we set the current split
-            splt_t_set_current_split(state, tracks-1);
-
-            int current_split = splt_t_get_current_split(state);
-            int output_filenames = 
-              splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
-            //if we have the default output or the mins_secs
-            if ((output_filenames == SPLT_OUTPUT_DEFAULT)
-                || (output_filenames == SPLT_OUTPUT_MINS_SECS))
-            {
-              //we put the splitpoints values in the state
-              splt_t_set_splitpoint_value(state,
-                  current_split,(long)(begin*100));
-              splt_t_set_splitpoint_value(state,
-                  current_split+1,(long)(end*100));
-              //we put the filename with mins_secs
-              splt_u_set_complete_mins_secs_filename(state, &err);
-            }
-            else
-            {
-              //if we have the output format
-              if (output_filenames == SPLT_OUTPUT_FORMAT)
-              {
-                //if we have the output option
-                //we put the output filename
-                splt_u_put_output_format_filename(state);
-              }
-            }
-
-            //we get the final fname
-            final_fname =
-              splt_u_get_fname_with_path_and_extension(state,&err);
-
-            //if error
-            if (err < 0)
-            {
-              *error = err;
-              break;
-            }
-
-            if (file_format == SPLT_MP3_FORMAT) 
-            {
-              if (*error >= 0)
-              {
-                //put id3
-                char *id3_data = NULL;
-                id3_data = splt_mp3_get_tags(filename,
-                    state, error);
-                if (*error >= 0)
-                {
-                  //we put the end of the file - we need this for the progress bar
-                  splt_mp3_split (final_fname, state,
-                      id3_data, begin, end,
-                      error);
-                  if (id3_data)
-                  {
-                    free(id3_data);
-                  }
-                }
-              }
-              else
-              {
-                break;
-              }
-            }
-#ifndef NO_OGG
-            else
-            {
-              splt_ogg_put_tags(state,error);
-
-              splt_ogg_split(final_fname, 
-                  state, begin, end, 
-                  !state->options.option_input_not_seekable,
-                  state->options.parameter_gap,
-                  state->options.parameter_threshold,
-                  error);
-            }
-#endif
-            //if no error for the split, put the splitted file
-            if (*error >= 0)
-            {
-              splt_t_put_splitted_file(state, 
-                  final_fname);
-            }
-
-            //set new splitpoints
-            begin=end;
-            end+= splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
-            tracks++;
-
-            //get out if error
-            if ((*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)||
-                (*error==SPLT_MP3_MIGHT_BE_VBR)||
-                (*error==SPLT_OK_SPLITTED_MP3_EOF)||
-                (*error==SPLT_ERROR_INVALID_OGG)||
-                (*error==SPLT_ERROR_INVALID_MP3)||
-                (*error==SPLT_OK_SPLITTED_OGG_EOF))
-            {
-              tracks = 0;
-            }
-            if (*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)
-            {
-              j--;
-            }
-
-            //free memory
-            free(final_fname);
-            final_fname = NULL;
+            //if we have the output option
+            //we put the output filename
+            splt_u_put_output_format_filename(state);
           }
-          else
-          {
-            *error = SPLT_SPLIT_CANCELLED;
-            break;
-          }
-        }  while (j++<tracks);
+        }
+
+        //we get the final fname
+        final_fname =
+          splt_u_get_fname_with_path_and_extension(state,&err);
+
+        //if error
+        if (err < 0)
+        {
+          *error = err;
+          break;
+        }
+
+        splt_p_simple_split(state, filename, begin, end, error);
+
+        //if no error for the split, put the splitted file
+        if (*error >= 0)
+        {
+          splt_t_put_splitted_file(state, 
+              final_fname);
+        }
+
+        //set new splitpoints
+        begin=end;
+        end+= splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
+        tracks++;
+
+        //get out if error
+        if ((*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)||
+            (*error==SPLT_MP3_MIGHT_BE_VBR)||
+            (*error==SPLT_OK_SPLITTED_MP3_EOF)||
+            (*error==SPLT_ERROR_INVALID_OGG)||
+            (*error==SPLT_ERROR_INVALID_MP3)||
+            (*error==SPLT_OK_SPLITTED_OGG_EOF))
+        {
+          tracks = 0;
+        }
+        if (*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)
+        {
+          j--;
+        }
 
         //free memory
-        if (final_fname)
-        {
-          free(final_fname);
-        }
-
-        //we put the mp3 time split error
-        switch (*error)
-        {
-          case SPLT_MP3_MIGHT_BE_VBR : 
-            *error = SPLT_TIME_SPLIT_OK;
-            break;
-          case SPLT_OK_SPLITTED_OGG : 
-            *error = SPLT_TIME_SPLIT_OK;
-            break;
-          case SPLT_OK_SPLITTED_MP3 : 
-            *error = SPLT_TIME_SPLIT_OK;
-            break;
-          case SPLT_OK_SPLITTED_OGG_EOF : 
-            *error = SPLT_TIME_SPLIT_OK;
-            break;
-          case SPLT_OK_SPLITTED_MP3_EOF : 
-            *error = SPLT_TIME_SPLIT_OK;
-            break;
-          case SPLT_ERROR_BEGIN_OUT_OF_FILE : 
-            *error = SPLT_TIME_SPLIT_OK;
-            break;
-          default:
-            break;
-        }
+        free(final_fname);
+        final_fname = NULL;
       }
       else
       {
-        *error = SPLT_ERROR_NEGATIVE_TIME_SPLIT;
+        *error = SPLT_SPLIT_CANCELLED;
+        break;
       }
+    }  while (j++<tracks);
+
+    //free memory
+    if (final_fname)
+    {
+      free(final_fname);
+      final_fname = NULL;
     }
 
-    //we free the mp3 state after the check
-    if(file_format == SPLT_MP3_FORMAT)
+    //we put the mp3 time split error
+    switch (*error)
     {
-      splt_mp3_state_free (state);
-      fclose(file_input);
+      case SPLT_MP3_MIGHT_BE_VBR : 
+        *error = SPLT_TIME_SPLIT_OK;
+        break;
+      case SPLT_OK_SPLITTED_OGG : 
+        *error = SPLT_TIME_SPLIT_OK;
+        break;
+      case SPLT_OK_SPLITTED_MP3 : 
+        *error = SPLT_TIME_SPLIT_OK;
+        break;
+      case SPLT_OK_SPLITTED_OGG_EOF : 
+        *error = SPLT_TIME_SPLIT_OK;
+        break;
+      case SPLT_OK_SPLITTED_MP3_EOF : 
+        *error = SPLT_TIME_SPLIT_OK;
+        break;
+      case SPLT_ERROR_BEGIN_OUT_OF_FILE : 
+        *error = SPLT_TIME_SPLIT_OK;
+        break;
+      default:
+        break;
     }
-#ifndef NO_OGG
-    else
-    {
-      //we also close the file here
-      splt_ogg_state_free(state);
-    }
-#endif
   }
   else
   {
-    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    *error = SPLT_ERROR_NEGATIVE_TIME_SPLIT;
   }
 }
 
@@ -834,185 +525,109 @@ int splt_s_set_silence_splitpoints(splt_state *state,
 {
   splt_u_print_debug("We search and set silence splitpoints...",0,NULL);
 
-  char *filename = splt_t_get_filename_to_split(state);
   //found is the number of silence splits found
   int found = 0;
   //checks if the state is null
   int state_null = SPLT_FALSE;
-  struct splt_ssplit *temp = NULL, **list = NULL;
-  FILE *file_input;
+  struct splt_ssplit *temp = NULL;
   int append_error = SPLT_OK;
   //we get some options
   float offset =
     splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
-  float threshold = 
-    splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
-  float min_length =
-    splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
   int number_tracks =
     splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
 
-  //we try to open the file
-  if((file_input = fopen(filename, "rb")))
+  found = splt_p_scan_silence(state, error);
+
+  //if no error
+  if (*error > 0)
   {
-    //we get information and scan for silence
-    if(splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
+    //we set the number of tracks
+    int order = 0;
+    if (!splt_t_split_is_canceled(state))
     {
-      if((state = splt_s_get_mp3_info(state, file_input, error))
-          != NULL)
+      found++;
+      if ((number_tracks > 0)&&
+          (number_tracks < SPLT_MAXSILENCE))
       {
-        state->mstate->off = offset;
-
-        list = &state->mstate->silence_list;
-        found = 
-          splt_mp3_scan_silence(state, state->mstate->mp3file.firsthead.ptr, 0,
-              threshold, min_length, 1);
-      }
-      else
-      {
-        state_null = SPLT_TRUE;
-        *error = SPLT_ERROR_INVALID_MP3;
-      }
-    }
-#ifndef NO_OGG
-    else
-    {
-      if((state = splt_s_get_ogg_info(state, file_input,error))
-          != NULL)
-      {
-        state->ostate->off = offset;
-
-        list = &state->ostate->silence_list;
-        found = 
-          splt_ogg_scan_silence(state, 0, threshold,
-              min_length, 1, NULL, 0);
-      }
-      else
-      {
-        state_null = SPLT_TRUE;
-        *error = SPLT_ERROR_INVALID_OGG;
-      }
-    }
-#endif
-    //if we have a state not NULL
-    if(!state_null)
-    {
-      //we set the number of tracks
-      int order = 0;
-      if (!splt_t_split_is_canceled(state))
-      {
-        found++;
-        if ((number_tracks > 0)&&
-            (number_tracks < SPLT_MAXSILENCE))
+        if (number_tracks < found)
         {
-          if (number_tracks < found)
+          found = number_tracks;
+        }
+      }
+
+      //put first splitpoint
+      append_error = splt_t_append_splitpoint(state, 0, NULL);
+      if (append_error != SPLT_OK)
+      {
+        *error = append_error;
+      }
+      else
+      {
+        temp = state->silence_list;
+        int i;
+
+        //we take all splitpoints found and we remove silence 
+        //if needed
+        for (i = 1; i < found; i++)
+        {
+          if (temp == NULL)
           {
-            found = number_tracks;
+            found = i;
+            break;
           }
+          if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+          {
+            //we append 2 splitpoints
+            splt_t_append_splitpoint(state, 0, NULL);
+            splt_t_append_splitpoint(state, 0, NULL);
+            //we set the values
+            splt_t_set_splitpoint_value(state,
+                2*i-1,temp->begin_position * 100);
+            splt_t_set_splitpoint_value(state,
+                2*i,temp->end_position * 100);
+          }
+          else
+          {
+            long temp_silence_pos = splt_u_silence_position(temp, offset) *100;
+            append_error = splt_t_append_splitpoint(state, temp_silence_pos, NULL);
+            if (append_error != SPLT_OK)
+            {
+              *error = append_error;
+              break;
+            }
+          }
+          temp = temp->next;
         }
 
-        //put first splitpoint
-        append_error = 
-          splt_t_append_splitpoint(state, 0, NULL);
+        //we order the splitpoints
+        if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+        {
+          order = (found-1)*2+1;
+        }
+        else 
+        {
+          order = found;
+        }
+
+        splt_u_print_debug("We order splitpoints...",0,NULL);
+        splt_u_order_splitpoints(state, order);
+
+        //last splitpoint, end of file
+        append_error = splt_t_append_splitpoint(state,
+            splt_t_get_total_time(state), NULL);
         if (append_error != SPLT_OK)
         {
           *error = append_error;
         }
-        else
-        {
-          temp = *list;
-          int i;
-
-          //we take all splitpoints found and we remove silence 
-          //if needed
-          for (i = 1; i < found; i++)
-          {
-            if (temp == NULL)
-            {
-              found = i;
-              break;
-            }
-            if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
-            {
-              //we append 2 splitpoints
-              splt_t_append_splitpoint(state, 0, NULL);
-              splt_t_append_splitpoint(state, 0, NULL);
-              //we set the values
-              splt_t_set_splitpoint_value(state,
-                  2*i-1,temp->begin_position * 100);
-              splt_t_set_splitpoint_value(state,
-                  2*i,temp->end_position * 100);
-            }
-            else
-            {
-              long temp_silence_pos = 
-                splt_u_silence_position(temp, offset) *100;
-              append_error =
-                splt_t_append_splitpoint(state, temp_silence_pos,
-                    NULL);
-              if (append_error != SPLT_OK)
-              {
-                *error = append_error;
-                break;
-              }
-            }
-            temp = temp->next;
-          }
-
-          //we order the splitpoints
-          if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
-          {
-            order = (found-1)*2+1;
-          }
-          else 
-          {
-            order = found;
-          }
-
-          splt_u_print_debug("We order splitpoints...",0,NULL);
-          splt_u_order_splitpoints(state, order);
-
-          //last splitpoint, end of file
-          append_error = 
-            splt_t_append_splitpoint(state,
-                splt_t_get_total_time(state), NULL);
-          if (append_error != SPLT_OK)
-          {
-            *error = append_error;
-          }
-        }
-      }
-      else
-      {
-        *error = SPLT_SPLIT_CANCELLED;
-      }
-
-      //free memory if we don't call the write_silence_tracks function
-      if (!write_tracks)
-      {
-        //we free the state
-        if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-        {
-          fclose(state->mstate->file_input);
-          splt_mp3_state_free (state);
-        }
-#ifndef NO_OGG
-        else
-        {
-          splt_ogg_state_free(state);
-        }
-#endif
       }
     }
     else
     {
-      fclose(file_input);
+      *error = SPLT_SPLIT_CANCELLED;
     }
   }
-  else
-  {
-    *error = SPLT_ERROR_WHILE_READING_FILE;
-  }
+  splt_t_ssplit_free(&state->silence_list);
 
   return found;
 }
@@ -1036,23 +651,13 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
   //mp3, ogg, or..
   int file_format = splt_t_get_file_format(state);
 
-  //put frames to 1 if necessary
-  if(file_format == SPLT_MP3_FORMAT)
-  {
-    if (splt_t_get_total_time(state) > 0)
-    {
-      state->mstate->frames = 1;
-    }
-  }
-
   //we put the number of tracks found
   splt_t_set_splitnumber(state, found+1);
 
   //if we have the default output, we put the
   //default
   int err = SPLT_OK;
-  int output_filenames = 
-    splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
+  int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
   //if we have the default output
   if (output_filenames == SPLT_OUTPUT_DEFAULT)
   {
@@ -1068,8 +673,7 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
       if (!splt_t_split_is_canceled(state))
       {
         //if we have to put the original tags
-        if (splt_t_get_int_option(state, SPLT_OPT_TAGS) 
-            == SPLT_TAGS_ORIGINAL_FILE)
+        if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
         {
           //we put the original tags to the current split
           splt_t_append_original_tags(state);
@@ -1087,28 +691,13 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
           long split_begin = 0,split_end = 0;
           if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
           {
-            split_begin = 
-              splt_t_get_splitpoint_value(state,2*i,&get_error);
-            split_end = 
-              splt_t_get_splitpoint_value(state,2*i+1,&get_error);
-
-            if (file_format == SPLT_MP3_FORMAT) 
-            {
-              state->mstate->end = 0;
-            }
-#ifndef NO_OGG
-            else 
-            {
-              state->ostate->end = 0;
-            }
-#endif
+            split_begin = splt_t_get_splitpoint_value(state,2*i,&get_error);
+            split_end = splt_t_get_splitpoint_value(state,2*i+1,&get_error);
           }
           else
           {
-            split_begin = 
-              splt_t_get_splitpoint_value(state,i,&get_error);
-            split_end = 
-              splt_t_get_splitpoint_value(state,i+1,&get_error);
+            split_begin = splt_t_get_splitpoint_value(state,i,&get_error);
+            split_end = splt_t_get_splitpoint_value(state,i+1,&get_error);
           }
 
           //if we have an error
@@ -1121,40 +710,8 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
             beg_pos = splt_u_get_double_pos(split_begin);
             end_pos = splt_u_get_double_pos(split_end);
 
-            //effective silence split
-            if (file_format == SPLT_MP3_FORMAT)
-            {
-              //put id3
-              char *id3_data = NULL;
-              id3_data = splt_mp3_get_tags(filename,
-                  state,error);
+            splt_p_simple_split(state, filename, beg_pos, end_pos, error);
 
-              if (*error >= 0)
-              {
-                /*splt_t_set_int_option(state,
-                  SPLT_OPT_PARAM_GAP, 0);
-                  splt_t_set_float_option(state,
-                  SPLT_OPT_PARAM_THRESHOLD, 0);*/
-                splt_mp3_split (final_fname, state,
-                    id3_data, beg_pos, end_pos,
-                    error);
-                if (id3_data)
-                {
-                  free(id3_data);
-                }
-              }
-            }
-#ifndef NO_OGG
-            else 
-            {
-              splt_ogg_put_tags(state,error);
-
-              splt_ogg_split(final_fname,
-                  state, beg_pos, end_pos, 
-                  !state->options.option_input_not_seekable, 
-                  0, 0, error);
-            }
-#endif
             //put the splitted file if no error
             if (*error >= 0)
             {
@@ -1190,9 +747,6 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
         {
           goto function_end;
         }
-        //free memory
-        free(final_fname);
-        final_fname = NULL;
       }
       else
       {
@@ -1207,18 +761,9 @@ function_end:
   if (final_fname)
   {
     free(final_fname);
+    final_fname = NULL;
   }
-  //free the state
-  if (file_format == SPLT_MP3_FORMAT)
-  {
-    splt_mp3_state_free (state);
-  }
-#ifndef NO_OGG
-  else
-  {
-    splt_ogg_state_free(state);
-  }
-#endif
+  splt_p_free_plugin_state(state);
 }
 
 //do the silence split
@@ -1242,18 +787,6 @@ void splt_s_silence_split(splt_state *state, int *error)
     }
     else
     {
-      //free the state
-      if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-      {
-        fclose(state->mstate->file_input);
-        splt_mp3_state_free (state);
-      }
-#ifndef NO_OGG
-      else
-      {
-        splt_ogg_state_free(state);
-      }
-#endif
       *error = SPLT_NO_SILENCE_SPLITPOINTS_FOUND;
     }
   }
@@ -1272,31 +805,5 @@ void splt_s_wrap_split(splt_state *state, int *error)
 
   splt_t_put_message_to_client(state,SPLT_MESS_START_WRAP_SPLIT);
 
-  //only for mp3
-  if(splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-  {
-    //we free possibly previous wrapped files
-    splt_t_wrap_free(state);
-
-    FILE *file_input;
-    //we check if we can open the file in check_if_mp3_or_ogg
-    //open the file read binary
-    if ((file_input = fopen(filename, "rb")) != NULL)
-    {
-      //SPLT_FALSE means don't list tracks
-      //we get the result error or confirmation
-      splt_mp3_dewrap(file_input,SPLT_FALSE, new_filename_path, 
-          error, state);
-      //close the file
-      fclose(file_input);
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-    }
-  }
-  else
-  {
-    *error = SPLT_ERROR_WRAP_NOT_IMPLEMENTED;
-  }
+  splt_p_dewrap(state, SPLT_FALSE, new_filename_path, error);
 }

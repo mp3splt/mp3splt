@@ -30,6 +30,8 @@
  *
  *********************************************************/
 
+#ifndef MP3SPLT_UTILS_H
+
 /****************************/
 /* utils for conversion */
 
@@ -84,3 +86,8 @@ float splt_u_silence_position(struct splt_ssplit *temp, float off);
 void splt_u_print_debug(char *message,double optional,char *optional2);
 double splt_u_get_double_pos(long split);
 int splt_u_create_directory(char *dir);
+
+#define MP3SPLT_UTILS_H
+
+#endif
+

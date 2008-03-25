@@ -37,6 +37,8 @@
  * 
  */
 
+#ifndef MP3SPLT_CDDB_H
+
 /*******************************/
 /* freedb internet structure */
 
@@ -100,3 +102,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 //#define PROXYCONFIG ".mp3splt"
 //#define PROXYDLG "HTTP/1.0\nUserAgent: "PACKAGE_NAME"/"PACKAGE_VERSION"\n"
 //#define SPLT_AUTH "Proxy-Authorization: Basic "
+
+#define MP3SPLT_CDDB_H
+
+#endif
+

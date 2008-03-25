@@ -19,15 +19,15 @@
 }
 
 #we run aclocal, autoconf and automake
-echo -n "Running aclocal... " \
+echo -n "1/5 Running aclocal... " \
 && aclocal $ACLOCAL_FLAGS && echo "done" \
-&& echo -n "Running autoheader... " \
+&& echo -n "2/5 Running autoheader... " \
 && autoheader && echo "done" \
-&& echo -n "Running autoconf... " \
+&& echo -n "3/5 Running libtoolize... " \
+&& libtoolize -c --force && echo "done" \
+&& echo -n "4/5 Running autoconf... " \
 && autoconf && echo "done" \
-&& echo -n "Running automake... " \
-&& automake -a -c && echo "done" \
-&& echo -n "Running libtoolize... " \
-&& libtoolize -c 2>/dev/null && echo "done"
+&& echo -n "5/5 Running automake... " \
+&& automake -a -c && echo "done"
 
 

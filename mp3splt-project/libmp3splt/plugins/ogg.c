@@ -30,14 +30,12 @@
  *
  *********************************************************/
 
-#ifndef NO_OGG
-
 #include <time.h>
 #include <string.h>
 #include <math.h>
 #include <locale.h>
 
-#include "splt.h"
+#include "ogg.h"
 
 /****************************/
 /* ogg constants */
@@ -280,10 +278,6 @@ static void splt_ogg_v_free(splt_ogg_state *oggstate)
       vorbis_info_clear(oggstate->vi);
       free(oggstate->vi);
     }
-    if (oggstate->silence_list)
-    {
-      splt_t_ssplit_free(&oggstate->silence_list);
-    }
     free(oggstate);
   }
 }
@@ -340,11 +334,12 @@ static splt_ogg_state *splt_ogg_v_new(void)
 //used in the splt_t_state_free() function
 void splt_ogg_state_free(splt_state *state)
 {
-  if (state->ostate)
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  if (oggstate)
   {
-    ov_clear(&state->ostate->vf);
-    splt_ogg_v_free(state->ostate);
-    state->ostate = NULL;
+    ov_clear(&oggstate->vf);
+    splt_ogg_v_free(oggstate);
+    state->codec = NULL;
   }
 }
 
@@ -383,6 +378,8 @@ void splt_ogg_get_original_tags(char *filename,
 {
   FILE *file_input;
 
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
@@ -390,7 +387,7 @@ void splt_ogg_get_original_tags(char *filename,
         != NULL)
     {
       vorbis_comment *vc_local;
-      vc_local = ov_comment(&state->ostate->vf,-1);
+      vc_local = ov_comment(&oggstate->vf,-1);
 
       char *a = NULL,*t = NULL,*al = NULL,*da = NULL,
            *g = NULL,*tr = NULL,*com = NULL;
@@ -492,28 +489,31 @@ void splt_ogg_get_original_tags(char *filename,
 //new file
 static void splt_ogg_put_original_tags(splt_state *state)
 {
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
   char *a,*t,*al,*da,/**g,*tr,*/*com;
 
-                                 a = state->original_tags.artist;
-                                 t = state->original_tags.title;
-                                 al = state->original_tags.album;
-                                 da = state->original_tags.year;
+  a = state->original_tags.artist;
+  t = state->original_tags.title;
+  al = state->original_tags.album;
+  da = state->original_tags.year;
   //g = (char *)state->original_tags.genre;
   //tr = (char *)state->original_tags.track;
   com = state->original_tags.comment;
 
-  vorbis_comment_clear(&state->ostate->vc);
-  vorbis_comment_init(&state->ostate->vc);
-  splt_ogg_v_comment(&state->ostate->vc, a,al,t,
+  vorbis_comment_clear(&oggstate->vc);
+  vorbis_comment_init(&oggstate->vc);
+  splt_ogg_v_comment(&oggstate->vc, a,al,t,
   /*tr*/NULL,da,/*g*/NULL,com);
 }
 
 //puts the ogg tags
 void splt_ogg_put_tags(splt_state *state, int *error)
 {
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+
   //clean_original_id3(state);
   //if we put the original tags
-  vorbis_comment_clear(&state->ostate->vc);
+  vorbis_comment_clear(&oggstate->vc);
 
   if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
   {
@@ -569,7 +569,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
                 splt_ogg_trackstring(current_split+1);
             }
 
-            splt_ogg_v_comment(&state->ostate->vc,
+            splt_ogg_v_comment(&oggstate->vc,
                 tags[current_split].artist,
                 tags[current_split].album,
                 tags[current_split].title,
@@ -935,7 +935,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   //for the progress
   int progress_adjust = 1;
 
-  splt_ogg_state *oggstate = state->ostate;
+  splt_ogg_state *oggstate = state->codec;
 
   ogg_packet packet;
   ogg_page page;
@@ -1070,14 +1070,14 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
               if (splt_ogg_scan_silence(state,
                     (2 * adjust), threshold, 0.f, 0, &page, current_granpos) > 0)
               {
-                cutpoint = (splt_u_silence_position(oggstate->silence_list, 
+                cutpoint = (splt_u_silence_position(state->silence_list, 
                       oggstate->off) * oggstate->vi->rate);
               }
               else
               {
                 cutpoint = (cutpoint + (adjust * oggstate->vi->rate));
               }
-              splt_t_ssplit_free(&oggstate->silence_list);
+              splt_t_ssplit_free(&state->silence_list);
               adjust=0;
               progress_adjust = 0;
               splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
@@ -1170,7 +1170,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
 {
   //we do the next split
   splt_t_current_split_next(state);
-  splt_ogg_state *oggstate = state->ostate;
+  splt_ogg_state *oggstate = state->codec;
 
   ogg_stream_state stream_out;
   ogg_packet header_comm;
@@ -1341,7 +1341,7 @@ int splt_ogg_scan_silence (splt_state *state, short seconds,
     ogg_page *page, ogg_int64_t granpos)
 {
   splt_t_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
-  splt_ogg_state *oggstate = state->ostate;
+  splt_ogg_state *oggstate = state->codec;
 
   ogg_page og;
   ogg_packet op;
@@ -1453,7 +1453,7 @@ int splt_ogg_scan_silence (splt_state *state, short seconds,
                     e_position = (float) temp;
                     if ((e_position - b_position - min) >= 0.f)
                     {
-                      splt_t_ssplit_new(&oggstate->silence_list, b_position, e_position, len);
+                      splt_t_ssplit_new(&state->silence_list, b_position, e_position, len);
                       found++;
                     }
                     len = 0;
@@ -1508,7 +1508,7 @@ int splt_ogg_scan_silence (splt_state *state, short seconds,
       if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE)
           == SPLT_OPTION_SILENCE_MODE)
       {
-        //float level = splt_u_convert2dB(state->ostate->temp_level);
+        //float level = splt_u_convert2dB(oggstate->temp_level);
         //fprintf(stderr, "dB level: %+.1f\n", level);
 
         //if we have cancelled the split
@@ -1541,4 +1541,183 @@ int splt_ogg_scan_silence (splt_state *state, short seconds,
   return found;
 }
 
-#endif
+/****************************/
+/* External plugin API */
+
+//returns the plugin name
+//-returned string must be freed
+char *splt_pl_get_plugin_name()
+{
+  char *plugin_name = malloc(sizeof(char) * 30);
+  snprintf(plugin_name,30,"ogg vorbis (libvorbis)");
+
+  return plugin_name;
+}
+
+//returns the plugin version
+//-returned string must be freed
+float splt_pl_get_plugin_version()
+{
+  float plugin_version = 0.1;
+
+  return plugin_version;
+}
+
+//check if file is ogg vorbis
+int splt_pl_check_plugin_is_for_file(char *filename, int *error)
+{
+  int is_ogg = SPLT_FALSE;
+  OggVorbis_File ogg_file;
+
+  FILE *file_input = NULL;
+
+  if(!(file_input = fopen(filename, "rb")))
+  {
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+  }
+  else
+  {
+    //check if the file is ogg vorbis
+    if ((ov_test(file_input, &ogg_file, NULL, 0) + 1) == 1)
+    {
+      is_ogg = SPLT_TRUE;
+      ov_clear(&ogg_file);
+    }
+  }
+
+  return is_ogg;
+}
+
+//gets the mp3 info and puts it in the state
+splt_state *splt_pl_get_info(splt_state *state, FILE *file_input, int *error)
+{
+  //checks if valid ogg file
+  state->codec = splt_ogg_info(file_input, state->codec, error);
+
+  //if error
+  if ((*error < 0) ||
+      (state->codec == NULL))
+  {
+    return NULL;
+  }
+
+  return state;
+}
+
+void splt_pl_set_total_time(splt_state *state, int *error)
+{
+  FILE *file_input = NULL;
+  char *filename = splt_t_get_filename_to_split(state);
+
+  //if we can open the file
+  if ((file_input = fopen(filename, "rb")) != NULL)
+  {
+    OggVorbis_File ogg_file;
+
+    //if we can open file
+    if(ov_open(file_input, &ogg_file, NULL, 0) >= 0)
+    {
+      long temp = ov_time_total(&ogg_file, -1) * 100;
+      splt_t_set_total_time(state,temp);
+      ov_clear(&ogg_file);
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    }
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+  }
+}
+
+void splt_pl_simple_split(splt_state *state, char *final_fname,
+    double begin_point, double end_point, int *error) 
+{
+  FILE *file_input = NULL;
+  char *filename = splt_t_get_filename_to_split(state);
+
+  //if we can open the file
+  if ((file_input = fopen(filename, "rb")) != NULL)
+  {
+    splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+    if(splt_pl_get_info(state, file_input,error) != NULL)
+    {
+      oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
+
+      splt_ogg_put_tags(state, error);
+
+      if (*error >= 0)
+      {
+        //effective ogg split
+        splt_ogg_split(final_fname, state,
+            begin_point, end_point,
+            !state->options.option_input_not_seekable,
+            state->options.parameter_gap,
+            state->options.parameter_threshold, error);
+      }
+
+      splt_ogg_state_free(state);
+    }
+    else
+    {
+      fclose(file_input);
+      file_input = NULL;
+    }
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+  }
+}
+
+int splt_pl_scan_silence(splt_state *state, int *error)
+{
+  char *filename = splt_t_get_filename_to_split(state);
+  float offset =
+    splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
+  float threshold = 
+    splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+  float min_length =
+    splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
+  int found = 0;
+  FILE *file_input = NULL;
+
+  //open the file
+  if ((file_input = fopen(filename, "rb")))
+  {
+    splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+    if((state = splt_s_get_ogg_info(state, file_input,error))
+        != NULL)
+    {
+      oggstate->off = offset;
+
+      found = splt_ogg_scan_silence(state, 0, threshold,
+            min_length, 1, NULL, 0);
+
+      splt_ogg_state_free(state);
+    }
+    else
+    {
+      *error = SPLT_ERROR_INVALID_OGG;
+    }
+    fclose(file_input);
+    file_input = NULL;
+  }
+  else
+  {
+    *error = SPLT_ERROR_WHILE_READING_FILE;
+  }
+
+  return found;
+}
+
+void splt_pl_set_original_tags(splt_state *state, int *error)
+{
+  char *filename = splt_t_get_filename_to_split(state);
+
+  splt_u_print_debug("Putting ogg original tags...\n",0,NULL);
+  splt_ogg_get_original_tags(filename, state, error);
+}
+

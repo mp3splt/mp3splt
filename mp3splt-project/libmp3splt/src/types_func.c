@@ -82,6 +82,17 @@ splt_state *splt_t_new_state(splt_state *state, int *error)
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       return NULL;
     }
+    if ((state->plug = malloc(sizeof(splt_plugins))) == NULL)
+    {
+      free(state->wrap);
+      free(state->serrors);
+      free(state->split.p_bar);
+      free(state);
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
+    }
+    state->current_plugin = -1;
+
     //put default options
     splt_t_state_put_default_options(state);
   }
@@ -121,6 +132,11 @@ static void splt_t_free_state_struct(splt_state *state)
       free(state->serrors);
       state->serrors = NULL;
     }
+    if (state->plug)
+    {
+      free(state->plug);
+      state->plug = NULL;
+    }
     free(state);
     state = NULL;
   }
@@ -136,21 +152,65 @@ void splt_t_iopts_free(splt_state *state)
   }
 }
 
+//frees the state->plug structure
+void splt_t_free_plugins(splt_state *state)
+{
+  splt_plugins *pl = state->plug;
+  int i = 0;
+
+  //free the plugins scan dirs
+  if (pl->plugins_scan_dirs)
+  {
+    for (i = 0;i < pl->number_of_dirs_to_scan;i++)
+    {
+      if (pl->plugins_scan_dirs[i])
+      {
+        free(pl->plugins_scan_dirs[i]);
+        pl->plugins_scan_dirs[i] = NULL;
+      }
+    }
+    free(pl->plugins_scan_dirs);
+    pl->plugins_scan_dirs = NULL;
+    pl->number_of_dirs_to_scan = 0;
+  }
+  //free the information about the plugins found
+  if (pl->info)
+  {
+    for (i = 0;i < pl->number_of_plugins_found;i++)
+    {
+      //frees the structure of one plugin info
+      if (pl->info[i].plugin_filename)
+      {
+        free(pl->info[i].plugin_filename);
+        pl->info[i].plugin_filename = NULL;
+      }
+      if (pl->info[i].plugin_name)
+      {
+        free(pl->info[i].plugin_name);
+        pl->info[i].plugin_name = NULL;
+      }
+      if (pl->info[i].plugin_handle)
+      {
+        lt_dlclose(pl->info[i].plugin_handle);
+        pl->info[i].plugin_handle = NULL;
+      }
+      if (pl->info[i].func)
+      {
+        free(pl->info[i].func);
+        pl->info[i].func = NULL;
+      }
+    }
+    free(pl->info);
+    pl->info = NULL;
+    pl->number_of_plugins_found = 0;
+  }
+}
+
 //this function frees all the memory from the state
 void splt_t_free_state(splt_state *state)
 {
   if (state)
   {
-    //free mp3state
-    if (state->mstate)
-    {
-      splt_mp3_state_free(state);
-    }
-    //free oggstate
-    if (state->ostate)
-    {
-      splt_ogg_state_free(state);
-    }
     //free original tags
     splt_t_clean_original_tags(state);
     //we free output format
@@ -165,6 +225,8 @@ void splt_t_free_state(splt_state *state)
     splt_t_free_splitpoints_tags(state);
     //free internal options
     splt_t_iopts_free(state);
+    //free the plugins structure
+    splt_t_free_plugins(state);
     //we free the progress bar
     if (state->split.p_bar)
     {
@@ -539,7 +601,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
   if (split_value == LONG_MAX)
   {
     //we check if mp3 or ogg
-    splt_check_if_mp3_or_ogg(state, &error);
+    splt_check_file_type(state, &error);
     //we put the total time
     splt_s_put_total_time(state, &error);
     if (error != SPLT_OK)
@@ -768,27 +830,7 @@ void splt_t_get_original_tags(splt_state *state, int *err)
   //we clean the original tags
   splt_t_clean_original_tags(state);
 
-  char *filename = splt_t_get_filename_to_split(state);
-  if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-  {
-    splt_u_print_debug("Putting mp3 original tags...\n",0,NULL);
-#ifndef NO_ID3TAG
-    splt_mp3_get_original_tags(filename, state, err);
-#else
-    splt_u_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
-#endif
-  }
-  else
-  {
-#ifndef NO_OGG
-    if (splt_t_get_file_format(state) == SPLT_OGG_FORMAT)
-    {
-      splt_u_print_debug("Putting ogg original tags...\n",0,NULL);
-      splt_ogg_get_original_tags(filename, state, err);
-    }
-#endif
-    //TODO if no mp3 or ogg
-  }
+  splt_p_set_original_tags(state, err);
 }
 
 //append original tags
@@ -1763,6 +1805,11 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
   state->split.splitnumber = 0;
+  //plugins
+  state->plug->plugins_scan_dirs = NULL;
+  state->plug->number_of_plugins_found = 0;
+  state->plug->info = NULL;
+  state->plug->number_of_dirs_to_scan = 0;
   //syncerrors
   state->serrors->serrors_points = NULL;
   state->serrors->serrors_points_num = 0;
@@ -1891,7 +1938,7 @@ void splt_t_set_float_option(splt_state *state, int option_name,
   }
 }
 
-//returns a int option (see mp3splt_types.h for int options)
+//returns a int option (see mp3splt.h for int options)
 int splt_t_get_int_option(splt_state *state, int option_name)
 {
   int returned = 0;
@@ -2277,7 +2324,7 @@ int splt_t_ssplit_new(struct splt_ssplit **silence_list,
       s_new->next = temp;
       *silence_list = s_new;
     }
-    else  
+    else
     {
       if (temp->next == NULL)
         temp->next = s_new;
@@ -2335,8 +2382,10 @@ void splt_t_ssplit_free (struct splt_ssplit **silence_list)
 int splt_t_serrors_append_point(splt_state *state, off_t point)
 {
   int error = SPLT_OK;
+  int file_format = splt_t_get_file_format(state);
 
-  state->mstate->syncerrors++;
+  int syncerrors = 0;
+
   state->serrors->serrors_points_num++;
 
   if (point > 0)
@@ -2345,7 +2394,7 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
     if (state->serrors->serrors_points == NULL)
     {
       if((state->serrors->serrors_points = 
-            malloc(sizeof(off_t)*(state->mstate->syncerrors+2)))
+            malloc(sizeof(off_t)*(syncerrors+2)))
           == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -2359,7 +2408,7 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
     {
       if((state->serrors->serrors_points = 
             realloc(state->serrors->serrors_points,
-              sizeof(off_t)*(state->mstate->syncerrors+2)))
+              sizeof(off_t)*(syncerrors+2)))
           == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -2368,10 +2417,10 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
 
     if (error == SPLT_OK)
     {
-      state->serrors->serrors_points[state->mstate->syncerrors] = 
+      state->serrors->serrors_points[syncerrors] = 
         point;
 
-      if (state->serrors->serrors_points[state->mstate->syncerrors] == -1)
+      if (state->serrors->serrors_points[syncerrors] == -1)
       {
         error = SPLT_MP3_ERR_SYNC;
       }
@@ -2705,3 +2754,10 @@ void splt_t_clean_split_data(splt_state *state,int tracks)
     splt_t_current_split_next(state);
   } while (splt_t_get_current_split(state)<tracks);
 }
+
+//sets the current detected file plugin
+void splt_t_set_current_plugin(splt_state *state, int current_plugin)
+{
+  state->current_plugin = current_plugin;
+}
+

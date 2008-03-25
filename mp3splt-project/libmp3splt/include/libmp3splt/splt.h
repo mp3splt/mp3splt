@@ -30,10 +30,10 @@
  *
  *********************************************************/
 
+#ifndef MP3SPLT_SPLT_H
+
 #include "mp3splt.h"
 #include "types_func.h"
-#include "mp3.h"
-#include "ogg.h"
 #include "cddb.h"
 #include "utils.h"
 #include "checks.h"
@@ -128,4 +128,8 @@ void splt_s_wrap_split(splt_state *state, int *error);
 #define SPLT_TAGS_TRACK 5
 #define SPLT_TAGS_GENRE 6
 #define SPLT_TAGS_PERFORMER 7
+
+#define MP3SPLT_SPLT_H
+
+#endif
 

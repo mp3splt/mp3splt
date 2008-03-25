@@ -30,39 +30,6 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_CHECKS_H
-
-/****************************/
-/* splitpoints checks */
-
-void splt_check_splitpts_inf_song_length(splt_state *state,
-    int *error);
-void splt_check_if_splitpoints_in_order(splt_state *state,
-    int *error);
-
-/****************************/
-/* path check */
-
-void splt_check_if_new_filename_path_correct(char *new_filename_path,
-    int *error);
-char *splt_check_put_dir_of_cur_song(char *filename,
-    char *the_filename_path);
-
-/****************************/
-/* options check */
-
-int splt_check_compatible_options(splt_state *state);
-void splt_check_set_correct_options(splt_state *state);
-
-/****************************/
-/* file checks */
-
-void splt_check_file_type(splt_state *state, int *error);
-int splt_check_is_file(char *fname);
-int splt_check_is_the_same_file(char *file1, char *file2,
-    int *error);
-
-#define MP3SPLT_CHECKS_H
-
-#endif
+//finds the plugins
+int splt_p_find_get_plugins_info(splt_state *state);
 

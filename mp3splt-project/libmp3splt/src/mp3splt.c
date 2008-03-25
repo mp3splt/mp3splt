@@ -35,28 +35,46 @@
 
 #include "splt.h"
 
-short global_debug = SPLT_FALSE;
+short global_debug = SPLT_TRUE;
 
 /************************************/
 /* Initialisation and free          */
 
 /**
- * Creates and returns the new mp3splt state
+ * creates and returns the new mp3splt state
  * \param error A possible error.
  */
 splt_state *mp3splt_new_state(int *error)
 {
   splt_state *state = NULL;
 
+  int libdl_result = lt_dlinit();
+
   //if error is null
   if (error == NULL)
   {
     int err = SPLT_OK;
+    lt_dlinit();
     state = splt_t_new_state(state,&err);
+    if (err == SPLT_OK)
+    {
+      err = splt_p_find_get_plugins_info(state);
+    }
   }
   else
   {
-    state = splt_t_new_state(state,error);
+    if (lt_dlinit() != 0)
+    {
+      *error = SPLT_ERROR_CANNOT_INIT_LIBLTDL;
+    }
+    else
+    {
+      state = splt_t_new_state(state,error);
+      if (*error == SPLT_OK)
+      {
+        *error = splt_p_find_get_plugins_info(state);
+      }
+    }
   }
 
   return state;
@@ -558,7 +576,7 @@ int mp3splt_split(splt_state *state)
       splt_t_set_default_iopts(state);
 
       //we check if mp3 or ogg
-      splt_check_if_mp3_or_ogg(state, &error);
+      splt_check_file_type(state, &error);
       if (error < 0)
       {
         splt_t_unlock_library(state);
@@ -583,7 +601,7 @@ int mp3splt_split(splt_state *state)
       splt_u_print_debug("Original filename to split is ",0, fname_to_split);
 
       //we put the real splitnumber in the splitnumber variable
-      //that could be changed (see splitnumber in mp3splt_types.h)
+      //that could be changed (see splitnumber in mp3splt.h)
       state->split.splitnumber = state->split.real_splitnumber;
 
       //we put splitnumber in the state, we will use it later
@@ -924,46 +942,13 @@ splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
     {
       splt_t_lock_library(state);
 
-      //if the file is mp3 (not ogg)
-      if(splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-      {
-        FILE *file_input = NULL;
-        char *filename = splt_t_get_filename_to_split(state);
-
-        //we open the file
-        if ((file_input = fopen(filename, "rb")) != NULL)
-        {
-          //we get the infos for the file
-          if((state = splt_s_get_mp3_info(state, file_input,
-                  error)) != NULL)
-          {
-            //we detect sync errors
-            splt_mp3_syncerror_search(state, error);
-            //we put the syncerrors to 0
-            state->mstate->syncerrors = 0;
-            //we free the mp3 state after the check
-            splt_mp3_state_free(state);
-          }
-          fclose(file_input);
-          file_input = NULL;
-        }
-        else
-        {
-          *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-          splt_t_unlock_library(state);
-          return NULL;
-        }
-      }
-      else
-      {
-#ifndef NO_OGG
-        *error = SPLT_ERROR_CANNOT_SYNC_OGG;
-        splt_t_unlock_library(state);
-        return NULL;
-#endif
-      }
+      splt_p_search_syncerrors(state, error);
 
       splt_t_unlock_library(state);
+      if (*error < 0)
+      {
+        return NULL;
+      }
     }
     else
     {
@@ -989,43 +974,12 @@ splt_wrap *mp3splt_get_wrap_files(splt_state *state,
     {
       splt_t_lock_library(state);
 
-      FILE *file_input = NULL;
-      char *filename = splt_t_get_filename_to_split(state);
+      //we check the format of the filename
+      splt_check_file_type(state, error);
 
-      //we try to open the file read binary
-      if((file_input = fopen(filename, "rb")) != NULL)
+      if (*error >= 0)
       {
-        //we check the format of the filename
-        splt_check_if_mp3_or_ogg(state, error);
-        //if the filename is mp3,
-        if(splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
-        {
-          //TRUE means we only get the files
-          //first NULL because no directory
-          splt_mp3_dewrap(file_input, SPLT_TRUE, 
-              NULL, error, state);
-        }
-        else
-        {
-          if (splt_t_get_file_format(state) !=
-              SPLT_INVALID_FORMAT)
-          {
-            *error = SPLT_ERROR_WRAP_NOT_IMPLEMENTED;
-          }
-          splt_t_unlock_library(state);
-          fclose(file_input);
-          file_input = NULL;
-          return NULL;
-        }
-
-        //close the file
-        fclose(file_input);
-      }
-      else
-      {
-        *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-        splt_t_unlock_library(state);
-        return NULL;
+        splt_p_dewrap(state, SPLT_TRUE, NULL, error);
       }
 
       splt_t_unlock_library(state);
@@ -1055,7 +1009,7 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
     {
       splt_t_lock_library(state);
 
-      splt_check_if_mp3_or_ogg(state, error);
+      splt_check_file_type(state, error);
 
       if (error >= 0)
       {

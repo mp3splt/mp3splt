@@ -30,9 +30,94 @@
  *
  *********************************************************/
 
+#ifndef MP3SPLT_MP3_H
+
 #ifndef NO_ID3TAG
 #include <id3tag.h>
 #endif
+
+#include <mad.h>
+
+#include "splt.h"
+
+/**********************************/
+/* Mp3 structures                 */
+
+#define SPLT_MAD_BSIZE 4032
+
+// Struct that will contain header's useful infos
+struct splt_header {
+  off_t ptr;    // Offset of header
+  int bitrate;
+  int padding;
+  int framesize;
+};
+
+// Struct that will contains infos on mp3 and an header struct of first valid header
+struct splt_mp3 {
+  int mpgid;    // 0 or 1
+  int layer;    // mpg1, mpg2, or mpg3
+  int channels;
+  //0 = single channel
+  //1 = dual channel
+  //2 = joint stereo
+  //3 = stereo
+  //4 = other
+  //frequency
+  int freq;
+  //bitrate
+  int bitrate;
+  //frames per second
+  float fps;
+  //used for the xing header
+  int xing;
+  char *xingbuffer;
+  off_t xing_offset;
+  //length of the mp3 file
+  off_t len;
+  //where we begin reading
+  off_t firsth;
+  struct splt_header firsthead;
+};
+
+typedef struct {
+  FILE *file_input;
+  struct splt_header h;
+  //if we are in framemode or not
+  short framemode;
+  //total frames
+  unsigned long frames;
+  int syncdetect;
+  off_t end;
+  off_t end2;
+  off_t bytes;
+  int first;
+  unsigned long headw;
+
+  //see the mp3 structure
+  struct splt_mp3 mp3file;
+
+  //used internally, libmad structures
+  struct mad_stream stream;
+  struct mad_frame frame;
+  struct mad_synth synth;
+  //internally used by the silence detection functions
+  mad_fixed_t temp_level;
+  //the offset
+  float off;
+  //used internally when reading the file
+  unsigned char inputBuffer[SPLT_MAD_BSIZE];
+  //mad timer
+  mad_timer_t timer;
+  //used internally, pointer to the beginning of a frame
+  unsigned char *data_ptr;
+  //used internally, length of a frame
+  long data_len;
+  //length of a buffer when reading a frame
+  int buf_len;
+  double avg_level;
+  unsigned long n_stat;
+} splt_mp3_state;
 
 /****************************/
 /* mp3 utils */
@@ -117,3 +202,8 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
 #define SPLT_MP3_ABWLEN 0x1f5
 #define SPLT_MP3_INDEXVERSION 1
 #define SPLT_MP3_READBSIZE 1024
+
+#define MP3SPLT_MP3_H
+
+#endif
+

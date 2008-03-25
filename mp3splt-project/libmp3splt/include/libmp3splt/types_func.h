@@ -30,6 +30,8 @@
  *
  *********************************************************/
 
+#ifndef MP3SPLT_TYPES_FUNC
+
 /********************************/
 /* types: state access */
 
@@ -221,3 +223,8 @@ void splt_t_clean_one_split_data(splt_state *state, int num);
 void splt_t_clean_split_data(splt_state *state,int tracks);
 int splt_t_split_is_canceled(splt_state *state);
 void splt_t_set_stop_split(splt_state *state, int bool_value);
+
+#define MP3SPLT_TYPES_FUNC
+
+#endif
+
