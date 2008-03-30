@@ -424,30 +424,6 @@ char *splt_t_get_m3u_filename(splt_state *state)
 }
 
 /********************************/
-/* types: file format access */
-
-//sets the file format
-void splt_t_set_file_format(splt_state *state, int file_format)
-{
-  if ((file_format == SPLT_MP3_FORMAT)
-      ||(file_format == SPLT_OGG_FORMAT)
-      ||(file_format == SPLT_INVALID_FORMAT))
-  {
-    state->file_format = file_format;
-  }
-  else
-  {
-    splt_u_error(SPLT_IERROR_INT,__func__, file_format, NULL);
-  }
-}
-
-//returns the file format
-int splt_t_get_file_format(splt_state *state)
-{
-  return state->file_format;
-}
-
-/********************************/
 /* types: current split access */
 
 //sets the current split
@@ -588,8 +564,6 @@ int splt_t_get_splitnumber(splt_state *state)
 //puts a splitpoint in the state with an eventual file name
 //split_value is which splitpoint hundreths of seconds
 //if split_value is LONG_MAX, we put the end of the song (EOF)
-//TODO, we need to have the filename in the state here
-//in order to treat LONG_MAX value
 int splt_t_append_splitpoint(splt_state *state, long split_value,
     char *name)
 {
@@ -1833,8 +1807,6 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->split.p_bar->progress_type = SPLT_PROGRESS_PREPARE;
   state->split.p_bar->user_data = 0;
   state->split.p_bar->progress = NULL;
-  //other
-  state->file_format = SPLT_MP3_FORMAT;
   state->cancel_split = SPLT_FALSE;
   //internal
   state->iopts.library_locked = SPLT_FALSE;
@@ -1848,7 +1820,7 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->options.output_filenames = SPLT_OUTPUT_DEFAULT;
   state->options.split_mode = SPLT_OPTION_NORMAL_MODE;
   state->options.tags = SPLT_CURRENT_TAGS;
-  state->options.option_mp3_frame_mode = SPLT_TRUE;
+  state->options.option_frame_mode = SPLT_TRUE;
   state->options.option_auto_adjust = SPLT_FALSE;
   state->options.option_input_not_seekable = SPLT_FALSE;
   state->options.parameter_number_tracks = SPLT_DEFAULT_PARAM_TRACKS;
@@ -1887,8 +1859,8 @@ void splt_t_set_int_option(splt_state *state, int option_name,
     case SPLT_OPT_TAGS:
       state->options.tags = value;
       break;
-    case SPLT_OPT_MP3_FRAME_MODE:
-      state->options.option_mp3_frame_mode = value;
+    case SPLT_OPT_FRAME_MODE:
+      state->options.option_frame_mode = value;
       break;
     case SPLT_OPT_AUTO_ADJUST:
       state->options.option_auto_adjust = value;
@@ -1953,8 +1925,8 @@ int splt_t_get_int_option(splt_state *state, int option_name)
     case SPLT_OPT_TAGS:
       returned = state->options.tags;
       break;
-    case SPLT_OPT_MP3_FRAME_MODE:
-      returned = state->options.option_mp3_frame_mode;
+    case SPLT_OPT_FRAME_MODE:
+      returned = state->options.option_frame_mode;
       break;
     case SPLT_OPT_AUTO_ADJUST:
       returned = state->options.option_auto_adjust;
@@ -2382,8 +2354,6 @@ void splt_t_ssplit_free (struct splt_ssplit **silence_list)
 int splt_t_serrors_append_point(splt_state *state, off_t point)
 {
   int error = SPLT_OK;
-  int file_format = splt_t_get_file_format(state);
-
   int syncerrors = 0;
 
   state->serrors->serrors_points_num++;
@@ -2422,7 +2392,7 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
 
       if (state->serrors->serrors_points[syncerrors] == -1)
       {
-        error = SPLT_MP3_ERR_SYNC;
+        error = SPLT_ERR_SYNC;
       }
     }
   }
@@ -2585,35 +2555,35 @@ void splt_t_put_progress_text(splt_state *state,int type)
   if (state->split.p_bar->progress != NULL)
   {
     char *point_name = NULL;
-    int curr_split =
-      splt_t_get_current_split(state);
-    point_name = 
-      splt_t_get_splitpoint_name(state, curr_split-1,&err);
+    int curr_split = splt_t_get_current_split(state);
+    point_name = splt_t_get_splitpoint_name(state, curr_split-1,&err);
 
     if (point_name != NULL)
     {
       //we put the extension of the song
-      char extension[10] = SPLT_MP3EXT;
-      if (splt_t_get_file_format(state) == SPLT_OGG_FORMAT)
+      char *extension = splt_p_get_extension(state, &err);
+      if (err >= 0)
       {
-        snprintf(extension, 9, SPLT_OGGEXT);
+        snprintf(filename_shorted,
+            state->split.p_bar->progress_text_max_char,"%s%s",
+            point_name,extension);
+
+        if (strlen(point_name) > state->split.p_bar->progress_text_max_char)
+        {
+          filename_shorted[strlen(filename_shorted)-1] = '.';
+          filename_shorted[strlen(filename_shorted)-2] = '.';
+          filename_shorted[strlen(filename_shorted)-3] = '.';
+        }
       }
-
-      snprintf(filename_shorted,
-          state->split.p_bar->progress_text_max_char,"%s%s",
-          point_name,extension);
-
-      if (strlen(point_name)
-          > state->split.p_bar->progress_text_max_char)
+      //free memory
+      if (extension)
       {
-        filename_shorted[strlen(filename_shorted)-1] = '.';
-        filename_shorted[strlen(filename_shorted)-2] = '.';
-        filename_shorted[strlen(filename_shorted)-3] = '.';
+        free(extension);
+        extension = NULL;
       }
     }
 
-    snprintf(state->split.p_bar->filename_shorted, 512,"%s",
-        filename_shorted);
+    snprintf(state->split.p_bar->filename_shorted, 512,"%s", filename_shorted);
 
     state->split.p_bar->current_split = splt_t_get_current_split(state);
     state->split.p_bar->max_splits = state->split.splitnumber-1;

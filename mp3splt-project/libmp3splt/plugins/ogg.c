@@ -725,7 +725,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate,int *error)
   {
     if(ov_open(oggstate->in, &oggstate->vf, NULL, 0) < 0)
     {
-      *error = SPLT_ERROR_INVALID_OGG;
+      *error = SPLT_ERROR_INVALID;
       splt_ogg_v_free(oggstate);
       return NULL;
     }
@@ -735,7 +735,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate,int *error)
   /* Read headers in, and save them */
   if(splt_ogg_process_headers(oggstate) == -1)
   {
-    *error = SPLT_ERROR_INVALID_OGG;
+    *error = SPLT_ERROR_INVALID;
     splt_ogg_v_free(oggstate);
     return NULL;
   }
@@ -1221,7 +1221,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
       else
       {
         splt_u_print_debug("Invalid ogg file in find_begin_cutpoint",0,NULL);
-        *error = SPLT_ERROR_INVALID_OGG;
+        *error = SPLT_ERROR_INVALID;
       }
       return;
     }
@@ -1277,7 +1277,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
     }
     else
     {
-      *error = SPLT_ERROR_INVALID_OGG;
+      *error = SPLT_ERROR_INVALID;
       splt_u_print_debug("Invalid ogg file in find_end_cutpoint",0,NULL);
     }
     ogg_stream_clear(&stream_out);
@@ -1290,11 +1290,11 @@ void splt_ogg_split(char *filename, splt_state *state, double
 
   if (oggstate->end == -1) 
   {
-    *error = SPLT_OK_SPLITTED_OGG_EOF;
+    *error = SPLT_OK_SPLITTED_EOF;
     return;
   }
 
-  *error = SPLT_OK_SPLITTED_OGG;
+  *error = SPLT_OK_SPLITTED;
 }
 
 /****************************/
@@ -1546,10 +1546,18 @@ int splt_ogg_scan_silence (splt_state *state, short seconds,
 
 //returns the plugin name
 //-returned string must be freed
-char *splt_pl_get_plugin_name()
+char *splt_pl_get_plugin_name(int *error)
 {
   char *plugin_name = malloc(sizeof(char) * 30);
-  snprintf(plugin_name,30,"ogg vorbis (libvorbis)");
+  if (plugin_name != NULL)
+  {
+    snprintf(plugin_name,30,"ogg vorbis (libvorbis)");
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
 
   return plugin_name;
 }
@@ -1632,7 +1640,7 @@ void splt_pl_set_total_time(splt_state *state, int *error)
   }
 }
 
-void splt_pl_simple_split(splt_state *state, char *final_fname,
+void splt_pl_simple_split (splt_state *state, char *final_fname,
     double begin_point, double end_point, int *error) 
 {
   FILE *file_input = NULL;
@@ -1700,7 +1708,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
     }
     else
     {
-      *error = SPLT_ERROR_INVALID_OGG;
+      *error = SPLT_ERROR_INVALID;
     }
     fclose(file_input);
     file_input = NULL;
@@ -1719,5 +1727,23 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 
   splt_u_print_debug("Putting ogg original tags...\n",0,NULL);
   splt_ogg_get_original_tags(filename, state, error);
+}
+
+//returned string must be freed
+char *splt_pl_get_extension(int *error)
+{
+  char *ext = malloc(sizeof(char) * (strlen(SPLT_OGGEXT)+2));
+
+  if (ext != NULL)
+  {
+    snprintf(ext, strlen(SPLT_OGGEXT)+1, SPLT_OGGEXT);
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  return ext;
 }
 

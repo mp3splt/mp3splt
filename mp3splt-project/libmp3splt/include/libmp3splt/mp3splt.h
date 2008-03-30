@@ -30,7 +30,7 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_H
+#ifndef MP3SPLT_MP3SPLT_H
 
 #include <sys/types.h>
 #include <stdlib.h>
@@ -359,11 +359,11 @@ typedef enum {
    */
   SPLT_OPTION_SILENCE_MODE,
   /**
-   * Split with error mode (mp3 only)\n
+   * Split with error mode 
    * It is useful to split large file derivated from a concatenation of
    * smaller files
    */
-  SPLT_OPTION_MP3_ERROR_MODE,
+  SPLT_OPTION_ERROR_MODE,
   /**
    * Will create an indefinite number of smaller files with
    * a fixed time length specified by #SPLT_OPT_SPLIT_TIME
@@ -453,7 +453,7 @@ typedef struct {
   //SPLT_OPTION_NORMAL_MODE
   //SPLT_OPTION_WRAP_MODE
   //SPLT_OPTION_SILENCE_MODE
-  //SPLT_OPTION_MP3_ERROR_MODE
+  //SPLT_OPTION_ERROR_MODE
   //SPLT_OPTION_TIME_MODE
   splt_split_mode_options split_mode;
 
@@ -469,7 +469,7 @@ typedef struct {
 
   //frame mode (mp3 only). Process all frames, seeking split positions
   //by counting frames and not with bitrate guessing.
-  short option_mp3_frame_mode;
+  short option_frame_mode;
   //the time of split when split_mode = OPTION_TIME_SPLIT
   float split_time;
   //this option uses silence detection to auto-adjust splitpoints.
@@ -517,13 +517,6 @@ typedef struct {
 /**********************************/
 /* Main structure                 */
 
-typedef enum {
-  SPLT_MP3_FORMAT,
-  SPLT_OGG_FORMAT,
-  //other format
-  SPLT_INVALID_FORMAT,
-} splt_file_format;
-
 //internal structures
 typedef struct
 {
@@ -547,15 +540,15 @@ typedef struct
 //contains pointers to the plugin functions
 typedef struct {
   float (*get_plugin_version)();
-  char *(*get_plugin_name)();
+  char *(*get_plugin_name)(int *error);
+  char *(*get_extension)(int *error);
   int (*check_plugin_is_for_file)(char *filename, int *error);
   void (*search_syncerrors)(void *state, int *error);
   void (*dewrap)(void *state, int listonly, char *dir, int *error);
   void (*set_total_time)(void *state, int *error);
-  void (*simple_split)(char *final_fname, void *state, double begin_point,
+  void (*simple_split)(void *state, char *final_fname, double begin_point,
       double end_point, int *error);
   int (*scan_silence)(void *state, int *error);
-  void (*free_plugin_state)(void *state);
   void (*set_original_tags)(void *state, int *error);
 } splt_plugin_func;
 
@@ -587,11 +580,6 @@ typedef struct
 //structure for the splt state
 typedef struct {
 
-  //if we have mp3, ogg or other to split
-  //values are :
-  //SPLT_MP3_FORMAT
-  //SPLT_OGG_FORMAT
-  splt_file_format file_format;
   //if we cancel split or not
   //set to SPLT_TRUE cancels the split
   short cancel_split;
@@ -629,8 +617,6 @@ typedef struct {
   struct splt_ssplit *silence_list;
 
   //file format states, mp3,ogg..
-  //splt_mp3_state *mstate;
-  //splt_ogg_state *ostate;
   void *codec;
 
   //plugins structure
@@ -646,23 +632,23 @@ typedef struct {
 /**
  * @brief Warning, split : mp3 file might be VBR
  */
-#define SPLT_MP3_MIGHT_BE_VBR 301
+#define SPLT_MIGHT_BE_VBR 301
 /**
  * @brief Confirmation, syncerror : syncerror processed ok
  */
-#define SPLT_MP3_SYNC_OK 300
+#define SPLT_SYNC_OK 300
 /**
  * @brief Error, syncerror : error for the syncerror
  */
-#define SPLT_MP3_ERR_SYNC -300
+#define SPLT_ERR_SYNC -300
 /**
  * @brief Error, syncerror : no sync errors found
  */
-#define SPLT_MP3_ERR_NO_SYNC_FOUND -301
+#define SPLT_ERR_NO_SYNC_FOUND -301
 /**
  * @brief Error, syncerror : too many syncerrors found
  */
-#define SPLT_MP3_ERR_TOO_MANY_SYNC_ERR -302
+#define SPLT_ERR_TOO_MANY_SYNC_ERR -302
 
 //freedb
 /**
@@ -790,15 +776,10 @@ typedef struct {
  */
 #define SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED -204
 
-//main
 /**
- * @brief Warning, split : ogg splitted, end of file
+ * @brief Warning, split : splitted, end of file
  */
-#define SPLT_OK_SPLITTED_OGG_EOF 9
-/**
- * @brief Warning, split : mp3 splitted, end of file
- */
-#define SPLT_OK_SPLITTED_MP3_EOF 8
+#define SPLT_OK_SPLITTED_EOF 8
 /**
  * @brief Warning, silence detection : no silence splitpoint found
  */
@@ -816,13 +797,9 @@ typedef struct {
  */
 #define SPLT_SPLITPOINT_BIGGER_THAN_LENGTH 4
 /**
- * @brief Confirmation, split : ogg splitted
+ * @brief Confirmation, split : splitted
  */
-#define SPLT_OK_SPLITTED_OGG 2
-/**
- * @brief Confirmation, split : mp3 splitted
- */
-#define SPLT_OK_SPLITTED_MP3 1
+#define SPLT_OK_SPLITTED 1
 /**
  * @brief Confirmation : no error
  */
@@ -839,11 +816,7 @@ typedef struct {
 /**
  * @brief Error, split : invalid mp3 file
  */
-#define SPLT_ERROR_INVALID_MP3 -3
-/**
- * @brief Error, split : invalid ogg file
- */
-#define SPLT_ERROR_INVALID_OGG -4
+#define SPLT_ERROR_INVALID -3
 /**
  * @brief Error, split : splitpoints are equal
  */
@@ -863,7 +836,7 @@ typedef struct {
 /**
  * @brief Error, split : ogg syncerror not implemented
  */
-#define SPLT_ERROR_CANNOT_SYNC_OGG -9
+#define SPLT_ERROR_CANNOT_SYNC -9
 /**
  * @brief Error, split : incompatible split options
  */
@@ -993,11 +966,7 @@ typedef struct {
 /**
  * @brief todo
  */
-#define SPLT_MESS_DETECTED_MP3 7
-/**
- * @brief todo
- */
-#define SPLT_MESS_DETECTED_OGG 8
+#define SPLT_MESS_DETECTED 7
 /**
  * @brief todo
  */
@@ -1073,15 +1042,15 @@ typedef enum {
    */
   SPLT_OPT_OUTPUT_FILENAMES,
   /**
-   * If we enable the frame mode or not (mp3 only)\n
-   * The frame mode processes the mp3 file frame by frame and
-   * it is useful when splitting a VBR (Variable Bit Rate) mp3 file
+   * If we enable the frame mode or not \n
+   * The frame mode processes the file frame by frame and
+   * it is useful when splitting a VBR (Variable Bit Rate) file
    * 
    * The option can take the values #SPLT_TRUE or #SPLT_FALSE
    *
    * Default is #SPLT_TRUE
    */
-  SPLT_OPT_MP3_FRAME_MODE,
+  SPLT_OPT_FRAME_MODE,
   /**
    * If we use silence detection to auto-adjust splitpoints\n
    * The following options may change the behaviour of the
@@ -1275,20 +1244,6 @@ splt_state *mp3splt_new_state(int *error);
 void mp3splt_free_state(splt_state *state, int *error);
 
 /************************************/
-/* Check functions                  */
-
-/**
- * returns SPLT_TRUE if the library has been compiled with libid3tag 
- * and SPLT_FALSE if the library has not been compiled with libid3tag
- */
-short mp3splt_has_id3tag();
-/**
- * returns SPLT_TRUE if the library has been compiled with ogg
- * and SPLT_FALSE if the library has not been compiled with ogg
- */
-short mp3splt_has_ogg();
-
-/************************************/
 /* Set path                         */
 
 //puts the path for the new splitted files
@@ -1437,15 +1392,7 @@ splt_wrap *mp3splt_get_wrap_files(splt_state *state,
 //count how many silence splitpoints we have with silence detection
 int mp3splt_count_silence_points(splt_state *state, int *error);
 
-#ifndef __WIN32__
-#define SPLT_PLUGIN_EXT ".so"
-#define SPLT_PLUGIN_EXT_SIZE 3
-#else
-#define SPLT_PLUGIN_EXT ".dll"
-#define SPLT_PLUGIN_EXT_SIZE 4
-#endif
-
-#define MP3SPLT_H
+#define MP3SPLT_MP3SPLT_H
 
 #endif
 

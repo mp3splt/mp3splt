@@ -59,12 +59,6 @@ char *splt_t_get_path_of_split(splt_state *state);
 char *splt_t_get_m3u_filename(splt_state *state);
 
 /********************************/
-/* types: file format access */
-
-void splt_t_set_file_format(splt_state *state, int file_format);
-int splt_t_get_file_format(splt_state *state);
-
-/********************************/
 /* types: current split access */
 
 void splt_t_set_current_split(splt_state *state, int index);

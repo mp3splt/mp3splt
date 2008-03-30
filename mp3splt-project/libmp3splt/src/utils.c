@@ -327,23 +327,27 @@ static char *splt_u_get_mins_secs_filename(char *filename,
           mins_char2, secs_char2,hundr_secs_char2);
 
       //put the extension according to the file type
-      if (splt_t_get_file_format(state) == SPLT_MP3_FORMAT)
+      char *extension = splt_p_get_extension(state, error);
+      if (*error >= 0)
       {
-        strcat(fname2, SPLT_MP3EXT);
+        strcat(fname2, extension);
+        if (extension)
+        {
+          free(extension);
+          extension = NULL;
+        }
       }
-#ifndef NO_OGG
-      else 
-      {
-        strcat(fname2, SPLT_OGGEXT);
-      }
-#endif
     }
     else
     {
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
     //freeing memory
-    free(fname);
+    if (fname)
+    {
+      free(fname);
+      fname = NULL;
+    }
   }
   else
   {
@@ -420,43 +424,34 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
       error);
   int malloc_number = strlen(output_fname)+
     strlen(new_filename_path) + 10;
-  int file_format = splt_t_get_file_format(state);
 
   if ((output_fname_with_path = malloc(malloc_number)) != NULL)
   {
     //we put the full output filename (with the path)
     //construct full filename with path
-    switch (file_format) 
+    char *extension = splt_p_get_extension(state, error);
+    if (*error >= 0)
     {
-      case SPLT_MP3_FORMAT:
-        if (strcmp(new_filename_path,"") == 0)
-        {
-          snprintf(output_fname_with_path, malloc_number,
-              "%s"SPLT_MP3EXT,output_fname);
-        }
-        else
-        {
-          snprintf(output_fname_with_path, malloc_number,
-              "%s%c%s"SPLT_MP3EXT,new_filename_path,
-              SPLT_DIRCHAR, output_fname);
-        }
-        break;
-      case SPLT_OGG_FORMAT:
-        if (strcmp(new_filename_path,"") == 0)
-        {
-          snprintf(output_fname_with_path, malloc_number,
-              "%s"SPLT_OGGEXT,output_fname);
-        }
-        else
-        {
-          snprintf(output_fname_with_path, malloc_number,
-              "%s%c%s"SPLT_OGGEXT,new_filename_path,
-              SPLT_DIRCHAR, output_fname);
-        }
-        break;
-      default:
-        *error = SPLT_ERROR_INVALID_FORMAT;
-        break;
+      if (strcmp(new_filename_path,"") == 0)
+      {
+        snprintf(output_fname_with_path, malloc_number,
+            "%s%s", output_fname, extension);
+      }
+      else
+      {
+        snprintf(output_fname_with_path, malloc_number,
+            "%s%c%s%s",new_filename_path, SPLT_DIRCHAR,
+            output_fname, extension);
+      }
+      if (extension)
+      {
+        free(extension);
+        extension = NULL;
+      }
+    }
+    else
+    {
+      return NULL;
     }
   }
   else
@@ -1234,7 +1229,7 @@ int splt_u_put_output_format_filename(splt_state *state)
           if ((split_mode != SPLT_OPTION_TIME_MODE) &&
               (split_mode != SPLT_OPTION_NORMAL_MODE) &&
               (split_mode != SPLT_OPTION_SILENCE_MODE) &&
-              (split_mode != SPLT_OPTION_MP3_ERROR_MODE))
+              (split_mode != SPLT_OPTION_ERROR_MODE))
           {
             if (splt_t_tags_exists(state,current_split))
             {

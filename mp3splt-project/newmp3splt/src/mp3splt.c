@@ -442,17 +442,11 @@ void print_confirmation_error(int conf, Options *opt,
     case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
       print_message(" file splitted, splitpoints bigger than length");
       break;
-    case SPLT_OK_SPLITTED_OGG :
-      print_message(" ogg splitted");
+    case SPLT_OK_SPLITTED :
+      print_message(" file splitted");
       break;
-    case SPLT_OK_SPLITTED_MP3 :
-      print_message(" mp3 splitted");
-      break;
-    case SPLT_OK_SPLITTED_OGG_EOF :
-      print_message(" ogg splitted");
-      break;
-    case SPLT_OK_SPLITTED_MP3_EOF :
-      print_message(" mp3 splitted");
+    case SPLT_OK_SPLITTED_EOF :
+      print_message(" file splitted");
       break;
     case SPLT_OK :
       //fprintf(stderr," bug in the program, please report it");
@@ -463,12 +457,8 @@ void print_confirmation_error(int conf, Options *opt,
     case SPLT_ERROR_CANNOT_OPEN_FILE :
       put_error_message_exit(" error: cannot open file",opt,state);
       break;
-    case SPLT_ERROR_INVALID_MP3 :
-      put_error_message_exit(" error: invalid mp3 file or libmp3splt "
-          "compiled without ogg support",opt,state);
-      break;
-    case SPLT_ERROR_INVALID_OGG :
-      put_error_message_exit(" error: invalid ogg file",opt,state);
+    case SPLT_ERROR_INVALID :
+      put_error_message_exit(" error: invalid file",opt,state);
       break;
     case SPLT_ERROR_EQUAL_SPLITPOINTS :
       put_error_message_exit(" error: equal splitpoints",opt,state);
@@ -557,8 +547,8 @@ void print_confirmation_error(int conf, Options *opt,
     case SPLT_SILENCE_OK:
       print_message(" silence split ok");
       break;
-    case SPLT_ERROR_CANNOT_SYNC_OGG:
-      put_error_message_exit(" sync error: cannot sync ogg files",opt,state);
+    case SPLT_ERROR_CANNOT_SYNC:
+      put_error_message_exit(" sync error: cannot sync files",opt,state);
       break;
     case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
       put_error_message_exit(" error: incompatible options",opt,state);
@@ -566,16 +556,16 @@ void print_confirmation_error(int conf, Options *opt,
     case SPLT_ERROR_SILENCE:
       put_error_message_exit(" error for the silence split",opt,state);
       break;
-    case SPLT_MP3_SYNC_OK:
-      print_message(" mp3 error mode ok");
+    case SPLT_SYNC_OK:
+      print_message(" error mode ok");
       break;
-    case SPLT_MP3_ERR_SYNC:
-      put_error_message_exit(" error: mp3 sync",opt,state);
+    case SPLT_ERR_SYNC:
+      put_error_message_exit(" error: sync",opt,state);
       break;
-    case SPLT_MP3_ERR_NO_SYNC_FOUND:
+    case SPLT_ERR_NO_SYNC_FOUND:
       print_message(" no sync errors found                ");
       break;
-    case SPLT_MP3_ERR_TOO_MANY_SYNC_ERR:
+    case SPLT_ERR_TOO_MANY_SYNC_ERR:
       put_error_message_exit(" sync error: too many sync errors",opt,state);
       break;
     case SPLT_DEWRAP_OK:
@@ -610,8 +600,8 @@ void print_confirmation_error(int conf, Options *opt,
       put_error_message_exit(" error: unable to allocate"
           " memory",opt,state);
       break;
-    case SPLT_MP3_MIGHT_BE_VBR:
-      print_message(" warning: mp3 might be VBR,"
+    case SPLT_MIGHT_BE_VBR:
+      print_message(" warning: might be VBR,"
           " use frame mode");
       break;
     case SPLT_ERROR_CANNOT_OPEN_DEST_FILE:
@@ -1223,12 +1213,6 @@ void put_library_message(int message)
     case SPLT_MESS_START_TIME_SPLIT:
       print_message(" info: starting time mode split");
       break;
-    case SPLT_MESS_DETECTED_MP3:
-      print_message(" info: mp3 format detected");
-      break;
-    case SPLT_MESS_DETECTED_OGG:
-      print_message(" info: ogg format detected");
-      break;
     case SPLT_MESS_DETECTED_INVALID:
       fprintf(stderr," info error: invalid format detected");
       fflush(stderr);
@@ -1399,10 +1383,13 @@ int main (int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option=getopt(argc, argv, "m:SDVifkwleqnasc:d:o:t:p:g:"))!=-1)
+  while ((option=getopt(argc, argv, "m:SDVifkwleqnasc:d:o:t:p:g:h"))!=-1)
   {
     switch (option)
     {
+      case 'h':
+        show_small_help_exit(opt, state);
+        break;
       case 'D':
         mp3splt_set_int_option(state, SPLT_OPT_DEBUG_MODE,
             SPLT_TRUE);
@@ -1416,7 +1403,7 @@ int main (int argc, char *argv[])
         exit(0);
         break;
       case 'f':
-        mp3splt_set_int_option(state, SPLT_OPT_MP3_FRAME_MODE,
+        mp3splt_set_int_option(state, SPLT_OPT_FRAME_MODE,
             SPLT_TRUE);
         opt->f_option = SPLT_TRUE;
         break;
@@ -1435,7 +1422,7 @@ int main (int argc, char *argv[])
         break;
       case 'e':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE,
-            SPLT_OPTION_MP3_ERROR_MODE);
+            SPLT_OPTION_ERROR_MODE);
         opt->e_option = SPLT_TRUE;
         break;
       case 'q':

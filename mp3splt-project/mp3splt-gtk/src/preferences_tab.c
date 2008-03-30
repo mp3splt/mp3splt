@@ -723,7 +723,7 @@ GtkWidget *create_pref_splitpoints_page()
                       tags_radio, FALSE, FALSE, 2);
 
   //if the library has been compiled with id3tag support
-  if (!mp3splt_has_id3tag())
+  /*if (!mp3splt_has_id3tag())
     {
       //horizontal fake widget box
       horiz_fake = gtk_hbox_new(FALSE,0);
@@ -736,7 +736,7 @@ GtkWidget *create_pref_splitpoints_page()
                                            " the original mp3 tags to the splitted files"));
       gtk_box_pack_start (GTK_BOX (horiz_fake),
                           tag_label, FALSE, FALSE, 0);
-    }
+    }*/
   
   return general_hbox;
 }

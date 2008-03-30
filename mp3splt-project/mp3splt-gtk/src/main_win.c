@@ -301,7 +301,7 @@ void split_button_event (GtkWidget *widget,
         case SPLT_OPTION_SILENCE_MODE:
           put_status_message((gchar *)_(" info: starting silence mode split... "));
           break; 
-        case SPLT_OPTION_MP3_ERROR_MODE:
+        case SPLT_OPTION_ERROR_MODE:
           put_status_message((gchar *)_(" info: starting"
                                         " error mode split... "));
           break;
@@ -825,17 +825,11 @@ void print_status_bar_confirmation(gint confirmation)
   case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
     put_status_message((gchar *)_(" file splitted, splitpoints bigger than length "));
     break;
-  case SPLT_OK_SPLITTED_OGG :
-    put_status_message((gchar *)_(" ogg splitted "));
+  case SPLT_OK_SPLITTED :
+    put_status_message((gchar *)_(" file splitted "));
     break;
-  case SPLT_OK_SPLITTED_MP3 :
-    put_status_message((gchar *)_(" mp3 splitted "));
-    break;
-  case SPLT_OK_SPLITTED_OGG_EOF :
-    put_status_message((gchar *)_(" ogg splitted "));
-    break;
-  case SPLT_OK_SPLITTED_MP3_EOF :
-    put_status_message((gchar *)_(" mp3 splitted "));
+  case SPLT_OK_SPLITTED_EOF :
+    put_status_message((gchar *)_(" file splitted "));
     break;
   case SPLT_OK :
     //put_status_message((gchar *)_(" bug in the program, please report it "));
@@ -846,12 +840,8 @@ void print_status_bar_confirmation(gint confirmation)
   case SPLT_ERROR_CANNOT_OPEN_FILE :
     put_status_message((gchar *)_(" error: cannot open file "));
     break;
-  case SPLT_ERROR_INVALID_MP3 :
-    put_status_message((gchar *)_(" error: invalid mp3 file or libmp3splt "
-                                  "compiled without ogg support"));
-    break;
-  case SPLT_ERROR_INVALID_OGG :
-    put_status_message((gchar *)_(" error: invalid ogg file "));
+  case SPLT_ERROR_INVALID :
+    put_status_message((gchar *)_(" error: invalid file"));
     break;
   case SPLT_ERROR_EQUAL_SPLITPOINTS :
     put_status_message((gchar *)_(" error: equal splitpoints "));
@@ -935,7 +925,7 @@ void print_status_bar_confirmation(gint confirmation)
   case SPLT_SILENCE_OK:
     put_status_message((gchar *)_(" silence split ok "));
     break;
-  case SPLT_ERROR_CANNOT_SYNC_OGG:
+  case SPLT_ERROR_CANNOT_SYNC:
     put_status_message((gchar *)_(" sync error: cannot sync ogg files "));
     break;
   case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
@@ -944,16 +934,16 @@ void print_status_bar_confirmation(gint confirmation)
   case SPLT_ERROR_SILENCE:
     put_status_message((gchar *)_(" error for the silence split "));
     break;
-  case SPLT_MP3_SYNC_OK:
-    put_status_message((gchar *)_(" mp3 error mode ok "));
+  case SPLT_SYNC_OK:
+    put_status_message((gchar *)_(" error mode ok "));
     break;
-  case SPLT_MP3_ERR_SYNC:
-    put_status_message((gchar *)_(" error: mp3 sync "));
+  case SPLT_ERR_SYNC:
+    put_status_message((gchar *)_(" error: sync "));
     break;
-  case SPLT_MP3_ERR_NO_SYNC_FOUND:
+  case SPLT_ERR_NO_SYNC_FOUND:
     put_status_message((gchar *)_(" no sync errors found "));
     break;
-  case SPLT_MP3_ERR_TOO_MANY_SYNC_ERR:
+  case SPLT_ERR_TOO_MANY_SYNC_ERR:
     put_status_message((gchar *)_(" sync error: too many sync errors "));
     break;
   case SPLT_DEWRAP_OK:
@@ -990,8 +980,8 @@ void print_status_bar_confirmation(gint confirmation)
     put_status_message((gchar *)_(" error: unable to allocate"
                                   " memory "));
     break;
-  case SPLT_MP3_MIGHT_BE_VBR:
-    put_status_message((gchar *)_(" warning: mp3 might be VBR,"
+  case SPLT_MIGHT_BE_VBR:
+    put_status_message((gchar *)_(" warning: file might be VBR,"
                                   " use frame mode "));
     break;
   case SPLT_ERROR_CANNOT_OPEN_DEST_FILE:

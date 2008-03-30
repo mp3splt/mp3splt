@@ -203,6 +203,8 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
 #define SPLT_MP3_INDEXVERSION 1
 #define SPLT_MP3_READBSIZE 1024
 
+#define SPLT_MP3EXT ".mp3"
+
 #define MP3SPLT_MP3_H
 
 #endif

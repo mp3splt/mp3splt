@@ -105,9 +105,6 @@ void splt_s_wrap_split(splt_state *state, int *error);
 
 #define SPLT_VARCHAR '@'
 
-#define SPLT_MP3EXT ".mp3"
-#define SPLT_MP3EXTU ".MP3"
-#define SPLT_OGGEXTU ".OGG"
 #define SPLT_OGGEXT ".ogg"
 
 //max number of splitpoints 

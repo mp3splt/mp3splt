@@ -126,7 +126,7 @@ static void splt_s_simple_split(splt_state *state, int *error)
         splt_t_set_i_begin_point(state,splt_beg);
         splt_t_set_i_end_point(state,splt_end);
 
-        //we do the real split, if mp3 or ogg..
+        //we do the real split
         splt_s_real_simple_split(state, error);
       }
     }
@@ -147,12 +147,9 @@ void splt_s_multiple_split(splt_state *state, int *error)
   //if we have the sync error mode
   //we do a different split than the normal split
   if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE)
-      == SPLT_OPTION_MP3_ERROR_MODE)
+      == SPLT_OPTION_ERROR_MODE)
   {
     splt_t_put_message_to_client(state, SPLT_MESS_START_ERROR_SPLIT);
-
-    //mp3,ogg, or..
-    int file_format = splt_t_get_file_format(state);
 
     char *filename = splt_t_get_filename_to_split(state);
     FILE *file_input;
@@ -231,14 +228,14 @@ void splt_s_multiple_split(splt_state *state, int *error)
                 //we put the real error
                 switch (split_result)
                 {
-                  case SPLT_OK_SPLITTED_MP3:
-                    *error = SPLT_MP3_SYNC_OK;
+                  case SPLT_OK_SPLITTED:
+                    *error = SPLT_SYNC_OK;
                     break;
                   case SPLT_ERROR_BEGIN_OUT_OF_FILE:
-                    *error = SPLT_MP3_SYNC_OK;
+                    *error = SPLT_SYNC_OK;
                     break;
                   default:
-                    *error = SPLT_MP3_ERR_SYNC;
+                    *error = SPLT_ERR_SYNC;
                     goto bloc_end;
                     break;
                 }
@@ -266,8 +263,6 @@ bloc_end:
         }
         //we put the syncerrors to 0
         state->syncerrors = 0;
-        //we free the state after the split
-        splt_p_free_plugin_state(state);
       }
       fclose(file_input);
     }
@@ -361,8 +356,6 @@ void splt_s_time_split(splt_state *state, int *error)
   double begin = 0.f;
   double end = (double)
     splt_t_get_float_option(state, SPLT_OPT_SPLIT_TIME);
-  //mp3,ogg, or..
-  int file_format = splt_t_get_file_format(state);
 
   //if no state error
   if (state->options.split_time >= 0)
@@ -450,11 +443,9 @@ void splt_s_time_split(splt_state *state, int *error)
 
         //get out if error
         if ((*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)||
-            (*error==SPLT_MP3_MIGHT_BE_VBR)||
-            (*error==SPLT_OK_SPLITTED_MP3_EOF)||
-            (*error==SPLT_ERROR_INVALID_OGG)||
-            (*error==SPLT_ERROR_INVALID_MP3)||
-            (*error==SPLT_OK_SPLITTED_OGG_EOF))
+            (*error==SPLT_MIGHT_BE_VBR)||
+            (*error==SPLT_ERROR_INVALID)||
+            (*error==SPLT_OK_SPLITTED_EOF))
         {
           tracks = 0;
         }
@@ -481,22 +472,16 @@ void splt_s_time_split(splt_state *state, int *error)
       final_fname = NULL;
     }
 
-    //we put the mp3 time split error
+    //we put the time split error
     switch (*error)
     {
-      case SPLT_MP3_MIGHT_BE_VBR : 
+      case SPLT_MIGHT_BE_VBR : 
         *error = SPLT_TIME_SPLIT_OK;
         break;
-      case SPLT_OK_SPLITTED_OGG : 
+      case SPLT_OK_SPLITTED: 
         *error = SPLT_TIME_SPLIT_OK;
         break;
-      case SPLT_OK_SPLITTED_MP3 : 
-        *error = SPLT_TIME_SPLIT_OK;
-        break;
-      case SPLT_OK_SPLITTED_OGG_EOF : 
-        *error = SPLT_TIME_SPLIT_OK;
-        break;
-      case SPLT_OK_SPLITTED_MP3_EOF : 
+      case SPLT_OK_SPLITTED_EOF : 
         *error = SPLT_TIME_SPLIT_OK;
         break;
       case SPLT_ERROR_BEGIN_OUT_OF_FILE : 
@@ -648,8 +633,6 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
   //begin splitpoint and end splitpoint
   double beg_pos = 0, end_pos = 0;
   int get_error = SPLT_OK;
-  //mp3, ogg, or..
-  int file_format = splt_t_get_file_format(state);
 
   //we put the number of tracks found
   splt_t_set_splitnumber(state, found+1);
@@ -721,19 +704,13 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
             //we put the silence split errors
             switch (*error)
             {
-              case SPLT_MP3_MIGHT_BE_VBR:
+              case SPLT_MIGHT_BE_VBR:
                 *error = SPLT_SILENCE_OK;
                 break;
-              case SPLT_OK_SPLITTED_MP3:
+              case SPLT_OK_SPLITTED:
                 *error = SPLT_SILENCE_OK;
                 break;
-              case SPLT_OK_SPLITTED_OGG:
-                *error = SPLT_SILENCE_OK;
-                break;
-              case SPLT_OK_SPLITTED_MP3_EOF:
-                *error = SPLT_SILENCE_OK;
-                break;
-              case SPLT_OK_SPLITTED_OGG_EOF:
+              case SPLT_OK_SPLITTED_EOF:
                 *error = SPLT_SILENCE_OK;
                 break;
               default:
@@ -763,7 +740,6 @@ function_end:
     free(final_fname);
     final_fname = NULL;
   }
-  splt_p_free_plugin_state(state);
 }
 
 //do the silence split

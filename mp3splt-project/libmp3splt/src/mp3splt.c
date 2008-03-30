@@ -106,29 +106,6 @@ void mp3splt_free_state(splt_state *state, int *error)
 }
 
 /************************************/
-/* Check functions                  */
-
-//returns if the library has id3tag support or not
-short mp3splt_has_id3tag()
-{
-#ifdef NO_ID3TAG
-  return SPLT_FALSE;
-#else
-  return SPLT_TRUE;
-#endif
-}
-
-//returns if the library has ogg support or not
-short mp3splt_has_ogg()
-{
-#ifdef NO_OGG
-  return SPLT_FALSE;
-#else
-  return SPLT_TRUE;
-#endif
-}
-
-/************************************/
 /* Set path                         */
 
 //puts the path of the split
@@ -679,12 +656,11 @@ int mp3splt_split(splt_state *state)
             break;
           default:
             //this is the normal split or error mode split:
-            //here we also have mp3_error_mode and
-            //mp3_frame_mode 
+            //here we also have error_mode and frame_mode 
             //if we dont have error mode, check if we have
             //at least 2 splitpoints
             if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE)
-                != SPLT_OPTION_MP3_ERROR_MODE)
+                != SPLT_OPTION_ERROR_MODE)
             {
               //check if we have at least 2 splitpoints
               if (splt_t_get_splitnumber(state) < 2)
@@ -1041,6 +1017,3 @@ void mp3splt_get_version(char *version)
   snprintf(version,20,"%s",SPLT_PACKAGE_VERSION);
 }
 
-//checks the version
-void mp3splt_v0_4_rc1()
-{}

@@ -269,8 +269,7 @@ void splt_check_set_correct_options(splt_state *state)
   {
     //if we have the adjust option or the silence option,
     //enable frame mode by default
-    splt_t_set_int_option(state,SPLT_OPT_MP3_FRAME_MODE,
-        SPLT_TRUE);
+    splt_t_set_int_option(state,SPLT_OPT_FRAME_MODE, SPLT_TRUE);
 
     //for the autoadjust or silence mode
     if  ((splt_t_get_float_option(state,SPLT_OPT_PARAM_THRESHOLD) < -96.f) || 
@@ -311,7 +310,7 @@ void splt_check_set_correct_options(splt_state *state)
   if ((splt_t_get_int_option(state,SPLT_OPT_INPUT_NOT_SEEKABLE)) &&
       (splt_t_get_int_option(state,SPLT_OPT_AUTO_ADJUST) ||
        (split_mode == SPLT_OPTION_SILENCE_MODE) ||
-       (split_mode == SPLT_OPTION_MP3_ERROR_MODE) ||
+       (split_mode == SPLT_OPTION_ERROR_MODE) ||
        (split_mode == SPLT_OPTION_WRAP_MODE)))
   {
     splt_t_set_int_option(state,SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_FALSE);

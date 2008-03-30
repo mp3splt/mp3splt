@@ -151,12 +151,12 @@ void put_options_from_preferences()
   //
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_MP3_FRAME_MODE,
+      mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE,
                              SPLT_TRUE);
     }
   else
     {
-      mp3splt_set_int_option(the_state, SPLT_OPT_MP3_FRAME_MODE,
+      mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE,
                              SPLT_FALSE);
     }
   //adjust option
@@ -235,7 +235,7 @@ void put_options_from_preferences()
       break;
     case SELECTED_SPLIT_ERROR:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                             SPLT_OPTION_MP3_ERROR_MODE);
+                             SPLT_OPTION_ERROR_MODE);
       break;
     default:
       break;
