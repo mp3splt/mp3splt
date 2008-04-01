@@ -325,24 +325,41 @@ void splt_check_set_correct_options(splt_state *state)
 void splt_check_file_type(splt_state *state, int *error)
 {
   int err = SPLT_OK;
-  char *filename = splt_t_get_filename_to_split(state);
 
   splt_u_print_debug("Detecting file format...",0,NULL);
+  char *filename = splt_t_get_filename_to_split(state);
   splt_u_print_debug("Checking the format of",0,filename);
 
   //parse each plugin until we find out a plugin for the file
   splt_plugins *pl = state->plug;
   int i = 0;
+  int plugin_found = SPLT_FALSE;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
     splt_t_set_current_plugin(state, i);
-    if (splt_p_check_plugin_is_for_file(state, filename, &err))
+    err = SPLT_OK;
+    if (splt_p_check_plugin_is_for_file(state, &err))
     {
       if (err == SPLT_OK)
       {
-        //get out
+        //here, plugin found
+        plugin_found = SPLT_TRUE;
         break;
       }
+    }
+  }
+  if (! plugin_found)
+  {
+    *error = SPLT_ERROR_INVALID;
+  }
+  else
+  {
+    char *temp = splt_p_get_plugin_name(state);
+    splt_u_print_debug("plugin found : ",0,temp);
+    if (temp)
+    {
+      free(temp);
+      temp = NULL;
     }
   }
 }

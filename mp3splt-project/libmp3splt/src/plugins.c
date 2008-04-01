@@ -35,6 +35,7 @@
 #include <dlfcn.h>
 
 #include "splt.h"
+#include "plugins.h"
 
 //sets the plugin scan directories
 int splt_p_set_default_plugins_scan_dirs(splt_state *state)
@@ -150,20 +151,19 @@ int splt_p_scan_dir_for_plugins(splt_plugins *pl, char *directory)
           goto end;
         }
       }
-      pl->info[pl->number_of_plugins_found].plugin_name = NULL;
       pl->info[pl->number_of_plugins_found].func = NULL;
       pl->info[pl->number_of_plugins_found].func = malloc(sizeof(splt_plugin_func));
-      splt_plugin_func *pl_func = pl->info[pl->number_of_plugins_found].func;
-      memset(pl_func,0,sizeof(splt_plugin_func));
       if (pl->info[pl->number_of_plugins_found].func == NULL)
       {
         return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         goto end;
       }
+      memset(pl->info[pl->number_of_plugins_found].func,0,sizeof(splt_plugin_func));
       pl->info[pl->number_of_plugins_found].plugin_handle = NULL;
       pl->info[pl->number_of_plugins_found].plugin_version = 0;
+      pl->info[pl->number_of_plugins_found].plugin_filename = NULL;
       pl->info[pl->number_of_plugins_found].plugin_filename = malloc(sizeof(char) *
-          (fname_len+directory_len+2));
+          (fname_len+directory_len+3));
       if (pl->info[pl->number_of_plugins_found].plugin_filename == NULL)
       {
         return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -177,6 +177,7 @@ int splt_p_scan_dir_for_plugins(splt_plugins *pl, char *directory)
     number_of_files = old_number_of_files;
 
 end:
+    ;
     //free memory
     while (number_of_files--)
     {
@@ -294,12 +295,29 @@ int splt_p_find_get_plugins_info(splt_state *state)
   int err = 0;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
-    splt_u_print_debug("plugin filename = ",0,pl->info[i].plugin_filename);
-    splt_u_print_debug("plugin name = ",0,pl->info[i].func->get_plugin_name(&err));
-    splt_u_print_debug("plugin version = ",pl->info[i].func->get_plugin_version(),NULL);
-    splt_u_print_debug("extension = ",0,pl->info[i].func->get_extension(&err));
+    splt_t_set_current_plugin(state, i);
+    if (pl->info[i].plugin_filename != NULL)
+    {
+      splt_u_print_debug("plugin filename = ",0,pl->info[i].plugin_filename);
+    }
+    char *temp = splt_p_get_plugin_name(state, &err);
+    splt_u_print_debug("plugin name = ",0,temp);
+    if (temp)
+    {
+      free(temp);
+    }
+    float version = splt_p_get_plugin_version(state, &err);
+    splt_u_print_debug("plugin version = ", version, NULL);
+    temp = splt_p_get_extension(state,&err);
+    splt_u_print_debug("extension = ",0,temp);
+    if (temp)
+    {
+      free(temp);
+      temp = NULL;
+    }
     splt_u_print_debug("",0,NULL);
   }
+  splt_t_set_current_plugin(state, -1);
 
   return return_value;
 }
@@ -309,9 +327,10 @@ int splt_p_find_get_plugins_info(splt_state *state)
 float splt_p_get_plugin_version(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->check_plugin_is_for_file != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->check_plugin_is_for_file != NULL)
   {
-    return pl->info[state->current_plugin].func->get_plugin_version();
+    return pl->info[current_plugin].func->get_plugin_version();
   }
   else
   {
@@ -323,9 +342,10 @@ float splt_p_get_plugin_version(splt_state *state, int *error)
 char *splt_p_get_plugin_name(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->check_plugin_is_for_file != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->check_plugin_is_for_file != NULL)
   {
-    return pl->info[state->current_plugin].func->get_plugin_name(error);
+    return pl->info[current_plugin].func->get_plugin_name(error);
   }
   else
   {
@@ -334,12 +354,13 @@ char *splt_p_get_plugin_name(splt_state *state, int *error)
   }
 }
 
-int splt_p_check_plugin_is_for_file(splt_state *state, char *filename, int *error)
+int splt_p_check_plugin_is_for_file(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->check_plugin_is_for_file != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->check_plugin_is_for_file != NULL)
   {
-    return pl->info[state->current_plugin].func->check_plugin_is_for_file(filename,error);
+    return pl->info[current_plugin].func->check_plugin_is_for_file(state, error);
   }
   else
   {
@@ -351,9 +372,10 @@ int splt_p_check_plugin_is_for_file(splt_state *state, char *filename, int *erro
 void splt_p_search_syncerrors(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->search_syncerrors != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->search_syncerrors != NULL)
   {
-    pl->info[state->current_plugin].func->search_syncerrors(state, error);
+    pl->info[current_plugin].func->search_syncerrors(state, error);
   }
   else
   {
@@ -364,9 +386,10 @@ void splt_p_search_syncerrors(splt_state *state, int *error)
 void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->dewrap != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->dewrap != NULL)
   {
-    pl->info[state->current_plugin].func->dewrap(state, listonly, dir, error);
+    pl->info[current_plugin].func->dewrap(state, listonly, dir, error);
   }
   else
   {
@@ -377,9 +400,10 @@ void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error)
 void splt_p_set_total_time(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->set_total_time != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->set_total_time != NULL)
   {
-    pl->info[state->current_plugin].func->set_total_time(state, error);
+    pl->info[current_plugin].func->set_total_time(state, error);
   }
   else
   {
@@ -391,9 +415,10 @@ void splt_p_simple_split(splt_state *state, char *final_fname, double begin_poin
     double end_point, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->simple_split != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->simple_split != NULL)
   {
-    pl->info[state->current_plugin].func->simple_split(state, final_fname,
+    pl->info[current_plugin].func->simple_split(state, final_fname,
         begin_point, end_point, error);
   }
   else
@@ -405,9 +430,10 @@ void splt_p_simple_split(splt_state *state, char *final_fname, double begin_poin
 void splt_p_scan_silence(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->scan_silence != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->scan_silence != NULL)
   {
-    pl->info[state->current_plugin].func->scan_silence(state, error);
+    pl->info[current_plugin].func->scan_silence(state, error);
   }
   else
   {
@@ -418,18 +444,20 @@ void splt_p_scan_silence(splt_state *state, int *error)
 void splt_p_set_original_tags(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->set_original_tags != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->set_original_tags != NULL)
   {
-    pl->info[state->current_plugin].func->set_original_tags(state, error);
+    pl->info[current_plugin].func->set_original_tags(state, error);
   }
 }
 
 char *splt_p_get_extension(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  if (pl->info[state->current_plugin].func->get_extension != NULL)
+  int current_plugin = splt_t_get_current_plugin(state);
+  if (pl->info[current_plugin].func->get_extension != NULL)
   {
-    return pl->info[state->current_plugin].func->get_extension(error);
+    return pl->info[current_plugin].func->get_extension(error);
   }
 
   return "";

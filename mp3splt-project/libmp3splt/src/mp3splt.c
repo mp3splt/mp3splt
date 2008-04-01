@@ -48,8 +48,6 @@ splt_state *mp3splt_new_state(int *error)
 {
   splt_state *state = NULL;
 
-  int libdl_result = lt_dlinit();
-
   //if error is null
   if (error == NULL)
   {

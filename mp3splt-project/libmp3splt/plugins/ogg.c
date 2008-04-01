@@ -1572,14 +1572,15 @@ float splt_pl_get_plugin_version()
 }
 
 //check if file is ogg vorbis
-int splt_pl_check_plugin_is_for_file(char *filename, int *error)
+int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 {
+  char *filename = splt_t_get_filename_to_split(state);
   int is_ogg = SPLT_FALSE;
   OggVorbis_File ogg_file;
 
   FILE *file_input = NULL;
 
-  if(!(file_input = fopen(filename, "rb")))
+  if((file_input = fopen(filename, "rb")) == NULL)
   {
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
@@ -1591,13 +1592,18 @@ int splt_pl_check_plugin_is_for_file(char *filename, int *error)
       is_ogg = SPLT_TRUE;
       ov_clear(&ogg_file);
     }
+    else
+    {
+      fclose(file_input);
+      file_input = NULL;
+    }
   }
 
   return is_ogg;
 }
 
 //gets the mp3 info and puts it in the state
-splt_state *splt_pl_get_info(splt_state *state, FILE *file_input, int *error)
+splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
 {
   //checks if valid ogg file
   state->codec = splt_ogg_info(file_input, state->codec, error);
@@ -1650,7 +1656,7 @@ void splt_pl_simple_split (splt_state *state, char *final_fname,
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
     splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
-    if(splt_pl_get_info(state, file_input,error) != NULL)
+    if(splt_ogg_get_info(state, file_input,error) != NULL)
     {
       oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
 

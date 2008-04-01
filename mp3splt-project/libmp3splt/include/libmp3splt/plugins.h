@@ -30,10 +30,10 @@
  *
  *********************************************************/
 
-float splt_p_get_plugin_version(splt_state *state);
+float splt_p_get_plugin_version(splt_state *state, int *error);
 char *splt_p_get_plugin_name(splt_state *state, int *error);
 char *splt_p_get_extension(splt_state *state, int *error);
-int splt_p_check_plugin_is_for_file(splt_state *state, char *filename, int *error);
+int splt_p_check_plugin_is_for_file(splt_state *state, int *error);
 void splt_p_search_syncerrors(splt_state *state, int *error);
 void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error);
 void splt_p_set_total_time(splt_state *state, int *error);

@@ -542,7 +542,7 @@ typedef struct {
   float (*get_plugin_version)();
   char *(*get_plugin_name)(int *error);
   char *(*get_extension)(int *error);
-  int (*check_plugin_is_for_file)(char *filename, int *error);
+  int (*check_plugin_is_for_file)(void *state, int *error);
   void (*search_syncerrors)(void *state, int *error);
   void (*dewrap)(void *state, int listonly, char *dir, int *error);
   void (*set_total_time)(void *state, int *error);
@@ -556,7 +556,6 @@ typedef struct {
 typedef struct
 {
   char *plugin_filename;
-  char *plugin_name;
   float plugin_version;
   //plugin handle get with dlopen
   //-would be closed with dlclose

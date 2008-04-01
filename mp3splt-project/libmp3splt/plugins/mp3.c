@@ -902,10 +902,10 @@ function_end:
 //It justs copies the data of the input file from a begin offset
 //to an end offset, and, eventually, a Xing frame (for VBR)
 //at the beginning and a ID3v1 at the end, to an outputfile.
-int splt_mp3_simple_split (splt_state *state, char *filename,
+int splt_mp3_simple_split (splt_state *state, char *output_fname,
                            off_t begin, off_t end, char *id3buffer)
 {
-  splt_u_print_debug("We do mp3 simple split...",0,NULL);
+  splt_u_print_debug("We do mp3 simple split on output...",0,output_fname);
   splt_u_print_debug("Mp3 simple split offset begin is",begin,NULL);
   splt_u_print_debug("Mp3 simple split offset end is",end,NULL);
 
@@ -943,7 +943,8 @@ int splt_mp3_simple_split (splt_state *state, char *filename,
 
   //get the file size
   struct stat file_statistics;
-  if(stat(filename, &file_statistics) == 0)
+  char *fname_to_split = splt_t_get_filename_to_split(state);
+  if(stat(fname_to_split, &file_statistics) == 0)
   {
     mp3state->end2 = file_statistics.st_size;
   }
@@ -953,13 +954,13 @@ int splt_mp3_simple_split (splt_state *state, char *filename,
   }
 
   // - means stdout huh)
-  if (strcmp(filename, "-")==0)
+  if (strcmp(output_fname, "-")==0)
   {
     file_output = stdout;
   }
   else
   {
-    if (!(file_output=fopen(filename, "wb+")))
+    if (!(file_output=fopen(output_fname, "wb+")))
     {
       return SPLT_ERROR_CANNOT_OPEN_FILE;
     }
@@ -1118,17 +1119,17 @@ int splt_mp3_simple_split (splt_state *state, char *filename,
 //threshold - see manual
 //must be called after splt_mp3_info()
 //returns possible error in error
-void splt_mp3_split (char *filename, splt_state *state, char *id3,
+void splt_mp3_split (char *output_fname, splt_state *state, char *id3,
                      double fbegin_sec, double fend_sec, int *error)
 {
   splt_u_print_debug("Mp3 split...",0,NULL);
-  splt_u_print_debug("Output filename is",0,filename);
+  splt_u_print_debug("Output filename is",0,output_fname);
   splt_u_print_debug("Begin position",fbegin_sec,NULL);
   splt_u_print_debug("End position",fend_sec,NULL);
 
   //we do the next split
   splt_t_current_split_next(state);
-  splt_mp3_state *mp3state = state->codec;
+  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
 
   /*  //crc check
       off_t begin,end;
@@ -1180,13 +1181,13 @@ void splt_mp3_split (char *filename, splt_state *state, char *id3,
     splt_u_print_debug("Starting not seekable...",0,NULL);
 
     //for the stdout output, hmm..
-    if (strcmp(filename, "-")==0)
+    if (strcmp(output_fname, "-")==0)
     {
       file_output = stdout;
     }
     else
     {
-      if (!(file_output=fopen(filename, "wb+")))
+      if (!(file_output=fopen(output_fname, "wb+")))
       {
         *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
         mad_frame_finish(&mp3state->frame);
@@ -1776,7 +1777,7 @@ bloc_end:
     }
 
     //seekable real split
-    status = splt_mp3_simple_split(state, filename, begin, end, id3);
+    status = splt_mp3_simple_split(state, output_fname, begin, end, id3);
   }
 
   if (check_bitrate)
@@ -2072,7 +2073,7 @@ static off_t splt_mp3_adjustsync(splt_mp3_state *mp3state, off_t begin, off_t en
 //returns the syncerror splitpoints in off_t *
 //if error, returns NULL
 //result must be freed
-void splt_mp3_syncerror_search (splt_state *state, int *error)
+void splt_mp3_syncerror_search(splt_state *state, int *error)
 {
   off_t offset = 0;
   char *filename = splt_t_get_filename_to_split(state);
@@ -2279,9 +2280,9 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
   //wrapfiles = the wrapped files number
   int wrapfiles=0, i, j, k=0;
   unsigned char c;
-  char filename[512];
+  char filename[512] = { '\0' };
   off_t begin=0, end=0, len, id3offset;
-  char junk[384];
+  char junk[384] = { '\0' };
 
   //we free previously wrap files
   splt_t_wrap_free(state);
@@ -2774,7 +2775,7 @@ float splt_pl_get_plugin_version()
 }
 
 //gets the mp3 info and puts it in the state
-splt_state *splt_pl_get_info(splt_state *state, FILE *file_input, int *error)
+splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 {
   //checks if valid mp3 file
   //before last argument, if framemode or not
@@ -2792,18 +2793,25 @@ splt_state *splt_pl_get_info(splt_state *state, FILE *file_input, int *error)
 }
 
 //check if file is mp3
-int splt_pl_check_plugin_is_for_file(splt_state *state, char *filename, int *error)
+int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 {
+  char *filename = splt_t_get_filename_to_split(state);
+
   int is_mp3 = SPLT_FALSE;
 
   FILE *file_input = NULL;
-  if (!(file_input = fopen(filename, "rb")))
+  if ((file_input = fopen(filename, "rb")) == NULL)
   {
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    return is_mp3;
   }
-  else if (splt_pl_get_info(state, file_input, error) != NULL)
+  else
   {
-    splt_mp3_state_free(state);
+    if (splt_mp3_get_info(state, file_input, error) != NULL)
+    {
+      is_mp3 = SPLT_TRUE;
+      splt_mp3_state_free(state);
+    }
     fclose(file_input);
     file_input = NULL;
   }
@@ -2822,7 +2830,7 @@ void splt_pl_search_syncerrors(splt_state *state, int *error)
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
     //we get the infos for the file
-    if(splt_pl_get_info(state, file_input, error) != NULL)
+    if(splt_mp3_get_info(state, file_input, error) != NULL)
     {
       //we detect sync errors
       splt_mp3_syncerror_search(state, error);
@@ -2869,7 +2877,7 @@ void splt_pl_set_total_time(splt_state *state, int *error)
 
     //if we can read the file
     //get the mp3 info => this puts the total time in the state
-    if(splt_pl_get_info(state, file_input,error) != NULL)
+    if(splt_mp3_get_info(state, file_input,error) != NULL)
     {
       //we free the mp3 state after the check
       splt_mp3_state_free(state);
@@ -2894,9 +2902,9 @@ void splt_pl_simple_split(splt_state *state, char *final_fname,
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
-    splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
-    mp3state = splt_mp3_info(file_input, state,
+    state->codec = splt_mp3_info(file_input, state,
         splt_t_get_int_option(state,SPLT_OPT_FRAME_MODE), error);
+    splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
 
     if(*error >= 0)
     {

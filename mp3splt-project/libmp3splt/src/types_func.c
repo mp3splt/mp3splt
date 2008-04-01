@@ -184,11 +184,7 @@ void splt_t_free_plugins(splt_state *state)
         free(pl->info[i].plugin_filename);
         pl->info[i].plugin_filename = NULL;
       }
-      if (pl->info[i].plugin_name)
-      {
-        free(pl->info[i].plugin_name);
-        pl->info[i].plugin_name = NULL;
-      }
+
       if (pl->info[i].plugin_handle)
       {
         lt_dlclose(pl->info[i].plugin_handle);
@@ -2729,5 +2725,10 @@ void splt_t_clean_split_data(splt_state *state,int tracks)
 void splt_t_set_current_plugin(splt_state *state, int current_plugin)
 {
   state->current_plugin = current_plugin;
+}
+
+int splt_t_get_current_plugin(splt_state *state)
+{
+  return state->current_plugin;
 }
 
