@@ -1,0 +1,13 @@
+* Matteo Trotta - <mtrotta@users.sourceforge.net>: Author and main maintainer of Mp3Splt Project
+
+* Munteanu Alexandru Ionut - <io_alex_2002@yahoo.fr> : Maintainer of mp3splt
+
+People who contributed to mp3splt development :
+
+  - Marco Papa Manzillo <mpapamanz@users.sourceforge.net>: rpm and deb packager.
+  - François Revol <revol@free.fr>: added list option and worked on BeOS porting.
+  - Remo Laubacher <laubi@users.sourceforge.net>: ported mp3splt v. 0.4 for Windows.
+  - Davide Magatti <gilgamesh@notme.com>: "official" mp3splt beta tester
+
+homepage :
+	http://mp3splt.sourceforge.net/

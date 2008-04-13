@@ -1,0 +1,11 @@
+libmp3splt (0.4_rc1) unstable; urgency=low
+
+  * version 0.4_rc1
+
+ -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Thu, 21 Dec 2006 22:35:40 +0100
+
+libmp3splt (0.3.1) testing; urgency=low
+    
+    * debian package
+  
+ -- Munteanu Alexandru <io_alex_2002@yahoo.fr>  Mon,  27 Feb 2006 19:39:00 +0200
