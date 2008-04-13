@@ -354,13 +354,8 @@ void splt_check_file_type(splt_state *state, int *error)
   }
   else
   {
-    char *temp = splt_p_get_plugin_name(state);
+    char *temp = splt_p_get_name(state,&err);
     splt_u_print_debug("plugin found : ",0,temp);
-    if (temp)
-    {
-      free(temp);
-      temp = NULL;
-    }
   }
 }
 

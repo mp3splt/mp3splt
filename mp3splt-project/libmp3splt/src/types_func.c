@@ -152,6 +152,69 @@ void splt_t_iopts_free(splt_state *state)
   }
 }
 
+//allocates and initialises a new plugin
+int splt_t_alloc_init_new_plugin(splt_plugins *pl)
+{
+  int return_value = SPLT_OK;
+
+  //allocate memory for the plugin data
+  if (pl->data == NULL)
+  {
+    pl->data = malloc(sizeof(splt_plugin_data) * (pl->number_of_plugins_found+1));
+    if (pl->data == NULL)
+    {
+      return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return return_value;
+    }
+  }
+  else
+  {
+    pl->data = realloc(pl->data,sizeof(splt_plugin_data) *
+        (pl->number_of_plugins_found+1));
+    if (pl->data == NULL)
+    {
+      return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return return_value;
+    }
+  }
+  pl->data[pl->number_of_plugins_found].func = NULL;
+  pl->data[pl->number_of_plugins_found].plugin_handle = NULL;
+  pl->data[pl->number_of_plugins_found].info.version = 0;
+  pl->data[pl->number_of_plugins_found].plugin_filename = NULL;
+
+  return return_value;
+}
+
+//frees the structure of one plugin data
+void splt_t_free_plugin_data(splt_plugin_data pl_data)
+{
+  if (pl_data.info.name)
+  {
+    free(pl_data.info.name);
+    pl_data.info.name = NULL;
+  }
+  if (pl_data.info.extension)
+  {
+    free(pl_data.info.extension);
+    pl_data.info.extension = NULL;
+  }
+  if (pl_data.plugin_filename)
+  {
+    free(pl_data.plugin_filename);
+    pl_data.plugin_filename = NULL;
+  }
+  if (pl_data.plugin_handle)
+  {
+    lt_dlclose(pl_data.plugin_handle);
+    pl_data.plugin_handle = NULL;
+  }
+  if (pl_data.func)
+  {
+    free(pl_data.func);
+    pl_data.func = NULL;
+  }
+}
+
 //frees the state->plug structure
 void splt_t_free_plugins(splt_state *state)
 {
@@ -173,31 +236,15 @@ void splt_t_free_plugins(splt_state *state)
     pl->plugins_scan_dirs = NULL;
     pl->number_of_dirs_to_scan = 0;
   }
-  //free the information about the plugins found
-  if (pl->info)
+  //free the data about the plugins found
+  if (pl->data)
   {
     for (i = 0;i < pl->number_of_plugins_found;i++)
     {
-      //frees the structure of one plugin info
-      if (pl->info[i].plugin_filename)
-      {
-        free(pl->info[i].plugin_filename);
-        pl->info[i].plugin_filename = NULL;
-      }
-
-      if (pl->info[i].plugin_handle)
-      {
-        lt_dlclose(pl->info[i].plugin_handle);
-        pl->info[i].plugin_handle = NULL;
-      }
-      if (pl->info[i].func)
-      {
-        free(pl->info[i].func);
-        pl->info[i].func = NULL;
-      }
+      splt_t_free_plugin_data(pl->data[i]);
     }
-    free(pl->info);
-    pl->info = NULL;
+    free(pl->data);
+    pl->data = NULL;
     pl->number_of_plugins_found = 0;
   }
 }
@@ -1778,7 +1825,7 @@ static void splt_t_state_put_default_options(splt_state *state)
   //plugins
   state->plug->plugins_scan_dirs = NULL;
   state->plug->number_of_plugins_found = 0;
-  state->plug->info = NULL;
+  state->plug->data = NULL;
   state->plug->number_of_dirs_to_scan = 0;
   //syncerrors
   state->serrors->serrors_points = NULL;

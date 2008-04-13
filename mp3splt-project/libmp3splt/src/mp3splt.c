@@ -56,7 +56,7 @@ splt_state *mp3splt_new_state(int *error)
     state = splt_t_new_state(state,&err);
     if (err == SPLT_OK)
     {
-      err = splt_p_find_get_plugins_info(state);
+      err = splt_p_find_get_plugins_data(state);
     }
   }
   else
@@ -70,7 +70,7 @@ splt_state *mp3splt_new_state(int *error)
       state = splt_t_new_state(state,error);
       if (*error == SPLT_OK)
       {
-        *error = splt_p_find_get_plugins_info(state);
+        *error = splt_p_find_get_plugins_data(state);
       }
     }
   }

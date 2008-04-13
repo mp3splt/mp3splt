@@ -532,7 +532,7 @@ int splt_s_set_silence_splitpoints(splt_state *state,
     if (!splt_t_split_is_canceled(state))
     {
       found++;
-      if ((number_tracks > 0)&&
+      if ((number_tracks > 0) &&
           (number_tracks < SPLT_MAXSILENCE))
       {
         if (number_tracks < found)

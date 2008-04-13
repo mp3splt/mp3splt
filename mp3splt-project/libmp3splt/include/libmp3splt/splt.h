@@ -37,6 +37,7 @@
 #include "cddb.h"
 #include "utils.h"
 #include "checks.h"
+#include "plugins.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

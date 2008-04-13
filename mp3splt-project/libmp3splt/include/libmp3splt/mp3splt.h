@@ -537,12 +537,21 @@ typedef struct
   double split_end;
 } splt_internal;
 
+/*
+ * Structure containing information about one plugin.
+ * Must be filled up at plugin initialisation.
+ */
+typedef struct
+{
+  float version;
+  char *name;
+  char *extension;
+} splt_plugin_info;
+
 //contains pointers to the plugin functions
 typedef struct {
-  float (*get_plugin_version)();
-  char *(*get_plugin_name)(int *error);
-  char *(*get_extension)(int *error);
   int (*check_plugin_is_for_file)(void *state, int *error);
+  void (*set_plugin_info)(splt_plugin_info *info, int *error);
   void (*search_syncerrors)(void *state, int *error);
   void (*dewrap)(void *state, int listonly, char *dir, int *error);
   void (*set_total_time)(void *state, int *error);
@@ -552,17 +561,18 @@ typedef struct {
   void (*set_original_tags)(void *state, int *error);
 } splt_plugin_func;
 
-//structure containing informations about one plugin
+//structure containing all the data about one plugin
 typedef struct
 {
+  splt_plugin_info info;
+  //complete filename of the plugin shared object
   char *plugin_filename;
-  float plugin_version;
-  //plugin handle get with dlopen
-  //-would be closed with dlclose
+  //plugin handle get with lt_dlopen
+  //-would be closed with lt_dlclose
   void *plugin_handle;
   //plugin functions
   splt_plugin_func *func;
-} splt_plugin_info;
+} splt_plugin_data;
 
 //internal plugins structure
 typedef struct
@@ -572,8 +582,8 @@ typedef struct
   int number_of_dirs_to_scan;
   //the number of plugins found
   int number_of_plugins_found;
-  //information about all the plugins
-  splt_plugin_info *info;
+  //data structure about all the plugins
+  splt_plugin_data *data;
 } splt_plugins;
 
 //structure for the splt state

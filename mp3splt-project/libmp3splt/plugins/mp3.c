@@ -2743,37 +2743,6 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
   }
 }
 
-/****************************/
-/* External plugin API */
-
-//returns the plugin name
-//-returned string must be freed
-char *splt_pl_get_plugin_name(int *error)
-{
-  char *plugin_name = malloc(sizeof(char) * 20);
-
-  if (plugin_name != NULL)
-  {
-    snprintf(plugin_name,20,"mp3 (libmad)");
-  }
-  else
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return NULL;
-  }
-
-  return plugin_name;
-}
-
-//returns the plugin version
-//-returned string must be freed
-float splt_pl_get_plugin_version()
-{
-  float plugin_version = 0.1;
-
-  return plugin_version;
-}
-
 //gets the mp3 info and puts it in the state
 splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 {
@@ -2790,6 +2759,43 @@ splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
   }
 
   return state;
+}
+
+/****************************/
+/* External plugin API */
+
+//returns the plugin infos (name, version, extension)
+//-alloced data in splt_plugin_info will be freed at the end of the program
+void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
+{
+  float plugin_version = 0.1;
+
+  //set plugin version
+  info->version = plugin_version;
+
+  //set plugin name
+  info->name = malloc(sizeof(char) * 40);
+  if (info->name != NULL)
+  {
+    snprintf(info->name, 39, "mp3 (libmad)");
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
+
+  //set plugin extension
+  info->extension = malloc(sizeof(char) * (strlen(SPLT_MP3EXT)+2));
+  if (info->extension != NULL)
+  {
+    snprintf(info->extension, strlen(SPLT_MP3EXT)+1, SPLT_MP3EXT);
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
 }
 
 //check if file is mp3
@@ -2988,23 +2994,5 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 #else
   splt_u_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
 #endif
-}
-
-//returned string must be freed
-char *splt_pl_get_extension(int *error)
-{
-  char *ext = malloc(sizeof(char) * (strlen(SPLT_MP3EXT)+2));
-
-  if (ext != NULL)
-  {
-    snprintf(ext, strlen(SPLT_MP3EXT)+1, SPLT_MP3EXT);
-  }
-  else
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return NULL;
-  }
-
-  return ext;
 }
 
