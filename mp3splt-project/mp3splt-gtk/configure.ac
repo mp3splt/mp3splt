@@ -75,7 +75,7 @@ LIBMP3SPLT_TEST=1
 #we check for libmp3splt
 if test $LIBMP3SPLT_TEST -eq 1;then
 #checking for libmp3splt
-AC_CHECK_LIB(mp3splt, mp3splt_v0_4_rc1,libmp3splt=yes,
+AC_CHECK_LIB(mp3splt, mp3splt_new_state,libmp3splt=yes,
         [AC_MSG_ERROR(libmp3splt version 0.4_rc1 needed :
 
 You can download it at http://mp3splt.sourceforge.net/
