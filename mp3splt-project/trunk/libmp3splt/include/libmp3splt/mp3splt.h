@@ -915,9 +915,9 @@ typedef struct {
  */
 #define SPLT_ERROR_INVALID_FORMAT -28
 /**
- * @brief Error, cannot find plugins directory
+ * @brief Error, cannot find plugins
  */
-#define SPLT_ERROR_CANNOT_FIND_PLUGINS -29
+#define SPLT_ERROR_NO_PLUGIN_FOUND -29
 /**
  * @brief Error, cannot init libltdl
  */
@@ -1246,6 +1246,9 @@ typedef enum {
  * Creates a new state structure, needed by libmp3splt
  */
 splt_state *mp3splt_new_state(int *error);
+
+//find plugins
+int mp3splt_find_plugins(splt_state *state);
 
 //this function frees the left variables in the library
 //don't forget to call this function ONLY at the end of the program

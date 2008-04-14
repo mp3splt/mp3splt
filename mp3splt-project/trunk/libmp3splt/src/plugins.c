@@ -304,21 +304,45 @@ float splt_p_get_version(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  return pl->data[current_plugin].info.version;
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return 0;
+  }
+  else
+  {
+    return pl->data[current_plugin].info.version;
+  }
 }
 
 char *splt_p_get_name(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  return pl->data[current_plugin].info.name;
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return NULL;
+  }
+  else
+  {
+    return pl->data[current_plugin].info.name;
+  }
 }
 
 char *splt_p_get_extension(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  return pl->data[current_plugin].info.extension;
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return NULL;
+  }
+  else
+  {
+    return pl->data[current_plugin].info.extension;
+  }
 }
 
 /* plugin function wrappers */
@@ -327,14 +351,22 @@ int splt_p_check_plugin_is_for_file(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  if (pl->data[current_plugin].func->check_plugin_is_for_file != NULL)
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
-    return pl->data[current_plugin].func->check_plugin_is_for_file(state, error);
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return SPLT_FALSE;
   }
   else
   {
-    *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
-    return SPLT_FALSE;
+    if (pl->data[current_plugin].func->check_plugin_is_for_file != NULL)
+    {
+      return pl->data[current_plugin].func->check_plugin_is_for_file(state, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      return SPLT_FALSE;
+    }
   }
 }
 
@@ -342,13 +374,21 @@ void splt_p_search_syncerrors(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  if (pl->data[current_plugin].func->search_syncerrors != NULL)
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
-    pl->data[current_plugin].func->search_syncerrors(state, error);
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
   }
   else
   {
-    *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    if (pl->data[current_plugin].func->search_syncerrors != NULL)
+    {
+      pl->data[current_plugin].func->search_syncerrors(state, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
   }
 }
 
@@ -356,13 +396,21 @@ void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  if (pl->data[current_plugin].func->dewrap != NULL)
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
-    pl->data[current_plugin].func->dewrap(state, listonly, dir, error);
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
   }
   else
   {
-    *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    if (pl->data[current_plugin].func->dewrap != NULL)
+    {
+      pl->data[current_plugin].func->dewrap(state, listonly, dir, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
   }
 }
 
@@ -370,13 +418,21 @@ void splt_p_set_total_time(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  if (pl->data[current_plugin].func->set_total_time != NULL)
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
-    pl->data[current_plugin].func->set_total_time(state, error);
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
   }
   else
   {
-    *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    if (pl->data[current_plugin].func->set_total_time != NULL)
+    {
+      pl->data[current_plugin].func->set_total_time(state, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
   }
 }
 
@@ -385,14 +441,22 @@ void splt_p_simple_split(splt_state *state, char *final_fname, double begin_poin
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  if (pl->data[current_plugin].func->simple_split != NULL)
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
-    pl->data[current_plugin].func->simple_split(state, final_fname,
-        begin_point, end_point, error);
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
   }
   else
   {
-    *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    if (pl->data[current_plugin].func->simple_split != NULL)
+    {
+      pl->data[current_plugin].func->simple_split(state, final_fname,
+          begin_point, end_point, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
   }
 }
 
@@ -400,14 +464,23 @@ int splt_p_scan_silence(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  if (pl->data[current_plugin].func->scan_silence != NULL)
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
-    return pl->data[current_plugin].func->scan_silence(state, error);
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return 0;
   }
   else
   {
-    *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    if (pl->data[current_plugin].func->scan_silence != NULL)
+    {
+      return pl->data[current_plugin].func->scan_silence(state, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
   }
+
   return 0;
 }
 
@@ -415,9 +488,17 @@ void splt_p_set_original_tags(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
-  if (pl->data[current_plugin].func->set_original_tags != NULL)
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
-    pl->data[current_plugin].func->set_original_tags(state, error);
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
+  }
+  else
+  {
+    if (pl->data[current_plugin].func->set_original_tags != NULL)
+    {
+      pl->data[current_plugin].func->set_original_tags(state, error);
+    }
   }
 }
 

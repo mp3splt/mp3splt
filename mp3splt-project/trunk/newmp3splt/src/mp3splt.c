@@ -1505,6 +1505,11 @@ int main (int argc, char *argv[])
     }
   }
 
+  err = SPLT_OK;
+  //after getting the options (especially the debug option), find plugins
+  err = mp3splt_find_plugins(state);
+  print_confirmation_error(err,opt,state);
+
   //if we have parameter options
   if (opt->p_option)
   {
