@@ -35,7 +35,7 @@
 
 #include "splt.h"
 
-short global_debug = SPLT_TRUE;
+short global_debug = SPLT_FALSE;
 
 /************************************/
 /* Initialisation and free          */
@@ -54,10 +54,6 @@ splt_state *mp3splt_new_state(int *error)
     int err = SPLT_OK;
     lt_dlinit();
     state = splt_t_new_state(state,&err);
-    if (err == SPLT_OK)
-    {
-      err = splt_p_find_get_plugins_data(state);
-    }
   }
   else
   {
@@ -68,14 +64,16 @@ splt_state *mp3splt_new_state(int *error)
     else
     {
       state = splt_t_new_state(state,error);
-      if (*error == SPLT_OK)
-      {
-        *error = splt_p_find_get_plugins_data(state);
-      }
     }
   }
 
   return state;
+}
+
+//find plugins and initialise them
+int mp3splt_find_plugins(splt_state *state)
+{
+  return splt_p_find_get_plugins_data(state);
 }
 
 //this function frees the left variables in the library
