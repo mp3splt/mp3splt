@@ -11,8 +11,12 @@ install_libmp3splt:
 	make -C ../trunk/libmp3splt install
 
 test_mp3:
+	#simple split
 	echo && $(MP3SPLT_PROG) -q -d $(OUTPUT_DIR) $(MP3_FILE) 0.2 1.3 2.4 EOF
+	#time split
 
 test_ogg:
 	echo && $(MP3SPLT_PROG) -q -d $(OUTPUT_DIR) $(OGG_FILE) 0.2 1.3 2.4 EOF
+	#time split
+	echo && $(MP3SPLT_PROG) -q -d $(OUTPUT_DIR
 
