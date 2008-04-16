@@ -2618,12 +2618,6 @@ void splt_t_put_progress_text(splt_state *state,int type)
           filename_shorted[strlen(filename_shorted)-3] = '.';
         }
       }
-      //free memory
-      if (extension)
-      {
-        free(extension);
-        extension = NULL;
-      }
     }
 
     snprintf(state->split.p_bar->filename_shorted, 512,"%s", filename_shorted);
