@@ -96,6 +96,22 @@ const char *splt_ogg_genre_list[] = {
 /****************************/
 /* ogg utils */
 
+//gets the mp3 info and puts it in the state
+splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
+{
+  //checks if valid ogg file
+  state->codec = splt_ogg_info(file_input, state->codec, error);
+
+  //if error
+  if ((*error < 0) ||
+      (state->codec == NULL))
+  {
+    return NULL;
+  }
+
+  return state;
+}
+
 static char *splt_ogg_trackstring(int number)
 {
   char *track = NULL;
@@ -378,14 +394,13 @@ void splt_ogg_get_original_tags(char *filename,
 {
   FILE *file_input;
 
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
-
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
-    if((state = splt_s_get_ogg_info(state, file_input, tag_error))
-        != NULL)
+    if(splt_ogg_get_info(state, file_input, tag_error) != NULL)
     {
+      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+
       vorbis_comment *vc_local;
       vc_local = ov_comment(&oggstate->vf,-1);
 
@@ -1609,22 +1624,6 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
   return is_ogg;
 }
 
-//gets the mp3 info and puts it in the state
-splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
-{
-  //checks if valid ogg file
-  state->codec = splt_ogg_info(file_input, state->codec, error);
-
-  //if error
-  if ((*error < 0) ||
-      (state->codec == NULL))
-  {
-    return NULL;
-  }
-
-  return state;
-}
-
 void splt_pl_set_total_time(splt_state *state, int *error)
 {
   FILE *file_input = NULL;
@@ -1662,9 +1661,9 @@ void splt_pl_simple_split (splt_state *state, char *final_fname,
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
-    splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
-    if(splt_ogg_get_info(state, file_input,error) != NULL)
+    if(splt_ogg_get_info(state, file_input, error) != NULL)
     {
+      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
       oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
 
       splt_ogg_put_tags(state, error);
@@ -1708,10 +1707,9 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   //open the file
   if ((file_input = fopen(filename, "rb")))
   {
-    splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
-    if((state = splt_s_get_ogg_info(state, file_input,error))
-        != NULL)
+    if(splt_ogg_get_info(state, file_input, error) != NULL)
     {
+      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
       oggstate->off = offset;
 
       found = splt_ogg_scan_silence(state, 0, threshold,

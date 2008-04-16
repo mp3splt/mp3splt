@@ -331,11 +331,6 @@ static char *splt_u_get_mins_secs_filename(char *filename,
       if (*error >= 0)
       {
         strcat(fname2, extension);
-        if (extension)
-        {
-          free(extension);
-          extension = NULL;
-        }
       }
     }
     else
@@ -442,11 +437,6 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
         snprintf(output_fname_with_path, malloc_number,
             "%s%c%s%s",new_filename_path, SPLT_DIRCHAR,
             output_fname, extension);
-      }
-      if (extension)
-      {
-        free(extension);
-        extension = NULL;
       }
     }
     else
