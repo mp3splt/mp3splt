@@ -427,7 +427,7 @@ void splt_s_time_split(splt_state *state, int *error)
           break;
         }
 
-        splt_p_simple_split(state, filename, begin, end, error);
+        splt_p_simple_split(state, final_fname, begin, end, error);
 
         //if no error for the split, put the splitted file
         if (*error >= 0)
