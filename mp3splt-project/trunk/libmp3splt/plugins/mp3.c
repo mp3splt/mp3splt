@@ -665,6 +665,7 @@ static unsigned char splt_mp3_getgenre (char *genre_string)
 /****************************/
 /* mp3 infos */
 
+
 //puts in the state informations about mp3 file
 //i think it also reads the file
 //must be called before mp3split()
@@ -892,6 +893,24 @@ function_end:
   mad_synth_finish(&mp3state->synth);
 
   return mp3state;
+}
+
+//gets the mp3 info and puts it in the state
+splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
+{
+  //checks if valid mp3 file
+  //before last argument, if framemode or not
+  //last argument if we put messages to clients or not
+  state->codec = splt_mp3_info(file_input, state,
+        splt_t_get_int_option(state,SPLT_OPT_FRAME_MODE), error);
+  //if error
+  if ((*error < 0) || 
+      (state->codec == NULL))
+  {
+    return NULL;
+  }
+
+  return state;
 }
 
 /****************************/
@@ -2273,8 +2292,6 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
 {
   *error = SPLT_DEWRAP_OK;
 
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
-
   //if albumwrap or mp3wrap
   short albumwrap=0, mp3wrap=0;
   //wrapfiles = the wrapped files number
@@ -2289,7 +2306,7 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
 
   splt_t_lock_messages(state);
   //we create the codec
-  state = splt_s_get_mp3_info(state, file_input, error);
+  splt_mp3_get_info(state, file_input, error);
   splt_t_unlock_messages(state);
 
   //if error
@@ -2299,6 +2316,8 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
   }
   else
   {
+    splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+
     //we put the file_input in the state
     mp3state->file_input = file_input;
 
@@ -2743,24 +2762,6 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
   }
 }
 
-//gets the mp3 info and puts it in the state
-splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
-{
-  //checks if valid mp3 file
-  //before last argument, if framemode or not
-  //last argument if we put messages to clients or not
-  state->codec = splt_mp3_info(file_input, state,
-        splt_t_get_int_option(state,SPLT_OPT_FRAME_MODE), error);
-  //if error
-  if ((*error < 0) || 
-      (state->codec == NULL))
-  {
-    return NULL;
-  }
-
-  return state;
-}
-
 /****************************/
 /* External plugin API */
 
@@ -2959,10 +2960,9 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   //open the file
   if ((file_input = fopen(filename, "rb")))
   {
-    splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
-    if((state = splt_s_get_mp3_info(state, file_input, error))
-        != NULL)
+    if(splt_mp3_get_info(state, file_input, error) != NULL)
     {
+      splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
       mp3state->off = offset;
 
       found = splt_mp3_scan_silence(state, mp3state->mp3file.firsthead.ptr, 0,

@@ -1,6 +1,10 @@
 MP3_FILE=en_attendant_Mado__21min20_thermosta7__mme_asperge.mp3
 MP3_VBR_FILE=nat_h__demain__juste_un_peu_de_temps.mp3
 OGG_FILE=cartel__prepare_for_glory__whoa_whoa.ogg
+DEWRAP_FILE=mp3wrap_file.mp3
+
+ERROR_MODE_MP3_FILE=all_concat.mp3
+ERROR_MODE_FILE=$(ERROR_MODE_MP3_FILE)
 
 MP3SPLT_PROG=./mp3splt
 
@@ -43,14 +47,18 @@ tests: normal_split time_split
 
 tests:
 	@#normal
-	echo && $(MP3SPLT_PROG) -q -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo && echo "Normal split : " && $(MP3SPLT_PROG) -q -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#time
-	echo && $(MP3SPLT_PROG) -q -d $(TIME_SPLIT_OUTPUT_DIR) -t 1.5 $(MP3SPLT_FILE)
+	echo && echo "Time split : " && $(MP3SPLT_PROG) -q -d $(TIME_SPLIT_OUTPUT_DIR) -t 1.5 $(MP3SPLT_FILE)
 	@#silence
-	echo && $(MP3SPLT_PROG) -q -s -d $(SILENCE_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE)
+	echo && echo "Silence split : " && $(MP3SPLT_PROG) -q -s -d $(SILENCE_SPLIT_OUTPUT_DIR) $(CDDB_MP3SPLT_FILE)
 	@#cddb
-	echo && $(MP3SPLT_PROG) -q -d $(CDDB_SPLIT_OUTPUT_DIR) -c $(CDDB_FILE) $(CDDB_MP3SPLT_FILE)
+	echo && echo "Cddb split : " && $(MP3SPLT_PROG) -q -d $(CDDB_SPLIT_OUTPUT_DIR) -c $(CDDB_FILE) $(CDDB_MP3SPLT_FILE)
 	@#cue
-	echo && $(MP3SPLT_PROG) -q -d $(CUE_SPLIT_OUTPUT_DIR) -c $(CUE_FILE) $(CDDB_MP3SPLT_FILE)
+	echo && echo "Cue split : " && $(MP3SPLT_PROG) -q -d $(CUE_SPLIT_OUTPUT_DIR) -c $(CUE_FILE) $(CDDB_MP3SPLT_FILE)
+	@#error split
+	echo && echo "Error split : " && $(MP3SPLT_PROG) -q -d $(ERROR_MODE_SPLIT_OUTPUT_DIR) -e $(ERROR_MODE_FILE)
+	@#dewrap
+	echo && echo "Dewrap split : " && $(MP3SPLT_PROG) -q -d $(WRAP_SPLIT_OUTPUT_DIR) -w $(DEWRAP_FILE)
 	@echo
 

@@ -1721,8 +1721,10 @@ int splt_pl_scan_silence(splt_state *state, int *error)
     {
       *error = SPLT_ERROR_INVALID;
     }
-    fclose(file_input);
-    file_input = NULL;
+    //we don't need to close the file_input becase ov_clear() does it
+    //when we call splt_ogg_state_free(..)
+    /*fclose(file_input);
+    file_input = NULL;*/
   }
   else
   {
