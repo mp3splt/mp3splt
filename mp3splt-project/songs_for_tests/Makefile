@@ -23,7 +23,7 @@ SILENCE_SPLIT_OUTPUT_DIR=silence_split
 CDDB_SPLIT_OUTPUT_DIR=cddb_split
 CUE_SPLIT_OUTPUT_DIR=cue_split
 WRAP_SPLIT_OUTPUT_DIR=wrap_split
-ERROR_MODE_SPLIT_OUTPUT_DIR=error_mode_split
+ERROR_MODE_SPLIT_OUTPUT_DIR=error_split
 
 #if we set debug or not
 DEBUG=
@@ -38,7 +38,7 @@ install_libmp3splt:
 
 clean:
 	rm -f $(NORMAL_SPLIT_OUTPUT_DIR)/*; rm -f $(TIME_SPLIT_OUTPUT_DIR)/*; rm -f $(SILENCE_SPLIT_OUTPUT_DIR)/*
-	rm -f $(WRAP_SPLIT_OUTPUT_DIR)/*; rm -f $(ERROR_MODE_SPLIT_OUTPUT_DIR)*; rm -f $(CDDB_SPLIT_OUTPUT_DIR)/*
+	rm -f $(WRAP_SPLIT_OUTPUT_DIR)/*; rm -f $(ERROR_MODE_SPLIT_OUTPUT_DIR)/*; rm -f $(CDDB_SPLIT_OUTPUT_DIR)/*
 	rm -f $(CUE_SPLIT_OUTPUT_DIR)/*
 
 test_mp3:
