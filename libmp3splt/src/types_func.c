@@ -1147,8 +1147,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         else
         {
           if ((state->split.tags[index].artist = malloc((strlen(data)+1) * 
-                  sizeof(char)))
-              == NULL)
+                  sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           }

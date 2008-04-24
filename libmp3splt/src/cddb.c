@@ -52,128 +52,150 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
 {
   int i = 0;
   char *artist0 = NULL;
-  if (splt_t_get_tags_char_field(state, 0,
-                                 SPLT_TAGS_ARTIST) != NULL)
-    {
-      artist0 = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST);
-    }
+  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST))
+  {
+    artist0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST));
+  }
   else
-    {
-      artist0 = NULL;
-    }
-  
-  char *album0 = splt_t_get_tags_char_field(state, 0,
-                                            SPLT_TAGS_ALBUM);
-  char *year0 = splt_t_get_tags_char_field(state, 0,
-                                           SPLT_TAGS_YEAR);
+  {
+    artist0 = NULL;
+  }
+
+  char *album0 = NULL;
+  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM))
+  {
+    album0 = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM);
+  }
+
+  char *year0 = NULL;
+  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR))
+  {
+    year0 = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR);
+  }
+
   char *performer = NULL;
-  unsigned char genre0 = splt_t_get_tags_uchar_field(state, 0,
-                                                     SPLT_TAGS_GENRE);
+  unsigned char genre0 = splt_t_get_tags_uchar_field(state, 0, SPLT_TAGS_GENRE);
   int tags_error = SPLT_OK;
-  
+
   //if we have the defaults for the output,
   int output_filenames = 
     splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
   if (output_filenames == SPLT_OUTPUT_DEFAULT)
-    {
-      //we put the default output if we have the default output
-      splt_t_new_oformat(state, SPLT_DEFAULT_OUTPUT);
- 
-      //we put the real performer in the artist
-      for(i = 0; i < tracks;i++)
-        {
-          performer = splt_t_get_tags_char_field(state, i,
-                                       SPLT_TAGS_PERFORMER);
-          //we put performer if found
-          if ((performer != NULL) && (performer[0] != '\0'))
-            {
-              tags_error = 
-                splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
-                                           performer);
-              if (tags_error != SPLT_OK)
-                {
-                  *error = tags_error;
-                }
-            }
-          else
-            {
-              //we put the artist0
-              tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
-                                                      artist0);
-            }
+  {
+    //we put the default output if we have the default output
+    splt_t_new_oformat(state, SPLT_DEFAULT_OUTPUT);
 
-          //we put the same album, year and genre everywhere
-          if (i != 0)
-            {
-              tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM,
-                                                      album0);
-              tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR,
-                                                      year0);
-              tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
-                                                       genre0);
-              if (tags_error != SPLT_OK)
-                {
-                  *error = tags_error;
-                }
-            }
-        }
-    }
-  else
+    //we put the real performer in the artist
+    for(i = 0; i < tracks;i++)
     {
-      //we put the same artist, genre, album and year everywhere
-      for(i = 1;i<tracks;i++)
+      performer = splt_t_get_tags_char_field(state, i, SPLT_TAGS_PERFORMER);
+      //we put performer if found
+      if ((performer != NULL) && (performer[0] != '\0'))
+      {
+        tags_error = 
+          splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
+              performer);
+        if (tags_error != SPLT_OK)
         {
-          tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
-                                                   genre0);
-          tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
-                                                  artist0);
-          tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM,
-                                                  album0);
-          tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR,
-                                                  year0);
-          tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
-                                                   genre0);
-          if (tags_error != SPLT_OK)
-            {
-              *error = tags_error;
-            }
+          *error = tags_error;
         }
-    }
-  
-  if (*error >= 0)
-    {
-      int err_format = SPLT_OK;
-      
-      if (splt_t_get_oformat(state) != NULL)
-        {
-          //we put the outputted filename
-          char *old_format = strdup(splt_t_get_oformat(state));
-          splt_t_set_oformat(state, old_format,&err_format);
-          free(old_format);
-          old_format = NULL;
-        }
-      
-      if (err_format >= 0)
-        {
-          //we set the current split to 0
-          splt_t_set_current_split(state,0);
-          do {
-            int filename_error = SPLT_OK;
-            //get output format filename
-            filename_error = splt_u_put_output_format_filename(state);
-            if (filename_error != SPLT_OK)
-              {
-                *error = filename_error;
-                break;
-              }
-            splt_t_current_split_next(state);
-          } while (splt_t_get_current_split(state) < tracks);
-        }
+      }
       else
+      {
+        //we put the artist0
+        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
+            artist0);
+      }
+
+      //we put the same album, year and genre everywhere
+      if (i != 0)
+      {
+        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM,
+            album0);
+        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR,
+            year0);
+        tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
+            genre0);
+        if (tags_error != SPLT_OK)
         {
-          *error = err_format;
+          *error = tags_error;
         }
+      }
     }
+  }
+  else
+  {
+    //we put the same artist, genre, album and year everywhere
+    for(i = 1;i<tracks;i++)
+    {
+      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
+          genre0);
+      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
+          artist0);
+      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM,
+          album0);
+      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR,
+          year0);
+      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
+          genre0);
+      if (tags_error != SPLT_OK)
+      {
+        *error = tags_error;
+      }
+    }
+  }
+
+  if (*error >= 0)
+  {
+    int err_format = SPLT_OK;
+
+    if (splt_t_get_oformat(state) != NULL)
+    {
+      //we put the outputted filename
+      char *old_format = strdup(splt_t_get_oformat(state));
+      splt_t_set_oformat(state, old_format,&err_format);
+      free(old_format);
+      old_format = NULL;
+    }
+
+    if (err_format >= 0)
+    {
+      //we set the current split to 0
+      splt_t_set_current_split(state,0);
+      do {
+        int filename_error = SPLT_OK;
+        //get output format filename
+        filename_error = splt_u_put_output_format_filename(state);
+        if (filename_error != SPLT_OK)
+        {
+          *error = filename_error;
+          break;
+        }
+        splt_t_current_split_next(state);
+      } while (splt_t_get_current_split(state) < tracks);
+    }
+    else
+    {
+      *error = err_format;
+    }
+  }
+
+  //free 
+  if (artist0)
+  {
+    free(artist0);
+    artist0 = NULL;
+  }
+  if (album0)
+  {
+    free(album0);
+    album0 = NULL;
+  }
+  if (year0)
+  {
+    free(year0);
+    year0 = NULL;
+  }
 }
 
 /***********************/
