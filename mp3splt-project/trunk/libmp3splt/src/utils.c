@@ -1334,10 +1334,7 @@ int splt_u_put_output_format_filename(splt_state *state)
 
   splt_u_print_debug("The new output filename is ",0,output_filename);
 
-  name_error = 
-    splt_t_set_splitpoint_name(state,
-        cur_splt,
-        output_filename);
+  name_error = splt_t_set_splitpoint_name(state, cur_splt, output_filename);
 
   if (name_error != SPLT_OK)
   {

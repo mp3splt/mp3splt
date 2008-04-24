@@ -525,7 +525,7 @@ int splt_s_set_silence_splitpoints(splt_state *state,
   found = splt_p_scan_silence(state, error);
 
   //if no error
-  if (*error > 0)
+  if (*error >= 0)
   {
     //we set the number of tracks
     int order = 0;
@@ -693,7 +693,7 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
             beg_pos = splt_u_get_double_pos(split_begin);
             end_pos = splt_u_get_double_pos(split_end);
 
-            splt_p_simple_split(state, filename, beg_pos, end_pos, error);
+            splt_p_simple_split(state, final_fname, beg_pos, end_pos, error);
 
             //put the splitted file if no error
             if (*error >= 0)

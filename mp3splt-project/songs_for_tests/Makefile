@@ -25,6 +25,10 @@ CUE_SPLIT_OUTPUT_DIR=cue_split
 WRAP_SPLIT_OUTPUT_DIR=wrap_split
 ERROR_MODE_SPLIT_OUTPUT_DIR=error_mode_split
 
+#if we set debug or not
+DEBUG=
+#DEBUG="-D"
+
 all: all_tests
 
 all_tests: install_libmp3splt clean test_mp3 test_ogg
@@ -47,18 +51,18 @@ tests: normal_split time_split
 
 tests:
 	@#normal
-	echo && echo "Normal split : " && $(MP3SPLT_PROG) -q -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo && echo "normal split : " && $(MP3SPLT_PROG) -q $(DEBUG) -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#time
-	echo && echo "Time split : " && $(MP3SPLT_PROG) -q -d $(TIME_SPLIT_OUTPUT_DIR) -t 1.5 $(MP3SPLT_FILE)
+	echo && echo "time split : " && $(MP3SPLT_PROG) -q $(DEBUG) -d $(TIME_SPLIT_OUTPUT_DIR) -t 1.5 $(MP3SPLT_FILE)
 	@#silence
-	echo && echo "Silence split : " && $(MP3SPLT_PROG) -q -s -d $(SILENCE_SPLIT_OUTPUT_DIR) $(CDDB_MP3SPLT_FILE)
+	echo && echo "silence split : " && $(MP3SPLT_PROG) -q $(DEBUG) -s -d $(SILENCE_SPLIT_OUTPUT_DIR) $(CDDB_MP3SPLT_FILE)
 	@#cddb
-	echo && echo "Cddb split : " && $(MP3SPLT_PROG) -q -d $(CDDB_SPLIT_OUTPUT_DIR) -c $(CDDB_FILE) $(CDDB_MP3SPLT_FILE)
+	echo && echo "cddb split : " && $(MP3SPLT_PROG) -q $(DEBUG) -d $(CDDB_SPLIT_OUTPUT_DIR) -c $(CDDB_FILE) $(CDDB_MP3SPLT_FILE)
 	@#cue
-	echo && echo "Cue split : " && $(MP3SPLT_PROG) -q -d $(CUE_SPLIT_OUTPUT_DIR) -c $(CUE_FILE) $(CDDB_MP3SPLT_FILE)
+	echo && echo "cue split : " && $(MP3SPLT_PROG) -q $(DEBUG) -d $(CUE_SPLIT_OUTPUT_DIR) -c $(CUE_FILE) $(CDDB_MP3SPLT_FILE)
 	@#error split
-	echo && echo "Error split : " && $(MP3SPLT_PROG) -q -d $(ERROR_MODE_SPLIT_OUTPUT_DIR) -e $(ERROR_MODE_FILE)
+	echo && echo "error split : " && $(MP3SPLT_PROG) -q $(DEBUG) -d $(ERROR_MODE_SPLIT_OUTPUT_DIR) -e $(ERROR_MODE_FILE)
 	@#dewrap
-	echo && echo "Dewrap split : " && $(MP3SPLT_PROG) -q -d $(WRAP_SPLIT_OUTPUT_DIR) -w $(DEWRAP_FILE)
+	echo && echo "dewrap split : " && $(MP3SPLT_PROG) -q $(DEBUG) -d $(WRAP_SPLIT_OUTPUT_DIR) -w $(DEWRAP_FILE)
 	@echo
 

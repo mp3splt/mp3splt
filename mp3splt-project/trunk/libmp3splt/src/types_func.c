@@ -762,6 +762,9 @@ int splt_t_set_splitpoint_name(splt_state *state,
 
   int error = SPLT_OK;
 
+  /*fprintf(stdout,"real split number = %d\n",
+      state->split.real_splitnumber);
+  fflush(stdout);*/
   if ((index >= 0) &&
       (index < state->split.real_splitnumber))
   {
