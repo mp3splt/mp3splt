@@ -56,7 +56,7 @@ tests: normal_split time_split
 #-d option is tested all over
 tests:
 	@#normal : also verifies the -m option
-	echo && echo "normal split : " && $(MP3SPLT_PROG) -m -q $(DEBUG) -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo && echo "normal split : " && $(MP3SPLT_PROG) -m playlist.m3u -q $(DEBUG) -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#time : -t option
 	echo && echo "time split : " && $(MP3SPLT_PROG) -q $(DEBUG) -d $(TIME_SPLIT_OUTPUT_DIR) -t 1.5 $(MP3SPLT_FILE)
 	@#silence : -s option
@@ -76,18 +76,18 @@ tests:
 	@#verifies the -a option
 	echo && echo "-a option auto adjust : " && $(MP3SPLT_PROG) -a -q $(DEBUG) -d $(AUTO_ADJUST_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -g option
-	echo && echo "-g option custom tags : " && $(MP3SPLT_PROG) -m -q $(DEBUG) -g "[@t=jimmy,@a=wife_of_jimmy,@b=big show],\
-	 [@t=john,@a=wife_of_john,@b=small show],%%[@o,@a=default_artist]"\
-	-d $(CUSTOM_TAGS_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo && echo "-g option custom tags : " && $(MP3SPLT_PROG) -q $(DEBUG) -g "[@t=jimmy,@a=wife_of_jimmy,@b=big show], \
+[@t=john,@a=wife_of_john,@b=small show],%%[@o,@a=default_artist]" \
+-d $(CUSTOM_TAGS_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -o option
-	echo && echo "-g option set output filename : " && $(MP3SPLT_PROG) -m -q $(DEBUG) -o "@a_@t_@n"\
-	-d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo && echo "-g option set output filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -o "@a_@t_@n" \
+-d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -g + -o option
-	echo && echo "-g + - o options set output tags and filename : " && $(MP3SPLT_PROG) -m -q $(DEBUG) -g "%%[@o,@title=the_same]" -o "@n_@t_@a"\
-	-d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo && echo "-g + - o options set output tags and filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -g "%%[@o,@title=the_same]" -o "@n_@t_@a" \
+-d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -n option
-	echo && echo "-n option set no tags : " && $(MP3SPLT_PROG) -m -q $(DEBUG) -n -o "@a_@b_@t"\
-	-d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo && echo "-n option set no tags : " && $(MP3SPLT_PROG) -q $(DEBUG) -n -o "@a_@b_@t" \
+-d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@echo
 
 
