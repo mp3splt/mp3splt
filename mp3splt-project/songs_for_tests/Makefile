@@ -54,6 +54,7 @@ tests: normal_split time_split
 
 #-f, -k and -p options not tested : must test them separately
 #-d option is tested all over
+#TODO: mp3 VBR
 tests:
 	@#normal : also verifies the -m option
 	echo && echo "normal split : " && $(MP3SPLT_PROG) -m playlist.m3u -q $(DEBUG) -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
