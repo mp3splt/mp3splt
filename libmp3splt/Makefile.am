@@ -1,2 +1,0 @@
-SUBDIRS = src plugins
-EXTRA_DIST = LIMITS
