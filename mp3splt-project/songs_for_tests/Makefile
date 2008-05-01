@@ -1,5 +1,5 @@
 MP3_FILE=en_attendant_Mado__21min20_thermosta7__mme_asperge.mp3
-MP3_VBR_FILE=nat_h__demain__juste_un_peu_de_temps.mp3
+MP3_VBR_FILE=
 OGG_FILE=cartel__prepare_for_glory__whoa_whoa.ogg
 DEWRAP_FILE=mp3wrap_file.mp3
 
@@ -81,7 +81,7 @@ tests:
 [@t=john,@a=wife_of_john,@b=small show],%%[@o,@a=default_artist]" \
 -d $(CUSTOM_TAGS_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -o option
-	echo && echo "-g option set output filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -o "@a_@t_@n" \
+	echo && echo "-o option set output filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -o "@a_@t_@n" \
 -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -g + -o option
 	echo && echo "-g + - o options set output tags and filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -g "%%[@o,@title=the_same]" -o "@n_@t_@a" \
