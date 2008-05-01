@@ -1143,7 +1143,7 @@ int splt_u_put_output_format_filename(splt_state *state)
             }
 
             snprintf(fm, fm_length, temp, album);
-          }               
+          }
           break;
         case 't':
           if (splt_t_tags_exists(state,current_split))
@@ -1293,8 +1293,7 @@ int splt_u_put_output_format_filename(splt_state *state)
     //allocate memory for the output filename
     if (!output_filename)
     {
-      if ((output_filename = malloc((1+fm_size)*sizeof(char)))
-          == NULL)
+      if ((output_filename = malloc((1+fm_size)*sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         goto end;
@@ -1305,10 +1304,8 @@ int splt_u_put_output_format_filename(splt_state *state)
     else
     {
       output_filename_size += fm_size+1;
-      if ((output_filename = realloc(output_filename,
-              output_filename_size
-              * sizeof(char)))
-          == NULL)
+      if ((output_filename = realloc(output_filename, output_filename_size
+              * sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         goto end;

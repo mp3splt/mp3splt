@@ -64,13 +64,13 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
   char *album0 = NULL;
   if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM))
   {
-    album0 = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM);
+    album0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM));
   }
 
   char *year0 = NULL;
   if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR))
   {
-    year0 = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR);
+    year0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR));
   }
 
   char *performer = NULL;
@@ -685,6 +685,31 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
           if (line[strlen(line)-1]=='\r')
             line[strlen(line)-1]='\0';
         }
+
+        //some cddb files have Year and Genre before TTITLE
+        if (strstr(line, "YEAR") != NULL)
+        {
+          tags_error = splt_t_set_tags_char_field(state, 0, SPLT_TAGS_YEAR, line+6);
+          if (tags_error != SPLT_OK)
+          {
+            *error = tags_error;
+            goto function_end;
+          }
+        }
+        else if (strstr(line, "GENRE") != NULL)
+        {
+          char a[4];
+          strncpy(a,line+6,3);
+          //this tag doesn't work correctly because GENRE is not a number
+          tags_error = splt_t_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE,
+              (unsigned char) atoi(a));
+          if (tags_error != SPLT_OK)
+          {
+            *error = tags_error;
+            goto function_end;
+          }
+        }
+
         //we search for the title of the disc
         if (j==0)
         {
@@ -924,9 +949,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
           {
             if ((c=strstr(number, "YEAR"))!=NULL)
             {
-              tags_error = 
-                splt_t_set_tags_char_field(state, 0, SPLT_TAGS_YEAR,
-                    c+6);
+              tags_error = splt_t_set_tags_char_field(state, 0, SPLT_TAGS_YEAR, c+6);
               if (tags_error != SPLT_OK)
               {
                 *error = tags_error;
@@ -936,8 +959,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
             if ((c=strstr(number, "ID3G"))!=NULL) 
             {
               strncpy(line, c+6, 3);
-              tags_error = 
-                splt_t_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE,
+              tags_error = splt_t_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE,
                     (unsigned char) atoi(line));
               if (tags_error != SPLT_OK)
               {

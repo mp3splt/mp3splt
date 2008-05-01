@@ -361,8 +361,7 @@ int splt_t_set_path_of_split(splt_state *state, char *path)
     if((state->path_of_split = malloc(sizeof(char)*(strlen(path)+1)))
         != NULL)
     {
-      snprintf(state->path_of_split,(strlen(path)+1), 
-          "%s", path);
+      snprintf(state->path_of_split,(strlen(path)+1), "%s", path);
     }
     else
     {
