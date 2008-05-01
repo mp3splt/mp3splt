@@ -2297,7 +2297,7 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
   //wrapfiles = the wrapped files number
   int wrapfiles=0, i, j, k=0;
   unsigned char c;
-  char filename[512] = { '\0' };
+  char filename[2048] = { '\0' };
   off_t begin=0, end=0, len, id3offset;
   char junk[384] = { '\0' };
 
@@ -2402,6 +2402,7 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
           splt_u_print_debug("We do mp3 mp3wrap check...",0,NULL);
 
           short indexver;
+          //Mp3Wrap version
           fgetc(mp3state->file_input);
           fgetc(mp3state->file_input);
           indexver = fgetc(mp3state->file_input);
@@ -2419,7 +2420,6 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
             return;
           }
           if (indexver > 0x0) {
-            //unsigned long crc=0;
             unsigned long fcrc=0;
             if (splt_u_getword (mp3state->file_input, 0, SEEK_CUR, &fcrc)==-1)
             {
@@ -2428,8 +2428,8 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
               return;
             }
 
-            /*//we can enable crc later
-              begin = ftello(mp3state->file_input);
+            //we can enable crc later
+            /*  begin = ftello(mp3state->file_input);
               fseeko(mp3state->file_input, getid3v1(mp3state->file_input), SEEK_END);
             //if (==-1)
             //-1 means SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED
@@ -2546,7 +2546,9 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
               }
             }
             else 
+            {
               begin = end;
+            }
 
             //we get the end and checkings..
             if (mp3wrap)
@@ -2562,7 +2564,7 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
                   c=SPLT_DIRCHAR;
                 }
                 filename[j++] = c;
-              }  while ((c!=0x00)&&(j<512));
+              }  while ((c!=0x00)&&(j<2048));
 
               if (splt_u_getword (mp3state->file_input, 0, SEEK_CUR, &w) == -1)
               {
@@ -2574,175 +2576,203 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
               end = (off_t) (w + id3offset);
 
               memset(junk, 0x00, 384);
-
-              //we get the end wrap point for albumwrap and
-              //checkings.. 
-              if (albumwrap)
-              {
-                if (i<wrapfiles-1)
-                {
-                  if (fseeko (mp3state->file_input, 
-                        (off_t) (SPLT_MP3_ABWINDEXOFFSET + (i * SPLT_MP3_ABWLEN)), SEEK_SET)==-1)
-                  {
-                    *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
+              char *ptr = filename;
+              //create output directories for the wrapped files
+              while (((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)&&((ptr-filename)<384)) {
+                ptr++;
+                strncpy(junk, filename, ptr-filename);
+                if (!opendir(junk))
+#ifdef _WIN32					
+                  if ((mkdir(junk))==-1) {
+#else
+                  if ((mkdir(junk, 0755))==-1) {
+#endif
+                    *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
                     splt_mp3_state_free(state);
                     return;
                   }
-                  j = 0;
-                  while ((j<384) && ((c = fgetc(mp3state->file_input))!='['))
-                    if (c!='.') junk[j++] = c;
-                    else k = j;
-                  junk[j] = '\0';
-                  end = (off_t) atol (junk);
-                  k = j - k;
-                  if (k<4)
-                    for (j=0; j<(4-k); j++)
-                      end = end * 10;
-                  end += begin;
-                }
-                else end = len;
+              }
+            }
 
+            //we get the end wrap point for albumwrap and
+            //checkings.. 
+            if (albumwrap)
+            {
+              if (i<wrapfiles-1)
+              {
                 if (fseeko (mp3state->file_input, 
-                      (off_t) (SPLT_MP3_ABWINDEXOFFSET + (i*SPLT_MP3_ABWLEN)), SEEK_SET)==-1)
-                  *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
-                j = 0;
-                while ((c=fgetc(mp3state->file_input))!='[')
-                  if (j++ > 32) 
-                  {
-                    *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
-                    splt_mp3_state_free(state);
-                    return;
-                  }
-                if (fseeko (mp3state->file_input, (off_t) 3, SEEK_CUR)==-1)
+                      (off_t) (SPLT_MP3_ABWINDEXOFFSET + (i * SPLT_MP3_ABWLEN)), SEEK_SET)==-1)
                 {
                   *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
                   splt_mp3_state_free(state);
                   return;
                 }
                 j = 0;
-                while ((c=fgetc(mp3state->file_input))!='[')
-                  if (j++ > 32) 
-                  {
-                    *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
-                    splt_mp3_state_free(state);
-                    return;
-                  }
-                if (fseeko(mp3state->file_input, (off_t) 3, SEEK_CUR)==-1)
+                while ((j<384) && ((c = fgetc(mp3state->file_input))!='['))
+                  if (c!='.') junk[j++] = c;
+                  else k = j;
+                junk[j] = '\0';
+                end = (off_t) atol (junk);
+                k = j - k;
+                if (k<4)
+                  for (j=0; j<(4-k); j++)
+                    end = end * 10;
+                end += begin;
+              }
+              else end = len;
+
+              if (fseeko (mp3state->file_input, 
+                    (off_t) (SPLT_MP3_ABWINDEXOFFSET + (i*SPLT_MP3_ABWLEN)), SEEK_SET)==-1)
+                *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
+              j = 0;
+              while ((c=fgetc(mp3state->file_input))!='[')
+                if (j++ > 32) 
                 {
                   *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
                   splt_mp3_state_free(state);
                   return;
                 }
-                j = 0;
-                while (j<=400)
-                  filename[j++] = fgetc(mp3state->file_input);
-                for (j=400; j>0; j--) {
-                  if (filename[j]==0x20)
-                    filename[j]='\0';
-                  else break;
-                }
-                filename[j+1] = '\0';
-              }
-
-              splt_u_print_debug("We have found the file",0,filename);
-              splt_u_print_debug("We cut the dirchar",0,NULL);
-
-              //we cut the .DIRCHAR before the filename
-              char str_temp[4];
-              snprintf(str_temp,4,"%c%c",'.',SPLT_DIRCHAR);
-              if (strstr(filename,str_temp) != NULL)
-              {
-                if (filename != NULL)
-                {
-                  char *filename2 = strdup(filename);
-                  snprintf(filename,512, "%s", filename2+2);
-                  free(filename2);
-                }
-              }
-
-              if (feof(mp3state->file_input)) 
+              if (fseeko (mp3state->file_input, (off_t) 3, SEEK_CUR)==-1)
               {
                 *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
                 splt_mp3_state_free(state);
                 return;
               }
-
-              //if we only list the contents
-              //we put the files in the wrap_files
-              if (listonly)
+              j = 0;
+              while ((c=fgetc(mp3state->file_input))!='[')
+                if (j++ > 32) 
+                {
+                  *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
+                  splt_mp3_state_free(state);
+                  return;
+                }
+              if (fseeko(mp3state->file_input, (off_t) 3, SEEK_CUR)==-1)
               {
-                splt_u_print_debug("We only list wrapped files",0,NULL);
-
-                int put_file_error = SPLT_OK;
-                put_file_error =
-                  splt_t_wrap_put_file(state, wrapfiles,
-                      i, filename);
-
-                if (put_file_error != SPLT_OK)
-                {
-                  *error = put_file_error;
-                  splt_mp3_state_free(state);
-                  return;
-                }
+                *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
+                splt_mp3_state_free(state);
+                return;
               }
-              //if we split the file
-              //we split from begin to end calculated previously
-              else {
-                splt_u_print_debug("We split wrapped file",0,NULL);
+              j = 0;
+              while (j<=400)
+                filename[j++] = fgetc(mp3state->file_input);
+              for (j=400; j>0; j--) {
+                if (filename[j]==0x20)
+                  filename[j]='\0';
+                else break;
+              }
+              filename[j+1] = '\0';
+            }
 
-                int ret;
-                if (dir)
+            splt_u_print_debug("We have found the file",0,filename);
+            splt_u_print_debug("We cut the dirchar",0,NULL);
+
+            //we cut the .DIRCHAR before the filename
+            char str_temp[4];
+            snprintf(str_temp,4,"%c%c",'.',SPLT_DIRCHAR);
+            if (strstr(filename,str_temp) != NULL)
+            {
+              if (filename != NULL)
+              {
+                char *filename2 = strdup(filename);
+                snprintf(filename,2048, "%s", filename2+2);
+                free(filename2);
+              }
+            }
+
+            if (feof(mp3state->file_input)) 
+            {
+              *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
+              splt_mp3_state_free(state);
+              return;
+            }
+
+            //if we only list the contents
+            //we put the files in the wrap_files
+            if (listonly)
+            {
+              splt_u_print_debug("We only list wrapped files",0,NULL);
+
+              int put_file_error = SPLT_OK;
+              put_file_error = splt_t_wrap_put_file(state, wrapfiles, i, filename);
+
+              if (put_file_error != SPLT_OK)
+              {
+                *error = put_file_error;
+                splt_mp3_state_free(state);
+                return;
+              }
+            }
+            //if we split the file
+            //we split from begin to end calculated previously
+            else
+            {
+              splt_u_print_debug("We split wrapped file",0,NULL);
+
+              int ret = 0;
+              //if we have an output directory
+              if (dir && (dir[0] != '\0'))
+              {
+                char temp[2048];
+                strncpy(temp, filename, 2048);
+                char *ptr = temp;
+                //if we have an output dir, cut directory path from filename
+                if ((ptr = strrchr(temp,SPLT_DIRCHAR)) == NULL)
                 {
-                  char temp[512];
-                  strncpy(temp, filename, 512);
-                  //if dir == .DIRCHAR
-                  if (strcmp(dir,str_temp) == 0)
+                  ptr = temp;
+                }
+                else
+                {
+                  if (ptr-temp > 0)
                   {
-                    snprintf(filename, 512,"%s%s", dir, temp);
+                    ptr++;
                   }
-                  else
-                  {
-                    snprintf(filename, 512,"%s%c%s", dir, SPLT_DIRCHAR, temp);
-                  }
-                  splt_u_print_debug("wrap dir",0,dir);
-                  splt_u_print_debug("wrap after dir",0,temp);
                 }
-
-                //we put xingbuffer
-                if (mp3state->mp3file.xingbuffer)
+                //if dir == .DIRCHAR
+                if (strcmp(dir,str_temp) == 0)
                 {
-                  free(mp3state->mp3file.xingbuffer);
+                  snprintf(filename, 2048,"%s%s", dir, ptr);
                 }
-                mp3state->mp3file.xingbuffer = NULL;
-                mp3state->mp3file.xing = 0;
-
-                int change_error = SPLT_OK;
-                change_error = 
-                  splt_t_append_splitpoint(state,0,
-                      splt_u_get_real_name(filename));
-                if (change_error != SPLT_OK)
+                else
                 {
-                  *error = change_error;
-                  splt_mp3_state_free(state);
-                  return;
+                  snprintf(filename, 2048,"%s%c%s", dir, SPLT_DIRCHAR, ptr);
                 }
+                splt_u_print_debug("wrap dir",0,dir);
+                splt_u_print_debug("wrap after dir",0,ptr);
+              }
 
-                //cut extension
-                change_error = splt_u_cut_splitpoint_extension(state,i);
-                if (change_error != SPLT_OK)
-                {
-                  *error = change_error;
-                  splt_mp3_state_free(state);
-                  break;
-                }
+              //we put xingbuffer
+              if (mp3state->mp3file.xingbuffer)
+              {
+                free(mp3state->mp3file.xingbuffer);
+              }
+              mp3state->mp3file.xingbuffer = NULL;
+              mp3state->mp3file.xing = 0;
 
-                ret = splt_mp3_simple_split(state, filename, begin, end, NULL);
+              int change_error = SPLT_OK;
+              change_error = splt_t_append_splitpoint(state,0,
+                  splt_u_get_real_name(filename));
+              if (change_error != SPLT_OK)
+              {
+                *error = change_error;
+                splt_mp3_state_free(state);
+                return;
+              }
 
-                //if we could split put the splitted file
-                if (ret >= 0)
-                {
-                  splt_t_put_splitted_file(state,filename);
-                }
+              //cut extension
+              change_error = splt_u_cut_splitpoint_extension(state,i);
+              if (change_error != SPLT_OK)
+              {
+                *error = change_error;
+                splt_mp3_state_free(state);
+                break;
+              }
+
+              ret = splt_mp3_simple_split(state, filename, begin, end, NULL);
+
+              //if we could split put the splitted file
+              if (ret >= 0)
+              {
+                splt_t_put_splitted_file(state,filename);
               }
             }
           }
