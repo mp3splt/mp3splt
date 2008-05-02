@@ -84,7 +84,7 @@ tests:
 	echo && echo "-o option set output filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -o "@a_@t_@n" \
 -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -g + -o option
-	echo && echo "-g + - o options set output tags and filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -g "%%[@o,@title=the_same]" -o "@n_@t_@a" \
+	echo && echo "-g + - o options set output tags and filename : " && $(MP3SPLT_PROG) -q $(DEBUG) -g "%%[@o,@t=the_same]" -o "@n_@t_@a" \
 -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@#testing the -n option
 	echo && echo "-n option set no tags : " && $(MP3SPLT_PROG) -q $(DEBUG) -n -o "@a_@b_@t" \
