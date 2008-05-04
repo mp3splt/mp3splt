@@ -990,12 +990,16 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
 
   if (mp3state->mp3file.xing!=0)
   {
-    if(fwrite(mp3state->mp3file.xingbuffer, 1, 
-          mp3state->mp3file.xing, file_output) <= 0)
+    //don't write the xing header if error mode split
+    if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
     {
-      error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-      fclose(file_output);
-      return error;
+      if(fwrite(mp3state->mp3file.xingbuffer, 1, 
+            mp3state->mp3file.xing, file_output) <= 0)
+      {
+        error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
+        fclose(file_output);
+        return error;
+      }
     }
   }
 
