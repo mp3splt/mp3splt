@@ -903,7 +903,7 @@ void mp3splt_set_oformat(splt_state *state,
 /************************************/
 /* Other utilities                  */
 
-//returns the number of syncerrors found
+//returns the syncerrors found
 //puts error in the error variable
 splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
     int *error)

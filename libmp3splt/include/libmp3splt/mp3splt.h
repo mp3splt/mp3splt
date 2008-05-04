@@ -555,7 +555,8 @@ typedef struct {
   void (*search_syncerrors)(void *state, int *error);
   void (*dewrap)(void *state, int listonly, char *dir, int *error);
   void (*set_total_time)(void *state, int *error);
-  void (*simple_split)(void *state, char *final_fname, double begin_point,
+  int (*simple_split)(void *state, char *output_fname, off_t begin, off_t end);
+  void (*split)(void *state, char *final_fname, double begin_point,
       double end_point, int *error);
   int (*scan_silence)(void *state, int *error);
   void (*set_original_tags)(void *state, int *error);
