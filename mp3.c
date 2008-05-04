@@ -161,9 +161,6 @@ off_t findvalidhead (mp3_state *state, off_t start)
 	off_t begin;
 	struct header h;
 
-  fprintf(stdout,"orig_start = %ld\n",start);
-  fflush(stdout);
-
 	begin = findhead(state, start);
 	do {
 		start = begin;
