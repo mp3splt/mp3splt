@@ -1652,7 +1652,7 @@ void splt_pl_set_total_time(splt_state *state, int *error)
   }
 }
 
-void splt_pl_simple_split (splt_state *state, char *final_fname,
+void splt_pl_split(splt_state *state, char *final_fname,
     double begin_point, double end_point, int *error) 
 {
   FILE *file_input = NULL;

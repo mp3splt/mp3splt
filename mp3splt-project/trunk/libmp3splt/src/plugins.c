@@ -233,6 +233,8 @@ int splt_p_open_get_plugins_data(splt_state *state)
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_total_time");
       *(void **) (&pl->data[i].func->simple_split) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_simple_split");
+      *(void **) (&pl->data[i].func->split) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_split");
       *(void **) (&pl->data[i].func->scan_silence) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_silence");
       *(void **) (&pl->data[i].func->set_original_tags) =
@@ -383,6 +385,8 @@ void splt_p_search_syncerrors(splt_state *state, int *error)
   {
     if (pl->data[current_plugin].func->search_syncerrors != NULL)
     {
+      //we free previous sync errors if necesssary
+      splt_t_serrors_free(state);
       pl->data[current_plugin].func->search_syncerrors(state, error);
     }
     else
@@ -436,7 +440,7 @@ void splt_p_set_total_time(splt_state *state, int *error)
   }
 }
 
-void splt_p_simple_split(splt_state *state, char *final_fname, double begin_point,
+void splt_p_split(splt_state *state, char *final_fname, double begin_point,
     double end_point, int *error)
 {
   splt_plugins *pl = state->plug;
@@ -448,9 +452,9 @@ void splt_p_simple_split(splt_state *state, char *final_fname, double begin_poin
   }
   else
   {
-    if (pl->data[current_plugin].func->simple_split != NULL)
+    if (pl->data[current_plugin].func->split != NULL)
     {
-      pl->data[current_plugin].func->simple_split(state, final_fname,
+      pl->data[current_plugin].func->split(state, final_fname,
           begin_point, end_point, error);
     }
     else
@@ -458,6 +462,32 @@ void splt_p_simple_split(splt_state *state, char *final_fname, double begin_poin
       *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
     }
   }
+}
+
+int splt_p_simple_split(splt_state *state, char *output_fname, off_t begin,
+    off_t end)
+{
+  splt_plugins *pl = state->plug;
+  int current_plugin = splt_t_get_current_plugin(state);
+  int error = SPLT_OK;
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
+  }
+  else
+  {
+    if (pl->data[current_plugin].func->simple_split != NULL)
+    {
+      error = pl->data[current_plugin].func->simple_split(state, output_fname, begin, end);
+    }
+    else
+    {
+      error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
+  }
+
+  return error;
 }
 
 int splt_p_scan_silence(splt_state *state, int *error)

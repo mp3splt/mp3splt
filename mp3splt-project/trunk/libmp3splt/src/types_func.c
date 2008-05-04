@@ -2392,24 +2392,23 @@ void splt_t_ssplit_free (struct splt_ssplit **silence_list)
   }
 }
 /********************************/
-/* types: syncerrors access */
+/* types: sync errors access */
 
 //appends a syncerror splitpoint
 int splt_t_serrors_append_point(splt_state *state, off_t point)
 {
   int error = SPLT_OK;
-  int syncerrors = 0;
+  int serrors_num = state->serrors->serrors_points_num;
 
   state->serrors->serrors_points_num++;
 
-  if (point > 0)
+  if (point >= 0)
   {
     //allocate memory for the splitpoints
     if (state->serrors->serrors_points == NULL)
     {
       if((state->serrors->serrors_points = 
-            malloc(sizeof(off_t)*(syncerrors+2)))
-          == NULL)
+            malloc(sizeof(off_t) * (serrors_num + 2))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       }
@@ -2422,8 +2421,7 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
     {
       if((state->serrors->serrors_points = 
             realloc(state->serrors->serrors_points,
-              sizeof(off_t)*(syncerrors+2)))
-          == NULL)
+              sizeof(off_t) * (serrors_num + 2))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       }
@@ -2431,10 +2429,9 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
 
     if (error == SPLT_OK)
     {
-      state->serrors->serrors_points[syncerrors] = 
-        point;
+      state->serrors->serrors_points[serrors_num] = point;
 
-      if (state->serrors->serrors_points[syncerrors] == -1)
+      if (state->serrors->serrors_points[serrors_num] == -1)
       {
         error = SPLT_ERR_SYNC;
       }
@@ -2478,13 +2475,14 @@ off_t splt_t_serrors_get_point(splt_state *state, int index)
   }
 }
 
-//free the syncerrors
+//free the serrors
 void splt_t_serrors_free(splt_state *state)
 {
   if (state->serrors->serrors_points)
   {
     free(state->serrors->serrors_points);
     state->serrors->serrors_points = NULL;
+    state->serrors->serrors_points_num = 0;
   }
 }
 

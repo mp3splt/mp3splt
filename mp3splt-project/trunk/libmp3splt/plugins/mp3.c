@@ -257,6 +257,7 @@ static int splt_mp3_get_valid_frame(splt_state *state)
       }
       if (mp3state->stream.error == MAD_ERROR_LOSTSYNC)
       {
+        //syncerrors?
         state->syncerrors++;
         if ((mp3state->syncdetect)&&
             (state->syncerrors>SPLT_MAXSYNC))
@@ -269,6 +270,7 @@ static int splt_mp3_get_valid_frame(splt_state *state)
         continue;
       }
       else
+      {
         if(mp3state->stream.error==MAD_ERROR_BUFLEN)
         {
           continue;
@@ -277,6 +279,7 @@ static int splt_mp3_get_valid_frame(splt_state *state)
         {
           break;
         }
+      }
     }
     else
     {
@@ -921,8 +924,8 @@ splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 //It justs copies the data of the input file from a begin offset
 //to an end offset, and, eventually, a Xing frame (for VBR)
 //at the beginning and a ID3v1 at the end, to an outputfile.
-int splt_mp3_simple_split (splt_state *state, char *output_fname,
-                           off_t begin, off_t end, char *id3buffer)
+int splt_mp3_simple_split(splt_state *state, char *output_fname,
+                          off_t begin, off_t end, char *id3buffer)
 {
   splt_u_print_debug("We do mp3 simple split on output...",0,output_fname);
   splt_u_print_debug("Mp3 simple split offset begin is",begin,NULL);
@@ -1596,11 +1599,16 @@ bloc_end:
             goto bloc_end2;
           }
 
+          //syncerrors?
           if ((begin!=mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0)) 
+          {
             state->syncerrors++;
-
+          }
           if ((mp3state->syncdetect)&&(state->syncerrors> SPLT_MAXSYNC))
+          {
             splt_mp3_checksync(mp3state);
+          }
+
           mp3state->h = splt_mp3_makehead (mp3state->headw, mp3state->mp3file, mp3state->h, begin);
           mp3state->frames++;
 
@@ -1651,11 +1659,11 @@ bloc_end:
           break;
         }
 
+        //syncerrors?
         if ((end!=mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0))
         {
           state->syncerrors++;
         }
-
         if ((mp3state->syncdetect)&&(state->syncerrors>SPLT_MAXSYNC))
         {
           splt_mp3_checksync(mp3state);
@@ -2087,26 +2095,19 @@ static off_t splt_mp3_adjustsync(splt_mp3_state *mp3state, off_t begin, off_t en
 }
 
 //the function counts the number of sync error splits, 
-//puts how many syncerrors we have in
-//mp3state->syncerrors and 
-//returns the syncerror splitpoints in off_t *
-//if error, returns NULL
-//result must be freed
+//and sets the offsets
 void splt_mp3_syncerror_search(splt_state *state, int *error)
 {
   off_t offset = 0;
   char *filename = splt_t_get_filename_to_split(state);
+  int sync_err = SPLT_OK;
 
   splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
 
   splt_t_put_progress_text(state,SPLT_PROGRESS_SEARCH_SYNC);
 
-  //we free previous sync errors if necesssary
-  splt_t_serrors_free(state);
-
   mp3state->h.ptr = mp3state->mp3file.firsthead.ptr;
   mp3state->h.framesize = mp3state->mp3file.firsthead.framesize;
-  state->syncerrors = 0;
 
   //if the filename is correct
   if (!splt_check_is_file(filename))
@@ -2119,29 +2120,34 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
   struct stat file_statistics;
   if(stat(filename, &file_statistics) == 0)
   {
-    //search for syncerrors and put in splitpoints
-    while (state->syncerrors < SPLT_MAXSILENCE)
+    //put the start point
+    sync_err = splt_t_serrors_append_point(state, 0);
+    if (sync_err != SPLT_OK)
+    {
+      *error = sync_err;
+      return;
+    }
+
+    //search for sync errors and put in splitpoints
+    while (state->serrors->serrors_points_num < SPLT_MAXSYNC)
     {
       offset = splt_mp3_findhead(mp3state, mp3state->h.ptr + mp3state->h.framesize);
       if (offset==-1)
         break;
 
-      if (offset!=mp3state->h.ptr + mp3state->h.framesize)
+      if (offset != mp3state->h.ptr + mp3state->h.framesize)
       {
         off_t serror_point =
           splt_mp3_adjustsync(mp3state, mp3state->h.ptr, offset);
 
         //put syncerror splitpoint offset
-        int sync_err = SPLT_OK;
-        sync_err = splt_t_serrors_append_point(state,serror_point);
+        sync_err = splt_t_serrors_append_point(state, serror_point);
         if (sync_err != SPLT_OK)
         {
           *error = sync_err;
           return;
         }
-
-        offset = splt_mp3_findvalidhead(mp3state, 
-            splt_t_serrors_get_point(state,state->syncerrors));
+        offset = splt_mp3_findvalidhead(mp3state, serror_point);
         if (splt_u_getword(mp3state->file_input, offset, SEEK_SET, &mp3state->headw) == -1)
         {
           *error = SPLT_ERR_SYNC;
@@ -2169,19 +2175,25 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
     return;
   }
 
-  if (state->syncerrors == 0)
+  if (state->serrors->serrors_points_num == 0)
   {
     *error = SPLT_ERR_NO_SYNC_FOUND;
     return;
   }
 
-  if (state->syncerrors == SPLT_MAXSYNC)
+  if (state->serrors->serrors_points_num == SPLT_MAXSYNC)
   {
     *error = SPLT_ERR_TOO_MANY_SYNC_ERR;
     return;
   }
 
-  splt_t_serrors_set_point(state,++state->syncerrors,-1);
+  //put the end point
+  sync_err = splt_t_serrors_append_point(state, LONG_MAX);
+  if (sync_err != SPLT_OK)
+  {
+    *error = sync_err;
+    return;
+  }
 
   *error = SPLT_SYNC_OK;
 
@@ -2871,8 +2883,6 @@ void splt_pl_search_syncerrors(splt_state *state, int *error)
     {
       //we detect sync errors
       splt_mp3_syncerror_search(state, error);
-      //we put the syncerrors to 0
-      state->syncerrors = 0;
       //we free the mp3 state after the check
       splt_mp3_state_free(state);
     }
@@ -2930,7 +2940,7 @@ void splt_pl_set_total_time(splt_state *state, int *error)
   }
 }
 
-void splt_pl_simple_split(splt_state *state, char *final_fname,
+void splt_pl_split(splt_state *state, char *final_fname,
     double begin_point, double end_point, int *error) 
 {
   FILE *file_input = NULL;
@@ -2973,6 +2983,41 @@ void splt_pl_simple_split(splt_state *state, char *final_fname,
     fclose(file_input);
     file_input = NULL;
   }
+}
+
+int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off_t end)
+{
+  FILE *file_input = NULL;
+  char *filename = splt_t_get_filename_to_split(state);
+
+  int error = SPLT_OK;
+
+  //if we can open the file
+  if ((file_input = fopen(filename, "rb")) != NULL)
+  {
+    state->codec = splt_mp3_info(file_input, state,
+        splt_t_get_int_option(state,SPLT_OPT_FRAME_MODE), error);
+    splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+
+    if(error >= 0)
+    {
+      //we initialise frames to 1
+      if (splt_t_get_total_time(state) > 0)
+      {
+        mp3state->frames = 1;
+      }
+
+      //effective mp3 split
+      error = splt_mp3_simple_split(state, output_fname, begin, end, NULL);
+
+      //we free the mp3 state 
+      splt_mp3_state_free(state);
+    }
+    fclose(file_input);
+    file_input = NULL;
+  }
+
+  return error;
 }
 
 int splt_pl_scan_silence(splt_state *state, int *error)
