@@ -161,6 +161,9 @@ off_t findvalidhead (mp3_state *state, off_t start)
 	off_t begin;
 	struct header h;
 
+  fprintf(stdout,"orig_start = %ld\n",start);
+  fflush(stdout);
+
 	begin = findhead(state, start);
 	do {
 		start = begin;
@@ -265,7 +268,7 @@ int get_valid_frame(mp3_state *state)
 				return -1;
 			if (state->stream.error == MAD_ERROR_LOSTSYNC)
 			{
-				state->syncerrors++;
+        state->syncerrors++;
 				if ((state->syncdetect)&&(state->syncerrors>MAXSYNC))
 					checksync(state);
 			}

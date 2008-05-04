@@ -623,6 +623,10 @@ int main (int argc, char *argv[]) {
 					if ((file_input != stdin) && (strcmp(argv[k+1], filename)==0))
 						splt_abort("input and output are the same file.", state,126);
 					fprintf (stderr, "\n %3ld %% -> Splitting %s... ", ((i+1)*100)/state->mstate->syncerrors, filename);
+
+          fprintf(stdout,"%ld -> %ld\n",splitpoints[i],splitpoints[i+1]);
+          fflush(stdout);
+
 					ret = split(filename, state->mstate->file_input, splitpoints[i], splitpoints[i+1], 0, NULL, NULL);
 					if ((ret==0) || (ret==-3))
 						fprintf (stderr, "OK");
