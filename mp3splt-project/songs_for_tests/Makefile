@@ -53,7 +53,6 @@ test_ogg:
 tests: normal_split time_split
 
 #-f, -k and -p options not tested : must test them separately
-#-d option is tested all over
 #TODO: mp3 VBR
 tests:
 	@#normal : also verifies the -m option
@@ -75,7 +74,7 @@ tests:
 	@#count how many silence points we have : -i option
 	echo && echo "-i option count silence : " && $(MP3SPLT_PROG) -q $(DEBUG) -i $(CDDB_MP3SPLT_FILE)
 	@#verifies the -a option
-	echo && echo "-a option auto adjust : " && $(MP3SPLT_PROG) -a -q $(DEBUG) -d $(AUTO_ADJUST_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
+	echo "" echo "-a option auto adjust : " && $(MP3SPLT_PROG) -q -a -p th=-20 -d $(AUTO_ADJUST_SPLIT_OUTPUT_DIR) $(CDDB_MP3SPLT_FILE) 0.0 1.43 5.0 9.0 12.30
 	@#testing the -g option
 	echo && echo "-g option custom tags : " && $(MP3SPLT_PROG) -q $(DEBUG) -g "[@t=jimmy,@a=wife_of_jimmy,@b=big show], \
 [@t=john,@a=wife_of_john,@b=small show],%%[@o,@a=default_artist]" \
@@ -90,5 +89,4 @@ tests:
 	echo && echo "-n option set no tags : " && $(MP3SPLT_PROG) -q $(DEBUG) -n -o "@a_@b_@t" \
 -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
 	@echo
-
 
