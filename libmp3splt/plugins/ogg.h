@@ -101,7 +101,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
 /****************************/
 /* ogg scan for silence */
 
-int splt_ogg_scan_silence (splt_state *sp_state, short seconds, 
+int splt_ogg_scan_silence(splt_state *sp_state, short seconds, 
     float threshold, float min, 
     short output, ogg_page *page, ogg_int64_t granpos);
 

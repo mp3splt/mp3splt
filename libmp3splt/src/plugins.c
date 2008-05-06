@@ -235,6 +235,10 @@ int splt_p_open_get_plugins_data(splt_state *state)
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_simple_split");
       *(void **) (&pl->data[i].func->split) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_split");
+      *(void **) (&pl->data[i].func->init_split) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_init_split");
+      *(void **) (&pl->data[i].func->end_split) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_end_split");
       *(void **) (&pl->data[i].func->scan_silence) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_silence");
       *(void **) (&pl->data[i].func->set_original_tags) =
@@ -463,6 +467,51 @@ void splt_p_split(splt_state *state, char *final_fname, double begin_point,
     }
   }
 }
+
+void splt_p_init_split(splt_state *state, int *error)
+{
+  splt_plugins *pl = state->plug;
+  int current_plugin = splt_t_get_current_plugin(state);
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
+  }
+  else
+  {
+    if (pl->data[current_plugin].func->init_split != NULL)
+    {
+      pl->data[current_plugin].func->init_split(state, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
+  }
+}
+
+void splt_p_end_split(splt_state *state, int *error)
+{
+  splt_plugins *pl = state->plug;
+  int current_plugin = splt_t_get_current_plugin(state);
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return;
+  }
+  else
+  {
+    if (pl->data[current_plugin].func->end_split != NULL)
+    {
+      pl->data[current_plugin].func->end_split(state, error);
+    }
+    else
+    {
+      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+    }
+  }
+}
+
 
 int splt_p_simple_split(splt_state *state, char *output_fname, off_t begin,
     off_t end)

@@ -144,7 +144,7 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
 
 int splt_mp3_simple_split (splt_state *state, char *filename,
     off_t begin, off_t end, char *id3buffer);
-void splt_mp3_split (char *filename, splt_state *state, char *id3,
+void splt_mp3_split(char *filename, splt_state *state, char *id3,
     double fbegin_sec, double fend_sec, int *error);
 
 /****************************/
@@ -152,7 +152,7 @@ void splt_mp3_split (char *filename, splt_state *state, char *id3,
 
 int splt_mp3_silence(splt_mp3_state *mp3state, 
     int channels, mad_fixed_t threshold);
-int splt_mp3_scan_silence (splt_state *sp_state, off_t begin, 
+int splt_mp3_scan_silence(splt_state *sp_state, off_t begin, 
     unsigned long length, float threshold, float min, short output);
 
 /****************************/

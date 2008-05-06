@@ -1351,7 +1351,7 @@ static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, floa
 }
 
 //scans for silence
-int splt_ogg_scan_silence (splt_state *state, short seconds,
+int splt_ogg_scan_silence(splt_state *state, short seconds,
     float threshold, float min, short output, 
     ogg_page *page, ogg_int64_t granpos)
 {
@@ -1652,8 +1652,7 @@ void splt_pl_set_total_time(splt_state *state, int *error)
   }
 }
 
-void splt_pl_split(splt_state *state, char *final_fname,
-    double begin_point, double end_point, int *error) 
+void splt_pl_init_split(splt_state *state, int *error)
 {
   FILE *file_input = NULL;
   char *filename = splt_t_get_filename_to_split(state);
@@ -1661,35 +1660,38 @@ void splt_pl_split(splt_state *state, char *final_fname,
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
-    if(splt_ogg_get_info(state, file_input, error) != NULL)
+    splt_ogg_get_info(state, file_input, error);
+    if (*error >= 0)
     {
       splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
       oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
-
-      splt_ogg_put_tags(state, error);
-
-      if (*error >= 0)
-      {
-        //effective ogg split
-        splt_ogg_split(final_fname, state,
-            begin_point, end_point,
-            !state->options.option_input_not_seekable,
-            state->options.parameter_gap,
-            state->options.parameter_threshold, error);
-      }
-
-      splt_ogg_state_free(state);
-    }
-    else
-    {
-      fclose(file_input);
-      file_input = NULL;
     }
   }
   else
   {
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
+}
+
+void splt_pl_end_split(splt_state *state)
+{
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state_free(state);
+}
+
+void splt_pl_split(splt_state *state, char *final_fname,
+    double begin_point, double end_point, int *error) 
+{
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+
+  splt_ogg_put_tags(state, error);
+
+  //effective ogg split
+  splt_ogg_split(final_fname, state,
+      begin_point, end_point,
+      !state->options.option_input_not_seekable,
+      state->options.parameter_gap,
+      state->options.parameter_threshold, error);
 }
 
 int splt_pl_scan_silence(splt_state *state, int *error)
