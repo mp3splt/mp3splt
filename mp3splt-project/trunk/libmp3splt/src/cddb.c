@@ -875,7 +875,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
               splt_u_cleanstring(artist);
 
               //we put the album
-              i += 2;
+              i += 1;
               number = splt_u_cut_spaces_from_begin(number+i);
 
               tags_error = splt_t_set_tags_char_field(state, 0, SPLT_TAGS_ALBUM, 
