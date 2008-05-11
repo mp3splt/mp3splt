@@ -1,5 +1,5 @@
 MP3_FILE=en_attendant_Mado__21min20_thermosta7__mme_asperge.mp3
-MP3_VBR_FILE=
+MP3_VBR_FILE=tanita_good_tradition.mp3
 OGG_FILE=cartel__prepare_for_glory__whoa_whoa.ogg
 DEWRAP_FILE=mp3wrap_file.mp3
 
@@ -52,8 +52,6 @@ test_ogg:
 
 tests: normal_split time_split
 
-#-f, -k and -p options not tested : must test them separately
-#TODO: mp3 VBR
 tests:
 	@#normal : also verifies the -m option
 	echo && echo "normal split : " && $(MP3SPLT_PROG) -m playlist.m3u -q $(DEBUG) -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3SPLT_FILE) 0.2 1.3 2.4 EOF
