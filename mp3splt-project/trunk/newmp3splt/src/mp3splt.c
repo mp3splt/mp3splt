@@ -1191,38 +1191,9 @@ end:
 }
 
 //prints a library message
-void put_library_message(int message)
+void put_library_message(char *message)
 {
-  switch (message)
-  {
-    case SPLT_MESS_FRAME_MODE_ENABLED:
-      print_message(" info: frame mode enabled");
-      break;
-    case SPLT_MESS_START_WRAP_SPLIT:
-      print_message(" info: starting wrap mode split");
-      break;
-    case SPLT_MESS_START_SILENCE_SPLIT:
-      print_message(" info: starting silence mode split");
-      break;
-    case SPLT_MESS_START_ERROR_SPLIT:
-      print_message(" info: starting error mode split");
-      break;
-    case SPLT_MESS_START_NORMAL_SPLIT:
-      print_message(" info: starting normal split");
-      break;
-    case SPLT_MESS_START_TIME_SPLIT:
-      print_message(" info: starting time mode split");
-      break;
-    case SPLT_MESS_DETECTED_INVALID:
-      fprintf(stderr," info error: invalid format detected");
-      fflush(stderr);
-      break;
-    case SPLT_MESS_STOP_SPLIT:
-      print_message("\n info: stopping split...");
-      break;
-    default:
-      break;
-  }
+  print_message(message);
 }
 
 //prints the splitted file
@@ -1365,7 +1336,7 @@ int main (int argc, char *argv[])
   signal (SIGINT, sigint_handler);
 
   //callback for the library messages
-  mp3splt_set_message_function(state,put_library_message);
+  mp3splt_set_message_function(state, put_library_message);
   //callback for the splitted files
   mp3splt_set_splitted_filename_function(state,put_splitted_file);
   //callback for the progress bar

@@ -441,17 +441,10 @@ void sigint_handler(gint sig)
 }
 
 //prints a message from the library
-void put_message_from_library(gint message)
+void put_message_from_library(gchar message)
 {
   gdk_threads_enter();
-  switch (message)
-    {
-    case SPLT_MESS_FRAME_MODE_ENABLED :
-      put_status_message((gchar *)_(" info: frame mode enabled "));
-      break;
-    default:
-      break;
-    }
+  put_status_message((gchar *)_(message));
   gdk_threads_leave();
 }
 
@@ -498,7 +491,7 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   //put the callback function to receive the splitted file
   mp3splt_set_splitted_filename_function(the_state,put_splitted_filename);
   //put the callback function for miscellaneous messages
-  mp3splt_set_message_function(the_state,put_message_from_library);
+  mp3splt_set_message_function(the_state, put_message_from_library);
   //debug on or off
   //mp3splt_set_int_option(the_state,SPLT_OPT_DEBUG_MODE,SPLT_TRUE);
   //main program
