@@ -325,10 +325,7 @@ typedef struct {
   splt_progress *p_bar;
   //sends a message to the main program to tell him what
   //he is doing
-  //possible values : 
-  //SPLT_MESS_FRAME_MODE_ENABLED
-  //SPLT_MESS_START_WRAP_SPLIT
-  void (*put_message)(int);
+  void (*put_message)(char *);
   //structure in which we have all the splitpoints
   splt_point *points;
   //how many tags we have
@@ -949,44 +946,8 @@ typedef struct {
 //plugin error messages
 #define SPLT_ERROR_UNSUPPORTED_FEATURE -600
 
-//miscellaneous messages that the library sends to the clients 
-/**
- * @brief Infos, split : frame mode has been enabled
- */
-#define SPLT_MESS_FRAME_MODE_ENABLED 0
 #define SPLT_INTERNAL_PROGRESS_RATE 1
-/**
- * @brief todo
- */
-#define SPLT_MESS_START_WRAP_SPLIT 2
-/**
- * @brief todo
- */
-#define SPLT_MESS_START_SILENCE_SPLIT 3
-/**
- * @brief todo
- */
-#define SPLT_MESS_START_TIME_SPLIT 4
-/**
- * @brief todo
- */
-#define SPLT_MESS_START_ERROR_SPLIT 5
-/**
- * @brief todo
- */
-#define SPLT_MESS_START_NORMAL_SPLIT 6
-/**
- * @brief todo
- */
-#define SPLT_MESS_DETECTED 7
-/**
- * @brief todo
- */
-#define SPLT_MESS_DETECTED_INVALID 9
-/**
- * @brief todo
- */
-#define SPLT_MESS_STOP_SPLIT 10
+#define SPLT_INTERNAL_FRAME_MODE_ENABLED 2
 
 //progress messages
 /**
@@ -1277,7 +1238,7 @@ int mp3splt_set_m3u_filename(splt_state *state, char *filename);
 /* Set callback functions           */
 
 int mp3splt_set_message_function(splt_state *state,
-    void (*put_message)(int));
+    void (*put_message)(char *));
 int mp3splt_set_splitted_filename_function(splt_state *state,
     void (*file_cb)(char *,int));
 int mp3splt_set_progress_function(splt_state *state,

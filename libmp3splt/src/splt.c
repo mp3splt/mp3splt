@@ -149,7 +149,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
   //we do a different split than the normal split
   if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_ERROR_MODE)
   {
-    splt_t_put_message_to_client(state, SPLT_MESS_START_ERROR_SPLIT);
+    splt_t_put_message_to_client(state, " info: starting error mode split");
 
     //we detect sync errors
     splt_p_search_syncerrors(state, error);
@@ -251,7 +251,7 @@ bloc_end:
     //if we don't have the sync error mode
     //we do a normal split
   {
-    splt_t_put_message_to_client(state,SPLT_MESS_START_NORMAL_SPLIT);
+    splt_t_put_message_to_client(state, " info: starting normal split");
 
     int get_error = SPLT_OK;
 
@@ -338,7 +338,7 @@ void splt_s_time_split(splt_state *state, int *error)
 
   splt_u_print_debug("Starting time split...",0,NULL);
 
-  splt_t_put_message_to_client(state,SPLT_MESS_START_TIME_SPLIT);
+  splt_t_put_message_to_client(state, " info: starting time mode split");
 
   char *final_fname = NULL;
   //if the state has an error
@@ -764,7 +764,7 @@ void splt_s_silence_split(splt_state *state, int *error)
 {
   splt_u_print_debug("Starting silence split ...",0,NULL);
 
-  splt_t_put_message_to_client(state,SPLT_MESS_START_SILENCE_SPLIT);
+  splt_t_put_message_to_client(state, " info: starting silence mode split");
 
   int found = 0;
   found = splt_s_set_silence_splitpoints(state, SPLT_TRUE, error);
@@ -795,7 +795,7 @@ void splt_s_wrap_split(splt_state *state, int *error)
 
   splt_u_print_debug("We begin wrap split for the file ...",0,filename);
 
-  splt_t_put_message_to_client(state,SPLT_MESS_START_WRAP_SPLIT);
+  splt_t_put_message_to_client(state, " info: starting wrap mode split");
 
   splt_p_dewrap(state, SPLT_FALSE, new_filename_path, error);
 }

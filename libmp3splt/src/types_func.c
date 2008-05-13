@@ -1773,7 +1773,7 @@ void splt_t_set_iopt(splt_state *state, int type, int value)
 {
   switch (type)
   {
-    case SPLT_MESS_FRAME_MODE_ENABLED:
+    case SPLT_INTERNAL_FRAME_MODE_ENABLED:
       state->iopts.frame_mode_enabled = value;
       break;
     case SPLT_INTERNAL_PROGRESS_RATE:
@@ -1789,7 +1789,7 @@ int splt_t_get_iopt(splt_state *state, int type)
 {
   switch (type)
   {
-    case SPLT_MESS_FRAME_MODE_ENABLED:
+    case SPLT_INTERNAL_FRAME_MODE_ENABLED:
       return state->iopts.frame_mode_enabled;
       break;
     case SPLT_INTERNAL_PROGRESS_RATE:
@@ -1805,7 +1805,7 @@ int splt_t_get_iopt(splt_state *state, int type)
 //set default internal options
 void splt_t_set_default_iopts(splt_state *state)
 {
-  splt_t_set_iopt(state, SPLT_MESS_FRAME_MODE_ENABLED,SPLT_FALSE);
+  splt_t_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED,SPLT_FALSE);
   splt_t_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,0);
   int error = SPLT_OK;
   splt_t_set_new_filename_path(state,NULL,&error);
@@ -2628,7 +2628,7 @@ void splt_t_put_progress_text(splt_state *state,int type)
 }
 
 //puts a message to the client
-void splt_t_put_message_to_client(splt_state *state, int message)
+void splt_t_put_message_to_client(splt_state *state, char *message)
 {
   if (!splt_t_messages_locked(state))
   {
@@ -2741,7 +2741,6 @@ static void splt_t_free_files(char **files, int number)
 //sets the stop split value
 void splt_t_set_stop_split(splt_state *state, int bool_value)
 {
-  //splt_t_put_message_to_client(state,SPLT_MESS_STOP_SPLIT);
   state->cancel_split = bool_value;
 }
 

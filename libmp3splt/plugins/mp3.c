@@ -813,10 +813,10 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
           //if the messages are not locked
           if (!splt_t_messages_locked(state))
           {
-            if (!splt_t_get_iopt(state,SPLT_MESS_FRAME_MODE_ENABLED))
+            if (!splt_t_get_iopt(state,SPLT_INTERNAL_FRAME_MODE_ENABLED))
             {
-              splt_t_put_message_to_client(state,SPLT_MESS_FRAME_MODE_ENABLED);
-              splt_t_set_iopt(state,SPLT_MESS_FRAME_MODE_ENABLED,SPLT_TRUE);
+              splt_t_put_message_to_client(state, " info: frame mode enabled");
+              splt_t_set_iopt(state,SPLT_INTERNAL_FRAME_MODE_ENABLED,SPLT_TRUE);
             }
           }
           continue;
@@ -2322,10 +2322,8 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
   //we free previously wrap files
   splt_t_wrap_free(state);
 
-  splt_t_lock_messages(state);
   //we create the codec
   splt_mp3_get_info(state, file_input, error);
-  splt_t_unlock_messages(state);
 
   //if error
   if (*error != SPLT_DEWRAP_OK)
@@ -2862,6 +2860,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
   }
   else
   {
+    splt_t_lock_messages(state);
     if (splt_mp3_get_info(state, file_input, error) != NULL)
     {
       is_mp3 = SPLT_TRUE;
@@ -2869,6 +2868,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
     }
     fclose(file_input);
     file_input = NULL;
+    splt_t_unlock_messages(state);
   }
 
   return is_mp3;
@@ -2931,7 +2931,6 @@ void splt_pl_set_total_time(splt_state *state, int *error)
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
     splt_t_lock_messages(state);
-
     //if we can read the file
     //get the mp3 info => this puts the total time in the state
     if(splt_mp3_get_info(state, file_input,error) != NULL)
@@ -2939,7 +2938,6 @@ void splt_pl_set_total_time(splt_state *state, int *error)
       //we free the mp3 state after the check
       splt_mp3_state_free(state);
     }
-
     splt_t_unlock_messages(state);
 
     fclose(file_input);

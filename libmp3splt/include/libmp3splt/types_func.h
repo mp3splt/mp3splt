@@ -202,7 +202,7 @@ void splt_t_wrap_free(splt_state *state);
 
 void splt_t_put_splitted_file(splt_state *state, char *filename);
 void splt_t_put_progress_text(splt_state *state,int type);
-void splt_t_put_message_to_client(splt_state *state, int message);
+void splt_t_put_message_to_client(splt_state *state, char *message);
 void splt_t_update_progress(splt_state *state, float current_point,
     float total_points, int progress_stage,
     float progress_start, int refresh_rate);

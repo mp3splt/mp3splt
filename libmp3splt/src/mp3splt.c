@@ -198,7 +198,7 @@ int mp3splt_set_filename_to_split(splt_state *state,char *filename)
 //sets the function that sends messages to the client
 //returns possible error
 int mp3splt_set_message_function(splt_state *state,
-    void (*message_cb)(int))
+    void (*message_cb)(char *))
 {
   int error = SPLT_OK;
 
