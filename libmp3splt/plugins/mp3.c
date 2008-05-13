@@ -40,6 +40,15 @@ static unsigned char splt_mp3_getgenre (char *genre_string);
 /****************************/
 /* mp3 constants */
 
+const char *splt_mp3_chan[] =
+{
+	"Mono",
+	"Dual Mono",
+	"Joint Stereo",
+	"Stereo",
+	"?"
+};
+
 //layer, bitrate..
 const int splt_mp3_tabsel_123[2][3][16] = {
   { {128,32,64,96,128,160,192,224,256,288,320,352,384,416,448,},
@@ -911,6 +920,44 @@ splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
       (state->codec == NULL))
   {
     return NULL;
+  }
+  else
+  {
+    if (! splt_t_messages_locked(state))
+    {
+      splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+      struct splt_mp3 *mfile = &mp3state->mp3file;
+      //codec infos
+      char mpeg_infos[2048] = { '\0' };
+      snprintf(mpeg_infos,2048, " info: MPEG %d Layer %d - %d Hz - %s", (2-mfile->mpgid), mfile->layer, mfile->freq, splt_mp3_chan[mfile->channels]);
+      //frame mode or bitrate
+      char frame_mode_infos[256] = { '\0' };
+      if (mp3state->framemode)
+      {
+        if (splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
+        {
+          snprintf(frame_mode_infos,256," - FRAME MODE NS");
+        }
+        else
+        {
+          snprintf(frame_mode_infos,256," - FRAME MODE");
+        }
+      }
+      else 
+      {
+        snprintf(frame_mode_infos,256," - %d Kb/s",mfile->bitrate * SPLT_MP3_BYTE / 1000);
+      }
+      //total time
+      char total_time[256] = { '\0' };
+      int total_seconds = (int) splt_t_get_total_time(state) / 100;
+      int minutes = total_seconds / 60;
+      int seconds = total_seconds % 60;
+      snprintf(total_time,256," - Total time: %dm.%02ds", minutes, seconds%60);
+      //put all the infos together
+      char all_infos[3072] = { '\0' };
+      snprintf(all_infos,3072,"%s%s%s",mpeg_infos,frame_mode_infos,total_time);
+      splt_t_put_message_to_client(state, all_infos);
+    }
   }
 
   return state;
@@ -2956,8 +3003,7 @@ void splt_pl_init_split(splt_state *state, int *error)
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
-    state->codec = splt_mp3_info(file_input, state,
-        splt_t_get_int_option(state,SPLT_OPT_FRAME_MODE), error);
+    state = splt_mp3_get_info(state, file_input, error);
 
     if (*error >= 0)
     {
