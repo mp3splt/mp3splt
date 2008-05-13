@@ -108,6 +108,28 @@ splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
   {
     return NULL;
   }
+  else
+  {
+    if (! splt_t_messages_locked(state))
+    {
+      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+      //ogg infos
+      char ogg_infos[2048] = { '\0' };
+      snprintf(ogg_infos, 2048, " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels",
+          oggstate->vd->vi->rate, oggstate->vd->vi->bitrate_nominal/1024,
+          oggstate->vd->vi->channels);
+      //total time
+      char total_time[256] = { '\0' };
+      int total_seconds = (int) splt_t_get_total_time(state) / 100;
+      int minutes = total_seconds / 60;
+      int seconds = total_seconds % 60;
+      snprintf(total_time,256," - Total time: %dm.%02ds", minutes, seconds%60);
+      //all infos together
+      char all_infos[3072] = { '\0' };
+      snprintf(all_infos,3072,"%s%s",ogg_infos,total_time);
+      splt_t_put_message_to_client(state, all_infos);
+    }
+  }
 
   return state;
 }
@@ -397,8 +419,10 @@ void splt_ogg_get_original_tags(char *filename,
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
+    splt_t_lock_messages(state);
     if(splt_ogg_get_info(state, file_input, tag_error) != NULL)
     {
+      splt_t_unlock_messages(state);
       splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
 
       vorbis_comment *vc_local;
@@ -491,6 +515,7 @@ void splt_ogg_get_original_tags(char *filename,
     }
     else
     {
+      splt_t_unlock_messages(state);
       fclose(file_input);
     }
   }
@@ -1666,6 +1691,10 @@ void splt_pl_init_split(splt_state *state, int *error)
       splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
       oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
     }
+    else
+    {
+      fclose(file_input);
+    }
   }
   else
   {
@@ -1709,8 +1738,10 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   //open the file
   if ((file_input = fopen(filename, "rb")))
   {
+    splt_t_lock_messages(state);
     if(splt_ogg_get_info(state, file_input, error) != NULL)
     {
+      splt_t_unlock_messages(state);
       splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
       oggstate->off = offset;
 
@@ -1721,7 +1752,9 @@ int splt_pl_scan_silence(splt_state *state, int *error)
     }
     else
     {
+      splt_t_unlock_messages(state);
       *error = SPLT_ERROR_INVALID;
+      fclose(file_input);
     }
     //we don't need to close the file_input becase ov_clear() does it
     //when we call splt_ogg_state_free(..)
