@@ -1743,6 +1743,22 @@ int main (int argc, char *argv[])
           //we do the effective split
           err = mp3splt_split(state);
           print_confirmation_error(err,opt,state);
+
+          //if cddb split, put message at the end
+          if (opt->c_option && err >= 0 && !opt->q_option)
+          {
+            print_message("\n +-----------------------------------------------------------------------------+\n\
+ |NOTE: When you use cddb/cue, splitted files might be not very precise due to:|\n\
+ |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n\
+ |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n\
+ |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n\
+ |3) Encoders might add some padding frames so  that  file is longer than CD.  |\n\
+ |4) There are several entries of the same cd on CDDB, find the best for yours.|\n\
+ |   Usually you can find the correct splitpoints for your mp3, so good luck!  |\n\
+ +-----------------------------------------------------------------------------+\n\
+ | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n\
+ +-----------------------------------------------------------------------------+\n");
+          }
         }
       }
     }
