@@ -949,10 +949,13 @@ splt_wrap *mp3splt_get_wrap_files(splt_state *state,
       //we check the format of the filename
       splt_check_file_type(state, error);
 
+      int old_split_mode = splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+      splt_t_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_WRAP_MODE);
       if (*error >= 0)
       {
         splt_p_dewrap(state, SPLT_TRUE, NULL, error);
       }
+      splt_t_set_int_option(state, SPLT_OPT_SPLIT_MODE, old_split_mode);
 
       splt_t_unlock_library(state);
     }

@@ -923,7 +923,11 @@ splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
   }
   else
   {
-    if (! splt_t_messages_locked(state))
+    if ((! splt_t_messages_locked(state)) &&
+        (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE)
+         != SPLT_OPTION_WRAP_MODE) &&
+         (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE)
+         != SPLT_OPTION_ERROR_MODE))
     {
       splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
       struct splt_mp3 *mfile = &mp3state->mp3file;
@@ -2460,14 +2464,22 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
       {
         splt_u_print_debug("We do the effective dewrap...",0,NULL);
 
-        //mp3wrap checkings and we get the wrap file number
-        if (mp3wrap){
-          splt_u_print_debug("We do mp3 mp3wrap check...",0,NULL);
+        //client informations
+        char client_infos[2048] = { '\0' };
 
+        //mp3wrap checkings and we get the wrap file number
+        if (mp3wrap) {
+          splt_u_print_debug("We do mp3 mp3wrap check...",0,NULL);
           short indexver;
+
           //Mp3Wrap version
-          fgetc(mp3state->file_input);
-          fgetc(mp3state->file_input);
+          char major_v = fgetc(file_input);
+          char minor_v = fgetc(file_input);
+          snprintf(client_infos,1024,
+              " Detected file created with: Mp3Wrap v. %c.%c",major_v,minor_v);
+
+          splt_t_put_message_to_client(state, client_infos);
+
           indexver = fgetc(mp3state->file_input);
           if (indexver > SPLT_MP3_INDEXVERSION)
           {
@@ -2522,6 +2534,9 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
         if (albumwrap)
         {
           splt_u_print_debug("We do mp3 albumwrap check...",0,NULL);
+          //Mp3Wrap version
+          snprintf(client_infos,1024, " Detected file created with: AlbumWrap");
+          splt_t_put_message_to_client(state, client_infos);
 
           if (fseeko(mp3state->file_input, (off_t) 0x52d, SEEK_SET)==-1)
           {
@@ -2547,6 +2562,9 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
 
         splt_u_print_debug("Number of wrap splitpoints is",wrapfiles+1,NULL);
 
+        snprintf(client_infos, 1024, " Total files: %d",wrapfiles);
+        splt_t_put_message_to_client(state, client_infos);
+        
         //we do the dewrap
         for (i=0; i<wrapfiles; i++)
         {
