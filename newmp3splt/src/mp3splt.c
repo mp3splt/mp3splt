@@ -1217,45 +1217,45 @@ void put_splitted_file(char *file, int progress_data)
 //prints the progress bar
 void put_progress_bar(splt_progress *p_bar)
 {
-  char progress_text[1024] = " ";
+  char progress_text[2048] = " ";
 
   switch (p_bar->progress_type)
   {
     case SPLT_PROGRESS_PREPARE :
-      snprintf(progress_text,1023,
+      snprintf(progress_text,2047,
           " preparing \"%s\" (%d of %d)",
           p_bar->filename_shorted,
           p_bar->current_split,
           p_bar->max_splits);
       break;
     case SPLT_PROGRESS_CREATE :
-      snprintf(progress_text,1023,
+      snprintf(progress_text,2047,
           " creating \"%s\" (%d of %d)",
           p_bar->filename_shorted,
           p_bar->current_split,
           p_bar->max_splits);
       break;
     case SPLT_PROGRESS_SEARCH_SYNC :
-      snprintf(progress_text,1023,
+      snprintf(progress_text,2047,
           " searching for sync errors...");
       break;
     case SPLT_PROGRESS_SCAN_SILENCE :
-      snprintf(progress_text,1023,
+      snprintf(progress_text,2047,
           " scanning for silence...");
       break;
     default:
-      snprintf(progress_text,1023, " ");
+      snprintf(progress_text,2047, " ");
       break;
   }
 
-  char printed_value[1024] = "";
+  char printed_value[2048] = "";
   //we update the progress
-  snprintf(printed_value,1023,"%6.2f %% %s",
+  snprintf(printed_value,2047,"%6.2f %% %s",
       p_bar->percent_progress * 100,
       progress_text);
 
   //we put necessary spaces
-  char temp[1024] = "";
+  char temp[2048] = "";
   int this_spaces = strlen(printed_value);
   int counter = strlen(printed_value);
   while (counter <= p_bar->user_data)

@@ -1738,10 +1738,8 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   //open the file
   if ((file_input = fopen(filename, "rb")))
   {
-    splt_t_lock_messages(state);
     if(splt_ogg_get_info(state, file_input, error) != NULL)
     {
-      splt_t_unlock_messages(state);
       splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
       oggstate->off = offset;
 
