@@ -704,7 +704,7 @@ int checkstring (char *s)
   return 0;
 }
 
-//for the moment 3 ways of getting the file and one way to search it
+//for the moment 2 ways of getting the file and one way to search it
 //freedb get type can be : cddb_cgi or cddb_protocol
 //freedb search type can be : cddb_cgi or web_search
 //query[get=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
