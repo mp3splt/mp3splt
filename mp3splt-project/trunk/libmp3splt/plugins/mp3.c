@@ -2040,7 +2040,8 @@ int splt_mp3_scan_silence(splt_state *state, off_t begin,
           float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
           mp3state->avg_level += level;
           mp3state->n_stat++;
-          //fprintf(stderr, "dB level: %+.1f\n", level);
+          state->split.p_bar->silence_db_level = level;
+          state->split.p_bar->silence_found_tracks = found;
 
           //if we don't have silence split,
           //put the 1/4 of progress

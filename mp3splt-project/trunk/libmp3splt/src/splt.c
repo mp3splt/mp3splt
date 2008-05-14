@@ -528,6 +528,11 @@ int splt_s_set_silence_splitpoints(splt_state *state,
   //if no error
   if (*error >= 0)
   {
+    //put client infos
+    char client_infos[512] = { '\0' };
+    snprintf(client_infos,512,"\n Total silence points found: %d.",found);
+    splt_t_put_message_to_client(state,client_infos);
+
     //we set the number of tracks
     int order = 0;
     if (!splt_t_split_is_canceled(state))

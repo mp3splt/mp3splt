@@ -294,6 +294,9 @@ typedef struct splt_progres {
   //SPLT_PROGRESS_SEARCH_SYNC
   //SPLT_PROGRESS_SCAN_SILENCE
   int progress_type;
+  //infos for the silence split
+  int silence_found_tracks;
+  float silence_db_level;
   //use this variable as you wish
   //this variable will not be modified by the library
   //but is 0 at the start
@@ -1364,9 +1367,6 @@ splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
 //returns the wrapped files found
 splt_wrap *mp3splt_get_wrap_files(splt_state *state,
     int *error);
-
-//count how many silence splitpoints we have with silence detection
-int mp3splt_count_silence_points(splt_state *state, int *error);
 
 #define MP3SPLT_MP3SPLT_H
 
