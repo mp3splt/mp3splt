@@ -292,8 +292,9 @@ void change_window_progress_bar(splt_progress *p_bar)
                  _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE :
-      g_snprintf(progress_text,1023,
-                 _(" scanning for silence..."));
+      g_snprintf(progress_text,2047,
+          "S: %02d, Level: %.2f dB; scanning for silence...",
+          p_bar->silence_found_tracks, p_bar->silence_db_level);
       break;
     default:
       g_snprintf(progress_text,1023, " ");

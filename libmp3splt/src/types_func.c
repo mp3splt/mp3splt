@@ -1849,6 +1849,8 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->split.p_bar->current_split = 0;
   state->split.p_bar->max_splits = 0;
   state->split.p_bar->progress_type = SPLT_PROGRESS_PREPARE;
+  state->split.p_bar->silence_found_tracks = 0;
+  state->split.p_bar->silence_db_level = 0;
   state->split.p_bar->user_data = 0;
   state->split.p_bar->progress = NULL;
   state->cancel_split = SPLT_FALSE;

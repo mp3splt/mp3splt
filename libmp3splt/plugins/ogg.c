@@ -1548,8 +1548,9 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
       if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE)
           == SPLT_OPTION_SILENCE_MODE)
       {
-        //float level = splt_u_convert2dB(oggstate->temp_level);
-        //fprintf(stderr, "dB level: %+.1f\n", level);
+        float level = splt_u_convert2dB(oggstate->temp_level);
+        state->split.p_bar->silence_db_level = level;
+        state->split.p_bar->silence_found_tracks = found;
 
         //if we have cancelled the split
         if (splt_t_split_is_canceled(state))
