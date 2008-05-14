@@ -1685,7 +1685,13 @@ void splt_pl_init_split(splt_state *state, int *error)
   //if we can open the file
   if ((file_input = fopen(filename, "rb")) != NULL)
   {
+    if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) ==
+        SPLT_OPTION_SILENCE_MODE)
+    {
+      splt_t_lock_messages(state);
+    }
     splt_ogg_get_info(state, file_input, error);
+    splt_t_unlock_messages(state);
     if (*error >= 0)
     {
       splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
@@ -1750,7 +1756,6 @@ int splt_pl_scan_silence(splt_state *state, int *error)
     }
     else
     {
-      splt_t_unlock_messages(state);
       *error = SPLT_ERROR_INVALID;
       fclose(file_input);
     }
