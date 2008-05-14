@@ -973,6 +973,43 @@ splt_wrap *mp3splt_get_wrap_files(splt_state *state,
   }
 }
 
+//count how many silence splitpoints we have with silence detection
+int mp3splt_count_silence_points(splt_state *state, int *error)
+{
+  int found_splitpoints = -1;
+
+  if (state != NULL)
+  {
+    if (!splt_t_library_locked(state))
+    {
+      splt_t_lock_library(state);
+
+      splt_check_file_type(state, error);
+
+      if (error >= 0)
+      {
+        found_splitpoints =
+          splt_s_set_silence_splitpoints(state, SPLT_FALSE, error);
+        //the set_silence_splitpoints returns us the
+        //number of tracks, not splitpoints
+        found_splitpoints--;
+      }
+
+      splt_t_unlock_library(state);
+    }
+    else
+    {
+      *error = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    *error = SPLT_ERROR_STATE_NULL;
+  }
+
+  return found_splitpoints;
+}
+
 //returns libmp3splt version, max 20 chars
 void mp3splt_get_version(char *version)
 {

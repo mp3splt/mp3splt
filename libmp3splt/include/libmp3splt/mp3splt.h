@@ -1356,6 +1356,8 @@ void mp3splt_set_oformat(splt_state *state,
 /************************************/
 /* Other utilities                  */
 
+int mp3splt_count_silence_points(splt_state *state, int *error);
+
 //returns the version of libmp3splt
 void mp3splt_get_version(char *version);
 
