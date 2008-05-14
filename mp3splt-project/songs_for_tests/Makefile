@@ -33,7 +33,6 @@ DEBUG=
 
 all: all_tests
 
-#TODO: infos for silence split
 all_tests: install_libmp3splt clean test_mp3 test_ogg
 
 install_libmp3splt:

@@ -60,8 +60,8 @@ typedef struct {
   short o_option; short d_option; short k_option;
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
-  //m3u file option
-  short m_option;
+  //info -i option, m3u file option
+  short i_option; short m_option;
   //cddb argument, output dir argument, parameters arguments with -p
   char *cddb_arg; char *dir_arg; char *param_args;
   //the m3u filename
@@ -139,6 +139,8 @@ void show_small_help_exit(Options *opt,splt_state *state)
       " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
       " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
       " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)\n"
+      " -i   Count how many silence splitpoints we have with silence detection\n"
+      "      (Use -p for arguments)\n"
       "\nOPTIONS\n"
       " -m + M3U_FILE: Creates a m3u file with the newly splitted files\n"
       " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
@@ -289,6 +291,9 @@ void check_args(int argc, Options *opt, splt_state *state)
   }
   else
   {
+    //TODO
+    //-i option
+
     //if we want input not seekable (-k)
     if (opt->k_option)
     {
@@ -384,7 +389,8 @@ void check_args(int argc, Options *opt, splt_state *state)
     //parameters (-p)
     if (opt->p_option)
     {
-      if (!opt->a_option && !opt->s_option)
+      if (!opt->a_option && !opt->s_option
+          && !opt->i_option)
       {
         put_error_message_exit("Error : cannot use '-p' without \
             '-a' or '-s'",opt,state);
@@ -1286,7 +1292,8 @@ Options *new_options()
   opt->p_option = SPLT_FALSE; opt->o_option = SPLT_FALSE;
   opt->d_option = SPLT_FALSE; opt->k_option = SPLT_FALSE;
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
-  opt->q_option = SPLT_FALSE; opt->m_option = SPLT_FALSE;
+  opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
+  opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
   opt->param_args = NULL; opt->custom_tags = NULL;
   opt->m3u_arg = NULL;
@@ -1347,7 +1354,8 @@ int main (int argc, char *argv[])
 
   //parse command line options
   int option;
-  while ((option=getopt(argc, argv, "m:SDVfkwleqnasc:d:o:t:p:g:h"))!=-1)
+  //I have erased the "-i" option
+  while ((option=getopt(argc, argv, "m:SDVifkwleqnasc:d:o:t:p:g:h"))!=-1)
   {
     switch (option)
     {
@@ -1406,6 +1414,11 @@ int main (int argc, char *argv[])
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE,
             SPLT_OPTION_SILENCE_MODE);
         opt->s_option = SPLT_TRUE;
+        break;
+      case 'i':
+        mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE,
+            SPLT_OPTION_SILENCE_MODE);
+        opt->i_option = SPLT_TRUE;
         break;
       case 'c':
         //default tags
@@ -1586,8 +1599,9 @@ int main (int argc, char *argv[])
   //argv[1] to argv[argc-1] and argv[0] = program_command
 
   //just don't put incompatible options!, rtfm
-  if (opt->l_option || opt->c_option || opt->e_option ||
-      opt->t_option || opt->w_option || opt->s_option)
+  if (opt->l_option || opt->i_option || opt->c_option ||
+      opt->e_option || opt->t_option || opt->w_option ||
+      opt->s_option)
   {
     if (argc > 1)
     {
@@ -1627,7 +1641,26 @@ int main (int argc, char *argv[])
     }
   }
   else
-    //if we don't list wrapped files
+    //count how many silence splitpoints we have
+    //if we count how many silence splitpoints
+    if (opt->i_option)
+    {
+      err = SPLT_OK;
+
+      int silence_number =
+        mp3splt_count_silence_points(state, &err);
+      print_confirmation_error(err,opt,state);
+
+      if (err >= 0)
+      {
+        fprintf(stdout,"%d silence splitpoints detected"
+            "            \n",
+            silence_number);
+        fflush(stdout);
+      }
+    }
+    else
+      //if we don't list wrapped files and we don't count silence files
     {
       //if we have cddb option
       if (opt->c_option)
