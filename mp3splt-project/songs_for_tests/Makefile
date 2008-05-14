@@ -31,6 +31,7 @@ ERROR_MODE_SPLIT_OUTPUT_DIR=error_split
 DEBUG=
 #DEBUG="-D"
 
+#TODO: CRC, STDIN, STDOUT, PROXY
 all: all_tests
 
 all_tests: install_libmp3splt clean test_mp3 test_ogg
