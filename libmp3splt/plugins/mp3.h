@@ -197,7 +197,7 @@ void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
 #define SPLT_MP3_ID3_TRACK 6
 #define SPLT_MP3_ID3_COMMENT 7
 
-//#define SPLT_MP3_CRCLEN 4
+#define SPLT_MP3_CRCLEN 4
 #define SPLT_MP3_ABWINDEXOFFSET 0x539
 #define SPLT_MP3_ABWLEN 0x1f5
 #define SPLT_MP3_INDEXVERSION 1

@@ -149,7 +149,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
   //we do a different split than the normal split
   if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_ERROR_MODE)
   {
-    splt_t_put_message_to_client(state, " info: starting error mode split");
+    splt_t_put_message_to_client(state, " info: starting error mode split\n");
 
     //we detect sync errors
     splt_p_search_syncerrors(state, error);
@@ -251,7 +251,7 @@ bloc_end:
     //if we don't have the sync error mode
     //we do a normal split
   {
-    splt_t_put_message_to_client(state, " info: starting normal split");
+    splt_t_put_message_to_client(state, " info: starting normal split\n");
 
     int get_error = SPLT_OK;
 
@@ -338,7 +338,7 @@ void splt_s_time_split(splt_state *state, int *error)
 
   splt_u_print_debug("Starting time split...",0,NULL);
 
-  splt_t_put_message_to_client(state, " info: starting time mode split");
+  splt_t_put_message_to_client(state, " info: starting time mode split\n");
 
   char *final_fname = NULL;
   //if the state has an error
@@ -530,7 +530,7 @@ int splt_s_set_silence_splitpoints(splt_state *state,
   {
     //put client infos
     char client_infos[512] = { '\0' };
-    snprintf(client_infos,512,"\n Total silence points found: %d.",found);
+    snprintf(client_infos,512,"\n Total silence points found: %d.\n",found);
     splt_t_put_message_to_client(state,client_infos);
 
     //we set the number of tracks
@@ -769,7 +769,7 @@ void splt_s_silence_split(splt_state *state, int *error)
 {
   splt_u_print_debug("Starting silence split ...",0,NULL);
 
-  splt_t_put_message_to_client(state, " info: starting silence mode split");
+  splt_t_put_message_to_client(state, " info: starting silence mode split\n");
 
   int found = 0;
   found = splt_s_set_silence_splitpoints(state, SPLT_TRUE, error);
@@ -800,7 +800,7 @@ void splt_s_wrap_split(splt_state *state, int *error)
 
   splt_u_print_debug("We begin wrap split for the file ...",0,filename);
 
-  splt_t_put_message_to_client(state, " info: starting wrap mode split");
+  splt_t_put_message_to_client(state, " info: starting wrap mode split\n");
 
   splt_p_dewrap(state, SPLT_FALSE, new_filename_path, error);
 }

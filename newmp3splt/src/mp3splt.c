@@ -1193,7 +1193,8 @@ end:
 //prints a library message
 void put_library_message(char *message)
 {
-  print_message(message);
+  fprintf(stdout,"%s",message);
+  fflush(stdout);
 }
 
 //prints the splitted file
