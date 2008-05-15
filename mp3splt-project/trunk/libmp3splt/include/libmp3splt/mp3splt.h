@@ -925,6 +925,10 @@ typedef struct {
  * @brief Error, cannot init libltdl
  */
 #define SPLT_ERROR_CANNOT_INIT_LIBLTDL -30
+/**
+ * @brief Error, cannot init libltdl
+ */
+#define SPLT_ERROR_CRC_FAILED -31
 
 //output format
 /**

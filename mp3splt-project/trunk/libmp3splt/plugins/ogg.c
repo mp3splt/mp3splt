@@ -126,7 +126,7 @@ splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
       snprintf(total_time,256," - Total time: %dm.%02ds", minutes, seconds%60);
       //all infos together
       char all_infos[3072] = { '\0' };
-      snprintf(all_infos,3072,"%s%s",ogg_infos,total_time);
+      snprintf(all_infos,3072,"%s%s\n",ogg_infos,total_time);
       splt_t_put_message_to_client(state, all_infos);
     }
   }
