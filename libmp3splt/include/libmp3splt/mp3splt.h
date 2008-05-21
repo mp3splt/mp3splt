@@ -306,6 +306,19 @@ typedef struct splt_progres {
   void (*progress)(struct splt_progres*);
 } splt_progress;
 
+//proxy informations
+typedef struct {
+  //if we use proxy or not
+  int use_proxy;
+  char hostname[256];
+  int port;
+  //if we need authentification or not
+  int authentification;
+  //the user and password needed for authentification
+  char user[256];
+  char password[256];
+} splt_proxy;
+
 typedef struct {
   //total time of the song
   long total_time;
@@ -627,6 +640,9 @@ typedef struct {
 
   //see the ssplit structure
   struct splt_ssplit *silence_list;
+
+  //proxy infos
+  //splt_proxy proxy;
 
   //file format states, mp3,ogg..
   void *codec;

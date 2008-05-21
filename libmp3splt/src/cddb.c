@@ -1242,71 +1242,33 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 //      return s;
 //}
 
-static splt_addr splt_freedb_useproxy(FILE *in, splt_addr dest,
-                                      char search_server[256],
-                                      int port)
+static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
+    char search_server[256], int port)
 {
-  //char line[270];
-  //char *ptr;
-
   dest.proxy=0;
   memset(dest.hostname, 0, 256);
   //memset(line, 0, 270);
 
-  if (in != NULL)
+  //if (proxy->use_proxy)
+  if (proxy)
   {
     /*
-    //proxy NOT IMPLEMENTED YET
+    //TODO
+    strncpy(dest.hostname, proxy->hostname, 255);
+    dest.port = proxy->port;
+    dest.proxy = proxy->use_proxy;
 
-    fseek(in, 0, SEEK_SET);
+    fprintf(stderr, "Using Proxy: %s on Port %d\n", dest.hostname, dest.port);
 
-    if (fgets(line, 266, in)!=NULL) {
-    if (strstr(line, "PROXYADDR")!=NULL) {
-    line[strlen(line)-1]='\0';
-    if ((ptr = strchr(line, '='))!=NULL) {
-    ptr++;
-    strncpy(dest.hostname, ptr, 255);
-    }
-
-    if (fgets(line, 266, in)!=NULL) {
-    if (strstr(line, "PROXYPORT")!=NULL) {
-    line[strlen(line)-1]='\0';
-    if ((ptr = strchr(line, '='))!=NULL) {
-    ptr++;
-    dest.port = atoi (ptr);
-    dest.proxy=1;
-    }
-    fprintf (stderr, "Using Proxy: %s on Port %d\n", dest.hostname, dest.port);
-    if (fgets(line, 266, in)!=NULL) {
-    if (strstr(line, "PROXYAUTH")!=NULL) {
-    line[strlen(line)-1]='\0';
-    if ((ptr = strchr(line, '='))!=NULL) {
-    ptr++;
-    if (ptr[0]=='1') {
-    if (fgets(line, 266, in)!=NULL) {
     dest.auth = malloc(strlen(line)+1);
-    if (dest.auth==NULL) {
-    perror("malloc");
-    exit(1);
+    if (dest.auth==NULL)
+    {
+      perror("malloc");
+      exit(1);
     }
     memset(dest.auth, 0x0, strlen(line)+1);
     strncpy(dest.auth, line, strlen(line));
-    }
-    else {
-    login(line);
-    dest.auth = b64(line, strlen(line));
-    memset(line, 0x00, strlen(line));
-    }
-    }
-    }
-    }
-    }
-    else dest.auth = NULL;
-    }
-    }
-    }
-    }
-    */
+    //dest.auth = b64(line, strlen(line));*/
   }
 
   if (!dest.proxy) 
@@ -1405,10 +1367,8 @@ int splt_freedb_process_search(splt_state *state, char *search,
     }
   }
 
-  //null because we dont use proxy for now
-  dest = splt_freedb_useproxy(NULL, dest,
-      search_server,
-      port);
+  //dest = splt_freedb_useproxy(&state->proxy, dest, search_server, port);
+  dest = splt_freedb_useproxy(NULL, dest, search_server, port);
 
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
@@ -1633,7 +1593,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   int fd = 0;
 #endif
 
-  //NULL because we dont use proxy for now
+  //dest = splt_freedb_useproxy(&state->proxy, dest, cddb_get_server, port);
   dest = splt_freedb_useproxy(NULL, dest, cddb_get_server, port);
 
   //we get the hostname of freedb
