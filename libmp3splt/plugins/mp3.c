@@ -1117,7 +1117,7 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
     return SPLT_ERROR_CANNOT_OPEN_FILE;
   }
 
-  // - means stdout huh)
+  // - means stdout
   if (strcmp(output_fname, "-")==0)
   {
     file_output = stdout;
@@ -1139,7 +1139,11 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
             mp3state->mp3file.xing, file_output) <= 0)
       {
         error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-        fclose(file_output);
+        if (file_output != stdout)
+        {
+          fclose(file_output);
+        }
+        file_output = NULL;
         return error;
       }
     }
@@ -1169,7 +1173,11 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
     if (fwrite(buffer, 1, readed, file_output)==-1)
     {
       error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-      fclose(file_output);
+      if (file_output != stdout)
+      {
+        fclose(file_output);
+      }
+      file_output = NULL;
       return error;
     }
     begin+=readed;
@@ -1249,20 +1257,31 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
     {
       if (fwrite(id3buffer, 1, 128, file_output) <= 0)
       {
-        fclose(file_output);
+        if (file_output != stdout)
+        {
+          fclose(file_output);
+        }
+        file_output = NULL;
         error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
         return error;
       }
     }
     else
     {
-      fclose(file_output);
+      if (file_output != stdout)
+      {
+        fclose(file_output);
+      }
+      file_output = NULL;
       error = SPLT_ERROR_SEEKING_FILE;
       return error;
     }
   }
 
-  fclose(file_output);
+  if (file_output != stdout)
+  {
+    fclose(file_output);
+  }
   file_output = NULL;
 
   if (fseeko(mp3state->file_input, position, SEEK_SET)==-1)
@@ -1328,7 +1347,7 @@ void splt_mp3_split (char *output_fname, splt_state *state, char *id3,
   {
     splt_u_print_debug("Starting not seekable...",0,NULL);
 
-    //for the stdout output, hmm..
+    //for the stdout
     if (strcmp(output_fname, "-")==0)
     {
       file_output = stdout;
@@ -1647,7 +1666,11 @@ void splt_mp3_split (char *output_fname, splt_state *state, char *id3,
       }
 
 bloc_end:
-      fclose(file_output);
+      if (file_output != stdout)
+      {
+        fclose(file_output);
+      }
+      file_output = NULL;
       mad_frame_finish(&mp3state->frame);
       mad_stream_finish(&mp3state->stream);
       return;
@@ -2337,8 +2360,8 @@ const unsigned char splt_mp3_albumwraphead[22] =
 
 //this function dewraps a file
 //we return the possible error in the process_result parameter
-void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
-                      int *error, splt_state *state)
+void splt_mp3_dewrap(FILE *file_input, int listonly, char *dir,
+    int *error, splt_state *state)
 {
   *error = SPLT_DEWRAP_OK;
 
@@ -2927,7 +2950,10 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
       is_mp3 = SPLT_TRUE;
       splt_mp3_state_free(state);
     }
-    fclose(file_input);
+    if (file_input != stdin)
+    {
+      fclose(file_input);
+    }
     file_input = NULL;
     splt_t_unlock_messages(state);
   }
@@ -2953,7 +2979,10 @@ void splt_pl_search_syncerrors(splt_state *state, int *error)
       //we free the mp3 state after the check
       splt_mp3_state_free(state);
     }
-    fclose(file_input);
+    if (file_input != stdin)
+    {
+      fclose(file_input);
+    }
     file_input = NULL;
   }
   else
@@ -2973,8 +3002,11 @@ void splt_pl_dewrap (splt_state *state, int listonly, char *dir, int *error)
   if((file_input = fopen(filename, "rb")) != NULL)
   {
     splt_mp3_dewrap (file_input, listonly, dir, error, state);
-    //close the file
-    fclose(file_input);
+    if (file_input != stdin)
+    {
+      fclose(file_input);
+    }
+    file_input = NULL;
   }
   else
   {
@@ -3001,7 +3033,11 @@ void splt_pl_set_total_time(splt_state *state, int *error)
     }
     splt_t_unlock_messages(state);
 
-    fclose(file_input);
+    if (file_input != stdin)
+    {
+      fclose(file_input);
+    }
+    file_input = NULL;
   }
   else
   {
@@ -3048,7 +3084,10 @@ void splt_pl_end_split(splt_state *state)
   splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
   if (mp3state->file_input)
   {
-    fclose(mp3state->file_input);
+    if (mp3state->file_input != stdin)
+    {
+      fclose(mp3state->file_input);
+    }
     mp3state->file_input = NULL;
   }
   //we free the mp3 state 
@@ -3105,7 +3144,10 @@ int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off
       //we free the mp3 state 
       splt_mp3_state_free(state);
     }
-    fclose(file_input);
+    if (file_input != stdin)
+    {
+      fclose(file_input);
+    }
     file_input = NULL;
   }
   else
@@ -3145,7 +3187,10 @@ int splt_pl_scan_silence(splt_state *state, int *error)
     {
       *error = SPLT_ERROR_INVALID;
     }
-    fclose(file_input);
+    if (file_input != stdin)
+    {
+      fclose(file_input);
+    }
     file_input = NULL;
   }
   else

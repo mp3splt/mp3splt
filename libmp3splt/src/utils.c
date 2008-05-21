@@ -415,64 +415,69 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
   char *output_fname_with_path = NULL;
   char *new_filename_path = splt_t_get_new_filename_path(state);
   int current_split = splt_t_get_current_split(state);
-  char *output_fname = splt_t_get_splitpoint_name(state, current_split,
-      error);
-  int malloc_number = strlen(output_fname)+
-    strlen(new_filename_path) + 10;
+  char *output_fname = splt_t_get_splitpoint_name(state, current_split, error);
+  int malloc_number = strlen(output_fname)+ strlen(new_filename_path) + 10;
 
-  if ((output_fname_with_path = malloc(malloc_number)) != NULL)
+  //if we don't output to stdout
+  if (strcmp(output_fname,"-") != 0)
   {
-    //we put the full output filename (with the path)
-    //construct full filename with path
-    char *extension = splt_p_get_extension(state, error);
-    if (*error >= 0)
+    if ((output_fname_with_path = malloc(malloc_number)) != NULL)
     {
-      if (strcmp(new_filename_path,"") == 0)
+      //we put the full output filename (with the path)
+      //construct full filename with path
+      char *extension = splt_p_get_extension(state, error);
+      if (*error >= 0)
       {
-        snprintf(output_fname_with_path, malloc_number,
-            "%s%s", output_fname, extension);
+        if (strcmp(new_filename_path,"") == 0)
+        {
+          snprintf(output_fname_with_path, malloc_number,
+              "%s%s", output_fname, extension);
+        }
+        else
+        {
+          snprintf(output_fname_with_path, malloc_number,
+              "%s%c%s%s",new_filename_path, SPLT_DIRCHAR,
+              output_fname, extension);
+        }
       }
       else
       {
-        snprintf(output_fname_with_path, malloc_number,
-            "%s%c%s%s",new_filename_path, SPLT_DIRCHAR,
-            output_fname, extension);
+        return NULL;
       }
     }
     else
     {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       return NULL;
     }
+
+    char *filename = splt_t_get_filename_to_split(state);
+
+    //if the output file exists
+    if (splt_check_is_file(output_fname_with_path))
+    {
+      //if input and output are the same file
+      if (splt_check_is_the_same_file(filename,output_fname_with_path,
+            error))
+      {
+        *error = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
+      }
+      else
+      {
+        //if no error from the check_is_the_same..
+        if (*error >= 0)
+        {
+          //TODO
+          //warning if a file already exists
+        }
+      }
+    }
+    return output_fname_with_path;
   }
   else
   {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return NULL;
+    return strdup(output_fname);
   }
-
-  char *filename = splt_t_get_filename_to_split(state);
-
-  //if the output file exists
-  if (splt_check_is_file(output_fname_with_path))
-  {
-    //if input and output are the same file
-    if (splt_check_is_the_same_file(filename,output_fname_with_path,
-          error))
-    {
-      *error = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
-    }
-    else
-    {
-      //if no error from the check_is_the_same..
-      if (*error >= 0)
-      {
-        //TODO
-        //warning if a file already exists
-      }
-    }
-  }
-
-  return output_fname_with_path;
 }
 
 /****************************/
@@ -1410,26 +1415,26 @@ void splt_u_print_debug(char *message,double optional,
     {
       if (optional2 != NULL)
       {
-        fprintf(stdout,"%s %f _%s_\n",message,optional,
+        fprintf(stderr,"%s %f _%s_\n",message,optional,
             optional2);
       }
       else
       {
-        fprintf(stdout,"%s %f\n",message,optional);
+        fprintf(stderr,"%s %f\n",message,optional);
       }
     }
     else
     {
       if (optional2 != NULL)
       {
-        fprintf(stdout,"%s _%s_\n",message, optional2);
+        fprintf(stderr,"%s _%s_\n",message, optional2);
       }
       else
       {
-        fprintf(stdout,"%s\n",message);
+        fprintf(stderr,"%s\n",message);
       }
     }
-    fflush(stdout);
+    fflush(stderr);
   }
 }
 
