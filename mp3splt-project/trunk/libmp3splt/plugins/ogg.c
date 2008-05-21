@@ -516,7 +516,11 @@ void splt_ogg_get_original_tags(char *filename,
     else
     {
       splt_t_unlock_messages(state);
-      fclose(file_input);
+      if (file_input != stdin)
+      {
+        fclose(file_input);
+      }
+      file_input = NULL;
     }
   }
   else
@@ -1267,6 +1271,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
     }
   }
 
+  //- means stdout
   if (strcmp(filename, "-")==0)
   {
     oggstate->out = stdout;
@@ -1301,7 +1306,11 @@ void splt_ogg_split(char *filename, splt_state *state, double
   {
     *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
     ogg_stream_clear(&stream_out);
-    fclose(oggstate->out);
+    if (oggstate->out != stdout)
+    {
+      fclose(oggstate->out);
+    }
+    oggstate->out = NULL;
     return;
   }
 
@@ -1321,12 +1330,20 @@ void splt_ogg_split(char *filename, splt_state *state, double
       splt_u_print_debug("Invalid ogg file in find_end_cutpoint",0,NULL);
     }
     ogg_stream_clear(&stream_out);
-    fclose(oggstate->out);
+    if (oggstate->out != stdout)
+    {
+      fclose(oggstate->out);
+    }
+    oggstate->out = NULL;
     return;
   }
 
   ogg_stream_clear(&stream_out);
-  fclose(oggstate->out);
+  if (oggstate->out != stdout)
+  {
+    fclose(oggstate->out);
+  }
+  oggstate->out = NULL;
 
   if (oggstate->end == -1) 
   {
@@ -1642,7 +1659,10 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
     }
     else
     {
-      fclose(file_input);
+      if (file_input != stdin)
+      {
+        fclose(file_input);
+      }
       file_input = NULL;
     }
   }
@@ -1700,7 +1720,11 @@ void splt_pl_init_split(splt_state *state, int *error)
     }
     else
     {
-      fclose(file_input);
+      if (file_input != stdin)
+      {
+        fclose(file_input);
+      }
+      file_input = NULL;
     }
   }
   else
@@ -1758,12 +1782,14 @@ int splt_pl_scan_silence(splt_state *state, int *error)
     else
     {
       *error = SPLT_ERROR_INVALID;
-      fclose(file_input);
+      if (file_input != stdin)
+      {
+        fclose(file_input);
+      }
+      file_input = NULL;
     }
     //we don't need to close the file_input becase ov_clear() does it
     //when we call splt_ogg_state_free(..)
-    /*fclose(file_input);
-    file_input = NULL;*/
   }
   else
   {

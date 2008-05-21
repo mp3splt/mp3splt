@@ -48,6 +48,11 @@
 #define MP3SPLT_EMAIL2 "<io_fx AT yahoo.fr>"
 #define MP3SPLT_CDDBFILE "query.cddb"
 
+//in case of STDIN/STDOUT usage, we change the console file handle
+//-yeah indeed, global variables might suck
+FILE *console_out = NULL;
+FILE *console_err = NULL;
+
 //command line options
 typedef struct {
   //wrap split, list wrap options, error split
@@ -91,23 +96,23 @@ splt_state *state;
 //prints a message
 void print_message(char *m)
 {
-  fprintf(stdout,"%s\n",m);
-  fflush(stdout);
+  fprintf(console_out,"%s\n",m);
+  fflush(console_out);
 }
 
 //prints a warning
 void print_warning(char *w)
 {
-  fprintf(stderr,"Warning, %s\n",w);
-  fflush(stderr);
+  fprintf(console_err,"Warning, %s\n",w);
+  fflush(console_err);
 }
 
 //puts an error message and exists the program with error 1
 void put_error_message_exit(char *message, Options *opt,
     splt_state *state)
 {
-  fprintf(stderr,"%s\n",message);
-  fflush(stderr);
+  fprintf(console_err,"%s\n",message);
+  fflush(console_err);
   //we free options
   free(opt);
   int err = SPLT_OK;
@@ -125,7 +130,7 @@ void show_small_help_exit(Options *opt,splt_state *state)
   //we free left variables in the state
   mp3splt_free_state(state,&err);
 
-  fprintf(stdout,
+  fprintf(console_out,
       "\n"
       "USAGE (Please read man page for complete documentation)\n"
       "      mp3splt [SPLIT_MODE] [OPTIONS] FILE [BEGIN_TIME1] [TIME2] ... [END_TIME]\n"
@@ -146,21 +151,29 @@ void show_small_help_exit(Options *opt,splt_state *state)
       " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
       " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n"
       " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
-                                                     " -o + FORMAT: output filename pattern. Can contain those variables:\n"
-                                                     "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
-                                                     "      @t: title tag, @n: track number tag, @f: original filename\n"
-                                                     " -g + TAGS_FORMAT: allows you to put custom tags "
-                                                     "to your splitted files.\n"
-                                                     "      Example, tags for the first splitted file and all the others like the second one : \n"
-                                                     "       @o means that we put the original tags, before replacing artist with \"artist2\"\n\t"
-                                                     "[@a=artist1,@t=title1]%%[@o,@a=artist2]\n"
-                                                     " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
-                                                     " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
-                                                     " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
-                                                     " -q   Quiet mode: do not prompt for anything and print less messages.\n"
-                                                     " -D   Debug mode: used to debug the program (by developers).\n");
-  fflush(stdout);
-  exit(0);
+      " -o + FORMAT: output filename pattern. Can contain those variables:\n"
+      "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
+      "      @t: title tag, @n: track number tag, @f: original filename\n"
+      " -g + TAGS_FORMAT: allows you to put custom tags "
+      "to your splitted files.\n"
+      "      Example, tags for the first splitted file and all the others like the second one : \n"
+      "       @o means that we put the original tags, before replacing artist with \"artist2\"\n\t"
+      "[@a=artist1,@t=title1]%%[@o,@a=artist2]\n"
+      " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
+      " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
+      " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
+      " -q   Quiet mode: do not prompt for anything and print less messages.\n"
+      " -D   Debug mode: used to debug the program (by developers).\n");
+  fflush(console_out);
+
+  if (console_out == stderr)
+  {
+    exit(1);
+  }
+  else
+  {
+    exit(0);
+  }
 }
 
 //removes options until offset
@@ -287,6 +300,7 @@ void check_args(int argc, Options *opt, splt_state *state)
 {
   if (argc < 2)
   {
+    console_out = stderr;
     show_small_help_exit(opt,state);
   }
   else
@@ -449,7 +463,7 @@ void print_confirmation_error(int conf, Options *opt,
       print_message(" file splitted");
       break;
     case SPLT_OK :
-      //fprintf(stderr," bug in the program, please report it");
+      //fprintf(console_err," bug in the program, please report it");
       break;
     case SPLT_ERROR_SPLITPOINTS :
       put_error_message_exit(" error: not enough splitpoints (<2)",opt,state);
@@ -695,8 +709,8 @@ int checkstring (char *s)
   {
     if ((isalnum(s[i])==0)&&(s[i]!=0x20))
     {
-      fprintf (stderr, " Error: '%c' is not allowed!\n", s[i]);
-      fflush(stderr);
+      fprintf(console_err, " Error: '%c' is not allowed!\n", s[i]);
+      fflush(console_err);
       return -1;
     }
   }
@@ -1021,12 +1035,12 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
   }
 
   //print out infos about the servers
-  fprintf(stdout," Freedb_search_type : %s , Url: %s , Port: %d\n",
+  fprintf(console_out," Freedb_search_type : %s , Url: %s , Port: %d\n",
       search_type,opt->freedb_search_server,opt->freedb_search_port);
-  fflush(stdout);
-  fprintf(stdout," Freedb_get_type : %s , Url: %s , Port: %d\n",
+  fflush(console_out);
+  fprintf(console_out," Freedb_get_type : %s , Url: %s , Port: %d\n",
       get_type,opt->freedb_get_server,opt->freedb_get_port);
-  fflush(stdout);
+  fflush(console_out);
 
   //freedb search
   print_message("CDDB QUERY. Insert album and artist informations to find cd.");
@@ -1040,8 +1054,8 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
       print_message("\nPlease search something ...");
     }
 
-    fprintf (stdout, "\n\t____________________________________________________________]");
-    fprintf (stdout, "\r Search: [");
+    fprintf(console_out, "\n\t____________________________________________________________]");
+    fprintf(console_out, "\r Search: [");
     fgets(freedb_input, 800, stdin);
 
     first_time = SPLT_FALSE;
@@ -1050,10 +1064,10 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
   } while ((strlen(freedb_input)==0)||
       (checkstring(freedb_input)!=0));
 
-  fprintf(stdout, "\nSearching from %s on port %d using %s ...\n",
+  fprintf(console_out, "\nSearching from %s on port %d using %s ...\n",
       opt->freedb_search_server,opt->freedb_search_port,
       search_type);
-  fflush(stdout);
+  fflush(console_out);
 
   //the freedb results
   splt_freedb_results *f_results;
@@ -1072,25 +1086,25 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
     int cd_number = 0;
     short end = SPLT_FALSE;
     do {
-      fprintf (stdout,"%3d) %s\n",
+      fprintf(console_out,"%3d) %s\n",
           f_results->results[cd_number].id,
           f_results->results[cd_number].name);
 
       int i;
       for(i = 0; i < f_results->results[cd_number].revision_number; i++)
       {
-        fprintf (stdout, "  |\\=>");
-        fprintf (stdout, "%3d) ",
+        fprintf(console_out, "  |\\=>");
+        fprintf(console_out, "%3d) ",
             f_results->results[cd_number].id+i+1);
-        fprintf (stdout, "Revision: %d\n", i+2);
+        fprintf(console_out, "Revision: %d\n", i+2);
 
         //break at 22
         if (((f_results->results[cd_number].id+i+2)%22)==0)
         {
           //duplicate, see below
           char junk[18];
-          fprintf (stdout, "-- 'q' to select cd, Enter for more:");
-          fflush(stdout);
+          fprintf(console_out, "-- 'q' to select cd, Enter for more:");
+          fflush(console_out);
 
           fgets(junk, 16, stdin);
           if (junk[0]=='q')
@@ -1107,8 +1121,8 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
       {
         //duplicate, see ^^
         char junk[18];
-        fprintf (stdout, "-- 'q' to select cd, Enter for more: ");
-        fflush(stdout);
+        fprintf(console_out, "-- 'q' to select cd, Enter for more: ");
+        fflush(console_out);
 
         fgets(junk, 16, stdin);
         if (junk[0]=='q')
@@ -1135,8 +1149,8 @@ end:
     int selected_cd = 0,tot = 0;
     do {
       selected_cd = 0;
-      fprintf (stdout, "Select cd #: ");
-      fflush(stdout);
+      fprintf(console_out, "Select cd #: ");
+      fflush(console_out);
       fgets(sel_cd_input, 254, stdin);
       sel_cd_input[strlen(sel_cd_input)-1]='\0';
       tot = 0;
@@ -1150,8 +1164,8 @@ end:
       {
         if (isdigit(sel_cd_input[tot++])==0)
         {
-          fprintf (stdout, "Please ");
-          fflush(stdout);
+          fprintf(console_out, "Please ");
+          fflush(console_out);
 
           selected_cd = -1;
           break;
@@ -1166,10 +1180,10 @@ end:
     } while ((selected_cd >= f_results->number) 
         || (selected_cd < 0));
 
-    fprintf(stdout, "\nGetting file from %s on port %d using %s ...\n",
+    fprintf(console_out, "\nGetting file from %s on port %d using %s ...\n",
         opt->freedb_get_server,opt->freedb_get_port,
         get_type);
-    fflush(stdout);
+    fflush(console_out);
 
     //here we have the selected cd in selected_cd
     mp3splt_write_freedb_file_result(state, selected_cd,
@@ -1193,8 +1207,8 @@ end:
 //prints a library message
 void put_library_message(char *message)
 {
-  fprintf(stdout,"%s",message);
-  fflush(stdout);
+  fprintf(console_out,"%s",message);
+  fflush(console_out);
 }
 
 //prints the splitted file
@@ -1211,8 +1225,8 @@ void put_splitted_file(char *file, int progress_data)
   }
   temp[counter] = '\0';
 
-  fprintf(stdout,"   File \"%s\" created%s\n",file,temp);
-  fflush(stdout);
+  fprintf(console_out,"   File \"%s\" created%s\n",file,temp);
+  fflush(console_out);
 }
 
 //prints the progress bar
@@ -1267,8 +1281,8 @@ void put_progress_bar(splt_progress *p_bar)
   }
   temp[counter] = '\0';
 
-  fprintf(stdout,"%s%s\r",printed_value,temp);
-  fflush(stdout);
+  fprintf(console_out,"%s%s\r",printed_value,temp);
+  fflush(console_out);
 
   p_bar->user_data = strlen(printed_value)+1;
 }
@@ -1316,15 +1330,18 @@ Options *new_options()
 //output package, version and authors
 void print_package_version_authors()
 {
-  fprintf (stdout, PACKAGE_NAME" version "VERSION", released on "MP3SPLT_DATE", by \n");
-  fprintf (stdout, MP3SPLT_AUTHOR1" "MP3SPLT_EMAIL1"\n"MP3SPLT_AUTHOR2" "MP3SPLT_EMAIL2"\n");
-  fprintf (stdout, "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n");
-  fflush(stdout);
+  fprintf(console_err, PACKAGE_NAME" version "VERSION", released on "MP3SPLT_DATE", by \n");
+  fprintf(console_err, MP3SPLT_AUTHOR1" "MP3SPLT_EMAIL1"\n"MP3SPLT_AUTHOR2" "MP3SPLT_EMAIL2"\n");
+  fprintf(console_err, "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n");
+  fflush(console_err);
 }
 
 //main program starts here
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
+  console_out = stdout;
+  console_err = stderr;
+
   //possible error
   int err = SPLT_OK;
 
@@ -1335,7 +1352,7 @@ int main (int argc, char *argv[])
   state = mp3splt_new_state(&err);
 
   //close nicely on Ctrl+C
-  signal (SIGINT, sigint_handler);
+  signal(SIGINT, sigint_handler);
 
   //callback for the library messages
   mp3splt_set_message_function(state, put_library_message);
@@ -1442,6 +1459,11 @@ int main (int argc, char *argv[])
         mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
             SPLT_OUTPUT_FORMAT);
         opt->output_format = optarg;
+        //if the splitted result must be written to stdout
+        if (strcmp(optarg,"-") == 0)
+        {
+          console_out = stderr;
+        }
         opt->o_option = SPLT_TRUE;
         break;
       case 't':
@@ -1496,38 +1518,32 @@ int main (int argc, char *argv[])
     //threshold
     if (th != -200)
     {
-      mp3splt_set_float_option(state, SPLT_OPT_PARAM_THRESHOLD,
-          th);
+      mp3splt_set_float_option(state, SPLT_OPT_PARAM_THRESHOLD, th);
     }
     //offset
     if (off != -200)
     {
-      mp3splt_set_float_option(state, SPLT_OPT_PARAM_OFFSET,
-          off);
+      mp3splt_set_float_option(state, SPLT_OPT_PARAM_OFFSET, off);
     }
     //min
     if (min != -200)
     {
-      mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH,
-          min);
+      mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
     }
     //gap
     if (gap != -200)
     {
-      mp3splt_set_int_option(state, SPLT_OPT_PARAM_GAP,
-          gap);
+      mp3splt_set_int_option(state, SPLT_OPT_PARAM_GAP, gap);
     }
     //number of tracks
     if (nt != -200)
     {
-      mp3splt_set_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS,
-          nt);
+      mp3splt_set_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS, nt);
     }
     //remove silence (rm)
     if (rm != -200)
     {
-      mp3splt_set_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE,
-          rm);
+      mp3splt_set_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE, rm);
     }
   }
 
@@ -1570,7 +1586,7 @@ int main (int argc, char *argv[])
   if ((file_to_split_test = fopen(argv[file_arg_position],"r"))
       == NULL)
   {
-    fprintf(stdout,"Error: cannot open file \"%s\"\n",
+    fprintf(console_err,"Error: cannot open file \"%s\"\n",
         argv[file_arg_position]);
     //just exit
     put_error_message_exit("",opt,state);
@@ -1606,7 +1622,7 @@ int main (int argc, char *argv[])
   {
     if (argc > 1)
     {
-      fprintf(stdout," error: \"%s\" - unrecognized argument for\
+      fprintf(console_err," error: \"%s\" - unrecognized argument for\
           this type of split\n", argv[1]);
       //just exit
       put_error_message_exit("",opt,state);
@@ -1627,13 +1643,13 @@ int main (int argc, char *argv[])
       {
         int wrap_files_number = wrap_files->wrap_files_num;
         int i = 0;
-        fprintf(stdout,"\n");
+        fprintf(console_out,"\n");
         for (i = 0;i < wrap_files_number;i++)
         {
-          fprintf(stdout,"%s\n",wrap_files->wrap_files[i]);
+          fprintf(console_out,"%s\n",wrap_files->wrap_files[i]);
         }
-        fprintf(stdout,"\n");
-        fflush(stdout);
+        fprintf(console_out,"\n");
+        fflush(console_out);
       }
       else
       {
@@ -1654,10 +1670,10 @@ int main (int argc, char *argv[])
 
       if (err >= 0)
       {
-        fprintf(stdout,"%d silence splitpoints detected"
+        fprintf(console_out,"%d silence splitpoints detected"
             "            \n",
             silence_number);
-        fflush(stdout);
+        fflush(console_out);
       }
     }
     else
