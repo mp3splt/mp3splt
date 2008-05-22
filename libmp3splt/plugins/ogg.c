@@ -96,6 +96,23 @@ const char *splt_ogg_genre_list[] = {
 /****************************/
 /* ogg utils */
 
+FILE *splt_ogg_open_file_read(char *filename)
+{
+  FILE *file_input = NULL;
+
+  if (strcmp(filename,"o-") == 0)
+  {
+    file_input = stdin;
+  }
+  else
+  {
+    //we open the file
+    file_input = fopen(filename, "rb");
+  }
+
+  return file_input;
+}
+
 //gets the mp3 info and puts it in the state
 splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
 {
@@ -417,7 +434,7 @@ void splt_ogg_get_original_tags(char *filename,
   FILE *file_input;
 
   //if we can open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_ogg_open_file_read(filename)) != NULL)
   {
     splt_t_lock_messages(state);
     if(splt_ogg_get_info(state, file_input, tag_error) != NULL)
@@ -1640,12 +1657,19 @@ void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
 int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
+
+  //-o means stdin ogg format
+  if (strcmp(filename,"-o") == 0)
+  {
+    return SPLT_TRUE;
+  }
+
   int is_ogg = SPLT_FALSE;
   OggVorbis_File ogg_file;
 
   FILE *file_input = NULL;
 
-  if((file_input = fopen(filename, "rb")) == NULL)
+  if ((file_input = fopen(filename, "rb")) == NULL)
   {
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
@@ -1676,7 +1700,7 @@ void splt_pl_set_total_time(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
 
   //if we can open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_ogg_open_file_read(filename)) != NULL)
   {
     OggVorbis_File ogg_file;
 
@@ -1704,7 +1728,7 @@ void splt_pl_init_split(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
 
   //if we can open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_ogg_open_file_read(filename)) != NULL)
   {
     if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) ==
         SPLT_OPTION_SILENCE_MODE)
@@ -1767,7 +1791,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   FILE *file_input = NULL;
 
   //open the file
-  if ((file_input = fopen(filename, "rb")))
+  if ((file_input = splt_ogg_open_file_read(filename)) != NULL)
   {
     if(splt_ogg_get_info(state, file_input, error) != NULL)
     {

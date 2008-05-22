@@ -82,23 +82,23 @@ You can download it at http://mp3splt.sourceforge.net/
 )])
 fi
 
-#checking for --enable-bmp string
-AC_ARG_ENABLE(bmp,
-AC_HELP_STRING([--enable-bmp],
-	[Enable beep media player support(default is disabled)]),
-#action if given
-[AC_CHECK_LIB([beep], [xmms_remote_play],[],
-	    [AC_MSG_ERROR(beep media player is not installed. 
-	    
- Install it or configure without "--enable-bmp" :
-)])
-LIBS="$LIBS -lbeep"
-bmp=yes
-],
-#action if not given
-[CFLAGS="$CFLAGS -DNO_BMP"
-bmp=no
+#checking for --enable-audacious string
+AC_ARG_ENABLE(audacious,
+AC_HELP_STRING([--enable-audacious], [Enable Audacious player support(default is disabled)]),
+[PKG_CHECK_MODULES(AUDACIOUS, [audacious >= 0.1],
+  [],
+  [AC_MSG_ERROR([Audacious player development files are not installed.
+
+    Install it or configure with "--disable-audacious".
+])])
+AM_CONDITIONAL(AUDACIOUS,true)
+audacious=yes
 ]
+,
+#action if not given
+[CFLAGS="$CFLAGS -DNO_AUDACIOUS"
+AM_CONDITIONAL(AUDACIOUS,false)
+audacious=no]
 )
 
 #generate makefiles
@@ -112,7 +112,7 @@ echo "    install path:            ${prefix}"
 echo
 echo " Players supported :"
 echo
-echo "    beep-media-player        $bmp"
+echo "    audacious                $audacious"
 echo "    snackAmp                 yes (default)"
 echo
 echo "---------------------------------------------------------"

@@ -439,13 +439,13 @@ void connect_button_event (GtkWidget *widget,
              " Only default port is supported for now(8775)\n"
              " After that, restart snackamp and mp3splt-gtk should work.\n");
           break;
-        case PLAYER_BMP :
+        case PLAYER_AUDACIOUS :
           label = gtk_label_new 
-            ("\n Cannot connect to beep media player(bmp).\n"
-             " Verify that you have installed bmp.\n\n"
-             " Put in your PATH variable the directory where the bmp"
+            ("\n Cannot connect to Audacious player.\n"
+             " Verify that you have installed audacious.\n\n"
+             " Put in your PATH variable the directory where the audacious"
              " executable is.\n"
-             " If you don't know how to do that, start bmp manually"
+             " If you don't know how to do that, start audacious manually"
              " and then try to connect.\n");
           break;
         default:
@@ -870,66 +870,66 @@ void check_update_down_progress_bar()
       
       gchar *progress_description =
         get_splitpoint_name(splitpoint_left_index-1);
-      gchar description_shorted[512];
+      gchar description_shorted[512] = { '\0' };
       //if we have a splitpoint on our right
       //and we are before the first splitpoint
       if (splitpoint_time_right != -1)
+      {
+        if (splitpoint_time_left == -1)
         {
-          if (splitpoint_time_left == -1)
-            {
-              if (progress_description != NULL)
-                {
-                  g_snprintf(description_shorted,60,
-                             "before %s", progress_description);
-                }
-            }
-          else
-            {
-              if (progress_description != NULL)
-                {
-                  g_snprintf(description_shorted,
-                             60,"%s", progress_description);
-                }
-            }
+          if (progress_description != NULL)
+          {
+            g_snprintf(description_shorted,60,
+                "before %s", progress_description);
+          }
         }
+        else
+        {
+          if (progress_description != NULL)
+          {
+            g_snprintf(description_shorted,
+                60,"%s", progress_description);
+          }
+        }
+      }
       else
+      {
+        if (splitpoint_time_left != -1)
         {
-          if (splitpoint_time_left != -1)
-            {
-              if (progress_description != NULL)
-                {
-                  g_snprintf(description_shorted,
-                             60,"%s", progress_description);
-                }
-            }
-          else
-            {
-              gchar *fname;
-              fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
-              fname = get_real_namee(fname);
-              g_snprintf(description_shorted,60,fname);
-              if (fname != NULL)
-                {
-                  if (strlen(fname) > 60)
-                    {
-                      description_shorted[strlen(description_shorted)-1] = '.';
-                      description_shorted[strlen(description_shorted)-2] = '.';
-                      description_shorted[strlen(description_shorted)-3] = '.';
-                    }
-                }
-            }
+          if (progress_description != NULL)
+          {
+            g_snprintf(description_shorted,
+                60,"%s", progress_description);
+          }
         }
-      //we put "..."
-      if (progress_description != NULL)
+        else
         {
-          if (strlen(progress_description) > 60)
+          gchar *fname;
+          fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
+          fname = get_real_namee(fname);
+          g_snprintf(description_shorted,60,"%s",fname);
+          if (fname != NULL)
+          {
+            if (strlen(fname) > 60)
             {
               description_shorted[strlen(description_shorted)-1] = '.';
               description_shorted[strlen(description_shorted)-2] = '.';
               description_shorted[strlen(description_shorted)-3] = '.';
             }
+          }
         }
-      
+      }
+      //we put "..."
+      if (progress_description != NULL)
+      {
+        if (strlen(progress_description) > 60)
+        {
+          description_shorted[strlen(description_shorted)-1] = '.';
+          description_shorted[strlen(description_shorted)-2] = '.';
+          description_shorted[strlen(description_shorted)-3] = '.';
+        }
+      }
+            
       //progress text
       //we write the name and the progress on the bar
       gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
@@ -1053,8 +1053,7 @@ void print_player_filename()
   gchar *title;
   title = (gchar *)player_get_title();
   gchar new_title[90];
-  g_snprintf(new_title,75,
-             "%s",title);
+  g_snprintf(new_title,75, "%s",title);
   if (title != NULL)
     {
       if (strlen(title) > 75)
@@ -2110,9 +2109,9 @@ gboolean da_expose_event (GtkWidget      *da,
           //if we don't move the splitpoints
           if (!move_splitpoints && !remove_splitpoints)
             {
-              //if we have beep media player selected as player,
+              //if we have Audacious player selected as player,
               //we move only by seconds
-              if (selected_player == PLAYER_BMP)
+              if (selected_player == PLAYER_AUDACIOUS)
                 move_time_bis = (move_time_bis / 100) * 100;
             }
           
@@ -3027,9 +3026,10 @@ void file_chooser_ok_event(gchar *fname)
 //events for browse button
 //also used for the cddb and cue browses
 void browse_button_event( GtkWidget *widget,
-                          gpointer   data )
+                          gpointer   data)
 {
-  gint i = (gint)data;
+  gint *iii = (gint *) data;
+  gint i = *iii;
   
   /* file chooser */
   GtkWidget *file_chooser;

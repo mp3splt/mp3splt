@@ -57,7 +57,7 @@ gint player_get_elapsed_time()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_get_time_elapsed();
 #endif
 #endif
@@ -75,7 +75,7 @@ gint player_get_total_time()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_get_total_time();
 #endif
 #endif
@@ -93,7 +93,7 @@ gint player_is_running()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_is_running();
 #endif
 #endif
@@ -111,7 +111,7 @@ void player_start()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_start();
 #endif
 #endif
@@ -128,7 +128,7 @@ void player_start_add_files(GList *list)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_start_with_songs(list);
 #endif
 #endif
@@ -145,7 +145,7 @@ void player_add_files(GList *list)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_add_files(list);
 #endif
 #endif
@@ -163,7 +163,7 @@ void player_add_files_and_select(GList *list)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_add_files(list);
       myxmms_select_last_file();
 #endif
@@ -185,7 +185,7 @@ void player_add_play_files(GList *list)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       player_add_files(list);
       myxmms_play_last_file();
 #endif
@@ -204,7 +204,7 @@ void player_start_play_with_songs(GList *list)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_start_with_songs(list);
       myxmms_play_last_file();
 #endif
@@ -222,7 +222,7 @@ void player_play()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_play();
 #endif
 #endif
@@ -239,7 +239,7 @@ void player_stop()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_stop();
 #endif
 #endif
@@ -256,7 +256,7 @@ void player_pause()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_pause();
 #endif
 #endif
@@ -273,7 +273,7 @@ void player_next()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_next();
 #endif
 #endif
@@ -290,7 +290,7 @@ void player_prev()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_prev();
 #endif
 #endif
@@ -307,7 +307,7 @@ void player_jump(gint position)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_jump(position);
 #endif
 #endif
@@ -325,7 +325,7 @@ void player_get_song_infos(gchar *total_infos)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_get_song_infos(total_infos);
 #endif
 #endif
@@ -343,7 +343,7 @@ gint player_is_playing()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_is_playing();
 #endif
 #endif
@@ -361,7 +361,7 @@ gint player_is_paused()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_is_paused();
 #endif
 #endif
@@ -380,7 +380,7 @@ gchar *player_get_filename()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return (gchar *)myxmms_get_filename();
 #endif
 #endif
@@ -399,7 +399,7 @@ gchar *player_get_title()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return (gchar *)myxmms_get_title_song();
 #endif
 #endif
@@ -417,7 +417,7 @@ gint player_get_volume()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_get_volume();
 #endif
 #endif
@@ -435,7 +435,7 @@ void player_set_volume(gint volume)
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       myxmms_set_volume(volume);
 #endif
 #endif
@@ -452,7 +452,7 @@ gint player_get_playlist_number()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_get_playlist_number();
 #endif
 #endif
@@ -470,7 +470,7 @@ gint player_quit()
   else
     {
 #ifndef __WIN32__
-#ifndef NO_BMP
+#ifndef NO_AUDACIOUS
       return myxmms_quit();
 #endif
 #endif

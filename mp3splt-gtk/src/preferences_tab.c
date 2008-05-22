@@ -970,12 +970,12 @@ GtkWidget *create_save_buttons_hbox()
 //removes unavailable players from the combo
 void combo_remove_unavailable_players()
 {
-  //if we dont have BMP
-#ifdef NO_BMP
+  //if we dont have AUDACIOUS
+#ifdef NO_AUDACIOUS
   gtk_combo_box_remove_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_BMP-1);
+                            PLAYER_AUDACIOUS-1);
   player_pref_list =
-    g_list_remove(player_pref_list, (gint *)PLAYER_BMP);
+    g_list_remove(player_pref_list, (gint *)PLAYER_AUDACIOUS);
 #endif
 }
 
@@ -1030,9 +1030,9 @@ GtkWidget *create_choose_player_combo()
   
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_BMP,(gchar *)_("Beep Media Player"));
+                            PLAYER_AUDACIOUS,(gchar *)_("Audacious"));
   player_pref_list =
-    g_list_append(player_pref_list, (gint *)PLAYER_BMP);
+    g_list_append(player_pref_list, (gint *)PLAYER_AUDACIOUS);
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
                             PLAYER_SNACKAMP,(gchar *)_("SnackAmp"));

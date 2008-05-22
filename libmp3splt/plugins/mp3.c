@@ -158,6 +158,24 @@ static const unsigned long splt_mp3_crctab[256] = {
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 };
 
+FILE *splt_mp3_open_file_read(char *filename)
+{
+  FILE *file_input = NULL;
+
+  if ((strcmp(filename,"-") == 0) ||
+      (strcmp(filename,"-m") == 0))
+  {
+    file_input = stdin;
+  }
+  else
+  {
+    //we open the file
+    file_input = fopen(filename, "rb");
+  }
+
+  return file_input;
+}
+
 /****************************/
 /* CRC functions */
 
@@ -2446,7 +2464,7 @@ void splt_mp3_dewrap(FILE *file_input, int listonly, char *dir,
       //only if not mp3wrap
       if (!mp3wrap && (id3offset!=0))
       {    
-        if (fseeko (mp3state->file_input, (off_t) 8, SEEK_SET)==-1)
+        if (fseeko(mp3state->file_input, (off_t) 8, SEEK_SET)==-1)
         {
           *error = SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED;
           splt_mp3_state_free(state);
@@ -2934,6 +2952,12 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
+  if ((strcmp(filename,"-") == 0) ||
+      (strcmp(filename,"-m") == 0))
+  {
+    return SPLT_TRUE;
+  }
+
   int is_mp3 = SPLT_FALSE;
 
   FILE *file_input = NULL;
@@ -2950,6 +2974,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
       is_mp3 = SPLT_TRUE;
       splt_mp3_state_free(state);
     }
+    //security check
     if (file_input != stdin)
     {
       fclose(file_input);
@@ -2968,8 +2993,7 @@ void splt_pl_search_syncerrors(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
   splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
 
-  //we open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_mp3_open_file_read(filename)) != NULL)
   {
     //we get the infos for the file
     if(splt_mp3_get_info(state, file_input, error) != NULL)
@@ -2999,7 +3023,7 @@ void splt_pl_dewrap (splt_state *state, int listonly, char *dir, int *error)
 
   splt_t_wrap_free(state);
 
-  if((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_mp3_open_file_read(filename)) != NULL)
   {
     splt_mp3_dewrap (file_input, listonly, dir, error, state);
     if (file_input != stdin)
@@ -3011,7 +3035,6 @@ void splt_pl_dewrap (splt_state *state, int listonly, char *dir, int *error)
   else
   {
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-    return;
   }
 }
 
@@ -3021,7 +3044,7 @@ void splt_pl_set_total_time(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
 
   //if we can open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_mp3_open_file_read(filename)) != NULL)
   {
     splt_t_lock_messages(state);
     //if we can read the file
@@ -3051,7 +3074,7 @@ void splt_pl_init_split(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
 
   //if we can open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_mp3_open_file_read(filename)) != NULL)
   {
     if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) ==
         SPLT_OPTION_SILENCE_MODE)
@@ -3124,7 +3147,7 @@ int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off
   int error = SPLT_OK;
 
   //if we can open the file
-  if ((file_input = fopen(filename, "rb")) != NULL)
+  if ((file_input = splt_mp3_open_file_read(filename)) != NULL)
   {
     state->codec = splt_mp3_info(file_input, state,
         splt_t_get_int_option(state,SPLT_OPT_FRAME_MODE), &error);
@@ -3171,7 +3194,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   FILE *file_input = NULL;
 
   //open the file
-  if ((file_input = fopen(filename, "rb")))
+  if ((file_input = splt_mp3_open_file_read(filename)) != NULL)
   {
     if(splt_mp3_get_info(state, file_input, error) != NULL)
     {

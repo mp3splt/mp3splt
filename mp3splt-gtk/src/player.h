@@ -37,7 +37,7 @@
  *
  *********************************************************/
 
-#define PLAYER_BMP 1
+#define PLAYER_AUDACIOUS 1
 #define PLAYER_SNACKAMP 2
 
 gint player_get_elapsed_time();

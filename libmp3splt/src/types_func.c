@@ -431,8 +431,7 @@ int splt_t_set_filename_to_split(splt_state *state, char *filename)
     if ((state->fname_to_split = malloc(sizeof(char)*(strlen(filename)+1))) 
         != NULL)
     {
-      snprintf(state->fname_to_split,strlen(filename)+1,
-          filename);
+      snprintf(state->fname_to_split,strlen(filename)+1,"%s", filename);
     }
     else
     {

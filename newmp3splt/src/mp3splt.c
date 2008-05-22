@@ -957,11 +957,11 @@ int parse_query_arg(Options *opt, char *query)
         }
         if (*freedb_server != '\0')
         {
-          snprintf(opt->freedb_search_server,255, freedb_server);
+          snprintf(opt->freedb_search_server,255, "%s",freedb_server);
         }
         else
         {
-          snprintf(opt->freedb_search_server,255, SPLT_FREEDB2_CGI_SITE);
+          snprintf(opt->freedb_search_server,255, "%s",SPLT_FREEDB2_CGI_SITE);
         }
         if (freedb_int_port != -1)
         {
@@ -979,11 +979,11 @@ int parse_query_arg(Options *opt, char *query)
           }
           if (*freedb_server != '\0')
           {
-            snprintf(opt->freedb_get_server,255, freedb_server);
+            snprintf(opt->freedb_get_server,255, "%s", freedb_server);
           }
           else
           {
-            snprintf(opt->freedb_get_server,255, SPLT_FREEDB2_CGI_SITE);
+            snprintf(opt->freedb_get_server,255, "%s", SPLT_FREEDB2_CGI_SITE);
           }
           if (freedb_int_port != -1)
           {
@@ -1316,12 +1316,12 @@ Options *new_options()
   //we put the default values for freedb search
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
   opt->freedb_search_type = SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI;
-  snprintf(opt->freedb_search_server,255, SPLT_FREEDB2_CGI_SITE);
+  snprintf(opt->freedb_search_server,255, "%s", SPLT_FREEDB2_CGI_SITE);
   opt->freedb_search_port = SPLT_FREEDB_CDDB_CGI_PORT;
   //we put the default values for the freedb cddb file get
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
   opt->freedb_get_type = SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI;
-  snprintf(opt->freedb_get_server,255, SPLT_FREEDB2_CGI_SITE);
+  snprintf(opt->freedb_get_server,255, "%s", SPLT_FREEDB2_CGI_SITE);
   opt->freedb_get_port = SPLT_FREEDB_CDDB_CGI_PORT;
 
   return opt;
@@ -1580,21 +1580,6 @@ int main(int argc, char *argv[])
     }
   }
   file_arg_position = i;
-
-  FILE *file_to_split_test;
-  //we check that we can open the file
-  if ((file_to_split_test = fopen(argv[file_arg_position],"r"))
-      == NULL)
-  {
-    fprintf(console_err,"Error: cannot open file \"%s\"\n",
-        argv[file_arg_position]);
-    //just exit
-    put_error_message_exit("",opt,state);
-  }
-  else
-  {
-    fclose(file_to_split_test);
-  }
 
   err = SPLT_OK;
   //we put the filename

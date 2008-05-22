@@ -25,6 +25,13 @@ INCLUDES = @GTK_CFLAGS@ -DPIXMAP_PATH=\""$(datadir)/pixmaps/"\" -Wall
 
 mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 -lmp3splt
 
+#
+if AUDACIOUS
+mp3splt_gtk_LDADD += @AUDACIOUS_LIBS@
+INCLUDES += @AUDACIOUS_CFLAGS@ -I/usr/include/dbus-1.0 -I/usr/include/dbus-1.0/include
+endif
+
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+

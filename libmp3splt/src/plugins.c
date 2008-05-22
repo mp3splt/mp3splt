@@ -54,13 +54,13 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
   char temp[2048] = { '\0' };
 
   //we put the default plugin directory
-  snprintf(temp,2048,SPLT_PLUGINS_DIR);
+  snprintf(temp,2048,"%s",SPLT_PLUGINS_DIR);
   pl->plugins_scan_dirs[0] = malloc(sizeof(char) * (strlen(temp)+1));
   if (pl->plugins_scan_dirs[0] == NULL)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  snprintf(pl->plugins_scan_dirs[0],strlen(temp)+1,temp);
+  snprintf(pl->plugins_scan_dirs[0],strlen(temp)+1,"%s",temp);
 
   //we put the home libmp3splt home directory
   snprintf(temp,2048,"%s%c%s",getenv("HOME"),SPLT_DIRCHAR,".libmp3splt");
@@ -69,7 +69,7 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  snprintf(pl->plugins_scan_dirs[1],strlen(temp)+1,temp);
+  snprintf(pl->plugins_scan_dirs[1],strlen(temp)+1,"%s",temp);
 
   //we put the current directory
   memset(temp,'\0',2048);
@@ -78,7 +78,7 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  snprintf(pl->plugins_scan_dirs[2],strlen(temp)+1,temp);
+  snprintf(pl->plugins_scan_dirs[2],strlen(temp)+1,"%s",temp);
 
   return SPLT_OK;
 }

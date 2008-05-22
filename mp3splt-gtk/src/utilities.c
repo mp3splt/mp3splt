@@ -906,7 +906,7 @@ void write_default_preferences_file()
                               "player",
                               "default_player",
                               "\n 1"
-                              " = PLAYER_BMP, 2 = PLAYER_SNACKAMP (on windows"
+                              " = PLAYER_AUDACIOUS, 2 = PLAYER_SNACKAMP (on windows"
                               " only 0 or 2)",
                               NULL);
     }
@@ -921,11 +921,11 @@ void write_default_preferences_file()
                                "default_player",
                                NULL);
         
-      //if we have bmp in the config file
-      if (the_player == PLAYER_BMP)
+      //if we have audacious in the config file
+      if (the_player == PLAYER_AUDACIOUS)
         {
-          //if we dont support bmp, write another player
-#ifdef NO_BMP
+          //if we dont support audacious, write another player
+#ifdef NO_AUDACIOUS
           g_key_file_set_integer(my_key_file,
                                  "player",
                                  "default_player",
