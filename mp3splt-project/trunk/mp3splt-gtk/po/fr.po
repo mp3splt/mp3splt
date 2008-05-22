@@ -242,7 +242,7 @@ msgid "Choose a player :"
 msgstr "Choisir un lecteur"
 
 #: src/preferences_tab.c:1033
-msgid "Beep Media Player"
+msgid "Audacious"
 msgstr ""
 
 #: src/preferences_tab.c:1038
@@ -910,8 +910,8 @@ msgstr ""
 #~ msgid " ok ? "
 #~ msgstr " ok?"
 
-#~ msgid "Beep Media Player (BMP) (supports also XMMS)"
-#~ msgstr "Beep Media Player (BMP) (supporte aussi XMMS)"
+#~ msgid "Audacious Player (supports also XMMS)"
+#~ msgstr "Audacious Player (supporte aussi XMMS)"
 
 #~ msgid "enable window resize"
 #~ msgstr "rendre possible le redimensionnement de la fenetre"

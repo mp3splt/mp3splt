@@ -1329,7 +1329,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
   //default cgi path
   if (strlen(search_server) == 0)
   {
-    snprintf(cgi_path,255,"/~cddb/cddb.cgi");
+    snprintf(cgi_path,255,"%s","/~cddb/cddb.cgi");
   }
 
   //possible error that we will return
@@ -1563,7 +1563,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   //default cgi path
   if (strlen(cddb_get_server) == 0)
   {
-    snprintf(cgi_path,255,"/~cddb/cddb.cgi");
+    snprintf(cgi_path,255,"%s","/~cddb/cddb.cgi");
   }
 
   //possible error that we will return

@@ -945,6 +945,7 @@ typedef struct {
  * @brief Error, cannot init libltdl
  */
 #define SPLT_ERROR_CRC_FAILED -31
+#define SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE -32
 
 //output format
 /**

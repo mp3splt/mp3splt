@@ -570,6 +570,8 @@ int mp3splt_split(splt_state *state)
       //the new filename path
       char *new_filename_path = NULL;
       char *fname_to_split = splt_t_get_filename_to_split(state);
+      fprintf(stdout,"fname = _%s_\n",fname_to_split);
+      fflush(stdout);
 
       splt_u_print_debug("Original filename to split is ",0, fname_to_split);
 

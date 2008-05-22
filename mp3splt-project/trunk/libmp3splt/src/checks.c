@@ -328,6 +328,7 @@ void splt_check_file_type(splt_state *state, int *error)
 
   splt_u_print_debug("Detecting file format...",0,NULL);
   char *filename = splt_t_get_filename_to_split(state);
+
   splt_u_print_debug("Checking the format of",0,filename);
 
   //parse each plugin until we find out a plugin for the file
@@ -350,7 +351,21 @@ void splt_check_file_type(splt_state *state, int *error)
   }
   if (! plugin_found)
   {
-    *error = SPLT_ERROR_INVALID;
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE;
+
+    //if no plugin was found,
+    //verify if the file is a real file
+    splt_u_print_debug("Verify if the file is a file",0,filename);
+    FILE *test = NULL;
+    if ((test = fopen(filename,"r")) != NULL)
+    {
+      fclose(test);
+      test = NULL;
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    }
   }
   else
   {
