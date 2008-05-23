@@ -3274,10 +3274,10 @@ GtkWidget *create_choose_file_frame()
                        FALSE);
   g_signal_connect (G_OBJECT (fix_ogg_stream_button), "clicked",
                     G_CALLBACK (fix_ogg_stream_button_event), NULL);
-  gtk_box_pack_start (GTK_BOX(bottom_buttons_hbox), 
+ /* gtk_box_pack_start (GTK_BOX(bottom_buttons_hbox), 
                       fix_ogg_stream_button, FALSE, FALSE, 7);
   gtk_box_pack_start (GTK_BOX(main_choose_file_vbox), 
-                      bottom_buttons_hbox, FALSE, FALSE, 0);
+                      bottom_buttons_hbox, FALSE, FALSE, 0);*/
   
   return file_handle_box;
 }
