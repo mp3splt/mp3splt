@@ -6,6 +6,8 @@
  * Copyright: (C) 2005-2006 Munteanu Alexandru
  * Contact: io_alex_2002@yahoo.fr
  *
+ * from BMP to Audacious patch from Roberto Neri - 2007,2008
+ *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
