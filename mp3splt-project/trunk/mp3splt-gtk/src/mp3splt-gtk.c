@@ -444,9 +444,7 @@ void sigint_handler(gint sig)
 //prints a message from the library
 void put_message_from_library(gchar *message)
 {
-  gdk_threads_enter();
   put_status_message(message);
-  gdk_threads_leave();
 }
 
 gint main (gint argc, gchar *argv[], gchar **envp)

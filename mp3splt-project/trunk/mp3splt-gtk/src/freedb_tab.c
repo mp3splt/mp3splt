@@ -467,20 +467,20 @@ void write_freedbfile(int *err)
   
   //unlock gtk
   gdk_threads_leave();
-  
+
   //we write the freedb file ...
   mp3splt_write_freedb_file_result(the_state, selected_id,
                                    filename, err,
-				   //for now cddb.cgi get file type
-				   SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI,
-				   "\0",-1);
-  
+                                   //for now cddb.cgi get file type
+                                   SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI,
+                                   "\0",-1);
+
   //lock gtk
   gdk_threads_enter();
 
   //here we have in err a possible error from the freedb
   print_status_bar_confirmation(*err);
-  
+
   //we put the output default option
   if(get_checked_output_radio_box())
     {
@@ -493,15 +493,15 @@ void write_freedbfile(int *err)
                              SPLT_OUTPUT_FORMAT);
     }
   
+  //unlock gtk
+  gdk_threads_leave();
+
   //we get the information from the cddb file
   //we print err when we leave this function
   mp3splt_put_cddb_splitpoints_from_file(the_state,filename, err);
   
   //freeing memory
   g_free(filename);
-  
-  //unlock gtk
-  gdk_threads_leave();
 }
 
 //returns the seconds, minutes, and hudreths
@@ -584,14 +584,13 @@ void update_splitpoints_from_the_state(gint type)
 
 void put_freedb_splitpoints(gpointer *data)
 {
+  //possible errors
+  gint err;
+
   //lock gtk
   gdk_threads_enter();
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), 
-                           FALSE);
-  
-  //possible errors
-  gint err;
-  
+                           FALSE);  
   gdk_threads_leave();
   
   write_freedbfile(&err);
