@@ -109,9 +109,8 @@ gchar *myxmms_get_filename()
   fname = audacious_remote_get_playlist_file(dbus_proxy, playlist_position);
 
   //erase file:// and replace %20 with spaces
-  gchar *fname2 = g_malloc(sizeof(gchar) * strlen(fname));
-  fname2 = g_filename_from_uri(fname,NULL,NULL);
-  free(fname);
+  gchar *fname2 = g_filename_from_uri(fname,NULL,NULL);
+  g_free(fname);
   fname = NULL;
 
   return fname2;
@@ -193,7 +192,7 @@ void myxmms_add_files(GList *list)
     //duplicate the filename
     gchar *dup_filename = strdup((gchar *)list_pos->data);
     //free the GList data content
-    g_free(list_pos->data);
+    //g_free(list_pos->data);
     //put the new GList data content
     list_pos->data = g_filename_to_uri(dup_filename,NULL,NULL);
     //free the duplicated filename

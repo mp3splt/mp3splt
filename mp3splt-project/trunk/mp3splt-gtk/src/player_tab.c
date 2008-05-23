@@ -309,7 +309,7 @@ void connect_with_song(gchar *fname, gint i)
   //list with songs
   GList *song_list = NULL;
   
-  if ((fname != "") && (fname != NULL))
+  if (fname != NULL)
     {
       song_list = g_list_append(song_list, fname);
       
@@ -1041,8 +1041,7 @@ void print_about_the_song()
 //prints the player filename
 void print_player_filename()
 {
-  gchar *fname;
-  fname = player_get_filename();
+  gchar *fname = player_get_filename();
   
   if ((fname != NULL) &&
       (strcmp(fname,"disconnect")))
@@ -1066,7 +1065,8 @@ void print_player_filename()
   gtk_label_set_text(GTK_LABEL(song_name_label), 
                      new_title);
   
-  g_free(fname);g_free(title);
+  g_free(fname);
+  g_free(title);
 }
 
 //get time elapsed from the song
