@@ -110,11 +110,9 @@ gchar *myxmms_get_filename()
 
   //erase file:// and replace %20 with spaces
   gchar *fname2 = g_malloc(sizeof(gchar) * strlen(fname));
-  //start = fname+7
-  g_snprintf(fname2,strlen(fname),"%s",fname+7);
+  fname2 = g_filename_from_uri(fname,NULL,NULL);
   free(fname);
   fname = NULL;
-  //fname2 = g_uri_unescape_string(fname2,NULL);
 
   return fname2;
 }
@@ -186,6 +184,25 @@ void myxmms_play_last_file()
 //add files to the xmms playlist
 void myxmms_add_files(GList *list)
 {
+  //change filenames into URLs
+  GList *list_pos = list;
+
+  //for each element of the list
+  while (list_pos)
+  {
+    //duplicate the filename
+    gchar *dup_filename = strdup((gchar *)list_pos->data);
+    //free the GList data content
+    g_free(list_pos->data);
+    //put the new GList data content
+    list_pos->data = g_filename_to_uri(dup_filename,NULL,NULL);
+    //free the duplicated filename
+    g_free(dup_filename);
+    dup_filename = NULL;
+    //move to the next element
+    list_pos = g_list_next(list_pos);
+  }
+
   audacious_remote_playlist_add(dbus_proxy, list); 
 }
 

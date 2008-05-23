@@ -253,8 +253,7 @@ void queue_files_button_event( GtkWidget *widget,
                               -1);
           
           //add it to the queue file
-          file_list = g_list_append(file_list, 
-                                    strdup(filename));
+          file_list = g_list_append(file_list, strdup(filename));
           g_free(filename);
         }
       gtk_tree_path_free(path);

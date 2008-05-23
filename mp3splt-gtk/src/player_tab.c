@@ -1042,13 +1042,13 @@ void print_about_the_song()
 void print_player_filename()
 {
   gchar *fname;
-  fname = (gchar *)player_get_filename();
+  fname = player_get_filename();
   
   if ((fname != NULL) &&
       (strcmp(fname,"disconnect")))
-    {
-      gtk_entry_set_text(GTK_ENTRY(entry), fname);
-    }
+  {
+    gtk_entry_set_text(GTK_ENTRY(entry), fname);
+  }
   
   gchar *title;
   title = (gchar *)player_get_title();
