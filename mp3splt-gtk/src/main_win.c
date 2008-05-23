@@ -227,7 +227,8 @@ void about_window(GtkWidget *widget,
   gtk_about_dialog_set_website (GTK_ABOUT_DIALOG(dialog),
                                 "http://mp3splt.sourceforge.net/");
 
-  gtk_widget_show(dialog);
+  gtk_dialog_run(GTK_DIALOG(dialog));
+  gtk_widget_destroy(dialog);
 }
 
 //resizes the window event
