@@ -14,11 +14,7 @@ cd $PROGRAM_DIR
 VERSION=$LIBMP3SPLT_VERSION
 PROGRAM="libmp3splt"
 
-#debian changelog
-if ! debchange --distribution "testing" -v $VERSION "version "$VERSION 2>/dev/null;then
-    rm -f debian/.changelog.dch.swp
-    debchange -r "version "$VERSION || exit 1
-fi
+sed -i "1,4s/libmp3splt (\(.*\))/libmp3splt ($VERSION)/" ./debian/changelog
 
 #README
 #./README:       libmp3splt version 0.3.1
@@ -36,7 +32,7 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 #libmp3splt source code
 #./src/mp3splt_types.h:#define SPLT_PACKAGE_VERSION "0.3.1"
 sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
-#define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./src/mp3splt_types.h || exit 1
+#define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./include/libmp3splt/mp3splt.h || exit 1
 #./src/mp3splt.c:void mp3splt_v0_3_1
 sed -i "s/void mp3splt_v.*/void mp3splt_v$NEW_LIBMP3SPLT_VER()/" ./src/mp3splt.c || exit 1
 #./src/Doxyfile:PROJECT_NUMBER=0.3.1

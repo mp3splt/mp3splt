@@ -161,18 +161,18 @@ root_uninstall:
 #cleans the /tmp directories for a good build
 DATE=`date +-%d_%m_%Y__%H_%M_%S`
 clean_tmp:
-	if [[ -e /tmp/dynamic_tmp ]];then \
-mv /tmp/dynamic_tmp /tmp/dynamic_tmp${DATE} &>/dev/null;fi
-	if [[ -e /tmp/static_tmp ]];then \
-mv /tmp/static_tmp /tmp/static_tmp${DATE} &>/dev/null;fi
-	if [[ -e /tmp/rpm_tmp ]];then \
-mv /tmp/rpm_temp /tmp/rpm_temp${DATE} &>/dev/null;fi
-	if [[ -e /tmp/slack_temp ]];then \
-mv /tmp/slack_temp /tmp/slack_temp${DATE} &>/dev/null;fi
-	if [[ -e /tmp/temp ]];then \
-mv /tmp/temp /tmp/temp${DATE} &>/dev/null;fi
-	if [[ -e /tmp/gentoo_temp ]];then \
-mv /tmp/gentoo_temp /tmp/gentoo${DATE} &>/dev/null;fi
+	$(shell if [[ -e /tmp/dynamic_tmp ]];then \
+mv /tmp/dynamic_tmp /tmp/dynamic_tmp${DATE} &>/dev/null;fi)
+	$(shell if [[ -e /tmp/static_tmp ]];then \
+mv /tmp/static_tmp /tmp/static_tmp${DATE} &>/dev/null;fi)
+	$(shell if [[ -e /tmp/rpm_tmp ]];then \
+mv /tmp/rpm_temp /tmp/rpm_temp${DATE} &>/dev/null;fi)
+	$(shell if [[ -e /tmp/slack_temp ]];then \
+mv /tmp/slack_temp /tmp/slack_temp${DATE} &>/dev/null;fi)
+	$(shell if [[ -e /tmp/temp ]];then \
+mv /tmp/temp /tmp/temp${DATE} &>/dev/null;fi)
+	$(shell if [[ -e /tmp/gentoo_temp ]];then \
+mv /tmp/gentoo_temp /tmp/gentoo${DATE} &>/dev/null;fi)
 	sleep 1
 
 #clean the builds

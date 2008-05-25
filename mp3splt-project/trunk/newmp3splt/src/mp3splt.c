@@ -38,10 +38,10 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "2.2_rc1"
+#define VERSION "2.2"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "21/12/06"
+#define MP3SPLT_DATE "25/05/08"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Munteanu Alexandru Ionut"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"

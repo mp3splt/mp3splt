@@ -41,7 +41,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "0.4_rc1"
+#define VERSION "0.5"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
@@ -197,7 +197,7 @@ void about_window(GtkWidget *widget,
   b2 = (gchar *)_("created from");
   gchar library_version[20];
   mp3splt_get_version(library_version);
-  g_snprintf(b3, 100, "-release of 21/12/06-\n%s libmp3splt %s (%s mp3splt)",
+  g_snprintf(b3, 100, "-release of 25/05/08-\n%s libmp3splt %s (%s mp3splt)",
              b1, library_version, b2);
   
   gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG(dialog), b3);

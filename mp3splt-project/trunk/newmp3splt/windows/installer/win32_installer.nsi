@@ -1,4 +1,4 @@
-!define VERSION "2.2_rc1"
+!define VERSION "2.2"
 !define PROGRAM_NAME "mp3splt"
 !define MP3SPLT_PATH c:/mp3splt_mingw/home/admin/mp3splt-project/newmp3splt/windows/installer/../../..
 

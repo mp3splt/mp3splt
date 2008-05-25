@@ -14,11 +14,7 @@ cd $PROGRAM_DIR
 VERSION=$MP3SPLT_GTK_VERSION
 PROGRAM="mp3splt-gtk"
 
-#debian changelog
-if ! debchange --distribution "testing" -v $VERSION "version "$VERSION 2>/dev/null;then
-    rm -f debian/.changelog.dch.swp
-    debchange -r "version "$VERSION || exit 1
-fi
+sed -i "1,4s/mp3splt-gtk (\(.*\))/mp3splt-gtk ($VERSION)/" ./debian/changelog
 
 #README
 #./README:       libmp3splt version 0.3.1
@@ -38,15 +34,9 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 #windows installer
 #./windows/installer/win32_installer.nsi:!define VERSION "0.3.1"
 sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./windows/installer/win32_installer.nsi || exit 1
-#debian control file, libmp3splt dependency
-#./debian/control:Build-Depends: debhelper (>= 4.0.0), libmp3splt (= 0.3.1), beep-media-player-dev(>= 0.9.7-1)
-#./debian/control:Depends: ${shlibs:Depends}, libmp3splt (= 0.3.1), beep-media-player(>= 0.9.7-1)
-sed -i "s/libmp3splt (= .*)/libmp3splt (= $LIBMP3SPLT_VERSION)/" ./debian/control || exit 1
+
 #configure.ac libmp3splt version check
-#./configure.ac:AC_CHECK_LIB(mp3splt, mp3splt_v0_3_5,libmp3splt=yes,
 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
-sed -i "s/AC_CHECK_LIB(mp3splt, mp3splt_v.*,l/\
-AC_CHECK_LIB(mp3splt, mp3splt_v$NEW_LIBMP3SPLT_VER,l/" ./configure.ac || exit 1
 sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
 \[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
 #source code
