@@ -46,8 +46,7 @@
 //checks if the splitpoints are inferior to the length of the song
 //remove all the splitpoint superior than the biggest one superior
 //to the end of file
-void splt_check_splitpts_inf_song_length(splt_state *state,
-    int *error)
+void splt_check_splitpts_inf_song_length(splt_state *state, int *error)
 {
   int i = 0;
   int found_max_splitpoint = SPLT_FALSE;
@@ -63,7 +62,7 @@ void splt_check_splitpts_inf_song_length(splt_state *state,
     splitpoint_value = splt_t_get_splitpoint_value(state,i,&err);
     total_time = splt_t_get_total_time(state);
     //if the value is superior to the total time
-    if ( splitpoint_value > total_time )
+    if (splitpoint_value > total_time)
     {
       found_max_splitpoint = SPLT_TRUE;
       splt_t_set_splitnumber(state, i+1);
@@ -95,6 +94,12 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
       {
         *error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
         return;
+      }
+
+      if (splt_t_get_splitpoint_value(state,i,&err) == LONG_MAX)
+      {
+        //we take the total time and assign it to split_value
+        splt_t_set_splitpoint_value(state,i,splt_t_get_total_time(state));
       }
 
       //check if splitpoints not in order
@@ -352,6 +357,7 @@ void splt_check_file_type(splt_state *state, int *error)
   if (! plugin_found)
   {
     *error = SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE;
+    splt_u_print_debug("No plugin found !",0,NULL);
 
     //if no plugin was found,
     //verify if the file is a real file
@@ -379,30 +385,39 @@ int splt_check_is_file(char *fname)
 {
   struct stat buffer;
   int         status;
-
-  if (fname == NULL)
+  
+  char *ptr = fname + strlen(fname) - 1;
+  //if the filename ends with '-', suppose STDIN, thus no check
+  if (strncmp(ptr,"-",1) != 0)
   {
-    return SPLT_FALSE;
-  }
-  else
-  {
-    status = stat(fname, &buffer);
-    if (status == 0)
+    if (fname == NULL)
     {
-      //if it is a file
-      if (S_ISREG(buffer.st_mode))
+      return SPLT_FALSE;
+    }
+    else
+    {
+      status = stat(fname, &buffer);
+      if (status == 0)
       {
-        return SPLT_TRUE;
+        //if it is a file
+        if (S_ISREG(buffer.st_mode))
+        {
+          return SPLT_TRUE;
+        }
+        else
+        {
+          return SPLT_FALSE;
+        }
       }
       else
       {
         return SPLT_FALSE;
       }
     }
-    else
-    {
-      return SPLT_FALSE;
-    }
+  }
+  else
+  {
+    return SPLT_TRUE;
   }
 }
 

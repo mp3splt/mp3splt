@@ -612,24 +612,6 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
 
   splt_u_print_debug("Appending splitpoint...",0,NULL);
 
-  //if we put the EOF
-  if (split_value == LONG_MAX)
-  {
-    //we check if mp3 or ogg
-    splt_check_file_type(state, &error);
-    //we put the total time
-    splt_s_put_total_time(state, &error);
-    if (error != SPLT_OK)
-    {
-      return error;
-    }
-    else
-    {
-      //we take the total time and assign it to split_value
-      split_value = splt_t_get_total_time(state);
-    }
-  }
-
   if (split_value >= 0)
   {
     state->split.real_splitnumber++;
@@ -2718,6 +2700,19 @@ void splt_t_clean_one_split_data(splt_state *state, int num)
   {
     splt_t_set_splitpoint_name(state, num, NULL);
   }
+}
+
+//returns SPLT_TRUE if the filename to split looks like STDIN
+int splt_t_is_stdin(splt_state *state)
+{
+  char *filename = splt_t_get_filename_to_split(state);
+
+  if (filename[strlen(filename)-2] != '-')
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
 }
 
 //frees an array of strings

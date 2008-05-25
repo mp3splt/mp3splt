@@ -229,16 +229,14 @@ int splt_p_open_get_plugins_data(splt_state *state)
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_search_syncerrors");
       *(void **) (&pl->data[i].func->dewrap) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_dewrap");
-      *(void **) (&pl->data[i].func->set_total_time) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_total_time");
       *(void **) (&pl->data[i].func->simple_split) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_simple_split");
       *(void **) (&pl->data[i].func->split) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_split");
-      *(void **) (&pl->data[i].func->init_split) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_init_split");
-      *(void **) (&pl->data[i].func->end_split) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_end_split");
+      *(void **) (&pl->data[i].func->init) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_init");
+      *(void **) (&pl->data[i].func->end) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_end");
       *(void **) (&pl->data[i].func->scan_silence) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_silence");
       *(void **) (&pl->data[i].func->set_original_tags) =
@@ -422,28 +420,6 @@ void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error)
   }
 }
 
-void splt_p_set_total_time(splt_state *state, int *error)
-{
-  splt_plugins *pl = state->plug;
-  int current_plugin = splt_t_get_current_plugin(state);
-  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
-  {
-    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
-    return;
-  }
-  else
-  {
-    if (pl->data[current_plugin].func->set_total_time != NULL)
-    {
-      pl->data[current_plugin].func->set_total_time(state, error);
-    }
-    else
-    {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
-    }
-  }
-}
-
 void splt_p_split(splt_state *state, char *final_fname, double begin_point,
     double end_point, int *error)
 {
@@ -468,7 +444,7 @@ void splt_p_split(splt_state *state, char *final_fname, double begin_point,
   }
 }
 
-void splt_p_init_split(splt_state *state, int *error)
+void splt_p_init(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
@@ -479,9 +455,9 @@ void splt_p_init_split(splt_state *state, int *error)
   }
   else
   {
-    if (pl->data[current_plugin].func->init_split != NULL)
+    if (pl->data[current_plugin].func->init != NULL)
     {
-      pl->data[current_plugin].func->init_split(state, error);
+      pl->data[current_plugin].func->init(state, error);
     }
     else
     {
@@ -490,7 +466,7 @@ void splt_p_init_split(splt_state *state, int *error)
   }
 }
 
-void splt_p_end_split(splt_state *state, int *error)
+void splt_p_end(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
@@ -501,9 +477,9 @@ void splt_p_end_split(splt_state *state, int *error)
   }
   else
   {
-    if (pl->data[current_plugin].func->end_split != NULL)
+    if (pl->data[current_plugin].func->end != NULL)
     {
-      pl->data[current_plugin].func->end_split(state, error);
+      pl->data[current_plugin].func->end (state, error);
     }
     else
     {

@@ -37,15 +37,6 @@
 #include "splt.h"
 
 /****************************/
-/* splt utils */
-
-//put the total time in state->split.total_time
-void splt_s_put_total_time(splt_state *state, int *error)
-{
-  splt_p_set_total_time(state, error);
-}
-
-/****************************/
 /* splt normal split */
 
 //the real split of the file
@@ -255,8 +246,6 @@ bloc_end:
 
     int get_error = SPLT_OK;
 
-    splt_p_init_split(state,&get_error);
-
     if (get_error >= 0)
     {
       //for every 2 splitpoints, split
@@ -313,7 +302,6 @@ bloc_end:
         }
       }
       err = SPLT_OK;
-      splt_p_end_split(state, &err);
       if (*error >= 0 && err < 0)
       {
         *error = err;
@@ -363,7 +351,6 @@ void splt_s_time_split(splt_state *state, int *error)
     //we append a splitpoint
     splt_t_append_splitpoint(state, 0, "");
 
-    splt_p_init_split(state, &err);
     if (err >= 0)
     {
       //while we have tracks
@@ -459,7 +446,6 @@ void splt_s_time_split(splt_state *state, int *error)
         }
       } while (j++<tracks);
       err = SPLT_OK;
-      splt_p_end_split(state,&err);
       if (*error >= 0 && err < 0)
       {
         *error = err;
@@ -648,8 +634,6 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
   int err = SPLT_OK;
   int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
 
-  splt_p_init_split(state, &err);
-
   if (err >= 0)
   {
     //if we have the default output
@@ -750,7 +734,6 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
 
 function_end:
   err = SPLT_OK;
-  splt_p_end_split(state, &err);
   if (*error >= 0 && err < 0)
   {
     *error = err;

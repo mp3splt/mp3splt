@@ -88,7 +88,7 @@ void splt_ogg_put_tags(splt_state *state, int *error);
 /****************************/
 /* ogg infos */
 
-splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate, 
+splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state,
     int *error);
 
 /****************************/

@@ -1710,8 +1710,7 @@ int main(int argc, char *argv[])
           if (strcmp(argv[i],"EOF") == 0)
           {
             //we put the splitpoints
-            err = mp3splt_append_splitpoint(state,
-                LONG_MAX, NULL);
+            err = mp3splt_append_splitpoint(state, LONG_MAX, NULL);
             print_confirmation_error(err,opt,state);
           }
           else

@@ -117,7 +117,7 @@ FILE *splt_ogg_open_file_read(char *filename)
 splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
 {
   //checks if valid ogg file
-  state->codec = splt_ogg_info(file_input, state->codec, error);
+  state->codec = splt_ogg_info(file_input, state, error);
 
   //if error
   if ((*error < 0) ||
@@ -431,119 +431,86 @@ static vorbis_comment *splt_ogg_v_comment (vorbis_comment *vc, char *artist, cha
 void splt_ogg_get_original_tags(char *filename,
     splt_state *state, int *tag_error)
 {
-  FILE *file_input;
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
 
-  //if we can open the file
-  if ((file_input = splt_ogg_open_file_read(filename)) != NULL)
+  vorbis_comment *vc_local;
+  vc_local = ov_comment(&oggstate->vf,-1);
+
+  char *a = NULL,*t = NULL,*al = NULL,*da = NULL, *g = NULL,*tr = NULL,
+       *com = NULL;
+
+  int size = 0;
+  a = vorbis_comment_query(vc_local, "artist",0);
+  if (a != NULL)
   {
-    splt_t_lock_messages(state);
-    if(splt_ogg_get_info(state, file_input, tag_error) != NULL)
-    {
-      splt_t_unlock_messages(state);
-      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
-
-      vorbis_comment *vc_local;
-      vc_local = ov_comment(&oggstate->vf,-1);
-
-      char *a = NULL,*t = NULL,*al = NULL,*da = NULL,
-           *g = NULL,*tr = NULL,*com = NULL;
-
-      int size = 0;
-      a = vorbis_comment_query(vc_local, "artist",0);
-      if (a != NULL)
-      {
-        size = strlen(a);
-      }
-      else
-      {
-        size = 0;
-      }
-      splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
-          0,a,0x0,size);
-      t = vorbis_comment_query(vc_local, "title",0);
-      if (t != NULL)
-      {
-        size = strlen(t);
-      }
-      else
-      {
-        size = 0;
-      }
-      splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
-          0,t,0x0,size);
-
-      al = vorbis_comment_query(vc_local, "album",0);
-      if (al != NULL)
-      {
-        size = strlen(al);
-      }
-      else
-      {
-        size = 0;
-      }
-      splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
-          0,al,0x0,size);
-      da = vorbis_comment_query(vc_local, "date",0);
-      if (da != NULL)
-      {
-        size = strlen(da);
-      }
-      else
-      {
-        size = 0;
-      }
-      splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
-          0,da,0x0,size);
-      g = vorbis_comment_query(vc_local, "genre",0);
-      if (g != NULL)
-      {
-        size = strlen(g);
-      }
-      else
-      {
-        size = 0;
-      }
-      splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-          0, g, 0x0,size);
-      tr = vorbis_comment_query(vc_local, "tracknumber",0);
-      if (tr != NULL)
-      {
-        size = strlen(tr);
-      }
-      else
-      {
-        size = 0;
-      }
-      splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
-          0,tr, 0x0,size);
-      com = vorbis_comment_query(vc_local, "comment",0);
-      if (com != NULL)
-      {
-        size = strlen(com);
-      }
-      else
-      {
-        size = 0;
-      }
-      splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
-          0,com,0x0,size);
-
-      splt_ogg_state_free(state);
-    }
-    else
-    {
-      splt_t_unlock_messages(state);
-      if (file_input != stdin)
-      {
-        fclose(file_input);
-      }
-      file_input = NULL;
-    }
+    size = strlen(a);
   }
   else
   {
-    *tag_error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    size = 0;
   }
+  splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST, 0,a,0x0,size);
+  t = vorbis_comment_query(vc_local, "title",0);
+  if (t != NULL)
+  {
+    size = strlen(t);
+  }
+  else
+  {
+    size = 0;
+  }
+  splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE, 0,t,0x0,size);
+
+  al = vorbis_comment_query(vc_local, "album",0);
+  if (al != NULL)
+  {
+    size = strlen(al);
+  }
+  else
+  {
+    size = 0;
+  }
+  splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM, 0,al,0x0,size);
+  da = vorbis_comment_query(vc_local, "date",0);
+  if (da != NULL)
+  {
+    size = strlen(da);
+  }
+  else
+  {
+    size = 0;
+  }
+  splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR, 0,da,0x0,size);
+  g = vorbis_comment_query(vc_local, "genre",0);
+  if (g != NULL)
+  {
+    size = strlen(g);
+  }
+  else
+  {
+    size = 0;
+  }
+  splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE, 0, g, 0x0,size);
+  tr = vorbis_comment_query(vc_local, "tracknumber",0);
+  if (tr != NULL)
+  {
+    size = strlen(tr);
+  }
+  else
+  {
+    size = 0;
+  }
+  splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK, 0,tr, 0x0,size);
+  com = vorbis_comment_query(vc_local, "comment",0);
+  if (com != NULL)
+  {
+    size = strlen(com);
+  }
+  else
+  {
+    size = 0;
+  }
+  splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT, 0,com,0x0,size);
 }
 
 //we take the tags from the state and put them in the
@@ -769,8 +736,10 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate)
 }
 
 //returns ogg info
-splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate,int *error)
+splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state,int *error)
 {
+  splt_ogg_state *oggstate = state->codec;
+
   oggstate = splt_ogg_v_new();
 
   if (oggstate == NULL)
@@ -782,6 +751,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate,int *error)
   oggstate->in = in;
   oggstate->end = 0;
 
+  //open the file
   if (oggstate->in != stdin)
   {
     if(ov_open(oggstate->in, &oggstate->vf, NULL, 0) < 0)
@@ -790,6 +760,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate,int *error)
       splt_ogg_v_free(oggstate);
       return NULL;
     }
+    //go at the start of the file
     rewind(oggstate->in);
   }
 
@@ -803,7 +774,10 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_ogg_state *oggstate,int *error)
 
   if (oggstate->in != stdin)
   {
-    oggstate->len = (ogg_int64_t) ((oggstate->vi->rate)*(ov_time_total(&oggstate->vf, -1)));
+    //read total time
+    long total_time = ov_time_total(&oggstate->vf, -1) * 100;
+    splt_t_set_total_time(state,total_time);
+    oggstate->len = (ogg_int64_t) (oggstate->vi->rate*total_time);
   }
 
   oggstate->cutpoint_begin = 0;
@@ -1658,8 +1632,8 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  //-o means stdin ogg format
-  if (strcmp(filename,"-o") == 0)
+  //o- means stdin ogg format
+  if (strcmp(filename,"o-") == 0)
   {
     return SPLT_TRUE;
   }
@@ -1694,35 +1668,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
   return is_ogg;
 }
 
-void splt_pl_set_total_time(splt_state *state, int *error)
-{
-  FILE *file_input = NULL;
-  char *filename = splt_t_get_filename_to_split(state);
-
-  //if we can open the file
-  if ((file_input = splt_ogg_open_file_read(filename)) != NULL)
-  {
-    OggVorbis_File ogg_file;
-
-    //if we can open file
-    if(ov_open(file_input, &ogg_file, NULL, 0) >= 0)
-    {
-      long temp = ov_time_total(&ogg_file, -1) * 100;
-      splt_t_set_total_time(state,temp);
-      ov_clear(&ogg_file);
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-    }
-  }
-  else
-  {
-    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-  }
-}
-
-void splt_pl_init_split(splt_state *state, int *error)
+void splt_pl_init(splt_state *state, int *error)
 {
   FILE *file_input = NULL;
   char *filename = splt_t_get_filename_to_split(state);
@@ -1742,14 +1688,6 @@ void splt_pl_init_split(splt_state *state, int *error)
       splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
       oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
     }
-    else
-    {
-      if (file_input != stdin)
-      {
-        fclose(file_input);
-      }
-      file_input = NULL;
-    }
   }
   else
   {
@@ -1757,7 +1695,7 @@ void splt_pl_init_split(splt_state *state, int *error)
   }
 }
 
-void splt_pl_end_split(splt_state *state)
+void splt_pl_end(splt_state *state)
 {
   splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
   splt_ogg_state_free(state);
@@ -1780,7 +1718,6 @@ void splt_pl_split(splt_state *state, char *final_fname,
 
 int splt_pl_scan_silence(splt_state *state, int *error)
 {
-  char *filename = splt_t_get_filename_to_split(state);
   float offset =
     splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
   float threshold = 
@@ -1788,37 +1725,11 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   float min_length =
     splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
   int found = 0;
-  FILE *file_input = NULL;
 
-  //open the file
-  if ((file_input = splt_ogg_open_file_read(filename)) != NULL)
-  {
-    if(splt_ogg_get_info(state, file_input, error) != NULL)
-    {
-      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
-      oggstate->off = offset;
+  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  oggstate->off = offset;
 
-      found = splt_ogg_scan_silence(state, 0, threshold,
-            min_length, 1, NULL, 0);
-
-      splt_ogg_state_free(state);
-    }
-    else
-    {
-      *error = SPLT_ERROR_INVALID;
-      if (file_input != stdin)
-      {
-        fclose(file_input);
-      }
-      file_input = NULL;
-    }
-    //we don't need to close the file_input becase ov_clear() does it
-    //when we call splt_ogg_state_free(..)
-  }
-  else
-  {
-    *error = SPLT_ERROR_WHILE_READING_FILE;
-  }
+  found = splt_ogg_scan_silence(state, 0, threshold, min_length, 1, NULL, 0);
 
   return found;
 }
@@ -1827,7 +1738,11 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  splt_u_print_debug("Putting ogg original tags...\n",0,NULL);
-  splt_ogg_get_original_tags(filename, state, error);
+  //doesn't work with STDIN for the moment
+  if (! splt_t_is_stdin(state))
+  {
+    splt_u_print_debug("Putting ogg original tags...",0,NULL);
+    splt_ogg_get_original_tags(filename, state, error);
+  }
 }
 
