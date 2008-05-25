@@ -542,6 +542,12 @@ int mp3splt_split(splt_state *state)
 
       splt_u_print_debug("Starting to split file...",0,NULL);
 
+      //if we have stdin, enable NOT SEEKABLE
+      if (splt_t_is_stdin(state))
+      {
+        splt_t_set_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_TRUE);
+      }
+
       state->cancel_split = SPLT_FALSE;
 
       //we set default internal options
@@ -635,6 +641,8 @@ int mp3splt_split(splt_state *state)
           splt_p_end(state);
           goto function_end;
         }
+
+        splt_u_print_debug("parse type of split...",0,NULL);
 
         //the type of the split
         switch (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE))

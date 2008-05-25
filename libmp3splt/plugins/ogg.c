@@ -1738,11 +1738,7 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  //doesn't work with STDIN for the moment
-  if (! splt_t_is_stdin(state))
-  {
-    splt_u_print_debug("Putting ogg original tags...",0,NULL);
-    splt_ogg_get_original_tags(filename, state, error);
-  }
+  splt_u_print_debug("Putting ogg original tags...",0,NULL);
+  splt_ogg_get_original_tags(filename, state, error);
 }
 
