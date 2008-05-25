@@ -111,8 +111,17 @@ static void splt_s_split(splt_state *state, int *error)
         // 34.6  --> 34 seconds and 6 hundredth
         splt_beg = split_begin / 100;
         splt_beg += ((split_begin % 100) / 100.);
-        splt_end = split_end / 100;
-        splt_end += ((split_end % 100) / 100.);
+        //we will transmit to the plugins the -1.f value
+        //if we have LONG_MAX (== EOF)
+        if (split_end == LONG_MAX)
+        {
+          splt_end = -1.f;
+        }
+        else
+        {
+          splt_end = split_end / 100;
+          splt_end += ((split_end % 100) / 100.);
+        }
 
         splt_t_set_i_begin_point(state,splt_beg);
         splt_t_set_i_end_point(state,splt_end);

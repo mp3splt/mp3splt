@@ -256,6 +256,8 @@ static char *splt_u_get_mins_secs_filename(char *filename,
   fname2_malloc_number = fname_malloc_number = 
     strlen(filename) + 256;
 
+  long old_split_end = split_end;
+
   if((fname = calloc(fname_malloc_number*sizeof(char),1))
       != NULL)
   {
@@ -324,10 +326,20 @@ static char *splt_u_get_mins_secs_filename(char *filename,
         splt_u_error(SPLT_IERROR_INT,__func__, i, NULL);
       }
 
-      snprintf(fname2,fname2_malloc_number,
-          "%s_%sm_%ss_%sh__%sm_%ss_%sh", 
-          fname, mins_char, secs_char, hundr_secs_char,
-          mins_char2, secs_char2,hundr_secs_char2);
+      //we put EOF if LONG_MAX
+      if (old_split_end == LONG_MAX)
+      {
+        snprintf(fname2,fname2_malloc_number,
+            "%s_%sm_%ss_%sh__EOF", 
+            fname, mins_char, secs_char, hundr_secs_char);
+      }
+      else
+      {
+        snprintf(fname2,fname2_malloc_number,
+            "%s_%sm_%ss_%sh__%sm_%ss_%sh", 
+            fname, mins_char, secs_char, hundr_secs_char,
+            mins_char2, secs_char2,hundr_secs_char2);
+      }
 
       //put the extension according to the file type
       char *extension = splt_p_get_extension(state, error);
@@ -361,9 +373,9 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
 {
   int current_split = splt_t_get_current_split(state);
   int get_error = SPLT_OK;
-  int split_begin = 
+  long split_begin = 
     splt_t_get_splitpoint_value(state, current_split, &get_error);
-  int split_end = 
+  long split_end = 
     splt_t_get_splitpoint_value(state, current_split+1, &get_error);
   char *filename = splt_t_get_filename_to_split(state);
   char *filename2 = strdup(filename);
