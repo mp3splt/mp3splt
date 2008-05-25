@@ -569,6 +569,8 @@ int mp3splt_split(splt_state *state)
       //we check if the filename is a real file
       if (!splt_check_is_file(fname_to_split))
       {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state,fname_to_split);
         error = SPLT_ERROR_INEXISTENT_FILE;
         splt_t_unlock_library(state);
         return error;
@@ -609,10 +611,10 @@ int mp3splt_split(splt_state *state)
         }
 
         //we create output directory if it does not exists
-        splt_u_create_directory(new_filename_path);
+        splt_u_create_directory(state, new_filename_path);
 
         //check means the test is ok
-        splt_check_if_new_filename_path_correct(new_filename_path, &error);
+        splt_check_if_new_filename_path_correct(state, new_filename_path,&error);
         if (error < 0)
         {
           goto function_end;
@@ -862,7 +864,9 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
         FILE *output = NULL;
         if (!(output = fopen(cddb_file, "w")))
         {
-          *err = SPLT_CANNOT_WRITE_CDDB_FILE;
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state,cddb_file);
+          *err = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
         }
         else
         {
@@ -1055,5 +1059,11 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
 void mp3splt_get_version(char *version)
 {
   snprintf(version,20,"%s",SPLT_PACKAGE_VERSION);
+}
+
+//result must be freed
+char *mp3splt_get_strerror(splt_state *state, int error_code)
+{
+  return splt_u_strerror(state, error_code);
 }
 

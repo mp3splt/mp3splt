@@ -368,7 +368,7 @@ int splt_p_check_plugin_is_for_file(splt_state *state, int *error)
     }
     else
     {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
       return SPLT_FALSE;
     }
   }
@@ -393,7 +393,7 @@ void splt_p_search_syncerrors(splt_state *state, int *error)
     }
     else
     {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
 }
@@ -415,7 +415,7 @@ void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error)
     }
     else
     {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
 }
@@ -439,7 +439,7 @@ void splt_p_split(splt_state *state, char *final_fname, double begin_point,
     }
     else
     {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
 }
@@ -461,7 +461,7 @@ void splt_p_init(splt_state *state, int *error)
     }
     else
     {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
 }
@@ -483,7 +483,7 @@ void splt_p_end(splt_state *state, int *error)
     }
     else
     {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
 }
@@ -508,7 +508,7 @@ int splt_p_simple_split(splt_state *state, char *output_fname, off_t begin,
     }
     else
     {
-      error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
 
@@ -532,7 +532,7 @@ int splt_p_scan_silence(splt_state *state, int *error)
     }
     else
     {
-      *error = SPLT_ERROR_UNSUPPORTED_FEATURE;
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
 

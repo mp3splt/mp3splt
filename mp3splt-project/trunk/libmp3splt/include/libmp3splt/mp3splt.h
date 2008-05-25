@@ -602,6 +602,13 @@ typedef struct
   splt_plugin_data *data;
 } splt_plugins;
 
+//structure containing error strings for error messages
+typedef struct
+{
+  char *error_data;
+  char *strerror_msg;
+} splt_error;
+
 //structure for the splt state
 typedef struct {
 
@@ -646,6 +653,9 @@ typedef struct {
 
   //file format states, mp3,ogg..
   void *codec;
+
+  //error strings for error code messages
+  splt_error err;
 
   //plugins structure
   splt_plugins *plug;
@@ -749,14 +759,6 @@ typedef struct {
  */
 #define SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE -112
 /**
- * @brief Error, cue : cannot open file for reading
- */
-#define SPLT_CUE_ERROR_CANNOT_OPEN_FILE_READING -113
-/**
- * @brief Error, cddb : cannot open file for reading
- */
-#define SPLT_CDDB_ERROR_CANNOT_OPEN_FILE_READING -114
-/**
  * @brief Error, cue : invalid cue file, the parse failed
  */
 #define SPLT_INVALID_CUE_FILE -115
@@ -764,10 +766,6 @@ typedef struct {
  * @brief Error, cddb : invalid cddb file, the parse failed
  */
 #define SPLT_INVALID_CDDB_FILE -116
-/**
- * @brief Error, cddb : cannot write cddb file
- */
-#define SPLT_CANNOT_WRITE_CDDB_FILE -117
 /**
  * @brief Error, freedb : No such CD entry in database
  */
@@ -842,7 +840,7 @@ typedef struct {
  */
 #define SPLT_ERROR_CANNOT_OPEN_FILE -2
 /**
- * @brief Error, split : invalid mp3 file
+ * @brief Error, split : invalid file for plugin
  */
 #define SPLT_ERROR_INVALID -3
 /**
@@ -862,17 +860,9 @@ typedef struct {
  */
 #define SPLT_ERROR_INCORRECT_PATH -8
 /**
- * @brief Error, split : ogg syncerror not implemented
- */
-#define SPLT_ERROR_CANNOT_SYNC -9
-/**
  * @brief Error, split : incompatible split options
  */
 #define SPLT_ERROR_INCOMPATIBLE_OPTIONS -10
-/**
- * @brief Error, silence split : error while doing the silence split
- */
-#define SPLT_ERROR_SILENCE -11
 /**
  * @brief Error, split : input and output are the same file
  */
@@ -910,10 +900,6 @@ typedef struct {
  */
 #define SPLT_SPLIT_CANCELLED -22
 /**
- * @brief Error, wrap split : wrap not implemented for this format
- */
-#define SPLT_ERROR_WRAP_NOT_IMPLEMENTED -23
-/**
  * @brief Error, the library is being used
  */
 #define SPLT_ERROR_LIBRARY_LOCKED -24
@@ -929,10 +915,6 @@ typedef struct {
  * @brief Error, cannot create output directory
  */
 #define SPLT_ERROR_CANNOT_CREATE_DIRECTORY -27
-/**
- * @brief Error, invalid format
- */
-#define SPLT_ERROR_INVALID_FORMAT -28
 /**
  * @brief Error, cannot find plugins
  */
@@ -966,10 +948,10 @@ typedef struct {
 //miscellaneous error messages
 #define SPLT_ERROR_INEXISTENT_SPLITPOINT -500
 
-
 //plugin error messages
-#define SPLT_ERROR_UNSUPPORTED_FEATURE -600
+#define SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE -600
 
+//internal
 #define SPLT_INTERNAL_PROGRESS_RATE 1
 #define SPLT_INTERNAL_FRAME_MODE_ENABLED 2
 
@@ -1381,6 +1363,9 @@ int mp3splt_count_silence_points(splt_state *state, int *error);
 
 //returns the version of libmp3splt
 void mp3splt_get_version(char *version);
+
+//result must be freed
+char *mp3splt_get_strerror(splt_state *state, int error_code);
 
 //returns the number of syncerrors
 //puts possible error in error variable

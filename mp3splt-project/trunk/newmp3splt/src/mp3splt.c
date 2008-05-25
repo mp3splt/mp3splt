@@ -448,213 +448,22 @@ void check_args(int argc, Options *opt, splt_state *state)
 }
 
 //prints a confirmation error that comes from the library
-void print_confirmation_error(int conf, Options *opt, 
-    splt_state *state)
+void print_confirmation_error(int conf, Options *opt, splt_state *state)
 {
-  switch (conf)
+  char *error_from_library = NULL;
+  error_from_library = mp3splt_get_strerror(state, conf);
+  if (error_from_library != NULL)
   {
-    case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
-      print_message(" file splitted, splitpoints bigger than length");
-      break;
-    case SPLT_OK_SPLITTED :
-      print_message(" file splitted");
-      break;
-    case SPLT_OK_SPLITTED_EOF :
-      print_message(" file splitted");
-      break;
-    case SPLT_OK :
-      //fprintf(console_err," bug in the program, please report it");
-      break;
-    case SPLT_ERROR_SPLITPOINTS :
-      put_error_message_exit(" error: not enough splitpoints (<2)",opt,state);
-      break;
-    case SPLT_ERROR_CANNOT_OPEN_FILE :
-      put_error_message_exit(" error: cannot open file",opt,state);
-      break;
-    case SPLT_ERROR_INVALID :
-      put_error_message_exit(" error: invalid file",opt,state);
-      break;
-    case SPLT_ERROR_EQUAL_SPLITPOINTS :
-      put_error_message_exit(" error: equal splitpoints",opt,state);
-      break;
-    case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER :
-      put_error_message_exit(" error: splitpoints not in order",opt,state);
-      break;
-    case SPLT_ERROR_NEGATIVE_SPLITPOINT :
-      put_error_message_exit(" error: negative splitpoint",opt,state);
-      break;
-    case SPLT_ERROR_INCORRECT_PATH :
-      put_error_message_exit(" error: incorrect destination folder",opt,state);
-      break;
-    case SPLT_ERROR_INVALID_FORMAT :
-      put_error_message_exit(" error: invalid format",opt,state);
-      break;
-    case SPLT_FREEDB_OK :
-      print_message(" freedb search processed ok");
-      break;
-    case SPLT_FREEDB_FILE_OK :
-      print_message(" freedb processed ok");
-      break;
-    case SPLT_FREEDB_CDDB_OK :
-      print_message(" cddb file processed ok");
-      break;
-    case SPLT_FREEDB_CUE_OK :
-      print_message(" cue file processed ok");
-      break;
-    case SPLT_FREEDB_ERROR_INITIALISE_SOCKET :
-      put_error_message_exit(" error: cannot initialise socket",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_GET_HOST :
-      put_error_message_exit(" error: cannot get host by name",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET :
-      put_error_message_exit(" error: cannot open socket",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_CONNECT :
-      put_error_message_exit(" error: cannot connect to host",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE :
-      put_error_message_exit(" error: cannot send message to host",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER :
-      put_error_message_exit(" error: invalid server answer",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_SITE_201 :
-      put_error_message_exit(" error: error 201 while connecting"
-          " to site",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_SITE_200 :
-      put_error_message_exit(" error: error 200 while connecting"
-          " to site",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_SITE :
-      put_error_message_exit(" freedb error: unknown error from the website",opt,state);
-      break;
-    case SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE :
-      put_error_message_exit(" freedb error: No such CD entry in database",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_BAD_COMMUNICATION :
-      put_error_message_exit(" error: bad communication with site",opt,state);
-      break;
-    case SPLT_FREEDB_ERROR_GETTING_INFOS :
-      put_error_message_exit(" error: could not get infos from site",opt,state);
-      break;
-    case SPLT_FREEDB_NO_CD_FOUND :
-      print_message(" no cd found for this search");
-      break;
-    case SPLT_FREEDB_MAX_CD_REACHED :
-      print_message(" maximum number of found"
-          " CD reached");
-      break;
-    case SPLT_CUE_ERROR_CANNOT_OPEN_FILE_READING:
-      put_error_message_exit(" cue error: cannot read file",opt,state);
-      break;
-    case SPLT_CDDB_ERROR_CANNOT_OPEN_FILE_READING:
-      put_error_message_exit(" cddb error: cannot read file",opt,state);
-      break;
-    case SPLT_INVALID_CUE_FILE:
-      put_error_message_exit(" cue error: invalid cue file",opt,state);
-      break;
-    case SPLT_INVALID_CDDB_FILE:
-      put_error_message_exit(" cddb error: invalid cddb file",opt,state);
-      break;
-    case SPLT_SILENCE_OK:
-      print_message(" silence split ok");
-      break;
-    case SPLT_ERROR_CANNOT_SYNC:
-      put_error_message_exit(" sync error: cannot sync files",opt,state);
-      break;
-    case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
-      put_error_message_exit(" error: incompatible options",opt,state);
-      break;
-    case SPLT_ERROR_SILENCE:
-      put_error_message_exit(" error for the silence split",opt,state);
-      break;
-    case SPLT_SYNC_OK:
-      print_message(" error mode ok");
-      break;
-    case SPLT_ERR_SYNC:
-      put_error_message_exit(" error: sync",opt,state);
-      break;
-    case SPLT_ERR_NO_SYNC_FOUND:
-      print_message(" no sync errors found                ");
-      break;
-    case SPLT_ERR_TOO_MANY_SYNC_ERR:
-      put_error_message_exit(" sync error: too many sync errors",opt,state);
-      break;
-    case SPLT_DEWRAP_OK:
-      print_message(" wrap split ok");
-      break;
-    case SPLT_DEWRAP_ERR_FILE_LENGTH:
-      put_error_message_exit(" wrap error: file length",opt,state);
-      break;
-    case SPLT_DEWRAP_ERR_VERSION_OLD:
-      put_error_message_exit(" wrap error: version too old",opt,state);
-      break;
-    case SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX:
-      put_error_message_exit(" wrap error: no file or bad index",opt,state);
-      break;
-    case SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE:
-      put_error_message_exit(" wrap error: file damaged or incomplete",opt,state);
-      break;
-    case SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED:
-      put_error_message_exit(" wrap error: maybe not a wrapped"
-          " file or wrap file damaged",opt,state); 
-      break;
-    case SPLT_TIME_SPLIT_OK:
-      print_message(" time split ok");
-      break;
-    case SPLT_ERROR_INPUT_OUTPUT_SAME_FILE:
-      put_error_message_exit(" error: input and output are the same file",opt,state); 
-      break;
-    case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
-      print_message(" no silence splitpoints found    ");
-      break;
-    case SPLT_ERROR_CANNOT_ALLOCATE_MEMORY:
-      put_error_message_exit(" error: unable to allocate"
-          " memory",opt,state);
-      break;
-    case SPLT_MIGHT_BE_VBR:
-      print_message(" warning: might be VBR,"
-          " use frame mode");
-      break;
-    case SPLT_ERROR_CANNOT_OPEN_DEST_FILE:
-      put_error_message_exit(" error: cannot open"
-          " destination file",opt,state);
-      break;
-    case SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE:
-      put_error_message_exit(" error: cannot write"
-          " to output file",opt,state);
-      break;
-    case SPLT_ERROR_WHILE_READING_FILE:
-      put_error_message_exit(" error: cannot read file",opt,state);
-      break;
-    case SPLT_ERROR_SEEKING_FILE:
-      put_error_message_exit(" error: cannot seek file",opt,state);
-      break;
-    case SPLT_ERROR_BEGIN_OUT_OF_FILE:
-      put_error_message_exit(" error: begin point out of file",opt,state);
-      break;
-    case SPLT_ERROR_INEXISTENT_FILE:
-      put_error_message_exit(" error: inexistent file",opt,state);
-      break;
-    case SPLT_SPLIT_CANCELLED:
-      print_message(" split process cancelled");
-      break;
-    case SPLT_ERROR_WRAP_NOT_IMPLEMENTED:
-      put_error_message_exit(" wrap error: wrap not implemented for this format",opt,state);
-      break;
-    case SPLT_OUTPUT_FORMAT_OK:
-
-      break;
-    case SPLT_OUTPUT_FORMAT_ERROR:
-      print_message(" warning: output format error");
-      break;
-    case SPLT_OUTPUT_FORMAT_AMBIGUOUS:
-      print_message(" warning: output format ambiguous");
-      break;
-    default:
-      break;
+    if (conf >= 0)
+    {
+      print_message(error_from_library);
+    }
+    else
+    {
+      put_error_message_exit(error_from_library,opt,state);
+    }
+    free(error_from_library);
+    error_from_library = NULL;
   }
 }
 

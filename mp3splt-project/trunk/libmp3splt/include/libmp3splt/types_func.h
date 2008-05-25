@@ -210,6 +210,9 @@ void splt_t_update_progress(splt_state *state, float current_point,
 /********************************/
 /* types: miscelanneous */
 
+void splt_t_set_error_data(splt_state *state, char *error_data);
+void splt_t_set_strerror_msg(splt_state *state);
+
 void splt_t_free_splitpoints_tags(splt_state *state);
 void splt_t_free_splitpoints(splt_state *state);
 void splt_t_free_tags(splt_state *state);
