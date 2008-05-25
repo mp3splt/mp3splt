@@ -827,10 +827,14 @@ char *splt_t_get_splitpoint_name(splt_state *state,
 //sets the original tags to the state
 void splt_t_get_original_tags(splt_state *state, int *err)
 {
-  //we clean the original tags
-  splt_t_clean_original_tags(state);
+  //doesn't work with STDIN for the moment
+  if (! splt_t_is_stdin(state))
+  {
+    //we clean the original tags
+    splt_t_clean_original_tags(state);
 
-  splt_p_set_original_tags(state, err);
+    splt_p_set_original_tags(state, err);
+  }
 }
 
 //append original tags
