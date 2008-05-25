@@ -1203,7 +1203,7 @@ typedef enum {
 /**
  * @brief Package version
  */
-#define SPLT_PACKAGE_VERSION "0.4_rc1"
+#define SPLT_PACKAGE_VERSION "0.5"
 #endif
 /**
  * @brief Package authors

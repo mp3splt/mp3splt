@@ -7,7 +7,7 @@ Standards-Version: 3.6.1.1
 
 Package: libmp3splt
 Architecture: any
-Depends: 
+Depends: ${shlibs:Depends}
 Enhances: mp3splt, mp3splt-gtk
 Description: Library that splits MP3 and Ogg Vorbis files without reencoding
  Used to split MP3 (VBR supported) and Ogg Vorbis

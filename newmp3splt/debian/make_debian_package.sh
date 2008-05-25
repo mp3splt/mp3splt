@@ -23,6 +23,7 @@ if [[ ! -f $DIST_FILE ]];then
     #set necessary flags
     export CFLAGS="-I/tmp/temp/usr/include $CFLAGS"
     export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS"
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/temp/usr/lib/
     
     #we compile
     ./autogen.sh && \

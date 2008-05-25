@@ -27,35 +27,30 @@ endif
 config.status: configure
 	dh_testdir
 	# Add here commands to configure the package.
-	#we enable beep media player by default
-	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --enable-bmp
+	#we enable audacious player by default
+	CFLAGS="$(CFLAGS)" ./configure --enable-audacious --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info
 
 build: build-stamp
 
-build-stamp:  config.status
+build-stamp: config.status
 	dh_testdir
-
 ifneq "$(wildcard /usr/share/misc/config.sub)" ""
 	cp -f /usr/share/misc/config.sub config.sub
 endif
 ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	cp -f /usr/share/misc/config.guess config.guess
 endif
-
 	# Add here commands to compile the package.
 	$(MAKE)
-
 	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
-
 	# Add here commands to clean up after the build process.
 	-$(MAKE) distclean
 	rm -f config.sub config.guess
-
 	dh_clean 
 
 install: build
@@ -85,6 +80,7 @@ binary-arch: build install
 	dh_compress
 	dh_fixperms
 	dh_installdeb
+	dh_makeshlibs
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
@@ -93,3 +89,4 @@ binary-arch: build install
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install 
+
