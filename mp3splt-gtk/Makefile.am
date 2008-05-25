@@ -3,3 +3,8 @@ AUTOMAKE_OPTIONS = foreign no-dependencies
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = m4 po src
+
+EXTRA_DIST = mp3splt-gtk.desktop
+appsdir = $(datadir)/applications
+apps_DATA = mp3splt-gtk.desktop
+

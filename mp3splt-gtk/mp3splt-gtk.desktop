@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+
+Name=Mp3splt-gtk audio splitter
+Name[fr]=Audacity Audio-Editor
+GenericName=Sound Splitter
+Comment=Split mp3 and ogg files without decoding
+
+Icon=/usr/share/mp3splt-gtk/mp3splt-gtk_ico.png
+
+Type=Application
+Categories=Application;AudioVideo;Audio;AudioVideoEditing;
+
+Exec=mp3splt-gtk
+StartupNotify=false
+Terminal=false
+MimeType=application/oggaudio/x-mp3;
