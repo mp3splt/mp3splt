@@ -385,48 +385,51 @@ int splt_check_is_file(char *fname)
 {
   struct stat buffer;
   int         status;
-  
-  char *ptr = fname + strlen(fname) - 1;
-  //if the filename ends with '-', suppose STDIN, thus no check
-  if (strncmp(ptr,"-",1) != 0)
+
+  //stdin : consider as file
+  if (fname[strlen(fname)-1] == '-')
   {
-    if (fname == NULL)
+    return SPLT_TRUE;
+  }
+
+  if (fname == NULL)
+  {
+    return SPLT_FALSE;
+  }
+  else
+  {
+    status = stat(fname, &buffer);
+    if (status == 0)
     {
-      return SPLT_FALSE;
-    }
-    else
-    {
-      status = stat(fname, &buffer);
-      if (status == 0)
+      //if it is a file
+      if (S_ISREG(buffer.st_mode))
       {
-        //if it is a file
-        if (S_ISREG(buffer.st_mode))
-        {
-          return SPLT_TRUE;
-        }
-        else
-        {
-          return SPLT_FALSE;
-        }
+        return SPLT_TRUE;
       }
       else
       {
         return SPLT_FALSE;
       }
     }
-  }
-  else
-  {
-    return SPLT_TRUE;
+    else
+    {
+      return SPLT_FALSE;
+    }
   }
 }
 
 //check if file1 = file2
 int splt_check_is_the_same_file(char *file1, char *file2, int *error)
 {
+  //stdin
+  if (file1[strlen(file1)-1] == '-')
+  {
+    return SPLT_FALSE;
+  }
+
   splt_u_print_debug("Checking if this file :",0,file1);
   splt_u_print_debug("is like this file :",0,file2);
-
+  
   if (splt_check_is_file(file1) && splt_check_is_file(file2))
   {
     //file1
