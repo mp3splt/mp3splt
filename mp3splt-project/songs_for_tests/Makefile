@@ -6,7 +6,9 @@ DEWRAP_FILE=mp3wrap_file.mp3
 ERROR_MODE_MP3_FILE=all_concat.mp3
 ERROR_MODE_FILE=$(ERROR_MODE_MP3_FILE)
 
-MP3SPLT_PROG=./mp3splt
+VALGRIND=
+VALGRIND=valgrind --leak-check=yes
+MP3SPLT_PROG=$(VALGRIND) ./mp3splt
 
 MP3SPLT_FILE?=$(MP3_FILE)
 CDDB_MP3SPLT_FILE?=$(CDDB_MP3_FILE)
@@ -29,7 +31,7 @@ ERROR_MODE_SPLIT_OUTPUT_DIR=error_split
 
 #if we set debug or not
 DEBUG=
-#DEBUG="-D"
+#DEBUG=-D
 
 #TODO: STDIN, STDOUT, PROXY
 all: all_tests

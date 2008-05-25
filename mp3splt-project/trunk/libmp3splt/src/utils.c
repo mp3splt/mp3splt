@@ -710,13 +710,37 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
               {
                 ambigous = SPLT_TRUE;
               }
-              int error = SPLT_OK;
-              splt_t_lock_messages(state);
-              splt_check_file_type(state, &error);
-              splt_t_unlock_messages(state);
-              splt_t_get_original_tags(state, &error);
-              splt_t_append_original_tags(state);
-              original_tags = SPLT_TRUE;
+
+              char *filename = splt_t_get_filename_to_split(state);
+              //if we don't have STDIN
+              if (! splt_t_is_stdin(state))
+              {
+                int error = SPLT_OK;
+                splt_t_lock_messages(state);
+                splt_check_file_type(state, &error);
+                splt_t_unlock_messages(state);
+
+                splt_t_lock_messages(state);
+                splt_p_init(state, &error);
+                if (error >= 0)
+                {
+                  splt_t_get_original_tags(state, &error);
+                  splt_p_end(state);
+                  splt_t_append_original_tags(state);
+                  original_tags = SPLT_TRUE;
+                  splt_t_unlock_messages(state);
+                }
+                else
+                {
+                  splt_t_unlock_messages(state);
+                  goto after_while;
+                }
+              }
+              else
+              {
+                ambigous = SPLT_TRUE;
+              }
+
               //if we have a @a,@p,.. before @n
               //then ambigous
               if ((artist != NULL) || (performer != NULL) ||
@@ -829,6 +853,9 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
           cur_pos++;
         }
       }
+
+after_while:
+;
 
       int track = -1;
       //we check that we really have the tracknumber as integer

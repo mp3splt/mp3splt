@@ -573,8 +573,8 @@ typedef struct {
       double end_point, int *error);
   int (*scan_silence)(void *state, int *error);
   void (*set_original_tags)(void *state, int *error);
-  void (*init_split)(void *state, int *error);
-  void (*end_split)(void *state, int *error);
+  void (*init)(void *state, int *error);
+  void (*end)(void *state, int *error);
 } splt_plugin_func;
 
 //structure containing all the data about one plugin

@@ -163,8 +163,7 @@ void splt_mp3_syncerror_search (splt_state *state, int *error);
 /****************************/
 /* mp3 dewrap */
 
-void splt_mp3_dewrap (FILE *file_input, int listonly, char *dir,
-    int *error, splt_state *state);
+void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state);
 
 /****************************/
 /* mp3 constants */
