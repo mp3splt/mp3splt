@@ -2,7 +2,6 @@
 Encoding=UTF-8
 
 Name=Mp3splt-gtk audio splitter
-Name[fr]=Audacity Audio-Editor
 GenericName=Sound Splitter
 Comment=Split mp3 and ogg files without decoding
 
@@ -14,4 +13,4 @@ Categories=Application;AudioVideo;Audio;AudioVideoEditing;
 Exec=mp3splt-gtk
 StartupNotify=false
 Terminal=false
-MimeType=application/oggaudio/x-mp3;
+MimeType=application/ogg;audio/x-mp3;
