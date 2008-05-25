@@ -85,7 +85,8 @@ void splt_u_error(int error_type, const char *function,
 float splt_u_silence_position(struct splt_ssplit *temp, float off);
 void splt_u_print_debug(char *message,double optional,char *optional2);
 double splt_u_get_double_pos(long split);
-int splt_u_create_directory(char *dir);
+int splt_u_create_directory(splt_state *state, char *dir);
+char *splt_u_strerror(splt_state *state, int error_code);
 
 #define MP3SPLT_UTILS_H
 

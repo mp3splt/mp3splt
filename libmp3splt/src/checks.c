@@ -127,7 +127,8 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
 /* path check */
 
 //checks if the filename path is correct
-void splt_check_if_new_filename_path_correct(char *new_filename_path, int *error)
+void splt_check_if_new_filename_path_correct(splt_state *state,
+    char *new_filename_path, int *error)
 {
   splt_u_print_debug("We check if the new filename path is correct ",0,new_filename_path);
 
@@ -146,6 +147,7 @@ void splt_check_if_new_filename_path_correct(char *new_filename_path, int *error
     //-1 means error
     if((status = stat(new_filename_path, &buffer)) == -1)
     {
+      splt_t_set_error_data(state,new_filename_path);
       *error = SPLT_ERROR_INCORRECT_PATH;
     }
     else
@@ -157,6 +159,7 @@ void splt_check_if_new_filename_path_correct(char *new_filename_path, int *error
       }
       else
       {
+        splt_t_set_error_data(state,new_filename_path);
         *error = SPLT_ERROR_INCORRECT_PATH;
       }
     }
@@ -356,6 +359,7 @@ void splt_check_file_type(splt_state *state, int *error)
   }
   if (! plugin_found)
   {
+    splt_t_set_error_data(state, filename);
     *error = SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE;
     splt_u_print_debug("No plugin found !",0,NULL);
 
@@ -370,6 +374,8 @@ void splt_check_file_type(splt_state *state, int *error)
     }
     else
     {
+      splt_t_set_error_data(state,filename);
+      splt_t_set_strerror_msg(state);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
@@ -419,7 +425,7 @@ int splt_check_is_file(char *fname)
 }
 
 //check if file1 = file2
-int splt_check_is_the_same_file(char *file1, char *file2, int *error)
+int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int *error)
 {
   //stdin
   if (file1[strlen(file1)-1] == '-')
@@ -436,6 +442,8 @@ int splt_check_is_the_same_file(char *file1, char *file2, int *error)
     FILE *file1_ = fopen(file1,"r");
     if (file1_ == NULL)
     {
+      splt_t_set_error_data(state,file1);
+      splt_t_set_strerror_msg(state);
       //error
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
       return SPLT_FALSE;
@@ -450,6 +458,8 @@ int splt_check_is_the_same_file(char *file1, char *file2, int *error)
         FILE *file2_ = fopen(file2,"r");
         if (file2_ == NULL)
         {
+          splt_t_set_error_data(state,file2);
+          splt_t_set_strerror_msg(state);
           //error
           *error = SPLT_ERROR_CANNOT_OPEN_FILE;
           return SPLT_FALSE;
@@ -468,12 +478,16 @@ int splt_check_is_the_same_file(char *file1, char *file2, int *error)
           //we get the file information for the file1
           if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file1_d), &handle_info_file1))
           {
+            splt_t_set_error_data(state,file1);
+            splt_t_set_strerror_msg(state);
             *error = SPLT_ERROR_CANNOT_OPEN_FILE;
             return SPLT_FALSE;
           }
           //we get the file information for the file2
           if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file2_d), &handle_info_file2))
           {
+            splt_t_set_error_data(state,file2);
+            splt_t_set_strerror_msg(state);
             *error = SPLT_ERROR_CANNOT_OPEN_FILE;
             return SPLT_FALSE;
           }
@@ -501,6 +515,8 @@ int splt_check_is_the_same_file(char *file1, char *file2, int *error)
           }
           else
           {
+            splt_t_set_error_data(state,file2);
+            splt_t_set_strerror_msg(state);
             //error
             *error = SPLT_ERROR_CANNOT_OPEN_FILE;
             return SPLT_FALSE;
@@ -510,6 +526,8 @@ int splt_check_is_the_same_file(char *file1, char *file2, int *error)
       }
       else
       {
+        splt_t_set_error_data(state,file1);
+        splt_t_set_strerror_msg(state);
         //error
         *error = SPLT_ERROR_CANNOT_OPEN_FILE;
         return SPLT_FALSE;

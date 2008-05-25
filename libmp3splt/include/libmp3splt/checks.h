@@ -43,8 +43,8 @@ void splt_check_if_splitpoints_in_order(splt_state *state,
 /****************************/
 /* path check */
 
-void splt_check_if_new_filename_path_correct(char *new_filename_path,
-    int *error);
+void splt_check_if_new_filename_path_correct(splt_state *state,
+    char *new_filename_path, int *error);
 char *splt_check_put_dir_of_cur_song(char *filename,
     char *the_filename_path);
 
@@ -59,8 +59,8 @@ void splt_check_set_correct_options(splt_state *state);
 
 void splt_check_file_type(splt_state *state, int *error);
 int splt_check_is_file(char *fname);
-int splt_check_is_the_same_file(char *file1, char *file2,
-    int *error);
+int splt_check_is_the_same_file(splt_state *state, char *file1,
+    char *file2, int *error);
 
 #define MP3SPLT_CHECKS_H
 

@@ -32,6 +32,7 @@
 
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 
 #include "splt.h"
 
@@ -274,6 +275,17 @@ void splt_t_free_state(splt_state *state)
     if (state->split.p_bar)
     {
       free(state->split.p_bar);
+    }
+    //free error messages strings
+    if (state->err.error_data)
+    {
+      free(state->err.error_data);
+      state->err.error_data = NULL;
+    }
+    if (state->err.strerror_msg)
+    {
+      free(state->err.strerror_msg);
+      state->err.strerror_msg = NULL;
     }
     //free our state
     splt_t_free_state_struct(state);
@@ -1861,8 +1873,36 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->options.parameter_offset = SPLT_DEFAULT_PARAM_OFFSET;
   state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
   state->options.split_time = 6000;
+  //error strings for error messages
+  state->err.error_data = NULL;
+  state->err.strerror_msg = NULL;
 
   state->options.tags_after_x_like_x_one = -1;
+}
+
+//sets the error data information
+void splt_t_set_error_data(splt_state *state, char *error_data)
+{
+  if (state->err.error_data)
+  {
+    free(state->err.error_data);
+    state->err.error_data = NULL;
+  }
+  state->err.error_data = malloc(sizeof(char) * (strlen(error_data) + 1));
+  snprintf(state->err.error_data,strlen(error_data)+1,"%s",error_data);
+}
+
+//sets the error string message (probably got with strerror(..)
+void splt_t_set_strerror_msg(splt_state *state)
+{
+  char *strerr = strerror(errno);
+  if (state->err.strerror_msg)
+  {
+    free(state->err.strerror_msg);
+    state->err.strerror_msg = NULL;
+  }
+  state->err.strerror_msg = malloc(sizeof(char) * (strlen(strerr) + 1));
+  snprintf(state->err.strerror_msg,strlen(strerr)+1,"%s",strerr);
 }
 
 //set an int option

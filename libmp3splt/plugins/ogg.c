@@ -748,6 +748,8 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state,int *error)
     return NULL;
   }
 
+  char *filename = splt_t_get_filename_to_split(state);
+
   oggstate->in = in;
   oggstate->end = 0;
 
@@ -756,6 +758,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state,int *error)
   {
     if(ov_open(oggstate->in, &oggstate->vf, NULL, 0) < 0)
     {
+      splt_t_set_error_data(state,filename);
       *error = SPLT_ERROR_INVALID;
       splt_ogg_v_free(oggstate);
       return NULL;
@@ -767,6 +770,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state,int *error)
   /* Read headers in, and save them */
   if(splt_ogg_process_headers(oggstate) == -1)
   {
+    splt_t_set_error_data(state,filename);
     *error = SPLT_ERROR_INVALID;
     splt_ogg_v_free(oggstate);
     return NULL;
@@ -1255,6 +1259,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
       }
       else
       {
+        splt_t_set_error_data(state,filename);
         splt_u_print_debug("Invalid ogg file in find_begin_cutpoint",0,NULL);
         *error = SPLT_ERROR_INVALID;
       }
@@ -1271,6 +1276,8 @@ void splt_ogg_split(char *filename, splt_state *state, double
   {
     if (!(oggstate->out=fopen(filename, "wb")))
     {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state,filename);
       *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
       return;
     }
@@ -1317,6 +1324,7 @@ void splt_ogg_split(char *filename, splt_state *state, double
     }
     else
     {
+      splt_t_set_error_data(state,filename);
       *error = SPLT_ERROR_INVALID;
       splt_u_print_debug("Invalid ogg file in find_end_cutpoint",0,NULL);
     }
@@ -1645,6 +1653,8 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 
   if ((file_input = fopen(filename, "rb")) == NULL)
   {
+    splt_t_set_error_data(state,filename);
+    splt_t_set_strerror_msg(state);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
   else
@@ -1691,6 +1701,8 @@ void splt_pl_init(splt_state *state, int *error)
   }
   else
   {
+    splt_t_set_error_data(state,filename);
+    splt_t_set_strerror_msg(state);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
 }
