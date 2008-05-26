@@ -1023,7 +1023,7 @@ function_end:
 }
 
 //gets the mp3 info and puts it in the state
-splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
+void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 {
   //checks if valid mp3 file
   //before last argument, if framemode or not
@@ -1034,7 +1034,7 @@ splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
   if ((*error < 0) || 
       (state->codec == NULL))
   {
-    return NULL;
+    return;
   }
   else
   {
@@ -1074,12 +1074,10 @@ splt_state *splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
       snprintf(total_time,256," - Total time: %dm.%02ds", minutes, seconds%60);
       //put all the infos together
       char all_infos[3072] = { '\0' };
-      snprintf(all_infos,3072,"%s%s%s\n",mpeg_infos,frame_mode_infos,total_time);
+      snprintf(all_infos,3071,"%s%s%s\n",mpeg_infos,frame_mode_infos,total_time);
       splt_t_put_message_to_client(state, all_infos);
     }
   }
-
-  return state;
 }
 
 /****************************/
@@ -2983,7 +2981,7 @@ void splt_mp3_init(splt_state *state, int *error)
     {
       splt_t_lock_messages(state);
     }
-    state = splt_mp3_get_info(state, file_input, error);
+    splt_mp3_get_info(state, file_input, error);
     splt_t_unlock_messages(state);
 
     if (*error >= 0)

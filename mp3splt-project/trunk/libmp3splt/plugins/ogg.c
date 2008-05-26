@@ -114,7 +114,7 @@ FILE *splt_ogg_open_file_read(char *filename)
 }
 
 //gets the mp3 info and puts it in the state
-splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
+void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
 {
   //checks if valid ogg file
   state->codec = splt_ogg_info(file_input, state, error);
@@ -123,7 +123,7 @@ splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
   if ((*error < 0) ||
       (state->codec == NULL))
   {
-    return NULL;
+    return;
   }
   else
   {
@@ -147,8 +147,6 @@ splt_state *splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
       splt_t_put_message_to_client(state, all_infos);
     }
   }
-
-  return state;
 }
 
 static char *splt_ogg_trackstring(int number)
