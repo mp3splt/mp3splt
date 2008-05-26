@@ -7,7 +7,7 @@ ERROR_MODE_MP3_FILE=all_concat.mp3
 ERROR_MODE_FILE=$(ERROR_MODE_MP3_FILE)
 
 VALGRIND=
-VALGRIND=valgrind --leak-check=yes
+#VALGRIND=valgrind --leak-check=yes
 MP3SPLT_PROG=$(VALGRIND) ./mp3splt
 
 MP3SPLT_FILE?=$(MP3_FILE)

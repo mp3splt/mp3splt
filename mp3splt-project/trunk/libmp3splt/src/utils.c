@@ -315,7 +315,7 @@ static char *splt_u_get_mins_secs_filename(char *filename,
           snprintf(fname,strlen(filename),"%s", filename);
           //we cut the extension of the original file
           char *temp = strrchr(fname,'.');
-          if (temp)
+          //if (temp)
           {
             *temp='\0';
           }
