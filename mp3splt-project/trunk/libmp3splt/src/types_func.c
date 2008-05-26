@@ -2751,7 +2751,8 @@ int splt_t_is_stdin(splt_state *state)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  if (filename[strlen(filename)-2] == '-')
+  if ((strcmp(filename,"-") == 0) ||
+      (filename[strlen(filename)-1] == '-'))
   {
     return SPLT_TRUE;
   }
