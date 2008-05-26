@@ -351,7 +351,7 @@ void splt_s_time_split(splt_state *state, int *error)
     int err = SPLT_OK;
 
     int temp_int = 
-      (int)floor(((state->split.total_time/100.0) /
+      (int)floor(((splt_t_get_total_time(state)/100.0) /
             (state->options.split_time))+1) + 1;
     splt_t_set_splitnumber(state,temp_int);
 
@@ -390,8 +390,13 @@ void splt_s_time_split(splt_state *state, int *error)
             //we put the splitpoints values in the state
             splt_t_set_splitpoint_value(state,
                 current_split,(long)(begin*100));
+            long end_splitpoint = end*100;
+            if (end_splitpoint > splt_t_get_total_time(state))
+            {
+              end_splitpoint = splt_t_get_total_time(state);
+            }
             splt_t_set_splitpoint_value(state,
-                current_split+1,(long)(end*100));
+                current_split+1,end_splitpoint);
             //we put the filename with mins_secs
             splt_u_set_complete_mins_secs_filename(state, &err);
           }
@@ -422,13 +427,12 @@ void splt_s_time_split(splt_state *state, int *error)
           //if no error for the split, put the splitted file
           if (*error >= 0)
           {
-            splt_t_put_splitted_file(state, 
-                final_fname);
+            splt_t_put_splitted_file(state, final_fname);
           }
 
           //set new splitpoints
-          begin=end;
-          end+= splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
+          begin = end;
+          end += splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
           tracks++;
 
           //get out if error
@@ -453,6 +457,7 @@ void splt_s_time_split(splt_state *state, int *error)
           *error = SPLT_SPLIT_CANCELLED;
           break;
         }
+
       } while (j++<tracks);
       err = SPLT_OK;
       if (*error >= 0 && err < 0)
