@@ -2582,7 +2582,11 @@ void splt_t_put_splitted_file(splt_state *state, char *filename)
       char *real_name_m3u_file = splt_u_cleanstring(m3u_file);
       char *path_of_split = splt_t_get_path_of_split(state);
       char *new_m3u_file = NULL;
-      int malloc_number = strlen(real_name_m3u_file)+strlen(path_of_split)+2;
+      int malloc_number = strlen(real_name_m3u_file)+2;
+      if (path_of_split)
+      {
+        malloc_number += strlen(path_of_split);
+      }
       if ((new_m3u_file = malloc(malloc_number)) != NULL)
       {
         snprintf(new_m3u_file,malloc_number,"%s%c%s",
@@ -2758,6 +2762,24 @@ int splt_t_is_stdin(splt_state *state)
   }
 
   return SPLT_FALSE;
+}
+
+//returns SPLT_TRUE if the output filename to split looks like STDOUT
+int splt_t_is_stdout(splt_state *state)
+{
+  char *oformat = splt_t_get_oformat(state);
+
+  if (oformat)
+  {
+    if ((strcmp(oformat,"-") == 0))
+    {
+      return SPLT_TRUE;
+    }
+    else
+    {
+      return SPLT_FALSE;
+    }
+  }
 }
 
 //frees an array of strings

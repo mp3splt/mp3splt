@@ -431,10 +431,14 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
   char *new_filename_path = splt_t_get_new_filename_path(state);
   int current_split = splt_t_get_current_split(state);
   char *output_fname = splt_t_get_splitpoint_name(state, current_split, error);
-  int malloc_number = strlen(output_fname)+ strlen(new_filename_path) + 10;
+  int malloc_number = strlen(new_filename_path) + 10;
+  if (output_fname)
+  {
+    malloc_number += strlen(output_fname);
+  }
 
   //if we don't output to stdout
-  if (strcmp(output_fname,"-") != 0)
+  if (output_fname && strcmp(output_fname,"-") != 0)
   {
     if ((output_fname_with_path = malloc(malloc_number)) != NULL)
     {
@@ -492,7 +496,14 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
   }
   else
   {
-    return strdup(output_fname);
+    if (output_fname)
+    {
+      return strdup(output_fname);
+    }
+    else
+    {
+      return strdup("-");
+    }
   }
 }
 
@@ -1018,6 +1029,12 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   else
   {
     ptre=s;
+  }
+
+  //if stdout, NOT ambigous
+  if (splt_t_is_stdout(state))
+  {
+    return SPLT_OUTPUT_FORMAT_OK;
   }
 
   if (ptre==NULL)
