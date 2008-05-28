@@ -1499,6 +1499,7 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
             break;
           case -1:
             eof = 1;
+            *error = SPLT_OK_SPLITTED_EOF;
             break;
         }
       } while (!finished);
