@@ -11,7 +11,7 @@ VALGRIND=
 MP3SPLT_PROG=$(VALGRIND) ./mp3splt
 
 MP3SPLT_FILE?=$(MP3_FILE)
-MP3_OR_OGG?=m-
+MP3_OR_OGG_STDIN?=m-
 MP3_OGG?=mp3
 CDDB_MP3SPLT_FILE?=$(CDDB_MP3_FILE)
 
@@ -39,7 +39,7 @@ DEBUG=
 all: all_tests
 
 #all_tests: install_libmp3splt clean normal_tests stdin_tests stdout_tests
-all_tests: install_libmp3splt clean stdout_tests
+all_tests: install_libmp3splt clean stdin_tests
 
 install_libmp3splt:
 	make -C ../trunk/libmp3splt install
@@ -104,27 +104,30 @@ all_stdin_tests:
 	@#normal : also verifies the -m option
 	echo && echo "normal split : " && cat $(MP3SPLT_FILE) | $(MP3SPLT_PROG) -m playlist.m3u -q $(DEBUG) -d $(NORMAL_SPLIT_OUTPUT_DIR) $(MP3_OR_OGG_STDIN) 0.2 1.3 2.4 EOF
 	#@#time : -t option
+	#NOT WORKING! BROKEN, BROKEN
 	echo && echo "time split : " && cat $(MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -d $(TIME_SPLIT_OUTPUT_DIR) -t 1.5 $(MP3_OR_OGG_STDIN) 
 	@#silence : -s option
 	#-unavailable in old mp3splt
-	echo && echo "silence split : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -d $(SILENCE_SPLIT_OUTPUT_DIR) -s $(MP3_OR_OGG_STDIN)
+	#echo && echo "silence split : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -d $(SILENCE_SPLIT_OUTPUT_DIR) -s $(MP3_OR_OGG_STDIN)
 	@#cddb : -c option
 	echo && echo "cddb split : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -c $(CDDB_FILE) -d $(CDDB_SPLIT_OUTPUT_DIR) $(MP3_OR_OGG_STDIN)
 	@#cue : -c option
 	echo && echo "cue split : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -c $(CUE_FILE) -d $(CUE_SPLIT_OUTPUT_DIR) $(MP3_OR_OGG_STDIN)
 	@#error split : -e option 
 	#-unavailable in old mp3splt
-	echo && echo "error split : " && cat $(ERROR_MODE_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -e -d $(ERROR_MODE_SPLIT_OUTPUT_DIR) $(MP3_OR_OGG_STDIN)
+	#echo && echo "error split : " && cat $(ERROR_MODE_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -e -d $(ERROR_MODE_SPLIT_OUTPUT_DIR) $(MP3_OR_OGG_STDIN)
 	@#dewrap : -w option
 	#-unavailable in old mp3splt
-	echo && echo "dewrap split : " && cat $(DEWRAP_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -w -d $(DEWRAP_FILE) $(MP3_OR_OGG_STDIN)
+	#echo && echo "dewrap split : " && cat $(DEWRAP_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -w -d $(DEWRAP_FILE) $(MP3_OR_OGG_STDIN)
 	@#list wrap files : -l option
-	echo && echo "-l option list wrap : " && cat $(DEWRAP_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -l $(MP3_OR_OGG_STDIN)
+	#-unavailable in old mp3splt
+	#echo && echo "-l option list wrap : " && cat $(DEWRAP_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -l $(MP3_OR_OGG_STDIN)
 	@#count how many silence points we have : -i option
-	echo && echo "-i option count silence : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -i $(MP3_OR_OGG_STDIN)
+	#-unavailable in old mp3splt
+	#echo && echo "-i option count silence : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -i $(MP3_OR_OGG_STDIN)
 	@#verifies the -a option
 	#-unavailable in old mp3splt
-	echo "" echo "-a option auto adjust : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -d $(AUTO_ADJUST_SPLIT_OUTPUT_DIR) -q -a -p th=-20 $(MP3_OR_OGG_STDIN) 0.0 1.43 5.0 9.0 12.30
+	#echo "" echo "-a option auto adjust : " && cat $(CDDB_MP3SPLT_FILE) | $(MP3SPLT_PROG) -d $(AUTO_ADJUST_SPLIT_OUTPUT_DIR) -q -a -p th=-20 $(MP3_OR_OGG_STDIN) 0.0 1.43 5.0 9.0 12.30
 	@#testing the -g option
 	echo && echo "-g option custom tags : " && cat $(MP3SPLT_FILE) | $(MP3SPLT_PROG) -q $(DEBUG) -g "[@t=jimmy,@a=wife_of_jimmy,@b=big show], \
 [@t=john,@a=wife_of_john,@b=small show],%%[@o,@a=default_artist]" \
@@ -159,6 +162,7 @@ all_stdout_tests:
 	#echo && echo "dewrap split : " && $(MP3SPLT_PROG) -q $(DEBUG) -w $(DEWRAP_FILE) -o - > $(WRAP_SPLIT_OUTPUT_DIR)/wrap_stdout.$(MP3_OGG)
 	@#list wrap files : -l option
 	#-unavailable
+	@#count how many silence points we have : -i option
 	echo && echo "-i option count silence : " && $(MP3SPLT_PROG) -q $(DEBUG) -i $(CDDB_MP3SPLT_FILE) -o -
 	@#verifies the -a option
 	echo "" echo "-a option auto adjust : " && $(MP3SPLT_PROG) -q -a -p th=-20 $(CDDB_MP3SPLT_FILE) 0.0 1.43 5.0 9.0 12.30 -o - > $(AUTO_ADJUST_SPLIT_OUTPUT_DIR)/auto_adj_stdout.$(MP3_OGG)
