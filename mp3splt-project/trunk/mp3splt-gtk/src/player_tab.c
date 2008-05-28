@@ -3028,8 +3028,7 @@ void file_chooser_ok_event(gchar *fname)
 void browse_button_event( GtkWidget *widget,
                           gpointer   data)
 {
-  gint *iii = (gint *) data;
-  gint i = *iii;
+  gint i = (gint) data;
   
   /* file chooser */
   GtkWidget *file_chooser;
