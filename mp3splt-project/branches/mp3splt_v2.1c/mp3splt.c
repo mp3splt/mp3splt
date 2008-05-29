@@ -982,10 +982,6 @@ int main (int argc, char *argv[]) {
 								break;
 					}
 
-          fprintf(stdout,"j = %d\n",j);
-          fprintf(stdout,"tracks = %d\n",tracks);
-          fflush(stdout);
-
 				}  while (j++<tracks);
 
 				if (!quietoption) {

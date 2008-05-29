@@ -305,57 +305,57 @@ void check_args(int argc, Options *opt, splt_state *state)
   }
   else
   {
-    //TODO
-    //-i option
-
     //if we want input not seekable (-k)
     if (opt->k_option)
     {
-      if (opt->s_option || opt->a_option ||
-          opt->e_option || opt->w_option)
+      if (opt->s_option || opt->w_option ||
+          opt->l_option || opt->e_option ||
+          opt->i_option || opt->a_option ||
+          opt->p_option)
       {
-        put_error_message_exit("Error: can't use -k option with\
-            -s -a -e -w -l (input must be seekable)",opt,state);
+        put_error_message_exit("Error: cannot use -k option (or STDIN) with"
+            " one of the following options : -s -w -l -e -i -a -p",opt,state);
       }
     }
 
     //if we dewrap (-w)
     if (opt->w_option)
     {
-      if (opt->l_option || opt->e_option ||
-          opt->f_option || opt->c_option ||
-          opt->t_option || opt->s_option ||
-          opt->a_option || opt->p_option ||
-          opt->o_option || opt->n_option ||
-          opt->g_option)
+      if (opt->t_option || opt->c_option ||
+          opt->s_option || opt->l_option ||
+          opt->e_option || opt->i_option ||
+          opt->f_option || opt->a_option ||
+          opt->p_option || opt->o_option ||
+          opt->g_option || opt->n_option)
       {
-        put_error_message_exit("Error: usage is 'mp3splt -w FILE...'",opt,state);
+        put_error_message_exit("Error: the -w option can only be used with -m, -d and -q",opt,state);
       }
     }
 
     //if we list wrapped files (-l)
     if (opt->l_option)
     {
-      if (opt->t_option || opt->s_option ||
-          opt->e_option || opt->f_option ||
-          opt->d_option || opt->p_option ||
-          opt->o_option || opt->c_option ||
-          opt->a_option || opt->g_option ||
+      if (opt->t_option || opt->c_option ||
+          opt->s_option || opt->e_option ||
+          opt->i_option || opt->m_option ||
+          opt->f_option || opt->a_option ||
+          opt->p_option || opt->o_option ||
+          opt->g_option || opt->d_option ||
           opt->n_option)
       {
-        put_error_message_exit("Error: usage is 'mp3splt -l FILE...'",opt,state);
+        put_error_message_exit("Error: the -l option can only be used with -q",opt,state);
       }
     }
 
     //error mode (-e)
     if (opt->e_option)
     {
-      if (opt->c_option || opt->t_option || 
-          opt->s_option || opt->a_option || 
-          opt->p_option || opt->f_option ||
-          opt->n_option)
+      if (opt->t_option || opt->c_option || 
+          opt->s_option || opt->i_option || 
+          opt->a_option || opt->p_option ||
+          opt->g_option || opt->n_option)
       {
-        put_error_message_exit("Error: usage is 'mp3splt -e FILE...'",opt,state);
+        put_error_message_exit("Error: the -e option can only be used with -m, -f, -o, -d, -q",opt,state);
       }
     }
 
@@ -368,80 +368,100 @@ void check_args(int argc, Options *opt, splt_state *state)
     if (opt->c_option)
     {
       if (opt->t_option || opt->s_option || 
-          opt->g_option)
+          opt->g_option || opt->i_option)
       {
-        put_error_message_exit("Error: usage is 'mp3splt -c \
-            SOURCE FILE...''",opt,state);
+        put_error_message_exit("Error: the -c option cannot be used with -t, -s, -g or -i",opt,state);
       }
     }
 
     //time split (-t)
     if (opt->t_option)
     {
-      if (opt->s_option || opt->e_option ||
-          opt->p_option)
+      if (opt->s_option || opt->i_option)
       {
-        put_error_message_exit("Error: usage is 'mp3splt -t TIME FILE...'",opt,state);
+        put_error_message_exit("Error: the -t option cannot be used with -s or -i",opt,state);
       }
     }
 
     //silence split (-s)
     if (opt->s_option)
     {
-      if (opt->e_option || opt->a_option)
+      if (opt->a_option || opt->i_option)
       {
-        put_error_message_exit("Error: usage is 'mp3splt \
-            -s [-p th=THRESHOLD,nt=NUMBER,off=OFFSET,rm] FILE...'",opt,state);
+        put_error_message_exit("Error: -s option cannot be used with -a or -i",opt,state);
       }
     }
 
     //auto adjust option (-a)
     if (opt->a_option)
     {
+      if (opt->i_option)
+      {
+        put_error_message_exit("Error: -a option cannot be used with -i",opt,state);
+      }
     }
 
     //parameters (-p)
     if (opt->p_option)
     {
-      if (!opt->a_option && !opt->s_option
-          && !opt->i_option)
+      if (!opt->a_option && !opt->s_option)
       {
-        put_error_message_exit("Error : cannot use '-p' without \
-            '-a' or '-s'",opt,state);
+        put_error_message_exit("Error : the -p option cannot be used without -a or -s",opt,state);
       }
     }
 
     //output format (-o)
     if (opt->o_option)
     {
+      if (opt->i_option)
+      {
+        put_error_message_exit("Error: the -o option cannot be used with -i",opt,state);
+      }
     }
 
     //custom tags (-g)
     if (opt->g_option)
     {
-      if (opt->n_option)
+      if (opt->i_option || opt->n_option)
       {
-        put_error_message_exit("Error: cannot use '-g' with '-n'",opt,state);
+        put_error_message_exit("Error: the -g option cannot be used with -n or -i",opt,state);
       }
     }
 
     //directory (-d)
     if (opt->d_option)
     {
-    }
-
-    //input not seekable (-k)
-    if (opt->k_option)
-    {
+      if (opt->i_option)
+      {
+        put_error_message_exit("Error: the -d option cannot be used with -i",opt,state);
+      }
     }
 
     //no tags (-n)
     if (opt->n_option)
     {
+      if (opt->i_option)
+      {
+        put_error_message_exit("Error: the -n option cannot be used with -i",opt,state);
+      }
+    }
+
+    //generate m3u file (-m)
+    if (opt->m_option)
+    {
+      if (opt->i_option)
+      {
+        put_error_message_exit("Error: the -m option cannot be used with -i",opt,state);
+      }
+    }
+
+    //count silence splitpoints (-i)
+    if (opt->i_option)
+    {
     }
 
     //quiet mode (-q)
-    if (opt->n_option)
+    if (opt->q_option)
     {
     }
   }
