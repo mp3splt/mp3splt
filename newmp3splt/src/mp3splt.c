@@ -417,6 +417,13 @@ void check_args(int argc, Options *opt, splt_state *state)
       {
         put_error_message_exit("Error: the -o option cannot be used with -i",opt,state);
       }
+      if (opt->output_format)
+      {
+        if ((strcmp(opt->output_format,"-") == 0) && (opt->m_option || opt->d_option))
+        {
+          put_error_message_exit("Error: cannot use '-o -' (STDOUT) with -m or -d",opt,state);
+        }
+      }
     }
 
     //custom tags (-g)
@@ -1436,8 +1443,7 @@ int main(int argc, char *argv[])
   {
     if (argc > 1)
     {
-      fprintf(console_err," error: \"%s\" - unrecognized argument for\
-          this type of split\n", argv[1]);
+      fprintf(console_err," error: \"%s\" - unrecognized argument for this type of split", argv[1]);
       //just exit
       put_error_message_exit("",opt,state);
     }

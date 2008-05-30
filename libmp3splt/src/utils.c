@@ -1725,7 +1725,11 @@ char *splt_u_strerror(splt_state *state, int error_code)
       break;
     //
     case SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE:
-      snprintf(error_msg,max_error_size, " error: unsupported feature");
+      ;
+      splt_plugins *pl = state->plug;
+      int current_plugin = splt_t_get_current_plugin(state);
+      snprintf(error_msg,max_error_size, " error: unsupported feature for the plugin '%s'",
+          pl->data[current_plugin].info.name);
       break;
   }
 
