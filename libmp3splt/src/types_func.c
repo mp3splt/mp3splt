@@ -622,7 +622,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
 {
   int error = SPLT_OK;
 
-  splt_u_print_debug("Appending splitpoint...",0,NULL);
+  splt_u_print_debug("Appending splitpoint...",split_value,name);
 
   if (split_value >= 0)
   {
@@ -2589,8 +2589,15 @@ void splt_t_put_splitted_file(splt_state *state, char *filename)
       }
       if ((new_m3u_file = malloc(malloc_number)) != NULL)
       {
-        snprintf(new_m3u_file,malloc_number,"%s%c%s",
-            path_of_split, SPLT_DIRCHAR,real_name_m3u_file);
+        if (path_of_split)
+        {
+          snprintf(new_m3u_file,malloc_number,"%s%c%s",
+              path_of_split, SPLT_DIRCHAR,real_name_m3u_file);
+        }
+        else
+        {
+          snprintf(new_m3u_file,malloc_number,"%s",real_name_m3u_file);
+        }
         //we open the m3u file
         FILE *file_input = NULL;
         if((file_input = fopen(new_m3u_file, "a+")))

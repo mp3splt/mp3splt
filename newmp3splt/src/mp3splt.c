@@ -367,10 +367,10 @@ void check_args(int argc, Options *opt, splt_state *state)
     //cddb/cue/freedb (-c)
     if (opt->c_option)
     {
-      if (opt->t_option || opt->s_option || 
-          opt->g_option || opt->i_option)
+      if (opt->t_option || opt->s_option ||
+          opt->i_option || opt->g_option)
       {
-        put_error_message_exit("Error: the -c option cannot be used with -t, -s, -g or -i",opt,state);
+        put_error_message_exit("Error: the -c option cannot be used with -t, -g, -s, or -i",opt,state);
       }
     }
 
@@ -404,9 +404,9 @@ void check_args(int argc, Options *opt, splt_state *state)
     //parameters (-p)
     if (opt->p_option)
     {
-      if (!opt->a_option && !opt->s_option)
+      if (!opt->a_option && !opt->s_option && !opt->i_option)
       {
-        put_error_message_exit("Error : the -p option cannot be used without -a or -s",opt,state);
+        put_error_message_exit("Error : the -p option cannot be used without -a, -s or -i",opt,state);
       }
     }
 
@@ -1552,11 +1552,21 @@ int main(int argc, char *argv[])
           {
             long hundr_of_seconds = c_hundreths(argv[i]);
 
-            //we put the splitpoints
-            err = mp3splt_append_splitpoint(state,
-                hundr_of_seconds, 
-                NULL);
-            print_confirmation_error(err,opt,state);
+            if (hundr_of_seconds == -1)
+            {
+              fprintf(console_err," Error converting argument '%s' to time !\n",argv[i]);
+              fprintf(console_err," The TIME argument must have the format \'min.sec[.0-99]\'.\n");
+              fprintf(console_err," The 'sec' part has to be between 0 and (including) 59.");
+              fprintf(console_err," The 'min' part can be over 59\n");
+              fflush(console_err);
+              goto end;
+            }
+            else
+            {
+              //we put the splitpoints
+              err = mp3splt_append_splitpoint(state, hundr_of_seconds, NULL);
+              print_confirmation_error(err,opt,state);
+            }
           }
         }
       }
@@ -1599,6 +1609,7 @@ int main(int argc, char *argv[])
       }
     }
 
+end:
   //we free left variables in the state
   mp3splt_free_state(state,&err);
   //we free the options
