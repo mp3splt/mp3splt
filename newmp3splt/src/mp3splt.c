@@ -133,7 +133,7 @@ void show_small_help_exit(Options *opt,splt_state *state)
   fprintf(console_out,
       "\n"
       "USAGE (Please read man page for complete documentation)\n"
-      "      mp3splt [SPLIT_MODE] [OPTIONS] FILE [BEGIN_TIME1] [TIME2] ... [END_TIME]\n"
+      "      mp3splt [SPLIT_MODE] [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME1] [TIME2] ... [END_TIME]\n"
       "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59. \n"
       "\nSPLIT_MODE\n"
       "\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n"
@@ -1416,196 +1416,217 @@ int main(int argc, char *argv[])
   }
   file_arg_position = i;
 
-  err = SPLT_OK;
-  //we put the filename
-  err = mp3splt_set_filename_to_split(state,argv[file_arg_position]);
-  print_confirmation_error(err,opt,state);
-
-  //if error
-  if (err != SPLT_OK)
+  //if we have a normal split, we need to parse the splitpoints
+  int normal_split = SPLT_FALSE;
+  if (!opt->l_option && !opt->i_option && !opt->c_option &&
+      !opt->e_option && !opt->t_option && !opt->w_option &&
+      !opt->s_option)
   {
-    //just exit
-    put_error_message_exit("",opt,state);
+    normal_split = SPLT_TRUE;
   }
 
-  //we remove the filename from the arguments
-  argv = rmopt2(argv, file_arg_position, argc);
-  argc--;
-
-  //here we have all the trash or the splitpoints from
-  //argv[1] to argv[argc-1] and argv[0] = program_command
-
-  //just don't put incompatible options!, rtfm
-  if (opt->l_option || opt->i_option || opt->c_option ||
-      opt->e_option || opt->t_option || opt->w_option ||
-      opt->s_option)
+  //for all the remained arguments, consider as files
+  while (argc > 1)
   {
-    if (argc > 1)
+    err = SPLT_OK;
+    fprintf(console_out," Processing file '%s' ...\n",argv[file_arg_position]);
+    fflush(console_out);
+    //we put the filename
+    err = mp3splt_set_filename_to_split(state,argv[file_arg_position]);
+    print_confirmation_error(err,opt,state);
+
+    //if error
+    if (err != SPLT_OK)
     {
-      fprintf(console_err," error: \"%s\" - unrecognized argument for this type of split", argv[1]);
       //just exit
       put_error_message_exit("",opt,state);
     }
-  }
 
-  //if we list wrap files
-  if (opt->l_option)
-  {
-    //if no error when putting the filename to split
-    if (err >= 0)
+    //we remove the filename from the arguments
+    argv = rmopt2(argv, file_arg_position, argc);
+    argc--;
+
+    //here we have all the trash or the splitpoints from
+    //argv[1] to argv[argc-1] and argv[0] = program_command
+
+    //if we list wrap files
+    if (opt->l_option)
     {
-      splt_wrap *wrap_files;
-      wrap_files = mp3splt_get_wrap_files(state,&err);
-
-      //if no error when getting the wrap files
+      //if no error when putting the filename to split
       if (err >= 0)
       {
-        int wrap_files_number = wrap_files->wrap_files_num;
-        int i = 0;
-        fprintf(console_out,"\n");
-        for (i = 0;i < wrap_files_number;i++)
-        {
-          fprintf(console_out,"%s\n",wrap_files->wrap_files[i]);
-        }
-        fprintf(console_out,"\n");
-        fflush(console_out);
-      }
-      else
-      {
-        print_confirmation_error(err,opt,state);
-      }
-    }
-  }
-  else
-    //count how many silence splitpoints we have
-    //if we count how many silence splitpoints
-    if (opt->i_option)
-    {
-      err = SPLT_OK;
+        splt_wrap *wrap_files;
+        wrap_files = mp3splt_get_wrap_files(state,&err);
 
-      int silence_number =
-        mp3splt_count_silence_points(state, &err);
-      print_confirmation_error(err,opt,state);
-
-      if (err >= 0)
-      {
-        fprintf(console_out,"%d silence splitpoints detected"
-            "            \n",
-            silence_number);
-        fflush(console_out);
-      }
-    }
-    else
-      //if we don't list wrapped files and we don't count silence files
-    {
-      //if we have cddb option
-      if (opt->c_option)
-      {
-        //we get the filename
-        if ((strstr(opt->cddb_arg, ".cue")!=NULL)||
-            (strstr(opt->cddb_arg, ".CUE")!=NULL))
+        //if no error when getting the wrap files
+        if (err >= 0)
         {
-          //we have the cue filename in cddb_arg
-          //here we get cue splitpoints
-          mp3splt_put_cue_splitpoints_from_file(state, opt->cddb_arg,
-              &err);
-          print_confirmation_error(err,opt,state);
+          int wrap_files_number = wrap_files->wrap_files_num;
+          int i = 0;
+          fprintf(console_out,"\n");
+          for (i = 0;i < wrap_files_number;i++)
+          {
+            fprintf(console_out,"%s\n",wrap_files->wrap_files[i]);
+          }
+          fprintf(console_out,"\n");
+          fflush(console_out);
         }
         else
         {
-          //if we have a freedb search
-          if ((strcmp(opt->cddb_arg, "query")==0)
-              ||(strstr(opt->cddb_arg,"query[") == opt->cddb_arg))
-          {
-            int ambigous = parse_query_arg(opt,opt->cddb_arg);
-            if (ambigous)
-            {
-              print_warning("freedb server format ambigous !");
-            }
-            do_freedb_search(opt,state,&err);
-          }
-          else
-            //here we have cddb file
-          {
-            mp3splt_put_cddb_splitpoints_from_file(state,
-                opt->cddb_arg, &err);
-            print_confirmation_error(err,opt,state);
-          }
+          print_confirmation_error(err,opt,state);
         }
       }
-      else
-        //if we have a normal split (includes time split,
-        //error mode split, silence split)
+    }
+    else
+      //count how many silence splitpoints we have
+      //if we count how many silence splitpoints
+      if (opt->i_option)
       {
-        for (i=1;i<argc; i++)
-        {
-          //we manage the EOF keyword
-          if (strcmp(argv[i],"EOF") == 0)
-          {
-            //we put the splitpoints
-            err = mp3splt_append_splitpoint(state, LONG_MAX, NULL);
-            print_confirmation_error(err,opt,state);
-          }
-          else
-          {
-            long hundr_of_seconds = c_hundreths(argv[i]);
+        err = SPLT_OK;
 
-            if (hundr_of_seconds == -1)
-            {
-              fprintf(console_err," Error converting argument '%s' to time !\n",argv[i]);
-              fprintf(console_err," The TIME argument must have the format \'min.sec[.0-99]\'.\n");
-              fprintf(console_err," The 'sec' part has to be between 0 and (including) 59.");
-              fprintf(console_err," The 'min' part can be over 59\n");
-              fflush(console_err);
-              goto end;
-            }
-            else
-            {
-              //we put the splitpoints
-              err = mp3splt_append_splitpoint(state, hundr_of_seconds, NULL);
-              print_confirmation_error(err,opt,state);
-            }
-          }
-        }
-      }
-
-      //if no error
-      if (err >= 0)
-      {
-        //we set the path of split
-        err = mp3splt_set_path_of_split(state, opt->dir_arg);
+        int silence_number = mp3splt_count_silence_points(state, &err);
         print_confirmation_error(err,opt,state);
 
         if (err >= 0)
         {
-          //if custom tags, we put the tags
-          if(mp3splt_put_tags_from_string(state,opt->custom_tags))
+          fprintf(console_out,"%d silence splitpoints detected"
+              "            \n",
+              silence_number);
+          fflush(console_out);
+        }
+      }
+      else
+        //if we don't list wrapped files and we don't count silence files
+      {
+        //if we have cddb option
+        if (opt->c_option)
+        {
+          //we get the filename
+          if ((strstr(opt->cddb_arg, ".cue")!=NULL)||
+              (strstr(opt->cddb_arg, ".CUE")!=NULL))
           {
-            print_warning("tags format ambigous !");
+            //we have the cue filename in cddb_arg
+            //here we get cue splitpoints
+            mp3splt_put_cue_splitpoints_from_file(state, opt->cddb_arg,
+                &err);
+            print_confirmation_error(err,opt,state);
           }
+          else
+          {
+            //if we have a freedb search
+            if ((strcmp(opt->cddb_arg, "query")==0)
+                ||(strstr(opt->cddb_arg,"query[") == opt->cddb_arg))
+            {
+              int ambigous = parse_query_arg(opt,opt->cddb_arg);
+              if (ambigous)
+              {
+                print_warning("freedb server format ambigous !");
+              }
+              do_freedb_search(opt,state,&err);
+            }
+            else
+              //here we have cddb file
+            {
+              mp3splt_put_cddb_splitpoints_from_file(state,
+                  opt->cddb_arg, &err);
+              print_confirmation_error(err,opt,state);
+            }
+          }
+        }
+        else
+        //if we have a normal split, then parse splitpoints
+        {
+          if (normal_split)
+          {
 
-          //we do the effective split
-          err = mp3splt_split(state);
+            for (i=1;i<argc; i++)
+            {
+              //we manage the EOF keyword
+              if (strcmp(argv[i],"EOF") == 0)
+              {
+                //we put the splitpoints
+                err = mp3splt_append_splitpoint(state, LONG_MAX, NULL);
+                print_confirmation_error(err,opt,state);
+              }
+              else
+              {
+                long hundr_of_seconds = c_hundreths(argv[i]);
+
+                if (hundr_of_seconds == -1)
+                {
+                  fprintf(console_err," Error converting argument '%s' to time !\n",argv[i]);
+                  fprintf(console_err," The TIME argument must have the format \'min.sec[.0-99]\'.\n");
+                  fprintf(console_err," The 'sec' part has to be between 0 and (including) 59.");
+                  fprintf(console_err," The 'min' part can be over 59\n");
+                  fflush(console_err);
+                  goto end;
+                }
+                else
+                {
+                  //we put the splitpoints
+                  err = mp3splt_append_splitpoint(state, hundr_of_seconds, NULL);
+                  print_confirmation_error(err,opt,state);
+                }
+              }
+            }
+            //this is important in order to get out the while loop
+            argc = 1;
+          }
+        }
+
+        //if no error
+        if (err >= 0)
+        {
+          //we set the path of split
+          err = mp3splt_set_path_of_split(state, opt->dir_arg);
           print_confirmation_error(err,opt,state);
 
-          //if cddb split, put message at the end
-          if (opt->c_option && err >= 0 && !opt->q_option)
+          if (err >= 0)
           {
-            print_message("\n +-----------------------------------------------------------------------------+\n\
- |NOTE: When you use cddb/cue, splitted files might be not very precise due to:|\n\
- |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n\
- |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n\
- |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n\
- |3) Encoders might add some padding frames so  that  file is longer than CD.  |\n\
- |4) There are several entries of the same cd on CDDB, find the best for yours.|\n\
- |   Usually you can find the correct splitpoints for your mp3, so good luck!  |\n\
- +-----------------------------------------------------------------------------+\n\
- | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n\
- +-----------------------------------------------------------------------------+\n");
+            //if custom tags, we put the tags
+            if(mp3splt_put_tags_from_string(state,opt->custom_tags))
+            {
+              print_warning("tags format ambigous !");
+            }
+
+            //we do the effective split
+            err = mp3splt_split(state);
+            print_confirmation_error(err,opt,state);
+
+            //if cddb split, put message at the end
+            if (opt->c_option && err >= 0 && !opt->q_option)
+            {
+              print_message("\n +-----------------------------------------------------------------------------+\n\
+                  |NOTE: When you use cddb/cue, splitted files might be not very precise due to:|\n\
+                  |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n\
+                |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n\
+                |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n\
+                |3) Encoders might add some padding frames so  that  file is longer than CD.  |\n\
+                |4) There are several entries of the same cd on CDDB, find the best for yours.|\n\
+                |   Usually you can find the correct splitpoints for your mp3, so good luck!  |\n\
+                +-----------------------------------------------------------------------------+\n\
+                | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n\
+                +-----------------------------------------------------------------------------+\n");
+            }
           }
         }
       }
+
+    //go to the next file
+    if (argc > 1)
+    {
+      fprintf(stdout,"\n");
+      fflush(stdout);
     }
+    //erase the previous splitpoints
+    err = SPLT_OK;
+    mp3splt_erase_all_splitpoints(state,&err);
+    print_confirmation_error(err,opt,state);
+    if (err < 0)
+    {
+      break;
+    }
+  }
 
 end:
   //we free left variables in the state
