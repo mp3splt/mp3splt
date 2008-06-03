@@ -253,17 +253,16 @@ static char *splt_u_get_mins_secs_filename(char *filename,
   char *fname = NULL, *fname2 = NULL;
   int fname2_malloc_number = 0,fname_malloc_number = 0;
 
-  fname2_malloc_number = fname_malloc_number = 
-    strlen(filename) + 256;
+  fname2_malloc_number = fname_malloc_number = strlen(filename) + 256;
 
   long old_split_end = split_end;
 
-  if((fname = calloc(fname_malloc_number*sizeof(char),1))
-      != NULL)
+  if((fname = malloc(fname_malloc_number*sizeof(char))) != NULL)
   {
-    if((fname2 = calloc(fname2_malloc_number*sizeof(char),1))
-        != NULL)
+    memset(fname,'\0',fname_malloc_number*sizeof(char));
+    if((fname2 = malloc(fname2_malloc_number*sizeof(char))) != NULL)
     {
+      memset(fname2,'\0',fname2_malloc_number*sizeof(char));
       //hundreds of seconds
       snprintf(hundr_secs_char,16, "%ld", split_begin % 100);
       snprintf(hundr_secs_char2,16, "%ld", split_end % 100);
@@ -282,7 +281,7 @@ static char *splt_u_get_mins_secs_filename(char *filename,
       {
         if (points[i].name != NULL)
         {
-          char temp[3];
+          char temp[3] = { '\0' };
           //transform " " to "\ "
           int j;
           for (j = 0; j < strlen(points[i].name); j++)
@@ -388,6 +387,7 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
   fname = splt_u_get_mins_secs_filename(filename3, state,
       split_begin, split_end,
       current_split,error);
+
   //free memory
   if (filename2)
   {
