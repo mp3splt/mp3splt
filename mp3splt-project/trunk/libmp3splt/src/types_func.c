@@ -1888,8 +1888,11 @@ void splt_t_set_error_data(splt_state *state, char *error_data)
     free(state->err.error_data);
     state->err.error_data = NULL;
   }
-  state->err.error_data = malloc(sizeof(char) * (strlen(error_data) + 1));
-  snprintf(state->err.error_data,strlen(error_data)+1,"%s",error_data);
+  if (error_data)
+  {
+    state->err.error_data = malloc(sizeof(char) * (strlen(error_data) + 1));
+    snprintf(state->err.error_data,strlen(error_data)+1,"%s",error_data);
+  }
 }
 
 //sets the error string message (probably got with strerror(..)
@@ -2762,10 +2765,13 @@ int splt_t_is_stdin(splt_state *state)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  if ((strcmp(filename,"-") == 0) ||
-      (filename[strlen(filename)-1] == '-'))
+  if (filename)
   {
-    return SPLT_TRUE;
+    if ((strcmp(filename,"-") == 0) ||
+        (filename[strlen(filename)-1] == '-'))
+    {
+      return SPLT_TRUE;
+    }
   }
 
   return SPLT_FALSE;

@@ -1103,8 +1103,7 @@ void put_progress_bar(splt_progress *p_bar)
   char printed_value[2048] = "";
   //we update the progress
   snprintf(printed_value,2047," [ %.2f %%] %s",
-      p_bar->percent_progress * 100,
-      progress_text);
+      p_bar->percent_progress * 100, progress_text);
 
   //we put necessary spaces
   char temp[2048] = "";
@@ -1529,8 +1528,7 @@ int main(int argc, char *argv[])
             //here we have cddb file
           {
             mp3splt_put_cddb_splitpoints_from_file(state,
-                opt->cddb_arg,
-                &err);
+                opt->cddb_arg, &err);
             print_confirmation_error(err,opt,state);
           }
         }

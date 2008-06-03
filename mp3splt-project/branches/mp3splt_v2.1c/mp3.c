@@ -491,7 +491,9 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 						state->data_len = 0;
 					}
 					if ((end_c > 0) && (time > end_c))
+          {
 						finished = 1;
+          }
 					if (eof || finished)
 					{
 						finished = 1;

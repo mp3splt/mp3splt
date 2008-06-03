@@ -168,7 +168,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
     }
 
     //if no error
-    if (*error >= 0)
+    if (*error >= 0 && err >= 0)
     {
       //we put the number of sync errors
       splt_t_set_splitnumber(state, state->serrors->serrors_points_num - 1);
@@ -239,6 +239,13 @@ void splt_s_multiple_split(splt_state *state, int *error)
         }
       }
     }
+    else
+    {
+      if (err < 0)
+      {
+        *error = err;
+      }
+    }
 
 bloc_end:
     if (final_fname)
@@ -291,14 +298,21 @@ bloc_end:
           {
             //if we have no filename, we put
             //option mins secs
-            if ((temp_name == NULL)
-                || (temp_name[0] == '\0'))
+            if ((temp_name == NULL) || (temp_name[0] == '\0'))
             {
               splt_t_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
                   SPLT_OUTPUT_MINS_SECS);
             }
 
             splt_s_split(state, error);
+
+            //get out if error
+            if ((*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)||
+                (*error==SPLT_ERROR_INVALID)||
+                (*error==SPLT_OK_SPLITTED_EOF))
+            {
+              break;
+            }
           }
           else
           {
@@ -309,11 +323,6 @@ bloc_end:
         {
           *error = SPLT_SPLIT_CANCELLED;
         }
-      }
-      err = SPLT_OK;
-      if (*error >= 0 && err < 0)
-      {
-        *error = err;
       }
     }
     else
@@ -459,11 +468,6 @@ void splt_s_time_split(splt_state *state, int *error)
         }
 
       } while (j++<tracks);
-      err = SPLT_OK;
-      if (*error >= 0 && err < 0)
-      {
-        *error = err;
-      }
     }
 
     //free memory

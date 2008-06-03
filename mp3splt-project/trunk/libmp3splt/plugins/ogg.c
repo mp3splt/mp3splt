@@ -120,8 +120,7 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
   state->codec = splt_ogg_info(file_input, state, error);
 
   //if error
-  if ((*error < 0) ||
-      (state->codec == NULL))
+  if ((*error < 0) || (state->codec == NULL))
   {
     return;
   }
@@ -316,7 +315,8 @@ static void splt_ogg_v_free(splt_ogg_state *oggstate)
       vorbis_dsp_clear(oggstate->vd);
       free(oggstate->vd);
     }
-    if(oggstate->stream_in)
+    //only free the input if different from stdin
+    if(oggstate->stream_in && oggstate->in != stdin)
     {
       ogg_stream_clear(oggstate->stream_in);
       free(oggstate->stream_in);
@@ -1571,15 +1571,14 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
         {
           eos = 1;
         }
-        splt_t_update_progress(state,(float)pos,
+        splt_t_update_progress(state,(float)pos * 100,
             (float)(oggstate->len),
             1,0,SPLT_DEFAULT_PROGRESS_RATE2);
       }
       else
       {
         splt_t_update_progress(state,(float)begin,
-            (float)end,
-            2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
+            (float)end, 2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
       }
     }
   }
