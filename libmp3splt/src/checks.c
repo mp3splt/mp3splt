@@ -382,7 +382,9 @@ void splt_check_file_type(splt_state *state, int *error)
   else
   {
     char *temp = splt_p_get_name(state,&err);
-    splt_u_print_debug("plugin found : ",0,temp);
+    char infos[2048] = { '\0' };
+    snprintf(infos,2047," info: file matches the plugin '%s'\n",temp);
+    splt_t_put_message_to_client(state, infos);
   }
 }
 
@@ -392,10 +394,13 @@ int splt_check_is_file(char *fname)
   struct stat buffer;
   int         status;
 
-  //stdin : consider as file
-  if (fname[strlen(fname)-1] == '-')
+  if (fname)
   {
-    return SPLT_TRUE;
+    //stdin : consider as file
+    if (fname[strlen(fname)-1] == '-')
+    {
+      return SPLT_TRUE;
+    }
   }
 
   if (fname == NULL)

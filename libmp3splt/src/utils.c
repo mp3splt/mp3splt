@@ -1593,7 +1593,7 @@ char *splt_u_strerror(splt_state *state, int error_code)
       break;
     //
     case SPLT_OK_SPLITTED_EOF :
-      snprintf(error_msg,max_error_size," file splitted");
+      snprintf(error_msg,max_error_size," file splitted (EOF)");
       break;
     case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
       snprintf(error_msg,max_error_size, " no silence splitpoints found");

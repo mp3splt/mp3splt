@@ -1502,6 +1502,7 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
             *error = SPLT_OK_SPLITTED_EOF;
             break;
         }
+
       } while (!finished);
     }
     //if we don't have the framemode
