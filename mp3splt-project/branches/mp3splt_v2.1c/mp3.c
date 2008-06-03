@@ -265,7 +265,7 @@ int get_valid_frame(mp3_state *state)
 				return -1;
 			if (state->stream.error == MAD_ERROR_LOSTSYNC)
 			{
-        state->syncerrors++;
+				state->syncerrors++;
 				if ((state->syncdetect)&&(state->syncerrors>MAXSYNC))
 					checksync(state);
 			}
@@ -491,9 +491,7 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 						state->data_len = 0;
 					}
 					if ((end_c > 0) && (time > end_c))
-          {
 						finished = 1;
-          }
 					if (eof || finished)
 					{
 						finished = 1;
@@ -710,9 +708,7 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 				}
 			}
 			else
-      {
 				begin = state->end;
-      }
 
 			if (state->mp3file.len > 0)
 				if (begin >= state->mp3file.len) // If we can check, we just do that :)
@@ -738,7 +734,6 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 						adjust = (unsigned long) (adjustoption * state->mp3file.fps);
 					fend += adjust;
 					end = findhead(state, end);
-
 					ssplit_free(&state->silence_list);
 					adjust=0;
 				}
