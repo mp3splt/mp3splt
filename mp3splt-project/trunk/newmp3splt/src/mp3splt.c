@@ -136,18 +136,21 @@ void show_small_help_exit(Options *opt,splt_state *state)
       "      mp3splt [SPLIT_MODE] [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME1] [TIME2] ... [END_TIME]\n"
       "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59. \n"
       "\nSPLIT_MODE\n"
-      "\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n"
+      //"\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n"
       " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
       " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n"
       "      .cddb or .cue file or from Internet (\"query\"). Use -a to auto-adjust.\n"
+      "      \n"
       " -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n"
       " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
       " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
       " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)\n"
       " -i   Count how many silence splitpoints we have with silence detection\n"
       "      (Use -p for arguments)\n"
+      " -v   Prints current version and exits\n"
+      " -h   Shows this help\n"
       "\nOPTIONS\n"
-      " -m + M3U_FILE: Creates a m3u file with the newly splitted files\n"
+      " -m + M3U_FILE: Appends to the specified m3u file the splitted filenames.\n"
       " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
       " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n"
       " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
@@ -1162,13 +1165,33 @@ Options *new_options()
   return opt;
 }
 
-//output package, version and authors
-void print_package_version_authors()
+void print_version(FILE *std)
 {
-  fprintf(console_err, PACKAGE_NAME" version "VERSION", released on "MP3SPLT_DATE", by \n");
-  fprintf(console_err, MP3SPLT_AUTHOR1" "MP3SPLT_EMAIL1"\n"MP3SPLT_AUTHOR2" "MP3SPLT_EMAIL2"\n");
-  fprintf(console_err, "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n");
-  fflush(console_err);
+  char version[128] = { '\0' };
+  mp3splt_get_version(version);
+  fprintf(std, PACKAGE_NAME" "VERSION" ("MP3SPLT_DATE") -"
+      " using libmp3splt %s\n",version);
+  fflush(std);
+}
+
+void print_authors(FILE *std)
+{
+  fprintf(std, "\t"MP3SPLT_AUTHOR1" "MP3SPLT_EMAIL1"\n\t"MP3SPLT_AUTHOR2" "MP3SPLT_EMAIL2"\n");
+  fflush(std);
+}
+
+void print_no_warranty(FILE *std)
+{
+  fprintf(std, "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n");
+  fflush(std);
+}
+
+//output package, version and authors
+void print_version_authors(FILE *std)
+{
+  print_version(std);
+  print_authors(std);
+  print_no_warranty(std);
 }
 
 //main program starts here
@@ -1208,7 +1231,7 @@ int main(int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option=getopt(argc, argv, "m:SDVifkwleqnasc:d:o:t:p:g:h"))!=-1)
+  while ((option=getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:h"))!=-1)
   {
     switch (option)
     {
@@ -1219,9 +1242,11 @@ int main(int argc, char *argv[])
         mp3splt_set_int_option(state, SPLT_OPT_DEBUG_MODE,
             SPLT_TRUE);
         break;
-      case 'V':
-        //output package, version and authors
-        print_package_version_authors();
+      case 'v':
+        print_version(console_out); 
+        fprintf(console_out,"\n");
+        fflush(console_out);
+        print_authors(console_out);
         //free variables
         free(opt);
         mp3splt_free_state(state,&err);
@@ -1330,7 +1355,7 @@ int main(int argc, char *argv[])
         opt->g_option = SPLT_TRUE;
         break;
       default:
-        put_error_message_exit("Read man page for complete documentation",opt,state);
+        put_error_message_exit("Read man page for documentation or type 'mp3splt -h'.",opt,state);
         break;
     }
   }
@@ -1385,7 +1410,7 @@ int main(int argc, char *argv[])
   //if quiet, does not write authors and other
   if (!opt->q_option)
   {
-    print_package_version_authors();
+    print_version_authors(console_err);
   }
 
   if (opt->o_option)

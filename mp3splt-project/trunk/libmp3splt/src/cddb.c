@@ -208,20 +208,34 @@ static int splt_cue_set_value(splt_state *state, char *file, char *in,
 {
   int error = SPLT_OK;
 
-  char *ptr_b = NULL, *ptr_e = NULL;
-  ptr_b = strchr(in, '"');
-  if (ptr_b==NULL)
+  char *ptr_b = in, *ptr_e = NULL;
+
+  //-find begin
+  //while we don't have spaces any more
+  while (*ptr_b == ' ')
   {
-    splt_t_set_error_data(state,file);
-    return SPLT_INVALID_CUE_FILE;
+    ptr_b++;
   }
-  ptr_e = strchr(ptr_b+1, '"');
-  if (ptr_e==NULL)
+  //if we have a '"', then skip quote
+  if (*ptr_b == '"')
   {
-    splt_t_set_error_data(state,file);
-    return SPLT_INVALID_CUE_FILE;
+    ptr_b++;
   }
-  *ptr_e='\0';
+  
+  //-find and and put '\0'
+  //go to the end of line
+  ptr_e = strchr(ptr_b+1,'\n');
+  //move back ignoring spaces
+  while (*ptr_e == ' ')
+  {
+    ptr_e--;
+  }
+  //if we have a '"', then skip quote
+  if (*ptr_e == '"')
+  {
+    ptr_e--;
+  }
+  *ptr_e = '\0';
 
   char *out = NULL;
   if ((out = malloc(strlen(ptr_b)+1)) == NULL)
@@ -270,8 +284,7 @@ end:
 //error = possible error that we return
 //gets the cue splitpoints from a file and puts them in the state
 //returns the number of tracks found
-int splt_cue_put_splitpoints(char *file, splt_state *state, 
-                             int *error)
+int splt_cue_put_splitpoints(char *file, splt_state *state, int *error)
 {
   //clear previous splitpoints
   splt_t_free_splitpoints_tags(state);
@@ -329,33 +342,41 @@ int splt_cue_put_splitpoints(char *file, splt_state *state,
       //put pointer at the beginning of the file
       if (fseek(file_input, 0, SEEK_SET) == 0)
         {
+          //contains the start of the content of the line;
+          //-for example for the '      PERFORMER abcd' line,
+          //it will point to ' abcd'
+          char *line_content = NULL;
+
           //we read the file line by line
           while (fgets(line, 1024, file_input)!=NULL)
             {
               type = SPLT_CUE_NOTHING;
-              
-              //we read strings from file TRACK,TITLE,AUDIO,PERFORMER,
-              //INDEX
-              if ((strstr(line, "TRACK")!=NULL)&&(strstr(line, "AUDIO")!=NULL))
+
+              //we read strings from file TRACK,TITLE,AUDIO,PERFORMER,INDEX
+              if (((line_content = strstr(line, "TRACK"))!=NULL)
+                  && (strstr(line, "AUDIO")!=NULL))
                 {
+                  line_content += 5;
                   type = SPLT_CUE_TRACK;
                 }
-              else if (strstr(line, "TITLE")!=NULL)
+              else if ((line_content = strstr(line, "TITLE")) != NULL)
                 {
+                  line_content += 5;
                   type = SPLT_CUE_TITLE;
                 }
-              else if (strstr(line, "PERFORMER")!=NULL)
+              else if ((line_content = strstr(line, "PERFORMER")) != NULL)
                 {
                   type = SPLT_CUE_PERFORMER;
+                  line_content += 9;
                 }
               else if ((ptr=strstr(line, "INDEX 01"))!=NULL)
                 {
                   type = SPLT_CUE_INDEX;
                 }
-              
+
               //we clean previous data
               splt_t_clean_one_split_data(state, tracks);
-              
+
               //we analyse the previous strings found
               switch (type)
                 {
@@ -385,8 +406,8 @@ int splt_cue_put_splitpoints(char *file, splt_state *state,
                 case SPLT_CUE_TITLE:
                   if (tracks == -1)
                     {
-                      if ((temp_error = splt_cue_set_value(state, file, line, 0, SPLT_TAGS_ALBUM)) 
-                          != SPLT_OK)
+                      if ((temp_error = splt_cue_set_value(state, file, line_content, 
+                              0, SPLT_TAGS_ALBUM)) != SPLT_OK)
                         {
                           *error = temp_error;
                           goto function_end;
@@ -396,8 +417,8 @@ int splt_cue_put_splitpoints(char *file, splt_state *state,
                     {
                       if (tracks > 0)
                         {
-                          if ((temp_error = splt_cue_set_value(state, file, line, tracks-1, SPLT_TAGS_TITLE)) 
-                              != SPLT_OK)
+                          if ((temp_error = splt_cue_set_value(state, file, line_content,
+                                  tracks-1, SPLT_TAGS_TITLE)) != SPLT_OK)
                             {
                               *error = temp_error;
                               goto function_end;
@@ -412,8 +433,8 @@ int splt_cue_put_splitpoints(char *file, splt_state *state,
                     {
                       //we always have one artist in a cue file, we
                       //put the performers if more than one artist
-                      if ((temp_error = splt_cue_set_value(state, file, line, 0, SPLT_TAGS_ARTIST)) 
-                          != SPLT_OK)
+                      if ((temp_error = splt_cue_set_value(state, file, line_content,
+                              0, SPLT_TAGS_ARTIST)) != SPLT_OK)
                         {
                           *error = temp_error;
                           goto function_end;
@@ -423,8 +444,8 @@ int splt_cue_put_splitpoints(char *file, splt_state *state,
                     {
                       if (tracks>0)
                         {
-                          if ((temp_error = splt_cue_set_value(state, file, line, tracks-1, SPLT_TAGS_PERFORMER)) 
-                              != SPLT_OK)
+                          if ((temp_error = splt_cue_set_value(state, file, line_content,
+                                  tracks-1, SPLT_TAGS_PERFORMER)) != SPLT_OK)
                             {
                               *error = temp_error;
                               goto function_end;
