@@ -65,6 +65,7 @@ typedef struct {
   short o_option; short d_option; short k_option;
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
+  short qq_option;
   //info -i option, m3u file option
   short i_option; short m_option;
   //cddb argument, output dir argument, parameters arguments with -p
@@ -165,7 +166,8 @@ void show_small_help_exit(Options *opt,splt_state *state)
       " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
-      " -q   Quiet mode: do not prompt for anything and print less messages.\n"
+      " -q   Quiet mode: try not prompt (if possible) and print less messages.\n"
+      " -Q   Very quiet mode: do not print anything to stdout (also enables -q).\n"
       " -D   Debug mode: used to debug the program (by developers).\n\n"
       "      Read man page for complete documentation.\n\n");
   fflush(console_out);
@@ -474,6 +476,19 @@ void check_args(int argc, Options *opt, splt_state *state)
     //quiet mode (-q)
     if (opt->q_option)
     {
+    }
+
+    //very quiet mode (-Q)
+    if (opt->qq_option)
+    {
+      if (opt->o_option)
+      {
+        if (strcmp(opt->output_format,"-") == 0)
+        {
+          put_error_message_exit("Error: the -Q option cannot be used with"
+              " STDOUT output ('-o -')", opt,state);
+        }
+      }
     }
   }
 }
@@ -1147,6 +1162,7 @@ Options *new_options()
   opt->d_option = SPLT_FALSE; opt->k_option = SPLT_FALSE;
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
+  opt->qq_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
   opt->param_args = NULL; opt->custom_tags = NULL;
@@ -1232,7 +1248,7 @@ int main(int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option=getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:h"))!=-1)
+  while ((option=getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQ"))!=-1)
   {
     switch (option)
     {
@@ -1354,6 +1370,11 @@ int main(int argc, char *argv[])
             SPLT_CURRENT_TAGS);
         opt->custom_tags = optarg;
         opt->g_option = SPLT_TRUE;
+        break;
+      case 'Q':
+        opt->q_option = SPLT_TRUE;
+        opt->qq_option = SPLT_TRUE;
+        fclose(stdout);
         break;
       default:
         put_error_message_exit("Read man page for documentation or type 'mp3splt -h'.",opt,state);
