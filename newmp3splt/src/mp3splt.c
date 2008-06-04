@@ -489,6 +489,14 @@ void check_args(int argc, Options *opt, splt_state *state)
               " STDOUT output ('-o -')", opt,state);
         }
       }
+      if (opt->c_option)
+      {
+        if (strncmp(opt->cddb_arg,"query",5) == 0)
+        {
+          put_error_message_exit("Error: the -Q option cannot be used with"
+              " interactive freedb query ('-c query')", opt,state);
+        }
+      }
     }
   }
 }
