@@ -166,7 +166,8 @@ void show_small_help_exit(Options *opt,splt_state *state)
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
       " -q   Quiet mode: do not prompt for anything and print less messages.\n"
-      " -D   Debug mode: used to debug the program (by developers).\n");
+      " -D   Debug mode: used to debug the program (by developers).\n\n"
+      "      Read man page for complete documentation.\n\n");
   fflush(console_out);
 
   if (console_out == stderr)
