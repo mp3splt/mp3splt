@@ -704,11 +704,15 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 					if ((state->syncdetect)&&(state->syncerrors>MAXSYNC))
 						checksync(state);
 					state->h = makehead (state->headw, state->mp3file, state->h, begin);
-					state->frames++;
+          state->frames++;
 				}
 			}
 			else
+      {
 				begin = state->end;
+        fprintf(stdout,"\n\nbegin = %ld\n",begin);
+        fflush(stdout);
+      }
 
 			if (state->mp3file.len > 0)
 				if (begin >= state->mp3file.len) // If we can check, we just do that :)
@@ -716,13 +720,17 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 
 			// Finds end by counting frames
 			while (state->frames <= fend) {
-				state->frames++;
+        state->frames++;
 				end = findhead(state, state->h.ptr + state->h.framesize);
 				if (end == -1) {
 					end = state->h.ptr + state->h.framesize; // Last valid offset
 					eof=1;
 					break;
 				}
+        fprintf(stdout,"alex frame = %d\n",state->frames);
+        fprintf(stdout,"alex_end = %ld\n",end);
+        fflush(stdout);
+
 				if ((end!=state->h.ptr + state->h.framesize)&&(state->syncerrors>=0)) state->syncerrors++;
 				if ((state->syncdetect)&&(state->syncerrors>MAXSYNC))
 					checksync(state);
@@ -739,7 +747,11 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 				}
 			}
 
-			state->end = end;
+			state->end = end + state->h.framesize;
+      fprintf(stdout,"alex = %ld\n", end);
+      fprintf(stdout,"alex = %ld\n", state->h.framesize);
+      fprintf(stdout,"alex = %ld\n", state->end);
+      fflush(stdout);
 
 			if (state->mp3file.xing > 0) {
 				unsigned long headw;

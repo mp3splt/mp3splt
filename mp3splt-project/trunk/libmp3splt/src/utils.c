@@ -1299,9 +1299,10 @@ int splt_u_put_output_format_filename(splt_state *state)
           }
           snprintf(temp+4, temp_len, state->oformat.format[i]+2);
 
-          fm_length = strlen(temp);
-          if ((fm = malloc(fm_length * sizeof(char)))
-              == NULL)
+          fm_length = strlen(temp) + 1;
+          char tt[2] = { state->oformat.output_format_digits, '\0' };
+          int number_of_digits = atoi(tt);
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
             goto end;

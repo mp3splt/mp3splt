@@ -649,8 +649,8 @@ void splt_mp3_get_original_tags(char *filename,splt_state *state,
 
   if (id3file == NULL)
   {
-    splt_t_set_error_data(state,filename);
     splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,filename);
     *tag_error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
   else
@@ -1138,8 +1138,8 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
   }
   else
   {
-    splt_t_set_error_data(state,fname_to_split);
     splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,fname_to_split);
     return SPLT_ERROR_CANNOT_OPEN_FILE;
   }
 
@@ -1152,8 +1152,8 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
   {
     if (!(file_output=fopen(output_fname, "wb+")))
     {
-      splt_t_set_error_data(state,output_fname);
       splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state,output_fname);
       return SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
@@ -1740,7 +1740,9 @@ bloc_end:
       mad_frame_finish(&mp3state->frame);
       mad_stream_finish(&mp3state->stream);
       if (*error == SPLT_OK)
+      {
         *error = SPLT_OK_SPLITTED;
+      }
       return;
     }
   }
@@ -1846,6 +1848,8 @@ bloc_end:
       else
       {
         begin = mp3state->end;
+        //fprintf(stdout,"\n\nbegin = %ld\n",begin);
+        //fflush(stdout);
       }
 
       splt_u_print_debug("Begin is...",begin,NULL);
@@ -1873,6 +1877,9 @@ bloc_end:
           eof=1;
           break;
         }
+        //fprintf(stdout,"alex frame = %d\n",mp3state->frames);
+        //fprintf(stdout,"alex_end = %ld\n",end);
+        //fflush(stdout);
 
         //syncerrors?
         if ((end!=mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0))
@@ -1958,7 +1965,12 @@ bloc_end:
         }
       }
 
-      mp3state->end = end;
+      //added '+ state->h.framesize' to begin the next split from the next frame
+      mp3state->end = end + mp3state->h.framesize;
+      //fprintf(stdout,"alex = %ld\n", end);
+      //fprintf(stdout,"alex = %ld\n", mp3state->h.framesize);
+      //fprintf(stdout,"alex = %ld\n", mp3state->end);
+      //fflush(stdout);
 
       //if xing, we get xing
       if (mp3state->mp3file.xing > 0)
@@ -1983,15 +1995,11 @@ bloc_end:
     {
       splt_u_print_debug("Starting mp3 non frame mode...",0,NULL);
 
-      // If file is CBR we can trust bitrate to find position
-      //CBR = constant bit rate
       if (mp3state->end == 0) 
       {
         begin = (off_t) (fbegin_sec * mp3state->mp3file.bitrate + mp3state->mp3file.firsth);
         // Finds first valid header. Mantain clean files.
         begin = splt_mp3_findvalidhead (mp3state, begin);
-
-        splt_u_print_debug("File is CBR...begin is",begin,NULL);
 
         if (begin==-1)
         {
@@ -2007,7 +2015,6 @@ bloc_end:
       else 
       {
         begin = mp3state->end;
-        splt_u_print_debug("File is not CBR...begin is",begin,NULL);
       }
 
       if (fend_sec != -1)
@@ -2024,6 +2031,9 @@ bloc_end:
     //seekable real split
     status = splt_mp3_simple_split(state, output_fname, begin, end, id3);
   }
+
+  //fprintf(stdout,"\nEND frames = %d\n",mp3state->frames);
+  //fflush(stdout);
 
   if (check_bitrate)
   {
@@ -2322,8 +2332,8 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
   //if the filename is correct
   if (!splt_check_is_file(filename))
   {
-    splt_t_set_error_data(state,filename);
     splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return;
   }
@@ -2994,8 +3004,8 @@ void splt_mp3_init(splt_state *state, int *error)
   }
   else
   {
-    splt_t_set_error_data(state,filename);
     splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
 }
@@ -3008,16 +3018,19 @@ void splt_pl_init(splt_state *state, int *error)
 void splt_mp3_end(splt_state *state)
 {
   splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
-  if (mp3state->file_input)
+  if (mp3state)
   {
-    if (mp3state->file_input != stdin)
+    if (mp3state->file_input)
     {
-      fclose(mp3state->file_input);
+      if (mp3state->file_input != stdin)
+      {
+        fclose(mp3state->file_input);
+      }
+      mp3state->file_input = NULL;
     }
-    mp3state->file_input = NULL;
+    //we free the mp3 state 
+    splt_mp3_state_free(state);
   }
-  //we free the mp3 state 
-  splt_mp3_state_free(state);
 }
 
 void splt_pl_end(splt_state *state)
@@ -3048,8 +3061,8 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
     {
       is_mp3 = SPLT_TRUE;
     }
-    splt_mp3_end(state);
   }
+  splt_mp3_end(state);
  
   return is_mp3;
 }

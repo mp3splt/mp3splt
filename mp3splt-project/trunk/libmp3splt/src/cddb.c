@@ -331,8 +331,8 @@ int splt_cue_put_splitpoints(char *file, splt_state *state, int *error)
   //we open the file
   if (!(file_input=fopen(file, "r")))
     {
-      splt_t_set_error_data(state,file);
       splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state,file);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
       return tracks;
     }
@@ -598,8 +598,8 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
   //we open the file
   if (!(file_input=fopen(file, "r")))
   {
-    splt_t_set_error_data(state,file);
     splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;
   }

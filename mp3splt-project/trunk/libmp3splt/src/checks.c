@@ -374,8 +374,8 @@ void splt_check_file_type(splt_state *state, int *error)
     }
     else
     {
-      splt_t_set_error_data(state,filename);
       splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state,filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
@@ -394,21 +394,18 @@ int splt_check_is_file(char *fname)
   struct stat buffer;
   int         status;
 
-  if (fname)
-  {
-    //stdin : consider as file
-    if (fname[strlen(fname)-1] == '-')
-    {
-      return SPLT_TRUE;
-    }
-  }
-
   if (fname == NULL)
   {
     return SPLT_FALSE;
   }
   else
   {
+    //stdin : consider as file
+    if (fname[strlen(fname)-1] == '-')
+    {
+      return SPLT_TRUE;
+    }
+    //not stdin :
     status = stat(fname, &buffer);
     if (status == 0)
     {
@@ -429,9 +426,27 @@ int splt_check_is_file(char *fname)
   }
 }
 
+//close two filehandles
+void close_files(FILE **f1, FILE **f2)
+{
+  if (*f1)
+  {
+    fclose(*f1);
+    *f1 = NULL;
+  }
+  if (*f2)
+  {
+    fclose(*f2);
+    *f2 = NULL;
+  }
+}
+
 //check if file1 = file2
 int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int *error)
 {
+  FILE *file1_ = NULL;
+  FILE *file2_ = NULL;
+
   //stdin
   if (file1[strlen(file1)-1] == '-')
   {
@@ -440,18 +455,16 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
 
   splt_u_print_debug("Checking if this file :",0,file1);
   splt_u_print_debug("is like this file :",0,file2);
-  
+ 
   if (splt_check_is_file(file1) && splt_check_is_file(file2))
   {
     //file1
-    FILE *file1_ = fopen(file1,"r");
-    if (file1_ == NULL)
+    
+    if ((file1_ = fopen(file1,"r")) == NULL)
     {
-      splt_t_set_error_data(state,file1);
       splt_t_set_strerror_msg(state);
-      //error
-      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-      return SPLT_FALSE;
+      splt_t_set_error_data(state,file1);
+      goto end_error;
     }
     else
     {
@@ -460,14 +473,11 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
       if (fstat(file1_d,&file1_stat) == 0)
       {
         //file2
-        FILE *file2_ = fopen(file2,"r");
-        if (file2_ == NULL)
+        if ((file2_ = fopen(file2,"r")) == NULL)
         {
-          splt_t_set_error_data(state,file2);
           splt_t_set_strerror_msg(state);
-          //error
-          *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-          return SPLT_FALSE;
+          splt_t_set_error_data(state,file2);
+          goto end_error;
         }
         else
         {
@@ -483,23 +493,22 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
           //we get the file information for the file1
           if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file1_d), &handle_info_file1))
           {
-            splt_t_set_error_data(state,file1);
             splt_t_set_strerror_msg(state);
-            *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-            return SPLT_FALSE;
+            splt_t_set_error_data(state,file1);
+            goto end_error;
           }
           //we get the file information for the file2
           if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file2_d), &handle_info_file2))
           {
-            splt_t_set_error_data(state,file2);
             splt_t_set_strerror_msg(state);
-            *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-            return SPLT_FALSE;
+            splt_t_set_error_data(state,file2);
+            goto end_error;
           }
           //if the files have the same indexes, we have the same files
           if ((handle_info_file1.nFileIndexHigh == handle_info_file2.nFileIndexHigh)&&
               (handle_info_file1.nFileIndexLow == handle_info_file2.nFileIndexLow))
           {
+            close_files(&file1_,&file2_);
             return SPLT_TRUE;
           }
 #else
@@ -511,31 +520,41 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
             if ((file1_stat.st_ino == file2_stat.st_ino) &&
                 (file1_stat.st_dev == file2_stat.st_dev))
             {
+              close_files(&file1_,&file2_);
               return SPLT_TRUE;
             }
             else
             {
+              close_files(&file1_,&file2_);
               return SPLT_FALSE;
             }
           }
           else
           {
-            splt_t_set_error_data(state,file2);
             splt_t_set_strerror_msg(state);
-            //error
-            *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-            return SPLT_FALSE;
+            splt_t_set_error_data(state,file2);
+            goto end_error;
           }
 #endif
+          //close the second file
+          if (file2_)
+          {
+            fclose(file2_);
+            file2_ = NULL;
+          }
         }
       }
       else
       {
-        splt_t_set_error_data(state,file1);
         splt_t_set_strerror_msg(state);
-        //error
-        *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-        return SPLT_FALSE;
+        splt_t_set_error_data(state,file1);
+        goto end_error;
+      }
+      //close the first file
+      if (file1_)
+      {
+        fclose(file1_);
+        file1_ = NULL;
       }
     }
   }
@@ -544,6 +563,12 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
     return SPLT_FALSE;
   }
 
+end:
+  return SPLT_FALSE;
+
+end_error:
+  close_files(&file1_,&file2_);
+  *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   return SPLT_FALSE;
 }
 
