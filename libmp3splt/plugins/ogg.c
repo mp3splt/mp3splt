@@ -1650,8 +1650,8 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 
   if ((file_input = fopen(filename, "rb")) == NULL)
   {
-    splt_t_set_error_data(state,filename);
     splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
   else
@@ -1692,8 +1692,8 @@ void splt_pl_init(splt_state *state, int *error)
   }
   else
   {
-    splt_t_set_error_data(state,filename);
     splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
 }
