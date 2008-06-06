@@ -52,6 +52,7 @@
 //-yeah indeed, global variables might suck
 FILE *console_out = NULL;
 FILE *console_err = NULL;
+FILE *console_progress = NULL;
 
 //command line options
 typedef struct {
@@ -167,7 +168,7 @@ void show_small_help_exit(Options *opt,splt_state *state)
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
       " -q   Quiet mode: try not prompt (if possible) and print less messages.\n"
-      " -Q   Very quiet mode: do not print anything to stdout (also enables -q).\n"
+      " -Q   Very quiet mode: don't print anything to stdout and no progress bar (also enables -q).\n"
       " -D   Debug mode: used to debug the program (by developers).\n\n"
       "      Read man page for complete documentation.\n\n");
   fflush(console_out);
@@ -1143,8 +1144,8 @@ void put_progress_bar(splt_progress *p_bar)
   }
   temp[counter] = '\0';
 
-  fprintf(console_out,"%s%s\r",printed_value,temp);
-  fflush(console_out);
+  fprintf(console_progress,"%s%s\r",printed_value,temp);
+  fflush(console_progress);
 
   p_bar->user_data = strlen(printed_value)+1;
 }
@@ -1224,6 +1225,7 @@ int main(int argc, char *argv[])
 {
   console_out = stdout;
   console_err = stderr;
+  console_progress = stderr;
 
   //possible error
   int err = SPLT_OK;
@@ -1382,6 +1384,7 @@ int main(int argc, char *argv[])
       case 'Q':
         opt->q_option = SPLT_TRUE;
         opt->qq_option = SPLT_TRUE;
+        console_progress = stdout;
         fclose(stdout);
         break;
       default:

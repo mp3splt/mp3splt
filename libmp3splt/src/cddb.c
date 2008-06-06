@@ -743,9 +743,10 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
 
         //we remove the cddb_offset of the first splitpoint
         //and we divide by 75 (cddb specs)
+        long difference = split1 - split2;
+        float real_value = (float) difference / 75.f;
         change_error =
-          splt_t_set_splitpoint_value(state,
-              i, (split1 - split2)/75);
+          splt_t_set_splitpoint_value(state, i, (long) ceilf(real_value));
 
         if (change_error != SPLT_OK)
         {
