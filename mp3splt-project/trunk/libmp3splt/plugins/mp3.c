@@ -1161,21 +1161,25 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
 
   if (mp3state->mp3file.xing!=0)
   {
-    //don't write the xing header if error mode split
-    if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
+    //don't write the xing header if we have the no tags
+    if (splt_t_get_int_option(state,SPLT_OPT_TAGS) != SPLT_NO_TAGS)
     {
-      if(fwrite(mp3state->mp3file.xingbuffer, 1, 
-            mp3state->mp3file.xing, file_output) <= 0)
+      //don't write the xing header if error mode split
+      if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
       {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state,output_fname);
-        error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-        if (file_output != stdout)
+        if(fwrite(mp3state->mp3file.xingbuffer, 1, 
+              mp3state->mp3file.xing, file_output) <= 0)
         {
-          fclose(file_output);
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state,output_fname);
+          error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
+          if (file_output != stdout)
+          {
+            fclose(file_output);
+          }
+          file_output = NULL;
+          return error;
         }
-        file_output = NULL;
-        return error;
       }
     }
   }
@@ -1961,8 +1965,7 @@ bloc_end:
         }
       }
 
-      //added '+ state->h.framesize' to begin the next split from the next frame
-      mp3state->end = end + mp3state->h.framesize;
+      mp3state->end = end;
 
       //if xing, we get xing
       if (mp3state->mp3file.xing > 0)
@@ -2891,8 +2894,8 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
               if (mp3state->mp3file.xingbuffer)
               {
                 free(mp3state->mp3file.xingbuffer);
+                mp3state->mp3file.xingbuffer = NULL;
               }
-              mp3state->mp3file.xingbuffer = NULL;
               mp3state->mp3file.xing = 0;
 
               int change_error = SPLT_OK;

@@ -116,7 +116,10 @@ int split (unsigned char *filename, FILE *file_input, off_t begin, off_t end, in
 	}
 
 	if (xing!=0)
+  {
+    //BUG: don't write xing buffer if no tags are specified
 		fwrite(xingbuffer, 1, xing, file_output);
+  }
 
        while (!feof(file_input)) {
 		readed = READBSIZE;

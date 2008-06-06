@@ -742,7 +742,7 @@ int mp3split (unsigned char *filename, mp3_state *state, char *id3, float fbegin
 				}
 			}
 
-			state->end = end + state->h.framesize;
+			state->end = end;
 
 			if (state->mp3file.xing > 0) {
 				unsigned long headw;
