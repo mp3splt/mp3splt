@@ -1306,8 +1306,6 @@ int main(int argc, char *argv[])
         opt->q_option = SPLT_TRUE;
         break;
       case 'n':
-        mp3splt_set_int_option(state, SPLT_OPT_TAGS,
-            SPLT_NO_TAGS);
         opt->n_option = SPLT_TRUE;
         break;
       case 'a':
@@ -1391,6 +1389,12 @@ int main(int argc, char *argv[])
         put_error_message_exit("Read man page for documentation or type 'mp3splt -h'.",opt,state);
         break;
     }
+  }
+
+  //if -n option, set no tags whatever happends
+  if (opt->n_option)
+  {
+    mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_NO_TAGS);
   }
 
   err = SPLT_OK;
