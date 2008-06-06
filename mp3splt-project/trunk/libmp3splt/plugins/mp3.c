@@ -908,8 +908,9 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
             mp3state->frames = mad_bit_read(&ptr, 32);
             total = mp3state->frame.header.duration;
             mad_timer_multiply(&total, mp3state->frames);
-            splt_t_set_total_time(state,
-                mad_timer_count(total, MAD_UNITS_CENTISECONDS));
+            float total_time_milliseconds = mad_timer_count(total, MAD_UNITS_MILLISECONDS);
+            total_time_milliseconds /= 10.f;
+            splt_t_set_total_time(state, (long) ceilf(total_time_milliseconds));
           }
 
           if (xing_word & SPLT_MP3_XING_BYTES)
@@ -1848,8 +1849,6 @@ bloc_end:
       else
       {
         begin = mp3state->end;
-        //fprintf(stdout,"\n\nbegin = %ld\n",begin);
-        //fflush(stdout);
       }
 
       splt_u_print_debug("Begin is...",begin,NULL);
@@ -1877,9 +1876,6 @@ bloc_end:
           eof=1;
           break;
         }
-        //fprintf(stdout,"alex frame = %d\n",mp3state->frames);
-        //fprintf(stdout,"alex_end = %ld\n",end);
-        //fflush(stdout);
 
         //syncerrors?
         if ((end!=mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0))
@@ -1967,10 +1963,6 @@ bloc_end:
 
       //added '+ state->h.framesize' to begin the next split from the next frame
       mp3state->end = end + mp3state->h.framesize;
-      //fprintf(stdout,"alex = %ld\n", end);
-      //fprintf(stdout,"alex = %ld\n", mp3state->h.framesize);
-      //fprintf(stdout,"alex = %ld\n", mp3state->end);
-      //fflush(stdout);
 
       //if xing, we get xing
       if (mp3state->mp3file.xing > 0)
@@ -2031,9 +2023,6 @@ bloc_end:
     //seekable real split
     status = splt_mp3_simple_split(state, output_fname, begin, end, id3);
   }
-
-  //fprintf(stdout,"\nEND frames = %d\n",mp3state->frames);
-  //fflush(stdout);
 
   if (check_bitrate)
   {
