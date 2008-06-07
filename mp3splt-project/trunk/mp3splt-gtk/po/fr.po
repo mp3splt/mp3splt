@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-05-24 17:52+0200\n"
+"POT-Creation-Date: 2008-06-07 01:51+0200\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -357,44 +357,44 @@ msgstr ""
 msgid " quick preview finished, song paused"
 msgstr ""
 
-#: src/player_tab.c:3045
+#: src/player_tab.c:3044
 msgid "Choose File"
 msgstr "Choisir fichier"
 
-#: src/player_tab.c:3058
+#: src/player_tab.c:3057
 msgid "mp3 and ogg files(*.mp3 *.ogg)"
 msgstr "fichiers mp3 et ogg(*.mp3 *.ogg)"
 
-#: src/player_tab.c:3064
+#: src/player_tab.c:3063
 msgid "mp3 files(*.mp3)"
 msgstr "fichiers mp3(*.mp3)"
 
-#: src/player_tab.c:3069
+#: src/player_tab.c:3068
 msgid "ogg files(*.ogg)"
 msgstr "fichiers ogg(*.ogg)"
 
-#: src/player_tab.c:3078
+#: src/player_tab.c:3077
 msgid "cddb files(*.cddb)"
 msgstr "fichier cddb(*.cddb)"
 
-#: src/player_tab.c:3088
+#: src/player_tab.c:3087
 msgid "cue files(*.cue)"
 msgstr "fichiers cue(*.cue)"
 
-#: src/player_tab.c:3096
+#: src/player_tab.c:3095
 #, fuzzy
 msgid "All Files"
 msgstr "Fichier"
 
-#: src/player_tab.c:3257
+#: src/player_tab.c:3256
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:3266
+#: src/player_tab.c:3265
 msgid "select file"
 msgstr "sélection fichier"
 
-#: src/player_tab.c:3273
+#: src/player_tab.c:3272
 msgid "_Fix ogg stream"
 msgstr ""
 
@@ -504,261 +504,6 @@ msgstr "Coupure"
 msgid "Stop"
 msgstr "stop"
 
-#: src/main_win.c:827
-#, fuzzy
-msgid " file splitted, splitpoints bigger than length "
-msgstr " mp3 coupé, points de coupure supérieurs à la longueur"
-
-#: src/main_win.c:830 src/main_win.c:833
-#, fuzzy
-msgid " file splitted "
-msgstr " ogg coupé"
-
-#: src/main_win.c:839
-msgid " error: not enough splitpoints (<2) "
-msgstr " erreur: pas assez de points de coupure (<2)"
-
-#: src/main_win.c:842
-msgid " error: cannot open file "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:845
-#, fuzzy
-msgid " error: invalid file"
-msgstr " erreur: fichier ogg invalide"
-
-#: src/main_win.c:848
-msgid " error: equal splitpoints "
-msgstr " erreur: points de coupure égaux"
-
-#: src/main_win.c:851
-msgid " error: splitpoints not in order "
-msgstr " erreur: les points de coupure ne sont pas en ordre"
-
-#: src/main_win.c:854
-msgid " error: negative splitpoint "
-msgstr " erreur: point de coupure negatif"
-
-#: src/main_win.c:857
-msgid " error: incorrect destination folder "
-msgstr " erreur: dossier destination incorrect"
-
-#: src/main_win.c:860
-msgid " freedb search processed ok "
-msgstr "recherche freedb ok"
-
-#: src/main_win.c:863
-msgid " freedb file processed ok "
-msgstr "fichier freedb analysé ok"
-
-#: src/main_win.c:866
-msgid " cddb file processed ok "
-msgstr "fichier cddb correctemen analysé"
-
-#: src/main_win.c:869
-msgid " cue file processed ok "
-msgstr "fichier cue correctement analysé"
-
-#: src/main_win.c:872
-msgid " error: cannot initialise socket "
-msgstr " erreur: ne peut pas initialiser le socket"
-
-#: src/main_win.c:875
-msgid " error: cannot get host by name "
-msgstr " erreur: ne peut pas trouver le hote par le nom"
-
-#: src/main_win.c:878
-msgid " error: cannot open socket "
-msgstr " erreur: ne peut pas ouvrir le socket"
-
-#: src/main_win.c:881
-msgid " error: cannot connect to host "
-msgstr " erreur: ne peut pas se connecter a l'hote"
-
-#: src/main_win.c:884
-msgid " error: cannot send message to host "
-msgstr " erreur: ne peut pas envoyer de message a l'hote"
-
-#: src/main_win.c:887
-msgid " error: invalid server answer "
-msgstr " erreur: reponse du serveur invalide"
-
-#: src/main_win.c:890
-msgid " error: error 201 while connecting to site "
-msgstr "erreur: erreur 201 a la connexion avec le site"
-
-#: src/main_win.c:894
-msgid " error: error 200 while connecting to site "
-msgstr "erreur: erreur 200 a la connexion avec le site"
-
-#: src/main_win.c:898
-msgid " error: bad communication with site "
-msgstr "erreur : mauvaise communication avec le site"
-
-#: src/main_win.c:901
-msgid " error: could not get infos from site "
-msgstr " erreur: ne peut pas retirer les infos du site"
-
-#: src/main_win.c:904
-msgid " no cd found for this search "
-msgstr "pas de cd trouvé pour cette recherche"
-
-#: src/main_win.c:907
-msgid " maximum number of found CD reached "
-msgstr " nombre maximum de CD atteint"
-
-#: src/main_win.c:911
-#, fuzzy
-msgid " cue error: cannot read file"
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:915
-#, fuzzy
-msgid " cddb error: cannot read file"
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:919
-#, fuzzy
-msgid " cue error: invalid cue file"
-msgstr " erreur: fichier ogg invalide"
-
-#: src/main_win.c:923
-#, fuzzy
-msgid " cddb error: invalid cddb file"
-msgstr " erreur: fichier ogg invalide"
-
-#: src/main_win.c:927
-msgid " silence split ok "
-msgstr ""
-
-#: src/main_win.c:930
-#, fuzzy
-msgid " sync error: cannot sync ogg files "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:933
-#, fuzzy
-msgid " error: incompatible options "
-msgstr " erreur: point de coupure negatif"
-
-#: src/main_win.c:936
-#, fuzzy
-msgid " error for the silence split "
-msgstr " erreur : aucun fichier sélectionné"
-
-#: src/main_win.c:939
-#, fuzzy
-msgid " error mode ok "
-msgstr " erreur: ne peut pas ouvrir le socket"
-
-#: src/main_win.c:942
-msgid " error: sync "
-msgstr ""
-
-#: src/main_win.c:945
-#, fuzzy
-msgid " no sync errors found "
-msgstr " erreur: ne peut pas se connecter a l'hote"
-
-#: src/main_win.c:948
-#, fuzzy
-msgid " sync error: too many sync errors "
-msgstr " erreur: ne peut pas se connecter a l'hote"
-
-#: src/main_win.c:951
-#, fuzzy
-msgid " wrap split ok "
-msgstr " mp3 coupé"
-
-#: src/main_win.c:954
-#, fuzzy
-msgid " wrap error: file length "
-msgstr " erreur : aucun fichier sélectionné"
-
-#: src/main_win.c:957
-#, fuzzy
-msgid " wrap error: version too old "
-msgstr " erreur : aucun fichier sélectionné"
-
-#: src/main_win.c:960
-#, fuzzy
-msgid " wrap error: no file or bad index"
-msgstr " erreur : aucun fichier sélectionné"
-
-#: src/main_win.c:964
-#, fuzzy
-msgid " wrap error: file damaged or incomplete"
-msgstr " erreur : aucun fichier sélectionné"
-
-#: src/main_win.c:968
-#, fuzzy
-msgid " wrap error: maybe not a wrapped file or wrap file damaged"
-msgstr " erreur : aucun fichier sélectionné"
-
-#: src/main_win.c:972
-#, fuzzy
-msgid " time split ok "
-msgstr " mp3 coupé"
-
-#: src/main_win.c:975
-msgid " error: input and output are the same file "
-msgstr ""
-
-#: src/main_win.c:978
-#, fuzzy
-msgid " no silence splitpoints found "
-msgstr " erreur: points de coupure égaux"
-
-#: src/main_win.c:981
-msgid " error: unable to allocate memory "
-msgstr ""
-
-#: src/main_win.c:985
-msgid " warning: file might be VBR, use frame mode "
-msgstr ""
-
-#: src/main_win.c:989
-#, fuzzy
-msgid " error: cannot open destination file "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:993
-#, fuzzy
-msgid " error: cannot write to output file "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:997
-#, fuzzy
-msgid " error: cannot read file "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:1001
-#, fuzzy
-msgid " error: cannot seek file "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:1005
-#, fuzzy
-msgid " error: begin point out of file "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:1009
-#, fuzzy
-msgid " error: inexistent file "
-msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#: src/main_win.c:1012
-msgid " split process cancelled "
-msgstr ""
-
-#: src/main_win.c:1018
-msgid " warning: output format error "
-msgstr ""
-
-#: src/main_win.c:1021
-msgid " warning: output format ambiguous"
-msgstr ""
-
 #: src/cddb_cue.c:301
 msgid "CDDB file : "
 msgstr "fichier CDDB : "
@@ -863,6 +608,180 @@ msgstr ""
 #: src/special_split.c:411
 msgid "Set default options"
 msgstr ""
+
+#, fuzzy
+#~ msgid " file splitted, splitpoints bigger than length "
+#~ msgstr " mp3 coupé, points de coupure supérieurs à la longueur"
+
+#, fuzzy
+#~ msgid " file splitted "
+#~ msgstr " ogg coupé"
+
+#~ msgid " error: not enough splitpoints (<2) "
+#~ msgstr " erreur: pas assez de points de coupure (<2)"
+
+#~ msgid " error: cannot open file "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " error: invalid file"
+#~ msgstr " erreur: fichier ogg invalide"
+
+#~ msgid " error: equal splitpoints "
+#~ msgstr " erreur: points de coupure égaux"
+
+#~ msgid " error: splitpoints not in order "
+#~ msgstr " erreur: les points de coupure ne sont pas en ordre"
+
+#~ msgid " error: negative splitpoint "
+#~ msgstr " erreur: point de coupure negatif"
+
+#~ msgid " error: incorrect destination folder "
+#~ msgstr " erreur: dossier destination incorrect"
+
+#~ msgid " freedb search processed ok "
+#~ msgstr "recherche freedb ok"
+
+#~ msgid " freedb file processed ok "
+#~ msgstr "fichier freedb analysé ok"
+
+#~ msgid " cddb file processed ok "
+#~ msgstr "fichier cddb correctemen analysé"
+
+#~ msgid " cue file processed ok "
+#~ msgstr "fichier cue correctement analysé"
+
+#~ msgid " error: cannot initialise socket "
+#~ msgstr " erreur: ne peut pas initialiser le socket"
+
+#~ msgid " error: cannot get host by name "
+#~ msgstr " erreur: ne peut pas trouver le hote par le nom"
+
+#~ msgid " error: cannot open socket "
+#~ msgstr " erreur: ne peut pas ouvrir le socket"
+
+#~ msgid " error: cannot connect to host "
+#~ msgstr " erreur: ne peut pas se connecter a l'hote"
+
+#~ msgid " error: cannot send message to host "
+#~ msgstr " erreur: ne peut pas envoyer de message a l'hote"
+
+#~ msgid " error: invalid server answer "
+#~ msgstr " erreur: reponse du serveur invalide"
+
+#~ msgid " error: error 201 while connecting to site "
+#~ msgstr "erreur: erreur 201 a la connexion avec le site"
+
+#~ msgid " error: error 200 while connecting to site "
+#~ msgstr "erreur: erreur 200 a la connexion avec le site"
+
+#~ msgid " error: bad communication with site "
+#~ msgstr "erreur : mauvaise communication avec le site"
+
+#~ msgid " error: could not get infos from site "
+#~ msgstr " erreur: ne peut pas retirer les infos du site"
+
+#~ msgid " no cd found for this search "
+#~ msgstr "pas de cd trouvé pour cette recherche"
+
+#~ msgid " maximum number of found CD reached "
+#~ msgstr " nombre maximum de CD atteint"
+
+#, fuzzy
+#~ msgid " cue error: cannot read file"
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " cddb error: cannot read file"
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " cue error: invalid cue file"
+#~ msgstr " erreur: fichier ogg invalide"
+
+#, fuzzy
+#~ msgid " cddb error: invalid cddb file"
+#~ msgstr " erreur: fichier ogg invalide"
+
+#, fuzzy
+#~ msgid " sync error: cannot sync ogg files "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " error: incompatible options "
+#~ msgstr " erreur: point de coupure negatif"
+
+#, fuzzy
+#~ msgid " error for the silence split "
+#~ msgstr " erreur : aucun fichier sélectionné"
+
+#, fuzzy
+#~ msgid " error mode ok "
+#~ msgstr " erreur: ne peut pas ouvrir le socket"
+
+#, fuzzy
+#~ msgid " no sync errors found "
+#~ msgstr " erreur: ne peut pas se connecter a l'hote"
+
+#, fuzzy
+#~ msgid " sync error: too many sync errors "
+#~ msgstr " erreur: ne peut pas se connecter a l'hote"
+
+#, fuzzy
+#~ msgid " wrap split ok "
+#~ msgstr " mp3 coupé"
+
+#, fuzzy
+#~ msgid " wrap error: file length "
+#~ msgstr " erreur : aucun fichier sélectionné"
+
+#, fuzzy
+#~ msgid " wrap error: version too old "
+#~ msgstr " erreur : aucun fichier sélectionné"
+
+#, fuzzy
+#~ msgid " wrap error: no file or bad index"
+#~ msgstr " erreur : aucun fichier sélectionné"
+
+#, fuzzy
+#~ msgid " wrap error: file damaged or incomplete"
+#~ msgstr " erreur : aucun fichier sélectionné"
+
+#, fuzzy
+#~ msgid " wrap error: maybe not a wrapped file or wrap file damaged"
+#~ msgstr " erreur : aucun fichier sélectionné"
+
+#, fuzzy
+#~ msgid " time split ok "
+#~ msgstr " mp3 coupé"
+
+#, fuzzy
+#~ msgid " no silence splitpoints found "
+#~ msgstr " erreur: points de coupure égaux"
+
+#, fuzzy
+#~ msgid " error: cannot open destination file "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " error: cannot write to output file "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " error: cannot read file "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " error: cannot seek file "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " error: begin point out of file "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
+#, fuzzy
+#~ msgid " error: inexistent file "
+#~ msgstr " erreur: ne peut pas ouvrir le fichier"
 
 #~ msgid " mp3 splitted "
 #~ msgstr " mp3 coupé"
