@@ -1132,6 +1132,7 @@ GtkWidget *create_pref_output_page()
   GtkWidget *label;
   label = gtk_label_new((gchar *)
                         _("Output filename format for most of the splits except normal split :\n"
+                          "    @f - file name\n"
                           "    @a - artist name\n"
                           "    @p - performer of each song (does not"
                           " always exist)\n"
