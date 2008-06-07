@@ -1131,8 +1131,7 @@ GtkWidget *create_pref_output_page()
   //output label
   GtkWidget *label;
   label = gtk_label_new((gchar *)
-                        _("Output filename format for cddb files and cue files"
-                          " (includes freedb search) :\n"
+                        _("Output filename format for most of the splits except normal split :\n"
                           "    @a - artist name\n"
                           "    @p - performer of each song (does not"
                           " always exist)\n"
@@ -1145,9 +1144,7 @@ GtkWidget *create_pref_output_page()
   //radio button for choosing default or custom output options
   radio_output = 
     gtk_radio_button_new_with_label(NULL, 
-                                    (gchar *)_("Default format : \n"
-                                               "   @a - @n - @t where @a"
-                                               " is the performer if found"));
+                                    (gchar *)_("Default format"));
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_output),
                     "toggled",
                     G_CALLBACK (output_radio_box_event),
