@@ -301,7 +301,7 @@ void change_window_progress_bar(splt_progress *p_bar)
       break;
     }
       
-  gchar printed_value[1024] = "";
+  gchar printed_value[1024] = { '\0' };
   
   //lock gtk
   gdk_threads_enter();
@@ -444,7 +444,24 @@ void sigint_handler(gint sig)
 //prints a message from the library
 void put_message_from_library(gchar *message)
 {
-  put_status_message(message);
+  gchar *mess = g_strdup(message);
+  if (mess)
+  {
+    gint i = 0;
+    //replace '\n' with ' '
+    for (i = 0;i < strlen(mess);i++)
+    {
+      if (mess[i] == '\n')
+      {
+        mess[i] = ' ';
+      }
+    }
+    gdk_threads_enter();
+    put_status_message(mess);
+    gdk_threads_leave();
+    g_free(mess);
+    mess = NULL;
+  }
 }
 
 gint main (gint argc, gchar *argv[], gchar **envp)
