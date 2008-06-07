@@ -1197,6 +1197,18 @@ typedef enum {
  */
 #define SPLT_WEBSITE "http://mp3splt.sourceforge.net"
 
+/* other useful variables */
+
+//backslash character
+#ifndef SPLT_DIRCHAR
+#ifdef __WIN32__
+#define SPLT_DIRCHAR '\\'
+#define SPLT_NDIRCHAR '/'
+#else
+#define SPLT_DIRCHAR '/'
+#define SPLT_NDIRCHAR '\\'
+#endif
+#endif
 
 /**
  * @file mp3splt.h

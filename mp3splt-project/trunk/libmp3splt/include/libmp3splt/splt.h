@@ -83,19 +83,6 @@ void splt_s_silence_split(splt_state *state, int *error);
 
 void splt_s_wrap_split(splt_state *state, int *error);
 
-/* other useful variables */
-
-//backslash character
-#ifndef SPLT_DIRCHAR
-#ifdef __WIN32__
-#define SPLT_DIRCHAR '\\'
-#define SPLT_NDIRCHAR '/'
-#else
-#define SPLT_DIRCHAR '/'
-#define SPLT_NDIRCHAR '\\'
-#endif
-#endif
-
 /* other stuff :/ */
 
 #define SPLT_DEFAULT_PROGRESS_RATE 350

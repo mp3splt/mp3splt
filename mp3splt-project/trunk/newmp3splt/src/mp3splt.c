@@ -109,6 +109,17 @@ void print_warning(char *w)
   fflush(console_err);
 }
 
+//free the option struct
+void free_options(Options *opt)
+{
+  if (opt->output_format)
+  {
+    free(opt->output_format);
+    opt->output_format = NULL;
+  }
+  free(opt);
+}
+
 //puts an error message and exists the program with error 1
 void put_error_message_exit(char *message, Options *opt,
     splt_state *state)
@@ -116,7 +127,7 @@ void put_error_message_exit(char *message, Options *opt,
   fprintf(console_err,"%s\n",message);
   fflush(console_err);
   //we free options
-  free(opt);
+  free_options(opt);
   int err = SPLT_OK;
   //we free left variables in the state
   mp3splt_free_state(state,&err);
@@ -127,7 +138,7 @@ void put_error_message_exit(char *message, Options *opt,
 void show_small_help_exit(Options *opt,splt_state *state)
 {
   //we free options
-  free(opt);
+  free_options(opt);
   int err = SPLT_OK;
   //we free left variables in the state
   mp3splt_free_state(state,&err);
@@ -1162,6 +1173,10 @@ void sigint_handler(int sig)
 Options *new_options()
 {
   Options *opt = malloc(sizeof(Options));
+  if (opt == NULL)
+  {
+    return NULL;
+  }
 
   opt->w_option = SPLT_FALSE; opt->l_option = SPLT_FALSE;
   opt->e_option = SPLT_FALSE; opt->f_option = SPLT_FALSE;
@@ -1232,6 +1247,12 @@ int main(int argc, char *argv[])
 
   //command line options
   Options *opt = new_options();
+  if (opt == NULL)
+  {
+    fprintf(console_err,"Error: cannot allocate memory !\n");
+    fflush(console_err);
+    return 1;
+  }
 
   //we create our state
   state = mp3splt_new_state(&err);
@@ -1275,7 +1296,7 @@ int main(int argc, char *argv[])
         fflush(console_out);
         print_authors(console_out);
         //free variables
-        free(opt);
+        free_options(opt);
         mp3splt_free_state(state,&err);
         exit(0);
         break;
@@ -1343,7 +1364,10 @@ int main(int argc, char *argv[])
         //default output is false now
         mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
             SPLT_OUTPUT_FORMAT);
-        opt->output_format = optarg;
+        if (optarg)
+        {
+          opt->output_format = strdup(optarg);
+        }
         //if the splitted result must be written to stdout
         if (strcmp(optarg,"-") == 0)
         {
@@ -1388,6 +1412,45 @@ int main(int argc, char *argv[])
       default:
         put_error_message_exit("Read man page for documentation or type 'mp3splt -h'.",opt,state);
         break;
+    }
+  }
+
+  //if -o option, then take the directory path and set it as dir_char
+  //if -d option is also specified, then the -d option will replace this
+  //path
+  if (opt->o_option)
+  {
+    if (opt->output_format)
+    {
+      char *dup = strdup(opt->output_format);
+      if (dup)
+      {
+        char *p = NULL;
+        if ((p = strrchr(dup,SPLT_DIRCHAR)) != NULL) 
+        {
+          free(opt->output_format);
+          int malloc_size = strlen(p) + 1;
+          opt->output_format = malloc(sizeof(char) * malloc_size);
+          if (opt->output_format == NULL)
+          {
+            fprintf(console_err,"Error: cannot allocate memory !\n");
+            fflush(console_err);
+            //free variables
+            free_options(opt);
+            mp3splt_free_state(state,&err);
+            return 1;
+          }
+          else
+          {
+            snprintf(opt->output_format,malloc_size,"%s",p);
+            *p = '\0';
+            err = mp3splt_set_path_of_split(state, dup);
+            print_confirmation_error(err,opt,state);
+          }
+        }
+        free(dup);
+        dup = NULL;
+      }
     }
   }
 
@@ -1639,9 +1702,12 @@ int main(int argc, char *argv[])
         //if no error
         if (err >= 0)
         {
-          //we set the path of split
-          err = mp3splt_set_path_of_split(state, opt->dir_arg);
-          print_confirmation_error(err,opt,state);
+          //we set the path of split for the -d option
+          if (opt->d_option)
+          {
+            err = mp3splt_set_path_of_split(state, opt->dir_arg);
+            print_confirmation_error(err,opt,state);
+          }
 
           if (err >= 0)
           {
@@ -1694,7 +1760,7 @@ end:
   //we free left variables in the state
   mp3splt_free_state(state,&err);
   //we free the options
-  free(opt);
+  free_options(opt);
 
   return 0;
 }
