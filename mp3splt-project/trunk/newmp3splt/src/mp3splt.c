@@ -147,7 +147,7 @@ void show_small_help_exit(Options *opt,splt_state *state)
       "\n"
       "USAGE (Please read man page for complete documentation)\n"
       "      mp3splt [SPLIT_MODE] [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME1] [TIME2] ... [END_TIME]\n"
-      "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59. \n"
+      "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59 (or EOF for End Of File). \n"
       "\nSPLIT_MODE\n"
       //"\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n"
       " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
