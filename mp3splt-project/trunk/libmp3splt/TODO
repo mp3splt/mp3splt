@@ -1,31 +1,10 @@
-LIBMP3SPLT, urgent :
-***make 0001 when using @n other than time split
-***ameliorate progress bar on ogg split
-***fix ogg bugs from here : http://sourceforge.net/tracker/index.php?func=detail&aid=1078018&group_id=55130&atid=476061
-***output to STDOUT
-***do proxy
-***make more general error messages and less (if possible)
-***
+BUGS :
 
-*custom tags with cddb&cue&freedb
-*output @a @t..@X for error mode, wrap and normal split
+* fix ogg bugs from here : http://sourceforge.net/tracker/index.php?func=detail&aid=1078018&group_id=55130&atid=476061
 
-1) Also noticed that if the destination files already exist they are
-overwritten without warning or prompting. I dont know if this was the
-case with the original program as i never tested it like that. But
-thats not an issue or anything, just worth remembering...so i dont
-accidentally overwrite files.
+FEATURES REQUESTS :
 
-2) When I split a large mp3 podcast file, I get files with
- the name track**.mp3
- Is it possible to add the name of the podcast-file
- concatenated with the track**.mp3?
- eg. A file is called gw20060212.mp3
- The splitted files: gw20060212 track01.mp3 and so on?
+* do proxy
+* ameliorate progress bar on ogg split
+* warning before overwriting files
 
-*mp3splt-gtk debian package must build with beep media player
-*beep media player does not queue files in a correct order
-*labels must not be sensitive if article not selected
-*check if preferences have changed on gui exit also
-*snackamp port on GTK gui
-*check if the file is mp3
