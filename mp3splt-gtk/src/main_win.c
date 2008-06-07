@@ -639,6 +639,9 @@ GtkWidget *create_main_vbox()
   main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 0);
 
+  frame = (GtkWidget *)create_choose_file_frame();
+  gtk_box_pack_start(GTK_BOX(main_vbox), frame, FALSE, FALSE, 0);
+
   /* tabbed notebook */
   notebook = gtk_notebook_new();
   gtk_box_pack_start (GTK_BOX (main_vbox), notebook, TRUE, TRUE, 0);
@@ -671,9 +674,6 @@ GtkWidget *create_main_vbox()
                            player_vbox,
                            (GtkWidget *)notebook_label);
       
-  frame = (GtkWidget *)create_choose_file_frame();
-  gtk_box_pack_start (GTK_BOX (player_vbox), frame, FALSE, FALSE, 0);
-
   /* splitpoints page */
   notebook_label = gtk_label_new((gchar *)_("Splitpoints"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
