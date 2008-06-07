@@ -1235,6 +1235,40 @@ void print_version_authors(FILE *std)
   print_no_warranty(std);
 }
 
+//check if its a directory
+int check_if_directory(char *fname)
+{
+  struct stat buffer;
+  int         status;
+
+  if (fname == NULL)
+  {
+    return SPLT_FALSE;
+  }
+  else
+  {
+    status = stat(fname, &buffer);
+    if (status == 0)
+    {
+      //if it is a file
+      if (S_ISDIR(buffer.st_mode))
+      {
+        return SPLT_TRUE;
+      }
+      else
+      {
+        return SPLT_FALSE;
+      }
+    }
+    else
+    {
+      return SPLT_FALSE;
+    }
+  }
+
+  return SPLT_FALSE;
+}
+
 //main program starts here
 int main(int argc, char *argv[])
 {
@@ -1425,28 +1459,52 @@ int main(int argc, char *argv[])
       char *dup = strdup(opt->output_format);
       if (dup)
       {
+        int replace_output_format = SPLT_FALSE;
+        int malloc_size = 0;
         char *p = NULL;
-        if ((p = strrchr(dup,SPLT_DIRCHAR)) != NULL) 
+        //if -o argument is a directory
+        if (check_if_directory(dup))
+        {
+          replace_output_format = SPLT_TRUE;
+          opt->o_option = SPLT_FALSE;
+        }
+        else
+        {
+          //if not a directory, find the first dirchar from the end
+          if ((p = strrchr(dup,SPLT_DIRCHAR)) != NULL) 
+          {
+            malloc_size = strlen(p) + 1;
+            replace_output_format = SPLT_TRUE;
+          }
+        }
+
+        //if we replace the output format
+        if (replace_output_format)
         {
           free(opt->output_format);
-          int malloc_size = strlen(p) + 1;
-          opt->output_format = malloc(sizeof(char) * malloc_size);
-          if (opt->output_format == NULL)
+          opt->output_format = NULL;
+          //if we really replace the output format
+          if (malloc_size != 0)
           {
-            fprintf(console_err,"Error: cannot allocate memory !\n");
-            fflush(console_err);
-            //free variables
-            free_options(opt);
-            mp3splt_free_state(state,&err);
-            return 1;
+            opt->output_format = malloc(sizeof(char) * malloc_size);
+            if (opt->output_format == NULL)
+            {
+              fprintf(console_err,"Error: cannot allocate memory !\n");
+              fflush(console_err);
+              //free variables
+              free_options(opt);
+              mp3splt_free_state(state,&err);
+              return 1;
+            }
           }
-          else
+          //for 'strrchr' version
+          if (malloc_size != 0)
           {
             snprintf(opt->output_format,malloc_size,"%s",p);
             *p = '\0';
-            err = mp3splt_set_path_of_split(state, dup);
-            print_confirmation_error(err,opt,state);
           }
+          err = mp3splt_set_path_of_split(state, dup);
+          print_confirmation_error(err,opt,state);
         }
         free(dup);
         dup = NULL;
