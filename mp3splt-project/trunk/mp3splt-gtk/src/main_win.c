@@ -282,13 +282,25 @@ void split_button_event (GtkWidget *widget,
       //set the options
       mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
                              SPLT_OUTPUT_DEFAULT);
+
+      gint err = SPLT_OK;
+
       //put the options from the preferences
       put_options_from_preferences();
-      
-      gint err = SPLT_OK;
+
+      //set the output format for almost all the types of split
+      if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,&err)
+          != SPLT_OPTION_NORMAL_MODE)
+      {
+        if (!get_checked_output_radio_box())
+        {
+          mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+              SPLT_OUTPUT_FORMAT);
+        }
+      }
+ 
       //we put the starting status message
-      switch (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                                     &err))
+      switch (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err))
         {
         case SPLT_OPTION_NORMAL_MODE:
           put_status_message((gchar *)_(" info: starting normal split... "));

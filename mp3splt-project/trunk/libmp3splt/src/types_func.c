@@ -528,8 +528,7 @@ int splt_t_new_oformat(splt_state *state, char *format_string)
   if (format_string != NULL)
   {
     if ((state->oformat.format_string =
-          malloc(sizeof(char)*(strlen(format_string)+1)))
-        == NULL)
+          malloc(sizeof(char)*(strlen(format_string)+1))) == NULL)
     {
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
