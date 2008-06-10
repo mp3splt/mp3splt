@@ -48,12 +48,11 @@ long splt_t_get_total_time(splt_state *state);
 /* types: filename and path access */
 
 void splt_t_set_new_filename_path(splt_state *state, 
-    char *new_filename_path,
-    int *error);
+    char *new_filename_path, int *error);
 char *splt_t_get_new_filename_path(splt_state *state);
-int splt_t_set_filename_to_split(splt_state *state, char *filename);
-int splt_t_set_path_of_split(splt_state *state, char *path);
-int splt_t_set_m3u_filename(splt_state *state, char *filename);
+int splt_t_set_filename_to_split(splt_state *state, const char *filename);
+int splt_t_set_path_of_split(splt_state *state, const char *path);
+int splt_t_set_m3u_filename(splt_state *state, const char *filename);
 char *splt_t_get_filename_to_split(splt_state *state);
 char *splt_t_get_path_of_split(splt_state *state);
 char *splt_t_get_m3u_filename(splt_state *state);
@@ -68,9 +67,9 @@ void splt_t_current_split_next(splt_state *state);
 /********************************/
 /* types: output format access */
 
-void splt_t_set_oformat(splt_state *state, char *format_string,
+void splt_t_set_oformat(splt_state *state, const char *format_string,
     int *error);
-int splt_t_new_oformat(splt_state *state, char *format_string);
+int splt_t_new_oformat(splt_state *state, const char *format_string);
 char *splt_t_get_oformat(splt_state *state);
 void splt_t_set_oformat_digits(splt_state *state);
 
@@ -84,12 +83,12 @@ int splt_t_get_splitnumber(splt_state *state);
 /* types: splitpoints access */
 
 int splt_t_append_splitpoint(splt_state *state, long split_value,
-    char *name);
+    const char *name);
 int splt_t_splitpoint_exists(splt_state *state, int index);
 int splt_t_set_splitpoint_value(splt_state *state,
     int index, long split_value);
 int splt_t_set_splitpoint_name(splt_state *state,
-    int index, char *name);
+    int index, const char *name);
 long splt_t_get_splitpoint_value(splt_state *state,
     int index, int *error);
 char *splt_t_get_splitpoint_name(splt_state *state,
@@ -103,9 +102,9 @@ splt_point *splt_t_get_splitpoints(splt_state *state,
 void splt_t_append_original_tags(splt_state *state);
 void splt_t_get_original_tags(splt_state *state, int *err);
 int splt_t_append_tags(splt_state *state,
-    char *title, char *artist,
-    char *album, char *performer,
-    char *year, char *comment,
+    const char *title, const char *artist,
+    const char *album, const char *performer,
+    const char *year, const char *comment,
     int track, unsigned char genre);
 int splt_t_append_only_non_null_previous_tags(splt_state *state, 
     char *title, char *artist,
@@ -118,7 +117,7 @@ int splt_t_set_original_tags_field(splt_state *state,
     char *char_data, unsigned char uchar_data,
     int length);
 int splt_t_set_tags_char_field(splt_state *state, int index,
-    int tags_field, char *data);
+    int tags_field, const char *data);
 int splt_t_set_tags_int_field(splt_state *state, int index,
     int tags_field, int data);
 int splt_t_set_tags_uchar_field(splt_state *state, int index,
@@ -210,8 +209,16 @@ void splt_t_update_progress(splt_state *state, float current_point,
 /********************************/
 /* types: miscelanneous */
 
-void splt_t_set_error_data(splt_state *state, char *error_data);
+void splt_t_get_mins_secs_hundr_from_splitpoint(long splitpoint,
+    long *mins, long *secs, long *hudr);
+void splt_t_set_error_data(splt_state *state, const char *error_data);
+void splt_t_set_error_data_from_splitpoints(splt_state *state, long splitpoint1,
+    long splitpoint2);
+void splt_t_set_error_data_from_splitpoint(splt_state *state, long splitpoint);
+void splt_t_set_strerr_msg(splt_state *state, const char *message);
 void splt_t_set_strerror_msg(splt_state *state);
+void splt_t_set_strherror_msg(splt_state *state);
+void splt_t_clean_strerror_msg(splt_state *state);
 
 void splt_t_free_splitpoints_tags(splt_state *state);
 void splt_t_free_splitpoints(splt_state *state);

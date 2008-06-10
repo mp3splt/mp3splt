@@ -47,14 +47,19 @@
 //the cddb and cue functions does not fill in all the tags, this
 //function completes the fill
 //and calls another function that sets the output filenames
-void splt_tag_put_filenames_from_tags(splt_state *state,
-                                      int tracks, int *error)
+static void splt_tag_put_filenames_from_tags(splt_state *state,
+    int tracks, int *error)
 {
   int i = 0;
   char *artist0 = NULL;
   if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST))
   {
     artist0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST));
+    if (artist0 == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto function_end;
+    }
   }
   else
   {
@@ -65,12 +70,22 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
   if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM))
   {
     album0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM));
+    if (album0 == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto function_end;
+    }
   }
 
   char *year0 = NULL;
   if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR))
   {
     year0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR));
+    if (year0 == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto function_end;
+    }
   }
 
   char *performer = NULL;
@@ -92,33 +107,45 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
       //we put performer if found
       if ((performer != NULL) && (performer[0] != '\0'))
       {
-        tags_error = 
-          splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
+        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
               performer);
         if (tags_error != SPLT_OK)
         {
           *error = tags_error;
+          goto function_end;
         }
       }
       else
       {
         //we put the artist0
-        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
-            artist0);
+        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST, artist0);
+        if (tags_error != SPLT_OK)
+        {
+          *error = tags_error;
+          goto function_end;
+        }
       }
 
       //we put the same album, year and genre everywhere
       if (i != 0)
       {
-        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM,
-            album0);
-        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR,
-            year0);
-        tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
-            genre0);
+        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM, album0);
         if (tags_error != SPLT_OK)
         {
           *error = tags_error;
+          goto function_end;
+        }
+        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR, year0);
+        if (tags_error != SPLT_OK)
+        {
+          *error = tags_error;
+          goto function_end;
+        }
+        tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
+        if (tags_error != SPLT_OK)
+        {
+          *error = tags_error;
+          goto function_end;
         }
       }
     }
@@ -128,20 +155,16 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
     //we put the same artist, genre, album and year everywhere
     for(i = 1;i<tracks;i++)
     {
-      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
-          genre0);
-      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
-          artist0);
-      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM,
-          album0);
-      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR,
-          year0);
-      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE,
-          genre0);
-      if (tags_error != SPLT_OK)
-      {
-        *error = tags_error;
-      }
+      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
+      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST, artist0);
+      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM, album0);
+      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR, year0);
+      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
+      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
     }
   }
 
@@ -153,9 +176,17 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
     {
       //we put the outputted filename
       char *old_format = strdup(splt_t_get_oformat(state));
-      splt_t_set_oformat(state, old_format,&err_format);
-      free(old_format);
-      old_format = NULL;
+      if (old_format != NULL)
+      {
+        splt_t_set_oformat(state, old_format,&err_format);
+        free(old_format);
+        old_format = NULL;
+      }
+      else
+      {
+        *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        goto function_end;
+      }
     }
 
     if (err_format >= 0)
@@ -180,6 +211,7 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
     }
   }
 
+function_end:
   //free 
   if (artist0)
   {
@@ -201,10 +233,12 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
 /***********************/
 /* cue */
 
-//if we have a string "test", this functions cuts out the two "
+//-if we have a string "test", this functions cuts out the two "
 //and cleans the string of other unwanted characters
-static int splt_cue_set_value(splt_state *state, char *file, char *in, 
-                              int index, int tag_field)
+//-then puts the information in the tags
+//-returns possible error
+static int splt_cue_set_value(splt_state *state, char *in,
+    int index, int tag_field)
 {
   int error = SPLT_OK;
 
@@ -248,32 +282,33 @@ static int splt_cue_set_value(splt_state *state, char *file, char *in,
     splt_u_cleanstring(out);
     int tags_err = SPLT_OK;
 
-    //put artist info to client
+    //put Artist + Album info to client
     char *client_infos = malloc(sizeof(char) * (strlen(out)+30));
     if (client_infos == NULL)
     {
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto end;
     }
-    if (tag_field == SPLT_TAGS_ARTIST)
+    else
     {
-      snprintf(client_infos,strlen(out)+30,"\n  Artist: %s\n", out);
-      splt_t_put_message_to_client(state, client_infos);
-    }
-    else if (tag_field == SPLT_TAGS_ALBUM)
-    {
-      snprintf(client_infos,strlen(out)+30,"  Album: %s\n", out);
-      splt_t_put_message_to_client(state, client_infos);
-    }
-    free(client_infos);
-    client_infos = NULL;
+      if (tag_field == SPLT_TAGS_ARTIST)
+      {
+        snprintf(client_infos,strlen(out)+30,"\n  Artist: %s\n", out);
+        splt_t_put_message_to_client(state, client_infos);
+      }
+      else if (tag_field == SPLT_TAGS_ALBUM)
+      {
+        snprintf(client_infos,strlen(out)+30,"  Album: %s\n", out);
+        splt_t_put_message_to_client(state, client_infos);
+      }
+      free(client_infos);
+      client_infos = NULL;
 
-    tags_err = splt_t_set_tags_char_field(state, index, tag_field, out);
-    if (tags_err != SPLT_OK)
-    {
-      error = tags_err;
+      tags_err = splt_t_set_tags_char_field(state, index, tag_field, out);
+      if (tags_err != SPLT_OK)
+      {
+        error = tags_err;
+      }
     }
-end:
     free(out);
     out = NULL;
   }
@@ -284,13 +319,19 @@ end:
 //error = possible error that we return
 //gets the cue splitpoints from a file and puts them in the state
 //returns the number of tracks found
-int splt_cue_put_splitpoints(char *file, splt_state *state, int *error)
+int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 {
+  if (file == NULL)
+  { 
+    *error = SPLT_INVALID_CUE_FILE;
+    return 0;
+  }
+
   //clear previous splitpoints
   splt_t_free_splitpoints_tags(state);
 
   //default no error
-  *error = SPLT_FREEDB_CUE_OK;
+  *error = SPLT_CUE_OK;
   
   char *client_infos = malloc(sizeof(char) * (strlen(file)+200));
   //put information to client
@@ -323,216 +364,215 @@ int splt_cue_put_splitpoints(char *file, splt_state *state, int *error)
   //default genre
   tags_error = splt_t_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE, 12);
   if (tags_error != SPLT_OK)
-    {
-      *error = tags_error;
-      return tracks;
-    }
+  {
+    *error = tags_error;
+    return tracks;
+  }
   
-  //we open the file
+  //if we cannot open the file
   if (!(file_input=fopen(file, "r")))
+  {
+    splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,file);
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    return tracks;
+  }
+  //if we can open the file
+  else
+  {
+    //put pointer at the beginning of the file
+    if (fseek(file_input, 0, SEEK_SET) == 0)
+    {
+      //contains the start of the content of the line;
+      //-for example for the '      PERFORMER abcd' line,
+      //it will point to ' abcd'
+      char *line_content = NULL;
+
+      //we read the file line by line
+      while (fgets(line, 2048, file_input)!=NULL)
+      {
+        type = SPLT_CUE_NOTHING;
+
+        //we read strings from file TRACK,TITLE,AUDIO,PERFORMER,INDEX
+        if (((line_content = strstr(line, "TRACK"))!=NULL)
+            && (strstr(line, "AUDIO")!=NULL))
+        {
+          line_content += 5;
+          type = SPLT_CUE_TRACK;
+        }
+        else if ((line_content = strstr(line, "TITLE")) != NULL)
+        {
+          line_content += 5;
+          type = SPLT_CUE_TITLE;
+        }
+        else if ((line_content = strstr(line, "PERFORMER")) != NULL)
+        {
+          type = SPLT_CUE_PERFORMER;
+          line_content += 9;
+        }
+        else if ((ptr=strstr(line, "INDEX 01"))!=NULL)
+        {
+          type = SPLT_CUE_INDEX;
+        }
+
+        //we clean previous data
+        splt_t_clean_one_split_data(state, tracks);
+
+        //we analyse the previous strings found
+        switch (type)
+        {
+          //nothing found
+          case SPLT_CUE_NOTHING:
+            break;
+          //TRACK and AUDIO found
+          case SPLT_CUE_TRACK:
+            if (tracks==-1) 
+            {
+              tracks = 0;
+            }
+            if (time_for_track) 
+            {
+              performer = SPLT_FALSE;
+              title = SPLT_FALSE;
+              tracks++;
+            }
+            else
+            {
+              splt_t_set_error_data(state,file);
+              *error = SPLT_INVALID_CUE_FILE;
+              goto function_end;
+            }
+            time_for_track = SPLT_FALSE;
+            break;
+          //TITLE found
+          case SPLT_CUE_TITLE:
+            if (tracks == -1)
+            {
+              if ((temp_error = splt_cue_set_value(state, line_content, 
+                      0, SPLT_TAGS_ALBUM)) != SPLT_OK)
+              {
+                *error = temp_error;
+                goto function_end;
+              }
+            }
+            else
+            {
+              if (tracks > 0)
+              {
+                if ((temp_error = splt_cue_set_value(state, line_content,
+                        tracks-1, SPLT_TAGS_TITLE)) != SPLT_OK)
+                {
+                  *error = temp_error;
+                  goto function_end;
+                }
+              }
+              title = SPLT_TRUE;
+            }
+            break;
+          //PERFORMER found
+          case SPLT_CUE_PERFORMER:        
+            if (tracks == -1)
+            {
+              //we always have one artist in a cue file, we
+              //put the performers if more than one artist
+              if ((temp_error = splt_cue_set_value(state, line_content,
+                      0, SPLT_TAGS_ARTIST)) != SPLT_OK)
+              {
+                *error = temp_error;
+                goto function_end;
+              }
+            }
+            else
+            {
+              if (tracks>0)
+              {
+                if ((temp_error = splt_cue_set_value(state, line_content,
+                        tracks-1, SPLT_TAGS_PERFORMER)) != SPLT_OK)
+                {
+                  *error = temp_error;
+                  goto function_end;
+                }
+              }
+              performer = SPLT_TRUE;
+            }
+            break;
+          //INDEX 01 found
+          case SPLT_CUE_INDEX:
+            line[strlen(line)-1]='\0';
+            ptr += 9;
+            if ((dot = strchr(ptr, ':'))==NULL)
+            {
+              splt_t_set_error_data(state,file);
+              *error = SPLT_INVALID_CUE_FILE;
+              goto function_end;
+            }
+            else
+            {
+              //we replace : with . for the sscanf
+              ptr[dot-ptr] = ptr[dot-ptr+3] = '.';
+              //we clean the string for unwanted characters
+              splt_u_cleanstring(ptr);
+              //we convert to hundreths of seconds and put splitpoints
+              if (tracks>0)
+              {
+                long hundr_seconds = splt_u_convert_hundreths(ptr);
+                if (hundr_seconds==-1)
+                {
+                  splt_t_set_error_data(state,file);
+                  *error = SPLT_INVALID_CUE_FILE;
+                  goto function_end;
+                }
+
+                //we append the splitpoint
+                append_error =
+                  splt_t_append_splitpoint(state, hundr_seconds, NULL);
+                if (append_error != SPLT_OK)
+                {
+                  *error = append_error;
+                  goto function_end;
+                }
+
+                time_for_track = SPLT_TRUE;
+                counter++;
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      }
+      //we append the last splitpoint
+      append_error = splt_t_append_splitpoint(state, LONG_MAX,
+          "description here");
+    }
+    else
     {
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state,file);
-      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-      return tracks;
+      *error = SPLT_ERROR_SEEKING_FILE;
+      goto function_end;
     }
-  else
-    //if we can open the file
+
+    //if we don't find INDEX on the file, error
+    if (counter == 0)
     {
-      //put pointer at the beginning of the file
-      if (fseek(file_input, 0, SEEK_SET) == 0)
-        {
-          //contains the start of the content of the line;
-          //-for example for the '      PERFORMER abcd' line,
-          //it will point to ' abcd'
-          char *line_content = NULL;
-
-          //we read the file line by line
-          while (fgets(line, 1024, file_input)!=NULL)
-            {
-              type = SPLT_CUE_NOTHING;
-
-              //we read strings from file TRACK,TITLE,AUDIO,PERFORMER,INDEX
-              if (((line_content = strstr(line, "TRACK"))!=NULL)
-                  && (strstr(line, "AUDIO")!=NULL))
-                {
-                  line_content += 5;
-                  type = SPLT_CUE_TRACK;
-                }
-              else if ((line_content = strstr(line, "TITLE")) != NULL)
-                {
-                  line_content += 5;
-                  type = SPLT_CUE_TITLE;
-                }
-              else if ((line_content = strstr(line, "PERFORMER")) != NULL)
-                {
-                  type = SPLT_CUE_PERFORMER;
-                  line_content += 9;
-                }
-              else if ((ptr=strstr(line, "INDEX 01"))!=NULL)
-                {
-                  type = SPLT_CUE_INDEX;
-                }
-
-              //we clean previous data
-              splt_t_clean_one_split_data(state, tracks);
-
-              //we analyse the previous strings found
-              switch (type)
-                {
-                  //nothing found
-                case SPLT_CUE_NOTHING:break;
-                  //TRACK and AUDIO found
-                case SPLT_CUE_TRACK:
-                  if (tracks==-1) 
-                    {
-                      tracks = 0;
-                    }
-                  if (time_for_track) 
-                    {
-                      performer = SPLT_FALSE;
-                      title = SPLT_FALSE;
-                      tracks++;
-                    }
-                  else
-                    {
-                      splt_t_set_error_data(state,file);
-                      *error = SPLT_INVALID_CUE_FILE;
-                      goto function_end;
-                    }
-                  time_for_track = SPLT_FALSE;
-                  break;
-                  //TITLE found
-                case SPLT_CUE_TITLE:
-                  if (tracks == -1)
-                    {
-                      if ((temp_error = splt_cue_set_value(state, file, line_content, 
-                              0, SPLT_TAGS_ALBUM)) != SPLT_OK)
-                        {
-                          *error = temp_error;
-                          goto function_end;
-                        }
-                    }
-                  else
-                    {
-                      if (tracks > 0)
-                        {
-                          if ((temp_error = splt_cue_set_value(state, file, line_content,
-                                  tracks-1, SPLT_TAGS_TITLE)) != SPLT_OK)
-                            {
-                              *error = temp_error;
-                              goto function_end;
-                            }
-                        }
-                      title = SPLT_TRUE;
-                    }
-                  break;
-                  //PERFORMER found
-                case SPLT_CUE_PERFORMER:        
-                  if (tracks == -1)
-                    {
-                      //we always have one artist in a cue file, we
-                      //put the performers if more than one artist
-                      if ((temp_error = splt_cue_set_value(state, file, line_content,
-                              0, SPLT_TAGS_ARTIST)) != SPLT_OK)
-                        {
-                          *error = temp_error;
-                          goto function_end;
-                        }
-                    }
-                  else
-                    {
-                      if (tracks>0)
-                        {
-                          if ((temp_error = splt_cue_set_value(state, file, line_content,
-                                  tracks-1, SPLT_TAGS_PERFORMER)) != SPLT_OK)
-                            {
-                              *error = temp_error;
-                              goto function_end;
-                            }
-                        }
-                      performer = SPLT_TRUE;
-                    }
-                  break;
-                  //INDEX 01 found
-                  //we get the 
-                case SPLT_CUE_INDEX:
-                  line[strlen(line)-1]='\0';
-                  ptr += 9;
-                  if ((dot = strchr(ptr, ':'))==NULL)
-                    {
-                      splt_t_set_error_data(state,file);
-                      *error = SPLT_INVALID_CUE_FILE;
-                      goto function_end;
-                    }
-                  else
-                    {
-                      //we replace : with . for the sscanf
-                      ptr[dot-ptr] = ptr[dot-ptr+3] = '.';
-                      //we clean the string for unwanted characters
-                      splt_u_cleanstring(ptr);
-                      //we convert to hundreths of seconds and put splitpoints
-                      if (tracks>0)
-                        {
-                          long hundr_seconds = splt_u_convert_hundreths(ptr);
-                          if (hundr_seconds==-1)
-                            {
-                              splt_t_set_error_data(state,file);
-                              *error = SPLT_INVALID_CUE_FILE;
-                              goto function_end;
-                            }
-                          
-                          //we append the splitpoint
-                          append_error =
-                            splt_t_append_splitpoint(state, hundr_seconds, NULL);
-                          if (append_error != SPLT_OK)
-                            {
-                              *error = append_error;
-                              goto function_end;
-                            }
-                          
-                          time_for_track = SPLT_TRUE;
-                          counter++;
-                        }
-                    }
-                  break;
-                default:
-                  break;
-                }
-            }
-          //we append the last splitpoint
-          append_error =
-            splt_t_append_splitpoint(state, LONG_MAX,
-                                     "description here");
-        }
-      else
-        {
-          splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state,file);
-          *error = SPLT_ERROR_SEEKING_FILE;
-          goto function_end;
-        }
-      
-      //if we don't find INDEX on the file, error
-      if (counter == 0)
-        {
-          splt_t_set_error_data(state,file);
-          *error = SPLT_INVALID_CUE_FILE;
-          goto function_end;
-        }
-      
-      //if no time for track,
-      if (!time_for_track) 
-        {
-          tracks--;
-        }
-      
-      splt_tag_put_filenames_from_tags(state,tracks,error);
-      
-    function_end:
-      fclose(file_input);
-      file_input = NULL;
+      splt_t_set_error_data(state,file);
+      *error = SPLT_INVALID_CUE_FILE;
+      goto function_end;
     }
+
+    //if no time for track,
+    if (!time_for_track) 
+    {
+      tracks--;
+    }
+
+    splt_tag_put_filenames_from_tags(state,tracks,error);
+
+function_end:
+    fclose(file_input);
+    file_input = NULL;
+  }
   
   //put number of tracks
   char tracks_info[64] = { '\0' };
@@ -550,14 +590,14 @@ int splt_cue_put_splitpoints(char *file, splt_state *state, int *error)
 //puts the cddb splitpoints from the file in the state
 //returns number of tracks
 //see freedb file format documentation on freedb.org
-int splt_cddb_put_splitpoints (char *file, splt_state *state,
-                               int *error)
+//-file must not be NULL
+int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
 {
   //clear previous splitpoints
   splt_t_free_splitpoints_tags(state);
 
   //default no error
-  *error = SPLT_FREEDB_CDDB_OK;
+  *error = SPLT_CDDB_OK;
 
   char *client_infos = malloc(sizeof(char) * (strlen(file)+200));
   //put information to client
@@ -611,7 +651,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
     {
       //we search for the string "Track frame offset"
       do {
-        if ((fgets(line, 1024, file_input))==NULL)
+        if ((fgets(line, 2048, file_input))==NULL)
         {
           splt_t_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
@@ -624,7 +664,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
 
       //we read the track offsets
       do {
-        if ((fgets(line, 1024, file_input))==NULL)
+        if ((fgets(line, 2048, file_input))==NULL)
         {
           splt_t_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
@@ -646,7 +686,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
           break;
         }
         else
-          //we put the offsets in the splitpoint table
+        //we put the offsets in the splitpoint table
         {
           double temp = 0;
           temp = atof(number);
@@ -709,8 +749,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
         temp2 = atof(number);
 
         //we append the splitpoint (in seconds*100)
-        append_error =
-          splt_t_append_splitpoint(state, temp2 * 100, NULL);
+        append_error = splt_t_append_splitpoint(state, temp2 * 100, NULL);
         if (append_error != SPLT_OK)
         {
           *error = append_error;
@@ -719,7 +758,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
       }
       else
       {
-        //we append the splitpoint
+        //we append 0 as splitpoint
         append_error = splt_t_append_splitpoint(state, 0, NULL);
         if (append_error != SPLT_OK)
         {
@@ -729,12 +768,16 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
       }
 
       split2 = splt_t_get_splitpoint_value(state, 0, &get_error);
+      if (get_error != SPLT_OK)
+      {
+        *error = get_error;
+        goto function_end;
+      }
 
       //we convert the points previously found
       for (i=tracks-1; i>=0; i--)
       {
-        split1 = 
-          splt_t_get_splitpoint_value(state, i, &get_error);
+        split1 = splt_t_get_splitpoint_value(state, i, &get_error);
         if (get_error != SPLT_OK)
         {
           *error = get_error;
@@ -764,7 +807,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
         title = 0;
         char temp[10];
         memset(temp, 0, 10);
-        if ((fgets(line, 1024, file_input))==NULL)
+        if ((fgets(line, 2048, file_input))==NULL)
         {
           splt_t_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
@@ -774,7 +817,9 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
         if (strlen(line)>0)
         {
           if (line[strlen(line)-1]=='\r')
+          {
             line[strlen(line)-1]='\0';
+          }
         }
 
         //some cddb files have Year and Genre before TTITLE
@@ -822,6 +867,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
           }
         }
 
+        //if we don't have '=', invalid file
         if ((number=strchr(line, '='))==NULL) 
         {
           splt_t_set_error_data(state,file);
@@ -836,7 +882,10 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
         if (j>0)
         {
           int len = number-line;
-          if (len>10) len = 10;
+          if (len>10) 
+          {
+            len = 10;
+          }
           strncpy(temp, line, len);
           if ((c = strchr(number, '/'))!=NULL) 
           {
@@ -871,8 +920,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
               }
             }
 
-            perfor = splt_t_get_tags_char_field(state, j-1, 
-                SPLT_TAGS_PERFORMER);
+            perfor = splt_t_get_tags_char_field(state, j-1, SPLT_TAGS_PERFORMER);
             splt_u_cleanstring(perfor);
             number = c+1;
           }
@@ -920,8 +968,6 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
               *error =tags_error;
               goto function_end;
             }
-            //strncat(state->tags.id[j-1].title,
-            //number, 128-strlen(state->tags.id[j-1].title));
           }
           else
           {
@@ -952,8 +998,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
               }
 
               //we cut the space at the end of the artist
-              artist = 
-                splt_t_get_tags_char_field(state,0, SPLT_TAGS_ARTIST);
+              artist = splt_t_get_tags_char_field(state,0, SPLT_TAGS_ARTIST);
               int k = strlen(artist)-1;
               while (artist[k] == ' ')
               {
@@ -1023,7 +1068,6 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
                 *error =tags_error;
                 goto function_end;
               }
-              //strncpy(state->tags.id[j-1].title, t, 128);
             }
             j++;
           }
@@ -1041,7 +1085,7 @@ int splt_cddb_put_splitpoints (char *file, splt_state *state,
         goto function_end;
       }
 
-      while ((fgets(line, 1024, file_input))!=NULL)
+      while ((fgets(line, 2048, file_input))!=NULL)
       {
         line[strlen(line)-1] = '\0';
         if (strlen(line)>0)
@@ -1103,10 +1147,13 @@ function_end:
     file_input = NULL;
   }
 
-  //put number of tracks
-  char tracks_info[64] = { '\0' };
-  snprintf(tracks_info, 64, "  Tracks: %d\n\n",tracks);
-  splt_t_put_message_to_client(state, tracks_info);
+  //if we have tracks, put the number of tracks to the user
+  if (*error >= 0)
+  {
+    char tracks_info[64] = { '\0' };
+    snprintf(tracks_info, 64, "  Tracks: %d\n\n",tracks);
+    splt_t_put_message_to_client(state, tracks_info);
+  }
 
   return tracks;
 }
@@ -1191,8 +1238,8 @@ function_end:
 // End of Base64 Algorithm
 
 //we analyse the freedb2 buffer for the CDs results
-static int splt_freedb2_analyse_cd_buffer (char *buf, int size, 
-		splt_state *state, int *error)
+static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
+    splt_state *state, int *error)
 {
   //temporary pointer
   char *temp = buf, *temp2 = NULL;
@@ -1284,7 +1331,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 //}
 
 static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
-    char search_server[256], int port)
+    const char search_server[256], int port)
 {
   dest.proxy=0;
   memset(dest.hostname, 0, 256);
@@ -1349,10 +1396,8 @@ static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
 //search_server is the server on which to search for,
 // if search_server == NULL, it will be freedb2.org by default
 //port is the port where to connect to the server; by default is 80
-//
-//TODO: see when we don't have a valid search_type or port
 int splt_freedb_process_search(splt_state *state, char *search,
-                               int search_type, char search_server[256],
+                               int search_type, const char search_server[256],
                                int port)
 {
   //we take the cgi path of the search_server
@@ -1377,7 +1422,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
   int error = SPLT_FREEDB_OK;
   //socket and internet structures
   struct sockaddr_in host;
-  struct hostent *h;
+  struct hostent *h = NULL;
   splt_addr dest;
   //e is used for the end of the buffer
   //c is used for the buffer read
@@ -1386,7 +1431,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
   //the message delivered to the server
   char *message = NULL;
   //the buffer that we are using to read incoming transmission
-  char buffer[SPLT_FREEDB_BUFFERSIZE];
+  char buffer[SPLT_FREEDB_BUFFERSIZE] = { '\0' };
 
   //fd = socket identifier
 #ifdef __WIN32__
@@ -1394,11 +1439,17 @@ int splt_freedb_process_search(splt_state *state, char *search,
   WSADATA winsock;
   SOCKET fd;
   winsockinit = WSAStartup(0x0101,&winsock);
+  if (winsockinit != 0)
+  {
+    splt_t_clean_strerror_msg(state);
+    error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
+    return error;
+  }
 #else
   int fd;
 #endif
 
-  //transform " " to "+"
+  //transform ' ' to '+'
   int string_length = strlen(search);
   for (i = 0; i < string_length; i++)
   {
@@ -1414,12 +1465,18 @@ int splt_freedb_process_search(splt_state *state, char *search,
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
   {
+    splt_t_set_strherror_msg(state);
     error = SPLT_FREEDB_ERROR_CANNOT_GET_HOST;
     splt_t_set_error_data(state,dest.hostname);
+#ifdef __WIN32__
+    WSACleanup();
+#endif
     return error;
   }
   else
   {
+    splt_t_set_error_data(state,dest.hostname);
+
     //we prepare socket
     memset(&host, 0x0, sizeof(host));
     host.sin_family=AF_INET;
@@ -1429,7 +1486,11 @@ int splt_freedb_process_search(splt_state *state, char *search,
     //initialize socket
     if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
     {
+      splt_t_set_strerror_msg(state);
       error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
+#ifdef __WIN32__
+      WSACleanup();
+#endif
       return error;
     }
     else
@@ -1437,9 +1498,12 @@ int splt_freedb_process_search(splt_state *state, char *search,
       //make connection
       if ((connect(fd, (void *)&host, sizeof(host))) < 0)
       {
+        splt_t_set_strerror_msg(state);
         error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
-        splt_t_set_error_data(state,dest.hostname);
         closesocket(fd);
+#ifdef __WIN32__
+        WSACleanup();
+#endif
         return error;
       }
       else
@@ -1475,8 +1539,8 @@ int splt_freedb_process_search(splt_state *state, char *search,
             //message sent
             if((send(fd, message, strlen(message), 0))==-1)
             {
+              splt_t_set_strerror_msg(state);
               error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-              splt_t_set_error_data(state,dest.hostname);
             }
             else
             {
@@ -1500,6 +1564,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
                     i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
                     if (i == -1) 
                     {
+                      splt_t_set_strerror_msg(state);
                       error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                       goto function_end1;
                     }
@@ -1553,6 +1618,9 @@ function_end1:
             //free memory
             free(message);
             message = NULL;
+#ifdef __WIN32__
+            WSACleanup();
+#endif
           }
         }
         //we will put the new web html freedb search
@@ -1560,6 +1628,10 @@ function_end1:
         else 
         {
           error = SPLT_FREEDB_ERROR_GETTING_INFOS;
+#ifdef __WIN32__
+          WSACleanup();
+#endif
+          closesocket(fd);
           return error;
           /*if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB)
             {
@@ -1589,8 +1661,7 @@ function_end1:
 //
 //TODO: see when we don't have a valid port or get_type
 char *splt_freedb_get_file(splt_state *state, int i, int *error,
-    int get_type, char cddb_get_server[256], 
-    int port)
+    int get_type, const char cddb_get_server[256], int port)
 {
   //we take the cgi path of the search_server
   //if we have one
@@ -1633,6 +1704,12 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   WSADATA winsock;
   SOCKET fd;
   winsockinit = WSAStartup(0x0101,&winsock);
+  if (winsockinit != 0)
+  {
+    splt_t_clean_strerror_msg(state);
+    error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
+    return error;
+  }
 #else
   int fd = 0;
 #endif
@@ -1643,12 +1720,18 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
   {
+    splt_t_set_strherror_msg(state);
     *error = SPLT_FREEDB_ERROR_CANNOT_GET_HOST;
     splt_t_set_error_data(state,dest.hostname);
+#ifdef __WIN32__
+    WSACleanup();
+#endif
     return NULL;
   }
   else
   {
+    splt_t_set_error_data(state,dest.hostname);
+
     //we prepare socket
     memset(&host, 0x0, sizeof(host));
     host.sin_family=AF_INET;
@@ -1668,10 +1751,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
     //        strncat(message, "\n", 1);
     //        }
     //        else 
-    char *cd_category = 
-      splt_t_freedb_get_disc_category(state, i);
-    char *cd_id = 
-      splt_t_freedb_get_disc_id(state, i);
+    char *cd_category = splt_t_freedb_get_disc_category(state, i);
+    char *cd_id = splt_t_freedb_get_disc_id(state, i);
 
     int malloc_number = 0;
     if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
@@ -1681,12 +1762,9 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
     }
     else
     {
-      if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
-      {
-        malloc_number = strlen(cd_category)+strlen(cd_id)+
-          strlen(SPLT_FREEDB_CDDB_CGI_GET_FILE)+
-          strlen(cgi_path);
-      }
+      //if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
+      malloc_number = strlen(cd_category) + strlen(cd_id) +
+        strlen(SPLT_FREEDB_CDDB_CGI_GET_FILE) + strlen(cgi_path);
     }
     message = malloc(malloc_number);
     if (message != NULL)
@@ -1694,23 +1772,23 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
       //CDDB protocol (usually port 8880)
       if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
       {
-        snprintf(message, malloc_number, SPLT_FREEDB_GET_FILE,
-            cd_category, cd_id);
+        snprintf(message, malloc_number, SPLT_FREEDB_GET_FILE, cd_category, cd_id);
 
         //open socket
         if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
         {
+          splt_t_set_strerror_msg(state);
           *error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
           free(message);
-          return NULL;
+          goto end_function;
         }
         else
         {
           //connect to host
           if ((connect(fd, (void *)&host, sizeof(host)))==-1)
           {
+            splt_t_set_strerror_msg(state);
             *error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
-            splt_t_set_error_data(state,dest.hostname);
             goto bloc_end;
           }
           else
@@ -1721,6 +1799,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
               i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
               if (i == -1)
               {
+                splt_t_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                 goto bloc_end;
               }
@@ -1735,14 +1814,15 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
               //send hello message
               if((send(fd, SPLT_FREEDB_HELLO, strlen(SPLT_FREEDB_HELLO), 0))==-1)
               {
+                splt_t_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-                splt_t_set_error_data(state,dest.hostname);
                 goto bloc_end;
               }
               i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
 
               if (i == -1)
               {
+                splt_t_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                 goto bloc_end;
               }
@@ -1758,8 +1838,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
             //we send the message
             if((send(fd, message, strlen(message), 0))==-1)
             {
+              splt_t_set_strerror_msg(state);
               *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-              splt_t_set_error_data(state,dest.hostname);
               goto bloc_end;
             }
             else
@@ -1773,6 +1853,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
                 i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
                 if (i == -1)
                 {
+                  splt_t_set_strerror_msg(state);
                   *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                   goto bloc_end;
                 }
@@ -1807,8 +1888,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
               {
                 if((send(fd, "quit\n", 5, 0))==-1)
                 {
+                  splt_t_set_strerror_msg(state);
                   *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-                  splt_t_set_error_data(state,dest.hostname);
                   goto bloc_end;
                 }
               }
@@ -1827,7 +1908,7 @@ bloc_end:
           if (tot==0) 
           {
             *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
-            return NULL;
+            goto end_function;
           }
 
           if (e!=NULL)
@@ -1838,40 +1919,43 @@ bloc_end:
           //if invalid server answer
           if ((strstr(buffer, "database entry follows"))==NULL)
           {
-            if ((c = strchr (buffer, '\n'))!=NULL)
+            if ((c = strchr(buffer, '\n'))!=NULL)
             {
               buffer[c-buffer]='\0';
             }
             *error = SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER;
-            return NULL;
+            goto end_function;
           }
           else
           {
-            if ((c = strchr (buffer, '#'))==NULL)
+            if ((c = strchr(buffer, '#'))==NULL)
             {
               output = NULL;
               *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
-              return NULL;
+              goto end_function;
             }
             else
             {
               output = malloc(strlen(c)+1);
               if (output != NULL)
               {
-                sprintf (output,c);
+                sprintf(output,c);
+#ifdef __WIN32__
+                WSACleanup();
+#endif
                 return output;
               }
               else
               {
                 *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                return NULL;
+                goto end_function;
               }
             }
           }
         }
         else
         {
-          return NULL;
+          goto end_function;
         }
       }
       //cddb.cgi script (usually port 80)
@@ -1879,24 +1963,24 @@ bloc_end:
       {
         if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
         {
-          snprintf(message, malloc_number,
-              SPLT_FREEDB_CDDB_CGI_GET_FILE, 
+          snprintf(message, malloc_number, SPLT_FREEDB_CDDB_CGI_GET_FILE, 
               cgi_path, cd_category, cd_id);
 
           //open socket
           if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
           {
+            splt_t_set_strerror_msg(state);
             *error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
             free(message);
-            return NULL;
+            goto end_function;
           }
           else
           {
             //connect to host
             if ((connect(fd, (void *)&host, sizeof(host)))==-1)
             {
+              splt_t_set_strerror_msg(state);
               *error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
-              splt_t_set_error_data(state,dest.hostname);
               goto bloc_end2;
             }
             else
@@ -1904,8 +1988,8 @@ bloc_end:
               //we send the message
               if((send(fd, message, strlen(message), 0))==-1)
               {
+                splt_t_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
-                splt_t_set_error_data(state,dest.hostname);
                 goto bloc_end2;
               }
               else
@@ -1924,6 +2008,7 @@ bloc_end:
                     i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
                     if (i == -1) 
                     {
+                      splt_t_set_strerror_msg(state);
                       *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                       goto bloc_end2;
                     }
@@ -1973,14 +2058,14 @@ bloc_end2:
               if (tot==0) 
               {
                 *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
-                return NULL;
+                goto end_function;
               }
 
               if ((c = strchr (buffer, '#'))==NULL)
               {
                 output = NULL;
                 *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
-                return NULL;
+                goto end_function;
               }
               else
               {
@@ -1988,19 +2073,22 @@ bloc_end2:
                 if (output != NULL)
                 {
                   //we write the output
-                  sprintf (output,c);
+                  sprintf(output,c);
+#ifdef __WIN32__
+                  WSACleanup();
+#endif
                   return output;
                 }
                 else
                 {
                   *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                  return NULL;
+                  goto end_function;
                 }
               }
             }
             else
             {
-              return NULL;
+              goto end_function;
             }
           }
         }
@@ -2008,15 +2096,22 @@ bloc_end2:
         {
           //invalid get file type
           *error = SPLT_FREEDB_ERROR_GETTING_INFOS;
-          return NULL;
+          goto end_function;
         }
       }
     }
     else
     {
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
+      goto end_function;
     }
+
+end_function:
+    ;
+#ifdef __WIN32__
+    WSACleanup();
+#endif
+    return NULL;
   }
 }
 

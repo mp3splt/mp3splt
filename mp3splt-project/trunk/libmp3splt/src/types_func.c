@@ -33,6 +33,7 @@
 #include <string.h>
 #include <math.h>
 #include <errno.h>
+#include <netdb.h>
 
 #include "splt.h"
 
@@ -321,8 +322,7 @@ long splt_t_get_total_time(splt_state *state)
 
 //sets the new filename path
 void splt_t_set_new_filename_path(splt_state *state, 
-    char *new_filename_path,
-    int *error)
+    char *new_filename_path, int *error)
 {
   //free previous path
   if (state->iopts.new_filename_path)
@@ -355,7 +355,7 @@ char *splt_t_get_new_filename_path(splt_state *state)
 
 //sets the path of the split
 //returns possible error
-int splt_t_set_path_of_split(splt_state *state, char *path)
+int splt_t_set_path_of_split(splt_state *state, const char *path)
 {
   int error = SPLT_OK;
 
@@ -390,7 +390,7 @@ int splt_t_set_path_of_split(splt_state *state, char *path)
 
 //sets the m3u filename
 //returns possible error
-int splt_t_set_m3u_filename(splt_state *state, char *filename)
+int splt_t_set_m3u_filename(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
 
@@ -425,7 +425,7 @@ int splt_t_set_m3u_filename(splt_state *state, char *filename)
 }
 
 //sets the filename to split
-int splt_t_set_filename_to_split(splt_state *state, char *filename)
+int splt_t_set_filename_to_split(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
 
@@ -520,7 +520,7 @@ static void splt_t_free_oformat(splt_state *state)
 }
 
 //set the output format string
-int splt_t_new_oformat(splt_state *state, char *format_string)
+int splt_t_new_oformat(splt_state *state, const char *format_string)
 {
   int error = SPLT_OK;
   splt_t_free_oformat(state);
@@ -547,7 +547,7 @@ int splt_t_new_oformat(splt_state *state, char *format_string)
 }
 
 //puts the output format
-void splt_t_set_oformat(splt_state *state, char *format_string,
+void splt_t_set_oformat(splt_state *state, const char *format_string,
     int *error)
 {
   int j = 0;
@@ -617,7 +617,7 @@ int splt_t_get_splitnumber(splt_state *state)
 //split_value is which splitpoint hundreths of seconds
 //if split_value is LONG_MAX, we put the end of the song (EOF)
 int splt_t_append_splitpoint(splt_state *state, long split_value,
-    char *name)
+    const char *name)
 {
   int error = SPLT_OK;
 
@@ -666,8 +666,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
     //we change the splitpoint name
     int name_error = SPLT_OK;
     name_error = splt_t_set_splitpoint_name(state,
-        state->split.real_splitnumber-1,
-        name);
+        state->split.real_splitnumber-1, name);
     if (name_error != SPLT_OK)
     {
       error = name_error;
@@ -708,8 +707,7 @@ void splt_t_free_splitpoints(splt_state *state)
 }
 
 //returns if the splitpoint at index position exists
-int splt_t_splitpoint_exists(splt_state *state,
-    int index)
+int splt_t_splitpoint_exists(splt_state *state, int index)
 {
   if ((index >= 0) &&
       (index < state->split.real_splitnumber))
@@ -747,7 +745,7 @@ int splt_t_set_splitpoint_value(splt_state *state,
 
 //change the splitpoint name
 int splt_t_set_splitpoint_name(splt_state *state,
-    int index, char *name)
+    int index, const char *name)
 {
   splt_u_print_debug("Splitpoint name at ",index,name);
 
@@ -864,9 +862,9 @@ void splt_t_append_original_tags(splt_state *state)
 
 //append tags
 int splt_t_append_tags(splt_state *state, 
-    char *title, char *artist,
-    char *album, char *performer,
-    char *year, char *comment,
+    const char *title, const char *artist,
+    const char *album, const char *performer,
+    const char *year, const char *comment,
     int track, unsigned char genre)
 {
   int error = SPLT_OK;
@@ -1081,7 +1079,7 @@ int splt_t_tags_exists(splt_state *state, int index)
 
 //set title, artist, album, year or comment
 int splt_t_set_tags_char_field(splt_state *state, int index,
-    int tags_field, char *data)
+    int tags_field, const char *data)
 {
   int error = SPLT_OK;
 
@@ -1880,7 +1878,7 @@ static void splt_t_state_put_default_options(splt_state *state)
 }
 
 //sets the error data information
-void splt_t_set_error_data(splt_state *state, char *error_data)
+void splt_t_set_error_data(splt_state *state, const char *error_data)
 {
   if (state->err.error_data)
   {
@@ -1894,17 +1892,78 @@ void splt_t_set_error_data(splt_state *state, char *error_data)
   }
 }
 
-//sets the error string message (probably got with strerror(..)
-void splt_t_set_strerror_msg(splt_state *state)
+//return the minutes, seconds and hundr from 'splitpoint'
+void splt_t_get_mins_secs_hundr_from_splitpoint(long splitpoint,
+    long *mins, long *secs, long *hundr)
 {
-  char *strerr = strerror(errno);
+  *hundr = splitpoint % 100;
+  splitpoint /= 100;
+  *secs = splitpoint % 60;
+  *mins = splitpoint / 60;
+}
+
+//set the error data from 1 splitpoint
+void splt_t_set_error_data_from_splitpoint(splt_state *state, long splitpoint)
+{
+  char str_value[256] = { '\0' };
+  long mins = 0, secs = 0, hundr = 0;
+  splt_t_get_mins_secs_hundr_from_splitpoint(splitpoint, &mins, &secs, &hundr);
+  snprintf(str_value,256,"%ldm%lds%ldh",mins,secs,hundr);
+  splt_t_set_error_data(state, str_value);
+}
+
+//set the error data from 2 splitpoints
+void splt_t_set_error_data_from_splitpoints(splt_state *state, long splitpoint1,
+    long splitpoint2)
+{
+  char str_value[256] = { '\0' };
+  long mins = 0, secs = 0, hundr = 0;
+  long mins2 = 0, secs2 = 0, hundr2 = 0;
+  splt_t_get_mins_secs_hundr_from_splitpoint(splitpoint1, &mins, &secs, &hundr);
+  splt_t_get_mins_secs_hundr_from_splitpoint(splitpoint2, &mins2, &secs2, &hundr2);
+  snprintf(str_value,256,"%ldm%lds%ldh, %ldm%lds%ldh",
+      mins, secs, hundr, mins2, secs2, hundr2);
+  splt_t_set_error_data(state, str_value);
+}
+
+//sets the error string message passed as second parameter
+void splt_t_set_strerr_msg(splt_state *state, const char *message)
+{
   if (state->err.strerror_msg)
   {
     free(state->err.strerror_msg);
     state->err.strerror_msg = NULL;
   }
-  state->err.strerror_msg = malloc(sizeof(char) * (strlen(strerr) + 1));
-  snprintf(state->err.strerror_msg,strlen(strerr)+1,"%s",strerr);
+  //if we have a message
+  if (message)
+  {
+    state->err.strerror_msg = malloc(sizeof(char) * (strlen(message) + 1));
+    snprintf(state->err.strerror_msg,strlen(message)+1,"%s",message);
+  }
+  else
+  {
+    state->err.strerror_msg = NULL;
+  }
+}
+
+//sets the error string message got with hstrerror(..)
+void splt_t_clean_strerror_msg(splt_state *state)
+{
+  splt_t_set_strerr_msg(state,NULL);
+}
+
+//sets the error string message got with strerror(..)
+void splt_t_set_strerror_msg(splt_state *state)
+{
+  char *strerr = strerror(errno);
+  splt_t_set_strerr_msg(state,strerr);
+}
+
+//sets the error string message got with hstrerror(..)
+void splt_t_set_strherror_msg(splt_state *state)
+{
+  const char *hstrerr = hstrerror(h_errno);
+  splt_t_set_strerr_msg(state,hstrerr);
 }
 
 //set an int option

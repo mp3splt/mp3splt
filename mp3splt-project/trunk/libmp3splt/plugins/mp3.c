@@ -1023,6 +1023,25 @@ function_end:
   return mp3state;
 }
 
+void splt_mp3_end(splt_state *state)
+{
+  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  if (mp3state)
+  {
+    if (mp3state->file_input)
+    {
+      if (mp3state->file_input != stdin)
+      {
+        fclose(mp3state->file_input);
+      }
+      mp3state->file_input = NULL;
+    }
+    //we free the mp3 state 
+    splt_mp3_state_free(state);
+  }
+  state->codec = NULL;
+}
+
 //gets the mp3 info and puts it in the state
 void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 {
@@ -1035,6 +1054,10 @@ void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
   if ((*error < 0) || 
       (state->codec == NULL))
   {
+    if (state->codec != NULL)
+    {
+      splt_mp3_end(state);
+    }
     return;
   }
   else
@@ -2322,10 +2345,10 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
   mp3state->h.framesize = mp3state->mp3file.firsthead.framesize;
 
   //if the filename is correct
-  if (!splt_check_is_file(filename))
+  int is_file = splt_check_is_file(state, filename);
+  if (*error < 0) { return; }
+  if (!is_file)
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state,filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return;
   }
@@ -3005,24 +3028,6 @@ void splt_mp3_init(splt_state *state, int *error)
 void splt_pl_init(splt_state *state, int *error)
 {
   splt_mp3_init(state,error);
-}
-
-void splt_mp3_end(splt_state *state)
-{
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
-  if (mp3state)
-  {
-    if (mp3state->file_input)
-    {
-      if (mp3state->file_input != stdin)
-      {
-        fclose(mp3state->file_input);
-      }
-      mp3state->file_input = NULL;
-    }
-    //we free the mp3 state 
-    splt_mp3_state_free(state);
-  }
 }
 
 void splt_pl_end(splt_state *state)

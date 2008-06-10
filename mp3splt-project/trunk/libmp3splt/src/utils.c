@@ -246,10 +246,6 @@ static char *splt_u_get_mins_secs_filename(char *filename,
   splt_point *points = 
     splt_t_get_splitpoints(state, &number_of_splits);
 
-  //calculating minutes and seconds to modify filename
-  char mins_char[16], secs_char[16], hundr_secs_char[16],
-       mins_char2[16], secs_char2[16], hundr_secs_char2[16];
-
   char *fname = NULL, *fname2 = NULL;
   int fname2_malloc_number = 0,fname_malloc_number = 0;
 
@@ -263,18 +259,10 @@ static char *splt_u_get_mins_secs_filename(char *filename,
     if((fname2 = malloc(fname2_malloc_number*sizeof(char))) != NULL)
     {
       memset(fname2,'\0',fname2_malloc_number*sizeof(char));
-      //hundreds of seconds
-      snprintf(hundr_secs_char,16, "%ld", split_begin % 100);
-      snprintf(hundr_secs_char2,16, "%ld", split_end % 100);
-      //transform to seconds
-      split_begin = split_begin / 100;
-      split_end = split_end / 100;
-      //calculating seconds
-      snprintf(secs_char,16, "%ld", split_begin % 60);
-      snprintf(secs_char2,16, "%ld", split_end % 60);
-      //calculating minutes
-      snprintf(mins_char,16, "%ld", split_begin / 60);
-      snprintf(mins_char2,16, "%ld", split_end / 60);
+      long hundr = 0, secs = 0, mins = 0;
+      long hundr2 = 0, secs2 = 0, mins2 = 0;
+      splt_t_get_mins_secs_hundr_from_splitpoint(split_begin, &mins, &secs, &hundr);
+      splt_t_get_mins_secs_hundr_from_splitpoint(split_end, &mins2, &secs2, &hundr2);
 
       //if we have this splitpoint
       if (splt_t_splitpoint_exists(state, i))
@@ -329,15 +317,14 @@ static char *splt_u_get_mins_secs_filename(char *filename,
       if (old_split_end == LONG_MAX)
       {
         snprintf(fname2,fname2_malloc_number,
-            "%s_%sm_%ss_%sh__EOF", 
-            fname, mins_char, secs_char, hundr_secs_char);
+            "%s_%ldm_%lds_%ldh__EOF", 
+            fname, mins, secs, hundr);
       }
       else
       {
         snprintf(fname2,fname2_malloc_number,
-            "%s_%sm_%ss_%sh__%sm_%ss_%sh", 
-            fname, mins_char, secs_char, hundr_secs_char,
-            mins_char2, secs_char2,hundr_secs_char2);
+            "%s_%ldm_%lds_%ldh__%ldm_%lds_%ldh", 
+            fname, mins, secs, hundr, mins2, secs2, hundr2);
       }
 
       //put the extension according to the file type
@@ -423,9 +410,8 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
 }
 
 //the result must be freed
-//returns the new_filename_path + filename + extension
-char *splt_u_get_fname_with_path_and_extension(splt_state *state,
-    int *error)
+//returns the new_filename_path + filename + extension or NULL if error
+char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
 {
   char *output_fname_with_path = NULL;
   char *new_filename_path = splt_t_get_new_filename_path(state);
@@ -447,7 +433,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
       char *extension = splt_p_get_extension(state, error);
       if (*error >= 0)
       {
-        if (strcmp(new_filename_path,"") == 0)
+        if (new_filename_path[0] == '\0')
         {
           snprintf(output_fname_with_path, malloc_number,
               "%s%s", output_fname, extension);
@@ -473,11 +459,11 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
     char *filename = splt_t_get_filename_to_split(state);
 
     //if the output file exists
-    if (splt_check_is_file(output_fname_with_path))
+    int is_file = splt_check_is_file(state, output_fname_with_path);
+    if (is_file)
     {
       //if input and output are the same file
-      if (splt_check_is_the_same_file(state,filename,
-            output_fname_with_path, error))
+      if (splt_check_is_the_same_file(state,filename, output_fname_with_path, error))
       {
         splt_t_set_error_data(state,filename);
         *error = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
@@ -492,6 +478,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
         }
       }
     }
+
     return output_fname_with_path;
   }
   else
@@ -574,13 +561,13 @@ void splt_u_order_splitpoints(splt_state *state, int len)
 /* utils for the tags       */
 
 //parse the word, returns a allocated string with the recognised word
-char *splt_u_parse_tag_word(char *cur_pos, char *end_paranthesis,
-    int *ambigous)
+char *splt_u_parse_tag_word(const char *cur_pos,
+    char *end_paranthesis, int *ambigous)
 {
   char *word = NULL;
   char *word_end = NULL;
   char *word_end2 = NULL;
-  char *equal_sign = NULL;
+  const char *equal_sign = NULL;
   if ((word_end = strchr(cur_pos,',')))
   {
     if ((word_end2 = strchr(cur_pos,']')) < word_end)
@@ -636,11 +623,11 @@ char *splt_u_parse_tag_word(char *cur_pos, char *end_paranthesis,
 
 //we put the custom tags
 //returns if ambigous or not
-int splt_u_put_tags_from_string(splt_state *state, char *tags)
+int splt_u_put_tags_from_string(splt_state *state, const char *tags)
 {
   if (tags != NULL)
   {
-    char *cur_pos = NULL;
+    const char *cur_pos = NULL;
     int all_tags = SPLT_FALSE;
 
     cur_pos = tags;
@@ -718,7 +705,7 @@ int splt_u_put_tags_from_string(splt_state *state, char *tags)
           cur_pos = tag+1;
         }
 
-        char *old_pos = cur_pos;
+        const char *old_pos = cur_pos;
         //we take the artist, performer,...
         if (*(cur_pos-1) == '@')
         {
@@ -1497,10 +1484,10 @@ char *splt_u_strerror(splt_state *state, int error_code)
     case SPLT_FREEDB_MAX_CD_REACHED :
       snprintf(error_msg,max_error_size, " maximum number of found CD reached");
       break;
-    case SPLT_FREEDB_CUE_OK :
+    case SPLT_CUE_OK :
       snprintf(error_msg,max_error_size, " cue file processed");
       break;
-    case SPLT_FREEDB_CDDB_OK :
+    case SPLT_CDDB_OK :
       snprintf(error_msg,max_error_size, " cddb file processed");
       break;
     case SPLT_FREEDB_FILE_OK :
@@ -1512,24 +1499,26 @@ char *splt_u_strerror(splt_state *state, int error_code)
     //
     case SPLT_FREEDB_ERROR_INITIALISE_SOCKET :
       snprintf(error_msg,max_error_size, 
-          " freedb error: cannot initialise socket");
+          " freedb error: cannot initialise socket (%s)",
+          state->err.strerror_msg);
       break;
     case SPLT_FREEDB_ERROR_CANNOT_GET_HOST :
       snprintf(error_msg,max_error_size, 
-          " freedb error: cannot get host by name ('%s')",state->err.error_data);
+          " freedb error: cannot get host '%s' by name (%s)",
+          state->err.error_data, state->err.strerror_msg);
       break;
     case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET :
       snprintf(error_msg,max_error_size, " freedb error: cannot open socket");
       break;
     case SPLT_FREEDB_ERROR_CANNOT_CONNECT :
       snprintf(error_msg,max_error_size, 
-          " freedb error: cannot connect to host '%s'",
-          state->err.error_data);
+          " freedb error: cannot connect to host '%s' (%s)",
+          state->err.error_data, state->err.strerror_msg);
       break;
     case SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE :
       snprintf(error_msg,max_error_size, 
-          " freedb error: cannot send message to host '%s'",
-          state->err.error_data);
+          " freedb error: cannot send message to host '%s' (%s)",
+          state->err.error_data, state->err.strerror_msg);
       break;
     case SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER :
       snprintf(error_msg,max_error_size, " freedb error: invalid server answer");
@@ -1544,14 +1533,16 @@ char *splt_u_strerror(splt_state *state, int error_code)
       snprintf(error_msg,max_error_size, " freedb error: bad communication with site");
       break;
     case SPLT_FREEDB_ERROR_GETTING_INFOS :
-      snprintf(error_msg,max_error_size, " freedb error: could not get infos from site");
+      snprintf(error_msg,max_error_size, " freedb error: could not get infos from site '%s'",
+          state->err.error_data);
       break;
     case SPLT_FREEDB_NO_CD_FOUND :
       snprintf(error_msg,max_error_size, " no CD found for this search");
       break;
     case SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE:
       snprintf(error_msg,max_error_size,
-          " freedb error: cannot receive message from server");
+          " freedb error: cannot receive message from server '%s' (%s)",
+          state->err.error_data, state->err.strerror_msg);
       break;
     case SPLT_INVALID_CUE_FILE:
       snprintf(error_msg,max_error_size, " cue error: invalid cue file '%s'",
@@ -1623,6 +1614,11 @@ char *splt_u_strerror(splt_state *state, int error_code)
           " error: cannot open file '%s' : %s",
           state->err.error_data, state->err.strerror_msg);
       break;
+    case SPLT_ERROR_CANNOT_CLOSE_FILE :
+      snprintf(error_msg,max_error_size,
+          " error: cannot close file '%s' : %s",
+          state->err.error_data, state->err.strerror_msg);
+      break;
     case SPLT_ERROR_INVALID :
       snprintf(error_msg,max_error_size,
           " error: invalid input file '%s' for this plugin",
@@ -1630,19 +1626,22 @@ char *splt_u_strerror(splt_state *state, int error_code)
       break;
     case SPLT_ERROR_EQUAL_SPLITPOINTS :
       snprintf(error_msg,max_error_size,
-          " error: some splitpoints are equal");
+          " error: splitpoints are equal (%s)",
+          state->err.error_data);
       break;
     case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER :
       snprintf(error_msg,max_error_size,
-          " error: the splitpoints are not in order");
+          " error: the splitpoints are not in order (%s)",
+          state->err.error_data);
       break;
     case SPLT_ERROR_NEGATIVE_SPLITPOINT :
-      snprintf(error_msg,max_error_size, " error: negative splitpoint");
+      snprintf(error_msg,max_error_size, " error: negative splitpoint (%s)",
+          state->err.error_data);
       break;
     case SPLT_ERROR_INCORRECT_PATH :
       snprintf(error_msg,max_error_size,
-          " error: bad destination folder '%s'",
-          state->err.error_data);
+          " error: bad destination folder '%s' (%s)",
+          state->err.error_data, state->err.strerror_msg);
       break;
     case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
       snprintf(error_msg,max_error_size, " error: incompatible options");
@@ -1744,8 +1743,7 @@ char *splt_u_strerror(splt_state *state, int error_code)
 }
 
 //debug messages
-void splt_u_print_debug(char *message,double optional,
-    char *optional2)
+void splt_u_print_debug(const char *message,double optional, const char *optional2)
 {
   if (global_debug)
   {
@@ -1850,6 +1848,7 @@ int splt_u_create_directory(splt_state *state, char *dir)
     }
   
   free(junk);
+  junk = NULL;
   
   return result;
 }

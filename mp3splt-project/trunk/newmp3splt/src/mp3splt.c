@@ -1080,14 +1080,14 @@ end:
 }
 
 //prints a library message
-void put_library_message(char *message)
+void put_library_message(const char *message)
 {
   fprintf(console_out,"%s",message);
   fflush(console_out);
 }
 
 //prints the splitted file
-void put_splitted_file(char *file, int progress_data)
+void put_splitted_file(const char *file, int progress_data)
 {
   //we put necessary spaces
   char temp[1024] = "";
