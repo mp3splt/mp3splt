@@ -65,7 +65,7 @@ void splt_u_order_splitpoints(splt_state *state, int len);
 
 /****************************/
 /* utils for the tags       */
-int splt_u_put_tags_from_string(splt_state *state, char *tags);
+int splt_u_put_tags_from_string(splt_state *state, const char *tags);
 
 /*******************************/
 /* utils for the output format */
@@ -83,7 +83,7 @@ void splt_u_error(int error_type, const char *function,
 /* utils miscellaneous */
 
 float splt_u_silence_position(struct splt_ssplit *temp, float off);
-void splt_u_print_debug(char *message,double optional,char *optional2);
+void splt_u_print_debug(const char *message,double optional, const char *optional2);
 double splt_u_get_double_pos(long split);
 int splt_u_create_directory(splt_state *state, char *dir);
 char *splt_u_strerror(splt_state *state, int error_code);

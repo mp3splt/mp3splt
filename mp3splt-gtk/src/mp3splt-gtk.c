@@ -123,7 +123,7 @@ extern GtkWidget *remove_all_files_button;
 gint splitted_files = 0;
 
 //put the splitted file in the splitted_file tab
-void put_splitted_filename(char *filename,int progress_data)
+void put_splitted_filename(const char *filename,int progress_data)
 {
   //lock gtk
   gdk_threads_enter();
@@ -442,7 +442,7 @@ void sigint_handler(gint sig)
 }
 
 //prints a message from the library
-void put_message_from_library(gchar *message)
+void put_message_from_library(const char *message)
 {
   gchar *mess = g_strdup(message);
   if (mess)

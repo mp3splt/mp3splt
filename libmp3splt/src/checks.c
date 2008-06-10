@@ -60,16 +60,25 @@ void splt_check_splitpts_inf_song_length(splt_state *state, int *error)
   for(i = 0; i < initial_splitpoints; i++)
   {
     splitpoint_value = splt_t_get_splitpoint_value(state,i,&err);
-    total_time = splt_t_get_total_time(state);
-    //if the value is superior to the total time
-    if (splitpoint_value > total_time)
+    if (err != SPLT_OK)
     {
-      found_max_splitpoint = SPLT_TRUE;
-      splt_t_set_splitnumber(state, i+1);
-      //we have an error only if different from the
-      //total time
-      *error = SPLT_SPLITPOINT_BIGGER_THAN_LENGTH;
-      splt_t_set_splitpoint_value(state,i,total_time);
+      total_time = splt_t_get_total_time(state);
+      //if the value is superior to the total time
+      if (splitpoint_value > total_time)
+      {
+        found_max_splitpoint = SPLT_TRUE;
+        splt_t_set_splitnumber(state, i+1);
+        //we have an error only if different from the
+        //total time
+        *error = SPLT_SPLITPOINT_BIGGER_THAN_LENGTH;
+        splt_t_set_error_data_from_splitpoint(state, splitpoint_value);
+        splt_t_set_splitpoint_value(state,i,total_time);
+        break;
+      }
+    }
+    else
+    {
+      *error = err;
       break;
     }
   }
@@ -83,38 +92,45 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
 
   int err = SPLT_OK;
 
-  for(i = 0; i < (splt_t_get_splitnumber(state)-1); i++)
+  int splitnumber = splt_t_get_splitnumber(state);
+  for(i = 0; i < (splitnumber-1); i++)
   {
+    long splitpoint_value = splt_t_get_splitpoint_value(state,i,&err);
+    if (err != SPLT_OK) { *error = err; return; }
+    long next_splitpoint_value = splt_t_get_splitpoint_value(state,i+1,&err);
+    if (err != SPLT_OK) { *error = err; return; }
+
     //if we don't have EOF for the second value <=> != total_time
-    if (splt_t_get_splitpoint_value(state,i+1,&err) != 
-        splt_t_get_total_time(state))
+    if (splitpoint_value != splt_t_get_total_time(state))
     {
       //check if first splitpoint is positive
-      if (splt_t_get_splitpoint_value(state,i,&err) < 0)
+      if (splitpoint_value < 0)
       {
+        splt_t_set_error_data_from_splitpoint(state, splitpoint_value);
         *error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
         return;
       }
 
-      if (splt_t_get_splitpoint_value(state,i,&err) == LONG_MAX)
+      //we take the total time and assign it to split_value
+      if (splitpoint_value == LONG_MAX)
       {
-        //we take the total time and assign it to split_value
         splt_t_set_splitpoint_value(state,i,splt_t_get_total_time(state));
       }
 
       //check if splitpoints not in order
-      if (splt_t_get_splitpoint_value(state,i,&err) > 
-          splt_t_get_splitpoint_value(state,i+1,&err))
+      if (splitpoint_value > next_splitpoint_value) 
       {
+        splt_t_set_error_data_from_splitpoints(state,
+            splitpoint_value, next_splitpoint_value);
         *error = SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER;
         return;
       }
       else
       {
         //check if two consecutive splitpoints are equals
-        if (splt_t_get_splitpoint_value(state,i,&err)
-            == splt_t_get_splitpoint_value(state,i+1,&err))
+        if (splitpoint_value == next_splitpoint_value)
         {
+          splt_t_set_error_data_from_splitpoint(state, splitpoint_value);
           *error = SPLT_ERROR_EQUAL_SPLITPOINTS;
           return;
         }
@@ -128,7 +144,7 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
 
 //checks if the filename path is correct
 void splt_check_if_new_filename_path_correct(splt_state *state,
-    char *new_filename_path, int *error)
+    const char *new_filename_path, int *error)
 {
   splt_u_print_debug("We check if the new filename path is correct ",0,new_filename_path);
 
@@ -147,7 +163,8 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
     //-1 means error
     if((status = stat(new_filename_path, &buffer)) == -1)
     {
-      splt_t_set_error_data(state,new_filename_path);
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state, new_filename_path);
       *error = SPLT_ERROR_INCORRECT_PATH;
     }
     else
@@ -156,10 +173,12 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
       if (S_ISDIR(buffer.st_mode) != 0)
       {
         //no error
+        return;
       }
       else
       {
-        splt_t_set_error_data(state,new_filename_path);
+        splt_t_set_strerr_msg(state,"Directory does not exists");
+        splt_t_set_error_data(state, new_filename_path);
         *error = SPLT_ERROR_INCORRECT_PATH;
       }
     }
@@ -168,15 +187,16 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
 
 //if the new_filename_path is "", we put the directory of
 //the current song
-//returns NULL means he cannot allocate memory
+//return NULL means 'cannot allocate memory'
 //result must be freed
-char *splt_check_put_dir_of_cur_song(char *filename, char *the_filename_path)
+char *splt_check_put_dir_of_cur_song(const char *filename,
+    const char *the_filename_path)
 {
   char *orig_filename = strdup(filename);
 
   char *c = NULL;
   char *filename_path = NULL;
-  int length_malloc = strlen(orig_filename)+1;
+  int length_malloc = strlen(orig_filename) + 1;
   if (length_malloc < 5)
   {
     length_malloc = 8;
@@ -198,7 +218,7 @@ char *splt_check_put_dir_of_cur_song(char *filename, char *the_filename_path)
   else
   {
     //if new_filename_path is ""
-    if (strcmp(the_filename_path,"") == 0)
+    if (the_filename_path[0] == '\0')
     {
       cur_dir = SPLT_TRUE;
     }
@@ -217,7 +237,7 @@ char *splt_check_put_dir_of_cur_song(char *filename, char *the_filename_path)
     //otherwise we set the path as ""
     else
     {
-      snprintf(filename_path, length_malloc,"%s","");
+      filename_path[0] = '\0';
     }
 
     free(orig_filename);
@@ -225,30 +245,38 @@ char *splt_check_put_dir_of_cur_song(char *filename, char *the_filename_path)
     return filename_path;
   }
 
-  free(filename_path);
-  filename_path = NULL;
-  free(orig_filename);
-  orig_filename = NULL;
-
-  if (the_filename_path != NULL)
+  //free memory
+  if (filename_path)
   {
-    //manage directory "-d test/" on windows (mingw test)
-    if (the_filename_path[strlen(the_filename_path)-1] == '/')
-    {
-      the_filename_path[strlen(the_filename_path)-1] = '\0';
-    }
-
-#ifdef __WIN32__
-    //manage c:\ because the gtk dir returns us "c:\"
-    //and the normal directories without the "\"
-    if (the_filename_path[strlen(the_filename_path)-1] == '\\')
-    {
-      the_filename_path[strlen(the_filename_path)-1] = '\0';
-    }
-#endif
+    free(filename_path);
+    filename_path = NULL;
+  }
+  if (orig_filename)
+  {
+    free(orig_filename);
+    orig_filename = NULL;
   }
 
-  return strdup(the_filename_path);
+  char *new_filename_path = strdup(the_filename_path);
+  if (new_filename_path == NULL)
+  {
+    return NULL;
+  }
+
+  if (new_filename_path != NULL)
+  {
+    size_t path_len = strlen(new_filename_path);
+    //erase the last char directory
+    //-for windows manage c:\ because the gtk dir returns us "c:\"
+    //and the normal directories without the "\"
+    //-for unix, erase '/'
+    if (new_filename_path[path_len-1] == SPLT_DIRCHAR)
+    {
+      new_filename_path[path_len-1] = '\0';
+    }
+  }
+
+  return new_filename_path;
 }
 
 //****************************/
@@ -366,33 +394,54 @@ void splt_check_file_type(splt_state *state, int *error)
     //if no plugin was found,
     //verify if the file is a real file
     splt_u_print_debug("Verify if the file is a file",0,filename);
+
     FILE *test = NULL;
     if ((test = fopen(filename,"r")) != NULL)
     {
-      fclose(test);
-      test = NULL;
+      if (fclose(test) != 0)
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, filename);
+        *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+        return;
+      }
+      else
+      {
+        test = NULL;
+      }
     }
     else
     {
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state,filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+      return;
     }
   }
   else
   {
+    err = SPLT_OK;
     char *temp = splt_p_get_name(state,&err);
-    char infos[2048] = { '\0' };
-    snprintf(infos,2047," info: file matches the plugin '%s'\n",temp);
-    splt_t_put_message_to_client(state, infos);
+    if (err != SPLT_OK)
+    {
+      char infos[2048] = { '\0' };
+      snprintf(infos,2047," info: file matches the plugin '%s'\n",temp);
+      splt_t_put_message_to_client(state, infos);
+    }
+    else
+    {
+      *error = err;
+      return;
+    }
   }
 }
 
 //check if its a file
-int splt_check_is_file(char *fname)
+//-we are not interested in errors
+int splt_check_is_file(splt_state *state, const char *fname)
 {
   struct stat buffer;
-  int         status;
+  int status = 0;
 
   if (fname == NULL)
   {
@@ -416,33 +465,56 @@ int splt_check_is_file(char *fname)
       }
       else
       {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, fname);
         return SPLT_FALSE;
       }
     }
     else
     {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state, fname);
       return SPLT_FALSE;
     }
   }
 }
 
 //close two filehandles
-void close_files(FILE **f1, FILE **f2)
+static void close_files(splt_state *state, const char *file1, FILE **f1,
+    const char *file2, FILE **f2, int *error)
 {
   if (*f1)
   {
-    fclose(*f1);
-    *f1 = NULL;
+    if (fclose(*f1) != 0)
+    {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state, file1);
+      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+    }
+    else
+    {
+      *f1 = NULL;
+    }
   }
   if (*f2)
   {
-    fclose(*f2);
-    *f2 = NULL;
+    if (fclose(*f2) != 0)
+    {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state, file2);
+      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+    }
+    else
+    {
+      *f2 = NULL;
+    }
   }
 }
 
 //check if file1 = file2
-int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int *error)
+//-we are not interested in getting the errors of fopen or fstat
+int splt_check_is_the_same_file(splt_state *state, const char *file1,
+    const char *file2, int *error)
 {
   FILE *file1_ = NULL;
   FILE *file2_ = NULL;
@@ -456,14 +528,13 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
   splt_u_print_debug("Checking if this file :",0,file1);
   splt_u_print_debug("is like this file :",0,file2);
  
-  if (splt_check_is_file(file1) && splt_check_is_file(file2))
+  int is_file1 = splt_check_is_file(state, file1);
+  int is_file2 = splt_check_is_file(state, file2);
+  if (is_file1 && is_file2)
   {
     //file1
-    
     if ((file1_ = fopen(file1,"r")) == NULL)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,file1);
       goto end_error;
     }
     else
@@ -475,8 +546,6 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
         //file2
         if ((file2_ = fopen(file2,"r")) == NULL)
         {
-          splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state,file2);
           goto end_error;
         }
         else
@@ -493,22 +562,18 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
           //we get the file information for the file1
           if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file1_d), &handle_info_file1))
           {
-            splt_t_set_strerror_msg(state);
-            splt_t_set_error_data(state,file1);
             goto end_error;
           }
           //we get the file information for the file2
           if (!GetFileInformationByHandle((HANDLE)_get_osfhandle(file2_d), &handle_info_file2))
           {
-            splt_t_set_strerror_msg(state);
-            splt_t_set_error_data(state,file2);
             goto end_error;
           }
           //if the files have the same indexes, we have the same files
           if ((handle_info_file1.nFileIndexHigh == handle_info_file2.nFileIndexHigh)&&
               (handle_info_file1.nFileIndexLow == handle_info_file2.nFileIndexLow))
           {
-            close_files(&file1_,&file2_);
+            close_files(state, file1, &file1_,file2, &file2_,error);
             return SPLT_TRUE;
           }
 #else
@@ -520,41 +585,53 @@ int splt_check_is_the_same_file(splt_state *state, char *file1, char *file2, int
             if ((file1_stat.st_ino == file2_stat.st_ino) &&
                 (file1_stat.st_dev == file2_stat.st_dev))
             {
-              close_files(&file1_,&file2_);
+              close_files(state, file1, &file1_,file2, &file2_,error);
               return SPLT_TRUE;
             }
             else
             {
-              close_files(&file1_,&file2_);
+              close_files(state, file1, &file1_,file2, &file2_,error);
               return SPLT_FALSE;
             }
           }
           else
           {
-            splt_t_set_strerror_msg(state);
-            splt_t_set_error_data(state,file2);
             goto end_error;
           }
 #endif
           //close the second file
           if (file2_)
           {
-            fclose(file2_);
-            file2_ = NULL;
+            if (fclose(file2_) != 0)
+            {
+              splt_t_set_strerror_msg(state);
+              splt_t_set_error_data(state, file2);
+              *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+            }
+            else
+            {
+              file2_ = NULL;
+            }
           }
         }
       }
       else
       {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state,file1);
         goto end_error;
       }
       //close the first file
       if (file1_)
       {
-        fclose(file1_);
-        file1_ = NULL;
+        if (fclose(file1_) != 0)
+        {
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state, file1);
+          *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+        }
+        else
+        {
+          file1_ = NULL;
+        }
       }
     }
   }
@@ -567,8 +644,10 @@ end:
   return SPLT_FALSE;
 
 end_error:
-  close_files(&file1_,&file2_);
-  *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+  /*splt_t_set_strerror_msg(state);
+  splt_t_set_error_data(state,file1);
+  *error = SPLT_ERROR_CANNOT_OPEN_FILE;*/
+  close_files(state, file1, &file1_,file2, &file2_,error);
   return SPLT_FALSE;
 }
 

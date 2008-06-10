@@ -171,7 +171,7 @@ guchar *get_real_naame(guchar *filename)
 }
 
 //add a row to the table
-void add_splitted_row(gchar *name)
+void add_splitted_row(const gchar *name)
 {
   GtkTreeIter iter;
   GtkTreeView *tree_view = 

@@ -40,7 +40,7 @@ GtkTreeView *create_splitted_files_tree();
 void create_splitted_columns (GtkTreeView *tree_view);
 void remove_all_splitted_rows ();
 guchar *get_real_naame(guchar *filename);
-void add_splitted_row(gchar *name);
+void add_splitted_row(const gchar *name);
 void remove_splitted_selected_row();
 void queue_files_button_event( GtkWidget *widget,
                                gpointer   data );
