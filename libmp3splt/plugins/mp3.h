@@ -120,52 +120,6 @@ typedef struct {
 } splt_mp3_state;
 
 /****************************/
-/* mp3 utils */
-
-void splt_mp3_state_free(splt_state *state);
-
-/****************************/
-/* mp3 tags */
-
-void splt_mp3_get_original_tags(char *filename,splt_state *state,
-    int *tag_error);
-
-char *splt_mp3_get_tags(char *filename,splt_state *state,
-    int *error);
-
-/****************************/
-/* mp3 infos */
-
-splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
-    int framemode, int *error);
-
-/****************************/
-/* mp3 split */
-
-int splt_mp3_simple_split (splt_state *state, char *filename,
-    off_t begin, off_t end, char *id3buffer);
-void splt_mp3_split(char *filename, splt_state *state, char *id3,
-    double fbegin_sec, double fend_sec, int *error);
-
-/****************************/
-/* mp3 scan for silence */
-
-int splt_mp3_silence(splt_mp3_state *mp3state, 
-    int channels, mad_fixed_t threshold);
-int splt_mp3_scan_silence(splt_state *sp_state, off_t begin, 
-    unsigned long length, float threshold, float min, short output);
-
-/****************************/
-/* mp3 syncerror */
-
-void splt_mp3_syncerror_search (splt_state *state, int *error);
-
-/****************************/
-/* mp3 dewrap */
-
-void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state);
-
-/****************************/
 /* mp3 constants */
 
 /*

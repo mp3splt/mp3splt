@@ -33,14 +33,9 @@
 #include "mp3.h"
 
 /****************************/
-/* prototypes */
-
-static unsigned char splt_mp3_getgenre (char *genre_string);
-
-/****************************/
 /* mp3 constants */
 
-const char *splt_mp3_chan[] =
+static const char *splt_mp3_chan[] =
 {
 	"Mono",
 	"Dual Mono",
@@ -50,7 +45,7 @@ const char *splt_mp3_chan[] =
 };
 
 //layer, bitrate..
-const int splt_mp3_tabsel_123[2][3][16] = {
+static const int splt_mp3_tabsel_123[2][3][16] = {
   { {128,32,64,96,128,160,192,224,256,288,320,352,384,416,448,},
     {128,32,48,56, 64, 80, 96,112,128,160,192,224,256,320,384,},
     {128,32,40,48, 56, 64, 80, 96,112,128,160,192,224,256,320,} },
@@ -61,7 +56,7 @@ const int splt_mp3_tabsel_123[2][3][16] = {
 };
 
 //categories of mp3 songs
-const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
+static const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
   {"Blues"}, {"Classic Rock"}, {"Country"}, {"Dance"}, 
   {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
   {"Metal"},{"New Age"},{"Oldies"}, {"Other"}, {"Pop"},
@@ -83,7 +78,7 @@ const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
   {"Musical"},{"Rock & Roll"},{"Hard Rock"}, {"misc"}, {"misc"},
 };
 
-const char unsigned splt_mp3_id3genre[SPLT_MP3_GENRENUM] = 
+static const char unsigned splt_mp3_id3genre[SPLT_MP3_GENRENUM] = 
 { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
   0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
   0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
@@ -158,7 +153,11 @@ static const unsigned long splt_mp3_crctab[256] = {
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 };
 
-FILE *splt_mp3_open_file_read(char *filename)
+//-filename must not be null; if filename is NULL, then this plugin should
+//not have been detected
+//-returns NULL if error
+static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
+    int *error)
 {
   FILE *file_input = NULL;
 
@@ -171,6 +170,12 @@ FILE *splt_mp3_open_file_read(char *filename)
   {
     //we open the file
     file_input = fopen(filename, "rb");
+    if (file_input == NULL)
+    {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state,filename);
+      *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    }
   }
 
   return file_input;
@@ -179,7 +184,7 @@ FILE *splt_mp3_open_file_read(char *filename)
 /****************************/
 /* CRC functions */
 
-unsigned long splt_mp3_c_crc(splt_state *state,
+static unsigned long splt_mp3_c_crc(splt_state *state,
     FILE *in, off_t begin, off_t end, int *error)
 {
   register unsigned long crc;
@@ -195,7 +200,8 @@ unsigned long splt_mp3_c_crc(splt_state *state,
     return;
   }
 
-  while(begin++ < end) {
+  while(begin++ < end)
+  {
     c = fgetc(in);
     crc = ((crc >> 8) & 0x00FFFFFF) ^ splt_mp3_crctab[(crc ^ c) & 0xFF];
   }
@@ -239,9 +245,7 @@ static int splt_mp3_c_bitrate (unsigned long head)
 
 //make mp3 header bitrate, padding, offset, framesize
 static struct splt_header splt_mp3_makehead (unsigned long headword, 
-    struct splt_mp3 mp3f, 
-    struct splt_header head, 
-    off_t ptr)
+    struct splt_mp3 mp3f, struct splt_header head, off_t ptr)
 {
   head.ptr = ptr;
   head.bitrate = splt_mp3_tabsel_123[1 - mp3f.mpgid][mp3f.layer-1][splt_mp3_c_bitrate(headword)];
@@ -263,7 +267,8 @@ static off_t splt_mp3_findhead (splt_mp3_state *mp3state, off_t start)
   {
     return -1;
   }
-  while (!(splt_mp3_c_bitrate(mp3state->headw))) {
+  while (!(splt_mp3_c_bitrate(mp3state->headw)))
+  {
     if (feof(mp3state->file_input)) 
     {
       return -1;
@@ -286,7 +291,9 @@ static off_t splt_mp3_findvalidhead (splt_mp3_state *mp3state, off_t start)
   do {
     start = begin;
     if (start == -1) 
+    {
       break;
+    }
     h = splt_mp3_makehead (mp3state->headw, mp3state->mp3file, h, start);
     begin = splt_mp3_findhead(mp3state, (start + 1));
   } while (begin!=(start + h.framesize));
@@ -315,6 +322,7 @@ static int splt_mp3_xing_info_off(splt_mp3_state *mp3state)
 }
 
 //get a frame
+//-returns a negative value if error
 static int splt_mp3_get_frame(splt_mp3_state *mp3state)
 {
   if(mp3state->stream.buffer==NULL || 
@@ -341,8 +349,8 @@ static int splt_mp3_get_frame(splt_mp3_state *mp3state)
       readStart=mp3state->inputBuffer;
       remaining=0;
     }
-    readSize=fread(readStart, 1, readSize, mp3state->file_input);
 
+    readSize=fread(readStart, 1, readSize, mp3state->file_input);
     if (readSize <= 0)
     {
       return -2;
@@ -350,27 +358,29 @@ static int splt_mp3_get_frame(splt_mp3_state *mp3state)
 
     mp3state->buf_len = readSize + remaining;
     mp3state->bytes += readSize;
+    //does not set any error
     mad_stream_buffer(&mp3state->stream, mp3state->inputBuffer, 
         readSize+remaining);
-    mp3state->stream.error = MAD_ERROR_NONE;
   }
 
+  //mad_frame_decode() returns -1 if error, 0 if no error
   return mad_frame_decode(&mp3state->frame,&mp3state->stream);
 }
 
 //used by mp3split and mp3_scan_silence
 //gets a frame and checks for its validity
 //returns 1 if ok, -1 if end of file, 0 if nothing ?
+//and -3 if other error; the error will be set in the '*error' parameter
 //sets the mp3state->data_ptr the pointer to the frame
 //and the mp3state->data_len the length of the frame
-static int splt_mp3_get_valid_frame(splt_state *state)
+static int splt_mp3_get_valid_frame(splt_state *state, int *error)
 {
   splt_mp3_state *mp3state = state->codec;
-  int ok = SPLT_FALSE;
+  int ok = 0;
   do
   {
     int ret = splt_mp3_get_frame(mp3state);
-    if(ret)
+    if(ret != 0)
     {
       if (ret == -2)
       {
@@ -398,7 +408,9 @@ static int splt_mp3_get_valid_frame(splt_state *state)
         }
         else
         {
-          break;
+          splt_t_set_error_data(state, mad_stream_errorstr(&mp3state->stream));
+          *error = SPLT_ERROR_PLUGIN_ERROR;
+          return -3;
         }
       }
     }
@@ -406,11 +418,11 @@ static int splt_mp3_get_valid_frame(splt_state *state)
     {
       //the important stuff
       mp3state->data_ptr = (unsigned char *) mp3state->stream.this_frame;
-      if(mp3state->stream.next_frame!=NULL)
+      if (mp3state->stream.next_frame!=NULL)
       {
         mp3state->data_len = (long) (mp3state->stream.next_frame - mp3state->stream.this_frame);
       }
-      ok = SPLT_TRUE;
+      ok = 1;
     }
 
   } while (!ok);
@@ -420,6 +432,8 @@ static int splt_mp3_get_valid_frame(splt_state *state)
 
 //search for ID3 v1 tag, "TAG" sequence
 //if found returns offset of mp3 data
+//-else returns 0
+//-we don't check fseeko error
 static int splt_mp3_getid3v1 (FILE *file_input)
 {
   if (fseeko(file_input, (off_t) -128, SEEK_END)==-1)
@@ -437,6 +451,8 @@ static int splt_mp3_getid3v1 (FILE *file_input)
 
 //check if there is a ID3v2. 
 //if found, it returns offset of mp3 data.
+//-else returns 0
+//-we don't check fseeko error
 static off_t splt_mp3_getid3v2 (FILE *in, off_t start)
 {
   unsigned long oword = 0;
@@ -466,9 +482,9 @@ static off_t splt_mp3_getid3v2 (FILE *in, off_t start)
 
 //frees the splt_mp3_state structure,
 //used in the splt_t_state_free() function
-void splt_mp3_state_free (splt_state *state)
+static void splt_mp3_state_free(splt_state *state)
 {
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
 
   if (mp3state)
   {
@@ -487,18 +503,34 @@ void splt_mp3_state_free (splt_state *state)
 /****************************/
 /* mp3 tags */
 
-//return id3 buffer as string (the char *id is filled)
+//returns the genre of the song, mp3splt used this in cddb search
+static unsigned char splt_mp3_getgenre (const char *genre_string)
+{
+  int i;
+  for (i=0; i< SPLT_MP3_GENRENUM; i++)
+  {
+    if (strncmp(genre_string, splt_mp3_id3v1_categories[i],
+          strlen(genre_string))==0)
+    {
+      return splt_mp3_id3genre[i];
+    }
+  }
+
+  return 0xFF;
+}
+
+//returns a id3v1 buffer as string (the char *id is filled)
 //return must be freed
-static char *splt_mp3_id3v1 (char *title, char *artist, char *album,
-                             char *year, unsigned char genre, 
-                             char *comment, short track, int *error)
+//-returns NULL if error
+static char *splt_mp3_id3v1 (const char *title, const char *artist,
+    const char *album, const char *year, unsigned char genre, 
+    const char *comment, short track, int *error)
 {
   char *id = NULL;
   char buffer[30] = { '\0' };
   int j = 3,i = 0;
 
-  if ((id = malloc(sizeof(char) * 128))
-      != NULL)
+  if ((id = malloc(sizeof(char) * 128)) != NULL)
   {
     memset(id,'\0',128);
 
@@ -547,96 +579,109 @@ static char *splt_mp3_id3v1 (char *title, char *artist, char *album,
 
 #ifndef NO_ID3TAG
 //puts a original field on id3 conforming to frame_type
-static void splt_mp3_put_original_id3_frame(splt_state *state,
-                                            struct id3_tag *id3tag,
-                                            char *frame_type,
-                                            int id_type)
+static int splt_mp3_put_original_id3_frame(splt_state *state,
+    const struct id3_tag *id3tag, const char *frame_type, int id_type)
 {
   struct id3_frame *frame = NULL;
   id3_ucs4_t *ucs4 = NULL;
   id3_latin1_t *latin1 = NULL;
-  
+
+  int err = SPLT_OK;
+
   //we get the artist
   frame = id3_tag_findframe(id3tag, frame_type,0);
   if (frame != NULL)
+  {
+    if (id_type == SPLT_MP3_ID3_COMMENT)
     {
-      if (id_type == SPLT_MP3_ID3_COMMENT)
-        {
-          ucs4 = (id3_ucs4_t *)
-            id3_field_getfullstring(&frame->fields[3]);
-        }
-      else
-        {
-          ucs4 = (id3_ucs4_t *) 
-            id3_field_getstrings(&frame->fields[1],0);
-        }
-      if (ucs4 != NULL)
-        {
-          latin1 = id3_ucs4_latin1duplicate (ucs4);
-          if (latin1 != NULL)
-            {
-              switch (id_type)
-                {
-                case SPLT_MP3_ID3_ALBUM:
-                  splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
-                                                 0,(char *)latin1,0x0,30);
-                  break;
-                case SPLT_MP3_ID3_ARTIST:
-                  splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
-                                                 0,(char *)latin1,0x0,30);
-                  break;
-                case SPLT_MP3_ID3_TITLE:
-                  if (strcmp(frame_type,ID3_FRAME_TITLE) == 0)
-                    {
-                      splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
-                                                     0,(char *)latin1,0x0,30);
-                    }
-                  break;
-                case SPLT_MP3_ID3_YEAR:
-                  splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
-                                                 0,(char *)latin1,0x0,4);
-                  break;
-                case SPLT_MP3_ID3_TRACK:
-                  splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
-                      atof((char*)latin1), NULL,0x0,0);
-                  break;
-                case SPLT_MP3_ID3_COMMENT:
-                  splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
-                      0,(char*)latin1,0x0,30);
-                  break;
-                case SPLT_MP3_ID3_GENRE:
-                  splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                      0,NULL,splt_mp3_getgenre((char *)latin1),0);
-
-                  int number = 80;
-                  number = atoi((char *)latin1);
-                  //if we have a number returned by latin1
-                  if ((number != 0) &&
-                      (state->original_tags.genre == 0xFF))
-                  {
-                    splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                        0,NULL,number,0);
-                  }
-                  //if we have 0 returned
-                  if (strcmp((char*)latin1, "0") == 0)
-                  {
-                    splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                        0,NULL,12,0);
-                  }
-                  break;
-                default:
-                  break;
-                }
-            }
-          free(latin1);
-          latin1 = NULL;
-        }
+      ucs4 = (id3_ucs4_t *)
+        id3_field_getfullstring(&frame->fields[3]);
     }
+    else
+    {
+      ucs4 = (id3_ucs4_t *) 
+        id3_field_getstrings(&frame->fields[1],0);
+    }
+    if (ucs4 != NULL)
+    {
+      latin1 = id3_ucs4_latin1duplicate (ucs4);
+      if (latin1 != NULL)
+      {
+        switch (id_type)
+        {
+          case SPLT_MP3_ID3_ALBUM:
+            err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
+                0,(char *)latin1,0x0,30);
+            break;
+          case SPLT_MP3_ID3_ARTIST:
+            err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
+                0,(char *)latin1,0x0,30);
+            break;
+          case SPLT_MP3_ID3_TITLE:
+            if (strcmp(frame_type,ID3_FRAME_TITLE) == 0)
+            {
+              err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
+                  0,(char *)latin1,0x0,30);
+            }
+            break;
+          case SPLT_MP3_ID3_YEAR:
+            err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
+                0,(char *)latin1,0x0,4);
+            break;
+          case SPLT_MP3_ID3_TRACK:
+            err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
+                atof((char*)latin1), NULL,0x0,0);
+            break;
+          case SPLT_MP3_ID3_COMMENT:
+            err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
+                0,(char*)latin1,0x0,30);
+            break;
+          case SPLT_MP3_ID3_GENRE:
+            err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
+                0,NULL,splt_mp3_getgenre((char *)latin1),0);
+
+            int number = 80;
+            number = atoi((char *)latin1);
+            //if we have a number returned by latin1
+            if ((number != 0) &&
+                (state->original_tags.genre == 0xFF))
+            {
+              err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
+                  0,NULL,number,0);
+            }
+            //if we have 0 returned
+            if (strcmp((char*)latin1, "0") == 0)
+            {
+              err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
+                  0,NULL,12,0);
+            }
+            break;
+          default:
+            break;
+        }
+        free(latin1);
+        latin1 = NULL;
+      }
+      else
+      {
+        err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      }
+    }
+  }
+
+  return err;
 }
 
-//this function puts the original id3 tags if we had libid3tag enabled
+//macro used only in the following function splt_mp3_get_original_tags
+#define VERIFY_ERROR() \
+if (err != SPLT_OK) \
+{ \
+*tag_error = err; \
+goto function_end; \
+};
+//this function puts the original id3 tags if we have libid3tag enabled
 //at compilation time
-void splt_mp3_get_original_tags(char *filename,splt_state *state,
+static void splt_mp3_get_original_tags(const char *filename, splt_state *state,
     int *tag_error)
 {
   //we get the id3 from the original file
@@ -646,7 +691,6 @@ void splt_mp3_get_original_tags(char *filename,splt_state *state,
 
   //we open the file
   id3file = id3_file_open(filename, ID3_FILE_MODE_READONLY);
-
   if (id3file == NULL)
   {
     splt_t_set_strerror_msg(state);
@@ -656,27 +700,45 @@ void splt_mp3_get_original_tags(char *filename,splt_state *state,
   else
   {
     //we get the real tags
-    id3tag = id3_file_tag (id3file);
+    id3tag = id3_file_tag(id3file);
 
-    //we copy original tag to our new tag
-    //we get the artist
-    splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ARTIST,
-        SPLT_MP3_ID3_ARTIST);
-    splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ALBUM,
-        SPLT_MP3_ID3_ALBUM);
-    splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TITLE,
-        SPLT_MP3_ID3_TITLE);
-    splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_YEAR,
-        SPLT_MP3_ID3_YEAR);
-    splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_GENRE,
-        SPLT_MP3_ID3_GENRE);
-    splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_COMMENT,
-        SPLT_MP3_ID3_COMMENT);
-    splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TRACK,
-        SPLT_MP3_ID3_TRACK);
+    if (id3tag)
+    {
+      int err = SPLT_OK;
 
+      //we copy original tag to our new tag
+      //we get the artist
+      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ARTIST,
+          SPLT_MP3_ID3_ARTIST);
+      VERIFY_ERROR();
+      splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ALBUM,
+          SPLT_MP3_ID3_ALBUM);
+      VERIFY_ERROR();
+      splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TITLE,
+          SPLT_MP3_ID3_TITLE);
+      VERIFY_ERROR();
+      splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_YEAR,
+          SPLT_MP3_ID3_YEAR);
+      VERIFY_ERROR();
+      splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_GENRE,
+          SPLT_MP3_ID3_GENRE);
+      VERIFY_ERROR();
+      splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_COMMENT,
+          SPLT_MP3_ID3_COMMENT);
+      VERIFY_ERROR();
+      splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TRACK,
+          SPLT_MP3_ID3_TRACK);
+      VERIFY_ERROR();
+    }
+
+function_end: 
     //we close the file
-    id3_file_close(id3file);
+    if (id3_file_close(id3file) == -1)
+    {
+      splt_t_clean_strerror_msg(state);
+      splt_t_set_error_data(state, filename);
+      *tag_error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+    }
     id3file = NULL;
   }
 }
@@ -684,7 +746,7 @@ void splt_mp3_get_original_tags(char *filename,splt_state *state,
 
 //put the song tags
 //return must be freed
-char *splt_mp3_get_tags(char *filename, splt_state *state, int *error)
+static char *splt_mp3_get_tags(const char *filename, splt_state *state, int *error)
 {
   char *id3_data = NULL;
 
@@ -713,15 +775,13 @@ char *splt_mp3_get_tags(char *filename, splt_state *state, int *error)
   }
   else
   {
-    if (splt_t_get_int_option(state,SPLT_OPT_TAGS)
-        == SPLT_CURRENT_TAGS)
+    if (splt_t_get_int_option(state,SPLT_OPT_TAGS) == SPLT_CURRENT_TAGS)
     {
       int current_split = splt_t_get_current_split(state);
 
       //if we set all the tags like the x one
       int tags_after_x_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X); 
-      if ((current_split >= tags_after_x_like_x)
-          && (tags_after_x_like_x != -1))
+      if ((current_split >= tags_after_x_like_x) && (tags_after_x_like_x != -1))
       {
         current_split = tags_after_x_like_x;
       }
@@ -731,10 +791,8 @@ char *splt_mp3_get_tags(char *filename, splt_state *state, int *error)
       {
         char *title = NULL;
         char *artist = NULL;
-        title = splt_t_get_tags_char_field(state,current_split,
-              SPLT_TAGS_TITLE);
-        artist = splt_t_get_tags_char_field(state,current_split,
-              SPLT_TAGS_ARTIST);
+        title = splt_t_get_tags_char_field(state, current_split, SPLT_TAGS_TITLE);
+        artist = splt_t_get_tags_char_field(state, current_split, SPLT_TAGS_ARTIST);
 
         //only if we have the artist or the title
         if (((artist != NULL) && (artist[0] != '\0'))
@@ -755,7 +813,6 @@ char *splt_mp3_get_tags(char *filename, splt_state *state, int *error)
 
           if (splt_t_tags_exists(state,current_split))
           {
-            //we put the id3 comments on id3_infos
             id3_data = splt_mp3_id3v1(tags[current_split].title,
                 tags[current_split].artist,
                 tags[current_split].album,
@@ -772,44 +829,25 @@ char *splt_mp3_get_tags(char *filename, splt_state *state, int *error)
   return id3_data;
 }
 
-//returns the genre of the song, mp3splt used this in cddb search
-static unsigned char splt_mp3_getgenre (char *genre_string)
-{
-  int i;
-  for (i=0; i< SPLT_MP3_GENRENUM; i++)
-  {
-    if (strncmp(genre_string, splt_mp3_id3v1_categories[i], 
-          strlen(genre_string))==0)
-    {
-      return splt_mp3_id3genre[i];
-    }
-  }
-
-  return 0xFF;
-}
-
 /****************************/
 /* mp3 infos */
 
-
 //puts in the state informations about mp3 file
-//i think it also reads the file
-//must be called before mp3split()
+//must be called before splt_mp3_split()
 //enables framemode if xing header found 
 //xing header is often associated with VBR (variable bit rate)
-splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
-                              int framemode, int *error)
+static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
+    int framemode, int *error)
 {
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
 
   int prev = -1, len;
 
-  if ((mp3state = malloc (sizeof(splt_mp3_state)))==NULL)
+  if ((mp3state = malloc(sizeof(splt_mp3_state)))==NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
   }
-
   memset(mp3state, 0x0, sizeof(splt_mp3_state));
 
   char *filename = splt_t_get_filename_to_split(state);
@@ -859,7 +897,6 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
       goto function_end;
     }
 
-    //we end the cycle if
     if ((prev == 0) && 
         ((ret == 0) || 
          (mp3state->stream.error==MAD_ERROR_BUFLEN)))
@@ -874,7 +911,9 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
       mp3state->data_ptr = (unsigned char *) mp3state->stream.this_frame;
       //we set length of frame
       if(mp3state->stream.next_frame!=NULL)
+      {
         mp3state->data_len = (long) (mp3state->stream.next_frame - mp3state->stream.this_frame);
+      }
 
       if (mp3state->stream.anc_bitlen > 64)
       {
@@ -890,6 +929,7 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
         }
         //Handle misplaced Xing header in mp3 files with CRC
         else 
+        {
           if (xing_word == ((SPLT_MP3_XING_MAGIC << 16) & 0xffffffffL) 
               || xing_word == ((SPLT_MP3_INFO_MAGIC << 16) & 0xffffffffL))
           {
@@ -897,6 +937,7 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
             mad_bit_skip(&ptr, 16);
             tag = 1;
           }
+        }
 
         //if we have xing, put infos
         if (tag)
@@ -935,7 +976,7 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
           //set framemode true (because VBR)
           splt_t_set_int_option(state, SPLT_OPT_FRAME_MODE, SPLT_TRUE);
           mp3state->framemode = 1;
-          //if the messages are not locked
+          //print message to client because frame mode enabled
           if (!splt_t_messages_locked(state))
           {
             if (!splt_t_get_iopt(state,SPLT_INTERNAL_FRAME_MODE_ENABLED))
@@ -950,7 +991,6 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
     }
 
     prev = ret;
-
   } while (1);
 
   len = (long) (mp3state->buf_len - (mp3state->data_ptr - mp3state->inputBuffer));
@@ -1010,7 +1050,7 @@ splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
       long temp =
         ((mp3state->mp3file.len - mp3state->mp3file.firsth)
          / mp3state->mp3file.bitrate) * 100;
-      splt_t_set_total_time(state,temp);
+      splt_t_set_total_time(state, temp);
     }
   }
 
@@ -1023,16 +1063,22 @@ function_end:
   return mp3state;
 }
 
-void splt_mp3_end(splt_state *state)
+static void splt_mp3_end(splt_state *state, int *error)
 {
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
   if (mp3state)
   {
     if (mp3state->file_input)
     {
       if (mp3state->file_input != stdin)
       {
-        fclose(mp3state->file_input);
+        if (fclose(mp3state->file_input) != 0)
+        {
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state,
+              splt_t_get_filename_to_split(state));
+          *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+        }
       }
       mp3state->file_input = NULL;
     }
@@ -1043,7 +1089,7 @@ void splt_mp3_end(splt_state *state)
 }
 
 //gets the mp3 info and puts it in the state
-void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
+static void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 {
   //checks if valid mp3 file
   //before last argument, if framemode or not
@@ -1056,19 +1102,18 @@ void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
   {
     if (state->codec != NULL)
     {
-      splt_mp3_end(state);
+      splt_mp3_end(state, error);
     }
     return;
   }
+  //print informations about the current file to the client
   else
   {
     if ((! splt_t_messages_locked(state)) &&
-        (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE)
-         != SPLT_OPTION_WRAP_MODE) &&
-         (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE)
-         != SPLT_OPTION_ERROR_MODE))
+        (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_WRAP_MODE) &&
+        (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_ERROR_MODE))
     {
-      splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+      splt_mp3_state *mp3state = state->codec;
       struct splt_mp3 *mfile = &mp3state->mp3file;
       //codec infos
       char mpeg_infos[2048] = { '\0' };
@@ -1105,6 +1150,215 @@ void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 }
 
 /****************************/
+/* mp3 scan for silence */
+
+//used by mp3_scan_silence, and compare with threshold, returns 0 if
+//silence spot > threshold, 1 otherwise
+static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t threshold)
+{
+  int i, j;
+  mad_fixed_t sample;
+
+  for (j=0; j<channels; j++)
+  {
+    for(i=0; i<mp3state->synth.pcm.length; i++)
+    {
+      //get silence spot?
+      sample = mad_f_abs(mp3state->synth.pcm.samples[j][i]);
+      mp3state->temp_level = mp3state->temp_level *0.999 + sample*0.001;
+
+      if (sample > threshold)
+      {
+        return 0;
+      }
+    }
+  }
+
+  return 1;
+}
+
+//scan for silence
+//-returns the number of silence points found
+//and -1 if error; the error is set in the '*error' parameter
+static int splt_mp3_scan_silence(splt_state *state, off_t begin, 
+    unsigned long length, float threshold, 
+    float min, short output, int *error)
+{
+  int len = 0, found = 0, shot;
+  short first, flush = 0, stop = 0;
+  unsigned long silence_begin = 0, silence_end = 0, time;
+  off_t pos;
+  mad_fixed_t th;
+
+  splt_mp3_state *mp3state = state->codec;
+
+  splt_t_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
+
+  pos = begin;
+  th = mad_f_tofixed(splt_u_convertfromdB(threshold));
+
+  //we seek to the begin
+  if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
+  {
+    splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_SEEKING_FILE;
+    return -1;
+  }
+
+  first = output;
+  shot = SPLT_DEFAULTSHOT;
+
+  //initialise mad stuff
+  mad_stream_init(&mp3state->stream);
+  mad_frame_init(&mp3state->frame);
+  mad_synth_init(&mp3state->synth);
+
+  mad_timer_reset(&mp3state->timer);
+
+  mp3state->temp_level = 0.0;
+  mp3state->avg_level = 0.0;
+  mp3state->n_stat = 0;
+
+  //we do the effective scan
+  do
+  {
+    int mad_err = SPLT_OK;
+    switch (splt_mp3_get_valid_frame(state, &mad_err))
+    {
+      case 1:
+        //1 we have a valid frame
+        //we get mad infos and put them in the mp3state
+        mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
+        mad_synth_frame(&mp3state->synth,&mp3state->frame);
+        time = mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
+
+        if (length > 0)
+        {
+          if (time >= length)
+          {
+            flush = 1;
+            stop = 1;
+          }
+        }
+
+        if ((!flush) && (splt_mp3_silence(mp3state, MAD_NCHANNELS(&mp3state->frame.header), th)))
+        {
+          if (len == 0) silence_begin = time;
+          if (first == 0) len++;
+          if (shot < SPLT_DEFAULTSHOT)
+            shot+=2;
+          silence_end = time;
+        }
+        else
+        {
+          if (len > SPLT_DEFAULTSILLEN)
+          {
+            if ((flush) || (shot <= 0))
+            {
+              double begin_position, end_position;
+              begin_position = (double) (silence_begin / 100.f);
+              end_position = (double) (silence_end / 100.f);
+              len = (int) (silence_end - silence_begin);
+
+              if ((end_position - begin_position - min) >= 0.f)
+              {
+                if (splt_t_ssplit_new(&state->silence_list, begin_position, end_position,
+                      len, error) == -1)
+                {
+                  stop = 1;
+                  found = -1;
+                  break;
+                }
+                found++;
+              }
+
+              len = 0;
+              shot = SPLT_DEFAULTSHOT;
+            }
+          }
+          else 
+          {
+            len = 0;
+          }
+
+          if ((first) && (shot <= 0))
+          {
+            first = 0;
+          }
+
+          if (shot > 0) 
+          {
+            shot--;
+          }
+        }
+
+        if (mp3state->mp3file.len > 0)
+        {
+          pos = ftello(mp3state->file_input);
+
+          float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
+          mp3state->avg_level += level;
+          mp3state->n_stat++;
+          state->split.p_bar->silence_db_level = level;
+          state->split.p_bar->silence_found_tracks = found;
+
+          //if we don't have silence split,
+          //put the 1/4 of progress
+          if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != 
+              SPLT_OPTION_SILENCE_MODE)
+          {
+            splt_t_update_progress(state,(float)(time),
+                (float)(length), 4,1/(float)4,
+                SPLT_DEFAULT_PROGRESS_RATE);
+          }
+          else
+          {
+            //if we have cancelled the split
+            if (splt_t_split_is_canceled(state))
+            {
+              stop = 1;
+            }
+            splt_t_update_progress(state,(float)pos,
+                (float)(mp3state->mp3file.len),
+                1,0,SPLT_DEFAULT_PROGRESS_RATE);
+          }
+        }
+        break;
+      case 0:
+        //0 we do nothing
+        break;
+      case -1:
+        // -1 means eof
+        stop = 1;
+        break;
+      case -3:
+        //error from libmad
+        stop = 1;
+        *error = mad_err;
+        found = -1;
+        break;
+      default:
+        break;
+    }
+  } while (!stop && (found < SPLT_MAXSILENCE));
+
+  //only if we have silence mode, we set progress to 100%
+  if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) == 
+      SPLT_OPTION_SILENCE_MODE)
+  {
+    splt_t_update_progress(state,1.0,1.0,1,1,1);
+  }
+
+  //we finish with mad_*
+  mad_frame_finish(&mp3state->frame);
+  mad_stream_finish(&mp3state->stream);
+  mad_synth_finish(&mp3state->synth);
+
+  return found;
+}
+
+/****************************/
 /* mp3 split */
 
 //used for the mp3 sync errors split and mp3 split(for header)
@@ -1112,21 +1366,21 @@ void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 //It justs copies the data of the input file from a begin offset
 //to an end offset, and, eventually, a Xing frame (for VBR)
 //at the beginning and a ID3v1 at the end, to an outputfile.
-int splt_mp3_simple_split(splt_state *state, char *output_fname,
-                          off_t begin, off_t end, char *id3buffer)
+static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
+    off_t begin, off_t end, const char *id3buffer)
 {
   splt_u_print_debug("We do mp3 simple split on output...",0,output_fname);
   splt_u_print_debug("Mp3 simple split offset begin is",begin,NULL);
   splt_u_print_debug("Mp3 simple split offset end is",end,NULL);
 
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
 
   int error = SPLT_OK_SPLITTED;
 
   FILE *file_output = NULL;
-  off_t position;
-  unsigned char buffer[SPLT_MP3_READBSIZE];
-  long readed;
+  off_t position = 0;
+  unsigned char buffer[SPLT_MP3_READBSIZE] = { '\0' };
+  long readed = 0;
   //for the progress
   off_t temp_end = 0;
   //the start point of the split
@@ -1136,15 +1390,6 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
   splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
 
   char *filename = splt_t_get_filename_to_split(state);
-
-  if (end != -1)
-  {
-    if (begin >= end) 
-    {
-      error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
-      return error;
-    }
-  }
 
   position = ftello(mp3state->file_input); // Save current position
 
@@ -1177,7 +1422,7 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
     if (!(file_output=fopen(output_fname, "wb+")))
     {
       splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,output_fname);
+      splt_t_set_error_data(state, output_fname);
       return SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
@@ -1194,14 +1439,9 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
               mp3state->mp3file.xing, file_output) <= 0)
         {
           splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state,output_fname);
+          splt_t_set_error_data(state, output_fname);
           error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-          if (file_output != stdout)
-          {
-            fclose(file_output);
-          }
-          file_output = NULL;
-          return error;
+          goto function_end;
         }
       }
     }
@@ -1222,8 +1462,7 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
       }
     }
 
-    if ((readed = fread(buffer, 1, readed, 
-            mp3state->file_input))==-1)
+    if ((readed = fread(buffer, 1, readed, mp3state->file_input))==-1)
     {
       break;
     }
@@ -1233,14 +1472,9 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state,output_fname);
       error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-      if (file_output != stdout)
-      {
-        fclose(file_output);
-      }
-      file_output = NULL;
-      return error;
+      goto function_end;
     }
-    begin+=readed;
+    begin += readed;
 
     //we update the progress bar
     if ((split_mode == SPLT_OPTION_WRAP_MODE) ||
@@ -1320,12 +1554,7 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
         splt_t_set_strerror_msg(state);
         splt_t_set_error_data(state, output_fname);
         error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-        if (file_output != stdout)
-        {
-          fclose(file_output);
-        }
-        file_output = NULL;
-        return error;
+        goto function_end;
       }
     }
     else
@@ -1333,30 +1562,28 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state, output_fname);
       error = SPLT_ERROR_SEEKING_FILE;
-      if (file_output != stdout)
-      {
-        fclose(file_output);
-      }
-      file_output = NULL;
-      return error;
+      goto function_end;
     }
   }
-
-  if (file_output != stdout)
-  {
-    fclose(file_output);
-  }
-  file_output = NULL;
 
   if (fseeko(mp3state->file_input, position, SEEK_SET)==-1)
   {
     splt_t_set_strerror_msg(state);
     splt_t_set_error_data(state, filename);
-    return SPLT_ERROR_SEEKING_FILE;
+    goto function_end;
   }
 
-  //if (begin!=end)
-  //return SPLT_OK_SPLITTED;
+function_end:
+  if (file_output != stdout)
+  {
+    if (fclose(file_output) != 0)
+    {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state, filename);
+      return SPLT_ERROR_CANNOT_CLOSE_FILE;
+    }
+  }
+  file_output = NULL;
 
   return error;
 }
@@ -1371,9 +1598,9 @@ int splt_mp3_simple_split(splt_state *state, char *output_fname,
 //seekable is if we split in seekable mode or not
 //threshold - see manual
 //must be called after splt_mp3_info()
-//returns possible error in error
-void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
-    double fbegin_sec, double fend_sec, int *error)
+//returns possible error in '*error'
+static void splt_mp3_split(const char *output_fname, splt_state *state,
+    const char *id3, double fbegin_sec, double fend_sec, int *error)
 {
   splt_u_print_debug("Mp3 split...",0,NULL);
   splt_u_print_debug("Output filename is",0,output_fname);
@@ -1382,13 +1609,13 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
 
   //we do the next split
   splt_t_current_split_next(state);
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
 
   short adjustoption = splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP);
   short seekable = ! splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE);
   float threshold = splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
 
-  short status = -1, eof=0, check_bitrate=0;
+  short eof=0, check_bitrate=0;
 
   char *filename = splt_t_get_filename_to_split(state);
 
@@ -1495,7 +1722,7 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
           if (eof || finished)
           {
             finished = 1;
-            status = 0;
+            if (eof) { *error = SPLT_OK_SPLITTED_EOF; }
             break;
           }
         }
@@ -1515,8 +1742,9 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
               SPLT_DEFAULT_PROGRESS_RATE);
         }
 
+        int mad_err = SPLT_OK;
         //we get next frame
-        switch (splt_mp3_get_valid_frame(state))
+        switch (splt_mp3_get_valid_frame(state, &mad_err))
         {
           case 1:
             mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
@@ -1528,6 +1756,13 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
           case -1:
             eof = 1;
             *error = SPLT_OK_SPLITTED_EOF;
+            break;
+          case -3:
+            //error from libmad
+            *error = mad_err;
+            goto bloc_end;
+            break;
+          default:
             break;
         }
 
@@ -1545,6 +1780,7 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
             mp3state->mp3file.bitrate + mp3state->mp3file.firsth);
       }
 
+      //find begin point because no 'end' saved point
       if (mp3state->end == 0)
       {
         begin = (off_t) (fbegin_sec * mp3state->mp3file.bitrate + mp3state->mp3file.firsth);
@@ -1590,8 +1826,9 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
             mp3state->bytes+=mp3state->data_len;
           }
 
+          int mad_err = SPLT_OK;
           //we get next frame
-          switch (splt_mp3_get_valid_frame(state))
+          switch (splt_mp3_get_valid_frame(state, &mad_err))
           {
             case 1:
               len = (long) (mp3state->inputBuffer + mp3state->buf_len - mp3state->data_ptr);
@@ -1615,10 +1852,19 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
               break;
             case -1:
               eof = 1;
+              *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
+              break;
+            case -3:
+              //error from libmad
+              *error = mad_err;
+              goto bloc_end;
+              break;
+            default:
               break;
           }
         }
       }
+      //set the 'begin' as the saved 'end'
       else
       {
         len = (long) (mp3state->inputBuffer + mp3state->buf_len - mp3state->data_ptr);
@@ -1650,7 +1896,6 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
           to_read = (end - mp3state->bytes);
           if (to_read <= 0)
           {
-            status = 0;
             break;
           }
           if (to_read > SPLT_MAD_BSIZE)
@@ -1663,30 +1908,31 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
               fread(mp3state->inputBuffer, 1, to_read, mp3state->file_input))<=0))
         {
           eof = 1;
-          status = 0;
+          *error = SPLT_OK_SPLITTED_EOF;
           break;
         }
 
         //we write to file output
         if (fwrite(mp3state->inputBuffer, 1, mp3state->data_len, file_output)<0)
         {
-          status = -5;
-          break;
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state,output_fname);
+          *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
+          goto bloc_end;
         }
 
         mp3state->bytes += mp3state->data_len;
 
-        splt_t_update_progress(state, (float)
-            (mp3state->bytes-split_begin_point),
-            (float)(end-split_begin_point),
-            1,0,SPLT_DEFAULT_PROGRESS_RATE);
+        splt_t_update_progress(state, (float) (mp3state->bytes-split_begin_point),
+            (float)(end-split_begin_point), 1,0,SPLT_DEFAULT_PROGRESS_RATE);
       }
 
       mp3state->end = end;
 
       if (!eof)
       {
-        switch (splt_mp3_get_valid_frame(state))
+        int mad_err = SPLT_OK;
+        switch (splt_mp3_get_valid_frame(state, &mad_err))
         {
           case 1:
             len = (long) (mp3state->data_ptr - mp3state->inputBuffer);
@@ -1708,6 +1954,13 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
             break;
           case -1:
             eof = 1;
+            *error = SPLT_OK_SPLITTED_EOF;
+            break;
+          case -3:
+            *error = mad_err;
+            goto bloc_end;
+            break;
+          default:
             break;
         }
       }
@@ -1758,21 +2011,28 @@ void splt_mp3_split(char *output_fname, splt_state *state, char *id3,
           goto bloc_end;
         }
       }
+    }
 
 bloc_end:
+    if (file_output)
+    {
       if (file_output != stdout)
       {
-        fclose(file_output);
+        if (fclose(file_output) != 0)
+        {
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state, output_fname);
+          *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+        }
       }
-      file_output = NULL;
-      mad_frame_finish(&mp3state->frame);
-      mad_stream_finish(&mp3state->stream);
-      if (*error == SPLT_OK)
-      {
-        *error = SPLT_OK_SPLITTED;
-      }
-      return;
     }
+    file_output = NULL;
+
+    mad_frame_finish(&mp3state->frame);
+    mad_stream_finish(&mp3state->stream);
+    if (*error == SPLT_OK) { *error = SPLT_OK_SPLITTED; }
+
+    return;
   }
   //if seekable :
   else
@@ -1901,11 +2161,12 @@ bloc_end:
         {
           end = mp3state->h.ptr + mp3state->h.framesize; // Last valid offset
           eof=1;
+          *error = SPLT_OK_SPLITTED_EOF;
           break;
         }
 
         //syncerrors?
-        if ((end!=mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0))
+        if ((end != mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0))
         {
           state->syncerrors++;
         }
@@ -1919,17 +2180,14 @@ bloc_end:
         //if we have a progress callback function
         //time split only calculates the end of the 
         //split
-        int split_mode = 
-          splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+        int split_mode = splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
         if (((split_mode == SPLT_OPTION_TIME_MODE) || 
               (split_mode == SPLT_OPTION_SILENCE_MODE))
             && (!splt_t_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
         {
-          splt_t_update_progress(state,
-              (float)(mp3state->frames-fbegin),
-              (float)(fend-fbegin),
-              progress_adjust_val,
-              0,SPLT_DEFAULT_PROGRESS_RATE);
+          splt_t_update_progress(state, (float)(mp3state->frames-fbegin),
+              (float)(fend-fbegin), progress_adjust_val,
+              0, SPLT_DEFAULT_PROGRESS_RATE);
         }
         else
         {
@@ -1966,7 +2224,14 @@ bloc_end:
         //if adjust option, scans for silence
         if ((adjust) && (mp3state->frames >= fend))
         {
-          if (splt_mp3_scan_silence(state, end, 2 * adjust, threshold, 0.f, 0) > 0)
+          int silence_points_found =
+            splt_mp3_scan_silence(state, end, 2 * adjust, threshold, 0.f, 0, error);
+          //if error, go out
+          if (silence_points_found == -1)
+          {
+            goto bloc_end2;
+          }
+          else if (silence_points_found > 0)
           {
             adjust = (unsigned long) (splt_u_silence_position(state->silence_list, mp3state->off) 
                 * mp3state->mp3file.fps);
@@ -1988,6 +2253,7 @@ bloc_end:
         }
       }
 
+      //save end point for performance reasons
       mp3state->end = end;
 
       //if xing, we get xing
@@ -1999,8 +2265,11 @@ bloc_end:
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+5] = (headw >> 16) & 0xFF;
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+6] = (headw >> 8) & 0xFF;
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+7] = headw  & 0xFF;
+        //we put the length of the file if end is -1
         if (end == -1)
+        {
           end = mp3state->mp3file.len;
+        }
         headw = (unsigned long) (end - begin + mp3state->mp3file.xing); // Bytes
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+8] = (headw >> 24) & 0xFF;
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+9] = (headw >> 16) & 0xFF;
@@ -2009,15 +2278,16 @@ bloc_end:
       }
     }
     else
-      //if not framemode
+    //if not framemode
     {
       splt_u_print_debug("Starting mp3 non frame mode...",0,NULL);
 
+      //find begin point if the last 'end' not saved
       if (mp3state->end == 0) 
       {
         begin = (off_t) (fbegin_sec * mp3state->mp3file.bitrate + mp3state->mp3file.firsth);
         // Finds first valid header. Mantain clean files.
-        begin = splt_mp3_findvalidhead (mp3state, begin);
+        begin = splt_mp3_findvalidhead(mp3state, begin);
 
         if (begin==-1)
         {
@@ -2030,6 +2300,7 @@ bloc_end:
           check_bitrate = 1;
         }
       }
+      //set the begin point from the last 'end' saved
       else 
       {
         begin = mp3state->end;
@@ -2038,39 +2309,24 @@ bloc_end:
       if (fend_sec != -1)
       {
         end = (off_t) (fend_sec * mp3state->mp3file.bitrate + mp3state->mp3file.firsth);
-        end = splt_mp3_findvalidhead (mp3state, end); // We take the complete frame
+        end = splt_mp3_findvalidhead(mp3state, end); // We take the complete frame
         if (splt_mp3_tabsel_123[1 - mp3state->mp3file.mpgid][mp3state->mp3file.layer-1][splt_mp3_c_bitrate(mp3state->headw)] != 
             mp3state->mp3file.firsthead.bitrate)
           check_bitrate = 1;
       }
+
+      //save end point for performance reasons
       mp3state->end = end;
     }
 
     //seekable real split
-    status = splt_mp3_simple_split(state, output_fname, begin, end, id3);
+    int err = splt_mp3_simple_split(state, output_fname, begin, end, id3);
+    if (err < 0) { *error = err; }
   }
 
   if (check_bitrate)
   {
     *error = SPLT_MIGHT_BE_VBR;
-  }
-  else
-  {
-    if ((status == 0) && eof)
-    {
-      *error = SPLT_OK_SPLITTED_EOF;
-    }
-    else
-    {
-      if (status == SPLT_OK)
-      {
-        *error = SPLT_OK_SPLITTED;
-      }
-      else
-      {
-        *error = status;
-      }
-    }
   }
 
 bloc_end2:
@@ -2079,198 +2335,9 @@ bloc_end2:
 }
 
 /****************************/
-/* mp3 scan for silence */
-
-//used by mp3_scan_silence, and compare with threshold, returns 0 if
-//silence spot > threshold, 1 otherwise
-int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t threshold)
-{
-  int i, j;
-  mad_fixed_t sample;
-
-  for (j=0; j<channels; j++)
-  {
-    for(i=0; i<mp3state->synth.pcm.length; i++)
-    {
-      //get silence spot?
-      sample = mad_f_abs(mp3state->synth.pcm.samples[j][i]);
-      mp3state->temp_level = mp3state->temp_level *0.999 + sample*0.001;
-
-      if (sample > threshold)
-      {
-        return 0;
-      }
-    }
-  }
-
-  return 1;
-}
-
-//scan for silence
-int splt_mp3_scan_silence(splt_state *state, off_t begin, 
-                           unsigned long length, float threshold, 
-                           float min, short output)
-{
-  int len = 0, found = 0, shot;
-  short first, flush = 0, stop = 0;
-  unsigned long silence_begin = 0, silence_end = 0, time;
-  off_t pos;
-  mad_fixed_t th;
-
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
-
-  splt_t_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
-
-  pos = begin;
-  th = mad_f_tofixed(splt_u_convertfromdB(threshold));
-
-  //we seek to the begin
-  if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
-  {
-    return -1;
-  }
-
-  first = output;
-  shot = SPLT_DEFAULTSHOT;
-
-  //initialise mad stuff
-  mad_stream_init(&mp3state->stream);
-  mad_frame_init(&mp3state->frame);
-  mad_synth_init(&mp3state->synth);
-
-  mad_timer_reset(&mp3state->timer);
-
-  mp3state->temp_level = 0.0;
-  mp3state->avg_level = 0.0;
-  mp3state->n_stat = 0;
-
-  //we do the effective scan
-  do
-  {
-    switch (splt_mp3_get_valid_frame(state))
-    {
-      case 1:
-        //1 we have a valid frame
-        //we get mad infos and put them in the mp3state
-        mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
-        mad_synth_frame(&mp3state->synth,&mp3state->frame);
-        time = mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
-
-        if (length > 0)
-        {
-          if (time >= length)
-          {
-            flush = 1;
-            stop = 1;
-          }
-        }
-
-        if ((!flush) && (splt_mp3_silence(mp3state, MAD_NCHANNELS(&mp3state->frame.header), th)))
-        {
-          if (len == 0) silence_begin = time;
-          if (first == 0) len++;
-          if (shot < SPLT_DEFAULTSHOT)
-            shot+=2;
-          silence_end = time;
-        }
-        else
-        {
-          if (len > SPLT_DEFAULTSILLEN)
-          {
-            if ((flush) || (shot <= 0))
-            {
-              double begin_position, end_position;
-              begin_position = (double) (silence_begin / 100.f);
-              end_position = (double) (silence_end / 100.f);
-              len = (int) (silence_end - silence_begin);
-
-              if ((end_position - begin_position - min) >= 0.f)
-              {
-                splt_t_ssplit_new(&state->silence_list, begin_position, end_position, len);
-                found++;
-              }
-
-              len = 0;
-              shot = SPLT_DEFAULTSHOT;
-            }
-          }
-          else 
-          {
-            len = 0;
-          }
-
-          if ((first) && (shot <= 0))
-          {
-            first = 0;
-          }
-
-          if (shot > 0) 
-          {
-            shot--;
-          }
-        }
-
-        if (mp3state->mp3file.len > 0)
-        {
-          pos = ftello(mp3state->file_input);
-
-          float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
-          mp3state->avg_level += level;
-          mp3state->n_stat++;
-          state->split.p_bar->silence_db_level = level;
-          state->split.p_bar->silence_found_tracks = found;
-
-          //if we don't have silence split,
-          //put the 1/4 of progress
-          if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != 
-              SPLT_OPTION_SILENCE_MODE)
-          {
-            splt_t_update_progress(state,(float)(time),
-                (float)(length), 4,1/(float)4,
-                SPLT_DEFAULT_PROGRESS_RATE);
-          }
-          else
-          {
-            //if we have cancelled the split
-            if (splt_t_split_is_canceled(state))
-            {
-              stop = 1;
-            }
-            splt_t_update_progress(state,(float)pos,
-                (float)(mp3state->mp3file.len),
-                1,0,SPLT_DEFAULT_PROGRESS_RATE);
-          }
-        }
-        break;
-      case 0:
-        //0 we do nothing
-        break;
-      case -1:
-        // -1 means eof
-        stop = 1;
-        break;
-    }
-  } while (!stop && (found < SPLT_MAXSILENCE));
-
-  //only if we have silence mode, we set progress to 100%
-  if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) == 
-      SPLT_OPTION_SILENCE_MODE)
-  {
-    splt_t_update_progress(state,1.0,1.0,1,1,1);
-  }
-
-  //we finish with mad_
-  mad_frame_finish(&mp3state->frame);
-  mad_stream_finish(&mp3state->stream);
-  mad_synth_finish(&mp3state->synth);
-
-  return found;
-}
-
-/****************************/
 /* mp3 syncerror */
 
-//this function search for the id3v1 and id3v2
+//this function is searching for the id3v1 and id3v2 and returns the offset
 static off_t splt_mp3_adjustsync(splt_mp3_state *mp3state, off_t begin, off_t end)
 {
   off_t position;
@@ -2331,13 +2398,13 @@ static off_t splt_mp3_adjustsync(splt_mp3_state *mp3state, off_t begin, off_t en
 
 //the function counts the number of sync error splits, 
 //and sets the offsets
-void splt_mp3_syncerror_search(splt_state *state, int *error)
+static void splt_mp3_syncerror_search(splt_state *state, int *error)
 {
   off_t offset = 0;
   char *filename = splt_t_get_filename_to_split(state);
   int sync_err = SPLT_OK;
 
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
 
   splt_t_put_progress_text(state,SPLT_PROGRESS_SEARCH_SYNC);
 
@@ -2347,9 +2414,10 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
   //if the filename is correct
   int is_file = splt_check_is_file(state, filename);
   if (*error < 0) { return; }
+
   if (!is_file)
   {
-    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    *error = SPLT_ERROR_INEXISTENT_FILE;
     return;
   }
 
@@ -2370,7 +2438,9 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
     {
       offset = splt_mp3_findhead(mp3state, mp3state->h.ptr + mp3state->h.framesize);
       if (offset==-1)
+      {
         break;
+      }
 
       if (offset != mp3state->h.ptr + mp3state->h.framesize)
       {
@@ -2392,7 +2462,8 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
         }
       }
 
-      mp3state->h = splt_mp3_makehead (mp3state->headw, mp3state->mp3file, mp3state->h, offset);
+      mp3state->h = splt_mp3_makehead (mp3state->headw, mp3state->mp3file,
+          mp3state->h, offset);
 
       if (splt_t_split_is_canceled(state))
       {
@@ -2408,7 +2479,9 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
   }
   else
   {
-    *error = SPLT_ERR_SYNC;
+    splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state,filename);
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return;
   }
 
@@ -2440,14 +2513,14 @@ void splt_mp3_syncerror_search(splt_state *state, int *error)
 /****************************/
 /* mp3 dewrap */
 
-const unsigned char splt_mp3_albumwraphead[22] =
+static const unsigned char splt_mp3_albumwraphead[22] =
 {
   0xa, 0x23, 0x54, 0x49, 0x54, 0x32, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x41, 0x6c, 0x62, 0x75, 0x6d, 0x57, 0x72, 0x61, 0x70,
 };
 
 //this function dewraps a file
 //we return the possible error in the process_result parameter
-void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
+static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_state *state)
 {
   *error = SPLT_DEWRAP_OK;
 
@@ -2457,7 +2530,7 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
   int wrapfiles=0, i, j, k=0;
   unsigned char c;
   char filename[2048] = { '\0' };
-  off_t begin=0, end=0, len, id3offset;
+  off_t begin=0, end=0, len = 0, id3offset = 0;
   char junk[384] = { '\0' };
   char *file_to_dewrap = splt_t_get_filename_to_split(state);
 
@@ -2471,7 +2544,7 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
   }
   else
   {
-    splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+    splt_mp3_state *mp3state = state->codec;
 
     if (*error >= 0)
     {
@@ -2600,6 +2673,7 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
             }
             if (crc != fcrc)
             {
+              //No interactivity in the library (for the moment)
               //fprintf (stderr, "BAD\nWARNING: Bad CRC. File might be damaged. Continue anyway? (y/n) ");
               //fgets(junk, 32, stdin);
               //if (junk[0]!='y')
@@ -2713,8 +2787,12 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
                 begin = (off_t) atol (junk);
                 k = j - k;
                 if (k<4)
+                {
                   for (j=0; j<(4-k); j++)
+                  {
                     begin = begin * 10;
+                  }
+                }
               }
             }
             else 
@@ -2848,8 +2926,17 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
               if (filename != NULL)
               {
                 char *filename2 = strdup(filename);
-                snprintf(filename,2048, "%s", filename2+2);
-                free(filename2);
+                if (!filename2)
+                {
+                  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                  return;
+                }
+                else
+                {
+                  snprintf(filename,2048, "%s", filename2+2);
+                  free(filename2);
+                  filename2 = NULL;
+                }
               }
             }
 
@@ -2883,9 +2970,10 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
 
               int ret = 0;
               //if we have an output directory
+              //-try to create it
               if (dir && (dir[0] != '\0'))
               {
-                char temp[2048];
+                char temp[2048] = { '\0' };
                 strncpy(temp, filename, 2048);
                 char *ptr = temp;
                 //if we have an output dir, cut directory path from filename
@@ -2921,29 +3009,34 @@ void splt_mp3_dewrap(int listonly, char *dir, int *error, splt_state *state)
               }
               mp3state->mp3file.xing = 0;
 
-              int change_error = SPLT_OK;
-              change_error = splt_t_append_splitpoint(state,0,
+              int append_err = SPLT_OK;
+              append_err = splt_t_append_splitpoint(state,0,
                   splt_u_get_real_name(filename));
-              if (change_error != SPLT_OK)
+              if (append_err != SPLT_OK)
               {
-                *error = change_error;
+                *error = append_err;
                 return;
               }
 
               //cut extension
-              change_error = splt_u_cut_splitpoint_extension(state,i);
-              if (change_error != SPLT_OK)
+              int cut_err = splt_u_cut_splitpoint_extension(state,i);
+              if (cut_err != SPLT_OK)
               {
-                *error = change_error;
-                break;
+                *error = cut_err;
+                return;
               }
 
+              //do the real wrap split
               ret = splt_mp3_simple_split(state, filename, begin, end, NULL);
 
               //if we could split put the splitted file
               if (ret >= 0)
               {
-                splt_t_put_splitted_file(state,filename);
+                splt_t_put_splitted_file(state, filename);
+              }
+              else
+              {
+                *error = ret;
               }
             }
           }
@@ -3001,13 +3094,13 @@ void splt_mp3_init(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
 
   //if we can open the file
-  if ((file_input = splt_mp3_open_file_read(filename)) != NULL)
+  if ((file_input = splt_mp3_open_file_read(state, filename, error)) != NULL)
   {
     splt_mp3_get_info(state, file_input, error);
 
     if (*error >= 0)
     {
-      splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+      splt_mp3_state *mp3state = state->codec;
       mp3state->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
 
       //we initialise frames to 1
@@ -3017,22 +3110,16 @@ void splt_mp3_init(splt_state *state, int *error)
       }
     }
   }
-  else
-  {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state,filename);
-    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-  }
 }
 
 void splt_pl_init(splt_state *state, int *error)
 {
-  splt_mp3_init(state,error);
+  splt_mp3_init(state, error);
 }
 
-void splt_pl_end(splt_state *state)
+void splt_pl_end(splt_state *state, int *error)
 {
-  splt_mp3_end(state);
+  splt_mp3_end(state, error);
 }
 
 //check if file is mp3
@@ -3049,17 +3136,17 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
   int is_mp3 = SPLT_FALSE;
 
   splt_t_lock_messages(state);
-  splt_mp3_init(state,error);
+  splt_mp3_init(state, error);
   splt_t_unlock_messages(state);
   if (*error >= 0)
   {
-    splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+    splt_mp3_state *mp3state = state->codec;
     if (mp3state)
     {
       is_mp3 = SPLT_TRUE;
     }
   }
-  splt_mp3_end(state);
+  splt_mp3_end(state, error);
  
   return is_mp3;
 }
@@ -3072,16 +3159,16 @@ void splt_pl_search_syncerrors(splt_state *state, int *error)
 }
 
 //get wrap files or dewrap
-void splt_pl_dewrap(splt_state *state, int listonly, char *dir, int *error)
+void splt_pl_dewrap(splt_state *state, int listonly, const char *dir, int *error)
 {
   splt_t_wrap_free(state);
   splt_mp3_dewrap(listonly, dir, error, state);
 }
 
-void splt_pl_split(splt_state *state, char *final_fname,
+void splt_pl_split(splt_state *state, const char *final_fname,
     double begin_point, double end_point, int *error)
 {
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
   char *filename = splt_t_get_filename_to_split(state);
 
   //put id3v1 tags
@@ -3107,7 +3194,7 @@ int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off
 
   int error = SPLT_OK;
 
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
 
   //we initialise frames to 1
   if (splt_t_get_total_time(state) > 0)
@@ -3130,11 +3217,11 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   int found = 0;
   FILE *file_input = NULL;
 
-  splt_mp3_state *mp3state = (splt_mp3_state *) state->codec;
+  splt_mp3_state *mp3state = state->codec;
   mp3state->off = offset;
 
   found = splt_mp3_scan_silence(state, mp3state->mp3file.firsthead.ptr, 0,
-      threshold, min_length, 1);
+      threshold, min_length, 1, error);
 
   return found;
 }

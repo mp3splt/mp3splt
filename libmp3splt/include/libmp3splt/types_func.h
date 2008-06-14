@@ -177,7 +177,7 @@ void splt_t_freedb_free_search(splt_state *state);
 /* types: silence access */
 
 int splt_t_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len);
+    float begin_position, float end_position, int len, int *error);
 void splt_t_ssplit_free (struct splt_ssplit **silence_list);
 
 /********************************/

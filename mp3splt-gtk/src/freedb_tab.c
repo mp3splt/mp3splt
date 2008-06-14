@@ -71,7 +71,7 @@ enum
   };
 
 //results of the freedb search
-splt_freedb_results *search_results;
+const splt_freedb_results *search_results;
 //the selected entry id
 gint selected_id = -1;
 

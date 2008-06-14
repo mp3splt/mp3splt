@@ -945,7 +945,7 @@ void do_freedb_search(Options *opt, splt_state *state,int *err)
   fflush(console_out);
 
   //the freedb results
-  splt_freedb_results *f_results;
+  const splt_freedb_results *f_results;
   //we search the freedb
   f_results = mp3splt_get_freedb_search(state,freedb_input,
       err, opt->freedb_search_type,
@@ -1638,7 +1638,7 @@ int main(int argc, char *argv[])
       //if no error when putting the filename to split
       if (err >= 0)
       {
-        splt_wrap *wrap_files;
+        const splt_wrap *wrap_files;
         wrap_files = mp3splt_get_wrap_files(state,&err);
 
         //if no error when getting the wrap files
