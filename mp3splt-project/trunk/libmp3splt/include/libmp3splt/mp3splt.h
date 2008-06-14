@@ -932,6 +932,7 @@ typedef struct {
  */
 #define SPLT_ERROR_CRC_FAILED -31
 #define SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE -32
+#define SPLT_ERROR_PLUGIN_ERROR -33
 
 //output format
 /**
@@ -1294,9 +1295,8 @@ int mp3splt_append_tags(splt_state *state,
     int track, unsigned char genre);
 
 //returns a pointer to all the current tags
-splt_tags *mp3splt_get_tags(splt_state *state,
-    int *tags_number,
-    int *error);
+const splt_tags *mp3splt_get_tags(splt_state *state,
+    int *tags_number, int *error);
 
 //puts tags from a string
 int mp3splt_put_tags_from_string(splt_state *state, 
@@ -1350,7 +1350,7 @@ void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
 /**
  * @brief test
  */
-splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
+const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     const char *searched_string,
     int *error,
     int search_type,
@@ -1382,11 +1382,11 @@ char *mp3splt_get_strerror(splt_state *state, int error_code);
 
 //returns the number of syncerrors
 //puts possible error in error variable
-splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
+const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
     int *error);
 
 //returns the wrapped files found
-splt_wrap *mp3splt_get_wrap_files(splt_state *state,
+const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
     int *error);
 
 #define MP3SPLT_MP3SPLT_H

@@ -365,7 +365,7 @@ int mp3splt_append_tags(splt_state *state,
 }
 
 //returns a list containing all the tags
-splt_tags *mp3splt_get_tags(splt_state *state,
+const splt_tags *mp3splt_get_tags(splt_state *state,
     int *tags_number, int *error)
 {
   int *err = SPLT_OK;
@@ -805,7 +805,7 @@ void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
 /*    Freedb functions              */
 
 //get freedb search
-splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
+const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     //our search
     const char *search_string,
     //possible errors
@@ -956,7 +956,7 @@ void mp3splt_set_oformat(splt_state *state,
 
 //returns the syncerrors found
 //puts error in the error variable
-splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
+const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
     int *error)
 {
   int *err = SPLT_OK;
@@ -1010,7 +1010,7 @@ splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
 }
 
 //puts possible error in the error variable
-splt_wrap *mp3splt_get_wrap_files(splt_state *state,
+const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
     int *error)
 {
   int *err = SPLT_OK;

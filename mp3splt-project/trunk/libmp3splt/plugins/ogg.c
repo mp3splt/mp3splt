@@ -128,7 +128,7 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
   {
     if (! splt_t_messages_locked(state))
     {
-      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+      splt_ogg_state *oggstate = state->codec;
       //ogg infos
       char ogg_infos[2048] = { '\0' };
       snprintf(ogg_infos, 2048, " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels",
@@ -387,7 +387,7 @@ static splt_ogg_state *splt_ogg_v_new(void)
 //used in the splt_t_state_free() function
 void splt_ogg_state_free(splt_state *state)
 {
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state *oggstate = state->codec;
   if (oggstate)
   {
     ov_clear(&oggstate->vf);
@@ -429,7 +429,7 @@ static vorbis_comment *splt_ogg_v_comment (vorbis_comment *vc, char *artist, cha
 void splt_ogg_get_original_tags(char *filename,
     splt_state *state, int *tag_error)
 {
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state *oggstate = state->codec;
 
   vorbis_comment *vc_local;
   vc_local = ov_comment(&oggstate->vf,-1);
@@ -515,7 +515,7 @@ void splt_ogg_get_original_tags(char *filename,
 //new file
 static void splt_ogg_put_original_tags(splt_state *state)
 {
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state *oggstate = state->codec;
   char *a,*t,*al,*da,/**g,*tr,*/*com;
 
   a = state->original_tags.artist;
@@ -535,7 +535,7 @@ static void splt_ogg_put_original_tags(splt_state *state)
 //puts the ogg tags
 void splt_ogg_put_tags(splt_state *state, int *error)
 {
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state *oggstate = state->codec;
 
   //clean_original_id3(state);
   //if we put the original tags
@@ -1507,7 +1507,13 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
                     e_position = (float) temp;
                     if ((e_position - b_position - min) >= 0.f)
                     {
-                      splt_t_ssplit_new(&state->silence_list, b_position, e_position, len);
+                      //TODO: errors
+                      int err = SPLT_OK;
+                      if (splt_t_ssplit_new(&state->silence_list, b_position, e_position, len, &err) == -1)
+                      {
+                        found = -1;
+                        goto function_end;
+                      }
                       found++;
                     }
                     len = 0;
@@ -1582,6 +1588,8 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
       }
     }
   }
+
+function_end:
 
   ogg_stream_clear(&os);
 
@@ -1686,7 +1694,7 @@ void splt_pl_init(splt_state *state, int *error)
     splt_ogg_get_info(state, file_input, error);
     if (*error >= 0)
     {
-      splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+      splt_ogg_state *oggstate = state->codec;
       oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
     }
   }
@@ -1698,16 +1706,16 @@ void splt_pl_init(splt_state *state, int *error)
   }
 }
 
-void splt_pl_end(splt_state *state)
+void splt_pl_end(splt_state *state, int *error)
 {
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state *oggstate = state->codec;
   splt_ogg_state_free(state);
 }
 
 void splt_pl_split(splt_state *state, char *final_fname,
     double begin_point, double end_point, int *error) 
 {
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state *oggstate = state->codec;
 
   splt_ogg_put_tags(state, error);
 
@@ -1729,7 +1737,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
     splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
   int found = 0;
 
-  splt_ogg_state *oggstate = (splt_ogg_state *) state->codec;
+  splt_ogg_state *oggstate = state->codec;
   oggstate->off = offset;
 
   found = splt_ogg_scan_silence(state, 0, threshold, min_length, 1, NULL, 0);

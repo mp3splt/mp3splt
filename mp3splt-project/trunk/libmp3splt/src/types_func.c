@@ -1316,7 +1316,7 @@ int splt_t_set_original_tags_field(splt_state *state,
       {
         state->original_tags.title = NULL;
       }
-      else
+     else
       {
         if ((state->original_tags.title = malloc(sizeof(char)*(length+1)))
             == NULL)
@@ -1888,7 +1888,10 @@ void splt_t_set_error_data(splt_state *state, const char *error_data)
   if (error_data)
   {
     state->err.error_data = malloc(sizeof(char) * (strlen(error_data) + 1));
-    snprintf(state->err.error_data,strlen(error_data)+1,"%s",error_data);
+    if (state->err.error_data)
+    {
+      snprintf(state->err.error_data,strlen(error_data)+1,"%s",error_data);
+    }
   }
 }
 
@@ -1938,7 +1941,10 @@ void splt_t_set_strerr_msg(splt_state *state, const char *message)
   if (message)
   {
     state->err.strerror_msg = malloc(sizeof(char) * (strlen(message) + 1));
-    snprintf(state->err.strerror_msg,strlen(message)+1,"%s",message);
+    if (state->err.strerror_msg)
+    {
+      snprintf(state->err.strerror_msg,strlen(message)+1,"%s",message);
+    }
   }
   else
   {
@@ -2404,13 +2410,17 @@ char *splt_t_freedb_get_disc_id(splt_state *state,
 
 //creates a new ssplit structure
 int splt_t_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len)
+    float begin_position, float end_position, int len,
+    int *error)
 {
   struct splt_ssplit *temp;
   struct splt_ssplit *s_new;
 
   if ((s_new = malloc(sizeof(struct splt_ssplit)))==NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return -1;
+  }
   s_new->len = len;
   s_new->begin_position = begin_position;
   s_new->end_position = end_position;
@@ -2519,7 +2529,7 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
     {
       state->serrors->serrors_points[serrors_num] = point;
 
-      if (state->serrors->serrors_points[serrors_num] == -1)
+      if (point == -1)
       {
         error = SPLT_ERR_SYNC;
       }
@@ -2863,12 +2873,15 @@ static void splt_t_free_files(char **files, int number)
     {
       for (i = 0; i < number; i++)
       {
-        free(files[i]);
-        files[i] = NULL;
+        if (files[i])
+        {
+          free(files[i]);
+          files[i] = NULL;
+        }
       }
-      free(files);
-      files = NULL;
     }
+    free(files);
+    files = NULL;
   }
 }
 

@@ -1,6 +1,8 @@
 BUGS :
 
-* fix ogg bugs from here : http://sourceforge.net/tracker/index.php?func=detail&aid=1078018&group_id=55130&atid=476061
+* 0% progress on EOF
+* check 'const' returns from functions
+
 
 FEATURES REQUESTS :
 

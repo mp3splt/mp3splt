@@ -1472,7 +1472,7 @@ char *splt_u_strerror(splt_state *state, int error_code)
       snprintf(error_msg,max_error_size, " error mode ok");
       break;
     case SPLT_ERR_SYNC:
-      snprintf(error_msg,max_error_size, " error: sync error");
+      snprintf(error_msg,max_error_size, " error: unknown sync error");
       break;
     case SPLT_ERR_NO_SYNC_FOUND:
       snprintf(error_msg,max_error_size, " no sync errors found");
@@ -1722,6 +1722,11 @@ char *splt_u_strerror(splt_state *state, int error_code)
     //
     case SPLT_ERROR_INEXISTENT_SPLITPOINT:
       snprintf(error_msg,max_error_size, " error: inexistent splitpoint");
+      break;
+      //
+    case SPLT_ERROR_PLUGIN_ERROR:
+      snprintf(error_msg,max_error_size, " plugin error: '%s'",
+          state->err.error_data);
       break;
     //
     case SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE:

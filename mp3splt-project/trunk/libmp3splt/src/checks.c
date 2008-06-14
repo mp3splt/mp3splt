@@ -88,7 +88,7 @@ void splt_check_splitpts_inf_song_length(splt_state *state, int *error)
 //and not 1, 5, 4 ... (4<5 -> error)
 void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
 {
-  int i;
+  int i = 0;
 
   int err = SPLT_OK;
 

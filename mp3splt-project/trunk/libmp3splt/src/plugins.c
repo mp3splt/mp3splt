@@ -479,7 +479,7 @@ void splt_p_end(splt_state *state, int *error)
   {
     if (pl->data[current_plugin].func->end != NULL)
     {
-      pl->data[current_plugin].func->end (state, error);
+      pl->data[current_plugin].func->end(state, error);
     }
     else
     {
