@@ -673,7 +673,7 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
 }
 
 //macro used only in the following function splt_mp3_get_original_tags
-#define VERIFY_ERROR() \
+#define MP3_VERIFY_ERROR() \
 if (err != SPLT_OK) \
 { \
 *tag_error = err; \
@@ -710,25 +710,25 @@ static void splt_mp3_get_original_tags(const char *filename, splt_state *state,
       //we get the artist
       err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ARTIST,
           SPLT_MP3_ID3_ARTIST);
-      VERIFY_ERROR();
+      MP3_VERIFY_ERROR();
       splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ALBUM,
           SPLT_MP3_ID3_ALBUM);
-      VERIFY_ERROR();
+      MP3_VERIFY_ERROR();
       splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TITLE,
           SPLT_MP3_ID3_TITLE);
-      VERIFY_ERROR();
+      MP3_VERIFY_ERROR();
       splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_YEAR,
           SPLT_MP3_ID3_YEAR);
-      VERIFY_ERROR();
+      MP3_VERIFY_ERROR();
       splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_GENRE,
           SPLT_MP3_ID3_GENRE);
-      VERIFY_ERROR();
+      MP3_VERIFY_ERROR();
       splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_COMMENT,
           SPLT_MP3_ID3_COMMENT);
-      VERIFY_ERROR();
+      MP3_VERIFY_ERROR();
       splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TRACK,
           SPLT_MP3_ID3_TRACK);
-      VERIFY_ERROR();
+      MP3_VERIFY_ERROR();
     }
 
 function_end: 
@@ -1436,7 +1436,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
       {
         if(fwrite(mp3state->mp3file.xingbuffer, 1, 
-              mp3state->mp3file.xing, file_output) <= 0)
+              mp3state->mp3file.xing, file_output) < mp3state->mp3file.xing)
         {
           splt_t_set_strerror_msg(state);
           splt_t_set_error_data(state, output_fname);
@@ -1467,7 +1467,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       break;
     }
 
-    if (fwrite(buffer, 1, readed, file_output)==-1)
+    if (fwrite(buffer, 1, readed, file_output) < readed)
     {
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state,output_fname);
@@ -1549,7 +1549,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
     if (fseeko(file_output,
           splt_mp3_getid3v1(file_output), SEEK_END)!=-1)
     {
-      if (fwrite(id3buffer, 1, 128, file_output) <= 0)
+      if (fwrite(id3buffer, 1, 128, file_output) < 128)
       {
         splt_t_set_strerror_msg(state);
         splt_t_set_error_data(state, output_fname);
@@ -1689,7 +1689,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           if (mp3state->mp3file.xing > 0)
           {
             wrote = fwrite(mp3state->mp3file.xingbuffer, 1, mp3state->mp3file.xing, file_output);
-            if (wrote <= 0)
+            if (wrote < mp3state->mp3file.xing)
             {
               splt_t_set_strerror_msg(state);
               splt_t_set_error_data(state,output_fname);
@@ -1705,7 +1705,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           if (mp3state->data_len > 0)
           {
             if ((len = fwrite(mp3state->data_ptr, 1, mp3state->data_len, file_output))
-                <= 0)
+                < mp3state->data_len)
             {
               splt_t_set_strerror_msg(state);
               splt_t_set_error_data(state,output_fname);
@@ -1794,7 +1794,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
             *error = SPLT_ERROR_WHILE_READING_FILE;
             goto bloc_end;
           }
-          if (fwrite(mp3state->data_ptr, 1, len, file_output) < 0)
+          if (fwrite(mp3state->data_ptr, 1, len, file_output) < len)
           {
             splt_t_set_strerror_msg(state);
             splt_t_set_error_data(state,output_fname);
@@ -1838,7 +1838,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
                 *error = SPLT_ERROR_WHILE_READING_FILE;
                 goto bloc_end;
               }
-              if (fwrite(mp3state->data_ptr, 1, len, file_output) < 0)
+              if (fwrite(mp3state->data_ptr, 1, len, file_output) < len)
               {
                 splt_t_set_strerror_msg(state);
                 splt_t_set_error_data(state,output_fname);
@@ -1874,7 +1874,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           *error = SPLT_ERROR_WHILE_READING_FILE;
           goto bloc_end;
         }
-        if (fwrite(mp3state->data_ptr, 1, len, file_output) < 0)
+        if (fwrite(mp3state->data_ptr, 1, len, file_output) < len)
         {
           splt_t_set_strerror_msg(state);
           splt_t_set_error_data(state,output_fname);
@@ -1913,7 +1913,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
         }
 
         //we write to file output
-        if (fwrite(mp3state->inputBuffer, 1, mp3state->data_len, file_output)<0)
+        if (fwrite(mp3state->inputBuffer, 1, mp3state->data_len, file_output) < mp3state->data_len)
         {
           splt_t_set_strerror_msg(state);
           splt_t_set_error_data(state,output_fname);
@@ -1942,7 +1942,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
               *error = SPLT_ERROR_WHILE_READING_FILE;
               goto bloc_end;
             }
-            if (fwrite(mp3state->inputBuffer, 1, len, file_output) <= 0)
+            if (fwrite(mp3state->inputBuffer, 1, len, file_output) < len)
             {
               splt_t_set_strerror_msg(state);
               splt_t_set_error_data(state,output_fname);
@@ -1980,7 +1980,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           *error = SPLT_ERROR_SEEKING_FILE;
           goto bloc_end;
         }
-        if(fwrite(id3, 1, 128, file_output) <=0)
+        if(fwrite(id3, 1, 128, file_output) < 128)
         {
           splt_t_set_strerror_msg(state);
           splt_t_set_error_data(state,output_fname);
