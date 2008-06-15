@@ -421,7 +421,7 @@ void splt_check_file_type(splt_state *state, int *error)
   else
   {
     err = SPLT_OK;
-    char *temp = splt_p_get_name(state,&err);
+    const char *temp = splt_p_get_name(state,&err);
     if (err != SPLT_OK)
     {
       char infos[2048] = { '\0' };

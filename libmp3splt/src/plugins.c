@@ -38,7 +38,7 @@
 #include "plugins.h"
 
 //sets the plugin scan directories
-int splt_p_set_default_plugins_scan_dirs(splt_state *state)
+static int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 {
   splt_plugins *pl = state->plug;
   pl->number_of_dirs_to_scan = 3;
@@ -84,7 +84,7 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 }
 
 //function to filter the plugin files
-int splt_p_filter_plugin_files(const struct dirent *de)
+static int splt_p_filter_plugin_files(const struct dirent *de)
 {
   int file_length = strlen(de->d_name);
   char *file = (char *) de->d_name;
@@ -109,7 +109,8 @@ int splt_p_filter_plugin_files(const struct dirent *de)
 }
 
 //scans the directory *directory for plugins
-int splt_p_scan_dir_for_plugins(splt_plugins *pl, char *directory)
+//-directory must not be NULL
+static int splt_p_scan_dir_for_plugins(splt_plugins *pl, const char *directory)
 {
   int return_value = SPLT_OK;
 
@@ -131,7 +132,12 @@ int splt_p_scan_dir_for_plugins(splt_plugins *pl, char *directory)
       char *fname = files[number_of_files]->d_name;
       int fname_len = strlen(fname);
 
-      splt_t_alloc_init_new_plugin(pl);
+      int alloc_err = splt_t_alloc_init_new_plugin(pl);
+      if (alloc_err < 0)
+      {
+        return_value = alloc_err;
+        goto end;
+      }
     
       pl->data[pl->number_of_plugins_found].func = malloc(sizeof(splt_plugin_func));
       if (pl->data[pl->number_of_plugins_found].func == NULL)
@@ -156,14 +162,20 @@ int splt_p_scan_dir_for_plugins(splt_plugins *pl, char *directory)
 
 end:
     ;
-    //free memory
-    while (number_of_files--)
+    if (files)
     {
-      free(files[number_of_files]);
-      files[number_of_files] = NULL;
+      //free memory
+      while (number_of_files--)
+      {
+        if (files[number_of_files])
+        {
+          free(files[number_of_files]);
+          files[number_of_files] = NULL;
+        }
+      }
+      free(files);
+      files = NULL;
     }
-    free(files);
-    files = NULL;
   }
 
   return return_value;
@@ -172,7 +184,7 @@ end:
 //finds the plugins
 //-returns SPLT_OK if no error and SPLT_ERROR_CANNOT_FIND_PLUGINS if
 //no plugin was found
-int splt_p_find_plugins(splt_state *state)
+static int splt_p_find_plugins(splt_state *state)
 {
   int return_value = SPLT_OK;
 
@@ -197,7 +209,7 @@ int splt_p_find_plugins(splt_state *state)
     return_value = splt_p_scan_dir_for_plugins(pl, pl->plugins_scan_dirs[i]);
     if (return_value != SPLT_OK)
     {
-      break;
+      return return_value;
     }
   }
 
@@ -205,7 +217,7 @@ int splt_p_find_plugins(splt_state *state)
 }
 
 //function that gets information of each plugin
-int splt_p_open_get_plugins_data(splt_state *state)
+static int splt_p_open_get_plugins_data(splt_state *state)
 {
   splt_plugins *pl = state->plug;
   int error = SPLT_OK;
@@ -288,7 +300,7 @@ int splt_p_find_get_plugins_data(splt_state *state)
       {
         splt_u_print_debug("plugin filename = ",0,pl->data[i].plugin_filename);
       }
-      char *temp = splt_p_get_name(state, &err);
+      const char *temp = splt_p_get_name(state, &err);
       splt_u_print_debug("plugin name = ",0,temp);
       float version = splt_p_get_version(state, &err);
       splt_u_print_debug("plugin version = ", version, NULL);
@@ -319,7 +331,7 @@ float splt_p_get_version(splt_state *state, int *error)
   }
 }
 
-char *splt_p_get_name(splt_state *state, int *error)
+const char *splt_p_get_name(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
@@ -334,7 +346,7 @@ char *splt_p_get_name(splt_state *state, int *error)
   }
 }
 
-char *splt_p_get_extension(splt_state *state, int *error)
+const char *splt_p_get_extension(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
@@ -398,7 +410,7 @@ void splt_p_search_syncerrors(splt_state *state, int *error)
   }
 }
 
-void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error)
+void splt_p_dewrap(splt_state *state, int listonly, const char *dir, int *error)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
@@ -420,7 +432,7 @@ void splt_p_dewrap(splt_state *state, int listonly, char *dir, int *error)
   }
 }
 
-void splt_p_split(splt_state *state, char *final_fname, double begin_point,
+void splt_p_split(splt_state *state, const char *final_fname, double begin_point,
     double end_point, int *error)
 {
   splt_plugins *pl = state->plug;
@@ -489,7 +501,7 @@ void splt_p_end(splt_state *state, int *error)
 }
 
 
-int splt_p_simple_split(splt_state *state, char *output_fname, off_t begin,
+int splt_p_simple_split(splt_state *state, const char *output_fname, off_t begin,
     off_t end)
 {
   splt_plugins *pl = state->plug;
