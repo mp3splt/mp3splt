@@ -35,7 +35,8 @@
 /****************************/
 /* utils for conversion */
 
-long splt_u_convert_hundreths (char *s);
+
+long splt_u_convert_hundreths (const char *s);
 float splt_u_convert2dB(double input);
 double splt_u_convertfromdB(float input);
 
@@ -44,15 +45,16 @@ double splt_u_convertfromdB(float input);
 
 int splt_u_getword (FILE *in, off_t offset, int mode,
     unsigned long *headw);
-off_t splt_u_flength (FILE *in);
+off_t splt_u_flength(splt_state *state, FILE *in, const char *filename, int *error);
 
 /*****************************************************/
 /* utils manipulating strings (including filenames) */
 
-char *splt_u_cleanstring (char *s);
+
+void splt_u_cleanstring(splt_state *state, char *s, int *error);
 char *splt_u_cut_spaces_at_the_end(char *c);
 char *splt_u_cut_spaces_from_begin(char *c);
-char *splt_u_get_real_name(char *filename);
+const char *splt_u_get_real_name(const char *filename);
 void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error);
 char *splt_u_get_fname_with_path_and_extension(splt_state *state,
     int *error);
@@ -85,7 +87,7 @@ void splt_u_error(int error_type, const char *function,
 float splt_u_silence_position(struct splt_ssplit *temp, float off);
 void splt_u_print_debug(const char *message,double optional, const char *optional2);
 double splt_u_get_double_pos(long split);
-int splt_u_create_directory(splt_state *state, char *dir);
+int splt_u_create_directory(splt_state *state, const char *dir);
 char *splt_u_strerror(splt_state *state, int error_code);
 
 #define MP3SPLT_UTILS_H
