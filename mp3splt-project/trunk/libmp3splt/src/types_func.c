@@ -847,9 +847,9 @@ void splt_t_get_original_tags(splt_state *state, int *err)
 }
 
 //append original tags
-void splt_t_append_original_tags(splt_state *state)
+int splt_t_append_original_tags(splt_state *state)
 {
-  splt_t_append_tags(state,
+  return splt_t_append_tags(state,
       state->original_tags.title,
       state->original_tags.artist,
       state->original_tags.album,
@@ -2473,7 +2473,7 @@ int splt_t_ssplit_new(struct splt_ssplit **silence_list,
 //free the ssplit structure
 void splt_t_ssplit_free (struct splt_ssplit **silence_list)
 {
-  struct splt_ssplit *temp, *saved;
+  struct splt_ssplit *temp = NULL, *saved = NULL;
 
   if (silence_list)
   {
