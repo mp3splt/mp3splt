@@ -48,7 +48,7 @@ long splt_t_get_total_time(splt_state *state);
 /* types: filename and path access */
 
 void splt_t_set_new_filename_path(splt_state *state, 
-    char *new_filename_path, int *error);
+    const char *new_filename_path, int *error);
 char *splt_t_get_new_filename_path(splt_state *state);
 int splt_t_set_filename_to_split(splt_state *state, const char *filename);
 int splt_t_set_path_of_split(splt_state *state, const char *path);
@@ -70,7 +70,7 @@ void splt_t_current_split_next(splt_state *state);
 void splt_t_set_oformat(splt_state *state, const char *format_string,
     int *error);
 int splt_t_new_oformat(splt_state *state, const char *format_string);
-char *splt_t_get_oformat(splt_state *state);
+const char *splt_t_get_oformat(splt_state *state);
 void splt_t_set_oformat_digits(splt_state *state);
 
 /********************************/
@@ -107,19 +107,17 @@ int splt_t_append_tags(splt_state *state,
     const char *year, const char *comment,
     int track, unsigned char genre);
 int splt_t_append_only_non_null_previous_tags(splt_state *state, 
-    char *title, char *artist,
-    char *album, char *performer,
-    char *year, char *comment,
+    const char *title, const char *artist,
+    const char *album, const char *performer,
+    const char *year, const char *comment,
     int track, unsigned char genre);
 int splt_t_tags_exists(splt_state *state, int index);
 int splt_t_set_original_tags_field(splt_state *state,
     int tags_field, int int_data,
-    char *char_data, unsigned char uchar_data,
+    const char *char_data, unsigned char uchar_data,
     int length);
 int splt_t_set_tags_char_field(splt_state *state, int index,
     int tags_field, const char *data);
-int splt_t_set_tags_int_field(splt_state *state, int index,
-    int tags_field, int data);
 int splt_t_set_tags_uchar_field(splt_state *state, int index,
     int tags_field, unsigned char data);
 
@@ -130,7 +128,6 @@ int splt_t_get_tags_int_field(splt_state *state, int index,
     int tags_field);
 unsigned char splt_t_get_tags_uchar_field(splt_state *state, int index,
     int tags_field);
-void splt_t_clean_original_tags(splt_state *state);
 
 /********************************/
 /* types: options access */
@@ -159,18 +156,14 @@ void splt_t_unlock_library(splt_state *state);
 /********************************/
 /* types: freedb access */
 
-int splt_t_freedb_append_result(splt_state *state,char *album_name,
-    int revision);
+int splt_t_freedb_append_result(splt_state *state, const char *album_name, int revision);
 int splt_t_freedb_init_search(splt_state *state);
 int splt_t_freedb_get_found_cds(splt_state *state);
 void splt_t_freedb_found_cds_next(splt_state *state);
 void splt_t_freedb_set_disc(splt_state *state, int index,
-    char *discid, char *category,
-    int category_size);
-char *splt_t_freedb_get_disc_category(splt_state *state, 
-    int index);
-char *splt_t_freedb_get_disc_id(splt_state *state,
-    int index);
+    const char *discid, const char *category, int category_size);
+const char *splt_t_freedb_get_disc_category(splt_state *state, int index);
+const char *splt_t_freedb_get_disc_id(splt_state *state, int index);
 void splt_t_freedb_free_search(splt_state *state);
 
 /********************************/
@@ -193,13 +186,13 @@ void splt_t_serrors_free(splt_state *state);
 /* types: wrap access */
 
 int splt_t_wrap_put_file(splt_state *state, int wrapfiles,
-    int index, char *filename);
+    int index, const char *filename);
 void splt_t_wrap_free(splt_state *state);
 
 /******************************/
 /* types: client communication */
 
-void splt_t_put_splitted_file(splt_state *state, char *filename);
+int splt_t_put_splitted_file(splt_state *state, char *filename);
 void splt_t_put_progress_text(splt_state *state,int type);
 void splt_t_put_message_to_client(splt_state *state, char *message);
 void splt_t_update_progress(splt_state *state, float current_point,

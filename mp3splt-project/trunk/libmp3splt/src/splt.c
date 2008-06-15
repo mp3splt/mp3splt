@@ -59,7 +59,9 @@ static void splt_s_real_split(splt_state *state, int *error)
       splt_t_update_progress(state,1.0,1.0,1,1,1);
 
       //we put the splitted file
-      splt_t_put_splitted_file(state, final_fname);
+      int err = SPLT_OK;
+      err = splt_t_put_splitted_file(state, final_fname);
+      if (err < 0) { *error = err; }
     }
   }
 
@@ -216,7 +218,8 @@ void splt_s_multiple_split(splt_state *state, int *error)
             //if the split has been a success
             if (*error == SPLT_SYNC_OK)
             {
-              splt_t_put_splitted_file(state, final_fname);
+              err = splt_t_put_splitted_file(state, final_fname);
+              if (err < 0) { *error = err; goto bloc_end; }
             }
           }
           else
@@ -425,7 +428,8 @@ void splt_s_time_split(splt_state *state, int *error)
           //if no error for the split, put the splitted file
           if (*error >= 0)
           {
-            splt_t_put_splitted_file(state, final_fname);
+            err = splt_t_put_splitted_file(state, final_fname);
+            if (err < 0) { *error = err; break; }
           }
 
           //set new splitpoints
@@ -614,7 +618,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int write_tracks, int *err
 //warning, this function must always be called after
 //set_silence_splitpoints
 //we have possible error in error
-void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
+static void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
@@ -691,7 +695,8 @@ void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
         //put the splitted file if no error
         if (*error >= 0)
         {
-          splt_t_put_splitted_file(state, final_fname);
+          err = splt_t_put_splitted_file(state, final_fname);
+          if (err < 0) { *error = err; goto function_end; }
         }
 
         //we put the silence split errors

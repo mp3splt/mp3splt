@@ -43,14 +43,17 @@ extern short global_debug;
 /* types: prototypes */
 
 static void splt_t_free_oformat(splt_state *state);
-static void splt_t_state_put_default_options(splt_state *state);
+static void splt_t_state_put_default_options(splt_state *state, int *error);
 static void splt_t_free_files(char **files, int number);
+static void splt_t_clean_original_tags(splt_state *state);
+static int splt_t_set_tags_int_field(splt_state *state, int index,
+    int tags_field, int data);
 
 /********************************/
 /* types: state access */
 
 //create new state aux, allocationg memory
-//error is the possible error
+//-error is the possible error and  NULL is returned
 splt_state *splt_t_new_state(splt_state *state, int *error)
 {
   if ((state =malloc(sizeof(splt_state))) ==NULL)
@@ -96,7 +99,7 @@ splt_state *splt_t_new_state(splt_state *state, int *error)
     state->current_plugin = -1;
 
     //put default options
-    splt_t_state_put_default_options(state);
+    splt_t_state_put_default_options(state, error);
   }
 
   return state;
@@ -145,7 +148,7 @@ static void splt_t_free_state_struct(splt_state *state)
 }
 
 //we free internal options
-void splt_t_iopts_free(splt_state *state)
+static void splt_t_iopts_free(splt_state *state)
 {
   if (state->iopts.new_filename_path)
   {
@@ -188,7 +191,7 @@ int splt_t_alloc_init_new_plugin(splt_plugins *pl)
 }
 
 //frees the structure of one plugin data
-void splt_t_free_plugin_data(splt_plugin_data pl_data)
+static void splt_t_free_plugin_data(splt_plugin_data pl_data)
 {
   if (pl_data.info.name)
   {
@@ -322,7 +325,7 @@ long splt_t_get_total_time(splt_state *state)
 
 //sets the new filename path
 void splt_t_set_new_filename_path(splt_state *state, 
-    char *new_filename_path, int *error)
+    const char *new_filename_path, int *error)
 {
   //free previous path
   if (state->iopts.new_filename_path)
@@ -339,7 +342,6 @@ void splt_t_set_new_filename_path(splt_state *state,
   else
   {
     state->iopts.new_filename_path = strdup(new_filename_path);
-
     if (state->iopts.new_filename_path == NULL)
     {
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -370,8 +372,7 @@ int splt_t_set_path_of_split(splt_state *state, const char *path)
 
   if (path != NULL)
   {
-    if((state->path_of_split = malloc(sizeof(char)*(strlen(path)+1)))
-        != NULL)
+    if((state->path_of_split = malloc(sizeof(char)*(strlen(path)+1))) != NULL)
     {
       snprintf(state->path_of_split,(strlen(path)+1), "%s", path);
     }
@@ -405,8 +406,7 @@ int splt_t_set_m3u_filename(splt_state *state, const char *filename)
 
   if (filename != NULL)
   {
-    if((state->m3u_filename = malloc(sizeof(char)*(strlen(filename)+1)))
-        != NULL)
+    if((state->m3u_filename = malloc(sizeof(char)*(strlen(filename)+1))) != NULL)
     {
       snprintf(state->m3u_filename,(strlen(filename)+1), 
           "%s", filename);
@@ -440,8 +440,7 @@ int splt_t_set_filename_to_split(splt_state *state, const char *filename)
 
   if (filename != NULL)
   {
-    if ((state->fname_to_split = malloc(sizeof(char)*(strlen(filename)+1))) 
-        != NULL)
+    if ((state->fname_to_split = malloc(sizeof(char)*(strlen(filename)+1))) != NULL)
     {
       snprintf(state->fname_to_split,strlen(filename)+1,"%s", filename);
     }
@@ -546,9 +545,16 @@ int splt_t_new_oformat(splt_state *state, const char *format_string)
   return error;
 }
 
+//puts the number of digits for the output format
+void splt_t_set_oformat_digits(splt_state *state)
+{
+  int i = 0;
+  i = (int) (log10((double) (splt_t_get_splitnumber(state))));
+  state->oformat.output_format_digits = (char) ((i+1) | 0x30);
+}
+
 //puts the output format
-void splt_t_set_oformat(splt_state *state, const char *format_string,
-    int *error)
+void splt_t_set_oformat(splt_state *state, const char *format_string, int *error)
 {
   int j = 0;
 
@@ -559,10 +565,14 @@ void splt_t_set_oformat(splt_state *state, const char *format_string,
     j++;
   }
 
-  splt_t_new_oformat(state, format_string);
+  int err = SPLT_OK;
+  err = splt_t_new_oformat(state, format_string);
+  if (err < 0) { *error = err; return; }
+
   char *new_str = strdup(format_string);
   *error = splt_u_parse_outformat(new_str,state);
   free(new_str);
+  new_str = NULL;
 
   //if no error
   if (*error == SPLT_OUTPUT_FORMAT_OK)
@@ -571,16 +581,8 @@ void splt_t_set_oformat(splt_state *state, const char *format_string,
   }
 }
 
-//puts the number of digits for the output format
-void splt_t_set_oformat_digits(splt_state *state)
-{
-  int i = 0;
-  i = (int) (log10((double) (splt_t_get_splitnumber(state))));
-  state->oformat.output_format_digits = (char) ((i+1) | 0x30);
-}
-
 //returns the output format string
-char *splt_t_get_oformat(splt_state *state)
+const char *splt_t_get_oformat(splt_state *state)
 {
   return state->oformat.format_string;
 }
@@ -616,8 +618,7 @@ int splt_t_get_splitnumber(splt_state *state)
 //puts a splitpoint in the state with an eventual file name
 //split_value is which splitpoint hundreths of seconds
 //if split_value is LONG_MAX, we put the end of the song (EOF)
-int splt_t_append_splitpoint(splt_state *state, long split_value,
-    const char *name)
+int splt_t_append_splitpoint(splt_state *state, long split_value, const char *name)
 {
   int error = SPLT_OK;
 
@@ -630,8 +631,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
     //we allocate memory for this splitpoint
     if (!state->split.points)
     {
-      if ((state->split.points = malloc(sizeof(splt_point)))
-          == NULL)
+      if ((state->split.points = malloc(sizeof(splt_point))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         return error;
@@ -639,10 +639,8 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
     }
     else
     {
-      if ((state->split.points = 
-            realloc(state->split.points,
-              state->split.real_splitnumber * sizeof(splt_point)))
-          == NULL)
+      if ((state->split.points = realloc(state->split.points,
+              state->split.real_splitnumber * sizeof(splt_point))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         return error;
@@ -655,8 +653,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
     //we change the splitpoint value
     int value_error = SPLT_OK;
     value_error = splt_t_set_splitpoint_value(state,
-        state->split.real_splitnumber-1,
-        split_value);
+        state->split.real_splitnumber-1, split_value);
     if (value_error != SPLT_OK)
     {
       error = value_error;
@@ -666,7 +663,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value,
     //we change the splitpoint name
     int name_error = SPLT_OK;
     name_error = splt_t_set_splitpoint_name(state,
-        state->split.real_splitnumber-1, name);
+        state->split.real_splitnumber - 1, name);
     if (name_error != SPLT_OK)
     {
       error = name_error;
@@ -721,10 +718,9 @@ int splt_t_splitpoint_exists(splt_state *state, int index)
 }
 
 //change the splitpoint value
-int splt_t_set_splitpoint_value(splt_state *state,
-    int index, long split_value)
+int splt_t_set_splitpoint_value(splt_state *state, int index, long split_value)
 {
-  char temp[100];
+  char temp[100] = { '\0' };
   snprintf(temp,100,"%d",index);
   splt_u_print_debug("Splitpoint value is.. at ",split_value,temp);
 
@@ -744,16 +740,12 @@ int splt_t_set_splitpoint_value(splt_state *state,
 }
 
 //change the splitpoint name
-int splt_t_set_splitpoint_name(splt_state *state,
-    int index, const char *name)
+int splt_t_set_splitpoint_name(splt_state *state, int index, const char *name)
 {
   splt_u_print_debug("Splitpoint name at ",index,name);
 
   int error = SPLT_OK;
 
-  /*fprintf(stdout,"real split number = %d\n",
-      state->split.real_splitnumber);
-  fflush(stdout);*/
   if ((index >= 0) &&
       (index < state->split.real_splitnumber))
   {
@@ -767,15 +759,13 @@ int splt_t_set_splitpoint_name(splt_state *state,
     {
       //allocate memory for this split name
       if((state->split.points[index].name =
-            malloc((strlen(name)+1)*sizeof(char)))
-          == NULL)
+            malloc((strlen(name)+1)*sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         return error;
       }
 
-      snprintf(state->split.points[index].name,
-          strlen(name)+1, "%s",name);
+      snprintf(state->split.points[index].name, strlen(name)+1, "%s",name);
     }
     else
     {
@@ -791,16 +781,14 @@ int splt_t_set_splitpoint_name(splt_state *state,
 }
 
 //returns the splitpoints from the state
-splt_point *splt_t_get_splitpoints(splt_state *state,
-    int *splitpoints_number)
+splt_point *splt_t_get_splitpoints(splt_state *state, int *splitpoints_number)
 {
   *splitpoints_number = state->split.real_splitnumber;
   return state->split.points;
 }
 
 //get the splitpoint value
-long splt_t_get_splitpoint_value(splt_state *state,
-    int index, int *error)
+long splt_t_get_splitpoint_value(splt_state *state, int index, int *error)
 {
   if ((index >= 0) &&
       (index < state->split.real_splitnumber))
@@ -815,8 +803,7 @@ long splt_t_get_splitpoint_value(splt_state *state,
 }
 
 //get the splitpoint name
-char *splt_t_get_splitpoint_name(splt_state *state,
-    int index, int *error)
+char *splt_t_get_splitpoint_name(splt_state *state, int index, int *error)
 {
   if ((index >= 0) &&
       (index < state->split.real_splitnumber))
@@ -871,43 +858,35 @@ int splt_t_append_tags(splt_state *state,
   int old_tagsnumber = state->split.real_tagsnumber;
 
   error = splt_t_set_tags_char_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_TITLE, title);
+      old_tagsnumber, SPLT_TAGS_TITLE, title);
   if (error != SPLT_OK)
     return error;
   error = splt_t_set_tags_char_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_ARTIST, artist);
+      old_tagsnumber, SPLT_TAGS_ARTIST, artist);
   if (error != SPLT_OK)
     return error;
   error = splt_t_set_tags_char_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_ALBUM, album);
+      old_tagsnumber, SPLT_TAGS_ALBUM, album);
   if (error != SPLT_OK)
     return error;
   error = splt_t_set_tags_char_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_PERFORMER, performer);
+      old_tagsnumber, SPLT_TAGS_PERFORMER, performer);
   if (error != SPLT_OK)
     return error;
   error = splt_t_set_tags_char_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_YEAR, year);
+      old_tagsnumber, SPLT_TAGS_YEAR, year);
   if (error != SPLT_OK)
     return error;
   error = splt_t_set_tags_char_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_COMMENT, comment);
+      old_tagsnumber, SPLT_TAGS_COMMENT, comment);
   if (error != SPLT_OK)
     return error;
   error = splt_t_set_tags_int_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_TRACK, track);
+      old_tagsnumber, SPLT_TAGS_TRACK, track);
   if (error != SPLT_OK)
     return error;
   error = splt_t_set_tags_uchar_field(state,
-      old_tagsnumber,
-      SPLT_TAGS_GENRE, genre);
+      old_tagsnumber, SPLT_TAGS_GENRE, genre);
 
   return error;
 }
@@ -915,9 +894,9 @@ int splt_t_append_tags(splt_state *state,
 //append tags on the previous song
 //only if char non null and track != -1 and genre != 12
 int splt_t_append_only_non_null_previous_tags(splt_state *state, 
-    char *title, char *artist,
-    char *album, char *performer,
-    char *year, char *comment,
+    const char *title, const char *artist,
+    const char *album, const char *performer,
+    const char *year, const char *comment,
     int track, unsigned char genre)
 {
   int error = SPLT_OK;
@@ -928,64 +907,56 @@ int splt_t_append_only_non_null_previous_tags(splt_state *state,
     if (title != NULL)
     {
       error = splt_t_set_tags_char_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_TITLE, title);
+          old_tagsnumber, SPLT_TAGS_TITLE, title);
     }
     if (error != SPLT_OK)
       return error;
     if (artist != NULL)
     {
       error = splt_t_set_tags_char_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_ARTIST, artist);
+          old_tagsnumber, SPLT_TAGS_ARTIST, artist);
     }
     if (error != SPLT_OK)
       return error;
     if (album != NULL)
     {
       error = splt_t_set_tags_char_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_ALBUM, album);
+          old_tagsnumber, SPLT_TAGS_ALBUM, album);
     }
     if (error != SPLT_OK)
       return error;
     if (performer != NULL)
     {
       error = splt_t_set_tags_char_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_PERFORMER, performer);
+          old_tagsnumber, SPLT_TAGS_PERFORMER, performer);
     }
     if (error != SPLT_OK)
       return error;
     if (year != NULL)
     {
       error = splt_t_set_tags_char_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_YEAR, year);
+          old_tagsnumber, SPLT_TAGS_YEAR, year);
     }
     if (error != SPLT_OK)
       return error;
     if (comment != NULL)
     {
       error = splt_t_set_tags_char_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_COMMENT, comment);
+          old_tagsnumber, SPLT_TAGS_COMMENT, comment);
     }
     if (error != SPLT_OK)
       return error;
     if (track != -1)
     {
       error = splt_t_set_tags_int_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_TRACK, track);
+          old_tagsnumber, SPLT_TAGS_TRACK, track);
     }
     if (error != SPLT_OK)
       return error;
     if (genre != 12)
     {
       error = splt_t_set_tags_uchar_field(state,
-          old_tagsnumber,
-          SPLT_TAGS_GENRE, genre);
+          old_tagsnumber, SPLT_TAGS_GENRE, genre);
     }
   }
 
@@ -993,6 +964,7 @@ int splt_t_append_only_non_null_previous_tags(splt_state *state,
 }
 
 //only used for splt_t_new_tags_if_necessary
+//-index should not be out of bounds
 static void splt_t_set_empty_tags(splt_state *state, int index)
 {
   state->split.tags[index].title = NULL;
@@ -1012,30 +984,27 @@ static int splt_t_new_tags_if_necessary(splt_state *state, int index)
 
   if (!state->split.tags)
   {
-    if ((index > state->split.real_tagsnumber)
-        || (index < 0))
+    if ((index > state->split.real_tagsnumber) || (index < 0))
     {
       splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
     }
     else
     {
-      if ((state->split.tags = malloc(sizeof(splt_tags)))
-          == NULL)
+      if ((state->split.tags = malloc(sizeof(splt_tags))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         return error;
       }
       else
       {
-        splt_t_set_empty_tags(state,index);
+        splt_t_set_empty_tags(state, index);
         state->split.real_tagsnumber++;
       }
     }
   }
   else
   {
-    if ((index > state->split.real_tagsnumber)
-        || (index < 0))
+    if ((index > state->split.real_tagsnumber) || (index < 0))
     {
       splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
     }
@@ -1044,9 +1013,7 @@ static int splt_t_new_tags_if_necessary(splt_state *state, int index)
       if (index == state->split.real_tagsnumber)
       {
         if ((state->split.tags = realloc(state->split.tags,
-                sizeof(splt_tags) *
-                (index+1)))
-            == NULL)
+                sizeof(splt_tags) * (index+1))) == NULL)
         {
           error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           return error;
@@ -1066,8 +1033,7 @@ static int splt_t_new_tags_if_necessary(splt_state *state, int index)
 //returns if the tags at index position exists
 int splt_t_tags_exists(splt_state *state, int index)
 {
-  if ((index >= 0) &&
-      (index < state->split.real_tagsnumber))
+  if ((index >= 0) && (index < state->split.real_tagsnumber))
   {
     return SPLT_TRUE;
   }
@@ -1084,14 +1050,9 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
   int error = SPLT_OK;
 
   error = splt_t_new_tags_if_necessary(state,index);
+  if (error != SPLT_OK) { return error; }
 
-  if (error != SPLT_OK)
-  {
-    return error;
-  }
-
-  if ((index >= state->split.real_tagsnumber)
-      || (index < 0))
+  if ((index >= state->split.real_tagsnumber) || (index < 0))
   {
     error = SPLT_ERROR_INEXISTENT_SPLITPOINT;
     splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
@@ -1115,8 +1076,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         else
         {
           if ((state->split.tags[index].title = malloc((strlen(data)+1) * 
-                  sizeof(char)))
-              == NULL)
+                  sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           }
@@ -1164,8 +1124,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         else
         {
           if ((state->split.tags[index].album = malloc((strlen(data)+1) * 
-                  sizeof(char)))
-              == NULL)
+                  sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           }
@@ -1189,8 +1148,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         else
         {
           if ((state->split.tags[index].year = malloc((strlen(data)+1) * 
-                  sizeof(char)))
-              == NULL)
+                  sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           }
@@ -1213,8 +1171,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         else
         {
           if ((state->split.tags[index].comment = malloc((strlen(data)+1) * 
-                  sizeof(char)))
-              == NULL)
+                  sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           }
@@ -1238,8 +1195,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         else
         {
           if ((state->split.tags[index].performer = malloc((strlen(data)+1) * 
-                  sizeof(char)))
-              == NULL)
+                  sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           }
@@ -1263,7 +1219,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
 }
 
 //cleans original tags
-void splt_t_clean_original_tags(splt_state *state)
+static void splt_t_clean_original_tags(splt_state *state)
 {
   if (state->original_tags.year)
   {
@@ -1299,7 +1255,7 @@ void splt_t_clean_original_tags(splt_state *state)
 //length is the length of the string
 int splt_t_set_original_tags_field(splt_state *state,
     int tags_field, int int_data,
-    char *char_data, unsigned char uchar_data,
+    const char *char_data, unsigned char uchar_data,
     int length)
 {
   int error = SPLT_OK;
@@ -1316,7 +1272,7 @@ int splt_t_set_original_tags_field(splt_state *state,
       {
         state->original_tags.title = NULL;
       }
-     else
+      else
       {
         if ((state->original_tags.title = malloc(sizeof(char)*(length+1)))
             == NULL)
@@ -1325,8 +1281,7 @@ int splt_t_set_original_tags_field(splt_state *state,
         }
         else
         {
-          snprintf(state->original_tags.title,
-              length+1,"%s", char_data);
+          snprintf(state->original_tags.title, length+1,"%s", char_data);
         }
       }      
       break;
@@ -1470,7 +1425,7 @@ int splt_t_set_original_tags_field(splt_state *state,
 }
 
 //set track number
-int splt_t_set_tags_int_field(splt_state *state, int index,
+static int splt_t_set_tags_int_field(splt_state *state, int index,
     int tags_field, int data)
 {
   int error = SPLT_OK;
@@ -1492,7 +1447,7 @@ int splt_t_set_tags_int_field(splt_state *state, int index,
   }
   else
   {
-    char temp[100];
+    char temp[100] = { '\0' };
     switch (tags_field)
     {
       case SPLT_TAGS_TRACK:
@@ -1516,15 +1471,13 @@ int splt_t_set_tags_uchar_field(splt_state *state, int index,
   int error = SPLT_OK;
 
   error = splt_t_new_tags_if_necessary(state,index);
-
-  if (error != SPLT_OK)
+  if (error < 0)
   {
     splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
     return error;
   }
 
-  if ((index >= state->split.real_tagsnumber)
-      || (index < 0))
+  if ((index >= state->split.real_tagsnumber) || (index < 0))
   {
     error = SPLT_ERROR_INEXISTENT_SPLITPOINT;
     splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
@@ -1532,7 +1485,7 @@ int splt_t_set_tags_uchar_field(splt_state *state, int index,
   }
   else
   {
-    char temp[100];
+    char temp[100] = { '\0' };
     switch (tags_field)
     {
       case SPLT_TAGS_GENRE:
@@ -1560,8 +1513,7 @@ splt_tags *splt_t_get_tags(splt_state *state,int *tags_number)
 char *splt_t_get_tags_char_field(splt_state *state, int index,
     int tags_field)
 {
-  if ((index >= state->split.real_tagsnumber)
-      || (index < 0))
+  if ((index >= state->split.real_tagsnumber) || (index < 0))
   {
     splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
     return NULL;
@@ -1601,8 +1553,7 @@ char *splt_t_get_tags_char_field(splt_state *state, int index,
 //get track number
 int splt_t_get_tags_int_field(splt_state *state, int index, int tags_field)
 {
-  if ((index >= state->split.real_tagsnumber)
-      || (index < 0))
+  if ((index >= state->split.real_tagsnumber) || (index < 0))
   {
     splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
     return 0;
@@ -1802,11 +1753,12 @@ void splt_t_set_default_iopts(splt_state *state)
   splt_t_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED,SPLT_FALSE);
   splt_t_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,0);
   int error = SPLT_OK;
+  //cannot fail because second argument is NULL
   splt_t_set_new_filename_path(state,NULL,&error);
 }
 
 //puts the default options for a normal split
-static void splt_t_state_put_default_options(splt_state *state)
+static void splt_t_state_put_default_options(splt_state *state, int *error)
 {
   //split
   state->split.tags = NULL;
@@ -1833,7 +1785,8 @@ static void splt_t_state_put_default_options(splt_state *state)
   state->wrap->wrap_files_num = 0;
   //output format
   state->oformat.format_string = NULL;
-  splt_t_new_oformat(state,SPLT_DEFAULT_OUTPUT);
+  int err = splt_t_new_oformat(state,SPLT_DEFAULT_OUTPUT);
+  if (err < 0) { *error = err; return; }
   //client connection
   state->split.put_message = NULL;
   state->split.file_splitted = NULL;
@@ -1945,6 +1898,11 @@ void splt_t_set_strerr_msg(splt_state *state, const char *message)
     {
       snprintf(state->err.strerror_msg,strlen(message)+1,"%s",message);
     }
+    else
+    {
+      //if not enough memory
+      splt_u_error(SPLT_IERROR_CHAR,__func__, 0, "not enough memory");
+    }
   }
   else
   {
@@ -1955,7 +1913,7 @@ void splt_t_set_strerr_msg(splt_state *state, const char *message)
 //sets the error string message got with hstrerror(..)
 void splt_t_clean_strerror_msg(splt_state *state)
 {
-  splt_t_set_strerr_msg(state,NULL);
+  splt_t_set_strerr_msg(state, NULL);
 }
 
 //sets the error string message got with strerror(..)
@@ -1969,12 +1927,11 @@ void splt_t_set_strerror_msg(splt_state *state)
 void splt_t_set_strherror_msg(splt_state *state)
 {
   const char *hstrerr = hstrerror(h_errno);
-  splt_t_set_strerr_msg(state,hstrerr);
+  splt_t_set_strerr_msg(state, hstrerr);
 }
 
 //set an int option
-void splt_t_set_int_option(splt_state *state, int option_name,
-    int value)
+void splt_t_set_int_option(splt_state *state, int option_name, int value)
 {
   switch (option_name)
   {
@@ -2025,8 +1982,7 @@ void splt_t_set_int_option(splt_state *state, int option_name,
 }
 
 //sets a float option
-void splt_t_set_float_option(splt_state *state, int option_name,
-    float value)
+void splt_t_set_float_option(splt_state *state, int option_name, float value)
 {
   switch (option_name)
   {
@@ -2170,8 +2126,8 @@ void splt_t_freedb_free_search(splt_state *state)
 
 //sets a freedb result
 //if revision != -1, then not a revision
-int splt_t_freedb_append_result(splt_state *state,char *album_name,
-    int revision)
+//-album_name must not be NULL
+int splt_t_freedb_append_result(splt_state *state, const char *album_name, int revision)
 {
   int error = SPLT_OK;
 
@@ -2179,8 +2135,7 @@ int splt_t_freedb_append_result(splt_state *state,char *album_name,
   //search_results variable, do it now
   if (state->fdb.search_results->number == 0)
   {
-    state->fdb.search_results->results =
-      malloc(sizeof(splt_freedb_one_result));
+    state->fdb.search_results->results = malloc(sizeof(splt_freedb_one_result));
     state->fdb.search_results->results[0].revisions = NULL;
     if (state->fdb.search_results->results == NULL)
     {
@@ -2296,8 +2251,7 @@ int splt_t_freedb_init_search(splt_state *state)
 {
   int error = SPLT_OK;
 
-  if ((state->fdb.cdstate = 
-        malloc(sizeof(splt_cd_state))) == NULL)
+  if ((state->fdb.cdstate = malloc(sizeof(splt_cd_state))) == NULL)
   {
     error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
@@ -2306,14 +2260,14 @@ int splt_t_freedb_init_search(splt_state *state)
     state->fdb.cdstate->foundcd = 0;
     //initialise the search results
     if ((state->fdb.search_results =
-          malloc (sizeof(splt_freedb_results))) == NULL)
+          malloc(sizeof(splt_freedb_results))) == NULL)
     {
       free(state->fdb.cdstate);
       state->fdb.cdstate = NULL;
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
     else
-    {
+   {
       state->fdb.search_results->number = 0;
       state->fdb.search_results->results = NULL;
     }
@@ -2342,8 +2296,7 @@ void splt_t_freedb_found_cds_next(splt_state *state)
 
 //set a disc
 void splt_t_freedb_set_disc(splt_state *state, int index,
-    char *discid, char *category,
-    int category_size)
+    const char *discid, const char *category, int category_size)
 {
   splt_cd_state *cdstate = state->fdb.cdstate;
 
@@ -2372,8 +2325,7 @@ void splt_t_freedb_set_disc(splt_state *state, int index,
 }
 
 //get disc category
-char *splt_t_freedb_get_disc_category(splt_state *state, 
-    int index)
+const char *splt_t_freedb_get_disc_category(splt_state *state, int index)
 {
   splt_cd_state *cdstate = state->fdb.cdstate;
 
@@ -2389,8 +2341,7 @@ char *splt_t_freedb_get_disc_category(splt_state *state,
 }
 
 //get freedb discid
-char *splt_t_freedb_get_disc_id(splt_state *state,
-    int index)
+const char *splt_t_freedb_get_disc_id(splt_state *state, int index)
 {
   splt_cd_state *cdstate = state->fdb.cdstate;
 
@@ -2410,11 +2361,10 @@ char *splt_t_freedb_get_disc_id(splt_state *state,
 
 //creates a new ssplit structure
 int splt_t_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len,
-    int *error)
+    float begin_position, float end_position, int len, int *error)
 {
-  struct splt_ssplit *temp;
-  struct splt_ssplit *s_new;
+  struct splt_ssplit *temp = NULL;
+  struct splt_ssplit *s_new = NULL;
 
   if ((s_new = malloc(sizeof(struct splt_ssplit)))==NULL)
   {
@@ -2517,8 +2467,7 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
     }
     else
     {
-      if((state->serrors->serrors_points = 
-            realloc(state->serrors->serrors_points,
+      if((state->serrors->serrors_points = realloc(state->serrors->serrors_points,
               sizeof(off_t) * (serrors_num + 2))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -2544,11 +2493,9 @@ int splt_t_serrors_append_point(splt_state *state, off_t point)
 }
 
 //sets a syncerror point
-void splt_t_serrors_set_point(splt_state *state, int index,
-    off_t point)
+void splt_t_serrors_set_point(splt_state *state, int index, off_t point)
 {
-  if ((index <= state->serrors->serrors_points_num+1)
-      && (index >= 0))
+  if ((index <= state->serrors->serrors_points_num+1) && (index >= 0))
   {
     state->serrors->serrors_points[index] = point;
   }
@@ -2561,8 +2508,7 @@ void splt_t_serrors_set_point(splt_state *state, int index,
 //returns a syncerror point
 off_t splt_t_serrors_get_point(splt_state *state, int index)
 {
-  if ((index <= state->serrors->serrors_points_num)
-      && (index >= 0))
+  if ((index <= state->serrors->serrors_points_num) && (index >= 0))
   {
     return state->serrors->serrors_points[index];
   }
@@ -2590,17 +2536,14 @@ void splt_t_serrors_free(splt_state *state)
 //appends a file from to the wrap files
 int splt_t_wrap_put_file(splt_state *state,
     //how many files
-    int wrapfiles,
-    int index, char *filename)
+    int wrapfiles, int index, const char *filename)
 {
   int error = SPLT_OK;
 
   //we allocate memory the first time for all files
   if (index == 0)
   {
-    if ((state->wrap->wrap_files = 
-          malloc(wrapfiles * sizeof(char*)))
-        == NULL)
+    if ((state->wrap->wrap_files = malloc(wrapfiles * sizeof(char*))) == NULL)
     {
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
@@ -2613,8 +2556,7 @@ int splt_t_wrap_put_file(splt_state *state,
   if (error == SPLT_OK)
   {
     //if strdup fails
-    if ((state->wrap->wrap_files[index] = strdup(filename))
-        == NULL)
+    if ((state->wrap->wrap_files[index] = strdup(filename)) == NULL)
     {
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
@@ -2630,8 +2572,7 @@ int splt_t_wrap_put_file(splt_state *state,
 //free the wrap files
 void splt_t_wrap_free(splt_state *state)
 {
-  splt_t_free_files(state->wrap->wrap_files,
-      state->wrap->wrap_files_num);
+  splt_t_free_files(state->wrap->wrap_files, state->wrap->wrap_files_num);
   state->wrap->wrap_files_num = 0;
 }
 
@@ -2639,12 +2580,16 @@ void splt_t_wrap_free(splt_state *state)
 /* types: client communication */
 
 //says to the program using the library the splitted file
-void splt_t_put_splitted_file(splt_state *state, char *filename)
+//-return possible error
+int splt_t_put_splitted_file(splt_state *state, char *filename)
 {
+  int error = SPLT_OK;
+
   //put splitted file 
   if (state->split.file_splitted != NULL)
   {
     state->split.file_splitted(filename,state->split.p_bar->user_data);
+
     //if we create a m3u file
     char *m3u_file = splt_t_get_m3u_filename(state);
     if (m3u_file != NULL)
@@ -2658,12 +2603,13 @@ void splt_t_put_splitted_file(splt_state *state, char *filename)
       {
         malloc_number += strlen(path_of_split);
       }
+      //allocate memory for the m3u file
       if ((new_m3u_file = malloc(malloc_number)) != NULL)
       {
         if (path_of_split)
         {
           snprintf(new_m3u_file,malloc_number,"%s%c%s",
-              path_of_split, SPLT_DIRCHAR,real_name_m3u_file);
+              path_of_split, SPLT_DIRCHAR, real_name_m3u_file);
         }
         else
         {
@@ -2671,13 +2617,29 @@ void splt_t_put_splitted_file(splt_state *state, char *filename)
         }
         //we open the m3u file
         FILE *file_input = NULL;
-        if((file_input = fopen(new_m3u_file, "a+")))
+        if ((file_input = fopen(new_m3u_file, "a+")) != NULL)
         {
           //we don't care about the path of the splitted filename
           fprintf(file_input,"%s\n",splt_u_get_real_name(filename));
-          fclose(file_input);
+          if (fclose(file_input) != 0)
+          {
+            splt_t_set_strerror_msg(state);
+            splt_t_set_error_data(state, new_m3u_file);
+            error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+          }
+        }
+        else
+        {
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state, new_m3u_file);
+          error = SPLT_ERROR_CANNOT_OPEN_FILE;
         }
         free(new_m3u_file);
+        new_m3u_file = NULL;
+      }
+      else
+      {
+        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       }
     }
   }
@@ -2694,7 +2656,7 @@ void splt_t_put_splitted_file(splt_state *state, char *filename)
 //type = 2 we put " searching for sync errors ..."
 //type = 3 we put " scanning for silence ..."
 //we write the filename that we are currently splitting
-void splt_t_put_progress_text(splt_state *state,int type)
+void splt_t_put_progress_text(splt_state *state, int type)
 {
   //filename_shorted_length = sp_state->progress_text_max_char;
   //if we have a too long filename, display it shortly
@@ -2766,16 +2728,13 @@ void splt_t_update_progress(splt_state *state, float current_point,
   //if we have a progress callback function
   if (state->split.p_bar->progress != NULL)
   {
-    if (splt_t_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE)
-        > refresh_rate)
+    if (splt_t_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) > refresh_rate)
     {
       //shows the progress
-      state->split.p_bar->percent_progress = 
-        (current_point / total_points);
+      state->split.p_bar->percent_progress = (current_point / total_points);
 
       state->split.p_bar->percent_progress = 
-        state->split.p_bar->percent_progress / progress_stage +
-        progress_start;
+        state->split.p_bar->percent_progress / progress_stage + progress_start;
 
       //security check
       if (state->split.p_bar->percent_progress < 0)
@@ -2848,7 +2807,7 @@ int splt_t_is_stdin(splt_state *state)
 //returns SPLT_TRUE if the output filename to split looks like STDOUT
 int splt_t_is_stdout(splt_state *state)
 {
-  char *oformat = splt_t_get_oformat(state);
+  const char *oformat = splt_t_get_oformat(state);
 
   if (oformat)
   {
@@ -2910,7 +2869,14 @@ void splt_t_clean_split_data(splt_state *state,int tracks)
 //sets the current detected file plugin
 void splt_t_set_current_plugin(splt_state *state, int current_plugin)
 {
-  state->current_plugin = current_plugin;
+  if (current_plugin >= 0)
+  {
+    state->current_plugin = current_plugin;
+  }
+  else
+  {
+    splt_u_error(SPLT_IERROR_INT,__func__, current_plugin, NULL);
+  }
 }
 
 int splt_t_get_current_plugin(splt_state *state)

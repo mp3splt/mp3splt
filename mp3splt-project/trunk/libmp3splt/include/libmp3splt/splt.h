@@ -74,8 +74,6 @@ void splt_s_time_split(splt_state *state, int *error);
 
 int splt_s_set_silence_splitpoints(splt_state *state,
     int write_tracks, int *error);
-void splt_s_write_silence_tracks(int found, splt_state *state,
-    int *error);
 void splt_s_silence_split(splt_state *state, int *error);
 
 /****************************/
@@ -103,6 +101,7 @@ void splt_s_wrap_split(splt_state *state, int *error);
 /* libmp3splt internals */
 #define SPLT_IERROR_INT -1
 #define SPLT_IERROR_SET_ORIGINAL_TAGS -2
+#define SPLT_IERROR_CHAR -3
 
 //tags options
 #define SPLT_TAGS_TITLE 0

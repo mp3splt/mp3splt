@@ -65,7 +65,7 @@ void splt_u_order_splitpoints(splt_state *state, int len);
 
 /****************************/
 /* utils for the tags       */
-int splt_u_put_tags_from_string(splt_state *state, const char *tags);
+int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error);
 
 /*******************************/
 /* utils for the output format */

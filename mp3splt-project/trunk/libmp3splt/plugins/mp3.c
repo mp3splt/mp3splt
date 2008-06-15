@@ -2955,7 +2955,6 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
 
               int put_file_error = SPLT_OK;
               put_file_error = splt_t_wrap_put_file(state, wrapfiles, i, filename);
-
               if (put_file_error != SPLT_OK)
               {
                 *error = put_file_error;
@@ -3032,7 +3031,8 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               //if we could split put the splitted file
               if (ret >= 0)
               {
-                splt_t_put_splitted_file(state, filename);
+                ret = splt_t_put_splitted_file(state, filename);
+                if (ret < 0) { *error = ret; }
               }
               else
               {
