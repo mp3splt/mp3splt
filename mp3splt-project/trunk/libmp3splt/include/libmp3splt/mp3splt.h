@@ -566,10 +566,10 @@ typedef struct {
   int (*check_plugin_is_for_file)(void *state, int *error);
   void (*set_plugin_info)(splt_plugin_info *info, int *error);
   void (*search_syncerrors)(void *state, int *error);
-  void (*dewrap)(void *state, int listonly, char *dir, int *error);
+  void (*dewrap)(void *state, int listonly, const char *dir, int *error);
   void (*set_total_time)(void *state, int *error);
-  int (*simple_split)(void *state, char *output_fname, off_t begin, off_t end);
-  void (*split)(void *state, char *final_fname, double begin_point,
+  int (*simple_split)(void *state, const char *output_fname, off_t begin, off_t end);
+  void (*split)(void *state, const char *final_fname, double begin_point,
       double end_point, int *error);
   int (*scan_silence)(void *state, int *error);
   void (*set_original_tags)(void *state, int *error);
@@ -1276,9 +1276,8 @@ int mp3splt_append_splitpoint(splt_state *state,
     long split_value, const char *name);
 
 //returns a pointer to all the current splitpoints
-splt_point *mp3splt_get_splitpoints(splt_state *state,
-    int *splitpoints_number,
-    int *error);
+const splt_point *mp3splt_get_splitpoints(splt_state *state,
+    int *splitpoints_number, int *error);
 
 //erase all the splitpoints
 void mp3splt_erase_all_splitpoints(splt_state *state,

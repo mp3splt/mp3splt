@@ -2712,7 +2712,7 @@ void splt_t_put_progress_text(splt_state *state,int type)
     if (point_name != NULL)
     {
       //we put the extension of the song
-      char *extension = splt_p_get_extension(state, &err);
+      const char *extension = splt_p_get_extension(state, &err);
       if (err >= 0)
       {
         snprintf(filename_shorted,

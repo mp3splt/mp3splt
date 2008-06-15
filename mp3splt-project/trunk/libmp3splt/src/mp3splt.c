@@ -283,7 +283,7 @@ int mp3splt_append_splitpoint(splt_state *state,
 }
 
 //returns a list containing all the splitpoints
-splt_point *mp3splt_get_splitpoints(splt_state *state,
+const splt_point *mp3splt_get_splitpoints(splt_state *state,
     int *splitpoints_number, int *error)
 {
   int *err = SPLT_OK;

@@ -328,7 +328,7 @@ static char *splt_u_get_mins_secs_filename(char *filename,
       }
 
       //put the extension according to the file type
-      char *extension = splt_p_get_extension(state, error);
+      const char *extension = splt_p_get_extension(state, error);
       if (*error >= 0)
       {
         strcat(fname2, extension);
@@ -430,7 +430,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
     {
       //we put the full output filename (with the path)
       //construct full filename with path
-      char *extension = splt_p_get_extension(state, error);
+      const char *extension = splt_p_get_extension(state, error);
       if (*error >= 0)
       {
         if (new_filename_path[0] == '\0')

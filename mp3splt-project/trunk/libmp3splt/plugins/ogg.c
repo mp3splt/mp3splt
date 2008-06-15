@@ -1874,7 +1874,7 @@ void splt_pl_end(splt_state *state, int *error)
   splt_ogg_state_free(state);
 }
 
-void splt_pl_split(splt_state *state, char *final_fname,
+void splt_pl_split(splt_state *state, const char *final_fname,
     double begin_point, double end_point, int *error) 
 {
   splt_ogg_state *oggstate = state->codec;
