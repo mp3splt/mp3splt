@@ -1770,7 +1770,9 @@ int main(int argc, char *argv[])
           if (err >= 0)
           {
             //if custom tags, we put the tags
-            if(mp3splt_put_tags_from_string(state,opt->custom_tags))
+            int ambigous = mp3splt_put_tags_from_string(state, opt->custom_tags, &err);
+            print_confirmation_error(err,opt,state);
+            if (ambigous)
             {
               print_warning("tags format ambigous !");
             }

@@ -383,9 +383,11 @@ const splt_tags *mp3splt_get_tags(splt_state *state,
 }
 
 //puts tags from a string
-int mp3splt_put_tags_from_string(splt_state *state, const char *tags)
+int mp3splt_put_tags_from_string(splt_state *state, const char *tags, int *error)
 {
-  int error = SPLT_OK;
+  int ambigous = SPLT_FALSE;
+  int *err = SPLT_OK;
+  if (error != NULL) { err = error; }
 
   if (state != NULL)
   {
@@ -393,21 +395,21 @@ int mp3splt_put_tags_from_string(splt_state *state, const char *tags)
     {
       splt_t_lock_library(state);
 
-      error = splt_u_put_tags_from_string(state,tags);
+      ambigous = splt_u_put_tags_from_string(state, tags, err);
 
       splt_t_unlock_library(state);
     }
     else
     {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
+      *err = SPLT_ERROR_LIBRARY_LOCKED;
     }
   }
   else
   {
-    error = SPLT_ERROR_STATE_NULL;
+    *err = SPLT_ERROR_STATE_NULL;
   }
 
-  return error;
+  return ambigous;
 }
 
 //erase all the tags
@@ -1081,8 +1083,7 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
         splt_p_init(state, &err);
         if (err >= 0)
         {
-          found_splitpoints =
-            splt_s_set_silence_splitpoints(state, SPLT_FALSE, err);
+          found_splitpoints = splt_s_set_silence_splitpoints(state, SPLT_FALSE, err);
           //the set_silence_splitpoints returns us the
           //number of tracks, not splitpoints
           found_splitpoints--;

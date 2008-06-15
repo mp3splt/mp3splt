@@ -1298,8 +1298,8 @@ const splt_tags *mp3splt_get_tags(splt_state *state,
     int *tags_number, int *error);
 
 //puts tags from a string
-int mp3splt_put_tags_from_string(splt_state *state, 
-    const char *tags);
+int mp3splt_put_tags_from_string(splt_state *state, const char *tags,
+    int *error);
 
 void mp3splt_erase_all_tags(splt_state *state,
     int *error);

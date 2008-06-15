@@ -220,8 +220,7 @@ char *splt_u_cut_spaces_at_the_end(char *c)
 char *splt_u_get_real_name(char *filename)
 {
   char *c = NULL;
-  while ((c = strchr(filename, SPLT_DIRCHAR))
-      !=NULL)
+  while ((c = strchr(filename, SPLT_DIRCHAR)) !=NULL)
   {
     filename = c + 1;
   }
@@ -623,7 +622,7 @@ char *splt_u_parse_tag_word(const char *cur_pos,
 
 //we put the custom tags
 //returns if ambigous or not
-int splt_u_put_tags_from_string(splt_state *state, const char *tags)
+int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
 {
   if (tags != NULL)
   {
@@ -641,6 +640,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags)
     }
 
     int tags_appended = 0;
+    int get_out_from_while = SPLT_FALSE;
     while((cur_pos = strchr(cur_pos,'[')))
     {
       //if we set the tags for all the files
@@ -913,46 +913,67 @@ after_while:
           track = 0;
         }
         //we put the tags
-        splt_t_append_tags(state, title, artist,
-            album, performer, year, comment,
-            track, genre);
+        int err = splt_t_append_tags(state, title, artist,
+            album, performer, year, comment, track, genre);
+        if (err < 0)
+        {
+          *error = err;
+          get_out_from_while = SPLT_TRUE;
+        }
       }
       else
       {
         //we put the tags
-        splt_t_append_only_non_null_previous_tags(state, title, artist,
-            album, performer, year, comment,
-            track, genre);
+        int err = splt_t_append_only_non_null_previous_tags(state, title, artist,
+            album, performer, year, comment, track, genre);
+        if (err < 0)
+        {
+          *error = err;
+          get_out_from_while = SPLT_TRUE;
+        }
       }
 
       //we free the memory
       if (title)
       {
         free(title);
+        title = NULL;
       }
       if (artist)
       {
         free(artist);
+        artist = NULL;
       }
       if (album)
       {
         free(album);
+        album = NULL;
       }
       if (performer)
       {
         free(performer);
+        performer = NULL;
       }
       if (year)
       {
         free(year);
+        year = NULL;
       }
       if (comment)
       {
         free(comment);
+        comment = NULL;
       }
       if (tracknumber)
       {
         free(tracknumber);
+        tracknumber = NULL;
+      }
+
+      //we get out from while when error
+      if (get_out_from_while)
+      {
+        break;
       }
 
       tags_appended++;
@@ -1280,9 +1301,8 @@ int splt_u_put_output_format_filename(splt_state *state)
           {
             if (splt_t_tags_exists(state,current_split))
             {
-              int tags_track = 
-                splt_t_get_tags_int_field(state,
-                    current_split,SPLT_TAGS_TRACK);
+              int tags_track = splt_t_get_tags_int_field(state,
+                  current_split,SPLT_TAGS_TRACK);
               if (tags_track > 0)
               {
                 tracknumber = tags_track;
@@ -1437,11 +1457,16 @@ void splt_u_error(int error_type, const char *function,
           "libmp3splt: cannot set original file tags, "
           "libmp3splt not compiled with libid3tag\n");
       break;
+    case SPLT_IERROR_CHAR:
+      fprintf(stderr,
+          "libmp3splt: error in %s with message '%s'\n",function,arg_char);
+      break;
     default:
       fprintf(stderr,
           "libmp3splt: unknown error in %s\n", function);
       break;
   }
+  fflush(stderr);
 }
 
 /****************************/

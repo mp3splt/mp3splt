@@ -98,10 +98,11 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   if (output_filenames == SPLT_OUTPUT_DEFAULT)
   {
     //we put the default output if we have the default output
-    splt_t_new_oformat(state, SPLT_DEFAULT_OUTPUT);
+    int err = splt_t_new_oformat(state, SPLT_DEFAULT_OUTPUT);
+    if (err < 0) { *error = err; goto function_end; }
 
     //we put the real performer in the artist
-    for(i = 0; i < tracks;i++)
+    for (i = 0; i < tracks;i++)
     {
       performer = splt_t_get_tags_char_field(state, i, SPLT_TAGS_PERFORMER);
       //we put performer if found
@@ -1289,8 +1290,19 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 
           //i!=-1 means that it's not a revision
           int i=0;
+          int err = SPLT_OK;
           //here we have in album_name the name of the current album      
-          splt_t_freedb_append_result(state, full_artist_album, i);
+          err = splt_t_freedb_append_result(state, full_artist_album, i);
+          if (err < 0)
+          {
+            if (full_artist_album)
+            {
+              free(full_artist_album);
+              full_artist_album = NULL;
+            }
+            *error = err;
+            return -2;
+          }
 
           //free memory
           free(full_artist_album);
@@ -1576,7 +1588,6 @@ int splt_freedb_process_search(splt_state *state, char *search,
 
                   //we analyse the buffer
                   tot = splt_freedb2_analyse_cd_buffer(buffer, tot, state,&error);
-
                   if (error < 0)
                   {
                     goto function_end1;
@@ -1751,8 +1762,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
     //        strncat(message, "\n", 1);
     //        }
     //        else 
-    char *cd_category = splt_t_freedb_get_disc_category(state, i);
-    char *cd_id = splt_t_freedb_get_disc_id(state, i);
+    const char *cd_category = splt_t_freedb_get_disc_category(state, i);
+    const char *cd_id = splt_t_freedb_get_disc_id(state, i);
 
     int malloc_number = 0;
     if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
