@@ -570,9 +570,17 @@ void splt_t_set_oformat(splt_state *state, const char *format_string, int *error
   if (err < 0) { *error = err; return; }
 
   char *new_str = strdup(format_string);
-  *error = splt_u_parse_outformat(new_str,state);
-  free(new_str);
-  new_str = NULL;
+  if (new_str)
+  {
+    *error = splt_u_parse_outformat(new_str,state);
+    free(new_str);
+    new_str = NULL;
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
 
   //if no error
   if (*error == SPLT_OUTPUT_FORMAT_OK)
@@ -1510,8 +1518,7 @@ splt_tags *splt_t_get_tags(splt_state *state,int *tags_number)
 }
 
 //get title, artist, album, year or comment
-char *splt_t_get_tags_char_field(splt_state *state, int index,
-    int tags_field)
+char *splt_t_get_tags_char_field(splt_state *state, int index, int tags_field)
 {
   if ((index >= state->split.real_tagsnumber) || (index < 0))
   {
@@ -2581,7 +2588,7 @@ void splt_t_wrap_free(splt_state *state)
 
 //says to the program using the library the splitted file
 //-return possible error
-int splt_t_put_splitted_file(splt_state *state, char *filename)
+int splt_t_put_splitted_file(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
 
@@ -2595,10 +2602,12 @@ int splt_t_put_splitted_file(splt_state *state, char *filename)
     if (m3u_file != NULL)
     {
       //we don't care about the path; we clean the string
-      char *real_name_m3u_file = splt_u_cleanstring(m3u_file);
+      splt_u_cleanstring(state, m3u_file, &error);
+      if (error < 0) { return error; }
+
       char *path_of_split = splt_t_get_path_of_split(state);
       char *new_m3u_file = NULL;
-      int malloc_number = strlen(real_name_m3u_file)+2;
+      int malloc_number = strlen(m3u_file)+2;
       if (path_of_split)
       {
         malloc_number += strlen(path_of_split);
@@ -2609,11 +2618,11 @@ int splt_t_put_splitted_file(splt_state *state, char *filename)
         if (path_of_split)
         {
           snprintf(new_m3u_file,malloc_number,"%s%c%s",
-              path_of_split, SPLT_DIRCHAR, real_name_m3u_file);
+              path_of_split, SPLT_DIRCHAR, m3u_file);
         }
         else
         {
-          snprintf(new_m3u_file,malloc_number,"%s",real_name_m3u_file);
+          snprintf(new_m3u_file,malloc_number,"%s",m3u_file);
         }
         //we open the m3u file
         FILE *file_input = NULL;
@@ -2869,7 +2878,8 @@ void splt_t_clean_split_data(splt_state *state,int tracks)
 //sets the current detected file plugin
 void splt_t_set_current_plugin(splt_state *state, int current_plugin)
 {
-  if (current_plugin >= 0)
+  //-1 means no plugin
+  if (current_plugin >= -1)
   {
     state->current_plugin = current_plugin;
   }

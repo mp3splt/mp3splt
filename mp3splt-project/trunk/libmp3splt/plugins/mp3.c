@@ -865,11 +865,9 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
   mp3state->mp3file.xing = 0;
   mp3state->mp3file.xing_offset = 0;
   mp3state->mp3file.xingbuffer = NULL;
-  mp3state->mp3file.len = splt_u_flength(file_input);
-  if (mp3state->mp3file.len == -1)
+  mp3state->mp3file.len = splt_u_flength(state, file_input, filename, error);
+  if (error < 0)
   {
-    splt_t_set_error_data(state,filename);
-    *error = SPLT_ERROR_INVALID;
     return NULL;
   }
   splt_t_set_total_time(state,0);
@@ -2548,14 +2546,8 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
 
     if (*error >= 0)
     {
-      len = splt_u_flength(mp3state->file_input);
-
-      //if the file length is not normal error
-      if (len == -1)
-      {
-        *error = SPLT_DEWRAP_ERR_FILE_LENGTH;
-        return;
-      }
+      len = splt_u_flength(state, mp3state->file_input, file_to_dewrap, error);
+      if (error < 0) { return; }
 
       id3offset = splt_mp3_getid3v2(mp3state->file_input, 0);
 

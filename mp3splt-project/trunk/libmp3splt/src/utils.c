@@ -40,11 +40,10 @@
 
 extern short global_debug;
 
-void splt_i_debug(char *message)
-{
-  fprintf(stdout,"%s\n",message);
-  fflush(stdout);
-}
+/****************************/
+/* some prototypes */
+
+static void splt_u_cut_extension(char *str);
 
 /****************************/
 /* utils for conversion */
@@ -52,7 +51,7 @@ void splt_i_debug(char *message)
 //converts string s in hundredth
 //and returns seconds
 //returns -1 if it cannot convert (usually we hope it can :)
-long splt_u_convert_hundreths (char *s)
+long splt_u_convert_hundreths (const char *s)
 {
   long minutes=0, seconds=0, hundredths=0, i;
   long hun;
@@ -141,11 +140,14 @@ int splt_u_getword (FILE *in, off_t offset, int mode,
 }
 
 //returns the file length
-off_t splt_u_flength (FILE *in)
+off_t splt_u_flength(splt_state *state, FILE *in, const char *filename, int *error)
 {
   struct stat info;
   if (fstat(fileno(in), &info)==-1)
   {
+    splt_t_set_strerror_msg(state);
+    splt_t_set_error_data(state, filename);
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return -1;
   }
   return info.st_size;
@@ -155,37 +157,46 @@ off_t splt_u_flength (FILE *in)
 /* utils manipulating strings (including filenames) */
 
 //cleans the string of weird characters like ? " | : > < * \ \r
-char *splt_u_cleanstring (char *s)
+void splt_u_cleanstring(splt_state *state, char *s, int *error)
 {
-  int i, j=0;
-  char *copy;
-  copy = strdup(s);
-  for (i=0; i<=strlen(copy); i++)
+  int i = 0, j=0;
+  char *copy = NULL;
+  if (s)
   {
-    if ((copy[i]!='\\')&&(copy[i]!='/')&&(copy[i]!='?')
-        &&(copy[i]!='*')&&(copy[i]!=':')&&(copy[i]!='"')
-        &&(copy[i]!='>')&&(copy[i]!='<')&&(copy[i]!='|')
-        &&(copy[i]!='\r'))
+    copy = strdup(s);
+    if (copy)
     {
-      s[j++] = copy[i];
+      for (i=0; i<=strlen(copy); i++)
+      {
+        if ((copy[i]!='\\')&&(copy[i]!='/')&&(copy[i]!='?')
+            &&(copy[i]!='*')&&(copy[i]!=':')&&(copy[i]!='"')
+            &&(copy[i]!='>')&&(copy[i]!='<')&&(copy[i]!='|')
+            &&(copy[i]!='\r'))
+        {
+          s[j++] = copy[i];
+        }
+      }
+      free(copy);
+      copy = NULL;
+
+      // Trim string. I will never stop to be surprised about cddb strings dirtiness! ;-)
+      for (i=strlen(s)-1; i >= 0; i--) 
+      {
+        if (s[i]==' ')
+        {
+          s[i] = '\0';
+        }
+        else 
+        {
+          break;
+        }
+      }
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
   }
-  free(copy);
-
-  // Trim string. I will never stop to be surprised about cddb strings dirtiness! ;-)
-  for (i=strlen(s)-1; i >= 0; i--) 
-  {
-    if (s[i]==' ')
-    {
-      s[i] = '\0';
-    }
-    else 
-    {
-      break;
-    }
-  }
-
-  return s;
 }
 
 //cuts spaces from the begin
@@ -217,7 +228,7 @@ char *splt_u_cut_spaces_at_the_end(char *c)
 }
 
 //finding the real name of the file, without the path
-char *splt_u_get_real_name(char *filename)
+const char *splt_u_get_real_name(const char *filename)
 {
   char *c = NULL;
   while ((c = strchr(filename, SPLT_DIRCHAR)) !=NULL)
@@ -235,11 +246,8 @@ char *splt_u_get_real_name(char *filename)
 //state->fn[i]
 //error is the possible error
 //result must be freed
-static char *splt_u_get_mins_secs_filename(char *filename, 
-    splt_state *state,
-    long split_begin,
-    long split_end,
-    int i, int *error)
+static char *splt_u_get_mins_secs_filename(char *filename, splt_state *state,
+    long split_begin, long split_end, int i, int *error)
 {
   int number_of_splits = 0;
   splt_point *points = 
@@ -295,16 +303,11 @@ static char *splt_u_get_mins_secs_filename(char *filename,
 
         //if fn[i] is "", we put the same name as the
         //original file
-        if ((points[i].name == NULL)
-            || (strcmp(points[i].name,"") == 0))
+        if ((points[i].name == NULL) || (strcmp(points[i].name,"") == 0))
         {
           snprintf(fname,strlen(filename),"%s", filename);
           //we cut the extension of the original file
-          char *temp = strrchr(fname,'.');
-          if (temp)
-          {
-            *temp='\0';
-          }
+          splt_u_cut_extension(fname);
         }
       }
       else
@@ -356,56 +359,84 @@ static char *splt_u_get_mins_secs_filename(char *filename,
 //error is the possible error
 void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
 {
-  int current_split = splt_t_get_current_split(state);
   int get_error = SPLT_OK;
-  long split_begin = 
-    splt_t_get_splitpoint_value(state, current_split, &get_error);
-  long split_end = 
-    splt_t_get_splitpoint_value(state, current_split+1, &get_error);
+  int current_split = splt_t_get_current_split(state);
+  long split_begin = splt_t_get_splitpoint_value(state, current_split, &get_error);
+  if (get_error < 0) { *error = get_error; return; }
+  long split_end = splt_t_get_splitpoint_value(state, current_split+1, &get_error);
+  if (get_error < 0) { *error = get_error; return; }
   char *filename = splt_t_get_filename_to_split(state);
+
   char *filename2 = strdup(filename);
 
-  //filename of the new created file
-  char *fname = NULL;
-
-  //get the filename without the path
-  char *filename3 = strdup(splt_u_get_real_name(filename2));
-  fname = splt_u_get_mins_secs_filename(filename3, state,
-      split_begin, split_end,
-      current_split,error);
-
-  //free memory
-  if (filename2)
+  if (!filename2)
   {
-    free(filename2);
-  }
-  if (filename3)
-  {
-    free(filename3);
-  }
-
-  if ((*error >= 0) && (get_error == SPLT_OK))
-  {
-    //we cut the extension
-    char *fname2 = strdup(fname);
-    fname2[strlen(fname2)-4]='\0';
-    //we put the filename in the state
-    splt_t_set_splitpoint_name(state, current_split, fname2);
-    free(fname2);
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
   }
   else
-    //if error, put NULL ?
   {
-    //we put the name in the state
-    int change_error = SPLT_OK;
-    change_error = splt_t_set_splitpoint_name(state,current_split,NULL);
-    if (change_error != SPLT_OK)
+    //filename of the new created file
+    char *fname = NULL;
+
+    //get the filename without the path
+    char *filename3 = strdup(splt_u_get_real_name(filename2));
+    if (!filename3)
     {
-      *error = change_error;
+      if (filename2)
+      {
+        free(filename2);
+        filename2 = NULL;
+      }
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+    else
+    {
+      fname = splt_u_get_mins_secs_filename(filename3, state,
+          split_begin, split_end, current_split, error);
+
+      if (*error >= 0)
+      {
+        //we cut the extension
+        char *fname2 = strdup(fname);
+        if (fname2)
+        {
+          fname2[strlen(fname2)-4]='\0';
+          //we put the filename in the state
+          splt_t_set_splitpoint_name(state, current_split, fname2);
+          if (fname2)
+          {
+            free(fname2);
+            fname2 = NULL;
+          }
+        }
+        else
+        {
+          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        }
+      }
+
+      if (fname)
+      {
+        free(fname);
+        fname = NULL;
+      }
+
+      //free some memory
+      if (filename3)
+      {
+        free(filename3);
+        filename3 = NULL;
+      }
+    }
+
+    //free some memory
+    if (filename2)
+    {
+      free(filename2);
+      filename2 = NULL;
     }
   }
-
-  free(fname);
 }
 
 //the result must be freed
@@ -423,7 +454,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
   }
 
   //if we don't output to stdout
-  if (output_fname && strcmp(output_fname,"-") != 0)
+  if (output_fname && (strcmp(output_fname,"-") != 0))
   {
     if ((output_fname_with_path = malloc(malloc_number)) != NULL)
     {
@@ -446,6 +477,11 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
       }
       else
       {
+        if (output_fname_with_path)
+        {
+          free(output_fname_with_path);
+          output_fname_with_path = NULL;
+        }
         return NULL;
       }
     }
@@ -496,6 +532,16 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
 /****************************/
 /* utils for splitpoints */
 
+//cut extension from 'str'
+static void splt_u_cut_extension(char *str)
+{
+  char *point = strrchr(str , '.');
+  if (point)
+  {
+    *point = '\0';
+  }
+}
+
 //cuts the extension of a splitpoint
 int splt_u_cut_splitpoint_extension(splt_state *state, int index)
 {
@@ -504,8 +550,7 @@ int splt_u_cut_splitpoint_extension(splt_state *state, int index)
   if (splt_t_splitpoint_exists(state,index))
   {
     int get_error = SPLT_OK;
-    char *temp_name =
-      splt_t_get_splitpoint_name(state,index,&get_error);
+    char *temp_name = splt_t_get_splitpoint_name(state, index, &get_error);
 
     if (get_error != SPLT_OK)
     {
@@ -513,17 +558,20 @@ int splt_u_cut_splitpoint_extension(splt_state *state, int index)
     }
     else
     {
-      char *new_name = strdup(temp_name);
-      if (new_name == NULL)
+      if (temp_name)
       {
-        return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
-      else
-      {
-        new_name[strlen(new_name)-4] = '\0';
-        change_error = splt_t_set_splitpoint_name(state,index,
-            new_name);
-        free(new_name);
+        char *new_name = strdup(temp_name);
+        if (new_name == NULL)
+        {
+          return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        }
+        else
+        {
+          splt_u_cut_extension(new_name);
+          change_error = splt_t_set_splitpoint_name(state,index, new_name);
+          free(new_name);
+          new_name = NULL;
+        }
       }
     }
   }
@@ -560,13 +608,15 @@ void splt_u_order_splitpoints(splt_state *state, int len)
 /* utils for the tags       */
 
 //parse the word, returns a allocated string with the recognised word
-char *splt_u_parse_tag_word(const char *cur_pos,
-    char *end_paranthesis, int *ambigous)
+//-return must be freed
+static char *splt_u_parse_tag_word(const char *cur_pos,
+    const char *end_paranthesis, int *ambigous, int *error)
 {
   char *word = NULL;
   char *word_end = NULL;
   char *word_end2 = NULL;
   const char *equal_sign = NULL;
+
   if ((word_end = strchr(cur_pos,',')))
   {
     if ((word_end2 = strchr(cur_pos,']')) < word_end)
@@ -601,8 +651,16 @@ char *splt_u_parse_tag_word(const char *cur_pos,
       if (string_length > 0)
       {
         word = malloc(string_length*sizeof(char));
-        memcpy(word,equal_sign+1,string_length);
-        word[string_length] = '\0';
+        if (word)
+        {
+          memcpy(word,equal_sign+1,string_length);
+          word[string_length] = '\0';
+        }
+        else
+        {
+          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+          return NULL;
+        }
       }
       else
       {
@@ -632,7 +690,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
     cur_pos = tags;
 
     int ambigous = SPLT_FALSE;
-    char *end_paranthesis = NULL;
+    const char *end_paranthesis = NULL;
     //we search for tags
     if (!strchr(cur_pos,'['))
     {
@@ -641,7 +699,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
 
     int tags_appended = 0;
     int get_out_from_while = SPLT_FALSE;
-    while((cur_pos = strchr(cur_pos,'[')))
+    while ((cur_pos = strchr(cur_pos,'[')))
     {
       //if we set the tags for all the files
       if (cur_pos != tags)
@@ -649,8 +707,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         //if we have % before [
         if (*(cur_pos-1) == '%')
         {
-          splt_t_set_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X,
-              tags_appended);
+          splt_t_set_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X, tags_appended);
           all_tags = SPLT_TRUE;
         }
       }
@@ -693,7 +750,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
 
       char *tag = NULL;
       int original_tags = SPLT_FALSE;
-      while((tag = strchr(cur_pos-1,'@')))
+      while ((tag = strchr(cur_pos-1,'@')))
       {
         //if the current position is superior or equal
         if (tag >= end_paranthesis)
@@ -729,30 +786,48 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               //if we don't have STDIN
               if (! splt_t_is_stdin(state))
               {
-                int error = SPLT_OK;
+                int err = SPLT_OK;
                 splt_t_lock_messages(state);
-                splt_check_file_type(state, &error);
+                splt_check_file_type(state, &err);
+                if (err < 0)
+                {
+                  *error = err;
+                  splt_t_unlock_messages(state);
+                  get_out_from_while = SPLT_TRUE;
+                  goto end_while;
+                }
                 splt_t_unlock_messages(state);
 
                 splt_t_lock_messages(state);
-                splt_p_init(state, &error);
-                if (error >= 0)
+                splt_p_init(state, &err);
+                if (err >= 0)
                 {
-                  splt_t_get_original_tags(state, &error);
-                  splt_p_end(state);
-                  error = splt_t_append_original_tags(state);
-                  if (error < 0)
+                  splt_t_get_original_tags(state, &err);
+                  if (err < 0) 
                   {
+                    *error = err;
                     splt_t_unlock_messages(state);
-                    goto after_while;
+                    get_out_from_while = SPLT_TRUE;
+                    goto end_while;
+                  }
+                  splt_p_end(state);
+                  err = splt_t_append_original_tags(state);
+                  if (err < 0)
+                  {
+                    *error = err;
+                    splt_t_unlock_messages(state);
+                    get_out_from_while = SPLT_TRUE;
+                    goto end_while;
                   }
                   original_tags = SPLT_TRUE;
                   splt_t_unlock_messages(state);
                 }
                 else
                 {
+                  *error = err;
                   splt_t_unlock_messages(state);
-                  goto after_while;
+                  get_out_from_while = SPLT_TRUE;
+                  goto end_while;
                 }
               }
               else
@@ -771,8 +846,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'a':
-              artist =
-                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              artist = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous, error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (artist != NULL)
               {
                 cur_pos += strlen(artist)+2;
@@ -784,8 +859,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'p':
-              performer = 
-                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              performer = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous, error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (performer != NULL)
               {
                 cur_pos += strlen(performer)+2;
@@ -797,8 +872,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'b':
-              album =
-                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              album = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous,error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (album != NULL)
               {
                 cur_pos += strlen(album)+2;
@@ -810,8 +885,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 't':
-              title =
-                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              title = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous,error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (title != NULL)
               {
                 cur_pos += strlen(title)+2;
@@ -823,8 +898,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'c':
-              comment =
-                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              comment = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous,error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (comment != NULL)
               {
                 cur_pos += strlen(comment)+2;
@@ -836,8 +911,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'y':
-              year =
-                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              year = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous,error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (year != NULL)
               {
                 cur_pos += strlen(year)+2;
@@ -849,8 +924,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'n':
-              tracknumber = 
-                splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous);
+              tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambigous,error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (tracknumber != NULL)
               {
                 cur_pos += strlen(tracknumber)+2;
@@ -872,9 +947,6 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
           cur_pos++;
         }
       }
-
-after_while:
-;
 
       int track = -1;
       //we check that we really have the tracknumber as integer
@@ -933,6 +1005,7 @@ after_while:
         }
       }
 
+end_while:
       //we free the memory
       if (title)
       {
@@ -998,11 +1071,11 @@ after_while:
 /* utils for the output format */
 
 //parse the output format to see if correct
-//use strdup on s when calling this function
+//use strdup on 's' when calling this function
 int splt_u_parse_outformat(char *s, splt_state *state)
 {
-  char *ptrs, *ptre;
-  int i=0, amb=SPLT_OUTPUT_FORMAT_AMBIGUOUS, len=0;
+  char *ptrs = NULL, *ptre = NULL;
+  int i=0, amb = SPLT_OUTPUT_FORMAT_AMBIGUOUS, len=0;
 
   for (i=0; i<strlen(s); i++)
   {
@@ -1012,22 +1085,24 @@ int splt_u_parse_outformat(char *s, splt_state *state)
     }
     else 
     {
-      if (s[i]==SPLT_VARCHAR) 
+      if (s[i] == SPLT_VARCHAR) 
       {
         s[i]='%';
       }
     }
   }
 
-  splt_u_cleanstring(s);
+  splt_u_cleanstring(state, s, &amb);
+  if (amb < 0) { return amb; }
+
   ptrs = s;
-  i=0;
-  ptre=strchr(ptrs+1, '%');
-  if (s[0]!='%')
+  i = 0;
+  ptre = strchr(ptrs+1, '%');
+  if (s[0] != '%')
   {
     if (ptre==NULL)
     {
-      len=strlen(ptrs);
+      len = strlen(ptrs);
     }
     else
     {
@@ -1041,7 +1116,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   }
   else
   {
-    ptre=s;
+    ptre = s;
   }
 
   //if stdout, NOT ambigous
@@ -1050,14 +1125,13 @@ int splt_u_parse_outformat(char *s, splt_state *state)
     return SPLT_OUTPUT_FORMAT_OK;
   }
 
-  if (ptre==NULL)
+  if (ptre == NULL)
   {
     return SPLT_OUTPUT_FORMAT_AMBIGUOUS;
   }
   ptrs = ptre;
 
-  while (((ptre=strchr(ptrs+1, '%'))!=NULL) && 
-      (i < SPLT_OUTNUM))
+  while (((ptre = strchr(ptrs+1, '%')) != NULL) && (i < SPLT_OUTNUM))
   {
     char cf = *(ptrs+1);
 
@@ -1093,10 +1167,14 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   strncpy(state->oformat.format[i], ptrs, strlen(ptrs));
 
   if (ptrs[1]=='t')
+  {
     amb = SPLT_OUTPUT_FORMAT_OK;
+  }
 
   if (ptrs[1]=='n')
+  {
     amb = SPLT_OUTPUT_FORMAT_OK;
+  }
 
   return amb;
 }
@@ -1118,8 +1196,7 @@ int splt_u_put_output_format_filename(splt_state *state)
   char *performer = NULL;
   char *original_filename = NULL;
 
-  int old_current_split =
-    splt_t_get_current_split(state);
+  int old_current_split = splt_t_get_current_split(state);
 
   int current_split = old_current_split;
 
@@ -1128,22 +1205,21 @@ int splt_u_put_output_format_filename(splt_state *state)
   //if we get the tags from the first file
   int tags_after_x_like_x = 
     splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X);
-  if ((current_split >= tags_after_x_like_x) &&
-      (tags_after_x_like_x != -1))
+  if ((current_split >= tags_after_x_like_x) && (tags_after_x_like_x != -1))
   {
     current_split = tags_after_x_like_x;
   }
 
   splt_u_print_debug("The output format is ",0,state->oformat.format_string);
 
-  for (i=0; i<SPLT_OUTNUM; i++)
+  for (i = 0; i < SPLT_OUTNUM; i++)
   {
-    if (strlen(state->oformat.format[i])==0)
+    if (strlen(state->oformat.format[i]) == 0)
     {
       break;
     }
     //if we have some % in the format (@ has been converted to %)
-    if (state->oformat.format[i][0]=='%')
+    if (state->oformat.format[i][0] == '%')
     {
       //we allocate memory for the temp variable
       if (temp)
@@ -1160,8 +1236,8 @@ int splt_u_put_output_format_filename(splt_state *state)
       }
       memset(temp, 0x0, temp_len);
 
-      temp[0]='%';
-      temp[1]='s';
+      temp[0] = '%';
+      temp[1] = 's';
       switch (state->oformat.format[i][1])
       {
         case 'a':
@@ -1169,8 +1245,7 @@ int splt_u_put_output_format_filename(splt_state *state)
           {
             //we get the artist
             artist =
-              splt_t_get_tags_char_field(state,current_split,
-                  SPLT_TAGS_ARTIST);
+              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ARTIST);
           }
           else
           {
@@ -1184,8 +1259,7 @@ int splt_u_put_output_format_filename(splt_state *state)
             int artist_length = 0;
             artist_length = strlen(artist);
             fm_length = strlen(temp)+artist_length;
-            if ((fm = malloc(fm_length
-                    * sizeof(char))) == NULL)
+            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
@@ -1213,8 +1287,7 @@ int splt_u_put_output_format_filename(splt_state *state)
             snprintf(temp+2, temp_len, state->oformat.format[i]+2);
 
             fm_length = strlen(temp)+album_length;
-            if ((fm = malloc(fm_length
-                    * sizeof(char))) == NULL)
+            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
@@ -1228,8 +1301,7 @@ int splt_u_put_output_format_filename(splt_state *state)
           {
             //we get the title
             title =
-              splt_t_get_tags_char_field(state,current_split,
-                  SPLT_TAGS_TITLE);
+              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_TITLE);
           }
           else
           {
@@ -1243,8 +1315,7 @@ int splt_u_put_output_format_filename(splt_state *state)
             snprintf(temp+2, temp_len, state->oformat.format[i]+2);
 
             fm_length = strlen(temp)+title_length;
-            if ((fm = malloc(fm_length
-                    * sizeof(char))) == NULL)
+            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
@@ -1258,8 +1329,7 @@ int splt_u_put_output_format_filename(splt_state *state)
           {
             //we get the performer
             performer =
-              splt_t_get_tags_char_field(state,current_split,
-                  SPLT_TAGS_PERFORMER);
+              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_PERFORMER);
           }
           else
           {
@@ -1273,8 +1343,7 @@ int splt_u_put_output_format_filename(splt_state *state)
             snprintf(temp+2, temp_len, state->oformat.format[i]+2);
 
             fm_length = strlen(temp)+performer_length;
-            if ((fm = malloc(fm_length
-                    * sizeof(char))) == NULL)
+            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
@@ -1284,9 +1353,9 @@ int splt_u_put_output_format_filename(splt_state *state)
           }
           break;
         case 'n':
-          temp[1]='0';
-          temp[2]=state->oformat.output_format_digits;
-          temp[3]='d';
+          temp[1] = '0';
+          temp[2] = state->oformat.output_format_digits;
+          temp[3] = 'd';
 
           //we set the track number
           int tracknumber = old_current_split+1;
@@ -1327,24 +1396,31 @@ int splt_u_put_output_format_filename(splt_state *state)
           {
             //we get the filename
             original_filename = strdup(splt_u_get_real_name(splt_t_get_filename_to_split(state)));
-            snprintf(temp+2,temp_len, state->oformat.format[i]+2);
+            if (original_filename)
+            {
+              snprintf(temp+2,temp_len, state->oformat.format[i]+2);
 
-            //we cut extension
-            original_filename[strlen(original_filename)-4] = '\0';
+              //we cut extension
+              splt_u_cut_extension(original_filename);
 
-            int filename_length = strlen(original_filename);
+              int filename_length = strlen(original_filename);
 
-            fm_length = strlen(temp) + filename_length;
-            if ((fm = malloc(fm_length
-                    * sizeof(char))) == NULL)
+              fm_length = strlen(temp) + filename_length;
+              if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+              {
+                error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                goto end;
+              }
+
+              snprintf(fm, fm_length, temp, original_filename);
+              free(original_filename);
+              original_filename = NULL;
+            }
+            else
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
               goto end;
             }
-
-            snprintf(fm, fm_length, temp, original_filename);
-            free(original_filename);
-            original_filename = NULL;
           }
           break;
       }
@@ -1352,8 +1428,7 @@ int splt_u_put_output_format_filename(splt_state *state)
     else
     {
       fm_length = SPLT_MAXOLEN;
-      if ((fm = malloc(fm_length * sizeof(char)))
-          == NULL)
+      if ((fm = malloc(fm_length * sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         goto end;
@@ -1451,22 +1526,25 @@ void splt_u_error(int error_type, const char *function,
       fprintf(stderr,
           "libmp3splt: error in %s with value %d\n",
           function, arg_int);
+      fflush(stderr);
       break;
     case SPLT_IERROR_SET_ORIGINAL_TAGS:
       fprintf(stderr,
           "libmp3splt: cannot set original file tags, "
           "libmp3splt not compiled with libid3tag\n");
+      fflush(stderr);
       break;
     case SPLT_IERROR_CHAR:
       fprintf(stderr,
           "libmp3splt: error in %s with message '%s'\n",function,arg_char);
+      fflush(stderr);
       break;
     default:
       fprintf(stderr,
           "libmp3splt: unknown error in %s\n", function);
+      fflush(stderr);
       break;
   }
-  fflush(stderr);
 }
 
 /****************************/
@@ -1475,9 +1553,7 @@ void splt_u_error(int error_type, const char *function,
 //get silence position depending of the offset
 float splt_u_silence_position(struct splt_ssplit *temp, float off)
 {
-  float position = (temp->end_position - 
-      temp->begin_position);
-
+  float position = (temp->end_position - temp->begin_position);
   position = temp->begin_position + (position*off);
 
   return position;
@@ -1489,289 +1565,297 @@ char *splt_u_strerror(splt_state *state, int error_code)
 {
   int max_error_size = 4096;
   char *error_msg = malloc(sizeof(char) * max_error_size);
-  memset(error_msg,'\0',4096);
-
-  switch (error_code)
+  if (error_msg)
   {
-    //
-    case SPLT_MIGHT_BE_VBR:
-      snprintf(error_msg,max_error_size,
-          " warning: might be VBR, use frame mode");
-      break;
-    case SPLT_SYNC_OK:
-      snprintf(error_msg,max_error_size, " error mode ok");
-      break;
-    case SPLT_ERR_SYNC:
-      snprintf(error_msg,max_error_size, " error: unknown sync error");
-      break;
-    case SPLT_ERR_NO_SYNC_FOUND:
-      snprintf(error_msg,max_error_size, " no sync errors found");
-      break;
-    case SPLT_ERR_TOO_MANY_SYNC_ERR:
-      snprintf(error_msg,max_error_size, " sync error: too many sync errors");
-      break;
-    //
-    case SPLT_FREEDB_MAX_CD_REACHED :
-      snprintf(error_msg,max_error_size, " maximum number of found CD reached");
-      break;
-    case SPLT_CUE_OK :
-      snprintf(error_msg,max_error_size, " cue file processed");
-      break;
-    case SPLT_CDDB_OK :
-      snprintf(error_msg,max_error_size, " cddb file processed");
-      break;
-    case SPLT_FREEDB_FILE_OK :
-      snprintf(error_msg,max_error_size, " freedb file downloaded");
-      break;
-    case SPLT_FREEDB_OK :
-      snprintf(error_msg,max_error_size, " freedb search processed");
-      break;
-    //
-    case SPLT_FREEDB_ERROR_INITIALISE_SOCKET :
-      snprintf(error_msg,max_error_size, 
-          " freedb error: cannot initialise socket (%s)",
-          state->err.strerror_msg);
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_GET_HOST :
-      snprintf(error_msg,max_error_size, 
-          " freedb error: cannot get host '%s' by name (%s)",
-          state->err.error_data, state->err.strerror_msg);
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET :
-      snprintf(error_msg,max_error_size, " freedb error: cannot open socket");
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_CONNECT :
-      snprintf(error_msg,max_error_size, 
-          " freedb error: cannot connect to host '%s' (%s)",
-          state->err.error_data, state->err.strerror_msg);
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE :
-      snprintf(error_msg,max_error_size, 
-          " freedb error: cannot send message to host '%s' (%s)",
-          state->err.error_data, state->err.strerror_msg);
-      break;
-    case SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER :
-      snprintf(error_msg,max_error_size, " freedb error: invalid server answer");
-      break;
-    case SPLT_FREEDB_ERROR_SITE_201 :
-      snprintf(error_msg,max_error_size, " freedb error: site returned code 201");
-      break;
-    case SPLT_FREEDB_ERROR_SITE_200 :
-      snprintf(error_msg,max_error_size, " freedb error: site returned code 200");
-      break;
-    case SPLT_FREEDB_ERROR_BAD_COMMUNICATION :
-      snprintf(error_msg,max_error_size, " freedb error: bad communication with site");
-      break;
-    case SPLT_FREEDB_ERROR_GETTING_INFOS :
-      snprintf(error_msg,max_error_size, " freedb error: could not get infos from site '%s'",
-          state->err.error_data);
-      break;
-    case SPLT_FREEDB_NO_CD_FOUND :
-      snprintf(error_msg,max_error_size, " no CD found for this search");
-      break;
-    case SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE:
-      snprintf(error_msg,max_error_size,
-          " freedb error: cannot receive message from server '%s' (%s)",
-          state->err.error_data, state->err.strerror_msg);
-      break;
-    case SPLT_INVALID_CUE_FILE:
-      snprintf(error_msg,max_error_size, " cue error: invalid cue file '%s'",
-          state->err.error_data);
-      break;
-    case SPLT_INVALID_CDDB_FILE:
-      snprintf(error_msg,max_error_size, " cddb error: invalid cddb file '%s'",
-          state->err.error_data);
-      break;
-    case SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE :
-      snprintf(error_msg,max_error_size, " freedb error: No such CD entry in database");
-      break;
-    case SPLT_FREEDB_ERROR_SITE :
-      snprintf(error_msg,max_error_size, " freedb error: site returned an unknown error");
-      break;
-    //
-    case SPLT_DEWRAP_OK:
-      snprintf(error_msg,max_error_size, " wrap split ok");
-      break;
-    //
-    case SPLT_DEWRAP_ERR_FILE_LENGTH:
-      snprintf(error_msg,max_error_size, " wrap error : incorrect file length");
-      break;
-    case SPLT_DEWRAP_ERR_VERSION_OLD:
-      snprintf(error_msg,max_error_size,
-          " wrap error: libmp3splt version too old for this wrap file");
-      break;
-    case SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX:
-      snprintf(error_msg,max_error_size,
-          " wrap error: no file found or bad index");
-      break;
-    case SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE:
-      snprintf(error_msg,max_error_size,
-          " wrap error: file '%s' damaged or incomplete",
-          state->err.error_data);
-      break;
-    case SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED:
-      snprintf(error_msg,max_error_size,
-          " wrap error: maybe not a wrapped file or wrap file damaged");
-      break;
-    //
-    case SPLT_OK_SPLITTED_EOF :
-      snprintf(error_msg,max_error_size," file splitted (EOF)");
-      break;
-    case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
-      snprintf(error_msg,max_error_size, " no silence splitpoints found");
-      break;
-    case SPLT_TIME_SPLIT_OK:
-      snprintf(error_msg,max_error_size, " time split ok");
-      break;
-    case SPLT_SILENCE_OK:
-      snprintf(error_msg,max_error_size, " silence split ok");
-      break;
-    case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
-      snprintf(error_msg,max_error_size,
-          " file splitted, splitpoints bigger than length");
-      break;
-    case SPLT_OK_SPLITTED :
-      snprintf(error_msg,max_error_size," file splitted");
-      break;
-    case SPLT_OK :
-      //fprintf(console_err," bug in the program, please report it");
-      break;
-    case SPLT_ERROR_SPLITPOINTS :
-      snprintf(error_msg,max_error_size, " error: not enough splitpoints (<2)");
-      break;
-    case SPLT_ERROR_CANNOT_OPEN_FILE :
-      snprintf(error_msg,max_error_size,
-          " error: cannot open file '%s' : %s",
-          state->err.error_data, state->err.strerror_msg);
-      break;
-    case SPLT_ERROR_CANNOT_CLOSE_FILE :
-      snprintf(error_msg,max_error_size,
-          " error: cannot close file '%s' : %s",
-          state->err.error_data, state->err.strerror_msg);
-      break;
-    case SPLT_ERROR_INVALID :
-      snprintf(error_msg,max_error_size,
-          " error: invalid input file '%s' for this plugin",
-          state->err.error_data);
-      break;
-    case SPLT_ERROR_EQUAL_SPLITPOINTS :
-      snprintf(error_msg,max_error_size,
-          " error: splitpoints are equal (%s)",
-          state->err.error_data);
-      break;
-    case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER :
-      snprintf(error_msg,max_error_size,
-          " error: the splitpoints are not in order (%s)",
-          state->err.error_data);
-      break;
-    case SPLT_ERROR_NEGATIVE_SPLITPOINT :
-      snprintf(error_msg,max_error_size, " error: negative splitpoint (%s)",
-          state->err.error_data);
-      break;
-    case SPLT_ERROR_INCORRECT_PATH :
-      snprintf(error_msg,max_error_size,
-          " error: bad destination folder '%s' (%s)",
-          state->err.error_data, state->err.strerror_msg);
-      break;
-    case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
-      snprintf(error_msg,max_error_size, " error: incompatible options");
-      break;
-    case SPLT_ERROR_INPUT_OUTPUT_SAME_FILE:
-      snprintf(error_msg,max_error_size,
-          " input and output are the same file ('%s')",
-          state->err.error_data);
-      break;
-    case SPLT_ERROR_CANNOT_ALLOCATE_MEMORY:
-      snprintf(error_msg,max_error_size, " error: cannot allocate memory");
-      break;
-    case SPLT_ERROR_CANNOT_OPEN_DEST_FILE:
-      snprintf(error_msg,max_error_size,
-          " error: cannot open destination file '%s' : %s",
-          state->err.error_data,state->err.strerror_msg);
-      break;
-    case SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE:
-      snprintf(error_msg,max_error_size,
-          " error: cannot write to output file '%s' : %s",
-          state->err.error_data,state->err.strerror_msg);
-      break;
-    case SPLT_ERROR_WHILE_READING_FILE:
-      snprintf(error_msg,max_error_size, " error: error while reading file '%s'",
-          state->err.error_data,state->err.strerror_msg);
-      break;
-    case SPLT_ERROR_SEEKING_FILE:
-      snprintf(error_msg,max_error_size, " error: cannot seek file '%s'",
-          state->err.error_data);
-      break;
-    case SPLT_ERROR_BEGIN_OUT_OF_FILE:
-      snprintf(error_msg,max_error_size, " error: begin point out of file");
-      break;
-    case SPLT_ERROR_INEXISTENT_FILE:
-      snprintf(error_msg,max_error_size, " error: inexistent file '%s' : %s",
-          state->err.error_data,state->err.strerror_msg);
-      break;
-    case SPLT_SPLIT_CANCELLED:
-      snprintf(error_msg,max_error_size, " split process cancelled");
-      break;
-    case SPLT_ERROR_LIBRARY_LOCKED: 
-      snprintf(error_msg,max_error_size, " error: library locked");
-      break;
-    case SPLT_ERROR_STATE_NULL:
-      snprintf(error_msg,max_error_size,
-          " error: the state has not been initialized with 'mp3splt_new_state'");
-      break;
-    case SPLT_ERROR_NEGATIVE_TIME_SPLIT:
-      snprintf(error_msg,max_error_size, " error: negative time split");
-      break;
-    case SPLT_ERROR_CANNOT_CREATE_DIRECTORY:
-      snprintf(error_msg,max_error_size, " error: cannot create directory '%s'",
-          state->err.error_data);
-      break;
-    case SPLT_ERROR_NO_PLUGIN_FOUND:
-      snprintf(error_msg,max_error_size, " error: no plugin found");
-      break;
-    case SPLT_ERROR_CANNOT_INIT_LIBLTDL:
-      snprintf(error_msg,max_error_size, " error: cannot initiate libltdl");
-      break;
-    case SPLT_ERROR_CRC_FAILED:
-      snprintf(error_msg,max_error_size, " error: CRC failed");
-      break;
-    case SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE:
-      snprintf(error_msg,max_error_size,
-          " error: no plugin matches the file '%s'", state->err.error_data);
-      break;
-    //
-    case SPLT_OUTPUT_FORMAT_OK:
-      break;
-    case SPLT_OUTPUT_FORMAT_AMBIGUOUS:
-      snprintf(error_msg,max_error_size, " warning: output format ambigous");
-      break;
-    //
-    case SPLT_OUTPUT_FORMAT_ERROR:
-      snprintf(error_msg,max_error_size, " warning: output format error");
-      break;
-    //
-    case SPLT_ERROR_INEXISTENT_SPLITPOINT:
-      snprintf(error_msg,max_error_size, " error: inexistent splitpoint");
-      break;
+    memset(error_msg,'\0',4096);
+
+    switch (error_code)
+    {
       //
-    case SPLT_ERROR_PLUGIN_ERROR:
-      snprintf(error_msg,max_error_size, " plugin error: '%s'",
-          state->err.error_data);
-      break;
-    //
-    case SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE:
-      ;
-      splt_plugins *pl = state->plug;
-      int current_plugin = splt_t_get_current_plugin(state);
-      snprintf(error_msg,max_error_size, " error: unsupported feature for the plugin '%s'",
-          pl->data[current_plugin].info.name);
-      break;
-  }
+      case SPLT_MIGHT_BE_VBR:
+        snprintf(error_msg,max_error_size,
+            " warning: might be VBR, use frame mode");
+        break;
+      case SPLT_SYNC_OK:
+        snprintf(error_msg,max_error_size, " error mode ok");
+        break;
+      case SPLT_ERR_SYNC:
+        snprintf(error_msg,max_error_size, " error: unknown sync error");
+        break;
+      case SPLT_ERR_NO_SYNC_FOUND:
+        snprintf(error_msg,max_error_size, " no sync errors found");
+        break;
+      case SPLT_ERR_TOO_MANY_SYNC_ERR:
+        snprintf(error_msg,max_error_size, " sync error: too many sync errors");
+        break;
+        //
+      case SPLT_FREEDB_MAX_CD_REACHED :
+        snprintf(error_msg,max_error_size, " maximum number of found CD reached");
+        break;
+      case SPLT_CUE_OK :
+        snprintf(error_msg,max_error_size, " cue file processed");
+        break;
+      case SPLT_CDDB_OK :
+        snprintf(error_msg,max_error_size, " cddb file processed");
+        break;
+      case SPLT_FREEDB_FILE_OK :
+        snprintf(error_msg,max_error_size, " freedb file downloaded");
+        break;
+      case SPLT_FREEDB_OK :
+        snprintf(error_msg,max_error_size, " freedb search processed");
+        break;
+        //
+      case SPLT_FREEDB_ERROR_INITIALISE_SOCKET :
+        snprintf(error_msg,max_error_size, 
+            " freedb error: cannot initialise socket (%s)",
+            state->err.strerror_msg);
+        break;
+      case SPLT_FREEDB_ERROR_CANNOT_GET_HOST :
+        snprintf(error_msg,max_error_size, 
+            " freedb error: cannot get host '%s' by name (%s)",
+            state->err.error_data, state->err.strerror_msg);
+        break;
+      case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET :
+        snprintf(error_msg,max_error_size, " freedb error: cannot open socket");
+        break;
+      case SPLT_FREEDB_ERROR_CANNOT_CONNECT :
+        snprintf(error_msg,max_error_size, 
+            " freedb error: cannot connect to host '%s' (%s)",
+            state->err.error_data, state->err.strerror_msg);
+        break;
+      case SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE :
+        snprintf(error_msg,max_error_size, 
+            " freedb error: cannot send message to host '%s' (%s)",
+            state->err.error_data, state->err.strerror_msg);
+        break;
+      case SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER :
+        snprintf(error_msg,max_error_size, " freedb error: invalid server answer");
+        break;
+      case SPLT_FREEDB_ERROR_SITE_201 :
+        snprintf(error_msg,max_error_size, " freedb error: site returned code 201");
+        break;
+      case SPLT_FREEDB_ERROR_SITE_200 :
+        snprintf(error_msg,max_error_size, " freedb error: site returned code 200");
+        break;
+      case SPLT_FREEDB_ERROR_BAD_COMMUNICATION :
+        snprintf(error_msg,max_error_size, " freedb error: bad communication with site");
+        break;
+      case SPLT_FREEDB_ERROR_GETTING_INFOS :
+        snprintf(error_msg,max_error_size, " freedb error: could not get infos from site '%s'",
+            state->err.error_data);
+        break;
+      case SPLT_FREEDB_NO_CD_FOUND :
+        snprintf(error_msg,max_error_size, " no CD found for this search");
+        break;
+      case SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE:
+        snprintf(error_msg,max_error_size,
+            " freedb error: cannot receive message from server '%s' (%s)",
+            state->err.error_data, state->err.strerror_msg);
+        break;
+      case SPLT_INVALID_CUE_FILE:
+        snprintf(error_msg,max_error_size, " cue error: invalid cue file '%s'",
+            state->err.error_data);
+        break;
+      case SPLT_INVALID_CDDB_FILE:
+        snprintf(error_msg,max_error_size, " cddb error: invalid cddb file '%s'",
+            state->err.error_data);
+        break;
+      case SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE :
+        snprintf(error_msg,max_error_size, " freedb error: No such CD entry in database");
+        break;
+      case SPLT_FREEDB_ERROR_SITE :
+        snprintf(error_msg,max_error_size, " freedb error: site returned an unknown error");
+        break;
+        //
+      case SPLT_DEWRAP_OK:
+        snprintf(error_msg,max_error_size, " wrap split ok");
+        break;
+        //
+      case SPLT_DEWRAP_ERR_FILE_LENGTH:
+        snprintf(error_msg,max_error_size, " wrap error : incorrect file length");
+        break;
+      case SPLT_DEWRAP_ERR_VERSION_OLD:
+        snprintf(error_msg,max_error_size,
+            " wrap error: libmp3splt version too old for this wrap file");
+        break;
+      case SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX:
+        snprintf(error_msg,max_error_size,
+            " wrap error: no file found or bad index");
+        break;
+      case SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE:
+        snprintf(error_msg,max_error_size,
+            " wrap error: file '%s' damaged or incomplete",
+            state->err.error_data);
+        break;
+      case SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED:
+        snprintf(error_msg,max_error_size,
+            " wrap error: maybe not a wrapped file or wrap file damaged");
+        break;
+        //
+      case SPLT_OK_SPLITTED_EOF :
+        snprintf(error_msg,max_error_size," file splitted (EOF)");
+        break;
+      case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
+        snprintf(error_msg,max_error_size, " no silence splitpoints found");
+        break;
+      case SPLT_TIME_SPLIT_OK:
+        snprintf(error_msg,max_error_size, " time split ok");
+        break;
+      case SPLT_SILENCE_OK:
+        snprintf(error_msg,max_error_size, " silence split ok");
+        break;
+      case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
+        snprintf(error_msg,max_error_size,
+            " file splitted, splitpoints bigger than length");
+        break;
+      case SPLT_OK_SPLITTED :
+        snprintf(error_msg,max_error_size," file splitted");
+        break;
+      case SPLT_OK :
+        //fprintf(console_err," bug in the program, please report it");
+        break;
+      case SPLT_ERROR_SPLITPOINTS :
+        snprintf(error_msg,max_error_size, " error: not enough splitpoints (<2)");
+        break;
+      case SPLT_ERROR_CANNOT_OPEN_FILE :
+        snprintf(error_msg,max_error_size,
+            " error: cannot open file '%s' : %s",
+            state->err.error_data, state->err.strerror_msg);
+        break;
+      case SPLT_ERROR_CANNOT_CLOSE_FILE :
+        snprintf(error_msg,max_error_size,
+            " error: cannot close file '%s' : %s",
+            state->err.error_data, state->err.strerror_msg);
+        break;
+      case SPLT_ERROR_INVALID :
+        snprintf(error_msg,max_error_size,
+            " error: invalid input file '%s' for this plugin",
+            state->err.error_data);
+        break;
+      case SPLT_ERROR_EQUAL_SPLITPOINTS :
+        snprintf(error_msg,max_error_size,
+            " error: splitpoints are equal (%s)",
+            state->err.error_data);
+        break;
+      case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER :
+        snprintf(error_msg,max_error_size,
+            " error: the splitpoints are not in order (%s)",
+            state->err.error_data);
+        break;
+      case SPLT_ERROR_NEGATIVE_SPLITPOINT :
+        snprintf(error_msg,max_error_size, " error: negative splitpoint (%s)",
+            state->err.error_data);
+        break;
+      case SPLT_ERROR_INCORRECT_PATH :
+        snprintf(error_msg,max_error_size,
+            " error: bad destination folder '%s' (%s)",
+            state->err.error_data, state->err.strerror_msg);
+        break;
+      case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
+        snprintf(error_msg,max_error_size, " error: incompatible options");
+        break;
+      case SPLT_ERROR_INPUT_OUTPUT_SAME_FILE:
+        snprintf(error_msg,max_error_size,
+            " input and output are the same file ('%s')",
+            state->err.error_data);
+        break;
+      case SPLT_ERROR_CANNOT_ALLOCATE_MEMORY:
+        snprintf(error_msg,max_error_size, " error: cannot allocate memory");
+        break;
+      case SPLT_ERROR_CANNOT_OPEN_DEST_FILE:
+        snprintf(error_msg,max_error_size,
+            " error: cannot open destination file '%s' : %s",
+            state->err.error_data,state->err.strerror_msg);
+        break;
+      case SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE:
+        snprintf(error_msg,max_error_size,
+            " error: cannot write to output file '%s' : %s",
+            state->err.error_data,state->err.strerror_msg);
+        break;
+      case SPLT_ERROR_WHILE_READING_FILE:
+        snprintf(error_msg,max_error_size, " error: error while reading file '%s'",
+            state->err.error_data,state->err.strerror_msg);
+        break;
+      case SPLT_ERROR_SEEKING_FILE:
+        snprintf(error_msg,max_error_size, " error: cannot seek file '%s'",
+            state->err.error_data);
+        break;
+      case SPLT_ERROR_BEGIN_OUT_OF_FILE:
+        snprintf(error_msg,max_error_size, " error: begin point out of file");
+        break;
+      case SPLT_ERROR_INEXISTENT_FILE:
+        snprintf(error_msg,max_error_size, " error: inexistent file '%s' : %s",
+            state->err.error_data,state->err.strerror_msg);
+        break;
+      case SPLT_SPLIT_CANCELLED:
+        snprintf(error_msg,max_error_size, " split process cancelled");
+        break;
+      case SPLT_ERROR_LIBRARY_LOCKED: 
+        snprintf(error_msg,max_error_size, " error: library locked");
+        break;
+      case SPLT_ERROR_STATE_NULL:
+        snprintf(error_msg,max_error_size,
+            " error: the state has not been initialized with 'mp3splt_new_state'");
+        break;
+      case SPLT_ERROR_NEGATIVE_TIME_SPLIT:
+        snprintf(error_msg,max_error_size, " error: negative time split");
+        break;
+      case SPLT_ERROR_CANNOT_CREATE_DIRECTORY:
+        snprintf(error_msg,max_error_size, " error: cannot create directory '%s'",
+            state->err.error_data);
+        break;
+      case SPLT_ERROR_NO_PLUGIN_FOUND:
+        snprintf(error_msg,max_error_size, " error: no plugin found");
+        break;
+      case SPLT_ERROR_CANNOT_INIT_LIBLTDL:
+        snprintf(error_msg,max_error_size, " error: cannot initiate libltdl");
+        break;
+      case SPLT_ERROR_CRC_FAILED:
+        snprintf(error_msg,max_error_size, " error: CRC failed");
+        break;
+      case SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE:
+        snprintf(error_msg,max_error_size,
+            " error: no plugin matches the file '%s'", state->err.error_data);
+        break;
+        //
+      case SPLT_OUTPUT_FORMAT_OK:
+        break;
+      case SPLT_OUTPUT_FORMAT_AMBIGUOUS:
+        snprintf(error_msg,max_error_size, " warning: output format ambigous");
+        break;
+        //
+      case SPLT_OUTPUT_FORMAT_ERROR:
+        snprintf(error_msg,max_error_size, " warning: output format error");
+        break;
+        //
+      case SPLT_ERROR_INEXISTENT_SPLITPOINT:
+        snprintf(error_msg,max_error_size, " error: inexistent splitpoint");
+        break;
+        //
+      case SPLT_ERROR_PLUGIN_ERROR:
+        snprintf(error_msg,max_error_size, " plugin error: '%s'",
+            state->err.error_data);
+        break;
+        //
+      case SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE:
+        ;
+        splt_plugins *pl = state->plug;
+        int current_plugin = splt_t_get_current_plugin(state);
+        snprintf(error_msg,max_error_size, " error: unsupported feature for the plugin '%s'",
+            pl->data[current_plugin].info.name);
+        break;
+    }
 
-  if (error_msg[0] == '\0')
+    if (error_msg[0] == '\0')
+    {
+      free(error_msg);
+      error_msg = NULL;
+    }
+  }
+  else
   {
-    free(error_msg);
-    error_msg = NULL;
+    //if not enough memory
+    splt_u_error(SPLT_IERROR_CHAR,__func__, 0, "not enough memory");
   }
 
   return error_msg;
@@ -1813,7 +1897,7 @@ void splt_u_print_debug(const char *message,double optional, const char *optiona
 // 3460 -> 34.6  | 34 seconds and 6 hundredth
 double splt_u_get_double_pos(long split)
 {
-  double pos;
+  double pos = 0;
   pos = split / 100;
   pos += ((split % 100) / 100.);
 
@@ -1821,12 +1905,20 @@ double splt_u_get_double_pos(long split)
 }
 
 //create recursive directories
-int splt_u_create_directory(splt_state *state, char *dir)
+int splt_u_create_directory(splt_state *state, const char *dir)
 {
   int result = SPLT_OK;
-  char *ptr = NULL;
+  const char *ptr = NULL;
+  if (dir[0] == '\0')
+  {
+    return result;
+  }
   char *junk = malloc(sizeof(char) * (strlen(dir)+100));
-  DIR *d;
+  if (!junk)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+  DIR *d = NULL;
   
   splt_u_print_debug("Creating directory ...",0,dir);
   
@@ -1841,7 +1933,7 @@ int splt_u_create_directory(splt_state *state, char *dir)
       
       if (!(d = opendir(junk)))
         {
-#ifdef _WIN32                                
+#ifdef __WIN32__
           if ((mkdir(junk))==-1)
             {
 #else
@@ -1859,13 +1951,13 @@ int splt_u_create_directory(splt_state *state, char *dir)
           closedir(d);
         }
     }
-      
+
   //we have created all the directories except the last one
   if (!(d = opendir(dir)))
     {
       splt_u_print_debug("final directory ...",0, dir);
 
-#ifdef _WIN32
+#ifdef __WIN32__
       if ((mkdir(dir))==-1)
         {
  #else
@@ -1882,8 +1974,11 @@ int splt_u_create_directory(splt_state *state, char *dir)
       closedir(d);
     }
   
-  free(junk);
-  junk = NULL;
+  if (junk)
+  {
+    free(junk);
+    junk = NULL;
+  }
   
   return result;
 }

@@ -97,7 +97,7 @@ static void splt_s_split(splt_state *state, int *error)
     if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES)
         == SPLT_OUTPUT_MINS_SECS)
     {
-      splt_u_set_complete_mins_secs_filename(state,error);
+      splt_u_set_complete_mins_secs_filename(state, error);
     }
 
     //if no error
@@ -294,7 +294,8 @@ bloc_end:
         //we put the output filrnames
         if (output_filenames == SPLT_OUTPUT_FORMAT)
         {
-          splt_u_put_output_format_filename(state);
+          err = splt_u_put_output_format_filename(state);
+          if (err < 0) { *error = err; return; }
         }
 
         char *temp_name = splt_t_get_splitpoint_name(state, i, &get_error);
