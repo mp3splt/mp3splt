@@ -740,7 +740,12 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags)
                 {
                   splt_t_get_original_tags(state, &error);
                   splt_p_end(state);
-                  splt_t_append_original_tags(state);
+                  error = splt_t_append_original_tags(state);
+                  if (error < 0)
+                  {
+                    splt_t_unlock_messages(state);
+                    goto after_while;
+                  }
                   original_tags = SPLT_TRUE;
                   splt_t_unlock_messages(state);
                 }

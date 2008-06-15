@@ -99,7 +99,7 @@ splt_point *splt_t_get_splitpoints(splt_state *state,
 /********************************/
 /* types: tags access */
 
-void splt_t_append_original_tags(splt_state *state);
+int splt_t_append_original_tags(splt_state *state);
 void splt_t_get_original_tags(splt_state *state, int *err);
 int splt_t_append_tags(splt_state *state,
     const char *title, const char *artist,
