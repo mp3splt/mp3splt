@@ -1191,6 +1191,7 @@ Options *new_options()
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
   opt->param_args = NULL; opt->custom_tags = NULL;
   opt->m3u_arg = NULL;
+  opt->output_format = NULL;
 
   //we put the default values for freedb search
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
@@ -1401,7 +1402,16 @@ int main(int argc, char *argv[])
         if (optarg)
         {
           opt->output_format = strdup(optarg);
+          if (!opt->output_format)
+          {
+            fprintf(console_err,"Error: cannot allocate memory !\n");
+            fflush(console_err);
+            //free variables
+            free_options(opt);
+            mp3splt_free_state(state,&err);
+          }
         }
+
         //if the splitted result must be written to stdout
         if (strcmp(optarg,"-") == 0)
         {
