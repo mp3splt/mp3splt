@@ -566,7 +566,7 @@ function_end:
     if (fclose(file_input) != 0)
     {
       splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, filename);
+      splt_t_set_error_data(state, file);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     file_input = NULL;
