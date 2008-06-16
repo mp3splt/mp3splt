@@ -576,7 +576,12 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     splt_tag_put_filenames_from_tags(state,tracks,error);
 
 function_end:
-    fclose(file_input);
+    if (fclose(file_input) != 0)
+    {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state, filename);
+      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+    }
     file_input = NULL;
   }
   
@@ -1152,7 +1157,12 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
     }
 
 function_end:
-    fclose(file_input);
+    if (fclose(file_input) != 0)
+    {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state, file);
+      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+    }
     file_input = NULL;
   }
 
@@ -1288,33 +1298,41 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
               temp,buf,temp-buf);
 
           char *full_artist_album = malloc(temp2-(temp+8)-1);
-          int max_chars = temp2-(temp+8)-1;
-          snprintf(full_artist_album,max_chars,"%s",temp+9);
-          //snprintf seems buggy
-#ifdef __WIN32__					
-          full_artist_album[max_chars-1] = '\0';
-#endif
-          splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
-
-          //i!=-1 means that it's not a revision
-          int i=0;
-          int err = SPLT_OK;
-          //here we have in album_name the name of the current album      
-          err = splt_t_freedb_append_result(state, full_artist_album, i);
-          if (err < 0)
+          if (full_artist_album)
           {
-            if (full_artist_album)
+            int max_chars = temp2-(temp+8)-1;
+            snprintf(full_artist_album,max_chars,"%s",temp+9);
+            //snprintf seems buggy
+#ifdef __WIN32__					
+            full_artist_album[max_chars-1] = '\0';
+#endif
+            splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
+
+            //i!=-1 means that it's not a revision
+            int i=0;
+            int err = SPLT_OK;
+            //here we have in album_name the name of the current album      
+            err = splt_t_freedb_append_result(state, full_artist_album, i);
+            if (err < 0)
             {
-              free(full_artist_album);
-              full_artist_album = NULL;
+              if (full_artist_album)
+              {
+                free(full_artist_album);
+                full_artist_album = NULL;
+              }
+              *error = err;
+              return -2;
             }
-            *error = err;
+
+            //free memory
+            free(full_artist_album);
+            full_artist_album = NULL;
+          }
+          else
+          {
+            *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
             return -2;
           }
-
-          //free memory
-          free(full_artist_album);
-          full_artist_album = NULL;
 
           //next cd
           splt_t_freedb_found_cds_next(state);

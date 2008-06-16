@@ -2143,13 +2143,13 @@ int splt_t_freedb_append_result(splt_state *state, const char *album_name, int r
   if (state->fdb.search_results->number == 0)
   {
     state->fdb.search_results->results = malloc(sizeof(splt_freedb_one_result));
-    state->fdb.search_results->results[0].revisions = NULL;
     if (state->fdb.search_results->results == NULL)
     {
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
     else
     {
+      state->fdb.search_results->results[0].revisions = NULL;
       state->fdb.search_results->results[0].name = strdup(album_name);
       //if strdup fails
       if (state->fdb.search_results->results[0].name == NULL)
