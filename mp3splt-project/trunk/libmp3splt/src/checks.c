@@ -193,6 +193,10 @@ char *splt_check_put_dir_of_cur_song(const char *filename,
     const char *the_filename_path)
 {
   char *orig_filename = strdup(filename);
+  if (!orig_filename)
+  {
+    return NULL;
+  }
 
   char *c = NULL;
   char *filename_path = NULL;
@@ -279,7 +283,7 @@ char *splt_check_put_dir_of_cur_song(const char *filename,
   return new_filename_path;
 }
 
-//****************************/
+/****************************/
 /* options check */
 
 //checks if the options are compatible. 

@@ -368,7 +368,6 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
 
   char *filename2 = strdup(filename);
-
   if (!filename2)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -518,13 +517,23 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
   }
   else
   {
+    char *returned_result = NULL;
     if (output_fname)
     {
-      return strdup(output_fname);
+      returned_result = strdup(output_fname);
     }
     else
     {
-      return strdup("-");
+      returned_result = strdup("-");
+    }
+    if (returned_result)
+    {
+      return returned_result;
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
     }
   }
 }

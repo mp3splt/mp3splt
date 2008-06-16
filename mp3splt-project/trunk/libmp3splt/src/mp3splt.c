@@ -828,7 +828,6 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
   {
     //we copy the search string, in order not to modify the original one
     char *search = strdup(search_string);
-
     if (search != NULL)
     {
       //puts the results in "search_results"
@@ -900,7 +899,12 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
         else
         {
           fprintf(output,"%s",freedb_file_content);
-          fclose(output);
+          if (fclose(output) != 0)
+          {
+            splt_t_set_strerror_msg(state);
+            splt_t_set_error_data(state, cddb_file);
+            *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+          }
           output = NULL;
         }
       }
