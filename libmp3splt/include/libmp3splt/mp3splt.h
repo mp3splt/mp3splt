@@ -1353,7 +1353,7 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     const char *searched_string,
     int *error,
     int search_type,
-    const char search_server[256],
+    const char *search_server,
     int port);
 
 void mp3splt_write_freedb_file_result(splt_state *state,
@@ -1361,7 +1361,7 @@ void mp3splt_write_freedb_file_result(splt_state *state,
     const char *cddb_file,
     int *error,
     int cddb_get_type,
-    const char cddb_get_server[256],
+    const char *cddb_get_server,
     int port);
 
 //string s is freed, call with strdup for example
