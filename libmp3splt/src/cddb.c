@@ -52,40 +52,27 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
 {
   int i = 0;
   char *artist0 = NULL;
-  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST))
+  artist0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST));
+  if (artist0 == NULL)
   {
-    artist0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST));
-    if (artist0 == NULL)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto function_end;
-    }
-  }
-  else
-  {
-    artist0 = NULL;
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    goto function_end;
   }
 
   char *album0 = NULL;
-  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM))
+  album0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM));
+  if (album0 == NULL)
   {
-    album0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM));
-    if (album0 == NULL)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto function_end;
-    }
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    goto function_end;
   }
 
   char *year0 = NULL;
-  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR))
+  year0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR));
+  if (year0 == NULL)
   {
-    year0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR));
-    if (year0 == NULL)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto function_end;
-    }
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    goto function_end;
   }
 
   char *performer = NULL;
@@ -213,7 +200,7 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   }
 
 function_end:
-  //free 
+  //free some memory
   if (artist0)
   {
     free(artist0);
