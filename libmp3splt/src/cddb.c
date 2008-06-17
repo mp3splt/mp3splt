@@ -694,13 +694,16 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
           //we convert them lower to seconds
           append_error =
             splt_t_append_splitpoint(state, temp * 100, NULL);
-          //we count the tracks
-          tracks++;
-
+  
           if (append_error != SPLT_OK)
           {
             *error = append_error;
             goto function_end;
+          }
+          else
+          {
+            //we count the tracks
+            tracks++;
           }
         }
       } while (1);
