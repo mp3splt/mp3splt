@@ -1,33 +1,12 @@
 .\" This -*- nroff -*- file has been generated from
 .\" DocBook SGML with docbook-to-man on Debian GNU/Linux.
-.\"
-.\"	transcript compatibility for postscript use.
-.\"
-.\"	synopsis:  .P! <file.ps>
-.\"
-
-.de IPs
-.IP "\\$1" \n(SS
-..
-.\" begin of first level suboptions, end with .RE
-.de RSs
-.RS \n(IN+13
-..
-.\" begin of 2nd level suboptions
-.de RSss
-.PD 0
-.RS \n(SS+3
-..
-.\" end of 2nd level suboptions
-.de REss
-.RE
-.PD 1
-..
-.
-
+...\"
+...\"	transcript compatibility for postscript use.
+...\"
+...\"	synopsis:  .P! <file.ps>
+...\"
 .de P!
 \\&.
-
 .fl			\" force out current output buffer
 \\!%PB
 \\!/showpage{}def
@@ -74,6 +53,7 @@
 .ds f4\"
 '\" t
 .ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
+
 .TH "MP3SPLT" "1"
 .SH "NAME"
 
@@ -82,10 +62,9 @@ mp3splt \(em Utility for mp3/ogg splitting without decoding
 .PP
 \fBmp3splt [OPTIONS] FILE... [BEGIN_TIME] [END_TIME...]\fP
 .PP
-\fBFILE\fP: mp3 or ogg file to be splitted. Note that mp3splt will recognize an ogg file
-instead of mp3 only from extension. So if your file is Ogg Vorbis, it must end with ".ogg".
-If you want to specify STDIN as input, you can use "-" when input is mp3, and "o-" when ogg.
-Multiple files can be specified, all files will be splitted with the same criterion.
+\fBFILE\fP: mp3 or ogg file to be splitted. If you want to specify STDIN as input, you can use "-"
+when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be splitted
+with the same criterion.
 
 .PP
 \fBTIME FORMAT\fP: begin_time and end_time must be in this form:
@@ -99,11 +78,9 @@ Multiple files can be specified, all files will be splitted with the same criter
 \fBHundredths\fP  (optional): Must be between 0 and 99. Use them for higher precision.
 
 .PP
-Multiple split points can be specified. After the minimal 2, another indefinite number of split points (up to 1000) can
+Multiple split points can be specified. After the minimal 2, another indefinite number of split points can
 be specified. Each split point will be an end time for the previous, and a begin for the following.
-An invalid time format (and the next ones) will be ignored (except for the one following filename
-that will be considered another file to be splitted). If you want to reach the end of file,
-you can use "EOF" as last splitpoint.
+If you want to reach the end of file, you can use "EOF" as last splitpoint.
 
 .SH "DESCRIPTION"
 .PP
@@ -113,7 +90,8 @@ without need of decoding and reencoding.
 It's useful to split large mp3/ogg to make smaller files or to split
 entire albums to obtain original tracks.
 
-If you are splitting an album you can get splitpoints and filenames automatically from Freedb.org server on internet
+If you are splitting an album you can get splitpoints and filenames
+automatically from servers on internet like Freedb.org, tracktype.org
 or from a local .XMCD (.CDDB) or .CUE file (see \-c option), with the possibility to adjust them automatically with silence
 detection (see \-a option).
 
@@ -239,9 +217,7 @@ the argument and must be in the form:
 
 \fB<name1=value,name2=value,..>\fP
 
-You can specify an indefinite number of them, with no spaces and separated by comma. You can let mp3splt
-decide all values by writing just "auto", which will set all parameters to default values.
-Available parameters are:
+You can specify an indefinite number of them, with no spaces and separated by comma. Available parameters are:
 
 .IP "\fBBoth -s and -a\fP"
 
@@ -289,8 +265,7 @@ those options.
 .IP "\fB\-o FORMAT\fP         " 10
 \fBOutput format\fP,
 to specify an output filename. FORMAT is a string that will be used
-as output filename. When using \-c option, it can contain name variables,
-that must begin with @ char and that can be:
+as output filename. It can contain name variables, that must begin with @ char and that can be:
 
 @a: artist name
 .br
@@ -326,9 +301,9 @@ In Wrap mode it will also skip CRC check, use if you are in such a hurry.
 
 .SH "EXAMPLES"
 .PP
-\fBmp3splt album.mp3 54.32.19 67.32 \-o out.mp3\fP
+\fBmp3splt album.mp3 54.32.19 67.32 \-o out\fP
 .br
-\fBmp3splt album.ogg 54.32.19 67.32 \-o out.ogg\fP
+\fBmp3splt album.ogg 54.32.19 67.32 \-o out\fP
 
 This is the standard use of mp3splt for constant bitrate mp3 or for any ogg.
 You specify a begin time (which in this case uses hundredths, 54.32.19), an end time and an output file.
