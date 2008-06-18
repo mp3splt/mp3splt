@@ -1,3 +1,11 @@
+TODO :
+
+* '-p' parsing shows no error if bad data
+* 'mp3splt.log' for silence split
+* print sync errors on '.mp3' ONLY if framemode
+* don't do CRC check if Quiet mode
+* split multiple files with the same splitpoints
+
 BUGS :
 
 * 0% progress on EOF
