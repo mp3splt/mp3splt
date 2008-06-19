@@ -248,6 +248,25 @@ int mp3splt_set_progress_function(splt_state *state,
   return error;
 }
 
+int mp3splt_set_silence_level_function(splt_state *state,
+  void (*get_silence_cb)(float level, void *user_data),
+  void *data)
+{
+  int error = SPLT_OK;
+
+  if (state != NULL)
+  {
+    state->split.get_silence_level = get_silence_cb;
+    state->split.silence_level_client_data = data;
+  }
+  else
+  {
+    error = SPLT_ERROR_STATE_NULL;
+  }
+
+  return error;
+}
+
 /************************************/
 /* Splitpoints                      */
 

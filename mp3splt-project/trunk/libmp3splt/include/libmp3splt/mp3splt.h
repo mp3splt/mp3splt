@@ -339,6 +339,10 @@ typedef struct {
   void (*file_splitted)(const char *,int);
   //for the progress bar
   splt_progress *p_bar;
+  //callback for sending the silence level to the client
+  void (*get_silence_level)(float level, void *user_data);
+  //user data set by the client for the 'get_silence_level' function
+  void *silence_level_client_data;
   //sends a message to the main program to tell him what
   //he is doing
   void (*put_message)(const char *);
@@ -636,8 +640,10 @@ typedef struct {
   splt_wrap *wrap;
   //syncerror related
   splt_syncerrors *serrors;
-  //number of sync errors found
-  //(syncerror mode)
+  //counter for the number of sync errors found
+  //-the state->serros->serrors_points_num must be used when processing the
+  //syncerrors from 'serrors' 
+  //-this is just a standalone counter
   unsigned long syncerrors;
   //freedb related
   splt_freedb fdb;
@@ -1266,6 +1272,9 @@ int mp3splt_set_splitted_filename_function(splt_state *state,
     void (*file_cb)(const char *,int));
 int mp3splt_set_progress_function(splt_state *state,
     void (*progress_cb)(splt_progress *p_bar));
+int mp3splt_set_silence_level_function(splt_state *state,
+  void (*get_silence_cb)(float level, void *user_data),
+  void *user_data);
 
 /************************************/
 /* Splitpoints                      */

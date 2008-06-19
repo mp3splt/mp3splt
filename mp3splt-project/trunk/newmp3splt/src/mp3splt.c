@@ -43,7 +43,7 @@
 #endif
 #define MP3SPLT_DATE "25/05/08"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
-#define MP3SPLT_AUTHOR2 "Munteanu Alexandru Ionut"
+#define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
 #define MP3SPLT_EMAIL2 "<io_fx AT yahoo.fr>"
 #define MP3SPLT_CDDBFILE "query.cddb"
@@ -90,6 +90,13 @@ typedef struct {
   char freedb_get_server[256];
   int freedb_get_port;
 } Options;
+
+
+typedef struct
+{
+  double level_sum;
+  unsigned long number_of_levels;
+} silence_level;
 
 //we make a global variable, we use it in
 //sigint_handler
@@ -153,7 +160,6 @@ void show_small_help_exit(Options *opt,splt_state *state)
       " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
       " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n"
       "      .cddb or .cue file or from Internet (\"query\"). Use -a to auto-adjust.\n"
-      "      \n"
       " -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n"
       " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
       " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
@@ -230,8 +236,8 @@ char **rmopt2 (char **argv,int index, int tot)
 int parse_arg(char *arg, float *th, int *gap, int *nt,
     float *off, int *rm, float *min)
 {
-  char *ptr;
-  int found=0;
+  char *ptr = NULL;
+  int found = 0;
 
   if ((gap!=NULL) && ((ptr=strstr(arg, "gap"))!=NULL))
   {
@@ -1270,6 +1276,13 @@ int check_if_directory(char *fname)
   return SPLT_FALSE;
 }
 
+void get_silence_level(float level, void *user_data)
+{
+  silence_level *sl = user_data;
+  sl->level_sum += level;
+  sl->number_of_levels++;
+}
+
 //main program starts here
 int main(int argc, char *argv[])
 {
@@ -1291,22 +1304,34 @@ int main(int argc, char *argv[])
 
   //we create our state
   state = mp3splt_new_state(&err);
+  print_confirmation_error(err, opt, state);
 
   //close nicely on Ctrl+C
   signal(SIGINT, sigint_handler);
 
   //callback for the library messages
   mp3splt_set_message_function(state, put_library_message);
+  silence_level *sl = malloc(sizeof(*sl));
+  sl->level_sum = 0;
+  sl->number_of_levels = 0;
+  if (!sl)
+  {
+    fprintf(console_err,"Error: cannot allocate memory !\n");
+    fflush(console_err);
+    //free variables
+    free_options(opt);
+    mp3splt_free_state(state,&err);
+    return 1;
+  }
+  mp3splt_set_silence_level_function(state, get_silence_level, sl);
   //callback for the splitted files
-  mp3splt_set_splitted_filename_function(state,put_splitted_file);
+  mp3splt_set_splitted_filename_function(state, put_splitted_file);
   //callback for the progress bar
   mp3splt_set_progress_function(state,put_progress_bar);
 
   //default we write mins_secs_hundr for normal split
-  mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
-      SPLT_OUTPUT_DEFAULT);
-  mp3splt_set_int_option(state, SPLT_OPT_TAGS,
-      SPLT_TAGS_ORIGINAL_FILE);
+  mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
+  mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
 
   //the index of the file that we are splitting in argv
   int file_arg_position = 0;
@@ -1327,8 +1352,6 @@ int main(int argc, char *argv[])
         break;
       case 'v':
         print_version(console_out); 
-        fprintf(console_out,"\n");
-        fflush(console_out);
         print_authors(console_out);
         //free variables
         free_options(opt);
@@ -1459,6 +1482,12 @@ int main(int argc, char *argv[])
     }
   }
 
+  //if quiet, does not write authors and other
+  if (!opt->q_option)
+  {
+    print_version_authors(console_err);
+  }
+
   //if -o option, then take the directory path and set it as dir_char
   //if -d option is also specified, then the -d option will replace this
   //path
@@ -1538,9 +1567,11 @@ int main(int argc, char *argv[])
   {
     float th = -200,off = -200,min = -200;
     int gap = -200,nt = -200,rm = -200;
-    if (parse_arg(opt->param_args,&th,&gap,&nt,&off,&rm,&min) < -1)
+    int parsed_p_options = parse_arg(opt->param_args,&th,&gap,&nt,&off,&rm,&min);
+    if (parsed_p_options < 1)
     {
-      print_warning("bad argument for -p option");
+      put_error_message_exit("Error: bad argument for -p option. No valid value"
+          " was recognized!", opt, state);
     }
 
     //threshold
@@ -1573,12 +1604,6 @@ int main(int argc, char *argv[])
     {
       mp3splt_set_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE, rm);
     }
-  }
-
-  //if quiet, does not write authors and other
-  if (!opt->q_option)
-  {
-    print_version_authors(console_err);
   }
 
   if (opt->o_option)
@@ -1621,7 +1646,10 @@ int main(int argc, char *argv[])
   //for all the remained arguments, consider as files
   while (argc > 1)
   {
+    sl->level_sum = 0;
+    sl->number_of_levels = 0;
     err = SPLT_OK;
+
     fprintf(console_out," Processing file '%s' ...\n",argv[file_arg_position]);
     fflush(console_out);
     //we put the filename
@@ -1682,8 +1710,7 @@ int main(int argc, char *argv[])
 
         if (err >= 0)
         {
-          fprintf(console_out,"%d silence splitpoints detected"
-              "            \n",
+          fprintf(console_out,"\n%d silence splitpoints detected.",
               silence_number);
           fflush(console_out);
         }
@@ -1790,6 +1817,17 @@ int main(int argc, char *argv[])
             //we do the effective split
             err = mp3splt_split(state);
             print_confirmation_error(err,opt,state);
+
+            //print the average silence level
+            if (opt->s_option)
+            {
+              float average_silence_levels = sl->level_sum /
+                (double) sl->number_of_levels;
+              char message[256] = { '\0' };
+              snprintf(message,256," Average silence level : %.2f",
+                  average_silence_levels);
+              print_message(message);
+            }
 
             //if cddb split, put message at the end
             if (opt->c_option && err >= 0 && !opt->q_option)

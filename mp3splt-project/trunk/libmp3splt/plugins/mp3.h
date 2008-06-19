@@ -115,8 +115,6 @@ typedef struct {
   long data_len;
   //length of a buffer when reading a frame
   int buf_len;
-  double avg_level;
-  unsigned long n_stat;
 } splt_mp3_state;
 
 /****************************/
