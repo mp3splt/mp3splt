@@ -530,8 +530,18 @@ int splt_s_set_silence_splitpoints(splt_state *state, int write_tracks, int *err
   {
     //put client infos
     char client_infos[512] = { '\0' };
-    snprintf(client_infos,512,"\n Total silence points found: %d.\n",found);
+    snprintf(client_infos,512,"\n Total silence points found: %d.",found);
     splt_t_put_message_to_client(state,client_infos);
+    if (found > 0)
+    {
+      snprintf(client_infos,512," (%d tracks)\n",found+1);
+      splt_t_put_message_to_client(state,client_infos);
+    }
+    else
+    {
+      snprintf(client_infos, 512, "\n");
+      splt_t_put_message_to_client(state,client_infos);
+    }
 
     //we set the number of tracks
     int order = 0;
@@ -713,7 +723,6 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
             *error = SPLT_SILENCE_OK;
             break;
           default:
-            goto function_end;
             break;
         }
       }
@@ -747,16 +756,44 @@ void splt_s_silence_split(splt_state *state, int *error)
 {
   splt_u_print_debug("Starting silence split ...",0,NULL);
 
+  //print some useful infos to the client
   splt_t_put_message_to_client(state, " info: starting silence mode split\n");
+  char remove_str[128] = { '\0' };
+  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+  {
+    snprintf(remove_str,128,"YES");
+  }
+  else
+  {
+    snprintf(remove_str,128,"NO");
+  }
+  char auto_user_str[128] = { '\0' };
+  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS) > 0)
+  {
+    snprintf(auto_user_str,128,"User");
+  }
+  else
+  {
+    snprintf(auto_user_str,128,"Auto");
+  }
+  char message[1024] = { '\0' };
+  snprintf(message, 1024, " Silence split type: %s mode (Th: %.1f dB,"
+      " Off: %.2f, Min: %.2f, Remove: %s)\n",
+      auto_user_str,
+      splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+      splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
+      splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
+      remove_str);
+  splt_t_put_message_to_client(state, message);
 
   int found = 0;
   found = splt_s_set_silence_splitpoints(state, SPLT_TRUE, error);
 
   //if no error
-  if(*error >= 0)
+  if (*error >= 0)
   {
     //if we have found splitpoints, write the silence tracks
-    if (found > 0)
+    if (found > 1)
     {
       splt_s_write_silence_tracks(found,state,error);
     }

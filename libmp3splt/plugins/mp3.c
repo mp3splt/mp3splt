@@ -388,7 +388,7 @@ static int splt_mp3_get_valid_frame(splt_state *state, int *error)
       }
       if (mp3state->stream.error == MAD_ERROR_LOSTSYNC)
       {
-        //syncerrors?
+        //syncerrors
         state->syncerrors++;
         if ((mp3state->syncdetect)&&
             (state->syncerrors>SPLT_MAXSYNC))
@@ -1215,8 +1215,6 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   mad_timer_reset(&mp3state->timer);
 
   mp3state->temp_level = 0.0;
-  mp3state->avg_level = 0.0;
-  mp3state->n_stat = 0;
 
   //we do the effective scan
   do
@@ -1296,8 +1294,10 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
           pos = ftello(mp3state->file_input);
 
           float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
-          mp3state->avg_level += level;
-          mp3state->n_stat++;
+          if (state->split.get_silence_level)
+          {
+            state->split.get_silence_level(level, state->split.silence_level_client_data);
+          }
           state->split.p_bar->silence_db_level = level;
           state->split.p_bar->silence_found_tracks = found;
 
@@ -2102,7 +2102,7 @@ bloc_end:
             goto bloc_end2;
           }
 
-          //syncerrors?
+          //count the number of syncerrors
           if ((begin!=mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0)) 
           {
             state->syncerrors++;
@@ -2163,7 +2163,7 @@ bloc_end:
           break;
         }
 
-        //syncerrors?
+        //count the number of syncerrors
         if ((end != mp3state->h.ptr + mp3state->h.framesize)&&(state->syncerrors>=0))
         {
           state->syncerrors++;
@@ -3085,6 +3085,8 @@ void splt_mp3_init(splt_state *state, int *error)
   FILE *file_input = NULL;
   char *filename = splt_t_get_filename_to_split(state);
 
+  state->syncerrors = 0;
+
   //if we can open the file
   if ((file_input = splt_mp3_open_file_read(state, filename, error)) != NULL)
   {
@@ -3111,6 +3113,20 @@ void splt_pl_init(splt_state *state, int *error)
 
 void splt_pl_end(splt_state *state, int *error)
 {
+  //put infos about the frames processed and the number of sync errors
+  //ONLY if framemode
+  if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_SILENCE_MODE)
+  {
+    if (splt_t_get_int_option(state, SPLT_OPT_FRAME_MODE))
+    {
+      splt_mp3_state *mp3state = state->codec;
+      char message[1024] = { '\0' };
+      snprintf(message, 1024,
+          " Processed %lu frames - Sync errors: %lu\n",
+          mp3state->frames, state->syncerrors);
+      splt_t_put_message_to_client(state, message);
+    }
+  }
   splt_mp3_end(state, error);
 }
 

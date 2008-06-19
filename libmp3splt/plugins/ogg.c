@@ -1576,8 +1576,6 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
   shot = SPLT_DEFAULTSHOT;
 
   oggstate->temp_level = 0.0;
-  oggstate->avg_level = 0.0;
-  oggstate->n_stat = 0.0;
 
   while (!eos)
   {
@@ -1651,7 +1649,6 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
                     e_position = (float) temp;
                     if ((e_position - b_position - min) >= 0.f)
                     {
-                      //TODO: errors
                       int err = SPLT_OK;
                       if (splt_t_ssplit_new(&state->silence_list, b_position, e_position, len, &err) == -1)
                       {
@@ -1726,6 +1723,10 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
       if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
       {
         float level = splt_u_convert2dB(oggstate->temp_level);
+        if (state->split.get_silence_level)
+        {
+          state->split.get_silence_level(level, state->split.silence_level_client_data);
+        }
         state->split.p_bar->silence_db_level = level;
         state->split.p_bar->silence_found_tracks = found;
 

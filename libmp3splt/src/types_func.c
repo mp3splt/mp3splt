@@ -1784,6 +1784,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   //syncerrors
   state->serrors->serrors_points = NULL;
   state->serrors->serrors_points_num = 0;
+  state->syncerrors = 0;
   //freedb
   state->fdb.search_results = NULL;
   state->fdb.cdstate = NULL;
