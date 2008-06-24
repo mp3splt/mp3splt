@@ -2327,6 +2327,8 @@ bloc_end:
     *error = SPLT_MIGHT_BE_VBR;
   }
 
+  if (*error == SPLT_OK) { *error = SPLT_OK_SPLITTED; }
+
 bloc_end2:
   mad_frame_finish(&mp3state->frame);
   mad_stream_finish(&mp3state->stream);
@@ -2646,44 +2648,49 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               *error = SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED;
               return;
             }
-            begin = ftello(mp3state->file_input);
-            if (fseeko(mp3state->file_input, 
-                  splt_mp3_getid3v1(mp3state->file_input), SEEK_END)==-1)
+
+            //perform CRC only if we don't have quiet mode
+            if (! splt_t_get_int_option(state, SPLT_OPT_QUIET_MODE))
             {
-              splt_t_set_strerror_msg(state);
-              splt_t_set_error_data(state, file_to_dewrap);
-              *error = SPLT_ERROR_SEEKING_FILE;
-              return;
-            }
-            end = ftello(mp3state->file_input);
-            splt_t_put_message_to_client(state,
-                " Check for file integrity: calculating CRC please wait... ");
-            crc = splt_mp3_c_crc(state, mp3state->file_input, begin, end, error);
-            if (*error < 0)
-            {
-              return;
-            }
-            if (crc != fcrc)
-            {
-              //No interactivity in the library (for the moment)
-              //fprintf (stderr, "BAD\nWARNING: Bad CRC. File might be damaged. Continue anyway? (y/n) ");
-              //fgets(junk, 32, stdin);
-              //if (junk[0]!='y')
-              //error("Aborted.",125);
-              //- no interactivity in the library for the moment
-              *error = SPLT_ERROR_CRC_FAILED;
-              return;
-            }
-            else 
-            {
-              splt_t_put_message_to_client(state, " OK\n");
-            }
-            if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
-            {
-              splt_t_set_strerror_msg(state);
-              splt_t_set_error_data(state, file_to_dewrap);
-              *error = SPLT_ERROR_SEEKING_FILE;
-              return;
+              begin = ftello(mp3state->file_input);
+              if (fseeko(mp3state->file_input, 
+                    splt_mp3_getid3v1(mp3state->file_input), SEEK_END)==-1)
+              {
+                splt_t_set_strerror_msg(state);
+                splt_t_set_error_data(state, file_to_dewrap);
+                *error = SPLT_ERROR_SEEKING_FILE;
+                return;
+              }
+              end = ftello(mp3state->file_input);
+              splt_t_put_message_to_client(state,
+                  " Check for file integrity: calculating CRC please wait... ");
+              crc = splt_mp3_c_crc(state, mp3state->file_input, begin, end, error);
+              if (*error < 0)
+              {
+                return;
+              }
+              if (crc != fcrc)
+              {
+                //No interactivity in the library (for the moment)
+                //fprintf (stderr, "BAD\nWARNING: Bad CRC. File might be damaged. Continue anyway? (y/n) ");
+                //fgets(junk, 32, stdin);
+                //if (junk[0]!='y')
+                //error("Aborted.",125);
+                //- no interactivity in the library for the moment
+                *error = SPLT_ERROR_CRC_FAILED;
+                return;
+              }
+              else 
+              {
+                splt_t_put_message_to_client(state, " OK\n");
+              }
+              if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
+              {
+                splt_t_set_strerror_msg(state);
+                splt_t_set_error_data(state, file_to_dewrap);
+                *error = SPLT_ERROR_SEEKING_FILE;
+                return;
+              }
             }
           }
         }

@@ -484,6 +484,9 @@ typedef struct {
   //defines the output filenames
   splt_output_filenames_options output_filenames;
 
+  //quiet mode : don't perform CRC check or other interaction with the user
+  short quiet_mode;
+
   //frame mode (mp3 only). Process all frames, seeking split positions
   //by counting frames and not with bitrate guessing.
   short option_frame_mode;
@@ -1001,6 +1004,10 @@ typedef enum {
  * Use #mp3splt_get_int_option to get those options
  */
 typedef enum {
+  /*
+   * If quiet; we don't do CRC check or human interaction
+   */
+  SPLT_OPT_QUIET_MODE,
   /**
    * If we print out debug messages
    *

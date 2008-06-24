@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-06-07 01:51+0200\n"
+"POT-Creation-Date: 2008-06-24 02:24+0200\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -251,8 +251,8 @@ msgstr ""
 
 #: src/preferences_tab.c:1134
 msgid ""
-"Output filename format for cddb files and cue files (includes freedb "
-"search) :\n"
+"Output filename format for most of the splits except normal split :\n"
+"    @f - file name\n"
 "    @a - artist name\n"
 "    @p - performer of each song (does not always exist)\n"
 "    @b - album title\n"
@@ -261,28 +261,26 @@ msgid ""
 msgstr ""
 
 #: src/preferences_tab.c:1148
-msgid ""
-"Default format : \n"
-"   @a - @n - @t where @a is the performer if found"
+msgid "Default format"
 msgstr ""
 
-#: src/preferences_tab.c:1159
+#: src/preferences_tab.c:1157
 msgid "Custom format"
 msgstr ""
 
-#: src/preferences_tab.c:1203
+#: src/preferences_tab.c:1201
 msgid "General"
 msgstr "Général"
 
-#: src/preferences_tab.c:1211
+#: src/preferences_tab.c:1209
 msgid "Split"
 msgstr "Coupure"
 
-#: src/preferences_tab.c:1219
+#: src/preferences_tab.c:1217
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1228 src/main_win.c:665
+#: src/preferences_tab.c:1226 src/main_win.c:680
 msgid "Player"
 msgstr "Lecteur"
 
@@ -318,7 +316,7 @@ msgstr "ajouter point de coupure du lecteur"
 msgid "_Connect    "
 msgstr "_Connecter    "
 
-#: src/player_tab.c:708 src/main_win.c:362 src/main_win.c:409
+#: src/player_tab.c:708 src/main_win.c:374 src/main_win.c:421
 msgid "connect to player"
 msgstr "se connecter au lecteur"
 
@@ -326,7 +324,7 @@ msgstr "se connecter au lecteur"
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:718 src/main_win.c:352
+#: src/player_tab.c:718 src/main_win.c:364
 msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
@@ -414,92 +412,92 @@ msgstr ""
 msgid " info: stopping the split process.. please wait"
 msgstr ""
 
-#: src/main_win.c:294
+#: src/main_win.c:306
 msgid " info: starting normal split... "
 msgstr ""
 
-#: src/main_win.c:297
+#: src/main_win.c:309
 msgid " info: starting wrap mode split... "
 msgstr ""
 
-#: src/main_win.c:300
+#: src/main_win.c:312
 msgid " info: starting time mode split... "
 msgstr ""
 
-#: src/main_win.c:303
+#: src/main_win.c:315
 msgid " info: starting silence mode split... "
 msgstr ""
 
-#: src/main_win.c:306
+#: src/main_win.c:318
 #, fuzzy
 msgid " info: starting error mode split... "
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:329
+#: src/main_win.c:341
 #, fuzzy
 msgid " error: no file selected "
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:334
+#: src/main_win.c:346
 #, fuzzy
 msgid " error: split in progress... "
 msgstr " erreur: les points de coupure ne sont pas en ordre"
 
-#: src/main_win.c:388
+#: src/main_win.c:400
 #, fuzzy
 msgid "set window default size"
 msgstr "rendre impossible le redimensionnement de la fenetre"
 
-#: src/main_win.c:429
+#: src/main_win.c:441
 msgid "split !"
 msgstr "coupe le fichier !"
 
-#: src/main_win.c:448
+#: src/main_win.c:460
 msgid "really wanna quit ?"
 msgstr "vraiment quitter ?"
 
-#: src/main_win.c:472
+#: src/main_win.c:484
 msgid "File"
 msgstr "Fichier"
 
-#: src/main_win.c:473
+#: src/main_win.c:485
 msgid "Help"
 msgstr "Aide"
 
-#: src/main_win.c:475 src/main_win.c:477
+#: src/main_win.c:487 src/main_win.c:489
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:480 src/main_win.c:482
+#: src/main_win.c:492 src/main_win.c:494
 msgid "About"
 msgstr "à propos"
 
-#: src/main_win.c:586 src/main_win.c:741
+#: src/main_win.c:598 src/main_win.c:753
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:613 src/main_win.c:717
+#: src/main_win.c:625 src/main_win.c:729
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:678
+#: src/main_win.c:690
 msgid "Splitpoints"
 msgstr "PointsCoupure"
 
-#: src/main_win.c:691
+#: src/main_win.c:703
 msgid "Splitted files"
 msgstr "Fichiers coupés"
 
-#: src/main_win.c:704
+#: src/main_win.c:716
 msgid "cddb&cue"
 msgstr "cddb&cue"
 
-#: src/main_win.c:728
+#: src/main_win.c:740
 #, fuzzy
 msgid "Split mode"
 msgstr "Coupure"
 
-#: src/main_win.c:763
+#: src/main_win.c:775
 #, fuzzy
 msgid "Stop"
 msgstr "stop"
