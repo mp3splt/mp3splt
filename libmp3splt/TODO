@@ -1,7 +1,6 @@
 TODO :
 
-* don't do CRC check if Quiet mode
-* split multiple files with the same splitpoints
+* BUG: -o '@a_@t_@n' produces strange result if no original tags found
 * 'mp3splt.log' for silence split
 
 BUGS :

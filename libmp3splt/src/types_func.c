@@ -45,7 +45,6 @@ extern short global_debug;
 static void splt_t_free_oformat(splt_state *state);
 static void splt_t_state_put_default_options(splt_state *state, int *error);
 static void splt_t_free_files(char **files, int number);
-static void splt_t_clean_original_tags(splt_state *state);
 static int splt_t_set_tags_int_field(splt_state *state, int index,
     int tags_field, int data);
 
@@ -1227,7 +1226,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
 }
 
 //cleans original tags
-static void splt_t_clean_original_tags(splt_state *state)
+void splt_t_clean_original_tags(splt_state *state)
 {
   if (state->original_tags.year)
   {
@@ -1953,6 +1952,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
         global_debug = SPLT_FALSE;
       }
       break;
+    case SPLT_OPT_QUIET_MODE:
+      state->options.quiet_mode = value;
+      break;
     case SPLT_OPT_OUTPUT_FILENAMES:
       state->options.output_filenames = value;
       break;
@@ -2015,45 +2017,45 @@ void splt_t_set_float_option(splt_state *state, int option_name, float value)
 //returns a int option (see mp3splt.h for int options)
 int splt_t_get_int_option(splt_state *state, int option_name)
 {
-  int returned = 0;
   switch (option_name)
   {
+    case SPLT_OPT_QUIET_MODE:
+      return state->options.quiet_mode;
+      break;
     case SPLT_OPT_OUTPUT_FILENAMES:
-      returned = state->options.output_filenames;
+      return state->options.output_filenames;
       break;
     case SPLT_OPT_SPLIT_MODE:
-      returned = state->options.split_mode;
+      return state->options.split_mode;
       break;
     case SPLT_OPT_TAGS:
-      returned = state->options.tags;
+      return state->options.tags;
       break;
     case SPLT_OPT_FRAME_MODE:
-      returned = state->options.option_frame_mode;
+      return state->options.option_frame_mode;
       break;
     case SPLT_OPT_AUTO_ADJUST:
-      returned = state->options.option_auto_adjust;
+      return state->options.option_auto_adjust;
       break;
     case SPLT_OPT_INPUT_NOT_SEEKABLE:
-      returned = state->options.option_input_not_seekable;
+      return state->options.option_input_not_seekable;
       break;
     case SPLT_OPT_PARAM_NUMBER_TRACKS:
-      returned = state->options.parameter_number_tracks;
+      return state->options.parameter_number_tracks;
       break;
     case SPLT_OPT_PARAM_REMOVE_SILENCE:
-      returned = state->options.parameter_remove_silence;
+      return state->options.parameter_remove_silence;
       break;
     case SPLT_OPT_PARAM_GAP:
-      returned = state->options.parameter_gap;
+      return state->options.parameter_gap;
       break;
     case SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X:
-      returned = state->options.tags_after_x_like_x_one;
+      return state->options.tags_after_x_like_x_one;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
   }
-
-  return returned;
 }
 
 //returns a float option (see mp3splt_types.h for int options)

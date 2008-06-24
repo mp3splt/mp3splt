@@ -217,6 +217,7 @@ void splt_t_clean_strerror_msg(splt_state *state);
 void splt_t_free_splitpoints_tags(splt_state *state);
 void splt_t_free_splitpoints(splt_state *state);
 void splt_t_free_tags(splt_state *state);
+void splt_t_clean_original_tags(splt_state *state);
 void splt_t_clean_one_split_data(splt_state *state, int num);
 void splt_t_clean_split_data(splt_state *state,int tracks);
 int splt_t_split_is_canceled(splt_state *state);
