@@ -2,7 +2,7 @@
 
 src/xmms_control.c
 src/tree_tab.c
-src/splitted_files.c
+src/split_files.c
 src/preferences_tab.c
 src/player_tab.c
 src/main_win.c

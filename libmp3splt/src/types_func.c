@@ -1796,7 +1796,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   if (err < 0) { *error = err; return; }
   //client connection
   state->split.put_message = NULL;
-  state->split.file_splitted = NULL;
+  state->split.file_split = NULL;
   state->split.p_bar->progress_text_max_char = 40;
   snprintf(state->split.p_bar->filename_shorted,512, "%s","");
   state->split.p_bar->percent_progress = 0;
@@ -2589,16 +2589,16 @@ void splt_t_wrap_free(splt_state *state)
 /******************************/
 /* types: client communication */
 
-//says to the program using the library the splitted file
+//says to the program using the library the split file
 //-return possible error
-int splt_t_put_splitted_file(splt_state *state, const char *filename)
+int splt_t_put_split_file(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
 
-  //put splitted file 
-  if (state->split.file_splitted != NULL)
+  //put split file 
+  if (state->split.file_split != NULL)
   {
-    state->split.file_splitted(filename,state->split.p_bar->user_data);
+    state->split.file_split(filename,state->split.p_bar->user_data);
 
     //if we create a m3u file
     char *m3u_file = splt_t_get_m3u_filename(state);
@@ -2631,7 +2631,7 @@ int splt_t_put_splitted_file(splt_state *state, const char *filename)
         FILE *file_input = NULL;
         if ((file_input = fopen(new_m3u_file, "a+")) != NULL)
         {
-          //we don't care about the path of the splitted filename
+          //we don't care about the path of the split filename
           fprintf(file_input,"%s\n",splt_u_get_real_name(filename));
           if (fclose(file_input) != 0)
           {

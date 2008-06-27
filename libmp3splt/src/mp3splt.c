@@ -104,7 +104,7 @@ void mp3splt_free_state(splt_state *state, int *error)
 /* Set path                         */
 
 //puts the path of the split
-//-where the splitted file will be
+//-where the split file will be
 int mp3splt_set_path_of_split(splt_state *state, const char *path)
 {
   int error = SPLT_OK;
@@ -213,16 +213,16 @@ int mp3splt_set_message_function(splt_state *state,
   return error;
 }
 
-//sets the function that sends the splitted filename after a split
+//sets the function that sends the split filename after a split
 //returns possible error
-int mp3splt_set_splitted_filename_function(splt_state *state,
+int mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *,int b))
 {
   int error = SPLT_OK;
 
   if (state != NULL)
   {
-    state->split.file_splitted = file_cb;
+    state->split.file_split = file_cb;
   }
   else
   {
@@ -1119,7 +1119,7 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
 
       if (err >= 0)
       {
-        splt_p_init(state, &err);
+        splt_p_init(state, err);
         if (err >= 0)
         {
           found_splitpoints = splt_s_set_silence_splitpoints(state, SPLT_FALSE, err);

@@ -57,7 +57,7 @@ libmp3splt version 0.1.3
 libmp3splt version 0.1.2
 
 - support for splitting in a chosen directory
-- support for getting the splitted filenames	
+- support for getting the split filenames	
 	
 -------------------------------------------------------------
 libmp3splt version 0.1.1

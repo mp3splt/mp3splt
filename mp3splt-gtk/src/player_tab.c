@@ -56,7 +56,7 @@
 #include "main_win.h"
 #include "snackamp_control.h"
 #include "utilities.h"
-#include "splitted_files.h"
+#include "split_files.h"
 #include "mp3splt-gtk.h"
 
 //filename entry
@@ -3190,8 +3190,8 @@ void fix_ogg_stream(gpointer *data)
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
                          SPLT_OPTION_NORMAL_MODE);
   
-  //remove old splitted files
-  remove_all_splitted_rows();  
+  //remove old split files
+  remove_all_split_rows();  
   
   filename_to_split = (gchar *)
     gtk_entry_get_text(GTK_ENTRY(entry));
@@ -3206,7 +3206,7 @@ void fix_ogg_stream(gpointer *data)
   
   //lock gtk
   gdk_threads_enter();
-  //we show infos about the splitted action
+  //we show infos about the split action
   print_status_bar_confirmation(confirmation);
   we_are_splitting = FALSE;
   gtk_widget_set_sensitive(GTK_WIDGET(fix_ogg_stream_button), TRUE);

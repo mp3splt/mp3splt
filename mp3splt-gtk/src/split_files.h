@@ -29,34 +29,34 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: splitted_files.h
+ * Filename: split_files.h
  *
- * header of splitted_files.c
+ * header of split_files.c
  *
  *********************************************************/
 
-GtkTreeModel *create_splitted_model();
-GtkTreeView *create_splitted_files_tree();
-void create_splitted_columns (GtkTreeView *tree_view);
-void remove_all_splitted_rows ();
+GtkTreeModel *create_split_model();
+GtkTreeView *create_split_files_tree();
+void create_split_columns (GtkTreeView *tree_view);
+void remove_all_split_rows ();
 guchar *get_real_naame(guchar *filename);
-void add_splitted_row(const gchar *name);
-void remove_splitted_selected_row();
+void add_split_row(const gchar *name);
+void remove_split_selected_row();
 void queue_files_button_event( GtkWidget *widget,
                                gpointer   data );
 void remove_file_button_event(GtkWidget *widget,
                               gpointer data);
 GtkWidget *create_queue_buttons_hbox();
-void splitted_tree_row_activated (GtkTreeView *tree_view,
+void split_tree_row_activated (GtkTreeView *tree_view,
                                   GtkTreePath *arg1,
                                   GtkTreeViewColumn *arg2,
                                   gpointer data);
-void splitted_selection_changed(GtkTreeSelection *selection,
+void split_selection_changed(GtkTreeSelection *selection,
                                 gpointer data);
-void close_splitted_popup_window_event( GtkWidget *window,
+void close_split_popup_window_event( GtkWidget *window,
                                         gpointer data );
-void handle_splitted_detached_event (GtkHandleBox *handlebox,
+void handle_split_detached_event (GtkHandleBox *handlebox,
                                      GtkWidget *widget,
                                      gpointer data);
-GtkWidget *create_splitted_files();
-gchar *get_filename_from_splitted_files(gint number);
+GtkWidget *create_split_files();
+gchar *get_filename_from_split_files(gint number);

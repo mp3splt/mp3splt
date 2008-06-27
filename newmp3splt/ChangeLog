@@ -95,7 +95,7 @@ Please read man page for more detail
   split from time to end of file.
 - feature improved: no more [outputfile], you always have to use -o option,
   even for one single file.
-- "bug" fixed: original vorbis comment preserved for all splitted files.
+- "bug" fixed: original vorbis comment preserved for all split files.
 - bug fixed (Thanks Lukasz Czarniecki): now performer for cue is taken in
   account for ID3.
 - bug fixed: better handling of files with Xing header. Also "bytes" field is taken
@@ -222,7 +222,7 @@ Not public. Experimental split of mp3 files using silence detection.
   Both with Mp3Wrap and AlbumWrap it only lists files without extraction.
 - new feature added: quiet option introduced. Allows to run mp3splt 
   without any kind of user interaction.
-- feature improved: VBR splitted files now begin with a Xing header
+- feature improved: VBR split files now begin with a Xing header
 - feature improved (Thanks François Revol): added support of BeOS platform
 - feature improved: frame mode warns about sync errors. Too many could mean a not valid mp3 file.
 - feature improved: in wrap mode, now searches for mp3wrap index for 16384 bytes. This should be enough.
@@ -351,7 +351,7 @@ Not public. Experimental split of Mp3Wrap files
 
 # Mp3splt v. 0.1b
 
-- More clean mp3 files (new splitted files begin only with a valid header)
+- More clean mp3 files (new split files begin only with a valid header)
 - bugs fixed
 
 # Mp3splt v. 0.1

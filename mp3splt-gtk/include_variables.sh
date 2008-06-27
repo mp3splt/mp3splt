@@ -32,7 +32,7 @@ MP3SPLT_GTK_DESCRIPTION="mp3splt-project common features:
 * split files created with Mp3Wrap or AlbumWrap
 * split concatenated mp3 files
 * support for mp3 VBR (variable bit rate)
-* specify output directory for splitted files"
+* specify output directory for split files"
 
 #we put i386 if i686 except for archlinux, where we set i686 inside
 #its make_ script

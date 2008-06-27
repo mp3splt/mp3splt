@@ -53,7 +53,7 @@
 #include "main_win.h"
 #include "mp3splt-gtk.h"
 #include "tree_tab.h"
-#include "splitted_files.h"
+#include "split_files.h"
 #include "cddb_cue.h"
 #include "utilities.h"
 #include "preferences_tab.h"
@@ -105,8 +105,8 @@ extern gint selected_id;
 extern splt_state *the_state;
 extern splt_freedb_results *search_results;
 extern GList *player_pref_list;
-extern gchar **splitted_files;
-extern gint max_splitted_files;
+extern gchar **split_files;
+extern gint max_split_files;
 extern gint no_top_connect_action;
 
 //close the window and exit button function
@@ -692,17 +692,17 @@ GtkWidget *create_main_vbox()
                            splitpoints_vbox,
                            (GtkWidget *)notebook_label);
 
-  /* splitted files frame */
-  GtkWidget *splitted_files_vbox;
-  splitted_files_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (splitted_files_vbox), 5);
+  /* split files frame */
+  GtkWidget *split_files_vbox;
+  split_files_vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (split_files_vbox), 5);
   
-  frame = (GtkWidget *)create_splitted_files();
-  gtk_container_add(GTK_CONTAINER(splitted_files_vbox), frame);
+  frame = (GtkWidget *)create_split_files();
+  gtk_container_add(GTK_CONTAINER(split_files_vbox), frame);
   
-  notebook_label = gtk_label_new((gchar *)_("Splitted files"));
+  notebook_label = gtk_label_new((gchar *)_("Split files"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           splitted_files_vbox,
+                           split_files_vbox,
                            (GtkWidget *)notebook_label);
   
   /* cddb and cue page */

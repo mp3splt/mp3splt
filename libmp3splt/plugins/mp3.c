@@ -1373,7 +1373,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
 
   splt_mp3_state *mp3state = state->codec;
 
-  int error = SPLT_OK_SPLITTED;
+  int error = SPLT_OK_SPLIT;
 
   FILE *file_output = NULL;
   off_t position = 0;
@@ -1720,7 +1720,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           if (eof || finished)
           {
             finished = 1;
-            if (eof) { *error = SPLT_OK_SPLITTED_EOF; }
+            if (eof) { *error = SPLT_OK_SPLIT_EOF; }
             break;
           }
         }
@@ -1753,7 +1753,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
             break;
           case -1:
             eof = 1;
-            *error = SPLT_OK_SPLITTED_EOF;
+            *error = SPLT_OK_SPLIT_EOF;
             break;
           case -3:
             //error from libmad
@@ -1906,7 +1906,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
               fread(mp3state->inputBuffer, 1, to_read, mp3state->file_input))<=0))
         {
           eof = 1;
-          *error = SPLT_OK_SPLITTED_EOF;
+          *error = SPLT_OK_SPLIT_EOF;
           break;
         }
 
@@ -1952,7 +1952,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
             break;
           case -1:
             eof = 1;
-            *error = SPLT_OK_SPLITTED_EOF;
+            *error = SPLT_OK_SPLIT_EOF;
             break;
           case -3:
             *error = mad_err;
@@ -2028,7 +2028,7 @@ bloc_end:
 
     mad_frame_finish(&mp3state->frame);
     mad_stream_finish(&mp3state->stream);
-    if (*error == SPLT_OK) { *error = SPLT_OK_SPLITTED; }
+    if (*error == SPLT_OK) { *error = SPLT_OK_SPLIT; }
 
     return;
   }
@@ -2159,7 +2159,7 @@ bloc_end:
         {
           end = mp3state->h.ptr + mp3state->h.framesize; // Last valid offset
           eof=1;
-          *error = SPLT_OK_SPLITTED_EOF;
+          *error = SPLT_OK_SPLIT_EOF;
           break;
         }
 
@@ -2327,7 +2327,7 @@ bloc_end:
     *error = SPLT_MIGHT_BE_VBR;
   }
 
-  if (*error == SPLT_OK) { *error = SPLT_OK_SPLITTED; }
+  if (*error == SPLT_OK) { *error = SPLT_OK_SPLIT; }
 
 bloc_end2:
   mad_frame_finish(&mp3state->frame);
@@ -3027,10 +3027,10 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               //do the real wrap split
               ret = splt_mp3_simple_split(state, filename, begin, end, NULL);
 
-              //if we could split put the splitted file
+              //if we could split put the split file
               if (ret >= 0)
               {
-                ret = splt_t_put_splitted_file(state, filename);
+                ret = splt_t_put_split_file(state, filename);
                 if (ret < 0) { *error = ret; }
               }
               else

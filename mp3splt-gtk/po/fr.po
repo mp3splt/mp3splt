@@ -89,7 +89,7 @@ msgstr ""
 msgid " cannot preview, not connected to player "
 msgstr ""
 
-#: src/tree_tab.c:1415 src/splitted_files.c:120
+#: src/tree_tab.c:1415 src/split_files.c:120
 msgid "Filename"
 msgstr "Nom fichier"
 
@@ -113,16 +113,16 @@ msgstr "Centièmes"
 msgid "Length"
 msgstr "anglais"
 
-#: src/splitted_files.c:373
+#: src/split_files.c:373
 msgid "_Queue files to player"
 msgstr "Ajoute les fichiers au lecteur"
 
-#: src/splitted_files.c:383
+#: src/split_files.c:383
 #, fuzzy
 msgid "_Delete selected files"
 msgstr "sélection fichier"
 
-#: src/splitted_files.c:393
+#: src/split_files.c:393
 #, fuzzy
 msgid "Delete all files"
 msgstr "sélection fichier"
@@ -156,7 +156,7 @@ msgid "Choose split directory"
 msgstr "Choisir répertoire pour les fichiers coupés"
 
 #: src/preferences_tab.c:498
-msgid "Directory for splitted files :"
+msgid "Directory for split files :"
 msgstr "Répertoire pour les fichiers coupés"
 
 #: src/preferences_tab.c:517
@@ -485,7 +485,7 @@ msgid "Splitpoints"
 msgstr "PointsCoupure"
 
 #: src/main_win.c:703
-msgid "Splitted files"
+msgid "Split files"
 msgstr "Fichiers coupés"
 
 #: src/main_win.c:716
@@ -608,11 +608,11 @@ msgid "Set default options"
 msgstr ""
 
 #, fuzzy
-#~ msgid " file splitted, splitpoints bigger than length "
+#~ msgid " file split, splitpoints bigger than length "
 #~ msgstr " mp3 coupé, points de coupure supérieurs à la longueur"
 
 #, fuzzy
-#~ msgid " file splitted "
+#~ msgid " file split"
 #~ msgstr " ogg coupé"
 
 #~ msgid " error: not enough splitpoints (<2) "
@@ -781,7 +781,7 @@ msgstr ""
 #~ msgid " error: inexistent file "
 #~ msgstr " erreur: ne peut pas ouvrir le fichier"
 
-#~ msgid " mp3 splitted "
+#~ msgid " mp3 split"
 #~ msgstr " mp3 coupé"
 
 #~ msgid " error: invalid mp3 file or libmp3splt compiled without ogg support"

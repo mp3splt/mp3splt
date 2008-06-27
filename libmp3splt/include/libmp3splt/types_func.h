@@ -193,7 +193,7 @@ void splt_t_wrap_free(splt_state *state);
 /* types: client communication */
 
 
-int splt_t_put_splitted_file(splt_state *state, const char *filename);
+int splt_t_put_split_file(splt_state *state, const char *filename);
 void splt_t_put_progress_text(splt_state *state,int type);
 void splt_t_put_message_to_client(splt_state *state, char *message);
 void splt_t_update_progress(splt_state *state, float current_point,
