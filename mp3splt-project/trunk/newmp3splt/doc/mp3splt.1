@@ -62,8 +62,8 @@ mp3splt \(em Utility for mp3/ogg splitting without decoding
 .PP
 \fBmp3splt [OPTIONS] FILE... [BEGIN_TIME] [END_TIME...]\fP
 .PP
-\fBFILE\fP: mp3 or ogg file to be splitted. If you want to specify STDIN as input, you can use "-"
-when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be splitted
+\fBFILE\fP: mp3 or ogg file to be split. If you want to specify STDIN as input, you can use "-"
+when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be split
 with the same criterion.
 
 .PP
@@ -155,7 +155,7 @@ of tracks (nt) which is the desired number of tracks, cutpoint
 .I minimum_length
 (min) which is the minimum silence length in seconds,
 .I remove
-silence (rm) which allows you to remove the silence between splitted tracks. If you don't specify any parameter,
+silence (rm) which allows you to remove the silence between split tracks. If you don't specify any parameter,
 mp3splt will use the default values. Of course if you specify the number of tracks to split,
 you will help mp3splt to understand what are the most probable split points,
 anyway once you scan a file with \-s option, mp3splt will write a file named "mp3splt.log" in which
@@ -165,7 +165,7 @@ not correct, you have many chances to achieve right result. For example if a sil
 was not detected because too short, you can manually split the long track in the two smaller ones.
 Or if file is an MP3 (not with ogg) and there are too many silence points that can't be discarded reducing
 track number (because are longer than right points) you can safely concatenate
-them with 'cat' programs or similar ('copy /b file1+file2' for dos) because splitted files are consecutive,
+them with 'cat' programs or similar ('copy /b file1+file2' for dos) because split files are consecutive,
 no data is lost and no ID3 is written for this purpose.
 This option is intended to split small/medium size (but even large if you can wait ;)  mp3 and ogg files
 where tracks are separated by a reasonable silence time. To try to split mixed albums or files
@@ -182,7 +182,7 @@ and, if all is correct, will write a file named "query.cddb" from which will get
 ID3v1 will be created automatically with taken informations. The first time you
 run mp3splt with "query" option, it will ask you if you use a proxy, just fill out informations.
 
-\fBIMPORTANT NOTE FOR CDDB\fP: File splitted with this option can be not very precise due to:
+\fBIMPORTANT NOTE FOR CDDB\fP: File split with this option can be not very precise due to:
 
 1) Who extracts CD tracks may use "Remove silence" option. This means
 that the large file is shorter than CD Total time. Never use this option.
@@ -232,7 +232,7 @@ you to adjust the offset of cutpoint in silence time. 0 is the begin of silence,
 .IP "\fBOnly \-s\fP"
 
 .IP \fBnt=INTEGER\fP
-Positive integer number of tracks to be splitted when using \-s option. By default all tracks are splitted.
+Positive integer number of tracks to be split when using \-s option. By default all tracks are split.
 .IP \fBmin=FLOAT\fP
 Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded.
 .IP \fBrm\fP
@@ -277,7 +277,7 @@ as output filename. It can contain name variables, that must begin with @ char a
 .br
 @n: track number* (valid also when not using \-c)
 
-When splitted files are more than one, at least one between @t and @n (*) must be present to avoid ambiguous names.
+When split files are more than one, at least one between @t and @n (*) must be present to avoid ambiguous names.
 You can put any prefix, separator, suffix in the string, for more elegance.
 To make easy the use spaces in output filename without interfering with line
 parameters, you can use the char '+' that will be automatically replaced with a space.

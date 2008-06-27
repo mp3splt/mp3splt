@@ -1701,8 +1701,8 @@ char *splt_u_strerror(splt_state *state, int error_code)
             " wrap error: maybe not a wrapped file or wrap file damaged");
         break;
         //
-      case SPLT_OK_SPLITTED_EOF :
-        snprintf(error_msg,max_error_size," file splitted (EOF)");
+      case SPLT_OK_SPLIT_EOF :
+        snprintf(error_msg,max_error_size," file split (EOF)");
         break;
       case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
         snprintf(error_msg,max_error_size, " no silence splitpoints found");
@@ -1715,10 +1715,10 @@ char *splt_u_strerror(splt_state *state, int error_code)
         break;
       case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
         snprintf(error_msg,max_error_size,
-            " file splitted, splitpoints bigger than length");
+            " file split, splitpoints bigger than length");
         break;
-      case SPLT_OK_SPLITTED :
-        snprintf(error_msg,max_error_size," file splitted");
+      case SPLT_OK_SPLIT:
+        snprintf(error_msg,max_error_size," file split");
         break;
       case SPLT_OK :
         //fprintf(console_err," bug in the program, please report it");

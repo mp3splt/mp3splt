@@ -4,7 +4,7 @@ mp3splt-gtk version 0.3.1
 	to put the original tags, cddb or cue tags or no tags
 -the update splitpoints was optimised, no more trouble when we
 have many splitpoints
--the splitted files tab can erase multiple selected files or 
+-the split files tab can erase multiple selected files or 
 all the files
 -important bug fix with the output filename for cddb and cue
 
@@ -25,7 +25,7 @@ mp3splt-gtk version 0.2.1
 -this is a stable release	
 -it is mainly a bug fix release, many many bugs were fixed
 -play preview and split preview added
--length column in the splitted tab added
+-length column in the split tab added
 -split in the same directory as the song support
 -added a search button on the freedb tab	
 -please update your snackAmp version with the latest testing 
@@ -69,7 +69,7 @@ mp3splt-gtk version 0.1.4
 -zoom progress bar with splitpoints added for the player	
 -cddb file and cue file support added
 -freedb support added
--split and give name for the splitted files
+-split and give name for the split files
 -all code revised
 -player optimised
 -bugs fixed
@@ -90,11 +90,11 @@ mp3splt-gtk version 0.1.2
 - fixes major bugs
 - added support for beep-media-player and made as default at compiling
 - created preferences tab
-- ability to choose the directory for splitted files
+- ability to choose the directory for split files
 - moved choose player to preferences tab
-- created splitted files tab where you can see splitted files, 
+- created split files tab where you can see split files, 
 	and erase them or listen them by click
-- also support for queuing splitted files to player
+- also support for queuing split files to player
 - detachable player, splitpoints ... added
 - added support for saving preferences in .mp3splt-gtk directory
 .....          autoloading ...

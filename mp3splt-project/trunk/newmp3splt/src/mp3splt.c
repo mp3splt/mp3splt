@@ -263,7 +263,7 @@ void show_small_help_exit(main_data *data)
       " -v   Prints current version and exits\n"
       " -h   Shows this help\n"
       "\nOPTIONS\n"
-      " -m + M3U_FILE: Appends to the specified m3u file the splitted filenames.\n"
+      " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
       " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
       " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n"
       " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
@@ -271,8 +271,8 @@ void show_small_help_exit(main_data *data)
       "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
       "      @t: title tag, @n: track number tag, @f: original filename\n"
       " -g + TAGS_FORMAT: allows you to put custom tags "
-      "to your splitted files.\n"
-      "      Example, tags for the first splitted file and all the others like the second one : \n"
+      "to your split files.\n"
+      "      Example, tags for the first split file and all the others like the second one : \n"
       "       @o means that we put the original tags, before replacing artist with \"artist2\"\n\t"
       "[@a=artist1,@t=title1]%%[@o,@a=artist2]\n"
       " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
@@ -1193,8 +1193,8 @@ void put_library_message(const char *message)
   fflush(console_out);
 }
 
-//prints the splitted file
-void put_splitted_file(const char *file, int progress_data)
+//prints the split file
+void put_split_file(const char *file, int progress_data)
 {
   //we put necessary spaces
   char temp[1024] = "";
@@ -1471,8 +1471,8 @@ int main(int argc, char *argv[])
   //callback for the library messages
   mp3splt_set_message_function(state, put_library_message);
   mp3splt_set_silence_level_function(state, get_silence_level, data->sl);
-  //callback for the splitted files
-  mp3splt_set_splitted_filename_function(state, put_splitted_file);
+  //callback for the split files
+  mp3splt_set_split_filename_function(state, put_split_file);
   //callback for the progress bar
   mp3splt_set_progress_function(state, put_progress_bar);
 
@@ -1565,7 +1565,7 @@ int main(int argc, char *argv[])
           }
         }
 
-        //if the splitted result must be written to stdout
+        //if the split result must be written to stdout
         if (strcmp(optarg,"-") == 0)
         {
           console_out = stderr;
@@ -1775,13 +1775,13 @@ int main(int argc, char *argv[])
     normal_split = SPLT_TRUE;
   }
 
-  //for all the remained arguments, consider as files
   int j = 0;
   if (data->number_of_filenames > 1)
   {
     fprintf(console_out,"\n");
     fflush(console_out);
   }
+  //split all the filenames
   for (j = 0;j < data->number_of_filenames; j++)
   {
     char *current_filename = data->filenames[j];
@@ -1822,11 +1822,8 @@ int main(int argc, char *argv[])
       if (opt->i_option)
       {
         err = SPLT_OK;
-
-        int silence_number = mp3splt_count_silence_points(state, &err);
+        mp3splt_count_silence_points(state, &err);
         process_confirmation_error(err, data);
-        fprintf(console_out,"\n%d silence splitpoints detected.", silence_number);
-        fflush(console_out);
       }
       else
       //if we don't list wrapped files and we don't count silence files
@@ -1911,7 +1908,7 @@ int main(int argc, char *argv[])
         if (opt->c_option && err >= 0 && !opt->q_option)
         {
           print_message("\n +-----------------------------------------------------------------------------+\n"
-              " |NOTE: When you use cddb/cue, splitted files might be not very precise due to:|\n"
+              " |NOTE: When you use cddb/cue, split files might be not very precise due to:|\n"
               " |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n"
               " |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n"
               " |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n"

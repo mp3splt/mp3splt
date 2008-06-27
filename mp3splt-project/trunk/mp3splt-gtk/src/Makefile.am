@@ -13,7 +13,7 @@ mp3splt_gtk_SOURCES = \
 	player_tab.c player_tab.h \
 	preferences_tab.c preferences_tab.h \
 	utilities.c utilities.h \
-	splitted_files.c splitted_files.h \
+	split_files.c split_files.h \
 	freedb_tab.c freedb_tab.h \
 	cddb_cue.c cddb_cue.h \
 	snackamp_control.c snackamp_control.h \

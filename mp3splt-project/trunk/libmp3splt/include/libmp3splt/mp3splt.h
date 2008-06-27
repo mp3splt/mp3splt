@@ -334,9 +334,9 @@ typedef struct {
   //how many splitpoints we have
   int real_splitnumber;
   //put this function if you want that the library
-  //tells you when a file has been splitted
+  //tells you when a file has been split
   //the char* is the filename
-  void (*file_splitted)(const char *,int);
+  void (*file_split)(const char *,int);
   //for the progress bar
   splt_progress *p_bar;
   //callback for sending the silence level to the client
@@ -513,14 +513,14 @@ typedef struct {
 
   //PARAMETERS for option_silence_mode :
   //the desired number of tracks
-  //(positive integer number of tracks to be splitted;by default all
-  //tracks are splitted)
+  //(positive integer number of tracks to be split;by default all
+  //tracks are split)
   int parameter_number_tracks;
   //the minimum silence length in seconds
   //(positive float of the minimum number of seconds to be considered
   //a valid splitpoint)
   float parameter_minimum_length;
-  //allows you to remove the silence between splitted tracks
+  //allows you to remove the silence between split tracks
   short parameter_remove_silence;
 
   //PARAMETERS for option_auto_adjust :
@@ -624,10 +624,10 @@ typedef struct {
   short cancel_split;
   //filename to split
   char *fname_to_split;
-  //where the splitted file will be splitted
+  //where the split file will be split
   char *path_of_split;
 
-  //if this is non null, we write a m3u from the splitted files
+  //if this is non null, we write a m3u from the split files
   char *m3u_filename;
 
   //tags of the original file to split
@@ -812,9 +812,9 @@ typedef struct {
 #define SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED -204
 
 /**
- * @brief Warning, split : splitted, end of file
+ * @brief Warning, split : split, end of file
  */
-#define SPLT_OK_SPLITTED_EOF 8
+#define SPLT_OK_SPLIT_EOF 8
 /**
  * @brief Warning, silence detection : no silence splitpoint found
  */
@@ -832,9 +832,9 @@ typedef struct {
  */
 #define SPLT_SPLITPOINT_BIGGER_THAN_LENGTH 4
 /**
- * @brief Confirmation, split : splitted
+ * @brief Confirmation, split : split
  */
-#define SPLT_OK_SPLITTED 1
+#define SPLT_OK_SPLIT 1
 /**
  * @brief Confirmation : no error
  */
@@ -981,7 +981,7 @@ typedef enum {
    */
   SPLT_PROGRESS_PREPARE,
   /**
-   * Creating the splited file
+   * Creating the split file
    */
   SPLT_PROGRESS_CREATE,
   /**
@@ -1025,7 +1025,7 @@ typedef enum {
    */
   SPLT_OPT_SPLIT_MODE,
   /**
-   * The type of tags to put in the new splitted files
+   * The type of tags to put in the new split files
    *
    * The option can take the values from #splt_tags_options
    *
@@ -1080,7 +1080,7 @@ typedef enum {
    */
   SPLT_OPT_PARAM_NUMBER_TRACKS,
   /**
-   * Allows you to remove the silence between the splitted tracks when
+   * Allows you to remove the silence between the split tracks when
    * having a #SPLT_OPTION_SILENCE_MODE split
    *
    * The option can take the values #SPLT_TRUE or #SPLT_FALSE
@@ -1258,7 +1258,7 @@ void mp3splt_free_state(splt_state *state, int *error);
 /************************************/
 /* Set path                         */
 
-//puts the path for the new splitted files
+//puts the path for the new split files
 //returns possible error
 int mp3splt_set_path_of_split(splt_state *state, const char *path);
 
@@ -1275,7 +1275,7 @@ int mp3splt_set_m3u_filename(splt_state *state, const char *filename);
 
 int mp3splt_set_message_function(splt_state *state,
     void (*put_message)(const char *));
-int mp3splt_set_splitted_filename_function(splt_state *state,
+int mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *,int));
 int mp3splt_set_progress_function(splt_state *state,
     void (*progress_cb)(splt_progress *p_bar));

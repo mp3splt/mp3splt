@@ -58,9 +58,9 @@ static void splt_s_real_split(splt_state *state, int *error)
       //automatically set progress callback to 100%
       splt_t_update_progress(state,1.0,1.0,1,1,1);
 
-      //we put the splitted file
+      //we put the split file
       int err = SPLT_OK;
-      err = splt_t_put_splitted_file(state, final_fname);
+      err = splt_t_put_split_file(state, final_fname);
       if (err < 0) { *error = err; }
     }
   }
@@ -218,7 +218,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
             //if the split has been a success
             if (*error == SPLT_SYNC_OK)
             {
-              err = splt_t_put_splitted_file(state, final_fname);
+              err = splt_t_put_split_file(state, final_fname);
               if (err < 0) { *error = err; goto bloc_end; }
             }
           }
@@ -313,7 +313,7 @@ bloc_end:
 
           //get out if error
           if ((*error < 0) ||
-              (*error==SPLT_OK_SPLITTED_EOF))
+              (*error==SPLT_OK_SPLIT_EOF))
           {
             break;
           }
@@ -426,10 +426,10 @@ void splt_s_time_split(splt_state *state, int *error)
 
           splt_p_split(state, final_fname, begin, end, error);
 
-          //if no error for the split, put the splitted file
+          //if no error for the split, put the split file
           if (*error >= 0)
           {
-            err = splt_t_put_splitted_file(state, final_fname);
+            err = splt_t_put_split_file(state, final_fname);
             if (err < 0) { *error = err; break; }
           }
 
@@ -440,7 +440,7 @@ void splt_s_time_split(splt_state *state, int *error)
 
           //get out if error
           if ((*error == SPLT_MIGHT_BE_VBR) ||
-              (*error==SPLT_OK_SPLITTED_EOF) ||
+              (*error==SPLT_OK_SPLIT_EOF) ||
               (*error < 0))
           {
             tracks = 0;
@@ -483,10 +483,10 @@ void splt_s_time_split(splt_state *state, int *error)
       case SPLT_MIGHT_BE_VBR : 
         *error = SPLT_TIME_SPLIT_OK;
         break;
-      case SPLT_OK_SPLITTED: 
+      case SPLT_OK_SPLIT: 
         *error = SPLT_TIME_SPLIT_OK;
         break;
-      case SPLT_OK_SPLITTED_EOF : 
+      case SPLT_OK_SPLIT_EOF : 
         *error = SPLT_TIME_SPLIT_OK;
         break;
       case SPLT_ERROR_BEGIN_OUT_OF_FILE : 
@@ -703,10 +703,10 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
 
         splt_p_split(state, final_fname, beg_pos, end_pos, error);
 
-        //put the splitted file if no error
+        //put the split file if no error
         if (*error >= 0)
         {
-          err = splt_t_put_splitted_file(state, final_fname);
+          err = splt_t_put_split_file(state, final_fname);
           if (err < 0) { *error = err; goto function_end; }
         }
 
@@ -716,10 +716,10 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
           case SPLT_MIGHT_BE_VBR:
             *error = SPLT_SILENCE_OK;
             break;
-          case SPLT_OK_SPLITTED:
+          case SPLT_OK_SPLIT:
             *error = SPLT_SILENCE_OK;
             break;
-          case SPLT_OK_SPLITTED_EOF:
+          case SPLT_OK_SPLIT_EOF:
             *error = SPLT_SILENCE_OK;
             break;
           default:

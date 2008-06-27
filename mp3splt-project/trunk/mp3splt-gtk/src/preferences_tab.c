@@ -495,7 +495,7 @@ GtkWidget *create_pref_splitpoints_page()
   
   //directory label
   GtkWidget *label;
-  label = gtk_label_new((gchar *)_("Directory for splitted files :"));
+  label = gtk_label_new((gchar *)_("Directory for split files :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 0);
   
@@ -521,7 +521,7 @@ GtkWidget *create_pref_splitpoints_page()
   gtk_box_pack_start (GTK_BOX (dir_hbox), 
                       browse_dir_button, FALSE, FALSE, 0);
   
-  //to set the directory for splitted files to the current song
+  //to set the directory for split files to the current song
   //directory
   GtkWidget *song_dir_button;
   song_dir_button = (GtkWidget *)
@@ -733,7 +733,7 @@ GtkWidget *create_pref_splitpoints_page()
       tag_label = gtk_label_new((gchar *)_("-libmp3splt has been compiled"
                                            " without id3tag support :\n"
                                            "   we don't write"
-                                           " the original mp3 tags to the splitted files"));
+                                           " the original mp3 tags to the split files"));
       gtk_box_pack_start (GTK_BOX (horiz_fake),
                           tag_label, FALSE, FALSE, 0);
     }*/

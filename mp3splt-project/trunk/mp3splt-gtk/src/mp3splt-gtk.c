@@ -52,7 +52,7 @@
 #include "tree_tab.h"
 #include "main_win.h"
 #include "snackamp_control.h"
-#include "splitted_files.h"
+#include "split_files.h"
 #include "preferences_tab.h"
 
 //the state
@@ -119,11 +119,11 @@ extern GtkWidget *split_button;
 
 extern GtkWidget *remove_all_files_button;
 
-//how many splitted files
-gint splitted_files = 0;
+//how many split files
+gint split_files = 0;
 
-//put the splitted file in the splitted_file tab
-void put_splitted_filename(const char *filename,int progress_data)
+//put the split file in the split_file tab
+void put_split_filename(const char *filename,int progress_data)
 {
   //lock gtk
   gdk_threads_enter();
@@ -137,8 +137,8 @@ void put_splitted_filename(const char *filename,int progress_data)
       gtk_widget_set_sensitive(remove_all_files_button,TRUE);
     }
   
-  add_splitted_row(filename);
-  splitted_files++;
+  add_split_row(filename);
+  split_files++;
   
   //unlock gtk
   gdk_threads_leave();
@@ -332,8 +332,8 @@ gpointer split_it(gpointer data)
   gtk_widget_set_sensitive(GTK_WIDGET(split_button),
                            FALSE);
   
-  //remove old splitted files
-  remove_all_splitted_rows();  
+  //remove old split files
+  remove_all_split_rows();  
   
   gint err = SPLT_OK;
   
@@ -387,7 +387,7 @@ gpointer split_it(gpointer data)
   //lock gtk
   gdk_threads_enter();
   
-  //we show infos about the splitted action
+  //we show infos about the split action
   print_status_bar_confirmation(confirmation);
   
   //see the cancel button
@@ -504,8 +504,8 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   
   //put the callback progress bar function
   mp3splt_set_progress_function(the_state,change_window_progress_bar);
-  //put the callback function to receive the splitted file
-  mp3splt_set_splitted_filename_function(the_state,put_splitted_filename);
+  //put the callback function to receive the split file
+  mp3splt_set_split_filename_function(the_state,put_split_filename);
   //put the callback function for miscellaneous messages
   mp3splt_set_message_function(the_state, put_message_from_library);
   //debug on or off

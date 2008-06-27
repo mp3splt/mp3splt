@@ -1028,7 +1028,7 @@ void write_default_preferences_file()
                               "split",
                               "save_path",
                               "\n this is the path where you will find "
-                              "your splitted files ",
+                              "your split files ",
                               NULL);
 
 #ifdef __WIN32__

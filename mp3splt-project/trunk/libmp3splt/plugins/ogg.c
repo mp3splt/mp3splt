@@ -1479,11 +1479,11 @@ end:
   {
     if (oggstate->end == -1) 
     {
-      *error = SPLT_OK_SPLITTED_EOF;
+      *error = SPLT_OK_SPLIT_EOF;
       return;
     }
 
-    *error = SPLT_OK_SPLITTED;
+    *error = SPLT_OK_SPLIT;
   }
 }
 

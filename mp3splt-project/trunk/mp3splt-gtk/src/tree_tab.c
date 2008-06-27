@@ -55,7 +55,7 @@
 #include "utilities.h"
 #include "player_tab.h"
 #include "mp3splt-gtk.h"
-#include "splitted_files.h"
+#include "split_files.h"
 
 //tree column enumeration
 enum
@@ -66,7 +66,7 @@ enum
     COL_MINUTES,
     COL_SECONDS,
     COL_HUNDR_SECS,
-    /* length of the splitted song */
+    /* length of the split song */
     COL_NUMBER,
     /* preview button */
     COL_PREVIEW,
@@ -1277,8 +1277,8 @@ void split_preview(gpointer *data)
       fname = (gchar *)
         gtk_entry_get_text(GTK_ENTRY(entry));
       
-      //remove old splitted files
-      remove_all_splitted_rows();  
+      //remove old split files
+      remove_all_split_rows();  
       
       filename_to_split = (gchar *)
         gtk_entry_get_text(GTK_ENTRY(entry));
@@ -1294,13 +1294,13 @@ void split_preview(gpointer *data)
       //lock gtk
       gdk_threads_enter();
       
-      //we show infos about the splitted action
+      //we show infos about the split action
       print_status_bar_confirmation(confirmation);
       
-      gchar *splitted_file; 
+      gchar *split_file; 
       //here the first one
-      splitted_file = get_filename_from_splitted_files(1);
-      if (splitted_file != NULL)
+      split_file = get_filename_from_split_files(1);
+      if (split_file != NULL)
         {
           //only if success
           if (confirmation > 0)
@@ -1308,10 +1308,10 @@ void split_preview(gpointer *data)
               //connecting to player
               connect_button_event (NULL, NULL);
               
-              //we play the splitted file
+              //we play the split file
               //set the entry with the current filename
-              gtk_entry_set_text(GTK_ENTRY(entry), splitted_file);
-              g_free(splitted_file);
+              gtk_entry_set_text(GTK_ENTRY(entry), split_file);
+              g_free(split_file);
               
               //starts playing, 0 means start playing
               connect_to_player_with_song(0);
