@@ -126,6 +126,11 @@ static void splt_t_free_state_struct(splt_state *state)
       free(state->m3u_filename);
       state->m3u_filename = NULL;
     }
+    if (state->silence_log_fname)
+    {
+      free(state->silence_log_fname);
+      state->silence_log_fname = NULL;
+    }
     if (state->wrap)
     {
       free(state->wrap);
@@ -423,6 +428,41 @@ int splt_t_set_m3u_filename(splt_state *state, const char *filename)
   return error;
 }
 
+//sets the m3u filename
+//returns possible error
+int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
+{
+  int error = SPLT_OK;
+
+  //free previous memory
+  if (splt_t_get_silence_log_fname(state))
+  {
+    free(state->silence_log_fname);
+    state->silence_log_fname = NULL;
+  }
+
+  splt_u_print_debug("Setting silence log fname ...",0,filename);
+
+  if (filename != NULL)
+  {
+    if((state->silence_log_fname = malloc(sizeof(char)*(strlen(filename)+1))) != NULL)
+    {
+      snprintf(state->silence_log_fname,(strlen(filename)+1), "%s", filename);
+    }
+    else
+    {
+      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+  }
+  else
+  {
+    state->silence_log_fname = NULL;
+  }
+
+  return error;
+}
+
+
 //sets the filename to split
 int splt_t_set_filename_to_split(splt_state *state, const char *filename)
 {
@@ -472,6 +512,12 @@ char *splt_t_get_path_of_split(splt_state *state)
 char *splt_t_get_m3u_filename(splt_state *state)
 {
   return state->m3u_filename;
+}
+
+//returns path of split
+char *splt_t_get_silence_log_fname(splt_state *state)
+{
+  return state->silence_log_fname;
 }
 
 /********************************/
@@ -1772,6 +1818,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->fname_to_split = NULL;
   state->path_of_split = NULL;
   state->m3u_filename = NULL;
+  state->silence_log_fname = NULL;
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
   state->split.splitnumber = 0;
@@ -1835,6 +1882,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->err.strerror_msg = NULL;
 
   state->options.tags_after_x_like_x_one = -1;
+  state->options.enable_silence_log = SPLT_FALSE;
 }
 
 //sets the error data information
@@ -1985,6 +2033,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X:
       state->options.tags_after_x_like_x_one = value;
       break;
+    case SPLT_OPT_ENABLE_SILENCE_LOG:
+      state->options.enable_silence_log = value;
+      break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
@@ -2051,6 +2102,9 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       break;
     case SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X:
       return state->options.tags_after_x_like_x_one;
+      break;
+    case SPLT_OPT_ENABLE_SILENCE_LOG:
+      return state->options.enable_silence_log;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);

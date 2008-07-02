@@ -163,6 +163,35 @@ int mp3splt_set_m3u_filename(splt_state *state, const char *filename)
   return error;
 }
 
+//sets the m3u filename
+int mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
+{
+  int error = SPLT_OK;
+
+  if (state != NULL)
+  {
+    if (!splt_t_library_locked(state))
+    {
+      splt_t_lock_library(state);
+
+      error = splt_t_set_silence_log_fname(state, filename);
+
+      splt_t_unlock_library(state);
+    }
+    else
+    {
+      error = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    error = SPLT_ERROR_STATE_NULL;
+  }
+
+  return error;
+}
+
+
 //puts the filename to split in the state
 int mp3splt_set_filename_to_split(splt_state *state, const char *filename)
 {

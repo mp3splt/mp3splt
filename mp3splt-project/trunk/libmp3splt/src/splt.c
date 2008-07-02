@@ -524,7 +524,94 @@ int splt_s_set_silence_splitpoints(splt_state *state, int write_tracks, int *err
   float offset = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
   int number_tracks = splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
 
-  found = splt_p_scan_silence(state, error);
+  //if we have a log file, read silence from logs
+  int we_read_silence_from_logs = SPLT_FALSE;
+  FILE *log_file = NULL;
+  char *log_fname = splt_t_get_silence_log_fname(state);
+  if (splt_t_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
+  {
+    if ((log_file = fopen(log_fname, "r")))
+    {
+      char log_silence_fname[1024] = { '\0' };
+      fgets(log_silence_fname, 1024, log_file);
+      if (log_silence_fname[0] != '\0')
+      {
+        //remove '\n' at the end
+        log_silence_fname[strlen(log_silence_fname)-1] = '\0';
+        if (strcmp(log_silence_fname, splt_t_get_filename_to_split(state)) == 0)
+        {
+          we_read_silence_from_logs = SPLT_TRUE;
+          float threshold = SPLT_DEFAULT_PARAM_THRESHOLD;
+          float min = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
+          int i = fscanf(log_file, "%f\t%f", &threshold, &min);
+
+          if ((i < 2) || (threshold != splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD))
+              || (splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH) != min))
+          {
+            we_read_silence_from_logs = SPLT_FALSE;
+          }
+          else
+          {
+            splt_t_set_float_option(state, SPLT_OPT_PARAM_THRESHOLD, threshold);
+            splt_t_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
+          }
+        }
+      }
+      if (!we_read_silence_from_logs && log_file)
+      {
+        fclose(log_file);
+        log_file = NULL;
+      }
+    }
+  }
+
+  //put silence split infos
+ 
+  char remove_str[128] = { '\0' };
+  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+  {
+    snprintf(remove_str,128,"YES");
+  }
+  else
+  {
+    snprintf(remove_str,128,"NO");
+  }
+  char auto_user_str[128] = { '\0' };
+  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS) > 0)
+  {
+    snprintf(auto_user_str,128,"User");
+  }
+  else
+  {
+    snprintf(auto_user_str,128,"Auto");
+  }
+
+  char message[1024] = { '\0' };
+  snprintf(message, 1024, " Silence split type: %s mode (Th: %.1f dB,"
+      " Off: %.2f, Min: %.2f, Remove: %s)\n",
+      auto_user_str,
+      splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+      splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
+      splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
+      remove_str);
+  splt_t_put_message_to_client(state, message);
+ 
+  if (we_read_silence_from_logs)
+  {
+    snprintf(message, 1024, " Found silence log file '%s' ! Reading silence points from file to save time ;)", log_fname);
+    splt_t_put_message_to_client(state,message);
+    found = splt_u_parse_ssplit_file(state, log_file, error);
+    if (log_file)
+    {
+      fclose(log_file);
+      log_file = NULL;
+    }
+  }
+  else
+  {
+    found = splt_p_scan_silence(state, error);
+  }
+
   //if no error
   if (*error >= 0)
   {
@@ -618,6 +705,60 @@ int splt_s_set_silence_splitpoints(splt_state *state, int write_tracks, int *err
     else
     {
       *error = SPLT_SPLIT_CANCELLED;
+    }
+
+    //if splitpoints are found
+    if ((found > 0) && !we_read_silence_from_logs)
+    {
+      //if we write the silence points log file
+      if (splt_t_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
+      {
+        char *message = malloc(sizeof(char) * 1024);
+        if (message)
+        {
+          snprintf(message, 1023, " Writing silence log file '%s' ...\n",
+              splt_t_get_silence_log_fname(state));
+          splt_t_put_message_to_client(state, message);
+          if (message)
+          {
+            free(message);
+            message = NULL;
+          }
+          char *fname = splt_t_get_silence_log_fname(state);
+          FILE *log_file = NULL;
+          if (!(log_file = fopen(fname, "w")))
+          {
+            splt_t_set_strerror_msg(state);
+            splt_t_set_error_data(state, fname);
+            *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+          }
+          else
+          {
+            //do the effective write
+            struct splt_ssplit *temp = state->silence_list;
+            fprintf(log_file, "%s\n", splt_t_get_filename_to_split(state));
+            fprintf(log_file, "%.2f\t%.2f\n", 
+                splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+                splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
+            while (temp != NULL)
+            {
+              fprintf(log_file, "%f\t%f\t%d\n",
+                  temp->begin_position, temp->end_position, temp->len);
+              temp = temp->next;
+            }
+            if (log_file)
+            {
+              fclose(log_file);
+              log_file = NULL;
+            }
+            temp = NULL;
+          }
+        }
+        else
+        {
+          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        }
+      }
     }
   }
   splt_t_ssplit_free(&state->silence_list);
@@ -758,33 +899,6 @@ void splt_s_silence_split(splt_state *state, int *error)
 
   //print some useful infos to the client
   splt_t_put_message_to_client(state, " info: starting silence mode split\n");
-  char remove_str[128] = { '\0' };
-  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
-  {
-    snprintf(remove_str,128,"YES");
-  }
-  else
-  {
-    snprintf(remove_str,128,"NO");
-  }
-  char auto_user_str[128] = { '\0' };
-  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS) > 0)
-  {
-    snprintf(auto_user_str,128,"User");
-  }
-  else
-  {
-    snprintf(auto_user_str,128,"Auto");
-  }
-  char message[1024] = { '\0' };
-  snprintf(message, 1024, " Silence split type: %s mode (Th: %.1f dB,"
-      " Off: %.2f, Min: %.2f, Remove: %s)\n",
-      auto_user_str,
-      splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
-      splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
-      splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
-      remove_str);
-  splt_t_put_message_to_client(state, message);
 
   int found = 0;
   found = splt_s_set_silence_splitpoints(state, SPLT_TRUE, error);

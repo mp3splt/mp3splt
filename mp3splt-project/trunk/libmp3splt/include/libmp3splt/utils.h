@@ -64,6 +64,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state,
 
 int splt_u_cut_splitpoint_extension(splt_state *state, int index);
 void splt_u_order_splitpoints(splt_state *state, int len);
+int splt_u_parse_ssplit_file(splt_state *state, FILE *log_file, int *error);
 
 /****************************/
 /* utils for the tags       */
