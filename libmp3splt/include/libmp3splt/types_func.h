@@ -53,9 +53,11 @@ char *splt_t_get_new_filename_path(splt_state *state);
 int splt_t_set_filename_to_split(splt_state *state, const char *filename);
 int splt_t_set_path_of_split(splt_state *state, const char *path);
 int splt_t_set_m3u_filename(splt_state *state, const char *filename);
+int splt_t_set_silence_log_fname(splt_state *state, const char *filename);
 char *splt_t_get_filename_to_split(splt_state *state);
 char *splt_t_get_path_of_split(splt_state *state);
 char *splt_t_get_m3u_filename(splt_state *state);
+char *splt_t_get_silence_log_fname(splt_state *state);
 
 /********************************/
 /* types: current split access */

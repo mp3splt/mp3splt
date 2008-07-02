@@ -532,6 +532,11 @@ typedef struct {
   //if we set all the tags like the x one,
   //tags_like_x_one must be different of -1
   int tags_after_x_like_x_one;
+
+  /**
+   * if we enable the silence points log ('mp3splt.log')
+   */
+  int enable_silence_log;
 } splt_options;
 
 /**********************************/
@@ -669,6 +674,9 @@ typedef struct {
   //plugins structure
   splt_plugins *plug;
   int current_plugin;
+
+  //filename of the silence log : 'mp3splt.log' in the original mp3splt
+  char *silence_log_fname;
 } splt_state;
 
 /*****************************************/
@@ -1100,7 +1108,11 @@ typedef enum {
   /**
    * if to set all tags like X one
    */
-  SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X
+  SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X,
+  /**
+   * if we enable the silence points log ('mp3splt.log')
+   */
+  SPLT_OPT_ENABLE_SILENCE_LOG
 } splt_int_options;
 
 //option types : float
@@ -1209,7 +1221,7 @@ typedef enum {
  * @brief Package authors
  */
 #define SPLT_AUTHOR "Matteo Trotta | Munteanu Alexandru"
-#define SPLT_EMAIL "<mtrotta@users.sourceforge.net> | <io_alex_2002@yahoo.fr>"
+#define SPLT_EMAIL "<mtrotta@users.sourceforge.net> | <io_fx@yahoo.fr>"
 /**
  * @brief Package website
  */
@@ -1269,6 +1281,7 @@ int mp3splt_set_path_of_split(splt_state *state, const char *path);
 //returns possible error
 int mp3splt_set_filename_to_split(splt_state *state, const char *filename);
 int mp3splt_set_m3u_filename(splt_state *state, const char *filename);
+int mp3splt_set_silence_log_filename(splt_state *state, const char *filename);
 
 /************************************/
 /* Set callback functions           */

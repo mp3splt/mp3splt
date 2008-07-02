@@ -1460,13 +1460,19 @@ int main(int argc, char *argv[])
   //we create our state
   data->state = mp3splt_new_state(&err);
   process_confirmation_error(err, data);
-
+ 
   splt_state *state = data->state;
   silence_level *sl = data->sl;
   options *opt = data->opt;
 
   //close nicely on Ctrl+C (for example)
   signal(SIGINT, sigint_handler);
+
+  //enable logging the silence splitpoints in a file
+  mp3splt_set_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG, SPLT_TRUE);
+  //silence splitpoints log filename
+  mp3splt_set_silence_log_filename(state, "mp3splt.log");
+  process_confirmation_error(err, data);
 
   //callback for the library messages
   mp3splt_set_message_function(state, put_library_message);
