@@ -2,7 +2,7 @@
  * Mp3Splt -- Utility for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2006 Munteanu Alexandru - <io_alex_2002@yahoo.fr>
+ * Copyright (c) 2005-2008 Munteanu Alexandru - <io_alex_2002@yahoo.fr>
  *
  * http://mp3splt.sourceforge.net
  *
@@ -247,9 +247,9 @@ void show_small_help_exit(main_data *data)
   free_main_struct(&data);
   print_message("\n"
       "USAGE (Please read man page for complete documentation)\n"
-      "      mp3splt [SPLIT_MODE] [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME1] [TIME2] ... [END_TIME]\n"
+      "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... [END_TIME]\n"
       "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59 (or EOF for End Of File). \n"
-      "\nSPLIT_MODE\n"
+      "\nOPTIONS (split mode options)\n"
       //"\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n"
       " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
       " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n"
@@ -262,7 +262,7 @@ void show_small_help_exit(main_data *data)
       "      (Use -p for arguments)\n"
       " -v   Prints current version and exits\n"
       " -h   Shows this help\n"
-      "\nOPTIONS\n"
+      "\n(other options)\n"
       " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
       " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
       " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n"
@@ -1735,11 +1735,15 @@ int main(int argc, char *argv[])
     }
   }
 
+  int output_format_error = SPLT_OK;
   if (opt->o_option)
   {
     //we set our output format
-    mp3splt_set_oformat(state, opt->output_format,&err);
-    process_confirmation_error(err, data);
+    mp3splt_set_oformat(state, opt->output_format,&output_format_error);
+    if (output_format_error != SPLT_OUTPUT_FORMAT_AMBIGUOUS)
+    {
+      process_confirmation_error(output_format_error, data);
+    }
   }
 
   if (optind > 1)
@@ -1770,6 +1774,13 @@ int main(int argc, char *argv[])
     {
       append_filename(data, pointer);
     }
+  }
+
+  //print 'output format ambigous if necessary
+  if ((output_format_error == SPLT_OUTPUT_FORMAT_AMBIGUOUS)
+      && (data->number_of_splitpoints > 2))
+  {
+    process_confirmation_error(output_format_error, data);
   }
 
   //if we have a normal split, we need to parse the splitpoints
@@ -1920,7 +1931,7 @@ int main(int argc, char *argv[])
               " |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n"
               " |3) Encoders might add some padding frames so  that  file is longer than CD.  |\n"
               " |4) There are several entries of the same cd on CDDB, find the best for yours.|\n"
-              " |   Usually you can find the correct splitpoints for your mp3, so good luck!  |\n"
+              " |   Usually you can find the correct splitpoints, so good luck!  |\n"
               " +-----------------------------------------------------------------------------+\n"
               " | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n"
               " +-----------------------------------------------------------------------------+\n");

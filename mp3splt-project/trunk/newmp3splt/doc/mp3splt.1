@@ -60,9 +60,9 @@
 mp3splt \(em Utility for mp3/ogg splitting without decoding
 .SH "SYNOPSIS"
 .PP
-\fBmp3splt [OPTIONS] FILE... [BEGIN_TIME] [END_TIME...]\fP
+\fBmp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME2] ... [END_TIME]\fP
 .PP
-\fBFILE\fP: mp3 or ogg file to be split. If you want to specify STDIN as input, you can use "-"
+\fBFILE\fP: mp3 or ogg file to be split. If you want to specify STDIN as input, you can use "m-" (or "-")
 when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be split
 with the same criterion.
 
@@ -85,13 +85,13 @@ If you want to reach the end of file, you can use "EOF" as last splitpoint.
 .SH "DESCRIPTION"
 .PP
 \fBmp3splt\fP is a free command-line utility that allows you to
-split mp3 and ogg files from a begin time to an end time,
+split mp3 and ogg files from several splitpoints,
 without need of decoding and reencoding.
-It's useful to split large mp3/ogg to make smaller files or to split
+It is useful to split large mp3/ogg to make smaller files or to split
 entire albums to obtain original tracks.
 
 If you are splitting an album you can get splitpoints and filenames
-automatically from servers on internet like Freedb.org, tracktype.org
+automatically from servers on internet like freedb.org, tracktype.org
 or from a local .XMCD (.CDDB) or .CUE file (see \-c option), with the possibility to adjust them automatically with silence
 detection (see \-a option).
 
@@ -115,7 +115,7 @@ you can split those VBR files only with framemode (see \-f option).
 the string MP3WRAP in filename and a special comment in ID3v2. If the file you are splitting is a Mp3Wrap file
 the splitting process will be very fast and you will obtain all files just with one command.
 If your filename contains MP3WRAP and you have errors or you don't want to use
-wrap mode, just remove it from filename.
+wrap mode, just remove it from the file.
 
 \fBAlbumWrap\fP: mp3splt is compatible also with albumwrap files, which usually
 contain the string ALBW in filename and ID3v2 contains AlbumWrap.
@@ -124,7 +124,7 @@ But, as AlbumWrap extractor, mp3splt doesn't give any warranty.
 .IP "\fB-l\fP         " 10
 \fBList mode\fP (Only for Wrap mode).
 Lists all tracks wrapped in a Mp3Wrap or AlbumWrap archive without any extraction.
-Use this to view only the content of the file or to test if file is a valid wrapped file.
+Use this to view the content of the file or to test if file is a valid wrapped file.
 
 .IP "\fB-e\fP         " 10
 \fBError mode\fP (mp3 only).
@@ -160,7 +160,7 @@ mp3splt will use the default values. Of course if you specify the number of trac
 you will help mp3splt to understand what are the most probable split points,
 anyway once you scan a file with \-s option, mp3splt will write a file named "mp3splt.log" in which
 it saves all silence points found. This allows you to run mp3splt with different parameters (except th and min)
-without need of decoding file again. Finally, if the number of silence points is
+without decoding the file again. Finally, if the number of silence points is
 not correct, you have many chances to achieve right result. For example if a silence point
 was not detected because too short, you can manually split the long track in the two smaller ones.
 Or if file is an MP3 (not with ogg) and there are too many silence points that can't be discarded reducing
@@ -179,8 +179,7 @@ If you want to get informations from Internet, just type "query" instead of file
 connect to server, will ask you some keywords and will start to find the requested informations.
 If you will find the right album, then mp3splt will finally query the server to get the selected album
 and, if all is correct, will write a file named "query.cddb" from which will get splitpoints and filenames.
-ID3v1 will be created automatically with taken informations. The first time you
-run mp3splt with "query" option, it will ask you if you use a proxy, just fill out informations.
+ID3v1 will be created automatically with taken informations.
 
 \fBIMPORTANT NOTE FOR CDDB\fP: File split with this option can be not very precise due to:
 
@@ -192,7 +191,7 @@ that the large file is shorter than CD Total time. Never use this option.
 3) Encoders may add some padding frames so that file is longer than CD.
 .br
 4) There are several entries of the same cd on CDDB. In mp3splt they appears with "\\=>" symbol.
-Try some of them and find the best for yours, usually you can find the correct splitpoints for your mp3, so good luck!
+Try some of them and find the best for yours; usually you can find the correct splitpoints, so good luck!
 
 \fBYOU CAN USE \-a OPTION TO ADJUST SPLITPOINTS!\fP
 
@@ -247,7 +246,8 @@ Default gap is 30 seconds (so for each song, total decode time is one minute).
 
 .IP "\fB\-f\fP         " 10
 \fBFrame mode (mp3 only)\fP. Process all frames, seeking split positions by counting frames and not
-with bitrate guessing. In this mode you have higher precision and you can split variable bitrate mp3.
+with bitrate guessing. In this mode you have higher precision and you can
+split variable bitrate (VBR) mp3.
 (You can also split costant bitrate mp3, but it will take more time). Note also that "high" precision
 means that time seeking is reliable, but may not coincide for example with another player program
 that uses time seeking with bitrate guessing, so make your choice.
@@ -312,7 +312,7 @@ You specify a begin time (which in this case uses hundredths, 54.32.19), an end 
 
 This is frame mode for variable bitrate mp3 and multiple files.
 You can see that time format uses min.sec even if minutes are over 60.
-Output files in this case will be: album_145.59_234.2.mp3 and album2_145.59_234.2.mp3
+Output files in this case will be: album_145m_59s_0h__234m_2s_0h.mp3 and album2_145m_59s_0h__234m_2s_0h.mp3
 because user didn't specify it and they will be in the directory named newdir.
 .PP
 \fBmp3splt  \-nf album.mp3  0.12  21.34.7  25.3  30.40  38.58\fP
@@ -323,10 +323,10 @@ and will not contain ID3 informations.
 \fBmp3splt  \-w  album_MP3WRAP.mp3\fP
 
 This is Wrap mode. You can use this when mp3 is a file wrapped with Mp3Wrap or AlbumWrap.
-You have not to specify further arguments because all will be automatic.
+You can specify an output directory with the \-d option.
 
 .PP
-\fBmp3splt  \-wlq  album.mp3\fP or just \fBmp3splt  \-lq  album.mp3\fP
+\fBmp3splt  \-lq  album.mp3\fP
 
 This is List mode. You can use this when you want to list all tracks of a wrapped file without extracting them.
 With quiet option (\-q), program will not calculate CRC!
@@ -373,23 +373,31 @@ This is \-t option. It will split album.mp3 in many files of 10 minutes each.
 
 .SH "BUGS"
 .PP
-Report any bugs you find to Author (see below). Advices and info requests are welcome.
+Report any bugs you find to Authors (see below). Advices and info requests are welcome.
 .SH "SEE ALSO"
 .PP
 \fBmp3wrap\fP(1)
-.SH "AUTHOR"
+.SH "AUTHORS"
 .PP
-Matteo Trotta <mtrotta@users.sourceforge.net>.
+Matteo Trotta <mtrotta@users.sourceforge.net>
+.br
+Alexandru Munteanu <io_fx@yahoo.fr>
 .SH "DISTRIBUTION"
 .PP
 Visit
 .I http://mp3splt.sourceforge.net
 for latest release.
 .PP
-.I mp3splt
-is (C) 2002-2004 by Matteo Trotta
+.I mp3splt-project is
+.PP
+(C) 2002-2005 by Matteo Trotta
+.br
+(C) 2005-2008 by Alexandru Ionut Munteanu
 .PP
 Permission is granted to copy, distribute and/or modify
 this document under the terms of the GNU General Public License.
 This can be found as COPYING in mp3splt packages.
+
 .\" created by instant / docbook-to-man, Sun 17 Feb 2002, 11:18
+.\" modified by Matteo and Alex
+
