@@ -3122,7 +3122,9 @@ void splt_pl_end(splt_state *state, int *error)
 {
   //put infos about the frames processed and the number of sync errors
   //ONLY if framemode
-  if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_SILENCE_MODE)
+  if ((splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_SILENCE_MODE)
+      && (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_ERROR_MODE)
+      && (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_WRAP_MODE))
   {
     if (splt_t_get_int_option(state, SPLT_OPT_FRAME_MODE))
     {

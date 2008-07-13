@@ -1,10 +1,5 @@
 TODO BEFORE NEXT RELEASE :
 
-* BUG: -o '@a_@t_@n' produces strange result if no original tags found
-* old wrap : All files have been splitted correctly. Visit http://mp3wrap.sourceforge.net!
-* Not always show 'Processed X frames : ...'
-* average silence level : nan
-* print "Working with silence auto-adjust ..."
 * bug: 0% progress on EOF
 * invalid input file for this plugin must print plugin name
 * print that .m3u file has been created
