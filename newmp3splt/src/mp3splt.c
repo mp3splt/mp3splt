@@ -270,11 +270,10 @@ void show_small_help_exit(main_data *data)
       " -o + FORMAT: output filename pattern. Can contain those variables:\n"
       "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
       "      @t: title tag, @n: track number tag, @f: original filename\n"
-      " -g + TAGS_FORMAT: allows you to put custom tags "
-      "to your split files.\n"
-      "      Example, tags for the first split file and all the others like the second one : \n"
-      "       @o means that we put the original tags, before replacing artist with \"artist2\"\n\t"
-      "[@a=artist1,@t=title1]%%[@o,@a=artist2]\n"
+      " -g + TAGS : custom tags for the split files.\n"
+      "      TAGS can contain those variables : @a, @b, @t, @n and @o (set original tags).\n"
+      "      TAGS format is like [@a=artist1,@t=title1]\%[@o,@a=artist2]\n"
+      "       (\% means that we set the tags for all remaining files)\n"
       " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
@@ -1030,10 +1029,10 @@ void do_freedb_search(main_data *data)
   }
 
   //print out infos about the servers
-  fprintf(console_out," Freedb_search_type : %s , Url: %s , Port: %d\n",
+  fprintf(console_out," Freedb search type : %s , Site: %s , Port: %d\n",
       search_type,opt->freedb_search_server,opt->freedb_search_port);
   fflush(console_out);
-  fprintf(console_out," Freedb_get_type : %s , Url: %s , Port: %d\n",
+  fprintf(console_out," Freedb get type : %s , Site: %s , Port: %d\n",
       get_type,opt->freedb_get_server,opt->freedb_get_port);
   fflush(console_out);
 
@@ -1626,56 +1625,59 @@ int main(int argc, char *argv[])
   //if -o option, then take the directory path and set it as dir_char
   //if -d option is also specified, then the -d option will replace this
   //path
-  if (opt->o_option)
+  if (!opt->d_option)
   {
-    if (opt->output_format)
+    if (opt->o_option)
     {
-      char *dup = strdup(opt->output_format);
-      if (!dup)
+      if (opt->output_format)
       {
-        print_error_exit("cannot allocate memory !",data);
-      }
-
-      int replace_output_format = SPLT_FALSE;
-      int malloc_size = 0;
-      char *p = NULL;
-      //if -o argument is a directory
-      if (check_if_directory(dup))
-      {
-        replace_output_format = SPLT_TRUE;
-        opt->o_option = SPLT_FALSE;
-      }
-      else
-      {
-        //if not a directory, find the first dirchar from the end
-        if ((p = strrchr(dup,SPLT_DIRCHAR)) != NULL) 
+        char *dup = strdup(opt->output_format);
+        if (!dup)
         {
-          malloc_size = strlen(p) + 1;
+          print_error_exit("cannot allocate memory !",data);
+        }
+
+        int replace_output_format = SPLT_FALSE;
+        int malloc_size = 0;
+        char *p = NULL;
+        //if -o argument is a directory
+        if (check_if_directory(dup))
+        {
           replace_output_format = SPLT_TRUE;
+          opt->o_option = SPLT_FALSE;
         }
-      }
+        else
+        {
+          //if not a directory, find the first dirchar from the end
+          if ((p = strrchr(dup,SPLT_DIRCHAR)) != NULL) 
+          {
+            malloc_size = strlen(p) + 1;
+            replace_output_format = SPLT_TRUE;
+          }
+        }
 
-      //if we replace the output format
-      if (replace_output_format)
-      {
-        free(opt->output_format);
-        opt->output_format = NULL;
-        //if we really replace the output format
-        if (malloc_size != 0)
+        //if we replace the output format
+        if (replace_output_format)
         {
-          opt->output_format = my_malloc(sizeof(char) * malloc_size, data);
+          free(opt->output_format);
+          opt->output_format = NULL;
+          //if we really replace the output format
+          if (malloc_size != 0)
+          {
+            opt->output_format = my_malloc(sizeof(char) * malloc_size, data);
+          }
+          //for 'strrchr' version
+          if (malloc_size != 0)
+          {
+            snprintf(opt->output_format,malloc_size,"%s",p);
+            *p = '\0';
+          }
+          err = mp3splt_set_path_of_split(state, dup);
+          process_confirmation_error(err, data);
         }
-        //for 'strrchr' version
-        if (malloc_size != 0)
-        {
-          snprintf(opt->output_format,malloc_size,"%s",p);
-          *p = '\0';
-        }
-        err = mp3splt_set_path_of_split(state, dup);
-        process_confirmation_error(err, data);
+        free(dup);
+        dup = NULL;
       }
-      free(dup);
-      dup = NULL;
     }
   }
 
