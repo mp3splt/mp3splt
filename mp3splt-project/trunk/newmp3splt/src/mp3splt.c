@@ -1556,8 +1556,7 @@ int main(int argc, char *argv[])
         opt->n_option = SPLT_TRUE;
         break;
       case 'a':
-        mp3splt_set_int_option(state, SPLT_OPT_AUTO_ADJUST,
-            SPLT_TRUE);
+        mp3splt_set_int_option(state, SPLT_OPT_AUTO_ADJUST, SPLT_TRUE);
         opt->a_option = SPLT_TRUE;
         break;
       case 's':
