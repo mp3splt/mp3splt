@@ -1019,7 +1019,7 @@ void do_freedb_search(main_data *data)
   char get_type[30] = "";
   if (opt->freedb_search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI)
   {
-    snprintf(search_type,30,"%s","cddb.cgi");
+    snprintf(search_type,30,"%s","cddb_cgi");
   }
   else
   {
@@ -1027,7 +1027,7 @@ void do_freedb_search(main_data *data)
   }
   if (opt->freedb_get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
   {
-    snprintf(get_type,30,"%s","cddb.cgi");
+    snprintf(get_type,30,"%s","cddb_cgi");
   }
   else
   {
@@ -1253,8 +1253,15 @@ void put_progress_bar(splt_progress *p_bar)
 
   char printed_value[2048] = "";
   //we update the progress
-  snprintf(printed_value,2047," [ %.2f %%] %s",
-      p_bar->percent_progress * 100, progress_text);
+  if (p_bar->percent_progress <= 0.01)
+  {
+    snprintf(printed_value,2047," [ - %%] %s", progress_text);
+  }
+  else
+  {
+    snprintf(printed_value,2047," [ %.2f %%] %s",
+        p_bar->percent_progress * 100, progress_text);
+  }
 
   //we put necessary spaces
   char temp[2048] = "";

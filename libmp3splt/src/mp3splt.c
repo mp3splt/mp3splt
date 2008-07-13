@@ -674,7 +674,6 @@ int mp3splt_split(splt_state *state)
           goto function_end;
         }
 
-
         int split_type = splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
 
         //normal split checks
@@ -708,6 +707,21 @@ int mp3splt_split(splt_state *state)
         splt_check_file_type(state, &error);
         if (error < 0) { goto function_end; }
 
+        //print the new m3u fname
+        char *m3u_fname_with_path = splt_t_get_m3u_file_with_path(state, &error);
+        if (error < 0) { goto function_end; }
+        int malloc_size = strlen(m3u_fname_with_path) + 200;
+        char *mess = malloc(sizeof(char) * (strlen(m3u_fname_with_path) + 200));
+        if (!mess) { error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto function_end; }
+        snprintf(mess, malloc_size, " M3U file '%s' will be created.\n",
+            m3u_fname_with_path);
+        splt_t_put_message_to_client(state, mess);
+        if (m3u_fname_with_path)
+        {
+          free(m3u_fname_with_path);
+          m3u_fname_with_path = NULL;
+        }
+
         //init the plugin for split
         splt_p_init(state, &error);
         if (error < 0) { goto function_end; }
@@ -725,6 +739,7 @@ int mp3splt_split(splt_state *state)
 
         splt_u_print_debug("parse type of split...",0,NULL);
 
+        char message[1024] = { '\0' };
         //print Working with auto adjust if necessary
         if ((split_type != SPLT_OPTION_WRAP_MODE)
             && (split_type != SPLT_OPTION_SILENCE_MODE)
@@ -732,8 +747,7 @@ int mp3splt_split(splt_state *state)
         {
           if (! splt_t_get_int_option(state, SPLT_OPT_QUIET_MODE))
           {
-            char message[1024] = { '\0' };
-            snprintf(message, 1024, " Working with SILENCE AUTO-ADJUST (Threshold:"
+            snprintf(message, 2048, " Working with SILENCE AUTO-ADJUST (Threshold:"
                 " %.1f dB Gap: %d sec Offset: %.2f)\n",
                 splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
                 splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP),
