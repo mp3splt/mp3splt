@@ -96,6 +96,8 @@ typedef struct
 {
   double level_sum;
   unsigned long number_of_levels;
+  //if set to FALSE, don't show the average silence level
+  int print_silence_level;
 } silence_level;
 
 typedef struct
@@ -641,6 +643,10 @@ void process_confirmation_error(int conf, main_data *data)
       exit(1);
     }
     error_from_library = NULL;
+  }
+  if (conf == SPLT_DEWRAP_OK)
+  {
+    print_message("\nAll files have been splitted correctly. Visit http://mp3wrap.sourceforge.net!");
   }
 }
 
@@ -1374,8 +1380,19 @@ int check_if_directory(char *fname)
 void get_silence_level(float level, void *user_data)
 {
   silence_level *sl = user_data;
-  sl->level_sum += level;
-  sl->number_of_levels++;
+  if (level == INT_MIN)
+  {
+    sl->print_silence_level = SPLT_FALSE;
+  }
+  else if (level == INT_MAX)
+  {
+    sl->print_silence_level = SPLT_TRUE;
+  }
+  else
+  {
+    sl->level_sum += level;
+    sl->number_of_levels++;
+  }
 }
 
 void append_filename(main_data *data, const char *str)
@@ -1440,6 +1457,7 @@ main_data *create_main_struct()
 
   data->sl->level_sum = 0;
   data->sl->number_of_levels = 0;
+  data->sl->print_silence_level = SPLT_TRUE;
 
   return data;
 }
@@ -1917,10 +1935,13 @@ int main(int argc, char *argv[])
         //print the average silence level
         if (opt->s_option)
         {
-          float average_silence_levels = sl->level_sum / (double) sl->number_of_levels;
-          char message[256] = { '\0' };
-          snprintf(message,256," Average silence level : %.2f", average_silence_levels);
-          print_message(message);
+          if (sl->print_silence_level)
+          {
+            float average_silence_levels = sl->level_sum / (double) sl->number_of_levels;
+            char message[256] = { '\0' };
+            snprintf(message,256," Average silence level : %.2f dB", average_silence_levels);
+            print_message(message);
+          }
         }
 
         //if cddb split, put message at the end

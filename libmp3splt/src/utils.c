@@ -660,10 +660,10 @@ static char *splt_u_parse_tag_word(const char *cur_pos,
       if (string_length > 0)
       {
         word = malloc(string_length*sizeof(char));
+        memset(word,'\0',string_length*sizeof(char));
         if (word)
         {
           memcpy(word,equal_sign+1,string_length);
-          word[string_length] = '\0';
         }
         else
         {
@@ -1261,20 +1261,35 @@ int splt_u_put_output_format_filename(splt_state *state)
             artist = NULL;
           }
 
+          //
           if (artist != NULL)
           {
             snprintf(temp+2,temp_len, state->oformat.format[i]+2);
 
             int artist_length = 0;
             artist_length = strlen(artist);
-            fm_length = strlen(temp)+artist_length;
-            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
-            {
-              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              goto end;
-            }
+            fm_length = strlen(temp) + artist_length + 1;
+          }
+          else
+          {
+            snprintf(temp,temp_len, state->oformat.format[i]+2);
+            fm_length = strlen(temp) + 1;
+          }
 
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          //
+          if (artist != NULL)
+          {
             snprintf(fm, fm_length, temp, artist);
+          }
+          else
+          {
+            snprintf(fm, fm_length, temp);
           }
           break;
         case 'b':
@@ -1289,20 +1304,35 @@ int splt_u_put_output_format_filename(splt_state *state)
             album = NULL;
           }
 
+          //
           if (album != NULL)
           {
             int album_length = 0;
             album_length = strlen(album);
             snprintf(temp+2, temp_len, state->oformat.format[i]+2);
 
-            fm_length = strlen(temp)+album_length;
-            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
-            {
-              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              goto end;
-            }
+            fm_length = strlen(temp) + album_length + 1;
+          }
+          else
+          {
+            snprintf(temp,temp_len, state->oformat.format[i]+2);
+            fm_length = strlen(temp) + 1;
+          }
 
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          //
+          if (album != NULL)
+          {
             snprintf(fm, fm_length, temp, album);
+          }
+          else
+          {
+            snprintf(fm, fm_length, "%s", temp);
           }
           break;
         case 't':
@@ -1317,20 +1347,35 @@ int splt_u_put_output_format_filename(splt_state *state)
             title = NULL;
           }
 
+          //
           if (title != NULL)
           {
             int title_length = 0;
             title_length = strlen(title);
             snprintf(temp+2, temp_len, state->oformat.format[i]+2);
 
-            fm_length = strlen(temp)+title_length;
-            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
-            {
-              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              goto end;
-            }
+            fm_length = strlen(temp) + title_length + 1;
+          }
+          else
+          {
+            snprintf(temp,temp_len, state->oformat.format[i]+2);
+            fm_length = strlen(temp) + 1;
+          }
 
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          //
+          if (title != NULL)
+          {
             snprintf(fm, fm_length, temp, title);
+          }
+          else
+          {
+            snprintf(fm, fm_length, temp);
           }
           break;
         case 'p':
@@ -1345,20 +1390,34 @@ int splt_u_put_output_format_filename(splt_state *state)
             performer = NULL;
           }
 
+          //
           if (performer != NULL)
           {
             int performer_length = 0;
             performer_length = strlen(performer);
             snprintf(temp+2, temp_len, state->oformat.format[i]+2);
 
-            fm_length = strlen(temp)+performer_length;
-            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
-            {
-              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              goto end;
-            }
+            fm_length = strlen(temp) + performer_length + 1;
+          }
+          else
+          {
+            snprintf(temp,temp_len, state->oformat.format[i]+2);
+            fm_length = strlen(temp) + 1;
+          }
 
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          if (performer != NULL)
+          {
             snprintf(fm, fm_length, temp, performer);
+          }
+          else
+          {
+            snprintf(fm, fm_length, temp);
           }
           break;
         case 'n':
@@ -1830,7 +1889,7 @@ char *splt_u_strerror(splt_state *state, int error_code)
       case SPLT_OUTPUT_FORMAT_OK:
         break;
       case SPLT_OUTPUT_FORMAT_AMBIGUOUS:
-        snprintf(error_msg,max_error_size, " warning: output format ambigous");
+        snprintf(error_msg,max_error_size, " warning: output format ambigous (@t or @n missing)");
         break;
         //
       case SPLT_OUTPUT_FORMAT_ERROR:

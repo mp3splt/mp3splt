@@ -725,6 +725,24 @@ int mp3splt_split(splt_state *state)
 
         splt_u_print_debug("parse type of split...",0,NULL);
 
+        //print Working with auto adjust if necessary
+        if ((split_type != SPLT_OPTION_WRAP_MODE)
+            && (split_type != SPLT_OPTION_SILENCE_MODE)
+            && (split_type != SPLT_OPTION_ERROR_MODE))
+        {
+          if (! splt_t_get_int_option(state, SPLT_OPT_QUIET_MODE))
+          {
+            char message[1024] = { '\0' };
+            snprintf(message, 1024, " Working with SILENCE AUTO-ADJUST (Threshold:"
+                " %.1f dB Gap: %d sec Offset: %.2f)\n",
+                splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+                splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP),
+                splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET));
+
+            splt_t_put_message_to_client(state, message);
+          }
+        }
+
         //the type of the split
         switch (split_type)
         {
