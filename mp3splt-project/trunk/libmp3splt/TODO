@@ -1,10 +1,3 @@
-TODO BEFORE NEXT RELEASE :
-
-* bug: 0% progress on EOF
-* invalid input file for this plugin must print plugin name
-* print that .m3u file has been created
-
-
 FEATURES REQUESTS :
 
 * use 'getline' (GNU extension) instead of 'fgets'

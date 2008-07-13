@@ -58,6 +58,7 @@ char *splt_t_get_filename_to_split(splt_state *state);
 char *splt_t_get_path_of_split(splt_state *state);
 char *splt_t_get_m3u_filename(splt_state *state);
 char *splt_t_get_silence_log_fname(splt_state *state);
+char *splt_t_get_m3u_file_with_path(splt_state *state, int *error);
 
 /********************************/
 /* types: current split access */

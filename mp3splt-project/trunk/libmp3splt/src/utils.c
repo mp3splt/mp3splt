@@ -1796,9 +1796,12 @@ char *splt_u_strerror(splt_state *state, int error_code)
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_ERROR_INVALID :
+        ;
+        int err = SPLT_OK;
+        const char *plugin_name = splt_p_get_name(state,&err);
         snprintf(error_msg,max_error_size,
-            " error: invalid input file '%s' for this plugin",
-            state->err.error_data);
+            " error: invalid input file '%s' for '%s' plugin",
+            state->err.error_data, plugin_name);
         break;
       case SPLT_ERROR_EQUAL_SPLITPOINTS :
         snprintf(error_msg,max_error_size,
