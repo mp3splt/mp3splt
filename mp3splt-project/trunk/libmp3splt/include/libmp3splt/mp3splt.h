@@ -1202,7 +1202,7 @@ typedef enum {
  * urls of freedb2.org and freedb.org
  */
 #define SPLT_FREEDB_CGI_SITE "freedb.org/~cddb/cddb.cgi"
-#define SPLT_FREEDB2_CGI_SITE "freedb2.org/~cddb/cddb.cgi"
+#define SPLT_FREEDB2_CGI_SITE "tracktype.org/~cddb/cddb.cgi"
 
 //package information constants
 #ifndef SPLT_PACKAGE_NAME

@@ -68,11 +68,14 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   }
 
   char *year0 = NULL;
-  year0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR));
-  if (year0 == NULL)
+  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR))
   {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    goto function_end;
+    year0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR));
+    if (year0 == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto function_end;
+    }
   }
 
   char *performer = NULL;

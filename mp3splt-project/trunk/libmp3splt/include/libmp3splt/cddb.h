@@ -77,7 +77,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 //global freedb, ports and buffersize
 #define SPLT_FREEDB_BUFFERSIZE 8192
 
-#define SPLT_FREEDB2_SITE "freedb2.org"
+#define SPLT_FREEDB2_SITE "tracktype.org"
 #define SPLT_FREEDB_SITE "freedb.org"
 
 //cddb protocol

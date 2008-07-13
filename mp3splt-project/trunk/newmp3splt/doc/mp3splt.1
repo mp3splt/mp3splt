@@ -81,7 +81,6 @@ with the same criterion.
 Multiple split points can be specified. After the minimal 2, another indefinite number of split points can
 be specified. Each split point will be an end time for the previous, and a begin for the following.
 If you want to reach the end of file, you can use "EOF" as last splitpoint.
-
 .SH "DESCRIPTION"
 .PP
 \fBmp3splt\fP is a free command-line utility that allows you to
@@ -100,13 +99,19 @@ time length (see \-t option)
 
 Or if you have a file created either with Mp3Wrap or AlbumWrap, you can easily split it
 just with one command (see \-w option).
-
 .PP
 \fBNOTE for MP3:\fP usually mp3splt understands if mp3 is VBR by checking the presence
 of a Xing or Info header and will consequently start in framemode, but if this is not present,
 mp3splt will start in standard mode.
 This means that splitting process will be quicker, but will be imprecise due to variable bitrate,
 you can split those VBR files only with framemode (see \-f option).
+
+\fBNOTE about TAGS:\fP by default, mp3splt will put the original tags in
+the splitted files. In order to extract the original tags from mp3 files,
+libmp3splt must be compiled with 'id3tag' support. Support for ID3v2
+tags in split files is not yet available. Custom tags for the split files
+can be set with the \-g option.
+
 .SH "OPTIONS"
 .IP "\fB-w\fP         " 10
 \fBWrap Mode\fP. Use to split file created with:
@@ -175,11 +180,33 @@ with consecutive tracks (such as live performances) might be only a waste of tim
 \fBCDDB mode\fP. To get splitpoints and filenames automatically from SOURCE, that is the name
 of a ".CUE" file (note that it must end with ".cue", otherwise it will be wrongly
 interpreted as a cddb file) or a local .XMCD (.CDDB) file on your hard disk.
-If you want to get informations from Internet, just type "query" instead of filename. mp3splt will
-connect to server, will ask you some keywords and will start to find the requested informations.
-If you will find the right album, then mp3splt will finally query the server to get the selected album
-and, if all is correct, will write a file named "query.cddb" from which will get splitpoints and filenames.
-ID3v1 will be created automatically with taken informations.
+
+If you want to get informations from Internet, SOURCE must have one of the
+following formats :
+
+    \fBquery\fP
+    \fBquery[search=protocol://SITE:PORT,get=protocol://SITE:PORT]\fP
+
+If SOURCE is 'query', then the default options will be chosen. Optional
+arguments to query are 'search' and 'get'; 'search' defines the CDDB search
+protocol and site (for searching the disc ID from the album and title); 'get'
+defines the CDDB download protocol and site (for downloading the CDDB file
+from the disc ID). Valid 'search' protocols are : 'cddb_cgi' and 'cddb_protocol'.
+Valid 'get' protocols are : 'cddb_cgi'.
+
+Examples :
+
+  query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]
+.br
+  query[get=cddb_protocol://freedb.org:8880]
+.br
+  query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80]
+
+Mp3splt will connect to server and will start to find the requested
+informations.  If you will find the right album, then mp3splt will finally
+query the server to get the selected album and, if all is correct, will
+write a file named "query.cddb" from which will get splitpoints and
+filenames. ID3v1 will be created automatically with taken informations.
 
 \fBIMPORTANT NOTE FOR CDDB\fP: File split with this option can be not very precise due to:
 
@@ -263,9 +290,15 @@ files, because to seek splitpoints we need to process all bytes and all frames. 
 those options.
 
 .IP "\fB\-o FORMAT\fP         " 10
-\fBOutput format\fP,
-to specify an output filename. FORMAT is a string that will be used
-as output filename. It can contain name variables, that must begin with @ char and that can be:
+\fBOutput format\fP. FORMAT is a string that will be used as output
+directory and/or filename. If FORMAT contains the DIRCHAR character ('\\' on
+windows and '/' on other systems), directories will be created for each
+DIRCHAR if they don't exist and the output files will be created in the
+corresponding directory. If the \-d option is also specified, FORMAT is used
+only as an output filename and no directory will be created from it;
+instead, the output directory will be taken from the \-d option.
+
+It can contain name variables, that must begin with @ char and that can be:
 
 @a: artist name
 .br
@@ -276,6 +309,8 @@ as output filename. It can contain name variables, that must begin with @ char a
 @t: song title*
 .br
 @n: track number* (valid also when not using \-c)
+.br
+@f: input filename (without extension)
 
 When split files are more than one, at least one between @t and @n (*) must be present to avoid ambiguous names.
 You can put any prefix, separator, suffix in the string, for more elegance.
@@ -290,14 +325,68 @@ Valid examples are:
 .IP "\fB\-d NAME\fP         " 10
 \fBOutput directory\fP.
 To put all output files in the directory named NAME. If directory does not exists,
-it will be created.
+it will be created. The \-o option can also be used to output files into a
+directory; however if both options are present, the output directory is
+defined by the \-d option.
 
 .IP "\fB\-n\fP         " 10
 \fBNo Tag\fP. Does not write ID3 or Vorbis comment in outputfile. Use if you need clean files.
+
+.IP "\fB\-t TAGS\fP         " 10
+\fBCustom Tags\fP. Set custom tags to the split files.
+TAGS should contain a list of square brackets pairs \fB[]\fP. The tags defined in the first
+pair of square brackets will be set on the first split file, those defined in the
+second pair of square brackets will be set on the second split file, ... Inside
+a pair of square brackets, each tag is defined as \fB@variable=value\fP and
+tags are \fBseparated by comma\fP. If a percent sign \fB%\fP is found before
+the open square bracket character, then the pair of square brackets following the % 
+character will define the tags in all remaining files. The variables can be :
+
+@a: artist name
+.br
+@b: album title
+.br
+@t: song title
+.br
+@n: track number
+.br
+@o: set original tags
+
+Example of tags format :
+\fB[@a=foo,@b=bar][@t=footitle,@n=3]%[@o,@b=special_album]\fP. In this
+example, the first split file will have the artist tag 'foo' and the album
+tag 'bar'; the second split file will have the title tag 'footitle' and the
+track number tag '3'; all the other files will have their original tags of
+the file to split with the album changed to 'special_album'.
+
+.IP "\fB\-m M3U\fP         " 10
+\fBCreate .m3u file mode\fP. Creates a .m3u file containing the split
+files. The generated .m3u file only contains the split filenames without
+the path. If an output directory is specified with \-d or \-o, the file is
+created in this directory. The path of M3U is ignored. This option cannot be
+used with STDOUT output.
+
 .IP "\fB\-q\fP         " 10
 \fBQuiet mode\fP. Stays quiet :) i.e. do not prompt the user for anything and print less messages.
 When you use quiet option, mp3splt will try to end program without asking anything to the user (useful for scripts).
 In Wrap mode it will also skip CRC check, use if you are in such a hurry.
+
+.IP "\fB\-Q\fP         " 10
+\fBVery quiet mode\fP. Enables the \-q option and does not print anything
+to STDOUT. This option cannot be used with STDOUT output.
+
+.IP "\fB\-D\fP         " 10
+\fBDebug mode\fP. Experimental debug support. Print extra informations
+about what is being done. Current print doesn't have a nice format.
+
+.IP "\fB\-i\fP         " 10
+\fBCount silence mode.\fP Print the number of silence splitpoints found with silence detection. Use \-p for arguments.
+
+.IP "\fB\-v\fP         " 10
+\fBPrint version.\fP Print the version of mp3splt and libmp3splt and exit.
+
+.IP "\fB\-h\fP         " 10
+\fBPrint help.\fP Print a short usage of mp3splt and exit.
 
 .SH "EXAMPLES"
 .PP
@@ -370,10 +459,10 @@ Output filenames will be named like: 01_Title.mp3
 \fBmp3splt  \-t  10.00  album.mp3\fP
 
 This is \-t option. It will split album.mp3 in many files of 10 minutes each.
-
 .SH "BUGS"
 .PP
-Report any bugs you find to Authors (see below). Advices and info requests are welcome.
+Report any bugs you find to Authors (see below). Advices, info requests and
+contributions are welcome.
 .SH "SEE ALSO"
 .PP
 \fBmp3wrap\fP(1)
@@ -381,7 +470,7 @@ Report any bugs you find to Authors (see below). Advices and info requests are w
 .PP
 Matteo Trotta <mtrotta@users.sourceforge.net>
 .br
-Alexandru Munteanu <io_fx@yahoo.fr>
+Alexandru Ionut Munteanu <io_fx@yahoo.fr>
 .SH "DISTRIBUTION"
 .PP
 Visit
@@ -400,4 +489,3 @@ This can be found as COPYING in mp3splt packages.
 
 .\" created by instant / docbook-to-man, Sun 17 Feb 2002, 11:18
 .\" modified by Matteo and Alex
-
