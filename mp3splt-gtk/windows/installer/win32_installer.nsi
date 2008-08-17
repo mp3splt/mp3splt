@@ -1,6 +1,6 @@
 !define VERSION "0.5"
 !define PROGRAM_NAME "mp3splt-gtk"
-!define MP3SPLT_PATH c:/mp3splt_mingw/home/admin/mp3splt-project/mp3splt-gtk/windows/installer/../../..
+!define MP3SPLT_PATH c:/mp3splt_mingw/home/alex/hacking/mp3splt-project/mp3splt-gtk/windows/installer/../../..
 
 ;name of the program
 Name "mp3splt-gtk ${VERSION}"
@@ -72,6 +72,16 @@ Section ""
 
 ;copy the main executable
   File ${MP3SPLT_PATH}\mp3splt-gtk\src\mp3splt-gtk.exe
+;copy the library
+  File ${MP3SPLT_PATH}\libmp3splt\src\.libs\libmp3splt-0.exe
+;copy the dependencies
+  File ${MP3SPLT_PATH}\libltdl3.dll
+  File ${MP3SPLT_PATH}\libogg-0.dll
+  File ${MP3SPLT_PATH}\libvorbis-0.dll
+  File ${MP3SPLT_PATH}\libvorbisfile-3.dll
+;copy the plugins
+  File ${MP3SPLT_PATH}\libmp3splt\plugins\.libs\libsplt_mp3.dll
+  File ${MP3SPLT_PATH}\libmp3splt\plugins\.libs\libsplt_ogg.dll
 ;copying the icons
   File ${MP3SPLT_PATH}\mp3splt-gtk\src\mp3splt-gtk.png
   File ${MP3SPLT_PATH}\mp3splt-gtk\src\mp3splt-gtk_ico.png

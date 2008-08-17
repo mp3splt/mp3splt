@@ -59,16 +59,18 @@ AC_C_CONST
 #################################################################
 
 AC_WITH_LTDL
+AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
 #################################################################
 # Check for the type of the host
 #################################################################
 
+AM_CONDITIONAL(WIN32,false)
 AC_MSG_CHECKING(the host)
 case $host in
-	*linux*)
-		HOST="Linux-based system"
+  *linux*)
+    HOST="Linux-based system"
 		;;
 	*openbsd*)
 		HOST="OpenBSD"
@@ -82,7 +84,8 @@ case $host in
 		;;
 	*mingw*)
 		HOST="Mingw"
-		LIBS="libz.a"
+    AM_CONDITIONAL(WIN32,true)
+		LIBS="-lz -lws2_32"
 		;;
 	*solaris*)
 		HOST="Solaris"

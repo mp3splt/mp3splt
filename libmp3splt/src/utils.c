@@ -2077,3 +2077,9 @@ int splt_u_create_directory(splt_state *state, const char *dir)
   return result;
 }
 
+void splt_u_print(char *mess)
+{
+	fprintf(stdout,"mess = _%s_ \n",mess);
+	fflush(stdout);
+}
+

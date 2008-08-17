@@ -1,17 +1,20 @@
 all:
-	cd libmp3splt && \
-	./autogen.sh && \
-	./configure --prefix=/usr --host=mingw32 --disable-shared \
-	--disable-vorbistest \
-	&& make clean && make && make install &&\
+	cd libmp3splt && ./autogen.sh && ./configure --prefix=/usr && make clean && make && \
+	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
+	\
 	cd ../newmp3splt && ./autogen.sh && \
-	cp /usr/lib/libmp3splt.a . && cp /usr/lib/libmp3splt.a ./src && \
-	./configure --host=--mingw32 && make clean && make && make install && \
-	cd ../mp3splt-gtk && \
-	cp /usr/lib/libmp3splt.a . && cp /usr/lib/libmp3splt.a ./src \
-	&& ./autogen.sh && \
-	./configure --prefix=/usr --host=mingw32 \
-	&& make clean && make && make install
+	cp /lib/libmp3splt* . && cp /lib/libmp3splt* ./src && \
+	./configure && make clean && make && make install && \
+	\
+	cd ../mp3splt-gtk && ./autogen.sh && \
+	cp /lib/libmp3splt* . && cp /lib/libmp3splt* ./src && \
+	./configure && make clean && make && make install
+
+recompile:
+	cd libmp3splt && make && \
+	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
+	cd ../newmp3splt && cp /usr/lib/libmp3splt.* . && cp /usr/lib/libmp3splt.* ./src && make && \
+	cd ../mp3splt-gtk && cp /usr/lib/libmp3splt.* . && cp /usr/lib/libmp3splt.* ./src && make
 
 clean:
 	cd libmp3splt && make clean
@@ -23,6 +26,11 @@ dist:
 	rm -rf fr_locales
 	mkdir fr_locales
 	msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
+#renaming mp3splt plugins
+	cp libmp3splt/plugins/.libs/libsplt_ogg-0.exe libmp3splt/plugins/.libs/libsplt_ogg.dll
+	cp libmp3splt/plugins/.libs/libsplt_mp3-0.exe libmp3splt/plugins/.libs/libsplt_mp3.dll
+#copying vorbis and libltdl libraries
+	cp /bin/libltdl3.dll /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll .
 #building installer for the gui
 	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
 	cd mp3splt-gtk/windows/installer && make && cp mp3splt-gtk*exe ../../../ && cd ../../../
