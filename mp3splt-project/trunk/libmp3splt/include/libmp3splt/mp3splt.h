@@ -35,7 +35,11 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+//libtool 1.4e is buggy on mingw if we include ltdl.h
+#ifndef __WIN32__
 #include <ltdl.h>
+#endif
 
 /**
  * @file  mp3splt.h

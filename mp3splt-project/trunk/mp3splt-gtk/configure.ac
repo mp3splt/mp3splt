@@ -44,7 +44,8 @@ case $host in
 		;;
 	*mingw*)
 		HOST="Mingw"
-		LIBS="libvorbisfile.a libmad.a libvorbis.a libogg.a libid3tag.a libz.a libmp3splt.a -lwsock32 -mwindows"
+		LIBS="$LIBS -lwsock32 -mwindows"
+		CFLAGS="$CFLAGS -mms-bitfields -enable-stdcall-fixup"
 		;;
 	*solaris*)
 		HOST="Solaris"

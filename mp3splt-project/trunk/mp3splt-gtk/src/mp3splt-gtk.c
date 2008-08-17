@@ -492,8 +492,8 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   
   //create new state
   the_state = mp3splt_new_state(&error);
-  
-  gtk_init (&argc, &argv);
+
+  gtk_init(&argc, &argv);
   
   //we initialise the splitpoints array
   splitpoints = g_array_new (FALSE, FALSE, sizeof (Split_point));

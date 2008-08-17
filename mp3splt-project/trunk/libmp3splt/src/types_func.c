@@ -33,7 +33,12 @@
 #include <string.h>
 #include <math.h>
 #include <errno.h>
+
+#ifdef __WIN32__
+#include <winsock.h>
+#else
 #include <netdb.h>
+#endif
 
 #include "splt.h"
 
@@ -1981,8 +1986,12 @@ void splt_t_set_strerror_msg(splt_state *state)
 //sets the error string message got with hstrerror(..)
 void splt_t_set_strherror_msg(splt_state *state)
 {
+#ifndef __WIN32__
   const char *hstrerr = hstrerror(h_errno);
   splt_t_set_strerr_msg(state, hstrerr);
+#else
+  splt_t_set_strerr_msg(state, "Network error");
+#endif
 }
 
 //set an int option

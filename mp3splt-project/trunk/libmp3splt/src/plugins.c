@@ -32,10 +32,113 @@
 
 #include <string.h>
 #include <dirent.h>
-#include <dlfcn.h>
+#include <errno.h>
 
 #include "splt.h"
 #include "plugins.h"
+
+//mingw does not provide BSD functions 'scandir' and 'alphasort'
+#ifdef __WIN32__
+
+//-returns -1 for not enough memory, -2 for other errors
+//-a positive (or 0) number if success
+int scandir(const char *dir, struct dirent ***namelist,
+		int(*filter)(const struct dirent *),
+		int(*compar)(const struct dirent **, const struct dirent **))
+{
+  struct dirent **files = NULL;
+  struct dirent *file = NULL;
+  DIR *directory = NULL;
+  int number_of_files = 0;
+
+  directory = opendir(dir);
+  if (directory == NULL)
+  {
+    return -2;
+  }
+
+  int free_memory = 0;
+  int we_have_error = 0;
+
+  while (file = readdir(directory))
+  {
+    if ((filter == NULL) || (filter(file)))
+    {
+      if (files == NULL)
+      {
+        files = malloc((sizeof *files));
+      }
+      else
+      {
+        files = realloc(files, (sizeof *files) * (number_of_files + 1));
+      }
+      if (files == NULL)
+      {
+        free_memory = 1;
+        we_have_error = 1;
+        break;
+      }
+
+      files[number_of_files] = malloc(sizeof(DIR));
+      if (files[number_of_files] == NULL)
+      {
+        free_memory = 1;
+        we_have_error = 1;
+        break;
+      }
+
+      *files[number_of_files] = *file;
+      number_of_files++;
+    }
+  }
+
+  //we should have a valid 'namelist' argument
+  if (namelist)
+  {
+    *namelist = files;
+  }
+  else
+  {
+    free_memory = 1;
+  }
+
+  //-free memory if error
+  if (free_memory)
+  {
+    while (number_of_files--)
+    {
+      if (files[number_of_files])
+      {
+        free(files[number_of_files]);
+        files[number_of_files] = NULL;
+      }
+    }
+    free(files);
+    files = NULL;
+  }
+
+  if (closedir(directory) == -1)
+  {
+    return -2;
+  }
+
+  qsort(*namelist, number_of_files, sizeof **namelist,
+      (int (*)(const void *, const void *)) compar);
+
+  if (we_have_error)
+  {
+    return -1;
+  }
+
+  return number_of_files;
+}
+
+int alphasort(const struct dirent **a, const struct dirent **b)
+{
+  return strcoll((*a)->d_name, (*b)->d_name);
+}
+
+#endif
 
 //sets the plugin scan directories
 static int splt_p_set_default_plugins_scan_dirs(splt_state *state)
@@ -73,6 +176,7 @@ static int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 
   //we put the current directory
   memset(temp,'\0',2048);
+  snprintf(temp,2048,".%c",SPLT_DIRCHAR);
   pl->plugins_scan_dirs[2] = malloc(sizeof(char) * (strlen(temp)+1));
   if (pl->plugins_scan_dirs[2] == NULL)
   {
@@ -90,7 +194,7 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
   char *file = (char *) de->d_name;
   char *p = NULL;
   //if the name starts with splt_and contains .so or .sl or .dll
-  if (strncmp(file,"splt_",5) == 0)
+  if (strncmp(file,"libsplt_",8) == 0)
   {
     //find the last '.' character
     p = strrchr(file,'.');
@@ -120,16 +224,19 @@ static int splt_p_scan_dir_for_plugins(splt_plugins *pl, const char *directory)
   number_of_files = scandir(directory, &files,
       splt_p_filter_plugin_files, alphasort);
   int directory_len = strlen(directory);
-  int old_number_of_files = number_of_files;
+  int new_number_of_files = number_of_files;
 
-  //ignore errors
-  if (number_of_files >= 0)
+  if (number_of_files == -1)
+  {
+		return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+  else if (new_number_of_files >= 0)
   {
     //for all the filtered found plugins,
     //copy their name
-    while (number_of_files--)
+    while (new_number_of_files--)
     {
-      char *fname = files[number_of_files]->d_name;
+      char *fname = files[new_number_of_files]->d_name;
       int fname_len = strlen(fname);
 
       int alloc_err = splt_t_alloc_init_new_plugin(pl);
@@ -158,7 +265,6 @@ static int splt_p_scan_dir_for_plugins(splt_plugins *pl, const char *directory)
           fname_len+directory_len+2,"%s%c%s",directory,SPLT_DIRCHAR,fname);
       pl->number_of_plugins_found++;
     }
-    number_of_files = old_number_of_files;
 
 end:
     ;
@@ -255,7 +361,13 @@ static int splt_p_open_get_plugins_data(splt_state *state)
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_original_tags");
       *(void **) (&pl->data[i].func->set_plugin_info) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_plugin_info");
-      pl->data[i].func->set_plugin_info(&pl->data[i].info,&error);
+      if (pl->data[i].func->set_plugin_info != NULL)
+      {
+        pl->data[i].func->set_plugin_info(&pl->data[i].info,&error);
+      }
+      else
+      {
+      }
     }
   }
 
