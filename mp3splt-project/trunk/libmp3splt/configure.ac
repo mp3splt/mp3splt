@@ -32,7 +32,7 @@
 # Basic initialisations 
 #################################################
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.56)
 AC_INIT(libmp3splt, 0.5, io_fx@yahoo.fr)
 AM_INIT_AUTOMAKE(libmp3splt, 0.5)
 AM_CONFIG_HEADER(config.h)
@@ -111,6 +111,9 @@ AC_CHECK_FUNCS(fseeko, [ CFLAGS="$CFLAGS -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS
 #check for -lm
 AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 
+#check for -ltld
+AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not found - check libtool installation !]) ] ) 
+
 #################################################################
 # Check mp3 plugin libraries
 #################################################################
@@ -120,10 +123,11 @@ AC_ARG_ENABLE(mp3,
               [ AC_HELP_STRING([--disable-mp3], [ Disable mp3 plugin. ]) ],
               [ AM_CONDITIONAL(MP3_PLUGIN,false) mp3="no" ],
               #check for -lmad
-              [ AC_CHECK_LIB(mad, mad_frame_decode, [ mp3="yes" ],
-                             [ AC_MSG_ERROR([libmad needed! Download the latest version
-                              at http://www.mars.org/home/rob/proj/mpeg/]); mp3="no" ])
-              AM_CONDITIONAL(MP3_PLUGIN,true) ])
+              [ AC_CHECK_LIB(mad, mad_frame_decode, [ mp3="yes"
+					              AM_CONDITIONAL(MP3_PLUGIN,true) ],
+                             [ AC_MSG_WARN([libmad not found ! Will build without mp3 support.]); 
+			       AM_CONDITIONAL(MP3_PLUGIN,false) mp3="no" ])
+               ])
 
 #check for --disable-id3tag
 AC_ARG_ENABLE(id3tag,

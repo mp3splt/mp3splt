@@ -882,6 +882,8 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
   mad_synth_init(&mp3state->synth);
 
   mad_timer_reset(&mp3state->timer);
+  /*mp3state->timer.seconds = 0;
+  mp3state->timer.fraction= 0;*/
 
   //we read mp3 infos and set pointers to read the mp3 data
   do
@@ -1213,6 +1215,8 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   mad_synth_init(&mp3state->synth);
 
   mad_timer_reset(&mp3state->timer);
+  /*mp3state->timer.seconds = 0;
+  mp3state->timer.fraction= 0;*/
 
   mp3state->temp_level = 0.0;
 

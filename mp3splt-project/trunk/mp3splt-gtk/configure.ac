@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.56)
 AC_INIT(mp3splt-gtk, 0.5, io_alex_2002@yahoo.fr)
 
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
@@ -13,7 +13,7 @@ AC_PROG_CC
 #gettext
 AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION(0.13.1)
+AM_GNU_GETTEXT_VERSION([0.13.1])
 
 # Checks for libraries.
 AM_PATH_GTK_2_0(2.6.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.6.0))
@@ -54,7 +54,6 @@ case $host in
 	*)
 		HOST="Other"
                 LIBS="$LIBS"
-#		LIBS="-lmad -logg -lvorbis -lvorbisfile -lm"
 		;;
 esac
 AC_MSG_RESULT($HOST)
