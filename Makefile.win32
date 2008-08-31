@@ -1,5 +1,5 @@
 all:
-	cd libmp3splt && ./autogen.sh && ./configure --prefix=/usr --disable-id3tag && make clean && make && \
+	cd libmp3splt && ./autogen.sh && ./configure --prefix=/usr && make clean && make && \
 	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
 	\
 	cd ../newmp3splt && ./autogen.sh && \
@@ -30,6 +30,8 @@ dist:
 	cp /bin/libltdl3.dll /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll .
 #copying libmad and libid3tag libraries
 	cp /bin/libmad-0.dll /bin/libid3tag.dll .
+#copying zlib1.dll (needed by libid3tag)
+	cp /bin/zlib1.dll .
 #building installer for the text mode
 	strip newmp3splt/src/mp3splt.exe && \
 	cd newmp3splt/windows/installer && make && cp mp3splt*exe ../../../ && cd ../../../

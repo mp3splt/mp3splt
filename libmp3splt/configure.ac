@@ -137,7 +137,8 @@ AC_ARG_ENABLE(id3tag,
               [ AC_CHECK_LIB(id3tag,
                              [id3_tag_new],
                              [ id3="yes" ],
-                             [ ID3_CFLAGS="-DNO_ID3TAG"; id3="no" ])
+                             [ ID3_CFLAGS="-DNO_ID3TAG"; id3="no"
+			       AM_CONDITIONAL(LIB_ID3TAG,true) ])
               AM_CONDITIONAL(LIB_ID3TAG,true) CFLAGS="$CFLAGS $ID3_CFLAGS" with_id3="yes" ])
 
 #################################################################
