@@ -30,6 +30,11 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+#ifdef __WIN32__
+#include <io.h>
+#include <fcntl.h>
+#endif
+
 #include "mp3.h"
 
 /****************************/
@@ -165,6 +170,9 @@ static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
       (strcmp(filename,"m-") == 0))
   {
     file_input = stdin;
+#ifdef __WIN32__
+    _setmode(fileno(file_input), _O_BINARY);
+#endif
   }
   else
   {
@@ -1418,6 +1426,9 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   if (strcmp(output_fname, "-")==0)
   {
     file_output = stdout;
+#ifdef __WIN32__
+    _setmode(fileno(file_output), _O_BINARY);
+#endif
   }
   else
   {
@@ -1648,6 +1659,9 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
     if (strcmp(output_fname, "-")==0)
     {
       file_output = stdout;
+#ifdef __WIN32__
+      _setmode(fileno(file_output), _O_BINARY);
+#endif
     }
     else
     {

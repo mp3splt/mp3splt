@@ -35,6 +35,11 @@
 #include <math.h>
 #include <locale.h>
 
+#ifdef __WIN32__
+#include <io.h>
+#include <fcntl.h>
+#endif
+
 #include "ogg.h"
 
 /**
@@ -121,6 +126,9 @@ FILE *splt_ogg_open_file_read(splt_state *state,
   if (strcmp(filename,"o-") == 0)
   {
     file_input = stdin;
+#ifdef __WIN32__
+    _setmode(fileno(file_input), _O_BINARY);
+#endif
   }
   else
   {
@@ -1418,6 +1426,9 @@ void splt_ogg_split(const char *output_fname, splt_state *state, double
   if (strcmp(output_fname, "-")==0)
   {
     oggstate->out = stdout;
+#ifdef __WIN32__
+    _setmode(fileno(oggstate->out), _O_BINARY);
+#endif
   }
   else
   {
