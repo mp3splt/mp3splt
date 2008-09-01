@@ -8,13 +8,12 @@ function upload_to_sourceforge()
 {
   DIR=$1;
   echo;
-  echo "Uploading files to sourceforge.net...";
+  echo "Uploading files to sourceforge.net ...";
   echo;
 
-  for a in $DIR/*; do
-    lftp -e "cd /incoming;put $a;quit" -u anonymous,\
-             upload.sourceforge.net || exit 1;
-  done;
+  echo "After the password, type  'cd uploads' and then 'put $DIR/*'"
+
+  sftp io_alex_2004@frs.sf.net
 }
 ############# finish uploading to sourceforge.net #####
 

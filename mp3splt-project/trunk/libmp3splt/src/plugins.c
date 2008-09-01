@@ -193,18 +193,21 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
   int file_length = strlen(de->d_name);
   char *file = (char *) de->d_name;
   char *p = NULL;
-  //if the name starts with splt_and contains .so or .sl or .dll
-  if (strncmp(file,"libsplt_",8) == 0)
+  if (strlen(file) >= 8)
   {
-    //find the last '.' character
-    p = strrchr(file,'.');
-    if (p != NULL)
+    //if the name starts with splt_and contains .so or .sl or .dll
+    if (strncmp(file,"libsplt_",8) == 0)
     {
-      if ((strcmp(p,".so") == 0) ||
-          (strcmp(p,".sl") == 0) ||
-          (strcmp(p,".dll") == 0))
+      //find the last '.' character
+      p = strrchr(file,'.');
+      if (p != NULL)
       {
-        return 1;
+        if ((strcmp(p,".so") == 0) ||
+            (strcmp(p,".sl") == 0) ||
+            (strcmp(p,".dll") == 0))
+        {
+          return 1;
+        }
       }
     }
   }
@@ -312,10 +315,13 @@ static int splt_p_find_plugins(splt_state *state)
   int i = 0;
   for (i = 0;i < pl->number_of_dirs_to_scan;i++)
   {
-    return_value = splt_p_scan_dir_for_plugins(pl, pl->plugins_scan_dirs[i]);
-    if (return_value != SPLT_OK)
+    if (splt_u_check_if_directory(pl->plugins_scan_dirs[i]))
     {
-      return return_value;
+      return_value = splt_p_scan_dir_for_plugins(pl, pl->plugins_scan_dirs[i]);
+      if (return_value != SPLT_OK)
+      {
+        return return_value;
+      }
     }
   }
 
