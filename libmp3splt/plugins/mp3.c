@@ -3268,7 +3268,7 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 #ifndef NO_ID3TAG
   splt_mp3_get_original_tags(filename, state, error);
 #else
-  splt_u_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
+  //splt_u_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
 #endif
 }
 

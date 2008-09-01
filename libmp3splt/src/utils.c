@@ -2083,3 +2083,37 @@ void splt_u_print(char *mess)
 	fflush(stdout);
 }
 
+//check if its a directory
+int splt_u_check_if_directory(char *fname)
+{
+  struct stat buffer;
+  int         status = 0;
+
+  if (fname == NULL)
+  {
+    return SPLT_FALSE;
+  }
+  else
+  {
+    status = stat(fname, &buffer);
+    if (status == 0)
+    {
+      //if it is a directory
+      if (S_ISDIR(buffer.st_mode))
+      {
+        return SPLT_TRUE;
+      }
+      else
+      {
+        return SPLT_FALSE;
+      }
+    }
+    else
+    {
+      return SPLT_FALSE;
+    }
+  }
+
+  return SPLT_FALSE;
+}
+

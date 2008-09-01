@@ -91,6 +91,8 @@ double splt_u_get_double_pos(long split);
 int splt_u_create_directory(splt_state *state, const char *dir);
 char *splt_u_strerror(splt_state *state, int error_code);
 
+int splt_u_check_if_directory(char *fname);
+
 #define MP3SPLT_UTILS_H
 
 #endif
