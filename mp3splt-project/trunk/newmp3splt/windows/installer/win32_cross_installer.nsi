@@ -43,7 +43,7 @@ Section ""
 ;copy the main executable
   File ${MP3SPLT_PATH}\newmp3splt\src\mp3splt.exe
 ;copy the library
-  File ${MP3SPLT_PATH}\libmp3splt\src\.libs\libmp3splt.dll
+  File ${MP3SPLT_PATH}\libmp3splt\src\.libs\libmp3splt-0.dll
 ;copy the dependencies
   File ${MP3SPLT_PATH}\libltdl3.dll
   File ${MP3SPLT_PATH}\libogg-0.dll
@@ -53,8 +53,8 @@ Section ""
   File ${MP3SPLT_PATH}\libid3tag.dll
   File ${MP3SPLT_PATH}\zlib1.dll
 ;copy the plugins
-  File ${MP3SPLT_PATH}\libmp3splt\plugins\.libs\libsplt_mp3.dll
-  File ${MP3SPLT_PATH}\libmp3splt\plugins\.libs\libsplt_ogg.dll
+  File ${MP3SPLT_PATH}\libmp3splt\plugins\.libs\libsplt_mp3-0.dll
+  File ${MP3SPLT_PATH}\libmp3splt\plugins\.libs\libsplt_ogg-0.dll
 
   FileOpen $9 mp3splt.bat w
   FileWrite $9 'cmd /K "cd $INSTDIR & .\mp3splt.exe"'

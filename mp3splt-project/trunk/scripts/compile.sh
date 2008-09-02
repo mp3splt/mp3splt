@@ -215,6 +215,14 @@ function windows_cross_installers()
   echo
   print_yellow "Creating windows installers..."
 
+  #suppose architecture is i386
+  if [[ -f mp3splt_${MP3SPLT_VERSION}_x86_64.exe ]];then
+    mv mp3splt_${MP3SPLT_VERSION}_x86_64.exe mp3splt_${MP3SPLT_VERSION}_i386.exe
+  fi
+  if [[ -f mp3splt-gtk_${MP3SPLT_VERSION}_x86_64.exe ]];then
+    mv mp3splt-gtk_${MP3SPLT_GTK_VERSION}_x86_64.exe mp3splt-gtk_${MP3SPLT_GTK_VERSION}_i386.exe
+  fi
+
   #if we don't have the distribution file
   DIST_FILE1="./mp3splt_${MP3SPLT_VERSION}_i386.exe"
   DIST_FILE2="./mp3splt-gtk_${MP3SPLT_GTK_VERSION}_i386.exe"
@@ -385,6 +393,7 @@ update_versions
 source_packages
 debian_packages
 ubuntu_packages
+windows_cross_installers
 
 #gnu_linux_static_packages
 #gnu_linux_dynamic_packages
@@ -392,8 +401,6 @@ ubuntu_packages
 #rpm_packages
 #archlinux_packages
 #slackware_packages
-#i386 windows cross installers :
-#windows_cross_installers
 #amd64 gnu/linux packages :
 #i386 bsd-like packages :
 #openbsd_packages
