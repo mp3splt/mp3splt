@@ -3,8 +3,8 @@
 ################# variables to set ############
 
 #Debian GNU/Linux settings
-export CC="i586-mingw32msvc-gcc"
-export PATH=/usr/i586-mingw32msvc/bin/:$PATH
+export CC="i686-mingw32-gcc"
+HOST="i686-mingw32"
 
 ################# end variables to set ############
 
@@ -23,8 +23,17 @@ cd libmp3splt && ./autogen.sh && cd .. || exit 1
 #untar and copy the required libraries
 cd ../libs
 tar jxf libmp3splt_mingw_required_libs.tar.bz2 || exit 1
-cp lib/libz.a ../mp3splt-project/libmp3splt/ || exit 1
-cp lib/libz.a ../mp3splt-project/libmp3splt/src/ || exit 1
+#
+cp bin/libltdl3.dll ../trunk/ || exit 1
+cp bin/libogg-0.dll ../trunk/ || exit 1
+cp bin/libvorbis-0.dll ../trunk/ || exit 1
+cp bin/libvorbisfile-3.dll ../trunk/ || exit 1
+cp bin/libmad-0.dll ../trunk/ || exit 1
+cp bin/libid3tag.dll ../trunk/ || exit 1
+cp bin/zlib1.dll ../trunk/ || exit 1
+#
+cp lib/libz.a ../trunk/libmp3splt/ || exit 1
+cp lib/libz.a ../trunk/libmp3splt/src/ || exit 1
 cd ..
 
 #cross compile flags
@@ -34,9 +43,7 @@ export PKG_CONFIG_PATH="`pwd`/libs/lib/pkgconfig"
 export PATH="`pwd`/libs/bin:$PATH"
 
 #we compile and install libmp3splt
-cd mp3splt-project/libmp3splt &&\
-    ./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-shared --disable-vorbistest\
+cd trunk/libmp3splt &&\
+    ./configure --prefix=`pwd`/../../libs --host=$HOST --disable-oggtest --disable-vorbistest\
     && make clean && make && make install || exit 1
 
-#we clean the remained files
-find . -type f -name "*.a" -exec rm -f {} \;

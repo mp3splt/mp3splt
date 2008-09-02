@@ -3,8 +3,8 @@
 ################# variables to set ############
 
 #Debian GNU/Linux settings
-export CC="i586-mingw32msvc-gcc"
-export PATH=/usr/i586-mingw32msvc/bin/:$PATH
+export CC="i686-mingw32-gcc"
+HOST="i686-mingw32"
 
 ################# end variables to set ############
 
@@ -26,9 +26,9 @@ tar jxf mp3splt-gtk_mingw_required_libs.tar.bz2 || exit 1
 tar jxf mp3splt-gtk_runtime.tar.bz2 || exit 1
 cp -a mp3splt-gtk_runtime/*.dll ./bin || exit 1
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt-project/mp3splt-gtk/ || exit 1
+    lib/libvorbisfile.a ../trunk/mp3splt-gtk/ || exit 1
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt-project/mp3splt-gtk/src || exit 1
+    lib/libvorbisfile.a ../trunk/mp3splt-gtk/src || exit 1
 cd ..
 
 #cross compile flags
@@ -55,11 +55,9 @@ for f in `pwd`/libs/lib/pkgconfig/*.pc ; do
 done
 
 #we compile mp3splt-gtk
-cd mp3splt-project/mp3splt-gtk &&\
+cd trunk/mp3splt-gtk &&\
 cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
-./configure --prefix=`pwd`/../../libs --host=mingw32 --disable-gtktest &&\
-make clean && make &&\
-strip ./src/mp3splt-gtk.exe || exit 1
+./configure --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
+make clean && make && make install &&\
+${HOST}-strip ./src/mp3splt-gtk.exe || exit 1
 
-#we clean the remained files
-find . -type f -name "*.a" -exec rm -f {} \;

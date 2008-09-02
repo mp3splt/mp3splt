@@ -2,9 +2,10 @@
 
 ################# variables to set ############
 
+
 #Debian GNU/Linux settings
-export CC="i586-mingw32msvc-gcc"
-export PATH=/usr/i586-mingw32msvc/bin/:$PATH
+export CC="i686-mingw32-gcc"
+HOST="i686-mingw32"
 
 ################# end variables to set ############
 
@@ -23,9 +24,9 @@ cd newmp3splt && ./autogen.sh && cd .. || exit 1
 #untar and copy the required libraries
 cd ../libs
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt-project/newmp3splt/ || exit 1
+    lib/libvorbisfile.a ../trunk/newmp3splt/ || exit 1
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
-    lib/libvorbisfile.a ../mp3splt-project/newmp3splt/src || exit 1
+    lib/libvorbisfile.a ../trunk/newmp3splt/src || exit 1
 cd ..
 
 #cross compile flags
@@ -35,12 +36,10 @@ export PKG_CONFIG_PATH="`pwd`/libs/lib/pkgconfig"
 export PATH="`pwd`/libs/bin:$PATH"
 
 #we compile mp3splt
-cd mp3splt-project/newmp3splt &&\
+cd trunk/newmp3splt &&\
 cp ../../libs/lib/libmp3splt.a . &&\
 cp ../../libs/lib/libmp3splt.a ./src &&\
-./configure --prefix=`pwd`/../../libs --host=--mingw32 &&\
-make clean && make &&\
-strip ./src/mp3splt.exe || exit 1
+./configure --prefix=`pwd`/../../libs --host=$HOST &&\
+make clean && make && make install &&\
+${HOST}-strip ./src/mp3splt.exe || exit 1
 
-#we clean the remained files
-find . -type f -name "*.a" -exec rm -f {} \;
