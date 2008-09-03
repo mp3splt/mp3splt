@@ -198,6 +198,7 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
     //if the name starts with splt_and contains .so or .sl or .dll
     if (strncmp(file,"libsplt_",8) == 0)
     {
+      splt_u_print_debug("Looking at the file ",0, file);
       //find the last '.' character
       p = strrchr(file,'.');
       if (p != NULL)
@@ -313,14 +314,27 @@ static int splt_p_find_plugins(splt_state *state)
   //for each scan directory, look for the files starting with 'splt' and
   //ending with '.so' on unix-like and '.dll' on windows
   int i = 0;
+
+  char current_dir[3] = { '\0' };
+  snprintf(current_dir,3,".%c",SPLT_DIRCHAR);
+
   for (i = 0;i < pl->number_of_dirs_to_scan;i++)
   {
-    if (splt_u_check_if_directory(pl->plugins_scan_dirs[i]))
+    if (pl->plugins_scan_dirs[i] != NULL)
     {
-      return_value = splt_p_scan_dir_for_plugins(pl, pl->plugins_scan_dirs[i]);
-      if (return_value != SPLT_OK)
+      splt_u_print_debug("Scanning plugins in the directory ",0, pl->plugins_scan_dirs[i]);
+
+      //don't check if directory exists if the directory is ./ on unix-like
+      //OSes or .\\ on windows
+      if (((strlen(pl->plugins_scan_dirs[i]) >= 2) &&
+            strncmp(pl->plugins_scan_dirs[i], current_dir,2) == 0) ||
+          splt_u_check_if_directory(pl->plugins_scan_dirs[i]))
       {
-        return return_value;
+        return_value = splt_p_scan_dir_for_plugins(pl, pl->plugins_scan_dirs[i]);
+        if (return_value != SPLT_OK)
+        {
+          return return_value;
+        }
       }
     }
   }
@@ -390,6 +404,7 @@ int splt_p_find_get_plugins_data(splt_state *state)
   //free old plugins
   splt_t_free_plugins(state);
 
+  splt_u_print_debug("\nSearching for plugins ...",0,NULL);
   //find the plugins
   return_value = splt_p_find_plugins(state);
 

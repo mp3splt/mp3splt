@@ -50,6 +50,7 @@ Section ""
   File ${MP3SPLT_PATH}\libvorbis-0.dll
   File ${MP3SPLT_PATH}\libvorbisfile-3.dll
   File ${MP3SPLT_PATH}\libmad-0.dll
+  File ${MP3SPLT_PATH}\libmad-0.dll
   File ${MP3SPLT_PATH}\libid3tag.dll
   File ${MP3SPLT_PATH}\zlib1.dll
 ;copy the plugins
