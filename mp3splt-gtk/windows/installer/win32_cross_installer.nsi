@@ -80,6 +80,7 @@ Section ""
   File ${MP3SPLT_PATH}\libvorbis-0.dll
   File ${MP3SPLT_PATH}\libvorbisfile-3.dll
   File ${MP3SPLT_PATH}\libmad-0.dll
+  File ${MP3SPLT_PATH}\libmad-0.dll
   File ${MP3SPLT_PATH}\libid3tag.dll
 ;copy the plugins
   File ${MP3SPLT_PATH}\libmp3splt\plugins\.libs\libsplt_mp3-0.dll

@@ -29,6 +29,7 @@ cp bin/libogg-0.dll ../trunk/ || exit 1
 cp bin/libvorbis-0.dll ../trunk/ || exit 1
 cp bin/libvorbisfile-3.dll ../trunk/ || exit 1
 cp bin/libmad-0.dll ../trunk/ || exit 1
+cp bin/libmad-0.dll ../trunk/ || exit 1
 cp bin/libid3tag.dll ../trunk/ || exit 1
 cp bin/zlib1.dll ../trunk/ || exit 1
 #

@@ -215,14 +215,6 @@ function windows_cross_installers()
   echo
   print_yellow "Creating windows installers..."
 
-  #suppose architecture is i386
-  if [[ -f mp3splt_${MP3SPLT_VERSION}_x86_64.exe ]];then
-    mv mp3splt_${MP3SPLT_VERSION}_x86_64.exe mp3splt_${MP3SPLT_VERSION}_i386.exe
-  fi
-  if [[ -f mp3splt-gtk_${MP3SPLT_VERSION}_x86_64.exe ]];then
-    mv mp3splt-gtk_${MP3SPLT_GTK_VERSION}_x86_64.exe mp3splt-gtk_${MP3SPLT_GTK_VERSION}_i386.exe
-  fi
-
   #if we don't have the distribution file
   DIST_FILE1="./mp3splt_${MP3SPLT_VERSION}_i386.exe"
   DIST_FILE2="./mp3splt-gtk_${MP3SPLT_GTK_VERSION}_i386.exe"
@@ -233,6 +225,15 @@ function windows_cross_installers()
     print_cyan "We already have the $DIST_FILE1 distribution file"
     print_cyan "and the $DIST_FILE2 distribution file !"
   fi
+
+  #suppose architecture is i386
+  #if [[ -f mp3splt_${MP3SPLT_VERSION}_x86_64.exe ]];then
+  #  mv mp3splt_${MP3SPLT_VERSION}_x86_64.exe $DIST_FILE1
+  #fi
+  #if [[ -f mp3splt-gtk_${MP3SPLT_GTK_VERSION}_x86_64.exe ]];then
+  #  mv mp3splt-gtk_${MP3SPLT_GTK_VERSION}_x86_64.exe $DIST_FILE2
+  #fi
+
   cd $PROJECT_DIR
 }
 ############# end windows installers ################
@@ -386,13 +387,15 @@ cd $PROJECT_DIR
 . ./${MP3SPLT_DIR}/include_variables.sh "quiet_noflags"
 . ./${MP3SPLT_GTK_DIR}/include_variables.sh "quiet_noflags"
 
+###################################
 #update the versions
 update_versions
 
+###################################
 #build packages
-source_packages
-debian_packages
-ubuntu_packages
+#source_packages
+#debian_packages
+#ubuntu_packages
 windows_cross_installers
 
 #gnu_linux_static_packages
@@ -408,7 +411,9 @@ windows_cross_installers
 #freebsd_packages
 #i386 gnu/opensolaris packages :
 #nexenta_packages #slow
-#finish packaging
+
+###################################
+#finish packaging ...
 
 #date info
 echo
@@ -424,3 +429,4 @@ echo
 ################################
 ######### end main program #####
 ################################
+
