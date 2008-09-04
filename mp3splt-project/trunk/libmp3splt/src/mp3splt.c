@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2006 Munteanu Alexandru - io_alex_2002@yahoo.fr
+ * Copyright (c) 2005-2006 Alexandru Munteanu - io_alex_2002@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *

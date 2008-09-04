@@ -20,7 +20,7 @@ libmp3splt - INSTALLATION INFORMATION
 	Before compiling the source code verify that you have the 
 	following libraries installed :
 
-		libogg 	and libvorbis http://www.xiph.org
+		libogg and libvorbis http://www.xiph.org
 		libmad	http://sourceforge.net/projects/mad/
 
 
@@ -34,9 +34,10 @@ in the libmp3splt directory. If not, please go in that directory :
 	
 		./configure
 
-	For disabling ogg you can use :
-
-		./configure --disable-ogg
+	Possible configure options :
+    --disable-ogg
+    --disable-mp3
+    --disable-id3tag
 
 	This will create the Makefile used to compile the program
 
@@ -63,13 +64,3 @@ in the libmp3splt directory. If not, please go in that directory :
 	in the libmp3splt directory to get informations about 
 	the compilation options
 
-
-///////////////////////////////////////////
-for any suggestion, bugs, etc... contact me
-or put it here :
-	http://sourceforge.net/projects/mp3splt
-
-	Munteanu Alexandru 
-	
-	io_alex_2002@yahoo.fr
-///////////////////////////////////////////

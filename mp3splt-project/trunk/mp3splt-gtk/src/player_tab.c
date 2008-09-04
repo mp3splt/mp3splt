@@ -3,8 +3,8 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *                for mp3/ogg splitting without decoding
  *
- * Copyright: (C) 2005-2006 Munteanu Alexandru
- * Contact: io_alex_2002@yahoo.fr
+ * Copyright: (C) 2005-2008 Alexandru Munteanu
+ * Contact: io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net/
  *
