@@ -1,6 +1,6 @@
-	libmp3splt version 0.4
+	mp3splt-gtk version 0.5
 
-	     Copyright (C) 2005 Munteanu Alexandru Ionut
+	     Copyright (C) 2005-2008 Alexandru Ionut Munteanu
 	
    Visit http://mp3splt.sourceforge.net for latest releases
 
@@ -35,13 +35,5 @@ Boston, MA 02111-1307, USA.
 
 See COPYING for more details.
 
-Read INSTALL for installation and compile istructions.
-
-//////////////////////////////////////////////////
-Contact me for any suggestions, remarks, bugs...
-
-Munteanu Alexandru 
-
-	io_alex_2002@yahoo.fr
-//////////////////////////////////////////////////
+Read INSTALL for installation and compile instructions.
 

@@ -1,7 +1,7 @@
 	mp3splt version 2.2
 
 	     Copyright (C) 2002-2005 Matteo Trotta
-	     Copyright (C) 2005-2006 Munteanu Alexandru Ionut
+	     Copyright (C) 2005-2008 Alexandru Ionut Munteanu
 
    Visit http://mp3splt.sourceforge.net for latest realease!
 
@@ -32,7 +32,7 @@ See COPYING for more details.
 
 HELP INFORMATION
 
-Read INSTALL for installation and compile istructions.
+Read INSTALL for installation and compile instructions.
 Run program without arguments to view HELP informations
 or read man.html.
 
@@ -42,4 +42,4 @@ advices and new functions to add to this program.
 Enjoy!
 
 Matteo Trotta - <mtrotta@users.sourceforge.net>
-Munteanu Alexandru Ionut - <io_alex_2002@yahoo.fr>
+Alexandru Ionut Munteanu - <io_fx@yahoo.fr>

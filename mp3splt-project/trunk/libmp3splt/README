@@ -1,6 +1,6 @@
-	libmp3splt	 version 0.4_rc1
-	     Copyright (c) 2005-2006 Munteanu Alexandru Ionut
-	     Copyright (c) 2002-2005 Matteo Trotta
+	libmp3splt version 0.5
+      Copyright (c) 2005-2008 Alexandru Ionut Munteanu
+      Copyright (c) 2002-2005 Matteo Trotta
 
    Visit http://mp3splt.sourceforge.net for the latest libmp3splt release!
 
@@ -35,13 +35,4 @@ See COPYING for more details.
 
 HELP INFORMATION
 
-Read INSTALL for installation and compile istructions.
-
-
-//////////////////////////////////////////////////
-Contact me for any suggestions, remarks, bugs... :
-
-Munteanu Alexandru 
-
-	io_alex_2002@yahoo.fr
-//////////////////////////////////////////////////
+Read INSTALL for installation and compile instructions.

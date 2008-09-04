@@ -1,5 +1,20 @@
+Please read the ChangeLog of libmp3splt for more information.
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5
+
+- Beep Media Player has been dropped for Audacious
+- moved the filename entry and browse button on top of all tabs
+- fixed bug when pushing the 'Close' button in the About window
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.4_rc1
+
+- no major change; changed code to follow libmp3splt API
+
 -------------------------------------------------------------
 mp3splt-gtk version 0.3.1
+
 -fixes important bugs with the tags, the user can now choose 
 	to put the original tags, cddb or cue tags or no tags
 -the update splitpoints was optimised, no more trouble when we
