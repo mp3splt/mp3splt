@@ -1,4 +1,31 @@
 -------------------------------------------------------------
+libmp3splt version 0.5
+- added plugin system for audio formats
+(currently supports ogg vorbis and mp3)
+-implemented STDIN and STDOUT (like in the original mp3splt)
+-moved translation of error codes to string into the library
+-implemented experimental version of 'mp3splt.log'
+(like in the original mp3splt)
+-return codes of many functions were checked
+-option '-o' now creates directories if necessary
+-fixed a log of bugs, including :
+(some are related to mp3splt command line, but I post them here)
+	#1807288 : one-off bug
+	#1483040 : problems with output file path(mp3splt is removing '/')
+	#1665006 & #1665002 : corrected return codes & const correctness
+	#2000246 : changed 'splitted' to 'split'
+	#118157 : unplayable stdin files on windows (+ same problem for stdin)
+
+-------------------------------------------------------------
+libmp3splt version 0.4_rc1
+-support for freedb2.org (now tracktype.org) implemented
+-fixed splits of ogg streams 
+-experimental .m3u support implemented
+-added @f in the output format (-o option)
+-on the fly code review
+-option to add custom tags to output files
+
+-------------------------------------------------------------
 libmp3splt version 0.3.1
 -code completely reviewed and reorganised
 -fixed bugs with the tags

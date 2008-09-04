@@ -1,12 +1,47 @@
-
-	
-
-//////////////////////////////////////////	
-------------------------------------------	
-   Release break up	
-------------------------------------------	
-//////////////////////////////////////////	
 Check http://mp3splt.sourceforge.net for latest release.
+
+Please read the ChangeLog of libmp3splt for more information.
+Some of the changes above implemented in libmp3splt.
+
+# mp3splt v. 2.2
+
+- mp3splt is now using libmp3splt
+- checks for compatibilities between options
+- added 'm-' for mp3 STDIN
+- possibility to specify the server and port for freedb search;
+(now using tracktype.org by default)
+
+Examples :
+query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~
+query[get=cddb_protocol://freedb.org:8880]
+query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80]
+
+- original id3v1 for mp3 tags are kept in the splitted files and also
+ogg vorbis tags
+- add custom tags with the new '-g' option
+
+Example of tags format :
+[@a=foo,@b=bar][@t=footitle,@n=3]%[@o,@b=special_album]
+In this example, the first split file will have the artist tag 'foo' and the
+album tag 'bar'; the second split file will have the title tag 'footitle'
+and the track number tag '3'; all the other files will have their original
+tags of the file to split with the album changed to 'special_album'.
+
+- '-o' option now creates the specified directories if '-d' option is not
+specified
+- added '-Q' option which enables the '-q' option and does not print
+anything to STDOUT
+- added experimental '-D' debug mode option
+- added '-i' option for counting the number of silence splitpoints
+- also added '-h' option which shows a small usage
+
+Please read man page for more detail.
+
+//////////////////////////////////////////	
+------------------------------------------	
+Release break up	
+------------------------------------------	
+//////////////////////////////////////////	
 
 # Mp3splt v. 2.1
 
