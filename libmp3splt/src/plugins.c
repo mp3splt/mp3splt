@@ -195,7 +195,7 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
   char *p = NULL;
   if (strlen(file) >= 8)
   {
-    //if the name starts with splt_and contains .so or .sl or .dll
+    //if the name starts with splt_and contains .so or .sl or .dll or .dylib
     if (strncmp(file,"libsplt_",8) == 0)
     {
       splt_u_print_debug("Looking at the file ",0, file);
@@ -205,7 +205,8 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
       {
         if ((strcmp(p,".so") == 0) ||
             (strcmp(p,".sl") == 0) ||
-            (strcmp(p,".dll") == 0))
+            (strcmp(p,".dll") == 0) ||
+            (strcmp(p,".dylib") == 0))
         {
           return 1;
         }
