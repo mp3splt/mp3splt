@@ -46,9 +46,9 @@ The default player for mp3splt-gtk is SnackAmp :
 	-only default port is supported for now(8775)
  -after that, restart snackamp and mp3splt-gtk should work
 
--by default, beep-media-player support is disabled
-However, if you need beep media player support, you can do :
-	./configure --enable-bmp
+-by default, audacious support is disabled
+However, if you need audacious, you can do :
+	./configure --enable-audacious
 
 if you don't want to install it as root, type :
 	
