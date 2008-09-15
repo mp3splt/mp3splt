@@ -32,9 +32,9 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: xmms_control.c
+ * Filename: gstreamer_control.c
  *
- * this file has functions to control the xmms player
+ * this file has functions to control the 'internal' gstreamer player
  *
  *********************************************************/
 
@@ -150,45 +150,48 @@ void gstreamer_get_song_infos(gchar *total_infos)
   GList *streaminfo = NULL;
   g_object_get(play, "stream-info", &streaminfo, NULL);
 
-  //get the first element of the stream info list
-  GObject *object = g_list_nth_data(streaminfo, number_of_stream); 
-  GstObject *obj = NULL; 
-  g_object_get(G_OBJECT(object), "object", &obj, NULL);
-
-  //get the caps from the first element
-  GstCaps *caps = NULL;
-  g_object_get(obj, "caps", &caps, NULL);
-  if (caps)
-  {
-    //get the structure from the caps
-    GstStructure *structure = NULL;
-    structure = gst_caps_get_structure(caps, number_of_stream);
-
-    //get the rate and the number of channels from the structure
-    gst_structure_get_int(structure, "rate", &freq);
-    gst_structure_get_int(structure, "channels", &nch);
-
-    gst_caps_unref(caps);
-  }
-
   gchar rate_str[32] = { '\0' };
   gchar freq_str[32] = { '\0' };
   gchar *nch_str = NULL;
-  
-  g_snprintf(rate_str,32, "%d", rate/1000);
-  g_snprintf(freq_str,32, "%d", freq/1000);
-  
-  if (nch >= 2)
-  {
-    nch_str = (gchar *)_("stereo");
-  }
-  else
-  {
-    nch_str = (gchar *)_("mono");
-  }
 
   gchar *_Kbps = (gchar *)_("Kbps");
   gchar *_Khz = (gchar *)_("Khz");
+
+  //get the first element of the stream info list
+  GObject *object = g_list_nth_data(streaminfo, number_of_stream); 
+  if (object)
+  {
+    GstObject *obj = NULL; 
+    g_object_get(G_OBJECT(object), "object", &obj, NULL);
+
+    //get the caps from the first element
+    GstCaps *caps = NULL;
+    g_object_get(obj, "caps", &caps, NULL);
+    if (caps)
+    {
+      //get the structure from the caps
+      GstStructure *structure = NULL;
+      structure = gst_caps_get_structure(caps, number_of_stream);
+
+      //get the rate and the number of channels from the structure
+      gst_structure_get_int(structure, "rate", &freq);
+      gst_structure_get_int(structure, "channels", &nch);
+
+      gst_caps_unref(caps);
+    }
+
+    g_snprintf(rate_str,32, "%d", rate/1000);
+    g_snprintf(freq_str,32, "%d", freq/1000);
+
+    if (nch >= 2)
+    {
+      nch_str = (gchar *)_("stereo");
+    }
+    else
+    {
+      nch_str = (gchar *)_("mono");
+    }
+  }
 
   if (rate != 0)
   {
