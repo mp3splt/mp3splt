@@ -906,8 +906,8 @@ void write_default_preferences_file()
                               "player",
                               "default_player",
                               "\n 1"
-                              " = PLAYER_AUDACIOUS, 2 = PLAYER_SNACKAMP (on windows"
-                              " only 0 or 2)",
+                              " = PLAYER_AUDACIOUS, 2 = PLAYER_SNACKAMP,"
+                              " 3 = PLAYER_GSTREAMER",
                               NULL);
     }
   else
@@ -934,7 +934,7 @@ void write_default_preferences_file()
         }
       else
         //if the value does not make sense
-        if ((the_player > PLAYER_SNACKAMP)
+        if ((the_player > PLAYER_GSTREAMER)
             || (the_player < 0))
           {
             g_key_file_set_integer(my_key_file,

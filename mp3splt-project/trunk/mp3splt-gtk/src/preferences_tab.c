@@ -1039,6 +1039,11 @@ GtkWidget *create_choose_player_combo()
   player_pref_list =
     g_list_append(player_pref_list, (gint *)PLAYER_SNACKAMP);
   //
+  gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
+                            PLAYER_GSTREAMER,(gchar *)_("GStreamer"));
+  player_pref_list =
+    g_list_append(player_pref_list, (gint *)PLAYER_GSTREAMER);
+  //
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       player_combo_box, FALSE, FALSE, 0);
   

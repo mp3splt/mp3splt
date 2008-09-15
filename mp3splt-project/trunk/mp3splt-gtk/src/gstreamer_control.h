@@ -3,9 +3,7 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *                for mp3/ogg splitting without decoding
  *
- * Copyright: (C) 2005-2008 Alexandru Munteanu
- * Contact: io_fx@yahoo.fr
- *
+ * Copyright (c) 2005-2008 Alexandru Munteanu - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net/
  *
@@ -31,37 +29,35 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: player.h
+ * Filename: xmms_control.h
  *
- * header of player.c, defines constants, etc..
+ * header to xmms_control.c
+ *
+ * xmms_control.c controls the xmms player
  *
  *********************************************************/
 
-#define PLAYER_AUDACIOUS 1
-#define PLAYER_SNACKAMP 2
-#define PLAYER_GSTREAMER 3
+void gstreamer_get_song_infos(gchar *total_infos);
+gchar *gstreamer_get_filename();
+gint gstreamer_get_playlist_number();
+gchar *gstreamer_get_title_song();
+gint gstreamer_get_time_elapsed();
+void gstreamer_start();
+void gstreamer_select_last_file();
+void gstreamer_play_last_file();
+void gstreamer_add_files(GList *list);
+void gstreamer_set_volume(gint volume);
+gint gstreamer_get_volume();
+void gstreamer_start_with_songs(GList *list);
+gint gstreamer_is_running();
+gint gstreamer_is_paused();
+void gstreamer_play();
+void gstreamer_stop();
+void gstreamer_pause();
+void gstreamer_next();
+void gstreamer_prev();
+void gstreamer_jump(gint position);
+gint gstreamer_get_total_time();
+gint gstreamer_is_playing();
+void gstreamer_quit();
 
-gint player_get_elapsed_time();
-gint player_get_total_time();
-gint player_is_running();
-void player_start();
-void player_start_add_files(GList *list);
-void player_add_files(GList *list);
-void player_add_files_and_select(GList *list);
-void player_add_play_files(GList *list);
-void player_start_play_with_songs(GList *list);
-void player_play();
-void player_stop();
-void player_pause();
-void player_next();
-void player_prev();
-void player_jump(gint position);
-void player_get_song_infos(gchar *total_infos);
-gint player_is_playing();
-gint player_is_paused();
-gchar *player_get_filename();
-gchar *player_get_title();
-gint player_get_volume();
-void player_set_volume(gint volume);
-gint player_get_playlist_number();
-gint player_quit();
