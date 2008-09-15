@@ -75,26 +75,31 @@ void myxmms_get_song_infos(gchar *total_infos)
   //infos about the song
   audacious_remote_get_info(dbus_proxy, &rate, &freq, &nch);
   
-  g_snprintf(rate_str,32,
-             "%d", rate/1000);
-  g_snprintf(freq_str,32,
-             "%d", freq/1000);
+  g_snprintf(rate_str,32, "%d", rate/1000);
+  g_snprintf(freq_str,32, "%d", freq/1000);
   
   if (nch == 2)
+  {
     nch_str = (gchar *)_("stereo");
+  }
   else
+  {
     nch_str = (gchar *)_("mono");
+  }
 
   gchar *_Kbps = (gchar *)_("Kbps");
   gchar *_Khz = (gchar *)_("Khz");
 
   if (rate != 0)
+  {
     g_snprintf(total_infos,512,
                "%s %s     %s %s    %s", 
-               rate_str,_Kbps,freq_str, 
-               _Khz,nch_str);
+               rate_str,_Kbps,freq_str, _Khz,nch_str);
+  }
   else 
+  {
     total_infos[0] = '\0';
+  }
 }
 
 //returns the filename
@@ -142,7 +147,6 @@ gchar *myxmms_get_title_song()
 //returns elapsed time
 gint myxmms_get_time_elapsed()
 {
-  
   return audacious_remote_get_output_time(dbus_proxy);
 }
 

@@ -44,6 +44,7 @@
 #include "player.h"
 #include "snackamp_control.h"
 #include "xmms_control.h"
+#include "gstreamer_control.h"
 
 extern int selected_player;
 
@@ -54,7 +55,7 @@ gint player_get_elapsed_time()
     {
       return snackamp_get_time_elapsed();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -62,6 +63,11 @@ gint player_get_elapsed_time()
 #endif
 #endif
     }
+    else
+    {
+      return gstreamer_get_time_elapsed();
+    }
+
   return 0;
 }
 
@@ -72,7 +78,7 @@ gint player_get_total_time()
     {
       return snackamp_get_total_time();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -80,6 +86,11 @@ gint player_get_total_time()
 #endif
 #endif
     }
+    else
+    {
+      return gstreamer_get_total_time();
+    }
+
   return 0;
 }
 
@@ -90,7 +101,7 @@ gint player_is_running()
     {
       return snackamp_is_running();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -98,6 +109,11 @@ gint player_is_running()
 #endif
 #endif
     }
+    else
+    {
+      return gstreamer_is_running();
+    }
+
   return 0;
 }
 
@@ -108,13 +124,17 @@ void player_start()
     {
       snackamp_start();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_start();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_start();
     }
 }
 
@@ -125,13 +145,17 @@ void player_start_add_files(GList *list)
     {
       snackamp_start_with_songs(list);
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_start_with_songs(list);
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_start_with_songs(list);
     }
 }
 
@@ -142,13 +166,17 @@ void player_add_files(GList *list)
     {
       snackamp_add_files(list);
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_add_files(list);
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_add_files(list);
     }
 }
 
@@ -160,7 +188,7 @@ void player_add_files_and_select(GList *list)
       snackamp_add_files(list);
       snackamp_select_last_file();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -169,27 +197,36 @@ void player_add_files_and_select(GList *list)
 #endif
 #endif
     }
+    else
+    {
+      gstreamer_add_files(list);
+      gstreamer_select_last_file();
+    }
 }
 
 //add files to playlist
 void player_add_play_files(GList *list)
 {
+  player_add_files(list);
+
   if (selected_player == PLAYER_SNACKAMP)
     {
       //snackamp adds files just after the current one
       //and not at the end of the playlist
-      player_add_files(list);
       snackamp_next();
       //snackamp_play_last_file();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      player_add_files(list);
       myxmms_play_last_file();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_play_last_file();
     }
 }
 
@@ -201,7 +238,7 @@ void player_start_play_with_songs(GList *list)
       snackamp_start_with_songs(list);
       snackamp_play_last_file();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -209,6 +246,11 @@ void player_start_play_with_songs(GList *list)
       myxmms_play_last_file();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_start_with_songs(list);
+      gstreamer_play_last_file();
     }
 }
 
@@ -219,13 +261,17 @@ void player_play()
     {
       snackamp_play();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_play();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_play();
     }
 }
 
@@ -236,13 +282,17 @@ void player_stop()
     {
       snackamp_stop();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_stop();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_stop();
     }
 }
 
@@ -253,13 +303,17 @@ void player_pause()
     {
       snackamp_pause();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_pause();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_pause();
     }
 }
 
@@ -270,13 +324,17 @@ void player_next()
     {
       snackamp_next();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_next();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_next();
     }
 }
 
@@ -287,13 +345,17 @@ void player_prev()
     {
       snackamp_prev();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_prev();
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_prev();
     }
 }
 
@@ -304,13 +366,17 @@ void player_jump(gint position)
     {
       snackamp_jump(position);
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_jump(position);
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_jump(position);
     }
 }
 
@@ -322,13 +388,17 @@ void player_get_song_infos(gchar *total_infos)
     {
       snackamp_get_song_infos(total_infos);
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_get_song_infos(total_infos);
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_get_song_infos(total_infos);
     }
 }
 
@@ -340,7 +410,7 @@ gint player_is_playing()
     {
       return snackamp_is_playing();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -348,6 +418,11 @@ gint player_is_playing()
 #endif
 #endif
     }
+    else
+    {
+      return gstreamer_is_playing();
+    }
+
   return 0;
 }
 
@@ -358,7 +433,7 @@ gint player_is_paused()
     {
       return snackamp_is_paused();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -366,6 +441,11 @@ gint player_is_paused()
 #endif
 #endif
     }
+    else
+    {
+      return gstreamer_is_paused();
+    }
+
   return 0;
 }
 
@@ -377,7 +457,7 @@ gchar *player_get_filename()
     {
       return (gchar *)snackamp_get_filename();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -385,6 +465,11 @@ gchar *player_get_filename()
 #endif
 #endif
     }
+    else
+    {
+      return (gchar *)gstreamer_get_filename();
+    }
+
   return 0;
 }
 
@@ -396,7 +481,7 @@ gchar *player_get_title()
     {
       return (gchar *)snackamp_get_title_song();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -404,6 +489,11 @@ gchar *player_get_title()
 #endif
 #endif
     }
+    else
+    {
+      return (gchar *)gstreamer_get_title_song();
+    }
+
   return 0;
 }
 
@@ -414,7 +504,7 @@ gint player_get_volume()
     {
       return snackamp_get_volume();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -422,6 +512,11 @@ gint player_get_volume()
 #endif
 #endif
     }
+    else
+    {
+      return gstreamer_get_volume();
+    }
+
   return 0;
 }
 
@@ -432,13 +527,17 @@ void player_set_volume(gint volume)
     {
       snackamp_set_volume(volume);
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
       myxmms_set_volume(volume);
 #endif
 #endif
+    }
+    else
+    {
+      gstreamer_set_volume(volume);
     }
 }
 
@@ -449,7 +548,7 @@ gint player_get_playlist_number()
     {
       return snackamp_get_playlist_number();
     }
-  else
+  else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
@@ -457,6 +556,11 @@ gint player_get_playlist_number()
 #endif
 #endif
     }
+    else
+    {
+      return gstreamer_get_playlist_number();
+    }
+
   return 0;
 }
 
@@ -475,5 +579,10 @@ gint player_quit()
 #endif
 #endif
 }*/
+  if (selected_player == PLAYER_GSTREAMER)
+  {
+    gstreamer_quit();
+  }
+
   return 0;
 }

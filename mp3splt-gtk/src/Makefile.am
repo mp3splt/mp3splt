@@ -9,6 +9,7 @@ mp3splt_gtk_SOURCES = \
 	tree_tab.c tree_tab.h \
 	main_win.c main_win.h \
 	xmms_control.c xmms_control.h \
+	gstreamer_control.c gstreamer_control.h \
 	player.c player.h \
 	player_tab.c player_tab.h \
 	preferences_tab.c preferences_tab.h \
@@ -29,6 +30,12 @@ mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 -lmp3splt
 if AUDACIOUS
 mp3splt_gtk_LDADD += @AUDACIOUS_LIBS@
 INCLUDES += @AUDACIOUS_CFLAGS@ -I/usr/include/dbus-1.0 -I/usr/include/dbus-1.0/include
+endif
+
+#
+if GSTREAMER
+mp3splt_gtk_LDADD += @GST_LIBS@
+INCLUDES += @GST_CFLAGS@
 endif
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
