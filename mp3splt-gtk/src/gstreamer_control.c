@@ -295,6 +295,12 @@ gint gstreamer_get_time_elapsed()
 //starts gstreamer
 void gstreamer_start()
 {
+  if (play)
+  {
+    gstreamer_quit();
+    gst_object_unref(play);
+  }
+
   _gstreamer_is_running = TRUE;
 
   gst_init(NULL, NULL);
@@ -404,7 +410,10 @@ void gstreamer_stop()
 //pause a song
 void gstreamer_pause()
 {
-  if (gstreamer_is_playing())
+  GstState state;
+  gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+
+  if (state == GST_STATE_PLAYING)
   {
     gst_element_set_state(play, GST_STATE_PAUSED);
   }
@@ -456,7 +465,7 @@ gint gstreamer_is_playing()
   GstState state;
   gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
 
-  if (state == GST_STATE_PLAYING)
+  if ((state == GST_STATE_PLAYING) || (state == GST_STATE_PAUSED))
   {
     return TRUE;
   }
@@ -470,7 +479,7 @@ gint gstreamer_is_playing()
 void gstreamer_quit()
 {
   gst_element_set_state(play, GST_STATE_NULL);
-  gst_object_unref(GST_OBJECT (play));
+  _gstreamer_is_running = FALSE;
 }
 
 #endif
