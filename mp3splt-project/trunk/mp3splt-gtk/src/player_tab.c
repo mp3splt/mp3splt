@@ -401,7 +401,10 @@ void connect_button_event (GtkWidget *widget,
   connect_to_player_with_song(1);
   
   //set browse button unavailable
-  gtk_widget_set_sensitive(browse_button, FALSE);
+  if (selected_player != PLAYER_GSTREAMER)
+  {
+    gtk_widget_set_sensitive(browse_button, FALSE);
+  }
   //enable player buttons
   enable_player_buttons();
   file_browsed = FALSE;
@@ -527,6 +530,8 @@ void disconnect_button_event (GtkWidget *widget,
       file_in_entry = TRUE;
       gtk_widget_set_sensitive(play_button, TRUE);
     }
+  
+  player_quit();
 }
 
 //play button event
@@ -536,7 +541,9 @@ void play_event (GtkWidget *widget, gpointer data)
   if (timer_active)
     {
       if (!player_is_running())
+      {
         player_start();
+      }
       player_play();
       playing = TRUE;
     }
@@ -546,7 +553,10 @@ void play_event (GtkWidget *widget, gpointer data)
       //0 means also start playing
       connect_to_player_with_song(0);
       //set browse button unavailable
-      gtk_widget_set_sensitive(browse_button, FALSE);
+      if (selected_player != PLAYER_GSTREAMER)
+      {
+        gtk_widget_set_sensitive(browse_button, FALSE);
+      }
     }
 }
 
@@ -3019,8 +3029,15 @@ void file_chooser_ok_event(gchar *fname)
   gtk_entry_set_text(GTK_ENTRY(entry), fname);
   gtk_widget_set_sensitive(browse_button, TRUE);
   gtk_widget_set_sensitive(play_button, TRUE);
-  
+
   file_browsed = TRUE;
+
+  if (timer_active)
+  {
+    GList *song_list = NULL;
+    song_list = g_list_append(song_list, fname);
+    player_start_add_files(song_list);
+  }
 }
 
 //events for browse button
