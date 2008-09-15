@@ -308,6 +308,12 @@ void gstreamer_start()
   bus = gst_pipeline_get_bus (GST_PIPELINE (play));
   gst_bus_add_watch(bus, bus_call, NULL);
   gst_object_unref(bus);
+
+  //add the current filename
+  gchar *fname = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  GList *song_list = NULL;
+  song_list = g_list_append(song_list, fname);
+  gstreamer_add_files(song_list);
 }
 
 //selects the last file in the playlist
@@ -318,6 +324,8 @@ void gstreamer_select_last_file()
 //plays the last file of the playlist
 void gstreamer_play_last_file()
 {
+  gstreamer_stop();
+  gstreamer_play();
 }
 
 //add files to the gstreamer playlist
