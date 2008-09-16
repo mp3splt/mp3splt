@@ -681,7 +681,12 @@ GtkWidget *create_main_vbox()
       
   //player control frame
   player_box = (GtkWidget *)create_player_control_frame(tree_view);
-  gtk_box_pack_start (GTK_BOX (player_vbox), player_box, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX(player_vbox), player_box, FALSE, FALSE, 0);
+
+  //playlist control frame
+  GtkWidget *playlist_box = (GtkWidget *)create_player_playlist_frame();
+  gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
+
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            player_vbox,
                            (GtkWidget *)notebook_label);

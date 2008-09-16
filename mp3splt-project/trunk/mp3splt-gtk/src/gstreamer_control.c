@@ -66,6 +66,8 @@ GstBus *bus = NULL;
 gint _gstreamer_is_running = FALSE;
 extern GtkWidget *entry;
 
+extern void add_playlist_file(const gchar *name);
+
 static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 {
   switch (GST_MESSAGE_TYPE(msg))
@@ -339,10 +341,21 @@ void gstreamer_add_files(GList *list)
   gchar *uri = NULL;
   int len_uri = 20;
 
+  if (song_title)
+  {
+    song_title = NULL;
+  }
+  if (song_artist)
+  {
+    song_artist = NULL;
+  }
+
   while ((song = g_list_nth_data(list, i)) != NULL)
   {
     if (song)
     {
+      //add file to playlist
+      add_playlist_file(song);
       len_uri += strlen(song);
       uri = malloc(sizeof(char) * len_uri);
       g_snprintf(uri,len_uri,"file://%s",song);

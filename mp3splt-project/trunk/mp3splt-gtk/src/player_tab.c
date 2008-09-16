@@ -89,6 +89,7 @@ extern GtkWidget *percent_progress_bar;
 extern gint we_are_splitting;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
+extern guchar *get_real_name_from_filename(guchar *filename);
 
 //our progress bar
 GtkWidget *progress_bar;
@@ -143,6 +144,9 @@ gint timeout_id;
 //handle for detaching
 GtkWidget *player_handle;
 
+//handle for detaching playlist
+GtkWidget *playlist_handle;
+
 extern gint file_browsed;
 extern GtkWidget *entry;
 extern gint selected_player;
@@ -195,20 +199,20 @@ gboolean select_splitpoints = FALSE;
 gint no_top_connect_action = FALSE;
 gint only_press_pause = FALSE;
 
+//our playlist tree
+GtkWidget *playlist_tree;
+gint playlist_tree_number = 0;
+
+//playlist tree enumeration
+enum
+  {
+    COL_NAME,
+    COL_FILENAME,
+    PLAYLIST_COLUMNS 
+  };
+
 //function declarations
 gint mytimer(gpointer data);
-
-
-//finding the real name of the file, without the path
-gchar *get_real_namee(gchar *filename)
-{
-  gchar *c = NULL;
-  while ((c = strchr(filename, G_DIR_SEPARATOR))
-         !=NULL)
-    filename = c + 1;
-  
-  return filename;
-}
 
 //resets and sets inactive the progress bar
 void reset_inactive_progress_bar()
@@ -925,7 +929,7 @@ void check_update_down_progress_bar()
         {
           gchar *fname;
           fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
-          fname = get_real_namee(fname);
+          fname = get_real_name_from_filename(fname);
           g_snprintf(description_shorted,60,"%s",fname);
           if (fname != NULL)
           {
@@ -1313,9 +1317,9 @@ void close_player_popup_window_event( GtkWidget *window,
 }
 
 //when we detach the handle
-void handle_player_detached_event (GtkHandleBox *handlebox,
-                                   GtkWidget *widget,
-                                   gpointer data)
+void handle_player_detached_event(GtkHandleBox *handlebox,
+                                  GtkWidget *widget,
+                                  gpointer data)
 {
   //new window
   GtkWidget *window;
@@ -1324,9 +1328,9 @@ void handle_player_detached_event (GtkHandleBox *handlebox,
 
   gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
 
-  g_signal_connect (G_OBJECT (window), "delete_event",
-                    G_CALLBACK (close_player_popup_window_event),
-                    NULL);
+  g_signal_connect(G_OBJECT(window), "delete_event",
+                   G_CALLBACK(close_player_popup_window_event),
+                   NULL);
   
   gtk_widget_show(GTK_WIDGET(window));
 }
@@ -2871,6 +2875,185 @@ GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
   gtk_box_pack_start (GTK_BOX (main_hbox), volume_control_vbox, FALSE, FALSE, 0);
   
   return player_handle;
+}
+
+//add a row to the table
+//TODO: only add file if it doesn't already exists
+void add_playlist_file(const gchar *name)
+{
+  //check if the name already exists in the playlist
+  gboolean name_already_exists_in_playlist = FALSE;
+
+  GtkTreeIter iter;
+  GtkTreeModel *model;
+  GtkTreeView *tree_view = (GtkTreeView *)playlist_tree;
+  
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
+  
+  gchar *filename = NULL;
+  gint i = 0;
+  GtkTreePath *path = NULL;
+  //for all the files from the playlist,
+  while (i < playlist_tree_number)
+  {
+    path = gtk_tree_path_new_from_indices(i ,-1);
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+    if (strcmp(filename,name) == 0)
+    {
+      name_already_exists_in_playlist = TRUE;
+      break;
+    }
+    g_free(filename);
+    i++;
+  }
+
+  if (! name_already_exists_in_playlist)
+  {
+    gtk_list_store_append (GTK_LIST_STORE(model), &iter);
+
+    //sets text in the minute, second and milisecond column
+    gtk_list_store_set (GTK_LIST_STORE(model), 
+        &iter,
+        COL_NAME,get_real_name_from_filename((guchar *)name),
+        COL_FILENAME,name,
+        -1);
+    playlist_tree_number++;
+  }
+}
+
+//when closing the new window after detaching
+void close_playlist_popup_window_event(GtkWidget *window,
+                                       gpointer data)
+{
+  GtkWidget *window_child;
+
+  window_child = gtk_bin_get_child(GTK_BIN(window));
+
+  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(playlist_handle));
+
+  gtk_widget_destroy(window);
+}
+
+
+//when we detach the handle
+void handle_playlist_detached_event(GtkHandleBox *handlebox,
+                                    GtkWidget *widget,
+                                    gpointer data)
+{
+  //new window
+  GtkWidget *window;
+
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
+
+  g_signal_connect(G_OBJECT(window), "delete_event",
+                   G_CALLBACK(close_playlist_popup_window_event),
+                   NULL);
+  
+  gtk_widget_show(GTK_WIDGET(window));
+}
+
+//creates the model for the playlist
+GtkTreeModel *create_playlist_model()
+{
+  GtkListStore *model;
+
+  model = gtk_list_store_new(PLAYLIST_COLUMNS,
+                             G_TYPE_STRING,
+                             G_TYPE_STRING);
+
+  return GTK_TREE_MODEL(model);
+}
+
+//creates the playlist tree
+GtkTreeView *create_playlist_tree()
+{
+  GtkTreeView *tree_view;
+  GtkTreeModel *model;
+
+  //create the model
+  model = (GtkTreeModel *)create_playlist_model();
+  //create the tree view
+  tree_view = (GtkTreeView *) gtk_tree_view_new_with_model(model);
+
+  return tree_view;
+}
+
+//creates playlist columns
+void create_playlist_columns (GtkTreeView *tree_view)
+{
+  //cells renderer
+  GtkCellRendererText *renderer;
+  //columns
+  GtkTreeViewColumn *name_column;
+  //GtkTreeViewColumn *filename_column;
+
+  /* minutes */
+  //renderer creation
+  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
+  g_object_set_data(G_OBJECT(renderer), "col", (gint *)COL_NAME);
+  name_column = gtk_tree_view_column_new_with_attributes 
+    ((gchar *)_("Playlist"), GTK_CELL_RENDERER(renderer),
+     "text", COL_NAME,
+     NULL);
+
+  //we dont insert the column to the tree view
+  /*  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
+      filename_column = gtk_tree_view_column_new_with_attributes 
+      ("Complete filename", GTK_CELL_RENDERER(renderer),
+      "text", COL_FILENAME,
+      NULL);*/
+  /*  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
+      GTK_TREE_VIEW_COLUMN (filename_column),COL_FILENAME);*/
+  
+  //appends columns to the list of columns of tree_view
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
+                               GTK_TREE_VIEW_COLUMN (name_column),COL_NAME);
+
+  //middle alignment of the column name
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column),
+                                     0.5);
+  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(name_column),
+                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+}
+
+//creates the playlist of the player
+GtkWidget *create_player_playlist_frame()
+{
+  //the main vbox inside the handle
+  GtkWidget *vbox;
+  vbox = gtk_vbox_new(FALSE, 0);
+
+  /* handle box for detaching */
+  playlist_handle = gtk_handle_box_new();
+  gtk_container_add(GTK_CONTAINER(playlist_handle), GTK_WIDGET(vbox));
+  //handle event
+  g_signal_connect(playlist_handle, "child-detached",
+                   G_CALLBACK(handle_playlist_detached_event),
+                   NULL);
+
+  // scrolled window and the tree 
+  //create the tree and add it to the scrolled window
+  playlist_tree = (GtkWidget *) create_playlist_tree();
+  //scrolled window for the tree
+  GtkWidget *scrolled_window;
+  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_set_size_request(scrolled_window, 300,130);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+                                  GTK_POLICY_AUTOMATIC,
+                                  GTK_POLICY_AUTOMATIC);
+  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+  //create columns
+  create_playlist_columns(GTK_TREE_VIEW(playlist_tree));
+  //add the tree to the scrolled window
+  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(playlist_tree));
+  g_signal_connect(G_OBJECT(playlist_tree), "row-activated",
+                   G_CALLBACK(split_tree_row_activated), NULL);
+
+  return playlist_handle;
 }
 
 //timer used to print infos about the song, like time elapsed and

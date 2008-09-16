@@ -162,7 +162,7 @@ void remove_all_split_rows ()
 }
 
 //finding the real name of the file, without the path
-guchar *get_real_naame(guchar *filename)
+guchar *get_real_name_from_filename(guchar *filename)
 {
   while (strchr((gchar *)filename, G_DIR_SEPARATOR)!=NULL)
     filename = (guchar *)strchr((gchar *)filename, G_DIR_SEPARATOR) + 1;
@@ -174,8 +174,7 @@ guchar *get_real_naame(guchar *filename)
 void add_split_row(const gchar *name)
 {
   GtkTreeIter iter;
-  GtkTreeView *tree_view = 
-    (GtkTreeView *)split_tree;
+  GtkTreeView *tree_view = (GtkTreeView *)split_tree;
   GtkTreeModel *model;
 
   model = gtk_tree_view_get_model(tree_view);
@@ -184,7 +183,7 @@ void add_split_row(const gchar *name)
   //sets text in the minute, second and milisecond column
   gtk_list_store_set (GTK_LIST_STORE (model), 
                       &iter,
-                      COL_NAME,get_real_naame((guchar *)name),
+                      COL_NAME,get_real_name_from_filename((guchar *)name),
                       COL_FILENAME,name,
                       -1);
   //add 1 to the row number of the table
@@ -243,8 +242,7 @@ void queue_files_button_event( GtkWidget *widget,
   //put the split filenames in a g_list
   while(number >= 0)
     {
-      path = 
-        gtk_tree_path_new_from_indices (number ,-1);
+      path = gtk_tree_path_new_from_indices (number ,-1);
       //get the iter correspondig to the path
       if(gtk_tree_model_get_iter(model, &iter, path))
         {
@@ -414,9 +412,9 @@ void split_tree_row_activated (GtkTreeView *tree_view,
   GtkTreePath *path;
   
   //get the model
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(split_tree));
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
   //get the selection
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(split_tree));
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
   //get selected rows
   selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
   
