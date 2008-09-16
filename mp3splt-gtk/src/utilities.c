@@ -897,11 +897,11 @@ void write_default_preferences_file()
                           "player",
                           "default_player",NULL))
     {
-      //write snackamp as default
+      //write gstreamer as default
       g_key_file_set_integer(my_key_file,
                              "player",
                              "default_player",
-                             PLAYER_SNACKAMP);
+                             PLAYER_GSTREAMER);
       g_key_file_set_comment (my_key_file,
                               "player",
                               "default_player",

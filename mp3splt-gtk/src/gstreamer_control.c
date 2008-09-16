@@ -409,7 +409,17 @@ gint gstreamer_is_paused()
 //plays a song
 void gstreamer_play()
 {
-  gst_element_set_state(play, GST_STATE_PLAYING);
+  GstState state;
+  gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+
+  if (state == GST_STATE_PLAYING)
+  {
+    gstreamer_jump(0);
+  }
+  else
+  {
+    gst_element_set_state(play, GST_STATE_PLAYING);
+  }
 }
 
 //stops a song
