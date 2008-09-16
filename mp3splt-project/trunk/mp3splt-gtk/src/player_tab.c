@@ -261,8 +261,11 @@ void enable_player_buttons()
 {
   gtk_widget_set_sensitive(stop_button, TRUE);
   gtk_widget_set_sensitive(pause_button, TRUE);
-  gtk_widget_set_sensitive(go_beg_button, TRUE);
-  gtk_widget_set_sensitive(go_end_button, TRUE);
+  if (selected_player != PLAYER_GSTREAMER)
+  {
+    gtk_widget_set_sensitive(go_beg_button, TRUE);
+    gtk_widget_set_sensitive(go_end_button, TRUE);
+  }
   gtk_widget_set_sensitive(play_button, TRUE);
 }
 
@@ -566,6 +569,12 @@ void stop_event (GtkWidget *widget, gpointer data)
   //only if connected to player
   if (timer_active)
     {
+      //unpress pause button
+      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pause_button)))
+      {
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button), FALSE);
+      }
+
       if (player_is_running())
         playing = FALSE;
       player_stop();
