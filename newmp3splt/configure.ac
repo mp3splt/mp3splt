@@ -1,5 +1,36 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+#/**********************************************************
+# *
+# * mp3splt - utility using libmp3splt,
+# *                for mp3/ogg splitting without decoding
+# *
+# * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
+# * Copyright (c) 2005-2008 Munteanu Alexandru - io_fx@yahoo.fr
+# *
+# * http://mp3splt.sourceforge.net
+# *
+# *********************************************************/
+
+#/**********************************************************
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# *********************************************************/
+
+#################################################
+# Basic initialisations 
+#################################################
 
 AC_PREREQ(2.56)
 AC_INIT(mp3splt, 2.2, mtrotta@users.sourceforge.net)
@@ -8,21 +39,22 @@ AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE(mp3splt, 2.2)
 AM_CONFIG_HEADER([config.h])
 
-# Checks for programs.
-AC_PROG_CC
 
 CFLAGS="$CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
 -I../libmp3splt/include/libmp3splt/ -I../../libmp3splt/include/libmp3splt/"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../libmp3splt/src \
 -L../../libmp3splt/src/.libs/ -L../../libmp3splt/src/"
 
-# Checks for header files.
+#################################################
+# Check for programs
+#################################################
 
-# Checks for typedefs, structures, and compiler characteristics.
+AC_PROG_CC
 
-# Checks for library functions.
+#################################################################
+# Check for the type of the host
+#################################################################
 
-#we check for mingw
 AC_MSG_CHECKING(the host)
 case $host in
 	*linux*)
@@ -52,38 +84,44 @@ case $host in
 esac
 AC_MSG_RESULT($HOST)
 
-#by default we do the libmp3splt test
-LIBMP3SPLT_TEST=1
+#################################################
+#Check for libmp3splt
 #checking for --disable-libmp3splt_test string
 AC_ARG_ENABLE(libmp3splt_test,
 AC_HELP_STRING([--disable-libmp3splt_test],
 	[Disables the libmp3splt test when doing configure)]),
-#action if given
-LIBMP3SPLT_TEST=0
-,
-#action if not given
-LIBMP3SPLT_TEST=1
-)
 
-#only we haven't disabled the libmp3splt test
-#we check for libmp3splt
-if test $LIBMP3SPLT_TEST -eq 1;then
+#action if given
 #checking for libmp3splt
 AC_CHECK_LIB(mp3splt, mp3splt_new_state,libmp3splt=yes,
         [AC_MSG_ERROR(libmp3splt version 0.5 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 )])
-fi
 
+LIBMP3SPLT_TEST_DISABLED=0
+,
+#action if not given
+LIBMP3SPLT_TEST_DISABLED=1
+)
+
+#################################################
+#Check for --enable-oggsplt
 AC_ARG_ENABLE(oggsplt_symlink,
 AC_HELP_STRING([--enable-oggsplt],
 [Enable symlink of oggsplt to mp3splt [[default=yes]] ]),
 ,enable_oggsplt_symlink=yes)
 AM_CONDITIONAL(DO_SYMLINK, test x$enable_oggsplt_symlink = xyes)
 
-#generate makefiles
+#################################################
+# Generate Makefiles
+#################################################
+
 AC_OUTPUT(Makefile src/Makefile doc/Makefile)
+
+#################################################
+# Output configuration
+#################################################
 
 echo
 echo "---------------------------------------------------------"
