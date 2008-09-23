@@ -4,7 +4,7 @@
 # *               for mp3/ogg splitting without decoding
 # *
 # * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
-# * Copyright (c) 2005-2008 Munteanu Alexandru - io_alex_2002@yahoo.fr
+# * Copyright (c) 2005-2008 Munteanu Alexandru - io_fx@yahoo.fr
 # *
 # * http://mp3splt.sourceforge.net
 # *
@@ -33,8 +33,8 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT(libmp3splt, 0.5, io_fx@yahoo.fr)
-AM_INIT_AUTOMAKE(libmp3splt, 0.5)
+AC_INIT(libmp3splt, 0.5.1, io_fx@yahoo.fr)
+AM_INIT_AUTOMAKE(libmp3splt, 0.5.1)
 AM_CONFIG_HEADER(config.h)
 
 CFLAGS="-g $CFLAGS -I../include/libmp3splt"

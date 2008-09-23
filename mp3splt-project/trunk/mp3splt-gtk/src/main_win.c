@@ -109,6 +109,8 @@ extern gchar **split_files;
 extern gint max_split_files;
 extern gint no_top_connect_action;
 
+GtkWidget *playlist_box;
+
 //close the window and exit button function
 void quit( GtkWidget *widget,
            gpointer   data )
@@ -684,8 +686,9 @@ GtkWidget *create_main_vbox()
   gtk_box_pack_start (GTK_BOX(player_vbox), player_box, FALSE, FALSE, 0);
 
   //playlist control frame
-  GtkWidget *playlist_box = (GtkWidget *)create_player_playlist_frame();
+  playlist_box = (GtkWidget *)create_player_playlist_frame();
   gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
+  //TODO - set playlist invisible
 
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            player_vbox,

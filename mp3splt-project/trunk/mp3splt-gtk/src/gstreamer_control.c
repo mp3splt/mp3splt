@@ -531,15 +531,15 @@ void gstreamer_play()
 		GstState state;
 		gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
 
-		if (state == GST_STATE_PLAYING)
-		{
-			gstreamer_jump(0);
-		}
-		else
-		{
-			gst_element_set_state(play, GST_STATE_PLAYING);
-		}
-	}
+    if (state == GST_STATE_PLAYING)
+    {
+      gstreamer_jump(0);
+    }
+    else
+    {
+      gst_element_set_state(play, GST_STATE_PLAYING);
+    }
+  }
 }
 
 //stops a song
@@ -559,15 +559,15 @@ void gstreamer_pause()
 		GstState state;
 		gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
 
-		if (state == GST_STATE_PLAYING)
-		{
-			gst_element_set_state(play, GST_STATE_PAUSED);
-		}
-		else
-		{
-			gstreamer_play();
-		}
-	}
+    if (state == GST_STATE_PLAYING)
+    {
+      gst_element_set_state(play, GST_STATE_PAUSED);
+    }
+    else
+    {
+      gstreamer_play();
+    }
+  }
 }
 
 //changes to next song
@@ -642,11 +642,11 @@ gint gstreamer_is_playing()
 //quits player
 void gstreamer_quit()
 {
-	if (play)
-	{
-		gst_element_set_state(play, GST_STATE_NULL);
-		_gstreamer_is_running = FALSE;
-	}
+  if (play)
+  {
+    gst_element_set_state(play, GST_STATE_NULL);
+  }
+  _gstreamer_is_running = FALSE;
 }
 
 #endif
