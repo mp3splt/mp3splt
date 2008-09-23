@@ -1,6 +1,6 @@
 !define VERSION "0.5"
 !define PROGRAM_NAME "mp3splt-gtk"
-!define MP3SPLT_PATH /home/ion/hacking/mp3splt-project/mp3splt-project/trunk/mp3splt-gtk/windows/installer/../../..
+!define MP3SPLT_PATH c:/mp3splt_mingw/home/alex/mp3splt-project/mp3splt-gtk/windows/installer/../../..
 
 ;name of the program
 Name "mp3splt-gtk ${VERSION}"
@@ -78,6 +78,7 @@ Section ""
   File ${MP3SPLT_PATH}\libltdl3.dll
   File ${MP3SPLT_PATH}\libogg-0.dll
   File ${MP3SPLT_PATH}\libvorbis-0.dll
+  File ${MP3SPLT_PATH}\libvorbisenc-2.dll
   File ${MP3SPLT_PATH}\libvorbisfile-3.dll
   File ${MP3SPLT_PATH}\libmad-0.dll
   File ${MP3SPLT_PATH}\libid3tag.dll

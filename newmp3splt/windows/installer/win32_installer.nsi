@@ -1,6 +1,6 @@
 !define VERSION "2.2"
 !define PROGRAM_NAME "mp3splt"
-!define MP3SPLT_PATH /home/ion/hacking/mp3splt-project/mp3splt-project/trunk/newmp3splt/windows/installer/../../..
+!define MP3SPLT_PATH c:/mp3splt_mingw/home/alex/mp3splt-project/newmp3splt/windows/installer/../../..
 
 ;name of the program
 Name "mp3splt ${VERSION}"
@@ -48,6 +48,7 @@ Section ""
   File ${MP3SPLT_PATH}\libltdl3.dll
   File ${MP3SPLT_PATH}\libogg-0.dll
   File ${MP3SPLT_PATH}\libvorbis-0.dll
+  File ${MP3SPLT_PATH}\libvorbisenc-2.dll
   File ${MP3SPLT_PATH}\libvorbisfile-3.dll
   File ${MP3SPLT_PATH}\libmad-0.dll
   File ${MP3SPLT_PATH}\libid3tag.dll
