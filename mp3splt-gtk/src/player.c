@@ -65,7 +65,9 @@ gint player_get_elapsed_time()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return gstreamer_get_time_elapsed();
+#endif
     }
 
   return 0;
@@ -88,7 +90,9 @@ gint player_get_total_time()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return gstreamer_get_total_time();
+#endif
     }
 
   return 0;
@@ -111,7 +115,9 @@ gint player_is_running()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return gstreamer_is_running();
+#endif
     }
 
   return 0;
@@ -134,7 +140,9 @@ void player_start()
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_start();
+#endif
     }
 }
 
@@ -155,7 +163,9 @@ void player_start_add_files(GList *list)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_start_with_songs(list);
+#endif 
     }
 }
 
@@ -176,7 +186,9 @@ void player_add_files(GList *list)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_add_files(list);
+#endif
     }
 }
 
@@ -199,8 +211,10 @@ void player_add_files_and_select(GList *list)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_add_files(list);
       gstreamer_select_last_file();
+#endif
     }
 }
 
@@ -226,7 +240,9 @@ void player_add_play_files(GList *list)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_play_last_file();
+#endif
     }
 }
 
@@ -249,8 +265,10 @@ void player_start_play_with_songs(GList *list)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_start_with_songs(list);
       gstreamer_play_last_file();
+#endif
     }
 }
 
@@ -271,7 +289,9 @@ void player_play()
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_play();
+#endif
     }
 }
 
@@ -292,7 +312,9 @@ void player_stop()
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_stop();
+#endif
     }
 }
 
@@ -313,7 +335,9 @@ void player_pause()
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_pause();
+#endif
     }
 }
 
@@ -334,7 +358,9 @@ void player_next()
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_next();
+#endif
     }
 }
 
@@ -355,7 +381,9 @@ void player_prev()
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_prev();
+#endif
     }
 }
 
@@ -376,7 +404,9 @@ void player_jump(gint position)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_jump(position);
+#endif
     }
 }
 
@@ -398,7 +428,9 @@ void player_get_song_infos(gchar *total_infos)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_get_song_infos(total_infos);
+#endif
     }
 }
 
@@ -420,7 +452,9 @@ gint player_is_playing()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return gstreamer_is_playing();
+#endif
     }
 
   return 0;
@@ -443,7 +477,9 @@ gint player_is_paused()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return gstreamer_is_paused();
+#endif
     }
 
   return 0;
@@ -467,7 +503,9 @@ gchar *player_get_filename()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return (gchar *)gstreamer_get_filename();
+#endif
     }
 
   return 0;
@@ -491,7 +529,9 @@ gchar *player_get_title()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return (gchar *)gstreamer_get_title_song();
+#endif
     }
 
   return 0;
@@ -514,7 +554,9 @@ gint player_get_volume()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return gstreamer_get_volume();
+#endif
     }
 
   return 0;
@@ -537,7 +579,9 @@ void player_set_volume(gint volume)
     }
     else
     {
+#ifndef NO_GSTREAMER
       gstreamer_set_volume(volume);
+#endif
     }
 }
 
@@ -558,7 +602,9 @@ gint player_get_playlist_number()
     }
     else
     {
+#ifndef NO_GSTREAMER
       return gstreamer_get_playlist_number();
+#endif
     }
 
   return 0;
@@ -581,7 +627,9 @@ gint player_quit()
 }*/
   if (selected_player == PLAYER_GSTREAMER)
   {
+#ifndef NO_GSTREAMER
     gstreamer_quit();
+#endif
   }
 
   return 0;

@@ -78,6 +78,7 @@ Section ""
   File ${MP3SPLT_PATH}\libltdl3.dll
   File ${MP3SPLT_PATH}\libogg-0.dll
   File ${MP3SPLT_PATH}\libvorbis-0.dll
+  File ${MP3SPLT_PATH}\libvorbisenc-2.dll
   File ${MP3SPLT_PATH}\libvorbisfile-3.dll
   File ${MP3SPLT_PATH}\libmad-0.dll
   File ${MP3SPLT_PATH}\libmad-0.dll

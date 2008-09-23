@@ -37,27 +37,17 @@ export LDFLAGS="-L`pwd`/libs/lib $LDFLAGS"
 export PKG_CONFIG_PATH="`pwd`/libs/lib/pkgconfig"
 export PATH="`pwd`/libs/bin:$PATH"
 
-#modify .*/devel/target/ for pkg-config
+#modify pkg-config files path
 TARGET=`pwd`/libs
 for f in `pwd`/libs/lib/pkgconfig/*.pc ; do
-   if grep 'prefix=.*/devel/target.*' $f >/dev/null 2>&1 ; then
-     cat $f | sed s+^prefix=.*/devel/target.*+prefix=$TARGET+ > $f.tmp
-     mv $f.tmp $f
-   fi
+  cat $f | sed s+^prefix=.*+prefix=$TARGET+ > $f.tmp
+  mv $f.tmp $f
 done  
-#modify /target for pkg-config
-TARGET=`pwd`/libs
-for f in `pwd`/libs/lib/pkgconfig/*.pc ; do
-   if grep 'prefix=/target.*' $f >/dev/null 2>&1 ; then
-     cat $f | sed s+^prefix=/target.*+prefix=$TARGET+ > $f.tmp
-     mv $f.tmp $f
-   fi
-done
 
 #we compile mp3splt-gtk
 cd trunk/mp3splt-gtk &&\
 cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
-./configure --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
+./configure --enable-gstreamer --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
 make clean && make && make install &&\
 ${HOST}-strip ./src/mp3splt-gtk.exe || exit 1
 
