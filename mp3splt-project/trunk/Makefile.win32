@@ -8,7 +8,7 @@ all:
 	\
 	cd ../mp3splt-gtk && ./autogen.sh && \
 	cp /lib/libmp3splt* . && \
-	./configure && make clean && make && make install
+	./configure --enable-gstreamer && make clean && make && make install
 
 recompile:
 	cd libmp3splt && make && \
@@ -27,7 +27,7 @@ dist:
 	mkdir fr_locales
 	msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
 #copying vorbis and libltdl libraries
-	cp /bin/libltdl3.dll /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll .
+	cp /bin/libltdl3.dll /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll /bin/libvorbisenc-2.dll .
 #copying libmad and libid3tag libraries
 	cp /bin/libmad-0.dll /bin/libid3tag.dll .
 #copying zlib1.dll (needed by libid3tag)

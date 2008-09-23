@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-06-24 02:24+0200\n"
+"POT-Creation-Date: 2008-09-23 19:56+0200\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -15,19 +15,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/xmms_control.c:84
+#: src/xmms_control.c:83
 msgid "stereo"
 msgstr "stéréo"
 
-#: src/xmms_control.c:86
+#: src/xmms_control.c:87
 msgid "mono"
 msgstr "mono"
 
-#: src/xmms_control.c:88
+#: src/xmms_control.c:90
 msgid "Kbps"
 msgstr "Kbps"
 
-#: src/xmms_control.c:89
+#: src/xmms_control.c:91
 msgid "Khz"
 msgstr "Khz"
 
@@ -113,16 +113,16 @@ msgstr "Centièmes"
 msgid "Length"
 msgstr "anglais"
 
-#: src/split_files.c:373
+#: src/split_files.c:371
 msgid "_Queue files to player"
 msgstr "Ajoute les fichiers au lecteur"
 
-#: src/split_files.c:383
+#: src/split_files.c:381
 #, fuzzy
 msgid "_Delete selected files"
 msgstr "sélection fichier"
 
-#: src/split_files.c:393
+#: src/split_files.c:391
 #, fuzzy
 msgid "Delete all files"
 msgstr "sélection fichier"
@@ -249,7 +249,11 @@ msgstr ""
 msgid "SnackAmp"
 msgstr ""
 
-#: src/preferences_tab.c:1134
+#: src/preferences_tab.c:1043
+msgid "GStreamer"
+msgstr ""
+
+#: src/preferences_tab.c:1139
 msgid ""
 "Output filename format for most of the splits except normal split :\n"
 "    @f - file name\n"
@@ -260,139 +264,143 @@ msgid ""
 "    @n - track number"
 msgstr ""
 
-#: src/preferences_tab.c:1148
+#: src/preferences_tab.c:1153
 msgid "Default format"
 msgstr ""
 
-#: src/preferences_tab.c:1157
+#: src/preferences_tab.c:1162
 msgid "Custom format"
 msgstr ""
 
-#: src/preferences_tab.c:1201
+#: src/preferences_tab.c:1206
 msgid "General"
 msgstr "Général"
 
-#: src/preferences_tab.c:1209
+#: src/preferences_tab.c:1214
 msgid "Split"
 msgstr "Coupure"
 
-#: src/preferences_tab.c:1217
+#: src/preferences_tab.c:1222
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1226 src/main_win.c:680
+#: src/preferences_tab.c:1231 src/main_win.c:680
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/player_tab.c:633
+#: src/player_tab.c:656
 msgid "previous"
 msgstr "précédent"
 
-#: src/player_tab.c:646
+#: src/player_tab.c:669
 msgid "play"
 msgstr "lecture"
 
-#: src/player_tab.c:658
+#: src/player_tab.c:681
 msgid "pause"
 msgstr "pause"
 
-#: src/player_tab.c:671
+#: src/player_tab.c:694
 msgid "stop"
 msgstr "stop"
 
-#: src/player_tab.c:684
+#: src/player_tab.c:707
 msgid "next"
 msgstr "suivant"
 
-#: src/player_tab.c:688
+#: src/player_tab.c:711
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/player_tab.c:697
+#: src/player_tab.c:720
 msgid "add splitpoint from player"
 msgstr "ajouter point de coupure du lecteur"
 
-#: src/player_tab.c:701
+#: src/player_tab.c:724
 msgid "_Connect    "
 msgstr "_Connecter    "
 
-#: src/player_tab.c:708 src/main_win.c:374 src/main_win.c:421
+#: src/player_tab.c:731 src/main_win.c:374 src/main_win.c:421
 msgid "connect to player"
 msgstr "se connecter au lecteur"
 
-#: src/player_tab.c:711
+#: src/player_tab.c:734
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:718 src/main_win.c:364
+#: src/player_tab.c:741 src/main_win.c:364
 msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
-#: src/player_tab.c:2221
+#: src/player_tab.c:2244
 msgid " left button on splitpoint selects it, right button erases it"
 msgstr ""
 
-#: src/player_tab.c:2234
+#: src/player_tab.c:2257
 msgid ""
 " left button + move changes song position \n"
 " right button + move changes zoom"
 msgstr ""
 
-#: src/player_tab.c:2248
+#: src/player_tab.c:2271
 #, fuzzy
 msgid " left button on splitpoint + move changes splitpoint position"
 msgstr "mettre les points cue au tableau des points de coupure"
 
-#: src/player_tab.c:2258
+#: src/player_tab.c:2281
 msgid " right button on splitpoint play preview"
 msgstr ""
 
-#: src/player_tab.c:2453
+#: src/player_tab.c:2476
 msgid " quick preview... "
 msgstr ""
 
-#: src/player_tab.c:2919
+#: src/player_tab.c:2998
+msgid "Playlist"
+msgstr ""
+
+#: src/player_tab.c:3121
 msgid " quick preview finished, song paused"
 msgstr ""
 
-#: src/player_tab.c:3044
+#: src/player_tab.c:3253
 msgid "Choose File"
 msgstr "Choisir fichier"
 
-#: src/player_tab.c:3057
+#: src/player_tab.c:3266
 msgid "mp3 and ogg files(*.mp3 *.ogg)"
 msgstr "fichiers mp3 et ogg(*.mp3 *.ogg)"
 
-#: src/player_tab.c:3063
+#: src/player_tab.c:3272
 msgid "mp3 files(*.mp3)"
 msgstr "fichiers mp3(*.mp3)"
 
-#: src/player_tab.c:3068
+#: src/player_tab.c:3277
 msgid "ogg files(*.ogg)"
 msgstr "fichiers ogg(*.ogg)"
 
-#: src/player_tab.c:3077
+#: src/player_tab.c:3286
 msgid "cddb files(*.cddb)"
 msgstr "fichier cddb(*.cddb)"
 
-#: src/player_tab.c:3087
+#: src/player_tab.c:3296
 msgid "cue files(*.cue)"
 msgstr "fichiers cue(*.cue)"
 
-#: src/player_tab.c:3095
+#: src/player_tab.c:3304
 #, fuzzy
 msgid "All Files"
 msgstr "Fichier"
 
-#: src/player_tab.c:3256
+#: src/player_tab.c:3465
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:3265
+#: src/player_tab.c:3474
 msgid "select file"
 msgstr "sélection fichier"
 
-#: src/player_tab.c:3272
+#: src/player_tab.c:3481
 msgid "_Fix ogg stream"
 msgstr ""
 
@@ -472,32 +480,32 @@ msgstr "Quitter"
 msgid "About"
 msgstr "à propos"
 
-#: src/main_win.c:598 src/main_win.c:753
+#: src/main_win.c:598 src/main_win.c:758
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:625 src/main_win.c:729
+#: src/main_win.c:625 src/main_win.c:734
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:690
+#: src/main_win.c:695
 msgid "Splitpoints"
 msgstr "PointsCoupure"
 
-#: src/main_win.c:703
+#: src/main_win.c:708
 msgid "Split files"
 msgstr "Fichiers coupés"
 
-#: src/main_win.c:716
+#: src/main_win.c:721
 msgid "cddb&cue"
 msgstr "cddb&cue"
 
-#: src/main_win.c:740
+#: src/main_win.c:745
 #, fuzzy
 msgid "Split mode"
 msgstr "Coupure"
 
-#: src/main_win.c:775
+#: src/main_win.c:780
 #, fuzzy
 msgid "Stop"
 msgstr "stop"
