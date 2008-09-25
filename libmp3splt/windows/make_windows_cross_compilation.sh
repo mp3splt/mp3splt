@@ -27,6 +27,7 @@ tar jxf libmp3splt_mingw_required_libs.tar.bz2 || exit 1
 cp bin/libltdl3.dll ../trunk/ || exit 1
 cp bin/libogg-0.dll ../trunk/ || exit 1
 cp bin/libvorbis-0.dll ../trunk/ || exit 1
+cp bin/libvorbisenc-2.dll ../trunk/ || exit 1
 cp bin/libvorbisfile-3.dll ../trunk/ || exit 1
 cp bin/libmad-0.dll ../trunk/ || exit 1
 cp bin/libmad-0.dll ../trunk/ || exit 1
