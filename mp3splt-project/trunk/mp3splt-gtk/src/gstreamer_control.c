@@ -382,6 +382,11 @@ void gstreamer_start()
   }
 
   gst_init(NULL, NULL);
+
+#ifdef __WIN32__
+  gst_default_registry_add_path("./");
+#endif
+
   play = gst_element_factory_make("playbin", "play");
 	//if we have started the player
   if (play)

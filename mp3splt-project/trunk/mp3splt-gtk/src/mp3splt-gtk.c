@@ -469,6 +469,11 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   //init threads
   g_thread_init(NULL);
   gdk_threads_init();
+
+//set gstreamer plugin path as the current directory
+#ifdef __WIN32__
+  g_setenv("GST_PLUGIN_PATH",".\\",TRUE);
+#endif
   
   gint error = 0;
   
