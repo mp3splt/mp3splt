@@ -75,7 +75,7 @@ GtkWidget *player_combo_box;
 //list where we stock the preferences combo box content
 GList *player_pref_list = NULL;
 //selected player
-gint selected_player = PLAYER_SNACKAMP;
+gint selected_player = PLAYER_GSTREAMER;
 
 //the language radio button
 GtkWidget *radio_button;
@@ -105,6 +105,9 @@ GtkWidget *spinner_adjust_threshold;
 extern GtkWidget *player_box;
 extern GtkWidget *queue_files_button;
 extern splt_state *the_state;
+extern GtkWidget *connect_button;
+extern GtkWidget *disconnect_button;
+extern GtkWidget *toolbar_connect_button;
 
 //creates a scrolled window
 GtkWidget *create_scrolled_window()
@@ -995,6 +998,17 @@ void player_combo_box_event(GtkComboBox *widget,
   //disconnect from player
   disconnect_button_event (NULL,
                            NULL);
+
+  if (selected_player == PLAYER_GSTREAMER)
+  {
+    gtk_widget_hide(connect_button);
+    gtk_widget_hide(toolbar_connect_button);
+  }
+  else
+  {
+    gtk_widget_show(connect_button);
+    gtk_widget_show(toolbar_connect_button);
+  }
   
   gtk_widget_show(player_box);
   gtk_widget_show(queue_files_button);

@@ -61,6 +61,7 @@
 #include "special_split.h"
 #include "utilities.h"
 #include "player_tab.h"
+#include "player.h"
 
 //main window
 GtkWidget *window;
@@ -108,6 +109,8 @@ extern GList *player_pref_list;
 extern gchar **split_files;
 extern gint max_split_files;
 extern gint no_top_connect_action;
+extern gint selected_player;
+extern GtkWidget *connect_button;
 
 GtkWidget *playlist_box;
 
@@ -688,7 +691,6 @@ GtkWidget *create_main_vbox()
   //playlist control frame
   playlist_box = (GtkWidget *)create_player_playlist_frame();
   gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
-  //TODO - set playlist invisible
 
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            player_vbox,
@@ -833,10 +835,19 @@ void create_all()
   
   //hide the disconnect button
   gtk_widget_hide(disconnect_button);
-  
+  //hide the playlist box
+  gtk_widget_hide(playlist_box);
+
   //load preferences
   load_preferences();
   combo_remove_unavailable_players();
+
+  //hide connect button if player is gstreamer
+  if (selected_player == PLAYER_GSTREAMER)
+  {
+    gtk_widget_hide(connect_button);
+    gtk_widget_hide(toolbar_connect_button);
+  }
 }
 
 //print the status bar confirmation

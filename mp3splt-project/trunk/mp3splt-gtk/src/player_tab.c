@@ -294,25 +294,31 @@ void disable_player_buttons()
 //changes connect and disconnect buttons when connecting to player
 void connect_change_buttons()
 {
-  gtk_widget_show(disconnect_button);
-  gtk_widget_hide(connect_button);
-  
-  no_top_connect_action = TRUE;
-  gtk_toggle_tool_button_set_active(
-   GTK_TOGGLE_TOOL_BUTTON(toolbar_connect_button),TRUE);
-  no_top_connect_action = FALSE;
+  if (selected_player != PLAYER_GSTREAMER)
+  {
+    gtk_widget_show(disconnect_button);
+    gtk_widget_hide(connect_button);
+
+    no_top_connect_action = TRUE;
+    gtk_toggle_tool_button_set_active(
+        GTK_TOGGLE_TOOL_BUTTON(toolbar_connect_button),TRUE);
+    no_top_connect_action = FALSE;
+  }
 }
 
 //disconnecting changing buttons
 void disconnect_change_buttons()
 {
-  gtk_widget_hide(disconnect_button);
-  gtk_widget_show(connect_button);
-  
-  no_top_connect_action = TRUE;
-  gtk_toggle_tool_button_set_active(
-   GTK_TOGGLE_TOOL_BUTTON(toolbar_connect_button),FALSE);  
-  no_top_connect_action = FALSE;
+  if (selected_player != PLAYER_GSTREAMER)
+  {
+    gtk_widget_hide(disconnect_button);
+    gtk_widget_show(connect_button);
+
+    no_top_connect_action = TRUE;
+    gtk_toggle_tool_button_set_active(
+        GTK_TOGGLE_TOOL_BUTTON(toolbar_connect_button),FALSE);  
+    no_top_connect_action = FALSE;
+  }
 }
 
 //connect with the song fname
@@ -3183,7 +3189,6 @@ GtkWidget *create_player_playlist_frame()
   //scrolled window for the tree
   GtkWidget *scrolled_window;
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_set_size_request(scrolled_window, 300,130);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,

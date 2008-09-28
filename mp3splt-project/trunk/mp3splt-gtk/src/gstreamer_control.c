@@ -65,6 +65,7 @@ GstElement *play = NULL;
 GstBus *bus = NULL;
 gint _gstreamer_is_running = FALSE;
 extern GtkWidget *entry;
+extern GtkWidget *playlist_box;
 
 extern void add_playlist_file(const gchar *name);
 
@@ -391,6 +392,9 @@ void gstreamer_start()
 	//if we have started the player
   if (play)
 	{
+    //show the playlist (history)
+    gtk_widget_show(playlist_box);
+
 		_gstreamer_is_running = TRUE;
 		bus = gst_pipeline_get_bus (GST_PIPELINE (play));
 		gst_bus_add_watch(bus, bus_call, NULL);
@@ -652,6 +656,9 @@ void gstreamer_quit()
     gst_element_set_state(play, GST_STATE_NULL);
   }
   _gstreamer_is_running = FALSE;
+
+  //hide the playlist (history)
+  gtk_widget_hide(playlist_box);
 }
 
 #endif
