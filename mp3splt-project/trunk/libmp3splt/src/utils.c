@@ -659,8 +659,8 @@ static char *splt_u_parse_tag_word(const char *cur_pos,
       int string_length = word_end-(equal_sign+1);
       if (string_length > 0)
       {
-        word = malloc(string_length*sizeof(char));
-        memset(word,'\0',string_length*sizeof(char));
+        word = malloc((string_length+1)*sizeof(char));
+        memset(word,'\0',(string_length+1)*sizeof(char));
         if (word)
         {
           memcpy(word,equal_sign+1,string_length);
@@ -696,6 +696,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
   {
     const char *cur_pos = NULL;
     int all_tags = SPLT_FALSE;
+    int we_had_all_tags = SPLT_FALSE;
 
     cur_pos = tags;
 
@@ -707,6 +708,16 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
       ambigous = SPLT_TRUE;
     }
 
+    //tags that we put to all the others : %[@t=tag1,@b=album1]
+    char *all_artist = NULL;
+    char *all_album = NULL;
+    char *all_title = NULL;
+    char *all_performer = NULL;
+    char *all_year = NULL;
+    char *all_comment = NULL;
+    int all_tracknumber = -1;
+    unsigned char all_genre = 12;
+
     int tags_appended = 0;
     int get_out_from_while = SPLT_FALSE;
     while ((cur_pos = strchr(cur_pos,'[')))
@@ -717,8 +728,18 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         //if we have % before [
         if (*(cur_pos-1) == '%')
         {
-          splt_t_set_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X, tags_appended);
+          splt_t_set_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X, tags_appended);
           all_tags = SPLT_TRUE;
+          //if we had all tags, remove them
+          if (we_had_all_tags)
+          {
+            if (all_title) { free(all_title); all_title = NULL; }
+            if (all_artist) { free(all_artist); all_artist = NULL; }
+            if (all_album) { free(all_album); all_album = NULL; }
+            if (all_performer) { free(all_performer); all_performer = NULL; }
+            if (all_year) { free(all_year); all_year = NULL; }
+            if (all_comment) { free(all_comment); all_comment = NULL; }
+          }
         }
       }
 
@@ -829,6 +850,46 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                     get_out_from_while = SPLT_TRUE;
                     goto end_while;
                   }
+                  //if we have all_tags, get out the last tags
+                  if (all_tags)
+                  {
+                    //and copy them
+                    splt_tags last_tags = splt_t_get_last_tags(state);
+                    //free previous all tags
+                    if (all_title) { free(all_title); all_title = NULL; }
+                    if (all_artist) { free(all_artist); all_artist = NULL; }
+                    if (all_album) { free(all_album); all_album = NULL; }
+                    if (all_performer) { free(all_performer); all_performer = NULL; }
+                    if (all_year) { free(all_year); all_year = NULL; }
+                    if (all_comment) { free(all_comment); all_comment = NULL; }
+                    //set new all tags
+                    if (last_tags.title != NULL)
+                    {
+                      all_title = strdup(last_tags.title);
+                    }
+                    if (last_tags.artist != NULL)
+                    {
+                      all_artist = strdup(last_tags.artist);
+                    }
+                    if (last_tags.album != NULL)
+                    {
+                      all_album = strdup(last_tags.album);
+                    }
+                    if (last_tags.performer != NULL)
+                    {
+                      all_performer = strdup(last_tags.performer);
+                    }
+                    if (last_tags.year != NULL)
+                    {
+                      all_year = strdup(last_tags.year);
+                    }
+                    if (last_tags.comment != NULL)
+                    {
+                      all_comment = strdup(last_tags.comment);
+                    }
+                    all_genre = last_tags.genre;
+                    all_tracknumber = last_tags.track;
+                  }
                   original_tags = SPLT_TRUE;
                   splt_t_unlock_messages(state);
                 }
@@ -860,6 +921,12 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (artist != NULL)
               {
+                //copy the artist for all tags
+                if (all_tags)
+                {
+                  if (all_artist) { free(all_artist); all_artist = NULL; }
+                  all_artist = strdup(artist);
+                }
                 cur_pos += strlen(artist)+2;
                 s_artist++;
               }
@@ -873,6 +940,12 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (performer != NULL)
               {
+                //copy the performer for all tags
+                if (all_tags)
+                {
+                  if (all_performer) { free(all_performer); all_performer = NULL; }
+                  all_performer = strdup(performer);
+                }
                 cur_pos += strlen(performer)+2;
                 s_performer++;
               }
@@ -886,6 +959,12 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (album != NULL)
               {
+                //copy the album for all tags
+                if (all_tags)
+                {
+                  if (all_album) { free(all_album); all_album = NULL; }
+                  all_album = strdup(album);
+                }
                 cur_pos += strlen(album)+2;
                 s_album++;
               }
@@ -899,6 +978,13 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (title != NULL)
               {
+                //copy the title for all tags
+                if (all_tags)
+                {
+                  if (all_title) { free(all_title); all_title = NULL; }
+                  all_title = strdup(title);
+                }
+
                 cur_pos += strlen(title)+2;
                 s_title++;
               }
@@ -912,6 +998,13 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (comment != NULL)
               {
+                //copy the comment for all tags
+                if (all_tags)
+                {
+                  if (all_comment) { free(all_comment); all_comment = NULL; }
+                  all_comment = strdup(comment);
+                }
+
                 cur_pos += strlen(comment)+2;
                 s_comment++;
               }
@@ -925,6 +1018,13 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (year != NULL)
               {
+                //copy the year for all tags
+                if (all_tags)
+                {
+                  if (all_year) { free(all_year); all_year = NULL; }
+                  all_year = strdup(year);
+                }
+
                 cur_pos += strlen(year)+2;
                 s_year++;
               }
@@ -938,6 +1038,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (tracknumber != NULL)
               {
+
                 cur_pos += strlen(tracknumber)+2;
                 s_tracknumber++;
               }
@@ -975,6 +1076,12 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         if (is_number)
         {
           track = atoi(tracknumber);
+
+          //copy the tracknumber for all tags
+          if (all_tags)
+          {
+            all_tracknumber = track;
+          }
         }
       }
 
@@ -1015,43 +1122,53 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         }
       }
 
+      //if we have all tags, set them
+      if (we_had_all_tags)
+      {
+        int index = state->split.real_tagsnumber - 1;
+        if (!title)
+        {
+          splt_t_set_tags_char_field(state, index, SPLT_TAGS_TITLE, all_title);
+        }
+        if (!artist)
+        {
+          splt_t_set_tags_char_field(state, index, SPLT_TAGS_ARTIST, all_artist);
+        }
+        if (!album)
+        {
+          splt_t_set_tags_char_field(state, index, SPLT_TAGS_ALBUM, all_album);
+        }
+        if (!performer)
+        {
+          splt_t_set_tags_char_field(state, index, SPLT_TAGS_PERFORMER, all_performer);
+        }
+        if (!year)
+        {
+          splt_t_set_tags_char_field(state, index, SPLT_TAGS_YEAR, all_year);
+        }
+        if (!comment)
+        {
+          splt_t_set_tags_char_field(state, index, SPLT_TAGS_COMMENT, all_comment);
+        }
+        if (!tracknumber)
+        {
+          splt_t_set_tags_int_field(state, index, SPLT_TAGS_TRACK, all_tracknumber);
+        }
+        if (genre != 12)
+        {
+          splt_t_set_tags_uchar_field(state, index, SPLT_TAGS_GENRE, all_genre);
+        }
+      }
+
 end_while:
       //we free the memory
-      if (title)
-      {
-        free(title);
-        title = NULL;
-      }
-      if (artist)
-      {
-        free(artist);
-        artist = NULL;
-      }
-      if (album)
-      {
-        free(album);
-        album = NULL;
-      }
-      if (performer)
-      {
-        free(performer);
-        performer = NULL;
-      }
-      if (year)
-      {
-        free(year);
-        year = NULL;
-      }
-      if (comment)
-      {
-        free(comment);
-        comment = NULL;
-      }
-      if (tracknumber)
-      {
-        free(tracknumber);
-        tracknumber = NULL;
-      }
+      if (title) { free(title); title = NULL; }
+      if (artist) { free(artist); artist = NULL; }
+      if (album) { free(album); album = NULL; }
+      if (performer) { free(performer); performer = NULL; }
+      if (year) { free(year); year = NULL; }
+      if (comment) { free(comment); comment = NULL; }
+      if (tracknumber) { free(tracknumber); tracknumber = NULL; }
 
       //we get out from while when error
       if (get_out_from_while)
@@ -1059,17 +1176,23 @@ end_while:
         break;
       }
 
-      tags_appended++;
-      //if we put all tags, we break
+      //set all tags for the next
       if (all_tags)
       {
-        if (*(end_paranthesis+1) != '\0')
-        {
-          ambigous = SPLT_TRUE;
-          break;
-        }
+        we_had_all_tags = SPLT_TRUE;
+        all_tags = SPLT_FALSE;
       }
+
+      tags_appended++;
     }
+
+    //free all tags memory
+    if (all_title) { free(all_title); all_title = NULL; }
+    if (all_artist) { free(all_artist); all_artist = NULL; }
+    if (all_album) { free(all_album); all_album = NULL; }
+    if (all_performer) { free(all_performer); all_performer = NULL; }
+    if (all_year) { free(all_year); all_year = NULL; }
+    if (all_comment) { free(all_comment); all_comment = NULL; }
 
     return ambigous;
   }
@@ -1213,11 +1336,12 @@ int splt_u_put_output_format_filename(splt_state *state)
   int fm_length = 0;
 
   //if we get the tags from the first file
-  int tags_after_x_like_x = 
-    splt_t_get_int_option(state,SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X);
-  if ((current_split >= tags_after_x_like_x) && (tags_after_x_like_x != -1))
+  int remaining_tags_like_x = 
+    splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
+  if ((current_split >= state->split.real_tagsnumber) &&
+      (remaining_tags_like_x != -1))
   {
-    current_split = tags_after_x_like_x;
+    current_split = remaining_tags_like_x;
   }
 
   splt_u_print_debug("The output format is ",0,state->oformat.format_string);

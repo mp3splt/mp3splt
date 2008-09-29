@@ -123,6 +123,8 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
     int tags_field, const char *data);
 int splt_t_set_tags_uchar_field(splt_state *state, int index,
     int tags_field, unsigned char data);
+int splt_t_set_tags_int_field(splt_state *state, int index,
+    int tags_field, int data);
 
 splt_tags *splt_t_get_tags(splt_state *state,int *tags_number);
 char *splt_t_get_tags_char_field(splt_state *state, int index,
@@ -131,6 +133,7 @@ int splt_t_get_tags_int_field(splt_state *state, int index,
     int tags_field);
 unsigned char splt_t_get_tags_uchar_field(splt_state *state, int index,
     int tags_field);
+splt_tags splt_t_get_last_tags(splt_state *state);
 
 /********************************/
 /* types: options access */

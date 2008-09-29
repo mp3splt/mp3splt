@@ -533,9 +533,10 @@ typedef struct {
   //splitpoint;default gap is 30 seconds)
   int parameter_gap;
 
-  //if we set all the tags like the x one,
-  //tags_like_x_one must be different of -1
-  int tags_after_x_like_x_one;
+  //-if we set all the remaining tags (for which we have no tags structure
+  //like the tag number 'remaining_tags_like_x'
+  //- set to -1 to disable
+  int remaining_tags_like_x;
 
   /**
    * if we enable the silence points log ('mp3splt.log')
@@ -1112,7 +1113,7 @@ typedef enum {
   /**
    * if to set all tags like X one
    */
-  SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X,
+  SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X,
   /**
    * if we enable the silence points log ('mp3splt.log')
    */

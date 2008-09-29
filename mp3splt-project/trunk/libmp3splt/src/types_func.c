@@ -50,8 +50,6 @@ extern short global_debug;
 static void splt_t_free_oformat(splt_state *state);
 static void splt_t_state_put_default_options(splt_state *state, int *error);
 static void splt_t_free_files(char **files, int number);
-static int splt_t_set_tags_int_field(splt_state *state, int index,
-    int tags_field, int data);
 
 /********************************/
 /* types: state access */
@@ -1483,7 +1481,7 @@ int splt_t_set_original_tags_field(splt_state *state,
 }
 
 //set track number
-static int splt_t_set_tags_int_field(splt_state *state, int index,
+int splt_t_set_tags_int_field(splt_state *state, int index,
     int tags_field, int data)
 {
   int error = SPLT_OK;
@@ -1561,10 +1559,16 @@ int splt_t_set_tags_uchar_field(splt_state *state, int index,
 }
 
 //returns the tags structure from the state
-splt_tags *splt_t_get_tags(splt_state *state,int *tags_number)
+splt_tags *splt_t_get_tags(splt_state *state, int *tags_number)
 {
   *tags_number = state->split.real_tagsnumber;
   return state->split.tags;
+}
+
+//returns the last tags
+splt_tags splt_t_get_last_tags(splt_state *state)
+{
+  return state->split.tags[state->split.real_tagsnumber-1];
 }
 
 //get title, artist, album, year or comment
@@ -1886,7 +1890,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->err.error_data = NULL;
   state->err.strerror_msg = NULL;
 
-  state->options.tags_after_x_like_x_one = -1;
+  state->options.remaining_tags_like_x = -1;
   state->options.enable_silence_log = SPLT_FALSE;
 }
 
@@ -2039,8 +2043,8 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = value;
       break;
-    case SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X:
-      state->options.tags_after_x_like_x_one = value;
+    case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:
+      state->options.remaining_tags_like_x = value;
       break;
     case SPLT_OPT_ENABLE_SILENCE_LOG:
       state->options.enable_silence_log = value;
@@ -2109,8 +2113,8 @@ int splt_t_get_int_option(splt_state *state, int option_name)
     case SPLT_OPT_PARAM_GAP:
       return state->options.parameter_gap;
       break;
-    case SPLT_OPT_ALL_TAGS_LIKE_X_AFTER_X:
-      return state->options.tags_after_x_like_x_one;
+    case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:
+      return state->options.remaining_tags_like_x;
       break;
     case SPLT_OPT_ENABLE_SILENCE_LOG:
       return state->options.enable_silence_log;
