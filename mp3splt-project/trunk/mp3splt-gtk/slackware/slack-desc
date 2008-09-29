@@ -16,4 +16,4 @@ mp3splt-gtk: -split mp3 and ogg files (begin time-end time) without decoding
 mp3splt-gtk: -split an album with splitpoints from the freedb.org server
 mp3splt-gtk: -split files automatically with silence detection, ...
 mp3splt-gtk:
-mp3splt-gtk: Requirements: libmp3splt version 0.5,
+mp3splt-gtk: Requirements: libmp3splt version 0.5.1,
