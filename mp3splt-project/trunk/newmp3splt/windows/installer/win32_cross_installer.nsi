@@ -1,4 +1,4 @@
-!define VERSION "2.2"
+!define VERSION "2.2.1"
 !define PROGRAM_NAME "mp3splt"
 !define MP3SPLT_PATH /home/ion/hacking/mp3splt-project/mp3splt-project/trunk/newmp3splt/windows/installer/../../..
 

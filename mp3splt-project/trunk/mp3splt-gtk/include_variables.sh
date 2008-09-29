@@ -8,7 +8,7 @@
 #build architecture
 ARCH=${ARCH:=`uname -m`}
 #mp3splt-gtk version
-MP3SPLT_GTK_VERSION=0.5
+MP3SPLT_GTK_VERSION=0.5.1
 #the libmp3splt version (if mp3splt-gtk is only compatible with this
 #libmp3splt version)
 LIBMP3SPLT_VERSION=0.5.1

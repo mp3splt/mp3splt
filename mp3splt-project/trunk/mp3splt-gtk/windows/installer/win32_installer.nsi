@@ -1,4 +1,4 @@
-!define VERSION "0.5"
+!define VERSION "0.5.1"
 !define PROGRAM_NAME "mp3splt-gtk"
 !define MP3SPLT_PATH c:/mp3splt_mingw/home/alex/mp3splt-project/mp3splt-gtk/windows/installer/../../..
 

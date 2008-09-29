@@ -35,6 +35,7 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 #windows installer
 #./windows/installer/win32_installer.nsi:!define VERSION "2.2.1"
 sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./windows/installer/win32_installer.nsi || exit 1
+sed -i "s/!define VERSION \".*\"/!define VERSION \"$VERSION\"/" ./windows/installer/win32_cross_installer.nsi || exit 1
 #configure.ac libmp3splt version check
 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
 sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\

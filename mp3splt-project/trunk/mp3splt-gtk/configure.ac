@@ -33,10 +33,10 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt-gtk, 0.5, io_fx@yahoo.fr)
+AC_INIT(mp3splt-gtk, 0.5.1, io_fx@yahoo.fr)
 
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.5)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.5.1)
 AC_CONFIG_HEADER([config.h])
 
 CFLAGS="$CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
