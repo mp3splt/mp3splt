@@ -835,7 +835,8 @@ void create_all()
   
   //hide the disconnect button
   gtk_widget_hide(disconnect_button);
-  //hide the playlist box
+
+  //hide the playlist window
   gtk_widget_hide(playlist_box);
 
   //load preferences
