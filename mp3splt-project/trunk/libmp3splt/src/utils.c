@@ -664,6 +664,7 @@ static char *splt_u_parse_tag_word(const char *cur_pos,
         if (word)
         {
           memcpy(word,equal_sign+1,string_length);
+          word[string_length] = '\0';
         }
         else
         {
