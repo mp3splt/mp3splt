@@ -176,6 +176,16 @@ This option is intended to split small/medium size (but even large if you can wa
 where tracks are separated by a reasonable silence time. To try to split mixed albums or files
 with consecutive tracks (such as live performances) might be only a waste of time.
 
+\fBNote about "mp3splt.log" :\fP 
+
+  The first line contains the name of the split file
+  The second line contains the threshold and the minimum silence length
+  The next lines contain each one three columns :
+      -the first column is the start position of the found silence (in seconds.fractions)
+      -the second column is the end position of the found silence (in seconds.fractions)
+      -the third column is the length of the silence in hundreths of seconds
+          (second_column * 100 - first_column * 100)
+
 .IP "\fB-c SOURCE\fP         " 10
 \fBCDDB mode\fP. To get splitpoints and filenames automatically from SOURCE, that is the name
 of a ".CUE" file (note that it must end with ".cue", otherwise it will be wrongly

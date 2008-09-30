@@ -751,6 +751,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int write_tracks, int *err
                   temp->begin_position, temp->end_position, temp->len);
               temp = temp->next;
             }
+            fflush(log_file);
             if (log_file)
             {
               fclose(log_file);
