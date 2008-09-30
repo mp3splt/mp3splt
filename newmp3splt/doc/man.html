@@ -150,6 +150,16 @@ This option is intended to split small/medium size (but even large if you can wa
 where tracks are separated by a reasonable silence time. To try to split mixed albums or files
 with consecutive tracks (such as live performances) might be only a waste of time.
 <P>
+<B>Note about &quot;mp3splt.log&quot; :</B> 
+<P>
+<BR>&nbsp;&nbsp;The&nbsp;first&nbsp;line&nbsp;contains&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;split&nbsp;file
+<BR>&nbsp;&nbsp;The&nbsp;second&nbsp;line&nbsp;contains&nbsp;the&nbsp;threshold&nbsp;and&nbsp;the&nbsp;minimum&nbsp;silence&nbsp;length
+<BR>&nbsp;&nbsp;The&nbsp;next&nbsp;lines&nbsp;contain&nbsp;each&nbsp;one&nbsp;three&nbsp;columns&nbsp;:
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;first&nbsp;column&nbsp;is&nbsp;the&nbsp;start&nbsp;position&nbsp;of&nbsp;the&nbsp;found&nbsp;silence&nbsp;(in&nbsp;seconds.fractions)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;second&nbsp;column&nbsp;is&nbsp;the&nbsp;end&nbsp;position&nbsp;of&nbsp;the&nbsp;found&nbsp;silence&nbsp;(in&nbsp;seconds.fractions)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;third&nbsp;column&nbsp;is&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;silence&nbsp;in&nbsp;hundreths&nbsp;of&nbsp;seconds
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(second_column&nbsp;*&nbsp;100&nbsp;-&nbsp;first_column&nbsp;*&nbsp;100)
+<P>
 <DT><B>-c SOURCE</B>         <DD>
 <B>CDDB mode</B>. To get splitpoints and filenames automatically from SOURCE, that is the name
 of a &quot;.CUE&quot; file (note that it must end with &quot;.cue&quot;, otherwise it will be wrongly
@@ -320,7 +330,7 @@ defined by the -d option.
 <DT><B>-n</B>         <DD>
 <B>No Tag</B>. Does not write ID3 or Vorbis comment in outputfile. Use if you need clean files.
 <P>
-<DT><B>-t TAGS</B>         <DD>
+<DT><B>-g TAGS</B>         <DD>
 <B>Custom Tags</B>. Set custom tags to the split files.
 TAGS should contain a list of square brackets pairs <B>[]</B>. The tags defined in the first
 pair of square brackets will be set on the first split file, those defined in the
@@ -328,7 +338,8 @@ second pair of square brackets will be set on the second split file, ... Inside
 a pair of square brackets, each tag is defined as <B>@variable=value</B> and
 tags are <B>separated by comma</B>. If a percent sign <B>%</B> is found before
 the open square bracket character, then the pair of square brackets following the % 
-character will define the tags in all remaining files. The variables can be :
+character will define the default tags in the following files. Multiple '%'
+can be defined. The variables can be :
 <P>
 @a: artist name
 <BR>
@@ -336,7 +347,13 @@ character will define the tags in all remaining files. The variables can be :
 @b: album title
 <BR>
 
-@t: song title
+@t: audio title
+<BR>
+
+@y: year
+<BR>
+
+@c: comment
 <BR>
 
 @n: track number
@@ -345,11 +362,13 @@ character will define the tags in all remaining files. The variables can be :
 @o: set original tags
 <P>
 Example of tags format :
-<B>[@a=foo,@b=bar][@t=footitle,@n=3]%[@o,@b=special_album]</B>. In this
-example, the first split file will have the artist tag 'foo' and the album
-tag 'bar'; the second split file will have the title tag 'footitle' and the
-track number tag '3'; all the other files will have their original tags of
-the file to split with the album changed to 'special_album'.
+<B>%[@o,@b=special_album][@a=foo,@b=bar][@t=footitle,@n=3]</B>. In this
+example, the first split file will have the original tags with album
+tag replaced by 'special album'; the second split file will have the tags
+of the first split, with the artist tag replaced by 'foo' and the album tag
+replaced by 'bar'; the third split file will have the tags of the first
+split, with the title tag replaced by 'footitle' and the track number
+replaced by '3'.
 <P>
 <DT><B>-m M3U</B>         <DD>
 <B>Create .m3u file mode</B>. Creates a .m3u file containing the split
@@ -535,6 +554,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 <A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
 using the manual pages.<BR>
-Time: 22:15:36 GMT, September 04, 2008
+Time: 19:58:50 GMT, September 30, 2008
 </BODY>
 </HTML>
