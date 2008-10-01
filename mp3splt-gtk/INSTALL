@@ -1,6 +1,7 @@
-Quick installation guide :
-*************************
-*************************
+############################
+# Quick installation guide :
+############################
+
 
 Installation on Debian GNU/Linux (i386):
 ****************************************
@@ -18,7 +19,6 @@ install it with
 
 Installation on GNU/Linux:
 *************************
-(for Windows installation see below)
 
 Prerequisites
 ===============
@@ -32,9 +32,35 @@ http://mp3splt.sf.net/
 Configuring
 =============
 
+ * basic configuration :
+ -----------------------
+
 	./configure
 
-The default player for mp3splt-gtk is SnackAmp :
+ * gstreamer support configuration :
+ -----------------------------------
+
+ -by default, gstreamer support is disabled
+ It is highly recommended to configure with gstreamer using the following
+ command :
+
+ ./configure --enable-gstreamer
+
+ * audacious support configuration :
+ -----------------------------------
+
+ -by default, audacious support is disabled
+ However, if you need audacious, you can do :
+
+	./configure --enable-audacious
+
+If you don't want to install it as root, type :
+	
+	./configure --prefix=<install directory>
+
+
+Note for the SnackAmp player :
+ To make SnackAmp work with mp3splt-gtk :
  download it from :
    http://snackamp.sourceforge.net/
   Make sure to download snackamp version >= 3.1.3 otherwise it will not work
@@ -45,14 +71,6 @@ The default player for mp3splt-gtk is SnackAmp :
    "Enable Socket Interface"
 	-only default port is supported for now(8775)
  -after that, restart snackamp and mp3splt-gtk should work
-
--by default, audacious support is disabled
-However, if you need audacious, you can do :
-	./configure --enable-audacious
-
-if you don't want to install it as root, type :
-	
-	./configure --prefix=<install directory>
 
 
 Compiling
@@ -68,6 +86,7 @@ if you have not configured with the "--prefix", you have to be root to
 install
 
 	make install
+
 
 Running
 =========
@@ -86,8 +105,11 @@ then
 Installation on Windows
 ************************
 
-Download the windows installer and install mp3splt-gtk.
-To get the player working with mp3splt-gtk :
+Download the windows installer and install it.
+The windows binary supports an 'internal' player with gstreamer.
+It is recommended to use the 'internal' player.
+
+However, if you wish to use SnackAmp with mp3splt-gtk :
 
  -download and install snackamp :
 	http://snackamp.sourceforge.net/

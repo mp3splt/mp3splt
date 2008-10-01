@@ -105,7 +105,7 @@ AM_PATH_GTK_2_0(2.6.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.6.0))
 #checking for --disable-libmp3splt_test string
 AC_ARG_ENABLE(libmp3splt_test,
 AC_HELP_STRING([--disable-libmp3splt_test],
-	[Disables the libmp3splt test when doing configure)]),
+	[Disables the libmp3splt test when doing configure]),
 
 #action if given
 #checking for libmp3splt
