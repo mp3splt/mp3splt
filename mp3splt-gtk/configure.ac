@@ -108,6 +108,10 @@ AC_HELP_STRING([--disable-libmp3splt_test],
 	[Disables the libmp3splt test when doing configure]),
 
 #action if given
+LIBMP3SPLT_TEST_DISABLED=1
+,
+#action if not given
+
 #checking for libmp3splt
 AC_CHECK_LIB(mp3splt, mp3splt_new_state,libmp3splt=yes,
         [AC_MSG_ERROR(libmp3splt version 0.5.1 needed :
@@ -116,9 +120,6 @@ You can download it at http://mp3splt.sourceforge.net/
 )])
 
 LIBMP3SPLT_TEST_DISABLED=0
-,
-#action if not given
-LIBMP3SPLT_TEST_DISABLED=1
 )
 
 #################################################
