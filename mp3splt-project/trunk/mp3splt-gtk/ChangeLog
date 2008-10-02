@@ -1,6 +1,11 @@
 Please read the ChangeLog of libmp3splt for more information.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.5.1
+
+- implemented 'internal' player using gstreamer
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.5
 
 - Beep Media Player has been dropped for Audacious

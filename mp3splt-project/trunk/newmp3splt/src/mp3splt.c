@@ -41,7 +41,7 @@
 #define VERSION "2.2.1"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "30/09/08"
+#define MP3SPLT_DATE "01/10/08"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"

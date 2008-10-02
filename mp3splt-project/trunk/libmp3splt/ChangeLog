@@ -1,3 +1,8 @@
+libmp3splt version 0.5.1
+-------------------------------------------------------------
+- fixed bug settings custom tags to splitted files
+- fixed bug for mac compilation (#2099498 : no plugin matches the file 'xxx')
+
 -------------------------------------------------------------
 libmp3splt version 0.5
 - added plugin system for audio formats
