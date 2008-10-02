@@ -41,6 +41,7 @@ Configuring
  -----------------------------------
 
  -by default, gstreamer support is disabled
+
  It is highly recommended to configure with gstreamer using the following
  command :
 

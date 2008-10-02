@@ -3,6 +3,12 @@ Check http://mp3splt.sourceforge.net for latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some of the changes above implemented in libmp3splt.
 
+# mp3splt v. 2.2.1
+
+- corrected the -g option to be more intuitive
+- fixed bug in the man page (from wrong '-t' to wrong '-g')
+- changed small usage error on '-g' option
+
 # mp3splt v. 2.2
 
 - mp3splt is now using libmp3splt
