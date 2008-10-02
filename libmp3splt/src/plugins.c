@@ -192,7 +192,8 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
 {
   int file_length = strlen(de->d_name);
   char *file = (char *) de->d_name;
-  char *p = NULL;
+  char *p_end = NULL;
+  char *p_start = NULL;
   if (strlen(file) >= 8)
   {
     //if the name starts with splt_and contains .so or .sl or .dll or .dylib
@@ -200,13 +201,15 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
     {
       splt_u_print_debug("Looking at the file ",0, file);
       //find the last '.' character
-      p = strrchr(file,'.');
-      if (p != NULL)
+      p_end = strrchr(file,'.');
+      p_start = strchr(file,'.');
+      //we only look at files containing only one dot
+      if ((p_end != NULL) && (p_start == p_end))
       {
-        if ((strcmp(p,".so") == 0) ||
-            (strcmp(p,".sl") == 0) ||
-            (strcmp(p,".dll") == 0) ||
-            (strcmp(p,".dylib") == 0))
+        if ((strcmp(p_end,".so") == 0) ||
+            (strcmp(p_end,".sl") == 0) ||
+            (strcmp(p_end,".dll") == 0) ||
+            (strcmp(p_end,".dylib") == 0))
         {
           return 1;
         }
