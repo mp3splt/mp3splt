@@ -150,7 +150,7 @@ root_newmp3splt:
 	cd ${MP3SPLT_DIR} && ./autogen.sh && ./configure \
 	&& make clean && make && make install
 root_mp3splt-gtk:
-	cd ${MP3SPLT_GTK_DIR} && ./autogen.sh && ./configure \
+	cd ${MP3SPLT_GTK_DIR} && ./autogen.sh && ./configure --enable-audacious --enable-gstreamer \
 	&& make clean && make && make install
 #uninstalls libmp3splt, mp3splt and mp3splt-gtk as root
 root_uninstall:
