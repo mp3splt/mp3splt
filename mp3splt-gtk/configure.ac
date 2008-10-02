@@ -189,7 +189,7 @@ echo "    audacious                $audacious"
 if test $audacious = "no"; then
   echo "        Please run configure with '--enable-audacious' to enable audacious support !"
 fi
-echo "    snackAmp                 yes (default)"
+echo "    snackAmp                 yes"
 echo
 echo "---------------------------------------------------------"
 echo
