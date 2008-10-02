@@ -146,7 +146,7 @@ audacious=no]
 #Check for gstreamer
 #checking for --enable-gstreamer string
 AC_ARG_ENABLE(gstreamer,
-AC_HELP_STRING([--enable-gstreamer], [Disable GStreamer 'internal' player support (default is disabled)]),
+AC_HELP_STRING([--enable-gstreamer], [Enable GStreamer 'internal' player support (default is disabled)]),
 [PKG_CHECK_MODULES(GST, [gstreamer-0.10 >= 0.10
                          gstreamer-base-0.10 >= 0.10
                          gstreamer-plugins-base-0.10 >= 0.10],
