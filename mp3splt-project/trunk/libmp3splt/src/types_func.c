@@ -1831,6 +1831,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
   state->split.splitnumber = 0;
+  state->split.get_silence_level = NULL;
   //plugins
   state->plug->plugins_scan_dirs = NULL;
   state->plug->number_of_plugins_found = 0;
