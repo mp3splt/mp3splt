@@ -1,13 +1,12 @@
 #!/bin/bash
 
-################# variables to set ############
+#################
+#set variables MINGW_HOST 
 
+HOST=${MINGW_HOST:-"i686-mingw32"}
+export CC=${HOST}"-gcc"
 
-#Debian GNU/Linux settings
-export CC="i686-mingw32-gcc"
-HOST="i686-mingw32"
-
-################# end variables to set ############
+#################
 
 #we move in the current script directory
 script_dir=$(readlink -f $0) || exit 1

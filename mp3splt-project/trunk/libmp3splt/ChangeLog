@@ -1,3 +1,8 @@
+libmp3splt version 0.5.2
+-------------------------------------------------------------
+- fixed bug crashing the applications on the silence split when
+no 'get_silence_level' function defined
+
 libmp3splt version 0.5.1
 -------------------------------------------------------------
 - fixed bug settings custom tags to splitted files

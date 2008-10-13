@@ -1,6 +1,11 @@
 Please read the ChangeLog of libmp3splt for more information.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.5.2
+
+- released to follow the same version with libmp3splt
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.5.1
 
 - implemented 'internal' player using gstreamer
