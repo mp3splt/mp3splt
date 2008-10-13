@@ -11,7 +11,7 @@ ARCH=${ARCH:=`uname -m`}
 MP3SPLT_VERSION=2.2.1
 #the libmp3splt version (if mp3splt is only compatible with this
 #libmp3splt version)
-LIBMP3SPLT_VERSION=0.5.1
+LIBMP3SPLT_VERSION=0.5.2
 #the mp3splt documentation files
 MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 #the mp3splt installed files (needed for openbsd, freebsd, ...)

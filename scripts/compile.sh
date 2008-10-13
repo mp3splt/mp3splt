@@ -8,9 +8,9 @@ MP3SPLT_DIR=newmp3splt
 MP3SPLT_GTK_DIR=mp3splt-gtk
 
 #program versions
-LIBMP3SPLT_REAL_VERSION=0.5.1
+LIBMP3SPLT_REAL_VERSION=0.5.2
 MP3SPLT_REAL_VERSION=2.2.1
-MP3SPLT_GTK_REAL_VERSION=0.5.1
+MP3SPLT_GTK_REAL_VERSION=0.5.2
 
 unset SHELL
 
@@ -394,8 +394,8 @@ update_versions
 ###################################
 #build packages
 source_packages
-debian_packages
-ubuntu_packages
+#debian_packages
+#ubuntu_packages
 windows_cross_installers
 
 #gnu_linux_static_packages
