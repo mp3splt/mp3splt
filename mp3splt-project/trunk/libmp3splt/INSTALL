@@ -20,8 +20,9 @@ libmp3splt - INSTALLATION INFORMATION
 	Before compiling the source code verify that you have the 
 	following libraries installed :
 
-		libogg and libvorbis http://www.xiph.org
-		libmad	http://sourceforge.net/projects/mad/
+    libltdl from libtool (http://www.gnu.org/software/libtool/)
+		libogg and libvorbis (http://www.xiph.org)
+		libmad and libid3tag (http://sourceforge.net/projects/mad/)
 
 
 --------------------------------------------------------------------
