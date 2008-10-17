@@ -63,7 +63,7 @@ gint write_freedbfile_and_get_splitpoints(int *err);
 void get_secs_mins_hundr(gfloat time,
                          gint *mins,gint *secs, 
                          gint *hundr);
-void update_splitpoints_from_the_state(gint type);
+void update_splitpoints_from_the_state();
 void freedb_add_button_clicked_event(GtkButton *button,
                                      gpointer data);
 GtkWidget *create_freedb_frame();

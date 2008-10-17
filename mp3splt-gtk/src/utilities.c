@@ -81,7 +81,7 @@ extern GtkWidget *radio_output;
 extern GtkWidget *tags_radio;
 
 //check if its a file
-gint is_filee(gchar *fname)
+gint is_filee(const gchar *fname)
 {
   struct stat buffer;
   gint         status;
@@ -940,7 +940,7 @@ void write_default_preferences_file()
             g_key_file_set_integer(my_key_file,
                                    "player",
                                    "default_player",
-                                   PLAYER_SNACKAMP);
+                                   PLAYER_GSTREAMER);
           }
     }
   

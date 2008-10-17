@@ -166,8 +166,8 @@ static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
 {
   FILE *file_input = NULL;
 
-  if ((strcmp(filename,"-") == 0) ||
-      (strcmp(filename,"m-") == 0))
+  if (filename != NULL && ((strcmp(filename,"-") == 0) ||
+        (strcmp(filename,"m-") == 0)))
   {
     file_input = stdin;
 #ifdef __WIN32__
@@ -3163,8 +3163,8 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  if ((strcmp(filename,"-") == 0) ||
-      (strcmp(filename,"m-") == 0))
+  if (filename != NULL && ((strcmp(filename,"-") == 0) ||
+      (strcmp(filename,"m-") == 0)))
   {
     return SPLT_TRUE;
   }

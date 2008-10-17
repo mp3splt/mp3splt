@@ -508,9 +508,7 @@ void splt_s_time_split(splt_state *state, int *error)
 //returns the number of silence splits found
 //or the number of tracks specified in the options
 //sets the silence splitpoints in state->split.splitpoints
-//write_tracks is a boolean, SPLT_TRUE if we call the function
-//write_silence_tracks and SPLT_FALSE otherwise
-int splt_s_set_silence_splitpoints(splt_state *state, int write_tracks, int *error)
+int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 {
   splt_u_print_debug("We search and set silence splitpoints...",0,NULL);
 
@@ -913,7 +911,7 @@ void splt_s_silence_split(splt_state *state, int *error)
   splt_t_put_message_to_client(state, " info: starting silence mode split\n");
 
   int found = 0;
-  found = splt_s_set_silence_splitpoints(state, SPLT_TRUE, error);
+  found = splt_s_set_silence_splitpoints(state, error);
 
   //if no error
   if (*error >= 0)

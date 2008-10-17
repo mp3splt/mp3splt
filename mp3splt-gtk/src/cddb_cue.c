@@ -133,7 +133,7 @@ void add_cddb_splitpoints(gpointer *data)
                            FALSE);
   
   gchar *filename;
-  gint err;
+  gint err = SPLT_OK;
   
   filename = 
     (gchar *)gtk_entry_get_text(GTK_ENTRY(cddb_entry));
@@ -163,10 +163,9 @@ void add_cddb_splitpoints(gpointer *data)
   print_status_bar_confirmation(err);
   
   if (err >= 0)
-    {
-      //1 means cddb split
-      update_splitpoints_from_the_state(1);
-    }
+  {
+    update_splitpoints_from_the_state();
+  }
   
   gtk_widget_set_sensitive(GTK_WIDGET(add_cddb_button),
                            TRUE);
@@ -241,10 +240,9 @@ void add_cue_splitpoints(gpointer *data)
   gdk_threads_enter();
   
   if (err >= 0)
-    {
-      //2 means cue split
-      update_splitpoints_from_the_state(2);
-    }
+  {
+    update_splitpoints_from_the_state();
+  }
   
   //here we have in err a possible error from the freedb
   print_status_bar_confirmation(err);

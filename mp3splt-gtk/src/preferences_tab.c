@@ -973,6 +973,14 @@ GtkWidget *create_save_buttons_hbox()
 //removes unavailable players from the combo
 void combo_remove_unavailable_players()
 {
+  //if we dont have GSTREAMER 
+#ifdef NO_GSTREAMER
+  gtk_combo_box_remove_text(GTK_COMBO_BOX(player_combo_box),
+                            PLAYER_GSTREAMER-1);
+  player_pref_list =
+    g_list_remove(player_pref_list, (gint *)PLAYER_GSTREAMER);
+#endif
+
   //if we dont have AUDACIOUS
 #ifdef NO_AUDACIOUS
   gtk_combo_box_remove_text(GTK_COMBO_BOX(player_combo_box),
@@ -989,15 +997,12 @@ void player_combo_box_event(GtkComboBox *widget,
   gint sel_pl;
   gint selected_item;
   selected_item = gtk_combo_box_get_active(widget);
-  sel_pl =
-    (gint)g_list_nth_data(player_pref_list,
-                         selected_item);
+  sel_pl = (gint)g_list_nth_data(player_pref_list, selected_item);
 
   selected_player = sel_pl;
 
   //disconnect from player
-  disconnect_button_event (NULL,
-                           NULL);
+  disconnect_button_event(NULL, NULL);
 
   if (selected_player == PLAYER_GSTREAMER)
   {

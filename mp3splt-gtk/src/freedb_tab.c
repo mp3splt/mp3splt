@@ -519,9 +519,7 @@ void get_secs_mins_hundr(gfloat time,
 //updates the current splitpoints int the table,
 //from the state splitpoints
 //max_splits is the maximum splitpoints to update
-//type = 2 => cue split
-//type = 1 => cddb split
-void update_splitpoints_from_the_state(gint type)
+void update_splitpoints_from_the_state()
 {
   gint max_splits = 0;
   gint err = SPLT_OK;
@@ -598,8 +596,7 @@ void put_freedb_splitpoints(gpointer *data)
   //lock gtk
   gdk_threads_enter();
   
-  //1 means cddb split
-  update_splitpoints_from_the_state(1);
+  update_splitpoints_from_the_state();
   
   //here we have in err a possible error from the freedb
   print_status_bar_confirmation(err);
