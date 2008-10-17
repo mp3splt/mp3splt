@@ -1405,7 +1405,11 @@ void mp3splt_set_oformat(splt_state *state,
 /************************************/
 /* Other utilities                  */
 
+//counts the number of tracks found with silence detection
 int mp3splt_count_silence_points(splt_state *state, int *error);
+
+//set the silence splitpoints without splitting
+int mp3splt_set_silence_points(splt_state *state, int *error);
 
 //returns the version of libmp3splt
 void mp3splt_get_version(char *version);

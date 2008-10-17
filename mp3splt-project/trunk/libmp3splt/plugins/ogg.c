@@ -1821,7 +1821,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
   char *filename = splt_t_get_filename_to_split(state);
 
   //o- means stdin ogg format
-  if (strcmp(filename,"o-") == 0)
+  if ((filename != NULL) && (strcmp(filename,"o-")) == 0)
   {
     return SPLT_TRUE;
   }

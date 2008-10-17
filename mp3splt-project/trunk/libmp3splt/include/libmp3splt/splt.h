@@ -72,8 +72,7 @@ void splt_s_time_split(splt_state *state, int *error);
 /************************************/
 /* splt silence detection and split */
 
-int splt_s_set_silence_splitpoints(splt_state *state,
-    int write_tracks, int *error);
+int splt_s_set_silence_splitpoints(splt_state *state, int *error);
 void splt_s_silence_split(splt_state *state, int *error);
 
 /****************************/

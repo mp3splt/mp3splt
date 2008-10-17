@@ -237,8 +237,10 @@ void reset_inactive_volume_bar()
 //resets the label time
 void reset_label_time()
 {
-  if (gtk_label_get_text(GTK_LABEL(label_time)) != "")
+  if (strcmp(gtk_label_get_text(GTK_LABEL(label_time)),"") == 0)
+  {
     gtk_label_set_text(GTK_LABEL(label_time), "");
+  }
 }
 
 //resets song infos, frequency, etc..
@@ -327,7 +329,7 @@ void connect_with_song(gchar *fname, gint i)
 {
   //list with songs
   GList *song_list = NULL;
-  
+
   if (fname != NULL)
     {
       song_list = g_list_append(song_list, fname);
@@ -338,9 +340,13 @@ void connect_with_song(gchar *fname, gint i)
           //if the player is not running, start it ,queue to playlist and
           //play the file
           if (!player_is_running())
+          {
             player_start_play_with_songs(song_list);
+          }
           else
+          {
             player_add_play_files(song_list);
+          }
         }
       else
         {
@@ -384,7 +390,7 @@ void connect_with_song(gchar *fname, gint i)
 //if i = 0 then start playing, else dont start playing
 void connect_to_player_with_song(gint i)
 {
-  gchar *fname;
+  gchar *fname = NULL;
   fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
   //connect with the song fname
   connect_with_song(fname,i);
@@ -941,7 +947,7 @@ void check_update_down_progress_bar()
         {
           gchar *fname;
           fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
-          fname = get_real_name_from_filename(fname);
+          fname = (gchar *) get_real_name_from_filename((guchar *)fname);
           g_snprintf(description_shorted,60,"%s",fname);
           if (fname != NULL)
           {

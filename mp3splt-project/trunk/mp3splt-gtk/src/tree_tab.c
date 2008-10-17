@@ -48,6 +48,7 @@
 #define usleep(x) Sleep(x*1000)
 #endif
 
+#include "freedb_tab.h"
 #include "util.h"
 #include "player.h"
 #include "tree_tab.h"
@@ -88,9 +89,12 @@ gchar current_description[255] = "description here";
 gint splitnumber = 0;
 
 //buttons for adding and removing rows
-GtkWidget *add_button;
-GtkWidget *remove_all_button;
-GtkWidget *remove_row_button;
+GtkWidget *add_button = NULL;
+GtkWidget *remove_all_button = NULL;
+GtkWidget *remove_row_button = NULL;
+
+//special buttons like 'set splitpoints from silence detection
+GtkWidget *scan_silence_button = NULL;
 
 //handle box for detaching window
 GtkWidget *handle_box;
@@ -138,6 +142,9 @@ extern gfloat current_time;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 extern gchar *filename_path_of_split;
+extern GtkWidget *cancel_button;
+//if we are currently splitting
+extern gint we_are_splitting;
 
 //updates add button, wether the spinners splitpoint is already
 //in the table or not
@@ -986,8 +993,57 @@ void add_row (GtkWidget *button, gpointer data)
   add_splitpoint(my_split_point,-1);  
 }
 
+//set splitpints from silence detection
+void detect_silence_and_set_splitpoints(gpointer data)
+{
+  gint err = SPLT_OK;
+
+  gdk_threads_enter();
+  gtk_widget_set_sensitive(cancel_button, TRUE);
+  gdk_threads_leave();
+
+  //we get the silence splitpoints
+  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  mp3splt_set_filename_to_split(the_state, filename_to_split);
+  mp3splt_erase_all_splitpoints(the_state, &err);
+  if (err >= 0)
+  {
+    we_are_splitting = TRUE;
+    mp3splt_set_silence_points(the_state, &err);
+    we_are_splitting = FALSE;
+  }
+
+  //lock gtk
+  gdk_threads_enter();
+
+  if (err >= 0)
+  {
+    update_splitpoints_from_the_state();
+  }
+
+  //here we have in err a possible error from the silence detection
+  print_status_bar_confirmation(err);
+
+  gtk_widget_set_sensitive(cancel_button, FALSE);
+
+  gdk_threads_leave();
+}
+
+//start thread with 'set splitpints from silence detection'
+void detect_silence_and_add_splitpoints_start_thread()
+{
+  g_thread_create((GThreadFunc)detect_silence_and_set_splitpoints,
+                  NULL, TRUE, NULL);
+}
+
+//event for clicking the 'detect silence and add splitpoints' button
+void detect_silence_and_add_splitpoints(GtkWidget *button, gpointer *data)
+{
+  detect_silence_and_add_splitpoints_start_thread();
+}
+
 //remove a row from the table
-void remove_row (GtkWidget *widget, gpointer data)
+void remove_row(GtkWidget *widget, gpointer data)
 {
   GtkTreeSelection *selection;
   GList *selected_list = NULL;
@@ -1178,6 +1234,31 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
                     G_CALLBACK (remove_all_rows), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), remove_all_button, TRUE, FALSE, 5);
   gtk_tooltips_set_tip(tooltip, remove_all_button,(gchar *)_("remove all rows"),"");
+
+  return hbox;
+}
+
+//special buttons like 'set silence from silence detection'
+GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
+{
+  GtkWidget *hbox;
+
+  hbox = gtk_hbox_new (FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
+
+  GtkTooltips *tooltip;
+  tooltip = gtk_tooltips_new();
+
+  /* set splitpoints from silence detection */
+  scan_silence_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
+                                               (gchar *)_("Set splitpoints from _silence detection"),
+                                               FALSE);
+  gtk_button_set_relief(GTK_BUTTON(scan_silence_button), GTK_RELIEF_NONE);
+  gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
+  g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
+      G_CALLBACK(detect_silence_and_add_splitpoints), NULL);
+  gtk_box_pack_end(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
+  gtk_tooltips_set_tip(tooltip, scan_silence_button,(gchar *)_("Set splitpoints from silence detection"), "");
 
   return hbox;
 }
@@ -1595,16 +1676,18 @@ void handle_detached_event (GtkHandleBox *handlebox,
 GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
 {
   //choose splitpoints box, has tree, spinner, arrows..
-  GtkWidget *choose_splitpoints_vbox;
+  GtkWidget *choose_splitpoints_vbox = NULL;
   //scrolled window used for the tree
-  GtkWidget *scrolled_window;
+  GtkWidget *scrolled_window = NULL;
   //spinners + add and remove buttons box
-  GtkWidget *spinners_buttons_hbox;
+  GtkWidget *spinners_buttons_hbox = NULL;
   //horizontal box for tree and arrows
-  GtkWidget *tree_hbox;
+  GtkWidget *tree_hbox = NULL;
+  //special buttons like 'Add splitpoints from silence detection'
+  GtkWidget *special_buttons_hbox = NULL;
 
   /* the tree */
-  GtkTreeSelection *selection;
+  GtkTreeSelection *selection = NULL;
 
   /* choose splitpoins vbox */
   choose_splitpoints_vbox = gtk_vbox_new (FALSE, 0);
@@ -1621,6 +1704,10 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   /* spinner buttons hbox */
   spinners_buttons_hbox = create_init_spinners_buttons(tree_view);
   gtk_box_pack_start (GTK_BOX (choose_splitpoints_vbox), spinners_buttons_hbox, FALSE, FALSE, 7);
+
+  /* special buttons like 'set silence from silence detection' */
+  special_buttons_hbox = create_init_special_buttons(tree_view);
+  gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), special_buttons_hbox, FALSE, FALSE, 7);
   
   /* horizontal box for the tree */
   tree_hbox = gtk_hbox_new (FALSE, 0);

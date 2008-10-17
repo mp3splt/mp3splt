@@ -620,7 +620,7 @@ int mp3splt_split(splt_state *state)
         splt_t_set_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_TRUE);
       }
 
-      state->cancel_split = SPLT_FALSE;
+      splt_t_set_stop_split(state, SPLT_FALSE);
 
       //we set default internal options
       splt_t_set_default_iopts(state);
@@ -1162,12 +1162,14 @@ const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
   }
 }
 
-//count how many silence splitpoints we have with silence detection
-int mp3splt_count_silence_points(splt_state *state, int *error)
+//set the silence splitpoints without splitting
+int mp3splt_set_silence_points(splt_state *state, int *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
   if (error != NULL) { err = error; }
+
+  splt_t_set_stop_split(state, SPLT_FALSE);
 
   int found_splitpoints = -1;
 
@@ -1179,15 +1181,12 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
 
       splt_check_file_type(state, err);
 
-      if (err >= 0)
+      if (*err >= 0)
       {
         splt_p_init(state, err);
-        if (err >= 0)
+        if (*err >= 0)
         {
-          found_splitpoints = splt_s_set_silence_splitpoints(state, SPLT_FALSE, err);
-          //the set_silence_splitpoints returns us the
-          //number of tracks, not splitpoints
-          found_splitpoints--;
+          found_splitpoints = splt_s_set_silence_splitpoints(state, err);
           splt_p_end(state);
         }
       }
@@ -1205,6 +1204,14 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
   }
 
   return found_splitpoints;
+}
+
+//count how many silence splitpoints we have with silence detection
+int mp3splt_count_silence_points(splt_state *state, int *error)
+{
+  int number_of_tracks = mp3splt_set_silence_points(state, error) - 1;
+
+  return number_of_tracks;
 }
 
 //returns libmp3splt version, max 20 chars

@@ -35,7 +35,7 @@
  *
  *********************************************************/
 
-gint is_filee(gchar *fname);
+gint is_filee(const gchar *fname);
 gint check_if_we_have_player();
 gchar *get_preferences_filename();
 gint check_if_different_from_config_file();
