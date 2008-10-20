@@ -1171,6 +1171,9 @@ int mp3splt_set_silence_points(splt_state *state, int *error)
 
   splt_t_set_stop_split(state, SPLT_FALSE);
 
+  //set silence_mode option
+  mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
+
   int found_splitpoints = -1;
 
   if (state != NULL)
