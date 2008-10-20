@@ -36,11 +36,12 @@
  *
  *********************************************************/
 
-#define SELECTED_SPLIT_NORMAL 4
-#define SELECTED_SPLIT_TIME 3
-#define SELECTED_SPLIT_SILENCE 2
+#define SELECTED_SPLIT_NORMAL 3
+#define SELECTED_SPLIT_TIME 2
 #define SELECTED_SPLIT_WRAP 1
 #define SELECTED_SPLIT_ERROR 0
+
+#define NUMBER_OF_SPLIT_MODES 4
 
 gint get_selected_split_mode(GtkToggleButton *radio_b);
 void deactivate_silence_parameters();
