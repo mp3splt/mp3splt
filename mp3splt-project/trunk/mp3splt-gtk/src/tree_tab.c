@@ -1019,9 +1019,6 @@ void detect_silence_and_set_splitpoints(gpointer data)
 {
   gint err = SPLT_OK;
 
-  //set silence_mode option
-  mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
-
   gdk_threads_enter();
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
   gtk_widget_set_sensitive(cancel_button, TRUE);
@@ -1060,6 +1057,27 @@ void detect_silence_and_add_splitpoints_start_thread()
 {
   g_thread_create((GThreadFunc)detect_silence_and_set_splitpoints,
                   NULL, TRUE, NULL);
+}
+
+//update silence parameters when 'widget' changes
+void update_silence_parameters(GtkWidget *widget, gpointer data)
+{
+  silence_threshold_value = 
+    gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_threshold));
+  silence_offset_value =
+    gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_offset));
+  silence_number_of_tracks =
+    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_silence_number_tracks));
+  silence_minimum_length = 
+    gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_minimum));
+  silence_remove_silence_between_tracks = 
+    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(silence_remove_silence));
+}
+
+//action when checking the 'remove silence' button
+void silence_remove_silence_checked(GtkToggleButton *button, gpointer data)
+{
+  update_silence_parameters(GTK_WIDGET(button), data);
 }
 
 //event for clicking the 'detect silence and add splitpoints' button
@@ -1180,10 +1198,19 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_minimum),
                             silence_minimum_length);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(silence_remove_silence),
-      silence_remove_silence);
+      silence_remove_silence_between_tracks);
 
   //add actions when changing the values
-
+  g_signal_connect(G_OBJECT(spinner_silence_threshold), "value_changed",
+      G_CALLBACK(update_silence_parameters), NULL);
+  g_signal_connect(G_OBJECT(spinner_silence_offset), "value_changed",
+      G_CALLBACK(update_silence_parameters), NULL);
+  g_signal_connect(G_OBJECT(spinner_silence_number_tracks), "value_changed",
+      G_CALLBACK(update_silence_parameters), NULL);
+  g_signal_connect(G_OBJECT(spinner_silence_minimum), "value_changed",
+      G_CALLBACK(update_silence_parameters), NULL);
+  g_signal_connect(G_OBJECT(silence_remove_silence), "toggled",
+      G_CALLBACK(silence_remove_silence_checked), NULL);
 
   gtk_widget_show_all(general_inside_vbox);
   gtk_container_add(GTK_CONTAINER(GTK_DIALOG(silence_detection_window)->vbox),
