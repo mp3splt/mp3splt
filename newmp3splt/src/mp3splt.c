@@ -1914,7 +1914,7 @@ int main(int argc, char *argv[])
             for (i = 0;i < data->number_of_splitpoints; i++)
             {
               long point = data->splitpoints[i];
-              err = mp3splt_append_splitpoint(state, point, NULL);
+              err = mp3splt_append_splitpoint(state, point, NULL, SPLT_SPLITPOINT);
               process_confirmation_error(err, data);
             }
           }
