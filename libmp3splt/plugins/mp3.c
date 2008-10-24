@@ -1614,7 +1614,8 @@ function_end:
 //must be called after splt_mp3_info()
 //returns possible error in '*error'
 static void splt_mp3_split(const char *output_fname, splt_state *state,
-    const char *id3, double fbegin_sec, double fend_sec, int *error)
+    const char *id3, double fbegin_sec, double fend_sec, int *error,
+    int save_end_point)
 {
   splt_u_print_debug("Mp3 split...",0,NULL);
   splt_u_print_debug("Output filename is",0,output_fname);
@@ -1944,7 +1945,14 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
             (float)(end-split_begin_point), 1,0,SPLT_DEFAULT_PROGRESS_RATE);
       }
 
-      mp3state->end = end;
+      if (save_end_point)
+      {
+        mp3state->end = end;
+      }
+      else
+      {
+        mp3state->end = 0;
+      }
 
       if (!eof)
       {
@@ -2271,7 +2279,14 @@ bloc_end:
       }
 
       //save end point for performance reasons
-      mp3state->end = end;
+      if (save_end_point)
+      {
+        mp3state->end = end;
+      }
+      else
+      {
+        mp3state->end = 0;
+      }
 
       //if xing, we get xing
       if (mp3state->mp3file.xing > 0)
@@ -2333,7 +2348,14 @@ bloc_end:
       }
 
       //save end point for performance reasons
-      mp3state->end = end;
+      if (save_end_point)
+      {
+        mp3state->end = end;
+      }
+      else
+      {
+        mp3state->end = 0;
+      }
     }
 
     //seekable real split
@@ -3028,7 +3050,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
 
               int append_err = SPLT_OK;
               append_err = splt_t_append_splitpoint(state,0,
-                  splt_u_get_real_name(filename));
+                  splt_u_get_real_name(filename), SPLT_SPLITPOINT);
               if (append_err != SPLT_OK)
               {
                 *error = append_err;
@@ -3202,7 +3224,7 @@ void splt_pl_dewrap(splt_state *state, int listonly, const char *dir, int *error
 }
 
 void splt_pl_split(splt_state *state, const char *final_fname,
-    double begin_point, double end_point, int *error)
+    double begin_point, double end_point, int *error, int save_end_point)
 {
   splt_mp3_state *mp3state = state->codec;
   char *filename = splt_t_get_filename_to_split(state);
@@ -3214,7 +3236,8 @@ void splt_pl_split(splt_state *state, const char *final_fname,
   if (*error >= 0)
   {
     //effective mp3 split
-    splt_mp3_split(final_fname, state, id3_data, begin_point, end_point, error);
+    splt_mp3_split(final_fname, state, id3_data, begin_point, end_point, error,
+        save_end_point);
     if (id3_data)
     {
       free(id3_data);

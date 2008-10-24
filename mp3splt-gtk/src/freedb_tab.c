@@ -566,7 +566,14 @@ void update_splitpoints_from_the_state()
             }
           
           //we add the row
-          add_row(NULL,NULL);
+          if (points[i].type == SPLT_SPLITPOINT)
+          {
+            add_row(TRUE);
+          }
+          else if (points[i].type == SPLT_SKIPPOINT)
+          {
+            add_row(FALSE);
+          }
         }
       
       //we reput the "description here" name

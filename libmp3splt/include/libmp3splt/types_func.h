@@ -86,18 +86,15 @@ int splt_t_get_splitnumber(splt_state *state);
 /* types: splitpoints access */
 
 int splt_t_append_splitpoint(splt_state *state, long split_value,
-    const char *name);
+    const char *name, int type);
 int splt_t_splitpoint_exists(splt_state *state, int index);
-int splt_t_set_splitpoint_value(splt_state *state,
-    int index, long split_value);
-int splt_t_set_splitpoint_name(splt_state *state,
-    int index, const char *name);
-long splt_t_get_splitpoint_value(splt_state *state,
-    int index, int *error);
-char *splt_t_get_splitpoint_name(splt_state *state,
-    int index, int *error);
-splt_point *splt_t_get_splitpoints(splt_state *state,
-    int *splitpoints_number);
+int splt_t_set_splitpoint_value(splt_state *state, int index, long split_value);
+int splt_t_set_splitpoint_name(splt_state *state, int index, const char *name);
+int splt_t_set_splitpoint_type(splt_state *state, int index, int type);
+long splt_t_get_splitpoint_value(splt_state *state, int index, int *error);
+char *splt_t_get_splitpoint_name(splt_state *state, int index, int *error);
+int splt_t_get_splitpoint_type(splt_state *state, int index, int *error);
+splt_point *splt_t_get_splitpoints(splt_state *state, int *splitpoints_number);
 
 /********************************/
 /* types: tags access */

@@ -76,7 +76,7 @@ void cell_edited_event (GtkCellRendererText *cell,
                         gpointer             data);
 void add_splitpoint_from_player(GtkWidget *widget, 
                                 gpointer data);
-void add_row (GtkWidget *button, gpointer data);
+void add_row(gint checked);
 void remove_row (GtkWidget *widget, gpointer data);
 void remove_all_rows (GtkWidget *widget, 
                       gpointer data);

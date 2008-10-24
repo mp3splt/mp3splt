@@ -39,6 +39,9 @@
 //splitpoint structure
 typedef struct
 {
+  //if we want to skip splitpoint, checked should be 0
+  //-otherwise, checked should be 1
+  gboolean checked;
   gint mins;
   gint secs;
   gint hundr_secs;

@@ -570,7 +570,7 @@ void splt_p_dewrap(splt_state *state, int listonly, const char *dir, int *error)
 }
 
 void splt_p_split(splt_state *state, const char *final_fname, double begin_point,
-    double end_point, int *error)
+    double end_point, int *error, int save_end_point)
 {
   splt_plugins *pl = state->plug;
   int current_plugin = splt_t_get_current_plugin(state);
@@ -584,7 +584,7 @@ void splt_p_split(splt_state *state, const char *final_fname, double begin_point
     if (pl->data[current_plugin].func->split != NULL)
     {
       pl->data[current_plugin].func->split(state, final_fname,
-          begin_point, end_point, error);
+          begin_point, end_point, error, save_end_point);
     }
     else
     {

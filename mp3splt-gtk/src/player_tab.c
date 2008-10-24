@@ -3556,8 +3556,8 @@ void fix_ogg_stream(gpointer *data)
   mp3splt_erase_all_splitpoints(the_state,&err);
   
   //we put the splitpoints in the state
-  mp3splt_append_splitpoint(the_state, 0, NULL);
-  mp3splt_append_splitpoint(the_state, LONG_MAX-1, NULL);
+  mp3splt_append_splitpoint(the_state, 0, NULL, SPLT_SPLITPOINT);
+  mp3splt_append_splitpoint(the_state, LONG_MAX-1, NULL, SPLT_SKIPPOINT);
   
   //put the options from the preferences
   put_options_from_preferences();

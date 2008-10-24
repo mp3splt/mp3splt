@@ -40,7 +40,7 @@
 /* splt normal split */
 
 //the real split of the file
-static void splt_s_real_split(splt_state *state, int *error)
+static void splt_s_real_split(splt_state *state, int *error, int save_end_point)
 {
   int split_error = *error;
   double splt_beg = splt_t_get_i_begin_point(state);
@@ -50,7 +50,7 @@ static void splt_s_real_split(splt_state *state, int *error)
 
   if (error >= 0)
   {
-    splt_p_split(state, final_fname, splt_beg, splt_end, error);
+    splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
 
     //if no error
     if (*error >= 0)
@@ -77,7 +77,8 @@ static void splt_s_real_split(splt_state *state, int *error)
 //i is the current splitpoint
 //(used to get the filename)
 //error in error parameter
-static void splt_s_split(splt_state *state, int *error)
+static void splt_s_split(splt_state *state, int first_splitpoint,
+    int second_splitpoint, int *error)
 {
   //begin splitpoint
   double splt_beg = 0;
@@ -86,10 +87,14 @@ static void splt_s_split(splt_state *state, int *error)
 
   //we get the splitpoints to split
   int get_error = SPLT_OK;
-  int current_split = splt_t_get_current_split(state);
   long split_begin = 0,split_end = 0;
-  split_begin = splt_t_get_splitpoint_value(state, current_split, &get_error);
-  split_end = splt_t_get_splitpoint_value(state, current_split+1, &get_error);
+  split_begin = splt_t_get_splitpoint_value(state, first_splitpoint, &get_error);
+  split_end = splt_t_get_splitpoint_value(state, second_splitpoint, &get_error);
+  int save_end_point = SPLT_TRUE;
+  if (splt_t_get_splitpoint_type(state, second_splitpoint, &get_error) == SPLT_SKIPPOINT)
+  {
+    save_end_point = SPLT_FALSE;
+  }
 
   if (get_error == SPLT_OK)
   {
@@ -126,7 +131,7 @@ static void splt_s_split(splt_state *state, int *error)
         splt_t_set_i_end_point(state,splt_end);
 
         //we do the real split
-        splt_s_real_split(state, error);
+        splt_s_real_split(state, error, save_end_point);
       }
     }
   }
@@ -182,7 +187,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
           splt_t_set_current_split(state, i);
 
           //we append a splitpoint
-          int err = splt_t_append_splitpoint(state, 0, "");
+          int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
           if (err < 0) { *error = err; goto bloc_end; }
 
           //if we have to put the original tags
@@ -267,11 +272,22 @@ bloc_end:
 
     int get_error = SPLT_OK;
 
+    //i is the first splitpoint indice
+    int i = 0;
     //for every 2 splitpoints, split
-    for(i = 0; i < (splt_t_get_splitnumber(state) - 1); i++)
+    while (i  < splt_t_get_splitnumber(state) - 1)
     {
       //we put the current file to split
       splt_t_set_current_split(state, i);
+
+      //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
+      int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
+      if (first_splitpoint_type == SPLT_SKIPPOINT)
+      {
+        i++;
+        continue;
+      }
+      int j = i+1;
 
       //if we don't cancel the split
       if (!splt_t_split_is_canceled(state))
@@ -309,7 +325,7 @@ bloc_end:
                 SPLT_OUTPUT_MINS_SECS);
           }
 
-          splt_s_split(state, error);
+          splt_s_split(state, i, j, error);
 
           //get out if error
           if ((*error < 0) ||
@@ -327,6 +343,7 @@ bloc_end:
       {
         *error = SPLT_SPLIT_CANCELLED;
       }
+      i++;
     }
   }
 }
@@ -365,7 +382,7 @@ void splt_s_time_split(splt_state *state, int *error)
     splt_t_set_oformat_digits(state);
 
     //we append a splitpoint
-    err = splt_t_append_splitpoint(state, 0, "");
+    err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
 
     if (err >= 0)
     {
@@ -375,7 +392,7 @@ void splt_s_time_split(splt_state *state, int *error)
         if (!splt_t_split_is_canceled(state))
         {
           //we append a splitpoint
-          err = splt_t_append_splitpoint(state, 0, "");
+          err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
           if (err < 0) { *error = err; break; }
 
           //if we have to put the original tags
@@ -424,7 +441,7 @@ void splt_s_time_split(splt_state *state, int *error)
           final_fname = splt_u_get_fname_with_path_and_extension(state,&err);
           if (err < 0) { *error = err; break; }
 
-          splt_p_split(state, final_fname, begin, end, error);
+          splt_p_split(state, final_fname, begin, end, error, SPLT_TRUE);
 
           //if no error for the split, put the split file
           if (*error >= 0)
@@ -654,7 +671,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       }
 
       //put first splitpoint
-      append_error = splt_t_append_splitpoint(state, 0, NULL);
+      append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
       if (append_error != SPLT_OK)
       {
         *error = append_error;
@@ -676,9 +693,9 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
           {
             //we append 2 splitpoints
-            append_error = splt_t_append_splitpoint(state, 0, NULL);
+            append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SKIPPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
-            append_error = splt_t_append_splitpoint(state, 0, NULL);
+            append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
             //we set the values
             splt_t_set_splitpoint_value(state, 2*i-1,temp->begin_position * 100);
@@ -687,7 +704,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           else
           {
             long temp_silence_pos = splt_u_silence_position(temp, offset) *100;
-            append_error = splt_t_append_splitpoint(state, temp_silence_pos, NULL);
+            append_error = splt_t_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
             if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
           }
           temp = temp->next;
@@ -707,7 +724,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
         splt_u_order_splitpoints(state, order);
 
         //last splitpoint, end of file
-        append_error = splt_t_append_splitpoint(state, splt_t_get_total_time(state), NULL);
+        append_error = splt_t_append_splitpoint(state, splt_t_get_total_time(state), NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK) { *error = append_error; }
       }
     }
@@ -852,7 +869,7 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
         beg_pos = splt_u_get_double_pos(split_begin);
         end_pos = splt_u_get_double_pos(split_end);
 
-        splt_p_split(state, final_fname, beg_pos, end_pos, error);
+        splt_p_split(state, final_fname, beg_pos, end_pos, error, SPLT_TRUE);
 
         //put the split file if no error
         if (*error >= 0)

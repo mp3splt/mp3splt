@@ -61,6 +61,8 @@
 //tree column enumeration
 enum
   {
+    /* if we enable this splitpoint for split */
+    COL_CHECK,
     /* the filename of the split */
     COL_DESCRIPTION,
     /* splitpoints, minutes, seconds,hundr */
@@ -73,7 +75,7 @@ enum
     COL_PREVIEW,
     /* split preview button */
     COL_SPLIT_PREVIEW,
-    NUM_COLUMNS = 7
+    NUM_COLUMNS = 8
   };
 
 //splitpoints
@@ -82,6 +84,8 @@ GArray *splitpoints = NULL;
 gint spin_mins = 0;
 gint spin_secs = 0;
 gint spin_hundr_secs = 0;
+//if we have a skippoint or a splitpoint
+gint splitpoint_checked = TRUE;
 //current description
 gchar current_description[255] = "description here";
 
@@ -216,6 +220,7 @@ GtkTreeModel *create_model()
 {
   GtkListStore *model;
   model = gtk_list_store_new (NUM_COLUMNS,
+                              G_TYPE_BOOLEAN,
                               G_TYPE_STRING,
                               G_TYPE_INT,
                               G_TYPE_INT, 
@@ -319,7 +324,7 @@ void order_length_column(GtkTreeView *tree_view)
                           &iter,
                           COL_NUMBER, new_length_string,
                           -1);
-    }  
+    }
 }
 
 //checks if splitpoints exists in the table
@@ -486,7 +491,7 @@ gint get_first_splitpoint_selected()
 void row_selection_event()
 {
   if(!GTK_WIDGET_SENSITIVE(remove_row_button))
-    gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), TRUE);  
+    gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), TRUE); 
 }
 
 //we dont check count = number
@@ -548,8 +553,7 @@ void select_splitpoint(gint index)
   //we get iter
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_selection_unselect_all(selection);
-  gtk_tree_selection_select_iter(selection,
-                                 &iter);
+  gtk_tree_selection_select_iter(selection, &iter);
   //we free the path
   gtk_tree_path_free(path);
   
@@ -617,40 +621,44 @@ void remove_splitpoint(gint index,gint stop_preview)
 void update_splitpoint(gint index, Split_point new_point)
 {
   if (check_if_splitpoint_exists(tree_view,
-                                 new_point.mins, 
-                                 new_point.secs,
-                                 new_point.hundr_secs,-1))
-    {
-      first_splitpoint_selected 
-        = get_first_splitpoint_selected();
-      
-      gchar *description = NULL;
-      description = get_splitpoint_name(index);
-      g_snprintf(current_description, 255, "%s",
-                 description);
-      g_free(description);
-      
-      //we remove the splitpoint, then we add it
-      remove_splitpoint(index,FALSE);
-      add_splitpoint(new_point,index);
-    }
+        new_point.mins, 
+        new_point.secs,
+        new_point.hundr_secs,-1))
+  {
+    first_splitpoint_selected = get_first_splitpoint_selected();
+
+    gchar *description = NULL;
+    description = get_splitpoint_name(index);
+    g_snprintf(current_description, 255, "%s",
+        description);
+    g_free(description);
+
+    //we remove the splitpoint, then we add it
+    remove_splitpoint(index,FALSE);
+    add_splitpoint(new_point,index);
+  }
   else
-    {      
-      Split_point old_point = 
-        g_array_index(splitpoints, Split_point, index);
-      //don't put error if we move the same splitpoint
-      //on the same place
-      if ((new_point.mins == old_point.mins) &&
-          (new_point.secs == old_point.secs) &&
-          (new_point.hundr_secs == old_point.hundr_secs))
-        {}
-      else
-        {
-          //if we already have a equal splitpoint
-          put_status_message((gchar *)_(" error : you already have"
-                                        " the splitpoint in table "));
-        }
+  {      
+    Split_point old_point = g_array_index(splitpoints, Split_point, index);
+    //don't put error if we move the same splitpoint
+    //on the same place
+    if ((new_point.mins == old_point.mins) &&
+        (new_point.secs == old_point.secs) &&
+        (new_point.hundr_secs == old_point.hundr_secs))
+    {
+      if (old_point.checked != new_point.checked)
+      {
+        g_array_remove_index(splitpoints,index);
+        g_array_insert_val(splitpoints,index,new_point);
+      }
     }
+    else
+    {
+      //if we already have a equal splitpoint
+      put_status_message((gchar *)_(" error : you already have"
+            " the splitpoint in table "));
+    }
+  }
 }
 
 //updates a splitpoint
@@ -778,6 +786,7 @@ void add_splitpoint_from_player(GtkWidget *widget,
       my_split_point.mins = player_minutes;
       my_split_point.secs = player_seconds;
       my_split_point.hundr_secs = player_hundr_secs;
+      my_split_point.checked = TRUE;
       add_splitpoint(my_split_point,-1);
     }
 }
@@ -798,7 +807,11 @@ void add_splitpoint(Split_point my_split_point,
     {
       gchar *temp = g_strdup(current_description);
       update_current_description(temp, -1);
-      free(temp);
+      if (temp)
+      {
+        free(temp);
+        temp = NULL;
+      }
       
       model = gtk_tree_view_get_model(tree_view);
       
@@ -971,6 +984,7 @@ void add_splitpoint(Split_point my_split_point,
       //sets text in the minute, second and milisecond column
       gtk_list_store_set (GTK_LIST_STORE (model), 
                           &iter,
+                          COL_CHECK,my_split_point.checked,
                           COL_DESCRIPTION,current_description,
                           COL_MINUTES,my_split_point.mins,
                           COL_SECONDS,my_split_point.secs,
@@ -1003,15 +1017,21 @@ void add_splitpoint(Split_point my_split_point,
 }
 
 //adds a row to the table
-void add_row (GtkWidget *button, gpointer data)
+void add_row(gboolean checked)
 {
   Split_point my_split_point;
   
   my_split_point.mins = spin_mins;
   my_split_point.secs = spin_secs;
   my_split_point.hundr_secs = spin_hundr_secs;
+  my_split_point.checked = checked;
   
-  add_splitpoint(my_split_point,-1);  
+  add_splitpoint(my_split_point,-1);
+}
+
+void add_row_clicked(GtkWidget *button, gpointer data)
+{
+  add_row(TRUE);
 }
 
 //set splitpints from silence detection
@@ -1252,8 +1272,7 @@ void remove_row(GtkWidget *widget, gpointer data)
   GtkTreeSelection *selection;
   GList *selected_list = NULL;
   GList *current_element = NULL;
-  GtkTreeView *tree_view = 
-    (GtkTreeView *)data;
+  GtkTreeView *tree_view = (GtkTreeView *)data;
   GtkTreeModel *model;
   //indice
   gint i;
@@ -1411,8 +1430,8 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
                                                (gchar *)_("_Add"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(add_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
-  g_signal_connect (G_OBJECT (add_button), "clicked",
-                    G_CALLBACK (add_row), tree_view);
+  g_signal_connect(G_OBJECT(add_button), "clicked",
+                    G_CALLBACK(add_row_clicked), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), add_button, TRUE, FALSE, 5);
   gtk_tooltips_set_tip(tooltip, add_button,(gchar *)_("add splitpoint"),"");
 
@@ -1534,10 +1553,10 @@ void split_preview(gpointer *data)
       
       //we put the splitpoints in the state
       mp3splt_append_splitpoint(the_state,
-                                preview_start_position / 10,"preview");
+                                preview_start_position / 10,"preview", SPLT_SPLITPOINT);
       mp3splt_append_splitpoint(the_state,
                                 get_splitpoint_time(quick_preview_end_splitpoint)/10,
-                                NULL);
+                                NULL, SPLT_SKIPPOINT);
       
       //put the options from the preferences
       put_options_from_preferences();
@@ -1636,37 +1655,78 @@ void preview_song (GtkTreeView *tree_view,
   GtkTreeModel *model;
   model = gtk_tree_view_get_model(tree_view);
   
-  gint number = (gint)
-    g_object_get_data (G_OBJECT(col), "col");
-  //only if connected to player
-  if (timer_active)
+  gint number = (gint) g_object_get_data (G_OBJECT(col), "col");
+
+  //only when clicking on the PREVIEW or SPLIT_PREVIEW columns
+  if (number == COL_PREVIEW || number == COL_SPLIT_PREVIEW)
+  {
+    //only if connected to player
+    if (timer_active)
     {
       //we get the split begin position to find the 
       //end position
       this_row = gtk_tree_path_get_indices (path)[0];
       //if we click COL_PREVIEW
       if (number == COL_PREVIEW)
-        {
-          player_quick_preview(this_row);
-        }
+      {
+        player_quick_preview(this_row);
+      }
       else
+      {
+        //if we have the split preview
+        if (number == COL_SPLIT_PREVIEW)
         {
-          //if we have the split preview
-          if (number == COL_SPLIT_PREVIEW)
-            {
-              preview_start_position = get_splitpoint_time(this_row);
-              quick_preview_end_splitpoint = this_row+1;
-              g_thread_create((GThreadFunc)split_preview,
-                              NULL, TRUE, NULL);
-            }
+          preview_start_position = get_splitpoint_time(this_row);
+          quick_preview_end_splitpoint = this_row+1;
+          g_thread_create((GThreadFunc)split_preview,
+              NULL, TRUE, NULL);
         }
+      }
     }
-  else
+    else
     {
       put_status_message((gchar *)
-                         _(" cannot preview,"
-                           " not connected to player "));
+          _(" cannot preview,"
+            " not connected to player "));
     }
+  }
+}
+
+//toggle 'check' button
+static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
+    gchar *path_str, gpointer data)
+{
+  GtkTreeView *tree_view = (GtkTreeView *)data;
+  GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
+  GtkTreeIter  iter;
+  GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
+  gboolean checked = FALSE;
+
+  //get the current value of the checked
+  gtk_tree_model_get_iter(model, &iter, path);
+  gtk_tree_model_get(model, &iter, COL_CHECK, &checked, -1);
+
+  //toggle the value
+  checked ^= 1;
+
+  //get the indice
+  gint index = gtk_tree_path_get_indices (path)[0];
+  Split_point new_point;
+  Split_point old_point;
+  //put new 'checked' value to splitpoint
+  old_point = g_array_index(splitpoints, Split_point, index);
+  new_point.mins = old_point.mins;
+  new_point.secs = old_point.secs;
+  new_point.hundr_secs = old_point.hundr_secs;
+  new_point.checked = checked;
+  //we update the splitpoint
+  update_splitpoint(index, new_point);
+
+  //set new value
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_CHECK, checked, -1);
+
+  //free memory
+  gtk_tree_path_free(path);
 }
 
 //creates columns for the tree
@@ -1675,8 +1735,10 @@ void create_columns (GtkTreeView *tree_view)
   //cells renderer
   GtkCellRendererText *renderer;
   GtkCellRendererPixbuf *renderer_pix;
+  GtkCellRendererToggle *renderer_toggle;
   //columns
   GtkTreeViewColumn *column_number;
+  GtkTreeViewColumn *column_check = NULL;
   GtkTreeViewColumn *column_description;
   GtkTreeViewColumn *column_hundr_secs;
   GtkTreeViewColumn *column_minutes;
@@ -1684,6 +1746,18 @@ void create_columns (GtkTreeView *tree_view)
   GtkTreeViewColumn *column_preview;
   GtkTreeViewColumn *column_split_preview;
   
+  /* Check point / skip point */
+  //renderer creation
+  renderer_toggle = GTK_CELL_RENDERER_TOGGLE(gtk_cell_renderer_toggle_new());
+  //cell edited events
+  g_signal_connect(renderer_toggle, "toggled",
+      G_CALLBACK(toggled_splitpoint_event), tree_view);
+  //enable cell editing
+  g_object_set_data(G_OBJECT(renderer_toggle), "col", (gchar *)COL_CHECK);
+  column_check = gtk_tree_view_column_new_with_attributes
+    ((gchar *)_("Keep"), GTK_CELL_RENDERER(renderer_toggle),
+     "active", COL_CHECK, NULL);
+
   /* description */
   //renderer creation
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
@@ -1780,6 +1854,8 @@ void create_columns (GtkTreeView *tree_view)
   
   //appends columns to the list of columns of tree_view
   gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
+      GTK_TREE_VIEW_COLUMN(column_check),COL_DESCRIPTION);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
                                GTK_TREE_VIEW_COLUMN (column_description),COL_DESCRIPTION);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
                                GTK_TREE_VIEW_COLUMN (column_minutes),COL_MINUTES);
@@ -1795,23 +1871,20 @@ void create_columns (GtkTreeView *tree_view)
                                GTK_TREE_VIEW_COLUMN (column_split_preview),
                                COL_SPLIT_PREVIEW);
   //middle alignment of the column name
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_description),
-                                     0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_minutes),
-                                     0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_seconds),
-                                     0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_hundr_secs),
-                                     0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_number),
-                                     0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_preview),
-                                     0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_split_preview),
-                                     0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_check), 0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_description), 0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_minutes), 0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_seconds), 0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_hundr_secs), 0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_number), 0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_preview), 0.5);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_split_preview), 0.5);
 
   //set the auto resizing for columns
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_description),
+  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_check),
+      GTK_TREE_VIEW_COLUMN_FIXED);
+  gtk_tree_view_column_set_fixed_width(GTK_TREE_VIEW_COLUMN(column_check), 70);
+  /*gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_description),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_minutes),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
@@ -1824,11 +1897,12 @@ void create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_preview),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_split_preview),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);*/
   
   //sets resize 
   gtk_tree_view_column_set_resizable(column_description, TRUE);
   //set column reorderable
+  gtk_tree_view_column_set_reorderable(column_check, TRUE);
   gtk_tree_view_column_set_reorderable(column_description, TRUE);
   gtk_tree_view_column_set_reorderable(column_minutes, TRUE);
   gtk_tree_view_column_set_reorderable(column_seconds, TRUE);
@@ -1959,8 +2033,7 @@ void put_splitpoints_in_the_state(splt_state *state)
   gint i;
   
   //for getting the filename
-  GtkTreeModel *model;
-  model = gtk_tree_view_get_model(tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
   GtkTreeIter iter;
   GtkTreePath *path = NULL;
   gchar *description = NULL;
@@ -1977,8 +2050,18 @@ void put_splitpoints_in_the_state(splt_state *state)
                          COL_DESCRIPTION,&description,
                          -1);
       
-      mp3splt_append_splitpoint(state,hundr[i], description);
-      
+      //get the 'checked' value from the current splitpoint
+      Split_point point = g_array_index(splitpoints, Split_point, i);
+      gint splitpoint_type = SPLT_SPLITPOINT;
+
+      if (point.checked == FALSE)
+      {
+        splitpoint_type = SPLT_SKIPPOINT;
+      }
+
+      //append the splitpoint
+      mp3splt_append_splitpoint(state,hundr[i], description, splitpoint_type);
+       
       //free memory
       gtk_tree_path_free(path);
     }
