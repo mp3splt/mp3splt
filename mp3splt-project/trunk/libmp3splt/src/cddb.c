@@ -521,7 +521,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 
                 //we append the splitpoint
                 append_error =
-                  splt_t_append_splitpoint(state, hundr_seconds, NULL);
+                  splt_t_append_splitpoint(state, hundr_seconds, NULL, SPLT_SPLITPOINT);
                 if (append_error != SPLT_OK)
                 {
                   *error = append_error;
@@ -539,7 +539,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
       }
       //we append the last splitpoint
       append_error = splt_t_append_splitpoint(state, LONG_MAX,
-          "description here");
+          "description here", SPLT_SPLITPOINT);
     }
     else
     {
@@ -696,7 +696,7 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
           //in cddb_offset*100
           //we convert them lower to seconds
           append_error =
-            splt_t_append_splitpoint(state, temp * 100, NULL);
+            splt_t_append_splitpoint(state, temp * 100, NULL, SPLT_SPLITPOINT);
   
           if (append_error != SPLT_OK)
           {
@@ -753,7 +753,7 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
         temp2 = atof(number);
 
         //we append the splitpoint (in seconds*100)
-        append_error = splt_t_append_splitpoint(state, temp2 * 100, NULL);
+        append_error = splt_t_append_splitpoint(state, temp2 * 100, NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK)
         {
           *error = append_error;
@@ -763,7 +763,7 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
       else
       {
         //we append 0 as splitpoint
-        append_error = splt_t_append_splitpoint(state, 0, NULL);
+        append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK)
         {
           *error = append_error;

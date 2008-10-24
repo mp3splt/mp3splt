@@ -259,6 +259,11 @@ typedef struct {
    * @brief Name of the new filename issued from the splitpoint
    */
   char *name;
+  /**
+   * @brief Type of the splitpoint
+   * @see splt_type_of_splitpoint
+   */
+  int type;
 } splt_point;
 
 /*****************************/
@@ -587,7 +592,7 @@ typedef struct {
   void (*set_total_time)(void *state, int *error);
   int (*simple_split)(void *state, const char *output_fname, off_t begin, off_t end);
   void (*split)(void *state, const char *final_fname, double begin_point,
-      double end_point, int *error);
+      double end_point, int *error, int save_end_point);
   int (*scan_silence)(void *state, int *error);
   void (*set_original_tags)(void *state, int *error);
   void (*init)(void *state, int *error);
@@ -1172,6 +1177,18 @@ typedef enum {
   SPLT_OPT_PARAM_MIN_LENGTH
 } splt_float_options;
 
+
+/**
+ * we define a 'skippoint' as a splitpoint that is not taken into
+ * consideration
+ */
+typedef enum {
+  /* a regular splitpoint */
+  SPLT_SPLITPOINT,
+  /* a skippoint */
+  SPLT_SKIPPOINT,
+} splt_type_of_splitpoint;
+
 /**
  * Freedb constants
  */
@@ -1307,7 +1324,7 @@ int mp3splt_set_silence_level_function(splt_state *state,
 //puts a splitpoint
 //returns possible error
 int mp3splt_append_splitpoint(splt_state *state,
-    long split_value, const char *name);
+    long split_value, const char *name, int type);
 
 //returns a pointer to all the current splitpoints
 const splt_point *mp3splt_get_splitpoints(splt_state *state,

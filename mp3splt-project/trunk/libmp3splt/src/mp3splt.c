@@ -305,7 +305,7 @@ int mp3splt_set_silence_level_function(splt_state *state,
 //split_value is which splitpoint hundreths of seconds
 //if split_value is LONG_MAX, we put the end of the song (EOF)
 int mp3splt_append_splitpoint(splt_state *state,
-    long split_value, const char *name)
+    long split_value, const char *name, int type)
 {
   int error = SPLT_OK;
 
@@ -315,7 +315,7 @@ int mp3splt_append_splitpoint(splt_state *state,
     {
       splt_t_lock_library(state);
 
-      error = splt_t_append_splitpoint(state, split_value, name);
+      error = splt_t_append_splitpoint(state, split_value, name, type);
 
       splt_t_unlock_library(state);
     }

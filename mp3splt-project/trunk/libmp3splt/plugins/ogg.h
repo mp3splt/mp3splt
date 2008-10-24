@@ -64,7 +64,7 @@ typedef struct {
   short end;
   float off;
   float temp_level;
-  //we cound how many pages we have for the headers
+  //we count how many pages we have for the headers
   long header_page_number;
   //the granpos at the end of the first page of the stream
   ogg_int64_t stream_granpos;

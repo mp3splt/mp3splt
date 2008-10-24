@@ -674,7 +674,9 @@ int splt_t_get_splitnumber(splt_state *state)
 //puts a splitpoint in the state with an eventual file name
 //split_value is which splitpoint hundreths of seconds
 //if split_value is LONG_MAX, we put the end of the song (EOF)
-int splt_t_append_splitpoint(splt_state *state, long split_value, const char *name)
+//-the 'type' of the splitpoint can be : 
+//  SPLT_SPLITPOINT or SPLT_SKIPPOINT
+int splt_t_append_splitpoint(splt_state *state, long split_value, const char *name, int type)
 {
   int error = SPLT_OK;
 
@@ -725,6 +727,9 @@ int splt_t_append_splitpoint(splt_state *state, long split_value, const char *na
       error = name_error;
       return error;
     }
+
+    //set splitpoint type
+    splt_t_set_splitpoint_type(state, state->split.real_splitnumber - 1, type);
   }
   else
   {
@@ -836,6 +841,24 @@ int splt_t_set_splitpoint_name(splt_state *state, int index, const char *name)
   return error;
 }
 
+//sets the type of the splitpoint
+int splt_t_set_splitpoint_type(splt_state *state, int index, int type)
+{
+  int error = SPLT_OK;
+
+  if ((index >= 0) &&
+      (index < state->split.real_splitnumber))
+  {
+    state->split.points[index].type = type;
+  }
+  else
+  {
+    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+  }
+
+  return error;
+}
+
 //returns the splitpoints from the state
 splt_point *splt_t_get_splitpoints(splt_state *state, int *splitpoints_number)
 {
@@ -870,6 +893,21 @@ char *splt_t_get_splitpoint_name(splt_state *state, int index, int *error)
   {
     //splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
     return NULL;
+  }
+}
+
+//get the splitpoint type
+int splt_t_get_splitpoint_type(splt_state *state, int index, int *error)
+{
+  if ((index >= 0) &&
+      (index < state->split.real_splitnumber))
+  {
+    return state->split.points[index].type;
+  }
+  else
+  {
+    //splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    return 1;
   }
 }
 

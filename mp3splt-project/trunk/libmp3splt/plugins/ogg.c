@@ -1101,7 +1101,7 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
  */
 static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *stream,
     FILE *in, FILE *f, ogg_int64_t cutpoint, short adjust, float threshold,
-    int *error, const char *output_fname)
+    int *error, const char *output_fname, int save_end_point)
 {
   splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
 
@@ -1356,8 +1356,18 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   }
 
   oggstate->initialgranpos = prev_granpos - cutpoint;
-  oggstate->end = 1;
   oggstate->cutpoint_begin += cutpoint;
+
+  if (save_end_point)
+  {
+    oggstate->end = 1;
+  }
+  else
+  {
+    oggstate->end = 0;
+    //if we don't save the end point, go at the start of the file
+    rewind(oggstate->in);
+  }
 
   return 0;
 
@@ -1371,7 +1381,7 @@ write_error:
 //splits ogg
 void splt_ogg_split(const char *output_fname, splt_state *state, double
     sec_begin, double sec_end, short seekable, 
-    short adjust, float threshold, int *error)
+    short adjust, float threshold, int *error, int save_end_point)
 {
   //we do the next split
   splt_t_current_split_next(state);
@@ -1471,7 +1481,7 @@ void splt_ogg_split(const char *output_fname, splt_state *state, double
 
   //find end cutpoint and get error
   int result = splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
-      oggstate->out, cutpoint, adjust, threshold, error, output_fname);
+      oggstate->out, cutpoint, adjust, threshold, error, output_fname, save_end_point);
 
 end:
   ogg_stream_clear(&stream_out);
@@ -1887,7 +1897,7 @@ void splt_pl_end(splt_state *state, int *error)
 }
 
 void splt_pl_split(splt_state *state, const char *final_fname,
-    double begin_point, double end_point, int *error) 
+    double begin_point, double end_point, int *error, int save_end_point) 
 {
   splt_ogg_state *oggstate = state->codec;
 
@@ -1900,7 +1910,7 @@ void splt_pl_split(splt_state *state, const char *final_fname,
         begin_point, end_point,
         !state->options.option_input_not_seekable,
         state->options.parameter_gap,
-        state->options.parameter_threshold, error);
+        state->options.parameter_threshold, error, save_end_point);
   }
 }
 
