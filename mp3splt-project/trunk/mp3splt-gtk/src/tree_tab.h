@@ -46,6 +46,7 @@ gint get_splitpoint_time(gint this_splitpoint);
 void remove_splitpoint(gint index,gint stop_preview);
 void update_splitpoint(gint index, Split_point new_point);
 void update_splitpoint_from_time(gint index, gdouble time);
+void update_splitpoint_check(gint index);
 void update_add_button();
 void update_minutes_from_spinner( GtkWidget *widget,
                                   gpointer   data );
@@ -55,7 +56,7 @@ void update_hundr_secs_from_spinner( GtkWidget *widget,
                                      gpointer   data );
 GtkTreeModel *create_model();
 void order_length_column(GtkTreeView *tree_view);
-gboolean check_if_splitpoint_exists(GtkTreeView *tree_view,
+gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
                                     gint minutes, 
                                     gint seconds,
                                     gint hundr_secs,

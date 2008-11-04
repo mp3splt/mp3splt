@@ -196,6 +196,7 @@ gint splitpoint_to_move = -1;
 gboolean move_splitpoints = FALSE;
 gboolean remove_splitpoints = FALSE;
 gboolean select_splitpoints = FALSE;
+gboolean check_splitpoint = FALSE;
 
 gint no_top_connect_action = FALSE;
 gint only_press_pause = FALSE;
@@ -203,6 +204,20 @@ gint only_press_pause = FALSE;
 //our playlist tree
 GtkWidget *playlist_tree;
 gint playlist_tree_number = 0;
+
+//drawing area variables
+gint margin;
+gint real_erase_split_length;
+gint real_progress_length;
+gint real_move_split_length;
+gint real_checkbox_length;
+gint real_text_length;
+//
+gint erase_split_ylimit;
+gint progress_ylimit;
+gint splitpoint_ypos;
+gint checkbox_ypos;
+gint text_ypos;
 
 //remove file button
 GtkWidget *playlist_remove_file_button;
@@ -1607,14 +1622,17 @@ void cancel_quick_preview()
 //move = FALSE means we don't move the splitpoint,
 //move = TRUE means we move the splitpoint
 //number_splitpoint is the current splitpoint we draw
+//-splitpoint_checked = TRUE if the splitpoint is checked
 void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
-                            gint ylimit,gint ylimit2,
                             gint x,gint draw,
                             gint current_point_hundr_secs,
                             gboolean move,
                             gint number_splitpoint)
 {
+  int m = margin - 1;
   GdkColor color;
+  Split_point point = g_array_index(splitpoints, Split_point, number_splitpoint);
+  gboolean splitpoint_checked = point.checked;
   
   //top color
   color.red = 255 * 212;
@@ -1626,35 +1644,34 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
   //if it' the splitpoint we move, don't fill in the circle and
   //the square
   if (!draw)
-    {
-      //top buttons
-      gdk_draw_rectangle (da->window,gc,
-                          FALSE, x-6,4,
-                          11,11);
-    }
+  {
+    //top buttons
+    gdk_draw_rectangle (da->window,gc,
+        FALSE, x-6,4,
+        11,11);
+  }
   else
+  {
+    //top buttons
+    gdk_draw_rectangle (da->window,gc,
+        TRUE, x-6,4,
+        12,12);
+    //if it's the splitpoint selected
+    if (number_splitpoint == get_first_splitpoint_selected())
     {
-      //top buttons
+      //top color
+      color.red = 255 * 220;
+      color.green = 255 * 220;
+      color.blue = 255 * 255;
+      //set the color for the graphic context
+      gdk_gc_set_rgb_fg_color (gc, &color);
+
       gdk_draw_rectangle (da->window,gc,
-                          TRUE, x-6,4,
-                          12,12);
-      //if it's the splitpoint selected
-      if (number_splitpoint == 
-          get_first_splitpoint_selected())
-        {
-          //top color
-          color.red = 255 * 220;
-          color.green = 255 * 220;
-          color.blue = 255 * 255;
-          //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
-          
-          gdk_draw_rectangle (da->window,gc,
-                              TRUE, x-4,6,
-                              8,8);
-        }
+          TRUE, x-4,6,
+          8,8);
     }
-  
+  }
+
   //default color
   color.red = 255 * 212;
   color.green = 255 * 196;
@@ -1664,24 +1681,31 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
   
   gint i;
   for(i = 0;i<5;i++)
-    {
-      gdk_draw_point (da->window,gc,x+i,ylimit+3);
-      gdk_draw_point (da->window,gc,x-i,ylimit+3);
-      gdk_draw_point (da->window,gc,x+i,ylimit+4);
-      gdk_draw_point (da->window,gc,x-i,ylimit+4);
-    }
+  {
+    gdk_draw_point (da->window,gc,x+i,erase_split_ylimit + m + 3);
+    gdk_draw_point (da->window,gc,x-i,erase_split_ylimit + m + 3);
+    gdk_draw_point (da->window,gc,x+i,erase_split_ylimit + m + 4);
+    gdk_draw_point (da->window,gc,x-i,erase_split_ylimit + m + 4);
+  }
   
   //if we are currently moving this splitpoint
   if (move)
+  {
+    //we set the green or blue color
+    if (splitpoint_checked)
     {
-      //we set the color
       color.red = 15000;color.green = 40000;color.blue = 25000;
-      gdk_gc_set_rgb_fg_color (gc, &color);
-      
-      gdk_draw_line(da->window, gc,
-                    x,ylimit-8,
-                    x,ylimit2);
     }
+    else
+    {
+      color.red = 25000;color.green = 25000;color.blue = 40000;
+    }
+    gdk_gc_set_rgb_fg_color (gc, &color);
+
+    gdk_draw_line(da->window, gc,
+        x,erase_split_ylimit + m -8,
+        x,progress_ylimit + m);
+  }
   
   color.red = 255 * 22;
   color.green = 255 * 35;
@@ -1689,80 +1713,97 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
   //set the color for the graphic context
   gdk_gc_set_rgb_fg_color (gc, &color);
   
-  gdk_draw_point (da->window,gc,x,ylimit-3);
-  gdk_draw_point (da->window,gc,x,ylimit-2);
-  gdk_draw_point (da->window,gc,x,ylimit-1);
-  gdk_draw_point (da->window,gc,x,ylimit+0);
-  gdk_draw_point (da->window,gc,x,ylimit+1);
-
-  gdk_draw_point (da->window,gc,x,ylimit+2);
-  gdk_draw_point (da->window,gc,x,ylimit+3);
-  gdk_draw_point (da->window,gc,x,ylimit+4);
-  gdk_draw_point (da->window,gc,x,ylimit+5);
-  
-  gdk_draw_point (da->window,gc,x-1,ylimit+3);
-  gdk_draw_point (da->window,gc,x-1,ylimit+4);
-  gdk_draw_point (da->window,gc,x+1,ylimit+3);
-  gdk_draw_point (da->window,gc,x+1,ylimit+4);
-  
-  gdk_draw_point (da->window,gc,x,ylimit+6);
-  gdk_draw_point (da->window,gc,x,ylimit+7);
-  gdk_draw_point (da->window,gc,x,ylimit+8);
-  gdk_draw_point (da->window,gc,x,ylimit+9);
-  gdk_draw_point (da->window,gc,x,ylimit+10);
-  gdk_draw_point (da->window,gc,x,ylimit+11);
+  //draw the splitpoint motif
+  for (i = -3;i <= 1;i++)
+  {
+    gdk_draw_point (da->window,gc,x,erase_split_ylimit + m +i);
+  }
+  for (i = 2;i <= 5;i++)
+  {
+    gdk_draw_point (da->window,gc,x,erase_split_ylimit + m + i);
+  }
+  for (i = 3;i <= 4;i++)
+  {
+    gdk_draw_point (da->window,gc,x-1,erase_split_ylimit + m + i);
+    gdk_draw_point (da->window,gc,x+1,erase_split_ylimit + m + i);
+  }
+  for (i = 6;i <= 11;i++)
+  {
+    gdk_draw_point (da->window,gc,x,erase_split_ylimit + m + i);
+  }
   
   //bottom splitpoint vertical bar
-  gdk_draw_point (da->window,gc,x,ylimit2-3);
-  gdk_draw_point (da->window,gc,x,ylimit2-2);
-  gdk_draw_point (da->window,gc,x,ylimit2-1);
-  gdk_draw_point (da->window,gc,x,ylimit2);
+  for (i = 0;i < margin;i++)
+  {
+    gdk_draw_point (da->window,gc,x,progress_ylimit + m - i);
+  }
+
+  //bottom checkbox vertical bar
+  for (i = 0;i < margin;i++)
+  {
+    gdk_draw_point (da->window,gc,x,splitpoint_ypos + m - i - 1);
+  }
+
+  //bottom rectangle
+  gdk_gc_set_rgb_fg_color (gc, &color);
+  color.red = 25000;color.green = 25000;color.blue = 25000;
+  //bottom check rectangle
+  gdk_draw_rectangle (da->window,gc,
+      FALSE, x-6,splitpoint_ypos + m, 12,12);
+
+  //draw a cross with 2 lines if the splitpoint is checked
+  if (splitpoint_checked)
+  {
+    //
+    gint left = x - 6;
+    gint right = x + 6;
+    //
+    gint top = splitpoint_ypos + m;
+    gint bottom = splitpoint_ypos + m + 12;
+    gdk_draw_line(da->window, gc, left, top, right, bottom);
+    gdk_draw_line(da->window, gc, left, bottom, right, top);
+  }
   
   //we set the color
-  color.red = 15000;color.green = 40000;color.blue = 25000;
-  gdk_gc_set_rgb_fg_color (gc, &color);
-  
-  //if it' the splitpoint we move, don't fill in the circle and
-  //the square
-  if (!draw)
-    {
-      //the green stuff
-      gdk_draw_arc (da->window,gc,FALSE,
-                    x-7,ylimit2+1,14,14,
-                    0,360*64);
-    }
+  //-if the splitpoint is checked, set green color
+  if (splitpoint_checked)
+  {
+    color.red = 15000;color.green = 40000;color.blue = 25000;
+  }
   else
-    {
-      //the green stuff
-      gdk_draw_arc (da->window,gc,TRUE,
-                    x-8,ylimit2,16,16,
-                    0,360*64);
-    }
+  {
+    color.red = 25000;color.green = 25000;color.blue = 40000;
+  }
+  gdk_gc_set_rgb_fg_color(gc, &color);
+  
+  gdk_draw_arc (da->window,gc,FALSE,
+      x-7,progress_ylimit + m+ 1,14,14, 0,360*64);
+  //only fill the circle if we don't move that splitpoint
+  if (draw)
+  {
+    gdk_draw_arc(da->window,gc,TRUE,
+        x-8,progress_ylimit + m + 1,16,16, 0,360*64);
+  }
   
   if (draw)
-    {
-      gint number_of_chars = 0;
-      PangoLayout *layout;
-      gchar str[30];
-      layout =
-        get_drawing_text(get_time_for_drawing(str,
-                                              current_point_hundr_secs,
-                                              TRUE,
-                                              &number_of_chars));
-      //left text
-      gdk_draw_layout(da->window, gc,
-                      x-(number_of_chars*3),
-                      69+4,layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
-    }
+  {
+    gint number_of_chars = 0;
+    PangoLayout *layout;
+    gchar str[30];
+    layout = get_drawing_text(get_time_for_drawing(str,
+            current_point_hundr_secs, TRUE, &number_of_chars));
+    //left text
+    gdk_draw_layout(da->window, gc,
+        x - (number_of_chars * 3),
+        checkbox_ypos + margin - 1, layout);
+    //we free the memory for the layout
+    g_object_unref (layout);
+  }
 }
 
 //left, right mark in hundreth of seconds
 void draw_splitpoints(gint left_mark,
                       gint right_mark,
-                      gint ylimit,
-                      gint ylimit2,
                       GtkWidget *da,
                       GdkGC *gc)
 {
@@ -1799,12 +1840,9 @@ void draw_splitpoints(gint left_mark,
           split_pixel = 
             get_draw_line_position(width_drawing_area,
                                    current_point_hundr_secs);
-          draw_motif_splitpoints(da, gc, 
-                                 ylimit,
-                                 ylimit2,
-                                 split_pixel,draw,
+          draw_motif_splitpoints(da, gc, split_pixel, draw,
                                  current_point_hundr_secs,
-                                 FALSE,i);
+                                 FALSE, i);
         }
     }
 }
@@ -1815,23 +1853,27 @@ gboolean da_expose_event (GtkWidget      *da,
                           gpointer       data)
 {  
   //
-  gint margin = 4;
-  gint erase_split_ylimit = 20;
-  gint progress_ylimit = 50;
-  gint split_text_ypos = 69;  
-  gint text_ypos = 84+margin;
-  
+  margin = 4;
+
   //
-  gint progress_length = progress_ylimit-
-    erase_split_ylimit;
-  gint move_split_length = split_text_ypos - 
-    progress_ylimit;
-  gint text_length = 15;
+  real_erase_split_length = 12;
+  real_progress_length = 26;
+  real_move_split_length = 16;
+  real_checkbox_length = 12;
+  real_text_length = 16;
+
+  gint erase_splitpoint_length = real_erase_split_length + (margin * 2);
+  gint progress_length = real_progress_length + margin;
+  gint move_split_length = real_move_split_length + margin;
+  gint text_length = real_text_length;
+  gint checkbox_length = real_checkbox_length + margin;
+
   //
-  gint real_move_split_length = 
-    move_split_length-margin;
-  gint real_erase_split_length = 
-    erase_split_ylimit-(margin * 2);
+  erase_split_ylimit = erase_splitpoint_length;
+  progress_ylimit = erase_split_ylimit + progress_length;
+  splitpoint_ypos = progress_ylimit + move_split_length;
+  checkbox_ypos = splitpoint_ypos + checkbox_length;
+  text_ypos = checkbox_ypos + text_length + margin;
   
   PangoLayout *layout;
   //graphic context
@@ -1851,11 +1893,9 @@ gboolean da_expose_event (GtkWidget      *da,
   gdk_gc_set_rgb_fg_color (gc, &color);
   //background rectangle
   gdk_draw_rectangle (da->window,gc,
-                      TRUE,
-                      0,0,
-                      width_drawing_area,text_ypos+
-                      text_length);
-  
+                      TRUE, 0,0,
+                      width_drawing_area, text_ypos + text_length + 2);
+
   //background white color
   color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 255;
   //set the color for the graphic context
@@ -1871,7 +1911,7 @@ gboolean da_expose_event (GtkWidget      *da,
                       TRUE,
                       0,erase_split_ylimit,
                       width_drawing_area,
-                      progress_length+1);
+                      progress_length);
   gdk_draw_rectangle (da->window,gc,
                       TRUE,
                       0,progress_ylimit+margin,
@@ -1879,430 +1919,421 @@ gboolean da_expose_event (GtkWidget      *da,
                       real_move_split_length);
   gdk_draw_rectangle (da->window,gc,
                       TRUE,
-                      0,split_text_ypos+margin,
+                      0,splitpoint_ypos+margin,
+                      width_drawing_area,
+                      real_checkbox_length);
+  gdk_draw_rectangle (da->window,gc,
+                      TRUE,
+                      0,checkbox_ypos+margin,
                       width_drawing_area,
                       text_length);
   
   //only if we are playing
   //and the timer active(connected to player)
-  if(playing&&
-     timer_active)
+  if(playing&& timer_active)
+  {
+    gfloat left_time;
+    gfloat right_time;
+    gfloat center_time;
+    left_time = get_left_drawing_time();
+    right_time = get_right_drawing_time();
+    center_time = current_time;
+
+    //marks to draw seconds, minutes...
+    gint left_mark = (gint)left_time;
+    gint right_mark = (gint)right_time;
+    if (left_mark < 0)
     {
-      gfloat left_time;gfloat right_time;
-      gfloat center_time;
-      left_time = get_left_drawing_time();
-      right_time = get_right_drawing_time();
-      center_time = current_time;
-  
-      //marks to draw seconds, minutes...
-      gint left_mark = (gint)left_time;
-      gint right_mark = (gint)right_time;
-      if (left_mark < 0)
-        left_mark = 0;
-      if (right_mark > total_time)
-        right_mark = (gint)total_time;
-    
-      //total draw time
-      gfloat total_draw_time = 
-        right_time - left_time;
-  
-      gchar str[30];
-      gint beg_pixel = 
-        get_draw_line_position(width_drawing_area,0);
-            
-      gint splitpoint_time_left = -1;
-      gint splitpoint_time_right = -1;
-      gint splitpoint_pixels_left = -1;
-      gint splitpoint_pixels_right = -1;
-      gint splitpoint_pixels_length = -1;
-      gint splitpoint_left_index = -1;
-      get_splitpoint_time_left_right(&splitpoint_time_left,
-                                     &splitpoint_time_right,
-                                     &splitpoint_left_index);
-      
-      if ((splitpoint_time_left != -1) && 
-          (splitpoint_time_right != -1))
-        {
-          //
-          splitpoint_pixels_left = get_draw_line_position(width_drawing_area,
-                                                          splitpoint_time_left);
-          splitpoint_pixels_right = get_draw_line_position(width_drawing_area,
-                                                           splitpoint_time_right);
-          splitpoint_pixels_length = 
-            splitpoint_pixels_right - splitpoint_pixels_left;
-          
-          //we put yellow rectangle between splitpoints
-          //we set default black color
-          color.red = 255 * 255;color.green = 255 * 255;
-          color.blue = 255 * 210;
-          //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
-          gdk_draw_rectangle (da->window,gc,
-                              TRUE,splitpoint_pixels_left,
-                              erase_split_ylimit,
-                              splitpoint_pixels_length,
-                              progress_ylimit-
-                              erase_split_ylimit+1);
-        }
-      
-      //we set blue color
-      color.red = 255 * 150;
-      color.green = 255 * 150;
-      color.blue = 255 * 255;
+      left_mark = 0;
+    }
+    if (right_mark > total_time)
+    {
+      right_mark = (gint)total_time;
+    }
+
+    //total draw time
+    gfloat total_draw_time = right_time - left_time;
+
+    gchar str[30];
+    gint beg_pixel = get_draw_line_position(width_drawing_area,0);
+
+    gint splitpoint_time_left = -1;
+    gint splitpoint_time_right = -1;
+    gint splitpoint_pixels_left = -1;
+    gint splitpoint_pixels_right = -1;
+    gint splitpoint_pixels_length = -1;
+    gint splitpoint_left_index = -1;
+    get_splitpoint_time_left_right(&splitpoint_time_left,
+        &splitpoint_time_right,
+        &splitpoint_left_index);
+
+    if ((splitpoint_time_left != -1) && 
+        (splitpoint_time_right != -1))
+    {
+      //
+      splitpoint_pixels_left = get_draw_line_position(width_drawing_area,
+          splitpoint_time_left);
+      splitpoint_pixels_right = get_draw_line_position(width_drawing_area,
+          splitpoint_time_right);
+      splitpoint_pixels_length = 
+        splitpoint_pixels_right - splitpoint_pixels_left;
+
+      //we put yellow rectangle between splitpoints
+      //we set default black color
+      color.red = 255 * 255;color.green = 255 * 255;
+      color.blue = 255 * 210;
       //set the color for the graphic context
       gdk_gc_set_rgb_fg_color (gc, &color);
-      
-      //if it's the first splitpoint from play preview
-      if (quick_preview_end_splitpoint != -1)
+      gdk_draw_rectangle (da->window,gc,
+          TRUE,splitpoint_pixels_left,
+          erase_split_ylimit,
+          splitpoint_pixels_length,
+          progress_ylimit-
+          erase_split_ylimit+1);
+    }
+
+    //we set blue color
+    color.red = 255 * 150;
+    color.green = 255 * 150;
+    color.blue = 255 * 255;
+    //set the color for the graphic context
+    gdk_gc_set_rgb_fg_color (gc, &color);
+
+    //if it's the first splitpoint from play preview
+    if (quick_preview_end_splitpoint != -1)
+    {
+      gint right_pixel =
+        get_draw_line_position(width_drawing_area,
+            get_splitpoint_time(quick_preview_end_splitpoint)/10);
+      gint left_pixel =
+        get_draw_line_position(width_drawing_area,
+            get_splitpoint_time(preview_start_splitpoint) /10);
+
+      gint preview_splitpoint_length = 
+        right_pixel - left_pixel + 1;
+
+      //top buttons
+      gdk_draw_rectangle (da->window,gc,
+          TRUE, left_pixel,
+          progress_ylimit-2,
+          preview_splitpoint_length,3);
+
+      //if we have a quick preview on going, put red bar
+      if (quick_preview)
+      {
+        color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
+        //set the color for the graphic context
+        gdk_gc_set_rgb_fg_color (gc, &color);
+        //top buttons
+        gdk_draw_rectangle (da->window,gc,
+            TRUE, left_pixel,
+            erase_split_ylimit,
+            preview_splitpoint_length,
+            3);
+      }
+    }
+    else
+    {
+      //if we draw until the end
+      if ((preview_start_splitpoint != -1)&&
+          (preview_start_splitpoint != (splitnumber-1)))
+      {
+        gint left_pixel =
+          get_draw_line_position(width_drawing_area,
+              get_splitpoint_time(preview_start_splitpoint) /10);
+        //top buttons
+        gdk_draw_rectangle (da->window,gc,
+            TRUE, left_pixel,
+            progress_ylimit-2,
+            width_drawing_area-left_pixel,
+            3);
+        //if we have a quick preview on going, put red bar
+        if (quick_preview)
         {
-          gint right_pixel =
-            get_draw_line_position(width_drawing_area,
-                                   get_splitpoint_time(quick_preview_end_splitpoint)/10);
-          gint left_pixel =
-            get_draw_line_position(width_drawing_area,
-                                   get_splitpoint_time(preview_start_splitpoint) /10);
-          
-          gint preview_splitpoint_length = 
-            right_pixel - left_pixel + 1;
-          
+          color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
+          //set the color for the graphic context
+          gdk_gc_set_rgb_fg_color (gc, &color);
           //top buttons
           gdk_draw_rectangle (da->window,gc,
-                              TRUE, left_pixel,
-                              progress_ylimit-2,
-                              preview_splitpoint_length,3);
-          
-          //if we have a quick preview on going, put red bar
-          if (quick_preview)
-            {
-              color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
-              //set the color for the graphic context
-              gdk_gc_set_rgb_fg_color (gc, &color);
-              //top buttons
-              gdk_draw_rectangle (da->window,gc,
-                                  TRUE, left_pixel,
-                                  erase_split_ylimit,
-                                  preview_splitpoint_length,
-                                  3);
-            }
+              TRUE, left_pixel,
+              erase_split_ylimit,
+              width_drawing_area-left_pixel,
+              3);
         }
-      else
-        {
-          //if we draw until the end
-          if ((preview_start_splitpoint != -1)&&
-              (preview_start_splitpoint != (splitnumber-1)))
-            {
-              gint left_pixel =
-                get_draw_line_position(width_drawing_area,
-                                       get_splitpoint_time(preview_start_splitpoint) /10);
-              //top buttons
-              gdk_draw_rectangle (da->window,gc,
-                                  TRUE, left_pixel,
-                                  progress_ylimit-2,
-                                  width_drawing_area-left_pixel,
-                                  3);
-              //if we have a quick preview on going, put red bar
-              if (quick_preview)
-                {
-                  color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
-                  //set the color for the graphic context
-                  gdk_gc_set_rgb_fg_color (gc, &color);
-                  //top buttons
-                  gdk_draw_rectangle (da->window,gc,
-                                      TRUE, left_pixel,
-                                      erase_split_ylimit,
-                                      width_drawing_area-left_pixel,
-                                      3);
-                }
-            }
-        }
-      
-      //song start
-      if ( left_time <= 0 )
-        {
-          color.red = 255 * 235;color.green = 255 * 235;
-          color.blue = 255 * 235;
-          //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
-          gdk_draw_rectangle (da->window,gc,
-                              TRUE,
-                              0,0,
-                              beg_pixel,
-                              text_ypos);
-        }
-      else
-        {
-          color.red = 30000;color.green = 0;color.blue = 30000;
-          //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
-          
-          layout =
-            get_drawing_text(get_time_for_drawing(str,
-                                                  left_time,
-                                                  FALSE,
-                                                  &nbr_chars));
-          //left text
-          gdk_draw_layout(da->window, gc,
-                          15,text_ypos,layout);
-          //we free the memory for the layout
-          g_object_unref (layout);
-        }
-      
-      gint end_pixel = 
-        get_draw_line_position(width_drawing_area,total_time);
-      //song end
-      if ( right_time >= total_time )
-        {
-          color.red = 255 * 235;color.green = 255 * 235;
-          color.blue = 255 * 235;
-          //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
-          
-          gdk_draw_rectangle (da->window,gc,
-                              TRUE,
-                              end_pixel,0,
-                              width_drawing_area,
-                              text_ypos);
-        }
-      else
-        {
-          color.red = 30000;color.green = 0;color.blue = 30000;
-          //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
-          
-          layout =
-            get_drawing_text(get_time_for_drawing(str,
-                                                  right_time,
-                                                  FALSE,
-                                                  &nbr_chars));
-          //right text
-          gdk_draw_layout(da->window, gc,
-                          width_drawing_area - 52,
-                          text_ypos, layout);
-          //we free the memory for the layout
-          g_object_unref (layout);
-        }
-  
-      if (total_draw_time < 20)
-        {
-          //DRAW HUNDR OF SECONDS
-          draw_marks(1,
-                     left_mark, right_mark,
-                     erase_split_ylimit+ progress_length/4,
-                     da, gc);
-        }
-      
-      if (total_draw_time < (3 * 100))
-        {
-          //DRAW TENS OF SECONDS
-          draw_marks(10,
-                     left_mark, right_mark,
-                     erase_split_ylimit+ progress_length/4,
-                     da, gc);
-        }
-  
-      if (total_draw_time < (40 * 100))
-        {
-          //DRAW SECONDS
-          draw_marks(100,
-                     left_mark, right_mark,
-                     erase_split_ylimit+ progress_length/4,
-                     da, gc);
-        }
-  
-      if (total_draw_time < (3 * 6000))
-        {
-          //DRAW TEN SECONDS
-          draw_marks(1000,
-                     left_mark, right_mark,
-                     erase_split_ylimit+ progress_length/4,
-                     da, gc);
-        }
+      }
+    }
 
-      if (total_draw_time < (20 * 6000))
-        {
-          //DRAW MINUTES
-          draw_marks(6000,
-                     left_mark, right_mark,
-                     erase_split_ylimit+ progress_length/4,
-                     da, gc);
-        }
+    //song start
+    if ( left_time <= 0 )
+    {
+      color.red = 255 * 235;color.green = 255 * 235;
+      color.blue = 255 * 235;
+      //set the color for the graphic context
+      gdk_gc_set_rgb_fg_color (gc, &color);
+      gdk_draw_rectangle (da->window,gc,
+          TRUE,
+          0,0,
+          beg_pixel,
+          text_ypos);
+    }
+    else
+    {
+      color.red = 30000;color.green = 0;color.blue = 30000;
+      //set the color for the graphic context
+      gdk_gc_set_rgb_fg_color (gc, &color);
 
-      if (total_draw_time < (3 * 3600 * 100))
-        {
-          //DRAW TEN MINUTES
-          draw_marks(60000,
-                     left_mark, right_mark,
-                     erase_split_ylimit+ progress_length/4,
-                     da, gc);
-        }
+      layout = get_drawing_text(get_time_for_drawing(str,
+              left_time, FALSE, &nbr_chars));
+      //left text
+      gdk_draw_layout(da->window, gc,
+          15,text_ypos,layout);
+      //we free the memory for the layout
+      g_object_unref (layout);
+    }
 
-      //DRAW HOURS
-      draw_marks(100 * 3600,
-                 left_mark, right_mark,
-                 erase_split_ylimit+progress_length/4,
-                 da, gc);
-      
-      //draw mobile button1 position line
-      if (button1_pressed)
-        {
-          gint move_time_bis = (gint)move_time;
-          
-          //if we don't move the splitpoints
-          if (!move_splitpoints && !remove_splitpoints)
-            {
-              //if we have Audacious player selected as player,
-              //we move only by seconds
-              if (selected_player == PLAYER_AUDACIOUS)
-                move_time_bis = (move_time_bis / 100) * 100;
-            }
-          
-          gint move_pixel = 
-            get_draw_line_position(width_drawing_area,
-                                   move_time_bis);
+    gint end_pixel = 
+      get_draw_line_position(width_drawing_area,total_time);
+    //song end
+    if ( right_time >= total_time )
+    {
+      color.red = 255 * 235;color.green = 255 * 235;
+      color.blue = 255 * 235;
+      //set the color for the graphic context
+      gdk_gc_set_rgb_fg_color (gc, &color);
 
-          //if we move the splitpoints
-          if (move_splitpoints)
-            {
-              draw_motif_splitpoints(da, gc,
-                                     erase_split_ylimit+margin,
-                                     progress_ylimit+margin-1,
-                                     move_pixel,TRUE,
-                                     move_time,TRUE,
-                                     splitpoint_to_move);
-              
-              //we set default black color
-              color.red = 0;color.green = 0;color.blue = 0;
-              //set the color for the graphic context
-              gdk_gc_set_rgb_fg_color (gc, &color);
-              
-              //we put the current middle text
-              layout =
-                get_drawing_text(get_time_for_drawing(str,
-                                                      current_time,
-                                                      FALSE,
-                                                      &nbr_chars));
-              gdk_draw_layout(da->window, gc,
-                              width_drawing_area/2-11,
-                              text_ypos, layout);
-              //we free the memory for the layout
-              g_object_unref (layout);
-            }
-          else
-            { 
-              gdk_draw_line(da->window, gc,
-                            move_pixel,erase_split_ylimit,
-                            move_pixel,progress_ylimit);
-              
-              //we set default black color
-              color.red = 0;color.green = 0;color.blue = 0;
-              //set the color for the graphic context
-              gdk_gc_set_rgb_fg_color (gc, &color);
-          
-              //move time text
-              layout =
-                get_drawing_text(get_time_for_drawing(str,
-                                                      move_time,
-                                                      FALSE,
-                                                      &nbr_chars));
-              gdk_draw_layout(da->window, gc,
-                              width_drawing_area/2-11,
-                              text_ypos, layout);
-              //we free the memory for the layout
-              g_object_unref (layout);
-            }
-        }
+      gdk_draw_rectangle (da->window,gc,
+          TRUE,
+          end_pixel,0,
+          width_drawing_area,
+          text_ypos);
+    }
+    else
+    {
+      color.red = 30000;color.green = 0;color.blue = 30000;
+      //set the color for the graphic context
+      gdk_gc_set_rgb_fg_color (gc, &color);
+
+      layout = get_drawing_text(get_time_for_drawing(str,
+              right_time, FALSE, &nbr_chars));
+      //right text
+      gdk_draw_layout(da->window, gc,
+          width_drawing_area - 52,
+          text_ypos, layout);
+      //we free the memory for the layout
+      g_object_unref (layout);
+    }
+
+    if (total_draw_time < 20)
+    {
+      //DRAW HUNDR OF SECONDS
+      draw_marks(1,
+          left_mark, right_mark,
+          erase_split_ylimit+ progress_length/4,
+          da, gc);
+    }
+
+    if (total_draw_time < (3 * 100))
+    {
+      //DRAW TENS OF SECONDS
+      draw_marks(10,
+          left_mark, right_mark,
+          erase_split_ylimit+ progress_length/4,
+          da, gc);
+    }
+
+    if (total_draw_time < (40 * 100))
+    {
+      //DRAW SECONDS
+      draw_marks(100,
+          left_mark, right_mark,
+          erase_split_ylimit+ progress_length/4,
+          da, gc);
+    }
+
+    if (total_draw_time < (3 * 6000))
+    {
+      //DRAW TEN SECONDS
+      draw_marks(1000,
+          left_mark, right_mark,
+          erase_split_ylimit+ progress_length/4,
+          da, gc);
+    }
+
+    if (total_draw_time < (20 * 6000))
+    {
+      //DRAW MINUTES
+      draw_marks(6000,
+          left_mark, right_mark,
+          erase_split_ylimit+ progress_length/4,
+          da, gc);
+    }
+
+    if (total_draw_time < (3 * 3600 * 100))
+    {
+      //DRAW TEN MINUTES
+      draw_marks(60000,
+          left_mark, right_mark,
+          erase_split_ylimit+ progress_length/4,
+          da, gc);
+    }
+
+    //DRAW HOURS
+    draw_marks(100 * 3600,
+        left_mark, right_mark,
+        erase_split_ylimit+progress_length/4,
+        da, gc);
+
+    //draw mobile button1 position line
+    if (button1_pressed)
+    {
+      gint move_time_bis = (gint)move_time;
+
+      //if we don't move the splitpoints
+      if (!move_splitpoints && !remove_splitpoints)
+      {
+        //if we have Audacious player selected as player,
+        //we move only by seconds
+        if (selected_player == PLAYER_AUDACIOUS)
+          move_time_bis = (move_time_bis / 100) * 100;
+      }
+
+      gint move_pixel = 
+        get_draw_line_position(width_drawing_area,
+            move_time_bis);
+
+      //if we move the splitpoints
+      if (move_splitpoints)
+      {
+        draw_motif_splitpoints(da, gc, move_pixel,TRUE, move_time,
+            TRUE, splitpoint_to_move);
+
+        //we set default black color
+        color.red = 0;color.green = 0;color.blue = 0;
+        //set the color for the graphic context
+        gdk_gc_set_rgb_fg_color (gc, &color);
+
+        //we put the current middle text
+        layout =
+          get_drawing_text(get_time_for_drawing(str,
+                current_time,
+                FALSE,
+                &nbr_chars));
+        gdk_draw_layout(da->window, gc,
+            width_drawing_area/2-11,
+            text_ypos, layout);
+        //we free the memory for the layout
+        g_object_unref (layout);
+      }
       else
-        {
-          //we set default black color
-          color.red = 0;color.green = 0;color.blue = 0;
-          //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
-          
-          layout =
-            get_drawing_text(get_time_for_drawing(str,
-                                                  center_time,
-                                                  FALSE,
-                                                  &nbr_chars));
-          //center text
-          gdk_draw_layout(da->window, gc,
-                          width_drawing_area/2-11,
-                          text_ypos, layout);
-          //we free the memory for the layout
-          g_object_unref (layout);
-        }
-      
+      { 
+        gdk_draw_line(da->window, gc,
+            move_pixel,erase_split_ylimit,
+            move_pixel,progress_ylimit);
+
+        //we set default black color
+        color.red = 0;color.green = 0;color.blue = 0;
+        //set the color for the graphic context
+        gdk_gc_set_rgb_fg_color (gc, &color);
+
+        //move time text
+        layout =
+          get_drawing_text(get_time_for_drawing(str,
+                move_time,
+                FALSE,
+                &nbr_chars));
+        gdk_draw_layout(da->window, gc,
+            width_drawing_area/2-11,
+            text_ypos, layout);
+        //we free the memory for the layout
+        g_object_unref (layout);
+      }
+    }
+    else
+    {
       //we set default black color
       color.red = 0;color.green = 0;color.blue = 0;
       //set the color for the graphic context
       gdk_gc_set_rgb_fg_color (gc, &color);
-      
-      //the middle line, current position
-      gdk_draw_line(da->window, gc,
-                    width_drawing_area/2,erase_split_ylimit,
-                    width_drawing_area/2,progress_ylimit);
-      
-      //we draw the splitpoints
-      draw_splitpoints(left_mark,right_mark,
-                       erase_split_ylimit+margin,
-                       progress_ylimit+margin-1,
-                       da, gc);
+
+      layout =
+        get_drawing_text(get_time_for_drawing(str,
+              center_time,
+              FALSE,
+              &nbr_chars));
+      //center text
+      gdk_draw_layout(da->window, gc,
+          width_drawing_area/2-11,
+          text_ypos, layout);
+      //we free the memory for the layout
+      g_object_unref (layout);
     }
+
+    //we set default black color
+    color.red = 0;color.green = 0;color.blue = 0;
+    //set the color for the graphic context
+    gdk_gc_set_rgb_fg_color (gc, &color);
+
+    //the middle line, current position
+    gdk_draw_line(da->window, gc,
+        width_drawing_area/2,erase_split_ylimit,
+        width_drawing_area/2,progress_ylimit);
+
+    //we draw the splitpoints
+    draw_splitpoints(left_mark,right_mark, da, gc);
+  }
   else
     //if not playing and timer not active
-    {      
-      //top color
-      color.red = 255 * 212;
-      color.green = 255 * 100;
-      color.blue = 255 * 200;
-      //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
+  {      
+    //top color
+    color.red = 255 * 212; color.green = 255 * 100; color.blue = 255 * 200;
+    //set the color for the graphic context
+    gdk_gc_set_rgb_fg_color (gc, &color);
 
-      layout =
-        get_drawing_text((gchar *)
-                         _(" left button on splitpoint selects it,"
-                           " right button erases it"));
-      gdk_draw_layout(da->window, gc,
-                      0, 3, layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
-      
-      color.red = 0;color.green = 0;color.blue = 0;
-      //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
-      
-      layout =
-        get_drawing_text((gchar *)
-                         _(" left button + move changes song"
-                           " position \n right button + move changes zoom"));
-      gdk_draw_layout(da->window, gc,
-                      0,
-                      20, layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
+    layout = get_drawing_text((gchar *)
+          _(" left button on splitpoint selects it,"
+            " right button erases it"));
+    gdk_draw_layout(da->window, gc,
+        0, margin - 3, layout);
+    //we free the memory for the layout
+    g_object_unref (layout);
 
-      //we set the color
-      color.red = 15000;color.green = 40000;color.blue = 25000;
-      gdk_gc_set_rgb_fg_color (gc, &color);
-      
-      layout =
-        get_drawing_text((gchar *)
-                         _(" left button on splitpoint + move changes splitpoint"
-                           " position"));
-      gdk_draw_layout(da->window, gc,
-                      0,54, layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
+    color.red = 0;color.green = 0;color.blue = 0;
+    //set the color for the graphic context
+    gdk_gc_set_rgb_fg_color (gc, &color);
 
-      //
-      layout =
-        get_drawing_text((gchar *)
-                         _(" right button on splitpoint play preview"));
-      gdk_draw_layout(da->window, gc,
-                      0,73, layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
+    layout = get_drawing_text((gchar *)
+          _(" left button + move changes song"
+            " position, right button + move changes zoom"));
+    gdk_draw_layout(da->window, gc,
+        0, erase_split_ylimit + margin, layout);
+    //we free the memory for the layout
+    g_object_unref (layout);
 
-    }
+    //we set the color
+    color.red = 15000;color.green = 40000;color.blue = 25000;
+    gdk_gc_set_rgb_fg_color (gc, &color);
+
+    layout = get_drawing_text((gchar *)
+          _(" left button on point + move changes point"
+            " position, right button play preview"));
+    gdk_draw_layout(da->window, gc,
+        0, progress_ylimit + margin, layout);
+    //we free the memory for the layout
+    g_object_unref (layout);
+
+    //bottom rectangle color
+    color.red = 0; color.green = 0; color.blue = 0;
+    //set the color for the graphic context
+    gdk_gc_set_rgb_fg_color (gc, &color);
+
+    layout = get_drawing_text((gchar *)
+          _(" left button on rectangle checks/unchecks 'keep splitpoint'"));
+    gdk_draw_layout(da->window, gc,
+        0, splitpoint_ypos + 1, layout);
+    //we free the memory for the layout
+    g_object_unref (layout);
+
+  }
   
   //freeing memory
   //graphic context
@@ -2356,8 +2387,12 @@ void get_splitpoint_time_left_right(gint *time_left,
 //second argument:
 //3 means right button
 //1 means left button
-gint get_splitpoint_clicked(gint button_y,gint type_clicked,
-                            gboolean move_area)
+//third 'type' argument :
+// 1 means erase splitpoint area,
+// 2 means move splitpoint area,
+// 3 means check splitpoint area
+gint get_splitpoint_clicked(gint button_y, gint type_clicked,
+                            gint type)
 {
   //the time current position
   gint time_pos,time_right_pos,time_margin;
@@ -2367,88 +2402,88 @@ gint get_splitpoint_clicked(gint button_y,gint type_clicked,
   
   //we see if we click on a right button
   if (type_clicked != 3)
-    {
-      but_y = button_y;
-      time_pos = 
-        left_time+
-        pixels_to_time(width_drawing_area,button_x);
-    }
+  {
+    but_y = button_y;
+    time_pos = left_time + pixels_to_time(width_drawing_area,button_x);
+  }
   else
-    {
-      but_y = button_y2;
-      time_pos = 
-        left_time+
-        pixels_to_time(width_drawing_area,button_x2);
-    }
+  {
+    but_y = button_y2;
+    time_pos = left_time + pixels_to_time(width_drawing_area,button_x2);
+  }
+
   //we get this to find time_right_pos - time_right
-  //to see what time we have for 7 pixels
+  //to see what time we have for X pixels
+  gint pixels_to_look_for = real_erase_split_length / 2;
+  if (type == 2)
+  {
+    pixels_to_look_for = real_move_split_length / 2;
+  }
+
   if (type_clicked != 3)
-    {
-      time_right_pos =
-        left_time+
-        pixels_to_time(width_drawing_area,button_x+7);
-    }
+  {
+    time_right_pos = left_time+
+      pixels_to_time(width_drawing_area,button_x + pixels_to_look_for);
+  }
   else
-    {
-      time_right_pos =
-        left_time+
-        pixels_to_time(width_drawing_area,button_x2+7);
-    }
+  {
+    time_right_pos = left_time+
+      pixels_to_time(width_drawing_area,button_x2 + pixels_to_look_for);
+  }
+
   //the time margin is the margin for the splitpoint,
   //where we can click at his left or right
   time_margin = time_right_pos - time_pos;
   
   gint margin1,margin2;
   
-  if (!move_area)
-    {
-      margin1 = 54;
-      margin2 = 54+14;
-    }
-  else
-    {
-      margin1 = 4;
-      margin2 = 4+14;
-    }
-  
+  if (type == 2)
+  {
+    margin1 = progress_ylimit + margin;
+    margin2 = progress_ylimit + margin + real_move_split_length;
+  }
+  else if (type == 1)
+  {
+    margin1 = margin;
+    margin2 = margin + real_erase_split_length;
+  }
+  else if (type == 3)
+  {
+    margin1 = splitpoint_ypos + margin;
+    margin2 = splitpoint_ypos + margin + real_checkbox_length;
+  }
+
   gint splitpoint_returned = -1;
   
   //if we are in the area to move the split 
   if ((but_y > margin1) && (but_y < margin2))
+  {
+    //we check what splitpoints we found
+    Split_point current_point;
+    //current point in hundreth of seconds
+    gint current_point_hundr_secs;
+    gint current_point_left,current_point_right;
+
+    gint i;
+    //we look at all splitpoints
+    for(i = 0; i < splitnumber; i++ )
     {
-      //we check what splitpoints we found
-      Split_point current_point;
-      //current point in hundreth of seconds
-      gint current_point_hundr_secs;
-      gint current_point_left,current_point_right;
-      
-      gint i;
-      //we look at all splitpoints
-      for(i = 0; i < splitnumber; i++ )
-        {
-          current_point =
-            g_array_index(splitpoints, Split_point, i);
-          current_point_hundr_secs = 
-            current_point.hundr_secs +
-            current_point.secs * 100 +
-            current_point.mins * 6000;
-          //left margin
-          current_point_left = current_point_hundr_secs -
-            time_margin;
-          //right margin
-          current_point_right = current_point_hundr_secs +
-            time_margin;
-          
-          //if we found a valid splitpoint, we
-          //return him
-          if ((time_pos >= current_point_left) &&
-              (time_pos <= current_point_right))
-            {
-              splitpoint_returned = i;
-              break;
-            }
-        }
+      current_point = g_array_index(splitpoints, Split_point, i);
+      current_point_hundr_secs = current_point.hundr_secs +
+        current_point.secs * 100 + current_point.mins * 6000;
+      //left margin
+      current_point_left = current_point_hundr_secs - time_margin;
+      //right margin
+      current_point_right = current_point_hundr_secs + time_margin;
+
+      //if we found a valid splitpoint, we return it
+      if ((time_pos >= current_point_left) && (time_pos <= current_point_right))
+      {
+        splitpoint_returned = i;
+        break;
+      }
     }
+  }
   
   return splitpoint_returned;
 }
@@ -2515,102 +2550,112 @@ gboolean da_press_event (GtkWidget    *da,
 {
   //only if we are playing
   //and the timer active(connected to player)
-  if(playing&&
-     timer_active)
+  if (playing && timer_active)
+  {
+    if (event->button == 1)
     {
-      if (event->button == 1)
+      button_x = event->x;
+      button_y = event->y;
+      button1_pressed = TRUE;
+
+      if ((button_y > progress_ylimit + margin) &&
+          (button_y < progress_ylimit + margin + real_move_split_length))
+      {
+        splitpoint_to_move = get_splitpoint_clicked(button_y,1, 2);
+        //if we have found splitpoints
+        if (splitpoint_to_move != -1)
         {
-          button_x = event->x;
-          button_y = event->y;
-          button1_pressed = TRUE;
-          
-          if ((button_y > 54) && (button_y < 54+14))
-            {
-              splitpoint_to_move = 
-                get_splitpoint_clicked(button_y,1,
-                                       FALSE);
-              //if we have found splitpoints
-              if (splitpoint_to_move != -1)
-                {
-                  move_splitpoints = TRUE;
-                }
-            }
-          else
-            {
-              //if we are in the area to remove a splitpoint
-              if ((button_y > 4) && (button_y < 4+14))
-                {
-                  gint splitpoint_selected;
-                  //TRUE means remove splitpoint area
-                  splitpoint_selected = 
-                    get_splitpoint_clicked(button_y,1,
-                                           TRUE);
-                  
-                  //if we have found a splitpoint to select
-                  if (splitpoint_selected != -1)
-                    {
-                      select_splitpoints = TRUE;
-                      select_splitpoint(splitpoint_selected);
-                    }
-                  //refresh the drawing area
-                  refresh_drawing_area();
-                }
-            }
-          
-          if (!move_splitpoints)
-            {
-              move_time = current_time;
-            }
-          else
-            {
-              move_time = 
-                get_splitpoint_time(splitpoint_to_move) / 10;
-            }
+          move_splitpoints = TRUE;
         }
+      }
       else
-        //right click
-        if (event->button == 3)
-          {   
-            button_x2 = event->x;
-            button_y2 = event->y;
-            button2_pressed = TRUE;
-            zoom_coeff_old = zoom_coeff;
-            
-            if ((button_y2 > 54) && (button_y2 < 54+14))
-              {
-                gint splitpoint_to_preview = -1;
-                
-                splitpoint_to_preview =
-                  get_splitpoint_clicked(button_y2,3,
-                                         FALSE);
-                
-                //player quick preview here!!
-                player_quick_preview(splitpoint_to_preview);
-              }
-            else
-              {
-                //if we are in the area to remove a splitpoint
-                if ((button_y2 > 4) && (button_y2 < 4+14))
-                  {
-                    gint splitpoint_to_erase = -1;
-                    
-                    //TRUE means remove splitpoint area
-                    splitpoint_to_erase = 
-                      get_splitpoint_clicked(button_y2,3,
-                                             TRUE);
-                    
-                    //if we have found a splitpoint to erase
-                    if (splitpoint_to_erase != -1)
-                      {
-                        remove_splitpoints = TRUE;
-                        remove_splitpoint(splitpoint_to_erase,TRUE);
-                      }
-                    //refresh the drawing area
-                    refresh_drawing_area();
-                  }
-              }
+      {
+        //if we are in the area to remove a splitpoint
+        if ((button_y > margin) && (button_y < margin + real_erase_split_length))
+        {
+          gint splitpoint_selected;
+          //TRUE means remove splitpoint area
+          splitpoint_selected = get_splitpoint_clicked(button_y, 1, 1);
+
+          //if we have found a splitpoint to select
+          if (splitpoint_selected != -1)
+          {
+            select_splitpoints = TRUE;
+            select_splitpoint(splitpoint_selected);
           }
+          //refresh the drawing area
+          refresh_drawing_area();
+        }
+        else
+        {
+          //if we are in the area to check a splitpoint
+          if ((button_y > splitpoint_ypos + margin) &&
+              (button_y < splitpoint_ypos + margin + real_checkbox_length))
+          {
+            gint splitpoint_selected = get_splitpoint_clicked(button_y, 1, 3);
+            if (splitpoint_selected != -1)
+            {
+              check_splitpoint = TRUE;
+              update_splitpoint_check(splitpoint_selected);
+            }
+            refresh_drawing_area();
+          }
+        }
+      }
+
+      if (!move_splitpoints)
+      {
+        move_time = current_time;
+      }
+      else
+      {
+        move_time = get_splitpoint_time(splitpoint_to_move) / 10;
+      }
     }
+    else
+    {
+      //right click
+      if (event->button == 3)
+      {
+        button_x2 = event->x;
+        button_y2 = event->y;
+        button2_pressed = TRUE;
+        zoom_coeff_old = zoom_coeff;
+
+      if ((button_y2 > progress_ylimit + margin) &&
+          (button_y2 < progress_ylimit + margin + real_move_split_length))
+        {
+          gint splitpoint_to_preview = -1;
+
+          splitpoint_to_preview = get_splitpoint_clicked(button_y2,3, 2);
+
+          //player quick preview here!!
+          player_quick_preview(splitpoint_to_preview);
+        }
+        else
+        {
+          //if we are in the area to remove a splitpoint
+          if ((button_y2 > margin) && (button_y2 < margin + real_erase_split_length))
+          {
+            gint splitpoint_to_erase = -1;
+
+            //TRUE means remove splitpoint area
+            splitpoint_to_erase = get_splitpoint_clicked(button_y2,3, 1);
+
+            //if we have found a splitpoint to erase
+            if (splitpoint_to_erase != -1)
+            {
+              remove_splitpoints = TRUE;
+              remove_splitpoint(splitpoint_to_erase,TRUE);
+            }
+            //refresh the drawing area
+            refresh_drawing_area();
+          }
+        }
+      }
+    }
+  }
+
   return TRUE;
 }
 
@@ -2621,81 +2666,76 @@ gboolean da_unpress_event (GtkWidget    *da,
 {
   //only if we are playing
   //and the timer active(connected to player)
-  if(playing&&
-     timer_active)
+  if (playing && timer_active)
+  {
+    if (event->button == 1)
     {
-      if (event->button == 1)
+      button1_pressed = FALSE;
+      //if we move the current _position_
+      if (!move_splitpoints && !remove_splitpoints &&
+          !select_splitpoints && !check_splitpoint)
+      {
+        remove_status_message();
+        player_jump((gint)(move_time * 10));
+        change_progress_bar();
+
+        //if we have more than 2 splitpoints
+        //if we are outside the split preview, we 
+        //cancel split preview
+        if (quick_preview_end_splitpoint == -1)
         {
-          button1_pressed = FALSE;
-          //if we move the current _position_
-          if(!move_splitpoints && !remove_splitpoints &&
-             !select_splitpoints)
-            {
-              remove_status_message();
-              player_jump((gint)(move_time * 10));
-              change_progress_bar();
-              
-              //if we have more than 2 splitpoints
-              //if we are outside the split preview, we 
-              //cancel split preview
-              if (quick_preview_end_splitpoint == -1)
-                {
-                  if (move_time <
-                      get_splitpoint_time(preview_start_splitpoint)
-                      /10)
-                    {
-                      cancel_quick_preview_all();
-                    }
-                }
-              else
-                {
-                  if ((move_time < 
-                       get_splitpoint_time(preview_start_splitpoint)
-                       /10) ||
-                      (move_time > 
-                       get_splitpoint_time(quick_preview_end_splitpoint)
-                       /10))
-                    {
-                      cancel_quick_preview_all();
-                    }
-                  else
-                    //if we are inside, we turn on quick preview
-                    {
-                      //if we don't have a preview with the last
-                      //splitpoint
-                      if (quick_preview_end_splitpoint != -1)
-                        {
-                          //we unpause the player
-                          if (player_is_paused())
-                            {
-                              player_pause();
-                            }
-                          quick_preview = TRUE;
-                        }
-                    }
-                }
-            }
-          else
-            {
-              //if we moved the splitpoint
-              if (move_splitpoints)
-                {
-                  //we update the current splitpoint
-                  update_splitpoint_from_time(splitpoint_to_move,
-                                              move_time);
-                  splitpoint_to_move = -1;                
-                }
-            }
-          move_splitpoints = FALSE;
-          select_splitpoints = FALSE;
-        }
-      else
-        if (event->button == 3)
+          if (move_time < get_splitpoint_time(preview_start_splitpoint) /10)
           {
-            button2_pressed = FALSE;
-            remove_splitpoints = FALSE;
+            cancel_quick_preview_all();
           }
+        }
+        else
+        {
+          if ((move_time < get_splitpoint_time(preview_start_splitpoint) /10) ||
+              (move_time > get_splitpoint_time(quick_preview_end_splitpoint) /10))
+          {
+            cancel_quick_preview_all();
+          }
+          else
+          //if we are inside, we turn on quick preview
+          {
+            //if we don't have a preview with the last
+            //splitpoint
+            if (quick_preview_end_splitpoint != -1)
+            {
+              //we unpause the player
+              if (player_is_paused())
+              {
+                player_pause();
+              }
+              quick_preview = TRUE;
+            }
+          }
+        }
+      }
+      else
+      {
+        //if we moved the splitpoint
+        if (move_splitpoints)
+        {
+          //we update the current splitpoint
+          update_splitpoint_from_time(splitpoint_to_move, move_time);
+          splitpoint_to_move = -1;                
+        }
+      }
+      move_splitpoints = FALSE;
+      select_splitpoints = FALSE;
+      check_splitpoint = FALSE;
     }
+    else
+    {
+      if (event->button == 3)
+      {
+        button2_pressed = FALSE;
+        remove_splitpoints = FALSE;
+      }
+    }
+  }
   
   //refresh the drawing area
   refresh_drawing_area();
@@ -2710,91 +2750,98 @@ gboolean da_notify_event (GtkWidget     *da,
 {
   //only if we are playing
   //and the timer active(connected to player)
-  if((playing&&
-      timer_active)&&
-     (button1_pressed || button2_pressed))
+  if ((playing && timer_active) &&
+      (button1_pressed || button2_pressed))
+  {
+    gint x, y;
+    GdkModifierType state;
+    gdk_window_get_pointer (event->window, &x, &y, &state);
+
+    //drawing area width
+    gfloat width_drawing_area = (gfloat) da->allocation.width;
+
+    if (state)
     {
-      gint x, y;
-      GdkModifierType state;
-      gdk_window_get_pointer (event->window, &x, &y, &state);
-      
-      //drawing area width
-      gfloat width_drawing_area =
-        (gfloat)da->allocation.width;
-      
-      if (state)
+      //we push left button
+      if (button1_pressed)
+      {
+        //if we move the splitpoints
+        if (move_splitpoints)
         {
-          //we push left button
-          if (button1_pressed)
-            {
-              //if we move the splitpoints
-              if (move_splitpoints)
-                {
-                  gdouble splitpoint_time = 
-                    get_splitpoint_time(splitpoint_to_move) / 10;
-                  
-                  move_time = 
-                    splitpoint_time + 
-                    pixels_to_time(width_drawing_area,(x - button_x));
-                }
-              else
-                {
-                  //if we remove a splitpoint
-                  if (remove_splitpoints ||
-                      select_splitpoints)
-                    {
-                      move_time = current_time;
-                    }
-                  else
-                    {
-                      move_time = 
-                        current_time +
-                        pixels_to_time(width_drawing_area,(x - button_x));
-                    }
-                }
-              //if too left or too right
-              if (move_time < 0)
-                move_time = 0;
-              if (move_time > total_time)
-                move_time = total_time;
-              //refresh the drawing area
-              refresh_drawing_area();
-            }
-          else
-            if (button2_pressed)
-              {
-                gint diff = -((event->x - button_x2) * 1);
-                if (diff < (-width_drawing_area + 1))
-                  {
-                    diff = -width_drawing_area + 1;
-                  }
-                if (diff > (width_drawing_area - 1))
-                  {
-                    diff = width_drawing_area - 1;
-                  }
-            
-                zoom_coeff = diff /
-                  (width_drawing_area);
-                if (zoom_coeff < 0)
-                  {
-                    zoom_coeff = 1/(zoom_coeff+1);
-                  }
-                else
-                  {
-                    zoom_coeff = 1 - zoom_coeff;
-                  }
-                zoom_coeff = zoom_coeff_old * zoom_coeff;
-                if (zoom_coeff < 0.2)
-                  zoom_coeff = 0.2;
-                if (zoom_coeff > 10 *
-                    total_time / 6000)
-                  zoom_coeff = 10 *
-                    total_time / 6000;
-                //refresh the drawing area
-                refresh_drawing_area();
-              }
+          gdouble splitpoint_time = 
+            get_splitpoint_time(splitpoint_to_move) / 10;
+
+          move_time = splitpoint_time + 
+            pixels_to_time(width_drawing_area,(x - button_x));
         }
+        else
+        {
+          //if we remove a splitpoint
+          if (remove_splitpoints || select_splitpoints || check_splitpoint)
+          {
+            move_time = current_time;
+          }
+          else
+          {
+            move_time = current_time +
+              pixels_to_time(width_drawing_area,(x - button_x));
+          }
+        }
+        //if too left or too right
+        if (move_time < 0)
+        {
+          move_time = 0;
+        }
+        if (move_time > total_time)
+        {
+          move_time = total_time;
+        }
+        //refresh the drawing area
+        refresh_drawing_area();
+      }
+      else
+      {
+        if (button2_pressed)
+        {
+          gint diff = -((event->x - button_x2) * 1);
+
+          if (diff < (-width_drawing_area + 1))
+          {
+            diff = -width_drawing_area + 1;
+          }
+          if (diff > (width_drawing_area - 1))
+          {
+            diff = width_drawing_area - 1;
+          }
+
+          zoom_coeff = diff / (width_drawing_area);
+
+          if (zoom_coeff < 0)
+          {
+            zoom_coeff = 1/(zoom_coeff+1);
+          }
+          else
+          {
+            zoom_coeff = 1 - zoom_coeff;
+          }
+
+          zoom_coeff = zoom_coeff_old * zoom_coeff;
+
+          if (zoom_coeff < 0.2)
+          {
+            zoom_coeff = 0.2;
+          }
+          if (zoom_coeff > 10 * total_time / 6000)
+          {
+            zoom_coeff = 10 * total_time / 6000;
+          }
+
+          //refresh the drawing area
+          refresh_drawing_area();
+        }
+      }
     }
+  }
   
   return TRUE;
 }
@@ -2809,7 +2856,7 @@ GtkWidget *create_drawing_area()
     (GTK_FRAME (frame), GTK_SHADOW_NONE);
   //our drawing area
   da = gtk_drawing_area_new();
-  gtk_widget_set_size_request(da,400,105);
+  gtk_widget_set_size_request(da,400,123);
   g_signal_connect (da, "expose_event",
                     G_CALLBACK (da_expose_event), NULL);
   g_signal_connect (da, "button_press_event",
@@ -3327,12 +3374,11 @@ gint mytimer(gpointer data)
         //if not playing but still connected
         {
           //reset player minutes and seconds if needed
-          if ((player_minutes != 0) 
-              || (player_seconds != 0))
-            {
-              player_minutes = 0;
-              player_seconds = 0;
-            }
+          if ((player_minutes != 0) || (player_seconds != 0))
+          {
+            player_minutes = 0;
+            player_seconds = 0;
+          }
           print_player_filename();
           reset_song_infos();
           reset_label_time();
