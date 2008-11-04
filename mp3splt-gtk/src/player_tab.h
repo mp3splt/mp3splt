@@ -153,15 +153,12 @@ void draw_marks(gint time_interval,
 //motif for splitpoints
 //draw is false if we draw the splitpoint we move
 void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
-                            gint ylimit,gint ylimit2,
                             gint x,gint draw,
                             gint current_point_hundr_secs,
                             gboolean move,
                             gint number_splitpoint);
 void draw_splitpoints(gint left_mark,
                       gint right_mark,
-                      gint ylimit,
-                      gint ylimit2,
                       GtkWidget *da,
                       GdkGC *gc);
 gboolean da_expose_event (GtkWidget      *da,

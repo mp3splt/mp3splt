@@ -175,7 +175,7 @@ extern GtkWidget *window;
 //in the table or not
 void update_add_button()
 {
-  if (check_if_splitpoint_exists(tree_view,
+  if (check_if_splitpoint_does_not_exists(tree_view,
                                  spin_mins, 
                                  spin_secs,
                                  spin_hundr_secs,-1))
@@ -329,11 +329,11 @@ void order_length_column(GtkTreeView *tree_view)
 
 //checks if splitpoints exists in the table
 //and different from current_split
-gboolean check_if_splitpoint_exists(GtkTreeView *tree_view,
-                                    gint minutes, 
-                                    gint seconds,
-                                    gint hundr_secs,
-                                    gint current_split)
+gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
+    gint minutes, 
+    gint seconds,
+    gint hundr_secs,
+    gint current_split)
 {
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -350,46 +350,46 @@ gboolean check_if_splitpoint_exists(GtkTreeView *tree_view,
   //if the table is not empty
   //get iter number
   if(gtk_tree_model_get_iter_first(model, &iter))
+  {
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        COL_MINUTES, &tree_minutes,
+        COL_SECONDS, &tree_seconds,
+        COL_HUNDR_SECS, &tree_hundr_secs,
+        -1);
+
+    //supposing we have a finite tree, so it will break somehow
+    while(TRUE)
     {
       gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-                         COL_MINUTES, &tree_minutes,
-                         COL_SECONDS, &tree_seconds,
-                         COL_HUNDR_SECS, &tree_hundr_secs,
-                         -1);
-      
-      //supposing we have a finite tree, so it will break somehow
-      while(TRUE)
-        {
-          gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-                             COL_MINUTES, &tree_minutes,
-                             COL_SECONDS, &tree_seconds,
-                             COL_HUNDR_SECS, &tree_hundr_secs,
-                             -1);
-          
-          //we get the current line
-          path = gtk_tree_model_get_path(model, &iter);
-          i = gtk_tree_path_get_indices (path)[0];
-          
-          //if we already have the splitpoints in the table, return
-          //FALSE
-          if ((minutes == tree_minutes)
-              && (seconds == tree_seconds)
-              && (hundr_secs == tree_hundr_secs)
-              && (i != current_split))
-            {
-              //free memory
-              gtk_tree_path_free (path);
-              return FALSE;
-            }
-          
-          //free memory
-          gtk_tree_path_free (path);
-          
-          //go to next iter number(row)
-          if(!gtk_tree_model_iter_next(model, &iter))
-            break;
-        }
+          COL_MINUTES, &tree_minutes,
+          COL_SECONDS, &tree_seconds,
+          COL_HUNDR_SECS, &tree_hundr_secs,
+          -1);
+
+      //we get the current line
+      path = gtk_tree_model_get_path(model, &iter);
+      i = gtk_tree_path_get_indices (path)[0];
+
+      //if we already have the splitpoints in the table, return
+      //FALSE
+      if ((minutes == tree_minutes)
+          && (seconds == tree_seconds)
+          && (hundr_secs == tree_hundr_secs)
+          && (i != current_split))
+      {
+        //free memory
+        gtk_tree_path_free (path);
+        return FALSE;
+      }
+
+      //free memory
+      gtk_tree_path_free (path);
+
+      //go to next iter number(row)
+      if(!gtk_tree_model_iter_next(model, &iter))
+        break;
     }
+  }
   
   //if everything is ok, 
   //and we have no row containing the splitpoint,
@@ -620,17 +620,18 @@ void remove_splitpoint(gint index,gint stop_preview)
 //updates a splipoint
 void update_splitpoint(gint index, Split_point new_point)
 {
-  if (check_if_splitpoint_exists(tree_view,
-        new_point.mins, 
-        new_point.secs,
-        new_point.hundr_secs,-1))
+  int splitpoint_does_not_exists = check_if_splitpoint_does_not_exists(tree_view,
+      new_point.mins, new_point.secs, new_point.hundr_secs,-1);
+  Split_point old_point = g_array_index(splitpoints, Split_point, index);
+
+  if (splitpoint_does_not_exists ||
+      (!splitpoint_does_not_exists && old_point.checked != new_point.checked))
   {
     first_splitpoint_selected = get_first_splitpoint_selected();
 
     gchar *description = NULL;
     description = get_splitpoint_name(index);
-    g_snprintf(current_description, 255, "%s",
-        description);
+    g_snprintf(current_description, 255, "%s", description);
     g_free(description);
 
     //we remove the splitpoint, then we add it
@@ -639,18 +640,12 @@ void update_splitpoint(gint index, Split_point new_point)
   }
   else
   {      
-    Split_point old_point = g_array_index(splitpoints, Split_point, index);
     //don't put error if we move the same splitpoint
     //on the same place
     if ((new_point.mins == old_point.mins) &&
         (new_point.secs == old_point.secs) &&
         (new_point.hundr_secs == old_point.hundr_secs))
     {
-      if (old_point.checked != new_point.checked)
-      {
-        g_array_remove_index(splitpoints,index);
-        g_array_insert_val(splitpoints,index,new_point);
-      }
     }
     else
     {
@@ -662,7 +657,7 @@ void update_splitpoint(gint index, Split_point new_point)
 }
 
 //updates a splitpoint
-//i is the position in the GArray with splitpoints
+//index is the position in the GArray with splitpoints
 void update_splitpoint_from_time(gint index, gdouble time)
 {
   //if we have another splitpoint on the same place
@@ -672,7 +667,18 @@ void update_splitpoint_from_time(gint index, gdouble time)
                            &new_point.hundr_secs,
                            &new_point.secs,
                            &new_point.mins);
+  Split_point old_point = g_array_index(splitpoints, Split_point, index);
+  new_point.checked = old_point.checked;
   update_splitpoint(index, new_point);
+}
+
+//updates a splitpoint
+//index is the position in the GArray with splitpoints
+void update_splitpoint_check(gint index)
+{
+  Split_point old_point = g_array_index(splitpoints, Split_point, index);
+  old_point.checked ^= 1;
+  update_splitpoint(index, old_point);
 }
 
 //event for editing a cell
@@ -800,10 +806,10 @@ void add_splitpoint(Split_point my_split_point,
   GtkTreeIter iter;
   GtkTreeModel *model;
   
-  if(check_if_splitpoint_exists(tree_view,
-                                my_split_point.mins,
-                                my_split_point.secs,
-                                my_split_point.hundr_secs,-1))
+  if(check_if_splitpoint_does_not_exists(tree_view,
+        my_split_point.mins,
+        my_split_point.secs,
+        my_split_point.hundr_secs,-1))
     {
       gchar *temp = g_strdup(current_description);
       update_current_description(temp, -1);
@@ -1321,13 +1327,13 @@ void remove_all_rows (GtkWidget *widget, gpointer data)
   
   //for all the splitnumbers
   while (splitnumber > 0)
-    {
-      gtk_tree_model_get_iter_first(model, &iter);
-      gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
-      //remove values from the splitpoint array
-      g_array_remove_index (splitpoints, (splitnumber-1));
-      splitnumber--;
-    }
+  {
+    gtk_tree_model_get_iter_first(model, &iter);
+    gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+    //remove values from the splitpoint array
+    g_array_remove_index (splitpoints, (splitnumber-1));
+    splitnumber--;
+  }
   
   //disable remove all button
   if(GTK_WIDGET_SENSITIVE(remove_all_button))
@@ -1721,9 +1727,6 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
   new_point.checked = checked;
   //we update the splitpoint
   update_splitpoint(index, new_point);
-
-  //set new value
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_CHECK, checked, -1);
 
   //free memory
   gtk_tree_path_free(path);
