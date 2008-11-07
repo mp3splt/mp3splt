@@ -1566,6 +1566,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
   off_t position = ftello(oggstate->in); // Some backups
   int saveW = oggstate->prevW;
   float th = splt_u_convertfromdB(threshold);
+  unsigned long count = 0;
 
   ogg_sync_init(&oy);
   ogg_stream_init(&os, oggstate->serial);
@@ -1743,13 +1744,17 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
       //progress bar
       if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
       {
-        float level = splt_u_convert2dB(oggstate->temp_level);
-        if (state->split.get_silence_level)
+        if (count++ % 25 == 0)
         {
-          state->split.get_silence_level(level, state->split.silence_level_client_data);
+          float level = splt_u_convert2dB(oggstate->temp_level);
+          if (state->split.get_silence_level)
+          {
+            state->split.get_silence_level( (unsigned long) (((double) pos / oggstate->vi->rate) * 100.0),
+                level, state->split.silence_level_client_data);
+          }
+          state->split.p_bar->silence_db_level = level;
+          state->split.p_bar->silence_found_tracks = found;
         }
-        state->split.p_bar->silence_db_level = level;
-        state->split.p_bar->silence_found_tracks = found;
 
         //if we have cancelled the split
         if (splt_t_split_is_canceled(state))

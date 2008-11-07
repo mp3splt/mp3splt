@@ -280,7 +280,7 @@ int mp3splt_set_progress_function(splt_state *state,
 }
 
 int mp3splt_set_silence_level_function(splt_state *state,
-  void (*get_silence_cb)(float level, void *user_data),
+  void (*get_silence_cb)(long time, float level, void *user_data),
   void *data)
 {
   int error = SPLT_OK;

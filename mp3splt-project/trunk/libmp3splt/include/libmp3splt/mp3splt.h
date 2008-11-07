@@ -349,7 +349,7 @@ typedef struct {
   //for the progress bar
   splt_progress *p_bar;
   //callback for sending the silence level to the client
-  void (*get_silence_level)(float level, void *user_data);
+  void (*get_silence_level)(long time, float level, void *user_data);
   //user data set by the client for the 'get_silence_level' function
   void *silence_level_client_data;
   //sends a message to the main program to tell him what
@@ -1315,7 +1315,7 @@ int mp3splt_set_split_filename_function(splt_state *state,
 int mp3splt_set_progress_function(splt_state *state,
     void (*progress_cb)(splt_progress *p_bar));
 int mp3splt_set_silence_level_function(splt_state *state,
-  void (*get_silence_cb)(float level, void *user_data),
+  void (*get_silence_cb)(long time, float level, void *user_data),
   void *user_data);
 
 /************************************/

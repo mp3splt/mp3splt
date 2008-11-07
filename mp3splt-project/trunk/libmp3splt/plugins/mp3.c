@@ -958,7 +958,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
             mp3state->frames = mad_bit_read(&ptr, 32);
             total = mp3state->frame.header.duration;
             mad_timer_multiply(&total, mp3state->frames);
-            float total_time_milliseconds = mad_timer_count(total, MAD_UNITS_MILLISECONDS);
+            float total_time_milliseconds = (float) mad_timer_count(total, MAD_UNITS_MILLISECONDS);
             total_time_milliseconds /= 10.f;
             splt_t_set_total_time(state, (long) ceilf(total_time_milliseconds));
           }
@@ -1167,6 +1167,7 @@ static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t 
 {
   int i, j;
   mad_fixed_t sample;
+  int silence = 1;
 
   for (j=0; j<channels; j++)
   {
@@ -1174,16 +1175,16 @@ static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t 
     {
       //get silence spot?
       sample = mad_f_abs(mp3state->synth.pcm.samples[j][i]);
-      mp3state->temp_level = mp3state->temp_level *0.999 + sample*0.001;
+      mp3state->temp_level = mp3state->temp_level * 0.999 + sample * 0.001;
 
       if (sample > threshold)
       {
-        return 0;
+        silence = 0;
       }
     }
   }
 
-  return 1;
+  return silence;
 }
 
 //scan for silence
@@ -1196,6 +1197,7 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   int len = 0, found = 0, shot;
   short first, flush = 0, stop = 0;
   unsigned long silence_begin = 0, silence_end = 0, time;
+  unsigned long count = 0;
   off_t pos;
   mad_fixed_t th;
 
@@ -1240,7 +1242,7 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
         //we get mad infos and put them in the mp3state
         mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
         mad_synth_frame(&mp3state->synth,&mp3state->frame);
-        time = mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
+        time = (unsigned long) mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
 
         if (length > 0)
         {
@@ -1306,13 +1308,16 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
         {
           pos = ftello(mp3state->file_input);
 
-          float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
-          if (state->split.get_silence_level)
+          if (count++ % 100 == 0)
           {
-            state->split.get_silence_level(level, state->split.silence_level_client_data);
+            float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
+            if (state->split.get_silence_level)
+            {
+              state->split.get_silence_level(time, level, state->split.silence_level_client_data);
+            }
+            state->split.p_bar->silence_db_level = level;
+            state->split.p_bar->silence_found_tracks = found;
           }
-          state->split.p_bar->silence_db_level = level;
-          state->split.p_bar->silence_found_tracks = found;
 
           //if we don't have silence split,
           //put the 1/4 of progress
@@ -1767,7 +1772,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           case 1:
             mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
             mp3state->frames++;
-            time = mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
+            time = (unsigned long) mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
             break;
           case 0:
             break;

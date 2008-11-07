@@ -1385,7 +1385,7 @@ int check_if_directory(char *fname)
   return SPLT_FALSE;
 }
 
-void get_silence_level(float level, void *user_data)
+void get_silence_level(long time, float level, void *user_data)
 {
   silence_level *sl = user_data;
   if (level == INT_MIN)

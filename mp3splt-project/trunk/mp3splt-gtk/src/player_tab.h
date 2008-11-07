@@ -35,6 +35,13 @@
  *
  *********************************************************/
 
+//time structure
+typedef struct
+{
+  long time;
+  float level;
+} silence_wave;
+
 //float comparison
 #define DELTA 5
 

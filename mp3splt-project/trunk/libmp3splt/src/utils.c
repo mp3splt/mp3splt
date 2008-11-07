@@ -82,7 +82,7 @@ long splt_u_convert_hundreths (const char *s)
 float splt_u_convert2dB(double input)
 {
   float level;
-  if (input<=0.0)
+  if (input <= 0.0)
   {
     level = -96.0;
   }

@@ -45,5 +45,5 @@ typedef struct
   gint mins;
   gint secs;
   gint hundr_secs;
-}
-Split_point;
+} Split_point;
+
