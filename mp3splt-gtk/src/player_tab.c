@@ -91,6 +91,7 @@ extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 extern guchar *get_real_name_from_filename(guchar *filename);
 extern GtkWidget *playlist_box;
+extern GtkWidget *cancel_button;
 
 //our progress bar
 GtkWidget *progress_bar;
@@ -136,6 +137,12 @@ GtkWidget *pause_button;
 GtkWidget *player_add_button;
 GtkWidget *go_beg_button;
 GtkWidget *go_end_button;
+
+//silence wave
+GtkWidget *silence_wave_button = NULL;
+silence_wave *silence_points = NULL;
+gint number_of_silence_points = 0;
+gint we_scan_for_silence = FALSE;
 
 //stock if the timer is active or not
 gboolean timer_active = FALSE;
@@ -212,12 +219,14 @@ gint real_progress_length;
 gint real_move_split_length;
 gint real_checkbox_length;
 gint real_text_length;
+gint real_wave_length;
 //
 gint erase_split_ylimit;
 gint progress_ylimit;
 gint splitpoint_ypos;
 gint checkbox_ypos;
 gint text_ypos;
+gint wave_ypos;
 
 //remove file button
 GtkWidget *playlist_remove_file_button;
@@ -304,8 +313,8 @@ void disable_player_buttons()
   gtk_widget_set_sensitive(go_beg_button, FALSE);
   gtk_widget_set_sensitive(go_end_button, FALSE);
   gtk_widget_set_sensitive(play_button, FALSE);
-  gtk_widget_set_sensitive(player_add_button,
-                           FALSE);
+  gtk_widget_set_sensitive(player_add_button, FALSE);
+  gtk_widget_set_sensitive(silence_wave_button, FALSE);
 }
 
 //changes connect and disconnect buttons when connecting to player
@@ -665,6 +674,82 @@ void change_song_position()
   player_jump(position);  
 }
 
+//function called from the library when scanning for the silence level
+void get_silence_level(long time, float level, void *user_data)
+{
+  if (! silence_points)
+  {
+    silence_points = g_malloc(sizeof(silence_wave));
+  }
+  else
+  {
+    silence_points = g_realloc(silence_points,
+        sizeof(silence_wave) * (number_of_silence_points + 1));
+  }
+
+  silence_points[number_of_silence_points].time = time;
+  silence_points[number_of_silence_points].level = level + 96 + 1;
+
+  number_of_silence_points++;
+}
+
+void detect_silence(gpointer data)
+{
+  gint err = SPLT_OK;
+
+  //set the silence level function
+  mp3splt_set_silence_level_function(the_state, get_silence_level, NULL);
+
+  //erase previous points
+  if (silence_points)
+  {
+    g_free(silence_points);
+    silence_points = NULL;
+    number_of_silence_points = 0;
+  }
+
+  gdk_threads_enter();
+  gtk_widget_set_sensitive(silence_wave_button, FALSE);
+  gtk_widget_set_sensitive(cancel_button, TRUE);
+  gdk_threads_leave();
+
+  //we scan for silence
+  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  mp3splt_set_filename_to_split(the_state, filename_to_split);
+  mp3splt_erase_all_splitpoints(the_state, &err);
+  if (err >= 0)
+  {
+    we_are_splitting = TRUE;
+    we_scan_for_silence = TRUE;
+    mp3splt_set_silence_points(the_state, &err);
+    we_scan_for_silence = FALSE;
+    we_are_splitting = FALSE;
+  }
+
+  //lock gtk
+  gdk_threads_enter();
+
+  //here we have in err a possible error from the silence detection
+  print_status_bar_confirmation(err);
+
+  gtk_widget_set_sensitive(cancel_button, FALSE);
+  gtk_widget_set_sensitive(silence_wave_button, TRUE);
+
+  gdk_threads_leave();
+
+  //unset the silence level function
+  mp3splt_set_silence_level_function(the_state, NULL, NULL);
+}
+
+//adds a splitpoint from the player
+void set_silence_wave(GtkWidget *widget, gpointer data)
+{
+  if (timer_active)
+  { 
+    g_thread_create((GThreadFunc)detect_silence, NULL, TRUE, NULL);
+  }
+}
+
 //creates the player buttons hbox
 GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
 {
@@ -752,6 +837,15 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   
   gtk_tooltips_set_tip(tooltip, player_add_button,(gchar *)_("add splitpoint from player"),"");
   
+  //silence wave button
+  silence_wave_button = (GtkWidget *)create_cool_button(GTK_STOCK_REFRESH,
+      (gchar *)_("Silence wave"), FALSE);
+  //put the new button in the box
+  gtk_box_pack_end(GTK_BOX (player_buttons_hbox), silence_wave_button, FALSE, FALSE, 5);
+  g_signal_connect(G_OBJECT(silence_wave_button), "clicked", G_CALLBACK(set_silence_wave), NULL);
+  gtk_widget_set_sensitive(silence_wave_button, FALSE);
+  gtk_tooltips_set_tip(tooltip, silence_wave_button,(gchar *)_("shows the audio level wave"),"");
+
   /* connect player button */
   connect_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_CONNECT,(gchar *)_("_Connect    "),
@@ -1465,8 +1559,7 @@ gchar *get_time_for_drawing(gchar *str,
 }
 
 //transform time to pixels
-gint time_to_pixels(gint width,
-                    gfloat time)
+gint time_to_pixels(gint width, gfloat time)
 {
   return (width * time * zoom_coeff)/total_time;
 }
@@ -1847,6 +1940,57 @@ void draw_splitpoints(gint left_mark,
     }
 }
 
+void draw_silence_wave(gint left_mark, gint right_mark, 
+    GtkWidget *da, GdkGC *gc)
+{
+  if (silence_points && ! we_scan_for_silence)
+  {
+    GdkPoint *points = NULL;
+    gint number_of_points = 0;
+
+    //we set default black color
+    GdkColor color;
+    color.red = 0;color.green = 0;color.blue = 0;
+    gdk_gc_set_rgb_fg_color(gc, &color);
+    gdk_gc_set_line_attributes(gc, 0.1, GDK_LINE_SOLID,
+        GDK_CAP_BUTT, GDK_JOIN_ROUND);
+
+    int i = 0;
+    for (i = 0;i < number_of_silence_points;i++)
+    {
+      if ((silence_points[i].time <= right_mark) &&
+        (silence_points[i].time >= left_mark))
+      {
+        if (! points)
+        {
+          points = g_malloc(sizeof(GdkPoint));
+        }
+        else
+        {
+          points = g_realloc(points, sizeof(GdkPoint) * (number_of_points + 1));
+        }
+
+        points[number_of_points].x = get_draw_line_position(width_drawing_area,
+            (gfloat) silence_points[i].time);
+        points[number_of_points].y = text_ypos + margin + (int) floorf(silence_points[i].level);
+
+        number_of_points++;
+      }
+    }
+
+    //draw the points
+    gdk_draw_lines(da->window, gc, points, number_of_points);
+
+    //free the points
+    if (points)
+    {
+      g_free(points);
+      points = NULL;
+      number_of_points = 0;
+    }
+  }
+}
+
 //event for drawing the progress drawing area
 gboolean da_expose_event (GtkWidget      *da,
                           GdkEventExpose *event,
@@ -1860,13 +2004,15 @@ gboolean da_expose_event (GtkWidget      *da,
   real_progress_length = 26;
   real_move_split_length = 16;
   real_checkbox_length = 12;
-  real_text_length = 16;
+  real_text_length = 12;
+  real_wave_length = 96;
 
   gint erase_splitpoint_length = real_erase_split_length + (margin * 2);
   gint progress_length = real_progress_length + margin;
   gint move_split_length = real_move_split_length + margin;
-  gint text_length = real_text_length;
+  gint text_length = real_text_length + margin;
   gint checkbox_length = real_checkbox_length + margin;
+  gint wave_length = real_wave_length + margin;
 
   //
   erase_split_ylimit = erase_splitpoint_length;
@@ -1874,6 +2020,9 @@ gboolean da_expose_event (GtkWidget      *da,
   splitpoint_ypos = progress_ylimit + move_split_length;
   checkbox_ypos = splitpoint_ypos + checkbox_length;
   text_ypos = checkbox_ypos + text_length + margin;
+  wave_ypos = text_ypos + wave_length + margin;
+
+  gint bottom_left_middle_right_text_ypos = wave_ypos;
   
   PangoLayout *layout;
   //graphic context
@@ -1894,7 +2043,7 @@ gboolean da_expose_event (GtkWidget      *da,
   //background rectangle
   gdk_draw_rectangle (da->window,gc,
                       TRUE, 0,0,
-                      width_drawing_area, text_ypos + text_length + 2);
+                      width_drawing_area, wave_ypos + text_length + 2);
 
   //background white color
   color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 255;
@@ -1927,7 +2076,12 @@ gboolean da_expose_event (GtkWidget      *da,
                       0,checkbox_ypos+margin,
                       width_drawing_area,
                       text_length);
-  
+  gdk_draw_rectangle (da->window,gc,
+                      TRUE,
+                      0,text_ypos + margin,
+                      width_drawing_area,
+                      wave_length);
+ 
   //only if we are playing
   //and the timer active(connected to player)
   if(playing&& timer_active)
@@ -2074,7 +2228,7 @@ gboolean da_expose_event (GtkWidget      *da,
           TRUE,
           0,0,
           beg_pixel,
-          text_ypos);
+          wave_ypos);
     }
     else
     {
@@ -2086,7 +2240,7 @@ gboolean da_expose_event (GtkWidget      *da,
               left_time, FALSE, &nbr_chars));
       //left text
       gdk_draw_layout(da->window, gc,
-          15,text_ypos,layout);
+          15,bottom_left_middle_right_text_ypos,layout);
       //we free the memory for the layout
       g_object_unref (layout);
     }
@@ -2102,10 +2256,9 @@ gboolean da_expose_event (GtkWidget      *da,
       gdk_gc_set_rgb_fg_color (gc, &color);
 
       gdk_draw_rectangle (da->window,gc,
-          TRUE,
-          end_pixel,0,
+          TRUE, end_pixel,0,
           width_drawing_area,
-          text_ypos);
+          bottom_left_middle_right_text_ypos);
     }
     else
     {
@@ -2118,7 +2271,7 @@ gboolean da_expose_event (GtkWidget      *da,
       //right text
       gdk_draw_layout(da->window, gc,
           width_drawing_area - 52,
-          text_ypos, layout);
+          bottom_left_middle_right_text_ypos, layout);
       //we free the memory for the layout
       g_object_unref (layout);
     }
@@ -2215,12 +2368,10 @@ gboolean da_expose_event (GtkWidget      *da,
         //we put the current middle text
         layout =
           get_drawing_text(get_time_for_drawing(str,
-                current_time,
-                FALSE,
-                &nbr_chars));
+                current_time, FALSE, &nbr_chars));
         gdk_draw_layout(da->window, gc,
             width_drawing_area/2-11,
-            text_ypos, layout);
+            bottom_left_middle_right_text_ypos, layout);
         //we free the memory for the layout
         g_object_unref (layout);
       }
@@ -2238,12 +2389,10 @@ gboolean da_expose_event (GtkWidget      *da,
         //move time text
         layout =
           get_drawing_text(get_time_for_drawing(str,
-                move_time,
-                FALSE,
-                &nbr_chars));
+                move_time, FALSE, &nbr_chars));
         gdk_draw_layout(da->window, gc,
             width_drawing_area/2-11,
-            text_ypos, layout);
+            bottom_left_middle_right_text_ypos, layout);
         //we free the memory for the layout
         g_object_unref (layout);
       }
@@ -2255,15 +2404,12 @@ gboolean da_expose_event (GtkWidget      *da,
       //set the color for the graphic context
       gdk_gc_set_rgb_fg_color (gc, &color);
 
-      layout =
-        get_drawing_text(get_time_for_drawing(str,
-              center_time,
-              FALSE,
-              &nbr_chars));
+      layout = get_drawing_text(get_time_for_drawing(str,
+              center_time, FALSE, &nbr_chars));
       //center text
       gdk_draw_layout(da->window, gc,
           width_drawing_area/2-11,
-          text_ypos, layout);
+          bottom_left_middle_right_text_ypos, layout);
       //we free the memory for the layout
       g_object_unref (layout);
     }
@@ -2279,10 +2425,13 @@ gboolean da_expose_event (GtkWidget      *da,
         width_drawing_area/2,progress_ylimit);
 
     //we draw the splitpoints
-    draw_splitpoints(left_mark,right_mark, da, gc);
+    draw_splitpoints(left_mark, right_mark, da, gc);
+
+    //we draw the silence wave if we have it 
+    draw_silence_wave(left_mark, right_mark, da, gc);
   }
   else
-    //if not playing and timer not active
+  //if not playing and timer not active
   {      
     //top color
     color.red = 255 * 212; color.green = 255 * 100; color.blue = 255 * 200;
@@ -2332,7 +2481,6 @@ gboolean da_expose_event (GtkWidget      *da,
         0, splitpoint_ypos + 1, layout);
     //we free the memory for the layout
     g_object_unref (layout);
-
   }
   
   //freeing memory
@@ -2856,7 +3004,8 @@ GtkWidget *create_drawing_area()
     (GTK_FRAME (frame), GTK_SHADOW_NONE);
   //our drawing area
   da = gtk_drawing_area_new();
-  gtk_widget_set_size_request(da,400,123);
+  //gtk_widget_set_size_request(da,400,123);
+  gtk_widget_set_size_request(da,400,232);
   g_signal_connect (da, "expose_event",
                     G_CALLBACK (da_expose_event), NULL);
   g_signal_connect (da, "button_press_event",
@@ -3401,8 +3550,11 @@ gint mytimer(gpointer data)
         {
           if (!GTK_WIDGET_SENSITIVE(player_add_button))
             {
-              gtk_widget_set_sensitive(player_add_button,
-                                       TRUE);
+              gtk_widget_set_sensitive(player_add_button, TRUE);
+            }
+            if (!GTK_WIDGET_SENSITIVE(silence_wave_button))
+            {
+              gtk_widget_set_sensitive(silence_wave_button, TRUE);
             }
         }
       

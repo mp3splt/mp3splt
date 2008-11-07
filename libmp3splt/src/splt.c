@@ -618,7 +618,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     if (state->split.get_silence_level)
     {
-      state->split.get_silence_level(INT_MIN, state->split.silence_level_client_data);
+      state->split.get_silence_level(0, INT_MIN, state->split.silence_level_client_data);
     }
     snprintf(message, 1024, " Found silence log file '%s' ! Reading silence points from file to save time ;)", log_fname);
     splt_t_put_message_to_client(state,message);
@@ -633,7 +633,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     if (state->split.get_silence_level)
     {
-      state->split.get_silence_level(INT_MAX, state->split.silence_level_client_data);
+      //TODO
+      state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
     }
     found = splt_p_scan_silence(state, error);
   }
