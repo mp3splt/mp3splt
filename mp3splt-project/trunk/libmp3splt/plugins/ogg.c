@@ -1744,7 +1744,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
       //progress bar
       if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
       {
-        if (count++ % 25 == 0)
+        //if (count++ % 10 == 0)
         {
           float level = splt_u_convert2dB(oggstate->temp_level);
           if (state->split.get_silence_level)
