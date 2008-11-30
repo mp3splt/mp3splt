@@ -180,6 +180,7 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 {
   int err = SPLT_OK;
 
+#ifndef __WIN32__
   //temporary variable that we use to set the default directories
   char temp[2048] = { '\0' };
 
@@ -195,6 +196,7 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
   memset(temp,'\0',2048);
   snprintf(temp,2048,".%c",SPLT_DIRCHAR);
   if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
+#endif
 
   return err;
 }

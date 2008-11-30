@@ -71,7 +71,7 @@ case $host in
 		;;
 	*mingw*)
 		HOST="Mingw"
-		LIBS="$LIBS -lltdl -lwsock32"
+		LIBS="$LIBS -lltdl -lwsock32 -lshlwapi"
 		;;
 	*solaris*)
 		HOST="Solaris"
