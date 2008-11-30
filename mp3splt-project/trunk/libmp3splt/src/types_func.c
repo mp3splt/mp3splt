@@ -205,7 +205,7 @@ int splt_t_alloc_init_new_plugin(splt_plugins *pl)
 }
 
 //frees the structure of one plugin data
-static void splt_t_free_plugin_data(splt_plugin_data pl_data)
+void splt_t_free_plugin_data(splt_plugin_data pl_data)
 {
   if (pl_data.info.name)
   {

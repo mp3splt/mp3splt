@@ -1727,7 +1727,6 @@ int main(int argc, char *argv[])
   if (end)
   {
     *end = '\0';
-    //if we don't launch from the program installation directory
     mp3splt_append_plugins_scan_dir(state, executable);
   }
   if (executable)
@@ -1736,29 +1735,25 @@ int main(int argc, char *argv[])
     executable = NULL;
   }
 
-  //if we don't launch from the program installation directory
-  if (end == NULL)
+  //also add the installation directory that we take from the registry
+  char mp3splt_uninstall_file[2048] = { '\0' };
+  DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
+  if (SHGetValue(HKEY_LOCAL_MACHINE,
+        TEXT("SOFTWARE\\mp3splt"),
+        TEXT("UninstallString"),
+        &dwType,
+        mp3splt_uninstall_file,
+        &dwSize) != ERROR_SUCCESS)
   {
-    //also add the installation directory that we take from the registry
-    char mp3splt_uninstall_file[2048] = { '\0' };
-    DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
-    if (SHGetValue(HKEY_LOCAL_MACHINE,
-          TEXT("SOFTWARE\\mp3splt"),
-          TEXT("UninstallString"),
-          &dwType,
-          mp3splt_uninstall_file,
-          &dwSize) != ERROR_SUCCESS)
+    //do nothing if error
+  }
+  else
+  {
+    end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
+    if (end)
     {
-      //do nothing if error
-    }
-    else
-    {
-      end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
-      if (end)
-      {
-        *end = '\0';
-        mp3splt_append_plugins_scan_dir(state, mp3splt_uninstall_file);
-      }
+      *end = '\0';
+      mp3splt_append_plugins_scan_dir(state, mp3splt_uninstall_file);
     }
   }
 #endif
