@@ -433,7 +433,7 @@ void split_tree_row_activated (GtkTreeView *tree_view,
   //connecting to player
   connect_button_event (NULL, NULL);
   //set the entry with the current filename
-  gtk_entry_set_text(GTK_ENTRY(entry), filename);
+  change_current_filename(filename);
   //starts playing, 0 means start playing
   connect_to_player_with_song(0);
       

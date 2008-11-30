@@ -1618,8 +1618,9 @@ void split_preview(gpointer *data)
               
               //we play the split file
               //set the entry with the current filename
-              gtk_entry_set_text(GTK_ENTRY(entry), split_file);
+              change_current_filename(split_file);
               g_free(split_file);
+              split_file = NULL;
               
               //starts playing, 0 means start playing
               connect_to_player_with_song(0);

@@ -139,9 +139,10 @@ GtkWidget *go_beg_button;
 GtkWidget *go_end_button;
 
 //silence wave
-GtkWidget *silence_wave_button = NULL;
+GtkWidget *silence_wave_check_button = NULL;
 silence_wave *silence_points = NULL;
 gint number_of_silence_points = 0;
+gint show_silence_wave = FALSE;
 gint we_scan_for_silence = FALSE;
 
 //stock if the timer is active or not
@@ -156,7 +157,6 @@ GtkWidget *player_handle;
 GtkWidget *playlist_handle;
 
 extern gint file_browsed;
-extern GtkWidget *entry;
 extern gint selected_player;
 extern GArray *splitpoints;
 extern gint splitnumber;
@@ -244,6 +244,91 @@ enum
 //function declarations
 gint mytimer(gpointer data);
 
+//function called from the library when scanning for the silence level
+void get_silence_level(long time, float level, void *user_data)
+{
+  if (! silence_points)
+  {
+    silence_points = g_malloc(sizeof(silence_wave));
+  }
+  else
+  {
+    silence_points = g_realloc(silence_points,
+        sizeof(silence_wave) * (number_of_silence_points + 1));
+  }
+
+  silence_points[number_of_silence_points].time = time;
+  silence_points[number_of_silence_points].level = level + 96 + 1;
+
+  number_of_silence_points++;
+}
+
+void detect_silence(gpointer data)
+{
+  gint err = SPLT_OK;
+
+  //erase previous points
+  if (silence_points)
+  {
+    g_free(silence_points);
+    silence_points = NULL;
+    number_of_silence_points = 0;
+  }
+
+  gdk_threads_enter();
+  gtk_widget_set_sensitive(cancel_button, TRUE);
+  gdk_threads_leave();
+
+  //we scan for silence
+  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  mp3splt_set_filename_to_split(the_state, filename_to_split);
+  //set the silence level function
+  mp3splt_set_silence_level_function(the_state, get_silence_level, NULL);
+  we_are_splitting = TRUE;
+  we_scan_for_silence = TRUE;
+  mp3splt_set_silence_points(the_state, &err);
+  we_scan_for_silence = FALSE;
+  we_are_splitting = FALSE;
+  //unset the silence level function
+  mp3splt_set_silence_level_function(the_state, NULL, NULL);
+
+  //lock gtk
+  gdk_threads_enter();
+
+  //here we have in err a possible error from the silence detection
+  print_status_bar_confirmation(err);
+
+  gtk_widget_set_sensitive(cancel_button, FALSE);
+
+  gdk_threads_leave();
+}
+
+void scan_for_silence_wave()
+{
+  if (we_scan_for_silence)
+  {
+    cancel_button_event(NULL, NULL);
+  }
+
+  if (timer_active)
+  {
+    g_thread_create((GThreadFunc)detect_silence, NULL, TRUE, NULL);
+  }
+}
+
+void change_current_filename(gchar *fname)
+{
+  const gchar *old_fname = gtk_entry_get_text(GTK_ENTRY(entry));
+  if (strcmp(old_fname,fname) != 0)
+  {
+    gtk_entry_set_text(GTK_ENTRY(entry), fname);
+    if (show_silence_wave)
+    {
+      scan_for_silence_wave();
+    }
+  }
+}
+
 //resets and sets inactive the progress bar
 void reset_inactive_progress_bar()
 {
@@ -314,7 +399,7 @@ void disable_player_buttons()
   gtk_widget_set_sensitive(go_end_button, FALSE);
   gtk_widget_set_sensitive(play_button, FALSE);
   gtk_widget_set_sensitive(player_add_button, FALSE);
-  gtk_widget_set_sensitive(silence_wave_button, FALSE);
+  gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
 }
 
 //changes connect and disconnect buttons when connecting to player
@@ -543,17 +628,17 @@ void disconnect_button_event (GtkWidget *widget,
 {
   //if the timer is active, deactivate the function
   if (timer_active)
+  {
+    //we open socket channel  if dealing with snackamp
+    if (selected_player == PLAYER_SNACKAMP)
     {
-      //we open socket channel  if dealing with snackamp
-      if (selected_player == PLAYER_SNACKAMP)
-        {
-          disconnect_snackamp();
-        }
-      
-      g_source_remove(timeout_id);
-      timer_active = FALSE;
+      disconnect_snackamp();
     }
-  
+
+    g_source_remove(timeout_id);
+    timer_active = FALSE;
+  }
+
   clear_data_player();
   //set browse button available
   gtk_widget_set_sensitive(browse_button, TRUE);
@@ -561,25 +646,25 @@ void disconnect_button_event (GtkWidget *widget,
   disconnect_change_buttons();
   //disable player buttons
   disable_player_buttons();
-  
+
   //update bottom progress bar to 0 and ""
   if (!we_are_splitting)
-    {
-      //fraction update
-      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-                                    0);
-      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-                                "");
-    }
-  
+  {
+    //fraction update
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
+        0);
+    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
+        "");
+  }
+
   gchar *fname;
   fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
   if (is_filee(fname))
-    {
-      file_in_entry = TRUE;
-      gtk_widget_set_sensitive(play_button, TRUE);
-    }
-  
+  {
+    file_in_entry = TRUE;
+    gtk_widget_set_sensitive(play_button, TRUE);
+  }
+
   player_quit();
 }
 
@@ -674,79 +759,31 @@ void change_song_position()
   player_jump(position);  
 }
 
-//function called from the library when scanning for the silence level
-void get_silence_level(long time, float level, void *user_data)
+//adds a splitpoint from the player
+void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
 {
-  if (! silence_points)
+  if (gtk_toggle_button_get_active(widget))
   {
-    silence_points = g_malloc(sizeof(silence_wave));
+    show_silence_wave = TRUE;
+    if (number_of_silence_points == 0)
+    {
+      scan_for_silence_wave();
+    }
   }
   else
   {
-    silence_points = g_realloc(silence_points,
-        sizeof(silence_wave) * (number_of_silence_points + 1));
-  }
-
-  silence_points[number_of_silence_points].time = time;
-  silence_points[number_of_silence_points].level = level + 96 + 1;
-
-  number_of_silence_points++;
-}
-
-void detect_silence(gpointer data)
-{
-  gint err = SPLT_OK;
-
-  //set the silence level function
-  mp3splt_set_silence_level_function(the_state, get_silence_level, NULL);
-
-  //erase previous points
-  if (silence_points)
-  {
-    g_free(silence_points);
-    silence_points = NULL;
+    show_silence_wave = FALSE;
+    if (we_scan_for_silence)
+    {
+      cancel_button_event(NULL, NULL);
+    }
+    //free the previous silence points if any
+    if (silence_points != NULL)
+    {
+      g_free(silence_points);
+      silence_points = NULL;
+    }
     number_of_silence_points = 0;
-  }
-
-  gdk_threads_enter();
-  gtk_widget_set_sensitive(silence_wave_button, FALSE);
-  gtk_widget_set_sensitive(cancel_button, TRUE);
-  gdk_threads_leave();
-
-  //we scan for silence
-  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
-  mp3splt_set_filename_to_split(the_state, filename_to_split);
-  mp3splt_erase_all_splitpoints(the_state, &err);
-  if (err >= 0)
-  {
-    we_are_splitting = TRUE;
-    we_scan_for_silence = TRUE;
-    mp3splt_set_silence_points(the_state, &err);
-    we_scan_for_silence = FALSE;
-    we_are_splitting = FALSE;
-  }
-
-  //lock gtk
-  gdk_threads_enter();
-
-  //here we have in err a possible error from the silence detection
-  print_status_bar_confirmation(err);
-
-  gtk_widget_set_sensitive(cancel_button, FALSE);
-  gtk_widget_set_sensitive(silence_wave_button, TRUE);
-
-  gdk_threads_leave();
-
-  //unset the silence level function
-  mp3splt_set_silence_level_function(the_state, NULL, NULL);
-}
-
-//adds a splitpoint from the player
-void set_silence_wave(GtkWidget *widget, gpointer data)
-{
-  if (timer_active)
-  { 
-    g_thread_create((GThreadFunc)detect_silence, NULL, TRUE, NULL);
   }
 }
 
@@ -837,14 +874,13 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   
   gtk_tooltips_set_tip(tooltip, player_add_button,(gchar *)_("add splitpoint from player"),"");
   
-  //silence wave button
-  silence_wave_button = (GtkWidget *)create_cool_button(GTK_STOCK_REFRESH,
-      (gchar *)_("Silence wave"), FALSE);
+  //silence wave check button
+  silence_wave_check_button = (GtkWidget *)gtk_check_button_new_with_label((gchar *)_("Show silence wave"));
   //put the new button in the box
-  gtk_box_pack_end(GTK_BOX (player_buttons_hbox), silence_wave_button, FALSE, FALSE, 5);
-  g_signal_connect(G_OBJECT(silence_wave_button), "clicked", G_CALLBACK(set_silence_wave), NULL);
-  gtk_widget_set_sensitive(silence_wave_button, FALSE);
-  gtk_tooltips_set_tip(tooltip, silence_wave_button,(gchar *)_("shows the audio level wave"),"");
+  gtk_box_pack_end(GTK_BOX (player_buttons_hbox), silence_wave_check_button, FALSE, FALSE, 5);
+  g_signal_connect(G_OBJECT(silence_wave_check_button), "toggled", G_CALLBACK(enable_show_silence_wave), NULL);
+  gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
+  gtk_tooltips_set_tip(tooltip, silence_wave_check_button,(gchar *)_("shows the audio level wave"),"");
 
   /* connect player button */
   connect_button = (GtkWidget *)
@@ -1196,7 +1232,7 @@ void print_player_filename()
   if ((fname != NULL) &&
       (strcmp(fname,"disconnect")))
   {
-    gtk_entry_set_text(GTK_ENTRY(entry), fname);
+    change_current_filename(fname);
   }
   
   gchar *title;
@@ -1795,9 +1831,11 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
     }
     gdk_gc_set_rgb_fg_color (gc, &color);
 
+    gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
     gdk_draw_line(da->window, gc,
         x,erase_split_ylimit + m -8,
         x,progress_ylimit + m);
+    gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
   }
   
   color.red = 255 * 22;
@@ -1892,6 +1930,28 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
     //we free the memory for the layout
     g_object_unref (layout);
   }
+
+  if (show_silence_wave)
+  {
+    //we set the black color
+    color.red = 0;color.green = 0;color.blue = 0;
+    gdk_gc_set_rgb_fg_color(gc, &color);
+
+    if (move)
+    {
+      gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+    }
+
+    //the draw silence wave middle line
+    gdk_draw_line(da->window, gc,
+        x,text_ypos + margin,
+        x,wave_ypos);
+
+    if (move)
+    {
+      gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+    }
+  }
 }
 
 //left, right mark in hundreth of seconds
@@ -1907,37 +1967,37 @@ void draw_splitpoints(gint left_mark,
   gint i;
   //we get all splitpoints
   for(i = 0; i < splitnumber; i++ )
+  {
+    current_point =
+      g_array_index(splitpoints, Split_point, i);
+    current_point_hundr_secs = 
+      current_point.hundr_secs +
+      current_point.secs * 100 +
+      current_point.mins * 6000;
+
+    //if the splitpoint is > left and < right
+    //it must be visible !
+    if ((current_point_hundr_secs <= right_mark)
+        &&(current_point_hundr_secs >= left_mark))
     {
-      current_point =
-        g_array_index(splitpoints, Split_point, i);
-      current_point_hundr_secs = 
-        current_point.hundr_secs +
-        current_point.secs * 100 +
-        current_point.mins * 6000;
-      
-      //if the splitpoint is > left and < right
-      //it must be visible !
-      if ((current_point_hundr_secs <= right_mark)
-          &&(current_point_hundr_secs >= left_mark))
-        {
-          //our split pixel (Ox)
-          gint split_pixel;
-          
-          //if it's the splitpoint we move, we draw it differently
-          gboolean draw = TRUE;
-          if (splitpoint_to_move == i)
-            {
-              draw = FALSE;
-            }
-          
-          split_pixel = 
-            get_draw_line_position(width_drawing_area,
-                                   current_point_hundr_secs);
-          draw_motif_splitpoints(da, gc, split_pixel, draw,
-                                 current_point_hundr_secs,
-                                 FALSE, i);
-        }
+      //our split pixel (Ox)
+      gint split_pixel;
+
+      //if it's the splitpoint we move, we draw it differently
+      gboolean draw = TRUE;
+      if (splitpoint_to_move == i)
+      {
+        draw = FALSE;
+      }
+
+      split_pixel = 
+        get_draw_line_position(width_drawing_area,
+            current_point_hundr_secs);
+      draw_motif_splitpoints(da, gc, split_pixel, draw,
+          current_point_hundr_secs,
+          FALSE, i);
     }
+  }
 }
 
 void draw_silence_wave(gint left_mark, gint right_mark, 
@@ -1952,14 +2012,13 @@ void draw_silence_wave(gint left_mark, gint right_mark,
     GdkColor color;
     color.red = 0;color.green = 0;color.blue = 0;
     gdk_gc_set_rgb_fg_color(gc, &color);
-    gdk_gc_set_line_attributes(gc, 0.1, GDK_LINE_SOLID,
-        GDK_CAP_BUTT, GDK_JOIN_ROUND);
+    gdk_gc_set_line_attributes(gc, 0.1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 
     int i = 0;
     for (i = 0;i < number_of_silence_points;i++)
     {
       if ((silence_points[i].time <= right_mark) &&
-        (silence_points[i].time >= left_mark))
+          (silence_points[i].time >= left_mark))
       {
         if (! points)
         {
@@ -1996,6 +2055,24 @@ gboolean da_expose_event (GtkWidget      *da,
                           GdkEventExpose *event,
                           gpointer       data)
 {  
+  int width = 0, height = 0;
+  gtk_widget_get_size_request(da, &width, &height);
+
+  if (show_silence_wave)
+  {
+    if (height != 232)
+    {
+      gtk_widget_set_size_request(da,400,232);
+    }
+  }
+  else
+  {
+    if (height != 123)
+    {
+      gtk_widget_set_size_request(da,400,123);
+    }
+  }
+
   //
   margin = 4;
 
@@ -2022,7 +2099,11 @@ gboolean da_expose_event (GtkWidget      *da,
   text_ypos = checkbox_ypos + text_length + margin;
   wave_ypos = text_ypos + wave_length + margin;
 
-  gint bottom_left_middle_right_text_ypos = wave_ypos;
+  gint bottom_left_middle_right_text_ypos = text_ypos;
+  if (show_silence_wave)
+  {
+    bottom_left_middle_right_text_ypos = wave_ypos;
+  }
   
   PangoLayout *layout;
   //graphic context
@@ -2076,11 +2157,14 @@ gboolean da_expose_event (GtkWidget      *da,
                       0,checkbox_ypos+margin,
                       width_drawing_area,
                       text_length);
-  gdk_draw_rectangle (da->window,gc,
-                      TRUE,
-                      0,text_ypos + margin,
-                      width_drawing_area,
-                      wave_length);
+  if (show_silence_wave)
+  {
+    gdk_draw_rectangle (da->window,gc,
+        TRUE,
+        0,text_ypos + margin,
+        width_drawing_area,
+        wave_length);
+  }
  
   //only if we are playing
   //and the timer active(connected to player)
@@ -2376,10 +2460,27 @@ gboolean da_expose_event (GtkWidget      *da,
         g_object_unref (layout);
       }
       else
+      //we move the time
       { 
+        //we set the red color
+        color.red = 255 * 255;color.green = 0;color.blue = 0;
+        gdk_gc_set_rgb_fg_color(gc, &color);
+
+        gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+
         gdk_draw_line(da->window, gc,
             move_pixel,erase_split_ylimit,
             move_pixel,progress_ylimit);
+
+        if (show_silence_wave)
+        {
+          //the draw silence wave middle line
+          gdk_draw_line(da->window, gc,
+              move_pixel,text_ypos + margin,
+              move_pixel,wave_ypos);
+        }
+
+        gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 
         //we set default black color
         color.red = 0;color.green = 0;color.blue = 0;
@@ -2419,16 +2520,32 @@ gboolean da_expose_event (GtkWidget      *da,
     //set the color for the graphic context
     gdk_gc_set_rgb_fg_color (gc, &color);
 
-    //the middle line, current position
+    //we set the red color
+    color.red = 255 * 255;color.green = 0;color.blue = 0;
+    gdk_gc_set_rgb_fg_color(gc, &color);
+
+    //the top middle line, current position
     gdk_draw_line(da->window, gc,
         width_drawing_area/2,erase_split_ylimit,
         width_drawing_area/2,progress_ylimit);
 
+    //we draw the silence wave if we have it 
+    if (show_silence_wave)
+    {
+      draw_silence_wave(left_mark, right_mark, da, gc);
+
+      //we set the red color
+      color.red = 255 * 255;color.green = 0;color.blue = 0;
+      gdk_gc_set_rgb_fg_color(gc, &color);
+
+      //the draw silence wave middle line
+      gdk_draw_line(da->window, gc,
+          width_drawing_area/2,text_ypos + margin,
+          width_drawing_area/2,wave_ypos);
+    }
+
     //we draw the splitpoints
     draw_splitpoints(left_mark, right_mark, da, gc);
-
-    //we draw the silence wave if we have it 
-    draw_silence_wave(left_mark, right_mark, da, gc);
   }
   else
   //if not playing and timer not active
@@ -3004,8 +3121,7 @@ GtkWidget *create_drawing_area()
     (GTK_FRAME (frame), GTK_SHADOW_NONE);
   //our drawing area
   da = gtk_drawing_area_new();
-  //gtk_widget_set_size_request(da,400,123);
-  gtk_widget_set_size_request(da,400,232);
+  gtk_widget_set_size_request(da,400,123);
   g_signal_connect (da, "expose_event",
                     G_CALLBACK (da_expose_event), NULL);
   g_signal_connect (da, "button_press_event",
@@ -3552,9 +3668,9 @@ gint mytimer(gpointer data)
             {
               gtk_widget_set_sensitive(player_add_button, TRUE);
             }
-            if (!GTK_WIDGET_SENSITIVE(silence_wave_button))
+            if (!GTK_WIDGET_SENSITIVE(silence_wave_check_button))
             {
-              gtk_widget_set_sensitive(silence_wave_button, TRUE);
+              gtk_widget_set_sensitive(silence_wave_check_button, TRUE);
             }
         }
       
@@ -3585,7 +3701,7 @@ void file_chooser_cancel_event()
 //event for the file chooser ok button
 void file_chooser_ok_event(gchar *fname)
 {
-  gtk_entry_set_text(GTK_ENTRY(entry), fname);
+  change_current_filename(fname);
   gtk_widget_set_sensitive(browse_button, TRUE);
   gtk_widget_set_sensitive(play_button, TRUE);
 
