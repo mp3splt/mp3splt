@@ -994,15 +994,15 @@ void combo_remove_unavailable_players()
 void player_combo_box_event(GtkComboBox *widget,
                             gpointer data)
 {
+  //disconnect from player
+  disconnect_button_event(NULL, NULL);
+
   gint sel_pl;
   gint selected_item;
   selected_item = gtk_combo_box_get_active(widget);
   sel_pl = (gint)g_list_nth_data(player_pref_list, selected_item);
 
   selected_player = sel_pl;
-
-  //disconnect from player
-  disconnect_button_event(NULL, NULL);
 
   if (selected_player == PLAYER_GSTREAMER)
   {

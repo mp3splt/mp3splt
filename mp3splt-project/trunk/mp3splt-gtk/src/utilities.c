@@ -462,8 +462,10 @@ void load_preferences()
                                     NULL);
     
   if (save_path != NULL)
-    gtk_entry_set_text(GTK_ENTRY(directory_entry), 
-                       (gchar *)save_path);
+  {
+    gtk_entry_set_text(GTK_ENTRY(directory_entry), (gchar *)save_path);
+  }
+
   //freeing memory
   g_free(save_path);
   
@@ -495,8 +497,7 @@ void load_preferences()
   gint i;
   for(i = 0; i < 4; i++)
     {
-      if (item == (gint)
-          g_list_nth_data(player_pref_list, i))
+      if (item == (gint) g_list_nth_data(player_pref_list, i))
         {
           selected_player = 
             (gint)g_list_nth_data(player_pref_list, i);

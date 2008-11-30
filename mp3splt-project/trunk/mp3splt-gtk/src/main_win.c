@@ -111,40 +111,52 @@ extern gint max_split_files;
 extern gint no_top_connect_action;
 extern gint selected_player;
 extern GtkWidget *connect_button;
+extern silence_wave *silence_points;
+extern gint number_of_silence_points;
 
 GtkWidget *playlist_box;
 
 //close the window and exit button function
-void quit( GtkWidget *widget,
-           gpointer   data )
+void quit(GtkWidget *widget, gpointer   data)
 {
   //if we are in the middle of the split
   if (we_are_splitting)
-    {
-      gint err = SPLT_OK;
-      mp3splt_stop_split(the_state,&err);
-      print_status_bar_confirmation(err);
-      
-      //wait to finish split then quit
-      we_quit_main_program = TRUE;
-      put_status_message(_(" info: stopping the split process"
-                           " before exiting"));
-    }
-  else
-    //quit program
-    {
-      //free player choices list
-      g_list_free(player_pref_list);
-      //we free the splitpoints
-      g_array_free(splitpoints, TRUE);
-      gint err = SPLT_OK;
-      //we free left variables in the library
-      mp3splt_free_state(the_state,&err);
-      print_status_bar_confirmation(err);
-      
-      //we definetly quit the program...
-      gtk_main_quit ();
-    }
+  {
+    gint err = SPLT_OK;
+    mp3splt_stop_split(the_state,&err);
+    print_status_bar_confirmation(err);
+
+    //wait to finish split then quit
+    we_quit_main_program = TRUE;
+    put_status_message(_(" info: stopping the split process before exiting"));
+  }
+
+  //quit the player : currently closes gstreamer
+  if (player_is_running())
+  {
+    player_quit();
+  }
+
+  //free player choices list
+  g_list_free(player_pref_list);
+  //we free the splitpoints
+  g_array_free(splitpoints, TRUE);
+
+  //we free the GUI silence points
+  if (silence_points)
+  {
+    g_free(silence_points);
+    silence_points = NULL;
+    number_of_silence_points = 0;
+  }
+
+  gint err = SPLT_OK;
+  //we free left variables in the library
+  mp3splt_free_state(the_state,&err);
+  print_status_bar_confirmation(err);
+
+  //we definetly quit the program...
+  gtk_main_quit ();
 }
 
 //initializes window
@@ -266,8 +278,7 @@ void put_status_message(gchar *text)
 }
 
 //event for the split button
-void cancel_button_event (GtkWidget *widget,
-                          gpointer data)
+void cancel_button_event(GtkWidget *widget, gpointer data)
 {
   gint err = SPLT_OK;
   mp3splt_stop_split(the_state,&err);
@@ -459,14 +470,12 @@ GtkWidget *create_toolbar()
                                    FALSE);
 
   //quit button
-  toolbar_button = (GtkWidget *)
-    gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
+  toolbar_button = (GtkWidget *) gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
   gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(toolbar_button),
                             GTK_TOOLTIPS(tooltip), (gchar *)_("really wanna quit ?"),"");
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
                      GTK_TOOL_ITEM(toolbar_button), 6);
-  g_signal_connect(G_OBJECT(toolbar_button), "clicked",
-                   G_CALLBACK(quit), tooltip);
+  g_signal_connect(G_OBJECT(toolbar_button), "clicked", G_CALLBACK(quit), tooltip);
   
   //toolbar preferences
   gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);

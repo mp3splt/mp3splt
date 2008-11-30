@@ -194,3 +194,5 @@ void handle_file_detached_event (GtkHandleBox *handlebox,
                                  GtkWidget *widget,
                                  gpointer data);
 GtkWidget *create_choose_file_frame();
+
+void change_current_filename(gchar *fname);
