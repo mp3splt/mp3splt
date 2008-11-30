@@ -140,51 +140,63 @@ int alphasort(const struct dirent **a, const struct dirent **b)
 
 #endif
 
-//sets the plugin scan directories
-static int splt_p_set_default_plugins_scan_dirs(splt_state *state)
+int splt_p_append_plugin_scan_dir(splt_state *state, char *dir)
 {
   splt_plugins *pl = state->plug;
-  pl->number_of_dirs_to_scan = 3;
-  //allocate memory
-  pl->plugins_scan_dirs = malloc(sizeof(char *) * pl->number_of_dirs_to_scan);
+
+  //allocate memory for another char * pointer
+  if (pl->plugins_scan_dirs == NULL)
+  {
+    //allocate memory
+    pl->plugins_scan_dirs = malloc(sizeof(char *));
+  }
+  else
+  {
+    pl->plugins_scan_dirs = realloc(pl->plugins_scan_dirs,
+        sizeof(char *) * (pl->number_of_dirs_to_scan + 1));
+  }
   if (pl->plugins_scan_dirs == NULL)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  memset(pl->plugins_scan_dirs,0,sizeof(char *) * pl->number_of_dirs_to_scan);
+  pl->plugins_scan_dirs[pl->number_of_dirs_to_scan] = NULL;
+
+  //allocate memory for this directory name
+  pl->plugins_scan_dirs[pl->number_of_dirs_to_scan] = malloc(sizeof(char) * (strlen(dir)+1));
+  if (pl->plugins_scan_dirs[pl->number_of_dirs_to_scan] == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+
+  snprintf(pl->plugins_scan_dirs[pl->number_of_dirs_to_scan],strlen(dir)+1,"%s",dir);
+
+  pl->number_of_dirs_to_scan++;
+
+  return SPLT_OK;
+}
+
+//sets the plugin scan directories
+int splt_p_set_default_plugins_scan_dirs(splt_state *state)
+{
+  int err = SPLT_OK;
 
   //temporary variable that we use to set the default directories
   char temp[2048] = { '\0' };
 
   //we put the default plugin directory
   snprintf(temp,2048,"%s",SPLT_PLUGINS_DIR);
-  pl->plugins_scan_dirs[0] = malloc(sizeof(char) * (strlen(temp)+1));
-  if (pl->plugins_scan_dirs[0] == NULL)
-  {
-    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
-  snprintf(pl->plugins_scan_dirs[0],strlen(temp)+1,"%s",temp);
+  if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
 
   //we put the home libmp3splt home directory
   snprintf(temp,2048,"%s%c%s",getenv("HOME"),SPLT_DIRCHAR,".libmp3splt");
-  pl->plugins_scan_dirs[1] = malloc(sizeof(char) * (strlen(temp)+1));
-  if (pl->plugins_scan_dirs[1] == NULL)
-  {
-    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
-  snprintf(pl->plugins_scan_dirs[1],strlen(temp)+1,"%s",temp);
+  if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
 
   //we put the current directory
   memset(temp,'\0',2048);
   snprintf(temp,2048,".%c",SPLT_DIRCHAR);
-  pl->plugins_scan_dirs[2] = malloc(sizeof(char) * (strlen(temp)+1));
-  if (pl->plugins_scan_dirs[2] == NULL)
-  {
-    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
-  snprintf(pl->plugins_scan_dirs[2],strlen(temp)+1,"%s",temp);
+  if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
 
-  return SPLT_OK;
+  return err;
 }
 
 //function to filter the plugin files
@@ -304,17 +316,6 @@ static int splt_p_find_plugins(splt_state *state)
 
   splt_plugins *pl = state->plug;
 
-  //if we don't have any directory set for scanning
-  if (pl->plugins_scan_dirs == NULL)
-  {
-    //set the default directories
-    return_value = splt_p_set_default_plugins_scan_dirs(state);
-    if (return_value != SPLT_OK)
-    {
-      return return_value;
-    }
-  }
-
   //for each scan directory, look for the files starting with 'splt' and
   //ending with '.so' on unix-like and '.dll' on windows
   int i = 0;
@@ -406,9 +407,10 @@ int splt_p_find_get_plugins_data(splt_state *state)
   int return_value = SPLT_OK;
 
   //free old plugins
-  splt_t_free_plugins(state);
+  //splt_t_free_plugins(state);
 
   splt_u_print_debug("\nSearching for plugins ...",0,NULL);
+
   //find the plugins
   return_value = splt_p_find_plugins(state);
 

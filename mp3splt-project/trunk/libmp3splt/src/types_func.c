@@ -104,6 +104,13 @@ splt_state *splt_t_new_state(splt_state *state, int *error)
     splt_t_state_put_default_options(state, error);
   }
 
+  //set the default plugins scan directories
+  int return_value = splt_p_set_default_plugins_scan_dirs(state);
+  if (return_value != SPLT_OK)
+  {
+    return NULL;
+  }
+
   return state;
 }
 

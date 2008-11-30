@@ -1714,6 +1714,20 @@ int main(int argc, char *argv[])
 
   err = SPLT_OK;
 
+  //on windows, add the directory of the executable in the plugin scan
+  //directories
+#ifdef __WIN32__
+  char *executable = strdup(argv[0]);
+  char *end = strrchr(executable, SPLT_DIRCHAR);
+  *end = '\0';
+  mp3splt_append_plugins_scan_dir(state, executable);
+  if (executable)
+  {
+    free(executable);
+    executable = NULL;
+  }
+#endif
+
   //after getting the options (especially the debug option), find plugins
   err = mp3splt_find_plugins(state);
   process_confirmation_error(err, data);
