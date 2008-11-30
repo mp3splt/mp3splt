@@ -497,9 +497,41 @@ static int splt_p_open_get_plugins_data(splt_state *state)
       if (pl->data[i].func->set_plugin_info != NULL)
       {
         pl->data[i].func->set_plugin_info(&pl->data[i].info,&error);
+        /*splt_t_set_current_plugin(state, i);
+        const char *p_name = splt_p_get_name(state, &error);
+        fprintf(stdout," Plugin NAME = _%s_\n",p_name);
+        fflush(stdout);*/
       }
       else
       {
+      }
+
+      //look if we already have a plugin with the same name
+      int j = 0;
+      splt_t_set_current_plugin(state, i);
+      const char *current_plugin_name = splt_p_get_name(state, &error);
+      for (j = 0;j < i;j++)
+      {
+        if (pl->data[j].plugin_handle)
+        {
+          splt_t_set_current_plugin(state, j);
+          const char *plugin_name = splt_p_get_name(state, &error);
+          //if we do have one with the same name,
+          if (strcmp(plugin_name,current_plugin_name) == 0)
+          {
+            //keep its index to remove it afterwards
+            if (! plugin_index_to_remove)
+            {
+              plugin_index_to_remove = malloc(sizeof(int));
+            }
+            else
+            {
+              plugin_index_to_remove = realloc(plugin_index_to_remove, sizeof(int) * (number_of_plugins_to_remove + 1));
+            }
+            plugin_index_to_remove[number_of_plugins_to_remove] = i;
+            number_of_plugins_to_remove++;
+          }
+        }
       }
     }
   }
@@ -513,7 +545,7 @@ static int splt_p_open_get_plugins_data(splt_state *state)
   {
     int index_to_remove = plugin_index_to_remove[i] - left_shift;
 
-    splt_u_print_debug("Removing the bad plugin ",0, pl->data[index_to_remove].plugin_filename);
+    splt_u_print_debug("Removing the plugin ",0, pl->data[index_to_remove].plugin_filename);
 
     error = splt_p_shift_left_plugins_data(state, index_to_remove);
     if (error != SPLT_OK)
