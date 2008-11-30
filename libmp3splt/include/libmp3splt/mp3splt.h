@@ -1440,8 +1440,9 @@ const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
     int *error);
 
 //returns the wrapped files found
-const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
-    int *error);
+const splt_wrap *mp3splt_get_wrap_files(splt_state *state, int *error);
+
+int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir);
 
 #define MP3SPLT_MP3SPLT_H
 

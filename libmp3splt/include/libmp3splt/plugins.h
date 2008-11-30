@@ -47,3 +47,6 @@ void splt_p_set_original_tags(splt_state *state, int *error);
 //
 int splt_p_find_get_plugins_data(splt_state *state);
 
+int splt_p_set_default_plugins_scan_dirs(splt_state *state);
+int splt_p_append_plugin_scan_dir(splt_state *state, char *dir);
+

@@ -1229,3 +1229,9 @@ char *mp3splt_get_strerror(splt_state *state, int error_code)
   return splt_u_strerror(state, error_code);
 }
 
+//returns possible error or SPLT_OK if no error
+int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir)
+{
+  return splt_p_append_plugin_scan_dir(state, dir);
+}
+
