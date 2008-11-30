@@ -29,6 +29,11 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
+#ifdef __WIN32__
+#include <windows.h>
+#include <shlwapi.h>
+#endif
+
 #include <libmp3splt/mp3splt.h>
 
 #include "getopt.h"
@@ -1714,20 +1719,47 @@ int main(int argc, char *argv[])
 
   err = SPLT_OK;
 
-  //on windows, add the directory of the executable in the plugin scan
-  //directories
+  //add special directory search for plugins on Windows
 #ifdef __WIN32__
+  //add the directory of the executable in the plugin scan directories
   char *executable = strdup(argv[0]);
   char *end = strrchr(executable, SPLT_DIRCHAR);
   if (end)
   {
     *end = '\0';
+    //if we don't launch from the program installation directory
     mp3splt_append_plugins_scan_dir(state, executable);
   }
   if (executable)
   {
     free(executable);
     executable = NULL;
+  }
+
+  //if we don't launch from the program installation directory
+  if (end == NULL)
+  {
+    //also add the installation directory that we take from the registry
+    char mp3splt_uninstall_file[2048] = { '\0' };
+    DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
+    if (SHGetValue(HKEY_LOCAL_MACHINE,
+          TEXT("SOFTWARE\\mp3splt"),
+          TEXT("UninstallString"),
+          &dwType,
+          mp3splt_uninstall_file,
+          &dwSize) != ERROR_SUCCESS)
+    {
+      //do nothing if error
+    }
+    else
+    {
+      end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
+      if (end)
+      {
+        *end = '\0';
+        mp3splt_append_plugins_scan_dir(state, mp3splt_uninstall_file);
+      }
+    }
   }
 #endif
 
