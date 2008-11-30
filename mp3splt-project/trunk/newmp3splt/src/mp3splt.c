@@ -1719,8 +1719,11 @@ int main(int argc, char *argv[])
 #ifdef __WIN32__
   char *executable = strdup(argv[0]);
   char *end = strrchr(executable, SPLT_DIRCHAR);
-  *end = '\0';
-  mp3splt_append_plugins_scan_dir(state, executable);
+  if (end)
+  {
+    *end = '\0';
+    mp3splt_append_plugins_scan_dir(state, executable);
+  }
   if (executable)
   {
     free(executable);
