@@ -1169,8 +1169,6 @@ int mp3splt_set_silence_points(splt_state *state, int *error)
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  splt_t_set_stop_split(state, SPLT_FALSE);
-
   //set silence_mode option
   mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
 
@@ -1181,6 +1179,8 @@ int mp3splt_set_silence_points(splt_state *state, int *error)
     if (!splt_t_library_locked(state))
     {
       splt_t_lock_library(state);
+
+      splt_t_set_stop_split(state, SPLT_FALSE);
 
       splt_check_file_type(state, err);
 

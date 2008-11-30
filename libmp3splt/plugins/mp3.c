@@ -1308,7 +1308,7 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
         {
           pos = ftello(mp3state->file_input);
 
-          if (count++ % 100 == 0)
+          if (count++ % 10 == 0)
           {
             float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
             if (state->split.get_silence_level)
