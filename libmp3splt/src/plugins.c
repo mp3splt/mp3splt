@@ -180,13 +180,14 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 {
   int err = SPLT_OK;
 
-#ifndef __WIN32__
   //temporary variable that we use to set the default directories
   char temp[2048] = { '\0' };
 
+#ifndef __WIN32__
   //we put the default plugin directory
   snprintf(temp,2048,"%s",SPLT_PLUGINS_DIR);
   if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
+#endif
 
   //we put the home libmp3splt home directory
   snprintf(temp,2048,"%s%c%s",getenv("HOME"),SPLT_DIRCHAR,".libmp3splt");
@@ -196,7 +197,6 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
   memset(temp,'\0',2048);
   snprintf(temp,2048,".%c",SPLT_DIRCHAR);
   if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
-#endif
 
   return err;
 }
@@ -236,15 +236,15 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
 
 //scans the directory *directory for plugins
 //-directory must not be NULL
-static int splt_p_scan_dir_for_plugins(splt_plugins *pl, const char *directory)
+static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, const char *directory)
 {
   int return_value = SPLT_OK;
 
   struct dirent **files = NULL;
   int number_of_files = 0;
   //scan the directory
-  number_of_files = scandir(directory, &files,
-      splt_p_filter_plugin_files, alphasort);
+  number_of_files = scandir(directory, &files, splt_p_filter_plugin_files,
+      alphasort);
   int directory_len = strlen(directory);
   int new_number_of_files = number_of_files;
 
@@ -261,31 +261,72 @@ static int splt_p_scan_dir_for_plugins(splt_plugins *pl, const char *directory)
       char *fname = files[new_number_of_files]->d_name;
       int fname_len = strlen(fname);
 
-      int alloc_err = splt_t_alloc_init_new_plugin(pl);
-      if (alloc_err < 0)
-      {
-        return_value = alloc_err;
-        goto end;
-      }
-    
-      pl->data[pl->number_of_plugins_found].func = malloc(sizeof(splt_plugin_func));
-      if (pl->data[pl->number_of_plugins_found].func == NULL)
+      //get the full directory + filename
+      int dir_and_fname_len = fname_len + directory_len + 3;
+      char *dir_and_fname = malloc(sizeof(char) * dir_and_fname_len);
+      if (dir_and_fname == NULL)
       {
         return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         goto end;
       }
-      memset(pl->data[pl->number_of_plugins_found].func,0,sizeof(splt_plugin_func));
-      pl->data[pl->number_of_plugins_found].plugin_filename = malloc(sizeof(char) *
-          (fname_len+directory_len+3));
-      if (pl->data[pl->number_of_plugins_found].plugin_filename == NULL)
+      snprintf(dir_and_fname, dir_and_fname_len - 1, "%s%c%s",directory,SPLT_DIRCHAR,fname);
+
+      //check if we already have a plugin with the same file
+      int we_already_have_this_plugin_file = SPLT_FALSE;
+      int i = 0;
+      int err = SPLT_OK;
+      for (i = 0;i < pl->number_of_plugins_found;i++)
       {
-        return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        goto end;
+        if (splt_check_is_the_same_file(state, dir_and_fname, pl->data[i].plugin_filename, &err))
+        {
+          we_already_have_this_plugin_file = SPLT_TRUE;
+          break;
+        }
+
+        if (err != SPLT_OK)
+        {
+          return_value = err;
+          goto end;
+        }
       }
-      //set the plugin name and the directory
-      snprintf(pl->data[pl->number_of_plugins_found].plugin_filename,
-          fname_len+directory_len+2,"%s%c%s",directory,SPLT_DIRCHAR,fname);
-      pl->number_of_plugins_found++;
+
+      //if we don't have a plugin from the same file, add this new plugin
+      if (! we_already_have_this_plugin_file)
+      {
+        int alloc_err = splt_t_alloc_init_new_plugin(pl);
+        if (alloc_err < 0)
+        {
+          return_value = alloc_err;
+          goto end;
+        }
+
+        pl->data[pl->number_of_plugins_found].func = malloc(sizeof(splt_plugin_func));
+        if (pl->data[pl->number_of_plugins_found].func == NULL)
+        {
+          return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+          goto end;
+        }
+        memset(pl->data[pl->number_of_plugins_found].func,0,sizeof(splt_plugin_func));
+        pl->data[pl->number_of_plugins_found].plugin_filename = malloc(sizeof(char) *
+            dir_and_fname_len);
+        if (pl->data[pl->number_of_plugins_found].plugin_filename == NULL)
+        {
+          return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+          goto end;
+        }
+        //set the plugin name and the directory
+        snprintf(pl->data[pl->number_of_plugins_found].plugin_filename,
+            dir_and_fname_len - 1,"%s%c%s",directory,SPLT_DIRCHAR,fname);
+
+        pl->number_of_plugins_found++;
+      }
+
+      //free some memory
+      if (dir_and_fname)
+      {
+        free(dir_and_fname);
+        dir_and_fname = NULL;
+      }
     }
 
 end:
@@ -337,7 +378,7 @@ static int splt_p_find_plugins(splt_state *state)
             strncmp(pl->plugins_scan_dirs[i], current_dir,2) == 0) ||
           splt_u_check_if_directory(pl->plugins_scan_dirs[i]))
       {
-        return_value = splt_p_scan_dir_for_plugins(pl, pl->plugins_scan_dirs[i]);
+        return_value = splt_p_scan_dir_for_plugins(state, pl, pl->plugins_scan_dirs[i]);
         if (return_value != SPLT_OK)
         {
           return return_value;
@@ -349,23 +390,88 @@ static int splt_p_find_plugins(splt_state *state)
   return return_value;
 }
 
+int splt_p_move_replace_plugin_data(splt_state *state, int old, int new)
+{
+  splt_plugins *pl = state->plug;
+
+  splt_t_free_plugin_data(pl->data[new]);
+
+  pl->data[new].func = malloc(sizeof(splt_plugin_func));
+  if (pl->data[new].func == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+  memcpy(pl->data[new].func, pl->data[old].func, sizeof(pl->data[old].func));
+
+  int plugin_fname_len = strlen(pl->data[old].plugin_filename) + 1;
+  pl->data[new].plugin_filename = malloc(sizeof(char) * plugin_fname_len);
+  if (pl->data[new].plugin_filename == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+  snprintf(pl->data[new].plugin_filename, plugin_fname_len, "%s",
+      pl->data[old].plugin_filename);
+
+  splt_t_free_plugin_data(pl->data[old]);
+}
+
+//shifts all the elements to the left, starting at element index+1
+static int splt_p_shift_left_plugins_data(splt_state *state, int index)
+{
+  int i = 0;
+  splt_plugins *pl = state->plug;
+
+  for (i = index+1;i < pl->number_of_plugins_found;i++)
+  {
+    int err = splt_p_move_replace_plugin_data(state, i, i - 1);
+    if (err != SPLT_OK)
+    {
+      return err;
+    }
+  }
+
+  return SPLT_OK;
+}
+
 //function that gets information of each plugin
 static int splt_p_open_get_plugins_data(splt_state *state)
 {
   splt_plugins *pl = state->plug;
+
+  int *plugin_index_to_remove = NULL;
+  int number_of_plugins_to_remove = 0;
+
   int error = SPLT_OK;
 
   int i = 0;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
+    splt_u_print_debug("\nTrying to open the plugin ...",0,pl->data[i].plugin_filename);
+
     pl->data[i].plugin_handle = lt_dlopen(pl->data[i].plugin_filename);
     //error
     if (! pl->data[i].plugin_handle)
     {
       splt_u_print_debug("Error loading the plugin",0,pl->data[i].plugin_filename);
+      splt_u_print_debug(" - error message from libltdl : ",0,lt_dlerror());
+      
+      //keep the index of this failed plugin in order to remove it
+      //afterwards
+      if (! plugin_index_to_remove)
+      {
+        plugin_index_to_remove = malloc(sizeof(int));
+      }
+      else
+      {
+        plugin_index_to_remove = realloc(plugin_index_to_remove, sizeof(int) * (number_of_plugins_to_remove + 1));
+      }
+      plugin_index_to_remove[number_of_plugins_to_remove] = i;
+      number_of_plugins_to_remove++;
     }
     else
     {
+      splt_u_print_debug(" - success !",0,NULL);
+
       //get pointers to functions from the plugins
       //-this function must only be called once and here 
       *(void **) (&pl->data[i].func->check_plugin_is_for_file) =
@@ -398,6 +504,36 @@ static int splt_p_open_get_plugins_data(splt_state *state)
     }
   }
 
+  //remove the plugins that failed to open
+  //-some plugins fail to open twice (on Windows for example)
+  int left_shift = 0;
+  //we shift to the left the plugin data in order to replace the bad
+  //plugins with the others
+  for (i = 0;i < number_of_plugins_to_remove;i++) 
+  {
+    int index_to_remove = plugin_index_to_remove[i] - left_shift;
+
+    splt_u_print_debug("Removing the bad plugin ",0, pl->data[index_to_remove].plugin_filename);
+
+    error = splt_p_shift_left_plugins_data(state, index_to_remove);
+    if (error != SPLT_OK)
+    {
+      goto end;
+    }
+
+    pl->number_of_plugins_found--;
+    left_shift++;
+  }
+
+end:
+  //free the plugin index to remove
+  if (plugin_index_to_remove)
+  {
+    free(plugin_index_to_remove);
+    plugin_index_to_remove = NULL;
+  }
+  number_of_plugins_to_remove = 0;
+
   return error;
 }
 
@@ -407,9 +543,6 @@ static int splt_p_open_get_plugins_data(splt_state *state)
 int splt_p_find_get_plugins_data(splt_state *state)
 {
   int return_value = SPLT_OK;
-
-  //free old plugins
-  //splt_t_free_plugins(state);
 
   splt_u_print_debug("\nSearching for plugins ...",0,NULL);
 
