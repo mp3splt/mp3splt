@@ -1,2 +1,2 @@
 SUBDIRS = src plugins
-EXTRA_DIST = LIMITS
+EXTRA_DIST = LIMITS autogen.sh
