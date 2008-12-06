@@ -2556,8 +2556,8 @@ gboolean da_expose_event (GtkWidget      *da,
     gdk_gc_set_rgb_fg_color (gc, &color);
 
     layout = get_drawing_text((gchar *)
-          _(" left button on splitpoint selects it,"
-            " right button erases it"));
+          _(" left click on splitpoint selects it,"
+            " right click erases it"));
     gdk_draw_layout(da->window, gc,
         0, margin - 3, layout);
     //we free the memory for the layout
@@ -2568,8 +2568,8 @@ gboolean da_expose_event (GtkWidget      *da,
     gdk_gc_set_rgb_fg_color (gc, &color);
 
     layout = get_drawing_text((gchar *)
-          _(" left button + move changes song"
-            " position, right button + move changes zoom"));
+          _(" left click + move changes song"
+            " position, right click + move changes zoom"));
     gdk_draw_layout(da->window, gc,
         0, erase_split_ylimit + margin, layout);
     //we free the memory for the layout
@@ -2580,8 +2580,8 @@ gboolean da_expose_event (GtkWidget      *da,
     gdk_gc_set_rgb_fg_color (gc, &color);
 
     layout = get_drawing_text((gchar *)
-          _(" left button on point + move changes point"
-            " position, right button play preview"));
+          _(" left click on point + move changes point"
+            " position, right click play preview"));
     gdk_draw_layout(da->window, gc,
         0, progress_ylimit + margin, layout);
     //we free the memory for the layout
@@ -2593,7 +2593,7 @@ gboolean da_expose_event (GtkWidget      *da,
     gdk_gc_set_rgb_fg_color (gc, &color);
 
     layout = get_drawing_text((gchar *)
-          _(" left button on rectangle checks/unchecks 'keep splitpoint'"));
+          _(" left click on rectangle checks/unchecks 'keep splitpoint'"));
     gdk_draw_layout(da->window, gc,
         0, splitpoint_ypos + 1, layout);
     //we free the memory for the layout
