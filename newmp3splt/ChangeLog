@@ -259,12 +259,12 @@ Not public. Experimental split of mp3 files using silence detection.
 - new feature added: now mp3splt supports files created with Mp3Wrap v. 0.5 or higher that uses CRC
 - new feature added: now mp3splt supports .cue files! Follow the 
   instructions in man page.
-- new feature added (Thanks François Revol): list option introduced for wrap mode
+- new feature added (Thanks FranÃ§ois Revol): list option introduced for wrap mode
   Both with Mp3Wrap and AlbumWrap it only lists files without extraction.
 - new feature added: quiet option introduced. Allows to run mp3splt 
   without any kind of user interaction.
 - feature improved: VBR split files now begin with a Xing header
-- feature improved (Thanks François Revol): added support of BeOS platform
+- feature improved (Thanks FranÃ§ois Revol): added support of BeOS platform
 - feature improved: frame mode warns about sync errors. Too many could mean a not valid mp3 file.
 - feature improved: in wrap mode, now searches for mp3wrap index for 16384 bytes. This should be enough.
 - feature improved: added check for "mp3wrap" string in lower case for mp3wrap file identification.
