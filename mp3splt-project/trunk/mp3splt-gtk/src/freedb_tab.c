@@ -533,9 +533,17 @@ void update_splitpoints_from_the_state()
       //erase rows from the splitpoints table
       remove_all_rows(NULL,NULL);
       gint i;
+
       //for each splitpoint, we put it in the table
       for(i = 0; i < max_splits;i++)
         {
+          //ugly hack because we use maximum ints in the GUI
+          //-GUI must be changed to accept long values
+          if (points[i].value > INT_MAX)
+          {
+            points[i].value = INT_MAX;
+          }
+
           //we get the minutes, seconds and hudreths
           get_secs_mins_hundr(points[i].value,
                               &spin_mins, &spin_secs,
