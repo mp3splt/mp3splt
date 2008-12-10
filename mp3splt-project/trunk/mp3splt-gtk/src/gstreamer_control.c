@@ -224,8 +224,8 @@ void gstreamer_get_song_infos(gchar *total_infos)
 		gchar freq_str[32] = { '\0' };
 		gchar *nch_str = NULL;
 
-		gchar *_Kbps = (gchar *)_("Kbps");
-		gchar *_Khz = (gchar *)_("Khz");
+		gchar *_Kbps = _("Kbps");
+		gchar *_Khz = _("Khz");
 
 		//get the first element of the stream info list
 		GObject *object = g_list_nth_data(streaminfo, number_of_stream); 
@@ -255,11 +255,11 @@ void gstreamer_get_song_infos(gchar *total_infos)
 
 			if (nch >= 2)
 			{
-				nch_str = (gchar *)_("stereo");
+				nch_str = _("stereo");
 			}
 			else
 			{
-				nch_str = (gchar *)_("mono");
+				nch_str = _("mono");
 			}
 		}
 
@@ -401,10 +401,11 @@ void gstreamer_start()
 		gst_object_unref(bus);
 
 		//add the current filename
-		gchar *fname = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+		const gchar *fname =  gtk_entry_get_text(GTK_ENTRY(entry));
 		GList *song_list = NULL;
-		song_list = g_list_append(song_list, fname);
+		song_list = g_list_append(song_list, strdup(fname));
 		gstreamer_add_files(song_list);
+    //TODO: free memory from GList *song_list
 	}
 	else
 	{

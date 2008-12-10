@@ -650,8 +650,7 @@ void update_splitpoint(gint index, Split_point new_point)
     else
     {
       //if we already have a equal splitpoint
-      put_status_message((gchar *)_(" error : you already have"
-            " the splitpoint in table "));
+      put_status_message(_(" error : you already have the splitpoint in table "));
     }
   }
 }
@@ -701,7 +700,8 @@ void cell_edited_event (GtkCellRendererText *cell,
   model = gtk_tree_view_get_model(tree_view);
   
   //get the column number
-  gint col = (gint)(g_object_get_data (G_OBJECT(cell), "col"));
+  gint col = GPOINTER_TO_INT(g_object_get_data (G_OBJECT(cell), "col"));
+
   //get iter number
   gtk_tree_model_get_iter (model, &iter, path);
   //get the indice
@@ -720,8 +720,7 @@ void cell_edited_event (GtkCellRendererText *cell,
                           col, current_description,
                           -1);
       
-      g_snprintf(current_description, 255, "%s",
-                 (gchar *)_("description here"));      
+      g_snprintf(current_description, 255, "%s", _("description here"));      
       break;
       //seconds column
     case COL_SECONDS:
@@ -1009,12 +1008,10 @@ void add_splitpoint(Split_point my_split_point,
   else
     {
       //if we already have a equal splitpoint
-      put_status_message((gchar *)_(" error : you already have"
-                                    " the splitpoint in table "));
+      put_status_message(_(" error : you already have the splitpoint in table "));
     }
   
-  g_snprintf(current_description, 255,
-             "%s", (gchar *)_("description here"));
+  g_snprintf(current_description, 255, "%s", _("description here"));
   
   //
   update_add_button();
@@ -1110,7 +1107,7 @@ void silence_remove_silence_checked(GtkToggleButton *button, gpointer data)
 void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointer *data)
 {
   GtkWidget *silence_detection_window =
-    gtk_dialog_new_with_buttons((gchar *)_("Set splitpoints from silence detection"),
+    gtk_dialog_new_with_buttons(_("Set splitpoints from silence detection"),
         GTK_WINDOW(window),
         GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
         GTK_STOCK_OK,
@@ -1208,9 +1205,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   //remove silence (rm) : allows you to remove the silence between
   //tracks
   silence_remove_silence =
-    gtk_check_button_new_with_label((gchar *)
-                                    _(" remove silence between "
-                                      "tracks"));
+    gtk_check_button_new_with_label(_(" remove silence between tracks"));
   gtk_box_pack_start(GTK_BOX(param_vbox), silence_remove_silence,
       FALSE, FALSE, 0);
 
@@ -1413,18 +1408,18 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
   /* minutes and seconds spinners */
   spinner_minutes = create_init_spinner(hbox, 
                                         0, 2000,
-                                        (gchar *)_("Minutes:"),
+                                        _("Minutes:"),
                                         //0 means spinner minutes
                                         0);
   spinner_seconds = create_init_spinner(hbox, 
                                         0, 59,
-                                        (gchar *)_("Seconds:"), 
+                                        _("Seconds:"), 
                                         //1 means spinner seconds
                                         1);
   //hundredth spinner
   spinner_hundr_secs = create_init_spinner(hbox, 
                                            0, 99,
-                                           (gchar *)_("Hundredths:"), 
+                                           _("Hundredths:"), 
                                            //2 means spinner hundredth
                                            2);
 
@@ -1433,35 +1428,35 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
   
   /* add button */
   add_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
-                                               (gchar *)_("_Add"), FALSE);
+                                               _("_Add"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(add_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
   g_signal_connect(G_OBJECT(add_button), "clicked",
                     G_CALLBACK(add_row_clicked), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), add_button, TRUE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, add_button,(gchar *)_("add splitpoint"),"");
+  gtk_tooltips_set_tip(tooltip, add_button,_("add splitpoint"),"");
 
   /* remove row button */
   remove_row_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_REMOVE, (gchar *)_("_Remove"),
+    create_cool_button(GTK_STOCK_REMOVE, _("_Remove"),
                        FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_row_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
   g_signal_connect (G_OBJECT (remove_row_button), "clicked",
                     G_CALLBACK (remove_row), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), remove_row_button, TRUE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, remove_row_button,(gchar *)_("remove rows"),"");
+  gtk_tooltips_set_tip(tooltip, remove_row_button, _("remove rows"),"");
 
   /* remove all rows button */
   remove_all_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE,(gchar *)_("Remove all"),
+    create_cool_button(GTK_STOCK_DELETE, _("Remove all"),
                        FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_all_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   g_signal_connect (G_OBJECT (remove_all_button), "clicked",
                     G_CALLBACK (remove_all_rows), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), remove_all_button, TRUE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, remove_all_button,(gchar *)_("remove all rows"),"");
+  gtk_tooltips_set_tip(tooltip, remove_all_button, _("remove all rows"),"");
 
   return hbox;
 }
@@ -1479,13 +1474,12 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
 
   /* set splitpoints from silence detection */
   scan_silence_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
-                                               (gchar *)_("_Silence detection"),
-                                               FALSE);
+                                               _("_Silence detection"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
       G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);
   gtk_box_pack_end(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, scan_silence_button,(gchar *)_("Set splitpoints from silence detection"), "");
+  gtk_tooltips_set_tip(tooltip, scan_silence_button, _("Set splitpoints from silence detection"), "");
 
   return hbox;
 }
@@ -1573,7 +1567,7 @@ void split_preview(gpointer *data)
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
                              SPLT_OPTION_NORMAL_MODE);
       
-      gchar *fname;
+      const gchar *fname = NULL;
       gchar *fname_path;
       
       //we cut the preferences filename path
@@ -1582,14 +1576,12 @@ void split_preview(gpointer *data)
       fname_path[strlen(fname_path)-18] = '\0';
       
       //we get the filename to split
-      fname = (gchar *)
-        gtk_entry_get_text(GTK_ENTRY(entry));
+      fname = gtk_entry_get_text(GTK_ENTRY(entry));
       
       //remove old split files
       remove_all_split_rows();  
       
-      filename_to_split = (gchar *)
-        gtk_entry_get_text(GTK_ENTRY(entry));
+      filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
       
       //unlock gtk
       gdk_threads_leave();
@@ -1644,9 +1636,7 @@ void split_preview(gpointer *data)
     }
   else
     {
-      put_status_message((gchar *)
-                         _(" cannot split preview"
-                           " last splitpoint"));
+      put_status_message(_(" cannot split preview last splitpoint"));
     }
   
   //unlock gtk
@@ -1662,7 +1652,7 @@ void preview_song (GtkTreeView *tree_view,
   GtkTreeModel *model;
   model = gtk_tree_view_get_model(tree_view);
   
-  gint number = (gint) g_object_get_data (G_OBJECT(col), "col");
+  gint number = GPOINTER_TO_INT(g_object_get_data (G_OBJECT(col), "col"));
 
   //only when clicking on the PREVIEW or SPLIT_PREVIEW columns
   if (number == COL_PREVIEW || number == COL_SPLIT_PREVIEW)
@@ -1692,9 +1682,7 @@ void preview_song (GtkTreeView *tree_view,
     }
     else
     {
-      put_status_message((gchar *)
-          _(" cannot preview,"
-            " not connected to player "));
+      put_status_message( _(" cannot preview, not connected to player "));
     }
   }
 }
@@ -1757,9 +1745,9 @@ void create_columns (GtkTreeView *tree_view)
   g_signal_connect(renderer_toggle, "toggled",
       G_CALLBACK(toggled_splitpoint_event), tree_view);
   //enable cell editing
-  g_object_set_data(G_OBJECT(renderer_toggle), "col", (gchar *)COL_CHECK);
+  g_object_set_data(G_OBJECT(renderer_toggle), "col", GINT_TO_POINTER(COL_CHECK));
   column_check = gtk_tree_view_column_new_with_attributes
-    ((gchar *)_("Keep"), GTK_CELL_RENDERER(renderer_toggle),
+    (_("Keep"), GTK_CELL_RENDERER(renderer_toggle),
      "active", COL_CHECK, NULL);
 
   /* description */
@@ -1771,11 +1759,10 @@ void create_columns (GtkTreeView *tree_view)
                    tree_view);
   //enable cell editing
   g_object_set(renderer, "editable", TRUE, NULL);
-  g_object_set_data(G_OBJECT(renderer), "col", (gchar *)COL_DESCRIPTION);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_DESCRIPTION));
   column_description = gtk_tree_view_column_new_with_attributes
-    ((gchar *)_("Filename"), GTK_CELL_RENDERER(renderer),
-     "text", COL_DESCRIPTION,
-     NULL);
+    (_("Filename"), GTK_CELL_RENDERER(renderer),
+     "text", COL_DESCRIPTION, NULL);
   
   /* seconds */
   //renderer creation
@@ -1786,11 +1773,10 @@ void create_columns (GtkTreeView *tree_view)
                    tree_view);
   //enable cell editing
   g_object_set(renderer, "editable", TRUE, NULL);
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)COL_SECONDS);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_SECONDS));
   column_seconds = gtk_tree_view_column_new_with_attributes
-    ((gchar *)_("Secs"), GTK_CELL_RENDERER(renderer),
-     "text", COL_SECONDS,
-     NULL);
+    (_("Secs"), GTK_CELL_RENDERER(renderer),
+     "text", COL_SECONDS, NULL);
   
   /* minutes */
   //renderer creation
@@ -1801,11 +1787,10 @@ void create_columns (GtkTreeView *tree_view)
                    tree_view);
   //enable cell editing
   g_object_set(renderer, "editable", TRUE, NULL);
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)COL_MINUTES);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_MINUTES));
   column_minutes = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)_("Mins"), GTK_CELL_RENDERER(renderer),
-     "text", COL_MINUTES,
-     NULL);
+    (_("Mins"), GTK_CELL_RENDERER(renderer),
+     "text", COL_MINUTES, NULL);
 
   /* hundr secs */
   //renderer creation
@@ -1816,19 +1801,19 @@ void create_columns (GtkTreeView *tree_view)
                    tree_view);
   //enable cell editing
   g_object_set(renderer, "editable", TRUE, NULL);
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)COL_HUNDR_SECS);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_HUNDR_SECS));
   column_hundr_secs = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)_("Hundr"), GTK_CELL_RENDERER(renderer),
+    (_("Hundr"), GTK_CELL_RENDERER(renderer),
      "text", COL_HUNDR_SECS, NULL);
   
   /* Length column */
   //renderer creation
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)COL_NUMBER);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NUMBER));
   //middle alignment
   g_object_set (G_OBJECT (renderer), "xalign", 1.0, NULL);
   column_number = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)_("Length"), GTK_CELL_RENDERER(renderer),
+    (_("Length"), GTK_CELL_RENDERER(renderer),
      "text", COL_NUMBER, NULL);
   
   /* column preview */
@@ -1839,10 +1824,9 @@ void create_columns (GtkTreeView *tree_view)
                "stock-size",GTK_ICON_SIZE_MENU,NULL);
   //create the column
   column_preview = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)"LiveP", GTK_CELL_RENDERER(renderer_pix), 
+    (_("LiveP"), GTK_CELL_RENDERER(renderer_pix), 
      "pixbuf",COL_PREVIEW, NULL);
-  g_object_set_data(G_OBJECT(column_preview), "col", 
-                    (gint *)COL_PREVIEW);
+  g_object_set_data(G_OBJECT(column_preview), "col", GINT_TO_POINTER(COL_PREVIEW));
   
   /* split preview */
   renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new ());
@@ -1851,10 +1835,9 @@ void create_columns (GtkTreeView *tree_view)
                "stock-size",GTK_ICON_SIZE_MENU,NULL);
   //create the column
   column_split_preview = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)"SplitP", GTK_CELL_RENDERER(renderer_pix), 
+    (_("SplitP"), GTK_CELL_RENDERER(renderer_pix), 
      "pixbuf",COL_SPLIT_PREVIEW, NULL);
-  g_object_set_data(G_OBJECT(column_split_preview), "col", 
-                    (gint *)COL_SPLIT_PREVIEW);
+  g_object_set_data(G_OBJECT(column_split_preview), "col", GINT_TO_POINTER(COL_SPLIT_PREVIEW));
   
   //appends columns to the list of columns of tree_view
   gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),

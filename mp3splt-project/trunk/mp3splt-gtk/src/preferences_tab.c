@@ -246,14 +246,14 @@ GtkWidget *create_pref_general_page()
   horiz_fake = gtk_hbox_new(FALSE,0);
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
                       horiz_fake, FALSE, FALSE, 5);
-  label = gtk_label_new((gchar *)_("Save preferences :"));
+  label = gtk_label_new(_("Save preferences :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake), label, FALSE, FALSE, 0);
   
   
   //save dialog check button
   check_save_dialog =
-    gtk_check_button_new_with_label((gchar *)_(" popup save dialog confirmation "
-                                               "if preferences have changed"));
+    gtk_check_button_new_with_label(_(" popup save dialog confirmation "
+          "if preferences have changed"));
   //event for the file selection check button
   g_signal_connect (G_OBJECT (check_save_dialog),
                     "toggled",
@@ -271,7 +271,7 @@ GtkWidget *create_pref_general_page()
   gtk_box_pack_start (GTK_BOX (radio_vbox), 
                       horiz_fake, FALSE, FALSE, 5);
   
-  label = gtk_label_new((gchar *)_("Choose language (require restart) :"));
+  label = gtk_label_new(_("Choose language (require restart) :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake), label, FALSE, FALSE, 0);
   
   GtkWidget *radio_box;
@@ -279,7 +279,7 @@ GtkWidget *create_pref_general_page()
   //event for the radio button
   gtk_box_pack_start (GTK_BOX (radio_vbox), radio_box, TRUE, TRUE, 2);
   //language radio items
-  radio_button = gtk_radio_button_new_with_label(NULL, (gchar *)_("english"));
+  radio_button = gtk_radio_button_new_with_label(NULL, _("english"));
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
                     G_CALLBACK (radio_box_changed_event),
@@ -287,7 +287,7 @@ GtkWidget *create_pref_general_page()
   
   gtk_box_pack_start (GTK_BOX (radio_box), radio_button, TRUE, TRUE, 2);
   radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_button), (gchar *)_("french"));
+    (GTK_RADIO_BUTTON (radio_button), _("french"));
   gtk_box_pack_start (GTK_BOX (radio_box), radio_button, TRUE, TRUE, 2);
   
   //add the radio button to the vertical box
@@ -305,7 +305,7 @@ void browse_dir_button_event( GtkWidget *widget,
   GtkWidget *dir_chooser;
       
   //creates and shows the dialog
-  dir_chooser = gtk_file_chooser_dialog_new ((gchar *)_("Choose split directory"),
+  dir_chooser = gtk_file_chooser_dialog_new (_("Choose split directory"),
                                              NULL,
                                              GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                              GTK_STOCK_CANCEL,
@@ -498,7 +498,7 @@ GtkWidget *create_pref_splitpoints_page()
   
   //directory label
   GtkWidget *label;
-  label = gtk_label_new((gchar *)_("Directory for split files :"));
+  label = gtk_label_new(_("Directory for split files :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 0);
   
@@ -517,8 +517,7 @@ GtkWidget *create_pref_splitpoints_page()
   //browse dir button
   GtkWidget *browse_dir_button;
   browse_dir_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DIRECTORY,(gchar *)_("_Browse dir"),
-                       FALSE);
+    create_cool_button(GTK_STOCK_DIRECTORY,_("_Browse dir"), FALSE);
   g_signal_connect (G_OBJECT (browse_dir_button), "clicked",
                     G_CALLBACK (browse_dir_button_event), NULL);
   gtk_box_pack_start (GTK_BOX (dir_hbox), 
@@ -528,7 +527,7 @@ GtkWidget *create_pref_splitpoints_page()
   //directory
   GtkWidget *song_dir_button;
   song_dir_button = (GtkWidget *)
-    gtk_button_new_with_label((gchar *)_("Song dir"));
+    gtk_button_new_with_label(_("Song dir"));
   g_signal_connect (G_OBJECT (song_dir_button), "clicked",
                     G_CALLBACK (song_dir_button_event), NULL);
   gtk_box_pack_start (GTK_BOX (dir_hbox), 
@@ -541,14 +540,13 @@ GtkWidget *create_pref_splitpoints_page()
                       horiz_fake, FALSE, FALSE, 5);
   //label for the split options
   GtkWidget *options_label;
-  options_label = gtk_label_new((gchar *)_("Split options :"));
+  options_label = gtk_label_new(_("Split options :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake),
                       options_label, FALSE, FALSE, 0);
   
   //frame mode option
   frame_mode =
-    gtk_check_button_new_with_label((gchar *)
-                                    _(" frame mode (useful"
+    gtk_check_button_new_with_label(_(" frame mode (useful"
                                       " for mp3 VBR) (mp3 only)"));
   gtk_box_pack_start (GTK_BOX(general_inside_vbox),
                       frame_mode, FALSE, FALSE, 0);
@@ -559,8 +557,7 @@ GtkWidget *create_pref_splitpoints_page()
   
   //seekable option
   seekable_mode =
-    gtk_check_button_new_with_label((gchar *)
-                                    _(" input not seekable (for streams that can "
+    gtk_check_button_new_with_label(_(" input not seekable (for streams that can "
                                       "be read only one time)\n"
                                       "(works only with normal and "
                                       "time split modes) (mp3 only)"));
@@ -573,8 +570,7 @@ GtkWidget *create_pref_splitpoints_page()
   
   //auto adjust mode option
   adjust_mode =
-    gtk_check_button_new_with_label((gchar *)
-                                    _(" auto-adjust mode (uses"
+    gtk_check_button_new_with_label(_(" auto-adjust mode (uses"
                                       " silence detection to auto"
                                       "-adjust splitpoints)"));
   gtk_box_pack_start (GTK_BOX(general_inside_vbox),
@@ -677,8 +673,7 @@ GtkWidget *create_pref_splitpoints_page()
   GtkWidget *set_default_prefs_button;
   set_default_prefs_button =
     (GtkWidget *)create_cool_button(GTK_STOCK_PREFERENCES,
-                                    (gchar *)_("Set default split"
-                                               " options"),FALSE); 
+                                    _("Set default split" " options"),FALSE); 
   g_signal_connect (G_OBJECT (set_default_prefs_button), "clicked",
                     G_CALLBACK (set_default_prefs_event), NULL);
   gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button,
@@ -693,14 +688,13 @@ GtkWidget *create_pref_splitpoints_page()
   GtkWidget *tag_label;
 
   //if library has been compiled with libid3tag
-  tag_label = gtk_label_new((gchar *)_("Tags options :"));
+  tag_label = gtk_label_new(_("Tags options :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake),
                       tag_label, FALSE, FALSE, 0);
       
   //tags radio items
   tags_radio = 
-    gtk_radio_button_new_with_label(NULL,
-                                    (gchar *)_("Original file tags"));
+    gtk_radio_button_new_with_label(NULL, _("Original file tags"));
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), tags_radio,
                       FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (tags_radio),
@@ -708,8 +702,7 @@ GtkWidget *create_pref_splitpoints_page()
                     G_CALLBACK (tags_radio_changed_event),
                     NULL);
   tags_radio = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (tags_radio), (gchar *)_("Default tags (cddb or"
-                                               " cue tags)"));
+    (GTK_RADIO_BUTTON (tags_radio), _("Default tags (cddb or cue tags)"));
   g_signal_connect (GTK_TOGGLE_BUTTON (tags_radio),
                     "toggled",
                     G_CALLBACK (tags_radio_changed_event),
@@ -717,7 +710,7 @@ GtkWidget *create_pref_splitpoints_page()
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), tags_radio,
                       FALSE, FALSE, 2);
   tags_radio = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (tags_radio), (gchar *)_("No tags"));
+    (GTK_RADIO_BUTTON (tags_radio),_("No tags"));
   g_signal_connect (GTK_TOGGLE_BUTTON (tags_radio),
                     "toggled",
                     G_CALLBACK (tags_radio_changed_event),
@@ -733,7 +726,7 @@ GtkWidget *create_pref_splitpoints_page()
       gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
                           horiz_fake, FALSE, FALSE, 6);
       
-      tag_label = gtk_label_new((gchar *)_("-libmp3splt has been compiled"
+      tag_label = gtk_label_new(_("-libmp3splt has been compiled"
                                            " without id3tag support :\n"
                                            "   we don't write"
                                            " the original mp3 tags to the split files"));
@@ -775,9 +768,8 @@ GString *get_checked_language()
 void save_preferences_event (GtkWidget *widget, 
                              gpointer data)
 {
-  gchar *filename;
-  filename = (gchar *)
-    get_preferences_filename();
+  const gchar *filename;
+  filename = get_preferences_filename();
 
   //our key file
   GKeyFile *my_key_file = g_key_file_new();
@@ -871,12 +863,11 @@ void save_preferences_event (GtkWidget *widget,
   FILE *preferences_file;
   preferences_file = (FILE *)g_fopen(filename,"w");
   g_fprintf(preferences_file,"%s", key_data);
-  
   fclose(preferences_file);
+  preferences_file = NULL;
   
   //we free memory
   g_free(key_data);
-  g_free(filename);
   g_key_file_free(my_key_file);
   
   gtk_widget_set_sensitive(GTK_WIDGET(save_button), FALSE);
@@ -895,7 +886,7 @@ void popup_save_preferences_dialog()
 {
   GtkWidget *dialog, *label;
    
-  dialog = gtk_dialog_new_with_buttons ((gchar *)_("Save preferences ?"),
+  dialog = gtk_dialog_new_with_buttons (_("Save preferences ?"),
                                         NULL,
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_STOCK_SAVE,
@@ -906,7 +897,7 @@ void popup_save_preferences_dialog()
                                         GTK_RESPONSE_CANCEL,
                                         NULL);
   
-  label = gtk_label_new ((gchar *)_("\n\tPreferences have changed.\n"
+  label = gtk_label_new (_("\n\tPreferences have changed.\n"
                          "Save preferences or revert to saved ?"
                          "\n"));
   //text label
@@ -948,24 +939,23 @@ GtkWidget *create_save_buttons_hbox()
   tooltip = gtk_tooltips_new();
 
   /* save button */
-  save_button = (GtkWidget *)create_cool_button(GTK_STOCK_SAVE,
-                                                (gchar *)_("Save"), FALSE);
+  save_button = (GtkWidget *)create_cool_button(GTK_STOCK_SAVE, _("Save"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(save_button), FALSE);
   g_signal_connect (G_OBJECT (save_button), "clicked",
                     G_CALLBACK (save_preferences_event), NULL);
   gtk_box_pack_start (GTK_BOX (hbox), save_button, TRUE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, save_button,(gchar *)_("save preferences"),"");
+  gtk_tooltips_set_tip(tooltip, save_button,_("save preferences"),"");
 
   /* revert to save button */
   revert_to_save_button = 
     (GtkWidget *)create_cool_button(GTK_STOCK_REVERT_TO_SAVED,
-                                    (gchar *)_("Revert to saved"), FALSE);
+                                    _("Revert to saved"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(revert_to_save_button), FALSE);
   g_signal_connect (G_OBJECT (revert_to_save_button), "clicked",
                     G_CALLBACK (revert_to_save_event), NULL);
   gtk_box_pack_start (GTK_BOX (hbox), revert_to_save_button, TRUE, FALSE, 5);
   gtk_tooltips_set_tip(tooltip, 
-                       revert_to_save_button,(gchar *)_("revert to saved preferences"),"");
+                       revert_to_save_button,_("revert to saved preferences"),"");
 
   return hbox;
 }
@@ -978,7 +968,7 @@ void combo_remove_unavailable_players()
   gtk_combo_box_remove_text(GTK_COMBO_BOX(player_combo_box),
                             PLAYER_GSTREAMER-1);
   player_pref_list =
-    g_list_remove(player_pref_list, (gint *)PLAYER_GSTREAMER);
+    g_list_remove(player_pref_list, GINT_TO_POINTER(PLAYER_GSTREAMER));
 #endif
 
   //if we dont have AUDACIOUS
@@ -986,7 +976,7 @@ void combo_remove_unavailable_players()
   gtk_combo_box_remove_text(GTK_COMBO_BOX(player_combo_box),
                             PLAYER_AUDACIOUS-1);
   player_pref_list =
-    g_list_remove(player_pref_list, (gint *)PLAYER_AUDACIOUS);
+    g_list_remove(player_pref_list, GINT_TO_POINTER(PLAYER_AUDACIOUS));
 #endif
 }
 
@@ -997,10 +987,9 @@ void player_combo_box_event(GtkComboBox *widget,
   //disconnect from player
   disconnect_button_event(NULL, NULL);
 
-  gint sel_pl;
   gint selected_item;
   selected_item = gtk_combo_box_get_active(widget);
-  sel_pl = (gint)g_list_nth_data(player_pref_list, selected_item);
+  gint sel_pl = GPOINTER_TO_INT(g_list_nth_data(player_pref_list, selected_item));
 
   selected_player = sel_pl;
 
@@ -1037,7 +1026,7 @@ GtkWidget *create_choose_player_combo()
                       horiz_fake, FALSE, FALSE, 5);
   
   //label for choose player
-  label = gtk_label_new((gchar *)_("Choose a player :"));
+  label = gtk_label_new(_("Choose a player :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 5);
   
@@ -1049,19 +1038,19 @@ GtkWidget *create_choose_player_combo()
   
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_AUDACIOUS,(gchar *)_("Audacious"));
+                            PLAYER_AUDACIOUS,_("Audacious"));
   player_pref_list =
-    g_list_append(player_pref_list, (gint *)PLAYER_AUDACIOUS);
+    g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_AUDACIOUS));
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_SNACKAMP,(gchar *)_("SnackAmp"));
+                            PLAYER_SNACKAMP,_("SnackAmp"));
   player_pref_list =
-    g_list_append(player_pref_list, (gint *)PLAYER_SNACKAMP);
+    g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_SNACKAMP));
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_GSTREAMER,(gchar *)_("GStreamer"));
+                            PLAYER_GSTREAMER,_("GStreamer"));
   player_pref_list =
-    g_list_append(player_pref_list, (gint *)PLAYER_GSTREAMER);
+    g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_GSTREAMER));
   //
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       player_combo_box, FALSE, FALSE, 0);
@@ -1111,8 +1100,7 @@ gboolean output_entry_event (GtkWidget *widget,
                              gpointer   user_data)  
 {
   //we check if the output format is correct
-  char *data = (char *)
-    gtk_entry_get_text(GTK_ENTRY(output_entry));
+  const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
   gint error = SPLT_OUTPUT_FORMAT_OK;
   mp3splt_set_oformat(the_state, data, &error);
   print_status_bar_confirmation(error);
@@ -1154,8 +1142,7 @@ GtkWidget *create_pref_output_page()
   
   //output label
   GtkWidget *label;
-  label = gtk_label_new((gchar *)
-                        _("Output filename format for most of the splits except normal split :\n"
+  label = gtk_label_new(_("Output filename format for most of the splits except normal split :\n"
                           "    @f - file name\n"
                           "    @a - artist name\n"
                           "    @p - performer of each song (does not"
@@ -1168,8 +1155,7 @@ GtkWidget *create_pref_output_page()
   
   //radio button for choosing default or custom output options
   radio_output = 
-    gtk_radio_button_new_with_label(NULL, 
-                                    (gchar *)_("Default format"));
+    gtk_radio_button_new_with_label(NULL, _("Default format"));
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_output),
                     "toggled",
                     G_CALLBACK (output_radio_box_event),
@@ -1178,7 +1164,7 @@ GtkWidget *create_pref_output_page()
   gtk_box_pack_start (GTK_BOX (output_inside_vbox), 
                       radio_output, FALSE, FALSE, 0);
   radio_output = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_output), (gchar *)_("Custom format"));
+    (GTK_RADIO_BUTTON (radio_output), _("Custom format"));
   //add the radio button to the box
   gtk_box_pack_start (GTK_BOX (output_inside_vbox), 
                       radio_output, FALSE, FALSE, 0);
@@ -1222,7 +1208,7 @@ GtkWidget *create_choose_preferences()
   /* general preferences page */
   GtkWidget *general_prefs;
   general_prefs = (GtkWidget *)create_pref_general_page();
-  notebook_label = gtk_label_new((gchar *)_("General"));
+  notebook_label = gtk_label_new(_("General"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            general_prefs,
                            (GtkWidget *)notebook_label);
@@ -1230,7 +1216,7 @@ GtkWidget *create_choose_preferences()
   /* split preferences */
   GtkWidget *splitpoints_prefs;
   splitpoints_prefs = (GtkWidget *)create_pref_splitpoints_page();
-  notebook_label = gtk_label_new((gchar *)_("Split"));
+  notebook_label = gtk_label_new(_("Split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            splitpoints_prefs,
                            (GtkWidget *)notebook_label);
@@ -1238,7 +1224,7 @@ GtkWidget *create_choose_preferences()
   /* output preferences */
   GtkWidget *output_prefs;
   output_prefs = (GtkWidget *)create_pref_output_page();
-  notebook_label = gtk_label_new((gchar *)_("Output"));
+  notebook_label = gtk_label_new(_("Output"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            output_prefs,
                            (GtkWidget *)notebook_label);
@@ -1247,7 +1233,7 @@ GtkWidget *create_choose_preferences()
   /* player preferences */
   GtkWidget *player_prefs;
   player_prefs = (GtkWidget *)create_pref_player_page();
-  notebook_label = gtk_label_new((gchar *)_("Player"));
+  notebook_label = gtk_label_new(_("Player"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            player_prefs,
                            (GtkWidget *)notebook_label);

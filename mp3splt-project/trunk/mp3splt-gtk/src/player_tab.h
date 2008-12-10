@@ -70,7 +70,7 @@ void enable_player_buttons();
 void disable_player_buttons();
 void connect_change_buttons();
 void disconnect_change_buttons();
-void connect_with_song(gchar *fname, gint i);
+void connect_with_song(const gchar *fname, gint i);
 void connect_to_player_with_song(gint i);
 void connect_button_event (GtkWidget *widget,
                            gpointer data);
@@ -196,3 +196,5 @@ void handle_file_detached_event (GtkHandleBox *handlebox,
 GtkWidget *create_choose_file_frame();
 
 void change_current_filename(gchar *fname);
+GtkWidget *create_player_playlist_frame();
+

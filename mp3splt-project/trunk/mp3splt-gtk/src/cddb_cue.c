@@ -132,11 +132,10 @@ void add_cddb_splitpoints(gpointer *data)
   gtk_widget_set_sensitive(GTK_WIDGET(add_cddb_button),
                            FALSE);
   
-  gchar *filename;
+  const gchar *filename;
   gint err = SPLT_OK;
   
-  filename = 
-    (gchar *)gtk_entry_get_text(GTK_ENTRY(cddb_entry));
+  filename = gtk_entry_get_text(GTK_ENTRY(cddb_entry));
   
   //we put the output default option
   if(get_checked_output_radio_box())
@@ -181,8 +180,7 @@ void update_output_options()
     {
       mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
                              SPLT_OUTPUT_DEFAULT);
-      char *data = (char *)
-        gtk_entry_get_text(GTK_ENTRY(output_entry));
+      const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
       gint error = SPLT_OUTPUT_FORMAT_OK;
       mp3splt_set_oformat(the_state, data, &error);
       print_status_bar_confirmation(error);
@@ -212,11 +210,10 @@ void add_cue_splitpoints(gpointer *data)
   gtk_widget_set_sensitive(GTK_WIDGET(add_cue_button),
                            FALSE);
 
-  gchar *filename;
+  const gchar *filename;
   gint err;
   
-  filename = 
-    (gchar *)gtk_entry_get_text(GTK_ENTRY(cue_entry));
+  filename = gtk_entry_get_text(GTK_ENTRY(cue_entry));
   
   //we put the output default option
   if(get_checked_output_radio_box())
@@ -296,14 +293,14 @@ GtkWidget *create_cddb_cue_frame()
   
   //cddb label
   GtkWidget *label_cddb;
-  label_cddb = gtk_label_new((gchar *)_("CDDB file : "));
+  label_cddb = gtk_label_new(_("CDDB file : "));
   gtk_box_pack_start (GTK_BOX(cddb_hbox), label_cddb , 
                       FALSE, FALSE, 0);
   
   //browse cddb button
   browse_cddb_button =
     (GtkWidget *)create_cool_button(GTK_STOCK_FILE,
-                                    (gchar *)_("_Browse .cddb file"),
+                                    _("_Browse .cddb file"),
                                     FALSE);
   g_signal_connect (G_OBJECT (browse_cddb_button), "clicked",
                     G_CALLBACK (browse_button_event), 
@@ -315,12 +312,11 @@ GtkWidget *create_cddb_cue_frame()
   tooltip = gtk_tooltips_new();
   gtk_tooltips_set_tip(tooltip, 
                        browse_cddb_button,
-                       (gchar *)_("select CDDB file"),"");
+                       _("select CDDB file"),"");
   
   //add cddb splitpoints button
   add_cddb_button =
-    (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
-                                    (gchar *)_("_Add cddb splitpoints"),
+    (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("_Add cddb splitpoints"),
                                     FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(add_cddb_button), FALSE);
   g_signal_connect (G_OBJECT (add_cddb_button), "clicked",
@@ -331,8 +327,8 @@ GtkWidget *create_cddb_cue_frame()
   //tooltip for the button
   gtk_tooltips_set_tip(tooltip, 
                        add_cddb_button,
-                       (gchar *)_("set cddb splitpoints to the "
-                                  "splitpoints table"),"");
+                       _("set cddb splitpoints to the "
+                         "splitpoints table"),"");
   
   //cddb entry
   cddb_entry = gtk_entry_new();
@@ -356,14 +352,14 @@ GtkWidget *create_cddb_cue_frame()
   
   //cue label
   GtkWidget *label_cue;
-  label_cue = gtk_label_new((gchar *)_("CUE file : "));
+  label_cue = gtk_label_new(_("CUE file : "));
   gtk_box_pack_start (GTK_BOX(cue_hbox), label_cue , 
                       FALSE, FALSE, 0);
   
   //browse cue button
   browse_cue_button =
     (GtkWidget *)create_cool_button(GTK_STOCK_FILE,
-                                    (gchar *)_("_Browse .cue file"),
+                                    _("_Browse .cue file"),
                                     FALSE);
   g_signal_connect (G_OBJECT (browse_cue_button), "clicked",
                     G_CALLBACK (browse_button_event), 
@@ -373,12 +369,12 @@ GtkWidget *create_cddb_cue_frame()
   //tooltip for the button
   gtk_tooltips_set_tip(tooltip, 
                        browse_cue_button,
-                       (gchar *)_("select CUE file"),"");
+                       _("select CUE file"),"");
   
   //add cue splitpoints button
   add_cue_button =
     (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
-                                    (gchar *)_("_Add cue splitpoints"),
+                                    _("_Add cue splitpoints"),
                                     FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(add_cue_button), FALSE);
   g_signal_connect (G_OBJECT (add_cue_button), "clicked",
@@ -389,8 +385,8 @@ GtkWidget *create_cddb_cue_frame()
   //tooltip for the button
   gtk_tooltips_set_tip(tooltip, 
                        add_cue_button,
-                       (gchar *)_("set cue splitpoints to the "
-                                  "splitpoints table"),"");
+                       _("set cue splitpoints to the "
+                         "splitpoints table"),"");
   
   //cue entry
   cue_entry = gtk_entry_new();

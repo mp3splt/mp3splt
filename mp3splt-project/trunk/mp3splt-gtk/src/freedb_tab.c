@@ -114,8 +114,7 @@ void add_freedb_row(gchar *album_name,
   gchar *number;
   gint malloc_number = strlen(album_name) + 20;
   //allocate memory
-  number = (gchar *)
-    malloc(malloc_number*sizeof(gchar *));
+  number = malloc(malloc_number * sizeof(gchar *));
   gint i;
   for(i = 0; i < revisions_number; i++)
     {
@@ -172,9 +171,9 @@ void create_freedb_columns (GtkTreeView *tree_view)
   
   //album title
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)ALBUM_NAME);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(ALBUM_NAME));
   name_column = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)_("Album title"), GTK_CELL_RENDERER(renderer),
+    (_("Album title"), GTK_CELL_RENDERER(renderer),
      "text", ALBUM_NAME, NULL);
 
   //appends columns to the list of columns of tree_view
@@ -192,10 +191,9 @@ void create_freedb_columns (GtkTreeView *tree_view)
 
   //number of the album title
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)NUMBER);
-  number_column = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)_("No"), GTK_CELL_RENDERER(renderer),
-     "text", NUMBER, NULL);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(NUMBER));
+  number_column = gtk_tree_view_column_new_with_attributes
+    (_("No"), GTK_CELL_RENDERER(renderer), "text", NUMBER, NULL);
 
   //appends columns to the list of columns of tree_view
   gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
@@ -306,10 +304,7 @@ gchar *transform_to_utf8(gchar *text,
   if(!(g_utf8_validate (text, -1,NULL)) &&
      (text != NULL))
     {
-      temp = g_convert (text, -1,
-                        "UTF-8",
-                        "ISO-8859-1",
-                        &test,&test, NULL);
+      temp = g_convert(text, -1, "UTF-8", "ISO-8859-1", &test,&test, NULL);
       if (free_or_not)
         g_free(text);
           
@@ -335,13 +330,11 @@ void freedb_search(gpointer *data)
                            FALSE);
   gtk_entry_set_editable (GTK_ENTRY (freedb_entry), FALSE);
   
-  put_status_message((gchar *)
-                     _("please wait... contacting freedb.org"));
+  put_status_message(_("please wait... contacting freedb.org"));
   
   //possible errors
   gint err;
-  gchar *freedb_search = (gchar *)
-    gtk_entry_get_text(GTK_ENTRY(freedb_entry));
+  const gchar *freedb_search = gtk_entry_get_text(GTK_ENTRY(freedb_entry));
   
   //unlock gtk
   gdk_threads_leave();
@@ -435,8 +428,7 @@ void freedb_entry_activate_event (GtkEntry *entry,
 void write_freedbfile(int *err)
 {
   //we check if the output format is correct
-  char *data = (char *)
-    gtk_entry_get_text(GTK_ENTRY(output_entry));
+  const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
   gint error = SPLT_OUTPUT_FORMAT_OK;
   mp3splt_set_oformat(the_state, data, &error);
   
@@ -445,20 +437,18 @@ void write_freedbfile(int *err)
   
   print_status_bar_confirmation(error);
   
-  put_status_message((gchar *)
-                     _("please wait... contacting freedb.org"));
+  put_status_message(_("please wait... contacting freedb.org"));
   
   //we suppose directory exists
   //it should be created when mp3splt-gtk starts
   gchar mp3splt_dir[14] = ".mp3splt-gtk";
   //home directory
-  gchar *home_dir = (gchar *)g_get_home_dir();
+  const gchar *home_dir = g_get_home_dir();
   gchar *filename;
   gint malloc_number = strlen(mp3splt_dir) + 
     strlen(home_dir) + 20;
   //allocate memory
-  filename = (gchar *)
-    malloc(malloc_number * sizeof(gchar *));
+  filename = malloc(malloc_number * sizeof(gchar *));
   
   g_snprintf(filename,malloc_number,
              "%s%s%s%s%s", home_dir,
@@ -523,8 +513,7 @@ void update_splitpoints_from_the_state()
 {
   gint max_splits = 0;
   gint err = SPLT_OK;
-  splt_point *points = 
-    mp3splt_get_splitpoints(the_state, &max_splits,&err);
+  const splt_point *points = mp3splt_get_splitpoints(the_state, &max_splits,&err);
   print_status_bar_confirmation(err);
   
   //only if we have splitpoints
@@ -539,18 +528,19 @@ void update_splitpoints_from_the_state()
         {
           //ugly hack because we use maximum ints in the GUI
           //-GUI must be changed to accept long values
-          if (points[i].value > INT_MAX)
+          int point_value = points[i].value;
+          if (point_value > INT_MAX)
           {
-            points[i].value = INT_MAX;
+            point_value = INT_MAX;
           }
 
           //we get the minutes, seconds and hudreths
-          get_secs_mins_hundr(points[i].value,
+          get_secs_mins_hundr(point_value,
                               &spin_mins, &spin_secs,
                               &spin_hundr_secs);
           
           gint must_be_free = FALSE;
-          gchar *result_utf8 = (gchar *)points[i].name;
+          gchar *result_utf8 = points[i].name;
           
           if (result_utf8 != NULL)
             {
@@ -658,7 +648,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start (GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 3);
   //top label
   GtkWidget *label;
-  label = gtk_label_new((gchar *)_("Search freedb2.org : "));
+  label = gtk_label_new(_("Search freedb2.org : "));
   gtk_box_pack_start (GTK_BOX(search_hbox), label , FALSE, FALSE, 0);
   //top entry
   freedb_entry = gtk_entry_new();
@@ -669,8 +659,7 @@ GtkWidget *create_freedb_frame()
   
   //search button
   freedb_search_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_FIND,
-                       (gchar *)_("_Search"),FALSE);
+    create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
   g_signal_connect (G_OBJECT (freedb_search_button), "clicked",
                     G_CALLBACK (freedb_search_button_event), NULL);
   gtk_box_pack_start (GTK_BOX (search_hbox), freedb_search_button,
@@ -712,7 +701,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start (GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 3);
   //top selected label
   GtkWidget *label_selected;
-  label_selected = gtk_label_new((gchar *)_("Selected album : "));
+  label_selected = gtk_label_new(_("Selected album : "));
   gtk_box_pack_start (GTK_BOX(selected_hbox), label_selected , FALSE, FALSE, 0);
   //freedb selected entry
   freedb_selected_entry = gtk_entry_new();
@@ -723,15 +712,14 @@ GtkWidget *create_freedb_frame()
   tooltip = gtk_tooltips_new();
   //add button
   freedb_add_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_ADD,(gchar *)_("_Add splitpoints"),
-                       FALSE);
+    create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
   //gtk_button_set_relief(GTK_BUTTON(freedb_add_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   g_signal_connect (G_OBJECT (freedb_add_button), "clicked",
                     G_CALLBACK (freedb_add_button_clicked_event), NULL);
   gtk_box_pack_start (GTK_BOX (selected_hbox), freedb_add_button, FALSE, FALSE, 5);
   gtk_tooltips_set_tip(tooltip, freedb_add_button,
-                       (gchar *)_("set splitpoints to the splitpoints table"),"");
+                       _("set splitpoints to the splitpoints table"),"");
   
   return freedb_handle_box;
 }
