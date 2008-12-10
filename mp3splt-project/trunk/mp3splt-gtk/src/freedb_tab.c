@@ -300,11 +300,14 @@ gchar *transform_to_utf8(gchar *text,
                          gint *must_be_freed)
 {
   gchar *temp;
-  guint test;
+
+  gsize bytes_read;
+  gsize bytes_written;
+
   if(!(g_utf8_validate (text, -1,NULL)) &&
      (text != NULL))
     {
-      temp = g_convert(text, -1, "UTF-8", "ISO-8859-1", &test,&test, NULL);
+      temp = g_convert(text, -1, "UTF-8", "ISO-8859-1", &bytes_read, &bytes_written, NULL);
       if (free_or_not)
         g_free(text);
           
