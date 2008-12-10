@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <math.h>
 
 #ifdef __WIN32__
 #include <io.h>
