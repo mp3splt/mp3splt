@@ -119,7 +119,7 @@ gchar *get_preferences_filename()
   gint         status;
   
   //home directory
-  const gchar *home_dir = g_get_home_dir();
+  gchar *home_dir = g_strdup(g_get_home_dir());
  
 #ifdef __WIN32__
   //manage c:\ because the gtk dir returns us "c:\"
@@ -139,6 +139,12 @@ gchar *get_preferences_filename()
   g_snprintf(mp3splt_dir_with_path, malloc_number,
              "%s%s%s", home_dir,G_DIR_SEPARATOR_S,
              mp3splt_dir);
+
+  if (home_dir)
+  {
+    g_free(home_dir);
+    home_dir = NULL;
+  }
   
   //filename+path
   gchar *filename;
