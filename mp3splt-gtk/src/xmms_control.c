@@ -80,15 +80,15 @@ void myxmms_get_song_infos(gchar *total_infos)
   
   if (nch == 2)
   {
-    nch_str = (gchar *)_("stereo");
+    nch_str = _("stereo");
   }
   else
   {
-    nch_str = (gchar *)_("mono");
+    nch_str = _("mono");
   }
 
-  gchar *_Kbps = (gchar *)_("Kbps");
-  gchar *_Khz = (gchar *)_("Khz");
+  gchar *_Kbps = _("Kbps");
+  gchar *_Khz = _("Khz");
 
   if (rate != 0)
   {
@@ -196,7 +196,7 @@ void myxmms_add_files(GList *list)
   while (list_pos)
   {
     //duplicate the filename
-    gchar *dup_filename = strdup((gchar *)list_pos->data);
+    gchar *dup_filename = strdup(list_pos->data);
     //free the GList data content
     //g_free(list_pos->data);
     //put the new GList data content

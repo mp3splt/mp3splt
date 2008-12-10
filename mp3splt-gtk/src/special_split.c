@@ -142,15 +142,14 @@ GtkWidget *create_special_split_page()
   
   //label for the split modes
   GtkWidget *options_label;
-  options_label = gtk_label_new((gchar *)_("Split mode :"));
+  options_label = gtk_label_new(_("Split mode :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake),
                       options_label, FALSE, FALSE, 0);
   
   GtkWidget *radio_button;
   //normal split
   radio_button = 
-    gtk_radio_button_new_with_label(NULL,
-                                    (gchar *)_("Normal"));
+    gtk_radio_button_new_with_label(NULL, _("Normal"));
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
@@ -159,7 +158,7 @@ GtkWidget *create_special_split_page()
   
   //time split
   radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_button), (gchar *)_("Time"));
+    (GTK_RADIO_BUTTON (radio_button), _("Time"));
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
@@ -205,10 +204,10 @@ GtkWidget *create_special_split_page()
 
   //wrap split
   radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_button), (gchar *)_("Wrap - split"
-                                                 " files created with "
-                                                 "mp3wrap or albumwrap"
-                                                 " (mp3 only)"));
+    (GTK_RADIO_BUTTON (radio_button), _("Wrap - split"
+                                        " files created with "
+                                        "mp3wrap or albumwrap"
+                                        " (mp3 only)"));
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
@@ -217,8 +216,7 @@ GtkWidget *create_special_split_page()
   
   //error mode split
   radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_button), (gchar *)_("Error mode "
-                                                 "(mp3 only)"));
+    (GTK_RADIO_BUTTON (radio_button), _("Error mode (mp3 only)"));
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
@@ -234,8 +232,7 @@ GtkWidget *create_special_split_page()
   GtkWidget *set_default_prefs_button;
   set_default_prefs_button =
     (GtkWidget *)create_cool_button(GTK_STOCK_PREFERENCES,
-                                    (gchar *)_("Set default"
-                                               " options"),FALSE); 
+                                    _("Set default options"),FALSE); 
   g_signal_connect (G_OBJECT (set_default_prefs_button), "clicked",
                     G_CALLBACK (set_default_split_modes), radio_button);
   gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button,

@@ -491,20 +491,20 @@ gchar *player_get_filename()
 {
   if (selected_player == PLAYER_SNACKAMP)
     {
-      return (gchar *)snackamp_get_filename();
+      return snackamp_get_filename();
     }
   else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      return (gchar *)myxmms_get_filename();
+      return myxmms_get_filename();
 #endif
 #endif
     }
     else
     {
 #ifndef NO_GSTREAMER
-      return (gchar *)gstreamer_get_filename();
+      return gstreamer_get_filename();
 #endif
     }
 
@@ -517,20 +517,20 @@ gchar *player_get_title()
 {
   if (selected_player == PLAYER_SNACKAMP)
     {
-      return (gchar *)snackamp_get_title_song();
+      return snackamp_get_title_song();
     }
   else if (selected_player == PLAYER_AUDACIOUS)
     {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      return (gchar *)myxmms_get_title_song();
+      return myxmms_get_title_song();
 #endif
 #endif
     }
     else
     {
 #ifndef NO_GSTREAMER
-      return (gchar *)gstreamer_get_title_song();
+      return gstreamer_get_title_song();
 #endif
     }
 

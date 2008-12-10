@@ -434,14 +434,14 @@ void disconnect_change_buttons()
 
 //connect with the song fname
 //if i = 0 then start playing, else dont start playing
-void connect_with_song(gchar *fname, gint i)
+void connect_with_song(const gchar *fname, gint i)
 {
   //list with songs
   GList *song_list = NULL;
 
   if (fname != NULL)
     {
-      song_list = g_list_append(song_list, fname);
+      song_list = g_list_append(song_list, strdup(fname));
       
       //if we must also play the song
       if (i == 0)
@@ -492,6 +492,7 @@ void connect_with_song(gchar *fname, gint i)
         }
     }
   
+  //TODO: free elements of list
   g_list_free(song_list);
 }
 
@@ -499,8 +500,8 @@ void connect_with_song(gchar *fname, gint i)
 //if i = 0 then start playing, else dont start playing
 void connect_to_player_with_song(gint i)
 {
-  gchar *fname = NULL;
-  fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
+  const gchar *fname = fname = gtk_entry_get_text(GTK_ENTRY(entry));
+
   //connect with the song fname
   connect_with_song(fname,i);
 }
@@ -657,8 +658,7 @@ void disconnect_button_event (GtkWidget *widget,
         "");
   }
 
-  gchar *fname;
-  fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
+  const gchar *fname = gtk_entry_get_text(GTK_ENTRY(entry));
   if (is_filee(fname))
   {
     file_in_entry = TRUE;
@@ -808,7 +808,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    NULL);
   gtk_widget_set_sensitive(go_beg_button, FALSE);
 
-  gtk_tooltips_set_tip(tooltip, go_beg_button,(gchar *)_("previous"),"");
+  gtk_tooltips_set_tip(tooltip, go_beg_button,_("previous"),"");
 
   //play button
   play_button = (GtkWidget *)create_cool_button(GTK_STOCK_MEDIA_PLAY,  "",
@@ -821,7 +821,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    NULL);
   gtk_widget_set_sensitive(play_button, FALSE);
 
-  gtk_tooltips_set_tip(tooltip, play_button,(gchar *)_("play"),"");
+  gtk_tooltips_set_tip(tooltip, play_button,_("play"),"");
 
   //pause button
   pause_button = (GtkWidget *)create_cool_button(GTK_STOCK_MEDIA_PAUSE, "",
@@ -833,7 +833,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    G_CALLBACK(pause_event), NULL);
   gtk_widget_set_sensitive(pause_button, FALSE);
   
-  gtk_tooltips_set_tip(tooltip, pause_button,(gchar *)_("pause"),"");
+  gtk_tooltips_set_tip(tooltip, pause_button,_("pause"),"");
 
   //stop button
   stop_button = (GtkWidget *)create_cool_button(GTK_STOCK_MEDIA_STOP,
@@ -846,7 +846,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    NULL);
   gtk_widget_set_sensitive(stop_button, FALSE);
 
-  gtk_tooltips_set_tip(tooltip, stop_button,(gchar *)_("stop"),"");
+  gtk_tooltips_set_tip(tooltip, stop_button,_("stop"),"");
 
   //go at the end button
   go_end_button = (GtkWidget *)create_cool_button(GTK_STOCK_MEDIA_NEXT, "",
@@ -859,11 +859,10 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    NULL);
   gtk_widget_set_sensitive(go_end_button, FALSE);
 
-  gtk_tooltips_set_tip(tooltip, go_end_button,(gchar *)_("next"),"");
+  gtk_tooltips_set_tip(tooltip, go_end_button,_("next"),"");
 
   //add button
-  player_add_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
-                                                      (gchar *)_("Add"), FALSE);
+  player_add_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("Add"), FALSE);
   //put the new button in the box
   gtk_box_pack_start (GTK_BOX (player_buttons_hbox), player_add_button, FALSE, FALSE, 5);
   gtk_button_set_relief(GTK_BUTTON(player_add_button), GTK_RELIEF_NONE);
@@ -872,36 +871,35 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    tree_view);
   gtk_widget_set_sensitive(player_add_button, FALSE);
   
-  gtk_tooltips_set_tip(tooltip, player_add_button,(gchar *)_("add splitpoint from player"),"");
+  gtk_tooltips_set_tip(tooltip, player_add_button,_("add splitpoint from player"),"");
   
   //silence wave check button
-  silence_wave_check_button = (GtkWidget *)gtk_check_button_new_with_label((gchar *)_("Show silence wave"));
+  silence_wave_check_button = (GtkWidget *)gtk_check_button_new_with_label(_("Show silence wave"));
   //put the new button in the box
   gtk_box_pack_end(GTK_BOX (player_buttons_hbox), silence_wave_check_button, FALSE, FALSE, 5);
   g_signal_connect(G_OBJECT(silence_wave_check_button), "toggled", G_CALLBACK(enable_show_silence_wave), NULL);
   gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
-  gtk_tooltips_set_tip(tooltip, silence_wave_check_button,(gchar *)_("shows the audio level wave"),"");
+  gtk_tooltips_set_tip(tooltip, silence_wave_check_button,_("shows the audio level wave"),"");
 
   /* connect player button */
   connect_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_CONNECT,(gchar *)_("_Connect    "),
-                       FALSE);
+    create_cool_button(GTK_STOCK_CONNECT,_("_Connect    "), FALSE);
   //gtk_button_set_relief(GTK_BUTTON(connect_button), GTK_RELIEF_HALF);
   g_signal_connect (G_OBJECT (connect_button), "clicked",
                     G_CALLBACK (connect_button_event), NULL);
   gtk_box_pack_start (GTK_BOX(player_buttons_hbox), connect_button, FALSE, FALSE, 7);
 
-  gtk_tooltips_set_tip(tooltip, connect_button,(gchar *)_("connect to player"),"");
+  gtk_tooltips_set_tip(tooltip, connect_button,_("connect to player"),"");
   
   /* disconnect player button */
-  disconnect_button = (GtkWidget *)create_cool_button(GTK_STOCK_DISCONNECT,(gchar *)_("_Disconnect"),
+  disconnect_button = (GtkWidget *)create_cool_button(GTK_STOCK_DISCONNECT,_("_Disconnect"),
                                                       FALSE);
   //gtk_button_set_relief(GTK_BUTTON(disconnect_button), GTK_RELIEF_HALF);
   g_signal_connect (G_OBJECT (disconnect_button), "clicked",
                     G_CALLBACK (disconnect_button_event), NULL);
   gtk_box_pack_start (GTK_BOX(player_buttons_hbox), disconnect_button, FALSE, FALSE, 7);
   
-  gtk_tooltips_set_tip(tooltip, disconnect_button,(gchar *)_("disconnect from player"),"");
+  gtk_tooltips_set_tip(tooltip, disconnect_button,_("disconnect from player"),"");
 
   return player_buttons_hbox;
 }
@@ -1090,9 +1088,10 @@ void check_update_down_progress_bar()
         }
         else
         {
+          //TODO ugly code in 'fname' usage !
           gchar *fname;
           fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
-          fname = (gchar *) get_real_name_from_filename((guchar *)fname);
+          fname = (gchar *)get_real_name_from_filename((guchar *)fname);
           g_snprintf(description_shorted,60,"%s",fname);
           if (fname != NULL)
           {
@@ -1236,7 +1235,7 @@ void print_player_filename()
   }
   
   gchar *title;
-  title = (gchar *)player_get_title();
+  title = player_get_title();
   gchar new_title[90];
   g_snprintf(new_title,75, "%s",title);
   if (title != NULL)
@@ -1301,8 +1300,7 @@ void print_song_time_elapsed()
   g_snprintf(seconds_minutes, 64, "%s  :  %s  /  %s  :  %s", 
              minutes, seconds, total_minutes, total_seconds);
       
-  gtk_label_set_text(GTK_LABEL(label_time), 
-                     (gchar *)seconds_minutes);
+  gtk_label_set_text(GTK_LABEL(label_time), seconds_minutes);
 }
 
 //change volume to be the players volume
@@ -2555,9 +2553,8 @@ gboolean da_expose_event (GtkWidget      *da,
     //set the color for the graphic context
     gdk_gc_set_rgb_fg_color (gc, &color);
 
-    layout = get_drawing_text((gchar *)
-          _(" left click on splitpoint selects it,"
-            " right click erases it"));
+    layout = get_drawing_text(_(" left click on splitpoint selects it,"
+          " right click erases it"));
     gdk_draw_layout(da->window, gc,
         0, margin - 3, layout);
     //we free the memory for the layout
@@ -2567,8 +2564,7 @@ gboolean da_expose_event (GtkWidget      *da,
     //set the color for the graphic context
     gdk_gc_set_rgb_fg_color (gc, &color);
 
-    layout = get_drawing_text((gchar *)
-          _(" left click + move changes song"
+    layout = get_drawing_text(_(" left click + move changes song"
             " position, right click + move changes zoom"));
     gdk_draw_layout(da->window, gc,
         0, erase_split_ylimit + margin, layout);
@@ -2579,8 +2575,7 @@ gboolean da_expose_event (GtkWidget      *da,
     color.red = 15000;color.green = 40000;color.blue = 25000;
     gdk_gc_set_rgb_fg_color (gc, &color);
 
-    layout = get_drawing_text((gchar *)
-          _(" left click on point + move changes point"
+    layout = get_drawing_text(_(" left click on point + move changes point"
             " position, right click play preview"));
     gdk_draw_layout(da->window, gc,
         0, progress_ylimit + margin, layout);
@@ -2592,8 +2587,7 @@ gboolean da_expose_event (GtkWidget      *da,
     //set the color for the graphic context
     gdk_gc_set_rgb_fg_color (gc, &color);
 
-    layout = get_drawing_text((gchar *)
-          _(" left click on rectangle checks/unchecks 'keep splitpoint'"));
+    layout = get_drawing_text(_(" left click on rectangle checks/unchecks 'keep splitpoint'"));
     gdk_draw_layout(da->window, gc,
         0, splitpoint_ypos + 1, layout);
     //we free the memory for the layout
@@ -2790,8 +2784,7 @@ void player_quick_preview(gint splitpoint_to_preview)
       
       player_jump(preview_start_position);
       change_progress_bar();
-      put_status_message((gchar *)
-                         _(" quick preview... "));
+      put_status_message(_(" quick preview... "));
       
       quick_preview = FALSE;
       if (quick_preview_end_splitpoint != -1)
@@ -3326,11 +3319,10 @@ void create_playlist_columns (GtkTreeView *tree_view)
   /* minutes */
   //renderer creation
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)COL_NAME);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NAME));
   name_column = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)_("History"), GTK_CELL_RENDERER(renderer),
-     "text", COL_NAME,
-     NULL);
+    (_("History"), GTK_CELL_RENDERER(renderer),
+     "text", COL_NAME, NULL);
 
   //we dont insert the column to the tree view
   /*  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
@@ -3464,8 +3456,7 @@ GtkWidget *create_delete_buttons_hbox()
 
   //button for removing a file
   playlist_remove_file_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE,
-                       (gchar *)_("_Erase selected entries"),FALSE);
+    create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       playlist_remove_file_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
@@ -3474,8 +3465,7 @@ GtkWidget *create_delete_buttons_hbox()
   
   //button for removing a file
   playlist_remove_all_files_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE,
-                       (gchar *)_("Erase all history"),FALSE);
+    create_cool_button(GTK_STOCK_DELETE, _("Erase all history"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       playlist_remove_all_files_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);
@@ -3598,8 +3588,7 @@ gint mytimer(gpointer data)
                       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button),
                                                    TRUE);
                       cancel_quick_preview();
-                      put_status_message((gchar *)
-                                         _(" quick preview finished, song paused"));
+                      put_status_message(_(" quick preview finished, song paused"));
                     }
                 }
               
@@ -3717,10 +3706,9 @@ void file_chooser_ok_event(gchar *fname)
 
 //events for browse button
 //also used for the cddb and cue browses
-void browse_button_event( GtkWidget *widget,
-                          gpointer   data)
+void browse_button_event(GtkWidget *widget, gpointer data)
 {
-  gint i = (gint) data;
+  gint i = GPOINTER_TO_INT(data);
   
   /* file chooser */
   GtkWidget *file_chooser;
@@ -3731,9 +3719,9 @@ void browse_button_event( GtkWidget *widget,
       //disable browse button
       gtk_widget_set_sensitive(widget, FALSE);
     }
-      
+ 
   //creates and shows the dialog
-  file_chooser = gtk_file_chooser_dialog_new ((gchar *)_("Choose File"),
+  file_chooser = gtk_file_chooser_dialog_new (_("Choose File"),
                                               NULL,
                                               GTK_FILE_CHOOSER_ACTION_OPEN,
                                               GTK_STOCK_CANCEL,
@@ -3746,18 +3734,18 @@ void browse_button_event( GtkWidget *widget,
     {
       //sets a filter for the file choose
       our_filter = (GtkWidget *)gtk_file_filter_new();
-      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), (gchar *)_("mp3 and ogg files(*.mp3 *.ogg)"));
+      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files(*.mp3 *.ogg)"));
       gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
       gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
       gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
       //sets a filter for the file choose
       our_filter = (GtkWidget *)gtk_file_filter_new();
-      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), (gchar *)_("mp3 files(*.mp3)"));
+      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files(*.mp3)"));
       gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
       gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
       //sets a filter for the file choose
       our_filter = (GtkWidget *)gtk_file_filter_new();
-      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), (gchar *)_("ogg files(*.ogg)"));
+      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files(*.ogg)"));
       gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
       gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
     }
@@ -3766,7 +3754,7 @@ void browse_button_event( GtkWidget *widget,
       {
         //sets a filter for the file choose
         our_filter = (GtkWidget *)gtk_file_filter_new();
-        gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), (gchar *)_("cddb files(*.cddb)"));
+        gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cddb files(*.cddb)"));
         gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cddb");
         gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
                                     GTK_FILE_FILTER(our_filter));
@@ -3776,7 +3764,7 @@ void browse_button_event( GtkWidget *widget,
         {
           //sets a filter for the file choose
           our_filter = (GtkWidget *)gtk_file_filter_new();
-          gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), (gchar *)_("cue files(*.cue)"));
+          gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cue files(*.cue)"));
           gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cue");
           gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
                                       GTK_FILE_FILTER(our_filter));
@@ -3784,7 +3772,7 @@ void browse_button_event( GtkWidget *widget,
       
   //all files filter
   our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), (gchar *)_("All Files"));
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("All Files"));
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
   
@@ -3885,8 +3873,7 @@ void fix_ogg_stream(gpointer *data)
   //remove old split files
   remove_all_split_rows();  
   
-  filename_to_split = (gchar *)
-    gtk_entry_get_text(GTK_ENTRY(entry));
+  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
   
   gint confirmation = SPLT_OK;
   gdk_threads_leave();
@@ -3945,8 +3932,7 @@ GtkWidget *create_choose_file_frame()
   
   /* browse button */
   browse_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_FILE,(gchar *)_("_Browse"),
-                       FALSE);
+    create_cool_button(GTK_STOCK_FILE,_("_Browse"), FALSE);
   g_signal_connect (G_OBJECT (browse_button), "clicked",
                     G_CALLBACK (browse_button_event), 
                     (gpointer *)BROWSE_SONG);
@@ -3954,15 +3940,14 @@ GtkWidget *create_choose_file_frame()
   
   GtkTooltips *tooltip;
   tooltip = gtk_tooltips_new();
-  gtk_tooltips_set_tip(tooltip, browse_button,(gchar *)_("select file"),"");
+  gtk_tooltips_set_tip(tooltip, browse_button,_("select file"),"");
   
   /* bottom buttons hbox */
   //GtkWidget *bottom_buttons_hbox = gtk_hbox_new(FALSE,0);
   
   /* fix ogg stream button */
   fix_ogg_stream_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_HARDDISK,(gchar *)_("_Fix ogg stream"),
-                       FALSE);
+    create_cool_button(GTK_STOCK_HARDDISK,_("_Fix ogg stream"), FALSE);
   g_signal_connect (G_OBJECT (fix_ogg_stream_button), "clicked",
                     G_CALLBACK (fix_ogg_stream_button_event), NULL);
  /* gtk_box_pack_start (GTK_BOX(bottom_buttons_hbox), 

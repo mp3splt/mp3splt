@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-11-30 02:33+0100\n"
+"POT-Creation-Date: 2008-12-09 01:04+0100\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -36,8 +36,8 @@ msgid " error : you already have the splitpoint in table "
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:724 src/tree_tab.c:1017 src/freedb_tab.c:559
-#: src/freedb_tab.c:581
+#: src/tree_tab.c:724 src/tree_tab.c:1017 src/freedb_tab.c:567
+#: src/freedb_tab.c:589
 msgid "description here"
 msgstr "ici, une description"
 
@@ -357,25 +357,24 @@ msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
 #: src/player_tab.c:2559
-msgid " left button on splitpoint selects it, right button erases it"
+msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 
 #: src/player_tab.c:2571
 #, fuzzy
 msgid ""
-" left button + move changes song position, right button + move changes zoom"
+" left click + move changes song position, right click + move changes zoom"
 msgstr "mettre les points cue au tableau des points de coupure"
 
 #: src/player_tab.c:2583
 #, fuzzy
 msgid ""
-" left button on point + move changes point position, right button play "
-"preview"
+" left click on point + move changes point position, right click play preview"
 msgstr "mettre les points cue au tableau des points de coupure"
 
 #: src/player_tab.c:2596
 #, fuzzy
-msgid " left button on rectangle checks/unchecks 'keep splitpoint'"
+msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr "mettre les points cue au tableau des points de coupure"
 
 #: src/player_tab.c:2794
@@ -598,24 +597,24 @@ msgstr "Numéro"
 msgid "please wait... contacting freedb.org"
 msgstr "veuillez attendre... connexion avec freedb.org"
 
-#: src/freedb_tab.c:653
+#: src/freedb_tab.c:661
 #, fuzzy
 msgid "Search freedb2.org : "
 msgstr "Rechercher dans freedb.org : "
 
-#: src/freedb_tab.c:665
+#: src/freedb_tab.c:673
 msgid "_Search"
 msgstr ""
 
-#: src/freedb_tab.c:707
+#: src/freedb_tab.c:715
 msgid "Selected album : "
 msgstr "Album sélectionné :"
 
-#: src/freedb_tab.c:718
+#: src/freedb_tab.c:726
 msgid "_Add splitpoints"
 msgstr "Ajouter les points"
 
-#: src/freedb_tab.c:726
+#: src/freedb_tab.c:734
 msgid "set splitpoints to the splitpoints table"
 msgstr "mettre les points au tableau de points de coupure"
 

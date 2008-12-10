@@ -394,7 +394,7 @@ update_versions
 ###################################
 #build packages
 
-#source_packages
+source_packages
 #debian_packages
 #ubuntu_packages
 windows_cross_installers

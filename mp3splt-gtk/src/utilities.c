@@ -86,7 +86,7 @@ gint is_filee(const gchar *fname)
   struct stat buffer;
   gint         status;
   
-  status = stat((gchar *)fname, &buffer);
+  status = stat(fname, &buffer);
   if (status == 0)
     {
       //if it is a file
@@ -119,7 +119,7 @@ gchar *get_preferences_filename()
   gint         status;
   
   //home directory
-  gchar *home_dir = (gchar *)g_get_home_dir();
+  const gchar *home_dir = g_get_home_dir();
  
 #ifdef __WIN32__
   //manage c:\ because the gtk dir returns us "c:\"
@@ -135,8 +135,7 @@ gchar *get_preferences_filename()
   gint malloc_number = strlen(home_dir) + 
     strlen(mp3splt_dir)+2;
   //allocate memory for the mp3splt dir with path
-  mp3splt_dir_with_path = 
-    (gchar *)malloc(malloc_number *sizeof(gchar *));
+  mp3splt_dir_with_path = malloc(malloc_number *sizeof(gchar *));
   g_snprintf(mp3splt_dir_with_path, malloc_number,
              "%s%s%s", home_dir,G_DIR_SEPARATOR_S,
              mp3splt_dir);
@@ -144,8 +143,7 @@ gchar *get_preferences_filename()
   //filename+path
   gchar *filename;
   gint fname_malloc_number = strlen(mp3splt_dir_with_path)+30;
-  filename = 
-    (gchar *)malloc(fname_malloc_number*sizeof(gchar *));
+  filename = malloc(fname_malloc_number*sizeof(gchar *));
   
   status = g_stat(mp3splt_dir_with_path, &buffer);
   //if it is not a directory
@@ -156,8 +154,7 @@ gchar *get_preferences_filename()
         {
           gchar *backup_file;
           malloc_number = strlen(mp3splt_dir_with_path)+5;
-          backup_file = (gchar *)
-            malloc(malloc_number*sizeof(gchar *));
+          backup_file = malloc(malloc_number*sizeof(gchar *));
           snprintf(backup_file,malloc_number,
                    "%s%s", mp3splt_dir_with_path,".bak");
           //we rename the file
@@ -463,7 +460,7 @@ void load_preferences()
     
   if (save_path != NULL)
   {
-    gtk_entry_set_text(GTK_ENTRY(directory_entry), (gchar *)save_path);
+    gtk_entry_set_text(GTK_ENTRY(directory_entry), save_path);
   }
 
   //freeing memory
@@ -497,10 +494,9 @@ void load_preferences()
   gint i;
   for(i = 0; i < 4; i++)
     {
-      if (item == (gint) g_list_nth_data(player_pref_list, i))
+      if (item == GPOINTER_TO_INT(g_list_nth_data(player_pref_list, i)))
         {
-          selected_player = 
-            (gint)g_list_nth_data(player_pref_list, i);
+          selected_player = GPOINTER_TO_INT(g_list_nth_data(player_pref_list, i));
           goto jump_near;
         }
     }
@@ -995,11 +991,10 @@ void write_default_preferences_file()
 #ifdef __WIN32__
       gint dir_malloc_number;
       //home directory
-      gchar *home_dir = (gchar *)g_get_home_dir();
-      //gchar *default_dir = (gchar *)g_get_home_dir();
+      const gchar *home_dir = g_get_home_dir();
+      //const gchar *default_dir = g_get_home_dir();
       dir_malloc_number = strlen(home_dir)+ 10;
-      gchar *default_dir = 
-        (gchar *) malloc(dir_malloc_number*sizeof(gchar *));
+      gchar *default_dir = malloc(dir_malloc_number*sizeof(gchar *));
       g_snprintf(default_dir,dir_malloc_number,
                  "%s\\Desktop",home_dir);
       
@@ -1016,8 +1011,7 @@ void write_default_preferences_file()
         }
       
 #else
-      gchar *default_dir = 
-        (gchar *)g_get_home_dir();
+      const gchar *default_dir = g_get_home_dir();
 #endif
       
       g_key_file_set_string(my_key_file,
@@ -1077,8 +1071,7 @@ void check_pref_file()
           //backup the directory
           gchar *backup_dir;
           gint malloc_number = strlen(filename)+5;
-          backup_dir = (gchar *)
-            malloc(malloc_number * sizeof(gchar *));
+          backup_dir = malloc(malloc_number * sizeof(gchar *));
           snprintf(backup_dir,malloc_number,
                    "%s%s",filename,".bak");
           //we rename the directory
@@ -1095,6 +1088,7 @@ void check_pref_file()
 }
 
 //check if its a directory
+//TODO: why guchar ?
 gint check_if_dir(guchar *fname)
 {
   struct stat buffer;
@@ -1109,6 +1103,7 @@ gint check_if_dir(guchar *fname)
 }
 
 //check if its a file
+//TODO: why guchar ?
 gint check_if_file(guchar *fname)
 {
   struct stat buffer;

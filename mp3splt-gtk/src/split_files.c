@@ -115,11 +115,10 @@ void create_split_columns (GtkTreeView *tree_view)
   /* minutes */
   //renderer creation
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  g_object_set_data(G_OBJECT(renderer), "col", (gint *)COL_NAME);
+  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NAME));
   name_column = gtk_tree_view_column_new_with_attributes 
-    ((gchar *)_("Filename"), GTK_CELL_RENDERER(renderer),
-     "text", COL_NAME,
-     NULL);
+    (_("Filename"), GTK_CELL_RENDERER(renderer),
+     "text", COL_NAME, NULL);
 
   //we dont insert the column to the tree view
   /*  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
@@ -162,9 +161,10 @@ void remove_all_split_rows ()
 }
 
 //finding the real name of the file, without the path
+//TODO: why guchar instead of gchar ?
 guchar *get_real_name_from_filename(guchar *filename)
 {
-  while (strchr((gchar *)filename, G_DIR_SEPARATOR)!=NULL)
+  while (strchr((gchar *) filename, G_DIR_SEPARATOR)!=NULL)
     filename = (guchar *)strchr((gchar *)filename, G_DIR_SEPARATOR) + 1;
 
   return filename;
@@ -368,7 +368,7 @@ GtkWidget *create_queue_buttons_hbox()
   //button for queueing all files
   queue_files_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_UNINDENT, 
-                       (gchar *)_("_Queue files to player"),FALSE);
+                       _("_Queue files to player"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       queue_files_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(queue_files_button, FALSE);
@@ -378,7 +378,7 @@ GtkWidget *create_queue_buttons_hbox()
   //button for removing a file
   remove_file_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE,
-                       (gchar *)_("_Delete selected files"),FALSE);
+                       _("_Delete selected files"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       remove_file_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(remove_file_button,FALSE);
@@ -388,7 +388,7 @@ GtkWidget *create_queue_buttons_hbox()
   //button for removing a file
   remove_all_files_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE,
-                       (gchar *)_("Delete all files"),FALSE);
+                       _("Delete all files"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       remove_all_files_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(remove_all_files_button,FALSE);

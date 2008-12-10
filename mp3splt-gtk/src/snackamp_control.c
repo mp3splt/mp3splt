@@ -192,7 +192,7 @@ gint disconnect_snackamp()
 //must rewrite
 gchar *snackamp_socket_send_message(gchar *message)
 {
-  gchar *result = (gchar *) malloc(1024 * sizeof(gchar *));
+  gchar *result = malloc(1024 * sizeof(gchar *));
   strcpy(result,"disconnected");
   
 #ifdef __WIN32__
@@ -317,12 +317,12 @@ void snackamp_get_song_infos(gchar *total_infos)
       nch = atoi(nch_str);
       
       if (nch == 2)
-        nch_str = (gchar *)_("stereo");
+        nch_str = _("stereo");
       else
-        nch_str = (gchar *)_("mono");
+        nch_str = _("mono");
       
-      gchar *_Kbps = (gchar *)_("Kbps");
-      gchar *_Khz = (gchar *)_("Khz");
+      gchar *_Kbps = _("Kbps");
+      gchar *_Khz = _("Khz");
       
       g_snprintf(total_infos, 512,
                  "%s %s     %s %s    %s", 
@@ -494,7 +494,7 @@ void snackamp_add_files(GList *list)
   while ((song = g_list_nth_data(list, i)) != NULL)
     {
       malloc_int = strlen(song) + 30;
-      local = (gchar *)malloc(malloc_int * sizeof(gchar *));
+      local = malloc(malloc_int * sizeof(gchar *));
       g_snprintf(local,malloc_int,"%s {%s}\n", 
                  "xmms_remote_playlist_add ", song);
       result = snackamp_socket_send_message(local);
