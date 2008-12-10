@@ -870,7 +870,7 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
         beg_pos = splt_u_get_double_pos(split_begin);
         end_pos = splt_u_get_double_pos(split_end);
 
-        splt_p_split(state, final_fname, beg_pos, end_pos, error, SPLT_TRUE);
+        splt_p_split(state, final_fname, beg_pos, end_pos, error, SPLT_FALSE);
 
         //put the split file if no error
         if (*error >= 0)
