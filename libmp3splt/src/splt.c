@@ -165,17 +165,17 @@ void splt_s_multiple_split(splt_state *state, int *error)
     //if we have the default output, we put the
     //default
     err = SPLT_OK;
-    if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES)
-        == SPLT_OUTPUT_DEFAULT)
-    {
-      splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
-    }
 
     //if no error
     if (*error >= 0 && err >= 0)
     {
       //we put the number of sync errors
       splt_t_set_splitnumber(state, state->serrors->serrors_points_num - 1);
+
+      if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
+      {
+        splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
+      }
 
       //we split all sync errors
       for (i = 0; i < state->serrors->serrors_points_num - 1; i++)
@@ -269,6 +269,8 @@ bloc_end:
   //we do a normal split
   {
     splt_t_put_message_to_client(state, " info: starting normal split\n");
+
+    splt_t_set_oformat_digits(state);
 
     int get_error = SPLT_OK;
 
@@ -825,6 +827,8 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
     splt_t_set_oformat(state,SPLT_DEFAULT_SILENCE_OUTPUT,&err);
     if (err < 0) { *error = err; return; }
   }
+
+  splt_t_set_oformat_digits(state);
 
   //we write all found tracks
   for (i = 0; i < found; i++)
