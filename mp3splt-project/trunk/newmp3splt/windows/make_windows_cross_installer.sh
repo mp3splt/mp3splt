@@ -18,8 +18,8 @@ mv ${NSIS_INSTALLER_SCRIPT}2 $NSIS_INSTALLER_SCRIPT
 
 #we create the installer
 make -f Makefile cross || exit 1
-##mv mp3splt_${MP3SPLT_VERSION}.exe ../../../mp3splt_${MP3SPLT_VERSION}_${ARCH}.exe || exit 1
+mv mp3splt_${MP3SPLT_VERSION}.exe ../../../mp3splt_${MP3SPLT_VERSION}_${ARCH}.exe || exit 1
 
 #put the old installer file of mp3splt
-##mv ${NSIS_INSTALLER_SCRIPT}_old $NSIS_INSTALLER_SCRIPT
+mv ${NSIS_INSTALLER_SCRIPT}_old $NSIS_INSTALLER_SCRIPT
 
