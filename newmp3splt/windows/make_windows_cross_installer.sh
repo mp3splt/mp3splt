@@ -9,17 +9,17 @@ cd $script_dir/installer
 
 put_package "cross_windows_installer"
 
+NSIS_INSTALLER_SCRIPT="win32_cross_installer.nsi"
+
 #we put the correct installer path
-cp win32_installer.nsi win32_installer.nsi_old
-cat win32_installer.nsi | sed s+.define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ `pwd`/../../..+ > win32_installer.nsi2
-mv win32_installer.nsi2 win32_installer.nsi
+cp $NSIS_INSTALLER_SCRIPT ${NSIS_INSTALLER_SCRIPT}_old
+cat $NSIS_INSTALLER_SCRIPT | sed s+.define\ MP3SPLT_PATH.*+\!define\ MP3SPLT_PATH\ `pwd`/../../..+ > ${NSIS_INSTALLER_SCRIPT}2
+mv ${NSIS_INSTALLER_SCRIPT}2 $NSIS_INSTALLER_SCRIPT
 
 #we create the installer
 make -f Makefile cross || exit 1
-mv mp3splt_${MP3SPLT_VERSION}.exe ../../../mp3splt_${MP3SPLT_VERSION}_${ARCH}.exe || exit 1
+##mv mp3splt_${MP3SPLT_VERSION}.exe ../../../mp3splt_${MP3SPLT_VERSION}_${ARCH}.exe || exit 1
 
 #put the old installer file of mp3splt
-mv win32_installer.nsi_old win32_installer.nsi
+##mv ${NSIS_INSTALLER_SCRIPT}_old $NSIS_INSTALLER_SCRIPT
 
-#erase the executable
-rm -f ../../src/mp3splt.exe
