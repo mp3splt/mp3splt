@@ -34,7 +34,7 @@ dist:
 	cp /bin/zlib1.dll .
 #building installer for the text mode
 	strip newmp3splt/src/mp3splt.exe && \
-	cd newmp3splt/windows/installer && make && cp mp3splt*exe ../../../ && cd ../../../
+	cd newmp3splt/windows && ./make_windows_installer.sh && cd ../../
 #building installer for the gui
 	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
 	cd mp3splt-gtk/windows/installer && make && cp mp3splt-gtk*exe ../../../ && cd ../../../
