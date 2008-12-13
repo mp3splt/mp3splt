@@ -22,9 +22,8 @@ else
 fi
 
 #we compile the locales
-mv -f fr_locales fr_locales_old &>/dev/null
-mkdir -p fr_locales
-wine `pwd`/../../../libs/bin/msgfmt -o ./fr_locales/mp3splt-gtk.mo ../po/fr.po || exit 1
+mkdir -p ../../fr_locales
+wine `pwd`/../../../libs/bin/msgfmt -o ../../fr_locales/mp3splt-gtk.mo ../po/fr.po || exit 1
 
 cd ../../../libs &&\
 tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../trunk || exit 1 &&\
@@ -197,7 +196,7 @@ mp3splt-gtk\windows\mp3splt-gtk.ico
 
 echo '
 ;main installation section
-Section "mp3splt-gtk (with libmp3splt)" main_section
+Section "mp3splt-gtk (with libmp3splt, gtk & gstreamer)" main_section
 ' >> $WIN_INSTALLER_FILE
 
 set_out_path '$INSTDIR'
@@ -275,7 +274,7 @@ mp3splt-gtk\AUTHORS
 
 echo '
 ;main documentation section
-SubSection /e "Documentation" documentation_section
+SubSection "Documentation" documentation_section
 
   Section "mp3splt-gtk documentation" mp3splt_gtk_doc_section
 ' >> $WIN_INSTALLER_FILE
@@ -313,6 +312,26 @@ echo '
 SubSectionEnd' >> $WIN_INSTALLER_FILE
 
 
+#translations section
+echo '
+SubSection "Translations" translations_section
+ 
+  Section "English" english_translation_section 
+
+  SectionEnd
+
+  Section "French" french_translation_section
+
+    CreateDirectory $INSTDIR\translations\fr\LC_MESSAGES
+    SetOutPath $INSTDIR\translations\fr\LC_MESSAGES
+    File ${MP3SPLT_PATH}\fr_locales\mp3splt-gtk.mo
+
+  SectionEnd
+
+SubSectionEnd
+' >> $WIN_INSTALLER_FILE
+
+
 echo '
 ;start Menu Shortcuts section
 Section "Start Menu Shortcuts" menu_shortcuts_section
@@ -321,13 +340,13 @@ Section "Start Menu Shortcuts" menu_shortcuts_section
 create_directory '$SMPROGRAMS\mp3splt-gtk'
 
 echo '  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt-gtk.ico" 0
-  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\uninstall.lnk" "$INSTDIR\mp3splt-gtk_uninst.exe" "" "$INSTDIR\mp3splt-gtk_uninst.exe" 0
+  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\Uninstall.lnk" "$INSTDIR\mp3splt-gtk_uninst.exe" "" "$INSTDIR\mp3splt-gtk_uninst.exe" 0
 
   ;if mp3splt_gtk__doc_section is selected, add mp3splt_doc link
   SectionGetFlags ${mp3splt_gtk_doc_section} $0
   IntOp $1 $0 & ${SF_SELECTED}
   IntCmp 0 $1 after_doc_shortcut
-  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt_gtk_doc.lnk" "$INSTDIR\mp3splt_gtk_doc" "" "$INSTDIR\mp3splt_gtk_doc" 
+  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk_doc.lnk" "$INSTDIR\mp3splt-gtk_doc" "" "$INSTDIR\mp3splt-gtk_doc" 
   after_doc_shortcut:
 
   ;if libmp3splt_doc_section is selected, add libmp3splt_doc link
@@ -358,8 +377,14 @@ echo '
   Delete $SMPROGRAMS\mp3splt-gtk\mp3splt-gtk_doc.lnk
   Delete $SMPROGRAMS\mp3splt-gtk\libmp3splt_doc.lnk
   Delete $SMPROGRAMS\mp3splt-gtk\Mp3splt-gtk.lnk
-  Delete $SMPROGRAMS\mp3splt-gtk\uninstall.lnk
+  Delete $SMPROGRAMS\mp3splt-gtk\Uninstall.lnk
   RmDir $SMPROGRAMS\mp3splt-gtk
+
+  ;delete the translations
+  Delete $INSTDIR\translations\fr\LC_MESSAGES\mp3splt-gtk.mo
+  RmDir $INSTDIR\translations\fr\LC_MESSAGES
+  RmDir $INSTDIR\translations\fr
+  RmDir $INSTDIR\translations
 
   ;desktop shortcut section
   Delete $DESKTOP\mp3splt-gtk.lnk
@@ -383,6 +408,10 @@ Function .onInit
   ;read only and select the main section
   IntOp $0 ${SF_SELECTED} | ${SF_RO}
   SectionSetFlags ${main_section} $0
+
+  ;read only and select the english translation
+  IntOp $0 ${SF_SELECTED} | ${SF_RO}
+  SectionSetFlags ${english_translation_section} $0
 
   ;read from registry eventual uninstall string
   ReadRegStr $R0 HKLM "Software\${PROGRAM_NAME}\" "UninstallString"
@@ -419,5 +448,5 @@ fi
 #rm -f $WIN_INSTALLER_FILE
 
 #remove used dirs
-rm -rf fr_locales && cd ../.. && rm -rf mp3splt-gtk_runtime
+rm -rf ../fr_locales && cd ../.. && rm -rf mp3splt-gtk_runtime
 

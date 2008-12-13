@@ -464,9 +464,9 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   //used for gettext
   setlocale (LC_ALL, "");
   textdomain ("mp3splt-gtk");
-  
+
 #ifdef __WIN32__
-  bindtextdomain ("mp3splt-gtk", "locale");
+  bindtextdomain ("mp3splt-gtk", "translations");
   bind_textdomain_codeset ("mp3splt-gtk", "UTF-8");
 #else
   bindtextdomain ("mp3splt-gtk", LOCALEDIR);
