@@ -22,10 +22,6 @@ clean:
 	cd newmp3splt && make clean
 
 dist:
-#compiling locales
-	rm -rf fr_locales
-	mkdir fr_locales
-	msgfmt -o ./fr_locales/mp3splt-gtk.mo ./mp3splt-gtk/po/fr.po
 #copying vorbis and libltdl libraries
 	cp /bin/libltdl3.dll /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll /bin/libvorbisenc-2.dll .
 #copying libmad and libid3tag libraries
@@ -38,4 +34,3 @@ dist:
 #building installer for the gui
 	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
 	cd mp3splt-gtk/windows && ./make_windows_installer.sh && cd ../../
-	rm -rf fr_locales
