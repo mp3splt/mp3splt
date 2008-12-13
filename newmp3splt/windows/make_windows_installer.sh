@@ -1,4 +1,5 @@
 #!/bin/sh
+#we should have done '!/bin/bash', but it won't work on msys+mingw
 
 #if the first argument of the script is not empty, then we consider a cross
 #compilation; otherwise, consider a windows installation
@@ -74,25 +75,27 @@ function create_directory()
 #    "no" otherwise
 function start_section()
 {
-  flags=$1
-  section_name=$2
-  section_id=$3
-  we_create_directory=$4
+  section_name=$1
+  section_id=$2
+  we_create_directory=$3
 
   echo "
-  Section $flags \"$section_name\" $section_id
+  Section \"$section_name\" $section_id
 
     DetailPrint \"\"
     DetailPrint \"Installing section "$section_id" :\"
     DetailPrint \"\"
 " >> $WIN_INSTALLER_FILE
 
+  #write if we install the section in the 'installed_sections.ini' file
   echo '
- SectionGetFlags ${'$section_id'} $0
- IntOp $1 $0 & ${SF_SELECTED}
- WriteINIStr $INSTDIR\installed_sections.ini '$section_id' "installed" $1' \
+  SectionGetFlags ${'$section_id'} $0
+  IntOp $1 $0 & ${SF_SELECTED}
+  WriteINIStr $INSTDIR\installed_sections.ini '$section_id' "installed" $1' \
  >> $TMP_CHECK_SECTIONS_UNINSTALL_FILE
 
+  #condition to uninstall the directories of this section only if the
+  #section is found installed from the 'installed_sections.ini' file
   if [[ $we_create_directory = "yes" ]];then
     echo '
  ReadINIStr $0 $INSTDIR\installed_sections.ini '$section_id' "installed"
@@ -102,6 +105,8 @@ function start_section()
     echo '  DetailPrint ""' >> $TMP_CREATED_DIRECTORIES_FILE
   fi
 
+  #condition to uninstall the files of this section only if the
+  #section is found installed from the 'installed_sections.ini' file
   echo '
  ReadINIStr $0 $INSTDIR\installed_sections.ini '$section_id' "installed"
  IntCmp 0 $0 after_files_'$section_id >> $TMP_GENERATED_FILES_FILE
@@ -123,10 +128,14 @@ function end_section()
   SectionEnd
 " >> $WIN_INSTALLER_FILE
 
+ #end condition to uninstall directories only if the section is found
+ #installed from the 'installed_sections.ini' file
  if [[ $we_created_directory = "yes" ]];then
     echo ' after_dirs_'$section_id':' >> $TMP_CREATED_DIRECTORIES_FILE
   fi
 
+ #end condition to uninstall files only if the section is found
+ #installed from the 'installed_sections.ini' file
   echo ' after_files_'$section_id':' >> $TMP_GENERATED_FILES_FILE
 }
 
@@ -134,7 +143,9 @@ function end_section()
 # and after, RmDir dir for all the created directories
 function generate_uninstall_files_dirs()
 {
+  #first, remove the files
   cat $TMP_GENERATED_FILES_FILE >> $WIN_INSTALLER_FILE
+  #then, remove directories
   cat $TMP_CREATED_DIRECTORIES_FILE >> $WIN_INSTALLER_FILE
 }
 
@@ -164,16 +175,32 @@ BrandingText " "
 ;interface settings
 !define MUI_ICON ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.ico
 !define MUI_UNICON ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.ico
+
+!define MUI_WELCOMEFINISHPAGE_BITMAP ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.bmp
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.bmp
+
+!define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+
+!define MUI_FINISHPAGE_NOAUTOCLOSE
+!define MUI_FINISHPAGE_RUN $INSTDIR\mp3splt.bat
+!define MUI_FINISHPAGE_LINK "Mp3splt-project home page"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://mp3splt.sourceforge.net"
+
+!define MUI_FINISHPAGE_SHOWREADME "http://mp3splt.sourceforge.net/mp3splt_page/documentation/man.html"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "View online manual"
+
 !define MUI_COMPONENTSPAGE_NODESC
 ShowInstDetails "show"
 ShowUninstDetails "show"
 SetCompressor /SOLID "lzma"
 
 ;install pages
+!insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE ${MP3SPLT_PATH}\newmp3splt\COPYING
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
 
 ;uninstall pages
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -211,17 +238,13 @@ echo '
 
   WriteUninstaller "${PROGRAM_NAME}_uninst.exe"
 
-  WriteRegStr HKLM "Software\${PROGRAM_NAME}\" "UninstallString" \
-    "$INSTDIR\${PROGRAM_NAME}_uninst.exe"
+  WriteRegStr HKLM "Software\${PROGRAM_NAME}\" "UninstallString" "$INSTDIR\${PROGRAM_NAME}_uninst.exe"
 
   ;add to Add/Remove programs
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROGRAM_NAME}" \
-    "DisplayName" "mp3splt"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROGRAM_NAME}" \
-    "UninstallString" "$INSTDIR\${PROGRAM_NAME}_uninst.exe"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROGRAM_NAME}" "DisplayName" "mp3splt"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROGRAM_NAME}" "UninstallString" "$INSTDIR\${PROGRAM_NAME}_uninst.exe"
 
 SectionEnd' >> $WIN_INSTALLER_FILE
-
 
 #mp3 plugin section
 MP3_PLUGIN_FILES="
@@ -232,10 +255,9 @@ libmp3splt\plugins\.libs\libsplt_mp3${DLL_SUFFIX}.dll
 
 echo '
 ;main plugins section
-SubSection /e "Plugins" plugins_section
-' >> $WIN_INSTALLER_FILE
+SubSection /e "Plugins" plugins_section' >> $WIN_INSTALLER_FILE
 
-start_section "" "mp3 plugin" "mp3_plugin_section" "no"
+start_section "mp3 plugin" "mp3_plugin_section" "no"
 set_out_path '$INSTDIR'
 copy_files $MP3_PLUGIN_FILES
 end_section "mp3_plugin_section" "no"
@@ -249,13 +271,12 @@ libvorbisfile-3.dll
 libmp3splt\plugins\.libs\libsplt_ogg${DLL_SUFFIX}.dll
 "
 
-start_section "" "ogg vorbis plugin" "ogg_plugin_section" "no"
+start_section "ogg vorbis plugin" "ogg_plugin_section" "no"
 set_out_path '$INSTDIR'
 copy_files $OGG_PLUGIN_FILES
 end_section "ogg_plugin_section" "no"
 
-echo ' SubSectionEnd' >> $WIN_INSTALLER_FILE
-
+echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE
 
 #mp3splt doc section
 MP3SPLT_DOC_FILES="
@@ -271,10 +292,9 @@ newmp3splt\AUTHORS
 
 echo '
 ;main documentation section
-SubSection /e "Documentation" documentation_section
-' >> $WIN_INSTALLER_FILE
+SubSection /e "Documentation" documentation_section' >> $WIN_INSTALLER_FILE
 
-start_section "" "mp3splt documentation" "mp3splt_doc_section" "yes"
+start_section "mp3splt documentation" "mp3splt_doc_section" "yes"
 create_directory '$INSTDIR\mp3splt_doc'
 set_out_path '$INSTDIR\mp3splt_doc'
 copy_files $MP3SPLT_DOC_FILES
@@ -291,14 +311,13 @@ libmp3splt\TODO
 libmp3splt\AUTHORS
 "
 
-start_section "" "libmp3splt documentation" "libmp3splt_doc_section" "yes"
+start_section "libmp3splt documentation" "libmp3splt_doc_section" "yes"
 create_directory '$INSTDIR\libmp3splt_doc'
 set_out_path '$INSTDIR\libmp3splt_doc'
-end_section "libmp3splt_doc_section" "yes"
 copy_files $LIBMP3SPLT_DOC_FILES
+end_section "libmp3splt_doc_section" "yes"
 
 echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE
-
 
 #menu shortcuts section
 echo '
@@ -313,7 +332,7 @@ Section "Start Menu Shortcuts" menu_shortcuts_section
 create_directory '$SMPROGRAMS\mp3splt'
 
 echo '  CreateShortCut "$SMPROGRAMS\mp3splt\Mp3splt.lnk" "$INSTDIR\mp3splt.bat" "" ""
-	CreateShortCut "$SMPROGRAMS\mp3splt\uninstall.lnk" "$INSTDIR\mp3splt_uninst.exe" "" "$INSTDIR\mp3splt_uninst.exe" 0
+	CreateShortCut "$SMPROGRAMS\mp3splt\Uninstall.lnk" "$INSTDIR\mp3splt_uninst.exe" "" "$INSTDIR\mp3splt_uninst.exe" 0
 
   ;if mp3splt_doc_section is selected, add mp3splt_doc link
   SectionGetFlags ${mp3splt_doc_section} $0
@@ -342,7 +361,7 @@ Section "Desktop Shortcut" desktop_shortcut_section
 
 SectionEnd' >> $WIN_INSTALLER_FILE
 
-#hidden sections checking for uninstalling
+#hidden sections checking for uninstalling only installed sections
 echo -n '
 ;write installed sections into .ini file
 Section "-write installed sections into .ini file"' >> $WIN_INSTALLER_FILE
@@ -370,6 +389,7 @@ Section "Uninstall"
   DetailPrint "Uninstalling the main files :"
   DetailPrint ""
 
+  Delete $INSTDIR\${PROGRAM_NAME}_uninst.exe
   Delete $INSTDIR\mp3splt.bat' >> $WIN_INSTALLER_FILE
 
 generate_uninstall_files_dirs
@@ -393,7 +413,7 @@ echo '
    after_link_libmp3splt_doc_section:
 
    Delete $SMPROGRAMS\mp3splt\Mp3splt.lnk
-   Delete $SMPROGRAMS\mp3splt\uninstall.lnk
+   Delete $SMPROGRAMS\mp3splt\Uninstall.lnk
    RmDir $SMPROGRAMS\mp3splt
   after_menu_shortcuts_section:
 
@@ -407,11 +427,10 @@ echo '
   after_desktop_shortcut_section:
 
   DetailPrint ""
-  DetailPrint "Uninstalling remaining files :"
+  DetailPrint "Uninstalling remaining files & removing registry keys :"
   DetailPrint ""
 
   ;delete remaining ashes if possible
-  Delete $INSTDIR\${PROGRAM_NAME}_uninst.exe
   Delete $INSTDIR\installed_sections.ini
   RmDir $INSTDIR
 
@@ -439,8 +458,7 @@ Function .onInit
  
   ;uninstall previous installation
   MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
-  "${PROGRAM_NAME} is already installed. $\n$\nClick `OK` to remove the \
-  previous installation or `Cancel` to cancel this installation." \
+  "${PROGRAM_NAME} is already installed. $\n$\nClick `OK` to start the uninstall program of the previous installation.$\n$\n" \
   IDOK uninst
   Abort
 
@@ -455,17 +473,16 @@ Function .onInit
 FunctionEnd
 ' >> $WIN_INSTALLER_FILE
 
-
 rm -f $TMP_GENERATED_FILES_FILE
 rm -f $TMP_CREATED_DIRECTORIES_FILE
 rm -f $TMP_CHECK_SECTIONS_UNINSTALL_FILE
 
 if [[ -z $we_dont_cross_compile ]];then
-  ../../../nsis/makensis win32_installer.nsi || exit 1
+  ../../../nsis/makensis -V3 win32_installer.nsi || exit 1
 else
-  makensis win32_installer.nsi || exit 1
+  makensis -V3 win32_installer.nsi || exit 1
 fi
 
 #remove '.nsi' script
-rm -f $WIN_INSTALLER_FILE
+#rm -f $WIN_INSTALLER_FILE
 
