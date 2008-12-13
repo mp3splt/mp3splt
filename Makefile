@@ -103,9 +103,9 @@ nexenta_packages: clean_tmp
 windows_cross_installers:
 	./${LIBMP3SPLT_DIR}/windows/make_windows_cross_compilation.sh
 	./${MP3SPLT_DIR}/windows/make_windows_cross_compilation.sh
-	./${MP3SPLT_DIR}/windows/make_windows_installer.sh
+	./${MP3SPLT_DIR}/windows/make_windows_installer.sh cross
 	./${MP3SPLT_GTK_DIR}/windows/make_windows_cross_compilation.sh
-	ARCH=i386 ./${MP3SPLT_GTK_DIR}/windows/make_windows_cross_installer.sh
+	./${MP3SPLT_GTK_DIR}/windows/make_windows_installer.sh cross
 
 #debian hurd packages creation
 debian_hurd_packages: clean_tmp
