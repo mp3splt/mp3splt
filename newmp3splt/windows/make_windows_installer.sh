@@ -33,7 +33,6 @@ TMP_CHECK_SECTIONS_UNINSTALL_FILE='.mp3splt_tmp_check_sections_uninstall.txt'
 echo '' > $TMP_GENERATED_FILES_FILE
 echo '' > $TMP_CREATED_DIRECTORIES_FILE
 echo '' > $TMP_CHECK_SECTIONS_UNINSTALL_FILE
- 
 
 CURRENT_OUT_PATH=""
 
@@ -61,7 +60,7 @@ function copy_files()
 #directories in a temporary file for generating the uninstaller
 function create_directory()
 {
-  DIR=$@
+  DIR=$1
   echo '    CreateDirectory '$DIR >> $WIN_INSTALLER_FILE
   echo "  RmDir $DIR" >> $TMP_CREATED_DIRECTORIES_FILE
 }
@@ -128,13 +127,13 @@ function end_section()
   SectionEnd
 " >> $WIN_INSTALLER_FILE
 
- #end condition to uninstall directories only if the section is found
- #installed from the 'installed_sections.ini' file
- if [[ $we_created_directory = "yes" ]];then
+  #end condition to uninstall directories only if the section is found
+  #installed from the 'installed_sections.ini' file
+  if [[ $we_created_directory = "yes" ]];then
     echo ' after_dirs_'$section_id':' >> $TMP_CREATED_DIRECTORIES_FILE
   fi
 
- #end condition to uninstall files only if the section is found
+  #end condition to uninstall files only if the section is found
  #installed from the 'installed_sections.ini' file
   echo ' after_files_'$section_id':' >> $TMP_GENERATED_FILES_FILE
 }
@@ -166,7 +165,7 @@ echo '
 ;name of the program
 Name "mp3splt ${VERSION}"
 ;file to write
-OutFile "../../mp3splt_'$MP3SPLT_VERSION'_'$ARCH'.exe"
+OutFile "../../mp3splt_${VERSION}_'$ARCH'.exe"
 ;installation directory
 InstallDir $PROGRAMFILES\mp3splt
 
@@ -177,8 +176,6 @@ BrandingText " "
 !define MUI_UNICON ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.ico
 
 !define MUI_WELCOMEFINISHPAGE_BITMAP ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.bmp
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.bmp
-
 !define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
 
 !define MUI_FINISHPAGE_NOAUTOCLOSE
@@ -223,6 +220,7 @@ zlib1.dll
 echo '
 ;main installation section
 Section "mp3splt (with libmp3splt)" main_section
+
   DetailPrint ""
   DetailPrint "Installing the main section :"
   DetailPrint ""
@@ -349,7 +347,6 @@ echo '  CreateShortCut "$SMPROGRAMS\mp3splt\Mp3splt.lnk" "$INSTDIR\mp3splt.bat" 
   after_lib_doc_shortcut:
 
 SectionEnd
-
 
 ;desktop shortcut
 Section "Desktop Shortcut" desktop_shortcut_section
@@ -484,5 +481,5 @@ else
 fi
 
 #remove '.nsi' script
-#rm -f $WIN_INSTALLER_FILE
+rm -f $WIN_INSTALLER_FILE
 
