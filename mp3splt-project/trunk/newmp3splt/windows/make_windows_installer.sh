@@ -79,10 +79,12 @@ function start_section()
   section_id=$3
   we_create_directory=$4
 
-  echo "  Section $flags \"$section_name\" $section_id
-  DetailPrint \"\"
-  DetailPrint \"Installing section "$section_id" :\"
-  DetailPrint \"\"
+  echo "
+  Section $flags \"$section_name\" $section_id
+
+    DetailPrint \"\"
+    DetailPrint \"Installing section "$section_id" :\"
+    DetailPrint \"\"
 " >> $WIN_INSTALLER_FILE
 
   echo '
@@ -128,6 +130,14 @@ function end_section()
   echo ' after_files_'$section_id':' >> $TMP_GENERATED_FILES_FILE
 }
 
+#generates the Delete file1.txt for all the installed files
+# and after, RmDir dir for all the created directories
+function generate_uninstall_files_dirs()
+{
+  cat $TMP_GENERATED_FILES_FILE >> $WIN_INSTALLER_FILE
+  cat $TMP_CREATED_DIRECTORIES_FILE >> $WIN_INSTALLER_FILE
+}
+
 #main options
 echo "!include MUI2.nsh
 
@@ -140,15 +150,6 @@ if [[ -z $we_dont_cross_compile ]];then
 else 
   echo "!define MP3SPLT_PATH \"`pwd`/../..\"" >> $WIN_INSTALLER_FILE
 fi
-
-
-#generates the Delete file1.txt for all the installed files
-# and after, RmDir dir for all the created directories
-function generate_uninstall_files_dirs()
-{
-  cat $TMP_GENERATED_FILES_FILE >> $WIN_INSTALLER_FILE
-  cat $TMP_CREATED_DIRECTORIES_FILE >> $WIN_INSTALLER_FILE
-}
 
 echo '
 ;name of the program
@@ -270,7 +271,6 @@ newmp3splt\AUTHORS
 
 echo '
 ;main documentation section
-
 SubSection /e "Documentation" documentation_section
 ' >> $WIN_INSTALLER_FILE
 
@@ -294,8 +294,8 @@ libmp3splt\AUTHORS
 start_section "" "libmp3splt documentation" "libmp3splt_doc_section" "yes"
 create_directory '$INSTDIR\libmp3splt_doc'
 set_out_path '$INSTDIR\libmp3splt_doc'
-copy_files $LIBMP3SPLT_DOC_FILES
 end_section "libmp3splt_doc_section" "yes"
+copy_files $LIBMP3SPLT_DOC_FILES
 
 echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE
 
@@ -304,6 +304,7 @@ echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE
 echo '
 ;start Menu Shortcuts section
 Section "Start Menu Shortcuts" menu_shortcuts_section
+
   DetailPrint ""
   DetailPrint "Installing the start menu shortcuts :"
   DetailPrint ""
@@ -333,10 +334,12 @@ SectionEnd
 
 ;desktop shortcut
 Section "Desktop Shortcut" desktop_shortcut_section
+
   DetailPrint ""
   DetailPrint "Installing the desktop shortcut :"
   DetailPrint ""
 	CreateShortCut "$DESKTOP\mp3splt.lnk" "$INSTDIR\mp3splt.bat" "" ""  
+
 SectionEnd' >> $WIN_INSTALLER_FILE
 
 #hidden sections checking for uninstalling
@@ -347,13 +350,13 @@ Section "-write installed sections into .ini file"' >> $WIN_INSTALLER_FILE
 cat $TMP_CHECK_SECTIONS_UNINSTALL_FILE >> $WIN_INSTALLER_FILE
 
 echo '
-SectionGetFlags ${menu_shortcuts_section} $0
-IntOp $1 $0 & ${SF_SELECTED}
-WriteINIStr $INSTDIR\installed_sections.ini menu_shortcuts_section "installed" $1
+  SectionGetFlags ${menu_shortcuts_section} $0
+  IntOp $1 $0 & ${SF_SELECTED}
+  WriteINIStr $INSTDIR\installed_sections.ini menu_shortcuts_section "installed" $1
 
-SectionGetFlags ${desktop_shortcut_section} $0
-IntOp $1 $0 & ${SF_SELECTED}
-WriteINIStr $INSTDIR\installed_sections.ini desktop_shortcut_section "installed" $1' >> $WIN_INSTALLER_FILE
+  SectionGetFlags ${desktop_shortcut_section} $0
+  IntOp $1 $0 & ${SF_SELECTED}
+  WriteINIStr $INSTDIR\installed_sections.ini desktop_shortcut_section "installed" $1' >> $WIN_INSTALLER_FILE
 
 echo '
 SectionEnd' >> $WIN_INSTALLER_FILE
@@ -464,5 +467,5 @@ else
 fi
 
 #remove '.nsi' script
-#rm -f $WIN_INSTALLER_FILE
+rm -f $WIN_INSTALLER_FILE
 
