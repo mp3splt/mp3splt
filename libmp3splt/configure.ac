@@ -32,7 +32,7 @@
 # Basic initialisations 
 #################################################
 
-AC_PREREQ(2.61)
+AC_PREREQ(2.56)
 AC_INIT([libmp3splt],[0.5.3],[io_fx@yahoo.fr])
 AM_INIT_AUTOMAKE(libmp3splt, 0.5.3)
 AC_CONFIG_HEADERS([config.h])
@@ -129,7 +129,7 @@ AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not fou
 
 #check for --disable-mp3
 AC_ARG_ENABLE(mp3,
-              [ AS_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ],
+              [ AC_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ],
               [ AM_CONDITIONAL(MP3_PLUGIN,false) mp3="no" ],
               #check for -lmad
               [ AC_CHECK_LIB(mad, mad_frame_decode, [ mp3="yes"
@@ -140,7 +140,7 @@ AC_ARG_ENABLE(mp3,
 
 #check for --disable-id3tag
 AC_ARG_ENABLE(id3tag,
-              [ AS_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
+              [ AC_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
               [ AM_CONDITIONAL(LIB_ID3TAG,false) id3="no" with_id3="no" CFLAGS="$CFLAGS -DNO_ID3TAG" ],
               #check for -lid3tag
               [ AC_CHECK_LIB(id3tag,
@@ -156,7 +156,7 @@ AC_ARG_ENABLE(id3tag,
 
 #check for --disable-ogg
 AC_ARG_ENABLE(ogg,
-              [ AS_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
+              [ AC_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
               [ AM_CONDITIONAL(OGG_PLUGIN,false) ogg="no" ],
               #check for -logg -lvorbis -lvorbisfile
               [ XIPH_PATH_OGG(,AC_MSG_ERROR(Ogg needed! Download the latest version of libogg at http://www.xiph.org))
