@@ -27,9 +27,11 @@ WIN_INSTALLER_FILE="win32_installer.nsi"
 
 TMP_GENERATED_FILES_FILE='.mp3splt_tmp_uninstall_files.txt'
 TMP_CREATED_DIRECTORIES_FILE='.mp3splt_tmp_uninstall_directories.txt'
+TMP_CHECK_SECTIONS_UNINSTALL_FILE='.mp3splt_tmp_check_sections_uninstall.txt'
 
 echo '' > $TMP_GENERATED_FILES_FILE
 echo '' > $TMP_CREATED_DIRECTORIES_FILE
+echo '' > $TMP_CHECK_SECTIONS_UNINSTALL_FILE
  
 
 CURRENT_OUT_PATH=""
@@ -61,6 +63,69 @@ function create_directory()
   DIR=$@
   echo '    CreateDirectory '$DIR >> $WIN_INSTALLER_FILE
   echo "  RmDir $DIR" >> $TMP_CREATED_DIRECTORIES_FILE
+}
+
+#-creates the start of a section
+#-must receive 4 parameters : 
+#  * the flags of the start of the section
+#  * the section name
+#  * the section identifier in the '.nsi' script
+#  * the fourth parameter : "yes" if we create a directory in the section,
+#    "no" otherwise
+function start_section()
+{
+  flags=$1
+  section_name=$2
+  section_id=$3
+  we_create_directory=$4
+
+  echo "  Section $flags \"$section_name\" $section_id
+  DetailPrint \"\"
+  DetailPrint \"Installing section "$section_id" :\"
+  DetailPrint \"\"
+" >> $WIN_INSTALLER_FILE
+
+  echo '
+ SectionGetFlags ${'$section_id'} $0
+ IntOp $1 $0 & ${SF_SELECTED}
+ WriteINIStr $INSTDIR\installed_sections.ini '$section_id' "installed" $1' \
+ >> $TMP_CHECK_SECTIONS_UNINSTALL_FILE
+
+  if [[ $we_create_directory = "yes" ]];then
+    echo '
+ ReadINIStr $0 $INSTDIR\installed_sections.ini '$section_id' "installed"
+ IntCmp 0 $0 after_dirs_'$section_id >> $TMP_CREATED_DIRECTORIES_FILE
+    echo '  DetailPrint ""' >> $TMP_CREATED_DIRECTORIES_FILE
+    echo '  DetailPrint "Uninstalling dirs from section '$section_id' :"' >> $TMP_CREATED_DIRECTORIES_FILE
+    echo '  DetailPrint ""' >> $TMP_CREATED_DIRECTORIES_FILE
+  fi
+
+  echo '
+ ReadINIStr $0 $INSTDIR\installed_sections.ini '$section_id' "installed"
+ IntCmp 0 $0 after_files_'$section_id >> $TMP_GENERATED_FILES_FILE
+  echo '  DetailPrint ""' >> $TMP_GENERATED_FILES_FILE
+  echo '  DetailPrint "Uninstalling files from section '$section_id' :"' >> $TMP_GENERATED_FILES_FILE
+  echo '  DetailPrint ""' >> $TMP_GENERATED_FILES_FILE
+}
+
+#-creates the end of a section
+#-must receive 2 parameters :
+#  *the section identifier
+#  *"yes" if we have created a directory in this section, and "no" otherwise
+function end_section()
+{
+  section_id=$1
+  we_created_directory=$2
+
+  echo "
+  SectionEnd
+" >> $WIN_INSTALLER_FILE
+
+ if [[ $we_created_directory = "yes" ]];then
+    echo ' after_dirs_'$section_id':' >> $TMP_CREATED_DIRECTORIES_FILE
+  fi
+
+  echo ' after_files_'$section_id':' >> $TMP_GENERATED_FILES_FILE
 }
 
 #main options
@@ -130,6 +195,9 @@ zlib1.dll
 echo '
 ;main installation section
 Section "mp3splt (with libmp3splt)" main_section
+  DetailPrint ""
+  DetailPrint "Installing the main section :"
+  DetailPrint ""
 ' >> $WIN_INSTALLER_FILE
 
 set_out_path '$INSTDIR'
@@ -164,17 +232,12 @@ libmp3splt\plugins\.libs\libsplt_mp3${DLL_SUFFIX}.dll
 echo '
 ;main plugins section
 SubSection /e "Plugins" plugins_section
-
-  Section "mp3 plugin" mp3_plugin_section
 ' >> $WIN_INSTALLER_FILE
 
+start_section "" "mp3 plugin" "mp3_plugin_section" "no"
 set_out_path '$INSTDIR'
 copy_files $MP3_PLUGIN_FILES
-
-echo '
-  SectionEnd
-' >> $WIN_INSTALLER_FILE
-
+end_section "mp3_plugin_section" "no"
 
 #ogg plugin section
 OGG_PLUGIN_FILES="
@@ -185,16 +248,12 @@ libvorbisfile-3.dll
 libmp3splt\plugins\.libs\libsplt_ogg${DLL_SUFFIX}.dll
 "
 
-echo '  Section "ogg vorbis plugin" ogg_plugin_section
-' >> $WIN_INSTALLER_FILE
-
+start_section "" "ogg vorbis plugin" "ogg_plugin_section" "no"
 set_out_path '$INSTDIR'
 copy_files $OGG_PLUGIN_FILES
+end_section "ogg_plugin_section" "no"
 
-echo '
-  SectionEnd
-
-SubSectionEnd' >> $WIN_INSTALLER_FILE
+echo ' SubSectionEnd' >> $WIN_INSTALLER_FILE
 
 
 #mp3splt doc section
@@ -211,18 +270,15 @@ newmp3splt\AUTHORS
 
 echo '
 ;main documentation section
-SubSection /e "Documentation" documentation_section
 
-  Section "mp3splt documentation" mp3splt_doc_section
+SubSection /e "Documentation" documentation_section
 ' >> $WIN_INSTALLER_FILE
 
+start_section "" "mp3splt documentation" "mp3splt_doc_section" "yes"
 create_directory '$INSTDIR\mp3splt_doc'
 set_out_path '$INSTDIR\mp3splt_doc'
 copy_files $MP3SPLT_DOC_FILES
-
-echo '
-  SectionEnd' >> $WIN_INSTALLER_FILE
-
+end_section "mp3splt_doc_section" "yes"
 
 #libmp3splt doc section
 LIBMP3SPLT_DOC_FILES="
@@ -235,23 +291,22 @@ libmp3splt\TODO
 libmp3splt\AUTHORS
 "
 
-echo '
-  Section "libmp3splt documentation" libmp3splt_doc_section
-' >> $WIN_INSTALLER_FILE
-
+start_section "" "libmp3splt documentation" "libmp3splt_doc_section" "yes"
 create_directory '$INSTDIR\libmp3splt_doc'
 set_out_path '$INSTDIR\libmp3splt_doc'
 copy_files $LIBMP3SPLT_DOC_FILES
+end_section "libmp3splt_doc_section" "yes"
 
-echo '
-  SectionEnd
-
-SubSectionEnd' >> $WIN_INSTALLER_FILE
+echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE
 
 
+#menu shortcuts section
 echo '
 ;start Menu Shortcuts section
 Section "Start Menu Shortcuts" menu_shortcuts_section
+  DetailPrint ""
+  DetailPrint "Installing the start menu shortcuts :"
+  DetailPrint ""
 ' >> $WIN_INSTALLER_FILE
 
 create_directory '$SMPROGRAMS\mp3splt'
@@ -278,15 +333,39 @@ SectionEnd
 
 ;desktop shortcut
 Section "Desktop Shortcut" desktop_shortcut_section
-
+  DetailPrint ""
+  DetailPrint "Installing the desktop shortcut :"
+  DetailPrint ""
 	CreateShortCut "$DESKTOP\mp3splt.lnk" "$INSTDIR\mp3splt.bat" "" ""  
-
 SectionEnd' >> $WIN_INSTALLER_FILE
 
+#hidden sections checking for uninstalling
+echo -n '
+;write installed sections into .ini file
+Section "-write installed sections into .ini file"' >> $WIN_INSTALLER_FILE
 
+cat $TMP_CHECK_SECTIONS_UNINSTALL_FILE >> $WIN_INSTALLER_FILE
+
+echo '
+SectionGetFlags ${menu_shortcuts_section} $0
+IntOp $1 $0 & ${SF_SELECTED}
+WriteINIStr $INSTDIR\installed_sections.ini menu_shortcuts_section "installed" $1
+
+SectionGetFlags ${desktop_shortcut_section} $0
+IntOp $1 $0 & ${SF_SELECTED}
+WriteINIStr $INSTDIR\installed_sections.ini desktop_shortcut_section "installed" $1' >> $WIN_INSTALLER_FILE
+
+echo '
+SectionEnd' >> $WIN_INSTALLER_FILE
+
+#uninstallation section
 echo '
 ;uninstallation section
 Section "Uninstall"
+
+  DetailPrint ""
+  DetailPrint "Uninstalling the main files :"
+  DetailPrint ""
 
   Delete $INSTDIR\mp3splt.bat' >> $WIN_INSTALLER_FILE
 
@@ -294,22 +373,50 @@ generate_uninstall_files_dirs
 
 echo '
   ;menu shortcuts
-  Delete $SMPROGRAMS\mp3splt\mp3splt_doc.lnk
-  Delete $SMPROGRAMS\mp3splt\libmp3splt_doc.lnk
-  Delete $SMPROGRAMS\mp3splt\Mp3splt.lnk
-  Delete $SMPROGRAMS\mp3splt\uninstall.lnk
-  RmDir $SMPROGRAMS\mp3splt
+  ReadINIStr $0 $INSTDIR\installed_sections.ini menu_shortcuts_section "installed"
+  IntCmp 0 $0 after_menu_shortcuts_section
+   DetailPrint ""
+   DetailPrint "Uninstalling section menu_shortcuts_section :"
+   DetailPrint ""
+
+   ReadINIStr $0 $INSTDIR\installed_sections.ini mp3splt_doc_section "installed"
+   IntCmp 0 $0 after_link_mp3splt_doc_section
+    Delete $SMPROGRAMS\mp3splt\mp3splt_doc.lnk
+   after_link_mp3splt_doc_section:
+
+   ReadINIStr $0 $INSTDIR\installed_sections.ini mp3splt_doc_section "installed"
+   IntCmp 0 $0 after_link_libmp3splt_doc_section
+    Delete $SMPROGRAMS\mp3splt\libmp3splt_doc.lnk
+   after_link_libmp3splt_doc_section:
+
+   Delete $SMPROGRAMS\mp3splt\Mp3splt.lnk
+   Delete $SMPROGRAMS\mp3splt\uninstall.lnk
+   RmDir $SMPROGRAMS\mp3splt
+  after_menu_shortcuts_section:
 
   ;desktop shortcut section
-  Delete $DESKTOP\mp3splt.lnk
+  ReadINIStr $0 $INSTDIR\installed_sections.ini desktop_shortcut_section "installed"
+  IntCmp 0 $0 after_desktop_shortcut_section
+   DetailPrint ""
+   DetailPrint "Uninstalling desktop shortcut :"
+   DetailPrint ""
+   Delete $DESKTOP\mp3splt.lnk
+  after_desktop_shortcut_section:
+
+  DetailPrint ""
+  DetailPrint "Uninstalling remaining files :"
+  DetailPrint ""
 
   ;delete remaining ashes if possible
   Delete $INSTDIR\${PROGRAM_NAME}_uninst.exe
+  Delete $INSTDIR\installed_sections.ini
   RmDir $INSTDIR
 
   ;delete registry
   DeleteRegKey HKLM Software\${PROGRAM_NAME}
   DeleteRegKey HKLM Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROGRAM_NAME}
+
+  DetailPrint ""
 
 SectionEnd' >> $WIN_INSTALLER_FILE
 
@@ -348,6 +455,7 @@ FunctionEnd
 
 rm -f $TMP_GENERATED_FILES_FILE
 rm -f $TMP_CREATED_DIRECTORIES_FILE
+rm -f $TMP_CHECK_SECTIONS_UNINSTALL_FILE
 
 if [[ -z $we_dont_cross_compile ]];then
   ../../../nsis/makensis win32_installer.nsi || exit 1
@@ -356,5 +464,5 @@ else
 fi
 
 #remove '.nsi' script
-rm -f $WIN_INSTALLER_FILE
+#rm -f $WIN_INSTALLER_FILE
 
