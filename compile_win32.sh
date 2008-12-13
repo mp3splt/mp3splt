@@ -1,12 +1,12 @@
 #!/bin/sh
 
 echo "unarchiving libmp3splt required libs ..."
-tar jxf ../libmp3splt_mingw_required_libs.tar.bz2 -C /
+tar jxf ../libmp3splt_mingw_required_libs.tar.bz2 -C / || exit 1
 cp /usr/bin/mingw32-make.exe /usr/bin/make.exe
 echo "unarchiving mp3splt-gtk required libs ..."
-tar jxf ../mp3splt-gtk_mingw_required_libs.tar.bz2 -C /
+tar jxf ../mp3splt-gtk_mingw_required_libs.tar.bz2 -C / || exit 1
 echo "unarchiving mp3splt-gtk runtime ..."
-tar jxf ../mp3splt-gtk_runtime.tar.bz2
+tar jxf ../mp3splt-gtk_runtime.tar.bz2 || exit 1
 cp -a ./mp3splt-gtk_runtime/*.dll /usr/bin
 mkdir -p /lib/.libs
 cp /lib/libvorbis* /lib/libmad* /lib/libid3tag* /lib/.libs
