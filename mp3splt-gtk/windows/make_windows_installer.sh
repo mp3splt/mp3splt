@@ -22,13 +22,20 @@ else
   DLL_SUFFIX="-0"
 fi
 
-#we compile the locales
 mkdir -p ../../translations/translations/fr/LC_MESSAGES
-wine `pwd`/../../../libs/bin/msgfmt -o ../../translations/translations/fr/LC_MESSAGES/mp3splt-gtk.mo ../po/fr.po || exit 1
+#mings/msys compilation section
+if [[ -z $we_dont_cross_compile ]];then
+  #we compile the locales
+  msgfmt -o ../../translations/translations/fr/LC_MESSAGES/mp3splt-gtk.mo ../po/fr.po || exit 1
+#cross compilation section
+else
+  #we compile the locales
+  wine `pwd`/../../../libs/bin/msgfmt -o ../../translations/translations/fr/LC_MESSAGES/mp3splt-gtk.mo ../po/fr.po || exit 1
 
-cd ../../../libs &&\
-tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../trunk || exit 1 &&\
-cd - &> /dev/null
+  cd ../../../libs &&\
+  tar jxf mp3splt-gtk_runtime.tar.bz2 -C ../trunk || exit 1 &&\
+  cd - &> /dev/null
+fi
 
 #generate the '.nsi' installer script
 
@@ -517,7 +524,6 @@ echo '
 
 SectionEnd' >> $WIN_INSTALLER_FILE
 
-
 #uninstall old program if found installed
 echo '
 ;uninstall the old program if necessary
@@ -560,11 +566,12 @@ if [[ -z $we_dont_cross_compile ]];then
   ../../../nsis/makensis -V3 win32_installer.nsi || exit 1
 else
   makensis -V3 win32_installer.nsi || exit 1
+  cd ../.. && rm -rf mp3splt-gtk_runtime && cd - &>/dev/null
 fi
 
-#remove .nsi script
-#rm -f $WIN_INSTALLER_FILE
+cd ../.. && rm -rf translations
 
-#remove used dirs
-cd ../.. && rm -rf translations && rm -rf mp3splt-gtk_runtime
+#remove .nsi script
+rm -f $WIN_INSTALLER_FILE
+
 
