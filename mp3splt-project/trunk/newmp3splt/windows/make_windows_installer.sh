@@ -6,9 +6,12 @@
 we_dont_cross_compile=$1
 
 #we move in the current script directory
-script_dir=$(readlink -f $0) || exit 1
-script_dir=${script_dir%\/*.sh}
-cd $script_dir
+#on cross compilation
+if [[ ! -z $we_dont_cross_compile ]];then
+  script_dir=$(readlink -f $0) || exit 1
+  script_dir=${script_dir%\/*.sh}
+  cd $script_dir
+fi
 
 . ../include_variables.sh
 
@@ -156,7 +159,7 @@ echo "!include MUI2.nsh
 !define PROGRAM_NAME \"mp3splt\"" > $WIN_INSTALLER_FILE
 
 if [[ -z $we_dont_cross_compile ]];then
-  echo "!define MP3SPLT_PATH \"c:/mp3splt_mingw`pwd`/../..\"" >> $WIN_INSTALLER_FILE
+  echo "!define MP3SPLT_PATH \"c:\mp3splt_mingw`pwd`\..\..\"" >> $WIN_INSTALLER_FILE
 else 
   echo "!define MP3SPLT_PATH \"`pwd`/../..\"" >> $WIN_INSTALLER_FILE
 fi
@@ -165,17 +168,17 @@ echo '
 ;name of the program
 Name "mp3splt ${VERSION}"
 ;file to write
-OutFile "../../mp3splt_${VERSION}_'$ARCH'.exe"
+OutFile "..\..\mp3splt_${VERSION}_'$ARCH'.exe"
 ;installation directory
 InstallDir $PROGRAMFILES\mp3splt
 
 BrandingText " "
 
 ;interface settings
-!define MUI_ICON ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.ico
-!define MUI_UNICON ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.ico
+!define MUI_ICON ${MP3SPLT_PATH}\newmp3splt\windows\mp3splt.ico
+!define MUI_UNICON ${MP3SPLT_PATH}\newmp3splt\windows\mp3splt.ico
 
-!define MUI_WELCOMEFINISHPAGE_BITMAP ${MP3SPLT_PATH}/newmp3splt/windows/mp3splt.bmp
+!define MUI_WELCOMEFINISHPAGE_BITMAP ${MP3SPLT_PATH}\newmp3splt\windows\mp3splt.bmp
 !define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
 
 !define MUI_FINISHPAGE_NOAUTOCLOSE

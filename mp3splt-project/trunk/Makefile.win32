@@ -4,7 +4,7 @@ all:
 	\
 	cd ../newmp3splt && ./autogen.sh && \
 	cp /lib/libmp3splt* . && \
-	./configure && make clean && make && make install && \
+	./configure --host=mingw32 && make clean && make && make install && \
 	\
 	cd ../mp3splt-gtk && ./autogen.sh && \
 	cp /lib/libmp3splt* . && \
