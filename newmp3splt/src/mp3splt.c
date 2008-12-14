@@ -46,7 +46,7 @@
 #define VERSION "2.2.2"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "13/12/08"
+#define MP3SPLT_DATE "14/12/08"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -71,6 +71,7 @@ typedef struct {
   short o_option; short d_option; short k_option;
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
+  short N_option;
   //-Q option
   short qq_option;
   //info -i option, m3u file option
@@ -285,6 +286,7 @@ void show_small_help_exit(main_data *data)
       " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
+      " -N   Don't create the 'mp3splt.log' log file when using '-s'.\n"
       " -q   Quiet mode: try not prompt (if possible) and print less messages.\n"
       " -Q   Very quiet mode: don't print anything to stdout and no progress bar (also enables -q).\n"
       " -D   Debug mode: used to debug the program (by developers).\n\n"
@@ -623,6 +625,15 @@ void check_args(int argc, main_data *data)
           print_error_exit("the -Q option cannot be used with"
               " interactive freedb query ('-c query')", data);
         }
+      }
+    }
+
+    if (opt->N_option)
+    {
+      if (!opt->s_option)
+      {
+        print_error_exit("the -N option must be used with"
+            " silence detection (-s option)", data);
       }
     }
   }
@@ -1306,6 +1317,7 @@ options *new_options(main_data *data)
   opt->d_option = SPLT_FALSE; opt->k_option = SPLT_FALSE;
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
+  opt->N_option = SPLT_FALSE;
   opt->qq_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
@@ -1498,12 +1510,6 @@ int main(int argc, char *argv[])
   //close nicely on Ctrl+C (for example)
   signal(SIGINT, sigint_handler);
 
-  //enable logging the silence splitpoints in a file
-  mp3splt_set_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG, SPLT_TRUE);
-  //silence splitpoints log filename
-  mp3splt_set_silence_log_filename(state, "mp3splt.log");
-  process_confirmation_error(err, data);
-
   //callback for the library messages
   mp3splt_set_message_function(state, put_library_message);
   mp3splt_set_silence_level_function(state, get_silence_level, data->sl);
@@ -1519,7 +1525,7 @@ int main(int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option = getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQ")) != -1)
+  while ((option = getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQ:N")) != -1)
   {
     switch (option)
     {
@@ -1587,6 +1593,9 @@ int main(int argc, char *argv[])
       case 'd':
         opt->dir_arg = optarg;
         opt->d_option = SPLT_TRUE;
+        break;
+      case 'N':
+        opt->N_option = SPLT_TRUE;
         break;
       case 'o':
         //default output is false now
@@ -1825,6 +1834,15 @@ int main(int argc, char *argv[])
 
   //check arguments
   check_args(argc, data);
+
+  //enable/disable logging the silence splitpoints in a file
+  mp3splt_set_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG, ! opt->N_option);
+  //silence splitpoints log filename
+  if (! opt->N_option)
+  {
+    mp3splt_set_silence_log_filename(state, "mp3splt.log");
+    process_confirmation_error(err, data);
+  }
 
   int i = 0;
   data->filenames = NULL;
