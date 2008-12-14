@@ -188,6 +188,8 @@ BrandingText " "
 
 !define MUI_FINISHPAGE_SHOWREADME "http://mp3splt.sourceforge.net/mp3splt_page/documentation/man.html"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "View online manual"
+!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+;!define MUI_FINISHPAGE_CANCEL_ENABLED
 
 !define MUI_COMPONENTSPAGE_NODESC
 ShowInstDetails "show"
@@ -332,8 +334,8 @@ Section "Start Menu Shortcuts" menu_shortcuts_section
 
 create_directory '$SMPROGRAMS\mp3splt'
 
-echo '  CreateShortCut "$SMPROGRAMS\mp3splt\Mp3splt.lnk" "$INSTDIR\mp3splt.bat" "" ""
-	CreateShortCut "$SMPROGRAMS\mp3splt\Uninstall.lnk" "$INSTDIR\mp3splt_uninst.exe" "" "$INSTDIR\mp3splt_uninst.exe" 0
+echo '  CreateShortCut "$SMPROGRAMS\mp3splt\mp3splt.lnk" "$INSTDIR\mp3splt.bat" "" ""
+	CreateShortCut "$SMPROGRAMS\mp3splt\uninstall.lnk" "$INSTDIR\mp3splt_uninst.exe" "" "$INSTDIR\mp3splt_uninst.exe" 0
 
   ;if mp3splt_doc_section is selected, add mp3splt_doc link
   SectionGetFlags ${mp3splt_doc_section} $0
@@ -407,13 +409,13 @@ echo '
     Delete $SMPROGRAMS\mp3splt\mp3splt_doc.lnk
    after_link_mp3splt_doc_section:
 
-   ReadINIStr $0 $INSTDIR\installed_sections.ini mp3splt_doc_section "installed"
+   ReadINIStr $0 $INSTDIR\installed_sections.ini libmp3splt_doc_section "installed"
    IntCmp 0 $0 after_link_libmp3splt_doc_section
     Delete $SMPROGRAMS\mp3splt\libmp3splt_doc.lnk
    after_link_libmp3splt_doc_section:
 
-   Delete $SMPROGRAMS\mp3splt\Mp3splt.lnk
-   Delete $SMPROGRAMS\mp3splt\Uninstall.lnk
+   Delete $SMPROGRAMS\mp3splt\mp3splt.lnk
+   Delete $SMPROGRAMS\mp3splt\uninstall.lnk
    RmDir $SMPROGRAMS\mp3splt
   after_menu_shortcuts_section:
 
