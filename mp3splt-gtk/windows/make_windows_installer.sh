@@ -262,6 +262,8 @@ BrandingText " "
 !define MUI_FINISHPAGE_RUN $INSTDIR\mp3splt-gtk.exe
 !define MUI_FINISHPAGE_LINK "Mp3splt-project home page"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://mp3splt.sourceforge.net"
+!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+;!define MUI_FINISHPAGE_CANCEL_ENABLED
 
 !define MUI_COMPONENTSPAGE_NODESC
 ShowInstDetails "show"
@@ -421,7 +423,7 @@ Section "Start Menu Shortcuts" menu_shortcuts_section
 create_directory '$SMPROGRAMS\mp3splt-gtk'
 
 echo '  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\mp3splt-gtk.lnk" "$INSTDIR\mp3splt-gtk.exe" "" "$INSTDIR\mp3splt-gtk.ico" 0
-  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\Uninstall.lnk" "$INSTDIR\mp3splt-gtk_uninst.exe" "" "$INSTDIR\mp3splt-gtk_uninst.exe" 0
+  CreateShortCut "$SMPROGRAMS\mp3splt-gtk\uninstall.lnk" "$INSTDIR\mp3splt-gtk_uninst.exe" "" "$INSTDIR\mp3splt-gtk_uninst.exe" 0
 
   ;if mp3splt_gtk__doc_section is selected, add mp3splt_doc link
   SectionGetFlags ${mp3splt_gtk_doc_section} $0
@@ -494,13 +496,13 @@ echo '
     Delete $SMPROGRAMS\mp3splt-gtk\mp3splt-gtk_doc.lnk
    after_link_mp3splt_gtk_doc_section:
 
-   ReadINIStr $0 $INSTDIR\installed_sections.ini mp3splt_doc_section "installed"
+   ReadINIStr $0 $INSTDIR\installed_sections.ini libmp3splt_doc_section "installed"
    IntCmp 0 $0 after_link_libmp3splt_doc_section
     Delete $SMPROGRAMS\mp3splt\libmp3splt_doc.lnk
    after_link_libmp3splt_doc_section:
 
-   Delete $SMPROGRAMS\mp3splt-gtk\Mp3splt-gtk.lnk
-   Delete $SMPROGRAMS\mp3splt-gtk\Uninstall.lnk
+   Delete $SMPROGRAMS\mp3splt-gtk\mp3splt-gtk.lnk
+   Delete $SMPROGRAMS\mp3splt-gtk\uninstall.lnk
    RmDir $SMPROGRAMS\mp3splt-gtk
   after_menu_shortcuts_section:
 
