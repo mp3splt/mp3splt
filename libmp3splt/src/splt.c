@@ -706,7 +706,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           }
           else
           {
-            long temp_silence_pos = splt_u_silence_position(temp, offset) *100;
+            long temp_silence_pos = splt_u_silence_position(temp, offset) * 100;
             append_error = splt_t_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
             if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
           }
@@ -853,7 +853,9 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
       if (err < 0) { *error = err; goto function_end; }
 
       long split_begin = 0,split_end = 0;
-      if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+      int we_remove_silence = splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE);
+
+      if (we_remove_silence)
       {
         split_begin = splt_t_get_splitpoint_value(state,2*i,&get_error);
         split_end = splt_t_get_splitpoint_value(state,2*i+1,&get_error);
@@ -874,7 +876,7 @@ static void splt_s_write_silence_tracks(int found, splt_state *state, int *error
         beg_pos = splt_u_get_double_pos(split_begin);
         end_pos = splt_u_get_double_pos(split_end);
 
-        splt_p_split(state, final_fname, beg_pos, end_pos, error, SPLT_FALSE);
+        splt_p_split(state, final_fname, beg_pos, end_pos, error, ! we_remove_silence);
 
         //put the split file if no error
         if (*error >= 0)
