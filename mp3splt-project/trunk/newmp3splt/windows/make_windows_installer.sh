@@ -478,7 +478,7 @@ rm -f $TMP_CREATED_DIRECTORIES_FILE
 rm -f $TMP_CHECK_SECTIONS_UNINSTALL_FILE
 
 if [[ -z $we_dont_cross_compile ]];then
-  ../../../nsis/makensis -V3 win32_installer.nsi || exit 1
+  ../../nsis/makensis -V3 win32_installer.nsi || exit 1
 else
   makensis -V3 win32_installer.nsi || exit 1
 fi
