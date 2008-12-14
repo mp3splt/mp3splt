@@ -1164,6 +1164,7 @@ static void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 
 //used by mp3_scan_silence, and compare with threshold, returns 0 if
 //silence spot > threshold, 1 otherwise
+//-computes one frame
 static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t threshold)
 {
   int i, j;
@@ -1174,7 +1175,7 @@ static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t 
   {
     for(i=0; i<mp3state->synth.pcm.length; i++)
     {
-      //get silence spot?
+      //get silence spot ?
       sample = mad_f_abs(mp3state->synth.pcm.samples[j][i]);
       mp3state->temp_level = mp3state->temp_level * 0.999 + sample * 0.001;
 
@@ -1257,7 +1258,10 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
         if ((!flush) && (splt_mp3_silence(mp3state, MAD_NCHANNELS(&mp3state->frame.header), th)))
         {
           if (len == 0) silence_begin = time;
-          if (first == 0) len++;
+          if (first == 0) 
+          {
+            len++;
+          }
           if (shot < SPLT_DEFAULTSHOT)
             shot+=2;
           silence_end = time;
