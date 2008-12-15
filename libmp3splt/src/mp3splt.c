@@ -733,7 +733,7 @@ int mp3splt_split(splt_state *state)
         splt_t_get_original_tags(state,&error);
         if (error < 0)
         {
-          splt_p_end(state);
+          splt_p_end(state, &error);
           goto function_end;
         }
 
@@ -770,10 +770,11 @@ int mp3splt_split(splt_state *state)
           case SPLT_OPTION_TIME_MODE:
             splt_s_time_split(state, &error);
             break;
+          case SPLT_OPTION_ERROR_MODE:
+            splt_s_error_split(state, &error);
+            break;
           default:
-            //this is the normal split or error mode split:
-            //here we also have error_mode and frame_mode 
-
+            //this is the normal split
             if (split_type == SPLT_OPTION_NORMAL_MODE)
             {
               //if we don't have STDIN
@@ -791,7 +792,7 @@ int mp3splt_split(splt_state *state)
         }
 
         //ends the 'init' of the plugin for the split
-        splt_p_end(state);
+        splt_p_end(state, &error);
 
 function_end:
         //free memory
@@ -1080,7 +1081,7 @@ const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
         {
           splt_t_unlock_messages(state);
           splt_p_search_syncerrors(state, err);
-          splt_p_end(state);
+          splt_p_end(state, err);
         }
         else
         {
@@ -1137,7 +1138,7 @@ const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
         {
           splt_t_unlock_messages(state);
           splt_p_dewrap(state, SPLT_TRUE, NULL, err);
-          splt_p_end(state);
+          splt_p_end(state, err);
         }
         else
         {
@@ -1190,7 +1191,7 @@ int mp3splt_set_silence_points(splt_state *state, int *error)
         if (*err >= 0)
         {
           found_splitpoints = splt_s_set_silence_splitpoints(state, err);
-          splt_p_end(state);
+          splt_p_end(state, err);
         }
       }
 

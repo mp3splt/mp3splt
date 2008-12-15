@@ -204,7 +204,6 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 //function to filter the plugin files
 static int splt_p_filter_plugin_files(const struct dirent *de)
 {
-  int file_length = strlen(de->d_name);
   char *file = (char *) de->d_name;
   char *p_end = NULL;
   char *p_start = NULL;
@@ -413,6 +412,8 @@ int splt_p_move_replace_plugin_data(splt_state *state, int old, int new)
       pl->data[old].plugin_filename);
 
   splt_t_free_plugin_data(pl->data[old]);
+
+  return SPLT_OK;
 }
 
 //shifts all the elements to the left, starting at element index+1
@@ -816,7 +817,7 @@ int splt_p_simple_split(splt_state *state, const char *output_fname, off_t begin
   if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
     error = SPLT_ERROR_NO_PLUGIN_FOUND;
-    return;
+    return error;
   }
   else
   {

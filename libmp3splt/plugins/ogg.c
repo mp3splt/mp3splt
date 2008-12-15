@@ -378,7 +378,7 @@ static void splt_ogg_v_free(splt_ogg_state *oggstate)
         splt_ogg_free_packet(oggstate->headers[i]);
       }
       free(oggstate->headers);
-      oggstate->headers;
+      oggstate->headers = NULL;
     }
     vorbis_comment_clear(&oggstate->vc);
     if(oggstate->vb)
@@ -1117,8 +1117,6 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   ogg_int64_t page_granpos = 0, current_granpos = 0, prev_granpos = 0;
   ogg_int64_t packetnum=0; /* Should this start from 0 or 3 ? */
 
-  char *filename = splt_t_get_filename_to_split(state);
-
   if(oggstate->packets[0] && oggstate->packets[1])
   { // Check if we have the 2 packet, begin can be 0!
     packet.bytes = oggstate->packets[0]->length;
@@ -1480,7 +1478,7 @@ void splt_ogg_split(const char *output_fname, splt_state *state, double
   }
 
   //find end cutpoint and get error
-  int result = splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
+  splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
       oggstate->out, cutpoint, adjust, threshold, error, output_fname, save_end_point);
 
 end:
@@ -1566,7 +1564,6 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
   off_t position = ftello(oggstate->in); // Some backups
   int saveW = oggstate->prevW;
   float th = splt_u_convertfromdB(threshold);
-  unsigned long count = 0;
 
   ogg_sync_init(&oy);
   ogg_stream_init(&os, oggstate->serial);
@@ -1897,15 +1894,12 @@ void splt_pl_init(splt_state *state, int *error)
 
 void splt_pl_end(splt_state *state, int *error)
 {
-  splt_ogg_state *oggstate = state->codec;
   splt_ogg_state_free(state);
 }
 
 void splt_pl_split(splt_state *state, const char *final_fname,
     double begin_point, double end_point, int *error, int save_end_point) 
 {
-  splt_ogg_state *oggstate = state->codec;
-
   splt_ogg_put_tags(state, error);
 
   if (*error >= 0)

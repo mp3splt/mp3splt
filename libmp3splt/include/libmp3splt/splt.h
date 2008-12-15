@@ -62,6 +62,7 @@ void splt_s_put_total_time(splt_state *state, int *error);
 /**********************************/
 /* splt normal or syncerror split */
 
+void splt_s_error_split(splt_state *state, int *error);
 void splt_s_multiple_split(splt_state *state, int *error);
 
 /************************************/
