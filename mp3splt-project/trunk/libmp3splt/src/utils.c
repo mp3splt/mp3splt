@@ -813,7 +813,6 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                 ambigous = SPLT_TRUE;
               }
 
-              char *filename = splt_t_get_filename_to_split(state);
               //if we don't have STDIN
               if (! splt_t_is_stdin(state))
               {
@@ -841,7 +840,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                     get_out_from_while = SPLT_TRUE;
                     goto end_while;
                   }
-                  splt_p_end(state);
+                  splt_p_end(state, &err);
                   err = splt_t_append_original_tags(state);
                   if (err < 0)
                   {
@@ -1553,6 +1552,14 @@ int splt_u_put_output_format_filename(splt_state *state)
           //we set the track number
           int tracknumber = old_current_split+1;
 
+          //TODO: see if we set this here ?
+          //if we remove silence, make 'SKIP_POINTS' transparent
+          if ((tracknumber > 1) &&
+              (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE)))
+          {
+            tracknumber = old_current_split / 2 + 1;
+          }
+
           //if not time split, or normal split, or silence split or error,
           //we put the track number from the tags
           int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
@@ -1574,9 +1581,6 @@ int splt_u_put_output_format_filename(splt_state *state)
           snprintf(temp+4, temp_len, state->oformat.format[i]+2);
 
           fm_length = strlen(temp) + 1;
-          char tt[2] = { state->oformat.output_format_digits, '\0' };
-          int number_of_digits = atoi(tt);
-
           if ((fm = malloc(fm_length * sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -1970,8 +1974,8 @@ char *splt_u_strerror(splt_state *state, int error_code)
             state->err.error_data,state->err.strerror_msg);
         break;
       case SPLT_ERROR_WHILE_READING_FILE:
-        snprintf(error_msg,max_error_size, " error: error while reading file '%s'",
-            state->err.error_data,state->err.strerror_msg);
+        snprintf(error_msg,max_error_size, " error: error while reading file '%s' : %s",
+            state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_ERROR_SEEKING_FILE:
         snprintf(error_msg,max_error_size, " error: cannot seek file '%s'",

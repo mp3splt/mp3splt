@@ -225,8 +225,14 @@ void splt_t_clean_one_split_data(splt_state *state, int num);
 void splt_t_clean_split_data(splt_state *state,int tracks);
 int splt_t_split_is_canceled(splt_state *state);
 void splt_t_set_stop_split(splt_state *state, int bool_value);
-
 void splt_t_free_plugin_data(splt_plugin_data pl_data);
+
+int splt_t_is_stdin(splt_state *state);
+int splt_t_is_stdout(splt_state *state);
+
+void splt_t_set_current_plugin(splt_state *state, int current_plugin);
+int splt_t_get_current_plugin(splt_state *state);
+int splt_t_alloc_init_new_plugin(splt_plugins *pl);
 
 #define MP3SPLT_TYPES_FUNC
 

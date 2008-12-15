@@ -50,3 +50,6 @@ int splt_p_find_get_plugins_data(splt_state *state);
 int splt_p_set_default_plugins_scan_dirs(splt_state *state);
 int splt_p_append_plugin_scan_dir(splt_state *state, char *dir);
 
+void splt_p_init(splt_state *state, int *error);
+void splt_p_end(splt_state *state, int *error);
+

@@ -206,7 +206,7 @@ static unsigned long splt_mp3_c_crc(splt_state *state,
     splt_t_set_strerror_msg(state);
     splt_t_set_error_data(state,splt_t_get_filename_to_split(state));
     *error = SPLT_ERROR_SEEKING_FILE;
-    return;
+    return 0;
   }
 
   while(begin++ < end)
@@ -3236,7 +3236,6 @@ void splt_pl_dewrap(splt_state *state, int listonly, const char *dir, int *error
 void splt_pl_split(splt_state *state, const char *final_fname,
     double begin_point, double end_point, int *error, int save_end_point)
 {
-  splt_mp3_state *mp3state = state->codec;
   char *filename = splt_t_get_filename_to_split(state);
 
   //put id3v1 tags
@@ -3258,9 +3257,6 @@ void splt_pl_split(splt_state *state, const char *final_fname,
 
 int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off_t end)
 {
-  FILE *file_input = NULL;
-  char *filename = splt_t_get_filename_to_split(state);
-
   int error = SPLT_OK;
 
   splt_mp3_state *mp3state = state->codec;
@@ -3279,12 +3275,10 @@ int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off
 
 int splt_pl_scan_silence(splt_state *state, int *error)
 {
-  char *filename = splt_t_get_filename_to_split(state);
   float offset = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
   float threshold = splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
   float min_length = splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
   int found = 0;
-  FILE *file_input = NULL;
 
   splt_mp3_state *mp3state = state->codec;
   mp3state->off = offset;

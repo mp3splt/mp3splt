@@ -644,9 +644,6 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
     return SPLT_FALSE;
   }
 
-end:
-  return SPLT_FALSE;
-
 end_error:
   /*splt_t_set_strerror_msg(state);
   splt_t_set_error_data(state,file1);

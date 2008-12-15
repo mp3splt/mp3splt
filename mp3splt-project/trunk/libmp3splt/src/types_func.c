@@ -51,6 +51,43 @@ static void splt_t_free_oformat(splt_state *state);
 static void splt_t_state_put_default_options(splt_state *state, int *error);
 static void splt_t_free_files(char **files, int number);
 
+//returns SPLT_TRUE if the filename to split looks like STDIN
+int splt_t_is_stdin(splt_state *state)
+{
+  char *filename = splt_t_get_filename_to_split(state);
+
+  if (filename)
+  {
+    if ((strcmp(filename,"-") == 0) ||
+        (filename[strlen(filename)-1] == '-'))
+    {
+      return SPLT_TRUE;
+    }
+  }
+
+  return SPLT_FALSE;
+}
+
+//returns SPLT_TRUE if the output filename to split looks like STDOUT
+int splt_t_is_stdout(splt_state *state)
+{
+  const char *oformat = splt_t_get_oformat(state);
+
+  if (oformat)
+  {
+    if ((strcmp(oformat,"-") == 0))
+    {
+      return SPLT_TRUE;
+    }
+    else
+    {
+      return SPLT_FALSE;
+    }
+  }
+
+  return SPLT_FALSE;
+}
+
 /********************************/
 /* types: state access */
 
@@ -642,6 +679,8 @@ void splt_t_set_oformat(splt_state *state, const char *format_string, int *error
   {
     splt_t_set_oformat_digits(state); 
   }
+
+  splt_t_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
 }
 
 //returns the output format string
@@ -2169,6 +2208,8 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
   }
+
+  return -1;
 }
 
 //returns a float option (see mp3splt_types.h for int options)
@@ -2744,6 +2785,8 @@ int splt_t_put_split_file(splt_state *state, const char *filename)
   {
     //splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
   }
+
+  return error;
 }
 
 //puts in the state->progress_text the real text 
@@ -2881,41 +2924,6 @@ void splt_t_clean_one_split_data(splt_state *state, int num)
   if (splt_t_splitpoint_exists(state, num))
   {
     splt_t_set_splitpoint_name(state, num, NULL);
-  }
-}
-
-//returns SPLT_TRUE if the filename to split looks like STDIN
-int splt_t_is_stdin(splt_state *state)
-{
-  char *filename = splt_t_get_filename_to_split(state);
-
-  if (filename)
-  {
-    if ((strcmp(filename,"-") == 0) ||
-        (filename[strlen(filename)-1] == '-'))
-    {
-      return SPLT_TRUE;
-    }
-  }
-
-  return SPLT_FALSE;
-}
-
-//returns SPLT_TRUE if the output filename to split looks like STDOUT
-int splt_t_is_stdout(splt_state *state)
-{
-  const char *oformat = splt_t_get_oformat(state);
-
-  if (oformat)
-  {
-    if ((strcmp(oformat,"-") == 0))
-    {
-      return SPLT_TRUE;
-    }
-    else
-    {
-      return SPLT_FALSE;
-    }
   }
 }
 

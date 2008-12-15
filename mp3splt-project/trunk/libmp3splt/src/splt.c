@@ -42,7 +42,6 @@
 //the real split of the file
 static void splt_s_real_split(splt_state *state, int *error, int save_end_point)
 {
-  int split_error = *error;
   double splt_beg = splt_t_get_i_begin_point(state);
   double splt_end = splt_t_get_i_end_point(state);
   char *final_fname = NULL;
@@ -99,8 +98,7 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
   if (get_error == SPLT_OK)
   {
     //if we put mins and secs
-    if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES)
-        == SPLT_OUTPUT_MINS_SECS)
+    if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_MINS_SECS)
     {
       splt_u_set_complete_mins_secs_filename(state, error);
     }
@@ -127,8 +125,8 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
           splt_end += ((split_end % 100) / 100.);
         }
 
-        splt_t_set_i_begin_point(state,splt_beg);
-        splt_t_set_i_end_point(state,splt_end);
+        splt_t_set_i_begin_point(state, splt_beg);
+        splt_t_set_i_end_point(state, splt_end);
 
         //we do the real split
         splt_s_real_split(state, error, save_end_point);
@@ -144,209 +142,206 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
 //splits the file with multiple points
 void splt_s_multiple_split(splt_state *state, int *error)
 {
+  int split_type = splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+
   int i = 0;
-  char *final_fname = NULL;
 
   int err = SPLT_OK;
 
-  //if we have the sync error mode
-  //we do a different split than the normal split
-  if (splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_ERROR_MODE)
-  {
-    splt_t_put_message_to_client(state, " info: starting error mode split\n");
+  splt_t_set_oformat_digits(state);
 
-    //we detect sync errors
-    splt_p_search_syncerrors(state, error);
-
-    //automatically set progress callback to 100% after
-    //the error detection
-    splt_t_update_progress(state,1.0,1.0,1,1,1);
-
-    //if we have the default output, we put the
-    //default
-    err = SPLT_OK;
-
-    //if no error
-    if (*error >= 0 && err >= 0)
-    {
-      //we put the number of sync errors
-      splt_t_set_splitnumber(state, state->serrors->serrors_points_num - 1);
-
-      if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
-      {
-        splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
-      }
-
-      //we split all sync errors
-      for (i = 0; i < state->serrors->serrors_points_num - 1; i++)
-      {
-        //if we don't cancel the split
-        if (!splt_t_split_is_canceled(state))
-        {
-          //we put the current file to split
-          splt_t_set_current_split(state, i);
-
-          //we append a splitpoint
-          int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
-          if (err < 0) { *error = err; goto bloc_end; }
-
-          //if we have to put the original tags
-          if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
-          {
-            //we put the original tags to the current split
-            err = splt_t_append_original_tags(state);
-            if (err < 0) { *error = err; goto bloc_end; }
-          }
-
-          //we put the output filename
-          err = splt_u_put_output_format_filename(state);
-          if (err < 0) { *error = err; goto bloc_end; }
-
-          //we get the final fname
-          final_fname = splt_u_get_fname_with_path_and_extension(state, error);
-
-          if(*error >= 0)
-          {
-            //we split with the detected splitpoints
-            int split_result = splt_p_simple_split(state, final_fname, 
-                (off_t) state->serrors->serrors_points[i], 
-                (off_t) state->serrors->serrors_points[i+1]);
-
-            //automatically set progress callback to 100%
-            splt_t_update_progress(state,1.0,1.0,1,1,1);
-
-            if (split_result >= 0)
-            {
-              *error = SPLT_SYNC_OK;
-            }
-
-            //if the split has been a success
-            if (*error == SPLT_SYNC_OK)
-            {
-              err = splt_t_put_split_file(state, final_fname);
-              if (err < 0) { *error = err; goto bloc_end; }
-            }
-          }
-          else
-          {
-            //error
-            goto bloc_end;
-          }
-
-          //free some memory
-          if (final_fname)
-          {
-            free(final_fname);
-            final_fname = NULL;
-          }
-        }
-        //if we cancel the split
-        else
-        {
-          *error = SPLT_SPLIT_CANCELLED;
-          goto bloc_end;
-        }
-      }
-    }
-    else
-    {
-      if (*error >= 0 && err < 0)
-      {
-        *error = err;
-      }
-    }
-
-bloc_end:
-    //free possible unfreed 'final_fname'
-    if (final_fname)
-    {
-      free(final_fname);
-      final_fname = NULL;
-    }
-  }
-  else
-  //if we don't have the sync error mode
-  //we do a normal split
+  if (split_type == SPLT_OPTION_NORMAL_MODE)
   {
     splt_t_put_message_to_client(state, " info: starting normal split\n");
+  }
 
-    splt_t_set_oformat_digits(state);
+  int get_error = SPLT_OK;
 
-    int get_error = SPLT_OK;
+  //for every 2 splitpoints, split
+  while (i  < splt_t_get_splitnumber(state) - 1)
+  {
+    //we put the current file to split
+    splt_t_set_current_split(state, i);
 
-    //i is the first splitpoint indice
-    int i = 0;
-    //for every 2 splitpoints, split
-    while (i  < splt_t_get_splitnumber(state) - 1)
+    //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
+    int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
+    if (first_splitpoint_type == SPLT_SKIPPOINT)
     {
-      //we put the current file to split
-      splt_t_set_current_split(state, i);
+      i++;
+      continue;
+    }
+    int j = i+1;
 
-      //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
-      int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
-      if (first_splitpoint_type == SPLT_SKIPPOINT)
+    //if we don't cancel the split
+    if (!splt_t_split_is_canceled(state))
+    {
+      get_error = SPLT_OK;
+
+      //if we have to put the original tags
+      if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
       {
-        i++;
-        continue;
+        int err = SPLT_OK;
+
+        //we put the original tags to the current split
+        err = splt_t_append_original_tags(state);
+        if (err < 0) { *error = err; return; }
       }
-      int j = i+1;
 
-      //if we don't cancel the split
-      if (!splt_t_split_is_canceled(state))
+      //we look what option we have for the output filenames
+      int output_filenames = splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+      if (output_filenames == SPLT_OUTPUT_FORMAT)
       {
-        get_error = SPLT_OK;
+        err = splt_u_put_output_format_filename(state);
+        if (err < 0) { *error = err; return; }
+      }
 
-        //we look what option we have for the output filenames
-        int output_filenames = splt_t_get_int_option(state,
-            SPLT_OPT_OUTPUT_FILENAMES);
-        //if we have to put the original tags
-        if (splt_t_get_int_option(state, SPLT_OPT_TAGS) 
-            == SPLT_TAGS_ORIGINAL_FILE)
+      char *temp_name = splt_t_get_splitpoint_name(state, i, &get_error);
+      if (get_error == SPLT_OK)
+      {
+        //if we have no filename, we put option mins secs
+        if ((temp_name == NULL) || (temp_name[0] == '\0'))
         {
-          int err = SPLT_OK;
-
-          //we put the original tags to the current split
-          err = splt_t_append_original_tags(state);
-          if (err < 0) { *error = err; return; }
-        }
-        //we put the output filrnames
-        if (output_filenames == SPLT_OUTPUT_FORMAT)
-        {
-          err = splt_u_put_output_format_filename(state);
-          if (err < 0) { *error = err; return; }
+          splt_t_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_MINS_SECS);
         }
 
-        char *temp_name = splt_t_get_splitpoint_name(state, i, &get_error);
-        if (get_error == SPLT_OK)
-        {
-          //if we have no filename, we put
-          //option mins secs
-          if ((temp_name == NULL) || (temp_name[0] == '\0'))
-          {
-            splt_t_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES,
-                SPLT_OUTPUT_MINS_SECS);
-          }
+        splt_s_split(state, i, j, error);
 
-          splt_s_split(state, i, j, error);
-
-          //get out if error
-          if ((*error < 0) ||
-              (*error==SPLT_OK_SPLIT_EOF))
-          {
-            break;
-          }
-        }
-        else
+        //get out if error
+        if ((*error < 0) ||
+            (*error == SPLT_OK_SPLIT_EOF))
         {
-          *error = get_error;
+          break;
         }
       }
       else
       {
-        *error = SPLT_SPLIT_CANCELLED;
+        *error = get_error;
+        return;
       }
-      i++;
     }
+    else
+    {
+      *error = SPLT_SPLIT_CANCELLED;
+      return;
+    }
+    i++;
+  }
+}
+
+//the sync error mode
+void splt_s_error_split(splt_state *state, int *error)
+{
+  splt_t_put_message_to_client(state, " info: starting error mode split\n");
+  char *final_fname = NULL;
+
+  //we detect sync errors
+  splt_p_search_syncerrors(state, error);
+
+  //automatically set progress callback to 100% after
+  //the error detection
+  splt_t_update_progress(state,1.0,1.0,1,1,1);
+
+  //if we have the default output, we put the
+  //default
+  int err = SPLT_OK;
+
+  //if no error
+  if (*error >= 0 && err >= 0)
+  {
+    //we put the number of sync errors
+    splt_t_set_splitnumber(state, state->serrors->serrors_points_num - 1);
+
+    if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
+    {
+      splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
+    }
+
+    //we split all sync errors
+    int i = 0;
+    for (i = 0; i < state->serrors->serrors_points_num - 1; i++)
+    {
+      //if we don't cancel the split
+      if (!splt_t_split_is_canceled(state))
+      {
+        //we put the current file to split
+        splt_t_set_current_split(state, i);
+
+        //we append a splitpoint
+        int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
+        if (err < 0) { *error = err; goto bloc_end; }
+
+        //if we have to put the original tags
+        if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
+        {
+          //we put the original tags to the current split
+          err = splt_t_append_original_tags(state);
+          if (err < 0) { *error = err; goto bloc_end; }
+        }
+
+        //we put the output filename
+        err = splt_u_put_output_format_filename(state);
+        if (err < 0) { *error = err; goto bloc_end; }
+
+        //we get the final fname
+        final_fname = splt_u_get_fname_with_path_and_extension(state, error);
+
+        if(*error >= 0)
+        {
+          //we split with the detected splitpoints
+          int split_result = splt_p_simple_split(state, final_fname, 
+              (off_t) state->serrors->serrors_points[i], 
+              (off_t) state->serrors->serrors_points[i+1]);
+
+          //automatically set progress callback to 100%
+          splt_t_update_progress(state,1.0,1.0,1,1,1);
+
+          if (split_result >= 0)
+          {
+            *error = SPLT_SYNC_OK;
+          }
+
+          //if the split has been a success
+          if (*error == SPLT_SYNC_OK)
+          {
+            err = splt_t_put_split_file(state, final_fname);
+            if (err < 0) { *error = err; goto bloc_end; }
+          }
+        }
+        else
+        {
+          //error
+          goto bloc_end;
+        }
+
+        //free some memory
+        if (final_fname)
+        {
+          free(final_fname);
+          final_fname = NULL;
+        }
+      }
+      //if we cancel the split
+      else
+      {
+        *error = SPLT_SPLIT_CANCELLED;
+        goto bloc_end;
+      }
+    }
+  }
+  else
+  {
+    if (*error >= 0 && err < 0)
+    {
+      *error = err;
+    }
+  }
+
+bloc_end:
+  //free possible unfreed 'final_fname'
+  if (final_fname)
+  {
+    free(final_fname);
+    final_fname = NULL;
   }
 }
 
@@ -358,10 +353,7 @@ bloc_end:
 //length specified by options.split_time in seconds
 void splt_s_time_split(splt_state *state, int *error)
 {
-  char *filename = splt_t_get_filename_to_split(state);
-
   splt_u_print_debug("Starting time split...",0,NULL);
-
   splt_t_put_message_to_client(state, " info: starting time mode split\n");
 
   char *final_fname = NULL;
@@ -533,8 +525,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 
   //found is the number of silence splits found
   int found = 0;
-  //checks if the state is null
-  int state_null = SPLT_FALSE;
   struct splt_ssplit *temp = NULL;
   int append_error = SPLT_OK;
   //we get some options
@@ -771,7 +761,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
                 splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
             while (temp != NULL)
             {
-              fprintf(log_file, "%f\t%f\t%d\n",
+              fprintf(log_file, "%f\t%f\t%ld\n",
                   temp->begin_position, temp->end_position, temp->len);
               temp = temp->next;
             }
@@ -793,136 +783,17 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   }
   splt_t_ssplit_free(&state->silence_list);
 
+  //set number of splitpoints
+  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+  {
+    splt_t_set_splitnumber(state, found * 2);
+  }
+  else
+  {
+    splt_t_set_splitnumber(state, found + 1);
+  }
+
   return found;
-}
-
-//write the silence tracks
-//warning, this function must always be called after
-//set_silence_splitpoints
-//we have possible error in error
-static void splt_s_write_silence_tracks(int found, splt_state *state, int *error)
-{
-  char *filename = splt_t_get_filename_to_split(state);
-
-  splt_u_print_debug("Writing silence tracks...",0,NULL);
-
-  char *final_fname = NULL;
-  int i = 0;
-
-  //begin splitpoint and end splitpoint
-  double beg_pos = 0, end_pos = 0;
-  int get_error = SPLT_OK;
-
-  //we put the number of tracks found
-  splt_t_set_splitnumber(state, found + 1);
-
-  //if we have the default output, we put the
-  //default
-  int err = SPLT_OK;
-  int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
-
-  //if we have the default output
-  if (output_filenames == SPLT_OUTPUT_DEFAULT)
-  {
-    splt_t_set_oformat(state,SPLT_DEFAULT_SILENCE_OUTPUT,&err);
-    if (err < 0) { *error = err; return; }
-  }
-
-  splt_t_set_oformat_digits(state);
-
-  //we write all found tracks
-  for (i = 0; i < found; i++)
-  {
-    if (!splt_t_split_is_canceled(state))
-    {
-      //if we have to put the original tags
-      if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
-      {
-        //we put the original tags to the current split
-        int err = SPLT_OK;
-        err = splt_t_append_original_tags(state);
-        if (err < 0) { *error = err; goto function_end; }
-      }
-
-      //we put the output filename
-      err = splt_u_put_output_format_filename(state);
-      if (err < 0) { *error = err; goto function_end; }
-
-      //we get the output filename+path+extension
-      final_fname = splt_u_get_fname_with_path_and_extension(state, &err);
-      if (err < 0) { *error = err; goto function_end; }
-
-      long split_begin = 0,split_end = 0;
-      int we_remove_silence = splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE);
-
-      if (we_remove_silence)
-      {
-        split_begin = splt_t_get_splitpoint_value(state,2*i,&get_error);
-        split_end = splt_t_get_splitpoint_value(state,2*i+1,&get_error);
-      }
-      else
-      {
-        split_begin = splt_t_get_splitpoint_value(state,i,&get_error);
-        split_end = splt_t_get_splitpoint_value(state,i+1,&get_error);
-      }
-
-      //if we have an error
-      if (get_error != SPLT_OK)
-      {
-        *error = get_error;
-      }
-      else
-      {
-        beg_pos = splt_u_get_double_pos(split_begin);
-        end_pos = splt_u_get_double_pos(split_end);
-
-        splt_p_split(state, final_fname, beg_pos, end_pos, error, ! we_remove_silence);
-
-        //put the split file if no error
-        if (*error >= 0)
-        {
-          err = splt_t_put_split_file(state, final_fname);
-          if (err < 0) { *error = err; goto function_end; }
-        }
-
-        //we put the silence split errors
-        switch (*error)
-        {
-          case SPLT_MIGHT_BE_VBR:
-            *error = SPLT_SILENCE_OK;
-            break;
-          case SPLT_OK_SPLIT:
-            *error = SPLT_SILENCE_OK;
-            break;
-          case SPLT_OK_SPLIT_EOF:
-            *error = SPLT_SILENCE_OK;
-            break;
-          default:
-            break;
-        }
-      }
-    }
-    else
-    {
-      *error = SPLT_SPLIT_CANCELLED;
-      goto function_end;
-    }
-
-    //free memory
-    if (final_fname)
-    {
-      free(final_fname);
-      final_fname = NULL;
-    }
-  }
-
-function_end:
-  //free memory in case we get out of the 'for' with 'break'
-  if (final_fname)
-  {
-    free(final_fname);
-    final_fname = NULL;
-  }
 }
 
 //do the silence split
@@ -943,7 +814,35 @@ void splt_s_silence_split(splt_state *state, int *error)
     //if we have found splitpoints, write the silence tracks
     if (found > 1)
     {
-      splt_s_write_silence_tracks(found,state,error);
+      //we put the number of tracks found
+      splt_u_print_debug("Writing silence tracks...",0,NULL);
+
+      //set the default silence output
+      int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
+      int err = SPLT_OK;
+      if (output_filenames == SPLT_OUTPUT_DEFAULT)
+      {
+        splt_t_set_oformat(state, SPLT_DEFAULT_SILENCE_OUTPUT, &err);
+        if (err < 0) { *error = err; return; }
+      }
+
+      splt_s_multiple_split(state, error);
+
+      //we put the silence split errors
+      switch (*error)
+      {
+        case SPLT_MIGHT_BE_VBR:
+          *error = SPLT_SILENCE_OK;
+          break;
+        case SPLT_OK_SPLIT:
+          *error = SPLT_SILENCE_OK;
+          break;
+        case SPLT_OK_SPLIT_EOF:
+          *error = SPLT_SILENCE_OK;
+          break;
+        default:
+          break;
+      }
     }
     else
     {
