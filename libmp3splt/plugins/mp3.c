@@ -1447,7 +1447,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
     {
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state, output_fname);
-      return SPLT_ERROR_CANNOT_OPEN_FILE;
+      return SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
     }
   }
 
@@ -3179,12 +3179,15 @@ void splt_pl_end(splt_state *state, int *error)
   {
     if (splt_t_get_int_option(state, SPLT_OPT_FRAME_MODE))
     {
-      splt_mp3_state *mp3state = state->codec;
-      char message[1024] = { '\0' };
-      snprintf(message, 1024,
-          " Processed %lu frames - Sync errors: %lu\n",
-          mp3state->frames, state->syncerrors);
-      splt_t_put_message_to_client(state, message);
+      if (*error >= 0)
+      {
+        splt_mp3_state *mp3state = state->codec;
+        char message[1024] = { '\0' };
+        snprintf(message, 1024,
+            " Processed %lu frames - Sync errors: %lu\n",
+            mp3state->frames, state->syncerrors);
+        splt_t_put_message_to_client(state, message);
+      }
     }
   }
   splt_mp3_end(state, error);

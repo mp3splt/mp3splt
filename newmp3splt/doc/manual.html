@@ -286,9 +286,11 @@ those options.
 directory and/or filename. If FORMAT contains the DIRCHAR character ('\' on
 windows and '/' on other systems), directories will be created for each
 DIRCHAR if they don't exist and the output files will be created in the
-corresponding directory. If the -d option is also specified, FORMAT is used
-only as an output filename and no directory will be created from it;
-instead, the output directory will be taken from the -d option.
+corresponding directory. If the -d option is also specified, the output
+directory will be the concatenation between the -d option value and the
+extracted path from the -o FORMAT (characters up to the last DIRCHAR).
+Invalid filename characters (except the DIRCHAR from the extracted path
+of FORMAT) are transformed to '_'.
 <P>
 It can contain name variables, that must begin with @ char and that can be:
 <P>
@@ -319,13 +321,15 @@ Valid examples are:
 <BR>
 
 @<A HREF="mailto:a+-+@n+-+">a+-+@n+-+</A>@t (default if using -c and -o is not specified)
+<BR>
+
+@a/@b/@t_@n (will create the directories '&lt;artist&gt;' and '&lt;artist&gt;/&lt;album&gt;')
 <P>
 <DT><B>-d NAME</B>         <DD>
 <B>Output directory</B>.
 To put all output files in the directory named NAME. If directory does not exists,
 it will be created. The -o option can also be used to output files into a
-directory; however if both options are present, the output directory is
-defined by the -d option.
+directory.
 <P>
 <DT><B>-n</B>         <DD>
 <B>No Tag</B>. Does not write ID3 or Vorbis comment in outputfile. Use if you need clean files.
@@ -558,6 +562,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 <A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
 using the manual pages.<BR>
-Time: 01:47:23 GMT, December 14, 2008
+Time: 23:53:17 GMT, December 15, 2008
 </BODY>
 </HTML>
