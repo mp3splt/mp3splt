@@ -1661,65 +1661,6 @@ int main(int argc, char *argv[])
     print_version_authors(console_err);
   }
 
-  //if -o option, then take the directory path and set it as dir_char
-  //if -d option is also specified, then the -d option will replace this
-  //path
-  if (!opt->d_option)
-  {
-    if (opt->o_option)
-    {
-      if (opt->output_format)
-      {
-        char *dup = strdup(opt->output_format);
-        if (!dup)
-        {
-          print_error_exit("cannot allocate memory !",data);
-        }
-
-        int replace_output_format = SPLT_FALSE;
-        int malloc_size = 0;
-        char *p = NULL;
-        //if -o argument is a directory
-        if (check_if_directory(dup))
-        {
-          replace_output_format = SPLT_TRUE;
-          opt->o_option = SPLT_FALSE;
-        }
-        else
-        {
-          //if not a directory, find the first dirchar from the end
-          if ((p = strrchr(dup,SPLT_DIRCHAR)) != NULL) 
-          {
-            malloc_size = strlen(p) + 1;
-            replace_output_format = SPLT_TRUE;
-          }
-        }
-
-        //if we replace the output format
-        if (replace_output_format)
-        {
-          free(opt->output_format);
-          opt->output_format = NULL;
-          //if we really replace the output format
-          if (malloc_size != 0)
-          {
-            opt->output_format = my_malloc(sizeof(char) * malloc_size, data);
-          }
-          //for 'strrchr' version
-          if (malloc_size != 0)
-          {
-            snprintf(opt->output_format,malloc_size,"%s",p);
-            *p = '\0';
-          }
-          err = mp3splt_set_path_of_split(state, dup);
-          process_confirmation_error(err, data);
-        }
-        free(dup);
-        dup = NULL;
-      }
-    }
-  }
-
   //if -n option, set no tags whatever happends
   if (opt->n_option)
   {
@@ -1818,6 +1759,9 @@ int main(int argc, char *argv[])
   int output_format_error = SPLT_OK;
   if (opt->o_option)
   {
+    //enable to create directories from the output filenames
+    mp3splt_set_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, SPLT_TRUE);
+
     //we set our output format
     mp3splt_set_oformat(state, opt->output_format,&output_format_error);
     if (output_format_error != SPLT_OUTPUT_FORMAT_AMBIGUOUS)

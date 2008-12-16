@@ -509,6 +509,13 @@ typedef struct {
   //if you don't know what this means, set it to FALSE
   short option_input_not_seekable;
 
+  //If this option is SPLT_TRUE, we create directories from the output
+  //file names without parsing for illegal characters the output filenames.
+  //Otherwise, we parse for illegal characters the filenames and replace
+  //them with '_'. The tags are always checked for illegal characters when
+  //set into filenames.
+  short create_dirs_from_filenames;
+
   //PARAMETERS---------------------------------------
   //PARAMETERS for option_auto_adjust and option_silence_mode :
   //the sound level to be considered silence
@@ -1050,6 +1057,18 @@ typedef enum {
    * Default is #SPLT_CURRENT_TAGS
    */
   SPLT_OPT_TAGS,
+  /**
+   * If this option is SPLT_TRUE, we create directories from the output
+   * file names without parsing for illegal characters the output filenames.
+   *
+   * Otherwise, we parse for illegal characters the filenames and replace
+   * them with '_'. The tags are always checked for illegal characters when
+   * set into filenames.
+   *
+   * Default is #SPLT_FALSE because it's safer to check for illegal
+   * characters.
+   */
+  SPLT_OPT_CREATE_DIRS_FROM_FILENAMES,
   /**
    * The option can take the values from #SPLT_OUTPUT_FILENAMES_OPTIONS
    *

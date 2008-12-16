@@ -156,8 +156,38 @@ off_t splt_u_flength(splt_state *state, FILE *in, const char *filename, int *err
 /*****************************************************/
 /* utils manipulating strings (including filenames) */
 
+int splt_u_is_illegal_char(char c, int ignore_dirchar)
+{
+/*#ifdef __WIN32__
+  char windows_illegal_characters[] =
+  { '\\', '/', ':', '*', '?', '"', "<", ">", "|", '\r' };
+#elif defined(__MACOS__)
+  char mac_os_illegal_characters[] = { ':' };
+#elif defined(__MACOSX__)
+  char mac_osx_illegal_characters[] = { ':' };
+#else
+  char _nix_illegal_characters[] = { '/' };
+#endif*/
+
+  if ((ignore_dirchar) && (c == SPLT_DIRCHAR))
+  {
+    return SPLT_FALSE;
+  }
+
+  //for the sake of filename portability, we take the the windows illegal
+  //characters (will be changed upon feature request)
+  if ((c == '\\') || (c == '/') || (c == ':') || (c == '*') ||
+      (c == '?') || (c == '"') || (c == '<') ||
+      (c == '>') || (c == '|') || (c == '\r'))
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
+}
+
 //cleans the string of weird characters like ? " | : > < * \ \r
-void splt_u_cleanstring(splt_state *state, char *s, int *error)
+void splt_u_cleanstring_(splt_state *state, char *s, int *error, int ignore_dirchar)
 {
   int i = 0, j=0;
   char *copy = NULL;
@@ -168,12 +198,13 @@ void splt_u_cleanstring(splt_state *state, char *s, int *error)
     {
       for (i=0; i<=strlen(copy); i++)
       {
-        if ((copy[i]!='\\')&&(copy[i]!='/')&&(copy[i]!='?')
-            &&(copy[i]!='*')&&(copy[i]!=':')&&(copy[i]!='"')
-            &&(copy[i]!='>')&&(copy[i]!='<')&&(copy[i]!='|')
-            &&(copy[i]!='\r'))
+        if (! splt_u_is_illegal_char(copy[i], ignore_dirchar))
         {
           s[j++] = copy[i];
+        }
+        else
+        {
+          s[j++] = '_';
         }
       }
       free(copy);
@@ -197,6 +228,11 @@ void splt_u_cleanstring(splt_state *state, char *s, int *error)
       *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
   }
+}
+
+void splt_u_cleanstring(splt_state *state, char *s, int *error)
+{
+  splt_u_cleanstring_(state, s, error, SPLT_FALSE);
 }
 
 //cuts spaces from the begin
@@ -1224,9 +1260,6 @@ int splt_u_parse_outformat(char *s, splt_state *state)
     }
   }
 
-  splt_u_cleanstring(state, s, &amb);
-  if (amb < 0) { return amb; }
-
   ptrs = s;
   i = 0;
   ptre = strchr(ptrs+1, '%');
@@ -1379,6 +1412,8 @@ int splt_u_put_output_format_filename(splt_state *state)
             //we get the artist
             artist =
               splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ARTIST);
+            splt_u_cleanstring(state, artist, &error);
+            if (error < 0) { goto end; };
           }
           else
           {
@@ -1422,6 +1457,8 @@ int splt_u_put_output_format_filename(splt_state *state)
             //we get the album
             album =
               splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ALBUM);
+            splt_u_cleanstring(state, album, &error);
+            if (error < 0) { goto end; };
           }
           else
           {
@@ -1463,8 +1500,9 @@ int splt_u_put_output_format_filename(splt_state *state)
           if (splt_t_tags_exists(state,current_split))
           {
             //we get the title
-            title =
-              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_TITLE);
+            title = splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_TITLE);
+            splt_u_cleanstring(state, title, &error);
+            if (error < 0) { goto end; };
           }
           else
           {
@@ -1506,8 +1544,9 @@ int splt_u_put_output_format_filename(splt_state *state)
           if (splt_t_tags_exists(state,current_split))
           {
             //we get the performer
-            performer =
-              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_PERFORMER);
+            performer = splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_PERFORMER);
+            splt_u_cleanstring(state, performer, &error);
+            if (error < 0) { goto end; };
           }
           else
           {
@@ -1682,12 +1721,68 @@ int splt_u_put_output_format_filename(splt_state *state)
 
   splt_u_print_debug("The new output filename is ",0,output_filename);
 
-  name_error = splt_t_set_splitpoint_name(state, cur_splt, output_filename);
-
-  if (name_error != SPLT_OK)
+  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
   {
-    error = name_error;
+    char *only_dirs = strdup(output_filename);
+    if (! only_dirs)
+    {
+      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto end;
+    }
+
+    //get out the directory path
+    char *dir_char = strrchr(only_dirs, SPLT_DIRCHAR);
+    if (dir_char != NULL)
+    {
+      *dir_char = '\0';
+      char *path_of_split = splt_t_get_path_of_split(state);
+      //append the 'directory path' from the filename to the path of split
+      if (path_of_split)
+      {
+        int malloc_length = strlen(path_of_split) + strlen(only_dirs) + 3;
+        char *full_path_to_create = malloc(sizeof(char) * malloc_length);
+        if (! full_path_to_create)
+        {
+          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+          if (only_dirs)
+          {
+            free(only_dirs);
+            only_dirs = NULL;
+          }
+          goto end;
+        }
+        else
+        {
+          snprintf(full_path_to_create, malloc_length - 1,
+              "%s%c%s", path_of_split, SPLT_DIRCHAR, only_dirs);
+          splt_u_create_directories(state, full_path_to_create);
+        }
+
+        if (full_path_to_create)
+        {
+          free(full_path_to_create);
+          full_path_to_create = NULL;
+        }
+      }
+      else
+      {
+        splt_u_create_directories(state, only_dirs);
+      }
+    }
+    if (only_dirs)
+    {
+      free(only_dirs);
+      only_dirs = NULL;
+    }
   }
+  else
+  {
+    splt_u_cleanstring(state, output_filename, &error);
+    if (error < 0 ) { goto end; }
+  }
+
+  name_error = splt_t_set_splitpoint_name(state, cur_splt, output_filename);
+  if (name_error != SPLT_OK) { error = name_error; }
 
 end:
   //free memory
@@ -2129,7 +2224,7 @@ int splt_u_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 }
 
 //create recursive directories
-int splt_u_create_directory(splt_state *state, const char *dir)
+int splt_u_create_directories(splt_state *state, const char *dir)
 {
   int result = SPLT_OK;
   const char *ptr = NULL;
@@ -2154,9 +2249,12 @@ int splt_u_create_directory(splt_state *state, const char *dir)
       junk[ptr-dir] = '\0';
       
       splt_u_print_debug("directory ...",0, junk);
-      
+ 
       if (!(d = opendir(junk)))
         {
+          splt_u_cleanstring_(state, junk, &result, SPLT_TRUE);
+          if (result < 0) { goto end; }
+
 #ifdef __WIN32__
           if ((mkdir(junk))==-1)
             {
@@ -2164,10 +2262,12 @@ int splt_u_create_directory(splt_state *state, const char *dir)
           if ((mkdir(junk, 0755))==-1)
             {
 #endif
+              fprintf(stdout,"shit ?\n");
+              fflush(stdout);
               splt_t_set_strerror_msg(state);
               splt_t_set_error_data(state,junk);
               result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-              break;
+              goto end;
             }
         }
       else
@@ -2198,6 +2298,7 @@ int splt_u_create_directory(splt_state *state, const char *dir)
       closedir(d);
     }
   
+end:
   if (junk)
   {
     free(junk);

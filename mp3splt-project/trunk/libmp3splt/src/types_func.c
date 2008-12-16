@@ -1961,6 +1961,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->options.output_filenames = SPLT_OUTPUT_DEFAULT;
   state->options.split_mode = SPLT_OPTION_NORMAL_MODE;
   state->options.tags = SPLT_CURRENT_TAGS;
+  state->options.create_dirs_from_filenames = SPLT_FALSE;
   state->options.option_frame_mode = SPLT_TRUE;
   state->options.option_auto_adjust = SPLT_FALSE;
   state->options.option_input_not_seekable = SPLT_FALSE;
@@ -2110,6 +2111,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_TAGS:
       state->options.tags = value;
       break;
+    case SPLT_OPT_CREATE_DIRS_FROM_FILENAMES:
+      state->options.create_dirs_from_filenames = value;
+      break;
     case SPLT_OPT_FRAME_MODE:
       state->options.option_frame_mode = value;
       break;
@@ -2179,6 +2183,9 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       break;
     case SPLT_OPT_TAGS:
       return state->options.tags;
+      break;
+    case SPLT_OPT_CREATE_DIRS_FROM_FILENAMES:
+      return state->options.create_dirs_from_filenames;
       break;
     case SPLT_OPT_FRAME_MODE:
       return state->options.option_frame_mode;

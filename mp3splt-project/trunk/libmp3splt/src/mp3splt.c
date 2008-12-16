@@ -695,8 +695,8 @@ int mp3splt_split(splt_state *state)
         splt_t_set_new_filename_path(state, new_filename_path, &error);
         if (error < 0) { goto function_end; }
 
-        //we create output directory if it does not exists
-        error = splt_u_create_directory(state, new_filename_path);
+        //we create output directories if they do not exist
+        error = splt_u_create_directories(state, new_filename_path);
         if (error < 0) { goto function_end; }
 
         //check means the test is ok
