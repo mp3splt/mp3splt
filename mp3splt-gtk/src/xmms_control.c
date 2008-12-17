@@ -68,9 +68,9 @@ void myxmms_get_song_infos(gchar *total_infos)
   //number of channels (mono/stereo)
   gint nch;
   
-  gchar rate_str[32];
-  gchar freq_str[32];
-  gchar *nch_str;
+  gchar rate_str[32] = { '\0' };
+  gchar freq_str[32] = { '\0' };
+  gchar nch_str[32] = { '\0' };
   
   //infos about the song
   audacious_remote_get_info(dbus_proxy, &rate, &freq, &nch);
@@ -80,11 +80,11 @@ void myxmms_get_song_infos(gchar *total_infos)
   
   if (nch == 2)
   {
-    nch_str = _("stereo");
+    snprintf(nch_str, 32, "%s", _("stereo"));
   }
   else
   {
-    nch_str = _("mono");
+    snprintf(nch_str, 32, "%s", _("mono"));
   }
 
   gchar *_Kbps = _("Kbps");

@@ -222,7 +222,7 @@ void gstreamer_get_song_infos(gchar *total_infos)
 
 		gchar rate_str[32] = { '\0' };
 		gchar freq_str[32] = { '\0' };
-		gchar *nch_str = NULL;
+		gchar nch_str[32] = { '\0' };
 
 		gchar *_Kbps = _("Kbps");
 		gchar *_Khz = _("Khz");
@@ -255,11 +255,11 @@ void gstreamer_get_song_infos(gchar *total_infos)
 
 			if (nch >= 2)
 			{
-				nch_str = _("stereo");
+				snprintf(nch_str, 32, "%s", _("stereo"));
 			}
 			else
 			{
-				nch_str = _("mono");
+				snprintf(nch_str, 32, "%s", _("mono"));
 			}
 		}
 

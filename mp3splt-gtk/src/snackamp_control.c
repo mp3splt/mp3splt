@@ -266,9 +266,10 @@ gboolean snackamp_is_connected()
 //gets informations about the song
 void snackamp_get_song_infos(gchar *total_infos)
 {
-  gchar rate_str[32] = "";
-  gchar freq_str[32] = "";
-  gchar *nch_str = NULL;
+  gchar rate_str[32] = { '\0' };
+  gchar freq_str[32] = { '\0' };
+  gchar nch_str[32] = { '\0' };
+  gchar *ptr = NULL;
   
   gchar *result;
   result = snackamp_socket_send_message("xmms_remote_get_info\n");
@@ -279,7 +280,7 @@ void snackamp_get_song_infos(gchar *total_infos)
   if (a != NULL)
     {
       if (strstr(a+1, " ") != NULL)
-        nch_str = strstr(a+1, " ")+1;
+        ptr = strstr(a+1, " ")+1;
   
       gint i = 0;
       //we get the rate
@@ -314,12 +315,16 @@ void snackamp_get_song_infos(gchar *total_infos)
   
       //channels int
       gint nch;
-      nch = atoi(nch_str);
+      nch = atoi(ptr);
       
       if (nch == 2)
-        nch_str = _("stereo");
+      {
+        snprintf(nch_str, 32, "%s", _("stereo"));
+      }
       else
-        nch_str = _("mono");
+      {
+        snprintf(nch_str, 32, "%s", _("mono"));
+      }
       
       gchar *_Kbps = _("Kbps");
       gchar *_Khz = _("Khz");
