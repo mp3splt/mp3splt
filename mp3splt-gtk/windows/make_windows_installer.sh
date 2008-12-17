@@ -48,7 +48,7 @@ WIN_INSTALLER_FILE="win32_installer.nsi"
 
 TMP_GENERATED_FILES_FILE='.mp3splt-gtk_tmp_uninstall_files.txt'
 TMP_CREATED_DIRECTORIES_FILE='.mp3splt-gtk_tmp_uninstall_directories.txt'
-TMP_CHECK_SECTIONS_UNINSTALL_FILE='.mp3splt_tmp_check_sections_uninstall.txt'
+TMP_CHECK_SECTIONS_UNINSTALL_FILE='.mp3splt-gtk_tmp_check_sections_uninstall.txt'
 
 echo '' > $TMP_GENERATED_FILES_FILE
 echo '' > $TMP_CREATED_DIRECTORIES_FILE
@@ -167,21 +167,30 @@ function recursive_copy_files_from_directory()
 
   cd $DIR
 
+  olddir=$OLDPWD
+
   directories=$(find . -type d)
   files=$(find . -type f)
 
+  echo -n "generating uninstall directories list for $DIR ... "
   #prepare directories to remove at the uninstall
   find . -type d -exec echo '  RmDir ''{}' \; | grep -v 'RmDir \.$' | \
-    sed 's+RmDir \.+RmDir $INSTDIR+; s+/+\\+g' | tac >> $script_dir/$TMP_CREATED_DIRECTORIES_FILE
+    sed 's+RmDir \.+RmDir $INSTDIR+; s+/+\\+g' > .tmp_tmp_dirs_mp3splt_gtk
+  tac .tmp_tmp_dirs_mp3splt_gtk >> $olddir/$TMP_CREATED_DIRECTORIES_FILE
+  rm -f .tmp_tmp_dirs_mp3splt_gtk
+  echo "done"
 
+  echo -n "generating uninstall files list for $DIR ... "
   #prepare files to remove at the uninstall
   find . -type f -exec echo '  Delete $INSTDIR'"\\"'{}' \; | \
-    sed 's+$INSTDIR\\\.+$INSTDIR+; s+/+\\+g' >> $script_dir/$TMP_GENERATED_FILES_FILE
+    sed 's+$INSTDIR\\\.+$INSTDIR+; s+/+\\+g' >> $olddir/$TMP_GENERATED_FILES_FILE
+  echo "done"
 
   cd - &>/dev/null
 
   echo '' >> $WIN_INSTALLER_FILE
 
+  echo -n "generating the install directories and files ... "
   #create the directories
   for cur_dir in ${directories};do
 
@@ -216,6 +225,7 @@ function recursive_copy_files_from_directory()
     fi
 
   done
+  echo "done"
 }
 
 #generates the Delete file1.txt for all the installed files
@@ -498,7 +508,7 @@ echo '
 
    ReadINIStr $0 $INSTDIR\installed_sections.ini libmp3splt_doc_section "installed"
    IntCmp 0 $0 after_link_libmp3splt_doc_section
-    Delete $SMPROGRAMS\mp3splt\libmp3splt_doc.lnk
+    Delete $SMPROGRAMS\mp3splt-gtk\libmp3splt_doc.lnk
    after_link_libmp3splt_doc_section:
 
    Delete $SMPROGRAMS\mp3splt-gtk\mp3splt-gtk.lnk
