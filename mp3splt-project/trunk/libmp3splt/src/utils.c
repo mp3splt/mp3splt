@@ -1846,8 +1846,8 @@ void splt_u_error(int error_type, const char *function,
 //get silence position depending of the offset
 float splt_u_silence_position(struct splt_ssplit *temp, float off)
 {
-  float position = (temp->end_position - temp->begin_position);
-  position = temp->begin_position + (position*off);
+  float length_of_silence = (temp->end_position - temp->begin_position);
+  float position = temp->begin_position + (length_of_silence * off);
 
   return position;
 }
