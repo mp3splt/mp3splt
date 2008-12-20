@@ -960,6 +960,35 @@ int splt_t_get_splitpoint_type(splt_state *state, int index, int *error)
 /********************************/
 /* types: tags access */
 
+//if we auto increment the track number, we must replace the tracknumber in 
+//'all remaining tags like X'
+void splt_t_set_auto_increment_tracknumber_tag(splt_state *state, int old_current_split, int current_split)
+{
+  int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+
+  if (remaining_tags_like_x != -1)
+  {
+    if (splt_t_get_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS) > 0)
+    {
+      if (current_split == remaining_tags_like_x)
+      {
+        if ((old_current_split > 0) && 
+            (old_current_split-1 < state->split.real_tagsnumber) && 
+            (old_current_split != remaining_tags_like_x))
+        {
+          int previous_track = splt_t_get_tags_int_field(state, old_current_split - 1, SPLT_TAGS_TRACK);
+          splt_t_set_tags_int_field(state, remaining_tags_like_x, SPLT_TAGS_TRACK, previous_track);
+        }
+        if (old_current_split != current_split)
+        {
+          int tracknumber = splt_t_get_tags_int_field(state, current_split, SPLT_TAGS_TRACK);
+          splt_t_set_tags_int_field(state, current_split, SPLT_TAGS_TRACK, tracknumber+1);
+        }
+      }
+    }
+  }
+}
+
 //sets the original tags to the state
 void splt_t_get_original_tags(splt_state *state, int *err)
 {
@@ -1977,6 +2006,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->err.strerror_msg = NULL;
 
   state->options.remaining_tags_like_x = -1;
+  state->options.auto_increment_tracknumber_tags = 0;
   state->options.enable_silence_log = SPLT_FALSE;
 }
 
@@ -2135,6 +2165,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:
       state->options.remaining_tags_like_x = value;
       break;
+    case SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS:
+      state->options.auto_increment_tracknumber_tags = value;
+      break;
     case SPLT_OPT_ENABLE_SILENCE_LOG:
       state->options.enable_silence_log = value;
       break;
@@ -2207,6 +2240,9 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       break;
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:
       return state->options.remaining_tags_like_x;
+      break;
+    case SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS:
+      return state->options.auto_increment_tracknumber_tags;
       break;
     case SPLT_OPT_ENABLE_SILENCE_LOG:
       return state->options.enable_silence_log;

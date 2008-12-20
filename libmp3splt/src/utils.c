@@ -752,7 +752,11 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
     char *all_year = NULL;
     char *all_comment = NULL;
     int all_tracknumber = -1;
+    int auto_incremented_tracknumber = -1;
     unsigned char all_genre = 12;
+    //when using 'N', auto increment the track number
+    short auto_increment_tracknumber = SPLT_FALSE;
+    short first_time_auto_increment_tracknumber = SPLT_TRUE;
 
     int tags_appended = 0;
     int get_out_from_while = SPLT_FALSE;
@@ -765,6 +769,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         if (*(cur_pos-1) == '%')
         {
           splt_t_set_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X, tags_appended);
+          splt_t_set_int_option(state,SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, 1);
           all_tags = SPLT_TRUE;
           //if we had all tags, remove them
           if (we_had_all_tags)
@@ -1073,13 +1078,29 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (tracknumber != NULL)
               {
-
                 cur_pos += strlen(tracknumber)+2;
                 s_tracknumber++;
               }
               else
               {
                 cur_pos++;
+              }
+              if (auto_increment_tracknumber)
+              {
+                first_time_auto_increment_tracknumber = SPLT_TRUE;
+              }
+              break;
+            case 'N':
+              tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis, &ambigous,error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
+              if (auto_increment_tracknumber)
+              {
+                first_time_auto_increment_tracknumber = SPLT_TRUE;
+              }
+              else if (all_tags)
+              {
+                auto_increment_tracknumber = SPLT_TRUE;
+                first_time_auto_increment_tracknumber = SPLT_TRUE;
               }
               break;
             default:
@@ -1113,10 +1134,26 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
           track = atoi(tracknumber);
 
           //copy the tracknumber for all tags
-          if (all_tags)
+          if (all_tags || auto_increment_tracknumber)
           {
             all_tracknumber = track;
           }
+        }
+      }
+
+      //
+      if (auto_increment_tracknumber)
+      {
+        if (first_time_auto_increment_tracknumber)
+        {
+          auto_incremented_tracknumber = all_tracknumber;
+          first_time_auto_increment_tracknumber = SPLT_FALSE;
+        }
+        track = auto_incremented_tracknumber++;
+        int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+        if (remaining_tags_like_x != -1)
+        {
+          splt_t_set_int_option(state,SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, track);
         }
       }
 
@@ -1136,6 +1173,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         {
           track = 0;
         }
+
         //we put the tags
         int err = splt_t_append_tags(state, title, artist,
             album, performer, year, comment, track, genre);
@@ -1185,7 +1223,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         {
           splt_t_set_tags_char_field(state, index, SPLT_TAGS_COMMENT, all_comment);
         }
-        if (!tracknumber)
+        if (!tracknumber && ! auto_incremented_tracknumber)
         {
           splt_t_set_tags_int_field(state, index, SPLT_TAGS_TRACK, all_tracknumber);
         }

@@ -550,6 +550,10 @@ typedef struct {
   //- set to -1 to disable
   int remaining_tags_like_x;
 
+  //if to auto increment the tracknumber of the tags
+  //-int value : > 0 means TRUE, 0 means FALSE
+  int auto_increment_tracknumber_tags;
+
   /**
    * if we enable the silence points log ('mp3splt.log')
    */
@@ -1138,6 +1142,11 @@ typedef enum {
    * if to set all tags like X one
    */
   SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X,
+  /**
+   * -if we auto increment the tracknumber in the tags: a value > 0 means
+   * true, 0 means FALSE
+   */
+  SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS,
   /**
    * if we enable the silence points log ('mp3splt.log')
    */
