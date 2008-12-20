@@ -386,15 +386,19 @@ can be defined. The variables can be :
 @n: track number
 .br
 @o: set original tags
+.br
+@N: auto increment track number : 
+this variable has to be placed inside the %[] field in order to have the track
+number auto incremented for all the split files following it
 
 Example of tags format :
-\fB%[@o,@b=special_album][@a=foo,@b=bar][@t=footitle,@n=3]\fP. In this
+\fB%[@o,@N=1,@b=special_album][@a=foo,@b=bar][@t=footitle]\fP. In this
 example, the first split file will have the original tags with album
 tag replaced by 'special album'; the second split file will have the tags
 of the first split, with the artist tag replaced by 'foo' and the album tag
 replaced by 'bar'; the third split file will have the tags of the first
-split, with the title tag replaced by 'footitle' and the track number
-replaced by '3'.
+split, with the title tag replaced by 'footitle'. The track number will
+start at 1 for the first split file and auto increment to the other files.
 
 .IP "\fB\-m M3U\fP         " 10
 \fBCreate .m3u file mode\fP. Creates a .m3u file containing the split

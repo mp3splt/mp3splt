@@ -787,6 +787,7 @@ static char *splt_mp3_get_tags(const char *filename, splt_state *state, int *err
     if (splt_t_get_int_option(state,SPLT_OPT_TAGS) == SPLT_CURRENT_TAGS)
     {
       int current_split = splt_t_get_current_split(state);
+      int old_current_split = current_split;
 
       //if we set all the tags like the x one
       int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
@@ -808,6 +809,8 @@ static char *splt_mp3_get_tags(const char *filename, splt_state *state, int *err
         if (((artist != NULL) && (artist[0] != '\0'))
             || ((title != NULL) && (title[0] != '\0')))
         {
+          splt_t_set_auto_increment_tracknumber_tag(state, old_current_split, current_split);
+
           int tags_number = 0;
           splt_tags *tags = splt_t_get_tags(state, &tags_number);
 
