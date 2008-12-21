@@ -769,7 +769,6 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         if (*(cur_pos-1) == '%')
         {
           splt_t_set_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X, tags_appended);
-          splt_t_set_int_option(state,SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, 1);
           all_tags = SPLT_TRUE;
           //if we had all tags, remove them
           if (we_had_all_tags)
@@ -1093,6 +1092,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
             case 'N':
               tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis, &ambigous,error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
+              splt_t_set_int_option(state,SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, SPLT_TRUE);
               if (auto_increment_tracknumber)
               {
                 first_time_auto_increment_tracknumber = SPLT_TRUE;
@@ -1150,11 +1150,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
           first_time_auto_increment_tracknumber = SPLT_FALSE;
         }
         track = auto_incremented_tracknumber++;
-        int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
-        if (remaining_tags_like_x != -1)
-        {
-          splt_t_set_int_option(state,SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, track);
-        }
+        fprintf(stdout,"TRACK = _%d_\n",track);
+        fflush(stdout);
       }
 
       if ((s_title > 1) || (s_artist > 1)
@@ -2103,8 +2100,8 @@ char *splt_u_strerror(splt_state *state, int error_code)
         break;
       case SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE:
         snprintf(error_msg,max_error_size,
-            " error: cannot write to output file '%s' : %s",
-            state->err.error_data,state->err.strerror_msg);
+            " error: cannot write to output file '%s'",
+            state->err.error_data);
         break;
       case SPLT_ERROR_WHILE_READING_FILE:
         snprintf(error_msg,max_error_size, " error: error while reading file '%s' : %s",
@@ -2300,8 +2297,6 @@ int splt_u_create_directories(splt_state *state, const char *dir)
           if ((mkdir(junk, 0755))==-1)
             {
 #endif
-              fprintf(stdout,"shit ?\n");
-              fflush(stdout);
               splt_t_set_strerror_msg(state);
               splt_t_set_error_data(state,junk);
               result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;

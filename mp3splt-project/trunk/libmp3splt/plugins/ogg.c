@@ -335,7 +335,6 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
   return 0;
 
 write_error:
-  splt_t_set_strerror_msg(state);
   splt_t_set_error_data(state, output_fname);
   *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   return -1;
@@ -1368,7 +1367,6 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   return 0;
 
 write_error:
-  splt_t_set_strerror_msg(state);
   splt_t_set_error_data(state, output_fname);
   *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   return -1;
@@ -1379,8 +1377,6 @@ void splt_ogg_split(const char *output_fname, splt_state *state, double
     sec_begin, double sec_end, short seekable, 
     short adjust, float threshold, int *error, int save_end_point)
 {
-  //we do the next split
-  splt_t_current_split_next(state);
   splt_ogg_state *oggstate = state->codec;
 
   ogg_stream_state stream_out;

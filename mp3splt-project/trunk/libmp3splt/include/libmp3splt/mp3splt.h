@@ -551,7 +551,6 @@ typedef struct {
   int remaining_tags_like_x;
 
   //if to auto increment the tracknumber of the tags
-  //-int value : > 0 means TRUE, 0 means FALSE
   int auto_increment_tracknumber_tags;
 
   /**
@@ -1143,8 +1142,7 @@ typedef enum {
    */
   SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X,
   /**
-   * -if we auto increment the tracknumber in the tags: a value > 0 means
-   * true, 0 means FALSE
+   * -if we auto increment the tracknumber in the tags
    */
   SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS,
   /**
