@@ -108,9 +108,10 @@ you can split those VBR files only with framemode (see \-f option).
 
 \fBNOTE about TAGS:\fP by default, mp3splt will put the original tags in
 the splitted files. In order to extract the original tags from mp3 files,
-libmp3splt must be compiled with 'id3tag' support. Support for ID3v2
-tags in split files is not yet available. Custom tags for the split files
-can be set with the \-g option.
+libmp3splt must be compiled with 'id3tag' support. Support for ID3v2 for
+known tags is available if libmp3splt is compiled with 'id3tag' support.
+Otherwise, ID3v1 tags will be set. Custom tags for the split files can be
+set with the \-g option.
 
 .SH "OPTIONS"
 .IP "\fB-w\fP         " 10
@@ -216,7 +217,7 @@ Mp3splt will connect to server and will start to find the requested
 informations.  If you will find the right album, then mp3splt will finally
 query the server to get the selected album and, if all is correct, will
 write a file named "query.cddb" from which will get splitpoints and
-filenames. ID3v1 will be created automatically with taken informations.
+filenames. ID3 will be created automatically with taken informations.
 
 \fBIMPORTANT NOTE FOR CDDB\fP: File split with this option can be not very precise due to:
 
@@ -333,7 +334,7 @@ It can contain name variables, that must begin with @ char and that can be:
 .br
 @t: song title*
 .br
-@n: track number* (valid also when not using \-c)
+@n: track number identifier* (not the real ID3 track number) (valid also when not using \-c)
 .br
 @f: input filename (without extension)
 
