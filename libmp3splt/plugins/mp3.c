@@ -660,6 +660,7 @@ error:
 #endif
 
 
+#ifdef NO_ID3TAG
 //returns a id3v1 buffer as string
 //return must be freed
 //-returns NULL if error
@@ -719,6 +720,7 @@ static char *splt_mp3_id3v1(const char *title, const char *artist,
 
   return id;
 }
+#endif
 
 //returns a id3v2 or id3v1 buffer as string
 //return must be freed
@@ -1016,7 +1018,7 @@ int splt_mp3_write_id3_tags(splt_state *state, FILE *file_output, const
   {
     if (id3_version == tags_version)
     {
-      int i = 0;
+      /*int i = 0;
       fprintf(stdout,"\n\n_");
       for (i = 0;i < number_of_bytes;i++)
       {
@@ -1026,7 +1028,7 @@ int splt_mp3_write_id3_tags(splt_state *state, FILE *file_output, const
         }
       }
       fprintf(stdout,"_\n\n");
-      fflush(stdout);
+      fflush(stdout);*/
 
       //id3v1
       if (id3_version == 1)

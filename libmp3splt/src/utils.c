@@ -1150,8 +1150,6 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
           first_time_auto_increment_tracknumber = SPLT_FALSE;
         }
         track = auto_incremented_tracknumber++;
-        fprintf(stdout,"TRACK = _%d_\n",track);
-        fflush(stdout);
       }
 
       if ((s_title > 1) || (s_artist > 1)
