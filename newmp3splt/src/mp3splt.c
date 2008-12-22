@@ -46,7 +46,7 @@
 #define VERSION "2.2.2"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "18/12/08"
+#define MP3SPLT_DATE "22/12/08"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -1526,7 +1526,7 @@ int main(int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option = getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQ:N")) != -1)
+  while ((option = getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQN")) != -1)
   {
     switch (option)
     {
