@@ -269,15 +269,19 @@ char *splt_check_put_dir_of_cur_song(const char *filename,
 
   if (new_filename_path != NULL)
   {
+#ifdef __WIN32__
     size_t path_len = strlen(new_filename_path);
     //erase the last char directory
     //-for windows manage c:\ because the gtk dir returns us "c:\"
     //and the normal directories without the "\"
-    //-for unix, erase '/'
-    if (new_filename_path[path_len-1] == SPLT_DIRCHAR)
+    if (path_len > 3)
     {
-      new_filename_path[path_len-1] = '\0';
+      if (new_filename_path[path_len-1] == SPLT_DIRCHAR)
+      {
+        new_filename_path[path_len-1] = '\0';
+      }
     }
+#endif
   }
 
   return new_filename_path;

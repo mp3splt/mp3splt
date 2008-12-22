@@ -163,15 +163,6 @@ void splt_s_multiple_split(splt_state *state, int *error)
     //we put the current file to split
     splt_t_set_current_split(state, i);
 
-    //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
-    int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
-    if (first_splitpoint_type == SPLT_SKIPPOINT)
-    {
-      i++;
-      continue;
-    }
-    int j = i+1;
-
     //if we don't cancel the split
     if (!splt_t_split_is_canceled(state))
     {
@@ -203,6 +194,15 @@ void splt_s_multiple_split(splt_state *state, int *error)
         {
           splt_t_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_MINS_SECS);
         }
+
+        //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
+        int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
+        if (first_splitpoint_type == SPLT_SKIPPOINT)
+        {
+          i++;
+          continue;
+        }
+        int j = i+1;
 
         splt_s_split(state, i, j, error);
 

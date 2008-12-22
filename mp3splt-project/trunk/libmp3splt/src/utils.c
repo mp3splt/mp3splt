@@ -1797,9 +1797,38 @@ int splt_u_put_output_format_filename(splt_state *state)
           full_path_to_create = NULL;
         }
       }
+      //the new path of split is the path of the source file
       else
       {
-        splt_u_create_directories(state, only_dirs);
+        char *new_filename_path = splt_t_get_new_filename_path(state);
+        //append the new path of split from the filename to the path of split
+        if (new_filename_path)
+        {
+          int malloc_length = strlen(new_filename_path) + strlen(only_dirs) + 3;
+          char *full_path_to_create = malloc(sizeof(char) * malloc_length);
+          if (! full_path_to_create)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            if (only_dirs)
+            {
+              free(only_dirs);
+              only_dirs = NULL;
+            }
+            goto end;
+          }
+          else
+          {
+            snprintf(full_path_to_create, malloc_length - 1,
+                "%s%c%s", new_filename_path , SPLT_DIRCHAR, only_dirs);
+            splt_u_create_directories(state, full_path_to_create);
+          }
+
+          if (full_path_to_create)
+          {
+            free(full_path_to_create);
+            full_path_to_create = NULL;
+          }
+        }
       }
     }
     if (only_dirs)
@@ -2281,11 +2310,12 @@ int splt_u_create_directories(splt_state *state, const char *dir)
       strncpy(junk, dir, ptr-dir);
       junk[ptr-dir] = '\0';
       
-      splt_u_print_debug("directory ...",0, junk);
- 
       if (!(d = opendir(junk)))
         {
-          splt_u_cleanstring_(state, junk, &result, SPLT_TRUE);
+          //splt_u_cleanstring_(state, junk, &result, SPLT_TRUE);
+
+          splt_u_print_debug("directory ...",0, junk);
+
           if (result < 0) { goto end; }
 
 #ifdef __WIN32__
@@ -2308,19 +2338,28 @@ int splt_u_create_directories(splt_state *state, const char *dir)
     }
 
   //we have created all the directories except the last one
-  if (!(d = opendir(dir)))
+  char *last_dir = strdup(dir);
+  if (!last_dir)
+  {
+    result = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    goto end;
+  }
+  //splt_u_cleanstring_(state, last_dir, &result, SPLT_TRUE);
+
+  if (!(d = opendir(last_dir)))
     {
-      splt_u_print_debug("final directory ...",0, dir);
+
+      splt_u_print_debug("final directory ...",0, last_dir);
 
 #ifdef __WIN32__
-      if ((mkdir(dir))==-1)
+      if ((mkdir(last_dir))==-1)
         {
  #else
-      if ((mkdir(dir, 0755))==-1)
+      if ((mkdir(last_dir, 0755))==-1)
         {
 #endif
           splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state,dir);
+          splt_t_set_error_data(state,last_dir);
           result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
         }
     }
@@ -2329,6 +2368,12 @@ int splt_u_create_directories(splt_state *state, const char *dir)
       closedir(d);
     }
   
+  if (last_dir)
+  {
+    free(last_dir);
+    last_dir = NULL;
+  }
+
 end:
   if (junk)
   {
