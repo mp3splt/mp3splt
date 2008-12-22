@@ -776,26 +776,27 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
       latin1 = id3_ucs4_latin1duplicate (ucs4);
       if (latin1 != NULL)
       {
+        int length = strlen((char *)latin1);
         switch (id_type)
         {
           case SPLT_MP3_ID3_ALBUM:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
-                0,(char *)latin1,0x0,30);
+                0,(char *)latin1,0x0,length);
             break;
           case SPLT_MP3_ID3_ARTIST:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
-                0,(char *)latin1,0x0,30);
+                0,(char *)latin1,0x0,length);
             break;
           case SPLT_MP3_ID3_TITLE:
             if (strcmp(frame_type,ID3_FRAME_TITLE) == 0)
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
-                  0,(char *)latin1,0x0,30);
+                  0,(char *)latin1,0x0,length);
             }
             break;
           case SPLT_MP3_ID3_YEAR:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
-                0,(char *)latin1,0x0,4);
+                0,(char *)latin1,0x0,length);
             break;
           case SPLT_MP3_ID3_TRACK:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
@@ -803,7 +804,7 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
             break;
           case SPLT_MP3_ID3_COMMENT:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
-                0,(char*)latin1,0x0,30);
+                0,(char*)latin1,0x0,length);
             break;
           case SPLT_MP3_ID3_GENRE:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,

@@ -52,6 +52,7 @@ off_t splt_u_flength(splt_state *state, FILE *in, const char *filename, int *err
 
 
 void splt_u_cleanstring(splt_state *state, char *s, int *error);
+void splt_u_cleanstring_(splt_state *state, char *s, int *error, int ignore_dirchar);
 char *splt_u_cut_spaces_at_the_end(char *c);
 char *splt_u_cut_spaces_from_begin(char *c);
 const char *splt_u_get_real_name(const char *filename);
