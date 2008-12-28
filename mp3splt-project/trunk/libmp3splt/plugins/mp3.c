@@ -792,7 +792,7 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
 {
   struct id3_frame *frame = NULL;
   id3_ucs4_t *ucs4 = NULL;
-  id3_latin1_t *latin1 = NULL;
+  signed char *tag_value = NULL;
 
   int err = SPLT_OK;
 
@@ -803,55 +803,55 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
     if (id_type == SPLT_MP3_ID3_COMMENT)
     {
       ucs4 = (id3_ucs4_t *)
-        id3_field_getfullstring(&frame->fields[3]);
+        id3_field_getfullstring(id3_frame_field(frame,3));
     }
     else
     {
       ucs4 = (id3_ucs4_t *) 
-        id3_field_getstrings(&frame->fields[1],0);
+        id3_field_getstrings(id3_frame_field(frame,1),0);
     }
     if (ucs4 != NULL)
     {
-      latin1 = id3_ucs4_latin1duplicate (ucs4);
-      if (latin1 != NULL)
+      tag_value = id3_ucs4_utf8duplicate(ucs4);
+      if (tag_value != NULL)
       {
-        int length = strlen((char *)latin1);
+        int length = strlen((char *)tag_value);
         switch (id_type)
         {
           case SPLT_MP3_ID3_ALBUM:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
-                0,(char *)latin1,0x0,length);
+                0,(char *)tag_value,0x0,length);
             break;
           case SPLT_MP3_ID3_ARTIST:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
-                0,(char *)latin1,0x0,length);
+                0,(char *)tag_value,0x0,length);
             break;
           case SPLT_MP3_ID3_TITLE:
             if (strcmp(frame_type,ID3_FRAME_TITLE) == 0)
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
-                  0,(char *)latin1,0x0,length);
+                  0,(char *)tag_value,0x0,length);
             }
             break;
           case SPLT_MP3_ID3_YEAR:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
-                0,(char *)latin1,0x0,length);
+                0,(char *)tag_value,0x0,length);
             break;
           case SPLT_MP3_ID3_TRACK:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
-                atof((char*)latin1), NULL,0x0,0);
+                atof((char*)tag_value), NULL,0x0,0);
             break;
           case SPLT_MP3_ID3_COMMENT:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
-                0,(char*)latin1,0x0,length);
+                0,(char*)tag_value,0x0,length);
             break;
           case SPLT_MP3_ID3_GENRE:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                0,NULL,splt_mp3_getgenre((char *)latin1),0);
+                0,NULL,splt_mp3_getgenre((char *)tag_value),0);
 
             int number = 80;
-            number = atoi((char *)latin1);
-            //if we have a number returned by latin1
+            number = atoi((char *)tag_value);
+            //if we have a number returned by tag_value
             if ((number != 0) &&
                 (state->original_tags.genre == 0xFF))
             {
@@ -859,7 +859,7 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
                   0,NULL,number,0);
             }
             //if we have 0 returned
-            if (strcmp((char*)latin1, "0") == 0)
+            if (strcmp((char*)tag_value, "0") == 0)
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
                   0,NULL,12,0);
@@ -868,8 +868,8 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
           default:
             break;
         }
-        free(latin1);
-        latin1 = NULL;
+        free(tag_value);
+        tag_value = NULL;
       }
       else
       {
