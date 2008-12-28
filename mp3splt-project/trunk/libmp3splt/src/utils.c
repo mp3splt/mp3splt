@@ -1394,8 +1394,7 @@ int splt_u_put_output_format_filename(splt_state *state)
   char *performer = NULL;
   char *original_filename = NULL;
 
-  int old_current_split = splt_t_get_current_split(state);
-
+  int old_current_split = splt_t_get_current_split_file_number(state) - 1;
   int current_split = old_current_split;
 
   int fm_length = 0;
@@ -1622,15 +1621,7 @@ int splt_u_put_output_format_filename(splt_state *state)
           temp[3] = 'd';
 
           //we set the track number
-          int tracknumber = old_current_split+1;
-
-          //TODO: see if we set this here ?
-          //if we remove silence, make 'SKIP_POINTS' transparent
-          if ((tracknumber > 1) &&
-              (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE)))
-          {
-            tracknumber = old_current_split / 2 + 1;
-          }
+          int tracknumber = old_current_split + 1;
 
           //if not time split, or normal split, or silence split or error,
           //we put the track number from the tags

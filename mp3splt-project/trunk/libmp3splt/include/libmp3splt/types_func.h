@@ -67,6 +67,8 @@ void splt_t_set_current_split(splt_state *state, int index);
 int splt_t_get_current_split(splt_state *state);
 void splt_t_current_split_next(splt_state *state);
 
+int splt_t_get_current_split_file_number(splt_state *state);
+
 /********************************/
 /* types: output format access */
 

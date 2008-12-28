@@ -987,7 +987,7 @@ static char *splt_mp3_get_tags(const char *filename, splt_state *state, int *err
   {
     if (splt_t_get_int_option(state,SPLT_OPT_TAGS) == SPLT_CURRENT_TAGS)
     {
-      int current_split = splt_t_get_current_split(state);
+      int current_split = splt_t_get_current_split_file_number(state) - 1;
       int old_current_split = current_split;
 
       //if we set all the tags like the x one
