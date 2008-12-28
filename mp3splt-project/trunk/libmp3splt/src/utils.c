@@ -2314,10 +2314,10 @@ int splt_u_create_directories(splt_state *state, const char *dir)
           if (result < 0) { goto end; }
 
 #ifdef __WIN32__
-          if ((mkdir(junk))==-1)
+          if ((splt_u_mkdir(junk))==-1)
             {
 #else
-          if ((mkdir(junk, 0755))==-1)
+          if ((splt_u_mkdir(junk, 0755))==-1)
             {
 #endif
               splt_t_set_strerror_msg(state);
@@ -2347,10 +2347,10 @@ int splt_u_create_directories(splt_state *state, const char *dir)
       splt_u_print_debug("final directory ...",0, last_dir);
 
 #ifdef __WIN32__
-      if ((mkdir(last_dir))==-1)
+      if ((splt_u_mkdir(last_dir))==-1)
         {
  #else
-      if ((mkdir(last_dir, 0755))==-1)
+      if ((splt_u_mkdir(last_dir, 0755))==-1)
         {
 #endif
           splt_t_set_strerror_msg(state);
@@ -2450,4 +2450,17 @@ FILE *splt_u_fopen(const char *filename, const char *mode)
 	return fopen(filename, mode);
 #endif
 }
+
+#ifdef __WIN32__
+int splt_u_mkdir(const char *path)
+{
+	wchar_t *wpath = splt_u_convert_char_to_wchar(path);
+	return _wmkdir(wpath);
+}
+#else
+int splt_u_mkdir(const char *path, mode_t mode)
+{
+	return mkdir(path, mode);
+}
+#endif
 
