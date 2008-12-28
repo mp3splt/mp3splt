@@ -792,7 +792,7 @@ static int splt_mp3_put_original_id3_frame(splt_state *state,
 {
   struct id3_frame *frame = NULL;
   id3_ucs4_t *ucs4 = NULL;
-  signed char *tag_value = NULL;
+  id3_utf8_t *tag_value = NULL;
 
   int err = SPLT_OK;
 
