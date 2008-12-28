@@ -292,7 +292,7 @@ typedef struct splt_progres {
   char filename_shorted[512];
   //the current percent of the progress
   float percent_progress;
-  //the number we are currently splitting
+  //the splitpoint that we are currently splitting
   int current_split;
   //the maximum number of splits
   int max_splits;
@@ -335,6 +335,8 @@ typedef struct {
   //1 if the first, 2 if the second
   //the number of splitpoints
   int current_split;
+  //for the user feedback : the current split file number
+  int current_split_file_number;
   //how many splits, this will be modified
   //by check_splitpts_inf_song_length()
   //to really see how many splitpoints we have

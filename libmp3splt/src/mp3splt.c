@@ -634,8 +634,6 @@ int mp3splt_split(splt_state *state)
       //we put the real splitnumber in the splitnumber variable
       //that could be changed (see splitnumber in mp3splt.h)
       state->split.splitnumber = state->split.real_splitnumber;
-
-      //we put splitnumber in the state, we will use it later
       splt_t_set_current_split(state,0);
 
       //we check if the filename is a real file

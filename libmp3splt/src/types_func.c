@@ -570,6 +570,22 @@ char *splt_t_get_silence_log_fname(splt_state *state)
 /********************************/
 /* types: current split access */
 
+//functions for the current split file number
+static void splt_t_set_current_split_file_number(splt_state *state, int index)
+{
+  state->split.current_split_file_number = index;
+}
+
+static void splt_t_set_current_split_file_number_next(splt_state *state)
+{
+  splt_t_set_current_split_file_number(state, state->split.current_split_file_number+1);
+}
+
+int splt_t_get_current_split_file_number(splt_state *state)
+{
+  return state->split.current_split_file_number;
+}
+
 //sets the current split
 void splt_t_set_current_split(splt_state *state, int index)
 {
@@ -577,7 +593,26 @@ void splt_t_set_current_split(splt_state *state, int index)
   //(index >= 0))
   if (index >= 0)
   {
-    state->split.current_split = index;
+	  if (index == 0)
+	  {
+		  splt_t_set_current_split_file_number(state,1);
+	  }
+	  else
+	  {
+		  if (splt_t_splitpoint_exists(state, index))
+		  {
+			  int err = SPLT_OK;
+			  if (splt_t_get_splitpoint_type(state, index, &err) != SPLT_SKIPPOINT)
+			  {
+				  splt_t_set_current_split_file_number_next(state);
+			  }
+		  }
+		  else
+		  {
+			  splt_t_set_current_split_file_number_next(state);
+		  }
+	  }
+	  state->split.current_split = index;
   }
   else
   {
@@ -1944,6 +1979,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
   state->split.splitnumber = 0;
+  state->split.current_split_file_number = 1;
   state->split.get_silence_level = NULL;
   //plugins
   state->plug->plugins_scan_dirs = NULL;
@@ -2852,7 +2888,7 @@ void splt_t_put_progress_text(splt_state *state, int type)
   {
     char *point_name = NULL;
     int curr_split = splt_t_get_current_split(state);
-    point_name = splt_t_get_splitpoint_name(state, curr_split-1,&err);
+    point_name = splt_t_get_splitpoint_name(state, curr_split,&err);
 
     if (point_name != NULL)
     {
@@ -2875,7 +2911,7 @@ void splt_t_put_progress_text(splt_state *state, int type)
 
     snprintf(state->split.p_bar->filename_shorted, 512,"%s", filename_shorted);
 
-    state->split.p_bar->current_split = splt_t_get_current_split(state);
+    state->split.p_bar->current_split = splt_t_get_current_split_file_number(state);
     state->split.p_bar->max_splits = state->split.splitnumber-1;
     state->split.p_bar->progress_type = type;
   }
