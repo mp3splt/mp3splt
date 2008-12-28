@@ -404,7 +404,7 @@ void splt_check_file_type(splt_state *state, int *error)
     splt_u_print_debug("Verify if the file is a file",0,filename);
 
     FILE *test = NULL;
-    if ((test = fopen(filename,"r")) != NULL)
+    if ((test = splt_u_fopen(filename,"r")) != NULL)
     {
       if (fclose(test) != 0)
       {
@@ -541,7 +541,7 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
   if (is_file1 && is_file2)
   {
     //file1
-    if ((file1_ = fopen(file1,"r")) == NULL)
+    if ((file1_ = splt_u_fopen(file1,"r")) == NULL)
     {
       goto end_error;
     }
@@ -552,7 +552,7 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
       if (fstat(file1_d,&file1_stat) == 0)
       {
         //file2
-        if ((file2_ = fopen(file2,"r")) == NULL)
+        if ((file2_ = splt_u_fopen(file2,"r")) == NULL)
         {
           goto end_error;
         }

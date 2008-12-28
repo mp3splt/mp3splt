@@ -199,7 +199,7 @@ static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
   else
   {
     //we open the file
-    file_input = fopen(filename, "rb");
+    file_input = splt_u_fopen(filename, "rb");
     if (file_input == NULL)
     {
       splt_t_set_strerror_msg(state);
@@ -580,7 +580,7 @@ void put_id3_frame_in_tag_with_content(struct id3_tag *id, const char *frame_typ
           ID3_FIELD_TEXTENCODING_UTF_16);
     }
 
-    field_content = id3_latin1_ucs4duplicate((unsigned char *)content);
+    field_content = id3_utf8_ucs4duplicate((signed char *)content);
     if (! field_content)
     {
       goto error;
@@ -1718,7 +1718,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   }
   else
   {
-    if (!(file_output=fopen(output_fname, "wb+")))
+    if (!(file_output=splt_u_fopen(output_fname, "wb+")))
     {
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state, output_fname);
@@ -1949,7 +1949,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
     }
     else
     {
-      if (!(file_output=fopen(output_fname, "wb+")))
+      if (!(file_output=splt_u_fopen(output_fname, "wb+")))
       {
         splt_t_set_strerror_msg(state);
         splt_t_set_error_data(state,output_fname);

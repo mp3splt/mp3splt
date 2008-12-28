@@ -133,7 +133,7 @@ FILE *splt_ogg_open_file_read(splt_state *state,
   else
   {
     //we open the file
-    file_input = fopen(filename, "rb");
+    file_input = splt_u_fopen(filename, "rb");
     if (file_input == NULL)
     {
       splt_t_set_strerror_msg(state);
@@ -1434,7 +1434,7 @@ void splt_ogg_split(const char *output_fname, splt_state *state, double
   }
   else
   {
-    if (!(oggstate->out = fopen(output_fname, "wb")))
+    if (!(oggstate->out = splt_u_fopen(output_fname, "wb")))
     {
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state, output_fname);
@@ -1837,7 +1837,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 
   FILE *file_input = NULL;
 
-  if ((file_input = fopen(filename, "rb")) == NULL)
+  if ((file_input = splt_u_fopen(filename, "rb")) == NULL)
   {
     splt_t_set_strerror_msg(state);
     splt_t_set_error_data(state,filename);

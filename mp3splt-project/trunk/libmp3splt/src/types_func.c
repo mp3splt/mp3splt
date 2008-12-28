@@ -2839,7 +2839,7 @@ int splt_t_put_split_file(splt_state *state, const char *filename)
     {
       //we open the m3u file
       FILE *file_input = NULL;
-      if ((file_input = fopen(new_m3u_file, "a+")) != NULL)
+      if ((file_input = splt_u_fopen(new_m3u_file, "a+")) != NULL)
       {
         //we don't care about the path of the split filename
         fprintf(file_input,"%s\n",splt_u_get_real_name(filename));

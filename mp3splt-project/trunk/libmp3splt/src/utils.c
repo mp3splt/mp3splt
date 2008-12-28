@@ -36,6 +36,10 @@
 #include <ctype.h>
 #include <dirent.h>
 
+#ifdef __WIN32__
+#include <windows.h>
+#endif
+
 #include "splt.h"
 
 extern short global_debug;
@@ -2413,5 +2417,37 @@ int splt_u_check_if_directory(char *fname)
   }
 
   return SPLT_FALSE;
+}
+
+#ifdef __WIN32__
+static wchar_t *splt_u_convert_char_to_wchar(const char *source)
+{
+	wchar_t *dest = NULL;
+	int converted_size = MultiByteToWideChar(CP_UTF8, 0, source, -1, NULL, 0);
+	if (converted_size > 0)
+	{
+		dest = malloc(sizeof(wchar_t *) * converted_size);
+		MultiByteToWideChar(CP_UTF8, 0, source, -1, dest, converted_size);
+	}
+	else
+	{
+		return NULL;
+	}
+
+	return dest;
+}
+#endif
+
+//windows filenames have to be converted to utf16
+FILE *splt_u_fopen(const char *filename, const char *mode)
+{
+#ifdef __WIN32__
+	wchar_t *wfilename = splt_u_convert_char_to_wchar(filename);
+	wchar_t *wmode = splt_u_convert_char_to_wchar(mode);
+
+	return _wfopen(wfilename, wmode);
+#else
+	return fopen(filename, mode);
+#endif
 }
 
