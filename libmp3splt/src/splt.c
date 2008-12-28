@@ -535,7 +535,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   char *log_fname = splt_t_get_silence_log_fname(state);
   if (splt_t_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
   {
-    if ((log_file = fopen(log_fname, "r")))
+    if ((log_file = splt_u_fopen(log_fname, "r")))
     {
       char log_silence_fname[1024] = { '\0' };
       fgets(log_silence_fname, 1024, log_file);
@@ -743,7 +743,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           }
           char *fname = splt_t_get_silence_log_fname(state);
           FILE *log_file = NULL;
-          if (!(log_file = fopen(fname, "w")))
+          if (!(log_file = splt_u_fopen(fname, "w")))
           {
             splt_t_set_strerror_msg(state);
             splt_t_set_error_data(state, fname);

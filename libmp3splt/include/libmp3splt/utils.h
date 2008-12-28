@@ -94,6 +94,8 @@ char *splt_u_strerror(splt_state *state, int error_code);
 
 int splt_u_check_if_directory(char *fname);
 
+FILE *splt_u_fopen(const char *filename, const char *mode);
+
 #define MP3SPLT_UTILS_H
 
 #endif

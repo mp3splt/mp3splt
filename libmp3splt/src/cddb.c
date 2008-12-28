@@ -364,7 +364,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   }
   
   //if we cannot open the file
-  if (!(file_input=fopen(file, "r")))
+  if (!(file_input=splt_u_fopen(file, "r")))
   {
     splt_t_set_strerror_msg(state);
     splt_t_set_error_data(state,file);
@@ -637,7 +637,7 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
   char *perfor = NULL;
 
   //we open the file
-  if (!(file_input=fopen(file, "r")))
+  if (!(file_input=splt_u_fopen(file, "r")))
   {
     splt_t_set_strerror_msg(state);
     splt_t_set_error_data(state,file);
@@ -2158,8 +2158,8 @@ end_function:
     if ((c=getenv("HOME"))!=NULL) sprintf(message, "%s/"PROXYCONFIG, c);
     else strncpy(message, PROXYCONFIG, strlen(PROXYCONFIG));
 
-    if (!(output=fopen(message, "r"))) {
-    if (!(output=fopen(message, "w+"))) {
+    if (!(output=splt_u_fopen(message, "r"))) {
+    if (!(output=splt_u_fopen(message, "w+"))) {
     fprintf(stderr, "\nWARNING Can't open config file ");
     perror(message);
     }

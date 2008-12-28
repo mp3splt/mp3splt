@@ -982,7 +982,7 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
       {
         //we write the result to the file
         FILE *output = NULL;
-        if (!(output = fopen(cddb_file, "w")))
+        if (!(output = splt_u_fopen(cddb_file, "w")))
         {
           splt_t_set_strerror_msg(state);
           splt_t_set_error_data(state,cddb_file);
