@@ -73,10 +73,17 @@ This means that splitting process will be quicker, but will be imprecise due to 
 you can split those VBR files only with framemode (see -f option).
 <P>
 <B>NOTE about TAGS:</B> by default, mp3splt will put the original tags in
-the splitted files. In order to extract the original tags from mp3 files,
-libmp3splt must be compiled with 'id3tag' support. Support for ID3v2
-tags in split files is not yet available. Custom tags for the split files
-can be set with the -g option.
+the split files. In order to extract the original tags from mp3 files,
+libmp3splt must be compiled with 'id3tag' support. Support for ID3v2 for
+known tags is available if libmp3splt is compiled with 'id3tag' support;
+otherwise, ID3v1 tags will be set. Custom tags for the split files can be
+set with the -g option.
+<P>
+<B>NOTE about the OUTPUT DIRECTORY:</B> by default, mp3splt will put the
+split files in the directory of the input file. In order to change the
+output directory, you can use one of the following options : -d or -o.
+Please note that directories from the -o option will be created relative
+to the input file directory.
 <P>
 <A NAME="lbAE">&nbsp;</A>
 <H2>OPTIONS</H2>
@@ -192,7 +199,7 @@ Mp3splt will connect to server and will start to find the requested
 informations.  If you will find the right album, then mp3splt will finally
 query the server to get the selected album and, if all is correct, will
 write a file named &quot;query.cddb&quot; from which will get splitpoints and
-filenames. ID3v1 will be created automatically with taken informations.
+filenames. ID3 will be created automatically with taken informations.
 <P>
 <B>IMPORTANT NOTE FOR CDDB</B>: File split with this option can be not very precise due to:
 <P>
@@ -299,11 +306,12 @@ those options.
 directory and/or filename. If FORMAT contains the DIRCHAR character ('\' on
 windows and '/' on other systems), directories will be created for each
 DIRCHAR if they don't exist and the output files will be created in the
-corresponding directory. If the -d option is also specified, the output
-directory will be the concatenation between the -d option value and the
-extracted path from the -o FORMAT (characters up to the last DIRCHAR).
-Invalid filename characters (except the DIRCHAR from the extracted path
-of FORMAT) are transformed to '_'.
+corresponding directory. If the -d option is not specified, the output directory
+is the concatenation of the input file directory and the extracted path from
+FORMAT. If the -d option is also specified, the output directory will be the
+concatenation between the -d option value and the extracted path from the -o
+FORMAT (characters up to the last DIRCHAR). Invalid filename characters from the
+tags are transformed to '_'.
 <P>
 It can contain name variables, that must begin with @ char and that can be:
 <P>
@@ -319,7 +327,7 @@ It can contain name variables, that must begin with @ char and that can be:
 @t: song title*
 <BR>
 
-@n: track number* (valid also when not using -c)
+@n: track number identifier* (not the real ID3 track number) (valid also when not using -c)
 <BR>
 
 @f: input filename (without extension)
@@ -580,6 +588,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 <A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
 using the manual pages.<BR>
-Time: 14:37:34 GMT, December 20, 2008
+Time: 14:57:26 GMT, December 27, 2008
 </BODY>
 </HTML>

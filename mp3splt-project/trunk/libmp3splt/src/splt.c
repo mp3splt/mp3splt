@@ -241,8 +241,6 @@ void splt_s_error_split(splt_state *state, int *error)
   //the error detection
   splt_t_update_progress(state,1.0,1.0,1,1,1);
 
-  //if we have the default output, we put the
-  //default
   int err = SPLT_OK;
 
   //if no error
