@@ -96,6 +96,12 @@ int splt_u_check_if_directory(char *fname);
 
 FILE *splt_u_fopen(const char *filename, const char *mode);
 
+#ifdef __WIN32__
+int splt_u_mkdir(const char *path);
+#else
+int splt_u_mkdir(const char *path, mode_t mode);
+#endif
+
 #define MP3SPLT_UTILS_H
 
 #endif

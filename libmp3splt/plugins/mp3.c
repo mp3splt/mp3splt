@@ -3151,9 +3151,9 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 strncpy(junk, filename, ptr-filename);
                 if (!opendir(junk))
 #ifdef _WIN32					
-                  if ((mkdir(junk))==-1) {
+                  if ((splt_u_mkdir(junk))==-1) {
 #else
-                  if ((mkdir(junk, 0755))==-1) {
+                  if ((splt_u_mkdir(junk, 0755))==-1) {
 #endif
                     *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
                     return;
