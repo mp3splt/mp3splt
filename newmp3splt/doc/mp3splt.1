@@ -107,11 +107,17 @@ This means that splitting process will be quicker, but will be imprecise due to 
 you can split those VBR files only with framemode (see \-f option).
 
 \fBNOTE about TAGS:\fP by default, mp3splt will put the original tags in
-the splitted files. In order to extract the original tags from mp3 files,
+the split files. In order to extract the original tags from mp3 files,
 libmp3splt must be compiled with 'id3tag' support. Support for ID3v2 for
-known tags is available if libmp3splt is compiled with 'id3tag' support.
-Otherwise, ID3v1 tags will be set. Custom tags for the split files can be
+known tags is available if libmp3splt is compiled with 'id3tag' support;
+otherwise, ID3v1 tags will be set. Custom tags for the split files can be
 set with the \-g option.
+
+\fBNOTE about the OUTPUT DIRECTORY:\fP by default, mp3splt will put the
+split files in the directory of the input file. In order to change the
+output directory, you can use one of the following options : \-d or \-o.
+Please note that directories from the \-o option will be created relative
+to the input file directory.
 
 .SH "OPTIONS"
 .IP "\fB-w\fP         " 10
@@ -318,10 +324,12 @@ those options.
 directory and/or filename. If FORMAT contains the DIRCHAR character ('\\' on
 windows and '/' on other systems), directories will be created for each
 DIRCHAR if they don't exist and the output files will be created in the
-corresponding directory. If the \-d option is also specified, the output
-directory will be the concatenation between the \-d option value and the
-extracted path from the \-o FORMAT (characters up to the last DIRCHAR).
-Invalid filename characters from the tags are transformed to '_'.
+corresponding directory. If the \-d option is not specified, the output directory
+is the concatenation of the input file directory and the extracted path from
+FORMAT. If the \-d option is also specified, the output directory will be the
+concatenation between the \-d option value and the extracted path from the \-o
+FORMAT (characters up to the last DIRCHAR). Invalid filename characters from the
+tags are transformed to '_'.
 
 It can contain name variables, that must begin with @ char and that can be:
 

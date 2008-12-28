@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <math.h>
+#include <ctype.h>
 
 #ifdef __WIN32__
 #include <io.h>
@@ -158,6 +159,26 @@ static const unsigned long splt_mp3_crctab[256] = {
   0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 };
+
+int splt_mp3_str_is_ascii(const char *str)
+{
+  int i = 0;
+
+  if (str == NULL)
+  {
+    return SPLT_FALSE;
+  }
+
+  for (i = 0;i < strlen(str);i++)
+  {
+    if (isascii((int)str[i]))
+    {
+      return SPLT_FALSE;
+    }
+  }
+
+  return SPLT_TRUE;
+}
 
 //-filename must not be null; if filename is NULL, then this plugin should
 //not have been detected
@@ -546,7 +567,19 @@ void put_id3_frame_in_tag_with_content(struct id3_tag *id, const char *frame_typ
     }
 
     id_field = id3_frame_field(id_frame, field_number);
-    id3_field_settextencoding(id_field, ID3_FIELD_TEXTENCODING_UTF_16);
+
+    //only output ascii in ISO 8859 1
+    if (splt_mp3_str_is_ascii(content))
+    {
+      id3_field_settextencoding(id3_frame_field(id_frame, 0),
+          ID3_FIELD_TEXTENCODING_ISO_8859_1);
+    }
+    else
+    {
+      id3_field_settextencoding(id3_frame_field(id_frame, 0),
+          ID3_FIELD_TEXTENCODING_UTF_16);
+    }
+
     field_content = id3_latin1_ucs4duplicate((unsigned char *)content);
     if (! field_content)
     {
@@ -602,8 +635,14 @@ static char *splt_mp3_id3v2(const char *title, const char *artist,
     const char *comment, int track, int *error, unsigned long *number_of_bytes)
 {
   struct id3_tag *id = id3_tag_new();
+
   id3_byte_t *bytes = NULL;
   id3_length_t bytes_length = 0;
+
+  //turn off CRC and COMPRESSION; many players don't support that ?,
+  //resulting in No tags (oh !)
+  id3_tag_options(id, ID3_TAG_OPTION_CRC, 0);
+  id3_tag_options(id, ID3_TAG_OPTION_COMPRESSION, 0);
 
   put_id3_frame_in_tag_with_content(id, ID3_FRAME_TITLE, 1, title, error);
   if (*error < 0) { goto error; }
