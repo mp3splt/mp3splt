@@ -78,7 +78,8 @@ case $host in
 		;;
 	*mingw*)
 		HOST="Mingw"
-		LIBS="$LIBS -lwsock32 -mwindows"
+		LIBS="$LIBS -lwsock32 -lshlwapi -mwindows"
+		#LIBS="$LIBS -lwsock32 -lshlwapi"
 		CFLAGS="$CFLAGS -mms-bitfields -enable-stdcall-fixup"
 		;;
 	*solaris*)

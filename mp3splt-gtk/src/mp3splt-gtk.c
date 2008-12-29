@@ -45,6 +45,11 @@
 #include <string.h>
 #include <glib.h>
 
+#ifdef __WIN32__
+#include <windows.h>
+#include <shlwapi.h>
+#endif
+
 #include "util.h"
 #include "special_split.h"
 #include "player.h"
@@ -447,11 +452,6 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   g_thread_init(NULL);
   gdk_threads_init();
 
-//set gstreamer plugin path as the current directory
-#ifdef __WIN32__
-  g_setenv("GST_PLUGIN_PATH",".\\",TRUE);
-#endif
-  
   gint error = 0;
   
   //close nicely
@@ -492,6 +492,50 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   mp3splt_set_message_function(the_state, put_message_from_library);
   //debug on or off
   mp3splt_set_int_option(the_state,SPLT_OPT_DEBUG_MODE,SPLT_FALSE);
+
+  //add special directory search for plugins on Windows
+#ifdef __WIN32__
+  //add the directory of the executable in the plugin scan directories
+  char *executable = strdup(argv[0]);
+  char *end = strrchr(executable, SPLT_DIRCHAR);
+  if (end)
+  {
+    *end = '\0';
+    //set gstreamer plugin path as the current directory of the executable
+#ifdef __WIN32__
+    g_setenv("GST_PLUGIN_PATH",executable,TRUE);
+#endif
+    mp3splt_append_plugins_scan_dir(the_state, executable);
+  }
+  if (executable)
+  {
+    free(executable);
+    executable = NULL;
+  }
+
+  //also add the installation directory that we take from the registry
+  char mp3splt_uninstall_file[2048] = { '\0' };
+  DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
+  if (SHGetValue(HKEY_LOCAL_MACHINE,
+        TEXT("SOFTWARE\\mp3splt-gtk"),
+        TEXT("UninstallString"),
+        &dwType,
+        mp3splt_uninstall_file,
+        &dwSize) != ERROR_SUCCESS)
+  {
+    //do nothing if error
+  }
+  else
+  {
+    end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
+    if (end)
+    {
+      *end = '\0';
+      mp3splt_append_plugins_scan_dir(the_state, mp3splt_uninstall_file);
+    }
+  }
+#endif
+
   //main program
   create_all();
   error = mp3splt_find_plugins(the_state);
