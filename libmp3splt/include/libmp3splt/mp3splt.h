@@ -498,6 +498,10 @@ typedef struct {
   //quiet mode : don't perform CRC check or other interaction with the user
   short quiet_mode;
 
+  //Pretend to split the file, without real split : this option works in
+  //all modes except error mode and dewrap split.
+  short pretend_to_split;
+
   //frame mode (mp3 only). Process all frames, seeking split positions
   //by counting frames and not with bitrate guessing.
   short option_frame_mode;
@@ -1034,6 +1038,11 @@ typedef enum {
  * Use #mp3splt_get_int_option to get those options
  */
 typedef enum {
+  /**
+   * Pretend to split the file, without real split : this option works in
+   * all modes except error mode and dewrap split.
+   */
+  SPLT_OPT_PRETEND_TO_SPLIT,
   /*
    * If quiet; we don't do CRC check or human interaction
    */
@@ -1453,7 +1462,6 @@ void mp3splt_set_oformat(splt_state *state,
 //counts the number of tracks found with silence detection
 int mp3splt_count_silence_points(splt_state *state, int *error);
 
-//set the silence splitpoints without splitting
 int mp3splt_set_silence_points(splt_state *state, int *error);
 
 //returns the version of libmp3splt

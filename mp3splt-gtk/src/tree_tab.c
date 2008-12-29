@@ -171,6 +171,8 @@ extern gint we_are_splitting;
 //main window
 extern GtkWidget *window;
 
+extern GtkWidget *output_entry;
+
 //updates add button, wether the spinners splitpoint is already
 //in the table or not
 void update_add_button()
@@ -1051,12 +1053,30 @@ void detect_silence_and_set_splitpoints(gpointer data)
   filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
   mp3splt_set_filename_to_split(the_state, filename_to_split);
   mp3splt_erase_all_splitpoints(the_state, &err);
+
+  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
+  mp3splt_set_oformat(the_state, format, &err);
+  if (format)
+  {
+    free(format);
+    format = NULL;
+  }
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
+  int old_split_mode = mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err);
+  mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
+  int old_tags_option = mp3splt_get_int_option(the_state, SPLT_OPT_TAGS, &err);
+  mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
   if (err >= 0)
   {
     we_are_splitting = TRUE;
-    mp3splt_set_silence_points(the_state, &err);
+    //real work
+    err = mp3splt_split(the_state);
     we_are_splitting = FALSE;
   }
+  mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, old_tags_option);
+  mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
+  mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_FALSE);
 
   //lock gtk
   gdk_threads_enter();
