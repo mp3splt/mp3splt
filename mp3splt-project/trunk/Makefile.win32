@@ -33,4 +33,4 @@ dist:
 	cd newmp3splt/windows && ./make_windows_installer.sh && cd ../../
 #building installer for the gui
 	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
-	cd mp3splt-gtk/windows #&& ./make_windows_installer.sh && cd ../../
+	cd mp3splt-gtk/windows && ./make_windows_installer.sh && cd ../../
