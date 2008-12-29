@@ -677,11 +677,14 @@ int mp3splt_split(splt_state *state)
         //normal split checks
         if (split_type == SPLT_OPTION_NORMAL_MODE)
         {
-          //check if we have at least 2 splitpoints
-          if (splt_t_get_splitnumber(state) < 2)
+          if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
           {
-            error = SPLT_ERROR_SPLITPOINTS;
-            goto function_end;
+            //check if we have at least 2 splitpoints
+            if (splt_t_get_splitnumber(state) < 2)
+            {
+              error = SPLT_ERROR_SPLITPOINTS;
+              goto function_end;
+            }
           }
 
           //we check if the splitpoints are in order

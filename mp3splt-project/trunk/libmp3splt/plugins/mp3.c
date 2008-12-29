@@ -2342,7 +2342,7 @@ bloc_end:
   {
     splt_u_print_debug("Starting mp3 seekable...",0,NULL);
 
-    off_t begin = 0, end = -1;
+    off_t begin = 0, end = 0;
     //if framemode
     if (mp3state->framemode)
     {
@@ -2438,6 +2438,8 @@ bloc_end:
       }
       else
       {
+        fprintf(stdout,"end = %d\n",(int)mp3state->end);
+        fflush(stdout);
         begin = mp3state->end;
       }
 

@@ -214,7 +214,7 @@ void about_window(GtkWidget *widget,
   b2 = (gchar *)_("created from");
   gchar library_version[20];
   mp3splt_get_version(library_version);
-  g_snprintf(b3, 100, "-release of 27/12/08-\n%s libmp3splt %s (%s mp3splt)",
+  g_snprintf(b3, 100, "-release of 28/12/08-\n%s libmp3splt %s (%s mp3splt)",
              b1, library_version, b2);
   
   gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG(dialog), b3);
@@ -327,9 +327,6 @@ void split_button_event (GtkWidget *widget,
         case SPLT_OPTION_TIME_MODE:
           put_status_message((gchar *)_(" info: starting time mode split... "));
           break;
-        case SPLT_OPTION_SILENCE_MODE:
-          put_status_message((gchar *)_(" info: starting silence mode split... "));
-          break; 
         case SPLT_OPTION_ERROR_MODE:
           put_status_message((gchar *)_(" info: starting"
                                         " error mode split... "));

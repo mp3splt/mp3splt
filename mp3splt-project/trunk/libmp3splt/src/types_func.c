@@ -2023,20 +2023,22 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->iopts.split_begin = 0;
   state->iopts.split_end = 0;
   //options
-  state->options.output_filenames = SPLT_OUTPUT_DEFAULT;
   state->options.split_mode = SPLT_OPTION_NORMAL_MODE;
   state->options.tags = SPLT_CURRENT_TAGS;
-  state->options.create_dirs_from_filenames = SPLT_FALSE;
+  state->options.output_filenames = SPLT_OUTPUT_DEFAULT;
+  state->options.quiet_mode = SPLT_FALSE;
+  state->options.pretend_to_split = SPLT_FALSE;
   state->options.option_frame_mode = SPLT_TRUE;
+  state->options.split_time = 6000;
   state->options.option_auto_adjust = SPLT_FALSE;
   state->options.option_input_not_seekable = SPLT_FALSE;
-  state->options.parameter_number_tracks = SPLT_DEFAULT_PARAM_TRACKS;
-  state->options.parameter_remove_silence = SPLT_FALSE;
-  state->options.parameter_gap = SPLT_DEFAULT_PARAM_GAP;
+  state->options.create_dirs_from_filenames = SPLT_FALSE;
   state->options.parameter_threshold = SPLT_DEFAULT_PARAM_THRESHOLD;
   state->options.parameter_offset = SPLT_DEFAULT_PARAM_OFFSET;
+  state->options.parameter_number_tracks = SPLT_DEFAULT_PARAM_TRACKS;
   state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
-  state->options.split_time = 6000;
+  state->options.parameter_remove_silence = SPLT_FALSE;
+  state->options.parameter_gap = SPLT_DEFAULT_PARAM_GAP;
   //error strings for error messages
   state->err.error_data = NULL;
   state->err.strerror_msg = NULL;
@@ -2168,6 +2170,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_QUIET_MODE:
       state->options.quiet_mode = value;
       break;
+    case SPLT_OPT_PRETEND_TO_SPLIT:
+      state->options.pretend_to_split = value;
+      break;
     case SPLT_OPT_OUTPUT_FILENAMES:
       state->options.output_filenames = value;
       break;
@@ -2243,6 +2248,9 @@ int splt_t_get_int_option(splt_state *state, int option_name)
   {
     case SPLT_OPT_QUIET_MODE:
       return state->options.quiet_mode;
+      break;
+    case SPLT_OPT_PRETEND_TO_SPLIT:
+      return state->options.pretend_to_split;
       break;
     case SPLT_OPT_OUTPUT_FILENAMES:
       return state->options.output_filenames;

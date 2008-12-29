@@ -2313,18 +2313,21 @@ int splt_u_create_directories(splt_state *state, const char *dir)
 
           if (result < 0) { goto end; }
 
+          //don't create output directories if we pretend to split
+          if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+          {
 #ifdef __WIN32__
-          if ((splt_u_mkdir(junk))==-1)
-            {
+            if ((splt_u_mkdir(junk))==-1)
 #else
-          if ((splt_u_mkdir(junk, 0755))==-1)
-            {
+            if ((splt_u_mkdir(junk, 0755))==-1)
 #endif
+            {
               splt_t_set_strerror_msg(state);
               splt_t_set_error_data(state,junk);
               result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
               goto end;
             }
+          }
         }
       else
         {

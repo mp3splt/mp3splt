@@ -544,7 +544,7 @@ void update_splitpoints_from_the_state()
           
           gint must_be_free = FALSE;
           gchar *result_utf8 = points[i].name;
-          
+
           if (result_utf8 != NULL)
             {
               result_utf8 = transform_to_utf8(result_utf8, 
