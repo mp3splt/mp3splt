@@ -2438,8 +2438,6 @@ bloc_end:
       }
       else
       {
-        fprintf(stdout,"end = %d\n",(int)mp3state->end);
-        fflush(stdout);
         begin = mp3state->end;
       }
 

@@ -1624,6 +1624,22 @@ int splt_u_put_output_format_filename(splt_state *state)
           temp[2] = state->oformat.output_format_digits;
           temp[3] = 'd';
 
+          int number_of_digits = state->oformat.output_format_digits;
+
+          int format_length = strlen(state->oformat.format[i]);
+          char *format_dup = strdup(state->oformat.format[i]);
+          if ((format_length > 2) &&
+              isdigit(state->oformat.format[i][2]))
+          {
+            temp[2] = state->oformat.format[i][2];
+            number_of_digits = (int) state->oformat.format[i][2];
+            int k = 0;
+            for (k = 2;k < format_length;k++)
+            {
+              format_dup[k] = format_dup[k+1];
+            }
+          }
+
           //we set the track number
           int tracknumber = old_current_split + 1;
 
@@ -1645,9 +1661,14 @@ int splt_u_put_output_format_filename(splt_state *state)
               }
             }
           }
-          snprintf(temp+4, temp_len, state->oformat.format[i]+2);
+          snprintf(temp+4, temp_len, format_dup+2);
+          if (format_dup)
+          {
+            free(format_dup);
+            format_dup = NULL;
+          }
 
-          fm_length = strlen(temp) + 1;
+          fm_length = strlen(temp) + 1 + number_of_digits;
           if ((fm = malloc(fm_length * sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
