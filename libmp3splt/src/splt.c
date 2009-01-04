@@ -158,7 +158,8 @@ void splt_s_multiple_split(splt_state *state, int *error)
   int get_error = SPLT_OK;
 
   //for every 2 splitpoints, split
-  while (i  < splt_t_get_splitnumber(state) - 1)
+  int number_of_splitpoints = splt_t_get_splitnumber(state);
+  while (i  < number_of_splitpoints - 1)
   {
     //we put the current file to split
     splt_t_set_current_split(state, i);
@@ -202,11 +203,10 @@ void splt_s_multiple_split(splt_state *state, int *error)
           i++;
           continue;
         }
-        int j = i+1;
 
         if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          splt_s_split(state, i, j, error);
+          splt_s_split(state, i, i+1, error);
         }
 
         //get out if error
@@ -614,7 +614,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     if (state->split.get_silence_level)
     {
-      state->split.get_silence_level(0, INT_MIN, state->split.silence_level_client_data);
+      state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
     }
     snprintf(message, 1024, " Found silence log file '%s' ! Reading silence points from file to save time ;)", log_fname);
     splt_t_put_message_to_client(state,message);
@@ -788,14 +788,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   splt_t_ssplit_free(&state->silence_list);
 
   //set number of splitpoints
-  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
-  {
-    splt_t_set_splitnumber(state, found * 2);
-  }
-  else
-  {
-    splt_t_set_splitnumber(state, found + 1);
-  }
+  //TODO:verify here ?
+  splt_t_set_splitnumber(state, found + 1);
 
   return found;
 }

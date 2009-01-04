@@ -535,7 +535,7 @@ void update_splitpoints_from_the_state()
           int point_value = (int) old_point_value;
           if (old_point_value > INT_MAX)
           {
-            point_value = INT_MAX - 1;
+            point_value = INT_MAX;
           }
 
           //we get the minutes, seconds and hundreths

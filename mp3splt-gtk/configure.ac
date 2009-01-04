@@ -59,6 +59,7 @@ AM_GNU_GETTEXT_VERSION([0.13.1])
 #################################################################
 
 AC_MSG_CHECKING(the host)
+AM_CONDITIONAL(NOT_WIN32,true)
 case $host in
 	*linux*)
 		HOST="Linux-based system"
@@ -77,6 +78,7 @@ case $host in
 		LIBS="$LIBS -lpthread"
 		;;
 	*mingw*)
+		AM_CONDITIONAL(NOT_WIN32,false)
 		HOST="Mingw"
 		LIBS="$LIBS -lwsock32 -lshlwapi -mwindows"
 		#LIBS="$LIBS -lwsock32 -lshlwapi"

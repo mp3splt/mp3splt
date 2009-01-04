@@ -235,77 +235,82 @@ static int splt_cue_set_value(splt_state *state, char *in,
 
   char *ptr_b = in, *ptr_e = NULL;
 
-  //-find begin
-  //while we don't have spaces any more
-  while (*ptr_b == ' ')
-  {
-    ptr_b++;
-  }
-  //if we have a '"', then skip quote
-  if (*ptr_b == '"')
-  {
-    ptr_b++;
-  }
-  
-  //-find and and put '\0'
-  //go to the end of line
-  ptr_e = strchr(ptr_b+1,'\n');
-  //move back ignoring spaces
-  while (*ptr_e == ' ')
-  {
-    ptr_e--;
-  }
-  //if we have a '"', then skip quote
-  if (*ptr_e == '"')
-  {
-    ptr_e--;
-  }
-  *ptr_e = '\0';
+	if (in)
+	{
+		//-find begin
+		//while we don't have spaces any more
+		while (*ptr_b == ' ')
+		{
+			ptr_b++;
+		}
+		//if we have a '"', then skip quote
+		if (*ptr_b == '"')
+		{
+			ptr_b++;
+		}
 
-  char *out = NULL;
-  if ((out = malloc(strlen(ptr_b)+1)) == NULL)
-  {
-    error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
-  else
-  {
-    strncpy(out, ptr_b, (strlen(ptr_b)+1));
-    splt_u_cleanstring(state, out, &error);
-    if (error >= 0)
-    {
-      int tags_err = SPLT_OK;
+		//-find and and put '\0'
+		//go to the end of line
+		ptr_e = strchr(ptr_b+1,'\n');
+		if (ptr_e)
+		{
+			//move back ignoring spaces
+			while (*ptr_e == ' ')
+			{
+				ptr_e--;
+			}
+			//if we have a '"', then skip quote
+			if (*(ptr_e-1) == '"')
+			{
+				ptr_e--;
+			}
+			*ptr_e = '\0';
+		}
 
-      //put Artist + Album info to client
-      char *client_infos = malloc(sizeof(char) * (strlen(out)+30));
-      if (client_infos == NULL)
-      {
-        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
-      else
-      {
-        if (tag_field == SPLT_TAGS_ARTIST)
-        {
-          snprintf(client_infos,strlen(out)+30,"\n  Artist: %s\n", out);
-          splt_t_put_message_to_client(state, client_infos);
-        }
-        else if (tag_field == SPLT_TAGS_ALBUM)
-        {
-          snprintf(client_infos,strlen(out)+30,"  Album: %s\n", out);
-          splt_t_put_message_to_client(state, client_infos);
-        }
-        free(client_infos);
-        client_infos = NULL;
+		char *out = NULL;
+		if ((out = malloc(strlen(ptr_b)+1)) == NULL)
+		{
+			error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+		}
+		else
+		{
+			strncpy(out, ptr_b, (strlen(ptr_b)+1));
+			int tags_err = SPLT_OK;
 
-        tags_err = splt_t_set_tags_char_field(state, index, tag_field, out);
-        if (tags_err != SPLT_OK)
-        {
-          error = tags_err;
-        }
-      }
-    }
-    free(out);
-    out = NULL;
-  }
+			//put Artist + Album info to client
+			char *client_infos = malloc(sizeof(char) * (strlen(out)+30));
+			if (client_infos == NULL)
+			{
+				error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+			}
+			else
+			{
+				if (tag_field == SPLT_TAGS_ARTIST)
+				{
+					snprintf(client_infos,strlen(out)+30,"\n  Artist: %s\n", out);
+					splt_t_put_message_to_client(state, client_infos);
+				}
+				else if (tag_field == SPLT_TAGS_ALBUM)
+				{
+					snprintf(client_infos,strlen(out)+30,"  Album: %s\n", out);
+					splt_t_put_message_to_client(state, client_infos);
+				}
+				free(client_infos);
+				client_infos = NULL;
+
+				tags_err = splt_t_set_tags_char_field(state, index, tag_field, out);
+				if (tags_err != SPLT_OK)
+				{
+					error = tags_err;
+				}
+			}
+			if (out)
+			{
+				free(out);
+				out = NULL;
+			}
+		}
+	}
 
   return error;
 }
@@ -504,9 +509,6 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
             {
               //we replace : with . for the sscanf
               ptr[dot-ptr] = ptr[dot-ptr+3] = '.';
-              //we clean the string for unwanted characters
-              splt_u_cleanstring(state, ptr, error);
-              if (*error < 0) { goto function_end; }
 
               //we convert to hundreths of seconds and put splitpoints
               if (tracks>0)
@@ -925,13 +927,8 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
             }
 
             perfor = splt_t_get_tags_char_field(state, j-1, SPLT_TAGS_PERFORMER);
-            splt_u_cleanstring(state, perfor, error);
-            if (*error < 0) { goto function_end; }
             number = c+1;
           }
-
-          splt_u_cleanstring(state, number, error);
-          if (*error < 0) { goto function_end; }
         }
 
         //we limit number to 512?
@@ -1015,8 +1012,6 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
                   break;
                 }
               }
-              splt_u_cleanstring(state, artist, error);
-              if (*error < 0) { goto function_end; }
 
               //put artist info to client
               client_infos = malloc(sizeof(char) * (strlen(artist)+30));
@@ -1043,8 +1038,6 @@ int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
               }
 
               album = splt_t_get_tags_char_field(state,0, SPLT_TAGS_ALBUM);
-              splt_u_cleanstring(state, album, error);
-              if (*error < 0) { goto function_end; }
 
               //put album info to client
               client_infos = malloc(sizeof(char) * (strlen(album)+30));
@@ -1737,8 +1730,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   if (winsockinit != 0)
   {
     splt_t_clean_strerror_msg(state);
-    error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
-    return error;
+    *error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
+    return output;
   }
 #else
   int fd = 0;

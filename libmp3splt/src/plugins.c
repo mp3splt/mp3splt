@@ -60,7 +60,7 @@ int scandir(const char *dir, struct dirent ***namelist,
   int free_memory = 0;
   int we_have_error = 0;
 
-  while (file = readdir(directory))
+  while ((file = readdir(directory)))
   {
     if ((filter == NULL) || (filter(file)))
     {
