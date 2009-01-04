@@ -22,7 +22,11 @@ mp3splt_gtk_SOURCES = \
 	mp3splt-gtk.c mp3splt-gtk.h \
 	util.h
 
-INCLUDES = @GTK_CFLAGS@ -DPIXMAP_PATH=\""$(datadir)/pixmaps/"\" -Wall
+INCLUDES = @GTK_CFLAGS@ -Wall
+
+if NOT_WIN32
+INCLUDES += -DPIXMAP_PATH=\""$(datadir)/pixmaps/"\"
+endif
 
 mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 -lmp3splt
 

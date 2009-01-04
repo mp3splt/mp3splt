@@ -751,9 +751,9 @@ void cell_edited_event (GtkCellRendererText *cell,
         {
           new_point.mins = 0;
         }
-      if (new_point.mins > 2000)
+      if (new_point.mins > INT_MAX/6000)
         {
-          new_point.mins = 2000;
+          new_point.mins = INT_MAX/6000;
         }
           
       update_splitpoint(i,new_point);
@@ -1195,7 +1195,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   
   //number of tracks
-  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, 0, 2000, 1,
+  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, 0, INT_MAX, 1,
                                               10.0, 0.0);
   //the number of tracks spinner
   spinner_silence_number_tracks = gtk_spin_button_new (adj, 1, 0);
@@ -1427,7 +1427,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 
   /* minutes and seconds spinners */
   spinner_minutes = create_init_spinner(hbox, 
-                                        0, 2000,
+                                        0, INT_MAX/6000,
                                         _("Minutes:"),
                                         //0 means spinner minutes
                                         0);
@@ -2018,7 +2018,7 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
 
 //transform garray to array
 void garray_to_array(GArray *spltpoints, 
-                     gint *hundredth)
+                     glong *hundredth)
 {
   gint i;
   Split_point point;
@@ -2027,15 +2027,22 @@ void garray_to_array(GArray *spltpoints,
     {
       point = g_array_index(splitpoints, Split_point, i);
       //convert to hundreds
-      hundredth[i] = point.mins*6000 
-        + point.secs*100 + point.hundr_secs;
+      if (point.mins >= (INT_MAX-1)/6000)
+      {
+	      hundredth[i] = LONG_MAX;
+      }
+      else
+      {
+	      hundredth[i] = point.mins * 6000 +
+		      point.secs * 100 + point.hundr_secs;
+      }
     }
 }
 
 //puts the splitpoints in the state
 void put_splitpoints_in_the_state(splt_state *state)
 {
-  gint hundr[splitnumber];
+  glong hundr[splitnumber];
   garray_to_array(splitpoints, hundr);
   gint i;
   
