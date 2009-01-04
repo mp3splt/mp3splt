@@ -531,13 +531,14 @@ void update_splitpoints_from_the_state()
         {
           //ugly hack because we use maximum ints in the GUI
           //-GUI must be changed to accept long values
-          int point_value = points[i].value;
-          if (point_value > INT_MAX)
+          long old_point_value = points[i].value;
+          int point_value = (int) old_point_value;
+          if (old_point_value > INT_MAX)
           {
-            point_value = INT_MAX;
+            point_value = INT_MAX - 1;
           }
 
-          //we get the minutes, seconds and hudreths
+          //we get the minutes, seconds and hundreths
           get_secs_mins_hundr(point_value,
                               &spin_mins, &spin_secs,
                               &spin_hundr_secs);
