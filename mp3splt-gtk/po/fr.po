@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2008-12-10 22:35+0100\n"
+"POT-Creation-Date: 2009-01-04 11:39+0100\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -31,109 +31,109 @@ msgstr "Kbps"
 msgid "Khz"
 msgstr "Khz"
 
-#: src/tree_tab.c:653 src/tree_tab.c:1011
+#: src/tree_tab.c:655 src/tree_tab.c:1013
 msgid " error : you already have the splitpoint in table "
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:723 src/tree_tab.c:1014 src/freedb_tab.c:560
+#: src/tree_tab.c:725 src/tree_tab.c:1016 src/freedb_tab.c:560
 #: src/freedb_tab.c:582
 msgid "description here"
 msgstr "ici, une description"
 
-#: src/tree_tab.c:1110 src/tree_tab.c:1482
+#: src/tree_tab.c:1130 src/tree_tab.c:1502
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1208
+#: src/tree_tab.c:1228
 msgid " remove silence between tracks"
 msgstr ""
 
-#: src/tree_tab.c:1411
+#: src/tree_tab.c:1431
 msgid "Minutes:"
 msgstr "Minutes:"
 
-#: src/tree_tab.c:1416
+#: src/tree_tab.c:1436
 msgid "Seconds:"
 msgstr "Secondes:"
 
-#: src/tree_tab.c:1422
+#: src/tree_tab.c:1442
 msgid "Hundredths:"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:1431
+#: src/tree_tab.c:1451
 msgid "_Add"
 msgstr "_Ajouter"
 
-#: src/tree_tab.c:1437
+#: src/tree_tab.c:1457
 msgid "add splitpoint"
 msgstr "ajouter un point de coupure"
 
-#: src/tree_tab.c:1441
+#: src/tree_tab.c:1461
 msgid "_Remove"
 msgstr "_Effacer"
 
-#: src/tree_tab.c:1448
+#: src/tree_tab.c:1468
 msgid "remove rows"
 msgstr "effacer les lignes"
 
-#: src/tree_tab.c:1452
+#: src/tree_tab.c:1472
 msgid "Remove all"
 msgstr "Effacer tout"
 
-#: src/tree_tab.c:1459
+#: src/tree_tab.c:1479
 msgid "remove all rows"
 msgstr "effacer toutes les lignes"
 
-#: src/tree_tab.c:1477
+#: src/tree_tab.c:1497
 msgid "_Silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1631
+#: src/tree_tab.c:1651
 msgid " finished "
 msgstr ""
 
-#: src/tree_tab.c:1639
+#: src/tree_tab.c:1659
 msgid " cannot split preview last splitpoint"
 msgstr ""
 
-#: src/tree_tab.c:1685
+#: src/tree_tab.c:1705
 msgid " cannot preview, not connected to player "
 msgstr ""
 
-#: src/tree_tab.c:1750
+#: src/tree_tab.c:1770
 msgid "Keep"
 msgstr ""
 
-#: src/tree_tab.c:1764 src/split_files.c:120
+#: src/tree_tab.c:1784 src/split_files.c:120
 msgid "Filename"
 msgstr "Nom fichier"
 
-#: src/tree_tab.c:1778
+#: src/tree_tab.c:1798
 #, fuzzy
 msgid "Secs"
 msgstr "Secondes"
 
-#: src/tree_tab.c:1792
+#: src/tree_tab.c:1812
 #, fuzzy
 msgid "Mins"
 msgstr "Minutes"
 
-#: src/tree_tab.c:1806
+#: src/tree_tab.c:1826
 #, fuzzy
 msgid "Hundr"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:1816
+#: src/tree_tab.c:1836
 #, fuzzy
 msgid "Length"
 msgstr "anglais"
 
-#: src/tree_tab.c:1827
+#: src/tree_tab.c:1847
 msgid "LiveP"
 msgstr ""
 
-#: src/tree_tab.c:1838
+#: src/tree_tab.c:1858
 #, fuzzy
 msgid "SplitP"
 msgstr "Coupure"
@@ -309,7 +309,7 @@ msgstr "Coupure"
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1236 src/main_win.c:694
+#: src/preferences_tab.c:1236 src/main_win.c:691
 msgid "Player"
 msgstr "Lecteur"
 
@@ -353,7 +353,7 @@ msgstr ""
 msgid "_Connect    "
 msgstr "_Connecter    "
 
-#: src/player_tab.c:892 src/main_win.c:390 src/main_win.c:437
+#: src/player_tab.c:892 src/main_win.c:387 src/main_win.c:434
 msgid "connect to player"
 msgstr "se connecter au lecteur"
 
@@ -361,7 +361,7 @@ msgstr "se connecter au lecteur"
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:902 src/main_win.c:380
+#: src/player_tab.c:902 src/main_win.c:377
 msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
@@ -477,79 +477,75 @@ msgid " info: starting time mode split... "
 msgstr ""
 
 #: src/main_win.c:331
-msgid " info: starting silence mode split... "
-msgstr ""
-
-#: src/main_win.c:334
 #, fuzzy
 msgid " info: starting error mode split... "
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:357
+#: src/main_win.c:354
 #, fuzzy
 msgid " error: no file selected "
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:362
+#: src/main_win.c:359
 #, fuzzy
 msgid " error: split in progress... "
 msgstr " erreur: les points de coupure ne sont pas en ordre"
 
-#: src/main_win.c:416
+#: src/main_win.c:413
 #, fuzzy
 msgid "set window default size"
 msgstr "rendre impossible le redimensionnement de la fenetre"
 
-#: src/main_win.c:457
+#: src/main_win.c:454
 msgid "split !"
 msgstr "coupe le fichier !"
 
-#: src/main_win.c:475
+#: src/main_win.c:472
 msgid "really wanna quit ?"
 msgstr "vraiment quitter ?"
 
-#: src/main_win.c:498
+#: src/main_win.c:495
 msgid "File"
 msgstr "Fichier"
 
-#: src/main_win.c:499
+#: src/main_win.c:496
 msgid "Help"
 msgstr "Aide"
 
-#: src/main_win.c:501 src/main_win.c:503
+#: src/main_win.c:498 src/main_win.c:500
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:506 src/main_win.c:508
+#: src/main_win.c:503 src/main_win.c:505
 msgid "About"
 msgstr "à propos"
 
-#: src/main_win.c:612 src/main_win.c:772
+#: src/main_win.c:609 src/main_win.c:769
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:639 src/main_win.c:748
+#: src/main_win.c:636 src/main_win.c:745
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:709
+#: src/main_win.c:706
 msgid "Splitpoints"
 msgstr "PointsCoupure"
 
-#: src/main_win.c:722
+#: src/main_win.c:719
 msgid "Split files"
 msgstr "Fichiers coupés"
 
-#: src/main_win.c:735
+#: src/main_win.c:732
 msgid "cddb&cue"
 msgstr "cddb&cue"
 
-#: src/main_win.c:759
+#: src/main_win.c:756
 #, fuzzy
 msgid "Split mode"
 msgstr "Coupure"
 
-#: src/main_win.c:794
+#: src/main_win.c:791
 #, fuzzy
 msgid "Stop"
 msgstr "stop"
