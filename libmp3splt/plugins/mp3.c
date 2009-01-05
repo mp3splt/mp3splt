@@ -3547,9 +3547,8 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
-  char *filename = splt_t_get_filename_to_split(state);
-
 #ifndef NO_ID3TAG
+  char *filename = splt_t_get_filename_to_split(state);
   splt_mp3_get_original_tags(filename, state, error);
 #else
   //splt_u_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
