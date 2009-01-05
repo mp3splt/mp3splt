@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-01-04 11:39+0100\n"
+"POT-Creation-Date: 2009-01-04 13:50+0100\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -36,8 +36,8 @@ msgid " error : you already have the splitpoint in table "
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:725 src/tree_tab.c:1016 src/freedb_tab.c:560
-#: src/freedb_tab.c:582
+#: src/tree_tab.c:725 src/tree_tab.c:1016 src/freedb_tab.c:561
+#: src/freedb_tab.c:583
 msgid "description here"
 msgstr "ici, une description"
 
@@ -602,24 +602,24 @@ msgstr "Numéro"
 msgid "please wait... contacting freedb.org"
 msgstr "veuillez attendre... connexion avec freedb.org"
 
-#: src/freedb_tab.c:654
+#: src/freedb_tab.c:655
 #, fuzzy
 msgid "Search freedb2.org : "
 msgstr "Rechercher dans freedb.org : "
 
-#: src/freedb_tab.c:665
+#: src/freedb_tab.c:666
 msgid "_Search"
 msgstr ""
 
-#: src/freedb_tab.c:707
+#: src/freedb_tab.c:708
 msgid "Selected album : "
 msgstr "Album sélectionné :"
 
-#: src/freedb_tab.c:718
+#: src/freedb_tab.c:719
 msgid "_Add splitpoints"
 msgstr "Ajouter les points"
 
-#: src/freedb_tab.c:725
+#: src/freedb_tab.c:726
 msgid "set splitpoints to the splitpoints table"
 msgstr "mettre les points au tableau de points de coupure"
 
