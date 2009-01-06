@@ -55,17 +55,8 @@ AC_C_BIGENDIAN
 AC_C_CONST
 
 #################################################################
-# Enable libtool and check for libltdl and define @LIBLTDL@ and @INCLTDL@
+# Enable libtool, check for libltdl and define @LIBLTDL@ and @INCLTDL@
 #################################################################
-
-#m4_ifdef([LT_INIT],
-#[
-#LT_INIT([dlopen])
-#LTDL_INIT([installable])
-#],
-#
-#[ AC_WITH_LTDL ]
-#)
 
 AC_WITH_LTDL
 AC_LIBTOOL_WIN32_DLL
