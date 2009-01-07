@@ -1,7 +1,7 @@
 * Alexandru Ionut Munteanu - <io_fx@yahoo.fr>: Author and main maintainer of mp3splt-gtk
 
 	-mp3splt-gtk uses libmp3splt
-	-libmp3splt is based on mp3splt
+	-libmp3splt is based on mp3splt v2.1c
 
 * Matteo Trotta - <mtrotta@users.sourceforge.net>: Author and main maintainer of Mp3Splt Project
 
@@ -15,6 +15,8 @@ People who contributed to mp3splt development
 People who contributed to mp3splt-gtk development
 
   - Roberto Neri : patch from BMP to audacious support
+
+Please see also the AUTHORS file from libmp3splt.
 
 homepage :
 	http://mp3splt.sourceforge.net/

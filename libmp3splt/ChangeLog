@@ -1,3 +1,19 @@
+libmp3splt version 0.5.3
+-------------------------------------------------------------
+
+- added ID3v2 support when compiling with 'libid3tag' support
+- added '@nX' to '-o' option to specify the number of digits (X) in the
+output track identifier number
+- added the '@N' variable when using the '-g' option for auto incrementing
+the track number in the tags
+- fixed bug #2398397 : 'license version broken in README'
+- fixed the zeroes not being added before the number when using @n
+- fixed a lot of ugly codings and compiler warnings
+- fixed problem with configure yielding error when libid3tag not found
+- fixed libtool incompatibility issue (libtool: link: cannot find the
+library `../libltdl/libltdlc.la'), bug #2144760
+- updated to check for illegal characters in output filenames
+
 libmp3splt version 0.5.2
 -------------------------------------------------------------
 - fixed bug crashing the applications on the silence split when

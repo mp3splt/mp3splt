@@ -1,6 +1,24 @@
 Please read the ChangeLog of libmp3splt for more information.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.5.3
+
+- moved 'silence split' in the 'splitpoints' tab to set the splitpoints
+from silence detection before splitting the file
+- added a silence wave in the player
+- added 'skippoint' option : allows the user to skip some splitpoints from
+creating the split file if the 'Keep' column is unchecked in the 'splitpoints' tab
+- created a completely new windows installer allowing to install only some
+components and to uninstall only the installed files
+- fixed the 'quit' button which did not always quit
+- fixed playlist hide on player change
+- fixed bug #2407192 : 'mp3splt-gtk loose the last split file with CUE files'
+- fixed an error coding in the gstreamer player infos
+- removed most of the warnings from the compilation (+ removed unuseful and
+dangerous casts)
+- small renames in the gtk player tab help
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.5.2
 
 - released to follow the same version with libmp3splt
