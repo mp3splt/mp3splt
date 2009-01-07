@@ -3,6 +3,26 @@ Check http://mp3splt.sourceforge.net for latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some of the changes above implemented in libmp3splt.
 
+# mp3splt v. 2.2.2
+
+- added ID3v2 support (for known tags like title, artist, album, track
+number, ...)
+- added '@nX' to '-o' option to specify the number of digits (X) in the
+output track identifier number
+- added '-N' option for Not writing mp3splt.log file
+- added the '@N' variable when using the '-g' option for auto incrementing
+the track number in the tags
+- created a completely new windows installer allowing to install only some
+components and to uninstall only the installed files
+- added some more documentation about the 'off' parameter
+- updated to check for illegal characters in output filenames
+- fixed bug with mp3splt not searching for plugins in its directory on
+Windows (it will now search in the directory of the 'mp3splt' executable
+if we detect a path from the launch command and in the installation directory
+written in the registry)
+- fixed the zeroes not being added before the number when using @n
+- fixed small bug about '-Q' not working right
+
 # mp3splt v. 2.2.1
 
 - corrected the -g option to be more intuitive
