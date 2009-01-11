@@ -38,6 +38,7 @@
 
 #ifdef __WIN32__
 #include <windows.h>
+#include <direct.h>
 #endif
 
 #include "splt.h"
@@ -1834,9 +1835,16 @@ int splt_u_put_output_format_filename(splt_state *state)
           }
           else
           {
-            snprintf(full_path_to_create, malloc_length - 1,
-                "%s%c%s", new_filename_path , SPLT_DIRCHAR, only_dirs);
-            splt_u_create_directories(state, full_path_to_create);
+            if (new_filename_path != NULL && new_filename_path[0] != '\0')
+            {
+              snprintf(full_path_to_create, malloc_length - 1,
+                  "%s%c%s", new_filename_path , SPLT_DIRCHAR, only_dirs);
+              splt_u_create_directories(state, full_path_to_create);
+            }
+            else
+            {
+              splt_u_create_directories(state, only_dirs);
+            }
           }
 
           if (full_path_to_create)
@@ -1852,11 +1860,6 @@ int splt_u_put_output_format_filename(splt_state *state)
       free(only_dirs);
       only_dirs = NULL;
     }
-  }
-  else
-  {
-    splt_u_cleanstring(state, output_filename, &error);
-    if (error < 0 ) { goto end; }
   }
 
   name_error = splt_t_set_splitpoint_name(state, cur_splt, output_filename);
@@ -2315,21 +2318,18 @@ int splt_u_create_directories(splt_state *state, const char *dir)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  DIR *d = NULL;
   
   splt_u_print_debug("Creating directory ...",0,dir);
   
   ptr = dir;
   while ((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)
     {
-      ptr++;
       strncpy(junk, dir, ptr-dir);
       junk[ptr-dir] = '\0';
-      
-      if (!(d = opendir(junk)))
-        {
-          //splt_u_cleanstring_(state, junk, &result, SPLT_TRUE);
+      ptr++;
 
+      if (! splt_u_check_if_directory(junk))
+        {
           splt_u_print_debug("directory ...",0, junk);
 
           if (result < 0) { goto end; }
@@ -2350,10 +2350,6 @@ int splt_u_create_directories(splt_state *state, const char *dir)
             }
           }
         }
-      else
-        {
-          closedir(d);
-        }
     }
 
   //we have created all the directories except the last one
@@ -2363,11 +2359,9 @@ int splt_u_create_directories(splt_state *state, const char *dir)
     result = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     goto end;
   }
-  //splt_u_cleanstring_(state, last_dir, &result, SPLT_TRUE);
 
-  if (!(d = opendir(last_dir)))
+  if (! splt_u_check_if_directory(last_dir))
     {
-
       splt_u_print_debug("final directory ...",0, last_dir);
 
 #ifdef __WIN32__
@@ -2381,10 +2375,6 @@ int splt_u_create_directories(splt_state *state, const char *dir)
           splt_t_set_error_data(state,last_dir);
           result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
         }
-    }
-  else
-    {
-      closedir(d);
     }
   
   if (last_dir)
@@ -2412,20 +2402,18 @@ void splt_u_print(char *mess)
 //check if its a directory
 int splt_u_check_if_directory(char *fname)
 {
-  struct stat buffer;
-  int         status = 0;
-
   if (fname == NULL)
   {
     return SPLT_FALSE;
   }
   else
   {
-    status = stat(fname, &buffer);
+    mode_t st_mode;
+    int status = splt_u_stat(fname, &st_mode, NULL);
     if (status == 0)
     {
       //if it is a directory
-      if (S_ISDIR(buffer.st_mode))
+      if (S_ISDIR(st_mode))
       {
         return SPLT_TRUE;
       }
@@ -2444,21 +2432,77 @@ int splt_u_check_if_directory(char *fname)
 }
 
 #ifdef __WIN32__
-static wchar_t *splt_u_convert_char_to_wchar(const char *source)
+static wchar_t *splt_u_win32_encoding_to_utf16(UINT encoding, const char *source)
 {
-	wchar_t *dest = NULL;
-	int converted_size = MultiByteToWideChar(CP_UTF8, 0, source, -1, NULL, 0);
-	if (converted_size > 0)
-	{
-		dest = malloc(sizeof(wchar_t *) * converted_size);
-		MultiByteToWideChar(CP_UTF8, 0, source, -1, dest, converted_size);
-	}
-	else
-	{
-		return NULL;
-	}
+  wchar_t *dest = NULL;
 
-	return dest;
+  int converted_size = MultiByteToWideChar(encoding, 0, source, -1, NULL, 0);
+  if (converted_size > 0)
+  {
+    dest = malloc(sizeof(wchar_t) * converted_size);
+    if (dest)
+    {
+      MultiByteToWideChar(encoding, 0, source, -1, dest, converted_size);
+    }
+  }
+
+  return dest;
+}
+
+static char *splt_u_win32_utf16_to_encoding(UINT encoding, const wchar_t *source)
+{
+  char *dest = NULL;
+
+  int converted_size = WideCharToMultiByte(encoding, 0, source, -1, NULL, 0, NULL, NULL);
+  if (converted_size > 0)
+  {
+    dest = malloc(sizeof(char *) * converted_size);
+    if (dest)
+    {
+      WideCharToMultiByte(encoding, 0, source, -1, dest, converted_size, NULL, NULL);
+    }
+  }
+
+  return dest;
+}
+
+static wchar_t *splt_u_win32_utf8_to_utf16(const char *source)
+{
+  return splt_u_win32_encoding_to_utf16(CP_UTF8, source);
+}
+
+char *splt_u_win32_utf16_to_utf8(const wchar_t *source)
+{
+  return splt_u_win32_utf16_to_encoding(CP_UTF8, source);
+}
+
+static int splt_u_win32_check_if_encoding_is_utf8(const char *source)
+{
+  int is_utf8 = SPLT_FALSE;
+
+  if (source)
+  {
+    wchar_t *source_wchar = splt_u_win32_utf8_to_utf16(source);
+    if (source_wchar)
+    {
+      char *source2 = splt_u_win32_utf16_to_utf8(source_wchar);
+      if (source2)
+      {
+        if (strcmp(source, source2) == 0)
+        {
+          is_utf8 = SPLT_TRUE;
+        }
+
+        free(source2);
+        source2 = NULL;
+      }
+
+      free(source_wchar);
+      source_wchar = NULL;
+    }
+  }
+
+  return is_utf8;
 }
 #endif
 
@@ -2466,25 +2510,129 @@ static wchar_t *splt_u_convert_char_to_wchar(const char *source)
 FILE *splt_u_fopen(const char *filename, const char *mode)
 {
 #ifdef __WIN32__
-	wchar_t *wfilename = splt_u_convert_char_to_wchar(filename);
-	wchar_t *wmode = splt_u_convert_char_to_wchar(mode);
+  if (splt_u_win32_check_if_encoding_is_utf8(filename))
+  {
+    //fprintf(stdout,"Wide fopen _%s_\n",filename);
+    //fflush(stdout);
 
-	return _wfopen(wfilename, wmode);
-#else
-	return fopen(filename, mode);
+    wchar_t *wfilename = splt_u_win32_utf8_to_utf16(filename);
+    wchar_t *wmode = splt_u_win32_utf8_to_utf16(mode);
+
+    FILE *file = _wfopen(wfilename, wmode);
+    /*if (file != NULL)
+    {
+      fprintf(stdout,"wide fopen OK!\n");
+      fflush(stdout);
+    }*/
+
+    if (wfilename)
+    {
+      free(wfilename);
+      wfilename = NULL;
+    }
+
+    if (wmode)
+    {
+      free(wmode);
+      wmode = NULL;
+    }
+
+    return file;
+  }
+  else
 #endif
+  {
+    /*fprintf(stdout,"normal fopen _%s_\n",filename);
+    fflush(stdout);*/
+
+    return fopen(filename, mode);
+  }
 }
 
-#ifdef __WIN32__
 int splt_u_mkdir(const char *path)
 {
-	wchar_t *wpath = splt_u_convert_char_to_wchar(path);
-	return _wmkdir(wpath);
-}
+#ifdef __WIN32__
+  if (splt_u_win32_check_if_encoding_is_utf8(path))
+  {
+    wchar_t *wpath = splt_u_win32_utf8_to_utf16(path);
+
+    /*fprintf(stdout,"wide mkdir _%s_\n",path);
+    fflush(stdout);*/
+
+    int ret = _wmkdir(wpath);
+
+    if (wpath)
+    {
+      free(wpath);
+      wpath = NULL;
+    }
+
+    return ret;
+  }
+  else
+  {
+    /*fprintf(stdout,"normal mkdir _%s_\n",path);
+    fflush(stdout);*/
+
+    return mkdir(path);
+  }
 #else
-int splt_u_mkdir(const char *path, mode_t mode)
-{
-	return mkdir(path, mode);
-}
+  return mkdir(path, 0755);
 #endif
+}
+
+int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size)
+{
+#ifdef __WIN32__
+  if (splt_u_win32_check_if_encoding_is_utf8(path))
+  {
+    struct _stat buf;
+    wchar_t *wpath = splt_u_win32_utf8_to_utf16(path);
+
+    /*fprintf(stdout,"wide stat _%s_\n",path);
+    fflush(stdout);*/
+
+    int ret = _wstat(wpath, &buf);
+
+    if (wpath)
+    {
+      free(wpath);
+      wpath = NULL;
+    }
+
+    if (st_mode != NULL)
+    {
+      *st_mode = buf.st_mode;
+    }
+
+    if (st_size != NULL)
+    {
+      *st_size = buf.st_size;
+    }
+
+    return ret;
+  }
+  else
+#endif
+  {
+    struct stat buf;
+
+    /*fprintf(stdout,"normal stat _%s_\n",path);
+    fflush(stdout);*/
+ 
+    int ret = stat(path, &buf);
+
+    if (st_mode != NULL)
+    {
+      *st_mode = buf.st_mode;
+    }
+
+    if (st_size != NULL)
+    {
+      *st_size = buf.st_size;
+    }
+
+    return ret;
+  }
+}
 

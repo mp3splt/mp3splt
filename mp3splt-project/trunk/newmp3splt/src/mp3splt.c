@@ -120,6 +120,10 @@ typedef struct
   //the splitpoints parsed from the arguments
   long *splitpoints;
   int number_of_splitpoints;
+  //command line arguments : on windows, we need to
+  //keep the ones transformed to utf8 and free them later
+  char **argv;
+  int argc;
 } main_data;
 
 //we make a global variable, we use it in
@@ -133,6 +137,36 @@ void free_options(options **opt)
   {
     if (*opt)
     {
+      if ((*opt)->dir_arg)
+      {
+        free((*opt)->dir_arg);
+        (*opt)->dir_arg = NULL;
+      }
+
+      if ((*opt)->cddb_arg)
+      {
+        free((*opt)->cddb_arg);
+        (*opt)->cddb_arg = NULL;
+      }
+
+      if ((*opt)->m3u_arg)
+      {
+        free((*opt)->m3u_arg);
+        (*opt)->m3u_arg = NULL;
+      }
+
+      if ((*opt)->param_args)
+      {
+        free((*opt)->param_args);
+        (*opt)->param_args = NULL;
+      }
+
+      if ((*opt)->custom_tags)
+      {
+        free((*opt)->custom_tags);
+        (*opt)->custom_tags = NULL;
+      }
+
       if ((*opt)->output_format)
       {
         free((*opt)->output_format);
@@ -180,6 +214,25 @@ void free_main_struct(main_data **d)
         free(data->splitpoints);
         data->splitpoints = NULL;
       }
+
+#ifdef __WIN32__
+      //free argv
+      if (data->argv)
+      {
+        int i = 0;
+        for (i = 0; i < data->argc;i++)
+        {
+          if (data->argv[i])
+          {
+            free(data->argv[i]);
+            data->argv[i] = NULL;
+          }
+        }
+
+        free(data->argv);
+        data->argv = NULL;
+      }
+#endif 
 
       //free left variables in the state
       mp3splt_free_state(data->state, NULL);
@@ -256,9 +309,9 @@ void show_small_help_exit(main_data *data)
   print_message("\n"
       "USAGE (Please read man page for complete documentation)\n"
       "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... [END_TIME]\n"
-      "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59 (or EOF for End Of File). \n"
+      "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
+      "                   (or EOF for End Of File). \n"
       "\nOPTIONS (split mode options)\n"
-      //"\tIf you have a ogg stream, split from 0 to a big number to fix it; \n\t example : mp3splt stream_song.ogg 0.0 7000.0\n"
       " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
       " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n"
       "      .cddb or .cue file or from Internet (\"query\"). Use -a to auto-adjust.\n"
@@ -271,6 +324,9 @@ void show_small_help_exit(main_data *data)
       " -v   Prints current version and exits\n"
       " -h   Shows this help\n"
       "\n(other options)\n"
+      " -1   For mp3 files, force output tags as version 1\n"
+      " -2   For mp3 files, force output tags as version 2\n"
+      "      (default is to set the same version as the file to split)\n"
       " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
       " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
       " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n"
@@ -290,7 +346,8 @@ void show_small_help_exit(main_data *data)
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
       " -N   Don't create the 'mp3splt.log' log file when using '-s'.\n"
       " -q   Quiet mode: try not prompt (if possible) and print less messages.\n"
-      " -Q   Very quiet mode: don't print anything to stdout and no progress bar (also enables -q).\n"
+      " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
+      "       (also enables -q).\n"
       " -D   Debug mode: used to debug the program (by developers).\n\n"
       "      Read man page for complete documentation.\n");
 
@@ -305,32 +362,26 @@ void show_small_help_exit(main_data *data)
 }
 
 //
-char **rmopt (char **argv, int offset, int tot)
+char **rmopt(char **argv, int offset, int tot)
 {
+#ifdef __WIN32__
+  int i = 0;
+  for (i = 0; i < offset;i++)
+  {
+    if (argv[i])
+    {
+      free(argv[i]);
+      argv[i] = NULL;
+    }
+  }
+#endif
+
   char **first = &argv[1];
   while (offset < tot)
   {
     *first = argv[offset];
     first++;
     offset++;
-  }
-
-  return argv;
-}
-
-//removes the element index from the argv
-char **rmopt2 (char **argv,int index, int tot)
-{
-  char **first = &argv[1];
-  int i = 1;
-  while (i < tot)
-  {
-    if (i != index)
-    {
-      *first = argv[i];
-      first++;
-    }
-    i++;
   }
 
   return argv;
@@ -1466,7 +1517,45 @@ void append_splitpoint(main_data *data, long value)
   }
 }
 
-main_data *create_main_struct()
+#ifdef __WIN32__
+char **win32_get_utf8_args(main_data *data)
+{
+  char **argv_utf8 = my_malloc(sizeof(char *) * data->argc, data);
+  LPWSTR *argv_utf16 = NULL;
+  int nArgs = 0;
+  int i = 0;
+
+  argv_utf16 = CommandLineToArgvW(GetCommandLineW(), &nArgs);
+  if (argv_utf16 == NULL )
+  {
+    if (argv_utf8)
+    {
+      free(argv_utf8);
+      argv_utf8 = NULL;
+    }
+
+    print_error_exit("CommandLineToArgvW failed (oh !)", data);
+  }
+  else
+  {
+    for (i=0; i<nArgs; i++)
+    {
+      argv_utf8[i] = mp3splt_win32_utf16_to_utf8((wchar_t *)argv_utf16[i]);
+      if (argv_utf8[i] == NULL)
+      {
+        print_error_exit("failed to allocate argv_utf8 memory", data);
+      }
+    }
+
+    LocalFree(argv_utf16);
+    argv_utf16 = NULL;
+  }
+
+  return argv_utf8;
+}
+#endif
+
+main_data *create_main_struct(int argc, char **orig_argv)
 {
   main_data *data = NULL;
   data = my_malloc(sizeof(main_data), data);
@@ -1486,11 +1575,19 @@ main_data *create_main_struct()
   data->sl->number_of_levels = 0;
   data->sl->print_silence_level = SPLT_TRUE;
 
+  data->argc = argc;
+#ifdef __WIN32__
+  data->argv = NULL;
+  data->argv = win32_get_utf8_args(data);
+#else
+  data->argv = orig_argv;
+#endif
+
   return data;
 }
 
 //main program starts here
-int main(int argc, char *argv[])
+int main(int argc, char **orig_argv)
 {
   console_out = stdout;
   console_err = stderr;
@@ -1499,7 +1596,7 @@ int main(int argc, char *argv[])
   //possible error
   int err = SPLT_OK;
 
-  main_data *data = create_main_struct();
+  main_data *data = create_main_struct(argc, orig_argv);
 
   //we create our state
   data->state = mp3splt_new_state(&err);
@@ -1527,12 +1624,18 @@ int main(int argc, char *argv[])
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option = getopt(argc, argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQN")) != -1)
+  while ((option = getopt(data->argc, data->argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQN12")) != -1)
   {
     switch (option)
     {
       case 'h':
         show_small_help_exit(data);
+        break;
+      case '1':
+        mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
+        break;
+      case '2':
+        mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
         break;
       case 'D':
         mp3splt_set_int_option(state, SPLT_OPT_DEBUG_MODE, SPLT_TRUE);
@@ -1585,15 +1688,15 @@ int main(int argc, char *argv[])
         //default tags
         mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
         opt->c_option = SPLT_TRUE;
-        opt->cddb_arg = optarg;
+        opt->cddb_arg = strdup(optarg);
         break;
       case 'm':
         opt->m_option = SPLT_TRUE;
-        opt->m3u_arg = optarg;
+        opt->m3u_arg = strdup(optarg);
         mp3splt_set_m3u_filename(state, opt->m3u_arg);
         break;
       case 'd':
-        opt->dir_arg = optarg;
+        opt->dir_arg = strdup(optarg);
         opt->d_option = SPLT_TRUE;
         break;
       case 'N':
@@ -1636,11 +1739,11 @@ int main(int argc, char *argv[])
         break;
       case 'p':
         opt->p_option = SPLT_TRUE;
-        opt->param_args = optarg;
+        opt->param_args = strdup(optarg);
         break;
       case 'g':
         mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
-        opt->custom_tags = optarg;
+        opt->custom_tags = strdup(optarg);
         opt->g_option = SPLT_TRUE;
         break;
       case 'Q':
@@ -1674,7 +1777,7 @@ int main(int argc, char *argv[])
   //add special directory search for plugins on Windows
 #ifdef __WIN32__
   //add the directory of the executable in the plugin scan directories
-  char *executable = strdup(argv[0]);
+  char *executable = strdup(data->argv[0]);
   char *end = strrchr(executable, SPLT_DIRCHAR);
   if (end)
   {
@@ -1774,8 +1877,8 @@ int main(int argc, char *argv[])
 
   if (optind > 1)
   {
-    argv = rmopt(argv, optind, argc);
-    argc -= optind-1;
+    data->argv = rmopt(data->argv, optind, data->argc);
+    data->argc -= optind-1;
   }
 
   //check arguments
@@ -1797,9 +1900,9 @@ int main(int argc, char *argv[])
   data->number_of_splitpoints = 0;
   char *pointer = NULL;
   //we get out the filenames and the splitpoints from the left arguments
-  for (i=1; i < argc; i++)
+  for (i=1; i < data->argc; i++)
   {
-    pointer = argv[i];
+    pointer = data->argv[i];
     long hundreths = c_hundreths(pointer);
     if (hundreths != -1)
     {

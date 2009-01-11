@@ -156,12 +156,9 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
   if ((strcmp(new_filename_path, "") != 0) &&
       (strcmp(new_filename_path, current_directory) != 0))
   {
-    //used to see if the file exists
-    struct stat buffer;
-    int         status;
-
-    //-1 means error
-    if((status = stat(new_filename_path, &buffer)) == -1)
+    mode_t st_mode;
+    int status = splt_u_stat(new_filename_path, &st_mode, NULL);
+    if(status == -1)
     {
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state, new_filename_path);
@@ -169,10 +166,8 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
     }
     else
     {
-      //if it is a directory
-      if (S_ISDIR(buffer.st_mode) != 0)
+      if (S_ISDIR(st_mode) != 0)
       {
-        //no error
         return;
       }
       else
@@ -448,9 +443,6 @@ void splt_check_file_type(splt_state *state, int *error)
 //-we are not interested in errors
 int splt_check_is_file(splt_state *state, const char *fname)
 {
-  struct stat buffer;
-  int status = 0;
-
   if (fname == NULL)
   {
     return SPLT_FALSE;
@@ -462,12 +454,12 @@ int splt_check_is_file(splt_state *state, const char *fname)
     {
       return SPLT_TRUE;
     }
-    //not stdin :
-    status = stat(fname, &buffer);
+
+    mode_t st_mode;
+    int status = splt_u_stat(fname, &st_mode, NULL);
     if (status == 0)
     {
-      //if it is a file
-      if (S_ISREG(buffer.st_mode))
+      if (S_ISREG(st_mode))
       {
         return SPLT_TRUE;
       }
