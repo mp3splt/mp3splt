@@ -242,6 +242,11 @@ typedef struct {
    * @brief The genre
    */
   unsigned char genre;
+
+  /*
+   * @brief tags version (for mp3) : 1 or 2
+   */
+  int tags_version;
 } splt_tags;
 
 /**
@@ -563,6 +568,14 @@ typedef struct {
    * if we enable the silence points log ('mp3splt.log')
    */
   int enable_silence_log;
+
+  /**
+   * If we force the mp3 tags version to 1 or 2;
+   * Set to 0 if force disable;
+   * If disabled, original tags version is set to split files,
+   *  or version 1 if compiled without libid3tag support
+   */
+  int force_tags_version;
 } splt_options;
 
 /**********************************/
@@ -1159,7 +1172,11 @@ typedef enum {
   /**
    * if we enable the silence points log ('mp3splt.log')
    */
-  SPLT_OPT_ENABLE_SILENCE_LOG
+  SPLT_OPT_ENABLE_SILENCE_LOG,
+  /**
+   * if we force a tags version or not
+   */
+  SPLT_OPT_FORCE_TAGS_VERSION
 } splt_int_options;
 
 //option types : float
@@ -1479,6 +1496,10 @@ const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
 const splt_wrap *mp3splt_get_wrap_files(splt_state *state, int *error);
 
 int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir);
+
+#ifdef __WIN32__
+char *mp3splt_win32_utf16_to_utf8(const wchar_t *source);
+#endif
 
 #define MP3SPLT_MP3SPLT_H
 

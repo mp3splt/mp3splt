@@ -51,6 +51,7 @@ int scandir(const char *dir, struct dirent ***namelist,
   DIR *directory = NULL;
   int number_of_files = 0;
 
+  //TODO: doesn't work with utf dirs on windows
   directory = opendir(dir);
   if (directory == NULL)
   {

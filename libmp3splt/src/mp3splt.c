@@ -1237,3 +1237,11 @@ int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir)
   return splt_p_append_plugin_scan_dir(state, dir);
 }
 
+#ifdef __WIN32__
+//returned result must be free'd
+char *mp3splt_win32_utf16_to_utf8(const wchar_t *source)
+{
+  return splt_u_win32_utf16_to_utf8(source);
+}
+#endif
+

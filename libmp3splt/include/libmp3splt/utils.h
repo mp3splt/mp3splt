@@ -94,12 +94,12 @@ char *splt_u_strerror(splt_state *state, int error_code);
 
 int splt_u_check_if_directory(char *fname);
 
+int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size);
 FILE *splt_u_fopen(const char *filename, const char *mode);
+int splt_u_mkdir(const char *path);
 
 #ifdef __WIN32__
-int splt_u_mkdir(const char *path);
-#else
-int splt_u_mkdir(const char *path, mode_t mode);
+char *splt_u_win32_utf16_to_utf8(const wchar_t *source);
 #endif
 
 #define MP3SPLT_UTILS_H

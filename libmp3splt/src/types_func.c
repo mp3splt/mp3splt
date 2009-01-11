@@ -1150,7 +1150,7 @@ int splt_t_append_only_non_null_previous_tags(splt_state *state,
     }
     if (error != SPLT_OK)
       return error;
-    if (track != -1)
+    if (track != -LONG_MAX)
     {
       error = splt_t_set_tags_int_field(state,
           old_tagsnumber, SPLT_TAGS_TRACK, track);
@@ -1177,8 +1177,9 @@ static void splt_t_set_empty_tags(splt_state *state, int index)
   state->split.tags[index].performer = NULL;
   state->split.tags[index].year = NULL;
   state->split.tags[index].comment = NULL;
-  state->split.tags[index].track = 0;
+  state->split.tags[index].track = -LONG_MAX;
   state->split.tags[index].genre = 0x0;
+  state->split.tags[index].tags_version = 0;
 }
 
 //allocate new tags if necessary
@@ -1450,7 +1451,7 @@ void splt_t_clean_original_tags(splt_state *state)
     free(state->original_tags.comment);
     state->original_tags.comment = NULL;
   }
-  state->original_tags.track = -1;
+  state->original_tags.track = -LONG_MAX;
   //12 means "other"
   state->original_tags.genre = 12;
 }
@@ -1615,6 +1616,9 @@ int splt_t_set_original_tags_field(splt_state *state,
     case SPLT_TAGS_GENRE:
       state->original_tags.genre = uchar_data;
       break;
+    case SPLT_TAGS_VERSION:
+      state->original_tags.tags_version = int_data;
+      break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
       break;
@@ -1659,6 +1663,10 @@ int splt_t_set_tags_int_field(splt_state *state, int index,
         snprintf(temp,100,"%d",data);
         splt_u_print_debug("Setting track tags at",index,temp);
         state->split.tags[index].track = data;
+        break;
+      case SPLT_TAGS_VERSION:
+        splt_u_print_debug("Setting tags version at",index,temp);
+        state->split.tags[index].tags_version = data;
         break;
       default:
         break;
@@ -1773,6 +1781,9 @@ int splt_t_get_tags_int_field(splt_state *state, int index, int tags_field)
     {
       case SPLT_TAGS_TRACK:
         return state->split.tags[index].track;
+        break;
+      case SPLT_TAGS_VERSION:
+        return state->split.tags[index].tags_version;
         break;
       default:
         splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
@@ -2046,6 +2057,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->options.remaining_tags_like_x = -1;
   state->options.auto_increment_tracknumber_tags = 0;
   state->options.enable_silence_log = SPLT_FALSE;
+  state->options.force_tags_version = 0;
 }
 
 //sets the error data information
@@ -2212,6 +2224,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_ENABLE_SILENCE_LOG:
       state->options.enable_silence_log = value;
       break;
+    case SPLT_OPT_FORCE_TAGS_VERSION:
+      state->options.force_tags_version = value;
+      break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
@@ -2290,6 +2305,9 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       break;
     case SPLT_OPT_ENABLE_SILENCE_LOG:
       return state->options.enable_silence_log;
+      break;
+    case SPLT_OPT_FORCE_TAGS_VERSION:
+      return state->options.force_tags_version;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
