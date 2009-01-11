@@ -2337,11 +2337,7 @@ int splt_u_create_directories(splt_state *state, const char *dir)
           //don't create output directories if we pretend to split
           if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
           {
-#ifdef __WIN32__
-            if ((splt_u_mkdir(junk))==-1)
-#else
-            if ((splt_u_mkdir(junk, 0755))==-1)
-#endif
+            if ((splt_u_mkdir(junk)) == -1)
             {
               splt_t_set_strerror_msg(state);
               splt_t_set_error_data(state,junk);
@@ -2361,21 +2357,16 @@ int splt_u_create_directories(splt_state *state, const char *dir)
   }
 
   if (! splt_u_check_if_directory(last_dir))
-    {
-      splt_u_print_debug("final directory ...",0, last_dir);
+  {
+    splt_u_print_debug("final directory ...",0, last_dir);
 
-#ifdef __WIN32__
-      if ((splt_u_mkdir(last_dir))==-1)
-        {
- #else
-      if ((splt_u_mkdir(last_dir, 0755))==-1)
-        {
-#endif
-          splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state,last_dir);
-          result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-        }
+    if ((splt_u_mkdir(last_dir)) == -1)
+    {
+      splt_t_set_strerror_msg(state);
+      splt_t_set_error_data(state,last_dir);
+      result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
     }
+  }
   
   if (last_dir)
   {
@@ -2512,18 +2503,10 @@ FILE *splt_u_fopen(const char *filename, const char *mode)
 #ifdef __WIN32__
   if (splt_u_win32_check_if_encoding_is_utf8(filename))
   {
-    //fprintf(stdout,"Wide fopen _%s_\n",filename);
-    //fflush(stdout);
-
     wchar_t *wfilename = splt_u_win32_utf8_to_utf16(filename);
     wchar_t *wmode = splt_u_win32_utf8_to_utf16(mode);
 
     FILE *file = _wfopen(wfilename, wmode);
-    /*if (file != NULL)
-    {
-      fprintf(stdout,"wide fopen OK!\n");
-      fflush(stdout);
-    }*/
 
     if (wfilename)
     {
@@ -2542,9 +2525,6 @@ FILE *splt_u_fopen(const char *filename, const char *mode)
   else
 #endif
   {
-    /*fprintf(stdout,"normal fopen _%s_\n",filename);
-    fflush(stdout);*/
-
     return fopen(filename, mode);
   }
 }
@@ -2555,9 +2535,6 @@ int splt_u_mkdir(const char *path)
   if (splt_u_win32_check_if_encoding_is_utf8(path))
   {
     wchar_t *wpath = splt_u_win32_utf8_to_utf16(path);
-
-    /*fprintf(stdout,"wide mkdir _%s_\n",path);
-    fflush(stdout);*/
 
     int ret = _wmkdir(wpath);
 
@@ -2571,9 +2548,6 @@ int splt_u_mkdir(const char *path)
   }
   else
   {
-    /*fprintf(stdout,"normal mkdir _%s_\n",path);
-    fflush(stdout);*/
-
     return mkdir(path);
   }
 #else
@@ -2588,9 +2562,6 @@ int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size)
   {
     struct _stat buf;
     wchar_t *wpath = splt_u_win32_utf8_to_utf16(path);
-
-    /*fprintf(stdout,"wide stat _%s_\n",path);
-    fflush(stdout);*/
 
     int ret = _wstat(wpath, &buf);
 
@@ -2617,9 +2588,6 @@ int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size)
   {
     struct stat buf;
 
-    /*fprintf(stdout,"normal stat _%s_\n",path);
-    fflush(stdout);*/
- 
     int ret = stat(path, &buf);
 
     if (st_mode != NULL)

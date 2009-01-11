@@ -1150,7 +1150,7 @@ int splt_t_append_only_non_null_previous_tags(splt_state *state,
     }
     if (error != SPLT_OK)
       return error;
-    if (track != -LONG_MAX)
+    if (track != -INT_MAX)
     {
       error = splt_t_set_tags_int_field(state,
           old_tagsnumber, SPLT_TAGS_TRACK, track);
@@ -1177,7 +1177,7 @@ static void splt_t_set_empty_tags(splt_state *state, int index)
   state->split.tags[index].performer = NULL;
   state->split.tags[index].year = NULL;
   state->split.tags[index].comment = NULL;
-  state->split.tags[index].track = -LONG_MAX;
+  state->split.tags[index].track = -INT_MAX;
   state->split.tags[index].genre = 0x0;
   state->split.tags[index].tags_version = 0;
 }
@@ -1451,7 +1451,7 @@ void splt_t_clean_original_tags(splt_state *state)
     free(state->original_tags.comment);
     state->original_tags.comment = NULL;
   }
-  state->original_tags.track = -LONG_MAX;
+  state->original_tags.track = -INT_MAX;
   //12 means "other"
   state->original_tags.genre = 12;
 }
