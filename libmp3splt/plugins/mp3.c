@@ -637,7 +637,7 @@ static char *splt_mp3_id3tag(const char *title, const char *artist,
   if (*error < 0) { goto error; }
   put_id3_frame_in_tag_with_content(id, ID3_FRAME_COMMENT, 3, comment, error);
   if (*error < 0) { goto error; }
-  if (track != -LONG_MAX)
+  if (track != -INT_MAX)
   {
     char track_str[255] = { '\0' };
     snprintf(track_str,254,"%d",track);
@@ -683,6 +683,7 @@ error:
 }
 #endif
 
+#ifdef NO_ID3TAG
 //returns a id3v1 buffer as string
 //return must be freed
 //-returns NULL if error
@@ -723,7 +724,7 @@ static char *splt_mp3_simple_id3v1(const char *title, const char *artist,
       id[j++]=buffer[i];
     }
     //if we have a positive track
-    if (track != -LONG_MAX)
+    if (track != -INT_MAX)
     {
       if (track != 0x00)
       {
@@ -742,6 +743,7 @@ static char *splt_mp3_simple_id3v1(const char *title, const char *artist,
 
   return id;
 }
+#endif
 
 //returns a id3v2 or id3v1 buffer as string
 //return must be freed
@@ -3233,18 +3235,18 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               memset(junk, 0x00, 384);
               char *ptr = filename;
               //create output directories for the wrapped files
-              while (((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)&&((ptr-filename)<384)) {
+              while (((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)&&((ptr-filename)<384))
+              {
                 ptr++;
                 strncpy(junk, filename, ptr-filename);
                 if (! splt_u_check_if_directory(junk))
-#ifdef _WIN32					
-                  if ((splt_u_mkdir(junk))==-1) {
-#else
-                  if ((splt_u_mkdir(junk, 0755))==-1) {
-#endif
+                {
+                  if ((splt_u_mkdir(junk))==-1)
+                  {
                     *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
                     return;
                   }
+                }
               }
             }
 
