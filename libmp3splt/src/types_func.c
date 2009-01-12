@@ -672,12 +672,17 @@ int splt_t_new_oformat(splt_state *state, const char *format_string)
   return error;
 }
 
+void splt_t_set_oformat_digits_tracks(splt_state *state, int tracks)
+{
+  int i = 0;
+  i = (int) (log10((double) (tracks)));
+  state->oformat.output_format_digits = (char) ((i+1) | 0x30);
+}
+
 //puts the number of digits for the output format
 void splt_t_set_oformat_digits(splt_state *state)
 {
-  int i = 0;
-  i = (int) (log10((double) (splt_t_get_splitnumber(state))));
-  state->oformat.output_format_digits = (char) ((i+1) | 0x30);
+  splt_t_set_oformat_digits_tracks(state, splt_t_get_splitnumber(state));
 }
 
 //puts the output format

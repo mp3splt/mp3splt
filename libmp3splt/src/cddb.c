@@ -51,6 +51,7 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
     int tracks, int *error)
 {
   int i = 0;
+
   char *artist0 = NULL;
   artist0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST));
   if (artist0 == NULL)
@@ -179,6 +180,8 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
         goto function_end;
       }
     }
+
+    splt_t_set_oformat_digits_tracks(state, tracks);
 
     if (err_format >= 0)
     {

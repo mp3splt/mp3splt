@@ -521,72 +521,72 @@ void update_splitpoints_from_the_state()
   
   //only if we have splitpoints
   if (max_splits > 0)
+  {
+    //erase rows from the splitpoints table
+    remove_all_rows(NULL,NULL);
+    gint i;
+
+    //for each splitpoint, we put it in the table
+    for(i = 0; i < max_splits;i++)
     {
-      //erase rows from the splitpoints table
-      remove_all_rows(NULL,NULL);
-      gint i;
+      //ugly hack because we use maximum ints in the GUI
+      //-GUI must be changed to accept long values
+      long old_point_value = points[i].value;
+      int point_value = (int) old_point_value;
+      if (old_point_value > INT_MAX)
+      {
+        point_value = INT_MAX;
+      }
 
-      //for each splitpoint, we put it in the table
-      for(i = 0; i < max_splits;i++)
-        {
-          //ugly hack because we use maximum ints in the GUI
-          //-GUI must be changed to accept long values
-          long old_point_value = points[i].value;
-          int point_value = (int) old_point_value;
-          if (old_point_value > INT_MAX)
-          {
-            point_value = INT_MAX;
-          }
+      //we get the minutes, seconds and hundreths
+      get_secs_mins_hundr(point_value,
+          &spin_mins, &spin_secs,
+          &spin_hundr_secs);
 
-          //we get the minutes, seconds and hundreths
-          get_secs_mins_hundr(point_value,
-                              &spin_mins, &spin_secs,
-                              &spin_hundr_secs);
-          
-          gint must_be_free = FALSE;
-          gchar *result_utf8 = points[i].name;
+      gint must_be_free = FALSE;
+      gchar *result_utf8 = points[i].name;
 
-          if (result_utf8 != NULL)
-            {
-              result_utf8 = transform_to_utf8(result_utf8, 
-                                              FALSE, &must_be_free);
-                  
-              g_snprintf(current_description,255,
-                         "%s", result_utf8);
-            }
-          else
-            {
-              //we reput the "description here" name
-              g_snprintf(current_description, 255, "%s",
-                         _("description here"));
-            }
-              
-          //free memory
-          if (must_be_free)
-            {
-              g_free(result_utf8);
-            }
-          
-          //we add the row
-          if (points[i].type == SPLT_SPLITPOINT)
-          {
-            add_row(TRUE);
-          }
-          else if (points[i].type == SPLT_SKIPPOINT)
-          {
-            add_row(FALSE);
-          }
-        }
-      
-      //we reput the "description here" name
-      g_snprintf(current_description, 255, "%s",
-                 _("description here"));
-      
-      update_minutes_from_spinner(NULL,NULL);
-      update_seconds_from_spinner(NULL,NULL);
-      update_hundr_secs_from_spinner(NULL,NULL);
-      update_add_button();
+      if (result_utf8 != NULL)
+      {
+        result_utf8 = transform_to_utf8(result_utf8, 
+            FALSE, &must_be_free);
+
+        g_snprintf(current_description,255,
+            "%s", result_utf8);
+      }
+      else
+      {
+        //we reput the "description here" name
+        g_snprintf(current_description, 255, "%s",
+            _("description here"));
+      }
+
+      //free memory
+      if (must_be_free)
+      {
+        g_free(result_utf8);
+      }
+
+      //we add the row
+      if (points[i].type == SPLT_SPLITPOINT)
+      {
+        add_row(TRUE);
+      }
+      else if (points[i].type == SPLT_SKIPPOINT)
+      {
+        add_row(FALSE);
+      }
     }
+
+    //we reput the "description here" name
+    g_snprintf(current_description, 255, "%s",
+        _("description here"));
+
+    update_minutes_from_spinner(NULL,NULL);
+    update_seconds_from_spinner(NULL,NULL);
+    update_hundr_secs_from_spinner(NULL,NULL);
+    update_add_button();
+  }
 }
 
 void put_freedb_splitpoints(gpointer *data)
