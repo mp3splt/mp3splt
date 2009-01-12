@@ -100,6 +100,7 @@ int splt_u_mkdir(const char *path);
 
 #ifdef __WIN32__
 char *splt_u_win32_utf16_to_utf8(const wchar_t *source);
+wchar_t *splt_u_win32_utf8_to_utf16(const char *source);
 #endif
 
 #define MP3SPLT_UTILS_H

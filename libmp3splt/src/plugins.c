@@ -37,22 +37,27 @@
 #include "splt.h"
 #include "plugins.h"
 
+#ifdef __WIN32__
+#include <direct.h>
+#endif
+
 //mingw does not provide BSD functions 'scandir' and 'alphasort'
 #ifdef __WIN32__
 
 //-returns -1 for not enough memory, -2 for other errors
 //-a positive (or 0) number if success
-int scandir(const char *dir, struct dirent ***namelist,
-		int(*filter)(const struct dirent *),
-		int(*compar)(const struct dirent **, const struct dirent **))
+int scandir(const char *dir, struct _wdirent ***namelist,
+		int(*filter)(const struct _wdirent *),
+		int(*compar)(const struct _wdirent **, const struct _wdirent **))
 {
-  struct dirent **files = NULL;
-  struct dirent *file = NULL;
-  DIR *directory = NULL;
+  struct _wdirent **files = NULL;
+  struct _wdirent *file = NULL;
+  _WDIR *directory = NULL;
   int number_of_files = 0;
 
-  //TODO: doesn't work with utf dirs on windows
-  directory = opendir(dir);
+  wchar_t *wdir = splt_u_win32_utf8_to_utf16(dir);
+  directory = _wopendir(wdir);
+  if (wdir) { free(wdir); wdir = NULL; }
   if (directory == NULL)
   {
     return -2;
@@ -61,7 +66,7 @@ int scandir(const char *dir, struct dirent ***namelist,
   int free_memory = 0;
   int we_have_error = 0;
 
-  while ((file = readdir(directory)))
+  while ((file = _wreaddir(directory)))
   {
     if ((filter == NULL) || (filter(file)))
     {
@@ -80,7 +85,7 @@ int scandir(const char *dir, struct dirent ***namelist,
         break;
       }
 
-      files[number_of_files] = malloc(sizeof(DIR));
+      files[number_of_files] = malloc(sizeof(struct _wdirent));
       if (files[number_of_files] == NULL)
       {
         free_memory = 1;
@@ -118,7 +123,7 @@ int scandir(const char *dir, struct dirent ***namelist,
     files = NULL;
   }
 
-  if (closedir(directory) == -1)
+  if (_wclosedir(directory) == -1)
   {
     return -2;
   }
@@ -134,9 +139,26 @@ int scandir(const char *dir, struct dirent ***namelist,
   return number_of_files;
 }
 
-int alphasort(const struct dirent **a, const struct dirent **b)
+int alphasort(const struct _wdirent **a, const struct _wdirent **b)
 {
-  return strcoll((*a)->d_name, (*b)->d_name);
+  char *name_a = splt_u_win32_utf16_to_utf8((*a)->d_name);
+  char *name_b = splt_u_win32_utf16_to_utf8((*b)->d_name);
+
+  int ret = strcoll(name_a, name_b);
+
+  if (name_a)
+  {
+    free(name_a);
+    name_a = NULL;
+  }
+
+  if (name_b)
+  {
+    free(name_b);
+    name_b = NULL;
+  }
+
+  return ret;
 }
 
 #endif
@@ -203,33 +225,59 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 }
 
 //function to filter the plugin files
+#ifdef __WIN32__
+static int splt_p_filter_plugin_files(const struct _wdirent *de)
+#else
 static int splt_p_filter_plugin_files(const struct dirent *de)
+#endif
 {
+#ifdef __WIN32__
+  char *file = splt_u_win32_utf16_to_utf8(de->d_name);
+#else
   char *file = (char *) de->d_name;
+#endif
   char *p_end = NULL;
   char *p_start = NULL;
-  if (strlen(file) >= 8)
+  if (file)
   {
-    //if the name starts with splt_and contains .so or .sl or .dll or .dylib
-    if (strncmp(file,"libsplt_",8) == 0)
+    if (strlen(file) >= 8)
     {
-      splt_u_print_debug("Looking at the file ",0, file);
-      //find the last '.' character
-      p_end = strrchr(file,'.');
-      p_start = strchr(file,'.');
-      //we only look at files containing only one dot
-      if ((p_end != NULL) && (p_start == p_end))
+      //if the name starts with splt_and contains .so or .sl or .dll or .dylib
+      if (strncmp(file,"libsplt_",8) == 0)
       {
-        if ((strcmp(p_end,".so") == 0) ||
-            (strcmp(p_end,".sl") == 0) ||
-            (strcmp(p_end,".dll") == 0) ||
-            (strcmp(p_end,".dylib") == 0))
+        splt_u_print_debug("Looking at the file ",0, file);
+        //find the last '.' character
+        p_end = strrchr(file,'.');
+        p_start = strchr(file,'.');
+        //we only look at files containing only one dot
+        if ((p_end != NULL) && (p_start == p_end))
         {
-          return 1;
+          if ((strcmp(p_end,".so") == 0) ||
+              (strcmp(p_end,".sl") == 0) ||
+              (strcmp(p_end,".dll") == 0) ||
+              (strcmp(p_end,".dylib") == 0))
+          {
+#ifdef __WIN32__
+            if (file)
+            {
+              free(file);
+              file = NULL;
+            }
+#endif
+            return 1;
+          }
         }
       }
     }
   }
+
+#ifdef __WIN32__
+  if (file)
+  {
+    free(file);
+    file = NULL;
+  }
+#endif
 
   return 0;
 }
@@ -240,7 +288,12 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
 {
   int return_value = SPLT_OK;
 
+#ifdef __WIN32__
+  struct _wdirent **files = NULL;
+#else
   struct dirent **files = NULL;
+#endif
+
   int number_of_files = 0;
   //scan the directory
   number_of_files = scandir(directory, &files, splt_p_filter_plugin_files,
@@ -254,11 +307,17 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
   }
   else if (new_number_of_files >= 0)
   {
+    char *fname = NULL;
+
     //for all the filtered found plugins,
     //copy their name
     while (new_number_of_files--)
     {
-      char *fname = files[new_number_of_files]->d_name;
+#ifdef __WIN32__
+      fname = splt_u_win32_utf16_to_utf8(files[new_number_of_files]->d_name);
+#else
+      fname = files[new_number_of_files]->d_name;
+#endif
       int fname_len = strlen(fname);
 
       //get the full directory + filename
@@ -327,10 +386,26 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
         free(dir_and_fname);
         dir_and_fname = NULL;
       }
+
+#ifdef __WIN32__
+      if (fname)
+      {
+        free(fname);
+        fname = NULL;
+      }
+#endif
     }
 
 end:
+#ifdef __WIN32__
+    if (fname)
+    {
+      free(fname);
+      fname = NULL;
+    }
+#endif
     ;
+
     if (files)
     {
       //free memory
@@ -450,13 +525,14 @@ static int splt_p_open_get_plugins_data(splt_state *state)
   {
     splt_u_print_debug("\nTrying to open the plugin ...",0,pl->data[i].plugin_filename);
 
+    //ltdl currently does not supports windows unicode path/filename
     pl->data[i].plugin_handle = lt_dlopen(pl->data[i].plugin_filename);
     //error
     if (! pl->data[i].plugin_handle)
     {
       splt_u_print_debug("Error loading the plugin",0,pl->data[i].plugin_filename);
       splt_u_print_debug(" - error message from libltdl : ",0,lt_dlerror());
-      
+
       //keep the index of this failed plugin in order to remove it
       //afterwards
       if (! plugin_index_to_remove)
