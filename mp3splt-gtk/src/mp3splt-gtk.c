@@ -491,7 +491,7 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   //put the callback function for miscellaneous messages
   mp3splt_set_message_function(the_state, put_message_from_library);
   //debug on or off
-  mp3splt_set_int_option(the_state,SPLT_OPT_DEBUG_MODE,SPLT_FALSE);
+  mp3splt_set_int_option(the_state,SPLT_OPT_DEBUG_MODE, SPLT_FALSE);
 
   //add special directory search for plugins on Windows
 #ifdef __WIN32__

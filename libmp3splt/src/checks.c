@@ -644,6 +644,7 @@ end_error:
   /*splt_t_set_strerror_msg(state);
   splt_t_set_error_data(state,file1);
   *error = SPLT_ERROR_CANNOT_OPEN_FILE;*/
+
   close_files(state, file1, &file1_,file2, &file2_,error);
   return SPLT_FALSE;
 }
