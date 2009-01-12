@@ -2323,30 +2323,33 @@ int splt_u_create_directories(splt_state *state, const char *dir)
   
   ptr = dir;
   while ((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)
+  {
+    strncpy(junk, dir, ptr-dir);
+    junk[ptr-dir] = '\0';
+    ptr++;
+
+    if (junk[0] != '\0')
     {
-      strncpy(junk, dir, ptr-dir);
-      junk[ptr-dir] = '\0';
-      ptr++;
-
       if (! splt_u_check_if_directory(junk))
+      {
+        splt_u_print_debug("directory ...",0, junk);
+
+        if (result < 0) { goto end; }
+
+        //don't create output directories if we pretend to split
+        if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          splt_u_print_debug("directory ...",0, junk);
-
-          if (result < 0) { goto end; }
-
-          //don't create output directories if we pretend to split
-          if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+          if ((splt_u_mkdir(junk)) == -1)
           {
-            if ((splt_u_mkdir(junk)) == -1)
-            {
-              splt_t_set_strerror_msg(state);
-              splt_t_set_error_data(state,junk);
-              result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-              goto end;
-            }
+            splt_t_set_strerror_msg(state);
+            splt_t_set_error_data(state,junk);
+            result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+            goto end;
           }
         }
+      }
     }
+  }
 
   //we have created all the directories except the last one
   char *last_dir = strdup(dir);

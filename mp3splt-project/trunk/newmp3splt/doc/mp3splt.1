@@ -107,11 +107,12 @@ This means that splitting process will be quicker, but will be imprecise due to 
 you can split those VBR files only with framemode (see \-f option).
 
 \fBNOTE about TAGS:\fP by default, mp3splt will put the original tags in
-the split files. In order to extract the original tags from mp3 files,
-libmp3splt must be compiled with 'id3tag' support. Support for ID3v2 for
-known tags is available if libmp3splt is compiled with 'id3tag' support;
-otherwise, ID3v1 tags will be set. Custom tags for the split files can be
-set with the \-g option.
+the split files. Custom tags for the split files can be set with the \-g option.
+
+\fBNOTE about MP3 TAGS:\fP in order to extract the original tags from mp3 files,
+libmp3splt must be compiled with 'id3tag' support. By default, the output
+files will have the same ID3 tag version as the input file. However, ID3V1
+output can be forced with the \-1 option and ID3V2 with the \-2 option.
 
 \fBNOTE about the OUTPUT DIRECTORY:\fP by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
@@ -365,14 +366,20 @@ it will be created. The \-o option can also be used to output files into a
 directory.
 
 .IP "\fB\-n\fP         " 10
-\fBNo Tag\fP. Does not write ID3 or Vorbis comment in outputfile. Use if you need clean files.
+\fBNo tags\fP. Does not write ID3 or Vorbis comment in outputfile. Use if you need clean files.
+
+.IP "\fB\-1\fP         " 10
+\fBForce ID3v1 tags\fP. For mp3 files, force output tags as version 1.
+
+.IP "\fB\-2\fP         " 10
+\fBForce ID3v2 tags\fP. For mp3 files, force output tags as version 2.
 
 .IP "\fB\-N\fP         " 10
 \fBNo silence log file\fP. Don't create the 'mp3splt.log' log file when using
 silence detection. This option cannot be used without the '\-s' option.
 
 .IP "\fB\-g TAGS\fP         " 10
-\fBCustom Tags\fP. Set custom tags to the split files.
+\fBCustom tags\fP. Set custom tags to the split files.
 TAGS should contain a list of square brackets pairs \fB[]\fP. The tags defined in the first
 pair of square brackets will be set on the first split file, those defined in the
 second pair of square brackets will be set on the second split file, ... Inside

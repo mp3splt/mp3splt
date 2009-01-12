@@ -47,7 +47,7 @@ static void splt_s_real_split(splt_state *state, int *error, int save_end_point)
   char *final_fname = NULL;
   final_fname = splt_u_get_fname_with_path_and_extension(state,error);
 
-  if (error >= 0)
+  if (*error >= 0)
   {
     splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
 

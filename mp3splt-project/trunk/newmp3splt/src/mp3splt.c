@@ -61,6 +61,8 @@ FILE *console_progress = NULL;
 
 //command line options
 typedef struct {
+  //force id3v1 tags, force id3v2 tags
+  short id3v1_option; short id3v2_option;
   //wrap split, list wrap options, error split
   short w_option; short l_option; short e_option;
   //frame mode, cddb/cue option, time split
@@ -635,9 +637,9 @@ void check_args(int argc, main_data *data)
     //no tags (-n)
     if (opt->n_option)
     {
-      if (opt->i_option)
+      if (opt->i_option || opt->id3v1_option || opt->id3v2_option)
       {
-        print_error_exit("the -n option cannot be used with -i", data);
+        print_error_exit("the -n option cannot be used with -i or -1 or -2", data);
       }
     }
 
@@ -1362,6 +1364,7 @@ options *new_options(main_data *data)
 {
   options *opt = my_malloc(sizeof(options), data);
 
+  opt->id3v1_option = SPLT_FALSE; opt->id3v2_option = SPLT_FALSE;
   opt->w_option = SPLT_FALSE; opt->l_option = SPLT_FALSE;
   opt->e_option = SPLT_FALSE; opt->f_option = SPLT_FALSE;
   opt->c_option = SPLT_FALSE; opt->t_option = SPLT_FALSE;
@@ -1633,9 +1636,11 @@ int main(int argc, char **orig_argv)
         break;
       case '1':
         mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
+        opt->id3v1_option = SPLT_TRUE;
         break;
       case '2':
         mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
+        opt->id3v2_option = SPLT_TRUE;
         break;
       case 'D':
         mp3splt_set_int_option(state, SPLT_OPT_DEBUG_MODE, SPLT_TRUE);
