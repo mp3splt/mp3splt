@@ -2457,7 +2457,7 @@ static char *splt_u_win32_utf16_to_encoding(UINT encoding, const wchar_t *source
   return dest;
 }
 
-static wchar_t *splt_u_win32_utf8_to_utf16(const char *source)
+wchar_t *splt_u_win32_utf8_to_utf16(const char *source)
 {
   return splt_u_win32_encoding_to_utf16(CP_UTF8, source);
 }
