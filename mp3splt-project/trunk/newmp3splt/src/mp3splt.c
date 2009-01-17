@@ -2,7 +2,7 @@
  * Mp3Splt -- Utility for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2008 Alexandru Munteanu - <io_fx@yahoo.fr>
+ * Copyright (c) 2005-2009 Alexandru Munteanu - <io_fx@yahoo.fr>
  *
  * http://mp3splt.sourceforge.net
  *
@@ -43,10 +43,10 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "2.2.2"
+#define VERSION "2.2.3"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "08/01/09"
+#define MP3SPLT_DATE "17/01/09"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -313,14 +313,15 @@ void show_small_help_exit(main_data *data)
 {
   free_main_struct(&data);
   print_message("\n"
-      "USAGE (Please read man page for complete documentation)\n"
+      "USAGE: (Please read man page for complete documentation)\n"
       "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... [END_TIME]\n"
       "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
       "                   (or EOF for End Of File). \n"
       "\nOPTIONS (split mode options)\n"
       " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
-      " -c + file.cddb, file.cue or \"query\". Get splitpoints and filenames from a\n"
-      "      .cddb or .cue file or from Internet (\"query\"). Use -a to auto-adjust.\n"
+      " -c + file.cddb, file.cue or \"query\" or \"query{album}\". Get splitpoints and\n"
+      "      filenames from a .cddb or .cue file or from Internet (\"query\").\n"
+      "      Use -a to auto-adjust splitpoints.\n"
       " -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n"
       " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
       " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
@@ -722,7 +723,7 @@ void process_confirmation_error(int conf, main_data *data)
   }
   if (conf == SPLT_DEWRAP_OK)
   {
-    print_message("\nAll files have been splitted correctly. Visit http://mp3wrap.sourceforge.net!");
+    print_message("\nAll files have been split correctly. Visit http://mp3wrap.sourceforge.net!");
   }
 }
 

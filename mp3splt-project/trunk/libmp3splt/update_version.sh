@@ -22,8 +22,8 @@ sed -i "s/\s*$PROGRAM version.*/\t$PROGRAM version $VERSION/" README || exit 1
 #configure.ac
 #./configure.ac:AC_INIT(libmp3splt, 0.3.1, io_alex_2002@yahoo.fr)
 #./configure.ac:AM_INIT_AUTOMAKE(libmp3splt, 0.3.1)
-sed -i "s/AC_INIT($PROGRAM, .*,/\
-AC_INIT($PROGRAM, $VERSION,/" ./configure.ac || exit 1
+sed -i "s/AC_INIT(\[$PROGRAM\],\[.*\],/\
+AC_INIT(\[$PROGRAM\],\[$VERSION\],/" ./configure.ac || exit 1
 sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
 AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac || exit 1   
 
