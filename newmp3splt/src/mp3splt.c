@@ -98,6 +98,10 @@ typedef struct {
   int freedb_get_type;
   char freedb_get_server[256];
   int freedb_get_port;
+  //the search string passed in parameter -c query{my artist}
+  char freedb_arg_search_string[2048];
+  //the chosen result passed in parameter : -c query{my artist}[
+  int freedb_arg_result_option;
 } options;
 
 typedef struct
@@ -774,18 +778,20 @@ long c_hundreths(const char *s)
 //query[get=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
 //query[get=cddb_protocol://freedb.org:8880,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
 //query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
+//query[get...]{search_string}
+//query[get...]{search_string}(chosen_result_int)
 //we parse the query arguments
 int parse_query_arg(options *opt, const char *query)
 {
   const char *cur_pos = NULL;
   const char *end_pos = NULL;
   const char *test_pos = NULL;
-  cur_pos = query;
+  cur_pos = query + 5;
 
   short ambigous = SPLT_FALSE;
 
-  //if we have query[
-  if (strstr(query ,"query[") == query)
+  //if we have [get=...]
+  if (cur_pos[0] == '[')
   {
     cur_pos = strchr(query,'[');
 
@@ -793,14 +799,6 @@ int parse_query_arg(options *opt, const char *query)
     if (!(test_pos = strchr(cur_pos,']')))
     {
       ambigous = SPLT_TRUE;
-    }
-    else
-    {
-      //if we have something after ], ambigous
-      if (*(test_pos+1) != '\0')
-      {
-        ambigous = SPLT_TRUE;
-      }
     }
 
     int search_found = SPLT_FALSE;
@@ -861,7 +859,7 @@ int parse_query_arg(options *opt, const char *query)
         if (end_pos-cur_pos < 255)
         {
           snprintf(freedb_type,end_pos-cur_pos+1,"%s",cur_pos);
-          freedb_type[end_pos-cur_pos+1] = '\0';
+          freedb_type[end_pos-cur_pos] = '\0';
           if ((strchr(cur_pos,',')==end_pos) ||
               (strchr(cur_pos,']')==end_pos))
           {
@@ -890,7 +888,7 @@ int parse_query_arg(options *opt, const char *query)
           && (*end_pos != '\0'))
       {
         snprintf(freedb_server,end_pos-cur_pos+1,"%s",cur_pos);
-        freedb_server[end_pos-cur_pos+1] = '\0';
+        freedb_server[end_pos-cur_pos] = '\0';
         if (*(end_pos+1) == ']' || *(end_pos+1) == ',')
         {
           cur_pos = end_pos+1;
@@ -930,7 +928,7 @@ int parse_query_arg(options *opt, const char *query)
         if ((end_pos != cur_pos) && (end_pos-cur_pos < 10))
         {
           snprintf(freedb_port,end_pos-cur_pos+1,"%s",cur_pos);
-          freedb_port[end_pos-cur_pos+1] = '\0';
+          freedb_port[end_pos-cur_pos] = '\0';
           cur_pos = end_pos;
         }
 
@@ -1058,6 +1056,61 @@ int parse_query_arg(options *opt, const char *query)
     }
   }
 
+  //possible search string
+  int we_have_search_string = SPLT_FALSE;
+  if (cur_pos != NULL)
+  {
+    if ((cur_pos = strchr(cur_pos, '{')))
+    {
+      //if we don't have }, ambigous
+      if (!(end_pos = strchr(cur_pos,'}')))
+      {
+        ambigous = SPLT_TRUE;
+      }
+      else
+      {
+        if (end_pos-cur_pos < 2048)
+        {
+          snprintf(opt->freedb_arg_search_string, end_pos-cur_pos, "%s", cur_pos+1);
+          opt->freedb_arg_search_string[end_pos-cur_pos-1] = '\0';
+          we_have_search_string = SPLT_TRUE;
+        }
+      }
+    }
+
+    if (ambigous)
+    {
+      return ambigous;
+    }
+  }
+
+  //possible get result integer from the search results
+  if (cur_pos != NULL)
+  {
+    if ((cur_pos = strchr(cur_pos, '(')))
+    {
+      if (!we_have_search_string)
+      {
+        return ambigous;
+      }
+  
+      //if we don't have ), ambigous
+      if (!(end_pos = strchr(cur_pos,')')))
+      {
+        ambigous = SPLT_TRUE;
+      }
+      else
+      {
+        char chosen_int[256] = { '\0' };
+        if (end_pos-cur_pos < 256)
+        {
+          snprintf(chosen_int, end_pos-cur_pos, "%s", cur_pos+1);
+          opt->freedb_arg_result_option = atoi(chosen_int);
+        }
+      }
+    }
+  }
+
   return ambigous;
 }
 
@@ -1096,28 +1149,43 @@ void do_freedb_search(main_data *data)
       get_type,opt->freedb_get_server,opt->freedb_get_port);
   fflush(console_out);
 
-  //freedb search
-  print_message("CDDB QUERY. Insert album and artist informations to find cd.");
+  char *freedb_search_string = NULL;
+  char freedb_input[2048] = { '\0' };
+  //if we haven't chosen to search from the arguments, interactive search
+  if (opt->freedb_arg_search_string[0] == '\0')
+  {
+    //freedb search
+    print_message("CDDB QUERY. Insert album and artist informations to find cd.");
 
-  char freedb_input[2048];
+    short first_time = SPLT_TRUE;
+    //here we search freedb
+    do {
+      if (!first_time)
+      {
+        print_message("\nPlease search something ...");
+      }
 
-  short first_time = SPLT_TRUE;
-  //here we search freedb
-  do {
-    if (!first_time)
-    {
-      print_message("\nPlease search something ...");
-    }
+      memset(freedb_input, '\0', sizeof(freedb_input));
 
-    fprintf(console_out, "\n\t____________________________________________________________]");
-    fprintf(console_out, "\r Search: [");
+      fprintf(console_out, "\n\t____________________________________________________________]");
+      fprintf(console_out, "\r Search: [");
 
-    fgets(freedb_input, 2046, stdin);
+      fgets(freedb_input, 2046, stdin);
 
-    first_time = SPLT_FALSE;
+      first_time = SPLT_FALSE;
 
-  } while (strlen(freedb_input)==0);
+      freedb_input[strlen(freedb_input)-1] = '\0';
 
+    } while (strlen(freedb_input)==0);
+
+    freedb_search_string = freedb_input;
+  }
+  else
+  {
+    freedb_search_string = opt->freedb_arg_search_string;
+  }
+
+  fprintf(console_out, "\n  Search string : %s\n",freedb_search_string);
   fprintf(console_out, "\nSearching from %s on port %d using %s ...\n",
       opt->freedb_search_server,opt->freedb_search_port, search_type);
   fflush(console_out);
@@ -1125,35 +1193,59 @@ void do_freedb_search(main_data *data)
   //the freedb results
   const splt_freedb_results *f_results;
   //we search the freedb
-  f_results = mp3splt_get_freedb_search(state, freedb_input,
+  f_results = mp3splt_get_freedb_search(state, freedb_search_string,
       &err, opt->freedb_search_type,
       opt->freedb_search_server,
       opt->freedb_search_port);
   process_confirmation_error(err, data);
 
-  //print the searched informations
-  print_message("List of found cd:");
+  //if we don't have an auto-select the result X from the arguments :
+  // (query{artist}(resultX)
+  //, then interactive user ask
+  int selected_cd = 0;
+  if (opt->freedb_arg_result_option < 0)
+  {
+    //print the searched informations
+    print_message("List of found cd:");
 
-  int cd_number = 0;
-  short end = SPLT_FALSE;
-  do {
-    fprintf(console_out,"%3d) %s\n",
-        f_results->results[cd_number].id,
-        f_results->results[cd_number].name);
+    int cd_number = 0;
+    short end = SPLT_FALSE;
+    do {
+      fprintf(console_out,"%3d) %s\n",
+          f_results->results[cd_number].id,
+          f_results->results[cd_number].name);
 
-    int i = 0;
-    for(i = 0; i < f_results->results[cd_number].revision_number; i++)
-    {
-      fprintf(console_out, "  |\\=>");
-      fprintf(console_out, "%3d) ", f_results->results[cd_number].id+i+1);
-      fprintf(console_out, "Revision: %d\n", i+2);
-
-      //break at 22
-      if (((f_results->results[cd_number].id+i+2)%22)==0)
+      int i = 0;
+      for(i = 0; i < f_results->results[cd_number].revision_number; i++)
       {
-        //duplicate, see below
+        fprintf(console_out, "  |\\=>");
+        fprintf(console_out, "%3d) ", f_results->results[cd_number].id+i+1);
+        fprintf(console_out, "Revision: %d\n", i+2);
+
+        //break at 22
+        if (((f_results->results[cd_number].id+i+2)%22)==0)
+        {
+          //duplicate, see below
+          char junk[18];
+          fprintf(console_out, "-- 'q' to select cd, Enter for more:");
+          fflush(console_out);
+
+          fgets(junk, 16, stdin);
+          if (junk[0]=='q')
+          {
+            end = SPLT_TRUE;
+            goto end;
+          }
+        }
+      }
+
+      //we read result from the char, q tu select cd or
+      //enter to show more results
+      if (((f_results->results[cd_number].id+1)%22)==0)
+      {
+        //duplicate, see ^^
         char junk[18];
-        fprintf(console_out, "-- 'q' to select cd, Enter for more:");
+        fprintf(console_out, "-- 'q' to select cd, Enter for more: ");
         fflush(console_out);
 
         fgets(junk, 16, stdin);
@@ -1163,72 +1255,62 @@ void do_freedb_search(main_data *data)
           goto end;
         }
       }
-    }
-
-    //we read result from the char, q tu select cd or
-    //enter to show more results
-    if (((f_results->results[cd_number].id+1)%22)==0)
-    {
-      //duplicate, see ^^
-      char junk[18];
-      fprintf(console_out, "-- 'q' to select cd, Enter for more: ");
-      fflush(console_out);
-
-      fgets(junk, 16, stdin);
-      if (junk[0]=='q')
-      {
-        end = SPLT_TRUE;
-        goto end;
-      }
-    }
 
 end:
-    if (end)
-    {
-      end = SPLT_FALSE;
-      break;
-    }
-
-    cd_number++;
-  } while (cd_number < f_results->number);
-
-  //select the CD
-  //input of the selected cd
-  char sel_cd_input[1024];
-  //selected_cd = the selected cd
-  int selected_cd = 0,tot = 0;
-  do {
-    selected_cd = 0;
-    fprintf(console_out, "Select cd #: ");
-    fflush(console_out);
-    fgets(sel_cd_input, 254, stdin);
-    sel_cd_input[strlen(sel_cd_input)-1]='\0';
-    tot = 0;
-
-    if (sel_cd_input[tot] == '\0') 
-    {
-      selected_cd = -1;
-    }
-
-    while(sel_cd_input[tot] != '\0')
-    {
-      if (isdigit(sel_cd_input[tot++])==0)
+      if (end)
       {
-        fprintf(console_out, "Please ");
-        fflush(console_out);
-
-        selected_cd = -1;
+        end = SPLT_FALSE;
         break;
       }
-    }
 
-    if (selected_cd != -1) 
+      cd_number++;
+    } while (cd_number < f_results->number);
+
+    //select the CD
+    //input of the selected cd
+    char sel_cd_input[1024];
+    int tot = 0;
+    do {
+      selected_cd = 0;
+      fprintf(console_out, "Select cd #: ");
+      fflush(console_out);
+      fgets(sel_cd_input, 254, stdin);
+      sel_cd_input[strlen(sel_cd_input)-1]='\0';
+      tot = 0;
+
+      if (sel_cd_input[tot] == '\0') 
+      {
+        selected_cd = -1;
+      }
+
+      while(sel_cd_input[tot] != '\0')
+      {
+        if (isdigit(sel_cd_input[tot++])==0)
+        {
+          fprintf(console_out, "Please ");
+          fflush(console_out);
+
+          selected_cd = -1;
+          break;
+        }
+      }
+
+      if (selected_cd != -1) 
+      {
+        selected_cd = atoi (sel_cd_input);
+      }
+
+    } while ((selected_cd >= f_results->number) 
+        || (selected_cd < 0));
+  }
+  else
+  {
+    selected_cd = opt->freedb_arg_result_option;
+    if (selected_cd >= f_results->number)
     {
-      selected_cd = atoi (sel_cd_input);
+      selected_cd = 0;
     }
-
-  } while ((selected_cd >= f_results->number) 
-      || (selected_cd < 0));
+  }
 
   fprintf(console_out, "\nGetting file from %s on port %d using %s ...\n",
       opt->freedb_get_server,opt->freedb_get_port, get_type);
@@ -1373,6 +1455,9 @@ options *new_options(main_data *data)
   opt->freedb_get_type = SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI;
   snprintf(opt->freedb_get_server,255, "%s", SPLT_FREEDB2_CGI_SITE);
   opt->freedb_get_port = SPLT_FREEDB_CDDB_CGI_PORT;
+
+  opt->freedb_arg_search_string[0] = '\0';
+  opt->freedb_arg_result_option = -1;
 
   return opt;
 }
@@ -1985,13 +2070,12 @@ int main(int argc, char **orig_argv)
           else
           {
             //if we have a freedb search
-            if ((strcmp(opt->cddb_arg, "query")==0)
-                ||(strstr(opt->cddb_arg,"query[") == opt->cddb_arg))
+            if (strncmp(opt->cddb_arg, "query", 5)==0)
             {
               int ambigous = parse_query_arg(opt,opt->cddb_arg);
               if (ambigous)
               {
-                print_warning("freedb server format ambigous !");
+                print_warning("freedb query format ambigous !");
               }
               do_freedb_search(data);
             }
