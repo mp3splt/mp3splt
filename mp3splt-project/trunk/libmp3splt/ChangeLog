@@ -1,8 +1,6 @@
 libmp3splt version 0.5.4
 -------------------------------------------------------------
 
-- fixed small track issue in tags
-- fixed issue when the output is the same as the original file
 - fixed all tags/filenames "unicode" encoding issues on windows
 - the default behaviour of the tags on the split files has changed :
 by default, we set the tags version of the file to split in the
@@ -10,6 +8,8 @@ split files (for example if the file for split has ID3 version X, the
 tags in the split files will be ID3vX)
 - the tags in the output files can be changed with the
 SPLT_OPT_FORCE_TAGS_VERSION option
+- fixed issue when the input file is erased if the output is the same as the original file
+- fixed small track issue in tags
 
 libmp3splt version 0.5.3
 -------------------------------------------------------------

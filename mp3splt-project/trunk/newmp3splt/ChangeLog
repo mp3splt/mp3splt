@@ -1,24 +1,22 @@
 Check http://mp3splt.sourceforge.net for the latest release.
 
 Please read the ChangeLog of libmp3splt for more information.
-Changes after a blank line are implemented in libmp3splt, but reported here
-for convenience.
+Some changes are implemented in libmp3splt, but reported here for convenience.
 
 # mp3splt v. 2.2.3
 
-- implemented query{search_string}(chosen_result_int) for the -c option :
-windows users should use this instead of -c query when searching using a
-"unicode" string
-- added -1 (force tags in output files to be ID3v1) and -2 (force tags in
-output files to be ID3v2) options
-
-- fixed all tags/filenames "unicode" encoding issues on windows
-- fixed small track issue in tags
-- fixed issue when the output is the same as the original file
 - the default behaviour of the tags on the split files has changed :
 by default, we set the tags version of the file to split in the
 split files (for example if the file for split has ID3 version X, the
 tags in the split files will be ID3vX)
+- added -1 (force tags in output files to be ID3v1) and -2 (force tags in
+output files to be ID3v2) options
+- implemented query{search_string}(chosen_result_int) for the -c option :
+windows users should use this instead of -c query when searching using a
+"unicode" string
+- fixed all tags/filenames "unicode" encoding issues on windows
+- fixed small track issue in tags
+- fixed issue when the output is the same as the original file
 
 # mp3splt v. 2.2.2
 
