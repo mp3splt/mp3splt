@@ -2322,8 +2322,20 @@ int splt_u_create_directories(splt_state *state, const char *dir)
   splt_u_print_debug("Creating directory ...",0,dir);
   
   ptr = dir;
+#ifdef __WIN32__
+  int first_time = SPLT_TRUE;
+#endif
   while ((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)
   {
+		//handle C:DIRCHAR on windows
+#ifdef __WIN32__
+    if (first_time && (strlen(dir) > 2)
+        && (dir[1] == ':') && (dir[2] == SPLT_DIRCHAR))
+    {
+      ptr++;
+    }
+    first_time = SPLT_FALSE;
+#endif
     strncpy(junk, dir, ptr-dir);
     junk[ptr-dir] = '\0';
     ptr++;

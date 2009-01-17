@@ -921,7 +921,10 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
   if (state != NULL)
   {
     //we copy the search string, in order not to modify the original one
-    char *search = strdup(search_string);
+    char *search = strdup((char *)search_string);
+    fprintf(stdout,"\n\nSEARCH STRING = _%s_\n\n",search);
+    fflush(stdout);
+
     if (search != NULL)
     {
       //puts the results in "search_results"
