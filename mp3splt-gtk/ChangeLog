@@ -1,20 +1,18 @@
 Check http://mp3splt.sourceforge.net for the latest release.
 
 Please read the ChangeLog of libmp3splt for more information.
-Changes after a blank line are implemented in libmp3splt, but reported here
-for convenience.
+Some changed are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
 mp3splt-gtk version 0.5.4
 
-- fixed CUE & CDDB not always setting the correct number of digits for @n
-in the GUI
-
-- fixed all tags/filenames "unicode" encoding issues on windows
 - the default behaviour of the tags on the split files has changed :
 by default, we set the tags version of the file to split in the
 split files (for example if the file for split has ID3 version X, the
 tags in the split files will be ID3vX)
+- fixed CUE & CDDB not always setting the correct number of digits for @n
+in the GUI
+- fixed all tags/filenames "unicode" encoding issues on windows
 
 -------------------------------------------------------------
 mp3splt-gtk version 0.5.3
