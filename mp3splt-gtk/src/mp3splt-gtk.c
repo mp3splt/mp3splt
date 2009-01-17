@@ -246,6 +246,27 @@ void put_options_from_preferences()
             }
         }
     }
+
+  //tag version options
+  //0 = same version like the original file
+  if (get_checked_tags_version_radio_box() == 0)
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 0);
+  }
+  else
+  {
+    if (get_checked_tags_version_radio_box() == 1)
+    {
+      mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
+    }
+    else
+    {
+      if (get_checked_tags_version_radio_box() == 2)
+      {
+        mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
+      }
+    }
+  }
 }
 
 //changes the progress bar
