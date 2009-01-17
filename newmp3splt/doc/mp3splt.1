@@ -203,14 +203,26 @@ If you want to get informations from Internet, SOURCE must have one of the
 following formats :
 
     \fBquery\fP
+    \fBquery{album}\fP
+    \fBquery{album}(ALBUM_RESULT_NUMBER)\fP
     \fBquery[search=protocol://SITE:PORT,get=protocol://SITE:PORT]\fP
+    \fBquery[search...]{album}\fP
+    \fBquery[search...]{album}(ALBUM_RESULT_NUMBER)\fP
 
-If SOURCE is 'query', then the default options will be chosen. Optional
-arguments to query are 'search' and 'get'; 'search' defines the CDDB search
-protocol and site (for searching the disc ID from the album and title); 'get'
-defines the CDDB download protocol and site (for downloading the CDDB file
-from the disc ID). Valid 'search' protocols are : 'cddb_cgi' and 'cddb_protocol'.
-Valid 'get' protocols are : 'cddb_cgi'.
+If a string is specified between '{' and '}', then the internet search is
+made on this string and the user will not be requested to
+interactively input a search string.
+The number between '(' and ')' is for auto-selecting the result number
+ALBUM_RESULT_NUMBER; thus, the user will not be requested to interactively
+input a choose result.
+
+The other parameters between '[' and ']' are used to specify the protocols
+and the sites. If those parameters are not specified, default values will
+be chosen, which are good enough in most cases.
+Inside the square brackets, 'search' defines the CDDB search protocol and site (for
+searching the disc ID from the album and title); 'get' defines the CDDB download protocol
+and site (for downloading the CDDB file from the disc ID). Valid 'search' protocols are
+: 'cddb_cgi' and 'cddb_protocol'.  Valid 'get' protocols are : 'cddb_cgi'.
 
 Examples :
 
@@ -220,11 +232,11 @@ Examples :
 .br
   query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80]
 
-Mp3splt will connect to server and will start to find the requested
-informations.  If you will find the right album, then mp3splt will finally
-query the server to get the selected album and, if all is correct, will
+Mp3splt will connect to the server and start to find the requested
+informations. If the right album is found, then mp3splt will query the
+server to get the selected album and (if no problem occurs) will
 write a file named "query.cddb" from which will get splitpoints and
-filenames. ID3 will be created automatically with taken informations.
+filenames.
 
 \fBIMPORTANT NOTE FOR CDDB\fP: File split with this option can be not very precise due to:
 
@@ -538,7 +550,7 @@ for latest release.
 .PP
 (C) 2002-2005 by Matteo Trotta
 .br
-(C) 2005-2008 by Alexandru Ionut Munteanu
+(C) 2005-2009 by Alexandru Ionut Munteanu
 .PP
 Permission is granted to copy, distribute and/or modify
 this document under the terms of the GNU General Public License.
