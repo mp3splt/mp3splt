@@ -1191,7 +1191,7 @@ void do_freedb_search(main_data *data)
   fflush(console_out);
 
   //the freedb results
-  const splt_freedb_results *f_results;
+  const splt_freedb_results *f_results = NULL;
   //we search the freedb
   f_results = mp3splt_get_freedb_search(state, freedb_search_string,
       &err, opt->freedb_search_type,
@@ -1320,10 +1320,6 @@ end:
   mp3splt_write_freedb_file_result(state, selected_cd,
       MP3SPLT_CDDBFILE, &err, opt->freedb_get_type,
       opt->freedb_get_server, opt->freedb_get_port);
-  process_confirmation_error(err, data);
-
-  //we get the splitpoints from the file
-  mp3splt_put_cddb_splitpoints_from_file(state, MP3SPLT_CDDBFILE, &err);
   process_confirmation_error(err, data);
 }
 
@@ -2072,12 +2068,20 @@ int main(int argc, char **orig_argv)
             //if we have a freedb search
             if (strncmp(opt->cddb_arg, "query", 5)==0)
             {
-              int ambigous = parse_query_arg(opt,opt->cddb_arg);
-              if (ambigous)
+              //only do freedb search for the first time
+              if (j == 0)
               {
-                print_warning("freedb query format ambigous !");
+                int ambigous = parse_query_arg(opt,opt->cddb_arg);
+                if (ambigous)
+                {
+                  print_warning("freedb query format ambigous !");
+                }
+                do_freedb_search(data);
               }
-              do_freedb_search(data);
+
+              //we get the splitpoints from the file
+              mp3splt_put_cddb_splitpoints_from_file(state, MP3SPLT_CDDBFILE, &err);
+              process_confirmation_error(err, data);
             }
             else
               //here we have cddb file

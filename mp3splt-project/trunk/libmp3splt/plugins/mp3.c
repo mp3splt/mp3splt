@@ -988,6 +988,11 @@ static id3_byte_t *get_id3_tag_bytes(splt_state *state,const char *filename,
 end:
   if (fclose(file) != 0)
   {
+    if (bytes)
+    {
+      free(bytes);
+      bytes = NULL;
+    }
     return NULL;
   }
 
@@ -1050,11 +1055,20 @@ static void splt_mp3_get_original_tags(const char *filename, splt_state *state,
         err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TRACK,
             SPLT_MP3_ID3_TRACK);
         MP3_VERIFY_ERROR();
+
+        free(id3tag);
+        id3tag = NULL;
       }
     }
 
 end: 
     ;
+  }
+
+  if (id3_tag_bytes)
+  {
+    free(id3_tag_bytes);
+    id3_tag_bytes = NULL;
   }
 }
 #endif
