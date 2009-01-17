@@ -1018,36 +1018,39 @@ static void splt_mp3_get_original_tags(const char *filename, splt_state *state,
 
   if (*tag_error >= 0)
   {
-    id3tag = id3_tag_parse(id3_tag_bytes, id3_tag_length);
-
-    if (id3tag)
+    if (id3_tag_bytes)
     {
-      int err = SPLT_OK;
+      id3tag = id3_tag_parse(id3_tag_bytes, id3_tag_length);
 
-      err = splt_t_set_original_tags_field(state,SPLT_TAGS_VERSION,
-                tags_version, NULL, 0, 0);
-      MP3_VERIFY_ERROR();
-      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ARTIST,
-          SPLT_MP3_ID3_ARTIST);
-      MP3_VERIFY_ERROR();
-      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ALBUM,
-          SPLT_MP3_ID3_ALBUM);
-      MP3_VERIFY_ERROR();
-      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TITLE,
-          SPLT_MP3_ID3_TITLE);
-      MP3_VERIFY_ERROR();
-      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_YEAR,
-          SPLT_MP3_ID3_YEAR);
-      MP3_VERIFY_ERROR();
-      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_GENRE,
-          SPLT_MP3_ID3_GENRE);
-      MP3_VERIFY_ERROR();
-      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_COMMENT,
-          SPLT_MP3_ID3_COMMENT);
-      MP3_VERIFY_ERROR();
-      err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TRACK,
-          SPLT_MP3_ID3_TRACK);
-      MP3_VERIFY_ERROR();
+      if (id3tag)
+      {
+        int err = SPLT_OK;
+
+        err = splt_t_set_original_tags_field(state,SPLT_TAGS_VERSION,
+            tags_version, NULL, 0, 0);
+        MP3_VERIFY_ERROR();
+        err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ARTIST,
+            SPLT_MP3_ID3_ARTIST);
+        MP3_VERIFY_ERROR();
+        err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_ALBUM,
+            SPLT_MP3_ID3_ALBUM);
+        MP3_VERIFY_ERROR();
+        err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TITLE,
+            SPLT_MP3_ID3_TITLE);
+        MP3_VERIFY_ERROR();
+        err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_YEAR,
+            SPLT_MP3_ID3_YEAR);
+        MP3_VERIFY_ERROR();
+        err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_GENRE,
+            SPLT_MP3_ID3_GENRE);
+        MP3_VERIFY_ERROR();
+        err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_COMMENT,
+            SPLT_MP3_ID3_COMMENT);
+        MP3_VERIFY_ERROR();
+        err = splt_mp3_put_original_id3_frame(state,id3tag,ID3_FRAME_TRACK,
+            SPLT_MP3_ID3_TRACK);
+        MP3_VERIFY_ERROR();
+      }
     }
 
 end: 

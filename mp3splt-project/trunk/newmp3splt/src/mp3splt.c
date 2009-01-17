@@ -768,24 +768,6 @@ long c_hundreths(const char *s)
   return hun;
 }
 
-//interaction with the user when he was choosing the
-//freedb.org search to detect if the entered string was a number
-int checkstring(const char *s)
-{
-  int i;
-  for (i=0; i<strlen(s); i++)
-  {
-    if ((isalnum(s[i]) == 0) && (s[i] != 0x20))
-    {
-      fprintf(console_err," Error: '%c' is not allowed !", s[i]);
-      fflush(console_err);
-      return -1;
-    }
-  }
-
-  return 0;
-}
-
 //for the moment 2 ways of getting the file and one way to search it
 //freedb get type can be : cddb_cgi or cddb_protocol
 //freedb search type can be : cddb_cgi or web_search
@@ -1117,7 +1099,8 @@ void do_freedb_search(main_data *data)
   //freedb search
   print_message("CDDB QUERY. Insert album and artist informations to find cd.");
 
-  char freedb_input[1024];
+  char freedb_input[2048];
+
   short first_time = SPLT_TRUE;
   //here we search freedb
   do {
@@ -1128,13 +1111,12 @@ void do_freedb_search(main_data *data)
 
     fprintf(console_out, "\n\t____________________________________________________________]");
     fprintf(console_out, "\r Search: [");
-    fgets(freedb_input, 800, stdin);
+
+    fgets(freedb_input, 2046, stdin);
 
     first_time = SPLT_FALSE;
 
-    freedb_input[strlen(freedb_input)-1]='\0';
-  } while ((strlen(freedb_input)==0)||
-      (checkstring(freedb_input)!=0));
+  } while (strlen(freedb_input)==0);
 
   fprintf(console_out, "\nSearching from %s on port %d using %s ...\n",
       opt->freedb_search_server,opt->freedb_search_port, search_type);
@@ -1143,7 +1125,7 @@ void do_freedb_search(main_data *data)
   //the freedb results
   const splt_freedb_results *f_results;
   //we search the freedb
-  f_results = mp3splt_get_freedb_search(state,freedb_input,
+  f_results = mp3splt_get_freedb_search(state, freedb_input,
       &err, opt->freedb_search_type,
       opt->freedb_search_server,
       opt->freedb_search_port);
