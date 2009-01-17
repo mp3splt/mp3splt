@@ -85,6 +85,7 @@ GtkWidget *radio_output;
 
 //radio button for tags options
 GtkWidget *tags_radio;
+GtkWidget *tags_version_radio;
 
 //split options
 //frame mode option
@@ -458,9 +459,43 @@ gint get_checked_tags_radio_box()
   return selected;
 }
 
+//returns the checked tags radio box
+gint get_checked_tags_version_radio_box()
+{
+  //get the radio buttons
+  GSList *radio_button_list;
+  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(tags_version_radio));
+
+  //we check which bubble is checked
+  GtkToggleButton *test;
+  gint i, selected = 0;
+  //O = The same version as the original file
+  //1 = Force ID3v1
+  //2 = Force ID3v2
+  for(i = 0; i<3;i++)
+    {
+      test = (GtkToggleButton *)
+        g_slist_nth_data(radio_button_list,i);
+      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(test)))
+        {
+          selected = i;
+        }
+    }
+  
+  return selected;
+}
+
+
 //tags radio changed event
 void tags_radio_changed_event (GtkToggleButton *radio_b,
                                gpointer data)
+{
+  update_save_buttons();
+}
+
+//tags radio changed event
+void tags_version_radio_changed_event (GtkToggleButton *radio_b,
+    gpointer data)
 {
   update_save_buttons();
 }
@@ -718,6 +753,41 @@ GtkWidget *create_pref_splitpoints_page()
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
                       tags_radio, FALSE, FALSE, 2);
 
+  //tags version radio buttons
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
+                      horiz_fake, FALSE, FALSE, 6);
+
+  tag_label = gtk_label_new(_("Tags version (mp3 only) :"));
+  gtk_box_pack_start (GTK_BOX (horiz_fake),
+                      tag_label, FALSE, FALSE, 0);
+      
+  //tags version radio items
+  tags_version_radio = 
+    gtk_radio_button_new_with_label(NULL, _("Force ID3v2 tags"));
+  gtk_box_pack_start (GTK_BOX (general_inside_vbox), tags_version_radio,
+                      FALSE, FALSE, 2);
+  g_signal_connect (GTK_TOGGLE_BUTTON (tags_version_radio),
+                    "toggled",
+                    G_CALLBACK (tags_version_radio_changed_event),
+                    NULL);
+  tags_version_radio = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON (tags_version_radio), _("Force ID3v1 tags"));
+  g_signal_connect (GTK_TOGGLE_BUTTON (tags_version_radio),
+                    "toggled",
+                    G_CALLBACK (tags_version_radio_changed_event),
+                    NULL);
+  gtk_box_pack_start (GTK_BOX (general_inside_vbox), tags_version_radio,
+                      FALSE, FALSE, 2);
+  tags_version_radio = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON (tags_version_radio),_("Same tags version as the input file"));
+  g_signal_connect (GTK_TOGGLE_BUTTON (tags_version_radio),
+                    "toggled",
+                    G_CALLBACK (tags_version_radio_changed_event),
+                    NULL);
+  gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
+                      tags_version_radio, FALSE, FALSE, 2);
+
   //if the library has been compiled with id3tag support
   /*if (!mp3splt_has_id3tag())
     {
@@ -853,6 +923,12 @@ void save_preferences_event (GtkWidget *widget,
                          "tags",
                          get_checked_tags_radio_box());
   
+  //write the default output format
+  g_key_file_set_integer(my_key_file,
+                         "split",
+                         "tags_version",
+                         get_checked_tags_version_radio_box());
+
   //our data
   gchar *key_data;
   key_data = g_key_file_to_data(my_key_file,
@@ -1142,7 +1218,7 @@ GtkWidget *create_pref_output_page()
   
   //output label
   GtkWidget *label;
-  label = gtk_label_new(_("Output filename format for most of the splits except normal split :\n"
+  label = gtk_label_new(_("Output filename format :\n"
                           "    @f - file name\n"
                           "    @a - artist name\n"
                           "    @p - performer of each song (does not"

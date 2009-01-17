@@ -39,6 +39,7 @@ GtkWidget *create_scrolled_window();
 gboolean get_checked_output_radio_box();
 void update_save_buttons();
 gint get_checked_tags_radio_box();
+gint get_checked_tags_version_radio_box();
 void check_save_dialog_event (GtkToggleButton *check_button,
                               gpointer data);
 void radio_box_changed_event (GtkToggleButton *radio_b,

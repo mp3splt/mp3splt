@@ -79,6 +79,7 @@ extern GtkWidget *spinner_adjust_threshold;
 extern GtkWidget *output_entry;
 extern GtkWidget *radio_output;
 extern GtkWidget *tags_radio;
+extern GtkWidget *tags_version_radio;
 
 //check if its a file
 gint is_filee(const gchar *fname)
@@ -355,6 +356,17 @@ gboolean check_if_different_from_config_file()
       different = TRUE;
     }
 
+  //we check the tag selection
+  gint tag_version_pref_file = 
+    g_key_file_get_integer(key_file,
+                           "split",
+                           "tags_version", NULL);
+  tag_selection = get_checked_tags_version_radio_box();
+  if (tag_selection != tag_version_pref_file)
+  {
+    different = TRUE;
+  }
+
   //free memory
   g_key_file_free(key_file);
   
@@ -598,6 +610,21 @@ void load_preferences()
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(the_selection),
                                 TRUE);
   
+  //the tags version option
+  tag_pref_file = 
+    g_key_file_get_integer(key_file,
+                           "split",
+                           "tags_version", NULL);
+
+  //get the radio buttons
+  GSList *tags_version_radio_button_list;
+  tags_version_radio_button_list = 
+    gtk_radio_button_get_group(GTK_RADIO_BUTTON(tags_version_radio));
+  the_selection = 
+    (GtkWidget *)g_slist_nth_data(tags_version_radio_button_list,
+                                  tag_pref_file);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(the_selection), TRUE);
+
   //the output format entry
   gchar *output_format =
     g_key_file_get_string(key_file,
@@ -895,6 +922,25 @@ void write_default_preferences_file()
                               NULL);
     }
   
+  //tags version options
+  // 0 = same version as the input file, 1 = force ID3v1 tags version, 2 = force ID3v2 tags version
+  //if we don't have the key default_output_format
+  if (!g_key_file_has_key(my_key_file,
+                          "split",
+                          "tags_version",NULL))
+    {
+      //if we don't have the key we write default values
+      g_key_file_set_integer(my_key_file,
+                             "split", "tags_version", 0);
+      
+      g_key_file_set_comment (my_key_file,
+                              "split",
+                              "tags_version",
+                              "\n 0 - same tags version as the input file, 1 - force ID3v1 tags, 2 - force ID3v2 tags",
+                              NULL);
+    }
+  
+
   //if there is no player selection
   if (!g_key_file_has_key(my_key_file,
                           "player",
