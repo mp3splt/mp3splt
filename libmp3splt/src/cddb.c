@@ -393,6 +393,16 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
       //we read the file line by line
       while (fgets(line, 2048, file_input)!=NULL)
       {
+        //if windows file with '\r', then pretend is a unix file
+        if (strlen(line) > 1)
+        {
+          if (line[strlen(line)-2] == '\r')
+          {
+            line[strlen(line)-2] = '\n';
+            line[strlen(line)-1] = '\0';
+          }
+        }
+
         type = SPLT_CUE_NOTHING;
 
         //we read strings from file TRACK,TITLE,AUDIO,PERFORMER,INDEX
@@ -597,7 +607,7 @@ function_end:
 //returns number of tracks
 //see freedb file format documentation on freedb.org
 //-file must not be NULL
-int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error)
+int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 {
   //clear previous splitpoints
   splt_t_free_splitpoints_tags(state);
