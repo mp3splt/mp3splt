@@ -3037,7 +3037,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
         splt_u_print_debug("We do the effective dewrap...",0,NULL);
 
         //client informations
-        char client_infos[2048] = { '\0' };
+        char client_infos[1024] = { '\0' };
 
         //mp3wrap checkings and we get the wrap file number
         if (mp3wrap) {

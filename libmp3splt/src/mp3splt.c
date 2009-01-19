@@ -749,7 +749,7 @@ int mp3splt_split(splt_state *state)
               && (split_type != SPLT_OPTION_SILENCE_MODE)
               && (split_type != SPLT_OPTION_ERROR_MODE))
           {
-            snprintf(message, 2048, " Working with SILENCE AUTO-ADJUST (Threshold:"
+            snprintf(message, 1024, " Working with SILENCE AUTO-ADJUST (Threshold:"
                 " %.1f dB Gap: %d sec Offset: %.2f)\n",
                 splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
                 splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP),
