@@ -428,7 +428,7 @@ void splt_check_file_type(splt_state *state, int *error)
     if (err != SPLT_OK)
     {
       char infos[2048] = { '\0' };
-      snprintf(infos,2047," info: file matches the plugin '%s'\n",temp);
+      snprintf(infos,2048," info: file matches the plugin '%s'\n",temp);
       splt_t_put_message_to_client(state, infos);
     }
     else
