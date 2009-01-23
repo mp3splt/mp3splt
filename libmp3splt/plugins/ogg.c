@@ -643,7 +643,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
     if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_CURRENT_TAGS)
     {
       int current_split = splt_t_get_current_split_file_number(state) - 1;
-      int old_current_split = current_split;
+      //int old_current_split = current_split;
 
       //if we set all the tags like the x one
       int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
@@ -656,53 +656,42 @@ void splt_ogg_put_tags(splt_state *state, int *error)
       //only if the tags exists for the current split
       if (splt_t_tags_exists(state,current_split))
       {
-        char *title = NULL;
-        char *artist = NULL;
+        //splt_t_set_auto_increment_tracknumber_tag(state, old_current_split, current_split);
 
-        title = splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_TITLE);
-        artist = splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ARTIST);
+        int tags_number = 0;
+        splt_tags *tags = splt_t_get_tags(state, &tags_number);
 
-        //only if we have the artist or the title
-        if (((artist != NULL) && (artist[0] != '\0'))
-            || ((title != NULL) && (title[0] != '\0')))
+        if (splt_t_tags_exists(state, current_split))
         {
-          splt_t_set_auto_increment_tracknumber_tag(state, old_current_split, current_split);
-
-          int tags_number = 0;
-          splt_tags *tags = splt_t_get_tags(state, &tags_number);
-
-          if (splt_t_tags_exists(state, current_split))
+          char *track_string = NULL;
+          if (tags[current_split].track > 0)
           {
-            char *track_string = NULL;
-            if (tags[current_split].track > 0)
-            {
-              track_string = splt_ogg_trackstring(tags[current_split].track);
-            }
-            else
-            {
-              track_string = splt_ogg_trackstring(current_split+1);
-            }
+            track_string = splt_ogg_trackstring(tags[current_split].track);
+          }
+          else
+          {
+            track_string = splt_ogg_trackstring(current_split+1);
+          }
 
-            if (track_string)
-            {
-              splt_ogg_v_comment(&oggstate->vc,
-                  tags[current_split].artist,
-                  tags[current_split].album,
-                  tags[current_split].title,
-                  track_string,
-                  tags[current_split].year,
-                  (char *)splt_ogg_genre_list[(int) 
-                  tags[current_split].genre],
-                  tags[current_split].comment, error);
+          if (track_string)
+          {
+            splt_ogg_v_comment(&oggstate->vc,
+                tags[current_split].artist,
+                tags[current_split].album,
+                tags[current_split].title,
+                track_string,
+                tags[current_split].year,
+                (char *)splt_ogg_genre_list[(int) 
+                tags[current_split].genre],
+                tags[current_split].comment, error);
 
-              free(track_string);
-              track_string = NULL;
-            }
-            else
-            {
-              *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              return;
-            }
+            free(track_string);
+            track_string = NULL;
+          }
+          else
+          {
+            *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            return;
           }
         }
       }
