@@ -1730,6 +1730,7 @@ int main(int argc, char **orig_argv)
         break;
       case 'l':
         opt->l_option = SPLT_TRUE;
+        console_out = console_err;
         break;
       case 'e':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_ERROR_MODE);
@@ -2032,13 +2033,13 @@ int main(int argc, char **orig_argv)
       //if no error when getting the wrap files
       int wrap_files_number = wrap_files->wrap_files_num;
       int i = 0;
-      fprintf(console_out,"\n");
+      fprintf(stdout,"\n");
       for (i = 0;i < wrap_files_number;i++)
       {
-        fprintf(console_out,"%s\n",wrap_files->wrap_files[i]);
+        fprintf(stdout,"%s\n",wrap_files->wrap_files[i]);
       }
-      fprintf(console_out,"\n");
-      fflush(console_out);
+      fprintf(stdout,"\n");
+      fflush(stdout);
     }
     else
     {
@@ -2132,10 +2133,13 @@ int main(int argc, char **orig_argv)
         {
           if (sl->print_silence_level)
           {
-            float average_silence_levels = sl->level_sum / (double) sl->number_of_levels;
-            char message[256] = { '\0' };
-            snprintf(message,256," Average silence level : %.2f dB", average_silence_levels);
-            print_message(message);
+            if (sl->number_of_levels != 0)
+            {
+              float average_silence_levels = sl->level_sum / (double) sl->number_of_levels;
+              char message[256] = { '\0' };
+              snprintf(message,256," Average silence level : %.2f dB", average_silence_levels);
+              print_message(message);
+            }
           }
         }
 
