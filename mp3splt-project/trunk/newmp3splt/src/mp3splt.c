@@ -1439,9 +1439,11 @@ options *new_options(main_data *data)
   opt->qq_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
-  opt->param_args = NULL; opt->custom_tags = NULL;
+  opt->param_args = NULL;
   opt->m3u_arg = NULL;
   opt->output_format = NULL;
+
+  opt->custom_tags = strdup("%[@o,@N=1]");
 
   //we put the default values for freedb search
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
@@ -1687,7 +1689,7 @@ int main(int argc, char **orig_argv)
 
   //default we write mins_secs_hundr for normal split
   mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
-  mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
+  mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
 
   //parse command line options
   int option;
@@ -1813,7 +1815,11 @@ int main(int argc, char **orig_argv)
         opt->param_args = strdup(optarg);
         break;
       case 'g':
-        mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
+        if (opt->custom_tags)
+        {
+          free(opt->custom_tags);
+          opt->custom_tags = NULL;
+        }
         opt->custom_tags = strdup(optarg);
         opt->g_option = SPLT_TRUE;
         break;
@@ -1957,6 +1963,7 @@ int main(int argc, char **orig_argv)
 
   //enable/disable logging the silence splitpoints in a file
   mp3splt_set_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG, ! opt->N_option);
+
   //silence splitpoints log filename
   if (! opt->N_option)
   {
