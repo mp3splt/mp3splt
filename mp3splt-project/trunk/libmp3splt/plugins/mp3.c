@@ -1203,7 +1203,7 @@ int splt_mp3_write_id3v2_tags(splt_state *state, FILE *file_output,
   unsigned long number_of_bytes = 0;
   int error = SPLT_OK;
 
-  char *id3_tags = splt_mp3_build_tags(filename, state, &error, &number_of_bytes, 1);
+  char *id3_tags = splt_mp3_build_tags(filename, state, &error, &number_of_bytes, 2);
 
   if ((error >= 0) && (id3_tags) && (number_of_bytes > 0))
   {
