@@ -1011,15 +1011,14 @@ void splt_t_auto_increment_tracknumber_tag(splt_state *state)
   //if we set all the tags like the x one
   int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
 
-  if ((current_split >= state->split.real_tagsnumber) &&
-      (remaining_tags_like_x != -1))
-  {
-    current_split = remaining_tags_like_x;
-  }
-
   //auto increment track tag number if necessary
   if (remaining_tags_like_x != -1)
   {
+    if (current_split >= state->split.real_tagsnumber)
+    {
+      current_split = remaining_tags_like_x;
+    }
+
     if (splt_t_get_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS) > 0)
     {
       if (current_split == remaining_tags_like_x)
@@ -1167,7 +1166,7 @@ int splt_t_append_only_non_null_previous_tags(splt_state *state,
     }
     if (error != SPLT_OK)
       return error;
-    if (track != -INT_MAX)
+    if (track != -1)
     {
       error = splt_t_set_tags_int_field(state,
           old_tagsnumber, SPLT_TAGS_TRACK, track);
