@@ -1002,10 +1002,22 @@ int splt_t_get_splitpoint_type(splt_state *state, int index, int *error)
 
 //if we auto increment the track number, we must replace the tracknumber in 
 //'all remaining tags like X'
-void splt_t_set_auto_increment_tracknumber_tag(splt_state *state, int old_current_split, int current_split)
+void splt_t_auto_increment_tracknumber_tag(splt_state *state)
 {
-  int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  //get the old current split and the current split
+  int current_split = splt_t_get_current_split_file_number(state) - 1;
+  int old_current_split = current_split;
 
+  //if we set all the tags like the x one
+  int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+
+  if ((current_split >= state->split.real_tagsnumber) &&
+      (remaining_tags_like_x != -1))
+  {
+    current_split = remaining_tags_like_x;
+  }
+
+  //auto increment track tag number if necessary
   if (remaining_tags_like_x != -1)
   {
     if (splt_t_get_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS) > 0)

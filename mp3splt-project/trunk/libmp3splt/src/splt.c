@@ -164,6 +164,8 @@ void splt_s_multiple_split(splt_state *state, int *error)
     //we put the current file to split
     splt_t_set_current_split(state, i);
 
+    splt_t_auto_increment_tracknumber_tag(state);
+
     //if we don't cancel the split
     if (!splt_t_split_is_canceled(state))
     {
@@ -266,6 +268,8 @@ void splt_s_error_split(splt_state *state, int *error)
       {
         //we put the current file to split
         splt_t_set_current_split(state, i);
+
+        splt_t_auto_increment_tracknumber_tag(state);
 
         //we append a splitpoint
         int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
@@ -400,6 +404,8 @@ void splt_s_time_split(splt_state *state, int *error)
 
           //we set the current split
           splt_t_set_current_split(state, tracks-1);
+
+          splt_t_auto_increment_tracknumber_tag(state);
 
           int current_split = splt_t_get_current_split(state);
           int output_filenames = 

@@ -1353,6 +1353,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
       case 't':
         break;
       case 'n':
+      case 'N':
         amb = SPLT_OUTPUT_FORMAT_OK;
         break;
       case 'f':
@@ -1621,6 +1622,7 @@ int splt_u_put_output_format_filename(splt_state *state)
           }
           break;
         case 'n':
+        case 'N':
           temp[1] = '0';
           temp[2] = state->oformat.output_format_digits;
           temp[3] = 'd';
@@ -1629,8 +1631,7 @@ int splt_u_put_output_format_filename(splt_state *state)
 
           int format_length = strlen(state->oformat.format[i]);
           char *format_dup = strdup(state->oformat.format[i]);
-          if ((format_length > 2) &&
-              isdigit(state->oformat.format[i][2]))
+          if ((format_length > 2) && isdigit(state->oformat.format[i][2]))
           {
             temp[2] = state->oformat.format[i][2];
             number_of_digits = (int) state->oformat.format[i][2];
@@ -1647,10 +1648,11 @@ int splt_u_put_output_format_filename(splt_state *state)
           //if not time split, or normal split, or silence split or error,
           //we put the track number from the tags
           int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
-          if ((split_mode != SPLT_OPTION_TIME_MODE) &&
-              (split_mode != SPLT_OPTION_NORMAL_MODE) &&
-              (split_mode != SPLT_OPTION_SILENCE_MODE) &&
-              (split_mode != SPLT_OPTION_ERROR_MODE))
+          if ((state->oformat.format[i][1] == 'N') ||
+              ((split_mode != SPLT_OPTION_TIME_MODE) &&
+               (split_mode != SPLT_OPTION_NORMAL_MODE) &&
+               (split_mode != SPLT_OPTION_SILENCE_MODE) &&
+               (split_mode != SPLT_OPTION_ERROR_MODE)))
           {
             if (splt_t_tags_exists(state,current_split))
             {
@@ -1662,6 +1664,7 @@ int splt_u_put_output_format_filename(splt_state *state)
               }
             }
           }
+
           snprintf(temp+4, temp_len, format_dup+2);
           if (format_dup)
           {
