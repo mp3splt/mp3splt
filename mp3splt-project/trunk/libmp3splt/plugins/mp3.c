@@ -774,6 +774,16 @@ static void splt_mp3_get_original_tags(const char *filename, splt_state *state,
   id3_byte_t *id3_tag_bytes = splt_mp3_get_id3_tag_bytes(state, filename, &id3_tag_length,
       tag_error, &tags_version);
 
+  /*//client feedback
+  if (tags_version == 1)
+  {
+    splt_t_put_message_to_client(state, " info: detected input file original tags as ID3v1\n");
+  }
+  else if (tags_version == 2)
+  {
+    splt_t_put_message_to_client(state, " info: detected input file tags as ID3v2\n");
+  }*/
+
   if (*tag_error >= 0)
   {
     if (id3_tag_bytes)
