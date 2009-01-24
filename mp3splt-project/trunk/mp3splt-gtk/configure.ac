@@ -33,10 +33,10 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt-gtk, 0.5.4, io_fx@yahoo.fr)
+AC_INIT(mp3splt-gtk, 0.5.5, io_fx@yahoo.fr)
 
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.5.4)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.5.5)
 AC_CONFIG_HEADER([config.h])
 
 CFLAGS="-Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
@@ -117,7 +117,7 @@ LIBMP3SPLT_TEST_DISABLED=1
 
 #checking for libmp3splt
 AC_CHECK_LIB(mp3splt, mp3splt_new_state,libmp3splt=yes,
-        [AC_MSG_ERROR(libmp3splt version 0.5.4 needed :
+        [AC_MSG_ERROR(libmp3splt version 0.5.5 needed :
 
 You can download it at http://mp3splt.sourceforge.net/
 )])
