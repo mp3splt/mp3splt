@@ -49,18 +49,21 @@ static void splt_s_real_split(splt_state *state, int *error, int save_end_point)
 
   if (*error >= 0)
   {
-    splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
-
-    //if no error
-    if (*error >= 0)
+    if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
     {
-      //automatically set progress callback to 100%
-      splt_t_update_progress(state,1.0,1.0,1,1,1);
+      splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
 
-      //we put the split file
-      int err = SPLT_OK;
-      err = splt_t_put_split_file(state, final_fname);
-      if (err < 0) { *error = err; }
+      //if no error
+      if (*error >= 0)
+      {
+        //automatically set progress callback to 100%
+        splt_t_update_progress(state,1.0,1.0,1,1,1);
+
+        //we put the split file
+        int err = SPLT_OK;
+        err = splt_t_put_split_file(state, final_fname);
+        if (err < 0) { *error = err; }
+      }
     }
   }
 
@@ -206,10 +209,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
           continue;
         }
 
-        if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
-        {
-          splt_s_split(state, i, i+1, error);
-        }
+        splt_s_split(state, i, i+1, error);
 
         //get out if error
         if ((*error < 0) ||
@@ -373,9 +373,8 @@ void splt_s_time_split(splt_state *state, int *error)
   {
     int err = SPLT_OK;
 
-    int temp_int = 
-      (int)floor(((splt_t_get_total_time(state)/100.0) /
-            (state->options.split_time))+1) + 1;
+    int temp_int = (int)floor(((splt_t_get_total_time(state)/100.0) /
+          (state->options.split_time))+1) + 1;
     splt_t_set_splitnumber(state,temp_int);
 
     splt_t_set_oformat_digits(state);
@@ -452,30 +451,30 @@ void splt_s_time_split(splt_state *state, int *error)
               err = splt_t_put_split_file(state, final_fname);
               if (err < 0) { *error = err; break; }
             }
+          }
 
-            //set new splitpoints
-            begin = end;
-            end += splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
-            tracks++;
+          //set new splitpoints
+          begin = end;
+          end += splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
+          tracks++;
 
-            //get out if error
-            if ((*error == SPLT_MIGHT_BE_VBR) ||
-                (*error==SPLT_OK_SPLIT_EOF) ||
-                (*error < 0))
-            {
-              tracks = 0;
-            }
-            if (*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)
-            {
-              j--;
-            }
+          //get out if error
+          if ((*error == SPLT_MIGHT_BE_VBR) ||
+              (*error==SPLT_OK_SPLIT_EOF) ||
+              (*error < 0))
+          {
+            tracks = 0;
+          }
+          if (*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)
+          {
+            j--;
+          }
 
-            if (final_fname)
-            {
-              //free memory
-              free(final_fname);
-              final_fname = NULL;
-            }
+          if (final_fname)
+          {
+            //free memory
+            free(final_fname);
+            final_fname = NULL;
           }
         }
         else
