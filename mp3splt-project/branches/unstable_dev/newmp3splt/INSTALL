@@ -1,0 +1,48 @@
+
+mp3splt - INSTALLATION INFORMATION
+
+====================================================================
+
+	To install the program, you can to compile the source code.
+
+	Installing the program is made in 3 steps :
+
+		1) Compile the source
+
+		2) Install the binary
+
+
+--------------------------------------------------------------------
+1) Compiling the source :
+
+  Verify that you have installed libmp3splt.
+	As you are reading this, it is probably that you are already
+in the mp3splt directory. If not, please go in that directory.
+
+	Once in the mp3splt directory type :
+	
+		./configure
+
+	This will create the Makefile used to compile the program
+
+	After that, type :
+	
+		make
+
+
+--------------------------------------------------------------------
+2) Install the binary :
+
+	To install the binary type :
+	
+		make install
+
+
+///////////////////////////////////////////
+for any suggestion, bugs, etc... contact us.
+
+Matteo Trotta - <mtrotta@users.sourceforge.net>: Author and main maintainer of Mp3Splt Project
+Alexandru Munteanu - <io_fx@yahoo.fr>: Maintainer of mp3splt
+
+///////////////////////////////////////////
+

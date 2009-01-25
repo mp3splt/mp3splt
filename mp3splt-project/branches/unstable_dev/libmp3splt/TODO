@@ -1,0 +1,18 @@
+FEATURES REQUESTS :
+
+* use 'getline' (GNU extension) instead of 'fgets'
+* don't set the same name on the structures as the defined type
+* use 'backtrace()' on SIGSEV on GNU/Linux
+* use sizeof(* pointer) instead of sizeof(struct pointer_struct)
+
+* use 'substr' to copy a substring :
+char *substr(char *dst, const char *src, size_t len)
+{
+  sprintf(dst, "%.*s", len, src);
+  return dst;
+}
+
+* do proxy
+* ameliorate progress bar on ogg split
+* warning before overwriting files
+
