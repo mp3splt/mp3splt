@@ -1296,8 +1296,6 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
   mad_synth_init(&mp3state->synth);
 
   mad_timer_reset(&mp3state->timer);
-  /*mp3state->timer.seconds = 0;
-  mp3state->timer.fraction= 0;*/
 
   //we read mp3 infos and set pointers to read the mp3 data
   do
@@ -1631,8 +1629,6 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   mad_synth_init(&mp3state->synth);
 
   mad_timer_reset(&mp3state->timer);
-  /*mp3state->timer.seconds = 0;
-  mp3state->timer.fraction= 0;*/
 
   mp3state->temp_level = 0.0;
 
@@ -1871,7 +1867,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
 
   if (mp3state->mp3file.xing!=0)
   {
-    //don't write the xing header if we have the no tags
+    //don't write the xing header if we have no tags
     if (splt_t_get_int_option(state,SPLT_OPT_TAGS) != SPLT_NO_TAGS)
     {
       //don't write the xing header if error mode split
@@ -2026,7 +2022,8 @@ function_end:
 //threshold - see manual
 //must be called after splt_mp3_info()
 //returns possible error in '*error'
-static void splt_mp3_split(const char *output_fname, splt_state *state,
+//-returns the fend_sec (possibly modified with the auto adjust option)
+static double splt_mp3_split(const char *output_fname, splt_state *state,
     double fbegin_sec, double fend_sec, int *error, int save_end_point)
 {
   splt_u_print_debug("Mp3 split...",0,NULL);
@@ -2062,10 +2059,13 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
   mad_stream_init(&mp3state->stream);
   mad_frame_init(&mp3state->frame);
 
+  double sec_end_time = fend_sec;
+
   //if not seekable
   if (!seekable)
   {
     splt_u_print_debug("Starting not seekable...",0,NULL);
+    long hundr_end_time = 0;
 
     //for the stdout
     if (strcmp(output_fname, "-")==0)
@@ -2084,7 +2084,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
         *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
         mad_frame_finish(&mp3state->frame);
         mad_stream_finish(&mp3state->stream);
-        return;
+        return sec_end_time;
       }
     }
 
@@ -2108,7 +2108,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
     {
       splt_u_print_debug("Starting mp3 frame mode...",0,NULL);
 
-      long begin_c, end_c, time;
+      long begin_c, end_c;
       //convert seconds to hundreths
       begin_c = (long) (fbegin_sec * 100);
       if (fend_sec > 0)
@@ -2119,12 +2119,12 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
       {
         end_c = 0;
       }
-      time = 0;
+      hundr_end_time = 0;
 
       do
       {
         //we write xing if vbr
-        if (!writing && (time >= begin_c))
+        if (!writing && (hundr_end_time >= begin_c))
         {
           writing = 1;
           fbegin = mp3state->frames;
@@ -2156,7 +2156,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
             wrote = (off_t) (wrote + len);
             mp3state->data_len = 0;
           }
-          if ((end_c > 0) && (time > end_c))
+          if ((end_c > 0) && (hundr_end_time > end_c))
           {
             finished = 1;
           }
@@ -2172,13 +2172,13 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
         if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE)
             == SPLT_OPTION_TIME_MODE)
         {
-          splt_t_update_progress(state,(float)(time-begin_c),
+          splt_t_update_progress(state,(float)(hundr_end_time-begin_c),
               (float)(end_c-begin_c),1,0,
               SPLT_DEFAULT_PROGRESS_RATE);
         }
         else
         {
-          splt_t_update_progress(state,(float)(time),
+          splt_t_update_progress(state,(float)(hundr_end_time),
               (float)(end_c),1,0,
               SPLT_DEFAULT_PROGRESS_RATE);
         }
@@ -2190,7 +2190,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           case 1:
             mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
             mp3state->frames++;
-            time = (unsigned long) mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
+            hundr_end_time = mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
             break;
           case 0:
             break;
@@ -2467,7 +2467,7 @@ bloc_end:
     mad_stream_finish(&mp3state->stream);
     if (*error == SPLT_OK) { *error = SPLT_OK_SPLIT; }
 
-    return;
+    return sec_end_time;
   }
   //if seekable :
   else
@@ -2680,6 +2680,8 @@ bloc_end:
 
           end = splt_mp3_findhead(mp3state, end);
 
+          sec_end_time = mp3state->frames / mp3state->mp3file.fps;
+
           splt_t_ssplit_free(&state->silence_list);
           adjust=0;
           //progress
@@ -2783,6 +2785,8 @@ bloc_end:
 bloc_end2:
   mad_frame_finish(&mp3state->frame);
   mad_stream_finish(&mp3state->stream);
+
+  return sec_end_time;
 }
 
 /****************************/
@@ -3636,11 +3640,10 @@ void splt_pl_dewrap(splt_state *state, int listonly, const char *dir, int *error
   splt_mp3_dewrap(listonly, dir, error, state);
 }
 
-void splt_pl_split(splt_state *state, const char *final_fname,
+double splt_pl_split(splt_state *state, const char *final_fname,
     double begin_point, double end_point, int *error, int save_end_point)
 {
-  //effective mp3 split
-  splt_mp3_split(final_fname, state, begin_point, end_point, error, save_end_point);
+  return splt_mp3_split(final_fname, state, begin_point, end_point, error, save_end_point);
 }
 
 int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off_t end)

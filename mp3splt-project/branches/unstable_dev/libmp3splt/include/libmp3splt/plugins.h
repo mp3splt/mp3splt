@@ -37,7 +37,7 @@ int splt_p_check_plugin_is_for_file(splt_state *state, int *error);
 void splt_p_search_syncerrors(splt_state *state, int *error);
 void splt_p_dewrap(splt_state *state, int listonly, const char *dir, int *error);
 void splt_p_set_total_time(splt_state *state, int *error);
-void splt_p_split(splt_state *state, const char *final_fname, double begin_point,
+double splt_p_split(splt_state *state, const char *final_fname, double begin_point,
     double end_point, int *error, int save_end_point);
 int splt_p_simple_split(splt_state *state, const char *output_fname, off_t begin,
     off_t end);

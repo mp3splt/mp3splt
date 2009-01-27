@@ -40,18 +40,21 @@
 /* splt normal split */
 
 //the real split of the file
-static void splt_s_real_split(splt_state *state, int *error, int save_end_point)
+//-returns the new end point as long
+static long splt_s_real_split(splt_state *state, int *error, int save_end_point)
 {
   double splt_beg = splt_t_get_i_begin_point(state);
   double splt_end = splt_t_get_i_end_point(state);
   char *final_fname = NULL;
   final_fname = splt_u_get_fname_with_path_and_extension(state,error);
+  long new_end_point = splt_end * 100;
 
   if (*error >= 0)
   {
     if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
     {
-      splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
+      double new_sec_end_point = splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
+      new_end_point = new_sec_end_point * 100;
 
       //if no error
       if (*error >= 0)
@@ -73,6 +76,8 @@ static void splt_s_real_split(splt_state *state, int *error, int save_end_point)
     free(final_fname);
     final_fname = NULL;
   }
+
+  return new_end_point;
 }
 
 //simple split with only 2 splitpoints
@@ -132,7 +137,13 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
         splt_t_set_i_end_point(state, splt_end);
 
         //we do the real split
-        splt_s_real_split(state, error, save_end_point);
+        long new_end_point = splt_s_real_split(state, error, save_end_point);
+        //TODO
+        if (new_end_point != split_end)
+        {
+          fprintf(stdout,"\nend differents !\n");
+          fflush(stdout);
+        }
       }
     }
   }
@@ -443,7 +454,15 @@ void splt_s_time_split(splt_state *state, int *error)
             final_fname = splt_u_get_fname_with_path_and_extension(state,&err);
             if (err < 0) { *error = err; break; }
 
-            splt_p_split(state, final_fname, begin, end, error, SPLT_TRUE);
+            double new_sec_end_point = splt_p_split(state, final_fname, begin, end, error, SPLT_TRUE);
+            long original_end = end * 100;
+            long new_end_point = new_sec_end_point * 100;
+            //TODO
+            if (original_end != new_end_point)
+            {
+              fprintf(stdout,"\ntime split end differents !\n");
+              fflush(stdout);
+            }
 
             //if no error for the split, put the split file
             if (*error >= 0)
@@ -634,7 +653,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     if (state->split.get_silence_level)
     {
-      //TODO
       state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
     }
     found = splt_p_scan_silence(state, error);
@@ -793,7 +811,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   splt_t_ssplit_free(&state->silence_list);
 
   //set number of splitpoints
-  //TODO:verify here ?
   splt_t_set_splitnumber(state, found + 1);
 
   return found;
