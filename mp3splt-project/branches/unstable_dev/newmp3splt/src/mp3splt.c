@@ -505,6 +505,15 @@ void check_args(int argc, main_data *data)
   }
   else
   {
+    if ((!opt->w_option) && (!opt->c_option) &&
+        (!opt->e_option) && (!opt->s_option) &&
+        (!opt->t_option) && (!opt->l_option) &&
+        (!opt->i_option))
+    {
+      console_out = stderr;
+      show_small_help_exit(data);
+    }
+
     //if we want input not seekable (-k)
     if (opt->k_option)
     {
@@ -726,7 +735,8 @@ void process_confirmation_error(int conf, main_data *data)
     }
     error_from_library = NULL;
   }
-  if (conf == SPLT_DEWRAP_OK)
+
+  if ((conf == SPLT_DEWRAP_OK) && (!data->opt->l_option))
   {
     print_message("\nAll files have been split correctly. Visit http://mp3wrap.sourceforge.net!");
   }
@@ -2024,6 +2034,12 @@ int main(int argc, char **orig_argv)
     fprintf(console_out,"\n");
     fflush(console_out);
   }
+
+  if (data->number_of_filenames == 0)
+  {
+    print_error_exit("no input file(s) specified", data);
+  }
+
   //split all the filenames
   for (j = 0;j < data->number_of_filenames; j++)
   {
