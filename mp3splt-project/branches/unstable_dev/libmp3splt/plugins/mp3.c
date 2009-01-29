@@ -643,14 +643,17 @@ static id3_byte_t *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *fil
   }
 
 end:
-  if (fclose(file) != 0)
+  if (file)
   {
-    if (bytes)
+    if (fclose(file) != 0)
     {
-      free(bytes);
-      bytes = NULL;
+      if (bytes)
+      {
+        free(bytes);
+        bytes = NULL;
+      }
+      return NULL;
     }
-    return NULL;
   }
 
   return bytes;
@@ -1171,7 +1174,7 @@ int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output,
   {
     if (fseeko(file_output, splt_mp3_getid3v1_offset(file_output), SEEK_END)!=-1)
     {
-      if (fwrite(id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
+      if (splt_u_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
       {
         splt_t_set_error_data(state, output_fname);
         error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -1207,7 +1210,7 @@ int splt_mp3_write_id3v2_tags(splt_state *state, FILE *file_output,
 
   if ((error >= 0) && (id3_tags) && (number_of_bytes > 0))
   {
-    if (fwrite(id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
+    if (splt_u_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
     {
       splt_t_set_error_data(state, output_fname);
       error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -1842,11 +1845,14 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   }
   else
   {
-    if (!(file_output=splt_u_fopen(output_fname, "wb+")))
+    if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, output_fname);
-      return SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
+      if (!(file_output=splt_u_fopen(output_fname, "wb+")))
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, output_fname);
+        return SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
+      }
     }
   }
 
@@ -1873,7 +1879,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       //don't write the xing header if error mode split
       if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
       {
-        if(fwrite(mp3state->mp3file.xingbuffer, 1, 
+        if(splt_u_fwrite(state, mp3state->mp3file.xingbuffer, 1, 
               mp3state->mp3file.xing, file_output) < mp3state->mp3file.xing)
         {
           splt_t_set_error_data(state, output_fname);
@@ -1904,7 +1910,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       break;
     }
 
-    if (fwrite(buffer, 1, readed, file_output) < readed)
+    if (splt_u_fwrite(state, buffer, 1, readed, file_output) < readed)
     {
       splt_t_set_error_data(state,output_fname);
       error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -1998,16 +2004,19 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   }
 
 function_end:
-  if (file_output != stdout)
+  if (file_output)
   {
-    if (fclose(file_output) != 0)
+    if (file_output != stdout)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, filename);
-      return SPLT_ERROR_CANNOT_CLOSE_FILE;
+      if (fclose(file_output) != 0)
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, filename);
+        return SPLT_ERROR_CANNOT_CLOSE_FILE;
+      }
     }
+    file_output = NULL;
   }
-  file_output = NULL;
 
   return error;
 }
@@ -2077,14 +2086,17 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
     }
     else
     {
-      if (!(file_output=splt_u_fopen(output_fname, "wb+")))
+      if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
       {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state,output_fname);
-        *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
-        mad_frame_finish(&mp3state->frame);
-        mad_stream_finish(&mp3state->stream);
-        return sec_end_time;
+        if (!(file_output=splt_u_fopen(output_fname, "wb+")))
+        {
+          splt_t_set_strerror_msg(state);
+          splt_t_set_error_data(state,output_fname);
+          *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
+          mad_frame_finish(&mp3state->frame);
+          mad_stream_finish(&mp3state->stream);
+          return sec_end_time;
+        }
       }
     }
 
@@ -2131,7 +2143,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
 
           if (mp3state->mp3file.xing > 0)
           {
-            wrote = fwrite(mp3state->mp3file.xingbuffer, 1, mp3state->mp3file.xing, file_output);
+            wrote = splt_u_fwrite(state, mp3state->mp3file.xingbuffer, 1, mp3state->mp3file.xing, file_output);
             if (wrote < mp3state->mp3file.xing)
             {
               splt_t_set_error_data(state,output_fname);
@@ -2146,7 +2158,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
         {
           if (mp3state->data_len > 0)
           {
-            if ((len = fwrite(mp3state->data_ptr, 1, mp3state->data_len, file_output))
+            if ((len = splt_u_fwrite(state, mp3state->data_ptr, 1, mp3state->data_len, file_output))
                 < mp3state->data_len)
             {
               splt_t_set_error_data(state,output_fname);
@@ -2235,7 +2247,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
             *error = SPLT_ERROR_WHILE_READING_FILE;
             goto bloc_end;
           }
-          if (fwrite(mp3state->data_ptr, 1, len, file_output) < len)
+          if (splt_u_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
           {
             splt_t_set_error_data(state,output_fname);
             *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2278,7 +2290,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
                 *error = SPLT_ERROR_WHILE_READING_FILE;
                 goto bloc_end;
               }
-              if (fwrite(mp3state->data_ptr, 1, len, file_output) < len)
+              if (splt_u_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
               {
                 splt_t_set_error_data(state,output_fname);
                 *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2313,7 +2325,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
           *error = SPLT_ERROR_WHILE_READING_FILE;
           goto bloc_end;
         }
-        if (fwrite(mp3state->data_ptr, 1, len, file_output) < len)
+        if (splt_u_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
         {
           splt_t_set_error_data(state,output_fname);
           *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2351,7 +2363,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
         }
 
         //we write to file output
-        if (fwrite(mp3state->inputBuffer, 1, mp3state->data_len, file_output) < mp3state->data_len)
+        if (splt_u_fwrite(state, mp3state->inputBuffer, 1, mp3state->data_len, file_output) < mp3state->data_len)
         {
           splt_t_set_error_data(state,output_fname);
           *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2386,7 +2398,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
               *error = SPLT_ERROR_WHILE_READING_FILE;
               goto bloc_end;
             }
-            if (fwrite(mp3state->inputBuffer, 1, len, file_output) < len)
+            if (splt_u_fwrite(state, mp3state->inputBuffer, 1, len, file_output) < len)
             {
               splt_t_set_error_data(state,output_fname);
               *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -3290,10 +3302,13 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 {
                   if (!listonly)
                   {
-                    if ((splt_u_mkdir(junk))==-1)
+                    if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
                     {
-                      *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-                      return;
+                      if ((splt_u_mkdir(junk))==-1)
+                      {
+                        *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+                        return;
+                      }
                     }
                   }
                 }

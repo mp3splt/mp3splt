@@ -2310,7 +2310,7 @@ int splt_u_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 //create recursive directories
 int splt_u_create_directories(splt_state *state, const char *dir)
 {
-  int result = SPLT_OK;
+    int result = SPLT_OK;
   const char *ptr = NULL;
   if (dir[0] == '\0')
   {
@@ -2354,12 +2354,15 @@ int splt_u_create_directories(splt_state *state, const char *dir)
         //don't create output directories if we pretend to split
         if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          if ((splt_u_mkdir(junk)) == -1)
+          if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
           {
-            splt_t_set_strerror_msg(state);
-            splt_t_set_error_data(state,junk);
-            result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-            goto end;
+            if ((splt_u_mkdir(junk)) == -1)
+            {
+              splt_t_set_strerror_msg(state);
+              splt_t_set_error_data(state,junk);
+              result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+              goto end;
+            }
           }
         }
       }
@@ -2378,11 +2381,14 @@ int splt_u_create_directories(splt_state *state, const char *dir)
   {
     splt_u_print_debug("final directory ...",0, last_dir);
 
-    if ((splt_u_mkdir(last_dir)) == -1)
+    if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,last_dir);
-      result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+      if ((splt_u_mkdir(last_dir)) == -1)
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state,last_dir);
+        result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+      }
     }
   }
   
@@ -2619,6 +2625,19 @@ int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size)
     }
 
     return ret;
+  }
+}
+
+size_t splt_u_fwrite(splt_state *state,
+    const void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+  if (splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  {
+    return size * nmemb;
+  }
+  else
+  {
+    return fwrite(ptr, size, nmemb, stream);
   }
 }
 

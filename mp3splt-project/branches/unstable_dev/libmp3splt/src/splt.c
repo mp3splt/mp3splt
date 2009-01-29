@@ -51,22 +51,19 @@ static long splt_s_real_split(splt_state *state, int *error, int save_end_point)
 
   if (*error >= 0)
   {
-    if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+    double new_sec_end_point = splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
+    new_end_point = new_sec_end_point * 100;
+
+    //if no error
+    if (*error >= 0)
     {
-      double new_sec_end_point = splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
-      new_end_point = new_sec_end_point * 100;
+      //automatically set progress callback to 100%
+      splt_t_update_progress(state,1.0,1.0,1,1,1);
 
-      //if no error
-      if (*error >= 0)
-      {
-        //automatically set progress callback to 100%
-        splt_t_update_progress(state,1.0,1.0,1,1,1);
-
-        //we put the split file
-        int err = SPLT_OK;
-        err = splt_t_put_split_file(state, final_fname);
-        if (err < 0) { *error = err; }
-      }
+      //we put the split file
+      int err = SPLT_OK;
+      err = splt_t_put_split_file(state, final_fname);
+      if (err < 0) { *error = err; }
     }
   }
 
@@ -138,11 +135,9 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
 
         //we do the real split
         long new_end_point = splt_s_real_split(state, error, save_end_point);
-        //TODO
         if (new_end_point != split_end)
         {
-          fprintf(stdout,"\nend differents !\n");
-          fflush(stdout);
+          splt_t_set_splitpoint_value(state, second_splitpoint, new_end_point);
         }
       }
     }
@@ -448,28 +443,23 @@ void splt_s_time_split(splt_state *state, int *error)
             }
           }
 
-          if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+          //we get the final fname
+          final_fname = splt_u_get_fname_with_path_and_extension(state,&err);
+          if (err < 0) { *error = err; break; }
+
+          double new_sec_end_point = splt_p_split(state, final_fname, begin, end, error, SPLT_TRUE);
+          long original_end = end * 100;
+          long new_end_point = new_sec_end_point * 100;
+          if (original_end != new_end_point)
           {
-            //we get the final fname
-            final_fname = splt_u_get_fname_with_path_and_extension(state,&err);
+            splt_t_set_splitpoint_value(state, current_split+1, new_end_point);
+          }
+
+          //if no error for the split, put the split file
+          if (*error >= 0)
+          {
+            err = splt_t_put_split_file(state, final_fname);
             if (err < 0) { *error = err; break; }
-
-            double new_sec_end_point = splt_p_split(state, final_fname, begin, end, error, SPLT_TRUE);
-            long original_end = end * 100;
-            long new_end_point = new_sec_end_point * 100;
-            //TODO
-            if (original_end != new_end_point)
-            {
-              fprintf(stdout,"\ntime split end differents !\n");
-              fflush(stdout);
-            }
-
-            //if no error for the split, put the split file
-            if (*error >= 0)
-            {
-              err = splt_t_put_split_file(state, final_fname);
-              if (err < 0) { *error = err; break; }
-            }
           }
 
           //set new splitpoints

@@ -307,11 +307,11 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
   {
     while(ogg_stream_flush(stream, &page))
     {
-      if(fwrite(page.header, 1, page.header_len, file) < page.header_len)
+      if(splt_u_fwrite(state, page.header, 1, page.header_len, file) < page.header_len)
       {
         goto write_error;
       }
-      if(fwrite(page.body, 1, page.body_len, file) < page.body_len)
+      if(splt_u_fwrite(state, page.body, 1, page.body_len, file) < page.body_len)
       {
         goto write_error;
       }
@@ -321,11 +321,11 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
   {
     while(ogg_stream_pageout(stream, &page))
     {
-      if (fwrite(page.header,1,page.header_len, file) < page.header_len)
+      if (splt_u_fwrite(state, page.header,1,page.header_len, file) < page.header_len)
       {
         goto write_error;
       }
-      if (fwrite(page.body,1,page.body_len, file) < page.body_len)
+      if (splt_u_fwrite(state, page.body,1,page.body_len, file) < page.body_len)
       {
         goto write_error;
       }
@@ -1124,11 +1124,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
     if(ogg_stream_flush(stream, &page)!=0)
     {
-      if (fwrite(page.header,1,page.header_len,f) < page.header_len)
+      if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
       {
         goto write_error;
       }
-      if (fwrite(page.body,1,page.body_len,f) < page.body_len)
+      if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
       {
         goto write_error;
       }
@@ -1141,11 +1141,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
        * in case.
        */
       //fprintf(stderr, "Warning: First audio packet didn't fit into page. File may not decode correctly\n");
-      if (fwrite(page.header,1,page.header_len,f) < page.header_len)
+      if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
       {
         goto write_error;
       }
-      if (fwrite(page.body,1,page.body_len,f) < page.body_len)
+      if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
       {
         goto write_error;
       }
@@ -1428,12 +1428,15 @@ double splt_ogg_split(const char *output_fname, splt_state *state, double
   }
   else
   {
-    if (!(oggstate->out = splt_u_fopen(output_fname, "wb")))
+    if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, output_fname);
-      *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
-      return sec_end_time;
+      if (!(oggstate->out = splt_u_fopen(output_fname, "wb")))
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, output_fname);
+        *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
+        return sec_end_time;
+      }
     }
   }
 
@@ -1474,13 +1477,16 @@ double splt_ogg_split(const char *output_fname, splt_state *state, double
 
 end:
   ogg_stream_clear(&stream_out);
-  if (oggstate->out != stdout)
+  if (oggstate->out)
   {
-    if (fclose(oggstate->out) != 0)
+    if (oggstate->out != stdout)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, output_fname);
-      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+      if (fclose(oggstate->out) != 0)
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, output_fname);
+        *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+      }
     }
   }
   oggstate->out = NULL;

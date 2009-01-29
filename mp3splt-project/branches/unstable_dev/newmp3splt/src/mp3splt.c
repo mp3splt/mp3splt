@@ -333,8 +333,8 @@ void show_small_help_exit(main_data *data)
       " -v   Prints current version and exits\n"
       " -h   Shows this help\n"
       "\n(other options)\n"
-      /*" -P   Pretend to split, without actually splitting the file\n"
-      " -E   Export .cue file (use with -P to export .cue file without splitting)\n"*/
+      " -P   Pretend to split, without actually splitting the file\n"
+      /*" -E   Export .cue file (use with -P to export .cue file without splitting)\n"*/
       " -1   For mp3 files, force output tags as version 1\n"
       " -2   For mp3 files, force output tags as version 2\n"
       "      (default is to set the same version as the file to split)\n"
@@ -1708,7 +1708,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option = getopt(data->argc, data->argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQN12")) != -1)
+  while ((option = getopt(data->argc, data->argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQN12P")) != -1)
   {
     switch (option)
     {
@@ -1846,10 +1846,10 @@ int main(int argc, char **orig_argv)
         break;
       /*case 'E':
         opt->E_option = SPLT_TRUE;
-        break;
+        break;*/
       case 'P':
         mp3splt_set_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
-        break;*/
+        break;
       default:
         print_error_exit("read man page for documentation or type 'mp3splt -h'.",
             data);

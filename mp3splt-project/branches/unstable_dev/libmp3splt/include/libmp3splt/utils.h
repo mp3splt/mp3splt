@@ -103,6 +103,9 @@ char *splt_u_win32_utf16_to_utf8(const wchar_t *source);
 wchar_t *splt_u_win32_utf8_to_utf16(const char *source);
 #endif
 
+size_t splt_u_fwrite(splt_state *state,
+    const void *ptr, size_t size, size_t nmemb, FILE *stream);
+
 #define MP3SPLT_UTILS_H
 
 #endif

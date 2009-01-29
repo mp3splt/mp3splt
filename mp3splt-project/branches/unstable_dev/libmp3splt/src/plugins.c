@@ -834,8 +834,6 @@ double splt_p_split(splt_state *state, const char *final_fname, double begin_poi
           begin_point, end_point, error, save_end_point);
 
       splt_u_print_debug("New end point after split ...",(double)new_end_point,NULL);
-      fprintf(stdout,"\nNew end point after split = %lf\n", new_end_point);
-      fflush(stdout);
 
       return new_end_point;
     }
