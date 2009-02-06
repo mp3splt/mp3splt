@@ -700,9 +700,11 @@ int mp3splt_split(splt_state *state)
         error = splt_u_create_directories(state, new_filename_path);
         if (error < 0) { goto function_end; }
 
-        //check means the test is ok
-        splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
-        if (error < 0) { goto function_end; }
+        if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+        {
+          splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
+          if (error < 0) { goto function_end; }
+        }
 
         //we check if mp3 or ogg
         splt_check_file_type(state, &error);
