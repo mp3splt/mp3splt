@@ -22,7 +22,7 @@ win=$1
 #we run aclocal, autoconf and automake
 #info: the 'sed' is an ugly hack for libtool version compatibility because aclocal.m4 is shipped in 'make dist'
 echo -n "1/5 Running aclocal... " \
-&& aclocal $ACLOCAL_FLAGS && echo "done" \
+&& aclocal -Im4 $ACLOCAL_FLAGS && echo "done" \
 && if [[ -z $win ]];then sed -i "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4;fi \
 && echo -n "2/5 Running autoheader... " \
 && autoheader && echo "done" \

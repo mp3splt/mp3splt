@@ -39,7 +39,6 @@ AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE(mp3splt, 2.2.4)
 AM_CONFIG_HEADER([config.h])
 
-
 CFLAGS="-Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
 -I../libmp3splt/include/libmp3splt/ -I../../libmp3splt/include/libmp3splt/"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../libmp3splt/src \
@@ -86,25 +85,11 @@ AC_MSG_RESULT($HOST)
 
 #################################################
 #Check for libmp3splt
-#checking for --disable-libmp3splt_test string
-AC_ARG_ENABLE(libmp3splt_test,
-AC_HELP_STRING([--disable-libmp3splt_test],
-	[Disables the libmp3splt test when doing configure)]),
 
-#action if given
-LIBMP3SPLT_TEST_DISABLED=1
-,
-#action if not given
-
-#checking for libmp3splt
-AC_CHECK_LIB(mp3splt, mp3splt_new_state,libmp3splt=yes,
-        [AC_MSG_ERROR(libmp3splt version 0.5.5 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.5.5 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
-)])
-
-LIBMP3SPLT_TEST_DISABLED=0
-)
+) ])
 
 #################################################
 #Check for --enable-oggsplt

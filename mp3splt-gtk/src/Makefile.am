@@ -34,12 +34,16 @@ mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 -lmp3splt
 if AUDACIOUS
 mp3splt_gtk_LDADD += @AUDACIOUS_LIBS@
 INCLUDES += @AUDACIOUS_CFLAGS@ -I/usr/include/dbus-1.0 -I/usr/include/dbus-1.0/include
+else
+INCLUDES += -DNO_AUDACIOUS
 endif
 
 #
 if GSTREAMER
 mp3splt_gtk_LDADD += @GST_LIBS@
 INCLUDES += @GST_CFLAGS@
+else
+INCLUDES += -DNO_GSTREAMER
 endif
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
