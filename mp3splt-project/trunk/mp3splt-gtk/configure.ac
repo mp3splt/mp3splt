@@ -105,69 +105,50 @@ AM_PATH_GTK_2_0(2.6.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.6.0))
 
 #################################################
 #Check for libmp3splt
-#checking for --disable-libmp3splt_test string
-AC_ARG_ENABLE(libmp3splt_test,
-AC_HELP_STRING([--disable-libmp3splt_test],
-	[Disables the libmp3splt test when doing configure]),
 
-#action if given
-LIBMP3SPLT_TEST_DISABLED=1
-,
-#action if not given
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.5.5 needed :
 
-#checking for libmp3splt
-AC_CHECK_LIB(mp3splt, mp3splt_new_state,libmp3splt=yes,
-        [AC_MSG_ERROR(libmp3splt version 0.5.5 needed :
-
-You can download it at http://mp3splt.sourceforge.net/
-)])
-
-LIBMP3SPLT_TEST_DISABLED=0
-)
+Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
+) ])
 
 #################################################
 #Check for audacious
-#checking for --enable-audacious string
-AC_ARG_ENABLE(audacious,
-AC_HELP_STRING([--enable-audacious], [Enable Audacious player support (default is disabled)]),
-[PKG_CHECK_MODULES(AUDACIOUS, [audacious >= 0.1],
-  [],
-  [AC_MSG_ERROR([Audacious player development files are not installed.
 
-    Install it or configure with "--disable-audacious".
-])])
-AM_CONDITIONAL(AUDACIOUS,true)
-audacious=yes
-]
+AM_CONDITIONAL(AUDACIOUS,false)
+audacious="no"
+#checking for --disable-audacious & audacious library
+AC_ARG_ENABLE(audacious,
+AC_HELP_STRING([--disable-audacious], [Disable audacious player support (default is enabled)]),
+[AC_MSG_WARN([audacious support is disabled !])
+audacious="disabled"]
 ,
 #action if not given
-[CFLAGS="$CFLAGS -DNO_AUDACIOUS"
-AM_CONDITIONAL(AUDACIOUS,false)
-audacious=no]
-)
+[PKG_CHECK_MODULES(AUDACIOUS, [audacious >= 0.1],
+  [AM_CONDITIONAL(AUDACIOUS,true) audacious="yes" ],
+  [AC_MSG_ERROR([Audacious player development files are not installed.
+
+    Install it or configure with "--disable-audacious".])])
+])
 
 #################################################
 #Check for gstreamer
-#checking for --enable-gstreamer string
+
+AM_CONDITIONAL(GSTREAMER,false)
+gstreamer="no"
+#checking for --disable-gstreamer & gstreamer library
 AC_ARG_ENABLE(gstreamer,
-AC_HELP_STRING([--enable-gstreamer], [Enable GStreamer 'internal' player support (default is disabled)]),
+AC_HELP_STRING([--disable-gstreamer], [Disable gstreamer 'internal' player support (default is enabled)]),
+[AC_MSG_WARN([gstreamer support is disabled !])
+gstreamer="disabled"]
+,
+#action if not given
 [PKG_CHECK_MODULES(GST, [gstreamer-0.10 >= 0.10
                          gstreamer-base-0.10 >= 0.10
                          gstreamer-plugins-base-0.10 >= 0.10],
-  [],
+  [AM_CONDITIONAL(GSTREAMER,true) gstreamer="yes"],
   [AC_MSG_ERROR([GStreamer >= 0.10 development files are not installed.
 
     Install it or configure with "--disable-gstreamer".])])
-AM_CONDITIONAL(GSTREAMER,true)
-gstreamer=yes
-]
-,
-#action if not given
-[
-AC_MSG_WARN([gstreamer support is disabled !])
-CFLAGS="$CFLAGS -DNO_GSTREAMER"
-AM_CONDITIONAL(GSTREAMER,false)
-gstreamer=no
 ])
 
 #################################################
@@ -186,13 +167,10 @@ echo "Configuration:"
 echo
 echo "    install path:            ${prefix}"
 echo
-echo " Players supported :"
+echo " Players :"
 echo
 echo "    gstreamer                $gstreamer"
 echo "    audacious                $audacious"
-if test $audacious = "no"; then
-  echo "        Please run configure with '--enable-audacious' to enable audacious support !"
-fi
 echo "    snackAmp                 yes"
 echo
 echo "---------------------------------------------------------"

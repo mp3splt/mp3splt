@@ -118,42 +118,40 @@ AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not fou
 # Check mp3 plugin libraries
 #################################################################
 
-#check for --disable-mp3
+#check for --disable-mp3 & mad library
+AM_CONDITIONAL(MP3_PLUGIN,false)
+mp3="no" 
 AC_ARG_ENABLE(mp3,
-              [ AC_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ],
-              [ AM_CONDITIONAL(MP3_PLUGIN,false) mp3="no" ],
-              #check for -lmad
-              [ AC_CHECK_LIB(mad, mad_frame_decode, [ mp3="yes"
-					              AM_CONDITIONAL(MP3_PLUGIN,true) ],
-                             [ AC_MSG_WARN([libmad not found ! Will build without mp3 support.]); 
-			       AM_CONDITIONAL(MP3_PLUGIN,false) mp3="no" ])
-               ])
+              [AC_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ], 
+              mp3="disabled",
+              [MAD_CHECK([ AM_CONDITIONAL(MP3_PLUGIN,true) mp3="yes" ],
+                [ AC_MSG_WARN([libmad not found ! Will build without mp3 support.]) ])
+              ])
 
-#check for --disable-id3tag
+#check for --disable-id3tag & id3tag library
+AM_CONDITIONAL(ID3TAG,false)
+id3="no";
 AC_ARG_ENABLE(id3tag,
-              [ AC_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
-              [ AM_CONDITIONAL(LIB_ID3TAG,false) id3="no" with_id3="no" CFLAGS="$CFLAGS -DNO_ID3TAG" ],
-              #check for -lid3tag
-              [ AC_CHECK_LIB(id3tag,
-                             [id3_tag_new],
-                             [ id3="yes"
-                             AM_CONDITIONAL(LIB_ID3TAG,true) ],
-                             [ ID3_CFLAGS="-DNO_ID3TAG"; id3="no"
-			       AM_CONDITIONAL(LIB_ID3TAG,false) ])
-              CFLAGS="$CFLAGS $ID3_CFLAGS" with_id3="yes" ])
+              [AC_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
+              id3="disabled",
+              [ ID3_CHECK([ AM_CONDITIONAL(ID3TAG,true) id3="yes"; ],
+                [ AC_MSG_WARN([libid3tag not found ! Will build without id3 support.]) ])
+              ])
 
 #################################################################
 # Check ogg plugin libraries
 #################################################################
 
-#check for --disable-ogg
+#check for --disable-ogg & ogg libraries
+AM_CONDITIONAL(OGG_PLUGIN,false)
+ogg="no" 
 AC_ARG_ENABLE(ogg,
-              [ AC_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
-              [ AM_CONDITIONAL(OGG_PLUGIN,false) ogg="no" ],
-              #check for -logg -lvorbis -lvorbisfile
-              [ XIPH_PATH_OGG(,AC_MSG_ERROR(Ogg needed! Download the latest version of libogg at http://www.xiph.org))
-              XIPH_PATH_VORBIS(,AC_MSG_ERROR(Vorbis needed! Download the latest version of libvorbis at http://www.xiph.org))
-              AM_CONDITIONAL(OGG_PLUGIN,true) ogg="yes" ])
+              [AC_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
+              ogg="disabled",
+              [ XIPH_PATH_OGG(,AC_MSG_WARN([Ogg not found! Download the latest version of libogg at http://www.xiph.org.]))
+              XIPH_PATH_VORBIS(AM_CONDITIONAL(OGG_PLUGIN,true) ogg="yes",
+                AC_MSG_WARN(Vorbis not found! Will build without ogg/vorbis support.))
+              ])
 
 #################################################
 # Print the configuration to the screen
@@ -168,17 +166,19 @@ echo
 echo " Plugins :"
 echo
 echo "    libmad (.mp3 format)                                    $mp3"
-echo "    libogg, libvorbis (.ogg format)                         $ogg"
+echo "    libogg, libvorbis (.ogg/vorbis format)                  $ogg"
 echo
-if test $mp3 = "yes"; then
+if test "x$mp3" = "xyes"; then
   echo " Other :"
-  echo "    libid3tag (for getting id3 from the orginial mp3 file)  $id3"
-  if test $id3 = "no" && test $with_id3 = "yes"; then
-    echo "      install libid3tag from http://sourceforge.net/projects/mad/"
-    echo "      to have this feature supported"
+  echo
+  echo "    libid3tag (for handling id3 tags)                       $id3"
+  if test "x$id3" = "xno" && test "x$with_id3" = "xyes"; then
+    echo
+    echo "    install libid3tag from http://sourceforge.net/projects/id3/"
+    echo "    to have this feature supported"
   fi
+  echo
 fi
-echo
 echo "---------------------------------------------------------"
 echo
 

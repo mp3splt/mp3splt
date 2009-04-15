@@ -2,9 +2,8 @@ bin_PROGRAMS = mp3splt
 
 mp3splt_SOURCES = mp3splt.c
 
-INCLUDES = -Wall -g
-
-mp3splt_LDADD = -lmp3splt
+INCLUDES = @MP3SPLT_CFLAGS@
+mp3splt_LDADD = @MP3SPLT_LIBS@
 
 #install-exec-hook:
 #if DO_SYMLINK
@@ -16,3 +15,4 @@ mp3splt_LDADD = -lmp3splt
 #		echo "The $(DESTDIR)/$(bindir)/oggsplt symlink still exists. You may want to remove it." \
 #	fi \;
 #endif
+
