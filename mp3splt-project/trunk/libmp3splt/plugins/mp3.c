@@ -2985,9 +2985,6 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
   char junk[384] = { '\0' };
   char *file_to_dewrap = splt_t_get_filename_to_split(state);
 
-  //we free previously wrap files
-  splt_t_wrap_free(state);
-
   //if error
   if (*error != SPLT_DEWRAP_OK)
   {
@@ -3373,20 +3370,17 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
             snprintf(str_temp,4,"%c%c",'.',SPLT_DIRCHAR);
             if (strstr(filename,str_temp) != NULL)
             {
-              if (filename != NULL)
+              char *filename2 = strdup(filename);
+              if (!filename2)
               {
-                char *filename2 = strdup(filename);
-                if (!filename2)
-                {
-                  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-                  return;
-                }
-                else
-                {
-                  snprintf(filename,2048, "%s", filename2+2);
-                  free(filename2);
-                  filename2 = NULL;
-                }
+                *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                return;
+              }
+              else
+              {
+                snprintf(filename,2048, "%s", filename2+2);
+                free(filename2);
+                filename2 = NULL;
               }
             }
 

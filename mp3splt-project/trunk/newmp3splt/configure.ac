@@ -39,7 +39,7 @@ AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE(mp3splt, 2.2.4)
 AM_CONFIG_HEADER([config.h])
 
-CFLAGS="-Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
+CFLAGS="-Wall -g $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
 -I../libmp3splt/include/libmp3splt/ -I../../libmp3splt/include/libmp3splt/"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../libmp3splt/src \
 -L../../libmp3splt/src/.libs/ -L../../libmp3splt/src/"

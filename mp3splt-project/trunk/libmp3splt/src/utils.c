@@ -287,7 +287,7 @@ const char *splt_u_get_real_name(const char *filename)
 //state->fn[i]
 //error is the possible error
 //result must be freed
-static char *splt_u_get_mins_secs_filename(char *filename, splt_state *state,
+static char *splt_u_get_mins_secs_filename(const char *filename, splt_state *state,
     long split_begin, long split_end, int i, int *error)
 {
   int number_of_splits = 0;
@@ -400,13 +400,18 @@ static char *splt_u_get_mins_secs_filename(char *filename, splt_state *state,
 //error is the possible error
 void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
 {
+  char *filename = splt_t_get_filename_to_split(state);
+  if (filename == NULL)
+  {
+    return;
+  }
+
   int get_error = SPLT_OK;
   int current_split = splt_t_get_current_split(state);
   long split_begin = splt_t_get_splitpoint_value(state, current_split, &get_error);
   if (get_error < 0) { *error = get_error; return; }
   long split_end = splt_t_get_splitpoint_value(state, current_split+1, &get_error);
   if (get_error < 0) { *error = get_error; return; }
-  char *filename = splt_t_get_filename_to_split(state);
 
   char *filename2 = strdup(filename);
   if (!filename2)
@@ -420,53 +425,22 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
     char *fname = NULL;
 
     //get the filename without the path
-    char *filename3 = strdup(splt_u_get_real_name(filename2));
-    if (!filename3)
+    const char *ptr = splt_u_get_real_name(filename2);
+    if (ptr)
     {
-      if (filename2)
-      {
-        free(filename2);
-        filename2 = NULL;
-      }
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-    else
-    {
-      fname = splt_u_get_mins_secs_filename(filename3, state,
+      fname = splt_u_get_mins_secs_filename(ptr, state,
           split_begin, split_end, current_split, error);
 
       if (*error >= 0)
       {
-        //we cut the extension
-        char *fname2 = strdup(fname);
-        if (fname2)
-        {
-          fname2[strlen(fname2)-4]='\0';
-          //we put the filename in the state
-          splt_t_set_splitpoint_name(state, current_split, fname2);
-          if (fname2)
-          {
-            free(fname2);
-            fname2 = NULL;
-          }
-        }
-        else
-        {
-          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
+        splt_u_cut_extension(fname);
+        splt_t_set_splitpoint_name(state, current_split, fname);
       }
 
       if (fname)
       {
         free(fname);
         fname = NULL;
-      }
-
-      //free some memory
-      if (filename3)
-      {
-        free(filename3);
-        filename3 = NULL;
       }
     }
 
@@ -1276,8 +1250,6 @@ end_while:
 /*******************************/
 /* utils for the output format */
 
-//parse the output format to see if correct
-//use strdup on 's' when calling this function
 int splt_u_parse_outformat(char *s, splt_state *state)
 {
   char *ptrs = NULL, *ptre = NULL;
@@ -2366,30 +2338,33 @@ int splt_u_create_directories(splt_state *state, const char *dir)
     }
   }
 
-  //we have created all the directories except the last one
-  char *last_dir = strdup(dir);
-  if (!last_dir)
+  if (dir)
   {
-    result = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    goto end;
-  }
-
-  if (! splt_u_check_if_directory(last_dir))
-  {
-    splt_u_print_debug("final directory ...",0, last_dir);
-
-    if ((splt_u_mkdir(last_dir)) == -1)
+    //we have created all the directories except the last one
+    char *last_dir = strdup(dir);
+    if (!last_dir)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,last_dir);
-      result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+      result = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto end;
     }
-  }
-  
-  if (last_dir)
-  {
-    free(last_dir);
-    last_dir = NULL;
+
+    if (! splt_u_check_if_directory(last_dir))
+    {
+      splt_u_print_debug("final directory ...",0, last_dir);
+
+      if ((splt_u_mkdir(last_dir)) == -1)
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state,last_dir);
+        result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+      }
+    }
+
+    if (last_dir)
+    {
+      free(last_dir);
+      last_dir = NULL;
+    }
   }
 
 end:
@@ -2619,6 +2594,27 @@ int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size)
     }
 
     return ret;
+  }
+}
+
+char *splt_u_safe_strdup(char *input, int *error)
+{
+  if (input == NULL)
+  {
+    return NULL;
+  }
+  else
+  {
+    char *dup_input = strdup(input);
+    if (dup_input != NULL)
+    {
+      return dup_input;
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
+    }
   }
 }
 

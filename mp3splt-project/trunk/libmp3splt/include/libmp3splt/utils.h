@@ -103,6 +103,8 @@ char *splt_u_win32_utf16_to_utf8(const wchar_t *source);
 wchar_t *splt_u_win32_utf8_to_utf16(const char *source);
 #endif
 
+char *splt_u_safe_strdup(char *input, int *error);
+
 #define MP3SPLT_UTILS_H
 
 #endif

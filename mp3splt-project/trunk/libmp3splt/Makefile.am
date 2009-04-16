@@ -1,4 +1,4 @@
-SUBDIRS = src plugins m4
+SUBDIRS = src plugins
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = mp3splt.m4
