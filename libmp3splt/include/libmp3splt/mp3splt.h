@@ -1469,7 +1469,6 @@ void mp3splt_write_freedb_file_result(splt_state *state,
     const char *cddb_get_server,
     int port);
 
-//string s is freed, call with strdup for example
 void mp3splt_set_oformat(splt_state *state,
     const char *format_string, int *error);
 

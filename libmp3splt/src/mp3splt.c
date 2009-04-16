@@ -637,8 +637,7 @@ int mp3splt_split(splt_state *state)
       splt_t_set_current_split(state,0);
 
       //we check if the filename is a real file
-      int is_file = splt_check_is_file(state, fname_to_split);
-      if (!is_file)
+      if (!splt_check_is_file(state, fname_to_split))
       {
         error = SPLT_ERROR_INEXISTENT_FILE;
         splt_t_unlock_library(state);
@@ -647,159 +646,152 @@ int mp3splt_split(splt_state *state)
 
       //if the new_filename_path is "", we put the directory of
       //the current song
-      new_filename_path =
-        splt_check_put_dir_of_cur_song(fname_to_split,
-            splt_t_get_path_of_split(state));
-
-      //we use strdup in the check_put_dir
-      //if strdup fails,
-      if (new_filename_path == NULL)
+      new_filename_path = splt_check_put_dir_of_cur_song(fname_to_split,
+          splt_t_get_path_of_split(state), &error);
+      if (error < 0)
       {
-        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         splt_t_unlock_library(state);
         return error;
       }
-      else
+
+      //checks and sets correct options
+      splt_check_set_correct_options(state);
+
+      //if we have compatible options
+      //this function is optional,
+      if (!splt_check_compatible_options(state))
       {
-        //checks and sets correct options
-        splt_check_set_correct_options(state);
+        error = SPLT_ERROR_INCOMPATIBLE_OPTIONS;
+        goto function_end;
+      }
 
-        //if we have compatible options
-        //this function is optional,
-        if (!splt_check_compatible_options(state))
+      int split_type = splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+
+      //normal split checks
+      if (split_type == SPLT_OPTION_NORMAL_MODE)
+      {
+        if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          error = SPLT_ERROR_INCOMPATIBLE_OPTIONS;
-          goto function_end;
-        }
-
-        int split_type = splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
-
-        //normal split checks
-        if (split_type == SPLT_OPTION_NORMAL_MODE)
-        {
-          if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+          //check if we have at least 2 splitpoints
+          if (splt_t_get_splitnumber(state) < 2)
           {
-            //check if we have at least 2 splitpoints
-            if (splt_t_get_splitnumber(state) < 2)
-            {
-              error = SPLT_ERROR_SPLITPOINTS;
-              goto function_end;
-            }
-          }
-
-          //we check if the splitpoints are in order
-          splt_check_if_splitpoints_in_order(state, &error);
-          if (error < 0) { goto function_end; }
-        }
-
-        //we put the new filename path in the state
-        splt_t_set_new_filename_path(state, new_filename_path, &error);
-        if (error < 0) { goto function_end; }
-
-        //we create output directories if they do not exist
-        error = splt_u_create_directories(state, new_filename_path);
-        if (error < 0) { goto function_end; }
-
-        //check means the test is ok
-        splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
-        if (error < 0) { goto function_end; }
-
-        //we check if mp3 or ogg
-        splt_check_file_type(state, &error);
-        if (error < 0) { goto function_end; }
-
-        //print the new m3u fname
-        char *m3u_fname_with_path = splt_t_get_m3u_file_with_path(state, &error);
-        if (error < 0) { goto function_end; }
-        if (m3u_fname_with_path)
-        {
-          int malloc_size = strlen(m3u_fname_with_path) + 200;
-          char *mess = malloc(sizeof(char) * (strlen(m3u_fname_with_path) + 200));
-          if (!mess) { error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto function_end; }
-          snprintf(mess, malloc_size, " M3U file '%s' will be created.\n",
-              m3u_fname_with_path);
-          splt_t_put_message_to_client(state, mess);
-          free(m3u_fname_with_path);
-          m3u_fname_with_path = NULL;
-        }
-
-        //init the plugin for split
-        splt_p_init(state, &error);
-        if (error < 0) { goto function_end; }
-
-        splt_u_print_debug("Setting original tags...",0,NULL);
-        //we retrieve the original tags from the file
-        //and save them for future use
-        // (for use with the output options)
-        splt_t_get_original_tags(state,&error);
-        if (error < 0)
-        {
-          splt_p_end(state, &error);
-          goto function_end;
-        }
-
-        splt_u_print_debug("parse type of split...",0,NULL);
-
-        char message[1024] = { '\0' };
-        //print Working with auto adjust if necessary
-        if (splt_t_get_int_option(state, SPLT_OPT_AUTO_ADJUST)
-            && !  splt_t_get_int_option(state, SPLT_OPT_QUIET_MODE))
-        {
-          if ((split_type != SPLT_OPTION_WRAP_MODE)
-              && (split_type != SPLT_OPTION_SILENCE_MODE)
-              && (split_type != SPLT_OPTION_ERROR_MODE))
-          {
-            snprintf(message, 1024, " Working with SILENCE AUTO-ADJUST (Threshold:"
-                " %.1f dB Gap: %d sec Offset: %.2f)\n",
-                splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
-                splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP),
-                splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET));
-
-            splt_t_put_message_to_client(state, message);
+            error = SPLT_ERROR_SPLITPOINTS;
+            goto function_end;
           }
         }
 
-        //the type of the split
-        switch (split_type)
-        {
-          case SPLT_OPTION_WRAP_MODE:
-            splt_s_wrap_split(state, &error);
-            break;
-          case SPLT_OPTION_SILENCE_MODE:
-            splt_s_silence_split(state, &error);
-            break; 
-          case SPLT_OPTION_TIME_MODE:
-            splt_s_time_split(state, &error);
-            break;
-          case SPLT_OPTION_ERROR_MODE:
-            splt_s_error_split(state, &error);
-            break;
-          default:
-            //this is the normal split
-            if (split_type == SPLT_OPTION_NORMAL_MODE)
-            {
-              //if we don't have STDIN
-              if (! splt_t_is_stdin(state))
-              {
-                //total time of the song
-                splt_check_splitpts_inf_song_length(state, &error);
-                if (error < 0) { goto function_end; }
-              }
-            }
+        //we check if the splitpoints are in order
+        splt_check_if_splitpoints_in_order(state, &error);
+        if (error < 0) { goto function_end; }
+      }
 
-            //do the effective multiple split
-            splt_s_multiple_split(state, &error);
-            break;
-        }
+      //we put the new filename path in the state
+      splt_t_set_new_filename_path(state, new_filename_path, &error);
+      if (error < 0) { goto function_end; }
 
-        //ends the 'init' of the plugin for the split
+      //we create output directories if they do not exist
+      error = splt_u_create_directories(state, new_filename_path);
+      if (error < 0) { goto function_end; }
+
+      //check means the test is ok
+      splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
+      if (error < 0) { goto function_end; }
+
+      //we check if mp3 or ogg
+      splt_check_file_type(state, &error);
+      if (error < 0) { goto function_end; }
+
+      //print the new m3u fname
+      char *m3u_fname_with_path = splt_t_get_m3u_file_with_path(state, &error);
+      if (error < 0) { goto function_end; }
+      if (m3u_fname_with_path)
+      {
+        int malloc_size = strlen(m3u_fname_with_path) + 200;
+        char *mess = malloc(sizeof(char) * (strlen(m3u_fname_with_path) + 200));
+        if (!mess) { error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto function_end; }
+        snprintf(mess, malloc_size, " M3U file '%s' will be created.\n",
+            m3u_fname_with_path);
+        splt_t_put_message_to_client(state, mess);
+        free(m3u_fname_with_path);
+        m3u_fname_with_path = NULL;
+      }
+
+      //init the plugin for split
+      splt_p_init(state, &error);
+      if (error < 0) { goto function_end; }
+
+      splt_u_print_debug("Setting original tags...",0,NULL);
+      //we retrieve the original tags from the file
+      //and save them for future use
+      // (for use with the output options)
+      splt_t_get_original_tags(state,&error);
+      if (error < 0)
+      {
         splt_p_end(state, &error);
+        goto function_end;
+      }
+
+      splt_u_print_debug("parse type of split...",0,NULL);
+
+      char message[1024] = { '\0' };
+      //print Working with auto adjust if necessary
+      if (splt_t_get_int_option(state, SPLT_OPT_AUTO_ADJUST)
+          && !  splt_t_get_int_option(state, SPLT_OPT_QUIET_MODE))
+      {
+        if ((split_type != SPLT_OPTION_WRAP_MODE)
+            && (split_type != SPLT_OPTION_SILENCE_MODE)
+            && (split_type != SPLT_OPTION_ERROR_MODE))
+        {
+          snprintf(message, 1024, " Working with SILENCE AUTO-ADJUST (Threshold:"
+              " %.1f dB Gap: %d sec Offset: %.2f)\n",
+              splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+              splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP),
+              splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET));
+
+          splt_t_put_message_to_client(state, message);
+        }
+      }
+
+      //the type of the split
+      switch (split_type)
+      {
+        case SPLT_OPTION_WRAP_MODE:
+          splt_s_wrap_split(state, &error);
+          break;
+        case SPLT_OPTION_SILENCE_MODE:
+          splt_s_silence_split(state, &error);
+          break; 
+        case SPLT_OPTION_TIME_MODE:
+          splt_s_time_split(state, &error);
+          break;
+        case SPLT_OPTION_ERROR_MODE:
+          splt_s_error_split(state, &error);
+          break;
+        default:
+          //this is the normal split
+          if (split_type == SPLT_OPTION_NORMAL_MODE)
+          {
+            //if we don't have STDIN
+            if (! splt_t_is_stdin(state))
+            {
+              //total time of the song
+              splt_check_splitpts_inf_song_length(state, &error);
+              if (error < 0) { goto function_end; }
+            }
+          }
+
+          //do the effective multiple split
+          splt_s_multiple_split(state, &error);
+          break;
+      }
+
+      //ends the 'init' of the plugin for the split
+      splt_p_end(state, &error);
 
 function_end:
-        //free memory
-        free(new_filename_path);
-        new_filename_path = NULL;
-      }
+      //free memory
+      free(new_filename_path);
+      new_filename_path = NULL;
 
       splt_t_unlock_library(state);
     }
@@ -918,17 +910,20 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
   int *err = &erro;
   if (error != NULL) { err = error; }
 
+  if (search_string == NULL)
+  {
+    *err = SPLT_FREEDB_NO_CD_FOUND;
+    return NULL;
+  }
+ 
   if (state != NULL)
   {
     //we copy the search string, in order not to modify the original one
-    char *search = strdup((char *)search_string);
-
+    char *search = strdup(search_string);
     if (search != NULL)
     {
-      //puts the results in "search_results"
-      //for the moment, 1 means search freedb2.org
-      *err = splt_freedb_process_search(state, search,
-          search_type, search_server, port);
+      *err = splt_freedb_process_search(state, search, search_type,
+          search_server, port);
 
       free(search);
       search = NULL;
@@ -1032,6 +1027,11 @@ void mp3splt_set_oformat(splt_state *state,
   int erro = SPLT_OK;
   int *err = &erro;
   if (error != NULL) { err = error; }
+
+  if (format_string == NULL)
+  {
+    return;
+  }
 
   if (state != NULL)
   {

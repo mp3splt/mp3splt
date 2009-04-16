@@ -53,31 +53,19 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   int i = 0;
 
   char *artist0 = NULL;
-  artist0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST));
-  if (artist0 == NULL)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    goto function_end;
-  }
+  char *first_artist = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST);
+  artist0 = splt_u_safe_strdup(first_artist, error);
+  if (*error < 0) { goto function_end; }
 
   char *album0 = NULL;
-  album0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM));
-  if (album0 == NULL)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    goto function_end;
-  }
+  char *first_album = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM);
+  album0 = splt_u_safe_strdup(first_album, error);
+  if (*error < 0) { goto function_end; }
 
   char *year0 = NULL;
-  if (splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR))
-  {
-    year0 = strdup(splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR));
-    if (year0 == NULL)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto function_end;
-    }
-  }
+  char *first_year = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR);
+  year0 = splt_u_safe_strdup(first_year, error);
+  if (*error < 0) { goto function_end; }
 
   char *performer = NULL;
   unsigned char genre0 = splt_t_get_tags_uchar_field(state, 0, SPLT_TAGS_GENRE);
@@ -164,10 +152,11 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   {
     int err_format = SPLT_OK;
 
-    if (splt_t_get_oformat(state) != NULL)
+    const char *format = splt_t_get_oformat(state);
+    if (format != NULL)
     {
       //we put the outputted filename
-      char *old_format = strdup(splt_t_get_oformat(state));
+      char *old_format = strdup(format);
       if (old_format != NULL)
       {
         splt_t_set_oformat(state, old_format,&err_format);

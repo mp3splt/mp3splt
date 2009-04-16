@@ -185,48 +185,26 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
 //return NULL means 'cannot allocate memory'
 //result must be freed
 char *splt_check_put_dir_of_cur_song(const char *filename,
-    const char *the_filename_path)
+    const char *the_filename_path, int *error)
 {
-  char *orig_filename = strdup(filename);
-  if (!orig_filename)
-  {
-    return NULL;
-  }
-
-  char *c = NULL;
-  char *filename_path = NULL;
-  int length_malloc = strlen(orig_filename) + 1;
-  if (length_malloc < 5)
-  {
-    length_malloc = 8;
-  }
-
-  if((filename_path = malloc(length_malloc)) == NULL)
-  {
-    free(orig_filename);
-    orig_filename = NULL;
-    return NULL;
-  }
-
-  int cur_dir = SPLT_FALSE;
-  //if new filename path is null
-  if (the_filename_path == NULL)
-  {
-    cur_dir = SPLT_TRUE;
-  }
-  else
-  {
-    //if new_filename_path is ""
-    if (the_filename_path[0] == '\0')
-    {
-      cur_dir = SPLT_TRUE;
-    }
-  }
-
   //if we split in the current directory
-  if (cur_dir)
+  if (the_filename_path == NULL || the_filename_path[0] == '\0')
   {
-    snprintf(filename_path,length_malloc, "%s", orig_filename);
+    char *c = NULL;
+    char *filename_path = NULL;
+    int length_malloc = strlen(filename) + 1;
+    if (length_malloc < 5)
+    {
+      length_malloc = 8;
+    }
+
+    if ((filename_path = malloc(length_malloc)) == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
+    }
+
+    snprintf(filename_path,length_malloc, "%s", filename);
     c = strrchr(filename_path,SPLT_DIRCHAR);
     //if we found a dirchar, erase everythig after to get the path
     if (c != NULL)
@@ -239,47 +217,35 @@ char *splt_check_put_dir_of_cur_song(const char *filename,
       filename_path[0] = '\0';
     }
 
-    free(orig_filename);
-    orig_filename = NULL;
     return filename_path;
   }
-
-  //free memory
-  if (filename_path)
+  else
   {
-    free(filename_path);
-    filename_path = NULL;
-  }
-  if (orig_filename)
-  {
-    free(orig_filename);
-    orig_filename = NULL;
-  }
-
-  char *new_filename_path = strdup(the_filename_path);
-  if (new_filename_path == NULL)
-  {
-    return NULL;
-  }
-
-  if (new_filename_path != NULL)
-  {
-#ifdef __WIN32__
-    size_t path_len = strlen(new_filename_path);
-    //erase the last char directory
-    //-for windows manage c:\ because the gtk dir returns us "c:\"
-    //and the normal directories without the "\"
-    if (path_len > 3)
+    char *new_filename_path = strdup(the_filename_path);
+    if (new_filename_path == NULL)
     {
-      if (new_filename_path[path_len-1] == SPLT_DIRCHAR)
-      {
-        new_filename_path[path_len-1] = '\0';
-      }
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
     }
+    else
+    {
+#ifdef __WIN32__
+      size_t path_len = strlen(new_filename_path);
+      //erase the last char directory
+      //-for windows manage c:\ because the gtk dir returns us "c:\"
+      //and the normal directories without the "\"
+      if (path_len > 3)
+      {
+        if (new_filename_path[path_len-1] == SPLT_DIRCHAR)
+        {
+          new_filename_path[path_len-1] = '\0';
+        }
+      }
 #endif
-  }
+    }
 
-  return new_filename_path;
+    return new_filename_path;
+  }
 }
 
 /****************************/

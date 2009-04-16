@@ -46,7 +46,7 @@ void splt_check_if_splitpoints_in_order(splt_state *state,
 void splt_check_if_new_filename_path_correct(splt_state *state,
     const char *new_filename_path, int *error);
 char *splt_check_put_dir_of_cur_song(const char *filename,
-    const char *the_filename_path);
+    const char *the_filename_path, int *error);
 
 /****************************/
 /* options check */

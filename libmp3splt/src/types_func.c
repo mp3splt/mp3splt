@@ -688,6 +688,12 @@ void splt_t_set_oformat_digits(splt_state *state)
 //puts the output format
 void splt_t_set_oformat(splt_state *state, const char *format_string, int *error)
 {
+  if (format_string == NULL)
+  {
+    *error = SPLT_OUTPUT_FORMAT_AMBIGUOUS;
+    return;
+  }
+
   int j = 0;
 
   //we clean out the output
@@ -2411,10 +2417,14 @@ void splt_t_freedb_free_search(splt_state *state)
 
 //sets a freedb result
 //if revision != -1, then not a revision
-//-album_name must not be NULL
 int splt_t_freedb_append_result(splt_state *state, const char *album_name, int revision)
 {
   int error = SPLT_OK;
+
+  if (album_name == NULL)
+  {
+    return error;
+  }
 
   //if we had not initialised the 
   //search_results variable, do it now
@@ -2429,7 +2439,6 @@ int splt_t_freedb_append_result(splt_state *state, const char *album_name, int r
     {
       state->fdb.search_results->results[0].revisions = NULL;
       state->fdb.search_results->results[0].name = strdup(album_name);
-      //if strdup fails
       if (state->fdb.search_results->results[0].name == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -2463,7 +2472,6 @@ int splt_t_freedb_append_result(splt_state *state, const char *album_name, int r
       {
         state->fdb.search_results->results[state->fdb.search_results->number]
           .name = strdup(album_name);
-        //if strdup fails
         if (state->fdb.search_results->results[state->fdb.search_results->number]
             .name == NULL)
         {
@@ -2820,7 +2828,6 @@ void splt_t_serrors_free(splt_state *state)
 
 //appends a file from to the wrap files
 int splt_t_wrap_put_file(splt_state *state,
-    //how many files
     int wrapfiles, int index, const char *filename)
 {
   int error = SPLT_OK;
@@ -2840,14 +2847,21 @@ int splt_t_wrap_put_file(splt_state *state,
 
   if (error == SPLT_OK)
   {
-    //if strdup fails
-    if ((state->wrap->wrap_files[index] = strdup(filename)) == NULL)
+    if (filename == NULL)
     {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      state->wrap->wrap_files[index] = NULL;
+      state->wrap->wrap_files_num++;
     }
     else
     {
-      state->wrap->wrap_files_num++;
+      if ((state->wrap->wrap_files[index] = strdup(filename)) == NULL)
+      {
+        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      }
+      else
+      {
+        state->wrap->wrap_files_num++;
+      }
     }
   }
 
