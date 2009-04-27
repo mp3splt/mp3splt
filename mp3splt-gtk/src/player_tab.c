@@ -3866,7 +3866,7 @@ void fix_ogg_stream(gpointer *data)
   
   //set the options
   mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-                         SPLT_OUTPUT_MINS_SECS);
+                         SPLT_OUTPUT_DEFAULT);
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
                          SPLT_OPTION_NORMAL_MODE);
   

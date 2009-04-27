@@ -49,6 +49,8 @@ LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../libmp3splt/src \
 #################################################
 
 AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_LN_S
 
 #################################################################
 # Check for the type of the host
@@ -94,9 +96,9 @@ Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 #################################################
 #Check for --enable-oggsplt
 AC_ARG_ENABLE(oggsplt_symlink,
-AC_HELP_STRING([--enable-oggsplt],
-[Enable symlink of oggsplt to mp3splt [[default=yes]] ]),
-,enable_oggsplt_symlink=yes)
+AC_HELP_STRING([--enable-oggsplt_symlink],
+[Enable symlink of oggsplt to mp3splt. ]),
+,enable_oggsplt_symlink=no)
 AM_CONDITIONAL(DO_SYMLINK, test x$enable_oggsplt_symlink = xyes)
 
 #################################################
@@ -114,6 +116,7 @@ echo "---------------------------------------------------------"
 echo "Configuration:"
 echo
 echo "    install path:            ${prefix}"
+echo "    oggsplt symlink:         ${enable_oggsplt_symlink}"
 echo
 echo "---------------------------------------------------------"
 echo

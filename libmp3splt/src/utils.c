@@ -1316,23 +1316,29 @@ int splt_u_parse_outformat(char *s, splt_state *state)
       len = SPLT_MAXOLEN;
     }
 
+    char err[2] = { '\0' };
+
     switch (cf)
     {
+      case 's':
+      case 'S':
+      case 'm':
+      case 'M':
+      case 'h':
+      case 'H':
       case 'a':
-        break;
       case 'b':
+      case 'f':
+      case 'p':
         break;
       case 't':
-        break;
       case 'n':
       case 'N':
         amb = SPLT_OUTPUT_FORMAT_OK;
         break;
-      case 'f':
-        break;
-      case 'p':
-        break;
       default:
+        err[0] = cf;
+        splt_t_set_error_data(state, err);
         return SPLT_OUTPUT_FORMAT_ERROR;
     }
 
@@ -1355,10 +1361,31 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   return amb;
 }
 
+static char *splt_u_get_format_ptr_and_set_number_of_digits(splt_state *state, int i, char *temp, int *number_of_digits)
+{
+  *number_of_digits = state->oformat.output_format_digits;
+  int format_length = strlen(state->oformat.format[i]);
+  char *format = state->oformat.format[i];
+  if ((format_length > 2) && isdigit(state->oformat.format[i][2]))
+  {
+    temp[2] = state->oformat.format[i][2];
+    *number_of_digits = (int) state->oformat.format[i][2];
+    format = state->oformat.format[i] + 1;
+  }
+
+  return format;
+}
+
 //writes the current filename according to the output_filename
 int splt_u_put_output_format_filename(splt_state *state)
 {
   int error = SPLT_OK;
+
+  int output_filenames = splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+  if (output_filenames == SPLT_OUTPUT_CUSTOM)
+  {
+    return error;
+  }
 
   char *temp = NULL;
   char *fm = NULL;
@@ -1375,6 +1402,20 @@ int splt_u_put_output_format_filename(splt_state *state)
   int old_current_split = splt_t_get_current_split_file_number(state) - 1;
   int current_split = old_current_split;
 
+  long mins = -1;
+  long secs = -1;
+  long hundr = -1;
+  long point_value = splt_t_get_splitpoint_value(state, old_current_split, &error);
+  splt_u_get_mins_secs_hundr(point_value, &mins, &secs, &hundr);
+  long next_mins = -1;
+  long next_secs = -1;
+  long next_hundr = -1;
+  if (splt_t_splitpoint_exists(state, old_current_split + 1))
+  {
+    point_value = splt_t_get_splitpoint_value(state, old_current_split +1, &error);
+    splt_u_get_mins_secs_hundr(point_value, &next_mins, &next_secs, &next_hundr);
+  }
+
   int fm_length = 0;
 
   //if we get the tags from the first file
@@ -1387,6 +1428,8 @@ int splt_u_put_output_format_filename(splt_state *state)
   }
 
   splt_u_print_debug("The output format is ",0,state->oformat.format_string);
+
+  long mMsShH_value = -1;
 
   for (i = 0; i < SPLT_OUTNUM; i++)
   {
@@ -1414,8 +1457,72 @@ int splt_u_put_output_format_filename(splt_state *state)
 
       temp[0] = '%';
       temp[1] = 's';
-      switch (state->oformat.format[i][1])
+      char char_variable = state->oformat.format[i][1];
+      switch (char_variable)
       {
+        case 's':
+          mMsShH_value = secs;
+          goto put_value;
+        case 'S':
+          mMsShH_value = next_secs;
+          goto put_value;
+        case 'm':
+          mMsShH_value = mins;
+          goto put_value;
+        case 'M':
+          mMsShH_value = next_mins;
+          goto put_value;
+        case 'h':
+          mMsShH_value = hundr;
+          goto put_value;
+        case 'H':
+          mMsShH_value = next_hundr;
+put_value:
+          temp[1] = '0';
+          temp[2] = '2';
+          temp[3] = 'l';
+          temp[4] = 'd';
+
+          if (mMsShH_value != -1)
+          {
+            char *format = NULL;
+            int number_of_digits = state->oformat.output_format_digits;
+            int offset = 5;
+
+            //don't print out @h or @H if 0 for default output
+            if ((strcmp(state->oformat.format_string, SPLT_DEFAULT_OUTPUT) == 0) &&
+                (mMsShH_value == 0) &&
+                (char_variable == 'h' || char_variable == 'H'))
+            {
+              if (char_variable == 'h')
+              {
+                format = state->oformat.format[i]+2;
+                offset = 0;
+              }
+              else
+              {
+                output_filename[strlen(output_filename)-1] = '\0';
+                break;
+              }
+            }
+            else
+            {
+              format = splt_u_get_format_ptr_and_set_number_of_digits(state, i,
+                  temp, &number_of_digits);
+            }
+
+            snprintf(temp + offset, temp_len, format + 2);
+
+            fm_length = strlen(temp) + 1 + number_of_digits;
+            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+            {
+              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+              goto end;
+            }
+
+            snprintf(fm, fm_length, temp, mMsShH_value);
+          }
+          break;
         case 'a':
           if (splt_t_tags_exists(state,current_split))
           {
@@ -1600,21 +1707,10 @@ int splt_u_put_output_format_filename(splt_state *state)
           temp[3] = 'd';
 
           int number_of_digits = state->oformat.output_format_digits;
+          char *format = splt_u_get_format_ptr_and_set_number_of_digits(state, i, temp,
+              &number_of_digits);
 
-          int format_length = strlen(state->oformat.format[i]);
-          char *format_dup = strdup(state->oformat.format[i]);
-          if ((format_length > 2) && isdigit(state->oformat.format[i][2]))
-          {
-            temp[2] = state->oformat.format[i][2];
-            number_of_digits = (int) state->oformat.format[i][2];
-            int k = 0;
-            for (k = 2;k < format_length;k++)
-            {
-              format_dup[k] = format_dup[k+1];
-            }
-          }
-
-          //we set the track number
+         //we set the track number
           int tracknumber = old_current_split + 1;
 
           //if not time split, or normal split, or silence split or error,
@@ -1637,12 +1733,7 @@ int splt_u_put_output_format_filename(splt_state *state)
             }
           }
 
-          snprintf(temp+4, temp_len, format_dup+2);
-          if (format_dup)
-          {
-            free(format_dup);
-            format_dup = NULL;
-          }
+          snprintf(temp+4, temp_len, format+2);
 
           fm_length = strlen(temp) + 1 + number_of_digits;
           if ((fm = malloc(fm_length * sizeof(char))) == NULL)
@@ -2177,7 +2268,8 @@ char *splt_u_strerror(splt_state *state, int error_code)
         break;
         //
       case SPLT_OUTPUT_FORMAT_ERROR:
-        snprintf(error_msg,max_error_size, " warning: output format error");
+        snprintf(error_msg,max_error_size, " error: illegal variable '@%s' in output format.",
+            state->err.error_data);
         break;
         //
       case SPLT_ERROR_INEXISTENT_SPLITPOINT:
@@ -2254,6 +2346,26 @@ double splt_u_get_double_pos(long split)
   pos += ((split % 100) / 100.);
 
   return pos;
+}
+
+void splt_u_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *hundr)
+{
+  long split_hundr_without_h = split_hundr / 100;
+  long h = split_hundr % 100;
+  long m = split_hundr_without_h / 60;
+  long s = split_hundr_without_h % 60;
+  if (mins)
+  {
+    *mins = m;
+  }
+  if (secs)
+  {
+    *secs = s;
+  }
+  if (hundr)
+  {
+    *hundr = h;
+  }
 }
 
 int splt_u_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)

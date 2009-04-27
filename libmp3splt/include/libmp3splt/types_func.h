@@ -73,7 +73,7 @@ int splt_t_get_current_split_file_number(splt_state *state);
 /* types: output format access */
 
 void splt_t_set_oformat(splt_state *state, const char *format_string,
-    int *error);
+    int *error, int ignore_incorrect_format_warning);
 int splt_t_new_oformat(splt_state *state, const char *format_string);
 const char *splt_t_get_oformat(splt_state *state);
 void splt_t_set_oformat_digits_tracks(splt_state *state, int tracks);

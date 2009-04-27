@@ -1956,10 +1956,10 @@ int main(int argc, char **orig_argv)
 
     //we set our output format
     mp3splt_set_oformat(state, opt->output_format,&output_format_error);
-    if (output_format_error != SPLT_OUTPUT_FORMAT_AMBIGUOUS)
-    {
-      process_confirmation_error(output_format_error, data);
-    }
+    //if (output_format_error != SPLT_OUTPUT_FORMAT_AMBIGUOUS)
+    //{
+    process_confirmation_error(output_format_error, data);
+    //}
   }
 
   if (optind > 1)
@@ -2003,11 +2003,11 @@ int main(int argc, char **orig_argv)
   }
 
   //print 'output format ambigous if necessary
-  if ((output_format_error == SPLT_OUTPUT_FORMAT_AMBIGUOUS)
-      && (data->number_of_splitpoints > 2))
-  {
-    process_confirmation_error(output_format_error, data);
-  }
+//  if ((output_format_error == SPLT_OUTPUT_FORMAT_AMBIGUOUS)
+//      && (data->number_of_splitpoints > 2))
+//  {
+//    process_confirmation_error(output_format_error, data);
+//  }
 
   //if we have a normal split, we need to parse the splitpoints
   int normal_split = SPLT_FALSE;

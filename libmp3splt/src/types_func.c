@@ -686,7 +686,8 @@ void splt_t_set_oformat_digits(splt_state *state)
 }
 
 //puts the output format
-void splt_t_set_oformat(splt_state *state, const char *format_string, int *error)
+void splt_t_set_oformat(splt_state *state, const char *format_string,
+    int *error, int ignore_incorrect_format_warning)
 {
   if (format_string == NULL)
   {
@@ -710,7 +711,11 @@ void splt_t_set_oformat(splt_state *state, const char *format_string, int *error
   char *new_str = strdup(format_string);
   if (new_str)
   {
-    *error = splt_u_parse_outformat(new_str,state);
+    err = splt_u_parse_outformat(new_str, state);
+    if (! ignore_incorrect_format_warning)
+    {
+      *error = err;
+    }
     free(new_str);
     new_str = NULL;
   }
@@ -2031,7 +2036,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->wrap->wrap_files_num = 0;
   //output format
   state->oformat.format_string = NULL;
-  int err = splt_t_new_oformat(state,SPLT_DEFAULT_OUTPUT);
+  int err = splt_t_new_oformat(state,SPLT_DEFAULT_CDDB_CUE_OUTPUT);
   if (err < 0) { *error = err; return; }
   //client connection
   state->split.put_message = NULL;

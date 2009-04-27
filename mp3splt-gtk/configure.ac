@@ -155,7 +155,7 @@ gstreamer="disabled"]
 # Generate Makefiles
 #################################################
 
-AC_OUTPUT(Makefile src/Makefile m4/Makefile po/Makefile.in)
+AC_OUTPUT(Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile)
 
 #################################################
 # Output configuration

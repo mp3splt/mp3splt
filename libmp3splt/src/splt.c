@@ -100,12 +100,6 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
 
   if (get_error == SPLT_OK)
   {
-    //if we put mins and secs
-    if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_MINS_SECS)
-    {
-      splt_u_set_complete_mins_secs_filename(state, error);
-    }
-
     //if no error
     if (*error >= 0)
     {
@@ -177,51 +171,27 @@ void splt_s_multiple_split(splt_state *state, int *error)
       //if we have to put the original tags
       if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
       {
-        int err = SPLT_OK;
-
-        //we put the original tags to the current split
         err = splt_t_append_original_tags(state);
         if (err < 0) { *error = err; return; }
       }
 
-      //we look what option we have for the output filenames
-      int output_filenames = splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
-      if (output_filenames == SPLT_OUTPUT_FORMAT)
+      err = splt_u_put_output_format_filename(state);
+      if (err < 0) { *error = err; return; }
+
+      //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
+      int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
+      if (first_splitpoint_type == SPLT_SKIPPOINT)
       {
-        err = splt_u_put_output_format_filename(state);
-        if (err < 0) { *error = err; return; }
+        i++;
+        continue;
       }
 
-      char *temp_name = splt_t_get_splitpoint_name(state, i, &get_error);
-      if (get_error == SPLT_OK)
+      splt_s_split(state, i, i+1, error);
+
+      //get out if error
+      if ((*error < 0) || (*error == SPLT_OK_SPLIT_EOF))
       {
-        //if we have no filename, we put option mins secs
-        if ((temp_name == NULL) || (temp_name[0] == '\0'))
-        {
-          splt_t_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_MINS_SECS);
-        }
-
-        //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
-        int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
-        if (first_splitpoint_type == SPLT_SKIPPOINT)
-        {
-          i++;
-          continue;
-        }
-
-        splt_s_split(state, i, i+1, error);
-
-        //get out if error
-        if ((*error < 0) ||
-            (*error == SPLT_OK_SPLIT_EOF))
-        {
-          break;
-        }
-      }
-      else
-      {
-        *error = get_error;
-        return;
+        break;
       }
     }
     else
@@ -231,6 +201,18 @@ void splt_s_multiple_split(splt_state *state, int *error)
     }
     i++;
   }
+}
+
+void splt_s_normal_split(splt_state *state, int *error)
+{
+  int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
+  if (output_filenames == SPLT_OUTPUT_DEFAULT)
+  {
+    splt_t_set_oformat(state, SPLT_DEFAULT_OUTPUT, error, SPLT_TRUE);
+    if (*error < 0) { return; }
+  }
+
+  splt_s_multiple_split(state, error);
 }
 
 //the sync error mode
@@ -249,14 +231,17 @@ void splt_s_error_split(splt_state *state, int *error)
   int err = SPLT_OK;
 
   //if no error
-  if (*error >= 0 && err >= 0)
+  if (*error >= 0)
   {
     //we put the number of sync errors
     splt_t_set_splitnumber(state, state->serrors->serrors_points_num - 1);
 
+    splt_t_set_oformat_digits(state);
+
     if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
     {
-      splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT,&err);
+      splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT, &err, SPLT_TRUE);
+      if (err < 0) { *error = err; goto bloc_end; }
     }
 
     //we split all sync errors
@@ -379,11 +364,18 @@ void splt_s_time_split(splt_state *state, int *error)
 
     splt_t_set_oformat_digits(state);
 
+    //if we have the default output
+    int output_filenames = splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+    if (output_filenames == SPLT_OUTPUT_DEFAULT)
+    {
+      splt_t_set_oformat(state, SPLT_DEFAULT_OUTPUT, &err, SPLT_TRUE);
+      if (err < 0) { *error = err; return; }
+    }
+
     //we append a splitpoint
     err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
-
     if (err >= 0)
-    {
+    { 
       //while we have tracks
       do {
         //if we don't cancel the split
@@ -407,35 +399,18 @@ void splt_s_time_split(splt_state *state, int *error)
           splt_t_auto_increment_tracknumber_tag(state);
 
           int current_split = splt_t_get_current_split(state);
-          int output_filenames = 
-            splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
-          //if we have the default output or the mins_secs
-          if ((output_filenames == SPLT_OUTPUT_DEFAULT)
-              || (output_filenames == SPLT_OUTPUT_MINS_SECS))
+
+          //we put the splitpoints values in the state
+          splt_t_set_splitpoint_value(state, current_split,(long)(begin*100));
+          long end_splitpoint = end*100;
+          if (end_splitpoint > splt_t_get_total_time(state))
           {
-            //we put the splitpoints values in the state
-            splt_t_set_splitpoint_value(state, current_split,(long)(begin*100));
-            long end_splitpoint = end*100;
-            if (end_splitpoint > splt_t_get_total_time(state))
-            {
-              end_splitpoint = splt_t_get_total_time(state);
-            }
-            splt_t_set_splitpoint_value(state, current_split+1,end_splitpoint);
-            //we put the filename with mins_secs
-            splt_u_set_complete_mins_secs_filename(state, &err);
-            if (err < 0) { *error = err; break; }
+            end_splitpoint = splt_t_get_total_time(state);
           }
-          else
-          {
-            //if we have the output format
-            if (output_filenames == SPLT_OUTPUT_FORMAT)
-            {
-              //if we have the output option
-              //we put the output filename
-              err = splt_u_put_output_format_filename(state);
-              if (err < 0) { *error = err; break; }
-            }
-          }
+          splt_t_set_splitpoint_value(state, current_split+1,end_splitpoint);
+
+          err = splt_u_put_output_format_filename(state);
+          if (err < 0) { *error = err; break; }
 
           if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
           {
@@ -649,7 +624,13 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     splt_t_put_message_to_client(state,client_infos);
     if (found > 0)
     {
-      snprintf(client_infos,512," (%d tracks)\n",found+1);
+      int selected_tracks = found + 1;
+      int param_number_of_tracks = splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
+      if (param_number_of_tracks > 0)
+      {
+        selected_tracks = param_number_of_tracks;
+      }
+      snprintf(client_infos,512," (Selected %d tracks)\n", selected_tracks);
       splt_t_put_message_to_client(state,client_infos);
     }
     else
@@ -822,11 +803,10 @@ void splt_s_silence_split(splt_state *state, int *error)
 
       //set the default silence output
       int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
-      int err = SPLT_OK;
       if (output_filenames == SPLT_OUTPUT_DEFAULT)
       {
-        splt_t_set_oformat(state, SPLT_DEFAULT_SILENCE_OUTPUT, &err);
-        if (err < 0) { *error = err; return; }
+        splt_t_set_oformat(state, SPLT_DEFAULT_SILENCE_OUTPUT, error, SPLT_TRUE);
+        if (*error < 0) { return; }
       }
 
       splt_s_multiple_split(state, error);
