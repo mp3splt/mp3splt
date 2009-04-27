@@ -412,8 +412,6 @@ typedef enum {
 typedef enum {
   //output specified by the set_oformat
   SPLT_OUTPUT_FORMAT,
-  //output filename like song_1m_2s_3h__2m_33s_65h.ogg
-  SPLT_OUTPUT_MINS_SECS,
   //the default output
   //it depends of the type of the split
   SPLT_OUTPUT_DEFAULT,
@@ -464,11 +462,13 @@ typedef enum {
   SPLT_NO_TAGS
 } splt_tags_options;
 
+#define SPLT_DEFAULT_OUTPUT "@f_@mm_@ss_@hh__@Mm_@Ss_@Hh"
+
 /**
  * @brief Default output for the cddb and cue.
  * See #mp3splt_set_oformat
  */
-#define SPLT_DEFAULT_OUTPUT "@a - @n - @t"
+#define SPLT_DEFAULT_CDDB_CUE_OUTPUT "@a - @n - @t"
 /**
  * @brief Default output for the syncerror.
  * See #mp3splt_set_oformat

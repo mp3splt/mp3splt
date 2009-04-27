@@ -1,20 +1,20 @@
 .\" This -*- nroff -*- file has been generated from
 .\" DocBook SGML with docbook-to-man on Debian GNU/Linux.
-...\"
-...\"	transcript compatibility for postscript use.
-...\"
-...\"	synopsis:  .P! <file.ps>
-...\"
+.\"
+.\"	transcript compatibility for postscript use.
+.\"
+.\"	synopsis:  .P! <file.ps>
+.\"
 .de P!
 \\&.
 .fl			\" force out current output buffer
 \\!%PB
 \\!/showpage{}def
-...\" the following is from Ken Flowers -- it prevents dictionary overflows
+.\" the following is from Ken Flowers -- it prevents dictionary overflows
 \\!/tempdict 200 dict def tempdict begin
 .fl			\" prolog
 .sy cat \\$1\" bring in postscript file
-...\" the following line matches the tempdict above
+.\" the following line matches the tempdict above
 \\!end % tempdict %
 \\!PE
 \\!.
@@ -189,9 +189,9 @@ with consecutive tracks (such as live performances) might be only a waste of tim
   The first line contains the name of the split file
   The second line contains the threshold and the minimum silence length
   The next lines contain each one three columns :
-      -the first column is the start position of the found silence (in seconds.fractions)
-      -the second column is the end position of the found silence (in seconds.fractions)
-      -the third column is the length of the silence in hundreths of seconds
+      \(hythe first column is the start position of the found silence (in seconds.fractions)
+      \(hythe second column is the end position of the found silence (in seconds.fractions)
+      \(hythe third column is the length of the silence in hundreths of seconds
           (second_column * 100 - first_column * 100)
 
 .IP "\fB-c SOURCE\fP         " 10
@@ -205,7 +205,8 @@ following formats :
     \fBquery\fP
     \fBquery{album}\fP
     \fBquery{album}(ALBUM_RESULT_NUMBER)\fP
-    \fBquery[search=protocol://SITE:PORT,get=protocol://SITE:PORT]\fP
+    \fBquery[search=protocol://SITE:PORT,
+             get=protocol://SITE:PORT]\fP
     \fBquery[search...]{album}\fP
     \fBquery[search...]{album}(ALBUM_RESULT_NUMBER)\fP
 
@@ -226,7 +227,8 @@ and site (for downloading the CDDB file from the disc ID). Valid 'search' protoc
 
 Examples :
 
-  query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]
+  query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,
+        get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]
 .br
   query[get=cddb_protocol://freedb.org:8880]
 .br
@@ -303,7 +305,7 @@ and '...' a segment of the audio file (silence or audio)
 .IP \fBnt=INTEGER\fP
 Positive integer number of tracks to be split when using \-s option. By default all tracks are split.
 .IP \fBmin=FLOAT\fP
-Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded.
+Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded. Default is 0.
 .IP \fBrm\fP
 Does not require an additional number and it used to remove silence when using \-s option.
 
@@ -432,7 +434,7 @@ split, with the title tag replaced by 'footitle'. The track number will
 start at 1 for the first split file and auto increment to the other files.
 
 .IP "\fB\-m M3U\fP         " 10
-\fBCreate .m3u file mode\fP. Creates a .m3u file containing the split
+\fBCreate .m3u file\fP. Creates a .m3u file containing the split
 files. The generated .m3u file only contains the split filenames without
 the path. If an output directory is specified with \-d or \-o, the file is
 created in this directory. The path of M3U is ignored. This option cannot be

@@ -510,6 +510,9 @@ int mp3splt_set_int_option(splt_state *state,
     {
       splt_t_lock_library(state);
 
+      fprintf(stdout,"int option = %d, value = %d\n",option_name, value);
+      fflush(stdout);
+
       splt_t_set_int_option(state, option_name, value);
 
       splt_t_unlock_library(state);
@@ -780,8 +783,7 @@ int mp3splt_split(splt_state *state)
             }
           }
 
-          //do the effective multiple split
-          splt_s_multiple_split(state, &error);
+          splt_s_normal_split(state, &error);
           break;
       }
 
@@ -1039,7 +1041,7 @@ void mp3splt_set_oformat(splt_state *state,
     {
       splt_t_lock_library(state);
 
-      splt_t_set_oformat(state, format_string, err);  
+      splt_t_set_oformat(state, format_string, err, SPLT_FALSE);
 
       splt_t_unlock_library(state);
     }

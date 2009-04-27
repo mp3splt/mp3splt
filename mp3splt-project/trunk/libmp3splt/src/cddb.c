@@ -77,7 +77,7 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   if (output_filenames == SPLT_OUTPUT_DEFAULT)
   {
     //we put the default output if we have the default output
-    int err = splt_t_new_oformat(state, SPLT_DEFAULT_OUTPUT);
+    int err = splt_t_new_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT);
     if (err < 0) { *error = err; goto function_end; }
 
     //we put the real performer in the artist
@@ -159,7 +159,7 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
       char *old_format = strdup(format);
       if (old_format != NULL)
       {
-        splt_t_set_oformat(state, old_format,&err_format);
+        splt_t_set_oformat(state, old_format,&err_format, SPLT_TRUE);
         free(old_format);
         old_format = NULL;
       }
