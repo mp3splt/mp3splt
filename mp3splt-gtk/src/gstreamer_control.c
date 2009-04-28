@@ -91,8 +91,8 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,"Error : %s",error->message);
 
-          fprintf(stdout,"error : %s\n",message);
-          fflush(stdout);
+          //fprintf(stdout,"error : %s\n",message);
+          //fflush(stdout);
 
           gdk_threads_enter();
           put_status_message(message);
@@ -122,8 +122,8 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,"Warning: %s",error->message);
 
-          fprintf(stdout,"warning : %s\n",message);
-          fflush(stdout);
+          //fprintf(stdout,"warning : %s\n",message);
+          //fflush(stdout);
 
           gdk_threads_enter();
           put_status_message(message);
@@ -153,8 +153,8 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,"Info : %s",error->message);
 
-          fprintf(stdout,"info : %s\n",message);
-          fflush(stdout);
+          //fprintf(stdout,"info : %s\n",message);
+          //fflush(stdout);
 
           gdk_threads_enter();
           put_status_message(message);

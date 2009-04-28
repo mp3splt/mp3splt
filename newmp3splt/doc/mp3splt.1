@@ -356,13 +356,17 @@ It can contain name variables, that must begin with @ char and that can be:
 .br
 @t: song title*
 .br
-@n: track number identifier* (not the real ID3 track number) (a digit may
-follow the for the number of digits to output)
+@n: track number identifier* (not the real ID3 track number)**
 .br
-@N: track tag number (a digit may follow it for the number of digits to
-output)
+@N: track tag number**
 .br
 @f: input filename (without extension)
+.br
+@m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint**
+.br
+@M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint**
+
+(**) a digit may follow for the number of digits to output
 
 When split files are more than one, at least one between @t and @n (*) must be present to avoid ambiguous names.
 You can put any prefix, separator, suffix in the string, for more elegance.
@@ -375,6 +379,8 @@ Valid examples are:
 @a+-+@n+-+@t (default if using \-c and \-o is not specified)
 .br
 @a/@b/@t_@n (will create the directories '<artist>' and '<artist>/<album>')
+.br
+@f_@n+@m:@s+@M:@S
 
 .IP "\fB\-d NAME\fP         " 10
 \fBOutput directory\fP.
