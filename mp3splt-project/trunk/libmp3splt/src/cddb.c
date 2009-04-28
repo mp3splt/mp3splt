@@ -77,8 +77,8 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   if (output_filenames == SPLT_OUTPUT_DEFAULT)
   {
     //we put the default output if we have the default output
-    int err = splt_t_new_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT);
-    if (err < 0) { *error = err; goto function_end; }
+    splt_t_set_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT, error, SPLT_TRUE);
+    if (*error < 0) { goto function_end; }
 
     //we put the real performer in the artist
     for (i = 0; i < tracks;i++)

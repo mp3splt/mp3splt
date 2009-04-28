@@ -1300,9 +1300,12 @@ int splt_u_parse_outformat(char *s, splt_state *state)
     return SPLT_OUTPUT_FORMAT_OK;
   }
 
+  char err[2] = { '\0' };
+
   if (ptre == NULL)
   {
-    return SPLT_OUTPUT_FORMAT_AMBIGUOUS;
+    splt_t_set_error_data(state, err);
+    return SPLT_OUTPUT_FORMAT_ERROR;
   }
   ptrs = ptre;
 
@@ -1315,8 +1318,6 @@ int splt_u_parse_outformat(char *s, splt_state *state)
     {
       len = SPLT_MAXOLEN;
     }
-
-    char err[2] = { '\0' };
 
     switch (cf)
     {
@@ -1413,6 +1414,11 @@ int splt_u_put_output_format_filename(splt_state *state)
   if (splt_t_splitpoint_exists(state, old_current_split + 1))
   {
     point_value = splt_t_get_splitpoint_value(state, old_current_split +1, &error);
+    long total_time = splt_t_get_total_time(state);
+    if (point_value > total_time)
+    {
+      point_value = total_time;
+    }
     splt_u_get_mins_secs_hundr(point_value, &next_mins, &next_secs, &next_hundr);
   }
 
@@ -1837,7 +1843,8 @@ put_value:
 
   splt_u_print_debug("The new output filename is ",0,output_filename);
 
-  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
+  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES)
+      && output_filenames)
   {
     char *only_dirs = strdup(output_filename);
     if (! only_dirs)
@@ -2268,8 +2275,15 @@ char *splt_u_strerror(splt_state *state, int error_code)
         break;
         //
       case SPLT_OUTPUT_FORMAT_ERROR:
-        snprintf(error_msg,max_error_size, " error: illegal variable '@%s' in output format.",
-            state->err.error_data);
+        if (state->err.error_data == NULL || strlen(state->err.error_data) == 0)
+        {
+          snprintf(error_msg,max_error_size, " error: invalid output format");
+        }
+        else
+        {
+          snprintf(error_msg,max_error_size, " error: illegal variable '@%s' in output format",
+              state->err.error_data);
+        }
         break;
         //
       case SPLT_ERROR_INEXISTENT_SPLITPOINT:

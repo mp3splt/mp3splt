@@ -510,9 +510,6 @@ int mp3splt_set_int_option(splt_state *state,
     {
       splt_t_lock_library(state);
 
-      fprintf(stdout,"int option = %d, value = %d\n",option_name, value);
-      fflush(stdout);
-
       splt_t_set_int_option(state, option_name, value);
 
       splt_t_unlock_library(state);

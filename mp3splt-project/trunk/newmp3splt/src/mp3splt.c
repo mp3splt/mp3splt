@@ -1953,13 +1953,8 @@ int main(int argc, char **orig_argv)
   {
     //enable to create directories from the output filenames
     mp3splt_set_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, SPLT_TRUE);
-
-    //we set our output format
     mp3splt_set_oformat(state, opt->output_format,&output_format_error);
-    //if (output_format_error != SPLT_OUTPUT_FORMAT_AMBIGUOUS)
-    //{
     process_confirmation_error(output_format_error, data);
-    //}
   }
 
   if (optind > 1)
@@ -2141,9 +2136,23 @@ int main(int argc, char **orig_argv)
           print_warning("tags format ambigous !");
         }
 
+        //for cddb, filenames are already set from the library, so 
+        //set output filenames to CUSTOM
+        int saved_output_filenames = mp3splt_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, &err);
+        if (opt->c_option && !opt->o_option)
+        {
+          mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
+        }
+ 
         //we do the effective split
         err = mp3splt_split(state);
         process_confirmation_error(err, data);
+
+        //for cddb, set output filenames to its old value before the split
+        if (opt->c_option && !opt->o_option)
+        {
+          mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, saved_output_filenames);
+        }
 
         //print the average silence level
         if (opt->s_option)

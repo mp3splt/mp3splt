@@ -384,8 +384,7 @@ gpointer split_it(gpointer data)
   confirmation = mp3splt_split(the_state);
   
   //reenable default output if necessary
-  mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-                         output_filenames);
+  mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
   
   //lock gtk
   gdk_threads_enter();

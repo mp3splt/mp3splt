@@ -335,8 +335,7 @@ void split_button_event (GtkWidget *widget,
           break;
         }
       
-      filename_to_split = (gchar *)
-        gtk_entry_get_text(GTK_ENTRY(entry));
+      filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
       
       filename_path_of_split = (gchar *)
         gtk_entry_get_text(GTK_ENTRY(directory_entry));
