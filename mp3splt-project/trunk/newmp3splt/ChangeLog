@@ -3,6 +3,22 @@ Check http://mp3splt.sourceforge.net for the latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
+#mp3splt v. 2.2.4
+
+- fixed issue with CUE file not being imported correctly : \r and \n
+problem (bug #2778717)
+- fixed bug #2691576 - CUE file seg fault if no artist
+- fixed segfault when output format was empty
+- fixed bug with ID3v1 and '@N' (was 1,3,5,... instead of 1,2,3,...)
+- fixed time split with '0.0' was infinite looping
+- fixed empty output format '' seg fault
+- small fixes in the man page
+- re-enabled mp3splt ogg symlink configure option
+- added options @m,@M,@s,@S,@H,@h + no @h or @H in output filenames if hundreths are 0
+- added default custom tags as %[@o,@N=1]
+- print to stdout is now on stderr for the '-l' option, except for the filenames
+- added --with-mp3splt(-libraries|-includes)?, --disable-mp3splttest configure options
+
 # mp3splt v. 2.2.3
 
 - the default behaviour of the tags on the split files has changed :

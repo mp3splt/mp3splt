@@ -118,7 +118,7 @@ AM_CONDITIONAL(AUDACIOUS,false)
 audacious="no"
 #checking for --disable-audacious & audacious library
 AC_ARG_ENABLE(audacious,
-AC_HELP_STRING([--disable-audacious], [Disable audacious player support (default is enabled)]),
+AC_HELP_STRING([--disable-audacious], [Disable audacious player support. ]),
 [AC_MSG_WARN([audacious support is disabled !])
 audacious="disabled"]
 ,
@@ -137,7 +137,7 @@ AM_CONDITIONAL(GSTREAMER,false)
 gstreamer="no"
 #checking for --disable-gstreamer & gstreamer library
 AC_ARG_ENABLE(gstreamer,
-AC_HELP_STRING([--disable-gstreamer], [Disable gstreamer 'internal' player support (default is enabled)]),
+AC_HELP_STRING([--disable-gstreamer], [Disable gstreamer 'internal' player support. ]),
 [AC_MSG_WARN([gstreamer support is disabled !])
 gstreamer="disabled"]
 ,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.1.3\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-01-18 00:12+0100\n"
+"POT-Creation-Date: 2009-04-29 22:21+0200\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Munteanu Alexandru <io_alex_2004@users.sourceforge.net>\n"
 "Language-Team: French  <io_alex_2004@users.sourceforge.net>\n"
@@ -325,7 +325,7 @@ msgstr "Coupure"
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1312 src/main_win.c:691
+#: src/preferences_tab.c:1312 src/main_win.c:690
 msgid "Player"
 msgstr "Lecteur"
 
@@ -369,7 +369,7 @@ msgstr ""
 msgid "_Connect    "
 msgstr "_Connecter    "
 
-#: src/player_tab.c:892 src/main_win.c:387 src/main_win.c:434
+#: src/player_tab.c:892 src/main_win.c:386 src/main_win.c:433
 msgid "connect to player"
 msgstr "se connecter au lecteur"
 
@@ -377,7 +377,7 @@ msgstr "se connecter au lecteur"
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:902 src/main_win.c:377
+#: src/player_tab.c:902 src/main_win.c:376
 msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
@@ -452,15 +452,15 @@ msgstr "fichiers cue(*.cue)"
 msgid "All Files"
 msgstr "Fichier"
 
-#: src/player_tab.c:3935
+#: src/player_tab.c:3936
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:3943
+#: src/player_tab.c:3944
 msgid "select file"
 msgstr "sélection fichier"
 
-#: src/player_tab.c:3950
+#: src/player_tab.c:3951
 msgid "_Fix ogg stream"
 msgstr ""
 
@@ -497,71 +497,71 @@ msgstr ""
 msgid " info: starting error mode split... "
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:354
+#: src/main_win.c:353
 #, fuzzy
 msgid " error: no file selected "
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:359
+#: src/main_win.c:358
 #, fuzzy
 msgid " error: split in progress... "
 msgstr " erreur: les points de coupure ne sont pas en ordre"
 
-#: src/main_win.c:413
+#: src/main_win.c:412
 #, fuzzy
 msgid "set window default size"
 msgstr "rendre impossible le redimensionnement de la fenetre"
 
-#: src/main_win.c:454
+#: src/main_win.c:453
 msgid "split !"
 msgstr "coupe le fichier !"
 
-#: src/main_win.c:472
+#: src/main_win.c:471
 msgid "really wanna quit ?"
 msgstr "vraiment quitter ?"
 
-#: src/main_win.c:495
+#: src/main_win.c:494
 msgid "File"
 msgstr "Fichier"
 
-#: src/main_win.c:496
+#: src/main_win.c:495
 msgid "Help"
 msgstr "Aide"
 
-#: src/main_win.c:498 src/main_win.c:500
+#: src/main_win.c:497 src/main_win.c:499
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:503 src/main_win.c:505
+#: src/main_win.c:502 src/main_win.c:504
 msgid "About"
 msgstr "à propos"
 
-#: src/main_win.c:609 src/main_win.c:769
+#: src/main_win.c:608 src/main_win.c:768
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:636 src/main_win.c:745
+#: src/main_win.c:635 src/main_win.c:744
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:706
+#: src/main_win.c:705
 msgid "Splitpoints"
 msgstr "PointsCoupure"
 
-#: src/main_win.c:719
+#: src/main_win.c:718
 msgid "Split files"
 msgstr "Fichiers coupés"
 
-#: src/main_win.c:732
+#: src/main_win.c:731
 msgid "cddb&cue"
 msgstr "cddb&cue"
 
-#: src/main_win.c:756
+#: src/main_win.c:755
 #, fuzzy
 msgid "Split mode"
 msgstr "Coupure"
 
-#: src/main_win.c:791
+#: src/main_win.c:790
 #, fuzzy
 msgid "Stop"
 msgstr "stop"

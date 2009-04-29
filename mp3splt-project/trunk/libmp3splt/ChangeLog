@@ -1,3 +1,16 @@
+libmp3splt version 0.5.5
+-------------------------------------------------------------
+
+- fixed issue with CUE file not being imported correctly : \r and \n
+problem (bug #2778717)
+- fixed bug #2691576 - CUE file seg fault if no artist
+- fixed bug #2520183 : wrong size in snprintf call
+- fixed bug with ID3v1 and '@N' (was 1,3,5,... instead of 1,2,3,...)
+- fixed time split with '0.0' was infinite looping
+- fixed empty output format '' seg fault
+- added options @m,@M,@s,@S,@H,@h + no @h or @H in output filenames if hundreths are 0
+- added --with-(mad|id3)(-libraries|-includes)?, --disable-[mad|id3]test configure options
+
 libmp3splt version 0.5.4
 -------------------------------------------------------------
 

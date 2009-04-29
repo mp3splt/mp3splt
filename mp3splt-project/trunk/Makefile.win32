@@ -8,7 +8,7 @@ all:
 	\
 	cd ../mp3splt-gtk && ./autogen.sh && \
 	cp /lib/libmp3splt* . && \
-	./configure --enable-gstreamer && make clean && make && make install
+	./configure --disable-audacious && make clean && make && make install
 
 recompile:
 	cd libmp3splt && make && \
