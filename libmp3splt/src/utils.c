@@ -2187,6 +2187,9 @@ char *splt_u_strerror(splt_state *state, int error_code)
             " error: splitpoints are equal (%s)",
             state->err.error_data);
         break;
+      case SPLT_ERROR_TIME_SPLIT_VALUE_INVALID :
+        snprintf(error_msg,max_error_size, " error: invalid time split value");
+        break;
       case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER :
         snprintf(error_msg,max_error_size,
             " error: the splitpoints are not in order (%s)",

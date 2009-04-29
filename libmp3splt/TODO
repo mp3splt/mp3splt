@@ -1,9 +1,4 @@
-BUGS :
-* -t 0.0 infinite !
-* -o "" segfault !
-
-
-FEATURES REQUESTS :
+FEATURES :
 
 * use 'getline' (GNU extension) instead of 'fgets'
 * don't set the same name on the structures as the defined type

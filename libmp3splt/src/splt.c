@@ -352,6 +352,11 @@ void splt_s_time_split(splt_state *state, int *error)
   //the begin split
   double begin = 0.f;
   double end = (double) splt_t_get_float_option(state, SPLT_OPT_SPLIT_TIME);
+  if (end == 0.0)
+  {
+    *error = SPLT_ERROR_TIME_SPLIT_VALUE_INVALID;
+    return;
+  }
 
   //if no state error
   if (state->options.split_time >= 0)

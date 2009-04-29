@@ -186,6 +186,6 @@ echo
 # Generate Makefile
 #################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile plugins/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile plugins/Makefile m4/Makefile])
 AC_OUTPUT
 

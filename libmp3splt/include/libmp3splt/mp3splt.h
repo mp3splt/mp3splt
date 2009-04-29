@@ -989,6 +989,7 @@ typedef struct {
 #define SPLT_ERROR_CRC_FAILED -31
 #define SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE -32
 #define SPLT_ERROR_PLUGIN_ERROR -33
+#define SPLT_ERROR_TIME_SPLIT_VALUE_INVALID -34
 
 //output format
 /**

@@ -27,7 +27,7 @@ if [[ ! -f $DIST_FILE ]];then
     
     #we compile
     ./autogen.sh && \
-        ./configure --enable-audacious --enable-gstreamer --prefix=/usr && \
+        ./configure --prefix=/usr && \
         make clean && \
         make && \
         #we create the debian package

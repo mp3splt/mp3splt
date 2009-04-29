@@ -47,7 +47,7 @@ done
 #we compile mp3splt-gtk
 cd trunk/mp3splt-gtk &&\
 cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
-./configure --enable-gstreamer --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
+./configure --disable-audacious --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
 make clean && make && make install &&\
 ${HOST}-strip ./src/mp3splt-gtk.exe || exit 1
 

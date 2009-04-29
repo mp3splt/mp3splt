@@ -46,7 +46,7 @@
 #define VERSION "2.2.4"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "24/01/09"
+#define MP3SPLT_DATE "29/04/09"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -1810,7 +1810,7 @@ int main(int argc, char **orig_argv)
         else
         {
           print_error_exit("bad time expression for the time split.\n"
-              "Must be min.sec, read man page for details.", data);
+              "\tMust be min.sec, read man page for details.", data);
         }
         opt->t_option = SPLT_TRUE;
         break;

@@ -1,7 +1,20 @@
 Check http://mp3splt.sourceforge.net for the latest release.
 
 Please read the ChangeLog of libmp3splt for more information.
-Some changed are implemented in libmp3splt, but reported here for convenience.
+Some changes are implemented in libmp3splt, but reported here for convenience.
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.5
+
+- IMPORTANT : by default gstreamer and audacious are now enabled for mp3splt-gtk :
+configure options changed from --enable-gstreamer to --disable-gstreamer
+and from --enable-audacious to --disable-audacious
+- fixed issue with CUE file not being imported correctly : \r and \n
+problem (bug #2778717)
+- fixed bug #2691576 - CUE file seg fault if no artist
+- added a basic mp3splt-gtk man page
+- removed encoding from '.desktop' file
+- added --with-mp3splt(-libraries|-includes)?, --disable-mp3splttest configure options
 
 -------------------------------------------------------------
 mp3splt-gtk version 0.5.4
