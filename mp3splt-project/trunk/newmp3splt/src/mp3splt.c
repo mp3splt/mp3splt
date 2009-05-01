@@ -74,6 +74,7 @@ typedef struct {
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
   short N_option;
+  short O_option;
   //export cue
   //short E_option;
   //-Q option
@@ -355,6 +356,7 @@ void show_small_help_exit(main_data *data)
       "       (\% means that we set the tags for all remaining files)\n"
       " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
+      " -O + TIME : Overlap split files with TIME (slower).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
       " -N   Don't create the 'mp3splt.log' log file when using '-s'.\n"
       " -q   Quiet mode: try not prompt (if possible) and print less messages.\n"
@@ -699,6 +701,16 @@ void check_args(int argc, main_data *data)
       {
         print_error_exit("the -N option must be used with"
             " silence detection (-s option)", data);
+      }
+    }
+
+    if (opt->O_option)
+    {
+      if (opt->w_option || opt->e_option ||
+          opt->l_option || opt->i_option)
+      {
+        print_error_exit("the -O option cannot be used with"
+            " -w, -e, -l or -i", data);
       }
     }
   }
@@ -1439,7 +1451,7 @@ options *new_options(main_data *data)
   opt->d_option = SPLT_FALSE; opt->k_option = SPLT_FALSE;
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
-  opt->N_option = SPLT_FALSE;
+  opt->N_option = SPLT_FALSE; opt->O_option = SPLT_FALSE;
   opt->qq_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
@@ -1698,7 +1710,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option = getopt(data->argc, data->argv, "m:SDvifkwleqnasc:d:o:t:p:g:hQN12")) != -1)
+  while ((option = getopt(data->argc, data->argv, "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12")) != -1)
   {
     switch (option)
     {
@@ -1797,6 +1809,11 @@ int main(int argc, char **orig_argv)
           console_out = stderr;
         }
         opt->o_option = SPLT_TRUE;
+        break;
+      case 'O':
+        opt->O_option = SPLT_TRUE;
+        mp3splt_set_long_option(state, SPLT_OPT_OVERLAP_TIME,
+            c_hundreths(optarg));
         break;
       case 't':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);

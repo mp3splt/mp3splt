@@ -10,6 +10,7 @@ problem (bug #2778717)
 - fixed empty output format '' seg fault
 - added options @m,@M,@s,@S,@H,@h + no @h or @H in output filenames if hundreths are 0
 - added --with-(mad|id3)(-libraries|-includes)?, --disable-[mad|id3]test configure options
+- added overlapping option of split files (feature request #1530782)
 
 libmp3splt version 0.5.4
 -------------------------------------------------------------

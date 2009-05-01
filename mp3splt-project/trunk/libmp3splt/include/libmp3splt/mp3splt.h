@@ -512,6 +512,7 @@ typedef struct {
   short option_frame_mode;
   //the time of split when split_mode = OPTION_TIME_SPLIT
   float split_time;
+  long overlap_time;
   //this option uses silence detection to auto-adjust splitpoints.
   short option_auto_adjust;
   //input not seekable. enabling this allows you to split mp3 and ogg streams
@@ -1180,6 +1181,22 @@ typedef enum {
   SPLT_OPT_FORCE_TAGS_VERSION
 } splt_int_options;
 
+//options types : long
+/**
+ * @brief Integer options
+ *
+ * Integer options
+ *
+ * Use #mp3splt_set_long_option to set those options\n
+ * Use #mp3splt_get_long_option to get those options
+ */
+typedef enum {
+  /** 
+   * Time to overlap between the split files
+   */
+  SPLT_OPT_OVERLAP_TIME
+} splt_long_options;
+
 //option types : float
 /**
  * @brief Float options
@@ -1416,10 +1433,16 @@ void mp3splt_erase_all_tags(splt_state *state,
 int mp3splt_set_int_option(splt_state *state, int option_name,
     int value);
 
+int mp3splt_set_long_option(splt_state *state, int option_name,
+    long value);
+
 int mp3splt_set_float_option(splt_state *state, int option_name,
     float value);
 
 int mp3splt_get_int_option(splt_state *state, int option_name,
+    int *error);
+
+long mp3splt_get_long_option(splt_state *state, int option_name,
     int *error);
 
 float mp3splt_get_float_option(splt_state *state, int option_name,

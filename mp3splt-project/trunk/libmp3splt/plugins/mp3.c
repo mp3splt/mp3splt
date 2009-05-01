@@ -160,6 +160,24 @@ static const unsigned long splt_mp3_crctab[256] = {
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 };
 
+static void splt_mp3_save_end_point(splt_state *state, splt_mp3_state *mp3state,
+    int save_end_point, off_t end)
+{
+  if (save_end_point)
+  {
+    mp3state->end = end;
+  }
+  else
+  {
+    mp3state->end = 0;
+    if (splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
+    {
+      mp3state->frames = 1;
+      mp3state->first = 1;
+    }
+  }
+}
+
 //-filename must not be null; if filename is NULL, then this plugin should
 //not have been detected
 //-returns NULL if error
@@ -2364,14 +2382,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
             (float)(end-split_begin_point), 1,0,SPLT_DEFAULT_PROGRESS_RATE);
       }
 
-      if (save_end_point)
-      {
-        mp3state->end = end;
-      }
-      else
-      {
-        mp3state->end = 0;
-      }
+      splt_mp3_save_end_point(state, mp3state, save_end_point, end);
 
       if (!eof)
       {
@@ -2688,15 +2699,7 @@ bloc_end:
         }
       }
 
-      //save end point for performance reasons
-      if (save_end_point)
-      {
-        mp3state->end = end;
-      }
-      else
-      {
-        mp3state->end = 0;
-      }
+      splt_mp3_save_end_point(state, mp3state, save_end_point, end);
 
       //if xing, we get xing
       if (mp3state->mp3file.xing > 0)
@@ -2757,15 +2760,7 @@ bloc_end:
           check_bitrate = 1;
       }
 
-      //save end point for performance reasons
-      if (save_end_point)
-      {
-        mp3state->end = end;
-      }
-      else
-      {
-        mp3state->end = 0;
-      }
+      splt_mp3_save_end_point(state, mp3state, save_end_point, end);
     }
 
     //seekable real split

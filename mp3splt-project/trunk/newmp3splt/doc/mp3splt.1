@@ -334,6 +334,10 @@ files, because to seek splitpoints we need to process all bytes and all frames. 
 (so STDIN as input too) can't be used together with \-s \-a \-w \-e, because input must be seekable for
 those options.
 
+.IP "\fB\-O TIME\fP         " 10
+\fBOverlap split files\fP. TIME will be added to each end splitpoint.
+Current implementation of this option makes the split slower.
+
 .IP "\fB\-o FORMAT\fP         " 10
 \fBOutput format\fP. FORMAT is a string that will be used as output
 directory and/or filename. If FORMAT contains the DIRCHAR character ('\\' on

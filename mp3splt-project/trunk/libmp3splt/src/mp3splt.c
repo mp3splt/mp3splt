@@ -527,6 +527,36 @@ int mp3splt_set_int_option(splt_state *state,
   return error;
 }
 
+//set a long option
+//returns possible error
+int mp3splt_set_long_option(splt_state *state, 
+    int option_name, long value)
+{
+  int error = SPLT_OK;
+
+  if (state != NULL)
+  {
+    if (!splt_t_library_locked(state))
+    {
+      splt_t_lock_library(state);
+
+      splt_t_set_long_option(state, option_name, value);
+
+      splt_t_unlock_library(state);
+    }
+    else
+    {
+      error = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    error = SPLT_ERROR_STATE_NULL;
+  }
+
+  return error;
+}
+
 //set a float option
 //returns possible error
 int mp3splt_set_float_option(splt_state *state, 
@@ -568,6 +598,24 @@ int mp3splt_get_int_option(splt_state *state, int option_name,
   if (state != NULL)
   {
     return splt_t_get_int_option(state, option_name);
+  }
+  else
+  {
+    *err = SPLT_ERROR_STATE_NULL;
+    return 0;
+  }
+}
+
+long mp3splt_get_long_option(splt_state *state, int option_name,
+    int *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  if (state != NULL)
+  {
+    return splt_t_get_long_option(state, option_name);
   }
   else
   {

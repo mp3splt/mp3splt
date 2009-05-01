@@ -2747,3 +2747,40 @@ char *splt_u_safe_strdup(char *input, int *error)
   }
 }
 
+void splt_u_print_overlap_time(splt_state *state)
+{
+  long overlap_time = splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
+  if (overlap_time > 0)
+  {
+    char message[1024] = { '\0' };
+    long mins = -1;
+    long secs = -1;
+    long hundr = -1;
+    splt_u_get_mins_secs_hundr(overlap_time, &mins, &secs, &hundr);
+    snprintf(message, 1024,
+        " info: overlapping split files with %ld.%ld.%ld\n", mins, secs, hundr);
+    splt_t_put_message_to_client(state, message);
+  }
+}
+
+long splt_u_overlap_time(splt_state *state, int splitpoint_index)
+{
+  int error = SPLT_OK;
+  long split_value = splt_t_get_splitpoint_value(state, splitpoint_index, &error);
+  long overlap_time = splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
+  if ((overlap_time > 0) && (split_value != LONG_MAX))
+  {
+    long total_time = splt_t_get_total_time(state);
+    long overlapped_split_value = split_value + overlap_time;
+    if (overlapped_split_value > total_time)
+    {
+      overlapped_split_value = total_time;
+    }
+    splt_t_set_splitpoint_value(state, splitpoint_index, overlapped_split_value);
+
+    return overlapped_split_value;
+  }
+
+  return split_value;
+}
+
