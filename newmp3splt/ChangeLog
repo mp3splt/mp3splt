@@ -18,6 +18,7 @@ problem (bug #2778717)
 - added default custom tags as %[@o,@N=1]
 - print to stdout is now on stderr for the '-l' option, except for the filenames
 - added --with-mp3splt(-libraries|-includes)?, --disable-mp3splttest configure options
+- added overlapping split files with the -O option (feature request #1530782)
 
 # mp3splt v. 2.2.3
 

@@ -141,9 +141,12 @@ splt_tags splt_t_get_last_tags(splt_state *state);
 
 void splt_t_set_int_option(splt_state *state, int option_name,
     int value);
+void splt_t_set_long_option(splt_state *state, int option_name,
+    long value);
 void splt_t_set_float_option(splt_state *state, int option_name,
     float value);
 int splt_t_get_int_option(splt_state *state, int option_name);
+long splt_t_get_long_option(splt_state *state, int option_name);
 float splt_t_get_float_option(splt_state *state, int option_name);
 //internal :
 void splt_t_set_i_begin_point(splt_state *state, double value);

@@ -2066,6 +2066,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->options.pretend_to_split = SPLT_FALSE;
   state->options.option_frame_mode = SPLT_TRUE;
   state->options.split_time = 6000;
+  state->options.overlap_time = 0;
   state->options.option_auto_adjust = SPLT_FALSE;
   state->options.option_input_not_seekable = SPLT_FALSE;
   state->options.create_dirs_from_filenames = SPLT_FALSE;
@@ -2258,6 +2259,19 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
   }
 }
 
+void splt_t_set_long_option(splt_state *state, int option_name, long value)
+{
+  switch (option_name)
+  {
+    case SPLT_OPT_OVERLAP_TIME:
+      state->options.overlap_time = value;
+      break;
+    default:
+      splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      break;
+  }
+}
+
 //sets a float option
 void splt_t_set_float_option(splt_state *state, int option_name, float value)
 {
@@ -2333,6 +2347,21 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       break;
     case SPLT_OPT_FORCE_TAGS_VERSION:
       return state->options.force_tags_version;
+      break;
+    default:
+      splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      break;
+  }
+
+  return -1;
+}
+
+long splt_t_get_long_option(splt_state *state, int option_name)
+{
+  switch (option_name)
+  {
+    case SPLT_OPT_OVERLAP_TIME:
+      return state->options.overlap_time;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);

@@ -76,9 +76,6 @@ static void splt_s_real_split(splt_state *state, int *error, int save_end_point)
 }
 
 //simple split with only 2 splitpoints
-//i is the current splitpoint
-//(used to get the filename)
-//error in error parameter
 static void splt_s_split(splt_state *state, int first_splitpoint,
     int second_splitpoint, int *error)
 {
@@ -93,7 +90,8 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
   split_begin = splt_t_get_splitpoint_value(state, first_splitpoint, &get_error);
   split_end = splt_t_get_splitpoint_value(state, second_splitpoint, &get_error);
   int save_end_point = SPLT_TRUE;
-  if (splt_t_get_splitpoint_type(state, second_splitpoint, &get_error) == SPLT_SKIPPOINT)
+  if (splt_t_get_splitpoint_type(state, second_splitpoint, &get_error) == SPLT_SKIPPOINT ||
+      splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
   {
     save_end_point = SPLT_FALSE;
   }
@@ -128,6 +126,11 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
         //we do the real split
         splt_s_real_split(state, error, save_end_point);
       }
+      else
+      {
+        splt_t_set_error_data_from_splitpoint(state, split_begin);
+        *error = SPLT_ERROR_EQUAL_SPLITPOINTS;
+      }
     }
   }
   else
@@ -152,6 +155,8 @@ void splt_s_multiple_split(splt_state *state, int *error)
     splt_t_put_message_to_client(state, " info: starting normal split\n");
   }
 
+  splt_u_print_overlap_time(state);
+
   int get_error = SPLT_OK;
 
   //for every 2 splitpoints, split
@@ -168,7 +173,9 @@ void splt_s_multiple_split(splt_state *state, int *error)
     {
       get_error = SPLT_OK;
 
-      //if we have to put the original tags
+      long saved_end_point = splt_t_get_splitpoint_value(state, i+1, &get_error);
+      splt_u_overlap_time(state, i+1);
+
       if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
       {
         err = splt_t_append_original_tags(state);
@@ -178,7 +185,6 @@ void splt_s_multiple_split(splt_state *state, int *error)
       err = splt_u_put_output_format_filename(state);
       if (err < 0) { *error = err; return; }
 
-      //we split only if the type of the first splitpoint is SPLT_SPLITPOINT
       int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
       if (first_splitpoint_type == SPLT_SKIPPOINT)
       {
@@ -187,6 +193,8 @@ void splt_s_multiple_split(splt_state *state, int *error)
       }
 
       splt_s_split(state, i, i+1, error);
+
+      splt_t_set_splitpoint_value(state, i+1,saved_end_point);
 
       //get out if error
       if ((*error < 0) || (*error == SPLT_OK_SPLIT_EOF))
@@ -346,6 +354,8 @@ void splt_s_time_split(splt_state *state, int *error)
   splt_u_print_debug("Starting time split...",0,NULL);
   splt_t_put_message_to_client(state, " info: starting time mode split\n");
 
+  splt_u_print_overlap_time(state);
+
   char *final_fname = NULL;
   //if the state has an error
   int j=0,tracks=1;
@@ -359,7 +369,7 @@ void splt_s_time_split(splt_state *state, int *error)
   }
 
   //if no state error
-  if (state->options.split_time >= 0)
+  if (end >= 0)
   {
     int err = SPLT_OK;
 
@@ -381,6 +391,12 @@ void splt_s_time_split(splt_state *state, int *error)
     err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
     if (err >= 0)
     { 
+      int save_end_point = SPLT_TRUE;
+      if (splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
+      {
+        save_end_point = SPLT_FALSE;
+      }
+
       //while we have tracks
       do {
         //if we don't cancel the split
@@ -414,6 +430,9 @@ void splt_s_time_split(splt_state *state, int *error)
           }
           splt_t_set_splitpoint_value(state, current_split+1,end_splitpoint);
 
+          double overlapped_end =
+            (double)(splt_u_overlap_time(state, current_split+1) / 100.0);
+
           err = splt_u_put_output_format_filename(state);
           if (err < 0) { *error = err; break; }
 
@@ -423,7 +442,8 @@ void splt_s_time_split(splt_state *state, int *error)
             final_fname = splt_u_get_fname_with_path_and_extension(state,&err);
             if (err < 0) { *error = err; break; }
 
-            splt_p_split(state, final_fname, begin, end, error, SPLT_TRUE);
+            splt_p_split(state, final_fname, begin, overlapped_end,
+                error, save_end_point);
 
             //if no error for the split, put the split file
             if (*error >= 0)
