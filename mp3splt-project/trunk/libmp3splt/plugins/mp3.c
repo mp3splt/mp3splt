@@ -2968,7 +2968,14 @@ static const unsigned char splt_mp3_albumwraphead[22] =
 //we return the possible error in the process_result parameter
 static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_state *state)
 {
-  *error = SPLT_DEWRAP_OK;
+  if (listonly)
+  {
+    *error = SPLT_OK;
+  }
+  else
+  {
+    *error = SPLT_DEWRAP_OK;
+  }
 
   //if albumwrap or mp3wrap
   short albumwrap=0, mp3wrap=0;
@@ -2977,11 +2984,11 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
   unsigned char c;
   char filename[2048] = { '\0' };
   off_t begin=0, end=0, len = 0, id3offset = 0;
-  char junk[384] = { '\0' };
+  char junk[2048] = { '\0' };
   char *file_to_dewrap = splt_t_get_filename_to_split(state);
 
   //if error
-  if (*error != SPLT_DEWRAP_OK)
+  if (*error < 0)
   {
     return;
   }
@@ -3153,7 +3160,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
             return;
           }
           i = 0;
-          while (((c=fgetc(mp3state->file_input))!=0x20) &&(i<384))
+          while (((c=fgetc(mp3state->file_input))!=0x20) &&(i<2048))
             junk[i++] = c;
           junk[i] = '\0';
           wrapfiles = atoi (junk);
@@ -3222,7 +3229,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                   return;
                 }
                 j = 0;
-                while ((j<384) && ((c = fgetc(mp3state->file_input))!='['))
+                while ((j<2048) && ((c = fgetc(mp3state->file_input))!='['))
                   if (c!='.') junk[j++] = c;
                   else k = j;
                 junk[j] = '\0';
@@ -3267,19 +3274,26 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
 
               end = (off_t) (w + id3offset);
 
-              memset(junk, 0x00, 384);
-              char *ptr = filename;
               //create output directories for the wrapped files
-              while (((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)&&((ptr-filename)<384))
+              //if we don't list only and if we don't have an output
+              //directory
+              if (!listonly && (!dir || dir[0] == '\0'))
               {
-                ptr++;
-                strncpy(junk, filename, ptr-filename);
-                if (! splt_u_check_if_directory(junk))
+                memset(junk, 0x00, 2048);
+                char *ptr = filename;
+                while (((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)&&((ptr-filename)<2048))
                 {
-                  if ((splt_u_mkdir(junk))==-1)
+                  ptr++;
+                  strncpy(junk, filename, ptr-filename);
+                  if (! splt_u_check_if_directory(junk))
                   {
-                    *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-                    return;
+                    if ((splt_u_mkdir(junk)) == -1)
+                    {
+                      *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+                      splt_t_set_strerror_msg(state);
+                      splt_t_set_error_data(state,junk);
+                      return;
+                    }
                   }
                 }
               }
@@ -3299,7 +3313,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                   return;
                 }
                 j = 0;
-                while ((j<384) && ((c = fgetc(mp3state->file_input))!='['))
+                while ((j<2048) && ((c = fgetc(mp3state->file_input))!='['))
                   if (c!='.') junk[j++] = c;
                   else k = j;
                 junk[j] = '\0';
