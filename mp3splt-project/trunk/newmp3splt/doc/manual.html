@@ -179,7 +179,8 @@ following formats :
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query{album}</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query{album}(ALBUM_RESULT_NUMBER)</B>
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search=protocol://SITE:PORT,get=protocol://SITE:PORT]</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search=protocol://SITE:PORT,
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get=protocol://SITE:PORT]</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search...]{album}</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search...]{album}(ALBUM_RESULT_NUMBER)</B>
 <P>
@@ -188,7 +189,7 @@ made on this string and the user will not be requested to
 interactively input a search string.
 The number between '(' and ')' is for auto-selecting the result number
 ALBUM_RESULT_NUMBER; thus, the user will not be requested to interactively
-input a choose result.
+input a result number.
 <P>
 The other parameters between '[' and ']' are used to specify the protocols
 and the sites. If those parameters are not specified, default values will
@@ -200,7 +201,8 @@ and site (for downloading the CDDB file from the disc ID). Valid 'search' protoc
 <P>
 Examples :
 <P>
-<BR>&nbsp;&nbsp;query[search=cddb_<A HREF="cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]">cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]</A>
+<BR>&nbsp;&nbsp;query[search=cddb_<A HREF="cgi://tracktype.org/~cddb/cddb.cgi:80,">cgi://tracktype.org/~cddb/cddb.cgi:80,</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get=cddb_<A HREF="cgi://tracktype.org/~cddb/cddb.cgi:80]">cgi://tracktype.org/~cddb/cddb.cgi:80]</A>
 <BR>
 
 <BR>&nbsp;&nbsp;query[get=cddb_protocol://freedb.org:8880]
@@ -285,7 +287,7 @@ and '...' a segment of the audio file (silence or audio)
 <DT><B>nt=INTEGER</B><DD>
 Positive integer number of tracks to be split when using -s option. By default all tracks are split.
 <DT><B>min=FLOAT</B><DD>
-Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded.
+Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded. Default is 0.
 <DT><B>rm</B><DD>
 Does not require an additional number and it used to remove silence when using -s option.
 <P>
@@ -314,6 +316,10 @@ files, because to seek splitpoints we need to process all bytes and all frames. 
 (so STDIN as input too) can't be used together with -s -a -w -e, because input must be seekable for
 those options.
 <P>
+<DT><B>-O TIME</B>         <DD>
+<B>Overlap split files</B>. TIME will be added to each end splitpoint.
+Current implementation of this option makes the split slower.
+<P>
 <DT><B>-o FORMAT</B>         <DD>
 <B>Output format</B>. FORMAT is a string that will be used as output
 directory and/or filename. If FORMAT contains the DIRCHAR character ('\' on
@@ -340,15 +346,21 @@ It can contain name variables, that must begin with @ char and that can be:
 @t: song title*
 <BR>
 
-@n: track number identifier* (not the real ID3 track number) (a digit may
-follow the for the number of digits to output)
+@n: track number identifier* (not the real ID3 track number)**
 <BR>
 
-@N: track tag number (a digit may follow it for the number of digits to
-output)
+@N: track tag number**
 <BR>
 
 @f: input filename (without extension)
+<BR>
+
+@m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint**
+<BR>
+
+@M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint**
+<P>
+(**) a digit may follow for the number of digits to output
 <P>
 When split files are more than one, at least one between @t and @n (*) must be present to avoid ambiguous names.
 You can put any prefix, separator, suffix in the string, for more elegance.
@@ -363,6 +375,9 @@ Valid examples are:
 <BR>
 
 @a/@b/@t_@n (will create the directories '&lt;artist&gt;' and '&lt;artist&gt;/&lt;album&gt;')
+<BR>
+
+@f_@n+@m:@s+@M:@S
 <P>
 <DT><B>-d NAME</B>         <DD>
 <B>Output directory</B>.
@@ -429,7 +444,7 @@ split, with the title tag replaced by 'footitle'. The track number will
 start at 1 for the first split file and auto increment to the other files.
 <P>
 <DT><B>-m M3U</B>         <DD>
-<B>Create .m3u file mode</B>. Creates a .m3u file containing the split
+<B>Create .m3u file</B>. Creates a .m3u file containing the split
 files. The generated .m3u file only contains the split filenames without
 the path. If an output directory is specified with -d or -o, the file is
 created in this directory. The path of M3U is ignored. This option cannot be
@@ -612,6 +627,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 <A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
 using the manual pages.<BR>
-Time: 22:34:28 GMT, January 23, 2009
+Time: 19:29:20 GMT, May 02, 2009
 </BODY>
 </HTML>
