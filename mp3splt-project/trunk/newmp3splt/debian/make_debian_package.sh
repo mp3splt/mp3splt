@@ -27,7 +27,7 @@ if [[ ! -f $DIST_FILE ]];then
     
     #we compile
     ./autogen.sh && \
-        ./configure --prefix=/usr && \
+        ./configure --prefix=/usr --enable-oggsplt_symlink && \
         make clean && \
         make && \
         #we create the debian package

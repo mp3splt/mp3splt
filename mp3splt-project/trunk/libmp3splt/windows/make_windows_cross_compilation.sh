@@ -46,6 +46,6 @@ export PATH="`pwd`/libs/bin:$PATH"
 
 #we compile and install libmp3splt
 cd trunk/libmp3splt &&\
-    ./configure --prefix=`pwd`/../../libs --host=$HOST --disable-oggtest --disable-vorbistest\
-    && make clean && make && make install || exit 1
+    ./configure --with-ltdl-lib=/usr/lib --prefix=`pwd`/../../libs --host=$HOST --disable-oggtest --disable-vorbistest\
+    && sed -i 's/^ECHO=/echo=/g' libtool && make clean && make && make install || exit 1
 
