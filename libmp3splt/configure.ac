@@ -37,7 +37,7 @@ AC_INIT([libmp3splt],[0.5.5],[io_fx@yahoo.fr])
 AM_INIT_AUTOMAKE(libmp3splt, 0.5.5)
 AC_CONFIG_HEADERS([config.h])
 
-CFLAGS="-Wall -g $CFLAGS -I../include/libmp3splt"
+CFLAGS="-Wall $CFLAGS -I../include/libmp3splt"
 
 #################################################
 # Check for programs

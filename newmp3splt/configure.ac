@@ -39,7 +39,7 @@ AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE(mp3splt, 2.2.4)
 AM_CONFIG_HEADER([config.h])
 
-CFLAGS="-Wall -g $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
+CFLAGS="-Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
 -I../libmp3splt/include/libmp3splt/ -I../../libmp3splt/include/libmp3splt/"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../libmp3splt/src \
 -L../../libmp3splt/src/.libs/ -L../../libmp3splt/src/"
@@ -105,7 +105,7 @@ AM_CONDITIONAL(DO_SYMLINK, test x$enable_oggsplt_symlink = xyes)
 # Generate Makefiles
 #################################################
 
-AC_OUTPUT(Makefile src/Makefile doc/Makefile)
+AC_OUTPUT(Makefile src/Makefile doc/Makefile m4/Makefile)
 
 #################################################
 # Output configuration

@@ -144,7 +144,7 @@ function make_debian_flavor()
 
 function debian_packages()
 {
-    DEBIAN_FLAVORS="lenny unstable"
+    DEBIAN_FLAVORS="lenny squeeze unstable"
 
     echo
     print_yellow "Creating debian packages..."
@@ -161,7 +161,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="gutsy hardy intrepid"
+    UBUNTU_FLAVORS="hardy intrepid jaunty"
 
     echo
     print_yellow "Creating ubuntu packages..."

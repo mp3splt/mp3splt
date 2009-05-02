@@ -24,7 +24,7 @@ if [[ ! -f $DIST_FILE ]];then
     #we compile
     ./autogen.sh &&\
         ./configure --prefix=/usr &&\
-        make dist &&\
+        make clean && make dist &&\
         mv mp3splt-gtk*.tar.gz ../ || exit 1
 else
     put_is_package_warning "We already have the $DIST_FILE distribution file !"

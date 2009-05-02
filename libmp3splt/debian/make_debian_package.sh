@@ -23,7 +23,8 @@ DIST_FILE="../libmp3splt_${DEBIAN_VERSION}_${ARCH}.deb"
 if [[ ! -f $DIST_FILE ]];then
     #we compile
     ./autogen.sh && \
-        ./configure --prefix=/usr && \
+        ./configure --prefix=/usr --with-ltdl-lib=/usr/lib --with-ltdl-include=/usr/include && \
+        sed -i 's/ECHO=/echo=/g' libtool && \
         make clean && \
         make && \
         #we create the debian package
