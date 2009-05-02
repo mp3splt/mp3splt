@@ -43,10 +43,10 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "2.2.4"
+#define VERSION "2.2.5"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "02/05/09"
+#define MP3SPLT_DATE "03/05/09"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -530,7 +530,7 @@ void check_args(int argc, main_data *data)
           opt->p_option || opt->o_option ||
           opt->g_option || opt->n_option)
       {
-        print_error_exit("the -w option can only be used with -m, -d and -q", data);
+        print_error_exit("the -w option can only be used with -m, -d, -q and -Q", data);
       }
     }
 
@@ -543,7 +543,7 @@ void check_args(int argc, main_data *data)
           opt->f_option || opt->a_option ||
           opt->p_option || opt->o_option ||
           opt->g_option || opt->d_option ||
-          opt->n_option)
+          opt->n_option || opt->qq_option)
       {
         print_error_exit("the -l option can only be used with -q", data);
       }
@@ -557,7 +557,7 @@ void check_args(int argc, main_data *data)
           opt->a_option || opt->p_option ||
           opt->g_option || opt->n_option)
       {
-        print_error_exit("the -e option can only be used with -m, -f, -o, -d, -q", data);
+        print_error_exit("the -e option can only be used with -m, -f, -o, -d, -q, -Q", data);
       }
     }
 

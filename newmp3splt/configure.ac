@@ -33,13 +33,13 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt, 2.2.4, mtrotta@users.sourceforge.net)
+AC_INIT(mp3splt, 2.2.5, mtrotta@users.sourceforge.net)
 
 AC_CONFIG_SRCDIR([src/mp3splt.c])
-AM_INIT_AUTOMAKE(mp3splt, 2.2.4)
+AM_INIT_AUTOMAKE(mp3splt, 2.2.5)
 AM_CONFIG_HEADER([config.h])
 
-CFLAGS="-Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
+CFLAGS="-g -Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/ \
 -I../libmp3splt/include/libmp3splt/ -I../../libmp3splt/include/libmp3splt/"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../libmp3splt/src \
 -L../../libmp3splt/src/.libs/ -L../../libmp3splt/src/"
