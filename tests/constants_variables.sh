@@ -5,7 +5,7 @@ USE_GRAPHIC_DIFF=1
 GRAPHIC_DIFF_CMD="meld"
 
 MP3SPLT="./mp3splt -T"
-MP3_FILE="songs/alicia_keys.mp3"
+MP3_FILE="songs/La_Verue__Today.mp3"
 
 OUTPUT_DIR="output"
 ACTUAL_FILE="/tmp/mp3splt_actual.txt"
