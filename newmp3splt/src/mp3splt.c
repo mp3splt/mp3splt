@@ -75,6 +75,7 @@ typedef struct {
   short g_option; short n_option; short q_option;
   short N_option;
   short O_option;
+  short T_option;
   //export cue
   //short E_option;
   //-Q option
@@ -359,10 +360,10 @@ void show_small_help_exit(main_data *data)
       " -O + TIME : Overlap split files with TIME (slower).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
       " -N   Don't create the 'mp3splt.log' log file when using '-s'.\n"
-      " -q   Quiet mode: try not prompt (if possible) and print less messages.\n"
+      " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
       " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
       "       (also enables -q).\n"
-      " -D   Debug mode: used to debug the program (by developers).\n\n"
+      " -D   Debug mode: used to debug the program.\n\n"
       "      Read man page for complete documentation.\n");
 
   if (console_out == stderr)
@@ -1452,6 +1453,7 @@ options *new_options(main_data *data)
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
   opt->N_option = SPLT_FALSE; opt->O_option = SPLT_FALSE;
+  opt->T_option = SPLT_FALSE;
   opt->qq_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
@@ -1700,8 +1702,6 @@ int main(int argc, char **orig_argv)
   mp3splt_set_silence_level_function(state, get_silence_level, data->sl);
   //callback for the split files
   mp3splt_set_split_filename_function(state, put_split_file);
-  //callback for the progress bar
-  mp3splt_set_progress_function(state, put_progress_bar);
 
   //default we write mins_secs_hundr for normal split
   mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
@@ -1710,7 +1710,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option = getopt(data->argc, data->argv, "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12")) != -1)
+  while ((option = getopt(data->argc, data->argv, "Tm:O:SDvifkwleqnasc:d:o:t:p:g:hQN12")) != -1)
   {
     switch (option)
     {
@@ -1815,6 +1815,9 @@ int main(int argc, char **orig_argv)
         mp3splt_set_long_option(state, SPLT_OPT_OVERLAP_TIME,
             c_hundreths(optarg));
         break;
+      case 'T':
+        opt->T_option = SPLT_TRUE;
+        break;
       case 't':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
         float converted_time = c_hundreths(optarg);
@@ -1864,8 +1867,14 @@ int main(int argc, char **orig_argv)
     }
   }
 
+  //callback for the progress bar
+  if (!opt->T_option)
+  {
+    mp3splt_set_progress_function(state, put_progress_bar);
+  }
+
   //if quiet, does not write authors and other
-  if (!opt->q_option)
+  if (!opt->q_option && !opt->T_option)
   {
     print_version_authors(console_err);
   }
@@ -2031,11 +2040,18 @@ int main(int argc, char **orig_argv)
   }
 
   int j = 0;
+
+  if (data->number_of_filenames <= 0)
+  {
+    print_error_exit("no input filename(s).", data);
+  }
+
   if (data->number_of_filenames > 1)
   {
     fprintf(console_out,"\n");
     fflush(console_out);
   }
+
   //split all the filenames
   for (j = 0;j < data->number_of_filenames; j++)
   {
