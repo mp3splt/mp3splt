@@ -1,0 +1,27 @@
+MP3 FILES
+**************************
+
+normal mode
+-----------
+
+  - EOF with tags version of input file
+  - no tags (-n)
+  - tags v1 (-1)
+  - tags v2 (-2)
+
+  - m3u file (-m) (combined with -d and/or -o)
+  - frame mode (-f)
+  - auto adjust (-a)
+  - silence parameters (-a & -p) : th, off, gap
+  - output filename (-o) : also test create directories
+  - custom tags (-g)
+  - output directory (-d)
+  - input not seekable (-k)
+  - overlap split time (-O)
+  - don't create 'mp3splt.log' file (-N)
+  - quiet mode (-q)
+  - very quiet mode (-Q)
+
+
+TODO: tests ID3v2 UTF16
+
