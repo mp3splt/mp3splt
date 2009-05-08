@@ -65,19 +65,160 @@ function check_file_content
   check_files_content $EXPECTED_FILE $file
 }
 
-#TODO
+function check_equal_variables
+{
+  expected_v=$1
+  actual_v=$2
+
+  echo -e "$expected_v" > $EXPECTED_FILE
+  echo -e "$actual_v" > $ACTUAL_FILE
+
+  check_files_content $EXPECTED_FILE $ACTUAL_FILE
+}
+
+function run_command
+{
+  command=$1
+
+  result=$($command)
+  exit_code=$?
+
+  if [[ $exit_code -ne 0 ]];then
+    p_red "FAILED"
+    cat $TEMP_FILE > $ACTUAL_FILE
+    echo -e $expected > $EXPECTED_FILE
+    $DIFF_CMD $EXPECTED_FILE $ACTUAL_FILE
+    echo
+    if [[ $USE_GRAPHIC_DIFF -eq 1 ]];then
+      $GRAPHIC_DIFF_CMD $expected_f $actual_f
+    fi
+    exit 1
+  fi
+
+  echo "$result"
+}
+
+function mp3_get_tag_value
+{
+  tags=$1
+  tag_field=$2
+  column=$3
+  actual_tag_value=$(echo "$tags" | grep $tag_field | sed 's/\s\+$//g' | awk -F"\t" "{ print \$$column }" | awk -F": " '{ print $2 }')
+  echo "$actual_tag_value"
+}
+
 function check_mp3_tags
 {
   file=$1
   tags_version=$2
   tags_field=$3
-  expected_value=$4
+  expected_tag_value=$4
 
+  expected_value="$tags_field for $file : '$expected_tag_value'"
+  actual_tag_value=""
+
+  if [[ $tags_version -eq 1 ]];then
+    id3_tags=$(run_command "id3 -R -l $file")
+
+    case "$tags_field" in 
+      Artist*)
+        actual_tag_value=$(mp3_get_tag_value "$id3_tags" "Artist" 1)
+      ;;
+      Album*)
+        actual_tag_value=$(mp3_get_tag_value "$id3_tags" "Album" 1)
+      ;;
+      Title*)
+        actual_tag_value=$(mp3_get_tag_value "$id3_tags" "Title" 1)
+      ;;
+      Year*)
+        actual_tag_value=$(mp3_get_tag_value "$id3_tags" "Year" 1)
+      ;;
+      Genre*)
+        actual_tag_value=$(mp3_get_tag_value "$id3_tags" "Genre" 1)
+      ;;
+      Tracknumber*)
+        actual_tag_value=$(mp3_get_tag_value "$id3_tags" "Track" 1)
+      ;;
+      Comment*)
+        actual_tag_value=$(mp3_get_tag_value "$id3_tags" "Comment" 1)
+      ;;
+      *)
+        p_red "Error: unrecognized tags field '$tags_field' (for mp3 tags) " 2>&1
+        exit 1
+      ;;
+    esac
+
+  else
+    id3v2_tags=$(run_command "eyeD3 -2 --no-color $file")
+
+    case "$tags_field" in 
+      Artist*)
+        actual_tag_value=$(mp3_get_tag_value "$id3v2_tags" "artist" 3)
+      ;;
+      Album*)
+        actual_tag_value=$(mp3_get_tag_value "$id3v2_tags" "album" 1)
+      ;;
+      Title*)
+        actual_tag_value=$(mp3_get_tag_value "$id3v2_tags" "title" 1)
+      ;;
+      Year*)
+        actual_tag_value=$(mp3_get_tag_value "$id3v2_tags" "year" 3)
+      ;;
+      Genre*)
+        actual_tag_value=$(mp3_get_tag_value "$id3v2_tags" "genre" 3)
+      ;;
+      Tracknumber*)
+        actual_tag_value=$(mp3_get_tag_value "$id3v2_tags" "track" 1)
+      ;;
+      Comment*)
+        actual_tag_value=$(echo "$id3v2_tags" | tail -n 1)
+      ;;
+      *)
+        p_red "Error: unrecognized tags field '$tags_field' (for mp3 tags) " 2>&1
+        exit 1
+      ;;
+    esac
+
+  fi
+
+  actual_value="$tags_field for $file : '$actual_tag_value'"
+
+  check_equal_variables "$expected_value" "$actual_value"
 }
 
 function check_current_mp3_tags
 {
-  check_mp3_tags $current_file $current_tags_version $1 $2
+  check_mp3_tags $current_file $current_tags_version "$1" "$2"
+}
+
+function check_all_current_mp3_tags
+{
+  check_current_mp3_tags "Artist" "$1"
+  check_current_mp3_tags "Album" "$2"
+  check_current_mp3_tags "Title" "$3"
+  check_current_mp3_tags "Year" "$4"
+  check_current_mp3_tags "Genre" "$5"
+  check_current_mp3_tags "Tracknumber" "$6"
+  check_current_mp3_tags "Comment" "$7"
+}
+
+function check_mp3_length
+{
+  file=$1
+  expected_length=$2
+
+  mp3_info=$(run_command "eyeD3 --no-color $file")
+  actual_length=$(echo "$mp3_info" | grep "Time: " | awk -F"\t" '{ print $1 }' | sed 's/Time: //g' | sed 's/:/./g')
+
+  expected_value="Length for mp3 $file : '$expected_length'"
+  actual_value="Length for mp3 $file : '$actual_length'"
+
+  check_equal_variables "$expected_value" "$actual_value"
+}
+
+function check_current_mp3_length
+{
+  check_mp3_length $current_file $1
 }
 
 #TODO
@@ -89,7 +230,7 @@ function check_ogg_tags
 
 }
 
-function check_ogg_current_tags
+function check_current_ogg_tags
 {
   check_ogg_tags $current_file $1 $2
 }
