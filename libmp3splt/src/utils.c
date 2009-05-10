@@ -1201,7 +1201,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         {
           splt_t_set_tags_int_field(state, index, SPLT_TAGS_TRACK, all_tracknumber);
         }
-        if (genre != 12)
+        if (genre == 12)
         {
           splt_t_set_tags_uchar_field(state, index, SPLT_TAGS_GENRE, all_genre);
         }
