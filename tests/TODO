@@ -8,20 +8,25 @@ normal mode
   - no tags (-n)
   - tags v1 (-1)
   - tags v2 (-2)
+  - no xing (-x)
+  - m3u file (-m)
 
-  - m3u file (-m) (combined with -d and/or -o)
-  - frame mode (-f)
+  - output directory (-d)
+  - custom tags (-g)
+  - input not seekable (-k)
+  - overlap split time (-O)
   - auto adjust (-a)
   - silence parameters (-a & -p) : th, off, gap
   - output filename (-o) : also test create directories
-  - custom tags (-g)
-  - output directory (-d)
-  - input not seekable (-k)
-  - overlap split time (-O)
   - don't create 'mp3splt.log' file (-N)
   - quiet mode (-q)
   - very quiet mode (-Q)
+  - frame mode (-f)
 
 
-TODO: tests ID3v2 UTF16
+TESTS TODO: tests ID3v2 UTF16
+
+-- 
+REAL TODO: print if output will have ID3v1 or ID3v2
+REAL TODO: print if no xing is written
 

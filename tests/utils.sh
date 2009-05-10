@@ -36,28 +36,28 @@ function check_file_content
 
 function check_current_mp3_no_tags
 {
-  _run_command "id3 -R -l $current_file" ""
+  _run_command "eyeD3 -2 --no-color $current_file " "eyeD3 command" 1
+
+  id3v2=$command_output
+  no_id3_line=$(echo "$id3v2" | grep "No ID3 v2.x tag found!" | sed 's/\s\+$//g')
+  _check_equal_variables "No ID3 v2.x tag found!" "$no_id3_line"
+
+  _run_command "id3 -R -l $current_file" "id3 command"
   id3v1=$command_output
 
   for tag in "Artist Album Title Year Tracknumber Comment";do
     _check_mp3_tags $current_file 1 "$tag" "" "$id3v1"
   done
   _check_mp3_tags $current_file 1 "Genre" "Unknown (255)" "$id3v1"
-
-  _run_command "eyeD3 -2 --no-color $current_file " "" 1
-
-  id3v2=$command_output
-  no_id3_line=$(echo "$id3v2" | grep "No ID3 v2.x tag found!" | sed 's/\s\+$//g')
-  _check_equal_variables "No ID3 v2.x tag found!" "$no_id3_line"
 }
 
 function check_all_current_mp3_tags
 {
   if [[ $current_tags_version -eq 1 ]];then
-    _run_command "id3 -R -l $current_file" ""
+    _run_command "id3 -R -l $current_file" "id3 command"
     tags=$command_output
   else  
-    _run_command "eyeD3 -2 --no-color $current_file" ""
+    _run_command "eyeD3 -2 --no-color $current_file" "eyeD3 command"
     tags=$command_output
   fi
 
@@ -70,23 +70,17 @@ function check_all_current_mp3_tags
   _check_mp3_tags $current_file $current_tags_version "Comment" "$7" "$tags"
 }
 
-function check_mp3_length
+function check_current_mp3_length
 {
-  file=$1
-  expected_length=$2
+  expected_length=$1
 
-  _run_command "eyeD3 --no-color $file" "$expected_length"
+  _run_command "eyeD3 --no-color $current_file" "eyeD3 command"
   mp3_info=$command_output
   actual_length=$(echo "$mp3_info" | grep "Time: " | awk -F"\t" '{ print $1 }' | sed 's/Time: //g' | sed 's/:/./g')
 
-  expected_value="Length for mp3 $file : '$expected_length'"
-  actual_value="Length for mp3 $file : '$actual_length'"
+  expected_value="Length for mp3 $current_file : '$expected_length'"
+  actual_value="Length for mp3 $current_file : '$actual_length'"
   _check_equal_variables "$expected_value" "$actual_value"
-}
-
-function check_current_mp3_length
-{
-  check_mp3_length $current_file $1
 }
 
 function run_check_output
@@ -96,11 +90,47 @@ function run_check_output
 
   _print_test_title
 
+  if [[ $PRINT_MP3SPLT_COMMAND -eq 1 ]];then
+    echo
+    echo "$MP3SPLT $mp3splt_args"
+  fi
+
   echo -e "$expected" > $EXPECTED_FILE
 
   $MP3SPLT $mp3splt_args > $ACTUAL_FILE 2>&1
 
-  _check_files_content $EXPECTED_FILE $ACTUAL_FILE
+  if [[ ! -z $expected ]];then
+    _check_files_content $EXPECTED_FILE $ACTUAL_FILE
+  fi
+}
+
+function check_current_file_size
+{
+  expected_file_size=$1
+
+  _run_command "du -b $current_file" "du command"
+  file_size=$command_output
+  actual_file_size=$(echo $command_output | awk '{ print $1 }')
+
+  _check_equal_variables "$expected_file_size" "$actual_file_size"
+}
+
+function check_current_file_has_xing
+{
+  _run_command "grep 'Xing' $current_file" "grep xing command" 0 1
+
+  if [[ $? -ne 0 ]];then
+    _check_equal_variables "Expected Xing" "No Xing found for file $current_file"
+  fi
+}
+
+function check_current_file_has_no_xing
+{
+  _run_command "grep 'Xing' $current_file" "grep xing command" 0 1
+
+  if [[ $? -eq 0 ]];then
+    _check_equal_variables "Expected No Xing" "Xing found for file $current_file"
+  fi
 }
 
 
@@ -109,7 +139,7 @@ function run_check_output
 
 function _print_test_title
 {
-  p_white "\tRunning '"
+  p_white "\tTesting '"
   p_yellow $test_name
   p_white "' ... "
 }
@@ -140,7 +170,7 @@ function _check_files_content
 
   res=$(_run_command "$DIFF_CMD $expected_f $actual_f" "")
   if [[ $? -ne 0 ]];then
-    _diff_files $expected_f $ACTUAL_FILE
+    _diff_files $expected_f $actual_f
   fi
 }
 
@@ -243,16 +273,16 @@ function _run_command
   command=$1
   expected=$2
   get_stderr_in_stdout=$3
+  ignore_exit_code=$4
 
-  if [[ -z $get_stderr_in_stdout ]];then
-    result=$($command 2>$TEMP_FILE)
+  if [[ $get_stderr_in_stdout -eq 0 ]];then
+    result=$(eval $command 2>$TEMP_FILE)
   else
-    result=$($command 2>&1)
+    result=$(eval $command 2>&1)
   fi
   exit_code=$?
 
-  if [[ $exit_code -ne 0 ]];then
-    p_red "FAILED"
+  if [[ $ignore_exit_code -ne 1 && $exit_code -ne 0 ]];then
     cat $TEMP_FILE > $COM_ACTUAL_FILE
     if [[ -z $expected ]];then
       echo -n > $COM_EXPECTED_FILE
@@ -260,9 +290,11 @@ function _run_command
       echo -e "$expected" > $COM_EXPECTED_FILE
     fi
     _diff_files $COM_EXPECTED_FILE $COM_ACTUAL_FILE
-    exit 1
+    return 1
   fi
 
   command_output="$result"
+
+  return $exit_code
 }
 
