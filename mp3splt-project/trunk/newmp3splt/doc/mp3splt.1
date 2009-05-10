@@ -393,7 +393,13 @@ it will be created. The \-o option can also be used to output files into a
 directory.
 
 .IP "\fB\-n\fP         " 10
-\fBNo tags\fP. Does not write ID3 or Vorbis comment in outputfile. Use if you need clean files.
+\fBNo tags\fP. Does not write ID3 or Vorbis comment in output files. Use if you need clean files.
+See also the \-x option.
+
+.IP "\fB\-x\fP         " 10
+\fBNo Xing header\fP. Does not write the Xing header in output files. Use
+this option with \-n if you wish to concatenate the split files and obtain
+a similar file as the input file.
 
 .IP "\fB\-1\fP         " 10
 \fBForce ID3v1 tags\fP. For mp3 files, force output tags as version 1.
