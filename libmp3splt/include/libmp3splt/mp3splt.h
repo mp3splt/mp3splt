@@ -497,6 +497,8 @@ typedef struct {
   //or that we set manually with the functions
   splt_tags_options tags;
 
+  short xing;
+
   //defines the output filenames
   splt_output_filenames_options output_filenames;
 
@@ -1086,6 +1088,10 @@ typedef enum {
    * Default is #SPLT_CURRENT_TAGS
    */
   SPLT_OPT_TAGS,
+  /**
+   * #SPLT_TRUE if we write Xing header (mp3 only)
+   */
+  SPLT_OPT_XING,
   /**
    * If this option is SPLT_TRUE, we create directories from the output
    * file names without parsing for illegal characters the output filenames.
