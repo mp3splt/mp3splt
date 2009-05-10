@@ -1889,10 +1889,9 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
 
   if (mp3state->mp3file.xing!=0)
   {
-    //don't write the xing header if we have the no tags
-    if (splt_t_get_int_option(state,SPLT_OPT_TAGS) != SPLT_NO_TAGS)
+    if (splt_t_get_int_option(state, SPLT_OPT_XING))
     {
-      //don't write the xing header if error mode split
+      //error mode split must only contain original file data
       if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
       {
         if(fwrite(mp3state->mp3file.xingbuffer, 1, 
@@ -3453,7 +3452,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 splt_u_print_debug("wrap after dir",0,ptr);
               }
 
-              //we put xingbuffer
+              //free xingbuffer
               if (mp3state->mp3file.xingbuffer)
               {
                 free(mp3state->mp3file.xingbuffer);

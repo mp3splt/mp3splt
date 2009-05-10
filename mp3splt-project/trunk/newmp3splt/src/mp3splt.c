@@ -73,6 +73,7 @@ typedef struct {
   short o_option; short d_option; short k_option;
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
+  short x_option;
   short N_option;
   short O_option;
   short T_option;
@@ -529,7 +530,8 @@ void check_args(int argc, main_data *data)
           opt->e_option || opt->i_option ||
           opt->f_option || opt->a_option ||
           opt->p_option || opt->o_option ||
-          opt->g_option || opt->n_option)
+          opt->g_option || opt->n_option ||
+          opt->x_option)
       {
         print_error_exit("the -w option can only be used with -m, -d, -q and -Q", data);
       }
@@ -544,7 +546,8 @@ void check_args(int argc, main_data *data)
           opt->f_option || opt->a_option ||
           opt->p_option || opt->o_option ||
           opt->g_option || opt->d_option ||
-          opt->n_option || opt->qq_option)
+          opt->n_option || opt->qq_option ||
+          opt->x_option)
       {
         print_error_exit("the -l option can only be used with -q", data);
       }
@@ -713,6 +716,10 @@ void check_args(int argc, main_data *data)
         print_error_exit("the -O option cannot be used with"
             " -w, -e, -l or -i", data);
       }
+    }
+
+    if (opt->x_option)
+    {
     }
   }
 }
@@ -1453,6 +1460,7 @@ options *new_options(main_data *data)
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
   opt->N_option = SPLT_FALSE; opt->O_option = SPLT_FALSE;
+  opt->x_option = SPLT_FALSE;
   opt->T_option = SPLT_FALSE;
   opt->qq_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
@@ -1710,10 +1718,13 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   //I have erased the "-i" option
-  while ((option = getopt(data->argc, data->argv, "Tm:O:SDvifkwleqnasc:d:o:t:p:g:hQN12")) != -1)
+  while ((option = getopt(data->argc, data->argv, "Tm:O:SDvifkwleqnasc:d:o:t:p:g:hQN12x")) != -1)
   {
     switch (option)
     {
+      case 'x':
+        mp3splt_set_int_option(state, SPLT_OPT_XING, SPLT_FALSE);
+        break;
       case 'h':
         show_small_help_exit(data);
         break;

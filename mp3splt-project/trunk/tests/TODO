@@ -15,9 +15,9 @@ normal mode
   - custom tags (-g)
   - input not seekable (-k)
   - overlap split time (-O)
+  - output filename (-o) : also test create directories
   - auto adjust (-a)
   - silence parameters (-a & -p) : th, off, gap
-  - output filename (-o) : also test create directories
   - don't create 'mp3splt.log' file (-N)
   - quiet mode (-q)
   - very quiet mode (-Q)
@@ -27,6 +27,8 @@ normal mode
 TESTS TODO: tests ID3v2 UTF16
 
 -- 
+REAL TODO: add documentation of '-x' 
+
 REAL TODO: print if output will have ID3v1 or ID3v2
 REAL TODO: print if no xing is written
 
