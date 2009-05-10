@@ -10,11 +10,11 @@ normal mode
   - tags v2 (-2)
   - no xing (-x)
   - m3u file (-m)
-
   - output directory (-d)
   - custom tags (-g)
-  - input not seekable (-k)
+
   - overlap split time (-O)
+  - input not seekable (-k)
   - output filename (-o) : also test create directories
   - auto adjust (-a)
   - silence parameters (-a & -p) : th, off, gap
@@ -23,12 +23,10 @@ normal mode
   - very quiet mode (-Q)
   - frame mode (-f)
 
-
 TESTS TODO: tests ID3v2 UTF16
 
 -- 
-REAL TODO: add documentation of '-x' 
-
-REAL TODO: print if output will have ID3v1 or ID3v2
-REAL TODO: print if no xing is written
+TODO: print if output will have ID3v1 or ID3v2
+TODO: print if no xing is written
+TODO: bug with -g
 

@@ -133,6 +133,21 @@ function check_current_file_has_no_xing
   fi
 }
 
+function check_if_directory_exist
+{
+  dir=$1
+  if [[ ! -d $dir ]];then
+    _check_equal_variables "Expected directory $dir to exist" "No such directory"
+  fi
+}
+
+function check_if_file_exist
+{
+  file=$1
+  if [[ ! -f $file ]];then
+    _check_equal_variables "Expected file $file to exist" "No such file"
+  fi
+}
 
 ###################
 #internal functions
@@ -254,7 +269,7 @@ function _check_mp3_tags
         actual_tag_value=$(_mp3_get_tag_value "$tags" "track" 1)
       ;;
       Comment*)
-        actual_tag_value=$(echo "$tags" | tail -n 1)
+        actual_tag_value=$(echo "$tags" | grep -A 1 "Comment" | tail -n 1)
       ;;
       *)
         p_red "Error: unrecognized tags field '$tags_field' (for id3v2 tags) " 2>&1
