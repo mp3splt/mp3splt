@@ -360,6 +360,8 @@ void show_small_help_exit(main_data *data)
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
       " -O + TIME : Overlap split files with TIME (slower).\n"
       " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
+      " -x   No Xing header: does not write the Xing header. Use with -n if you wish\n"
+      "      to concatenate the split files\n"
       " -N   Don't create the 'mp3splt.log' log file when using '-s'.\n"
       " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
       " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"

@@ -44,7 +44,7 @@ function test_normal
   run_check_output "$command_to_run" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
-  check_current_mp3_length "1.00"
+  check_current_mp3_length "01.00"
   check_current_file_has_xing
 
   if [[ $current_tags_version -eq -1 ]];then
@@ -62,7 +62,7 @@ function test_normal
   fi
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
-  check_current_mp3_length "1.04"
+  check_current_mp3_length "01.04"
   check_current_file_has_xing
 
   if [[ $current_tags_version -eq -1 ]];then
@@ -80,7 +80,7 @@ function test_normal
   fi
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
-  check_current_mp3_length "1.00"
+  check_current_mp3_length "01.00"
   check_current_file_has_xing
 
   if [[ $current_tags_version -eq -1 ]];then
@@ -117,17 +117,17 @@ function test_normal_no_xing
   run_check_output "$command_to_run" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
-  check_current_mp3_length "1.08"
+  check_current_mp3_length "01.08"
   check_current_file_has_no_xing
   check_current_file_size "1365611"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
-  check_current_mp3_length "1.16"
+  check_current_mp3_length "01.16"
   check_current_file_has_no_xing
   check_current_file_size "1521443"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
-  check_current_mp3_length "0.58"
+  check_current_mp3_length "00.58"
   check_current_file_has_no_xing
   check_current_file_size "1399596"
 
@@ -186,7 +186,6 @@ m3u"
   p_blue " NORMAL tests DONE."
   echo
 }
-
 
 #main
 echo
