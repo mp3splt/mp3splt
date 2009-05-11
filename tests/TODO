@@ -12,8 +12,8 @@ normal mode
   - m3u file (-m)
   - output directory (-d)
   - custom tags (-g)
+  - overlap splitpoints (-O)
 
-  - overlap split time (-O)
   - input not seekable (-k)
   - output filename (-o) : also test create directories
   - auto adjust (-a)
