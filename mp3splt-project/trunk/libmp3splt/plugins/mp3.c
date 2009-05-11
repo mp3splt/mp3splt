@@ -170,11 +170,6 @@ static void splt_mp3_save_end_point(splt_state *state, splt_mp3_state *mp3state,
   else
   {
     mp3state->end = 0;
-    if (splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
-    {
-      mp3state->frames = 1;
-      mp3state->first = 1;
-    }
   }
 }
 
@@ -2765,6 +2760,15 @@ bloc_end:
     //seekable real split
     int err = splt_mp3_simple_split(state, output_fname, begin, end, SPLT_TRUE);
     if (err < 0) { *error = err; }
+
+    if (!save_end_point)
+    {
+      if (splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
+      {
+        mp3state->frames = 1;
+        mp3state->first = 1;
+      }
+    }
   }
 
   if (check_bitrate)
@@ -3584,11 +3588,16 @@ void splt_pl_end(splt_state *state, int *error)
       if (*error >= 0)
       {
         splt_mp3_state *mp3state = state->codec;
-        char message[1024] = { '\0' };
-        snprintf(message, 1024,
-            " Processed %lu frames - Sync errors: %lu\n",
-            mp3state->frames, state->syncerrors);
-        splt_t_put_message_to_client(state, message);
+        //-if we don't save the end point, the ->frames are set to 1 at the
+        //end of the split
+        if (mp3state->frames != 1)
+        {
+          char message[1024] = { '\0' };
+
+          snprintf(message, 1024, " Processed %lu frames - Sync errors: %lu\n",
+              mp3state->frames, state->syncerrors);
+          splt_t_put_message_to_client(state, message);
+        }
       }
     }
   }

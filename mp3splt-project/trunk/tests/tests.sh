@@ -199,7 +199,7 @@ function test_normal_custom_tags
   test_name="custom tags"
   M_FILE="La_Verue__Today"
 
-  expected=" Processing file 'songs/La_Verue__Today.mp3' ...
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -235,31 +235,6 @@ function test_normal_custom_tags
   check_all_current_mp3_tags "La Verue" "Riez Noir" "Today"\
   "2007" "Rock (${id_str}17)" "20" "http://www.jamendo.com/"
 
-  expected=" Processing file 'songs/La_Verue__Today.mp3' ...
- info: frame mode enabled
- info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
- info: starting normal split
-   File \"$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3\" created
-   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3\" created
-   File \"$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3\" created
-   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3\" created
-   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3\" created
- Processed 7083 frames - Sync errors: 0
- file split"
-  tags_option="%[@a=a1,@b=b1,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  command_to_run="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
-  run_check_output "$command_to_run" "$expected"
-
-  id_str="id "
-
-  current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
-  check_all_current_mp3_tags "a1" "b1" ""\
-  "None" "Other (${id_str}12)" "10" ""
-
-  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_current_mp3_tags "a1" "b1" "" "None" "Other (${id_str}12)"\
-  "2" ""
-
   p_green "OK"
   echo
 }
@@ -271,7 +246,7 @@ function test_normal_custom_tags_multiple_percent
   test_name="custom tags multiple percent"
   M_FILE="La_Verue__Today"
 
-  expected=" Processing file 'songs/La_Verue__Today.mp3' ...
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -306,6 +281,38 @@ function test_normal_custom_tags_multiple_percent
   echo
 }
 
+function test_normal_overlap_split_time
+{
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="overlap splitpoints"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+ info: overlapping split files with 0.30.0
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3\" created
+ file split (EOF)"
+  command_to_run="-O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
+  run_check_output "$command_to_run" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
+  check_current_mp3_length "01.30"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3"
+  check_current_mp3_length "01.59"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3"
+  check_current_mp3_length "00.35"
+
+  p_green "OK"
+  echo
+}
+
 function run_normal_mode_tests
 {
   date
@@ -321,7 +328,8 @@ no_tags \
 no_xing \
 m3u \
 create_directories \
-custom_tags_multiple_percent 
+overlap_split_time \
+custom_tags_multiple_percent \
 custom_tags"
 
   for t in $normal_tests_to_run;do
