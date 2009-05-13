@@ -28,5 +28,4 @@ TESTS TODO: tests ID3v2 UTF16
 -- 
 TODO: print if output will have ID3v1 or ID3v2
 TODO: print if no xing is written
-TODO: bug with -g
 

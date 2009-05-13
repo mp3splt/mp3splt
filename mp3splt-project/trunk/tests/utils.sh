@@ -88,20 +88,16 @@ function run_check_output
   mp3splt_args=$1
   expected=$2
 
-  _print_test_title
+  _run_check_output "$MP3SPLT" "$mp3splt_args" "$expected"
+}
 
-  if [[ $PRINT_MP3SPLT_COMMAND -eq 1 ]];then
-    echo
-    echo "$MP3SPLT $mp3splt_args"
-  fi
+function run_custom_check_output
+{
+  program=$1
+  mp3splt_args=$2
+  expected=$3
 
-  echo -e "$expected" > $EXPECTED_FILE
-
-  $MP3SPLT $mp3splt_args > $ACTUAL_FILE 2>&1
-
-  if [[ ! -z $expected ]];then
-    _check_files_content $EXPECTED_FILE $ACTUAL_FILE
-  fi
+  _run_check_output "$program" "$mp3splt_args" "$expected"
 }
 
 function check_current_file_size
@@ -312,4 +308,27 @@ function _run_command
 
   return $exit_code
 }
+
+function _run_check_output
+{
+  program=$1
+  mp3splt_args=$2
+  expected=$3
+
+  _print_test_title
+
+  if [[ $PRINT_MP3SPLT_COMMAND -eq 1 ]];then
+    echo
+    echo "$MP3SPLT $mp3splt_args"
+  fi
+
+  echo -e "$expected" > $EXPECTED_FILE
+
+  eval "$program $mp3splt_args" > $ACTUAL_FILE 2>&1
+
+  if [[ ! -z $expected ]];then
+    _check_files_content $EXPECTED_FILE $ACTUAL_FILE
+  fi
+}
+
 

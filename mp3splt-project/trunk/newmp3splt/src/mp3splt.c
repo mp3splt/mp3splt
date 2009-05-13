@@ -2174,12 +2174,11 @@ int main(int argc, char **orig_argv)
           process_confirmation_error(err, data);
         }
 
-        //if custom tags, we put the tags
-        int ambigous = mp3splt_put_tags_from_string(state, opt->custom_tags, &err);
+        int ambiguous = mp3splt_put_tags_from_string(state, opt->custom_tags, &err);
         process_confirmation_error(err, data);
-        if (ambigous)
+        if (ambiguous)
         {
-          print_warning("tags format ambigous !");
+          print_warning("tags format ambiguous !");
         }
 
         //for cddb, filenames are already set from the library, so 
