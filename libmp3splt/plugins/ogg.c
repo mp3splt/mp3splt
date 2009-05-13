@@ -1863,6 +1863,16 @@ void splt_pl_init(splt_state *state, int *error)
   FILE *file_input = NULL;
   char *filename = splt_t_get_filename_to_split(state);
 
+  if (splt_t_is_stdin(state))
+  {
+    if (filename[1] == '\0')
+    {
+      char message[1024] = { '\0' };
+      snprintf(message, 1024, " warning: stdin 'o-' is supposed to be ogg stream.\n");
+      splt_t_put_message_to_client(state, message);
+    }
+  }
+
   //if we can open the file
   if ((file_input = splt_ogg_open_file_read(state, filename, error)) != NULL)
   {

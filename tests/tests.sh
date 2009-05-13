@@ -40,8 +40,8 @@ function test_normal
    File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
  Processed 9402 frames - Sync errors: 0
  file split (EOF)"
-  command_to_run="$tags_option -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
-  run_check_output "$command_to_run" "$expected"
+  mp3splt_args="$tags_option -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
   check_current_mp3_length "01.00"
@@ -108,13 +108,14 @@ function test_normal_id3v2 { test_normal 2; }
 
 function test_normal_no_xing
 {
+  current_tags_version=2
   rm -f $OUTPUT_DIR/*
 
   test_name="no xing"
   M_FILE="La_Verue__Today"
 
-  command_to_run="-x -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
-  run_check_output "$command_to_run" ""
+  mp3splt_args="-x -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
   check_current_mp3_length "01.08"
@@ -137,6 +138,7 @@ function test_normal_no_xing
 
 function test_normal_m3u
 {
+  current_tags_version=2
   rm -rf $OUTPUT_DIR/*
 
   test_name="m3u"
@@ -152,8 +154,8 @@ function test_normal_m3u
    File \"$OUTPUT_DIR/m3u/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
  Processed 9402 frames - Sync errors: 0
  file split (EOF)"
-  command_to_run="-m playlist.m3u -d $OUTPUT_DIR/m3u $MP3_FILE 1.0 2.0.2 3.5 EOF" 
-  run_check_output "$command_to_run" "$expected"
+  mp3splt_args="-m playlist.m3u -d $OUTPUT_DIR/m3u $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
 
   expected="La_Verue__Today_01m_00s__02m_00s_20h.mp3
 La_Verue__Today_02m_00s_20h__03m_05s.mp3
@@ -166,6 +168,7 @@ La_Verue__Today_03m_05s__04m_05s_58h.mp3"
 
 function test_normal_create_directories
 {
+  current_tags_version=2
   rm -rf $OUTPUT_DIR/*
 
   test_name="create directories"
@@ -180,8 +183,8 @@ function test_normal_create_directories
    File \"$OUTPUT_DIR/a/b/c/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
  Processed 9402 frames - Sync errors: 0
  file split (EOF)"
-  command_to_run=" -d $OUTPUT_DIR/a/b/c $MP3_FILE 1.0 2.0.2 3.5 EOF" 
-  run_check_output "$command_to_run" "$expected"
+  mp3splt_args=" -d $OUTPUT_DIR/a/b/c $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
 
   check_if_directory_exist "$OUTPUT_DIR/a/b/c"
   check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_01m_00s__02m_00s_20h.mp3"
@@ -194,6 +197,7 @@ function test_normal_create_directories
 
 function test_normal_custom_tags
 {
+  current_tags_version=2
   rm -rf $OUTPUT_DIR/*
 
   test_name="custom tags"
@@ -211,8 +215,8 @@ function test_normal_custom_tags
  Processed 7083 frames - Sync errors: 0
  file split"
   tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  command_to_run="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
-  run_check_output "$command_to_run" "$expected"
+  mp3splt_args="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  run_check_output "$mp3splt_args" "$expected"
 
   id_str="id "
 
@@ -241,6 +245,7 @@ function test_normal_custom_tags
 
 function test_normal_custom_tags_multiple_percent
 {
+  current_tags_version=2
   rm -rf $OUTPUT_DIR/*
 
   test_name="custom tags multiple percent"
@@ -258,8 +263,8 @@ function test_normal_custom_tags_multiple_percent
  Processed 7083 frames - Sync errors: 0
  file split"
   tags_option="%[@a=a1,@b=b1,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  command_to_run="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
-  run_check_output "$command_to_run" "$expected"
+  mp3splt_args="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  run_check_output "$mp3splt_args" "$expected"
 
   id_str="id "
 
@@ -281,8 +286,9 @@ function test_normal_custom_tags_multiple_percent
   echo
 }
 
-function test_normal_overlap_split_time
+function test_normal_overlap_split
 {
+  current_tags_version=2
   rm -rf $OUTPUT_DIR/*
 
   test_name="overlap splitpoints"
@@ -297,21 +303,123 @@ function test_normal_overlap_split_time
    File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3\" created
  file split (EOF)"
-  command_to_run="-O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
-  run_check_output "$command_to_run" "$expected"
+  mp3splt_args="-O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
+  run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
   check_current_mp3_length "01.30"
+  check_current_file_size "2007679"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3"
   check_current_mp3_length "01.59"
+  check_current_file_size "2823096"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3"
   check_current_mp3_length "00.35"
+  check_current_file_size "809280"
 
   p_green "OK"
   echo
 }
+
+function test_normal_stdin
+{
+  current_tags_version=2
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="stdin"
+  M_FILE="La_Verue__Today"
+
+  #TODO: bug sync errors 4 ??
+  expected=" Processing file '-' ...
+ warning: stdin '-' is supposed to be mp3 stream.
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE NS - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3\" created
+   File \"$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3\" created
+ Processed 9372 frames - Sync errors: 4
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR - 1.0 2.0.2 3.30 EOF"
+  run_custom_check_output "cat songs/${M_FILE}.mp3 | $MP3SPLT" "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3"
+  check_current_mp3_no_tags
+  check_current_file_size "1365812"
+
+  current_file="$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3"
+  check_current_mp3_no_tags
+  check_current_file_size "2116661"
+
+  current_file="$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3"
+  check_current_mp3_no_tags
+  check_current_file_size "789756"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_stdin_and_tags
+{
+  current_tags_version=$1
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="stdin and tags v$current_tags_version"
+  M_FILE="La_Verue__Today"
+
+  #TODO: bug sync errors 4 ??
+  expected=" Processing file '-' ...
+ warning: stdin '-' is supposed to be mp3 stream.
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE NS - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3\" created
+   File \"$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3\" created
+ Processed 9372 frames - Sync errors: 4
+ file split (EOF)"
+  mp3splt_args="-g %[@a=a1,@b=b1,@y=1070,@N=1] -$current_tags_version -d $OUTPUT_DIR - 1.0 2.0.2 3.30 EOF"
+  run_custom_check_output "cat songs/${M_FILE}.mp3 | $MP3SPLT" "$mp3splt_args" "$expected"
+
+  id_str=""
+  if [[ $current_tags_version -eq 2 ]];then
+    id_str="id "
+  fi
+
+  current_file="$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3"
+  check_all_current_mp3_tags "a1" "b1" "" "1070" "Other (${id_str}12)" "1" ""
+  check_current_file_has_xing
+  if [[ $current_tags_version -eq 2 ]];then
+    check_current_file_size "1365915"
+  else
+    check_current_file_size "1365940"
+  fi
+
+  current_file="$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3"
+  check_all_current_mp3_tags "a1" "b1" "" "1070" "Other (${id_str}12)" "2" ""
+  check_current_file_has_xing
+  if [[ $current_tags_version -eq 2 ]];then
+    check_current_file_size "2116764"
+  else
+    check_current_file_size "2116789"
+  fi
+
+  current_file="$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3"
+  check_all_current_mp3_tags "a1" "b1" "" "1070" "Other (${id_str}12)" "3" ""
+  check_current_file_has_xing
+  if [[ $current_tags_version -eq 2 ]];then
+    check_current_file_size "789859"
+  else
+    check_current_file_size "789884"
+  fi
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_stdin_and_tags_v1 { test_normal_stdin_and_tags 1; }
+function test_normal_stdin_and_tags_v2 { test_normal_stdin_and_tags 2; }
 
 function run_normal_mode_tests
 {
@@ -328,13 +436,17 @@ no_tags \
 no_xing \
 m3u \
 create_directories \
-overlap_split_time \
 custom_tags_multiple_percent \
-custom_tags"
+custom_tags \
+overlap_split \
+stdin \
+stdin_and_tags_v1 \
+stdin_and_tags_v2"
 
   for t in $normal_tests_to_run;do
     eval "test_normal_"$t
   done
+#  eval "test_normal_stdin_and_tags_v1"$t
 
   p_blue " NORMAL tests DONE."
   echo
