@@ -4,6 +4,15 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.5.6
+
+libmp3splt fixes :
+- Xing header is now written even if 'No tags' option is used
+- fixed dewrap error message
+- fixed dewrap bug to not attempt to create output directories
+- fixed minor bug #2790952 : time mode creating an empty file (at the end)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.5.5
 
 - IMPORTANT : by default gstreamer and audacious are now enabled for mp3splt-gtk :

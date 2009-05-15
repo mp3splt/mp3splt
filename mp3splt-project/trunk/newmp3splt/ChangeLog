@@ -3,6 +3,22 @@ Check http://mp3splt.sourceforge.net for the latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
+#mp3splt v. 2.2.5
+
+- added -x option to not write Xing header
+
+mostly libmp3splt (but important for mp3splt users) :
+- fixed bug with -g and multiple usages of @o (libmp3splt)
+- fixed a small bug with genre in -g 
+- Xing header is now written even if -n option is used (libmp3splt)
+- fixed bug with stdin & id3v2 & xing
+- fixed critical bug with overlap splitpoints not working (feature #1530782 => bug)
+- fixed critical bug with mp3 stdin (& framemode)
+- fixed some warning messages & added some more
+- fixed dewrap error message
+- fixed dewrap bug to not attempt to create output directories when '-d' option is used
+- fixed minor bug #2790952 : time mode creating an empty file (at the end)
+
 #mp3splt v. 2.2.4
 
 - fixed issue with CUE file not being imported correctly : \r and \n

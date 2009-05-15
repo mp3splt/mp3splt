@@ -27,8 +27,7 @@ if [[ ! -f $DIST_FILE ]];then
     
     #we compile
     ./autogen.sh &&\
-        ./configure --with-ltdl-lib=/usr/lib --prefix=/usr &&\
-        sed -i 's/ECHO=/echo=/g' libtool &&\
+        ./configure --prefix=/usr &&\
         make clean && make dist && make install DESTDIR=$TEMPDIR &&\
         mv libmp3splt*.tar.gz ../ || exit 1
 else

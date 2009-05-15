@@ -1,8 +1,11 @@
-MP3 FILES
+NORMAL MODE
 **************************
 
-normal mode & VBR - frame mode
-------------------------------
+  MP3 FILES
+  ----------------------------
+
+  Frame Mode
+  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
   - EOF with tags version of input file
   - no tags (-n)
