@@ -88,6 +88,7 @@ function run_check_output
   mp3splt_args=$1
   expected=$2
 
+  echo "$MP3SPLT" "$mp3splt_args"
   _run_check_output "$MP3SPLT" "$mp3splt_args" "$expected"
 }
 

@@ -235,6 +235,18 @@ static unsigned long splt_mp3_c_crc(splt_state *state,
 /****************************/
 /* mp3 utils */
 
+static void splt_mp3_init_stream_frame(splt_mp3_state *mp3state)
+{
+  mad_stream_init(&mp3state->stream);
+  mad_frame_init(&mp3state->frame);
+}
+
+static void splt_mp3_finish_stream_frame(splt_mp3_state *mp3state)
+{
+  mad_stream_finish(&mp3state->stream);
+  mad_frame_finish(&mp3state->frame);
+}
+
 //does nothing important for libmp3splt
 //review this..
 static void splt_mp3_checksync (splt_mp3_state *mp3state)
@@ -386,6 +398,7 @@ static int splt_mp3_get_frame(splt_mp3_state *mp3state)
     //does not set any error
     mad_stream_buffer(&mp3state->stream, mp3state->inputBuffer, 
         readSize+remaining);
+    mp3state->stream.error = MAD_ERROR_NONE;
   }
 
   //mad_frame_decode() returns -1 if error, 0 if no error
@@ -1311,13 +1324,10 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
   mp3state->bytes = 0;
 
   //we initialise the mad structures
-  mad_stream_init(&mp3state->stream);
-  mad_frame_init(&mp3state->frame);
+  splt_mp3_init_stream_frame(mp3state);
   mad_synth_init(&mp3state->synth);
 
   mad_timer_reset(&mp3state->timer);
-  /*mp3state->timer.seconds = 0;
-  mp3state->timer.fraction= 0;*/
 
   //we read mp3 infos and set pointers to read the mp3 data
   do
@@ -1493,8 +1503,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
 
 function_end:
   //we free memory allocated by mad_frame_decode(..)
-  mad_stream_finish(&mp3state->stream);
-  mad_frame_finish(&mp3state->frame);
+  //splt_mp3_finish_stream_frame(mp3state);
   mad_synth_finish(&mp3state->synth);
 
   return mp3state;
@@ -1505,6 +1514,7 @@ static void splt_mp3_end(splt_state *state, int *error)
   splt_mp3_state *mp3state = state->codec;
   if (mp3state)
   {
+    splt_mp3_finish_stream_frame(mp3state);
     if (mp3state->file_input)
     {
       if (mp3state->file_input != stdin)
@@ -1649,13 +1659,10 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   shot = SPLT_DEFAULTSHOT;
 
   //initialise mad stuff
-  mad_stream_init(&mp3state->stream);
-  mad_frame_init(&mp3state->frame);
+  splt_mp3_init_stream_frame(mp3state);
   mad_synth_init(&mp3state->synth);
 
   mad_timer_reset(&mp3state->timer);
-  /*mp3state->timer.seconds = 0;
-  mp3state->timer.fraction= 0;*/
 
   mp3state->temp_level = 0.0;
 
@@ -1798,8 +1805,7 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   }
 
   //we finish with mad_*
-  mad_frame_finish(&mp3state->frame);
-  mad_stream_finish(&mp3state->stream);
+  splt_mp3_finish_stream_frame(mp3state);
   mad_synth_finish(&mp3state->synth);
 
   return found;
@@ -2082,9 +2088,6 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
 
   splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
 
-  mad_stream_init(&mp3state->stream);
-  mad_frame_init(&mp3state->frame);
-
   //if not seekable
   if (!seekable)
   {
@@ -2105,8 +2108,6 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
         splt_t_set_strerror_msg(state);
         splt_t_set_error_data(state,output_fname);
         *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
-        mad_frame_finish(&mp3state->frame);
-        mad_stream_finish(&mp3state->stream);
         return;
       }
     }
@@ -2209,7 +2210,6 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
         }
 
         int mad_err = SPLT_OK;
-        //we get next frame
         switch (splt_mp3_get_valid_frame(state, &mad_err))
         {
           case 1:
@@ -2292,7 +2292,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
           }
 
           int mad_err = SPLT_OK;
-          //we get next frame
+          splt_mp3_init_stream_frame(mp3state);
           switch (splt_mp3_get_valid_frame(state, &mad_err))
           {
             case 1:
@@ -2394,6 +2394,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
       if (!eof)
       {
         int mad_err = SPLT_OK;
+        splt_mp3_init_stream_frame(mp3state);
         switch (splt_mp3_get_valid_frame(state, &mad_err))
         {
           case 1:
@@ -2481,8 +2482,6 @@ bloc_end:
     }
     file_output = NULL;
 
-    mad_frame_finish(&mp3state->frame);
-    mad_stream_finish(&mp3state->stream);
     if (*error == SPLT_OK) { *error = SPLT_OK_SPLIT; }
 
     return;
@@ -2554,7 +2553,7 @@ bloc_end:
           if (begin==-1)
           {
             *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
-            goto bloc_end2;
+            return;
           }
 
           //count the number of syncerrors
@@ -2598,7 +2597,7 @@ bloc_end:
         if (begin >= mp3state->mp3file.len) // If we can check, we just do that :)
         {
           *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
-          goto bloc_end2;
+          return;
         }
       }
 
@@ -2682,7 +2681,7 @@ bloc_end:
           //if error, go out
           if (silence_points_found == -1)
           {
-            goto bloc_end2;
+            return;
           }
           else if (silence_points_found > 0)
           {
@@ -2744,7 +2743,7 @@ bloc_end:
         if (begin==-1)
         {
           *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
-          goto bloc_end2;
+          return;
         }
         if (splt_mp3_tabsel_123[1 - mp3state->mp3file.mpgid][mp3state->mp3file.layer-1][splt_mp3_c_bitrate(mp3state->headw)] != 
             mp3state->mp3file.firsthead.bitrate)
@@ -2790,10 +2789,6 @@ bloc_end:
   }
 
   if (*error == SPLT_OK) { *error = SPLT_OK_SPLIT; }
-
-bloc_end2:
-  mad_frame_finish(&mp3state->frame);
-  mad_stream_finish(&mp3state->stream);
 }
 
 /****************************/

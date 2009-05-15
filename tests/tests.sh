@@ -330,7 +330,6 @@ function test_normal_stdin
   test_name="stdin"
   M_FILE="La_Verue__Today"
 
-  #TODO: bug sync errors 4 ??
   expected=" Processing file '-' ...
  warning: stdin '-' is supposed to be mp3 stream.
  info: frame mode enabled
@@ -339,22 +338,25 @@ function test_normal_stdin
    File \"$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3\" created
    File \"$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3\" created
    File \"$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3\" created
- Processed 9372 frames - Sync errors: 4
+ Processed 9400 frames - Sync errors: 1
  file split (EOF)"
   mp3splt_args="-d $OUTPUT_DIR - 1.0 2.0.2 3.30 EOF"
   run_custom_check_output "cat songs/${M_FILE}.mp3 | $MP3SPLT" "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3"
+  check_current_mp3_length "01.00"
   check_current_mp3_no_tags
-  check_current_file_size "1365812"
+  check_current_file_size "1365917"
 
   current_file="$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3"
+  check_current_mp3_length "01.29"
   check_current_mp3_no_tags
-  check_current_file_size "2116661"
+  check_current_file_size "2113734"
 
   current_file="$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3"
+  check_current_mp3_length "00.35"
   check_current_mp3_no_tags
-  check_current_file_size "789756"
+  check_current_file_size "806141"
 
   p_green "OK"
   echo
@@ -368,7 +370,6 @@ function test_normal_stdin_and_tags
   test_name="stdin and tags v$current_tags_version"
   M_FILE="La_Verue__Today"
 
-  #TODO: bug sync errors 4 ??
   expected=" Processing file '-' ...
  warning: stdin '-' is supposed to be mp3 stream.
  info: frame mode enabled
@@ -377,7 +378,7 @@ function test_normal_stdin_and_tags
    File \"$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3\" created
    File \"$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3\" created
    File \"$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3\" created
- Processed 9372 frames - Sync errors: 4
+ Processed 9400 frames - Sync errors: 1
  file split (EOF)"
   mp3splt_args="-g %[@a=a1,@b=b1,@y=1070,@N=1] -$current_tags_version -d $OUTPUT_DIR - 1.0 2.0.2 3.30 EOF"
   run_custom_check_output "cat songs/${M_FILE}.mp3 | $MP3SPLT" "$mp3splt_args" "$expected"
@@ -389,29 +390,32 @@ function test_normal_stdin_and_tags
 
   current_file="$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3"
   check_all_current_mp3_tags "a1" "b1" "" "1070" "Other (${id_str}12)" "1" ""
+  check_current_mp3_length "01.00"
   check_current_file_has_xing
   if [[ $current_tags_version -eq 2 ]];then
-    check_current_file_size "1365915"
+    check_current_file_size "1366020"
   else
-    check_current_file_size "1365940"
+    check_current_file_size "1366045"
   fi
 
   current_file="$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3"
   check_all_current_mp3_tags "a1" "b1" "" "1070" "Other (${id_str}12)" "2" ""
+  check_current_mp3_length "01.29"
   check_current_file_has_xing
   if [[ $current_tags_version -eq 2 ]];then
-    check_current_file_size "2116764"
+    check_current_file_size "2113837"
   else
-    check_current_file_size "2116789"
+    check_current_file_size "2113862"
   fi
 
   current_file="$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3"
   check_all_current_mp3_tags "a1" "b1" "" "1070" "Other (${id_str}12)" "3" ""
+  check_current_mp3_length "00.35"
   check_current_file_has_xing
   if [[ $current_tags_version -eq 2 ]];then
-    check_current_file_size "789859"
+    check_current_file_size "806244"
   else
-    check_current_file_size "789884"
+    check_current_file_size "806269"
   fi
 
   p_green "OK"
@@ -446,7 +450,6 @@ stdin_and_tags_v2"
   for t in $normal_tests_to_run;do
     eval "test_normal_"$t
   done
-#  eval "test_normal_stdin_and_tags_v1"$t
 
   p_blue " NORMAL tests DONE."
   echo
