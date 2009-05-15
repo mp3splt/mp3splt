@@ -1839,8 +1839,7 @@ put_value:
 
   splt_u_print_debug("The new output filename is ",0,output_filename);
 
-  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES)
-      && output_filenames)
+  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
   {
     char *only_dirs = strdup(output_filename);
     if (! only_dirs)
@@ -2363,8 +2362,8 @@ double splt_u_get_double_pos(long split)
 
 void splt_u_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *hundr)
 {
-  long split_hundr_without_h = split_hundr / 100;
   long h = split_hundr % 100;
+  long split_hundr_without_h = split_hundr / 100;
   long m = split_hundr_without_h / 60;
   long s = split_hundr_without_h % 60;
   if (mins)

@@ -425,6 +425,158 @@ function test_normal_stdin_and_tags
 function test_normal_stdin_and_tags_v1 { test_normal_stdin_and_tags 1; }
 function test_normal_stdin_and_tags_v2 { test_normal_stdin_and_tags 2; }
 
+function test_normal_output_fnames_and_custom_tags
+{
+  current_tags_version=2
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="output fnames & custom tags"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/a1_b1_t1_1_10_${M_FILE} 00:05:00 01:00:30.mp3\" created
+   File \"$OUTPUT_DIR/___2_2_${M_FILE} 01:00:30 01:05:00.mp3\" created
+   File \"$OUTPUT_DIR/La Verue_album_Today_3_7_${M_FILE} 01:05:00 02:00:00.mp3\" created
+ Processed 4594 frames - Sync errors: 0
+ file split"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7]"
+  output_option="\"@a_@b_@t_@n_@N_@f+@m:@s:@h @M:@S:@H\""
+  mp3splt_args="-d $OUTPUT_DIR -g $tags_option -o $output_option $MP3_FILE 0.5 1.0.30 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  id_str="id "
+
+  check_if_file_exist "$OUTPUT_DIR/a1_b1_t1_1_10_${M_FILE} 00:05:00 01:00:30.mp3"
+  check_if_file_exist "$OUTPUT_DIR/___2_2_${M_FILE} 01:00:30 01:05:00.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue_album_Today_3_7_${M_FILE} 01:05:00 02:00:00.mp3"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_output_fnames_and_dirs
+{
+  current_tags_version=2
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="output fnames & directories"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 1.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 2.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 3.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  output_option="@a/@b/@a-@t @n"
+  mp3splt_args="-o '$output_option' -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_directory_exist "$OUTPUT_DIR/La Verue"
+  check_if_directory_exist "$OUTPUT_DIR/La Verue/Riez Noir"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 1.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 2.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 3.mp3"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_output_fnames_and_custom_tags_dirs
+{
+  current_tags_version=2
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="output fnames & custom tags & directories"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/La Verue/album1/La Verue-Today 1.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/album2/La Verue-Today 2.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/album3/La Verue-Today 3.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  output_option="@a/@b/@a-@t @n"
+  tags_option="%[@o,@b=album1][@b=album2][@b=album3]"
+  mp3splt_args="-o '$output_option' -g $tags_option -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_directory_exist "$OUTPUT_DIR/La Verue"
+  check_if_directory_exist "$OUTPUT_DIR/La Verue/album1"
+  check_if_directory_exist "$OUTPUT_DIR/La Verue/album2"
+  check_if_directory_exist "$OUTPUT_DIR/La Verue/album3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/album1/La Verue-Today 1.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/album2/La Verue-Today 2.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/album3/La Verue-Today 3.mp3"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_stdout
+{
+  current_tags_version=2
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="stdout"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"-\" created
+ Processed 5750 frames - Sync errors: 0
+ file split"
+  mp3splt_args="-o - $MP3_FILE 1.0 2.30.2"
+  run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.mp3" "" "$expected"
+
+  current_file="$OUTPUT_DIR/stdout.mp3"
+  check_current_mp3_length "01.30"
+  check_current_file_size "2007679"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_stdout_multiple_splitpoints
+{
+  current_tags_version=2
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="stdout"
+  M_FILE="La_Verue__Today"
+
+  expected=" Warning: multiple splitpoints with stdout !
+ Processing file 'songs/${M_FILE}.mp3' ...
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"-\" created
+   File \"-\" created
+ Processed 6508 frames - Sync errors: 0
+ file split"
+  mp3splt_args="-o - $MP3_FILE 1.0 2.30.2 2.50"
+  run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.mp3" "" "$expected"
+
+  current_file="$OUTPUT_DIR/stdout.mp3"
+  check_current_mp3_length "01.30"
+  check_current_file_size "2489578"
+
+  p_green "OK"
+  echo
+}
+
+
 function run_normal_mode_tests
 {
   date
@@ -445,11 +597,17 @@ custom_tags \
 overlap_split \
 stdin \
 stdin_and_tags_v1 \
-stdin_and_tags_v2"
+stdin_and_tags_v2 \
+output_fnames_and_dirs \
+output_fnames_and_custom_tags \
+output_fnames_and_custom_tags_dirs \
+stdout \
+stdout_multiple_splitpoints"
 
-  for t in $normal_tests_to_run;do
-    eval "test_normal_"$t
-  done
+#  for t in $normal_tests_to_run;do
+#    eval "test_normal_"$t
+#  done
+  eval "test_normal_stdout_multiple_splitpoints"
 
   p_blue " NORMAL tests DONE."
   echo

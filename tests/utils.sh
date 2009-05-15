@@ -54,27 +54,27 @@ function check_current_mp3_no_tags
 function check_all_current_mp3_tags
 {
   if [[ $current_tags_version -eq 1 ]];then
-    _run_command "id3 -R -l $current_file" "id3 command"
+    _run_command "id3 -R -l '$current_file'" "id3 command"
     tags=$command_output
   else  
-    _run_command "eyeD3 -2 --no-color $current_file" "eyeD3 command"
+    _run_command "eyeD3 -2 --no-color '$current_file'" "eyeD3 command"
     tags=$command_output
   fi
 
-  _check_mp3_tags $current_file $current_tags_version "Artist" "$1" "$tags"
-  _check_mp3_tags $current_file $current_tags_version "Album" "$2" "$tags"
-  _check_mp3_tags $current_file $current_tags_version "Title" "$3" "$tags"
-  _check_mp3_tags $current_file $current_tags_version "Year" "$4" "$tags"
-  _check_mp3_tags $current_file $current_tags_version "Genre" "$5" "$tags"
-  _check_mp3_tags $current_file $current_tags_version "Tracknumber" "$6" "$tags"
-  _check_mp3_tags $current_file $current_tags_version "Comment" "$7" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Artist" "$1" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Album" "$2" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Title" "$3" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Year" "$4" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Genre" "$5" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Tracknumber" "$6" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Comment" "$7" "$tags"
 }
 
 function check_current_mp3_length
 {
   expected_length=$1
 
-  _run_command "eyeD3 --no-color $current_file" "eyeD3 command"
+  _run_command "eyeD3 --no-color '$current_file'" "eyeD3 command"
   mp3_info=$command_output
   actual_length=$(echo "$mp3_info" | grep "Time: " | awk -F"\t" '{ print $1 }' | sed 's/Time: //g' | sed 's/:/./g')
 
@@ -88,7 +88,6 @@ function run_check_output
   mp3splt_args=$1
   expected=$2
 
-  echo "$MP3SPLT" "$mp3splt_args"
   _run_check_output "$MP3SPLT" "$mp3splt_args" "$expected"
 }
 
@@ -105,7 +104,7 @@ function check_current_file_size
 {
   expected_file_size=$1
 
-  _run_command "du -b $current_file" "du command"
+  _run_command "du -b '$current_file'" "du command"
   file_size=$command_output
   actual_file_size=$(echo $command_output | awk '{ print $1 }')
 
@@ -114,7 +113,7 @@ function check_current_file_size
 
 function check_current_file_has_xing
 {
-  _run_command "grep 'Xing' $current_file" "grep xing command" 0 1
+  _run_command "grep 'Xing' '$current_file'" "grep xing command" 0 1
 
   if [[ $? -ne 0 ]];then
     _check_equal_variables "Expected Xing" "No Xing found for file $current_file"
@@ -123,7 +122,7 @@ function check_current_file_has_xing
 
 function check_current_file_has_no_xing
 {
-  _run_command "grep 'Xing' $current_file" "grep xing command" 0 1
+  _run_command "grep 'Xing' '$current_file'" "grep xing command" 0 1
 
   if [[ $? -eq 0 ]];then
     _check_equal_variables "Expected No Xing" "Xing found for file $current_file"
@@ -251,22 +250,22 @@ function _check_mp3_tags
         actual_tag_value=$(_mp3_get_tag_value "$tags" "artist" 3)
       ;;
       Album*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "album" 1)
+        actual_tag_value=$(_mp3_get_tag_value "$tags" "album:" 1)
       ;;
       Title*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "title" 1)
+        actual_tag_value=$(_mp3_get_tag_value "$tags" "title:" 1)
       ;;
       Year*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "year" 3)
+        actual_tag_value=$(_mp3_get_tag_value "$tags" "year:" 3)
       ;;
       Genre*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "genre" 3)
+        actual_tag_value=$(_mp3_get_tag_value "$tags" "genre:" 3)
       ;;
       Tracknumber*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "track" 1)
+        actual_tag_value=$(_mp3_get_tag_value "$tags" "track:" 1)
       ;;
       Comment*)
-        actual_tag_value=$(echo "$tags" | grep -A 1 "Comment" | tail -n 1)
+        actual_tag_value=$(echo "$tags" | grep -A 1 "Comment:" | tail -n 1)
       ;;
       *)
         p_red "Error: unrecognized tags field '$tags_field' (for id3v2 tags) " 2>&1
