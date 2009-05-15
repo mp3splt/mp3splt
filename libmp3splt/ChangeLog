@@ -1,3 +1,20 @@
+libmp3splt version 0.5.6
+-------------------------------------------------------------
+
+- fixed compilation problem, bug #2785683
+- fixed critical bug with overlap splitpoints not working (feature #1530782 => bug)
+- fixed critical bug with mp3 stdin (& framemode)
+- fixed bug #2786300 in plugins compilation (added -lm)
+- Xing header is now written even if SPLT_NO_TAGS option is used
+- added SPLT_OPT_XING option to not write Xing header
+- fixed bug with custom tags and multiple usages of @o
+- fixed bug with stdin & id3v2 & xing
+- fixed a small bug with genre in custom tags
+- fixed some warning messages & added some more
+- fixed dewrap error message
+- fixed dewrap bug to not attempt to create output directories when '-d' option is used
+- fixed minor bug #2790952 : time mode creating an empty file (at the end)
+
 libmp3splt version 0.5.5
 -------------------------------------------------------------
 
