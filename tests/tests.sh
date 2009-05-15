@@ -553,7 +553,7 @@ function test_normal_stdout_multiple_splitpoints
   current_tags_version=2
   rm -rf $OUTPUT_DIR/*
 
-  test_name="stdout"
+  test_name="stdout & splitpoints > 2"
   M_FILE="La_Verue__Today"
 
   expected=" Warning: multiple splitpoints with stdout !
@@ -581,7 +581,7 @@ function run_normal_mode_tests
 {
   date
   echo
-  p_blue " NORMAL tests ..."
+  p_blue " NORMAL mp3 tests ..."
   echo
 
   normal_tests_to_run="\
