@@ -604,10 +604,9 @@ output_fnames_and_custom_tags_dirs \
 stdout \
 stdout_multiple_splitpoints"
 
-#  for t in $normal_tests_to_run;do
-#    eval "test_normal_"$t
-#  done
-  eval "test_normal_stdout_multiple_splitpoints"
+  for t in $normal_tests_to_run;do
+    eval "test_normal_"$t
+  done
 
   p_blue " NORMAL tests DONE."
   echo
