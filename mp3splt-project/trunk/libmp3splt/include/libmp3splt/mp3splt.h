@@ -181,7 +181,7 @@ typedef struct {
 /* Structures for the output format    */
 
 #define SPLT_MAXOLEN 255
-#define SPLT_OUTNUM  10
+#define SPLT_OUTNUM  20
 
 //structure defining the output format
 typedef struct {

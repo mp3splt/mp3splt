@@ -1,8 +1,8 @@
 MP3 FILES
 **************************
 
-normal mode
------------
+normal mode & VBR - frame mode
+------------------------------
 
   - EOF with tags version of input file
   - no tags (-n)
@@ -13,15 +13,13 @@ normal mode
   - output directory (-d)
   - custom tags (-g)
   - overlap splitpoints (-O)
+  - stdin : input not seekable (-k)
+  - output filename (-o) + create directories
+  - stdout
 
-  - input not seekable (-k)
-  - output filename (-o) : also test create directories
   - auto adjust (-a)
   - silence parameters (-a & -p) : th, off, gap
   - don't create 'mp3splt.log' file (-N)
-  - quiet mode (-q)
-  - very quiet mode (-Q)
-  - frame mode (-f)
 
 TESTS TODO: tests ID3v2 UTF16
 

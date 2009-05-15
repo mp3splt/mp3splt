@@ -2065,6 +2065,12 @@ int main(int argc, char **orig_argv)
     fflush(console_out);
   }
 
+  if ((data->number_of_splitpoints > 2) &&
+      opt->output_format && (strcmp(opt->output_format, "-") == 0))
+  {
+    print_warning("multiple splitpoints with stdout !");
+  }
+
   //split all the filenames
   for (j = 0;j < data->number_of_filenames; j++)
   {
