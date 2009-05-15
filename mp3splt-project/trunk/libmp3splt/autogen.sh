@@ -21,6 +21,7 @@ win=$1
 
 #remove old libtool generated files
 rm -f m4/{libtool,argz,ltdl,ltoptions,lt~obsolete,ltversion,ltsugar}.m4
+rm -f libtool aclocal.m4 config.status configure autom4te.cache/* ltmain.sh
 
 #we run aclocal, autoconf and automake
 #info: the 'sed' is an ugly hack for libtool version compatibility because aclocal.m4 is shipped in 'make dist'
