@@ -397,6 +397,8 @@ void splt_s_time_split(splt_state *state, int *error)
         save_end_point = SPLT_FALSE;
       }
 
+      int last_file = SPLT_FALSE;
+
       //while we have tracks
       do {
         //if we don't cancel the split
@@ -427,6 +429,9 @@ void splt_s_time_split(splt_state *state, int *error)
           if (end_splitpoint > splt_t_get_total_time(state))
           {
             end_splitpoint = splt_t_get_total_time(state);
+            //avoid worst scenarios where floor & SPLT_OK_SPLIT_EOF do not
+            //work
+            last_file = SPLT_TRUE;
           }
           splt_t_set_splitpoint_value(state, current_split+1,end_splitpoint);
 
@@ -460,11 +465,12 @@ void splt_s_time_split(splt_state *state, int *error)
 
           //get out if error
           if ((*error == SPLT_MIGHT_BE_VBR) ||
-              (*error==SPLT_OK_SPLIT_EOF) ||
+              (*error == SPLT_OK_SPLIT_EOF) ||
               (*error < 0))
           {
             tracks = 0;
           }
+
           if (*error==SPLT_ERROR_BEGIN_OUT_OF_FILE)
           {
             j--;
@@ -475,6 +481,11 @@ void splt_s_time_split(splt_state *state, int *error)
             //free memory
             free(final_fname);
             final_fname = NULL;
+          }
+
+          if (last_file)
+          {
+            break;
           }
         }
         else
