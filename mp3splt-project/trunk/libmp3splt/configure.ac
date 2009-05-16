@@ -33,8 +33,8 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT([libmp3splt],[0.5.6],[io_fx@yahoo.fr])
-AM_INIT_AUTOMAKE(libmp3splt, 0.5.6)
+AC_INIT([libmp3splt],[0.5.7],[io_fx@yahoo.fr])
+AM_INIT_AUTOMAKE(libmp3splt, 0.5.7)
 AC_CONFIG_HEADERS([config.h])
 
 CFLAGS="-Wall $CFLAGS -I../include/libmp3splt"
