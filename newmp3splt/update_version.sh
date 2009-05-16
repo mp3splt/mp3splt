@@ -33,9 +33,9 @@ DATE=$(date +%d\\/%m\\/%y)
 NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 
 #configure.ac libmp3splt version check
-#./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
-sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
-\[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
+#./configure.ac:        [ AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
+sed -i "s/\[ AC_MSG_ERROR(libmp3splt version .* needed/\
+\[ AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
 #source code
 #./src/mp3splt.c:#define VERSION "2.2"
 sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/mp3splt.c || exit 1

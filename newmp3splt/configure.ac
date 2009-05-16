@@ -88,7 +88,7 @@ AC_MSG_RESULT($HOST)
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.5.5 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.5.6 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
