@@ -33,8 +33,8 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 
 #configure.ac libmp3splt version check
 #./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
-sed -i "s/\[AC_MSG_ERROR(libmp3splt version .* needed/\
-\[AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
+sed -i "s/\[ AC_MSG_ERROR(libmp3splt version .* needed/\
+\[ AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
 #source code
 #./src/main_win.c:#define VERSION "0.3.1"
 #./src/main_win.c:  g_snprintf(b3, 100, "-release of 27/02/06-\n%s libmp3splt...
