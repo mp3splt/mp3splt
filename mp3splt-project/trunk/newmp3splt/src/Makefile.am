@@ -11,8 +11,8 @@ if DO_SYMLINK
 endif
 uninstall-hook:
 if DO_SYMLINK
-	if [ -L $(DESTDIR)/$(bindir)/oggsplt ]; then \
-		echo "The $(DESTDIR)/$(bindir)/oggsplt symlink still exists. You may want to remove it." \
-	fi \;
+	if [ -L $(DESTDIR)/$(bindir)/oggsplt ];then \
+	  echo "The $(DESTDIR)/$(bindir)/oggsplt symlink still exists. You may want to remove it."; \
+	fi
 endif
 
