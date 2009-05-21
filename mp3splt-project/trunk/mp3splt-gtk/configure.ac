@@ -117,18 +117,16 @@ Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 AM_CONDITIONAL(AUDACIOUS,false)
 audacious="no"
 #checking for --disable-audacious & audacious library
-AC_ARG_ENABLE(audacious,
-AC_HELP_STRING([--disable-audacious], [Disable audacious player support. ]),
-[AC_MSG_WARN([audacious support is disabled !])
-audacious="disabled"]
-,
-#action if not given
-[PKG_CHECK_MODULES(AUDACIOUS, [audacious >= 0.1],
-  [AM_CONDITIONAL(AUDACIOUS,true) audacious="yes" ],
-  [AC_MSG_ERROR([Audacious player development files are not installed.
+AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audacious player support. ]),
+    [enable_audacious=$enableval],[enable_audacious="yes"])
+
+if test x$enable_audacious = xyes;then
+  PKG_CHECK_MODULES(AUDACIOUS, [audacious >= 0.1],
+      [AM_CONDITIONAL(AUDACIOUS,true) audacious="yes" ],
+      [AC_MSG_ERROR([Audacious player development files are not installed.
 
     Install it or configure with "--disable-audacious".])])
-])
+fi
 
 #################################################
 #Check for gstreamer
@@ -136,20 +134,18 @@ audacious="disabled"]
 AM_CONDITIONAL(GSTREAMER,false)
 gstreamer="no"
 #checking for --disable-gstreamer & gstreamer library
-AC_ARG_ENABLE(gstreamer,
-AC_HELP_STRING([--disable-gstreamer], [Disable gstreamer 'internal' player support. ]),
-[AC_MSG_WARN([gstreamer support is disabled !])
-gstreamer="disabled"]
-,
-#action if not given
-[PKG_CHECK_MODULES(GST, [gstreamer-0.10 >= 0.10
-                         gstreamer-base-0.10 >= 0.10
-                         gstreamer-plugins-base-0.10 >= 0.10],
-  [AM_CONDITIONAL(GSTREAMER,true) gstreamer="yes"],
-  [AC_MSG_ERROR([GStreamer >= 0.10 development files are not installed.
+AC_ARG_ENABLE(gstreamer, AC_HELP_STRING([--disable-gstreamer], [Disable gstreamer 'internal' player support. ]),
+    [enable_gstreamer=$enableval],[enable_gstreamer="yes"])
+
+if test x$enable_gstreamer = xyes;then
+  PKG_CHECK_MODULES(GST, [gstreamer-0.10 >= 0.10
+      gstreamer-base-0.10 >= 0.10
+      gstreamer-plugins-base-0.10 >= 0.10],
+      [AM_CONDITIONAL(GSTREAMER,true) gstreamer="yes"],
+      [AC_MSG_ERROR([GStreamer >= 0.10 development files are not installed.
 
     Install it or configure with "--disable-gstreamer".])])
-])
+fi
 
 #################################################
 # Generate Makefiles
