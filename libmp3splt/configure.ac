@@ -121,22 +121,25 @@ AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not fou
 #check for --disable-mp3 & mad library
 AM_CONDITIONAL(MP3_PLUGIN,false)
 mp3="no" 
-AC_ARG_ENABLE(mp3,
-              [AC_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ], 
-              mp3="disabled",
-              [MAD_CHECK([ AM_CONDITIONAL(MP3_PLUGIN,true) mp3="yes" ],
-                [ AC_MSG_WARN([libmad not found ! Will build without mp3 support.]) ])
-              ])
+AC_ARG_ENABLE(mp3, [AC_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ], 
+    [enable_mp3_plugin=$enableval],[enable_mp3_plugin="yes"])
+
+if test x$enable_mp3_plugin = xyes;then
+  MAD_CHECK([ AM_CONDITIONAL(MP3_PLUGIN,true) mp3="yes" ],
+      [ AC_MSG_WARN([libmad not found ! Will build without mp3 support.]) ])
+fi
 
 #check for --disable-id3tag & id3tag library
 AM_CONDITIONAL(ID3TAG,false)
 id3="no";
-AC_ARG_ENABLE(id3tag,
-              [AC_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
-              id3="disabled",
-              [ ID3_CHECK([ AM_CONDITIONAL(ID3TAG,true) id3="yes"; ],
-                [ AC_MSG_WARN([libid3tag not found ! Will build without id3 support.]) ])
-              ])
+AC_ARG_ENABLE(id3tag, [AC_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
+    [enable_id3tag=$enableval],[enable_id3tag="yes"])
+
+if test x$enable_id3tag = xyes;then
+  ID3_CHECK([ AM_CONDITIONAL(ID3TAG,true) id3="yes"; ],
+      [ AC_MSG_WARN([libid3tag not found ! Will build without id3 support.]) ])
+fi
+
 
 #################################################################
 # Check ogg plugin libraries
@@ -145,13 +148,15 @@ AC_ARG_ENABLE(id3tag,
 #check for --disable-ogg & ogg libraries
 AM_CONDITIONAL(OGG_PLUGIN,false)
 ogg="no" 
-AC_ARG_ENABLE(ogg,
-              [AC_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
-              ogg="disabled",
-              [ XIPH_PATH_OGG(,AC_MSG_WARN([Ogg not found! Download the latest version of libogg at http://www.xiph.org.]))
-              XIPH_PATH_VORBIS(AM_CONDITIONAL(OGG_PLUGIN,true) ogg="yes",
-                AC_MSG_WARN(Vorbis not found! Will build without ogg/vorbis support.))
-              ])
+AC_ARG_ENABLE(ogg, [AC_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
+    [enable_ogg_plugin=$enableval],[enable_ogg_plugin="yes"])
+
+if test x$enable_ogg_plugin = xyes;then
+  XIPH_PATH_OGG(,AC_MSG_WARN([Ogg not found! Download the latest version of libogg at http://www.xiph.org.]))
+  XIPH_PATH_VORBIS(AM_CONDITIONAL(OGG_PLUGIN,true) ogg="yes",
+      AC_MSG_WARN(Vorbis not found! Will build without ogg/vorbis support.))
+fi
+
 
 #################################################
 # Print the configuration to the screen
