@@ -296,7 +296,7 @@ void change_window_progress_bar(splt_progress *p_bar)
       break;
     case SPLT_PROGRESS_SCAN_SILENCE :
       g_snprintf(progress_text,2047,
-          "S: %02d, Level: %.2f dB; scanning for silence...",
+          _("S: %02d, Level: %.2f dB; scanning for silence..."),
           p_bar->silence_found_tracks, p_bar->silence_db_level);
       break;
     default:
@@ -480,7 +480,10 @@ gint main (gint argc, gchar *argv[], gchar **envp)
 #ifndef __WIN32__
   signal (SIGPIPE, sigpipe_handler);
 #endif
-  
+   
+  //create new state
+  the_state = mp3splt_new_state(&error);
+
   //used for gettext
   setlocale (LC_ALL, "");
   textdomain ("mp3splt-gtk");
@@ -491,10 +494,7 @@ gint main (gint argc, gchar *argv[], gchar **envp)
 #else
   bindtextdomain ("mp3splt-gtk", LOCALEDIR);
 #endif
-  
-  //create new state
-  the_state = mp3splt_new_state(&error);
-
+ 
   gtk_init(&argc, &argv);
   
   //we initialise the splitpoints array

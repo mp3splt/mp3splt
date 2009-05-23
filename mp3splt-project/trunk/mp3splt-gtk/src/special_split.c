@@ -182,7 +182,7 @@ GtkWidget *create_special_split_page()
                       horiz_fake, FALSE, FALSE, 0);
   
   //seconds for the time split
-  label = gtk_label_new("split every X seconds. X = ");
+  label = gtk_label_new(_("split every X seconds. X = "));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 0);
   

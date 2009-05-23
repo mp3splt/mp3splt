@@ -44,20 +44,16 @@
 #endif
 
 #include <limits.h>
+#include <libintl.h>
+#include <locale.h>
 
 #if !HAVE_FSEEKO
 #define fseeko fseek
 #define ftello ftell
 #endif
 
-/****************************/
-/* splt utils */
-
-splt_state *splt_s_get_mp3_info(splt_state *state, FILE *file_input,
-    int *error);
-splt_state *splt_s_get_ogg_info(splt_state *state, FILE *file_input,
-    int *error);
-void splt_s_put_total_time(splt_state *state, int *error);
+#define SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"
+#define _(STR) dgettext(SPLT_LIB_GETTEXT_DOMAIN, STR)
 
 /**********************************/
 /* splt normal or syncerror split */
@@ -91,8 +87,6 @@ void splt_s_wrap_split(splt_state *state, int *error);
 #define SPLT_DEFAULTSHOT 25
 
 #define SPLT_VARCHAR '@'
-
-#define SPLT_OGGEXT ".ogg"
 
 //max number of splitpoints 
 //for silence detection and for syncerrors

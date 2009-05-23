@@ -42,6 +42,7 @@
 /****************************/
 /* mp3 constants */
 
+//TODO : translation
 static const char *splt_mp3_chan[] =
 {
 	"Mono",
@@ -63,6 +64,7 @@ static const int splt_mp3_tabsel_123[2][3][16] = {
 };
 
 //categories of mp3 songs
+//TODO : translation
 static const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
   {"Blues"}, {"Classic Rock"}, {"Country"}, {"Dance"}, 
   {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
@@ -1428,7 +1430,8 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
           {
             if (!splt_t_get_iopt(state,SPLT_INTERNAL_FRAME_MODE_ENABLED))
             {
-              splt_t_put_message_to_client(state, " info: frame mode enabled\n");
+              splt_t_put_message_to_client(state,
+                  _(" info: frame mode enabled\n"));
               splt_t_set_iopt(state,SPLT_INTERNAL_FRAME_MODE_ENABLED,SPLT_TRUE);
             }
           }
@@ -1563,30 +1566,32 @@ static void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
       struct splt_mp3 *mfile = &mp3state->mp3file;
       //codec infos
       char mpeg_infos[2048] = { '\0' };
-      snprintf(mpeg_infos,2048, " info: MPEG %d Layer %d - %d Hz - %s", (2-mfile->mpgid), mfile->layer, mfile->freq, splt_mp3_chan[mfile->channels]);
+      snprintf(mpeg_infos,2048, _(" info: MPEG %d Layer %d - %d Hz - %s"),
+          (2-mfile->mpgid), mfile->layer, mfile->freq, splt_mp3_chan[mfile->channels]);
       //frame mode or bitrate
       char frame_mode_infos[256] = { '\0' };
       if (mp3state->framemode)
       {
         if (splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
         {
-          snprintf(frame_mode_infos,256," - FRAME MODE NS");
+          snprintf(frame_mode_infos,256,_(" - FRAME MODE NS"));
         }
         else
         {
-          snprintf(frame_mode_infos,256," - FRAME MODE");
+          snprintf(frame_mode_infos,256,_(" - FRAME MODE"));
         }
       }
       else 
       {
-        snprintf(frame_mode_infos,256," - %d Kb/s",mfile->bitrate * SPLT_MP3_BYTE / 1000);
+        snprintf(frame_mode_infos,256,_(" - %d Kb/s"),
+            mfile->bitrate * SPLT_MP3_BYTE / 1000);
       }
       //total time
       char total_time[256] = { '\0' };
       int total_seconds = (int) splt_t_get_total_time(state) / 100;
       int minutes = total_seconds / 60;
       int seconds = total_seconds % 60;
-      snprintf(total_time,256," - Total time: %dm.%02ds", minutes, seconds%60);
+      snprintf(total_time,256,_(" - Total time: %dm.%02ds"), minutes, seconds%60);
       //put all the infos together
       char all_infos[3072] = { '\0' };
       snprintf(all_infos,3071,"%s%s%s\n",mpeg_infos,frame_mode_infos,total_time);
@@ -1970,8 +1975,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       {
         splt_t_update_progress(state,(float)(begin-start),
             (float)(end-start),
-            2,0.5,
-            SPLT_DEFAULT_PROGRESS_RATE);
+            2,0.5, SPLT_DEFAULT_PROGRESS_RATE);
       }
       else
       {
@@ -1990,23 +1994,20 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
           {
             splt_t_update_progress(state,(float)(begin-start),
                 (float)(temp_end-start),
-                2,0.5,
-                SPLT_DEFAULT_PROGRESS_RATE);
+                2,0.5, SPLT_DEFAULT_PROGRESS_RATE);
           }
           else
           {
             splt_t_update_progress(state,(float)(begin-start),
                 (float)(temp_end-start),
-                1,0,
-                SPLT_DEFAULT_PROGRESS_RATE);
+                1,0, SPLT_DEFAULT_PROGRESS_RATE);
           }
         }
         else
         {
           splt_t_update_progress(state,(float)(begin-start),
               (float)(end-start),
-              2,0.5,
-              SPLT_DEFAULT_PROGRESS_RATE);
+              2,0.5, SPLT_DEFAULT_PROGRESS_RATE);
         }
       }
     }
@@ -3084,7 +3085,8 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
           char major_v = fgetc(mp3state->file_input);
           char minor_v = fgetc(mp3state->file_input);
           snprintf(client_infos,1024,
-              " Detected file created with: Mp3Wrap v. %c.%c\n",major_v,minor_v);
+              _(" Detected file created with: Mp3Wrap v. %c.%c\n"),
+              major_v,minor_v);
 
           splt_t_put_message_to_client(state, client_infos);
 
@@ -3124,7 +3126,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               }
               end = ftello(mp3state->file_input);
               splt_t_put_message_to_client(state,
-                  " Check for file integrity: calculating CRC please wait... ");
+                  _(" Check for file integrity: calculating CRC please wait... "));
               crc = splt_mp3_c_crc(state, mp3state->file_input, begin, end, error);
               if (*error < 0)
               {
@@ -3143,7 +3145,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               }
               else 
               {
-                splt_t_put_message_to_client(state, " OK\n");
+                splt_t_put_message_to_client(state, _(" OK\n"));
               }
               if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
               {
@@ -3162,7 +3164,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
         {
           splt_u_print_debug("We do mp3 albumwrap check...",0,NULL);
           //Mp3Wrap version
-          snprintf(client_infos,1024, " Detected file created with: AlbumWrap\n");
+          snprintf(client_infos,1024, _(" Detected file created with: AlbumWrap\n"));
           splt_t_put_message_to_client(state, client_infos);
 
           if (fseeko(mp3state->file_input, (off_t) 0x52d, SEEK_SET)==-1)
@@ -3185,9 +3187,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
         //we put the number of "splitpoints"
         state->split.splitnumber = wrapfiles+1;
 
-        splt_u_print_debug("Number of wrap splitpoints is",wrapfiles+1,NULL);
-
-        snprintf(client_infos, 1024, " Total files: %d\n",wrapfiles);
+        snprintf(client_infos, 1024, _(" Total files: %d\n"),wrapfiles);
         splt_t_put_message_to_client(state, client_infos);
         
         //we do the dewrap
@@ -3586,7 +3586,7 @@ void splt_pl_init(splt_state *state, int *error)
     if (filename[1] == '\0')
     {
       char message[1024] = { '\0' };
-      snprintf(message, 1024, " warning: stdin '-' is supposed to be mp3 stream.\n");
+      snprintf(message, 1024, _(" warning: stdin '-' is supposed to be mp3 stream.\n"));
       splt_t_put_message_to_client(state, message);
     }
   }
@@ -3613,7 +3613,7 @@ void splt_pl_end(splt_state *state, int *error)
         {
           char message[1024] = { '\0' };
 
-          snprintf(message, 1024, " Processed %lu frames - Sync errors: %lu\n",
+          snprintf(message, 1024, _(" Processed %lu frames - Sync errors: %lu\n"),
               mp3state->frames, state->syncerrors);
           splt_t_put_message_to_client(state, message);
         }

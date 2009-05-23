@@ -19,11 +19,14 @@
 }
 
 #we run aclocal, autoconf and automake
-echo -n "Running aclocal... " \
+echo -n "1/5 Running autopoint... " \
+&& autopoint -f && echo "done" \
+&& echo -n "2/5 Running aclocal... " \
 && aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
-&& echo -n "Running autoheader... " \
+&& echo -n "3/5 Running autoheader... " \
 && autoheader && echo "done" \
-&& echo -n "Running autoconf... " \
+&& echo -n "4/5 Running autoconf... " \
 && autoconf && echo "done" \
-&& echo -n "Running automake... " && echo "done" \
-&& automake -a -c
+&& echo -n "5/5 Running automake... " \
+&& automake -a -c && echo "done"
+

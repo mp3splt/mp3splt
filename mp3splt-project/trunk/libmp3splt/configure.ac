@@ -47,6 +47,10 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+AC_CHECK_HEADERS([unistd.h])
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.13.1])
+
 #################################################################
 # Checks for typedefs, structures, and compiler characteristics
 #################################################################
@@ -191,6 +195,6 @@ echo
 # Generate Makefile
 #################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile plugins/Makefile m4/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile po/Makefile.in plugins/Makefile m4/Makefile])
 AC_OUTPUT
 

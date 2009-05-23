@@ -119,8 +119,8 @@ void add_freedb_row(gchar *album_name,
   for(i = 0; i < revisions_number; i++)
     {
       g_snprintf(number,malloc_number,
-                "%s Revision %d",album_name, revisions[i]);
-      
+          _("%s Revision %d"),album_name, revisions[i]);
+
       //sets the children..
       gtk_tree_store_append (GTK_TREE_STORE(model),
                              &child_iter, &iter);
@@ -333,7 +333,7 @@ void freedb_search(gpointer *data)
                            FALSE);
   gtk_entry_set_editable (GTK_ENTRY (freedb_entry), FALSE);
   
-  put_status_message(_("please wait... contacting freedb.org"));
+  put_status_message(_("please wait... contacting tracktype.org"));
   
   //possible errors
   gint err;
@@ -440,7 +440,7 @@ void write_freedbfile(int *err)
   
   print_status_bar_confirmation(error);
   
-  put_status_message(_("please wait... contacting freedb.org"));
+  put_status_message(_("please wait... contacting tracktype.org"));
   
   //we suppose directory exists
   //it should be created when mp3splt-gtk starts
@@ -652,7 +652,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start (GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 3);
   //top label
   GtkWidget *label;
-  label = gtk_label_new(_("Search freedb2.org : "));
+  label = gtk_label_new(_("Search tracktype.org : "));
   gtk_box_pack_start (GTK_BOX(search_hbox), label , FALSE, FALSE, 0);
   //top entry
   freedb_entry = gtk_entry_new();

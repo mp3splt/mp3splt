@@ -2158,7 +2158,7 @@ void splt_t_set_strerr_msg(splt_state *state, const char *message)
     else
     {
       //if not enough memory
-      splt_u_error(SPLT_IERROR_CHAR,__func__, 0, "not enough memory");
+      splt_u_error(SPLT_IERROR_CHAR,__func__, 0, _("not enough memory"));
     }
   }
   else
@@ -2187,7 +2187,7 @@ void splt_t_set_strherror_msg(splt_state *state)
   const char *hstrerr = hstrerror(h_errno);
   splt_t_set_strerr_msg(state, hstrerr);
 #else
-  splt_t_set_strerr_msg(state, "Network error");
+  splt_t_set_strerr_msg(state, _("Network error"));
 #endif
 }
 

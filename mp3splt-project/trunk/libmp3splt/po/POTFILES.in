@@ -1,0 +1,10 @@
+# List of files which contain translatable strings.
+src/mp3splt.c
+src/checks.c
+src/cddb.c
+src/types_func.c
+src/splt.c
+src/utils.c
+src/plugins.c
+plugins/mp3.c
+plugins/ogg.c

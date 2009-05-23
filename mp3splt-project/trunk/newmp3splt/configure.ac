@@ -52,6 +52,10 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+AC_CHECK_HEADERS([unistd.h])
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.13.1])
+
 #################################################################
 # Check for the type of the host
 #################################################################
@@ -110,7 +114,7 @@ fi
 # Generate Makefiles
 #################################################
 
-AC_OUTPUT(Makefile src/Makefile doc/Makefile m4/Makefile)
+AC_OUTPUT(Makefile src/Makefile po/Makefile.in doc/Makefile m4/Makefile)
 
 #################################################
 # Output configuration

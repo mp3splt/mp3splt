@@ -551,20 +551,18 @@ void connect_button_event (GtkWidget *widget,
     {
       //if not, we put a message
       GtkWidget *dialog, *label;
-      //TODO : translation __
-      dialog = gtk_dialog_new_with_buttons ("Cannot connect to player",
+      dialog = gtk_dialog_new_with_buttons (_("Cannot connect to player"),
                                             (GtkWindow *)window,
                                             GTK_DIALOG_MODAL,
                                             GTK_STOCK_OK,
                                             GTK_RESPONSE_NONE,
                                             NULL);
       
-      //TODO : translation __
       switch (selected_player)
         {
         case PLAYER_SNACKAMP :
           label = gtk_label_new
-            ("\n Cannot connect to snackAmp player.\n"
+            (_("\n Cannot connect to snackAmp player.\n"
              " Please download and install snackamp from\n"
              "\thttp://snackamp.sourceforge.net\n\n"
              " Verify that snackamp is running.\n"
@@ -575,19 +573,19 @@ void connect_button_event (GtkWidget *widget,
              " from the snackamp menu and check\n"
              "\tEnable Socket Interface\n"
              " Only default port is supported for now(8775)\n"
-             " After that, restart snackamp and mp3splt-gtk should work.\n");
+             " After that, restart snackamp and mp3splt-gtk should work.\n"));
           break;
         case PLAYER_AUDACIOUS :
           label = gtk_label_new 
-            ("\n Cannot connect to Audacious player.\n"
+            (_("\n Cannot connect to Audacious player.\n"
              " Verify that you have installed audacious.\n\n"
              " Put in your PATH variable the directory where the audacious"
              " executable is.\n"
              " If you don't know how to do that, start audacious manually"
-             " and then try to connect.\n");
+             " and then try to connect.\n"));
           break;
         default:
-          label = gtk_label_new ("Cannot connect to player");
+          label = gtk_label_new (_("Cannot connect to player"));
           break;
         }
       
@@ -1063,16 +1061,15 @@ void check_update_down_progress_bar()
         {
           if (progress_description != NULL)
           {
-            g_snprintf(description_shorted,60,
-                "before %s", progress_description);
+            g_snprintf(description_shorted,60, _("before %s"),
+                progress_description);
           }
         }
         else
         {
           if (progress_description != NULL)
           {
-            g_snprintf(description_shorted,
-                60,"%s", progress_description);
+            g_snprintf(description_shorted, 60,"%s", progress_description);
           }
         }
       }
@@ -1082,8 +1079,7 @@ void check_update_down_progress_bar()
         {
           if (progress_description != NULL)
           {
-            g_snprintf(description_shorted,
-                60,"%s", progress_description);
+            g_snprintf(description_shorted, 60,"%s", progress_description);
           }
         }
         else
@@ -1229,7 +1225,7 @@ void print_player_filename()
   gchar *fname = player_get_filename();
   
   if ((fname != NULL) &&
-      (strcmp(fname,"disconnect")))
+      (strcmp(fname, "disconnect")))
   {
     change_current_filename(fname);
   }

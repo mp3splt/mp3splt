@@ -4,7 +4,7 @@ plugin_LTLIBRARIES =
 INCLUDES =
 
 #ccommon_LDFLAGS = -module -export-dynamic -avoid-version
-common_LDFLAGS = -L../src -L../src/.libs -L/lib -no-undefined -lm -lmp3splt
+common_LDFLAGS = -L../src -L../src/.libs -L/lib -no-undefined -lm -lmp3splt @LIBINTL@
 
 #mp3 plugin
 if MP3_PLUGIN

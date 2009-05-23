@@ -279,12 +279,12 @@ static int splt_cue_set_value(splt_state *state, char *in,
 			{
 				if (tag_field == SPLT_TAGS_ARTIST)
 				{
-					snprintf(client_infos,strlen(out)+30,"\n  Artist: %s\n", out);
+					snprintf(client_infos,strlen(out)+30, _("\n  Artist: %s\n"), out);
 					splt_t_put_message_to_client(state, client_infos);
 				}
 				else if (tag_field == SPLT_TAGS_ALBUM)
 				{
-					snprintf(client_infos,strlen(out)+30,"  Album: %s\n", out);
+					snprintf(client_infos,strlen(out)+30, _("  Album: %s\n"), out);
 					splt_t_put_message_to_client(state, client_infos);
 				}
 				free(client_infos);
@@ -332,7 +332,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     return 0;
   }
   snprintf(client_infos, strlen(file)+200,
-      " reading informations from CUE file %s ...\n",file);
+      _(" reading informations from CUE file %s ...\n"),file);
   splt_t_put_message_to_client(state, client_infos);
   free(client_infos);
   client_infos = NULL;
@@ -543,7 +543,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
       }
       //we append the last splitpoint
       append_error = splt_t_append_splitpoint(state, LONG_MAX,
-          "description here", SPLT_SPLITPOINT);
+          _("description here"), SPLT_SPLITPOINT);
     }
     else
     {
@@ -581,7 +581,7 @@ function_end:
   
   //put number of tracks
   char tracks_info[64] = { '\0' };
-  snprintf(tracks_info, 64, "  Tracks: %d\n\n",tracks);
+  snprintf(tracks_info, 64, _("  Tracks: %d\n\n"),tracks);
   splt_t_put_message_to_client(state, tracks_info);
 
   //we return the number of tracks found
@@ -612,7 +612,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
     return 0;
   }
   snprintf(client_infos, strlen(file)+200,
-      " reading informations from CDDB file %s ...\n",file);
+      _(" reading informations from CDDB file %s ...\n"),file);
   splt_t_put_message_to_client(state, client_infos);
   free(client_infos);
   client_infos = NULL;
@@ -1022,7 +1022,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
                 goto function_end;
               }
-              snprintf(client_infos,strlen(artist)+30,"\n  Artist: %s\n", artist);
+              snprintf(client_infos,strlen(artist)+30,_("\n  Artist: %s\n"), artist);
               splt_t_put_message_to_client(state, client_infos);
               free(client_infos);
               client_infos = NULL;
@@ -1048,7 +1048,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
                 goto function_end;
               }
-              snprintf(client_infos,strlen(album)+30,"  Album: %s\n", album);
+              snprintf(client_infos,strlen(album)+30,_("  Album: %s\n"), album);
               splt_t_put_message_to_client(state, client_infos);
               free(client_infos);
               client_infos = NULL;
@@ -1158,7 +1158,7 @@ function_end:
   if (*error >= 0)
   {
     char tracks_info[64] = { '\0' };
-    snprintf(tracks_info, 64, "  Tracks: %d\n\n",tracks);
+    snprintf(tracks_info, 64, _("  Tracks: %d\n\n"),tracks);
     splt_t_put_message_to_client(state, tracks_info);
   }
 
