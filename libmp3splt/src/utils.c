@@ -2016,157 +2016,157 @@ char *splt_u_strerror(splt_state *state, int error_code)
       //
       case SPLT_MIGHT_BE_VBR:
         snprintf(error_msg,max_error_size,
-            " warning: might be VBR, use frame mode");
+            _(" warning: might be VBR, use frame mode"));
         break;
       case SPLT_SYNC_OK:
-        snprintf(error_msg,max_error_size, " error mode ok");
+        snprintf(error_msg,max_error_size, _(" error mode ok"));
         break;
       case SPLT_ERR_SYNC:
-        snprintf(error_msg,max_error_size, " error: unknown sync error");
+        snprintf(error_msg,max_error_size, _(" error: unknown sync error"));
         break;
       case SPLT_ERR_NO_SYNC_FOUND:
-        snprintf(error_msg,max_error_size, " no sync errors found");
+        snprintf(error_msg,max_error_size, _(" no sync errors found"));
         break;
       case SPLT_ERR_TOO_MANY_SYNC_ERR:
-        snprintf(error_msg,max_error_size, " sync error: too many sync errors");
+        snprintf(error_msg,max_error_size, _(" sync error: too many sync errors"));
         break;
         //
       case SPLT_FREEDB_MAX_CD_REACHED :
-        snprintf(error_msg,max_error_size, " maximum number of found CD reached");
+        snprintf(error_msg,max_error_size, _(" maximum number of found CD reached"));
         break;
       case SPLT_CUE_OK :
-        snprintf(error_msg,max_error_size, " cue file processed");
+        snprintf(error_msg,max_error_size, _(" cue file processed"));
         break;
       case SPLT_CDDB_OK :
-        snprintf(error_msg,max_error_size, " cddb file processed");
+        snprintf(error_msg,max_error_size, _(" cddb file processed"));
         break;
       case SPLT_FREEDB_FILE_OK :
-        snprintf(error_msg,max_error_size, " freedb file downloaded");
+        snprintf(error_msg,max_error_size, _(" freedb file downloaded"));
         break;
       case SPLT_FREEDB_OK :
-        snprintf(error_msg,max_error_size, " freedb search processed");
+        snprintf(error_msg,max_error_size, _(" freedb search processed"));
         break;
         //
       case SPLT_FREEDB_ERROR_INITIALISE_SOCKET :
         snprintf(error_msg,max_error_size, 
-            " freedb error: cannot initialise socket (%s)",
+            _(" freedb error: cannot initialise socket (%s)"),
             state->err.strerror_msg);
         break;
       case SPLT_FREEDB_ERROR_CANNOT_GET_HOST :
         snprintf(error_msg,max_error_size, 
-            " freedb error: cannot get host '%s' by name (%s)",
+            _(" freedb error: cannot get host '%s' by name (%s)"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET :
-        snprintf(error_msg,max_error_size, " freedb error: cannot open socket");
+        snprintf(error_msg,max_error_size, _(" freedb error: cannot open socket"));
         break;
       case SPLT_FREEDB_ERROR_CANNOT_CONNECT :
         snprintf(error_msg,max_error_size, 
-            " freedb error: cannot connect to host '%s' (%s)",
+            _(" freedb error: cannot connect to host '%s' (%s)"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE :
         snprintf(error_msg,max_error_size, 
-            " freedb error: cannot send message to host '%s' (%s)",
+            _(" freedb error: cannot send message to host '%s' (%s)"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER :
-        snprintf(error_msg,max_error_size, " freedb error: invalid server answer");
+        snprintf(error_msg,max_error_size, _(" freedb error: invalid server answer"));
         break;
       case SPLT_FREEDB_ERROR_SITE_201 :
-        snprintf(error_msg,max_error_size, " freedb error: site returned code 201");
+        snprintf(error_msg,max_error_size, _(" freedb error: site returned code 201"));
         break;
       case SPLT_FREEDB_ERROR_SITE_200 :
-        snprintf(error_msg,max_error_size, " freedb error: site returned code 200");
+        snprintf(error_msg,max_error_size, _(" freedb error: site returned code 200"));
         break;
       case SPLT_FREEDB_ERROR_BAD_COMMUNICATION :
-        snprintf(error_msg,max_error_size, " freedb error: bad communication with site");
+        snprintf(error_msg,max_error_size, _(" freedb error: bad communication with site"));
         break;
       case SPLT_FREEDB_ERROR_GETTING_INFOS :
-        snprintf(error_msg,max_error_size, " freedb error: could not get infos from site '%s'",
+        snprintf(error_msg,max_error_size, _(" freedb error: could not get infos from site '%s'"),
             state->err.error_data);
         break;
       case SPLT_FREEDB_NO_CD_FOUND :
-        snprintf(error_msg,max_error_size, " no CD found for this search");
+        snprintf(error_msg,max_error_size, _(" no CD found for this search"));
         break;
       case SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE:
         snprintf(error_msg,max_error_size,
-            " freedb error: cannot receive message from server '%s' (%s)",
+            _(" freedb error: cannot receive message from server '%s' (%s)"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_INVALID_CUE_FILE:
-        snprintf(error_msg,max_error_size, " cue error: invalid cue file '%s'",
+        snprintf(error_msg,max_error_size, _(" cue error: invalid cue file '%s'"),
             state->err.error_data);
         break;
       case SPLT_INVALID_CDDB_FILE:
-        snprintf(error_msg,max_error_size, " cddb error: invalid cddb file '%s'",
+        snprintf(error_msg,max_error_size, _(" cddb error: invalid cddb file '%s'"),
             state->err.error_data);
         break;
       case SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE :
-        snprintf(error_msg,max_error_size, " freedb error: No such CD entry in database");
+        snprintf(error_msg,max_error_size, _(" freedb error: No such CD entry in database"));
         break;
       case SPLT_FREEDB_ERROR_SITE :
-        snprintf(error_msg,max_error_size, " freedb error: site returned an unknown error");
+        snprintf(error_msg,max_error_size, _(" freedb error: site returned an unknown error"));
         break;
         //
       case SPLT_DEWRAP_OK:
-        snprintf(error_msg,max_error_size, " wrap split ok");
+        snprintf(error_msg,max_error_size, _(" wrap split ok"));
         break;
         //
       case SPLT_DEWRAP_ERR_FILE_LENGTH:
-        snprintf(error_msg,max_error_size, " wrap error : incorrect file length");
+        snprintf(error_msg,max_error_size, _(" wrap error : incorrect file length"));
         break;
       case SPLT_DEWRAP_ERR_VERSION_OLD:
         snprintf(error_msg,max_error_size,
-            " wrap error: libmp3splt version too old for this wrap file");
+            _(" wrap error: libmp3splt version too old for this wrap file"));
         break;
       case SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX:
         snprintf(error_msg,max_error_size,
-            " wrap error: no file found or bad index");
+            _(" wrap error: no file found or bad index"));
         break;
       case SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE:
         snprintf(error_msg,max_error_size,
-            " wrap error: file '%s' damaged or incomplete",
+            _(" wrap error: file '%s' damaged or incomplete"),
             state->err.error_data);
         break;
       case SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED:
         snprintf(error_msg,max_error_size,
-            " wrap error: maybe not a wrapped file or wrap file damaged");
+            _(" wrap error: maybe not a wrapped file or wrap file damaged"));
         break;
         //
       case SPLT_OK_SPLIT_EOF :
-        snprintf(error_msg,max_error_size," file split (EOF)");
+        snprintf(error_msg,max_error_size,_(" file split (EOF)"));
         break;
       case SPLT_NO_SILENCE_SPLITPOINTS_FOUND:
-        snprintf(error_msg,max_error_size, " no silence splitpoints found");
+        snprintf(error_msg,max_error_size, _(" no silence splitpoints found"));
         break;
       case SPLT_TIME_SPLIT_OK:
-        snprintf(error_msg,max_error_size, " time split ok");
+        snprintf(error_msg,max_error_size, _(" time split ok"));
         break;
       case SPLT_SILENCE_OK:
-        snprintf(error_msg,max_error_size, " silence split ok");
+        snprintf(error_msg,max_error_size, _(" silence split ok"));
         break;
       case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH :
         snprintf(error_msg,max_error_size,
-            " file split, splitpoints bigger than length");
+            _(" file split, splitpoints bigger than length"));
         break;
       case SPLT_OK_SPLIT:
-        snprintf(error_msg,max_error_size," file split");
+        snprintf(error_msg,max_error_size, _(" file split"));
         break;
       case SPLT_OK :
         //fprintf(console_err," bug in the program, please report it");
         break;
       case SPLT_ERROR_SPLITPOINTS :
-        snprintf(error_msg,max_error_size, " error: not enough splitpoints (<2)");
+        snprintf(error_msg,max_error_size, _(" error: not enough splitpoints (<2)"));
         break;
       case SPLT_ERROR_CANNOT_OPEN_FILE :
         snprintf(error_msg,max_error_size,
-            " error: cannot open file '%s' : %s",
+            _(" error: cannot open file '%s' : %s"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_ERROR_CANNOT_CLOSE_FILE :
         snprintf(error_msg,max_error_size,
-            " error: cannot close file '%s' : %s",
+            _(" error: cannot close file '%s' : %s"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_ERROR_INVALID :
@@ -2174,122 +2174,125 @@ char *splt_u_strerror(splt_state *state, int error_code)
         int err = SPLT_OK;
         const char *plugin_name = splt_p_get_name(state,&err);
         snprintf(error_msg,max_error_size,
-            " error: invalid input file '%s' for '%s' plugin",
+            _(" error: invalid input file '%s' for '%s' plugin"),
             state->err.error_data, plugin_name);
         break;
       case SPLT_ERROR_EQUAL_SPLITPOINTS :
         snprintf(error_msg,max_error_size,
-            " error: splitpoints are equal (%s)",
+            _(" error: splitpoints are equal (%s)"),
             state->err.error_data);
         break;
       case SPLT_ERROR_TIME_SPLIT_VALUE_INVALID :
-        snprintf(error_msg,max_error_size, " error: invalid time split value");
+        snprintf(error_msg,max_error_size, _(" error: invalid time split value"));
         break;
       case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER :
         snprintf(error_msg,max_error_size,
-            " error: the splitpoints are not in order (%s)",
+            _(" error: the splitpoints are not in order (%s)"),
             state->err.error_data);
         break;
       case SPLT_ERROR_NEGATIVE_SPLITPOINT :
-        snprintf(error_msg,max_error_size, " error: negative splitpoint (%s)",
+        snprintf(error_msg,max_error_size, _(" error: negative splitpoint (%s)"),
             state->err.error_data);
         break;
       case SPLT_ERROR_INCORRECT_PATH :
         snprintf(error_msg,max_error_size,
-            " error: bad destination folder '%s' (%s)",
+            _(" error: bad destination folder '%s' (%s)"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_ERROR_INCOMPATIBLE_OPTIONS:
-        snprintf(error_msg,max_error_size, " error: incompatible options");
+        snprintf(error_msg,max_error_size, _(" error: incompatible options"));
         break;
       case SPLT_ERROR_INPUT_OUTPUT_SAME_FILE:
         snprintf(error_msg,max_error_size,
-            " input and output are the same file ('%s')",
+            _(" input and output are the same file ('%s')"),
             state->err.error_data);
         break;
       case SPLT_ERROR_CANNOT_ALLOCATE_MEMORY:
-        snprintf(error_msg,max_error_size, " error: cannot allocate memory");
+        snprintf(error_msg,max_error_size, _(" error: cannot allocate memory"));
         break;
       case SPLT_ERROR_CANNOT_OPEN_DEST_FILE:
         snprintf(error_msg,max_error_size,
-            " error: cannot open destination file '%s' : %s",
+            _(" error: cannot open destination file '%s' : %s"),
             state->err.error_data,state->err.strerror_msg);
         break;
       case SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE:
         snprintf(error_msg,max_error_size,
-            " error: cannot write to output file '%s'",
+            _(" error: cannot write to output file '%s'"),
             state->err.error_data);
         break;
       case SPLT_ERROR_WHILE_READING_FILE:
-        snprintf(error_msg,max_error_size, " error: error while reading file '%s' : %s",
+        snprintf(error_msg,max_error_size, _(" error: error while reading file '%s' : %s"),
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_ERROR_SEEKING_FILE:
-        snprintf(error_msg,max_error_size, " error: cannot seek file '%s'",
+        snprintf(error_msg,max_error_size, _(" error: cannot seek file '%s'"),
             state->err.error_data);
         break;
       case SPLT_ERROR_BEGIN_OUT_OF_FILE:
-        snprintf(error_msg,max_error_size, " error: begin point out of file");
+        snprintf(error_msg,max_error_size, _(" error: begin point out of file"));
         break;
       case SPLT_ERROR_INEXISTENT_FILE:
-        snprintf(error_msg,max_error_size, " error: inexistent file '%s' : %s",
+        snprintf(error_msg,max_error_size, _(" error: inexistent file '%s' : %s"),
             state->err.error_data,state->err.strerror_msg);
         break;
       case SPLT_SPLIT_CANCELLED:
-        snprintf(error_msg,max_error_size, " split process cancelled");
+        snprintf(error_msg,max_error_size, _(" split process cancelled"));
         break;
       case SPLT_ERROR_LIBRARY_LOCKED: 
-        snprintf(error_msg,max_error_size, " error: library locked");
+        snprintf(error_msg,max_error_size, _(" error: library locked"));
         break;
       case SPLT_ERROR_STATE_NULL:
         snprintf(error_msg,max_error_size,
-            " error: the state has not been initialized with 'mp3splt_new_state'");
+            _(" error: the state has not been initialized with 'mp3splt_new_state'"));
         break;
       case SPLT_ERROR_NEGATIVE_TIME_SPLIT:
-        snprintf(error_msg,max_error_size, " error: negative time split");
+        snprintf(error_msg,max_error_size, _(" error: negative time split"));
         break;
       case SPLT_ERROR_CANNOT_CREATE_DIRECTORY:
-        snprintf(error_msg,max_error_size, " error: cannot create directory '%s'",
+        snprintf(error_msg,max_error_size, _(" error: cannot create directory '%s'"),
             state->err.error_data);
         break;
       case SPLT_ERROR_NO_PLUGIN_FOUND:
-        snprintf(error_msg,max_error_size, " error: no plugin found");
+        snprintf(error_msg,max_error_size, _(" error: no plugin found"));
         break;
       case SPLT_ERROR_CANNOT_INIT_LIBLTDL:
-        snprintf(error_msg,max_error_size, " error: cannot initiate libltdl");
+        snprintf(error_msg,max_error_size, _(" error: cannot initiate libltdl"));
         break;
       case SPLT_ERROR_CRC_FAILED:
-        snprintf(error_msg,max_error_size, " error: CRC failed");
+        snprintf(error_msg,max_error_size, _(" error: CRC failed"));
         break;
       case SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE:
         snprintf(error_msg,max_error_size,
-            " error: no plugin matches the file '%s'", state->err.error_data);
+            _(" error: no plugin matches the file '%s'"),
+            state->err.error_data);
         break;
         //
       case SPLT_OUTPUT_FORMAT_OK:
         break;
       case SPLT_OUTPUT_FORMAT_AMBIGUOUS:
-        snprintf(error_msg,max_error_size, " warning: output format ambiguous (@t or @n missing)");
+        snprintf(error_msg,max_error_size,
+            _(" warning: output format ambiguous (@t or @n missing)"));
         break;
         //
       case SPLT_OUTPUT_FORMAT_ERROR:
         if (state->err.error_data == NULL || strlen(state->err.error_data) == 0)
         {
-          snprintf(error_msg,max_error_size, " error: invalid output format");
+          snprintf(error_msg,max_error_size, _(" error: invalid output format"));
         }
         else
         {
-          snprintf(error_msg,max_error_size, " error: illegal variable '@%s' in output format",
+          snprintf(error_msg,max_error_size,
+              _(" error: illegal variable '@%s' in output format"),
               state->err.error_data);
         }
         break;
         //
       case SPLT_ERROR_INEXISTENT_SPLITPOINT:
-        snprintf(error_msg,max_error_size, " error: inexistent splitpoint");
+        snprintf(error_msg,max_error_size, _(" error: inexistent splitpoint"));
         break;
         //
       case SPLT_ERROR_PLUGIN_ERROR:
-        snprintf(error_msg,max_error_size, " plugin error: '%s'",
+        snprintf(error_msg,max_error_size, _(" plugin error: '%s'"),
             state->err.error_data);
         break;
         //
@@ -2297,7 +2300,7 @@ char *splt_u_strerror(splt_state *state, int error_code)
         ;
         splt_plugins *pl = state->plug;
         int current_plugin = splt_t_get_current_plugin(state);
-        snprintf(error_msg,max_error_size, " error: unsupported feature for the plugin '%s'",
+        snprintf(error_msg,max_error_size, _(" error: unsupported feature for the plugin '%s'"),
             pl->data[current_plugin].info.name);
         break;
     }
@@ -2311,7 +2314,7 @@ char *splt_u_strerror(splt_state *state, int error_code)
   else
   {
     //if not enough memory
-    splt_u_error(SPLT_IERROR_CHAR,__func__, 0, "not enough memory");
+    splt_u_error(SPLT_IERROR_CHAR,__func__, 0, _("not enough memory"));
   }
 
   return error_msg;
@@ -2753,7 +2756,8 @@ void splt_u_print_overlap_time(splt_state *state)
     long hundr = -1;
     splt_u_get_mins_secs_hundr(overlap_time, &mins, &secs, &hundr);
     snprintf(message, 1024,
-        " info: overlapping split files with %ld.%ld.%ld\n", mins, secs, hundr);
+        _(" info: overlapping split files with %ld.%ld.%ld\n"),
+        mins, secs, hundr);
     splt_t_put_message_to_client(state, message);
   }
 }

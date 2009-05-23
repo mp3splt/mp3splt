@@ -246,8 +246,7 @@ gboolean check_if_different_from_config_file()
                                       "general",
                                       "language",
                                       NULL);
-  GString *langg =
-    g_string_new(file_string);
+  GString *langg = g_string_new(file_string);
   //free memory
   g_free(file_string);
   
@@ -390,8 +389,7 @@ void set_language()
   g_free(filename);
   
   GString *lang;
-  gchar *file_string =
-    g_key_file_get_string(key_file,
+  gchar *file_string = g_key_file_get_string(key_file,
                           "general",
                           "language",
                           NULL);
@@ -443,13 +441,11 @@ void load_preferences()
   //only for the buttons, the setenv is in another function
   /* the language radio buttons */
   GString *lang;
-  gchar *file_string =
-    g_key_file_get_string(key_file,
+  gchar *file_string = g_key_file_get_string(key_file,
                           "general",
                           "language",
                           NULL);
-  lang = 
-    g_string_new(file_string);
+  lang = g_string_new(file_string);
   //0 = french, 1 = english
   gint list_number = 1;
   if(g_string_equal(lang,g_string_new("en")))
@@ -461,8 +457,7 @@ void load_preferences()
   GSList *radio_button_list;
   radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
   GtkWidget *our_button;
-  our_button = 
-    (GtkWidget *)g_slist_nth_data(radio_button_list, list_number);
+  our_button = (GtkWidget *)g_slist_nth_data(radio_button_list, list_number);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(our_button), TRUE);
   
   //free the string

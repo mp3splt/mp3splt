@@ -613,6 +613,7 @@ stdout_multiple_splitpoints"
 }
 
 #main
+export LANGUAGE="en"
 echo
 start_date=$(date "+%D %H:%M:%S")
 

@@ -58,6 +58,14 @@ splt_state *mp3splt_new_state(int *error)
   }
   else
   {
+
+#ifdef __WIN32__
+    bindtextdomain(SPLT_LIB_GETTEXT_DOMAIN, "translations");
+    bind_textdomain_codeset(SPLT_LIB_GETTEXT_DOMAIN, "UTF-8");
+#else
+    bindtextdomain(SPLT_LIB_GETTEXT_DOMAIN, LOCALEDIR);
+#endif
+
     state = splt_t_new_state(state, err);
   }
 
@@ -748,6 +756,12 @@ int mp3splt_split(splt_state *state)
       splt_check_file_type(state, &error);
       if (error < 0) { goto function_end; }
 
+      const char *plugin_name = splt_p_get_name(state,&error);
+      if (error < 0) { goto function_end; }
+      char infos[2048] = { '\0' };
+      snprintf(infos,2048,_(" info: file matches the plugin '%s'\n"), plugin_name);
+      splt_t_put_message_to_client(state, infos);
+
       //print the new m3u fname
       char *m3u_fname_with_path = splt_t_get_m3u_file_with_path(state, &error);
       if (error < 0) { goto function_end; }
@@ -756,7 +770,7 @@ int mp3splt_split(splt_state *state)
         int malloc_size = strlen(m3u_fname_with_path) + 200;
         char *mess = malloc(sizeof(char) * (strlen(m3u_fname_with_path) + 200));
         if (!mess) { error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto function_end; }
-        snprintf(mess, malloc_size, " M3U file '%s' will be created.\n",
+        snprintf(mess, malloc_size, _(" M3U file '%s' will be created.\n"),
             m3u_fname_with_path);
         splt_t_put_message_to_client(state, mess);
         free(m3u_fname_with_path);
@@ -789,8 +803,8 @@ int mp3splt_split(splt_state *state)
             && (split_type != SPLT_OPTION_SILENCE_MODE)
             && (split_type != SPLT_OPTION_ERROR_MODE))
         {
-          snprintf(message, 1024, " Working with SILENCE AUTO-ADJUST (Threshold:"
-              " %.1f dB Gap: %d sec Offset: %.2f)\n",
+          snprintf(message, 1024, _(" Working with SILENCE AUTO-ADJUST (Threshold:"
+                " %.1f dB Gap: %d sec Offset: %.2f)\n"),
               splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
               splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP),
               splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET));

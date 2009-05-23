@@ -25,16 +25,17 @@ rm -f libtool aclocal.m4 config.status configure autom4te.cache/* ltmain.sh
 
 #we run aclocal, autoconf and automake
 #info: the 'sed' is an ugly hack for libtool version compatibility because aclocal.m4 is shipped in 'make dist'
-echo -n "1/5 Running aclocal... " \
+echo -n "1/6 Running autopoint... " \
+&& autopoint -f && echo "done" \
+&& echo -n "2/6 Running aclocal... " \
 && aclocal -Im4 $ACLOCAL_FLAGS && echo "done" \
 && if [[ -z $win ]];then sed -i "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4;fi \
-&& echo -n "2/5 Running autoheader... " \
+&& echo -n "3/6 Running autoheader... " \
 && autoheader && echo "done" \
-&& echo -n "3/5 Running libtoolize... " \
+&& echo -n "4/6 Running libtoolize... " \
 && libtoolize -c --force && echo "done" \
-&& echo -n "4/5 Running autoconf... " \
+&& echo -n "5/6 Running autoconf... " \
 && autoconf && echo "done" \
-&& echo -n "5/5 Running automake... " \
+&& echo -n "6/6 Running automake... " \
 && automake -a -c && echo "done"
-
 

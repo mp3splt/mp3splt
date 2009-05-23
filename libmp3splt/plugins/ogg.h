@@ -37,6 +37,8 @@
 
 #include "splt.h"
 
+#define SPLT_OGGEXT ".ogg"
+
 /**********************************/
 /* Ogg structures                 */
 

@@ -89,10 +89,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
         if (message)
         {
           memset(message,'\0',malloc_size);
-          g_snprintf(message, malloc_size,"Error : %s",error->message);
-
-          //fprintf(stdout,"error : %s\n",message);
-          //fflush(stdout);
+          g_snprintf(message, malloc_size,_("Error : %s"),error->message);
 
           gdk_threads_enter();
           put_status_message(message);
@@ -120,10 +117,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
         if (message)
         {
           memset(message,'\0',malloc_size);
-          g_snprintf(message, malloc_size,"Warning: %s",error->message);
-
-          //fprintf(stdout,"warning : %s\n",message);
-          //fflush(stdout);
+          g_snprintf(message, malloc_size,_("Warning: %s"),error->message);
 
           gdk_threads_enter();
           put_status_message(message);
@@ -151,10 +145,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
         if (message)
         {
           memset(message,'\0',malloc_size);
-          g_snprintf(message, malloc_size,"Info : %s",error->message);
-
-          //fprintf(stdout,"info : %s\n",message);
-          //fflush(stdout);
+          g_snprintf(message, malloc_size,_("Info : %s"),error->message);
 
           gdk_threads_enter();
           put_status_message(message);
@@ -410,7 +401,7 @@ void gstreamer_start()
 	else
 	{
 		gdk_threads_enter();
-		put_status_message(" Error: cannot create gstreamer playbin\n");
+		put_status_message(_(" Error: cannot create gstreamer playbin\n"));
 		gdk_threads_leave();
 	}
 }

@@ -172,7 +172,7 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
       }
       else
       {
-        splt_t_set_strerr_msg(state,"Directory does not exists");
+        splt_t_set_strerr_msg(state,_("Directory does not exists"));
         splt_t_set_error_data(state, new_filename_path);
         *error = SPLT_ERROR_INCORRECT_PATH;
       }
@@ -384,22 +384,6 @@ void splt_check_file_type(splt_state *state, int *error)
       splt_t_set_strerror_msg(state);
       splt_t_set_error_data(state,filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-      return;
-    }
-  }
-  else
-  {
-    err = SPLT_OK;
-    const char *temp = splt_p_get_name(state,&err);
-    if (err != SPLT_OK)
-    {
-      char infos[2048] = { '\0' };
-      snprintf(infos,2048," info: file matches the plugin '%s'\n",temp);
-      splt_t_put_message_to_client(state, infos);
-    }
-    else
-    {
-      *error = err;
       return;
     }
   }

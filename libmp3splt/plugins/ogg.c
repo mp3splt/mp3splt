@@ -63,6 +63,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
 /* ogg constants */
 
 //ogg genre list
+//TODO: genres
 const char *splt_ogg_genre_list[] = {
   "Blues",                 "Classic Rock",          "Country",
   "Dance",                 "Disco",                 "Funk",
@@ -164,7 +165,8 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
       splt_ogg_state *oggstate = state->codec;
       //ogg infos
       char ogg_infos[2048] = { '\0' };
-      snprintf(ogg_infos, 2048, " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels",
+      snprintf(ogg_infos, 2048, 
+          _(" info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"),
           oggstate->vd->vi->rate, oggstate->vd->vi->bitrate_nominal/1024,
           oggstate->vd->vi->channels);
       //total time
@@ -172,7 +174,7 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
       int total_seconds = (int) splt_t_get_total_time(state) / 100;
       int minutes = total_seconds / 60;
       int seconds = total_seconds % 60;
-      snprintf(total_time,256," - Total time: %dm.%02ds", minutes, seconds%60);
+      snprintf(total_time,256,_(" - Total time: %dm.%02ds"), minutes, seconds%60);
       //all infos together
       char all_infos[3072] = { '\0' };
       snprintf(all_infos,3072,"%s%s\n",ogg_infos,total_time);
@@ -748,7 +750,7 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate, int *error)
   {
     goto error_invalid_file;
   }
-  //TODO: ogg doc says "usually this will not be a fatal error"
+  //TODO: ogg doc says 'usually this will not be a fatal error'
   if(ogg_stream_packetout(oggstate->stream_in, &packet)!=1)
   {
     goto error_invalid_file;
@@ -793,7 +795,7 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate, int *error)
           {
             break;
           }
-          //TODO: ogg doc says "usually this will not be a fatal error"
+          //TODO: ogg doc says 'usually this will not be a fatal error'
           if(res<0)
           {
             goto error_invalid_file;
@@ -1139,7 +1141,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
        * spectacularly unlucky? Doubt it, but let's check for it just
        * in case.
        */
-      //fprintf(stderr, "Warning: First audio packet didn't fit into page. File may not decode correctly\n");
+      //fprintf(stderr, 'Warning: First audio packet didn't fit into page. File may not decode correctly\n")'
       if (fwrite(page.header,1,page.header_len,f) < page.header_len)
       {
         goto write_error;
@@ -1868,7 +1870,8 @@ void splt_pl_init(splt_state *state, int *error)
     if (filename[1] == '\0')
     {
       char message[1024] = { '\0' };
-      snprintf(message, 1024, " warning: stdin 'o-' is supposed to be ogg stream.\n");
+      snprintf(message, 1024,
+          _(" warning: stdin 'o-' is supposed to be ogg stream.\n"));
       splt_t_put_message_to_client(state, message);
     }
   }

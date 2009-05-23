@@ -306,9 +306,8 @@ void order_length_column(GtkTreeView *tree_view)
             }
           
           //we write the new string
-          g_snprintf(new_length_string,30,
-                     "%d:%02d:%02d",result_mins,
-                     result_secs,result_hundr);
+          g_snprintf(new_length_string,30, "%d:%02d:%02d",result_mins,
+              result_secs,result_hundr);
           
           //free memory
           gtk_tree_path_free(path2);
@@ -518,8 +517,7 @@ void update_current_description(gchar *descr, gint number)
               *tmp = '\0';
             }
           gchar *temp = g_strdup(current_description);
-          g_snprintf(current_description,255,
-                     "%s_%d_",temp,ll);
+          g_snprintf(current_description,255, "%s_%d_",temp,ll);
           //freeing memory
           g_free(temp);
         }
@@ -1154,7 +1152,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       horiz_fake, FALSE, FALSE, 0);
   
   //threshold level
-  GtkWidget *label = gtk_label_new("threshold level (dB) : ");
+  GtkWidget *label = gtk_label_new(_("threshold level (dB) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake), 
       label, FALSE, FALSE, 0);
   
@@ -1173,8 +1171,8 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
                       horiz_fake, FALSE, FALSE, 0);
   
   //offset level
-  label = gtk_label_new("cutpoint offset (0 is the begin of silence,"
-                        "and 1 the end) : ");
+  label = gtk_label_new(_("cutpoint offset (0 is the begin of silence,"
+        "and 1 the end) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   
   //adjustement for the offset spinner
@@ -1191,7 +1189,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       horiz_fake, FALSE, FALSE, 0);
   
   //number of tracks level
-  label = gtk_label_new("number of tracks (0 means all tracks) : ");
+  label = gtk_label_new(_("number of tracks (0 means all tracks) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   
   //number of tracks
@@ -1209,7 +1207,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
                       horiz_fake, FALSE, FALSE, 0);
   
   //the minimum length parameter
-  label = gtk_label_new("minimum silence length (seconds) : ");
+  label = gtk_label_new(_("minimum silence length (seconds) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake),
                       label, FALSE, FALSE, 0);
   

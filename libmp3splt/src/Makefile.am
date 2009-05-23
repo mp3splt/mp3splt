@@ -8,7 +8,7 @@ INCLUDES=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt\" @INCLTDL@
 lib_LTLIBRARIES = libmp3splt.la
 
 libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:5:0
-libmp3splt_la_LIBADD = @LIBLTDL@ -lm
+libmp3splt_la_LIBADD = @LIBINTL@ @LIBLTDL@ -lm
 
 if WIN32
 libmp3splt_la_LIBADD += -lz -lws2_32
@@ -22,4 +22,8 @@ cddb.c ../include/libmp3splt/cddb.h \
 checks.c ../include/libmp3splt/checks.h \
 utils.c ../include/libmp3splt/utils.h \
 plugins.c ../include/libmp3splt/plugins.h
+
+# Define a C macro LOCALEDIR indicating where catalogs will be installed.
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 

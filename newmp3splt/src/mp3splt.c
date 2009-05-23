@@ -28,6 +28,9 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include <getopt.h>
+#include <locale.h>
+#include <libintl.h>
 
 #ifdef __WIN32__
 #include <windows.h>
@@ -35,8 +38,6 @@
 #endif
 
 #include <libmp3splt/mp3splt.h>
-
-#include "getopt.h"
 
 //constants
 //we include the "config.h" file from the config options
@@ -52,6 +53,9 @@
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
 #define MP3SPLT_EMAIL2 "<io_fx AT yahoo.fr>"
 #define MP3SPLT_CDDBFILE "query.cddb"
+
+#define MP3SPLT_GETTEXT_DOMAIN "mp3splt"
+#define _(STR) gettext(STR)
 
 //in case of STDIN/STDOUT usage, we change the console file handle
 //-yeah indeed, global variables might suck
@@ -265,14 +269,14 @@ void print_message(const char *m)
 //prints a warning
 void print_warning(const char *w)
 {
-  fprintf(console_err," Warning: %s\n",w);
+  fprintf(console_err,_(" Warning: %s\n"),w);
   fflush(console_err);
 }
 
 //prints an error
 void print_error(const char *e)
 {
-  fprintf(console_err," Error: %s\n",e);
+  fprintf(console_err,_(" Error: %s\n"),e);
   fflush(console_err);
 }
 
@@ -288,7 +292,7 @@ void *my_malloc(size_t size, main_data *data)
   void *allocated = malloc(size);
   if (! allocated)
   {
-    print_error_exit("cannot allocate memory !", data);
+    print_error_exit(_("cannot allocate memory !"), data);
   }
   else
   {
@@ -303,7 +307,7 @@ void *my_realloc(void *ptr, size_t size, main_data *data)
   void *allocated = realloc(ptr, size);
   if (! allocated)
   {
-    print_error_exit("cannot allocate memory !", data);
+    print_error_exit(_("cannot allocate memory !"), data);
   }
   else
   {
@@ -317,7 +321,7 @@ void *my_realloc(void *ptr, size_t size, main_data *data)
 void show_small_help_exit(main_data *data)
 {
   free_main_struct(&data);
-  print_message("\n"
+  print_message(_("\n"
       "USAGE: (Please read man page for complete documentation)\n"
       "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... [END_TIME]\n"
       "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
@@ -367,7 +371,7 @@ void show_small_help_exit(main_data *data)
       " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
       "       (also enables -q).\n"
       " -D   Debug mode: used to debug the program.\n\n"
-      "      Read man page for complete documentation.\n");
+      "      Read man page for complete documentation.\n"));
 
   if (console_out == stderr)
   {
@@ -422,7 +426,7 @@ int parse_arg(char *arg, float *th, int *gap,
       }
       else 
       {
-        print_warning("bad gap argument. It will be ignored!");
+        print_warning(_("bad gap argument. It will be ignored !"));
       }
     }
   }
@@ -437,7 +441,7 @@ int parse_arg(char *arg, float *th, int *gap,
       }
       else 
       {
-        print_warning("bad threshold argument. It will be ignored!");
+        print_warning(_("bad threshold argument. It will be ignored !"));
       }
     }
   }
@@ -452,7 +456,7 @@ int parse_arg(char *arg, float *th, int *gap,
       }
       else 
       {
-        print_warning("bad tracknumber argument. It will be ignored!");
+        print_warning(_("bad tracknumber argument. It will be ignored !"));
       }
     }
   }
@@ -476,7 +480,7 @@ int parse_arg(char *arg, float *th, int *gap,
       }
       else 
       {
-        print_warning("bad offset argument. It will be ignored!");
+        print_warning(_("bad offset argument. It will be ignored!"));
       }
     }
   }
@@ -491,7 +495,7 @@ int parse_arg(char *arg, float *th, int *gap,
       }
       else 
       {
-        print_warning("bad minimum silence length argument. It will be ignored!");
+        print_warning(_("bad minimum silence length argument. It will be ignored !"));
       }
     }
   }
@@ -519,8 +523,8 @@ void check_args(int argc, main_data *data)
           opt->i_option || opt->a_option ||
           opt->p_option)
       {
-        print_error_exit("cannot use -k option (or STDIN) with"
-            " one of the following options : -s -w -l -e -i -a -p", data);
+        print_error_exit(_("cannot use -k option (or STDIN) with"
+              " one of the following options : -s -w -l -e -i -a -p"), data);
       }
     }
 
@@ -535,7 +539,7 @@ void check_args(int argc, main_data *data)
           opt->g_option || opt->n_option ||
           opt->x_option)
       {
-        print_error_exit("the -w option can only be used with -m, -d, -q and -Q", data);
+        print_error_exit(_("the -w option can only be used with -m, -d, -q and -Q"), data);
       }
     }
 
@@ -551,7 +555,7 @@ void check_args(int argc, main_data *data)
           opt->n_option || opt->qq_option ||
           opt->x_option)
       {
-        print_error_exit("the -l option can only be used with -q", data);
+        print_error_exit(_("the -l option can only be used with -q"), data);
       }
     }
 
@@ -563,7 +567,7 @@ void check_args(int argc, main_data *data)
           opt->a_option || opt->p_option ||
           opt->g_option || opt->n_option)
       {
-        print_error_exit("the -e option can only be used with -m, -f, -o, -d, -q, -Q", data);
+        print_error_exit(_("the -e option can only be used with -m, -f, -o, -d, -q, -Q"), data);
       }
     }
 
@@ -578,7 +582,7 @@ void check_args(int argc, main_data *data)
       if (opt->t_option || opt->s_option ||
           opt->i_option || opt->g_option)
       {
-        print_error_exit("the -c option cannot be used with -t, -g, -s, or -i", data);
+        print_error_exit(_("the -c option cannot be used with -t, -g, -s, or -i"), data);
       }
     }
 
@@ -587,7 +591,7 @@ void check_args(int argc, main_data *data)
     {
       if (opt->s_option || opt->i_option)
       {
-        print_error_exit("the -t option cannot be used with -s or -i", data);
+        print_error_exit(_("the -t option cannot be used with -s or -i"), data);
       }
     }
 
@@ -596,7 +600,7 @@ void check_args(int argc, main_data *data)
     {
       if (opt->a_option || opt->i_option)
       {
-        print_error_exit("-s option cannot be used with -a or -i", data);
+        print_error_exit(_("-s option cannot be used with -a or -i"), data);
       }
     }
 
@@ -605,7 +609,7 @@ void check_args(int argc, main_data *data)
     {
       if (opt->i_option)
       {
-        print_error_exit("-a option cannot be used with -i", data);
+        print_error_exit(_("-a option cannot be used with -i"), data);
       }
     }
 
@@ -614,7 +618,7 @@ void check_args(int argc, main_data *data)
     {
       if (!opt->a_option && !opt->s_option && !opt->i_option)
       {
-        print_error_exit("the -p option cannot be used without -a, -s or -i", data);
+        print_error_exit(_("the -p option cannot be used without -a, -s or -i"), data);
       }
     }
 
@@ -623,13 +627,13 @@ void check_args(int argc, main_data *data)
     {
       if (opt->i_option)
       {
-        print_error_exit("the -o option cannot be used with -i", data);
+        print_error_exit(_("the -o option cannot be used with -i"), data);
       }
       if (opt->output_format)
       {
         if ((strcmp(opt->output_format,"-") == 0) && (opt->m_option || opt->d_option))
         {
-          print_error_exit("cannot use '-o -' (STDOUT) with -m or -d", data);
+          print_error_exit(_("cannot use '-o -' (STDOUT) with -m or -d"), data);
         }
       }
     }
@@ -639,7 +643,7 @@ void check_args(int argc, main_data *data)
     {
       if (opt->i_option || opt->n_option)
       {
-        print_error_exit("the -g option cannot be used with -n or -i", data);
+        print_error_exit(_("the -g option cannot be used with -n or -i"), data);
       }
     }
 
@@ -648,7 +652,7 @@ void check_args(int argc, main_data *data)
     {
       if (opt->i_option)
       {
-        print_error_exit("the -d option cannot be used with -i", data);
+        print_error_exit(_("the -d option cannot be used with -i"), data);
       }
     }
 
@@ -657,7 +661,7 @@ void check_args(int argc, main_data *data)
     {
       if (opt->i_option || opt->id3v1_option || opt->id3v2_option)
       {
-        print_error_exit("the -n option cannot be used with -i or -1 or -2", data);
+        print_error_exit(_("the -n option cannot be used with -i or -1 or -2"), data);
       }
     }
 
@@ -666,7 +670,7 @@ void check_args(int argc, main_data *data)
     {
       if (opt->i_option)
       {
-        print_error_exit("the -m option cannot be used with -i", data);
+        print_error_exit(_("the -m option cannot be used with -i"), data);
       }
     }
 
@@ -687,16 +691,16 @@ void check_args(int argc, main_data *data)
       {
         if (strcmp(opt->output_format,"-") == 0)
         {
-          print_error_exit("the -Q option cannot be used with"
-              " STDOUT output ('-o -')", data);
+          print_error_exit(_("the -Q option cannot be used with"
+              " STDOUT output ('-o -')"), data);
         }
       }
       if (opt->c_option)
       {
         if (strncmp(opt->cddb_arg,"query",5) == 0)
         {
-          print_error_exit("the -Q option cannot be used with"
-              " interactive freedb query ('-c query')", data);
+          print_error_exit(_("the -Q option cannot be used with"
+              " interactive freedb query ('-c query')"), data);
         }
       }
     }
@@ -705,8 +709,8 @@ void check_args(int argc, main_data *data)
     {
       if (!opt->s_option)
       {
-        print_error_exit("the -N option must be used with"
-            " silence detection (-s option)", data);
+        print_error_exit(_("the -N option must be used with"
+            " silence detection (-s option)"), data);
       }
     }
 
@@ -715,8 +719,8 @@ void check_args(int argc, main_data *data)
       if (opt->w_option || opt->e_option ||
           opt->l_option || opt->i_option)
       {
-        print_error_exit("the -O option cannot be used with"
-            " -w, -e, -l or -i", data);
+        print_error_exit(_("the -O option cannot be used with"
+            " -w, -e, -l or -i"), data);
       }
     }
 
@@ -750,7 +754,8 @@ void process_confirmation_error(int conf, main_data *data)
   }
   if (conf == SPLT_DEWRAP_OK)
   {
-    print_message("\nAll files have been split correctly. Visit http://mp3wrap.sourceforge.net!");
+    print_message(_("\nAll files have been split correctly."
+          " Visit http://mp3wrap.sourceforge.net!"));
   }
 }
 
@@ -970,7 +975,8 @@ int parse_query_arg(options *opt, const char *query)
           else
           {
             freedb_int_port = SPLT_FREEDB_CDDB_CGI_PORT;
-            print_warning("found non digits characters in port ! (switched to default)");
+            print_warning(_("found non digits characters in port !"
+                  " (switched to default)"));
           }
         }
       }
@@ -994,7 +1000,8 @@ int parse_query_arg(options *opt, const char *query)
             }
             else
             {
-              print_warning("unknown search type ! (switched to default)");
+              print_warning(_("unknown search type !"
+                    " (switched to default)"));
             }
           }
         }
@@ -1009,12 +1016,13 @@ int parse_query_arg(options *opt, const char *query)
           {
             if (strcmp(freedb_type,"web_search") == 0)
             {
-              print_warning("freedb web search not implemented yet ! (switched to default)");
+              print_warning(_("freedb web search not implemented yet !"
+                    " (switched to default)"));
               freedb_int_type = SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI;
             }
             else
             {
-              print_warning("unknown get type ! (switched to default)");
+              print_warning(_("unknown get type ! (switched to default)"));
             }
           }
         }
@@ -1170,10 +1178,10 @@ void do_freedb_search(main_data *data)
   }
 
   //print out infos about the servers
-  fprintf(console_out," Freedb search type : %s , Site: %s , Port: %d\n",
+  fprintf(console_out,_(" Freedb search type : %s , Site: %s , Port: %d\n"),
       search_type,opt->freedb_search_server,opt->freedb_search_port);
   fflush(console_out);
-  fprintf(console_out," Freedb get type : %s , Site: %s , Port: %d\n",
+  fprintf(console_out,_(" Freedb get type : %s , Site: %s , Port: %d\n"),
       get_type,opt->freedb_get_server,opt->freedb_get_port);
   fflush(console_out);
 
@@ -1183,20 +1191,21 @@ void do_freedb_search(main_data *data)
   if (opt->freedb_arg_search_string[0] == '\0')
   {
     //freedb search
-    print_message("CDDB QUERY. Insert album and artist informations to find cd.");
+    print_message(_("CDDB QUERY. Insert album and"
+          " artist informations to find cd."));
 
     short first_time = SPLT_TRUE;
     //here we search freedb
     do {
       if (!first_time)
       {
-        print_message("\nPlease search something ...");
+        print_message(_("\nPlease search something ..."));
       }
 
       memset(freedb_input, '\0', sizeof(freedb_input));
 
       fprintf(console_out, "\n\t____________________________________________________________]");
-      fprintf(console_out, "\r Search: [");
+      fprintf(console_out, _("\r Search: ["));
 
       fgets(freedb_input, 2046, stdin);
 
@@ -1213,8 +1222,8 @@ void do_freedb_search(main_data *data)
     freedb_search_string = opt->freedb_arg_search_string;
   }
 
-  fprintf(console_out, "\n  Search string : %s\n",freedb_search_string);
-  fprintf(console_out, "\nSearching from %s on port %d using %s ...\n",
+  fprintf(console_out, _("\n  Search string : %s\n"),freedb_search_string);
+  fprintf(console_out, _("\nSearching from %s on port %d using %s ...\n"),
       opt->freedb_search_server,opt->freedb_search_port, search_type);
   fflush(console_out);
 
@@ -1234,7 +1243,7 @@ void do_freedb_search(main_data *data)
   if (opt->freedb_arg_result_option < 0)
   {
     //print the searched informations
-    print_message("List of found cd:");
+    print_message(_("List of found cd:"));
 
     int cd_number = 0;
     short end = SPLT_FALSE;
@@ -1248,14 +1257,14 @@ void do_freedb_search(main_data *data)
       {
         fprintf(console_out, "  |\\=>");
         fprintf(console_out, "%3d) ", f_results->results[cd_number].id+i+1);
-        fprintf(console_out, "Revision: %d\n", i+2);
+        fprintf(console_out, _("Revision: %d\n"), i+2);
 
         //break at 22
         if (((f_results->results[cd_number].id+i+2)%22)==0)
         {
           //duplicate, see below
           char junk[18];
-          fprintf(console_out, "-- 'q' to select cd, Enter for more:");
+          fprintf(console_out, _("-- 'q' to select cd, Enter for more:"));
           fflush(console_out);
 
           fgets(junk, 16, stdin);
@@ -1273,7 +1282,7 @@ void do_freedb_search(main_data *data)
       {
         //duplicate, see ^^
         char junk[18];
-        fprintf(console_out, "-- 'q' to select cd, Enter for more: ");
+        fprintf(console_out, _("-- 'q' to select cd, Enter for more: "));
         fflush(console_out);
 
         fgets(junk, 16, stdin);
@@ -1300,7 +1309,7 @@ end:
     int tot = 0;
     do {
       selected_cd = 0;
-      fprintf(console_out, "Select cd #: ");
+      fprintf(console_out, _("Select cd #: "));
       fflush(console_out);
       fgets(sel_cd_input, 254, stdin);
       sel_cd_input[strlen(sel_cd_input)-1]='\0';
@@ -1315,7 +1324,7 @@ end:
       {
         if (isdigit(sel_cd_input[tot++])==0)
         {
-          fprintf(console_out, "Please ");
+          fprintf(console_out, _("Please "));
           fflush(console_out);
 
           selected_cd = -1;
@@ -1340,7 +1349,7 @@ end:
     }
   }
 
-  fprintf(console_out, "\nGetting file from %s on port %d using %s ...\n",
+  fprintf(console_out, _("\nGetting file from %s on port %d using %s ...\n"),
       opt->freedb_get_server,opt->freedb_get_port, get_type);
   fflush(console_out);
 
@@ -1372,7 +1381,7 @@ void put_split_file(const char *file, int progress_data)
   }
   temp[counter] = '\0';
 
-  fprintf(console_out,"   File \"%s\" created%s\n",file,temp);
+  fprintf(console_out,_("   File \"%s\" created%s\n"),file,temp);
   fflush(console_out);
 }
 
@@ -1385,25 +1394,25 @@ void put_progress_bar(splt_progress *p_bar)
   {
     case SPLT_PROGRESS_PREPARE :
       snprintf(progress_text,2047,
-          " preparing \"%s\" (%d of %d)",
+          _(" preparing \"%s\" (%d of %d)"),
           p_bar->filename_shorted,
           p_bar->current_split,
           p_bar->max_splits);
       break;
     case SPLT_PROGRESS_CREATE :
       snprintf(progress_text,2047,
-          " creating \"%s\" (%d of %d)",
+          _(" creating \"%s\" (%d of %d)"),
           p_bar->filename_shorted,
           p_bar->current_split,
           p_bar->max_splits);
       break;
     case SPLT_PROGRESS_SEARCH_SYNC :
       snprintf(progress_text,2047,
-          " searching for sync errors...");
+          _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE :
       snprintf(progress_text,2047,
-          "S: %02d, Level: %.2f dB; scanning for silence...",
+          _("S: %02d, Level: %.2f dB; scanning for silence..."),
           p_bar->silence_found_tracks, p_bar->silence_db_level);
       break;
     default:
@@ -1495,7 +1504,7 @@ void print_version(FILE *std)
   char version[128] = { '\0' };
   mp3splt_get_version(version);
   fprintf(std, PACKAGE_NAME" "VERSION" ("MP3SPLT_DATE") -"
-      " using libmp3splt %s\n",version);
+      " %s libmp3splt %s\n",("using"),version);
   fflush(std);
 }
 
@@ -1507,7 +1516,8 @@ void print_authors(FILE *std)
 
 void print_no_warranty(FILE *std)
 {
-  fprintf(std, "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n");
+  fprintf(std, _("THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY!"
+        " USE AT YOUR OWN RISK!\n"));
   fflush(std);
 }
 
@@ -1632,7 +1642,7 @@ char **win32_get_utf8_args(main_data *data)
       argv_utf8 = NULL;
     }
 
-    print_error_exit("CommandLineToArgvW failed (oh !)", data);
+    print_error_exit(_("CommandLineToArgvW failed (oh !)"), data);
   }
   else
   {
@@ -1641,7 +1651,7 @@ char **win32_get_utf8_args(main_data *data)
       argv_utf8[i] = mp3splt_win32_utf16_to_utf8((wchar_t *)argv_utf16[i]);
       if (argv_utf8[i] == NULL)
       {
-        print_error_exit("failed to allocate argv_utf8 memory", data);
+        print_error_exit(_("failed to allocate argv_utf8 memory"), data);
       }
     }
 
@@ -1687,6 +1697,17 @@ main_data *create_main_struct(int argc, char **orig_argv)
 //main program starts here
 int main(int argc, char **orig_argv)
 {
+  //gettext
+  setlocale(LC_ALL, "");
+  textdomain(MP3SPLT_GETTEXT_DOMAIN);
+
+#ifdef __WIN32__
+  bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, "translations");
+  bind_textdomain_codeset(MP3SPLT_GETTEXT_DOMAIN, "UTF-8");
+#else
+  bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, LOCALEDIR);
+#endif
+
   console_out = stdout;
   console_err = stderr;
   console_progress = stderr;
@@ -1812,7 +1833,7 @@ int main(int argc, char **orig_argv)
           opt->output_format = strdup(optarg);
           if (!opt->output_format)
           {
-            print_error_exit("cannot allocate memory !",data);
+            print_error_exit(_("cannot allocate memory !"),data);
           }
         }
 
@@ -1842,8 +1863,8 @@ int main(int argc, char **orig_argv)
         }
         else
         {
-          print_error_exit("bad time expression for the time split.\n"
-              "\tMust be min.sec, read man page for details.", data);
+          print_error_exit(_("bad time expression for the time split.\n"
+                "\tMust be min.sec, read man page for details."), data);
         }
         opt->t_option = SPLT_TRUE;
         break;
@@ -1874,8 +1895,8 @@ int main(int argc, char **orig_argv)
         mp3splt_set_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
         break;*/
       default:
-        print_error_exit("read man page for documentation or type 'mp3splt -h'.",
-            data);
+        print_error_exit(_("read man page for documentation"
+              " or type 'mp3splt -h'."), data);
         break;
     }
   }
@@ -1951,8 +1972,8 @@ int main(int argc, char **orig_argv)
     int parsed_p_options = parse_arg(opt->param_args,&th,&gap,&nt,&off,&rm,&min);
     if (parsed_p_options < 1)
     {
-      print_error_exit("bad argument for -p option. No valid value"
-          " was recognized !", data);
+      print_error_exit(_("bad argument for -p option. No valid value"
+            " was recognized !"), data);
     }
 
     //threshold
@@ -2056,7 +2077,7 @@ int main(int argc, char **orig_argv)
 
   if (data->number_of_filenames <= 0)
   {
-    print_error_exit("no input filename(s).", data);
+    print_error_exit(_("no input filename(s)."), data);
   }
 
   if (data->number_of_filenames > 1)
@@ -2080,7 +2101,7 @@ int main(int argc, char **orig_argv)
     sl->number_of_levels = 0;
     err = SPLT_OK;
 
-    fprintf(console_out," Processing file '%s' ...\n",current_filename);
+    fprintf(console_out,_(" Processing file '%s' ...\n"),current_filename);
     fflush(console_out);
     //we put the filename
     err = mp3splt_set_filename_to_split(state, current_filename);
@@ -2141,7 +2162,7 @@ int main(int argc, char **orig_argv)
                 int ambigous = parse_query_arg(opt,opt->cddb_arg);
                 if (ambigous)
                 {
-                  print_warning("freedb query format ambigous !");
+                  print_warning(_("freedb query format ambigous !"));
                 }
                 do_freedb_search(data);
               }
@@ -2184,7 +2205,7 @@ int main(int argc, char **orig_argv)
         process_confirmation_error(err, data);
         if (ambiguous)
         {
-          print_warning("tags format ambiguous !");
+          print_warning(_("tags format ambiguous !"));
         }
 
         //for cddb, filenames are already set from the library, so 
@@ -2214,7 +2235,8 @@ int main(int argc, char **orig_argv)
             {
               float average_silence_levels = sl->level_sum / (double) sl->number_of_levels;
               char message[256] = { '\0' };
-              snprintf(message,256," Average silence level : %.2f dB", average_silence_levels);
+              snprintf(message,256,
+                  _(" Average silence level : %.2f dB"), average_silence_levels);
               print_message(message);
             }
           }
@@ -2223,7 +2245,7 @@ int main(int argc, char **orig_argv)
         //if cddb split, put message at the end
         if (opt->c_option && err >= 0 && !opt->q_option)
         {
-          print_message("\n +-----------------------------------------------------------------------------+\n"
+          print_message(_("\n +-----------------------------------------------------------------------------+\n"
               " |NOTE: When you use cddb/cue, split files might be not very precise due to:|\n"
               " |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n"
               " |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n"
@@ -2233,7 +2255,7 @@ int main(int argc, char **orig_argv)
               " |   Usually you can find the correct splitpoints, so good luck!  |\n"
               " +-----------------------------------------------------------------------------+\n"
               " | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n"
-              " +-----------------------------------------------------------------------------+\n");
+              " +-----------------------------------------------------------------------------+\n"));
         }
       }
     }

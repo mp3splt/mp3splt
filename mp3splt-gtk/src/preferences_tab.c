@@ -632,7 +632,7 @@ GtkWidget *create_pref_splitpoints_page()
                       horiz_fake, FALSE, FALSE, 0);
   
   //threshold level
-  label = gtk_label_new("threshold level (dB) : ");
+  label = gtk_label_new(_("threshold level (dB) : "));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 0);
   
@@ -656,8 +656,8 @@ GtkWidget *create_pref_splitpoints_page()
                       horiz_fake, FALSE, FALSE, 0);
   
   //offset level
-  label = gtk_label_new("cutpoint offset (0 is the begin of silence,"
-                        "and 1 the end) : ");
+  label = gtk_label_new(_("cutpoint offset (0 is the begin of silence,"
+        "and 1 the end) : "));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 0);
   
@@ -679,8 +679,8 @@ GtkWidget *create_pref_splitpoints_page()
                       horiz_fake, FALSE, FALSE, 0);
   
   //gap level (seconds)
-  label = gtk_label_new("gap level (seconds around splitpoint to "
-                        "search for silence) : ");
+  label = gtk_label_new(_("gap level (seconds around splitpoint to "
+        "search for silence) : "));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 0);
   
@@ -1114,17 +1114,17 @@ GtkWidget *create_choose_player_combo()
   
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_AUDACIOUS,_("Audacious"));
+                            PLAYER_AUDACIOUS,"Audacious");
   player_pref_list =
     g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_AUDACIOUS));
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_SNACKAMP,_("SnackAmp"));
+                            PLAYER_SNACKAMP,"SnackAmp");
   player_pref_list =
     g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_SNACKAMP));
   //
   gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_GSTREAMER,_("GStreamer"));
+                            PLAYER_GSTREAMER,"GStreamer");
   player_pref_list =
     g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_GSTREAMER));
   //

@@ -214,13 +214,13 @@ void about_window(GtkWidget *widget,
   b2 = (gchar *)_("created from");
   gchar library_version[20];
   mp3splt_get_version(library_version);
-  g_snprintf(b3, 100, "-release of 16/05/09-\n%s libmp3splt %s (%s mp3splt)",
-             b1, library_version, b2);
+  g_snprintf(b3, 100, "-%s 16/05/09-\n%s libmp3splt %s (%s mp3splt)",
+             _("release of"), b1, library_version, b2);
   
   gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG(dialog), b3);
   
   gtk_about_dialog_set_license (GTK_ABOUT_DIALOG(dialog),
-                                "\n"
+                                _("\n"
                                 "This program is free software; you can "
                                 "redistribute it and/or \n"
                                 "modify it under the terms of the GNU General Public License\n"
@@ -239,7 +239,7 @@ void about_window(GtkWidget *widget,
                                 "to the Free Software\n"
                                 "Foundation, Inc., 59 Temple Place -"
                                 "Suite 330, Boston, MA  02111-1307, "
-                                "USA.");
+                                "USA."));
 
   gtk_about_dialog_set_website (GTK_ABOUT_DIALOG(dialog),
                                 "http://mp3splt.sourceforge.net/");
@@ -315,26 +315,6 @@ void split_button_event (GtkWidget *widget,
         }
       }
  
-      //we put the starting status message
-      switch (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err))
-        {
-        case SPLT_OPTION_NORMAL_MODE:
-          put_status_message((gchar *)_(" info: starting normal split... "));
-          break;
-        case SPLT_OPTION_WRAP_MODE:
-          put_status_message((gchar *)_(" info: starting wrap mode split... "));
-          break;
-        case SPLT_OPTION_TIME_MODE:
-          put_status_message((gchar *)_(" info: starting time mode split... "));
-          break;
-        case SPLT_OPTION_ERROR_MODE:
-          put_status_message((gchar *)_(" info: starting"
-                                        " error mode split... "));
-          break;
-        default:
-          break;
-        }
-      
       filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
       
       filename_path_of_split = (gchar *)
@@ -468,7 +448,8 @@ GtkWidget *create_toolbar()
   //quit button
   toolbar_button = (GtkWidget *) gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
   gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(toolbar_button),
-                            GTK_TOOLTIPS(tooltip), (gchar *)_("really wanna quit ?"),"");
+                            GTK_TOOLTIPS(tooltip),
+                            (gchar *)_("Do you really want to quit ?"),"");
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
                      GTK_TOOL_ITEM(toolbar_button), 6);
   g_signal_connect(G_OBJECT(toolbar_button), "clicked", G_CALLBACK(quit), tooltip);

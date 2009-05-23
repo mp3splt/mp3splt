@@ -3,7 +3,11 @@ bin_PROGRAMS = mp3splt
 mp3splt_SOURCES = mp3splt.c
 
 INCLUDES = @MP3SPLT_CFLAGS@
-mp3splt_LDADD = @MP3SPLT_LIBS@
+mp3splt_LDADD = @MP3SPLT_LIBS@ @LIBINTL@
+
+# Define a C macro LOCALEDIR indicating where catalogs will be installed.
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 install-exec-hook:
 if DO_SYMLINK
