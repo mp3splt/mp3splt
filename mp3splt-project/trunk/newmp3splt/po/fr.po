@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-05-23 15:39+0200\n"
+"POT-Creation-Date: 2009-05-24 00:55+0200\n"
 "PO-Revision-Date: 2009-05-20 02:20+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -347,25 +347,25 @@ msgstr ""
 msgid "no input filename(s)."
 msgstr ""
 
-#: src/mp3splt.c:2098
+#: src/mp3splt.c:2104
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Fichier '%s' ...\n"
 
-#: src/mp3splt.c:2159
+#: src/mp3splt.c:2165
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:2202
+#: src/mp3splt.c:2208
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:2233
+#: src/mp3splt.c:2239
 #, c-format
 msgid " Average silence level : %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:2242
+#: src/mp3splt.c:2248
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
