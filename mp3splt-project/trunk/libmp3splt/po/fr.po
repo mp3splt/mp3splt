@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
 "POT-Creation-Date: 2009-05-23 15:38+0200\n"
-"PO-Revision-Date: 2009-05-20 02:20+0100\n"
-"Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
+"PO-Revision-Date: 2009-05-23 14:07+0100\n"
+"Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,16 +26,15 @@ msgstr ""
 
 #: src/mp3splt.c:806
 #, c-format
-msgid ""
-" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
-"%.2f)\n"
+msgid " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: %.2f)\n"
 msgstr ""
 
 #: src/checks.c:175
 msgid "Directory does not exists"
 msgstr ""
 
-#: src/cddb.c:282 src/cddb.c:1025
+#: src/cddb.c:282
+#: src/cddb.c:1025
 #, c-format
 msgid ""
 "\n"
@@ -44,7 +43,8 @@ msgstr ""
 "\n"
 "  Artiste: %s\n"
 
-#: src/cddb.c:287 src/cddb.c:1051
+#: src/cddb.c:287
+#: src/cddb.c:1051
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album: %s\n"
@@ -58,7 +58,8 @@ msgstr ""
 msgid "description here"
 msgstr ""
 
-#: src/cddb.c:584 src/cddb.c:1161
+#: src/cddb.c:584
+#: src/cddb.c:1161
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -70,7 +71,8 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/types_func.c:2161 src/utils.c:2318
+#: src/types_func.c:2161
+#: src/utils.c:2318
 msgid "not enough memory"
 msgstr ""
 
@@ -112,16 +114,12 @@ msgstr ""
 
 #: src/splt.c:607
 #, c-format
-msgid ""
-" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %"
-"s)\n"
+msgid " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s)\n"
 msgstr ""
 
 #: src/splt.c:623
 #, c-format
-msgid ""
-" Found silence log file '%s' ! Reading silence points from file to save "
-"time ;)"
+msgid " Found silence log file '%s' ! Reading silence points from file to save time ;)"
 msgstr ""
 
 #: src/splt.c:648
@@ -310,9 +308,9 @@ msgid " wrap error: maybe not a wrapped file or wrap file damaged"
 msgstr ""
 
 #: src/utils.c:2139
-#, fuzzy, c-format
+#, c-format
 msgid " file split (EOF)"
-msgstr " fichier coupé"
+msgstr ""
 
 #: src/utils.c:2142
 #, c-format
@@ -320,14 +318,14 @@ msgid " no silence splitpoints found"
 msgstr ""
 
 #: src/utils.c:2145
-#, fuzzy, c-format
+#, c-format
 msgid " time split ok"
-msgstr " fichier coupé"
+msgstr ""
 
 #: src/utils.c:2148
-#, fuzzy, c-format
+#, c-format
 msgid " silence split ok"
-msgstr " fichier coupé"
+msgstr ""
 
 #: src/utils.c:2152
 #, c-format
@@ -533,7 +531,8 @@ msgstr ""
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1594 plugins/ogg.c:177
+#: plugins/mp3.c:1594
+#: plugins/ogg.c:177
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
@@ -580,3 +579,4 @@ msgstr ""
 #, c-format
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
+
