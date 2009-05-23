@@ -51,7 +51,7 @@ if test "x$enable_mp3splttest" = "xyes" ; then
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mp3splt.h>
+#include <libmp3splt/mp3splt.h>
 
 int main ()
 {
@@ -79,7 +79,7 @@ else
      LIBS="$LIBS $MP3SPLT_LIBS"
      AC_TRY_LINK([
 #include <stdio.h>
-#include <mp3splt.h>
+#include <libmp3splt/mp3splt.h>
 ],     [ return 0; ],
        [ echo "*** The test program compiled, but did not run. This usually means"
        echo "*** that the run-time linker is not finding libmp3splt or finding the wrong"
