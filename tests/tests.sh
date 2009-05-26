@@ -32,6 +32,7 @@ function test_normal
   fi
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -145,6 +146,7 @@ function test_normal_m3u
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  M3U file '$OUTPUT_DIR/m3u/playlist.m3u' will be created.
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
@@ -175,6 +177,7 @@ function test_normal_create_directories
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -204,6 +207,7 @@ function test_normal_custom_tags
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -252,6 +256,7 @@ function test_normal_custom_tags_multiple_percent
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -295,6 +300,7 @@ function test_normal_overlap_split
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -331,6 +337,7 @@ function test_normal_stdin
   M_FILE="La_Verue__Today"
 
   expected=" Processing file '-' ...
+ info: file matches the plugin 'mp3 (libmad)'
  warning: stdin '-' is supposed to be mp3 stream.
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE NS - Total time: 4m.05s
@@ -371,6 +378,7 @@ function test_normal_stdin_and_tags
   M_FILE="La_Verue__Today"
 
   expected=" Processing file '-' ...
+ info: file matches the plugin 'mp3 (libmad)'
  warning: stdin '-' is supposed to be mp3 stream.
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE NS - Total time: 4m.05s
@@ -434,6 +442,7 @@ function test_normal_output_fnames_and_custom_tags
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -466,6 +475,7 @@ function test_normal_output_fnames_and_dirs
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -497,6 +507,7 @@ function test_normal_output_fnames_and_custom_tags_dirs
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -531,6 +542,7 @@ function test_normal_stdout
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
@@ -558,6 +570,7 @@ function test_normal_stdout_multiple_splitpoints
 
   expected=" Warning: multiple splitpoints with stdout !
  Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
  info: frame mode enabled
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split

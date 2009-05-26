@@ -36,7 +36,7 @@ elif test "x$prefix" != "xNONE"; then
 fi
 
 
-AC_MSG_CHECKING(for Mp3splt)
+AC_MSG_CHECKING(for libmp3splt)
 no_mp3splt=""
 
 if test "x$enable_mp3splttest" = "xyes" ; then
@@ -74,7 +74,7 @@ else
    if test -f conf.mp3splttest ; then
      :
    else
-     echo "*** Could not run Mp3splt test program, checking why..."
+     echo "*** Could not run libmp3splt test program, checking why..."
      CFLAGS="$CFLAGS $MP3SPLT_CFLAGS"
      LIBS="$LIBS $MP3SPLT_LIBS"
      AC_TRY_LINK([

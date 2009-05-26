@@ -249,11 +249,13 @@ gboolean check_if_different_from_config_file()
   GString *langg = g_string_new(file_string);
   //free memory
   g_free(file_string);
-  
+ 
   //check the language from general
   if (!g_string_equal(lang,langg))
+  {
     different = TRUE;
-  
+  }
+ 
   //freeing memory
   g_string_free(lang, TRUE);
   g_string_free(langg, TRUE);
@@ -377,8 +379,7 @@ void set_language()
 {
   GKeyFile *key_file = g_key_file_new();
   //filename
-  gchar *filename;
-  filename = get_preferences_filename();
+  gchar *filename = get_preferences_filename();
 
   //load config
   g_key_file_load_from_file(key_file,
@@ -387,37 +388,23 @@ void set_language()
                             NULL);
   //free the filename
   g_free(filename);
+  filename = NULL;
   
-  GString *lang;
-  gchar *file_string = g_key_file_get_string(key_file,
+  gchar *lang = g_key_file_get_string(key_file,
                           "general",
                           "language",
                           NULL);
-  lang = g_string_new(file_string);
-  
-  //0 = french, 1 = english
-  //gint list_number = 1;
-  if(g_string_equal(lang,g_string_new("en")))
-    {
+ 
 #ifdef __WIN32__
-      putenv("LANG=en");
+  gchar lang_env[32] = { '\0' };
+  g_snprintf(lang_env, 32, "LANG=%s", lang);
+  putenv(lang_env);
 #else
-      setenv("LANGUAGE", "en",1);      
+  setenv("LANGUAGE", lang,1);
 #endif
-    }
-  else
-    if(g_string_equal(lang,g_string_new("fr")))
-      {
-#ifdef __WIN32__
-        putenv("LANG=fr");
-#else
-        setenv("LANGUAGE", "fr",1);
-#endif
-      }
-  
+
   //freeing memory
-  g_string_free(lang, TRUE);
-  g_free(file_string);
+  g_free(lang);
   g_key_file_free(key_file);
 }
 
@@ -446,13 +433,16 @@ void load_preferences()
                           "language",
                           NULL);
   lang = g_string_new(file_string);
-  //0 = french, 1 = english
-  gint list_number = 1;
-  if(g_string_equal(lang,g_string_new("en")))
+  //0 = german, 1 = french, 2 = english
+  gint list_number = 2;
+  if (g_string_equal(lang,g_string_new("de")))
+  {
+    list_number = 0;
+  }
+  else if (g_string_equal(lang, g_string_new("fr")))
+  {
     list_number = 1;
-  else
-    if(g_string_equal(lang,g_string_new("fr")))
-      list_number = 0;
+  }
   //get the radio buttons
   GSList *radio_button_list;
   radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
@@ -693,7 +683,7 @@ void write_default_preferences_file()
                               "general",
                               "language",
                               "\n language of the gui : en = english, fr"
-                              " = french",
+                              " = french, de = german",
                               NULL);
     }
   else
@@ -708,7 +698,8 @@ void write_default_preferences_file()
       lang_char = g_string_new(file_string);
 
       if((!g_string_equal(lang_char,g_string_new("en")))
-         &&(!g_string_equal(lang_char, g_string_new("fr"))))
+         &&(!g_string_equal(lang_char, g_string_new("fr")))
+         &&(!g_string_equal(lang_char, g_string_new("de"))))
         {
           g_key_file_set_string(my_key_file,
                                 "general",
@@ -719,7 +710,7 @@ void write_default_preferences_file()
                                   "general",
                                   "language",
                                   "\n language of the gui : en = english, fr"
-                                  " = french",
+                                  " = french, de = german",
                                   NULL);
         }
       
@@ -1103,33 +1094,27 @@ void check_pref_file()
   struct stat buffer;
   gint         status;
   
-  //our preferences filename
-  gchar *filename;
-  filename =
-    get_preferences_filename();
+  gchar *pref_file = get_preferences_filename();
   
-  status = stat(filename, &buffer);
-  //if its not a file
+  status = stat(pref_file, &buffer);
   if (S_ISREG(buffer.st_mode) == 0)
+  {
+    if (S_ISDIR(buffer.st_mode) != 0)
     {
-      //if it is a directory
-      if (S_ISDIR(buffer.st_mode) != 0)
-        {
-          //backup the directory
-          gchar *backup_dir;
-          gint malloc_number = strlen(filename)+5;
-          backup_dir = malloc(malloc_number * sizeof(gchar *));
-          snprintf(backup_dir,malloc_number,
-                   "%s%s",filename,".bak");
-          //we rename the directory
-          g_rename(filename, backup_dir);
-          
-          //free memory
-          g_free(backup_dir);
-        }
+      //backup the directory
+      gchar *backup_dir;
+      gint malloc_number = strlen(pref_file)+5;
+      backup_dir = malloc(malloc_number * sizeof(gchar *));
+      snprintf(backup_dir,malloc_number,
+          "%s%s",pref_file,".bak");
+      //rename the directory
+      g_rename(pref_file, backup_dir);
+      g_free(backup_dir);
+      backup_dir = NULL;
     }
-  //free memory
-  g_free(filename);
+  }
+  g_free(pref_file);
+  pref_file = NULL;
   
   write_default_preferences_file();
 }

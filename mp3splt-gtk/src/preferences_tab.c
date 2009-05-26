@@ -275,22 +275,30 @@ GtkWidget *create_pref_general_page()
   label = gtk_label_new(_("Choose language (require restart) :"));
   gtk_box_pack_start (GTK_BOX (horiz_fake), label, FALSE, FALSE, 0);
   
-  GtkWidget *radio_box;
-  radio_box = gtk_hbox_new (FALSE, 0);
-  //event for the radio button
-  gtk_box_pack_start (GTK_BOX (radio_vbox), radio_box, TRUE, TRUE, 2);
-  //language radio items
+  //language
   radio_button = gtk_radio_button_new_with_label(NULL, _("english"));
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
                     G_CALLBACK (radio_box_changed_event),
                     NULL);
-  
-  gtk_box_pack_start (GTK_BOX (radio_box), radio_button, TRUE, TRUE, 2);
+  gtk_box_pack_start (GTK_BOX (radio_vbox), radio_button, TRUE, TRUE, 2);
+
   radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON (radio_button), _("french"));
-  gtk_box_pack_start (GTK_BOX (radio_box), radio_button, TRUE, TRUE, 2);
+  g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
+                    "toggled",
+                    G_CALLBACK (radio_box_changed_event),
+                    NULL);
+  gtk_box_pack_start (GTK_BOX (radio_vbox), radio_button, TRUE, TRUE, 2);
   
+  radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON (radio_button), _("german"));
+  g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
+                    "toggled",
+                    G_CALLBACK (radio_box_changed_event),
+                    NULL);
+  gtk_box_pack_start (GTK_BOX (radio_vbox), radio_button, TRUE, TRUE, 2);
+
   //add the radio button to the vertical box
   gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
                       radio_vbox, FALSE, FALSE, 0);
@@ -811,27 +819,26 @@ GtkWidget *create_pref_splitpoints_page()
 //must be free() after
 GString *get_checked_language()
 {
-  //the selected language
-  GString *selected_lang = NULL;
-  
-  //get the radio buttons
   GSList *radio_button_list;
   radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
   GtkWidget *our_button;
-  //0 = french, 1 = english
-  our_button = 
-    (GtkWidget *)g_slist_nth_data(radio_button_list, 0);
+
+  //0 = german, 1 = french, 2 = english
+  our_button = (GtkWidget *)g_slist_nth_data(radio_button_list, 0);
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(our_button)))
-    selected_lang = g_string_new("fr");
+  {
+    return g_string_new("de");
+  }
   else 
+  {
+    our_button = (GtkWidget *)g_slist_nth_data(radio_button_list, 1);
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(our_button)))
     {
-      our_button = 
-        (GtkWidget *)g_slist_nth_data(radio_button_list, 1);
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(our_button)))
-        selected_lang = g_string_new("en");
+      return g_string_new("fr");
     }
-  
-  return selected_lang;
+  }
+
+  return g_string_new("en");
 }
 
 //save preferences event
