@@ -2089,7 +2089,7 @@ int main(int argc, char **orig_argv)
   if ((data->number_of_splitpoints > 2) &&
       opt->output_format && (strcmp(opt->output_format, "-") == 0))
   {
-    print_warning("multiple splitpoints with stdout !");
+    print_warning(_("multiple splitpoints with stdout !"));
   }
 
   //split all the filenames
