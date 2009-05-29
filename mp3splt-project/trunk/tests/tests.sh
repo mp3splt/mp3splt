@@ -447,10 +447,23 @@ function test_normal_overlap_split
 
 function test_normal_stdin
 {
+  no_tags_file=$1
+
   rm -rf $OUTPUT_DIR/*
 
-  test_name="stdin"
-  M_FILE="La_Verue__Today"
+  if [[ $no_tags_file -eq "no_input_tags" ]];then
+    test_name="stdin & no input tags"
+    M_FILE="La_Verue__Today__no_tags"
+    frames=9399
+    sync_errors=0
+    last_file_size=806037
+  else
+    test_name="stdin"
+    M_FILE="La_Verue__Today"
+    sync_errors=1
+    frames=9400
+    last_file_size=806141
+  fi
 
   expected=" Processing file '-' ...
  info: file matches the plugin 'mp3 (libmad)'
@@ -461,7 +474,7 @@ function test_normal_stdin
    File \"$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3\" created
    File \"$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3\" created
    File \"$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3\" created
- Processed 9400 frames - Sync errors: 1
+ Processed $frames frames - Sync errors: $sync_errors
  file split (EOF)"
   mp3splt_args="-d $OUTPUT_DIR - 1.0 2.0.2 3.30 EOF"
   run_custom_check_output "cat songs/${M_FILE}.mp3 | $MP3SPLT" "$mp3splt_args" "$expected"
@@ -479,13 +492,15 @@ function test_normal_stdin
   current_file="$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3"
   check_current_mp3_length "00.35"
   check_current_mp3_no_tags
-  check_current_file_size "806141"
+  check_current_file_size "$last_file_size"
 
   p_green "OK"
   echo
 }
 
-function test_normal_stdin_and_tags
+function test_normal_stdin_no_input_tags { test_normal_stdin "no_input_tags"; }
+
+function _test_normal_stdin_and_tags
 {
   local tags_version=$1
   rm -rf $OUTPUT_DIR/*
@@ -544,8 +559,8 @@ function test_normal_stdin_and_tags
   echo
 }
 
-function test_normal_stdin_and_tags_v1 { test_normal_stdin_and_tags 1; }
-function test_normal_stdin_and_tags_v2 { test_normal_stdin_and_tags 2; }
+function test_normal_stdin_and_tags_v1 { _test_normal_stdin_and_tags 1; }
+function test_normal_stdin_and_tags_v2 { _test_normal_stdin_and_tags 2; }
 
 function test_normal_output_fnames_and_custom_tags
 {
@@ -572,6 +587,34 @@ function test_normal_output_fnames_and_custom_tags
   check_if_file_exist "$OUTPUT_DIR/a1_b1_t1_1_10_${M_FILE} 00:05:00 01:00:30.mp3"
   check_if_file_exist "$OUTPUT_DIR/___2_2_${M_FILE} 01:00:30 01:05:00.mp3"
   check_if_file_exist "$OUTPUT_DIR/La Verue_album_Today_3_7_${M_FILE} 01:05:00 02:00:00.mp3"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_output_fname
+{
+  rm -rf $OUTPUT_DIR/*
+
+  test_name="output fname"
+  M_FILE="La_Verue__Today"
+
+  expected=" warning: output format ambiguous (@t or @n missing)
+ Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: frame mode enabled
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/test.mp3\" created
+ Processed 4594 frames - Sync errors: 0
+ file split"
+  mp3splt_args="-o 'test' -d $OUTPUT_DIR $MP3_FILE 1.0 2.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_file_exist "$OUTPUT_DIR/test.mp3"
+
+  current_file="$OUTPUT_DIR/test.mp3" 
+  check_current_mp3_length "01.00"
 
   p_green "OK"
   echo
@@ -704,33 +747,11 @@ function run_normal_mode_tests
   p_blue " NORMAL mp3 tests ..."
   echo
 
-  normal_tests_to_run="\
-original_tags_v2 \
-id3v1 \
-id3v2 \
-id3v1_and_id3v2 
-no_tags \
-no_xing \
-m3u \
-create_directories \
-custom_tags_multiple_percent \
-custom_tags \
-custom_tags_and_input_no_tags \
-overlap_split \
-stdin \
-stdin_and_tags_v1 \
-stdin_and_tags_v2 \
-output_fnames_and_dirs \
-output_fnames_and_custom_tags \
-output_fnames_and_custom_tags_dirs \
-stdout \
-stdout_multiple_splitpoints"
+  normal_test_functions=$(declare -F | grep " test_normal_" | awk '{ print $3 }')
 
-#  for t in $normal_tests_to_run;do
-#    eval "test_normal_"$t
-#  done
-#TODO: add test to $normal_tests_to_run
-  eval "test_normal_no_input_tags"
+  for test_func in $normal_test_functions;do
+    eval $test_func
+  done
 
   p_blue " NORMAL tests DONE."
   echo

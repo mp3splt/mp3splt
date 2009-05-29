@@ -20,8 +20,8 @@ NORMAL MODE
   - stdin : input not seekable (-k)
   - output filename (-o) + create directories
   - stdout
-
   - no tags in input file (+ -g option)
+
   - auto adjust (-a)
   - silence parameters (-a & -p) : th, off, gap
   - don't create 'mp3splt.log' file (-N)
