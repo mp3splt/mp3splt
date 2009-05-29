@@ -5,6 +5,11 @@ mp3splt_SOURCES = mp3splt.c
 INCLUDES = @MP3SPLT_CFLAGS@
 mp3splt_LDADD = @MP3SPLT_LIBS@ @LIBINTL@
 
+if WIN32
+#TODO
+#mp3splt_LDDD += -lltdl -lwsock32 -lshlwapi -lintl
+endif
+
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@

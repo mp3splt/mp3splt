@@ -602,103 +602,70 @@ void splt_ogg_get_original_tags(const char *filename,
   }
 }
 
-//we take the tags from the state and put them in the
-//new file
-//TODO: why we don't set the 'genre' and 'track' ?
-static void splt_ogg_put_original_tags(splt_state *state, int *error)
-{
-  splt_ogg_state *oggstate = state->codec;
-  char *a = NULL,*t = NULL,*al = NULL,*da = NULL,
-       /**g,*tr,*/*com = NULL;
-
-  a = state->original_tags.artist;
-  t = state->original_tags.title;
-  al = state->original_tags.album;
-  da = state->original_tags.year;
-  //g = (char *)state->original_tags.genre;
-  //tr = (char *)state->original_tags.track;
-  com = state->original_tags.comment;
-
-  vorbis_comment_clear(&oggstate->vc);
-  vorbis_comment_init(&oggstate->vc);
-  splt_ogg_v_comment(&oggstate->vc, a,al,t,
-  /*tr*/NULL,da,/*g*/NULL,com, error);
-}
-
 //puts the ogg tags
 void splt_ogg_put_tags(splt_state *state, int *error)
 {
   splt_ogg_state *oggstate = state->codec;
 
-  //clean_original_id3(state);
   //if we put the original tags
   vorbis_comment_clear(&oggstate->vc);
 
-  if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
+  //if we put current tags (cddb,cue,...)
+  if (splt_t_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
-    splt_ogg_put_original_tags(state, error);
-    return;
-  }
-  else
-  {
-    //if we put current tags (cddb,cue,...)
-    if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_CURRENT_TAGS)
+    int current_split = splt_t_get_current_split_file_number(state) - 1;
+    //int old_current_split = current_split;
+
+    //if we set all the tags like the x one
+    int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+    if ((current_split >= state->split.real_tagsnumber)
+        && (remaining_tags_like_x != -1))
     {
-      int current_split = splt_t_get_current_split_file_number(state) - 1;
-      //int old_current_split = current_split;
+      current_split = remaining_tags_like_x;
+    }
 
-      //if we set all the tags like the x one
-      int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
-      if ((current_split >= state->split.real_tagsnumber)
-          && (remaining_tags_like_x != -1))
+    //only if the tags exists for the current split
+    if (splt_t_tags_exists(state,current_split))
+    {
+      //splt_t_set_auto_increment_tracknumber_tag(state, old_current_split, current_split);
+
+      int tags_number = 0;
+      splt_tags *tags = splt_t_get_tags(state, &tags_number);
+
+      if (splt_t_tags_exists(state, current_split))
       {
-        current_split = remaining_tags_like_x;
-      }
-
-      //only if the tags exists for the current split
-      if (splt_t_tags_exists(state,current_split))
-      {
-        //splt_t_set_auto_increment_tracknumber_tag(state, old_current_split, current_split);
-
-        int tags_number = 0;
-        splt_tags *tags = splt_t_get_tags(state, &tags_number);
-
-        if (splt_t_tags_exists(state, current_split))
+        char *track_string = NULL;
+        if (tags[current_split].track > 0)
         {
-          char *track_string = NULL;
-          if (tags[current_split].track > 0)
-          {
-            track_string = splt_ogg_trackstring(tags[current_split].track);
-          }
-          else
-          {
-            track_string = splt_ogg_trackstring(current_split+1);
-          }
+          track_string = splt_ogg_trackstring(tags[current_split].track);
+        }
+        else
+        {
+          track_string = splt_ogg_trackstring(current_split+1);
+        }
 
-          if (track_string)
-          {
-            splt_ogg_v_comment(&oggstate->vc,
-                tags[current_split].artist,
-                tags[current_split].album,
-                tags[current_split].title,
-                track_string,
-                tags[current_split].year,
-                (char *)splt_ogg_genre_list[(int) 
-                tags[current_split].genre],
-                tags[current_split].comment, error);
+        if (track_string)
+        {
+          splt_ogg_v_comment(&oggstate->vc,
+              tags[current_split].artist,
+              tags[current_split].album,
+              tags[current_split].title,
+              track_string,
+              tags[current_split].year,
+              (char *)splt_ogg_genre_list[(int) 
+              tags[current_split].genre],
+              tags[current_split].comment, error);
 
-            free(track_string);
-            track_string = NULL;
-          }
-          else
-          {
-            *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-            return;
-          }
+          free(track_string);
+          track_string = NULL;
+        }
+        else
+        {
+          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+          return;
         }
       }
     }
-    //no tags
   }
 }
 

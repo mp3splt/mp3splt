@@ -1115,64 +1115,47 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
 {
   char *id3_data = NULL;
 
-  if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
+  if (splt_t_get_int_option(state,SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
-    id3_data = splt_mp3_build_id3_tags(state,
-        state->original_tags.title,
-        state->original_tags.artist,
-        state->original_tags.album,
-        state->original_tags.year,
-        state->original_tags.genre, 
-        state->original_tags.comment,
-        state->original_tags.track,
-        error, number_of_bytes, id3_version);
-  }
-  else
-  {
-    if (splt_t_get_int_option(state,SPLT_OPT_TAGS) == SPLT_CURRENT_TAGS)
+    int current_split = splt_t_get_current_split_file_number(state) - 1;
+
+    //if we set all the tags like the x one
+    int remaining_tags_like_x = splt_t_get_int_option(state,
+        SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+
+    if ((current_split >= state->split.real_tagsnumber) &&
+        (remaining_tags_like_x != -1))
     {
-      int current_split = splt_t_get_current_split_file_number(state) - 1;
+      current_split = remaining_tags_like_x;
+    }
 
-      //if we set all the tags like the x one
-      int remaining_tags_like_x = splt_t_get_int_option(state,
-          SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+    //only if the tags exists for the current split
+    if (splt_t_tags_exists(state,current_split))
+    {
+      //only if we have the artist or the title
+      int tags_number = 0;
+      splt_tags *tags = splt_t_get_tags(state, &tags_number);
 
-      if ((current_split >= state->split.real_tagsnumber) &&
-          (remaining_tags_like_x != -1))
+      int track = 0;
+      if (tags[current_split].track > 0)
       {
-        current_split = remaining_tags_like_x;
+        track = tags[current_split].track;
+      }
+      else
+      {
+        track = current_split+1;
       }
 
-      //only if the tags exists for the current split
       if (splt_t_tags_exists(state,current_split))
       {
-        //splt_t_set_auto_increment_tracknumber_tag(state, old_current_split, current_split);
-
-        //only if we have the artist or the title
-        int tags_number = 0;
-        splt_tags *tags = splt_t_get_tags(state, &tags_number);
-
-        int track = 0;
-        if (tags[current_split].track > 0)
-        {
-          track = tags[current_split].track;
-        }
-        else
-        {
-          track = current_split+1;
-        }
-
-        if (splt_t_tags_exists(state,current_split))
-        {
-          id3_data = splt_mp3_build_id3_tags(state,
-              tags[current_split].title,
-              tags[current_split].artist,
-              tags[current_split].album,
-              tags[current_split].year,
-              tags[current_split].genre,
-              tags[current_split].comment,
-              track, error, number_of_bytes, id3_version);
-        }
+        id3_data = splt_mp3_build_id3_tags(state,
+            tags[current_split].title,
+            tags[current_split].artist,
+            tags[current_split].album,
+            tags[current_split].year,
+            tags[current_split].genre,
+            tags[current_split].comment,
+            track, error, number_of_bytes, id3_version);
       }
     }
   }
@@ -1218,7 +1201,6 @@ int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output,
 }
 
 #ifndef NO_ID3TAG
-//writes id3v2 tags to 'file_output'
 int splt_mp3_write_id3v2_tags(splt_state *state, FILE *file_output,
     const char *output_fname, off_t *end_offset)
 {
@@ -1264,15 +1246,20 @@ int splt_mp3_get_output_tags_version(splt_state *state)
   int force_tags_version = splt_t_get_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION);
 
   int output_tags_version = original_tags_version;
-  if ((force_tags_version == 1) || (force_tags_version == 2))
+  if (force_tags_version != 0)
   {
     output_tags_version = force_tags_version;
   }
 
-/*if (output_tags_version == 0)
+  if ((output_tags_version == 0) &&
+      (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_CURRENT_TAGS))
   {
-    output_tags_version = 2;
-  }*/
+    char *filename = splt_t_get_filename_to_split(state);
+    if (strcmp(filename, "-") != 0)
+    {
+      output_tags_version = 12;
+    }
+  }
 
   return output_tags_version;
 #endif
@@ -1892,7 +1879,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
 
 #ifndef NO_ID3TAG
   //write id3 tags version 2 at the start of the file, if necessary
-  if (do_write_tags && (output_tags_version == 2))
+  if (do_write_tags && (output_tags_version == 2 || output_tags_version == 12))
   {
     int err = SPLT_OK;
     if ((err = splt_mp3_write_id3v2_tags(state, file_output,
@@ -2014,7 +2001,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   }
 
   //write id3 tags version 1 at the end of the file, if necessary
-  if (do_write_tags && (output_tags_version == 1))
+  if (do_write_tags && (output_tags_version == 1 || output_tags_version == 12))
   {
     int err = SPLT_OK;
     if ((err = splt_mp3_write_id3v1_tags(state, file_output, output_fname)) < 0)
@@ -2118,7 +2105,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
     off_t id3v2_end_offset = 0;
 #ifndef NO_ID3TAG
     //write id3 tags version 2 at the start of the file
-    if (output_tags_version == 2)
+    if (output_tags_version == 2 || output_tags_version == 12)
     {
       int err = SPLT_OK;
       if ((err = splt_mp3_write_id3v2_tags(state, file_output,
@@ -2457,7 +2444,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
       }
 
       //write id3 tags version 1 at the end of the file
-      if (output_tags_version == 1)
+      if (output_tags_version == 1 || output_tags_version == 12)
       {
         int err = SPLT_OK;
         if ((err = splt_mp3_write_id3v1_tags(state, file_output, output_fname)) < 0)

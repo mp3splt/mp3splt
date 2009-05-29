@@ -176,12 +176,6 @@ void splt_s_multiple_split(splt_state *state, int *error)
       long saved_end_point = splt_t_get_splitpoint_value(state, i+1, &get_error);
       splt_u_overlap_time(state, i+1);
 
-      if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
-      {
-        err = splt_t_append_original_tags(state);
-        if (err < 0) { *error = err; return; }
-      }
-
       err = splt_u_put_output_format_filename(state);
       if (err < 0) { *error = err; return; }
 
@@ -267,14 +261,6 @@ void splt_s_error_split(splt_state *state, int *error)
         //we append a splitpoint
         int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
         if (err < 0) { *error = err; goto bloc_end; }
-
-        //if we have to put the original tags
-        if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
-        {
-          //we put the original tags to the current split
-          err = splt_t_append_original_tags(state);
-          if (err < 0) { *error = err; goto bloc_end; }
-        }
 
         //we put the output filename
         err = splt_u_put_output_format_filename(state);
@@ -406,14 +392,6 @@ void splt_s_time_split(splt_state *state, int *error)
           //we append a splitpoint
           err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
           if (err < 0) { *error = err; break; }
-
-          //if we have to put the original tags
-          if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
-          {
-            //we put the original tags to the current split
-            err = splt_t_append_original_tags(state);
-            if (err < 0) { *error = err; break; }
-          }
 
           //we set the current split
           splt_t_set_current_split(state, tracks-1);

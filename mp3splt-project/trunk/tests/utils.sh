@@ -51,23 +51,29 @@ function check_current_mp3_no_tags
   _check_mp3_tags $current_file 1 "Genre" "Unknown (255)" "$id3v1"
 }
 
-function check_all_current_mp3_tags
+function check_all_mp3_tags_with_version
 {
-  if [[ $current_tags_version -eq 1 ]];then
-    _run_command "id3 -R -l '$current_file'" "id3 command"
-    tags=$command_output
-  else  
-    _run_command "eyeD3 -2 --no-color '$current_file'" "eyeD3 command"
-    tags=$command_output
-  fi
+  year=$5
+  for tags_v in $1;do
+    current_tags_version=$tags_v
 
-  _check_mp3_tags "$current_file" $current_tags_version "Artist" "$1" "$tags"
-  _check_mp3_tags "$current_file" $current_tags_version "Album" "$2" "$tags"
-  _check_mp3_tags "$current_file" $current_tags_version "Title" "$3" "$tags"
-  _check_mp3_tags "$current_file" $current_tags_version "Year" "$4" "$tags"
-  _check_mp3_tags "$current_file" $current_tags_version "Genre" "$5" "$tags"
-  _check_mp3_tags "$current_file" $current_tags_version "Tracknumber" "$6" "$tags"
-  _check_mp3_tags "$current_file" $current_tags_version "Comment" "$7" "$tags"
+    if [[ $tags_v -ne 1 && $tags_v -ne 2 ]];then
+      echo "Bad test; tags_version = $tags_v";
+      exit 1
+    fi
+
+    new_year=$year
+    if [[ $tags_v -eq 2 ]];then
+      id_str="id "
+      if [[ -z $year ]];then
+        new_year="None"
+      fi
+    else
+      id_str=""
+    fi
+
+    _check_all_current_mp3_tags "$2" "$3" "$4" "$new_year" "$6 (${id_str}$7)" "$8" "$9"
+  done
 }
 
 function check_current_mp3_length
@@ -205,15 +211,34 @@ function _mp3_get_tag_value
   echo "$actual_tag_value"
 }
 
+function _check_all_current_mp3_tags
+{
+  if [[ $current_tags_version -eq 1 ]];then
+    _run_command "id3 -R -l '$current_file'" "id3 command"
+    tags=$command_output
+  else  
+    _run_command "eyeD3 -2 --no-color '$current_file'" "eyeD3 command"
+    tags=$command_output
+  fi
+
+  _check_mp3_tags "$current_file" $current_tags_version "Artist" "$1" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Album" "$2" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Title" "$3" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Year" "$4" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Genre" "$5" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Tracknumber" "$6" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Comment" "$7" "$tags"
+}
+
 function _check_mp3_tags
 {
   file=$1
-  tags_version=$2
+  local tags_version=$2
   tags_field=$3
   expected_tag_value=$4
   tags=$5
 
-  expected_value="$tags_field for $file : '$expected_tag_value'"
+  expected_value="$tags_field for $file : '$expected_tag_value' (id3v$current_tags_version)"
   actual_tag_value=""
 
   if [[ $tags_version -eq 1 ]];then
@@ -274,7 +299,7 @@ function _check_mp3_tags
     esac
   fi
 
-  actual_value="$tags_field for $file : '$actual_tag_value'"
+  actual_value="$tags_field for $file : '$actual_tag_value' (id3v$current_tags_version)"
 
   _check_equal_variables "$expected_value" "$actual_value"
 }

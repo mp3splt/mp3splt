@@ -65,8 +65,9 @@ FILE *console_progress = NULL;
 
 //command line options
 typedef struct {
-  //force id3v1 tags, force id3v2 tags
-  short id3v1_option; short id3v2_option;
+  //force id3v1 tags, force id3v2 tags or both
+  short T_option;
+  short T_option_value;
   //wrap split, list wrap options, error split
   short w_option; short l_option; short e_option;
   //frame mode, cddb/cue option, time split
@@ -80,7 +81,7 @@ typedef struct {
   short x_option;
   short N_option;
   short O_option;
-  short T_option;
+  short X_option;
   //export cue
   //short E_option;
   //-Q option
@@ -342,8 +343,8 @@ void show_small_help_exit(main_data *data)
       "\n(other options)\n"
       /*" -P   Pretend to split, without actually splitting the file\n"
       " -E   Export .cue file (use with -P to export .cue file without splitting)\n"*/
-      " -1   For mp3 files, force output tags as version 1\n"
-      " -2   For mp3 files, force output tags as version 2\n"
+      " -T + TAGS_VERSION: for mp3 files, force output tags as version 1, 2 or 1 & 2.\n"
+      "      TAGS_VERSION can be 1, 2 or 12\n"
       "      (default is to set the same version as the file to split)\n"
       " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
       " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
@@ -659,9 +660,9 @@ void check_args(int argc, main_data *data)
     //no tags (-n)
     if (opt->n_option)
     {
-      if (opt->i_option || opt->id3v1_option || opt->id3v2_option)
+      if (opt->i_option || opt->T_option)
       {
-        print_error_exit(_("the -n option cannot be used with -i or -1 or -2"), data);
+        print_error_exit(_("the -n option cannot be used with -i or -T"), data);
       }
     }
 
@@ -726,6 +727,16 @@ void check_args(int argc, main_data *data)
 
     if (opt->x_option)
     {
+    }
+
+    if (opt->T_option)
+    {
+      int force_tags_version = opt->T_option_value;
+      if ((force_tags_version != 1) && (force_tags_version != 2) &&
+          (force_tags_version != 12))
+      {
+        print_error_exit("the -T option can only have values 1, 2 or 12", data);
+      }
     }
   }
 }
@@ -1334,7 +1345,7 @@ end:
 
       if (selected_cd != -1) 
       {
-        selected_cd = atoi (sel_cd_input);
+        selected_cd = atoi(sel_cd_input);
       }
 
     } while ((selected_cd >= f_results->number) 
@@ -1461,7 +1472,8 @@ options *new_options(main_data *data)
 {
   options *opt = my_malloc(sizeof(options), data);
 
-  opt->id3v1_option = SPLT_FALSE; opt->id3v2_option = SPLT_FALSE;
+  opt->T_option = SPLT_FALSE;
+  opt->T_option_value = 0;
   opt->w_option = SPLT_FALSE; opt->l_option = SPLT_FALSE;
   opt->e_option = SPLT_FALSE; opt->f_option = SPLT_FALSE;
   opt->c_option = SPLT_FALSE; opt->t_option = SPLT_FALSE;
@@ -1472,7 +1484,7 @@ options *new_options(main_data *data)
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
   opt->N_option = SPLT_FALSE; opt->O_option = SPLT_FALSE;
   opt->x_option = SPLT_FALSE;
-  opt->T_option = SPLT_FALSE;
+  opt->X_option = SPLT_FALSE;
   opt->qq_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
@@ -1480,7 +1492,7 @@ options *new_options(main_data *data)
   opt->m3u_arg = NULL;
   opt->output_format = NULL;
 
-  opt->custom_tags = strdup("%[@o,@N=1]");
+  opt->custom_tags = NULL;
 
   //we put the default values for freedb search
   //by default, CDDB_CGI (cddb.cgi) port 80 on freedb2.org
@@ -1736,12 +1748,11 @@ int main(int argc, char **orig_argv)
 
   //default we write mins_secs_hundr for normal split
   mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
-  mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
+  mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
 
   //parse command line options
   int option;
-  //I have erased the "-i" option
-  while ((option = getopt(data->argc, data->argv, "Tm:O:SDvifkwleqnasc:d:o:t:p:g:hQN12x")) != -1)
+  while ((option = getopt(data->argc, data->argv, "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12T:Xx")) != -1)
   {
     switch (option)
     {
@@ -1751,13 +1762,23 @@ int main(int argc, char **orig_argv)
       case 'h':
         show_small_help_exit(data);
         break;
+      //deprecated : use -T
       case '1':
         mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
-        opt->id3v1_option = SPLT_TRUE;
+        opt->T_option_value = 1;
+        opt->T_option = SPLT_TRUE;
         break;
+      //deprecated : use -T
       case '2':
         mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
-        opt->id3v2_option = SPLT_TRUE;
+        opt->T_option_value = 2;
+        opt->T_option = SPLT_TRUE;
+        break;
+      case 'T':
+        opt->T_option_value = atoi(optarg);
+        mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION,
+            opt->T_option_value);
+        opt->T_option = SPLT_TRUE;
         break;
       case 'D':
         mp3splt_set_int_option(state, SPLT_OPT_DEBUG_MODE, SPLT_TRUE);
@@ -1808,7 +1829,6 @@ int main(int argc, char **orig_argv)
         opt->i_option = SPLT_TRUE;
         break;
       case 'c':
-        //default tags
         mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
         opt->c_option = SPLT_TRUE;
         opt->cddb_arg = strdup(optarg);
@@ -1849,8 +1869,8 @@ int main(int argc, char **orig_argv)
         mp3splt_set_long_option(state, SPLT_OPT_OVERLAP_TIME,
             c_hundreths(optarg));
         break;
-      case 'T':
-        opt->T_option = SPLT_TRUE;
+      case 'X':
+        opt->X_option = SPLT_TRUE;
         break;
       case 't':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
@@ -1878,6 +1898,7 @@ int main(int argc, char **orig_argv)
           free(opt->custom_tags);
           opt->custom_tags = NULL;
         }
+        mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
         opt->custom_tags = strdup(optarg);
         opt->g_option = SPLT_TRUE;
         break;
@@ -1902,13 +1923,13 @@ int main(int argc, char **orig_argv)
   }
 
   //callback for the progress bar
-  if (!opt->T_option)
+  if (!opt->X_option)
   {
     mp3splt_set_progress_function(state, put_progress_bar);
   }
 
   //if quiet, does not write authors and other
-  if (!opt->q_option && !opt->T_option)
+  if (!opt->q_option && !opt->X_option)
   {
     print_version_authors(console_err);
   }
@@ -2201,11 +2222,14 @@ int main(int argc, char **orig_argv)
           process_confirmation_error(err, data);
         }
 
-        int ambiguous = mp3splt_put_tags_from_string(state, opt->custom_tags, &err);
-        process_confirmation_error(err, data);
-        if (ambiguous)
+        if (opt->g_option && (opt->custom_tags != NULL))
         {
-          print_warning(_("tags format ambiguous !"));
+          int ambiguous = mp3splt_put_tags_from_string(state, opt->custom_tags, &err);
+          process_confirmation_error(err, data);
+          if (ambiguous)
+          {
+            print_warning(_("tags format ambiguous !"));
+          }
         }
 
         //for cddb, filenames are already set from the library, so 
