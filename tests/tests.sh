@@ -729,6 +729,7 @@ stdout_multiple_splitpoints"
 #  for t in $normal_tests_to_run;do
 #    eval "test_normal_"$t
 #  done
+#TODO: add test to $normal_tests_to_run
   eval "test_normal_no_input_tags"
 
   p_blue " NORMAL tests DONE."
