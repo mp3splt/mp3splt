@@ -9,8 +9,9 @@ NORMAL MODE
 
   - EOF with tags version of input file
   - no tags (-n)
-  - tags v1 (-1)
-  - tags v2 (-2)
+  - tags v1 (-T 1)
+  - tags v2 (-T 2)
+  - tags v1 & v2 (-T 12)
   - no xing (-x)
   - m3u file (-m)
   - output directory (-d)
@@ -20,6 +21,7 @@ NORMAL MODE
   - output filename (-o) + create directories
   - stdout
 
+  - no tags in input file (+ -g option)
   - auto adjust (-a)
   - silence parameters (-a & -p) : th, off, gap
   - don't create 'mp3splt.log' file (-N)

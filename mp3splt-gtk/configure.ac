@@ -57,7 +57,7 @@ AM_GNU_GETTEXT_VERSION([0.13.1])
 #################################################################
 
 AC_MSG_CHECKING(the host)
-AM_CONDITIONAL(NOT_WIN32,true)
+AM_CONDITIONAL(WIN32,false)
 case $host in
 	*linux*)
 		HOST="Linux-based system"
@@ -76,11 +76,8 @@ case $host in
 		LIBS="$LIBS -lpthread"
 		;;
 	*mingw*)
-		AM_CONDITIONAL(NOT_WIN32,false)
 		HOST="Mingw"
-		LIBS="$LIBS -lwsock32 -lshlwapi -mwindows"
-		#LIBS="$LIBS -lwsock32 -lshlwapi"
-		CFLAGS="$CFLAGS -mms-bitfields -enable-stdcall-fixup"
+		AM_CONDITIONAL(WIN32,true)
 		;;
 	*solaris*)
 		HOST="Solaris"
@@ -88,7 +85,6 @@ case $host in
 		;;
 	*)
 		HOST="Other"
-                LIBS="$LIBS"
 		;;
 esac
 AC_MSG_RESULT($HOST)

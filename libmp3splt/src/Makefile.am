@@ -11,7 +11,7 @@ libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:5:0
 libmp3splt_la_LIBADD = @LIBINTL@ @LIBLTDL@ -lm
 
 if WIN32
-libmp3splt_la_LIBADD += -lz -lws2_32
+libmp3splt_la_LIBADD += -lz -lws2_32 -lintl
 endif
 
 libmp3splt_la_SOURCES = \

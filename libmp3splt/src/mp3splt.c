@@ -752,6 +752,16 @@ int mp3splt_split(splt_state *state)
       splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
+      //set original tags from string if necessary
+      if (splt_t_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE) {
+        splt_u_put_tags_from_string(state, SPLT_ORIGINAL_TAGS_DEFAULT, &error);
+        if (error < 0)
+        {
+          splt_p_end(state, &error);
+          goto function_end;
+        }
+      }
+
       //we check if mp3 or ogg
       splt_check_file_type(state, &error);
       if (error < 0) { goto function_end; }
@@ -780,17 +790,6 @@ int mp3splt_split(splt_state *state)
       //init the plugin for split
       splt_p_init(state, &error);
       if (error < 0) { goto function_end; }
-
-      splt_u_print_debug("Setting original tags...",0,NULL);
-      //we retrieve the original tags from the file
-      //and save them for future use
-      // (for use with the output options)
-      splt_t_get_original_tags(state,&error);
-      if (error < 0)
-      {
-        splt_p_end(state, &error);
-        goto function_end;
-      }
 
       splt_u_print_debug("parse type of split...",0,NULL);
 

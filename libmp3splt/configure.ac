@@ -37,7 +37,8 @@ AC_INIT([libmp3splt],[0.5.7],[io_fx@yahoo.fr])
 AM_INIT_AUTOMAKE(libmp3splt, 0.5.7)
 AC_CONFIG_HEADERS([config.h])
 
-CFLAGS="-Wall $CFLAGS -I../include/libmp3splt"
+DEBUG_FLAGS="-g"
+CFLAGS="-Wall $DEBUG_FLAGS $CFLAGS -I../include/libmp3splt"
 
 #################################################
 # Check for programs
@@ -89,7 +90,6 @@ case $host in
 	*mingw*)
 		HOST="Mingw"
     AM_CONDITIONAL(WIN32,true)
-		LIBS="-lz -lws2_32"
 		;;
 	*solaris*)
 		HOST="Solaris"

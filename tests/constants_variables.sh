@@ -5,8 +5,9 @@ VIEW_DIFF_CMD="acoc diff"
 USE_GRAPHIC_DIFF=0
 GRAPHIC_DIFF_CMD="meld"
 
-MP3SPLT="./mp3splt -T"
+MP3SPLT="./mp3splt -X"
 MP3_FILE="songs/La_Verue__Today.mp3"
+NO_TAGS_MP3_FILE="songs/La_Verue__Today__no_tags.mp3"
 
 PRINT_MP3SPLT_COMMAND=0
 

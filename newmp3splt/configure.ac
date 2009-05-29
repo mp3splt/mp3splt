@@ -39,7 +39,8 @@ AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE(mp3splt, 2.2.6)
 AM_CONFIG_HEADER([config.h])
 
-CFLAGS="-Wall $CFLAGS -I../libmp3splt/include -I../../libmp3splt/include"
+DEBUG_CFLAGS="-g"
+CFLAGS="-Wall $DEBUG_CFLAGS $CFLAGS -I../libmp3splt/include -I../../libmp3splt/include"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../../libmp3splt/src/.libs"
 
 #################################################
@@ -58,6 +59,7 @@ AM_GNU_GETTEXT_VERSION([0.13.1])
 # Check for the type of the host
 #################################################################
 
+AM_CONDITIONAL(WIN32,false)
 AC_MSG_CHECKING(the host)
 case $host in
 	*linux*)
@@ -74,7 +76,7 @@ case $host in
 		;;
 	*mingw*)
 		HOST="Mingw"
-		LIBS="$LIBS -lltdl -lwsock32 -lshlwapi"
+    AM_CONDITIONAL(WIN32,true)
 		;;
 	*solaris*)
 		HOST="Solaris"

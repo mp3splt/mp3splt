@@ -244,7 +244,7 @@ typedef struct {
   unsigned char genre;
 
   /*
-   * @brief tags version (for mp3) : 1 or 2
+   * @brief tags version (for mp3) : 1 or 2 or 1 & 2
    */
   int tags_version;
 } splt_tags;
@@ -462,6 +462,8 @@ typedef enum {
   SPLT_NO_TAGS
 } splt_tags_options;
 
+#define SPLT_ORIGINAL_TAGS_DEFAULT "%[@o,@N=1]"
+
 #define SPLT_DEFAULT_OUTPUT "@f_@mm_@ss_@hh__@Mm_@Ss_@Hh"
 
 /**
@@ -573,7 +575,7 @@ typedef struct {
   int enable_silence_log;
 
   /**
-   * If we force the mp3 tags version to 1 or 2;
+   * If we force the mp3 tags version to 1 or 2 or 1 & 2;
    * Set to 0 if force disable;
    * If disabled, original tags version is set to split files,
    *  or version 1 if compiled without libid3tag support
