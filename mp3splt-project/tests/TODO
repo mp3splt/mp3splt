@@ -1,0 +1,34 @@
+NORMAL MODE
+**************************
+
+  MP3 FILES
+  ----------------------------
+
+  Frame Mode
+  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+  - EOF with tags version of input file
+  - no tags (-n)
+  - tags v1 (-T 1)
+  - tags v2 (-T 2)
+  - tags v1 & v2 (-T 12)
+  - no xing (-x)
+  - m3u file (-m)
+  - output directory (-d)
+  - custom tags (-g)
+  - overlap splitpoints (-O)
+  - stdin : input not seekable (-k)
+  - output filename (-o) + create directories
+  - stdout
+  - no tags in input file (+ -g option)
+
+  - auto adjust (-a)
+  - silence parameters (-a & -p) : th, off, gap
+  - don't create 'mp3splt.log' file (-N)
+
+TESTS TODO: tests ID3v2 UTF16
+
+-- 
+TODO: print if output will have ID3v1 or ID3v2
+TODO: print if no xing is written
+

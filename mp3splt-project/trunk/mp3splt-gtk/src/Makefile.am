@@ -28,7 +28,8 @@ mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 -lmp3splt
 
 if WIN32
 INCLUDES += -mms-bitfields -enable-stdcall-fixup
-mp3splt_gtk_LIBADD = -lwsock32 -lshlwapi -mwindows
+mp3splt_gtk_LDFLAGS = -mwindows
+mp3splt_gtk_LDADD += -lwsock32 -lshlwapi
 else
 INCLUDES += -DPIXMAP_PATH=\""$(datadir)/pixmaps/"\"
 endif
