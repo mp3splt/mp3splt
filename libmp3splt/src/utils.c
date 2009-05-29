@@ -1301,7 +1301,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   if (ptre == NULL)
   {
     splt_t_set_error_data(state, err);
-    return SPLT_OUTPUT_FORMAT_ERROR;
+    return SPLT_OUTPUT_FORMAT_AMBIGUOUS;
   }
   ptrs = ptre;
 
