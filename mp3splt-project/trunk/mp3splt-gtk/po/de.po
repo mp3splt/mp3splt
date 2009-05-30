@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-05-25 23:15+0200\n"
+"POT-Creation-Date: 2009-05-30 18:44+0200\n"
 "PO-Revision-Date: 2009-05-17 15:57+0200\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -45,11 +45,11 @@ msgstr "Beschreibung hier"
 msgid "Set splitpoints from silence detection"
 msgstr "Teilungspunkte aus erkannter Stille erzeugen"
 
-#: src/tree_tab.c:1155 src/preferences_tab.c:635
+#: src/tree_tab.c:1155 src/preferences_tab.c:643
 msgid "threshold level (dB) : "
 msgstr ""
 
-#: src/tree_tab.c:1174 src/preferences_tab.c:659
+#: src/tree_tab.c:1174 src/preferences_tab.c:667
 msgid "cutpoint offset (0 is the begin of silence,and 1 the end) : "
 msgstr ""
 
@@ -173,39 +173,43 @@ msgstr "Bestätigungsdialog zum Speichern, falls Einstellungen geändert wurden"
 msgid "Choose language (require restart) :"
 msgstr "Sprache wählen (erfordert Neustart):"
 
-#: src/preferences_tab.c:283
+#: src/preferences_tab.c:279
 msgid "english"
 msgstr "Englisch"
 
-#: src/preferences_tab.c:291
+#: src/preferences_tab.c:287
 msgid "french"
 msgstr "Französisch"
 
-#: src/preferences_tab.c:309
+#: src/preferences_tab.c:295
+msgid "german"
+msgstr ""
+
+#: src/preferences_tab.c:317
 msgid "Choose split directory"
 msgstr "Teilingsordner wählen"
 
-#: src/preferences_tab.c:536
+#: src/preferences_tab.c:544
 msgid "Directory for split files :"
 msgstr "Ordner für erzeugte Teilungsdateien:"
 
-#: src/preferences_tab.c:555
+#: src/preferences_tab.c:563
 msgid "_Browse dir"
 msgstr "_Ordner wählen"
 
-#: src/preferences_tab.c:565
+#: src/preferences_tab.c:573
 msgid "Song dir"
 msgstr "Titelordner"
 
-#: src/preferences_tab.c:578
+#: src/preferences_tab.c:586
 msgid "Split options :"
 msgstr "Teilungsoptionen:"
 
-#: src/preferences_tab.c:584
+#: src/preferences_tab.c:592
 msgid " frame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Frame-Modus (nützlich für mp3-VBR) (nur für mp3)"
 
-#: src/preferences_tab.c:595
+#: src/preferences_tab.c:603
 msgid ""
 " input not seekable (for streams that can be read only one time)\n"
 "(works only with normal and time split modes) (mp3 only)"
@@ -214,57 +218,57 @@ msgstr ""
 "werden können)\n"
 "(nur im Normal- und Zeit-Teilungsmodus) (nur mp3)"
 
-#: src/preferences_tab.c:608
+#: src/preferences_tab.c:616
 msgid " auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 "Selbstregulierender Modus (verwendet die Stille-Erkennung zum automatischen "
 "Setzen von Teilungspunkten)"
 
-#: src/preferences_tab.c:682
+#: src/preferences_tab.c:690
 msgid "gap level (seconds around splitpoint to search for silence) : "
 msgstr ""
 
-#: src/preferences_tab.c:711
+#: src/preferences_tab.c:719
 msgid "Set default split options"
 msgstr "Standard-Teilungsoptionen festlegen"
 
-#: src/preferences_tab.c:726
+#: src/preferences_tab.c:734
 msgid "Tags options :"
 msgstr "Tag-Optionen:"
 
-#: src/preferences_tab.c:732
+#: src/preferences_tab.c:740
 msgid "Original file tags"
 msgstr "Originale Datei-Tags"
 
-#: src/preferences_tab.c:740
+#: src/preferences_tab.c:748
 msgid "Default tags (cddb or cue tags)"
 msgstr "Vorgegebene Tags (cddb oder cue)"
 
-#: src/preferences_tab.c:748
+#: src/preferences_tab.c:756
 msgid "No tags"
 msgstr "Keine Tags"
 
-#: src/preferences_tab.c:761
+#: src/preferences_tab.c:769
 msgid "Tags version (mp3 only) :"
 msgstr "Tag-Version (nur für mp3):"
 
-#: src/preferences_tab.c:767
+#: src/preferences_tab.c:775
 msgid "Force ID3v2 tags"
 msgstr "ID3v2-Tags erzwingen"
 
-#: src/preferences_tab.c:775
+#: src/preferences_tab.c:783
 msgid "Force ID3v1 tags"
 msgstr "ID3v1-Tags erzwingen"
 
-#: src/preferences_tab.c:783
+#: src/preferences_tab.c:791
 msgid "Same tags version as the input file"
 msgstr "Gleiche Tag-Version wie Eingabedatei"
 
-#: src/preferences_tab.c:965
+#: src/preferences_tab.c:972
 msgid "Save preferences ?"
 msgstr "Einstellungen speichern?"
 
-#: src/preferences_tab.c:976
+#: src/preferences_tab.c:983
 msgid ""
 "\n"
 "\tPreferences have changed.\n"
@@ -274,27 +278,27 @@ msgstr ""
 "\tEinstellungen wurden geändert.\n"
 "Einstellungen speichern oder gespeicherte wiederherstellen?\n"
 
-#: src/preferences_tab.c:1018
+#: src/preferences_tab.c:1025
 msgid "Save"
 msgstr "Speichern"
 
-#: src/preferences_tab.c:1023
+#: src/preferences_tab.c:1030
 msgid "save preferences"
 msgstr "Einstellungen speichern"
 
-#: src/preferences_tab.c:1028
+#: src/preferences_tab.c:1035
 msgid "Revert to saved"
 msgstr "Zurücksetzen"
 
-#: src/preferences_tab.c:1034
+#: src/preferences_tab.c:1041
 msgid "revert to saved preferences"
 msgstr "Auf gespeicherte Einstellungen zurücksetzen"
 
-#: src/preferences_tab.c:1105
+#: src/preferences_tab.c:1112
 msgid "Choose a player :"
 msgstr "Abspielprogramm wählen:"
 
-#: src/preferences_tab.c:1221
+#: src/preferences_tab.c:1228
 msgid ""
 "Output filename format :\n"
 "    @f - file name\n"
@@ -312,27 +316,27 @@ msgstr ""
 "    @t - Songtitel\n"
 "    @n - Titelnummer"
 
-#: src/preferences_tab.c:1234
+#: src/preferences_tab.c:1241
 msgid "Default format"
 msgstr "Vorgegebenes Format"
 
-#: src/preferences_tab.c:1243
+#: src/preferences_tab.c:1250
 msgid "Custom format"
 msgstr "Benutzerdefiniertes Format"
 
-#: src/preferences_tab.c:1287
+#: src/preferences_tab.c:1294
 msgid "General"
 msgstr "Allgemein"
 
-#: src/preferences_tab.c:1295
+#: src/preferences_tab.c:1302
 msgid "Split"
 msgstr "Teilung"
 
-#: src/preferences_tab.c:1303
+#: src/preferences_tab.c:1310
 msgid "Output"
 msgstr "Ausgabe"
 
-#: src/preferences_tab.c:1312 src/main_win.c:671
+#: src/preferences_tab.c:1319 src/main_win.c:671
 msgid "Player"
 msgstr "Abspieler"
 

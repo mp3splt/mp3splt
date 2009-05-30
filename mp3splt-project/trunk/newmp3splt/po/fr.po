@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-05-29 23:47+0200\n"
+"POT-Creation-Date: 2009-05-30 18:34+0200\n"
 "PO-Revision-Date: 2009-05-20 02:20+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid " Error: %s\n"
 msgstr ""
 
-#: src/mp3splt.c:296 src/mp3splt.c:311 src/mp3splt.c:1856
+#: src/mp3splt.c:296 src/mp3splt.c:311 src/mp3splt.c:1900
 msgid "cannot allocate memory !"
 msgstr ""
 
@@ -330,47 +330,47 @@ msgstr ""
 msgid "failed to allocate argv_utf8 memory"
 msgstr ""
 
-#: src/mp3splt.c:1886
+#: src/mp3splt.c:1930
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec, read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:1919
+#: src/mp3splt.c:1963
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr ""
 
-#: src/mp3splt.c:1996
+#: src/mp3splt.c:2020
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 
-#: src/mp3splt.c:2101
+#: src/mp3splt.c:2125
 msgid "no input filename(s)."
 msgstr ""
 
-#: src/mp3splt.c:2113
+#: src/mp3splt.c:2137
 msgid "multiple splitpoints with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:2125
+#: src/mp3splt.c:2149
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Fichier '%s' ...\n"
 
-#: src/mp3splt.c:2186
+#: src/mp3splt.c:2210
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:2231
+#: src/mp3splt.c:2255
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:2263
+#: src/mp3splt.c:2287
 #, c-format
 msgid " Average silence level : %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:2272
+#: src/mp3splt.c:2296
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
