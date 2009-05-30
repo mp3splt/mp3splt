@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
 "POT-Creation-Date: 2009-05-30 20:23+0200\n"
-"PO-Revision-Date: 2009-05-30 23:11+0100\n"
+"PO-Revision-Date: 2009-05-31 01:19+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
 "MIME-Version: 1.0\n"
@@ -518,7 +518,7 @@ msgstr " info: mode trame activé\n"
 #: plugins/mp3.c:1556
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
-msgstr " info: couche %d MPEG %d - %d Hz - %s"
+msgstr " info: MPEG %d couche %d - %d Hz - %s"
 
 #: plugins/mp3.c:1564
 #, c-format
