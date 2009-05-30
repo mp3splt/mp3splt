@@ -535,10 +535,11 @@ gint main (gint argc, gchar *argv[], gchar **envp)
     }
   }
 
-  bind_textdomain_codeset ("mp3splt-gtk", "UTF-8");
 #else
   bindtextdomain ("mp3splt-gtk", LOCALEDIR);
 #endif
+
+  bind_textdomain_codeset ("mp3splt-gtk", "UTF-8");
  
   gtk_init(&argc, &argv);
   
