@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-05-30 18:44+0200\n"
+"POT-Creation-Date: 2009-05-31 01:11+0200\n"
 "PO-Revision-Date: 2009-05-31 00:58+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -29,33 +29,28 @@ msgstr "Kbps"
 msgid "Khz"
 msgstr "Khz"
 
-#: src/tree_tab.c:653
-#: src/tree_tab.c:1011
+#: src/tree_tab.c:653 src/tree_tab.c:1011
 msgid " error : you already have the splitpoint in table "
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:723
-#: src/tree_tab.c:1014
-#: src/freedb_tab.c:561
+#: src/tree_tab.c:723 src/tree_tab.c:1014 src/freedb_tab.c:561
 #: src/freedb_tab.c:583
 msgid "description here"
 msgstr "description"
 
-#: src/tree_tab.c:1128
-#: src/tree_tab.c:1500
+#: src/tree_tab.c:1128 src/tree_tab.c:1500
 msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/tree_tab.c:1155
-#: src/preferences_tab.c:643
+#: src/tree_tab.c:1155 src/preferences_tab.c:643
 msgid "threshold level (dB) : "
 msgstr "niveau seuil (dB) : "
 
-#: src/tree_tab.c:1174
-#: src/preferences_tab.c:667
+#: src/tree_tab.c:1174 src/preferences_tab.c:667
 msgid "cutpoint offset (0 is the begin of silence,and 1 the end) : "
-msgstr "compensation du point de coupure (0 est le début du silence, et 1 la fin) : "
+msgstr ""
+"compensation du point de coupure (0 est le début du silence, et 1 la fin) : "
 
 #: src/tree_tab.c:1192
 msgid "number of tracks (0 means all tracks) : "
@@ -125,8 +120,7 @@ msgstr " impossible d'écouter l'aperçu, déconnecté du lecteur"
 msgid "Keep"
 msgstr "Garder"
 
-#: src/tree_tab.c:1782
-#: src/split_files.c:120
+#: src/tree_tab.c:1782 src/split_files.c:120
 msgid "Filename"
 msgstr "Nom fichier"
 
@@ -224,7 +218,9 @@ msgstr ""
 
 #: src/preferences_tab.c:616
 msgid " auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr " ajustement automatique (utilise la détection du silence pour ajuster les points)"
+msgstr ""
+" ajustement automatique (utilise la détection du silence pour ajuster les "
+"points)"
 
 #: src/preferences_tab.c:690
 msgid "gap level (seconds around splitpoint to search for silence) : "
@@ -338,13 +334,11 @@ msgstr "Coupure"
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:1319
-#: src/main_win.c:671
+#: src/preferences_tab.c:1319 src/main_win.c:671
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/player_tab.c:554
-#: src/player_tab.c:588
+#: src/player_tab.c:554 src/player_tab.c:588
 msgid "Cannot connect to player"
 msgstr "Impossible de se connecter au lecteur"
 
@@ -389,7 +383,8 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to connect.\n"
+" If you don't know how to do that, start audacious manually and then try to "
+"connect.\n"
 msgstr ""
 "\n"
 " Impossible de se connecter au lecteur Audacious.\n"
@@ -435,9 +430,7 @@ msgstr "montrer le niveau du signal audio"
 msgid "_Connect    "
 msgstr "_Connecter    "
 
-#: src/player_tab.c:890
-#: src/main_win.c:366
-#: src/main_win.c:413
+#: src/player_tab.c:890 src/main_win.c:366 src/main_win.c:413
 msgid "connect to player"
 msgstr "se connecter au lecteur"
 
@@ -445,8 +438,7 @@ msgstr "se connecter au lecteur"
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:900
-#: src/main_win.c:356
+#: src/player_tab.c:900 src/main_win.c:356
 msgid "disconnect from player"
 msgstr "se déconnecter du lecteur"
 
@@ -460,12 +452,18 @@ msgid " left click on splitpoint selects it, right click erases it"
 msgstr " click gauche sur le point le sélectionne, click droit l'efface"
 
 #: src/player_tab.c:2563
-msgid " left click + move changes song position, right click + move changes zoom"
-msgstr " click gauche + déplacement change la position, click droit + déplacement change le zoom"
+msgid ""
+" left click + move changes song position, right click + move changes zoom"
+msgstr ""
+" click gauche + déplacement change la position, click droit + déplacement "
+"change le zoom"
 
 #: src/player_tab.c:2574
-msgid " left click on point + move changes point position, right click play preview"
-msgstr " click gauche sur le point + déplacement change la position du point, click droit aperçu"
+msgid ""
+" left click on point + move changes point position, right click play preview"
+msgstr ""
+" click gauche sur le point + déplacement change la position du point, click "
+"droit aperçu"
 
 #: src/player_tab.c:2586
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
@@ -547,38 +545,6 @@ msgstr "créé à partir de"
 msgid "release of"
 msgstr "version du"
 
-#: src/main_win.c:223
-msgid ""
-"\n"
-"This program is free software; you can redistribute it and/or \n"
-"modify it under the terms of the GNU General Public License\n"
-"as published by the Free Software Foundation; either version 2\n"
-"of the License, or (at your option) any later version.\n"
-"\n"
-"This program is distributed in the hope that it will be useful,\n"
-"but WITHOUT ANY WARRANTY; without eventhe implied warranty of\n"
-"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"GNU General Public License for more details.\n"
-"\n"
-"You should have received a copy of the GNU General Public License\n"
-"along with this program; if not, write to the Free Software\n"
-"Foundation, Inc., 59 Temple Place -Suite 330, Boston, MA  02111-1307, USA."
-msgstr ""
-"\n"
-"This program is free software; you can redistribute it and/or \n"
-"modify it under the terms of the GNU General Public License\n"
-"as published by the Free Software Foundation; either version 2\n"
-"of the License, or (at your option) any later version.\n"
-"\n"
-"This program is distributed in the hope that it will be useful,\n"
-"but WITHOUT ANY WARRANTY; without eventhe implied warranty of\n"
-"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"GNU General Public License for more details.\n"
-"\n"
-"You should have received a copy of the GNU General Public License\n"
-"along with this program; if not, write to the Free Software\n"
-"Foundation, Inc., 59 Temple Place -Suite 330, Boston, MA  02111-1307, USA."
-
 #: src/main_win.c:288
 msgid " info: stopping the split process.. please wait"
 msgstr " info: arrêt du processus de division... veuillez attendre"
@@ -611,23 +577,19 @@ msgstr "Fichier"
 msgid "Help"
 msgstr "Aide"
 
-#: src/main_win.c:478
-#: src/main_win.c:480
+#: src/main_win.c:478 src/main_win.c:480
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:483
-#: src/main_win.c:485
+#: src/main_win.c:483 src/main_win.c:485
 msgid "About"
 msgstr "à propos"
 
-#: src/main_win.c:589
-#: src/main_win.c:749
+#: src/main_win.c:589 src/main_win.c:749
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:616
-#: src/main_win.c:725
+#: src/main_win.c:616 src/main_win.c:725
 msgid "FreeDB"
 msgstr "FreeDB"
 
@@ -704,8 +666,7 @@ msgstr "Titre de l'album"
 msgid "No"
 msgstr "Numéro"
 
-#: src/freedb_tab.c:336
-#: src/freedb_tab.c:443
+#: src/freedb_tab.c:336 src/freedb_tab.c:443
 msgid "please wait... contacting tracktype.org"
 msgstr "veuillez attendre... connexion avec tracktype.org"
 
@@ -747,7 +708,8 @@ msgstr "diviser à chaque X secondes. X = "
 
 #: src/special_split.c:207
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
-msgstr "Wrap - diviser les fichiers créés avec mp3wrap ou albumwrap (seulement mp3)"
+msgstr ""
+"Wrap - diviser les fichiers créés avec mp3wrap ou albumwrap (seulement mp3)"
 
 #: src/special_split.c:219
 msgid "Error mode (mp3 only)"
@@ -756,6 +718,37 @@ msgstr "Mode recherche erreurs de synchronisation (seulement mp3)"
 #: src/special_split.c:235
 msgid "Set default options"
 msgstr "Options par défaut"
+
+#~ msgid ""
+#~ "\n"
+#~ "This program is free software; you can redistribute it and/or \n"
+#~ "modify it under the terms of the GNU General Public License\n"
+#~ "as published by the Free Software Foundation; either version 2\n"
+#~ "of the License, or (at your option) any later version.\n"
+#~ "\n"
+#~ "This program is distributed in the hope that it will be useful,\n"
+#~ "but WITHOUT ANY WARRANTY; without eventhe implied warranty of\n"
+#~ "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+#~ "GNU General Public License for more details.\n"
+#~ "\n"
+#~ "You should have received a copy of the GNU General Public License\n"
+#~ "along with this program; if not, write to the Free Software\n"
+#~ "Foundation, Inc., 59 Temple Place -Suite 330, Boston, MA  02111-1307, USA."
+#~ msgstr ""
+#~ "\n"
+#~ "This program is free software; you can redistribute it and/or \n"
+#~ "modify it under the terms of the GNU General Public License\n"
+#~ "as published by the Free Software Foundation; either version 2\n"
+#~ "of the License, or (at your option) any later version.\n"
+#~ "\n"
+#~ "This program is distributed in the hope that it will be useful,\n"
+#~ "but WITHOUT ANY WARRANTY; without eventhe implied warranty of\n"
+#~ "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+#~ "GNU General Public License for more details.\n"
+#~ "\n"
+#~ "You should have received a copy of the GNU General Public License\n"
+#~ "along with this program; if not, write to the Free Software\n"
+#~ "Foundation, Inc., 59 Temple Place -Suite 330, Boston, MA  02111-1307, USA."
 
 #, fuzzy
 #~ msgid " info: starting error mode split... "
@@ -768,52 +761,74 @@ msgstr "Options par défaut"
 #, fuzzy
 #~ msgid " file split"
 #~ msgstr " ogg coupé"
+
 #~ msgid " error: not enough splitpoints (<2) "
 #~ msgstr " erreur: pas assez de points de coupure (<2)"
+
 #~ msgid " error: cannot open file "
 #~ msgstr " erreur: ne peut pas ouvrir le fichier"
 
 #, fuzzy
 #~ msgid " error: invalid file"
 #~ msgstr " erreur: fichier ogg invalide"
+
 #~ msgid " error: equal splitpoints "
 #~ msgstr " erreur: points de coupure égaux"
+
 #~ msgid " error: splitpoints not in order "
 #~ msgstr " erreur: les points de coupure ne sont pas en ordre"
+
 #~ msgid " error: negative splitpoint "
 #~ msgstr " erreur: point de coupure negatif"
+
 #~ msgid " error: incorrect destination folder "
 #~ msgstr " erreur: dossier destination incorrect"
+
 #~ msgid " freedb search processed ok "
 #~ msgstr "recherche freedb ok"
+
 #~ msgid " freedb file processed ok "
 #~ msgstr "fichier freedb analysé ok"
+
 #~ msgid " cddb file processed ok "
 #~ msgstr "fichier cddb correctemen analysé"
+
 #~ msgid " cue file processed ok "
 #~ msgstr "fichier cue correctement analysé"
+
 #~ msgid " error: cannot initialise socket "
 #~ msgstr " erreur: ne peut pas initialiser le socket"
+
 #~ msgid " error: cannot get host by name "
 #~ msgstr " erreur: ne peut pas trouver le hote par le nom"
+
 #~ msgid " error: cannot open socket "
 #~ msgstr " erreur: ne peut pas ouvrir le socket"
+
 #~ msgid " error: cannot connect to host "
 #~ msgstr " erreur: ne peut pas se connecter a l'hote"
+
 #~ msgid " error: cannot send message to host "
 #~ msgstr " erreur: ne peut pas envoyer de message a l'hote"
+
 #~ msgid " error: invalid server answer "
 #~ msgstr " erreur: reponse du serveur invalide"
+
 #~ msgid " error: error 201 while connecting to site "
 #~ msgstr "erreur: erreur 201 a la connexion avec le site"
+
 #~ msgid " error: error 200 while connecting to site "
 #~ msgstr "erreur: erreur 200 a la connexion avec le site"
+
 #~ msgid " error: bad communication with site "
 #~ msgstr "erreur : mauvaise communication avec le site"
+
 #~ msgid " error: could not get infos from site "
 #~ msgstr " erreur: ne peut pas retirer les infos du site"
+
 #~ msgid " no cd found for this search "
 #~ msgstr "pas de cd trouvé pour cette recherche"
+
 #~ msgid " maximum number of found CD reached "
 #~ msgstr " nombre maximum de CD atteint"
 
@@ -912,8 +927,10 @@ msgstr "Options par défaut"
 #, fuzzy
 #~ msgid " error: inexistent file "
 #~ msgstr " erreur: ne peut pas ouvrir le fichier"
+
 #~ msgid " mp3 split"
 #~ msgstr " mp3 coupé"
+
 #~ msgid " error: invalid mp3 file or libmp3splt compiled without ogg support"
 #~ msgstr ""
 #~ " erreur: fichier mp3 invalide ou libmp3splt compilé sans le support ogg"
@@ -925,61 +942,81 @@ msgstr "Options par défaut"
 #, fuzzy
 #~ msgid " wrap error: ogg wrap not implemented "
 #~ msgstr " erreur : aucun fichier sélectionné"
+
 #~ msgid "_Delete file from disk"
 #~ msgstr "Efface fichier du disque"
+
 #~ msgid "error: cannot open cddb file for writing"
 #~ msgstr " erreur: ne peut pas ouvrir le fichier cddb en écriture"
+
 #~ msgid ""
 #~ "when playing(or paused)... left button + move => changes song position"
 #~ msgstr ""
 #~ "quand en écoute(ou sur pause)...bouton gauche + mouvement => change la "
 #~ "position"
+
 #~ msgid " right button + move => changes zoom"
 #~ msgstr "bouton droit + mouvement => change le zoom"
+
 #~ msgid "Player disabled"
 #~ msgstr "Aucun lecteur"
 
 #, fuzzy
 #~ msgid " warning: splitpoints bigger than length "
 #~ msgstr " ogg divisé, points de coupure supérieurs à la longueur"
+
 #~ msgid "File name"
 #~ msgstr "Nom du fichier"
+
 #~ msgid "Number"
 #~ msgstr "Numéro"
+
 #~ msgid " ok ? "
 #~ msgstr " ok?"
+
 #~ msgid "Audacious Player (supports also XMMS)"
 #~ msgstr "Audacious Player (supporte aussi XMMS)"
+
 #~ msgid "enable window resize"
 #~ msgstr "rendre possible le redimensionnement de la fenetre"
+
 #~ msgid ""
 #~ " file selection  instead of file chooser (check if you are using \n"
 #~ "\tgnome and have compiled with xmms support)"
 #~ msgstr ""
 #~ " selection fichier à la place du choix de fichier (bifez ca si vous \n"
 #~ "\tutilisez gnome et vous avez compilé avec support xmms)"
+
 #~ msgid "Choose the split directory"
 #~ msgstr "Choisir le répertoire pour les fichiers coupés"
+
 #~ msgid "X Multimedia System (XMMS)"
 #~ msgstr "X Multimedia System (XMMS)"
+
 #~ msgid "Choose file to split"
 #~ msgstr "Choisir fichier à diviser"
+
 #~ msgid "Choose CDDB file"
 #~ msgstr "Choisir fichier CDDB"
+
 #~ msgid "Choose CUE file"
 #~ msgstr "Choisir fichier CUE"
+
 #~ msgid "based on"
 #~ msgstr "basé sur"
+
 #~ msgid "written by"
 #~ msgstr "écrit par"
+
 #~ msgid "Description"
 #~ msgstr "Description"
+
 #~ msgid "based on mp3splt, written by Matteo Trotta"
 #~ msgstr "basé sur mp3splt, écrit par Matteo Trotta"
 
 #, fuzzy
 #~ msgid "_File"
 #~ msgstr "Fichier"
+
 #~ msgid "mp3splt-gtk"
 #~ msgstr "mp3splt-gtk"
-

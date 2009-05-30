@@ -88,6 +88,22 @@ function update_versions()
 }
 ################## end update versions ############
 
+################## remove pot files ############
+function remove_pot_files()
+{
+  echo
+  print_yellow "Removing pot files..."
+  echo
+
+  #we update the versions
+  rm -f ./${LIBMP3SPLT_DIR}/po/libmp3splt.pot
+  rm -f ./${MP3SPLT_DIR}/po/mp3splt.pot
+  rm -f ./${MP3SPLT_GTK_DIR}/po/mp3splt-gtk.pot
+
+  cd $PROJECT_DIR
+}
+################## end remove pot files ############
+
 ############# source packages ################
 function source_packages()
 {
@@ -390,6 +406,7 @@ cd $PROJECT_DIR
 ###################################
 #update the versions
 update_versions
+remove_pot_files
 
 ###################################
 #build packages
