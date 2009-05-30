@@ -1331,6 +1331,8 @@ typedef enum {
 
 /* other useful variables */
 
+#define MP3SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"
+
 //backslash character
 #ifndef SPLT_DIRCHAR
 #ifdef __WIN32__

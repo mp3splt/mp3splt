@@ -22,8 +22,10 @@ clean:
 	cd newmp3splt && make clean
 
 dist:
-#copying vorbis and libltdl libraries
-	cp /bin/libltdl3.dll /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll /bin/libvorbisenc-2.dll .
+#copy iconv & intl & ltdl
+	cp /bin/iconv.dll /bin/libintl-8.dll /bin/libltdl3.dll .
+#copying vorbis and ogg libraries
+	cp /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll /bin/libvorbisenc-2.dll .
 #copying libmad and libid3tag libraries
 	cp /bin/libmad-0.dll /bin/libid3tag.dll .
 #copying zlib1.dll (needed by libid3tag)
@@ -33,4 +35,4 @@ dist:
 	cd newmp3splt/windows && ./make_windows_installer.sh && cd ../../
 #building installer for the gui
 	strip mp3splt-gtk/src/mp3splt-gtk.exe && \
-	#cd mp3splt-gtk/windows && ./make_windows_installer.sh && cd ../../
+	cd mp3splt-gtk/windows && ./make_windows_installer.sh && cd ../../

@@ -59,11 +59,8 @@ splt_state *mp3splt_new_state(int *error)
   else
   {
 
-#ifdef __WIN32__
-    bindtextdomain(SPLT_LIB_GETTEXT_DOMAIN, "translations");
-    bind_textdomain_codeset(SPLT_LIB_GETTEXT_DOMAIN, "UTF-8");
-#else
-    bindtextdomain(SPLT_LIB_GETTEXT_DOMAIN, LOCALEDIR);
+#ifndef __WIN32__
+    bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, LOCALEDIR);
 #endif
 
     state = splt_t_new_state(state, err);
