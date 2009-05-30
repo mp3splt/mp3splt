@@ -220,7 +220,7 @@ void about_window(GtkWidget *widget,
   gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG(dialog), b3);
   
   gtk_about_dialog_set_license (GTK_ABOUT_DIALOG(dialog),
-                                _("\n"
+                                "\n"
                                 "This program is free software; you can "
                                 "redistribute it and/or \n"
                                 "modify it under the terms of the GNU General Public License\n"
@@ -239,7 +239,7 @@ void about_window(GtkWidget *widget,
                                 "to the Free Software\n"
                                 "Foundation, Inc., 59 Temple Place -"
                                 "Suite 330, Boston, MA  02111-1307, "
-                                "USA."));
+                                "USA.");
 
   gtk_about_dialog_set_website (GTK_ABOUT_DIALOG(dialog),
                                 "http://mp3splt.sourceforge.net/");
