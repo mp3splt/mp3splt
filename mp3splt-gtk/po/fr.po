@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-05-23 15:39+0200\n"
+"POT-Creation-Date: 2009-05-30 18:44+0200\n"
 "PO-Revision-Date: 2005-06-14 00:52+0200\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French  <io_fx@yahoo.fr>\n"
@@ -43,11 +43,11 @@ msgstr "ici, une description"
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1155 src/preferences_tab.c:635
+#: src/tree_tab.c:1155 src/preferences_tab.c:643
 msgid "threshold level (dB) : "
 msgstr ""
 
-#: src/tree_tab.c:1174 src/preferences_tab.c:659
+#: src/tree_tab.c:1174 src/preferences_tab.c:667
 msgid "cutpoint offset (0 is the begin of silence,and 1 the end) : "
 msgstr ""
 
@@ -182,95 +182,99 @@ msgstr ""
 msgid "Choose language (require restart) :"
 msgstr "Choisir la langue : (nécessite redémarrage)"
 
-#: src/preferences_tab.c:283
+#: src/preferences_tab.c:279
 msgid "english"
 msgstr "anglais"
 
-#: src/preferences_tab.c:291
+#: src/preferences_tab.c:287
 msgid "french"
 msgstr "français"
 
-#: src/preferences_tab.c:309
+#: src/preferences_tab.c:295
+msgid "german"
+msgstr ""
+
+#: src/preferences_tab.c:317
 msgid "Choose split directory"
 msgstr "Choisir répertoire pour les fichiers coupés"
 
-#: src/preferences_tab.c:536
+#: src/preferences_tab.c:544
 msgid "Directory for split files :"
 msgstr "Répertoire pour les fichiers coupés"
 
-#: src/preferences_tab.c:555
+#: src/preferences_tab.c:563
 msgid "_Browse dir"
 msgstr "Parcourir dossier"
 
-#: src/preferences_tab.c:565
+#: src/preferences_tab.c:573
 msgid "Song dir"
 msgstr ""
 
-#: src/preferences_tab.c:578
+#: src/preferences_tab.c:586
 #, fuzzy
 msgid "Split options :"
 msgstr "PointsCoupure"
 
-#: src/preferences_tab.c:584
+#: src/preferences_tab.c:592
 msgid " frame mode (useful for mp3 VBR) (mp3 only)"
 msgstr ""
 
-#: src/preferences_tab.c:595
+#: src/preferences_tab.c:603
 msgid ""
 " input not seekable (for streams that can be read only one time)\n"
 "(works only with normal and time split modes) (mp3 only)"
 msgstr ""
 
-#: src/preferences_tab.c:608
+#: src/preferences_tab.c:616
 msgid " auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 
-#: src/preferences_tab.c:682
+#: src/preferences_tab.c:690
 msgid "gap level (seconds around splitpoint to search for silence) : "
 msgstr ""
 
-#: src/preferences_tab.c:711
+#: src/preferences_tab.c:719
 msgid "Set default split options"
 msgstr ""
 
-#: src/preferences_tab.c:726
+#: src/preferences_tab.c:734
 #, fuzzy
 msgid "Tags options :"
 msgstr "PointsCoupure"
 
-#: src/preferences_tab.c:732
+#: src/preferences_tab.c:740
 msgid "Original file tags"
 msgstr ""
 
-#: src/preferences_tab.c:740
+#: src/preferences_tab.c:748
 msgid "Default tags (cddb or cue tags)"
 msgstr ""
 
-#: src/preferences_tab.c:748
+#: src/preferences_tab.c:756
 msgid "No tags"
 msgstr ""
 
-#: src/preferences_tab.c:761
+#: src/preferences_tab.c:769
 msgid "Tags version (mp3 only) :"
 msgstr ""
 
-#: src/preferences_tab.c:767
+#: src/preferences_tab.c:775
 msgid "Force ID3v2 tags"
 msgstr ""
 
-#: src/preferences_tab.c:775
+#: src/preferences_tab.c:783
 msgid "Force ID3v1 tags"
 msgstr ""
 
-#: src/preferences_tab.c:783
+#: src/preferences_tab.c:791
 msgid "Same tags version as the input file"
 msgstr ""
 
-#: src/preferences_tab.c:965
+#: src/preferences_tab.c:972
 msgid "Save preferences ?"
 msgstr "Sauver les préférences ?"
 
-#: src/preferences_tab.c:976
+#: src/preferences_tab.c:983
 msgid ""
 "\n"
 "\tPreferences have changed.\n"
@@ -280,27 +284,27 @@ msgstr ""
 "\tLes préférences ont changé \n"
 "Sauvegarder les préférences ou revenir à l'ancienne sauvegarde ?\n"
 
-#: src/preferences_tab.c:1018
+#: src/preferences_tab.c:1025
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: src/preferences_tab.c:1023
+#: src/preferences_tab.c:1030
 msgid "save preferences"
 msgstr "sauvegarder les préférences"
 
-#: src/preferences_tab.c:1028
+#: src/preferences_tab.c:1035
 msgid "Revert to saved"
 msgstr "Revenir à la sauvegarde"
 
-#: src/preferences_tab.c:1034
+#: src/preferences_tab.c:1041
 msgid "revert to saved preferences"
 msgstr "revenir aux préférences sauvegardés"
 
-#: src/preferences_tab.c:1105
+#: src/preferences_tab.c:1112
 msgid "Choose a player :"
 msgstr "Choisir un lecteur"
 
-#: src/preferences_tab.c:1221
+#: src/preferences_tab.c:1228
 msgid ""
 "Output filename format :\n"
 "    @f - file name\n"
@@ -311,27 +315,27 @@ msgid ""
 "    @n - track number"
 msgstr ""
 
-#: src/preferences_tab.c:1234
+#: src/preferences_tab.c:1241
 msgid "Default format"
 msgstr ""
 
-#: src/preferences_tab.c:1243
+#: src/preferences_tab.c:1250
 msgid "Custom format"
 msgstr ""
 
-#: src/preferences_tab.c:1287
+#: src/preferences_tab.c:1294
 msgid "General"
 msgstr "Général"
 
-#: src/preferences_tab.c:1295
+#: src/preferences_tab.c:1302
 msgid "Split"
 msgstr "Coupure"
 
-#: src/preferences_tab.c:1303
+#: src/preferences_tab.c:1310
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1312 src/main_win.c:671
+#: src/preferences_tab.c:1319 src/main_win.c:671
 msgid "Player"
 msgstr "Lecteur"
 

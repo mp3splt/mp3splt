@@ -39,7 +39,7 @@ if [[ -z $we_dont_cross_compile ]];then
 #cross compilation section
 else
   for lang in $LANGUAGES;do
-    wine `pwd`/../../../libs/bin/msgfmt -o ../../translations/translations/$lang/LC_MESSAGES/mp3splt.mo ../po/$lang.po || exit 1
+    wine `pwd`/../../../libs/bin/msgfmt -o ../../translations/$lang/translations/$lang/LC_MESSAGES/mp3splt.mo ../po/$lang.po || exit 1
   done
 fi
 

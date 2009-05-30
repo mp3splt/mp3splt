@@ -26,6 +26,7 @@ cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
     lib/libvorbisfile.a ../trunk/newmp3splt/ || exit 1
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
     lib/libvorbisfile.a ../trunk/newmp3splt/src || exit 1
+cp bin/iconv.dll bin/libintl-8.dll ../trunk || exit 1 
 cd ..
 
 #cross compile flags

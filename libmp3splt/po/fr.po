@@ -337,7 +337,7 @@ msgstr ""
 #: src/utils.c:2154
 #, c-format
 msgid " file split"
-msgstr " fichier coupé"
+msgstr " fichier coupÃ©"
 
 #: src/utils.c:2160
 #, c-format
