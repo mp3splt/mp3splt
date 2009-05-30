@@ -489,7 +489,52 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   textdomain ("mp3splt-gtk");
 
 #ifdef __WIN32__
-  bindtextdomain ("mp3splt-gtk", "translations");
+  char mp3splt_uninstall_file[2048] = { '\0' };
+  DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
+  SHGetValue(HKEY_LOCAL_MACHINE,
+        TEXT("SOFTWARE\\mp3splt-gtk"),
+        TEXT("UninstallString"),
+        &dwType,
+        mp3splt_uninstall_file,
+        &dwSize);
+
+  gchar *end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
+  if (end) { *end = '\0'; }
+
+  gchar *executable = strdup(argv[0]);
+  gchar *executable_dir = NULL;
+
+  end = strrchr(executable, SPLT_DIRCHAR);
+  if (end)
+  {
+    *end = '\0';
+    executable_dir = executable;
+  }
+  else
+  {
+    if (mp3splt_uninstall_file[0] != '\0')
+    {
+      executable_dir = mp3splt_uninstall_file;
+    }
+  }
+
+  if (executable_dir != NULL)
+  {
+    gint translation_dir_length = strlen(executable_dir) + 30;
+    gchar *translation_dir = malloc(sizeof(gchar) * translation_dir_length);
+    g_snprintf(translation_dir,translation_dir_length,
+        "%s%ctranslations",executable_dir,SPLT_DIRCHAR);
+
+    bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, translation_dir);
+    bindtextdomain("mp3splt-gtk", translation_dir);
+
+    if (translation_dir)
+    {
+      free(translation_dir);
+      translation_dir = NULL;
+    }
+  }
+
   bind_textdomain_codeset ("mp3splt-gtk", "UTF-8");
 #else
   bindtextdomain ("mp3splt-gtk", LOCALEDIR);
@@ -515,44 +560,20 @@ gint main (gint argc, gchar *argv[], gchar **envp)
 
   //add special directory search for plugins on Windows
 #ifdef __WIN32__
-  //add the directory of the executable in the plugin scan directories
-  char *executable = strdup(argv[0]);
-  char *end = strrchr(executable, SPLT_DIRCHAR);
-  if (end)
+  if (executable != NULL)
   {
-    *end = '\0';
-    //set gstreamer plugin path as the current directory of the executable
-#ifdef __WIN32__
-    g_setenv("GST_PLUGIN_PATH",executable,TRUE);
-#endif
-    mp3splt_append_plugins_scan_dir(the_state, executable);
-  }
-  if (executable)
-  {
+    if (executable[0] != '\0')
+    {
+      g_setenv("GST_PLUGIN_PATH",executable,TRUE);
+      mp3splt_append_plugins_scan_dir(the_state, executable);
+    }
     free(executable);
     executable = NULL;
   }
 
-  //also add the installation directory that we take from the registry
-  char mp3splt_uninstall_file[2048] = { '\0' };
-  DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
-  if (SHGetValue(HKEY_LOCAL_MACHINE,
-        TEXT("SOFTWARE\\mp3splt-gtk"),
-        TEXT("UninstallString"),
-        &dwType,
-        mp3splt_uninstall_file,
-        &dwSize) != ERROR_SUCCESS)
+  if (mp3splt_uninstall_file[0] != '\0')
   {
-    //do nothing if error
-  }
-  else
-  {
-    end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
-    if (end)
-    {
-      *end = '\0';
-      mp3splt_append_plugins_scan_dir(the_state, mp3splt_uninstall_file);
-    }
+    mp3splt_append_plugins_scan_dir(the_state, mp3splt_uninstall_file);
   }
 #endif
 

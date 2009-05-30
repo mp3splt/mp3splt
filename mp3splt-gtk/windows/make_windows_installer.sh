@@ -27,18 +27,18 @@ fi
 
 LANGUAGES="fr de"
 
-for lang in "$LANGUAGES";do
-  mkdir -p ../../translations/translations/$lang/LC_MESSAGES
+for lang in $LANGUAGES;do
+  mkdir -p ../../translations/${lang}/translations/$lang/LC_MESSAGES
 done
 #mings/msys compilation section
 if [[ -z $we_dont_cross_compile ]];then
-  for lang in "$LANGUAGES";do
-    msgfmt -o ../../translations/translations/$lang/LC_MESSAGES/mp3splt-gtk.mo ../po/$lang.po || exit 1
-    msgfmt -o ../../translations/translations/$lang/LC_MESSAGES/libmp3splt.mo ../../libmp3splt/po/$lang.po || exit 1
+  for lang in $LANGUAGES;do
+    msgfmt -o ../../translations/${lang}/translations/$lang/LC_MESSAGES/mp3splt-gtk.mo ../po/$lang.po || exit 1
+    msgfmt -o ../../translations/${lang}/translations/$lang/LC_MESSAGES/libmp3splt.mo ../../libmp3splt/po/$lang.po || exit 1
   done
 #cross compilation section
 else
-  for lang in "$LANGUAGES";do
+  for lang in $LANGUAGES;do
     wine `pwd`/../../../libs/bin/msgfmt -o ../../translations/translations/$lang/LC_MESSAGES/mp3splt-gtk.mo ../po/$lang.po || exit 1
   done
 
@@ -169,7 +169,8 @@ function end_section()
 function recursive_copy_files_from_directory()
 {
   DIR=$1
-
+  optional_file_dir=$2
+  
   last_dir=${DIR##*\/}
 
   cd $DIR
@@ -179,18 +180,20 @@ function recursive_copy_files_from_directory()
   directories=$(find . -type d)
   files=$(find . -type f)
 
+  OUTPUT_DIR='$INSTDIR'
+
   echo -n "generating uninstall directories list for $DIR ... "
   #prepare directories to remove at the uninstall
   find . -type d -exec echo '  RmDir ''{}' \; | grep -v 'RmDir \.$' | \
-    sed 's+RmDir \.+RmDir $INSTDIR+; s+/+\\+g' > .tmp_tmp_dirs_mp3splt_gtk
+    sed 's+RmDir \.+RmDir '$OUTPUT_DIR'+; s+/+\\+g' > .tmp_tmp_dirs_mp3splt_gtk
   tac .tmp_tmp_dirs_mp3splt_gtk >> $olddir/$TMP_CREATED_DIRECTORIES_FILE
   rm -f .tmp_tmp_dirs_mp3splt_gtk
   echo "done"
 
   echo -n "generating uninstall files list for $DIR ... "
   #prepare files to remove at the uninstall
-  find . -type f -exec echo '  Delete $INSTDIR'"\\"'{}' \; | \
-    sed 's+$INSTDIR\\\.+$INSTDIR+; s+/+\\+g' >> $olddir/$TMP_GENERATED_FILES_FILE
+  find . -type f -exec echo '  Delete '$OUTPUT_DIR''"\\"'{}' \; | \
+    sed 's+'$OUTPUT_DIR'\\\.+'$OUTPUT_DIR'+; s+/+\\+g' >> $olddir/$TMP_GENERATED_FILES_FILE
   echo "done"
 
   cd - &>/dev/null
@@ -209,9 +212,9 @@ function recursive_copy_files_from_directory()
       windows_dir=""
     fi
 
-    #don't re-create the $INSTDIR directory
+    #don't re-create the $OUTPUT_DIR directory
     if [[ ! -z $windows_dir ]];then
-      echo '    CreateDirectory $INSTDIR'$windows_dir >> $WIN_INSTALLER_FILE
+      echo '    CreateDirectory '${OUTPUT_DIR}$windows_dir >> $WIN_INSTALLER_FILE
     fi
     
     #copy files from the current directory (not recursively)
@@ -222,11 +225,15 @@ function recursive_copy_files_from_directory()
     if [[ ! -z $files ]];then
 
       #set the outpath as the current directory
-      set_out_path '$INSTDIR'$windows_dir
+      set_out_path ${OUTPUT_DIR}$windows_dir
 
       for cur_file in ${files};do
         file=$(echo ${cur_file#\.\/} | sed 's+/+\\+g')
-        echo '    File ${MP3SPLT_PATH}'\\${last_dir}${windows_dir}"\\"$file >> $WIN_INSTALLER_FILE
+        if [[ ! -z $optional_file_dir ]];then
+          echo '    File ${MP3SPLT_PATH}'\\${optional_file_dir}\\${last_dir}${windows_dir}"\\"$file >> $WIN_INSTALLER_FILE
+        else
+          echo '    File ${MP3SPLT_PATH}'\\${last_dir}${windows_dir}"\\"$file >> $WIN_INSTALLER_FILE
+        fi
       done
 
     fi
@@ -422,13 +429,13 @@ SubSection "Translations" translations_section
 ' >> $WIN_INSTALLER_FILE
 
 start_section "French" "french_translation_section" "yes"
-set_out_path '$INSTDIR/translations'
-recursive_copy_files_from_directory "../../translations/fr"
+set_out_path '$INSTDIR'
+recursive_copy_files_from_directory "../../translations/fr" "translations"
 end_section "french_translation_section" "yes"
 
 start_section "German" "german_translation_section" "yes"
-set_out_path '$INSTDIR/translations'
-recursive_copy_files_from_directory "../../translations/de"
+set_out_path '$INSTDIR'
+recursive_copy_files_from_directory "../../translations/de" "translations"
 end_section "german_translation_section" "yes"
 
 echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE
@@ -555,7 +562,6 @@ SectionEnd' >> $WIN_INSTALLER_FILE
 
 #uninstall old program if found installed
 echo '
-;uninstall the old program if necessary
 Function .onInit
 
   ;read only and select the main section

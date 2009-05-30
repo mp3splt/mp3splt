@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-05-24 00:51+0200\n"
+"POT-Creation-Date: 2009-05-29 23:43+0200\n"
 "PO-Revision-Date: 2009-05-23 14:07+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -14,17 +14,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:762
+#: src/mp3splt.c:772
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:773
+#: src/mp3splt.c:783
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:806
+#: src/mp3splt.c:805
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -82,70 +82,70 @@ msgstr ""
 msgid " info: starting normal split\n"
 msgstr ""
 
-#: src/splt.c:229
+#: src/splt.c:223
 msgid " info: starting error mode split\n"
 msgstr ""
 
-#: src/splt.c:354
+#: src/splt.c:340
 msgid " info: starting time mode split\n"
 msgstr ""
 
-#: src/splt.c:599
+#: src/splt.c:577
 #, c-format
 msgid "YES"
 msgstr ""
 
-#: src/splt.c:603
+#: src/splt.c:581
 #, c-format
 msgid "NO"
 msgstr ""
 
-#: src/splt.c:608
+#: src/splt.c:586
 #, c-format
 msgid "User"
 msgstr ""
 
-#: src/splt.c:612
+#: src/splt.c:590
 #, c-format
 msgid "Auto"
 msgstr ""
 
-#: src/splt.c:618
+#: src/splt.c:596
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %"
 "s)\n"
 msgstr ""
 
-#: src/splt.c:634
+#: src/splt.c:612
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)"
 msgstr ""
 
-#: src/splt.c:659
+#: src/splt.c:637
 #, c-format
 msgid ""
 "\n"
 " Total silence points found: %d."
 msgstr ""
 
-#: src/splt.c:669
+#: src/splt.c:647
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr ""
 
-#: src/splt.c:764
+#: src/splt.c:742
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr ""
 
-#: src/splt.c:826
+#: src/splt.c:804
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:884
+#: src/splt.c:862
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
@@ -337,7 +337,7 @@ msgstr ""
 #: src/utils.c:2154
 #, c-format
 msgid " file split"
-msgstr " fichier coupÃ©"
+msgstr " fichier coupé"
 
 #: src/utils.c:2160
 #, c-format
@@ -509,64 +509,64 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: plugins/mp3.c:1434
+#: plugins/mp3.c:1421
 msgid " info: frame mode enabled\n"
 msgstr ""
 
-#: plugins/mp3.c:1569
+#: plugins/mp3.c:1556
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr ""
 
-#: plugins/mp3.c:1577
+#: plugins/mp3.c:1564
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr ""
 
-#: plugins/mp3.c:1581
+#: plugins/mp3.c:1568
 #, c-format
 msgid " - FRAME MODE"
 msgstr ""
 
-#: plugins/mp3.c:1586
+#: plugins/mp3.c:1573
 #, c-format
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1594 plugins/ogg.c:177
+#: plugins/mp3.c:1581 plugins/ogg.c:177
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
 
-#: plugins/mp3.c:3088
+#: plugins/mp3.c:3075
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr ""
 
-#: plugins/mp3.c:3129
+#: plugins/mp3.c:3116
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 
-#: plugins/mp3.c:3148
+#: plugins/mp3.c:3135
 msgid " OK\n"
 msgstr ""
 
-#: plugins/mp3.c:3167
+#: plugins/mp3.c:3154
 #, c-format
 msgid " Detected file created with: AlbumWrap\n"
 msgstr ""
 
-#: plugins/mp3.c:3190
+#: plugins/mp3.c:3177
 #, c-format
 msgid " Total files: %d\n"
 msgstr ""
 
-#: plugins/mp3.c:3589
+#: plugins/mp3.c:3576
 #, c-format
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 
-#: plugins/mp3.c:3616
+#: plugins/mp3.c:3603
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr ""
@@ -576,7 +576,7 @@ msgstr ""
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:1874
+#: plugins/ogg.c:1841
 #, c-format
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""

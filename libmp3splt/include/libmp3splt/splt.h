@@ -52,8 +52,7 @@
 #define ftello ftell
 #endif
 
-#define SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"
-#define _(STR) dgettext(SPLT_LIB_GETTEXT_DOMAIN, STR)
+#define _(STR) dgettext(MP3SPLT_LIB_GETTEXT_DOMAIN, STR)
 
 /**********************************/
 /* splt normal or syncerror split */

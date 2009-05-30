@@ -1713,13 +1713,6 @@ int main(int argc, char **orig_argv)
   setlocale(LC_ALL, "");
   textdomain(MP3SPLT_GETTEXT_DOMAIN);
 
-#ifdef __WIN32__
-  bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, "translations");
-  bind_textdomain_codeset(MP3SPLT_GETTEXT_DOMAIN, "UTF-8");
-#else
-  bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, LOCALEDIR);
-#endif
-
   console_out = stdout;
   console_err = stderr;
   console_progress = stderr;
@@ -1729,7 +1722,58 @@ int main(int argc, char **orig_argv)
 
   main_data *data = create_main_struct(argc, orig_argv);
 
-  //we create our state
+#ifdef __WIN32__
+  char mp3splt_uninstall_file[2048] = { '\0' };
+  DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
+  SHGetValue(HKEY_LOCAL_MACHINE,
+      TEXT("SOFTWARE\\mp3splt"),
+      TEXT("UninstallString"),
+      &dwType,
+      mp3splt_uninstall_file,
+      &dwSize);
+
+  char *end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
+  if (end) { *end = '\0'; }
+
+  char *executable = strdup(data->argv[0]);
+  char *executable_dir = NULL;
+
+  end = strrchr(executable, SPLT_DIRCHAR);
+  if (end)
+  {
+    *end = '\0';
+    executable_dir = executable;
+  }
+  else
+  {
+    if (mp3splt_uninstall_file[0] != '\0')
+    {
+      executable_dir = mp3splt_uninstall_file;
+    }
+  }
+
+  if (executable_dir != NULL)
+  {
+    int translation_dir_length = strlen(executable_dir) + 30;
+    char *translation_dir = malloc(sizeof(char) * translation_dir_length);
+    snprintf(translation_dir,translation_dir_length,
+        "%s%ctranslations",executable_dir,SPLT_DIRCHAR);
+
+    bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, translation_dir);
+    bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, translation_dir);
+
+    if (translation_dir)
+    {
+			free(translation_dir);
+			translation_dir = NULL;
+    }
+  }
+
+  bind_textdomain_codeset(MP3SPLT_GETTEXT_DOMAIN, "UTF-8");
+#else
+  bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, LOCALEDIR);
+#endif
+
   data->state = mp3splt_new_state(&err);
   process_confirmation_error(err, data);
  
@@ -1944,40 +1988,20 @@ int main(int argc, char **orig_argv)
 
   //add special directory search for plugins on Windows
 #ifdef __WIN32__
-  //add the directory of the executable in the plugin scan directories
-  char *executable = strdup(data->argv[0]);
-  char *end = strrchr(executable, SPLT_DIRCHAR);
-  if (end)
+  if (executable != NULL)
   {
-    *end = '\0';
-    mp3splt_append_plugins_scan_dir(state, executable);
-  }
-  if (executable)
-  {
+    if (executable[0] != '\0')
+    {
+      mp3splt_append_plugins_scan_dir(state, executable);
+    }
     free(executable);
     executable = NULL;
   }
 
   //also add the installation directory that we take from the registry
-  char mp3splt_uninstall_file[2048] = { '\0' };
-  DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
-  if (SHGetValue(HKEY_LOCAL_MACHINE,
-        TEXT("SOFTWARE\\mp3splt"),
-        TEXT("UninstallString"),
-        &dwType,
-        mp3splt_uninstall_file,
-        &dwSize) != ERROR_SUCCESS)
+  if (mp3splt_uninstall_file[0] != '\0')
   {
-    //do nothing if error
-  }
-  else
-  {
-    end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
-    if (end)
-    {
-      *end = '\0';
-      mp3splt_append_plugins_scan_dir(state, mp3splt_uninstall_file);
-    }
+    mp3splt_append_plugins_scan_dir(state, mp3splt_uninstall_file);
   }
 #endif
 

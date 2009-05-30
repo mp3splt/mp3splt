@@ -28,7 +28,7 @@ rm -f libtool aclocal.m4 config.status configure autom4te.cache/* ltmain.sh
 echo -n "1/6 Running autopoint... " \
 && autopoint -f && echo "done" \
 && echo -n "2/6 Running aclocal... " \
-&& aclocal -Im4 $ACLOCAL_FLAGS && echo "done" \
+&& aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
 && if [[ -z $win ]];then sed -i "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4;fi \
 && echo -n "3/6 Running autoheader... " \
 && autoheader && echo "done" \
