@@ -615,6 +615,7 @@ typedef struct
   float version;
   char *name;
   char *extension;
+  char *upper_extension;
 } splt_plugin_info;
 
 //contains pointers to the plugin functions
@@ -1533,6 +1534,9 @@ int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir);
 #ifdef __WIN32__
 char *mp3splt_win32_utf16_to_utf8(const wchar_t *source);
 #endif
+
+char **mp3splt_find_filenames(splt_state *state, const char *filename,
+    int *num_of_files_found, int *error);
 
 #define MP3SPLT_MP3SPLT_H
 

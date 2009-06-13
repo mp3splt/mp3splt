@@ -660,7 +660,7 @@ GtkWidget *create_main_vbox()
   //creating the tree view
   GtkWidget *splitpoints_vbox;
   splitpoints_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (splitpoints_vbox), 5);
+  gtk_container_set_border_width (GTK_CONTAINER (splitpoints_vbox), 0);
   tree_view = (GtkTreeView *)create_tree_view();
   frame = (GtkWidget *)create_choose_splitpoints_frame(tree_view);
   gtk_container_add(GTK_CONTAINER(splitpoints_vbox), frame);
@@ -691,7 +691,7 @@ GtkWidget *create_main_vbox()
   /* split files frame */
   GtkWidget *split_files_vbox;
   split_files_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (split_files_vbox), 5);
+  gtk_container_set_border_width (GTK_CONTAINER (split_files_vbox), 0);
   
   frame = (GtkWidget *)create_split_files();
   gtk_container_add(GTK_CONTAINER(split_files_vbox), frame);
@@ -704,7 +704,7 @@ GtkWidget *create_main_vbox()
   /* cddb and cue page */
   GtkWidget *cddb_cue_vbox;
   cddb_cue_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (cddb_cue_vbox), 5);
+  gtk_container_set_border_width (GTK_CONTAINER (cddb_cue_vbox), 0);
 
   frame = (GtkWidget *)create_cddb_cue_frame();
   gtk_container_add(GTK_CONTAINER(cddb_cue_vbox), frame);
@@ -717,7 +717,7 @@ GtkWidget *create_main_vbox()
   /* freedb page */
   GtkWidget *freedb_vbox;
   freedb_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (freedb_vbox), 5);
+  gtk_container_set_border_width (GTK_CONTAINER (freedb_vbox), 0);
   
   frame = (GtkWidget *)create_freedb_frame();
   gtk_container_add(GTK_CONTAINER(freedb_vbox), frame);
@@ -730,18 +730,18 @@ GtkWidget *create_main_vbox()
   /* special split page */
   GtkWidget *special_split_vbox;
   special_split_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (special_split_vbox), 5);
+  gtk_container_set_border_width (GTK_CONTAINER (special_split_vbox), 0);
   frame = (GtkWidget *)create_special_split_page();
   gtk_container_add(GTK_CONTAINER(special_split_vbox), frame);
-  notebook_label = gtk_label_new((gchar *)_("Split mode"));
+  notebook_label = gtk_label_new(_("Type of split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            special_split_vbox,
                            (GtkWidget *)notebook_label);
-  
+ 
   /* preferences page */
   GtkWidget *preferences_vbox;
   preferences_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (preferences_vbox), 5);
+  gtk_container_set_border_width (GTK_CONTAINER (preferences_vbox), 0);
 
   frame = (GtkWidget *)create_choose_preferences();
   gtk_container_add(GTK_CONTAINER(preferences_vbox), frame);

@@ -3357,7 +3357,11 @@ void playlist_selection_changed(GtkTreeSelection *selec,
 
   if (g_list_length(selected_list) > 0)
   {
-    gtk_widget_set_sensitive(playlist_remove_file_button,TRUE);
+    gtk_widget_set_sensitive(playlist_remove_file_button, TRUE);
+  }
+  else
+  {
+    gtk_widget_set_sensitive(playlist_remove_file_button, FALSE);
   }
 }
 

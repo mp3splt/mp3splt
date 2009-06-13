@@ -400,7 +400,7 @@ int splt_check_is_file(splt_state *state, const char *fname)
   else
   {
     //stdin : consider as file
-    if (fname[strlen(fname)-1] == '-')
+    if (fname[0] != '\0' && fname[strlen(fname)-1] == '-')
     {
       return SPLT_TRUE;
     }
@@ -427,6 +427,78 @@ int splt_check_is_file(splt_state *state, const char *fname)
       return SPLT_FALSE;
     }
   }
+}
+
+//check if its a file and not a symlink
+//-we are not interested in errors
+int splt_check_is_file_and_not_symlink(splt_state *state, const char *fname)
+{
+  if (fname == NULL)
+  {
+    return SPLT_FALSE;
+  }
+  else
+  {
+    //stdin : consider as file
+    if (fname[strlen(fname)-1] == '-')
+    {
+      return SPLT_TRUE;
+    }
+
+    mode_t st_mode;
+    int status = splt_u_stat(fname, &st_mode, NULL);
+    if (status == 0)
+    {
+      if (S_ISLNK(st_mode)) { return SPLT_FALSE; }
+      if (S_ISREG(st_mode)) { return SPLT_TRUE; }
+      return SPLT_FALSE;
+    }
+    else
+    {
+      return SPLT_FALSE;
+    }
+  }
+}
+
+//-we are not interested in errors
+int splt_check_is_directory(const char *fname)
+{
+  if (fname == NULL)
+  {
+    return SPLT_FALSE;
+  }
+  else
+  {
+    mode_t st_mode;
+    int status = splt_u_stat(fname, &st_mode, NULL);
+    if (status == 0)
+    {
+      if (S_ISDIR(st_mode)) { return SPLT_TRUE; }
+    }
+  }
+
+  return SPLT_FALSE;
+}
+
+//-we are not interested in errors
+int splt_check_is_directory_and_not_symlink(const char *fname)
+{
+  if (fname == NULL)
+  {
+    return SPLT_FALSE;
+  }
+  else
+  {
+    mode_t st_mode;
+    int status = splt_u_stat(fname, &st_mode, NULL);
+    if (status == 0)
+    {
+      if (S_ISLNK(st_mode)) { return SPLT_FALSE; }
+      if (S_ISDIR(st_mode)) { return SPLT_TRUE; }
+    }
+  }
+
+  return SPLT_FALSE;
 }
 
 //close two filehandles

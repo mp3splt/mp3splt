@@ -59,6 +59,7 @@
 #include "snackamp_control.h"
 #include "split_files.h"
 #include "preferences_tab.h"
+#include "multiple_files.h"
 
 //the state
 splt_state *the_state = NULL;
@@ -123,6 +124,10 @@ extern GtkWidget *output_entry;
 extern GtkWidget *split_button;
 
 extern GtkWidget *remove_all_files_button;
+
+extern gint split_file_mode;
+extern GtkWidget *multiple_files_tree;
+extern gint multiple_files_tree_number;
 
 //how many split files
 gint split_files = 0;
@@ -330,7 +335,7 @@ gpointer split_it(gpointer data)
   //lock gtk
   gdk_threads_enter();
   
-  gint confirmation;
+  gint confirmation = SPLT_OK;
   
   gtk_widget_set_sensitive(GTK_WIDGET(split_button),
                            FALSE);
@@ -366,10 +371,6 @@ gpointer split_it(gpointer data)
   //unlock gtk
   gdk_threads_leave();
   
-  //put filename and path of split
-  mp3splt_set_filename_to_split(the_state,filename_to_split);
-  mp3splt_set_path_of_split(the_state,filename_path_of_split);
-  
   //if we have the normal split mode, enable default output
   gint output_filenames = 
     mp3splt_get_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,&err);
@@ -380,8 +381,46 @@ gpointer split_it(gpointer data)
                              SPLT_OUTPUT_CUSTOM);
     }
   
-  //effective split, returns confirmation or error;
-  confirmation = mp3splt_split(the_state);
+  mp3splt_set_path_of_split(the_state,filename_path_of_split);
+
+  if (split_file_mode == FILE_MODE_SINGLE)
+  {
+    mp3splt_set_filename_to_split(the_state, filename_to_split);
+    confirmation = mp3splt_split(the_state);
+  }
+  else
+  {
+    gchar *filename = NULL;
+    GtkTreeIter iter;
+    GtkTreePath *path;
+    GtkTreeModel *model =
+      gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
+
+    gint row_number = 0;
+    while (row_number < multiple_files_tree_number)
+    {
+      path = gtk_tree_path_new_from_indices(row_number ,-1);
+      gtk_tree_model_get_iter(model, &iter, path);
+      gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME,
+          &filename, -1);
+
+      mp3splt_set_filename_to_split(the_state, filename);
+      confirmation = mp3splt_split(the_state);
+
+      if (filename)
+      {
+        g_free(filename);
+        filename = NULL;
+      }
+
+      if (confirmation < 0)
+      {
+        break;
+      }
+
+      row_number++;
+    }
+  }
   
   //reenable default output if necessary
   mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);

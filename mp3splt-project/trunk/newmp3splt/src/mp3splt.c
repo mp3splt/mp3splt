@@ -288,6 +288,13 @@ void print_error_exit(const char *m, main_data *data)
   exit(1);
 }
 
+void print_message_exit(const char *m, main_data *data)
+{
+  print_message(m);
+  free_main_struct(&data);
+  exit(0);
+}
+
 void *my_malloc(size_t size, main_data *data)
 {
   void *allocated = malloc(size);
@@ -1706,6 +1713,68 @@ main_data *create_main_struct(int argc, char **orig_argv)
   return data;
 }
 
+void show_files_and_ask_for_confirmation(main_data *data)
+{
+  int j = 0;
+
+  char junk[18] = { '\0' };
+  print_message(_("List of found files:\n"));
+
+  for (j = 0;j < data->number_of_filenames; j++)
+  {
+    fprintf(console_out, "  %s\n", data->filenames[j]);
+
+    if ((j+1) % 22 == 0)
+    {
+      fprintf(console_out, _("\n-- 'Enter' for more, 's' to split, 'c' to cancel :"));
+      fflush(console_out);
+
+      fgets(junk, 16, stdin);
+
+      if (junk[1] == '\n')
+      {
+        if (junk[0] == 'q')
+        {
+          print_message_exit(_("\n split aborted."), data);
+        }
+        if (junk[0] == 's')
+        {
+          goto split;
+        }
+      }
+
+      print_message("\n");
+    }
+  }
+
+  int answer_is_correct = SPLT_FALSE;
+  do {
+    fprintf(console_out, _("\n-- 's' to split, 'c' to cancel :"));
+    fflush(console_out);
+
+    fgets(junk, 16, stdin);
+
+    if (junk[1] == '\n')
+    {
+      if (junk[0] == 'c')
+      {
+        print_message_exit(_("\n split aborted."), data);
+      }
+      if (junk[0] == 's')
+      {
+        answer_is_correct = SPLT_TRUE;
+      }
+    }
+
+  } while (!answer_is_correct);
+
+  fprintf(console_out, "\n");
+  fflush(console_out);
+
+split:
+  ;
+}
+
 //main program starts here
 int main(int argc, char **orig_argv)
 {
@@ -2086,28 +2155,56 @@ int main(int argc, char **orig_argv)
   data->number_of_filenames = 0;
   data->splitpoints = NULL;
   data->number_of_splitpoints = 0;
-  char *pointer = NULL;
+
+  int we_had_directory_as_argument = SPLT_FALSE;
+
+  char *argument = NULL;
   //we get out the filenames and the splitpoints from the left arguments
   for (i=1; i < data->argc; i++)
   {
-    pointer = data->argv[i];
-    long hundreths = c_hundreths(pointer);
+    argument = data->argv[i];
+    long hundreths = c_hundreths(argument);
     if (hundreths != -1)
     {
       append_splitpoint(data, hundreths);
     }
     else
     {
-      append_filename(data, pointer);
+      //directory process
+      if (check_if_directory(argument))
+      {
+        we_had_directory_as_argument = SPLT_TRUE;
+
+        int num_of_files_found = 0;
+        char **found_files = mp3splt_find_filenames(state, argument,
+            &num_of_files_found, &err);
+        int k = 0;
+        for (k = 0;k < num_of_files_found; k++)
+        {
+          char *current_fname = found_files[k];
+          
+          append_filename(data, current_fname);
+
+          if (found_files[k])
+          {
+            free(found_files[k]);
+            found_files[k] = NULL;
+          }
+        }
+        if (found_files)
+        {
+          free(found_files);
+          found_files = NULL;
+        }
+        num_of_files_found = 0;
+        process_confirmation_error(err, data);
+      }
+      else
+      {
+        append_filename(data, argument);
+      }
     }
   }
-
-  //print 'output format ambigous if necessary
-//  if ((output_format_error == SPLT_OUTPUT_FORMAT_AMBIGUOUS)
-//      && (data->number_of_splitpoints > 2))
-//  {
-//    process_confirmation_error(output_format_error, data);
-//  }
 
   //if we have a normal split, we need to parse the splitpoints
   int normal_split = SPLT_FALSE;
@@ -2135,6 +2232,11 @@ int main(int argc, char **orig_argv)
       opt->output_format && (strcmp(opt->output_format, "-") == 0))
   {
     print_warning(_("multiple splitpoints with stdout !"));
+  }
+
+  if (!opt->q_option && we_had_directory_as_argument)
+  {
+    show_files_and_ask_for_confirmation(data);
   }
 
   //split all the filenames
