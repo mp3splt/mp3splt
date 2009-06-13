@@ -44,11 +44,14 @@
 #include "special_split.h"
 #include "preferences_tab.h"
 #include "main_win.h"
+#include "multiple_files.h"
 
-//spinner time
-GtkWidget *spinner_time;
-//the selected split mode
+GtkWidget *spinner_time = NULL;
+
 gint selected_split_mode = SELECTED_SPLIT_NORMAL;
+gint split_file_mode = FILE_MODE_SINGLE;
+
+GtkWidget *multiple_files_component = NULL;
 
 //returns the selected split mode
 gint get_selected_split_mode(GtkToggleButton *radio_b)
@@ -72,8 +75,7 @@ gint get_selected_split_mode(GtkToggleButton *radio_b)
 }
 
 //when the split mode selection changed
-void split_mode_changed (GtkToggleButton *radio_b,
-                         gpointer data)
+void split_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
   selected_split_mode = get_selected_split_mode(radio_b);
   
@@ -108,49 +110,36 @@ void set_default_split_modes (GtkWidget *widget,
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(test),TRUE);  
 }
 
-//creates the special split page
-GtkWidget *create_special_split_page()
+static void split_file_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
-  //our general preferences vertical box
-  GtkWidget *general_hbox;
-  general_hbox = gtk_hbox_new(FALSE,0);
-  
-  //horizontal box in the scrolled window
-  GtkWidget *general_inside_hbox;
-  general_inside_hbox = gtk_hbox_new(FALSE,0);
-  
-  //scrolled window
-  GtkWidget *scrolled_window;
-  scrolled_window = (GtkWidget *)create_scrolled_window();
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-                                        GTK_WIDGET(general_inside_hbox));
-  gtk_box_pack_start (GTK_BOX (general_hbox),
-                      scrolled_window, TRUE, TRUE, 0);
-  
-  //vertical box inside the horizontal box from the scrolled window
-  GtkWidget *general_inside_vbox;
-  general_inside_vbox = gtk_vbox_new(FALSE, 0);;
-  gtk_box_pack_start (GTK_BOX (general_inside_hbox),
-                      general_inside_vbox, TRUE, TRUE, 8);
-  
-  GtkWidget *horiz_fake;
-  GtkWidget *label;
-  //horizontal fake widget box
-  horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
-                      horiz_fake, FALSE, FALSE, 5);
-  
-  //label for the split modes
-  GtkWidget *options_label;
-  options_label = gtk_label_new(_("Split mode :"));
-  gtk_box_pack_start (GTK_BOX (horiz_fake),
-                      options_label, FALSE, FALSE, 0);
-  
+  GSList *radio_button_list = NULL;
+  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
+
+  GtkToggleButton *current_radio_button = NULL;
+  current_radio_button = (GtkToggleButton *) g_slist_nth_data(radio_button_list,0);
+
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(current_radio_button)))
+  {
+    split_file_mode = FILE_MODE_MULTIPLE;
+    gtk_widget_set_sensitive(multiple_files_component, TRUE);
+  }
+  else
+  {
+    split_file_mode = FILE_MODE_SINGLE;
+    gtk_widget_set_sensitive(multiple_files_component, FALSE);
+  }
+}
+
+static GtkWidget *create_split_mode()
+{
+  GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 5);
+
   GtkWidget *radio_button;
   //normal split
   radio_button = 
     gtk_radio_button_new_with_label(NULL, _("Normal"));
-  gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
+  gtk_box_pack_start (GTK_BOX (local_vbox), radio_button, FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
                     G_CALLBACK (split_mode_changed),
@@ -159,15 +148,15 @@ GtkWidget *create_special_split_page()
   //time split
   radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON (radio_button), _("Time"));
-  gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
+  gtk_box_pack_start (GTK_BOX (local_vbox), radio_button, FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
                     G_CALLBACK (split_mode_changed),
                     NULL);
   
   //parameters for the silence option
-  horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
+  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start (GTK_BOX (local_vbox), 
                       horiz_fake, FALSE, FALSE, 0);
   
   //vertical parameter box
@@ -182,7 +171,7 @@ GtkWidget *create_special_split_page()
                       horiz_fake, FALSE, FALSE, 0);
   
   //seconds for the time split
-  label = gtk_label_new(_("split every X seconds. X = "));
+  GtkWidget *label = gtk_label_new(_("split every X seconds. X = "));
   gtk_box_pack_start (GTK_BOX (horiz_fake), 
                       label, FALSE, FALSE, 0);
   
@@ -208,7 +197,7 @@ GtkWidget *create_special_split_page()
                                         " files created with "
                                         "mp3wrap or albumwrap"
                                         " (mp3 only)"));
-  gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
+  gtk_box_pack_start (GTK_BOX (local_vbox), radio_button, FALSE, FALSE, 2);
   g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
                     "toggled",
                     G_CALLBACK (split_mode_changed),
@@ -216,30 +205,74 @@ GtkWidget *create_special_split_page()
   
   //error mode split
   radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_button), _("Error mode (mp3 only)"));
-  gtk_box_pack_start (GTK_BOX (general_inside_vbox), radio_button, FALSE, FALSE, 2);
-  g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
-                    "toggled",
-                    G_CALLBACK (split_mode_changed),
-                    NULL);
-  
-  //set default preferences button
-  //horizontal box fake for the gap level
-  horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX (general_inside_vbox), 
-                      horiz_fake, FALSE, FALSE, 0);
-  
-  GtkWidget *set_default_prefs_button;
-  set_default_prefs_button =
-    (GtkWidget *)create_cool_button(GTK_STOCK_PREFERENCES,
-                                    _("Set default options"),FALSE); 
-  g_signal_connect (G_OBJECT (set_default_prefs_button), "clicked",
-                    G_CALLBACK (set_default_split_modes), radio_button);
-  gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button,
-                      FALSE, FALSE, 5);
+    (GTK_RADIO_BUTTON(radio_button), _("Error mode (mp3 only)"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), radio_button, FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(radio_button),
+                    "toggled", G_CALLBACK (split_mode_changed), NULL);
   
   //put default values
-  set_default_split_modes(NULL,radio_button);
-  
-  return general_hbox;
+  set_default_split_modes(NULL, radio_button);
+
+  GtkWidget *scrolled_window = create_scrolled_window();
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
+                                        GTK_WIDGET(local_vbox));
+ 
+  return scrolled_window;
 }
+
+static GtkWidget *create_single_multiple_split_modes()
+{
+  GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 5);
+
+  GtkWidget *radio_button;
+
+  //single file
+  radio_button = 
+    gtk_radio_button_new_with_label(NULL, _("Single file"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), radio_button, FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON (radio_button),
+      "toggled", G_CALLBACK(split_file_mode_changed), NULL);
+ 
+  //multiple files
+  radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(radio_button), _("Multiple files"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), radio_button, FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON (radio_button),
+      "toggled", G_CALLBACK(split_file_mode_changed), NULL);
+
+  multiple_files_component = create_multiple_files_component();
+  gtk_widget_set_sensitive(multiple_files_component, FALSE);
+  gtk_box_pack_start(GTK_BOX(local_vbox), multiple_files_component, TRUE, TRUE, 2);
+
+  GtkWidget *scrolled_window = create_scrolled_window();
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
+                                        GTK_WIDGET(local_vbox));
+
+  return scrolled_window;
+}
+
+//creates the special split page
+GtkWidget *create_special_split_page()
+{
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
+
+  /* tabbed notebook */
+  GtkWidget *notebook = gtk_notebook_new();
+  gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
+  gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
+  gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);
+  gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
+  gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
+
+  GtkWidget *notebook_label = gtk_label_new(_("Split mode"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_split_mode(),
+                           (GtkWidget *)notebook_label);
+
+  notebook_label = gtk_label_new(_("File mode"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
+      create_single_multiple_split_modes(), (GtkWidget *)notebook_label);
+
+  return vbox;
+}
+

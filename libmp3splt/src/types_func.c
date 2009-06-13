@@ -56,7 +56,7 @@ int splt_t_is_stdin(splt_state *state)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  if (filename)
+  if (filename && filename[0] != '\0')
   {
     if ((strcmp(filename,"-") == 0) ||
         (filename[strlen(filename)-1] == '-'))
@@ -73,7 +73,7 @@ int splt_t_is_stdout(splt_state *state)
 {
   const char *oformat = splt_t_get_oformat(state);
 
-  if (oformat)
+  if (oformat && oformat[0] != '\0')
   {
     if ((strcmp(oformat,"-") == 0))
     {
@@ -236,6 +236,9 @@ int splt_t_alloc_init_new_plugin(splt_plugins *pl)
   pl->data[pl->number_of_plugins_found].func = NULL;
   pl->data[pl->number_of_plugins_found].plugin_handle = NULL;
   pl->data[pl->number_of_plugins_found].info.version = 0;
+  pl->data[pl->number_of_plugins_found].info.name = NULL;
+  pl->data[pl->number_of_plugins_found].info.extension = NULL;
+  pl->data[pl->number_of_plugins_found].info.upper_extension = NULL;
   pl->data[pl->number_of_plugins_found].plugin_filename = NULL;
 
   return return_value;
@@ -253,6 +256,11 @@ void splt_t_free_plugin_data(splt_plugin_data pl_data)
   {
     free(pl_data.info.extension);
     pl_data.info.extension = NULL;
+  }
+  if (pl_data.info.upper_extension)
+  {
+    free(pl_data.info.upper_extension);
+    pl_data.info.upper_extension = NULL;
   }
   if (pl_data.plugin_filename)
   {

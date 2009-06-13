@@ -310,9 +310,7 @@ GtkWidget *create_cddb_cue_frame()
   //tooltip for the button
   GtkTooltips *tooltip;
   tooltip = gtk_tooltips_new();
-  gtk_tooltips_set_tip(tooltip, 
-                       browse_cddb_button,
-                       _("select CDDB file"),"");
+  gtk_tooltips_set_tip(tooltip, browse_cddb_button, _("select CDDB file"),"");
   
   //add cddb splitpoints button
   add_cddb_button =

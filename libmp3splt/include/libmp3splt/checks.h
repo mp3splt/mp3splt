@@ -59,6 +59,9 @@ void splt_check_set_correct_options(splt_state *state);
 
 void splt_check_file_type(splt_state *state, int *error);
 int splt_check_is_file(splt_state *state, const char *fname);
+int splt_check_is_file_and_not_symlink(splt_state *state, const char *fname);
+int splt_check_is_directory(const char *fname);
+int splt_check_is_directory_and_not_symlink(const char *fname);
 int splt_check_is_the_same_file(splt_state *state, const char *file1,
     const char *file2, int *error);
 

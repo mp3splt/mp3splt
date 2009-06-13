@@ -20,7 +20,8 @@ mp3splt_gtk_SOURCES = \
 	snackamp_control.c snackamp_control.h \
 	special_split.c special_split.h\
 	mp3splt-gtk.c mp3splt-gtk.h \
-	util.h
+	util.h \
+  multiple_files.c multiple_files.h
 
 INCLUDES = @GTK_CFLAGS@ -Wall
 

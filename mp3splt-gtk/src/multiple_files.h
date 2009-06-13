@@ -30,31 +30,21 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: special_split.h
- *
- * header of special_split.c, defines constants, etc..
+ * Filename: multiple_files.h
  *
  *********************************************************/
 
-#ifndef SPECIAL_SPLIT_H
+#ifndef MULTIPLE_FILES_H
 
-#define FILE_MODE_SINGLE 1
-#define FILE_MODE_MULTIPLE 2
+GtkWidget *create_multiple_files_component();
 
-#define SELECTED_SPLIT_NORMAL 3
-#define SELECTED_SPLIT_TIME 2
-#define SELECTED_SPLIT_WRAP 1
-#define SELECTED_SPLIT_ERROR 0
+enum {
+  /*COL_NAME,*/
+  MULTIPLE_COL_FILENAME,
+  MULTIPLE_FILES_COLUMNS
+};
 
-#define NUMBER_OF_SPLIT_MODES 4
 
-gint get_selected_split_mode(GtkToggleButton *radio_b);
-void deactivate_silence_parameters();
-void activate_silence_parameters();
-void split_mode_changed (GtkToggleButton *radio_b, gpointer data);
-void set_default_split_modes (GtkWidget *widget, gpointer data);
-GtkWidget *create_special_split_page();
-
-#define SPECIAL_SPLIT_H
+#define MULTIPLE_FILES_H
 #endif
 

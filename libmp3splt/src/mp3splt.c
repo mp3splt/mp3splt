@@ -668,6 +668,12 @@ int mp3splt_split(splt_state *state)
 
       splt_u_print_debug("Starting to split file...",0,NULL);
 
+      //the new filename path
+      char *new_filename_path = NULL;
+      char *fname_to_split = splt_t_get_filename_to_split(state);
+
+      splt_u_print_debug("Original filename/path to split is ",0, fname_to_split);
+
       if (splt_t_is_stdin(state))
       {
         splt_t_set_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_TRUE);
@@ -677,12 +683,6 @@ int mp3splt_split(splt_state *state)
 
       //we set default internal options
       splt_t_set_default_iopts(state);
- 
-      //the new filename path
-      char *new_filename_path = NULL;
-      char *fname_to_split = splt_t_get_filename_to_split(state);
-
-      splt_u_print_debug("Original filename to split is ",0, fname_to_split);
 
       //we put the real splitnumber in the splitnumber variable
       //that could be changed (see splitnumber in mp3splt.h)
@@ -1302,4 +1302,87 @@ char *mp3splt_win32_utf16_to_utf8(const wchar_t *source)
   return splt_u_win32_utf16_to_utf8(source);
 }
 #endif
+
+//returned result must be freed
+char **mp3splt_find_filenames(splt_state *state, const char *filename,
+    int *num_of_files_found, int *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  char **found_files = NULL;
+
+  if (state != NULL)
+  {
+    if (!splt_t_library_locked(state))
+    {
+      splt_t_lock_library(state);
+
+      *num_of_files_found = 0;
+
+      if (splt_check_is_file_and_not_symlink(state, filename))
+      {
+        if (splt_u_file_is_supported_by_plugins(state, filename))
+        {
+          found_files = malloc(sizeof(char *));
+          if (!found_files)
+          {
+            *err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            return NULL;
+          }
+
+          int fname_size = strlen(filename) + 1;
+          found_files[0] = malloc(sizeof(char) * fname_size);
+          memset(found_files[0], '\0', fname_size);
+
+          if (!found_files[0])
+          {
+            free(found_files);
+            return NULL;
+          }
+
+          strncat(found_files[0], filename, fname_size);
+          *num_of_files_found = 1;
+        }
+      }
+      else
+      {
+        char *dir = strdup(filename);
+        if (dir == NULL)
+        {
+          *err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+          return NULL;
+        }
+
+        if (dir[strlen(dir)-1] == SPLT_DIRCHAR)
+        {
+          dir[strlen(dir)-1] = '\0';
+        }
+
+        splt_u_find_filenames(state, dir, &found_files, num_of_files_found,
+            err);
+
+        if (dir)
+        {
+          free(dir);
+          dir = NULL;
+        }
+      }
+
+      splt_t_unlock_library(state);
+    }
+    else
+    {
+      *err = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    *err = SPLT_ERROR_STATE_NULL;
+    return NULL;
+  }
+
+  return found_files;
+}
 

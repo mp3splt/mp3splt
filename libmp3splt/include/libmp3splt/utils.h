@@ -30,6 +30,14 @@
  *
  *********************************************************/
 
+#include <dirent.h>
+
+#ifdef __WIN32__
+#include <windows.h>
+#include <direct.h>
+#endif
+
+
 #ifndef MP3SPLT_UTILS_H
 
 /****************************/
@@ -108,6 +116,20 @@ char *splt_u_safe_strdup(char *input, int *error);
 
 void splt_u_print_overlap_time(splt_state *state);
 long splt_u_overlap_time(splt_state *state, int splitpoint_index);
+
+#ifdef __WIN32__
+int scandir(const char *dir, struct _wdirent ***namelist,
+		int(*filter)(const struct _wdirent *),
+		int(*compar)(const struct _wdirent **, const struct _wdirent **));
+int alphasort(const struct _wdirent **a, const struct _wdirent **b);
+#endif
+
+int splt_u_file_is_supported_by_plugins(splt_state *state, const char *fname);
+
+void splt_u_find_filenames(splt_state *state, const char *directory,
+    char ***found_files, int *number_of_found_files, int *error);
+
+char *splt_u_str_to_upper(const char *str, int *error);
 
 #define MP3SPLT_UTILS_H
 

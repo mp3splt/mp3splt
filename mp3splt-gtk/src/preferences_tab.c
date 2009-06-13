@@ -1281,7 +1281,7 @@ GtkWidget *create_choose_preferences()
   //label for the notebook
   GtkWidget *notebook_label;
   notebook = gtk_notebook_new();
-  gtk_box_pack_start (GTK_BOX (pref_vbox), notebook, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (pref_vbox), notebook, TRUE, TRUE, 0);
   
   gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
   gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);

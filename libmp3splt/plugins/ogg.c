@@ -1777,6 +1777,8 @@ void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return;
   }
+
+  info->upper_extension = splt_u_str_to_upper(info->extension, error);
 }
 
 //check if file is ogg vorbis
