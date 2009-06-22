@@ -21,7 +21,8 @@ mp3splt_gtk_SOURCES = \
 	special_split.c special_split.h\
 	mp3splt-gtk.c mp3splt-gtk.h \
 	util.h \
-  multiple_files.c multiple_files.h
+  multiple_files.c multiple_files.h \
+  messages.c messages.h
 
 INCLUDES = @GTK_CFLAGS@ -Wall
 

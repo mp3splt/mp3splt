@@ -77,28 +77,18 @@ GtkTreeView *create_multiple_files_tree()
 
 void create_multiple_files_columns(GtkTreeView *tree_view)
 {
-  GtkCellRendererText *renderer;
-  //GtkTreeViewColumn *name_column;
-  GtkTreeViewColumn *filename_column;
-
-  /*renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-    g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NAME));
-    name_column = gtk_tree_view_column_new_with_attributes 
-    (_("Filename"), GTK_CELL_RENDERER(renderer),
-    "text", COL_NAME, NULL);*/
-
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  filename_column = gtk_tree_view_column_new_with_attributes 
+  GtkCellRendererText *renderer =
+    GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  GtkTreeViewColumn *filename_column = gtk_tree_view_column_new_with_attributes 
     ("Complete filename", GTK_CELL_RENDERER(renderer),
      "text", MULTIPLE_COL_FILENAME, NULL);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-      GTK_TREE_VIEW_COLUMN (filename_column),MULTIPLE_COL_FILENAME);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
+      GTK_TREE_VIEW_COLUMN(filename_column),MULTIPLE_COL_FILENAME);
 
-  /*  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-      GTK_TREE_VIEW_COLUMN (name_column),COL_NAME);
-      gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column), 0.5);
-      gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(name_column),
-      GTK_TREE_VIEW_COLUMN_AUTOSIZE);*/
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(filename_column), 0.5);
+  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(filename_column),
+      GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id(filename_column, MULTIPLE_COL_FILENAME);
 }
 
 void multiple_files_open_button_event(GtkWidget *widget, gpointer data)
@@ -291,16 +281,15 @@ GtkWidget *create_multiple_files_buttons_hbox()
 
   //button for adding file(s)
   GtkWidget *multiple_files_add_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_ADD, _("_Add file(s)"), FALSE);
-  gtk_box_pack_start(GTK_BOX(hbox),
-      multiple_files_add_button, TRUE, FALSE, 5);
+    create_cool_button(GTK_STOCK_ADD, _("_Add files"), FALSE);
+  gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
   g_signal_connect(G_OBJECT(multiple_files_add_button), "clicked",
                    G_CALLBACK(multiple_files_add_button_event), NULL);
 
   //button for removing a file
   multiple_files_remove_file_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
+    create_cool_button(GTK_STOCK_DELETE, _("_Remove selected entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
       multiple_files_remove_file_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
@@ -309,7 +298,7 @@ GtkWidget *create_multiple_files_buttons_hbox()
   
   //button for removing a file
   multiple_files_remove_all_files_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("Erase all entries"),FALSE);
+    create_cool_button(GTK_STOCK_DELETE, _("R_emove all entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
       TRUE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_all_files_button,FALSE);
@@ -341,17 +330,14 @@ void multiple_files_selection_changed(GtkTreeSelection *selec, gpointer data)
 
 GtkWidget *create_multiple_files_component()
 {
-  GtkWidget *vbox;
-  vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
 
   multiple_files_tree = (GtkWidget *)create_multiple_files_tree();
 
-  GtkWidget *scrolled_window;
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
-                                  GTK_POLICY_AUTOMATIC,
-                                  GTK_POLICY_AUTOMATIC);
+      GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
   //create columns
@@ -361,8 +347,7 @@ GtkWidget *create_multiple_files_component()
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(multiple_files_tree));
 
   //selection for the tree
-  GtkWidget *multiple_files_tree_selection;
-  multiple_files_tree_selection = (GtkWidget *)
+  GtkWidget *multiple_files_tree_selection = (GtkWidget *)
     gtk_tree_view_get_selection(GTK_TREE_VIEW(multiple_files_tree));
   g_signal_connect(G_OBJECT(multiple_files_tree_selection), "changed",
                    G_CALLBACK(multiple_files_selection_changed), NULL);

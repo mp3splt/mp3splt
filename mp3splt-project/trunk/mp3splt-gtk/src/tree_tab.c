@@ -57,6 +57,7 @@
 #include "player_tab.h"
 #include "mp3splt-gtk.h"
 #include "split_files.h"
+#include "preferences_tab.h"
 
 //tree column enumeration
 enum
@@ -120,7 +121,7 @@ gboolean quick_preview = FALSE;
 gint quick_preview_end_splitpoint = -1;
 
 //for the preview
-gint this_row;
+gint this_row = 0;
 //the position transmitted to the player
 gint preview_start_position;
 gint preview_start_splitpoint = -1;
@@ -170,8 +171,8 @@ extern GtkWidget *cancel_button;
 extern gint we_are_splitting;
 //main window
 extern GtkWidget *window;
-
 extern GtkWidget *output_entry;
+extern gint debug_is_active;
 
 //updates add button, wether the spinners splitpoint is already
 //in the table or not
@@ -650,7 +651,7 @@ void update_splitpoint(gint index, Split_point new_point)
     else
     {
       //if we already have a equal splitpoint
-      put_status_message(_(" error : you already have the splitpoint in table "));
+      put_status_message(_(" error: you already have the splitpoint in table"));
     }
   }
 }
@@ -1008,7 +1009,7 @@ void add_splitpoint(Split_point my_split_point,
   else
     {
       //if we already have a equal splitpoint
-      put_status_message(_(" error : you already have the splitpoint in table "));
+      put_status_message(_(" error: you already have the splitpoint in table"));
     }
   
   g_snprintf(current_description, 255, "%s", _("description here"));
@@ -1043,17 +1044,21 @@ void detect_silence_and_set_splitpoints(gpointer data)
   gint err = SPLT_OK;
 
   gdk_threads_enter();
+
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
   gtk_widget_set_sensitive(cancel_button, TRUE);
+  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
+
   gdk_threads_leave();
 
-  //we get the silence splitpoints
-  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
   mp3splt_set_filename_to_split(the_state, filename_to_split);
   mp3splt_erase_all_splitpoints(the_state, &err);
 
-  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
-  mp3splt_set_oformat(the_state, format, &err);
+  if (get_checked_output_radio_box() == 0)
+  {
+    mp3splt_set_oformat(the_state, format, &err);
+  }
   if (format)
   {
     free(format);
@@ -1076,7 +1081,6 @@ void detect_silence_and_set_splitpoints(gpointer data)
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
   mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_FALSE);
 
-  //lock gtk
   gdk_threads_enter();
 
   if (err >= 0)
@@ -1084,7 +1088,6 @@ void detect_silence_and_set_splitpoints(gpointer data)
     update_splitpoints_from_the_state();
   }
 
-  //here we have in err a possible error from the silence detection
   print_status_bar_confirmation(err);
 
   gtk_widget_set_sensitive(cancel_button, FALSE);
@@ -1152,36 +1155,33 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       horiz_fake, FALSE, FALSE, 0);
   
   //threshold level
-  GtkWidget *label = gtk_label_new(_("threshold level (dB) : "));
-  gtk_box_pack_start(GTK_BOX(horiz_fake), 
-      label, FALSE, FALSE, 0);
+  GtkWidget *label = gtk_label_new(_("Threshold level (dB):"));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   
   //adjustement for the threshold spinner
-  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new (0.0, -96.0, 0.0, 0.5,
-                                              10.0, 0.0);
+  GtkAdjustment *adj = (GtkAdjustment *)
+    gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
   //the threshold spinner
-  spinner_silence_threshold = gtk_spin_button_new (adj, 0.5, 2);
+  spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
   //set not editable
   gtk_box_pack_start(GTK_BOX(horiz_fake), 
-      spinner_silence_threshold, FALSE, FALSE, 0);
+      spinner_silence_threshold, FALSE, FALSE, 6);
   
   //horizontal box fake for the offset level
   horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start(GTK_BOX(param_vbox), 
-                      horiz_fake, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   //offset level
-  label = gtk_label_new(_("cutpoint offset (0 is the begin of silence,"
-        "and 1 the end) : "));
+  label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence,"
+        "and 1 the end):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   
   //adjustement for the offset spinner
-  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, -2, 2, 0.05,
-                                              10.0, 0.0);
+  adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
   //the offset spinner
   spinner_silence_offset = gtk_spin_button_new (adj, 0.05, 2);
-  gtk_box_pack_start (GTK_BOX (horiz_fake), spinner_silence_offset,
-      FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_offset,
+      FALSE, FALSE, 6);
   
   //horizontal box fake for the number of tracks
   horiz_fake = gtk_hbox_new(FALSE,0);
@@ -1189,41 +1189,35 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       horiz_fake, FALSE, FALSE, 0);
   
   //number of tracks level
-  label = gtk_label_new(_("number of tracks (0 means all tracks) : "));
+  label = gtk_label_new(_("Number of tracks (0 means all tracks):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   
   //number of tracks
-  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, 0, INT_MAX, 1,
-                                              10.0, 0.0);
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
   //the number of tracks spinner
   spinner_silence_number_tracks = gtk_spin_button_new (adj, 1, 0);
-  gtk_box_pack_start (GTK_BOX (horiz_fake), 
-                      spinner_silence_number_tracks,
-                      FALSE, FALSE, 0);
-  
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_number_tracks,
+      FALSE, FALSE, 6);
+ 
   //horizontal box fake for minimum length parameter
   horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX (param_vbox), 
-                      horiz_fake, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   //the minimum length parameter
-  label = gtk_label_new(_("minimum silence length (seconds) : "));
-  gtk_box_pack_start(GTK_BOX(horiz_fake),
-                      label, FALSE, FALSE, 0);
+  label = gtk_label_new(_("Minimum silence length (seconds):"));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   
   //minimum silence length (seconds)
-  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, 0, 2000, 0.5,
-                                              10.0, 0.0);
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
   //the minimum silence length in seconds
-  spinner_silence_minimum = gtk_spin_button_new (adj, 1, 2);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), 
-                      spinner_silence_minimum,
-                      FALSE, FALSE, 0);
+  spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum,
+      FALSE, FALSE, 6);
   
-  //remove silence (rm) : allows you to remove the silence between
+  //remove silence (rm): allows you to remove the silence between
   //tracks
   silence_remove_silence =
-    gtk_check_button_new_with_label(_(" remove silence between tracks"));
+    gtk_check_button_new_with_mnemonic(_("_Remove silence between tracks"));
   gtk_box_pack_start(GTK_BOX(param_vbox), silence_remove_silence,
       FALSE, FALSE, 0);
 
@@ -1270,18 +1264,16 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
       silence_remove_silence_between_tracks);
 
-  //destroys dialog
+  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+
   gtk_widget_destroy(silence_detection_window);
 
-  //if we pushed the 'OK' button
   if (result == GTK_RESPONSE_YES)
   {
-    //if 'OK', scan for silence and set splitpoints
     detect_silence_and_add_splitpoints_start_thread();
   }
   else if (result == GTK_RESPONSE_CANCEL)
   {
-    //if cancel, do nothing
   }
 }
 
@@ -1441,9 +1433,6 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
                                            //2 means spinner hundredth
                                            2);
 
-  GtkTooltips *tooltip;
-  tooltip = gtk_tooltips_new();
-  
   /* add button */
   add_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
                                                _("_Add"), FALSE);
@@ -1452,29 +1441,27 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
   g_signal_connect(G_OBJECT(add_button), "clicked",
                     G_CALLBACK(add_row_clicked), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), add_button, TRUE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, add_button,_("add splitpoint"),"");
+  gtk_widget_set_tooltip_text(add_button,_("Add splitpoint"));
 
   /* remove row button */
   remove_row_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_REMOVE, _("_Remove"),
-                       FALSE);
+    create_cool_button(GTK_STOCK_REMOVE, _("_Remove"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_row_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
   g_signal_connect (G_OBJECT (remove_row_button), "clicked",
                     G_CALLBACK (remove_row), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), remove_row_button, TRUE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, remove_row_button, _("remove rows"),"");
+  gtk_widget_set_tooltip_text(remove_row_button, _("Remove rows"));
 
   /* remove all rows button */
   remove_all_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("Remove all"),
-                       FALSE);
+    create_cool_button(GTK_STOCK_DELETE, _("R_emove all"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_all_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   g_signal_connect (G_OBJECT (remove_all_button), "clicked",
                     G_CALLBACK (remove_all_rows), tree_view);
   gtk_box_pack_start (GTK_BOX (hbox), remove_all_button, TRUE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, remove_all_button, _("remove all rows"),"");
+  gtk_widget_set_tooltip_text(remove_all_button, _("Remove all rows"));
 
   return hbox;
 }
@@ -1487,9 +1474,6 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
   hbox = gtk_hbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
 
-  GtkTooltips *tooltip;
-  tooltip = gtk_tooltips_new();
-
   /* set splitpoints from silence detection */
   scan_silence_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
                                                _("_Silence detection"), FALSE);
@@ -1497,7 +1481,8 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
       G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);
   gtk_box_pack_end(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
-  gtk_tooltips_set_tip(tooltip, scan_silence_button, _("Set splitpoints from silence detection"), "");
+  gtk_widget_set_tooltip_text(scan_silence_button,
+      _("Set splitpoints from silence detection"));
 
   return hbox;
 }
@@ -1545,127 +1530,103 @@ gchar *get_splitpoint_name(gint index)
 gint get_splitpoint_time(gint this_splitpoint)
 {
   if (this_splitpoint != -1)
-    {
-      return splitpoint_to_hundreths(g_array_index(splitpoints,
-                                                   Split_point,
-                                                   this_splitpoint));
-    }
+  {
+    return splitpoint_to_hundreths(
+        g_array_index(splitpoints, Split_point, this_splitpoint));
+  }
   else
+  {
     return -1;
+  }
 }
 
-//the split preview
 void split_preview(gpointer *data)
 {
-  //lock gtk
-  gdk_threads_enter();
-  
-  //if it's not the last one
   if (this_row+1 != splitnumber)
+  {
+    gint confirmation;
+
+    int err = 0;
+    mp3splt_erase_all_splitpoints(the_state,&err);
+
+    mp3splt_append_splitpoint(the_state, preview_start_position / 10,
+        "preview", SPLT_SPLITPOINT);
+    mp3splt_append_splitpoint(the_state,
+        get_splitpoint_time(quick_preview_end_splitpoint)/10,
+        NULL, SPLT_SKIPPOINT);
+
+    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+        SPLT_OUTPUT_CUSTOM);
+    mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
+        SPLT_OPTION_NORMAL_MODE);
+
+    gdk_threads_enter();
+
+    put_options_from_preferences();
+
+    //we cut the preferences filename path
+    //to find the ~/.mp3splt directory
+    gchar *fname_path = get_preferences_filename();
+    fname_path[strlen(fname_path)-18] = '\0';
+
+    remove_all_split_rows();  
+    filename_to_split = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
+
+    gdk_threads_leave();
+
+    mp3splt_set_path_of_split(the_state,fname_path);
+    mp3splt_set_filename_to_split(the_state,filename_to_split);
+    confirmation = mp3splt_split(the_state);
+
+    gdk_threads_enter();
+
+    print_status_bar_confirmation(confirmation);
+
+    gchar *split_file = get_filename_from_split_files(1);
+    if (split_file != NULL)
     {
-      gint confirmation;
-      
-      int err = 0;
-      //erase previous splitpoints
-      mp3splt_erase_all_splitpoints(the_state,&err);
-      
-      //we put the splitpoints in the state
-      mp3splt_append_splitpoint(the_state,
-                                preview_start_position / 10,"preview", SPLT_SPLITPOINT);
-      mp3splt_append_splitpoint(the_state,
-                                get_splitpoint_time(quick_preview_end_splitpoint)/10,
-                                NULL, SPLT_SKIPPOINT);
-      
-      //put the options from the preferences
-      put_options_from_preferences();
-     
-      //set the options
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-                             SPLT_OUTPUT_CUSTOM);
-      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                             SPLT_OPTION_NORMAL_MODE);
-      
-      const gchar *fname = NULL;
-      gchar *fname_path;
-      
-      //we cut the preferences filename path
-      //to find the ~/.mp3splt directory
-      fname_path = get_preferences_filename();
-      fname_path[strlen(fname_path)-18] = '\0';
-      
-      //we get the filename to split
-      fname = gtk_entry_get_text(GTK_ENTRY(entry));
-      
-      //remove old split files
-      remove_all_split_rows();  
-      
-      filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
-      
-      //unlock gtk
-      gdk_threads_leave();
-      
-      mp3splt_set_path_of_split(the_state,fname_path);
-      mp3splt_set_filename_to_split(the_state,filename_to_split);
-      //effective split, returns confirmation or error;
-      confirmation = mp3splt_split(the_state);
-      
-      //lock gtk
-      gdk_threads_enter();
-      
-      //we show infos about the split action
-      print_status_bar_confirmation(confirmation);
-      
-      gchar *split_file; 
-      //here the first one
-      split_file = get_filename_from_split_files(1);
-      if (split_file != NULL)
-        {
-          //only if success
-          if (confirmation > 0)
-            {
-              //connecting to player
-              connect_button_event (NULL, NULL);
-              
-              //we play the split file
-              //set the entry with the current filename
-              change_current_filename(split_file);
-              g_free(split_file);
-              split_file = NULL;
-              
-              //starts playing, 0 means start playing
-              connect_to_player_with_song(0);
-            }
-        }
-      
-      //only if success
       if (confirmation > 0)
-        {
-          //we have finished, put 100 to the progress bar
-          //we update the progress
-          gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-                                        1.0);
-          //we write the progress on the bar
-          gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-                                    _(" finished "));
-        }
-      
-      //free memory
-      g_free(fname_path);
+      {
+        connect_button_event(NULL, NULL);
+
+        change_current_filename(split_file);
+        g_free(split_file);
+        split_file = NULL;
+
+        //starts playing, 0 means start playing
+        connect_to_player_with_song(0);
+      }
     }
-  else
+
+    if (confirmation > 0)
     {
-      put_status_message(_(" cannot split preview last splitpoint"));
+      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
+          1.0);
+      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
+          _(" finished"));
     }
-  
-  //unlock gtk
-  gdk_threads_leave();
+
+    if (fname_path)
+    {
+      g_free(fname_path);
+      fname_path = NULL;
+    }
+
+    gdk_threads_leave();
+  }
+  else
+  {
+    gdk_threads_enter();
+
+    put_status_message(_(" cannot split preview last splitpoint"));
+
+    gdk_threads_leave();
+  }
 }
 
 //the row clicked event, preview the song
-void preview_song (GtkTreeView *tree_view,
-                   GtkTreePath *path,
-                   GtkTreeViewColumn *col,
-                   gpointer user_data)
+void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
+    GtkTreeViewColumn *col, gpointer user_data)
 {
   GtkTreeModel *model;
   model = gtk_tree_view_get_model(tree_view);
@@ -1693,14 +1654,13 @@ void preview_song (GtkTreeView *tree_view,
         {
           preview_start_position = get_splitpoint_time(this_row);
           quick_preview_end_splitpoint = this_row+1;
-          g_thread_create((GThreadFunc)split_preview,
-              NULL, TRUE, NULL);
+          g_thread_create((GThreadFunc)split_preview, NULL, TRUE, NULL);
         }
       }
     }
     else
     {
-      put_status_message( _(" cannot preview, not connected to player "));
+      put_status_message(_(" cannot preview, not connected to player"));
     }
   }
 }
@@ -1836,7 +1796,7 @@ void create_columns (GtkTreeView *tree_view)
   
   /* column preview */
   //renderer creation
-  renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new ());
+  renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
   //set the icon
   g_object_set(renderer_pix,"stock-id",GTK_STOCK_MEDIA_PLAY,
                "stock-size",GTK_ICON_SIZE_MENU,NULL);
@@ -1847,7 +1807,7 @@ void create_columns (GtkTreeView *tree_view)
   g_object_set_data(G_OBJECT(column_preview), "col", GINT_TO_POINTER(COL_PREVIEW));
   
   /* split preview */
-  renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new ());
+  renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
   //set the icon
   g_object_set(renderer_pix,"stock-id",GTK_STOCK_MEDIA_PLAY,
                "stock-size",GTK_ICON_SIZE_MENU,NULL);
@@ -1992,7 +1952,6 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
 
   /* scrolled window for the tree */
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_set_size_request(scrolled_window, 300,130);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
@@ -2071,8 +2030,9 @@ void put_splitpoints_in_the_state(splt_state *state)
         splitpoint_type = SPLT_SKIPPOINT;
       }
 
-      //append the splitpoint
+      gdk_threads_leave();
       mp3splt_append_splitpoint(state,hundr[i], description, splitpoint_type);
+      gdk_threads_enter();
        
       //free memory
       gtk_tree_path_free(path);

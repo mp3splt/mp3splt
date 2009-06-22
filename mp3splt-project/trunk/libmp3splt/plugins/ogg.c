@@ -43,7 +43,7 @@
 #include "ogg.h"
 
 /**
- * Notes :
+ * Notes:
  * - if ogg_stream_init() returns -1, then the stream was incorrectly
  *   initialized => coding error
  * - some 'vorbis_synthesis_*' functions return OV_EINVAL for bad argument
@@ -63,7 +63,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
 /* ogg constants */
 
 //ogg genre list
-//TODO: genres
+//TODO: translation ?
 const char *splt_ogg_genre_list[] = {
   "Blues",                 "Classic Rock",          "Country",
   "Dance",                 "Disco",                 "Funk",
@@ -178,7 +178,7 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
       //all infos together
       char all_infos[3072] = { '\0' };
       snprintf(all_infos,3072,"%s%s\n",ogg_infos,total_time);
-      splt_t_put_message_to_client(state, all_infos);
+      splt_t_put_info_message_to_client(state, all_infos);
     }
   }
 }
@@ -859,7 +859,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error)
   if (oggstate->in != stdin)
   {
     //read total time
-    long total_time = ov_time_total(&oggstate->vf, -1) * 100;
+    double total_time = ov_time_total(&oggstate->vf, -1) * 100;
     splt_t_set_total_time(state,total_time);
     oggstate->len = (ogg_int64_t) (oggstate->vi->rate*total_time);
   }
@@ -1187,14 +1187,14 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                         == SPLT_OPTION_SILENCE_MODE) ||
                       (!splt_t_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
                   {
-                    splt_t_update_progress(state, (float)page_granpos,
-                        (float)cutpoint,
+                    splt_t_update_progress(state, (double)page_granpos,
+                        (double)cutpoint,
                         1,0,SPLT_DEFAULT_PROGRESS_RATE);
                   }
                   else
                   {
-                    splt_t_update_progress(state, (float)page_granpos,
-                        (float)cutpoint,
+                    splt_t_update_progress(state, (double)page_granpos,
+                        (double)cutpoint,
                         2,0,SPLT_DEFAULT_PROGRESS_RATE);
                   }
 
@@ -1504,6 +1504,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
   splt_t_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
   splt_ogg_state *oggstate = state->codec;
 
+  //unsigned long count = 0;
   ogg_page og;
   ogg_packet op;
   ogg_sync_state oy;
@@ -1690,34 +1691,32 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
       result = ogg_sync_pageout(&oy, &og);
       //result == -1 is NOT a fatal error
 
-      //progress bar
+      //if (count++ % X == 0)
+      {
+        float level = splt_u_convert2dB(oggstate->temp_level);
+        if (state->split.get_silence_level)
+        {
+          state->split.get_silence_level((unsigned long) (((double) pos / oggstate->vi->rate) * 100.0),
+              level, state->split.silence_level_client_data);
+        }
+        state->split.p_bar->silence_db_level = level;
+        state->split.p_bar->silence_found_tracks = found;
+      }
+
       if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
       {
-        //if (count++ % 10 == 0)
-        {
-          float level = splt_u_convert2dB(oggstate->temp_level);
-          if (state->split.get_silence_level)
-          {
-            state->split.get_silence_level( (unsigned long) (((double) pos / oggstate->vi->rate) * 100.0),
-                level, state->split.silence_level_client_data);
-          }
-          state->split.p_bar->silence_db_level = level;
-          state->split.p_bar->silence_found_tracks = found;
-        }
-
-        //if we have cancelled the split
         if (splt_t_split_is_canceled(state))
         {
           eos = 1;
         }
-        splt_t_update_progress(state,(float)pos * 100,
-            (float)(oggstate->len),
+        splt_t_update_progress(state,(double)pos * 100,
+            (double)(oggstate->len),
             1,0,SPLT_DEFAULT_PROGRESS_RATE2);
       }
       else
       {
-        splt_t_update_progress(state,(float)begin,
-            (float)end, 2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
+        splt_t_update_progress(state,(double)begin,
+            (double)end, 2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
       }
     }
   }
@@ -1841,7 +1840,7 @@ void splt_pl_init(splt_state *state, int *error)
       char message[1024] = { '\0' };
       snprintf(message, 1024,
           _(" warning: stdin 'o-' is supposed to be ogg stream.\n"));
-      splt_t_put_message_to_client(state, message);
+      splt_t_put_info_message_to_client(state, message);
     }
   }
 
@@ -1898,7 +1897,7 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
 
-  splt_u_print_debug("Putting ogg original tags...",0,NULL);
+  splt_u_print_debug(state,"Putting ogg original tags...",0,NULL);
   splt_ogg_get_original_tags(filename, state, error);
 }
 

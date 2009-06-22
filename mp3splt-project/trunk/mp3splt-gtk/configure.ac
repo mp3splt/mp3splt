@@ -39,7 +39,7 @@ AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 AM_INIT_AUTOMAKE(mp3splt-gtk, 0.5.7)
 AC_CONFIG_HEADER([config.h])
 
-CFLAGS="-Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/"
+CFLAGS="-g -Wall $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../../libmp3splt/src/.libs/"
 
 #################################################
@@ -95,7 +95,7 @@ AC_MSG_RESULT($HOST)
 
 #################################################
 #Check for GTK
-AM_PATH_GTK_2_0(2.6.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.6.0))
+AM_PATH_GTK_2_0(2.12.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.12.0))
 
 #################################################
 #Check for libmp3splt

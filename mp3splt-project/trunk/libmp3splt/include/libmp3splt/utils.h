@@ -95,7 +95,8 @@ void splt_u_error(int error_type, const char *function,
 /* utils miscellaneous */
 
 float splt_u_silence_position(struct splt_ssplit *temp, float off);
-void splt_u_print_debug(const char *message,double optional, const char *optional2);
+void splt_u_print_debug(splt_state *state, const char *message,
+    double optional, const char *optional2);
 double splt_u_get_double_pos(long split);
 void splt_u_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *hundr);
 int splt_u_create_directories(splt_state *state, const char *dir);

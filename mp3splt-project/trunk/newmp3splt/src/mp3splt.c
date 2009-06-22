@@ -1379,10 +1379,18 @@ end:
 }
 
 //prints a library message
-void put_library_message(const char *message)
+void put_library_message(const char *message, splt_message_type mess_type)
 {
-  fprintf(console_out,"%s",message);
-  fflush(console_out);
+  if (mess_type == SPLT_MESSAGE_INFO)
+  {
+    fprintf(console_out,"%s",message);
+    fflush(console_out);
+  }
+  else if (mess_type == SPLT_MESSAGE_DEBUG)
+  {
+    fprintf(stderr, "%s", message);
+    fflush(stderr);
+  }
 }
 
 //prints the split file
@@ -1724,7 +1732,7 @@ void show_files_and_ask_for_confirmation(main_data *data)
   {
     fprintf(console_out, "  %s\n", data->filenames[j]);
 
-    if ((j+1) % 22 == 0)
+    if (((j+1) % 22 == 0) && (j+1 < data->number_of_filenames))
     {
       fprintf(console_out, _("\n-- 'Enter' for more, 's' to split, 'c' to cancel :"));
       fflush(console_out);
@@ -1733,7 +1741,7 @@ void show_files_and_ask_for_confirmation(main_data *data)
 
       if (junk[1] == '\n')
       {
-        if (junk[0] == 'q')
+        if (junk[0] == 'c')
         {
           print_message_exit(_("\n split aborted."), data);
         }
@@ -1959,7 +1967,6 @@ int main(int argc, char **orig_argv)
         opt->N_option = SPLT_TRUE;
         break;
       case 'o':
-        //default output is false now
         mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
         if (optarg)
         {
@@ -2212,6 +2219,10 @@ int main(int argc, char **orig_argv)
       !opt->e_option && !opt->t_option && !opt->w_option &&
       !opt->s_option)
   {
+    if (data->number_of_splitpoints < 2)
+    {
+      process_confirmation_error(SPLT_ERROR_SPLITPOINTS, data);
+    }
     normal_split = SPLT_TRUE;
   }
 

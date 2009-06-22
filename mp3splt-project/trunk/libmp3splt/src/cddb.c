@@ -280,12 +280,12 @@ static int splt_cue_set_value(splt_state *state, char *in,
 				if (tag_field == SPLT_TAGS_ARTIST)
 				{
 					snprintf(client_infos,strlen(out)+30, _("\n  Artist: %s\n"), out);
-					splt_t_put_message_to_client(state, client_infos);
+					splt_t_put_info_message_to_client(state, client_infos);
 				}
 				else if (tag_field == SPLT_TAGS_ALBUM)
 				{
 					snprintf(client_infos,strlen(out)+30, _("  Album: %s\n"), out);
-					splt_t_put_message_to_client(state, client_infos);
+					splt_t_put_info_message_to_client(state, client_infos);
 				}
 				free(client_infos);
 				client_infos = NULL;
@@ -333,7 +333,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   }
   snprintf(client_infos, strlen(file)+200,
       _(" reading informations from CUE file %s ...\n"),file);
-  splt_t_put_message_to_client(state, client_infos);
+  splt_t_put_info_message_to_client(state, client_infos);
   free(client_infos);
   client_infos = NULL;
 
@@ -509,7 +509,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
             }
             else
             {
-              //we replace : with . for the sscanf
+              //we replace ':' with . for the sscanf
               ptr[dot-ptr] = ptr[dot-ptr+3] = '.';
 
               //we convert to hundreths of seconds and put splitpoints
@@ -582,7 +582,7 @@ function_end:
   //put number of tracks
   char tracks_info[64] = { '\0' };
   snprintf(tracks_info, 64, _("  Tracks: %d\n\n"),tracks);
-  splt_t_put_message_to_client(state, tracks_info);
+  splt_t_put_info_message_to_client(state, tracks_info);
 
   //we return the number of tracks found
   return tracks;
@@ -613,7 +613,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   }
   snprintf(client_infos, strlen(file)+200,
       _(" reading informations from CDDB file %s ...\n"),file);
-  splt_t_put_message_to_client(state, client_infos);
+  splt_t_put_info_message_to_client(state, client_infos);
   free(client_infos);
   client_infos = NULL;
 
@@ -1023,7 +1023,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 goto function_end;
               }
               snprintf(client_infos,strlen(artist)+30,_("\n  Artist: %s\n"), artist);
-              splt_t_put_message_to_client(state, client_infos);
+              splt_t_put_info_message_to_client(state, client_infos);
               free(client_infos);
               client_infos = NULL;
 
@@ -1049,7 +1049,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 goto function_end;
               }
               snprintf(client_infos,strlen(album)+30,_("  Album: %s\n"), album);
-              splt_t_put_message_to_client(state, client_infos);
+              splt_t_put_info_message_to_client(state, client_infos);
               free(client_infos);
               client_infos = NULL;
             }
@@ -1159,7 +1159,7 @@ function_end:
   {
     char tracks_info[64] = { '\0' };
     snprintf(tracks_info, 64, _("  Tracks: %d\n\n"),tracks);
-    splt_t_put_message_to_client(state, tracks_info);
+    splt_t_put_info_message_to_client(state, tracks_info);
   }
 
   return tracks;
@@ -1294,7 +1294,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 #ifdef __WIN32__					
             full_artist_album[max_chars-1] = '\0';
 #endif
-            splt_u_print_debug("Setting the full artist album name ",0,full_artist_album);
+            splt_u_print_debug(state,"Setting the full artist album name ",0,full_artist_album);
 
             //i!=-1 means that it's not a revision
             int i=0;

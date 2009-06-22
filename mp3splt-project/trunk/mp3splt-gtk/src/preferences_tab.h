@@ -37,39 +37,23 @@
 
 GtkWidget *create_scrolled_window();
 gboolean get_checked_output_radio_box();
-void update_save_buttons();
 gint get_checked_tags_radio_box();
 gint get_checked_tags_version_radio_box();
-void check_save_dialog_event (GtkToggleButton *check_button,
-                              gpointer data);
-void radio_box_changed_event (GtkToggleButton *radio_b,
-                              gpointer data);
+void radio_box_changed_event(GtkToggleButton *radio_b, gpointer data);
 GtkWidget *create_pref_general_page();
-void browse_dir_button_event( GtkWidget *widget,
-                              gpointer   data );
+void browse_dir_button_event(GtkWidget *widget, gpointer data);
 void disable_adjust_spinners();
 void enables_adjust_spinners();
-void adjust_event (GtkToggleButton *adjust_mode,
-                   gpointer user_data);
-void seekable_event (GtkToggleButton *seekable,
-                     gpointer user_data);
-void frame_event (GtkToggleButton *frame_mode,
-                  gpointer user_data);
-void set_default_prefs_event (GtkWidget *widget, 
-                              gpointer data);
-void song_dir_button_event( GtkWidget *widget,
-                            gpointer   data );
+void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data);
+void frame_event(GtkToggleButton *frame_mode, gpointer user_data);
+void set_default_prefs_event(GtkWidget *widget, gpointer data);
+void song_dir_button_event(GtkWidget *widget, gpointer data);
 GtkWidget *create_pref_splitpoints_page();
 GString *get_checked_language();
-void save_preferences_event (GtkWidget *widget, 
-                             gpointer data);
-void revert_to_save_event (GtkToggleButton *check_button,
-                           gpointer data);
-void popup_save_preferences_dialog();
+void save_preferences(GtkWidget *widget, gpointer data);
 GtkWidget *create_save_buttons_hbox();
 void combo_remove_unavailable_players();
-void player_combo_box_event(GtkComboBox *widget,
-                            gpointer data);
+void player_combo_box_event(GtkComboBox *widget, gpointer data);
 GtkWidget *create_choose_player_combo();
 GtkWidget *create_pref_player_page();
 GtkWidget *create_choose_preferences();

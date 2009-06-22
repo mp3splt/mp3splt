@@ -38,10 +38,14 @@
 gint is_filee(const gchar *fname);
 gint check_if_we_have_player();
 gchar *get_preferences_filename();
-gint check_if_different_from_config_file();
 void set_language();
 void load_preferences();
 void write_default_preferences_file();
 void check_pref_file();
 gint check_if_dir(guchar *fname);
 gint check_if_file(guchar *fname);
+void print_processing_file(gchar *filename);
+
+GtkWidget *set_title_and_get_vbox(GtkWidget *widget, gchar *title);
+gboolean container_has_child(GtkContainer *cont, GtkWidget *my_child);
+

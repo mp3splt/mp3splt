@@ -148,7 +148,7 @@ void splt_t_set_float_option(splt_state *state, int option_name,
 int splt_t_get_int_option(splt_state *state, int option_name);
 long splt_t_get_long_option(splt_state *state, int option_name);
 float splt_t_get_float_option(splt_state *state, int option_name);
-//internal :
+//internal:
 void splt_t_set_i_begin_point(splt_state *state, double value);
 void splt_t_set_i_end_point(splt_state *state, double value);
 double splt_t_get_i_begin_point(splt_state *state);
@@ -205,9 +205,10 @@ void splt_t_wrap_free(splt_state *state);
 
 int splt_t_put_split_file(splt_state *state, const char *filename);
 void splt_t_put_progress_text(splt_state *state,int type);
-void splt_t_put_message_to_client(splt_state *state, char *message);
-void splt_t_update_progress(splt_state *state, float current_point,
-    float total_points, int progress_stage,
+void splt_t_put_info_message_to_client(splt_state *state, char *message);
+void splt_t_put_debug_message_to_client(splt_state *state, char *message);
+void splt_t_update_progress(splt_state *state, double current_point,
+    double total_points, int progress_stage,
     float progress_start, int refresh_rate);
 
 /********************************/
@@ -232,7 +233,8 @@ void splt_t_clean_one_split_data(splt_state *state, int num);
 void splt_t_clean_split_data(splt_state *state,int tracks);
 int splt_t_split_is_canceled(splt_state *state);
 void splt_t_set_stop_split(splt_state *state, int bool_value);
-void splt_t_free_plugin_data(splt_plugin_data pl_data);
+void splt_t_free_plugin_data(splt_plugin_data *pl_data);
+void splt_t_free_plugin_data_info(splt_plugin_data *pl_data);
 
 int splt_t_is_stdin(splt_state *state);
 int splt_t_is_stdout(splt_state *state);

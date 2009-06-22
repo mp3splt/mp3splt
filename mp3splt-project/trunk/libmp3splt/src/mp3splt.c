@@ -232,7 +232,7 @@ int mp3splt_set_filename_to_split(splt_state *state, const char *filename)
 //sets the function that sends messages to the client
 //returns possible error
 int mp3splt_set_message_function(splt_state *state, 
-    void (*message_cb)(const char *))
+    void (*message_cb)(const char *, splt_message_type))
 {
   int error = SPLT_OK;
 
@@ -666,13 +666,13 @@ int mp3splt_split(splt_state *state)
     {
       splt_t_lock_library(state);
 
-      splt_u_print_debug("Starting to split file...",0,NULL);
+      splt_u_print_debug(state,"Starting to split file...",0,NULL);
 
       //the new filename path
       char *new_filename_path = NULL;
       char *fname_to_split = splt_t_get_filename_to_split(state);
 
-      splt_u_print_debug("Original filename/path to split is ",0, fname_to_split);
+      splt_u_print_debug(state,"Original filename/path to split is ",0, fname_to_split);
 
       if (splt_t_is_stdin(state))
       {
@@ -768,7 +768,7 @@ int mp3splt_split(splt_state *state)
       if (error < 0) { goto function_end; }
       char infos[2048] = { '\0' };
       snprintf(infos,2048,_(" info: file matches the plugin '%s'\n"), plugin_name);
-      splt_t_put_message_to_client(state, infos);
+      splt_t_put_info_message_to_client(state, infos);
 
       //print the new m3u fname
       char *m3u_fname_with_path = splt_t_get_m3u_file_with_path(state, &error);
@@ -780,7 +780,7 @@ int mp3splt_split(splt_state *state)
         if (!mess) { error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto function_end; }
         snprintf(mess, malloc_size, _(" M3U file '%s' will be created.\n"),
             m3u_fname_with_path);
-        splt_t_put_message_to_client(state, mess);
+        splt_t_put_info_message_to_client(state, mess);
         free(m3u_fname_with_path);
         m3u_fname_with_path = NULL;
       }
@@ -789,7 +789,7 @@ int mp3splt_split(splt_state *state)
       splt_p_init(state, &error);
       if (error < 0) { goto function_end; }
 
-      splt_u_print_debug("parse type of split...",0,NULL);
+      splt_u_print_debug(state,"parse type of split...",0,NULL);
 
       char message[1024] = { '\0' };
       //print Working with auto adjust if necessary
@@ -806,7 +806,7 @@ int mp3splt_split(splt_state *state)
               splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP),
               splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET));
 
-          splt_t_put_message_to_client(state, message);
+          splt_t_put_info_message_to_client(state, message);
         }
       }
 
@@ -1084,11 +1084,6 @@ void mp3splt_set_oformat(splt_state *state,
   int erro = SPLT_OK;
   int *err = &erro;
   if (error != NULL) { err = error; }
-
-  if (format_string == NULL)
-  {
-    return;
-  }
 
   if (state != NULL)
   {
