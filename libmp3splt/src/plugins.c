@@ -123,7 +123,7 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
       //if the name starts with splt_and contains .so or .sl or .dll or .dylib
       if (strncmp(file,"libsplt_",8) == 0)
       {
-        splt_u_print_debug("Looking at the file ",0, file);
+        splt_u_print_debug(NULL, "Looking at the file ",0, file);
         //find the last '.' character
         p_end = strrchr(file,'.');
         p_start = strchr(file,'.');
@@ -244,6 +244,7 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
           goto end;
         }
         memset(pl->data[pl->number_of_plugins_found].func,0,sizeof(splt_plugin_func));
+
         pl->data[pl->number_of_plugins_found].plugin_filename = malloc(sizeof(char) *
             dir_and_fname_len);
         if (pl->data[pl->number_of_plugins_found].plugin_filename == NULL)
@@ -251,7 +252,8 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
           return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           goto end;
         }
-        //set the plugin name and the directory
+
+        //set the plugin path
         snprintf(pl->data[pl->number_of_plugins_found].plugin_filename,
             dir_and_fname_len - 1,"%s%c%s",directory,SPLT_DIRCHAR,fname);
 
@@ -323,7 +325,7 @@ static int splt_p_find_plugins(splt_state *state)
   {
     if (pl->plugins_scan_dirs[i] != NULL)
     {
-      splt_u_print_debug("Scanning plugins in the directory ",0, pl->plugins_scan_dirs[i]);
+      splt_u_print_debug(state,"Scanning plugins in the directory ",0, pl->plugins_scan_dirs[i]);
 
       //don't check if directory exists if the directory is ./ on unix-like
       //OSes or .\\ on windows
@@ -347,14 +349,14 @@ int splt_p_move_replace_plugin_data(splt_state *state, int old, int new)
 {
   splt_plugins *pl = state->plug;
 
-  splt_t_free_plugin_data(pl->data[new]);
+  splt_t_free_plugin_data(&pl->data[new]);
 
   pl->data[new].func = malloc(sizeof(splt_plugin_func));
   if (pl->data[new].func == NULL)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  memcpy(pl->data[new].func, pl->data[old].func, sizeof(pl->data[old].func));
+  memset(pl->data[new].func,0,sizeof(splt_plugin_func));
 
   int plugin_fname_len = strlen(pl->data[old].plugin_filename) + 1;
   pl->data[new].plugin_filename = malloc(sizeof(char) * plugin_fname_len);
@@ -365,7 +367,7 @@ int splt_p_move_replace_plugin_data(splt_state *state, int old, int new)
   snprintf(pl->data[new].plugin_filename, plugin_fname_len, "%s",
       pl->data[old].plugin_filename);
 
-  splt_t_free_plugin_data(pl->data[old]);
+  splt_t_free_plugin_data(&pl->data[old]);
 
   return SPLT_OK;
 }
@@ -389,7 +391,7 @@ static int splt_p_shift_left_plugins_data(splt_state *state, int index)
 }
 
 //function that gets information of each plugin
-static int splt_p_open_get_plugins_data(splt_state *state)
+static int splt_p_open_get_valid_plugins(splt_state *state)
 {
   splt_plugins *pl = state->plug;
 
@@ -401,15 +403,15 @@ static int splt_p_open_get_plugins_data(splt_state *state)
   int i = 0;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
-    splt_u_print_debug("\nTrying to open the plugin ...",0,pl->data[i].plugin_filename);
+    splt_u_print_debug(state,"\nTrying to open the plugin ...",0,pl->data[i].plugin_filename);
 
     //ltdl currently does not supports windows unicode path/filename
     pl->data[i].plugin_handle = lt_dlopen(pl->data[i].plugin_filename);
     //error
     if (! pl->data[i].plugin_handle)
     {
-      splt_u_print_debug("Error loading the plugin",0,pl->data[i].plugin_filename);
-      splt_u_print_debug(" - error message from libltdl : ",0,lt_dlerror());
+      splt_u_print_debug(state,"Error loading the plugin",0,pl->data[i].plugin_filename);
+      splt_u_print_debug(state," - error message from libltdl: ",0,lt_dlerror());
 
       //keep the index of this failed plugin in order to remove it
       //afterwards
@@ -426,40 +428,13 @@ static int splt_p_open_get_plugins_data(splt_state *state)
     }
     else
     {
-      splt_u_print_debug(" - success !",0,NULL);
+      splt_u_print_debug(state," - success !",0,NULL);
 
-      //get pointers to functions from the plugins
-      //-this function must only be called once and here 
-      *(void **) (&pl->data[i].func->check_plugin_is_for_file) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_check_plugin_is_for_file");
-      *(void **) (&pl->data[i].func->search_syncerrors) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_search_syncerrors");
-      *(void **) (&pl->data[i].func->dewrap) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_dewrap");
-      *(void **) (&pl->data[i].func->simple_split) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_simple_split");
-      *(void **) (&pl->data[i].func->split) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_split");
-      *(void **) (&pl->data[i].func->init) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_init");
-      *(void **) (&pl->data[i].func->end) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_end");
-      *(void **) (&pl->data[i].func->scan_silence) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_silence");
-      *(void **) (&pl->data[i].func->set_original_tags) =
-        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_original_tags");
       *(void **) (&pl->data[i].func->set_plugin_info) =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_plugin_info");
       if (pl->data[i].func->set_plugin_info != NULL)
       {
         pl->data[i].func->set_plugin_info(&pl->data[i].info,&error);
-        /*splt_t_set_current_plugin(state, i);
-        const char *p_name = splt_p_get_name(state, &error);
-        fprintf(stdout," Plugin NAME = _%s_\n",p_name);
-        fflush(stdout);*/
-      }
-      else
-      {
       }
 
       //look if we already have a plugin with the same name
@@ -475,17 +450,31 @@ static int splt_p_open_get_plugins_data(splt_state *state)
           //if we do have one with the same name,
           if (strcmp(plugin_name,current_plugin_name) == 0)
           {
-            //keep its index to remove it afterwards
-            if (! plugin_index_to_remove)
+            //keep unique index to remove afterwards
+            int unique = SPLT_TRUE;
+            int k = 0;
+            for (k = 0;k < number_of_plugins_to_remove;k++)
             {
-              plugin_index_to_remove = malloc(sizeof(int));
+              if (i == plugin_index_to_remove[k])
+              {
+                unique = SPLT_FALSE;
+                break;
+              }
             }
-            else
+            if (unique)
             {
-              plugin_index_to_remove = realloc(plugin_index_to_remove, sizeof(int) * (number_of_plugins_to_remove + 1));
+              if (! plugin_index_to_remove)
+              {
+                plugin_index_to_remove = malloc(sizeof(int));
+              }
+              else
+              {
+                plugin_index_to_remove = realloc(plugin_index_to_remove,
+                    sizeof(int) * (number_of_plugins_to_remove + 1));
+              }
+              plugin_index_to_remove[number_of_plugins_to_remove] = i;
+              number_of_plugins_to_remove++;
             }
-            plugin_index_to_remove[number_of_plugins_to_remove] = i;
-            number_of_plugins_to_remove++;
           }
         }
       }
@@ -501,12 +490,20 @@ static int splt_p_open_get_plugins_data(splt_state *state)
   {
     int index_to_remove = plugin_index_to_remove[i] - left_shift;
 
-    splt_u_print_debug("Removing the plugin ",0, pl->data[index_to_remove].plugin_filename);
+    splt_u_print_debug(state,"Removing the plugin ",0,
+        pl->data[index_to_remove].plugin_filename);
 
-    error = splt_p_shift_left_plugins_data(state, index_to_remove);
-    if (error != SPLT_OK)
+    if (i == number_of_plugins_to_remove-1)
     {
-      goto end;
+      splt_t_free_plugin_data(&pl->data[index_to_remove]);
+    }
+    else
+    {
+      error = splt_p_shift_left_plugins_data(state, index_to_remove);
+      if (error != SPLT_OK)
+      {
+        goto end;
+      }
     }
 
     pl->number_of_plugins_found--;
@@ -532,7 +529,7 @@ int splt_p_find_get_plugins_data(splt_state *state)
 {
   int return_value = SPLT_OK;
 
-  splt_u_print_debug("\nSearching for plugins ...",0,NULL);
+  splt_u_print_debug(state,"\nSearching for plugins ...",0,NULL);
 
   //find the plugins
   return_value = splt_p_find_plugins(state);
@@ -544,31 +541,59 @@ int splt_p_find_get_plugins_data(splt_state *state)
   else
   {
     //open the plugins
-    return_value = splt_p_open_get_plugins_data(state);
+    return_value = splt_p_open_get_valid_plugins(state);
   }
 
   if (return_value >= 0)
   {
     //debug
     splt_plugins *pl = state->plug;
-    splt_u_print_debug("\nNumber of plugins found = ",pl->number_of_plugins_found,NULL);
-    splt_u_print_debug("",0,NULL);
+    splt_u_print_debug(state,"\nNumber of plugins found = ",pl->number_of_plugins_found,NULL);
+    splt_u_print_debug(state,"",0,NULL);
     int i = 0;
     int err = 0;
     for (i = 0;i < pl->number_of_plugins_found;i++)
     {
+      pl->data[i].plugin_handle = lt_dlopen(pl->data[i].plugin_filename);
+
+      *(void **) (&pl->data[i].func->check_plugin_is_for_file) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_check_plugin_is_for_file");
+      *(void **) (&pl->data[i].func->search_syncerrors) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_search_syncerrors");
+      *(void **) (&pl->data[i].func->dewrap) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_dewrap");
+      *(void **) (&pl->data[i].func->simple_split) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_simple_split");
+      *(void **) (&pl->data[i].func->split) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_split");
+      *(void **) (&pl->data[i].func->init) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_init");
+      *(void **) (&pl->data[i].func->end) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_end");
+      *(void **) (&pl->data[i].func->scan_silence) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_silence");
+      *(void **) (&pl->data[i].func->set_original_tags) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_original_tags");
+      *(void **) (&pl->data[i].func->set_plugin_info) =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_plugin_info");
+      if (pl->data[i].func->set_plugin_info != NULL)
+      {
+        splt_t_free_plugin_data_info(&pl->data[i]);
+        pl->data[i].func->set_plugin_info(&pl->data[i].info,&err);
+      }
+
       splt_t_set_current_plugin(state, i);
       if (pl->data[i].plugin_filename != NULL)
       {
-        splt_u_print_debug("plugin filename = ",0,pl->data[i].plugin_filename);
+        splt_u_print_debug(state,"plugin filename = ",0,pl->data[i].plugin_filename);
       }
       const char *temp = splt_p_get_name(state, &err);
-      splt_u_print_debug("plugin name = ",0,temp);
+      splt_u_print_debug(state,"plugin name = ",0,temp);
       float version = splt_p_get_version(state, &err);
-      splt_u_print_debug("plugin version = ", version, NULL);
+      splt_u_print_debug(state,"plugin version = ", version, NULL);
       temp = splt_p_get_extension(state,&err);
-      splt_u_print_debug("extension = ",0,temp);
-      splt_u_print_debug("",0,NULL);
+      splt_u_print_debug(state,"extension = ",0,temp);
+      splt_u_print_debug(state,"",0,NULL);
     }
   }
   splt_t_set_current_plugin(state, -1);

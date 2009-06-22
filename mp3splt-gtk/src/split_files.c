@@ -71,20 +71,18 @@ extern gboolean timer_active;
 
 //split files enumeration
 enum
-  {
-    COL_NAME,
-    COL_FILENAME,
-    SPLIT_COLUMNS
-  };
+{
+  COL_NAME,
+  COL_FILENAME,
+  SPLIT_COLUMNS
+};
 
 //creates the model for the split tree
 GtkTreeModel *create_split_model()
 {
   GtkListStore *model;
 
-  model = gtk_list_store_new (SPLIT_COLUMNS,
-                              G_TYPE_STRING,
-                              G_TYPE_STRING);
+  model = gtk_list_store_new(SPLIT_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
 
   return GTK_TREE_MODEL (model);
 }
@@ -106,38 +104,20 @@ GtkTreeView *create_split_files_tree()
 //creates split columns
 void create_split_columns (GtkTreeView *tree_view)
 {
-  //cells renderer
-  GtkCellRendererText *renderer;
-  //columns
-  GtkTreeViewColumn *name_column;
-  //GtkTreeViewColumn *filename_column;
-
-  /* minutes */
-  //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
+  GtkCellRendererText *renderer =
+    GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NAME));
-  name_column = gtk_tree_view_column_new_with_attributes 
-    (_("Filename"), GTK_CELL_RENDERER(renderer),
-     "text", COL_NAME, NULL);
+  GtkTreeViewColumn *name_column = gtk_tree_view_column_new_with_attributes 
+    (_("Filename"), GTK_CELL_RENDERER(renderer), "text", COL_NAME, NULL);
 
-  //we dont insert the column to the tree view
-  /*  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-      filename_column = gtk_tree_view_column_new_with_attributes 
-      ("Complete filename", GTK_CELL_RENDERER(renderer),
-      "text", COL_FILENAME,
-      NULL);*/
-  /*  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-      GTK_TREE_VIEW_COLUMN (filename_column),COL_FILENAME);*/
-  
   //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (name_column),COL_NAME);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
+      GTK_TREE_VIEW_COLUMN(name_column),COL_NAME);
 
-  //middle alignment of the column name
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column),
-                                     0.5);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(name_column),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column), 0.5);
+  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column),
+      GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_resizable(name_column, TRUE);
 }
 
 //removes all rows from the split files table
@@ -181,11 +161,9 @@ void add_split_row(const gchar *name)
   gtk_list_store_append (GTK_LIST_STORE (model), &iter);
       
   //sets text in the minute, second and milisecond column
-  gtk_list_store_set (GTK_LIST_STORE (model), 
-                      &iter,
-                      COL_NAME,get_real_name_from_filename((guchar *)name),
-                      COL_FILENAME,name,
-                      -1);
+  gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+      COL_NAME,get_real_name_from_filename((guchar *)name),
+      COL_FILENAME,name, -1);
   //add 1 to the row number of the table
   split_table_number++;
 }
@@ -201,15 +179,12 @@ gchar *get_filename_from_split_files(gint number)
   //get the model
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(split_tree));
   
-  path = 
-    gtk_tree_path_new_from_indices (number-1 ,-1);
+  path = gtk_tree_path_new_from_indices (number-1 ,-1);
   //get the iter correspondig to the path
   if(gtk_tree_model_get_iter(model, &iter, path))
-    {
-      gtk_tree_model_get (model, &iter, 
-                          COL_FILENAME, &filename,
-                          -1);
-    }
+  {
+    gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+  }
   gtk_tree_path_free(path);
   
   return filename;
@@ -241,36 +216,33 @@ void queue_files_button_event( GtkWidget *widget,
   gint number = split_files;
   //put the split filenames in a g_list
   while(number >= 0)
+  {
+    path = gtk_tree_path_new_from_indices (number ,-1);
+    //get the iter correspondig to the path
+    if(gtk_tree_model_get_iter(model, &iter, path))
     {
-      path = gtk_tree_path_new_from_indices (number ,-1);
-      //get the iter correspondig to the path
-      if(gtk_tree_model_get_iter(model, &iter, path))
-        {
-          gtk_tree_model_get (model, &iter, 
-                              COL_FILENAME, &filename,
-                              -1);
-          
-          //add it to the queue file
-          file_list = g_list_append(file_list, strdup(filename));
-          g_free(filename);
-        }
-      gtk_tree_path_free(path);
-      number--;
+      gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+
+      //add it to the queue file
+      file_list = g_list_append(file_list, strdup(filename));
+      g_free(filename);
     }
+    gtk_tree_path_free(path);
+    number--;
+  }
   
   if (file_list != NULL)
-    {
-      player_add_files(file_list);
-    }
-  
+  {
+    player_add_files(file_list);
+  }
+
   //free memory
   g_list_foreach(file_list, (GFunc)g_free, NULL);
   g_list_free(file_list);
 }
 
 //event for the remove file button
-void remove_file_button_event(GtkWidget *widget,
-                              gpointer data)
+void remove_file_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
   GtkTreeModel *model;
@@ -294,33 +266,31 @@ void remove_file_button_event(GtkWidget *widget,
   //while the list is not empty and we have numbers in the table
   //(splitnumber >0)
   while (g_list_length(selected_list) > 0)
-    {
-      //get the last element
-      current_element = g_list_last(selected_list);
-      path = current_element->data;
-      i = gtk_tree_path_get_indices (path)[0];
-      //get the iter correspondig to the path
-      gtk_tree_model_get_iter(model, &iter, path);
-      gtk_tree_model_get (model, &iter, 
-                          COL_FILENAME, &filename,
-                          -1);
-      g_remove(filename);
-      //remove the path from the selected list
-      gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
-      selected_list = g_list_remove(selected_list, path);
-      //remove 1 to the row number of the table
-      split_table_number--;
-      
-      //free memory
-      gtk_tree_path_free(path);
-      g_free(filename);
-    }
+  {
+    //get the last element
+    current_element = g_list_last(selected_list);
+    path = current_element->data;
+    i = gtk_tree_path_get_indices (path)[0];
+    //get the iter correspondig to the path
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+    g_remove(filename);
+    //remove the path from the selected list
+    gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+    selected_list = g_list_remove(selected_list, path);
+    //remove 1 to the row number of the table
+    split_table_number--;
+
+    //free memory
+    gtk_tree_path_free(path);
+    g_free(filename);
+  }
   
   if (split_table_number == 0)
-    {
-      gtk_widget_set_sensitive(queue_files_button, FALSE);
-      gtk_widget_set_sensitive(remove_all_files_button, FALSE);
-    }
+  {
+    gtk_widget_set_sensitive(queue_files_button, FALSE);
+    gtk_widget_set_sensitive(remove_all_files_button, FALSE);
+  }
   
   gtk_widget_set_sensitive(remove_file_button,FALSE);
   
@@ -343,15 +313,14 @@ void remove_all_files_button_event(GtkWidget *widget,
   gchar *filename;
   //for all the splitnumbers
   while (split_table_number > 0)
-    {
-      gtk_tree_model_get_iter_first(model, &iter);
-      gtk_tree_model_get (model, &iter, 
-                          COL_FILENAME, &filename, -1);
-      g_remove(filename);
-      gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
-      split_table_number--;
-      g_free(filename);
-    }
+  {
+    gtk_tree_model_get_iter_first(model, &iter);
+    gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+    g_remove(filename);
+    gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+    split_table_number--;
+    g_free(filename);
+  }
   
   gtk_widget_set_sensitive(remove_all_files_button,FALSE);
   gtk_widget_set_sensitive(remove_file_button,FALSE);
@@ -388,7 +357,7 @@ GtkWidget *create_queue_buttons_hbox()
   //button for removing a file
   remove_all_files_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE,
-                       _("Delete all files"),FALSE);
+                       _("D_elete all files"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       remove_all_files_button, TRUE, FALSE, 5);
   gtk_widget_set_sensitive(remove_all_files_button,FALSE);
@@ -399,10 +368,8 @@ GtkWidget *create_queue_buttons_hbox()
 }
 
 //when clicking on a row
-void split_tree_row_activated (GtkTreeView *tree_view,
-                               GtkTreePath *arg1,
-                               GtkTreeViewColumn *arg2,
-                               gpointer data)
+void split_tree_row_activated(GtkTreeView *tree_view, GtkTreePath *arg1,
+    GtkTreeViewColumn *arg2, gpointer data)
 {
   GtkTreeIter iter;
   GtkTreeModel *model;
@@ -410,36 +377,38 @@ void split_tree_row_activated (GtkTreeView *tree_view,
   GList *current_element = NULL;
   GtkTreeSelection *selection;
   GtkTreePath *path;
-  
+
   //get the model
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
   //get the selection
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
   //get selected rows
   selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
-  
+
   //get the last element
   current_element = g_list_first(selected_list);
   path = current_element->data;
   //get the iter correspondig to the path
   gtk_tree_model_get_iter(model, &iter, path);
   //the name of the file that we have clicked on
-  gchar *filename;
-      
-  gtk_tree_model_get (model, &iter, 
-                      COL_FILENAME, &filename,
-                      -1);
-  
+  gchar *filename = NULL;
+
+  gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+
   //connecting to player
   connect_button_event (NULL, NULL);
   //set the entry with the current filename
   change_current_filename(filename);
   //starts playing, 0 means start playing
   connect_to_player_with_song(0);
-      
+
   //free memory
   gtk_tree_path_free(path);
-  g_free(filename);
+  if (filename)
+  {
+    g_free(filename);
+    filename = NULL;
+  }
 }
 
 //split selection has changed
@@ -519,7 +488,6 @@ GtkWidget *create_split_files()
   //scrolled window for the tree
   GtkWidget *scrolled_window;
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_set_size_request(scrolled_window, 300,130);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,

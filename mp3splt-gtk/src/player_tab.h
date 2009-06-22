@@ -198,3 +198,8 @@ GtkWidget *create_choose_file_frame();
 void change_current_filename(gchar *fname);
 GtkWidget *create_player_playlist_frame();
 
+void hide_connect_button();
+void show_connect_button();
+void hide_disconnect_button();
+void show_disconnect_button();
+

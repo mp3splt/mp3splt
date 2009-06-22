@@ -66,6 +66,7 @@ GstBus *bus = NULL;
 gint _gstreamer_is_running = FALSE;
 extern GtkWidget *entry;
 extern GtkWidget *playlist_box;
+extern GtkWidget *player_vbox;
 
 extern void add_playlist_file(const gchar *name);
 
@@ -89,7 +90,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
         if (message)
         {
           memset(message,'\0',malloc_size);
-          g_snprintf(message, malloc_size,_("Error : %s"),error->message);
+          g_snprintf(message, malloc_size,_("gstreamer error: %s"),error->message);
 
           gdk_threads_enter();
           put_status_message(message);
@@ -98,7 +99,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           g_free(message);
         }
       }
-      g_error_free (error);
+      g_error_free(error);
       break;
     }
     case GST_MESSAGE_WARNING:
@@ -145,7 +146,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
         if (message)
         {
           memset(message,'\0',malloc_size);
-          g_snprintf(message, malloc_size,_("Info : %s"),error->message);
+          g_snprintf(message, malloc_size,_("Info: %s"),error->message);
 
           gdk_threads_enter();
           put_status_message(message);
@@ -383,7 +384,11 @@ void gstreamer_start()
 	//if we have started the player
   if (play)
 	{
-    //show the playlist (history)
+    GList *children = gtk_container_get_children(GTK_CONTAINER(player_vbox));
+    if (g_list_length(children) == 0)
+    {
+      gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
+    }
     gtk_widget_show(playlist_box);
 
 		_gstreamer_is_running = TRUE;
@@ -401,7 +406,7 @@ void gstreamer_start()
 	else
 	{
 		gdk_threads_enter();
-		put_status_message(_(" Error: cannot create gstreamer playbin\n"));
+		put_status_message(_(" error: cannot create gstreamer playbin\n"));
 		gdk_threads_leave();
 	}
 }
@@ -436,26 +441,26 @@ void gstreamer_add_files(GList *list)
   }
 
 	if (play)
-	{
-		while ((song = g_list_nth_data(list, i)) != NULL)
-		{
-			if (song)
-			{
-				//add file to playlist
-				add_playlist_file(song);
-				len_uri += strlen(song);
-				uri = malloc(sizeof(char) * len_uri);
-				g_snprintf(uri,len_uri,"file://%s",song);
-				g_object_set(G_OBJECT(play), "uri", uri, NULL);
-				if (uri)
-				{
-					g_free(uri);
-					uri = NULL;
-				}
-			}
-			i++;
-		}
-	}
+  {
+    while ((song = g_list_nth_data(list, i)) != NULL)
+    {
+      if (song)
+      {
+        //add file to playlist
+        add_playlist_file(song);
+        len_uri += strlen(song);
+        uri = malloc(sizeof(char) * len_uri);
+        g_snprintf(uri,len_uri,"file://%s",song);
+        g_object_set(G_OBJECT(play), "uri", uri, NULL);
+        if (uri)
+        {
+          g_free(uri);
+          uri = NULL;
+        }
+      }
+      i++;
+    }
+  }
 }
 
 //sets volume
@@ -649,7 +654,6 @@ void gstreamer_quit()
   }
   _gstreamer_is_running = FALSE;
 
-  //hide the playlist (history)
   gtk_widget_hide(playlist_box);
 }
 

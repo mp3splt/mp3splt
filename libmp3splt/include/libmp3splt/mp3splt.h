@@ -244,7 +244,7 @@ typedef struct {
   unsigned char genre;
 
   /*
-   * @brief tags version (for mp3) : 1 or 2 or 1 & 2
+   * @brief tags version (for mp3): 1 or 2 or 1 & 2
    */
   int tags_version;
 } splt_tags;
@@ -302,7 +302,7 @@ typedef struct splt_progres {
   //the maximum number of splits
   int max_splits;
   //the progress type
-  //can be :
+  //can be:
   //SPLT_PROGRESS_PREPARE
   //SPLT_PROGRESS_CREATE
   //SPLT_PROGRESS_SEARCH_SYNC
@@ -333,6 +333,18 @@ typedef struct {
   char password[256];
 } splt_proxy;
 
+//used with the 'put_message' function
+typedef enum {
+  /**
+   * Info message
+   */
+  SPLT_MESSAGE_INFO,
+  /**
+   * Debug message
+   */
+  SPLT_MESSAGE_DEBUG
+} splt_message_type;
+
 typedef struct {
   //total time of the song
   long total_time;
@@ -340,7 +352,7 @@ typedef struct {
   //1 if the first, 2 if the second
   //the number of splitpoints
   int current_split;
-  //for the user feedback : the current split file number
+  //for the user feedback: the current split file number
   int current_split_file_number;
   //how many splits, this will be modified
   //by check_splitpts_inf_song_length()
@@ -360,8 +372,8 @@ typedef struct {
   //user data set by the client for the 'get_silence_level' function
   void *silence_level_client_data;
   //sends a message to the main program to tell him what
-  //he is doing
-  void (*put_message)(const char *);
+  //he is doing; the second parameter is the type of split
+  void (*put_message)(const char *, splt_message_type );
   //structure in which we have all the splitpoints
   splt_point *points;
   //how many tags we have
@@ -484,7 +496,7 @@ typedef enum {
 
 //structure with all the options supplied to split the file
 typedef struct {
-  //this can take the following values :
+  //this can take the following values:
   //SPLT_OPTION_NORMAL_MODE
   //SPLT_OPTION_WRAP_MODE
   //SPLT_OPTION_SILENCE_MODE
@@ -492,7 +504,7 @@ typedef struct {
   //SPLT_OPTION_TIME_MODE
   splt_split_mode_options split_mode;
 
-  //might be :
+  //might be:
   //SPLT_TAGS_ORIGINAL_FILE - write tags from original file
   //SPLT_NO_TAGS - does not write any tags
   //SPLT_CURRENT_TAGS - tags issued from the cddb or cue for example
@@ -504,10 +516,10 @@ typedef struct {
   //defines the output filenames
   splt_output_filenames_options output_filenames;
 
-  //quiet mode : don't perform CRC check or other interaction with the user
+  //quiet mode: don't perform CRC check or other interaction with the user
   short quiet_mode;
 
-  //Pretend to split the file, without real split : this option works in
+  //Pretend to split the file, without real split: this option works in
   //all modes except error mode and dewrap split.
   short pretend_to_split;
 
@@ -533,7 +545,7 @@ typedef struct {
   short create_dirs_from_filenames;
 
   //PARAMETERS---------------------------------------
-  //PARAMETERS for option_auto_adjust and option_silence_mode :
+  //PARAMETERS for option_auto_adjust and option_silence_mode:
   //the sound level to be considered silence
   //(it is a float number between -96 and 0. Default is -48 dB)
   float parameter_threshold;
@@ -543,7 +555,7 @@ typedef struct {
   //end;default is 0.8. 
   float parameter_offset;
 
-  //PARAMETERS for option_silence_mode :
+  //PARAMETERS for option_silence_mode:
   //the desired number of tracks
   //(positive integer number of tracks to be split;by default all
   //tracks are split)
@@ -555,7 +567,7 @@ typedef struct {
   //allows you to remove the silence between split tracks
   short parameter_remove_silence;
 
-  //PARAMETERS for option_auto_adjust :
+  //PARAMETERS for option_auto_adjust:
   //the gap value around splitpoint to search for silence
   //(positive integer for the time to decode before and after
   //splitpoint;default gap is 30 seconds)
@@ -720,245 +732,245 @@ typedef struct {
   splt_plugins *plug;
   int current_plugin;
 
-  //filename of the silence log : 'mp3splt.log' in the original mp3splt
+  //filename of the silence log: 'mp3splt.log' in the original mp3splt
   char *silence_log_fname;
 } splt_state;
 
 /*****************************************/
 /* Confirmations, errors and messages    */
 
-//error and confirmation messages :
+//error and confirmation messages:
 //sync
 /**
- * @brief Warning, split : mp3 file might be VBR
+ * @brief Warning, split: mp3 file might be VBR
  */
 #define SPLT_MIGHT_BE_VBR 301
 /**
- * @brief Confirmation, syncerror : syncerror processed ok
+ * @brief Confirmation, syncerror: syncerror processed ok
  */
 #define SPLT_SYNC_OK 300
 /**
- * @brief Error, syncerror : error for the syncerror
+ * @brief Error, syncerror: error for the syncerror
  */
 #define SPLT_ERR_SYNC -300
 /**
- * @brief Error, syncerror : no sync errors found
+ * @brief Error, syncerror: no sync errors found
  */
 #define SPLT_ERR_NO_SYNC_FOUND -301
 /**
- * @brief Error, syncerror : too many syncerrors found
+ * @brief Error, syncerror: too many syncerrors found
  */
 #define SPLT_ERR_TOO_MANY_SYNC_ERR -302
 
 //freedb, cue, cddb
 /**
- * @brief Warning, freedb : maximum number of CD reached
+ * @brief Warning, freedb: maximum number of CD reached
  */
 #define SPLT_FREEDB_MAX_CD_REACHED 104
 /**
- * @brief Confirmation, cue : file processed ok
+ * @brief Confirmation, cue: file processed ok
  */
 #define SPLT_CUE_OK 103
 /**
- * @brief Confirmation, cddb : file processed ok
+ * @brief Confirmation, cddb: file processed ok
  */
 #define SPLT_CDDB_OK 102
 /**
- * @brief Confirmation, freedb : file processed ok
+ * @brief Confirmation, freedb: file processed ok
  */
 #define SPLT_FREEDB_FILE_OK 101
 /**
- * @brief Confirmation, freedb : search ok
+ * @brief Confirmation, freedb: search ok
  */
 #define SPLT_FREEDB_OK 100
 
 /**
- * @brief Error, freedb : cannot initialise socket
+ * @brief Error, freedb: cannot initialise socket
  */
 #define SPLT_FREEDB_ERROR_INITIALISE_SOCKET -101
 /**
- * @brief Error, freedb : cannot get host by name
+ * @brief Error, freedb: cannot get host by name
  */
 #define SPLT_FREEDB_ERROR_CANNOT_GET_HOST -102
 /**
- * @brief Error, freedb : cannot open socket
+ * @brief Error, freedb: cannot open socket
  */
 #define SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET -103
 /**
- * @brief Error, freedb : cannot connect to host
+ * @brief Error, freedb: cannot connect to host
  */
 #define SPLT_FREEDB_ERROR_CANNOT_CONNECT -104
 /**
- * @brief Error, freedb : cannot send message
+ * @brief Error, freedb: cannot send message
  */
 #define SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE -105
 /**
- * @brief Error, freedb : invalid server answer
+ * @brief Error, freedb: invalid server answer
  */
 #define SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER -106
 /**
- * @brief Error, freedb : site returned 201 error
+ * @brief Error, freedb: site returned 201 error
  */
 #define SPLT_FREEDB_ERROR_SITE_201 -107
 /**
- * @brief Error, freedb : site returned 200 error
+ * @brief Error, freedb: site returned 200 error
  */
 #define SPLT_FREEDB_ERROR_SITE_200 -108
 /**
- * @brief Error, freedb : bad communication between server and client
+ * @brief Error, freedb: bad communication between server and client
  */
 #define SPLT_FREEDB_ERROR_BAD_COMMUNICATION -109
 /**
- * @brief Error, freedb : error getting server informations
+ * @brief Error, freedb: error getting server informations
  */
 #define SPLT_FREEDB_ERROR_GETTING_INFOS -110
 /**
- * @brief Error, freedb : no CD found for the search
+ * @brief Error, freedb: no CD found for the search
  */
 #define SPLT_FREEDB_NO_CD_FOUND -111
 /**
- * @brief Error, freedb : cannot receive message from server
+ * @brief Error, freedb: cannot receive message from server
  */
 #define SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE -112
 /**
- * @brief Error, cue : invalid cue file, the parse failed
+ * @brief Error, cue: invalid cue file, the parse failed
  */
 #define SPLT_INVALID_CUE_FILE -115
 /**
- * @brief Error, cddb : invalid cddb file, the parse failed
+ * @brief Error, cddb: invalid cddb file, the parse failed
  */
 #define SPLT_INVALID_CDDB_FILE -116
 /**
- * @brief Error, freedb : No such CD entry in database
+ * @brief Error, freedb: No such CD entry in database
  */
 #define SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE -118
 /**
- * @brief Error, freedb : site returned an unknown error
+ * @brief Error, freedb: site returned an unknown error
  */
 #define SPLT_FREEDB_ERROR_SITE -119
 
 //wrap
 /**
- * @brief Confirmation, dewrap : dewrap processed ok
+ * @brief Confirmation, dewrap: dewrap processed ok
  */
 #define SPLT_DEWRAP_OK 200
 
 /**
- * @brief Error, dewrap : file length error
+ * @brief Error, dewrap: file length error
  */
 #define SPLT_DEWRAP_ERR_FILE_LENGTH -200
 /**
- * @brief Error, dewrap : wrapped with a too old version of mp3wrap
+ * @brief Error, dewrap: wrapped with a too old version of mp3wrap
  */
 #define SPLT_DEWRAP_ERR_VERSION_OLD -201
 /**
- * @brief Error, dewrap : file damaged
+ * @brief Error, dewrap: file damaged
  */
 #define SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX -202
 /**
- * @brief Error, dewrap : file damaged or incomplete
+ * @brief Error, dewrap: file damaged or incomplete
  */
 #define SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE -203
 /**
- * @brief Error, dewrap : file not wrapped or damaged
+ * @brief Error, dewrap: file not wrapped or damaged
  */
 #define SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED -204
 
 /**
- * @brief Warning, split : split, end of file
+ * @brief Warning, split: split, end of file
  */
 #define SPLT_OK_SPLIT_EOF 8
 /**
- * @brief Warning, silence detection : no silence splitpoint found
+ * @brief Warning, silence detection: no silence splitpoint found
  */
 #define SPLT_NO_SILENCE_SPLITPOINTS_FOUND 7
 /**
- * @brief Confirmation, time split : time split processed ok
+ * @brief Confirmation, time split: time split processed ok
  */
 #define SPLT_TIME_SPLIT_OK 6
 /**
- * @brief Confirmation, silence split : silence split processed ok
+ * @brief Confirmation, silence split: silence split processed ok
  */
 #define SPLT_SILENCE_OK 5
 /**
- * @brief Warning, split : splitpoints bigger than file length
+ * @brief Warning, split: splitpoints bigger than file length
  */
 #define SPLT_SPLITPOINT_BIGGER_THAN_LENGTH 4
 /**
- * @brief Confirmation, split : split
+ * @brief Confirmation, split: split
  */
 #define SPLT_OK_SPLIT 1
 /**
- * @brief Confirmation : no error
+ * @brief Confirmation: no error
  */
 #define SPLT_OK 0
 
 /**
- * @brief Error, split : not enough splitpoints
+ * @brief Error, split: not enough splitpoints
  */
 #define SPLT_ERROR_SPLITPOINTS -1
 /**
- * @brief Error, split : cannot open file
+ * @brief Error, split: cannot open file
  */
 #define SPLT_ERROR_CANNOT_OPEN_FILE -2
 /**
- * @brief Error, split : invalid file for plugin
+ * @brief Error, split: invalid file for plugin
  */
 #define SPLT_ERROR_INVALID -3
 /**
- * @brief Error, split : splitpoints are equal
+ * @brief Error, split: splitpoints are equal
  */
 #define SPLT_ERROR_EQUAL_SPLITPOINTS -5
 /**
- * @brief Error, split : splitpoints are not in order
+ * @brief Error, split: splitpoints are not in order
  */
 #define SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER -6
 /**
- * @brief Error, split : negative splitpoint found
+ * @brief Error, split: negative splitpoint found
  */
 #define SPLT_ERROR_NEGATIVE_SPLITPOINT -7
 /**
- * @brief Error, split : incorrect split path
+ * @brief Error, split: incorrect split path
  */
 #define SPLT_ERROR_INCORRECT_PATH -8
 /**
- * @brief Error, split : incompatible split options
+ * @brief Error, split: incompatible split options
  */
 #define SPLT_ERROR_INCOMPATIBLE_OPTIONS -10
 /**
- * @brief Error, split : input and output are the same file
+ * @brief Error, split: input and output are the same file
  */
 #define SPLT_ERROR_INPUT_OUTPUT_SAME_FILE -12
 /**
- * @brief Error : cannot allocate memory
+ * @brief Error: cannot allocate memory
  */
 #define SPLT_ERROR_CANNOT_ALLOCATE_MEMORY -15
 /**
- * @brief Error, split : cannot open destination file
+ * @brief Error, split: cannot open destination file
  */
 #define SPLT_ERROR_CANNOT_OPEN_DEST_FILE -16
 /**
- * @brief Error, split : cannot write to destination file
+ * @brief Error, split: cannot write to destination file
  */
 #define SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE -17
 /**
- * @brief Error, split : error while reading file
+ * @brief Error, split: error while reading file
  */
 #define SPLT_ERROR_WHILE_READING_FILE -18
 /**
- * @brief Error, split : error while seeking file
+ * @brief Error, split: error while seeking file
  */
 #define SPLT_ERROR_SEEKING_FILE -19
 /**
- * @brief Error, split : begin is out of file
+ * @brief Error, split: begin is out of file
  */
 #define SPLT_ERROR_BEGIN_OUT_OF_FILE -20
 /**
- * @brief Error, split : inexistent input file
+ * @brief Error, split: inexistent input file
  */
 #define SPLT_ERROR_INEXISTENT_FILE -21
 /**
- * @brief Error, split : split canceled
+ * @brief Error, split: split canceled
  */
 #define SPLT_SPLIT_CANCELLED -22
 /**
@@ -999,16 +1011,16 @@ typedef struct {
 
 //output format
 /**
- * @brief Confirmation, output format : the output format is ok
+ * @brief Confirmation, output format: the output format is ok
  */
 #define SPLT_OUTPUT_FORMAT_OK 400
 /**
- * @brief Warning, output format : output format ambigous
+ * @brief Warning, output format: output format ambigous
  */
 #define SPLT_OUTPUT_FORMAT_AMBIGUOUS 401
 
 /**
- * @brief Error, output format : error occured while parsing the
+ * @brief Error, output format: error occured while parsing the
  * output format
  */
 #define SPLT_OUTPUT_FORMAT_ERROR -400
@@ -1048,7 +1060,7 @@ typedef enum {
   SPLT_PROGRESS_SCAN_SILENCE
 } splt_progress_messages;
 
-//options types : integer
+//options types: integer
 /**
  * @brief Integer options
  *
@@ -1059,7 +1071,7 @@ typedef enum {
  */
 typedef enum {
   /**
-   * Pretend to split the file, without real split : this option works in
+   * Pretend to split the file, without real split: this option works in
    * all modes except error mode and dewrap split.
    */
   SPLT_OPT_PRETEND_TO_SPLIT,
@@ -1126,7 +1138,7 @@ typedef enum {
   /**
    * If we use silence detection to auto-adjust splitpoints\n
    * The following options may change the behaviour of the
-   * auto-adjust : #SPLT_OPT_PARAM_THRESHOLD, #SPLT_OPT_PARAM_OFFSET,
+   * auto-adjust: #SPLT_OPT_PARAM_THRESHOLD, #SPLT_OPT_PARAM_OFFSET,
    * #SPLT_OPT_PARAM_GAP, #
    *
    * The option can take the values #SPLT_TRUE or #SPLT_FALSE
@@ -1190,7 +1202,7 @@ typedef enum {
   SPLT_OPT_FORCE_TAGS_VERSION
 } splt_int_options;
 
-//options types : long
+//options types: long
 /**
  * @brief Integer options
  *
@@ -1206,7 +1218,7 @@ typedef enum {
   SPLT_OPT_OVERLAP_TIME
 } splt_long_options;
 
-//option types : float
+//option types: float
 /**
  * @brief Float options
  *
@@ -1391,8 +1403,8 @@ int mp3splt_set_silence_log_filename(splt_state *state, const char *filename);
 /************************************/
 /* Set callback functions           */
 
-int mp3splt_set_message_function(splt_state *state,
-    void (*put_message)(const char *));
+int mp3splt_set_message_function(splt_state *state, 
+    void (*message_cb)(const char *, splt_message_type));
 int mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *,int));
 int mp3splt_set_progress_function(splt_state *state,

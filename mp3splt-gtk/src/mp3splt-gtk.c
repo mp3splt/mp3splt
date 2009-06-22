@@ -79,8 +79,6 @@ extern gchar *filename_path_of_split;
 extern GtkWidget *frame_mode;
 //auto-adjust option
 extern GtkWidget *adjust_mode;
-//seekable option
-extern GtkWidget *seekable_mode;
 //gap parameter
 extern GtkWidget *spinner_adjust_gap;
 //offset parameter
@@ -128,6 +126,7 @@ extern GtkWidget *remove_all_files_button;
 extern gint split_file_mode;
 extern GtkWidget *multiple_files_tree;
 extern gint multiple_files_tree_number;
+extern gint debug_is_active;
 
 //how many split files
 gint split_files = 0;
@@ -135,22 +134,31 @@ gint split_files = 0;
 //put the split file in the split_file tab
 void put_split_filename(const char *filename,int progress_data)
 {
-  //lock gtk
   gdk_threads_enter();
-  
+
   if (!GTK_WIDGET_SENSITIVE(queue_files_button))
-    {
-      gtk_widget_set_sensitive(queue_files_button, TRUE);
-    }
+  {
+    gtk_widget_set_sensitive(queue_files_button, TRUE);
+  }
   if (!GTK_WIDGET_SENSITIVE(remove_all_files_button))
-    {
-      gtk_widget_set_sensitive(remove_all_files_button,TRUE);
-    }
-  
+  {
+    gtk_widget_set_sensitive(remove_all_files_button,TRUE);
+  }
+
   add_split_row(filename);
   split_files++;
-  
-  //unlock gtk
+
+  gint fname_status_size = (strlen(filename) + 255);
+  gchar *fname_status = g_malloc(sizeof(char) * fname_status_size);
+  g_snprintf(fname_status, fname_status_size,
+      _(" File '%s' created"), filename);
+  put_status_message(fname_status);
+  if (fname_status)
+  {
+    free(fname_status);
+    fname_status = NULL;
+  }
+
   gdk_threads_leave();
 }
 
@@ -160,146 +168,145 @@ void put_options_from_preferences()
   //preferences options
   //
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE,
-                             SPLT_TRUE);
-    }
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE,
+        SPLT_TRUE);
+  }
   else
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE,
-                             SPLT_FALSE);
-    }
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE,
+        SPLT_FALSE);
+  }
   //adjust option
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST,
-                             SPLT_TRUE);
-      //adjust spinners
-      mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_OFFSET,
-                               gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_offset)));
-      mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_GAP,
-                             gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_adjust_gap)));
-      mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
-                               gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_threshold)));
-    }
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST,
+        SPLT_TRUE);
+    //adjust spinners
+    mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_OFFSET,
+        gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_offset)));
+    mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_GAP,
+        gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_adjust_gap)));
+    mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
+        gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_threshold)));
+  }
   else
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST,
-                             SPLT_FALSE);
-    }
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(seekable_mode)))
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_INPUT_NOT_SEEKABLE,
-                             SPLT_TRUE);
-    }
-  else
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_INPUT_NOT_SEEKABLE,
-                             SPLT_FALSE);
-    }
-  
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST,
+        SPLT_FALSE);
+  }
+
+  //default seekable false
+  mp3splt_set_int_option(the_state, SPLT_OPT_INPUT_NOT_SEEKABLE,
+      SPLT_FALSE);
+
   //we set default option;
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                         SPLT_OPTION_NORMAL_MODE);
-  
+      SPLT_OPTION_NORMAL_MODE);
+
   //we get the split modes
   switch (selected_split_mode)
-    {
+  {
     case SELECTED_SPLIT_NORMAL:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                             SPLT_OPTION_NORMAL_MODE);
+          SPLT_OPTION_NORMAL_MODE);
       break;
     case SELECTED_SPLIT_WRAP:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                             SPLT_OPTION_WRAP_MODE);
+          SPLT_OPTION_WRAP_MODE);
       break;
     case SELECTED_SPLIT_TIME:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                             SPLT_OPTION_TIME_MODE);
+          SPLT_OPTION_TIME_MODE);
       //we set the time option
       mp3splt_set_float_option(the_state, SPLT_OPT_SPLIT_TIME,
-                               gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
+          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
       break;
     case SELECTED_SPLIT_ERROR:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                             SPLT_OPTION_ERROR_MODE);
+          SPLT_OPTION_ERROR_MODE);
       break;
     default:
       break;
-    }
-  
+  }
+
   //tag options
   //0 = No tags
   if (get_checked_tags_radio_box() == 0)
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
+        SPLT_NO_TAGS);
+  }
+  else
+  {
+    if (get_checked_tags_radio_box() == 1)
     {
       mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
-                             SPLT_NO_TAGS);
+          SPLT_CURRENT_TAGS);
     }
-  else
+    else
     {
-      if (get_checked_tags_radio_box() == 1)
-        {
-          mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
-                                 SPLT_CURRENT_TAGS);
-        }
-      else
-        {
-          if (get_checked_tags_radio_box() == 2)
-            {
-              mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
-                                     SPLT_TAGS_ORIGINAL_FILE);
-            }
-        }
+      if (get_checked_tags_radio_box() == 2)
+      {
+        mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
+            SPLT_TAGS_ORIGINAL_FILE);
+      }
     }
+  }
 
   //tag version options
-  //0 = same version like the original file
-  if (get_checked_tags_version_radio_box() == 0)
+  gint tags_radio_choice = get_checked_tags_version_radio_box();
+  if (tags_radio_choice == 0)
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 0);
   }
   else
   {
-    if (get_checked_tags_version_radio_box() == 1)
+    if (tags_radio_choice == 1)
     {
       mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
     }
     else
     {
-      if (get_checked_tags_version_radio_box() == 2)
+      if (tags_radio_choice == 2)
       {
         mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
       }
+      else
+      {
+        if (tags_radio_choice == 3)
+        {
+          mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 12);
+        }
+      }
     }
   }
+  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
 }
 
 //changes the progress bar
 void change_window_progress_bar(splt_progress *p_bar)
 {
   gchar progress_text[1024] = " ";
-  
+
   switch (p_bar->progress_type)
-    {
-    case SPLT_PROGRESS_PREPARE :
-      g_snprintf(progress_text,1023,
-                 _(" preparing \"%s\" (%d of %d)"),
-                 p_bar->filename_shorted,
-                 p_bar->current_split,
-                 p_bar->max_splits);
+  {
+    case SPLT_PROGRESS_PREPARE:
+      g_snprintf(progress_text,1023, _(" preparing \"%s\" (%d of %d)"),
+          p_bar->filename_shorted,
+          p_bar->current_split,
+          p_bar->max_splits);
       break;
-    case SPLT_PROGRESS_CREATE :
-      g_snprintf(progress_text,1023,
-                 _(" creating \"%s\" (%d of %d)"),
-                 p_bar->filename_shorted,
-                 p_bar->current_split,
-                 p_bar->max_splits);
+    case SPLT_PROGRESS_CREATE:
+      g_snprintf(progress_text,1023, _(" creating \"%s\" (%d of %d)"),
+          p_bar->filename_shorted,
+          p_bar->current_split,
+          p_bar->max_splits);
       break;
-    case SPLT_PROGRESS_SEARCH_SYNC :
-      g_snprintf(progress_text,1023,
-                 _(" searching for sync errors..."));
+    case SPLT_PROGRESS_SEARCH_SYNC:
+      g_snprintf(progress_text,1023, _(" searching for sync errors..."));
       break;
-    case SPLT_PROGRESS_SCAN_SILENCE :
+    case SPLT_PROGRESS_SCAN_SILENCE:
       g_snprintf(progress_text,2047,
           _("S: %02d, Level: %.2f dB; scanning for silence..."),
           p_bar->silence_found_tracks, p_bar->silence_db_level);
@@ -307,167 +314,182 @@ void change_window_progress_bar(splt_progress *p_bar)
     default:
       g_snprintf(progress_text,1023, " ");
       break;
-    }
-      
+  }
+
   gchar printed_value[1024] = { '\0' };
-  
-  //lock gtk
+
   gdk_threads_enter();
-      
-  //we update the progress
+
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-                                p_bar->percent_progress);
-  g_snprintf(printed_value,1023,"%6.2f %% %s",
-             p_bar->percent_progress * 100,
-             progress_text);
-  
-  //we write the progress on the bar
+      p_bar->percent_progress);
+  g_snprintf(printed_value,1023,"%6.2f %% %s", p_bar->percent_progress * 100,
+      progress_text);
+
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-                            printed_value);
-      
-  //unlock gtk
+      printed_value);
+
   gdk_threads_leave();
 }
 
 //effective split of the file
 gpointer split_it(gpointer data)
 {
-  //lock gtk
-  gdk_threads_enter();
-  
   gint confirmation = SPLT_OK;
   
-  gtk_widget_set_sensitive(GTK_WIDGET(split_button),
-                           FALSE);
-  
-  //remove old split files
-  remove_all_split_rows();  
-  
+  gdk_threads_enter();
+
+  remove_all_split_rows();
+
+  gdk_threads_leave();
+ 
   gint err = SPLT_OK;
-  
   //erase previous splitpoints
   mp3splt_erase_all_splitpoints(the_state,&err);
   //we erase previous tags if we don't have the option
   //splt_current_tags
   if (mp3splt_get_int_option(the_state, SPLT_OPT_TAGS,&err)
       != SPLT_CURRENT_TAGS)
-    {
-      mp3splt_erase_all_tags(the_state,&err);
-    }
+  {
+    mp3splt_erase_all_tags(the_state,&err);
+  }
+
+  gint split_mode =
+    mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err);
+
+  gdk_threads_enter();
   print_status_bar_confirmation(err);
   
   //we put the splitpoints in the state only if the normal mode
-  if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-                             &err) == SPLT_OPTION_NORMAL_MODE)
-    {
-      put_splitpoints_in_the_state(the_state);
-    }
-  
-  //we put the output format
+  if (split_mode == SPLT_OPTION_NORMAL_MODE)
+  {
+    put_splitpoints_in_the_state(the_state);
+  }
+
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
-  mp3splt_set_oformat(the_state, format, &err);
-  free(format);
-  
-  //unlock gtk
   gdk_threads_leave();
-  
+
+  mp3splt_set_oformat(the_state, format, &err);
+  if (format)
+  {
+    free(format);
+    format = NULL;
+  }
+ 
   //if we have the normal split mode, enable default output
   gint output_filenames = 
     mp3splt_get_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,&err);
   if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,&err)
       == SPLT_OPTION_NORMAL_MODE)
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-                             SPLT_OUTPUT_CUSTOM);
-    }
-  
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+        SPLT_OUTPUT_CUSTOM);
+  }
+
   mp3splt_set_path_of_split(the_state,filename_path_of_split);
 
+  gint multiple_files_error = SPLT_FALSE;
   if (split_file_mode == FILE_MODE_SINGLE)
   {
+    gdk_threads_enter();
+    print_processing_file(filename_to_split);
+    gdk_threads_leave();
+
     mp3splt_set_filename_to_split(the_state, filename_to_split);
     confirmation = mp3splt_split(the_state);
   }
   else
   {
-    gchar *filename = NULL;
-    GtkTreeIter iter;
-    GtkTreePath *path;
-    GtkTreeModel *model =
-      gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
-
-    gint row_number = 0;
-    while (row_number < multiple_files_tree_number)
+    if (multiple_files_tree_number > 0)
     {
-      path = gtk_tree_path_new_from_indices(row_number ,-1);
-      gtk_tree_model_get_iter(model, &iter, path);
-      gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME,
-          &filename, -1);
+      gdk_threads_enter();
 
-      mp3splt_set_filename_to_split(the_state, filename);
-      confirmation = mp3splt_split(the_state);
+      gchar *filename = NULL;
+      GtkTreeIter iter;
+      GtkTreePath *path;
+      GtkTreeModel *model =
+        gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
 
-      if (filename)
+      gdk_threads_leave();
+
+      gint row_number = 0;
+      while (row_number < multiple_files_tree_number)
       {
-        g_free(filename);
-        filename = NULL;
-      }
+        gdk_threads_enter();
 
-      if (confirmation < 0)
-      {
-        break;
-      }
+        path = gtk_tree_path_new_from_indices(row_number ,-1);
+        gtk_tree_model_get_iter(model, &iter, path);
+        gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME,
+            &filename, -1);
 
-      row_number++;
+        print_processing_file(filename);
+
+        gdk_threads_leave();
+
+        mp3splt_set_filename_to_split(the_state, filename);
+        confirmation = mp3splt_split(the_state);
+
+        if (filename)
+        {
+          g_free(filename);
+          filename = NULL;
+        }
+
+        if (confirmation < 0)
+        {
+          break;
+        }
+
+        row_number++;
+      }
+    }
+    else
+    {
+      multiple_files_error = SPLT_TRUE;
+
+      gdk_threads_enter();
+      put_status_message(_(" error: no files found in multiple files mode"));
+      gdk_threads_leave();
     }
   }
-  
+
   //reenable default output if necessary
   mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
   
-  //lock gtk
   gdk_threads_enter();
-  
+
   //we show infos about the split action
   print_status_bar_confirmation(confirmation);
   
   //see the cancel button
-  gtk_widget_set_sensitive(GTK_WIDGET(cancel_button),
-                           FALSE);
-  
-  we_are_splitting = FALSE;
+  gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), FALSE);
   
   //we look if we have pushed the exit button
   if (we_quit_main_program)
+  {
     quit(NULL,NULL);
+  }
   
-  if (confirmation >= 0)
-    {
-      //we have finished, put 100 to the progress bar
-      //we update the progress
-      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-                                    1.0);
-      //we write the progress on the bar
-      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-                                _(" finished "));
-    }
-  
-  gtk_widget_set_sensitive(GTK_WIDGET(split_button),
-                           TRUE);
-  //unlock gtk
+  if (confirmation >= 0 && !multiple_files_error)
+  {
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 1.0);
+    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
+        _(" finished"));
+  }
+
+  we_are_splitting = FALSE;
+
   gdk_threads_leave();
-  
+ 
   return NULL;
 }
 
 //handler for the SIGPIPE signal
 void sigpipe_handler(gint sig)
 {
-  if (player_is_running() &&
-      selected_player == PLAYER_SNACKAMP)
-    {
-      disconnect_snackamp();
-    }
+  if (player_is_running() && selected_player == PLAYER_SNACKAMP)
+  {
+    disconnect_snackamp();
+  }
 }
 
 gboolean sigint_called = FALSE;
@@ -475,15 +497,15 @@ gboolean sigint_called = FALSE;
 void sigint_handler(gint sig)
 {
   if (!sigint_called)
-    {
-      sigint_called = TRUE;
-      we_quit_main_program = TRUE;
-      quit(NULL,NULL);
-    }
+  {
+    sigint_called = TRUE;
+    we_quit_main_program = TRUE;
+    quit(NULL,NULL);
+  }
 }
 
 //prints a message from the library
-void put_message_from_library(const char *message)
+void put_message_from_library(const char *message, splt_message_type mess_type)
 {
   gchar *mess = g_strdup(message);
   if (mess)
@@ -498,7 +520,7 @@ void put_message_from_library(const char *message)
       }
     }
     gdk_threads_enter();
-    put_status_message(mess);
+    put_status_message_with_type(mess, mess_type);
     gdk_threads_leave();
     g_free(mess);
     mess = NULL;
@@ -583,7 +605,7 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   gtk_init(&argc, &argv);
   
   //we initialise the splitpoints array
-  splitpoints = g_array_new (FALSE, FALSE, sizeof (Split_point));
+  splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
   
   //checks if preferences file exists
   //and if it does not, it creates it
@@ -625,9 +647,8 @@ gint main (gint argc, gchar *argv[], gchar **envp)
     print_status_bar_confirmation(error);
   }
   
-  //loop
   gdk_threads_enter();
-  gtk_main ();
+  gtk_main();
   gdk_threads_leave();
   
   return 0;

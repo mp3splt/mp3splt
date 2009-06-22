@@ -36,31 +36,33 @@
  *
  *********************************************************/
 
+#ifndef MAIN_WIN_H
+
+#define MAIN_WIN_H
+
+#include <libmp3splt/mp3splt.h>
+
 #ifdef __WIN32__
 #define PIXMAP_PATH ""
 #endif
 
-#define WINDOW_X 600
-#define WINDOW_Y 430
+#define WINDOW_X 700
+#define WINDOW_Y 450
 
 //close the window and exit button function
-void quit( GtkWidget *widget,
-           gpointer   data );
-GtkWidget *initialize_window();
+void quit(GtkWidget *widget, gpointer data);
+void initialize_window();
 void about_window(GtkWidget *widget,
                   gpointer *data);
-void resize_window_event(GtkWidget *toolbar_button,
-                         gpointer data);
 void remove_status_message();
-void put_status_message(gchar *text);
+void put_status_message(const gchar *text);
+void put_status_message_with_type(const gchar *text,
+    splt_message_type mess_type);
 void split_button_event();
-void toolbar_connect_button_event (GtkWidget *widget,
-                                   gpointer data);
 GtkWidget *create_toolbar();
 GtkWidget *create_menu_bar();
-GtkWidget *create_cool_button( gchar *stock_id,
-                               gchar *label_text,
-                               gint toggle_or_not);
+GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
+    gint toggle_or_not);
 void notebook_page_changed_event(GtkNotebook *notebook,
                                  GtkNotebookPage *page,
                                  guint page_num,
@@ -69,4 +71,6 @@ GtkWidget *create_main_vbox();
 void create_all();
 void print_status_bar_confirmation(gint confirmation);
 void cancel_button_event(GtkWidget *widget, gpointer data);
+
+#endif
 

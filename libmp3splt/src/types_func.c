@@ -244,38 +244,43 @@ int splt_t_alloc_init_new_plugin(splt_plugins *pl)
   return return_value;
 }
 
-//frees the structure of one plugin data
-void splt_t_free_plugin_data(splt_plugin_data pl_data)
+void splt_t_free_plugin_data_info(splt_plugin_data *pl_data)
 {
-  if (pl_data.info.name)
+  if (pl_data->info.name)
   {
-    free(pl_data.info.name);
-    pl_data.info.name = NULL;
+    free(pl_data->info.name);
+    pl_data->info.name = NULL;
   }
-  if (pl_data.info.extension)
+  if (pl_data->info.extension)
   {
-    free(pl_data.info.extension);
-    pl_data.info.extension = NULL;
+    free(pl_data->info.extension);
+    pl_data->info.extension = NULL;
   }
-  if (pl_data.info.upper_extension)
+  if (pl_data->info.upper_extension)
   {
-    free(pl_data.info.upper_extension);
-    pl_data.info.upper_extension = NULL;
+    free(pl_data->info.upper_extension);
+    pl_data->info.upper_extension = NULL;
   }
-  if (pl_data.plugin_filename)
+}
+
+//frees the structure of one plugin data
+void splt_t_free_plugin_data(splt_plugin_data *pl_data)
+{
+  splt_t_free_plugin_data_info(pl_data);
+  if (pl_data->plugin_filename)
   {
-    free(pl_data.plugin_filename);
-    pl_data.plugin_filename = NULL;
+    free(pl_data->plugin_filename);
+    pl_data->plugin_filename = NULL;
   }
-  if (pl_data.plugin_handle)
+  if (pl_data->plugin_handle)
   {
-    lt_dlclose(pl_data.plugin_handle);
-    pl_data.plugin_handle = NULL;
+    lt_dlclose(pl_data->plugin_handle);
+    pl_data->plugin_handle = NULL;
   }
-  if (pl_data.func)
+  if (pl_data->func)
   {
-    free(pl_data.func);
-    pl_data.func = NULL;
+    free(pl_data->func);
+    pl_data->func = NULL;
   }
 }
 
@@ -305,7 +310,7 @@ void splt_t_free_plugins(splt_state *state)
   {
     for (i = 0;i < pl->number_of_plugins_found;i++)
     {
-      splt_t_free_plugin_data(pl->data[i]);
+      splt_t_free_plugin_data(&pl->data[i]);
     }
     free(pl->data);
     pl->data = NULL;
@@ -361,7 +366,7 @@ void splt_t_free_state(splt_state *state)
 //sets the total time of the file
 void splt_t_set_total_time(splt_state *state, long value)
 {
-  splt_u_print_debug("We set total time to",value,NULL);
+  splt_u_print_debug(state,"We set total time to",value,NULL);
 
   if (value >= 0)
   {
@@ -427,7 +432,7 @@ int splt_t_set_path_of_split(splt_state *state, const char *path)
     state->path_of_split = NULL;
   }
 
-  splt_u_print_debug("Setting path of split...",0,path);
+  splt_u_print_debug(state,"Setting path of split...",0,path);
 
   if (path != NULL)
   {
@@ -461,7 +466,7 @@ int splt_t_set_m3u_filename(splt_state *state, const char *filename)
     state->m3u_filename = NULL;
   }
 
-  splt_u_print_debug("Setting m3u filename...",0,filename);
+  splt_u_print_debug(state,"Setting m3u filename...",0,filename);
 
   if (filename != NULL)
   {
@@ -496,7 +501,7 @@ int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
     state->silence_log_fname = NULL;
   }
 
-  splt_u_print_debug("Setting silence log fname ...",0,filename);
+  splt_u_print_debug(state,"Setting silence log fname ...",0,filename);
 
   if (filename != NULL)
   {
@@ -530,7 +535,7 @@ int splt_t_set_filename_to_split(splt_state *state, const char *filename)
     state->fname_to_split = NULL;
   }
 
-  splt_u_print_debug("Setting filename to split...",0,filename);
+  splt_u_print_debug(state,"Setting filename to split...",0,filename);
 
   if (filename != NULL)
   {
@@ -697,9 +702,9 @@ void splt_t_set_oformat_digits(splt_state *state)
 void splt_t_set_oformat(splt_state *state, const char *format_string,
     int *error, int ignore_incorrect_format_warning)
 {
-  if (format_string == NULL)
+  if (format_string == NULL || format_string[0] == '\0')
   {
-    *error = SPLT_OUTPUT_FORMAT_AMBIGUOUS;
+    *error = SPLT_OUTPUT_FORMAT_ERROR;
     return;
   }
 
@@ -733,8 +738,7 @@ void splt_t_set_oformat(splt_state *state, const char *format_string,
     return;
   }
 
-  //if no error
-  if (*error == SPLT_OUTPUT_FORMAT_OK)
+  if (*error > 0)
   {
     splt_t_set_oformat_digits(state); 
   }
@@ -777,13 +781,13 @@ int splt_t_get_splitnumber(splt_state *state)
 //puts a splitpoint in the state with an eventual file name
 //split_value is which splitpoint hundreths of seconds
 //if split_value is LONG_MAX, we put the end of the song (EOF)
-//-the 'type' of the splitpoint can be : 
+//-the 'type' of the splitpoint can be: 
 //  SPLT_SPLITPOINT or SPLT_SKIPPOINT
 int splt_t_append_splitpoint(splt_state *state, long split_value, const char *name, int type)
 {
   int error = SPLT_OK;
 
-  splt_u_print_debug("Appending splitpoint...",split_value,name);
+  splt_u_print_debug(state,"Appending splitpoint...",split_value,name);
 
   if (split_value >= 0)
   {
@@ -836,7 +840,7 @@ int splt_t_append_splitpoint(splt_state *state, long split_value, const char *na
   }
   else
   {
-    splt_u_print_debug("Negative splitpoint.. ",(double)split_value,NULL);
+    splt_u_print_debug(state,"Negative splitpoint.. ",(double)split_value,NULL);
     error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
     return error;
   }
@@ -886,7 +890,7 @@ int splt_t_set_splitpoint_value(splt_state *state, int index, long split_value)
 {
   char temp[100] = { '\0' };
   snprintf(temp,100,"%d",index);
-  splt_u_print_debug("Splitpoint value is.. at ",split_value,temp);
+  splt_u_print_debug(state,"Splitpoint value is.. at ",split_value,temp);
 
   int error = SPLT_OK;
 
@@ -906,7 +910,7 @@ int splt_t_set_splitpoint_value(splt_state *state, int index, long split_value)
 //change the splitpoint name
 int splt_t_set_splitpoint_name(splt_state *state, int index, const char *name)
 {
-  splt_u_print_debug("Splitpoint name at ",index,name);
+  splt_u_print_debug(state,"Splitpoint name at ",index,name);
 
   int error = SPLT_OK;
 
@@ -1049,7 +1053,11 @@ void splt_t_auto_increment_tracknumber_tag(splt_state *state)
         }
         if (old_current_split != current_split)
         {
-          int tracknumber = splt_t_get_tags_int_field(state, current_split, SPLT_TAGS_TRACK);
+          int tracknumber = 1;
+          if (splt_t_tags_exists(state, current_split))
+          {
+            tracknumber = splt_t_get_tags_int_field(state, current_split, SPLT_TAGS_TRACK);
+          }
           splt_t_set_tags_int_field(state, current_split, SPLT_TAGS_TRACK, tracknumber+1);
         }
       }
@@ -1301,7 +1309,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
     switch(tags_field)
     {
       case SPLT_TAGS_TITLE:
-        splt_u_print_debug("Setting title tags at ",index,data);
+        splt_u_print_debug(state,"Setting title tags at ",index,data);
         if (state->split.tags[index].title)
         {
           free(state->split.tags[index].title);
@@ -1325,7 +1333,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         }
         break;
       case SPLT_TAGS_ARTIST:
-        splt_u_print_debug("Setting artist tags at ",index,data);
+        splt_u_print_debug(state,"Setting artist tags at ",index,data);
         if (state->split.tags[index].artist)
         {
           free(state->split.tags[index].artist);
@@ -1349,7 +1357,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         }
         break;
       case SPLT_TAGS_ALBUM:
-        splt_u_print_debug("Setting album tags at ",index,data);
+        splt_u_print_debug(state,"Setting album tags at ",index,data);
         if (state->split.tags[index].album)
         {
           free(state->split.tags[index].album);
@@ -1373,7 +1381,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         }
         break;
       case SPLT_TAGS_YEAR:
-        splt_u_print_debug("Setting year tags at ",index,data);
+        splt_u_print_debug(state,"Setting year tags at ",index,data);
         if (state->split.tags[index].year)
         {
           free(state->split.tags[index].year);
@@ -1420,7 +1428,7 @@ int splt_t_set_tags_char_field(splt_state *state, int index,
         }
         break;
       case SPLT_TAGS_PERFORMER:
-        splt_u_print_debug("Setting performer tags at ",index,data);
+        splt_u_print_debug(state,"Setting performer tags at ",index,data);
         if (state->split.tags[index].performer)
         {
           free(state->split.tags[index].performer);
@@ -1694,11 +1702,11 @@ int splt_t_set_tags_int_field(splt_state *state, int index,
       case SPLT_TAGS_TRACK:
         //debug
         snprintf(temp,100,"%d",data);
-        splt_u_print_debug("Setting track tags at",index,temp);
+        splt_u_print_debug(state,"Setting track tags at",index,temp);
         state->split.tags[index].track = data;
         break;
       case SPLT_TAGS_VERSION:
-        splt_u_print_debug("Setting tags version at",index,temp);
+        splt_u_print_debug(state,"Setting tags version at",index,temp);
         state->split.tags[index].tags_version = data;
         break;
       default:
@@ -1736,7 +1744,7 @@ int splt_t_set_tags_uchar_field(splt_state *state, int index,
       case SPLT_TAGS_GENRE:
         //debug
         snprintf(temp,100,"%uc",data);
-        splt_u_print_debug("Setting genre tags at",index,temp);
+        splt_u_print_debug(state,"Setting genre tags at",index,temp);
         state->split.tags[index].genre = data;
         break;
       default:
@@ -2648,7 +2656,7 @@ void splt_t_freedb_set_disc(splt_state *state, int index,
 #ifdef __WIN32__
     cdstate->discs[index].category[category_size-1] = '\0';
 #endif
-    splt_u_print_debug("Setting disc category ",0,cdstate->discs[index].category);
+    splt_u_print_debug(state,"Setting disc category ",0,cdstate->discs[index].category);
 
     memset(cdstate->discs[index].discid, '\0', SPLT_DISCIDLEN+1);
     snprintf(cdstate->discs[index].discid,SPLT_DISCIDLEN+1,"%s",discid);
@@ -2656,7 +2664,7 @@ void splt_t_freedb_set_disc(splt_state *state, int index,
 #ifdef __WIN32__
     cdstate->discs[index].discid[SPLT_DISCIDLEN] = '\0';
 #endif
-    splt_u_print_debug("Setting disc id ",SPLT_DISCIDLEN+1,cdstate->discs[index].discid);
+    splt_u_print_debug(state,"Setting disc id ",SPLT_DISCIDLEN+1,cdstate->discs[index].discid);
   }
   else
   {
@@ -3020,20 +3028,30 @@ void splt_t_put_progress_text(splt_state *state, int type)
   }
 }
 
-//puts a message to the client
-void splt_t_put_message_to_client(splt_state *state, char *message)
+static void splt_t_put_message_to_client(splt_state *state, char *message,
+    splt_message_type mess_type)
 {
   if (!splt_t_messages_locked(state))
   {
     if (state->split.put_message != NULL)
     {
-      state->split.put_message(message);
+      state->split.put_message(message, mess_type);
     }
     else
     {
       //splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
     }
   }
+}
+
+void splt_t_put_info_message_to_client(splt_state *state, char *message)
+{
+  splt_t_put_message_to_client(state, message, SPLT_MESSAGE_INFO);
+}
+
+void splt_t_put_debug_message_to_client(splt_state *state, char *message)
+{
+  splt_t_put_message_to_client(state, message, SPLT_MESSAGE_DEBUG);
 }
 
 //update the progress,
@@ -3043,8 +3061,8 @@ void splt_t_put_message_to_client(splt_state *state, char *message)
 //if split_stage = 2,
 //progress_start = from where to start the progress (fraction)
 //refresh_rate = the refresh rate of the display
-void splt_t_update_progress(splt_state *state, float current_point,
-    float total_points, int progress_stage,
+void splt_t_update_progress(splt_state *state, double current_point,
+    double total_points, int progress_stage,
     float progress_start, int refresh_rate)
 {
   //if we have a progress callback function
@@ -3053,7 +3071,7 @@ void splt_t_update_progress(splt_state *state, float current_point,
     if (splt_t_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) > refresh_rate)
     {
       //shows the progress
-      state->split.p_bar->percent_progress = (current_point / total_points);
+      state->split.p_bar->percent_progress = (float) (current_point / total_points);
 
       state->split.p_bar->percent_progress = 
         state->split.p_bar->percent_progress / progress_stage + progress_start;

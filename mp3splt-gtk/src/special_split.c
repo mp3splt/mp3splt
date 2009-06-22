@@ -46,10 +46,14 @@
 #include "main_win.h"
 #include "multiple_files.h"
 
+GtkWidget *time_label = NULL;
 GtkWidget *spinner_time = NULL;
 
 gint selected_split_mode = SELECTED_SPLIT_NORMAL;
 gint split_file_mode = FILE_MODE_SINGLE;
+
+GtkWidget *split_mode_radio_button = NULL;
+GtkWidget *file_mode_radio_button = NULL;
 
 GtkWidget *multiple_files_component = NULL;
 
@@ -65,8 +69,7 @@ gint get_selected_split_mode(GtkToggleButton *radio_b)
   //for each split mode, get the selected one
   for(i = 0; i < NUMBER_OF_SPLIT_MODES;i++)
     {
-      test = (GtkToggleButton *)
-        g_slist_nth_data(radio_button_list,i);
+      test = (GtkToggleButton *) g_slist_nth_data(radio_button_list,i);
       if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(test)))
         selected = i;
     }
@@ -78,23 +81,22 @@ gint get_selected_split_mode(GtkToggleButton *radio_b)
 void split_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
   selected_split_mode = get_selected_split_mode(radio_b);
-  
-  //if we select those modes
+
   if ((selected_split_mode == SELECTED_SPLIT_NORMAL)
       || (selected_split_mode == SELECTED_SPLIT_WRAP)
       || (selected_split_mode == SELECTED_SPLIT_ERROR))
-    {
-      //disable time and silence stuffs
-      //deactivate spinner time
-      gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), FALSE);
-    }
-  
-  //if we select time
+  {
+    gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(time_label), FALSE);
+  }
+
   if (selected_split_mode == SELECTED_SPLIT_TIME)
-    {
-      //activate spinner time
-      gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), TRUE);
-    }
+  {
+    gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(time_label), TRUE);
+  }
+
+  save_preferences(NULL, NULL);
 }
 
 //sets the default split modes
@@ -110,13 +112,22 @@ void set_default_split_modes (GtkWidget *widget,
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(test),TRUE);  
 }
 
+static void spinner_time_changed(GtkSpinButton *spinner, gpointer data)
+{
+  gint time = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+  gchar time_text[1024] = { '\0' };
+  g_snprintf(time_text, 1024, _("\tSplit every %2d seconds."), time);
+  gtk_label_set_text(GTK_LABEL(time_label), time_text);
+
+  save_preferences(NULL, NULL);
+}
+
 static void split_file_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
-  GSList *radio_button_list = NULL;
-  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
-
-  GtkToggleButton *current_radio_button = NULL;
-  current_radio_button = (GtkToggleButton *) g_slist_nth_data(radio_button_list,0);
+  GSList *radio_button_list =
+    gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
+  GtkToggleButton *current_radio_button = (GtkToggleButton *)
+    g_slist_nth_data(radio_button_list,0);
 
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(current_radio_button)))
   {
@@ -128,6 +139,8 @@ static void split_file_mode_changed(GtkToggleButton *radio_b, gpointer data)
     split_file_mode = FILE_MODE_SINGLE;
     gtk_widget_set_sensitive(multiple_files_component, FALSE);
   }
+
+  save_preferences(NULL, NULL);
 }
 
 static GtkWidget *create_split_mode()
@@ -135,83 +148,61 @@ static GtkWidget *create_split_mode()
   GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
   gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 5);
 
-  GtkWidget *radio_button;
   //normal split
-  radio_button = 
-    gtk_radio_button_new_with_label(NULL, _("Normal"));
-  gtk_box_pack_start (GTK_BOX (local_vbox), radio_button, FALSE, FALSE, 2);
-  g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
-                    "toggled",
-                    G_CALLBACK (split_mode_changed),
-                    NULL);
+  split_mode_radio_button = gtk_radio_button_new_with_label(NULL, _("Normal"));
+  gtk_box_pack_start (GTK_BOX (local_vbox), split_mode_radio_button,
+      FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button),
+      "toggled", G_CALLBACK (split_mode_changed), NULL);
   
   //time split
-  radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_button), _("Time"));
-  gtk_box_pack_start (GTK_BOX (local_vbox), radio_button, FALSE, FALSE, 2);
-  g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
-                    "toggled",
-                    G_CALLBACK (split_mode_changed),
-                    NULL);
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Time"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button,
+      FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+      G_CALLBACK(split_mode_changed), NULL);
   
-  //parameters for the silence option
+  //time split
   GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX (local_vbox), 
-                      horiz_fake, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  //vertical parameter box
-  GtkWidget *param_vbox;
-  param_vbox = gtk_vbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX (horiz_fake), 
-                      param_vbox, FALSE, FALSE, 25);
+  gint default_time = 60;
+
+  gchar time_text[1024] = { '\0' };
+  g_snprintf(time_text, 1024, _("\tSplit every %2d seconds."), default_time);
+  time_label = gtk_label_new(time_text);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), time_label, FALSE, FALSE, 0);
   
-  //horizontal box fake for the gap level
-  horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX (param_vbox), 
-                      horiz_fake, FALSE, FALSE, 0);
-  
-  //seconds for the time split
-  GtkWidget *label = gtk_label_new(_("split every X seconds. X = "));
-  gtk_box_pack_start (GTK_BOX (horiz_fake), 
-                      label, FALSE, FALSE, 0);
-  
-  //adjustement for the time spinner
-  GtkAdjustment *adj;
-  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, 1, 2000, 1.0,
-                                              10.0, 0.0);
-  //the time spinner
-  spinner_time =
-    gtk_spin_button_new (adj, 1, 0);
-  gtk_box_pack_start (GTK_BOX (horiz_fake), 
-                      spinner_time,
-                      FALSE, FALSE, 0);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_time),
-                            60);
-  
-  //deactivate spinner time
+  GtkAdjustment *adj =
+    (GtkAdjustment *)gtk_adjustment_new(0.0, 1, 2000, 1.0, 10.0, 0.0);
+  spinner_time = gtk_spin_button_new(adj, 1, 0);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_time, FALSE, FALSE, 6);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_time), default_time);
   gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), FALSE);
+  gtk_widget_set_sensitive(time_label, FALSE);
+  g_signal_connect(G_OBJECT(spinner_time), "value-changed",
+      G_CALLBACK(spinner_time_changed), NULL);
 
   //wrap split
-  radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON (radio_button), _("Wrap - split"
-                                        " files created with "
-                                        "mp3wrap or albumwrap"
-                                        " (mp3 only)"));
-  gtk_box_pack_start (GTK_BOX (local_vbox), radio_button, FALSE, FALSE, 2);
-  g_signal_connect (GTK_TOGGLE_BUTTON (radio_button),
-                    "toggled",
-                    G_CALLBACK (split_mode_changed),
-                    NULL);
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button),
+     _("Wrap - split files created with mp3wrap or albumwrap (mp3 only)"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button,
+      FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+                    G_CALLBACK(split_mode_changed), NULL);
   
   //error mode split
-  radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(radio_button), _("Error mode (mp3 only)"));
-  gtk_box_pack_start(GTK_BOX(local_vbox), radio_button, FALSE, FALSE, 2);
-  g_signal_connect(GTK_TOGGLE_BUTTON(radio_button),
-                    "toggled", G_CALLBACK (split_mode_changed), NULL);
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Error mode (mp3 only)"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button,
+      FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+      G_CALLBACK(split_mode_changed), NULL);
   
   //put default values
-  set_default_split_modes(NULL, radio_button);
+  set_default_split_modes(NULL, split_mode_radio_button);
 
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
@@ -225,25 +216,29 @@ static GtkWidget *create_single_multiple_split_modes()
   GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
   gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 5);
 
-  GtkWidget *radio_button;
-
   //single file
-  radio_button = 
+  file_mode_radio_button = 
     gtk_radio_button_new_with_label(NULL, _("Single file"));
-  gtk_box_pack_start(GTK_BOX(local_vbox), radio_button, FALSE, FALSE, 2);
-  g_signal_connect(GTK_TOGGLE_BUTTON (radio_button),
+  gtk_box_pack_start(GTK_BOX(local_vbox), file_mode_radio_button,
+      FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(file_mode_radio_button),
       "toggled", G_CALLBACK(split_file_mode_changed), NULL);
  
   //multiple files
-  radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(radio_button), _("Multiple files"));
-  gtk_box_pack_start(GTK_BOX(local_vbox), radio_button, FALSE, FALSE, 2);
-  g_signal_connect(GTK_TOGGLE_BUTTON (radio_button),
+  file_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(file_mode_radio_button), _("Multiple files"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), file_mode_radio_button,
+      FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(file_mode_radio_button),
       "toggled", G_CALLBACK(split_file_mode_changed), NULL);
+
+  GtkWidget *multiple_files_hbox = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(local_vbox), multiple_files_hbox, TRUE, TRUE, 2);
 
   multiple_files_component = create_multiple_files_component();
   gtk_widget_set_sensitive(multiple_files_component, FALSE);
-  gtk_box_pack_start(GTK_BOX(local_vbox), multiple_files_component, TRUE, TRUE, 2);
+  gtk_box_pack_start(GTK_BOX(multiple_files_hbox), multiple_files_component,
+      TRUE, TRUE, 20);
 
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 

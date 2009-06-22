@@ -77,7 +77,7 @@ void splt_s_silence_split(splt_state *state, int *error);
 
 void splt_s_wrap_split(splt_state *state, int *error);
 
-/* other stuff :/ */
+/* other stuff:/ */
 
 #define SPLT_DEFAULT_PROGRESS_RATE 350
 #define SPLT_DEFAULT_PROGRESS_RATE2 50

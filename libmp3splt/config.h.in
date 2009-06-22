@@ -184,6 +184,10 @@
 /* Define to the system default library search path. */
 #undef LTDL_SYSSEARCHPATH
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
 /* Define if dlsym() requires a leading underscore in symbol names. */
 #undef NEED_USCORE
 

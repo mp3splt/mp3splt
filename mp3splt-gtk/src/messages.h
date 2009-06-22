@@ -30,12 +30,19 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: mp3splt-gtk.h
+ * Filename: messages.h
  *
- * header of mp3splt-gtk.c
+ * header of messages.c
  *
  *********************************************************/
 
-void put_options_from_preferences();
-void split_it(gpointer data);
-void sigpipe_handler(gint sig);
+#ifndef MESSAGES_H
+
+#define MESSAGES_H
+
+GtkWidget *create_mess_history_dialog();
+void put_message_in_history(const gchar *message,
+    splt_message_type mess_type);
+
+#endif
+

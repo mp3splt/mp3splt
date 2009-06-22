@@ -48,6 +48,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <libmp3splt/mp3splt.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "util.h"
 #include "main_win.h"
@@ -62,9 +63,11 @@
 #include "utilities.h"
 #include "player_tab.h"
 #include "player.h"
+#include "messages.h"
 
 //main window
-GtkWidget *window;
+GtkWidget *window = NULL;
+GtkAccelGroup *window_accel_group = NULL;
 
 //status bar
 GtkWidget *status_bar;
@@ -80,9 +83,6 @@ GtkWidget *split_button;
 //the split freedb button
 GtkWidget *split_freedb_button;
 
-//toolbar connect/disconnect buttons
-GtkWidget *toolbar_connect_button;
-
 //new window for the progress bar
 GtkWidget *percent_progress_bar;
 
@@ -94,27 +94,27 @@ gchar *filename_path_of_split;
 gint we_are_splitting = FALSE;
 gint we_quit_main_program = FALSE;
 
-//stop button to cancel the split
-GtkWidget *cancel_button;
+GtkWidget *player_vbox = NULL;
 
-extern GtkWidget *disconnect_button;
+//stop button to cancel the split
+GtkWidget *cancel_button = NULL;
+
+extern GtkWidget *mess_history_dialog;
+
 extern GtkWidget *entry;
 extern GtkWidget *directory_entry;
 extern GArray *splitpoints;
-extern gint save_dialog;
 extern gint selected_id;
 extern splt_state *the_state;
 extern splt_freedb_results *search_results;
 extern GList *player_pref_list;
 extern gchar **split_files;
 extern gint max_split_files;
-extern gint no_top_connect_action;
 extern gint selected_player;
-extern GtkWidget *connect_button;
 extern silence_wave *silence_points;
 extern gint number_of_silence_points;
 
-GtkWidget *playlist_box;
+GtkWidget *playlist_box = NULL;
 
 //close the window and exit button function
 void quit(GtkWidget *widget, gpointer   data)
@@ -131,7 +131,7 @@ void quit(GtkWidget *widget, gpointer   data)
     put_status_message(_(" info: stopping the split process before exiting"));
   }
 
-  //quit the player : currently closes gstreamer
+  //quit the player: currently closes gstreamer
   if (player_is_running())
   {
     player_quit();
@@ -156,70 +156,57 @@ void quit(GtkWidget *widget, gpointer   data)
   print_status_bar_confirmation(err);
 
   //we definetly quit the program...
-  gtk_main_quit ();
+  gtk_main_quit();
 }
 
 //initializes window
-GtkWidget *initialize_window()
+void initialize_window()
 {
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  
-  //resize the window
-  gtk_window_resize(GTK_WINDOW(window), WINDOW_X, WINDOW_Y);
-  
+  window_accel_group = gtk_accel_group_new();
+  gtk_window_add_accel_group(GTK_WINDOW(window), window_accel_group);
+   
   //sets the title
-  gtk_window_set_title (GTK_WINDOW (window), PACKAGE_NAME" "VERSION);
+  gtk_window_set_title(GTK_WINDOW(window), PACKAGE_NAME" "VERSION);
   //sets the width
   gtk_container_set_border_width (GTK_CONTAINER (window), 0);
-  g_signal_connect (G_OBJECT (window), "delete_event",
-                    G_CALLBACK (quit), NULL);
-  
-  gtk_window_set_position (GTK_WINDOW(window),
-                           GTK_WIN_POS_CENTER);
-  
+  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(quit), NULL);
+ 
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+ 
   //for the bitmap
-  GdkPixbuf *pixbuf;
-  
-  pixbuf = gdk_pixbuf_new_from_file (PIXMAP_PATH"mp3splt-gtk_ico.png", NULL);
+  GdkPixbuf *pixbuf =
+    gdk_pixbuf_new_from_file(PIXMAP_PATH"mp3splt-gtk_ico.png", NULL);
   gtk_window_set_default_icon(pixbuf);
-  
-  return window;
 }
 
-//about window
-void about_window(GtkWidget *widget,
-                  gpointer *data)
+void about_window(GtkWidget *widget, gpointer *data)
 {
-  GtkWidget *dialog;
-  
-  dialog = gtk_about_dialog_new();
+  GtkWidget *dialog = gtk_about_dialog_new();
 
   //for the bitmap
-  GdkPixbuf *pixbuf;
-  pixbuf = gdk_pixbuf_new_from_file (PIXMAP_PATH"mp3splt-gtk.png", NULL);
-  gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), 
-                            pixbuf);
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (PIXMAP_PATH"mp3splt-gtk.png",
+      NULL);
+  gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
   
-  gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(dialog), 
-                            (gchar *)PACKAGE_NAME);
-  gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), 
-                               VERSION);
+  gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
+  gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
   gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),
                                  PACKAGE_NAME" (c) 2005-2009 Munteanu"
                                  " Alexandru \n mp3splt (c) 2002-2005 Matteo Trotta");
   
-  gchar *b1,*b2;
-  gchar b3[100];
+  gchar *b1 = NULL, *b2 = NULL;
+  gchar b3[100] = { '\0' };
   b1 = (gchar *)_("using");
   b2 = (gchar *)_("created from");
-  gchar library_version[20];
+  gchar library_version[20] = { '\0' };
   mp3splt_get_version(library_version);
   g_snprintf(b3, 100, "-%s 16/05/09-\n%s libmp3splt %s (%s mp3splt)",
              _("release of"), b1, library_version, b2);
   
-  gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG(dialog), b3);
+  gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), b3);
   
-  gtk_about_dialog_set_license (GTK_ABOUT_DIALOG(dialog),
+  gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog),
                                 "\n"
                                 "This program is free software; you can "
                                 "redistribute it and/or \n"
@@ -230,7 +217,7 @@ void about_window(GtkWidget *widget,
                                 "any later version.\n\n"
                                 "This program is distributed in the "
                                 "hope that it will be useful,\n"
-                                "but WITHOUT ANY WARRANTY; without even"
+                                "but WITHOUT ANY WARRANTY; without even "
                                 "the implied warranty of\n"
                                 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
                                 "GNU General Public License for more details.\n\n"
@@ -241,40 +228,39 @@ void about_window(GtkWidget *widget,
                                 "Suite 330, Boston, MA  02111-1307, "
                                 "USA.");
 
-  gtk_about_dialog_set_website (GTK_ABOUT_DIALOG(dialog),
-                                "http://mp3splt.sourceforge.net/");
+  gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog),
+      "http://mp3splt.sourceforge.net/");
 
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
-}
-
-//resizes the window event
-void resize_window_event(GtkWidget *toolbar_button,
-                                 gpointer data)
-{
-  gtk_window_resize(GTK_WINDOW(window), WINDOW_X, WINDOW_Y);
 }
 
 //used  for the ok button event
 //removes status bar message
 void remove_status_message()
 {
-  guint status_id = 
-    gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar),
-                                 "mess");
+  guint status_id =
+    gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), "mess");
   gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_id);
 }
 
-//puts a status bar message
-void put_status_message(gchar *text)
+void put_status_message(const gchar *text)
 {
-  guint status_id = 
-    gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar),
-                                 "mess");
-  //remove old message
-  gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_id);
-  gtk_statusbar_push(GTK_STATUSBAR(status_bar), 
-                     status_id, text);
+  put_status_message_with_type(text, SPLT_MESSAGE_INFO);
+}
+
+void put_status_message_with_type(const gchar *text, splt_message_type mess_type)
+{
+  if (mess_type == SPLT_MESSAGE_INFO)
+  {
+    guint status_id =
+      gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), "mess");
+
+    gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_id);
+    gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_id, text);
+  }
+
+  put_message_in_history(text, mess_type);
 }
 
 //event for the split button
@@ -284,183 +270,98 @@ void cancel_button_event(GtkWidget *widget, gpointer data)
   mp3splt_stop_split(the_state,&err);
   print_status_bar_confirmation(err);
   
-  gtk_widget_set_sensitive(widget, FALSE);
+  if (widget != NULL)
+  {
+    gtk_widget_set_sensitive(widget, FALSE);
+  }
   put_status_message(_(" info: stopping the split process.. please wait"));
 }
 
 //event for the split button
-void split_button_event (GtkWidget *widget,
-                         gpointer data)
+void split_button_event(GtkWidget *widget, gpointer data)
 {
   //if we are not splitting
   if (!we_are_splitting)
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+        SPLT_OUTPUT_DEFAULT);
+
+    gint err = SPLT_OK;
+
+    put_options_from_preferences();
+
+    //output format
+    if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,&err)
+        != SPLT_OPTION_NORMAL_MODE)
     {
-      //set the options
-      mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-                             SPLT_OUTPUT_DEFAULT);
-
-      gint err = SPLT_OK;
-
-      //put the options from the preferences
-      put_options_from_preferences();
-
-      //set the output format for almost all the types of split
-      if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,&err)
-          != SPLT_OPTION_NORMAL_MODE)
+      if (!get_checked_output_radio_box())
       {
-        if (!get_checked_output_radio_box())
-        {
-          mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-              SPLT_OUTPUT_FORMAT);
-        }
+        mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+            SPLT_OUTPUT_FORMAT);
       }
- 
-      filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
-      
-      filename_path_of_split = (gchar *)
-        gtk_entry_get_text(GTK_ENTRY(directory_entry));
-      
-      if (filename_path_of_split != NULL)
-        {
-          we_are_splitting = TRUE;
-          g_thread_create((GThreadFunc)split_it,
-                          NULL, TRUE, NULL);
-          gtk_widget_set_sensitive(GTK_WIDGET(cancel_button),
-                                   TRUE);
-        }
-      else
-        {
-          put_status_message((gchar *)_(" error: no file selected "));
-        }
     }
-  else
-    {
-      put_status_message((gchar *)_(" error: split in progress... "));
-    }
-}
 
-//toolbar connect button event
-void toolbar_connect_button_event (GtkWidget *widget,
-                                   gpointer data)
-{
-  if (!no_top_connect_action)
+    filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+
+    filename_path_of_split = (gchar *)
+      gtk_entry_get_text(GTK_ENTRY(directory_entry));
+
+    if (filename_path_of_split != NULL)
     {
-      GtkWidget *the_tooltip = data;
-      
-      //when we push connect
-      if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(widget)))
-        {
-          connect_button_event(NULL,NULL);
-          gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(widget),
-                                    GTK_TOOLTIPS(the_tooltip), 
-                                    (gchar *)_("disconnect from player"),"");
-          gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(widget),
-                                       GTK_STOCK_DISCONNECT);
-        }
-      else
-        //when we push disconnect
-        {
-          disconnect_button_event(NULL,NULL);
-          gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(widget),
-                                    GTK_TOOLTIPS(the_tooltip), 
-                                    (gchar *)_("connect to player"),"");
-          gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(widget),
-                                       GTK_STOCK_CONNECT);
-        }
+      we_are_splitting = TRUE;
+      g_thread_create((GThreadFunc)split_it, NULL, TRUE, NULL);
+      gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), TRUE);
     }
+    else
+    {
+      put_status_message((gchar *)_(" error: no file selected"));
+    }
+  }
+  else
+  {
+    put_status_message((gchar *)_(" error: split in progress..."));
+  }
 }
 
 //creates the toolbar
 GtkWidget *create_toolbar()
 {
   //the toolbar
-  GtkWidget *toolbar;
-  toolbar = gtk_toolbar_new();
-  //for tooltips
-  GtkWidget *tooltip;
-  
-  //initialize tooltips
-  tooltip = (GtkWidget *)gtk_tooltips_new();
-
-  //the toolbuttons
-  GtkWidget *toolbar_button;
-  
-  //enable resize button
-  toolbar_button = (GtkWidget *)
-    gtk_tool_button_new_from_stock(GTK_STOCK_ZOOM_FIT);
-  gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(toolbar_button),
-                            GTK_TOOLTIPS(tooltip), (gchar *)_("set"
-                                                              " window default size"),"");
-  g_signal_connect(G_OBJECT(toolbar_button), "clicked",
-                   G_CALLBACK(resize_window_event), tooltip);
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-                     GTK_TOOL_ITEM(toolbar_button), 0);
+  GtkWidget *toolbar = gtk_toolbar_new();
   
   //separator
-  toolbar_button = (GtkWidget *)gtk_separator_tool_item_new();
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-                     GTK_TOOL_ITEM(toolbar_button), 1);
-  gtk_tool_item_set_expand(GTK_TOOL_ITEM(toolbar_button),
-                           TRUE);
+  GtkWidget *toolbar_button = (GtkWidget *)gtk_separator_tool_item_new();
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(toolbar_button), 0);
+  gtk_tool_item_set_expand(GTK_TOOL_ITEM(toolbar_button), TRUE);
   gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(toolbar_button),
                                    FALSE);
   
-  //connect to player button
-  toolbar_connect_button = (GtkWidget *)
-    gtk_toggle_tool_button_new_from_stock(GTK_STOCK_CONNECT);
-  gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(toolbar_connect_button),
-                            GTK_TOOLTIPS(tooltip), 
-                            (gchar *)_("connect to player"),"");
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-                     GTK_TOOL_ITEM(toolbar_connect_button), 2);
-  g_signal_connect(G_OBJECT(toolbar_connect_button), "clicked",
-                   G_CALLBACK(toolbar_connect_button_event), 
-                   tooltip);
-  
-  //separator
-  toolbar_button = (GtkWidget *)gtk_separator_tool_item_new();
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-                     GTK_TOOL_ITEM(toolbar_button), 3);
-  gtk_tool_item_set_expand(GTK_TOOL_ITEM(toolbar_button),
-                           TRUE);
-  gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(toolbar_button),
-                                   FALSE);
-
   //split button
-  split_button = (GtkWidget *)
-    gtk_tool_button_new_from_stock(GTK_STOCK_APPLY);
-  gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(split_button),
-                            GTK_TOOLTIPS(tooltip), (gchar *)_("split !"),"");
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-                     GTK_TOOL_ITEM(split_button), 4);
+  split_button = (GtkWidget *)gtk_tool_button_new_from_stock(GTK_STOCK_APPLY);
+  gtk_widget_set_tooltip_text(split_button, _("Split !"));
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(split_button), 1);
   g_signal_connect(G_OBJECT(split_button), "clicked",
-                   G_CALLBACK(split_button_event), tooltip);
+      G_CALLBACK(split_button_event), NULL);
   
   //separator
   toolbar_button = (GtkWidget *)gtk_separator_tool_item_new();
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-                     GTK_TOOL_ITEM(toolbar_button), 5);
-  gtk_tool_item_set_expand(GTK_TOOL_ITEM(toolbar_button),
-                           TRUE);
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(toolbar_button), 2);
+  gtk_tool_item_set_expand(GTK_TOOL_ITEM(toolbar_button), TRUE);
   gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(toolbar_button),
                                    FALSE);
 
-  //quit button
-  toolbar_button = (GtkWidget *) gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
-  gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(toolbar_button),
-                            GTK_TOOLTIPS(tooltip),
-                            (gchar *)_("Do you really want to quit ?"),"");
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-                     GTK_TOOL_ITEM(toolbar_button), 6);
-  g_signal_connect(G_OBJECT(toolbar_button), "clicked", G_CALLBACK(quit), tooltip);
-  
   //toolbar preferences
   gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
-  gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
   gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
   gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
   
   return toolbar;
+}
+
+//event for the split button
+void show_messages_history_dialog(GtkWidget *widget, gpointer data)
+{
+  gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
 }
 
 //creates the menu bar
@@ -472,18 +373,18 @@ GtkWidget *create_menu_bar()
   //define the menu
   static GtkActionEntry entries[] = {
     //name, stock id,   label
-    { "FileMenu", NULL, N_("File") },  
-    { "HelpMenu", NULL, N_("Help") },
+    { "FileMenu", NULL, N_("_File") },  
+    { "HelpMenu", NULL, N_("_Help") },
+    //name, stock id, label, accelerator, tooltip
+    { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
+      G_CALLBACK(split_button_event) },
+    { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
+      G_CALLBACK(show_messages_history_dialog) },
+    { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
+      G_CALLBACK(quit) },
     //name, stock id, label, accelerator
-    { "Quit", GTK_STOCK_QUIT, N_("Quit"), "<control>Q",
-      //tooltip
-      N_("Quit"),
-      G_CALLBACK (quit) },
-    //name, stock id, label, accelerator
-    { "About", GTK_STOCK_ABOUT, N_("About"), "",
-      //tooltip
-      N_("About"),
-      G_CALLBACK (about_window)},
+    { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
+      G_CALLBACK(about_window)},
   };
   static guint n_entries = G_N_ELEMENTS (entries);
 
@@ -492,6 +393,9 @@ GtkWidget *create_menu_bar()
     "<ui>"
     "  <menubar name='MenuBar'>"
     "    <menu action='FileMenu'>"
+    "      <menuitem action='Split'/>"
+    "      <menuitem action='Messages history'/>"
+    "      <separator/>"
     "      <menuitem action='Quit'/>"
     "    </menu>"
     "    <menu action='HelpMenu'>"
@@ -535,93 +439,39 @@ GtkWidget *create_menu_bar()
 
 //creates a cool button with image from stock
 //toggle_or_not = TRUE means we create a toggle button
-GtkWidget *create_cool_button( gchar *stock_id,
-                               gchar *label_text,
-                               gint toggle_or_not)
+GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
+    gint toggle_or_not)
 {
   GtkWidget *box;
   GtkWidget *label;
   GtkWidget *image;
   GtkWidget *button;
 
-  /* Create box for image and label */
-  box = gtk_hbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (box), 2);
-  /* Now on to the image stuff */
-  image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
-  /* Create a label for the button */
-  label = gtk_label_new (label_text);
-  gtk_label_set_text_with_mnemonic(GTK_LABEL(label),label_text);
-  /* Pack the image and label into the box */
-  gtk_box_pack_start (GTK_BOX (box), image, FALSE, FALSE, 3);
-  gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 3);
+  box = gtk_hbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER (box), 2);
+
+  image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
+  gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 3);
+
+  if (label_text != NULL)
+  {
+    label = gtk_label_new (label_text);
+    gtk_label_set_text_with_mnemonic(GTK_LABEL(label),label_text);
+    gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 3);
+  }
   
   if (toggle_or_not)
-    {
-      button = gtk_toggle_button_new();
-    }
+  {
+    button = gtk_toggle_button_new();
+  }
   else
-    {
-      button = gtk_button_new();
-    }
-  
-  gtk_container_add (GTK_CONTAINER (button), box);
-  
+  {
+    button = gtk_button_new();
+  }
+ 
+  gtk_container_add(GTK_CONTAINER(button),box);
+ 
   return button;
-}
-
-//when changing the page of the main notebook
-void notebook_page_changed_event(GtkNotebook *notebook,
-                                 GtkNotebookPage *page,
-                                 guint page_num,
-                                 gpointer user_data)
-{
-  GtkWidget *tab_label;
-  GtkWidget *current_page;
-
-  current_page = gtk_notebook_get_nth_page(notebook,
-                                           page_num);
-  tab_label = 
-    (GtkWidget *)gtk_notebook_get_tab_label(notebook,
-                                            GTK_WIDGET(current_page));
-  
-  GString *pref;
-  pref = g_string_new((gchar *)_("Preferences"));
-  GString *tab_name;
-  tab_name = 
-    g_string_new(gtk_label_get_text(GTK_LABEL(tab_label)));
-  
-  //if we push on a tab different than Preferences
-  if (!g_string_equal(pref, tab_name))
-    {
-      //if we are on the preferences tab
-      if (preferences_tab)
-        {
-          //if we have save dialog enabled in the preferences
-          if(save_dialog)
-            {
-              if (check_if_different_from_config_file())
-                {
-                  popup_save_preferences_dialog(notebook, 
-                                                page_num);
-                }
-            }
-        }
-      preferences_tab = FALSE;
-    }
-  else
-    preferences_tab = TRUE;
-  
-  GString *freedb_name;
-  freedb_name = g_string_new((gchar *)_("FreeDB"));
-  //if we push on the tab freedb
-  if (g_string_equal(freedb_name, tab_name))
-    {
-      //TODO
-    }
-  
-  g_string_free(pref, TRUE);
-  g_string_free(tab_name, TRUE);
 }
 
 //main vbox
@@ -652,10 +502,6 @@ GtkWidget *create_main_vbox()
   gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);
   gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
-  //event when changing the notebook page
-  g_signal_connect (G_OBJECT (notebook), "switch-page",
-                    G_CALLBACK (notebook_page_changed_event), 
-                    NULL);
   
   //creating the tree view
   GtkWidget *splitpoints_vbox;
@@ -666,21 +512,18 @@ GtkWidget *create_main_vbox()
   gtk_container_add(GTK_CONTAINER(splitpoints_vbox), frame);
   
   /* player page */
-  GtkWidget *player_vbox;
   player_vbox = gtk_vbox_new(FALSE,0);
   notebook_label = gtk_label_new((gchar *)_("Player"));
       
   //player control frame
   player_box = (GtkWidget *)create_player_control_frame(tree_view);
-  gtk_box_pack_start (GTK_BOX(player_vbox), player_box, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(player_vbox), player_box, FALSE, FALSE, 0);
 
   //playlist control frame
   playlist_box = (GtkWidget *)create_player_playlist_frame();
-  gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
 
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           player_vbox,
-                           (GtkWidget *)notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox,
+      (GtkWidget *)notebook_label);
       
   /* splitpoints page */
   notebook_label = gtk_label_new((gchar *)_("Splitpoints"));
@@ -709,7 +552,7 @@ GtkWidget *create_main_vbox()
   frame = (GtkWidget *)create_cddb_cue_frame();
   gtk_container_add(GTK_CONTAINER(cddb_cue_vbox), frame);
   
-  notebook_label = gtk_label_new((gchar *)_("cddb&cue"));
+  notebook_label = gtk_label_new((gchar *)_("cddb & cue"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            cddb_cue_vbox,
                            (GtkWidget *)notebook_label);
@@ -752,7 +595,7 @@ GtkWidget *create_main_vbox()
                            (GtkWidget *)notebook_label);
   
   /* progress bar */
-  percent_progress_bar = gtk_progress_bar_new ();
+  percent_progress_bar = gtk_progress_bar_new();
   //we begin at 0
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
                                 0.0);
@@ -764,44 +607,52 @@ GtkWidget *create_main_vbox()
   GtkWidget *hbox;
   hbox = gtk_hbox_new (FALSE,0);
   //we put the progress bar in the hbox
-  gtk_box_pack_start(GTK_BOX(hbox),
-                     percent_progress_bar, TRUE, TRUE, 3);
+  gtk_box_pack_start(GTK_BOX(hbox), percent_progress_bar, TRUE, TRUE, 3);
   
   //stop button
-  cancel_button = create_cool_button(GTK_STOCK_CANCEL,_("Stop"),
-                                     FALSE);
+  cancel_button = create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
   //action for the cancel button
   g_signal_connect(G_OBJECT(cancel_button), "clicked",
                    G_CALLBACK(cancel_button_event), NULL);
   
   //we put the stop button in the hbox
-  gtk_box_pack_start(GTK_BOX(hbox),
-                     cancel_button, FALSE, TRUE, 3);
+  gtk_box_pack_start(GTK_BOX(hbox), cancel_button, FALSE, TRUE, 3);
   gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), FALSE);
   
   //we put progress bar hbox in the main box
-  gtk_box_pack_start(GTK_BOX (main_vbox),
-                     hbox, FALSE, FALSE, 3);  
-  
+  gtk_box_pack_start(GTK_BOX(main_vbox), hbox, FALSE, FALSE, 3);  
+
+  /* show messages history dialog */
+  create_mess_history_dialog();
+ 
   /* statusbar */
   status_bar = gtk_statusbar_new();
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(status_bar),
-                                    TRUE);
-  gtk_box_pack_start (GTK_BOX (main_vbox), status_bar, FALSE, FALSE, 0);
-  
+  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(status_bar), FALSE);
+
+  GtkWidget *mess_history_button =
+    create_cool_button(GTK_STOCK_INFO, NULL, FALSE);
+  gtk_button_set_relief(GTK_BUTTON(mess_history_button), GTK_RELIEF_NONE);
+  gtk_widget_set_tooltip_text(mess_history_button,_("Messages history"));
+  gtk_box_pack_start(GTK_BOX(status_bar), mess_history_button, FALSE, FALSE, 0);
+  g_signal_connect(G_OBJECT(mess_history_button), "clicked",
+      G_CALLBACK(show_messages_history_dialog), NULL);
+
+  gtk_box_pack_start(GTK_BOX(main_vbox), status_bar, FALSE, FALSE, 0);
+
   return main_vbox;
 }
 
 //main function, creates all the window
 void create_all()
 {
-  //sets the language
+#ifdef __WIN32__
   set_language();
+#endif
 
   //main vbox containing all + statusbar
   GtkWidget *main_vbox;
   
-  window = initialize_window();
+  initialize_window();
   
   /* vertical box */
   GtkWidget *window_vbox;
@@ -818,11 +669,8 @@ void create_all()
   gtk_box_pack_start(GTK_BOX(window_vbox), main_vbox, TRUE, TRUE, 0);
   
   gtk_widget_show_all(window);
-  
-  //hide the disconnect button
-  gtk_widget_hide(disconnect_button);
-
-  //hide the playlist window
+ 
+  hide_disconnect_button();
   gtk_widget_hide(playlist_box);
 
   //load preferences
@@ -832,8 +680,7 @@ void create_all()
   //hide connect button if player is gstreamer
   if (selected_player == PLAYER_GSTREAMER)
   {
-    gtk_widget_hide(connect_button);
-    gtk_widget_hide(toolbar_connect_button);
+    hide_connect_button();
   }
 }
 
