@@ -348,8 +348,8 @@ void show_small_help_exit(main_data *data)
       " -v   Prints current version and exits\n"
       " -h   Shows this help\n"
       "\n(other options)\n"
-      /*" -P   Pretend to split, without actually splitting the file\n"
-      " -E   Export .cue file (use with -P to export .cue file without splitting)\n"*/
+      //" -P   Pretend to split, without actually splitting the file\n"
+      //" -E   Export .cue file (use with -P to export .cue file without splitting)\n"
       " -T + TAGS_VERSION: for mp3 files, force output tags as version 1, 2 or 1 & 2.\n"
       "      TAGS_VERSION can be 1, 2 or 12\n"
       "      (default is to set the same version as the file to split)\n"
@@ -366,8 +366,8 @@ void show_small_help_exit(main_data *data)
       "      TAGS can contain those variables : \n"
       "         @a, @b, @t, @y, @c, @n, @o (set original tags),\n"
       "         @N (auto increment track number).\n"
-      "      TAGS format is like [@a=artist1,@t=title1]\%[@o,@N=2,@a=artist2]\n"
-      "       (\% means that we set the tags for all remaining files)\n"
+      "      TAGS format is like [@a=artist1,@t=title1]%[@o,@N=2,@a=artist2]\n"
+      "       (% means that we set the tags for all remaining files)\n"
       " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
       " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
       " -O + TIME : Overlap split files with TIME (slower).\n"
@@ -1531,7 +1531,7 @@ void print_version(FILE *std)
   char version[128] = { '\0' };
   mp3splt_get_version(version);
   fprintf(std, PACKAGE_NAME" "VERSION" ("MP3SPLT_DATE") -"
-      " %s libmp3splt %s\n",("using"),version);
+      " %s libmp3splt %s\n",_("using"),version);
   fflush(std);
 }
 

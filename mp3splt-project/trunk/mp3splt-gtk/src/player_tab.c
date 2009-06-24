@@ -187,7 +187,7 @@ gint stay_turn = 0;
 gint width_drawing_area = 0;
 
 //our drawing area
-GtkWidget *da;
+GtkWidget *da = NULL;
 
 //drawing zoom coefficient
 gfloat zoom_coeff = 2.0;
@@ -219,7 +219,7 @@ gboolean check_splitpoint = FALSE;
 gint only_press_pause = FALSE;
 
 //our playlist tree
-GtkWidget *playlist_tree;
+GtkWidget *playlist_tree = NULL;
 gint playlist_tree_number = 0;
 
 //drawing area variables
@@ -781,6 +781,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     }
     number_of_silence_points = 0;
   }
+  da_expose_event(da, NULL, NULL);
 }
 
 //creates the player buttons hbox
@@ -2064,7 +2065,7 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc
 
 //event for drawing the progress drawing area
 gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
-{  
+{
   int width = 0, height = 0;
   gtk_widget_get_size_request(da, &width, &height);
 
