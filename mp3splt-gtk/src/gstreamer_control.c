@@ -52,6 +52,7 @@
 
 #include "player.h"
 #include "main_win.h"
+#include "utilities.h"
 
 extern int selected_player;
 
@@ -384,12 +385,11 @@ void gstreamer_start()
 	//if we have started the player
   if (play)
 	{
-    GList *children = gtk_container_get_children(GTK_CONTAINER(player_vbox));
-    if (g_list_length(children) == 0)
+    if (! container_has_child(GTK_CONTAINER(player_vbox), playlist_box))
     {
       gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
     }
-    gtk_widget_show(playlist_box);
+    gtk_widget_show_all(playlist_box);
 
 		_gstreamer_is_running = TRUE;
 		bus = gst_pipeline_get_bus (GST_PIPELINE (play));

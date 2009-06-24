@@ -27,7 +27,6 @@
     exit 1
 }
 
-#we run aclocal, autoconf and automake
 echo -n "Running autopoint... ";
 autopoint -f && echo "done";
 echo -n "Running aclocal... " \
@@ -39,7 +38,6 @@ echo -n "Running aclocal... " \
 && echo -n "Running automake... " \
 && automake -a -c && echo "done"
 
-#we format the language files
 echo -n "Formatting language files with msgfmt... " && \
 {
     cd po
@@ -51,3 +49,4 @@ echo -n "Formatting language files with msgfmt... " && \
     done
     cd ..
 } && echo "done"
+

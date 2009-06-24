@@ -51,19 +51,13 @@ gint debug_is_active = FALSE;
 
 extern splt_state *the_state;
 
-gchar *get_current_time()
+const char *get_current_time()
 {
-  gchar *time_str = g_malloc(sizeof(char) * 512);
-  memset(time_str, '\0', 512);
-
-  GTimeVal time = { 0 };
-  g_get_current_time(&time);
-
-  gint seconds = (gint) time.tv_sec % 60;
-  gint minutes = (gint) (time.tv_sec / 60) % 60;
-  gint hour = (gint) ((time.tv_sec / 60) / 60) % 24;
-
-  g_snprintf(time_str, 512, "(UTC - %d:%d:%d) ",hour, minutes, seconds);
+  time_t cur_time = { 0 };
+  static char time_str[128] = { '\0' };
+  cur_time = time(NULL);
+  const struct tm *tm = localtime(&cur_time);
+  strftime(time_str, sizeof(time_str), "(%H:%M:%S) ", tm);
 
   return time_str;
 }
@@ -77,15 +71,10 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type)
       gtk_text_tag_table_lookup(mess_hist_tag_table, "gray_bold");
 
     GtkTextIter iter;
-    gchar *current_time = get_current_time();
+    const char *current_time = get_current_time();
     gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(mess_hist_buffer), &iter);
     gtk_text_buffer_insert_with_tags(GTK_TEXT_BUFFER(mess_hist_buffer),
         &iter, current_time, -1, gray_tag, NULL);
-    if (current_time)
-    {
-      g_free(current_time);
-      current_time = NULL;
-    }
 
     gtk_text_buffer_insert(GTK_TEXT_BUFFER(mess_hist_buffer), &iter,
         message, -1);

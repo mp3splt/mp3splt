@@ -19,6 +19,15 @@ win=$1
     exit 1
 }
 
+#msgfmt check
+(msgfmt --version) > /dev/null 2>&1 ||
+{
+    echo
+    echo "Error: you must have gettext(msgfmt) installed to compile mp3splt-gtk !"
+    echo
+    exit 1
+}
+
 #remove old libtool generated files
 rm -f m4/{libtool,argz,ltdl,ltoptions,lt~obsolete,ltversion,ltsugar}.m4
 rm -f libtool aclocal.m4 config.status configure autom4te.cache/* ltmain.sh
@@ -38,4 +47,16 @@ echo -n "1/6 Running autopoint... " \
 && autoconf && echo "done" \
 && echo -n "6/6 Running automake... " \
 && automake -a -c && echo "done"
+
+echo -n "Formatting language files with msgfmt... " && \
+{
+    cd po
+    for f in *.po; do
+        if test -r "$f"; then
+            lang=`echo $f | sed -e 's,\.po$,,'`
+            msgfmt -c -o $lang.gmo $lang.po
+        fi
+    done
+    cd ..
+} && echo "done"
 
