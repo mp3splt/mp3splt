@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-06-22 22:29+0200\n"
+"POT-Creation-Date: 2009-07-05 22:26+0200\n"
 "PO-Revision-Date: 2009-06-24 19:06+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -26,15 +26,18 @@ msgstr " Le fichier M3U '%s' sera créé.\n"
 
 #: src/mp3splt.c:803
 #, c-format
-msgid " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: %.2f)\n"
-msgstr " Avec ajustement du silence (Seuil : %.1f dB Ecart : %d sec Compensation : %.2f)\n"
+msgid ""
+" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
+"%.2f)\n"
+msgstr ""
+" Avec ajustement du silence (Seuil : %.1f dB Ecart : %d sec Compensation : "
+"%.2f)\n"
 
 #: src/checks.c:175
 msgid "Directory does not exists"
 msgstr "Le dossier n'existe pas"
 
-#: src/cddb.c:282
-#: src/cddb.c:1025
+#: src/cddb.c:244 src/cddb.c:987
 #, c-format
 msgid ""
 "\n"
@@ -43,23 +46,21 @@ msgstr ""
 "\n"
 "  Artiste : %s\n"
 
-#: src/cddb.c:287
-#: src/cddb.c:1051
+#: src/cddb.c:249 src/cddb.c:1013
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album : %s\n"
 
-#: src/cddb.c:335
+#: src/cddb.c:297
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " lecture des informations du fichier CUE %s ...\n"
 
-#: src/cddb.c:546
+#: src/cddb.c:508
 msgid "description here"
 msgstr "description"
 
-#: src/cddb.c:584
-#: src/cddb.c:1161
+#: src/cddb.c:546 src/cddb.c:1123
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -68,13 +69,12 @@ msgstr ""
 "  Pistes : %d\n"
 "\n"
 
-#: src/cddb.c:615
+#: src/cddb.c:577
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " lecture des informations du fichier CDDB %s ...\n"
 
-#: src/types_func.c:2177
-#: src/utils.c:2317
+#: src/types_func.c:2177 src/utils.c:2461
 msgid "not enough memory"
 msgstr "pas assez de mémoire"
 
@@ -88,7 +88,8 @@ msgstr " info : début de la division normale\n"
 
 #: src/splt.c:223
 msgid " info: starting error mode split\n"
-msgstr " info : début de la division avec recherche d'erreurs de synchronisation\n"
+msgstr ""
+" info : début de la division avec recherche d'erreurs de synchronisation\n"
 
 #: src/splt.c:340
 msgid " info: starting time mode split\n"
@@ -116,13 +117,21 @@ msgstr "Automatique"
 
 #: src/splt.c:597
 #, c-format
-msgid " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s)\n"
-msgstr " Division avec recherche du silence : mode %s (Seuil : %.1f dB, Ecart : %.2f, Min : %.2f, Suppression : %s)\n"
+msgid ""
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %"
+"s)\n"
+msgstr ""
+" Division avec recherche du silence : mode %s (Seuil : %.1f dB, Ecart : "
+"%.2f, Min : %.2f, Suppression : %s)\n"
 
 #: src/splt.c:613
 #, c-format
-msgid " Found silence log file '%s' ! Reading silence points from file to save time ;)"
-msgstr " Fichier de log avec silences trouvé '%s' ! Lecture des points de silence du fichier ;)"
+msgid ""
+" Found silence log file '%s' ! Reading silence points from file to save "
+"time ;)"
+msgstr ""
+" Fichier de log avec silences trouvé '%s' ! Lecture des points de silence du "
+"fichier ;)"
 
 #: src/splt.c:638
 #, c-format
@@ -151,425 +160,436 @@ msgstr " info : début de la division avec recherche de silence\n"
 msgid " info: starting wrap mode split\n"
 msgstr " info : début de la division 'wrap'\n"
 
-#: src/utils.c:2020
+#: src/utils.c:2164
 #, c-format
 msgid " warning: might be VBR, use frame mode"
-msgstr " attention : peut être VBR (taux d'échantillonnage variable), utilisez le mode 'frame'"
+msgstr ""
+" attention : peut être VBR (taux d'échantillonnage variable), utilisez le "
+"mode 'frame'"
 
-#: src/utils.c:2023
+#: src/utils.c:2167
 #, c-format
 msgid " error mode ok"
 msgstr " division avec recherche d'erreurs de synchronisation réussie"
 
-#: src/utils.c:2026
+#: src/utils.c:2170
 #, c-format
 msgid " error: unknown sync error"
 msgstr " erreur : erreur de synchronisation inconnue"
 
-#: src/utils.c:2029
+#: src/utils.c:2173
 #, c-format
 msgid " no sync errors found"
 msgstr " aucune erreur de synchronisation trouvée"
 
-#: src/utils.c:2032
+#: src/utils.c:2176
 #, c-format
 msgid " sync error: too many sync errors"
-msgstr " erreur de synchronisation : trop d'erreurs de synchronisation trouvées"
+msgstr ""
+" erreur de synchronisation : trop d'erreurs de synchronisation trouvées"
 
-#: src/utils.c:2036
+#: src/utils.c:2180
 #, c-format
 msgid " maximum number of found CD reached"
 msgstr " nombre maximum de CD atteint"
 
-#: src/utils.c:2039
+#: src/utils.c:2183
 #, c-format
 msgid " cue file processed"
 msgstr " fichier cue analysé"
 
-#: src/utils.c:2042
+#: src/utils.c:2186
 #, c-format
 msgid " cddb file processed"
 msgstr " fichier cddb analysé"
 
-#: src/utils.c:2045
+#: src/utils.c:2189
 #, c-format
 msgid " freedb file downloaded"
 msgstr " fichier freedb téléchargé"
 
-#: src/utils.c:2048
+#: src/utils.c:2192
 #, c-format
 msgid " freedb search processed"
 msgstr " recherche freedb finie"
 
-#: src/utils.c:2053
+#: src/utils.c:2197
 #, c-format
 msgid " freedb error: cannot initialise socket (%s)"
-msgstr " erreur freedb : impossible d'initialiser le point de communication (%s)"
+msgstr ""
+" erreur freedb : impossible d'initialiser le point de communication (%s)"
 
-#: src/utils.c:2058
+#: src/utils.c:2202
 #, c-format
 msgid " freedb error: cannot get host '%s' by name (%s)"
-msgstr " erreur freedb : impossible de récupérer l'hôte '%s' à partir du nom (%s)"
+msgstr ""
+" erreur freedb : impossible de récupérer l'hôte '%s' à partir du nom (%s)"
 
-#: src/utils.c:2062
+#: src/utils.c:2206
 #, c-format
 msgid " freedb error: cannot open socket"
 msgstr " erreur freedb : impossible d'ouvrir le point de communication"
 
-#: src/utils.c:2066
+#: src/utils.c:2210
 #, c-format
 msgid " freedb error: cannot connect to host '%s' (%s)"
 msgstr " erreur freedb : impossible de se connecter à l'hôte '%s' (%s)"
 
-#: src/utils.c:2071
+#: src/utils.c:2215
 #, c-format
 msgid " freedb error: cannot send message to host '%s' (%s)"
 msgstr " erreur freedb : impossible d'envoyer un message à l'hôte '%s' (%s)"
 
-#: src/utils.c:2075
+#: src/utils.c:2219
 #, c-format
 msgid " freedb error: invalid server answer"
 msgstr " erreur freedb : réponse invalide du serveur"
 
-#: src/utils.c:2078
+#: src/utils.c:2222
 #, c-format
 msgid " freedb error: site returned code 201"
 msgstr " erreur freedb : le site a retourné le code 201"
 
-#: src/utils.c:2081
+#: src/utils.c:2225
 #, c-format
 msgid " freedb error: site returned code 200"
 msgstr " erreur freedb : le site a retourné le code 200"
 
-#: src/utils.c:2084
+#: src/utils.c:2228
 #, c-format
 msgid " freedb error: bad communication with site"
 msgstr " erreur freedb : mauvaise communication avec le site"
 
-#: src/utils.c:2087
+#: src/utils.c:2231
 #, c-format
 msgid " freedb error: could not get infos from site '%s'"
 msgstr " erreur freedb : impossible de récupérer les informations du site '%s'"
 
-#: src/utils.c:2091
+#: src/utils.c:2235
 #, c-format
 msgid " no CD found for this search"
 msgstr " aucun CD trouvé pour cette recherche"
 
-#: src/utils.c:2095
+#: src/utils.c:2239
 #, c-format
 msgid " freedb error: cannot receive message from server '%s' (%s)"
-msgstr " erreur freedb : impossible de recevoir le message du serveur '%s' (%s)"
+msgstr ""
+" erreur freedb : impossible de recevoir le message du serveur '%s' (%s)"
 
-#: src/utils.c:2099
+#: src/utils.c:2243
 #, c-format
 msgid " cue error: invalid cue file '%s'"
 msgstr " erreur cue : fichier cue '%s' invalide"
 
-#: src/utils.c:2103
+#: src/utils.c:2247
 #, c-format
 msgid " cddb error: invalid cddb file '%s'"
 msgstr " erreur cddb : fichier cddb '%s' invalide"
 
-#: src/utils.c:2107
+#: src/utils.c:2251
 #, c-format
 msgid " freedb error: No such CD entry in database"
 msgstr " erreur freedb : Aucun CD trouvé dans la base de données"
 
-#: src/utils.c:2110
+#: src/utils.c:2254
 #, c-format
 msgid " freedb error: site returned an unknown error"
 msgstr " erreur freedb : le site a retourné une erreur inconnue"
 
-#: src/utils.c:2114
+#: src/utils.c:2258
 #, c-format
 msgid " wrap split ok"
 msgstr " division wrap réussie"
 
-#: src/utils.c:2118
+#: src/utils.c:2262
 #, c-format
 msgid " wrap error: incorrect file length"
 msgstr " erreur wrap : taille du fichier incorrecte"
 
-#: src/utils.c:2122
+#: src/utils.c:2266
 #, c-format
 msgid " wrap error: libmp3splt version too old for this wrap file"
-msgstr " erreur wrap : version de libmp3splt trop ancienne pour ce fichier wrap"
+msgstr ""
+" erreur wrap : version de libmp3splt trop ancienne pour ce fichier wrap"
 
-#: src/utils.c:2126
+#: src/utils.c:2270
 #, c-format
 msgid " wrap error: no file found or bad index"
 msgstr " erreur wrap : aucun fichier trouvé ou mauvais index"
 
-#: src/utils.c:2130
+#: src/utils.c:2274
 #, c-format
 msgid " wrap error: file '%s' damaged or incomplete"
 msgstr " erreur wrap : fichier '%s' endommagé ou incomplet"
 
-#: src/utils.c:2135
+#: src/utils.c:2279
 #, c-format
 msgid " wrap error: maybe not a wrapped file or wrap file damaged"
 msgstr " erreur wrap : probablément pas un fichier wrap ou fichier endommagé"
 
-#: src/utils.c:2139
+#: src/utils.c:2283
 #, c-format
 msgid " file split (EOF)"
 msgstr " fichier divisé (fin du fichier)"
 
-#: src/utils.c:2142
+#: src/utils.c:2286
 #, c-format
 msgid " no silence splitpoints found"
 msgstr " aucun point de silence trouvé"
 
-#: src/utils.c:2145
+#: src/utils.c:2289
 #, c-format
 msgid " time split ok"
 msgstr " division en plusieurs pistes de même taille réussie"
 
-#: src/utils.c:2148
+#: src/utils.c:2292
 #, c-format
 msgid " silence split ok"
 msgstr " division avec recherche du silence réussie"
 
-#: src/utils.c:2152
+#: src/utils.c:2296
 #, c-format
 msgid " file split, splitpoints bigger than length"
 msgstr " fichier divisé, point(s) de coupure supérieur(s) à la taille"
 
-#: src/utils.c:2155
+#: src/utils.c:2299
 #, c-format
 msgid " file split"
 msgstr " fichier divisé"
 
-#: src/utils.c:2160
+#: src/utils.c:2304
 #, c-format
 msgid " error: not enough splitpoints (<2)"
 msgstr " erreur : pas assez de points de coupure (<2)"
 
-#: src/utils.c:2164
+#: src/utils.c:2308
 #, c-format
 msgid " error: cannot open file '%s': %s"
 msgstr " erreur : impossible d'ouvrir le fichier '%s' : %s"
 
-#: src/utils.c:2169
+#: src/utils.c:2313
 #, c-format
 msgid " error: cannot close file '%s': %s"
 msgstr " erreur : impossible de fermer le fichier '%s' : %s"
 
-#: src/utils.c:2177
+#: src/utils.c:2321
 #, c-format
 msgid " error: invalid input file '%s' for '%s' plugin"
 msgstr " erreur : fichier d'entrée invalide '%s' pour le module '%s'"
 
-#: src/utils.c:2182
+#: src/utils.c:2326
 #, c-format
 msgid " error: splitpoints are equal (%s)"
 msgstr " erreur : les points de coupure sont egaux (%s)"
 
-#: src/utils.c:2186
+#: src/utils.c:2330
 #, c-format
 msgid " error: invalid time split value"
-msgstr " erreur : valeur de division en plusieurs pistes de même taille invalide"
+msgstr ""
+" erreur : valeur de division en plusieurs pistes de même taille invalide"
 
-#: src/utils.c:2190
+#: src/utils.c:2334
 #, c-format
 msgid " error: the splitpoints are not in order (%s)"
 msgstr " erreur : les points de coupure ne sont pas dans l'ordre (%s)"
 
-#: src/utils.c:2194
+#: src/utils.c:2338
 #, c-format
 msgid " error: negative splitpoint (%s)"
 msgstr " erreur : point de coupure négatif (%s)"
 
-#: src/utils.c:2199
+#: src/utils.c:2343
 #, c-format
 msgid " error: bad destination folder '%s' (%s)"
 msgstr " erreur : mauvais dossier destination '%s' (%s)"
 
-#: src/utils.c:2203
+#: src/utils.c:2347
 #, c-format
 msgid " error: incompatible options"
 msgstr " erreur : options incompatibles"
 
-#: src/utils.c:2207
+#: src/utils.c:2351
 #, c-format
 msgid " input and output are the same file ('%s')"
 msgstr " l'entrée et la sortie sont le même fichier ('%s')"
 
-#: src/utils.c:2211
+#: src/utils.c:2355
 #, c-format
 msgid " error: cannot allocate memory"
 msgstr " erreur : impossible d'allouer de la mémoire"
 
-#: src/utils.c:2215
+#: src/utils.c:2359
 #, c-format
 msgid " error: cannot open destination file '%s': %s"
 msgstr " erreur : impossible d'ouvrir le fichier destination '%s' : %s"
 
-#: src/utils.c:2220
+#: src/utils.c:2364
 #, c-format
 msgid " error: cannot write to output file '%s'"
 msgstr " erreur : impossible d'écrire dans le fichier de sortie '%s'"
 
-#: src/utils.c:2224
+#: src/utils.c:2368
 #, c-format
 msgid " error: error while reading file '%s': %s"
 msgstr " erreur : erreur de lecture du fichier '%s' : %s"
 
-#: src/utils.c:2228
+#: src/utils.c:2372
 #, c-format
 msgid " error: cannot seek file '%s'"
 msgstr " erreur : impossible de changer la position dans le fichier '%s'"
 
-#: src/utils.c:2232
+#: src/utils.c:2376
 #, c-format
 msgid " error: begin point out of file"
 msgstr " erreur : point de coupure en dehors du fichier"
 
-#: src/utils.c:2235
+#: src/utils.c:2379
 #, c-format
 msgid " error: inexistent file '%s': %s"
 msgstr " erreur : fichier inexistant '%s' : %s"
 
-#: src/utils.c:2239
+#: src/utils.c:2383
 #, c-format
 msgid " split process cancelled"
 msgstr " processus de division arreté"
 
-#: src/utils.c:2242
+#: src/utils.c:2386
 #, c-format
 msgid " error: library locked"
 msgstr " erreur : librairie occupée"
 
-#: src/utils.c:2246
+#: src/utils.c:2390
 #, c-format
 msgid " error: the state has not been initialized with 'mp3splt_new_state'"
 msgstr " erreur : l'état n'a pas été initialisé avec 'mp3splt_new_state'"
 
-#: src/utils.c:2249
+#: src/utils.c:2393
 #, c-format
 msgid " error: negative time split"
-msgstr " erreur : valeur de division en plusieurs pistes de même taille négative"
+msgstr ""
+" erreur : valeur de division en plusieurs pistes de même taille négative"
 
-#: src/utils.c:2252
+#: src/utils.c:2396
 #, c-format
 msgid " error: cannot create directory '%s'"
 msgstr " erreur : impossible de créer le dossier '%s'"
 
-#: src/utils.c:2256
+#: src/utils.c:2400
 #, c-format
 msgid " error: no plugin found"
 msgstr " erreur : aucun module trouvé"
 
-#: src/utils.c:2259
+#: src/utils.c:2403
 #, c-format
 msgid " error: cannot initiate libltdl"
 msgstr " erreur : impossible d'initialiser libltdl"
 
-#: src/utils.c:2262
+#: src/utils.c:2406
 #, c-format
 msgid " error: CRC failed"
 msgstr " erreur : le CRC (contrôle de redondance cyclique) a échoué"
 
-#: src/utils.c:2266
+#: src/utils.c:2410
 #, c-format
 msgid " error: no plugin matches the file '%s'"
 msgstr " erreur : aucun module ne correspond au fichier '%s'"
 
-#: src/utils.c:2274
+#: src/utils.c:2418
 #, c-format
 msgid " warning: output format ambiguous (@t or @n missing)"
 msgstr " attention : le format de sortie est ambigu (@t ou @n manquant)"
 
-#: src/utils.c:2281
+#: src/utils.c:2425
 #, c-format
 msgid " error: illegal variable '@%s' in output format"
 msgstr " erreur : variable illégale '@%s' dans le format de sortie"
 
-#: src/utils.c:2286
+#: src/utils.c:2430
 #, c-format
 msgid " error: invalid output format"
 msgstr " erreur : format de sortie invalide"
 
-#: src/utils.c:2291
+#: src/utils.c:2435
 #, c-format
 msgid " error: inexistent splitpoint"
 msgstr " erreur : point de coupure inexistant"
 
-#: src/utils.c:2295
+#: src/utils.c:2439
 #, c-format
 msgid " plugin error: '%s'"
 msgstr " erreur du module : '%s'"
 
-#: src/utils.c:2303
+#: src/utils.c:2447
 #, c-format
 msgid " error: unsupported feature for the plugin '%s'"
 msgstr " erreur : fonction non implementée pour le module '%s'"
 
-#: src/utils.c:2786
+#: src/utils.c:2930
 #, c-format
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 
-#: plugins/mp3.c:1420
+#: plugins/mp3.c:1423
 msgid " info: frame mode enabled\n"
 msgstr " info : mode 'frame' activé\n"
 
-#: plugins/mp3.c:1555
+#: plugins/mp3.c:1558
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " info : MPEG %d couche %d - %d Hz - %s"
 
-#: plugins/mp3.c:1563
+#: plugins/mp3.c:1566
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - MODE 'FRAME' NS (sans changement de position)"
 
-#: plugins/mp3.c:1567
+#: plugins/mp3.c:1570
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - MODE 'FRAME'"
 
-#: plugins/mp3.c:1572
+#: plugins/mp3.c:1575
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1580
-#: plugins/ogg.c:177
+#: plugins/mp3.c:1583 plugins/ogg.c:177
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
 
-#: plugins/mp3.c:3074
+#: plugins/mp3.c:3077
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Le fichier reconnu a le format Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:3115
+#: plugins/mp3.c:3118
 msgid " Check for file integrity: calculating CRC please wait... "
-msgstr " Vérification de l'intégrité du fichier : calcul du CRC (contrôle de redondance cyclique), veuillez attendre..."
+msgstr ""
+" Vérification de l'intégrité du fichier : calcul du CRC (contrôle de "
+"redondance cyclique), veuillez attendre..."
 
-#: plugins/mp3.c:3134
+#: plugins/mp3.c:3137
 msgid " OK\n"
 msgstr " Succès\n"
 
-#: plugins/mp3.c:3153
+#: plugins/mp3.c:3156
 #, c-format
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Le fichier reconnu a le format : AlbumWrap\n"
 
-#: plugins/mp3.c:3176
+#: plugins/mp3.c:3179
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Nombre de fichiers : %d\n"
 
-#: plugins/mp3.c:3577
+#: plugins/mp3.c:3580
 #, c-format
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
-msgstr " attention : le flux standard d'entrée '-' est supposé être un flux mp3.\n"
+msgstr ""
+" attention : le flux standard d'entrée '-' est supposé être un flux mp3.\n"
 
-#: plugins/mp3.c:3604
+#: plugins/mp3.c:3607
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
@@ -579,8 +599,8 @@ msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " info : flux Ogg Vorbis - %ld - %ld Kb/s - %d canaux"
 
-#: plugins/ogg.c:1842
+#: plugins/ogg.c:1845
 #, c-format
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
-msgstr " attention : le flux standard d'entrée '-' est supposé être un flux ogg.\n"
-
+msgstr ""
+" attention : le flux standard d'entrée '-' est supposé être un flux ogg.\n"

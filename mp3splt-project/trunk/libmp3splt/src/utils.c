@@ -3148,7 +3148,13 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
 
   while (new_number_of_files-- > 0)
   {
+#ifdef __WIN32__
+    char *fname =
+      splt_u_win32_utf16_to_utf8(files[new_number_of_files]->d_name);
+#else
     char *fname = files[new_number_of_files]->d_name;
+#endif
+
     int fname_size = strlen(fname);
 
     //avoid seg fault with strcmp(fname, "..")
