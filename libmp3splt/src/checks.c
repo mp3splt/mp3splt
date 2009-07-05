@@ -449,7 +449,9 @@ int splt_check_is_file_and_not_symlink(splt_state *state, const char *fname)
     int status = splt_u_stat(fname, &st_mode, NULL);
     if (status == 0)
     {
+#ifndef __WIN32__
       if (S_ISLNK(st_mode)) { return SPLT_FALSE; }
+#endif
       if (S_ISREG(st_mode)) { return SPLT_TRUE; }
       return SPLT_FALSE;
     }
@@ -493,7 +495,9 @@ int splt_check_is_directory_and_not_symlink(const char *fname)
     int status = splt_u_stat(fname, &st_mode, NULL);
     if (status == 0)
     {
+#ifndef __WIN32__
       if (S_ISLNK(st_mode)) { return SPLT_FALSE; }
+#endif
       if (S_ISDIR(st_mode)) { return SPLT_TRUE; }
     }
   }
