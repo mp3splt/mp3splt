@@ -646,8 +646,11 @@ void splt_ogg_put_tags(splt_state *state, int *error)
 
         if (track_string)
         {
+          char *artist_or_performer =
+            splt_u_get_artist_or_performer_ptr(state, current_split);
+
           splt_ogg_v_comment(&oggstate->vc,
-              tags[current_split].artist,
+              artist_or_performer,
               tags[current_split].album,
               tags[current_split].title,
               track_string,

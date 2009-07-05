@@ -1325,11 +1325,16 @@ int splt_u_parse_outformat(char *s, splt_state *state)
       case 'h':
       case 'H':
       case 'a':
+      case 'A':
       case 'b':
       case 'f':
       case 'p':
         break;
       case 't':
+      case 'l':
+      case 'L':
+      case 'u':
+      case 'U':
       case 'n':
       case 'N':
         amb = SPLT_OUTPUT_FORMAT_OK;
@@ -1370,8 +1375,83 @@ static char *splt_u_get_format_ptr_and_set_number_of_digits(splt_state *state, i
     *number_of_digits = (int) state->oformat.format[i][2];
     format = state->oformat.format[i] + 1;
   }
+  else if (toupper(state->oformat.format[i][1]) != 'N')
+  {
+    /* The default output_format_digits calculation is wrong for alphabetic
+     * track numbers, so treat '@l' like '@l1'.
+     */
+    *number_of_digits = '1';
+  }
 
   return format;
+}
+
+static void splt_u_alpha_track(const char *format, char *fm, int fm_length,
+    int number_of_digits, int tracknumber)
+{
+  /*
+   * Encode track number as 'A', 'B', ... 'Z', 'AA, 'AB', ...
+   *
+   * This is not simply "base 26"; note that the lowest 'digit' is from 'A' to
+   * 'Z' (base 26), but all higher digits are 'A' to 'Z' plus 'nothing', i.e.,
+   * base 27. In other words, since after 'Z' comes 'AA', we cannot use 'AA'
+   * as the padded version of track number 1 ('A').
+   *
+   * This means that there are two distinct work modes:
+   * - The normal encoding is as described above.
+   * - When the user has specified the number of digits (padding), we encode
+   *   the track number as simple base-26: 'AAA', 'AAB', ... 'AAZ', 'ABA',
+   *   'ABB', ...
+   */
+
+  int lowercase = (toupper(format[1]) == 'L');
+  char a = lowercase ? 'a' : 'A';
+  int zerobased = tracknumber - 1;
+  int i, min_digits;
+
+  /* Find the minimum number of digits required for this number */
+  min_digits = 1;
+  for (zerobased /= 26; zerobased > 0; zerobased /= 27)
+    ++ min_digits;
+  zerobased = tracknumber - 1;
+
+  /* number_of_digits is given as the ASCII character (bug?) */
+  number_of_digits = (number_of_digits - '0');
+
+  if (number_of_digits > 1)
+  {
+    /* Padding required => simple base-26 encoding */
+    if (number_of_digits < min_digits)
+      number_of_digits = min_digits;
+    for (i = 1; i <= number_of_digits; ++ i, zerobased /= 26)
+    {
+      int digit = (zerobased % 26);
+      fm[number_of_digits - i] = a + digit;
+    }
+  }
+  else
+  {
+    /* No padding: First letter base-26, others base-27 */
+    number_of_digits = min_digits;
+
+    /* Start with the first, base-26 'digit' */
+    fm[number_of_digits - 1] = a + (zerobased % 26);
+
+    /* Now handle all other digits */
+    zerobased /= 26;
+    for (i = 2; i <= number_of_digits; ++ i, zerobased /= 27)
+    {
+      int digit = (zerobased % 27);
+      fm[number_of_digits - i] = a + digit - 1;
+    }
+  }
+
+  int offset = 0;
+  if ((strlen(format) > 2) && isdigit(format[2]))
+  {
+    offset = 1;
+  }
+  snprintf(fm + number_of_digits, fm_length, "%s", format + 2 + offset);
 }
 
 //writes the current filename according to the output_filename
@@ -1395,6 +1475,7 @@ int splt_u_put_output_format_filename(splt_state *state)
   char *artist = NULL;
   char *album = NULL;
   char *performer = NULL;
+  char *artist_or_performer = NULL;
   char *original_filename = NULL;
 
   int old_current_split = splt_t_get_current_split_file_number(state) - 1;
@@ -1525,6 +1606,59 @@ put_value:
 
             snprintf(fm, fm_length, temp, mMsShH_value);
           }
+          break;
+        case 'A':
+          if (splt_t_tags_exists(state,current_split))
+          {
+            artist_or_performer =
+              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_PERFORMER);
+            splt_u_cleanstring(state, artist_or_performer, &error);
+            if (error < 0) { goto end; };
+
+            if (artist_or_performer == NULL || artist_or_performer[0] == '\0')
+            {
+              artist_or_performer = 
+                splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ARTIST);
+              splt_u_cleanstring(state, artist_or_performer, &error);
+              if (error < 0) { goto end; };
+            }
+          }
+          else
+          {
+            artist_or_performer = NULL;
+          }
+
+          //
+          if (artist_or_performer != NULL)
+          {
+            snprintf(temp+2,temp_len, state->oformat.format[i]+2);
+
+            int artist_length = 0;
+            artist_length = strlen(artist_or_performer);
+            fm_length = strlen(temp) + artist_length + 1;
+          }
+          else
+          {
+            snprintf(temp,temp_len, state->oformat.format[i]+2);
+            fm_length = strlen(temp) + 1;
+          }
+
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          //
+          if (artist_or_performer != NULL)
+          {
+            snprintf(fm, fm_length, temp, artist_or_performer);
+          }
+          else
+          {
+            snprintf(fm, fm_length, temp);
+          }
+
           break;
         case 'a':
           if (splt_t_tags_exists(state,current_split))
@@ -1703,8 +1837,12 @@ put_value:
             snprintf(fm, fm_length, temp);
           }
           break;
+        case 'l':
+        case 'L':
         case 'n':
         case 'N':
+        case 'u':
+        case 'U':
           temp[1] = '0';
           temp[2] = state->oformat.output_format_digits;
           temp[3] = 'd';
@@ -1713,13 +1851,12 @@ put_value:
           char *format = splt_u_get_format_ptr_and_set_number_of_digits(state, i, temp,
               &number_of_digits);
 
-         //we set the track number
           int tracknumber = old_current_split + 1;
 
           //if not time split, or normal split, or silence split or error,
           //we put the track number from the tags
           int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
-          if ((state->oformat.format[i][1] == 'N') ||
+          if ((isupper(state->oformat.format[i][1])) ||
               ((split_mode != SPLT_OPTION_TIME_MODE) &&
                (split_mode != SPLT_OPTION_NORMAL_MODE) &&
                (split_mode != SPLT_OPTION_SILENCE_MODE) &&
@@ -1745,7 +1882,14 @@ put_value:
             goto end;
           }
 
-          snprintf(fm, fm_length, temp, tracknumber);
+          if (toupper(state->oformat.format[i][1]) == 'N')
+          {
+            snprintf(fm, fm_length, temp, tracknumber);
+          }
+          else
+          {
+            splt_u_alpha_track(state->oformat.format[i], fm, fm_length, number_of_digits, tracknumber);
+          }
           break;
         case 'f':
           if (splt_t_get_filename_to_split(state) != NULL)
@@ -3084,5 +3228,19 @@ end:
     free(files);
     files = NULL;
   }
+}
+
+char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split)
+{
+  int tags_number = 0;
+  splt_tags *tags = splt_t_get_tags(state, &tags_number);
+  char *artist_or_performer = tags[current_split].artist;
+  if ((tags[current_split].performer != NULL) &&
+      (tags[current_split].performer[0] != '\0'))
+  {
+    artist_or_performer = tags[current_split].performer;
+  }
+
+  return artist_or_performer;
 }
 

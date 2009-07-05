@@ -352,6 +352,8 @@ tags are transformed to '_'.
 
 It can contain name variables, that must begin with @ char and that can be:
 
+@A: performer if found, otherwise artist
+.br
 @a: artist name
 .br
 @p: performer of each song (only with .cue)
@@ -364,6 +366,14 @@ It can contain name variables, that must begin with @ char and that can be:
 .br
 @N: track tag number**
 .br
+@l: track number identifier as lowercase letter* (not the real ID3 track number)**
+.br
+@L: track tag number as lowercase letter**
+.br
+@u: track number identifier as uppercase letter* (not the real ID3 track number)**
+.br
+@U: track tag number as uppercase letter**
+.br
 @f: input filename (without extension)
 .br
 @m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint**
@@ -372,11 +382,12 @@ It can contain name variables, that must begin with @ char and that can be:
 
 (**) a digit may follow for the number of digits to output
 
-When split files are more than one, at least one between @t and @n (*) must be present to avoid ambiguous names.
-You can put any prefix, separator, suffix in the string, for more elegance.
-To make easy the use spaces in output filename without interfering with line
-parameters, you can use the char '+' that will be automatically replaced with a space.
-Valid examples are:
+When split files are more than one, at least one of @t, @n, @N, @l, @L, @u or
+@U (*) must be present to avoid ambiguous names.  You can put any prefix,
+separator, suffix in the string, for more elegance.  To make easy the use
+spaces in output filename without interfering with line parameters, you can use
+the char '+' that will be automatically replaced with a space.  Valid examples
+are:
 
 @n_@a_@b_@t
 .br

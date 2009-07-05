@@ -67,84 +67,46 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
   year0 = splt_u_safe_strdup(first_year, error);
   if (*error < 0) { goto function_end; }
 
-  char *performer = NULL;
   unsigned char genre0 = splt_t_get_tags_uchar_field(state, 0, SPLT_TAGS_GENRE);
   int tags_error = SPLT_OK;
 
-  //if we have the defaults for the output,
-  int output_filenames = 
-    splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
-  if (output_filenames == SPLT_OUTPUT_DEFAULT)
+  if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) ==
+      SPLT_OUTPUT_DEFAULT)
   {
-    //we put the default output if we have the default output
     splt_t_set_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT, error, SPLT_TRUE);
     if (*error < 0) { goto function_end; }
-
-    //we put the real performer in the artist
-    for (i = 0; i < tracks;i++)
-    {
-      performer = splt_t_get_tags_char_field(state, i, SPLT_TAGS_PERFORMER);
-      //we put performer if found
-      if ((performer != NULL) && (performer[0] != '\0'))
-      {
-        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST,
-              performer);
-        if (tags_error != SPLT_OK)
-        {
-          *error = tags_error;
-          goto function_end;
-        }
-      }
-      else
-      {
-        //we put the artist0
-        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST, artist0);
-        if (tags_error != SPLT_OK)
-        {
-          *error = tags_error;
-          goto function_end;
-        }
-      }
-
-      //we put the same album, year and genre everywhere
-      if (i != 0)
-      {
-        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM, album0);
-        if (tags_error != SPLT_OK)
-        {
-          *error = tags_error;
-          goto function_end;
-        }
-        tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR, year0);
-        if (tags_error != SPLT_OK)
-        {
-          *error = tags_error;
-          goto function_end;
-        }
-        tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
-        if (tags_error != SPLT_OK)
-        {
-          *error = tags_error;
-          goto function_end;
-        }
-      }
-    }
   }
-  else
+
+  //we put the same artist, album, year and genre everywhere
+  for (i = 0; i < tracks;i++)
   {
-    //we put the same artist, genre, album and year everywhere
-    for(i = 1;i<tracks;i++)
+    if (i != 0)
     {
-      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
-      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
       tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST, artist0);
-      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      if (tags_error != SPLT_OK)
+      {
+        *error = tags_error;
+        goto function_end;
+      }
+
       tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM, album0);
-      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      if (tags_error != SPLT_OK)
+      {
+        *error = tags_error;
+        goto function_end;
+      }
       tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR, year0);
-      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      if (tags_error != SPLT_OK)
+      {
+        *error = tags_error;
+        goto function_end;
+      }
       tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
-      if (tags_error != SPLT_OK) { *error = tags_error; goto function_end; }
+      if (tags_error != SPLT_OK)
+      {
+        *error = tags_error;
+        goto function_end;
+      }
     }
   }
 
