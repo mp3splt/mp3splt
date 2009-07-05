@@ -1147,9 +1147,12 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
 
       if (splt_t_tags_exists(state,current_split))
       {
+        char *artist_or_performer =
+          splt_u_get_artist_or_performer_ptr(state, current_split);
+
         id3_data = splt_mp3_build_id3_tags(state,
             tags[current_split].title,
-            tags[current_split].artist,
+            artist_or_performer,
             tags[current_split].album,
             tags[current_split].year,
             tags[current_split].genre,

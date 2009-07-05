@@ -4,7 +4,7 @@ plugin_LTLIBRARIES =
 INCLUDES =
 
 #ccommon_LDFLAGS = -module -export-dynamic -avoid-version
-common_LDFLAGS = -L../src -L../src/.libs -L/lib -no-undefined -lm -lmp3splt @LIBINTL@
+common_LDFLAGS = -avoid-version -L../src -L../src/.libs -L/lib -no-undefined -lm -lmp3splt @LIBINTL@
 
 if WIN32
 common_LDFLAGS += -lz -lws2_32 -lintl

@@ -132,6 +132,8 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
 
 char *splt_u_str_to_upper(const char *str, int *error);
 
+char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split);
+
 #define MP3SPLT_UTILS_H
 
 #endif

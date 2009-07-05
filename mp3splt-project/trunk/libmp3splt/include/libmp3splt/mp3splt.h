@@ -482,7 +482,7 @@ typedef enum {
  * @brief Default output for the cddb and cue.
  * See #mp3splt_set_oformat
  */
-#define SPLT_DEFAULT_CDDB_CUE_OUTPUT "@a - @n - @t"
+#define SPLT_DEFAULT_CDDB_CUE_OUTPUT "@A - @n - @t"
 /**
  * @brief Default output for the syncerror.
  * See #mp3splt_set_oformat
