@@ -1364,59 +1364,75 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   return amb;
 }
 
-static char *splt_u_get_format_ptr_and_set_number_of_digits(splt_state *state, int i, char *temp, int *number_of_digits)
+static const char *splt_u_get_format_ptr(const char *format, char *temp)
 {
-  *number_of_digits = state->oformat.output_format_digits;
-  int format_length = strlen(state->oformat.format[i]);
-  char *format = state->oformat.format[i];
-  if ((format_length > 2) && isdigit(state->oformat.format[i][2]))
+  int format_length = strlen(format);
+  const char *format_ptr = format;
+
+  if ((format_length > 2) && isdigit(format[2]))
   {
-    temp[2] = state->oformat.format[i][2];
-    *number_of_digits = (int) state->oformat.format[i][2];
-    format = state->oformat.format[i] + 1;
-  }
-  else if (toupper(state->oformat.format[i][1]) != 'N')
-  {
-    /* The default output_format_digits calculation is wrong for alphabetic
-     * track numbers, so treat '@l' like '@l1'.
-     */
-    *number_of_digits = '1';
+    temp[2] = format[2];
+    format_ptr = format + 1;
   }
 
-  return format;
+  return format_ptr;
 }
 
+static int splt_u_get_requested_num_of_digits(splt_state *state, const char *format,
+    int *requested_num_of_digits, int is_alpha)
+{
+  int format_length = strlen(format);
+  int number_of_digits = 0;
+  if (is_alpha)
+  {
+    number_of_digits = state->oformat.output_alpha_format_digits;
+  }
+  else
+  {
+    number_of_digits = splt_t_get_oformat_number_of_digits_as_int(state);
+  }
+  int max_number_of_digits = number_of_digits;
+  *requested_num_of_digits = number_of_digits;
+
+  if ((format_length > 2) && isdigit(format[2]))
+  {
+    *requested_num_of_digits = format[2] - '0';
+  }
+
+  if (*requested_num_of_digits > number_of_digits)
+  {
+    max_number_of_digits = *requested_num_of_digits;
+  }
+
+  return max_number_of_digits;
+}
+
+/*
+ * Encode track number as 'A', 'B', ... 'Z', 'AA, 'AB', ...
+ *
+ * This is not simply "base 26"; note that the lowest 'digit' is from 'A' to
+ * 'Z' (base 26), but all higher digits are 'A' to 'Z' plus 'nothing', i.e.,
+ * base 27. In other words, since after 'Z' comes 'AA', we cannot use 'AA'
+ * as the padded version of track number 1 ('A').
+ *
+ * This means that there are two distinct work modes:
+ * - The normal encoding is as described above.
+ * - When the user has specified the number of digits (padding), we encode
+ *   the track number as simple base-26: 'AAA', 'AAB', ... 'AAZ', 'ABA',
+ *   'ABB', ...
+ */
 static void splt_u_alpha_track(const char *format, char *fm, int fm_length,
     int number_of_digits, int tracknumber)
 {
-  /*
-   * Encode track number as 'A', 'B', ... 'Z', 'AA, 'AB', ...
-   *
-   * This is not simply "base 26"; note that the lowest 'digit' is from 'A' to
-   * 'Z' (base 26), but all higher digits are 'A' to 'Z' plus 'nothing', i.e.,
-   * base 27. In other words, since after 'Z' comes 'AA', we cannot use 'AA'
-   * as the padded version of track number 1 ('A').
-   *
-   * This means that there are two distinct work modes:
-   * - The normal encoding is as described above.
-   * - When the user has specified the number of digits (padding), we encode
-   *   the track number as simple base-26: 'AAA', 'AAB', ... 'AAZ', 'ABA',
-   *   'ABB', ...
-   */
-
   int lowercase = (toupper(format[1]) == 'L');
   char a = lowercase ? 'a' : 'A';
   int zerobased = tracknumber - 1;
-  int i, min_digits;
+  int i = 1, min_digits = 1;
 
   /* Find the minimum number of digits required for this number */
-  min_digits = 1;
   for (zerobased /= 26; zerobased > 0; zerobased /= 27)
     ++ min_digits;
   zerobased = tracknumber - 1;
-
-  /* number_of_digits is given as the ASCII character (bug?) */
-  number_of_digits = (number_of_digits - '0');
 
   if (number_of_digits > 1)
   {
@@ -1451,7 +1467,8 @@ static void splt_u_alpha_track(const char *format, char *fm, int fm_length,
   {
     offset = 1;
   }
-  snprintf(fm + number_of_digits, fm_length, "%s", format + 2 + offset);
+  snprintf(fm + number_of_digits, fm_length - number_of_digits,
+      "%s", format + 2 + offset);
 }
 
 //writes the current filename according to the output_filename
@@ -1569,8 +1586,7 @@ put_value:
 
           if (mMsShH_value != -1)
           {
-            char *format = NULL;
-            int number_of_digits = state->oformat.output_format_digits;
+            const char *format = NULL;
             int offset = 5;
 
             //don't print out @h or @H if 0 for default output
@@ -1591,13 +1607,16 @@ put_value:
             }
             else
             {
-              format = splt_u_get_format_ptr_and_set_number_of_digits(state, i,
-                  temp, &number_of_digits);
+              format = splt_u_get_format_ptr(state->oformat.format[i], temp);
             }
+
+            int requested_num_of_digits = 0;
+            int max_number_of_digits = splt_u_get_requested_num_of_digits(state,
+                state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
 
             snprintf(temp + offset, temp_len, format + 2);
 
-            fm_length = strlen(temp) + 1 + number_of_digits;
+            fm_length = strlen(temp) + 1 + max_number_of_digits;
             if ((fm = malloc(fm_length * sizeof(char))) == NULL)
             {
               error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -1839,17 +1858,13 @@ put_value:
           break;
         case 'l':
         case 'L':
-        case 'n':
-        case 'N':
         case 'u':
         case 'U':
+        case 'n':
+        case 'N':
           temp[1] = '0';
-          temp[2] = state->oformat.output_format_digits;
+          temp[2] = splt_t_get_oformat_number_of_digits_as_char(state);
           temp[3] = 'd';
-
-          int number_of_digits = state->oformat.output_format_digits;
-          char *format = splt_u_get_format_ptr_and_set_number_of_digits(state, i, temp,
-              &number_of_digits);
 
           int tracknumber = old_current_split + 1;
 
@@ -1873,22 +1888,42 @@ put_value:
             }
           }
 
-          snprintf(temp+4, temp_len, format+2);
+          int requested_num_of_digits = 0;
+          int max_num_of_digits = splt_u_get_requested_num_of_digits(state,
+              state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
 
-          fm_length = strlen(temp) + 1 + number_of_digits;
+          int alpha_requested_num_of_digits = 0;
+          int alpha_max_num_of_digits = splt_u_get_requested_num_of_digits(state,
+              state->oformat.format[i], &alpha_requested_num_of_digits, SPLT_TRUE);
+
+          int is_numeric = toupper(state->oformat.format[i][1]) == 'N';
+          if (is_numeric)
+          {
+            const char *format = splt_u_get_format_ptr(state->oformat.format[i], temp);
+
+            snprintf(temp + 4, temp_len, format + 2);
+            fm_length = strlen(temp) + 1 + max_num_of_digits;
+          }
+          else
+          {
+            fm_length = strlen(state->oformat.format[i]) + 1 + alpha_max_num_of_digits;
+          }
+
           if ((fm = malloc(fm_length * sizeof(char))) == NULL)
           {
             error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
             goto end;
           }
+          memset(fm, '\0', fm_length);
 
-          if (toupper(state->oformat.format[i][1]) == 'N')
+          if (is_numeric)
           {
             snprintf(fm, fm_length, temp, tracknumber);
           }
           else
           {
-            splt_u_alpha_track(state->oformat.format[i], fm, fm_length, number_of_digits, tracknumber);
+            splt_u_alpha_track(state->oformat.format[i], fm, fm_length,
+                alpha_requested_num_of_digits, tracknumber);
           }
           break;
         case 'f':

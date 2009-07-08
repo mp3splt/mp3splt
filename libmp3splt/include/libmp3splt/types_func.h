@@ -78,6 +78,8 @@ int splt_t_new_oformat(splt_state *state, const char *format_string);
 const char *splt_t_get_oformat(splt_state *state);
 void splt_t_set_oformat_digits_tracks(splt_state *state, int tracks);
 void splt_t_set_oformat_digits(splt_state *state);
+int splt_t_get_oformat_number_of_digits_as_int(splt_state *state);
+char splt_t_get_oformat_number_of_digits_as_char(splt_state *state);
 
 /********************************/
 /* types: splitnumber access */

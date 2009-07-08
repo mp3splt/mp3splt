@@ -687,9 +687,19 @@ int splt_t_new_oformat(splt_state *state, const char *format_string)
 
 void splt_t_set_oformat_digits_tracks(splt_state *state, int tracks)
 {
-  int i = 0;
-  i = (int) (log10((double) (tracks)));
+  int i = (int) (log10((double) (tracks)));
   state->oformat.output_format_digits = (char) ((i+1) | 0x30);
+  state->oformat.output_alpha_format_digits = (tracks / 28) + 1;
+}
+
+int splt_t_get_oformat_number_of_digits_as_int(splt_state *state)
+{
+  return state->oformat.output_format_digits - '0';
+}
+
+char splt_t_get_oformat_number_of_digits_as_char(splt_state *state)
+{
+  return state->oformat.output_format_digits;
 }
 
 //puts the number of digits for the output format

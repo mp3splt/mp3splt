@@ -189,6 +189,7 @@ typedef struct {
   char *format_string;
   //when we have @n option on output format
   char output_format_digits;
+  int output_alpha_format_digits;
   //format for the cddb cue output
   char format[SPLT_OUTNUM+1][SPLT_MAXOLEN];
 } splt_oformat;
