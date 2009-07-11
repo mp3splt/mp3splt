@@ -75,6 +75,8 @@ gint cue_incorrect_selected_file = FALSE;
 extern splt_state *the_state;
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
+extern gchar *filename_to_split;
+extern GtkWidget *entry;
 
 //when closing the new window after detaching
 void close_cddb_cue_popup_window_event(GtkWidget *window, gpointer data)
@@ -130,24 +132,11 @@ void add_cddb_splitpoints(gpointer *data)
  
   gtk_widget_set_sensitive(GTK_WIDGET(add_cddb_button), FALSE);
  
-  gint err = SPLT_OK;
-
   const gchar *filename = gtk_entry_get_text(GTK_ENTRY(cddb_entry));
+
+  gdk_threads_leave();
  
-  if (get_checked_output_radio_box())
-  {
-    gdk_threads_leave();
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_DEFAULT);
-  }
-  else
-  {
-    gdk_threads_leave();
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_FORMAT);
-  }
- 
-  //we get the information from the cddb file
+  gint err = SPLT_OK;
   mp3splt_put_cddb_splitpoints_from_file(the_state, filename, &err);
 
   gdk_threads_enter();
@@ -166,20 +155,23 @@ void add_cddb_splitpoints(gpointer *data)
 
 void update_output_options()
 {
-  //output options
+  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  mp3splt_set_filename_to_split(the_state, filename_to_split);
+
+  const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
+  gint error = SPLT_OUTPUT_FORMAT_OK;
+  mp3splt_set_oformat(the_state, data, &error);
+  print_status_bar_confirmation(error);
+
   if (get_checked_output_radio_box() == 0)
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_DEFAULT);
-    const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
-    gint error = SPLT_OUTPUT_FORMAT_OK;
-    mp3splt_set_oformat(the_state, data, &error);
-    print_status_bar_confirmation(error);
+        SPLT_OUTPUT_FORMAT);
   }
   else
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_FORMAT);
+        SPLT_OUTPUT_DEFAULT);
   }
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE,
       debug_is_active);
@@ -200,20 +192,9 @@ void add_cue_splitpoints(gpointer *data)
   gtk_widget_set_sensitive(GTK_WIDGET(add_cue_button), FALSE);
 
   const gchar *filename = gtk_entry_get_text(GTK_ENTRY(cue_entry));
- 
-  if(get_checked_output_radio_box())
-  {
-    gdk_threads_leave();
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_DEFAULT);
-  }
-  else
-  {
-    gdk_threads_leave();
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_FORMAT);
-  }
- 
+
+  gdk_threads_leave();
+
   gint err = SPLT_OK;
   mp3splt_put_cue_splitpoints_from_file(the_state,filename, &err);
  

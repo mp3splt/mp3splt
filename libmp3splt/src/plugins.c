@@ -114,8 +114,8 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
 #else
   char *file = (char *) de->d_name;
 #endif
-  char *p_end = NULL;
-  char *p_start = NULL;
+  const char *p_end = NULL;
+  const char *p_start = NULL;
   if (file)
   {
     if (strlen(file) >= 8)
@@ -124,26 +124,37 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
       if (strncmp(file,"libsplt_",8) == 0)
       {
         splt_u_print_debug(NULL, "Looking at the file ",0, file);
-        //find the last '.' character
-        p_end = strrchr(file,'.');
+
         p_start = strchr(file,'.');
-        //we only look at files containing only one dot
+
+#ifndef __WIN32__
+        //gnu/linux .so.0
+        p_end = strstr(file, ".so.0");
+        if (p_end != NULL && (p_start == p_end) && (*(p_end+5) == '\0'))
+        {
+          return 1;
+        }
+#endif
+
+        p_end = strrchr(file,'.');
         if ((p_end != NULL) && (p_start == p_end))
         {
-          if ((strcmp(p_end,".so") == 0) ||
-              (strcmp(p_end,".sl") == 0) ||
-              (strcmp(p_end,".dll") == 0) ||
-              (strcmp(p_end,".dylib") == 0))
-          {
+          //windows .dll
 #ifdef __WIN32__
-            if (file)
-            {
-              free(file);
-              file = NULL;
-            }
-#endif
+          if (strcmp(p_end,".dll") == 0)
+          {
+            free(file);
+            file = NULL;
+
             return 1;
           }
+#else
+          //bsd .sl & darwin .dylib
+          if ((strcmp(p_end,".sl") == 0) || (strcmp(p_end,".dylib") == 0))
+          {
+            return 1;
+          }
+#endif
         }
       }
     }
@@ -731,6 +742,10 @@ void splt_p_split(splt_state *state, const char *final_fname, double begin_point
   }
   else
   {
+    int err = SPLT_OK;
+    splt_u_create_output_dirs_if_necessary(state, final_fname, &err);
+    if (err < 0) { *error = err; return; }
+
     if (pl->data[current_plugin].func->split != NULL)
     {
       pl->data[current_plugin].func->split(state, final_fname,

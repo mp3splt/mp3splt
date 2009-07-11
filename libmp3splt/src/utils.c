@@ -1471,6 +1471,31 @@ static void splt_u_alpha_track(const char *format, char *fm, int fm_length,
       "%s", format + 2 + offset);
 }
 
+void splt_u_create_output_dirs_if_necessary(splt_state *state,
+    const char *output_filename, int *error)
+{
+  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
+  {
+    char *only_dirs = strdup(output_filename);
+    if (! only_dirs)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return;
+    }
+
+    char *dir_char = strrchr(only_dirs, SPLT_DIRCHAR);
+    if (dir_char != NULL)
+    {
+      *dir_char = '\0';
+      int err = splt_u_create_directories(state, only_dirs);
+      if (err < 0) { *error = err; }
+    }
+
+    free(only_dirs);
+    only_dirs = NULL;
+  }
+}
+
 //writes the current filename according to the output_filename
 int splt_u_put_output_format_filename(splt_state *state)
 {
@@ -2013,108 +2038,13 @@ put_value:
     }
   }
 
-  //we change the splitpoint name
-  int name_error = SPLT_OK;
-  int cur_splt = splt_t_get_current_split(state);
-
   splt_u_print_debug(state,"The new output filename is ",0,output_filename);
-
-  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
-  {
-    char *only_dirs = strdup(output_filename);
-    if (! only_dirs)
-    {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto end;
-    }
-
-    //get out the directory path
-    char *dir_char = strrchr(only_dirs, SPLT_DIRCHAR);
-    if (dir_char != NULL)
-    {
-      *dir_char = '\0';
-      char *path_of_split = splt_t_get_path_of_split(state);
-      //append the 'directory path' from the filename to the path of split
-      if (path_of_split)
-      {
-        int malloc_length = strlen(path_of_split) + strlen(only_dirs) + 3;
-        char *full_path_to_create = malloc(sizeof(char) * malloc_length);
-        if (! full_path_to_create)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-          if (only_dirs)
-          {
-            free(only_dirs);
-            only_dirs = NULL;
-          }
-          goto end;
-        }
-        else
-        {
-          snprintf(full_path_to_create, malloc_length - 1,
-              "%s%c%s", path_of_split, SPLT_DIRCHAR, only_dirs);
-          splt_u_create_directories(state, full_path_to_create);
-        }
-
-        if (full_path_to_create)
-        {
-          free(full_path_to_create);
-          full_path_to_create = NULL;
-        }
-      }
-      //the new path of split is the path of the source file
-      else
-      {
-        char *new_filename_path = splt_t_get_new_filename_path(state);
-        //append the new path of split from the filename to the path of split
-        if (new_filename_path)
-        {
-          int malloc_length = strlen(new_filename_path) + strlen(only_dirs) + 3;
-          char *full_path_to_create = malloc(sizeof(char) * malloc_length);
-          if (! full_path_to_create)
-          {
-            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-            if (only_dirs)
-            {
-              free(only_dirs);
-              only_dirs = NULL;
-            }
-            goto end;
-          }
-          else
-          {
-            if (new_filename_path != NULL && new_filename_path[0] != '\0')
-            {
-              snprintf(full_path_to_create, malloc_length - 1,
-                  "%s%c%s", new_filename_path , SPLT_DIRCHAR, only_dirs);
-              splt_u_create_directories(state, full_path_to_create);
-            }
-            else
-            {
-              splt_u_create_directories(state, only_dirs);
-            }
-          }
-
-          if (full_path_to_create)
-          {
-            free(full_path_to_create);
-            full_path_to_create = NULL;
-          }
-        }
-      }
-    }
-    if (only_dirs)
-    {
-      free(only_dirs);
-      only_dirs = NULL;
-    }
-  }
-
-  name_error = splt_t_set_splitpoint_name(state, cur_splt, output_filename);
+  int cur_splt = splt_t_get_current_split(state);
+  int name_error =
+    splt_t_set_splitpoint_name(state, cur_splt, output_filename);
   if (name_error != SPLT_OK) { error = name_error; }
 
 end:
-  //free memory
   if (output_filename)
   {
     free(output_filename);
@@ -3276,6 +3206,7 @@ char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split)
   int tags_number = 0;
   splt_tags *tags = splt_t_get_tags(state, &tags_number);
   char *artist_or_performer = tags[current_split].artist;
+
   if ((tags[current_split].performer != NULL) &&
       (tags[current_split].performer[0] != '\0'))
   {

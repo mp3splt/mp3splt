@@ -74,6 +74,8 @@ extern GtkWidget *spinner_adjust_offset;
 //threshold parameter
 extern GtkWidget *spinner_adjust_threshold;
 
+extern GtkWidget *create_dirs_from_output_files;
+
 //output for the file output
 extern GtkWidget *output_entry;
 extern GtkWidget *output_label;
@@ -81,6 +83,8 @@ extern GtkWidget *radio_output;
 extern GtkWidget *tags_radio;
 extern GtkWidget *tags_version_radio;
 extern GtkWidget *spinner_time;
+
+extern splt_state *the_state;
 
 //check if its a file
 gint is_filee(const gchar *fname)
@@ -344,12 +348,6 @@ jump_near:
     (GtkWidget *)g_slist_nth_data(tags_version_radio_button_list, tag_pref_file);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(the_selection), TRUE);
 
-  //output format
-  gchar *output_format = g_key_file_get_string(key_file, "output", "output_format", NULL);
-  gtk_entry_set_text(GTK_ENTRY(output_entry), output_format);
-  g_free(output_format);
-  output_format = NULL;
-
   //default output format or not
   gint default_output_format = g_key_file_get_boolean(key_file, "output",
       "default_output_format", NULL);
@@ -362,6 +360,23 @@ jump_near:
   {
     gtk_widget_set_sensitive(GTK_WIDGET(output_entry), FALSE);
     gtk_widget_set_sensitive(GTK_WIDGET(output_label), FALSE);
+  }
+
+  //output format
+  gchar *output_format = g_key_file_get_string(key_file, "output", "output_format", NULL);
+  gtk_entry_set_text(GTK_ENTRY(output_entry), output_format);
+  g_free(output_format);
+  output_format = NULL;
+
+  //create directories if needed
+  item = g_key_file_get_boolean(key_file, "output", "create_dirs_if_needed", NULL);
+  if (item)
+  {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files), TRUE);
+  }
+  else
+  {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files), FALSE);
   }
 
   //type of split: split mode
@@ -575,6 +590,12 @@ void write_default_preferences_file()
         " - if we use the default output or"
         " not for cddb, cue and freedb search",
         NULL);
+  }
+
+  //frame mode
+  if (!g_key_file_has_key(my_key_file, "output", "create_dirs_if_needed", NULL))
+  {
+    g_key_file_set_boolean(my_key_file, "output", "create_dirs_if_needed", TRUE);
   }
 
   //split save path (output dir)
