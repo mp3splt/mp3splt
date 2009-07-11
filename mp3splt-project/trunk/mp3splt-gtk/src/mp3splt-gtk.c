@@ -86,6 +86,8 @@ extern GtkWidget *spinner_adjust_offset;
 //threshold parameter
 extern GtkWidget *spinner_adjust_threshold;
 
+extern GtkWidget *create_dirs_from_output_files;
+
 //silence mode parameters
 //number of tracks parameter
 extern GtkWidget *spinner_silence_number_tracks;
@@ -200,11 +202,9 @@ void put_options_from_preferences()
   mp3splt_set_int_option(the_state, SPLT_OPT_INPUT_NOT_SEEKABLE,
       SPLT_FALSE);
 
-  //we set default option;
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
       SPLT_OPTION_NORMAL_MODE);
 
-  //we get the split modes
   switch (selected_split_mode)
   {
     case SELECTED_SPLIT_NORMAL:
@@ -281,7 +281,11 @@ void put_options_from_preferences()
       }
     }
   }
+
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, 
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
 }
 
 //changes the progress bar

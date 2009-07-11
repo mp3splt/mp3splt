@@ -1095,7 +1095,7 @@ int splt_t_append_original_tags(splt_state *state)
       state->original_tags.title,
       state->original_tags.artist,
       state->original_tags.album,
-      state->original_tags.artist,
+      NULL,
       state->original_tags.year,
       state->original_tags.comment,
       state->original_tags.track,
@@ -3123,12 +3123,12 @@ void splt_t_clean_one_split_data(splt_state *state, int num)
 {
   if (splt_t_tags_exists(state,num))
   {
-    splt_t_set_tags_char_field(state,num, SPLT_TAGS_YEAR,NULL);
-    splt_t_set_tags_char_field(state,num, SPLT_TAGS_ARTIST,NULL);
+    splt_t_set_tags_char_field(state,num, SPLT_TAGS_YEAR, NULL);
+    splt_t_set_tags_char_field(state,num, SPLT_TAGS_ARTIST, NULL);
     splt_t_set_tags_char_field(state,num, SPLT_TAGS_ALBUM, NULL);
-    splt_t_set_tags_char_field(state,num, SPLT_TAGS_TITLE,NULL);
-    splt_t_set_tags_char_field(state,num, SPLT_TAGS_COMMENT,NULL);
-    splt_t_set_tags_char_field(state,num, SPLT_TAGS_PERFORMER,NULL);
+    splt_t_set_tags_char_field(state,num, SPLT_TAGS_TITLE, NULL);
+    splt_t_set_tags_char_field(state,num, SPLT_TAGS_COMMENT, NULL);
+    splt_t_set_tags_char_field(state,num, SPLT_TAGS_PERFORMER, NULL);
   }
 
   if (splt_t_splitpoint_exists(state, num))

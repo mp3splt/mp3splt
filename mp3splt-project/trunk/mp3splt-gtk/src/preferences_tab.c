@@ -84,6 +84,8 @@ GtkWidget *frame_mode = NULL;
 //auto-adjust option
 GtkWidget *adjust_mode = NULL;
 
+GtkWidget *create_dirs_from_output_files = NULL;
+
 //adjust mode parameters
 GtkWidget *spinner_adjust_gap = NULL;
 GtkWidget *gap_label = NULL;
@@ -243,10 +245,11 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //output format
   g_key_file_set_string(my_key_file, "output", "output_format",
       gtk_entry_get_text(GTK_ENTRY(output_entry)));
-
   //default output format
   g_key_file_set_boolean(my_key_file, "output", "default_output_format",
       get_checked_output_radio_box());
+  g_key_file_set_boolean(my_key_file, "output", "create_dirs_if_needed",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
 
   //tags
   g_key_file_set_integer(my_key_file, "split", "tags",
@@ -631,13 +634,6 @@ GtkWidget *create_pref_splitpoints_page()
   return general_hbox;
 }
 
-//revert to save event
-void revert_to_save_event (GtkToggleButton *check_button,
-                                 gpointer data)
-{
-  load_preferences();
-}
-
 //removes unavailable players from the combo
 void combo_remove_unavailable_players()
 {
@@ -777,6 +773,12 @@ GtkWidget *create_output_filename_box()
       G_CALLBACK(output_entry_event), NULL);
   gtk_entry_set_max_length(GTK_ENTRY(output_entry),244);
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_entry, TRUE, TRUE, 0);
+
+  create_dirs_from_output_files =
+    gtk_check_button_new_with_mnemonic(_("_Create directories from filenames "));
+  gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
+  g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
+      G_CALLBACK(save_preferences), NULL);
 
   //output label
   horiz_fake = gtk_hbox_new(FALSE,0);

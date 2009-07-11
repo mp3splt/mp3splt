@@ -436,6 +436,7 @@ void write_freedbfile(int *err)
   gdk_threads_leave();
 
   mp3splt_set_oformat(the_state, data, &error);
+  print_status_bar_confirmation(error);
 
   //we write the freedb file ...
   mp3splt_write_freedb_file_result(the_state, selected_id,
