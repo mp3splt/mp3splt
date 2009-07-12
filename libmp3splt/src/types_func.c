@@ -31,8 +31,8 @@
  *********************************************************/
 
 #include <string.h>
-#include <math.h>
 #include <errno.h>
+#include <math.h>
 
 #ifdef __WIN32__
 #include <winsock.h>
@@ -688,8 +688,12 @@ int splt_t_new_oformat(splt_state *state, const char *format_string)
 void splt_t_set_oformat_digits_tracks(splt_state *state, int tracks)
 {
   int i = (int) (log10((double) (tracks)));
-  state->oformat.output_format_digits = (char) ((i+1) | 0x30);
-  state->oformat.output_alpha_format_digits = (tracks / 28) + 1;
+  state->oformat.output_format_digits = (char) (i+'1');
+
+  /* Number of alphabetical "digits": almost base-27 */
+  state->oformat.output_alpha_format_digits = 1;
+  for (i = (tracks - 1) / 26; i > 0; i /= 27)
+    ++ state->oformat.output_alpha_format_digits;
 }
 
 int splt_t_get_oformat_number_of_digits_as_int(splt_state *state)

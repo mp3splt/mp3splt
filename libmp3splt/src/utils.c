@@ -1421,18 +1421,14 @@ static int splt_u_get_requested_num_of_digits(splt_state *state, const char *for
  *   the track number as simple base-26: 'AAA', 'AAB', ... 'AAZ', 'ABA',
  *   'ABB', ...
  */
-static void splt_u_alpha_track(const char *format, char *fm, int fm_length,
-    int number_of_digits, int tracknumber)
+static void splt_u_alpha_track(splt_state *state, int nfield,
+    char *fm, int fm_length, int number_of_digits, int tracknumber)
 {
+  char *format = state->oformat.format[nfield];
   int lowercase = (toupper(format[1]) == 'L');
   char a = lowercase ? 'a' : 'A';
   int zerobased = tracknumber - 1;
-  int i = 1, min_digits = 1;
-
-  /* Find the minimum number of digits required for this number */
-  for (zerobased /= 26; zerobased > 0; zerobased /= 27)
-    ++ min_digits;
-  zerobased = tracknumber - 1;
+  int i = 1, min_digits = state->oformat.output_alpha_format_digits;
 
   if (number_of_digits > 1)
   {
@@ -1947,7 +1943,7 @@ put_value:
           }
           else
           {
-            splt_u_alpha_track(state->oformat.format[i], fm, fm_length,
+            splt_u_alpha_track(state, i, fm, fm_length,
                 alpha_requested_num_of_digits, tracknumber);
           }
           break;
