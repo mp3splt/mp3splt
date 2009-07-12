@@ -525,6 +525,12 @@ GtkWidget *create_split_options_box()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
 
+  create_dirs_from_output_files =
+    gtk_check_button_new_with_mnemonic(_("_Create directories from filenames "));
+  gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
+  g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
+      G_CALLBACK(save_preferences), NULL);
+
   //frame mode option
   frame_mode = gtk_check_button_new_with_mnemonic(_("F_rame mode (useful"
         " for mp3 VBR) (mp3 only)"));
@@ -773,12 +779,6 @@ GtkWidget *create_output_filename_box()
       G_CALLBACK(output_entry_event), NULL);
   gtk_entry_set_max_length(GTK_ENTRY(output_entry),244);
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_entry, TRUE, TRUE, 0);
-
-  create_dirs_from_output_files =
-    gtk_check_button_new_with_mnemonic(_("_Create directories from filenames "));
-  gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
-  g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
-      G_CALLBACK(save_preferences), NULL);
 
   //output label
   horiz_fake = gtk_hbox_new(FALSE,0);
