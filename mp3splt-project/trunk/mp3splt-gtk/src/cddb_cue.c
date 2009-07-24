@@ -109,7 +109,7 @@ void handle_cddb_cue_detached_event (GtkHandleBox *handlebox,
 }
 
 //event for the cue file chooser ok button
-void cue_file_chooser_ok_event(gchar *fname)
+void cue_file_chooser_ok_event(const gchar *fname)
 {
   gtk_entry_set_text(GTK_ENTRY(cue_entry), fname);
   gtk_widget_set_sensitive(GTK_WIDGET(add_cue_button),
@@ -117,7 +117,7 @@ void cue_file_chooser_ok_event(gchar *fname)
 }
 
 //event for the cddb file chooser ok button
-void cddb_file_chooser_ok_event(gchar *fname)
+void cddb_file_chooser_ok_event(const gchar *fname)
 {
   gtk_entry_set_text(GTK_ENTRY(cddb_entry), fname);
   gtk_widget_set_sensitive(GTK_WIDGET(add_cddb_button),

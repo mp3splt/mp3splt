@@ -3,6 +3,20 @@ Check http://mp3splt.sourceforge.net for the latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
+#mp3splt v. 2.2.6
+
+- multiple files split : split recursively files from directories
+- added internationalization support (gettext) + french & german translations
+- added patch for output format variables @u, @U, @l, @L (thanks TODO ) (libmp3splt)
+- added support to output both ID3v1 and ID3v2 tags
+- fixed bug #2809816 with cue file : artist tags were the same (libmp3splt)
+- fixed important bug when detecting the total time : the last split file was shorter (libmp3splt)
+- replaced -1 & -2 with -T 1 & -T 2 + added -T 12 for both ID3v1 and ID3v2 output
+- by default, output tags 12 when using -g and no tags in input files
+- fixed compilation bug for libmp3splt detection to look for 'libmp3splt/mp3splt.h' instead of mp3splt.h (libmp3splt)
+- fixed uninstall hook for ogg symlinks
+- added oggsplt symlink to doc
+
 #mp3splt v. 2.2.5
 
 - added -x option to not write Xing header

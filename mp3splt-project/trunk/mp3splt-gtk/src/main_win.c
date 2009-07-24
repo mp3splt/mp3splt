@@ -159,18 +159,104 @@ void quit(GtkWidget *widget, gpointer   data)
   gtk_main_quit();
 }
 
+void process_filename_drop(char *filename)
+{
+  gchar *ext = strrchr(filename, '.');
+  GString *ext_str = g_string_new(ext);
+
+  g_string_ascii_up(ext_str);
+
+  if ((strstr(ext_str->str, ".MP3") != NULL) ||
+      (strstr(ext_str->str, ".OGG") != NULL))
+  {
+    file_chooser_ok_event(filename);
+    remove_status_message();
+  }
+  else if ((strstr(ext_str->str, ".CUE") != NULL))
+  {
+    cue_file_chooser_ok_event(filename);
+    cue_add_button_event(NULL, NULL);
+  }
+  else if ((strstr(ext_str->str, ".CDDB") != NULL))
+  {
+    cddb_file_chooser_ok_event(filename);
+    cddb_add_button_event(NULL, NULL);
+  }
+
+  if (ext_str)
+  {
+    g_string_free(ext_str, FALSE);
+  }
+}
+
+void main_window_drag_data_received(GtkWidget *window,
+    GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint
+    info, guint time, gpointer user_data)
+{
+  const gchar *received_data = (gchar *) data->data;
+
+  if (received_data != NULL)
+  {
+    gchar **drop_filenames = NULL;
+    drop_filenames = g_strsplit(received_data, "\n", 0);
+
+    gint current_index = 0;
+    gchar *current_filename = drop_filenames[current_index];
+    while (current_filename != NULL)
+    {
+      gchar *filename = NULL;
+      if (strstr(current_filename, "file:") == current_filename)
+      {
+        filename = g_filename_from_uri(current_filename, NULL, NULL);
+      }
+      else
+      {
+        gint fname_malloc_size = strlen(current_filename) + 1;
+        filename = g_malloc(sizeof(gchar) * fname_malloc_size);
+        g_snprintf(filename, fname_malloc_size, "%s", current_filename);
+      }
+
+      remove_end_slash_n_r_from_filename(filename);
+
+      if (is_filee(filename))
+      {
+        process_filename_drop(filename);
+      }
+
+      if (filename)
+      {
+        g_free(filename);
+        filename = NULL;
+      }
+
+      g_free(current_filename);
+      current_index++;
+      current_filename = drop_filenames[current_index];
+    }
+
+    if (drop_filenames)
+    {
+      g_free(drop_filenames);
+      drop_filenames = NULL;
+    }
+  }
+}
+
 //initializes window
 void initialize_window()
 {
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   window_accel_group = gtk_accel_group_new();
   gtk_window_add_accel_group(GTK_WINDOW(window), window_accel_group);
    
-  //sets the title
   gtk_window_set_title(GTK_WINDOW(window), PACKAGE_NAME" "VERSION);
-  //sets the width
   gtk_container_set_border_width (GTK_CONTAINER (window), 0);
+
   g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(quit), NULL);
+  g_signal_connect(G_OBJECT(window), "drag-data-received",
+      G_CALLBACK(main_window_drag_data_received), NULL);
+  gtk_drag_dest_set(window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
+      drop_types, 3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
  
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
  
@@ -178,6 +264,10 @@ void initialize_window()
   GdkPixbuf *pixbuf =
     gdk_pixbuf_new_from_file(PIXMAP_PATH"mp3splt-gtk_ico.png", NULL);
   gtk_window_set_default_icon(pixbuf);
+}
+
+void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
+{
 }
 
 void about_window(GtkWidget *widget, gpointer *data)
@@ -192,17 +282,16 @@ void about_window(GtkWidget *widget, gpointer *data)
   gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
   gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),
-                                 PACKAGE_NAME" (c) 2005-2009 Munteanu"
-                                 " Alexandru \n mp3splt (c) 2002-2005 Matteo Trotta");
-  
-  gchar *b1 = NULL, *b2 = NULL;
+                                 PACKAGE_NAME" : Copyright © 2005-2009 Alexandru"
+                                 " Munteanu \n mp3splt : Copyright © 2002-2005 Matteo Trotta");
+
+  gchar *b1 = NULL;
   gchar b3[100] = { '\0' };
   b1 = (gchar *)_("using");
-  b2 = (gchar *)_("created from");
   gchar library_version[20] = { '\0' };
   mp3splt_get_version(library_version);
-  g_snprintf(b3, 100, "-%s 16/05/09-\n%s libmp3splt %s (%s mp3splt)",
-             _("release of"), b1, library_version, b2);
+  g_snprintf(b3, 100, "-%s 16/05/09-\n%s libmp3splt %s",
+             _("release of"), b1, library_version);
   
   gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), b3);
   
@@ -228,8 +317,14 @@ void about_window(GtkWidget *widget, gpointer *data)
                                 "Suite 330, Boston, MA  02111-1307, "
                                 "USA.");
 
+  gtk_about_dialog_set_url_hook(activate_url, NULL, NULL);
+  gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog),
+      "http://mp3splt.sourceforge.net");
   gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog),
-      "http://mp3splt.sourceforge.net/");
+      "http://mp3splt.sourceforge.net");
+
+  gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(dialog),
+      "Mario Blättermann <mariobl@gnome.org>");
 
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
@@ -649,15 +744,10 @@ void create_all()
   set_language();
 #endif
 
-  //main vbox containing all + statusbar
-  GtkWidget *main_vbox;
-  
   initialize_window();
-  
-  /* vertical box */
-  GtkWidget *window_vbox;
-  window_vbox = gtk_vbox_new(FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (window), window_vbox);
+ 
+  GtkWidget *window_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_add(GTK_CONTAINER(window), window_vbox);
 
   /* menu bar */
   GtkWidget *menu_bar;
@@ -665,7 +755,7 @@ void create_all()
   gtk_box_pack_start(GTK_BOX(window_vbox), menu_bar, FALSE, FALSE, 0);  
   
   /* main vbox */
-  main_vbox = (GtkWidget *)create_main_vbox();
+  GtkWidget *main_vbox = (GtkWidget *)create_main_vbox();
   gtk_box_pack_start(GTK_BOX(window_vbox), main_vbox, TRUE, TRUE, 0);
   
   gtk_widget_show_all(window);

@@ -13,6 +13,5 @@ char *substr(char *dst, const char *src, size_t len)
 }
 
 * do proxy
-* ameliorate progress bar on ogg split
 * warning before overwriting files
 

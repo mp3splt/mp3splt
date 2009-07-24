@@ -154,6 +154,14 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
           {
             return 1;
           }
+
+#ifdef STATIC_BUILD
+          if (strcmp(p_end,".a") == 0)
+          {
+            return 1;
+          }
+#endif
+
 #endif
         }
       }
@@ -192,7 +200,10 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
 
   if (number_of_files == -1)
   {
-		return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    if (errno == ENOMEM)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
   }
   else if (new_number_of_files >= 0)
   {
@@ -801,7 +812,6 @@ void splt_p_end(splt_state *state, int *error)
     }
   }
 }
-
 
 int splt_p_simple_split(splt_state *state, const char *output_fname, off_t begin,
     off_t end)

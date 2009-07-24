@@ -10,6 +10,8 @@ cd $PROGRAM_DIR
 
 put_package "linux_kernel_static"
 
+export CFLAGS="${CFLAGS} -static"
+
 #if we don't have the distribution file
 DIST_FILE="../mp3splt-${MP3SPLT_VERSION}_static_${ARCH}.tar.gz"
 if [[ ! -f $DIST_FILE ]];then
@@ -28,7 +30,7 @@ if [[ ! -f $DIST_FILE ]];then
     
     #we compile
     ./autogen.sh && \
-        ./configure --disable-shared --enable-static && \
+        ./configure --enable-static-build && \
         make clean && \
         make DESTDIR=$STATIC_DIR install && \
         cp "${MP3SPLT_DOC_FILES[@]}" $STATIC_DIR/usr/local/share/doc/mp3splt &&\

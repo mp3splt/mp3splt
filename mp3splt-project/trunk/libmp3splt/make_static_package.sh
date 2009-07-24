@@ -24,17 +24,15 @@ if [[ ! -f $DIST_FILE ]];then
     
     #we compile
     ./autogen.sh && \
-        ./configure --disable-shared --enable-static && \
+        ./configure --enable-static-build && \
         make clean && \
         make DESTDIR=$STATIC_DIR install && \
         cp "${LIBMP3SPLT_DOC_FILES[@]}" $STATIC_DIR/usr/local/share/doc/libmp3splt &&\
         tar -c -z -C $STATIC_DIR -f libmp3splt-${LIBMP3SPLT_VERSION}_static_$ARCH.tar.gz . &&\
         mv libmp3splt*.tar.gz ../ || exit 1
     
-    #we install libmp3splt shared libs too for mp3splt and mp3splt-gtk
-    #configure scripts
-    ./configure --enable-shared --enable-static && make clean && make &&\
-        make DESTDIR=$STATIC_DIR install || exit 1
-else
-    put_is_package_warning "We already have the $DIST_FILE distribution file !"
+    exit 0
 fi
+
+put_is_package_warning "We already have the $DIST_FILE distribution file !"
+

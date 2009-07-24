@@ -11,7 +11,7 @@ cd $script_dir
 put_package "linux_kernel_static"
 
 #we put the flags, to find out libmp3splt headers and libraries
-export CFLAGS="-I/tmp/static_tmp/libmp3splt/usr/local/include $CFLAGS"
+export CFLAGS="-I/tmp/static_tmp/libmp3splt/usr/local/include $CFLAGS -static"
 export LDFLAGS="-L/tmp/static_tmp/libmp3splt/usr/local/lib $LDFLAGS"
 
 #if we don't have the distribution file

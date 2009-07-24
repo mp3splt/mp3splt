@@ -110,6 +110,18 @@ else
   AM_CONDITIONAL(DO_SYMLINK, false)
 fi
 
+#################################################################
+# Check for --enable-static-build
+#################################################################
+
+AM_CONDITIONAL(STATIC_BUILD,false)
+AC_ARG_ENABLE(static-build, [AC_HELP_STRING([--enable-all-static],[ Enables static build.]) ],
+    [enable_static_build=$enableval],[enable_static_build="no"])
+
+if test x$enable_static_build = xyes;then
+  AM_CONDITIONAL(STATIC_BUILD,true)
+fi
+
 #################################################
 # Generate Makefiles
 #################################################

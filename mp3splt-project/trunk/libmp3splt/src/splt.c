@@ -108,6 +108,8 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
         // 34.6  --> 34 seconds and 6 hundredth
         splt_beg = split_begin / 100;
         splt_beg += ((split_begin % 100) / 100.);
+
+        //TODO
         //we will transmit to the plugins the -1.f value
         //if we have LONG_MAX (== EOF)
         if (split_end == LONG_MAX)
@@ -405,8 +407,7 @@ void splt_s_time_split(splt_state *state, int *error)
           long end_splitpoint = end*100;
           if (end_splitpoint >= splt_t_get_total_time(state))
           {
-            end_splitpoint =
-              splt_t_get_total_time(state);
+            end_splitpoint = splt_t_get_total_time(state);
             //avoid worst scenarios where floor & SPLT_OK_SPLIT_EOF do not
             //work
             last_file = SPLT_TRUE;

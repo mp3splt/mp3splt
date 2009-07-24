@@ -412,11 +412,10 @@ See also the \-x option.
 this option with \-n if you wish to concatenate the split files and obtain
 a similar file as the input file.
 
-.IP "\fB\-1\fP         " 10
-\fBForce ID3v1 tags\fP. For mp3 files, force output tags as version 1.
-
-.IP "\fB\-2\fP         " 10
-\fBForce ID3v2 tags\fP. For mp3 files, force output tags as version 2.
+.IP "\fB\-T TAGS_VERSION\fP         " 10
+\fBForce output tags version\fP. For mp3 files, force output ID3 tags as version
+ID3v1, ID3v2 or ID3v1 and ID3v2. TAGS_VERSION can be 1, 2 or 12. Default is to set the output
+tags version as the tags version of the file to split.
 
 .IP "\fB\-N\fP         " 10
 \fBNo silence log file\fP. Don't create the 'mp3splt.log' log file when using

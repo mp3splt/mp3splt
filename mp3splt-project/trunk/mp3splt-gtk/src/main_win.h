@@ -49,6 +49,18 @@
 #define WINDOW_X 700
 #define WINDOW_Y 450
 
+enum {
+  DROP_PLAIN,
+  DROP_STRING,
+  DROP_URI_LIST
+};
+
+static const GtkTargetEntry drop_types[] = {
+  { "text/plain", 0, DROP_PLAIN },
+  { "STRING", 0, DROP_STRING },
+  { "text/uri-list", 0, DROP_URI_LIST }
+};
+
 //close the window and exit button function
 void quit(GtkWidget *widget, gpointer data);
 void initialize_window();

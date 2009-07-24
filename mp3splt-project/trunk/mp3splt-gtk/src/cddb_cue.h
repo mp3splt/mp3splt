@@ -37,8 +37,10 @@
  *
  *********************************************************/
 
-void cue_file_chooser_ok_event(gchar *fname);
-void cddb_file_chooser_ok_event(gchar *fname);
+void cddb_file_chooser_ok_event(const gchar *fname);
+void cue_file_chooser_ok_event(const gchar *fname);
+void cddb_add_button_event(GtkWidget *widget, gpointer *data);
+void cue_add_button_event(GtkWidget *widget, gpointer *data);
 void close_cddb_cue_popup_window_event( GtkWidget *window,
                                         gpointer data );
 void handle_cddb_cue_detached_event (GtkHandleBox *handlebox,
