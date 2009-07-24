@@ -1058,7 +1058,7 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
  * each packet, using the granulepos which we track block-by-block.
  */
 static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *stream,
-    FILE *in, FILE *f, ogg_int64_t cutpoint, short adjust, float threshold,
+    FILE *in, FILE *f, ogg_int64_t cutpoint, int adjust, float threshold,
     int *error, const char *output_fname, int save_end_point)
 {
   splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
@@ -1336,7 +1336,7 @@ write_error:
 //splits ogg
 void splt_ogg_split(const char *output_fname, splt_state *state, double
     sec_begin, double sec_end, short seekable, 
-    short adjust, float threshold, int *error, int save_end_point)
+    int adjust, float threshold, int *error, int save_end_point)
 {
   splt_ogg_state *oggstate = state->codec;
 

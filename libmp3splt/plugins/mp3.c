@@ -2055,7 +2055,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
 
   splt_mp3_state *mp3state = state->codec;
 
-  short adjustoption = splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP);
+  int adjustoption = splt_t_get_int_option(state, SPLT_OPT_PARAM_GAP);
   short seekable = ! splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE);
   float threshold = splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
 
@@ -2682,11 +2682,8 @@ bloc_end:
           {
             adjust = (unsigned long) (adjustoption * mp3state->mp3file.fps);
           }
-
           fend += adjust;
-
           end = splt_mp3_findhead(mp3state, end);
-
           splt_t_ssplit_free(&state->silence_list);
           adjust=0;
           //progress

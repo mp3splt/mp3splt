@@ -48,4 +48,5 @@ void print_processing_file(gchar *filename);
 
 GtkWidget *set_title_and_get_vbox(GtkWidget *widget, gchar *title);
 gboolean container_has_child(GtkContainer *cont, GtkWidget *my_child);
+void remove_end_slash_n_r_from_filename(char *filename);
 

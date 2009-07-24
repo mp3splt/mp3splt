@@ -328,7 +328,7 @@ void scan_for_silence_wave()
   }
 }
 
-void change_current_filename(gchar *fname)
+void change_current_filename(const gchar *fname)
 {
   const gchar *old_fname = gtk_entry_get_text(GTK_ENTRY(entry));
   if (strcmp(old_fname,fname) != 0)
@@ -3720,55 +3720,48 @@ void browse_button_event(GtkWidget *widget, gpointer data)
     }
  
   //creates and shows the dialog
-  file_chooser = gtk_file_chooser_dialog_new (_("Choose File"),
-                                              NULL,
-                                              GTK_FILE_CHOOSER_ACTION_OPEN,
-                                              GTK_STOCK_CANCEL,
-                                              GTK_RESPONSE_CANCEL,
-                                              GTK_STOCK_OPEN,
-                                              GTK_RESPONSE_ACCEPT,
-                                              NULL);
-  
+  file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
+      NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+
   if (i == BROWSE_SONG)
-    {
-      //sets a filter for the file choose
-      our_filter = (GtkWidget *)gtk_file_filter_new();
-      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files(*.mp3 *.ogg)"));
-      gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-      gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-      //sets a filter for the file choose
-      our_filter = (GtkWidget *)gtk_file_filter_new();
-      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files(*.mp3)"));
-      gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-      //sets a filter for the file choose
-      our_filter = (GtkWidget *)gtk_file_filter_new();
-      gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files(*.ogg)"));
-      gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-    }
-  else
-    if (i == BROWSE_CDDB_FILE)
-      {
-        //sets a filter for the file choose
-        our_filter = (GtkWidget *)gtk_file_filter_new();
-        gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cddb files(*.cddb)"));
-        gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cddb");
-        gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
-                                    GTK_FILE_FILTER(our_filter));
-      }
-    else
-      if (i == BROWSE_CUE_FILE)
-        {
-          //sets a filter for the file choose
-          our_filter = (GtkWidget *)gtk_file_filter_new();
-          gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cue files(*.cue)"));
-          gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cue");
-          gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
-                                      GTK_FILE_FILTER(our_filter));
-        }
-      
+  {
+    //sets a filter for the file choose
+    our_filter = (GtkWidget *)gtk_file_filter_new();
+    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files(*.mp3 *.ogg)"));
+    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+    //sets a filter for the file choose
+    our_filter = (GtkWidget *)gtk_file_filter_new();
+    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files(*.mp3)"));
+    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+    //sets a filter for the file choose
+    our_filter = (GtkWidget *)gtk_file_filter_new();
+    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files(*.ogg)"));
+    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  }
+  else if (i == BROWSE_CDDB_FILE)
+  {
+    //sets a filter for the file choose
+    our_filter = (GtkWidget *)gtk_file_filter_new();
+    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cddb files(*.cddb)"));
+    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cddb");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
+        GTK_FILE_FILTER(our_filter));
+  }
+  else if (i == BROWSE_CUE_FILE)
+  {
+    //sets a filter for the file choose
+    our_filter = (GtkWidget *)gtk_file_filter_new();
+    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cue files(*.cue)"));
+    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cue");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
+        GTK_FILE_FILTER(our_filter));
+  }
+
   //all files filter
   our_filter = (GtkWidget *)gtk_file_filter_new();
   gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("All Files"));
@@ -3776,41 +3769,43 @@ void browse_button_event(GtkWidget *widget, gpointer data)
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
   
   //if we push open, ..
-  if (gtk_dialog_run (GTK_DIALOG (file_chooser)) 
-      == GTK_RESPONSE_ACCEPT)
+  if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
+  {
+    gchar *filename;
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(file_chooser));
+
+    if (i == BROWSE_SONG)
     {
-      gchar *filename;
-      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(file_chooser));
-      
-      if (i == BROWSE_SONG)
-        {
-          file_chooser_ok_event(filename);
-        }
+      file_chooser_ok_event(filename);
+    }
+    else
+      if (i == BROWSE_CDDB_FILE)
+      {
+        cddb_file_chooser_ok_event(filename);
+      }
       else
-        if (i == BROWSE_CDDB_FILE)
-          {
-            cddb_file_chooser_ok_event(filename);
-          }
-        else
-          if (i == BROWSE_CUE_FILE)
-            {
-              cue_file_chooser_ok_event(filename);
-            }
-          
-      g_free (filename);
-    }
+        if (i == BROWSE_CUE_FILE)
+        {
+          cue_file_chooser_ok_event(filename);
+        }
+
+    g_free (filename);
+  }
   else
-    //if cancel
+  {
+    if (i == BROWSE_SONG)
     {
-      if (i == BROWSE_SONG)
-        file_chooser_cancel_event();
+      file_chooser_cancel_event();
     }
-      
+  }
+ 
   //destroys dialog
   gtk_widget_destroy (file_chooser);
   
   if (i == BROWSE_SONG)
+  {
     remove_status_message();
+  }
 }
 
 //when closing the new window after detaching

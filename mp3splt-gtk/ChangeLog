@@ -4,6 +4,27 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.5.7
+
+- major GUI usability improvements
+- multiple files split : split recursively files from directories
+- added basic Drag & Drop support for .mp3, .ogg, .cue, .cddb files
+- turned upside down silence wave & optimizations
+- added option in the GUI to create directories from filenames 
+- added messages history window 
+- updated french translation & added german translation
+- improved preferences to save automatically + saving the split mode state
+- added default UTF-8 encoding on all OSes
+- removed the language chooser in the preferences on most OSes
+- removed the 'input not seekable' option from the preferences
+- added patch for output format variables @u, @U, @l, @L (thanks TODO ) (libmp3splt)
+- added support to output both ID3v1 and ID3v2 tags
+- fixed bug #2809816 with cue file : artist tags were the same (libmp3splt)
+- fixed important bug when detecting the total time : the last split file was shorter (libmp3splt)
+- fixed compilation bug for libmp3splt detection to look for 'libmp3splt/mp3splt.h' instead of mp3splt.h (libmp3splt)
+- tweaked --enable-xxx and --disable-xxx options to act correctly : --enable-gstreamer was acting like --disable-gstreamer
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.5.6
 
 libmp3splt fixes :

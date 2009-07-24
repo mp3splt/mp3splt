@@ -89,26 +89,31 @@ extern splt_state *the_state;
 //check if its a file
 gint is_filee(const gchar *fname)
 {
+  if (fname == NULL)
+  {
+    return FALSE;
+  }
+
   struct stat buffer;
   gint         status;
-  
-  status = stat(fname, &buffer);
+
+  status = g_stat(fname, &buffer);
   if (status == 0)
+  {
+    //if it is a file
+    if (S_ISREG(buffer.st_mode) != 0)
     {
-      //if it is a file
-      if (S_ISREG(buffer.st_mode) != 0)
-        {
-          return TRUE;
-        }
-      else
-        {
-          return FALSE;
-        }
+      return TRUE;
     }
-  else
+    else
     {
       return FALSE;
     }
+  }
+  else
+  {
+    return FALSE;
+  }
 }
 
 //filename returned must be freed after
@@ -790,5 +795,29 @@ gboolean container_has_child(GtkContainer *container, GtkWidget *my_child)
   }
 
   return FALSE;
+}
+
+void remove_end_slash_n_r_from_filename(char *filename)
+{
+  if (filename == NULL)
+  {
+    return;
+  }
+
+  gint index = strlen(filename) - 1;
+  while (index >= 0)
+  {
+    if (filename[index] == '\n' ||
+        filename[index] == '\r')
+    {
+      filename[index] = '\0';
+    }
+    else if (filename[index] != '\0')
+    {
+      break;
+    }
+
+    index--;
+  }
 }
 

@@ -1,3 +1,14 @@
+libmp3splt version 0.5.7
+-------------------------------------------------------------
+
+- added internationalization support (gettext) + french & german translations
+- added patch for output format variables @u, @U, @l, @L (thanks TODO )
+- added support to output both ID3v1 and ID3v2 tags
+- changed code to look for '.so.0' instead of '.so' for the plugins
+- fixed compilation bug for libmp3splt detection to look for 'libmp3splt/mp3splt.h' instead of mp3splt.h 
+- fixed bug #2809816 with cue file : artist tags were the same
+- fixed important bug when detecting the total time : the last split file was shorter
+
 libmp3splt version 0.5.6
 -------------------------------------------------------------
 

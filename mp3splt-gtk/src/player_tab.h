@@ -195,7 +195,7 @@ void handle_file_detached_event (GtkHandleBox *handlebox,
                                  gpointer data);
 GtkWidget *create_choose_file_frame();
 
-void change_current_filename(gchar *fname);
+void change_current_filename(const gchar *fname);
 GtkWidget *create_player_playlist_frame();
 
 void hide_connect_button();
