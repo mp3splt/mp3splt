@@ -9,11 +9,6 @@ if WIN32
   mp3splt_LDADD += -lwsock32 -lshlwapi 
 endif
 
-if STATIC_BUILD
-  mp3splt_LDFLAGS = -static
-  mp3splt_LDADD += -lm -lltdl -ldl
-endif
-
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@

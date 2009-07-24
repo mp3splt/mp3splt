@@ -161,18 +161,6 @@ if test x$enable_ogg_plugin = xyes;then
       AC_MSG_WARN(Vorbis not found! Will build without ogg/vorbis support.))
 fi
 
-#################################################################
-# Check for --enable-static-build
-#################################################################
-
-AM_CONDITIONAL(STATIC_BUILD,false)
-AC_ARG_ENABLE(static-build, [AC_HELP_STRING([--enable-all-static],[ Enables static build.]) ],
-    [enable_static_build=$enableval],[enable_static_build="no"])
-
-if test x$enable_static_build = xyes;then
-  AM_CONDITIONAL(STATIC_BUILD,true)
-fi
-
 
 #################################################
 # Print the configuration to the screen

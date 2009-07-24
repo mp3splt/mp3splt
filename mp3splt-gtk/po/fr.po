@@ -5,27 +5,35 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-07-20 17:47+0200\n"
-"PO-Revision-Date: 2009-07-20 17:52+0100\n"
-"Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
+"POT-Creation-Date: 2009-07-24 22:33+0200\n"
+"PO-Revision-Date: 2009-07-24 22:37+0100\n"
+"Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/xmms_control.c:83
+#: src/gstreamer_control.c:251
+#: src/snackamp_control.c:322
 msgid "stereo"
 msgstr "stéréo"
 
 #: src/xmms_control.c:87
+#: src/gstreamer_control.c:255
+#: src/snackamp_control.c:326
 msgid "mono"
 msgstr "mono"
 
 #: src/xmms_control.c:90
+#: src/gstreamer_control.c:220
+#: src/snackamp_control.c:329
 msgid "Kbps"
 msgstr "Kbps"
 
 #: src/xmms_control.c:91
+#: src/gstreamer_control.c:221
+#: src/snackamp_control.c:330
 msgid "Khz"
 msgstr "Khz"
 
@@ -48,7 +56,7 @@ msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
 #: src/tree_tab.c:1158
-#: src/preferences_tab.c:553
+#: src/preferences_tab.c:559
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
@@ -110,6 +118,7 @@ msgid "_Silence detection"
 msgstr "Détection du _silence"
 
 #: src/tree_tab.c:1606
+#: src/mp3splt-gtk.c:480
 msgid " finished"
 msgstr " fini"
 
@@ -187,48 +196,48 @@ msgid "<b>Directory for split files</b>"
 msgstr "<b>Répertoire des fichiers coupés</b>"
 
 #: src/preferences_tab.c:529
+msgid "_Create directories from filenames "
+msgstr "_Créér les répertoires à partir des noms de fichiers"
+
+#: src/preferences_tab.c:535
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Mode 'f_rame' (utile pour mp3 VBR) (seulement mp3)"
 
-#: src/preferences_tab.c:536
+#: src/preferences_tab.c:542
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr "Aj_ustement automatique (utilise la détection du silence pour ajuster les points)"
 
-#: src/preferences_tab.c:568
+#: src/preferences_tab.c:574
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr "Compensation du point de coupure (0 - début du silence, 1 - la fin) :"
 
-#: src/preferences_tab.c:585
+#: src/preferences_tab.c:591
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "Niveau d'écart (secondes autour du point à chercher du silence) :"
 
-#: src/preferences_tab.c:604
+#: src/preferences_tab.c:610
 msgid "Set _default split options"
 msgstr "Options par _défaut"
 
-#: src/preferences_tab.c:610
+#: src/preferences_tab.c:616
 msgid "<b>Split options</b>"
 msgstr "<b>Options de coupure</b>"
 
-#: src/preferences_tab.c:688
+#: src/preferences_tab.c:694
 msgid "Choose a player:"
 msgstr "Choisir un lecteur :"
 
-#: src/preferences_tab.c:712
+#: src/preferences_tab.c:718
 msgid "<b>Player options</b>"
 msgstr "<b>Options du lecteur</b>"
 
-#: src/preferences_tab.c:759
+#: src/preferences_tab.c:765
 msgid "Default format"
 msgstr "Format par défaut"
 
-#: src/preferences_tab.c:763
+#: src/preferences_tab.c:769
 msgid "Custom format"
 msgstr "Format personnalisé"
-
-#: src/preferences_tab.c:778
-msgid "_Create directories from filenames "
-msgstr "_Créér les répertoires à partir des noms de fichiers"
 
 #: src/preferences_tab.c:786
 msgid ""
@@ -727,6 +736,58 @@ msgstr "_Effacer les éléments sélectionnés"
 msgid "R_emove all entries"
 msgstr "Effa_cer toutes les lignes"
 
+#: src/gstreamer_control.c:94
+#, c-format
+msgid "gstreamer error: %s"
+msgstr "erreur gstreamer: %s"
+
+#: src/gstreamer_control.c:122
+#, c-format
+msgid "Warning: %s"
+msgstr "Attention: %s"
+
+#: src/gstreamer_control.c:150
+#, c-format
+msgid "Info: %s"
+msgstr "Info: %s"
+
+#: src/gstreamer_control.c:409
+msgid " error: cannot create gstreamer playbin\n"
+msgstr " erreur: impossible de créer 'playbin' de gstreamer\n"
+
+#: src/mp3splt-gtk.c:156
+#, c-format
+msgid " File '%s' created"
+msgstr "Fichier '%s' créé"
+
+#: src/mp3splt-gtk.c:299
+#, c-format
+msgid " preparing \"%s\" (%d of %d)"
+msgstr " préparation de \"%s\" (%d sur %d)"
+
+#: src/mp3splt-gtk.c:305
+#, c-format
+msgid " creating \"%s\" (%d of %d)"
+msgstr " création de \"%s\" (%d sur %d)"
+
+#: src/mp3splt-gtk.c:311
+msgid " searching for sync errors..."
+msgstr " recherche d'erreurs de synchronisation..."
+
+#: src/mp3splt-gtk.c:315
+#, c-format
+msgid "S: %02d, Level: %.2f dB; scanning for silence..."
+msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
+
+#: src/mp3splt-gtk.c:454
+msgid " error: no files found in multiple files mode"
+msgstr " erreur: aucun fichier trouvé avec le mode 'fichiers multiples'"
+
+#: src/utilities.c:774
+#, c-format
+msgid "Processing file '%s' ..."
+msgstr "Fichier '%s' ..."
+
 #~ msgid "created from"
 #~ msgstr "créé à partir de"
 #~ msgid "add splitpoint"
@@ -853,8 +914,6 @@ msgstr "Effa_cer toutes les lignes"
 #~ msgstr "fichier cue correctement analysé"
 #~ msgid " error: cannot initialise socket "
 #~ msgstr " erreur: ne peut pas initialiser le socket"
-#~ msgid " error: cannot get host by name "
-#~ msgstr " erreur: ne peut pas trouver le hote par le nom"
 #~ msgid " error: cannot open socket "
 #~ msgstr " erreur: ne peut pas ouvrir le socket"
 #~ msgid " error: cannot connect to host "
@@ -950,10 +1009,6 @@ msgstr "Effa_cer toutes les lignes"
 
 #, fuzzy
 #~ msgid " error: cannot open destination file "
-#~ msgstr " erreur: ne peut pas ouvrir le fichier"
-
-#, fuzzy
-#~ msgid " error: cannot write to output file "
 #~ msgstr " erreur: ne peut pas ouvrir le fichier"
 
 #, fuzzy

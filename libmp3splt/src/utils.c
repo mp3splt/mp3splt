@@ -34,6 +34,7 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include "splt.h"
 
@@ -3007,6 +3008,7 @@ int scandir(const char *dir, struct _wdirent ***namelist,
 
   if (we_have_error)
   {
+    errno = ENOMEM;
     return -1;
   }
 
@@ -3102,7 +3104,9 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
   }
 
 
+  //TODO: handle scandir error
   int num_of_files = scandir(directory, &files, NULL, alphasort);
+
   int new_number_of_files = num_of_files;
 
   if (files == NULL) { return; }
