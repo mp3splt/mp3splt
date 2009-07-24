@@ -11,4 +11,9 @@ src/freedb_tab.c
 src/special_split.c
 src/messages.c
 src/multiple_files.c
+src/gstreamer_control.c
+src/mp3splt-gtk.c
+src/player.c
+src/snackamp_control.c
+src/utilities.c
 

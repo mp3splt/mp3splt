@@ -22,8 +22,6 @@ help:
 	@echo "make arch_packages : generate archlinux packages"
 	@echo "make slackware_packages : generate slackware packages (must be root)"
 	@echo "make slackware_fakeroot_packages : generate slackware packages by using fakeroot (should be root)"
-	@echo "make static_packages : generates static packages"
-	@echo "make dynamic_packages : generates dynamic packages"
 	@echo
 	@echo "make nexenta_packages : generates nexenta gnu/opensolaris packages"
 	@echo
@@ -47,18 +45,6 @@ debian_packages: clean_tmp
 	./${LIBMP3SPLT_DIR}/debian/make_debian_package.sh
 	./${MP3SPLT_DIR}/debian/make_debian_package.sh
 	./${MP3SPLT_GTK_DIR}/debian/make_debian_package.sh
-
-#creates static packages
-static_packages: clean_tmp
-	./${LIBMP3SPLT_DIR}/make_static_package.sh
-	./${MP3SPLT_DIR}/make_static_package.sh
-	./${MP3SPLT_GTK_DIR}/make_static_package.sh
-
-#creates dynamic packages
-dynamic_packages: clean_tmp
-	./${LIBMP3SPLT_DIR}/make_dynamic_package.sh
-	./${MP3SPLT_DIR}/make_dynamic_package.sh
-	./${MP3SPLT_GTK_DIR}/make_dynamic_package.sh
 
 #gentoo ebuilds creation
 gentoo_ebuilds: clean_tmp
@@ -161,10 +147,6 @@ root_uninstall:
 #cleans the /tmp directories for a good build
 DATE=`date +-%d_%m_%Y__%H_%M_%S`
 clean_tmp:
-	$(shell if [[ -e /tmp/dynamic_tmp ]];then \
-mv /tmp/dynamic_tmp /tmp/dynamic_tmp${DATE} &>/dev/null;fi)
-	$(shell if [[ -e /tmp/static_tmp ]];then \
-mv /tmp/static_tmp /tmp/static_tmp${DATE} &>/dev/null;fi)
 	$(shell if [[ -e /tmp/rpm_tmp ]];then \
 mv /tmp/rpm_temp /tmp/rpm_temp${DATE} &>/dev/null;fi)
 	$(shell if [[ -e /tmp/slack_temp ]];then \

@@ -155,13 +155,6 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
             return 1;
           }
 
-#ifdef STATIC_BUILD
-          if (strcmp(p_end,".a") == 0)
-          {
-            return 1;
-          }
-#endif
-
 #endif
         }
       }

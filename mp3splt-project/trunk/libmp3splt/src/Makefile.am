@@ -9,13 +9,8 @@ lib_LTLIBRARIES = libmp3splt.la
 libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:5:0
 libmp3splt_la_LIBADD = @LIBINTL@ @LIBLTDL@ -lm
 
-if STATIC_BUILD
-libmp3splt_la_LDFLAGS += -static
-endif
-
 if WIN32
 libmp3splt_la_LIBADD += -lz -lws2_32 -lintl
-INCLUDES += -DSTATIC_BUILD
 endif
 
 libmp3splt_la_SOURCES = \

@@ -10,10 +10,6 @@ if WIN32
 common_LDFLAGS += -lz -lws2_32 -lintl
 endif
 
-if STATIC_BUILD
-common_LDFLAGS += -static
-endif
-
 #mp3 plugin
 if MP3_PLUGIN
 

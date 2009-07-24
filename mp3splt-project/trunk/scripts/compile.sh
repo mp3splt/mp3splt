@@ -191,27 +191,6 @@ function ubuntu_packages()
 }
 ############# end ubuntu packages ##########################
 
-############# gnu/linux static build #####
-function gnu_linux_static_packages()
-{
-    echo
-    print_yellow "Creating gnu/linux static builds..."
-    
-    make -s static_packages || exit 1
-    cd $PROJECT_DIR
-}
-############# end gnu/linux static build #####
-
-############# gnu/linux dynamic build #####
-function gnu_linux_dynamic_packages()
-{
-    echo
-    print_yellow "Creating dynamic gnu/linux builds..."
-    
-    make -s dynamic_packages || exit 1
-    cd $PROJECT_DIR
-}
-############# end gnu/linux dynamic build #####
 
 ############# gentoo ebuilds ################
 function gentoo_packages()
@@ -416,8 +395,6 @@ ubuntu_packages
 debian_packages
 windows_cross_installers
 
-#gnu_linux_static_packages
-#gnu_linux_dynamic_packages
 #gentoo_packages
 #rpm_packages
 #archlinux_packages
