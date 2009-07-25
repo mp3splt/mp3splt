@@ -39,6 +39,7 @@
 
 #ifdef __WIN32__
 #include <direct.h>
+#include "win32.h"
 #endif
 
 int splt_p_append_plugin_scan_dir(splt_state *state, char *dir)
@@ -103,17 +104,9 @@ int splt_p_set_default_plugins_scan_dirs(splt_state *state)
 }
 
 //function to filter the plugin files
-#ifdef __WIN32__
-static int splt_p_filter_plugin_files(const struct _wdirent *de)
-#else
 static int splt_p_filter_plugin_files(const struct dirent *de)
-#endif
 {
-#ifdef __WIN32__
-  char *file = splt_u_win32_utf16_to_utf8(de->d_name);
-#else
   char *file = (char *) de->d_name;
-#endif
   const char *p_end = NULL;
   const char *p_start = NULL;
   if (file)
@@ -143,9 +136,6 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
 #ifdef __WIN32__
           if (strcmp(p_end,".dll") == 0)
           {
-            free(file);
-            file = NULL;
-
             return 1;
           }
 #else
@@ -154,20 +144,11 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
           {
             return 1;
           }
-
 #endif
         }
       }
     }
   }
-
-#ifdef __WIN32__
-  if (file)
-  {
-    free(file);
-    file = NULL;
-  }
-#endif
 
   return 0;
 }
@@ -178,16 +159,11 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
 {
   int return_value = SPLT_OK;
 
-#ifdef __WIN32__
-  struct _wdirent **files = NULL;
-#else
   struct dirent **files = NULL;
-#endif
 
   int number_of_files = 0;
   //scan the directory
-  number_of_files = scandir(directory, &files, splt_p_filter_plugin_files,
-      alphasort);
+  number_of_files = scandir(directory, &files, splt_p_filter_plugin_files, alphasort);
   int directory_len = strlen(directory);
   int new_number_of_files = number_of_files;
 
@@ -206,11 +182,7 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
     //copy their name
     while (new_number_of_files--)
     {
-#ifdef __WIN32__
-      fname = splt_u_win32_utf16_to_utf8(files[new_number_of_files]->d_name);
-#else
       fname = files[new_number_of_files]->d_name;
-#endif
       int fname_len = strlen(fname);
 
       //get the full directory + filename
@@ -281,24 +253,9 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
         free(dir_and_fname);
         dir_and_fname = NULL;
       }
-
-#ifdef __WIN32__
-      if (fname)
-      {
-        free(fname);
-        fname = NULL;
-      }
-#endif
     }
 
 end:
-#ifdef __WIN32__
-    if (fname)
-    {
-      free(fname);
-      fname = NULL;
-    }
-#endif
     ;
 
     if (files)

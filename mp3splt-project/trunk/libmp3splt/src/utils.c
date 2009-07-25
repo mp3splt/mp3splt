@@ -43,6 +43,7 @@
 #ifdef __WIN32__
 #include <windows.h>
 #include <direct.h>
+#include "win32.h"
 #endif
 
 extern short global_debug;
@@ -2916,129 +2917,6 @@ long splt_u_overlap_time(splt_state *state, int splitpoint_index)
   return split_value;
 }
 
-//mingw does not provide BSD functions 'scandir' and 'alphasort'
-#ifdef __WIN32__
-
-//-returns -1 for not enough memory, -2 for other errors
-//-a positive (or 0) number if success
-int scandir(const char *dir, struct _wdirent ***namelist,
-		int(*filter)(const struct _wdirent *),
-		int(*compar)(const struct _wdirent **, const struct _wdirent **))
-{
-  struct _wdirent **files = NULL;
-  struct _wdirent *file = NULL;
-  _WDIR *directory = NULL;
-  int number_of_files = 0;
-
-  wchar_t *wdir = splt_u_win32_utf8_to_utf16(dir);
-  directory = _wopendir(wdir);
-  if (wdir) { free(wdir); wdir = NULL; }
-  if (directory == NULL)
-  {
-    return -2;
-  }
-
-  int free_memory = 0;
-  int we_have_error = 0;
-
-  while ((file = _wreaddir(directory)))
-  {
-    if ((filter == NULL) || (filter(file)))
-    {
-      if (files == NULL)
-      {
-        files = malloc((sizeof *files));
-      }
-      else
-      {
-        files = realloc(files, (sizeof *files) * (number_of_files + 1));
-      }
-      if (files == NULL)
-      {
-        free_memory = 1;
-        we_have_error = 1;
-        break;
-      }
-
-      files[number_of_files] = malloc(sizeof(struct _wdirent));
-      if (files[number_of_files] == NULL)
-      {
-        free_memory = 1;
-        we_have_error = 1;
-        break;
-      }
-
-      *files[number_of_files] = *file;
-      number_of_files++;
-    }
-  }
-
-  //we should have a valid 'namelist' argument
-  if (namelist)
-  {
-    *namelist = files;
-  }
-  else
-  {
-    free_memory = 1;
-  }
-
-  //-free memory if error
-  if (free_memory)
-  {
-    while (number_of_files--)
-    {
-      if (files[number_of_files])
-      {
-        free(files[number_of_files]);
-        files[number_of_files] = NULL;
-      }
-    }
-    free(files);
-    files = NULL;
-  }
-
-  if (_wclosedir(directory) == -1)
-  {
-    return -2;
-  }
-
-  qsort(*namelist, number_of_files, sizeof **namelist,
-      (int (*)(const void *, const void *)) compar);
-
-  if (we_have_error)
-  {
-    errno = ENOMEM;
-    return -1;
-  }
-
-  return number_of_files;
-}
-
-int alphasort(const struct _wdirent **a, const struct _wdirent **b)
-{
-  char *name_a = splt_u_win32_utf16_to_utf8((*a)->d_name);
-  char *name_b = splt_u_win32_utf16_to_utf8((*b)->d_name);
-
-  int ret = strcoll(name_a, name_b);
-
-  if (name_a)
-  {
-    free(name_a);
-    name_a = NULL;
-  }
-
-  if (name_b)
-  {
-    free(name_b);
-    name_b = NULL;
-  }
-
-  return ret;
-}
-
-#endif
-
 //result must be freed
 char *splt_u_str_to_upper(const char *str, int *error)
 {
@@ -3103,9 +2981,12 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
     return;
   }
 
-
   //TODO: handle scandir error
+#ifdef __WIN32__
+  int num_of_files = wscandir(directory, &files, NULL, walphasort);
+#else
   int num_of_files = scandir(directory, &files, NULL, alphasort);
+#endif
 
   int new_number_of_files = num_of_files;
 
@@ -3114,8 +2995,7 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
   while (new_number_of_files-- > 0)
   {
 #ifdef __WIN32__
-    char *fname =
-      splt_u_win32_utf16_to_utf8(files[new_number_of_files]->d_name);
+    char *fname = splt_u_win32_utf16_to_utf8(files[new_number_of_files]->d_name);
 #else
     char *fname = files[new_number_of_files]->d_name;
 #endif
