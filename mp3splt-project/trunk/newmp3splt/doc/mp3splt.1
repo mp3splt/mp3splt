@@ -60,11 +60,13 @@
 mp3splt \(em Utility for mp3/ogg splitting without decoding
 .SH "SYNOPSIS"
 .PP
-\fBmp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME2] ... [END_TIME]\fP
+\fBmp3splt [OPTIONS] FILE_OR_DIR1 [FILE_OR_DIR2] ... [BEGIN_TIME] [TIME2] ... [END_TIME]\fP
 .PP
-\fBFILE\fP: mp3 or ogg file to be split. If you want to specify STDIN as input, you can use "m-" (or "-")
+\fBFILE_OR_DIR\fP: mp3/ogg file to be split or a directory.
+If you want to specify STDIN as input, you can use "m-" (or "-")
 when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be split
-with the same criterion.
+with the same criterion. If a directory is specified, a recursive scan will be
+performed in that directory to find out all the supported formats files.
 
 .PP
 \fBTIME FORMAT\fP: begin_time and end_time must be in this form:

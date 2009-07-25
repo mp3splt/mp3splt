@@ -2965,6 +2965,12 @@ int splt_u_file_is_supported_by_plugins(splt_state *state, const char *fname)
   return SPLT_FALSE;
 }
 
+static int splt_u_fname_is_directory_parent(char *fname, int fname_size)
+{
+  return ((fname_size == 1) && (strcmp(fname, ".") == 0)) ||
+    ((fname_size == 2) && (strcmp(fname, "..") == 0));
+}
+
 //recursive function to go through directories
 void splt_u_find_filenames(splt_state *state, const char *directory,
     char ***found_files, int *number_of_found_files, int *error)
@@ -3002,14 +3008,7 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
 
     int fname_size = strlen(fname);
 
-    //avoid seg fault with strcmp(fname, "..")
-    if (fname_size < 3)
-    {
-      continue;
-    }
-
-    if ((*error >= 0) &&
-        (strcmp(fname, ".") != 0) && (strcmp(fname, "..") != 0))
+    if (*error >= 0)
     {
       int path_with_fname_size = fname_size + strlen(directory) + 2;
       char *path_with_fname = malloc(sizeof(char) * path_with_fname_size);
@@ -3021,8 +3020,8 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
         continue;
       }
 
-      snprintf(path_with_fname, path_with_fname_size,
-          "%s%c%s", directory, SPLT_DIRCHAR, fname);
+      snprintf(path_with_fname, path_with_fname_size, "%s%c%s", directory,
+          SPLT_DIRCHAR, fname);
 
       if (splt_check_is_file_and_not_symlink(state, path_with_fname))
       {
@@ -3058,8 +3057,11 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
       }
       else if (splt_check_is_directory_and_not_symlink(path_with_fname))
       {
-        splt_u_find_filenames(state, path_with_fname, found_files,
-            number_of_found_files, error);
+        if (! splt_u_fname_is_directory_parent(fname, fname_size))
+        {
+          splt_u_find_filenames(state, path_with_fname, found_files,
+              number_of_found_files, error);
+        }
       }
 
 end:

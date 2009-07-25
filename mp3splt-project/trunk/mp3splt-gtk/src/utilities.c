@@ -158,6 +158,8 @@ gchar *get_preferences_filename()
   gchar *filename = malloc(fname_malloc_number*sizeof(gchar *));
   
   status = g_stat(mp3splt_dir_with_path, &buffer);
+  if (status == 0)
+  {
   //if it is not a directory
   if (S_ISDIR(buffer.st_mode) == 0)
     {
@@ -183,6 +185,7 @@ gchar *get_preferences_filename()
               S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 #endif
     }
+  }
   
   //the config filename+path
   g_snprintf(filename,fname_malloc_number,
