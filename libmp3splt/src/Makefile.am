@@ -20,7 +20,8 @@ mp3splt.c ../include/libmp3splt/mp3splt.h \
 cddb.c ../include/libmp3splt/cddb.h \
 checks.c ../include/libmp3splt/checks.h \
 utils.c ../include/libmp3splt/utils.h \
-plugins.c ../include/libmp3splt/plugins.h
+plugins.c ../include/libmp3splt/plugins.h \
+win32.c ../include/libmp3splt/win32.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale
