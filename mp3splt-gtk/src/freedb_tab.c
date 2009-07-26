@@ -412,12 +412,7 @@ void write_freedbfile(int *err)
   gchar *filename = NULL;
  
   gdk_threads_enter();
-  
-  const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
-  gint error = SPLT_OUTPUT_FORMAT_OK;
-
-  print_status_bar_confirmation(error);
-  
+   
   put_status_message(_("please wait... contacting tracktype.org"));
   
   //we suppose directory exists
@@ -435,9 +430,6 @@ void write_freedbfile(int *err)
  
   gdk_threads_leave();
 
-  mp3splt_set_oformat(the_state, data, &error);
-  print_status_bar_confirmation(error);
-
   //we write the freedb file ...
   mp3splt_write_freedb_file_result(the_state, selected_id,
                                    filename, err,
@@ -446,9 +438,7 @@ void write_freedbfile(int *err)
                                    "\0",-1);
 
   gdk_threads_enter();
-
   print_status_bar_confirmation(*err);
-
   gdk_threads_leave();
 
   if(get_checked_output_radio_box())
@@ -460,6 +450,13 @@ void write_freedbfile(int *err)
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
         SPLT_OUTPUT_FORMAT);
+
+    const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
+    gint error = SPLT_OUTPUT_FORMAT_OK;
+    mp3splt_set_oformat(the_state, data, &error);
+    gdk_threads_enter();
+    print_status_bar_confirmation(error);
+    gdk_threads_leave();
   }
 
   mp3splt_put_cddb_splitpoints_from_file(the_state,filename, err);

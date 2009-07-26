@@ -158,15 +158,15 @@ void update_output_options()
   filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
   mp3splt_set_filename_to_split(the_state, filename_to_split);
 
-  const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
-  gint error = SPLT_OUTPUT_FORMAT_OK;
-  mp3splt_set_oformat(the_state, data, &error);
-  print_status_bar_confirmation(error);
-
   if (get_checked_output_radio_box() == 0)
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
         SPLT_OUTPUT_FORMAT);
+
+    const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
+    gint error = SPLT_OUTPUT_FORMAT_OK;
+    mp3splt_set_oformat(the_state, data, &error);
+    print_status_bar_confirmation(error);
   }
   else
   {
