@@ -3,6 +3,10 @@ Check http://mp3splt.sourceforge.net for the latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
+Known issues :
+
+- menus translation 'N_' not working : no idea how to fix
+
 -------------------------------------------------------------
 mp3splt-gtk version 0.5.7
 

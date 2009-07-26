@@ -604,9 +604,10 @@ else
   cd ../.. && rm -rf mp3splt-gtk_runtime && cd - &>/dev/null
 fi
 
-cd ../.. && rm -rf translations
+cd ../.. 
+
+#rm -rf translations
 
 #remove .nsi script
 rm -f $WIN_INSTALLER_FILE
-
 

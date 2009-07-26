@@ -208,9 +208,9 @@ function gentoo_packages()
 function windows_cross_installers()
 {
   echo
-  print_yellow "Creating windows installers..."
+  print_yellow "Creating windows installers and zips ..."
 
-  #if we don't have the distribution file
+  #if we don't have the distribution files
   DIST_FILE1="./mp3splt_${MP3SPLT_VERSION}_i386.exe"
   DIST_FILE2="./mp3splt-gtk_${MP3SPLT_GTK_VERSION}_i386.exe"
   if [[ ! -f $DIST_FILE1 || ! -f $DIST_FILE2 ]];then

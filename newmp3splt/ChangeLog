@@ -3,6 +3,10 @@ Check http://mp3splt.sourceforge.net for the latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
+Known issues :
+
+- translated 'mp3splt -h' doesn't show complete message on utf8 on windows : won't fix in release 2.2.6
+
 #mp3splt v. 2.2.6
 
 - multiple files split : split recursively files from directories
