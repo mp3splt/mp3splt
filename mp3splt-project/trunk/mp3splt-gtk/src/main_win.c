@@ -45,10 +45,18 @@
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
+#include <string.h>
+
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <libmp3splt/mp3splt.h>
 #include <gdk/gdkkeysyms.h>
+
+#ifdef __WIN32__
+#include <windows.h>
+#include <shlwapi.h>
+#endif
+
 
 #include "util.h"
 #include "main_win.h"
@@ -268,6 +276,71 @@ void initialize_window()
 
 void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
 {
+#ifdef __WIN32__
+  char default_browser[512] = { '\0' };
+  DWORD dwType, dwSize = sizeof(default_browser) - 1;
+
+  SHGetValue(HKEY_CURRENT_USER,
+        TEXT("Software\\Clients\\StartMenuInternet"),
+        TEXT(""),
+        &dwType,
+        default_browser,
+        &dwSize);
+
+  if (default_browser[0] != '\0')
+  {
+    SHGetValue(HKEY_LOCAL_MACHINE,
+        TEXT("SOFTWARE\\Clients\\StartMenuInternet"),
+        TEXT(""),
+        &dwType,
+        default_browser,
+        &dwSize);
+  }
+
+  if (default_browser[0] != '\0')
+  {
+    char browser_exe[2048] = { '\0' };
+    dwSize = sizeof(browser_exe) - 1;
+
+    char browser_exe_registry[1024] = { '\0' };
+    snprintf(browser_exe_registry, 1024,
+        "SOFTWARE\\Clients\\StartMenuInternet\\%s\\shell\\open\\command\\",
+        default_browser);
+
+    SHGetValue(HKEY_LOCAL_MACHINE,
+        TEXT(browser_exe_registry), TEXT(""),
+        &dwType, browser_exe, &dwSize);
+
+    if (browser_exe[0] != '\0')
+    {
+      gint browser_command_size = strlen(browser_exe) + strlen(link) + 2;
+      char *browser_command = g_malloc(sizeof(char) * browser_command_size);
+      if (browser_command)
+      {
+        snprintf(browser_command, browser_command_size, "%s %s",
+            browser_exe, link);
+
+        STARTUPINFO si;
+        PROCESS_INFORMATION pinf;
+        ZeroMemory(&si, sizeof(si));
+        si.cb = sizeof(si);
+        ZeroMemory(&pinf, sizeof(pinf));
+
+        if (! CreateProcess(NULL, browser_command,
+              NULL, NULL, FALSE, 0, NULL, NULL, &si, &pinf))
+        {
+          put_status_message("Error launching external command");
+        }
+
+        CloseHandle(pinf.hProcess);
+        CloseHandle(pinf.hThread);
+
+        g_free(browser_command);
+        browser_command = NULL;
+      }
+    }
+  }
+#endif
 }
 
 void about_window(GtkWidget *widget, gpointer *data)
@@ -318,6 +391,7 @@ void about_window(GtkWidget *widget, gpointer *data)
                                 "USA.");
 
   gtk_about_dialog_set_url_hook(activate_url, NULL, NULL);
+
   gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog),
       "http://mp3splt.sourceforge.net");
   gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog),
@@ -462,11 +536,10 @@ void show_messages_history_dialog(GtkWidget *widget, gpointer data)
 //creates the menu bar
 GtkWidget *create_menu_bar()
 {
-  GtkWidget *menu_box;
-  menu_box = gtk_hbox_new(FALSE,0);
+  GtkWidget *menu_box = gtk_hbox_new(FALSE,0);
   
   //define the menu
-  static GtkActionEntry entries[] = {
+  static GtkActionEntry const entries[] = {
     //name, stock id,   label
     { "FileMenu", NULL, N_("_File") },  
     { "HelpMenu", NULL, N_("_Help") },
@@ -481,8 +554,6 @@ GtkWidget *create_menu_bar()
     { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
       G_CALLBACK(about_window)},
   };
-  static guint n_entries = G_N_ELEMENTS (entries);
-
   //build the menu
   static const gchar *ui_info = 
     "<ui>"
@@ -499,22 +570,19 @@ GtkWidget *create_menu_bar()
     "  </menubar>"
     "</ui>";
 
-  GtkUIManager *ui;
-  GtkActionGroup *actions;
-  
-  actions = gtk_action_group_new ("Actions");
+  GtkActionGroup *actions = gtk_action_group_new ("Actions");
   //translation
-  gtk_action_group_set_translation_domain(actions, NULL);
+  gtk_action_group_set_translation_domain(actions, "mp3splt-gtk");
   //adding the GtkActionEntry to GtkActionGroup
-  gtk_action_group_add_actions (actions, entries, n_entries, NULL);
-  ui = gtk_ui_manager_new ();
+  gtk_action_group_add_actions (actions, entries, G_N_ELEMENTS(entries), NULL);
+  GtkUIManager *ui = gtk_ui_manager_new ();
   //set action to the ui
   gtk_ui_manager_insert_action_group (ui, actions, 0);
   //set the actions to the window
   gtk_window_add_accel_group (GTK_WINDOW (window), 
                               gtk_ui_manager_get_accel_group (ui));
   //add ui from string
-  gtk_ui_manager_add_ui_from_string (ui, ui_info, -1, NULL);
+  gtk_ui_manager_add_ui_from_string(ui, ui_info, -1, NULL);
   
   //attach the menu
   gtk_box_pack_start (GTK_BOX (menu_box), 
