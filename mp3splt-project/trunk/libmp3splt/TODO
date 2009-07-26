@@ -1,3 +1,8 @@
+BUGS ?
+
+* wscandir not working when compiled on mingw windows
+
+
 FEATURES :
 
 * use 'getline' (GNU extension) instead of 'fgets'

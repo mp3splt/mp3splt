@@ -1833,17 +1833,25 @@ int main(int argc, char **orig_argv)
   {
     int translation_dir_length = strlen(executable_dir) + 30;
     char *translation_dir = malloc(sizeof(char) * translation_dir_length);
-    snprintf(translation_dir,translation_dir_length,
-        "%s%ctranslations",executable_dir,SPLT_DIRCHAR);
-
-    bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, translation_dir);
-    bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, translation_dir);
-
     if (translation_dir)
     {
-			free(translation_dir);
-			translation_dir = NULL;
+      snprintf(translation_dir,translation_dir_length,
+          "%s%ctranslations",executable_dir,SPLT_DIRCHAR);
+
+      bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, translation_dir);
+      bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, translation_dir);
+
+      if (translation_dir)
+      {
+        free(translation_dir);
+        translation_dir = NULL;
+      }
     }
+  }
+  else
+  {
+    bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, "translations");
+    bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, "translations");
   }
 #else
   bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, LOCALEDIR);

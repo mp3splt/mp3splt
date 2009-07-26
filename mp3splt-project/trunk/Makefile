@@ -92,6 +92,9 @@ windows_cross_installers:
 	./${MP3SPLT_DIR}/windows/make_windows_installer.sh cross
 	./${MP3SPLT_GTK_DIR}/windows/make_windows_cross_compilation.sh
 	./${MP3SPLT_GTK_DIR}/windows/make_windows_installer.sh cross
+	./${MP3SPLT_DIR}/windows/make_windows_zip.sh cross
+	./${MP3SPLT_GTK_DIR}/windows/make_windows_zip.sh cross
+	rm -rf translations
 
 #debian hurd packages creation
 debian_hurd_packages: clean_tmp
