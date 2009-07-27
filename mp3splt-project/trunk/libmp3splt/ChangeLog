@@ -2,7 +2,7 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
-ibmp3splt version 0.5.7
+libmp3splt version 0.5.7
 -------------------------------------------------------------
 
 - added internationalization support (gettext) + french & german translations

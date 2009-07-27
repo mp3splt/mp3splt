@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-07-25 13:55+0200\n"
+"POT-Creation-Date: 2009-07-27 20:55+0200\n"
 "PO-Revision-Date: 2009-07-24 22:37+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -38,8 +38,8 @@ msgid " error: you already have the splitpoint in table"
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:724 src/tree_tab.c:1015 src/freedb_tab.c:537
-#: src/freedb_tab.c:559
+#: src/tree_tab.c:724 src/tree_tab.c:1015 src/freedb_tab.c:534
+#: src/freedb_tab.c:556
 msgid "description here"
 msgstr "description"
 
@@ -285,7 +285,7 @@ msgstr "Même version des tags que le fichier d'entrée"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:918 src/main_win.c:474
+#: src/preferences_tab.c:918 src/main_win.c:547
 msgid "Split"
 msgstr "Coupure"
 
@@ -297,7 +297,7 @@ msgstr "Tags"
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:936 src/main_win.c:611
+#: src/preferences_tab.c:936 src/main_win.c:679
 msgid "Player"
 msgstr "Lecteur"
 
@@ -492,95 +492,95 @@ msgstr "Sélection fichier"
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
-#: src/main_win.c:131
+#: src/main_win.c:139
 msgid " info: stopping the split process before exiting"
 msgstr " info : arrêt du processus de division avant de sortir"
 
-#: src/main_win.c:290
+#: src/main_win.c:363
 msgid "using"
 msgstr "utilisant"
 
-#: src/main_win.c:294
+#: src/main_win.c:367
 msgid "release of"
 msgstr "version du"
 
-#: src/main_win.c:372
+#: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
 msgstr " info : arrêt du processus de division... veuillez attendre"
 
-#: src/main_win.c:412
+#: src/main_win.c:486
 msgid " error: no file selected"
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:417
+#: src/main_win.c:491
 msgid " error: split in progress..."
 msgstr " erreur : division en cours..."
 
-#: src/main_win.c:436
+#: src/main_win.c:510
 msgid "Split !"
 msgstr "Couper !"
 
-#: src/main_win.c:471
+#: src/main_win.c:544
 msgid "_File"
 msgstr "_Fichier"
 
-#: src/main_win.c:472
+#: src/main_win.c:545
 msgid "_Help"
 msgstr "_Aide"
 
-#: src/main_win.c:474
+#: src/main_win.c:547
 msgid "_Split !"
 msgstr "_Couper"
 
-#: src/main_win.c:476
+#: src/main_win.c:549
 msgid "Messages _history"
 msgstr "_Historique des messages"
 
-#: src/main_win.c:476 src/main_win.c:730 src/messages.c:185
+#: src/main_win.c:549 src/main_win.c:798 src/messages.c:185
 msgid "Messages history"
 msgstr "Historique des messages"
 
-#: src/main_win.c:478
+#: src/main_win.c:551
 msgid "_Quit"
 msgstr "_Quitter"
 
-#: src/main_win.c:478
+#: src/main_win.c:551
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:481
+#: src/main_win.c:554
 msgid "_About"
 msgstr "_A propos de"
 
-#: src/main_win.c:481
+#: src/main_win.c:554
 msgid "About"
 msgstr "A propos de"
 
-#: src/main_win.c:624
+#: src/main_win.c:692
 msgid "Splitpoints"
 msgstr "Points de coupure"
 
-#: src/main_win.c:637
+#: src/main_win.c:705
 msgid "Split files"
 msgstr "Fichiers coupés"
 
-#: src/main_win.c:650
+#: src/main_win.c:718
 msgid "cddb & cue"
 msgstr "cddb & cue"
 
-#: src/main_win.c:663
+#: src/main_win.c:731
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:674
+#: src/main_win.c:742
 msgid "Type of split"
 msgstr "Type de division"
 
-#: src/main_win.c:687
+#: src/main_win.c:755
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:708
+#: src/main_win.c:776
 msgid "S_top"
 msgstr "S_top"
 
@@ -637,27 +637,27 @@ msgstr "Titre de l'album"
 msgid "No"
 msgstr "Numéro"
 
-#: src/freedb_tab.c:334 src/freedb_tab.c:421
+#: src/freedb_tab.c:334 src/freedb_tab.c:416
 msgid "please wait... contacting tracktype.org"
 msgstr "veuillez attendre... connexion avec tracktype.org"
 
-#: src/freedb_tab.c:620
+#: src/freedb_tab.c:617
 msgid "Search tracktype.org:"
 msgstr "Chercher sur tracktype.org :"
 
-#: src/freedb_tab.c:631
+#: src/freedb_tab.c:628
 msgid "_Search"
 msgstr "_Recherche"
 
-#: src/freedb_tab.c:670
+#: src/freedb_tab.c:667
 msgid "Selected album:"
 msgstr "Album sélectionné :"
 
-#: src/freedb_tab.c:678
+#: src/freedb_tab.c:675
 msgid "_Add splitpoints"
 msgstr "Aj_outer les points"
 
-#: src/freedb_tab.c:685
+#: src/freedb_tab.c:682
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Mettre les points au tableau de points de coupure"
 
@@ -770,7 +770,7 @@ msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 msgid " error: no files found in multiple files mode"
 msgstr " erreur: aucun fichier trouvé avec le mode 'fichiers multiples'"
 
-#: src/utilities.c:774
+#: src/utilities.c:771
 #, c-format
 msgid "Processing file '%s' ..."
 msgstr "Fichier '%s' ..."

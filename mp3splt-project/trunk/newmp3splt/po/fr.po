@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-07-25 13:54+0200\n"
+"POT-Creation-Date: 2009-07-27 20:54+0200\n"
 "PO-Revision-Date: 2009-06-25 00:04+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -24,7 +24,7 @@ msgstr " Attention : %s\n"
 msgid " Error: %s\n"
 msgstr " Erreur : %s\n"
 
-#: src/mp3splt.c:303 src/mp3splt.c:318 src/mp3splt.c:1976
+#: src/mp3splt.c:303 src/mp3splt.c:318 src/mp3splt.c:1984
 msgid "cannot allocate memory !"
 msgstr "impossible d'allouer de la mémoire !"
 
@@ -468,7 +468,7 @@ msgstr ""
 "\n"
 "-- 's' pour diviser, 'c' pour annuler :"
 
-#: src/mp3splt.c:2006
+#: src/mp3splt.c:2014
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec, read man page for details."
@@ -476,42 +476,42 @@ msgstr ""
 "mauvaise valeur pour la division en plusieurs pistes de même taille.\n"
 "\tDoit être min.sec, lisez le manuel pour les détails."
 
-#: src/mp3splt.c:2039
+#: src/mp3splt.c:2047
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "lisez le manuel pour la documentation ou tapez 'mp3splt -h'."
 
-#: src/mp3splt.c:2096
+#: src/mp3splt.c:2104
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 "mauvais argument pour l'option -p. Aucune valeur valide n'a été réconnue !"
 
-#: src/mp3splt.c:2233
+#: src/mp3splt.c:2241
 msgid "no input filename(s)."
 msgstr "aucun fichier d'entrée."
 
-#: src/mp3splt.c:2245
+#: src/mp3splt.c:2253
 msgid "multiple splitpoints with stdout !"
 msgstr "plusieurs points de coupure avec le flux de sortie standard (stdout) !"
 
-#: src/mp3splt.c:2262
+#: src/mp3splt.c:2270
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Fichier '%s' ...\n"
 
-#: src/mp3splt.c:2323
+#: src/mp3splt.c:2331
 msgid "freedb query format ambigous !"
 msgstr "format freedb 'query' ambigu !"
 
-#: src/mp3splt.c:2368
+#: src/mp3splt.c:2376
 msgid "tags format ambiguous !"
 msgstr "format des tags ambigu !"
 
-#: src/mp3splt.c:2400
+#: src/mp3splt.c:2408
 #, c-format
 msgid " Average silence level : %.2f dB"
 msgstr " Niveau de silence moyen : %.2f dB"
 
-#: src/mp3splt.c:2409
+#: src/mp3splt.c:2417
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
