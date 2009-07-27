@@ -16,12 +16,14 @@ mp3splt --- Utility for mp3/ogg splitting without decoding
 
 <P>
 
-<B>mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME2] ... [END_TIME]</B>
+<B>mp3splt [OPTIONS] FILE_OR_DIR1 [FILE_OR_DIR2] ... [BEGIN_TIME] [TIME2] ... [END_TIME]</B>
 <P>
 
-<B>FILE</B>: mp3 or ogg file to be split. If you want to specify STDIN as input, you can use &quot;m-&quot; (or &quot;-&quot;)
+<B>FILE_OR_DIR</B>: mp3/ogg file to be split or a directory.
+If you want to specify STDIN as input, you can use &quot;m-&quot; (or &quot;-&quot;)
 when input is mp3, and &quot;o-&quot; when ogg. Multiple files can be specified, all files will be split
-with the same criterion.
+with the same criterion. If a directory is specified, a recursive scan will be
+performed in that directory to find out all the supported formats files.
 <P>
 <P>
 
@@ -334,6 +336,9 @@ tags are transformed to '_'.
 <P>
 It can contain name variables, that must begin with @ char and that can be:
 <P>
+@A: performer if found, otherwise artist
+<BR>
+
 @a: artist name
 <BR>
 
@@ -352,6 +357,18 @@ It can contain name variables, that must begin with @ char and that can be:
 @N: track tag number**
 <BR>
 
+@l: track number identifier as lowercase letter* (not the real ID3 track number)**
+<BR>
+
+@L: track tag number as lowercase letter**
+<BR>
+
+@u: track number identifier as uppercase letter* (not the real ID3 track number)**
+<BR>
+
+@U: track tag number as uppercase letter**
+<BR>
+
 @f: input filename (without extension)
 <BR>
 
@@ -362,11 +379,12 @@ It can contain name variables, that must begin with @ char and that can be:
 <P>
 (**) a digit may follow for the number of digits to output
 <P>
-When split files are more than one, at least one between @t and @n (*) must be present to avoid ambiguous names.
-You can put any prefix, separator, suffix in the string, for more elegance.
-To make easy the use spaces in output filename without interfering with line
-parameters, you can use the char '+' that will be automatically replaced with a space.
-Valid examples are:
+When split files are more than one, at least one of @t, @n, @N, @l, @L, @u or
+@U (*) must be present to avoid ambiguous names.  You can put any prefix,
+separator, suffix in the string, for more elegance.  To make easy the use
+spaces in output filename without interfering with line parameters, you can use
+the char '+' that will be automatically replaced with a space.  Valid examples
+are:
 <P>
 @n_@a_@b_@t
 <BR>
@@ -394,11 +412,10 @@ See also the -x option.
 this option with -n if you wish to concatenate the split files and obtain
 a similar file as the input file.
 <P>
-<DT><B>-1</B>         <DD>
-<B>Force ID3v1 tags</B>. For mp3 files, force output tags as version 1.
-<P>
-<DT><B>-2</B>         <DD>
-<B>Force ID3v2 tags</B>. For mp3 files, force output tags as version 2.
+<DT><B>-T TAGS_VERSION</B>         <DD>
+<B>Force output tags version</B>. For mp3 files, force output ID3 tags as version
+ID3v1, ID3v2 or ID3v1 and ID3v2. TAGS_VERSION can be 1, 2 or 12. Default is to set the output
+tags version as the tags version of the file to split.
 <P>
 <DT><B>-N</B>         <DD>
 <B>No silence log file</B>. Don't create the 'mp3splt.log' log file when using
@@ -633,6 +650,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 <A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
 using the manual pages.<BR>
-Time: 21:42:58 GMT, May 15, 2009
+Time: 21:01:43 GMT, July 26, 2009
 </BODY>
 </HTML>
