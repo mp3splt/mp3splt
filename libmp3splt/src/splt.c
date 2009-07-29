@@ -109,12 +109,10 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
         splt_beg = split_begin / 100;
         splt_beg += ((split_begin % 100) / 100.);
 
-        //TODO
-        //we will transmit to the plugins the -1.f value
-        //if we have LONG_MAX (== EOF)
+        //LONG_MAX == EOF
         if (split_end == LONG_MAX)
         {
-          splt_end = -1.f;
+          splt_end = splt_t_get_total_time_as_double_secs(state);
         }
         else
         {
@@ -190,7 +188,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
 
       splt_s_split(state, i, i+1, error);
 
-      splt_t_set_splitpoint_value(state, i+1,saved_end_point);
+      splt_t_set_splitpoint_value(state, i+1, saved_end_point);
 
       //get out if error
       if ((*error < 0) || (*error == SPLT_OK_SPLIT_EOF))
@@ -414,8 +412,8 @@ void splt_s_time_split(splt_state *state, int *error)
           }
           splt_t_set_splitpoint_value(state, current_split+1,end_splitpoint);
 
-          double overlapped_end =
-            (double)(splt_u_overlap_time(state, current_split+1) / 100.0);
+          double overlapped_end = (double)
+            ((double)splt_u_overlap_time(state, current_split+1) / 100.0);
 
           err = splt_u_put_output_format_filename(state);
           if (err < 0) { *error = err; break; }

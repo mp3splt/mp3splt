@@ -43,6 +43,7 @@ void splt_t_free_state(splt_state *state);
 
 void splt_t_set_total_time(splt_state *state, long value);
 long splt_t_get_total_time(splt_state *state);
+double splt_t_get_total_time_as_double_secs(splt_state *state);
 
 /**********************************/
 /* types: filename and path access */

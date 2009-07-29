@@ -3098,3 +3098,16 @@ char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split)
   return artist_or_performer;
 }
 
+short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
+    double fend_sec)
+{
+  double total_time = splt_t_get_total_time_as_double_secs(state);
+
+  if (fend_sec >= total_time - 0.01)
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
+}
+
