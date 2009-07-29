@@ -2038,7 +2038,7 @@ function_end:
 //the main mp3 split function
 //filename is our filename
 //state is our state
-//fbegin_sec is the beggining splitpoint
+//fbegin_sec is the begin splitpoint
 //fend_sec is the end splitpoint
 //adjustoption is if we adjust with silence detection or not
 //seekable is if we split in seekable mode or not
@@ -2059,6 +2059,9 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
   short seekable = ! splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE);
   float threshold = splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
 
+  short fend_sec_is_not_eof =
+    !splt_u_fend_sec_is_bigger_than_total_time(state, fend_sec);
+
   short eof=0, check_bitrate=0;
 
   char *filename = splt_t_get_filename_to_split(state);
@@ -2071,6 +2074,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
   //for the progress
   unsigned long stopped_frames = 0;
   int progress_adjust_val = 2;
+
   if (adjustoption) 
   {
     progress_adjust_val = 4;
@@ -2230,7 +2234,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
       splt_u_print_debug(state,"Starting mp3 non frame mode...",0,NULL);
 
       off_t begin = 0, end = 0;
-      if (fend_sec != -1)
+      if (fend_sec_is_not_eof)
       {
         end = (off_t) (fend_sec * 
             mp3state->mp3file.bitrate + mp3state->mp3file.firsth);
@@ -2491,12 +2495,12 @@ bloc_end:
       fbegin = fend = adjust = 0;
       fbegin = fbegin_sec * mp3state->mp3file.fps;
 
-      if (fend_sec != -1)
+      if (fend_sec_is_not_eof)
       {
         //if adjustoption
         if (adjustoption)
         {
-          if (fend_sec != -1)
+          if (fend_sec_is_not_eof)
           {
             float adj = (float) (adjustoption);
             float len = (fend_sec - fbegin_sec);
@@ -2512,7 +2516,7 @@ bloc_end:
           }
           else 
           {
-            adjust=0;
+            adjust = 0;
           }
         }
         fend = fend_sec * mp3state->mp3file.fps;
@@ -2540,7 +2544,7 @@ bloc_end:
         while (mp3state->frames < fbegin)
         {
           begin = splt_mp3_findhead(mp3state, mp3state->h.ptr + mp3state->h.framesize);
-          if (begin==-1)
+          if (begin == -1)
           {
             *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
             return;
@@ -2727,7 +2731,7 @@ bloc_end:
         // Finds first valid header. Mantain clean files.
         begin = splt_mp3_findvalidhead(mp3state, begin);
 
-        if (begin==-1)
+        if (begin == -1)
         {
           *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
           return;
@@ -2744,7 +2748,7 @@ bloc_end:
         begin = mp3state->end;
       }
 
-      if (fend_sec != -1)
+      if (fend_sec_is_not_eof)
       {
         end = (off_t) (fend_sec * mp3state->mp3file.bitrate + mp3state->mp3file.firsth);
         end = splt_mp3_findvalidhead(mp3state, end); // We take the complete frame

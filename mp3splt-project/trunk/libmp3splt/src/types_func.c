@@ -378,10 +378,19 @@ void splt_t_set_total_time(splt_state *state, long value)
   }
 }
 
-//returns total time of the file
 long splt_t_get_total_time(splt_state *state)
 {
   return state->split.total_time;
+}
+
+double splt_t_get_total_time_as_double_secs(splt_state *state)
+{
+  long total_time = splt_t_get_total_time(state);
+
+  double total = total_time / 100;
+  total += ((total_time % 100) / 100.);
+
+  return total;
 }
 
 /**********************************/

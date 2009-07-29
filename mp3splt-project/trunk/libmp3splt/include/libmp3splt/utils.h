@@ -127,6 +127,10 @@ char *splt_u_str_to_upper(const char *str, int *error);
 
 char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split);
 
+short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
+    double fend_sec);
+
+
 #define MP3SPLT_UTILS_H
 
 #endif

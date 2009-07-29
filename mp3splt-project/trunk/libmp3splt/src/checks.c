@@ -114,7 +114,7 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
       //we take the total time and assign it to split_value
       if (splitpoint_value == LONG_MAX)
       {
-        splt_t_set_splitpoint_value(state,i,splt_t_get_total_time(state));
+        splt_t_set_splitpoint_value(state, i, splt_t_get_total_time(state));
       }
 
       //check if splitpoints not in order

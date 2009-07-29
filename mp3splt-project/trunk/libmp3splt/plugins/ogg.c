@@ -920,7 +920,7 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
       else 
       {
         //result==1 means that we have a good page
-        if(result>0)
+        if(result > 0)
         {
           //for streams recorded in the middle
           //we add the current granpos
@@ -953,7 +953,7 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
 
           //for a broken ogg file with no
           //header, we have granpos > cutpoint the first time
-          if(granpos < cutpoint)
+          if (granpos < cutpoint)
           {
             while(1)
             {
@@ -1012,14 +1012,13 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
   }
 
   /* Now, check to see if we reached a real EOS */
-  if(granpos < cutpoint)
+  if (granpos < cutpoint)
   {
     *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
     return -1; // Cutpoint is out of file
   }
 
-  while((result = ogg_stream_packetout(oggstate->stream_in, &packet))
-      !=0)
+  while ((result = ogg_stream_packetout(oggstate->stream_in, &packet)) !=0)
   {
     //if == -1, we are out of sync; not a fatal error
     if (result != -1)
@@ -1029,7 +1028,7 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
       bs = splt_ogg_get_blocksize(oggstate, oggstate->vi, &packet);
       prevgranpos += bs;
 
-      if(prevgranpos > cutpoint)
+      if (prevgranpos > cutpoint)
       {
         oggstate->packets[1] = splt_ogg_save_packet(&packet, &packet_err);
         if (packet_err < 0) { return -1; }
@@ -1334,8 +1333,8 @@ write_error:
 }
 
 //splits ogg
-void splt_ogg_split(const char *output_fname, splt_state *state, double
-    sec_begin, double sec_end, short seekable, 
+void splt_ogg_split(const char *output_fname, splt_state *state,
+    double sec_begin, double sec_end, short seekable, 
     int adjust, float threshold, int *error, int save_end_point)
 {
   splt_ogg_state *oggstate = state->codec;
@@ -1348,11 +1347,14 @@ void splt_ogg_split(const char *output_fname, splt_state *state, double
 
   char *filename = splt_t_get_filename_to_split(state);
 
-  if (sec_end != -1.f)
+  short sec_end_is_not_eof =
+    !splt_u_fend_sec_is_bigger_than_total_time(state, sec_end);
+
+  if (sec_end_is_not_eof)
   {
     if (adjust)
     {
-      if (sec_end != -1)
+      if (sec_end_is_not_eof)
       {
         float gap = (float) adjust;
         if (sec_end > gap)
