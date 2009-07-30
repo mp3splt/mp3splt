@@ -7,11 +7,16 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows : won't fix in release 2.2.6
 
+
+#mp3splt version 2.2.6a
+
+- fixed important regression bug with the gap parameter of auto adjust (libmp3splt)
+
 #mp3splt v. 2.2.6
 
 - multiple files split : split recursively files from directories
 - added internationalization support (gettext) + french & german translations
-- added patch for output format variables @u, @U, @l, @L (thanks TODO ) (libmp3splt)
+- added patch for output format variables @u, @U, @l, @L (libmp3splt)
 - added support to output both ID3v1 and ID3v2 tags
 - fixed bug #2809816 with cue file : artist tags were the same (libmp3splt)
 - fixed important bug when detecting the total time : the last split file was shorter (libmp3splt)

@@ -1,12 +1,17 @@
-Known issues :
+K7nown issues :
 
 - C library error messages not translated on windows : won't fix
+
+libmp3splt version 0.5.7a
+-------------------------------------------------------------
+
+- fixed important regression bug with the gap parameter of auto adjust
 
 libmp3splt version 0.5.7
 -------------------------------------------------------------
 
 - added internationalization support (gettext) + french & german translations
-- added patch for output format variables @u, @U, @l, @L (thanks TODO )
+- added patch for output format variables @u, @U, @l, @L
 - added support to output both ID3v1 and ID3v2 tags
 - changed code to look for '.so.0' instead of '.so' for the plugins
 - fixed compilation bug for libmp3splt detection to look for 'libmp3splt/mp3splt.h' instead of mp3splt.h 

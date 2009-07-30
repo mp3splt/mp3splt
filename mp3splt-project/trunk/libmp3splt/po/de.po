@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-07-27 20:54+0200\n"
+"POT-Creation-Date: 2009-07-30 20:20+0200\n"
 "PO-Revision-Date: 2009-07-01 21:03+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -76,47 +76,47 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " Informationen aus CDDB-Datei %s werden gelesen …\n"
 
-#: src/types_func.c:2191 src/utils.c:2424
+#: src/types_func.c:2200 src/utils.c:2424
 msgid "not enough memory"
 msgstr "nicht genug Speicher"
 
-#: src/types_func.c:2220
+#: src/types_func.c:2229
 msgid "Network error"
 msgstr "Netzwerkfehler"
 
-#: src/splt.c:157
+#: src/splt.c:155
 msgid " info: starting normal split\n"
 msgstr " Info: Teilung im normalen Modus wird gestartet\n"
 
-#: src/splt.c:225
+#: src/splt.c:223
 msgid " info: starting error mode split\n"
 msgstr " Info: Teilung im normalen Fehlermodus wird gestartet\n"
 
-#: src/splt.c:342
+#: src/splt.c:340
 msgid " info: starting time mode split\n"
 msgstr " Info: Teilung im normalen Zeitmodus wird gestartet\n"
 
-#: src/splt.c:579
+#: src/splt.c:577
 #, c-format
 msgid "YES"
 msgstr "JA"
 
-#: src/splt.c:583
+#: src/splt.c:581
 #, c-format
 msgid "NO"
 msgstr "NEIN"
 
-#: src/splt.c:588
+#: src/splt.c:586
 #, c-format
 msgid "User"
 msgstr "Benutzer"
 
-#: src/splt.c:592
+#: src/splt.c:590
 #, c-format
 msgid "Auto"
 msgstr "Automatisch"
 
-#: src/splt.c:598
+#: src/splt.c:596
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %"
@@ -125,7 +125,7 @@ msgstr ""
 " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: "
 "%.2f, Entfernen: %s)\n"
 
-#: src/splt.c:614
+#: src/splt.c:612
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -134,7 +134,7 @@ msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden "
 "Teilungspunkte aus dieser Datei gelesen ;)"
 
-#: src/splt.c:639
+#: src/splt.c:637
 #, c-format
 msgid ""
 "\n"
@@ -143,21 +143,21 @@ msgstr ""
 "\n"
 " Insgesamt gefundene Teilungspunkte: %d."
 
-#: src/splt.c:649
+#: src/splt.c:647
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d Titel ausgewählt)\n"
 
-#: src/splt.c:744
+#: src/splt.c:742
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr "Stille-Protokolldatei »%s« wird geschrieben …\n"
 
-#: src/splt.c:805
+#: src/splt.c:803
 msgid " info: starting silence mode split\n"
 msgstr " Info: Teilung im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:863
+#: src/splt.c:861
 msgid " info: starting wrap mode split\n"
 msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 
@@ -554,35 +554,35 @@ msgstr " - %d kB/s"
 msgid " - Total time: %dm.%02ds"
 msgstr " - Zeit gesamt: %dm.%02ds"
 
-#: plugins/mp3.c:3074
+#: plugins/mp3.c:3078
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Erkannte Datei erzeugt mit: Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:3115
+#: plugins/mp3.c:3119
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Integritätsprüfung der Datei: CRC wird berechnet, bitte warten …"
 
-#: plugins/mp3.c:3134
+#: plugins/mp3.c:3138
 msgid " OK\n"
 msgstr " OK\n"
 
-#: plugins/mp3.c:3153
+#: plugins/mp3.c:3157
 #, c-format
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Erkannte Datei erzeugt mit: AlbumWrap\n"
 
-#: plugins/mp3.c:3176
+#: plugins/mp3.c:3180
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Dateien gesamt: %d\n"
 
-#: plugins/mp3.c:3577
+#: plugins/mp3.c:3581
 #, c-format
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Warnung: stdin »-« wird als mp3-Datenstrom angenommen.\n"
 
-#: plugins/mp3.c:3604
+#: plugins/mp3.c:3608
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
@@ -592,7 +592,7 @@ msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Info: OggVorbis-Datenstrom - %ld - %ld kB/s - %d Kanäle"
 
-#: plugins/ogg.c:1845
+#: plugins/ogg.c:1847
 #, c-format
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Warnung: stdin »o-« wird als Ogg-Datenstrom angenommen.\n"

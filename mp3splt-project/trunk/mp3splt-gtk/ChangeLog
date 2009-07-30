@@ -8,6 +8,11 @@ Known issues :
 - menus translation 'N_' not working : no idea how to fix
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.5.7a
+
+- fixed important regression bug with the gap parameter of auto adjust (libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.5.7
 
 - major GUI usability improvements
@@ -21,7 +26,7 @@ mp3splt-gtk version 0.5.7
 - added default UTF-8 encoding on all OSes
 - removed the language chooser in the preferences on most OSes
 - removed the 'input not seekable' option from the preferences
-- added patch for output format variables @u, @U, @l, @L (thanks TODO ) (libmp3splt)
+- added patch for output format variables @u, @U, @l, @L (libmp3splt)
 - added support to output both ID3v1 and ID3v2 tags
 - fixed bug #2809816 with cue file : artist tags were the same (libmp3splt)
 - fixed important bug when detecting the total time : the last split file was shorter (libmp3splt)
