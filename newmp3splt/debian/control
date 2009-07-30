@@ -2,12 +2,12 @@ Source: mp3splt
 Section: sound
 Priority: optional
 Maintainer: Munteanu Alexandru Ionut (io_alex_2002@yahoo.fr)
-Build-Depends: debhelper (>= 4.0.0), libmp3splt (>= 0.5.7)
+Build-Depends: debhelper (>= 4.0.0), libmp3splt (>= 0.5.7a)
 Standards-Version: 3.6.1.1
 
 Package: mp3splt
 Architecture: any
-Depends: ${shlibs:Depends}, libmp3splt (>= 0.5.7)
+Depends: ${shlibs:Depends}, libmp3splt (>= 0.5.7a)
 Description: Command line program that splits MP3 and Ogg Vorbis files without reencoding
  Used to split MP3 (VBR supported) and Ogg Vorbis
  files into smaller files without decoding. Useful for splitting albums, either
