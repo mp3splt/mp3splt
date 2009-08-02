@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-07-30 20:20+0200\n"
+"POT-Creation-Date: 2009-08-02 22:49+0200\n"
 "PO-Revision-Date: 2009-07-01 21:03+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -549,7 +549,7 @@ msgstr " - FRAME-MODUS"
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1583 plugins/ogg.c:177
+#: plugins/mp3.c:1583 plugins/ogg.c:181
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Zeit gesamt: %dm.%02ds"
@@ -587,12 +587,12 @@ msgstr " Warnung: stdin »-« wird als mp3-Datenstrom angenommen.\n"
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
 
-#: plugins/ogg.c:169
+#: plugins/ogg.c:173
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Info: OggVorbis-Datenstrom - %ld - %ld kB/s - %d Kanäle"
 
-#: plugins/ogg.c:1847
+#: plugins/ogg.c:1906
 #, c-format
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Warnung: stdin »o-« wird als Ogg-Datenstrom angenommen.\n"
