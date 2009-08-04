@@ -46,6 +46,8 @@
 
 #include "ogg.h"
 
+#define FIRST_GRANPOS 1
+
 /**
  * Notes:
  * - if ogg_stream_init() returns -1, then the stream was incorrectly
@@ -255,17 +257,20 @@ static splt_v_packet *splt_ogg_save_packet(ogg_packet *packet, int *error)
 }
 
 //frees a packet
-static void splt_ogg_free_packet(splt_v_packet *p)
+static void splt_ogg_free_packet(splt_v_packet **p)
 {
-  if(p)
+  if (p)
   {
-    if(p->packet)
+    if (*p)
     {
-      free(p->packet);
-      p->packet = NULL;
+      if((*p)->packet)
+      {
+        free((*p)->packet);
+        (*p)->packet = NULL;
+      }
+      free(*p);
+      *p = NULL;
     }
-    free(p);
-    p = NULL;
   }
 }
 
@@ -370,8 +375,8 @@ static void splt_ogg_v_free(splt_ogg_state *oggstate)
   {
     if(oggstate->packets)
     {
-      splt_ogg_free_packet(oggstate->packets[0]);
-      splt_ogg_free_packet(oggstate->packets[1]);
+      splt_ogg_free_packet(&oggstate->packets[0]);
+      splt_ogg_free_packet(&oggstate->packets[1]);
       free(oggstate->packets);
       oggstate->packets = NULL;
     }
@@ -380,7 +385,7 @@ static void splt_ogg_v_free(splt_ogg_state *oggstate)
       int i;
       for(i=0; i < 3; i++)
       {
-        splt_ogg_free_packet(oggstate->headers[i]);
+        splt_ogg_free_packet(&oggstate->headers[i]);
       }
       free(oggstate->headers);
       oggstate->headers = NULL;
@@ -958,24 +963,24 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
             while (1)
             {
               result = ogg_stream_packetout(oggstate->stream_in, &packet);
-              //throw away result, but update state
-              splt_ogg_get_blocksize(oggstate,oggstate->vi,&packet);
 
-              //result == -1 is not a fatal error
-              if (result == 0) 
+              if (result != -1)
               {
-                break;
-              }
-              else 
-              {
-                if (result != -1)
+                splt_ogg_get_blocksize(oggstate,oggstate->vi,&packet);
+
+                //result == -1 is not a fatal error
+                if (result == 0) 
+                {
+                  break;
+                }
+                else 
                 {
                   /* We need to save the last packet in the first
                    * stream - but we don't know when we're going
                    * to get there. So we have to keep every packet
                    * just in case.
                    */
-                  splt_ogg_free_packet(oggstate->packets[0]);
+                  splt_ogg_free_packet(&oggstate->packets[0]);
                   oggstate->packets[0] = splt_ogg_save_packet(&packet, &packet_err);
                   if (packet_err < 0) { return -1; }
                 }
@@ -1029,12 +1034,13 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
 
       if (prevgranpos > cutpoint)
       {
+        splt_ogg_free_packet(&oggstate->packets[1]);
         oggstate->packets[1] = splt_ogg_save_packet(&packet, &packet_err);
         if (packet_err < 0) { return -1; }
         break;
       }
 
-      splt_ogg_free_packet(oggstate->packets[0]);
+      splt_ogg_free_packet(&oggstate->packets[0]);
       oggstate->packets[0] = splt_ogg_save_packet(&packet, &packet_err);
       if (packet_err < 0) { return -1; }
     }
@@ -1063,6 +1069,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 {
   splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
 
+  //TODO: eos not set on ripped streams on last split file
+
   //for the progress
   int progress_adjust = 1;
 
@@ -1082,7 +1090,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
     packet.packet = oggstate->packets[0]->packet;
     packet.b_o_s = 0;
     packet.e_o_s = 0;
-    packet.granulepos = 0;
+    packet.granulepos = FIRST_GRANPOS;
     packet.packetno = packetnum++;
     ogg_stream_packetin(stream,&packet);
 
@@ -1123,35 +1131,37 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
       }
     }
   }
-  //TODO: added because packetno = 3 was never written
-  else if (oggstate->packets[1])
-  {
-    packet.bytes = oggstate->packets[1]->length;
-    packet.packet = oggstate->packets[1]->packet;
-    packet.b_o_s = 0;
-    packet.e_o_s = 0;
-    packet.granulepos = oggstate->initialgranpos;
-    packet.packetno = packetnum++;
-    ogg_stream_packetin(stream, &packet);
-
-    if (ogg_stream_flush(stream, &page)!=0)
-    {
-      if (fwrite(page.header,1,page.header_len,f) < page.header_len)
-      {
-        goto write_error;
-      }
-      if (fwrite(page.body,1,page.body_len,f) < page.body_len)
-      {
-        goto write_error;
-      }
-    }
-  }
+  //added because packetno = 3 was never written
   else
   {
-    oggstate->initialgranpos = 0;
+    if (oggstate->packets[1])
+    {
+      packet.bytes = oggstate->packets[1]->length;
+      packet.packet = oggstate->packets[1]->packet;
+      packet.b_o_s = 0;
+      packet.e_o_s = 0;
+      packet.granulepos = FIRST_GRANPOS;
+      packet.packetno = packetnum++;
+      ogg_stream_packetin(stream, &packet);
+
+      if (ogg_stream_flush(stream, &page)!=0)
+      {
+        if (fwrite(page.header,1,page.header_len,f) < page.header_len)
+        {
+          goto write_error;
+        }
+        if (fwrite(page.body,1,page.body_len,f) < page.body_len)
+        {
+          goto write_error;
+        }
+      }
+    }
+
+    oggstate->initialgranpos = FIRST_GRANPOS;
   }
 
   current_granpos = oggstate->initialgranpos;
+
   int packet_err = SPLT_OK;
 
   while (!eos)
@@ -1199,9 +1209,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                 {
                   int bs = splt_ogg_get_blocksize(oggstate, oggstate->vi, &packet);
                   current_granpos += bs;
-                  /* We need to save packet to optimize following split process */
-                  splt_ogg_free_packet(oggstate->packets[0]);
+
+                  //we need to save the last packet, so save the curren packet each time
+                  splt_ogg_free_packet(&oggstate->packets[0]);
                   oggstate->packets[0] = splt_ogg_save_packet(&packet, &packet_err);
+
                   if (packet_err < 0) { return -1; }
                   if (current_granpos > page_granpos)
                   {
@@ -1334,8 +1346,12 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
       if (prev_granpos >= cutpoint)
       {
-        splt_ogg_free_packet(oggstate->packets[1]);
-        oggstate->packets[1] = splt_ogg_save_packet(&packet, &packet_err);
+        splt_ogg_free_packet(&oggstate->packets[1]);
+        //don't save the last packet if exact split
+        if (prev_granpos != cutpoint)
+        {
+          oggstate->packets[1] = splt_ogg_save_packet(&packet, &packet_err);
+        }
         if (packet_err < 0) { return -1; }
         packet.granulepos = cutpoint; /* Set it! This 'truncates' the final packet, as needed. */
         packet.e_o_s = 1;
@@ -1348,7 +1364,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
         packet.packetno = packetnum++;
       }
 
-      splt_ogg_free_packet(oggstate->packets[0]);
+      splt_ogg_free_packet(&oggstate->packets[0]);
       oggstate->packets[0] = splt_ogg_save_packet(&packet, &packet_err);
       if (packet_err < 0) { return -1; }
 
@@ -1395,7 +1411,7 @@ void splt_ogg_split(const char *output_fname, splt_state *state,
   splt_ogg_state *oggstate = state->codec;
 
   ogg_stream_state stream_out;
-  ogg_packet header_comm;
+  //ogg_packet header_comm;
   ogg_int64_t begin,end = 0, cutpoint = 0;
 
   begin = (ogg_int64_t) (sec_begin * oggstate->vi->rate);
@@ -1468,7 +1484,7 @@ void splt_ogg_split(const char *output_fname, splt_state *state,
   /*
     //vorbis memory leak ?
     vorbis_commentheader_out(&oggstate->vc, &header_comm);
-  
+ 
     int packet_err = SPLT_OK;
     splt_ogg_free_packet(oggstate->headers[1]);
     oggstate->headers[1] = splt_ogg_save_packet(&header_comm, &packet_err);
