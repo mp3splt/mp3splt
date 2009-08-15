@@ -130,6 +130,7 @@ char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split);
 short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
     double fend_sec);
 
+int splt_u_str_ends_with(const char *str1, const char *str2);
 
 #define MP3SPLT_UTILS_H
 

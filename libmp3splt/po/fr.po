@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-08-02 22:49+0200\n"
+"POT-Creation-Date: 2009-08-04 22:52+0200\n"
 "PO-Revision-Date: 2009-06-24 19:06+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -553,7 +553,7 @@ msgstr " - MODE 'FRAME'"
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1583 plugins/ogg.c:181
+#: plugins/mp3.c:1583 plugins/ogg.c:183
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
@@ -594,12 +594,12 @@ msgstr ""
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
 
-#: plugins/ogg.c:173
+#: plugins/ogg.c:175
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " info : flux Ogg Vorbis - %ld - %ld Kb/s - %d canaux"
 
-#: plugins/ogg.c:1906
+#: plugins/ogg.c:1922
 #, c-format
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""

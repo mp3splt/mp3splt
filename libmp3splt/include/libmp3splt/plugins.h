@@ -33,6 +33,7 @@
 float splt_p_get_version(splt_state *state, int *error);
 const char *splt_p_get_name(splt_state *state, int *error);
 const char *splt_p_get_extension(splt_state *state, int *error);
+const char *splt_p_get_upper_extension(splt_state *state, int *error);
 int splt_p_check_plugin_is_for_file(splt_state *state, int *error);
 void splt_p_search_syncerrors(splt_state *state, int *error);
 void splt_p_dewrap(splt_state *state, int listonly, const char *dir, int *error);

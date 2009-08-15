@@ -123,8 +123,7 @@ double splt_u_convertfromdB(float input)
 
 //returns -1 is the file is damaged
 //0 otherwise
-int splt_u_getword (FILE *in, off_t offset, int mode, 
-    unsigned long *headw)
+int splt_u_getword(FILE *in, off_t offset, int mode, unsigned long *headw)
 {
   int i;
   *headw = 0;
@@ -1533,7 +1532,7 @@ int splt_u_put_output_format_filename(splt_state *state)
   {
     point_value = splt_t_get_splitpoint_value(state, old_current_split +1, &error);
     long total_time = splt_t_get_total_time(state);
-    if (point_value > total_time)
+    if (total_time > 0 && point_value > total_time)
     {
       point_value = total_time;
     }
@@ -3103,11 +3102,58 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
 {
   double total_time = splt_t_get_total_time_as_double_secs(state);
 
-  if (fend_sec >= total_time - 0.01)
+  if (total_time - 0.01 > 0)
   {
-    return SPLT_TRUE;
+    if (fend_sec >= total_time - 0.01)
+    {
+      return SPLT_TRUE;
+    }
+  }
+  else
+  {
+    //we might not have total time for non seekable
+    if (splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
+    {
+      int current_split = splt_t_get_current_split(state);
+      if (splt_t_splitpoint_exists(state, current_split + 1))
+      {
+        int get_error = SPLT_OK;
+        long split_end = splt_t_get_splitpoint_value(state, current_split+1, &get_error);
+        if (get_error >= 0)
+        {
+          if (split_end == LONG_MAX)
+          {
+            return SPLT_TRUE;
+          }
+        }
+      }
+    }
   }
 
   return SPLT_FALSE;
+}
+
+int splt_u_str_ends_with(const char *str1, const char *str2)
+{
+  if (!str1 || !str2)
+  {
+    return SPLT_FALSE;
+  }
+
+  int str1_end_index = strlen(str1) - 1;
+  int str2_end_index = strlen(str2) - 1;
+
+  while (str1_end_index >= 0 && str2_end_index >= 0)
+  {
+    if (str1[str1_end_index] != str2[str2_end_index])
+    {
+      return SPLT_FALSE;
+    }
+
+    str1_end_index--;
+    str2_end_index--;
+  }
+
+  return SPLT_TRUE;
 }
 

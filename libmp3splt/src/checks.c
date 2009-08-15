@@ -332,7 +332,7 @@ void splt_check_file_type(splt_state *state, int *error)
   int err = SPLT_OK;
 
   splt_u_print_debug(state,"Detecting file format...",0,NULL);
-  char *filename = splt_t_get_filename_to_split(state);
+  const char *filename = splt_t_get_filename_to_split(state);
 
   splt_u_print_debug(state,"Checking the format of",0,filename);
 
@@ -344,16 +344,36 @@ void splt_check_file_type(splt_state *state, int *error)
   {
     splt_t_set_current_plugin(state, i);
     err = SPLT_OK;
-    if (splt_p_check_plugin_is_for_file(state, &err))
+
+    if (splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE) &&
+        ! splt_t_is_stdin(state))
     {
+      const char *extension = splt_p_get_extension(state, &err);
+      const char *upper_extension = splt_p_get_extension(state, &err);
       if (err == SPLT_OK)
       {
-        //here, plugin found
-        plugin_found = SPLT_TRUE;
-        break;
+        if (splt_u_str_ends_with(filename, extension) ||
+            splt_u_str_ends_with(filename, upper_extension))
+        {
+          plugin_found = SPLT_TRUE;
+          break;
+        }
+      }
+    }
+    else
+    {
+      if (splt_p_check_plugin_is_for_file(state, &err))
+      {
+        if (err == SPLT_OK)
+        {
+          //here, plugin found
+          plugin_found = SPLT_TRUE;
+          break;
+        }
       }
     }
   }
+
   if (! plugin_found)
   {
     splt_t_set_error_data(state, filename);
