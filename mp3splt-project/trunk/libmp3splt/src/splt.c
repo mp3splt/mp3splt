@@ -112,6 +112,7 @@ static void splt_s_split(splt_state *state, int first_splitpoint,
         //LONG_MAX == EOF
         if (split_end == LONG_MAX)
         {
+          //Warning : we might not always have total time with input not seekable
           splt_end = splt_t_get_total_time_as_double_secs(state);
         }
         else

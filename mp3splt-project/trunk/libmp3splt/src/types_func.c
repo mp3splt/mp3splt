@@ -2104,7 +2104,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->options.output_filenames = SPLT_OUTPUT_DEFAULT;
   state->options.quiet_mode = SPLT_FALSE;
   state->options.pretend_to_split = SPLT_FALSE;
-  state->options.option_frame_mode = SPLT_TRUE;
+  state->options.option_frame_mode = SPLT_FALSE;
   state->options.split_time = 6000;
   state->options.overlap_time = 0;
   state->options.option_auto_adjust = SPLT_FALSE;

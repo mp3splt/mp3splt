@@ -620,6 +620,21 @@ const char *splt_p_get_extension(splt_state *state, int *error)
   }
 }
 
+const char *splt_p_get_upper_extension(splt_state *state, int *error)
+{
+  splt_plugins *pl = state->plug;
+  int current_plugin = splt_t_get_current_plugin(state);
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return NULL;
+  }
+  else
+  {
+    return pl->data[current_plugin].info.upper_extension;
+  }
+}
+
 /* plugin function wrappers */
 
 int splt_p_check_plugin_is_for_file(splt_state *state, int *error)
