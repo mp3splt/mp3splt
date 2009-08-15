@@ -2205,7 +2205,7 @@ static void splt_mp3_split(const char *output_fname, splt_state *state,
             mp3state->data_len = 0;
           }
 
-          if ((end_c > 0) && (time > end_c))
+          if ((end_c > 0) && (time >= end_c))
           {
             finished = 1;
           }
