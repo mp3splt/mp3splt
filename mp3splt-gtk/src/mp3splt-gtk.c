@@ -75,6 +75,8 @@ extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 
 //EXTERNAL OPTIONS
+//frame mode option
+extern GtkWidget *frame_mode;
 //auto-adjust option
 extern GtkWidget *adjust_mode;
 //gap parameter
@@ -165,6 +167,16 @@ void put_split_filename(const char *filename,int progress_data)
 //put the options from the preferences
 void put_options_from_preferences()
 {
+  //preferences options
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE, SPLT_TRUE);
+  }
+  else
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE, SPLT_FALSE);
+  }
+
   //adjust option
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
   {

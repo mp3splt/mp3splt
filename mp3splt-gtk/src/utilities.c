@@ -63,6 +63,8 @@ extern GtkWidget *entry;
 
 
 //EXTERNAL OPTIONS
+//frame mode option
+extern GtkWidget *frame_mode;
 //auto-adjust option
 extern GtkWidget *adjust_mode;
 //gap parameter
@@ -298,6 +300,17 @@ void load_preferences()
 jump_near:
   gtk_combo_box_set_active(GTK_COMBO_BOX(player_combo_box), i);
 
+  //frame mode
+  item = g_key_file_get_boolean(key_file, "split", "frame_mode", NULL);
+  if (item)
+  {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode),TRUE);
+  }
+  else
+  {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode),FALSE);
+  }
+
   //adjust mode
   item = g_key_file_get_boolean(key_file, "split", "adjust_mode", NULL);
   if (item)
@@ -440,6 +453,12 @@ void write_default_preferences_file()
     lang_char = NULL;
   }
 #endif
+
+  //frame mode
+  if (!g_key_file_has_key(my_key_file, "split", "frame_mode",NULL))
+  {
+    g_key_file_set_boolean(my_key_file, "split", "frame_mode", FALSE);
+  }
 
   //adjust mode
   if (!g_key_file_has_key(my_key_file, "split", "adjust_mode",NULL))
