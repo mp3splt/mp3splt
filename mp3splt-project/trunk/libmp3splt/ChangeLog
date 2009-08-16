@@ -2,7 +2,7 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
-libmp3splt version 0.5.8
+libmp3splt version 0.5.7b
 -------------------------------------------------------------
 
 - fixed issue with mp3 frame mode: frame mode is not any more enabled by default

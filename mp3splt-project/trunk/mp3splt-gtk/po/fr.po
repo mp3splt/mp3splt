@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-08-04 22:52+0200\n"
+"POT-Creation-Date: 2009-08-16 11:40+0200\n"
 "PO-Revision-Date: 2009-07-24 22:37+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -47,7 +47,7 @@ msgstr "description"
 msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/tree_tab.c:1158 src/preferences_tab.c:559
+#: src/tree_tab.c:1158 src/preferences_tab.c:557
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
@@ -107,7 +107,7 @@ msgstr "Effacer toutes les lignes"
 msgid "_Silence detection"
 msgstr "Détection du _silence"
 
-#: src/tree_tab.c:1606 src/mp3splt-gtk.c:480
+#: src/tree_tab.c:1606 src/mp3splt-gtk.c:478
 msgid " finished"
 msgstr " fini"
 
@@ -163,73 +163,73 @@ msgstr "_Effacer les fichiers sélectionnées"
 msgid "D_elete all files"
 msgstr "Effa_cer tous les fichiers"
 
-#: src/preferences_tab.c:352
+#: src/preferences_tab.c:353
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Choisir la langue (nécessite redémarrage)</b>"
 
-#: src/preferences_tab.c:386
+#: src/preferences_tab.c:387
 msgid "Choose split directory"
 msgstr "Choisir le répertoire pour les fichiers coupés"
 
-#: src/preferences_tab.c:508
+#: src/preferences_tab.c:506
 msgid "Br_owse dir"
 msgstr "Parc_ourir dossier"
 
-#: src/preferences_tab.c:516
+#: src/preferences_tab.c:514
 msgid "_Song dir"
 msgstr "Rép_ertoire du fichier"
 
-#: src/preferences_tab.c:521
+#: src/preferences_tab.c:519
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Répertoire des fichiers coupés</b>"
 
-#: src/preferences_tab.c:529
+#: src/preferences_tab.c:527
 msgid "_Create directories from filenames "
 msgstr "_Créér les répertoires à partir des noms de fichiers"
 
-#: src/preferences_tab.c:535
+#: src/preferences_tab.c:533
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Mode 'f_rame' (utile pour mp3 VBR) (seulement mp3)"
 
-#: src/preferences_tab.c:542
+#: src/preferences_tab.c:540
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 "Aj_ustement automatique (utilise la détection du silence pour ajuster les "
 "points)"
 
-#: src/preferences_tab.c:574
+#: src/preferences_tab.c:572
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr "Compensation du point de coupure (0 - début du silence, 1 - la fin) :"
 
-#: src/preferences_tab.c:591
+#: src/preferences_tab.c:589
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "Niveau d'écart (secondes autour du point à chercher du silence) :"
 
-#: src/preferences_tab.c:610
+#: src/preferences_tab.c:608
 msgid "Set _default split options"
 msgstr "Options par _défaut"
 
-#: src/preferences_tab.c:616
+#: src/preferences_tab.c:614
 msgid "<b>Split options</b>"
 msgstr "<b>Options de coupure</b>"
 
-#: src/preferences_tab.c:694
+#: src/preferences_tab.c:692
 msgid "Choose a player:"
 msgstr "Choisir un lecteur :"
 
-#: src/preferences_tab.c:718
+#: src/preferences_tab.c:716
 msgid "<b>Player options</b>"
 msgstr "<b>Options du lecteur</b>"
 
-#: src/preferences_tab.c:765
+#: src/preferences_tab.c:763
 msgid "Default format"
 msgstr "Format par défaut"
 
-#: src/preferences_tab.c:769
+#: src/preferences_tab.c:767
 msgid "Custom format"
 msgstr "Format personnalisé"
 
-#: src/preferences_tab.c:786
+#: src/preferences_tab.c:784
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -245,63 +245,63 @@ msgstr ""
 "    @t - titre\n"
 "    @n - identifiant de piste"
 
-#: src/preferences_tab.c:798
+#: src/preferences_tab.c:796
 msgid "<b>Output filename format</b>"
 msgstr "<b>Format des fichiers divisés</b>"
 
-#: src/preferences_tab.c:828
+#: src/preferences_tab.c:826
 msgid "Original file tags"
 msgstr "Tags du fichier d'entrée"
 
-#: src/preferences_tab.c:834
+#: src/preferences_tab.c:832
 msgid "Default tags (cddb or cue tags)"
 msgstr "Tags par défaut (cddb ou cue)"
 
-#: src/preferences_tab.c:840
+#: src/preferences_tab.c:838
 msgid "No tags"
 msgstr "Aucun tag"
 
-#: src/preferences_tab.c:845
+#: src/preferences_tab.c:843
 msgid "<b>Split files tags</b>"
 msgstr "<b>Tags des fichiers coupés</b>"
 
-#: src/preferences_tab.c:853
+#: src/preferences_tab.c:851
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Tags ID3v1 & ID3v2"
 
-#: src/preferences_tab.c:860
+#: src/preferences_tab.c:858
 msgid "ID3v2 tags"
 msgstr "Tags ID3v2"
 
-#: src/preferences_tab.c:866
+#: src/preferences_tab.c:864
 msgid "ID3v1 tags"
 msgstr "Tags ID3v1"
 
-#: src/preferences_tab.c:872
+#: src/preferences_tab.c:870
 msgid "Same tags version as the input file"
 msgstr "Même version des tags que le fichier d'entrée"
 
-#: src/preferences_tab.c:877
+#: src/preferences_tab.c:875
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:918 src/main_win.c:547
+#: src/preferences_tab.c:916 src/main_win.c:547
 msgid "Split"
 msgstr "Coupure"
 
-#: src/preferences_tab.c:924
+#: src/preferences_tab.c:922
 msgid "Tags"
 msgstr "Tags"
 
-#: src/preferences_tab.c:930
+#: src/preferences_tab.c:928
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:936 src/main_win.c:679
+#: src/preferences_tab.c:934 src/main_win.c:679
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/preferences_tab.c:943
+#: src/preferences_tab.c:941
 msgid "Language"
 msgstr "Langue"
 
@@ -747,26 +747,26 @@ msgstr " erreur: impossible de créer 'playbin' de gstreamer\n"
 msgid " File '%s' created"
 msgstr "Fichier '%s' créé"
 
-#: src/mp3splt-gtk.c:299
+#: src/mp3splt-gtk.c:297
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr " préparation de \"%s\" (%d sur %d)"
 
-#: src/mp3splt-gtk.c:305
+#: src/mp3splt-gtk.c:303
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr " création de \"%s\" (%d sur %d)"
 
-#: src/mp3splt-gtk.c:311
+#: src/mp3splt-gtk.c:309
 msgid " searching for sync errors..."
 msgstr " recherche d'erreurs de synchronisation..."
 
-#: src/mp3splt-gtk.c:315
+#: src/mp3splt-gtk.c:313
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
-#: src/mp3splt-gtk.c:454
+#: src/mp3splt-gtk.c:452
 msgid " error: no files found in multiple files mode"
 msgstr " erreur: aucun fichier trouvé avec le mode 'fichiers multiples'"
 

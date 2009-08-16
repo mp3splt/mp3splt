@@ -79,6 +79,8 @@ GtkWidget *tags_radio = NULL;
 GtkWidget *tags_version_radio = NULL;
 
 //split options
+//frame mode option
+GtkWidget *frame_mode = NULL;
 //auto-adjust option
 GtkWidget *adjust_mode = NULL;
 
@@ -222,6 +224,10 @@ void save_preferences(GtkWidget *widget, gpointer data)
   g_string_free(selected_lang, TRUE);
   selected_lang = NULL;
 #endif
+
+  //frame mode
+  g_key_file_set_boolean(my_key_file, "split", "frame_mode",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)));
 
   //adjust mode
   g_key_file_set_boolean(my_key_file, "split", "adjust_mode",
@@ -432,6 +438,10 @@ void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data)
   //if it is toggled
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
   {
+    if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
+    {
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode),TRUE);
+    }
     enable_adjust_spinners();
   }
   else
@@ -443,12 +453,27 @@ void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data)
   save_preferences(NULL, NULL);
 }
 
+//frame mode event
+void frame_event(GtkToggleButton *frame_mode, gpointer user_data)
+{
+  if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
+  {
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
+    {
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(adjust_mode),FALSE);
+    }
+  }
+
+  save_preferences(NULL, NULL);
+}
+
 //action for the set default prefs button
 void set_default_prefs_event(GtkWidget *widget, gpointer data)
 {
+  //set frame mode inactive
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode), FALSE);
   //set adjust mode inactive
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(adjust_mode),
-                               FALSE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(adjust_mode), FALSE);
   //set adjust mode preferences
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_threshold),
                             SPLT_DEFAULT_PARAM_THRESHOLD);
@@ -503,6 +528,13 @@ GtkWidget *create_split_options_box()
   gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
       G_CALLBACK(save_preferences), NULL);
+
+  //frame mode option
+  frame_mode = gtk_check_button_new_with_mnemonic(_("F_rame mode (useful"
+        " for mp3 VBR) (mp3 only)"));
+  gtk_box_pack_start(GTK_BOX(vbox), frame_mode, FALSE, FALSE, 0);
+  g_signal_connect(G_OBJECT(frame_mode), "toggled",
+      G_CALLBACK(frame_event), NULL);
 
   //auto adjust option
   adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (uses"
