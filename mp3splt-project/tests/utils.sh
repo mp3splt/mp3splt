@@ -133,6 +133,12 @@ function check_current_file_has_no_xing
   if [[ $? -eq 0 ]];then
     _check_equal_variables "Expected No Xing" "Xing found for file $current_file"
   fi
+
+  _run_command "grep 'Info' '$current_file'" "grep info command" 0 1
+
+  if [[ $? -eq 0 ]];then
+    _check_equal_variables "Expected No Info" "Info found for file $current_file"
+  fi
 }
 
 function check_if_directory_exist

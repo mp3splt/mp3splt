@@ -738,7 +738,7 @@ function test_normal_vbr_stdout_multiple_splitpoints
   echo
 }
 
-function run_normal_vbr_mode_tests
+function run_normal_vbr_tests
 {
   date
   echo
@@ -760,7 +760,7 @@ export LANGUAGE="en"
 echo
 start_date=$(date "+%D %H:%M:%S")
 
-run_normal_vbr_mode_tests
+run_normal_vbr_tests
 
 echo
 end_date=$(date "+%D %H:%M:%S")
