@@ -563,8 +563,6 @@ expected=" Processing file 'songs/${M_FILE}.mp3' ...
 
 function run_time_vbr_tests
 {
-  date
-  echo
   p_blue " TIME VBR mp3 tests ..."
   echo
 
@@ -580,16 +578,13 @@ function run_time_vbr_tests
 
 #main
 export LANGUAGE="en"
-echo
-start_date=$(date "+%D %H:%M:%S")
+start_date=$(date +%s)
 
 run_time_vbr_tests
 
-echo
-end_date=$(date "+%D %H:%M:%S")
-p_cyan "\tStart date : $start_date"
-echo
-p_cyan "\tEnd date : $end_date"
+end_date=$(date +%s)
+
+p_time_diff_cyan $start_date $end_date "\t"
 echo -e '\n'
 
 exit 0

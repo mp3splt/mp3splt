@@ -26,6 +26,27 @@ function p_yellow
   echo -n -e "\033[33m${@}\033[0m"
 }
 
+function p_time_diff_cyan
+{
+  start_date=$1
+  end_date=$2
+  prefix=$3
+
+  date_diff=$(($end_date - $start_date))
+
+  p_cyan "\n${prefix}Tests took $date_diff seconds."
+}
+
+function p_time_diff_green
+{
+  start_date=$1
+  end_date=$2
+
+  date_diff=$(($end_date - $start_date))
+
+  p_green "Tests took $date_diff seconds."
+}
+
 function check_file_content
 {
   file=$1
@@ -84,8 +105,8 @@ function check_current_mp3_length
   mp3_info=$command_output
   actual_length=$(echo "$mp3_info" | grep "Time: " | awk -F"\t" '{ print $1 }' | sed 's/Time: //g' | sed 's/:/./g')
 
-  expected_value="Length for mp3 $current_file : '$expected_length'"
-  actual_value="Length for mp3 $current_file : '$actual_length'"
+  expected_value="Length for mp3 $current_file: '$expected_length'"
+  actual_value="Length for mp3 $current_file: '$actual_length'"
   _check_equal_variables "$expected_value" "$actual_value"
 }
 
@@ -244,7 +265,7 @@ function _check_mp3_tags
   expected_tag_value=$4
   tags=$5
 
-  expected_value="$tags_field for $file : '$expected_tag_value' (id3v$current_tags_version)"
+  expected_value="$tags_field for $file: '$expected_tag_value' (id3v$current_tags_version)"
   actual_tag_value=""
 
   if [[ $tags_version -eq 1 ]];then
@@ -305,7 +326,7 @@ function _check_mp3_tags
     esac
   fi
 
-  actual_value="$tags_field for $file : '$actual_tag_value' (id3v$current_tags_version)"
+  actual_value="$tags_field for $file: '$actual_tag_value' (id3v$current_tags_version)"
 
   _check_equal_variables "$expected_value" "$actual_value"
 }

@@ -10,6 +10,7 @@ MP3_FILE="songs/La_Verue__Today.mp3"
 NO_TAGS_MP3_FILE="songs/La_Verue__Today__no_tags.mp3"
 CBR_MP3_FILE="songs/Merci_Bonsoir__Je_veux_Only_love.mp3"
 WRAPPED_FILE="songs/wrapped.mp3"
+SYNCERR_FILE="songs/syncerror.mp3"
 
 PRINT_MP3SPLT_COMMAND=0
 

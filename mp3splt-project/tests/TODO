@@ -44,7 +44,7 @@ NORMAL MODE
   - stdout (+ multiple splitpoints & EOF)
 
   IN PROGRESS:
-  - stdin : input not seekable (-k) (TODO bugs ?)
+  - stdin : input not seekable (-k) (TODO BUGS ?)
 
   NOT DONE:
   - no xing (-x)
@@ -81,8 +81,7 @@ TIME MODE
   - output filename (-o) + create directories
 
   IN PROGRESS:
-  - stdout (+ multiple splitpoints & EOF)
-    (TODO: bug)
+  - stdout (+ multiple splitpoints & EOF) (TODO: bug)
 
   NOT DONE:
   - no tags in input file (+ -g option)
@@ -127,7 +126,7 @@ WRAP MODE
   - dewrap files and create m3u file
 
   IN PROGRESS:
-  - dewrap files (BUG: Switching to frame mode)
+  - dewrap files (TODO BUG: Switching to frame mode)
 
 ERROR MODE
 **************************
@@ -135,8 +134,21 @@ ERROR MODE
   MP3 FILES
   ----------------------------
 
-  NOT DONE:
+  DONE:
+  -----
+  - sync error mode + output format
+  - sync error mode + create output dir
+  - sync error mode + m3u
 
+  IN PROGRESS:
+  ------------
+  - sync error mode (TODO BUG: Switching to frame mode)
+  - sync error mode + output format + create output dir (TODO BUG: not creating directory)
+
+
+////////////////////
+Non tested options : -q, -Q
+////////////////////
 
 TESTS TODO: tests ID3v2 UTF16
 
