@@ -63,7 +63,7 @@ function check_current_mp3_no_tags
   no_id3_line=$(echo "$id3v2" | grep "No ID3 v2.x tag found!" | sed 's/\s\+$//g')
   _check_equal_variables "No ID3 v2.x tag found!" "$no_id3_line"
 
-  _run_command "id3 -R -l $current_file" "id3 command"
+  _run_command "id3 -R -l \"$current_file\"" "id3 command"
   id3v1=$command_output
 
   for tag in "Artist Album Title Year Tracknumber Comment";do
@@ -101,7 +101,7 @@ function check_current_mp3_length
 {
   expected_length=$1
 
-  _run_command "eyeD3 --no-color '$current_file'" "eyeD3 command"
+  _run_command "eyeD3 --no-color \"$current_file\"" "eyeD3 command"
   mp3_info=$command_output
   actual_length=$(echo "$mp3_info" | grep "Time: " | awk -F"\t" '{ print $1 }' | sed 's/Time: //g' | sed 's/:/./g')
 
@@ -131,7 +131,7 @@ function check_current_file_size
 {
   expected_file_size=$1
 
-  _run_command "du -b '$current_file'" "du command"
+  _run_command "du -b \"$current_file\"" "du command"
   file_size=$command_output
   actual_file_size=$(echo $command_output | awk '{ print $1 }')
 
@@ -140,7 +140,7 @@ function check_current_file_size
 
 function check_current_file_has_xing
 {
-  _run_command "grep 'Xing' '$current_file'" "grep xing command" 0 1
+  _run_command "grep 'Xing' \"$current_file\"" "grep xing command" 0 1
 
   if [[ $? -ne 0 ]];then
     _check_equal_variables "Expected Xing" "No Xing found for file $current_file"
@@ -241,10 +241,10 @@ function _mp3_get_tag_value
 function _check_all_current_mp3_tags
 {
   if [[ $current_tags_version -eq 1 ]];then
-    _run_command "id3 -R -l '$current_file'" "id3 command"
+    _run_command "id3 -R -l \"$current_file\"" "id3 command"
     tags=$command_output
   else  
-    _run_command "eyeD3 -2 --no-color '$current_file'" "eyeD3 command"
+    _run_command "eyeD3 -2 --no-color \"$current_file\"" "eyeD3 command"
     tags=$command_output
   fi
 

@@ -113,11 +113,8 @@ TIME MODE
   - don't create 'mp3splt.log' file (-N)
 
 
-WRAP MODE
+WRAP MODE (MP3 only)
 **************************
-
-  MP3 FILES
-  ----------------------------
 
   DONE:
   - list wrapped files (with absolute path)
@@ -128,31 +125,68 @@ WRAP MODE
   IN PROGRESS:
   - dewrap files (TODO BUG: Switching to frame mode)
 
-ERROR MODE
+ERROR MODE (MP3 only)
 **************************
 
-  MP3 FILES
-  ----------------------------
-
   DONE:
-  -----
   - sync error mode + output format
   - sync error mode + create output dir
   - sync error mode + m3u
 
   IN PROGRESS:
-  ------------
   - sync error mode (TODO BUG: Switching to frame mode)
-  - sync error mode + output format + create output dir (TODO BUG: not creating directory)
+  - sync error mode + output format + create output dir (TODO BUG: not creating files ?)
 
 
-////////////////////
-Non tested options : -q, -Q
-////////////////////
+MISC
+**************************
+
+  DONE:
+  - version
+
+CDDB MODE
+**************************
+
+  DONE:
+  - cddb mode
+  - cddb mode & output format & create output dirs
+  - cddb mode & quiet mode
+
+  IN PROGRESS:
+  - cddb mode & output format (TODO BUG: last '@2' variable does not print any
+    error message if variable does not exists)
+
+CUE MODE
+**************************
+
+  DONE:
+  - cue mode
+  - cue mode & quotes
+  - cue mode & quiet mode
+  - cue mode & output format & create output dirs
+
+FREEDB MODE
+**************************
+
+  DONE:
+  - freedb mode - search tracktype & get cgi freedb
+  - freedb mode - search tracktype & get cddb freedb
+
+  IN PROGRESS:
+  - freedb mode - search & get cgi tracktype (TODO BUG: print Error: file
+      is damaged or this is not the right cddb if OK EOF)
+ 
+SILENCE MODE
+**************************
+
+  MP3 FILES
+  ----------------------------
+
+
+
+
 
 TESTS TODO: tests ID3v2 UTF16
-
--- 
 TODO: print if output will have ID3v1 or ID3v2
 TODO: print if no xing is written
 

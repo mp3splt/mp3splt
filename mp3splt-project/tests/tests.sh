@@ -1,5 +1,6 @@
 #!/bin/bash
 
+. ./constants_variables.sh
 . ./utils.sh
 
 start_date=$(date +%s)
@@ -14,6 +15,13 @@ echo
 ./vbr_time_tests.sh || exit 1
 ./wrap_mode_tests.sh || exit 1
 ./error_mode_tests.sh || exit 1
+./misc_tests.sh || exit 1
+./cddb_mode_tests.sh || exit 1
+./cue_mode_tests.sh || exit 1
+
+if [[ $RUN_INTERNET_TESTS -eq 1 ]];then
+./freedb_mode_tests.sh || exit 1
+fi
 
 end_date=$(date +%s)
 
