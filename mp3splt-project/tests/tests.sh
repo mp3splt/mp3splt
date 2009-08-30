@@ -18,6 +18,7 @@ echo
 ./misc_tests.sh || exit 1
 ./cddb_mode_tests.sh || exit 1
 ./cue_mode_tests.sh || exit 1
+./silence_mode_tests.sh || exit 1
 
 if [[ $RUN_INTERNET_TESTS -eq 1 ]];then
 ./freedb_mode_tests.sh || exit 1

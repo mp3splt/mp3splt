@@ -175,6 +175,7 @@ FREEDB MODE
   IN PROGRESS:
   - freedb mode - search & get cgi tracktype (TODO BUG: print Error: file
       is damaged or this is not the right cddb if OK EOF)
+  TODO: change to 'freedb.freedb.org' (random server) instead of 'freedb.org'
  
 SILENCE MODE
 **************************
@@ -182,8 +183,15 @@ SILENCE MODE
   MP3 FILES
   ----------------------------
 
+  DONE:
+  - silence mode & threshold
+  - silence mode & offset
+  - silence mode & nt
+  - silence mode & min
 
-
+  IN PROGRESS:
+  - silence mode & mp3splt.log (TODO BUG: year not written with silence ?)
+  - silence mode & rm (TODO BUG - IMPORTANT: last track is not split)
 
 
 TESTS TODO: tests ID3v2 UTF16
