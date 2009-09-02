@@ -164,34 +164,32 @@ void splt_s_multiple_split(splt_state *state, int *error)
   int number_of_splitpoints = splt_t_get_splitnumber(state);
   while (i  < number_of_splitpoints - 1)
   {
-    //we put the current file to split
     splt_t_set_current_split(state, i);
 
-    splt_t_auto_increment_tracknumber_tag(state);
-
-    //if we don't cancel the split
     if (!splt_t_split_is_canceled(state))
     {
       get_error = SPLT_OK;
 
-      long saved_end_point = splt_t_get_splitpoint_value(state, i+1, &get_error);
-      splt_u_overlap_time(state, i+1);
-
-      err = splt_u_put_output_format_filename(state);
-      if (err < 0) { *error = err; return; }
-
       int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
       if (first_splitpoint_type == SPLT_SKIPPOINT)
       {
+        splt_u_print_debug(state, "SKIP splitpoint", i, NULL);
         i++;
         continue;
       }
+
+      splt_t_auto_increment_tracknumber_tag(state);
+
+      long saved_end_point = splt_t_get_splitpoint_value(state, i+1, &get_error);
+      splt_u_overlap_time(state, i+1);
+
+      err = splt_u_put_output_format_filename(state, i);
+      if (err < 0) { *error = err; return; }
 
       splt_s_split(state, i, i+1, error);
 
       splt_t_set_splitpoint_value(state, i+1, saved_end_point);
 
-      //get out if error
       if ((*error < 0) || (*error == SPLT_OK_SPLIT_EOF))
       {
         break;
@@ -202,6 +200,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
       *error = SPLT_SPLIT_CANCELLED;
       return;
     }
+
     i++;
   }
 }
@@ -264,7 +263,7 @@ void splt_s_error_split(splt_state *state, int *error)
         if (err < 0) { *error = err; goto bloc_end; }
 
         //we put the output filename
-        err = splt_u_put_output_format_filename(state);
+        err = splt_u_put_output_format_filename(state, -1);
         if (err < 0) { *error = err; goto bloc_end; }
 
         //we get the final fname
@@ -361,7 +360,7 @@ void splt_s_time_split(splt_state *state, int *error)
 
     int temp_int = (int)floor(((splt_t_get_total_time(state)/100.0) /
           (state->options.split_time))+1) + 1;
-    splt_t_set_splitnumber(state,temp_int);
+    splt_t_set_splitnumber(state, temp_int);
 
     splt_t_set_oformat_digits(state);
 
@@ -416,7 +415,7 @@ void splt_s_time_split(splt_state *state, int *error)
           double overlapped_end = (double)
             ((double)splt_u_overlap_time(state, current_split+1) / 100.0);
 
-          err = splt_u_put_output_format_filename(state);
+          err = splt_u_put_output_format_filename(state, -1);
           if (err < 0) { *error = err; break; }
 
           if (!splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
@@ -523,6 +522,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 
   //found is the number of silence splits found
   int found = 0;
+  int splitpoints_appended = 0;
   struct splt_ssplit *temp = NULL;
   int append_error = SPLT_OK;
   //we get some options
@@ -655,7 +655,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     }
 
     //we set the number of tracks
-    int order = 0;
     if (!splt_t_split_is_canceled(state))
     {
       found++;
@@ -688,6 +687,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             found = i;
             break;
           }
+
           if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
           {
             //we append 2 splitpoints
@@ -696,8 +696,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
             //we set the values
-            splt_t_set_splitpoint_value(state, 2*i-1,temp->begin_position * 100);
-            splt_t_set_splitpoint_value(state, 2*i,temp->end_position * 100);
+            splt_t_set_splitpoint_value(state, 2*i-1, temp->begin_position * 100);
+            splt_t_set_splitpoint_value(state, 2*i, temp->end_position * 100);
           }
           else
           {
@@ -711,15 +711,15 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
         //we order the splitpoints
         if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
         {
-          order = (found-1)*2+1;
+          splitpoints_appended = (found-1)*2+1;
         }
         else 
         {
-          order = found;
+          splitpoints_appended = found;
         }
 
         splt_u_print_debug(state,"We order splitpoints...",0,NULL);
-        splt_u_order_splitpoints(state, order);
+        splt_u_order_splitpoints(state, splitpoints_appended);
 
         //last splitpoint, end of file
         append_error = splt_t_append_splitpoint(state, splt_t_get_total_time(state), NULL, SPLT_SPLITPOINT);
@@ -789,7 +789,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   splt_t_ssplit_free(&state->silence_list);
 
   //set number of splitpoints
-  splt_t_set_splitnumber(state, found + 1);
+  splt_t_set_splitnumber(state, splitpoints_appended + 1);
 
   return found;
 }

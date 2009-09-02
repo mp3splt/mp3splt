@@ -2,6 +2,9 @@ USER FEATURE REQUESTS :
 -----------------------
 - 
 
+BUGS :
+------
+- ogg: eos not set on last file if the file to split does not have eos on last packet
 
 FEATURES :
 
