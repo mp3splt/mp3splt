@@ -141,7 +141,7 @@ static void splt_tag_put_filenames_from_tags(splt_state *state,
       do {
         int filename_error = SPLT_OK;
         //get output format filename
-        filename_error = splt_u_put_output_format_filename(state);
+        filename_error = splt_u_put_output_format_filename(state, -1);
         if (filename_error != SPLT_OK)
         {
           *error = filename_error;

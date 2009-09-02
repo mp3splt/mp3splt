@@ -1494,7 +1494,7 @@ void splt_u_create_output_dirs_if_necessary(splt_state *state,
 }
 
 //writes the current filename according to the output_filename
-int splt_u_put_output_format_filename(splt_state *state)
+int splt_u_put_output_format_filename(splt_state *state, int current_split)
 {
   int error = SPLT_OK;
 
@@ -1517,20 +1517,25 @@ int splt_u_put_output_format_filename(splt_state *state)
   char *artist_or_performer = NULL;
   char *original_filename = NULL;
 
-  int old_current_split = splt_t_get_current_split_file_number(state) - 1;
-  int current_split = old_current_split;
+  int split_file_number = splt_t_get_current_split_file_number(state);
+  int tags_index = split_file_number - 1;
+
+  if (current_split == -1)
+  {
+    current_split = splt_t_get_current_split_file_number(state) - 1;
+  }
 
   long mins = -1;
   long secs = -1;
   long hundr = -1;
-  long point_value = splt_t_get_splitpoint_value(state, old_current_split, &error);
+  long point_value = splt_t_get_splitpoint_value(state, current_split, &error);
   splt_u_get_mins_secs_hundr(point_value, &mins, &secs, &hundr);
   long next_mins = -1;
   long next_secs = -1;
   long next_hundr = -1;
-  if (splt_t_splitpoint_exists(state, old_current_split + 1))
+  if (splt_t_splitpoint_exists(state, current_split + 1))
   {
-    point_value = splt_t_get_splitpoint_value(state, old_current_split +1, &error);
+    point_value = splt_t_get_splitpoint_value(state, current_split + 1, &error);
     long total_time = splt_t_get_total_time(state);
     if (total_time > 0 && point_value > total_time)
     {
@@ -1544,10 +1549,10 @@ int splt_u_put_output_format_filename(splt_state *state)
   //if we get the tags from the first file
   int remaining_tags_like_x = 
     splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
-  if ((current_split >= state->split.real_tagsnumber) &&
+  if ((tags_index >= state->split.real_tagsnumber) &&
       (remaining_tags_like_x != -1))
   {
-    current_split = remaining_tags_like_x;
+    tags_index = remaining_tags_like_x;
   }
 
   splt_u_print_debug(state,"The output format is ",0,state->oformat.format_string);
@@ -1649,17 +1654,17 @@ put_value:
           }
           break;
         case 'A':
-          if (splt_t_tags_exists(state,current_split))
+          if (splt_t_tags_exists(state,tags_index))
           {
             artist_or_performer =
-              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_PERFORMER);
+              splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_PERFORMER);
             splt_u_cleanstring(state, artist_or_performer, &error);
             if (error < 0) { goto end; };
 
             if (artist_or_performer == NULL || artist_or_performer[0] == '\0')
             {
               artist_or_performer = 
-                splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ARTIST);
+                splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_ARTIST);
               splt_u_cleanstring(state, artist_or_performer, &error);
               if (error < 0) { goto end; };
             }
@@ -1702,11 +1707,11 @@ put_value:
 
           break;
         case 'a':
-          if (splt_t_tags_exists(state,current_split))
+          if (splt_t_tags_exists(state,tags_index))
           {
             //we get the artist
             artist =
-              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ARTIST);
+              splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_ARTIST);
             splt_u_cleanstring(state, artist, &error);
             if (error < 0) { goto end; };
           }
@@ -1747,11 +1752,11 @@ put_value:
           }
           break;
         case 'b':
-          if (splt_t_tags_exists(state,current_split))
+          if (splt_t_tags_exists(state,tags_index))
           {
             //we get the album
             album =
-              splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_ALBUM);
+              splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_ALBUM);
             splt_u_cleanstring(state, album, &error);
             if (error < 0) { goto end; };
           }
@@ -1792,10 +1797,10 @@ put_value:
           }
           break;
         case 't':
-          if (splt_t_tags_exists(state,current_split))
+          if (splt_t_tags_exists(state,tags_index))
           {
             //we get the title
-            title = splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_TITLE);
+            title = splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_TITLE);
             splt_u_cleanstring(state, title, &error);
             if (error < 0) { goto end; };
           }
@@ -1836,10 +1841,10 @@ put_value:
           }
           break;
         case 'p':
-          if (splt_t_tags_exists(state,current_split))
+          if (splt_t_tags_exists(state,tags_index))
           {
             //we get the performer
-            performer = splt_t_get_tags_char_field(state,current_split, SPLT_TAGS_PERFORMER);
+            performer = splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_PERFORMER);
             splt_u_cleanstring(state, performer, &error);
             if (error < 0) { goto end; };
           }
@@ -1888,7 +1893,7 @@ put_value:
           temp[2] = splt_t_get_oformat_number_of_digits_as_char(state);
           temp[3] = 'd';
 
-          int tracknumber = old_current_split + 1;
+          int tracknumber = split_file_number;
 
           //if not time split, or normal split, or silence split or error,
           //we put the track number from the tags
@@ -1899,10 +1904,9 @@ put_value:
                (split_mode != SPLT_OPTION_SILENCE_MODE) &&
                (split_mode != SPLT_OPTION_ERROR_MODE)))
           {
-            if (splt_t_tags_exists(state,current_split))
+            if (splt_t_tags_exists(state, tags_index))
             {
-              int tags_track = splt_t_get_tags_int_field(state,
-                  current_split,SPLT_TAGS_TRACK);
+              int tags_track = splt_t_get_tags_int_field(state, tags_index, SPLT_TAGS_TRACK);
               if (tags_track > 0)
               {
                 tracknumber = tags_track;
@@ -2037,8 +2041,7 @@ put_value:
 
   splt_u_print_debug(state,"The new output filename is ",0,output_filename);
   int cur_splt = splt_t_get_current_split(state);
-  int name_error =
-    splt_t_set_splitpoint_name(state, cur_splt, output_filename);
+  int name_error = splt_t_set_splitpoint_name(state, cur_splt, output_filename);
   if (name_error != SPLT_OK) { error = name_error; }
 
 end:

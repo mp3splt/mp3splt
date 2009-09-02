@@ -81,7 +81,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
 /* utils for the output format */
 
 int splt_u_parse_outformat(char *s, splt_state *state);
-int splt_u_put_output_format_filename(splt_state *state);
+int splt_u_put_output_format_filename(splt_state *state, int current_split);
 
 /******************************/
 /* utils for debug and errors */
