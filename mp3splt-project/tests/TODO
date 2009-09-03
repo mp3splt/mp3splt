@@ -26,8 +26,10 @@ NORMAL MODE
 
   NOT DONE:
 
-  - auto adjust (-a)
-  - silence parameters (-a & -p) : th, off, gap
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
 
 
@@ -53,8 +55,10 @@ NORMAL MODE
   - custom tags (-g)
   - output filename (-o) + create directories
   - no tags in input file (+ -g option)
-  - auto adjust (-a)
-  - silence parameters (-a & -p) : th, off, gap
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
 
 TIME MODE
@@ -85,8 +89,10 @@ TIME MODE
 
   NOT DONE:
   - no tags in input file (+ -g option)
-  - auto adjust (-a)
-  - silence parameters (-a & -p) : th, off, gap
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
 
 
@@ -108,8 +114,10 @@ TIME MODE
   - output filename (-o) + create directories
   - stdout (+ multiple splitpoints & EOF)
   - no tags in input file (+ -g option)
-  - auto adjust (-a)
-  - silence parameters (-a & -p) : th, off, gap
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
 
 
@@ -183,16 +191,26 @@ SILENCE MODE
   MP3 FILES
   ----------------------------
 
+  NOTE: rm is special because it makes use of SKIPPOINT
+
   DONE:
   - silence mode & threshold
   - silence mode & offset
   - silence mode & nt
   - silence mode & min
+  - silence mode & rm
+  - silence mode & rm & output format
+  - silence mode & rm & overlap
+  - silence mode & rm & custom tags
+  - silence mode & rm & custom tags & output format
 
   IN PROGRESS:
   - silence mode & mp3splt.log (TODO BUG: year not written with silence ?)
-  - silence mode & rm (TODO BUG - IMPORTANT: last track is not split)
 
+  Fixed IMPORTANT BUGS : last track is not split + output format
+
+  NOT DONE:
+  - don't create 'mp3splt.log' file (-N)
 
 TESTS TODO: tests ID3v2 UTF16
 TODO: print if output will have ID3v1 or ID3v2

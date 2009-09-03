@@ -9,22 +9,22 @@ function _check_silence_output_files
   check_current_mp3_length "01.04"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791210"
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1791231"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.50"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "3145253"
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "3145274"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
   check_current_mp3_length "01.10"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "1974967"
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "1974988"
 }
 
 function test_silence
@@ -49,7 +49,7 @@ function test_silence
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level : -23,07 dB"
+ Average silence level : -23,08 dB"
   mp3splt_args="-d $OUTPUT_DIR -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -111,7 +111,7 @@ function test_silence_offset
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level : -23,07 dB"
+ Average silence level : -23,08 dB"
   mp3splt_args="-d $OUTPUT_DIR -p off=0 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -119,22 +119,22 @@ function test_silence_offset
   check_current_mp3_length "00.56"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1614424"
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1614445"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.51"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "3165391"
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "3165412"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
   check_current_mp3_length "01.17"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "2131615"
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "2131636"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48,00\t0,00
@@ -169,7 +169,7 @@ function test_silence_threshold
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_4.mp3\" created
  silence split ok
- Average silence level : -23,07 dB"
+ Average silence level : -23,08 dB"
   mp3splt_args="-d $OUTPUT_DIR -p th=-18 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -177,29 +177,29 @@ function test_silence_threshold
   check_current_mp3_length "01.04"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791210"
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1791231"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.50"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "3145253"
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "3145274"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
   check_current_mp3_length "00.27"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "794576"
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "794597"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_4.mp3"
   check_current_mp3_length "00.42"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "4" "http://www.jamendo.com/"
-  check_current_file_size "1181003"
+  "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+  check_current_file_size "1181024"
 
   expected="songs/La_Verue__Today_silence.mp3
 -18,00\t0,00
@@ -233,7 +233,7 @@ function test_silence_nt
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
  silence split ok
- Average silence level : -23,07 dB"
+ Average silence level : -23,08 dB"
   mp3splt_args="-d $OUTPUT_DIR -p nt=2 -s $SILENCE_MP3_FILE"
   run_check_output "$mp3splt_args" "$expected"
 
@@ -241,15 +241,15 @@ function test_silence_nt
   check_current_mp3_length "01.04"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791210"
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1791231"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "03.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "5119608"
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "5119629"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48,00\t0,00
@@ -281,8 +281,9 @@ function test_silence_rm
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level : -23,07 dB"
+ Average silence level : -23,08 dB"
   mp3splt_args="-d $OUTPUT_DIR -p rm -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -290,28 +291,188 @@ function test_silence_rm
   check_current_mp3_length "00.56"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1614424"
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1614445"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.41"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "2944985"
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "2945006"
 
-#  current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
-#  check_current_mp3_length "01.17"
-#  check_current_file_has_xing
-#  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-#  "None" "Rock" "17" "3" "http://www.jamendo.com/"
-#  check_current_file_size "2131615"
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
+  check_current_mp3_length "01.08"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "1935336"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48,00\t0,00
 56,840000\t66,790001\t995
 168,350006\t177,240005\t889"
   check_file_content "mp3splt.log" "$expected"
+
+  p_green "OK"
+  echo
+}
+
+function test_silence_rm_and_output_format
+{
+  rm -f mp3splt.log
+  rm -rf $OUTPUT_DIR/*
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode & rm & output format"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48,0 dB, Off: 0,80, Min: 0,00, Remove: YES)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/silence_1_00:00:00 00:56:84.mp3\" created
+   File \"$OUTPUT_DIR/silence_2_01:06:79 02:48:35.mp3\" created
+   File \"$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3\" created
+ silence split ok
+ Average silence level : -23,08 dB"
+  mp3splt_args="-d $OUTPUT_DIR -o \"silence_@n_@m:@s:@h+@M:@S:@H\" -p rm -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/silence_1_00:00:00 00:56:84.mp3"
+  check_current_mp3_length "00.56"
+
+  current_file="$OUTPUT_DIR/silence_2_01:06:79 02:48:35.mp3"
+  check_current_mp3_length "01.41"
+
+  current_file="$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3"
+  check_current_mp3_length "01.08"
+
+  p_green "OK"
+  echo
+}
+
+function test_silence_rm_and_overlap
+{
+  rm -f mp3splt.log
+  rm -rf $OUTPUT_DIR/*
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode & rm & overlap"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48,0 dB, Off: 0,80, Min: 0,00, Remove: YES)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+ info: overlapping split files with 0.10.0
+   File \"$OUTPUT_DIR/silence_1_00:00:00 01:06:84.mp3\" created
+   File \"$OUTPUT_DIR/silence_2_01:06:79 02:58:35.mp3\" created
+   File \"$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3\" created
+ silence split ok
+ Average silence level : -23,08 dB"
+  mp3splt_args="-d $OUTPUT_DIR -O 0.10 -o \"silence_@n_@m:@s:@h+@M:@S:@H\" -p rm -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/silence_1_00:00:00 01:06:84.mp3"
+  check_current_mp3_length "01.06"
+
+  current_file="$OUTPUT_DIR/silence_2_01:06:79 02:58:35.mp3"
+  check_current_mp3_length "01.51"
+
+  current_file="$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3"
+  check_current_mp3_length "01.08"
+
+  p_green "OK"
+  echo
+}
+
+function test_silence_rm_and_custom_tags
+{
+  rm -f mp3splt.log
+  rm -rf $OUTPUT_DIR/*
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode & rm & custom tags"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48,0 dB, Off: 0,80, Min: 0,00, Remove: YES)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
+ silence split ok
+ Average silence level : -23,08 dB"
+  mp3splt_args="-d $OUTPUT_DIR -g %[@o,@N=1,@t=title1][@t=title2][@a=artist3] -p rm -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_1.mp3"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "title1"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "title2"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
+  check_all_mp3_tags_with_version "2" "artist3" "Riez Noir" "title1"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+
+  p_green "OK"
+  echo
+}
+
+function test_silence_rm_and_custom_tags_and_output_format
+{
+  rm -f mp3splt.log
+  rm -rf $OUTPUT_DIR/*
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode & rm & custom tags & output format"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48,0 dB, Off: 0,80, Min: 0,00, Remove: YES)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/La Verue__Riez Noir__title1_1.mp3\" created
+   File \"$OUTPUT_DIR/La Verue__Riez Noir__title2_2.mp3\" created
+   File \"$OUTPUT_DIR/artist3__Riez Noir__title1_3.mp3\" created
+ silence split ok
+ Average silence level : -23,08 dB"
+  mp3splt_args="-d $OUTPUT_DIR -g %[@o,@N=1,@t=title1][@t=title2][@a=artist3] -o @a__@b__@t_@n -p rm -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/La Verue__Riez Noir__title1_1.mp3"
+  check_current_mp3_length "00.56"
+
+  current_file="$OUTPUT_DIR/La Verue__Riez Noir__title2_2.mp3"
+  check_current_mp3_length "01.41"
+
+  current_file="$OUTPUT_DIR/artist3__Riez Noir__title1_3.mp3"
+  check_current_mp3_length "01.08"
 
   p_green "OK"
   echo
@@ -338,7 +499,7 @@ function test_silence_min
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
  silence split ok
- Average silence level : -23,07 dB"
+ Average silence level : -23,08 dB"
   mp3splt_args="-d $OUTPUT_DIR -p min=9 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -346,15 +507,15 @@ function test_silence_min
   check_current_mp3_length "01.04"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791210"
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1791231"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "03.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
-  "None" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "5119608"
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "5119629"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48,00\t9,00
