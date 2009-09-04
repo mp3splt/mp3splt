@@ -82,6 +82,7 @@ typedef struct {
   short N_option;
   short O_option;
   short X_option;
+  short A_option;
   //export cue
   //short E_option;
   //-Q option
@@ -90,6 +91,7 @@ typedef struct {
   short i_option; short m_option;
   //cddb argument, output dir argument, parameters arguments with -p
   char *cddb_arg; char *dir_arg; char *param_args;
+  char *audacity_labels_arg;
   //the m3u filename
   char *m3u_arg;
   //custom tags with -g
@@ -163,6 +165,12 @@ void free_options(options **opt)
       {
         free((*opt)->cddb_arg);
         (*opt)->cddb_arg = NULL;
+      }
+
+      if ((*opt)->audacity_labels_arg)
+      {
+        free((*opt)->audacity_labels_arg);
+        (*opt)->audacity_labels_arg = NULL;
       }
 
       if ((*opt)->m3u_arg)
@@ -545,7 +553,7 @@ void check_args(int argc, main_data *data)
           opt->f_option || opt->a_option ||
           opt->p_option || opt->o_option ||
           opt->g_option || opt->n_option ||
-          opt->x_option)
+          opt->x_option || opt->A_option)
       {
         print_error_exit(_("the -w option can only be used with -m, -d, -q and -Q"), data);
       }
@@ -561,7 +569,7 @@ void check_args(int argc, main_data *data)
           opt->p_option || opt->o_option ||
           opt->g_option || opt->d_option ||
           opt->n_option || opt->qq_option ||
-          opt->x_option)
+          opt->x_option || opt->A_option)
       {
         print_error_exit(_("the -l option can only be used with -q"), data);
       }
@@ -573,7 +581,8 @@ void check_args(int argc, main_data *data)
       if (opt->t_option || opt->c_option || 
           opt->s_option || opt->i_option || 
           opt->a_option || opt->p_option ||
-          opt->g_option || opt->n_option)
+          opt->g_option || opt->n_option ||
+          opt->A_option)
       {
         print_error_exit(_("the -e option can only be used with -m, -f, -o, -d, -q, -Q"), data);
       }
@@ -588,9 +597,18 @@ void check_args(int argc, main_data *data)
     if (opt->c_option)
     {
       if (opt->t_option || opt->s_option ||
-          opt->i_option || opt->g_option)
+          opt->i_option || opt->g_option ||
+          opt->A_option)
       {
-        print_error_exit(_("the -c option cannot be used with -t, -g, -s, or -i"), data);
+        print_error_exit(_("the -c option cannot be used with -t, -g, -s, -A or -i"), data);
+      }
+    }
+
+    if (opt->A_option)
+    {
+      if (opt->t_option || opt->s_option || opt->i_option)
+      {
+        print_error_exit(_("the -A option cannot be used with -t, -s, or -i"), data);
       }
     }
 
@@ -1501,8 +1519,10 @@ options *new_options(main_data *data)
   opt->x_option = SPLT_FALSE;
   opt->X_option = SPLT_FALSE;
   opt->qq_option = SPLT_FALSE;
+  opt->A_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
+  opt->audacity_labels_arg = NULL;
   opt->param_args = NULL;
   opt->m3u_arg = NULL;
   opt->output_format = NULL;
@@ -1881,7 +1901,8 @@ int main(int argc, char **orig_argv)
 
   //parse command line options
   int option;
-  while ((option = getopt(data->argc, data->argv, "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12T:Xx")) != -1)
+  while ((option = getopt(data->argc, data->argv,
+          "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12T:XxA:")) != -1)
   {
     switch (option)
     {
@@ -1961,6 +1982,10 @@ int main(int argc, char **orig_argv)
         mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
         opt->c_option = SPLT_TRUE;
         opt->cddb_arg = strdup(optarg);
+        break;
+      case 'A':
+        opt->A_option = SPLT_TRUE;
+        opt->audacity_labels_arg = strdup(optarg);
         break;
       case 'm':
         opt->m_option = SPLT_TRUE;
@@ -2225,7 +2250,7 @@ int main(int argc, char **orig_argv)
   int normal_split = SPLT_FALSE;
   if (!opt->l_option && !opt->i_option && !opt->c_option &&
       !opt->e_option && !opt->t_option && !opt->w_option &&
-      !opt->s_option)
+      !opt->s_option && !opt->A_option)
   {
     if (data->number_of_splitpoints < 2)
     {
@@ -2345,18 +2370,19 @@ int main(int argc, char **orig_argv)
             }
           }
         }
-        else
-          //if we have a normal split, then parse splitpoints
+        else if (opt->audacity_labels_arg)
         {
-          if (normal_split)
+          mp3splt_put_audacity_labels_splitpoints_from_file(state,
+              opt->audacity_labels_arg, &err);
+          process_confirmation_error(err, data);
+        } else if (normal_split)
+        {
+          //we set the splitpoints to the library
+          for (i = 0;i < data->number_of_splitpoints; i++)
           {
-            //we set the splitpoints to the library
-            for (i = 0;i < data->number_of_splitpoints; i++)
-            {
-              long point = data->splitpoints[i];
-              err = mp3splt_append_splitpoint(state, point, NULL, SPLT_SPLITPOINT);
-              process_confirmation_error(err, data);
-            }
+            long point = data->splitpoints[i];
+            err = mp3splt_append_splitpoint(state, point, NULL, SPLT_SPLITPOINT);
+            process_confirmation_error(err, data);
           }
         }
 
@@ -2380,11 +2406,11 @@ int main(int argc, char **orig_argv)
         //for cddb, filenames are already set from the library, so 
         //set output filenames to CUSTOM
         int saved_output_filenames = mp3splt_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, &err);
-        if (opt->c_option && !opt->o_option)
+        if ((opt->c_option || opt->A_option) && !opt->o_option)
         {
           mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
         }
- 
+
         //we do the effective split
         err = mp3splt_split(state);
         process_confirmation_error(err, data);

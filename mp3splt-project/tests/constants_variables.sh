@@ -16,6 +16,7 @@ WRAPPED_FILE="songs/wrapped.mp3"
 SYNCERR_FILE="songs/syncerror.mp3"
 CDDB_FILE="songs/test.cddb"
 CUE_FILE="songs/test.cue"
+AUDACITY_FILE="songs/audacity.txt"
 
 PRINT_MP3SPLT_COMMAND=0
 

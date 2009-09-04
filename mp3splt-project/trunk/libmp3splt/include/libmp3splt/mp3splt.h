@@ -740,297 +740,95 @@ typedef struct {
 /*****************************************/
 /* Confirmations, errors and messages    */
 
-//error and confirmation messages:
-//sync
-/**
- * @brief Warning, split: mp3 file might be VBR
- */
-#define SPLT_MIGHT_BE_VBR 301
-/**
- * @brief Confirmation, syncerror: syncerror processed ok
- */
-#define SPLT_SYNC_OK 300
-/**
- * @brief Error, syncerror: error for the syncerror
- */
-#define SPLT_ERR_SYNC -300
-/**
- * @brief Error, syncerror: no sync errors found
- */
-#define SPLT_ERR_NO_SYNC_FOUND -301
-/**
- * @brief Error, syncerror: too many syncerrors found
- */
-#define SPLT_ERR_TOO_MANY_SYNC_ERR -302
+typedef enum {
+  SPLT_OK = 0,
 
-//freedb, cue, cddb
-/**
- * @brief Warning, freedb: maximum number of CD reached
- */
-#define SPLT_FREEDB_MAX_CD_REACHED 104
-/**
- * @brief Confirmation, cue: file processed ok
- */
-#define SPLT_CUE_OK 103
-/**
- * @brief Confirmation, cddb: file processed ok
- */
-#define SPLT_CDDB_OK 102
-/**
- * @brief Confirmation, freedb: file processed ok
- */
-#define SPLT_FREEDB_FILE_OK 101
-/**
- * @brief Confirmation, freedb: search ok
- */
-#define SPLT_FREEDB_OK 100
+  SPLT_OK_SPLIT = 1,
+  SPLT_SPLITPOINT_BIGGER_THAN_LENGTH = 4,
+  SPLT_SILENCE_OK = 5,
+  SPLT_TIME_SPLIT_OK = 6,
+  SPLT_NO_SILENCE_SPLITPOINTS_FOUND = 7,
+  SPLT_OK_SPLIT_EOF = 8,
 
-/**
- * @brief Error, freedb: cannot initialise socket
- */
-#define SPLT_FREEDB_ERROR_INITIALISE_SOCKET -101
-/**
- * @brief Error, freedb: cannot get host by name
- */
-#define SPLT_FREEDB_ERROR_CANNOT_GET_HOST -102
-/**
- * @brief Error, freedb: cannot open socket
- */
-#define SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET -103
-/**
- * @brief Error, freedb: cannot connect to host
- */
-#define SPLT_FREEDB_ERROR_CANNOT_CONNECT -104
-/**
- * @brief Error, freedb: cannot send message
- */
-#define SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE -105
-/**
- * @brief Error, freedb: invalid server answer
- */
-#define SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER -106
-/**
- * @brief Error, freedb: site returned 201 error
- */
-#define SPLT_FREEDB_ERROR_SITE_201 -107
-/**
- * @brief Error, freedb: site returned 200 error
- */
-#define SPLT_FREEDB_ERROR_SITE_200 -108
-/**
- * @brief Error, freedb: bad communication between server and client
- */
-#define SPLT_FREEDB_ERROR_BAD_COMMUNICATION -109
-/**
- * @brief Error, freedb: error getting server informations
- */
-#define SPLT_FREEDB_ERROR_GETTING_INFOS -110
-/**
- * @brief Error, freedb: no CD found for the search
- */
-#define SPLT_FREEDB_NO_CD_FOUND -111
-/**
- * @brief Error, freedb: cannot receive message from server
- */
-#define SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE -112
-/**
- * @brief Error, cue: invalid cue file, the parse failed
- */
-#define SPLT_INVALID_CUE_FILE -115
-/**
- * @brief Error, cddb: invalid cddb file, the parse failed
- */
-#define SPLT_INVALID_CDDB_FILE -116
-/**
- * @brief Error, freedb: No such CD entry in database
- */
-#define SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE -118
-/**
- * @brief Error, freedb: site returned an unknown error
- */
-#define SPLT_FREEDB_ERROR_SITE -119
+  SPLT_FREEDB_OK = 100,
+  SPLT_FREEDB_FILE_OK = 101,
+  SPLT_CDDB_OK = 102,
+  SPLT_CUE_OK = 103,
+  SPLT_FREEDB_MAX_CD_REACHED = 104,
+  SPLT_AUDACITY_OK = 105,
 
-//wrap
-/**
- * @brief Confirmation, dewrap: dewrap processed ok
- */
-#define SPLT_DEWRAP_OK 200
+  SPLT_DEWRAP_OK = 200,
 
-/**
- * @brief Error, dewrap: file length error
- */
-#define SPLT_DEWRAP_ERR_FILE_LENGTH -200
-/**
- * @brief Error, dewrap: wrapped with a too old version of mp3wrap
- */
-#define SPLT_DEWRAP_ERR_VERSION_OLD -201
-/**
- * @brief Error, dewrap: file damaged
- */
-#define SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX -202
-/**
- * @brief Error, dewrap: file damaged or incomplete
- */
-#define SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE -203
-/**
- * @brief Error, dewrap: file not wrapped or damaged
- */
-#define SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED -204
+  SPLT_SYNC_OK = 300,
+  SPLT_MIGHT_BE_VBR = 301,
 
-/**
- * @brief Warning, split: split, end of file
- */
-#define SPLT_OK_SPLIT_EOF 8
-/**
- * @brief Warning, silence detection: no silence splitpoint found
- */
-#define SPLT_NO_SILENCE_SPLITPOINTS_FOUND 7
-/**
- * @brief Confirmation, time split: time split processed ok
- */
-#define SPLT_TIME_SPLIT_OK 6
-/**
- * @brief Confirmation, silence split: silence split processed ok
- */
-#define SPLT_SILENCE_OK 5
-/**
- * @brief Warning, split: splitpoints bigger than file length
- */
-#define SPLT_SPLITPOINT_BIGGER_THAN_LENGTH 4
-/**
- * @brief Confirmation, split: split
- */
-#define SPLT_OK_SPLIT 1
-/**
- * @brief Confirmation: no error
- */
-#define SPLT_OK 0
+  SPLT_ERR_SYNC = -300,
+  SPLT_ERR_NO_SYNC_FOUND = -301,
+  SPLT_ERR_TOO_MANY_SYNC_ERR = -302,
 
-/**
- * @brief Error, split: not enough splitpoints
- */
-#define SPLT_ERROR_SPLITPOINTS -1
-/**
- * @brief Error, split: cannot open file
- */
-#define SPLT_ERROR_CANNOT_OPEN_FILE -2
-/**
- * @brief Error, split: invalid file for plugin
- */
-#define SPLT_ERROR_INVALID -3
-/**
- * @brief Error, split: splitpoints are equal
- */
-#define SPLT_ERROR_EQUAL_SPLITPOINTS -5
-/**
- * @brief Error, split: splitpoints are not in order
- */
-#define SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER -6
-/**
- * @brief Error, split: negative splitpoint found
- */
-#define SPLT_ERROR_NEGATIVE_SPLITPOINT -7
-/**
- * @brief Error, split: incorrect split path
- */
-#define SPLT_ERROR_INCORRECT_PATH -8
-/**
- * @brief Error, split: incompatible split options
- */
-#define SPLT_ERROR_INCOMPATIBLE_OPTIONS -10
-/**
- * @brief Error, split: input and output are the same file
- */
-#define SPLT_ERROR_INPUT_OUTPUT_SAME_FILE -12
-/**
- * @brief Error: cannot allocate memory
- */
-#define SPLT_ERROR_CANNOT_ALLOCATE_MEMORY -15
-/**
- * @brief Error, split: cannot open destination file
- */
-#define SPLT_ERROR_CANNOT_OPEN_DEST_FILE -16
-/**
- * @brief Error, split: cannot write to destination file
- */
-#define SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE -17
-/**
- * @brief Error, split: error while reading file
- */
-#define SPLT_ERROR_WHILE_READING_FILE -18
-/**
- * @brief Error, split: error while seeking file
- */
-#define SPLT_ERROR_SEEKING_FILE -19
-/**
- * @brief Error, split: begin is out of file
- */
-#define SPLT_ERROR_BEGIN_OUT_OF_FILE -20
-/**
- * @brief Error, split: inexistent input file
- */
-#define SPLT_ERROR_INEXISTENT_FILE -21
-/**
- * @brief Error, split: split canceled
- */
-#define SPLT_SPLIT_CANCELLED -22
-/**
- * @brief Error, the library is being used
- */
-#define SPLT_ERROR_LIBRARY_LOCKED -24
-/**
- * @brief Error, the state has not been initialised with #mp3splt_new_state
- */
-#define SPLT_ERROR_STATE_NULL -25
-/**
- * @brief Error, the time split has a negative value
- */
-#define SPLT_ERROR_NEGATIVE_TIME_SPLIT -26
-/**
- * @brief Error, cannot create output directory
- */
-#define SPLT_ERROR_CANNOT_CREATE_DIRECTORY -27
-/**
- * @brief Error, cannot create output directory
- */
-#define SPLT_ERROR_CANNOT_CLOSE_FILE -28
-/**
- * @brief Error, cannot find plugins
- */
-#define SPLT_ERROR_NO_PLUGIN_FOUND -29
-/**
- * @brief Error, cannot init libltdl
- */
-#define SPLT_ERROR_CANNOT_INIT_LIBLTDL -30
-/**
- * @brief Error, cannot init libltdl
- */
-#define SPLT_ERROR_CRC_FAILED -31
-#define SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE -32
-#define SPLT_ERROR_PLUGIN_ERROR -33
-#define SPLT_ERROR_TIME_SPLIT_VALUE_INVALID -34
+  SPLT_OUTPUT_FORMAT_OK = 400,
+  SPLT_OUTPUT_FORMAT_AMBIGUOUS = 401,
 
-//output format
-/**
- * @brief Confirmation, output format: the output format is ok
- */
-#define SPLT_OUTPUT_FORMAT_OK 400
-/**
- * @brief Warning, output format: output format ambigous
- */
-#define SPLT_OUTPUT_FORMAT_AMBIGUOUS 401
+  SPLT_ERROR_SPLITPOINTS = -1,
+  SPLT_ERROR_CANNOT_OPEN_FILE = -2,
+  SPLT_ERROR_INVALID = -3,
+  SPLT_ERROR_EQUAL_SPLITPOINTS = -5,
+  SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER = -6,
+  SPLT_ERROR_NEGATIVE_SPLITPOINT = -7,
+  SPLT_ERROR_INCORRECT_PATH = -8,
+  SPLT_ERROR_INCOMPATIBLE_OPTIONS = -10,
+  SPLT_ERROR_INPUT_OUTPUT_SAME_FILE = -12,
+  SPLT_ERROR_CANNOT_ALLOCATE_MEMORY = -15,
+  SPLT_ERROR_CANNOT_OPEN_DEST_FILE = -16,
+  SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE = -17,
+  SPLT_ERROR_WHILE_READING_FILE = -18,
+  SPLT_ERROR_SEEKING_FILE = -19,
+  SPLT_ERROR_BEGIN_OUT_OF_FILE = -20,
+  SPLT_ERROR_INEXISTENT_FILE = -21,
+  SPLT_SPLIT_CANCELLED = -22,
+  SPLT_ERROR_LIBRARY_LOCKED = -24,
+  SPLT_ERROR_STATE_NULL = -25,
+  SPLT_ERROR_NEGATIVE_TIME_SPLIT = -26,
+  SPLT_ERROR_CANNOT_CREATE_DIRECTORY = -27,
+  SPLT_ERROR_CANNOT_CLOSE_FILE = -28,
+  SPLT_ERROR_NO_PLUGIN_FOUND = -29,
+  SPLT_ERROR_CANNOT_INIT_LIBLTDL = -30,
+  SPLT_ERROR_CRC_FAILED = -31,
+  SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE = -32,
+  SPLT_ERROR_PLUGIN_ERROR = -33,
+  SPLT_ERROR_TIME_SPLIT_VALUE_INVALID = -34,
 
-/**
- * @brief Error, output format: error occured while parsing the
- * output format
- */
-#define SPLT_OUTPUT_FORMAT_ERROR -400
+  SPLT_FREEDB_ERROR_INITIALISE_SOCKET = -101,
+  SPLT_FREEDB_ERROR_CANNOT_GET_HOST = -102,
+  SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET = -103,
+  SPLT_FREEDB_ERROR_CANNOT_CONNECT = -104,
+  SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE = -105,
+  SPLT_FREEDB_ERROR_INVALID_SERVER_ANSWER = -106,
+  SPLT_FREEDB_ERROR_SITE_201 = -107,
+  SPLT_FREEDB_ERROR_SITE_200 = -108,
+  SPLT_FREEDB_ERROR_BAD_COMMUNICATION = -109,
+  SPLT_FREEDB_ERROR_GETTING_INFOS = -110,
+  SPLT_FREEDB_NO_CD_FOUND = -111,
+  SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE = -112,
+  SPLT_INVALID_CUE_FILE = -115,
+  SPLT_INVALID_CDDB_FILE = -116,
+  SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE = -118,
+  SPLT_FREEDB_ERROR_SITE = -119,
 
-//miscellaneous error messages
-#define SPLT_ERROR_INEXISTENT_SPLITPOINT -500
+  SPLT_DEWRAP_ERR_FILE_LENGTH = -200,
+  SPLT_DEWRAP_ERR_VERSION_OLD = -201,
+  SPLT_DEWRAP_ERR_NO_FILE_OR_BAD_INDEX = -202,
+  SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE = -203,
+  SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED = -204,
 
-//plugin error messages
-#define SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE -600
+  SPLT_OUTPUT_FORMAT_ERROR = -400,
+
+  SPLT_ERROR_INEXISTENT_SPLITPOINT = -500,
+
+  SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE = -600,
+
+  SPLT_INVALID_AUDACITY_FILE = -700,
+} splt_code;
 
 //internal
 #define SPLT_INTERNAL_PROGRESS_RATE 1
@@ -1494,6 +1292,9 @@ void mp3splt_put_cue_splitpoints_from_file(splt_state *state,
 //read cddb splitpoints from file and puts them in the state
 void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
     const char *cddb_file, int *error);
+
+void mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state,
+    const char *file, int *error);
 
 /************************************/
 /*    Freedb functions              */

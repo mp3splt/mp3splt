@@ -212,6 +212,19 @@ SILENCE MODE
   NOT DONE:
   - don't create 'mp3splt.log' file (-N)
 
+AUDACITY MODE
+**************************
+
+  MP3 FILES
+  ----------------------------
+
+  DONE:
+  - audacity mode
+  - audacity & output format
+  - audacity & custom tags
+  - audacity & custom tags & output format
+
+
 TESTS TODO: tests ID3v2 UTF16
 TODO: print if output will have ID3v1 or ID3v2
 TODO: print if no xing is written

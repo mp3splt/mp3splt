@@ -38,7 +38,8 @@ AM_INIT_AUTOMAKE(libmp3splt, 0.5.7b)
 AC_CONFIG_HEADERS([config.h])
 
 DEBUG_FLAGS="-g"
-CFLAGS="-Wall $DEBUG_FLAGS $CFLAGS -I../include/libmp3splt"
+WARNING_FLAGS="-Wswitch-enum"
+CFLAGS="-Wall $DEBUG_FLAGS $WARNING_FLAGS $CFLAGS -I../include/libmp3splt"
 
 #################################################
 # Check for programs
