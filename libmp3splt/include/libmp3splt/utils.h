@@ -100,7 +100,7 @@ void splt_u_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *
 int splt_u_create_directories(splt_state *state, const char *dir);
 void splt_u_create_output_dirs_if_necessary(splt_state *state,
     const char *output_filename, int *error);
-char *splt_u_strerror(splt_state *state, int error_code);
+char *splt_u_strerror(splt_state *state, splt_code error_code);
 
 int splt_u_check_if_directory(char *fname);
 

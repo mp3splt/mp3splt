@@ -945,6 +945,34 @@ void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
   }
 }
 
+void mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state,
+    const char *file, int *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  if (state != NULL)
+  {
+    if (!splt_t_library_locked(state))
+    {
+      splt_t_lock_library(state);
+
+      splt_audacity_put_splitpoints(file, state, err);
+
+      splt_t_unlock_library(state);
+    }
+    else
+    {
+      *err = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    *err = SPLT_ERROR_STATE_NULL;
+  }
+}
+
 /************************************/
 /*    Freedb functions              */
 

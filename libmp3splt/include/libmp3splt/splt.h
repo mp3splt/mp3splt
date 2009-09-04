@@ -38,6 +38,7 @@
 #include "utils.h"
 #include "checks.h"
 #include "plugins.h"
+#include "audacity.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

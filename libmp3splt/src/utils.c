@@ -2113,7 +2113,7 @@ float splt_u_silence_position(struct splt_ssplit *temp, float off)
 
 //returns a string error message from the 'error_code'
 //-return result must be freed
-char *splt_u_strerror(splt_state *state, int error_code)
+char *splt_u_strerror(splt_state *state, splt_code error_code)
 {
   int max_error_size = 4096;
   char *error_msg = malloc(sizeof(char) * max_error_size);
@@ -2411,6 +2411,13 @@ char *splt_u_strerror(splt_state *state, int error_code)
         int current_plugin = splt_t_get_current_plugin(state);
         snprintf(error_msg,max_error_size, _(" error: unsupported feature for the plugin '%s'"),
             pl->data[current_plugin].info.name);
+        break;
+      case SPLT_AUDACITY_OK:
+        snprintf(error_msg,max_error_size, _(" audacity labels file processed"));
+        break;
+      case SPLT_INVALID_AUDACITY_FILE:
+        snprintf(error_msg,max_error_size, _(" audacity error: invalid audacity labels file '%s'"),
+            state->err.error_data);
         break;
     }
 
