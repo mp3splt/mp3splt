@@ -7,7 +7,7 @@ script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 cd $script_dir
 
-. ../include_variables.sh "quiet_noflags"
+. ../include_variables.sh "quiet_noflags" || exit 1
 
 #generate the control file
 echo "Source: libmp3splt

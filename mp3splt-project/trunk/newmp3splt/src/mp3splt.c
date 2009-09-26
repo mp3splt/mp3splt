@@ -44,10 +44,10 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "2.2.6b"
+#define VERSION "2.2.7"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "16/08/09"
+#define MP3SPLT_DATE "25/09/09"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -337,57 +337,58 @@ void *my_realloc(void *ptr, size_t size, main_data *data)
 void show_small_help_exit(main_data *data)
 {
   free_main_struct(&data);
+
   print_message(_("\n"
-      "USAGE: (Please read man page for complete documentation)\n"
-      "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... [END_TIME]\n"
-      "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
-      "                   (or EOF for End Of File). \n"
-      "\nOPTIONS (split mode options)\n"
-      " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
-      " -c + file.cddb, file.cue or \"query\" or \"query{album}\". Get splitpoints and\n"
-      "      filenames from a .cddb or .cue file or from Internet (\"query\").\n"
-      "      Use -a to auto-adjust splitpoints.\n"
-      " -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n"
-      " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
-      " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
-      " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)\n"
-      " -i   Count how many silence splitpoints we have with silence detection\n"
-      "      (Use -p for arguments)\n"
-      " -v   Prints current version and exits\n"
-      " -h   Shows this help\n"
-      "\n(other options)\n"
-      //" -P   Pretend to split, without actually splitting the file\n"
-      //" -E   Export .cue file (use with -P to export .cue file without splitting)\n"
-      " -T + TAGS_VERSION: for mp3 files, force output tags as version 1, 2 or 1 & 2.\n"
-      "      TAGS_VERSION can be 1, 2 or 12\n"
-      "      (default is to set the same version as the file to split)\n"
-      " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
-      " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
-      " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)\n"
-      " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
-      " -o + FORMAT: output filename pattern. Can contain those variables:\n"
-      "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
-      "      @t: title tag, @n: track number identifier, @N: track tag number\n"
-      "      (a digit may follow the 'n' or 'N' for the number of digits to output),\n"
-      "      @f: original filename\n"
-      " -g + TAGS : custom tags for the split files.\n"
-      "      TAGS can contain those variables : \n"
-      "         @a, @b, @t, @y, @c, @n, @o (set original tags),\n"
-      "         @N (auto increment track number).\n"
-      "      TAGS format is like [@a=artist1,@t=title1]%[@o,@N=2,@a=artist2]\n"
-      "       (% means that we set the tags for all remaining files)\n"
-      " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
-      " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
-      " -O + TIME : Overlap split files with TIME (slower).\n"
-      " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
-      " -x   No Xing header: does not write the Xing header. Use with -n if you wish\n"
-      "      to concatenate the split files\n"
-      " -N   Don't create the 'mp3splt.log' log file when using '-s'.\n"
-      " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
-      " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
-      "       (also enables -q).\n"
-      " -D   Debug mode: used to debug the program.\n\n"
-      "      Read man page for complete documentation.\n"));
+        "USAGE:\n"
+        "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... [END_TIME]\n"
+        "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
+        "                   (or EOF for End Of File). "));
+  print_message(_("\nOPTIONS (split mode options)\n"
+        " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
+        " -c + file.cddb, file.cue or \"query\" or \"query{album}\". Get splitpoints and\n"
+        "      filenames from a .cddb or .cue file or from Internet (\"query\").\n"
+        "      Use -a to auto-adjust splitpoints."));
+  print_message(_(" -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n"
+        " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
+        " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
+        " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"));
+  print_message(_(" -i   Count how many silence splitpoints we have with silence detection\n"
+        "      (Use -p for arguments)\n"
+        " -v   Prints current version and exits\n"
+        " -h   Shows this help"));
+  print_message(_("\n(other options)\n"
+        //" -P   Pretend to split, without actually splitting the file\n"
+        //" -E   Export .cue file (use with -P to export .cue file without splitting)\n"
+        " -T + TAGS_VERSION: for mp3 files, force output tags as version 1, 2 or 1 & 2.\n"
+        "      TAGS_VERSION can be 1, 2 or 12\n"
+        "      (default is to set the same version as the file to split)"));
+  print_message(_(" -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
+        " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
+        " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"));
+  print_message(_(" -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
+        " -o + FORMAT: output filename pattern. Can contain those variables:\n"
+        "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
+        "      @t: title tag, @n: track number identifier, @N: track tag number\n"
+        "      (a digit may follow the 'n' or 'N' for the number of digits to output),\n"
+        "      @f: original filename"));
+  print_message(_(" -g + TAGS : custom tags for the split files.\n"
+        "      TAGS can contain those variables : \n"
+        "         @a, @b, @t, @y, @c, @n, @o (set original tags),\n"
+        "         @N (auto increment track number).\n"
+        "      TAGS format is like [@a=artist1,@t=title1]%[@o,@N=2,@a=artist2]\n"
+        "       (% means that we set the tags for all remaining files)"));
+  print_message(_(" -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
+        " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
+        " -O + TIME : Overlap split files with TIME (slower)."));
+  print_message(_(" -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
+        " -x   No Xing header: does not write the Xing header. Use with -n if you wish\n"
+        "      to concatenate the split files\n"
+        " -N   Don't create the 'mp3splt.log' log file when using '-s'."));
+  print_message(_(" -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
+        " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
+        "       (also enables -q).\n"
+        " -D   Debug mode: used to debug the program.\n"
+        "      Please read man page for complete documentation.\n"));
 
   if (console_out == stderr)
   {
@@ -2272,10 +2273,16 @@ int main(int argc, char **orig_argv)
     fflush(console_out);
   }
 
-  if ((data->number_of_splitpoints > 2) &&
-      opt->output_format && (strcmp(opt->output_format, "-") == 0))
+  if (opt->output_format && (strcmp(opt->output_format, "-") == 0))
   {
-    print_warning(_("multiple splitpoints with stdout !"));
+    if (data->number_of_splitpoints > 2)
+    {
+      print_warning(_("multiple splitpoints with stdout !"));
+    }
+    else if (opt->t_option)
+    {
+      print_warning(_("using time mode with stdout !"));
+    }
   }
 
   if (!opt->q_option && we_had_directory_as_argument)

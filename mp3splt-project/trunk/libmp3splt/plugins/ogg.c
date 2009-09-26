@@ -940,8 +940,8 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
           {
             //we take the page number
             long page_number = ogg_page_pageno(&page);
-            //if the page number > header_page+1, probably a stream
-            if (page_number > (oggstate->header_page_number+1))
+            //probably a stream
+            if (page_number > (oggstate->header_page_number+2))
             {
               cutpoint += granpos;
               prevgranpos += granpos;
@@ -1628,6 +1628,11 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
 
   oggstate->temp_level = 0.0;
 
+  short first_time = SPLT_TRUE;
+  short is_stream = SPLT_FALSE;
+  long stream_time0 = 0;
+  long old_time = 0;
+
   while (!eos)
   {
     while(!eos)
@@ -1643,6 +1648,18 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
           eos=1;
         }
         page_granpos = ogg_page_granulepos(&og) - oggstate->cutpoint_begin;
+
+        if (first_time)
+        {
+          long page_number = ogg_page_pageno(&og);
+          //probably a stream
+          if (page_number > (oggstate->header_page_number+2))
+          {
+            is_stream = SPLT_TRUE;
+          }
+          first_time = SPLT_FALSE;
+        }
+
         if (pos == 0) 
         {
           pos = page_granpos;
@@ -1776,8 +1793,18 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
         float level = splt_u_convert2dB(oggstate->temp_level);
         if (state->split.get_silence_level)
         {
-          state->split.get_silence_level((unsigned long) (((double) pos / oggstate->vi->rate) * 100.0),
-              level, state->split.silence_level_client_data);
+          long time = (long) (((double) pos / oggstate->vi->rate) * 100.0);
+          if (is_stream && stream_time0 == 0)
+          {
+            if (time - old_time > 500)
+            {
+              stream_time0 = time;
+            }
+            old_time = time;
+          }
+
+          state->split.get_silence_level(time - stream_time0, level,
+              state->split.silence_level_client_data);
         }
         state->split.p_bar->silence_db_level = level;
         state->split.p_bar->silence_found_tracks = found;

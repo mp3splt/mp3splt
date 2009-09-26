@@ -13,7 +13,7 @@ script_dir=$(readlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 cd $script_dir/../..
 
-. ./libmp3splt/include_variables.sh
+. ./libmp3splt/include_variables.sh || exit 1 
 
 put_package "cross_windows"
 

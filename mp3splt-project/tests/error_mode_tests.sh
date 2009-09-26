@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 F1=La_Verue__Today.mp3
 F2=La_Verue__Today__no_tags.mp3
@@ -32,15 +31,13 @@ function test_syncerror
 {
  _concat_files
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="sync error"
   M_FILE="syncerror"
 
-  #TODO bug: switching to frame mode
   expected=" Processing file 'songs/syncerror.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
  info: starting error mode split
    File \"$OUTPUT_DIR/syncerror_error_1.mp3\" created
    File \"$OUTPUT_DIR/syncerror_error_2.mp3\" created
@@ -59,15 +56,13 @@ function test_syncerror_with_output_format
 {
  _concat_files
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="sync error & output format"
   M_FILE="syncerror"
 
-  #TODO bug: switching to frame mode
   expected=" Processing file 'songs/syncerror.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
  info: starting error mode split
    File \"$OUTPUT_DIR/syncerror_1.mp3\" created
    File \"$OUTPUT_DIR/syncerror_2.mp3\" created
@@ -86,15 +81,13 @@ function test_syncerror_and_create_output_dir
 {
  _concat_files
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="sync error & create output dir"
   M_FILE="syncerror"
 
-  #TODO bug: switching to frame mode
   expected=" Processing file 'songs/syncerror.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
  info: starting error mode split
    File \"$OUTPUT_DIR/sync/syncerror_error_1.mp3\" created
    File \"$OUTPUT_DIR/sync/syncerror_error_2.mp3\" created
@@ -113,15 +106,13 @@ function test_syncerror_and_output_format_and_create_output_dir
 {
  _concat_files
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="sync error & output format & create output dir"
   M_FILE="syncerror"
 
-  #TODO bug: switching to frame mode
   expected=" Processing file 'songs/syncerror.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
  info: starting error mode split
    File \"$OUTPUT_DIR/sync/syncerror/syncerror_error_1.mp3\" created
    File \"$OUTPUT_DIR/sync/syncerror/syncerror_error_2.mp3\" created
@@ -130,7 +121,7 @@ function test_syncerror_and_output_format_and_create_output_dir
   mp3splt_args=" -d $OUTPUT_DIR/sync -o @f/@f_error_@n -e $SYNCERR_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  #_check_syncerror_split_files_sizes "$OUTPUT_DIR/sync/syncerror" "syncerror_error"
+  _check_syncerror_split_files_sizes "$OUTPUT_DIR/sync/syncerror" "syncerror_error"
 
   p_green "OK"
   echo
@@ -140,16 +131,14 @@ function test_syncerror_with_m3u
 {
  _concat_files
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="sync error & m3u"
   M_FILE="syncerror"
 
-  #TODO bug: switching to frame mode
   expected=" Processing file 'songs/syncerror.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
  M3U file '$OUTPUT_DIR/playlist.m3u' will be created.
- info: found Xing or Info header. Switching to frame mode... 
  info: starting error mode split
    File \"$OUTPUT_DIR/syncerror_error_1.mp3\" created
    File \"$OUTPUT_DIR/syncerror_error_2.mp3\" created

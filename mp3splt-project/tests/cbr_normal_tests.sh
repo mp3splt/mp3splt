@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 #normal mode functional tests
 
@@ -9,7 +8,7 @@ function test_normal_cbr
 {
   tags_version=$1
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="Merci_Bonsoir__Je_veux_Only_love"
 
@@ -102,7 +101,7 @@ function test_normal_cbr_id3v2 { test_normal_cbr 2; }
 
 function test_normal_cbr_overlap_splitpoints
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="cbr overlap splitpoints"
   M_FILE="Merci_Bonsoir__Je_veux_Only_love"
@@ -135,16 +134,15 @@ function test_normal_cbr_overlap_splitpoints
   echo
 }
 
-function _test_normal_cbr_stdin
+function test_normal_cbr_stdin
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   if [[ -z $no_tags_file ]];then
     test_name="cbr stdin"
     M_FILE="Merci_Bonsoir__Je_veux_Only_love"
   fi
 
-  #TODO!
   expected=" Processing file '-' ...
  info: file matches the plugin 'mp3 (libmad)'
  warning: stdin '-' is supposed to be mp3 stream.
@@ -152,7 +150,7 @@ function _test_normal_cbr_stdin
  info: starting normal split
    File \"$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3\" created
    File \"$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3\" created
-   File \"$OUTPUT_DIR/-_03m_30s__357913m_56s_47h.mp3\" created
+   File \"$OUTPUT_DIR/-_03m_30s__EOF.mp3\" created
  file split (EOF)"
   mp3splt_args="-d $OUTPUT_DIR - 1.0 2.0.2 3.30 EOF"
   run_custom_check_output "cat songs/${M_FILE}.mp3 | $MP3SPLT" "$mp3splt_args" "$expected"
@@ -167,7 +165,7 @@ function _test_normal_cbr_stdin
   check_current_mp3_no_tags
   check_current_file_size "1436944"
 
-  current_file="$OUTPUT_DIR/-_03m_30s__357913m_56s_47h.mp3"
+  current_file="$OUTPUT_DIR/-_03m_30s__EOF.mp3"
   check_current_mp3_length "00.13"
   check_current_mp3_no_tags
   check_current_file_size "216503"
@@ -178,7 +176,7 @@ function _test_normal_cbr_stdin
 
 function test_normal_cbr_stdout
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="cbr stdout"
   M_FILE="Merci_Bonsoir__Je_veux_Only_love"
@@ -202,7 +200,7 @@ function test_normal_cbr_stdout
 
 function test_normal_cbr_stdout_multiple_splitpoints
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="cbr stdout & splitpoints > 2"
   M_FILE="Merci_Bonsoir__Je_veux_Only_love"

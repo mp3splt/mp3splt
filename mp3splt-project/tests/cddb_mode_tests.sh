@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 function _create_cddb_file
 {
@@ -41,7 +40,7 @@ function test_cddb_mode
 {
   _create_cddb_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -105,7 +104,7 @@ function test_cddb_mode_quiet
 {
   _create_cddb_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -140,7 +139,7 @@ function test_cddb_mode_and_output_format
 {
   _create_cddb_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -184,11 +183,29 @@ $auto_adjust_warning"
   echo
 }
 
+function test_cddb_mode_and_output_format_error
+{
+  _create_cddb_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cddb mode & output format error"
+
+  expected=" error: illegal variable '@x' in output format"
+  mp3splt_args="-d $OUTPUT_DIR -o @n3-@a-@p-@b-@t-@x -c $CDDB_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  p_green "OK"
+  echo
+}
+
 function test_cddb_mode_and_output_format_and_create_dirs
 {
   _create_cddb_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 

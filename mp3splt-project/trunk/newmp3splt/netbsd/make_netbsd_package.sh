@@ -9,7 +9,7 @@ cd $script_dir
 
 unset PKG_PATH
 
-. ../include_variables.sh
+. ../include_variables.sh || exit 1
 
 put_package "netbsd"
 

@@ -64,7 +64,7 @@ static void append_splitpoints(splt_state *state, long start_point, long end_poi
     }
     else
     {
-      splt_t_append_splitpoint(state, last_end_point, label_name, SPLT_SKIPPOINT);
+      splt_t_append_splitpoint(state, last_end_point, "skip", SPLT_SKIPPOINT);
       *append_start_point = SPLT_TRUE;
     }
   }
@@ -79,9 +79,10 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
     return 0;
   }
 
+  splt_t_free_splitpoints_tags(state);
+
   *error = SPLT_AUDACITY_OK;
 
-  //put information to client
   char *client_infos = malloc(sizeof(char) * (strlen(file)+200));
   if (client_infos == NULL)
   {
@@ -136,6 +137,7 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
       *error = SPLT_INVALID_AUDACITY_FILE;
       goto end;
     }
+		errno = 0;
 		label_end = strtod(ptr, &ptr);
 		if (errno != 0)
     {

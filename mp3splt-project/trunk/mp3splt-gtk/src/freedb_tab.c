@@ -37,18 +37,20 @@
  *
  *********************************************************/
 
-#include <gtk/gtk.h>
-#include <libmp3splt/mp3splt.h>
-#include <glib/gi18n.h>
-#include <glib.h>
-#include <glib/gstdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <gtk/gtk.h>
+#include <glib/gi18n.h>
+#include <glib/gstdio.h>
+
+#include <libmp3splt/mp3splt.h>
 
 #include "util.h"
 #include "main_win.h"
 #include "tree_tab.h"
 #include "preferences_tab.h"
+#include "utilities.h"
 
 //handle box for detaching window
 GtkWidget *freedb_handle_box;
@@ -291,39 +293,8 @@ void remove_all_freedb_rows ()
     }
 }
 
-//transform text to utf8
-//free_or_not:  TRUE if we free text before and 
-//otherwise FALSE
-//the third result returns us if the result must be freed 
-//or not
-gchar *transform_to_utf8(gchar *text, 
-                         gint free_or_not,
-                         gint *must_be_freed)
-{
-  gchar *temp;
-
-  gsize bytes_read;
-  gsize bytes_written;
-
-  if(!(g_utf8_validate (text, -1,NULL)) &&
-     (text != NULL))
-    {
-      temp = g_convert(text, -1, "UTF-8", "ISO-8859-1", &bytes_read, &bytes_written, NULL);
-      if (free_or_not)
-        g_free(text);
-          
-      *must_be_freed = TRUE;
-          
-      return temp;
-    }
-  
-  *must_be_freed = FALSE;
-  
-  return text;
-}
-
 //search the freedb.org
-void freedb_search(gpointer *data)
+gpointer freedb_search(gpointer data)
 {
   gdk_threads_enter();
  
@@ -384,12 +355,14 @@ void freedb_search(gpointer *data)
   gtk_entry_set_editable(GTK_ENTRY(freedb_entry), TRUE);
  
   gdk_threads_leave();
+
+  return NULL;
 }
 
 void freedb_search_start_thread()
 {
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
-  g_thread_create((GThreadFunc)freedb_search, NULL, TRUE, NULL);
+  g_thread_create(freedb_search, NULL, TRUE, NULL);
 }
 
 //we push the search button
@@ -562,7 +535,7 @@ void update_splitpoints_from_the_state()
   }
 }
 
-void put_freedb_splitpoints(gpointer *data)
+gpointer put_freedb_splitpoints(gpointer data)
 {
   gint err = SPLT_OK;
 
@@ -579,13 +552,15 @@ void put_freedb_splitpoints(gpointer *data)
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
 
   gdk_threads_leave();
+  
+  return NULL;
 }
 
 //event for the freedb add button when clicked
 void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 {
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
-  g_thread_create((GThreadFunc)put_freedb_splitpoints, NULL, TRUE, NULL);
+  g_thread_create(put_freedb_splitpoints, NULL, TRUE, NULL);
 }
 
 //creates the freedb box

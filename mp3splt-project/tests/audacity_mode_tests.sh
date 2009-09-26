@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 function _create_audacity_file
 {
@@ -15,7 +14,7 @@ function test_audacity
 {
   _create_audacity_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -65,7 +64,7 @@ function test_audacity_and_output_format
 {
   _create_audacity_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -107,7 +106,7 @@ function test_audacity_and_custom_tags
 {
   _create_audacity_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -157,7 +156,7 @@ function test_audacity_and_custom_tags_and_output_format
 {
   _create_audacity_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 

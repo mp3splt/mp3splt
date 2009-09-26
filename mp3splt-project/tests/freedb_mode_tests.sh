@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 function _test_freedb_search_get_cgi_tracktype
 {
@@ -10,7 +9,7 @@ function _test_freedb_search_get_cgi_tracktype
   get_port=$3
 
   rm -f query.cddb
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 

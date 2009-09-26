@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 function _create_cue_file
 {
@@ -29,7 +28,7 @@ function _test_cue_mode
 
   _create_cue_file $with_quotes
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -92,7 +91,7 @@ function test_cue_mode_quiet
 {
   _create_cue_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -122,12 +121,11 @@ function test_cue_mode_quiet
   echo
 }
 
-#TODO
 function test_cue_mode_and_output_format
 {
   _create_cue_file
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 

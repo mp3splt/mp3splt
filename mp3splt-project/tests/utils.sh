@@ -1,6 +1,13 @@
 #!/bin/bash
 
-#print in different colors
+. ./constants_variables.sh
+
+function remove_output_dir
+{
+  rm -rf ./$OUTPUT_DIR || exit 1
+  mkdir -p $OUTPUT_DIR
+}
+
 function p_white
 {
   echo -n -e "${@}"

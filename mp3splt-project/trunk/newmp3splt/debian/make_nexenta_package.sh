@@ -6,7 +6,7 @@ script_dir=${script_dir%\/*.sh}
 PROGRAM_DIR=$script_dir/..
 cd $PROGRAM_DIR
 
-. ./include_variables.sh
+. ./include_variables.sh || exit 1
 
 put_package "nexenta"
 

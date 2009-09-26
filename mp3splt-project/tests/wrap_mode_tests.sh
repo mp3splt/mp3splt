@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 F1=La_Verue__Today.mp3
 F2=La_Verue__Today__no_tags.mp3
@@ -40,7 +39,7 @@ function test_wrap_mode_list_files
 {
   _wrap_files_with_absolute_paths
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="list wrapped files"
   M_FILE="wrapped"
@@ -66,15 +65,13 @@ function test_wrap_mode
 {
   _wrap_files
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="wrap mode"
   M_FILE="wrapped"
 
-  #TODO: bug with Switching to frame mode
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
  info: starting wrap mode split
  Detected file created with: Mp3Wrap v. 0.5
  Check for file integrity: calculating CRC please wait...  OK
@@ -98,15 +95,13 @@ function test_wrap_mode_with_absolute_paths
 {
   _wrap_files_with_absolute_paths
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="wrap mode with absolute paths"
   M_FILE="wrapped"
 
-  #TODO: bug with Switching to frame mode
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
  info: starting wrap mode split
  Detected file created with: Mp3Wrap v. 0.5
  Check for file integrity: calculating CRC please wait...  OK
@@ -130,15 +125,13 @@ function test_wrap_mode_with_create_output_dirs
 {
   _wrap_files_with_absolute_paths
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="wrap mode with create output dirs"
   M_FILE="wrapped"
 
-  #TODO: bug with Switching to frame mode
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
  info: starting wrap mode split
  Detected file created with: Mp3Wrap v. 0.5
  Check for file integrity: calculating CRC please wait...  OK
@@ -162,16 +155,14 @@ function test_wrap_mode_and_create_m3u
 {
   _wrap_files_with_absolute_paths
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="wrap mode with abs paths & create m3u"
   M_FILE="wrapped"
 
-  #TODO: bug with Switching to frame mode
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
  M3U file 'output/playlist.m3u' will be created.
- info: found Xing or Info header. Switching to frame mode... 
  info: starting wrap mode split
  Detected file created with: Mp3Wrap v. 0.5
  Check for file integrity: calculating CRC please wait...  OK

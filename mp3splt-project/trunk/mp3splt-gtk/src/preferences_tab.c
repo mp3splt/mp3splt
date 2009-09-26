@@ -48,6 +48,7 @@
 #include "player_tab.h"
 #include "utilities.h"
 #include "main_win.h"
+#include "preferences_manager.h"
 
 /* split preferences for choosing directory */
 //directory entry

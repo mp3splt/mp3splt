@@ -1,13 +1,12 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 function test_time_vbr
 {
   local tags_version=$1
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr time"
   M_FILE="La_Verue__Today"
@@ -157,7 +156,7 @@ function test_time_vbr_id3v2 { test_time_vbr 2; }
 
 function test_time_vbr_no_xing
 {
-  rm -f $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr no xing"
   M_FILE="La_Verue__Today"
@@ -186,7 +185,7 @@ function test_time_vbr_no_xing
 
 function test_time_vbr_m3u
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr m3u"
   M_FILE="La_Verue__Today"
@@ -216,7 +215,7 @@ La_Verue__Today_03m_40s__04m_05s_58h.mp3"
 
 function test_time_vbr_create_directories
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr create directories"
   M_FILE="La_Verue__Today"
@@ -245,7 +244,7 @@ function test_time_vbr_create_directories
 
 function test_time_vbr_custom_tags
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr custom tags"
   M_FILE="La_Verue__Today"
@@ -292,7 +291,7 @@ function test_time_vbr_custom_tags
 
 function test_time_vbr_custom_tags_multiple_percent
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr custom tags multiple percent"
   M_FILE="La_Verue__Today"
@@ -335,7 +334,7 @@ function test_time_vbr_custom_tags_multiple_percent
 
 function test_time_vbr_overlap_split
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr overlap splitpoints"
   M_FILE="La_Verue__Today"
@@ -366,7 +365,7 @@ function test_time_vbr_overlap_split
 
 function test_time_vbr_stdin
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr stdin"
   M_FILE="La_Verue__Today"
@@ -407,7 +406,8 @@ function test_time_vbr_stdin
 function _test_time_vbr_stdin_and_tags
 {
   local tags_version=$1
-  rm -rf $OUTPUT_DIR/*
+
+  remove_output_dir
 
   test_name="vbr stdin and tags v$tags_version"
   M_FILE="La_Verue__Today"
@@ -468,7 +468,7 @@ function test_time_vbr_stdin_and_tags_v2 { _test_time_vbr_stdin_and_tags 2; }
 
 function test_time_vbr_output_fnames_and_dirs
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr output fnames & directories"
   M_FILE="La_Verue__Today"
@@ -499,7 +499,7 @@ function test_time_vbr_output_fnames_and_dirs
 
 function test_time_vbr_output_fnames_and_custom_tags_dirs
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr output fnames & custom tags & directories"
   M_FILE="La_Verue__Today"
@@ -533,14 +533,13 @@ function test_time_vbr_output_fnames_and_custom_tags_dirs
 
 function test_time_vbr_stdout_multiple_splitpoints
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr stdout & splitpoints > 2"
   M_FILE="La_Verue__Today"
 
-#TODO
-#  expected=" Warning: multiple splitpoints with stdout !
-expected=" Processing file 'songs/${M_FILE}.mp3' ...
+expected=" Warning: using time mode with stdout !
+ Processing file 'songs/${M_FILE}.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s

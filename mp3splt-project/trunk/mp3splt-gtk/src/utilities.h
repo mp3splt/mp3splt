@@ -28,25 +28,20 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: utilities.h
- *
- * header file of utilities.c
- *
- *********************************************************/
+#ifndef UTILITIES_H
 
-gint is_filee(const gchar *fname);
 gint check_if_we_have_player();
-gchar *get_preferences_filename();
-void set_language();
-void load_preferences();
-void write_default_preferences_file();
-void check_pref_file();
+gint is_filee(const gchar *fname);
 gint check_if_dir(guchar *fname);
 gint check_if_file(guchar *fname);
 void print_processing_file(gchar *filename);
+void remove_end_slash_n_r_from_filename(char *filename);
+gchar *transform_to_utf8(gchar *text, gint free_or_not,
+    gint *must_be_freed);
 
 GtkWidget *set_title_and_get_vbox(GtkWidget *widget, gchar *title);
 gboolean container_has_child(GtkContainer *cont, GtkWidget *my_child);
-void remove_end_slash_n_r_from_filename(char *filename);
+
+#define UTILITIES_H
+#endif
 

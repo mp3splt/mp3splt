@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 function _check_silence_output_files
 {
@@ -30,7 +29,7 @@ function _check_silence_output_files
 function test_silence
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -66,7 +65,7 @@ function test_silence
 
   test_name="silence mode - check reading from mp3splt.log"
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
  info: file matches the plugin 'mp3 (libmad)'
@@ -92,7 +91,7 @@ function test_silence
 function test_silence_offset
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -149,7 +148,7 @@ function test_silence_offset
 function test_silence_threshold
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -215,7 +214,7 @@ function test_silence_threshold
 function test_silence_nt
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -264,7 +263,7 @@ function test_silence_nt
 function test_silence_rm
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -321,7 +320,7 @@ function test_silence_rm
 function test_silence_rm_and_output_format
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -360,7 +359,7 @@ function test_silence_rm_and_output_format
 function test_silence_rm_and_overlap
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -400,7 +399,7 @@ function test_silence_rm_and_overlap
 function test_silence_rm_and_custom_tags
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -442,7 +441,7 @@ function test_silence_rm_and_custom_tags
 function test_silence_rm_and_custom_tags_and_output_format
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 
@@ -481,7 +480,7 @@ function test_silence_rm_and_custom_tags_and_output_format
 function test_silence_min
 {
   rm -f mp3splt.log
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today_silence"
 

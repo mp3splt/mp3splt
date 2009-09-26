@@ -98,7 +98,5 @@ void handle_detached_event (GtkHandleBox *handlebox,
                             GtkWidget *widget,
                             gpointer data);
 GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view);
-void garray_to_array(GArray *spltpoints, 
-                     glong *hundredth);
 void put_splitpoints_in_the_state(splt_state *state);
 GtkTreeView *create_tree_view();

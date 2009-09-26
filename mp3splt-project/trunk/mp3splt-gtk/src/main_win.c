@@ -41,7 +41,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "0.5.7b"
+#define VERSION "0.5.8"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
@@ -63,7 +63,6 @@
 #include "mp3splt-gtk.h"
 #include "tree_tab.h"
 #include "split_files.h"
-#include "cddb_cue.h"
 #include "utilities.h"
 #include "preferences_tab.h"
 #include "freedb_tab.h"
@@ -72,6 +71,8 @@
 #include "player_tab.h"
 #include "player.h"
 #include "messages.h"
+#include "import.h"
+#include "preferences_manager.h"
 
 //main window
 GtkWidget *window = NULL;
@@ -145,12 +146,9 @@ void quit(GtkWidget *widget, gpointer   data)
     player_quit();
   }
 
-  //free player choices list
   g_list_free(player_pref_list);
-  //we free the splitpoints
   g_array_free(splitpoints, TRUE);
 
-  //we free the GUI silence points
   if (silence_points)
   {
     g_free(silence_points);
@@ -159,42 +157,10 @@ void quit(GtkWidget *widget, gpointer   data)
   }
 
   gint err = SPLT_OK;
-  //we free left variables in the library
-  mp3splt_free_state(the_state,&err);
+  mp3splt_free_state(the_state, &err);
   print_status_bar_confirmation(err);
 
-  //we definetly quit the program...
   gtk_main_quit();
-}
-
-void process_filename_drop(char *filename)
-{
-  gchar *ext = strrchr(filename, '.');
-  GString *ext_str = g_string_new(ext);
-
-  g_string_ascii_up(ext_str);
-
-  if ((strstr(ext_str->str, ".MP3") != NULL) ||
-      (strstr(ext_str->str, ".OGG") != NULL))
-  {
-    file_chooser_ok_event(filename);
-    remove_status_message();
-  }
-  else if ((strstr(ext_str->str, ".CUE") != NULL))
-  {
-    cue_file_chooser_ok_event(filename);
-    cue_add_button_event(NULL, NULL);
-  }
-  else if ((strstr(ext_str->str, ".CDDB") != NULL))
-  {
-    cddb_file_chooser_ok_event(filename);
-    cddb_add_button_event(NULL, NULL);
-  }
-
-  if (ext_str)
-  {
-    g_string_free(ext_str, FALSE);
-  }
 }
 
 void main_window_drag_data_received(GtkWidget *window,
@@ -228,7 +194,7 @@ void main_window_drag_data_received(GtkWidget *window,
 
       if (is_filee(filename))
       {
-        process_filename_drop(filename);
+        handle_import(filename);
       }
 
       if (filename)
@@ -478,7 +444,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
     if (filename_path_of_split != NULL)
     {
       we_are_splitting = TRUE;
-      g_thread_create((GThreadFunc)split_it, NULL, TRUE, NULL);
+      g_thread_create(split_it, NULL, TRUE, NULL);
       gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), TRUE);
     }
     else
@@ -546,6 +512,8 @@ GtkWidget *create_menu_bar()
     //name, stock id, label, accelerator, tooltip
     { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
       G_CALLBACK(split_button_event) },
+    { "Import", GTK_STOCK_OPEN, N_("_Import..."), "<Ctrl>I", N_("Import"),
+      G_CALLBACK(import_event) },
     { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
       G_CALLBACK(show_messages_history_dialog) },
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
@@ -560,6 +528,7 @@ GtkWidget *create_menu_bar()
     "  <menubar name='MenuBar'>"
     "    <menu action='FileMenu'>"
     "      <menuitem action='Split'/>"
+    "      <menuitem action='Import'/>"
     "      <menuitem action='Messages history'/>"
     "      <separator/>"
     "      <menuitem action='Quit'/>"
@@ -707,19 +676,6 @@ GtkWidget *create_main_vbox()
                            split_files_vbox,
                            (GtkWidget *)notebook_label);
   
-  /* cddb and cue page */
-  GtkWidget *cddb_cue_vbox;
-  cddb_cue_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (cddb_cue_vbox), 0);
-
-  frame = (GtkWidget *)create_cddb_cue_frame();
-  gtk_container_add(GTK_CONTAINER(cddb_cue_vbox), frame);
-  
-  notebook_label = gtk_label_new((gchar *)_("cddb & cue"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           cddb_cue_vbox,
-                           (GtkWidget *)notebook_label);
-
   /* freedb page */
   GtkWidget *freedb_vbox;
   freedb_vbox = gtk_vbox_new (FALSE, 0);

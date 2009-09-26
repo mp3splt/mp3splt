@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. ./constants_variables.sh
-. ./utils.sh
+. ./utils.sh || exit 1
 
 #normal mode functional tests
 
@@ -9,7 +8,7 @@ function test_normal_vbr
 {
   local tags_version=$1
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr normal"
   M_FILE="La_Verue__Today"
@@ -103,7 +102,7 @@ function test_normal_vbr_id3v2 { test_normal_vbr 2; }
 
 function test_normal_vbr_id3v1_and_id3v2
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   M_FILE="La_Verue__Today"
 
@@ -149,7 +148,7 @@ function test_normal_vbr_id3v1_and_id3v2
 
 function test_normal_vbr_no_input_tags
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr normal & no input tags"
   M_FILE="La_Verue__Today__no_tags"
@@ -188,7 +187,7 @@ function test_normal_vbr_no_input_tags
 
 function test_normal_vbr_no_xing
 {
-  rm -f $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr no xing"
   M_FILE="La_Verue__Today"
@@ -217,7 +216,7 @@ function test_normal_vbr_no_xing
 
 function test_normal_vbr_m3u
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr m3u"
   M_FILE="La_Verue__Today"
@@ -247,7 +246,7 @@ La_Verue__Today_03m_05s__04m_05s_58h.mp3"
 
 function test_normal_vbr_create_directories
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr create directories"
   M_FILE="La_Verue__Today"
@@ -276,7 +275,7 @@ function test_normal_vbr_create_directories
 
 function test_normal_vbr_custom_tags
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr custom tags"
   M_FILE="La_Verue__Today"
@@ -323,7 +322,7 @@ function test_normal_vbr_custom_tags
 
 function test_normal_vbr_custom_tags_and_input_no_tags
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr custom tags & no input tags"
   M_FILE="La_Verue__Today__no_tags"
@@ -367,7 +366,7 @@ function test_normal_vbr_custom_tags_and_input_no_tags
 
 function test_normal_vbr_custom_tags_multiple_percent
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr custom tags multiple percent"
   M_FILE="La_Verue__Today"
@@ -410,7 +409,7 @@ function test_normal_vbr_custom_tags_multiple_percent
 
 function test_normal_vbr_overlap_split
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr overlap splitpoints"
   M_FILE="La_Verue__Today"
@@ -448,7 +447,7 @@ function test_normal_vbr_stdin
 {
   no_tags_file=$1
 
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   if [[ -z $no_tags_file ]];then
     test_name="vbr stdin"
@@ -502,7 +501,8 @@ function test_normal_vbr_stdin_no_input_tags { test_normal_vbr_stdin "no_input_t
 function _test_normal_vbr_stdin_and_tags
 {
   local tags_version=$1
-  rm -rf $OUTPUT_DIR/*
+
+  remove_output_dir
 
   test_name="vbr stdin and tags v$tags_version"
   M_FILE="La_Verue__Today"
@@ -563,7 +563,7 @@ function test_normal_vbr_stdin_and_tags_v2 { _test_normal_vbr_stdin_and_tags 2; 
 
 function test_normal_vbr_output_fnames_and_custom_tags
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr output fnames & custom tags"
   M_FILE="La_Verue__Today"
@@ -593,7 +593,7 @@ function test_normal_vbr_output_fnames_and_custom_tags
 
 function test_normal_vbr_output_fname
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr output fname"
   M_FILE="La_Verue__Today"
@@ -621,7 +621,7 @@ function test_normal_vbr_output_fname
 
 function test_normal_vbr_output_fnames_and_dirs
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr output fnames & directories"
   M_FILE="La_Verue__Today"
@@ -652,7 +652,7 @@ function test_normal_vbr_output_fnames_and_dirs
 
 function test_normal_vbr_output_fnames_and_custom_tags_dirs
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr output fnames & custom tags & directories"
   M_FILE="La_Verue__Today"
@@ -686,7 +686,7 @@ function test_normal_vbr_output_fnames_and_custom_tags_dirs
 
 function test_normal_vbr_stdout
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr stdout"
   M_FILE="La_Verue__Today"
@@ -712,7 +712,7 @@ function test_normal_vbr_stdout
 
 function test_normal_vbr_stdout_multiple_splitpoints
 {
-  rm -rf $OUTPUT_DIR/*
+  remove_output_dir
 
   test_name="vbr stdout & splitpoints > 2"
   M_FILE="La_Verue__Today"

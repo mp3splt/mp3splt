@@ -1440,11 +1440,18 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
           //print message to client because frame mode enabled
           if (!splt_t_messages_locked(state))
           {
-            if (!splt_t_get_iopt(state,SPLT_INTERNAL_FRAME_MODE_ENABLED))
+            if (!splt_t_get_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED))
             {
-              splt_t_put_info_message_to_client(state,
-                  _(" info: found Xing or Info header. Switching to frame mode... \n"));
-              splt_t_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED, SPLT_TRUE);
+              int split_mode =
+                splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+
+              if (split_mode != SPLT_OPTION_WRAP_MODE &&
+                  split_mode != SPLT_OPTION_ERROR_MODE)
+              {
+                splt_t_put_info_message_to_client(state,
+                    _(" info: found Xing or Info header. Switching to frame mode... \n"));
+                splt_t_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED, SPLT_TRUE);
+              }
             }
           }
           continue;

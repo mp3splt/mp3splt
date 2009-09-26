@@ -1248,6 +1248,38 @@ end_while:
 /*******************************/
 /* utils for the output format */
 
+static short splt_u_output_variable_is_valid(char v, int *amb)
+{
+  switch (v)
+  {
+    case 's':
+    case 'S':
+    case 'm':
+    case 'M':
+    case 'h':
+    case 'H':
+    case 'a':
+    case 'A':
+    case 'b':
+    case 'f':
+    case 'p':
+      break;
+    case 't':
+    case 'l':
+    case 'L':
+    case 'u':
+    case 'U':
+    case 'n':
+    case 'N':
+      *amb = SPLT_OUTPUT_FORMAT_OK;
+      break;
+    default:
+      return SPLT_FALSE;
+  }
+
+  return SPLT_TRUE;
+}
+
 int splt_u_parse_outformat(char *s, splt_state *state)
 {
   char *ptrs = NULL, *ptre = NULL;
@@ -1307,6 +1339,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   }
   ptrs = ptre;
 
+  char *last_ptre = NULL;
   while (((ptre = strchr(ptrs+1, '%')) != NULL) && (i < SPLT_OUTNUM))
   {
     char cf = *(ptrs+1);
@@ -1317,37 +1350,27 @@ int splt_u_parse_outformat(char *s, splt_state *state)
       len = SPLT_MAXOLEN;
     }
 
-    switch (cf)
+    if (!splt_u_output_variable_is_valid(cf, &amb))
     {
-      case 's':
-      case 'S':
-      case 'm':
-      case 'M':
-      case 'h':
-      case 'H':
-      case 'a':
-      case 'A':
-      case 'b':
-      case 'f':
-      case 'p':
-        break;
-      case 't':
-      case 'l':
-      case 'L':
-      case 'u':
-      case 'U':
-      case 'n':
-      case 'N':
-        amb = SPLT_OUTPUT_FORMAT_OK;
-        break;
-      default:
-        err[0] = cf;
-        splt_t_set_error_data(state, err);
-        return SPLT_OUTPUT_FORMAT_ERROR;
+      err[0] = cf;
+      splt_t_set_error_data(state, err);
+      return SPLT_OUTPUT_FORMAT_ERROR;
     }
 
     strncpy(state->oformat.format[i++], ptrs, len);
     ptrs = ptre;
+    last_ptre = ptre;
+  }
+
+  if (last_ptre && *last_ptre != '\0')
+  {
+    char v = *(last_ptre+1);
+    if (!splt_u_output_variable_is_valid(v, &amb))
+    {
+      err[0] = v;
+      splt_t_set_error_data(state, err);
+      return SPLT_OUTPUT_FORMAT_ERROR;
+    }
   }
 
   strncpy(state->oformat.format[i], ptrs, strlen(ptrs));
@@ -1533,15 +1556,16 @@ int splt_u_put_output_format_filename(splt_state *state, int current_split)
   long next_mins = -1;
   long next_secs = -1;
   long next_hundr = -1;
+  long next_point_value = -1;
   if (splt_t_splitpoint_exists(state, current_split + 1))
   {
-    point_value = splt_t_get_splitpoint_value(state, current_split + 1, &error);
+    next_point_value = splt_t_get_splitpoint_value(state, current_split + 1, &error);
     long total_time = splt_t_get_total_time(state);
-    if (total_time > 0 && point_value > total_time)
+    if (total_time > 0 && next_point_value > total_time)
     {
-      point_value = total_time;
+      next_point_value = total_time;
     }
-    splt_u_get_mins_secs_hundr(point_value, &next_mins, &next_secs, &next_hundr);
+    splt_u_get_mins_secs_hundr(next_point_value, &next_mins, &next_secs, &next_hundr);
   }
 
   int fm_length = 0;
@@ -1555,9 +1579,18 @@ int splt_u_put_output_format_filename(splt_state *state, int current_split)
     tags_index = remaining_tags_like_x;
   }
 
-  splt_u_print_debug(state,"The output format is ",0,state->oformat.format_string);
+  const char *output_format = splt_t_get_oformat(state);
+  short write_eof = SPLT_FALSE;
+  if ((next_point_value == LONG_MAX) &&
+      (strcmp(output_format, SPLT_DEFAULT_OUTPUT) == 0))
+  {
+    write_eof = SPLT_TRUE;
+  }
+
+  splt_u_print_debug(state,"The output format is ", 0, output_format);
 
   long mMsShH_value = -1;
+  short eof_written = SPLT_FALSE;
 
   for (i = 0; i < SPLT_OUTNUM; i++)
   {
@@ -1606,51 +1639,70 @@ int splt_u_put_output_format_filename(splt_state *state, int current_split)
         case 'H':
           mMsShH_value = next_hundr;
 put_value:
-          temp[1] = '0';
-          temp[2] = '2';
-          temp[3] = 'l';
-          temp[4] = 'd';
-
-          if (mMsShH_value != -1)
+          if (!eof_written)
           {
-            const char *format = NULL;
-            int offset = 5;
-
-            //don't print out @h or @H if 0 for default output
-            if ((strcmp(state->oformat.format_string, SPLT_DEFAULT_OUTPUT) == 0) &&
-                (mMsShH_value == 0) &&
-                (char_variable == 'h' || char_variable == 'H'))
+            if (write_eof &&
+                (char_variable == 'S' ||
+                 char_variable == 'M' ||
+                 char_variable == 'H'))
             {
-              if (char_variable == 'h')
+              write_eof = SPLT_FALSE;
+              eof_written = SPLT_TRUE;
+
+              fm_length = strlen(temp) + 4;
+              if ((fm = malloc(fm_length * sizeof(char))) == NULL)
               {
-                format = state->oformat.format[i]+2;
-                offset = 0;
+                error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                goto end;
+              }
+              snprintf(fm, fm_length, temp, "EOF");
+            }
+            else if (mMsShH_value != -1)
+            {
+              temp[1] = '0';
+              temp[2] = '2';
+              temp[3] = 'l';
+              temp[4] = 'd';
+
+              const char *format = NULL;
+              int offset = 5;
+
+              //don't print out @h or @H if 0 for default output
+              if ((strcmp(state->oformat.format_string, SPLT_DEFAULT_OUTPUT) == 0) &&
+                  (mMsShH_value == 0) &&
+                  (char_variable == 'h' || char_variable == 'H'))
+              {
+                if (char_variable == 'h')
+                {
+                  format = state->oformat.format[i]+2;
+                  offset = 0;
+                }
+                else
+                {
+                  output_filename[strlen(output_filename)-1] = '\0';
+                  break;
+                }
               }
               else
               {
-                output_filename[strlen(output_filename)-1] = '\0';
-                break;
+                format = splt_u_get_format_ptr(state->oformat.format[i], temp);
               }
+
+              int requested_num_of_digits = 0;
+              int max_number_of_digits = splt_u_get_requested_num_of_digits(state,
+                  state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
+
+              snprintf(temp + offset, temp_len, format + 2);
+
+              fm_length = strlen(temp) + 1 + max_number_of_digits;
+              if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+              {
+                error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+                goto end;
+              }
+
+              snprintf(fm, fm_length, temp, mMsShH_value);
             }
-            else
-            {
-              format = splt_u_get_format_ptr(state->oformat.format[i], temp);
-            }
-
-            int requested_num_of_digits = 0;
-            int max_number_of_digits = splt_u_get_requested_num_of_digits(state,
-                state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
-
-            snprintf(temp + offset, temp_len, format + 2);
-
-            fm_length = strlen(temp) + 1 + max_number_of_digits;
-            if ((fm = malloc(fm_length * sizeof(char))) == NULL)
-            {
-              error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-              goto end;
-            }
-
-            snprintf(fm, fm_length, temp, mMsShH_value);
           }
           break;
         case 'A':

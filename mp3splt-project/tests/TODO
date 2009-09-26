@@ -44,9 +44,7 @@ NORMAL MODE
   - tags v1 & v2 (-T 12)
   - overlap splitpoints (-O)
   - stdout (+ multiple splitpoints & EOF)
-
-  IN PROGRESS:
-  - stdin : input not seekable (-k) (TODO BUGS ?)
+  - stdin : input not seekable (-k)
 
   NOT DONE:
   - no xing (-x)
@@ -83,9 +81,7 @@ TIME MODE
   - overlap splitpoints (-O)
   - stdin : input not seekable (-k)
   - output filename (-o) + create directories
-
-  IN PROGRESS:
-  - stdout (+ multiple splitpoints & EOF) (TODO: bug)
+  - stdout (+ multiple splitpoints & EOF)
 
   NOT DONE:
   - no tags in input file (+ -g option)
@@ -94,7 +90,6 @@ TIME MODE
   - auto adjust & off
   - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
-
 
   Non Frame Mode (CBR file)
   ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -125,26 +120,21 @@ WRAP MODE (MP3 only)
 **************************
 
   DONE:
+  - dewrap files
   - list wrapped files (with absolute path)
   - dewrap files with absolute path
   - dewrap files with create output directories
   - dewrap files and create m3u file
 
-  IN PROGRESS:
-  - dewrap files (TODO BUG: Switching to frame mode)
-
 ERROR MODE (MP3 only)
 **************************
 
   DONE:
+  - sync error mode
   - sync error mode + output format
   - sync error mode + create output dir
+  - sync error mode + output format + create output dir
   - sync error mode + m3u
-
-  IN PROGRESS:
-  - sync error mode (TODO BUG: Switching to frame mode)
-  - sync error mode + output format + create output dir (TODO BUG: not creating files ?)
-
 
 MISC
 **************************
@@ -159,10 +149,7 @@ CDDB MODE
   - cddb mode
   - cddb mode & output format & create output dirs
   - cddb mode & quiet mode
-
-  IN PROGRESS:
-  - cddb mode & output format (TODO BUG: last '@2' variable does not print any
-    error message if variable does not exists)
+  - cddb mode & output format
 
 CUE MODE
 **************************
@@ -181,7 +168,7 @@ FREEDB MODE
   - freedb mode - search tracktype & get cddb freedb
 
   IN PROGRESS:
-  - freedb mode - search & get cgi tracktype (TODO BUG: print Error: file
+  - freedb mode - search & get cgi tracktype (TODO: print Error: file
       is damaged or this is not the right cddb if OK EOF)
   TODO: change to 'freedb.freedb.org' (random server) instead of 'freedb.org'
  
@@ -203,9 +190,7 @@ SILENCE MODE
   - silence mode & rm & overlap
   - silence mode & rm & custom tags
   - silence mode & rm & custom tags & output format
-
-  IN PROGRESS:
-  - silence mode & mp3splt.log (TODO BUG: year not written with silence ?)
+  - silence mode & mp3splt.log
 
   Fixed IMPORTANT BUGS : last track is not split + output format
 
