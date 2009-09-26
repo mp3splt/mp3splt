@@ -560,10 +560,8 @@ function_end:
 //-file must not be NULL
 int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 {
-  //clear previous splitpoints
   splt_t_free_splitpoints_tags(state);
 
-  //default no error
   *error = SPLT_CDDB_OK;
 
   char *client_infos = malloc(sizeof(char) * (strlen(file)+200));

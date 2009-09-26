@@ -37,12 +37,14 @@
  *
  *********************************************************/
 
-#include <gtk/gtk.h>
-#include <libmp3splt/mp3splt.h>
-#include <glib/gi18n.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <gtk/gtk.h>
+#include <glib/gi18n.h>
+
+#include <libmp3splt/mp3splt.h>
 
 #ifdef __WIN32__
 #define usleep(x) Sleep(x*1000)
@@ -58,26 +60,26 @@
 #include "mp3splt-gtk.h"
 #include "split_files.h"
 #include "preferences_tab.h"
+#include "preferences_manager.h"
 
 //tree column enumeration
-enum
-  {
-    /* if we enable this splitpoint for split */
-    COL_CHECK,
-    /* the filename of the split */
-    COL_DESCRIPTION,
-    /* splitpoints, minutes, seconds,hundr */
-    COL_MINUTES,
-    COL_SECONDS,
-    COL_HUNDR_SECS,
-    /* length of the split song */
-    COL_NUMBER,
-    /* preview button */
-    COL_PREVIEW,
-    /* split preview button */
-    COL_SPLIT_PREVIEW,
-    NUM_COLUMNS = 8
-  };
+enum {
+  /* if we enable this splitpoint for split */
+  COL_CHECK,
+  /* the filename of the split */
+  COL_DESCRIPTION,
+  /* splitpoints, minutes, seconds,hundr */
+  COL_MINUTES,
+  COL_SECONDS,
+  COL_HUNDR_SECS,
+  /* length of the split song */
+  COL_NUMBER,
+  /* preview button */
+  COL_PREVIEW,
+  /* split preview button */
+  COL_SPLIT_PREVIEW,
+  NUM_COLUMNS = 8
+};
 
 //splitpoints
 GArray *splitpoints = NULL;
@@ -708,6 +710,7 @@ void cell_edited_event (GtkCellRendererText *cell,
   //get the indice
   i = gtk_tree_path_get_indices (path)[0];
   old_point = g_array_index(splitpoints, Split_point, i);
+  new_point.checked = old_point.checked;
   
   //check which column
   switch (col)
@@ -1039,7 +1042,7 @@ void add_row_clicked(GtkWidget *button, gpointer data)
 }
 
 //set splitpints from silence detection
-void detect_silence_and_set_splitpoints(gpointer data)
+gpointer detect_silence_and_set_splitpoints(gpointer data)
 {
   gint err = SPLT_OK;
 
@@ -1094,12 +1097,14 @@ void detect_silence_and_set_splitpoints(gpointer data)
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
 
   gdk_threads_leave();
+
+  return NULL;
 }
 
 //start thread with 'set splitpints from silence detection'
 void detect_silence_and_add_splitpoints_start_thread()
 {
-  g_thread_create((GThreadFunc)detect_silence_and_set_splitpoints,
+  g_thread_create(detect_silence_and_set_splitpoints,
                   NULL, TRUE, NULL);
 }
 
@@ -1540,7 +1545,7 @@ gint get_splitpoint_time(gint this_splitpoint)
   }
 }
 
-void split_preview(gpointer *data)
+gpointer split_preview(gpointer data)
 {
   if (this_row+1 != splitnumber)
   {
@@ -1622,6 +1627,8 @@ void split_preview(gpointer *data)
 
     gdk_threads_leave();
   }
+
+  return NULL;
 }
 
 //the row clicked event, preview the song
@@ -1654,7 +1661,7 @@ void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
         {
           preview_start_position = get_splitpoint_time(this_row);
           quick_preview_end_splitpoint = this_row+1;
-          g_thread_create((GThreadFunc)split_preview, NULL, TRUE, NULL);
+          g_thread_create(split_preview, NULL, TRUE, NULL);
         }
       }
     }
@@ -1973,9 +1980,7 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   return handle_box;
 }
 
-//transform garray to array
-void garray_to_array(GArray *spltpoints, 
-                     glong *hundredth)
+static void garray_to_array(GArray *spltpoints, glong *hundredth)
 {
   gint i;
   Split_point point;
@@ -1983,7 +1988,6 @@ void garray_to_array(GArray *spltpoints,
   for(i = 0; i < splitnumber; i++ )
     {
       point = g_array_index(splitpoints, Split_point, i);
-      //convert to hundreds
       if (point.mins >= (INT_MAX-1)/6000)
       {
 	      hundredth[i] = LONG_MAX;

@@ -6,7 +6,6 @@
  * Copyright: (C) 2005-2009 Alexandru Munteanu
  * Contact: io_fx@yahoo.fr
  *
- *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
@@ -30,22 +29,6 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: cddb_cue.h
- *
- * header of cue_cue.c - for the file_tab.c file
- *
- *********************************************************/
+void import_event(GtkWidget *widget, gpointer *data);
+void handle_import(gchar *filename);
 
-void cddb_file_chooser_ok_event(const gchar *fname);
-void cue_file_chooser_ok_event(const gchar *fname);
-void cddb_add_button_event(GtkWidget *widget, gpointer *data);
-void cue_add_button_event(GtkWidget *widget, gpointer *data);
-void close_cddb_cue_popup_window_event( GtkWidget *window,
-                                        gpointer data );
-void handle_cddb_cue_detached_event (GtkHandleBox *handlebox,
-                                     GtkWidget *widget,
-                                     gpointer data);
-GtkWidget *add_cddb_splitpoints();
-GtkWidget *add_cue_splitpoints();
-GtkWidget *create_cddb_cue_frame();

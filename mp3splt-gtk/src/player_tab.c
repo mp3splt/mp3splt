@@ -52,7 +52,6 @@
 #include "tree_tab.h"
 #include "player.h"
 #include "player_tab.h"
-#include "cddb_cue.h"
 #include "main_win.h"
 #include "snackamp_control.h"
 #include "utilities.h"
@@ -275,7 +274,7 @@ void get_silence_level(long time, float level, void *user_data)
   number_of_silence_points++;
 }
 
-void detect_silence(gpointer data)
+gpointer detect_silence(gpointer data)
 {
   gint err = SPLT_OK;
 
@@ -313,6 +312,8 @@ void detect_silence(gpointer data)
   gtk_widget_set_sensitive(cancel_button, FALSE);
 
   gdk_threads_leave();
+
+  return NULL;
 }
 
 void scan_for_silence_wave()
@@ -324,7 +325,7 @@ void scan_for_silence_wave()
 
   if (timer_active)
   {
-    g_thread_create((GThreadFunc)detect_silence, NULL, TRUE, NULL);
+    g_thread_create(detect_silence, NULL, TRUE, NULL);
   }
 }
 
@@ -2026,8 +2027,10 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc
 
     for (i = 0;i < number_of_silence_points;i++)
     {
-      if ((silence_points[i].time <= right_mark) &&
-          (silence_points[i].time >= left_mark))
+      long time = silence_points[i].time;
+      float level = silence_points[i].level;
+
+      if ((time <= right_mark) && (time >= left_mark))
       {
         if (i % points_coeff == 0)
         {
@@ -2040,11 +2043,10 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc
             points = g_realloc(points, sizeof(GdkPoint) * (number_of_points + 1));
           }
 
-          points[number_of_points].x = get_draw_line_position(width_drawing_area,
-              (gfloat) silence_points[i].time);
+          points[number_of_points].x =
+            get_draw_line_position(width_drawing_area, (gfloat) time);
 
-          points[number_of_points].y =
-            text_ypos + margin + (gint)floorf(silence_points[i].level);
+          points[number_of_points].y = text_ypos + margin + (gint)floorf(level);
 
           number_of_points++;
         }
@@ -2695,7 +2697,7 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked,
   //where we can click at his left or right
   time_margin = time_right_pos - time_pos;
   
-  gint margin1,margin2;
+  gint margin1, margin2;
   
   if (type == 2)
   {
@@ -2707,7 +2709,7 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked,
     margin1 = margin;
     margin2 = margin + real_erase_split_length;
   }
-  else if (type == 3)
+  else //if (type == 3)
   {
     margin1 = splitpoint_ypos + margin;
     margin2 = splitpoint_ypos + margin + real_checkbox_length;
@@ -3707,105 +3709,48 @@ void file_chooser_ok_event(gchar *fname)
 //also used for the cddb and cue browses
 void browse_button_event(GtkWidget *widget, gpointer data)
 {
-  gint i = GPOINTER_TO_INT(data);
-  
-  /* file chooser */
-  GtkWidget *file_chooser;
-  GtkWidget *our_filter;
-      
-  if (i == BROWSE_SONG)
-    {
-      //disable browse button
-      gtk_widget_set_sensitive(widget, FALSE);
-    }
- 
-  //creates and shows the dialog
-  file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
+  gtk_widget_set_sensitive(widget, FALSE);
+
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
       NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL,
       GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 
-  if (i == BROWSE_SONG)
-  {
-    //sets a filter for the file choose
-    our_filter = (GtkWidget *)gtk_file_filter_new();
-    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files(*.mp3 *.ogg)"));
-    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-    //sets a filter for the file choose
-    our_filter = (GtkWidget *)gtk_file_filter_new();
-    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files(*.mp3)"));
-    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-    //sets a filter for the file choose
-    our_filter = (GtkWidget *)gtk_file_filter_new();
-    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files(*.ogg)"));
-    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-  }
-  else if (i == BROWSE_CDDB_FILE)
-  {
-    //sets a filter for the file choose
-    our_filter = (GtkWidget *)gtk_file_filter_new();
-    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cddb files(*.cddb)"));
-    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cddb");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
-        GTK_FILE_FILTER(our_filter));
-  }
-  else if (i == BROWSE_CUE_FILE)
-  {
-    //sets a filter for the file choose
-    our_filter = (GtkWidget *)gtk_file_filter_new();
-    gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cue files(*.cue)"));
-    gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cue");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser),
-        GTK_FILE_FILTER(our_filter));
-  }
-
-  //all files filter
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("All Files"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*");
+  GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files(*.mp3 *.ogg)"));
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-  
-  //if we push open, ..
+
+  our_filter = (GtkWidget *)gtk_file_filter_new();
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files(*.mp3)"));
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+
+  our_filter = (GtkWidget *)gtk_file_filter_new();
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files(*.ogg)"));
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    gchar *filename;
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(file_chooser));
+    gchar *filename =
+      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
 
-    if (i == BROWSE_SONG)
+    file_chooser_ok_event(filename);
+
+    if (filename)
     {
-      file_chooser_ok_event(filename);
+      g_free(filename);
+      filename = NULL;
     }
-    else
-      if (i == BROWSE_CDDB_FILE)
-      {
-        cddb_file_chooser_ok_event(filename);
-      }
-      else
-        if (i == BROWSE_CUE_FILE)
-        {
-          cue_file_chooser_ok_event(filename);
-        }
-
-    g_free (filename);
   }
   else
   {
-    if (i == BROWSE_SONG)
-    {
-      file_chooser_cancel_event();
-    }
+    file_chooser_cancel_event();
   }
- 
-  //destroys dialog
-  gtk_widget_destroy (file_chooser);
-  
-  if (i == BROWSE_SONG)
-  {
-    remove_status_message();
-  }
+
+  gtk_widget_destroy(file_chooser);
+  remove_status_message();
 }
 
 //when closing the new window after detaching
@@ -3842,7 +3787,7 @@ void handle_file_detached_event (GtkHandleBox *handlebox,
 
 //fix ogg stream action
 //we split from 0 to a big number
-void fix_ogg_stream(gpointer *data)
+gpointer fix_ogg_stream(gpointer data)
 {
   we_are_splitting = TRUE;
 
@@ -3885,12 +3830,14 @@ void fix_ogg_stream(gpointer *data)
   gdk_threads_leave();
 
   we_are_splitting = FALSE;
+
+  return NULL;
 }
 
 //we make a thread with fix_ogg_stream
 void fix_ogg_stream_button_event(GtkWidget *widget, gpointer   data)
 {
-  g_thread_create((GThreadFunc)fix_ogg_stream, NULL, TRUE, NULL);
+  g_thread_create(fix_ogg_stream, NULL, TRUE, NULL);
 }
 
 GtkWidget *create_choose_file_frame()

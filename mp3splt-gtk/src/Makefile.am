@@ -16,13 +16,16 @@ mp3splt_gtk_SOURCES = \
 	utilities.c utilities.h \
 	split_files.c split_files.h \
 	freedb_tab.c freedb_tab.h \
-	cddb_cue.c cddb_cue.h \
 	snackamp_control.c snackamp_control.h \
 	special_split.c special_split.h\
 	mp3splt-gtk.c mp3splt-gtk.h \
 	util.h \
   multiple_files.c multiple_files.h \
-  messages.c messages.h
+  messages.c messages.h \
+  import.c import.h \
+  options_manager.c options_manager.h \
+  preferences_manager.c preferences_manager.h
+
 
 INCLUDES = @GTK_CFLAGS@ -Wall
 

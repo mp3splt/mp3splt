@@ -269,8 +269,14 @@ void splt_s_error_split(splt_state *state, int *error)
         //we get the final fname
         final_fname = splt_u_get_fname_with_path_and_extension(state, error);
 
-        if(*error >= 0)
+        if (*error >= 0)
         {
+          splt_u_create_output_dirs_if_necessary(state, final_fname, error);
+          if (error < 0)
+          {
+            goto bloc_end;
+          }
+
           //we split with the detected splitpoints
           int split_result = splt_p_simple_split(state, final_fname, 
               (off_t) state->serrors->serrors_points[i], 
@@ -282,6 +288,10 @@ void splt_s_error_split(splt_state *state, int *error)
           if (split_result >= 0)
           {
             *error = SPLT_SYNC_OK;
+          }
+          else
+          {
+            *error = split_result;
           }
 
           //if the split has been a success

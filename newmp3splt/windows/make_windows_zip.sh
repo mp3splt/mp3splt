@@ -13,7 +13,7 @@ if [[ ! -z $we_dont_cross_compile ]];then
   cd $script_dir
 fi
 
-. ../include_variables.sh
+. ../include_variables.sh || exit 1
 
 ARCH="i386"
 

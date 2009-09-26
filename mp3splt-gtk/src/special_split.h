@@ -29,13 +29,6 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: special_split.h
- *
- * header of special_split.c, defines constants, etc..
- *
- *********************************************************/
-
 #ifndef SPECIAL_SPLIT_H
 
 #define FILE_MODE_SINGLE 1

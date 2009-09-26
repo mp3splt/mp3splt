@@ -6,6 +6,7 @@
  * Copyright: (C) 2005-2009 Alexandru Munteanu
  * Contact: io_fx@yahoo.fr
  *
+ *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
@@ -29,13 +30,11 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: mp3splt-gtk.h
- *
- * header of mp3splt-gtk.c
- *
- *********************************************************/
+#ifndef OPTIONS_MANAGER_H
 
+void update_output_options();
 void put_options_from_preferences();
-gpointer split_it(gpointer data);
-void sigpipe_handler(gint sig);
+
+#define OPTIONS_MANAGER_H
+#endif
+

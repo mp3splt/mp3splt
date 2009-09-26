@@ -29,14 +29,6 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: mp3splt-gtk.c
- *
- * main file of the program that does the effective split of the
- * mp3/ogg and initialises gtk..
- *
- *********************************************************/
-
 #include <signal.h>
 #include <gtk/gtk.h>
 #include <libmp3splt/mp3splt.h>
@@ -60,6 +52,7 @@
 #include "split_files.h"
 #include "preferences_tab.h"
 #include "multiple_files.h"
+#include "preferences_manager.h"
 
 //the state
 splt_state *the_state = NULL;
@@ -102,8 +95,6 @@ extern GtkWidget *silence_remove_silence;
 
 //spinner time
 extern GtkWidget *spinner_time;
-//the selected split mode
-extern gint selected_split_mode;
 
 //player
 extern gint selected_player;
@@ -128,7 +119,6 @@ extern GtkWidget *remove_all_files_button;
 extern gint split_file_mode;
 extern GtkWidget *multiple_files_tree;
 extern gint multiple_files_tree_number;
-extern gint debug_is_active;
 
 //how many split files
 gint split_files = 0;
@@ -162,128 +152,6 @@ void put_split_filename(const char *filename,int progress_data)
   }
 
   gdk_threads_leave();
-}
-
-//put the options from the preferences
-void put_options_from_preferences()
-{
-  //preferences options
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE, SPLT_TRUE);
-  }
-  else
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_FRAME_MODE, SPLT_FALSE);
-  }
-
-  //adjust option
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST,
-        SPLT_TRUE);
-    //adjust spinners
-    mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_OFFSET,
-        gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_offset)));
-    mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_GAP,
-        gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_adjust_gap)));
-    mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
-        gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_threshold)));
-  }
-  else
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST,
-        SPLT_FALSE);
-  }
-
-  //default seekable false
-  mp3splt_set_int_option(the_state, SPLT_OPT_INPUT_NOT_SEEKABLE,
-      SPLT_FALSE);
-
-  mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-      SPLT_OPTION_NORMAL_MODE);
-
-  switch (selected_split_mode)
-  {
-    case SELECTED_SPLIT_NORMAL:
-      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-          SPLT_OPTION_NORMAL_MODE);
-      break;
-    case SELECTED_SPLIT_WRAP:
-      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-          SPLT_OPTION_WRAP_MODE);
-      break;
-    case SELECTED_SPLIT_TIME:
-      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-          SPLT_OPTION_TIME_MODE);
-      //we set the time option
-      mp3splt_set_float_option(the_state, SPLT_OPT_SPLIT_TIME,
-          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
-      break;
-    case SELECTED_SPLIT_ERROR:
-      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
-          SPLT_OPTION_ERROR_MODE);
-      break;
-    default:
-      break;
-  }
-
-  //tag options
-  //0 = No tags
-  if (get_checked_tags_radio_box() == 0)
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
-        SPLT_NO_TAGS);
-  }
-  else
-  {
-    if (get_checked_tags_radio_box() == 1)
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
-          SPLT_CURRENT_TAGS);
-    }
-    else
-    {
-      if (get_checked_tags_radio_box() == 2)
-      {
-        mp3splt_set_int_option(the_state, SPLT_OPT_TAGS,
-            SPLT_TAGS_ORIGINAL_FILE);
-      }
-    }
-  }
-
-  //tag version options
-  gint tags_radio_choice = get_checked_tags_version_radio_box();
-  if (tags_radio_choice == 0)
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 0);
-  }
-  else
-  {
-    if (tags_radio_choice == 1)
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
-    }
-    else
-    {
-      if (tags_radio_choice == 2)
-      {
-        mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
-      }
-      else
-      {
-        if (tags_radio_choice == 3)
-        {
-          mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 12);
-        }
-      }
-    }
-  }
-
-  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
-
-  mp3splt_set_int_option(the_state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, 
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
 }
 
 //changes the progress bar
@@ -529,7 +397,7 @@ void put_message_from_library(const char *message, splt_message_type mess_type)
   }
 }
 
-gint main (gint argc, gchar *argv[], gchar **envp)
+gint main(gint argc, gchar *argv[], gchar **envp)
 {
   //init threads
   g_thread_init(NULL);
@@ -616,19 +484,16 @@ gint main (gint argc, gchar *argv[], gchar **envp)
   
   //we initialise the splitpoints array
   splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
-  
+ 
   //checks if preferences file exists
   //and if it does not, it creates it
   check_pref_file();
-  
-  //put the callback progress bar function
+ 
   mp3splt_set_progress_function(the_state,change_window_progress_bar);
-  //put the callback function to receive the split file
   mp3splt_set_split_filename_function(the_state,put_split_filename);
-  //put the callback function for miscellaneous messages
   mp3splt_set_message_function(the_state, put_message_from_library);
-  //debug on or off
-  mp3splt_set_int_option(the_state,SPLT_OPT_DEBUG_MODE, SPLT_FALSE);
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, SPLT_FALSE);
 
   //add special directory search for plugins on Windows
 #ifdef __WIN32__

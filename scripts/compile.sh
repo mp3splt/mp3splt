@@ -2,15 +2,20 @@
 
 ################# variables to set ############
 
-#program directories
 LIBMP3SPLT_DIR=libmp3splt
 MP3SPLT_DIR=newmp3splt
 MP3SPLT_GTK_DIR=mp3splt-gtk
 
-#program versions
-LIBMP3SPLT_REAL_VERSION=0.5.7b
-MP3SPLT_REAL_VERSION=2.2.6b
-MP3SPLT_GTK_REAL_VERSION=0.5.7b
+LIBMP3SPLT_REAL_VERSION=0.5.8
+MP3SPLT_REAL_VERSION=2.2.7
+MP3SPLT_GTK_REAL_VERSION=0.5.8
+
+RUN_FUNCTIONAL_TESTS=1
+BUILD_OTHERS=0
+
+BUILD_UBUNTU_PACKAGES=$BUILD_OTHERS
+BUILD_DEBIAN_PACKAGES=$BUILD_OTHERS
+BUILD_WINDOWS_PACKAGES=$BUILD_OTHERS
 
 unset SHELL
 
@@ -44,13 +49,14 @@ function confirmation_question()
     print_red "This script must be run on a x86_64 system (not i386)."
     print_red "Please remember that you are using the script at your own risk !"
     echo
-    
-    select=("I know what I'm doing and I use it at my own risk" "Quit")
+
+    option1="I know what I'm doing and I use it at my own risk"
+    select=("$option1" "Quit")
     select continue in "${select[@]}";do
-        if [[ $continue = "Quit" ]]; then
-        exit 0
+        if [[ $continue = "$option1" ]]; then
+          break
         else
-            break
+          exit 0
         fi
     done
     
@@ -82,7 +88,7 @@ function update_versions()
   #we update the versions
   ./${LIBMP3SPLT_DIR}/update_version.sh || exit 1
   ./${MP3SPLT_DIR}/update_version.sh || exit 1
-   ./${MP3SPLT_GTK_DIR}/update_version.sh || exit 1
+  ./${MP3SPLT_GTK_DIR}/update_version.sh || exit 1
 
   cd $PROJECT_DIR
 }
@@ -111,6 +117,9 @@ function source_packages()
   print_yellow "Creating source distribution..."
 
   make -s source_packages || exit 1
+  make -C ${LIBMP3SPLT_DIR}
+  make -C ${MP3SPLT_DIR}
+  make -C ${MP3SPLT_GTK_DIR}
 }
 ############# end source packages ################
 
@@ -360,24 +369,32 @@ function nexenta_packages()
 }
 ############# end nexenta gnu/opensolaris packages #####
 
-################################
-############# main program #####
-################################
+function run_functional_tests
+{
+  echo
+  print_yellow "Running functional tests..."
+  echo
+
+  cd ../tests && ./tests.sh
+
+  cd $PROJECT_DIR
+}
+
+###########
+##  MAIN ##
+###########
 
 DATE_START=`date`
 
-#confirmation question
 if [[ $1 != "quiet_root" ]];then
-    confirmation_question
+  confirmation_question
 fi
 
-#we move in the current script directory
 script_dir=$(readlink -f $0)
 script_dir=${script_dir%\/*.sh}
 PROJECT_DIR=$script_dir/..
 cd $PROJECT_DIR
 
-#we include the package variables
 . ./${LIBMP3SPLT_DIR}/include_variables.sh "quiet_noflags"
 . ./${MP3SPLT_DIR}/include_variables.sh "quiet_noflags"
 . ./${MP3SPLT_GTK_DIR}/include_variables.sh "quiet_noflags"
@@ -391,21 +408,35 @@ remove_pot_files
 #build packages
 
 source_packages
-ubuntu_packages
-debian_packages
-windows_cross_installers
 
-#gentoo_packages
-#rpm_packages
-#archlinux_packages
-#slackware_packages
-#amd64 gnu/linux packages :
-#i386 bsd-like packages :
-#openbsd_packages
-#netbsd_packages
-#freebsd_packages
-#i386 gnu/opensolaris packages :
-#nexenta_packages #slow
+###################################
+#build packages
+
+if [[ $RUN_FUNCTIONAL_TESTS -eq 1 ]];then
+  run_functional_tests
+fi
+
+if [[ $BUILD_UBUNTU_PACKAGES -eq 1 ]];then
+  ubuntu_packages
+fi
+if [[ $BUILD_DEBIAN_PACKAGES -eq 1 ]];then
+  debian_packages
+fi
+if [[ $BUILD_WINDOWS_PACKAGES -eq 1 ]];then
+  windows_cross_installers
+fi
+
+##gentoo_packages
+##rpm_packages
+##archlinux_packages
+##slackware_packages
+##amd64 gnu/linux packages :
+##i386 bsd-like packages :
+##openbsd_packages
+##netbsd_packages
+##freebsd_packages
+##i386 gnu/opensolaris packages :
+##nexenta_packages #slow
 
 ###################################
 #finish packaging ...

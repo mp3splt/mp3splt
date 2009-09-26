@@ -7,7 +7,7 @@ script_dir=$(greadlink -f $0) || exit 1
 script_dir=${script_dir%\/*.sh}
 cd $script_dir
 
-. ../include_variables.sh
+. ../include_variables.sh || exit 1
 
 put_package "freebsd"
 
