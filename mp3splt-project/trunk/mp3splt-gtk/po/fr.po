@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-25 16:25+0200\n"
-"PO-Revision-Date: 2009-09-25 14:34+0100\n"
+"POT-Creation-Date: 2009-10-02 20:43+0200\n"
+"PO-Revision-Date: 2009-10-02 10:54+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
 "MIME-Version: 1.0\n"
@@ -737,7 +737,7 @@ msgstr "Choisir un fichier à importer"
 
 #: src/import.c:119
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
-msgstr "CDDB (*.cddb), CUE (*.cue), Audacity (*.txt)"
+msgstr "CDDB (*.cddb), CUE (*.cue), Marqueurs Audacity (*.txt)"
 
 #: src/import.c:123
 msgid "CDDB files (*.cddb)"
@@ -749,7 +749,7 @@ msgstr "Fichiers CUE (*.cue)"
 
 #: src/import.c:127
 msgid "Audacity labels files (*.txt)"
-msgstr "Fichiers Audacity (*.txt)"
+msgstr "Fichiers marqueurs Audacity (*.txt)"
 
 #: src/import.c:129
 msgid "All files"

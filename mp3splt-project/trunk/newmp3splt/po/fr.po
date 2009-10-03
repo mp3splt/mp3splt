@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-09-25 16:25+0200\n"
-"PO-Revision-Date: 2009-06-25 00:04+0100\n"
+"POT-Creation-Date: 2009-10-02 20:43+0200\n"
+"PO-Revision-Date: 2009-10-02 10:58+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgstr " Attention : %s\n"
 msgid " Error: %s\n"
 msgstr " Erreur : %s\n"
 
-#: src/mp3splt.c:311 src/mp3splt.c:326 src/mp3splt.c:2010
+#: src/mp3splt.c:311 src/mp3splt.c:326 src/mp3splt.c:2011
 msgid "cannot allocate memory !"
 msgstr "impossible d'allouer de la mémoire !"
 
@@ -86,6 +86,11 @@ msgstr ""
 
 #: src/mp3splt.c:355
 msgid ""
+" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
+msgstr " -A + FICHIER_AUDACITY : division à partir de marqueurs audacity"
+
+#: src/mp3splt.c:356
+msgid ""
 " -i   Count how many silence splitpoints we have with silence detection\n"
 "      (Use -p for arguments)\n"
 " -v   Prints current version and exits\n"
@@ -96,7 +101,7 @@ msgstr ""
 " -v   Afficher la version courante\n"
 " -h   Affiche cette aide"
 
-#: src/mp3splt.c:359
+#: src/mp3splt.c:360
 msgid ""
 "\n"
 "(other options)\n"
@@ -111,7 +116,7 @@ msgstr ""
 "      comme 1, 2 ou 1 et 2. VERSION_TAGS peut être 1, 2 ou 12\n"
 "      (par défaut: la même version que dans le fichier d'entrée)"
 
-#: src/mp3splt.c:365
+#: src/mp3splt.c:366
 msgid ""
 " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
 " -f   Frame mode (mp3 only): process all frames. For higher precision and "
@@ -126,7 +131,7 @@ msgstr ""
 " -a   Ajustement des points de coupure avec recherche du silence.\n"
 "      (Utiliser -p pour les arguments)"
 
-#: src/mp3splt.c:368
+#: src/mp3splt.c:369
 msgid ""
 " -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
 " -o + FORMAT: output filename pattern. Can contain those variables:\n"
@@ -146,7 +151,7 @@ msgstr ""
 "afficher),\n"
 "      @f: nom du fichier d'entrée"
 
-#: src/mp3splt.c:374
+#: src/mp3splt.c:375
 msgid ""
 " -g + TAGS : custom tags for the split files.\n"
 "      TAGS can contain those variables : \n"
@@ -165,7 +170,7 @@ msgstr ""
 "utilisés\n"
 "      pour tous les autres fichiers)"
 
-#: src/mp3splt.c:380
+#: src/mp3splt.c:381
 msgid ""
 " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
 " -k   Consider input not seekable (slower). Default when input is STDIN "
@@ -180,7 +185,7 @@ msgstr ""
 " -O + TEMPS : Chevaucher les fichiers créés sur un intervalle de TEMPS (plus "
 "lent)."
 
-#: src/mp3splt.c:383
+#: src/mp3splt.c:384
 msgid ""
 " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean "
 "files.\n"
@@ -197,7 +202,7 @@ msgstr ""
 " -N   Ne pas créer le fichier de log 'mp3splt.log' avec les points desilence "
 "quand -s est utilisé."
 
-#: src/mp3splt.c:387
+#: src/mp3splt.c:388
 msgid ""
 " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
 " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
@@ -213,27 +218,27 @@ msgstr ""
 " -D   Mode 'débogage' : utilisé pour débogguer le programme.\n"
 "      Lire le manuel pour une documentation complète.\n"
 
-#: src/mp3splt.c:446
+#: src/mp3splt.c:447
 msgid "bad gap argument. It will be ignored !"
 msgstr "mauvais argument pour l'écart. Sera ignoré !"
 
-#: src/mp3splt.c:461
+#: src/mp3splt.c:462
 msgid "bad threshold argument. It will be ignored !"
 msgstr "mauvais argument pour le seuil. Sera ignoré !"
 
-#: src/mp3splt.c:476
+#: src/mp3splt.c:477
 msgid "bad tracknumber argument. It will be ignored !"
 msgstr "mauvais argument pour le nombre de pistes. Sera ignoré !"
 
-#: src/mp3splt.c:500
+#: src/mp3splt.c:501
 msgid "bad offset argument. It will be ignored!"
 msgstr "mauvais argument pour la compensation. Sera ignoré !"
 
-#: src/mp3splt.c:515
+#: src/mp3splt.c:516
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr "mauvais argument pour la taille minimum du silence. Sera ignoré !"
 
-#: src/mp3splt.c:543
+#: src/mp3splt.c:544
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options : -s -w -l "
 "-e -i -a -p"
@@ -241,85 +246,85 @@ msgstr ""
 "impossible d'utiliser l'option -k (ou flux d'entrée standard) avec une des "
 "options suivantes : -s -w -l -e -i -a -p"
 
-#: src/mp3splt.c:559
+#: src/mp3splt.c:560
 msgid "the -w option can only be used with -m, -d, -q and -Q"
 msgstr "l'option -w peut seulement être utilisée avec -m, -d, -q et -Q"
 
-#: src/mp3splt.c:575
+#: src/mp3splt.c:576
 msgid "the -l option can only be used with -q"
 msgstr "l'option -l peut seulement être utilisée avec -q"
 
-#: src/mp3splt.c:588
+#: src/mp3splt.c:589
 msgid "the -e option can only be used with -m, -f, -o, -d, -q, -Q"
 msgstr "l'option -e peut seulement être utilisée avec -m, -f, -o, -d, -q, -Q"
 
-#: src/mp3splt.c:604
+#: src/mp3splt.c:605
 msgid "the -c option cannot be used with -t, -g, -s, -A or -i"
 msgstr "l'option -c ne peut pas être utilisée avec -t, -g, -s, -A ou -i"
 
-#: src/mp3splt.c:612
+#: src/mp3splt.c:613
 msgid "the -A option cannot be used with -t, -s, or -i"
 msgstr "l'option -A ne peut pas être utilisée avec -t, -s ou -i"
 
-#: src/mp3splt.c:621
+#: src/mp3splt.c:622
 msgid "the -t option cannot be used with -s or -i"
 msgstr "l'option -t ne peut pas être utilisée avec -s ou -i"
 
-#: src/mp3splt.c:630
+#: src/mp3splt.c:631
 msgid "-s option cannot be used with -a or -i"
 msgstr "l'option -s ne peut être utilisée avec -a ou -i"
 
-#: src/mp3splt.c:639
+#: src/mp3splt.c:640
 msgid "-a option cannot be used with -i"
 msgstr "l'option -a ne peut être utilisée avec -i"
 
-#: src/mp3splt.c:648
+#: src/mp3splt.c:649
 msgid "the -p option cannot be used without -a, -s or -i"
 msgstr "l'option -p ne peut être utilisée sans -a, -s ou -i"
 
-#: src/mp3splt.c:657
+#: src/mp3splt.c:658
 msgid "the -o option cannot be used with -i"
 msgstr "l'option -o ne peut être utilisée sans -i"
 
-#: src/mp3splt.c:663
+#: src/mp3splt.c:664
 msgid "cannot use '-o -' (STDOUT) with -m or -d"
 msgstr "impossible d'utiliser '-o -' (flux de sortie standard) avec -m ou -d"
 
-#: src/mp3splt.c:673
+#: src/mp3splt.c:674
 msgid "the -g option cannot be used with -n or -i"
 msgstr "l'option -g ne peut être utilisée avec -n ou -i"
 
-#: src/mp3splt.c:682
+#: src/mp3splt.c:683
 msgid "the -d option cannot be used with -i"
 msgstr "l'option -d ne peut être utilisée avec -i"
 
-#: src/mp3splt.c:691
+#: src/mp3splt.c:692
 msgid "the -n option cannot be used with -i or -T"
 msgstr "l'option -n ne peut être utilisée avec -i ou -T"
 
-#: src/mp3splt.c:700
+#: src/mp3splt.c:701
 msgid "the -m option cannot be used with -i"
 msgstr "l'option -m ne peut être utilisée avec -i"
 
-#: src/mp3splt.c:721
+#: src/mp3splt.c:722
 msgid "the -Q option cannot be used with STDOUT output ('-o -')"
 msgstr ""
 "l'option -Q ne peut être utilisée avec le flux standard de sortie ('-o -')"
 
-#: src/mp3splt.c:729
+#: src/mp3splt.c:730
 msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
 msgstr "l'option -Q ne peut être utilisée avec la requête freedb ('-c query')"
 
-#: src/mp3splt.c:739
+#: src/mp3splt.c:740
 msgid "the -N option must be used with silence detection (-s option)"
 msgstr ""
 "l'option -N doit être utilisée avec la détection de silence (option -s)"
 
-#: src/mp3splt.c:749
+#: src/mp3splt.c:750
 msgid "the -O option cannot be used with -w, -e, -l or -i"
 msgstr "l'option -O ne peut être utilisée avec -w, -e, -l ou -i"
 
-#: src/mp3splt.c:794
+#: src/mp3splt.c:795
 msgid ""
 "\n"
 "All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
@@ -328,43 +333,43 @@ msgstr ""
 "Tous les fichiers ont été divisés avec succès. Visitez http://mp3wrap."
 "sourceforge.net!"
 
-#: src/mp3splt.c:1015
+#: src/mp3splt.c:1016
 msgid "found non digits characters in port ! (switched to default)"
 msgstr ""
 "détection des caractères autre que des chiffres dans le port ! (utilisation "
 "du port par défaut)"
 
-#: src/mp3splt.c:1040
+#: src/mp3splt.c:1041
 msgid "unknown search type ! (switched to default)"
 msgstr "type de recherche freedb inconnu ! (utilisation du type par défaut)"
 
-#: src/mp3splt.c:1056
+#: src/mp3splt.c:1057
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
 "recherche web freedb pas encore implementée ! (utilisation de la recherche "
 "par défaut)"
 
-#: src/mp3splt.c:1062
+#: src/mp3splt.c:1063
 msgid "unknown get type ! (switched to default)"
 msgstr "type de récupération freedb inconnu ! (utilisation du type par défaut)"
 
-#: src/mp3splt.c:1218
+#: src/mp3splt.c:1219
 #, c-format
 msgid " Freedb search type : %s , Site: %s , Port: %d\n"
 msgstr " Type de recherche freedb : %s , Site : %s , Port : %d\n"
 
-#: src/mp3splt.c:1221
+#: src/mp3splt.c:1222
 #, c-format
 msgid " Freedb get type : %s , Site: %s , Port: %d\n"
 msgstr " Type de récupération freedb : %s , Site : %s , Port : %d\n"
 
-#: src/mp3splt.c:1231
+#: src/mp3splt.c:1232
 msgid "CDDB QUERY. Insert album and artist informations to find cd."
 msgstr ""
 "RECHERCHE CDDB. Entrez des informations sur l'album et l'artiste pour "
 "trouver un CD."
 
-#: src/mp3splt.c:1239
+#: src/mp3splt.c:1240
 msgid ""
 "\n"
 "Please search something ..."
@@ -372,12 +377,12 @@ msgstr ""
 "\n"
 "S'il vous plaît, cherchez quelque chose ..."
 
-#: src/mp3splt.c:1245
+#: src/mp3splt.c:1246
 #, c-format
 msgid "\r Search: ["
 msgstr "\r Chercher : ["
 
-#: src/mp3splt.c:1262
+#: src/mp3splt.c:1263
 #, c-format
 msgid ""
 "\n"
@@ -386,7 +391,7 @@ msgstr ""
 "\n"
 "  Chaîne cherchée : %s\n"
 
-#: src/mp3splt.c:1263
+#: src/mp3splt.c:1264
 #, c-format
 msgid ""
 "\n"
@@ -395,36 +400,36 @@ msgstr ""
 "\n"
 "Recherche sur %s et le port %d utilisant %s ...\n"
 
-#: src/mp3splt.c:1283
+#: src/mp3splt.c:1284
 msgid "List of found cd:"
 msgstr "Liste de CD trouvés :"
 
-#: src/mp3splt.c:1297
+#: src/mp3splt.c:1298
 #, c-format
 msgid "Revision: %d\n"
 msgstr "Révision : %d\n"
 
-#: src/mp3splt.c:1304
+#: src/mp3splt.c:1305
 #, c-format
 msgid "-- 'q' to select cd, Enter for more:"
 msgstr "-- 'q' pour sélectionner un CD, Entrée pour plus de CDs :"
 
-#: src/mp3splt.c:1322
+#: src/mp3splt.c:1323
 #, c-format
 msgid "-- 'q' to select cd, Enter for more: "
 msgstr "-- 'q' pour sélectionner un CD, Entrée pour plus de CDs :"
 
-#: src/mp3splt.c:1349
+#: src/mp3splt.c:1350
 #, c-format
 msgid "Select cd #: "
 msgstr "Sélectionnez le CD numéro # :"
 
-#: src/mp3splt.c:1364
+#: src/mp3splt.c:1365
 #, c-format
 msgid "Please "
 msgstr "S'il vous plaît "
 
-#: src/mp3splt.c:1389
+#: src/mp3splt.c:1390
 #, c-format
 msgid ""
 "\n"
@@ -433,36 +438,36 @@ msgstr ""
 "\n"
 "Récupération du fichier à partir de %s et le port %d utilisant %s ...\n"
 
-#: src/mp3splt.c:1429
+#: src/mp3splt.c:1430
 #, c-format
 msgid "   File \"%s\" created%s\n"
 msgstr "   Fichier \"%s\" créé%s\n"
 
-#: src/mp3splt.c:1442
+#: src/mp3splt.c:1443
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr " préparation de \"%s\" (%d sur %d)"
 
-#: src/mp3splt.c:1449
+#: src/mp3splt.c:1450
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr " création de \"%s\" (%d sur %d)"
 
-#: src/mp3splt.c:1456
+#: src/mp3splt.c:1457
 #, c-format
 msgid " searching for sync errors..."
 msgstr " recherche des erreurs de synchronisation ..."
 
-#: src/mp3splt.c:1460
+#: src/mp3splt.c:1461
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
-#: src/mp3splt.c:1555
+#: src/mp3splt.c:1556
 msgid "using"
 msgstr "utilisant"
 
-#: src/mp3splt.c:1567
+#: src/mp3splt.c:1568
 #, c-format
 msgid ""
 "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n"
@@ -470,19 +475,19 @@ msgstr ""
 "CE PROGRAMME EST FOURNI SANS AUCUNE GARANTIE ! UTILISEZ-LE SOUS VOTRE "
 "RESPONSABILITE !\n"
 
-#: src/mp3splt.c:1693
+#: src/mp3splt.c:1694
 msgid "CommandLineToArgvW failed (oh !)"
 msgstr "CommandLineToArgvW a échoué (oh !)"
 
-#: src/mp3splt.c:1702
+#: src/mp3splt.c:1703
 msgid "failed to allocate argv_utf8 memory"
 msgstr "impossible d'allouer de la mémoire pour argv_utf8"
 
-#: src/mp3splt.c:1750
+#: src/mp3splt.c:1751
 msgid "List of found files:\n"
 msgstr "Liste de CD trouvés :\n"
 
-#: src/mp3splt.c:1758
+#: src/mp3splt.c:1759
 #, c-format
 msgid ""
 "\n"
@@ -491,7 +496,7 @@ msgstr ""
 "\n"
 "-- 'Entrée' pour voir plus de fichiers, 's' pour diviser, 'c' pour annuler :"
 
-#: src/mp3splt.c:1767 src/mp3splt.c:1790
+#: src/mp3splt.c:1768 src/mp3splt.c:1791
 msgid ""
 "\n"
 " split aborted."
@@ -499,7 +504,7 @@ msgstr ""
 "\n"
 " processus de division annulé."
 
-#: src/mp3splt.c:1781
+#: src/mp3splt.c:1782
 #, c-format
 msgid ""
 "\n"
@@ -508,7 +513,7 @@ msgstr ""
 "\n"
 "-- 's' pour diviser, 'c' pour annuler :"
 
-#: src/mp3splt.c:2040
+#: src/mp3splt.c:2041
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec, read man page for details."
@@ -516,47 +521,47 @@ msgstr ""
 "mauvaise valeur pour la division en plusieurs pistes de même taille.\n"
 "\tDoit être min.sec, lisez le manuel pour les détails."
 
-#: src/mp3splt.c:2073
+#: src/mp3splt.c:2074
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "lisez le manuel pour la documentation ou tapez 'mp3splt -h'."
 
-#: src/mp3splt.c:2130
+#: src/mp3splt.c:2131
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 "mauvais argument pour l'option -p. Aucune valeur valide n'a été réconnue !"
 
-#: src/mp3splt.c:2267
+#: src/mp3splt.c:2268
 msgid "no input filename(s)."
 msgstr "aucun fichier d'entrée."
 
-#: src/mp3splt.c:2280
+#: src/mp3splt.c:2281
 msgid "multiple splitpoints with stdout !"
 msgstr "plusieurs points de coupure avec le flux de sortie standard (stdout) !"
 
-#: src/mp3splt.c:2284
+#: src/mp3splt.c:2285
 msgid "using time mode with stdout !"
 msgstr ""
 "utilisation du mode de division 'temps' avec la sortie standard (stdout) !"
 
-#: src/mp3splt.c:2302
+#: src/mp3splt.c:2303
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Fichier '%s' ...\n"
 
-#: src/mp3splt.c:2363
+#: src/mp3splt.c:2364
 msgid "freedb query format ambigous !"
 msgstr "format freedb 'query' ambigu !"
 
-#: src/mp3splt.c:2409
+#: src/mp3splt.c:2410
 msgid "tags format ambiguous !"
 msgstr "format des tags ambigu !"
 
-#: src/mp3splt.c:2441
+#: src/mp3splt.c:2442
 #, c-format
 msgid " Average silence level : %.2f dB"
 msgstr " Niveau de silence moyen : %.2f dB"
 
-#: src/mp3splt.c:2450
+#: src/mp3splt.c:2451
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"

@@ -39,8 +39,8 @@ AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE(mp3splt, 2.2.7)
 AM_CONFIG_HEADER([config.h])
 
-DEBUG_CFLAGS="-g"
-CFLAGS="-Wall $DEBUG_CFLAGS $CFLAGS -I../libmp3splt/include -I../../libmp3splt/include"
+#DEBUG_FLAGS="-g"
+CFLAGS="-Wall $DEBUG_FLAGS $CFLAGS -I../libmp3splt/include -I../../libmp3splt/include"
 LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../../libmp3splt/src/.libs"
 
 #################################################

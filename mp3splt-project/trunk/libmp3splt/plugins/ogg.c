@@ -614,6 +614,8 @@ void splt_ogg_get_original_tags(const char *filename,
 //puts the ogg tags
 void splt_ogg_put_tags(splt_state *state, int *error)
 {
+  splt_u_print_debug(state,"Setting ogg tags ...", 0,NULL);
+
   splt_ogg_state *oggstate = state->codec;
 
   //if we put the original tags
@@ -2002,9 +2004,8 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
+  splt_u_print_debug(state,"Taking ogg original tags...",0,NULL);
   char *filename = splt_t_get_filename_to_split(state);
-
-  splt_u_print_debug(state,"Putting ogg original tags...",0,NULL);
   splt_ogg_get_original_tags(filename, state, error);
 }
 

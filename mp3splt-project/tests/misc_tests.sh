@@ -2,7 +2,7 @@
 
 . ./utils.sh || exit 1
 
-function test_misc_version
+function _test_misc_version
 {
   test_name="version"
 
