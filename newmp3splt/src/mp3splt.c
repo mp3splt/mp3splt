@@ -47,7 +47,7 @@
 #define VERSION "2.2.7"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "25/09/09"
+#define MP3SPLT_DATE "02/10/09"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -352,6 +352,7 @@ void show_small_help_exit(main_data *data)
         " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
         " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
         " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"));
+  print_message(_(" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"));
   print_message(_(" -i   Count how many silence splitpoints we have with silence detection\n"
         "      (Use -p for arguments)\n"
         " -v   Prints current version and exits\n"

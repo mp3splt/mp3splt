@@ -995,8 +995,8 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
   {
     char track_str[255] = { '\0' };
     snprintf(track_str,254,"%d",track);
-    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1, track_str, 
-        error);
+    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1,
+        track_str, error);
   }
   if (*error < 0) { goto error; }
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1,
@@ -1034,6 +1034,7 @@ error:
     free(bytes);
     bytes = NULL;
   }
+
   return NULL;
 }
 
@@ -1114,17 +1115,20 @@ static char *splt_mp3_build_id3_tags(splt_state *state,
 #ifdef NO_ID3TAG
   if (version == 1)
   {
+    splt_u_print_debug(state,"Setting ID3v1 tags without libid3tag", 0,NULL);
     id = splt_mp3_build_simple_id3v1(title, artist, album, year, genre, comment, track,
         error, number_of_bytes);
   }
 #else
   if (version == 1)
   {
+    splt_u_print_debug(state,"Setting ID3v1 tags with libid3tag", 0,NULL);
     id = splt_mp3_build_libid3tag(title, artist, album, year, genre, comment, track,
         error, number_of_bytes, 1);
   }
   else
   {
+    splt_u_print_debug(state,"Setting ID3v2 tags with libid3tag", 0,NULL);
     id = splt_mp3_build_libid3tag(title, artist, album, year, genre, comment, track,
         error, number_of_bytes, 2);
   }
@@ -1268,6 +1272,7 @@ int splt_mp3_write_id3v2_tags(splt_state *state, FILE *file_output,
 int splt_mp3_get_output_tags_version(splt_state *state)
 {
 #ifdef NO_ID3TAG
+  splt_u_print_debug(state,"Output tags version is ID3v1 without libid3tag", 0,NULL);
   return 1;
 #else
   int original_tags_version = state->original_tags.tags_version;
@@ -1288,6 +1293,8 @@ int splt_mp3_get_output_tags_version(splt_state *state)
       output_tags_version = 12;
     }
   }
+
+  splt_u_print_debug(state,"Output tags version is ID3v", output_tags_version, NULL);
 
   return output_tags_version;
 #endif
@@ -3749,6 +3756,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
 #ifndef NO_ID3TAG
+  splt_u_print_debug(state,"Taking original ID3 tags from file using libid3tag ...", 0,NULL);
   char *filename = splt_t_get_filename_to_split(state);
   splt_mp3_get_original_tags(filename, state, error);
 #else

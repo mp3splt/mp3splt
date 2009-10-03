@@ -149,6 +149,14 @@ Examples of applicable files are wrapped file (both AlbumWrap and Mp3Wrap) or fi
 appending many mp3 files together.
 So, when you have a file to split, you should always try to use this option.
 
+.IP "\fB-A AUDACITY_FILE \fP         " 10
+\fBAudacity labels mode\fP.
+Split with splitpoints from the audacity labels file. Example of audacity
+labels file (in seconds):
+   10,000000 67,000000 first_file
+   67,000000 127,000000 second_file
+   149,000000  206,000000 third_file
+
 .IP "\fB-t TIME\fP         " 10
 \fBTime mode\fP.
 This option will create an indefinite number of smaller files with a fixed time length specified by TIME (which has the same format
