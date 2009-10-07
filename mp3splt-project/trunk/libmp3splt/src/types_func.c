@@ -1621,8 +1621,7 @@ int splt_t_set_original_tags_field(splt_state *state,
         }
         else
         {
-          snprintf(state->original_tags.year,
-              length+1,"%s", char_data);
+          snprintf(state->original_tags.year, length+1,"%s", char_data);
         }
       }      
       break;

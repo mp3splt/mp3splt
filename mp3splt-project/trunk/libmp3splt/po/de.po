@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-10-02 20:42+0200\n"
+"POT-Creation-Date: 2009-10-07 08:01+0200\n"
 "PO-Revision-Date: 2009-09-07 20:14+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -76,11 +76,11 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " Informationen aus CDDB-Datei %s werden gelesen …\n"
 
-#: src/types_func.c:2200 src/utils.c:2485
+#: src/types_func.c:2199 src/utils.c:2485
 msgid "not enough memory"
 msgstr "nicht genug Speicher"
 
-#: src/types_func.c:2229
+#: src/types_func.c:2228
 msgid "Network error"
 msgstr "Netzwerkfehler"
 
