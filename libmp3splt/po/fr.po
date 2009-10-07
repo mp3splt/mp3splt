@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-10-02 20:42+0200\n"
+"POT-Creation-Date: 2009-10-07 08:01+0200\n"
 "PO-Revision-Date: 2009-10-02 10:56+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -74,11 +74,11 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " lecture des informations du fichier CDDB %s ...\n"
 
-#: src/types_func.c:2200 src/utils.c:2485
+#: src/types_func.c:2199 src/utils.c:2485
 msgid "not enough memory"
 msgstr "pas assez de mémoire"
 
-#: src/types_func.c:2229
+#: src/types_func.c:2228
 msgid "Network error"
 msgstr "Erreur réseau"
 
