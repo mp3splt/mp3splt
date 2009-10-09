@@ -65,8 +65,8 @@ mp3splt \(em Utility for mp3/ogg splitting without decoding
 \fBFILE_OR_DIR\fP: mp3/ogg file to be split or a directory.
 If you want to specify STDIN as input, you can use "m-" (or "-")
 when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be split
-with the same criterion. If a directory is specified, a recursive scan will be
-performed in that directory to find out all the supported formats files.
+with the same criterion. If a directory is specified, a recursive scan is performed in that
+directory to find out all the supported formats files.
 
 .PP
 \fBTIME FORMAT\fP: begin_time and end_time must be in this form:
@@ -105,7 +105,7 @@ just with one command (see \-w option).
 \fBNOTE for MP3:\fP usually mp3splt understands if mp3 is VBR by checking the presence
 of a Xing or Info header and will consequently start in framemode, but if this is not present,
 mp3splt will start in standard mode.
-This means that splitting process will be quicker, but will be imprecise due to variable bitrate,
+This means that splitting process will be quicker, but imprecise due to variable bitrate,
 you can split those VBR files only with framemode (see \-f option).
 
 \fBNOTE about TAGS:\fP by default, mp3splt will put the original tags in
@@ -113,12 +113,13 @@ the split files. Custom tags for the split files can be set with the \-g option.
 
 \fBNOTE about MP3 TAGS:\fP in order to extract the original tags from mp3 files,
 libmp3splt must be compiled with 'id3tag' support. By default, the output
-files will have the same ID3 tag version as the input file. However, ID3V1
-output can be forced with the \-1 option and ID3V2 with the \-2 option.
+files will have the same ID3 tag version as the input file; this behaviour can be changed
+with the \-T option. If the input file has no tags and the \-g option is used, then both
+ID3v1 and ID3v2 are written.
 
 \fBNOTE about the OUTPUT DIRECTORY:\fP by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
-output directory, you can use one of the following options : \-d or \-o.
+output directory, you can use one of the following options: \-d or \-o.
 Please note that directories from the \-o option will be created relative
 to the input file directory.
 
@@ -153,9 +154,9 @@ So, when you have a file to split, you should always try to use this option.
 \fBAudacity labels mode\fP.
 Split with splitpoints from the audacity labels file. Example of audacity
 labels file (in seconds):
-   10,000000 67,000000 first_file
-   67,000000 127,000000 second_file
-   149,000000  206,000000 third_file
+   10.000000 67.000000 first_file
+   67.000000 127.000000 second_file
+   149.000000  206.000000 third_file
 
 .IP "\fB-t TIME\fP         " 10
 \fBTime mode\fP.
@@ -194,11 +195,11 @@ This option is intended to split small/medium size (but even large if you can wa
 where tracks are separated by a reasonable silence time. To try to split mixed albums or files
 with consecutive tracks (such as live performances) might be only a waste of time.
 
-\fBNote about "mp3splt.log" :\fP 
+\fBNote about "mp3splt.log":\fP 
 
   The first line contains the name of the split file
   The second line contains the threshold and the minimum silence length
-  The next lines contain each one three columns :
+  The next lines contain each one three columns:
       \(hythe first column is the start position of the found silence (in seconds.fractions)
       \(hythe second column is the end position of the found silence (in seconds.fractions)
       \(hythe third column is the length of the silence in hundreths of seconds
@@ -210,7 +211,7 @@ of a ".CUE" file (note that it must end with ".cue", otherwise it will be wrongl
 interpreted as a cddb file) or a local .XMCD (.CDDB) file on your hard disk.
 
 If you want to get informations from Internet, SOURCE must have one of the
-following formats :
+following formats:
 
     \fBquery\fP
     \fBquery{album}\fP
@@ -232,9 +233,9 @@ be chosen, which are good enough in most cases.
 Inside the square brackets, 'search' defines the CDDB search protocol and site (for
 searching the disc ID from the album and title); 'get' defines the CDDB download protocol
 and site (for downloading the CDDB file from the disc ID). Valid 'search' protocols are
-: 'cddb_cgi' and 'cddb_protocol'.  Valid 'get' protocols are : 'cddb_cgi'.
+: 'cddb_cgi' and 'cddb_protocol'.  Valid 'get' protocols are: 'cddb_cgi'.
 
-Examples :
+Examples:
 
   query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,
         get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]
@@ -297,7 +298,7 @@ Float number between \-2 and 2 and allows
 you to adjust the offset of cutpoint in silence time. 0 is the begin of silence, and 1 the end. Default is 0.8.
 In most cases, you will only need to use a value between 0 and 1.
 
-Offset visualization : 
+Offset visualization: 
 
                                v off=0    v off=1
  ++++ ... ++++++++++++++++++++++----------++++++++++  ... +++++
@@ -306,7 +307,7 @@ Offset visualization :
                  ^off=-1.5
           ^off=-2
 
-Legend : pluses are 'audio', minuses 'silence', 'v' down-arrow, '^' up-arrow
+Legend: pluses are 'audio', minuses 'silence', 'v' down-arrow, '^' up-arrow
 and '...' a segment of the audio file (silence or audio)
 
 .IP "\fBOnly \-s\fP"
@@ -424,7 +425,7 @@ a similar file as the input file.
 .IP "\fB\-T TAGS_VERSION\fP         " 10
 \fBForce output tags version\fP. For mp3 files, force output ID3 tags as version
 ID3v1, ID3v2 or ID3v1 and ID3v2. TAGS_VERSION can be 1, 2 or 12. Default is to set the output
-tags version as the tags version of the file to split.
+tags version as the tags version of the input file.
 
 .IP "\fB\-N\fP         " 10
 \fBNo silence log file\fP. Don't create the 'mp3splt.log' log file when using
@@ -439,7 +440,7 @@ a pair of square brackets, each tag is defined as \fB@variable=value\fP and
 tags are \fBseparated by comma\fP. If a percent sign \fB%\fP is found before
 the open square bracket character, then the pair of square brackets following the % 
 character will define the default tags in the following files. Multiple '%'
-can be defined. The variables can be :
+can be defined. The variables can be:
 
 @a: artist name
 .br
@@ -455,11 +456,11 @@ can be defined. The variables can be :
 .br
 @o: set original tags
 .br
-@N: auto increment track number : 
+@N: auto increment track number: 
 this variable has to be placed inside the %[] field in order to have the track
 number auto incremented for all the split files following it
 
-Example of tags format :
+Example of tags format:
 \fB%[@o,@N=1,@b=special_album][@a=foo,@b=bar][@t=footitle]\fP. In this
 example, the first split file will have the original tags with album
 tag replaced by 'special album'; the second split file will have the tags

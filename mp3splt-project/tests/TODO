@@ -32,7 +32,6 @@ NORMAL MODE
   - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
 
-
   Non Frame Mode (CBR file)
   ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -69,7 +68,7 @@ TIME MODE
   ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
   OK:
-  - with tags version of input file
+  - EOF & tags version of input file
   - no tags (-n)
   - tags v1 (-T 1)
   - tags v2 (-T 2)
@@ -90,6 +89,7 @@ TIME MODE
   - auto adjust & off
   - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
+
 
   Non Frame Mode (CBR file)
   ,,,,,,,,,,,,,,,,,,,,,,,,,,,,

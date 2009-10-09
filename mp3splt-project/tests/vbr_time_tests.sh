@@ -11,15 +11,12 @@ function test_time_vbr
   test_name="vbr time"
   M_FILE="La_Verue__Today"
 
-  tags_option="-T $tags_version"
-  if [[ $tags_version -eq 0 ]];then
-    tags_option=""
-    tags_version=2
-  elif [[ $tags_version -eq -1 ]];then
+  if [[ $tags_version -eq -1 ]];then
     tags_option="-n"
-    test_name="vbr no tags"
+      test_name="vbr no tags"
   else
     test_name="vbr id3v$tags_version"
+    tags_option="-T $tags_version"
   fi
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -149,10 +146,89 @@ function test_time_vbr
   echo
 }
 
-function test_time_vbr_original_tags_v2 { test_time_vbr 0; }
 function test_time_vbr_no_tags { test_time_vbr -1; }
 function test_time_vbr_id3v1 { test_time_vbr 1; }
 function test_time_vbr_id3v2 { test_time_vbr 2; }
+
+function test_time_vbr_original_tags
+{
+  remove_output_dir
+
+  test_name="vbr time"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting time mode split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ time split ok"
+  mp3splt_args="-d $OUTPUT_DIR $MP3_FILE -t 1.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1325926"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "1361669"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "1393181"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+  check_current_file_size "1434247"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+  check_current_file_size "1434247"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3" 
+  check_current_mp3_length "00.05"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "5" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "5" "http://www.jamendo.com/"
+  check_current_file_size "98905"
+
+  p_green "OK"
+  echo
+}
 
 function test_time_vbr_no_xing
 {
@@ -161,7 +237,7 @@ function test_time_vbr_no_xing
   test_name="vbr no xing"
   M_FILE="La_Verue__Today"
 
-  mp3splt_args="-x -d $OUTPUT_DIR $MP3_FILE -t 2.0" 
+  mp3splt_args="-T 2 -x -d $OUTPUT_DIR $MP3_FILE -t 2.0" 
   run_check_output "$mp3splt_args" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_00s.mp3" 
@@ -348,7 +424,7 @@ function test_time_vbr_overlap_split
    File \"$OUTPUT_DIR/${M_FILE}_00m_00s__02m_30s.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_02m_00s__04m_05s_58h.mp3\" created
  time split ok"
-  mp3splt_args="-O 0.30 -d $OUTPUT_DIR $MP3_FILE -t 2.0"
+  mp3splt_args="-T 2 -O 0.30 -d $OUTPUT_DIR $MP3_FILE -t 2.0"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_30s.mp3"
@@ -549,7 +625,7 @@ expected=" Warning: using time mode with stdout !
    File \"-\" created
  Processed 9402 frames - Sync errors: 0
  time split ok"
-  mp3splt_args="-o - $MP3_FILE -t 2.0"
+  mp3splt_args="-T 2 -o - $MP3_FILE -t 2.0"
   run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.mp3" "" "$expected"
 
   current_file="$OUTPUT_DIR/stdout.mp3"

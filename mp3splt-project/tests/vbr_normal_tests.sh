@@ -10,18 +10,14 @@ function test_normal_vbr
 
   remove_output_dir
 
-  test_name="vbr normal"
   M_FILE="La_Verue__Today"
 
-  tags_option="-T $tags_version"
-  if [[ $tags_version -eq 0 ]];then
-    tags_option=""
-    tags_version=2
-  elif [[ $tags_version -eq -1 ]];then
+  if [[ $tags_version -eq -1 ]];then
     tags_option="-n"
     test_name="vbr no tags"
   else
     test_name="vbr id3v$tags_version"
+    tags_option="-T $tags_version"
   fi
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -95,10 +91,60 @@ function test_normal_vbr
   echo
 }
 
-function test_normal_vbr_original_tags_v2 { test_normal_vbr 0; }
 function test_normal_vbr_no_tags { test_normal_vbr -1; }
 function test_normal_vbr_id3v1 { test_normal_vbr 1; }
 function test_normal_vbr_id3v2 { test_normal_vbr 2; }
+
+function test_normal_vbr_original_tags
+{
+  remove_output_dir
+
+  test_name="vbr normal"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1366678"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
+  check_current_mp3_length "01.04"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "1522092"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "1399515"
+
+  p_green "OK"
+  echo
+}
 
 function test_normal_vbr_id3v1_and_id3v2
 {
@@ -192,7 +238,7 @@ function test_normal_vbr_no_xing
   test_name="vbr no xing"
   M_FILE="La_Verue__Today"
 
-  mp3splt_args="-x -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  mp3splt_args="-x -2 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
   run_check_output "$mp3splt_args" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
@@ -424,7 +470,7 @@ function test_normal_vbr_overlap_split
    File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3\" created
  file split (EOF)"
-  mp3splt_args="-O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
+  mp3splt_args="-T 2 -O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
@@ -699,7 +745,7 @@ function test_normal_vbr_stdout
    File \"-\" created
  Processed 5751 frames - Sync errors: 0
  file split"
-  mp3splt_args="-o - $MP3_FILE 1.0 2.30.2"
+  mp3splt_args="-T 2 -o - $MP3_FILE 1.0 2.30.2"
   run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.mp3" "" "$expected"
 
   current_file="$OUTPUT_DIR/stdout.mp3"
@@ -727,7 +773,7 @@ function test_normal_vbr_stdout_multiple_splitpoints
    File \"-\" created
  Processed 6509 frames - Sync errors: 0
  file split"
-  mp3splt_args="-o - $MP3_FILE 1.0 2.30.2 2.50"
+  mp3splt_args="-T 2 -o - $MP3_FILE 1.0 2.30.2 2.50"
   run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.mp3" "" "$expected"
 
   current_file="$OUTPUT_DIR/stdout.mp3"
