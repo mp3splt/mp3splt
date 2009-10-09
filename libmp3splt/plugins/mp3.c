@@ -590,7 +590,6 @@ static unsigned char splt_mp3_getgenre (const char *genre_string)
 
 /* get libid3tag original tags */
 
-//returns the id3v2 tags as bytes from FILE 'file'
 static id3_byte_t *splt_mp3_get_id3v2_tag_bytes(FILE *file, id3_length_t *length)
 {
   id3_byte_t *bytes = NULL;
@@ -610,7 +609,6 @@ static id3_byte_t *splt_mp3_get_id3v2_tag_bytes(FILE *file, id3_length_t *length
 
     rewind(file);
 
-    //read the whole id3v2 tags
     if (fread(bytes, 1, id3v2_size, file) != id3v2_size)
     {
       if (bytes)
@@ -628,7 +626,6 @@ static id3_byte_t *splt_mp3_get_id3v2_tag_bytes(FILE *file, id3_length_t *length
   return bytes;
 }
 
-//returns the id3v1 tags as bytes from FILE 'file'
 static id3_byte_t *splt_mp3_get_id3v1_tag_bytes(FILE *file, id3_length_t *length)
 {
   id3_byte_t *bytes = NULL;
@@ -685,13 +682,30 @@ static id3_byte_t *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *fil
   }
   else
   {
-    bytes = splt_mp3_get_id3v2_tag_bytes(file, length);
-    *tags_version = 2;
+    id3_length_t id3v1_length = 0;
+    id3_byte_t *id3v1_bytes = splt_mp3_get_id3v1_tag_bytes(file, &id3v1_length);
 
-    if (! bytes)
+    id3_length_t id3v2_length = 0;
+    id3_byte_t *id3v2_bytes = splt_mp3_get_id3v2_tag_bytes(file, &id3v2_length);
+
+    if (id3v2_bytes)
     {
-      bytes = splt_mp3_get_id3v1_tag_bytes(file, length);
+      *tags_version = 2;
+      bytes = id3v2_bytes;
+      *length = id3v2_length;
+
+      if (id3v1_bytes)
+      {
+        *tags_version = 12;
+        free(id3v1_bytes);
+        id3v1_bytes = NULL;
+      }
+    }
+    else if (id3v1_bytes)
+    {
       *tags_version = 1;
+      bytes = id3v1_bytes;
+      *length = id3v1_length;
     }
   }
 
@@ -703,6 +717,7 @@ end:
       free(bytes);
       bytes = NULL;
     }
+
     return NULL;
   }
 
@@ -815,8 +830,8 @@ goto end; \
 
 //this function puts the original id3 tags if we have libid3tag enabled
 //at compilation time
-static void splt_mp3_get_original_tags(const char *filename, splt_state *state,
-    int *tag_error)
+static void splt_mp3_get_original_tags(const char *filename,
+    splt_state *state, int *tag_error)
 {
   //we get the id3 from the original file using libid3tag
   struct id3_tag *id3tag = NULL;
@@ -824,8 +839,9 @@ static void splt_mp3_get_original_tags(const char *filename, splt_state *state,
   //get out the tags from the file; id3_file_open doesn't work with win32 utf16 filenames
   id3_length_t id3_tag_length = 0;
   int tags_version = 0;
-  id3_byte_t *id3_tag_bytes = splt_mp3_get_id3_tag_bytes(state, filename, &id3_tag_length,
-      tag_error, &tags_version);
+  id3_byte_t *id3_tag_bytes =
+    splt_mp3_get_id3_tag_bytes(state, filename, &id3_tag_length, tag_error,
+        &tags_version);
 
   /*//client feedback
   if (tags_version == 1)
@@ -3757,8 +3773,7 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 {
 #ifndef NO_ID3TAG
   splt_u_print_debug(state,"Taking original ID3 tags from file using libid3tag ...", 0,NULL);
-  char *filename = splt_t_get_filename_to_split(state);
-  splt_mp3_get_original_tags(filename, state, error);
+  splt_mp3_get_original_tags(splt_t_get_filename_to_split(state), state, error);
 #else
   //splt_u_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
 #endif

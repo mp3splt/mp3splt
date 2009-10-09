@@ -16,6 +16,7 @@ Known issues :
 - fixed issue with mp3 frame mode: frame mode is not any more enabled by default (libmp3splt)
 - fixed mp3 non seekable stdin bug (libmp3splt)
 - fixed bug with ogg negative granulepos packets (libmp3splt)
+- both ID3v1 & ID3v2 are now written if the input file contains both (libmp3splt)
 - small adjustment on the mp3 seekable non frame mode & non seekable frame mode (libmp3splt)
 - removed unuseful 'frame mode enabled' message for dewrapping & sync error mode (libmp3splt)
 
