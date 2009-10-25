@@ -63,6 +63,8 @@ static const int splt_mp3_tabsel_123[2][3][16] = {
     {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,} }
 };
 
+#define DEFAULT_ID3V1_CATEGORY_INDEX 12
+
 //categories of mp3 songs
 //TODO: translation ?
 static const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
@@ -571,13 +573,18 @@ static void splt_mp3_state_free(splt_state *state)
 /* mp3 tags */
 
 //returns the genre of the song, mp3splt used this in cddb search
-static unsigned char splt_mp3_getgenre (const char *genre_string)
+static unsigned char splt_mp3_getgenre(const char *genre_string)
 {
-  int i;
-  for (i=0; i< SPLT_MP3_GENRENUM; i++)
+  if (genre_string == NULL)
+  {
+    return 0xFF;
+  }
+
+  int i = 0;
+  for (i=0; i < SPLT_MP3_GENRENUM; i++)
   {
     if (strncmp(genre_string, splt_mp3_id3v1_categories[i],
-          strlen(genre_string))==0)
+          strlen(genre_string)) == 0)
     {
       return splt_mp3_id3genre[i];
     }
@@ -786,7 +793,7 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
             break;
           case SPLT_MP3_ID3_GENRE:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                0,NULL,splt_mp3_getgenre((char *)tag_value),0);
+                0,NULL, splt_mp3_getgenre((char *)tag_value),0);
 
             int number = 80;
             number = atoi((char *)tag_value);
@@ -795,13 +802,13 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
                 (state->original_tags.genre == 0xFF))
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                  0,NULL,number,0);
+                  0,NULL, number, 0);
             }
             //if we have 0 returned
             if (strcmp((char*)tag_value, "0") == 0)
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                  0,NULL,12,0);
+                  0, NULL, DEFAULT_ID3V1_CATEGORY_INDEX, 0);
             }
             break;
           default:
@@ -1015,8 +1022,24 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
         track_str, error);
   }
   if (*error < 0) { goto error; }
+
+  int i = 0;
+  const char *genre_str = NULL;
+  for (i = 0;i < SPLT_MP3_GENRENUM;i++)
+  {
+    if (splt_mp3_id3genre[i] == genre)
+    {
+      genre_str = splt_mp3_id3v1_categories[i];
+      break;
+    }
+  }
+
+  if (!genre_str) {
+    genre_str = splt_mp3_id3v1_categories[DEFAULT_ID3V1_CATEGORY_INDEX];
+  }
+
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1,
-      splt_mp3_id3v1_categories[genre], error);
+      genre_str, error);
   if (*error < 0) { goto error; }
 
   //get the number of bytes needed for the tags
