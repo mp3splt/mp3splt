@@ -22,8 +22,8 @@ mp3splt --- Utility for mp3/ogg splitting without decoding
 <B>FILE_OR_DIR</B>: mp3/ogg file to be split or a directory.
 If you want to specify STDIN as input, you can use &quot;m-&quot; (or &quot;-&quot;)
 when input is mp3, and &quot;o-&quot; when ogg. Multiple files can be specified, all files will be split
-with the same criterion. If a directory is specified, a recursive scan will be
-performed in that directory to find out all the supported formats files.
+with the same criterion. If a directory is specified, a recursive scan is performed in that
+directory to find out all the supported formats files.
 <P>
 <P>
 
@@ -71,7 +71,7 @@ just with one command (see -w option).
 <B>NOTE for MP3:</B> usually mp3splt understands if mp3 is VBR by checking the presence
 of a Xing or Info header and will consequently start in framemode, but if this is not present,
 mp3splt will start in standard mode.
-This means that splitting process will be quicker, but will be imprecise due to variable bitrate,
+This means that splitting process will be quicker, but imprecise due to variable bitrate,
 you can split those VBR files only with framemode (see -f option).
 <P>
 <B>NOTE about TAGS:</B> by default, mp3splt will put the original tags in
@@ -79,12 +79,13 @@ the split files. Custom tags for the split files can be set with the -g option.
 <P>
 <B>NOTE about MP3 TAGS:</B> in order to extract the original tags from mp3 files,
 libmp3splt must be compiled with 'id3tag' support. By default, the output
-files will have the same ID3 tag version as the input file. However, ID3V1
-output can be forced with the -1 option and ID3V2 with the -2 option.
+files will have the same ID3 tag version as the input file; this behaviour can be changed
+with the -T option. If the input file has no tags and the -g option is used, then both
+ID3v1 and ID3v2 are written.
 <P>
 <B>NOTE about the OUTPUT DIRECTORY:</B> by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
-output directory, you can use one of the following options : -d or -o.
+output directory, you can use one of the following options: -d or -o.
 Please note that directories from the -o option will be created relative
 to the input file directory.
 <P>
@@ -117,6 +118,14 @@ from the so called &quot;sync errors&quot; (data that break stream, such as ID3 
 Examples of applicable files are wrapped file (both AlbumWrap and Mp3Wrap) or file created by
 appending many mp3 files together.
 So, when you have a file to split, you should always try to use this option.
+<P>
+<DT><B>-A AUDACITY_FILE </B>         <DD>
+<B>Audacity labels mode</B>.
+Split with splitpoints from the audacity labels file. Example of audacity
+labels file (in seconds):
+<BR>&nbsp;&nbsp;&nbsp;10.000000&nbsp;67.000000&nbsp;first_file
+<BR>&nbsp;&nbsp;&nbsp;67.000000&nbsp;127.000000&nbsp;second_file
+<BR>&nbsp;&nbsp;&nbsp;149.000000&nbsp;&nbsp;206.000000&nbsp;third_file
 <P>
 <DT><B>-t TIME</B>         <DD>
 <B>Time mode</B>.
@@ -160,11 +169,11 @@ This option is intended to split small/medium size (but even large if you can wa
 where tracks are separated by a reasonable silence time. To try to split mixed albums or files
 with consecutive tracks (such as live performances) might be only a waste of time.
 <P>
-<B>Note about &quot;mp3splt.log&quot; :</B> 
+<B>Note about &quot;mp3splt.log&quot;:</B> 
 <P>
 <BR>&nbsp;&nbsp;The&nbsp;first&nbsp;line&nbsp;contains&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;split&nbsp;file
 <BR>&nbsp;&nbsp;The&nbsp;second&nbsp;line&nbsp;contains&nbsp;the&nbsp;threshold&nbsp;and&nbsp;the&nbsp;minimum&nbsp;silence&nbsp;length
-<BR>&nbsp;&nbsp;The&nbsp;next&nbsp;lines&nbsp;contain&nbsp;each&nbsp;one&nbsp;three&nbsp;columns&nbsp;:
+<BR>&nbsp;&nbsp;The&nbsp;next&nbsp;lines&nbsp;contain&nbsp;each&nbsp;one&nbsp;three&nbsp;columns:
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;first&nbsp;column&nbsp;is&nbsp;the&nbsp;start&nbsp;position&nbsp;of&nbsp;the&nbsp;found&nbsp;silence&nbsp;(in&nbsp;seconds.fractions)
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;second&nbsp;column&nbsp;is&nbsp;the&nbsp;end&nbsp;position&nbsp;of&nbsp;the&nbsp;found&nbsp;silence&nbsp;(in&nbsp;seconds.fractions)
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;third&nbsp;column&nbsp;is&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;silence&nbsp;in&nbsp;hundreths&nbsp;of&nbsp;seconds
@@ -176,13 +185,12 @@ of a &quot;.CUE&quot; file (note that it must end with &quot;.cue&quot;, otherwi
 interpreted as a cddb file) or a local .XMCD (.CDDB) file on your hard disk.
 <P>
 If you want to get informations from Internet, SOURCE must have one of the
-following formats :
+following formats:
 <P>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query{album}</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query{album}(ALBUM_RESULT_NUMBER)</B>
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search=protocol://SITE:PORT,
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get=protocol://SITE:PORT]</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search=protocol://SITE:PORT,&nbsp;get=protocol://SITE:PORT]</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search...]{album}</B>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;<B>query[search...]{album}(ALBUM_RESULT_NUMBER)</B>
 <P>
@@ -199,9 +207,9 @@ be chosen, which are good enough in most cases.
 Inside the square brackets, 'search' defines the CDDB search protocol and site (for
 searching the disc ID from the album and title); 'get' defines the CDDB download protocol
 and site (for downloading the CDDB file from the disc ID). Valid 'search' protocols are
-: 'cddb_cgi' and 'cddb_protocol'.  Valid 'get' protocols are : 'cddb_cgi'.
+: 'cddb_cgi' and 'cddb_protocol'.  Valid 'get' protocols are: 'cddb_cgi'.
 <P>
-Examples :
+Examples:
 <P>
 <BR>&nbsp;&nbsp;query[search=cddb_<A HREF="cgi://tracktype.org/~cddb/cddb.cgi:80,">cgi://tracktype.org/~cddb/cddb.cgi:80,</A>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get=cddb_<A HREF="cgi://tracktype.org/~cddb/cddb.cgi:80]">cgi://tracktype.org/~cddb/cddb.cgi:80]</A>
@@ -272,7 +280,7 @@ Float number between -2 and 2 and allows
 you to adjust the offset of cutpoint in silence time. 0 is the begin of silence, and 1 the end. Default is 0.8.
 In most cases, you will only need to use a value between 0 and 1.
 <P>
-Offset visualization : 
+Offset visualization: 
 <P>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;off=0&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;off=1
 <BR>&nbsp;++++&nbsp;...&nbsp;++++++++++++++++++++++----------++++++++++&nbsp;&nbsp;...&nbsp;+++++
@@ -281,7 +289,7 @@ Offset visualization :
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=-1.5
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=-2
 <P>
-Legend : pluses are 'audio', minuses 'silence', 'v' down-arrow, '^' up-arrow
+Legend: pluses are 'audio', minuses 'silence', 'v' down-arrow, '^' up-arrow
 and '...' a segment of the audio file (silence or audio)
 <P>
 <DT><B>Only -s</B><DD>
@@ -415,7 +423,7 @@ a similar file as the input file.
 <DT><B>-T TAGS_VERSION</B>         <DD>
 <B>Force output tags version</B>. For mp3 files, force output ID3 tags as version
 ID3v1, ID3v2 or ID3v1 and ID3v2. TAGS_VERSION can be 1, 2 or 12. Default is to set the output
-tags version as the tags version of the file to split.
+tags version as the tags version of the input file.
 <P>
 <DT><B>-N</B>         <DD>
 <B>No silence log file</B>. Don't create the 'mp3splt.log' log file when using
@@ -430,7 +438,7 @@ a pair of square brackets, each tag is defined as <B>@variable=value</B> and
 tags are <B>separated by comma</B>. If a percent sign <B>%</B> is found before
 the open square bracket character, then the pair of square brackets following the % 
 character will define the default tags in the following files. Multiple '%'
-can be defined. The variables can be :
+can be defined. The variables can be:
 <P>
 @a: artist name
 <BR>
@@ -453,11 +461,11 @@ can be defined. The variables can be :
 @o: set original tags
 <BR>
 
-@N: auto increment track number : 
+@N: auto increment track number: 
 this variable has to be placed inside the %[] field in order to have the track
 number auto incremented for all the split files following it
 <P>
-Example of tags format :
+Example of tags format:
 <B>%[@o,@N=1,@b=special_album][@a=foo,@b=bar][@t=footitle]</B>. In this
 example, the first split file will have the original tags with album
 tag replaced by 'special album'; the second split file will have the tags
@@ -650,6 +658,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 <A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
 using the manual pages.<BR>
-Time: 21:01:43 GMT, July 26, 2009
+Time: 00:13:34 GMT, October 26, 2009
 </BODY>
 </HTML>

@@ -12,6 +12,8 @@ mp3splt-gtk version 0.5.8
 
 - removed CDDB & CUE tab & added 'Import...' in the 'File' menu
 - added audacity labels support
+- fixed bug #2844232: Desktop folder not found in localized Windows
+- fixed bug #2861898: no amplitude wave with ogg streams
 - fixed bug with wrong time on silence level detection for mp3 streams (libmp3splt)
 - fixed bug with sync error mode & output format (not creating output files) (libmp3splt)
 - fixed important bug with the 'rm' parameter - SPLT_SKIPPOINT in general (libmp3splt)
@@ -21,6 +23,7 @@ mp3splt-gtk version 0.5.8
 - small adjustment on the mp3 seekable non frame mode & non seekable frame mode (libmp3splt)
 - both ID3v1 & ID3v2 are now written if the input file contains both (libmp3splt)
 - removed unuseful 'frame mode enabled' message for dewrapping & sync error mode (libmp3splt)
+- fixed bug #2881113: crash when no genre (libmp3splt)
 
 -------------------------------------------------------------
 mp3splt-gtk version 0.5.7a

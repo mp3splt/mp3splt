@@ -15,6 +15,7 @@ libmp3splt version 0.5.8
 - both ID3v1 & ID3v2 are now written if the input file contains both
 - small adjustment on the mp3 seekable non frame mode & non seekable frame mode
 - removed unuseful 'frame mode enabled' message for dewrapping & sync error mode
+- fixed bug #2881113: crash when no genre
 
 libmp3splt version 0.5.7a
 -------------------------------------------------------------
