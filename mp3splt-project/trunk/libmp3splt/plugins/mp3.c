@@ -1020,27 +1020,15 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
     snprintf(track_str,254,"%d",track);
     splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1,
         track_str, error);
+    if (*error < 0) { goto error; }
   }
-  if (*error < 0) { goto error; }
 
-  int i = 0;
-  const char *genre_str = NULL;
-  for (i = 0;i < SPLT_MP3_GENRENUM;i++)
+  if (genre < SPLT_MP3_GENRENUM)
   {
-    if (splt_mp3_id3genre[i] == genre)
-    {
-      genre_str = splt_mp3_id3v1_categories[i];
-      break;
-    }
+    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1,
+        splt_mp3_id3v1_categories[genre], error);
+    if (*error < 0) { goto error; }
   }
-
-  if (!genre_str) {
-    genre_str = splt_mp3_id3v1_categories[DEFAULT_ID3V1_CATEGORY_INDEX];
-  }
-
-  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1,
-      genre_str, error);
-  if (*error < 0) { goto error; }
 
   //get the number of bytes needed for the tags
   bytes_length = id3_tag_render(id, NULL);
