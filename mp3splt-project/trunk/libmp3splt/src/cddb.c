@@ -321,7 +321,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     *error = tags_error;
     return tracks;
   }
-  
+ 
   //if we cannot open the file
   if (!(file_input=splt_u_fopen(file, "r")))
   {
@@ -398,6 +398,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
               performer = SPLT_FALSE;
               title = SPLT_FALSE;
               tracks++;
+              splt_t_new_tags_if_necessary(state, tracks-1);
             }
             else
             {
@@ -447,7 +448,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
             }
             else
             {
-              if (tracks>0)
+              if (tracks > 0)
               {
                 if ((temp_error = splt_cue_set_value(state, line_content,
                         tracks-1, SPLT_TAGS_PERFORMER)) != SPLT_OK)
@@ -772,7 +773,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
       //if we have performers or not
       int performer = SPLT_FALSE;
       do {
-        title = 0;
+        title = SPLT_FALSE;
         char temp[10];
         memset(temp, 0, 10);
         if ((fgets(line, 2048, file_input))==NULL)
@@ -847,7 +848,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         //the / sign is found on the DTITLE=Artist / Disc
         //we put the string in number variable
         //used for the filename
-        if (j>0)
+        if (j > 0)
         {
           int len = number-line;
           if (len>10) 
@@ -900,7 +901,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         }
 
         //if what we read contains Data or Track
-        if ((j>0)&&(strstr(number, "Data")!=NULL) && 
+        if ((j > 0) && (strstr(number, "Data")!=NULL) && 
             (strstr(number, "Track")!=NULL)) 
         {
           split1 = 
@@ -924,7 +925,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         else
         {
           //otherwise, we put the title
-          if ((j>0)&&(strcmp(temp, prev)==0))
+          if ((j > 0) && (strcmp(temp, prev)==0))
           {
             tags_error = splt_t_set_tags_char_field(state, j-1, SPLT_TAGS_TITLE,
                 number);
@@ -941,8 +942,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             {
               //we put the artist
               i=0;
-              while ((number[i]!='/') && 
-                  (number[i]!='\0')&&(i<127)) 
+              while ((number[i]!='/') && (number[i]!='\0')&&(i<127)) 
               {
                 i++;
               }
