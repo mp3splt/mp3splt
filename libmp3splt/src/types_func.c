@@ -1247,7 +1247,7 @@ static void splt_t_set_empty_tags(splt_state *state, int index)
 }
 
 //allocate new tags if necessary
-static int splt_t_new_tags_if_necessary(splt_state *state, int index)
+int splt_t_new_tags_if_necessary(splt_state *state, int index)
 {
   int error = SPLT_OK;
 

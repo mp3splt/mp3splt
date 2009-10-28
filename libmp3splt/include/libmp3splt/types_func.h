@@ -105,6 +105,7 @@ splt_point *splt_t_get_splitpoints(splt_state *state, int *splitpoints_number);
 /********************************/
 /* types: tags access */
 
+int splt_t_new_tags_if_necessary(splt_state *state, int index);
 void splt_t_auto_increment_tracknumber_tag(splt_state *state);
 int splt_t_append_original_tags(splt_state *state);
 void splt_t_get_original_tags(splt_state *state, int *err);
