@@ -32,6 +32,8 @@
 
 #ifdef __WIN32__
 
+#include "splt.h"
+
 #include "win32.h"
 
 #include <errno.h>
@@ -232,8 +234,8 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
 
 int alphasort(const struct dirent **a, const struct dirent **b)
 {
-  char *name_a = (*a)->d_name;
-  char *name_b = (*b)->d_name;
+  char *name_a = (char *)(*a)->d_name;
+  char *name_b = (char *)(*b)->d_name;
 
   return strcoll(name_a, name_b);
 }

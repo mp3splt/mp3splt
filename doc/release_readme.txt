@@ -27,7 +27,7 @@ Release instructions:
 10) create the distribution files:
      $ ./scripts/compile.sh
 11) upload to sourceforge
-12) change web site & upload to sourceforge
+12) change web site & upload web pages to sourceforge
 13) make release announcement on sourceforge
 14) make release announcement on mailing list
 

@@ -402,7 +402,7 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
     {
       splt_u_print_debug(state," - success !",0,NULL);
 
-      *(void **) (&pl->data[i].func->set_plugin_info) =
+      pl->data[i].func->set_plugin_info =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_plugin_info");
       if (pl->data[i].func->set_plugin_info != NULL)
       {
@@ -528,25 +528,25 @@ int splt_p_find_get_plugins_data(splt_state *state)
     {
       pl->data[i].plugin_handle = lt_dlopen(pl->data[i].plugin_filename);
 
-      *(void **) (&pl->data[i].func->check_plugin_is_for_file) =
+      pl->data[i].func->check_plugin_is_for_file =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_check_plugin_is_for_file");
-      *(void **) (&pl->data[i].func->search_syncerrors) =
+      pl->data[i].func->search_syncerrors =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_search_syncerrors");
-      *(void **) (&pl->data[i].func->dewrap) =
+      pl->data[i].func->dewrap =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_dewrap");
-      *(void **) (&pl->data[i].func->simple_split) =
+      pl->data[i].func->simple_split =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_simple_split");
-      *(void **) (&pl->data[i].func->split) =
+      pl->data[i].func->split =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_split");
-      *(void **) (&pl->data[i].func->init) =
+      pl->data[i].func->init =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_init");
-      *(void **) (&pl->data[i].func->end) =
+      pl->data[i].func->end =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_end");
-      *(void **) (&pl->data[i].func->scan_silence) =
+      pl->data[i].func->scan_silence =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_silence");
-      *(void **) (&pl->data[i].func->set_original_tags) =
+      pl->data[i].func->set_original_tags =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_original_tags");
-      *(void **) (&pl->data[i].func->set_plugin_info) =
+      pl->data[i].func->set_plugin_info =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_plugin_info");
       if (pl->data[i].func->set_plugin_info != NULL)
       {

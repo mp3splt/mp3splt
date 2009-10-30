@@ -66,6 +66,8 @@ AC_C_CONST
 # Enable libtool, check for libltdl and define @LIBLTDL@ and @INCLTDL@
 #################################################################
 
+#LT_INIT([dlopen])
+#LTDL_INIT
 AC_WITH_LTDL
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL

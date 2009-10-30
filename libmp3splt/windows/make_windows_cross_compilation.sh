@@ -23,6 +23,10 @@ cd libmp3splt && ./autogen.sh && cd .. || exit 1
 #untar and copy the required libraries
 cd ../libs
 tar jxf libmp3splt_mingw_required_libs.tar.bz2 || exit 1
+
+#hack
+sed -i 's/-luuid//' lib/libltdl.la
+
 #
 cp bin/libltdl3.dll ../trunk/ || exit 1
 cp bin/libogg-0.dll ../trunk/ || exit 1
@@ -44,8 +48,10 @@ export LDFLAGS="-L`pwd`/libs/lib $LDFLAGS"
 export PKG_CONFIG_PATH="`pwd`/libs/lib/pkgconfig"
 export PATH="`pwd`/libs/bin:$PATH"
 
+make -C trunk/libmp3splt/libltdl
+
 #we compile and install libmp3splt
 cd trunk/libmp3splt &&\
-    ./configure --prefix=`pwd`/../../libs --host=$HOST --disable-oggtest --disable-vorbistest\
+    ./configure --prefix=`pwd`/../../libs --host=$HOST --target=$HOST --disable-oggtest --disable-vorbistest\
     && make clean && make && make install || exit 1
 

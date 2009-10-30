@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-10-26 01:13+0100\n"
+"POT-Creation-Date: 2009-10-30 23:18+0100\n"
 "PO-Revision-Date: 2009-09-07 20:14+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -58,11 +58,11 @@ msgstr "  Album: %s\n"
 msgid " reading informations from CUE file %s ...\n"
 msgstr " Informationen aus CUE-Datei %s werden gelesen …\n"
 
-#: src/cddb.c:508
+#: src/cddb.c:509
 msgid "description here"
 msgstr "Beschreibung hier"
 
-#: src/cddb.c:546 src/cddb.c:1121
+#: src/cddb.c:547 src/cddb.c:1121
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -71,7 +71,7 @@ msgstr ""
 "  Titel: %d\n"
 "\n"
 
-#: src/cddb.c:575
+#: src/cddb.c:576
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " Informationen aus CDDB-Datei %s werden gelesen …\n"
@@ -608,7 +608,7 @@ msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Info: OggVorbis-Datenstrom - %ld - %ld kB/s - %d Kanäle"
 
-#: plugins/ogg.c:1951
+#: plugins/ogg.c:1959
 #, c-format
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Warnung: stdin »o-« wird als Ogg-Datenstrom angenommen.\n"
