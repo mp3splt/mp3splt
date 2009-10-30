@@ -875,8 +875,8 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error)
   {
     //read total time
     double total_time = ov_time_total(&oggstate->vf, -1) * 100;
-    splt_t_set_total_time(state,total_time);
-    oggstate->len = (ogg_int64_t) (oggstate->vi->rate*total_time);
+    splt_t_set_total_time(state, total_time);
+    oggstate->len = (ogg_int64_t) (oggstate->vi->rate * total_time);
   }
 
   oggstate->cutpoint_begin = 0;
@@ -936,18 +936,26 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
         {
           granpos = ogg_page_granulepos(&page);
 
+          /*long page_number = ogg_page_pageno(&page);
+          fprintf(stdout,"granpos = %ld\n",granpos);
+          fprintf(stdout,"page number = %ld\n", page_number);
+          fflush(stdout);*/
+          /*fprintf(stdout,"header page+2 = %ld\n", oggstate->header_page_number+2);
+          fflush(stdout);*/
+
           //for streams recorded in the middle
           //we add the current granpos
           if (first_time)
           {
-            //we take the page number
             long page_number = ogg_page_pageno(&page);
+
             //probably a stream
-            if (page_number > (oggstate->header_page_number+2))
+            if (page_number > (oggstate->header_page_number + 2))
             {
               cutpoint += granpos;
               prevgranpos += granpos;
             }
+
             first_time = SPLT_FALSE;
           }
 
