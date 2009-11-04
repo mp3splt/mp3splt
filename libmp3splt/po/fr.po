@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-10-30 23:18+0100\n"
+"POT-Creation-Date: 2009-11-04 01:51+0100\n"
 "PO-Revision-Date: 2009-10-02 10:56+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -95,27 +95,27 @@ msgstr ""
 msgid " info: starting time mode split\n"
 msgstr " info : début de la division en plusieurs pistes de même taille\n"
 
-#: src/splt.c:588
+#: src/splt.c:589
 #, c-format
 msgid "YES"
 msgstr "OUI"
 
-#: src/splt.c:592
+#: src/splt.c:593
 #, c-format
 msgid "NO"
 msgstr "NON"
 
-#: src/splt.c:597
+#: src/splt.c:598
 #, c-format
 msgid "User"
 msgstr "Utilisateur"
 
-#: src/splt.c:601
+#: src/splt.c:602
 #, c-format
 msgid "Auto"
 msgstr "Automatique"
 
-#: src/splt.c:607
+#: src/splt.c:608
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %"
@@ -124,7 +124,7 @@ msgstr ""
 " Division avec recherche du silence : mode %s (Seuil : %.1f dB, Ecart : "
 "%.2f, Min : %.2f, Suppression : %s)\n"
 
-#: src/splt.c:623
+#: src/splt.c:624
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -133,7 +133,7 @@ msgstr ""
 " Fichier de log avec silences trouvé '%s' ! Lecture des points de silence du "
 "fichier ;)"
 
-#: src/splt.c:648
+#: src/splt.c:649
 #, c-format
 msgid ""
 "\n"
@@ -142,21 +142,21 @@ msgstr ""
 "\n"
 " Points de silence trouvés : %d."
 
-#: src/splt.c:658
+#: src/splt.c:659
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d pistes sélectionnées)\n"
 
-#: src/splt.c:753
+#: src/splt.c:754
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr " Ecriture du fichier de log avec les points de silence '%s' ...\n"
 
-#: src/splt.c:814
+#: src/splt.c:815
 msgid " info: starting silence mode split\n"
 msgstr " info : début de la division avec recherche de silence\n"
 
-#: src/splt.c:872
+#: src/splt.c:873
 msgid " info: starting wrap mode split\n"
 msgstr " info : début de la division 'wrap'\n"
 

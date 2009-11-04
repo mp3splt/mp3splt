@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2009-10-30 23:18+0100\n"
+"POT-Creation-Date: 2009-11-04 01:51+0100\n"
 "PO-Revision-Date: 2009-09-07 20:14+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -96,27 +96,27 @@ msgstr " Info: Teilung im Fehlermodus wird gestartet\n"
 msgid " info: starting time mode split\n"
 msgstr " Info: Teilung im Zeitmodus wird gestartet\n"
 
-#: src/splt.c:588
+#: src/splt.c:589
 #, c-format
 msgid "YES"
 msgstr "JA"
 
-#: src/splt.c:592
+#: src/splt.c:593
 #, c-format
 msgid "NO"
 msgstr "NEIN"
 
-#: src/splt.c:597
+#: src/splt.c:598
 #, c-format
 msgid "User"
 msgstr "Benutzer"
 
-#: src/splt.c:601
+#: src/splt.c:602
 #, c-format
 msgid "Auto"
 msgstr "Automatisch"
 
-#: src/splt.c:607
+#: src/splt.c:608
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %"
@@ -125,7 +125,7 @@ msgstr ""
 " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: "
 "%.2f, Entfernen: %s)\n"
 
-#: src/splt.c:623
+#: src/splt.c:624
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -134,7 +134,7 @@ msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden "
 "Teilungspunkte aus dieser Datei gelesen ;)"
 
-#: src/splt.c:648
+#: src/splt.c:649
 #, c-format
 msgid ""
 "\n"
@@ -143,21 +143,21 @@ msgstr ""
 "\n"
 " Insgesamt gefundene Teilungspunkte: %d."
 
-#: src/splt.c:658
+#: src/splt.c:659
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d Titel ausgewählt)\n"
 
-#: src/splt.c:753
+#: src/splt.c:754
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr "Stille-Protokolldatei »%s« wird geschrieben …\n"
 
-#: src/splt.c:814
+#: src/splt.c:815
 msgid " info: starting silence mode split\n"
 msgstr " Info: Teilung im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:872
+#: src/splt.c:873
 msgid " info: starting wrap mode split\n"
 msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 

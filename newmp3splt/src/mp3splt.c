@@ -44,10 +44,10 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "2.2.7"
+#define VERSION "2.2.7a"
 #define PACKAGE_NAME "mp3splt"
 #endif
-#define MP3SPLT_DATE "30/10/09"
+#define MP3SPLT_DATE "04/11/09"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -521,6 +521,14 @@ int parse_arg(char *arg, float *th, int *gap,
   return found;
 }
 
+int we_have_incompatible_stdin_option(options *opt)
+{
+  return opt->s_option || opt->w_option ||
+    opt->l_option || opt->e_option ||
+    opt->i_option || opt->a_option ||
+    opt->p_option;
+}
+
 //check if we have the correct arguments
 void check_args(int argc, main_data *data)
 {
@@ -536,10 +544,7 @@ void check_args(int argc, main_data *data)
     //if we want input not seekable (-k)
     if (opt->k_option)
     {
-      if (opt->s_option || opt->w_option ||
-          opt->l_option || opt->e_option ||
-          opt->i_option || opt->a_option ||
-          opt->p_option)
+      if (we_have_incompatible_stdin_option(opt))
       {
         print_error_exit(_("cannot use -k option (or STDIN) with"
               " one of the following options : -s -w -l -e -i -a -p"), data);
@@ -2302,6 +2307,14 @@ int main(int argc, char **orig_argv)
 
     fprintf(console_out,_(" Processing file '%s' ...\n"),current_filename);
     fflush(console_out);
+
+    if ((strcmp(current_filename, "-") == 0 || strcmp(current_filename, "o-") == 0) &&
+        we_have_incompatible_stdin_option(opt))
+    {
+      print_error_exit(_("cannot use -k option (or STDIN) with"
+            " one of the following options : -s -w -l -e -i -a -p"), data);
+    }
+
     //we put the filename
     err = mp3splt_set_filename_to_split(state, current_filename);
     process_confirmation_error(err, data);

@@ -412,15 +412,16 @@ void splt_s_time_split(splt_state *state, int *error)
 
           //we put the splitpoints values in the state
           splt_t_set_splitpoint_value(state, current_split,(long)(begin*100));
-          long end_splitpoint = end*100;
-          if (end_splitpoint >= splt_t_get_total_time(state))
+          long end_splitpoint = end * 100;
+          long total_time = splt_t_get_total_time(state);
+          if (total_time > 0 && end_splitpoint >= total_time)
           {
             end_splitpoint = splt_t_get_total_time(state);
             //avoid worst scenarios where floor & SPLT_OK_SPLIT_EOF do not
             //work
             last_file = SPLT_TRUE;
           }
-          splt_t_set_splitpoint_value(state, current_split+1,end_splitpoint);
+          splt_t_set_splitpoint_value(state, current_split+1, end_splitpoint);
 
           double overlapped_end = (double)
             ((double)splt_u_overlap_time(state, current_split+1) / 100.0);
