@@ -2,6 +2,11 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.5.8a
+-------------------------------------------------------------
+
+- fixed ogg streams stdin time mode bug
+
 libmp3splt version 0.5.8
 -------------------------------------------------------------
 

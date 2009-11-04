@@ -7,6 +7,10 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows : won't fix in release 2.2.6
 
+#mp3splt version 2.2.7a
+
+- fixed ogg streams stdin time mode bug (libmp3splt)
+
 #mp3splt version 2.2.7
 
 - added '-A AUDACITY_FILE' option for audacity labels support
