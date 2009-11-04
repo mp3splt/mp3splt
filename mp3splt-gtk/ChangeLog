@@ -8,6 +8,11 @@ Known issues :
 - menus translation 'N_' not working : no idea how to fix
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.5.8a
+
+- fixed ogg streams stdin time mode bug (libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.5.8
 
 - removed CDDB & CUE tab & added 'Import...' in the 'File' menu
