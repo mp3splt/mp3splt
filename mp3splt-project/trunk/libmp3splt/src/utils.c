@@ -2966,7 +2966,7 @@ long splt_u_overlap_time(splt_state *state, int splitpoint_index)
   {
     long total_time = splt_t_get_total_time(state);
     long overlapped_split_value = split_value + overlap_time;
-    if (overlapped_split_value > total_time)
+    if (total_time > 0 && overlapped_split_value > total_time)
     {
       overlapped_split_value = total_time;
     }
