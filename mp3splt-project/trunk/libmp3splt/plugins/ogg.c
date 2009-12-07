@@ -314,15 +314,15 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
 {
   ogg_page page;
 
-  if(flush)
+  if (flush)
   {
     while (ogg_stream_flush(stream, &page))
     {
-      if(fwrite(page.header, 1, page.header_len, file) < page.header_len)
+      if (splt_u_fwrite(state, page.header, 1, page.header_len, file) < page.header_len)
       {
         goto write_error;
       }
-      if(fwrite(page.body, 1, page.body_len, file) < page.body_len)
+      if (splt_u_fwrite(state, page.body, 1, page.body_len, file) < page.body_len)
       {
         goto write_error;
       }
@@ -332,11 +332,11 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
   {
     while (ogg_stream_pageout(stream, &page))
     {
-      if (fwrite(page.header,1,page.header_len, file) < page.header_len)
+      if (splt_u_fwrite(state, page.header,1,page.header_len, file) < page.header_len)
       {
         goto write_error;
       }
-      if (fwrite(page.body,1,page.body_len, file) < page.body_len)
+      if (splt_u_fwrite(state, page.body,1,page.body_len, file) < page.body_len)
       {
         goto write_error;
       }
@@ -624,60 +624,46 @@ void splt_ogg_put_tags(splt_state *state, int *error)
   //if we put current tags (cddb,cue,...)
   if (splt_t_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
-    int current_split = splt_t_get_current_split_file_number(state) - 1;
-    //int old_current_split = current_split;
-
-    //if we set all the tags like the x one
-    int remaining_tags_like_x = splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
-    if ((current_split >= state->split.real_tagsnumber)
-        && (remaining_tags_like_x != -1))
-    {
-      current_split = remaining_tags_like_x;
-    }
+    int current_tags = splt_t_get_current_tags_number(state);
 
     //only if the tags exists for the current split
-    if (splt_t_tags_exists(state,current_split))
+    if (splt_t_tags_exists(state, current_tags))
     {
-      //splt_t_set_auto_increment_tracknumber_tag(state, old_current_split, current_split);
-
       int tags_number = 0;
       splt_tags *tags = splt_t_get_tags(state, &tags_number);
 
-      if (splt_t_tags_exists(state, current_split))
+      char *track_string = NULL;
+      if (tags[current_tags].track > 0)
       {
-        char *track_string = NULL;
-        if (tags[current_split].track > 0)
-        {
-          track_string = splt_ogg_trackstring(tags[current_split].track);
-        }
-        else
-        {
-          track_string = splt_ogg_trackstring(current_split+1);
-        }
+        track_string = splt_ogg_trackstring(tags[current_tags].track);
+      }
+      else
+      {
+        track_string = splt_ogg_trackstring(current_tags + 1);
+      }
 
-        if (track_string)
-        {
-          char *artist_or_performer =
-            splt_u_get_artist_or_performer_ptr(state, current_split);
+      if (track_string)
+      {
+        char *artist_or_performer =
+          splt_u_get_artist_or_performer_ptr(state, current_tags);
 
-          splt_ogg_v_comment(&oggstate->vc,
-              artist_or_performer,
-              tags[current_split].album,
-              tags[current_split].title,
-              track_string,
-              tags[current_split].year,
-              (char *)splt_ogg_genre_list[(int) 
-              tags[current_split].genre],
-              tags[current_split].comment, error);
+        splt_ogg_v_comment(&oggstate->vc,
+            artist_or_performer,
+            tags[current_tags].album,
+            tags[current_tags].title,
+            track_string,
+            tags[current_tags].year,
+            (char *)splt_ogg_genre_list[(int) 
+            tags[current_tags].genre],
+            tags[current_tags].comment, error);
 
-          free(track_string);
-          track_string = NULL;
-        }
-        else
-        {
-          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-          return;
-        }
+        free(track_string);
+        track_string = NULL;
+      }
+      else
+      {
+        *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        return;
       }
     }
   }
@@ -1075,7 +1061,8 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
 //begin and the end
 static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *stream,
     FILE *in, FILE *f, ogg_int64_t cutpoint, int adjust, float threshold,
-    int *error, const char *output_fname, int save_end_point)
+    int *error, const char *output_fname, int save_end_point,
+    double *sec_split_time_length)
 {
   splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
 
@@ -1114,11 +1101,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
     if (ogg_stream_flush(stream, &page)!=0)
     {
-      if (fwrite(page.header,1,page.header_len,f) < page.header_len)
+      if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
       {
         goto write_error;
       }
-      if (fwrite(page.body,1,page.body_len,f) < page.body_len)
+      if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
       {
         goto write_error;
       }
@@ -1131,11 +1118,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
       // in case.
       //
       //fprintf(stderr, 'Warning: First audio packet didn't fit into page. File may not decode correctly\n")'
-      if (fwrite(page.header,1,page.header_len,f) < page.header_len)
+      if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
       {
         goto write_error;
       }
-      if (fwrite(page.body,1,page.body_len,f) < page.body_len)
+      if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
       {
         goto write_error;
       }
@@ -1156,11 +1143,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
       if (ogg_stream_flush(stream, &page)!=0)
       {
-        if (fwrite(page.header,1,page.header_len,f) < page.header_len)
+        if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
         {
           goto write_error;
         }
-        if (fwrite(page.body,1,page.body_len,f) < page.body_len)
+        if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
         {
           goto write_error;
         }
@@ -1280,6 +1267,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
               {
                 cutpoint = (cutpoint + (adjust * oggstate->vi->rate));
               }
+
+              *sec_split_time_length = cutpoint / oggstate->vi->rate;
 
               splt_t_ssplit_free(&state->silence_list);
               adjust = 0;
@@ -1414,7 +1403,7 @@ write_error:
 }
 
 //splits ogg
-void splt_ogg_split(const char *output_fname, splt_state *state,
+double splt_ogg_split(const char *output_fname, splt_state *state,
     double sec_begin, double sec_end, short seekable, 
     int adjust, float threshold, int *error, int save_end_point)
 {
@@ -1422,9 +1411,11 @@ void splt_ogg_split(const char *output_fname, splt_state *state,
 
   ogg_stream_state stream_out;
   //ogg_packet header_comm;
-  ogg_int64_t begin,end = 0, cutpoint = 0;
+  ogg_int64_t begin, end = 0, cutpoint = 0;
 
   begin = (ogg_int64_t) (sec_begin * oggstate->vi->rate);
+
+  double sec_end_time = sec_end;
 
   char *filename = splt_t_get_filename_to_split(state);
 
@@ -1464,26 +1455,29 @@ void splt_ogg_split(const char *output_fname, splt_state *state,
     if (splt_ogg_find_begin_cutpoint(state,
           oggstate, oggstate->in, begin, error, filename) < 0)
     {
-      return;
+      return sec_end_time;
     }
   }
 
-  //- means stdout
-  if (strcmp(output_fname, "-")==0)
+  if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
   {
-    oggstate->out = stdout;
-#ifdef __WIN32__
-    _setmode(fileno(oggstate->out), _O_BINARY);
-#endif
-  }
-  else
-  {
-    if (!(oggstate->out = splt_u_fopen(output_fname, "wb")))
+    //- means stdout
+    if (strcmp(output_fname, "-")==0)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, output_fname);
-      *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
-      return;
+      oggstate->out = stdout;
+#ifdef __WIN32__
+      _setmode(fileno(oggstate->out), _O_BINARY);
+#endif
+    }
+    else
+    {
+      if (!(oggstate->out = splt_u_fopen(output_fname, "wb")))
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, output_fname);
+        *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
+        return sec_end_time;
+      }
     }
   }
 
@@ -1506,7 +1500,7 @@ void splt_ogg_split(const char *output_fname, splt_state *state,
     {
       *error = packet_err;
       ogg_stream_clear(&stream_out);
-      return;
+      return sec_end_time;
     }
   */
 
@@ -1519,32 +1513,40 @@ void splt_ogg_split(const char *output_fname, splt_state *state,
   }
 
   //find end cutpoint and get error
+  double sec_split_time_length = sec_end - sec_begin;
   splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
-      oggstate->out, cutpoint, adjust, threshold, error, output_fname, save_end_point);
+      oggstate->out, cutpoint, adjust, threshold, error, output_fname,
+      save_end_point, &sec_split_time_length);
+  sec_end_time = sec_begin + sec_split_time_length;
 
 end:
   ogg_stream_clear(&stream_out);
-  if (oggstate->out != stdout)
+  if (oggstate->out)
   {
-    if (fclose(oggstate->out) != 0)
+    if (oggstate->out != stdout)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, output_fname);
-      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+      if (fclose(oggstate->out) != 0)
+      {
+        splt_t_set_strerror_msg(state);
+        splt_t_set_error_data(state, output_fname);
+        *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+      }
     }
+    oggstate->out = NULL;
   }
-  oggstate->out = NULL;
 
   if (*error >= 0)
   {
     if (oggstate->end == -1) 
     {
       *error = SPLT_OK_SPLIT_EOF;
-      return;
+      return sec_end_time;
     }
 
     *error = SPLT_OK_SPLIT;
   }
+
+  return sec_end_time;
 }
 
 /****************************/
@@ -1978,7 +1980,7 @@ void splt_pl_end(splt_state *state, int *error)
   splt_ogg_state_free(state);
 }
 
-void splt_pl_split(splt_state *state, const char *final_fname,
+double splt_pl_split(splt_state *state, const char *final_fname,
     double begin_point, double end_point, int *error, int save_end_point) 
 {
   splt_ogg_put_tags(state, error);
@@ -1986,12 +1988,14 @@ void splt_pl_split(splt_state *state, const char *final_fname,
   if (*error >= 0)
   {
     //effective ogg split
-    splt_ogg_split(final_fname, state,
+    return splt_ogg_split(final_fname, state,
         begin_point, end_point,
         !state->options.option_input_not_seekable,
         state->options.parameter_gap,
         state->options.parameter_threshold, error, save_end_point);
   }
+
+  return end_point;
 }
 
 int splt_pl_scan_silence(splt_state *state, int *error)

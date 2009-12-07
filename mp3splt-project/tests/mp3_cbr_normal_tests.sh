@@ -99,6 +99,185 @@ function test_normal_cbr_no_tags { test_normal_cbr -1; }
 function test_normal_cbr_id3v1 { test_normal_cbr 1; }
 function test_normal_cbr_id3v2 { test_normal_cbr 2; }
 
+function test_normal_cbr_pretend
+{
+  remove_output_dir
+
+  test_name="cbr normal & pretend"
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_30s__02m_04s_50h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_04s_50h__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-P -d $OUTPUT_DIR $CBR_MP3_FILE 0.30 2.04.50 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_cbr_cue_export
+{
+  remove_output_dir
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  test_name="cbr normal & cue export"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_30s__02m_04s_50h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_04s_50h__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_43s_81h.mp3\" created
+ file split
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR $CBR_MP3_FILE 0.30 2.04.50 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 4
+
+  check_file_content "output/output_out.cue" 'TITLE "Merci album"
+PERFORMER "Merci Bonsoir"
+FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 00:30:00
+  TRACK 02 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 02:04:50
+  TRACK 03 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 03:00:00'
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_30s__02m_04s_50h.mp3" 
+  check_current_mp3_length "01.34"
+  check_current_file_has_no_xing
+
+  check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
+  "2009" "Rock" "17" "1" "http://www.jamendo.com"
+  check_current_file_size "1512014"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_04s_50h__03m_00s.mp3" 
+  check_current_mp3_length "00.55"
+  check_current_file_has_no_xing
+
+  check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
+  "2009" "Rock" "17" "2" "http://www.jamendo.com"
+  check_current_file_size "888837"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_43s_81h.mp3"
+  check_current_mp3_length "00.43"
+  check_current_file_has_no_xing
+
+  check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
+  "2009" "Rock" "17" "3" "http://www.jamendo.com"
+  check_current_file_size "700338"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_cbr_pretend_and_cue_export
+{
+  remove_output_dir
+
+  test_name="cbr normal & pretend & cue export"
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_30s__02m_04s_50h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_04s_50h__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_43s_81h.mp3\" created
+ file split
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-P -E output/out.cue -d $OUTPUT_DIR $CBR_MP3_FILE 0.30 2.04.50 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 1
+
+  check_file_content "output/output_out.cue" 'TITLE "Merci album"
+PERFORMER "Merci Bonsoir"
+FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 00:30:00
+  TRACK 02 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 02:04:50
+  TRACK 03 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 03:00:00'
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_cbr_cue_and_overlap
+{
+  remove_output_dir
+
+  test_name="cbr cue & overlap"
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+ info: overlapping split files with 0.30.0
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_43s_81h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_30s__03m_43s_81h.mp3\" created
+ file split
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-O 0.30 -E output/out.cue -d $OUTPUT_DIR $CBR_MP3_FILE 1.0 2.0.2 3.30 EOF"
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_file_content "output/output_out.cue" 'TITLE "Merci album"
+PERFORMER "Merci Bonsoir"
+FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 01:00:00
+  TRACK 02 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 02:30:19'
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
+  check_current_mp3_length "01.30"
+  check_current_file_size "1443051"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_43s_81h.mp3"
+  check_current_mp3_length "01.43"
+  check_current_file_size "1657882"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__03m_43s_81h.mp3"
+  check_current_mp3_length "00.13"
+  check_current_file_size "220939"
+
+  p_green "OK"
+  echo
+}
+
 function test_normal_cbr_overlap_splitpoints
 {
   remove_output_dir

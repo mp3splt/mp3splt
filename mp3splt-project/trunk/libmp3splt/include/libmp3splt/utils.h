@@ -106,7 +106,10 @@ int splt_u_check_if_directory(char *fname);
 
 int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size);
 FILE *splt_u_fopen(const char *filename, const char *mode);
-int splt_u_mkdir(const char *path);
+int splt_u_mkdir(splt_state *state, const char *path);
+
+size_t splt_u_fwrite(splt_state *state, const void *ptr,
+    size_t size, size_t nmemb, FILE *stream);
 
 #ifdef __WIN32__
 char *splt_u_win32_utf16_to_utf8(const wchar_t *source);
@@ -130,6 +133,8 @@ char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split);
 short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
     double fend_sec);
 
+char *splt_u_get_file_with_output_path(splt_state *state,
+    char *filename, int *error);
 int splt_u_str_ends_with(const char *str1, const char *str2);
 
 #define MP3SPLT_UTILS_H

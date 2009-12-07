@@ -52,6 +52,31 @@ function test_syncerror
   echo
 }
 
+function test_syncerror_and_pretend
+{
+ _concat_files
+
+  remove_output_dir
+
+  test_name="sync error & pretend "
+  M_FILE="syncerror"
+
+  expected=" Pretending to split file 'songs/syncerror.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: starting error mode split
+   File \"$OUTPUT_DIR/syncerror_error_1.mp3\" created
+   File \"$OUTPUT_DIR/syncerror_error_2.mp3\" created
+   File \"$OUTPUT_DIR/syncerror_error_3.mp3\" created
+ error mode ok"
+  mp3splt_args=" -P -d $OUTPUT_DIR -e $SYNCERR_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
+  p_green "OK"
+  echo
+}
+
 function test_syncerror_with_output_format
 {
  _concat_files

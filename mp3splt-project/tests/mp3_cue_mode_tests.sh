@@ -106,6 +106,172 @@ $auto_adjust_warning"
 function test_cue_mode { _test_cue_mode; }
 function test_cue_mode_with_quotes { _test_cue_mode \"; }
 
+function test_cue_mode_and_pretend
+{
+  _create_cue_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cue mode & pretend"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/First performer - 1 - Our piano.mp3\" created
+   File \"$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3\" created
+   File \"$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+$auto_adjust_warning"
+  mp3splt_args="-P -d $OUTPUT_DIR -c $CUE_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
+  p_green "OK"
+  echo
+}
+
+function test_cue_mode_and_cue_export
+{
+  _create_cue_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cue mode & cue export"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/First performer - 1 - Our piano.mp3\" created
+   File \"$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3\" created
+   File \"$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+ CUE file 'output/output_out.cue' created.
+$auto_adjust_warning"
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR -c $CUE_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 4
+
+  check_file_content "output/output_out.cue" 'TITLE "Gentoo"
+PERFORMER "First performer"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Our piano"
+    PERFORMER "First performer"
+    INDEX 01 00:00:00
+  TRACK 02 AUDIO
+    TITLE "Our guitar"
+    PERFORMER "GNU_Linux"
+    INDEX 01 01:43:00
+  TRACK 03 AUDIO
+    TITLE "Our laptop"
+    PERFORMER "Third performer"
+    INDEX 01 03:20:00'
+
+  current_file="$OUTPUT_DIR/First performer - 1 - Our piano.mp3"
+  check_current_mp3_length "01.43"
+  check_current_file_has_xing
+  check_current_file_size "2292252"
+  check_all_mp3_tags_with_version "2" "First performer" "Gentoo" "Our piano"\
+  "None" "Other" "12" "1" ""
+
+  current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3"
+  check_current_mp3_length "01.37"
+  check_current_file_has_xing
+  check_current_file_size "2287989"
+  check_all_mp3_tags_with_version "2" "GNU_Linux" "Gentoo" "Our guitar"\
+  "None" "Other" "12" "2" ""
+
+  current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3"
+  check_current_mp3_length "00.45"
+  check_current_file_has_xing
+  check_current_file_size "1031950"
+  check_all_mp3_tags_with_version "2" "Third performer" "Gentoo" "Our laptop"\
+  "None" "Other" "12" "3" ""
+
+  p_green "OK"
+  echo
+}
+
+function test_cue_mode_and_cue_export_and_pretend
+{
+  _create_cue_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cue mode & cue export & pretend"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/First performer - 1 - Our piano.mp3\" created
+   File \"$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3\" created
+   File \"$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+ CUE file 'output/output_out.cue' created.
+$auto_adjust_warning"
+  mp3splt_args="-P -E output/out.cue -d $OUTPUT_DIR -c $CUE_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 1
+
+  check_file_content "output/output_out.cue" 'TITLE "Gentoo"
+PERFORMER "First performer"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Our piano"
+    PERFORMER "First performer"
+    INDEX 01 00:00:00
+  TRACK 02 AUDIO
+    TITLE "Our guitar"
+    PERFORMER "GNU_Linux"
+    INDEX 01 01:43:00
+  TRACK 03 AUDIO
+    TITLE "Our laptop"
+    PERFORMER "Third performer"
+    INDEX 01 03:20:00'
+
+  p_green "OK"
+  echo
+}
+
 function test_cue_mode_incomplete
 {
   _create_incomplete_cue_file

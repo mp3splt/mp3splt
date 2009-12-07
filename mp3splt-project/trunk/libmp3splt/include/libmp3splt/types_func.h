@@ -246,6 +246,7 @@ int splt_t_is_stdout(splt_state *state);
 void splt_t_set_current_plugin(splt_state *state, int current_plugin);
 int splt_t_get_current_plugin(splt_state *state);
 int splt_t_alloc_init_new_plugin(splt_plugins *pl);
+int splt_t_get_current_tags_number(splt_state *state);
 
 #define MP3SPLT_TYPES_FUNC
 

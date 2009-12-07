@@ -706,7 +706,7 @@ void splt_p_dewrap(splt_state *state, int listonly, const char *dir, int *error)
   }
 }
 
-void splt_p_split(splt_state *state, const char *final_fname, double begin_point,
+double splt_p_split(splt_state *state, const char *final_fname, double begin_point,
     double end_point, int *error, int save_end_point)
 {
   splt_plugins *pl = state->plug;
@@ -714,24 +714,30 @@ void splt_p_split(splt_state *state, const char *final_fname, double begin_point
   if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
     *error = SPLT_ERROR_NO_PLUGIN_FOUND;
-    return;
+    return end_point;
   }
   else
   {
     int err = SPLT_OK;
     splt_u_create_output_dirs_if_necessary(state, final_fname, &err);
-    if (err < 0) { *error = err; return; }
+    if (err < 0) { *error = err; return end_point; }
 
     if (pl->data[current_plugin].func->split != NULL)
     {
-      pl->data[current_plugin].func->split(state, final_fname,
+      double new_end_point = pl->data[current_plugin].func->split(state, final_fname,
           begin_point, end_point, error, save_end_point);
+
+      splt_u_print_debug(state, "New end point after split ...",new_end_point,NULL);
+
+      return new_end_point;
     }
     else
     {
       *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
     }
   }
+
+  return end_point;
 }
 
 void splt_p_init(splt_state *state, int *error)

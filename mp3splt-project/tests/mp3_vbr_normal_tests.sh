@@ -95,6 +95,222 @@ function test_normal_vbr_no_tags { test_normal_vbr -1; }
 function test_normal_vbr_id3v1 { test_normal_vbr 1; }
 function test_normal_vbr_id3v2 { test_normal_vbr 2; }
 
+function test_normal_vbr_pretend
+{
+  remove_output_dir
+
+  test_name="vbr pretend"
+  M_FILE="La_Verue__Today"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-P -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_cue_export
+{
+  remove_output_dir
+
+  test_name="vbr & cue export"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-T 2 -E output/out.cue -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+ 
+  check_output_directory_number_of_files 4
+
+  check_file_content "output/output_out.cue" 'TITLE "Riez Noir"
+PERFORMER "La Verue"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 01:00:00
+  TRACK 02 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 02:00:20
+  TRACK 03 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:05:00'
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1366550"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
+  check_current_mp3_length "01.04"
+  check_current_file_has_xing
+
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "1521964"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_has_xing
+
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "1399387"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_pretend_and_cue_export
+{
+  remove_output_dir
+
+  test_name="vbr pretend & cue export"
+  M_FILE="La_Verue__Today"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-E output/out.cue -P -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+ 
+  check_output_directory_number_of_files 1
+
+  check_file_content "output/output_out.cue" 'TITLE "Riez Noir"
+PERFORMER "La Verue"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 01:00:00
+  TRACK 02 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 02:00:20
+  TRACK 03 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:05:00'
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_overlap_and_cue_export
+{
+  remove_output_dir
+
+  test_name="vbr overlap & cue export"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+ info: overlapping split files with 0.30.0
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3\" created
+ file split (EOF)
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-T 2 -E output/out.cue -O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_file_content 'output/output_out.cue' 'TITLE "Riez Noir"
+PERFORMER "La Verue"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 01:00:00
+  TRACK 02 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 02:30:19
+  TRACK 03 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 04:00:00'
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
+  check_current_mp3_length "01.30"
+  check_current_file_size "2008723"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3"
+  check_current_mp3_length "01.59"
+  check_current_file_size "2823722"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3"
+  check_current_mp3_length "00.35"
+  check_current_file_size "809280"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_pretend_and_m3u
+{
+  remove_output_dir
+
+  test_name="vbr pretend & m3u"
+  M_FILE="La_Verue__Today"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ M3U file 'output/output_out.m3u' will be created.
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-m output/out.m3u -P -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+ 
+  check_output_directory_number_of_files 0
+
+  p_green "OK"
+  echo
+}
+
 function test_normal_vbr_original_tags
 {
   remove_output_dir
@@ -238,7 +454,7 @@ function test_normal_vbr_no_xing
   test_name="vbr no xing"
   M_FILE="La_Verue__Today"
 
-  mp3splt_args="-x -2 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  mp3splt_args="-x -T 2 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
   run_check_output "$mp3splt_args" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
@@ -341,6 +557,80 @@ function test_normal_vbr_custom_tags
   tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
   mp3splt_args="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
   run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
+  check_all_mp3_tags_with_version "2" "a1" "b1" "t1"\
+  "2000" "Other" "12" "10" "my_comment"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
+  check_all_mp3_tags_with_version "2" "" "" "" ""\
+  "Other" "12" "2" ""
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
+  check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
+  "2007" "Rock" "17" "7" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
+  check_all_mp3_tags_with_version "2" "custom_artist" "album" "Today"\
+  "2007" "Rock" "17" "8" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "20" "http://www.jamendo.com/"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_custom_tags_and_cue_export
+{
+  remove_output_dir
+
+  test_name="vbr custom tags & cue export"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3\" created
+ Processed 7084 frames - Sync errors: 0
+ file split
+ CUE file 'output/output_out.cue' created."
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_file_content "output/output_out.cue" 'TITLE "b1"
+PERFORMER "a1"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "t1"
+    PERFORMER "a1"
+    INDEX 01 00:05:00
+  TRACK 02 AUDIO
+    INDEX 01 01:00:00
+  TRACK 03 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 01:05:00
+  TRACK 04 AUDIO
+    TITLE "Today"
+    PERFORMER "custom_artist"
+    INDEX 01 02:00:00
+  TRACK 05 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:00:00
+  TRACK 06 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:05:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
   check_all_mp3_tags_with_version "2" "a1" "b1" "t1"\

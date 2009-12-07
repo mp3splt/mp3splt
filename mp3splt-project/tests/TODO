@@ -23,6 +23,13 @@ NORMAL MODE
   - output filename (-o) + create directories
   - stdout (+ multiple splitpoints & EOF)
   - no tags in input file (+ -g option)
+  - pretend
+  - cue export
+  - pretend + cue export
+  - pretend + m3u
+  - cue export + overlap
+    (TODO: add warning when export + overlap)
+  - cue export + custom tags
 
   NOT DONE:
 
@@ -31,6 +38,7 @@ NORMAL MODE
   - auto adjust & off
   - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
+  - pretend + auto adjust
 
   Non Frame Mode (CBR file)
   ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -44,6 +52,10 @@ NORMAL MODE
   - overlap splitpoints (-O)
   - stdout (+ multiple splitpoints & EOF)
   - stdin : input not seekable (-k)
+  - pretend
+  - cue export
+  - pretend + cue export
+  - cue export + overlap
 
   NOT DONE:
   - no xing (-x)
@@ -57,6 +69,7 @@ NORMAL MODE
   - auto adjust & off
   - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
+  - pretend + auto adjust
 
 TIME MODE
 **************************
@@ -81,6 +94,15 @@ TIME MODE
   - stdin : input not seekable (-k)
   - output filename (-o) + create directories
   - stdout (+ multiple splitpoints & EOF)
+  - pretend
+  - cue export + overlap
+  - pretend + cue export
+
+  IN PROGRESS:
+
+  #TODO: BUG: splitpoint starting at 0 ?
+  #TODO: BUG2 - bad CUE filename reported at the end ? (probably fake)
+  - cue export
 
   NOT DONE:
   - no tags in input file (+ -g option)
@@ -89,6 +111,7 @@ TIME MODE
   - auto adjust & off
   - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
+  - pretend + auto adjust
 
 
   Non Frame Mode (CBR file)
@@ -114,7 +137,11 @@ TIME MODE
   - auto adjust & off
   - auto adjust & gap
   - don't create 'mp3splt.log' file (-N)
-
+  - pretend + auto adjust
+  - pretend
+  - cue export
+  - pretend + cue export
+  - cue export + overlap
 
 WRAP MODE (MP3 only)
 **************************
@@ -125,6 +152,8 @@ WRAP MODE (MP3 only)
   - dewrap files with absolute path
   - dewrap files with create output directories
   - dewrap files and create m3u file
+  - pretend
+
 
 ERROR MODE (MP3 only)
 **************************
@@ -135,6 +164,7 @@ ERROR MODE (MP3 only)
   - sync error mode + create output dir
   - sync error mode + output format + create output dir
   - sync error mode + m3u
+  - pretend
 
 MISC
 **************************
@@ -150,6 +180,9 @@ CDDB MODE
   - cddb mode & output format & create output dirs
   - cddb mode & quiet mode
   - cddb mode & output format
+  - pretend
+  - cue export #TODO bug: cue export starting at 0 ?
+  - pretend + cue export
 
 CUE MODE
 **************************
@@ -159,6 +192,9 @@ CUE MODE
   - cue mode & quotes
   - cue mode & quiet mode
   - cue mode & output format & create output dirs
+  - pretend
+  - cue export #TODO bug: cue files not equal
+  - pretend + cue export
 
 FREEDB MODE
 **************************
@@ -172,6 +208,13 @@ FREEDB MODE
       is damaged or this is not the right cddb if OK EOF)
   TODO: change to 'freedb.freedb.org' (random server) instead of 'freedb.org'
  
+  TODO:
+
+  - pretend
+  - pretend + auto adjust
+  - cue export
+  - pretend + cue export
+
 SILENCE MODE
 **************************
 
@@ -191,11 +234,15 @@ SILENCE MODE
   - silence mode & rm & custom tags
   - silence mode & rm & custom tags & output format
   - silence mode & mp3splt.log
+  - silence mode & pretend
+  - silence mode & cue export
+  - silence mode + pretend & cue export
 
   Fixed IMPORTANT BUGS : last track is not split + output format
 
   NOT DONE:
   - don't create 'mp3splt.log' file (-N)
+
 
 AUDACITY MODE
 **************************
@@ -208,7 +255,12 @@ AUDACITY MODE
   - audacity & output format
   - audacity & custom tags
   - audacity & custom tags & output format
+  - pretend
+  - cue export
+  - pretend + cue export
 
+  NOT DONE:
+  - pretend + auto adjust
 
 TESTS TODO: tests ID3v2 UTF16
 TODO: print if output will have ID3v1 or ID3v2

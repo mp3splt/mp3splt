@@ -57,6 +57,8 @@ $cur_dir/songs/$F3
   mp3splt_args=" -l $WRAPPED_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
+  check_output_directory_is_empty
+
   p_green "OK"
   echo
 }
@@ -86,6 +88,36 @@ All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
   run_check_output "$mp3splt_args" "$expected"
 
   _check_dewrapped_files_sizes $OUTPUT_DIR
+
+  p_green "OK"
+  echo
+}
+
+function test_wrap_mode_with_pretend
+{
+  _wrap_files
+
+  remove_output_dir
+
+  test_name="wrap mode & pretend"
+  M_FILE="wrapped"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: starting wrap mode split
+ Detected file created with: Mp3Wrap v. 0.5
+ Check for file integrity: calculating CRC please wait...  OK
+ Total files: 3
+   File \"output/$F1\" created
+   File \"output/$F2\" created
+   File \"output/$F3\" created
+ wrap split ok
+
+All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
+  mp3splt_args=" -P -d $OUTPUT_DIR -w $WRAPPED_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
 
   p_green "OK"
   echo

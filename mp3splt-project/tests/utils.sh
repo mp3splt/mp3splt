@@ -62,6 +62,25 @@ function check_file_content
   _check_files_content $EXPECTED_FILE $file
 }
 
+function check_output_directory_is_empty
+{
+  check_output_directory_number_of_files 0
+}
+
+function check_output_directory_number_of_files
+{
+  expected_num_of_files=$1
+  num_of_files=$(ls $OUTPUT_DIR | wc -l)
+  echo -e "" > $ACTUAL_FILE
+  echo -e "expected $expected_num_of_files files in output directory" > $EXPECTED_FILE
+  if [[ $num_of_files -ne $expected_num_of_files ]];then
+    echo -e "found $num_of_files files in the output directory" > $ACTUAL_FILE
+  else
+    echo -e "expected $num_of_files files in output directory" > $ACTUAL_FILE
+  fi
+  _check_expected_actual_files_equals
+}
+
 function check_current_mp3_no_tags
 {
   _run_command "eyeD3 -2 --no-color $current_file " "eyeD3 command" 1
@@ -77,6 +96,12 @@ function check_current_mp3_no_tags
     _check_mp3_tags $current_file 1 "$tag" "" "$id3v1"
   done
   _check_mp3_tags $current_file 1 "Genre" "Unknown (255)" "$id3v1"
+}
+
+function check_current_ogg_no_tags
+{
+#TODO
+  a=2
 }
 
 function check_all_mp3_tags_with_version
@@ -104,6 +129,12 @@ function check_all_mp3_tags_with_version
   done
 }
 
+function check_all_ogg_tags_with_version
+{
+#TODO
+  a=1
+}
+
 function check_current_mp3_length
 {
   expected_length=$1
@@ -115,6 +146,12 @@ function check_current_mp3_length
   expected_value="Length for mp3 $current_file: '$expected_length'"
   actual_value="Length for mp3 $current_file: '$actual_length'"
   _check_equal_variables "$expected_value" "$actual_value"
+}
+
+function check_current_ogg_length
+{
+#TODO
+  a=3
 }
 
 function run_check_output
@@ -185,6 +222,15 @@ function check_if_file_exist
   fi
 }
 
+function check_if_file_does_not_exist
+{
+  file=$1
+  if [[ -f $file ]];then
+    _check_equal_variables "Expected file $file to not exist" "File found"
+  fi
+}
+
+
 ###################
 #internal functions
 
@@ -193,6 +239,11 @@ function _print_test_title
   p_white "\tTesting '"
   p_yellow $test_name
   p_white "' ... "
+}
+
+function _check_expected_actual_files_equals
+{
+  _diff_files $EXPECTED_FILE $ACTUAL_FILE
 }
 
 function _diff_files

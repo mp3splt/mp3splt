@@ -60,6 +60,178 @@ function test_audacity
   echo
 }
 
+function test_audacity_and_pretend
+{
+  _create_audacity_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="audacity mode & pretend"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ reading informations from audacity labels file '$AUDACITY_FILE' ...
+ audacity labels file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/zero.mp3\" created
+   File \"$OUTPUT_DIR/first.mp3\" created
+   File \"$OUTPUT_DIR/second.mp3\" created
+   File \"$OUTPUT_DIR/.mp3\" created
+ Processed 9036 frames - Sync errors: 0
+ file split"
+  mp3splt_args="-P -d $OUTPUT_DIR -A $AUDACITY_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
+  p_green "OK"
+  echo
+}
+
+function test_audacity_and_cue_export
+{
+  _create_audacity_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="audacity mode & cue export"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ reading informations from audacity labels file '$AUDACITY_FILE' ...
+ audacity labels file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/zero.mp3\" created
+   File \"$OUTPUT_DIR/first.mp3\" created
+   File \"$OUTPUT_DIR/second.mp3\" created
+   File \"$OUTPUT_DIR/.mp3\" created
+ Processed 9036 frames - Sync errors: 0
+ file split
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR -A $AUDACITY_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_file_content "output/output_out.cue" 'TITLE "Riez Noir"
+PERFORMER "La Verue"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 00:10:00
+  TRACK 02 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 01:07:00
+  TRACK 03 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 02:07:00
+  TRACK 04 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:26:00
+  TRACK 05 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:56:00
+  TRACK 06 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:56:00'
+
+  current_file="$OUTPUT_DIR/zero.mp3"
+  check_current_mp3_length "00.57"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/first.mp3"
+  check_current_mp3_length "01.00"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/second.mp3"
+  check_current_mp3_length "00.57"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/.mp3"
+  check_current_mp3_length "00.30"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+
+  p_green "OK"
+  echo
+}
+
+function test_audacity_and_pretend_and_cue_export
+{
+  _create_audacity_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="audacity mode & pretend & cue export"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ reading informations from audacity labels file '$AUDACITY_FILE' ...
+ audacity labels file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/zero.mp3\" created
+   File \"$OUTPUT_DIR/first.mp3\" created
+   File \"$OUTPUT_DIR/second.mp3\" created
+   File \"$OUTPUT_DIR/.mp3\" created
+ Processed 9036 frames - Sync errors: 0
+ file split
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-P -E output/out.cue -d $OUTPUT_DIR -A $AUDACITY_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_file_content "output/output_out.cue" 'TITLE "Riez Noir"
+PERFORMER "La Verue"
+FILE "songs/La_Verue__Today.mp3" MP3
+  TRACK 01 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 00:10:00
+  TRACK 02 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 01:07:00
+  TRACK 03 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 02:07:00
+  TRACK 04 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:26:00
+  TRACK 05 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:56:00
+  TRACK 06 AUDIO
+    TITLE "Today"
+    PERFORMER "La Verue"
+    INDEX 01 03:56:00'
+
+  check_output_directory_number_of_files 1
+
+  p_green "OK"
+  echo
+}
+
 function test_audacity_and_output_format
 {
   _create_audacity_file

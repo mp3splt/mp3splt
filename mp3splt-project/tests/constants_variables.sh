@@ -32,7 +32,6 @@ current_file=""
 current_tags_version=0
 command_output=""
 
-
 auto_adjust_warning="
  +-----------------------------------------------------------------------------+
  |NOTE: When you use cddb/cue, split files might be not very precise due to:|

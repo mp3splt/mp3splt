@@ -639,7 +639,7 @@ typedef struct {
   void (*dewrap)(void *state, int listonly, const char *dir, int *error);
   void (*set_total_time)(void *state, int *error);
   int (*simple_split)(void *state, const char *output_fname, off_t begin, off_t end);
-  void (*split)(void *state, const char *final_fname, double begin_point,
+  double (*split)(void *state, const char *final_fname, double begin_point,
       double end_point, int *error, int save_end_point);
   int (*scan_silence)(void *state, int *error);
   void (*set_original_tags)(void *state, int *error);
@@ -1317,6 +1317,9 @@ void mp3splt_write_freedb_file_result(splt_state *state,
     int cddb_get_type,
     const char *cddb_get_server,
     int port);
+
+void mp3splt_export_to_cue(splt_state *state, const char *out_file,
+    short stop_at_total_time, int *error);
 
 void mp3splt_set_oformat(splt_state *state,
     const char *format_string, int *error);

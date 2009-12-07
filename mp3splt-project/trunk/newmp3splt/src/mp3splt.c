@@ -78,6 +78,8 @@ typedef struct {
   short o_option; short d_option; short k_option;
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
+  short E_option;
+  short P_option;
   short x_option;
   short N_option;
   short O_option;
@@ -91,6 +93,7 @@ typedef struct {
   short i_option; short m_option;
   //cddb argument, output dir argument, parameters arguments with -p
   char *cddb_arg; char *dir_arg; char *param_args;
+  char *export_cue_arg;
   char *audacity_labels_arg;
   //the m3u filename
   char *m3u_arg;
@@ -112,7 +115,7 @@ typedef struct {
   int freedb_get_port;
   //the search string passed in parameter -c query{my artist}
   char freedb_arg_search_string[2048];
-  //the chosen result passed in parameter : -c query{my artist}[
+  //the chosen result passed in parameter: -c query{my artist}[
   int freedb_arg_result_option;
 } options;
 
@@ -138,7 +141,7 @@ typedef struct
   //the splitpoints parsed from the arguments
   long *splitpoints;
   int number_of_splitpoints;
-  //command line arguments : on windows, we need to
+  //command line arguments: on windows, we need to
   //keep the ones transformed to utf8 and free them later
   char **argv;
   int argc;
@@ -165,6 +168,12 @@ void free_options(options **opt)
       {
         free((*opt)->cddb_arg);
         (*opt)->cddb_arg = NULL;
+      }
+
+      if ((*opt)->export_cue_arg)
+      {
+        free((*opt)->export_cue_arg);
+        (*opt)->export_cue_arg = NULL;
       }
 
       if ((*opt)->audacity_labels_arg)
@@ -358,8 +367,6 @@ void show_small_help_exit(main_data *data)
         " -v   Prints current version and exits\n"
         " -h   Shows this help"));
   print_message(_("\n(other options)\n"
-        //" -P   Pretend to split, without actually splitting the file\n"
-        //" -E   Export .cue file (use with -P to export .cue file without splitting)\n"
         " -T + TAGS_VERSION: for mp3 files, force output tags as version 1, 2 or 1 & 2.\n"
         "      TAGS_VERSION can be 1, 2 or 12\n"
         "      (default is to set the same version as the file to split)"));
@@ -372,23 +379,26 @@ void show_small_help_exit(main_data *data)
         "      @t: title tag, @n: track number identifier, @N: track tag number\n"
         "      (a digit may follow the 'n' or 'N' for the number of digits to output),\n"
         "      @f: original filename"));
-  print_message(_(" -g + TAGS : custom tags for the split files.\n"
-        "      TAGS can contain those variables : \n"
+  print_message(_(" -g + TAGS: custom tags for the split files.\n"
+        "      TAGS can contain those variables: \n"
         "         @a, @b, @t, @y, @c, @n, @o (set original tags),\n"
         "         @N (auto increment track number).\n"
         "      TAGS format is like [@a=artist1,@t=title1]%[@o,@N=2,@a=artist2]\n"
         "       (% means that we set the tags for all remaining files)"));
   print_message(_(" -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
         " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
-        " -O + TIME : Overlap split files with TIME (slower)."));
+        " -O + TIME: Overlap split files with TIME (slower)."));
   print_message(_(" -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean files.\n"
         " -x   No Xing header: does not write the Xing header. Use with -n if you wish\n"
         "      to concatenate the split files\n"
         " -N   Don't create the 'mp3splt.log' log file when using '-s'."));
+  print_message(_(" -P   Pretend to split: simulation of the process, without creating any\n"
+                  "      files or directories"));
+  print_message(_(" -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"));
   print_message(_(" -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
         " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
         "       (also enables -q).\n"
-        " -D   Debug mode: used to debug the program.\n"
+        " -D   Debug mode: used to debug the program.\n\n"
         "      Please read man page for complete documentation.\n"));
 
   if (console_out == stderr)
@@ -547,7 +557,7 @@ void check_args(int argc, main_data *data)
       if (we_have_incompatible_stdin_option(opt))
       {
         print_error_exit(_("cannot use -k option (or STDIN) with"
-              " one of the following options : -s -w -l -e -i -a -p"), data);
+              " one of the following options: -s -w -l -e -i -a -p"), data);
       }
     }
 
@@ -560,7 +570,8 @@ void check_args(int argc, main_data *data)
           opt->f_option || opt->a_option ||
           opt->p_option || opt->o_option ||
           opt->g_option || opt->n_option ||
-          opt->x_option || opt->A_option)
+          opt->x_option || opt->A_option ||
+          opt->E_option)
       {
         print_error_exit(_("the -w option can only be used with -m, -d, -q and -Q"), data);
       }
@@ -589,7 +600,7 @@ void check_args(int argc, main_data *data)
           opt->s_option || opt->i_option || 
           opt->a_option || opt->p_option ||
           opt->g_option || opt->n_option ||
-          opt->A_option)
+          opt->A_option || opt->E_option)
       {
         print_error_exit(_("the -e option can only be used with -m, -f, -o, -d, -q, -Q"), data);
       }
@@ -849,8 +860,8 @@ long c_hundreths(const char *s)
 }
 
 //for the moment 2 ways of getting the file and one way to search it
-//freedb get type can be : cddb_cgi or cddb_protocol
-//freedb search type can be : cddb_cgi or web_search
+//freedb get type can be: cddb_cgi or cddb_protocol
+//freedb search type can be: cddb_cgi or web_search
 //query[get=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
 //query[get=cddb_protocol://freedb.org:8880,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
 //query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80,search=cddb_cgi://freedb2.org/~cddb/cddb.cgi:80]
@@ -1221,10 +1232,10 @@ void do_freedb_search(main_data *data)
   }
 
   //print out infos about the servers
-  fprintf(console_out,_(" Freedb search type : %s , Site: %s , Port: %d\n"),
+  fprintf(console_out,_(" Freedb search type: %s , Site: %s , Port: %d\n"),
       search_type,opt->freedb_search_server,opt->freedb_search_port);
   fflush(console_out);
-  fprintf(console_out,_(" Freedb get type : %s , Site: %s , Port: %d\n"),
+  fprintf(console_out,_(" Freedb get type: %s , Site: %s , Port: %d\n"),
       get_type,opt->freedb_get_server,opt->freedb_get_port);
   fflush(console_out);
 
@@ -1265,7 +1276,7 @@ void do_freedb_search(main_data *data)
     freedb_search_string = opt->freedb_arg_search_string;
   }
 
-  fprintf(console_out, _("\n  Search string : %s\n"),freedb_search_string);
+  fprintf(console_out, _("\n  Search string: %s\n"),freedb_search_string);
   fprintf(console_out, _("\nSearching from %s on port %d using %s ...\n"),
       opt->freedb_search_server,opt->freedb_search_port, search_type);
   fflush(console_out);
@@ -1279,7 +1290,7 @@ void do_freedb_search(main_data *data)
       opt->freedb_search_port);
   process_confirmation_error(err, data);
 
-  //if we don't have an auto-select the result X from the arguments :
+  //if we don't have an auto-select the result X from the arguments:
   // (query{artist}(resultX)
   //, then interactive user ask
   int selected_cd = 0;
@@ -1443,25 +1454,25 @@ void put_progress_bar(splt_progress *p_bar)
 
   switch (p_bar->progress_type)
   {
-    case SPLT_PROGRESS_PREPARE :
+    case SPLT_PROGRESS_PREPARE:
       snprintf(progress_text,2047,
           _(" preparing \"%s\" (%d of %d)"),
           p_bar->filename_shorted,
           p_bar->current_split,
           p_bar->max_splits);
       break;
-    case SPLT_PROGRESS_CREATE :
+    case SPLT_PROGRESS_CREATE:
       snprintf(progress_text,2047,
           _(" creating \"%s\" (%d of %d)"),
           p_bar->filename_shorted,
           p_bar->current_split,
           p_bar->max_splits);
       break;
-    case SPLT_PROGRESS_SEARCH_SYNC :
+    case SPLT_PROGRESS_SEARCH_SYNC:
       snprintf(progress_text,2047,
           _(" searching for sync errors..."));
       break;
-    case SPLT_PROGRESS_SCAN_SILENCE :
+    case SPLT_PROGRESS_SCAN_SILENCE:
       snprintf(progress_text,2047,
           _("S: %02d, Level: %.2f dB; scanning for silence..."),
           p_bar->silence_found_tracks, p_bar->silence_db_level);
@@ -1523,12 +1534,15 @@ options *new_options(main_data *data)
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
   opt->N_option = SPLT_FALSE; opt->O_option = SPLT_FALSE;
+  opt->E_option = SPLT_FALSE;
+  opt->P_option = SPLT_FALSE;
   opt->x_option = SPLT_FALSE;
   opt->X_option = SPLT_FALSE;
   opt->qq_option = SPLT_FALSE;
   opt->A_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
+  opt->export_cue_arg = NULL;
   opt->audacity_labels_arg = NULL;
   opt->param_args = NULL;
   opt->m3u_arg = NULL;
@@ -1761,7 +1775,7 @@ void show_files_and_ask_for_confirmation(main_data *data)
 
     if (((j+1) % 22 == 0) && (j+1 < data->number_of_filenames))
     {
-      fprintf(console_out, _("\n-- 'Enter' for more, 's' to split, 'c' to cancel :"));
+      fprintf(console_out, _("\n-- 'Enter' for more, 's' to split, 'c' to cancel:"));
       fflush(console_out);
 
       fgets(junk, 16, stdin);
@@ -1784,7 +1798,7 @@ void show_files_and_ask_for_confirmation(main_data *data)
 
   int answer_is_correct = SPLT_FALSE;
   do {
-    fprintf(console_out, _("\n-- 's' to split, 'c' to cancel :"));
+    fprintf(console_out, _("\n-- 's' to split, 'c' to cancel:"));
     fflush(console_out);
 
     fgets(junk, 16, stdin);
@@ -1909,7 +1923,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   while ((option = getopt(data->argc, data->argv,
-          "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12T:XxA:")) != -1)
+          "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12T:XxPE:A:")) != -1)
   {
     switch (option)
     {
@@ -1919,13 +1933,13 @@ int main(int argc, char **orig_argv)
       case 'h':
         show_small_help_exit(data);
         break;
-      //deprecated : use -T
+      //deprecated: use -T
       case '1':
         mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
         opt->T_option_value = 1;
         opt->T_option = SPLT_TRUE;
         break;
-      //deprecated : use -T
+      //deprecated: use -T
       case '2':
         mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
         opt->T_option_value = 2;
@@ -1989,6 +2003,14 @@ int main(int argc, char **orig_argv)
         mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
         opt->c_option = SPLT_TRUE;
         opt->cddb_arg = strdup(optarg);
+        break;
+      case 'P':
+        opt->P_option = SPLT_TRUE;
+        mp3splt_set_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
+        break;
+      case 'E':
+        opt->export_cue_arg = strdup(optarg);
+        opt->E_option = SPLT_TRUE;
         break;
       case 'A':
         opt->A_option = SPLT_TRUE;
@@ -2069,12 +2091,6 @@ int main(int argc, char **orig_argv)
         console_progress = stdout;
         fclose(stdout);
         break;
-      /*case 'E':
-        opt->E_option = SPLT_TRUE;
-        break;
-      case 'P':
-        mp3splt_set_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
-        break;*/
       default:
         print_error_exit(_("read man page for documentation"
               " or type 'mp3splt -h'."), data);
@@ -2305,7 +2321,14 @@ int main(int argc, char **orig_argv)
     sl->number_of_levels = 0;
     err = SPLT_OK;
 
-    fprintf(console_out,_(" Processing file '%s' ...\n"),current_filename);
+    if (opt->P_option)
+    {
+      fprintf(console_out,_(" Pretending to split file '%s' ...\n"),current_filename);
+    }
+    else
+    {
+      fprintf(console_out,_(" Processing file '%s' ...\n"),current_filename);
+    }
     fflush(console_out);
 
     if ((strcmp(current_filename, "-") == 0 || strcmp(current_filename, "o-") == 0) &&
@@ -2452,31 +2475,37 @@ int main(int argc, char **orig_argv)
               float average_silence_levels = sl->level_sum / (double) sl->number_of_levels;
               char message[256] = { '\0' };
               snprintf(message,256,
-                  _(" Average silence level : %.2f dB"), average_silence_levels);
+                  _(" Average silence level: %.2f dB"), average_silence_levels);
               print_message(message);
             }
           }
         }
-
-        //if cddb split, put message at the end
-        if (opt->c_option && err >= 0 && !opt->q_option)
-        {
-          print_message(_("\n +-----------------------------------------------------------------------------+\n"
-              " |NOTE: When you use cddb/cue, split files might be not very precise due to:|\n"
-              " |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n"
-              " |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n"
-              " |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n"
-              " |3) Encoders might add some padding frames so  that  file is longer than CD.  |\n"
-              " |4) There are several entries of the same cd on CDDB, find the best for yours.|\n"
-              " |   Usually you can find the correct splitpoints, so good luck!  |\n"
-              " +-----------------------------------------------------------------------------+\n"
-              " | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n"
-              " +-----------------------------------------------------------------------------+\n"));
-        }
       }
     }
 
-    //go to the next file
+    if (opt->E_option)
+    {
+      err = SPLT_OK;
+      mp3splt_export_to_cue(state, opt->export_cue_arg, SPLT_TRUE, &err);
+      process_confirmation_error(err, data);
+    }
+
+    if (opt->c_option && err >= 0 && !opt->q_option)
+    {
+      print_message(_("\n +-----------------------------------------------------------------------------+\n"
+            " |NOTE: When you use cddb/cue, split files might be not very precise due to:|\n"
+            " |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n"
+            " |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n"
+            " |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n"
+            " |3) Encoders might add some padding frames so  that  file is longer than CD.  |\n"
+            " |4) There are several entries of the same cd on CDDB, find the best for yours.|\n"
+            " |   Usually you can find the correct splitpoints, so good luck!  |\n"
+            " +-----------------------------------------------------------------------------+\n"
+            " | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n"
+            " +-----------------------------------------------------------------------------+\n"));
+    }
+
+    //next file
     if (data->number_of_filenames > 1)
     {
       fprintf(console_out,"\n");

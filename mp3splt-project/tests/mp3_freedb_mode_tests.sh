@@ -14,10 +14,10 @@ function _test_freedb_search_get_cgi_tracktype
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/La_Verue__Today.mp3' ...
- Freedb search type : cddb_cgi , Site: tracktype.org/~cddb/cddb.cgi , Port: 80
- Freedb get type : $get_type , Site: $get_url , Port: $get_port
+ Freedb search type: cddb_cgi , Site: tracktype.org/~cddb/cddb.cgi , Port: 80
+ Freedb get type: $get_type , Site: $get_url , Port: $get_port
 
-  Search string : hacking the future
+  Search string: hacking the future
 
 Searching from tracktype.org/~cddb/cddb.cgi on port 80 using cddb_cgi ...
  freedb search processed

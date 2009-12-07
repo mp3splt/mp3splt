@@ -100,6 +100,198 @@ $auto_adjust_warning"
   echo
 }
 
+function test_cddb_mode_and_pretend
+{
+  _create_cddb_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cddb mode & pretend"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ reading informations from CDDB file songs/test.cddb ...
+
+  Artist: Don't worry
+  Album: Hack me
+  Tracks: 4
+
+ cddb file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/Don't worry - 1 - A famous title.mp3\" created
+   File \"$OUTPUT_DIR/Don't worry - 2 - Yeah, split me !.mp3\" created
+   File \"$OUTPUT_DIR/MS - 3 - 7 sins campaign.mp3\" created
+   File \"$OUTPUT_DIR/Don't worry - 4 - What the hack _.mp3\" created
+ Processed 9380 frames - Sync errors: 0
+ file split
+$auto_adjust_warning"
+  mp3splt_args="-P -d $OUTPUT_DIR -c $CDDB_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
+  p_green "OK"
+  echo
+}
+
+function test_cddb_mode_and_cue
+{
+  _create_cddb_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cddb mode & cue export"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ reading informations from CDDB file songs/test.cddb ...
+
+  Artist: Don't worry
+  Album: Hack me
+  Tracks: 4
+
+ cddb file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/Don't worry - 1 - A famous title.mp3\" created
+   File \"$OUTPUT_DIR/Don't worry - 2 - Yeah, split me !.mp3\" created
+   File \"$OUTPUT_DIR/MS - 3 - 7 sins campaign.mp3\" created
+   File \"$OUTPUT_DIR/Don't worry - 4 - What the hack _.mp3\" created
+ Processed 9380 frames - Sync errors: 0
+ file split
+ CUE file 'output/output_out.cue' created.
+$auto_adjust_warning"
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR -c $CDDB_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 5
+
+  check_file_content "output/output_out.cue" "TITLE \"Hack me\"
+PERFORMER \"Don't worry\"
+FILE \"songs/La_Verue__Today.mp3\" MP3
+  TRACK 01 AUDIO
+    TITLE \"A famous title\"
+    PERFORMER \"Don't worry\"
+    INDEX 01 00:00:00
+  TRACK 02 AUDIO
+    TITLE \"Yeah, split me !\"
+    PERFORMER \"Don't worry\"
+    INDEX 01 01:04:67
+  TRACK 03 AUDIO
+    TITLE \"7 sins campaign\"
+    PERFORMER \"MS\"
+    INDEX 01 02:11:34
+  TRACK 04 AUDIO
+    TITLE \"What the hack _\"
+    PERFORMER \"Don't worry\"
+    INDEX 01 03:34:40
+  TRACK 05 AUDIO
+    TITLE \"\"
+    PERFORMER \"\"
+    INDEX 01 04:05:00"
+
+  current_file="$OUTPUT_DIR/Don't worry - 1 - A famous title.mp3"
+  check_current_mp3_length "01.04"
+  check_current_file_has_xing
+  check_current_file_size "1424387"
+  check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "A famous title"\
+  "2009" "Other" "12" "1" ""
+
+  current_file="$OUTPUT_DIR/Don't worry - 2 - Yeah, split me !.mp3"
+  check_current_mp3_length "01.06"
+  check_current_file_has_xing
+  check_current_file_size "1499156"
+  check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "Yeah, split me !"\
+  "2009" "Other" "12" "2" ""
+
+  current_file="$OUTPUT_DIR/MS - 3 - 7 sins campaign.mp3"
+  check_current_mp3_length "01.23"
+  check_current_file_has_xing
+  check_current_file_size "1989671"
+  check_all_mp3_tags_with_version "2" "MS" "Hack me" "7 sins campaign"\
+  "2009" "Other" "12" "3" ""
+
+  current_file="$OUTPUT_DIR/Don't worry - 4 - What the hack _.mp3"
+  check_current_mp3_length "00.30"
+  check_current_file_has_xing
+  check_current_file_size "690906"
+  check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "What the hack _"\
+  "2009" "Other" "12" "4" ""
+
+  p_green "OK"
+  echo
+}
+
+function test_cddb_mode_pretend_and_cue
+{
+  _create_cddb_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cddb mode & cue & pretend"
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
+ reading informations from CDDB file songs/test.cddb ...
+
+  Artist: Don't worry
+  Album: Hack me
+  Tracks: 4
+
+ cddb file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/Don't worry - 1 - A famous title.mp3\" created
+   File \"$OUTPUT_DIR/Don't worry - 2 - Yeah, split me !.mp3\" created
+   File \"$OUTPUT_DIR/MS - 3 - 7 sins campaign.mp3\" created
+   File \"$OUTPUT_DIR/Don't worry - 4 - What the hack _.mp3\" created
+ Processed 9380 frames - Sync errors: 0
+ file split
+ CUE file 'output/output_out.cue' created.
+$auto_adjust_warning"
+  mp3splt_args="-P -E output/out.cue -d $OUTPUT_DIR -c $CDDB_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 1
+
+  check_file_content "output/output_out.cue" "TITLE \"Hack me\"
+PERFORMER \"Don't worry\"
+FILE \"songs/La_Verue__Today.mp3\" MP3
+  TRACK 01 AUDIO
+    TITLE \"A famous title\"
+    PERFORMER \"Don't worry\"
+    INDEX 01 00:00:00
+  TRACK 02 AUDIO
+    TITLE \"Yeah, split me !\"
+    PERFORMER \"Don't worry\"
+    INDEX 01 01:04:67
+  TRACK 03 AUDIO
+    TITLE \"7 sins campaign\"
+    PERFORMER \"MS\"
+    INDEX 01 02:11:34
+  TRACK 04 AUDIO
+    TITLE \"What the hack _\"
+    PERFORMER \"Don't worry\"
+    INDEX 01 03:34:40
+  TRACK 05 AUDIO
+    TITLE \"\"
+    PERFORMER \"\"
+    INDEX 01 04:05:00"
+
+  p_green "OK"
+  echo
+}
+
 function test_cddb_mode_quiet
 {
   _create_cddb_file
