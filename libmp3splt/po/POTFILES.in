@@ -6,5 +6,9 @@ src/types_func.c
 src/splt.c
 src/utils.c
 src/plugins.c
+src/cue.c
+src/freedb.c
+src/cddb_cue_common.c
+src/splt_array.c
 plugins/mp3.c
 plugins/ogg.c

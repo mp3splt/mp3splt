@@ -24,7 +24,11 @@ checks.c ../include/libmp3splt/checks.h \
 utils.c ../include/libmp3splt/utils.h \
 plugins.c ../include/libmp3splt/plugins.h \
 win32.c ../include/libmp3splt/win32.h \
-audacity.c ../include/libmp3splt/audacity.h
+cue.c ../include/libmp3splt/cue.h \
+cddb_cue_common.c ../include/libmp3splt/cddb_cue_common.h \
+freedb.c ../include/libmp3splt/freedb.h \
+audacity.c ../include/libmp3splt/audacity.h \
+splt_array.c ../include/libmp3splt/splt_array.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale

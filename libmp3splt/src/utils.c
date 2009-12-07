@@ -632,6 +632,22 @@ void splt_u_order_splitpoints(splt_state *state, int len)
 /****************************/
 /* utils for the tags       */
 
+static char *splt_u_get_word_and_replace_with_tags(const char *word, int word_length)
+{
+  /*char *word_with_tags = NULL;
+
+  splt_array *parts = splt_array_new();
+
+  char *ptr = word;
+  //while (*ptr )
+  //{
+    //TODO
+  //}
+
+  return word_with_tags;*/
+  return NULL;
+}
+
 //parse the word, returns a allocated string with the recognised word
 //-return must be freed
 static char *splt_u_parse_tag_word(const char *cur_pos,
@@ -687,6 +703,14 @@ static char *splt_u_parse_tag_word(const char *cur_pos,
           *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           return NULL;
         }
+
+//TODO
+//        word = splt_u_get_word_and_replace_with_tags(equal_sign + 1, string_length);
+//        if (word == NULL)
+//        {
+//          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+//          return NULL;
+//       }
       }
       else
       {
@@ -700,6 +724,9 @@ static char *splt_u_parse_tag_word(const char *cur_pos,
   }
 
   cur_pos = word_end;
+
+  /*fprintf(stdout, "word = _%s_\n", word);
+  fflush(stdout);*/
 
   return word;
 }
@@ -2644,7 +2671,7 @@ int splt_u_create_directories(splt_state *state, const char *dir)
         //don't create output directories if we pretend to split
         if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          if ((splt_u_mkdir(junk)) == -1)
+          if ((splt_u_mkdir(state, junk)) == -1)
           {
             splt_t_set_strerror_msg(state);
             splt_t_set_error_data(state,junk);
@@ -2670,7 +2697,7 @@ int splt_u_create_directories(splt_state *state, const char *dir)
     {
       splt_u_print_debug(state,"final directory ...",0, last_dir);
 
-      if ((splt_u_mkdir(last_dir)) == -1)
+      if ((splt_u_mkdir(state, last_dir)) == -1)
       {
         splt_t_set_strerror_msg(state);
         splt_t_set_error_data(state,last_dir);
@@ -2840,8 +2867,13 @@ FILE *splt_u_fopen(const char *filename, const char *mode)
   }
 }
 
-int splt_u_mkdir(const char *path)
+int splt_u_mkdir(splt_state *state, const char *path)
 {
+  if (splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  {
+    return 0;
+  }
+
 #ifdef __WIN32__
   if (splt_u_win32_check_if_encoding_is_utf8(path))
   {
@@ -3150,10 +3182,14 @@ char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split)
   splt_tags *tags = splt_t_get_tags(state, &tags_number);
   char *artist_or_performer = tags[current_split].artist;
 
-  if ((tags[current_split].performer != NULL) &&
-      (tags[current_split].performer[0] != '\0'))
+  if (tags[current_split].performer == NULL)
   {
-    artist_or_performer = tags[current_split].performer;
+    return artist_or_performer;
+  }
+
+  if (tags[current_split].performer[0] != '\0')
+  {
+    return tags[current_split].performer;
   }
 
   return artist_or_performer;
@@ -3195,6 +3231,66 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
   return SPLT_FALSE;
 }
 
+size_t splt_u_fwrite(splt_state *state, const void *ptr,
+    size_t size, size_t nmemb, FILE *stream)
+{
+  if (splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  {
+    return size * nmemb;
+  }
+  else
+  {
+    return fwrite(ptr, size, nmemb, stream);
+  }
+}
+
+//result must be freed
+char *splt_u_get_file_with_output_path(splt_state *state,
+    char *filename, int *error)
+{
+  char *new_fname = NULL;
+  if (filename != NULL)
+  {
+    //we don't care about the path; we clean the string
+    splt_u_cleanstring(state, filename, error);
+    if (error < 0) { return NULL; }
+
+    char *path_of_split = splt_t_get_path_of_split(state);
+    int malloc_number = strlen(filename) + 2;
+    if (path_of_split)
+    {
+      malloc_number += strlen(path_of_split);
+    }
+    //allocate memory for the m3u file
+    if ((new_fname = malloc(malloc_number)) != NULL)
+    {
+      if (path_of_split)
+      {
+        if (path_of_split[strlen(path_of_split)] == SPLT_DIRCHAR)
+        {
+          snprintf(new_fname, malloc_number, "%s%s",
+              path_of_split, filename);
+        }
+        else
+        {
+          snprintf(new_fname, malloc_number, "%s%c%s",
+              path_of_split, SPLT_DIRCHAR, filename);
+        }
+      }
+      else
+      {
+        snprintf(new_fname, malloc_number, "%s", filename);
+      }
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+  }
+
+  return new_fname;
+}
+
 int splt_u_str_ends_with(const char *str1, const char *str2)
 {
   if (!str1 || !str2)
@@ -3218,4 +3314,3 @@ int splt_u_str_ends_with(const char *str1, const char *str2)
 
   return SPLT_TRUE;
 }
-

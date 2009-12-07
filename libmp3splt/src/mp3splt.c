@@ -657,7 +657,6 @@ float mp3splt_get_float_option(splt_state *state, int option_name,
 //returns possible error
 int mp3splt_split(splt_state *state)
 {
-  //the result of the split
   int error = SPLT_OK;
 
   if (state != NULL)
@@ -668,7 +667,6 @@ int mp3splt_split(splt_state *state)
 
       splt_u_print_debug(state,"Starting to split file...",0,NULL);
 
-      //the new filename path
       char *new_filename_path = NULL;
       char *fname_to_split = splt_t_get_filename_to_split(state);
 
@@ -712,7 +710,7 @@ int mp3splt_split(splt_state *state)
 
       //if we have compatible options
       //this function is optional,
-      if (!splt_check_compatible_options(state))
+      if (! splt_check_compatible_options(state))
       {
         error = SPLT_ERROR_INCOMPATIBLE_OPTIONS;
         goto function_end;
@@ -846,9 +844,11 @@ int mp3splt_split(splt_state *state)
       splt_p_end(state, &error);
 
 function_end:
-      //free memory
-      free(new_filename_path);
-      new_filename_path = NULL;
+      if (new_filename_path)
+      {
+        free(new_filename_path);
+        new_filename_path = NULL;
+      }
 
       splt_t_unlock_library(state);
     }
@@ -1057,31 +1057,33 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
       splt_t_lock_library(state);
 
       char *freedb_file_content = NULL;
-      freedb_file_content =
-        splt_freedb_get_file(state, disc_id, err,
-            cddb_get_type,cddb_get_server,port);
+      freedb_file_content = splt_freedb_get_file(state, disc_id, err,
+          cddb_get_type, cddb_get_server, port);
 
       //if no error, write file
       if (*err == SPLT_FREEDB_FILE_OK)
       {
-        //we write the result to the file
-        FILE *output = NULL;
-        if (!(output = splt_u_fopen(cddb_file, "w")))
+        if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state,cddb_file);
-          *err = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-        }
-        else
-        {
-          fprintf(output,"%s",freedb_file_content);
-          if (fclose(output) != 0)
+          //we write the result to the file
+          FILE *output = NULL;
+          if (!(output = splt_u_fopen(cddb_file, "w")))
           {
             splt_t_set_strerror_msg(state);
-            splt_t_set_error_data(state, cddb_file);
-            *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+            splt_t_set_error_data(state,cddb_file);
+            *err = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
           }
-          output = NULL;
+          else
+          {
+            fprintf(output,"%s",freedb_file_content);
+            if (fclose(output) != 0)
+            {
+              splt_t_set_strerror_msg(state);
+              splt_t_set_error_data(state, cddb_file);
+              *err = SPLT_ERROR_CANNOT_CLOSE_FILE;
+            }
+            output = NULL;
+          }
         }
       }
 
@@ -1091,6 +1093,34 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
         free(freedb_file_content);
         freedb_file_content = NULL;
       }
+
+      splt_t_unlock_library(state);
+    }
+    else
+    {
+      *err = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    *err = SPLT_ERROR_STATE_NULL;
+  }
+}
+
+void mp3splt_export_to_cue(splt_state *state, const char *out_file,
+    short stop_at_total_time, int *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  if (state != NULL)
+  {
+    if (!splt_t_library_locked(state))
+    {
+      splt_t_lock_library(state);
+
+      splt_cue_export_to_file(state, out_file, stop_at_total_time, err);
 
       splt_t_unlock_library(state);
     }

@@ -30,76 +30,9 @@
  *
  *********************************************************/
 
-/**
- * @file   cddb.h
- * 
- * @brief  related to cddb, cue and freedb
- * 
- */
-
 #ifndef MP3SPLT_CDDB_H
 
-/*******************************/
-/* freedb internet structure */
-
-//structure for the socket connection
-typedef struct {
-  short proxy;
-  char hostname[512];
-  int port;
-  char *auth;
-} splt_addr;
-
-/***********************/
-/* cue */
-
-int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error);
-
-/***********************/
-/* cddb */
-
 int splt_cddb_put_splitpoints (const char *file, splt_state *state, int *error);
-
-/***********************/
-/* freedb */
-
-int splt_freedb_process_search(splt_state *state, char *search, 
-    int search_type, const char *cddb_get_server,
-    int port);
-char *splt_freedb_get_file(splt_state *state, int i, int *error,
-    int get_type, const char *cddb_get_server, int port);
-
-/**********************/
-/* constants */
-
-/* freedb stuff */
-
-//global freedb, ports and buffersize
-#define SPLT_FREEDB_BUFFERSIZE 8192
-
-#define SPLT_FREEDB2_SITE "tracktype.org"
-#define SPLT_FREEDB_SITE "freedb.org"
-
-//cddb protocol
-#define SPLT_FREEDB_HELLO "CDDB HELLO nouser mp3splt.sf.net "SPLT_PACKAGE_NAME" "SPLT_PACKAGE_VERSION"\n"
-#define SPLT_FREEDB_GET_FILE "CDDB READ %s %s\n"
-
-//cddb.cgi
-#define SPLT_FREEDB2_SEARCH "GET %s?cmd=cddb+album+%s"SPLT_FREEDB_HELLO_PROTO
-#define SPLT_FREEDB_HELLO_PROTO "&hello=nouser+mp3splt.sf.net+"SPLT_PACKAGE_NAME"+"SPLT_PACKAGE_VERSION"&proto=5\n"
-#define SPLT_FREEDB_CDDB_CGI_GET_FILE "GET %s?cmd=cddb+read+%s+%s"SPLT_FREEDB_HELLO_PROTO
-
-//the type found in the cue file
-#define SPLT_CUE_NOTHING 0
-#define SPLT_CUE_TRACK 1
-#define SPLT_CUE_TITLE 2
-#define SPLT_CUE_PERFORMER 3
-#define SPLT_CUE_INDEX 4
-
-//proxy stuff
-//#define PROXYCONFIG ".mp3splt"
-//#define PROXYDLG "HTTP/1.0\nUserAgent: "PACKAGE_NAME"/"PACKAGE_VERSION"\n"
-//#define SPLT_AUTH "Proxy-Authorization: Basic "
 
 #define MP3SPLT_CDDB_H
 
