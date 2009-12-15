@@ -347,32 +347,28 @@ bloc_end:
 }
 
 /************************************/
-/* splt time split */
+/* splt time and length split */
 
-//function used with the -t option (time split
-//create an indefinite number of smaller files with a fixed time
-//length specified by options.split_time in seconds
-void splt_s_time_split(splt_state *state, int *error)
+static void splt_s_split_by_time(splt_state *state, int *error,
+    double split_time_length, int number_of_files)
 {
-  splt_t_put_info_message_to_client(state, _(" info: starting time mode split\n"));
-  splt_u_print_overlap_time(state);
-
   char *final_fname = NULL;
   int j=0, tracks=1;
   double begin = 0.f;
-  double end = (double) splt_t_get_float_option(state, SPLT_OPT_SPLIT_TIME);
-  if (end == 0.0)
-  {
-    *error = SPLT_ERROR_TIME_SPLIT_VALUE_INVALID;
-    return;
-  }
+  double end = split_time_length;
+  long total_time = splt_t_get_total_time(state);
 
-  if (end >= 0)
+  if (split_time_length >= 0)
   {
+    splt_u_print_overlap_time(state);
+
     int err = SPLT_OK;
 
-    int temp_int = (int)floor(((splt_t_get_total_time(state)/100.0) /
-          (state->options.split_time))+1) + 1;
+    int temp_int = number_of_files + 1;
+    if (number_of_files == -1)
+    {
+      temp_int = (int)floor(((total_time / 100.0) / (split_time_length))+1) + 1;
+    }
     splt_t_set_splitnumber(state, temp_int);
 
     splt_t_set_oformat_digits(state);
@@ -413,10 +409,9 @@ void splt_s_time_split(splt_state *state, int *error)
 
           splt_t_set_splitpoint_value(state, current_split,(long)(begin*100));
           long end_splitpoint = end * 100;
-          long total_time = splt_t_get_total_time(state);
           if (total_time > 0 && end_splitpoint >= total_time)
           {
-            end_splitpoint = splt_t_get_total_time(state);
+            end_splitpoint = total_time;
             //avoid worst scenarios where floor & SPLT_OK_SPLIT_EOF do not work
             last_file = SPLT_TRUE;
           }
@@ -446,7 +441,7 @@ void splt_s_time_split(splt_state *state, int *error)
 
           //set new splitpoints
           begin = end;
-          end += splt_t_get_float_option(state,SPLT_OPT_SPLIT_TIME);
+          end += split_time_length;
           tracks++;
 
           //get out if error
@@ -523,6 +518,59 @@ void splt_s_time_split(splt_state *state, int *error)
   else
   {
     *error = SPLT_ERROR_NEGATIVE_TIME_SPLIT;
+  }
+}
+
+//function used with the -t option (time split
+//create an indefinite number of smaller files with a fixed time
+//length specified by options.split_time in seconds
+void splt_s_time_split(splt_state *state, int *error)
+{
+  splt_t_put_info_message_to_client(state, _(" info: starting time mode split\n"));
+
+  double split_time_length = (double) splt_t_get_float_option(state, SPLT_OPT_SPLIT_TIME);
+  if (((long)split_time_length) == 0)
+  {
+    *error = SPLT_ERROR_TIME_SPLIT_VALUE_INVALID;
+    return;
+  }
+
+  splt_s_split_by_time(state, error, split_time_length, -1);
+}
+
+//function used with the -L option (length split
+//split into X files
+//X is defined by SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER
+void splt_s_equal_length_split(splt_state *state, int *error)
+{
+  splt_t_put_info_message_to_client(state, _(" info: starting 'split in parts' mode\n"));
+
+  double total_time = splt_t_get_total_time_as_double_secs(state);
+  if (total_time > 0)
+  {
+    int number_of_files =
+      splt_t_get_int_option(state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER);
+
+    if (number_of_files > 0)
+    {
+      double split_time_length = total_time / number_of_files;
+      splt_s_split_by_time(state, error, split_time_length, number_of_files);
+    }
+    else
+    {
+      *error = SPLT_ERROR_LENGTH_SPLIT_VALUE_INVALID;
+      return;
+    }
+  }
+  else
+  {
+    *error = SPLT_ERROR_CANNOT_GET_TOTAL_TIME;
+    return;
+  }
+
+  if (*error == SPLT_TIME_SPLIT_OK)
+  {
+    *error = SPLT_LENGTH_SPLIT_OK;
   }
 }
 

@@ -820,6 +820,9 @@ int mp3splt_split(splt_state *state)
         case SPLT_OPTION_TIME_MODE:
           splt_s_time_split(state, &error);
           break;
+        case SPLT_OPTION_LENGTH_MODE:
+          splt_s_equal_length_split(state, &error);
+          break;
         case SPLT_OPTION_ERROR_MODE:
           splt_s_error_split(state, &error);
           break;

@@ -632,22 +632,6 @@ void splt_u_order_splitpoints(splt_state *state, int len)
 /****************************/
 /* utils for the tags       */
 
-static char *splt_u_get_word_and_replace_with_tags(const char *word, int word_length)
-{
-  /*char *word_with_tags = NULL;
-
-  splt_array *parts = splt_array_new();
-
-  char *ptr = word;
-  //while (*ptr )
-  //{
-    //TODO
-  //}
-
-  return word_with_tags;*/
-  return NULL;
-}
-
 //parse the word, returns a allocated string with the recognised word
 //-return must be freed
 static char *splt_u_parse_tag_word(const char *cur_pos,
@@ -703,14 +687,6 @@ static char *splt_u_parse_tag_word(const char *cur_pos,
           *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
           return NULL;
         }
-
-//TODO
-//        word = splt_u_get_word_and_replace_with_tags(equal_sign + 1, string_length);
-//        if (word == NULL)
-//        {
-//          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-//          return NULL;
-//       }
       }
       else
       {
@@ -2332,6 +2308,9 @@ char *splt_u_strerror(splt_state *state, splt_code error_code)
       case SPLT_TIME_SPLIT_OK:
         snprintf(error_msg,max_error_size, _(" time split ok"));
         break;
+      case SPLT_LENGTH_SPLIT_OK:
+        snprintf(error_msg,max_error_size, _(" split in parts ok"));
+        break;
       case SPLT_SILENCE_OK:
         snprintf(error_msg,max_error_size, _(" silence split ok"));
         break;
@@ -2372,6 +2351,12 @@ char *splt_u_strerror(splt_state *state, splt_code error_code)
         break;
       case SPLT_ERROR_TIME_SPLIT_VALUE_INVALID:
         snprintf(error_msg,max_error_size, _(" error: invalid time split value"));
+        break;
+      case SPLT_ERROR_LENGTH_SPLIT_VALUE_INVALID:
+        snprintf(error_msg,max_error_size, _(" error: invalid number of files for equal length split"));
+        break;
+      case SPLT_ERROR_CANNOT_GET_TOTAL_TIME:
+        snprintf(error_msg,max_error_size, _(" error: cannot get total audio length"));
         break;
       case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER:
         snprintf(error_msg,max_error_size,
