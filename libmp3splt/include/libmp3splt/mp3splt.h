@@ -414,7 +414,12 @@ typedef enum {
    * Will create an indefinite number of smaller files with
    * a fixed time length specified by #SPLT_OPT_SPLIT_TIME
    */
-  SPLT_OPTION_TIME_MODE
+  SPLT_OPTION_TIME_MODE,
+  /**
+   * Split in X pieces of equal time length.
+   * X is defined by the #SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER option
+   */
+  SPLT_OPTION_LENGTH_MODE,
 } splt_split_mode_options;
 
 /**
@@ -594,6 +599,10 @@ typedef struct {
    *  or version 1 if compiled without libid3tag support
    */
   int force_tags_version;
+  /**
+   * the number of files to be created when splitting by equal time length
+   */
+  int length_split_file_number;
 } splt_options;
 
 /**********************************/
@@ -749,6 +758,7 @@ typedef enum {
   SPLT_TIME_SPLIT_OK = 6,
   SPLT_NO_SILENCE_SPLITPOINTS_FOUND = 7,
   SPLT_OK_SPLIT_EOF = 8,
+  SPLT_LENGTH_SPLIT_OK = 9,
 
   SPLT_FREEDB_OK = 100,
   SPLT_FREEDB_FILE_OK = 101,
@@ -797,6 +807,8 @@ typedef enum {
   SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE = -32,
   SPLT_ERROR_PLUGIN_ERROR = -33,
   SPLT_ERROR_TIME_SPLIT_VALUE_INVALID = -34,
+  SPLT_ERROR_LENGTH_SPLIT_VALUE_INVALID = -35,
+  SPLT_ERROR_CANNOT_GET_TOTAL_TIME = -36,
 
   SPLT_FREEDB_ERROR_INITIALISE_SOCKET = -101,
   SPLT_FREEDB_ERROR_CANNOT_GET_HOST = -102,
@@ -998,7 +1010,11 @@ typedef enum {
   /**
    * if we force a tags version or not
    */
-  SPLT_OPT_FORCE_TAGS_VERSION
+  SPLT_OPT_FORCE_TAGS_VERSION,
+  /**
+   * number of files to split by equal time length
+   */
+  SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER
 } splt_int_options;
 
 //options types: long

@@ -67,9 +67,10 @@ void splt_s_multiple_split(splt_state *state, int *error);
 void splt_s_normal_split(splt_state *state, int *error);
 
 /************************************/
-/* splt time split */
+/* splt time and equal length split */
 
 void splt_s_time_split(splt_state *state, int *error);
+void splt_s_equal_length_split(splt_state *state, int *error);
 
 /************************************/
 /* splt silence detection and split */

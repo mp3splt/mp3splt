@@ -39,14 +39,13 @@
 
 #include <libmp3splt/mp3splt.h>
 
-//constants
-//we include the "config.h" file from the config options
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
 #define VERSION "2.2.7a"
 #define PACKAGE_NAME "mp3splt"
 #endif
+
 #define MP3SPLT_DATE "04/11/09"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
@@ -63,7 +62,6 @@ FILE *console_out = NULL;
 FILE *console_err = NULL;
 FILE *console_progress = NULL;
 
-//command line options
 typedef struct {
   //force id3v1 tags, force id3v2 tags or both
   short T_option;
@@ -85,12 +83,13 @@ typedef struct {
   short O_option;
   short X_option;
   short A_option;
-  //export cue
-  //short E_option;
   //-Q option
   short qq_option;
   //info -i option, m3u file option
-  short i_option; short m_option;
+  short i_option;
+  short m_option;
+  short S_option;
+  int S_option_value;
   //cddb argument, output dir argument, parameters arguments with -p
   char *cddb_arg; char *dir_arg; char *param_args;
   char *export_cue_arg;
@@ -362,6 +361,7 @@ void show_small_help_exit(main_data *data)
         " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
         " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"));
   print_message(_(" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"));
+  print_message(_(" -S + SPLIT_NUMBER: split in SPLIT_NUMBER files"));
   print_message(_(" -i   Count how many silence splitpoints we have with silence detection\n"
         "      (Use -p for arguments)\n"
         " -v   Prints current version and exits\n"
@@ -536,7 +536,7 @@ int we_have_incompatible_stdin_option(options *opt)
   return opt->s_option || opt->w_option ||
     opt->l_option || opt->e_option ||
     opt->i_option || opt->a_option ||
-    opt->p_option;
+    opt->p_option || opt->S_option;
 }
 
 //check if we have the correct arguments
@@ -557,7 +557,7 @@ void check_args(int argc, main_data *data)
       if (we_have_incompatible_stdin_option(opt))
       {
         print_error_exit(_("cannot use -k option (or STDIN) with"
-              " one of the following options: -s -w -l -e -i -a -p"), data);
+              " one of the following options: -S -s -w -l -e -i -a -p"), data);
       }
     }
 
@@ -571,7 +571,7 @@ void check_args(int argc, main_data *data)
           opt->p_option || opt->o_option ||
           opt->g_option || opt->n_option ||
           opt->x_option || opt->A_option ||
-          opt->E_option)
+          opt->E_option || opt->S_option)
       {
         print_error_exit(_("the -w option can only be used with -m, -d, -q and -Q"), data);
       }
@@ -587,7 +587,8 @@ void check_args(int argc, main_data *data)
           opt->p_option || opt->o_option ||
           opt->g_option || opt->d_option ||
           opt->n_option || opt->qq_option ||
-          opt->x_option || opt->A_option)
+          opt->x_option || opt->A_option ||
+          opt->S_option)
       {
         print_error_exit(_("the -l option can only be used with -q"), data);
       }
@@ -600,7 +601,8 @@ void check_args(int argc, main_data *data)
           opt->s_option || opt->i_option || 
           opt->a_option || opt->p_option ||
           opt->g_option || opt->n_option ||
-          opt->A_option || opt->E_option)
+          opt->A_option || opt->E_option ||
+          opt->S_option)
       {
         print_error_exit(_("the -e option can only be used with -m, -f, -o, -d, -q, -Q"), data);
       }
@@ -616,45 +618,49 @@ void check_args(int argc, main_data *data)
     {
       if (opt->t_option || opt->s_option ||
           opt->i_option || opt->g_option ||
-          opt->A_option)
+          opt->A_option || opt->S_option)
       {
-        print_error_exit(_("the -c option cannot be used with -t, -g, -s, -A or -i"), data);
+        print_error_exit(_("the -c option cannot be used with -t, -g, -s, -A, -i or -S"), data);
       }
     }
 
     if (opt->A_option)
     {
-      if (opt->t_option || opt->s_option || opt->i_option)
+      if (opt->t_option || opt->s_option || opt->i_option || opt->S_option)
       {
-        print_error_exit(_("the -A option cannot be used with -t, -s, or -i"), data);
+        print_error_exit(_("the -A option cannot be used with -t, -s, -i or -S"), data);
       }
     }
 
     //time split (-t)
     if (opt->t_option)
     {
-      if (opt->s_option || opt->i_option)
+      if (opt->s_option || opt->i_option || opt->S_option)
       {
-        print_error_exit(_("the -t option cannot be used with -s or -i"), data);
+        print_error_exit(_("the -t option cannot be used with -s, -i or -S"), data);
       }
     }
 
     //silence split (-s)
     if (opt->s_option)
     {
-      if (opt->a_option || opt->i_option)
+      if (opt->a_option || opt->i_option || opt->S_option)
       {
-        print_error_exit(_("-s option cannot be used with -a or -i"), data);
+        print_error_exit(_("-s option cannot be used with -a, -i or -S"), data);
       }
     }
 
     //auto adjust option (-a)
     if (opt->a_option)
     {
-      if (opt->i_option)
+      if (opt->i_option || opt->S_option)
       {
-        print_error_exit(_("-a option cannot be used with -i"), data);
+        print_error_exit(_("-a option cannot be used with -i or -S"), data);
       }
+    }
+
+    if (opt->S_option)
+    {
     }
 
     //parameters (-p)
@@ -1541,6 +1547,8 @@ options *new_options(main_data *data)
   opt->qq_option = SPLT_FALSE;
   opt->A_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
+  opt->S_option = SPLT_FALSE;
+  opt->S_option_value = 0;
   opt->cddb_arg = NULL; opt->dir_arg = NULL;
   opt->export_cue_arg = NULL;
   opt->audacity_labels_arg = NULL;
@@ -1923,7 +1931,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   while ((option = getopt(data->argc, data->argv,
-          "m:O:SDvifkwleqnasc:d:o:t:p:g:hQN12T:XxPE:A:")) != -1)
+          "m:O:Dvifkwleqnasc:d:o:t:p:g:hQN12T:XxPE:A:S:")) != -1)
   {
     switch (option)
     {
@@ -2020,6 +2028,12 @@ int main(int argc, char **orig_argv)
         opt->m_option = SPLT_TRUE;
         opt->m3u_arg = strdup(optarg);
         mp3splt_set_m3u_filename(state, opt->m3u_arg);
+        break;
+      case 'S':
+        opt->S_option = SPLT_TRUE;
+        opt->S_option_value = atoi(optarg);
+        mp3splt_set_int_option(state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER, opt->S_option_value);
+        mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_LENGTH_MODE);
         break;
       case 'd':
         opt->dir_arg = strdup(optarg);
@@ -2273,7 +2287,7 @@ int main(int argc, char **orig_argv)
   int normal_split = SPLT_FALSE;
   if (!opt->l_option && !opt->i_option && !opt->c_option &&
       !opt->e_option && !opt->t_option && !opt->w_option &&
-      !opt->s_option && !opt->A_option)
+      !opt->s_option && !opt->A_option && !opt->S_option)
   {
     if (data->number_of_splitpoints < 2)
     {
@@ -2335,7 +2349,7 @@ int main(int argc, char **orig_argv)
         we_have_incompatible_stdin_option(opt))
     {
       print_error_exit(_("cannot use -k option (or STDIN) with"
-            " one of the following options : -s -w -l -e -i -a -p"), data);
+            " one of the following options: -S -s -w -l -e -i -a -p"), data);
     }
 
     //we put the filename

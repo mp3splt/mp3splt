@@ -2123,6 +2123,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->options.auto_increment_tracknumber_tags = 0;
   state->options.enable_silence_log = SPLT_FALSE;
   state->options.force_tags_version = 0;
+  state->options.length_split_file_number = 1;
 }
 
 //sets the error data information
@@ -2295,6 +2296,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_FORCE_TAGS_VERSION:
       state->options.force_tags_version = value;
       break;
+    case SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER:
+      state->options.length_split_file_number = value;
+      break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
@@ -2392,6 +2396,9 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       break;
     case SPLT_OPT_FORCE_TAGS_VERSION:
       return state->options.force_tags_version;
+      break;
+    case SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER:
+      return state->options.length_split_file_number;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
