@@ -736,15 +736,12 @@ int mp3splt_split(splt_state *state)
         if (error < 0) { goto function_end; }
       }
 
-      //we put the new filename path in the state
       splt_t_set_new_filename_path(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
-      //we create output directories if they do not exist
       error = splt_u_create_directories(state, new_filename_path);
       if (error < 0) { goto function_end; }
 
-      //check means the test is ok
       splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
@@ -779,6 +776,8 @@ int mp3splt_split(splt_state *state)
         snprintf(mess, malloc_size, _(" M3U file '%s' will be created.\n"),
             m3u_fname_with_path);
         splt_t_put_info_message_to_client(state, mess);
+        free(mess);
+        mess = NULL;
         free(m3u_fname_with_path);
         m3u_fname_with_path = NULL;
       }
