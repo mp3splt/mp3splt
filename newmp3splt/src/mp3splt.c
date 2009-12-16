@@ -2128,7 +2128,7 @@ int main(int argc, char **orig_argv)
   }
 
   //callback for the progress bar
-  if (!opt->X_option)
+  if (!opt->q_option && !opt->X_option)
   {
     mp3splt_set_progress_function(state, put_progress_bar);
   }
