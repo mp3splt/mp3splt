@@ -30,49 +30,12 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_OGG_H
+#ifndef MP3SPLT_PLUGIN_UTILS_H
 
-#include <vorbis/codec.h>
-#include <vorbis/vorbisfile.h>
+splt_tags *splt_pu_replace_tags_in_tags(splt_tags *tags, int current_tags,
+    const char *artist_or_performer, int track);
 
-#define SPLT_OGGEXT ".ogg"
-
-/**********************************/
-/* Ogg structures                 */
-
-typedef struct {
-  int length;
-  unsigned char *packet;
-} splt_v_packet;
-
-typedef struct {
-  ogg_sync_state *sync_in;
-  ogg_stream_state *stream_in;
-  vorbis_dsp_state *vd;
-  vorbis_info *vi;
-  vorbis_block *vb;
-  int prevW;
-  ogg_int64_t initialgranpos;
-  ogg_int64_t len;
-  ogg_int64_t cutpoint_begin;
-  unsigned int serial;
-  splt_v_packet **packets; /* 2 */
-  splt_v_packet **headers; /* 3 */
-  OggVorbis_File vf;
-  vorbis_comment vc;
-  FILE *in,*out;
-  short end;
-  float off;
-  float temp_level;
-  //we count how many pages we have for the headers
-  long header_page_number;
-  //the granpos at the end of the first page of the stream
-  ogg_int64_t stream_granpos;
-} splt_ogg_state;
-
-#define SPLT_OGG_BUFSIZE 4096
-
-#define MP3SPLT_OGG_H
+#define MP3SPLT_PLUGIN_UTILS_H
 
 #endif
 

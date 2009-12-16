@@ -1104,6 +1104,7 @@ void splt_t_get_original_tags(splt_state *state, int *err)
 //append original tags
 int splt_t_append_original_tags(splt_state *state)
 {
+  //TODO: replace @ with @@ if REPLACE_TAGS_In_TAGS option
   return splt_t_append_tags(state,
       state->original_tags.title,
       state->original_tags.artist,
@@ -1129,33 +1130,39 @@ int splt_t_append_tags(splt_state *state,
       old_tagsnumber, SPLT_TAGS_TITLE, title);
   if (error != SPLT_OK)
     return error;
+
   error = splt_t_set_tags_char_field(state,
       old_tagsnumber, SPLT_TAGS_ARTIST, artist);
   if (error != SPLT_OK)
     return error;
+
   error = splt_t_set_tags_char_field(state,
       old_tagsnumber, SPLT_TAGS_ALBUM, album);
   if (error != SPLT_OK)
     return error;
+
   error = splt_t_set_tags_char_field(state,
       old_tagsnumber, SPLT_TAGS_PERFORMER, performer);
   if (error != SPLT_OK)
     return error;
+
   error = splt_t_set_tags_char_field(state,
       old_tagsnumber, SPLT_TAGS_YEAR, year);
   if (error != SPLT_OK)
     return error;
+
   error = splt_t_set_tags_char_field(state,
       old_tagsnumber, SPLT_TAGS_COMMENT, comment);
   if (error != SPLT_OK)
     return error;
+
   error = splt_t_set_tags_int_field(state,
       old_tagsnumber, SPLT_TAGS_TRACK, track);
   if (error != SPLT_OK)
     return error;
+
   error = splt_t_set_tags_uchar_field(state,
       old_tagsnumber, SPLT_TAGS_GENRE, genre);
-
   return error;
 }
 
@@ -1231,19 +1238,24 @@ int splt_t_append_only_non_null_previous_tags(splt_state *state,
   return error;
 }
 
+void splt_t_reset_tags(splt_tags *tags)
+{
+  tags->title = NULL;
+  tags->artist = NULL;
+  tags->album = NULL;
+  tags->performer = NULL;
+  tags->year = NULL;
+  tags->comment = NULL;
+  tags->track = -INT_MAX;
+  tags->genre = 0x0;
+  tags->tags_version = 0;
+}
+
 //only used for splt_t_new_tags_if_necessary
 //-index should not be out of bounds
 static void splt_t_set_empty_tags(splt_state *state, int index)
 {
-  state->split.tags[index].title = NULL;
-  state->split.tags[index].artist = NULL;
-  state->split.tags[index].album = NULL;
-  state->split.tags[index].performer = NULL;
-  state->split.tags[index].year = NULL;
-  state->split.tags[index].comment = NULL;
-  state->split.tags[index].track = -INT_MAX;
-  state->split.tags[index].genre = 0x0;
-  state->split.tags[index].tags_version = 0;
+  splt_t_reset_tags(&state->split.tags[index]);
 }
 
 //allocate new tags if necessary
@@ -1883,6 +1895,49 @@ unsigned char splt_t_get_tags_uchar_field(splt_state *state, int index,
   return 0x0;
 }
 
+static void splt_t_free_one_tags(splt_tags *tags)
+{
+  if (tags)
+  {
+    if (tags->title)
+    {
+      free(tags->title);
+      tags->title = NULL;
+    }
+    if (tags->artist)
+    {
+      free(tags->artist);
+      tags->artist = NULL;
+    }
+    if (tags->album)
+    {
+      free(tags->album);
+      tags->album = NULL;
+    }
+    if (tags->performer)
+    {
+      free(tags->performer);
+      tags->performer = NULL;
+    }
+    if (tags->year)
+    {
+      free(tags->year);
+      tags->year = NULL;
+    }
+    if (tags->comment)
+    {
+      free(tags->comment);
+      tags->comment = NULL;
+    }
+  }
+}
+
+void splt_t_free_one_tags_full(splt_tags *tags)
+{
+  splt_t_free_one_tags(tags);
+  if (tags) { free(tags); }
+}
+
 //this function clears all the tags
 void splt_t_free_tags(splt_state *state)
 {
@@ -1891,36 +1946,7 @@ void splt_t_free_tags(splt_state *state)
     int i = 0;
     for (i = 0; i < state->split.real_tagsnumber; i++)
     {
-      if (state->split.tags[i].title)
-      {
-        free(state->split.tags[i].title);
-        state->split.tags[i].title = NULL;
-      }
-      if (state->split.tags[i].artist)
-      {
-        free(state->split.tags[i].artist);
-        state->split.tags[i].artist = NULL;
-      }
-      if (state->split.tags[i].album)
-      {
-        free(state->split.tags[i].album);
-        state->split.tags[i].album = NULL;
-      }
-      if (state->split.tags[i].performer)
-      {
-        free(state->split.tags[i].performer);
-        state->split.tags[i].performer = NULL;
-      }
-      if (state->split.tags[i].year)
-      {
-        free(state->split.tags[i].year);
-        state->split.tags[i].year = NULL;
-      }
-      if (state->split.tags[i].comment)
-      {
-        free(state->split.tags[i].comment);
-        state->split.tags[i].comment = NULL;
-      }
+      splt_t_free_one_tags(&state->split.tags[i]);
     }
     free(state->split.tags);
     state->split.tags = NULL;
@@ -2124,6 +2150,7 @@ static void splt_t_state_put_default_options(splt_state *state, int *error)
   state->options.enable_silence_log = SPLT_FALSE;
   state->options.force_tags_version = 0;
   state->options.length_split_file_number = 1;
+  state->options.replace_tags_in_tags = SPLT_FALSE;
 }
 
 //sets the error data information
@@ -2299,6 +2326,9 @@ void splt_t_set_int_option(splt_state *state, int option_name, int value)
     case SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER:
       state->options.length_split_file_number = value;
       break;
+    case SPLT_OPT_REPLACE_TAGS_IN_TAGS:
+      state->options.replace_tags_in_tags = value;
+      break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
@@ -2399,6 +2429,9 @@ int splt_t_get_int_option(splt_state *state, int option_name)
       break;
     case SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER:
       return state->options.length_split_file_number;
+      break;
+    case SPLT_OPT_REPLACE_TAGS_IN_TAGS:
+      return state->options.replace_tags_in_tags;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);

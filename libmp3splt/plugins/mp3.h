@@ -38,8 +38,6 @@
 
 #include <mad.h>
 
-#include "splt.h"
-
 /**********************************/
 /* Mp3 structures                 */
 

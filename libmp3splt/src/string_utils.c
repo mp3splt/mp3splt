@@ -30,49 +30,56 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_OGG_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include <vorbis/codec.h>
-#include <vorbis/vorbisfile.h>
+#include <assert.h>
 
-#define SPLT_OGGEXT ".ogg"
+void splt_su_append(char **str, size_t *allocated_size,
+    const char *to_append, size_t to_append_size)
+{
+  if (str == NULL || to_append == NULL || to_append_size == 0)
+  {
+    return;
+  }
 
-/**********************************/
-/* Ogg structures                 */
+  size_t new_allocated_size = *allocated_size;
 
-typedef struct {
-  int length;
-  unsigned char *packet;
-} splt_v_packet;
+  if (*str == NULL || *allocated_size == 0)
+  {
+    *str = malloc(to_append_size + 1);
+    *str[0] = '\0';
+    new_allocated_size = to_append_size + 1;
+  }
+  else
+  {
+    *str = realloc(*str, to_append_size + *allocated_size);
+    new_allocated_size = to_append_size + *allocated_size;
+  }
 
-typedef struct {
-  ogg_sync_state *sync_in;
-  ogg_stream_state *stream_in;
-  vorbis_dsp_state *vd;
-  vorbis_info *vi;
-  vorbis_block *vb;
-  int prevW;
-  ogg_int64_t initialgranpos;
-  ogg_int64_t len;
-  ogg_int64_t cutpoint_begin;
-  unsigned int serial;
-  splt_v_packet **packets; /* 2 */
-  splt_v_packet **headers; /* 3 */
-  OggVorbis_File vf;
-  vorbis_comment vc;
-  FILE *in,*out;
-  short end;
-  float off;
-  float temp_level;
-  //we count how many pages we have for the headers
-  long header_page_number;
-  //the granpos at the end of the first page of the stream
-  ogg_int64_t stream_granpos;
-} splt_ogg_state;
+  *allocated_size = new_allocated_size;
 
-#define SPLT_OGG_BUFSIZE 4096
+  strncat(*str, to_append, to_append_size);
+}
 
-#define MP3SPLT_OGG_H
+/*int main()
+{
+  char *test = NULL;
+  size_t test_size = 0;
 
-#endif
+  splt_su_append(&test, &test_size, "abcd", 5);
+  splt_su_append(&test, &test_size, "efg", 4);
+  splt_su_append(&test, &test_size, "hijklm", 7);
+
+  assert(strcmp(test, "abcdefghijklm") == 0);
+
+  if (test) 
+  {
+    free(test);
+    test = NULL;
+  }
+
+  return EXIT_SUCCESS;
+}*/
 

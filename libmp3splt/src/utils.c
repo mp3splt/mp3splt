@@ -701,9 +701,6 @@ static char *splt_u_parse_tag_word(const char *cur_pos,
 
   cur_pos = word_end;
 
-  /*fprintf(stdout, "word = _%s_\n", word);
-  fflush(stdout);*/
-
   return word;
 }
 
@@ -802,6 +799,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
           ambiguous = SPLT_TRUE;
         }
       }
+
+      int track = -1;
 
       char *tag = NULL;
       int original_tags = SPLT_FALSE;
@@ -974,7 +973,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'b':
-              album = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous,error);
+              album = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (album != NULL)
               {
@@ -993,7 +992,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 't':
-              title = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous,error);
+              title = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (title != NULL)
               {
@@ -1013,7 +1012,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'c':
-              comment = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous,error);
+              comment = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (comment != NULL)
               {
@@ -1033,7 +1032,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'y':
-              year = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous,error);
+              year = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (year != NULL)
               {
@@ -1053,7 +1052,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'n':
-              tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous,error);
+              tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               if (tracknumber != NULL)
               {
@@ -1070,7 +1069,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
               break;
             case 'N':
-              tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis, &ambiguous,error);
+              tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis, &ambiguous, error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
               splt_t_set_int_option(state,SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, SPLT_TRUE);
               if (auto_increment_tracknumber)
@@ -1095,7 +1094,6 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         }
       }
 
-      int track = -1;
       //we check that we really have the tracknumber as integer
       if (tracknumber)
       {

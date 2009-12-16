@@ -603,6 +603,7 @@ typedef struct {
    * the number of files to be created when splitting by equal time length
    */
   int length_split_file_number;
+  int replace_tags_in_tags;
 } splt_options;
 
 /**********************************/
@@ -1014,7 +1015,11 @@ typedef enum {
   /**
    * number of files to split by equal time length
    */
-  SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER
+  SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER,
+  /**
+   *
+   */
+  SPLT_OPT_REPLACE_TAGS_IN_TAGS
 } splt_int_options;
 
 //options types: long

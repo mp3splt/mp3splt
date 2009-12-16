@@ -2095,7 +2095,22 @@ int main(int argc, char **orig_argv)
           opt->custom_tags = NULL;
         }
         mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
-        opt->custom_tags = strdup(optarg);
+        if (optarg)
+        {
+          if (optarg[0] == 'r' && strlen(optarg) > 1)
+          {
+            opt->custom_tags = strdup(optarg+1);
+            mp3splt_set_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS, SPLT_TRUE);
+          }
+          else
+          {
+            opt->custom_tags = strdup(optarg);
+          }
+        }
+        else
+        {
+          opt->custom_tags = NULL;
+        }
         opt->g_option = SPLT_TRUE;
         break;
       case 'Q':

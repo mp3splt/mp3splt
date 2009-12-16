@@ -109,7 +109,7 @@ int splt_t_new_tags_if_necessary(splt_state *state, int index);
 void splt_t_auto_increment_tracknumber_tag(splt_state *state);
 int splt_t_append_original_tags(splt_state *state);
 void splt_t_get_original_tags(splt_state *state, int *err);
-int splt_t_append_tags(splt_state *state,
+int splt_t_append_tags(splt_state *state, 
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
@@ -232,6 +232,8 @@ void splt_t_clean_strerror_msg(splt_state *state);
 void splt_t_free_splitpoints_tags(splt_state *state);
 void splt_t_free_splitpoints(splt_state *state);
 void splt_t_free_tags(splt_state *state);
+void splt_t_reset_tags(splt_tags *tags);
+void splt_t_free_one_tags_full(splt_tags *tags);
 void splt_t_clean_original_tags(splt_state *state);
 void splt_t_clean_one_split_data(splt_state *state, int num);
 void splt_t_clean_split_data(splt_state *state,int tracks);

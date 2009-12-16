@@ -43,6 +43,7 @@
 #include "freedb.h"
 #include "audacity.h"
 #include "splt_array.h"
+#include "string_utils.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

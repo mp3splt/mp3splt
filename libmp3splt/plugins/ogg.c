@@ -44,7 +44,9 @@
 #include <fcntl.h>
 #endif
 
+#include "splt.h"
 #include "ogg.h"
+#include "plugin_utils.h"
 
 #define FIRST_GRANPOS 1
 
@@ -494,9 +496,9 @@ void splt_ogg_state_free(splt_state *state)
 //puts tags in vc
 //what happens if 'vorbis_comment_add_tag(..)' fails ?
 //- ask vorbis developers
-static vorbis_comment *splt_ogg_v_comment (vorbis_comment *vc, char *artist,
-    char *album, char *title, 
-    char *tracknum, char *date, char *genre, char *comment, int *error)
+static vorbis_comment *splt_ogg_v_comment(vorbis_comment *vc, char *artist,
+    char *album, char *title, char *tracknum, char *date, char *genre, char *comment,
+    int *error)
 {
   if (title!=NULL)
   {
@@ -647,15 +649,27 @@ void splt_ogg_put_tags(splt_state *state, int *error)
         char *artist_or_performer =
           splt_u_get_artist_or_performer_ptr(state, current_tags);
 
+        int track = tags[current_tags].track;
+
+        splt_tags *final_tags = &tags[current_tags];
+        char *artist = artist_or_performer;
+
+        int we_replace_tags_in_tags = splt_t_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
+        if (we_replace_tags_in_tags)
+        {
+          final_tags = splt_pu_replace_tags_in_tags(tags, current_tags, artist_or_performer, track);
+          artist = final_tags->artist;
+        }
+
         splt_ogg_v_comment(&oggstate->vc,
-            artist_or_performer,
-            tags[current_tags].album,
-            tags[current_tags].title,
-            track_string,
-            tags[current_tags].year,
-            (char *)splt_ogg_genre_list[(int) 
-            tags[current_tags].genre],
-            tags[current_tags].comment, error);
+            artist, final_tags->album, final_tags->title, track_string,
+            final_tags->year, (char *)splt_ogg_genre_list[(int)tags[current_tags].genre],
+            final_tags->comment, error);
+
+        if (we_replace_tags_in_tags)
+        {
+          splt_t_free_one_tags_full(final_tags);
+        }
 
         free(track_string);
         track_string = NULL;

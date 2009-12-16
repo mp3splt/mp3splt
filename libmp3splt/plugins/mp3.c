@@ -37,7 +37,9 @@
 #include <fcntl.h>
 #endif
 
+#include "splt.h"
 #include "mp3.h"
+#include "plugin_utils.h"
 
 /****************************/
 /* mp3 constants */
@@ -1192,17 +1194,27 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
         track = current_tags + 1;
       }
 
-      char *artist_or_performer =
-        splt_u_get_artist_or_performer_ptr(state, current_tags);
+      char *artist_or_performer = splt_u_get_artist_or_performer_ptr(state, current_tags);
+
+      splt_tags *final_tags = &tags[current_tags];
+      const char *artist = artist_or_performer;
+
+      int we_replace_tags_in_tags = splt_t_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
+      if (we_replace_tags_in_tags)
+      {
+        final_tags = splt_pu_replace_tags_in_tags(tags, current_tags, artist_or_performer, track);
+        artist = final_tags->artist;
+      }
 
       id3_data = splt_mp3_build_id3_tags(state,
-          tags[current_tags].title,
-          artist_or_performer,
-          tags[current_tags].album,
-          tags[current_tags].year,
-          tags[current_tags].genre,
-          tags[current_tags].comment,
+          final_tags->title, artist, final_tags->album,
+          final_tags->year, tags[current_tags].genre, final_tags->comment,
           track, error, number_of_bytes, id3_version);
+
+      if (we_replace_tags_in_tags)
+      {
+        splt_t_free_one_tags_full(final_tags);
+      }
     }
   }
 

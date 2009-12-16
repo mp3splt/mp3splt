@@ -138,7 +138,7 @@ int splt_array_length(splt_array *array)
   return array->number_of_elements;
 }
 
-int main()
+/*int main()
 {
   splt_array *array = splt_array_new();
 
@@ -168,5 +168,5 @@ int main()
   assert(array == NULL);
 
   return EXIT_SUCCESS;
-}
+}*/
 
