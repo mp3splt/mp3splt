@@ -15,7 +15,7 @@ if MP3_PLUGIN
 
 INCLUDES += @MAD_CFLAGS@
 plugin_LTLIBRARIES += libsplt_mp3.la
-libsplt_mp3_la_SOURCES = mp3.c mp3.h
+libsplt_mp3_la_SOURCES = plugin_utils.c plugin_utils.h mp3.c mp3.h
 libsplt_mp3_la_LDFLAGS = $(common_LDFLAGS) @MAD_LIBS@
 
 if ID3TAG
@@ -32,7 +32,7 @@ if OGG_PLUGIN
 
 INCLUDES += @OGG_CFLAGS@ @VORBIS_CFLAGS@
 plugin_LTLIBRARIES += libsplt_ogg.la
-libsplt_ogg_la_SOURCES = ogg.c ogg.h
+libsplt_ogg_la_SOURCES = plugin_utils.c plugin_utils.h ogg.c ogg.h
 libsplt_ogg_la_LDFLAGS = $(common_LDFLAGS) @VORBISFILE_LIBS@ @VORBIS_LIBS@ @OGG_LIBS@ 
 
 endif

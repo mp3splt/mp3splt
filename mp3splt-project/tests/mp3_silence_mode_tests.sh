@@ -166,15 +166,11 @@ FILE "songs/La_Verue__Today_silence.mp3" MP3
   TRACK 02 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
-    INDEX 01 01:04:79
+    INDEX 01 01:04:80
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
-    INDEX 01 02:55:46
-  TRACK 04 AUDIO
-    TITLE "Today"
-    PERFORMER "La Verue"
-    INDEX 01 04:05:68'
+    INDEX 01 02:55:46'
 
   p_green "OK"
   echo
