@@ -156,26 +156,11 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
   if ((strcmp(new_filename_path, "") != 0) &&
       (strcmp(new_filename_path, current_directory) != 0))
   {
-    mode_t st_mode;
-    int status = splt_u_stat(new_filename_path, &st_mode, NULL);
-    if(status == -1)
+    if (!splt_u_check_if_directory(new_filename_path))
     {
-      splt_t_set_strerror_msg(state);
+      splt_t_set_strerr_msg(state, _("directory does not exists"));
       splt_t_set_error_data(state, new_filename_path);
       *error = SPLT_ERROR_INCORRECT_PATH;
-    }
-    else
-    {
-      if (S_ISDIR(st_mode) != 0)
-      {
-        return;
-      }
-      else
-      {
-        splt_t_set_strerr_msg(state,_("Directory does not exists"));
-        splt_t_set_error_data(state, new_filename_path);
-        *error = SPLT_ERROR_INCORRECT_PATH;
-      }
     }
   }
 }

@@ -39,6 +39,7 @@
 #include "splt.h"
 
 #include <dirent.h>
+#include <unistd.h>
 
 #ifdef __WIN32__
 #include <windows.h>
@@ -2712,7 +2713,7 @@ void splt_u_print(char *mess)
 }
 
 //check if its a directory
-int splt_u_check_if_directory(char *fname)
+int splt_u_check_if_directory(const char *fname)
 {
   if (fname == NULL)
   {
@@ -2729,6 +2730,41 @@ int splt_u_check_if_directory(char *fname)
       {
         return SPLT_TRUE;
       }
+#ifndef __WIN32__
+      else if (S_ISLNK(st_mode))
+      {
+        size_t linked_fname_size = strlen(fname) + 2048;
+        char *linked_fname = malloc(sizeof(char) * linked_fname_size);
+        if (linked_fname == NULL)
+        {
+          return SPLT_FALSE;
+          //TODO: error
+          //*error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        }
+
+        memset(linked_fname, '\0', sizeof(char) * linked_fname_size);
+
+        ssize_t real_link_size = readlink(fname, linked_fname, linked_fname_size);
+        linked_fname[real_link_size] = '\0';
+
+        mode_t linked_st_mode;
+        int linked_status = splt_u_stat(linked_fname, &linked_st_mode, NULL);
+        if (linked_status == 0)
+        {
+          if (S_ISDIR(linked_st_mode))
+          {
+            free(linked_fname);
+            linked_fname = NULL;
+            return SPLT_TRUE;
+          }
+        }
+
+        free(linked_fname);
+        linked_fname = NULL;
+
+        return SPLT_FALSE;
+      }
+#endif
       else
       {
         return SPLT_FALSE;
