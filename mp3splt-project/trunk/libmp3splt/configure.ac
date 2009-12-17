@@ -33,8 +33,8 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT([libmp3splt],[0.5.8a],[io_fx@yahoo.fr])
-AM_INIT_AUTOMAKE(libmp3splt, 0.5.8a)
+AC_INIT([libmp3splt],[0.5.9],[io_fx@yahoo.fr])
+AM_INIT_AUTOMAKE(libmp3splt, 0.5.9)
 AC_CONFIG_HEADERS([config.h])
 
 DEBUG_FLAGS="-g"
