@@ -1561,6 +1561,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
 
 function_end:
   //we free memory allocated by mad_frame_decode(..)
+  //TODO: memory leak
   //splt_mp3_finish_stream_frame(mp3state);
   mad_synth_finish(&mp3state->synth);
 
@@ -1580,8 +1581,7 @@ static void splt_mp3_end(splt_state *state, int *error)
         if (fclose(mp3state->file_input) != 0)
         {
           splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state,
-              splt_t_get_filename_to_split(state));
+          splt_t_set_error_data(state, splt_t_get_filename_to_split(state));
           *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         }
       }
