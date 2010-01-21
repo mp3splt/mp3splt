@@ -381,6 +381,7 @@ typedef struct {
   int real_tagsnumber;
   //structure in which we have all the tags
   splt_tags *tags;
+  splt_tags tags_like_x;
 } splt_struct;
 
 /**********************************/

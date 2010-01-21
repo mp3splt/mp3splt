@@ -28,37 +28,60 @@
 #include <string.h>
 
 #include "splt.h"
-#include "plugin_utils.h"
+#include "tags_utils.h"
 
-static char *splt_pu_replace_with_tags(const char *word, splt_tags *tags, int track);
+static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags, int track);
 
-splt_tags *splt_pu_replace_tags_in_tags(splt_tags *tags,
-    int current_tags, const char *artist_or_performer, int track)
+//int splt_tu_get_tags_index(splt_state
+
+int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
 {
-  splt_tags *new_tags = malloc(sizeof(splt_tags));
-  splt_t_reset_tags(new_tags);
+  //TODO: error handling
+  int err = SPLT_OK;
 
-  //todo: handle errors
-  if (new_tags == NULL)
+  splt_tags *tags = splt_t_get_tags_to_replace_in_tags(state);
+
+  if (tags)
   {
-    return NULL;
+    int track = 0;
+    if (tags->track > 0)
+    {
+      track = tags->track;
+    }
+    else
+    {
+      if (current_split != -1)
+      {
+        track = current_split + 1;
+      }
+      else
+      {
+        track = splt_t_get_current_split_file_number(state);
+      }
+    }
+
+    splt_tags *cur_tags = splt_t_get_current_tags(state);
+    cur_tags->track = track;
+    cur_tags->genre = tags->genre;
+    cur_tags->tags_version = tags->tags_version;
+
+    splt_su_free_replace(&cur_tags->title,
+        splt_tu_get_replaced_with_tags(tags->title, tags, track));
+    splt_su_free_replace(&cur_tags->artist,
+        splt_tu_get_replaced_with_tags(tags->artist, tags, track));
+    splt_su_free_replace(&cur_tags->album,
+        splt_tu_get_replaced_with_tags(tags->album, tags, track));
+    splt_su_free_replace(&cur_tags->year,
+        splt_tu_get_replaced_with_tags(tags->year, tags, track));
+    splt_su_free_replace(&cur_tags->comment,
+        splt_tu_get_replaced_with_tags(tags->comment, tags, track));
   }
 
-  new_tags->title = splt_pu_replace_with_tags(tags[current_tags].title,
-      &tags[current_tags], track);
-  new_tags->artist = splt_pu_replace_with_tags(artist_or_performer,
-      &tags[current_tags], track);
-  new_tags->album = splt_pu_replace_with_tags(tags[current_tags].album,
-      &tags[current_tags], track);
-  new_tags->year = splt_pu_replace_with_tags(tags[current_tags].year,
-      &tags[current_tags], track);
-  new_tags->comment = splt_pu_replace_with_tags(tags[current_tags].comment,
-      &tags[current_tags], track);
-
-  return new_tags;
+  return err;
 }
 
-static char *splt_pu_replace_with_tags(const char *word, splt_tags *tags, int track)
+static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags,
+    int track)
 {
   char *word_with_tags = NULL;
   size_t word_with_tags_size = 0;

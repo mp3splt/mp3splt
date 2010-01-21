@@ -29,7 +29,8 @@ cddb_cue_common.c ../include/libmp3splt/cddb_cue_common.h \
 freedb.c ../include/libmp3splt/freedb.h \
 audacity.c ../include/libmp3splt/audacity.h \
 splt_array.c ../include/libmp3splt/splt_array.h \
-string_utils.c ../include/libmp3splt/string_utils.h
+string_utils.c ../include/libmp3splt/string_utils.h \
+tags_utils.c ../include/libmp3splt/tags_utils.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale

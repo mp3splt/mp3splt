@@ -44,15 +44,14 @@ static long splt_s_real_split(splt_state *state, int *error, int save_end_point)
 {
   double splt_beg = splt_t_get_i_begin_point(state);
   double splt_end = splt_t_get_i_end_point(state);
-  char *final_fname = 
-    splt_u_get_fname_with_path_and_extension(state,error);
-  long new_end_point = splt_end * 100;
+  char *final_fname = splt_u_get_fname_with_path_and_extension(state,error);
+  long new_end_point = splt_u_time_to_long_ceil(splt_end);
 
   if (*error >= 0)
   {
     double new_sec_end_point = 
       splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
-    new_end_point = new_sec_end_point * 100;
+    new_end_point = splt_u_time_to_long_ceil(new_sec_end_point);
 
     //if no error
     if (*error >= 0)
@@ -180,7 +179,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
       long saved_end_point = splt_t_get_splitpoint_value(state, i+1, &get_error);
       splt_u_overlap_time(state, i+1);
 
-      err = splt_u_put_output_format_filename(state, i);
+      err = splt_u_finish_tags_and_put_output_format_filename(state, i);
       if (err < 0) { *error = err; goto end; }
 
       long new_end_point = splt_s_split(state, i, i+1, error);
@@ -269,8 +268,7 @@ void splt_s_error_split(splt_state *state, int *error)
         int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
         if (err < 0) { *error = err; goto bloc_end; }
 
-        //we put the output filename
-        err = splt_u_put_output_format_filename(state, -1);
+        err = splt_u_finish_tags_and_put_output_format_filename(state, -1);
         if (err < 0) { *error = err; goto bloc_end; }
 
         //we get the final fname
@@ -407,8 +405,9 @@ static void splt_s_split_by_time(splt_state *state, int *error,
 
           int current_split = splt_t_get_current_split(state);
 
-          splt_t_set_splitpoint_value(state, current_split,(long)(begin*100));
-          long end_splitpoint = end * 100;
+          splt_t_set_splitpoint_value(state, current_split,
+              splt_u_time_to_long_ceil(begin));
+          long end_splitpoint = splt_u_time_to_long_ceil(end);
           if (total_time > 0 && end_splitpoint >= total_time)
           {
             end_splitpoint = total_time;
@@ -420,7 +419,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           double overlapped_end = (double)
             ((double)splt_u_overlap_time(state, current_split+1) / 100.0);
 
-          err = splt_u_put_output_format_filename(state, -1);
+          err = splt_u_finish_tags_and_put_output_format_filename(state, -1);
           if (err < 0) { *error = err; break; }
 
           //we get the final fname
@@ -429,7 +428,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
 
           double new_sec_end_point = splt_p_split(state, final_fname,
               begin, overlapped_end, error, save_end_point);
-          long new_end_point = new_sec_end_point * 100;
+          long new_end_point = splt_u_time_to_long_ceil(new_sec_end_point);
           splt_array_append(new_end_points, (void *) new_end_point);
 
           //if no error for the split, put the split file
@@ -758,11 +757,12 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             if (append_error < 0) { *error = append_error; found = i; break;}
             append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
-            splt_t_set_splitpoint_value(state, 2*i-1, temp->begin_position * 100);
-            splt_t_set_splitpoint_value(state, 2*i, temp->end_position * 100);
+            splt_t_set_splitpoint_value(state, 2*i-1,splt_u_time_to_long(temp->begin_position));
+            splt_t_set_splitpoint_value(state, 2*i, splt_u_time_to_long(temp->end_position));
           }
           else
           {
+            //TODO
             long temp_silence_pos = splt_u_silence_position(temp, offset) * 100;
             append_error = splt_t_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
             if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
@@ -784,7 +784,9 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
         splt_u_order_splitpoints(state, splitpoints_appended);
 
         //last splitpoint, end of file
-        append_error = splt_t_append_splitpoint(state, splt_t_get_total_time(state), NULL, SPLT_SPLITPOINT);
+        append_error =
+          splt_t_append_splitpoint(state, splt_t_get_total_time(state),
+              NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK) { *error = append_error; }
       }
     }
@@ -853,7 +855,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   }
   splt_t_ssplit_free(&state->silence_list);
 
-  //set number of splitpoints
   splt_t_set_splitnumber(state, splitpoints_appended + 1);
 
   return found;

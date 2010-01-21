@@ -34,6 +34,8 @@
 
 void splt_su_append(char **str, size_t *allocated_size,
     const char *to_append, size_t to_append_size);
+void splt_su_free_replace(char **str, char *replacement);
+int splt_su_copy(const char *src, char **dest);
 
 #define MP3SPLT_STRING_UTILS_H
 

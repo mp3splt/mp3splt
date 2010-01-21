@@ -1228,6 +1228,14 @@ end_while:
       {
         we_had_all_tags = SPLT_TRUE;
         all_tags = SPLT_FALSE;
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_TITLE, 0, all_title, 0x0);
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_ARTIST, 0, all_artist, 0x0);
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_ALBUM, 0, all_album, 0x0);
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_PERFORMER, 0, all_performer, 0x0);
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_YEAR, 0, all_year, 0x0);
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_COMMENT, 0, all_comment, 0x0);
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_TRACK, all_tracknumber, NULL, 0x0);
+        splt_t_set_like_x_tags_field(state, SPLT_TAGS_GENRE, 0, NULL, all_genre);
       }
 
       tags_appended++;
@@ -1519,7 +1527,7 @@ void splt_u_create_output_dirs_if_necessary(splt_state *state,
 }
 
 //writes the current filename according to the output_filename
-int splt_u_put_output_format_filename(splt_state *state, int current_split)
+static int splt_u_put_output_format_filename(splt_state *state, int current_split)
 {
   int error = SPLT_OK;
 
@@ -2116,6 +2124,17 @@ end:
   }
 
   return error;
+}
+
+int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int current_split)
+{
+  int err = splt_tu_set_tags_in_tags(state, current_split);
+  if (err < 0)
+  {
+    return err;
+  }
+
+  return splt_u_put_output_format_filename(state, current_split);
 }
 
 /****************************/
@@ -3195,20 +3214,23 @@ end:
   }
 }
 
-char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split)
+char *splt_u_get_artist_or_performer_ptr(splt_tags *tags)
 {
-  int tags_number = 0;
-  splt_tags *tags = splt_t_get_tags(state, &tags_number);
-  char *artist_or_performer = tags[current_split].artist;
+  if (!tags)
+  {
+    return NULL;
+  }
 
-  if (tags[current_split].performer == NULL)
+  char *artist_or_performer = tags->artist;
+
+  if (tags->performer == NULL)
   {
     return artist_or_performer;
   }
 
-  if (tags[current_split].performer[0] != '\0')
+  if (tags->performer[0] != '\0')
   {
-    return tags[current_split].performer;
+    return tags->performer;
   }
 
   return artist_or_performer;
@@ -3333,3 +3355,14 @@ int splt_u_str_ends_with(const char *str1, const char *str2)
 
   return SPLT_TRUE;
 }
+
+long splt_u_time_to_long(double time)
+{
+  return (long) (time * 100.0);
+}
+
+long splt_u_time_to_long_ceil(double time)
+{
+  return (long) ceil(time * 100);
+}
+

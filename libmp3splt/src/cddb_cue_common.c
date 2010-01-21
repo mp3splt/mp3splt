@@ -126,9 +126,8 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
       int current_split = 0;
       do {
         int filename_error = SPLT_OK;
-        //get output format filename
         filename_error =
-          splt_u_put_output_format_filename(state, current_split);
+          splt_u_finish_tags_and_put_output_format_filename(state, current_split);
         if (filename_error != SPLT_OK)
         {
           *error = filename_error;

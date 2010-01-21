@@ -46,7 +46,6 @@
 
 #include "splt.h"
 #include "ogg.h"
-#include "plugin_utils.h"
 
 #define FIRST_GRANPOS 1
 
@@ -555,60 +554,52 @@ void splt_ogg_get_original_tags(const char *filename,
   char *a = NULL,*t = NULL,*al = NULL,*da = NULL, *g = NULL,*tr = NULL,
        *com = NULL;
 
-  int size = 0;
   a = vorbis_comment_query(vc_local, "artist",0);
   if (a != NULL)
   {
-    size = strlen(a);
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST, 0,a,0x0,size);
+    err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST, 0,a,0x0);
     OGG_VERIFY_ERROR();
   }
 
   t = vorbis_comment_query(vc_local, "title",0);
   if (t != NULL)
   {
-    size = strlen(t);
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE, 0,t,0x0,size);
+    err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE, 0,t,0x0);
     OGG_VERIFY_ERROR();
   }
 
   al = vorbis_comment_query(vc_local, "album",0);
   if (al != NULL)
   {
-    size = strlen(al);
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM, 0,al,0x0,size);
+    err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM, 0,al,0x0);
     OGG_VERIFY_ERROR();
   }
 
   da = vorbis_comment_query(vc_local, "date",0);
   if (da != NULL)
   {
-    size = strlen(da);
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR, 0,da,0x0,size);
+    err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR, 0,da,0x0);
     OGG_VERIFY_ERROR();
   }
 
   g = vorbis_comment_query(vc_local, "genre",0);
   if (g != NULL)
   {
-    size = strlen(g);
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE, 0, g, 0x0,size);
+    err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE, 0, g, 0x0);
     OGG_VERIFY_ERROR();
   }
 
   tr = vorbis_comment_query(vc_local, "tracknumber",0);
   if (tr != NULL)
   {
-    size = strlen(tr);
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK, 0,tr, 0x0,size);
+    err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK, 0,tr, 0x0);
     OGG_VERIFY_ERROR();
   }
 
   com = vorbis_comment_query(vc_local, "comment",0);
   if (com != NULL)
   {
-    size = strlen(com);
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT, 0,com,0x0,size);
+    err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT, 0,com,0x0);
     OGG_VERIFY_ERROR();
   }
 }
@@ -620,56 +611,21 @@ void splt_ogg_put_tags(splt_state *state, int *error)
 
   splt_ogg_state *oggstate = state->codec;
 
-  //if we put the original tags
   vorbis_comment_clear(&oggstate->vc);
 
-  //if we put current tags (cddb,cue,...)
   if (splt_t_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
-    int current_tags = splt_t_get_current_tags_number(state);
-
-    //only if the tags exists for the current split
-    if (splt_t_tags_exists(state, current_tags))
+    splt_tags *tags = splt_t_get_current_tags(state);
+    if (tags)
     {
-      int tags_number = 0;
-      splt_tags *tags = splt_t_get_tags(state, &tags_number);
-
-      char *track_string = NULL;
-      if (tags[current_tags].track > 0)
-      {
-        track_string = splt_ogg_trackstring(tags[current_tags].track);
-      }
-      else
-      {
-        track_string = splt_ogg_trackstring(current_tags + 1);
-      }
-
+      char *track_string = splt_ogg_trackstring(tags->track);
       if (track_string)
       {
-        char *artist_or_performer =
-          splt_u_get_artist_or_performer_ptr(state, current_tags);
-
-        int track = tags[current_tags].track;
-
-        splt_tags *final_tags = &tags[current_tags];
-        char *artist = artist_or_performer;
-
-        int we_replace_tags_in_tags = splt_t_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
-        if (we_replace_tags_in_tags)
-        {
-          final_tags = splt_pu_replace_tags_in_tags(tags, current_tags, artist_or_performer, track);
-          artist = final_tags->artist;
-        }
-
+        char *artist_or_performer = splt_u_get_artist_or_performer_ptr(tags);
         splt_ogg_v_comment(&oggstate->vc,
-            artist, final_tags->album, final_tags->title, track_string,
-            final_tags->year, (char *)splt_ogg_genre_list[(int)tags[current_tags].genre],
-            final_tags->comment, error);
-
-        if (we_replace_tags_in_tags)
-        {
-          splt_t_free_one_tags_full(final_tags);
-        }
+            artist_or_performer, tags->album, tags->title, track_string,
+            tags->year, (char *)splt_ogg_genre_list[(int)tags->genre],
+            tags->comment, error);
 
         free(track_string);
         track_string = NULL;

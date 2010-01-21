@@ -50,6 +50,7 @@ extern short global_debug;
 static void splt_t_free_oformat(splt_state *state);
 static void splt_t_state_put_default_options(splt_state *state, int *error);
 static void splt_t_free_files(char **files, int number);
+static splt_tags *splt_t_get_tags_like_x(splt_state *state);
 
 //returns SPLT_TRUE if the filename to split looks like STDIN
 int splt_t_is_stdin(splt_state *state)
@@ -1048,14 +1049,11 @@ int splt_t_get_splitpoint_type(splt_state *state, int index, int *error)
 //'all remaining tags like X'
 void splt_t_auto_increment_tracknumber_tag(splt_state *state)
 {
-  //get the old current split and the current split
   int current_split = splt_t_get_current_split_file_number(state) - 1;
   int old_current_split = current_split;
 
-  //if we set all the tags like the x one
   int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
 
-  //auto increment track tag number if necessary
   if (remaining_tags_like_x != -1)
   {
     if (current_split >= state->split.real_tagsnumber)
@@ -1074,6 +1072,7 @@ void splt_t_auto_increment_tracknumber_tag(splt_state *state)
           int previous_track = splt_t_get_tags_int_field(state, old_current_split - 1, SPLT_TAGS_TRACK);
           splt_t_set_tags_int_field(state, remaining_tags_like_x, SPLT_TAGS_TRACK, previous_track);
         }
+
         if (old_current_split != current_split)
         {
           int tracknumber = 1;
@@ -1082,6 +1081,8 @@ void splt_t_auto_increment_tracknumber_tag(splt_state *state)
             tracknumber = splt_t_get_tags_int_field(state, current_split, SPLT_TAGS_TRACK);
           }
           splt_t_set_tags_int_field(state, current_split, SPLT_TAGS_TRACK, tracknumber+1);
+          splt_t_set_like_x_tags_field(state, SPLT_TAGS_TRACK, tracknumber+1,
+              NULL, 0x0);
         }
       }
     }
@@ -1532,179 +1533,63 @@ void splt_t_clean_original_tags(splt_state *state)
   state->original_tags.genre = 12;
 }
 
-//returns error
-//length is the length of the string
-int splt_t_set_original_tags_field(splt_state *state,
-    int tags_field, int int_data,
-    const char *char_data, unsigned char uchar_data,
-    int length)
+static int splt_t_set_tags_field(splt_tags *tags,
+    int tags_field, int int_data, const char *char_data,
+    unsigned char uchar_data)
 {
-  int error = SPLT_OK;
+  int err = SPLT_OK;
 
   switch (tags_field)
   {
     case SPLT_TAGS_TITLE:
-      if (state->original_tags.title)
-      {
-        free(state->original_tags.title);
-        state->original_tags.title = NULL;
-      }
-      if (char_data == NULL)
-      {
-        state->original_tags.title = NULL;
-      }
-      else
-      {
-        if ((state->original_tags.title = malloc(sizeof(char)*(length+1)))
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-        else
-        {
-          snprintf(state->original_tags.title, length+1,"%s", char_data);
-        }
-      }      
+      err = splt_su_copy(char_data, &tags->title);
       break;
     case SPLT_TAGS_ARTIST:
-      if (state->original_tags.artist)
-      {
-        free(state->original_tags.artist);
-        state->original_tags.artist = NULL;
-      }
-      if (char_data == NULL)
-      {
-        state->original_tags.artist = NULL;
-      }
-      else
-      {
-        if ((state->original_tags.artist = malloc(sizeof(char)*(length+1)))
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-        else
-        {
-          snprintf(state->original_tags.artist,
-              length+1,"%s", char_data);
-        }
-      }
+      err = splt_su_copy(char_data, &tags->artist);
       break;
     case SPLT_TAGS_ALBUM:
-      if (state->original_tags.album)
-      {
-        free(state->original_tags.album);
-        state->original_tags.album = NULL;
-      }
-      if (char_data == NULL)
-      {
-        state->original_tags.album = NULL;
-      }
-      else
-      {
-        if ((state->original_tags.album = malloc(sizeof(char)*(length+1)))
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-        else
-        {
-          snprintf(state->original_tags.album,
-              length+1,"%s", char_data);
-        }
-      }      
+      err = splt_su_copy(char_data, &tags->album);
       break;
     case SPLT_TAGS_YEAR:
-      if (state->original_tags.year)
-      {
-        free(state->original_tags.year);
-        state->original_tags.year = NULL;
-      }
-      if (char_data == NULL)
-      {
-        state->original_tags.year = NULL;
-      }
-      else
-      {
-        if ((state->original_tags.year = malloc(sizeof(char)*(length+1)))
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-        else
-        {
-          snprintf(state->original_tags.year, length+1,"%s", char_data);
-        }
-      }      
+      err = splt_su_copy(char_data, &tags->year);
       break;
     case SPLT_TAGS_COMMENT:
-      if (state->original_tags.comment)
-      {
-        free(state->original_tags.comment);
-        state->original_tags.comment = NULL;
-      }
-      if (char_data == NULL)
-      {
-        state->original_tags.comment = NULL;
-      }
-      else
-      {
-        if ((state->original_tags.comment = malloc(sizeof(char)*(length+1)))
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-        else
-        {
-          snprintf(state->original_tags.comment,
-              length+1,"%s", char_data);
-        }
-      }      
+      err = splt_su_copy(char_data, &tags->comment);
       break;
     case SPLT_TAGS_PERFORMER:
-      if (state->original_tags.performer)
-      {
-        free(state->original_tags.performer);
-        state->original_tags.performer = NULL;
-      }
-      if (char_data == NULL)
-      {
-        state->original_tags.performer = NULL;
-      }
-      else
-      {
-        if ((state->original_tags.performer = malloc(sizeof(char)*(length+1)))
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-        else
-        {
-          snprintf(state->original_tags.performer,
-              length+1,"%s", char_data);
-        }
-      }      
+      err = splt_su_copy(char_data, &tags->performer);
       break;
     case SPLT_TAGS_TRACK:
-      state->original_tags.track = int_data;
+      tags->track = int_data;
       break;
     case SPLT_TAGS_GENRE:
-      state->original_tags.genre = uchar_data;
+      tags->genre = uchar_data;
       break;
     case SPLT_TAGS_VERSION:
-      state->original_tags.tags_version = int_data;
+      tags->tags_version = int_data;
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
       break;
   }
 
-  if (error != SPLT_OK)
-  {
-    splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
-  }
+  return err;
+}
 
-  return error;
+int splt_t_set_like_x_tags_field(splt_state *state,
+    int tags_field, int int_data,
+    const char *char_data, unsigned char uchar_data)
+{
+  return splt_t_set_tags_field(&state->split.tags_like_x, tags_field,
+      int_data, char_data, uchar_data);
+}
+
+int splt_t_set_original_tags_field(splt_state *state,
+    int tags_field, int int_data,
+    const char *char_data, unsigned char uchar_data)
+{
+  return splt_t_set_tags_field(&state->original_tags, tags_field,
+      int_data, char_data, uchar_data);
 }
 
 //set track number
@@ -1794,6 +1679,16 @@ splt_tags *splt_t_get_tags(splt_state *state, int *tags_number)
 {
   *tags_number = state->split.real_tagsnumber;
   return state->split.tags;
+}
+
+splt_tags *splt_t_get_tags_at(splt_state *state, int tags_index)
+{
+  if (!splt_t_tags_exists(state, tags_index))
+  {
+    return NULL;
+  }
+
+  return &state->split.tags[tags_index];
 }
 
 //returns the last tags
@@ -1953,6 +1848,8 @@ void splt_t_free_tags(splt_state *state)
   }
 
   state->split.real_tagsnumber = 0;
+
+  splt_t_free_one_tags(splt_t_get_tags_like_x(state));
 }
 
 /********************************/
@@ -2066,11 +1963,17 @@ void splt_t_set_default_iopts(splt_state *state)
   splt_t_set_new_filename_path(state,NULL,&error);
 }
 
+static splt_tags *splt_t_get_tags_like_x(splt_state *state)
+{
+  return &state->split.tags_like_x;
+}
+
 //puts the default options for a normal split
 static void splt_t_state_put_default_options(splt_state *state, int *error)
 {
   //split
   state->split.tags = NULL;
+  splt_t_reset_tags(splt_t_get_tags_like_x(state));
   state->split.points = NULL;
   state->fname_to_split = NULL;
   state->path_of_split = NULL;
@@ -3262,20 +3165,31 @@ int splt_t_get_current_plugin(splt_state *state)
   return state->current_plugin;
 }
 
-int splt_t_get_current_tags_number(splt_state *state)
+splt_tags *splt_t_get_current_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
 
-  //if we set all the tags like the x one
-  int remaining_tags_like_x = splt_t_get_int_option(state,
-      SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
-
+  int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
   if ((current_tags_number >= state->split.real_tagsnumber) &&
       (remaining_tags_like_x != -1))
   {
-    current_tags_number = remaining_tags_like_x;
+    current_tags_number = remaining_tags_like_x; 
   }
 
-  return current_tags_number;
+  return splt_t_get_tags_at(state, current_tags_number);
+}
+
+splt_tags *splt_t_get_tags_to_replace_in_tags(splt_state *state)
+{
+  int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
+
+  int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  if ((current_tags_number >= state->split.real_tagsnumber) &&
+      (remaining_tags_like_x != -1))
+  {
+    return splt_t_get_tags_like_x(state);
+  }
+
+  return splt_t_get_tags_at(state, current_tags_number);
 }
 
