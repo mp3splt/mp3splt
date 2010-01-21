@@ -32,8 +32,7 @@
 
 #ifndef MP3SPLT_PLUGIN_UTILS_H
 
-splt_tags *splt_pu_replace_tags_in_tags(splt_tags *tags, int current_tags,
-    const char *artist_or_performer, int track);
+int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
 
 #define MP3SPLT_PLUGIN_UTILS_H
 

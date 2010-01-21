@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_INTERNET_TESTS=1
+RUN_INTERNET_TESTS=0
 
 DIFF_CMD="diff"
 VIEW_DIFF_CMD="acoc diff"

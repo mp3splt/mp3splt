@@ -156,6 +156,7 @@ function test_silence_and_cue_export
 168,350006\t177,240005\t889"
   check_file_content "mp3splt.log" "$expected"
 
+  #TODO: verify
   check_file_content "output/output_out.cue" 'TITLE "Riez Noir"
 PERFORMER "La Verue"
 FILE "songs/La_Verue__Today_silence.mp3" MP3

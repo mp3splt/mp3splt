@@ -39,7 +39,6 @@
 
 #include "splt.h"
 #include "mp3.h"
-#include "plugin_utils.h"
 
 /****************************/
 /* mp3 constants */
@@ -764,39 +763,38 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
 
       if (tag_value != NULL)
       {
-        int length = strlen((char *)tag_value);
         switch (id_type)
         {
           case SPLT_MP3_ID3_ALBUM:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
-                0,(char *)tag_value,0x0,length);
+                0,(char *)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_ARTIST:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
-                0,(char *)tag_value,0x0,length);
+                0,(char *)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_TITLE:
             if (strcmp(frame_type,ID3_FRAME_TITLE) == 0)
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
-                  0,(char *)tag_value,0x0,length);
+                  0,(char *)tag_value,0x0);
             }
             break;
           case SPLT_MP3_ID3_YEAR:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
-                0,(char *)tag_value,0x0,length);
+                0,(char *)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_TRACK:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
-                atof((char*)tag_value), NULL,0x0,0);
+                atof((char*)tag_value), NULL,0x0);
             break;
           case SPLT_MP3_ID3_COMMENT:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
-                0,(char*)tag_value,0x0,length);
+                0,(char*)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_GENRE:
             err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                0,NULL, splt_mp3_getgenre((char *)tag_value),0);
+                0,NULL, splt_mp3_getgenre((char *)tag_value));
 
             int number = 80;
             number = atoi((char *)tag_value);
@@ -805,13 +803,13 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
                 (state->original_tags.genre == 0xFF))
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                  0,NULL, number, 0);
+                  0,NULL, number);
             }
             //if we have 0 returned
             if (strcmp((char*)tag_value, "0") == 0)
             {
               err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                  0, NULL, DEFAULT_ID3V1_CATEGORY_INDEX, 0);
+                  0, NULL, DEFAULT_ID3V1_CATEGORY_INDEX);
             }
             break;
           default:
@@ -874,7 +872,7 @@ static void splt_mp3_get_original_tags(const char *filename,
         int err = SPLT_OK;
 
         err = splt_t_set_original_tags_field(state,SPLT_TAGS_VERSION,
-            tags_version, NULL, 0, 0);
+            tags_version, NULL, 0);
         MP3_VERIFY_ERROR();
         err = splt_mp3_put_original_libid3_frame(state,id3tag,ID3_FRAME_ARTIST,
             SPLT_MP3_ID3_ARTIST);
@@ -1176,45 +1174,15 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
 
   if (splt_t_get_int_option(state,SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
-    int current_tags = splt_t_get_current_tags_number(state);
+    splt_tags *tags = splt_t_get_current_tags(state);
 
-    //only if the tags exists for the current split
-    if (splt_t_tags_exists(state, current_tags))
+    if (tags)
     {
-      int tags_number = 0;
-      splt_tags *tags = splt_t_get_tags(state, &tags_number);
-
-      int track = 0;
-      if (tags[current_tags].track > 0)
-      {
-        track = tags[current_tags].track;
-      }
-      else
-      {
-        track = current_tags + 1;
-      }
-
-      char *artist_or_performer = splt_u_get_artist_or_performer_ptr(state, current_tags);
-
-      splt_tags *final_tags = &tags[current_tags];
-      const char *artist = artist_or_performer;
-
-      int we_replace_tags_in_tags = splt_t_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
-      if (we_replace_tags_in_tags)
-      {
-        final_tags = splt_pu_replace_tags_in_tags(tags, current_tags, artist_or_performer, track);
-        artist = final_tags->artist;
-      }
-
+      char *artist_or_performer = splt_u_get_artist_or_performer_ptr(tags);
       id3_data = splt_mp3_build_id3_tags(state,
-          final_tags->title, artist, final_tags->album,
-          final_tags->year, tags[current_tags].genre, final_tags->comment,
-          track, error, number_of_bytes, id3_version);
-
-      if (we_replace_tags_in_tags)
-      {
-        splt_t_free_one_tags_full(final_tags);
-      }
+          tags->title, artist_or_performer, tags->album,
+          tags->year, tags->genre, tags->comment,
+          tags->track, error, number_of_bytes, id3_version);
     }
   }
 

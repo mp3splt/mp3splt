@@ -262,7 +262,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 02 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
-    INDEX 01 02:30:19
+    INDEX 01 02:30:20
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"

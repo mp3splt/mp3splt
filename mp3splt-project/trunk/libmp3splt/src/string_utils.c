@@ -36,6 +36,8 @@
 
 #include <assert.h>
 
+#include "splt.h"
+
 void splt_su_append(char **str, size_t *allocated_size,
     const char *to_append, size_t to_append_size)
 {
@@ -61,6 +63,54 @@ void splt_su_append(char **str, size_t *allocated_size,
   *allocated_size = new_allocated_size;
 
   strncat(*str, to_append, to_append_size);
+}
+
+void splt_su_free_replace(char **str, char *replacement)
+{
+  if (!str)
+  {
+    return;
+  }
+  if (*str)
+  {
+    free(*str);
+  }
+  *str = replacement;
+}
+
+int splt_su_copy(const char *src, char **dest)
+{
+  int err = SPLT_OK;
+
+  if (!dest)
+  {
+    return err;
+  }
+
+  if (*dest)
+  {
+    free(*dest);
+    *dest = NULL;
+  }
+
+  if (src == NULL)
+  {
+    *dest = NULL;
+  }
+  else
+  {
+    int length = strlen(src)+1;
+    if ((*dest = malloc(sizeof(char)*length)) == NULL)
+    {
+      err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+    else
+    {
+      snprintf(*dest, length+1,"%s", src);
+    }
+  }
+
+  return err;
 }
 
 /*int main()

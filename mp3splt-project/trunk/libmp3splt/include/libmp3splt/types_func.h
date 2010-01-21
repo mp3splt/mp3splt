@@ -122,8 +122,10 @@ int splt_t_append_only_non_null_previous_tags(splt_state *state,
 int splt_t_tags_exists(splt_state *state, int index);
 int splt_t_set_original_tags_field(splt_state *state,
     int tags_field, int int_data,
-    const char *char_data, unsigned char uchar_data,
-    int length);
+    const char *char_data, unsigned char uchar_data);
+int splt_t_set_like_x_tags_field(splt_state *state,
+    int tags_field, int int_data,
+    const char *char_data, unsigned char uchar_data);
 int splt_t_set_tags_char_field(splt_state *state, int index,
     int tags_field, const char *data);
 int splt_t_set_tags_uchar_field(splt_state *state, int index,
@@ -132,6 +134,7 @@ int splt_t_set_tags_int_field(splt_state *state, int index,
     int tags_field, int data);
 
 splt_tags *splt_t_get_tags(splt_state *state,int *tags_number);
+splt_tags *splt_t_get_tags_at(splt_state *state, int tags_index);
 char *splt_t_get_tags_char_field(splt_state *state, int index,
     int tags_field);
 int splt_t_get_tags_int_field(splt_state *state, int index, 
@@ -248,7 +251,9 @@ int splt_t_is_stdout(splt_state *state);
 void splt_t_set_current_plugin(splt_state *state, int current_plugin);
 int splt_t_get_current_plugin(splt_state *state);
 int splt_t_alloc_init_new_plugin(splt_plugins *pl);
-int splt_t_get_current_tags_number(splt_state *state);
+splt_tags *splt_t_get_current_tags(splt_state *state);
+splt_tags *splt_t_get_tags_to_replace_in_tags(splt_state *state);
+
 
 #define MP3SPLT_TYPES_FUNC
 

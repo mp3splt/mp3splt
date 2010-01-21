@@ -375,6 +375,42 @@ $auto_adjust_warning"
   echo
 }
 
+function test_cddb_mode_and_output_format_artist_or_performer
+{
+  _create_cddb_file
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="cddb mode & output format artist or performer"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ reading informations from CDDB file songs/test.cddb ...
+
+  Artist: Don't worry
+  Album: Hack me
+  Tracks: 4
+
+ cddb file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/001-Don't worry-A famous title.mp3\" created
+   File \"$OUTPUT_DIR/002-Don't worry-Yeah, split me !.mp3\" created
+   File \"$OUTPUT_DIR/003-MS-7 sins campaign.mp3\" created
+   File \"$OUTPUT_DIR/004-Don't worry-What the hack _.mp3\" created
+ Processed 9380 frames - Sync errors: 0
+ file split
+$auto_adjust_warning"
+  mp3splt_args="-d $OUTPUT_DIR -o @n3-@A-@t -c $CDDB_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  p_green "OK"
+  echo
+}
+
 function test_cddb_mode_and_output_format_error
 {
   _create_cddb_file

@@ -81,7 +81,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
 /* utils for the output format */
 
 int splt_u_parse_outformat(char *s, splt_state *state);
-int splt_u_put_output_format_filename(splt_state *state, int current_split);
+int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int current_split);
 
 /******************************/
 /* utils for debug and errors */
@@ -128,7 +128,7 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
 
 char *splt_u_str_to_upper(const char *str, int *error);
 
-char *splt_u_get_artist_or_performer_ptr(splt_state *state, int current_split);
+char *splt_u_get_artist_or_performer_ptr(splt_tags *tags);
 
 short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
     double fend_sec);
@@ -136,6 +136,8 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
 char *splt_u_get_file_with_output_path(splt_state *state,
     char *filename, int *error);
 int splt_u_str_ends_with(const char *str1, const char *str2);
+long splt_u_time_to_long(double time);
+long splt_u_time_to_long_ceil(double time);
 
 #define MP3SPLT_UTILS_H
 

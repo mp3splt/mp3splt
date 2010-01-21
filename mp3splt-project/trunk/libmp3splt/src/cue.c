@@ -405,31 +405,38 @@ function_end:
 }
 
 static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
-    int current_tags, short with_spaces, short write_album)
+    int tags_index, short with_spaces, short write_album)
 {
-  int tags_number = 0;
-  splt_tags *tags = splt_t_get_tags(state, &tags_number);
+  splt_tags *tags = NULL;
+  if (tags_index >= 0)
+  {
+    tags = splt_t_get_tags_at(state, tags_index);
+  }
+  else
+  {
+    tags = splt_t_get_current_tags(state);
+  }
 
-  if (splt_t_tags_exists(state, current_tags))
+  if (tags)
   {
     if (write_album)
     {
-      if (tags[current_tags].album)
+      if (tags->album)
       {
         if (with_spaces) { fprintf(file_output, "    "); }
-        fprintf(file_output, "TITLE \"%s\"\n", tags[current_tags].album);
+        fprintf(file_output, "TITLE \"%s\"\n", tags->album);
       }
     }
     else
     {
-      if (tags[current_tags].title)
+      if (tags->title)
       {
         if (with_spaces) { fprintf(file_output, "    "); }
-        fprintf(file_output, "TITLE \"%s\"\n", tags[current_tags].title);
+        fprintf(file_output, "TITLE \"%s\"\n", tags->title);
       }
     }
 
-    char *performer = splt_u_get_artist_or_performer_ptr(state, current_tags);
+    char *performer = splt_u_get_artist_or_performer_ptr(tags);
     if (performer)
     {
       if (with_spaces) { fprintf(file_output, "    "); }
@@ -504,6 +511,8 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 
       if (stop_at_total_time)
       {
+        //todo: splitpoint can be slightly != than total_time sometimes
+        // (test with silence and cue)
         if (total_time > 0  && splitpoint >= total_time)
         {
           break;
@@ -512,9 +521,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 
       fprintf(file_output, "  TRACK %02d AUDIO\n", i+1);
 
-      int current_tags = splt_t_get_current_tags_number(state);
-      splt_cue_write_title_performer(state, file_output, current_tags,
-          SPLT_TRUE, SPLT_FALSE);
+      splt_cue_write_title_performer(state, file_output, -1, SPLT_TRUE, SPLT_FALSE);
 
       long mins = 0, secs = 0, hundr = 0;
       splt_t_get_mins_secs_hundr_from_splitpoint(splitpoint, &mins, &secs, &hundr);
