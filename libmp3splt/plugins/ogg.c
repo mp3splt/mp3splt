@@ -495,7 +495,7 @@ void splt_ogg_state_free(splt_state *state)
 //puts tags in vc
 //what happens if 'vorbis_comment_add_tag(..)' fails ?
 //- ask vorbis developers
-static vorbis_comment *splt_ogg_v_comment(vorbis_comment *vc, char *artist,
+static void splt_ogg_v_comment(vorbis_comment *vc, char *artist,
     char *album, char *title, char *tracknum, char *date, char *genre, char *comment,
     int *error)
 {
@@ -528,10 +528,8 @@ static vorbis_comment *splt_ogg_v_comment(vorbis_comment *vc, char *artist,
   }
   if (comment!=NULL)
   {
-    vorbis_comment_add_tag(vc, "comment", comment);
+    vorbis_comment_add_tag(vc, "", comment);
   }
-
-  return vc;
 }
 
 //macro used only in the following function splt_ogg_get_original_tags
@@ -596,7 +594,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  com = vorbis_comment_query(vc_local, "comment",0);
+  com = vorbis_comment_query(vc_local, "",0);
   if (com != NULL)
   {
     err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT, 0,com,0x0);
@@ -622,6 +620,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
       if (track_string)
       {
         char *artist_or_performer = splt_u_get_artist_or_performer_ptr(tags);
+        vorbis_comment_init(&oggstate->vc);
         splt_ogg_v_comment(&oggstate->vc,
             artist_or_performer, tags->album, tags->title, track_string,
             tags->year, (char *)splt_ogg_genre_list[(int)tags->genre],
@@ -655,9 +654,7 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate, int *error)
 
   ogg_sync_init(oggstate->sync_in);
 
-  //how to handle alloc memory problem ?
   vorbis_info_init(oggstate->vi);
-  vorbis_comment_init(&oggstate->vc);
 
   //we read while we don't have a page anymore
   int result = 0;
@@ -1380,7 +1377,7 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
   splt_ogg_state *oggstate = state->codec;
 
   ogg_stream_state stream_out;
-  //ogg_packet header_comm;
+  ogg_packet header_comm;
   ogg_int64_t begin, end = 0, cutpoint = 0;
 
   begin = (ogg_int64_t) (sec_begin * oggstate->vi->rate);
@@ -1454,25 +1451,20 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
   /* gets random serial number*/
   ogg_stream_init(&stream_out, rand());
 
-  //TODO: is this important ? :
-  /*
-    //vorbis memory leak ?
-    vorbis_commentheader_out(&oggstate->vc, &header_comm);
- 
-    int packet_err = SPLT_OK;
-    splt_ogg_free_packet(oggstate->headers[1]);
-    oggstate->headers[1] = splt_ogg_save_packet(&header_comm, &packet_err);
-    //we clear the packet
-    ogg_packet_clear(&header_comm);
-    vorbis_comment_clear(&oggstate->vc);
-    //check error of 'splt_ogg_save_packet'
-    if (packet_err < 0)
-    {
-      *error = packet_err;
-      ogg_stream_clear(&stream_out);
-      return sec_end_time;
-    }
-  */
+  //vorbis memory leak ?
+  vorbis_commentheader_out(&oggstate->vc, &header_comm);
+
+  int packet_err = SPLT_OK;
+  splt_ogg_free_packet(&oggstate->headers[1]);
+  oggstate->headers[1] = splt_ogg_save_packet(&header_comm, &packet_err);
+  ogg_packet_clear(&header_comm);
+  vorbis_comment_clear(&oggstate->vc);
+  if (packet_err < 0)
+  {
+    *error = packet_err;
+    ogg_stream_clear(&stream_out);
+    return sec_end_time;
+  }
 
   splt_ogg_submit_headers_to_stream(&stream_out, oggstate);
 
