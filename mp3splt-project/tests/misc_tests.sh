@@ -16,6 +16,151 @@ function _test_misc_version
   echo
 }
 
+function test_misc_with_symlink_input_dir
+{
+  remove_output_dir
+
+  rm -f symlink_dir
+
+  test_name="symlink input dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  ln -s $SONGS_DIR symlink_dir
+
+  expected=" Processing file 'symlink_dir/Merci_Bonsoir__Je_veux_Only_love.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"output/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"output/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d $OUTPUT_DIR symlink_dir/$CBR_MP3 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f symlink_dir
+
+  p_green "OK"
+  echo
+}
+
+function test_misc_with_symlink_input_file
+{
+  remove_output_dir
+
+  rm -f $SONGS_DIR/symlink_file
+
+  test_name="symlink input file"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cd $SONGS_DIR && ln -s $CBR_MP3 symlink_file && cd - &> /dev/null
+
+  expected=" Processing file 'songs/symlink_file' ...
+ info: resolving linked filename to 'songs/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"output/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"output/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d $OUTPUT_DIR $SONGS_DIR/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f $SONGS_DIR/symlink_file
+
+  p_green "OK"
+  echo
+}
+
+function test_misc_with_symlink_input_dir_and_symlink_input_file
+{
+  remove_output_dir
+
+  rm -f $SONGS_DIR/symlink_file
+  rm -f symlink_dir
+
+  test_name="symlink input dir & symlink input file"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cd $SONGS_DIR && ln -s $CBR_MP3 symlink_file && cd - &> /dev/null
+  ln -s $SONGS_DIR symlink_dir
+
+  expected=" Processing file 'symlink_dir/symlink_file' ...
+ info: resolving linked filename to 'symlink_dir/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"output/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"output/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d $OUTPUT_DIR symlink_dir/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f $SONGS_DIR/symlink_file
+  rm -f symlink_dir
+
+  p_green "OK"
+  echo
+}
+
+function test_misc_with_symlink_output_dir
+{
+  remove_output_dir
+
+  rm -f symlink_dir
+
+  test_name="symlink output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  ln -s $OUTPUT_DIR symlink_dir
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"symlink_dir/a/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"symlink_dir/a/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d symlink_dir/a $CBR_MP3_FILE 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f symlink_dir
+
+  p_green "OK"
+  echo
+}
+
+function test_with_symlink_output_dir_last
+{
+  remove_output_dir
+
+  rm -f symlink_dir
+
+  test_name="symlink output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  ln -s $OUTPUT_DIR symlink_dir
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"symlink_dir/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"symlink_dir/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d symlink_dir $CBR_MP3_FILE 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f symlink_dir
+
+  p_green "OK"
+  echo
+}
+
 function run_misc_tests
 {
   p_blue " MISC tests ..."

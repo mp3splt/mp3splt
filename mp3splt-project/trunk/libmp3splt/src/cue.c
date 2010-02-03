@@ -105,7 +105,7 @@ static int splt_cue_set_value(splt_state *state, char *in,
 				free(client_infos);
 				client_infos = NULL;
 
-				tags_err = splt_t_set_tags_char_field(state, index, tag_field, out);
+				tags_err = splt_tu_set_tags_char_field(state, index, tag_field, out);
 				if (tags_err != SPLT_OK)
 				{
 					error = tags_err;
@@ -168,7 +168,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   int tags_error = SPLT_OK;
   
   //default genre
-  tags_error = splt_t_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE, 12);
+  tags_error = splt_tu_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE, 12);
   if (tags_error != SPLT_OK)
   {
     *error = tags_error;
@@ -251,7 +251,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
               performer = SPLT_FALSE;
               title = SPLT_FALSE;
               tracks++;
-              splt_t_new_tags_if_necessary(state, tracks-1);
+              splt_tu_new_tags_if_necessary(state, tracks-1);
             }
             else
             {
@@ -410,11 +410,11 @@ static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
   splt_tags *tags = NULL;
   if (tags_index >= 0)
   {
-    tags = splt_t_get_tags_at(state, tags_index);
+    tags = splt_tu_get_tags_at(state, tags_index);
   }
   else
   {
-    tags = splt_t_get_current_tags(state);
+    tags = splt_tu_get_current_tags(state);
   }
 
   if (tags)

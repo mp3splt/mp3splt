@@ -404,7 +404,7 @@ int mp3splt_append_tags(splt_state *state,
     {
       splt_t_lock_library(state);
 
-      error = splt_t_append_tags(state, title, artist,
+      error = splt_tu_append_tags(state, title, artist,
           album, performer, year, comment, track, genre);
 
       splt_t_unlock_library(state);
@@ -432,7 +432,7 @@ const splt_tags *mp3splt_get_tags(splt_state *state,
 
   if (state != NULL)
   {
-    return splt_t_get_tags(state,tags_number);
+    return splt_tu_get_tags(state,tags_number);
   }
   else
   {
@@ -485,7 +485,7 @@ void mp3splt_erase_all_tags(splt_state *state, int *error)
     {
       splt_t_lock_library(state);
 
-      splt_t_free_tags(state);
+      splt_tu_free_tags(state);
 
       splt_t_unlock_library(state);
     }
@@ -687,13 +687,28 @@ int mp3splt_split(splt_state *state)
       state->split.splitnumber = state->split.real_splitnumber;
       splt_t_set_current_split(state,0);
 
-      //we check if the filename is a real file
-      if (!splt_check_is_file(state, fname_to_split))
+      if (!splt_io_check_if_file(state, fname_to_split))
       {
         error = SPLT_ERROR_INEXISTENT_FILE;
         splt_t_unlock_library(state);
         return error;
       }
+
+#ifndef __WIN32__
+      char *linked_fname = splt_io_get_linked_fname_with_path(fname_to_split);
+      if (linked_fname)
+      {
+        char infos[2048] = { '\0' };
+        snprintf(infos, 2048, _(" info: resolving linked filename to '%s'\n"), linked_fname);
+        splt_t_put_info_message_to_client(state, infos);
+
+        splt_t_set_filename_to_split(state, linked_fname);
+        fname_to_split = splt_t_get_filename_to_split(state);
+
+        free(linked_fname);
+        linked_fname = NULL;
+      }
+#endif
 
       //if the new_filename_path is "", we put the directory of
       //the current song
@@ -1376,7 +1391,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 
       *num_of_files_found = 0;
 
-      if (splt_check_is_file_and_not_symlink(state, filename))
+      if (splt_io_check_if_file(state, filename))
       {
         if (splt_u_file_is_supported_by_plugins(state, filename))
         {
@@ -1415,8 +1430,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
           dir[strlen(dir)-1] = '\0';
         }
 
-        splt_u_find_filenames(state, dir, &found_files, num_of_files_found,
-            err);
+        splt_u_find_filenames(state, dir, &found_files, num_of_files_found, err);
 
         if (dir)
         {
@@ -1439,5 +1453,10 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
   }
 
   return found_files;
+}
+
+int mp3splt_u_check_if_directory(const char *fname)
+{
+  return splt_io_check_if_directory(fname);
 }
 

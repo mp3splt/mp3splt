@@ -102,8 +102,6 @@ void splt_u_create_output_dirs_if_necessary(splt_state *state,
     const char *output_filename, int *error);
 char *splt_u_strerror(splt_state *state, splt_code error_code);
 
-int splt_u_check_if_directory(const char *fname);
-
 int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size);
 FILE *splt_u_fopen(const char *filename, const char *mode);
 int splt_u_mkdir(splt_state *state, const char *path);

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_INTERNET_TESTS=0
+RUN_INTERNET_TESTS=1
 
 DIFF_CMD="diff"
 VIEW_DIFF_CMD="acoc diff"
@@ -8,15 +8,17 @@ USE_GRAPHIC_DIFF=1
 GRAPHIC_DIFF_CMD="meld"
 
 MP3SPLT="./mp3splt -X"
-MP3_FILE="songs/La_Verue__Today.mp3"
-SILENCE_MP3_FILE="songs/La_Verue__Today_silence.mp3"
-NO_TAGS_MP3_FILE="songs/La_Verue__Today__no_tags.mp3"
-CBR_MP3_FILE="songs/Merci_Bonsoir__Je_veux_Only_love.mp3"
-WRAPPED_FILE="songs/wrapped.mp3"
-SYNCERR_FILE="songs/syncerror.mp3"
-CDDB_FILE="songs/test.cddb"
-CUE_FILE="songs/test.cue"
-AUDACITY_FILE="songs/audacity.txt"
+SONGS_DIR="songs"
+MP3_FILE="$SONGS_DIR/La_Verue__Today.mp3"
+SILENCE_MP3_FILE="$SONGS_DIR/La_Verue__Today_silence.mp3"
+NO_TAGS_MP3_FILE="$SONGS_DIR/La_Verue__Today__no_tags.mp3"
+CBR_MP3="Merci_Bonsoir__Je_veux_Only_love.mp3"
+CBR_MP3_FILE="$SONGS_DIR/$CBR_MP3"
+WRAPPED_FILE="$SONGS_DIR/wrapped.mp3"
+SYNCERR_FILE="$SONGS_DIR/syncerror.mp3"
+CDDB_FILE="$SONGS_DIR/test.cddb"
+CUE_FILE="$SONGS_DIR/test.cue"
+AUDACITY_FILE="$SONGS_DIR/audacity.txt"
 
 PRINT_MP3SPLT_COMMAND=0
 

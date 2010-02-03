@@ -38,21 +38,21 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
   int i = 0;
 
   char *artist0 = NULL;
-  char *first_artist = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST);
+  char *first_artist = splt_tu_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST);
   artist0 = splt_u_safe_strdup(first_artist, error);
   if (*error < 0) { goto function_end; }
 
   char *album0 = NULL;
-  char *first_album = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM);
+  char *first_album = splt_tu_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM);
   album0 = splt_u_safe_strdup(first_album, error);
   if (*error < 0) { goto function_end; }
 
   char *year0 = NULL;
-  char *first_year = splt_t_get_tags_char_field(state, 0, SPLT_TAGS_YEAR);
+  char *first_year = splt_tu_get_tags_char_field(state, 0, SPLT_TAGS_YEAR);
   year0 = splt_u_safe_strdup(first_year, error);
   if (*error < 0) { goto function_end; }
 
-  unsigned char genre0 = splt_t_get_tags_uchar_field(state, 0, SPLT_TAGS_GENRE);
+  unsigned char genre0 = splt_tu_get_tags_uchar_field(state, 0, SPLT_TAGS_GENRE);
   int tags_error = SPLT_OK;
 
   if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) ==
@@ -67,26 +67,26 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
   {
     if (i != 0)
     {
-      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ARTIST, artist0);
+      tags_error = splt_tu_set_tags_char_field(state, i, SPLT_TAGS_ARTIST, artist0);
       if (tags_error != SPLT_OK)
       {
         *error = tags_error;
         goto function_end;
       }
 
-      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_ALBUM, album0);
+      tags_error = splt_tu_set_tags_char_field(state, i, SPLT_TAGS_ALBUM, album0);
       if (tags_error != SPLT_OK)
       {
         *error = tags_error;
         goto function_end;
       }
-      tags_error = splt_t_set_tags_char_field(state, i, SPLT_TAGS_YEAR, year0);
+      tags_error = splt_tu_set_tags_char_field(state, i, SPLT_TAGS_YEAR, year0);
       if (tags_error != SPLT_OK)
       {
         *error = tags_error;
         goto function_end;
       }
-      tags_error = splt_t_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
+      tags_error = splt_tu_set_tags_uchar_field(state, i, SPLT_TAGS_GENRE, genre0);
       if (tags_error != SPLT_OK)
       {
         *error = tags_error;

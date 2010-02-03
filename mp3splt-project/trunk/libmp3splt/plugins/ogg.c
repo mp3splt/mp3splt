@@ -555,49 +555,49 @@ void splt_ogg_get_original_tags(const char *filename,
   a = vorbis_comment_query(vc_local, "artist",0);
   if (a != NULL)
   {
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST, 0,a,0x0);
+    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ARTIST, 0,a,0x0);
     OGG_VERIFY_ERROR();
   }
 
   t = vorbis_comment_query(vc_local, "title",0);
   if (t != NULL)
   {
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE, 0,t,0x0);
+    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TITLE, 0,t,0x0);
     OGG_VERIFY_ERROR();
   }
 
   al = vorbis_comment_query(vc_local, "album",0);
   if (al != NULL)
   {
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM, 0,al,0x0);
+    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ALBUM, 0,al,0x0);
     OGG_VERIFY_ERROR();
   }
 
   da = vorbis_comment_query(vc_local, "date",0);
   if (da != NULL)
   {
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR, 0,da,0x0);
+    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_YEAR, 0,da,0x0);
     OGG_VERIFY_ERROR();
   }
 
   g = vorbis_comment_query(vc_local, "genre",0);
   if (g != NULL)
   {
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE, 0, g, 0x0);
+    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE, 0, g, 0x0);
     OGG_VERIFY_ERROR();
   }
 
   tr = vorbis_comment_query(vc_local, "tracknumber",0);
   if (tr != NULL)
   {
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK, 0,tr, 0x0);
+    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TRACK, 0,tr, 0x0);
     OGG_VERIFY_ERROR();
   }
 
   com = vorbis_comment_query(vc_local, "",0);
   if (com != NULL)
   {
-    err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT, 0,com,0x0);
+    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_COMMENT, 0,com,0x0);
     OGG_VERIFY_ERROR();
   }
 }
@@ -613,7 +613,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
 
   if (splt_t_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
-    splt_tags *tags = splt_t_get_current_tags(state);
+    splt_tags *tags = splt_tu_get_current_tags(state);
     if (tags)
     {
       char *track_string = splt_ogg_trackstring(tags->track);

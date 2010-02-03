@@ -103,47 +103,6 @@ int splt_t_get_splitpoint_type(splt_state *state, int index, int *error);
 splt_point *splt_t_get_splitpoints(splt_state *state, int *splitpoints_number);
 
 /********************************/
-/* types: tags access */
-
-int splt_t_new_tags_if_necessary(splt_state *state, int index);
-void splt_t_auto_increment_tracknumber_tag(splt_state *state);
-int splt_t_append_original_tags(splt_state *state);
-void splt_t_get_original_tags(splt_state *state, int *err);
-int splt_t_append_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, unsigned char genre);
-int splt_t_append_only_non_null_previous_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, unsigned char genre);
-int splt_t_tags_exists(splt_state *state, int index);
-int splt_t_set_original_tags_field(splt_state *state,
-    int tags_field, int int_data,
-    const char *char_data, unsigned char uchar_data);
-int splt_t_set_like_x_tags_field(splt_state *state,
-    int tags_field, int int_data,
-    const char *char_data, unsigned char uchar_data);
-int splt_t_set_tags_char_field(splt_state *state, int index,
-    int tags_field, const char *data);
-int splt_t_set_tags_uchar_field(splt_state *state, int index,
-    int tags_field, unsigned char data);
-int splt_t_set_tags_int_field(splt_state *state, int index,
-    int tags_field, int data);
-
-splt_tags *splt_t_get_tags(splt_state *state,int *tags_number);
-splt_tags *splt_t_get_tags_at(splt_state *state, int tags_index);
-char *splt_t_get_tags_char_field(splt_state *state, int index,
-    int tags_field);
-int splt_t_get_tags_int_field(splt_state *state, int index, 
-    int tags_field);
-unsigned char splt_t_get_tags_uchar_field(splt_state *state, int index,
-    int tags_field);
-splt_tags splt_t_get_last_tags(splt_state *state);
-
-/********************************/
 /* types: options access */
 
 void splt_t_set_int_option(splt_state *state, int option_name,
@@ -234,10 +193,7 @@ void splt_t_clean_strerror_msg(splt_state *state);
 
 void splt_t_free_splitpoints_tags(splt_state *state);
 void splt_t_free_splitpoints(splt_state *state);
-void splt_t_free_tags(splt_state *state);
-void splt_t_reset_tags(splt_tags *tags);
-void splt_t_free_one_tags_full(splt_tags *tags);
-void splt_t_clean_original_tags(splt_state *state);
+
 void splt_t_clean_one_split_data(splt_state *state, int num);
 void splt_t_clean_split_data(splt_state *state,int tracks);
 int splt_t_split_is_canceled(splt_state *state);
@@ -251,9 +207,6 @@ int splt_t_is_stdout(splt_state *state);
 void splt_t_set_current_plugin(splt_state *state, int current_plugin);
 int splt_t_get_current_plugin(splt_state *state);
 int splt_t_alloc_init_new_plugin(splt_plugins *pl);
-splt_tags *splt_t_get_current_tags(splt_state *state);
-splt_tags *splt_t_get_tags_to_replace_in_tags(splt_state *state);
-
 
 #define MP3SPLT_TYPES_FUNC
 

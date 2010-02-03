@@ -156,7 +156,7 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
   if ((strcmp(new_filename_path, "") != 0) &&
       (strcmp(new_filename_path, current_directory) != 0))
   {
-    if (!splt_u_check_if_directory(new_filename_path))
+    if (!splt_io_check_if_directory(new_filename_path))
     {
       splt_t_set_strerr_msg(state, _("directory does not exists"));
       splt_t_set_error_data(state, new_filename_path);
@@ -394,122 +394,6 @@ void splt_check_file_type(splt_state *state, int *error)
   }
 }
 
-//check if its a file
-//-we are not interested in errors
-int splt_check_is_file(splt_state *state, const char *fname)
-{
-  if (fname == NULL)
-  {
-    return SPLT_FALSE;
-  }
-  else
-  {
-    //stdin: consider as file
-    if (fname[0] != '\0' && fname[strlen(fname)-1] == '-')
-    {
-      return SPLT_TRUE;
-    }
-
-    mode_t st_mode;
-    int status = splt_u_stat(fname, &st_mode, NULL);
-    if (status == 0)
-    {
-      if (S_ISREG(st_mode))
-      {
-        return SPLT_TRUE;
-      }
-      else
-      {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state, fname);
-        return SPLT_FALSE;
-      }
-    }
-    else
-    {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, fname);
-      return SPLT_FALSE;
-    }
-  }
-}
-
-//check if its a file and not a symlink
-//-we are not interested in errors
-int splt_check_is_file_and_not_symlink(splt_state *state, const char *fname)
-{
-  if (fname == NULL)
-  {
-    return SPLT_FALSE;
-  }
-  else
-  {
-    //stdin: consider as file
-    if (fname[strlen(fname)-1] == '-')
-    {
-      return SPLT_TRUE;
-    }
-
-    mode_t st_mode;
-    int status = splt_u_stat(fname, &st_mode, NULL);
-    if (status == 0)
-    {
-#ifndef __WIN32__
-      if (S_ISLNK(st_mode)) { return SPLT_FALSE; }
-#endif
-      if (S_ISREG(st_mode)) { return SPLT_TRUE; }
-      return SPLT_FALSE;
-    }
-    else
-    {
-      return SPLT_FALSE;
-    }
-  }
-}
-
-//-we are not interested in errors
-int splt_check_is_directory(const char *fname)
-{
-  if (fname == NULL)
-  {
-    return SPLT_FALSE;
-  }
-  else
-  {
-    mode_t st_mode;
-    int status = splt_u_stat(fname, &st_mode, NULL);
-    if (status == 0)
-    {
-      if (S_ISDIR(st_mode)) { return SPLT_TRUE; }
-    }
-  }
-
-  return SPLT_FALSE;
-}
-
-//-we are not interested in errors
-int splt_check_is_directory_and_not_symlink(const char *fname)
-{
-  if (fname == NULL)
-  {
-    return SPLT_FALSE;
-  }
-  else
-  {
-    mode_t st_mode;
-    int status = splt_u_stat(fname, &st_mode, NULL);
-    if (status == 0)
-    {
-#ifndef __WIN32__
-      if (S_ISLNK(st_mode)) { return SPLT_FALSE; }
-#endif
-      if (S_ISDIR(st_mode)) { return SPLT_TRUE; }
-    }
-  }
-
-  return SPLT_FALSE;
-}
-
 //close two filehandles
 static void close_files(splt_state *state, const char *file1, FILE **f1,
     const char *file2, FILE **f2, int *error)
@@ -559,8 +443,8 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
   splt_u_print_debug(state,"Checking if this file:",0,file1);
   splt_u_print_debug(state,"is like this file:",0,file2);
  
-  int is_file1 = splt_check_is_file(state, file1);
-  int is_file2 = splt_check_is_file(state, file2);
+  int is_file1 = splt_io_check_if_file(state, file1);
+  int is_file2 = splt_io_check_if_file(state, file2);
   if (is_file1 && is_file2)
   {
     //file1
