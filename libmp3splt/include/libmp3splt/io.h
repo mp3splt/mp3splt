@@ -30,38 +30,16 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_CHECKS_H
+#ifndef MP3SPLT_IO_H
 
-/****************************/
-/* splitpoints checks */
+int splt_io_check_if_directory(const char *fname);
+int splt_io_check_if_file(splt_state *state, const char *fname);
 
-void splt_check_splitpts_inf_song_length(splt_state *state,
-    int *error);
-void splt_check_if_splitpoints_in_order(splt_state *state,
-    int *error);
+#ifndef __WIN32__
+char *splt_io_get_linked_fname_with_path(const char *fname);
+#endif
 
-/****************************/
-/* path check */
-
-void splt_check_if_new_filename_path_correct(splt_state *state,
-    const char *new_filename_path, int *error);
-char *splt_check_put_dir_of_cur_song(const char *filename,
-    const char *the_filename_path, int *error);
-
-/****************************/
-/* options check */
-
-int splt_check_compatible_options(splt_state *state);
-void splt_check_set_correct_options(splt_state *state);
-
-/****************************/
-/* file checks */
-
-void splt_check_file_type(splt_state *state, int *error);
-int splt_check_is_the_same_file(splt_state *state, const char *file1,
-    const char *file2, int *error);
-
-#define MP3SPLT_CHECKS_H
+#define MP3SPLT_IO_H
 
 #endif
 

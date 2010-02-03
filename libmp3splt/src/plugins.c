@@ -303,7 +303,7 @@ static int splt_p_find_plugins(splt_state *state)
       //OSes or .\\ on windows
       if (((strlen(pl->plugins_scan_dirs[i]) >= 2) &&
             strncmp(pl->plugins_scan_dirs[i], current_dir,2) == 0) ||
-          splt_u_check_if_directory(pl->plugins_scan_dirs[i]))
+          splt_io_check_if_directory(pl->plugins_scan_dirs[i]))
       {
         return_value = splt_p_scan_dir_for_plugins(state, pl, pl->plugins_scan_dirs[i]);
         if (return_value != SPLT_OK)

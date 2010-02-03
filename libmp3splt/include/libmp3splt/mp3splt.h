@@ -1377,6 +1377,8 @@ char *mp3splt_win32_utf16_to_utf8(const wchar_t *source);
 char **mp3splt_find_filenames(splt_state *state, const char *filename,
     int *num_of_files_found, int *error);
 
+int mp3splt_u_check_if_directory(const char *fname);
+
 #define MP3SPLT_MP3SPLT_H
 
 #endif

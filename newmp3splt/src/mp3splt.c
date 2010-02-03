@@ -1605,40 +1605,6 @@ void print_version_authors(FILE *std)
   print_no_warranty(std);
 }
 
-//check if its a directory
-int check_if_directory(char *fname)
-{
-  struct stat buffer;
-  int         status = 0;
-
-  if (fname == NULL)
-  {
-    return SPLT_FALSE;
-  }
-  else
-  {
-    status = stat(fname, &buffer);
-    if (status == 0)
-    {
-      //if it is a directory
-      if (S_ISDIR(buffer.st_mode))
-      {
-        return SPLT_TRUE;
-      }
-      else
-      {
-        return SPLT_FALSE;
-      }
-    }
-    else
-    {
-      return SPLT_FALSE;
-    }
-  }
-
-  return SPLT_FALSE;
-}
-
 void get_silence_level(long time, float level, void *user_data)
 {
   silence_level *sl = user_data;
@@ -2262,14 +2228,13 @@ int main(int argc, char **orig_argv)
     }
     else
     {
-      //directory process
-      if (check_if_directory(argument))
+      if (mp3splt_u_check_if_directory(argument))
       {
         we_had_directory_as_argument = SPLT_TRUE;
 
         int num_of_files_found = 0;
-        char **found_files = mp3splt_find_filenames(state, argument,
-            &num_of_files_found, &err);
+        char **found_files =
+          mp3splt_find_filenames(state, argument, &num_of_files_found, &err);
         int k = 0;
         for (k = 0;k < num_of_files_found; k++)
         {

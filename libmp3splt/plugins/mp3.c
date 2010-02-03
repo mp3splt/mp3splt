@@ -766,34 +766,34 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
         switch (id_type)
         {
           case SPLT_MP3_ID3_ALBUM:
-            err = splt_t_set_original_tags_field(state,SPLT_TAGS_ALBUM,
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ALBUM,
                 0,(char *)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_ARTIST:
-            err = splt_t_set_original_tags_field(state,SPLT_TAGS_ARTIST,
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ARTIST,
                 0,(char *)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_TITLE:
             if (strcmp(frame_type,ID3_FRAME_TITLE) == 0)
             {
-              err = splt_t_set_original_tags_field(state,SPLT_TAGS_TITLE,
+              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TITLE,
                   0,(char *)tag_value,0x0);
             }
             break;
           case SPLT_MP3_ID3_YEAR:
-            err = splt_t_set_original_tags_field(state,SPLT_TAGS_YEAR,
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_YEAR,
                 0,(char *)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_TRACK:
-            err = splt_t_set_original_tags_field(state,SPLT_TAGS_TRACK,
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TRACK,
                 atof((char*)tag_value), NULL,0x0);
             break;
           case SPLT_MP3_ID3_COMMENT:
-            err = splt_t_set_original_tags_field(state,SPLT_TAGS_COMMENT,
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_COMMENT,
                 0,(char*)tag_value,0x0);
             break;
           case SPLT_MP3_ID3_GENRE:
-            err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE,
                 0,NULL, splt_mp3_getgenre((char *)tag_value));
 
             int number = 80;
@@ -802,13 +802,13 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
             if ((number != 0) &&
                 (state->original_tags.genre == 0xFF))
             {
-              err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
+              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE,
                   0,NULL, number);
             }
             //if we have 0 returned
             if (strcmp((char*)tag_value, "0") == 0)
             {
-              err = splt_t_set_original_tags_field(state,SPLT_TAGS_GENRE,
+              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE,
                   0, NULL, DEFAULT_ID3V1_CATEGORY_INDEX);
             }
             break;
@@ -871,7 +871,7 @@ static void splt_mp3_get_original_tags(const char *filename,
       {
         int err = SPLT_OK;
 
-        err = splt_t_set_original_tags_field(state,SPLT_TAGS_VERSION,
+        err = splt_tu_set_original_tags_field(state,SPLT_TAGS_VERSION,
             tags_version, NULL, 0);
         MP3_VERIFY_ERROR();
         err = splt_mp3_put_original_libid3_frame(state,id3tag,ID3_FRAME_ARTIST,
@@ -1174,7 +1174,7 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
 
   if (splt_t_get_int_option(state,SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
-    splt_tags *tags = splt_t_get_current_tags(state);
+    splt_tags *tags = splt_tu_get_current_tags(state);
 
     if (tags)
     {
@@ -2928,16 +2928,6 @@ static void splt_mp3_syncerror_search(splt_state *state, int *error)
   mp3state->h.ptr = mp3state->mp3file.firsthead.ptr;
   mp3state->h.framesize = mp3state->mp3file.firsthead.framesize;
 
-  //if the filename is correct
-  int is_file = splt_check_is_file(state, filename);
-  if (*error < 0) { return; }
-
-  if (!is_file)
-  {
-    *error = SPLT_ERROR_INEXISTENT_FILE;
-    return;
-  }
-
   //we get the file length for the progress
   off_t st_size;
   if(splt_u_stat(filename, NULL, &st_size) == 0)
@@ -3355,7 +3345,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 {
                   ptr++;
                   strncpy(junk, filename, ptr-filename);
-                  if (! splt_u_check_if_directory(junk))
+                  if (! splt_io_check_if_directory(junk))
                   {
                     if ((splt_u_mkdir(state, junk)) == -1)
                     {

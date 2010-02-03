@@ -38,9 +38,6 @@
 
 #include "splt.h"
 
-#include <dirent.h>
-#include <unistd.h>
-
 #ifdef __WIN32__
 #include <windows.h>
 #include <direct.h>
@@ -508,10 +505,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
     }
 
     char *filename = splt_t_get_filename_to_split(state);
-
-    //if the output file exists
-    int is_file = splt_check_is_file(state, output_fname_with_path);
-    if (is_file)
+    if (splt_io_check_if_file(state, output_fname_with_path))
     {
       //if input and output are the same file
       if (splt_check_is_the_same_file(state,filename, output_fname_with_path, error))
@@ -856,7 +850,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                 splt_p_init(state, &err);
                 if (err >= 0)
                 {
-                  splt_t_get_original_tags(state, &err);
+                  splt_tu_get_original_tags(state, &err);
                   if (err < 0) 
                   {
                     *error = err;
@@ -865,7 +859,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                     goto end_while;
                   }
                   splt_p_end(state, &err);
-                  err = splt_t_append_original_tags(state);
+                  err = splt_tu_append_original_tags(state);
                   if (err < 0)
                   {
                     *error = err;
@@ -877,7 +871,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                   if (all_tags)
                   {
                     //and copy them
-                    splt_tags last_tags = splt_t_get_last_tags(state);
+                    splt_tags last_tags = splt_tu_get_last_tags(state);
                     //free previous all tags
                     if (all_title) { free(all_title); all_title = NULL; }
                     if (all_artist) { free(all_artist); all_artist = NULL; }
@@ -1148,8 +1142,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
           track = 0;
         }
 
-        //we put the tags
-        int err = splt_t_append_tags(state, title, artist,
+        int err = splt_tu_append_tags(state, title, artist,
             album, performer, year, comment, track, genre);
         if (err < 0)
         {
@@ -1159,8 +1152,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
       }
       else
       {
-        //we put the tags
-        int err = splt_t_append_only_non_null_previous_tags(state, title, artist,
+        int err = splt_tu_append_only_non_null_previous_tags(state, title, artist,
             album, performer, year, comment, track, genre);
         if (err < 0)
         {
@@ -1175,35 +1167,35 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         int index = state->split.real_tagsnumber - 1;
         if (!title)
         {
-          splt_t_set_tags_char_field(state, index, SPLT_TAGS_TITLE, all_title);
+          splt_tu_set_tags_char_field(state, index, SPLT_TAGS_TITLE, all_title);
         }
         if (!artist)
         {
-          splt_t_set_tags_char_field(state, index, SPLT_TAGS_ARTIST, all_artist);
+          splt_tu_set_tags_char_field(state, index, SPLT_TAGS_ARTIST, all_artist);
         }
         if (!album)
         {
-          splt_t_set_tags_char_field(state, index, SPLT_TAGS_ALBUM, all_album);
+          splt_tu_set_tags_char_field(state, index, SPLT_TAGS_ALBUM, all_album);
         }
         if (!performer)
         {
-          splt_t_set_tags_char_field(state, index, SPLT_TAGS_PERFORMER, all_performer);
+          splt_tu_set_tags_char_field(state, index, SPLT_TAGS_PERFORMER, all_performer);
         }
         if (!year)
         {
-          splt_t_set_tags_char_field(state, index, SPLT_TAGS_YEAR, all_year);
+          splt_tu_set_tags_char_field(state, index, SPLT_TAGS_YEAR, all_year);
         }
         if (!comment)
         {
-          splt_t_set_tags_char_field(state, index, SPLT_TAGS_COMMENT, all_comment);
+          splt_tu_set_tags_char_field(state, index, SPLT_TAGS_COMMENT, all_comment);
         }
         if (!tracknumber && ! auto_incremented_tracknumber)
         {
-          splt_t_set_tags_int_field(state, index, SPLT_TAGS_TRACK, all_tracknumber);
+          splt_tu_set_tags_int_field(state, index, SPLT_TAGS_TRACK, all_tracknumber);
         }
         if (genre == 12)
         {
-          splt_t_set_tags_uchar_field(state, index, SPLT_TAGS_GENRE, all_genre);
+          splt_tu_set_tags_uchar_field(state, index, SPLT_TAGS_GENRE, all_genre);
         }
       }
 
@@ -1228,14 +1220,14 @@ end_while:
       {
         we_had_all_tags = SPLT_TRUE;
         all_tags = SPLT_FALSE;
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_TITLE, 0, all_title, 0x0);
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_ARTIST, 0, all_artist, 0x0);
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_ALBUM, 0, all_album, 0x0);
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_PERFORMER, 0, all_performer, 0x0);
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_YEAR, 0, all_year, 0x0);
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_COMMENT, 0, all_comment, 0x0);
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_TRACK, all_tracknumber, NULL, 0x0);
-        splt_t_set_like_x_tags_field(state, SPLT_TAGS_GENRE, 0, NULL, all_genre);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_TITLE, 0, all_title, 0x0);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_ARTIST, 0, all_artist, 0x0);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_ALBUM, 0, all_album, 0x0);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_PERFORMER, 0, all_performer, 0x0);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_YEAR, 0, all_year, 0x0);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_COMMENT, 0, all_comment, 0x0);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_TRACK, all_tracknumber, NULL, 0x0);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_GENRE, 0, NULL, all_genre);
       }
 
       tags_appended++;
@@ -1716,17 +1708,17 @@ put_value:
           }
           break;
         case 'A':
-          if (splt_t_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state,tags_index))
           {
             artist_or_performer =
-              splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_PERFORMER);
+              splt_tu_get_tags_char_field(state,tags_index, SPLT_TAGS_PERFORMER);
             splt_u_cleanstring(state, artist_or_performer, &error);
             if (error < 0) { goto end; };
 
             if (artist_or_performer == NULL || artist_or_performer[0] == '\0')
             {
               artist_or_performer = 
-                splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_ARTIST);
+                splt_tu_get_tags_char_field(state,tags_index, SPLT_TAGS_ARTIST);
               splt_u_cleanstring(state, artist_or_performer, &error);
               if (error < 0) { goto end; };
             }
@@ -1769,11 +1761,11 @@ put_value:
 
           break;
         case 'a':
-          if (splt_t_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state,tags_index))
           {
             //we get the artist
             artist =
-              splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_ARTIST);
+              splt_tu_get_tags_char_field(state,tags_index, SPLT_TAGS_ARTIST);
             splt_u_cleanstring(state, artist, &error);
             if (error < 0) { goto end; };
           }
@@ -1814,11 +1806,11 @@ put_value:
           }
           break;
         case 'b':
-          if (splt_t_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state,tags_index))
           {
             //we get the album
             album =
-              splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_ALBUM);
+              splt_tu_get_tags_char_field(state,tags_index, SPLT_TAGS_ALBUM);
             splt_u_cleanstring(state, album, &error);
             if (error < 0) { goto end; };
           }
@@ -1859,10 +1851,10 @@ put_value:
           }
           break;
         case 't':
-          if (splt_t_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state,tags_index))
           {
             //we get the title
-            title = splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_TITLE);
+            title = splt_tu_get_tags_char_field(state,tags_index, SPLT_TAGS_TITLE);
             splt_u_cleanstring(state, title, &error);
             if (error < 0) { goto end; };
           }
@@ -1903,10 +1895,10 @@ put_value:
           }
           break;
         case 'p':
-          if (splt_t_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state,tags_index))
           {
             //we get the performer
-            performer = splt_t_get_tags_char_field(state,tags_index, SPLT_TAGS_PERFORMER);
+            performer = splt_tu_get_tags_char_field(state,tags_index, SPLT_TAGS_PERFORMER);
             splt_u_cleanstring(state, performer, &error);
             if (error < 0) { goto end; };
           }
@@ -1966,9 +1958,9 @@ put_value:
                (split_mode != SPLT_OPTION_SILENCE_MODE) &&
                (split_mode != SPLT_OPTION_ERROR_MODE)))
           {
-            if (splt_t_tags_exists(state, tags_index))
+            if (splt_tu_tags_exists(state, tags_index))
             {
-              int tags_track = splt_t_get_tags_int_field(state, tags_index, SPLT_TAGS_TRACK);
+              int tags_track = splt_tu_get_tags_int_field(state, tags_index, SPLT_TAGS_TRACK);
               if (tags_track > 0)
               {
                 tracknumber = tags_track;
@@ -2665,7 +2657,7 @@ int splt_u_create_directories(splt_state *state, const char *dir)
 
     if (junk[0] != '\0')
     {
-      if (! splt_u_check_if_directory(junk))
+      if (! splt_io_check_if_directory(junk))
       {
         splt_u_print_debug(state,"directory ...",0, junk);
 
@@ -2696,7 +2688,7 @@ int splt_u_create_directories(splt_state *state, const char *dir)
       goto end;
     }
 
-    if (! splt_u_check_if_directory(last_dir))
+    if (! splt_io_check_if_directory(last_dir))
     {
       splt_u_print_debug(state,"final directory ...",0, last_dir);
 
@@ -2729,73 +2721,6 @@ void splt_u_print(char *mess)
 {
 	fprintf(stdout,"mess = _%s_ \n",mess);
 	fflush(stdout);
-}
-
-//check if its a directory
-int splt_u_check_if_directory(const char *fname)
-{
-  if (fname == NULL)
-  {
-    return SPLT_FALSE;
-  }
-  else
-  {
-    mode_t st_mode;
-    int status = splt_u_stat(fname, &st_mode, NULL);
-    if (status == 0)
-    {
-      //if it is a directory
-      if (S_ISDIR(st_mode))
-      {
-        return SPLT_TRUE;
-      }
-#ifndef __WIN32__
-      else if (S_ISLNK(st_mode))
-      {
-        size_t linked_fname_size = strlen(fname) + 2048;
-        char *linked_fname = malloc(sizeof(char) * linked_fname_size);
-        if (linked_fname == NULL)
-        {
-          return SPLT_FALSE;
-          //TODO: error
-          //*error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-
-        memset(linked_fname, '\0', sizeof(char) * linked_fname_size);
-
-        ssize_t real_link_size = readlink(fname, linked_fname, linked_fname_size);
-        linked_fname[real_link_size] = '\0';
-
-        mode_t linked_st_mode;
-        int linked_status = splt_u_stat(linked_fname, &linked_st_mode, NULL);
-        if (linked_status == 0)
-        {
-          if (S_ISDIR(linked_st_mode))
-          {
-            free(linked_fname);
-            linked_fname = NULL;
-            return SPLT_TRUE;
-          }
-        }
-
-        free(linked_fname);
-        linked_fname = NULL;
-
-        return SPLT_FALSE;
-      }
-#endif
-      else
-      {
-        return SPLT_FALSE;
-      }
-    }
-    else
-    {
-      return SPLT_FALSE;
-    }
-  }
-
-  return SPLT_FALSE;
 }
 
 #ifdef __WIN32__
@@ -3112,12 +3037,6 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
   struct dirent **files = NULL;
 #endif
 
-  if (! (splt_check_is_directory_and_not_symlink(directory) ||
-        splt_check_is_file_and_not_symlink(state, directory)))
-  {
-    return;
-  }
-
   //TODO: handle scandir error
 #ifdef __WIN32__
   int num_of_files = wscandir(directory, &files, NULL, walphasort);
@@ -3154,7 +3073,7 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
       snprintf(path_with_fname, path_with_fname_size, "%s%c%s", directory,
           SPLT_DIRCHAR, fname);
 
-      if (splt_check_is_file_and_not_symlink(state, path_with_fname))
+      if (splt_io_check_if_file(state, path_with_fname))
       {
         if (splt_u_file_is_supported_by_plugins(state, fname))
         {
@@ -3186,7 +3105,7 @@ void splt_u_find_filenames(splt_state *state, const char *directory,
           (*number_of_found_files)++;
         }
       }
-      else if (splt_check_is_directory_and_not_symlink(path_with_fname))
+      else if (splt_io_check_if_directory(path_with_fname))
       {
         if (! splt_u_fname_is_directory_parent(fname, fname_size))
         {

@@ -174,7 +174,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
         continue;
       }
 
-      splt_t_auto_increment_tracknumber_tag(state);
+      splt_tu_auto_increment_tracknumber(state);
 
       long saved_end_point = splt_t_get_splitpoint_value(state, i+1, &get_error);
       splt_u_overlap_time(state, i+1);
@@ -262,7 +262,7 @@ void splt_s_error_split(splt_state *state, int *error)
         //we put the current file to split
         splt_t_set_current_split(state, i);
 
-        splt_t_auto_increment_tracknumber_tag(state);
+        splt_tu_auto_increment_tracknumber(state);
 
         //we append a splitpoint
         int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
@@ -401,7 +401,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
 
           splt_t_set_current_split(state, tracks-1);
 
-          splt_t_auto_increment_tracknumber_tag(state);
+          splt_tu_auto_increment_tracknumber(state);
 
           int current_split = splt_t_get_current_split(state);
 
