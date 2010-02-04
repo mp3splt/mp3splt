@@ -695,7 +695,7 @@ int mp3splt_split(splt_state *state)
       }
 
 #ifndef __WIN32__
-      char *linked_fname = splt_io_get_linked_fname_with_path(fname_to_split);
+      char *linked_fname = splt_io_get_linked_fname(fname_to_split);
       if (linked_fname)
       {
         char infos[2048] = { '\0' };

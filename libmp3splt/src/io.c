@@ -28,8 +28,11 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "splt.h"
+
+#define MAX_SYMLINKS 1024
 
 static int splt_io_file_type_is(const char *fname, int file_type)
 {
@@ -47,37 +50,81 @@ static int splt_io_file_type_is(const char *fname, int file_type)
 }
 
 #ifndef __WIN32__
-static char *splt_io_get_linked_fname(const char *fname)
+static char *splt_io_readlink(const char *fname)
 {
-  //TODO: wild guess of the max size
-  size_t linked_fname_size = strlen(fname) + 2048;
-  char *linked_fname = malloc(sizeof(char) * linked_fname_size);
-  if (linked_fname == NULL)
-  {
-    return NULL;
-  }
+  int bufsize = 1024;
 
-  memset(linked_fname, '\0', sizeof(char) * linked_fname_size);
-
-  ssize_t real_link_size = readlink(fname, linked_fname, linked_fname_size);
-  if (real_link_size == -1)
+  while (bufsize < INT_MAX)
   {
+    //TODO: error
+    char *linked_fname = malloc(sizeof(char) * bufsize);
+    ssize_t real_link_size = readlink(fname, linked_fname, bufsize);
+
+    if (real_link_size == -1)
+    {
+      free(linked_fname);
+      return NULL;
+    }
+
+    if (real_link_size < bufsize)
+    {
+      linked_fname[real_link_size] = '\0';
+      return linked_fname;
+    }
+
     free(linked_fname);
-    return NULL;
+    bufsize += 1024;
   }
 
-  linked_fname[real_link_size] = '\0';
-  return linked_fname;
+  return NULL;
 }
 
-char *splt_io_get_linked_fname_with_path(const char *fname)
+char *splt_io_get_linked_fname(const char *fname)
 {
-  //TODO: loop until the last linked
-  char *linked_fname = splt_io_get_linked_fname(fname);
+  char *previous_linked_fname = NULL;
+
+  mode_t st_mode;
+  if (splt_u_stat(fname, &st_mode, NULL) < 0)
+  {
+    if (errno == ELOOP)
+    {
+      fprintf(stdout,"loop!\n");
+      fflush(stdout);
+      return NULL;
+    }
+  }
+
+  char *linked_fname = splt_io_readlink(fname);
   if (!linked_fname)
   {
     return NULL;
   }
+
+  int count = 0;
+  while (linked_fname != NULL)
+  {
+    if (previous_linked_fname)
+    {
+      free(previous_linked_fname);
+    }
+    previous_linked_fname = linked_fname;
+    linked_fname = splt_io_readlink(linked_fname);
+
+    count++;
+    if (count > 1024)
+    {
+      if (previous_linked_fname)
+      {
+        free(previous_linked_fname);
+      }
+      if (linked_fname)
+      {
+        free(linked_fname);
+      }
+      return NULL;
+    }
+  }
+  linked_fname = previous_linked_fname;
 
   if (linked_fname[0] == SPLT_DIRCHAR)
   {
@@ -111,7 +158,7 @@ static int splt_io_linked_file_type_is(const char *fname, int file_type)
 {
   int linked_file_is_of_type = SPLT_FALSE;
 
-  char *linked_fname = splt_io_get_linked_fname_with_path(fname);
+  char *linked_fname = splt_io_get_linked_fname(fname);
   if (linked_fname)
   {
     if (splt_io_file_type_is(linked_fname, file_type))
