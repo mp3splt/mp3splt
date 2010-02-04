@@ -36,7 +36,7 @@ int splt_io_check_if_directory(const char *fname);
 int splt_io_check_if_file(splt_state *state, const char *fname);
 
 #ifndef __WIN32__
-char *splt_io_get_linked_fname_with_path(const char *fname);
+char *splt_io_get_linked_fname(const char *fname);
 #endif
 
 #define MP3SPLT_IO_H

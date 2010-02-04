@@ -161,6 +161,87 @@ function test_with_symlink_output_dir_last
   echo
 }
 
+function test_misc_with_complex_input_symlink
+{
+  remove_output_dir
+
+  rm -f symlink_dir1 symlink_dir2
+  rm -f symlink_file1 symlink_file2
+
+  test_name="complex input symlink"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  ln -s $SONGS_DIR symlink_dir1
+  ln -s symlink_dir1 symlink_dir2
+  ln -s symlink_dir2/$CBR_MP3 symlink_file1
+  ln -s symlink_file1 symlink_file2
+
+  expected=" Processing file 'symlink_file2' ...
+ info: resolving linked filename to 'symlink_dir2/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"output/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"output/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d $OUTPUT_DIR symlink_file2 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f symlink_dir1 symlink_dir2
+  rm -f symlink_file1 symlink_file2
+
+  p_green "OK"
+  echo
+}
+
+function test_misc_with_loop_symlink_file
+{
+  remove_output_dir
+
+  rm -f symlink_file
+
+  test_name="symlink file with loop"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  ln -s symlink_file symlink_file
+
+  expected=" Processing file 'symlink_file' ...
+ error: inexistent file 'symlink_file': No such file or directory"
+  mp3splt_args="-d $OUTPUT_DIR symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f symlink_file
+
+  p_green "OK"
+  echo
+}
+
+function test_misc_with_loop_symlink_dir
+{
+  remove_output_dir
+
+  rm -f symlink_dir1 symlink_dir2
+
+  test_name="symlink dir with loop"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  ln -s symlink_dir1 symlink_dir2
+  ln -s symlink_dir2 symlink_dir1
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ error: cannot create directory 'symlink_dir1'"
+  mp3splt_args="-d symlink_dir1 $CBR_MP3_FILE 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f symlink_dir1 symlink_dir2
+
+  p_green "OK"
+  echo
+}
+
 function run_misc_tests
 {
   p_blue " MISC tests ..."
