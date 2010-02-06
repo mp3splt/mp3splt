@@ -30,9 +30,10 @@
  *
  *********************************************************/
 
-#include <dirent.h>
 
 #ifndef MP3SPLT_UTILS_H
+
+#include <dirent.h>
 
 #ifdef __WIN32__
 #include <windows.h>
