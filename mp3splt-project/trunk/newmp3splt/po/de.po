@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: newmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-01-31 20:21+0100\n"
+"POT-Creation-Date: 2010-02-06 18:30+0100\n"
 "PO-Revision-Date: 2009-10-13 20:01+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -26,7 +26,7 @@ msgstr " Warnung: %s\n"
 msgid " Error: %s\n"
 msgstr " Fehler: %s\n"
 
-#: src/mp3splt.c:319 src/mp3splt.c:334 src/mp3splt.c:2052
+#: src/mp3splt.c:319 src/mp3splt.c:334 src/mp3splt.c:2018
 msgid "cannot allocate memory !"
 msgstr "Speicher kann nicht zugewiesen werden!"
 
@@ -243,7 +243,7 @@ msgstr "Falsches offset-Argument. Wird ignoriert!"
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr "Falsches minimum silence length-Argument. Wird ignoriert!"
 
-#: src/mp3splt.c:559 src/mp3splt.c:2366
+#: src/mp3splt.c:559 src/mp3splt.c:2331
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -w -"
@@ -489,19 +489,19 @@ msgstr ""
 "FÜR DIESE SOFTWARE ÜBERNEHMEN WIR KEINERLEI GARANTIE! BENUTZUNG NUR AUF "
 "EIGENE GEFAHR!\n"
 
-#: src/mp3splt.c:1721
+#: src/mp3splt.c:1687
 msgid "CommandLineToArgvW failed (oh !)"
 msgstr "CommandLineToArgvW gescheitert (oh !)"
 
-#: src/mp3splt.c:1730
+#: src/mp3splt.c:1696
 msgid "failed to allocate argv_utf8 memory"
 msgstr "argv_utf8-Speicher kann nicht zugewiesen werden"
 
-#: src/mp3splt.c:1778
+#: src/mp3splt.c:1744
 msgid "List of found files:\n"
 msgstr "Liste der gefundenen Dateien:\n"
 
-#: src/mp3splt.c:1786
+#: src/mp3splt.c:1752
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -510,7 +510,7 @@ msgstr ""
 "\n"
 "-- »Eingabetaste« für mehr, »s« zum Teilen, »c« zum Abbrechen:"
 
-#: src/mp3splt.c:1795 src/mp3splt.c:1818
+#: src/mp3splt.c:1761 src/mp3splt.c:1784
 msgid ""
 "\n"
 " split aborted."
@@ -518,7 +518,7 @@ msgstr ""
 "\n"
 " Teilen abgebrochen."
 
-#: src/mp3splt.c:1809
+#: src/mp3splt.c:1775
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -527,7 +527,7 @@ msgstr ""
 "\n"
 "-- »s« für Teilen, »c« für Abbrechen:"
 
-#: src/mp3splt.c:2082
+#: src/mp3splt.c:2048
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec, read man page for details."
@@ -535,50 +535,50 @@ msgstr ""
 "Falscher Zeit-Ausdruck für Teilung nach Zeit.\n"
 "\tMuss in min.sec angegeben werden, bitte die Handbuchseite lesen."
 
-#: src/mp3splt.c:2124
+#: src/mp3splt.c:2090
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "Lesen Sie die Handbuchseite oder geben Sie »mp3splt -h« ein."
 
-#: src/mp3splt.c:2181
+#: src/mp3splt.c:2147
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "Falsches Argument für Option -p. Kein gültiger Wert erkannt!"
 
-#: src/mp3splt.c:2318
+#: src/mp3splt.c:2283
 msgid "no input filename(s)."
 msgstr "Kein(e) Name(n) für Eingabedateien."
 
-#: src/mp3splt.c:2331
+#: src/mp3splt.c:2296
 msgid "multiple splitpoints with stdout !"
 msgstr "Mehrere Teilungspunkte mit Standardausgabe!"
 
-#: src/mp3splt.c:2335
+#: src/mp3splt.c:2300
 msgid "using time mode with stdout !"
 msgstr "Zeitmodus mit Standardausgabe wird verwendet!"
 
-#: src/mp3splt.c:2355
+#: src/mp3splt.c:2320
 #, fuzzy, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr " Datei »%s« wird verarbeitet …\n"
 
-#: src/mp3splt.c:2359
+#: src/mp3splt.c:2324
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Datei »%s« wird verarbeitet …\n"
 
-#: src/mp3splt.c:2429
+#: src/mp3splt.c:2394
 msgid "freedb query format ambigous !"
 msgstr "Format der Freedb-Abfrage ist nicht eindeutig!"
 
-#: src/mp3splt.c:2475
+#: src/mp3splt.c:2440
 msgid "tags format ambiguous !"
 msgstr "Tag-Format ist nicht eindeutig!"
 
-#: src/mp3splt.c:2507
+#: src/mp3splt.c:2472
 #, fuzzy, c-format
 msgid " Average silence level: %.2f dB"
 msgstr "Durchschnittlicher Pegel der Stille: %.2f dB"
 
-#: src/mp3splt.c:2524
+#: src/mp3splt.c:2489
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"

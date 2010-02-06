@@ -45,7 +45,7 @@
 #include "splt_array.h"
 #include "string_utils.h"
 #include "tags_utils.h"
-#include "io.h"
+#include "input_output.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
