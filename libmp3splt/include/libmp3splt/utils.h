@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2009 Munteanu Alexandru - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -114,8 +114,6 @@ size_t splt_u_fwrite(splt_state *state, const void *ptr,
 char *splt_u_win32_utf16_to_utf8(const wchar_t *source);
 wchar_t *splt_u_win32_utf8_to_utf16(const char *source);
 #endif
-
-char *splt_u_safe_strdup(char *input, int *error);
 
 void splt_u_print_overlap_time(splt_state *state);
 long splt_u_overlap_time(splt_state *state, int splitpoint_index);

@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2009 Munteanu Alexandru - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -32,7 +32,9 @@
 
 #ifndef MP3SPLT_STRING_UTILS_H
 
-void splt_su_append(char **str, size_t *allocated_size,
+char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error);
+char *splt_su_safe_strdup(const char *input, int *error);
+int splt_su_append(char **str, size_t *allocated_size,
     const char *to_append, size_t to_append_size);
 void splt_su_free_replace(char **str, char *replacement);
 int splt_su_copy(const char *src, char **dest);

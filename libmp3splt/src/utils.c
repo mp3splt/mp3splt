@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2009 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -2911,27 +2911,6 @@ int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size)
     }
 
     return ret;
-  }
-}
-
-char *splt_u_safe_strdup(char *input, int *error)
-{
-  if (input == NULL)
-  {
-    return NULL;
-  }
-  else
-  {
-    char *dup_input = strdup(input);
-    if (dup_input != NULL)
-    {
-      return dup_input;
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
   }
 }
 

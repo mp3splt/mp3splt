@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2009 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -38,12 +38,83 @@
 
 #include "splt.h"
 
-void splt_su_append(char **str, size_t *allocated_size,
+char *splt_su_replace_all(const char *str, char *to_replace,
+    char *replacement, int *error)
+{
+  if (str == NULL)
+  {
+    return NULL;
+  }
+
+  if (to_replace == NULL || replacement == NULL)
+  {
+    return splt_su_safe_strdup(str, NULL);
+  }
+
+
+  char *new_str = NULL;
+  size_t new_str_size = 0;
+
+  int err = SPLT_OK;
+
+  const char *ptr = str;
+  const char *prev_ptr = ptr;
+  while ((ptr = strstr(ptr, to_replace)) != NULL)
+  {
+    err = splt_su_append(&new_str, &new_str_size, prev_ptr, ptr - prev_ptr);
+    if (err != SPLT_OK) { goto error; }
+    err = splt_su_append(&new_str, &new_str_size, replacement, strlen(replacement));
+    if (err != SPLT_OK) { goto error; }
+    ptr += strlen(to_replace);
+    prev_ptr = ptr;
+  }
+
+  if (prev_ptr != NULL)
+  {
+    err = splt_su_append(&new_str, &new_str_size, prev_ptr, (str + strlen(str)) - prev_ptr);
+    if (err != SPLT_OK) { goto error; }
+  }
+ 
+  return new_str;
+
+error:
+  if (new_str)
+  {
+    free(new_str);
+  }
+  *error = err;
+
+  return NULL;
+}
+
+char *splt_su_safe_strdup(const char *input, int *error)
+{
+  if (input == NULL)
+  {
+    return NULL;
+  }
+
+  char *dup_input = strdup(input);
+  if (dup_input != NULL)
+  {
+    return dup_input;
+  }
+  else
+  {
+    if (error)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+    return NULL;
+  }
+}
+
+int splt_su_append(char **str, size_t *allocated_size,
     const char *to_append, size_t to_append_size)
 {
   if (str == NULL || to_append == NULL || to_append_size == 0)
   {
-    return;
+    return SPLT_OK;
   }
 
   size_t new_allocated_size = *allocated_size;
@@ -51,18 +122,30 @@ void splt_su_append(char **str, size_t *allocated_size,
   if (*str == NULL || *allocated_size == 0)
   {
     *str = malloc(to_append_size + 1);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+
     *str[0] = '\0';
     new_allocated_size = to_append_size + 1;
   }
   else
   {
     *str = realloc(*str, to_append_size + *allocated_size);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+
     new_allocated_size = to_append_size + *allocated_size;
   }
 
   *allocated_size = new_allocated_size;
 
   strncat(*str, to_append, to_append_size);
+
+  return SPLT_OK;
 }
 
 void splt_su_free_replace(char **str, char *replacement)
@@ -71,10 +154,12 @@ void splt_su_free_replace(char **str, char *replacement)
   {
     return;
   }
+
   if (*str)
   {
     free(*str);
   }
+
   *str = replacement;
 }
 
@@ -112,24 +197,4 @@ int splt_su_copy(const char *src, char **dest)
 
   return err;
 }
-
-/*int main()
-{
-  char *test = NULL;
-  size_t test_size = 0;
-
-  splt_su_append(&test, &test_size, "abcd", 5);
-  splt_su_append(&test, &test_size, "efg", 4);
-  splt_su_append(&test, &test_size, "hijklm", 7);
-
-  assert(strcmp(test, "abcdefghijklm") == 0);
-
-  if (test) 
-  {
-    free(test);
-    test = NULL;
-  }
-
-  return EXIT_SUCCESS;
-}*/
 

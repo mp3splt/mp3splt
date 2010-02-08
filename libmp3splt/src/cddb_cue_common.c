@@ -3,7 +3,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2009 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
  *
  *********************************************************/
 
@@ -39,17 +39,17 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
 
   char *artist0 = NULL;
   char *first_artist = splt_tu_get_tags_char_field(state, 0, SPLT_TAGS_ARTIST);
-  artist0 = splt_u_safe_strdup(first_artist, error);
+  artist0 = splt_su_safe_strdup(first_artist, error);
   if (*error < 0) { goto function_end; }
 
   char *album0 = NULL;
   char *first_album = splt_tu_get_tags_char_field(state, 0, SPLT_TAGS_ALBUM);
-  album0 = splt_u_safe_strdup(first_album, error);
+  album0 = splt_su_safe_strdup(first_album, error);
   if (*error < 0) { goto function_end; }
 
   char *year0 = NULL;
   char *first_year = splt_tu_get_tags_char_field(state, 0, SPLT_TAGS_YEAR);
-  year0 = splt_u_safe_strdup(first_year, error);
+  year0 = splt_su_safe_strdup(first_year, error);
   if (*error < 0) { goto function_end; }
 
   unsigned char genre0 = splt_tu_get_tags_uchar_field(state, 0, SPLT_TAGS_GENRE);

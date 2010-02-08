@@ -3,7 +3,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2009 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
  *
  *********************************************************/
 
@@ -30,7 +30,8 @@
 #include "splt.h"
 #include "tags_utils.h"
 
-static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags, int track);
+static char *splt_tu_get_replaced_with_tags(const char *word,
+    splt_tags *tags, int track, int *err);
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state);
 
 void splt_tu_free_original_tags(splt_state *state)
@@ -117,16 +118,41 @@ void splt_tu_get_original_tags(splt_state *state, int *err)
 
 int splt_tu_append_original_tags(splt_state *state)
 {
-  //TODO: replace @ with @@ if REPLACE_TAGS_In_TAGS option
-  return splt_tu_append_tags(state,
-      state->original_tags.title,
-      state->original_tags.artist,
-      state->original_tags.album,
-      NULL,
-      state->original_tags.year,
-      state->original_tags.comment,
-      state->original_tags.track,
+  int err = SPLT_OK;
+
+  char *new_title = NULL;
+  char *new_artist = NULL;
+  char *new_album = NULL;
+  char *new_year = NULL;
+  char *new_comment = NULL;
+
+  new_title = splt_su_replace_all(state->original_tags.title, "@", "@@", &err);
+  if (err != SPLT_OK) { goto end; }
+
+  new_artist = splt_su_replace_all(state->original_tags.artist, "@", "@@", &err);
+  if (err != SPLT_OK) { goto end; }
+
+  new_album = splt_su_replace_all(state->original_tags.album, "@", "@@", &err);
+  if (err != SPLT_OK) { goto end; }
+
+  new_year = splt_su_replace_all(state->original_tags.year, "@", "@@", &err);
+  if (err != SPLT_OK) { goto end; }
+
+  new_comment = splt_su_replace_all(state->original_tags.comment, "@", "@@", &err);
+  if (err != SPLT_OK) { goto end; }
+
+  err = splt_tu_append_tags(state, new_title, new_artist, new_album, NULL,
+      new_year, new_comment, state->original_tags.track,
       state->original_tags.genre);
+
+end:
+  if (new_title) { free(new_title); }
+  if (new_artist) { free(new_artist); }
+  if (new_album) { free(new_album); }
+  if (new_year) { free(new_year); }
+  if (new_comment) { free(new_comment); }
+
+  return err;
 }
 
 int splt_tu_append_tags(splt_state *state, 
@@ -568,7 +594,6 @@ int splt_tu_set_original_tags_field(splt_state *state,
 
 int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
 {
-  //TODO: error handling
   int err = SPLT_OK;
 
   splt_tags *tags = splt_tu_get_tags_to_replace_in_tags(state);
@@ -597,16 +622,25 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
     cur_tags->genre = tags->genre;
     cur_tags->tags_version = tags->tags_version;
 
-    splt_su_free_replace(&cur_tags->title,
-        splt_tu_get_replaced_with_tags(tags->title, tags, track));
-    splt_su_free_replace(&cur_tags->artist,
-        splt_tu_get_replaced_with_tags(tags->artist, tags, track));
-    splt_su_free_replace(&cur_tags->album,
-        splt_tu_get_replaced_with_tags(tags->album, tags, track));
-    splt_su_free_replace(&cur_tags->year,
-        splt_tu_get_replaced_with_tags(tags->year, tags, track));
-    splt_su_free_replace(&cur_tags->comment,
-        splt_tu_get_replaced_with_tags(tags->comment, tags, track));
+    char *t = splt_tu_get_replaced_with_tags(tags->title, tags, track, &err);
+    if (err != SPLT_OK) { return err; }
+    splt_su_free_replace(&cur_tags->title, t);
+
+    char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, track, &err);
+    if (err != SPLT_OK) { return err; }
+    splt_su_free_replace(&cur_tags->artist, a);
+
+    char *al = splt_tu_get_replaced_with_tags(tags->album, tags, track, &err);
+    if (err != SPLT_OK) { return err; }
+    splt_su_free_replace(&cur_tags->album, al);
+
+    char *y = splt_tu_get_replaced_with_tags(tags->year, tags, track, &err);
+    if (err != SPLT_OK) { return err; }
+    splt_su_free_replace(&cur_tags->year, y);
+
+    char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, track, &err);
+    if (err != SPLT_OK) { return err; }
+    splt_su_free_replace(&cur_tags->comment, c);
   }
 
   return err;
@@ -892,18 +926,16 @@ static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
   return splt_tu_get_tags_at(state, current_tags_number);
 }
 
-static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags,
-    int track)
+static char *splt_tu_get_replaced_with_tags(const char *word,
+    splt_tags *tags, int track, int *error)
 {
+  int err = SPLT_OK;
+
   char *word_with_tags = NULL;
   size_t word_with_tags_size = 0;
 
   char buffer[256] = { '\0' };
 
-  //TODO: handle memory errors
-
-  //TODO: set track ??
-  //TODO: leaks
   //TODO: no title or artist, reprint @t or @a ?
 
   if (word == NULL)
@@ -924,7 +956,8 @@ static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags,
   {
     if (*ptr == '@')
     {
-      splt_su_append(&word_with_tags, &word_with_tags_size, buffer, counter);
+      err = splt_su_append(&word_with_tags, &word_with_tags_size, buffer, counter);
+      if (err != SPLT_OK) { goto error; }
       memset(buffer, 256, '\0');
       counter = 0;
 
@@ -935,43 +968,49 @@ static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags,
         case 'a':
           if (artist != NULL)
           {
-            splt_su_append(&word_with_tags, &word_with_tags_size,
+            err = splt_su_append(&word_with_tags, &word_with_tags_size,
                 artist, strlen(artist));
+            if (err != SPLT_OK) { goto error; }
           }
           break;
         case 'p':
           if (performer != NULL)
           {
-            splt_su_append(&word_with_tags, &word_with_tags_size,
+            err = splt_su_append(&word_with_tags, &word_with_tags_size,
                 performer, strlen(performer));
+            if (err != SPLT_OK) { goto error; }
           }
           break;
         case 'b':
           if (album != NULL)
           {
-            splt_su_append(&word_with_tags, &word_with_tags_size,
+            err = splt_su_append(&word_with_tags, &word_with_tags_size,
                 album, strlen(album));
+            if (err != SPLT_OK) { goto error; }
           }
           break;
         case 't':
           if (title != NULL)
           {
-            splt_su_append(&word_with_tags, &word_with_tags_size,
+            err = splt_su_append(&word_with_tags, &word_with_tags_size,
                 title, strlen(title));
+            if (err != SPLT_OK) { goto error; }
           }
           break;
         case 'c':
           if (comment != NULL)
           {
-            splt_su_append(&word_with_tags, &word_with_tags_size,
+            err = splt_su_append(&word_with_tags, &word_with_tags_size,
                 comment, strlen(comment));
+            if (err != SPLT_OK) { goto error; }
           }
           break;
         case 'y':
           if (year != NULL)
           {
-            splt_su_append(&word_with_tags, &word_with_tags_size,
+            err = splt_su_append(&word_with_tags, &word_with_tags_size,
                 year, strlen(year));
+            if (err != SPLT_OK) { goto error; }
           }
           break;
         case 'N':
@@ -979,14 +1018,17 @@ static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags,
           ;
           char track_str[10] = { '\0' };
           snprintf(track_str, 10, "%d",track);
-          splt_su_append(&word_with_tags, &word_with_tags_size,
+          err = splt_su_append(&word_with_tags, &word_with_tags_size,
               track_str, strlen(track_str));
+          if (err != SPLT_OK) { goto error; }
           break;
         case '@':
-          splt_su_append(&word_with_tags, &word_with_tags_size, "@", 1);
+          err = splt_su_append(&word_with_tags, &word_with_tags_size, "@", 1);
+          if (err != SPLT_OK) { goto error; }
           break;
         default:
-          splt_su_append(&word_with_tags, &word_with_tags_size, (ptr-1), 2);
+          err = splt_su_append(&word_with_tags, &word_with_tags_size, (ptr-1), 2);
+          if (err != SPLT_OK) { goto error; }
           break;
       }
     }
@@ -997,15 +1039,27 @@ static char *splt_tu_get_replaced_with_tags(const char *word, splt_tags *tags,
 
       if (counter == 255)
       {
-        splt_su_append(&word_with_tags, &word_with_tags_size, buffer, counter);
+        err = splt_su_append(&word_with_tags, &word_with_tags_size, buffer, counter);
+        if (err != SPLT_OK) { goto error; }
         memset(buffer, 256, '\0');
         counter = 0;
       }
     }
   }
 
-  splt_su_append(&word_with_tags, &word_with_tags_size, buffer, counter);
+  err = splt_su_append(&word_with_tags, &word_with_tags_size, buffer, counter);
+  if (err != SPLT_OK) { goto error; }
 
   return word_with_tags;
+
+error:
+  if (word_with_tags)
+  {
+    free(word_with_tags);
+  }
+
+  *error = err;
+
+  return NULL;
 }
 
