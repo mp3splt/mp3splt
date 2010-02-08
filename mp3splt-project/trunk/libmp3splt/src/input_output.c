@@ -3,7 +3,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2009 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
  *
  *********************************************************/
 
@@ -56,8 +56,11 @@ static char *splt_io_readlink(const char *fname)
 
   while (bufsize < INT_MAX)
   {
-    //TODO: error
     char *linked_fname = malloc(sizeof(char) * bufsize);
+    if (linked_fname == NULL)
+    {
+      return NULL;
+    }
     ssize_t real_link_size = readlink(fname, linked_fname, bufsize);
 
     if (real_link_size == -1)
@@ -88,8 +91,6 @@ char *splt_io_get_linked_fname(const char *fname)
   {
     if (errno == ELOOP)
     {
-      fprintf(stdout,"loop!\n");
-      fflush(stdout);
       return NULL;
     }
   }
@@ -116,6 +117,7 @@ char *splt_io_get_linked_fname(const char *fname)
       if (previous_linked_fname)
       {
         free(previous_linked_fname);
+        previous_linked_fname = NULL;
       }
       if (linked_fname)
       {
@@ -143,10 +145,22 @@ char *splt_io_get_linked_fname(const char *fname)
   char *linked_fname_with_path = NULL;
   size_t allocated_size = 0;
 
-  splt_su_append(&linked_fname_with_path, &allocated_size,
+  int err = splt_su_append(&linked_fname_with_path, &allocated_size,
       fname, path_size);
-  splt_su_append(&linked_fname_with_path, &allocated_size,
+  if (err != SPLT_OK)
+  {
+    free(linked_fname);
+    return NULL;
+  }
+
+  err = splt_su_append(&linked_fname_with_path, &allocated_size,
       linked_fname, linked_fname_size);
+  if (err != SPLT_OK)
+  {
+    free(linked_fname);
+    free(linked_fname_with_path);
+    return NULL;
+  }
 
   free(linked_fname);
   linked_fname = NULL;
@@ -168,10 +182,6 @@ static int splt_io_linked_file_type_is(const char *fname, int file_type)
 
     free(linked_fname);
     linked_fname = NULL;
-  }
-  else
-  {
-    //TODO: error
   }
 
   return linked_file_is_of_type;
