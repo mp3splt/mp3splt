@@ -92,7 +92,7 @@ function check_current_mp3_no_tags
   _run_command "id3 -R -l \"$current_file\"" "id3 command"
   id3v1=$command_output
 
-  for tag in "Artist Album Title Year Tracknumber Comment";do
+  for tag in "Artist Album Title Year Track Comment";do
     _check_mp3_tags $current_file 1 "$tag" "" "$id3v1"
   done
   _check_mp3_tags $current_file 1 "Genre" "Unknown (255)" "$id3v1"
@@ -100,8 +100,8 @@ function check_current_mp3_no_tags
 
 function check_current_ogg_no_tags
 {
-#TODO
-  a=2
+  _run_command "vorbiscomment -l $current_file" "vorbiscomment command" 1
+  _check_equal_variables "" "$command_output"
 }
 
 function check_all_mp3_tags_with_version
@@ -129,10 +129,18 @@ function check_all_mp3_tags_with_version
   done
 }
 
-function check_all_ogg_tags_with_version
+function check_all_ogg_tags
 {
-#TODO
-  a=1
+  _run_command "vorbiscomment -l \"$current_file\"" "vorbiscomment command"
+  tags=$command_output
+
+  _check_ogg_tags "$current_file" "artist" "$1" "$tags"
+  _check_ogg_tags "$current_file" "album" "$2" "$tags"
+  _check_ogg_tags "$current_file" "title" "$3" "$tags"
+  _check_ogg_tags "$current_file" "date" "$4" "$tags"
+  _check_ogg_tags "$current_file" "genre" "$5" "$tags"
+  _check_ogg_tags "$current_file" "tracknumber" "$6" "$tags"
+  _check_ogg_tags "$current_file" "comment" "$7" "$tags"
 }
 
 function check_current_mp3_length
@@ -150,8 +158,14 @@ function check_current_mp3_length
 
 function check_current_ogg_length
 {
-#TODO
-  a=3
+  expected_length=$1
+
+  _run_command "ogginfo $current_file" "vorbiscomment command" 1
+
+  info=$command_output
+  actual_length=$(echo "$info" | grep "Playback length" | awk -F: "{ print \$2\":\"\$3 }" | sed 's/\s\+//g')
+ 
+  _check_equal_variables $expected_length "$actual_length"
 }
 
 function run_check_output
@@ -296,6 +310,14 @@ function _mp3_get_tag_value
   echo "$actual_tag_value"
 }
 
+function _ogg_get_tag_value
+{
+  tags=$1
+  tag_field=$2
+  actual_tag_value=$(echo "$tags" | grep $tag_field | awk -F"=" '{ print $2 }')
+  echo "$actual_tag_value"
+}
+
 function _check_all_current_mp3_tags
 {
   if [[ $current_tags_version -eq 1 ]];then
@@ -311,7 +333,7 @@ function _check_all_current_mp3_tags
   _check_mp3_tags "$current_file" $current_tags_version "Title" "$3" "$tags"
   _check_mp3_tags "$current_file" $current_tags_version "Year" "$4" "$tags"
   _check_mp3_tags "$current_file" $current_tags_version "Genre" "$5" "$tags"
-  _check_mp3_tags "$current_file" $current_tags_version "Tracknumber" "$6" "$tags"
+  _check_mp3_tags "$current_file" $current_tags_version "Track" "$6" "$tags"
   _check_mp3_tags "$current_file" $current_tags_version "Comment" "$7" "$tags"
 }
 
@@ -328,26 +350,8 @@ function _check_mp3_tags
 
   if [[ $tags_version -eq 1 ]];then
     case "$tags_field" in 
-      Artist*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "Artist" 1)
-      ;;
-      Album*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "Album" 1)
-      ;;
-      Title*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "Title" 1)
-      ;;
-      Year*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "Year" 1)
-      ;;
-      Genre*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "Genre" 1)
-      ;;
-      Tracknumber*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "Track" 1)
-      ;;
-      Comment*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "Comment" 1)
+      Artist|Album|Title|Year|Genre|Track|Comment)
+      actual_tag_value=$(_mp3_get_tag_value "$tags" "$tags_field" 1)
       ;;
       *)
         p_red "Error: unrecognized tags field '$tags_field' (for id3 tags) " 2>&1
@@ -371,7 +375,7 @@ function _check_mp3_tags
       Genre*)
         actual_tag_value=$(_mp3_get_tag_value "$tags" "genre:" 3)
       ;;
-      Tracknumber*)
+      Track)
         actual_tag_value=$(_mp3_get_tag_value "$tags" "track:" 1)
       ;;
       Comment*)
@@ -385,6 +389,31 @@ function _check_mp3_tags
   fi
 
   actual_value="$tags_field for $file: '$actual_tag_value' (id3v$current_tags_version)"
+
+  _check_equal_variables "$expected_value" "$actual_value"
+}
+
+function _check_ogg_tags
+{
+  file=$1
+  tags_field=$2
+  expected_tag_value=$3
+  tags=$4
+
+  expected_value="$tags_field for $file: '$expected_tag_value'"
+  actual_tag_value=""
+
+  case "$tags_field" in 
+    artist|album|title|date|genre|tracknumber|comment)
+    actual_tag_value=$(_ogg_get_tag_value "$tags" "$tags_field")
+    ;;
+    *)
+      p_red "Error: unrecognized tags field '$tags_field' (ogg) " 2>&1
+      exit 1
+    ;;
+  esac
+
+  actual_value="$tags_field for $file: '$actual_tag_value'"
 
   _check_equal_variables "$expected_value" "$actual_value"
 }

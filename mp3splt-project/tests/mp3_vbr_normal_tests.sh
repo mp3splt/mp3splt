@@ -1074,6 +1074,93 @@ function test_normal_vbr_stdout_multiple_splitpoints
   echo
 }
 
+function test_normal_vbr_custom_tags_with_replace_tags_in_tags
+{
+  remove_output_dir
+
+  test_name="vbr custom tags & replace tags in tags"
+  M_FILE="La_Verue__Today"
+
+  F1="-a_10-b_a_@n-10.mp3"
+  F2="Today-La Verue-album_cc_@t-7.mp3"
+  F3="Today-La Verue-album_cc_@t-8.mp3"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  tags_option="r[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@N=7]"
+  output_option="@t-@a-@b-@N"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_all_mp3_tags_with_version "2" "a_10" "b_a_@n" "" ""\
+  "Other" "12" "10" "cc_b_@a"
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "Today" "2007"\
+  "Rock" "17" "7" "cc_Today"
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "Today" "2007"\
+  "Rock" "17" "8" "cc_Today"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_split_in_equal_parts
+{
+  remove_output_dir
+
+  test_name="vbr split in equal parts"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting 'split in parts' mode
+   File \"$OUTPUT_DIR/1.mp3\" created
+   File \"$OUTPUT_DIR/2.mp3\" created
+   File \"$OUTPUT_DIR/3.mp3\" created
+   File \"$OUTPUT_DIR/4.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ split in parts ok"
+  mp3splt_args="-d $OUTPUT_DIR -o @n -S 4 $MP3_FILE"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/1.mp3" 
+  check_current_mp3_length "01.01"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/2.mp3" 
+  check_current_mp3_length "01.01"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/3.mp3" 
+  check_current_mp3_length "01.01"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/4.mp3" 
+  check_current_mp3_length "01.01"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir"\
+  "Today" "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+
+  p_green "OK"
+  echo
+}
+
 function run_normal_vbr_tests
 {
   p_blue " NORMAL VBR mp3 tests ..."

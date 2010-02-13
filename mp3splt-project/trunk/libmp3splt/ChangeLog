@@ -2,6 +2,20 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.5.9
+-------------------------------------------------------------
+
+- TODO: complete changelog
+
+- added pretend to split option
+- added cue export option
+- added replace tags in tags option (SPLT_OPT_REPLACE_TAGS_IN_TAGS)
+- added SPLIT_OPTION_LENGTH_MODE to split in equal time parts
+
+- fixed important bug #???? problem with ogg comments not written in the output files
+- fixed bug #??? with symlink issues
+- fixed bug #2913697 in order to resolve symlinks in output directory
+
 libmp3splt version 0.5.8a
 -------------------------------------------------------------
 

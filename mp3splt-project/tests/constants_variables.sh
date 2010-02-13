@@ -4,11 +4,13 @@ RUN_INTERNET_TESTS=1
 
 DIFF_CMD="diff"
 VIEW_DIFF_CMD="acoc diff"
-USE_GRAPHIC_DIFF=1
+USE_GRAPHIC_DIFF=0
 GRAPHIC_DIFF_CMD="meld"
 
 MP3SPLT="./mp3splt -X"
 SONGS_DIR="songs"
+
+#MP3
 MP3_FILE="$SONGS_DIR/La_Verue__Today.mp3"
 SILENCE_MP3_FILE="$SONGS_DIR/La_Verue__Today_silence.mp3"
 NO_TAGS_MP3_FILE="$SONGS_DIR/La_Verue__Today__no_tags.mp3"
@@ -16,6 +18,13 @@ CBR_MP3="Merci_Bonsoir__Je_veux_Only_love.mp3"
 CBR_MP3_FILE="$SONGS_DIR/$CBR_MP3"
 WRAPPED_FILE="$SONGS_DIR/wrapped.mp3"
 SYNCERR_FILE="$SONGS_DIR/syncerror.mp3"
+
+#OGG
+OGG_FILE="$SONGS_DIR/test.ogg"
+SILENCE_OGG_FILE="$SONGS_DIR/test.ogg"
+NO_TAGS_OGG_FILE="$SONGS_DIR/test.ogg"
+
+#OTHERS
 CDDB_FILE="$SONGS_DIR/test.cddb"
 CUE_FILE="$SONGS_DIR/test.cue"
 AUDACITY_FILE="$SONGS_DIR/audacity.txt"

@@ -528,7 +528,7 @@ static void splt_ogg_v_comment(vorbis_comment *vc, char *artist,
   }
   if (comment!=NULL)
   {
-    vorbis_comment_add_tag(vc, "", comment);
+    vorbis_comment_add_tag(vc, "comment", comment);
   }
 }
 
@@ -594,7 +594,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  com = vorbis_comment_query(vc_local, "",0);
+  com = vorbis_comment_query(vc_local, "comment",0);
   if (com != NULL)
   {
     err = splt_tu_set_original_tags_field(state,SPLT_TAGS_COMMENT, 0,com,0x0);
