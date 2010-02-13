@@ -31,7 +31,7 @@
 #include "tags_utils.h"
 
 static char *splt_tu_get_replaced_with_tags(const char *word,
-    splt_tags *tags, int track, int *err);
+    const splt_tags *tags, int track, int *err);
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state);
 
 void splt_tu_free_original_tags(splt_state *state)
@@ -624,22 +624,19 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
 
     char *t = splt_tu_get_replaced_with_tags(tags->title, tags, track, &err);
     if (err != SPLT_OK) { return err; }
-    splt_su_free_replace(&cur_tags->title, t);
-
-    char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, track, &err);
-    if (err != SPLT_OK) { return err; }
-    splt_su_free_replace(&cur_tags->artist, a);
-
-    char *al = splt_tu_get_replaced_with_tags(tags->album, tags, track, &err);
-    if (err != SPLT_OK) { return err; }
-    splt_su_free_replace(&cur_tags->album, al);
-
     char *y = splt_tu_get_replaced_with_tags(tags->year, tags, track, &err);
     if (err != SPLT_OK) { return err; }
-    splt_su_free_replace(&cur_tags->year, y);
-
+    char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, track, &err);
+    if (err != SPLT_OK) { return err; }
+    char *al = splt_tu_get_replaced_with_tags(tags->album, tags, track, &err);
+    if (err != SPLT_OK) { return err; }
     char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, track, &err);
     if (err != SPLT_OK) { return err; }
+
+    splt_su_free_replace(&cur_tags->title, t);
+    splt_su_free_replace(&cur_tags->year, y);
+    splt_su_free_replace(&cur_tags->artist, a);
+    splt_su_free_replace(&cur_tags->album, al);
     splt_su_free_replace(&cur_tags->comment, c);
   }
 
@@ -927,7 +924,7 @@ static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
 }
 
 static char *splt_tu_get_replaced_with_tags(const char *word,
-    splt_tags *tags, int track, int *error)
+    const splt_tags *tags, int track, int *error)
 {
   int err = SPLT_OK;
 
@@ -935,8 +932,6 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
   size_t word_with_tags_size = 0;
 
   char buffer[256] = { '\0' };
-
-  //TODO: no title or artist, reprint @t or @a ?
 
   if (word == NULL)
   {
