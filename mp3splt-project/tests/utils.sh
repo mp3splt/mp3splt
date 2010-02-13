@@ -92,7 +92,7 @@ function check_current_mp3_no_tags
   _run_command "id3 -R -l \"$current_file\"" "id3 command"
   id3v1=$command_output
 
-  for tag in "Artist Album Title Year Track Comment";do
+  for tag in Artist Album Title Year Track Comment;do
     _check_mp3_tags $current_file 1 "$tag" "" "$id3v1"
   done
   _check_mp3_tags $current_file 1 "Genre" "Unknown (255)" "$id3v1"
