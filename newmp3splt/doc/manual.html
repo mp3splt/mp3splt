@@ -133,6 +133,10 @@ This option will create an indefinite number of smaller files with a fixed time 
 described above). It is useful to split long files into smaller (for example with the time length of a CD). Adjust option (-a)
 can be used to adjust splitpoints with silence detection.
 <P>
+<DT><B>-S SPLIT_NUMBER</B>         <DD>
+<B>Equal time tracks mode</B>.
+Split in SPLIT_NUMBER files.
+<P>
 <DT><B>-s</B>         <DD>
 <B>Silence mode</B>,
 to split with silence detection. When you use -s option, mp3splt attempts to detect
@@ -438,7 +442,8 @@ a pair of square brackets, each tag is defined as <B>@variable=value</B> and
 tags are <B>separated by comma</B>. If a percent sign <B>%</B> is found before
 the open square bracket character, then the pair of square brackets following the % 
 character will define the default tags in the following files. Multiple '%'
-can be defined. The variables can be:
+can be defined. An optional '<B>r</B>' character can be placed at the start, to
+replace tags in tags. The 'replace tags in tags' option is not recursive. The variables can be:
 <P>
 @a: artist name
 <BR>
@@ -474,12 +479,28 @@ replaced by 'bar'; the third split file will have the tags of the first
 split, with the title tag replaced by 'footitle'. The track number will
 start at 1 for the first split file and auto increment to the other files.
 <P>
+Example of replacing tags in tags:
+<B>r%[@o,@N=1,@b=album,@a=artist_@b_@N]</B>. Having the 'r' option, the
+replace tags in tags mode is activated; thus, output artists are 'artist_album_1','artist_album_2', ...
+Without the 'r' option, output artists are 'artist_@b_@N'.
+<P>
+Replacement is not recursive: <B>r%[@o,@N=1,@b=album_@N,@a=artist_@b]</B>
+will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'.
+<P>
 <DT><B>-m M3U</B>         <DD>
 <B>Create .m3u file</B>. Creates a .m3u file containing the split
 files. The generated .m3u file only contains the split filenames without
 the path. If an output directory is specified with -d or -o, the file is
 created in this directory. The path of M3U is ignored. This option cannot be
 used with STDOUT output.
+<P>
+<DT><B>-E CUE_FILE</B>         <DD>
+<B>Export to .cue file</B>. Creates a .cue file containing the splitpoints.
+Use -P to export the splitpoints without actually splitting.
+<P>
+<DT><B>-P</B>         <DD>
+<B>Pretend to split</B>. Simulation of the process without creating any
+files or directories.
 <P>
 <DT><B>-q</B>         <DD>
 <B>Quiet mode</B>. Stays quiet :) i.e. do not prompt the user for anything and print less messages.
@@ -658,6 +679,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 <A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
 using the manual pages.<BR>
-Time: 00:13:34 GMT, October 26, 2009
+Time: 16:08:05 GMT, February 14, 2010
 </BODY>
 </HTML>

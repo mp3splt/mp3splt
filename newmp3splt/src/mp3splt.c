@@ -361,7 +361,7 @@ void show_small_help_exit(main_data *data)
         " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
         " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"));
   print_message(_(" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"));
-  print_message(_(" -S + SPLIT_NUMBER: split in SPLIT_NUMBER files"));
+  print_message(_(" -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"));
   print_message(_(" -i   Count how many silence splitpoints we have with silence detection\n"
         "      (Use -p for arguments)\n"
         " -v   Prints current version and exits\n"

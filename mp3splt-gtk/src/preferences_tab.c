@@ -101,6 +101,7 @@ extern splt_state *the_state;
 extern gint selected_split_mode;
 extern gint split_file_mode;
 extern GtkWidget *spinner_time;
+extern GtkWidget *spinner_equal_tracks;
 
 //returns the selected language
 //must be free() after
@@ -263,12 +264,15 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //type of split: split mode
   g_key_file_set_integer(my_key_file, "split", "split_mode",
       selected_split_mode);
-  //type of split: time value
+  //time value
   g_key_file_set_integer(my_key_file, "split", "split_mode_time_value",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
   //type of split: file mode
   g_key_file_set_integer(my_key_file, "split", "file_mode",
       split_file_mode);
+  //equal time tracks value
+  g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks",
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_equal_tracks)));
 
   //our data
   gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);

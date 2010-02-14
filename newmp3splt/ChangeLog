@@ -7,6 +7,16 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows : won't fix in release 2.2.6
 
+#mp3splt version 2.2.8
+
+- added '-E CUE_FILE' cue export option
+- added '-P' pretend to split option
+- added '-S SPLIT_NUMBER' split in equal time parts option
+- added replace tags in tags option with '-g': 'r%[@o,@N=1,@a=artist_@N]' outputs artists as 'artist_1', 'artist_2', ...
+- changed '-q' option not to output progress bar
+- fixed important problem with ogg comments not written in the output files (related to #2925104) (libmp3splt)
+- fixed bugs with symlink issues - #2913697 and #2943791 (libmp3splt)
+
 #mp3splt version 2.2.7a
 
 - fixed ogg streams stdin time mode bug (libmp3splt)

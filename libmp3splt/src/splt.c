@@ -542,7 +542,7 @@ void splt_s_time_split(splt_state *state, int *error)
 //X is defined by SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER
 void splt_s_equal_length_split(splt_state *state, int *error)
 {
-  splt_t_put_info_message_to_client(state, _(" info: starting 'split in parts' mode\n"));
+  splt_t_put_info_message_to_client(state, _(" info: starting 'split in equal tracks' mode\n"));
 
   double total_time = splt_t_get_total_time_as_double_secs(state);
   if (total_time > 0)

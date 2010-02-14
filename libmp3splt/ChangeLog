@@ -5,16 +5,12 @@ Known issues :
 libmp3splt version 0.5.9
 -------------------------------------------------------------
 
-- TODO: complete changelog
-
-- added pretend to split option
-- added cue export option
-- added replace tags in tags option (SPLT_OPT_REPLACE_TAGS_IN_TAGS)
-- added SPLIT_OPTION_LENGTH_MODE to split in equal time parts
-
-- fixed important bug #???? problem with ogg comments not written in the output files
-- fixed bug #??? with symlink issues
-- fixed bug #2913697 in order to resolve symlinks in output directory
+- added cue export option - feature #1374959 and #1763318
+- added pretend to split option (useful with cue export)
+- added replace tags in tags option SPLT_OPT_REPLACE_TAGS_IN_TAGS - feature #2909015
+- added SPLIT_OPTION_LENGTH_MODE to split in equal time parts - feature #2908857 and #2809465
+- fixed important problem with ogg comments not written in the output files (related to #2925104)
+- fixed bugs with symlink issues - #2913697 and #2943791
 
 libmp3splt version 0.5.8a
 -------------------------------------------------------------

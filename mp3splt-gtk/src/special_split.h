@@ -34,18 +34,19 @@
 #define FILE_MODE_SINGLE 1
 #define FILE_MODE_MULTIPLE 0
 
+#define SELECTED_SPLIT_EQUAL_TIME_TRACKS 4
 #define SELECTED_SPLIT_NORMAL 3
 #define SELECTED_SPLIT_TIME 2
 #define SELECTED_SPLIT_WRAP 1
 #define SELECTED_SPLIT_ERROR 0
 
-#define NUMBER_OF_SPLIT_MODES 4
+#define NUMBER_OF_SPLIT_MODES 5
 
-gint get_selected_split_mode(GtkToggleButton *radio_b);
+void select_split_mode(int split_mode);
+
 void deactivate_silence_parameters();
 void activate_silence_parameters();
 void split_mode_changed (GtkToggleButton *radio_b, gpointer data);
-void set_default_split_modes (GtkWidget *widget, gpointer data);
 GtkWidget *create_special_split_page();
 
 #define SPECIAL_SPLIT_H
