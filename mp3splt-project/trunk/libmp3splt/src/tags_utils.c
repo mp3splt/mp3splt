@@ -31,7 +31,7 @@
 #include "tags_utils.h"
 
 static char *splt_tu_get_replaced_with_tags(const char *word,
-    const splt_tags *tags, int track, int *err);
+    const splt_tags *tags, int track, int *err, int replace_tags_in_tags);
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state);
 
 void splt_tu_free_original_tags(splt_state *state)
@@ -622,15 +622,17 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
     cur_tags->genre = tags->genre;
     cur_tags->tags_version = tags->tags_version;
 
-    char *t = splt_tu_get_replaced_with_tags(tags->title, tags, track, &err);
+    int replace_tags_in_tags = splt_t_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
+
+    char *t = splt_tu_get_replaced_with_tags(tags->title, tags, track, &err, replace_tags_in_tags);
     if (err != SPLT_OK) { return err; }
-    char *y = splt_tu_get_replaced_with_tags(tags->year, tags, track, &err);
+    char *y = splt_tu_get_replaced_with_tags(tags->year, tags, track, &err, replace_tags_in_tags);
     if (err != SPLT_OK) { return err; }
-    char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, track, &err);
+    char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, track, &err, replace_tags_in_tags);
     if (err != SPLT_OK) { return err; }
-    char *al = splt_tu_get_replaced_with_tags(tags->album, tags, track, &err);
+    char *al = splt_tu_get_replaced_with_tags(tags->album, tags, track, &err, replace_tags_in_tags);
     if (err != SPLT_OK) { return err; }
-    char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, track, &err);
+    char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, track, &err, replace_tags_in_tags);
     if (err != SPLT_OK) { return err; }
 
     splt_su_free_replace(&cur_tags->title, t);
@@ -924,9 +926,14 @@ static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
 }
 
 static char *splt_tu_get_replaced_with_tags(const char *word,
-    const splt_tags *tags, int track, int *error)
+    const splt_tags *tags, int track, int *error, int replace_tags_in_tags)
 {
   int err = SPLT_OK;
+
+  if (!replace_tags_in_tags)
+  {
+    return splt_su_safe_strdup(word, error);
+  }
 
   char *word_with_tags = NULL;
   size_t word_with_tags_size = 0;

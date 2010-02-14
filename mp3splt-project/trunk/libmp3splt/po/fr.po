@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-02-06 18:30+0100\n"
+"POT-Creation-Date: 2010-02-14 16:46+0100\n"
 "PO-Revision-Date: 2009-10-02 10:56+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -94,7 +94,7 @@ msgstr " info : début de la division en plusieurs pistes de même taille\n"
 
 #: src/splt.c:545
 #, fuzzy
-msgid " info: starting 'split in parts' mode\n"
+msgid " info: starting 'split in equal tracks' mode\n"
 msgstr " info : début de la division en plusieurs pistes de même taille\n"
 
 #: src/splt.c:641
@@ -346,7 +346,7 @@ msgstr " division en plusieurs pistes de même taille réussie"
 
 #: src/utils.c:2322
 #, c-format
-msgid " split in parts ok"
+msgid " split in equal tracks ok"
 msgstr ""
 
 #: src/utils.c:2325
@@ -551,7 +551,7 @@ msgstr " fichier avec marqueurs audacity analysé"
 msgid " audacity error: invalid audacity labels file '%s'"
 msgstr " erreur audacity : fichier marqueurs audacity '%s' invalide"
 
-#: src/utils.c:2949
+#: src/utils.c:2928
 #, c-format
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"

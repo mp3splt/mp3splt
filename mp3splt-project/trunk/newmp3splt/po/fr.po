@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-02-06 18:30+0100\n"
+"POT-Creation-Date: 2010-02-14 16:47+0100\n"
 "PO-Revision-Date: 2009-10-02 10:58+0100\n"
 "Last-Translator: Alexandru Munteanu <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -90,7 +90,7 @@ msgid ""
 msgstr " -A + FICHIER_AUDACITY : division à partir de marqueurs audacity"
 
 #: src/mp3splt.c:364
-msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER files"
+msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"
 msgstr ""
 
 #: src/mp3splt.c:365

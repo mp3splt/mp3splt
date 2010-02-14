@@ -40,6 +40,7 @@
 #include <libmp3splt/mp3splt.h>
 
 #include "player.h"
+#include "special_split.h"
 
 extern GtkWidget *directory_entry;
 extern GtkWidget *player_combo_box;
@@ -47,7 +48,6 @@ extern gint selected_player;
 extern GList *player_pref_list;
 extern GtkWidget *radio_button;
 
-extern GtkWidget *split_mode_radio_button;
 extern GtkWidget *file_mode_radio_button;
 
 extern GtkWidget *entry;
@@ -59,6 +59,7 @@ extern GtkWidget *spinner_adjust_offset;
 extern GtkWidget *spinner_adjust_threshold;
 extern GtkWidget *create_dirs_from_output_files;
 extern GtkWidget *spinner_time;
+extern GtkWidget *spinner_equal_tracks;
 
 extern GtkWidget *output_entry;
 extern GtkWidget *output_label;
@@ -303,20 +304,15 @@ jump_near:
   }
 
   //type of split: split mode
-  gint split_mode = g_key_file_get_integer(key_file, "split",
-      "split_mode", NULL);
-  GSList *split_mode_radio_button_list = 
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(split_mode_radio_button));
-  our_selection = 
-    (GtkWidget *)g_slist_nth_data(split_mode_radio_button_list, split_mode);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_selection), TRUE);
+  gint split_mode = g_key_file_get_integer(key_file, "split", "split_mode", NULL);
+  select_split_mode(split_mode);
 
-  //type of split: time value
+  //time value
   gint time_value = g_key_file_get_integer(key_file, "split",
       "split_mode_time_value", NULL);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_time), time_value);
 
-  //type of split: file mode
+  //file mode
   gint file_mode = g_key_file_get_integer(key_file, "split",
       "file_mode", NULL);
   GSList *file_mode_radio_button_list = 
@@ -324,6 +320,11 @@ jump_near:
   our_selection = 
     (GtkWidget *)g_slist_nth_data(file_mode_radio_button_list, file_mode);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_selection), TRUE);
+
+  //equal time tracks value
+  gint equal_tracks = g_key_file_get_integer(key_file, "split",
+      "split_mode_equal_time_tracks", NULL);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_equal_tracks), equal_tracks);
 
   g_key_file_free(key_file);
   key_file = NULL;
@@ -556,7 +557,7 @@ void write_default_preferences_file()
   {
     g_key_file_set_integer(my_key_file, "split", "split_mode", 3);
     g_key_file_set_comment(my_key_file, "split", "split_mode",
-        "\n 0 - error mode, 1 - wrap mode, 2 - time mode, 3 - normal mode",
+        "\n 0 - error mode, 1 - wrap mode, 2 - time mode, 3 - normal mode, 4 - equal time tracks",
         NULL);
   }
 
@@ -575,6 +576,15 @@ void write_default_preferences_file()
     g_key_file_set_integer(my_key_file, "split", "file_mode", 1);
     g_key_file_set_comment(my_key_file, "split", "file_mode",
         "\n 0 - multiple files, 1 - single file",
+        NULL);
+  }
+
+  //equal time tracks
+  if (!g_key_file_has_key(my_key_file, "split", "split_mode_equal_time_tracks",NULL))
+  {
+    g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks", 10);
+    g_key_file_set_comment(my_key_file, "split", "split_mode_equal_time_tracks",
+        "\n number of tracks when to split in X tracks (for the equal time tracks split)",
         NULL);
   }
 

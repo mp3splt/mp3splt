@@ -2319,7 +2319,7 @@ char *splt_u_strerror(splt_state *state, splt_code error_code)
         snprintf(error_msg,max_error_size, _(" time split ok"));
         break;
       case SPLT_LENGTH_SPLIT_OK:
-        snprintf(error_msg,max_error_size, _(" split in parts ok"));
+        snprintf(error_msg,max_error_size, _(" split in equal tracks ok"));
         break;
       case SPLT_SILENCE_OK:
         snprintf(error_msg,max_error_size, _(" silence split ok"));

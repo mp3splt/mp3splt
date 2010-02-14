@@ -58,6 +58,7 @@ extern GtkWidget *spinner_adjust_gap;
 extern GtkWidget *spinner_adjust_offset;
 extern GtkWidget *spinner_adjust_threshold;
 extern GtkWidget *spinner_time;
+extern GtkWidget *spinner_equal_tracks;
 extern GtkWidget *create_dirs_from_output_files;
 
 void update_output_options()
@@ -129,6 +130,12 @@ void put_options_from_preferences()
           SPLT_OPTION_TIME_MODE);
       mp3splt_set_float_option(the_state, SPLT_OPT_SPLIT_TIME,
           gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
+      break;
+    case SELECTED_SPLIT_EQUAL_TIME_TRACKS:
+      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
+          SPLT_OPTION_LENGTH_MODE);
+      mp3splt_set_int_option(the_state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER,
+          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_equal_tracks)));
       break;
     case SELECTED_SPLIT_ERROR:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,

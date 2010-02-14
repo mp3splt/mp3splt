@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-02-06 18:30+0100\n"
+"POT-Creation-Date: 2010-02-14 16:46+0100\n"
 "PO-Revision-Date: 2009-09-07 20:14+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -95,7 +95,7 @@ msgstr " Info: Teilung im Zeitmodus wird gestartet\n"
 
 #: src/splt.c:545
 #, fuzzy
-msgid " info: starting 'split in parts' mode\n"
+msgid " info: starting 'split in equal tracks' mode\n"
 msgstr " Info: Teilung im Zeitmodus wird gestartet\n"
 
 #: src/splt.c:641
@@ -344,7 +344,7 @@ msgstr "Teilung nach Zeit OK"
 
 #: src/utils.c:2322
 #, c-format
-msgid " split in parts ok"
+msgid " split in equal tracks ok"
 msgstr ""
 
 #: src/utils.c:2325
@@ -547,7 +547,7 @@ msgstr "Audacity-Labels-Datei wurde verarbeitet"
 msgid " audacity error: invalid audacity labels file '%s'"
 msgstr " Audacity-Fehler: Ungültige Labels-Datei »%s«"
 
-#: src/utils.c:2949
+#: src/utils.c:2928
 #, c-format
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " Info: Überlappung der Dateiteilung mit %ld.%ld.%ld\n"

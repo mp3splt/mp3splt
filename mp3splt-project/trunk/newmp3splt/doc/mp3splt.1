@@ -164,6 +164,10 @@ This option will create an indefinite number of smaller files with a fixed time 
 described above). It is useful to split long files into smaller (for example with the time length of a CD). Adjust option (\-a)
 can be used to adjust splitpoints with silence detection.
 
+.IP "\fB-S SPLIT_NUMBER\fP         " 10
+\fBEqual time tracks mode\fP.
+Split in SPLIT_NUMBER files.
+
 .IP "\fB-s\fP         " 10
 \fBSilence mode\fP,
 to split with silence detection. When you use \-s option, mp3splt attempts to detect
@@ -440,7 +444,8 @@ a pair of square brackets, each tag is defined as \fB@variable=value\fP and
 tags are \fBseparated by comma\fP. If a percent sign \fB%\fP is found before
 the open square bracket character, then the pair of square brackets following the % 
 character will define the default tags in the following files. Multiple '%'
-can be defined. The variables can be:
+can be defined. An optional '\fBr\fP' character can be placed at the start, to
+replace tags in tags. The 'replace tags in tags' option is not recursive. The variables can be:
 
 @a: artist name
 .br
@@ -469,12 +474,28 @@ replaced by 'bar'; the third split file will have the tags of the first
 split, with the title tag replaced by 'footitle'. The track number will
 start at 1 for the first split file and auto increment to the other files.
 
+Example of replacing tags in tags:
+\fBr%[@o,@N=1,@b=album,@a=artist_@b_@N]\fP. Having the 'r' option, the
+replace tags in tags mode is activated; thus, output artists are 'artist_album_1','artist_album_2', ...
+Without the 'r' option, output artists are 'artist_@b_@N'.
+
+Replacement is not recursive: \fBr%[@o,@N=1,@b=album_@N,@a=artist_@b]\fP
+will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'.
+
 .IP "\fB\-m M3U\fP         " 10
 \fBCreate .m3u file\fP. Creates a .m3u file containing the split
 files. The generated .m3u file only contains the split filenames without
 the path. If an output directory is specified with \-d or \-o, the file is
 created in this directory. The path of M3U is ignored. This option cannot be
 used with STDOUT output.
+
+.IP "\fB\-E CUE_FILE\fP         " 10
+\fBExport to .cue file\fP. Creates a .cue file containing the splitpoints.
+Use \-P to export the splitpoints without actually splitting.
+
+.IP "\fB\-P\fP         " 10
+\fBPretend to split\fP. Simulation of the process without creating any
+files or directories.
 
 .IP "\fB\-q\fP         " 10
 \fBQuiet mode\fP. Stays quiet :) i.e. do not prompt the user for anything and print less messages.

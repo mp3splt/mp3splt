@@ -1116,6 +1116,48 @@ function test_normal_vbr_custom_tags_with_replace_tags_in_tags
   echo
 }
 
+function test_normal_vbr_custom_tags_without_replace_tags_in_tags
+{
+  remove_output_dir
+
+  test_name="vbr custom tags without replace tags in tags"
+  M_FILE="La_Verue__Today"
+
+  F1="-a_@n-b_@a-10.mp3"
+  F2="Today-La Verue-album_@c-7.mp3"
+  F3="Today-La Verue-album_@c-8.mp3"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  tags_option="[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@N=7]"
+  output_option="@t-@a-@b-@N"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_all_mp3_tags_with_version "2" "a_@n" "b_@a" "" ""\
+  "Other" "12" "10" "cc_@b"
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_@c" "Today" "2007"\
+  "Rock" "17" "7" "cc_@t"
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_@c" "Today" "2007"\
+  "Rock" "17" "8" "cc_@t"
+
+  p_green "OK"
+  echo
+}
+
 function test_normal_vbr_split_in_equal_parts
 {
   remove_output_dir

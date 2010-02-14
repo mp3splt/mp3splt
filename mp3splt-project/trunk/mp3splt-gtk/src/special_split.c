@@ -49,6 +49,9 @@
 GtkWidget *time_label = NULL;
 GtkWidget *spinner_time = NULL;
 
+GtkWidget *equal_tracks_label = NULL;
+GtkWidget *spinner_equal_tracks = NULL;
+
 gint selected_split_mode = SELECTED_SPLIT_NORMAL;
 gint split_file_mode = FILE_MODE_SINGLE;
 
@@ -57,24 +60,40 @@ GtkWidget *file_mode_radio_button = NULL;
 
 GtkWidget *multiple_files_component = NULL;
 
-//returns the selected split mode
-gint get_selected_split_mode(GtkToggleButton *radio_b)
+static gint get_selected_split_mode(GtkToggleButton *radio_b)
 {
-  //get the radio buttons
-  GSList *radio_button_list = NULL;
-  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
-  //we check which bubble is checked
-  GtkToggleButton *test = NULL;
-  gint i = 0,selected = SELECTED_SPLIT_NORMAL;
-  //for each split mode, get the selected one
+  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
+  gint selected = SELECTED_SPLIT_NORMAL;
+
+  gint i = 0;
   for(i = 0; i < NUMBER_OF_SPLIT_MODES;i++)
+  {
+    GtkToggleButton *test = (GtkToggleButton *) g_slist_nth_data(radio_button_list,i);
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(test)))
     {
-      test = (GtkToggleButton *) g_slist_nth_data(radio_button_list,i);
-      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(test)))
-        selected = i;
+      selected = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(test), "split_type_id"));
     }
+  }
   
   return selected;
+}
+
+void select_split_mode(int split_mode)
+{
+  GSList *split_mode_radio_button_list =
+    gtk_radio_button_get_group(GTK_RADIO_BUTTON(split_mode_radio_button));
+
+  gint i = 0;
+  for(i = 0; i < NUMBER_OF_SPLIT_MODES;i++)
+  {
+    GtkToggleButton *test = (GtkToggleButton *) g_slist_nth_data(split_mode_radio_button_list, i);
+    int id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(test), "split_type_id"));
+    if (split_mode == id)
+    {
+      gtk_toggle_button_set_active(test, TRUE);
+      return;
+    }
+  }
 }
 
 //when the split mode selection changed
@@ -82,34 +101,15 @@ void split_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
   selected_split_mode = get_selected_split_mode(radio_b);
 
-  if ((selected_split_mode == SELECTED_SPLIT_NORMAL)
-      || (selected_split_mode == SELECTED_SPLIT_WRAP)
-      || (selected_split_mode == SELECTED_SPLIT_ERROR))
-  {
-    gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), FALSE);
-    gtk_widget_set_sensitive(GTK_WIDGET(time_label), FALSE);
-  }
+  int enable_time = (selected_split_mode == SELECTED_SPLIT_TIME);
+  gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), enable_time);
+  gtk_widget_set_sensitive(GTK_WIDGET(time_label), enable_time);
 
-  if (selected_split_mode == SELECTED_SPLIT_TIME)
-  {
-    gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), TRUE);
-    gtk_widget_set_sensitive(GTK_WIDGET(time_label), TRUE);
-  }
+  int enable_split_equal_time = (selected_split_mode == SELECTED_SPLIT_EQUAL_TIME_TRACKS);
+  gtk_widget_set_sensitive(GTK_WIDGET(spinner_equal_tracks), enable_split_equal_time);
+  gtk_widget_set_sensitive(GTK_WIDGET(equal_tracks_label), enable_split_equal_time);
 
   save_preferences(NULL, NULL);
-}
-
-//sets the default split modes
-void set_default_split_modes (GtkWidget *widget, 
-                              gpointer data)
-{
-  GtkToggleButton *radio_b= GTK_TOGGLE_BUTTON(data);
-  //we activate the normal split button
-  GSList *radio_button_list;
-  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
-  GtkToggleButton *test = (GtkToggleButton *)
-    g_slist_nth_data(radio_button_list, SELECTED_SPLIT_NORMAL);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(test),TRUE);  
 }
 
 static void spinner_time_changed(GtkSpinButton *spinner, gpointer data)
@@ -118,6 +118,16 @@ static void spinner_time_changed(GtkSpinButton *spinner, gpointer data)
   gchar time_text[1024] = { '\0' };
   g_snprintf(time_text, 1024, _("\tSplit every %2d seconds."), time);
   gtk_label_set_text(GTK_LABEL(time_label), time_text);
+
+  save_preferences(NULL, NULL);
+}
+
+static void spinner_equal_tracks_changed(GtkSpinButton *spinner, gpointer data)
+{
+  gint equal_tracks = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+  gchar equal_tracks_text[1024] = { '\0' };
+  g_snprintf(equal_tracks_text, 1024, _("\tSplit in %2d equal time tracks."), equal_tracks);
+  gtk_label_set_text(GTK_LABEL(equal_tracks_label), equal_tracks_text);
 
   save_preferences(NULL, NULL);
 }
@@ -154,7 +164,9 @@ static GtkWidget *create_split_mode()
       FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button),
       "toggled", G_CALLBACK (split_mode_changed), NULL);
-  
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_NORMAL));
+
   //time split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Time"));
@@ -162,8 +174,10 @@ static GtkWidget *create_split_mode()
       FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
       G_CALLBACK(split_mode_changed), NULL);
-  
-  //time split
+   g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_TIME));
+ 
+  //
   GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
   gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
   
@@ -184,6 +198,36 @@ static GtkWidget *create_split_mode()
   g_signal_connect(G_OBJECT(spinner_time), "value-changed",
       G_CALLBACK(spinner_time_changed), NULL);
 
+  //split in equal length
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Equal time tracks"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button,
+      FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+      G_CALLBACK(split_mode_changed), NULL);
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_EQUAL_TIME_TRACKS));
+ 
+  //
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
+  
+  gint default_tracks = 10;
+
+  gchar equal_length_text[1024] = { '\0' };
+  g_snprintf(equal_length_text, 1024, _("\tSplit in %2d equal time tracks."), default_tracks);
+  equal_tracks_label = gtk_label_new(time_text);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), equal_tracks_label, FALSE, FALSE, 0);
+  
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 1, 2000, 1.0, 10.0, 0.0);
+  spinner_equal_tracks = gtk_spin_button_new(adj, 1, 0);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_equal_tracks, FALSE, FALSE, 6);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_equal_tracks), default_time);
+  gtk_widget_set_sensitive(GTK_WIDGET(spinner_equal_tracks), FALSE);
+  gtk_widget_set_sensitive(equal_tracks_label, FALSE);
+  g_signal_connect(G_OBJECT(spinner_equal_tracks), "value-changed",
+      G_CALLBACK(spinner_equal_tracks_changed), NULL);
+
   //wrap split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(split_mode_radio_button),
@@ -192,6 +236,8 @@ static GtkWidget *create_split_mode()
       FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
                     G_CALLBACK(split_mode_changed), NULL);
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_WRAP));
   
   //error mode split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
@@ -200,9 +246,10 @@ static GtkWidget *create_split_mode()
       FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
       G_CALLBACK(split_mode_changed), NULL);
-  
-  //put default values
-  set_default_split_modes(NULL, split_mode_radio_button);
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_ERROR));
+ 
+  select_split_mode(SELECTED_SPLIT_NORMAL);
 
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
