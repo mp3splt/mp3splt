@@ -1012,6 +1012,12 @@ end_function:
   }
 }
 
+void splt_freedb_set_default_values(splt_state *state)
+{
+  state->fdb.search_results = NULL;
+  state->fdb.cdstate = NULL;
+}
+
   //deprecated, and not in use
   //but may useful for the implementation of the proxy
   /*int search_freedb (splt_state *state)

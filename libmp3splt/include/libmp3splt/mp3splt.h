@@ -1171,9 +1171,11 @@ typedef enum {
 #ifndef SPLT_DIRCHAR
 #ifdef __WIN32__
 #define SPLT_DIRCHAR '\\'
+#define SPLT_DIRSTR "\\"
 #define SPLT_NDIRCHAR '/'
 #else
 #define SPLT_DIRCHAR '/'
+#define SPLT_DIRSTR "/"
 #define SPLT_NDIRCHAR '\\'
 #endif
 #endif

@@ -48,7 +48,6 @@ extern short global_debug;
 /* types: prototypes */
 
 static void splt_t_free_oformat(splt_state *state);
-static void splt_t_state_put_default_options(splt_state *state, int *error);
 static void splt_t_free_files(char **files, int number);
 
 //returns SPLT_TRUE if the filename to split looks like STDIN
@@ -91,8 +90,54 @@ int splt_t_is_stdout(splt_state *state)
 /********************************/
 /* types: state access */
 
-//create new state aux, allocationg memory
-//-error is the possible error and  NULL is returned
+static void splt_t_set_default_state_values(splt_state *state, int *error)
+{
+  state->split.tags = NULL;
+  splt_tu_reset_tags(splt_tu_get_tags_like_x(state));
+  state->split.points = NULL;
+  state->fname_to_split = NULL;
+  state->path_of_split = NULL;
+  state->m3u_filename = NULL;
+  state->silence_log_fname = NULL;
+  state->split.real_tagsnumber = 0;
+  state->split.real_splitnumber = 0;
+  state->split.splitnumber = 0;
+  state->split.current_split_file_number = 1;
+  state->split.get_silence_level = NULL;
+  state->split.put_message = NULL;
+  state->split.file_split = NULL;
+  state->split.p_bar->progress_text_max_char = 40;
+  snprintf(state->split.p_bar->filename_shorted,512, "%s","");
+  state->split.p_bar->percent_progress = 0;
+  state->split.p_bar->current_split = 0;
+  state->split.p_bar->max_splits = 0;
+  state->split.p_bar->progress_type = SPLT_PROGRESS_PREPARE;
+  state->split.p_bar->silence_found_tracks = 0;
+  state->split.p_bar->silence_db_level = 0;
+  state->split.p_bar->user_data = 0;
+  state->split.p_bar->progress = NULL;
+  state->cancel_split = SPLT_FALSE;
+
+  state->wrap->wrap_files = NULL;
+  state->wrap->wrap_files_num = 0;
+
+  state->serrors->serrors_points = NULL;
+  state->serrors->serrors_points_num = 0;
+  state->syncerrors = 0;
+
+  state->oformat.format_string = NULL;
+  splt_t_set_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT, error, SPLT_TRUE);
+  if (*error < 0) { return; }
+
+  state->err.error_data = NULL;
+  state->err.strerror_msg = NULL;
+
+  splt_freedb_set_default_values(state);
+  splt_o_set_options_default_values(state);
+  splt_o_set_ioptions_default_values(state);
+  splt_p_set_default_values(state);
+}
+
 splt_state *splt_t_new_state(splt_state *state, int *error)
 {
   if ((state =malloc(sizeof(splt_state))) ==NULL)
@@ -100,53 +145,43 @@ splt_state *splt_t_new_state(splt_state *state, int *error)
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
   }
-  else
-  {
-    memset(state, 0x0, sizeof(splt_state));
-    if ((state->wrap = malloc(sizeof(splt_wrap))) == NULL)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      free(state);
-      return NULL;
-    }
-    memset(state->wrap,0x0,sizeof(state->wrap));
-    if ((state->serrors = malloc(sizeof(splt_syncerrors))) == NULL)
-    {
-      free(state->wrap);
-      free(state);
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
-    memset(state->serrors,0x0,sizeof(state->serrors));
-    if ((state->split.p_bar = malloc(sizeof(splt_progress))) == NULL)
-    {
-      free(state->wrap);
-      free(state->serrors);
-      free(state);
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
-    if ((state->plug = malloc(sizeof(splt_plugins))) == NULL)
-    {
-      free(state->wrap);
-      free(state->serrors);
-      free(state->split.p_bar);
-      free(state);
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
-    state->current_plugin = -1;
 
-    //put default options
-    splt_t_state_put_default_options(state, error);
-  }
-
-  //set the default plugins scan directories
-  int return_value = splt_p_set_default_plugins_scan_dirs(state);
-  if (return_value != SPLT_OK)
+  memset(state, 0x0, sizeof(splt_state));
+  if ((state->wrap = malloc(sizeof(splt_wrap))) == NULL)
   {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    free(state);
     return NULL;
   }
+  memset(state->wrap,0x0,sizeof(state->wrap));
+  if ((state->serrors = malloc(sizeof(splt_syncerrors))) == NULL)
+  {
+    free(state->wrap);
+    free(state);
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+  memset(state->serrors,0x0,sizeof(state->serrors));
+  if ((state->split.p_bar = malloc(sizeof(splt_progress))) == NULL)
+  {
+    free(state->wrap);
+    free(state->serrors);
+    free(state);
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+  if ((state->plug = malloc(sizeof(splt_plugins))) == NULL)
+  {
+    free(state->wrap);
+    free(state->serrors);
+    free(state->split.p_bar);
+    free(state);
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+  state->current_plugin = -1;
+
+  splt_t_set_default_state_values(state, error);
 
   return state;
 }
@@ -1138,94 +1173,6 @@ void splt_t_set_default_iopts(splt_state *state)
   int error = SPLT_OK;
   //cannot fail because second argument is NULL
   splt_t_set_new_filename_path(state,NULL,&error);
-}
-
-//puts the default options for a normal split
-static void splt_t_state_put_default_options(splt_state *state, int *error)
-{
-  //split
-  state->split.tags = NULL;
-  splt_tu_reset_tags(splt_tu_get_tags_like_x(state));
-  state->split.points = NULL;
-  state->fname_to_split = NULL;
-  state->path_of_split = NULL;
-  state->m3u_filename = NULL;
-  state->silence_log_fname = NULL;
-  state->split.real_tagsnumber = 0;
-  state->split.real_splitnumber = 0;
-  state->split.splitnumber = 0;
-  state->split.current_split_file_number = 1;
-  state->split.get_silence_level = NULL;
-  //plugins
-  state->plug->plugins_scan_dirs = NULL;
-  state->plug->number_of_plugins_found = 0;
-  state->plug->data = NULL;
-  state->plug->number_of_dirs_to_scan = 0;
-  //syncerrors
-  state->serrors->serrors_points = NULL;
-  state->serrors->serrors_points_num = 0;
-  state->syncerrors = 0;
-  //freedb
-  state->fdb.search_results = NULL;
-  state->fdb.cdstate = NULL;
-  //wrap
-  state->wrap->wrap_files = NULL;
-  state->wrap->wrap_files_num = 0;
-  //output format
-  state->oformat.format_string = NULL;
-  splt_t_set_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT, error, SPLT_TRUE);
-  if (*error < 0) { return; }
-  //client connection
-  state->split.put_message = NULL;
-  state->split.file_split = NULL;
-  state->split.p_bar->progress_text_max_char = 40;
-  snprintf(state->split.p_bar->filename_shorted,512, "%s","");
-  state->split.p_bar->percent_progress = 0;
-  state->split.p_bar->current_split = 0;
-  state->split.p_bar->max_splits = 0;
-  state->split.p_bar->progress_type = SPLT_PROGRESS_PREPARE;
-  state->split.p_bar->silence_found_tracks = 0;
-  state->split.p_bar->silence_db_level = 0;
-  state->split.p_bar->user_data = 0;
-  state->split.p_bar->progress = NULL;
-  state->cancel_split = SPLT_FALSE;
-  //internal
-  state->iopts.library_locked = SPLT_FALSE;
-  state->iopts.messages_locked = SPLT_FALSE;
-  state->iopts.current_refresh_rate = SPLT_DEFAULT_PROGRESS_RATE;
-  state->iopts.frame_mode_enabled = SPLT_FALSE;
-  state->iopts.new_filename_path = NULL;
-  state->iopts.split_begin = 0;
-  state->iopts.split_end = 0;
-  //options
-  state->options.split_mode = SPLT_OPTION_NORMAL_MODE;
-  state->options.tags = SPLT_CURRENT_TAGS;
-  state->options.xing = SPLT_TRUE;
-  state->options.output_filenames = SPLT_OUTPUT_DEFAULT;
-  state->options.quiet_mode = SPLT_FALSE;
-  state->options.pretend_to_split = SPLT_FALSE;
-  state->options.option_frame_mode = SPLT_FALSE;
-  state->options.split_time = 6000;
-  state->options.overlap_time = 0;
-  state->options.option_auto_adjust = SPLT_FALSE;
-  state->options.option_input_not_seekable = SPLT_FALSE;
-  state->options.create_dirs_from_filenames = SPLT_FALSE;
-  state->options.parameter_threshold = SPLT_DEFAULT_PARAM_THRESHOLD;
-  state->options.parameter_offset = SPLT_DEFAULT_PARAM_OFFSET;
-  state->options.parameter_number_tracks = SPLT_DEFAULT_PARAM_TRACKS;
-  state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
-  state->options.parameter_remove_silence = SPLT_FALSE;
-  state->options.parameter_gap = SPLT_DEFAULT_PARAM_GAP;
-  //error strings for error messages
-  state->err.error_data = NULL;
-  state->err.strerror_msg = NULL;
-
-  state->options.remaining_tags_like_x = -1;
-  state->options.auto_increment_tracknumber_tags = 0;
-  state->options.enable_silence_log = SPLT_FALSE;
-  state->options.force_tags_version = 0;
-  state->options.length_split_file_number = 1;
-  state->options.replace_tags_in_tags = SPLT_FALSE;
 }
 
 //sets the error data information
@@ -2253,12 +2200,12 @@ void splt_t_clean_one_split_data(splt_state *state, int num)
 {
   if (splt_tu_tags_exists(state,num))
   {
-    splt_tu_set_tags_char_field(state,num, SPLT_TAGS_YEAR, NULL);
-    splt_tu_set_tags_char_field(state,num, SPLT_TAGS_ARTIST, NULL);
-    splt_tu_set_tags_char_field(state,num, SPLT_TAGS_ALBUM, NULL);
-    splt_tu_set_tags_char_field(state,num, SPLT_TAGS_TITLE, NULL);
-    splt_tu_set_tags_char_field(state,num, SPLT_TAGS_COMMENT, NULL);
-    splt_tu_set_tags_char_field(state,num, SPLT_TAGS_PERFORMER, NULL);
+    splt_tu_set_tags_field(state,num, SPLT_TAGS_YEAR, NULL);
+    splt_tu_set_tags_field(state,num, SPLT_TAGS_ARTIST, NULL);
+    splt_tu_set_tags_field(state,num, SPLT_TAGS_ALBUM, NULL);
+    splt_tu_set_tags_field(state,num, SPLT_TAGS_TITLE, NULL);
+    splt_tu_set_tags_field(state,num, SPLT_TAGS_COMMENT, NULL);
+    splt_tu_set_tags_field(state,num, SPLT_TAGS_PERFORMER, NULL);
   }
 
   if (splt_t_splitpoint_exists(state, num))

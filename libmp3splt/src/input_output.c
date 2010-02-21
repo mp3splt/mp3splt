@@ -139,22 +139,17 @@ char *splt_io_get_linked_fname(const char *fname)
     return linked_fname;
   }
 
-  size_t path_size = slash_ptr - fname + 1;
-  size_t linked_fname_size = strlen(linked_fname);
-
   char *linked_fname_with_path = NULL;
-  size_t allocated_size = 0;
 
-  int err = splt_su_append(&linked_fname_with_path, &allocated_size,
-      fname, path_size);
+  size_t path_size = slash_ptr - fname + 1;
+  int err = splt_su_append(&linked_fname_with_path, fname, path_size, NULL);
   if (err != SPLT_OK)
   {
     free(linked_fname);
     return NULL;
   }
 
-  err = splt_su_append(&linked_fname_with_path, &allocated_size,
-      linked_fname, linked_fname_size);
+  err = splt_su_append_str(&linked_fname_with_path, linked_fname, NULL);
   if (err != SPLT_OK)
   {
     free(linked_fname);

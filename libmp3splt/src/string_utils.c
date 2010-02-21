@@ -35,8 +35,13 @@
 #include <string.h>
 
 #include <assert.h>
+#include <stdarg.h>
 
-#include "splt.h"
+#include "string_utils.h"
+#include "mp3splt.h"
+
+static int splt_su_append_one(char **str, const char *to_append,
+    size_t to_append_size);
 
 char *splt_su_replace_all(const char *str, char *to_replace,
     char *replacement, int *error)
@@ -51,9 +56,7 @@ char *splt_su_replace_all(const char *str, char *to_replace,
     return splt_su_safe_strdup(str, NULL);
   }
 
-
   char *new_str = NULL;
-  size_t new_str_size = 0;
 
   int err = SPLT_OK;
 
@@ -61,9 +64,8 @@ char *splt_su_replace_all(const char *str, char *to_replace,
   const char *prev_ptr = ptr;
   while ((ptr = strstr(ptr, to_replace)) != NULL)
   {
-    err = splt_su_append(&new_str, &new_str_size, prev_ptr, ptr - prev_ptr);
-    if (err != SPLT_OK) { goto error; }
-    err = splt_su_append(&new_str, &new_str_size, replacement, strlen(replacement));
+    err = splt_su_append(&new_str, prev_ptr, ptr - prev_ptr,
+        replacement, strlen(replacement), NULL);
     if (err != SPLT_OK) { goto error; }
     ptr += strlen(to_replace);
     prev_ptr = ptr;
@@ -71,7 +73,7 @@ char *splt_su_replace_all(const char *str, char *to_replace,
 
   if (prev_ptr != NULL)
   {
-    err = splt_su_append(&new_str, &new_str_size, prev_ptr, (str + strlen(str)) - prev_ptr);
+    err = splt_su_append(&new_str, prev_ptr, (str + strlen(str)) - prev_ptr, NULL);
     if (err != SPLT_OK) { goto error; }
   }
  
@@ -109,43 +111,44 @@ char *splt_su_safe_strdup(const char *input, int *error)
   }
 }
 
-int splt_su_append(char **str, size_t *allocated_size,
-    const char *to_append, size_t to_append_size)
+int splt_su_append_str(char **str, const char *to_append, ...)
 {
-  if (str == NULL || to_append == NULL || to_append_size == 0)
+  int err = SPLT_OK;
+  va_list ap;
+
+  va_start(ap, to_append);
+
+  while (to_append)
   {
-    return SPLT_OK;
+    size_t to_append_size = strlen(to_append);
+    err = splt_su_append(str, to_append, to_append_size, NULL);
+    if (err < 0) { break; }
+    to_append = va_arg(ap, const char *);
   }
 
-  size_t new_allocated_size = *allocated_size;
+  va_end(ap);
 
-  if (*str == NULL || *allocated_size == 0)
+  return err;
+}
+
+int splt_su_append(char **str, const char *to_append, ...)
+{
+  int err = SPLT_OK;
+  va_list ap;
+
+  va_start(ap, to_append);
+
+  while (to_append)
   {
-    *str = malloc(to_append_size + 1);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-
-    *str[0] = '\0';
-    new_allocated_size = to_append_size + 1;
-  }
-  else
-  {
-    *str = realloc(*str, to_append_size + *allocated_size);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-
-    new_allocated_size = to_append_size + *allocated_size;
+    size_t to_append_size = va_arg(ap, size_t);
+    err = splt_su_append_one(str, to_append, to_append_size);
+    if (err < 0) { break; }
+    to_append = va_arg(ap, const char *);
   }
 
-  *allocated_size = new_allocated_size;
+  va_end(ap);
 
-  strncat(*str, to_append, to_append_size);
-
-  return SPLT_OK;
+  return err;
 }
 
 void splt_su_free_replace(char **str, char *replacement)
@@ -197,4 +200,56 @@ int splt_su_copy(const char *src, char **dest)
 
   return err;
 }
+
+static int splt_su_append_one(char **str, const char *to_append, size_t to_append_size)
+{
+  if (str == NULL || to_append == NULL || to_append_size == 0)
+  {
+    return SPLT_OK;
+  }
+
+  size_t new_size = 0;
+
+  if (*str == NULL)
+  {
+    new_size = to_append_size + 1;
+    *str = malloc(new_size);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+
+    *str[0] = '\0';
+  }
+  else
+  {
+    new_size = to_append_size + strlen(*str) + 1;
+    *str = realloc(*str, new_size);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+  }
+
+  strncat(*str, to_append, to_append_size);
+
+  return SPLT_OK;
+}
+
+/*int main()
+{
+  char *a = NULL;
+
+  splt_su_append(&a, "this is a test", 6, "another one", 4, "FFFF", 2, NULL);
+
+  free(a);
+  a = NULL;
+
+  splt_su_append_str(&a, "BISthis is a test", "another one", "FFFF", NULL);
+
+
+  free(a);
+
+  return 0;
+}*/
 

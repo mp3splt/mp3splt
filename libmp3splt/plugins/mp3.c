@@ -766,35 +766,32 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
         switch (id_type)
         {
           case SPLT_MP3_ID3_ALBUM:
-            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ALBUM,
-                0,(char *)tag_value,0x0);
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ALBUM, tag_value);
             break;
           case SPLT_MP3_ID3_ARTIST:
-            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ARTIST,
-                0,(char *)tag_value,0x0);
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ARTIST, tag_value);
             break;
           case SPLT_MP3_ID3_TITLE:
             if (strcmp(frame_type,ID3_FRAME_TITLE) == 0)
             {
-              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TITLE,
-                  0,(char *)tag_value,0x0);
+              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TITLE, tag_value);
             }
             break;
           case SPLT_MP3_ID3_YEAR:
-            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_YEAR,
-                0,(char *)tag_value,0x0);
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_YEAR, tag_value);
             break;
           case SPLT_MP3_ID3_TRACK:
-            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TRACK,
-                atof((char*)tag_value), NULL,0x0);
+            ;
+            int track = atoi((char *)tag_value);
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TRACK, &track);
             break;
           case SPLT_MP3_ID3_COMMENT:
-            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_COMMENT,
-                0,(char*)tag_value,0x0);
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_COMMENT, tag_value);
             break;
           case SPLT_MP3_ID3_GENRE:
-            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                0,NULL, splt_mp3_getgenre((char *)tag_value));
+            ;
+            unsigned char genre = splt_mp3_getgenre((char *)tag_value);
+            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE, &genre);
 
             int number = 80;
             number = atoi((char *)tag_value);
@@ -802,14 +799,13 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
             if ((number != 0) &&
                 (state->original_tags.genre == 0xFF))
             {
-              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                  0,NULL, number);
+              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE, &number);
             }
             //if we have 0 returned
             if (strcmp((char*)tag_value, "0") == 0)
             {
-              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE,
-                  0, NULL, DEFAULT_ID3V1_CATEGORY_INDEX);
+              number = DEFAULT_ID3V1_CATEGORY_INDEX;
+              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE, &number);
             }
             break;
           default:
@@ -871,8 +867,7 @@ static void splt_mp3_get_original_tags(const char *filename,
       {
         int err = SPLT_OK;
 
-        err = splt_tu_set_original_tags_field(state,SPLT_TAGS_VERSION,
-            tags_version, NULL, 0);
+        err = splt_tu_set_original_tags_field(state,SPLT_TAGS_VERSION, &tags_version);
         MP3_VERIFY_ERROR();
         err = splt_mp3_put_original_libid3_frame(state,id3tag,ID3_FRAME_ARTIST,
             SPLT_MP3_ID3_ARTIST);

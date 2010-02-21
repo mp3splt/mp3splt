@@ -46,6 +46,7 @@
 #include "string_utils.h"
 #include "tags_utils.h"
 #include "input_output.h"
+#include "options.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

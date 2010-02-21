@@ -30,17 +30,12 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_STRING_UTILS_H
+#ifndef SPLT_OPTIONS_H
 
-char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error);
-char *splt_su_safe_strdup(const char *input, int *error);
-int splt_su_append(char **str, const char *to_append, ...);
-int splt_su_append_str(char **str, const char *to_append, ...);
-void splt_su_free_replace(char **str, char *replacement);
-int splt_su_copy(const char *src, char **dest);
+void splt_o_set_options_default_values(splt_state *state);
+void splt_o_set_ioptions_default_values(splt_state *state);
 
-#define MP3SPLT_STRING_UTILS_H
+#define SPLT_OPTIONS_H
 
 #endif
-
 

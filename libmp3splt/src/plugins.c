@@ -42,14 +42,17 @@
 #include "win32.h"
 #endif
 
-int splt_p_append_plugin_scan_dir(splt_state *state, char *dir)
+int splt_p_append_plugin_scan_dir(splt_state *state, const char *dir)
 {
+  if (dir == NULL)
+  {
+    return SPLT_OK;
+  }
+
   splt_plugins *pl = state->plug;
 
-  //allocate memory for another char * pointer
   if (pl->plugins_scan_dirs == NULL)
   {
-    //allocate memory
     pl->plugins_scan_dirs = malloc(sizeof(char *));
   }
   else
@@ -61,46 +64,19 @@ int splt_p_append_plugin_scan_dir(splt_state *state, char *dir)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  pl->plugins_scan_dirs[pl->number_of_dirs_to_scan] = NULL;
 
-  //allocate memory for this directory name
-  pl->plugins_scan_dirs[pl->number_of_dirs_to_scan] = malloc(sizeof(char) * (strlen(dir)+1));
+  size_t dir_size = strlen(dir) + 1;
+
+  pl->plugins_scan_dirs[pl->number_of_dirs_to_scan] = malloc(sizeof(char) * dir_size);
   if (pl->plugins_scan_dirs[pl->number_of_dirs_to_scan] == NULL)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
 
-  snprintf(pl->plugins_scan_dirs[pl->number_of_dirs_to_scan],strlen(dir)+1,"%s",dir);
-
+  snprintf(pl->plugins_scan_dirs[pl->number_of_dirs_to_scan], dir_size, "%s", dir);
   pl->number_of_dirs_to_scan++;
 
   return SPLT_OK;
-}
-
-//sets the plugin scan directories
-int splt_p_set_default_plugins_scan_dirs(splt_state *state)
-{
-  int err = SPLT_OK;
-
-  //temporary variable that we use to set the default directories
-  char temp[2048] = { '\0' };
-
-#ifndef __WIN32__
-  //we put the default plugin directory
-  snprintf(temp,2048,"%s",SPLT_PLUGINS_DIR);
-  if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
-#endif
-
-  //we put the home libmp3splt home directory
-  snprintf(temp,2048,"%s%c%s",getenv("HOME"),SPLT_DIRCHAR,".libmp3splt");
-  if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
-
-  //we put the current directory
-  memset(temp,'\0',2048);
-  snprintf(temp,2048,".%c",SPLT_DIRCHAR);
-  if ((err = splt_p_append_plugin_scan_dir(state, temp)) != SPLT_OK) { return err; }
-
-  return err;
 }
 
 //function to filter the plugin files
@@ -850,5 +826,45 @@ void splt_p_set_original_tags(splt_state *state, int *error)
       pl->data[current_plugin].func->set_original_tags(state, error);
     }
   }
+}
+
+static int splt_p_set_default_plugins_scan_dirs(splt_state *state)
+{
+  int err = SPLT_OK;
+  char *dir = NULL;
+
+#ifndef __WIN32__
+  err = splt_p_append_plugin_scan_dir(state, SPLT_PLUGINS_DIR);
+  if (err < 0) { return err; }
+#endif
+
+  err = splt_su_append_str(&dir, getenv("HOME"), SPLT_DIRSTR, ".libmp3splt", NULL);
+  if (err < 0) { goto end; }
+  err = splt_p_append_plugin_scan_dir(state, dir);
+  free(dir);
+  dir = NULL;
+
+  err = splt_su_append_str(&dir, ".", SPLT_DIRSTR, NULL);
+  if (err < 0) { goto end; }
+  err = splt_p_append_plugin_scan_dir(state, dir);
+
+end:
+  if (dir)
+  {
+    free(dir);
+    dir = NULL;
+  }
+
+  return err;
+}
+
+int splt_p_set_default_values(splt_state *state)
+{
+  state->plug->plugins_scan_dirs = NULL;
+  state->plug->number_of_plugins_found = 0;
+  state->plug->data = NULL;
+  state->plug->number_of_dirs_to_scan = 0;
+
+  return splt_p_set_default_plugins_scan_dirs(state);
 }
 
