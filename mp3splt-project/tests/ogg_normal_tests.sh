@@ -8,9 +8,8 @@ function test_normal_no_tags
 {
   remove_output_dir
 
-  test_name="TODO no tags"
+  test_name="no tags"
 
-#
 #  O_FILE="test"
 #
 #  expected=" Processing file 'songs/${O_FILE}.ogg' ...
@@ -47,7 +46,7 @@ function test_normal_with_tags
 {
   remove_output_dir
 
-  test_name="TODO with tags"
+  test_name="with tags"
 
 #  O_FILE="test"
 #
@@ -84,7 +83,7 @@ function test_normal_with_tags
 function test_normal_pretend
 {
   remove_output_dir
-  test_name="TODO pretend"
+  test_name="pretend"
 
 #TODO
   p_green "OK"
@@ -94,7 +93,7 @@ function test_normal_pretend
 function test_normal_cue_export
 {
   remove_output_dir
-  test_name="TODO cue export"
+  test_name="cue export"
 
 
 #TODO
@@ -248,6 +247,7 @@ function test_normal_stdin_and_tags
 function test_normal_output_fnames_and_custom_tags
 {
   remove_output_dir
+  test_name="output fnames and custom tags"
 #TODO
   p_green "OK"
   echo
@@ -256,6 +256,7 @@ function test_normal_output_fnames_and_custom_tags
 function test_normal_output_fname
 {
   remove_output_dir
+  test_name="output fname"
 #TODO
   p_green "OK"
   echo
@@ -264,6 +265,7 @@ function test_normal_output_fname
 function test_normal_output_fnames_and_dirs
 {
   remove_output_dir
+  test_name="output fnames and directories"
 #TODO
   p_green "OK"
   echo
@@ -272,6 +274,7 @@ function test_normal_output_fnames_and_dirs
 function test_normal_output_fnames_and_custom_tags_dirs
 {
   remove_output_dir
+  test_name="output fnames and custom tags dirs"
 #TODO
   p_green "OK"
   echo
@@ -280,6 +283,7 @@ function test_normal_output_fnames_and_custom_tags_dirs
 function test_normal_stdout
 {
   remove_output_dir
+  test_name="stdout"
 #TODO
   p_green "OK"
   echo
@@ -288,6 +292,7 @@ function test_normal_stdout
 function test_normal_stdout_multiple_splitpoints
 {
   remove_output_dir
+  test_name="stdout multiple splitpoints"
 #TODO
   p_green "OK"
   echo
@@ -296,6 +301,7 @@ function test_normal_stdout_multiple_splitpoints
 function test_normal_custom_tags_with_replace_tags_in_tags
 {
   remove_output_dir
+  test_name="custom tags and replace tags in tags"
 #TODO
   p_green "OK"
   echo
@@ -304,6 +310,7 @@ function test_normal_custom_tags_with_replace_tags_in_tags
 function test_normal_split_in_equal_parts
 {
   remove_output_dir
+  test_name="split in equal parts"
 #TODO
   p_green "OK"
   echo
