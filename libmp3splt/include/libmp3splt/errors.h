@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -30,19 +30,21 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_IO_H
+#ifndef SPLT_ERRORS_H
 
-int splt_io_check_if_directory(const char *fname);
-int splt_io_check_if_file(splt_state *state, const char *fname);
+void splt_e_set_errors_default_values(splt_state *state);
+void splt_e_free_errors(splt_state *state);
 
-int splt_io_input_is_stdin(splt_state *state);
-int splt_io_input_is_stdout(splt_state *state);
+void splt_e_set_error_data(splt_state *state, const char *error_data);
+void splt_e_set_error_data_from_splitpoints(splt_state *state, long point1, long point2);
+void splt_e_set_error_data_from_splitpoint(splt_state *state, long splitpoint);
 
-#ifndef __WIN32__
-char *splt_io_get_linked_fname(const char *fname);
-#endif
+void splt_e_set_strerr_msg(splt_state *state, const char *message);
+void splt_e_set_strerror_msg(splt_state *state);
+void splt_e_set_strherror_msg(splt_state *state);
+void splt_e_clean_strerror_msg(splt_state *state);
 
-#define MP3SPLT_IO_H
+#define SPLT_ERRORS_H
 
 #endif
 

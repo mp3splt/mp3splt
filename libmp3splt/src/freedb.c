@@ -153,9 +153,8 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
         {
           temp2++;
 
-          //we set the category and the disc id
-          splt_t_freedb_set_disc(state,splt_t_freedb_get_found_cds(state), 
-              temp,buf,temp-buf);
+          splt_fu_freedb_set_disc(state, splt_fu_freedb_get_found_cds(state), 
+              temp, buf, temp-buf);
 
           char *full_artist_album = malloc(temp2-(temp+8)-1);
           if (full_artist_album)
@@ -172,7 +171,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
             int i=0;
             int err = SPLT_OK;
             //here we have in album_name the name of the current album      
-            err = splt_t_freedb_append_result(state, full_artist_album, i);
+            err = splt_fu_freedb_append_result(state, full_artist_album, i);
             if (err < 0)
             {
               if (full_artist_album)
@@ -195,7 +194,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
           }
 
           //next cd
-          splt_t_freedb_found_cds_next(state);
+          splt_fu_freedb_found_cds_next(state);
         }
         else
         {
@@ -210,9 +209,9 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 
   } while (((strstr(buf,"/"))!= NULL) &&
       ((strchr(buf,'\n'))!= NULL) &&
-      (splt_t_freedb_get_found_cds(state) < SPLT_MAXCD));
+      (splt_fu_freedb_get_found_cds(state) < SPLT_MAXCD));
 
-  return splt_t_freedb_get_found_cds(state);
+  return splt_fu_freedb_get_found_cds(state);
 }
 
 //char *login (char *s)
@@ -339,7 +338,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
   winsockinit = WSAStartup(0x0101,&winsock);
   if (winsockinit != 0)
   {
-    splt_t_clean_strerror_msg(state);
+    splt_e_clean_strerror_msg(state);
     error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
     return error;
   }
@@ -363,9 +362,9 @@ int splt_freedb_process_search(splt_state *state, char *search,
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
   {
-    splt_t_set_strherror_msg(state);
+    splt_e_set_strherror_msg(state);
     error = SPLT_FREEDB_ERROR_CANNOT_GET_HOST;
-    splt_t_set_error_data(state,dest.hostname);
+    splt_e_set_error_data(state,dest.hostname);
 #ifdef __WIN32__
     WSACleanup();
 #endif
@@ -373,7 +372,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
   }
   else
   {
-    splt_t_set_error_data(state,dest.hostname);
+    splt_e_set_error_data(state,dest.hostname);
 
     //we prepare socket
     memset(&host, 0x0, sizeof(host));
@@ -384,7 +383,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
     //initialize socket
     if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
     {
-      splt_t_set_strerror_msg(state);
+      splt_e_set_strerror_msg(state);
       error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
 #ifdef __WIN32__
       WSACleanup();
@@ -396,7 +395,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
       //make connection
       if ((connect(fd, (void *)&host, sizeof(host))) < 0)
       {
-        splt_t_set_strerror_msg(state);
+        splt_e_set_strerror_msg(state);
         error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
         closesocket(fd);
 #ifdef __WIN32__
@@ -437,20 +436,16 @@ int splt_freedb_process_search(splt_state *state, char *search,
             //message sent
             if((send(fd, message, strlen(message), 0))==-1)
             {
-              splt_t_set_strerror_msg(state);
+              splt_e_set_strerror_msg(state);
               error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
             }
             else
             {
               memset(buffer, 0x00, SPLT_FREEDB_BUFFERSIZE);
 
-              //we free previous search
-              splt_t_freedb_free_search(state);
+              splt_fu_freedb_free_search(state);
 
-              int init_err = SPLT_OK;
-              //create cdstate..
-              init_err = splt_t_freedb_init_search(state);
-
+              int init_err = splt_fu_freedb_init_search(state);
               if (init_err == SPLT_OK)
               {
                 //we read what we receive from the server
@@ -462,7 +457,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
                     i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
                     if (i == -1) 
                     {
-                      splt_t_set_strerror_msg(state);
+                      splt_e_set_strerror_msg(state);
                       error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                       goto function_end1;
                     }
@@ -483,22 +478,22 @@ int splt_freedb_process_search(splt_state *state, char *search,
                   if (tot == -2) break;
 
                 } while ((i>0)&&(e==NULL)&&
-                    (splt_t_freedb_get_found_cds(state)<SPLT_MAXCD));
+                    (splt_fu_freedb_get_found_cds(state)<SPLT_MAXCD));
 
                 //no cd found
-                if (splt_t_freedb_get_found_cds(state)==0) 
+                if (splt_fu_freedb_get_found_cds(state)==0) 
                 {
                   error = SPLT_FREEDB_NO_CD_FOUND;
                   goto function_end1;
                 }
                 //erroror occured while getting freedb infos
-                if (splt_t_freedb_get_found_cds(state)==-1) 
+                if (splt_fu_freedb_get_found_cds(state)==-1) 
                 {
                   error = SPLT_FREEDB_ERROR_GETTING_INFOS;
                   goto function_end1;
                 }
                 //max cd number reached
-                if (splt_t_freedb_get_found_cds(state)==SPLT_MAXCD) 
+                if (splt_fu_freedb_get_found_cds(state)==SPLT_MAXCD) 
                 {
                   error = SPLT_FREEDB_MAX_CD_REACHED;
                   goto function_end1;
@@ -603,7 +598,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   winsockinit = WSAStartup(0x0101,&winsock);
   if (winsockinit != 0)
   {
-    splt_t_clean_strerror_msg(state);
+    splt_e_clean_strerror_msg(state);
     *error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
     return output;
   }
@@ -617,9 +612,9 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   //we get the hostname of freedb
   if((h=gethostbyname(dest.hostname))==NULL)
   {
-    splt_t_set_strherror_msg(state);
+    splt_e_set_strherror_msg(state);
     *error = SPLT_FREEDB_ERROR_CANNOT_GET_HOST;
-    splt_t_set_error_data(state,dest.hostname);
+    splt_e_set_error_data(state,dest.hostname);
 #ifdef __WIN32__
     WSACleanup();
 #endif
@@ -627,7 +622,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   }
   else
   {
-    splt_t_set_error_data(state,dest.hostname);
+    splt_e_set_error_data(state,dest.hostname);
 
     //we prepare socket
     memset(&host, 0x0, sizeof(host));
@@ -648,8 +643,8 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
     //        strncat(message, "\n", 1);
     //        }
     //        else 
-    const char *cd_category = splt_t_freedb_get_disc_category(state, i);
-    const char *cd_id = splt_t_freedb_get_disc_id(state, i);
+    const char *cd_category = splt_fu_freedb_get_disc_category(state, i);
+    const char *cd_id = splt_fu_freedb_get_disc_id(state, i);
 
     int malloc_number = 0;
     if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
@@ -674,7 +669,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
         //open socket
         if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
         {
-          splt_t_set_strerror_msg(state);
+          splt_e_set_strerror_msg(state);
           *error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
           free(message);
           goto end_function;
@@ -684,7 +679,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
           //connect to host
           if ((connect(fd, (void *)&host, sizeof(host)))==-1)
           {
-            splt_t_set_strerror_msg(state);
+            splt_e_set_strerror_msg(state);
             *error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
             goto bloc_end;
           }
@@ -696,7 +691,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
               i=recv(fd, buffer, SPLT_FREEDB_BUFFERSIZE-1, 0);
               if (i == -1)
               {
-                splt_t_set_strerror_msg(state);
+                splt_e_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                 goto bloc_end;
               }
@@ -711,7 +706,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
               //send hello message
               if((send(fd, SPLT_FREEDB_HELLO, strlen(SPLT_FREEDB_HELLO), 0))==-1)
               {
-                splt_t_set_strerror_msg(state);
+                splt_e_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
                 goto bloc_end;
               }
@@ -719,7 +714,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 
               if (i == -1)
               {
-                splt_t_set_strerror_msg(state);
+                splt_e_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                 goto bloc_end;
               }
@@ -735,7 +730,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
             //we send the message
             if((send(fd, message, strlen(message), 0))==-1)
             {
-              splt_t_set_strerror_msg(state);
+              splt_e_set_strerror_msg(state);
               *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
               goto bloc_end;
             }
@@ -750,7 +745,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
                 i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
                 if (i == -1)
                 {
-                  splt_t_set_strerror_msg(state);
+                  splt_e_set_strerror_msg(state);
                   *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                   goto bloc_end;
                 }
@@ -785,7 +780,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
               {
                 if((send(fd, "quit\n", 5, 0))==-1)
                 {
-                  splt_t_set_strerror_msg(state);
+                  splt_e_set_strerror_msg(state);
                   *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
                   goto bloc_end;
                 }
@@ -866,7 +861,7 @@ bloc_end:
           //open socket
           if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
           {
-            splt_t_set_strerror_msg(state);
+            splt_e_set_strerror_msg(state);
             *error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
             free(message);
             goto end_function;
@@ -876,7 +871,7 @@ bloc_end:
             //connect to host
             if ((connect(fd, (void *)&host, sizeof(host)))==-1)
             {
-              splt_t_set_strerror_msg(state);
+              splt_e_set_strerror_msg(state);
               *error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
               goto bloc_end2;
             }
@@ -885,7 +880,7 @@ bloc_end:
               //we send the message
               if((send(fd, message, strlen(message), 0))==-1)
               {
-                splt_t_set_strerror_msg(state);
+                splt_e_set_strerror_msg(state);
                 *error = SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE;
                 goto bloc_end2;
               }
@@ -905,7 +900,7 @@ bloc_end:
                     i = recv(fd, c, SPLT_FREEDB_BUFFERSIZE-(c-buffer)-1, 0);
                     if (i == -1) 
                     {
-                      splt_t_set_strerror_msg(state);
+                      splt_e_set_strerror_msg(state);
                       *error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                       goto bloc_end2;
                     }
@@ -1012,12 +1007,6 @@ end_function:
   }
 }
 
-void splt_freedb_set_default_values(splt_state *state)
-{
-  state->fdb.search_results = NULL;
-  state->fdb.cdstate = NULL;
-}
-
   //deprecated, and not in use
   //but may useful for the implementation of the proxy
   /*int search_freedb (splt_state *state)
@@ -1065,7 +1054,7 @@ void splt_freedb_set_default_values(splt_state *state)
     }
     }
         
-    if (splt_t_freedb_get_found_cds(state)<=0) {
+    if (splt_fu_freedb_get_found_cds(state)<=0) {
     if (dest.proxy) {
     if (strstr(buffer, "HTTP/1.0")!=NULL) {
     if ((c = strchr (buffer, '\n'))!=NULL)

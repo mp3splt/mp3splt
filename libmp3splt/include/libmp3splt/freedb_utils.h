@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -30,19 +30,24 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_IO_H
+#ifndef SPLT_FREEDB_UTILS_H
 
-int splt_io_check_if_directory(const char *fname);
-int splt_io_check_if_file(splt_state *state, const char *fname);
+void splt_fu_set_default_values(splt_state *state);
+void splt_fu_freedb_free_search(splt_state *state);
 
-int splt_io_input_is_stdin(splt_state *state);
-int splt_io_input_is_stdout(splt_state *state);
+int splt_fu_freedb_init_search(splt_state *state);
+int splt_fu_freedb_append_result(splt_state *state, const char *album_name, int revision);
 
-#ifndef __WIN32__
-char *splt_io_get_linked_fname(const char *fname);
-#endif
+int splt_fu_freedb_get_found_cds(splt_state *state);
+void splt_fu_freedb_found_cds_next(splt_state *state);
 
-#define MP3SPLT_IO_H
+void splt_fu_freedb_set_disc(splt_state *state, int index,
+    const char *discid, const char *category, int category_size);
+
+const char *splt_fu_freedb_get_disc_category(splt_state *state, int index);
+const char *splt_fu_freedb_get_disc_id(splt_state *state, int index);
+
+#define SPLT_FREEDB_UTILS_H
 
 #endif
 

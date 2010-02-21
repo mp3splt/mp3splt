@@ -34,6 +34,41 @@
 
 #define MAX_SYMLINKS 1024
 
+int splt_io_input_is_stdin(splt_state *state)
+{
+  char *filename = splt_t_get_filename_to_split(state);
+
+  if (filename && filename[0] != '\0')
+  {
+    if ((strcmp(filename,"-") == 0) ||
+        (filename[strlen(filename)-1] == '-'))
+    {
+      return SPLT_TRUE;
+    }
+  }
+
+  return SPLT_FALSE;
+}
+
+int splt_io_input_is_stdout(splt_state *state)
+{
+  const char *oformat = splt_of_get_oformat(state);
+
+  if (oformat && oformat[0] != '\0')
+  {
+    if ((strcmp(oformat,"-") == 0))
+    {
+      return SPLT_TRUE;
+    }
+    else
+    {
+      return SPLT_FALSE;
+    }
+  }
+
+  return SPLT_FALSE;
+}
+
 static int splt_io_file_type_is(const char *fname, int file_type)
 {
   mode_t st_mode;
@@ -227,8 +262,8 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
   }
 
   //TODO: review ?
-  splt_t_set_strerror_msg(state);
-  splt_t_set_error_data(state, fname);
+  splt_e_set_strerror_msg(state);
+  splt_e_set_error_data(state, fname);
 
   return SPLT_FALSE;
 }

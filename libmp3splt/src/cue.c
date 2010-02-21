@@ -95,12 +95,12 @@ static int splt_cue_set_value(splt_state *state, char *in,
 				if (tag_field == SPLT_TAGS_ARTIST)
 				{
 					snprintf(client_infos,strlen(out)+30, _("\n  Artist: %s\n"), out);
-					splt_t_put_info_message_to_client(state, client_infos);
+					splt_c_put_info_message_to_client(state, client_infos);
 				}
 				else if (tag_field == SPLT_TAGS_ALBUM)
 				{
 					snprintf(client_infos,strlen(out)+30, _("  Album: %s\n"), out);
-					splt_t_put_info_message_to_client(state, client_infos);
+					splt_c_put_info_message_to_client(state, client_infos);
 				}
 				free(client_infos);
 				client_infos = NULL;
@@ -133,7 +133,6 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     return 0;
   }
 
-  //clear previous splitpoints
   splt_t_free_splitpoints_tags(state);
 
   //default no error
@@ -148,7 +147,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   }
   snprintf(client_infos, strlen(file)+200,
       _(" reading informations from CUE file %s ...\n"),file);
-  splt_t_put_info_message_to_client(state, client_infos);
+  splt_c_put_info_message_to_client(state, client_infos);
   free(client_infos);
   client_infos = NULL;
 
@@ -179,8 +178,8 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   //if we cannot open the file
   if (!(file_input=splt_u_fopen(file, "r")))
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state,file);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state,file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;
   }
@@ -256,7 +255,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
             }
             else
             {
-              splt_t_set_error_data(state,file);
+              splt_e_set_error_data(state,file);
               *error = SPLT_INVALID_CUE_FILE;
               goto function_end;
             }
@@ -320,7 +319,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
             ptr += 9;
             if ((dot = strchr(ptr, ':'))==NULL)
             {
-              splt_t_set_error_data(state,file);
+              splt_e_set_error_data(state,file);
               *error = SPLT_INVALID_CUE_FILE;
               goto function_end;
             }
@@ -335,14 +334,14 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
                 long hundr_seconds = splt_u_convert_hundreths(ptr);
                 if (hundr_seconds==-1)
                 {
-                  splt_t_set_error_data(state,file);
+                  splt_e_set_error_data(state,file);
                   *error = SPLT_INVALID_CUE_FILE;
                   goto function_end;
                 }
 
                 //we append the splitpoint
                 append_error =
-                  splt_t_append_splitpoint(state, hundr_seconds, NULL, SPLT_SPLITPOINT);
+                  splt_sp_append_splitpoint(state, hundr_seconds, NULL, SPLT_SPLITPOINT);
                 if (append_error != SPLT_OK)
                 {
                   *error = append_error;
@@ -359,13 +358,13 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
         }
       }
       //we append the last splitpoint
-      append_error = splt_t_append_splitpoint(state, LONG_MAX,
+      append_error = splt_sp_append_splitpoint(state, LONG_MAX,
           _("description here"), SPLT_SPLITPOINT);
     }
     else
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,file);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state,file);
       *error = SPLT_ERROR_SEEKING_FILE;
       goto function_end;
     }
@@ -373,7 +372,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     //if we don't find INDEX on the file, error
     if (counter == 0)
     {
-      splt_t_set_error_data(state,file);
+      splt_e_set_error_data(state,file);
       *error = SPLT_INVALID_CUE_FILE;
       goto function_end;
     }
@@ -389,8 +388,8 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 function_end:
     if (fclose(file_input) != 0)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, file);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state, file);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     file_input = NULL;
@@ -399,7 +398,7 @@ function_end:
   //put number of tracks
   char tracks_info[64] = { '\0' };
   snprintf(tracks_info, 64, _("  Tracks: %d\n\n"),tracks);
-  splt_t_put_info_message_to_client(state, tracks_info);
+  splt_c_put_info_message_to_client(state, tracks_info);
 
   //we return the number of tracks found
   return tracks;
@@ -481,8 +480,8 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
   //we write the result to the file
   if (!(file_output = splt_u_fopen(cue_out_file, "w")))
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state, cue_out_file);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state, cue_out_file);
     *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   }
   else
@@ -507,7 +506,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
     for (i = 0;i < num_of_splitpoints;i++)
     {
       int get_err = SPLT_OK;
-      long splitpoint = splt_t_get_splitpoint_value(state, i, &get_err);
+      long splitpoint = splt_sp_get_splitpoint_value(state, i, &get_err);
       if (get_err < 0) { *error = get_err; break; }
 
       if (stop_at_total_time)
@@ -525,8 +524,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
       splt_cue_write_title_performer(state, file_output, -1, SPLT_TRUE, SPLT_FALSE);
 
       long mins = 0, secs = 0, hundr = 0;
-      splt_t_get_mins_secs_hundr_from_splitpoint(splitpoint, &mins, &secs, &hundr);
-
+      splt_sp_get_mins_secs_hundr_from_splitpoint(splitpoint, &mins, &secs, &hundr);
       fprintf(file_output, "    INDEX 01 %02ld:%02ld:%02ld\n", mins, secs, hundr);
 
       splt_t_current_split_next(state);
@@ -535,8 +533,8 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 end:
     if (fclose(file_output) != 0)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, cue_out_file);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state, cue_out_file);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     file_output = NULL;
@@ -544,7 +542,7 @@ end:
 
   char infos[2048] = { '\0' };
   snprintf(infos,2048,_(" CUE file '%s' created.\n"), cue_out_file);
-  splt_t_put_info_message_to_client(state, infos);
+  splt_c_put_info_message_to_client(state, infos);
 
   if (cue_out_file)
   {

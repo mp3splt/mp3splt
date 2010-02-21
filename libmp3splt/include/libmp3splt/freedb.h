@@ -46,8 +46,6 @@ int splt_freedb_process_search(splt_state *state, char *search,
 char *splt_freedb_get_file(splt_state *state, int i, int *error,
     int get_type, const char *cddb_get_server, int port);
 
-void splt_freedb_set_default_values(splt_state *state);
-
 //global freedb, ports and buffersize
 #define SPLT_FREEDB_BUFFERSIZE 8192
 

@@ -75,7 +75,7 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
   int current_split = splt_t_get_current_split_file_number(state) - 1;
   int old_current_split = current_split;
 
-  int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
   if (remaining_tags_like_x != -1)
   {
     if (current_split >= state->split.real_tagsnumber)
@@ -83,7 +83,7 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
       current_split = remaining_tags_like_x;
     }
 
-    if (splt_t_get_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS) > 0)
+    if (splt_o_get_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS) > 0)
     {
       if (current_split == remaining_tags_like_x)
       {
@@ -122,7 +122,7 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
 
 void splt_tu_get_original_tags(splt_state *state, int *err)
 {
-  if (! splt_t_is_stdin(state))
+  if (! splt_io_input_is_stdin(state))
   {
     splt_tu_free_original_tags(state);
     splt_p_set_original_tags(state, err);
@@ -430,7 +430,7 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
     cur_tags->genre = tags->genre;
     cur_tags->tags_version = tags->tags_version;
 
-    int replace_tags_in_tags = splt_t_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
+    int replace_tags_in_tags = splt_o_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
 
     char *t = splt_tu_get_replaced_with_tags(tags->title, tags, track, &err, replace_tags_in_tags);
     if (err != SPLT_OK) { return err; }
@@ -548,7 +548,7 @@ splt_tags *splt_tu_get_current_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
 
-  int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
   if ((current_tags_number >= state->split.real_tagsnumber) &&
       (remaining_tags_like_x != -1))
   {
@@ -562,7 +562,7 @@ static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
 
-  int remaining_tags_like_x = splt_t_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
   if ((current_tags_number >= state->split.real_tagsnumber) &&
       (remaining_tags_like_x != -1))
   {
@@ -755,31 +755,31 @@ static int splt_tu_set_on_tags_field(splt_tags *tags,
   switch (tags_field)
   {
     case SPLT_TAGS_TITLE:
-      err = splt_su_copy((const char *)data, &tags->title);
+      err = splt_su_copy((char *)data, &tags->title);
       break;
     case SPLT_TAGS_ARTIST:
-      err = splt_su_copy((const char *)data, &tags->artist);
+      err = splt_su_copy((char *)data, &tags->artist);
       break;
     case SPLT_TAGS_ALBUM:
-      err = splt_su_copy((const char *)data, &tags->album);
+      err = splt_su_copy((char *)data, &tags->album);
       break;
     case SPLT_TAGS_YEAR:
-      err = splt_su_copy((const char *)data, &tags->year);
+      err = splt_su_copy((char *)data, &tags->year);
       break;
     case SPLT_TAGS_COMMENT:
-      err = splt_su_copy((const char *)data, &tags->comment);
+      err = splt_su_copy((char *)data, &tags->comment);
       break;
     case SPLT_TAGS_PERFORMER:
-      err = splt_su_copy((const char *)data, &tags->performer);
+      err = splt_su_copy((char *)data, &tags->performer);
       break;
     case SPLT_TAGS_TRACK:
-      tags->track = *((const int *)data);
+      tags->track = *((int *)data);
       break;
     case SPLT_TAGS_GENRE:
-      tags->genre = *((const unsigned char *)data);
+      tags->genre = *((unsigned char *)data);
       break;
     case SPLT_TAGS_VERSION:
-      tags->tags_version = *((const int *)data);
+      tags->tags_version = *((int *)data);
       break;
     default:
       splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);

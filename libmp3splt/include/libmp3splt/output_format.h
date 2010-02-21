@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -30,19 +30,21 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_IO_H
+#ifndef SPLT_OUTPUT_FORMAT_H
 
-int splt_io_check_if_directory(const char *fname);
-int splt_io_check_if_file(splt_state *state, const char *fname);
+int splt_of_set_default_values(splt_state *state);
+void splt_of_free_oformat(splt_state *state);
 
-int splt_io_input_is_stdin(splt_state *state);
-int splt_io_input_is_stdout(splt_state *state);
+void splt_of_set_oformat_digits_tracks(splt_state *state, int tracks);
+void splt_of_set_oformat_digits(splt_state *state);
+void splt_of_set_oformat(splt_state *state, const char *format_string,
+    int *error, int ignore_incorrect_format_warning);
 
-#ifndef __WIN32__
-char *splt_io_get_linked_fname(const char *fname);
-#endif
+int splt_of_get_oformat_number_of_digits_as_int(splt_state *state);
+char splt_of_get_oformat_number_of_digits_as_char(splt_state *state);
+const char *splt_of_get_oformat(splt_state *state);
 
-#define MP3SPLT_IO_H
+#define SPLT_OUTPUT_FORMAT_H
 
 #endif
 

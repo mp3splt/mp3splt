@@ -144,8 +144,8 @@ FILE *splt_ogg_open_file_read(splt_state *state,
     file_input = splt_u_fopen(filename, "rb");
     if (file_input == NULL)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,filename);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state,filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
@@ -167,7 +167,7 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
   else
   {
     //put file infos to client 
-    if (! splt_t_messages_locked(state))
+    if (! splt_o_messages_locked(state))
     {
       splt_ogg_state *oggstate = state->codec;
       //ogg infos
@@ -185,7 +185,7 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
       //all infos together
       char all_infos[3072] = { '\0' };
       snprintf(all_infos,3072,"%s%s\n",ogg_infos,total_time);
-      splt_t_put_info_message_to_client(state, all_infos);
+      splt_c_put_info_message_to_client(state, all_infos);
     }
   }
 }
@@ -300,7 +300,7 @@ static int splt_ogg_update_sync(splt_state *state, ogg_sync_state *sync_in,
 
   if (ogg_sync_wrote(sync_in, bytes) != 0)
   {
-    splt_t_set_error_data(state, splt_t_get_filename_to_split(state));
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
     *error = SPLT_ERROR_INVALID;
     return -1;
   }
@@ -347,7 +347,7 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
   return 0;
 
 write_error:
-  splt_t_set_error_data(state, output_fname);
+  splt_e_set_error_data(state, output_fname);
   *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   return -1;
 }
@@ -612,7 +612,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
 
   vorbis_comment_clear(&oggstate->vc);
 
-  if (splt_t_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
+  if (splt_o_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
     splt_tags *tags = splt_tu_get_current_tags(state);
     if (tags)
@@ -797,7 +797,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error)
     int ret = ov_open(oggstate->in, &oggstate->vf, NULL, 0);
     if(ret < 0)
     {
-      splt_t_set_error_data(state,filename);
+      splt_e_set_error_data(state,filename);
       switch (ret)
       {
         case OV_EREAD:
@@ -819,7 +819,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error)
   {
     if (*error == SPLT_ERROR_INVALID)
     {
-      splt_t_set_error_data(state,filename);
+      splt_e_set_error_data(state,filename);
     }
     splt_ogg_v_free(oggstate);
     return NULL;
@@ -1032,7 +1032,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
     int *error, const char *output_fname, int save_end_point,
     double *sec_split_time_length)
 {
-  splt_t_put_progress_text(state,SPLT_PROGRESS_CREATE);
+  splt_c_put_progress_text(state,SPLT_PROGRESS_CREATE);
 
   //TODO: eos not set on ripped streams on last split file
 
@@ -1188,17 +1188,17 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                   packet.packetno = packetnum++;
 
                   //progress
-                  if ((splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE)
+                  if ((splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE)
                         == SPLT_OPTION_SILENCE_MODE) ||
-                      (!splt_t_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
+                      (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
                   {
-                    splt_t_update_progress(state, (double)page_granpos,
+                    splt_c_update_progress(state, (double)page_granpos,
                         (double)cutpoint,
                         1,0,SPLT_DEFAULT_PROGRESS_RATE);
                   }
                   else
                   {
-                    splt_t_update_progress(state, (double)page_granpos,
+                    splt_c_update_progress(state, (double)page_granpos,
                         (double)cutpoint,
                         2,0,SPLT_DEFAULT_PROGRESS_RATE);
                   }
@@ -1238,10 +1238,10 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
               *sec_split_time_length = cutpoint / oggstate->vi->rate;
 
-              splt_t_ssplit_free(&state->silence_list);
+              splt_siu_ssplit_free(&state->silence_list);
               adjust = 0;
               progress_adjust = 0;
-              splt_t_put_progress_text(state, SPLT_PROGRESS_CREATE);
+              splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
 
               //check error of 'splt_ogg_scan_silence'
               if (*error < 0) { return -1; }
@@ -1365,7 +1365,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   return 0;
 
 write_error:
-  splt_t_set_error_data(state, output_fname);
+  splt_e_set_error_data(state, output_fname);
   *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   return -1;
 }
@@ -1427,7 +1427,7 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
     }
   }
 
-  if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
   {
     //- means stdout
     if (strcmp(output_fname, "-")==0)
@@ -1441,8 +1441,8 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
     {
       if (!(oggstate->out = splt_u_fopen(output_fname, "wb")))
       {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state, output_fname);
+        splt_e_set_strerror_msg(state);
+        splt_e_set_error_data(state, output_fname);
         *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
         return sec_end_time;
       }
@@ -1490,8 +1490,8 @@ end:
     {
       if (fclose(oggstate->out) != 0)
       {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state, output_fname);
+        splt_e_set_strerror_msg(state);
+        splt_e_set_error_data(state, output_fname);
         *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
       }
     }
@@ -1555,7 +1555,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
     float threshold, float min, short output, 
     ogg_page *page, ogg_int64_t granpos, int *error)
 {
-  splt_t_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
+  splt_c_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
   splt_ogg_state *oggstate = state->codec;
 
   //unsigned long count = 0;
@@ -1693,7 +1693,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
                     if ((e_position - b_position - min) >= 0.f)
                     {
                       int err = SPLT_OK;
-                      if (splt_t_ssplit_new(&state->silence_list, b_position, e_position, len, &err) == -1)
+                      if (splt_siu_ssplit_new(&state->silence_list, b_position, e_position, len, &err) == -1)
                       {
                         found = -1;
                         goto function_end;
@@ -1726,7 +1726,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
             else
             {
               *error = SPLT_ERROR_INVALID;
-              splt_t_set_error_data(state,filename);
+              splt_e_set_error_data(state,filename);
               found = -1;
               goto function_end;
             }
@@ -1785,19 +1785,19 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
         state->split.p_bar->silence_found_tracks = found;
       }
 
-      if (splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
+      if (splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
       {
         if (splt_t_split_is_canceled(state))
         {
           eos = 1;
         }
-        splt_t_update_progress(state,(double)pos * 100,
+        splt_c_update_progress(state,(double)pos * 100,
             (double)(oggstate->len),
             1,0,SPLT_DEFAULT_PROGRESS_RATE2);
       }
       else
       {
-        splt_t_update_progress(state,(double)begin,
+        splt_c_update_progress(state,(double)begin,
             (double)end, 2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
       }
     }
@@ -1814,8 +1814,8 @@ function_end:
   oggstate->prevW = saveW;
   if (fseeko(oggstate->in, position, SEEK_SET) == -1)
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state, filename);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state, filename);
     *error = SPLT_ERROR_SEEKING_FILE;
     found = -1;
   }
@@ -1880,8 +1880,8 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 
   if ((file_input = splt_u_fopen(filename, "rb")) == NULL)
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state,filename);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state,filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
   else
@@ -1898,8 +1898,8 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
       {
         if (fclose(file_input) != 0)
         {
-          splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state, filename);
+          splt_e_set_strerror_msg(state);
+          splt_e_set_error_data(state, filename);
           *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         }
       }
@@ -1915,14 +1915,14 @@ void splt_pl_init(splt_state *state, int *error)
   FILE *file_input = NULL;
   char *filename = splt_t_get_filename_to_split(state);
 
-  if (splt_t_is_stdin(state))
+  if (splt_io_input_is_stdin(state))
   {
     if (filename[1] == '\0')
     {
       char message[1024] = { '\0' };
       snprintf(message, 1024,
           _(" warning: stdin 'o-' is supposed to be ogg stream.\n"));
-      splt_t_put_info_message_to_client(state, message);
+      splt_c_put_info_message_to_client(state, message);
     }
   }
 
@@ -1933,7 +1933,7 @@ void splt_pl_init(splt_state *state, int *error)
     if (*error >= 0)
     {
       splt_ogg_state *oggstate = state->codec;
-      oggstate->off = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
+      oggstate->off = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
     }
   }
 }
@@ -1963,9 +1963,9 @@ double splt_pl_split(splt_state *state, const char *final_fname,
 
 int splt_pl_scan_silence(splt_state *state, int *error)
 {
-  float offset = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
-  float threshold = splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
-  float min_length = splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
+  float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
+  float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+  float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
   int found = 0;
 
   splt_ogg_state *oggstate = state->codec;
