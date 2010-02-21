@@ -518,38 +518,38 @@ typedef struct {
   //or that we set manually with the functions
   splt_tags_options tags;
 
-  short xing;
+  int xing;
 
   //defines the output filenames
   splt_output_filenames_options output_filenames;
 
   //quiet mode: don't perform CRC check or other interaction with the user
-  short quiet_mode;
+  int quiet_mode;
 
   //Pretend to split the file, without real split: this option works in
   //all modes except error mode and dewrap split.
-  short pretend_to_split;
+  int pretend_to_split;
 
   //frame mode (mp3 only). Process all frames, seeking split positions
   //by counting frames and not with bitrate guessing.
-  short option_frame_mode;
+  int option_frame_mode;
   //the time of split when split_mode = OPTION_TIME_SPLIT
   float split_time;
   long overlap_time;
   //this option uses silence detection to auto-adjust splitpoints.
-  short option_auto_adjust;
+  int option_auto_adjust;
   //input not seekable. enabling this allows you to split mp3 and ogg streams
   //which can be read only one time and canât be seeked.
   //WARNING!
   //if you don't know what this means, set it to FALSE
-  short option_input_not_seekable;
+  int option_input_not_seekable;
 
   //If this option is SPLT_TRUE, we create directories from the output
   //file names without parsing for illegal characters the output filenames.
   //Otherwise, we parse for illegal characters the filenames and replace
   //them with '_'. The tags are always checked for illegal characters when
   //set into filenames.
-  short create_dirs_from_filenames;
+  int create_dirs_from_filenames;
 
   //PARAMETERS---------------------------------------
   //PARAMETERS for option_auto_adjust and option_silence_mode:
@@ -572,7 +572,7 @@ typedef struct {
   //a valid splitpoint)
   float parameter_minimum_length;
   //allows you to remove the silence between split tracks
-  short parameter_remove_silence;
+  int parameter_remove_silence;
 
   //PARAMETERS for option_auto_adjust:
   //the gap value around splitpoint to search for silence
@@ -625,9 +625,6 @@ typedef struct
   int library_locked;
   //the new filename path (internal)
   char *new_filename_path;
-  //used for the normal split
-  double split_begin;
-  double split_end;
 } splt_internal;
 
 /*
@@ -695,7 +692,7 @@ typedef struct {
 
   //if we cancel split or not
   //set to SPLT_TRUE cancels the split
-  short cancel_split;
+  int cancel_split;
   //filename to split
   char *fname_to_split;
   //where the split file will be split
@@ -873,14 +870,13 @@ typedef enum {
   SPLT_PROGRESS_SCAN_SILENCE
 } splt_progress_messages;
 
-//options types: integer
 /**
  * @brief Integer options
  *
  * Integer options
  *
- * Use #mp3splt_set_int_option to set those options\n
- * Use #mp3splt_get_int_option to get those options
+ * Use #mp3splt_set_option to set those options\n
+ * Use #mp3splt_get_option to get those options
  */
 typedef enum {
   /**
@@ -1020,35 +1016,11 @@ typedef enum {
   /**
    *
    */
-  SPLT_OPT_REPLACE_TAGS_IN_TAGS
-} splt_int_options;
-
-//options types: long
-/**
- * @brief Integer options
- *
- * Integer options
- *
- * Use #mp3splt_set_long_option to set those options\n
- * Use #mp3splt_get_long_option to get those options
- */
-typedef enum {
+  SPLT_OPT_REPLACE_TAGS_IN_TAGS,
   /** 
    * Time to overlap between the split files
    */
-  SPLT_OPT_OVERLAP_TIME
-} splt_long_options;
-
-//option types: float
-/**
- * @brief Float options
- *
- * Float options
- *
- * Use #mp3splt_set_float_option to set those options\n
- * Use #mp3splt_get_float_option to get those options
- */
-typedef enum {
+  SPLT_OPT_OVERLAP_TIME,
   /**
    * The interval for the #SPLT_OPTION_TIME_MODE split (in
    * hundreths of seconds)
@@ -1089,8 +1061,7 @@ typedef enum {
    * Default is #SPLT_DEFAULT_PARAM_MINIMUM_LENGTH
    */
   SPLT_OPT_PARAM_MIN_LENGTH
-} splt_float_options;
-
+} splt_int_options;
 
 /**
  * we define a 'skippoint' as a splitpoint that is not taken into
@@ -1276,23 +1247,13 @@ void mp3splt_erase_all_tags(splt_state *state,
 /************************************/
 /* Options                          */
 
-int mp3splt_set_int_option(splt_state *state, int option_name,
-    int value);
+int mp3splt_set_int_option(splt_state *state, int option_name, int value);
+int mp3splt_set_long_option(splt_state *state, int option_name, long value);
+int mp3splt_set_float_option(splt_state *state, int option_name, float value);
 
-int mp3splt_set_long_option(splt_state *state, int option_name,
-    long value);
-
-int mp3splt_set_float_option(splt_state *state, int option_name,
-    float value);
-
-int mp3splt_get_int_option(splt_state *state, int option_name,
-    int *error);
-
-long mp3splt_get_long_option(splt_state *state, int option_name,
-    int *error);
-
-float mp3splt_get_float_option(splt_state *state, int option_name,
-    int *error);
+int mp3splt_get_int_option(splt_state *state, int option_name, int *error);
+long mp3splt_get_long_option(splt_state *state, int option_name, int *error);
+float mp3splt_get_float_option(splt_state *state, int option_name, int *error);
 
 /************************************/
 /* Split functions                  */

@@ -33,7 +33,29 @@
 #ifndef SPLT_OPTIONS_H
 
 void splt_o_set_options_default_values(splt_state *state);
+
+void splt_o_set_option(splt_state *state, int option_name, const void *data);
+void splt_o_set_int_option(splt_state *state, int option_name, int value);
+void splt_o_set_long_option(splt_state *state, int option_name, long value);
+void splt_o_set_float_option(splt_state *state, int option_name, float value);
+
+int splt_o_get_int_option(splt_state *state, int option_name);
+long splt_o_get_long_option(splt_state *state, int option_name);
+float splt_o_get_float_option(splt_state *state, int option_name);
+
 void splt_o_set_ioptions_default_values(splt_state *state);
+void splt_o_set_default_iopts(splt_state *state);
+void splt_o_set_iopt(splt_state *state, int type, int value);
+int splt_o_get_iopt(splt_state *state, int type);
+void splt_o_iopts_free(splt_state *state);
+
+int splt_o_library_locked(splt_state *state);
+void splt_o_lock_library(splt_state *state);
+void splt_o_unlock_library(splt_state *state);
+
+int splt_o_messages_locked(splt_state *state);
+void splt_o_lock_messages(splt_state *state);
+void splt_o_unlock_messages(splt_state *state);
 
 #define SPLT_OPTIONS_H
 

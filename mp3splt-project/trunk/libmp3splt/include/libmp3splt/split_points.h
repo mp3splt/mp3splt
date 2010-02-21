@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -30,19 +30,27 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_IO_H
+#ifndef SPLT_SPLIT_POINTS_H
 
-int splt_io_check_if_directory(const char *fname);
-int splt_io_check_if_file(splt_state *state, const char *fname);
+int splt_sp_splitpoint_exists(splt_state *state, int index);
 
-int splt_io_input_is_stdin(splt_state *state);
-int splt_io_input_is_stdout(splt_state *state);
+int splt_sp_append_splitpoint(splt_state *state, long split_value,
+    const char *name, int type);
+splt_point *splt_sp_get_splitpoints(splt_state *state, int *splitpoints_number);
+void splt_sp_free_splitpoints(splt_state *state);
 
-#ifndef __WIN32__
-char *splt_io_get_linked_fname(const char *fname);
-#endif
+int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value);
+int splt_sp_set_splitpoint_name(splt_state *state, int index, const char *name);
+int splt_sp_set_splitpoint_type(splt_state *state, int index, int type);
 
-#define MP3SPLT_IO_H
+long splt_sp_get_splitpoint_value(splt_state *state, int index, int *error);
+char *splt_sp_get_splitpoint_name(splt_state *state, int index, int *error);
+int splt_sp_get_splitpoint_type(splt_state *state, int index, int *error);
+
+void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
+    long *mins, long *secs, long *hudr);
+
+#define SPLT_SPLIT_POINTS_H
 
 #endif
 

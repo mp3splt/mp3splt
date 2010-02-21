@@ -54,17 +54,17 @@ static void append_splitpoints(splt_state *state, long start_point, long end_poi
   {
     if (*append_start_point)
     {
-      splt_t_append_splitpoint(state, last_start_point, last_label_name, SPLT_SPLITPOINT);
+      splt_sp_append_splitpoint(state, last_start_point, last_label_name, SPLT_SPLITPOINT);
     }
 
     if (start_point == last_end_point)
     {
-      splt_t_append_splitpoint(state, last_end_point, label_name, SPLT_SPLITPOINT);
+      splt_sp_append_splitpoint(state, last_end_point, label_name, SPLT_SPLITPOINT);
       *append_start_point = SPLT_FALSE;
     }
     else
     {
-      splt_t_append_splitpoint(state, last_end_point, "skip", SPLT_SKIPPOINT);
+      splt_sp_append_splitpoint(state, last_end_point, "skip", SPLT_SKIPPOINT);
       *append_start_point = SPLT_TRUE;
     }
   }
@@ -91,7 +91,7 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
   }
   snprintf(client_infos, strlen(file) + 200,
       _(" reading informations from audacity labels file '%s' ...\n"),file);
-  splt_t_put_info_message_to_client(state, client_infos);
+  splt_c_put_info_message_to_client(state, client_infos);
   free(client_infos);
   client_infos = NULL;
 
@@ -112,16 +112,16 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
 
 	if (!(file_input = splt_u_fopen(file, "r")))
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state,file);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state,file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;
   }
 
 	if (fseek(file_input, 0, SEEK_SET) != 0)
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state,file);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state,file);
     *error = SPLT_ERROR_SEEKING_FILE;
     goto end;
   }
@@ -216,8 +216,8 @@ end:
   }
   if (fclose(file_input) != 0)
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state, file);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state, file);
     *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
   }
   file_input = NULL;

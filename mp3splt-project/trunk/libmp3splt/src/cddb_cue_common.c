@@ -59,10 +59,9 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
   }
   int tags_error = SPLT_OK;
 
-  if (splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) ==
-      SPLT_OUTPUT_DEFAULT)
+  if (splt_o_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
   {
-    splt_t_set_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT, error, SPLT_TRUE);
+    splt_of_set_oformat(state, SPLT_DEFAULT_CDDB_CUE_OUTPUT, error, SPLT_TRUE);
     if (*error < 0) { goto function_end; }
   }
 
@@ -103,14 +102,14 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
   {
     int err_format = SPLT_OK;
 
-    const char *format = splt_t_get_oformat(state);
+    const char *format = splt_of_get_oformat(state);
     if (format != NULL)
     {
       //we put the outputted filename
       char *old_format = strdup(format);
       if (old_format != NULL)
       {
-        splt_t_set_oformat(state, old_format,&err_format, SPLT_TRUE);
+        splt_of_set_oformat(state, old_format,&err_format, SPLT_TRUE);
         free(old_format);
         old_format = NULL;
       }
@@ -121,7 +120,7 @@ void splt_tag_put_filenames_from_tags(splt_state *state,
       }
     }
 
-    splt_t_set_oformat_digits_tracks(state, tracks);
+    splt_of_set_oformat_digits_tracks(state, tracks);
 
     if (err_format >= 0)
     {

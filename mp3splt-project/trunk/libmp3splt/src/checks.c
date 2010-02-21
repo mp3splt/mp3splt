@@ -58,7 +58,7 @@ void splt_check_splitpts_inf_song_length(splt_state *state, int *error)
   //check if splitpoints > total time
   for(i = 0; i < initial_splitpoints; i++)
   {
-    splitpoint_value = splt_t_get_splitpoint_value(state,i,&err);
+    splitpoint_value = splt_sp_get_splitpoint_value(state,i,&err);
     if (err != SPLT_OK)
     {
       total_time = splt_t_get_total_time(state);
@@ -70,8 +70,8 @@ void splt_check_splitpts_inf_song_length(splt_state *state, int *error)
         //we have an error only if different from the
         //total time
         *error = SPLT_SPLITPOINT_BIGGER_THAN_LENGTH;
-        splt_t_set_error_data_from_splitpoint(state, splitpoint_value);
-        splt_t_set_splitpoint_value(state,i,total_time);
+        splt_e_set_error_data_from_splitpoint(state, splitpoint_value);
+        splt_sp_set_splitpoint_value(state,i,total_time);
         break;
       }
     }
@@ -94,9 +94,9 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
   int splitnumber = splt_t_get_splitnumber(state);
   for(i = 0; i < (splitnumber-1); i++)
   {
-    long splitpoint_value = splt_t_get_splitpoint_value(state,i,&err);
+    long splitpoint_value = splt_sp_get_splitpoint_value(state,i,&err);
     if (err != SPLT_OK) { *error = err; return; }
-    long next_splitpoint_value = splt_t_get_splitpoint_value(state,i+1,&err);
+    long next_splitpoint_value = splt_sp_get_splitpoint_value(state,i+1,&err);
     if (err != SPLT_OK) { *error = err; return; }
 
     //if we don't have EOF for the second value <=> != total_time
@@ -105,7 +105,7 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
       //check if first splitpoint is positive
       if (splitpoint_value < 0)
       {
-        splt_t_set_error_data_from_splitpoint(state, splitpoint_value);
+        splt_e_set_error_data_from_splitpoint(state, splitpoint_value);
         *error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
         return;
       }
@@ -113,13 +113,13 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
       //we take the total time and assign it to split_value
       if (splitpoint_value == LONG_MAX)
       {
-        splt_t_set_splitpoint_value(state, i, splt_t_get_total_time(state));
+        splt_sp_set_splitpoint_value(state, i, splt_t_get_total_time(state));
       }
 
       //check if splitpoints not in order
       if (splitpoint_value > next_splitpoint_value) 
       {
-        splt_t_set_error_data_from_splitpoints(state,
+        splt_e_set_error_data_from_splitpoints(state,
             splitpoint_value, next_splitpoint_value);
         *error = SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER;
         return;
@@ -129,7 +129,7 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
         //check if two consecutive splitpoints are equals
         if (splitpoint_value == next_splitpoint_value)
         {
-          splt_t_set_error_data_from_splitpoint(state, splitpoint_value);
+          splt_e_set_error_data_from_splitpoint(state, splitpoint_value);
           *error = SPLT_ERROR_EQUAL_SPLITPOINTS;
           return;
         }
@@ -157,8 +157,8 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
   {
     if (!splt_io_check_if_directory(new_filename_path))
     {
-      splt_t_set_strerr_msg(state, _("directory does not exists"));
-      splt_t_set_error_data(state, new_filename_path);
+      splt_e_set_strerr_msg(state, _("directory does not exists"));
+      splt_e_set_error_data(state, new_filename_path);
       *error = SPLT_ERROR_INCORRECT_PATH;
     }
   }
@@ -249,60 +249,51 @@ void splt_check_set_correct_options(splt_state *state)
 {
   splt_u_print_debug(state,"We check and set correct options.. ",0,NULL);
 
-  int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
+  int split_mode = splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE);
 
   //if we have the silence option or the adjustoption
   //we set the default values if something is not ok
   if (( split_mode == SPLT_OPTION_SILENCE_MODE)
-      || splt_t_get_int_option(state,SPLT_OPT_AUTO_ADJUST))
+      || splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST))
   {
-    //if we have the adjust option or the silence option,
-    //enable frame mode by default
-    splt_t_set_int_option(state,SPLT_OPT_FRAME_MODE, SPLT_TRUE);
+    splt_o_set_int_option(state, SPLT_OPT_FRAME_MODE, SPLT_OPT_FRAME_MODE);
 
     //for the autoadjust or silence mode
-    if  ((splt_t_get_float_option(state,SPLT_OPT_PARAM_THRESHOLD) < -96.f) || 
-        (splt_t_get_float_option(state,SPLT_OPT_PARAM_THRESHOLD) > 0.f))
+    if  ((splt_o_get_float_option(state,SPLT_OPT_PARAM_THRESHOLD) < -96.f) || 
+        (splt_o_get_float_option(state,SPLT_OPT_PARAM_THRESHOLD) > 0.f))
     {
-      splt_t_set_float_option(state,SPLT_OPT_PARAM_THRESHOLD,
-          SPLT_DEFAULT_PARAM_THRESHOLD);
+      splt_o_set_float_option(state,SPLT_OPT_PARAM_THRESHOLD, SPLT_DEFAULT_PARAM_THRESHOLD);
     }
-    if  ((splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET) < -2.f) || 
-        (splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET) > 2.f))
+    if  ((splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET) < -2.f) || 
+        (splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET) > 2.f))
     {
-      splt_t_set_float_option(state,SPLT_OPT_PARAM_OFFSET,
-          SPLT_DEFAULT_PARAM_OFFSET);
+      splt_o_set_float_option(state,SPLT_OPT_PARAM_OFFSET, SPLT_DEFAULT_PARAM_OFFSET);
     }
-    //for the adjust mode
-    if (splt_t_get_int_option(state,SPLT_OPT_PARAM_GAP) < 0)
+    if (splt_o_get_int_option(state,SPLT_OPT_PARAM_GAP) < 0)
     {
-      splt_t_set_int_option(state,SPLT_OPT_PARAM_GAP, SPLT_DEFAULT_PARAM_GAP);
+      splt_o_set_int_option(state,SPLT_OPT_PARAM_GAP, SPLT_DEFAULT_PARAM_GAP);
     }
-    //for the silence mode
-    if (splt_t_get_float_option(state,SPLT_OPT_PARAM_MIN_LENGTH) < 0.f)
+    if (splt_o_get_float_option(state,SPLT_OPT_PARAM_MIN_LENGTH) < 0.f)
     {
-      splt_t_set_float_option(state,SPLT_OPT_PARAM_MIN_LENGTH,
-          SPLT_DEFAULT_PARAM_MINIMUM_LENGTH);
-      //disable auto adjust mode
-      splt_t_set_int_option(state,SPLT_OPT_AUTO_ADJUST,
-          SPLT_FALSE);
+      splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, SPLT_DEFAULT_PARAM_MINIMUM_LENGTH);
+      splt_o_set_int_option(state, SPLT_OPT_AUTO_ADJUST, SPLT_FALSE);
     }
   }
 
   //if we don't have adjust, set gap to 0
-  if (!splt_t_get_int_option(state,SPLT_OPT_AUTO_ADJUST))
+  if (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST))
   {
-    splt_t_set_int_option(state,SPLT_OPT_PARAM_GAP, 0);
+    splt_o_set_int_option(state,SPLT_OPT_PARAM_GAP, 0);
   }
 
   //if seekable and (silence or adjust or wrap or err sync)
-  if ((splt_t_get_int_option(state,SPLT_OPT_INPUT_NOT_SEEKABLE)) &&
-      (splt_t_get_int_option(state,SPLT_OPT_AUTO_ADJUST) ||
+  if ((splt_o_get_int_option(state,SPLT_OPT_INPUT_NOT_SEEKABLE)) &&
+      (splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST) ||
        (split_mode == SPLT_OPTION_SILENCE_MODE) ||
        (split_mode == SPLT_OPTION_ERROR_MODE) ||
        (split_mode == SPLT_OPTION_WRAP_MODE)))
   {
-    splt_t_set_int_option(state,SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_FALSE);
+    splt_o_set_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_FALSE);
   }
 }
 
@@ -326,11 +317,11 @@ void splt_check_file_type(splt_state *state, int *error)
   int plugin_found = SPLT_FALSE;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
-    splt_t_set_current_plugin(state, i);
+    splt_p_set_current_plugin(state, i);
     err = SPLT_OK;
 
-    if (splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE) &&
-        ! splt_t_is_stdin(state))
+    if (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE) &&
+        ! splt_io_input_is_stdin(state))
     {
       const char *extension = splt_p_get_extension(state, &err);
       const char *upper_extension = splt_p_get_extension(state, &err);
@@ -360,7 +351,7 @@ void splt_check_file_type(splt_state *state, int *error)
 
   if (! plugin_found)
   {
-    splt_t_set_error_data(state, filename);
+    splt_e_set_error_data(state, filename);
     *error = SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE;
     splt_u_print_debug(state,"No plugin found !",0,NULL);
 
@@ -373,8 +364,8 @@ void splt_check_file_type(splt_state *state, int *error)
     {
       if (fclose(test) != 0)
       {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state, filename);
+        splt_e_set_strerror_msg(state);
+        splt_e_set_error_data(state, filename);
         *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         return;
       }
@@ -385,8 +376,8 @@ void splt_check_file_type(splt_state *state, int *error)
     }
     else
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,filename);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state,filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
       return;
     }
@@ -401,8 +392,8 @@ static void close_files(splt_state *state, const char *file1, FILE **f1,
   {
     if (fclose(*f1) != 0)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, file1);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state, file1);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     else
@@ -414,8 +405,8 @@ static void close_files(splt_state *state, const char *file1, FILE **f1,
   {
     if (fclose(*f2) != 0)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, file2);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state, file2);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     else
@@ -518,8 +509,8 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
           {
             if (fclose(file2_) != 0)
             {
-              splt_t_set_strerror_msg(state);
-              splt_t_set_error_data(state, file2);
+              splt_e_set_strerror_msg(state);
+              splt_e_set_error_data(state, file2);
               *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
             }
             else
@@ -538,8 +529,8 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
       {
         if (fclose(file1_) != 0)
         {
-          splt_t_set_strerror_msg(state);
-          splt_t_set_error_data(state, file1);
+          splt_e_set_strerror_msg(state);
+          splt_e_set_error_data(state, file1);
           *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         }
         else
@@ -555,11 +546,8 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
   }
 
 end_error:
-  /*splt_t_set_strerror_msg(state);
-  splt_t_set_error_data(state,file1);
-  *error = SPLT_ERROR_CANNOT_OPEN_FILE;*/
-
   close_files(state, file1, &file1_,file2, &file2_,error);
+
   return SPLT_FALSE;
 }
 

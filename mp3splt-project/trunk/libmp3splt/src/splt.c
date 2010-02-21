@@ -40,10 +40,9 @@
 /* splt normal split */
 
 //the real split of the file
-static long splt_s_real_split(splt_state *state, int *error, int save_end_point)
+static long splt_s_real_split(double splt_beg, double splt_end, 
+    int save_end_point, int *error, splt_state *state)
 {
-  double splt_beg = splt_t_get_i_begin_point(state);
-  double splt_end = splt_t_get_i_end_point(state);
   char *final_fname = splt_u_get_fname_with_path_and_extension(state,error);
   long new_end_point = splt_u_time_to_long_ceil(splt_end);
 
@@ -57,11 +56,11 @@ static long splt_s_real_split(splt_state *state, int *error, int save_end_point)
     if (*error >= 0)
     {
       //automatically set progress callback to 100%
-      splt_t_update_progress(state,1.0,1.0,1,1,1);
+      splt_c_update_progress(state,1.0,1.0,1,1,1);
 
       //we put the split file
       int err = SPLT_OK;
-      err = splt_t_put_split_file(state, final_fname);
+      err = splt_c_put_split_file(state, final_fname);
       if (err < 0) { *error = err; }
     }
   }
@@ -79,14 +78,14 @@ static long splt_s_split(splt_state *state, int first_splitpoint,
     int second_splitpoint, int *error)
 {
   int get_error = SPLT_OK;
-  long split_begin = splt_t_get_splitpoint_value(state, first_splitpoint, &get_error);
-  long split_end = splt_t_get_splitpoint_value(state, second_splitpoint, &get_error);
+  long split_begin = splt_sp_get_splitpoint_value(state, first_splitpoint, &get_error);
+  long split_end = splt_sp_get_splitpoint_value(state, second_splitpoint, &get_error);
 
   long new_end_point = split_end;
 
   int save_end_point = SPLT_TRUE;
-  if (splt_t_get_splitpoint_type(state, second_splitpoint, &get_error) == SPLT_SKIPPOINT ||
-      splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
+  if (splt_sp_get_splitpoint_type(state, second_splitpoint, &get_error) == SPLT_SKIPPOINT ||
+      splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
   {
     save_end_point = SPLT_FALSE;
   }
@@ -117,14 +116,11 @@ static long splt_s_split(splt_state *state, int first_splitpoint,
           splt_end += ((split_end % 100) / 100.);
         }
 
-        splt_t_set_i_begin_point(state, splt_beg);
-        splt_t_set_i_end_point(state, splt_end);
-
-        new_end_point = splt_s_real_split(state, error, save_end_point);
+        new_end_point = splt_s_real_split(splt_beg, splt_end, save_end_point, error, state);
       }
       else
       {
-        splt_t_set_error_data_from_splitpoint(state, split_begin);
+        splt_e_set_error_data_from_splitpoint(state, split_begin);
         *error = SPLT_ERROR_EQUAL_SPLITPOINTS;
       }
     }
@@ -140,14 +136,14 @@ static long splt_s_split(splt_state *state, int first_splitpoint,
 //splits the file with multiple points
 void splt_s_multiple_split(splt_state *state, int *error)
 {
-  int split_type = splt_t_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+  int split_type = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
   int err = SPLT_OK;
 
-  splt_t_set_oformat_digits(state);
+  splt_of_set_oformat_digits(state);
 
   if (split_type == SPLT_OPTION_NORMAL_MODE)
   {
-    splt_t_put_info_message_to_client(state, _(" info: starting normal split\n"));
+    splt_c_put_info_message_to_client(state, _(" info: starting normal split\n"));
   }
 
   splt_u_print_overlap_time(state);
@@ -166,7 +162,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
     {
       get_error = SPLT_OK;
 
-      int first_splitpoint_type = splt_t_get_splitpoint_type(state, i, &get_error);
+      int first_splitpoint_type = splt_sp_get_splitpoint_type(state, i, &get_error);
       if (first_splitpoint_type == SPLT_SKIPPOINT)
       {
         splt_u_print_debug(state, "SKIP splitpoint", i, NULL);
@@ -176,7 +172,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
 
       splt_tu_auto_increment_tracknumber(state);
 
-      long saved_end_point = splt_t_get_splitpoint_value(state, i+1, &get_error);
+      long saved_end_point = splt_sp_get_splitpoint_value(state, i+1, &get_error);
       splt_u_overlap_time(state, i+1);
 
       err = splt_u_finish_tags_and_put_output_format_filename(state, i);
@@ -185,7 +181,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
       long new_end_point = splt_s_split(state, i, i+1, error);
       splt_array_append(new_end_points, (void *)new_end_point);
 
-      splt_t_set_splitpoint_value(state, i+1, saved_end_point);
+      splt_sp_set_splitpoint_value(state, i+1, saved_end_point);
 
       if ((*error < 0) || (*error == SPLT_OK_SPLIT_EOF))
       {
@@ -204,7 +200,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
 end:
   for (i = 0;i < splt_array_length(new_end_points);i++)
   {
-    splt_t_set_splitpoint_value(state, i+1,
+    splt_sp_set_splitpoint_value(state, i+1,
         (long) splt_array_get(new_end_points, i));
   }
 
@@ -213,10 +209,10 @@ end:
 
 void splt_s_normal_split(splt_state *state, int *error)
 {
-  int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
+  int output_filenames = splt_o_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
   if (output_filenames == SPLT_OUTPUT_DEFAULT)
   {
-    splt_t_set_oformat(state, SPLT_DEFAULT_OUTPUT, error, SPLT_TRUE);
+    splt_of_set_oformat(state, SPLT_DEFAULT_OUTPUT, error, SPLT_TRUE);
     if (*error < 0) { return; }
   }
 
@@ -226,7 +222,7 @@ void splt_s_normal_split(splt_state *state, int *error)
 //the sync error mode
 void splt_s_error_split(splt_state *state, int *error)
 {
-  splt_t_put_info_message_to_client(state, _(" info: starting error mode split\n"));
+  splt_c_put_info_message_to_client(state, _(" info: starting error mode split\n"));
   char *final_fname = NULL;
 
   //we detect sync errors
@@ -234,7 +230,7 @@ void splt_s_error_split(splt_state *state, int *error)
 
   //automatically set progress callback to 100% after
   //the error detection
-  splt_t_update_progress(state,1.0,1.0,1,1,1);
+  splt_c_update_progress(state,1.0,1.0,1,1,1);
 
   int err = SPLT_OK;
 
@@ -244,11 +240,11 @@ void splt_s_error_split(splt_state *state, int *error)
     //we put the number of sync errors
     splt_t_set_splitnumber(state, state->serrors->serrors_points_num - 1);
 
-    splt_t_set_oformat_digits(state);
+    splt_of_set_oformat_digits(state);
 
-    if (splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
+    if (splt_o_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)
     {
-      splt_t_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT, &err, SPLT_TRUE);
+      splt_of_set_oformat(state, SPLT_DEFAULT_SYNCERROR_OUTPUT, &err, SPLT_TRUE);
       if (err < 0) { *error = err; goto bloc_end; }
     }
 
@@ -265,7 +261,7 @@ void splt_s_error_split(splt_state *state, int *error)
         splt_tu_auto_increment_tracknumber(state);
 
         //we append a splitpoint
-        int err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
+        int err = splt_sp_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
         if (err < 0) { *error = err; goto bloc_end; }
 
         err = splt_u_finish_tags_and_put_output_format_filename(state, -1);
@@ -288,7 +284,7 @@ void splt_s_error_split(splt_state *state, int *error)
               (off_t) state->serrors->serrors_points[i+1]);
 
           //automatically set progress callback to 100%
-          splt_t_update_progress(state,1.0,1.0,1,1,1);
+          splt_c_update_progress(state,1.0,1.0,1,1,1);
 
           if (split_result >= 0)
           {
@@ -302,7 +298,7 @@ void splt_s_error_split(splt_state *state, int *error)
           //if the split has been a success
           if (*error == SPLT_SYNC_OK)
           {
-            err = splt_t_put_split_file(state, final_fname);
+            err = splt_c_put_split_file(state, final_fname);
             if (err < 0) { *error = err; goto bloc_end; }
           }
         }
@@ -369,22 +365,22 @@ static void splt_s_split_by_time(splt_state *state, int *error,
     }
     splt_t_set_splitnumber(state, temp_int);
 
-    splt_t_set_oformat_digits(state);
+    splt_of_set_oformat_digits(state);
 
     //if we have the default output
-    int output_filenames = splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+    int output_filenames = splt_o_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
     if (output_filenames == SPLT_OUTPUT_DEFAULT)
     {
-      splt_t_set_oformat(state, SPLT_DEFAULT_OUTPUT, &err, SPLT_TRUE);
+      splt_of_set_oformat(state, SPLT_DEFAULT_OUTPUT, &err, SPLT_TRUE);
       if (err < 0) { *error = err; return; }
     }
 
     //we append a splitpoint
-    err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
+    err = splt_sp_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
     if (err >= 0)
     { 
       int save_end_point = SPLT_TRUE;
-      if (splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
+      if (splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
       {
         save_end_point = SPLT_FALSE;
       }
@@ -396,7 +392,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
       do {
         if (!splt_t_split_is_canceled(state))
         {
-          err = splt_t_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
+          err = splt_sp_append_splitpoint(state, 0, "", SPLT_SPLITPOINT);
           if (err < 0) { *error = err; break; }
 
           splt_t_set_current_split(state, tracks-1);
@@ -405,7 +401,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
 
           int current_split = splt_t_get_current_split(state);
 
-          splt_t_set_splitpoint_value(state, current_split,
+          splt_sp_set_splitpoint_value(state, current_split,
               splt_u_time_to_long_ceil(begin));
           long end_splitpoint = splt_u_time_to_long_ceil(end);
           if (total_time > 0 && end_splitpoint >= total_time)
@@ -414,7 +410,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
             //avoid worst scenarios where floor & SPLT_OK_SPLIT_EOF do not work
             last_file = SPLT_TRUE;
           }
-          splt_t_set_splitpoint_value(state, current_split+1, end_splitpoint);
+          splt_sp_set_splitpoint_value(state, current_split+1, end_splitpoint);
 
           double overlapped_end = (double)
             ((double)splt_u_overlap_time(state, current_split+1) / 100.0);
@@ -434,7 +430,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           //if no error for the split, put the split file
           if (*error >= 0)
           {
-            err = splt_t_put_split_file(state, final_fname);
+            err = splt_c_put_split_file(state, final_fname);
             if (err < 0) { *error = err; break; }
           }
 
@@ -485,7 +481,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
       int i = 0;
       for (i = 0;i < splt_array_length(new_end_points);i++)
       {
-        splt_t_set_splitpoint_value(state, i+1,
+        splt_sp_set_splitpoint_value(state, i+1,
             (long) splt_array_get(new_end_points, i));
       }
       splt_array_free(&new_end_points);
@@ -525,9 +521,9 @@ static void splt_s_split_by_time(splt_state *state, int *error,
 //length specified by options.split_time in seconds
 void splt_s_time_split(splt_state *state, int *error)
 {
-  splt_t_put_info_message_to_client(state, _(" info: starting time mode split\n"));
+  splt_c_put_info_message_to_client(state, _(" info: starting time mode split\n"));
 
-  double split_time_length = (double) splt_t_get_float_option(state, SPLT_OPT_SPLIT_TIME);
+  double split_time_length = (double) splt_o_get_float_option(state, SPLT_OPT_SPLIT_TIME);
   if (((long)split_time_length) == 0)
   {
     *error = SPLT_ERROR_TIME_SPLIT_VALUE_INVALID;
@@ -542,13 +538,13 @@ void splt_s_time_split(splt_state *state, int *error)
 //X is defined by SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER
 void splt_s_equal_length_split(splt_state *state, int *error)
 {
-  splt_t_put_info_message_to_client(state, _(" info: starting 'split in equal tracks' mode\n"));
+  splt_c_put_info_message_to_client(state, _(" info: starting 'split in equal tracks' mode\n"));
 
   double total_time = splt_t_get_total_time_as_double_secs(state);
   if (total_time > 0)
   {
     int number_of_files =
-      splt_t_get_int_option(state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER);
+      splt_o_get_int_option(state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER);
 
     if (number_of_files > 0)
     {
@@ -589,14 +585,14 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   struct splt_ssplit *temp = NULL;
   int append_error = SPLT_OK;
   //we get some options
-  float offset = splt_t_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
-  int number_tracks = splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
+  float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
+  int number_tracks = splt_o_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
 
   //if we have a log file, read silence from logs
   int we_read_silence_from_logs = SPLT_FALSE;
   FILE *log_file = NULL;
   char *log_fname = splt_t_get_silence_log_fname(state);
-  if (splt_t_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
+  if (splt_o_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
   {
     if ((log_file = splt_u_fopen(log_fname, "r")))
     {
@@ -613,15 +609,15 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           float min = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
           int i = fscanf(log_file, "%f\t%f", &threshold, &min);
 
-          if ((i < 2) || (threshold != splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD))
-              || (splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH) != min))
+          if ((i < 2) || (threshold != splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD))
+              || (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH) != min))
           {
             we_read_silence_from_logs = SPLT_FALSE;
           }
           else
           {
-            splt_t_set_float_option(state, SPLT_OPT_PARAM_THRESHOLD, threshold);
-            splt_t_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
+            splt_o_set_float_option(state, SPLT_OPT_PARAM_THRESHOLD, threshold);
+            splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
           }
         }
       }
@@ -636,7 +632,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   //put silence split infos
  
   char remove_str[128] = { '\0' };
-  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+  if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
   {
     snprintf(remove_str,128,_("YES"));
   }
@@ -645,7 +641,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     snprintf(remove_str,128,_("NO"));
   }
   char auto_user_str[128] = { '\0' };
-  if (splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS) > 0)
+  if (splt_o_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS) > 0)
   {
     snprintf(auto_user_str,128,_("User"));
   }
@@ -655,16 +651,16 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   }
 
   char message[1024] = { '\0' };
-  if (! splt_t_get_int_option(state,SPLT_OPT_QUIET_MODE))
+  if (! splt_o_get_int_option(state,SPLT_OPT_QUIET_MODE))
   {
     snprintf(message, 1024, _(" Silence split type: %s mode (Th: %.1f dB,"
           " Off: %.2f, Min: %.2f, Remove: %s)\n"),
         auto_user_str,
-        splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
-        splt_t_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
-        splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
         remove_str);
-    splt_t_put_info_message_to_client(state, message);
+    splt_c_put_info_message_to_client(state, message);
   }
  
   if (we_read_silence_from_logs)
@@ -675,7 +671,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     }
     snprintf(message, 1024, _(" Found silence log file '%s' ! Reading"
           " silence points from file to save time ;)"), log_fname);
-    splt_t_put_info_message_to_client(state, message);
+    splt_c_put_info_message_to_client(state, message);
     found = splt_u_parse_ssplit_file(state, log_file, error);
     if (log_file)
     {
@@ -699,22 +695,22 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     //put client infos
     char client_infos[512] = { '\0' };
     snprintf(client_infos,512,_("\n Total silence points found: %d."),found);
-    splt_t_put_info_message_to_client(state,client_infos);
+    splt_c_put_info_message_to_client(state,client_infos);
     if (found > 0)
     {
       int selected_tracks = found + 1;
-      int param_number_of_tracks = splt_t_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
+      int param_number_of_tracks = splt_o_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
       if (param_number_of_tracks > 0)
       {
         selected_tracks = param_number_of_tracks;
       }
       snprintf(client_infos,512,_(" (Selected %d tracks)\n"), selected_tracks);
-      splt_t_put_info_message_to_client(state, client_infos);
+      splt_c_put_info_message_to_client(state, client_infos);
     }
     else
     {
       snprintf(client_infos, 512, "\n");
-      splt_t_put_info_message_to_client(state,client_infos);
+      splt_c_put_info_message_to_client(state,client_infos);
     }
 
     //we set the number of tracks
@@ -731,7 +727,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       }
 
       //put first splitpoint
-      append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
+      append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
       if (append_error != SPLT_OK)
       {
         *error = append_error;
@@ -751,27 +747,27 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             break;
           }
 
-          if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+          if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
           {
-            append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SKIPPOINT);
+            append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SKIPPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
-            append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
+            append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
-            splt_t_set_splitpoint_value(state, 2*i-1,splt_u_time_to_long(temp->begin_position));
-            splt_t_set_splitpoint_value(state, 2*i, splt_u_time_to_long(temp->end_position));
+            splt_sp_set_splitpoint_value(state, 2*i-1,splt_u_time_to_long(temp->begin_position));
+            splt_sp_set_splitpoint_value(state, 2*i, splt_u_time_to_long(temp->end_position));
           }
           else
           {
             //TODO
             long temp_silence_pos = splt_u_silence_position(temp, offset) * 100;
-            append_error = splt_t_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
+            append_error = splt_sp_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
             if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
           }
           temp = temp->next;
         }
 
         //we order the splitpoints
-        if (splt_t_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+        if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
         {
           splitpoints_appended = (found-1)*2+1;
         }
@@ -785,7 +781,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 
         //last splitpoint, end of file
         append_error =
-          splt_t_append_splitpoint(state, splt_t_get_total_time(state),
+          splt_sp_append_splitpoint(state, splt_t_get_total_time(state),
               NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK) { *error = append_error; }
       }
@@ -799,27 +795,27 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     if ((found > 0) && !we_read_silence_from_logs)
     {
       //if we write the silence points log file
-      if (splt_t_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
+      if (splt_o_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
       {
         char *message = malloc(sizeof(char) * 1024);
         if (message)
         {
           snprintf(message, 1023, _(" Writing silence log file '%s' ...\n"),
               splt_t_get_silence_log_fname(state));
-          splt_t_put_info_message_to_client(state, message);
+          splt_c_put_info_message_to_client(state, message);
           if (message)
           {
             free(message);
             message = NULL;
           }
           char *fname = splt_t_get_silence_log_fname(state);
-          if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+          if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
           {
             FILE *log_file = NULL;
             if (!(log_file = splt_u_fopen(fname, "w")))
             {
-              splt_t_set_strerror_msg(state);
-              splt_t_set_error_data(state, fname);
+              splt_e_set_strerror_msg(state);
+              splt_e_set_error_data(state, fname);
               *error = SPLT_ERROR_CANNOT_OPEN_FILE;
             }
             else
@@ -828,8 +824,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
               struct splt_ssplit *temp = state->silence_list;
               fprintf(log_file, "%s\n", splt_t_get_filename_to_split(state));
               fprintf(log_file, "%.2f\t%.2f\n", 
-                  splt_t_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
-                  splt_t_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
+                  splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+                  splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
               while (temp != NULL)
               {
                 fprintf(log_file, "%f\t%f\t%ld\n",
@@ -853,7 +849,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       }
     }
   }
-  splt_t_ssplit_free(&state->silence_list);
+  splt_siu_ssplit_free(&state->silence_list);
 
   splt_t_set_splitnumber(state, splitpoints_appended + 1);
 
@@ -867,7 +863,7 @@ void splt_s_silence_split(splt_state *state, int *error)
   splt_u_print_debug(state,"Starting silence split ...",0,NULL);
 
   //print some useful infos to the client
-  splt_t_put_info_message_to_client(state, _(" info: starting silence mode split\n"));
+  splt_c_put_info_message_to_client(state, _(" info: starting silence mode split\n"));
 
   int found = 0;
   found = splt_s_set_silence_splitpoints(state, error);
@@ -882,10 +878,10 @@ void splt_s_silence_split(splt_state *state, int *error)
       splt_u_print_debug(state,"Writing silence tracks...",0,NULL);
 
       //set the default silence output
-      int output_filenames = splt_t_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
+      int output_filenames = splt_o_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
       if (output_filenames == SPLT_OUTPUT_DEFAULT)
       {
-        splt_t_set_oformat(state, SPLT_DEFAULT_SILENCE_OUTPUT, error, SPLT_TRUE);
+        splt_of_set_oformat(state, SPLT_DEFAULT_SILENCE_OUTPUT, error, SPLT_TRUE);
         if (*error < 0) { return; }
       }
 
@@ -925,7 +921,7 @@ void splt_s_wrap_split(splt_state *state, int *error)
 
   splt_u_print_debug(state,"We begin wrap split for the file ...",0,filename);
 
-  splt_t_put_info_message_to_client(state, _(" info: starting wrap mode split\n"));
+  splt_c_put_info_message_to_client(state, _(" info: starting wrap mode split\n"));
 
   splt_p_dewrap(state, SPLT_FALSE, new_filename_path, error);
 }

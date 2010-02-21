@@ -34,7 +34,6 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-#include <errno.h>
 
 #include "splt.h"
 
@@ -44,7 +43,7 @@
 #include "win32.h"
 #endif
 
-extern short global_debug;
+extern int global_debug;
 
 /****************************/
 /* some prototypes */
@@ -150,8 +149,8 @@ off_t splt_u_flength(splt_state *state, FILE *in, const char *filename, int *err
   struct stat info;
   if (fstat(fileno(in), &info)==-1)
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state, filename);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state, filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return -1;
   }
@@ -292,7 +291,7 @@ static char *splt_u_get_mins_secs_filename(const char *filename, splt_state *sta
 {
   int number_of_splits = 0;
   splt_point *points = 
-    splt_t_get_splitpoints(state, &number_of_splits);
+    splt_sp_get_splitpoints(state, &number_of_splits);
 
   char *fname = NULL, *fname2 = NULL;
   int fname2_malloc_number = 0,fname_malloc_number = 0;
@@ -309,11 +308,11 @@ static char *splt_u_get_mins_secs_filename(const char *filename, splt_state *sta
       memset(fname2,'\0',fname2_malloc_number*sizeof(char));
       long hundr = 0, secs = 0, mins = 0;
       long hundr2 = 0, secs2 = 0, mins2 = 0;
-      splt_t_get_mins_secs_hundr_from_splitpoint(split_begin, &mins, &secs, &hundr);
-      splt_t_get_mins_secs_hundr_from_splitpoint(split_end, &mins2, &secs2, &hundr2);
+      splt_sp_get_mins_secs_hundr_from_splitpoint(split_begin, &mins, &secs, &hundr);
+      splt_sp_get_mins_secs_hundr_from_splitpoint(split_end, &mins2, &secs2, &hundr2);
 
       //if we have this splitpoint
-      if (splt_t_splitpoint_exists(state, i))
+      if (splt_sp_splitpoint_exists(state, i))
       {
         if (points[i].name != NULL)
         {
@@ -407,9 +406,9 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
 
   int get_error = SPLT_OK;
   int current_split = splt_t_get_current_split(state);
-  long split_begin = splt_t_get_splitpoint_value(state, current_split, &get_error);
+  long split_begin = splt_sp_get_splitpoint_value(state, current_split, &get_error);
   if (get_error < 0) { *error = get_error; return; }
-  long split_end = splt_t_get_splitpoint_value(state, current_split+1, &get_error);
+  long split_end = splt_sp_get_splitpoint_value(state, current_split+1, &get_error);
   if (get_error < 0) { *error = get_error; return; }
 
   char *filename2 = strdup(filename);
@@ -433,7 +432,7 @@ void splt_u_set_complete_mins_secs_filename(splt_state *state, int *error)
       if (*error >= 0)
       {
         splt_u_cut_extension(fname);
-        splt_t_set_splitpoint_name(state, current_split, fname);
+        splt_sp_set_splitpoint_name(state, current_split, fname);
       }
 
       if (fname)
@@ -459,7 +458,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
   char *output_fname_with_path = NULL;
   char *new_filename_path = splt_t_get_new_filename_path(state);
   int current_split = splt_t_get_current_split(state);
-  char *output_fname = splt_t_get_splitpoint_name(state, current_split, error);
+  char *output_fname = splt_sp_get_splitpoint_name(state, current_split, error);
   int malloc_number = strlen(new_filename_path) + 10;
   if (output_fname)
   {
@@ -510,7 +509,7 @@ char *splt_u_get_fname_with_path_and_extension(splt_state *state, int *error)
       //if input and output are the same file
       if (splt_check_is_the_same_file(state,filename, output_fname_with_path, error))
       {
-        splt_t_set_error_data(state,filename);
+        splt_e_set_error_data(state,filename);
         *error = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
       }
       else
@@ -567,10 +566,10 @@ int splt_u_cut_splitpoint_extension(splt_state *state, int index)
 {
   int change_error = SPLT_OK;
 
-  if (splt_t_splitpoint_exists(state,index))
+  if (splt_sp_splitpoint_exists(state,index))
   {
     int get_error = SPLT_OK;
-    char *temp_name = splt_t_get_splitpoint_name(state, index, &get_error);
+    char *temp_name = splt_sp_get_splitpoint_name(state, index, &get_error);
 
     if (get_error != SPLT_OK)
     {
@@ -588,7 +587,7 @@ int splt_u_cut_splitpoint_extension(splt_state *state, int index)
         else
         {
           splt_u_cut_extension(new_name);
-          change_error = splt_t_set_splitpoint_name(state,index, new_name);
+          change_error = splt_sp_set_splitpoint_name(state,index, new_name);
           free(new_name);
           new_name = NULL;
         }
@@ -611,16 +610,16 @@ void splt_u_order_splitpoints(splt_state *state, int len)
   float key;
   for (j=1; j < len; j++)
   {
-    key = splt_t_get_splitpoint_value(state,j,&err);
+    key = splt_sp_get_splitpoint_value(state,j,&err);
     i = j -1;
     while ((i >= 0) && 
-        (splt_t_get_splitpoint_value(state,i,&err) > key))
+        (splt_sp_get_splitpoint_value(state,i,&err) > key))
     {
-      temp = splt_t_get_splitpoint_value(state,i,&err);
-      splt_t_set_splitpoint_value(state,i+1,temp);
+      temp = splt_sp_get_splitpoint_value(state,i,&err);
+      splt_sp_set_splitpoint_value(state,i+1,temp);
       i--;
     }
-    splt_t_set_splitpoint_value(state,i+1,key);
+    splt_sp_set_splitpoint_value(state,i+1,key);
   }
 }
 
@@ -746,7 +745,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
         //if we have % before [
         if (*(cur_pos-1) == '%')
         {
-          splt_t_set_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X, tags_appended);
+          splt_o_set_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X, tags_appended);
           all_tags = SPLT_TRUE;
           //if we had all tags, remove them
           if (we_had_all_tags)
@@ -834,21 +833,21 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
               }
 
               //if we don't have STDIN
-              if (! splt_t_is_stdin(state))
+              if (! splt_io_input_is_stdin(state))
               {
                 int err = SPLT_OK;
-                splt_t_lock_messages(state);
+                splt_o_lock_messages(state);
                 splt_check_file_type(state, &err);
                 if (err < 0)
                 {
                   *error = err;
-                  splt_t_unlock_messages(state);
+                  splt_o_unlock_messages(state);
                   get_out_from_while = SPLT_TRUE;
                   goto end_while;
                 }
-                splt_t_unlock_messages(state);
+                splt_o_unlock_messages(state);
 
-                splt_t_lock_messages(state);
+                splt_o_lock_messages(state);
                 splt_p_init(state, &err);
                 if (err >= 0)
                 {
@@ -856,7 +855,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                   if (err < 0) 
                   {
                     *error = err;
-                    splt_t_unlock_messages(state);
+                    splt_o_unlock_messages(state);
                     get_out_from_while = SPLT_TRUE;
                     goto end_while;
                   }
@@ -865,7 +864,7 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                   if (err < 0)
                   {
                     *error = err;
-                    splt_t_unlock_messages(state);
+                    splt_o_unlock_messages(state);
                     get_out_from_while = SPLT_TRUE;
                     goto end_while;
                   }
@@ -910,12 +909,12 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
                     all_tracknumber = last_tags.track;
                   }
                   original_tags = SPLT_TRUE;
-                  splt_t_unlock_messages(state);
+                  splt_o_unlock_messages(state);
                 }
                 else
                 {
                   *error = err;
-                  splt_t_unlock_messages(state);
+                  splt_o_unlock_messages(state);
                   get_out_from_while = SPLT_TRUE;
                   goto end_while;
                 }
@@ -1068,7 +1067,8 @@ int splt_u_put_tags_from_string(splt_state *state, const char *tags, int *error)
             case 'N':
               tracknumber = splt_u_parse_tag_word(cur_pos,end_paranthesis, &ambiguous, error);
               if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              splt_t_set_int_option(state,SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, SPLT_TRUE);
+              splt_o_set_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS,
+                  SPLT_TRUE);
               if (auto_increment_tracknumber)
               {
                 first_time_auto_increment_tracknumber = SPLT_TRUE;
@@ -1327,7 +1327,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
   }
 
   //if stdout, NOT ambiguous
-  if (splt_t_is_stdout(state))
+  if (splt_io_input_is_stdout(state))
   {
     return SPLT_OUTPUT_FORMAT_OK;
   }
@@ -1336,7 +1336,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
 
   if (ptre == NULL)
   {
-    splt_t_set_error_data(state, err);
+    splt_e_set_error_data(state, err);
     return SPLT_OUTPUT_FORMAT_AMBIGUOUS;
   }
   ptrs = ptre;
@@ -1355,7 +1355,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
     if (!splt_u_output_variable_is_valid(cf, &amb))
     {
       err[0] = cf;
-      splt_t_set_error_data(state, err);
+      splt_e_set_error_data(state, err);
       return SPLT_OUTPUT_FORMAT_ERROR;
     }
 
@@ -1370,7 +1370,7 @@ int splt_u_parse_outformat(char *s, splt_state *state)
     if (!splt_u_output_variable_is_valid(v, &amb))
     {
       err[0] = v;
-      splt_t_set_error_data(state, err);
+      splt_e_set_error_data(state, err);
       return SPLT_OUTPUT_FORMAT_ERROR;
     }
   }
@@ -1415,7 +1415,7 @@ static int splt_u_get_requested_num_of_digits(splt_state *state, const char *for
   }
   else
   {
-    number_of_digits = splt_t_get_oformat_number_of_digits_as_int(state);
+    number_of_digits = splt_of_get_oformat_number_of_digits_as_int(state);
   }
   int max_number_of_digits = number_of_digits;
   *requested_num_of_digits = number_of_digits;
@@ -1496,7 +1496,7 @@ static void splt_u_alpha_track(splt_state *state, int nfield,
 void splt_u_create_output_dirs_if_necessary(splt_state *state,
     const char *output_filename, int *error)
 {
-  if (splt_t_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
+  if (splt_o_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
   {
     char *only_dirs = strdup(output_filename);
     if (! only_dirs)
@@ -1523,7 +1523,7 @@ static int splt_u_put_output_format_filename(splt_state *state, int current_spli
 {
   int error = SPLT_OK;
 
-  int output_filenames = splt_t_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
+  int output_filenames = splt_o_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES);
   if (output_filenames == SPLT_OUTPUT_CUSTOM)
   {
     return error;
@@ -1553,15 +1553,15 @@ static int splt_u_put_output_format_filename(splt_state *state, int current_spli
   long mins = -1;
   long secs = -1;
   long hundr = -1;
-  long point_value = splt_t_get_splitpoint_value(state, current_split, &error);
+  long point_value = splt_sp_get_splitpoint_value(state, current_split, &error);
   splt_u_get_mins_secs_hundr(point_value, &mins, &secs, &hundr);
   long next_mins = -1;
   long next_secs = -1;
   long next_hundr = -1;
   long next_point_value = -1;
-  if (splt_t_splitpoint_exists(state, current_split + 1))
+  if (splt_sp_splitpoint_exists(state, current_split + 1))
   {
-    next_point_value = splt_t_get_splitpoint_value(state, current_split + 1, &error);
+    next_point_value = splt_sp_get_splitpoint_value(state, current_split + 1, &error);
     long total_time = splt_t_get_total_time(state);
     if (total_time > 0 && next_point_value > total_time)
     {
@@ -1574,14 +1574,14 @@ static int splt_u_put_output_format_filename(splt_state *state, int current_spli
 
   //if we get the tags from the first file
   int remaining_tags_like_x = 
-    splt_t_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
+    splt_o_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
   if ((tags_index >= state->split.real_tagsnumber) &&
       (remaining_tags_like_x != -1))
   {
     tags_index = remaining_tags_like_x;
   }
 
-  const char *output_format = splt_t_get_oformat(state);
+  const char *output_format = splt_of_get_oformat(state);
   short write_eof = SPLT_FALSE;
   if ((next_point_value == LONG_MAX) &&
       (strcmp(output_format, SPLT_DEFAULT_OUTPUT) == 0))
@@ -1942,14 +1942,14 @@ put_value:
         case 'n':
         case 'N':
           temp[1] = '0';
-          temp[2] = splt_t_get_oformat_number_of_digits_as_char(state);
+          temp[2] = splt_of_get_oformat_number_of_digits_as_char(state);
           temp[3] = 'd';
 
           int tracknumber = split_file_number;
 
           //if not time split, or normal split, or silence split or error,
           //we put the track number from the tags
-          int split_mode = splt_t_get_int_option(state,SPLT_OPT_SPLIT_MODE);
+          int split_mode = splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE);
           if ((isupper(state->oformat.format[i][1])) ||
               ((split_mode != SPLT_OPTION_TIME_MODE) &&
                (split_mode != SPLT_OPTION_NORMAL_MODE) &&
@@ -2093,7 +2093,7 @@ put_value:
 
   splt_u_print_debug(state,"The new output filename is ",0,output_filename);
   int cur_splt = splt_t_get_current_split(state);
-  int name_error = splt_t_set_splitpoint_name(state, cur_splt, output_filename);
+  int name_error = splt_sp_set_splitpoint_name(state, cur_splt, output_filename);
   if (name_error != SPLT_OK) { error = name_error; }
 
 end:
@@ -2480,7 +2480,7 @@ char *splt_u_strerror(splt_state *state, splt_code error_code)
       case SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE:
         ;
         splt_plugins *pl = state->plug;
-        int current_plugin = splt_t_get_current_plugin(state);
+        int current_plugin = splt_p_get_current_plugin(state);
         snprintf(error_msg,max_error_size, _(" error: unsupported feature for the plugin '%s'"),
             pl->data[current_plugin].info.name);
         break;
@@ -2550,7 +2550,7 @@ void splt_u_print_debug(splt_state *state, const char *message,
 
     if (state)
     {
-      splt_t_put_debug_message_to_client(state, mess);
+      splt_c_put_debug_message_to_client(state, mess);
     }
     else
     {
@@ -2605,7 +2605,7 @@ int splt_u_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
     float begin_position = 0, end_position = 0;
     if (sscanf(line, "%f\t%f\t%d", &begin_position, &end_position, &len) == 3)
     {
-      splt_t_ssplit_new(&state->silence_list, begin_position, end_position, len, error);
+      splt_siu_ssplit_new(&state->silence_list, begin_position, end_position, len, error);
       if (*error < 0)
       {
         break;
@@ -2662,12 +2662,12 @@ int splt_u_create_directories(splt_state *state, const char *dir)
         if (result < 0) { goto end; }
 
         //don't create output directories if we pretend to split
-        if (! splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+        if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
           if ((splt_u_mkdir(state, junk)) == -1)
           {
-            splt_t_set_strerror_msg(state);
-            splt_t_set_error_data(state,junk);
+            splt_e_set_strerror_msg(state);
+            splt_e_set_error_data(state,junk);
             result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
             goto end;
           }
@@ -2692,8 +2692,8 @@ int splt_u_create_directories(splt_state *state, const char *dir)
 
       if ((splt_u_mkdir(state, last_dir)) == -1)
       {
-        splt_t_set_strerror_msg(state);
-        splt_t_set_error_data(state,last_dir);
+        splt_e_set_strerror_msg(state);
+        splt_e_set_error_data(state,last_dir);
         result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
       }
     }
@@ -2830,7 +2830,7 @@ FILE *splt_u_fopen(const char *filename, const char *mode)
 
 int splt_u_mkdir(splt_state *state, const char *path)
 {
-  if (splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
   {
     return 0;
   }
@@ -2914,7 +2914,7 @@ int splt_u_stat(const char *path, mode_t *st_mode, off_t *st_size)
 
 void splt_u_print_overlap_time(splt_state *state)
 {
-  long overlap_time = splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
+  long overlap_time = splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
   if (overlap_time > 0)
   {
     char message[1024] = { '\0' };
@@ -2925,15 +2925,15 @@ void splt_u_print_overlap_time(splt_state *state)
     snprintf(message, 1024,
         _(" info: overlapping split files with %ld.%ld.%ld\n"),
         mins, secs, hundr);
-    splt_t_put_info_message_to_client(state, message);
+    splt_c_put_info_message_to_client(state, message);
   }
 }
 
 long splt_u_overlap_time(splt_state *state, int splitpoint_index)
 {
   int error = SPLT_OK;
-  long split_value = splt_t_get_splitpoint_value(state, splitpoint_index, &error);
-  long overlap_time = splt_t_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
+  long split_value = splt_sp_get_splitpoint_value(state, splitpoint_index, &error);
+  long overlap_time = splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
   if ((overlap_time > 0) && (split_value != LONG_MAX))
   {
     long total_time = splt_t_get_total_time(state);
@@ -2942,7 +2942,7 @@ long splt_u_overlap_time(splt_state *state, int splitpoint_index)
     {
       overlapped_split_value = total_time;
     }
-    splt_t_set_splitpoint_value(state, splitpoint_index, overlapped_split_value);
+    splt_sp_set_splitpoint_value(state, splitpoint_index, overlapped_split_value);
 
     return overlapped_split_value;
   }
@@ -3147,13 +3147,13 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
   else
   {
     //we might not have total time for non seekable
-    if (splt_t_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
+    if (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE))
     {
       int current_split = splt_t_get_current_split(state);
-      if (splt_t_splitpoint_exists(state, current_split + 1))
+      if (splt_sp_splitpoint_exists(state, current_split + 1))
       {
         int get_error = SPLT_OK;
-        long split_end = splt_t_get_splitpoint_value(state, current_split+1, &get_error);
+        long split_end = splt_sp_get_splitpoint_value(state, current_split+1, &get_error);
         if (get_error >= 0)
         {
           if (split_end == LONG_MAX)
@@ -3171,7 +3171,7 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
 size_t splt_u_fwrite(splt_state *state, const void *ptr,
     size_t size, size_t nmemb, FILE *stream)
 {
-  if (splt_t_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
   {
     return size * nmemb;
   }

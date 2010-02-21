@@ -56,7 +56,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   }
   snprintf(client_infos, strlen(file)+200,
       _(" reading informations from CDDB file %s ...\n"),file);
-  splt_t_put_info_message_to_client(state, client_infos);
+  splt_c_put_info_message_to_client(state, client_infos);
   free(client_infos);
   client_infos = NULL;
 
@@ -86,8 +86,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   //we open the file
   if (!(file_input=splt_u_fopen(file, "r")))
   {
-    splt_t_set_strerror_msg(state);
-    splt_t_set_error_data(state,file);
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state,file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;
   }
@@ -101,7 +101,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
       do {
         if ((fgets(line, 2048, file_input))==NULL)
         {
-          splt_t_set_error_data(state,file);
+          splt_e_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
           goto function_end;
         }
@@ -114,7 +114,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
       do {
         if ((fgets(line, 2048, file_input))==NULL)
         {
-          splt_t_set_error_data(state,file);
+          splt_e_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
           goto function_end;
         }
@@ -143,7 +143,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           //in cddb_offset*100
           //we convert them lower to seconds
           append_error =
-            splt_t_append_splitpoint(state, temp * 100, NULL, SPLT_SPLITPOINT);
+            splt_sp_append_splitpoint(state, temp * 100, NULL, SPLT_SPLITPOINT);
   
           if (append_error != SPLT_OK)
           {
@@ -177,7 +177,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         do {
           if ((fgets(line, 1024, file_input))==NULL)
           {
-            splt_t_set_error_data(state,file);
+            splt_e_set_error_data(state,file);
             *error = SPLT_INVALID_CDDB_FILE;
             goto function_end;
           }
@@ -200,7 +200,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         temp2 = atof(number);
 
         //we append the splitpoint (in seconds*100)
-        append_error = splt_t_append_splitpoint(state, temp2 * 100, NULL, SPLT_SPLITPOINT);
+        append_error = splt_sp_append_splitpoint(state, temp2 * 100, NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK)
         {
           *error = append_error;
@@ -210,7 +210,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
       else
       {
         //we append 0 as splitpoint
-        append_error = splt_t_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
+        append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK)
         {
           *error = append_error;
@@ -218,7 +218,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         }
       }
 
-      split2 = splt_t_get_splitpoint_value(state, 0, &get_error);
+      split2 = splt_sp_get_splitpoint_value(state, 0, &get_error);
       if (get_error != SPLT_OK)
       {
         *error = get_error;
@@ -228,7 +228,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
       //we convert the points previously found
       for (i=tracks-1; i>=0; i--)
       {
-        split1 = splt_t_get_splitpoint_value(state, i, &get_error);
+        split1 = splt_sp_get_splitpoint_value(state, i, &get_error);
         if (get_error != SPLT_OK)
         {
           *error = get_error;
@@ -240,7 +240,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         long difference = split1 - split2;
         float real_value = (float) difference / 75.f;
         change_error =
-          splt_t_set_splitpoint_value(state, i, (long) ceilf(real_value));
+          splt_sp_set_splitpoint_value(state, i, (long) ceilf(real_value));
 
         if (change_error != SPLT_OK)
         {
@@ -260,7 +260,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         memset(temp, 0, 10);
         if ((fgets(line, 2048, file_input))==NULL)
         {
-          splt_t_set_error_data(state,file);
+          splt_e_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
           goto function_end;
         }
@@ -321,7 +321,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         //if we don't have '=', invalid file
         if ((number=strchr(line, '='))==NULL) 
         {
-          splt_t_set_error_data(state,file);
+          splt_e_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
           goto function_end;
         }
@@ -387,7 +387,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             (strstr(number, "Track")!=NULL)) 
         {
           split1 = 
-            splt_t_get_splitpoint_value(state, j, &get_error);
+            splt_sp_get_splitpoint_value(state, j, &get_error);
           if (get_error != SPLT_OK)
           {
             *error = get_error;
@@ -395,7 +395,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           }
 
           change_error = 
-            splt_t_set_splitpoint_value(state,j-1, split1);
+            splt_sp_set_splitpoint_value(state,j-1, split1);
 
           if (change_error != SPLT_OK)
           {
@@ -465,7 +465,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 goto function_end;
               }
               snprintf(client_infos,strlen(artist)+30,_("\n  Artist: %s\n"), artist);
-              splt_t_put_info_message_to_client(state, client_infos);
+              splt_c_put_info_message_to_client(state, client_infos);
               free(client_infos);
               client_infos = NULL;
 
@@ -491,7 +491,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 goto function_end;
               }
               snprintf(client_infos,strlen(album)+30,_("  Album: %s\n"), album);
-              splt_t_put_info_message_to_client(state, client_infos);
+              splt_c_put_info_message_to_client(state, client_infos);
               free(client_infos);
               client_infos = NULL;
             }
@@ -581,8 +581,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
     }
     else
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state,file);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state,file);
       *error = SPLT_ERROR_SEEKING_FILE;
       goto function_end;
     }
@@ -590,8 +590,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 function_end:
     if (fclose(file_input) != 0)
     {
-      splt_t_set_strerror_msg(state);
-      splt_t_set_error_data(state, file);
+      splt_e_set_strerror_msg(state);
+      splt_e_set_error_data(state, file);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     file_input = NULL;
@@ -602,7 +602,7 @@ function_end:
   {
     char tracks_info[64] = { '\0' };
     snprintf(tracks_info, 64, _("  Tracks: %d\n\n"),tracks);
-    splt_t_put_info_message_to_client(state, tracks_info);
+    splt_c_put_info_message_to_client(state, tracks_info);
   }
 
   return tracks;

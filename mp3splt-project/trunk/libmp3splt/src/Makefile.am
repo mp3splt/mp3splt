@@ -32,7 +32,15 @@ splt_array.c ../include/libmp3splt/splt_array.h \
 string_utils.c ../include/libmp3splt/string_utils.h \
 tags_utils.c ../include/libmp3splt/tags_utils.h \
 input_output.c ../include/libmp3splt/input_output.h \
-options.c ../include/libmp3splt/options.h
+options.c ../include/libmp3splt/options.h \
+output_format.c ../include/libmp3splt/output_format.h \
+split_points.c ../include/libmp3splt/split_points.h \
+errors.c ../include/libmp3splt/errors.h \
+freedb_utils.c ../include/libmp3splt/freedb_utils.h \
+silence_utils.c ../include/libmp3splt/silence_utils.h \
+sync_errors.c ../include/libmp3splt/sync_errors.h \
+wrap.c ../include/libmp3splt/wrap.h \
+client.c ../include/libmp3splt/client.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale

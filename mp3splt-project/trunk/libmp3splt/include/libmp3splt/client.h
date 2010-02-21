@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -30,19 +30,19 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_IO_H
+#ifndef SPLT_CLIENT_H
 
-int splt_io_check_if_directory(const char *fname);
-int splt_io_check_if_file(splt_state *state, const char *fname);
+int splt_c_put_split_file(splt_state *state, const char *filename);
+void splt_c_put_progress_text(splt_state *state,int type);
 
-int splt_io_input_is_stdin(splt_state *state);
-int splt_io_input_is_stdout(splt_state *state);
+void splt_c_put_info_message_to_client(splt_state *state, char *message);
+void splt_c_put_debug_message_to_client(splt_state *state, char *message);
 
-#ifndef __WIN32__
-char *splt_io_get_linked_fname(const char *fname);
-#endif
+void splt_c_update_progress(splt_state *state, double current_point,
+    double total_points, int progress_stage,
+    float progress_start, int refresh_rate);
 
-#define MP3SPLT_IO_H
+#define SPLT_CLIENT_H
 
 #endif
 

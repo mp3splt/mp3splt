@@ -47,6 +47,14 @@
 #include "tags_utils.h"
 #include "input_output.h"
 #include "options.h"
+#include "output_format.h"
+#include "split_points.h"
+#include "errors.h"
+#include "freedb_utils.h"
+#include "silence_utils.h"
+#include "sync_errors.h"
+#include "wrap.h"
+#include "client.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
