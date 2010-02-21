@@ -1169,13 +1169,13 @@ function test_normal_vbr_split_in_equal_parts
  info: file matches the plugin 'mp3 (libmad)'
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
- info: starting 'split in parts' mode
+ info: starting 'split in equal tracks' mode
    File \"$OUTPUT_DIR/1.mp3\" created
    File \"$OUTPUT_DIR/2.mp3\" created
    File \"$OUTPUT_DIR/3.mp3\" created
    File \"$OUTPUT_DIR/4.mp3\" created
  Processed 9402 frames - Sync errors: 0
- split in parts ok"
+ split in equal tracks ok"
   mp3splt_args="-d $OUTPUT_DIR -o @n -S 4 $MP3_FILE"
   run_check_output "$mp3splt_args" "$expected"
 
