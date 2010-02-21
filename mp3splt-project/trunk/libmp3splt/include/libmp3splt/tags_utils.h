@@ -48,27 +48,18 @@ int splt_tu_append_only_non_null_previous_tags(splt_state *state,
 void splt_tu_reset_tags(splt_tags *tags);
 int splt_tu_new_tags_if_necessary(splt_state *state, int index);
 int splt_tu_tags_exists(splt_state *state, int index);
-int splt_tu_set_tags_char_field(splt_state *state, int index,
-    int tags_field, const char *data);
+int splt_tu_set_tags_field(splt_state *state, int index,
+    int tags_field, const void *data);
 int splt_tu_set_like_x_tags_field(splt_state *state,
-    int tags_field, int int_data,
-    const char *char_data, unsigned char uchar_data);
+    int tags_field, const void *data);
 int splt_tu_set_original_tags_field(splt_state *state,
-    int tags_field, int int_data,
-    const char *char_data, unsigned char uchar_data);
-int splt_tu_set_tags_int_field(splt_state *state, int index,
-    int tags_field, int data);
-int splt_tu_set_tags_uchar_field(splt_state *state, int index,
-    int tags_field, unsigned char data);
+    int tags_field, const void *data);
 splt_tags *splt_tu_get_tags(splt_state *state, int *tags_number);
 
 int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index);
 splt_tags splt_tu_get_last_tags(splt_state *state);
-char *splt_tu_get_tags_char_field(splt_state *state, int index, int tags_field);
-int splt_tu_get_tags_int_field(splt_state *state, int index, int tags_field);
-unsigned char splt_tu_get_tags_uchar_field(splt_state *state, int index,
-    int tags_field);
+void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field);
 void splt_tu_free_tags(splt_state *state);
 splt_tags *splt_tu_get_tags_like_x(splt_state *state);
 splt_tags *splt_tu_get_current_tags(splt_state *state);

@@ -276,7 +276,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         //some cddb files have Year and Genre before TTITLE
         if (strstr(line, "YEAR") != NULL)
         {
-          tags_error = splt_tu_set_tags_char_field(state, 0, SPLT_TAGS_YEAR, line+6);
+          tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_YEAR, line+6);
           if (tags_error != SPLT_OK)
           {
             *error = tags_error;
@@ -288,8 +288,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           char a[4];
           strncpy(a,line+6,3);
           //this tag doesn't work correctly because GENRE is not a number
-          tags_error = splt_tu_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE,
-              (unsigned char) atoi(a));
+          int t = atoi(a);
+          tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &t);
           if (tags_error != SPLT_OK)
           {
             *error = tags_error;
@@ -350,7 +350,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
               //we put performer
               performer = SPLT_TRUE;
               tags_error = 
-                splt_tu_set_tags_char_field(state, j-1, SPLT_TAGS_PERFORMER,
+                splt_tu_set_tags_field(state, j-1, SPLT_TAGS_PERFORMER,
                     number+1);
 
               if (tags_error != SPLT_OK)
@@ -362,7 +362,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             else
             {
               tags_error = 
-                splt_tu_set_tags_char_field(state, j-1, SPLT_TAGS_PERFORMER,
+                splt_tu_set_tags_field(state, j-1, SPLT_TAGS_PERFORMER,
                     NULL);
               if (tags_error != SPLT_OK)
               {
@@ -371,7 +371,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
               }
             }
 
-            perfor = splt_tu_get_tags_char_field(state, j-1, SPLT_TAGS_PERFORMER);
+            perfor = (char *)splt_tu_get_tags_field(state, j-1, SPLT_TAGS_PERFORMER);
             number = c+1;
           }
         }
@@ -409,7 +409,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           //otherwise, we put the title
           if ((j > 0) && (strcmp(temp, prev)==0))
           {
-            tags_error = splt_tu_set_tags_char_field(state, j-1, SPLT_TAGS_TITLE,
+            tags_error = splt_tu_set_tags_field(state, j-1, SPLT_TAGS_TITLE,
                 number);
             if (tags_error != SPLT_OK)
             {
@@ -436,7 +436,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 ttemp[i_temp] = number[i_temp];
               }
               ttemp[i] = '\0';
-              tags_error = splt_tu_set_tags_char_field(state, 0, SPLT_TAGS_ARTIST,
+              tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_ARTIST,
                   ttemp);
               if (tags_error != SPLT_OK)
               {
@@ -445,7 +445,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
               }
 
               //we cut the space at the end of the artist
-              artist = splt_tu_get_tags_char_field(state,0, SPLT_TAGS_ARTIST);
+              artist = (char *)splt_tu_get_tags_field(state,0, SPLT_TAGS_ARTIST);
               int k = strlen(artist)-1;
               while (artist[k] == ' ')
               {
@@ -473,7 +473,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
               i += 1;
               number = splt_u_cut_spaces_from_begin(number+i);
 
-              tags_error = splt_tu_set_tags_char_field(state, 0, SPLT_TAGS_ALBUM, 
+              tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_ALBUM, 
                   number);
               if (tags_error != SPLT_OK)
               {
@@ -481,7 +481,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 goto function_end;
               }
 
-              album = splt_tu_get_tags_char_field(state,0, SPLT_TAGS_ALBUM);
+              album = (char *)splt_tu_get_tags_field(state,0, SPLT_TAGS_ALBUM);
 
               //put album info to client
               client_infos = malloc(sizeof(char) * (strlen(album)+30));
@@ -505,7 +505,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
                 t = number-1;
               }
               t = splt_u_cut_spaces_from_begin(t);
-              tags_error = splt_tu_set_tags_char_field(state, j-1,
+              tags_error = splt_tu_set_tags_field(state, j-1,
                   SPLT_TAGS_TITLE, t);
               if (tags_error != SPLT_OK)
               {
@@ -522,7 +522,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 
       //we search for
       //YEAR (the year) and ID3 genre
-      tags_error = splt_tu_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE, 12);
+      unsigned char default_genre = 12;
+      tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &default_genre);
       if (tags_error != SPLT_OK)
       {
         *error =tags_error;
@@ -553,7 +554,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           {
             if ((c=strstr(number, "YEAR"))!=NULL)
             {
-              tags_error = splt_tu_set_tags_char_field(state, 0, SPLT_TAGS_YEAR, c+6);
+              tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_YEAR, c+6);
               if (tags_error != SPLT_OK)
               {
                 *error = tags_error;
@@ -563,8 +564,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             if ((c=strstr(number, "ID3G"))!=NULL) 
             {
               strncpy(line, c+6, 3);
-              tags_error = splt_tu_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE,
-                    (unsigned char) atoi(line));
+              int id3g = atoi(line);
+              tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &id3g);
               if (tags_error != SPLT_OK)
               {
                 *error = tags_error;

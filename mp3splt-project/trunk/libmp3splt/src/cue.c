@@ -105,7 +105,7 @@ static int splt_cue_set_value(splt_state *state, char *in,
 				free(client_infos);
 				client_infos = NULL;
 
-				tags_err = splt_tu_set_tags_char_field(state, index, tag_field, out);
+				tags_err = splt_tu_set_tags_field(state, index, tag_field, out);
 				if (tags_err != SPLT_OK)
 				{
 					error = tags_err;
@@ -168,7 +168,8 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   int tags_error = SPLT_OK;
   
   //default genre
-  tags_error = splt_tu_set_tags_uchar_field(state, 0, SPLT_TAGS_GENRE, 12);
+  int default_genre = 12;
+  tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &default_genre);
   if (tags_error != SPLT_OK)
   {
     *error = tags_error;
