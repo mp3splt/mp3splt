@@ -64,9 +64,18 @@
 #include <libintl.h>
 #include <locale.h>
 
+#ifdef __WIN32__
+
+#define fseeko fseeko64
+#define ftello ftello64
+
+#else
+
 #if !HAVE_FSEEKO
 #define fseeko fseek
 #define ftello ftell
+#endif
+
 #endif
 
 #define _(STR) dgettext(MP3SPLT_LIB_GETTEXT_DOMAIN, STR)

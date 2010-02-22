@@ -33,10 +33,10 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt-gtk, 0.5.9, io_fx@yahoo.fr)
+AC_INIT(mp3splt-gtk, 0.6, io_fx@yahoo.fr)
 
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.5.9)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.6)
 AC_CONFIG_HEADER([config.h])
 
 #DEBUG_FLAGS="-g"
@@ -104,7 +104,7 @@ AM_PATH_GTK_2_0(2.12.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.12.0))
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.5.9 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.6 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
