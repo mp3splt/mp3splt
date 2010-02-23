@@ -255,7 +255,7 @@ void splt_fu_freedb_set_disc(splt_state *state, int index,
     //snprintf seems buggy
     cdstate->discs[index].category[category_size-1] = '\0';
 #endif
-    splt_u_print_debug(state,"Setting disc category ",0,cdstate->discs[index].category);
+    splt_d_print_debug(state,"Setting disc category ",0,cdstate->discs[index].category);
 
     memset(cdstate->discs[index].discid, '\0', SPLT_DISCIDLEN+1);
     snprintf(cdstate->discs[index].discid,SPLT_DISCIDLEN+1,"%s",discid);
@@ -263,11 +263,11 @@ void splt_fu_freedb_set_disc(splt_state *state, int index,
     //snprintf seems buggy
     cdstate->discs[index].discid[SPLT_DISCIDLEN] = '\0';
 #endif
-    splt_u_print_debug(state,"Setting disc id ",SPLT_DISCIDLEN+1,cdstate->discs[index].discid);
+    splt_d_print_debug(state,"Setting disc id ",SPLT_DISCIDLEN+1,cdstate->discs[index].discid);
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT, __func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT, __func__, index, NULL);
   }
 }
 
@@ -281,7 +281,7 @@ const char *splt_fu_freedb_get_disc_category(splt_state *state, int index)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT, __func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT, __func__, index, NULL);
     return NULL;
   }
 }
@@ -296,7 +296,7 @@ const char *splt_fu_freedb_get_disc_id(splt_state *state, int index)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT, __func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT, __func__, index, NULL);
     return NULL;
   }
 }

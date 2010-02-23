@@ -455,7 +455,7 @@ int mp3splt_put_tags_from_string(splt_state *state, const char *tags, int *error
     {
       splt_o_lock_library(state);
 
-      ambigous = splt_u_put_tags_from_string(state, tags, err);
+      ambigous = splt_tp_put_tags_from_string(state, tags, err);
 
       splt_o_unlock_library(state);
     }
@@ -612,12 +612,12 @@ int mp3splt_split(splt_state *state)
     {
       splt_o_lock_library(state);
 
-      splt_u_print_debug(state,"Starting to split file...",0,NULL);
+      splt_d_print_debug(state,"Starting to split file...",0,NULL);
 
       char *new_filename_path = NULL;
       char *fname_to_split = splt_t_get_filename_to_split(state);
 
-      splt_u_print_debug(state,"Original filename/path to split is ",0, fname_to_split);
+      splt_d_print_debug(state,"Original filename/path to split is ",0, fname_to_split);
 
       if (splt_io_input_is_stdin(state))
       {
@@ -700,7 +700,7 @@ int mp3splt_split(splt_state *state)
       splt_t_set_new_filename_path(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
-      error = splt_u_create_directories(state, new_filename_path);
+      error = splt_io_create_directories(state, new_filename_path);
       if (error < 0) { goto function_end; }
 
       splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
@@ -708,7 +708,7 @@ int mp3splt_split(splt_state *state)
 
       if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
       {
-        splt_u_put_tags_from_string(state, SPLT_ORIGINAL_TAGS_DEFAULT, &error);
+        splt_tp_put_tags_from_string(state, SPLT_ORIGINAL_TAGS_DEFAULT, &error);
         if (error < 0)
         {
           splt_p_end(state, &error);
@@ -747,7 +747,7 @@ int mp3splt_split(splt_state *state)
       splt_p_init(state, &error);
       if (error < 0) { goto function_end; }
 
-      splt_u_print_debug(state,"parse type of split...",0,NULL);
+      splt_d_print_debug(state,"parse type of split...",0,NULL);
 
       char message[1024] = { '\0' };
       //print Working with auto adjust if necessary
@@ -1030,7 +1030,7 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
         {
           //we write the result to the file
           FILE *output = NULL;
-          if (!(output = splt_u_fopen(cddb_file, "w")))
+          if (!(output = splt_io_fopen(cddb_file, "w")))
           {
             splt_e_set_strerror_msg(state);
             splt_e_set_error_data(state,cddb_file);
@@ -1302,7 +1302,7 @@ void mp3splt_get_version(char *version)
 //result must be freed
 char *mp3splt_get_strerror(splt_state *state, int error_code)
 {
-  return splt_u_strerror(state, error_code);
+  return splt_e_strerror(state, error_code);
 }
 
 //returns possible error or SPLT_OK if no error
@@ -1315,7 +1315,7 @@ int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir)
 //returned result must be free'd
 char *mp3splt_win32_utf16_to_utf8(const wchar_t *source)
 {
-  return splt_u_win32_utf16_to_utf8(source);
+  return splt_w32_utf16_to_utf8(source);
 }
 #endif
 
@@ -1339,7 +1339,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 
       if (splt_io_check_if_file(state, filename))
       {
-        if (splt_u_file_is_supported_by_plugins(state, filename))
+        if (splt_p_file_is_supported_by_plugins(state, filename))
         {
           found_files = malloc(sizeof(char *));
           if (!found_files)
@@ -1376,7 +1376,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
           dir[strlen(dir)-1] = '\0';
         }
 
-        splt_u_find_filenames(state, dir, &found_files, num_of_files_found, err);
+        splt_io_find_filenames(state, dir, &found_files, num_of_files_found, err);
 
         if (dir)
         {

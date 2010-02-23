@@ -145,7 +145,7 @@ void splt_check_if_splitpoints_in_order(splt_state *state, int *error)
 void splt_check_if_new_filename_path_correct(splt_state *state,
     const char *new_filename_path, int *error)
 {
-  splt_u_print_debug(state,"We check if the new filename path is correct ",0,new_filename_path);
+  splt_d_print_debug(state,"We check if the new filename path is correct ",0,new_filename_path);
 
   char current_directory[4] = { '\0' };
   snprintf(current_directory,4,"%c%c",'.',SPLT_DIRCHAR);
@@ -247,7 +247,7 @@ int splt_check_compatible_options(splt_state *state)
 //we need so (this function is quite important)
 void splt_check_set_correct_options(splt_state *state)
 {
-  splt_u_print_debug(state,"We check and set correct options.. ",0,NULL);
+  splt_d_print_debug(state,"We check and set correct options.. ",0,NULL);
 
   int split_mode = splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE);
 
@@ -306,10 +306,10 @@ void splt_check_file_type(splt_state *state, int *error)
 {
   int err = SPLT_OK;
 
-  splt_u_print_debug(state,"Detecting file format...",0,NULL);
+  splt_d_print_debug(state,"Detecting file format...",0,NULL);
   const char *filename = splt_t_get_filename_to_split(state);
 
-  splt_u_print_debug(state,"Checking the format of",0,filename);
+  splt_d_print_debug(state,"Checking the format of",0,filename);
 
   //parse each plugin until we find out a plugin for the file
   splt_plugins *pl = state->plug;
@@ -327,8 +327,8 @@ void splt_check_file_type(splt_state *state, int *error)
       const char *upper_extension = splt_p_get_extension(state, &err);
       if (err == SPLT_OK)
       {
-        if (splt_u_str_ends_with(filename, extension) ||
-            splt_u_str_ends_with(filename, upper_extension))
+        if (splt_su_str_ends_with(filename, extension) ||
+            splt_su_str_ends_with(filename, upper_extension))
         {
           plugin_found = SPLT_TRUE;
           break;
@@ -353,14 +353,14 @@ void splt_check_file_type(splt_state *state, int *error)
   {
     splt_e_set_error_data(state, filename);
     *error = SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE;
-    splt_u_print_debug(state,"No plugin found !",0,NULL);
+    splt_d_print_debug(state,"No plugin found !",0,NULL);
 
     //if no plugin was found,
     //verify if the file is a real file
-    splt_u_print_debug(state,"Verify if the file is a file",0,filename);
+    splt_d_print_debug(state,"Verify if the file is a file",0,filename);
 
     FILE *test = NULL;
-    if ((test = splt_u_fopen(filename,"r")) != NULL)
+    if ((test = splt_io_fopen(filename,"r")) != NULL)
     {
       if (fclose(test) != 0)
       {
@@ -430,15 +430,15 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
     return SPLT_FALSE;
   }
 
-  splt_u_print_debug(state,"Checking if this file:",0,file1);
-  splt_u_print_debug(state,"is like this file:",0,file2);
+  splt_d_print_debug(state,"Checking if this file:",0,file1);
+  splt_d_print_debug(state,"is like this file:",0,file2);
  
   int is_file1 = splt_io_check_if_file(state, file1);
   int is_file2 = splt_io_check_if_file(state, file2);
   if (is_file1 && is_file2)
   {
     //file1
-    if ((file1_ = splt_u_fopen(file1,"r")) == NULL)
+    if ((file1_ = splt_io_fopen(file1,"r")) == NULL)
     {
       goto end_error;
     }
@@ -449,7 +449,7 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
       if (fstat(file1_d,&file1_stat) == 0)
       {
         //file2
-        if ((file2_ = splt_u_fopen(file2,"r")) == NULL)
+        if ((file2_ = splt_io_fopen(file2,"r")) == NULL)
         {
           goto end_error;
         }

@@ -29,10 +29,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
+#include <dirent.h>
 
 #include "splt.h"
+#include "win32.h"
 
-#define MAX_SYMLINKS 1024
+static int splt_u_fname_is_directory_parent(char *fname, int fname_size);
 
 int splt_io_input_is_stdin(splt_state *state)
 {
@@ -72,7 +74,7 @@ int splt_io_input_is_stdout(splt_state *state)
 static int splt_io_file_type_is(const char *fname, int file_type)
 {
   mode_t st_mode;
-  int status = splt_u_stat(fname, &st_mode, NULL);
+  int status = splt_io_stat(fname, &st_mode, NULL);
   if (status == 0)
   {
     if ((st_mode & S_IFMT) == file_type)
@@ -122,7 +124,7 @@ char *splt_io_get_linked_fname(const char *fname)
   char *previous_linked_fname = NULL;
 
   mode_t st_mode;
-  if (splt_u_stat(fname, &st_mode, NULL) < 0)
+  if (splt_io_stat(fname, &st_mode, NULL) < 0)
   {
     if (errno == ELOOP)
     {
@@ -266,5 +268,404 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
   splt_e_set_error_data(state, fname);
 
   return SPLT_FALSE;
+}
+
+int splt_io_get_word(FILE *in, off_t offset, int mode, unsigned long *headw)
+{
+  int i;
+  *headw = 0;
+
+  if (fseeko(in, offset, mode)==-1)
+  {
+    return -1;
+  }
+
+  for (i=0; i<4; i++)
+  {
+    if (feof(in)) 
+    {
+      return -1;
+    }
+    *headw = *headw << 8;
+    *headw |= fgetc(in);
+  }
+
+  return 0;
+}
+
+off_t splt_io_get_file_length(splt_state *state, FILE *in, const char *filename, int *error)
+{
+  struct stat info;
+  if (fstat(fileno(in), &info)==-1)
+  {
+    splt_e_set_strerror_msg(state);
+    splt_e_set_error_data(state, filename);
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    return -1;
+  }
+  return info.st_size;
+}
+
+void splt_io_create_output_dirs_if_necessary(splt_state *state,
+    const char *output_filename, int *error)
+{
+  if (splt_o_get_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES))
+  {
+    char *only_dirs = strdup(output_filename);
+    if (! only_dirs)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return;
+    }
+
+    char *dir_char = strrchr(only_dirs, SPLT_DIRCHAR);
+    if (dir_char != NULL)
+    {
+      *dir_char = '\0';
+      int err = splt_io_create_directories(state, only_dirs);
+      if (err < 0) { *error = err; }
+    }
+
+    free(only_dirs);
+    only_dirs = NULL;
+  }
+}
+
+int splt_io_create_directories(splt_state *state, const char *dir)
+{
+  int result = SPLT_OK;
+  const char *ptr = NULL;
+  if (dir[0] == '\0')
+  {
+    return result;
+  }
+
+  char *junk = malloc(sizeof(char) * (strlen(dir)+100));
+  if (!junk)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+  
+  splt_d_print_debug(state,"Creating directory ...",0,dir);
+  
+  ptr = dir;
+#ifdef __WIN32__
+  int first_time = SPLT_TRUE;
+#endif
+  while ((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)
+  {
+		//handle C:DIRCHAR on windows
+#ifdef __WIN32__
+    if (first_time && (strlen(dir) > 2)
+        && (dir[1] == ':') && (dir[2] == SPLT_DIRCHAR))
+    {
+      ptr++;
+    }
+    first_time = SPLT_FALSE;
+#endif
+    strncpy(junk, dir, ptr-dir);
+    junk[ptr-dir] = '\0';
+    ptr++;
+
+    if (junk[0] != '\0')
+    {
+      if (! splt_io_check_if_directory(junk))
+      {
+        splt_d_print_debug(state,"directory ...",0, junk);
+
+        if (result < 0) { goto end; }
+
+        //don't create output directories if we pretend to split
+        //TODO: remove if
+        if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+        {
+          if ((splt_io_mkdir(state, junk)) == -1)
+          {
+            splt_e_set_strerror_msg(state);
+            splt_e_set_error_data(state,junk);
+            result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+            goto end;
+          }
+        }
+      }
+    }
+  }
+
+  if (dir)
+  {
+    //we have created all the directories except the last one
+    char *last_dir = strdup(dir);
+    if (!last_dir)
+    {
+      result = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto end;
+    }
+
+    if (! splt_io_check_if_directory(last_dir))
+    {
+      splt_d_print_debug(state,"final directory ...",0, last_dir);
+
+      if ((splt_io_mkdir(state, last_dir)) == -1)
+      {
+        splt_e_set_strerror_msg(state);
+        splt_e_set_error_data(state,last_dir);
+        result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+      }
+    }
+
+    if (last_dir)
+    {
+      free(last_dir);
+      last_dir = NULL;
+    }
+  }
+
+end:
+  if (junk)
+  {
+    free(junk);
+    junk = NULL;
+  }
+  
+  return result;
+}
+
+FILE *splt_io_fopen(const char *filename, const char *mode)
+{
+#ifdef __WIN32__
+  if (splt_w32_check_if_encoding_is_utf8(filename))
+  {
+    wchar_t *wfilename = splt_w32_utf8_to_utf16(filename);
+    wchar_t *wmode = splt_w32_utf8_to_utf16(mode);
+
+    FILE *file = _wfopen(wfilename, wmode);
+
+    if (wfilename)
+    {
+      free(wfilename);
+      wfilename = NULL;
+    }
+
+    if (wmode)
+    {
+      free(wmode);
+      wmode = NULL;
+    }
+
+    return file;
+  }
+  else
+#endif
+  {
+    return fopen(filename, mode);
+  }
+}
+
+int splt_io_mkdir(splt_state *state, const char *path)
+{
+  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  {
+    return 0;
+  }
+
+#ifdef __WIN32__
+  if (splt_w32_check_if_encoding_is_utf8(path))
+  {
+    wchar_t *wpath = splt_w32_utf8_to_utf16(path);
+
+    int ret = _wmkdir(wpath);
+
+    if (wpath)
+    {
+      free(wpath);
+      wpath = NULL;
+    }
+
+    return ret;
+  }
+  else
+  {
+    return mkdir(path);
+  }
+#else
+  return mkdir(path, 0755);
+#endif
+}
+
+int splt_io_stat(const char *path, mode_t *st_mode, off_t *st_size)
+{
+#ifdef __WIN32__
+  if (splt_w32_check_if_encoding_is_utf8(path))
+  {
+    struct _stat buf;
+    wchar_t *wpath = splt_w32_utf8_to_utf16(path);
+
+    int ret = _wstat(wpath, &buf);
+
+    if (wpath)
+    {
+      free(wpath);
+      wpath = NULL;
+    }
+
+    if (st_mode != NULL)
+    {
+      *st_mode = buf.st_mode;
+    }
+
+    if (st_size != NULL)
+    {
+      *st_size = buf.st_size;
+    }
+
+    return ret;
+  }
+  else
+#endif
+  {
+    struct stat buf;
+
+#ifdef __WIN32__
+    int ret = stat(path, &buf);
+#else
+    int ret = lstat(path, &buf);
+#endif
+
+    if (st_mode != NULL)
+    {
+      *st_mode = buf.st_mode;
+    }
+
+    if (st_size != NULL)
+    {
+      *st_size = buf.st_size;
+    }
+
+    return ret;
+  }
+}
+
+void splt_io_find_filenames(splt_state *state, const char *directory,
+    char ***found_files, int *number_of_found_files, int *error)
+{
+#ifdef __WIN32__
+  struct _wdirent **files = NULL;
+#else
+  struct dirent **files = NULL;
+#endif
+
+  //TODO: handle scandir error
+#ifdef __WIN32__
+  int num_of_files = wscandir(directory, &files, NULL, walphasort);
+#else
+  int num_of_files = scandir(directory, &files, NULL, alphasort);
+#endif
+
+  int new_number_of_files = num_of_files;
+
+  if (files == NULL) { return; }
+
+  while (new_number_of_files-- > 0)
+  {
+#ifdef __WIN32__
+    char *fname = splt_w32_utf16_to_utf8(files[new_number_of_files]->d_name);
+#else
+    char *fname = files[new_number_of_files]->d_name;
+#endif
+
+    int fname_size = strlen(fname);
+
+    if (*error >= 0)
+    {
+      int path_with_fname_size = fname_size + strlen(directory) + 2;
+      char *path_with_fname = malloc(sizeof(char) * path_with_fname_size);
+      if (path_with_fname == NULL)
+      {
+        *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        free(files[new_number_of_files]);
+        files[new_number_of_files] = NULL;
+        continue;
+      }
+
+      snprintf(path_with_fname, path_with_fname_size, "%s%c%s", directory,
+          SPLT_DIRCHAR, fname);
+
+      if (splt_io_check_if_file(state, path_with_fname))
+      {
+        if (splt_p_file_is_supported_by_plugins(state, fname))
+        {
+          if (!(*found_files))
+          {
+            (*found_files) = malloc(sizeof(char *));
+          }
+          else
+          {
+            (*found_files) = realloc((*found_files),
+                sizeof(char *) * ((*number_of_found_files) + 1));
+          }
+          if (*found_files == NULL)
+          {
+            *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          int fname_size = strlen(path_with_fname) + 1;
+          (*found_files)[(*number_of_found_files)] = malloc(sizeof(char) * fname_size);
+          if ((*found_files)[(*number_of_found_files)] == NULL)
+          {
+            *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          memset((*found_files)[(*number_of_found_files)], '\0', fname_size);
+          strncat((*found_files)[*(number_of_found_files)], path_with_fname, fname_size);
+          (*number_of_found_files)++;
+        }
+      }
+      else if (splt_io_check_if_directory(path_with_fname))
+      {
+        if (! splt_u_fname_is_directory_parent(fname, fname_size))
+        {
+          splt_io_find_filenames(state, path_with_fname, found_files,
+              number_of_found_files, error);
+        }
+      }
+
+end:
+      if (path_with_fname)
+      {
+        free(path_with_fname);
+        path_with_fname = NULL;
+      }
+    }
+
+    free(files[new_number_of_files]);
+    files[new_number_of_files] = NULL;
+  }
+
+  if (files)
+  {
+    free(files);
+    files = NULL;
+  }
+}
+
+size_t splt_io_fwrite(splt_state *state, const void *ptr,
+    size_t size, size_t nmemb, FILE *stream)
+{
+  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  {
+    return size * nmemb;
+  }
+  else
+  {
+    return fwrite(ptr, size, nmemb, stream);
+  }
+}
+
+static int splt_u_fname_is_directory_parent(char *fname, int fname_size)
+{
+  return ((fname_size == 1) && (strcmp(fname, ".") == 0)) ||
+    ((fname_size == 2) && (strcmp(fname, "..") == 0));
 }
 

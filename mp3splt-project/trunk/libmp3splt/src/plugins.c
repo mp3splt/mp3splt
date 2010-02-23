@@ -96,7 +96,7 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
       //if the name starts with splt_and contains .so or .sl or .dll or .dylib
       if (strncmp(file,"libsplt_",8) == 0)
       {
-        splt_u_print_debug(NULL, "Looking at the file ",0, file);
+        splt_d_print_debug(NULL, "Looking at the file ",0, file);
 
         p_start = strchr(file,'.');
 
@@ -277,7 +277,7 @@ static int splt_p_find_plugins(splt_state *state)
   {
     if (pl->plugins_scan_dirs[i] != NULL)
     {
-      splt_u_print_debug(state,"Scanning plugins in the directory ",0, pl->plugins_scan_dirs[i]);
+      splt_d_print_debug(state,"Scanning plugins in the directory ",0, pl->plugins_scan_dirs[i]);
 
       //don't check if directory exists if the directory is ./ on unix-like
       //OSes or .\\ on windows
@@ -355,15 +355,15 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
   int i = 0;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
-    splt_u_print_debug(state,"\nTrying to open the plugin ...",0,pl->data[i].plugin_filename);
+    splt_d_print_debug(state,"\nTrying to open the plugin ...",0,pl->data[i].plugin_filename);
 
     //ltdl currently does not supports windows unicode path/filename
     pl->data[i].plugin_handle = lt_dlopen(pl->data[i].plugin_filename);
     //error
     if (! pl->data[i].plugin_handle)
     {
-      splt_u_print_debug(state,"Error loading the plugin",0,pl->data[i].plugin_filename);
-      splt_u_print_debug(state," - error message from libltdl: ",0,lt_dlerror());
+      splt_d_print_debug(state,"Error loading the plugin",0,pl->data[i].plugin_filename);
+      splt_d_print_debug(state," - error message from libltdl: ",0,lt_dlerror());
 
       //keep the index of this failed plugin in order to remove it
       //afterwards
@@ -380,7 +380,7 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
     }
     else
     {
-      splt_u_print_debug(state," - success !",0,NULL);
+      splt_d_print_debug(state," - success !",0,NULL);
 
       pl->data[i].func->set_plugin_info =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_plugin_info");
@@ -442,7 +442,7 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
   {
     int index_to_remove = plugin_index_to_remove[i] - left_shift;
 
-    splt_u_print_debug(state,"Removing the plugin ",0,
+    splt_d_print_debug(state,"Removing the plugin ",0,
         pl->data[index_to_remove].plugin_filename);
 
     if (i == number_of_plugins_to_remove-1)
@@ -481,7 +481,7 @@ int splt_p_find_get_plugins_data(splt_state *state)
 {
   int return_value = SPLT_OK;
 
-  splt_u_print_debug(state,"\nSearching for plugins ...",0,NULL);
+  splt_d_print_debug(state,"\nSearching for plugins ...",0,NULL);
 
   //find the plugins
   return_value = splt_p_find_plugins(state);
@@ -500,8 +500,8 @@ int splt_p_find_get_plugins_data(splt_state *state)
   {
     //debug
     splt_plugins *pl = state->plug;
-    splt_u_print_debug(state,"\nNumber of plugins found = ",pl->number_of_plugins_found,NULL);
-    splt_u_print_debug(state,"",0,NULL);
+    splt_d_print_debug(state,"\nNumber of plugins found = ",pl->number_of_plugins_found,NULL);
+    splt_d_print_debug(state,"",0,NULL);
     int i = 0;
     int err = 0;
     for (i = 0;i < pl->number_of_plugins_found;i++)
@@ -537,15 +537,15 @@ int splt_p_find_get_plugins_data(splt_state *state)
       splt_p_set_current_plugin(state, i);
       if (pl->data[i].plugin_filename != NULL)
       {
-        splt_u_print_debug(state,"plugin filename = ",0,pl->data[i].plugin_filename);
+        splt_d_print_debug(state,"plugin filename = ",0,pl->data[i].plugin_filename);
       }
       const char *temp = splt_p_get_name(state, &err);
-      splt_u_print_debug(state,"plugin name = ",0,temp);
+      splt_d_print_debug(state,"plugin name = ",0,temp);
       float version = splt_p_get_version(state, &err);
-      splt_u_print_debug(state,"plugin version = ", version, NULL);
+      splt_d_print_debug(state,"plugin version = ", version, NULL);
       temp = splt_p_get_extension(state,&err);
-      splt_u_print_debug(state,"extension = ",0,temp);
-      splt_u_print_debug(state,"",0,NULL);
+      splt_d_print_debug(state,"extension = ",0,temp);
+      splt_d_print_debug(state,"",0,NULL);
     }
   }
   splt_p_set_current_plugin(state, -1);
@@ -698,7 +698,7 @@ double splt_p_split(splt_state *state, const char *final_fname, double begin_poi
   else
   {
     int err = SPLT_OK;
-    splt_u_create_output_dirs_if_necessary(state, final_fname, &err);
+    splt_io_create_output_dirs_if_necessary(state, final_fname, &err);
     if (err < 0) { *error = err; return end_point; }
 
     if (pl->data[current_plugin].func->split != NULL)
@@ -706,7 +706,7 @@ double splt_p_split(splt_state *state, const char *final_fname, double begin_poi
       double new_end_point = pl->data[current_plugin].func->split(state, final_fname,
           begin_point, end_point, error, save_end_point);
 
-      splt_u_print_debug(state, "New end point after split ...",new_end_point,NULL);
+      splt_d_print_debug(state, "New end point after split ...",new_end_point,NULL);
 
       return new_end_point;
     }
@@ -985,12 +985,40 @@ void splt_p_set_current_plugin(splt_state *state, int current_plugin)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, current_plugin, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, current_plugin, NULL);
   }
 }
 
 int splt_p_get_current_plugin(splt_state *state)
 {
   return state->current_plugin;
+}
+
+int splt_p_file_is_supported_by_plugins(splt_state *state, const char *fname)
+{
+  splt_plugins *pl = state->plug;
+
+  int fname_length = strlen(fname);
+  if (fname_length > 3)
+  {
+    char *ptr_to_compare = strrchr(fname, '.');
+    if (ptr_to_compare)
+    {
+      int i = 0;
+      for (i = 0;i < pl->number_of_plugins_found;i++)
+      {
+        char *pl_extension = pl->data[i].info.extension;
+        char *pl_upper_extension = pl->data[i].info.upper_extension;
+
+        if ((strcmp(ptr_to_compare, pl_extension) == 0) ||
+            (strcmp(ptr_to_compare, pl_upper_extension) == 0))
+        {
+          return SPLT_TRUE;
+        }
+      }
+    }
+  }
+
+  return SPLT_FALSE;
 }
 

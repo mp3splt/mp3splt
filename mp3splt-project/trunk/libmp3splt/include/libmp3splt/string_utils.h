@@ -30,7 +30,7 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_STRING_UTILS_H
+#ifndef SPLT_STRING_UTILS_H
 
 char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error);
 char *splt_su_safe_strdup(const char *input, int *error);
@@ -39,7 +39,22 @@ int splt_su_append_str(char **str, const char *to_append, ...);
 void splt_su_free_replace(char **str, char *replacement);
 int splt_su_copy(const char *src, char **dest);
 
-#define MP3SPLT_STRING_UTILS_H
+void splt_su_clean_string(splt_state *state, char *s, int *error);
+char *splt_su_cut_spaces_from_the_end(char *c);
+char *splt_su_cut_spaces_from_begin(char *c);
+
+const char *splt_su_get_fname_without_path(const char *filename);
+char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error);
+
+void splt_su_cut_extension(char *str);
+char *splt_su_str_to_upper(const char *str, int *error);
+
+char *splt_su_get_file_with_output_path(splt_state *state,
+    char *filename, int *error);
+
+int splt_su_str_ends_with(const char *str1, const char *str2);
+
+#define SPLT_STRING_UTILS_H
 
 #endif
 

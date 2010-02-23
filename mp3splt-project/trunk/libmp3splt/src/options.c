@@ -145,7 +145,7 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       break;
 
     default:
-      splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
   }
 }
@@ -243,7 +243,7 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.parameter_minimum_length;
       break;
     default:
-      splt_u_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
   }
 

@@ -196,7 +196,7 @@ static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
   }
   else
   {
-    file_input = splt_u_fopen(filename, "rb");
+    file_input = splt_io_fopen(filename, "rb");
     if (file_input == NULL)
     {
       splt_e_set_strerror_msg(state);
@@ -222,7 +222,7 @@ static FILE *splt_mp3_open_file_write(splt_state *state, const char *output_fnam
   }
   else
   {
-    if (!(file_output = splt_u_fopen(output_fname, "wb+")))
+    if (!(file_output = splt_io_fopen(output_fname, "wb+")))
     {
       splt_e_set_strerror_msg(state);
       splt_e_set_error_data(state,output_fname);
@@ -324,7 +324,7 @@ static struct splt_header splt_mp3_makehead (unsigned long headword,
 //finds first header from start_pos. Returns -1 if no header is found
 static off_t splt_mp3_findhead (splt_mp3_state *mp3state, off_t start)
 {
-  if (splt_u_getword(mp3state->file_input, 
+  if (splt_io_get_word(mp3state->file_input, 
         start, SEEK_SET, &mp3state->headw) == -1)
   {
     return -1;
@@ -678,7 +678,7 @@ static id3_byte_t *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *fil
   *length = 0;
   id3_byte_t *bytes = NULL;
 
-  FILE *file = splt_u_fopen(filename, "r");
+  FILE *file = splt_io_fopen(filename, "r");
 
   if (! file)
   {
@@ -1138,20 +1138,20 @@ static char *splt_mp3_build_id3_tags(splt_state *state,
 #ifdef NO_ID3TAG
   if (version == 1)
   {
-    splt_u_print_debug(state,"Setting ID3v1 tags without libid3tag", 0,NULL);
+    splt_d_print_debug(state,"Setting ID3v1 tags without libid3tag", 0,NULL);
     id = splt_mp3_build_simple_id3v1(title, artist, album, year, genre, comment, track,
         error, number_of_bytes);
   }
 #else
   if (version == 1)
   {
-    splt_u_print_debug(state,"Setting ID3v1 tags with libid3tag", 0,NULL);
+    splt_d_print_debug(state,"Setting ID3v1 tags with libid3tag", 0,NULL);
     id = splt_mp3_build_libid3tag(title, artist, album, year, genre, comment, track,
         error, number_of_bytes, 1);
   }
   else
   {
-    splt_u_print_debug(state,"Setting ID3v2 tags with libid3tag", 0,NULL);
+    splt_d_print_debug(state,"Setting ID3v2 tags with libid3tag", 0,NULL);
     id = splt_mp3_build_libid3tag(title, artist, album, year, genre, comment, track,
         error, number_of_bytes, 2);
   }
@@ -1173,7 +1173,7 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
 
     if (tags)
     {
-      char *artist_or_performer = splt_u_get_artist_or_performer_ptr(tags);
+      char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
       id3_data = splt_mp3_build_id3_tags(state,
           tags->title, artist_or_performer, tags->album,
           tags->year, tags->genre, tags->comment,
@@ -1200,7 +1200,7 @@ int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output,
     {
       if (fseeko(file_output, splt_mp3_getid3v1_offset(file_output), SEEK_END)!=-1)
       {
-        if (splt_u_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
+        if (splt_io_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
         {
           splt_e_set_error_data(state, output_fname);
           error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -1236,7 +1236,7 @@ int splt_mp3_write_id3v2_tags(splt_state *state, FILE *file_output,
 
   if ((error >= 0) && (id3_tags) && (number_of_bytes > 0))
   {
-    if (splt_u_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
+    if (splt_io_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
     {
       splt_e_set_error_data(state, output_fname);
       error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -1264,7 +1264,7 @@ int splt_mp3_write_id3v2_tags(splt_state *state, FILE *file_output,
 int splt_mp3_get_output_tags_version(splt_state *state)
 {
 #ifdef NO_ID3TAG
-  splt_u_print_debug(state,"Output tags version is ID3v1 without libid3tag", 0,NULL);
+  splt_d_print_debug(state,"Output tags version is ID3v1 without libid3tag", 0,NULL);
   return 1;
 #else
   int original_tags_version = state->original_tags.tags_version;
@@ -1286,7 +1286,7 @@ int splt_mp3_get_output_tags_version(splt_state *state)
     }
   }
 
-  splt_u_print_debug(state,"Output tags version is ID3v", output_tags_version, NULL);
+  splt_d_print_debug(state,"Output tags version is ID3v", output_tags_version, NULL);
 
   return output_tags_version;
 #endif
@@ -1330,7 +1330,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
   mp3state->mp3file.xing_offset = 0;
   mp3state->mp3file.xingbuffer = NULL;
   //ignore flength error (ex for non seekable stdin)
-  mp3state->mp3file.len = splt_u_flength(state, file_input, filename, error);
+  mp3state->mp3file.len = splt_io_get_file_length(state, file_input, filename, error);
   splt_t_set_total_time(state, 0);
   mp3state->data_ptr = NULL;
   mp3state->data_len = 0;
@@ -1671,7 +1671,7 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   splt_c_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
 
   pos = begin;
-  th = mad_f_tofixed(splt_u_convertfromdB(threshold));
+  th = mad_f_tofixed(splt_co_convert_from_dB(threshold));
 
   //we seek to the begin
   if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
@@ -1775,7 +1775,7 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
 
           //if (count++ % 10 == 0)
           {
-            float level = splt_u_convert2dB(mad_f_todouble(mp3state->temp_level));
+            float level = splt_co_convert_to_dB(mad_f_todouble(mp3state->temp_level));
             if (state->split.get_silence_level)
             {
               state->split.get_silence_level(time, level, state->split.silence_level_client_data);
@@ -1855,7 +1855,7 @@ static off_t splt_mp3_write_data_ptr(splt_state *state, const char *filename,
     return len;
   }
 
-  if (splt_u_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
+  if (splt_io_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
   {
     splt_e_set_error_data(state,output_fname);
     *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -1876,9 +1876,9 @@ static off_t splt_mp3_write_data_ptr(splt_state *state, const char *filename,
 static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
     off_t begin, off_t end, int do_write_tags, short write_first_frame)
 {
-  splt_u_print_debug(state,"We do mp3 simple split on output...",0,output_fname);
-  splt_u_print_debug(state,"Mp3 simple split offset begin is",begin,NULL);
-  splt_u_print_debug(state,"Mp3 simple split offset end is",end,NULL);
+  splt_d_print_debug(state,"We do mp3 simple split on output...",0,output_fname);
+  splt_d_print_debug(state,"Mp3 simple split offset begin is",begin,NULL);
+  splt_d_print_debug(state,"Mp3 simple split offset end is",end,NULL);
 
   splt_mp3_state *mp3state = state->codec;
 
@@ -1908,7 +1908,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   //get the file size
   off_t st_size;
   char *fname_to_split = splt_t_get_filename_to_split(state);
-  if(splt_u_stat(fname_to_split, NULL, &st_size) == 0)
+  if(splt_io_stat(fname_to_split, NULL, &st_size) == 0)
   {
     mp3state->end2 = st_size;
   }
@@ -1948,7 +1948,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       //error mode split must only contain original file data
       if (state->options.split_mode != SPLT_OPTION_ERROR_MODE)
       {
-        if (splt_u_fwrite(state, mp3state->mp3file.xingbuffer, 1, 
+        if (splt_io_fwrite(state, mp3state->mp3file.xingbuffer, 1, 
               mp3state->mp3file.xing, file_output) < mp3state->mp3file.xing)
         {
           splt_e_set_error_data(state, output_fname);
@@ -1985,7 +1985,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       break;
     }
 
-    if (splt_u_fwrite(state, buffer, 1, readed, file_output) < readed)
+    if (splt_io_fwrite(state, buffer, 1, readed, file_output) < readed)
     {
       splt_e_set_error_data(state,output_fname);
       error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2105,10 +2105,10 @@ function_end:
 static double splt_mp3_split(const char *output_fname, splt_state *state,
     double fbegin_sec, double fend_sec, int *error, int save_end_point)
 {
-  splt_u_print_debug(state,"Mp3 split...",0,NULL);
-  splt_u_print_debug(state,"Output filename is",0,output_fname);
-  splt_u_print_debug(state,"Begin position",fbegin_sec,NULL);
-  splt_u_print_debug(state,"End position",fend_sec,NULL);
+  splt_d_print_debug(state,"Mp3 split...",0,NULL);
+  splt_d_print_debug(state,"Output filename is",0,output_fname);
+  splt_d_print_debug(state,"Begin position",fbegin_sec,NULL);
+  splt_d_print_debug(state,"End position",fend_sec,NULL);
 
   splt_mp3_state *mp3state = state->codec;
 
@@ -2170,7 +2170,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
     //if we have the framemode
     if (mp3state->framemode)
     {
-      splt_u_print_debug(state,"Starting not seekable mp3 frame mode...",0,NULL);
+      splt_d_print_debug(state,"Starting not seekable mp3 frame mode...",0,NULL);
 
       long begin_c, end_c, time;
       //convert seconds to hundreths
@@ -2195,7 +2195,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
 
           if (mp3state->mp3file.xing > 0)
           {
-            wrote = splt_u_fwrite(state, mp3state->mp3file.xingbuffer,
+            wrote = splt_io_fwrite(state, mp3state->mp3file.xingbuffer,
                 1, mp3state->mp3file.xing, file_output);
             if (wrote < mp3state->mp3file.xing)
             {
@@ -2211,7 +2211,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
         {
           if (mp3state->data_len > 0)
           {
-            if ((len = splt_u_fwrite(state, mp3state->data_ptr, 1, mp3state->data_len, file_output))
+            if ((len = splt_io_fwrite(state, mp3state->data_ptr, 1, mp3state->data_len, file_output))
                 < mp3state->data_len)
             {
               splt_e_set_error_data(state,output_fname);
@@ -2277,7 +2277,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
     //if we don't have the framemode
     else
     {
-      splt_u_print_debug(state,"Starting mp3 not seekable non frame mode...",0,NULL);
+      splt_d_print_debug(state,"Starting mp3 not seekable non frame mode...",0,NULL);
 
       off_t begin = 0, end = 0;
       if (fend_sec_is_not_eof)
@@ -2332,7 +2332,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
                 *error = SPLT_ERROR_WHILE_READING_FILE;
                 goto bloc_end;
               }
-              if (splt_u_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
+              if (splt_io_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
               {
                 splt_e_set_error_data(state,output_fname);
                 *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2367,7 +2367,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
           *error = SPLT_ERROR_WHILE_READING_FILE;
           goto bloc_end;
         }
-        if (splt_u_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
+        if (splt_io_fwrite(state, mp3state->data_ptr, 1, len, file_output) < len)
         {
           splt_e_set_error_data(state,output_fname);
           *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2403,7 +2403,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
           break;
         }
 
-        if (splt_u_fwrite(state, mp3state->inputBuffer, 1,
+        if (splt_io_fwrite(state, mp3state->inputBuffer, 1,
               mp3state->data_len, file_output) < mp3state->data_len)
         {
           splt_e_set_error_data(state,output_fname);
@@ -2435,7 +2435,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
               *error = SPLT_ERROR_WHILE_READING_FILE;
               goto bloc_end;
             }
-            if (splt_u_fwrite(state, mp3state->inputBuffer, 1, len, file_output) < len)
+            if (splt_io_fwrite(state, mp3state->inputBuffer, 1, len, file_output) < len)
             {
               splt_e_set_error_data(state,output_fname);
               *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
@@ -2524,7 +2524,7 @@ bloc_end:
     //if framemode
     if (mp3state->framemode)
     {
-      splt_u_print_debug(state,"Starting seekable mp3 frame mode...",0,NULL);
+      splt_d_print_debug(state,"Starting seekable mp3 frame mode...",0,NULL);
 
       unsigned long fbegin, fend, adjust;
       fbegin = fend = adjust = 0;
@@ -2565,7 +2565,7 @@ bloc_end:
         fend = 0xFFFFFFFF;
       }
 
-      splt_u_print_debug(state,"Finding begin...",0,NULL);
+      splt_d_print_debug(state,"Finding begin...",0,NULL);
 
       if (mp3state->end == 0)
       {
@@ -2619,7 +2619,7 @@ bloc_end:
         begin = mp3state->end;
       }
 
-      splt_u_print_debug(state,"Begin is...",begin,NULL);
+      splt_d_print_debug(state,"Begin is...",begin,NULL);
 
       if (mp3state->mp3file.len > 0)
       {
@@ -2714,7 +2714,7 @@ bloc_end:
           }
           else if (silence_points_found > 0)
           {
-            adjust = (unsigned long) (splt_u_silence_position(state->silence_list, mp3state->off) 
+            adjust = (unsigned long) (splt_siu_silence_position(state->silence_list, mp3state->off) 
                 * mp3state->mp3file.fps);
           }
           else
@@ -2760,7 +2760,7 @@ bloc_end:
     else
     //if not framemode
     {
-      splt_u_print_debug(state,"Starting mp3 seekable non frame mode...",0,NULL);
+      splt_d_print_debug(state,"Starting mp3 seekable non frame mode...",0,NULL);
 
       long first_frame_offset = mp3state->inputBuffer + mp3state->buf_len - mp3state->data_ptr;
 
@@ -2924,7 +2924,7 @@ static void splt_mp3_syncerror_search(splt_state *state, int *error)
 
   //we get the file length for the progress
   off_t st_size;
-  if(splt_u_stat(filename, NULL, &st_size) == 0)
+  if(splt_io_stat(filename, NULL, &st_size) == 0)
   {
     //put the start point
     sync_err = splt_se_serrors_append_point(state, 0);
@@ -2955,7 +2955,7 @@ static void splt_mp3_syncerror_search(splt_state *state, int *error)
           return;
         }
         offset = splt_mp3_findvalidhead(mp3state, serror_point);
-        if (splt_u_getword(mp3state->file_input, offset, SEEK_SET, &mp3state->headw) == -1)
+        if (splt_io_get_word(mp3state->file_input, offset, SEEK_SET, &mp3state->headw) == -1)
         {
           *error = SPLT_ERR_SYNC;
           return;
@@ -3052,7 +3052,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
 
     if (*error >= 0)
     {
-      len = splt_u_flength(state, mp3state->file_input, file_to_dewrap, error);
+      len = splt_io_get_file_length(state, mp3state->file_input, file_to_dewrap, error);
       if (error < 0) { return; }
 
       id3offset = splt_mp3_getid3v2_end_offset(mp3state->file_input, 0);
@@ -3064,7 +3064,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
         return;
       }
 
-      splt_u_print_debug(state,"We search for wrap string...",0,NULL);
+      splt_d_print_debug(state,"We search for wrap string...",0,NULL);
 
       //we search the WRAP string in the file to see if it was wrapped
       //with mp3wrap
@@ -3113,14 +3113,14 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
       //we do the mp3wrap or albumwrap
       if (albumwrap || mp3wrap)
       {
-        splt_u_print_debug(state,"We do the effective dewrap...",0,NULL);
+        splt_d_print_debug(state,"We do the effective dewrap...",0,NULL);
 
         //client informations
         char client_infos[1024] = { '\0' };
 
         //mp3wrap checkings and we get the wrap file number
         if (mp3wrap) {
-          splt_u_print_debug(state,"We do mp3 mp3wrap check...",0,NULL);
+          splt_d_print_debug(state,"We do mp3 mp3wrap check...",0,NULL);
           short indexver;
 
           //Mp3Wrap version
@@ -3148,7 +3148,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
           if (indexver > 0x0)
           {
             unsigned long crc = 0, fcrc = 0;
-            if (splt_u_getword(mp3state->file_input, 0, SEEK_CUR, &fcrc)==-1)
+            if (splt_io_get_word(mp3state->file_input, 0, SEEK_CUR, &fcrc)==-1)
             {
               *error = SPLT_DEWRAP_ERR_FILE_NOT_WRAPED_DAMAGED;
               return;
@@ -3204,7 +3204,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
         //wrapfiles variable
         if (albumwrap)
         {
-          splt_u_print_debug(state,"We do mp3 albumwrap check...",0,NULL);
+          splt_d_print_debug(state,"We do mp3 albumwrap check...",0,NULL);
           //Mp3Wrap version
           snprintf(client_infos,1024, _(" Detected file created with: AlbumWrap\n"));
           splt_c_put_info_message_to_client(state, client_infos);
@@ -3248,7 +3248,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               if (mp3wrap)
               {
                 unsigned long w;
-                if (splt_u_getword (mp3state->file_input, 0, SEEK_CUR, &w)==-1)
+                if (splt_io_get_word (mp3state->file_input, 0, SEEK_CUR, &w)==-1)
                 {
                   splt_e_set_error_data(state,file_to_dewrap);
                   *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
@@ -3318,7 +3318,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 filename[j++] = c;
               }  while ((c!=0x00)&&(j<2048));
 
-              if (splt_u_getword (mp3state->file_input, 0, SEEK_CUR, &w) == -1)
+              if (splt_io_get_word (mp3state->file_input, 0, SEEK_CUR, &w) == -1)
               {
                 splt_e_set_error_data(state,file_to_dewrap);
                 *error = SPLT_DEWRAP_ERR_FILE_DAMAGED_INCOMPLETE;
@@ -3340,7 +3340,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                   strncpy(junk, filename, ptr-filename);
                   if (! splt_io_check_if_directory(junk))
                   {
-                    if ((splt_u_mkdir(state, junk)) == -1)
+                    if ((splt_io_mkdir(state, junk)) == -1)
                     {
                       *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
                       splt_e_set_strerror_msg(state);
@@ -3424,8 +3424,8 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               filename[j+1] = '\0';
             }
 
-            splt_u_print_debug(state,"We have found the file",0,filename);
-            splt_u_print_debug(state,"We cut the dirchar",0,NULL);
+            splt_d_print_debug(state,"We have found the file",0,filename);
+            splt_d_print_debug(state,"We cut the dirchar",0,NULL);
 
             //we cut the .DIRCHAR before the filename
             char str_temp[4];
@@ -3457,7 +3457,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
             //we put the files in the wrap_files
             if (listonly)
             {
-              splt_u_print_debug(state,"We only list wrapped files",0,NULL);
+              splt_d_print_debug(state,"We only list wrapped files",0,NULL);
 
               int put_file_error = SPLT_OK;
               put_file_error = splt_w_wrap_put_file(state, wrapfiles, i, filename);
@@ -3471,7 +3471,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
             //we split from begin to end calculated previously
             else
             {
-              splt_u_print_debug(state,"We split wrapped file",0,NULL);
+              splt_d_print_debug(state,"We split wrapped file",0,NULL);
 
               int ret = 0;
               //if we have an output directory
@@ -3502,8 +3502,8 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 {
                   snprintf(filename, 2048,"%s%c%s", dir, SPLT_DIRCHAR, ptr);
                 }
-                splt_u_print_debug(state,"wrap dir",0,dir);
-                splt_u_print_debug(state,"wrap after dir",0,ptr);
+                splt_d_print_debug(state,"wrap dir",0,dir);
+                splt_d_print_debug(state,"wrap after dir",0,ptr);
               }
 
               //free xingbuffer
@@ -3516,7 +3516,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
 
               int append_err = SPLT_OK;
               append_err = splt_sp_append_splitpoint(state,0,
-                  splt_u_get_real_name(filename), SPLT_SPLITPOINT);
+                  splt_su_get_fname_without_path(filename), SPLT_SPLITPOINT);
               if (append_err != SPLT_OK)
               {
                 *error = append_err;
@@ -3524,7 +3524,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               }
 
               //cut extension
-              int cut_err = splt_u_cut_splitpoint_extension(state,i);
+              int cut_err = splt_sp_cut_splitpoint_extension(state,i);
               if (cut_err != SPLT_OK)
               {
                 *error = cut_err;
@@ -3620,7 +3620,7 @@ void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
     return;
   }
 
-  info->upper_extension = splt_u_str_to_upper(info->extension, error);
+  info->upper_extension = splt_su_str_to_upper(info->extension, error);
 }
 
 void splt_pl_init(splt_state *state, int *error)
@@ -3755,10 +3755,10 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
 #ifndef NO_ID3TAG
-  splt_u_print_debug(state,"Taking original ID3 tags from file using libid3tag ...", 0,NULL);
+  splt_d_print_debug(state,"Taking original ID3 tags from file using libid3tag ...", 0,NULL);
   splt_mp3_get_original_tags(splt_t_get_filename_to_split(state), state, error);
 #else
-  //splt_u_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
+  //splt_e_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
 #endif
 }
 

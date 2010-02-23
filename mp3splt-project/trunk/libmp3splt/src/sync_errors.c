@@ -81,7 +81,7 @@ int splt_se_serrors_append_point(splt_state *state, off_t point)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT, __func__, point, NULL);
+    splt_e_error(SPLT_IERROR_INT, __func__, point, NULL);
   }
 
   return error;

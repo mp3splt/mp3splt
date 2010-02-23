@@ -52,10 +52,10 @@ int splt_c_put_split_file(splt_state *state, const char *filename)
       if (new_m3u_file)
       {
         FILE *file_input = NULL;
-        if ((file_input = splt_u_fopen(new_m3u_file, "a+")) != NULL)
+        if ((file_input = splt_io_fopen(new_m3u_file, "a+")) != NULL)
         {
           //we don't care about the path of the split filename
-          fprintf(file_input,"%s\n",splt_u_get_real_name(filename));
+          fprintf(file_input,"%s\n", splt_su_get_fname_without_path(filename));
           if (fclose(file_input) != 0)
           {
             splt_e_set_strerror_msg(state);
@@ -76,7 +76,7 @@ int splt_c_put_split_file(splt_state *state, const char *filename)
   }
   else
   {
-    //splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
+    //splt_e_error(SPLT_IERROR_INT,__func__, -500, NULL);
   }
 
   return error;
@@ -174,7 +174,7 @@ static void splt_c_put_message_to_client(splt_state *state, char *message,
     }
     else
     {
-      //splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
+      //splt_e_error(SPLT_IERROR_INT,__func__, -500, NULL);
     }
   }
 }

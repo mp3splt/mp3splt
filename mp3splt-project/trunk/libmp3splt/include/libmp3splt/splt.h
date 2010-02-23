@@ -55,6 +55,10 @@
 #include "sync_errors.h"
 #include "wrap.h"
 #include "client.h"
+#include "conversions.h"
+#include "tags_parser.h"
+#include "oformat_parser.h"
+#include "debug.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

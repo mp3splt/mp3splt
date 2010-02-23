@@ -52,7 +52,7 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
 {
   int error = SPLT_OK;
 
-  splt_u_print_debug(state,"Appending splitpoint...",split_value,name);
+  splt_d_print_debug(state,"Appending splitpoint...",split_value,name);
 
   if (split_value >= 0)
   {
@@ -100,7 +100,7 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
   }
   else
   {
-    splt_u_print_debug(state,"Negative splitpoint.. ",(double)split_value,NULL);
+    splt_d_print_debug(state,"Negative splitpoint.. ",(double)split_value,NULL);
     error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
     return error;
   }
@@ -139,7 +139,7 @@ int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
 {
   char temp[100] = { '\0' };
   snprintf(temp,100,"%d",index);
-  splt_u_print_debug(state,"Splitpoint value is.. at ",split_value,temp);
+  splt_d_print_debug(state,"Splitpoint value is.. at ",split_value,temp);
 
   int error = SPLT_OK;
 
@@ -150,7 +150,7 @@ int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
   }
 
   return error;
@@ -158,7 +158,7 @@ int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
 
 int splt_sp_set_splitpoint_name(splt_state *state, int index, const char *name)
 {
-  splt_u_print_debug(state,"Splitpoint name at ",index,name);
+  splt_d_print_debug(state,"Splitpoint name at ",index,name);
 
   int error = SPLT_OK;
 
@@ -189,7 +189,7 @@ int splt_sp_set_splitpoint_name(splt_state *state, int index, const char *name)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
   }
 
   return error;
@@ -206,7 +206,7 @@ int splt_sp_set_splitpoint_type(splt_state *state, int index, int type)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
   }
 
   return error;
@@ -221,7 +221,7 @@ long splt_sp_get_splitpoint_value(splt_state *state, int index, int *error)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
     return -1;
   }
 }
@@ -235,7 +235,7 @@ char *splt_sp_get_splitpoint_name(splt_state *state, int index, int *error)
   }
   else
   {
-    //splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    //splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
     return NULL;
   }
 }
@@ -249,7 +249,7 @@ int splt_sp_get_splitpoint_type(splt_state *state, int index, int *error)
   }
   else
   {
-    //splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    //splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
     //wtf ?
     return 1;
   }
@@ -262,5 +262,85 @@ void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
   splitpoint /= 100;
   *secs = splitpoint % 60;
   *mins = splitpoint / 60;
+}
+
+int splt_sp_cut_splitpoint_extension(splt_state *state, int index)
+{
+  int change_error = SPLT_OK;
+
+  if (splt_sp_splitpoint_exists(state,index))
+  {
+    int get_error = SPLT_OK;
+    char *temp_name = splt_sp_get_splitpoint_name(state, index, &get_error);
+
+    if (get_error != SPLT_OK)
+    {
+      return get_error;
+    }
+    else
+    {
+      if (temp_name)
+      {
+        char *new_name = strdup(temp_name);
+        if (new_name == NULL)
+        {
+          return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        }
+        else
+        {
+          splt_su_cut_extension(new_name);
+          change_error = splt_sp_set_splitpoint_name(state,index, new_name);
+          free(new_name);
+          new_name = NULL;
+        }
+      }
+    }
+  }
+
+  return change_error;
+}
+
+void splt_sp_order_splitpoints(splt_state *state, int len)
+{
+  long temp = 0;
+
+  int err = SPLT_OK;
+
+  int i, j;
+  float key;
+  for (j=1; j < len; j++)
+  {
+    key = splt_sp_get_splitpoint_value(state,j,&err);
+    i = j -1;
+    while ((i >= 0) && 
+        (splt_sp_get_splitpoint_value(state,i,&err) > key))
+    {
+      temp = splt_sp_get_splitpoint_value(state,i,&err);
+      splt_sp_set_splitpoint_value(state,i+1,temp);
+      i--;
+    }
+    splt_sp_set_splitpoint_value(state,i+1,key);
+  }
+}
+
+long splt_sp_overlap_time(splt_state *state, int splitpoint_index)
+{
+  int error = SPLT_OK;
+  long split_value = splt_sp_get_splitpoint_value(state, splitpoint_index, &error);
+  long overlap_time = splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
+  if ((overlap_time > 0) && (split_value != LONG_MAX))
+  {
+    long total_time = splt_t_get_total_time(state);
+    long overlapped_split_value = split_value + overlap_time;
+    if (total_time > 0 && overlapped_split_value > total_time)
+    {
+      overlapped_split_value = total_time;
+    }
+    splt_sp_set_splitpoint_value(state, splitpoint_index, overlapped_split_value);
+
+    return overlapped_split_value;
+  }
+
+  return split_value;
 }
 

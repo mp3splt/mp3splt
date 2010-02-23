@@ -96,7 +96,7 @@ void splt_of_set_oformat(splt_state *state, const char *format_string,
   char *new_str = strdup(format_string);
   if (new_str)
   {
-    err = splt_u_parse_outformat(new_str, state);
+    err = splt_of_parse_outformat(new_str, state);
     if (! ignore_incorrect_format_warning)
     {
       *error = err;

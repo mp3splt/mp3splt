@@ -65,6 +65,8 @@ splt_tags *splt_tu_get_tags_like_x(splt_state *state);
 splt_tags *splt_tu_get_current_tags(splt_state *state);
 void splt_tu_get_original_tags(splt_state *state, int *err);
 
+char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags);
+
 #define MP3SPLT_PLUGIN_UTILS_H
 
 #endif
