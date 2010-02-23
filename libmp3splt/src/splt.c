@@ -43,14 +43,14 @@
 static long splt_s_real_split(double splt_beg, double splt_end, 
     int save_end_point, int *error, splt_state *state)
 {
-  char *final_fname = splt_u_get_fname_with_path_and_extension(state,error);
-  long new_end_point = splt_u_time_to_long_ceil(splt_end);
+  char *final_fname = splt_su_get_fname_with_path_and_extension(state,error);
+  long new_end_point = splt_co_time_to_long_ceil(splt_end);
 
   if (*error >= 0)
   {
     double new_sec_end_point = 
       splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
-    new_end_point = splt_u_time_to_long_ceil(new_sec_end_point);
+    new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
 
     //if no error
     if (*error >= 0)
@@ -165,7 +165,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
       int first_splitpoint_type = splt_sp_get_splitpoint_type(state, i, &get_error);
       if (first_splitpoint_type == SPLT_SKIPPOINT)
       {
-        splt_u_print_debug(state, "SKIP splitpoint", i, NULL);
+        splt_d_print_debug(state, "SKIP splitpoint", i, NULL);
         i++;
         continue;
       }
@@ -173,7 +173,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
       splt_tu_auto_increment_tracknumber(state);
 
       long saved_end_point = splt_sp_get_splitpoint_value(state, i+1, &get_error);
-      splt_u_overlap_time(state, i+1);
+      splt_sp_overlap_time(state, i+1);
 
       err = splt_u_finish_tags_and_put_output_format_filename(state, i);
       if (err < 0) { *error = err; goto end; }
@@ -268,11 +268,11 @@ void splt_s_error_split(splt_state *state, int *error)
         if (err < 0) { *error = err; goto bloc_end; }
 
         //we get the final fname
-        final_fname = splt_u_get_fname_with_path_and_extension(state, error);
+        final_fname = splt_su_get_fname_with_path_and_extension(state, error);
 
         if (*error >= 0)
         {
-          splt_u_create_output_dirs_if_necessary(state, final_fname, error);
+          splt_io_create_output_dirs_if_necessary(state, final_fname, error);
           if (error < 0)
           {
             goto bloc_end;
@@ -402,8 +402,8 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           int current_split = splt_t_get_current_split(state);
 
           splt_sp_set_splitpoint_value(state, current_split,
-              splt_u_time_to_long_ceil(begin));
-          long end_splitpoint = splt_u_time_to_long_ceil(end);
+              splt_co_time_to_long_ceil(begin));
+          long end_splitpoint = splt_co_time_to_long_ceil(end);
           if (total_time > 0 && end_splitpoint >= total_time)
           {
             end_splitpoint = total_time;
@@ -413,18 +413,18 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           splt_sp_set_splitpoint_value(state, current_split+1, end_splitpoint);
 
           double overlapped_end = (double)
-            ((double)splt_u_overlap_time(state, current_split+1) / 100.0);
+            ((double)splt_sp_overlap_time(state, current_split+1) / 100.0);
 
           err = splt_u_finish_tags_and_put_output_format_filename(state, -1);
           if (err < 0) { *error = err; break; }
 
           //we get the final fname
-          final_fname = splt_u_get_fname_with_path_and_extension(state,&err);
+          final_fname = splt_su_get_fname_with_path_and_extension(state,&err);
           if (err < 0) { *error = err; break; }
 
           double new_sec_end_point = splt_p_split(state, final_fname,
               begin, overlapped_end, error, save_end_point);
-          long new_end_point = splt_u_time_to_long_ceil(new_sec_end_point);
+          long new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
           splt_array_append(new_end_points, (void *) new_end_point);
 
           //if no error for the split, put the split file
@@ -577,7 +577,7 @@ void splt_s_equal_length_split(splt_state *state, int *error)
 //sets the silence splitpoints in state->split.splitpoints
 int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 {
-  splt_u_print_debug(state,"We search and set silence splitpoints...",0,NULL);
+  splt_d_print_debug(state,"We search and set silence splitpoints...",0,NULL);
 
   //found is the number of silence splits found
   int found = 0;
@@ -594,7 +594,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   char *log_fname = splt_t_get_silence_log_fname(state);
   if (splt_o_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
   {
-    if ((log_file = splt_u_fopen(log_fname, "r")))
+    if ((log_file = splt_io_fopen(log_fname, "r")))
     {
       char log_silence_fname[1024] = { '\0' };
       fgets(log_silence_fname, 1024, log_file);
@@ -672,7 +672,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     snprintf(message, 1024, _(" Found silence log file '%s' ! Reading"
           " silence points from file to save time ;)"), log_fname);
     splt_c_put_info_message_to_client(state, message);
-    found = splt_u_parse_ssplit_file(state, log_file, error);
+    found = splt_siu_parse_ssplit_file(state, log_file, error);
     if (log_file)
     {
       fclose(log_file);
@@ -753,13 +753,13 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             if (append_error < 0) { *error = append_error; found = i; break;}
             append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
-            splt_sp_set_splitpoint_value(state, 2*i-1,splt_u_time_to_long(temp->begin_position));
-            splt_sp_set_splitpoint_value(state, 2*i, splt_u_time_to_long(temp->end_position));
+            splt_sp_set_splitpoint_value(state, 2*i-1,splt_co_time_to_long(temp->begin_position));
+            splt_sp_set_splitpoint_value(state, 2*i, splt_co_time_to_long(temp->end_position));
           }
           else
           {
             //TODO
-            long temp_silence_pos = splt_u_silence_position(temp, offset) * 100;
+            long temp_silence_pos = splt_siu_silence_position(temp, offset) * 100;
             append_error = splt_sp_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
             if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
           }
@@ -776,8 +776,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           splitpoints_appended = found;
         }
 
-        splt_u_print_debug(state,"We order splitpoints...",0,NULL);
-        splt_u_order_splitpoints(state, splitpoints_appended);
+        splt_d_print_debug(state,"We order splitpoints...",0,NULL);
+        splt_sp_order_splitpoints(state, splitpoints_appended);
 
         //last splitpoint, end of file
         append_error =
@@ -812,7 +812,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
           {
             FILE *log_file = NULL;
-            if (!(log_file = splt_u_fopen(fname, "w")))
+            if (!(log_file = splt_io_fopen(fname, "w")))
             {
               splt_e_set_strerror_msg(state);
               splt_e_set_error_data(state, fname);
@@ -860,7 +860,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 //possible error in error
 void splt_s_silence_split(splt_state *state, int *error)
 {
-  splt_u_print_debug(state,"Starting silence split ...",0,NULL);
+  splt_d_print_debug(state,"Starting silence split ...",0,NULL);
 
   //print some useful infos to the client
   splt_c_put_info_message_to_client(state, _(" info: starting silence mode split\n"));
@@ -875,7 +875,7 @@ void splt_s_silence_split(splt_state *state, int *error)
     if (found > 1)
     {
       //we put the number of tracks found
-      splt_u_print_debug(state,"Writing silence tracks...",0,NULL);
+      splt_d_print_debug(state,"Writing silence tracks...",0,NULL);
 
       //set the default silence output
       int output_filenames = splt_o_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
@@ -919,7 +919,7 @@ void splt_s_wrap_split(splt_state *state, int *error)
   char *new_filename_path = splt_t_get_new_filename_path(state);
   char *filename = splt_t_get_filename_to_split(state);
 
-  splt_u_print_debug(state,"We begin wrap split for the file ...",0,filename);
+  splt_d_print_debug(state,"We begin wrap split for the file ...",0,filename);
 
   splt_c_put_info_message_to_client(state, _(" info: starting wrap mode split\n"));
 

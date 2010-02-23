@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
+ * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
@@ -30,17 +30,63 @@
  *
  *********************************************************/
 
-#ifndef SPLT_SILENCE_UTILS_H
+#include <string.h>
 
-int splt_siu_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len, int *error);
-void splt_siu_ssplit_free (struct splt_ssplit **silence_list);
+#include "splt.h"
 
-float splt_siu_silence_position(struct splt_ssplit *temp, float off);
+extern int global_debug;
 
-int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error);
+void splt_d_print_debug(splt_state *state, const char *message,
+    double optional, const char *optional2)
+{
+  if (global_debug)
+  {
+    int mess_size = 1024;
+    if (message)
+    {
+      mess_size += strlen(message);
+    }
+    if (optional2)
+    {
+      mess_size += strlen(optional2);
+    }
+    char *mess = malloc(sizeof(char) * mess_size);
 
-#define SPLT_SILENCE_UTILS_H
+    if (optional != 0)
+    {
+      if (optional2 != NULL)
+      {
+        snprintf(mess, mess_size, "%s %f _%s_\n",message, optional, optional2);
+      }
+      else
+      {
+        snprintf(mess, mess_size, "%s %f\n",message, optional);
+      }
+    }
+    else
+    {
+      if (optional2 != NULL)
+      {
+        snprintf(mess, mess_size, "%s _%s_\n",message, optional2);
+      }
+      else
+      {
+        snprintf(mess, mess_size, "%s\n",message);
+      }
+    }
 
-#endif
+    if (state)
+    {
+      splt_c_put_debug_message_to_client(state, mess);
+    }
+    else
+    {
+      fprintf(stdout,"%s",mess);
+      fflush(stdout);
+    }
+
+    free(mess);
+    mess = NULL;
+  }
+}
 

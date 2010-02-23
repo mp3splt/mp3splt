@@ -44,6 +44,11 @@ void splt_e_set_strerror_msg(splt_state *state);
 void splt_e_set_strherror_msg(splt_state *state);
 void splt_e_clean_strerror_msg(splt_state *state);
 
+void splt_e_error(int error_type, const char *function,
+    int arg_int, char *arg_char);
+
+char *splt_e_strerror(splt_state *state, splt_code error_code);
+
 #define SPLT_ERRORS_H
 
 #endif

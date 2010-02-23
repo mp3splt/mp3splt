@@ -116,7 +116,7 @@ void splt_t_free_state(splt_state *state)
 
 void splt_t_set_total_time(splt_state *state, long value)
 {
-  splt_u_print_debug(state,"We set total time to",value,NULL);
+  splt_d_print_debug(state,"We set total time to",value,NULL);
 
   if (value >= 0)
   {
@@ -124,7 +124,7 @@ void splt_t_set_total_time(splt_state *state, long value)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, value, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, value, NULL);
   }
 }
 
@@ -181,7 +181,7 @@ int splt_t_set_path_of_split(splt_state *state, const char *path)
     state->path_of_split = NULL;
   }
 
-  splt_u_print_debug(state,"Setting path of split...",0,path);
+  splt_d_print_debug(state,"Setting path of split...",0,path);
 
   if (path != NULL)
   {
@@ -217,7 +217,7 @@ int splt_t_set_m3u_filename(splt_state *state, const char *filename)
     state->m3u_filename = NULL;
   }
 
-  splt_u_print_debug(state,"Setting m3u filename...",0,filename);
+  splt_d_print_debug(state,"Setting m3u filename...",0,filename);
 
   if (filename != NULL)
   {
@@ -246,7 +246,7 @@ char *splt_t_get_m3u_filename(splt_state *state)
 char *splt_t_get_m3u_file_with_path(splt_state *state, int *error)
 {
   char *m3u_file = splt_t_get_m3u_filename(state);
-  return splt_u_get_file_with_output_path(state, m3u_file, error);
+  return splt_su_get_file_with_output_path(state, m3u_file, error);
 }
 
 int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
@@ -259,7 +259,7 @@ int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
     state->silence_log_fname = NULL;
   }
 
-  splt_u_print_debug(state,"Setting silence log fname ...",0,filename);
+  splt_d_print_debug(state,"Setting silence log fname ...",0,filename);
 
   if (filename != NULL)
   {
@@ -295,7 +295,7 @@ int splt_t_set_filename_to_split(splt_state *state, const char *filename)
     state->fname_to_split = NULL;
   }
 
-  splt_u_print_debug(state,"Setting filename to split...",0,filename);
+  splt_d_print_debug(state,"Setting filename to split...",0,filename);
 
   if (filename != NULL)
   {
@@ -348,7 +348,7 @@ void splt_t_set_current_split(splt_state *state, int index)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT, __func__,index, NULL);
+    splt_e_error(SPLT_IERROR_INT, __func__,index, NULL);
   }
 }
 
@@ -375,7 +375,7 @@ void splt_t_set_splitnumber(splt_state *state, int number)
   }
   else
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, number, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, number, NULL);
   }
 }
 

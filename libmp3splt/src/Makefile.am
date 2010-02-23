@@ -40,7 +40,11 @@ freedb_utils.c ../include/libmp3splt/freedb_utils.h \
 silence_utils.c ../include/libmp3splt/silence_utils.h \
 sync_errors.c ../include/libmp3splt/sync_errors.h \
 wrap.c ../include/libmp3splt/wrap.h \
-client.c ../include/libmp3splt/client.h
+client.c ../include/libmp3splt/client.h \
+conversions.c ../include/libmp3splt/conversions.h \
+tags_parser.c ../include/libmp3splt/tags_parser.h \
+oformat_parser.c ../include/libmp3splt/oformat_parser.h \
+debug.c ../include/libmp3splt/debug.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale

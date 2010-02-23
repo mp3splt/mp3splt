@@ -47,8 +47,14 @@ long splt_sp_get_splitpoint_value(splt_state *state, int index, int *error);
 char *splt_sp_get_splitpoint_name(splt_state *state, int index, int *error);
 int splt_sp_get_splitpoint_type(splt_state *state, int index, int *error);
 
+int splt_sp_cut_splitpoint_extension(splt_state *state, int index);
+
+void splt_sp_order_splitpoints(splt_state *state, int len);
+
 void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
     long *mins, long *secs, long *hudr);
+
+long splt_sp_overlap_time(splt_state *state, int splitpoint_index);
 
 #define SPLT_SPLIT_POINTS_H
 

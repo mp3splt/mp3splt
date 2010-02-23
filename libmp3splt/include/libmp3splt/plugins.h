@@ -59,6 +59,8 @@ void splt_p_free_plugins(splt_state *state);
 void splt_p_set_current_plugin(splt_state *state, int current_plugin);
 int splt_p_get_current_plugin(splt_state *state);
 
+int splt_p_file_is_supported_by_plugins(splt_state *state, const char *fname);
+
 #define SPLT_PLUGINS_H
 
 #endif

@@ -30,17 +30,16 @@
  *
  *********************************************************/
 
-#ifndef SPLT_SILENCE_UTILS_H
+#ifndef SPLT_CONVERSIONS_H
 
-int splt_siu_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len, int *error);
-void splt_siu_ssplit_free (struct splt_ssplit **silence_list);
+long splt_co_convert_to_hundreths (const char *s);
+float splt_co_convert_to_dB(double input);
+double splt_co_convert_from_dB(float input);
+void splt_co_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *hundr);
+long splt_co_time_to_long(double time);
+long splt_co_time_to_long_ceil(double time);
 
-float splt_siu_silence_position(struct splt_ssplit *temp, float off);
-
-int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error);
-
-#define SPLT_SILENCE_UTILS_H
+#define SPLT_CONVERSIONS_H
 
 #endif
 

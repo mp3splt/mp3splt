@@ -30,17 +30,12 @@
  *
  *********************************************************/
 
-#ifndef SPLT_SILENCE_UTILS_H
+#ifndef SPLT_OFORMAT_PARSER_H
 
-int splt_siu_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len, int *error);
-void splt_siu_ssplit_free (struct splt_ssplit **silence_list);
+int splt_of_parse_outformat(char *s, splt_state *state);
+int splt_of_put_output_format_filename(splt_state *state, int current_split);
 
-float splt_siu_silence_position(struct splt_ssplit *temp, float off);
-
-int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error);
-
-#define SPLT_SILENCE_UTILS_H
+#define SPLT_OFORMAT_PARSER_H
 
 #endif
 

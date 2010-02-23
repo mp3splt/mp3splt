@@ -176,7 +176,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   }
 
   //if we cannot open the file
-  if (!(file_input=splt_u_fopen(file, "r")))
+  if (!(file_input=splt_io_fopen(file, "r")))
   {
     splt_e_set_strerror_msg(state);
     splt_e_set_error_data(state,file);
@@ -331,7 +331,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
               //we convert to hundreths of seconds and put splitpoints
               if (tracks > 0)
               {
-                long hundr_seconds = splt_u_convert_hundreths(ptr);
+                long hundr_seconds = splt_co_convert_to_hundreths(ptr);
                 if (hundr_seconds==-1)
                 {
                   splt_e_set_error_data(state,file);
@@ -436,7 +436,7 @@ static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
       }
     }
 
-    char *performer = splt_u_get_artist_or_performer_ptr(tags);
+    char *performer = splt_tu_get_artist_or_performer_ptr(tags);
     if (performer)
     {
       if (with_spaces) { fprintf(file_output, "    "); }
@@ -466,19 +466,19 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
   long total_time = splt_t_get_total_time(state);
   FILE *file_output = NULL;
 
-  splt_u_print_debug(state, "cue output file without output path = ",0, out_file);
+  splt_d_print_debug(state, "cue output file without output path = ",0, out_file);
 
   char *dup_out_file = strdup(out_file);
   if (!dup_out_file) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto end; };
-  char *cue_out_file = splt_u_get_file_with_output_path(state, dup_out_file, error);
+  char *cue_out_file = splt_su_get_file_with_output_path(state, dup_out_file, error);
   free(dup_out_file);
   dup_out_file = NULL;
   if (*error < 0) { goto end; }
 
-  splt_u_print_debug(state, "cue output file with output path = ",0, cue_out_file);
+  splt_d_print_debug(state, "cue output file with output path = ",0, cue_out_file);
 
   //we write the result to the file
-  if (!(file_output = splt_u_fopen(cue_out_file, "w")))
+  if (!(file_output = splt_io_fopen(cue_out_file, "w")))
   {
     splt_e_set_strerror_msg(state);
     splt_e_set_error_data(state, cue_out_file);

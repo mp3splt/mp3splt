@@ -84,7 +84,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   char *perfor = NULL;
 
   //we open the file
-  if (!(file_input=splt_u_fopen(file, "r")))
+  if (!(file_input=splt_io_fopen(file, "r")))
   {
     splt_e_set_strerror_msg(state);
     splt_e_set_error_data(state,file);
@@ -345,7 +345,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             {
               c2 = strchr(number+1,'/');
               *c2 = '\0';
-              c2 = splt_u_cut_spaces_at_the_end(c2-1);
+              c2 = splt_su_cut_spaces_from_the_end(c2-1);
 
               //we put performer
               performer = SPLT_TRUE;
@@ -471,7 +471,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 
               //we put the album
               i += 1;
-              number = splt_u_cut_spaces_from_begin(number+i);
+              number = splt_su_cut_spaces_from_begin(number+i);
 
               tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_ALBUM, 
                   number);
@@ -504,7 +504,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
               {
                 t = number-1;
               }
-              t = splt_u_cut_spaces_from_begin(t);
+              t = splt_su_cut_spaces_from_begin(t);
               tags_error = splt_tu_set_tags_field(state, j-1,
                   SPLT_TAGS_TITLE, t);
               if (tags_error != SPLT_OK)

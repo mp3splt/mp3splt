@@ -111,3 +111,32 @@ void splt_siu_ssplit_free(struct splt_ssplit **silence_list)
   }
 }
 
+float splt_siu_silence_position(struct splt_ssplit *temp, float off)
+{
+  float length_of_silence = (temp->end_position - temp->begin_position);
+  return temp->begin_position + (length_of_silence * off);
+}
+
+int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
+{
+  char line[512] = { '\0' };
+  int found = 0;
+
+  while (fgets(line, 512, log_file)!=NULL)
+  {
+    int len = 0;
+    float begin_position = 0, end_position = 0;
+    if (sscanf(line, "%f\t%f\t%d", &begin_position, &end_position, &len) == 3)
+    {
+      splt_siu_ssplit_new(&state->silence_list, begin_position, end_position, len, error);
+      if (*error < 0)
+      {
+        break;
+      }
+      found++;
+    }
+  }
+
+  return found;
+}
+

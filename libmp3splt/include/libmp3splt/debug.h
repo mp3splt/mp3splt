@@ -30,17 +30,12 @@
  *
  *********************************************************/
 
-#ifndef SPLT_SILENCE_UTILS_H
+#ifndef SPLT_DEBUG_H
 
-int splt_siu_ssplit_new(struct splt_ssplit **silence_list, 
-    float begin_position, float end_position, int len, int *error);
-void splt_siu_ssplit_free (struct splt_ssplit **silence_list);
+void splt_d_print_debug(splt_state *state, const char *message,
+    double optional, const char *optional2);
 
-float splt_siu_silence_position(struct splt_ssplit *temp, float off);
-
-int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error);
-
-#define SPLT_SILENCE_UTILS_H
+#define SPLT_DEBUG_H
 
 #endif
 

@@ -165,7 +165,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 #ifdef __WIN32__					
             full_artist_album[max_chars-1] = '\0';
 #endif
-            splt_u_print_debug(state,"Setting the full artist album name ",0,full_artist_album);
+            splt_d_print_debug(state,"Setting the full artist album name ",0,full_artist_album);
 
             //i!=-1 means that it's not a revision
             int i=0;
@@ -1020,8 +1020,8 @@ end_function:
     if ((c=getenv("HOME"))!=NULL) sprintf(message, "%s/"PROXYCONFIG, c);
     else strncpy(message, PROXYCONFIG, strlen(PROXYCONFIG));
 
-    if (!(output=splt_u_fopen(message, "r"))) {
-    if (!(output=splt_u_fopen(message, "w+"))) {
+    if (!(output=splt_io_fopen(message, "r"))) {
+    if (!(output=splt_io_fopen(message, "w+"))) {
     fprintf(stderr, "\nWARNING Can't open config file ");
     perror(message);
     }

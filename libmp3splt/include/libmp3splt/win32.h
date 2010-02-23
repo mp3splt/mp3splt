@@ -32,15 +32,13 @@
 
 #ifdef __WIN32__
 
-#ifndef MP3SPLT_WIN32_H
-#define MP3SPLT_WIN32_H
+#ifndef SPLT_WIN32_H
 
+#include <errno.h>
 #include <dirent.h>
 
-#ifdef __WIN32__
 #include <windows.h>
 #include <direct.h>
-#endif
 
 int scandir(const char *dir, struct dirent ***namelist,
 		int(*filter)(const struct dirent *),
@@ -53,6 +51,12 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
 int alphasort(const struct dirent **a, const struct dirent **b);
 
 int walphasort(const struct _wdirent **a, const struct _wdirent **b);
+
+char *splt_w32_utf16_to_utf8(const wchar_t *source);
+wchar_t *splt_w32_utf8_to_utf16(const char *source);
+int splt_w32_check_if_encoding_is_utf8(const char *source);
+
+#define SPLT_WIN32_H
 
 #endif
 

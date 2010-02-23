@@ -110,7 +110,7 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
   long last_end_point = -1;
   int append_start_point = SPLT_TRUE;
 
-	if (!(file_input = splt_u_fopen(file, "r")))
+	if (!(file_input = splt_io_fopen(file, "r")))
   {
     splt_e_set_strerror_msg(state);
     splt_e_set_error_data(state,file);

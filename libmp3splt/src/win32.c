@@ -33,17 +33,8 @@
 #ifdef __WIN32__
 
 #include "splt.h"
-
 #include "win32.h"
 
-#include <errno.h>
-#include <dirent.h>
-
-#include <windows.h>
-#include <direct.h>
-
-//-returns -1 for not enough memory, -2 for other errors
-//-a positive (or 0) number if success
 int scandir(const char *dir, struct dirent ***namelist,
 		int(*filter)(const struct dirent *),
 		int(*compar)(const struct dirent **, const struct dirent **))
@@ -94,7 +85,6 @@ int scandir(const char *dir, struct dirent ***namelist,
     }
   }
 
-  //we should have a valid 'namelist' argument
   if (namelist)
   {
     *namelist = files;
@@ -104,7 +94,6 @@ int scandir(const char *dir, struct dirent ***namelist,
     free_memory = 1;
   }
 
-  //-free memory if error
   if (free_memory)
   {
     while (number_of_files--)
@@ -136,8 +125,6 @@ int scandir(const char *dir, struct dirent ***namelist,
   return number_of_files;
 }
 
-//-returns -1 for not enough memory, -2 for other errors
-//-a positive (or 0) number if success
 int wscandir(const char *dir, struct _wdirent ***namelist,
 		int(*filter)(const struct _wdirent *),
 		int(*compar)(const struct _wdirent **, const struct _wdirent **))
@@ -147,7 +134,7 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
   _WDIR *directory = NULL;
   int number_of_files = 0;
 
-  wchar_t *wdir = splt_u_win32_utf8_to_utf16(dir);
+  wchar_t *wdir = splt_w32_utf8_to_utf16(dir);
   directory = _wopendir(wdir);
   if (wdir) { free(wdir); wdir = NULL; }
   if (directory == NULL)
@@ -190,7 +177,6 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
     }
   }
 
-  //we should have a valid 'namelist' argument
   if (namelist)
   {
     *namelist = files;
@@ -200,7 +186,6 @@ int wscandir(const char *dir, struct _wdirent ***namelist,
     free_memory = 1;
   }
 
-  //-free memory if error
   if (free_memory)
   {
     while (number_of_files--)
@@ -242,8 +227,8 @@ int alphasort(const struct dirent **a, const struct dirent **b)
 
 int walphasort(const struct _wdirent **a, const struct _wdirent **b)
 {
-  char *name_a = splt_u_win32_utf16_to_utf8((*a)->d_name);
-  char *name_b = splt_u_win32_utf16_to_utf8((*b)->d_name);
+  char *name_a = splt_w32_utf16_to_utf8((*a)->d_name);
+  char *name_b = splt_w32_utf16_to_utf8((*b)->d_name);
 
   int ret = strcoll(name_a, name_b);
 
@@ -260,6 +245,79 @@ int walphasort(const struct _wdirent **a, const struct _wdirent **b)
   }
 
   return ret;
+}
+
+wchar_t *splt_w32_utf8_to_utf16(const char *source)
+{
+  return splt_u_win32_encoding_to_utf16(CP_UTF8, source);
+}
+
+char *splt_w32_utf16_to_utf8(const wchar_t *source)
+{
+  return splt_u_win32_utf16_to_encoding(CP_UTF8, source);
+}
+
+int splt_w32_check_if_encoding_is_utf8(const char *source)
+{
+  int is_utf8 = SPLT_FALSE;
+
+  if (source)
+  {
+    wchar_t *source_wchar = splt_w32_utf8_to_utf16(source);
+    if (source_wchar)
+    {
+      char *source2 = splt_w32_utf16_to_utf8(source_wchar);
+      if (source2)
+      {
+        if (strcmp(source, source2) == 0)
+        {
+          is_utf8 = SPLT_TRUE;
+        }
+
+        free(source2);
+        source2 = NULL;
+      }
+
+      free(source_wchar);
+      source_wchar = NULL;
+    }
+  }
+
+  return is_utf8;
+}
+
+static wchar_t *splt_u_win32_encoding_to_utf16(UINT encoding, const char *source)
+{
+  wchar_t *dest = NULL;
+
+  int converted_size = MultiByteToWideChar(encoding, 0, source, -1, NULL, 0);
+  if (converted_size > 0)
+  {
+    dest = malloc(sizeof(wchar_t) * converted_size);
+    if (dest)
+    {
+      MultiByteToWideChar(encoding, 0, source, -1, dest, converted_size);
+    }
+  }
+
+  return dest;
+}
+
+static char *splt_u_win32_utf16_to_encoding(UINT encoding, const wchar_t *source)
+{
+  char *dest = NULL;
+
+  int converted_size = WideCharToMultiByte(encoding, 0, source, -1, NULL, 0, NULL, NULL);
+  if (converted_size > 0)
+  {
+    dest = malloc(sizeof(char *) * converted_size);
+    if (dest)
+    {
+      WideCharToMultiByte(encoding, 0, source, -1, dest, converted_size, NULL, NULL);
+    }
+  }
+
+  return dest;
 }
 
 #endif

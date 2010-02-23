@@ -307,7 +307,7 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
   {
     if ((index > state->split.real_tagsnumber) || (index < 0))
     {
-      splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+      splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
     }
     else
     {
@@ -327,7 +327,7 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
   {
     if ((index > state->split.real_tagsnumber) || (index < 0))
     {
-      splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+      splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
     }
     else
     {
@@ -374,7 +374,7 @@ int splt_tu_set_tags_field(splt_state *state, int index,
   if ((index >= state->split.real_tagsnumber) || (index < 0))
   {
     error = SPLT_ERROR_INEXISTENT_SPLITPOINT;
-    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
     return error;
   }
   else
@@ -384,7 +384,7 @@ int splt_tu_set_tags_field(splt_state *state, int index,
 
   if (error != SPLT_OK)
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
   }
 
   return error;
@@ -478,7 +478,7 @@ void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
 {
   if ((index >= state->split.real_tagsnumber) || (index < 0))
   {
-    splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+    splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
     return NULL;
   }
   else
@@ -513,7 +513,7 @@ void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
         return &state->split.tags[index].genre;
         break;
       default:
-        splt_u_error(SPLT_IERROR_INT,__func__, index, NULL);
+        splt_e_error(SPLT_IERROR_INT,__func__, index, NULL);
         return NULL;
     }
   }
@@ -782,10 +782,32 @@ static int splt_tu_set_on_tags_field(splt_tags *tags,
       tags->tags_version = *((int *)data);
       break;
     default:
-      splt_u_error(SPLT_IERROR_INT,__func__, -500, NULL);
+      splt_e_error(SPLT_IERROR_INT,__func__, -500, NULL);
       break;
   }
 
   return err;
+}
+
+char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags)
+{
+  if (!tags)
+  {
+    return NULL;
+  }
+
+  char *artist_or_performer = tags->artist;
+
+  if (tags->performer == NULL)
+  {
+    return artist_or_performer;
+  }
+
+  if (tags->performer[0] != '\0')
+  {
+    return tags->performer;
+  }
+
+  return artist_or_performer;
 }
 

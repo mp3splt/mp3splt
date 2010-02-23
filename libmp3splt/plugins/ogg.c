@@ -141,7 +141,7 @@ FILE *splt_ogg_open_file_read(splt_state *state,
   else
   {
     //we open the file
-    file_input = splt_u_fopen(filename, "rb");
+    file_input = splt_io_fopen(filename, "rb");
     if (file_input == NULL)
     {
       splt_e_set_strerror_msg(state);
@@ -319,11 +319,11 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
   {
     while (ogg_stream_flush(stream, &page))
     {
-      if (splt_u_fwrite(state, page.header, 1, page.header_len, file) < page.header_len)
+      if (splt_io_fwrite(state, page.header, 1, page.header_len, file) < page.header_len)
       {
         goto write_error;
       }
-      if (splt_u_fwrite(state, page.body, 1, page.body_len, file) < page.body_len)
+      if (splt_io_fwrite(state, page.body, 1, page.body_len, file) < page.body_len)
       {
         goto write_error;
       }
@@ -333,11 +333,11 @@ static int splt_ogg_write_pages_to_file(splt_state *state,
   {
     while (ogg_stream_pageout(stream, &page))
     {
-      if (splt_u_fwrite(state, page.header,1,page.header_len, file) < page.header_len)
+      if (splt_io_fwrite(state, page.header,1,page.header_len, file) < page.header_len)
       {
         goto write_error;
       }
-      if (splt_u_fwrite(state, page.body,1,page.body_len, file) < page.body_len)
+      if (splt_io_fwrite(state, page.body,1,page.body_len, file) < page.body_len)
       {
         goto write_error;
       }
@@ -606,7 +606,7 @@ void splt_ogg_get_original_tags(const char *filename,
 //puts the ogg tags
 void splt_ogg_put_tags(splt_state *state, int *error)
 {
-  splt_u_print_debug(state,"Setting ogg tags ...", 0,NULL);
+  splt_d_print_debug(state,"Setting ogg tags ...", 0,NULL);
 
   splt_ogg_state *oggstate = state->codec;
 
@@ -620,7 +620,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
       char *track_string = splt_ogg_trackstring(tags->track);
       if (track_string)
       {
-        char *artist_or_performer = splt_u_get_artist_or_performer_ptr(tags);
+        char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
         vorbis_comment_init(&oggstate->vc);
         splt_ogg_v_comment(&oggstate->vc,
             artist_or_performer, tags->album, tags->title, track_string,
@@ -1069,11 +1069,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
     if (ogg_stream_flush(stream, &page)!=0)
     {
-      if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
+      if (splt_io_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
       {
         goto write_error;
       }
-      if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
+      if (splt_io_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
       {
         goto write_error;
       }
@@ -1086,11 +1086,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
       // in case.
       //
       //fprintf(stderr, 'Warning: First audio packet didn't fit into page. File may not decode correctly\n")'
-      if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
+      if (splt_io_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
       {
         goto write_error;
       }
-      if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
+      if (splt_io_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
       {
         goto write_error;
       }
@@ -1111,11 +1111,11 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
       if (ogg_stream_flush(stream, &page)!=0)
       {
-        if (splt_u_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
+        if (splt_io_fwrite(state, page.header,1,page.header_len,f) < page.header_len)
         {
           goto write_error;
         }
-        if (splt_u_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
+        if (splt_io_fwrite(state, page.body,1,page.body_len,f) < page.body_len)
         {
           goto write_error;
         }
@@ -1228,7 +1228,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
               if (splt_ogg_scan_silence(state,
                     (2 * adjust), threshold, 0.f, 0, &page, current_granpos, error) > 0)
               {
-                cutpoint = (splt_u_silence_position(state->silence_list, 
+                cutpoint = (splt_siu_silence_position(state->silence_list, 
                       oggstate->off) * oggstate->vi->rate);
               }
               else
@@ -1439,7 +1439,7 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
     }
     else
     {
-      if (!(oggstate->out = splt_u_fopen(output_fname, "wb")))
+      if (!(oggstate->out = splt_io_fopen(output_fname, "wb")))
       {
         splt_e_set_strerror_msg(state);
         splt_e_set_error_data(state, output_fname);
@@ -1570,7 +1570,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
   short first, flush = 0;
   off_t position = ftello(oggstate->in); // Some backups
   int saveW = oggstate->prevW;
-  float th = splt_u_convertfromdB(threshold);
+  float th = splt_co_convert_from_dB(threshold);
 
   ogg_sync_init(&oy);
   ogg_stream_init(&os, oggstate->serial);
@@ -1765,7 +1765,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
 
       //if (count++ % X == 0)
       {
-        float level = splt_u_convert2dB(oggstate->temp_level);
+        float level = splt_co_convert_to_dB(oggstate->temp_level);
         if (state->split.get_silence_level)
         {
           long time = (long) (((double) pos / oggstate->vi->rate) * 100.0);
@@ -1859,7 +1859,7 @@ void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
     return;
   }
 
-  info->upper_extension = splt_u_str_to_upper(info->extension, error);
+  info->upper_extension = splt_su_str_to_upper(info->extension, error);
 }
 
 //check if file is ogg vorbis
@@ -1878,7 +1878,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 
   FILE *file_input = NULL;
 
-  if ((file_input = splt_u_fopen(filename, "rb")) == NULL)
+  if ((file_input = splt_io_fopen(filename, "rb")) == NULL)
   {
     splt_e_set_strerror_msg(state);
     splt_e_set_error_data(state,filename);
@@ -1979,7 +1979,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
-  splt_u_print_debug(state,"Taking ogg original tags...",0,NULL);
+  splt_d_print_debug(state,"Taking ogg original tags...",0,NULL);
   char *filename = splt_t_get_filename_to_split(state);
   splt_ogg_get_original_tags(filename, state, error);
 }
