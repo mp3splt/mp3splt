@@ -96,7 +96,7 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
       //if the name starts with splt_and contains .so or .sl or .dll or .dylib
       if (strncmp(file,"libsplt_",8) == 0)
       {
-        splt_d_print_debug(NULL, "Looking at the file ",0, file);
+        splt_d_print_debug(NULL, "Looking at the file _%s_\n", file);
 
         p_start = strchr(file,'.');
 
@@ -277,7 +277,8 @@ static int splt_p_find_plugins(splt_state *state)
   {
     if (pl->plugins_scan_dirs[i] != NULL)
     {
-      splt_d_print_debug(state,"Scanning plugins in the directory ",0, pl->plugins_scan_dirs[i]);
+      splt_d_print_debug(state,"Scanning plugins in the directory _%s_\n",
+          pl->plugins_scan_dirs[i]);
 
       //don't check if directory exists if the directory is ./ on unix-like
       //OSes or .\\ on windows
@@ -355,15 +356,16 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
   int i = 0;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
-    splt_d_print_debug(state,"\nTrying to open the plugin ...",0,pl->data[i].plugin_filename);
+    splt_d_print_debug(state,"\nTrying to open the plugin _%s_ ...\n",
+        pl->data[i].plugin_filename);
 
     //ltdl currently does not supports windows unicode path/filename
     pl->data[i].plugin_handle = lt_dlopen(pl->data[i].plugin_filename);
     //error
     if (! pl->data[i].plugin_handle)
     {
-      splt_d_print_debug(state,"Error loading the plugin",0,pl->data[i].plugin_filename);
-      splt_d_print_debug(state," - error message from libltdl: ",0,lt_dlerror());
+      splt_d_print_debug(state,"Error loading the plugin _%s_\n", pl->data[i].plugin_filename);
+      splt_d_print_debug(state," - error message from libltdl: _%s_\n", lt_dlerror());
 
       //keep the index of this failed plugin in order to remove it
       //afterwards
@@ -380,7 +382,7 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
     }
     else
     {
-      splt_d_print_debug(state," - success !",0,NULL);
+      splt_d_print_debug(state," - success !\n");
 
       pl->data[i].func->set_plugin_info =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_plugin_info");
@@ -442,7 +444,7 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
   {
     int index_to_remove = plugin_index_to_remove[i] - left_shift;
 
-    splt_d_print_debug(state,"Removing the plugin ",0,
+    splt_d_print_debug(state,"Removing the plugin _%s_\n",
         pl->data[index_to_remove].plugin_filename);
 
     if (i == number_of_plugins_to_remove-1)
@@ -481,7 +483,7 @@ int splt_p_find_get_plugins_data(splt_state *state)
 {
   int return_value = SPLT_OK;
 
-  splt_d_print_debug(state,"\nSearching for plugins ...",0,NULL);
+  splt_d_print_debug(state,"\nSearching for plugins ...\n");
 
   //find the plugins
   return_value = splt_p_find_plugins(state);
@@ -498,10 +500,8 @@ int splt_p_find_get_plugins_data(splt_state *state)
 
   if (return_value >= 0)
   {
-    //debug
     splt_plugins *pl = state->plug;
-    splt_d_print_debug(state,"\nNumber of plugins found = ",pl->number_of_plugins_found,NULL);
-    splt_d_print_debug(state,"",0,NULL);
+    splt_d_print_debug(state,"\nNumber of plugins found: _%d_\n",pl->number_of_plugins_found);
     int i = 0;
     int err = 0;
     for (i = 0;i < pl->number_of_plugins_found;i++)
@@ -537,15 +537,14 @@ int splt_p_find_get_plugins_data(splt_state *state)
       splt_p_set_current_plugin(state, i);
       if (pl->data[i].plugin_filename != NULL)
       {
-        splt_d_print_debug(state,"plugin filename = ",0,pl->data[i].plugin_filename);
+        splt_d_print_debug(state,"plugin filename = _%s_\n", pl->data[i].plugin_filename);
       }
       const char *temp = splt_p_get_name(state, &err);
-      splt_d_print_debug(state,"plugin name = ",0,temp);
+      splt_d_print_debug(state,"plugin name = _%s_\n", temp);
       float version = splt_p_get_version(state, &err);
-      splt_d_print_debug(state,"plugin version = ", version, NULL);
+      splt_d_print_debug(state,"plugin version = _%d_\n", version);
       temp = splt_p_get_extension(state,&err);
-      splt_d_print_debug(state,"extension = ",0,temp);
-      splt_d_print_debug(state,"",0,NULL);
+      splt_d_print_debug(state,"extension = _%s_\n\n", temp);
     }
   }
   splt_p_set_current_plugin(state, -1);
@@ -706,7 +705,7 @@ double splt_p_split(splt_state *state, const char *final_fname, double begin_poi
       double new_end_point = pl->data[current_plugin].func->split(state, final_fname,
           begin_point, end_point, error, save_end_point);
 
-      splt_d_print_debug(state, "New end point after split ...",new_end_point,NULL);
+      splt_d_print_debug(state, "New end point after split = _%lf_\n", new_end_point);
 
       return new_end_point;
     }

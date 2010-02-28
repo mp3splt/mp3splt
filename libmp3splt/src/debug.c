@@ -31,62 +31,53 @@
  *********************************************************/
 
 #include <string.h>
+#include <stdarg.h>
 
 #include "splt.h"
 
 extern int global_debug;
 
-void splt_d_print_debug(splt_state *state, const char *message,
-    double optional, const char *optional2)
+static char global_mem_err_mess[1024] = "error allocating memory in splt_d_print_debug !\n";
+
+static void splt_d_send_message(splt_state *state, const char *mess);
+
+void splt_d_print_debug(splt_state *state, const char *message, ...)
 {
   if (global_debug)
   {
-    int mess_size = 1024;
-    if (message)
-    {
-      mess_size += strlen(message);
-    }
-    if (optional2)
-    {
-      mess_size += strlen(optional2);
-    }
-    char *mess = malloc(sizeof(char) * mess_size);
+    va_list ap;
+    char *mess = NULL;
 
-    if (optional != 0)
-    {
-      if (optional2 != NULL)
-      {
-        snprintf(mess, mess_size, "%s %f _%s_\n",message, optional, optional2);
-      }
-      else
-      {
-        snprintf(mess, mess_size, "%s %f\n",message, optional);
-      }
-    }
-    else
-    {
-      if (optional2 != NULL)
-      {
-        snprintf(mess, mess_size, "%s _%s_\n",message, optional2);
-      }
-      else
-      {
-        snprintf(mess, mess_size, "%s\n",message);
-      }
-    }
+    va_start(ap, message);
+    mess = splt_su_format_messagev(state, message, ap);
+    va_end(ap);
 
-    if (state)
+    if (mess)
     {
-      splt_c_put_debug_message_to_client(state, mess);
-    }
-    else
-    {
-      fprintf(stdout,"%s",mess);
-      fflush(stdout);
-    }
+      splt_d_send_message(state, mess);
 
-    free(mess);
-    mess = NULL;
+      free(mess);
+      mess = NULL;
+    }
   }
+}
+
+void splt_d_send_memory_error_message(splt_state *state)
+{
+  splt_d_send_message(state, global_mem_err_mess);
+}
+
+static void splt_d_send_message(splt_state *state, const char *mess)
+{
+  if (state)
+  {
+    splt_c_put_debug_message_to_client(state, mess);
+  }
+  else
+  {
+    fprintf(stdout,"%s\n",mess);
+    fflush(stdout);
+  }
+
 }
 

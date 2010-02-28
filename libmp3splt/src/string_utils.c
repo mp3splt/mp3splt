@@ -473,6 +473,46 @@ int splt_su_str_ends_with(const char *str1, const char *str2)
   return SPLT_TRUE;
 }
 
+char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap)
+{
+  int counter = 0;
+
+  int written_chars = 0;
+
+  int size = 255;
+  char *mess = malloc(sizeof(char) * size);
+  if (mess == NULL)
+  {
+    splt_d_send_memory_error_message(state);
+    return NULL;
+  }
+
+  while (counter < LONG_MAX)
+  {
+    written_chars = vsnprintf(mess, size, message, ap);
+
+    if ((written_chars > -1) &&
+        (written_chars+1 < size))
+    {
+      break;
+    }
+    else {
+      size += 255;
+    }
+
+    if ((mess = realloc(mess, size)) == NULL)
+    {
+      free(mess);
+      splt_d_send_memory_error_message(state);
+      return NULL;
+    }
+
+    counter++;
+  }
+
+  return mess;
+}
+
 static int splt_u_is_illegal_char(char c, int ignore_dirchar)
 {
   if ((ignore_dirchar) && (c == SPLT_DIRCHAR))

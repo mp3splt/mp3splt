@@ -34,7 +34,7 @@
 
 #include "splt.h"
 
-static void splt_c_put_message_to_client(splt_state *state, char *message,
+static void splt_c_put_message_to_client(splt_state *state, const char *message,
     splt_message_type mess_type);
 
 int splt_c_put_split_file(splt_state *state, const char *filename)
@@ -120,14 +120,42 @@ void splt_c_put_progress_text(splt_state *state, int type)
   }
 }
 
-void splt_c_put_info_message_to_client(splt_state *state, char *message)
+void splt_c_put_info_message_to_client(splt_state *state,
+    const char *message, ...)
 {
-  splt_c_put_message_to_client(state, message, SPLT_MESSAGE_INFO);
+  va_list ap;
+  char *mess = NULL;
+
+  va_start(ap, message);
+  mess = splt_su_format_messagev(state, message, ap);
+  va_end(ap);
+
+  if (mess)
+  {
+    splt_c_put_message_to_client(state, mess, SPLT_MESSAGE_INFO);
+
+    free(mess);
+    mess = NULL;
+  }
 }
 
-void splt_c_put_debug_message_to_client(splt_state *state, char *message)
+void splt_c_put_debug_message_to_client(splt_state *state,
+    const char *message, ...)
 {
-  splt_c_put_message_to_client(state, message, SPLT_MESSAGE_DEBUG);
+  va_list ap;
+  char *mess = NULL;
+
+  va_start(ap, message);
+  mess = splt_su_format_messagev(state, message, ap);
+  va_end(ap);
+
+  if (mess)
+  {
+    splt_c_put_message_to_client(state, mess, SPLT_MESSAGE_DEBUG);
+
+    free(mess);
+    mess = NULL;
+  }
 }
 
 void splt_c_update_progress(splt_state *state, double current_point,
@@ -163,7 +191,7 @@ void splt_c_update_progress(splt_state *state, double current_point,
   }
 }
 
-static void splt_c_put_message_to_client(splt_state *state, char *message,
+static void splt_c_put_message_to_client(splt_state *state, const char *message,
     splt_message_type mess_type)
 {
   if (!splt_o_messages_locked(state))

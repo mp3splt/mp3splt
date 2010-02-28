@@ -46,22 +46,21 @@ int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int cur
 void splt_u_print_overlap_time(splt_state *state)
 {
   long overlap_time = splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME);
-  if (overlap_time > 0)
+  if (overlap_time <= 0)
   {
-    char message[1024] = { '\0' };
-    long mins = -1;
-    long secs = -1;
-    long hundr = -1;
-    splt_co_get_mins_secs_hundr(overlap_time, &mins, &secs, &hundr);
-    snprintf(message, 1024,
-        _(" info: overlapping split files with %ld.%ld.%ld\n"),
-        mins, secs, hundr);
-    splt_c_put_info_message_to_client(state, message);
+    return;
   }
+
+  long mins = -1;
+  long secs = -1;
+  long hundr = -1;
+  splt_co_get_mins_secs_hundr(overlap_time, &mins, &secs, &hundr);
+  splt_c_put_info_message_to_client(state, 
+      _(" info: overlapping split files with %ld.%ld.%ld\n"),
+      mins, secs, hundr);
 }
 
-short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
-    double fend_sec)
+short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state, double fend_sec)
 {
   double total_time = splt_t_get_total_time_as_double_secs(state);
 
@@ -80,14 +79,12 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state,
       int current_split = splt_t_get_current_split(state);
       if (splt_sp_splitpoint_exists(state, current_split + 1))
       {
-        int get_error = SPLT_OK;
-        long split_end = splt_sp_get_splitpoint_value(state, current_split+1, &get_error);
-        if (get_error >= 0)
+        int err = SPLT_OK;
+        long split_end = splt_sp_get_splitpoint_value(state, current_split+1, &err);
+        if ((err >= 0) &&
+            (split_end == LONG_MAX))
         {
-          if (split_end == LONG_MAX)
-          {
-            return SPLT_TRUE;
-          }
+          return SPLT_TRUE;
         }
       }
     }

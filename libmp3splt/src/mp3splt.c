@@ -94,8 +94,6 @@ void mp3splt_free_state(splt_state *state, int *error)
       splt_o_lock_library(state);
 
       splt_t_free_state(state);
-
-      splt_o_unlock_library(state);
     }
     else
     {
@@ -612,12 +610,12 @@ int mp3splt_split(splt_state *state)
     {
       splt_o_lock_library(state);
 
-      splt_d_print_debug(state,"Starting to split file...",0,NULL);
+      splt_d_print_debug(state,"Starting to split file ...\n");
 
       char *new_filename_path = NULL;
       char *fname_to_split = splt_t_get_filename_to_split(state);
 
-      splt_d_print_debug(state,"Original filename/path to split is ",0, fname_to_split);
+      splt_d_print_debug(state,"Original filename/path to split is _%s_\n", fname_to_split);
 
       if (splt_io_input_is_stdin(state))
       {
@@ -644,9 +642,8 @@ int mp3splt_split(splt_state *state)
       char *linked_fname = splt_io_get_linked_fname(fname_to_split);
       if (linked_fname)
       {
-        char infos[2048] = { '\0' };
-        snprintf(infos, 2048, _(" info: resolving linked filename to '%s'\n"), linked_fname);
-        splt_c_put_info_message_to_client(state, infos);
+        splt_c_put_info_message_to_client(state, 
+            _(" info: resolving linked filename to '%s'\n"), linked_fname);
 
         splt_t_set_filename_to_split(state, linked_fname);
         fname_to_split = splt_t_get_filename_to_split(state);
@@ -722,23 +719,18 @@ int mp3splt_split(splt_state *state)
 
       const char *plugin_name = splt_p_get_name(state,&error);
       if (error < 0) { goto function_end; }
-      char infos[2048] = { '\0' };
-      snprintf(infos,2048,_(" info: file matches the plugin '%s'\n"), plugin_name);
-      splt_c_put_info_message_to_client(state, infos);
+
+      splt_c_put_info_message_to_client(state, 
+          _(" info: file matches the plugin '%s'\n"), plugin_name);
 
       //print the new m3u fname
       char *m3u_fname_with_path = splt_t_get_m3u_file_with_path(state, &error);
       if (error < 0) { goto function_end; }
       if (m3u_fname_with_path)
       {
-        int malloc_size = strlen(m3u_fname_with_path) + 200;
-        char *mess = malloc(sizeof(char) * (strlen(m3u_fname_with_path) + 200));
-        if (!mess) { error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto function_end; }
-        snprintf(mess, malloc_size, _(" M3U file '%s' will be created.\n"),
-            m3u_fname_with_path);
-        splt_c_put_info_message_to_client(state, mess);
-        free(mess);
-        mess = NULL;
+        splt_c_put_info_message_to_client(state, 
+            _(" M3U file '%s' will be created.\n"), m3u_fname_with_path);
+
         free(m3u_fname_with_path);
         m3u_fname_with_path = NULL;
       }
@@ -747,28 +739,24 @@ int mp3splt_split(splt_state *state)
       splt_p_init(state, &error);
       if (error < 0) { goto function_end; }
 
-      splt_d_print_debug(state,"parse type of split...",0,NULL);
+      splt_d_print_debug(state,"Parse type of split ...\n");
 
-      char message[1024] = { '\0' };
-      //print Working with auto adjust if necessary
       if (splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST)
-          && !  splt_o_get_int_option(state, SPLT_OPT_QUIET_MODE))
+          && !splt_o_get_int_option(state, SPLT_OPT_QUIET_MODE))
       {
         if ((split_type != SPLT_OPTION_WRAP_MODE)
             && (split_type != SPLT_OPTION_SILENCE_MODE)
             && (split_type != SPLT_OPTION_ERROR_MODE))
         {
-          snprintf(message, 1024, _(" Working with SILENCE AUTO-ADJUST (Threshold:"
+          splt_c_put_info_message_to_client(state, 
+              _(" Working with SILENCE AUTO-ADJUST (Threshold:"
                 " %.1f dB Gap: %d sec Offset: %.2f)\n"),
               splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
               splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP),
               splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET));
-
-          splt_c_put_info_message_to_client(state, message);
         }
       }
 
-      //the type of the split
       switch (split_type)
       {
         case SPLT_OPTION_WRAP_MODE:

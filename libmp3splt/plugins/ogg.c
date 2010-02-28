@@ -170,22 +170,20 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
     if (! splt_o_messages_locked(state))
     {
       splt_ogg_state *oggstate = state->codec;
-      //ogg infos
-      char ogg_infos[2048] = { '\0' };
-      snprintf(ogg_infos, 2048, 
+
+      char ogg_infos[1024] = { '\0' };
+      snprintf(ogg_infos, 1023, 
           _(" info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"),
           oggstate->vd->vi->rate, oggstate->vd->vi->bitrate_nominal/1024,
           oggstate->vd->vi->channels);
-      //total time
+
       char total_time[256] = { '\0' };
       int total_seconds = (int) splt_t_get_total_time(state) / 100;
       int minutes = total_seconds / 60;
       int seconds = total_seconds % 60;
-      snprintf(total_time,256,_(" - Total time: %dm.%02ds"), minutes, seconds%60);
-      //all infos together
-      char all_infos[3072] = { '\0' };
-      snprintf(all_infos,3072,"%s%s\n",ogg_infos,total_time);
-      splt_c_put_info_message_to_client(state, all_infos);
+      snprintf(total_time, 255, _(" - Total time: %dm.%02ds"), minutes, seconds%60);
+
+      splt_c_put_info_message_to_client(state, "%s%s\n", ogg_infos, total_time);
     }
   }
 }
@@ -606,7 +604,7 @@ void splt_ogg_get_original_tags(const char *filename,
 //puts the ogg tags
 void splt_ogg_put_tags(splt_state *state, int *error)
 {
-  splt_d_print_debug(state,"Setting ogg tags ...", 0,NULL);
+  splt_d_print_debug(state,"Setting ogg tags ...\n");
 
   splt_ogg_state *oggstate = state->codec;
 
@@ -1919,10 +1917,8 @@ void splt_pl_init(splt_state *state, int *error)
   {
     if (filename[1] == '\0')
     {
-      char message[1024] = { '\0' };
-      snprintf(message, 1024,
+      splt_c_put_info_message_to_client(state, 
           _(" warning: stdin 'o-' is supposed to be ogg stream.\n"));
-      splt_c_put_info_message_to_client(state, message);
     }
   }
 
@@ -1979,7 +1975,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
-  splt_d_print_debug(state,"Taking ogg original tags...",0,NULL);
+  splt_d_print_debug(state,"Taking ogg original tags... \n");
   char *filename = splt_t_get_filename_to_split(state);
   splt_ogg_get_original_tags(filename, state, error);
 }

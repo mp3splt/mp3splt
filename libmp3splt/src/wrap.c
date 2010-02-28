@@ -38,8 +38,9 @@ static void splt_w_free_files(char **files, int number);
 
 void splt_w_set_wrap_default_values(splt_state *state)
 {
-  state->wrap->wrap_files = NULL;
-  state->wrap->wrap_files_num = 0;
+  splt_wrap *wrap = state->wrap;
+  wrap->wrap_files = NULL;
+  wrap->wrap_files_num = 0;
 }
 
 int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
@@ -47,54 +48,46 @@ int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
 {
   int error = SPLT_OK;
 
+  splt_wrap *wrap = state->wrap;
+
   if (index == 0)
   {
-    if ((state->wrap->wrap_files = malloc(wrapfiles * sizeof(char*))) == NULL)
+    if ((wrap->wrap_files = malloc(wrapfiles * sizeof(char*))) == NULL)
     {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
-    else
-    {
-      state->wrap->wrap_files_num = 0;
-    }
+
+    wrap->wrap_files_num = 0;
   }
 
-  if (error == SPLT_OK)
+  if (filename == NULL)
   {
-    if (filename == NULL)
-    {
-      state->wrap->wrap_files[index] = NULL;
-      state->wrap->wrap_files_num++;
-    }
-    else
-    {
-      if ((state->wrap->wrap_files[index] = strdup(filename)) == NULL)
-      {
-        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
-      else
-      {
-        state->wrap->wrap_files_num++;
-      }
-    }
+    wrap->wrap_files[index] = NULL;
   }
+  else if ((wrap->wrap_files[index] = strdup(filename)) == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+
+  wrap->wrap_files_num++;
 
   return error;
 }
 
 void splt_w_wrap_free(splt_state *state)
 {
-  splt_w_free_files(state->wrap->wrap_files, state->wrap->wrap_files_num);
-  state->wrap->wrap_files_num = 0;
+  splt_wrap *wrap = state->wrap;
+  splt_w_free_files(wrap->wrap_files, wrap->wrap_files_num);
+  wrap->wrap_files_num = 0;
 }
 
 static void splt_w_free_files(char **files, int number)
 {
-  int i = 0;
   if (files != NULL)
   {
     if (number != 0)
     {
+      int i = 0;
       for (i = 0; i < number; i++)
       {
         if (files[i])
@@ -104,9 +97,9 @@ static void splt_w_free_files(char **files, int number)
         }
       }
     }
+
     free(files);
     files = NULL;
   }
 }
-
 

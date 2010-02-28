@@ -220,7 +220,7 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
     write_eof = SPLT_TRUE;
   }
 
-  splt_d_print_debug(state,"The output format is ", 0, output_format);
+  splt_d_print_debug(state,"The output format is _%s_\n", output_format);
 
   long mMsShH_value = -1;
   short eof_written = SPLT_FALSE;
@@ -720,7 +720,7 @@ put_value:
     }
   }
 
-  splt_d_print_debug(state,"The new output filename is ",0,output_filename);
+  splt_d_print_debug(state,"The new output filename is _%s_\n", output_filename);
   int cur_splt = splt_t_get_current_split(state);
   int name_error = splt_sp_set_splitpoint_name(state, cur_splt, output_filename);
   if (name_error != SPLT_OK) { error = name_error; }

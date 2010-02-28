@@ -32,6 +32,8 @@
 
 #ifndef SPLT_STRING_UTILS_H
 
+#include <stdarg.h>
+
 char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error);
 char *splt_su_safe_strdup(const char *input, int *error);
 int splt_su_append(char **str, const char *to_append, ...);
@@ -53,6 +55,8 @@ char *splt_su_get_file_with_output_path(splt_state *state,
     char *filename, int *error);
 
 int splt_su_str_ends_with(const char *str1, const char *str2);
+
+char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap);
 
 #define SPLT_STRING_UTILS_H
 
