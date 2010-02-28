@@ -37,27 +37,38 @@
 
 long splt_co_convert_to_hundreths(const char *s)
 {
-  long minutes=0, seconds=0, hundredths=0, i;
-  long hun;
+  long minutes = 0, seconds = 0, hundredths = 0, i = 0;
 
-  for(i=0; i<strlen(s); i++) // Some checking
+  for(i=0; i< strlen(s); i++)
+  {
     if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!='.'))
+    {
       return -1;
+    }
+  }
 
-  if (sscanf(s, "%ld.%ld.%ld", &minutes, &seconds, &hundredths)<2)
+  if (sscanf(s, "%ld.%ld.%ld", &minutes, &seconds, &hundredths) < 2)
+  {
     return -1;
+  }
 
   if ((minutes < 0) || (seconds < 0) || (hundredths < 0))
+  {
     return -1;
+  }
 
   if ((seconds > 59) || (hundredths > 99))
+  {
     return -1;
+  }
 
   if (s[strlen(s)-2]=='.')
+  {
     hundredths *= 10;
+  }
 
-  hun = hundredths;
-  hun += (minutes*60 + seconds) * 100;
+  long hun = hundredths;
+  hun += (minutes * 60 + seconds) * 100;
 
   return hun;
 }
@@ -80,13 +91,13 @@ float splt_co_convert_to_dB(double input)
 double splt_co_convert_from_dB(float input)
 {
   double amp;
-  if (input<-96.0)
+  if (input <- 96.0)
   {
     amp = 0.0;
   }
   else 
   {
-    amp = pow(10.0, input/20.0);
+    amp = pow(10.0, input / 20.0);
   }
 
   return amp;

@@ -157,8 +157,8 @@ void splt_check_if_new_filename_path_correct(splt_state *state,
   {
     if (!splt_io_check_if_directory(new_filename_path))
     {
-      splt_e_set_strerr_msg(state, _("directory does not exists"));
-      splt_e_set_error_data(state, new_filename_path);
+      splt_e_set_strerr_msg_with_data(state,
+          _("directory does not exists"), new_filename_path);
       *error = SPLT_ERROR_INCORRECT_PATH;
     }
   }
@@ -361,8 +361,7 @@ void splt_check_file_type(splt_state *state, int *error)
     {
       if (fclose(test) != 0)
       {
-        splt_e_set_strerror_msg(state);
-        splt_e_set_error_data(state, filename);
+        splt_e_set_strerror_msg_with_data(state, filename);
         *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         return;
       }
@@ -373,8 +372,7 @@ void splt_check_file_type(splt_state *state, int *error)
     }
     else
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state,filename);
+      splt_e_set_strerror_msg_with_data(state, filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
       return;
     }
@@ -389,8 +387,7 @@ static void close_files(splt_state *state, const char *file1, FILE **f1,
   {
     if (fclose(*f1) != 0)
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state, file1);
+      splt_e_set_strerror_msg_with_data(state, file1);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     else
@@ -402,8 +399,7 @@ static void close_files(splt_state *state, const char *file1, FILE **f1,
   {
     if (fclose(*f2) != 0)
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state, file2);
+      splt_e_set_strerror_msg_with_data(state, file2);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     else
@@ -505,8 +501,7 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
           {
             if (fclose(file2_) != 0)
             {
-              splt_e_set_strerror_msg(state);
-              splt_e_set_error_data(state, file2);
+              splt_e_set_strerror_msg_with_data(state, file2);
               *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
             }
             else
@@ -525,8 +520,7 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
       {
         if (fclose(file1_) != 0)
         {
-          splt_e_set_strerror_msg(state);
-          splt_e_set_error_data(state, file1);
+          splt_e_set_strerror_msg_with_data(state, file1);
           *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         }
         else

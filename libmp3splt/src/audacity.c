@@ -39,38 +39,11 @@
 
 #include "splt.h"
 
-static void append_splitpoints(splt_state *state, long start_point, long end_point, char *label_name, 
+static void append_splitpoints(splt_state *state,
+    long start_point, long end_point, char *label_name, 
     long last_start_point, long last_end_point, const char *last_label_name,
-    int *append_start_point)
-{
-  /*
-  // FIXME: what/why is this...
-  state->splitpoints[tracks] = floorf(label_start);
-  label_start = (label_start - state->splitpoints[tracks])*4/3;
-  state->splitpoints[tracks] += label_start;
-   */
+    int *append_start_point);
 
-  if (last_start_point != -1 && last_end_point != -1)
-  {
-    if (*append_start_point)
-    {
-      splt_sp_append_splitpoint(state, last_start_point, last_label_name, SPLT_SPLITPOINT);
-    }
-
-    if (start_point == last_end_point)
-    {
-      splt_sp_append_splitpoint(state, last_end_point, label_name, SPLT_SPLITPOINT);
-      *append_start_point = SPLT_FALSE;
-    }
-    else
-    {
-      splt_sp_append_splitpoint(state, last_end_point, "skip", SPLT_SKIPPOINT);
-      *append_start_point = SPLT_TRUE;
-    }
-  }
-}
-
-//returns the number of tracks found
 int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *error)
 {
   if (file == NULL)
@@ -87,7 +60,6 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
       _(" reading informations from audacity labels file '%s' ...\n"), file);
 
 	FILE *file_input = NULL;
-	char line[2048] = { '\0' };
 	double label_start;
 	double label_end;
 	char *label_name = NULL;
@@ -103,21 +75,20 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
 
 	if (!(file_input = splt_io_fopen(file, "r")))
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,file);
+    splt_e_set_strerror_msg_with_data(state, file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;
   }
 
 	if (fseek(file_input, 0, SEEK_SET) != 0)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,file);
+    splt_e_set_strerror_msg_with_data(state, file);
     *error = SPLT_ERROR_SEEKING_FILE;
     goto end;
   }
 
-  while (fgets(line, 2048, file_input) != NULL)
+  char *line = NULL;
+  while ((line = splt_io_readline(file_input, error)) != NULL)
   {
 		ptr = line;
 
@@ -128,6 +99,7 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
       *error = SPLT_INVALID_AUDACITY_FILE;
       goto end;
     }
+
 		errno = 0;
 		label_end = strtod(ptr, &ptr);
 		if (errno != 0)
@@ -168,8 +140,10 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
     append_splitpoints(state, start_point, end_point, label_name, last_start_point,
         last_end_point, last_label_name, &append_start_point);
 
+
     last_end_point = end_point;
     last_start_point = start_point;
+
     if (last_label_name)
     {
       free(last_label_name);
@@ -189,12 +163,20 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
     }
 
 		tracks++;
+
+    free(line);
+    line = NULL;
 	}
 
   append_splitpoints(state, start_point, end_point, label_name,
       last_start_point, last_end_point, last_label_name, &append_start_point);
 
 end:
+  if (line)
+  {
+    free(line);
+    line = NULL;
+  }
   if (label_name)
   {
     free(label_name);
@@ -207,12 +189,36 @@ end:
   }
   if (fclose(file_input) != 0)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state, file);
+    splt_e_set_strerror_msg_with_data(state, file);
     *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
   }
   file_input = NULL;
 
 	return tracks;
+}
+
+static void append_splitpoints(splt_state *state,
+    long start_point, long end_point, char *label_name, 
+    long last_start_point, long last_end_point, const char *last_label_name,
+    int *append_start_point)
+{
+  if (last_start_point != -1 && last_end_point != -1)
+  {
+    if (*append_start_point)
+    {
+      splt_sp_append_splitpoint(state, last_start_point, last_label_name, SPLT_SPLITPOINT);
+    }
+
+    if (start_point == last_end_point)
+    {
+      splt_sp_append_splitpoint(state, last_end_point, label_name, SPLT_SPLITPOINT);
+      *append_start_point = SPLT_FALSE;
+    }
+    else
+    {
+      splt_sp_append_splitpoint(state, last_end_point, "skip", SPLT_SKIPPOINT);
+      *append_start_point = SPLT_TRUE;
+    }
+  }
 }
 

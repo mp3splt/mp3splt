@@ -67,6 +67,8 @@ void splt_tu_get_original_tags(splt_state *state, int *err);
 
 char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags);
 
+int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks);
+
 #define MP3SPLT_PLUGIN_UTILS_H
 
 #endif

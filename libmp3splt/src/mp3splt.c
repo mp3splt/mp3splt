@@ -1020,8 +1020,7 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
           FILE *output = NULL;
           if (!(output = splt_io_fopen(cddb_file, "w")))
           {
-            splt_e_set_strerror_msg(state);
-            splt_e_set_error_data(state,cddb_file);
+            splt_e_set_strerror_msg_with_data(state, cddb_file);
             *err = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
           }
           else
@@ -1029,8 +1028,7 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
             fprintf(output,"%s",freedb_file_content);
             if (fclose(output) != 0)
             {
-              splt_e_set_strerror_msg(state);
-              splt_e_set_error_data(state, cddb_file);
+              splt_e_set_strerror_msg_with_data(state, cddb_file);
               *err = SPLT_ERROR_CANNOT_CLOSE_FILE;
             }
             output = NULL;

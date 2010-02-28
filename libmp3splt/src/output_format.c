@@ -49,22 +49,28 @@ int splt_of_set_default_values(splt_state *state)
 
 void splt_of_free_oformat(splt_state *state)
 {
-  if (state->oformat.format_string)
+  splt_oformat *oformat = &state->oformat;
+
+  if (oformat->format_string)
   {
-    free(state->oformat.format_string);
-    state->oformat.format_string = NULL;
+    free(oformat->format_string);
+    oformat->format_string = NULL;
   }
 }
 
 void splt_of_set_oformat_digits_tracks(splt_state *state, int tracks)
 {
-  int i = (int) (log10((double) (tracks)));
-  state->oformat.output_format_digits = (char) (i+'1');
+  splt_oformat *oformat = &state->oformat;
 
-  /* Number of alphabetical "digits": almost base-27 */
-  state->oformat.output_alpha_format_digits = 1;
+  int i = (int) (log10((double) (tracks)));
+  oformat->output_format_digits = (char) (i + '1');
+
+  //Number of alphabetical "digits": almost base-27
+  oformat->output_alpha_format_digits = 1;
   for (i = (tracks - 1) / 26; i > 0; i /= 27)
-    ++ state->oformat.output_alpha_format_digits;
+  {
+    ++ oformat->output_alpha_format_digits;
+  }
 }
 
 void splt_of_set_oformat_digits(splt_state *state)
@@ -82,38 +88,57 @@ void splt_of_set_oformat(splt_state *state, const char *format_string,
   }
 
   int j = 0;
-
   while (j <= SPLT_OUTNUM)
   {
-    memset(state->oformat.format[j],'\0',SPLT_MAXOLEN);
+    memset(state->oformat.format[j], '\0', SPLT_MAXOLEN);
     j++;
   }
 
-  int err = SPLT_OK;
-  err = splt_of_new_oformat(state, format_string);
+  int err = splt_of_new_oformat(state, format_string);
   if (err < 0) { *error = err; return; }
 
   char *new_str = strdup(format_string);
-  if (new_str)
-  {
-    err = splt_of_parse_outformat(new_str, state);
-    if (! ignore_incorrect_format_warning)
-    {
-      *error = err;
-    }
-    free(new_str);
-    new_str = NULL;
-  }
-  else
+  if (!new_str)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return;
   }
 
+  err = splt_of_parse_outformat(new_str, state);
+  if (! ignore_incorrect_format_warning)
+  {
+    *error = err;
+  }
+
+  free(new_str);
+  new_str = NULL;
+
   if (*error > 0)
   {
     splt_of_set_oformat_digits(state); 
   }
+}
+
+int splt_of_reparse_oformat(splt_state *state)
+{
+  int err = SPLT_OK;
+
+  const char *format = splt_of_get_oformat(state);
+  if (format != NULL)
+  {
+    char *old_format = strdup(format);
+    if (old_format == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+
+    splt_of_set_oformat(state, old_format, &err, SPLT_TRUE);
+
+    free(old_format);
+    old_format = NULL;
+  }
+
+  return err;
 }
 
 int splt_of_get_oformat_number_of_digits_as_int(splt_state *state)
@@ -133,27 +158,7 @@ const char *splt_of_get_oformat(splt_state *state)
 
 static int splt_of_new_oformat(splt_state *state, const char *format_string)
 {
-  int error = SPLT_OK;
   splt_of_free_oformat(state);
-
-  if (format_string != NULL)
-  {
-    if ((state->oformat.format_string =
-          malloc(sizeof(char)*(strlen(format_string)+1))) == NULL)
-    {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-    else
-    {
-      snprintf(state->oformat.format_string,
-          strlen(format_string)+1,"%s",format_string);
-    }
-  }
-  else
-  {
-    state->oformat.format_string = NULL;
-  }
-
-  return error;
+  return splt_su_copy(format_string, &state->oformat.format_string);
 }
 

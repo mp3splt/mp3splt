@@ -36,6 +36,8 @@
 
 static void splt_c_put_message_to_client(splt_state *state, const char *message,
     splt_message_type mess_type);
+static int splt_c_append_to_m3u_file(splt_state *state, const char *filename);
+static void splt_c_set_filename_shorted_from_current_point_name(splt_state *state);
 
 int splt_c_put_split_file(splt_state *state, const char *filename)
 {
@@ -43,36 +45,8 @@ int splt_c_put_split_file(splt_state *state, const char *filename)
 
   if (state->split.file_split != NULL)
   {
-    state->split.file_split(filename,state->split.p_bar->user_data);
-
-    if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
-    {
-      char *new_m3u_file = splt_t_get_m3u_file_with_path(state, &error); 
-      if (error < 0) { return error; }
-      if (new_m3u_file)
-      {
-        FILE *file_input = NULL;
-        if ((file_input = splt_io_fopen(new_m3u_file, "a+")) != NULL)
-        {
-          //we don't care about the path of the split filename
-          fprintf(file_input,"%s\n", splt_su_get_fname_without_path(filename));
-          if (fclose(file_input) != 0)
-          {
-            splt_e_set_strerror_msg(state);
-            splt_e_set_error_data(state, new_m3u_file);
-            error = SPLT_ERROR_CANNOT_CLOSE_FILE;
-          }
-        }
-        else
-        {
-          splt_e_set_strerror_msg(state);
-          splt_e_set_error_data(state, new_m3u_file);
-          error = SPLT_ERROR_CANNOT_OPEN_FILE;
-        }
-        free(new_m3u_file);
-        new_m3u_file = NULL;
-      }
-    }
+    state->split.file_split(filename, state->split.p_bar->user_data);
+    error = splt_c_append_to_m3u_file(state, filename);
   }
   else
   {
@@ -84,44 +58,17 @@ int splt_c_put_split_file(splt_state *state, const char *filename)
 
 void splt_c_put_progress_text(splt_state *state, int type)
 {
-  char filename_shorted[512] = "";
+  splt_progress *p_bar = state->split.p_bar;
+  if (p_bar->progress == NULL) { return; }
 
-  int err = SPLT_OK;
+  splt_c_set_filename_shorted_from_current_point_name(state);
 
-  if (state->split.p_bar->progress != NULL)
-  {
-    char *point_name = NULL;
-    int curr_split = splt_t_get_current_split(state);
-    point_name = splt_sp_get_splitpoint_name(state, curr_split,&err);
-
-    if (point_name != NULL)
-    {
-      const char *extension = splt_p_get_extension(state, &err);
-      if (err >= 0)
-      {
-        snprintf(filename_shorted,
-            state->split.p_bar->progress_text_max_char,"%s%s",
-            point_name,extension);
-
-        if (strlen(point_name) > state->split.p_bar->progress_text_max_char)
-        {
-          filename_shorted[strlen(filename_shorted)-1] = '.';
-          filename_shorted[strlen(filename_shorted)-2] = '.';
-          filename_shorted[strlen(filename_shorted)-3] = '.';
-        }
-      }
-    }
-
-    snprintf(state->split.p_bar->filename_shorted, 512,"%s", filename_shorted);
-
-    state->split.p_bar->current_split = splt_t_get_current_split_file_number(state);
-    state->split.p_bar->max_splits = state->split.splitnumber-1;
-    state->split.p_bar->progress_type = type;
-  }
+  p_bar->current_split = splt_t_get_current_split_file_number(state);
+  p_bar->max_splits = state->split.splitnumber - 1;
+  p_bar->progress_type = type;
 }
 
-void splt_c_put_info_message_to_client(splt_state *state,
-    const char *message, ...)
+void splt_c_put_info_message_to_client(splt_state *state, const char *message, ...)
 {
   va_list ap;
   char *mess = NULL;
@@ -139,8 +86,7 @@ void splt_c_put_info_message_to_client(splt_state *state,
   }
 }
 
-void splt_c_put_debug_message_to_client(splt_state *state,
-    const char *message, ...)
+void splt_c_put_debug_message_to_client(splt_state *state, const char *message, ...)
 {
   va_list ap;
   char *mess = NULL;
@@ -162,32 +108,31 @@ void splt_c_update_progress(splt_state *state, double current_point,
     double total_points, int progress_stage,
     float progress_start, int refresh_rate)
 {
-  if (state->split.p_bar->progress != NULL)
+  splt_progress *p_bar = state->split.p_bar;
+  if (p_bar->progress == NULL) { return; }
+
+  if (splt_o_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) > refresh_rate)
   {
-    if (splt_o_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) > refresh_rate)
+    p_bar->percent_progress = (float) (current_point / total_points);
+
+    p_bar->percent_progress = p_bar->percent_progress / progress_stage + progress_start;
+
+    if (p_bar->percent_progress < 0)
     {
-      state->split.p_bar->percent_progress = (float) (current_point / total_points);
-
-      state->split.p_bar->percent_progress = 
-        state->split.p_bar->percent_progress / progress_stage + progress_start;
-
-      if (state->split.p_bar->percent_progress < 0)
-      {
-        state->split.p_bar->percent_progress = 0;
-      }
-      if (state->split.p_bar->percent_progress > 1)
-      {
-        state->split.p_bar->percent_progress = 1;
-      }
-
-      state->split.p_bar->progress(state->split.p_bar);
-      splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE, 0);
+      p_bar->percent_progress = 0;
     }
-    else
+    if (p_bar->percent_progress > 1)
     {
-      splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,
-          splt_o_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE)+1);
+      p_bar->percent_progress = 1;
     }
+
+    p_bar->progress(p_bar);
+    splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE, 0);
+  }
+  else
+  {
+    splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,
+        splt_o_get_iopt(state, SPLT_INTERNAL_PROGRESS_RATE) + 1);
   }
 }
 
@@ -205,5 +150,72 @@ static void splt_c_put_message_to_client(splt_state *state, const char *message,
       //splt_e_error(SPLT_IERROR_INT,__func__, -500, NULL);
     }
   }
+}
+
+static int splt_c_append_to_m3u_file(splt_state *state, const char *filename)
+{
+  int err = SPLT_OK;
+
+  if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  {
+    return err;
+  }
+
+  char *new_m3u_file = splt_t_get_m3u_file_with_path(state, &err); 
+  if (err < 0 || !new_m3u_file) { return err; }
+
+  FILE *file_input = NULL;
+  if ((file_input = splt_io_fopen(new_m3u_file, "a+")) != NULL)
+  {
+    fprintf(file_input, "%s\n", splt_su_get_fname_without_path(filename));
+
+    if (fclose(file_input) != 0)
+    {
+      splt_e_set_strerror_msg_with_data(state, new_m3u_file);
+      err = SPLT_ERROR_CANNOT_CLOSE_FILE;
+    }
+  }
+  else
+  {
+    splt_e_set_strerror_msg_with_data(state, new_m3u_file);
+    err = SPLT_ERROR_CANNOT_OPEN_FILE;
+  }
+
+  free(new_m3u_file);
+  new_m3u_file = NULL;
+
+  return err;
+}
+
+static void splt_c_set_filename_shorted_from_current_point_name(splt_state *state)
+{
+  int err = SPLT_OK;
+  splt_progress *p_bar = state->split.p_bar;
+
+  char filename_shorted[512] = { '\0' };
+
+  int curr_split = splt_t_get_current_split(state);
+  char *point_name = splt_sp_get_splitpoint_name(state, curr_split, &err);
+  if (point_name != NULL)
+  {
+    const char *extension = splt_p_get_extension(state, &err);
+    if (err >= 0)
+    {
+      size_t max_size = p_bar->progress_text_max_char;
+      if (max_size >= 512) { max_size = 511; }
+
+      snprintf(filename_shorted, max_size, "%s%s", point_name, extension);
+
+      if (strlen(point_name) > max_size)
+      {
+        size_t size = strlen(filename_shorted);
+        filename_shorted[size-1] = '.';
+        filename_shorted[size-2] = '.';
+        filename_shorted[size-3] = '.';
+      }
+    }
+  }
+
+  snprintf(p_bar->filename_shorted, 512, "%s", filename_shorted);
 }
 

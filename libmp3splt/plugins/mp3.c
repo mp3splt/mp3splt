@@ -199,8 +199,7 @@ static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
     file_input = splt_io_fopen(filename, "rb");
     if (file_input == NULL)
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state,filename);
+      splt_e_set_strerror_msg_with_data(state, filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
@@ -224,8 +223,7 @@ static FILE *splt_mp3_open_file_write(splt_state *state, const char *output_fnam
   {
     if (!(file_output = splt_io_fopen(output_fname, "wb+")))
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state,output_fname);
+      splt_e_set_strerror_msg_with_data(state, output_fname);
       *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
     }
   }
@@ -247,8 +245,7 @@ static unsigned long splt_mp3_c_crc(splt_state *state,
 
   if (fseeko(in, begin, SEEK_SET) == -1)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,splt_t_get_filename_to_split(state));
+    splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
     *error = SPLT_ERROR_SEEKING_FILE;
     return 0;
   }
@@ -682,8 +679,7 @@ static id3_byte_t *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *fil
 
   if (! file)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,filename);
+    splt_e_set_strerror_msg_with_data(state, filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     goto end;
   }
@@ -1198,8 +1194,7 @@ int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output,
       }
       else
       {
-        splt_e_set_strerror_msg(state);
-        splt_e_set_error_data(state, output_fname);
+        splt_e_set_strerror_msg_with_data(state, output_fname);
         error = SPLT_ERROR_SEEKING_FILE;
       }
     }
@@ -1532,8 +1527,7 @@ static void splt_mp3_end(splt_state *state, int *error)
       {
         if (fclose(mp3state->file_input) != 0)
         {
-          splt_e_set_strerror_msg(state);
-          splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+          splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
           *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         }
       }
@@ -1665,8 +1659,7 @@ static int splt_mp3_scan_silence(splt_state *state, off_t begin,
   //we seek to the begin
   if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
     *error = SPLT_ERROR_SEEKING_FILE;
     return -1;
   }
@@ -1903,8 +1896,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
   }
   else
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,fname_to_split);
+    splt_e_set_strerror_msg_with_data(state, fname_to_split);
     return SPLT_ERROR_CANNOT_OPEN_FILE;
   }
 
@@ -2058,8 +2050,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
 
   if (fseeko(mp3state->file_input, position, SEEK_SET)==-1)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state, filename);
+    splt_e_set_strerror_msg_with_data(state, filename);
     goto function_end;
   }
 
@@ -2070,8 +2061,7 @@ function_end:
     {
       if (fclose(file_output) != 0)
       {
-        splt_e_set_strerror_msg(state);
-        splt_e_set_error_data(state, filename);
+        splt_e_set_strerror_msg_with_data(state, filename);
         return SPLT_ERROR_CANNOT_CLOSE_FILE;
       }
     }
@@ -2467,8 +2457,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
         }
         else
         {
-          splt_e_set_strerror_msg(state);
-          splt_e_set_error_data(state, output_fname);
+          splt_e_set_strerror_msg_with_data(state, output_fname);
           *error = SPLT_ERROR_SEEKING_FILE;
           goto bloc_end;
         }
@@ -2493,8 +2482,7 @@ bloc_end:
       {
         if (fclose(file_output) != 0)
         {
-          splt_e_set_strerror_msg(state);
-          splt_e_set_error_data(state, output_fname);
+          splt_e_set_strerror_msg_with_data(state, output_fname);
           *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         }
       }
@@ -2968,8 +2956,7 @@ static void splt_mp3_syncerror_search(splt_state *state, int *error)
   }
   else
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,filename);
+    splt_e_set_strerror_msg_with_data(state, filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return;
   }
@@ -3146,8 +3133,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               if (fseeko(mp3state->file_input, 
                     splt_mp3_getid3v1_offset(mp3state->file_input), SEEK_END)==-1)
               {
-                splt_e_set_strerror_msg(state);
-                splt_e_set_error_data(state, file_to_dewrap);
+                splt_e_set_strerror_msg_with_data(state, file_to_dewrap);
                 *error = SPLT_ERROR_SEEKING_FILE;
                 return;
               }
@@ -3176,8 +3162,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
               }
               if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
               {
-                splt_e_set_strerror_msg(state);
-                splt_e_set_error_data(state, file_to_dewrap);
+                splt_e_set_strerror_msg_with_data(state, file_to_dewrap);
                 *error = SPLT_ERROR_SEEKING_FILE;
                 return;
               }
@@ -3327,8 +3312,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                     if ((splt_io_mkdir(state, junk)) == -1)
                     {
                       *error = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-                      splt_e_set_strerror_msg(state);
-                      splt_e_set_error_data(state,junk);
+                      splt_e_set_strerror_msg_with_data(state, junk);
                       return;
                     }
                   }

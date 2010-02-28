@@ -39,8 +39,8 @@ AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE(mp3splt, 2.2.9)
 AM_CONFIG_HEADER([config.h])
 
-#DEBUG_FLAGS="-g"
-OPTIMISE_FLAGS="-O2"
+DEBUG_FLAGS="-g"
+#OPTIMISE_FLAGS="-O2"
 #WARNING_FLAGS="-Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
 WARNING_FLAGS="-Wall"
 CFLAGS="$DEBUG_FLAGS $WARNING_FLAGS $OPTIMISE_FLAGS $CFLAGS -I../libmp3splt/include -I../../libmp3splt/include"

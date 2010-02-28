@@ -76,8 +76,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   //we open the file
   if (!(file_input=splt_io_fopen(file, "r")))
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,file);
+    splt_e_set_strerror_msg_with_data(state, file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;
   }
@@ -551,8 +550,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
     }
     else
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state,file);
+      splt_e_set_strerror_msg_with_data(state, file);
       *error = SPLT_ERROR_SEEKING_FILE;
       goto function_end;
     }
@@ -560,8 +558,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 function_end:
     if (fclose(file_input) != 0)
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state, file);
+      splt_e_set_strerror_msg_with_data(state, file);
       *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
     }
     file_input = NULL;

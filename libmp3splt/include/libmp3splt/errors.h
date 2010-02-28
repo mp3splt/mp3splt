@@ -39,13 +39,14 @@ void splt_e_set_error_data(splt_state *state, const char *error_data);
 void splt_e_set_error_data_from_splitpoints(splt_state *state, long point1, long point2);
 void splt_e_set_error_data_from_splitpoint(splt_state *state, long splitpoint);
 
-void splt_e_set_strerr_msg(splt_state *state, const char *message);
 void splt_e_set_strerror_msg(splt_state *state);
 void splt_e_set_strherror_msg(splt_state *state);
 void splt_e_clean_strerror_msg(splt_state *state);
 
-void splt_e_error(int error_type, const char *function,
-    int arg_int, char *arg_char);
+void splt_e_set_strerr_msg_with_data(splt_state *state, const char *message, const char *data);
+void splt_e_set_strerror_msg_with_data(splt_state *state, const char *data);
+
+void splt_e_error(int error_type, const char *function, int arg_int, char *arg_char);
 
 char *splt_e_strerror(splt_state *state, splt_code error_code);
 

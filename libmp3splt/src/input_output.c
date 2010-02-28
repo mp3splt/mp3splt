@@ -264,8 +264,7 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
   }
 
   //TODO: review ?
-  splt_e_set_strerror_msg(state);
-  splt_e_set_error_data(state, fname);
+  splt_e_set_strerror_msg_with_data(state, fname);
 
   return SPLT_FALSE;
 }
@@ -298,8 +297,7 @@ off_t splt_io_get_file_length(splt_state *state, FILE *in, const char *filename,
   struct stat info;
   if (fstat(fileno(in), &info)==-1)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state, filename);
+    splt_e_set_strerror_msg_with_data(state, filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return -1;
   }
@@ -381,8 +379,7 @@ int splt_io_create_directories(splt_state *state, const char *dir)
         {
           if ((splt_io_mkdir(state, junk)) == -1)
           {
-            splt_e_set_strerror_msg(state);
-            splt_e_set_error_data(state,junk);
+            splt_e_set_strerror_msg_with_data(state, junk);
             result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
             goto end;
           }
@@ -407,8 +404,7 @@ int splt_io_create_directories(splt_state *state, const char *dir)
 
       if ((splt_io_mkdir(state, last_dir)) == -1)
       {
-        splt_e_set_strerror_msg(state);
-        splt_e_set_error_data(state,last_dir);
+        splt_e_set_strerror_msg_with_data(state, last_dir);
         result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
       }
     }
@@ -663,9 +659,64 @@ size_t splt_io_fwrite(splt_state *state, const void *ptr,
   }
 }
 
+char *splt_io_readline(FILE *stream, int *error)
+{
+  if (feof(stream))
+  {
+    return NULL;
+  }
+
+  int err = SPLT_OK;
+  int bufsize = 255;
+  char *buffer = malloc(sizeof(char) * bufsize);
+  buffer[0] = '\0';
+
+  char *line = NULL;
+  while (fgets(buffer, bufsize, stream) != NULL)
+  {
+    err = splt_su_append_str(&line, buffer, NULL);
+    if (err < 0) { *error = err; break; }
+
+    if (line != NULL && line[strlen(line)-1] == '\n')
+    {
+      free(buffer);
+      return line;
+    }
+
+    buffer[0] = '\0';  
+  }
+
+  free(buffer);
+  return line;
+}
+
 static int splt_u_fname_is_directory_parent(char *fname, int fname_size)
 {
   return ((fname_size == 1) && (strcmp(fname, ".") == 0)) ||
     ((fname_size == 2) && (strcmp(fname, "..") == 0));
 }
+
+/*int main()
+{
+  FILE *stream = fopen("input_output.c", "r");
+  fseek(stream, 0, SEEK_SET);
+
+  char *line = NULL;
+  int error = SPLT_OK;
+  while ((line = splt_io_readline(stream, &error)) != NULL)
+  {
+    if (error < 0)
+    {
+      fprintf(stdout, "ERROR _%d_\n", error);
+      fflush(stdout);
+    }
+
+    fprintf(stdout, "%s", line);
+    fflush(stdout);
+
+    free(line);
+  }
+
+  return EXIT_SUCCESS;
+}*/
 
