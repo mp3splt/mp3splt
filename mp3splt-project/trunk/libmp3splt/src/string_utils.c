@@ -172,11 +172,9 @@ void splt_su_free_replace(char **str, char *replacement)
 
 int splt_su_copy(const char *src, char **dest)
 {
-  int err = SPLT_OK;
-
   if (!dest)
   {
-    return err;
+    return SPLT_OK;
   }
 
   if (*dest)
@@ -188,26 +186,23 @@ int splt_su_copy(const char *src, char **dest)
   if (src == NULL)
   {
     *dest = NULL;
-  }
-  else
-  {
-    int length = strlen(src)+1;
-    if ((*dest = malloc(sizeof(char)*length)) == NULL)
-    {
-      err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-    else
-    {
-      snprintf(*dest, length+1,"%s", src);
-    }
+    return SPLT_OK;
   }
 
-  return err;
+  int length = strlen(src) + 1;
+  if ((*dest = malloc(sizeof(char) * length)) == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+
+  snprintf(*dest, length, "%s", src);
+
+  return SPLT_OK;
 }
 
 static int splt_su_append_one(char **str, const char *to_append, size_t to_append_size)
 {
-  if (str == NULL || to_append == NULL || to_append_size == 0)
+  if (str == NULL || to_append == NULL || to_append[0] == '\0' || to_append_size == 0)
   {
     return SPLT_OK;
   }

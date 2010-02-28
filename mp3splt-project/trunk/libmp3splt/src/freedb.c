@@ -381,7 +381,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
     host.sin_port=htons(dest.port);
 
     //initialize socket
-    if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
+    if((fd = socket(AF_INET, SOCK_STREAM, 0))==-1)
     {
       splt_e_set_strerror_msg(state);
       error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;

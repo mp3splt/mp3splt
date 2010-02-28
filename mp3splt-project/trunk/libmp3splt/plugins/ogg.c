@@ -144,8 +144,7 @@ FILE *splt_ogg_open_file_read(splt_state *state,
     file_input = splt_io_fopen(filename, "rb");
     if (file_input == NULL)
     {
-      splt_e_set_strerror_msg(state);
-      splt_e_set_error_data(state,filename);
+      splt_e_set_strerror_msg_with_data(state, filename);
       *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     }
   }
@@ -1439,8 +1438,7 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
     {
       if (!(oggstate->out = splt_io_fopen(output_fname, "wb")))
       {
-        splt_e_set_strerror_msg(state);
-        splt_e_set_error_data(state, output_fname);
+        splt_e_set_strerror_msg_with_data(state, output_fname);
         *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
         return sec_end_time;
       }
@@ -1488,8 +1486,7 @@ end:
     {
       if (fclose(oggstate->out) != 0)
       {
-        splt_e_set_strerror_msg(state);
-        splt_e_set_error_data(state, output_fname);
+        splt_e_set_strerror_msg_with_data(state, output_fname);
         *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
       }
     }
@@ -1812,8 +1809,7 @@ function_end:
   oggstate->prevW = saveW;
   if (fseeko(oggstate->in, position, SEEK_SET) == -1)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state, filename);
+    splt_e_set_strerror_msg_with_data(state, filename);
     *error = SPLT_ERROR_SEEKING_FILE;
     found = -1;
   }
@@ -1878,8 +1874,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 
   if ((file_input = splt_io_fopen(filename, "rb")) == NULL)
   {
-    splt_e_set_strerror_msg(state);
-    splt_e_set_error_data(state,filename);
+    splt_e_set_strerror_msg_with_data(state, filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
   }
   else
@@ -1896,8 +1891,7 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
       {
         if (fclose(file_input) != 0)
         {
-          splt_e_set_strerror_msg(state);
-          splt_e_set_error_data(state, filename);
+          splt_e_set_strerror_msg_with_data(state, filename);
           *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
         }
       }

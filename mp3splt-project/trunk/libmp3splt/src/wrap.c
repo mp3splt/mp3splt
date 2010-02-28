@@ -46,8 +46,6 @@ void splt_w_set_wrap_default_values(splt_state *state)
 int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
     const char *filename)
 {
-  int error = SPLT_OK;
-
   splt_wrap *wrap = state->wrap;
 
   if (index == 0)
@@ -71,7 +69,7 @@ int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
 
   wrap->wrap_files_num++;
 
-  return error;
+  return SPLT_OK;
 }
 
 void splt_w_wrap_free(splt_state *state)

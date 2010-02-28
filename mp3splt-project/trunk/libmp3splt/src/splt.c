@@ -807,8 +807,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           FILE *log_file = NULL;
           if (!(log_file = splt_io_fopen(fname, "w")))
           {
-            splt_e_set_strerror_msg(state);
-            splt_e_set_error_data(state, fname);
+            splt_e_set_strerror_msg_with_data(state, fname);
             *error = SPLT_ERROR_CANNOT_OPEN_FILE;
           }
           else

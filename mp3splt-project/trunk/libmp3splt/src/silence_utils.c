@@ -38,11 +38,12 @@ int splt_siu_ssplit_new(struct splt_ssplit **silence_list,
   struct splt_ssplit *temp = NULL;
   struct splt_ssplit *s_new = NULL;
 
-  if ((s_new = malloc(sizeof(struct splt_ssplit)))==NULL)
+  if ((s_new = malloc(sizeof(struct splt_ssplit))) == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return -1;
   }
+
   s_new->len = len;
   s_new->begin_position = begin_position;
   s_new->end_position = end_position;
@@ -52,39 +53,40 @@ int splt_siu_ssplit_new(struct splt_ssplit **silence_list,
   if (temp == NULL)
   {
     *silence_list = s_new; // No elements
+    return 0;
   }
-  else 
+
+  if (temp->len < len)
   {
-    if (temp->len < len)
+    s_new->next = temp;
+    *silence_list = s_new;
+  }
+  else
+  {
+    if (temp->next == NULL)
     {
-      s_new->next = temp;
-      *silence_list = s_new;
+      temp->next = s_new;
     }
-    else
+    else 
     {
-      if (temp->next == NULL)
-        temp->next = s_new;
-      else 
+      while (temp != NULL) 
       {
-        while (temp != NULL) 
+        if (temp->next != NULL) 
         {
-          if (temp->next != NULL) 
+          if (temp->next->len < len) 
           {
-            if (temp->next->len < len) 
-            {
-              // We build an ordered list by len to keep most probable silence points
-              s_new->next = temp->next;
-              temp->next = s_new;
-              break;
-            }
-          }
-          else 
-          {
+            //build an ordered list by len to keep most probable silence points
+            s_new->next = temp->next;
             temp->next = s_new;
             break;
           }
-          temp = temp->next;
         }
+        else 
+        {
+          temp->next = s_new;
+          break;
+        }
+        temp = temp->next;
       }
     }
   }
@@ -119,10 +121,11 @@ float splt_siu_silence_position(struct splt_ssplit *temp, float off)
 
 int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 {
+  //saved silence points lines are not very big
   char line[512] = { '\0' };
   int found = 0;
 
-  while (fgets(line, 512, log_file)!=NULL)
+  while ((fgets(line, 512, log_file) != NULL) && (found < INT_MAX))
   {
     int len = 0;
     float begin_position = 0, end_position = 0;
@@ -133,6 +136,7 @@ int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
       {
         break;
       }
+
       found++;
     }
   }

@@ -291,8 +291,7 @@ struct splt_ssplit {
 typedef struct splt_progres {
   //maximum number of characters for the filename(without the
   //extension) when displaying the progress
-  //warning, don't set this more than 512 !
-  //default is 40
+  //warning; default is 40
   int progress_text_max_char;
   //filename that we are currently splitting
   char filename_shorted[512];

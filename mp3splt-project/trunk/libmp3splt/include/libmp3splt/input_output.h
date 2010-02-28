@@ -59,6 +59,8 @@ size_t splt_io_fwrite(splt_state *state, const void *ptr,
 void splt_io_find_filenames(splt_state *state, const char *directory,
     char ***found_files, int *number_of_found_files, int *error);
 
+char *splt_io_readline(FILE *stream, int *error);
+
 #define MP3SPLT_IO_H
 
 #endif

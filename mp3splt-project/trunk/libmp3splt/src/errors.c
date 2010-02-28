@@ -41,6 +41,8 @@
 
 #include "splt.h"
 
+static void splt_e_set_strerr_msg(splt_state *state, const char *message);
+
 void splt_e_set_errors_default_values(splt_state *state)
 {
   state->err.error_data = NULL;
@@ -100,32 +102,6 @@ void splt_e_set_error_data_from_splitpoints(splt_state *state, long splitpoint1,
   splt_e_set_error_data(state, str_value);
 }
 
-void splt_e_set_strerr_msg(splt_state *state, const char *message)
-{
-  if (state->err.strerror_msg)
-  {
-    free(state->err.strerror_msg);
-    state->err.strerror_msg = NULL;
-  }
-
-  if (message)
-  {
-    state->err.strerror_msg = malloc(sizeof(char) * (strlen(message) + 1));
-    if (state->err.strerror_msg)
-    {
-      snprintf(state->err.strerror_msg,strlen(message)+1,"%s",message);
-    }
-    else
-    {
-      splt_e_error(SPLT_IERROR_CHAR,__func__, 0, _("not enough memory"));
-    }
-  }
-  else
-  {
-    state->err.strerror_msg = NULL;
-  }
-}
-
 void splt_e_clean_strerror_msg(splt_state *state)
 {
   splt_e_set_strerr_msg(state, NULL);
@@ -145,6 +121,18 @@ void splt_e_set_strherror_msg(splt_state *state)
 #else
   splt_e_set_strerr_msg(state, _("Network error"));
 #endif
+}
+
+void splt_e_set_strerr_msg_with_data(splt_state *state, const char *message, const char *data)
+{
+  splt_e_set_strerr_msg(state, message);
+  splt_e_set_error_data(state, data);
+}
+
+void splt_e_set_strerror_msg_with_data(splt_state *state, const char *data)
+{
+  splt_e_set_strerror_msg(state);
+  splt_e_set_error_data(state, data);
 }
 
 void splt_e_error(int error_type, const char *function,
@@ -232,10 +220,10 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
             state->err.error_data, state->err.strerror_msg);
         break;
       case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET:
-        snprintf(error_msg,max_error_size, _(" freedb error: cannot open socket"));
+        snprintf(error_msg, max_error_size, _(" freedb error: cannot open socket"));
         break;
       case SPLT_FREEDB_ERROR_CANNOT_CONNECT:
-        snprintf(error_msg,max_error_size, 
+        snprintf(error_msg, max_error_size, 
             _(" freedb error: cannot connect to host '%s' (%s)"),
             state->err.error_data, state->err.strerror_msg);
         break;
@@ -507,5 +495,31 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
   }
 
   return error_msg;
+}
+
+static void splt_e_set_strerr_msg(splt_state *state, const char *message)
+{
+  if (state->err.strerror_msg)
+  {
+    free(state->err.strerror_msg);
+    state->err.strerror_msg = NULL;
+  }
+
+  if (message)
+  {
+    state->err.strerror_msg = malloc(sizeof(char) * (strlen(message) + 1));
+    if (state->err.strerror_msg)
+    {
+      snprintf(state->err.strerror_msg,strlen(message)+1,"%s",message);
+    }
+    else
+    {
+      splt_e_error(SPLT_IERROR_CHAR,__func__, 0, _("not enough memory"));
+    }
+  }
+  else
+  {
+    state->err.strerror_msg = NULL;
+  }
 }
 
