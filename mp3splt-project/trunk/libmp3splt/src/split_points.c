@@ -52,7 +52,8 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
 {
   int error = SPLT_OK;
 
-  splt_d_print_debug(state,"Appending splitpoint...",split_value,name);
+  splt_d_print_debug(state,"Appending splitpoint _%s_ with value _%ld_\n",
+      name, split_value);
 
   if (split_value >= 0)
   {
@@ -100,7 +101,7 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
   }
   else
   {
-    splt_d_print_debug(state,"Negative splitpoint.. ",(double)split_value,NULL);
+    splt_d_print_debug(state,"Negative splitpoint _%ld_\n", split_value);
     error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
     return error;
   }
@@ -137,9 +138,7 @@ void splt_sp_free_splitpoints(splt_state *state)
 
 int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
 {
-  char temp[100] = { '\0' };
-  snprintf(temp,100,"%d",index);
-  splt_d_print_debug(state,"Splitpoint value is.. at ",split_value,temp);
+  splt_d_print_debug(state,"Splitpoint at _%d_ is %ld_\n", index, split_value);
 
   int error = SPLT_OK;
 
@@ -158,7 +157,7 @@ int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
 
 int splt_sp_set_splitpoint_name(splt_state *state, int index, const char *name)
 {
-  splt_d_print_debug(state,"Splitpoint name at ",index,name);
+  splt_d_print_debug(state,"Splitpoint name at _%d_ is _%s_\n", index, name);
 
   int error = SPLT_OK;
 

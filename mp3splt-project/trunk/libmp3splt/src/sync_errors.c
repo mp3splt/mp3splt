@@ -34,36 +34,41 @@
 
 void splt_se_set_sync_errors_default_values(splt_state *state)
 {
-  state->serrors->serrors_points = NULL;
-  state->serrors->serrors_points_num = 0;
+  splt_syncerrors *serrors = state->serrors;
+
   state->syncerrors = 0;
+  serrors->serrors_points = NULL;
+  serrors->serrors_points_num = 0;
 }
 
 int splt_se_serrors_append_point(splt_state *state, off_t point)
 {
   int error = SPLT_OK;
-  int serrors_num = state->serrors->serrors_points_num;
 
-  state->serrors->serrors_points_num++;
+  splt_syncerrors *serrors = state->serrors;
+
+  int serrors_num = serrors->serrors_points_num;
+
+  serrors->serrors_points_num++;
 
   if (point >= 0)
   {
-    if (state->serrors->serrors_points == NULL)
+    if (serrors->serrors_points == NULL)
     {
-      if((state->serrors->serrors_points = 
-            malloc(sizeof(off_t) * (serrors_num + 2))) == NULL)
+      if((serrors->serrors_points = 
+            malloc(sizeof(off_t) * (serrors_num + 1))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       }
       else
       {
-        state->serrors->serrors_points[0] = 0;
+        serrors->serrors_points[0] = 0;
       }
     }
     else
     {
-      if((state->serrors->serrors_points = realloc(state->serrors->serrors_points,
-              sizeof(off_t) * (serrors_num + 2))) == NULL)
+      if((serrors->serrors_points = realloc(serrors->serrors_points,
+              sizeof(off_t) * (serrors_num + 1))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       }
@@ -71,7 +76,7 @@ int splt_se_serrors_append_point(splt_state *state, off_t point)
 
     if (error == SPLT_OK)
     {
-      state->serrors->serrors_points[serrors_num] = point;
+      serrors->serrors_points[serrors_num] = point;
 
       if (point == -1)
       {
@@ -89,11 +94,13 @@ int splt_se_serrors_append_point(splt_state *state, off_t point)
 
 void splt_se_serrors_free(splt_state *state)
 {
-  if (state->serrors->serrors_points)
+  splt_syncerrors *serrors = state->serrors;
+
+  if (serrors->serrors_points)
   {
-    free(state->serrors->serrors_points);
-    state->serrors->serrors_points = NULL;
-    state->serrors->serrors_points_num = 0;
+    free(serrors->serrors_points);
+    serrors->serrors_points = NULL;
+    serrors->serrors_points_num = 0;
   }
 }
 

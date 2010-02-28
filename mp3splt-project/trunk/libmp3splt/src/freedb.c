@@ -165,7 +165,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
 #ifdef __WIN32__					
             full_artist_album[max_chars-1] = '\0';
 #endif
-            splt_d_print_debug(state,"Setting the full artist album name ",0,full_artist_album);
+            splt_d_print_debug(state,"Setting the full artist album name _%s_\n", full_artist_album);
 
             //i!=-1 means that it's not a revision
             int i=0;

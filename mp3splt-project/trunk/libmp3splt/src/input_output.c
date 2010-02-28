@@ -346,7 +346,7 @@ int splt_io_create_directories(splt_state *state, const char *dir)
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
   
-  splt_d_print_debug(state,"Creating directory ...",0,dir);
+  splt_d_print_debug(state,"Creating directory _%s_\n", dir);
   
   ptr = dir;
 #ifdef __WIN32__
@@ -371,7 +371,7 @@ int splt_io_create_directories(splt_state *state, const char *dir)
     {
       if (! splt_io_check_if_directory(junk))
       {
-        splt_d_print_debug(state,"directory ...",0, junk);
+        splt_d_print_debug(state,"directory _%s_\n", junk);
 
         if (result < 0) { goto end; }
 
@@ -403,7 +403,7 @@ int splt_io_create_directories(splt_state *state, const char *dir)
 
     if (! splt_io_check_if_directory(last_dir))
     {
-      splt_d_print_debug(state,"final directory ...",0, last_dir);
+      splt_d_print_debug(state,"final directory _%s_\n", last_dir);
 
       if ((splt_io_mkdir(state, last_dir)) == -1)
       {

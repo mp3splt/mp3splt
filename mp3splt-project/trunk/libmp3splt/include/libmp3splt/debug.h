@@ -32,8 +32,8 @@
 
 #ifndef SPLT_DEBUG_H
 
-void splt_d_print_debug(splt_state *state, const char *message,
-    double optional, const char *optional2);
+void splt_d_print_debug(splt_state *state, const char *message, ...);
+void splt_d_send_memory_error_message(splt_state *state);
 
 #define SPLT_DEBUG_H
 

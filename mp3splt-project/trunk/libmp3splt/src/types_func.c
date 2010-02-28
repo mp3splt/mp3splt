@@ -39,8 +39,6 @@ static void splt_t_free_state_struct(splt_state *state);
 static void splt_t_set_current_split_file_number(splt_state *state, int index);
 static void splt_t_set_current_split_file_number_next(splt_state *state);
 
-extern int global_debug;
-
 splt_state *splt_t_new_state(splt_state *state, int *error)
 {
   if ((state =malloc(sizeof(splt_state))) ==NULL)
@@ -116,7 +114,7 @@ void splt_t_free_state(splt_state *state)
 
 void splt_t_set_total_time(splt_state *state, long value)
 {
-  splt_d_print_debug(state,"We set total time to",value,NULL);
+  splt_d_print_debug(state,"Setting total time to _%ld_\n", value);
 
   if (value >= 0)
   {
@@ -181,7 +179,7 @@ int splt_t_set_path_of_split(splt_state *state, const char *path)
     state->path_of_split = NULL;
   }
 
-  splt_d_print_debug(state,"Setting path of split...",0,path);
+  splt_d_print_debug(state,"Setting path of split to _%s_\n", path);
 
   if (path != NULL)
   {
@@ -217,7 +215,7 @@ int splt_t_set_m3u_filename(splt_state *state, const char *filename)
     state->m3u_filename = NULL;
   }
 
-  splt_d_print_debug(state,"Setting m3u filename...",0,filename);
+  splt_d_print_debug(state,"Setting m3u filename to _%s_\n", filename);
 
   if (filename != NULL)
   {
@@ -259,7 +257,7 @@ int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
     state->silence_log_fname = NULL;
   }
 
-  splt_d_print_debug(state,"Setting silence log fname ...",0,filename);
+  splt_d_print_debug(state,"Setting silence log fname to _%s_\n", filename);
 
   if (filename != NULL)
   {
@@ -295,7 +293,7 @@ int splt_t_set_filename_to_split(splt_state *state, const char *filename)
     state->fname_to_split = NULL;
   }
 
-  splt_d_print_debug(state,"Setting filename to split...",0,filename);
+  splt_d_print_debug(state,"Setting filename to split to _%s_\n", filename);
 
   if (filename != NULL)
   {

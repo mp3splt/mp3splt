@@ -165,7 +165,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
       int first_splitpoint_type = splt_sp_get_splitpoint_type(state, i, &get_error);
       if (first_splitpoint_type == SPLT_SKIPPOINT)
       {
-        splt_d_print_debug(state, "SKIP splitpoint", i, NULL);
+        splt_d_print_debug(state, "SKIP splitpoint at _%d_\n", i);
         i++;
         continue;
       }
@@ -577,7 +577,7 @@ void splt_s_equal_length_split(splt_state *state, int *error)
 //sets the silence splitpoints in state->split.splitpoints
 int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 {
-  splt_d_print_debug(state,"We search and set silence splitpoints...",0,NULL);
+  splt_d_print_debug(state,"Search and set silence splitpoints...\n");
 
   //found is the number of silence splits found
   int found = 0;
@@ -650,17 +650,16 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     snprintf(auto_user_str,128,_("Auto"));
   }
 
-  char message[1024] = { '\0' };
   if (! splt_o_get_int_option(state,SPLT_OPT_QUIET_MODE))
   {
-    snprintf(message, 1024, _(" Silence split type: %s mode (Th: %.1f dB,"
+    splt_c_put_info_message_to_client(state, 
+        _(" Silence split type: %s mode (Th: %.1f dB,"
           " Off: %.2f, Min: %.2f, Remove: %s)\n"),
         auto_user_str,
         splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
         remove_str);
-    splt_c_put_info_message_to_client(state, message);
   }
  
   if (we_read_silence_from_logs)
@@ -669,9 +668,11 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     {
       state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
     }
-    snprintf(message, 1024, _(" Found silence log file '%s' ! Reading"
+
+    splt_c_put_info_message_to_client(state, 
+        _(" Found silence log file '%s' ! Reading"
           " silence points from file to save time ;)"), log_fname);
-    splt_c_put_info_message_to_client(state, message);
+
     found = splt_siu_parse_ssplit_file(state, log_file, error);
     if (log_file)
     {
@@ -692,10 +693,9 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   //if no error
   if (*error >= 0)
   {
-    //put client infos
-    char client_infos[512] = { '\0' };
-    snprintf(client_infos,512,_("\n Total silence points found: %d."),found);
-    splt_c_put_info_message_to_client(state,client_infos);
+    splt_c_put_info_message_to_client(state,
+        _("\n Total silence points found: %d."),found);
+
     if (found > 0)
     {
       int selected_tracks = found + 1;
@@ -704,13 +704,13 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       {
         selected_tracks = param_number_of_tracks;
       }
-      snprintf(client_infos,512,_(" (Selected %d tracks)\n"), selected_tracks);
-      splt_c_put_info_message_to_client(state, client_infos);
+
+      splt_c_put_info_message_to_client(state, 
+          _(" (Selected %d tracks)\n"), selected_tracks);
     }
     else
     {
-      snprintf(client_infos, 512, "\n");
-      splt_c_put_info_message_to_client(state,client_infos);
+      splt_c_put_info_message_to_client(state, "\n");
     }
 
     //we set the number of tracks
@@ -776,7 +776,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           splitpoints_appended = found;
         }
 
-        splt_d_print_debug(state,"We order splitpoints...",0,NULL);
+        splt_d_print_debug(state,"Order splitpoints...\n");
         splt_sp_order_splitpoints(state, splitpoints_appended);
 
         //last splitpoint, end of file
@@ -797,54 +797,42 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       //if we write the silence points log file
       if (splt_o_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
       {
-        char *message = malloc(sizeof(char) * 1024);
-        if (message)
+        splt_c_put_info_message_to_client(state, 
+            _(" Writing silence log file '%s' ...\n"),
+            splt_t_get_silence_log_fname(state));
+
+        char *fname = splt_t_get_silence_log_fname(state);
+        if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          snprintf(message, 1023, _(" Writing silence log file '%s' ...\n"),
-              splt_t_get_silence_log_fname(state));
-          splt_c_put_info_message_to_client(state, message);
-          if (message)
+          FILE *log_file = NULL;
+          if (!(log_file = splt_io_fopen(fname, "w")))
           {
-            free(message);
-            message = NULL;
+            splt_e_set_strerror_msg(state);
+            splt_e_set_error_data(state, fname);
+            *error = SPLT_ERROR_CANNOT_OPEN_FILE;
           }
-          char *fname = splt_t_get_silence_log_fname(state);
-          if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+          else
           {
-            FILE *log_file = NULL;
-            if (!(log_file = splt_io_fopen(fname, "w")))
+            //do the effective write
+            struct splt_ssplit *temp = state->silence_list;
+            fprintf(log_file, "%s\n", splt_t_get_filename_to_split(state));
+            fprintf(log_file, "%.2f\t%.2f\n", 
+                splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+                splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
+            while (temp != NULL)
             {
-              splt_e_set_strerror_msg(state);
-              splt_e_set_error_data(state, fname);
-              *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+              fprintf(log_file, "%f\t%f\t%ld\n",
+                  temp->begin_position, temp->end_position, temp->len);
+              temp = temp->next;
             }
-            else
+            fflush(log_file);
+            if (log_file)
             {
-              //do the effective write
-              struct splt_ssplit *temp = state->silence_list;
-              fprintf(log_file, "%s\n", splt_t_get_filename_to_split(state));
-              fprintf(log_file, "%.2f\t%.2f\n", 
-                  splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
-                  splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
-              while (temp != NULL)
-              {
-                fprintf(log_file, "%f\t%f\t%ld\n",
-                    temp->begin_position, temp->end_position, temp->len);
-                temp = temp->next;
-              }
-              fflush(log_file);
-              if (log_file)
-              {
-                fclose(log_file);
-                log_file = NULL;
-              }
-              temp = NULL;
+              fclose(log_file);
+              log_file = NULL;
             }
+            temp = NULL;
           }
-        }
-        else
-        {
-          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         }
       }
     }
@@ -860,7 +848,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 //possible error in error
 void splt_s_silence_split(splt_state *state, int *error)
 {
-  splt_d_print_debug(state,"Starting silence split ...",0,NULL);
+  splt_d_print_debug(state,"Starting silence split ...\n");
 
   //print some useful infos to the client
   splt_c_put_info_message_to_client(state, _(" info: starting silence mode split\n"));
@@ -874,8 +862,7 @@ void splt_s_silence_split(splt_state *state, int *error)
     //if we have found splitpoints, write the silence tracks
     if (found > 1)
     {
-      //we put the number of tracks found
-      splt_d_print_debug(state,"Writing silence tracks...",0,NULL);
+      splt_d_print_debug(state,"Writing silence tracks...\n");
 
       //set the default silence output
       int output_filenames = splt_o_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
@@ -919,7 +906,7 @@ void splt_s_wrap_split(splt_state *state, int *error)
   char *new_filename_path = splt_t_get_new_filename_path(state);
   char *filename = splt_t_get_filename_to_split(state);
 
-  splt_d_print_debug(state,"We begin wrap split for the file ...",0,filename);
+  splt_d_print_debug(state,"Begin wrap split for the file _%s_\n", filename);
 
   splt_c_put_info_message_to_client(state, _(" info: starting wrap mode split\n"));
 

@@ -84,33 +84,21 @@ static int splt_cue_set_value(splt_state *state, char *in,
 			strncpy(out, ptr_b, (strlen(ptr_b)+1));
 			int tags_err = SPLT_OK;
 
-			//put Artist + Album info to client
-			char *client_infos = malloc(sizeof(char) * (strlen(out)+30));
-			if (client_infos == NULL)
-			{
-				error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-			}
-			else
-			{
-				if (tag_field == SPLT_TAGS_ARTIST)
-				{
-					snprintf(client_infos,strlen(out)+30, _("\n  Artist: %s\n"), out);
-					splt_c_put_info_message_to_client(state, client_infos);
-				}
-				else if (tag_field == SPLT_TAGS_ALBUM)
-				{
-					snprintf(client_infos,strlen(out)+30, _("  Album: %s\n"), out);
-					splt_c_put_info_message_to_client(state, client_infos);
-				}
-				free(client_infos);
-				client_infos = NULL;
+      if (tag_field == SPLT_TAGS_ARTIST)
+      {
+        splt_c_put_info_message_to_client(state, _("\n  Artist: %s\n"), out);
+      }
+      else if (tag_field == SPLT_TAGS_ALBUM)
+      {
+        splt_c_put_info_message_to_client(state, _("  Album: %s\n"), out);
+      }
 
-				tags_err = splt_tu_set_tags_field(state, index, tag_field, out);
-				if (tags_err != SPLT_OK)
-				{
-					error = tags_err;
-				}
-			}
+      tags_err = splt_tu_set_tags_field(state, index, tag_field, out);
+      if (tags_err != SPLT_OK)
+      {
+        error = tags_err;
+      }
+
 			if (out)
 			{
 				free(out);
@@ -138,18 +126,8 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   //default no error
   *error = SPLT_CUE_OK;
   
-  char *client_infos = malloc(sizeof(char) * (strlen(file)+200));
-  //put information to client
-  if (client_infos == NULL)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return 0;
-  }
-  snprintf(client_infos, strlen(file)+200,
+  splt_c_put_info_message_to_client(state, 
       _(" reading informations from CUE file %s ...\n"),file);
-  splt_c_put_info_message_to_client(state, client_infos);
-  free(client_infos);
-  client_infos = NULL;
 
   int append_error = SPLT_OK;
   //our file
@@ -395,12 +373,8 @@ function_end:
     file_input = NULL;
   }
   
-  //put number of tracks
-  char tracks_info[64] = { '\0' };
-  snprintf(tracks_info, 64, _("  Tracks: %d\n\n"),tracks);
-  splt_c_put_info_message_to_client(state, tracks_info);
+  splt_c_put_info_message_to_client(state, _("  Tracks: %d\n\n"),tracks);
 
-  //we return the number of tracks found
   return tracks;
 }
 
@@ -466,7 +440,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
   long total_time = splt_t_get_total_time(state);
   FILE *file_output = NULL;
 
-  splt_d_print_debug(state, "cue output file without output path = ",0, out_file);
+  splt_d_print_debug(state, "Cue output file without output path = _%s_\n", out_file);
 
   char *dup_out_file = strdup(out_file);
   if (!dup_out_file) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto end; };
@@ -475,7 +449,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
   dup_out_file = NULL;
   if (*error < 0) { goto end; }
 
-  splt_d_print_debug(state, "cue output file with output path = ",0, cue_out_file);
+  splt_d_print_debug(state, "Cue output file with output path = _%s_\n", cue_out_file);
 
   //we write the result to the file
   if (!(file_output = splt_io_fopen(cue_out_file, "w")))
@@ -540,9 +514,8 @@ end:
     file_output = NULL;
   }
 
-  char infos[2048] = { '\0' };
-  snprintf(infos,2048,_(" CUE file '%s' created.\n"), cue_out_file);
-  splt_c_put_info_message_to_client(state, infos);
+  splt_c_put_info_message_to_client(state, 
+      _(" CUE file '%s' created.\n"), cue_out_file);
 
   if (cue_out_file)
   {

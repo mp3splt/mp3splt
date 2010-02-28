@@ -83,17 +83,8 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
 
   *error = SPLT_AUDACITY_OK;
 
-  char *client_infos = malloc(sizeof(char) * (strlen(file)+200));
-  if (client_infos == NULL)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return 0;
-  }
-  snprintf(client_infos, strlen(file) + 200,
-      _(" reading informations from audacity labels file '%s' ...\n"),file);
-  splt_c_put_info_message_to_client(state, client_infos);
-  free(client_infos);
-  client_infos = NULL;
+  splt_c_put_info_message_to_client(state, 
+      _(" reading informations from audacity labels file '%s' ...\n"), file);
 
 	FILE *file_input = NULL;
 	char line[2048] = { '\0' };
