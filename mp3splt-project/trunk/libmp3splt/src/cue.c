@@ -132,8 +132,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   int append_error = SPLT_OK;
   //our file
   FILE *file_input = NULL;
-  //the line we read from the file
-  char line[2048] = { '\0' };
+  char *line = NULL;
   char *ptr = NULL, *dot = NULL;
   ptr = dot = NULL;
   //tracks = number of tracks found
@@ -171,9 +170,13 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
       //it will point to ' abcd'
       char *line_content = NULL;
 
-      //we read the file line by line
-      while (fgets(line, 2048, file_input)!=NULL)
+      while ((line = splt_io_readline(file_input, error)) != NULL)
       {
+        if (*error < 0)
+        {
+          goto function_end;
+        }
+
         //if windows file with '\r', then pretend is a unix file
         if (strlen(line) > 1)
         {
@@ -333,8 +336,11 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
           default:
             break;
         }
+
+        free(line);
+        line = NULL;
       }
-      //we append the last splitpoint
+
       append_error = splt_sp_append_splitpoint(state, LONG_MAX,
           _("description here"), SPLT_SPLITPOINT);
     }
@@ -362,6 +368,11 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     splt_tag_put_filenames_from_tags(state,tracks,error);
 
 function_end:
+    if (line)
+    {
+      free(line);
+      line = NULL;
+    }
     if (fclose(file_input) != 0)
     {
       splt_e_set_strerror_msg_with_data(state, file);

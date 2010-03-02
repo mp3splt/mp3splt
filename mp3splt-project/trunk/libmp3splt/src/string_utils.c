@@ -242,26 +242,54 @@ void splt_su_clean_string(splt_state *state, char *s, int *error)
 
 char *splt_su_cut_spaces_from_begin(char *c)
 {
-  if (*c == ' ')
+  while (isspace(*c))
   {
-    while (*c == ' ')
-    {
-      c++;
-    }
+    c++;
   }
 
   return c;
 }
 
-char *splt_su_cut_spaces_from_the_end(char *c)
+char *splt_su_cut_spaces_from_end(char *c)
 {
-  while (*c == ' ')
+  char *end = strchr(c, '\0');
+  if (!end) { return c; }
+
+  end--;
+
+  while (isspace(*end))
   {
-    *c = '\0';
-    c--;
+    *end = '\0';
+    end--;
   }
 
-  return c;
+  return end;
+}
+
+char *splt_su_trim_spaces(char *c)
+{
+  splt_su_cut_spaces_from_end(c);
+  return splt_su_cut_spaces_from_begin(c);
+}
+
+int splt_su_is_empty_line(char *line)
+{
+  if (!line)
+  {
+    return SPLT_TRUE;
+  }
+
+  size_t size = strlen(line);
+  int i = 0;
+  for (i = 0;i < size;i++)
+  {
+    if (!isspace(line[i]))
+    {
+      return SPLT_FALSE;
+    }
+  }
+
+  return SPLT_TRUE;
 }
 
 const char *splt_su_get_fname_without_path(const char *filename)

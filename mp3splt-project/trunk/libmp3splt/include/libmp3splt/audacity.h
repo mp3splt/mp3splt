@@ -33,6 +33,12 @@
 
 int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *error);
 
+typedef struct {
+  long begin;
+  long end;
+  char *name;
+} splt_audacity;
+
 #define _MP3SPLT_AUDACITY_H
 #endif
 

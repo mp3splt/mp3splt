@@ -121,12 +121,16 @@ float splt_siu_silence_position(struct splt_ssplit *temp, float off)
 
 int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 {
-  //saved silence points lines are not very big
-  char line[512] = { '\0' };
+  char *line = NULL; 
   int found = 0;
 
-  while ((fgets(line, 512, log_file) != NULL) && (found < INT_MAX))
+  while ((line = splt_io_readline(log_file, error)) != NULL)
   {
+    if (*error < 0)
+    {
+      break;
+    }
+
     int len = 0;
     float begin_position = 0, end_position = 0;
     if (sscanf(line, "%f\t%f\t%d", &begin_position, &end_position, &len) == 3)
@@ -139,6 +143,18 @@ int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 
       found++;
     }
+
+    if (line)
+    {
+      free(line);
+      line = NULL;
+    }
+  }
+
+  if (line)
+  {
+    free(line);
+    line = NULL;
   }
 
   return found;
