@@ -42,8 +42,10 @@ void splt_su_free_replace(char **str, char *replacement);
 int splt_su_copy(const char *src, char **dest);
 
 void splt_su_clean_string(splt_state *state, char *s, int *error);
-char *splt_su_cut_spaces_from_the_end(char *c);
+char *splt_su_cut_spaces_from_end(char *c);
 char *splt_su_cut_spaces_from_begin(char *c);
+char *splt_su_trim_spaces(char *c);
+int splt_su_is_empty_line(char *line);
 
 const char *splt_su_get_fname_without_path(const char *filename);
 char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error);

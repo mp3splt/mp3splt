@@ -52,8 +52,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 
   //our file
   FILE *file_input = NULL;
-  //the line we read
-  char line[2048] = { '\0' };
+  char *line = NULL;
   char prev[10] = { '\0' };
   //performer_title_split is where we split if we have
   //performer / title on cddb
@@ -73,7 +72,6 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   char *album = NULL;
   char *perfor = NULL;
 
-  //we open the file
   if (!(file_input=splt_io_fopen(file, "r")))
   {
     splt_e_set_strerror_msg_with_data(state, file);
@@ -81,27 +79,39 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
     return tracks;
   }
   else
-  //if we can open the file
   {
-    //we go at the beggining of the file
+    //go at the beggining of the file
     if (fseek(file_input, 0, SEEK_SET) == 0)
     {
-      //we search for the string "Track frame offset"
+      //search for "Track frame offset"
       do {
-        if ((fgets(line, 2048, file_input))==NULL)
+        line = splt_io_readline(file_input, error);
+        if (*error < 0 || line == NULL)
         {
           splt_e_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
           goto function_end;
         }
         number = strstr(line, "Track frame offset");
+
+        if (line)
+        {
+          free(line);
+          line = NULL;
+        }
       } while (number == NULL);
 
       memset(prev, 0, 10);
 
-      //we read the track offsets
+      //read the track offsets
       do {
-        if ((fgets(line, 2048, file_input))==NULL)
+        if (line)
+        {
+          free(line);
+          line = NULL;
+        }
+        line = splt_io_readline(file_input, error);
+        if (*error < 0 || line == NULL)
         {
           splt_e_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
@@ -123,14 +133,13 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           break;
         }
         else
-        //we put the offsets in the splitpoint table
         {
           double temp = 0;
           temp = atof(number);
 
-          //we append the splitpoint
+          //append the splitpoint
           //in cddb_offset*100
-          //we convert them lower to seconds
+          //convert them lower to seconds
           append_error =
             splt_sp_append_splitpoint(state, temp * 100, NULL, SPLT_SPLITPOINT);
   
@@ -141,10 +150,10 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           }
           else
           {
-            //we count the tracks
             tracks++;
           }
         }
+
       } while (1);
 
       //we check parse output format
@@ -159,12 +168,20 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
       if (strstr(line,"Disc length") != NULL)
       {
         number = strstr(line, "Disc length");
+        free(line);
+        line = NULL;
       }
       else
       {
-        //we find out "Disc length"
+        //find out "Disc length"
         do {
-          if ((fgets(line, 1024, file_input))==NULL)
+          if (line)
+          {
+            free(line);
+            line = NULL;
+          }
+          line = splt_io_readline(file_input, error);
+          if (*error < 0 || line == NULL)
           {
             splt_e_set_error_data(state,file);
             *error = SPLT_INVALID_CDDB_FILE;
@@ -247,7 +264,13 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         title = SPLT_FALSE;
         char temp[10];
         memset(temp, 0, 10);
-        if ((fgets(line, 2048, file_input))==NULL)
+        if (line)
+        {
+          free(line);
+          line = NULL;
+        }
+        line = splt_io_readline(file_input, error);
+        if (*error < 0 || line == NULL)
         {
           splt_e_set_error_data(state,file);
           *error = SPLT_INVALID_CDDB_FILE;
@@ -291,6 +314,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         {
           if (strstr(line, "DTITLE")==NULL)
           {
+            free(line);
+            line = NULL;
             continue;
           }
         }
@@ -299,6 +324,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
           //we search for the title of the tracks
           if (strstr(line, "TTITLE")==NULL)
           {
+            free(line);
+            line = NULL;
             continue;
           }
           else
@@ -334,7 +361,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             {
               c2 = strchr(number+1,'/');
               *c2 = '\0';
-              c2 = splt_su_cut_spaces_from_the_end(c2-1);
+              c2 = splt_su_cut_spaces_from_end(c2-1);
 
               //we put performer
               performer = SPLT_TRUE;
@@ -487,6 +514,8 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         }
         strncpy(prev, temp, 10);
 
+        free(line);
+        line = NULL;
       } while (j<=tracks);
 
       //we search for
@@ -499,8 +528,13 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         goto function_end;
       }
 
-      while ((fgets(line, 2048, file_input))!=NULL)
+      while ((line = splt_io_readline(file_input, error))!=NULL)
       {
+        if (*error < 0 || line == NULL)
+        {
+          goto function_end;
+        }
+
         line[strlen(line)-1] = '\0';
         if (strlen(line)>0)
         {
@@ -511,12 +545,16 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
         }
         if (strstr(line, "EXTD")==NULL) 
         {
+          free(line);
+          line = NULL;
           continue;
         }
         else 
         {
           if ((number=strchr(line, '='))==NULL) 
           {
+            free(line);
+            line = NULL;
             break;
           }
           else 
@@ -544,6 +582,12 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             break;
           }
         }
+
+        if (line)
+        {
+          free(line);
+          line = NULL;
+        }
       }
 
       splt_tag_put_filenames_from_tags(state,tracks,error);
@@ -556,6 +600,11 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
     }
 
 function_end:
+    if (line)
+    {
+      free(line);
+      line = NULL;
+    }
     if (fclose(file_input) != 0)
     {
       splt_e_set_strerror_msg_with_data(state, file);

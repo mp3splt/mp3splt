@@ -687,6 +687,13 @@ char *splt_io_readline(FILE *stream, int *error)
   }
 
   free(buffer);
+
+  if (*error < 0)
+  {
+    free(line);
+    return NULL;
+  }
+
   return line;
 }
 

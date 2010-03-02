@@ -579,28 +579,36 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 {
   splt_d_print_debug(state,"Search and set silence splitpoints...\n");
 
-  //found is the number of silence splits found
   int found = 0;
   int splitpoints_appended = 0;
   struct splt_ssplit *temp = NULL;
   int append_error = SPLT_OK;
-  //we get some options
+
   float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
   int number_tracks = splt_o_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS);
 
-  //if we have a log file, read silence from logs
   int we_read_silence_from_logs = SPLT_FALSE;
+
   FILE *log_file = NULL;
   char *log_fname = splt_t_get_silence_log_fname(state);
   if (splt_o_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
   {
     if ((log_file = splt_io_fopen(log_fname, "r")))
     {
-      char log_silence_fname[1024] = { '\0' };
-      fgets(log_silence_fname, 1024, log_file);
-      if (log_silence_fname[0] != '\0')
+      char *log_silence_fname = splt_io_readline(log_file, error);
+      if (*error < 0)
       {
-        //remove '\n' at the end
+        if (log_silence_fname)
+        {
+          free(log_silence_fname);
+          log_silence_fname = NULL;
+        }
+        fclose(log_file);
+        return found;
+      }
+
+      if (log_silence_fname && log_silence_fname[0] != '\0')
+      {
         log_silence_fname[strlen(log_silence_fname)-1] = '\0';
         if (strcmp(log_silence_fname, splt_t_get_filename_to_split(state)) == 0)
         {
@@ -620,7 +628,11 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
           }
         }
+
+        free(log_silence_fname);
+        log_silence_fname = NULL;
       }
+
       if (!we_read_silence_from_logs && log_file)
       {
         fclose(log_file);
@@ -629,8 +641,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     }
   }
 
-  //put silence split infos
- 
   char remove_str[128] = { '\0' };
   if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
   {
@@ -640,6 +650,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     snprintf(remove_str,128,_("NO"));
   }
+
   char auto_user_str[128] = { '\0' };
   if (splt_o_get_int_option(state, SPLT_OPT_PARAM_NUMBER_TRACKS) > 0)
   {
@@ -836,6 +847,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       }
     }
   }
+
+
   splt_siu_ssplit_free(&state->silence_list);
 
   splt_t_set_splitnumber(state, splitpoints_appended + 1);
