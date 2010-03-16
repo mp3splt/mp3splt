@@ -106,6 +106,7 @@ void splt_t_free_state(splt_state *state)
     if (state->split.p_bar)
     {
       free(state->split.p_bar);
+      state->split.p_bar = NULL;
     }
     splt_e_free_errors(state);
     splt_t_free_state_struct(state);
@@ -144,24 +145,11 @@ double splt_t_get_total_time_as_double_secs(splt_state *state)
 void splt_t_set_new_filename_path(splt_state *state, 
     const char *new_filename_path, int *error)
 {
-  if (state->iopts.new_filename_path)
-  {
-    free(state->iopts.new_filename_path);
-    state->iopts.new_filename_path = NULL;
-  }
+  int err = SPLT_OK;
 
-  if (new_filename_path == NULL)
-  {
-    state->iopts.new_filename_path = NULL;
-  }
-  else
-  {
-    state->iopts.new_filename_path = strdup(new_filename_path);
-    if (state->iopts.new_filename_path == NULL && error != NULL)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
+  splt_internal *iopts = &state->iopts;
+  err = splt_su_copy(new_filename_path, &iopts->new_filename_path);
+  if (err < 0) { *error = err; }
 }
 
 char *splt_t_get_new_filename_path(splt_state *state)
@@ -171,33 +159,8 @@ char *splt_t_get_new_filename_path(splt_state *state)
 
 int splt_t_set_path_of_split(splt_state *state, const char *path)
 {
-  int error = SPLT_OK;
-
-  if (splt_t_get_path_of_split(state))
-  {
-    free(state->path_of_split);
-    state->path_of_split = NULL;
-  }
-
   splt_d_print_debug(state,"Setting path of split to _%s_\n", path);
-
-  if (path != NULL)
-  {
-    if((state->path_of_split = malloc(sizeof(char)*(strlen(path)+1))) != NULL)
-    {
-      snprintf(state->path_of_split,(strlen(path)+1), "%s", path);
-    }
-    else
-    {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
-  else
-  {
-    state->path_of_split = NULL;
-  }
-
-  return error;
+  return splt_su_copy(path, &state->path_of_split);
 }
 
 char *splt_t_get_path_of_split(splt_state *state)
@@ -207,33 +170,8 @@ char *splt_t_get_path_of_split(splt_state *state)
 
 int splt_t_set_m3u_filename(splt_state *state, const char *filename)
 {
-  int error = SPLT_OK;
-
-  if (splt_t_get_m3u_filename(state))
-  {
-    free(state->m3u_filename);
-    state->m3u_filename = NULL;
-  }
-
   splt_d_print_debug(state,"Setting m3u filename to _%s_\n", filename);
-
-  if (filename != NULL)
-  {
-    if((state->m3u_filename = malloc(sizeof(char)*(strlen(filename)+1))) != NULL)
-    {
-      snprintf(state->m3u_filename,(strlen(filename)+1), "%s", filename);
-    }
-    else
-    {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
-  else
-  {
-    state->m3u_filename = NULL;
-  }
-
-  return error;
+  return splt_su_copy(filename, &state->m3u_filename);
 }
 
 char *splt_t_get_m3u_filename(splt_state *state)
@@ -249,33 +187,8 @@ char *splt_t_get_m3u_file_with_path(splt_state *state, int *error)
 
 int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
 {
-  int error = SPLT_OK;
-
-  if (splt_t_get_silence_log_fname(state))
-  {
-    free(state->silence_log_fname);
-    state->silence_log_fname = NULL;
-  }
-
   splt_d_print_debug(state,"Setting silence log fname to _%s_\n", filename);
-
-  if (filename != NULL)
-  {
-    if((state->silence_log_fname = malloc(sizeof(char)*(strlen(filename)+1))) != NULL)
-    {
-      snprintf(state->silence_log_fname,(strlen(filename)+1), "%s", filename);
-    }
-    else
-    {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
-  else
-  {
-    state->silence_log_fname = NULL;
-  }
-
-  return error;
+  return splt_su_copy(filename, &state->silence_log_fname);
 }
 
 char *splt_t_get_silence_log_fname(splt_state *state)
@@ -285,33 +198,8 @@ char *splt_t_get_silence_log_fname(splt_state *state)
 
 int splt_t_set_filename_to_split(splt_state *state, const char *filename)
 {
-  int error = SPLT_OK;
-
-  if (splt_t_get_filename_to_split(state))
-  {
-    free(state->fname_to_split);
-    state->fname_to_split = NULL;
-  }
-
   splt_d_print_debug(state,"Setting filename to split to _%s_\n", filename);
-
-  if (filename != NULL)
-  {
-    if ((state->fname_to_split = malloc(sizeof(char)*(strlen(filename)+1))) != NULL)
-    {
-      snprintf(state->fname_to_split,strlen(filename)+1,"%s", filename);
-    }
-    else
-    {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
-  else
-  {
-    state->fname_to_split = NULL;
-  }
-
-  return error;
+  return splt_su_copy(filename, &state->fname_to_split);
 }
 
 char *splt_t_get_filename_to_split(splt_state *state)
@@ -342,6 +230,7 @@ void splt_t_set_current_split(splt_state *state, int index)
 			  splt_t_set_current_split_file_number_next(state);
 		  }
 	  }
+
 	  state->split.current_split = index;
   }
   else
@@ -352,7 +241,7 @@ void splt_t_set_current_split(splt_state *state, int index)
 
 void splt_t_current_split_next(splt_state *state)
 {
-  splt_t_set_current_split(state, splt_t_get_current_split(state)+1);
+  splt_t_set_current_split(state, splt_t_get_current_split(state) + 1);
 }
 
 int splt_t_get_current_split(splt_state *state)
@@ -502,6 +391,7 @@ static void splt_t_free_state_struct(splt_state *state)
       free(state->plug);
       state->plug = NULL;
     }
+
     free(state);
     state = NULL;
   }

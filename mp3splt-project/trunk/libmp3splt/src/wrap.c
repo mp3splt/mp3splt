@@ -54,18 +54,13 @@ int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
     {
       return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
+    memset(wrap->wrap_files, 0x0, sizeof(char *) * wrapfiles);
 
     wrap->wrap_files_num = 0;
   }
 
-  if (filename == NULL)
-  {
-    wrap->wrap_files[index] = NULL;
-  }
-  else if ((wrap->wrap_files[index] = strdup(filename)) == NULL)
-  {
-    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-  }
+  int err = splt_su_copy(filename, &wrap->wrap_files[index]);
+  if (err < 0) { return err; }
 
   wrap->wrap_files_num++;
 

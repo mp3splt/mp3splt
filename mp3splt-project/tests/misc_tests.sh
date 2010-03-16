@@ -242,6 +242,25 @@ function test_misc_with_loop_symlink_dir
   echo
 }
 
+function test_misc_input_output_same_file
+{
+  remove_output_dir
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" warning: output format ambiguous (@t or @n missing)
+ Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+ input and output are the same file ('songs/Merci_Bonsoir__Je_veux_Only_love.mp3')"
+  mp3splt_args="-d songs -o '$M_FILE' $CBR_MP3_FILE 1.0 2.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  p_green "OK"
+  echo
+}
+
 function run_misc_tests
 {
   p_blue " MISC tests ..."

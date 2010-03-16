@@ -195,7 +195,7 @@ static void splt_c_set_filename_shorted_from_current_point_name(splt_state *stat
   char filename_shorted[512] = { '\0' };
 
   int curr_split = splt_t_get_current_split(state);
-  char *point_name = splt_sp_get_splitpoint_name(state, curr_split, &err);
+  const char *point_name = splt_sp_get_splitpoint_name(state, curr_split, &err);
   if (point_name != NULL)
   {
     const char *extension = splt_p_get_extension(state, &err);

@@ -589,15 +589,15 @@ int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks)
   char *year0 = NULL;
 
   char *first_artist = (char *)splt_tu_get_tags_field(state, 0, SPLT_TAGS_ARTIST);
-  artist0 = splt_su_safe_strdup(first_artist, &err);
+  err = splt_su_copy(first_artist, &artist0);
   if (err < 0) { goto function_end; }
 
   char *first_album = (char *)splt_tu_get_tags_field(state, 0, SPLT_TAGS_ALBUM);
-  album0 = splt_su_safe_strdup(first_album, &err);
+  err = splt_su_copy(first_album, &album0);
   if (err < 0) { goto function_end; }
 
   char *first_year = (char *)splt_tu_get_tags_field(state, 0, SPLT_TAGS_YEAR);
-  year0 = splt_su_safe_strdup(first_year, &err);
+  err = splt_su_copy(first_year, &year0);
   if (err < 0) { goto function_end; }
 
   unsigned char genre0 = 0x0;
@@ -664,12 +664,14 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
 {
   int err = SPLT_OK;
 
+  char *word_with_tags = NULL;
+
   if (!replace_tags_in_tags)
   {
-    return splt_su_safe_strdup(word, error);
+    err = splt_su_copy(word, &word_with_tags);
+    if (err < 0) { *error = err; }
+    return word_with_tags;
   }
-
-  char *word_with_tags = NULL;
 
   char buffer[256] = { '\0' };
 

@@ -97,12 +97,9 @@ void splt_of_set_oformat(splt_state *state, const char *format_string,
   int err = splt_of_new_oformat(state, format_string);
   if (err < 0) { *error = err; return; }
 
-  char *new_str = strdup(format_string);
-  if (!new_str)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return;
-  }
+  char *new_str = NULL;
+  err = splt_su_copy(format_string, &new_str);
+  if (err < 0) { *error =err; return; }
 
   err = splt_of_parse_outformat(new_str, state);
   if (! ignore_incorrect_format_warning)
@@ -126,11 +123,9 @@ int splt_of_reparse_oformat(splt_state *state)
   const char *format = splt_of_get_oformat(state);
   if (format != NULL)
   {
-    char *old_format = strdup(format);
-    if (old_format == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
+    char *old_format = NULL;
+    err = splt_su_copy(format, &old_format);
+    if (err < 0) { return err; }
 
     splt_of_set_oformat(state, old_format, &err, SPLT_TRUE);
 

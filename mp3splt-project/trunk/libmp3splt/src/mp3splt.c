@@ -690,7 +690,7 @@ int mp3splt_split(splt_state *state)
         }
 
         //we check if the splitpoints are in order
-        splt_check_if_splitpoints_in_order(state, &error);
+        splt_check_if_points_in_order(state, &error);
         if (error < 0) { goto function_end; }
       }
 
@@ -700,7 +700,7 @@ int mp3splt_split(splt_state *state)
       error = splt_io_create_directories(state, new_filename_path);
       if (error < 0) { goto function_end; }
 
-      splt_check_if_new_filename_path_correct(state, new_filename_path, &error);
+      splt_check_if_fname_path_is_correct(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
       if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
@@ -775,16 +775,10 @@ int mp3splt_split(splt_state *state)
           splt_s_error_split(state, &error);
           break;
         default:
-          //this is the normal split
           if (split_type == SPLT_OPTION_NORMAL_MODE)
           {
-            //if we don't have STDIN
-            if (! splt_io_input_is_stdin(state))
-            {
-              //total time of the song
-              splt_check_splitpts_inf_song_length(state, &error);
-              if (error < 0) { goto function_end; }
-            }
+            splt_check_points_inf_song_length(state, &error);
+            if (error < 0) { goto function_end; }
           }
 
           splt_s_normal_split(state, &error);

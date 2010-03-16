@@ -45,7 +45,7 @@ static int splt_su_append_one(char **str, const char *to_append,
     size_t to_append_size);
 static void splt_su_clean_string_(splt_state *state, char *s, int *error,
     int ignore_dirchar);
-static int splt_u_is_illegal_char(char c, int ignore_dirchar);
+static int splt_su_is_illegal_char(char c, int ignore_dirchar);
 
 char *splt_su_replace_all(const char *str, char *to_replace,
     char *replacement, int *error)
@@ -55,14 +55,15 @@ char *splt_su_replace_all(const char *str, char *to_replace,
     return NULL;
   }
 
+  char *new_str = NULL;
+  int err = SPLT_OK;
+
   if (to_replace == NULL || replacement == NULL)
   {
-    return splt_su_safe_strdup(str, NULL);
+    int err = splt_su_copy(str, &new_str);
+    if (err < 0) { *error = err; }
+    return new_str;
   }
-
-  char *new_str = NULL;
-
-  int err = SPLT_OK;
 
   const char *ptr = str;
   const char *prev_ptr = ptr;
@@ -91,28 +92,6 @@ error:
   *error = err;
 
   return NULL;
-}
-
-char *splt_su_safe_strdup(const char *input, int *error)
-{
-  if (input == NULL)
-  {
-    return NULL;
-  }
-
-  char *dup_input = strdup(input);
-  if (dup_input != NULL)
-  {
-    return dup_input;
-  }
-  else
-  {
-    if (error)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-    return NULL;
-  }
 }
 
 int splt_su_append_str(char **str, const char *to_append, ...)
@@ -200,47 +179,12 @@ int splt_su_copy(const char *src, char **dest)
   return SPLT_OK;
 }
 
-static int splt_su_append_one(char **str, const char *to_append, size_t to_append_size)
-{
-  if (str == NULL || to_append == NULL || to_append[0] == '\0' || to_append_size == 0)
-  {
-    return SPLT_OK;
-  }
-
-  size_t new_size = 0;
-
-  if (*str == NULL)
-  {
-    new_size = to_append_size + 1;
-    *str = malloc(new_size);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-
-    *str[0] = '\0';
-  }
-  else
-  {
-    new_size = to_append_size + strlen(*str) + 1;
-    *str = realloc(*str, new_size);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
-
-  strncat(*str, to_append, to_append_size);
-
-  return SPLT_OK;
-}
-
 void splt_su_clean_string(splt_state *state, char *s, int *error)
 {
   splt_su_clean_string_(state, s, error, SPLT_FALSE);
 }
 
-char *splt_su_cut_spaces_from_begin(char *c)
+char *splt_su_cut_spaces(char *c)
 {
   while (isspace(*c))
   {
@@ -250,10 +194,13 @@ char *splt_su_cut_spaces_from_begin(char *c)
   return c;
 }
 
-char *splt_su_cut_spaces_from_end(char *c)
+void splt_su_cut_spaces_from_end(char *c)
 {
   char *end = strchr(c, '\0');
-  if (!end) { return c; }
+  if (!end)
+  {
+    return;
+  }
 
   end--;
 
@@ -262,14 +209,12 @@ char *splt_su_cut_spaces_from_end(char *c)
     *end = '\0';
     end--;
   }
-
-  return end;
 }
 
 char *splt_su_trim_spaces(char *c)
 {
   splt_su_cut_spaces_from_end(c);
-  return splt_su_cut_spaces_from_begin(c);
+  return splt_su_cut_spaces(c);
 }
 
 int splt_su_is_empty_line(char *line)
@@ -295,7 +240,7 @@ int splt_su_is_empty_line(char *line)
 const char *splt_su_get_fname_without_path(const char *filename)
 {
   char *c = NULL;
-  while ((c = strchr(filename, SPLT_DIRCHAR)) !=NULL)
+  while ((c = strchr(filename, SPLT_DIRCHAR)) != NULL)
   {
     filename = c + 1;
   }
@@ -305,97 +250,70 @@ const char *splt_su_get_fname_without_path(const char *filename)
 
 char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error)
 {
+  int err = SPLT_OK;
   char *output_fname_with_path = NULL;
-  char *new_filename_path = splt_t_get_new_filename_path(state);
+
   int current_split = splt_t_get_current_split(state);
-  char *output_fname = splt_sp_get_splitpoint_name(state, current_split, error);
-  int malloc_number = strlen(new_filename_path) + 10;
-  if (output_fname)
+  const char *output_fname = splt_sp_get_splitpoint_name(state, current_split, error);
+
+  if (!output_fname)
   {
-    malloc_number += strlen(output_fname);
+    char *stdout_str = NULL;
+    err = splt_su_copy("-", &stdout_str);
+    if (err < 0) { *error = err; }
+    return stdout_str;
   }
 
-  //if we don't output to stdout
-  if (output_fname && (strcmp(output_fname,"-") != 0))
+  if (strcmp(output_fname, "-") == 0)
   {
-    if ((output_fname_with_path = malloc(malloc_number)) != NULL)
-    {
-      //we put the full output filename (with the path)
-      //construct full filename with path
-      const char *extension = splt_p_get_extension(state, error);
-      if (*error >= 0)
-      {
-        if (new_filename_path[0] == '\0')
-        {
-          snprintf(output_fname_with_path, malloc_number,
-              "%s%s", output_fname, extension);
-        }
-        else
-        {
-          snprintf(output_fname_with_path, malloc_number,
-              "%s%c%s%s",new_filename_path, SPLT_DIRCHAR,
-              output_fname, extension);
-        }
-      }
-      else
-      {
-        if (output_fname_with_path)
-        {
-          free(output_fname_with_path);
-          output_fname_with_path = NULL;
-        }
-        return NULL;
-      }
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
+    char *result = NULL;
+    err = splt_su_copy(output_fname, &result);
+    if (err < 0) { goto error; }
+    return result;
+  }
 
-    char *filename = splt_t_get_filename_to_split(state);
-    if (splt_io_check_if_file(state, output_fname_with_path))
-    {
-      //if input and output are the same file
-      if (splt_check_is_the_same_file(state,filename, output_fname_with_path, error))
-      {
-        splt_e_set_error_data(state,filename);
-        *error = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
-      }
-      else
-      {
-        //if no error from the check_is_the_same..
-        if (*error >= 0)
-        {
-          //TODO
-          //warning if a file already exists
-        }
-      }
-    }
+  const char *extension = splt_p_get_extension(state, &err);
+  if (err < 0) { goto error; }
 
-    return output_fname_with_path;
+  const char *new_filename_path = splt_t_get_new_filename_path(state);
+  if (new_filename_path[0] == '\0')
+  {
+    err = splt_su_append_str(&output_fname_with_path, output_fname,
+        extension, NULL);
+    if (err < 0) { goto error; }
   }
   else
   {
-    char *returned_result = NULL;
-    if (output_fname)
+    err = splt_su_append_str(&output_fname_with_path, new_filename_path,
+        SPLT_DIRSTR, output_fname, extension, NULL);
+    if (err < 0) { goto error; }
+  }
+
+  const char *filename = splt_t_get_filename_to_split(state);
+  if (splt_io_check_if_file(state, output_fname_with_path))
+  {
+    if (splt_check_is_the_same_file(state, filename, output_fname_with_path, &err))
     {
-      returned_result = strdup(output_fname);
-    }
-    else
-    {
-      returned_result = strdup("-");
-    }
-    if (returned_result)
-    {
-      return returned_result;
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
+      splt_e_set_error_data(state,filename);
+      err = SPLT_ERROR_INPUT_OUTPUT_SAME_FILE;
+      goto error;
     }
   }
+
+  //TODO: warning if a file already exists
+
+  return output_fname_with_path;
+
+error:
+  if (output_fname_with_path)
+  {
+    free(output_fname_with_path);
+    output_fname_with_path = NULL;
+  }
+
+  *error = err;
+
+  return NULL;
 }
 
 void splt_su_cut_extension(char *str)
@@ -409,15 +327,22 @@ void splt_su_cut_extension(char *str)
 
 char *splt_su_str_to_upper(const char *str, int *error)
 {
-  int i = 0;
+  int err = SPLT_OK;
 
-  char *result = strdup(str);
-  if (result == NULL)
+  if (!str)
   {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
   }
 
+  char *result = NULL;
+  err = splt_su_copy(str, &result);
+  if (err < 0)
+  {
+    *error = err;
+    return NULL;
+  }
+
+  int i = 0;
   for (i = 0;i < strlen(str);i++)
   {
     result[i] = toupper(str[i]);
@@ -426,49 +351,36 @@ char *splt_su_str_to_upper(const char *str, int *error)
   return result;
 }
 
-char *splt_su_get_file_with_output_path(splt_state *state,
-    char *filename, int *error)
+char *splt_su_get_file_with_output_path(splt_state *state, char *filename, int *error)
 {
+  int err = SPLT_OK;
   char *new_fname = NULL;
-  if (filename != NULL)
-  {
-    //we don't care about the path; we clean the string
-    splt_su_clean_string(state, filename, error);
-    if (error < 0) { return NULL; }
 
-    char *path_of_split = splt_t_get_path_of_split(state);
-    int malloc_number = strlen(filename) + 2;
-    if (path_of_split)
-    {
-      malloc_number += strlen(path_of_split);
-    }
-    //allocate memory for the m3u file
-    if ((new_fname = malloc(malloc_number)) != NULL)
-    {
-      if (path_of_split)
-      {
-        if (path_of_split[strlen(path_of_split)] == SPLT_DIRCHAR)
-        {
-          snprintf(new_fname, malloc_number, "%s%s",
-              path_of_split, filename);
-        }
-        else
-        {
-          snprintf(new_fname, malloc_number, "%s%c%s",
-              path_of_split, SPLT_DIRCHAR, filename);
-        }
-      }
-      else
-      {
-        snprintf(new_fname, malloc_number, "%s", filename);
-      }
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
+  if (filename == NULL)
+  {
+    return NULL;
   }
 
+  splt_su_clean_string(state, filename, error);
+  if (error < 0) { return NULL; }
+
+  const char *path_of_split = splt_t_get_path_of_split(state);
+  if (path_of_split)
+  {
+    if (path_of_split[strlen(path_of_split)] == SPLT_DIRCHAR)
+    {
+      splt_su_append_str(&new_fname, path_of_split, filename, NULL);
+      if (err < 0) { *error = err; }
+      return new_fname;
+    }
+
+    splt_su_append_str(&new_fname, path_of_split, SPLT_DIRSTR, filename, NULL);
+    if (err < 0) { *error = err; }
+    return new_fname;
+  }
+
+  err = splt_su_copy(filename, &new_fname);
+  if (err < 0) { *error = err; }
   return new_fname;
 }
 
@@ -507,6 +419,7 @@ char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap
   if (mess == NULL)
   {
     splt_d_send_memory_error_message(state);
+    splt_e_error(SPLT_IERROR_CHAR, __func__, 0, _("not enough memory"));
     return NULL;
   }
 
@@ -527,6 +440,7 @@ char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap
     {
       free(mess);
       splt_d_send_memory_error_message(state);
+      splt_e_error(SPLT_IERROR_CHAR, __func__, 0, _("not enough memory"));
       return NULL;
     }
 
@@ -536,7 +450,54 @@ char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap
   return mess;
 }
 
-static int splt_u_is_illegal_char(char c, int ignore_dirchar)
+char *splt_su_get_formatted_message(splt_state *state, char *message, ...)
+{
+  char *mess = NULL;
+
+  va_list ap;
+  va_start(ap, message);
+  mess = splt_su_format_messagev(state, message, ap);
+  va_end(ap);
+
+  return mess;
+}
+
+static int splt_su_append_one(char **str, const char *to_append, size_t to_append_size)
+{
+  if (str == NULL || to_append == NULL || to_append[0] == '\0' || to_append_size == 0)
+  {
+    return SPLT_OK;
+  }
+
+  size_t new_size = 0;
+
+  if (*str == NULL)
+  {
+    new_size = to_append_size + 1;
+    *str = malloc(new_size);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+
+    *str[0] = '\0';
+  }
+  else
+  {
+    new_size = to_append_size + strlen(*str) + 1;
+    *str = realloc(*str, new_size);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+  }
+
+  strncat(*str, to_append, to_append_size);
+
+  return SPLT_OK;
+}
+
+static int splt_su_is_illegal_char(char c, int ignore_dirchar)
 {
   if ((ignore_dirchar) && (c == SPLT_DIRCHAR))
   {
@@ -566,7 +527,7 @@ static void splt_su_clean_string_(splt_state *state, char *s, int *error, int ig
     {
       for (i=0; i<=strlen(copy); i++)
       {
-        if (! splt_u_is_illegal_char(copy[i], ignore_dirchar))
+        if (! splt_su_is_illegal_char(copy[i], ignore_dirchar))
         {
           s[j++] = copy[i];
         }
