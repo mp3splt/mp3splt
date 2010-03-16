@@ -170,7 +170,7 @@ static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
             //i!=-1 means that it's not a revision
             int i=0;
             int err = SPLT_OK;
-            //here we have in album_name the name of the current album      
+            //here we have in album_name the name of the current album
             err = splt_fu_freedb_append_result(state, full_artist_album, i);
             if (err < 0)
             {

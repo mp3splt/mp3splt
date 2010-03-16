@@ -35,15 +35,14 @@
 #include <stdarg.h>
 
 char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error);
-char *splt_su_safe_strdup(const char *input, int *error);
 int splt_su_append(char **str, const char *to_append, ...);
 int splt_su_append_str(char **str, const char *to_append, ...);
 void splt_su_free_replace(char **str, char *replacement);
 int splt_su_copy(const char *src, char **dest);
 
 void splt_su_clean_string(splt_state *state, char *s, int *error);
-char *splt_su_cut_spaces_from_end(char *c);
-char *splt_su_cut_spaces_from_begin(char *c);
+void splt_su_cut_spaces_from_end(char *c);
+char *splt_su_cut_spaces(char *c);
 char *splt_su_trim_spaces(char *c);
 int splt_su_is_empty_line(char *line);
 
@@ -58,6 +57,7 @@ char *splt_su_get_file_with_output_path(splt_state *state,
 
 int splt_su_str_ends_with(const char *str1, const char *str2);
 
+char *splt_su_get_formatted_message(splt_state *state, char *message, ...);
 char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap);
 
 #define SPLT_STRING_UTILS_H

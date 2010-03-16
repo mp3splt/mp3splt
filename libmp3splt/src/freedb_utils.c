@@ -35,11 +35,20 @@
 #include "splt.h"
 
 static void splt_fu_free_freedb_search(splt_state *state);
+static int splt_fu_append_first_result(splt_freedb_results *res,
+    const char *album_name);
+static int splt_fu_append_next_result(splt_freedb_results *res,
+    const char *album_name);
+static int splt_fu_append_first_revision(splt_freedb_one_result *prev,
+    const char *album_name);
+static int splt_fu_append_next_revision(splt_freedb_one_result *prev,
+    const char *album_name);
 
 void splt_fu_set_default_values(splt_state *state)
 {
-  state->fdb.search_results = NULL;
-  state->fdb.cdstate = NULL;
+  splt_freedb *fdb = &state->fdb;
+  fdb->search_results = NULL;
+  fdb->cdstate = NULL;
 }
 
 void splt_fu_freedb_free_search(splt_state *state)
@@ -56,180 +65,58 @@ void splt_fu_freedb_free_search(splt_state *state)
 int splt_fu_freedb_init_search(splt_state *state)
 {
   int error = SPLT_OK;
+  splt_freedb *fdb = &state->fdb;
 
-  if ((state->fdb.cdstate = malloc(sizeof(splt_cd_state))) == NULL)
+  if ((fdb->cdstate = malloc(sizeof(splt_cd_state))) == NULL)
   {
     error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
   else
   {
-    state->fdb.cdstate->foundcd = 0;
-    if ((state->fdb.search_results = malloc(sizeof(splt_freedb_results))) == NULL)
+    fdb->cdstate->foundcd = 0;
+    if ((fdb->search_results = malloc(sizeof(splt_freedb_results))) == NULL)
     {
-      free(state->fdb.cdstate);
-      state->fdb.cdstate = NULL;
+      free(fdb->cdstate);
+      fdb->cdstate = NULL;
       error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
     else
-   {
-      state->fdb.search_results->number = 0;
-      state->fdb.search_results->results = NULL;
+    {
+      fdb->search_results->number = 0;
+      fdb->search_results->results = NULL;
     }
   }
 
   return error;
 }
 
-//sets a freedb result
-//if revision != -1, then not a revision
 int splt_fu_freedb_append_result(splt_state *state, const char *album_name, int revision)
 {
-  int error = SPLT_OK;
+  splt_freedb_results *res = state->fdb.search_results;
 
   if (album_name == NULL)
   {
-    return error;
+    return SPLT_OK;
   }
 
-  if (state->fdb.search_results->number == 0)
+  if (res->number == 0)
   {
-    state->fdb.search_results->results = malloc(sizeof(splt_freedb_one_result));
-    if (state->fdb.search_results->results == NULL)
-    {
-      error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-    else
-    {
-      state->fdb.search_results->results[0].revisions = NULL;
-      state->fdb.search_results->results[0].name = strdup(album_name);
-      if (state->fdb.search_results->results[0].name == NULL)
-      {
-        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
-      else
-      {
-        state->fdb.search_results->results[state->fdb.search_results->number]
-          .revision_number = 0;
-        state->fdb.search_results->results[state->fdb.search_results->number]
-          .id = 0;
-        state->fdb.search_results->number++;
-      }
-    }
+    return splt_fu_append_first_result(res, album_name);
   }
-  else
+
+  if (revision != -1)
   {
-    //if its not a revision
-    if (revision != -1)
-    {
-      state->fdb.search_results->results = 
-        realloc(state->fdb.search_results->results,
-            (state->fdb.search_results->number + 1)
-            * sizeof(splt_freedb_one_result));
-      state->fdb.search_results->results[state->fdb.search_results->number].revisions = NULL;
-      if (state->fdb.search_results->results == NULL)
-      {
-        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
-      else
-      {
-        state->fdb.search_results->results[state->fdb.search_results->number]
-          .name = strdup(album_name);
-        if (state->fdb.search_results->results[state->fdb.search_results->number]
-            .name == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        }
-        else
-        {
-          state->fdb.search_results->results[state->fdb.search_results->number]
-            .revision_number = 0;
-          state->fdb.search_results->results[state->fdb.search_results->number]
-            .id = (state->fdb.search_results->results[state->fdb.search_results->number - 1]
-                .id + state->fdb.search_results->results[state->fdb.search_results->number - 1]
-                .revision_number + 1);
-          state->fdb.search_results->number++;
-        }
-      }
-    }
-    else
-      //if it's a revision
-    {
-      //if it's the first revision
-      if (state->fdb.search_results->results[state->fdb.search_results->number-1]
-          .revision_number == 0)
-      {
-        state->fdb.search_results->results[state->fdb.search_results->number-1].revisions =
-          malloc(sizeof(int));
-        if (state->fdb.search_results->results[state->fdb.search_results->number-1].revisions
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;              
-        }
-        else
-        {
-          state->fdb.search_results->results[state->fdb.search_results->number-1].revisions[0]
-            = atoi(album_name);
-          state->fdb.search_results->results[state->fdb.search_results->number-1].revision_number++;
-        }
-      }
-      else
-        //if it's not the first revision
-      {
-        state->fdb.search_results->results[state->fdb.search_results->number-1].revisions =
-          realloc(state->fdb.search_results->results
-              [state->fdb.search_results->number-1].revisions,
-              (state->fdb.search_results->results[state->fdb.search_results->number-1]
-               .revision_number + 1)
-              * sizeof(int));
-        if (state->fdb.search_results->results[state->fdb.search_results->number-1].revisions
-            == NULL)
-        {
-          error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;              
-        }
-        else
-        {
-          state->fdb.search_results->results[state->fdb.search_results->number-1].
-            revisions[state->fdb.search_results->results[state->fdb.search_results->number-1].revision_number]
-            = atoi(album_name);
-          state->fdb.search_results->results[state->fdb.search_results->number-1].revision_number++;
-        }
-      }
-    }
+    return splt_fu_append_next_result(res, album_name);
   }
 
-  return error;
-}
+  splt_freedb_one_result *prev = &res->results[res->number-1];
 
-static void splt_fu_free_freedb_search(splt_state *state)
-{
-  splt_freedb_results *search_results = state->fdb.search_results;
-
-  if (state->fdb.search_results)
+  if (prev->revision_number == 0)
   {
-    int i;
-    for(i = 0; i < search_results->number;i++)
-    {
-      if (search_results->results[i].revisions)
-      {
-        free(search_results->results[i].revisions);
-        search_results->results[i].revisions = NULL;
-      }
-      if (search_results->results[i].name)
-      {
-        free(search_results->results[i].name);
-        search_results->results[i].name = NULL;
-      }
-    }
-    if (search_results->results)
-    {
-      free(search_results->results);
-      search_results->results = NULL;
-    }
-
-    state->fdb.search_results->number = 0;
-    free(state->fdb.search_results);
-    state->fdb.search_results = NULL;
+    return splt_fu_append_first_revision(prev, album_name);
   }
+
+  return splt_fu_append_next_revision(prev, album_name);
 }
 
 int splt_fu_freedb_get_found_cds(splt_state *state)
@@ -239,7 +126,7 @@ int splt_fu_freedb_get_found_cds(splt_state *state)
 
 void splt_fu_freedb_found_cds_next(splt_state *state)
 {
-  state->fdb.cdstate->foundcd = splt_fu_freedb_get_found_cds(state)+1;
+  state->fdb.cdstate->foundcd = splt_fu_freedb_get_found_cds(state) + 1;
 }
 
 void splt_fu_freedb_set_disc(splt_state *state, int index,
@@ -301,5 +188,114 @@ const char *splt_fu_freedb_get_disc_id(splt_state *state, int index)
   }
 }
 
+static void splt_fu_free_freedb_search(splt_state *state)
+{
+  splt_freedb_results *res = state->fdb.search_results;
 
+  if (res)
+  {
+    int i = 0;
+    for(i = 0; i < res->number;i++)
+    {
+      if (res->results[i].revisions)
+      {
+        free(res->results[i].revisions);
+        res->results[i].revisions = NULL;
+      }
+
+      if (res->results[i].name)
+      {
+        free(res->results[i].name);
+        res->results[i].name = NULL;
+      }
+    }
+
+    if (res->results)
+    {
+      free(res->results);
+      res->results = NULL;
+    }
+
+    res->number = 0;
+
+    free(state->fdb.search_results);
+    state->fdb.search_results = NULL;
+  }
+}
+
+static int splt_fu_append_first_result(splt_freedb_results *res,
+    const char *album_name)
+{
+  int error = SPLT_OK;
+
+  res->results = malloc(sizeof(splt_freedb_one_result));
+  if (res->results == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+
+  res->results[0].revisions = NULL;
+  error = splt_su_copy(album_name, &res->results[0].name);
+  if (error < 0) { return error; }
+
+  res->results[res->number].revision_number = 0;
+  res->results[res->number].id = 0;
+  res->number++;
+
+  return error;
+}
+
+static int splt_fu_append_next_result(splt_freedb_results *res,
+    const char *album_name)
+{
+  int error = SPLT_OK;
+
+  res->results = realloc(res->results, (res->number + 1) * sizeof(splt_freedb_one_result));
+  res->results[res->number].revisions = NULL;
+  if (res->results == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+
+  error = splt_su_copy(album_name, &res->results[res->number].name);
+  if (error < 0) { return error; }
+
+  splt_freedb_one_result *prev = &res->results[res->number-1];
+
+  res->results[res->number].revision_number = 0;
+  res->results[res->number].id = (prev->id + prev->revision_number + 1);
+  res->number++;
+
+  return error;
+}
+
+static int splt_fu_append_first_revision(splt_freedb_one_result *prev,
+    const char *album_name)
+{
+  prev->revisions = malloc(sizeof(int));
+  if (prev->revisions == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;              
+  }
+
+  prev->revisions[0] = atoi(album_name);
+  prev->revision_number++;
+
+  return SPLT_OK;
+}
+
+static int splt_fu_append_next_revision(splt_freedb_one_result *prev,
+    const char *album_name)
+{
+  prev->revisions = realloc(prev->revisions, (prev->revision_number + 1) * sizeof(int));
+  if (prev->revisions == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;              
+  }
+
+  prev->revisions[prev->revision_number] = atoi(album_name);
+  prev->revision_number++;
+
+  return SPLT_OK;
+}
 

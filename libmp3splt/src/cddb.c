@@ -57,8 +57,6 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   //performer_title_split is where we split if we have
   //performer / title on cddb
   char *number = NULL, *c = NULL;
-  //for the performer
-  char *c2 = NULL;
   //tracks is the number of tracks
   int tracks = 0, i = 0, j = 0;
   int append_error = SPLT_OK;
@@ -359,9 +357,9 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
             //if found '/' in TITLE, separate performer / title
             if (title)
             {
-              c2 = strchr(number+1,'/');
+              char *c2 = strchr(number+1,'/');
               *c2 = '\0';
-              c2 = splt_su_cut_spaces_from_end(c2-1);
+              splt_su_cut_spaces_from_end(c2-1);
 
               //we put performer
               performer = SPLT_TRUE;
@@ -477,7 +475,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 
               //we put the album
               i += 1;
-              number = splt_su_cut_spaces_from_begin(number+i);
+              number = splt_su_cut_spaces(number+i);
 
               tags_error = splt_tu_set_tags_field(state, 0, SPLT_TAGS_ALBUM, 
                   number);
@@ -500,7 +498,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
               {
                 t = number-1;
               }
-              t = splt_su_cut_spaces_from_begin(t);
+              t = splt_su_cut_spaces(t);
               tags_error = splt_tu_set_tags_field(state, j-1,
                   SPLT_TAGS_TITLE, t);
               if (tags_error != SPLT_OK)

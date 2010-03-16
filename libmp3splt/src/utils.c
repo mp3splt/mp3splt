@@ -81,8 +81,7 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state, double fend_s
       {
         int err = SPLT_OK;
         long split_end = splt_sp_get_splitpoint_value(state, current_split+1, &err);
-        if ((err >= 0) &&
-            (split_end == LONG_MAX))
+        if ((err >= 0) && (split_end == LONG_MAX))
         {
           return SPLT_TRUE;
         }
