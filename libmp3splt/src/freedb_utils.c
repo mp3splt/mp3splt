@@ -233,6 +233,7 @@ static int splt_fu_append_first_result(splt_freedb_results *res,
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
+  memset(res->results, 0x0, sizeof(splt_freedb_one_result));
 
   res->results[0].revisions = NULL;
   error = splt_su_copy(album_name, &res->results[0].name);
