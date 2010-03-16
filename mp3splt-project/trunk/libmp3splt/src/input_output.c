@@ -124,6 +124,8 @@ char *splt_io_get_linked_fname(const char *fname)
   char *previous_linked_fname = NULL;
 
   mode_t st_mode;
+  //errno = 0
+  //TODO: errno == ELOOP
   if (splt_io_stat(fname, &st_mode, NULL) < 0)
   {
     if (errno == ELOOP)
@@ -263,7 +265,7 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
 #endif
   }
 
-  //TODO: review ?
+  //TODO: review
   splt_e_set_strerror_msg_with_data(state, fname);
 
   return SPLT_FALSE;
