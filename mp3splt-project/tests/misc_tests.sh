@@ -208,7 +208,7 @@ function test_misc_with_loop_symlink_file
   ln -s symlink_file symlink_file
 
   expected=" Processing file 'symlink_file' ...
- error: inexistent file 'symlink_file': No such file or directory"
+ error: inexistent file 'symlink_file': Too many levels of symbolic links"
   mp3splt_args="-d $OUTPUT_DIR symlink_file 0.30 2.0 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -246,6 +246,8 @@ function test_misc_input_output_same_file
 {
   remove_output_dir
 
+  test_name="input and output same file"
+
   M_FILE="Merci_Bonsoir__Je_veux_Only_love"
 
   expected=" warning: output format ambiguous (@t or @n missing)
@@ -255,6 +257,23 @@ function test_misc_input_output_same_file
  info: starting normal split
  input and output are the same file ('songs/Merci_Bonsoir__Je_veux_Only_love.mp3')"
   mp3splt_args="-d songs -o '$M_FILE' $CBR_MP3_FILE 1.0 2.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  p_green "OK"
+  echo
+}
+
+function test_misc_inexistent_file
+{
+  remove_output_dir
+
+  test_name="inexistent file"
+
+  M_FILE="abcd"
+
+  expected=" Processing file '${M_FILE}.mp3' ...
+ error: inexistent file '${M_FILE}.mp3': No such file or directory"
+  mp3splt_args="-d songs ${M_FILE}.mp3 1.0 2.0" 
   run_check_output "$mp3splt_args" "$expected"
 
   p_green "OK"

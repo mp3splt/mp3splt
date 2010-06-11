@@ -141,7 +141,7 @@ function test_normal_vbr_cue_export
  CUE file 'output/output_out.cue' created."
   mp3splt_args="-T 2 -E output/out.cue -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
   run_check_output "$mp3splt_args" "$expected"
- 
+
   check_output_directory_number_of_files 4
 
   check_file_content "output/output_out.cue" 'TITLE "Riez Noir"
@@ -167,6 +167,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
   check_current_file_size "1366550"
+
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
   check_current_mp3_length "01.04"
