@@ -30,7 +30,17 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_CUE_H
+#ifndef SPLT_CUE_H
+
+typedef struct {
+  int tracks;
+  int time_for_track;
+  int error;
+  int performer;
+  int title;
+  const char *file;
+  int counter;
+} cue_utils;
 
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error);
 
@@ -43,7 +53,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 #define SPLT_CUE_PERFORMER 3
 #define SPLT_CUE_INDEX 4
 
-#define MP3SPLT_CUE_H
+#define SPLT_CUE_H
 
 #endif
 

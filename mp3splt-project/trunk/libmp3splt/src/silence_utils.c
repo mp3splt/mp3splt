@@ -126,10 +126,7 @@ int splt_siu_parse_ssplit_file(splt_state *state, FILE *log_file, int *error)
 
   while ((line = splt_io_readline(log_file, error)) != NULL)
   {
-    if (*error < 0)
-    {
-      break;
-    }
+    if (*error < 0) { break; }
 
     int len = 0;
     float begin_position = 0, end_position = 0;

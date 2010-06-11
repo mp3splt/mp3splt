@@ -11,7 +11,7 @@ MP3SPLT_REAL_VERSION=2.2.9
 MP3SPLT_GTK_REAL_VERSION=0.6
 
 RUN_FUNCTIONAL_TESTS=1
-BUILD_BINARY_PACKAGES=1
+BUILD_BINARY_PACKAGES=0
 
 BUILD_UBUNTU_PACKAGES=$BUILD_BINARY_PACKAGES
 BUILD_DEBIAN_PACKAGES=$BUILD_BINARY_PACKAGES
@@ -117,9 +117,9 @@ function source_packages()
   print_yellow "Creating source distribution..."
 
   make -s source_packages || exit 1
-  make -C ${LIBMP3SPLT_DIR}
-  make -C ${MP3SPLT_DIR}
-  make -C ${MP3SPLT_GTK_DIR}
+  make -C ${LIBMP3SPLT_DIR} || exit 1
+  make -C ${MP3SPLT_DIR} || exit 1
+  make -C ${MP3SPLT_GTK_DIR} || exit 1
 }
 ############# end source packages ################
 
@@ -186,7 +186,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="intrepid jaunty karmic"
+    UBUNTU_FLAVORS="jaunty karmic lucid"
 
     echo
     print_yellow "Creating ubuntu packages..."
