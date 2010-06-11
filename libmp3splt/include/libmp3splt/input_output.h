@@ -39,7 +39,8 @@ int splt_io_input_is_stdin(splt_state *state);
 int splt_io_input_is_stdout(splt_state *state);
 
 #ifndef __WIN32__
-char *splt_io_get_linked_fname(const char *fname);
+#define MAX_SYMLINKS 200
+char *splt_io_get_linked_fname(const char *fname, int *number_of_symlinks);
 #endif
 
 int splt_io_get_word (FILE *in, off_t offset, int mode, unsigned long *headw);

@@ -639,7 +639,7 @@ int mp3splt_split(splt_state *state)
       }
 
 #ifndef __WIN32__
-      char *linked_fname = splt_io_get_linked_fname(fname_to_split);
+      char *linked_fname = splt_io_get_linked_fname(fname_to_split, NULL);
       if (linked_fname)
       {
         splt_c_put_info_message_to_client(state, 

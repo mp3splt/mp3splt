@@ -142,8 +142,7 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
   struct dirent **files = NULL;
 
   int number_of_files = 0;
-  //TODO
-  //errno = 0;
+  errno = 0;
   number_of_files = scandir(directory, &files, splt_p_filter_plugin_files, alphasort);
   int directory_len = strlen(directory);
   int new_number_of_files = number_of_files;

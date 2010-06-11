@@ -97,6 +97,9 @@ AC_MSG_RESULT($HOST)
 # Check for libraries
 #################################################
 
+#check for -lm
+AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
+
 #################################################
 #Check for GTK
 AM_PATH_GTK_2_0(2.12.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.12.0))
@@ -119,8 +122,8 @@ AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audaciou
     [enable_audacious=$enableval],[enable_audacious="yes"])
 
 if test x$enable_audacious = xyes;then
-  PKG_CHECK_MODULES(AUDACIOUS, [audacious >= 0.1],
-      [AM_CONDITIONAL(AUDACIOUS,true) audacious="yes" ],
+  PKG_CHECK_MODULES(AUDACIOUS, [audclient >= 0.1],
+      [AM_CONDITIONAL(AUDACIOUS, true) audacious="yes" ],
       [AC_MSG_ERROR([Audacious player development files are not installed.
 
     Install it or configure with "--disable-audacious".])])

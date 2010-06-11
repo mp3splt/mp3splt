@@ -28,8 +28,8 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <errno.h>
 #include <dirent.h>
+#include <errno.h>
 
 #include "splt.h"
 #include "win32.h"
@@ -98,8 +98,8 @@ static char *splt_io_readlink(const char *fname)
     {
       return NULL;
     }
-    ssize_t real_link_size = readlink(fname, linked_fname, bufsize);
 
+    ssize_t real_link_size = readlink(fname, linked_fname, bufsize);
     if (real_link_size == -1)
     {
       free(linked_fname);
@@ -119,20 +119,9 @@ static char *splt_io_readlink(const char *fname)
   return NULL;
 }
 
-char *splt_io_get_linked_fname(const char *fname)
+char *splt_io_get_linked_fname(const char *fname, int *number_of_symlinks)
 {
   char *previous_linked_fname = NULL;
-
-  mode_t st_mode;
-  //errno = 0
-  //TODO: errno == ELOOP
-  if (splt_io_stat(fname, &st_mode, NULL) < 0)
-  {
-    if (errno == ELOOP)
-    {
-      return NULL;
-    }
-  }
 
   char *linked_fname = splt_io_readlink(fname);
   if (!linked_fname)
@@ -151,7 +140,7 @@ char *splt_io_get_linked_fname(const char *fname)
     linked_fname = splt_io_readlink(linked_fname);
 
     count++;
-    if (count > 1024)
+    if (count > MAX_SYMLINKS)
     {
       if (previous_linked_fname)
       {
@@ -162,9 +151,19 @@ char *splt_io_get_linked_fname(const char *fname)
       {
         free(linked_fname);
       }
+      if (number_of_symlinks)
+      {
+        *number_of_symlinks = MAX_SYMLINKS;
+      }
       return NULL;
     }
   }
+
+  if (number_of_symlinks)
+  {
+    *number_of_symlinks = count;
+  }
+
   linked_fname = previous_linked_fname;
 
   if (linked_fname[0] == SPLT_DIRCHAR)
@@ -206,7 +205,8 @@ static int splt_io_linked_file_type_is(const char *fname, int file_type)
 {
   int linked_file_is_of_type = SPLT_FALSE;
 
-  char *linked_fname = splt_io_get_linked_fname(fname);
+  int number_of_symlinks = 0;
+  char *linked_fname = splt_io_get_linked_fname(fname, &number_of_symlinks);
   if (linked_fname)
   {
     if (splt_io_file_type_is(linked_fname, file_type))
@@ -218,6 +218,11 @@ static int splt_io_linked_file_type_is(const char *fname, int file_type)
     linked_fname = NULL;
   }
 
+  if (number_of_symlinks == MAX_SYMLINKS)
+  {
+    errno = ELOOP;
+  }
+
   return linked_file_is_of_type;
 }
 #endif
@@ -226,13 +231,17 @@ int splt_io_check_if_directory(const char *fname)
 {
   if (fname != NULL)
   {
+#ifndef __WIN32__
+    int is_link = splt_io_file_type_is(fname, S_IFLNK);
+#endif
+
     if (splt_io_file_type_is(fname, S_IFDIR))
     {
       return SPLT_TRUE;
     }
 
 #ifndef __WIN32__
-    if (splt_io_linked_file_type_is(fname, S_IFDIR))
+    if (is_link && splt_io_linked_file_type_is(fname, S_IFDIR))
     {
       return SPLT_TRUE;
     }
@@ -244,6 +253,8 @@ int splt_io_check_if_directory(const char *fname)
 
 int splt_io_check_if_file(splt_state *state, const char *fname)
 {
+  errno = 0;
+
   if (fname != NULL)
   {
     //stdin: consider as file
@@ -252,20 +263,23 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
       return SPLT_TRUE;
     }
 
+#ifndef __WIN32__
+    int is_link = splt_io_file_type_is(fname, S_IFLNK);
+#endif
+
     if (splt_io_file_type_is(fname, S_IFREG))
     {
       return SPLT_TRUE;
     }
 
 #ifndef __WIN32__
-    if (splt_io_linked_file_type_is(fname, S_IFREG))
+    if (is_link && splt_io_linked_file_type_is(fname, S_IFREG))
     {
       return SPLT_TRUE;
     }
 #endif
   }
 
-  //TODO: review
   splt_e_set_strerror_msg_with_data(state, fname);
 
   return SPLT_FALSE;

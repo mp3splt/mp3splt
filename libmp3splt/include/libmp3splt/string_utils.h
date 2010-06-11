@@ -45,12 +45,15 @@ void splt_su_cut_spaces_from_end(char *c);
 char *splt_su_cut_spaces(char *c);
 char *splt_su_trim_spaces(char *c);
 int splt_su_is_empty_line(char *line);
+void splt_su_line_to_unix(char *line);
 
 const char *splt_su_get_fname_without_path(const char *filename);
 char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error);
 
 void splt_su_cut_extension(char *str);
 char *splt_su_str_to_upper(const char *str, int *error);
+void splt_su_str_cut_last_char(char *str);
+double splt_su_str_line_to_double(const char *str);
 
 char *splt_su_get_file_with_output_path(splt_state *state,
     char *filename, int *error);

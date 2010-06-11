@@ -237,6 +237,19 @@ int splt_su_is_empty_line(char *line)
   return SPLT_TRUE;
 }
 
+void splt_su_line_to_unix(char *line)
+{
+  size_t line_size = strlen(line);
+  if (line_size > 1)
+  {
+    if (line[line_size-2] == '\r')
+    {
+      line[line_size-2] = '\n';
+      line[line_size-1] = '\0';
+    }
+  }
+}
+
 const char *splt_su_get_fname_without_path(const char *filename)
 {
   char *c = NULL;
@@ -349,6 +362,31 @@ char *splt_su_str_to_upper(const char *str, int *error)
   }
 
   return result;
+}
+
+void splt_su_str_cut_last_char(char *str)
+{
+  if (!str)
+  {
+    return;
+  }
+
+  str[strlen(str)-1] = '\0';
+}
+
+double splt_su_str_line_to_double(const char *str)
+{
+  if (!str)
+  {
+    return 0.0;
+  }
+
+  while ((*str != '\0') && (isdigit(*str) == 0))
+  {
+    str++;
+  }
+
+  return atof(str);
 }
 
 char *splt_su_get_file_with_output_path(splt_state *state, char *filename, int *error)

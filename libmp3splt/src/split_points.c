@@ -269,7 +269,7 @@ int splt_sp_cut_splitpoint_extension(splt_state *state, int index)
 
 int splt_sp_order_splitpoints(splt_state *state, int len)
 {
-  //TODO: utiliser quicksort ?
+  //TODO: use quicksort ?
 
   int error = SPLT_OK;
 
