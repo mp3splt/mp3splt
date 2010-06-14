@@ -36,6 +36,7 @@ AC_PREREQ(2.56)
 AC_INIT([libmp3splt],[0.6],[io_fx@yahoo.fr])
 AM_INIT_AUTOMAKE(libmp3splt, 0.6)
 AC_CONFIG_HEADERS([config.h])
+AM_MAINTAINER_MODE([enable])
 
 DEBUG_FLAGS="-g"
 #OPTIMISE_FLAGS="-O2"

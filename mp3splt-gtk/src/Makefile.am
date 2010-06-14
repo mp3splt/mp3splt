@@ -29,7 +29,7 @@ mp3splt_gtk_SOURCES = \
 
 INCLUDES = @GTK_CFLAGS@ -Wall
 
-mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 -lmp3splt -lm
+mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm
 
 if WIN32
 INCLUDES += -mms-bitfields -enable-stdcall-fixup

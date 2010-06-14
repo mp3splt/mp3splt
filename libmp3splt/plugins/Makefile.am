@@ -4,7 +4,9 @@ plugin_LTLIBRARIES =
 INCLUDES =
 
 #ccommon_LDFLAGS = -module -export-dynamic -avoid-version
-common_LDFLAGS = -L../src -L../src/.libs -L/lib -no-undefined -lm -lmp3splt @LIBINTL@
+common_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt
+common_LDFLAGS = -L$(top_builddir)/src -L$(top_builddir)/src/.libs -L/lib \
+   -no-undefined -lm -lmp3splt @LIBINTL@
 
 if WIN32
 common_LDFLAGS += -lz -lws2_32 -lintl
@@ -16,6 +18,7 @@ if MP3_PLUGIN
 INCLUDES += @MAD_CFLAGS@
 plugin_LTLIBRARIES += libsplt_mp3.la
 libsplt_mp3_la_SOURCES = mp3.c mp3.h
+libsplt_mp3_la_CPPFLAGS = $(common_CPPFLAGS)
 libsplt_mp3_la_LDFLAGS = $(common_LDFLAGS) @MAD_LIBS@
 
 if ID3TAG
@@ -33,6 +36,7 @@ if OGG_PLUGIN
 INCLUDES += @OGG_CFLAGS@ @VORBIS_CFLAGS@
 plugin_LTLIBRARIES += libsplt_ogg.la
 libsplt_ogg_la_SOURCES = ogg.c ogg.h
+libsplt_ogg_la_CPPFLAGS = $(common_CPPFLAGS)
 libsplt_ogg_la_LDFLAGS = $(common_LDFLAGS) @VORBISFILE_LIBS@ @VORBIS_LIBS@ @OGG_LIBS@ 
 
 endif
