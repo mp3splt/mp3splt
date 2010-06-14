@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-06-11 00:03+0200\n"
+"POT-Creation-Date: 2010-06-14 21:21+0200\n"
 "PO-Revision-Date: 2010-02-15 01:40+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -42,12 +42,12 @@ msgstr ""
 msgid "directory does not exists"
 msgstr "le dossier n'existe pas"
 
-#: src/cddb.c:51
+#: src/cddb.c:59 src/cddb.c:653
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " lecture des informations du fichier CDDB %s ...\n"
 
-#: src/cddb.c:474 src/cue.c:89
+#: src/cddb.c:503 src/cddb.c:1089 src/cddb.c:1333 src/cue.c:284
 #, c-format
 msgid ""
 "\n"
@@ -56,12 +56,12 @@ msgstr ""
 "\n"
 "  Artiste : %s\n"
 
-#: src/cddb.c:490 src/cue.c:93
+#: src/cddb.c:519 src/cddb.c:1105 src/cddb.c:1342 src/cue.c:288
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album : %s\n"
 
-#: src/cddb.c:616 src/cue.c:384
+#: src/cddb.c:640 src/cddb.c:1223 src/cue.c:137
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -157,16 +157,16 @@ msgstr " info : début de la division 'wrap'\n"
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 
-#: src/cue.c:130
+#: src/cue.c:56
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " lecture des informations du fichier CUE %s ...\n"
 
-#: src/cue.c:345
+#: src/cue.c:103
 msgid "description here"
 msgstr "description"
 
-#: src/cue.c:524
+#: src/cue.c:228
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " Fichier CUE '%s' créé.\n"

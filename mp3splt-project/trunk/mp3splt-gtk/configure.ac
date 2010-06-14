@@ -38,6 +38,7 @@ AC_INIT(mp3splt-gtk, 0.6, io_fx@yahoo.fr)
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 AM_INIT_AUTOMAKE(mp3splt-gtk, 0.6)
 AC_CONFIG_HEADER([config.h])
+AM_MAINTAINER_MODE([enable])
 
 #DEBUG_FLAGS="-g"
 OPTIMISE_FLAGS="-O2"
@@ -122,7 +123,7 @@ AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audaciou
     [enable_audacious=$enableval],[enable_audacious="yes"])
 
 if test x$enable_audacious = xyes;then
-  PKG_CHECK_MODULES(AUDACIOUS, [audclient >= 0.1],
+  PKG_CHECK_MODULES(AUDACIOUS, [audacious >= 0.1 audclient],
       [AM_CONDITIONAL(AUDACIOUS, true) audacious="yes" ],
       [AC_MSG_ERROR([Audacious player development files are not installed.
 
