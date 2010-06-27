@@ -3468,7 +3468,14 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 }
                 else
                 {
-                  snprintf(filename, 2048,"%s%c%s", dir, SPLT_DIRCHAR, ptr);
+                  if (dir[strlen(dir)-1] == SPLT_DIRCHAR)
+                  {
+                    snprintf(filename, 2048,"%s%s", dir, ptr);
+                  }
+                  else
+                  {
+                    snprintf(filename, 2048,"%s%c%s", dir, SPLT_DIRCHAR, ptr);
+                  }
                 }
                 splt_d_print_debug(state,"wrap dir _%s_\n", dir);
                 splt_d_print_debug(state,"wrap after dir _%s_\n", ptr);

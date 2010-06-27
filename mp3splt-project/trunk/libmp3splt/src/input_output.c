@@ -336,6 +336,14 @@ void splt_io_create_output_dirs_if_necessary(splt_state *state,
     if (dir_char != NULL)
     {
       *dir_char = '\0';
+#ifdef __WIN32__
+      if (strlen(only_dirs) == 2 && only_dirs[1] == ':' &&
+          strlen(output_filename) > 3)
+      {
+        *dir_char = SPLT_DIRCHAR;
+        *(dir_char+1) = '\0';
+      }
+#endif
       int err = splt_io_create_directories(state, only_dirs);
       if (err < 0) { *error = err; }
     }
@@ -348,95 +356,85 @@ void splt_io_create_output_dirs_if_necessary(splt_state *state,
 int splt_io_create_directories(splt_state *state, const char *dir)
 {
   int result = SPLT_OK;
-  const char *ptr = NULL;
-  if (dir[0] == '\0')
+
+  if (dir == NULL || dir[0] == '\0')
   {
     return result;
   }
 
-  char *junk = malloc(sizeof(char) * (strlen(dir)+100));
-  if (!junk)
+  char *dir_to_create = malloc(sizeof(char) * (strlen(dir)+100));
+  if (!dir_to_create)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
-  
-  splt_d_print_debug(state,"Creating directory _%s_\n", dir);
-  
-  ptr = dir;
+ 
+  splt_d_print_debug(state, "Starting to create directories for _%s_ ...\n", dir);
+ 
+  const char *ptr = dir;
+
 #ifdef __WIN32__
   int first_time = SPLT_TRUE;
 #endif
-  while ((ptr = strchr(ptr, SPLT_DIRCHAR))!=NULL)
+
+  while ((ptr = strchr(ptr, SPLT_DIRCHAR)) != NULL)
   {
-		//handle C:DIRCHAR on windows
+    //handle C:DIRCHAR on windows
 #ifdef __WIN32__
-    if (first_time && (strlen(dir) > 2)
-        && (dir[1] == ':') && (dir[2] == SPLT_DIRCHAR))
+    if (first_time && splt_w32_str_starts_with_drive_root_directory(dir))
     {
       ptr++;
+      first_time = SPLT_FALSE;
+      continue;
     }
     first_time = SPLT_FALSE;
 #endif
-    strncpy(junk, dir, ptr-dir);
-    junk[ptr-dir] = '\0';
-    ptr++;
 
-    if (junk[0] != '\0')
+    strncpy(dir_to_create, dir, ptr-dir);
+    dir_to_create[ptr-dir] = '\0';
+
+    if (dir_to_create[0] != '\0')
     {
-      if (! splt_io_check_if_directory(junk))
+      splt_d_print_debug(state,"Checking if _%s_ is a directory ...\n", dir_to_create);
+
+      if (! splt_io_check_if_directory(dir_to_create))
       {
-        splt_d_print_debug(state,"directory _%s_\n", junk);
-
-        if (result < 0) { goto end; }
-
         //don't create output directories if we pretend to split
         //TODO: remove if
         if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
-          if ((splt_io_mkdir(state, junk)) == -1)
+          splt_d_print_debug(state,"Creating directory _%s_ ...\n", dir_to_create);
+
+          if ((splt_io_mkdir(state, dir_to_create)) == -1)
           {
-            splt_e_set_strerror_msg_with_data(state, junk);
+            splt_e_set_strerror_msg_with_data(state, dir_to_create);
             result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
             goto end;
           }
         }
       }
     }
+
+    ptr++;
   }
 
-  if (dir)
+  strncpy(dir_to_create, dir, strlen(dir) + 1);
+
+  if (! splt_io_check_if_directory(dir_to_create))
   {
-    //we have created all the directories except the last one
-    char *last_dir = strdup(dir);
-    if (!last_dir)
-    {
-      result = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto end;
-    }
+    splt_d_print_debug(state,"Creating final directory _%s_ ...\n", dir_to_create);
 
-    if (! splt_io_check_if_directory(last_dir))
+    if ((splt_io_mkdir(state, dir_to_create)) == -1)
     {
-      splt_d_print_debug(state,"final directory _%s_\n", last_dir);
-
-      if ((splt_io_mkdir(state, last_dir)) == -1)
-      {
-        splt_e_set_strerror_msg_with_data(state, last_dir);
-        result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-      }
-    }
-
-    if (last_dir)
-    {
-      free(last_dir);
-      last_dir = NULL;
+      splt_e_set_strerror_msg_with_data(state, dir_to_create);
+      result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
     }
   }
 
 end:
-  if (junk)
+  if (dir_to_create)
   {
-    free(junk);
-    junk = NULL;
+    free(dir_to_create);
+    dir_to_create = NULL;
   }
   
   return result;

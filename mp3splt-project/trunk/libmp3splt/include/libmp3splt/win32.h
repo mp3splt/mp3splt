@@ -56,6 +56,9 @@ char *splt_w32_utf16_to_utf8(const wchar_t *source);
 wchar_t *splt_w32_utf8_to_utf16(const char *source);
 int splt_w32_check_if_encoding_is_utf8(const char *source);
 
+int splt_w32_str_starts_with_drive_root_directory(const char *str);
+int splt_w32_str_is_drive_root_directory(const char *str);
+
 #define SPLT_WIN32_H
 
 #endif

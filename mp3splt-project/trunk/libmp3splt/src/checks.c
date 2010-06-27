@@ -156,35 +156,19 @@ char *splt_check_put_dir_of_cur_song(const char *filename,
     err = splt_su_copy(filename, &filename_path);
     if (err < 0) { *error = err; return NULL; }
 
-    char *c = strrchr(filename_path,SPLT_DIRCHAR);
-    if (c != NULL)
-    {
-      *c = '\0';
-    }
-    else
+    char *c = strrchr(filename_path, SPLT_DIRCHAR);
+    if (c == NULL)
     {
       filename_path[0] = '\0';
+      return filename_path;
     }
 
+    *(c+1) = '\0';
     return filename_path;
   }
 
   err = splt_su_copy(path, &filename_path);
   if (err < 0) { *error = err; return NULL; }
-
-#ifdef __WIN32__
-  size_t path_len = strlen(filename_path);
-  //erase the last char directory
-  //-for windows manage c:\ because the gtk dir returns us "c:\"
-  //and the normal directories without the "\"
-  if (path_len > 3)
-  {
-    if (filename_path[path_len-1] == SPLT_DIRCHAR)
-    {
-      filename_path[path_len-1] = '\0';
-    }
-  }
-#endif
 
   return filename_path;
 }
@@ -343,13 +327,6 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
     goto end;
   }
 
-  int file1_d = fileno(file1_);
-  struct stat file1_stat;
-  if (fstat(file1_d, &file1_stat) != 0)
-  {
-    goto end;
-  }
-
   if ((file2_ = splt_io_fopen(file2,"r")) == NULL)
   {
     goto end;
@@ -379,6 +356,13 @@ int splt_check_is_the_same_file(splt_state *state, const char *file1,
     return SPLT_TRUE;
   }
 #else
+  int file1_d = fileno(file1_);
+  struct stat file1_stat;
+  if (fstat(file1_d, &file1_stat) != 0)
+  {
+    goto end;
+  }
+
   int file2_d = fileno(file2_);
   struct stat file2_stat;
   if (fstat(file2_d,&file2_stat) != 0)
