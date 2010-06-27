@@ -35,6 +35,9 @@
 #include "splt.h"
 #include "win32.h"
 
+static wchar_t *splt_w32_encoding_to_utf16(UINT encoding, const char *source);
+static char *splt_w32_utf16_to_encoding(UINT encoding, const wchar_t *source);
+
 int scandir(const char *dir, struct dirent ***namelist,
 		int(*filter)(const struct dirent *),
 		int(*compar)(const struct dirent **, const struct dirent **))
@@ -249,12 +252,12 @@ int walphasort(const struct _wdirent **a, const struct _wdirent **b)
 
 wchar_t *splt_w32_utf8_to_utf16(const char *source)
 {
-  return splt_u_win32_encoding_to_utf16(CP_UTF8, source);
+  return splt_w32_encoding_to_utf16(CP_UTF8, source);
 }
 
 char *splt_w32_utf16_to_utf8(const wchar_t *source)
 {
-  return splt_u_win32_utf16_to_encoding(CP_UTF8, source);
+  return splt_w32_utf16_to_encoding(CP_UTF8, source);
 }
 
 int splt_w32_check_if_encoding_is_utf8(const char *source)
@@ -286,7 +289,25 @@ int splt_w32_check_if_encoding_is_utf8(const char *source)
   return is_utf8;
 }
 
-static wchar_t *splt_u_win32_encoding_to_utf16(UINT encoding, const char *source)
+int splt_w32_str_starts_with_drive_root_directory(const char *str)
+{
+  if (strlen(str) > 2 &&
+      str[1] == ':' &&
+      str[2] == SPLT_DIRCHAR)
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
+}
+
+int splt_w32_str_is_drive_root_directory(const char *str)
+{
+  return strlen(str) == 3 &&
+    splt_w32_str_starts_with_drive_root_directory(str);
+}
+
+static wchar_t *splt_w32_encoding_to_utf16(UINT encoding, const char *source)
 {
   wchar_t *dest = NULL;
 
@@ -303,7 +324,7 @@ static wchar_t *splt_u_win32_encoding_to_utf16(UINT encoding, const char *source
   return dest;
 }
 
-static char *splt_u_win32_utf16_to_encoding(UINT encoding, const wchar_t *source)
+static char *splt_w32_utf16_to_encoding(UINT encoding, const wchar_t *source)
 {
   char *dest = NULL;
 

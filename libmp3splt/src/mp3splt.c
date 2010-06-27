@@ -697,6 +697,8 @@ int mp3splt_split(splt_state *state)
       splt_t_set_new_filename_path(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
+      splt_d_print_debug(state, "new fname path = _%s_\n", new_filename_path); 
+
       error = splt_io_create_directories(state, new_filename_path);
       if (error < 0) { goto function_end; }
 

@@ -297,8 +297,16 @@ char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error)
   }
   else
   {
-    err = splt_su_append_str(&output_fname_with_path, new_filename_path,
-        SPLT_DIRSTR, output_fname, extension, NULL);
+    if (new_filename_path[strlen(new_filename_path)-1] == SPLT_DIRCHAR)
+    {
+      err = splt_su_append_str(&output_fname_with_path, new_filename_path,
+          output_fname, extension, NULL);
+    }
+    else
+    {
+      err = splt_su_append_str(&output_fname_with_path, new_filename_path,
+          SPLT_DIRSTR, output_fname, extension, NULL);
+    }
     if (err < 0) { goto error; }
   }
 

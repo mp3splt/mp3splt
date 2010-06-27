@@ -697,6 +697,9 @@ double splt_p_split(splt_state *state, const char *final_fname, double begin_poi
   else
   {
     int err = SPLT_OK;
+
+    splt_d_print_debug(state, "split creating directories of final fname ... _%s_\n", final_fname);
+
     splt_io_create_output_dirs_if_necessary(state, final_fname, &err);
     if (err < 0) { *error = err; return end_point; }
 

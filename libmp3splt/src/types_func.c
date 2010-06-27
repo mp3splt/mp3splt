@@ -157,10 +157,27 @@ char *splt_t_get_new_filename_path(splt_state *state)
   return state->iopts.new_filename_path;
 }
 
-int splt_t_set_path_of_split(splt_state *state, const char *path)
+int splt_t_set_path_of_split(splt_state *state, const char *path_of_split)
 {
-  splt_d_print_debug(state,"Setting path of split to _%s_\n", path);
-  return splt_su_copy(path, &state->path_of_split);
+  splt_d_print_debug(state,"Setting path of split to _%s_\n", path_of_split);
+  int err = splt_su_copy(path_of_split, &state->path_of_split);
+
+  if (state->path_of_split == NULL)
+  {
+    return err;
+  }
+
+#ifdef __WIN32__
+  if (state->path_of_split[strlen(state->path_of_split)-1] == SPLT_DIRCHAR)
+  {
+    if (! splt_w32_str_is_drive_root_directory(state->path_of_split))
+    {
+      splt_su_str_cut_last_char(state->path_of_split);
+    }
+  }
+#endif
+
+  return err;
 }
 
 char *splt_t_get_path_of_split(splt_state *state)

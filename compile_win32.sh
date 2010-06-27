@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cp /bin/mingw32-make.exe /bin/make.exe
+
 echo "unarchiving libmp3splt required libs ..."
 tar jxf ../libmp3splt_mingw_required_libs.tar.bz2 -C / || exit 1
 cp /usr/bin/mingw32-make.exe /usr/bin/make.exe
