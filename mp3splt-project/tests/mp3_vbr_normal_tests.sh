@@ -556,7 +556,7 @@ function test_normal_vbr_custom_tags
  Processed 7084 frames - Sync errors: 0
  file split"
   tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  mp3splt_args="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
@@ -604,7 +604,7 @@ function test_normal_vbr_custom_tags_and_cue_export
  file split
  CUE file 'output/output_out.cue' created."
   tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
   run_check_output "$mp3splt_args" "$expected"
 
   check_file_content "output/output_out.cue" 'TITLE "b1"
@@ -677,7 +677,7 @@ function test_normal_vbr_custom_tags_and_input_no_tags
  Processed 7084 frames - Sync errors: 0
  file split"
   tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  mp3splt_args="-d $OUTPUT_DIR -g $tags_option $NO_TAGS_MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $NO_TAGS_MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
@@ -721,7 +721,7 @@ function test_normal_vbr_custom_tags_multiple_percent
  Processed 7084 frames - Sync errors: 0
  file split"
   tags_option="%[@a=a1,@b=b1,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  mp3splt_args="-d $OUTPUT_DIR -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
@@ -917,7 +917,7 @@ function test_normal_vbr_output_fnames_and_custom_tags
  file split"
   tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7]"
   output_option="\"@a_@b_@t_@n_@N_@f+@m:@s:@h @M:@S:@H\""
-  mp3splt_args="-d $OUTPUT_DIR -g $tags_option -o $output_option $MP3_FILE 0.5 1.0.30 1.5 2.0"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" -o $output_option $MP3_FILE 0.5 1.0.30 1.5 2.0"
   run_check_output "$mp3splt_args" "$expected"
 
   check_if_file_exist "$OUTPUT_DIR/a1_b1_t1_1_10_${M_FILE} 00:05:00 01:00:30.mp3"
@@ -1006,7 +1006,7 @@ function test_normal_vbr_output_fnames_and_custom_tags_dirs
  file split (EOF)"
   output_option="@a/@b/@a-@t @n"
   tags_option="%[@o,@b=album1][@b=album2][@b=album3]"
-  mp3splt_args="-o '$output_option' -g $tags_option -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  mp3splt_args="-o '$output_option' -g \"$tags_option\" -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
   check_if_directory_exist "$OUTPUT_DIR/La Verue"
@@ -1098,7 +1098,7 @@ function test_normal_vbr_custom_tags_with_replace_tags_in_tags
  file split"
   tags_option="r[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@N=7]"
   output_option="@t-@a-@b-@N"
-  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/$F1"
@@ -1140,7 +1140,7 @@ function test_normal_vbr_custom_tags_without_replace_tags_in_tags
  file split"
   tags_option="[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@N=7]"
   output_option="@t-@a-@b-@N"
-  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g $tags_option $MP3_FILE 0.5 1.0 1.5 2.0"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/$F1"

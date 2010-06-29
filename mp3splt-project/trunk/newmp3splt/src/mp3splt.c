@@ -30,7 +30,10 @@
 #include <ctype.h>
 #include <getopt.h>
 #include <locale.h>
-#include <libintl.h>
+
+#ifdef ENABLE_NLS
+#  include <libintl.h>
+#endif
 
 #ifdef __WIN32__
 #include <windows.h>
@@ -46,15 +49,19 @@
 #define PACKAGE_NAME "mp3splt"
 #endif
 
-#define MP3SPLT_DATE "14/06/10"
+#define MP3SPLT_DATE "29/06/10"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
 #define MP3SPLT_EMAIL2 "<io_fx AT yahoo.fr>"
 #define MP3SPLT_CDDBFILE "query.cddb"
 
-#define MP3SPLT_GETTEXT_DOMAIN "mp3splt"
-#define _(STR) gettext(STR)
+#ifdef ENABLE_NLS
+#  define MP3SPLT_GETTEXT_DOMAIN "mp3splt"
+#  define _(STR) gettext(STR)
+#else
+#  define _(STR) ((const char *)STR)
+#endif
 
 //in case of STDIN/STDOUT usage, we change the console file handle
 //-yeah indeed, global variables might suck
@@ -1801,9 +1808,11 @@ split:
 //main program starts here
 int main(int argc, char **orig_argv)
 {
-  //gettext
   setlocale(LC_ALL, "");
+
+#ifdef ENABLE_NLS
   textdomain(MP3SPLT_GETTEXT_DOMAIN);
+#endif
 
   console_out = stdout;
   console_err = stderr;
@@ -1814,7 +1823,9 @@ int main(int argc, char **orig_argv)
 
   main_data *data = create_main_struct(argc, orig_argv);
 
-#ifdef __WIN32__
+#ifdef ENABLE_NLS
+
+# ifdef __WIN32__
   char mp3splt_uninstall_file[2048] = { '\0' };
   DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
   SHGetValue(HKEY_LOCAL_MACHINE,
@@ -1868,11 +1879,12 @@ int main(int argc, char **orig_argv)
     bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, "translations");
     bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, "translations");
   }
-#else
+# else
   bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, LOCALEDIR);
-#endif
+# endif
 
   bind_textdomain_codeset(MP3SPLT_GETTEXT_DOMAIN, "UTF-8");
+#endif
 
   data->state = mp3splt_new_state(&err);
   process_confirmation_error(err, data);

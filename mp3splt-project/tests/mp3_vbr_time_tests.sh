@@ -556,7 +556,7 @@ function test_time_vbr_custom_tags
  Processed 9402 frames - Sync errors: 0
  time split ok"
   tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  mp3splt_args="-d $OUTPUT_DIR -g $tags_option $MP3_FILE -t 1.0"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $MP3_FILE -t 1.0"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3"
@@ -603,7 +603,7 @@ function test_time_vbr_custom_tags_multiple_percent
  Processed 9402 frames - Sync errors: 0
  time split ok"
   tags_option="%[@a=a1,@b=b1,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
-  mp3splt_args="-d $OUTPUT_DIR -g $tags_option $MP3_FILE -t 1.0"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $MP3_FILE -t 1.0"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3"
@@ -810,7 +810,7 @@ function test_time_vbr_output_fnames_and_custom_tags_dirs
  time split ok"
   output_option="@a/@b/@a-@t @n"
   tags_option="%[@o,@b=album1][@b=album2][@b=album3]"
-  mp3splt_args="-o '$output_option' -g $tags_option -d $OUTPUT_DIR $MP3_FILE -t 2.0" 
+  mp3splt_args="-o '$output_option' -g \"$tags_option\" -d $OUTPUT_DIR $MP3_FILE -t 2.0" 
   run_check_output "$mp3splt_args" "$expected"
 
   check_if_directory_exist "$OUTPUT_DIR/La Verue"

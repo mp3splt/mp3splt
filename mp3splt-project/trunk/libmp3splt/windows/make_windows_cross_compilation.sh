@@ -3,7 +3,7 @@
 #################
 #set variables MINGW_HOST 
 
-HOST=${MINGW_HOST:-"i686-pc-mingw32"}
+HOST=${MINGW_HOST:-"i586-mingw32msvc"}
 export CC=${HOST}"-gcc"
 
 #################
