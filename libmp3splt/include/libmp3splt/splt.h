@@ -65,8 +65,11 @@
 #endif
 
 #include <limits.h>
-#include <libintl.h>
 #include <locale.h>
+
+#ifdef ENABLE_NLS
+#  include <libintl.h>
+#endif
 
 #ifdef __WIN32__
 
@@ -82,7 +85,11 @@
 
 #endif
 
-#define _(STR) dgettext(MP3SPLT_LIB_GETTEXT_DOMAIN, STR)
+#ifdef ENABLE_NLS
+#  define _(STR) dgettext(MP3SPLT_LIB_GETTEXT_DOMAIN, STR)
+#else
+#  define _(STR) ((const char *)STR)
+#endif
 
 /**********************************/
 /* splt normal or syncerror split */
