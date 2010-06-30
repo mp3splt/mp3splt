@@ -27,7 +27,7 @@ mp3splt_gtk_SOURCES = \
   preferences_manager.c preferences_manager.h
 
 
-INCLUDES = @GTK_CFLAGS@ -Wall
+INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 
 mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm
 
