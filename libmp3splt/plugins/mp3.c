@@ -603,28 +603,17 @@ static id3_byte_t *splt_mp3_get_id3v2_tag_bytes(FILE *file, id3_length_t *length
 
   if (id3v2_end_offset != 0)
   {
-    unsigned long id3v2_size = (unsigned long) id3v2_end_offset + 10;
-    bytes = malloc(sizeof(unsigned char) * id3v2_size);
+    size_t id3v2_size = (size_t) (id3v2_end_offset + 10);
+
+    rewind(file);
+    bytes = splt_io_fread(file, 1, id3v2_size);
 
     if (! bytes)
     {
       return NULL;
     }
 
-    rewind(file);
-
-    if (fread(bytes, 1, id3v2_size, file) != id3v2_size)
-    {
-      if (bytes)
-      {
-        free(bytes);
-        bytes = NULL;
-      }
-
-      return NULL;
-    }
-
-    *length = id3v2_size;
+    *length = (unsigned long) id3v2_size;
   }
 
   return bytes;
@@ -675,7 +664,7 @@ static id3_byte_t *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *fil
   *length = 0;
   id3_byte_t *bytes = NULL;
 
-  FILE *file = splt_io_fopen(filename, "r");
+  FILE *file = splt_io_fopen(filename, "rb");
 
   if (! file)
   {
@@ -3726,10 +3715,12 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
+  splt_d_print_debug(state, "Getting original tags ...");
 #ifndef NO_ID3TAG
-  splt_d_print_debug(state,"Taking original ID3 tags from file using libid3tag ...\n");
+  splt_d_print_debug(state, "Taking original ID3 tags from file using libid3tag ...\n");
   splt_mp3_get_original_tags(splt_t_get_filename_to_split(state), state, error);
 #else
+  splt_d_print_debug(state, "Warning ! NO_ID3TAG");
   //splt_e_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
 #endif
 }

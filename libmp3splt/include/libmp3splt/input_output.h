@@ -54,6 +54,7 @@ int splt_io_create_directories(splt_state *state, const char *dir);
 int splt_io_stat(const char *path, mode_t *st_mode, off_t *st_size);
 FILE *splt_io_fopen(const char *filename, const char *mode);
 int splt_io_mkdir(splt_state *state, const char *path);
+unsigned char *splt_io_fread(FILE *file, int start, size_t size);
 size_t splt_io_fwrite(splt_state *state, const void *ptr,
     size_t size, size_t nmemb, FILE *stream);
 
