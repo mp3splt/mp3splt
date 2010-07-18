@@ -252,11 +252,11 @@ static int splt_fu_append_next_result(splt_freedb_results *res,
   int error = SPLT_OK;
 
   res->results = realloc(res->results, (res->number + 1) * sizeof(splt_freedb_one_result));
-  res->results[res->number].revisions = NULL;
   if (res->results == NULL)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   }
+  memset(&res->results[res->number], 0x0, sizeof(splt_freedb_one_result));
 
   error = splt_su_copy(album_name, &res->results[res->number].name);
   if (error < 0) { return error; }

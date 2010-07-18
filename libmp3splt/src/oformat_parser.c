@@ -47,7 +47,8 @@ int splt_of_parse_outformat(char *s, splt_state *state)
   char *ptrs = NULL, *ptre = NULL;
   int i=0, amb = SPLT_OUTPUT_FORMAT_AMBIGUOUS, len=0;
 
-  for (i=0; i<strlen(s); i++)
+  size_t size = strlen(s);
+  for (i = 0; i < size; i++)
   {
     if (s[i]=='+') 
     {
