@@ -711,33 +711,34 @@ char *splt_io_readline(FILE *stream, int *error)
   return line;
 }
 
+unsigned char *splt_io_fread(FILE *file, int start, size_t size)
+{
+  unsigned char *bytes = malloc(sizeof(unsigned char) * size);
+
+  if (! bytes)
+  {
+    return NULL;
+  }
+
+  size_t bytes_read = fread(bytes, 1, size, file);
+
+  if (bytes_read != size)
+  {
+    if (bytes)
+    {
+      free(bytes);
+      bytes = NULL;
+    }
+
+    return NULL;
+  }
+
+  return bytes;
+}
+
 static int splt_u_fname_is_directory_parent(char *fname, int fname_size)
 {
   return ((fname_size == 1) && (strcmp(fname, ".") == 0)) ||
     ((fname_size == 2) && (strcmp(fname, "..") == 0));
 }
-
-/*int main()
-{
-  FILE *stream = fopen("input_output.c", "r");
-  fseek(stream, 0, SEEK_SET);
-
-  char *line = NULL;
-  int error = SPLT_OK;
-  while ((line = splt_io_readline(stream, &error)) != NULL)
-  {
-    if (error < 0)
-    {
-      fprintf(stdout, "ERROR _%d_\n", error);
-      fflush(stdout);
-    }
-
-    fprintf(stdout, "%s", line);
-    fflush(stdout);
-
-    free(line);
-  }
-
-  return EXIT_SUCCESS;
-}*/
 
