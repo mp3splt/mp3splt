@@ -32,6 +32,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
 #include "splt.h"
 
@@ -41,6 +42,7 @@ static int splt_u_get_requested_num_of_digits(splt_state *state, const char *for
     int *requested_num_of_digits, int is_alpha);
 static void splt_u_alpha_track(splt_state *state, int nfield,
     char *fm, int fm_length, int number_of_digits, int tracknumber);
+static char splt_of_get_number_of_digits_from_total_time(splt_state *state);
 
 int splt_of_parse_outformat(char *s, splt_state *state)
 {
@@ -294,7 +296,12 @@ put_value:
             else if (mMsShH_value != -1)
             {
               temp[1] = '0';
-              temp[2] = '2';
+              char number_of_digits = '2';
+              if (char_variable == 'M' || char_variable == 'm')
+              {
+                number_of_digits = splt_of_get_number_of_digits_from_total_time(state);
+              }
+              temp[2] = number_of_digits;
               temp[3] = 'l';
               temp[4] = 'd';
 
@@ -744,6 +751,25 @@ end:
   }
 
   return error;
+}
+
+static char splt_of_get_number_of_digits_from_total_time(splt_state *state)
+{
+  long total_time = splt_t_get_total_time(state);
+  if (total_time > 0)
+  {
+    long minutes = total_time / 100 / 60;
+    int i = (int) (log10l((long double) minutes));
+    char number_of_digits = (char) (i + '1');
+    if (number_of_digits == '1')
+    {
+      return '2';
+    }
+
+    return number_of_digits;
+  }
+
+  return '2';
 }
 
 static short splt_u_output_variable_is_valid(char v, int *amb)
