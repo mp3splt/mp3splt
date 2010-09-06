@@ -1552,7 +1552,8 @@ gpointer split_preview(gpointer data)
     gint confirmation;
 
     int err = 0;
-    mp3splt_erase_all_splitpoints(the_state,&err);
+    mp3splt_erase_all_splitpoints(the_state, &err);
+    mp3splt_erase_all_tags(the_state, &err);
 
     mp3splt_append_splitpoint(the_state, preview_start_position / 10,
         "preview", SPLT_SPLITPOINT);

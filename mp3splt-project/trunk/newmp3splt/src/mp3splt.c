@@ -49,7 +49,7 @@
 #define PACKAGE_NAME "mp3splt"
 #endif
 
-#define MP3SPLT_DATE "18/07/10"
+#define MP3SPLT_DATE "06/09/10"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
@@ -660,9 +660,9 @@ void check_args(int argc, main_data *data)
     //auto adjust option (-a)
     if (opt->a_option)
     {
-      if (opt->i_option || opt->S_option)
+      if (opt->i_option)
       {
-        print_error_exit(_("-a option cannot be used with -i or -S"), data);
+        print_error_exit(_("-a option cannot be used with -i"), data);
       }
     }
 

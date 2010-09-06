@@ -213,12 +213,13 @@ gpointer split_it(gpointer data)
   gdk_threads_leave();
  
   gint err = SPLT_OK;
-  //erase previous splitpoints
+
   mp3splt_erase_all_splitpoints(the_state,&err);
+
   //we erase previous tags if we don't have the option
   //splt_current_tags
-  if (mp3splt_get_int_option(the_state, SPLT_OPT_TAGS,&err)
-      != SPLT_CURRENT_TAGS)
+  if ((mp3splt_get_int_option(the_state, SPLT_OPT_TAGS, &err) !=
+        (SPLT_CURRENT_TAGS) || split_file_mode == FILE_MODE_MULTIPLE))
   {
     mp3splt_erase_all_tags(the_state,&err);
   }
@@ -310,6 +311,16 @@ gpointer split_it(gpointer data)
         }
 
         row_number++;
+
+        gdk_threads_enter();
+
+        mp3splt_erase_all_tags(the_state, &err);
+        print_status_bar_confirmation(err);
+        err = SPLT_OK;
+        mp3splt_erase_all_splitpoints(the_state, &err);
+        print_status_bar_confirmation(err);
+
+        gdk_threads_leave();
       }
     }
     else
