@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-09-06 23:15+0200\n"
+"POT-Creation-Date: 2010-09-07 20:57+0200\n"
 "PO-Revision-Date: 2010-02-15 01:54+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -108,47 +108,47 @@ msgstr "Effacer toutes les lignes"
 msgid "_Silence detection"
 msgstr "Détection du _silence"
 
-#: src/tree_tab.c:1611 src/mp3splt-gtk.c:346
+#: src/tree_tab.c:1612 src/mp3splt-gtk.c:357
 msgid " finished"
 msgstr " fini"
 
-#: src/tree_tab.c:1626
+#: src/tree_tab.c:1627
 msgid " cannot split preview last splitpoint"
 msgstr " impossible d'écouter l'aperçu du dernier point de coupure"
 
-#: src/tree_tab.c:1670
+#: src/tree_tab.c:1671
 msgid " cannot preview, not connected to player"
 msgstr " impossible d'écouter l'aperçu, déconnecté du lecteur"
 
-#: src/tree_tab.c:1735
+#: src/tree_tab.c:1736
 msgid "Keep"
 msgstr "Garder"
 
-#: src/tree_tab.c:1749 src/split_files.c:111
+#: src/tree_tab.c:1750 src/split_files.c:111
 msgid "Filename"
 msgstr "Nom fichier"
 
-#: src/tree_tab.c:1763
+#: src/tree_tab.c:1764
 msgid "Secs"
 msgstr "Secondes"
 
-#: src/tree_tab.c:1777
+#: src/tree_tab.c:1778
 msgid "Mins"
 msgstr "Minutes"
 
-#: src/tree_tab.c:1791
+#: src/tree_tab.c:1792
 msgid "Hundr"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:1801
+#: src/tree_tab.c:1802
 msgid "Length"
 msgstr "Durée"
 
-#: src/tree_tab.c:1812
+#: src/tree_tab.c:1813
 msgid "LiveP"
 msgstr "ALive"
 
-#: src/tree_tab.c:1823
+#: src/tree_tab.c:1824
 msgid "SplitP"
 msgstr "ACoupure"
 
@@ -732,7 +732,7 @@ msgstr " recherche d'erreurs de synchronisation..."
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
-#: src/mp3splt-gtk.c:320
+#: src/mp3splt-gtk.c:331
 msgid " error: no files found in multiple files mode"
 msgstr " erreur: aucun fichier trouvé avec le mode 'fichiers multiples'"
 

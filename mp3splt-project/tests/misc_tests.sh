@@ -16,6 +16,35 @@ function _test_misc_version
   echo
 }
 
+function test_misc_create_directories
+{
+  remove_output_dir
+
+  test_name="create directories"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/a/b/c/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/a/b/c/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/a/b/c/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args=" -d $OUTPUT_DIR/a/b/c $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_directory_exist "$OUTPUT_DIR/a/b/c"
+  check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_01m_00s__02m_00s_20h.mp3"
+  check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_02m_00s_20h__03m_05s.mp3"
+  check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_03m_05s__04m_05s_58h.mp3"
+
+  p_green "OK"
+  echo
+}
+
 function test_misc_with_symlink_input_dir
 {
   remove_output_dir

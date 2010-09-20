@@ -4,7 +4,7 @@ RUN_INTERNET_TESTS=1
 
 DIFF_CMD="diff"
 VIEW_DIFF_CMD="acoc diff"
-USE_GRAPHIC_DIFF=0
+USE_GRAPHIC_DIFF=1
 GRAPHIC_DIFF_CMD="meld"
 
 MP3SPLT="./mp3splt -X"
@@ -20,9 +20,9 @@ WRAPPED_FILE="$SONGS_DIR/wrapped.mp3"
 SYNCERR_FILE="$SONGS_DIR/syncerror.mp3"
 
 #OGG
-OGG_FILE="$SONGS_DIR/test.ogg"
+OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can.ogg"
 SILENCE_OGG_FILE="$SONGS_DIR/test.ogg"
-NO_TAGS_OGG_FILE="$SONGS_DIR/test.ogg"
+NO_TAGS_OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can__no_tags.ogg"
 
 #OTHERS
 CDDB_FILE="$SONGS_DIR/test.cddb"

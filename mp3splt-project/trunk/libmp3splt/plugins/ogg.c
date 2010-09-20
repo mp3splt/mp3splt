@@ -492,38 +492,44 @@ void splt_ogg_state_free(splt_state *state)
 //puts tags in vc
 //what happens if 'vorbis_comment_add_tag(..)' fails ?
 //- ask vorbis developers
-static void splt_ogg_v_comment(vorbis_comment *vc, char *artist,
+static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *artist,
     char *album, char *title, char *tracknum, char *date, char *genre, char *comment,
     int *error)
 {
-  if (title!=NULL)
+  if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE &&
+      state->original_tags.tags_version == 0)
+  {
+    return;
+  }
+
+  if (title != NULL)
   {
     vorbis_comment_add_tag(vc, "title", splt_ogg_checkutf(title));
   }
-  if (artist!=NULL)
+  if (artist != NULL)
   {
     vorbis_comment_add_tag(vc, "artist", splt_ogg_checkutf(artist));
   }
-  if (album!=NULL)
+  if (album != NULL)
   {
     vorbis_comment_add_tag(vc, "album", splt_ogg_checkutf(album));
   }
-  if (date!=NULL)
+  if (date != NULL)
   {
-    if (strlen(date)>0)
+    if (strlen(date) > 0)
     {
       vorbis_comment_add_tag(vc, "date", date);
     }
   }
-  if (genre!=NULL)
+  if (genre != NULL)
   {
     vorbis_comment_add_tag(vc, "genre", genre);
   }
-  if (tracknum!=NULL)
+  if (tracknum != NULL)
   {
     vorbis_comment_add_tag(vc, "tracknumber", tracknum);
   }
-  if (comment!=NULL)
+  if (comment != NULL)
   {
     vorbis_comment_add_tag(vc, "comment", comment);
   }
@@ -549,31 +555,37 @@ void splt_ogg_get_original_tags(const char *filename,
   char *a = NULL,*t = NULL,*al = NULL,*da = NULL, *g = NULL,*tr = NULL,
        *com = NULL;
 
+  int has_tags = SPLT_FALSE;
+
   a = vorbis_comment_query(vc_local, "artist",0);
   if (a != NULL)
   {
-    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ARTIST, a);
+    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_ARTIST, a);
+    has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
 
   t = vorbis_comment_query(vc_local, "title",0);
   if (t != NULL)
   {
-    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TITLE, t);
+    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_TITLE, t);
+    has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
 
   al = vorbis_comment_query(vc_local, "album",0);
   if (al != NULL)
   {
-    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_ALBUM, al);
+    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_ALBUM, al);
+    has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
 
   da = vorbis_comment_query(vc_local, "date",0);
   if (da != NULL)
   {
-    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_YEAR, da);
+    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_YEAR, da);
+    has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
 
@@ -582,22 +594,27 @@ void splt_ogg_get_original_tags(const char *filename,
   {
     //TODO: genre does not work
     err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, g);
+    has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
 
   tr = vorbis_comment_query(vc_local, "tracknumber",0);
   if (tr != NULL)
   {
-    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_TRACK, tr);
+    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_TRACK, tr);
+    has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
 
   com = vorbis_comment_query(vc_local, "comment",0);
   if (com != NULL)
   {
-    err = splt_tu_set_original_tags_field(state,SPLT_TAGS_COMMENT, com);
+    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_COMMENT, com);
+    has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
+
+  splt_tu_set_original_tags_field(state, SPLT_TAGS_VERSION, &has_tags);
 }
 
 //puts the ogg tags
@@ -612,6 +629,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
   if (splt_o_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
   {
     splt_tags *tags = splt_tu_get_current_tags(state);
+
     if (tags)
     {
       char *track_string = splt_ogg_trackstring(tags->track);
@@ -619,7 +637,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
       {
         char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
         vorbis_comment_init(&oggstate->vc);
-        splt_ogg_v_comment(&oggstate->vc,
+        splt_ogg_v_comment(state, &oggstate->vc,
             artist_or_performer, tags->album, tags->title, track_string,
             tags->year, (char *)splt_ogg_genre_list[(int)tags->genre],
             tags->comment, error);
@@ -1940,7 +1958,6 @@ double splt_pl_split(splt_state *state, const char *final_fname,
 
   if (*error >= 0)
   {
-    //effective ogg split
     return splt_ogg_split(final_fname, state,
         begin_point, end_point,
         !state->options.option_input_not_seekable,

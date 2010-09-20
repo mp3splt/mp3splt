@@ -163,16 +163,13 @@ FILE "songs/La_Verue__Today.mp3" MP3
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
-
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
   check_current_file_size "1366550"
 
-
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
   check_current_mp3_length "01.04"
   check_current_file_has_xing
-
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir"\
   "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
   check_current_file_size "1521964"
@@ -180,7 +177,6 @@ FILE "songs/La_Verue__Today.mp3" MP3
   current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
-
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
   check_current_file_size "1399387"
@@ -227,6 +223,42 @@ FILE "songs/La_Verue__Today.mp3" MP3
     TITLE "Today"
     PERFORMER "La Verue"
     INDEX 01 03:05:00'
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_overlap_split
+{
+  remove_output_dir
+
+  test_name="vbr overlap splitpoints"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+ info: overlapping split files with 0.30.0
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3\" created
+ file split (EOF)"
+  mp3splt_args="-T 2 -O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
+  check_current_mp3_length "01.30"
+  check_current_file_size "2008723"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3"
+  check_current_mp3_length "01.59"
+  check_current_file_size "2823722"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3"
+  check_current_mp3_length "00.35"
+  check_current_file_size "809280"
 
   p_green "OK"
   echo
@@ -285,6 +317,36 @@ FILE "songs/La_Verue__Today.mp3" MP3
   echo
 }
 
+function test_normal_vbr_m3u
+{
+  remove_output_dir
+
+  test_name="vbr m3u"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ M3U file '$OUTPUT_DIR/m3u/playlist.m3u' will be created.
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/m3u/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/m3u/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/m3u/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-m playlist.m3u -d $OUTPUT_DIR/m3u $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  expected="La_Verue__Today_01m_00s__02m_00s_20h.mp3
+La_Verue__Today_02m_00s_20h__03m_05s.mp3
+La_Verue__Today_03m_05s__04m_05s_58h.mp3"
+  check_file_content "$OUTPUT_DIR/m3u/playlist.m3u" "$expected"
+
+  p_green "OK"
+  echo
+}
+
 function test_normal_vbr_pretend_and_m3u
 {
   remove_output_dir
@@ -335,27 +397,21 @@ function test_normal_vbr_original_tags
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
-  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
-  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
   check_current_file_size "1366678"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
   check_current_mp3_length "01.04"
   check_current_file_has_xing
-  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir"\
-  "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir"\
+  check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir"\
   "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
   check_current_file_size "1522092"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
-  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
-  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
   check_current_file_size "1399515"
 
@@ -433,16 +489,19 @@ function test_normal_vbr_no_input_tags
   check_current_mp3_length "01.00"
   check_current_file_has_xing
   check_current_mp3_no_tags
+  check_current_file_size "1366334"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
   check_current_mp3_length "01.04"
   check_current_file_has_xing
   check_current_mp3_no_tags
+  check_current_file_size "1521748"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
   check_current_mp3_no_tags
+  check_current_file_size "1399171"
 
   p_green "OK"
   echo
@@ -472,65 +531,6 @@ function test_normal_vbr_no_xing
   check_current_mp3_length "00.58"
   check_current_file_has_no_xing
   check_current_file_size "1398970"
-
-  p_green "OK"
-  echo
-}
-
-function test_normal_vbr_m3u
-{
-  remove_output_dir
-
-  test_name="vbr m3u"
-  M_FILE="La_Verue__Today"
-
-  expected=" Processing file 'songs/${M_FILE}.mp3' ...
- info: file matches the plugin 'mp3 (libmad)'
- M3U file '$OUTPUT_DIR/m3u/playlist.m3u' will be created.
- info: found Xing or Info header. Switching to frame mode... 
- info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
- info: starting normal split
-   File \"$OUTPUT_DIR/m3u/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
-   File \"$OUTPUT_DIR/m3u/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
-   File \"$OUTPUT_DIR/m3u/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
- Processed 9402 frames - Sync errors: 0
- file split (EOF)"
-  mp3splt_args="-m playlist.m3u -d $OUTPUT_DIR/m3u $MP3_FILE 1.0 2.0.2 3.5 EOF" 
-  run_check_output "$mp3splt_args" "$expected"
-
-  expected="La_Verue__Today_01m_00s__02m_00s_20h.mp3
-La_Verue__Today_02m_00s_20h__03m_05s.mp3
-La_Verue__Today_03m_05s__04m_05s_58h.mp3"
-  check_file_content "$OUTPUT_DIR/m3u/playlist.m3u" "$expected"
-
-  p_green "OK"
-  echo
-}
-
-function test_normal_vbr_create_directories
-{
-  remove_output_dir
-
-  test_name="vbr create directories"
-  M_FILE="La_Verue__Today"
-
-  expected=" Processing file 'songs/${M_FILE}.mp3' ...
- info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
- info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
- info: starting normal split
-   File \"$OUTPUT_DIR/a/b/c/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
-   File \"$OUTPUT_DIR/a/b/c/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
-   File \"$OUTPUT_DIR/a/b/c/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
- Processed 9402 frames - Sync errors: 0
- file split (EOF)"
-  mp3splt_args=" -d $OUTPUT_DIR/a/b/c $MP3_FILE 1.0 2.0.2 3.5 EOF" 
-  run_check_output "$mp3splt_args" "$expected"
-
-  check_if_directory_exist "$OUTPUT_DIR/a/b/c"
-  check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_01m_00s__02m_00s_20h.mp3"
-  check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_02m_00s_20h__03m_05s.mp3"
-  check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_03m_05s__04m_05s_58h.mp3"
 
   p_green "OK"
   echo
@@ -744,42 +744,6 @@ function test_normal_vbr_custom_tags_multiple_percent
   echo
 }
 
-function test_normal_vbr_overlap_split
-{
-  remove_output_dir
-
-  test_name="vbr overlap splitpoints"
-  M_FILE="La_Verue__Today"
-
-  expected=" Processing file 'songs/${M_FILE}.mp3' ...
- info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
- info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
- info: starting normal split
- info: overlapping split files with 0.30.0
-   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3\" created
-   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3\" created
-   File \"$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3\" created
- file split (EOF)"
-  mp3splt_args="-T 2 -O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
-  run_check_output "$mp3splt_args" "$expected"
-
-  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
-  check_current_mp3_length "01.30"
-  check_current_file_size "2008723"
-
-  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__04m_00s.mp3"
-  check_current_mp3_length "01.59"
-  check_current_file_size "2823722"
-
-  current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__04m_05s_58h.mp3"
-  check_current_mp3_length "00.35"
-  check_current_file_size "809280"
-
-  p_green "OK"
-  echo
-}
-
 function test_normal_vbr_stdin
 {
   no_tags_file=$1
@@ -898,6 +862,34 @@ function _test_normal_vbr_stdin_and_tags
 function test_normal_vbr_stdin_and_tags_v1 { _test_normal_vbr_stdin_and_tags 1; }
 function test_normal_vbr_stdin_and_tags_v2 { _test_normal_vbr_stdin_and_tags 2; }
 
+function test_normal_vbr_output_fname
+{
+  remove_output_dir
+
+  test_name="vbr output fname"
+  M_FILE="La_Verue__Today"
+
+  expected=" warning: output format ambiguous (@t or @n missing)
+ Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/test.mp3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  mp3splt_args="-o 'test' -d $OUTPUT_DIR $MP3_FILE 1.0 2.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_file_exist "$OUTPUT_DIR/test.mp3"
+
+  current_file="$OUTPUT_DIR/test.mp3" 
+  check_current_mp3_length "01.00"
+
+  p_green "OK"
+  echo
+}
+
 function test_normal_vbr_output_fnames_and_custom_tags
 {
   remove_output_dir
@@ -923,34 +915,6 @@ function test_normal_vbr_output_fnames_and_custom_tags
   check_if_file_exist "$OUTPUT_DIR/a1_b1_t1_1_10_${M_FILE} 00:05:00 01:00:30.mp3"
   check_if_file_exist "$OUTPUT_DIR/___2_2_${M_FILE} 01:00:30 01:05:00.mp3"
   check_if_file_exist "$OUTPUT_DIR/La Verue_album_Today_3_7_${M_FILE} 01:05:00 02:00:00.mp3"
-
-  p_green "OK"
-  echo
-}
-
-function test_normal_vbr_output_fname
-{
-  remove_output_dir
-
-  test_name="vbr output fname"
-  M_FILE="La_Verue__Today"
-
-  expected=" warning: output format ambiguous (@t or @n missing)
- Processing file 'songs/${M_FILE}.mp3' ...
- info: file matches the plugin 'mp3 (libmad)'
- info: found Xing or Info header. Switching to frame mode... 
- info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
- info: starting normal split
-   File \"$OUTPUT_DIR/test.mp3\" created
- Processed 4595 frames - Sync errors: 0
- file split"
-  mp3splt_args="-o 'test' -d $OUTPUT_DIR $MP3_FILE 1.0 2.0" 
-  run_check_output "$mp3splt_args" "$expected"
-
-  check_if_file_exist "$OUTPUT_DIR/test.mp3"
-
-  current_file="$OUTPUT_DIR/test.mp3" 
-  check_current_mp3_length "01.00"
 
   p_green "OK"
   echo
@@ -987,7 +951,7 @@ function test_normal_vbr_output_fnames_and_dirs
   echo
 }
 
-function test_normal_vbr_output_fnames_and_custom_tags_dirs
+function test_normal_vbr_output_fnames_and_custom_tags_and_dirs
 {
   remove_output_dir
 
@@ -1068,6 +1032,7 @@ function test_normal_vbr_stdout_multiple_splitpoints
   run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.mp3" "" "$expected"
 
   current_file="$OUTPUT_DIR/stdout.mp3"
+#TODO: 2 outputs are concatenated in the same file ? should we do something ?
   check_current_mp3_length "01.30"
   check_current_file_size "2490309"
 

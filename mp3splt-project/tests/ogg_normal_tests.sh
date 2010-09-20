@@ -4,78 +4,85 @@
 
 #normal mode functional tests
 
-function test_normal_no_tags
-{
-  remove_output_dir
-
-  test_name="no tags"
-
-#  O_FILE="test"
-#
-#  expected=" Processing file 'songs/${O_FILE}.ogg' ...
-# info: file matches the plugin 'ogg vorbis (libvorbis)'
-# info: Ogg Vorbis Stream - 44100 - 109 Kb/s - 2 channels - Total time: 63m.12s
-# info: starting normal split
-#   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s_20h.ogg\" created
-#   File \"$OUTPUT_DIR/${O_FILE}_02m_00s_20h__03m_05s.ogg\" created
-#   File \"$OUTPUT_DIR/${O_FILE}_03m_05s__63m_12s_33h.ogg\" created
-# file split (EOF)"
-#  mp3splt_args="$tags_option -n -d $OUTPUT_DIR $OGG_FILE 1.0 2.0.2 3.5 EOF" 
-#  run_check_output "$mp3splt_args" "$expected"
-#
-#  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s_20h.ogg" 
-#  check_current_ogg_length "1m:00.200s"
-#  check_current_ogg_no_tags
-#  #check_current_file_size "835097"
-#
-#  current_file="$OUTPUT_DIR/${O_FILE}_02m_00s_20h__03m_05s.ogg" 
-#  check_current_ogg_length "1m:04.799s"
-#  check_current_ogg_no_tags
-#  #check_current_file_size "1521748"
-#
-#  current_file="$OUTPUT_DIR/${O_FILE}_03m_05s__63m_12s_33h.ogg" 
-#  check_current_ogg_length "60m:07.333s"
-#  check_current_ogg_no_tags
-#  #check_current_file_size "1399171"
-#
-  p_green "OK"
-  echo
-}
-
 function test_normal_with_tags
 {
   remove_output_dir
 
   test_name="with tags"
 
-#  O_FILE="test"
-#
-#  expected=" Processing file 'songs/${O_FILE}.ogg' ...
-# info: file matches the plugin 'ogg vorbis (libvorbis)'
-# info: Ogg Vorbis Stream - 44100 - 109 Kb/s - 2 channels - Total time: 63m.12s
-# info: starting normal split
-#   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s_20h.ogg\" created
-#   File \"$OUTPUT_DIR/${O_FILE}_02m_00s_20h__03m_05s.ogg\" created
-#   File \"$OUTPUT_DIR/${O_FILE}_03m_05s__63m_12s_33h.ogg\" created
-# file split (EOF)"
-#  mp3splt_args="$tags_option -d $OUTPUT_DIR $OGG_FILE 1.0 2.0.2 3.5 EOF" 
-#  run_check_output "$mp3splt_args" "$expected"
-#
-#  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s_20h.ogg" 
-#  check_current_ogg_length "1m:00.200s"
-#  #TODO: bug genre ?
-#  check_all_ogg_tags "Alicia Keys" "Songs in A Minor" "mytitle"\
-#  "2006" "Blues" "1" "this is a comment"
-#  #check_current_file_size "835097"
-#
-#  current_file="$OUTPUT_DIR/${O_FILE}_02m_00s_20h__03m_05s.ogg" 
-#  check_current_ogg_length "1m:04.799s"
-#  #check_current_file_size "1521748"
-#
-#  current_file="$OUTPUT_DIR/${O_FILE}_03m_05s__63m_12s_33h.ogg" 
-#  check_current_ogg_length "60m:07.333s"
-#  #check_current_file_size "1399171"
-#
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  #TODO bug genre !
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1637668"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1513049"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "3"\
+                     "http://www.jamendo.com"
+  check_current_file_size "53156"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_no_output_tags
+{
+  remove_output_dir
+
+  test_name="no output tags"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-n -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  check_current_ogg_no_tags
+  check_current_file_size "1637488"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_current_ogg_no_tags
+  check_current_file_size "1512869"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_current_ogg_no_tags
+  check_current_file_size "52976"
+
   p_green "OK"
   echo
 }
@@ -83,9 +90,24 @@ function test_normal_with_tags
 function test_normal_pretend
 {
   remove_output_dir
+
   test_name="pretend"
 
-#TODO
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Pretending to split file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-P -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
   p_green "OK"
   echo
 }
@@ -93,10 +115,62 @@ function test_normal_pretend
 function test_normal_cue_export
 {
   remove_output_dir
+
   test_name="cue export"
 
+  O_FILE="Kelly_Allyn__Whiskey_Can"
 
-#TODO
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 4
+
+  check_file_content "output/output_out.cue" 'TITLE "Getting Back From Where I'\''ve Been"
+PERFORMER "Kelly Allyn"
+FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
+  TRACK 01 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 01:00:00
+  TRACK 02 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 02:01:20
+  TRACK 03 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 03:00:10'
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1637668"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1513049"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "3"\
+                     "http://www.jamendo.com"
+  check_current_file_size "53156"
+
   p_green "OK"
   echo
 }
@@ -104,100 +178,41 @@ function test_normal_cue_export
 function test_normal_pretend_and_cue_export
 {
   remove_output_dir
-  test_name="pretend and cue export"
 
-#TODO
-  p_green "OK"
-  echo
-}
+  test_name="pretend & cue export"
 
-function test_normal_overlap_and_cue_export
-{
-  remove_output_dir
-  test_name="overlap and cue export"
+  O_FILE="Kelly_Allyn__Whiskey_Can"
 
-#TODO
-  p_green "OK"
-  echo
-}
+  expected=" Pretending to split file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-E output/out.cue -P -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
 
-function test_normal_pretend_and_m3u
-{
-  remove_output_dir
-  test_name="pretend and m3u"
+  check_output_directory_number_of_files 1
 
-#TODO
-  p_green "OK"
-  echo
-}
+  check_file_content "output/output_out.cue" 'TITLE "Getting Back From Where I'\''ve Been"
+PERFORMER "Kelly Allyn"
+FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
+  TRACK 01 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 01:00:00
+  TRACK 02 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 02:01:20
+  TRACK 03 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 03:00:10'
 
-function test_normal_no_input_tags
-{
-  remove_output_dir
-  test_name="no input tags"
-
-#TODO
-  p_green "OK"
-  echo
-}
-
-function test_normal_m3u
-{
-  remove_output_dir
-  test_name="m3u"
-
-#TODO
-  p_green "OK"
-  echo
-}
-
-function test_normal_create_directories
-{
-  remove_output_dir
-  test_name="create directories"
-
-#TODO
-  p_green "OK"
-  echo
-}
-
-function test_normal_custom_tags
-{
-  remove_output_dir
-  test_name="custom tags"
-
-#TODO
-  p_green "OK"
-  echo
-}
-
-function test_normal_custom_tags_and_cue_export
-{
-  remove_output_dir
-  test_name="custom tags and cue export"
-
-#TODO
-  p_green "OK"
-  echo
-}
-
-
-function test_normal_custom_tags_and_input_no_tags
-{
-  remove_output_dir
-  test_name="custom tags and input no tags"
-
-#TODO
-  p_green "OK"
-  echo
-}
-
-function test_normal_custom_tags_multiple_percent
-{
-  remove_output_dir
-  test_name="custom tags and multiple percent"
-
-#TODO
   p_green "OK"
   echo
 }
@@ -205,9 +220,366 @@ function test_normal_custom_tags_multiple_percent
 function test_normal_overlap_split
 {
   remove_output_dir
+
   test_name="overlap"
 
-#TODO
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+ info: overlapping split files with 0.30.0
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-O 0.30 -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
+  check_current_ogg_length "1m:31.199s"
+  check_current_file_size "2421249"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
+  check_current_ogg_length "1m:03.653s"
+  check_current_file_size "1561084"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_overlap_and_cue_export
+{
+  remove_output_dir
+
+  test_name="overlap & cue export"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+ info: overlapping split files with 0.30.0
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg\" created
+ file split (EOF)
+ CUE file 'output/output_out.cue' created."
+  mp3splt_args="-E output/out.cue -O 0.30 -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_file_content "output/output_out.cue" 'TITLE "Getting Back From Where I'\''ve Been"
+PERFORMER "Kelly Allyn"
+FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
+  TRACK 01 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 01:00:00
+  TRACK 02 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 02:31:20'
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
+  check_current_ogg_length "1m:31.199s"
+  check_current_file_size "2421249"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
+  check_current_ogg_length "1m:03.653s"
+  check_current_file_size "1561084"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_m3u
+{
+  remove_output_dir
+
+  test_name="m3u"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ M3U file '$OUTPUT_DIR/m3u/playlist.m3u' will be created.
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/m3u/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/m3u/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/m3u/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-m playlist.m3u -d $OUTPUT_DIR/m3u $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  expected="Kelly_Allyn__Whiskey_Can_01m_00s__02m_01s_20h.ogg
+Kelly_Allyn__Whiskey_Can_02m_01s_20h__03m_00s_10h.ogg
+Kelly_Allyn__Whiskey_Can_03m_00s_10h__03m_04s_85h.ogg"
+  check_file_content "$OUTPUT_DIR/m3u/playlist.m3u" "$expected"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_pretend_and_m3u
+{
+  remove_output_dir
+
+  test_name="pretend & m3u"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Pretending to split file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ M3U file 'output/output_out.m3u' will be created.
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-m output/out.m3u -P -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_number_of_files 0
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_no_input_tags
+{
+  remove_output_dir
+
+  test_name="no input tags"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can__no_tags"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $NO_TAGS_OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  check_current_ogg_no_tags
+  check_current_file_size "1637488"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_current_ogg_no_tags
+  check_current_file_size "1512869"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_current_ogg_no_tags
+  check_current_file_size "52976"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_custom_tags
+{
+  remove_output_dir
+
+  test_name="custom tags"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $OGG_FILE 0.05 0.30 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
+  check_all_ogg_tags "a1" "b1" "t1" "2000" "Other" "10" "my_comment"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
+  check_all_ogg_tags "" "" "" "" "Other" "2" ""
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_all_ogg_tags "Kelly Allyn" "album"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_all_ogg_tags "custom_artist" "album"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "20"\
+                     "http://www.jamendo.com"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_custom_tags_and_cue_export
+{
+  remove_output_dir
+
+  test_name="custom tags & cue export"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)
+ CUE file 'output/output_out.cue' created."
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
+  mp3splt_args="-E output/out.cue -d $OUTPUT_DIR -g \"$tags_option\" $OGG_FILE 0.05 0.30 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_file_content "output/output_out.cue" 'TITLE "b1"
+PERFORMER "a1"
+FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
+  TRACK 01 AUDIO
+    TITLE "t1"
+    PERFORMER "a1"
+    INDEX 01 00:05:00
+  TRACK 02 AUDIO
+    INDEX 01 00:30:00
+  TRACK 03 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 01:00:00
+  TRACK 04 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "custom_artist"
+    INDEX 01 02:01:20
+  TRACK 05 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 03:00:10'
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
+  check_all_ogg_tags "a1" "b1" "t1" "2000" "Other" "10" "my_comment"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
+  check_all_ogg_tags "" "" "" "" "Other" "2" ""
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_all_ogg_tags "Kelly Allyn" "album"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_all_ogg_tags "custom_artist" "album"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "20"\
+                     "http://www.jamendo.com"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_custom_tags_and_input_no_tags
+{
+  remove_output_dir
+
+  test_name="custom tags & no input tags"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can__no_tags"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $NO_TAGS_OGG_FILE 0.05 0.30 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
+  check_all_ogg_tags "a1" "b1" "t1" "2000" "Other" "10" "my_comment"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
+  check_all_ogg_tags "" "" "" "" "Other" "2" ""
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_all_ogg_tags "" "album" "" "" "Other" "7" ""
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_all_ogg_tags "custom_artist" "album" "" "" "Other" "8" ""
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_all_ogg_tags "" "" "" "" "Other" "20" ""
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_custom_tags_multiple_percent
+{
+  remove_output_dir
+
+  test_name="custom tags multiple percent"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+ file split"
+  tags_option="%[@a=a1,@b=b1,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $OGG_FILE 0.05 0.30 1.0 2.1.2 3.0.1" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
+  check_all_ogg_tags "a1" "b1" "" "" "Other" "10" ""
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
+  check_all_ogg_tags "a1" "b1" "" "" "Other" "2" ""
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_all_ogg_tags "Kelly Allyn" "album"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_all_ogg_tags "custom_artist" "album"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8"\
+                     "http://www.jamendo.com"
+
   p_green "OK"
   echo
 }
@@ -215,40 +587,115 @@ function test_normal_overlap_split
 function test_normal_stdin
 {
   remove_output_dir
-  test_name="stdin"
 
-#TODO
+  test_name="stdin"
+ 
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  #TODO: ogg stdin total time ?
+  expected=" Processing file 'o-' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 0m.00s
+ info: starting normal split
+   File \"$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR o- 1.0 2.1.2 3.0.1 EOF" 
+  run_custom_check_output "cat songs/${O_FILE}.ogg | $MP3SPLT" "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  check_current_ogg_no_tags
+  check_current_file_size "1637488"
+
+  current_file="$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_current_ogg_no_tags
+  check_current_file_size "1512869"
+
+  current_file="$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_current_ogg_no_tags
+  check_current_file_size "52976"
+
   p_green "OK"
   echo
 }
-
 
 function test_normal_stdin_no_input_tags
 {
   remove_output_dir
-  test_name="stdin and no input tags"
 
-#TODO
+  test_name="stdin & no input tags"
+ 
+  O_FILE="Kelly_Allyn__Whiskey_Can__no_tags"
+
+  #TODO: ogg stdin total time ?
+  expected=" Processing file 'o-' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 0m.00s
+ info: starting normal split
+   File \"$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR o- 1.0 2.1.2 3.0.1 EOF" 
+  run_custom_check_output "cat songs/${O_FILE}.ogg | $MP3SPLT" "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  check_current_ogg_no_tags
+  check_current_file_size "1637488"
+
+  current_file="$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_current_ogg_no_tags
+  check_current_file_size "1512869"
+
+  current_file="$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_current_ogg_no_tags
+  check_current_file_size "52976"
+
   p_green "OK"
   echo
-
 }
 
-function test_normal_stdin_and_tags
+function test_normal_stdin_with_custom_tags
 {
   remove_output_dir
-  test_name="stdin and tags"
 
-#TODO
-  p_green "OK"
-  echo
-}
+  test_name="stdin & custom tags"
 
-function test_normal_output_fnames_and_custom_tags
-{
-  remove_output_dir
-  test_name="output fnames and custom tags"
-#TODO
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'o-' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 0m.00s
+ info: starting normal split
+   File \"$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-g %[@a=a1,@b=b1,@y=1070,@N=1] -d $OUTPUT_DIR o- 1.0 2.1.2 3.0.1 EOF" 
+  run_custom_check_output "cat songs/${O_FILE}.ogg | $MP3SPLT" "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  check_all_ogg_tags "a1" "b1" "" "1070" "Other" "1" ""
+  check_current_file_size "1637558"
+
+  current_file="$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_all_ogg_tags "a1" "b1" "" "1070" "Other" "2" ""
+  check_current_file_size "1512939"
+
+  current_file="$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_all_ogg_tags "a1" "b1" "" "1070" "Other" "3" ""
+  check_current_file_size "53046"
+
   p_green "OK"
   echo
 }
@@ -256,8 +703,53 @@ function test_normal_output_fnames_and_custom_tags
 function test_normal_output_fname
 {
   remove_output_dir
+
   test_name="output fname"
-#TODO
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" warning: output format ambiguous (@t or @n missing)
+ Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/test.ogg\" created
+ file split"
+  mp3splt_args="-o 'test' -d $OUTPUT_DIR $OGG_FILE 1.0 2.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/test.ogg"
+  check_current_ogg_length "1m:00.000s"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_output_fnames_and_custom_tags
+{
+  remove_output_dir
+
+  test_name="output fnames & custom tags"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/a1_b1_t1_1_10_${O_FILE} 01:00:00 02:01:20.ogg\" created
+   File \"$OUTPUT_DIR/___2_2_${O_FILE} 02:01:20 03:00:10.ogg\" created
+   File \"$OUTPUT_DIR/Kelly Allyn_album_Whiskey Can_3_7_${O_FILE} 03:00:10 03:04:85.ogg\" created
+ file split (EOF)"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7]"
+  output_option="\"@a_@b_@t_@n_@N_@f+@m:@s:@h @M:@S:@H\""
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" -o $output_option $OGG_FILE 1.0 2.1.2 3.0.1 EOF"
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_file_exist "$OUTPUT_DIR/a1_b1_t1_1_10_${O_FILE} 01:00:00 02:01:20.ogg"
+  check_if_file_exist "$OUTPUT_DIR/___2_2_${O_FILE} 02:01:20 03:00:10.ogg"
+  check_if_file_exist "$OUTPUT_DIR/Kelly Allyn_album_Whiskey Can_3_7_${O_FILE} 03:00:10 03:04:85.ogg"
+
   p_green "OK"
   echo
 }
@@ -265,17 +757,69 @@ function test_normal_output_fname
 function test_normal_output_fnames_and_dirs
 {
   remove_output_dir
-  test_name="output fnames and directories"
-#TODO
+
+  test_name="output fnames & directories"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  local artist="Kelly Allyn"
+  local album="Getting Back From Where I've Been"
+  local title="Whiskey Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$artist/$album/$artist-$title 1.ogg\" created
+   File \"$OUTPUT_DIR/$artist/$album/$artist-$title 2.ogg\" created
+   File \"$OUTPUT_DIR/$artist/$album/$artist-$title 3.ogg\" created
+ file split (EOF)"
+  output_option="@a/@b/@a-@t @n"
+  mp3splt_args="-o '$output_option' -d $OUTPUT_DIR $OGG_FILE 1.0 2.0.2 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_directory_exist "$OUTPUT_DIR/$artist"
+  check_if_directory_exist "$OUTPUT_DIR/$artist/$album"
+  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title 1.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title 2.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title 3.ogg"
+
   p_green "OK"
   echo
 }
 
-function test_normal_output_fnames_and_custom_tags_dirs
+function test_normal_output_fnames_and_custom_tags_and_dirs
 {
   remove_output_dir
-  test_name="output fnames and custom tags dirs"
-#TODO
+
+  test_name="output fnames & custom tags & directories"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  local artist="Kelly Allyn"
+  local title="Whiskey Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$artist/album1/$artist-$title 1.ogg\" created
+   File \"$OUTPUT_DIR/$artist/album2/$artist-$title 2.ogg\" created
+   File \"$OUTPUT_DIR/$artist/album3/$artist-$title 3.ogg\" created
+ file split (EOF)"
+  output_option="@a/@b/@a-@t @n"
+  tags_option="%[@o,@b=album1][@b=album2][@b=album3]"
+  mp3splt_args="-o '$output_option' -g \"$tags_option\" -d $OUTPUT_DIR $OGG_FILE 1.0 2.0.2 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_directory_exist "$OUTPUT_DIR/$artist"
+  check_if_directory_exist "$OUTPUT_DIR/$artist/album1"
+  check_if_directory_exist "$OUTPUT_DIR/$artist/album2"
+  check_if_directory_exist "$OUTPUT_DIR/$artist/album3"
+  check_if_file_exist "$OUTPUT_DIR/$artist/album1/$artist-$title 1.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/album2/$artist-$title 2.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/album3/$artist-$title 3.ogg"
+
   p_green "OK"
   echo
 }
@@ -283,8 +827,24 @@ function test_normal_output_fnames_and_custom_tags_dirs
 function test_normal_stdout
 {
   remove_output_dir
+
   test_name="stdout"
-#TODO
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"-\" created
+ file split"
+  mp3splt_args="-o - $OGG_FILE 1.0 2.30.2"
+  run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.ogg" "" "$expected"
+
+  current_file="$OUTPUT_DIR/stdout.ogg"
+  check_current_ogg_length "1m:30.199s"
+  check_current_file_size "2395876"
+
   p_green "OK"
   echo
 }
@@ -292,29 +852,35 @@ function test_normal_stdout
 function test_normal_stdout_multiple_splitpoints
 {
   remove_output_dir
-  test_name="stdout multiple splitpoints"
-#TODO
+
+  test_name="stdout & splitpoints > 2"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Warning: multiple splitpoints with stdout !
+ Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"-\" created
+   File \"-\" created
+ file split"
+  mp3splt_args="-o - $OGG_FILE 1.0 2.30.2 2.50"
+  run_custom_check_output "$MP3SPLT $mp3splt_args > $OUTPUT_DIR/stdout.ogg" "" "$expected"
+
+  current_file="$OUTPUT_DIR/stdout.ogg"
+#TODO: 2 outputs are concatenated in the same file ? should we do something ?
+  check_current_ogg_length "1m:30.199s
+0m:19.800s"
+  check_current_file_size "2916006"
+
   p_green "OK"
   echo
 }
 
-function test_normal_custom_tags_with_replace_tags_in_tags
-{
-  remove_output_dir
-  test_name="custom tags and replace tags in tags"
-#TODO
-  p_green "OK"
-  echo
-}
 
-function test_normal_split_in_equal_parts
-{
-  remove_output_dir
-  test_name="split in equal parts"
-#TODO
-  p_green "OK"
-  echo
-}
+#TODO: continue ...
+
 
 function run_normal_tests
 {
