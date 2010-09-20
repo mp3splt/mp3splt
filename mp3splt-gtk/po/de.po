@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-09-06 23:15+0200\n"
+"POT-Creation-Date: 2010-09-07 20:57+0200\n"
 "PO-Revision-Date: 2010-02-14 18:18+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -110,47 +110,47 @@ msgstr "Alle Spalten löschen"
 msgid "_Silence detection"
 msgstr "_Stille erkennen"
 
-#: src/tree_tab.c:1611 src/mp3splt-gtk.c:346
+#: src/tree_tab.c:1612 src/mp3splt-gtk.c:357
 msgid " finished"
 msgstr " Beendet"
 
-#: src/tree_tab.c:1626
+#: src/tree_tab.c:1627
 msgid " cannot split preview last splitpoint"
 msgstr " Vorschau für letzten Teilungspunkt kann nicht angezeigt werden"
 
-#: src/tree_tab.c:1670
+#: src/tree_tab.c:1671
 msgid " cannot preview, not connected to player"
 msgstr " Vorschau nicht möglich, keine Verbindung zum Abspielprogramm"
 
-#: src/tree_tab.c:1735
+#: src/tree_tab.c:1736
 msgid "Keep"
 msgstr "Behalten"
 
-#: src/tree_tab.c:1749 src/split_files.c:111
+#: src/tree_tab.c:1750 src/split_files.c:111
 msgid "Filename"
 msgstr "Dateiname"
 
-#: src/tree_tab.c:1763
+#: src/tree_tab.c:1764
 msgid "Secs"
 msgstr "Sekunden"
 
-#: src/tree_tab.c:1777
+#: src/tree_tab.c:1778
 msgid "Mins"
 msgstr "Minuten"
 
-#: src/tree_tab.c:1791
+#: src/tree_tab.c:1792
 msgid "Hundr"
 msgstr "Hundertstel"
 
-#: src/tree_tab.c:1801
+#: src/tree_tab.c:1802
 msgid "Length"
 msgstr "Länge"
 
-#: src/tree_tab.c:1812
+#: src/tree_tab.c:1813
 msgid "LiveP"
 msgstr "LiveP"
 
-#: src/tree_tab.c:1823
+#: src/tree_tab.c:1824
 msgid "SplitP"
 msgstr "SplitP"
 
@@ -741,7 +741,7 @@ msgstr " Nach Synchronisationsfehlern wird gesucht …"
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S: %02d, Pegel: %.2f dB; nach Stille wird gesucht …"
 
-#: src/mp3splt-gtk.c:320
+#: src/mp3splt-gtk.c:331
 msgid " error: no files found in multiple files mode"
 msgstr " Fehler: Keine Dateien für Mehrfachmodus gefunden"
 
