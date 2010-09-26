@@ -1,10 +1,11 @@
-Content-type: text/html
 
-<HTML><HEAD><TITLE>Manpage of MP3SPLT</TITLE>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of MP3SPLT</TITLE>
 </HEAD><BODY>
 <H1>MP3SPLT</H1>
-Section: Misc. Reference Manual Pages (1)<BR><A HREF="#index">Index</A>
-<A HREF="http://localhost/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<HR>
 
 <A NAME="lbAB">&nbsp;</A>
 <H2>NAME</H2>
@@ -96,7 +97,7 @@ to the input file directory.
 <DT><B>-w</B>         <DD>
 <B>Wrap Mode</B>. Use to split file created with:
 <P>
-<B>Mp3Wrap (<A HREF="http://mp3wrap.sourceforge.net)">http://mp3wrap.sourceforge.net)</A></B>: This tool joins two or more mp3 files in one large playable file that usually contains
+<B>Mp3Wrap <A HREF="http://mp3wrap.sourceforge.net">http://mp3wrap.sourceforge.net</A></B>: This tool joins two or more mp3 files in one large playable file that usually contains
 the string MP3WRAP in filename and a special comment in ID3v2. If the file you are splitting is a Mp3Wrap file
 the splitting process will be very fast and you will obtain all files just with one command.
 If your filename contains MP3WRAP and you have errors or you don't want to use
@@ -215,14 +216,13 @@ and site (for downloading the CDDB file from the disc ID). Valid 'search' protoc
 <P>
 Examples:
 <P>
-<BR>&nbsp;&nbsp;query[search=cddb_<A HREF="cgi://tracktype.org/~cddb/cddb.cgi:80,">cgi://tracktype.org/~cddb/cddb.cgi:80,</A>
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get=cddb_<A HREF="cgi://tracktype.org/~cddb/cddb.cgi:80]">cgi://tracktype.org/~cddb/cddb.cgi:80]</A>
+<BR>&nbsp;&nbsp;query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80]
 <BR>
 
 <BR>&nbsp;&nbsp;query[get=cddb_protocol://freedb.org:8880]
 <BR>
 
-<BR>&nbsp;&nbsp;query[get=cddb_<A HREF="cgi://freedb.org/~cddb/cddb.cgi:80]">cgi://freedb.org/~cddb/cddb.cgi:80]</A>
+<BR>&nbsp;&nbsp;query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80]
 <P>
 Mp3splt will connect to the server and start to find the requested
 informations. If the right album is found, then mp3splt will query the
@@ -284,17 +284,6 @@ Float number between -2 and 2 and allows
 you to adjust the offset of cutpoint in silence time. 0 is the begin of silence, and 1 the end. Default is 0.8.
 In most cases, you will only need to use a value between 0 and 1.
 <P>
-Offset visualization: 
-<P>
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;off=0&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;off=1
-<BR>&nbsp;++++&nbsp;...&nbsp;++++++++++++++++++++++----------++++++++++&nbsp;&nbsp;...&nbsp;+++++
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=-0.5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=1.5
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=2
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=-1.5
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^off=-2
-<P>
-Legend: pluses are 'audio', minuses 'silence', 'v' down-arrow, '^' up-arrow
-and '...' a segment of the audio file (silence or audio)
 <P>
 <DT><B>Only -s</B><DD>
 <P>
@@ -401,7 +390,7 @@ are:
 @n_@a_@b_@t
 <BR>
 
-@<A HREF="mailto:a+-+@n+-+">a+-+@n+-+</A>@t (default if using -c and -o is not specified)
+@a+-+@n+-+@t (default if using -c and -o is not specified)
 <BR>
 
 @a/@b/@t_@n (will create the directories '&lt;artist&gt;' and '&lt;artist&gt;/&lt;album&gt;')
@@ -616,14 +605,14 @@ This is -t option. It will split album.mp3 in many files of 10 minutes each.
 
 <P>
 
-Report any bugs you find to Authors (see below). Advices, info requests and
+Report any bugs you find to authors (see below). Advices, support requests and
 contributions are welcome.
 <A NAME="lbAH">&nbsp;</A>
 <H2>SEE ALSO</H2>
 
 <P>
 
-<B><A HREF="http://localhost/cgi-bin/man/man2html?1+mp3wrap">mp3wrap</A></B>(1)
+<b><a href="http://mp3wrap.sourceforge.net/">mp3wrap</a></b>
 <A NAME="lbAI">&nbsp;</A>
 <H2>AUTHORS</H2>
 
@@ -677,8 +666,8 @@ This can be found as COPYING in mp3splt packages.
 </DL>
 <HR>
 This document was created by
-<A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
+man2html
 using the manual pages.<BR>
-Time: 16:08:05 GMT, February 14, 2010
+Time: 19:27:09 GMT, September 26, 2010
 </BODY>
 </HTML>
