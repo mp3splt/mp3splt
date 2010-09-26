@@ -6,7 +6,7 @@ Release instructions:
 2) check documentation of 'mp3splt -h'
 3) check documentation in 'newmp3splt/doc/mp3splt.1'
 4) convert documentation to html:
-    $ man2html newmp3splt/doc/mp3splt.1 > newmp3splt/doc/manual.html
+    $ ./newmp3splt/doc/generate_manual.sh
 5) translate (string freeze)
     (with 'poedit' for example)
 6) update the following files if necessary:
