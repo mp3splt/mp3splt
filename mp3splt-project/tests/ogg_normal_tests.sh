@@ -631,7 +631,6 @@ function test_normal_stdin_no_input_tags
  
   O_FILE="Kelly_Allyn__Whiskey_Can__no_tags"
 
-  #TODO: ogg stdin total time ?
   expected=" Processing file 'o-' ...
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 0m.00s
@@ -878,9 +877,129 @@ function test_normal_stdout_multiple_splitpoints
   echo
 }
 
+function test_normal_custom_tags_with_replace_tags_in_tags
+{
+  remove_output_dir
 
-#TODO: continue ...
+  test_name="custom tags & replace tags in tags"
 
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  F1="-a_10-b_a_@n-10.ogg"
+  F2="Whiskey Can-Kelly Allyn-album_cc_@t-7.ogg"
+  F3="Whiskey Can-Kelly Allyn-album_cc_@t-8.ogg"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ file split"
+  tags_option="r[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@N=7]"
+  output_option="@t-@a-@b-@N"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g \"$tags_option\" $OGG_FILE 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_all_ogg_tags "a_10" "b_a_@n" "" "" "Other" "10" "cc_b_@a"
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_all_ogg_tags "Kelly Allyn" "album_cc_@t" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7" "cc_Whiskey Can"
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_all_ogg_tags "Kelly Allyn" "album_cc_@t" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8" "cc_Whiskey Can"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_custom_tags_without_replace_tags_in_tags
+{
+  remove_output_dir
+
+  test_name="custom tags without replace tags in tags"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  F1="-a_@n-b_@a-10.ogg"
+  F2="Whiskey Can-Kelly Allyn-album_@c-7.ogg"
+  F3="Whiskey Can-Kelly Allyn-album_@c-8.ogg"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ file split"
+  tags_option="[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@N=7]"
+  output_option="@t-@a-@b-@N"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g \"$tags_option\" $OGG_FILE 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_all_ogg_tags "a_@n" "b_@a" "" "" "Other" "10" "cc_@b"
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_all_ogg_tags "Kelly Allyn" "album_@c" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7" "cc_@t"
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_all_ogg_tags "Kelly Allyn" "album_@c" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8" "cc_@t"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_split_in_equal_parts
+{
+  remove_output_dir
+
+  test_name="split in equal parts"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting 'split in equal tracks' mode
+   File \"$OUTPUT_DIR/1.ogg\" created
+   File \"$OUTPUT_DIR/2.ogg\" created
+   File \"$OUTPUT_DIR/3.ogg\" created
+   File \"$OUTPUT_DIR/4.ogg\" created
+ split in equal tracks ok"
+  mp3splt_args="-d $OUTPUT_DIR -o @n -S 4 $OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/1.ogg"
+  check_current_ogg_length "0m:46.219s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "1"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/2.ogg" 
+  check_current_ogg_length "0m:46.217s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "2"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/3.ogg" 
+  check_current_ogg_length "0m:46.214s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "3"\
+                     "http://www.jamendo.com"
+
+  current_file="$OUTPUT_DIR/4.ogg" 
+  check_current_ogg_length "0m:46.200s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "4"\
+                     "http://www.jamendo.com"
+
+  p_green "OK"
+  echo
+}
 
 function run_normal_tests
 {
