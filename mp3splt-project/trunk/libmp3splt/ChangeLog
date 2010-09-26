@@ -2,6 +2,16 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.6
+-------------------------------------------------------------
+
+- fixed bug #3028775 & #3028078: naming conventions for files > 100 minutes confuses sort
+- fixed bug #3025671: getting original ID3v2 tags was not working on Windows
+- fixed bug #3012688: wrong include and lib path using --with-mp3splt
+- fixed bug #2969968: build failed with --disable-nls
+- fixed bug #2969223: 'invalid dir I:'
+- added > 2Gb support on Windows
+
 libmp3splt version 0.5.9
 -------------------------------------------------------------
 

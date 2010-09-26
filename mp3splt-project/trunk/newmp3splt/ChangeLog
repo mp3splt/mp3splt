@@ -5,7 +5,15 @@ Some changes are implemented in libmp3splt, but reported here for convenience.
 
 Known issues :
 
-- translated 'mp3splt -h' doesn't show complete message on utf8 on windows : won't fix in release 2.2.6
+- translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
+
+#mp3splt version 2.2.9
+
+- allow auto adjusting when splitting in equal parts
+- fixed bug #3028775 & #3028078: naming conventions for files > 100 minutes confuses sort (libmp3splt)
+- fixed bug #3025671: getting original ID3v2 tags was not working on Windows (libmp3splt)
+- fixed bug #2969223: 'invalid dir I:' (libmp3splt)
+- added > 2Gb support on Windows (libmp3splt)
 
 #mp3splt version 2.2.8
 
