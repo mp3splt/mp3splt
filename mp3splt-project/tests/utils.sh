@@ -160,7 +160,7 @@ function check_current_ogg_length
 {
   expected_length=$1
 
-  _run_command "ogginfo $current_file" "ogginfo command" 1
+  _run_command "ogginfo \"$current_file\"" "ogginfo command" 1
 
   info=$command_output
   actual_length=$(echo "$info" | grep "Playback length" | awk -F: "{ print \$2\":\"\$3 }" | sed 's/\s\+//g')

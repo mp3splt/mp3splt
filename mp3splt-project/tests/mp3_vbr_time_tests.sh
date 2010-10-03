@@ -328,7 +328,7 @@ function test_time_vbr_overlap_split
 {
   remove_output_dir
 
-  test_name="vbr overlap splitpoints"
+  test_name="vbr time overlap splitpoints"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -359,7 +359,7 @@ function test_time_vbr_overlap_split_and_cue_export
 {
   remove_output_dir
 
-  test_name="vbr overlap & cue export"
+  test_name="vbr time overlap & cue export"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -483,7 +483,7 @@ function test_time_vbr_no_xing
 {
   remove_output_dir
 
-  test_name="vbr no xing"
+  test_name="vbr time no xing"
   M_FILE="La_Verue__Today"
 
   mp3splt_args="-T 2 -x -d $OUTPUT_DIR $MP3_FILE -t 2.0" 
@@ -512,7 +512,7 @@ function test_time_vbr_m3u
 {
   remove_output_dir
 
-  test_name="vbr m3u"
+  test_name="vbr time m3u"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -542,7 +542,7 @@ function test_time_vbr_create_directories
 {
   remove_output_dir
 
-  test_name="vbr create directories"
+  test_name="vbr time create directories"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -571,7 +571,7 @@ function test_time_vbr_custom_tags
 {
   remove_output_dir
 
-  test_name="vbr custom tags"
+  test_name="vbr time custom tags"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -618,7 +618,7 @@ function test_time_vbr_custom_tags_multiple_percent
 {
   remove_output_dir
 
-  test_name="vbr custom tags multiple percent"
+  test_name="vbr time custom tags multiple percent"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -653,6 +653,10 @@ function test_time_vbr_custom_tags_multiple_percent
   check_all_mp3_tags_with_version "2" "custom_artist" "album" "Today"\
   "2007" "Rock" "17" "8" "http://www.jamendo.com/"
 
+  current_file="$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3"
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "20" "http://www.jamendo.com/"
+
   p_green "OK"
   echo
 }
@@ -661,7 +665,7 @@ function test_time_vbr_stdin
 {
   remove_output_dir
 
-  test_name="vbr stdin"
+  test_name="vbr time stdin"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file '-' ...
@@ -703,7 +707,7 @@ function _test_time_vbr_stdin_and_tags
 
   remove_output_dir
 
-  test_name="vbr stdin and tags v$tags_version"
+  test_name="vbr time stdin and tags v$tags_version"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file '-' ...
@@ -764,7 +768,7 @@ function test_time_vbr_output_fnames_and_dirs
 {
   remove_output_dir
 
-  test_name="vbr output fnames & directories"
+  test_name="vbr time output fnames & directories"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -795,7 +799,7 @@ function test_time_vbr_output_fnames_and_custom_tags_dirs
 {
   remove_output_dir
 
-  test_name="vbr output fnames & custom tags & directories"
+  test_name="vbr time output fnames & custom tags & directories"
   M_FILE="La_Verue__Today"
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -829,7 +833,7 @@ function test_time_vbr_stdout_multiple_splitpoints
 {
   remove_output_dir
 
-  test_name="vbr stdout & splitpoints > 2"
+  test_name="vbr time stdout & splitpoints > 2"
   M_FILE="La_Verue__Today"
 
 expected=" Warning: using time mode with stdout !
