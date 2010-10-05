@@ -138,7 +138,7 @@ $auto_adjust_warning"
   echo
 }
 
-function test_cddb_mode_and_cue
+function test_cddb_mode_and_cue_export
 {
   _create_cddb_file
 
@@ -237,7 +237,7 @@ function test_cddb_mode_pretend_and_cue
 
   M_FILE="La_Verue__Today"
 
-  test_name="cddb mode & cue & pretend"
+  test_name="cddb mode & cue export & pretend"
 
   expected=" Pretending to split file 'songs/${M_FILE}.mp3' ...
  reading informations from CDDB file songs/test.cddb ...

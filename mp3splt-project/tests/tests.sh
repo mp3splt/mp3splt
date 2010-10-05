@@ -25,6 +25,7 @@ echo
 ./ogg_normal_tests.sh || exit 1
 ./ogg_time_tests.sh || exit 1
 ./ogg_cddb_mode_tests.sh || exit 1
+./ogg_cue_mode_tests.sh || exit 1
 
 if [[ $RUN_INTERNET_TESTS -eq 1 ]];then
 ./mp3_freedb_mode_tests.sh || exit 1

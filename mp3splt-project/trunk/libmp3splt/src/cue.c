@@ -194,14 +194,12 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
     long splitpoint = splt_sp_get_splitpoint_value(state, i, &err);
     if (err < 0) { *error = err; break; }
 
-    if (stop_at_total_time)
+    //todo: splitpoint can be slightly != than total_time sometimes
+    // (test with silence and cue)
+    if (stop_at_total_time &&
+        (total_time > 0  && splitpoint >= total_time))
     {
-      //todo: splitpoint can be slightly != than total_time sometimes
-      // (test with silence and cue)
-      if (total_time > 0  && splitpoint >= total_time)
-      {
-        break;
-      }
+      break;
     }
 
     fprintf(file_output, "  TRACK %02d AUDIO\n", i+1);
