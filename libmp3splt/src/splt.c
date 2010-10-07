@@ -174,8 +174,11 @@ void splt_s_multiple_split(splt_state *state, int *error)
       err = splt_u_finish_tags_and_put_output_format_filename(state, i);
       if (err < 0) { *error = err; goto end; }
 
-      long new_end_point = splt_s_split(state, i, i+1, error);
-      splt_array_append(new_end_points, (void *)new_end_point);
+      int end_point_index = i+1;
+      long new_end_point = splt_s_split(state, i, end_point_index, error);
+      splt_pair *index_end_point =
+        splt_pair_new((void *) &end_point_index, (void *) &new_end_point);
+      splt_array_append(new_end_points, (void *)index_end_point);
 
       splt_sp_set_splitpoint_value(state, i + 1, saved_end_point);
 
@@ -196,8 +199,13 @@ void splt_s_multiple_split(splt_state *state, int *error)
 end:
   for (i = 0;i < splt_array_length(new_end_points);i++)
   {
-    splt_sp_set_splitpoint_value(state, i+1,
-        (long) splt_array_get(new_end_points, i));
+    splt_pair *index_end_point = (splt_pair *) splt_array_get(new_end_points, i);
+
+    splt_sp_set_splitpoint_value(state,
+        *((int*) splt_pair_first(index_end_point)),
+        *((long*) splt_pair_second(index_end_point)));
+
+    splt_pair_free(&index_end_point);
   }
 
   splt_array_free(&new_end_points);
@@ -419,7 +427,11 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           double new_sec_end_point = splt_p_split(state, final_fname,
               begin, overlapped_end, error, save_end_point);
           long new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
-          splt_array_append(new_end_points, (void *) new_end_point);
+
+          int end_point_index = current_split + 1;
+          splt_pair *index_end_point =
+            splt_pair_new((void *) &end_point_index, (void *) &new_end_point);
+          splt_array_append(new_end_points, (void *) index_end_point);
 
           //if no error for the split, put the split file
           if (*error >= 0)
@@ -475,9 +487,15 @@ static void splt_s_split_by_time(splt_state *state, int *error,
       int i = 0;
       for (i = 0;i < splt_array_length(new_end_points);i++)
       {
-        splt_sp_set_splitpoint_value(state, i+1,
-            (long) splt_array_get(new_end_points, i));
+        splt_pair *index_end_point = (splt_pair *) splt_array_get(new_end_points, i);
+
+        splt_sp_set_splitpoint_value(state,
+            *((int*) splt_pair_first(index_end_point)),
+            *((long*) splt_pair_second(index_end_point)));
+
+        splt_pair_free(&index_end_point);
       }
+
       splt_array_free(&new_end_points);
     }
     else

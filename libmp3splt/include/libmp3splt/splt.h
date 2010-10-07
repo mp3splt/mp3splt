@@ -33,6 +33,7 @@
 #ifndef MP3SPLT_SPLT_H
 
 #include "mp3splt.h"
+#include "pair.h"
 #include "types_func.h"
 #include "cddb.h"
 #include "utils.h"
