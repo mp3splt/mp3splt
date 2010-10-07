@@ -260,7 +260,11 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
   TRACK 02 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
-    INDEX 01 02:30:20'
+    INDEX 01 02:00:20
+  TRACK 03 AUDIO
+    TITLE "Je veux (only love)"
+    PERFORMER "Merci Bonsoir"
+    INDEX 01 03:30:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
   check_current_mp3_length "01.30"

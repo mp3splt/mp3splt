@@ -285,6 +285,7 @@ function test_normal_vbr_overlap_and_cue_export
   mp3splt_args="-T 2 -E output/out.cue -O 0.30 -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.30 EOF"
   run_check_output "$mp3splt_args" "$expected"
 
+  #TODO: what to output as CUE ?
   check_file_content 'output/output_out.cue' 'TITLE "Riez Noir"
 PERFORMER "La Verue"
 FILE "songs/La_Verue__Today.mp3" MP3
@@ -295,11 +296,11 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 02 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
-    INDEX 01 02:30:20
+    INDEX 01 02:00:20
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
-    INDEX 01 04:00:00'
+    INDEX 01 03:30:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
   check_current_mp3_length "01.30"

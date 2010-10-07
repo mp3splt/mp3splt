@@ -278,7 +278,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
-    INDEX 01 02:31:20'
+    INDEX 01 02:01:20'
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
   check_current_ogg_length "1m:31.199s"

@@ -385,7 +385,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 02 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
-    INDEX 01 02:30:00'
+    INDEX 01 02:00:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_30s.mp3"
   check_current_mp3_length "02.30"

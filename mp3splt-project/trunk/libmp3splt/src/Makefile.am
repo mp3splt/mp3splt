@@ -45,6 +45,7 @@ libmp3splt_la_SOURCES = \
   conversions.c $(top_srcdir)/include/libmp3splt/conversions.h \
   tags_parser.c $(top_srcdir)/include/libmp3splt/tags_parser.h \
   oformat_parser.c $(top_srcdir)/include/libmp3splt/oformat_parser.h \
+  pair.c $(top_srcdir)/include/libmp3splt/pair.h \
   debug.c $(top_srcdir)/include/libmp3splt/debug.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.

@@ -252,10 +252,123 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   echo
 }
 
-#TODO
-#function test_cue_mode_incomplete
-#{
-#}
+function test_cue_mode_incomplete
+{
+  _create_incomplete_cue_file
+
+  remove_output_dir
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  test_name="cue mode incomplete"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/First performer - 1 - Our piano.ogg\" created
+   File \"$OUTPUT_DIR/GNU_Linux - 2 - .ogg\" created
+   File \"$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg\" created
+ file split (EOF)
+$auto_adjust_warning"
+  mp3splt_args="-d $OUTPUT_DIR -c $CUE_FILE $OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/First performer - 1 - Our piano.ogg"
+  check_current_ogg_length "1m:43.000s"
+  check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "Other" "1" ""
+
+  current_file="$OUTPUT_DIR/GNU_Linux - 2 - .ogg"
+  check_current_ogg_length "1m:18.000s"
+  check_all_ogg_tags "GNU_Linux" "Gentoo" "" "" "Other" "2" ""
+
+  current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg"
+  check_current_ogg_length "0m:03.853s"
+  check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
+
+  p_green "OK"
+  echo
+}
+
+function test_cue_mode_quiet
+{
+  _create_incomplete_cue_file
+
+  remove_output_dir
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  test_name="cue mode & quiet"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/First performer - 1 - Our piano.ogg\" created
+   File \"$OUTPUT_DIR/GNU_Linux - 2 - .ogg\" created
+   File \"$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR -q -c $CUE_FILE $OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  p_green "OK"
+  echo
+}
+
+function test_cue_mode_and_output_format
+{
+  _create_cue_file
+
+  remove_output_dir
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  test_name="cue mode & output format"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ reading informations from CUE file songs/test.cue ...
+
+  Artist: GNU_Linux
+  Album: Gentoo
+  Tracks: 3
+
+ cue file processed
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/GNU_Linux/1/001-GNU_Linux-First performer-Gentoo-Our piano.ogg\" created
+   File \"$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux--Gentoo-Our guitar.ogg\" created
+   File \"$OUTPUT_DIR/GNU_Linux/3/003-GNU_Linux-Third performer-Gentoo-Our laptop.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR -o @a/@n/@n3-@a-@p-@b-@t -q -c $CUE_FILE $OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/GNU_Linux/1/001-GNU_Linux-First performer-Gentoo-Our piano.ogg"
+  check_current_ogg_length "1m:43.000s"
+
+  current_file="$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux--Gentoo-Our guitar.ogg"
+  check_current_ogg_length "1m:18.000s"
+ 
+  current_file="$OUTPUT_DIR/GNU_Linux/3/003-GNU_Linux-Third performer-Gentoo-Our laptop.ogg"
+  check_current_ogg_length "0m:03.853s"
+
+  p_green "OK"
+  echo
+}
 
 function run_cue_mode_tests
 {
