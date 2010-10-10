@@ -12,13 +12,13 @@ echo
 ./misc_tests.sh || exit 1
 
 ./mp3_vbr_normal_tests.sh || exit 1
-./mp3_cbr_normal_tests.sh || exit 1
 ./mp3_vbr_time_tests.sh || exit 1
 ./mp3_cddb_mode_tests.sh || exit 1
 ./mp3_cue_mode_tests.sh || exit 1
 ./mp3_audacity_mode_tests.sh || exit 1
 ./mp3_silence_mode_tests.sh || exit 1
 
+./mp3_cbr_normal_tests.sh || exit 1
 ./mp3_wrap_mode_tests.sh || exit 1
 ./mp3_error_mode_tests.sh || exit 1
 

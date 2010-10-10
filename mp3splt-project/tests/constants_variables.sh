@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_INTERNET_TESTS=1
+RUN_INTERNET_TESTS=0
 
 DIFF_CMD="diff"
 VIEW_DIFF_CMD="acoc diff"
@@ -21,7 +21,7 @@ SYNCERR_FILE="$SONGS_DIR/syncerror.mp3"
 
 #OGG
 OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can.ogg"
-SILENCE_OGG_FILE="$SONGS_DIR/test.ogg"
+SILENCE_OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can_silence.ogg"
 NO_TAGS_OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can__no_tags.ogg"
 
 #OTHERS

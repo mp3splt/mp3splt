@@ -6,7 +6,7 @@
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
  * Copyright (c) 2005-2010 Alexandru Munteanu - <io_fx@yahoo.fr>
  *
- * Large parts of this files have been copied from the 'vcut'
+ * Large parts of this files have been copied from the 'vcut' 1.6
  * program provided with 'vorbis-tools' :
  *      vcut (c) 2000-2001 Michael Smith <msmith@xiph.org>
  *
