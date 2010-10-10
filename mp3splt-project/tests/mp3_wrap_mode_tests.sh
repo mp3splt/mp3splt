@@ -235,7 +235,7 @@ function run_wrap_mode_tests
 }
 
 #main
-export LANGUAGE="en"
+export LC_ALL="C"
 start_date=$(date +%s)
 
 run_wrap_mode_tests

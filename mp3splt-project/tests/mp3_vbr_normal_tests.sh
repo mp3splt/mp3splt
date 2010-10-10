@@ -1186,7 +1186,7 @@ function run_normal_vbr_tests
 }
 
 #main
-export LANGUAGE="en"
+export LC_ALL="C"
 start_date=$(date +%s)
 
 run_normal_vbr_tests

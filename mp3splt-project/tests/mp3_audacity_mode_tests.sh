@@ -4,10 +4,10 @@
 
 function _create_audacity_file
 {
-  echo $'10,000000\t67,000000\tzero
-67,000000\t127,000000\tfirst\n
-149,000000\t206,000000\tsecond
-206,000000\t236,000000\t' > $AUDACITY_FILE
+  echo $'10.000000\t67.000000\tzero
+67.000000\t127.000000\tfirst\n
+149.000000\t206.000000\tsecond
+206.000000\t236.000000\t' > $AUDACITY_FILE
 }
 
 function test_audacity
@@ -390,7 +390,7 @@ function run_audacity_mode_tests
 }
 
 #main
-export LANGUAGE="en"
+export LC_ALL="C"
 start_date=$(date +%s)
 
 run_audacity_mode_tests

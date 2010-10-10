@@ -874,7 +874,7 @@ function run_time_vbr_tests
 }
 
 #main
-export LANGUAGE="en"
+export LC_ALL="C"
 start_date=$(date +%s)
 
 run_time_vbr_tests

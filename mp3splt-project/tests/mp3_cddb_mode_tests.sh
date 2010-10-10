@@ -495,7 +495,7 @@ function run_cddb_mode_tests
 }
 
 #main
-export LANGUAGE="en"
+export LC_ALL="C"
 start_date=$(date +%s)
 
 run_cddb_mode_tests
