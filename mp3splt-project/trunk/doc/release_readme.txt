@@ -1,6 +1,7 @@
 Release instructions:
 ---------------------
 
+0) set in 'tests/constants_variables.sh' RUN_INTERNET_TESTS to 1
 1) update translation files:
     $ ./scripts/update_translation_files.sh 
 2) check documentation of 'mp3splt -h'
