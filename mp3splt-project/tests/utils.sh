@@ -458,7 +458,7 @@ function _run_check_output
 
   if [[ $PRINT_MP3SPLT_COMMAND -eq 1 ]];then
     echo
-    echo "$MP3SPLT $mp3splt_args"
+    echo "$program $mp3splt_args"
   fi
 
   echo -e "$expected" > $EXPECTED_FILE

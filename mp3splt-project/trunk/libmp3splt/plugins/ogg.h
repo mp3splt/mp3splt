@@ -68,6 +68,8 @@ typedef struct {
   long header_page_number;
   //the granpos at the end of the first page of the stream
   ogg_int64_t stream_granpos;
+  ogg_int64_t first_granpos;
+  long total_blocksize;
 } splt_ogg_state;
 
 #define SPLT_OGG_BUFSIZE 4096
