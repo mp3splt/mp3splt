@@ -539,10 +539,13 @@ int splt_p_find_get_plugins_data(splt_state *state)
       {
         splt_d_print_debug(state,"plugin filename = _%s_\n", pl->data[i].plugin_filename);
       }
+
       const char *temp = splt_p_get_name(state, &err);
       splt_d_print_debug(state,"plugin name = _%s_\n", temp);
+
       float version = splt_p_get_version(state, &err);
-      splt_d_print_debug(state,"plugin version = _%d_\n", version);
+      splt_d_print_debug(state,"plugin version = _%lf_\n", version);
+
       temp = splt_p_get_extension(state,&err);
       splt_d_print_debug(state,"extension = _%s_\n\n", temp);
     }

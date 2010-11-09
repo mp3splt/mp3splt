@@ -3555,7 +3555,7 @@ void splt_mp3_init(splt_state *state, int *error)
 //-alloced data in splt_plugin_info will be freed at the end of the program
 void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
 {
-  float plugin_version = 0.1;
+  float plugin_version = 1.0;
 
   //set plugin version
   info->version = plugin_version;
