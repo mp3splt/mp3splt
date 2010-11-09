@@ -151,6 +151,11 @@ function test_stream_time_mode
   echo
 }
 
+#function test_stream_silence_mode
+#{
+#  TODO
+#}
+
 function run_stream_tests
 {
   p_blue " STREAM ogg tests ..."

@@ -864,7 +864,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     }
   }
 
-
   splt_siu_ssplit_free(&state->silence_list);
 
   splt_t_set_splitnumber(state, splitpoints_appended + 1);
@@ -881,8 +880,7 @@ void splt_s_silence_split(splt_state *state, int *error)
   //print some useful infos to the client
   splt_c_put_info_message_to_client(state, _(" info: starting silence mode split\n"));
 
-  int found = 0;
-  found = splt_s_set_silence_splitpoints(state, error);
+  int found = splt_s_set_silence_splitpoints(state, error);
 
   //if no error
   if (*error >= 0)
