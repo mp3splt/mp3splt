@@ -694,7 +694,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 
     splt_c_put_info_message_to_client(state, 
         _(" Found silence log file '%s' ! Reading"
-          " silence points from file to save time ;)"), log_fname);
+          " silence points from file to save time ;)\n"), log_fname);
 
     found = splt_siu_parse_ssplit_file(state, log_file, error);
     if (log_file)
@@ -717,7 +717,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   if (*error >= 0)
   {
     splt_c_put_info_message_to_client(state,
-        _("\n Total silence points found: %d."),found);
+        _(" Total silence points found: %d."),found);
 
     if (found > 0)
     {
