@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-11-13 21:21+0100\n"
+"POT-Creation-Date: 2010-11-13 23:51+0100\n"
 "PO-Revision-Date: 2010-02-15 01:54+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -458,26 +458,29 @@ msgid "Choose File"
 msgstr "Choisir fichier"
 
 #: src/player_tab.c:3719 src/multiple_files.c:123
-msgid "mp3 and ogg files(*.mp3 *.ogg)"
+#, fuzzy
+msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "fichiers mp3 et ogg(*.mp3 *.ogg)"
 
-#: src/player_tab.c:3725 src/multiple_files.c:129
-msgid "mp3 files(*.mp3)"
+#: src/player_tab.c:3727 src/multiple_files.c:131
+#, fuzzy
+msgid "mp3 files (*.mp3)"
 msgstr "fichiers mp3(*.mp3)"
 
-#: src/player_tab.c:3730 src/multiple_files.c:134
-msgid "ogg files(*.ogg)"
+#: src/player_tab.c:3733 src/multiple_files.c:137
+#, fuzzy
+msgid "ogg files (*.ogg)"
 msgstr "fichiers ogg(*.ogg)"
 
-#: src/player_tab.c:3862
+#: src/player_tab.c:3866
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:3866
+#: src/player_tab.c:3870
 msgid "Select file"
 msgstr "Sélection fichier"
 
-#: src/player_tab.c:3873
+#: src/player_tab.c:3877
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
@@ -673,19 +676,19 @@ msgstr "_Effacer"
 msgid "Choose file or directory"
 msgstr "Choisir un fichier ou un dossier"
 
-#: src/multiple_files.c:140
+#: src/multiple_files.c:144
 msgid "All Files"
 msgstr "Tous les fichiers"
 
-#: src/multiple_files.c:284
+#: src/multiple_files.c:288
 msgid "_Add files"
 msgstr "Aj_outer fichiers"
 
-#: src/multiple_files.c:292
+#: src/multiple_files.c:296
 msgid "_Remove selected entries"
 msgstr "_Effacer les éléments sélectionnés"
 
-#: src/multiple_files.c:301
+#: src/multiple_files.c:305
 msgid "R_emove all entries"
 msgstr "Effa_cer toutes les lignes"
 
@@ -741,29 +744,35 @@ msgstr " erreur: aucun fichier trouvé avec le mode 'fichiers multiples'"
 msgid "Processing file '%s' ..."
 msgstr "Fichier '%s' ..."
 
-#: src/import.c:54
+#: src/import.c:55
 msgid "Choose file to import"
 msgstr "Choisir un fichier à importer"
 
-#: src/import.c:119
+#: src/import.c:120
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr "CDDB (*.cddb), CUE (*.cue), Marqueurs Audacity (*.txt)"
 
-#: src/import.c:123
+#: src/import.c:124
 msgid "CDDB files (*.cddb)"
 msgstr "Fichier CDDB (*.cddb)"
 
-#: src/import.c:125
+#: src/import.c:126
 msgid "CUE files (*.cue)"
 msgstr "Fichiers CUE (*.cue)"
 
-#: src/import.c:127
+#: src/import.c:128
 msgid "Audacity labels files (*.txt)"
 msgstr "Fichiers marqueurs Audacity (*.txt)"
 
-#: src/import.c:129
+#: src/import.c:130
 msgid "All files"
 msgstr "Tous les fichiers"
+
+#~ msgid "mp3 and ogg files(*.mp3 *.ogg)"
+#~ msgstr "fichiers mp3 et ogg(*.mp3 *.ogg)"
+
+#~ msgid "ogg files(*.ogg)"
+#~ msgstr "fichiers ogg(*.ogg)"
 
 #~ msgid "cddb & cue"
 #~ msgstr "cddb & cue"

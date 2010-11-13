@@ -120,19 +120,23 @@ void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
  
   //mp3 & ogg filter
   our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files(*.mp3 *.ogg)"));
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files (*.mp3 *.ogg)"));
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
   //mp3 filter
   our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files(*.mp3)"));
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files (*.mp3)"));
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
   //ogg filter
   our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files(*.ogg)"));
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files (*.ogg)"));
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
 
   //all files filter
