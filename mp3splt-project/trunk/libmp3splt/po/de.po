@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-09-27 00:49+0200\n"
+"POT-Creation-Date: 2010-11-13 21:20+0100\n"
 "PO-Revision-Date: 2010-02-14 17:59+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -50,7 +50,7 @@ msgstr "Ordner existiert nicht"
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " Informationen aus CDDB-Datei %s werden gelesen …\n"
 
-#: src/cddb.c:503 src/cddb.c:1089 src/cddb.c:1333 src/cue.c:284
+#: src/cddb.c:503 src/cddb.c:1089 src/cddb.c:1333 src/cue.c:282
 #, c-format
 msgid ""
 "\n"
@@ -59,7 +59,7 @@ msgstr ""
 "\n"
 "  Künstler: %s\n"
 
-#: src/cddb.c:519 src/cddb.c:1105 src/cddb.c:1342 src/cue.c:288
+#: src/cddb.c:519 src/cddb.c:1105 src/cddb.c:1342 src/cue.c:286
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album: %s\n"
@@ -77,39 +77,39 @@ msgstr ""
 msgid " info: starting normal split\n"
 msgstr " Info: Teilung im normalen Modus wird gestartet\n"
 
-#: src/splt.c:221
+#: src/splt.c:229
 msgid " info: starting error mode split\n"
 msgstr " Info: Teilung im Fehlermodus wird gestartet\n"
 
-#: src/splt.c:518
+#: src/splt.c:536
 msgid " info: starting time mode split\n"
 msgstr " Info: Teilung im Zeitmodus wird gestartet\n"
 
-#: src/splt.c:535
+#: src/splt.c:553
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr " Info: Teilung im Modus »Gleich große Teile« wird gestartet\n"
 
-#: src/splt.c:641
+#: src/splt.c:659
 #, c-format
 msgid "YES"
 msgstr "JA"
 
-#: src/splt.c:645
+#: src/splt.c:663
 #, c-format
 msgid "NO"
 msgstr "NEIN"
 
-#: src/splt.c:651
+#: src/splt.c:669
 #, c-format
 msgid "User"
 msgstr "Benutzer"
 
-#: src/splt.c:655
+#: src/splt.c:673
 #, c-format
 msgid "Auto"
 msgstr "Automatisch"
 
-#: src/splt.c:661
+#: src/splt.c:679
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: "
@@ -118,39 +118,37 @@ msgstr ""
 " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: "
 "%.2f, Entfernen: %s)\n"
 
-#: src/splt.c:678
-#, c-format
+#: src/splt.c:696
+#, fuzzy, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
-"time ;)"
+"time ;)\n"
 msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden "
 "Teilungspunkte aus dieser Datei gelesen ;)"
 
-#: src/splt.c:702
-#, c-format
-msgid ""
-"\n"
-" Total silence points found: %d."
+#: src/splt.c:720
+#, fuzzy, c-format
+msgid " Total silence points found: %d."
 msgstr ""
 "\n"
 " Insgesamt gefundene Teilungspunkte: %d."
 
-#: src/splt.c:714
+#: src/splt.c:732
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d Titel ausgewählt)\n"
 
-#: src/splt.c:810
+#: src/splt.c:828
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr "Stille-Protokolldatei »%s« wird geschrieben …\n"
 
-#: src/splt.c:864
+#: src/splt.c:881
 msgid " info: starting silence mode split\n"
 msgstr " Info: Teilung im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:921
+#: src/splt.c:937
 msgid " info: starting wrap mode split\n"
 msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 
@@ -168,7 +166,7 @@ msgstr " Informationen aus CUE-Datei %s werden gelesen …\n"
 msgid "description here"
 msgstr "Beschreibung hier"
 
-#: src/cue.c:228
+#: src/cue.c:226
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " CUE-Datei »%s« wurde erstellt.\n"
@@ -203,7 +201,7 @@ msgstr " - NS - %d kB/s"
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1589 plugins/ogg.c:183
+#: plugins/mp3.c:1589 plugins/ogg.c:186
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Zeit gesamt: %dm.%02ds"
@@ -239,12 +237,18 @@ msgstr " Warnung: stdin »-« wird als mp3-Datenstrom angenommen.\n"
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
 
-#: plugins/ogg.c:175
+#: plugins/ogg.c:178
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Info: OggVorbis-Datenstrom - %ld - %ld kB/s - %d Kanäle"
 
-#: plugins/ogg.c:1933
+#: plugins/ogg.c:881
+msgid ""
+" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
+"to fix.\n"
+msgstr ""
+
+#: plugins/ogg.c:2063
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Warnung: stdin »o-« wird als Ogg-Datenstrom angenommen.\n"
 
