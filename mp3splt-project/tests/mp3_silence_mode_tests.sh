@@ -41,7 +41,6 @@ function test_silence
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -103,7 +102,6 @@ function test_silence_and_pretend
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -136,7 +134,6 @@ function test_silence_and_cue_export
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -191,7 +188,6 @@ function test_silence_and_pretend_and_cue_export
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -225,7 +221,6 @@ function test_silence_offset
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.00, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -282,7 +277,6 @@ function test_silence_threshold
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -18.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 3. (Selected 4 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -348,7 +342,6 @@ function test_silence_nt
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: User mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -397,7 +390,6 @@ function test_silence_rm
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -454,7 +446,6 @@ function test_silence_rm_and_output_format
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/silence_1_00:00:00 00:56:84.mp3\" created
@@ -493,7 +484,6 @@ function test_silence_rm_and_overlap
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
  info: overlapping split files with 0.10.0
@@ -533,7 +523,6 @@ function test_silence_rm_and_custom_tags
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -575,7 +564,6 @@ function test_silence_rm_and_custom_tags_and_output_format
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/La Verue__Riez Noir__title1_1.mp3\" created
@@ -614,7 +602,6 @@ function test_silence_min
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 9.00, Remove: NO)
-
  Total silence points found: 1. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created

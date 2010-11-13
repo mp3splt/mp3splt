@@ -44,7 +44,6 @@ function test_silence
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -104,7 +103,6 @@ function test_silence_and_pretend
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -136,7 +134,6 @@ function test_silence_and_cue_export
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -188,7 +185,6 @@ function test_silence_and_pretend_and_cue_export
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -221,7 +217,6 @@ function test_silence_offset
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.00, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -277,7 +272,6 @@ function test_silence_threshold
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -22.3 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 3. (Selected 4 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -342,7 +336,6 @@ function test_silence_nt
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: User mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
-
  Total silence points found: 2. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -390,7 +383,6 @@ function test_silence_rm
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -446,7 +438,6 @@ function test_silence_rm_and_output_format
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/silence_1_00:00:00 00:50:64.ogg\" created
@@ -484,7 +475,6 @@ function test_silence_rm_and_overlap
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
  info: overlapping split files with 0.10.0
@@ -523,7 +513,6 @@ function test_silence_rm_and_custom_tags
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -567,7 +556,6 @@ function test_silence_rm_and_custom_tags_and_output_format
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
-
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/Kelly Allyn__Getting Back From Where I've Been__title1_1.ogg\" created
@@ -605,7 +593,6 @@ function test_silence_min
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
  Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 9.00, Remove: NO)
-
  Total silence points found: 1. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -657,8 +644,7 @@ function run_silence_mode_tests
 export LC_ALL="C"
 start_date=$(date +%s)
 
-#run_silence_mode_tests
-test_silence_offset
+run_silence_mode_tests
 
 end_date=$(date +%s)
 

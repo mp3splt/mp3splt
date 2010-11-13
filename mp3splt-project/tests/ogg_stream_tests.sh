@@ -151,10 +151,55 @@ function test_stream_time_mode
   echo
 }
 
-#function test_stream_silence_mode
-#{
-#  TODO
-#}
+function test_stream_silence_mode
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  test_name="stream silence mode"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can__stream"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 1m.36s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_silence_2.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_silence_3.ogg\" created
+ silence split ok
+ Average silence level: -16.15 dB"
+  mp3splt_args="-s -p th=-16 -d $OUTPUT_DIR $STREAM_OGG_FILE"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_silence_1.ogg"
+  check_current_ogg_length "0m:19.079s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "157440"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_silence_2.ogg"
+  check_current_ogg_length "0m:05.280s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "46350"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_silence_3.ogg"
+  check_current_ogg_length "1m:11.330s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "3"\
+                     "http://www.jamendo.com"
+  check_current_file_size "562758"
+
+  p_green "OK"
+  echo
+}
 
 function run_stream_tests
 {
