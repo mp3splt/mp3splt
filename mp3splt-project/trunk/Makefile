@@ -169,3 +169,7 @@ distclean:
 	cd ${LIBMP3SPLT_DIR} && make distclean
 	cd ${MP3SPLT_DIR} && make distclean
 	cd ${MP3SPLT_GTK_DIR} && make distclean
+
+vim:
+	screen vim libmp3splt/src/*.c libmp3splt/plugins/*.{c,h} newmp3splt/src/*.c mp3splt-gtk/src/*.{c,h}
+
