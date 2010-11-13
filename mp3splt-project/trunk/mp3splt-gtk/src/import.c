@@ -43,6 +43,7 @@ extern splt_state *the_state;
 static void set_import_filters(GtkFileChooser *chooser);
 static void build_import_filter(GtkFileChooser *chooser,
     const gchar *filter_name, const gchar *filter_pattern,
+    const gchar *filter_pattern_upper, 
     GList **filters, GtkFileFilter *all_filter);
 static gpointer add_audacity_labels_splitpoints(gpointer data);
 static gpointer add_cddb_splitpoints(gpointer data);
@@ -120,13 +121,13 @@ static void set_import_filters(GtkFileChooser *chooser)
 
   GList *filters = NULL;
 
-  build_import_filter(chooser, _("CDDB files (*.cddb)"), "*.cddb",
+  build_import_filter(chooser, _("CDDB files (*.cddb)"), "*.cddb", "*.CDDB", 
       &filters, all_filter);
-  build_import_filter(chooser, _("CUE files (*.cue)"), "*.cue",
+  build_import_filter(chooser, _("CUE files (*.cue)"), "*.cue", "*.CUE",
       &filters, all_filter);
-  build_import_filter(chooser, _("Audacity labels files (*.txt)"), "*.txt",
+  build_import_filter(chooser, _("Audacity labels files (*.txt)"), "*.txt", "*.TXT",
       &filters, all_filter);
-  build_import_filter(chooser, _("All files"), "*", &filters, NULL);
+  build_import_filter(chooser, _("All files"), "*", NULL, &filters, NULL);
 
   gtk_file_chooser_add_filter(chooser, all_filter);
 
@@ -139,15 +140,26 @@ static void set_import_filters(GtkFileChooser *chooser)
 
 static void build_import_filter(GtkFileChooser *chooser,
     const gchar *filter_name, const gchar *filter_pattern,
+    const gchar *filter_pattern_upper,
     GList **filters, GtkFileFilter *all_filter)
 {
   GtkFileFilter *filter = gtk_file_filter_new();
   gtk_file_filter_set_name(GTK_FILE_FILTER(filter), filter_name);
+
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(filter), filter_pattern);
+
+  if (filter_pattern_upper)
+  {
+    gtk_file_filter_add_pattern(GTK_FILE_FILTER(filter), filter_pattern_upper);
+  }
 
   if (all_filter)
   {
     gtk_file_filter_add_pattern(GTK_FILE_FILTER(all_filter), filter_pattern);
+    if (filter_pattern_upper)
+    {
+      gtk_file_filter_add_pattern(GTK_FILE_FILTER(all_filter), filter_pattern_upper);
+    }
   }
 
   *filters = g_list_append(*filters, filter);
