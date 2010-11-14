@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-11-13 23:50+0100\n"
+"POT-Creation-Date: 2010-11-14 17:31+0100\n"
 "PO-Revision-Date: 2010-02-15 01:40+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -117,7 +117,7 @@ msgstr ""
 " Division avec recherche du silence : mode %s (Seuil : %.1f dB, Ecart : "
 "%.2f, Min : %.2f, Suppression : %s)\n"
 
-#: src/splt.c:696
+#: src/splt.c:697
 #, fuzzy, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -126,28 +126,28 @@ msgstr ""
 " Fichier de log avec silences trouvé '%s' ! Lecture des points de silence du "
 "fichier ;)"
 
-#: src/splt.c:720
+#: src/splt.c:727
 #, fuzzy, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 "\n"
 " Points de silence trouvés : %d."
 
-#: src/splt.c:732
+#: src/splt.c:739
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d pistes sélectionnées)\n"
 
-#: src/splt.c:828
+#: src/splt.c:835
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr " Ecriture du fichier de log avec les points de silence '%s' ...\n"
 
-#: src/splt.c:881
+#: src/splt.c:888
 msgid " info: starting silence mode split\n"
 msgstr " info : début de la division avec recherche de silence\n"
 
-#: src/splt.c:937
+#: src/splt.c:944
 msgid " info: starting wrap mode split\n"
 msgstr " info : début de la division 'wrap'\n"
 
@@ -249,7 +249,7 @@ msgid ""
 "to fix.\n"
 msgstr ""
 
-#: plugins/ogg.c:2063
+#: plugins/ogg.c:2078
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux ogg.\n"
