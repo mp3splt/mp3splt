@@ -685,6 +685,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
         remove_str);
   }
  
+  short read_silence_from_logs = SPLT_FALSE;
   if (we_read_silence_from_logs)
   {
     if (state->split.get_silence_level)
@@ -702,6 +703,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       fclose(log_file);
       log_file = NULL;
     }
+
+    read_silence_from_logs = SPLT_TRUE;
   }
   else
   {
@@ -716,8 +719,12 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   //if no error
   if (*error >= 0)
   {
-    splt_c_put_info_message_to_client(state,
-        _(" Total silence points found: %d."),found);
+    if (!read_silence_from_logs)
+    {
+      splt_c_put_info_message_to_client(state, "\n");
+    }
+
+    splt_c_put_info_message_to_client(state, _(" Total silence points found: %d."), found);
 
     if (found > 0)
     {
