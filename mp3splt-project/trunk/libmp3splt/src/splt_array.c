@@ -138,35 +138,3 @@ int splt_array_length(splt_array *array)
   return array->number_of_elements;
 }
 
-/*int main()
-{
-  splt_array *array = splt_array_new();
-
-  int element = 183;
-  splt_array_append(array, (int *)element);
-  element = 87;
-  splt_array_append(array, (int *)element);
-
-  assert(splt_array_length(array) == 2);
-
-  int inside_int = (int) splt_array_get(array, 0);
-  assert(inside_int == 183);
-
-  inside_int = (int) splt_array_get(array, 1);
-  assert(inside_int == 87);
-
-  int *a = splt_array_get(array, 2);
-  assert(a == NULL);
-
-  a = splt_array_get(array, -1);
-  assert(a == NULL);
-
-  splt_array_clear(array);
-  assert(splt_array_length(array) == 0);
-
-  splt_array_free(&array);
-  assert(array == NULL);
-
-  return EXIT_SUCCESS;
-}*/
-

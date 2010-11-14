@@ -1,5 +1,5 @@
 all:
-	cd libmp3splt && ./autogen.sh win && ./configure --prefix=/usr && make clean && make && \
+	cd libmp3splt && ./autogen.sh win && ./configure --prefix=/usr --disable-cutter && make clean && make && \
 	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
 	\
 	cd ../newmp3splt && ./autogen.sh && \

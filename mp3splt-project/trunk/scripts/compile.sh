@@ -10,6 +10,7 @@ LIBMP3SPLT_REAL_VERSION=0.6.1
 MP3SPLT_REAL_VERSION=2.3
 MP3SPLT_GTK_REAL_VERSION=0.6.1
 
+RUN_UNIT_TESTS=1
 RUN_FUNCTIONAL_TESTS=1
 BUILD_BINARY_PACKAGES=1
 
@@ -380,6 +381,15 @@ function run_functional_tests
   cd $PROJECT_DIR
 }
 
+function run_unit_tests
+{
+  echo
+  print_yellow "Running unit tests..."
+  echo
+
+  ${LIBMP3SPLT_DIR}/test/run-tests.sh
+}
+
 ###########
 ##  MAIN ##
 ###########
@@ -405,16 +415,23 @@ update_versions
 remove_pot_files
 
 ###################################
-#build packages
+#build source packages
 
 source_packages
 
 ###################################
-#build packages
+#tests
+
+if [[ $RUN_UNIT_TESTS -eq 1 ]];then
+  run_unit_tests
+fi
 
 if [[ $RUN_FUNCTIONAL_TESTS -eq 1 ]];then
   run_functional_tests
 fi
+
+###################################
+#build packages
 
 if [[ $BUILD_UBUNTU_PACKAGES -eq 1 ]];then
   ubuntu_packages
