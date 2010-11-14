@@ -165,6 +165,23 @@ if test x$enable_ogg_plugin = xyes;then
       AC_MSG_WARN(Vorbis not found! Will build without ogg/vorbis support.))
 fi
 
+#################################################################
+# Check for cutter
+#################################################################
+
+AM_CONDITIONAL(HAS_CUTTER, false)
+
+AC_ARG_ENABLE(cutter, [AC_HELP_STRING([--disable-cutter],[ Disable Cutter unit testing. ]) ],
+    [enable_cutter=$enableval],[enable_cutter="yes"])
+
+if test x$enable_cutter = xyes;then
+
+AC_CHECK_CUTTER
+if test x$CUTTER != x;then
+  AM_CONDITIONAL(HAS_CUTTER, true)
+fi
+
+fi
 
 #################################################
 # Print the configuration to the screen
@@ -199,6 +216,6 @@ echo
 # Generate Makefile
 #################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile po/Makefile.in plugins/Makefile m4/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile po/Makefile.in plugins/Makefile test/Makefile m4/Makefile])
 AC_OUTPUT
 
