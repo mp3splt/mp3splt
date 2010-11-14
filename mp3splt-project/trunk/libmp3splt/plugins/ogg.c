@@ -66,8 +66,8 @@
 
 splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error);
 int splt_ogg_scan_silence(splt_state *state, short seconds, 
-    float threshold, float min,
-    short output, ogg_page *page, ogg_int64_t granpos, int *error);
+    float threshold, float min, short output, ogg_page *page,
+    ogg_int64_t granpos, int *error, long first_cut_granpos);
 
 /****************************/
 /* ogg constants */
@@ -1243,10 +1243,10 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                   if (first_cut_granpos == 0)
                   {
                     first_cut_granpos = first_granpos;
-                  }
-                  if (cutpoint != 0)
-                  {
-                    cutpoint += first_granpos;
+                    if (cutpoint != 0)
+                    {
+                      cutpoint += first_granpos;
+                    }
                   }
                   current_granpos += bs;
 
@@ -1303,7 +1303,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
             if (adjust)
             {
               if (splt_ogg_scan_silence(state,
-                    (2 * adjust), threshold, 0.f, 0, &page, current_granpos, error) > 0)
+                    (2 * adjust), threshold, 0.f, 0, &page, current_granpos, error, first_cut_granpos) > 0)
               {
                 cutpoint = (splt_siu_silence_position(state->silence_list, 
                       oggstate->off) * oggstate->vi->rate);
@@ -1313,6 +1313,13 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                 cutpoint = (cutpoint + (adjust * oggstate->vi->rate));
               }
 
+              if (first_cut_granpos == 0 && oggstate->first_granpos != 0)
+              {
+                first_cut_granpos = oggstate->first_granpos;
+                cutpoint += first_cut_granpos;
+                prev_granpos += first_cut_granpos;
+              }
+
               *sec_split_time_length = cutpoint / oggstate->vi->rate;
 
               splt_siu_ssplit_free(&state->silence_list);
@@ -1320,7 +1327,6 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
               progress_adjust = 0;
               splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
 
-              //check error of 'splt_ogg_scan_silence'
               if (*error < 0) { return -1; }
             }
             else 
@@ -1381,8 +1387,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                   {
                     packet.granulepos = cutpoint; /* Set it! This 'truncates' the final packet, as needed. */
                   }
-//                  fprintf(stdout,"granpos 2 = %ld\n", packet.granulepos);
-//                  fflush(stdout);
+                  //fprintf(stdout,"granpos 2 = %ld\n", packet.granulepos);
+                  //fflush(stdout);
                   packet.e_o_s = 1;
                   ogg_stream_packetin(stream, &packet);
                   break;
@@ -1397,8 +1403,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                   {
                     packet.granulepos = prev_granpos - first_cut_granpos;
                   }
-//                  fprintf(stdout,"granpos 3 = %ld\n", packet.granulepos);
-//                  fflush(stdout);
+                  //fprintf(stdout,"granpos 3 = %ld\n", packet.granulepos);
+                  //fflush(stdout);
                   packet.packetno = packetnum++;
                 }
 
@@ -1661,7 +1667,7 @@ static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, floa
 
 int splt_ogg_scan_silence(splt_state *state, short seconds,
     float threshold, float min, short output, 
-    ogg_page *page, ogg_int64_t granpos, int *error)
+    ogg_page *page, ogg_int64_t granpos, int *error, long first_cut_granpos)
 {
   splt_c_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
   splt_ogg_state *oggstate = state->codec;
@@ -1735,14 +1741,14 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
 
   while (!eos)
   {
-    while(!eos)
+    while (!eos)
     {
       if (result == 0) 
       {
         break;
       }
 
-      if(result > 0)
+      if (result > 0)
       {
         if (ogg_page_eos(&og)) 
         {
@@ -1762,7 +1768,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
           result = ogg_stream_packetout(&os, &op);
 
           /* need more data */
-          if (result==0) 
+          if (result == 0) 
           {
             break;
           }
@@ -1770,9 +1776,13 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
           if (result > 0)
           {
             int bs = splt_ogg_get_blocksize(oggstate, oggstate->vi, &op);
-            if (splt_ogg_compute_first_granulepos(state, oggstate, &op, bs) != 0)
+            long first_granpos = 
+              splt_ogg_compute_first_granulepos(state, oggstate, &op, bs);
+            if (first_cut_granpos == 0 && first_granpos != 0)
             {
               is_stream = SPLT_TRUE;
+              first_cut_granpos = first_granpos;
+              pos += first_cut_granpos;
             }
 
             pos += bs;                      
@@ -1808,13 +1818,15 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
                   if ((flush) || (shot <= 0))
                   {
                     float b_position, e_position;
-                    double temp;
-                    temp = (double) begin_position;
+
+                    double temp = (double) (begin_position - first_cut_granpos);
                     temp /= oggstate->vi->rate;
                     b_position = (float) temp;
-                    temp = (double) end_position;
+
+                    temp = (double) (end_position - first_cut_granpos);
                     temp /= oggstate->vi->rate;
                     e_position = (float) temp;
+
                     if ((e_position - b_position - min) >= 0.f)
                     {
                       int err = SPLT_OK;
@@ -1922,7 +1934,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
       state->split.p_bar->silence_db_level = level;
       state->split.p_bar->silence_found_tracks = found;
 
-      if (splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
+      if (option_silence_mode)
       {
         if (splt_t_split_is_canceled(state))
         {
@@ -1947,10 +1959,13 @@ function_end:
   vorbis_block_clear(&vb);
   vorbis_dsp_clear(&vd);
 
-  if (oy.data)
+  if (option_silence_mode)
   {
-    free(oy.data);
-    oy.data = NULL;
+    if (oy.data)
+    {
+      free(oy.data);
+      oy.data = NULL;
+    }
   }
   ogg_sync_clear(&oy);
 
@@ -2108,7 +2123,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   splt_ogg_state *oggstate = state->codec;
   oggstate->off = offset;
 
-  found = splt_ogg_scan_silence(state, 0, threshold, min_length, 1, NULL, 0, error);
+  found = splt_ogg_scan_silence(state, 0, threshold, min_length, 1, NULL, 0, error, 0);
   if (*error < 0) { return -1; }
 
   return found;
