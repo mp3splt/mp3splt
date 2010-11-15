@@ -468,17 +468,14 @@ msgid "Choose File"
 msgstr "Datei wählen"
 
 #: src/player_tab.c:3719 src/multiple_files.c:123
-#, fuzzy
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "mp3- und ogg-Dateien (*.mp3 *.ogg)"
 
 #: src/player_tab.c:3727 src/multiple_files.c:131
-#, fuzzy
 msgid "mp3 files (*.mp3)"
 msgstr "mp3-Dateien (*.mp3)"
 
 #: src/player_tab.c:3733 src/multiple_files.c:137
-#, fuzzy
 msgid "ogg files (*.ogg)"
 msgstr "ogg-Dateien (*.ogg)"
 
