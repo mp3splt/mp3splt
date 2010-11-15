@@ -119,16 +119,16 @@ msgstr ""
 "%.2f, Entfernen: %s)\n"
 
 #: src/splt.c:697
-#, fuzzy, c-format
+#, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)\n"
 msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden "
-"Teilungspunkte aus dieser Datei gelesen ;)"
+"die Teilungspunkte aus dieser Datei gelesen ;)"
 
 #: src/splt.c:727
-#, fuzzy, c-format
+#, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 "\n"
