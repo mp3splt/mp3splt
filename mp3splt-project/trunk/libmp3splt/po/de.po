@@ -125,14 +125,12 @@ msgid ""
 "time ;)\n"
 msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden "
-"die Teilungspunkte aus dieser Datei gelesen ;)"
+"die Teilungspunkte aus dieser Datei gelesen ;)\n"
 
 #: src/splt.c:727
 #, c-format
 msgid " Total silence points found: %d."
-msgstr ""
-"\n"
-" Insgesamt gefundene Teilungspunkte: %d."
+msgstr " Insgesamt gefundene Teilungspunkte: %d."
 
 #: src/splt.c:739
 #, c-format
