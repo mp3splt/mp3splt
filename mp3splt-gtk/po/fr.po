@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-11-14 23:42+0100\n"
+"POT-Creation-Date: 2010-11-16 20:13+0100\n"
 "PO-Revision-Date: 2010-02-15 01:54+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -298,7 +298,7 @@ msgstr "Tags"
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:939 src/main_win.c:648
+#: src/preferences_tab.c:939 src/main_win.c:651
 msgid "Player"
 msgstr "Lecteur"
 
@@ -536,7 +536,7 @@ msgstr "Importer"
 msgid "Messages _history"
 msgstr "_Historique des messages"
 
-#: src/main_win.c:517 src/main_win.c:754 src/messages.c:185
+#: src/main_win.c:517 src/main_win.c:757 src/messages.c:185
 msgid "Messages history"
 msgstr "Historique des messages"
 
@@ -549,34 +549,43 @@ msgid "Quit"
 msgstr "Quitter"
 
 #: src/main_win.c:522
+#, fuzzy
+msgid "_Contents"
+msgstr "_Connecter"
+
+#: src/main_win.c:522
+msgid "Contents"
+msgstr ""
+
+#: src/main_win.c:524
 msgid "_About"
 msgstr "_A propos de"
 
-#: src/main_win.c:522
+#: src/main_win.c:524
 msgid "About"
 msgstr "A propos de"
 
-#: src/main_win.c:661
+#: src/main_win.c:664
 msgid "Splitpoints"
 msgstr "Points de coupure"
 
-#: src/main_win.c:674
+#: src/main_win.c:677
 msgid "Split files"
 msgstr "Fichiers coupés"
 
-#: src/main_win.c:687
+#: src/main_win.c:690
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:698
+#: src/main_win.c:701
 msgid "Type of split"
 msgstr "Type de division"
 
-#: src/main_win.c:711
+#: src/main_win.c:714
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:732
+#: src/main_win.c:735
 msgid "S_top"
 msgstr "S_top"
 

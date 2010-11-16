@@ -29,7 +29,9 @@ mp3splt_gtk_SOURCES = \
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 
-mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm
+AM_CPPFLAGS = $(GNOMEUI_CFLAGS)
+
+mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm @GNOMEUI_LIBS@
 
 if WIN32
 INCLUDES += -mms-bitfields -enable-stdcall-fixup
