@@ -47,6 +47,7 @@
 
 #include <string.h>
 
+#include <libgnomeui/gnome-help.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <libmp3splt/mp3splt.h>
@@ -499,6 +500,13 @@ void show_messages_history_dialog(GtkWidget *widget, gpointer data)
   gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
 }
 
+/*! The function that starts the help browser on clicking help/help
+ */
+void ShowHelp()
+{
+	gnome_help_display_uri("ghelp:mp3splt-gtk",NULL);
+}
+
 //creates the menu bar
 GtkWidget *create_menu_bar()
 {
@@ -519,6 +527,8 @@ GtkWidget *create_menu_bar()
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
       G_CALLBACK(quit) },
     //name, stock id, label, accelerator
+    { "Contents", GTK_STOCK_HELP, N_("_Contents"), "F1", N_("Contents"),
+      G_CALLBACK(ShowHelp)},
     { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
       G_CALLBACK(about_window)},
   };
@@ -534,6 +544,7 @@ GtkWidget *create_menu_bar()
     "      <menuitem action='Quit'/>"
     "    </menu>"
     "    <menu action='HelpMenu'>"
+    "      <menuitem action='Contents'/>"
     "      <menuitem action='About'/>"
     "    </menu>"
     "  </menubar>"

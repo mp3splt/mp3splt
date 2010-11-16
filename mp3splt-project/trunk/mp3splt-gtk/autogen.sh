@@ -9,6 +9,9 @@
     exit 1
 }
 
+echo -n "Preparing the files for the help system with gnome-doc-prepare... ";
+gnome-doc-prepare --force && echo "done";
+
 #automake check
 (aclocal --version) > /dev/null 2>&1 ||
 {
@@ -49,4 +52,3 @@ echo -n "Formatting language files with msgfmt... " && \
     done
     cd ..
 } && echo "done"
-
