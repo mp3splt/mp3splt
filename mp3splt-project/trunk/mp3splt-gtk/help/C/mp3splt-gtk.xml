@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY legal SYSTEM "legal.xml">
+  <!ENTITY appversion "0.0.1">
+  <!ENTITY manrevision "0.1">
+  <!ENTITY app "<application>&appname;</application>">
+  <!ENTITY appname "mp3splt-gtk">
+]>
+
+<article id="index" lang="en_GB">
+  <articleinfo>
+    <title>&appname; Manual</title>
+    <abstract role="description">
+      <para>
+	 &appname;.
+      </para>
+      <para>
+	A tool that allows to losslessly cut MP3 or Ogg Vorbis files.
+	This means that the selected audio frames or packets are extracted
+	without the need to re-encode the file - which would loose quality.
+      </para>
+    </abstract>
+    <copyright>
+      <year>2010</year>
+      <holder>Gunter Königsmann</holder>
+    </copyright>
+    <!-- translators: uncomment this:
+	 
+	 <copyright>
+	   <year>2010</year>
+	   <holder>ME-THE-TRANSLATOR (Latin translation)</holder>
+	 </copyright>
+	 
+	 -->
+    
+    &legal;
+    
+    <author role="Developer">
+      <firstname>Alexandru Ionut</firstname>
+      <surname>Munteanu</surname>
+    </author>
+    <author role="Developer">
+      <firstname>Trotta</firstname>
+      <surname>Matteo</surname>
+    </author>
+
+    <revhistory>
+      <revision>
+        <revnumber>&appname; Manual &manrevision;</revnumber>
+        <date>2010-11-16</date>
+      </revision>
+    </revhistory>
+  </articleinfo>
+
+<sect1 id="mp3splt_gtk-introduction">
+  <title>Introduction</title>
+  <para>The <application>&appname;</application> application is a
+    tool that allows to cut MP3 and Ogg Vorbis files without the need
+    to re-encode them (which would loose them quality). 
+  </para>
+  <para>
+    Features include graphical selection of split points, automatic
+    splitting of music recordings into tracks and automatic adjustment
+    of split points to fall into pauses. 
+  </para>
+  <sect2 id="audiorec-tostartapp">
+    <title>Starting &appname;</title>
+    <para>You can start <application>&appname;</application> in - at
+      least - the following ways: 
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>Choose <menuchoice><guimenu>Sound and
+	      Video</guimenu><guimenuitem>&appname;</guimenuitem></menuchoice>
+          from the <guimenu>Applications</guimenu> menu.</para> 
+      </listitem>
+      <listitem>
+        <para>Run <command>&appname;</command> at the prompt in a
+          terminal such as <application>gnome-terminal</application>, or
+          from the <application>Run Application</application>
+          dialogue.</para> 
+      </listitem>
+    </itemizedlist>
+  </sect2>
+  <sect2 id="mp3splt_gtk-closeapp">
+    <title>Closing &appname;</title>
+    <para>To close the <application>&appname;</application> window
+      there are many options, too:</para>
+    <itemizedlist>
+      <listitem>
+	choose <menuchoice><guimenu>File</guimenu><guimenuitem>Close</guimenuitem></menuchoice>
+      </listitem>
+      <listitem>
+	press <keycombo><keycap>Ctrl</keycap><keycap>W</keycap></keycombo>
+      </listitem>
+      <listitem>
+	press on the X-shaped button the window manager of your choise
+	provides you with
+      </listitem>
+    </itemizedlist>
+  </sect2>
+  <sect2 id="mp3splt-features">
+    <title>&appname; Features</title>
+    <para>
+      <application>&appname;</application> will allow you to
+      manipulate audio files without loosing any quality.
+      <para>
+      It was designed with usability in Mind and contains the
+      followning features
+      <itemizedlist>
+	<listitem>
+	  The ability to use your favourite audio playback application
+	  for playback of the file that is to be cut.
+	</listitem>
+	<listitem>
+	  Automatic detection of the right places to split.
+	</listitem>
+	<listitem>
+	  Automatic adjustment of manually set split points to fall
+	  into a nearby pause - which allows the user to work with
+	  less than milisecond-accuracy when specifying the split
+	  points.
+	</listitem>
+	<listitem>
+	  Importing splitpoints for a known album from a database like
+	  freedb.
+	</listitem>
+	<listitem>
+	  Automatically split albums that have been joined by
+	  albumwrap or mp3wrap into the original files.
+	</listitem>
+      </itemizedlist>
+    </para> 
+  </sect2>
+</sect1>
+</article>
