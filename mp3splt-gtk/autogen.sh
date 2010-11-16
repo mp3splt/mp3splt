@@ -10,7 +10,7 @@
 }
 
 echo -n "Preparing the files for the help system with gnome-doc-prepare... ";
-gnome-doc-prepare --force && echo "done";
+gnome-doc-prepare --automake && echo "done";
 
 #automake check
 (aclocal --version) > /dev/null 2>&1 ||
