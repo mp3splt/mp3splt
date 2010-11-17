@@ -35,17 +35,25 @@
 AC_PREREQ(2.56)
 AC_INIT(mp3splt-gtk, 0.6.1, io_fx@yahoo.fr)
 
-# tell which file by being there indicates we are run from the
-# right directory
-AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
-
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
 # One of this files is gnome-doc-utils.make, which is needed to 
 # compile the help files.
 AC_CONFIG_AUX_DIR([build-aux])
 
+# This one is thaken from the "Migrating to gnome Documentation Build
+# utilities" page. No Idea, what it does.
+AC_CONFIG_MACRO_DIR([m4])
+
+# tell which file by being there indicates we are run from the
+# right directory
+AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
+
+# Initialize automake
 AM_INIT_AUTOMAKE(mp3splt-gtk, 0.6.1)
+
+# Tell autoconf where to put the output file that contains all
+# definitions our C program will need
 AC_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE([enable])
 
@@ -61,6 +69,10 @@ LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../../libmp3splt/src/.libs/"
 #################################################
 
 AC_PROG_CC
+
+# Include all m4 macros that have to do with the language C
+AC_LANG_C
+
 #gettext
 AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
@@ -102,6 +114,13 @@ case $host in
 		;;
 esac
 AC_MSG_RESULT($HOST)
+
+#################################################
+# Initialize the gnome help system
+#################################################
+
+# Prepare building the gnome documentation of this program
+GNOME_DOC_INIT
 
 #################################################
 # Check for libraries
@@ -181,17 +200,6 @@ top_builddir=`pwd`
 AC_SUBST(top_builddir)
 AC_SUBST(PACKAGE)
 AC_SUBST(LOCALEDIR)
-
-#################################################
-# Initialize the gnome help system
-#################################################
-
-# This one is thaken from the "Migrating to gnome Documentation Build
-# utilities" page. No Idea, what it does.
-AC_CONFIG_MACRO_DIR([m4])
-
-# Prepare building the gnome documentation of this program
-GNOME_DOC_INIT
 
 #################################################
 # Output configuration

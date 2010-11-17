@@ -4,6 +4,7 @@
   <!ENTITY legal SYSTEM "legal.xml">
   <!ENTITY appversion "0.0.1">
   <!ENTITY manrevision "0.1">
+  <!ENTITY date "November 2010">
   <!ENTITY app "<application>&appname;</application>">
   <!ENTITY appname "mp3splt-gtk">
 ]>
@@ -52,6 +53,14 @@
       Munteanu
     </surname>
   </author>
+  <author> 
+    <firstname> 
+      Gunter
+    </firstname> 
+    <surname>
+      Königsmann
+    </surname>
+  </author>
     <revhistory>
       <revision>
         <revnumber>&appname; Manual &manrevision;</revnumber>
@@ -73,20 +82,25 @@
     </para>
     <sect2 id="audiorec-tostartapp">
       <title>Starting &appname;</title>
-      <para>You can start <application>&appname;</application> in - at
-      least - the following ways: 
+      <para>
+	You can start <application>&appname;</application> in - at
+	least - the following ways: 
       </para>
       <itemizedlist>
 	<listitem>
-	  <para>Choose <menuchoice><guimenu>Sound and
-	  Video</guimenu><guimenuitem>&appname;</guimenuitem></menuchoice>
-          from the <guimenu>Applications</guimenu> menu.</para> 
+	  <para>
+	    Choose <menuchoice><guimenu>Sound and
+	    Video</guimenu><guimenuitem>&appname;</guimenuitem></menuchoice>
+	    from the <guimenu>Applications</guimenu> menu.
+	  </para> 
 	</listitem>
 	<listitem>
-	  <para>Run <command>&appname;</command> at the prompt in a
-          terminal such as <application>gnome-terminal</application>, or
-          from the <application>Run Application</application>
-          dialogue.</para> 
+	  <para>
+	    Run <command>&appname;</command> at the prompt in a
+	    terminal such as <application>gnome-terminal</application>, or
+	    from the <application>Run Application</application>
+	    dialogue.
+	  </para> 
 	</listitem>
       </itemizedlist>
     </sect2>
@@ -96,14 +110,22 @@
       there are many options, too:</para>
       <itemizedlist>
 	<listitem>
-	  choose <menuchoice><guimenu>File</guimenu><guimenuitem>Close</guimenuitem></menuchoice>
+	  <para>
+	    choose
+	    <menuchoice><guimenu>File</guimenu><guimenuitem>Close</guimenuitem></menuchoice>
+	  </para>
 	</listitem>
 	<listitem>
-	  press <keycombo><keycap>Ctrl</keycap><keycap>W</keycap></keycombo>
+	  <para>
+	    press
+	    <keycombo><keycap>Ctrl</keycap><keycap>W</keycap></keycombo>
+	  </para>
 	</listitem>
 	<listitem>
-	  press on the X-shaped button the window manager of your choise
-	  provides you with
+	  <para>
+	    press on the X-shaped button the window manager of your choise
+	    provides you with
+	  </para>
 	</listitem>
       </itemizedlist>
     </sect2>
@@ -118,28 +140,154 @@
 	followning features
 	<itemizedlist>
 	  <listitem>
-	    The ability to use your favourite audio playback application
-	    for playback of the file that is to be cut.
+	    <para>
+	      The ability to use your favourite audio playback application
+	      for playback of the file that is to be cut.
+	    </para>
 	  </listitem>
 	  <listitem>
-	    Automatic detection of the right places to split.
+	    <para>
+	      Automatic detection of the right places to split.
+	    </para>
 	  </listitem>
 	  <listitem>
-	    Automatic adjustment of manually set split points to fall
-	    into a nearby pause - which allows the user to work with
-	    less than milisecond-accuracy when specifying the split
-	    points.
+	    <para>
+	      Automatic adjustment of manually set split points to fall
+	      into a nearby pause - which allows the user to work with
+	      less than milisecond-accuracy when specifying the split
+	      points.
+	    </para>
 	  </listitem>
 	  <listitem>
-	    Importing splitpoints for a known album from a database like
-	    freedb.
+	    <para>
+	      Importing splitpoints for a known album from a database like
+	      freedb.
+	    </para>
 	  </listitem>
 	  <listitem>
-	    Automatically split albums that have been joined by
-	    albumwrap or mp3wrap into the original files.
+	    <para>
+	      Automatically split albums that have been joined by
+	      albumwrap or mp3wrap into the original files.
+	    </para>
 	  </listitem>
 	</itemizedlist>
       </para> 
+    </sect2>
+  </sect1>
+  <sect1 id="mp3splt_gtk-BasicWorkflow">
+    <title>Basic Workflow</title>
+    <sect2 id="mp3splt_gtk-OpenFile">
+      <title>Opening a file</title>
+      <para>
+	Just press the <guibutton> Choose </guibutton> button and
+	select a file to open.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-SetSplitPoints">
+      <title>Choose the right split points</title>
+      <sect3 id="mp3splt_gtk-SetSplitPointsManually">
+	<title>Choosing split points manually</title>
+	<para>
+	  Press the <guibutton> Play </guibutton> button (a gray
+	  triangle pointing to the right) on the
+	  <guilabel>Player</guilabel> tab, listen to the music and press
+	  the <guibutton>add</guibutton> button (which is on the
+	  <guilabel>Player</guilabel> tab, too) every time a new audio
+	  track should begin.
+	</para>
+	<para>
+	  If you don't want to be made to press the button exactly at
+	  the right centisecond the <guibutton>add</guibutton>
+	  Preferences tab gives you the possibility to let the program
+	  fine-tune the split points you choose.
+	</para>
+      </sect3>
+      <sect3 id="mp3splt_gtk-SetSplitPointsAutomatically">
+	<title>Automatical setting of split points</title>
+	<para>
+	  The <guilabel>Type of Split</guilabel> tab provides you with
+	  a wide choices of ways to select where to split a file into
+	  tracks. If you want to split a media into tracks others
+	  might have had access to before you can try searching for
+	  splitpoint readymades in the <guilabel>FreeDB</guilabel> tab
+	  instead.
+	</para>
+      </sect3>
+    </sect2>
+    <sect2 id="mp3splt_gtk-TrackInfos">
+      <title>Tweaking split points and entering track information</title>
+      <para>
+	  The <guilabel>Splitpoints</guilabel> tab now contains a list
+	  of points where tracks start or end. It also contains the
+	  information if this piece of the audio file is to be kept
+	  and how the corresponding track has to be named.
+      </para>
+      <para>
+	If you want to change the start or end position of a track
+	or give it a name just do it at any time you want.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-TrackExport">
+      <title>Exporting the tracks</title>
+      <para>
+	  Now press the button with the green <guibutton>check
+	  mark</guibutton> that is always visible in the menu
+	  line. &appname; will output all tracks into single files. If
+	  anything goes wrong don't despair: Since one of the goals of
+	  &appname; is to work completely lossless even if anything
+	  goes wrong not much is lost.
+      </para>
+      <para>
+	If you want to change the start or end position of a track
+	or give it a name just do it at any time you want.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="mp3splt_gtk-Troubleshooting">
+    <title>Troubleshooting</title>
+    <sect2 id="mp3splt_gtk-PlayerWontStart">
+      <title>The player won't start</title>
+      <para>
+	If the player won't start even if the play button is pressed try
+	starting the player independently from &appname; and pressing
+	play thereafter.
+      </para>
+      <para>
+	&appname; knows how to remote-control SnackAmp and Audacious to
+	automatically switch to the file that is about to be split.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-SplittingDoesntWork">
+      <title>Splitting doesn't work</title>
+      <para>
+	Try to make sure that the version of libmp3splt is installed
+	correspondends to the version of mp3splt-gtk.
+      </para>
+      <para>
+	Even if (for newer versions of the program) the configure
+	script makes sure that both versions match it might still
+	be possible to have the wrong combination of these elements
+	installed on the same system.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-SplittingDoesntWorkII">
+      <title>Splitting a certain Ogg file doesn't work</title>
+      <para>
+	Next to the lossy ogg vorbis format that gives good
+	compression while keeping file sizes extremely low there are
+	other file formats that can be kept inside an ogg container as
+	well, notably ogg flac. 
+      </para>
+      <para>
+	Flac is a completely lossless codec which means that the
+	output files are sonewhat larger than Ogg vorbis ones but
+	these files can be cut on any information without loosing any
+	quality.
+      </para>
+      <para>
+	Since there is no direct need mp3splt-gtk still does not
+	support cutting flac files.
+      </para>
     </sect2>
   </sect1>
 </article>
