@@ -18,9 +18,6 @@
     exit 1
 }
 
-echo -n "Preparing the files for the help system with gnome-doc-prepare... ";
-gnome-doc-prepare --automake && echo "done";
-
 #msgfmt check
 (msgfmt --version) > /dev/null 2>&1 ||
 {
@@ -33,6 +30,10 @@ gnome-doc-prepare --automake && echo "done";
 echo -n "Running autopoint... ";
 autopoint -f && echo "done";
 echo -n "Running aclocal... " \
+&& aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
+&& echo -n "Running gnome-doc-prepare... " \
+&& gnome-doc-prepare --automake && echo "done" \
+&& echo -n "Running aclocal again after adding the help files... " \
 && aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
 && echo -n "Running autoheader... " \
 && autoheader && echo "done" \
