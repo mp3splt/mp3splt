@@ -9,9 +9,6 @@
     exit 1
 }
 
-echo -n "Preparing the files for the help system with gnome-doc-prepare... ";
-gnome-doc-prepare --automake && echo "done";
-
 #automake check
 (aclocal --version) > /dev/null 2>&1 ||
 {
@@ -20,6 +17,9 @@ gnome-doc-prepare --automake && echo "done";
     echo
     exit 1
 }
+
+echo -n "Preparing the files for the help system with gnome-doc-prepare... ";
+gnome-doc-prepare --automake && echo "done";
 
 #msgfmt check
 (msgfmt --version) > /dev/null 2>&1 ||
