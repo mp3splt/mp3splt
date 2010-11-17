@@ -170,7 +170,7 @@ fi
 # Generate Makefiles
 #################################################
 
-AC_OUTPUT(Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile)
+AC_CONFIG_FILES(Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile)
 
 #################################################
 # Define some useful constants
