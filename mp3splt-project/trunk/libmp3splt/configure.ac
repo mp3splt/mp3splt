@@ -68,8 +68,7 @@ AC_C_CONST
 #################################################################
 
 AC_WITH_LTDL
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 
 #################################################################
 # Check for the type of the host
@@ -93,7 +92,7 @@ case $host in
 		;;
 	*mingw*)
 		HOST="Mingw"
-    AM_CONDITIONAL(WIN32,true)
+    AM_CONDITIONAL(WIN32, true)
 		;;
 	*solaris*)
 		HOST="Solaris"
@@ -103,6 +102,7 @@ case $host in
 		;;
 esac
 AC_MSG_RESULT($HOST)
+
 
 #################################################################
 # Check for some functions
@@ -121,6 +121,19 @@ AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 
 #check for -ltld
 AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not found - check libtool installation !]) ] ) 
+
+#################################################################
+# helper for windows compilation
+#################################################################
+
+AM_CONDITIONAL(IS_ON_WINDOWS, false)
+
+AC_ARG_ENABLE(win, [AC_HELP_STRING([--enable-win],[ Enable if compiling on windows with mingw. ]) ],
+    [enable_win=$enableval],[enable_win="no"])
+
+if test x$enable_win = xyes;then
+  AM_CONDITIONAL(IS_ON_WINDOWS, true)
+fi
 
 #################################################################
 # Check mp3 plugin libraries

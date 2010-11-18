@@ -32,12 +32,16 @@ win=$1
 rm -f m4/{libtool,argz,ltdl,ltoptions,lt~obsolete,ltversion,ltsugar}.m4
 rm -f libtool aclocal.m4 config.status configure autom4te.cache/* ltmain.sh
 
+if ! test -z $win ;then
+ WIN_ACLOCAL_FLAGS="-I /usr/share/aclocal"
+fi
+
 #we run aclocal, autoconf and automake
 #info: the 'sed' is an ugly hack for libtool version compatibility because aclocal.m4 is shipped in 'make dist'
 echo -n "1/6 Running autopoint... " \
 && autopoint -f && echo "done" \
 && echo -n "2/6 Running aclocal... " \
-&& aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
+&& aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
 && if test -z $win ;then sed "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4 > libmp3splt_aclocal.m4 && mv libmp3splt_aclocal.m4 aclocal.m4;fi \
 && echo -n "3/6 Running autoheader... " \
 && autoheader && echo "done" \

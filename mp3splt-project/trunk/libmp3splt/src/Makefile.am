@@ -11,7 +11,17 @@ libmp3splt_la_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt
 libmp3splt_la_LIBADD = @LIBINTL@ -lm
 
 if WIN32
-libmp3splt_la_LIBADD += -lltdl -lz -lws2_32 -lintl
+
+libmp3splt_la_LIBADD += -lltdl 
+
+if IS_ON_WINDOWS
+libmp3splt_la_LIBADD += /lib/libz.a
+else
+libmp3splt_la_LIBADD += -lz
+endif
+
+libmp3splt_la_LIBADD += -lws2_32 -lintl
+
 else
 libmp3splt_la_LIBADD += @LIBLTDL@ 
 endif
