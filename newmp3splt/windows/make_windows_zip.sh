@@ -17,12 +17,11 @@ fi
 
 ARCH="i386"
 
+DLL_SUFFIX="-0"
 if [[ -z $we_dont_cross_compile ]];then
   put_package "windows_zip"
-  DLL_SUFFIX=""
 else
   put_package "cross_windows_zip"
-  DLL_SUFFIX="-0"
 fi
 
 LANGUAGES="fr de"
@@ -32,7 +31,7 @@ newmp3splt/src/mp3splt.exe
 libmp3splt/src/.libs/libmp3splt${DLL_SUFFIX}.dll
 libintl-8.dll
 iconv.dll
-libltdl3.dll
+libltdl-7.dll
 zlib1.dll
 "
 

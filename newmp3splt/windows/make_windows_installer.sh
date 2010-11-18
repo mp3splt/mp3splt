@@ -17,12 +17,11 @@ fi
 
 ARCH="i386"
 
+DLL_SUFFIX="-0"
 if [[ -z $we_dont_cross_compile ]];then
   put_package "windows_installer"
-  DLL_SUFFIX=""
 else
   put_package "cross_windows_installer"
-  DLL_SUFFIX="-0"
 fi
 
 LANGUAGES="fr de"
@@ -254,7 +253,7 @@ echo "!include MUI2.nsh
 !define PROGRAM_NAME \"mp3splt\"" > $WIN_INSTALLER_FILE
 
 if [[ -z $we_dont_cross_compile ]];then
-  echo "!define MP3SPLT_PATH \"c:\mp3splt_mingw`pwd`\..\..\"" >> $WIN_INSTALLER_FILE
+  echo "!define MP3SPLT_PATH \"c:/mp3splt_mingw/msys/1.0`pwd`\..\..\"" >> $WIN_INSTALLER_FILE
 else 
   echo "!define MP3SPLT_PATH \"`pwd`/../..\"" >> $WIN_INSTALLER_FILE
 fi
@@ -315,7 +314,7 @@ newmp3splt\src\mp3splt.exe
 libmp3splt\src\.libs\libmp3splt${DLL_SUFFIX}.dll
 libintl-8.dll
 iconv.dll
-libltdl3.dll
+libltdl-7.dll
 zlib1.dll
 "
 

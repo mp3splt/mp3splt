@@ -1,4 +1,5 @@
 #!/bin/sh
+win=$1
 
 #autoconf check
 (autoconf --version && autoheader --version) > /dev/null 2>&1 ||
@@ -27,18 +28,21 @@
     exit 1
 }
 
+if ! test -z $win ;then
+ WIN_ACLOCAL_FLAGS="-I /usr/share/aclocal"
+fi
+
 echo -n "Running autopoint... ";
 autopoint -f && echo "done";
 echo -n "Running aclocal... " \
-&& aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
-&& echo -n "Running gnome-doc-prepare... " \
-&& gnome-doc-prepare --automake && echo "done" \
-&& echo -n "Running aclocal again after adding the help files... " \
-&& aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
+&& aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
+&& if test -z $win;then echo -n "Running gnome-doc-prepare... "; gnome-doc-prepare --automake; echo "done"; \
+echo -n "Running aclocal again after adding the help files... "; aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS; echo "done"; fi \
 && echo -n "Running autoheader... " \
 && autoheader && echo "done" \
 && echo -n "Running autoconf... " \
 && autoconf && echo "done" \
+&& if ! test -z $win; then touch build-aux/gnome-doc-utils.make; fi \
 && echo -n "Running automake... " \
 && automake -a -c && echo "done"
 

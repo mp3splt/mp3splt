@@ -1,18 +1,19 @@
 all:
-	cd libmp3splt && ./autogen.sh win && ./configure --prefix=/usr --disable-cutter && make clean && make && \
+	cd libmp3splt && ./autogen.sh win && ./configure --prefix=/usr --disable-cutter --enable-win && make clean && make && \
 	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
 	\
 	cd ../newmp3splt && ./autogen.sh && \
 	cp /lib/libmp3splt* . && \
 	./configure --host=mingw32 && make clean && make && make install && \
 	\
-	cd ../mp3splt-gtk && ./autogen.sh && \
+	cd ../mp3splt-gtk && ./autogen.sh win && \
 	cp /lib/libmp3splt* . && \
-	./configure --disable-audacious && make clean && make && make install
+	./configure --disable-audacious --disable-gnome && make clean && make && make install
 
 recompile:
 	cd libmp3splt && make && \
 	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
+	\
 	cd ../newmp3splt && cp /usr/lib/libmp3splt.* . && cp /usr/lib/libmp3splt.* ./src && make && \
 	cd ../mp3splt-gtk && cp /usr/lib/libmp3splt.* . && cp /usr/lib/libmp3splt.* ./src && make
 
@@ -23,7 +24,7 @@ clean:
 
 dist:
 #copy iconv & intl & ltdl
-	cp /bin/iconv.dll /bin/libintl-8.dll /bin/libltdl3.dll .
+	cp /bin/iconv.dll /bin/libintl-8.dll /bin/libltdl-7.dll .
 #copying vorbis and ogg libraries
 	cp /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll /bin/libvorbisenc-2.dll .
 #copying libmad and libid3tag libraries

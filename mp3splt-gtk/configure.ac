@@ -41,8 +41,6 @@ AC_INIT(mp3splt-gtk, 0.6.1, io_fx@yahoo.fr)
 # compile the help files.
 AC_CONFIG_AUX_DIR([build-aux])
 
-# This one is thaken from the "Migrating to gnome Documentation Build
-# utilities" page. No Idea, what it does.
 AC_CONFIG_MACRO_DIR([m4])
 
 # tell which file by being there indicates we are run from the
@@ -57,8 +55,8 @@ AM_INIT_AUTOMAKE(mp3splt-gtk, 0.6.1)
 AC_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE([enable])
 
-#DEBUG_FLAGS="-g"
-OPTIMISE_FLAGS="-O2"
+DEBUG_FLAGS="-g"
+#OPTIMISE_FLAGS="-O2"
 #WARNING_FLAGS="-Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
 WARNING_FLAGS="-Wall"
 CFLAGS="$DEBUG_FLAGS $WARNING_FLAGS $OPTIMISE_FLAGS $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/"
@@ -115,12 +113,6 @@ case $host in
 esac
 AC_MSG_RESULT($HOST)
 
-#################################################
-# Initialize the gnome help system
-#################################################
-
-# Prepare building the gnome documentation of this program
-GNOME_DOC_INIT
 
 #################################################
 # Check for libraries
@@ -129,13 +121,27 @@ GNOME_DOC_INIT
 #check for -lm
 AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 
-#check for libgnome, the library for displaying the "help"
-#dialogue
-#AC_CHECK_LIB(gnome-2,gnome_help_display_uri,, [ AC_MSG_ERROR([libgnome (night be part of libgnomeui) not found !]) ] )
-#AM_PATH_GNOME_2_0(2.12.0,,AC_MSG_ERROR(mp3splt-gtk needs libgnome (might be part of libgnomeui >= 2.12.0))
-PKG_CHECK_MODULES([GNOMEUI],
-                  [libgnomeui-2.0], ,
-                  [have_gnomeui=no])
+#################################################
+# Initialize the gnome integration
+#################################################
+
+AM_CONDITIONAL(GNOME,false)
+gnome="no"
+#checking for --disable-gnome
+AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
+    [enable_gnome=$enableval],[enable_gnome="yes"])
+
+if test x$enable_gnome = xyes;then
+  #Prepare building the gnome documentation of this program
+  GNOME_DOC_INIT
+  #Check for libgnome, the library for displaying the "help" dialogue
+  PKG_CHECK_MODULES([GNOMEUI],
+                    [libgnomeui-2.0], 
+                    [AM_CONDITIONAL(GNOME, true) gnome="yes" ],
+      [AC_MSG_ERROR([gnomeui development files are not installed.
+
+    Install it or configure with "--disable-gnome".])])
+fi
 
 #################################################
 #Check for GTK
@@ -216,6 +222,10 @@ echo
 echo "    gstreamer                $gstreamer"
 echo "    audacious                $audacious"
 echo "    snackAmp                 yes"
+echo
+echo " Other :"
+echo
+echo "    gnome support            $gnome"
 echo
 echo "---------------------------------------------------------"
 echo
