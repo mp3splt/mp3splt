@@ -29,12 +29,14 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: preferences_tab.c
- *
- * this file is for the preferences tab, where we choose the preferences.
- *
- *********************************************************/
+// *******************************************************
+/*! \file
+
+  this file contains the code for the preferences tab where 
+  the preferences can be chosen.
+
+ */
+// *******************************************************
 
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
@@ -42,13 +44,15 @@
 #include <glib/gstdio.h>
 #include <string.h>
 #include <libmp3splt/mp3splt.h>
-
+#include "preferences_tab.h"
 #include "player.h"
 #include "util.h"
 #include "player_tab.h"
 #include "utilities.h"
 #include "main_win.h"
 #include "preferences_manager.h"
+
+GString *outputdirname = NULL;
 
 /* split preferences for choosing directory */
 //directory entry
@@ -204,6 +208,37 @@ gint get_checked_tags_version_radio_box()
   return selected;
 }
 
+//! \brief Set the name of the output directory
+void outputdirectory_set(gchar *dirname)
+{
+  if(dirname!=NULL)
+    {
+      // Free the old string before allocating memory for the new one
+      if(outputdirname!=NULL)g_string_free(outputdirname,TRUE);
+      outputdirname=g_string_new(dirname);
+
+      // Update the text in the gui field displaying the output 
+      // directory - if this field is already there and thus can 
+      // be updated.
+      if(directory_entry!=NULL)
+	gtk_entry_set_text(GTK_ENTRY(directory_entry), dirname);
+    }
+}
+
+/*! \brief Get the name of the output directory
+
+\return 
+ - The name of the output directory, if a directory is set.
+ - NULL, otherwise.
+*/
+gchar* outputdirectory_get()
+{
+  if(outputdirname!=NULL)
+    return(outputdirname->str);
+  else
+    return NULL;
+}
+
 //save preferences event
 void save_preferences(GtkWidget *widget, gpointer data)
 {
@@ -214,7 +249,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
 
   //save_path
   g_key_file_set_string(my_key_file, "split", "save_path",
-      gtk_entry_get_text(GTK_ENTRY(directory_entry)));
+			outputdirectory_get());
   //default_player
   g_key_file_set_integer(my_key_file, "player", "default_player", selected_player);
 
@@ -247,7 +282,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
 
   //output format
   g_key_file_set_string(my_key_file, "output", "output_format",
-      gtk_entry_get_text(GTK_ENTRY(output_entry)));
+			outputdirectory_get());
   //default output format
   g_key_file_set_boolean(my_key_file, "output", "default_output_format",
       get_checked_output_radio_box());
@@ -382,7 +417,7 @@ GtkWidget *create_pref_language_page()
   return language_hbox;
 }
 
-//events for browse dir button
+//! \brief events for browse dir button
 void browse_dir_button_event(GtkWidget *widget, gpointer data)
 {
   // file chooser
@@ -403,7 +438,7 @@ void browse_dir_button_event(GtkWidget *widget, gpointer data)
     gchar *filename =
       gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dir_chooser));
 
-    gtk_entry_set_text(GTK_ENTRY(directory_entry), filename);
+    outputdirectory_set(filename);
 
     g_free (filename);
     filename = NULL;
@@ -493,8 +528,8 @@ void set_default_prefs_event(GtkWidget *widget, gpointer data)
 //events for the "set current song directory"
 void song_dir_button_event(GtkWidget *widget, gpointer data)
 {
-  gtk_entry_set_text(GTK_ENTRY(directory_entry), "");
-  save_preferences(NULL, NULL);
+    outputdirectory_set("");
+    save_preferences(NULL, NULL);
 }
 
 GtkWidget *create_directory_box()
@@ -505,6 +540,10 @@ GtkWidget *create_directory_box()
   directory_entry = gtk_entry_new();
   gtk_entry_set_editable(GTK_ENTRY(directory_entry), FALSE);
   gtk_box_pack_start(GTK_BOX(dir_hbox), directory_entry, TRUE, TRUE, 0);
+  // Put the right text into the text box containing the output directory
+  // name if this name was provided on command line
+  if(outputdirectory_get()!=NULL)
+    gtk_entry_set_text(GTK_ENTRY(directory_entry), outputdirectory_get());
   
   //browse dir button
   GtkWidget *browse_dir_button = (GtkWidget *)
@@ -832,13 +871,13 @@ GtkWidget *create_tags_options_box()
   gtk_box_pack_start(GTK_BOX(vbox), tags_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
-
+  
   tags_radio = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(tags_radio), _("Default tags (cddb or cue tags)"));
+       (GTK_RADIO_BUTTON(tags_radio), _("Default tags (cddb or cue tags)"));
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(vbox), tags_radio, FALSE, FALSE, 0);
-
+  
   tags_radio = gtk_radio_button_new_with_label_from_widget(
       GTK_RADIO_BUTTON(tags_radio),_("No tags"));
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_radio), "toggled", 
@@ -947,7 +986,12 @@ GtkWidget *create_choose_preferences()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), language_prefs,
                            (GtkWidget *)notebook_label);
 #endif
-
+  
   return pref_vbox;
 }
 
+// Emacs indentation style
+//
+// Local Variables:
+// c-indentation-style:whitesmith
+// End:

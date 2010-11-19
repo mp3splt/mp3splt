@@ -3705,8 +3705,10 @@ void file_chooser_ok_event(gchar *fname)
   }
 }
 
-//events for browse button
-//also used for the cddb and cue browses
+/*! \brief Events for browse button
+
+Also used for the cddb and cue browses.
+*/
 void browse_button_event(GtkWidget *widget, gpointer data)
 {
   gtk_widget_set_sensitive(widget, FALSE);
@@ -3863,7 +3865,7 @@ GtkWidget *create_choose_file_frame()
  
   /* browse button */
   browse_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_FILE,_("_Browse"), FALSE);
+    create_cool_button(GTK_STOCK_OPEN,_("_Browse"), FALSE);
   g_signal_connect(G_OBJECT (browse_button), "clicked",
       G_CALLBACK(browse_button_event), (gpointer *)BROWSE_SONG);
   gtk_box_pack_start(GTK_BOX(choose_file_hbox), browse_button, FALSE, FALSE, 4);

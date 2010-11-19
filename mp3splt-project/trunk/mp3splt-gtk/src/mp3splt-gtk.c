@@ -410,6 +410,9 @@ void put_message_from_library(const char *message, splt_message_type mess_type)
 
 gint main(gint argc, gchar *argv[], gchar **envp)
 {
+  int OptionIndex;
+  int OptionChar;
+
   //init threads
   g_thread_init(NULL);
   gdk_threads_init();
@@ -491,8 +494,37 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 
   bind_textdomain_codeset ("mp3splt-gtk", "UTF-8");
  
+  // Allow the gtk to parse all gtk arguments from the command 
+  // line first
   gtk_init(&argc, &argv);
   
+  // Now pass all remaining arguments to getopt.
+  opterr = 0;
+  
+  while ((OptionChar = getopt (argc, argv, "d:")) != -1)
+    switch (OptionChar)
+      {
+      case 'd':
+	outputdirectory_set((gchar *)optarg);
+	fprintf (stderr, "Setting the output directory to %s.\n", optarg);
+	break;
+      case '?':
+	if (optopt == 'd')
+	  fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+	else if (isprint (optopt))
+	  fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+	else
+	  fprintf (stderr,
+		   "Unknown option character `\\x%x'.\n",
+		   optopt);
+	return 1;
+      default:
+	abort ();
+      }
+  
+
+
+
   //we initialise the splitpoints array
   splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
  

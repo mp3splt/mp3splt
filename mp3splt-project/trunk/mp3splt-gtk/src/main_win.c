@@ -115,7 +115,6 @@ GtkWidget *cancel_button = NULL;
 extern GtkWidget *mess_history_dialog;
 
 extern GtkWidget *entry;
-extern GtkWidget *directory_entry;
 extern GArray *splitpoints;
 extern gint selected_id;
 extern splt_state *the_state;
@@ -442,8 +441,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
 
     filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
 
-    filename_path_of_split = (gchar *)
-      gtk_entry_get_text(GTK_ENTRY(directory_entry));
+    filename_path_of_split = outputdirectory_get();
 
     if (filename_path_of_split != NULL)
     {
@@ -525,8 +523,10 @@ GtkWidget *create_menu_bar()
     //name, stock id, label, accelerator, tooltip
     { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
       G_CALLBACK(split_button_event) },
-    { "Import", GTK_STOCK_OPEN, N_("_Import..."), "<Ctrl>I", N_("Import"),
+    { "Import", GTK_STOCK_FILE, N_("_Import splitpoints..."), "<Ctrl>I", N_("Import"),
       G_CALLBACK(import_event) },
+    { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>F", N_("Open"),
+      G_CALLBACK(browse_button_event) },
     { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
       G_CALLBACK(show_messages_history_dialog) },
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
@@ -546,8 +546,9 @@ GtkWidget *create_menu_bar()
     "<ui>"
     "  <menubar name='MenuBar'>"
     "    <menu action='FileMenu'>"
-    "      <menuitem action='Split'/>"
+    "      <menuitem action='Open'/>"
     "      <menuitem action='Import'/>"
+    "      <menuitem action='Split'/>"
     "      <menuitem action='Messages history'/>"
     "      <separator/>"
     "      <menuitem action='Quit'/>"

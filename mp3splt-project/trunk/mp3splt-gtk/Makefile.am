@@ -9,5 +9,8 @@ EXTRA_DIST = mp3splt-gtk.desktop autogen.sh build-aux/gnome-doc-utils.make m4
 appsdir = $(datadir)/applications
 apps_DATA = mp3splt-gtk.desktop
 
-DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper
 
+html/index.html: FORCE
+	doxygen
+
+DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper

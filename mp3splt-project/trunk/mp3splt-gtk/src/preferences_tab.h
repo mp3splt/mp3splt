@@ -35,6 +35,8 @@
  *
  *********************************************************/
 
+#ifndef _PREFERENCES_TAB_H
+#define _PREFERENCES_TAB_H
 GtkWidget *create_scrolled_window();
 gboolean get_checked_output_radio_box();
 gint get_checked_tags_radio_box();
@@ -57,3 +59,6 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data);
 GtkWidget *create_choose_player_combo();
 GtkWidget *create_pref_player_page();
 GtkWidget *create_choose_preferences();
+void outputdirectory_set(gchar *dirname);
+gchar *outputdirectory_get();
+#endif

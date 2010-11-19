@@ -29,6 +29,11 @@
  *
  *********************************************************/
 
+/*!\file Save and read preferences
+
+This file contains the functions to save the preferences on the
+hard disk and to read them again at the next start of the program.
+*/
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -40,9 +45,9 @@
 #include <libmp3splt/mp3splt.h>
 
 #include "player.h"
+#include "preferences_tab.h"
 #include "special_split.h"
 
-extern GtkWidget *directory_entry;
 extern GtkWidget *player_combo_box;
 extern gint selected_player;
 extern GList *player_pref_list;
@@ -69,11 +74,14 @@ extern GtkWidget *tags_version_radio;
 
 extern splt_state *the_state;
 
-//filename returned must be freed after
-//that functions also checks if we have a directory .mp3splt-gtk and
-//if not it creates it. if we have a file .mp3splt-gtk, it makes a
-//backup and then creates the directory
-//result must be freed!!!!
+/*! Get the name of the preferences file.
+
+\attention filename returned must be freed after
+that functions also checks if we have a directory .mp3splt-gtk and
+if not it creates it. if we have a file .mp3splt-gtk, it makes a
+backup and then creates the directory
+result must be freed!!!!
+*/
 gchar *get_preferences_filename()
 {
   gchar mp3splt_dir[14] = ".mp3splt-gtk";
@@ -151,6 +159,8 @@ gchar *get_preferences_filename()
   return filename;
 }
 
+/*! \brief Read the preferences from the preferences file.
+ */
 void load_preferences()
 {
   GKeyFile *key_file = g_key_file_new();
@@ -194,14 +204,21 @@ void load_preferences()
   lang = NULL;
 #endif
 
-  //output_path
-  gchar *save_path = g_key_file_get_string(key_file, "split", "save_path", NULL);
-  if (save_path != NULL)
-  {
-    gtk_entry_set_text(GTK_ENTRY(directory_entry), save_path);
-  }
-  g_free(save_path);
-  save_path = NULL;
+  // If outputdirectory_get()!=NULL the path where to output the split file
+  // to has been set from command line
+  if(outputdirectory_get()==NULL)
+    {
+      // No output_path from command-line => get the path from the preferences
+      gchar *save_path = g_key_file_get_string(key_file, "split", "save_path", NULL);
+      {
+	if (save_path != NULL)
+	  {
+	    outputdirectory_set(save_path);
+	  }
+	g_free(save_path);
+	save_path = NULL;
+      }
+    }
 
   //selected player
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
@@ -330,8 +347,10 @@ jump_near:
   key_file = NULL;
 }
 
-//writes a default configuration file
-//or writes good values on an ugly existing configuration file
+/* \brief writes a default configuration file
+
+Also is used to write good values on a bad existing configuration file
+*/
 void write_default_preferences_file()
 {
   gchar *filename = get_preferences_filename();
@@ -607,8 +626,10 @@ void write_default_preferences_file()
   g_key_file_free(my_key_file);
 }
 
-//checks if preferences file exists
-//and if it does not, create it
+/*!\brief Create a preferences file --- if needed.
+
+checks if preferences file exists and if it does not, create it
+*/
 void check_pref_file()
 {
   //used to see if the file exists
@@ -642,7 +663,7 @@ void check_pref_file()
   write_default_preferences_file();
 }
 
-//sets the language, loaded only at start
+//!sets the language, loaded only at start
 void set_language()
 {
   GKeyFile *key_file = g_key_file_new();

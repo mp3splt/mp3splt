@@ -6,7 +6,7 @@ Some changes are implemented in libmp3splt, but reported here for convenience.
 Known issues :
 
 - menus translation 'N_' not working : how to fix ?
-
+	
 -------------------------------------------------------------
 mp3splt-gtk version 0.6
 
@@ -17,6 +17,9 @@ mp3splt-gtk version 0.6
 - fixed bug #3025671: getting original ID3v2 tags was not working on Windows (libmp3splt)
 - fixed bug #2969223: 'invalid dir I:' (libmp3splt)
 - added > 2Gb support on Windows (libmp3splt)
+mp3splt-gtk version (Next)
+- Made the gui more gnome-like (help/contents menu entry, File/open
+  dialog that is redundand since there is a "browse" button as well)
 
 -------------------------------------------------------------
 mp3splt-gtk version 0.5.9
