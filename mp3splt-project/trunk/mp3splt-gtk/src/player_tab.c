@@ -595,8 +595,9 @@ void connect_button_event(GtkWidget *widget, gpointer data)
   {
     gtk_widget_set_sensitive(browse_button, FALSE);
   }
-  //enable player buttons
+  //!enable player buttons
   enable_player_buttons();
+
   file_browsed = FALSE;
   
   change_volume = TRUE;

@@ -198,11 +198,20 @@ fi
 
 # Check for doxygen, so we can decide if we add it to the "doc" 
 # make target.
-
 AC_PATH_PROG([DOXYGEN],[doxygen])
 AC_ARG_VAR(DOXYGEN,
-           [Location of the 'doxygen' program; if found, then we will renerate documentation for the C code])
+           [Location of the 'doxygen' program; if found we can generate documentation for the C code])
 AM_CONDITIONAL(HAVE_DOXYGEN, [ test "x$DOXYGEN" != "x" ])
+
+# Check for dot, the tool that makes the nice little caller graphs for the
+# doxygen documentation.
+AC_PATH_PROG([GRAPHVIZ],[dot])
+AC_ARG_VAR(GRAPHVIZ,
+           [Location of the 'dot' program from the graphviz suite; if found we can generate caller graphs for the documentation of the C code])
+AM_CONDITIONAL(HAVE_GRAPHVIZ, [ test "x$GRAPHVIZ" != "x" ])
+if test x$HAVE_DOT = "xfalse"; then
+   AC_MSG_WARN([*** dot from the graphviz package not found, inheritance diagrams will not be generated in code documentation])
+fi
 
 #################################################
 # Generate Makefiles
