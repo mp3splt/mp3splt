@@ -53,6 +53,8 @@
 #include "preferences_tab.h"
 #include "multiple_files.h"
 #include "preferences_manager.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
 //the state
 splt_state *the_state = NULL;
@@ -505,8 +507,14 @@ gint main(gint argc, gchar *argv[], gchar **envp)
     switch (OptionChar)
       {
       case 'd':
+	fprintf (stderr, "Trying ti set the output directory to %s.\n", optarg);
 	outputdirectory_set((gchar *)optarg);
-	fprintf (stderr, "Setting the output directory to %s.\n", optarg);
+	mkdir(optarg,0777);
+	if(!check_if_dir((guchar *)optarg))
+	  {
+	    fprintf(stderr,"Error: The specified output directory is inaccessible!\n");
+	    exit(-1);
+	  }
 	break;
       case '?':
 	if (optopt == 'd')
@@ -522,9 +530,6 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 	abort ();
       }
   
-
-
-
   //we initialise the splitpoints array
   splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
  
