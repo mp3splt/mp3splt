@@ -29,6 +29,13 @@
  *
  *********************************************************/
 
+/*!********************************************************
+ * \file
+ *
+ * Miscellaneous utilities like the check if a string may 
+ * contain a valid file- or directory name.
+ ********************************************************/
+
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>

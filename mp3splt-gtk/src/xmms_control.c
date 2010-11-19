@@ -31,12 +31,12 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: xmms_control.c
+/*!********************************************************
+ * \file
  *
- * this file has functions to control the xmms player
- *
- *********************************************************/
+ * this file contains the functions that control the xmms
+ * player
+ ********************************************************/
 
 #include <stdlib.h>
 #include <gtk/gtk.h>
