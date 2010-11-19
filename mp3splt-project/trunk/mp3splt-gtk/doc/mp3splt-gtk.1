@@ -61,6 +61,13 @@ mp3splt\(hygtk \(em Gtk utility for mp3/ogg splitting without decoding.
 .SH "SYNOPSIS"
 .PP
 \fBmp3splt\(hygtk\fP
+.RB [\| \-d
+.IR Directory
+.RB \|]
+.RB [\| 
+.IR Filename
+.RB \|]
+
 .PP
 .SH "DESCRIPTION"
 .PP
@@ -79,7 +86,10 @@ You can also split files automatically with silence detection, or by a fixed
 time length.
 
 If you have a file created either with Mp3Wrap or AlbumWrap, you can easily split it.
-
+.PP
+The whole program is controlled by a self-describing GUI and documented in the
+gnome help system. Optionally the name of the input file and the output
+directory can be specified on the command line (see above). 
 .SH "BUGS"
 .PP
 Report any bugs you find to the authors (see below). Advices, info requests and
