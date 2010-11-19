@@ -192,6 +192,19 @@ if test x$enable_gstreamer = xyes;then
 fi
 
 #################################################
+# Documentation of the code using 'make doxygen'
+# (but only if doxygen is installed)
+#################################################
+
+# Check for doxygen, so we can decide if we add it to the "doc" 
+# make target.
+
+AC_PATH_PROG([DOXYGEN],[doxygen])
+AC_ARG_VAR(DOXYGEN,
+           [Location of the 'doxygen' program; if found, then we will renerate documentation for the C code])
+AM_CONDITIONAL(HAVE_DOXYGEN, [ test "x$DOXYGEN" != "x" ])
+
+#################################################
 # Generate Makefiles
 #################################################
 
@@ -207,20 +220,6 @@ AC_SUBST(top_builddir)
 AC_SUBST(PACKAGE)
 AC_SUBST(LOCALEDIR)
 
-
-#################################################
-# Documentation of the code using 'make doxygen'
-# (but only if doxygen is installed)
-#################################################
-
-# Check for doxygen, so we can decide if we add it to the "doc" 
-# make target.
-
-AC_CHECK_PROG(HAVE_DOXYGEN, doxygen, true, false)
-if test $HAVE_DOXYGEN = "false"; then
-   AC_MSG_WARN([*** doxygen not found, code documentation will not be built])
-fi
-AM_CONDITIONAL(HAVE_DOXYGEN, $HAVE_DOXYGEN)
 
 #################################################
 # Output configuration
