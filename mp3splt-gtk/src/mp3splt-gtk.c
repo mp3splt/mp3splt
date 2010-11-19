@@ -421,6 +421,12 @@ void put_message_from_library(const char *message, splt_message_type mess_type)
  - Set the full path to the file to make sure that the player will find 
    it even if we are called in a different directory than the file is in
    and stuff.
+ - Gstreamer needs a fully qualified path to the audio file in order to 
+   be able to play it back. Don't know why. But what I know is that on
+   solaris realpath() may return a relative filename. And there might
+   be an old system around that does not malloc() memory for a pathname
+   if the pathname we give to it is 0 => find a solution that works 
+   everywhere.
  */
 gint main(gint argc, gchar *argv[], gchar **envp)
 {
@@ -544,6 +550,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   // Now let's see if we found a filename at the command line.
   if (optind != argc) 
     {
+      char *inputfilename;
       if(!check_if_file((guchar *)argv[optind]))
 	{
 	  fprintf (stderr,
@@ -551,14 +558,16 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 		   argv[optind]);
 	return 1;
 	}
-      inputfilename_set(argv[optind]);
+      inputfilename=realpath(argv[optind],NULL);
+      inputfilename_set(inputfilename);
+      free(inputfilename);
     }
 
-  //we initialise the splitpoints array
+  //We initialise the splitpoints array
   splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
  
-  //checks if preferences file exists
-  //and if it does not, it creates it
+  //check if preferences file exists
+  //and if it does not create it
   check_pref_file();
  
   mp3splt_set_progress_function(the_state,change_window_progress_bar);
