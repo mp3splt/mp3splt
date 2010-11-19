@@ -94,7 +94,7 @@ gint check_if_dir(guchar *fname)
  - Why guchar ?
  - And what is the difference to is_filee?
 */
-gnt check_if_file(guchar *fname)
+gint check_if_file(guchar *fname)
 {
   struct stat buffer;
   gint         status;
