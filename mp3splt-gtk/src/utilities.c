@@ -41,7 +41,7 @@
 #include "preferences_tab.h"
 #include "main_win.h"
 
-//check if its a file
+//!check if the string passed as an argument points to a file
 gint is_filee(const gchar *fname)
 {
   if (fname == NULL)
@@ -71,8 +71,7 @@ gint is_filee(const gchar *fname)
   }
 }
 
-//check if its a directory
-//TODO: why guchar ?
+//!check if a string points to a directory
 gint check_if_dir(guchar *fname)
 {
   struct stat buffer;
@@ -86,8 +85,12 @@ gint check_if_dir(guchar *fname)
     return FALSE;
 }
 
-//check if its a file
-//TODO: why guchar ?
+/*! check if a sting points to a file
+
+\todo
+ - Why guchar ?
+ - And what is the difference to is_filee?
+*/
 gint check_if_file(guchar *fname)
 {
   struct stat buffer;

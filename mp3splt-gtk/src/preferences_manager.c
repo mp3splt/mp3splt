@@ -55,8 +55,6 @@ extern GtkWidget *radio_button;
 
 extern GtkWidget *file_mode_radio_button;
 
-extern GtkWidget *entry;
-
 extern GtkWidget *frame_mode;
 extern GtkWidget *adjust_mode;
 extern GtkWidget *spinner_adjust_gap;

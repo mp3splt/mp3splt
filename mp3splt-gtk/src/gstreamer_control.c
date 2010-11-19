@@ -53,6 +53,7 @@
 #include "player.h"
 #include "main_win.h"
 #include "utilities.h"
+#include "player_tab.h"
 
 extern int selected_player;
 
@@ -65,7 +66,6 @@ gint rate = 0;
 GstElement *play = NULL;
 GstBus *bus = NULL;
 gint _gstreamer_is_running = FALSE;
-extern GtkWidget *entry;
 extern GtkWidget *playlist_box;
 extern GtkWidget *player_vbox;
 
@@ -273,7 +273,7 @@ void gstreamer_get_song_infos(gchar *total_infos)
 //must be freed after
 gchar *gstreamer_get_filename()
 {
-  return strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
+  return strdup(inputfilename_get();
 }
 
 //returns the number of songs of the playlist
@@ -397,7 +397,7 @@ void gstreamer_start()
 		gst_object_unref(bus);
 
 		//add the current filename
-		const gchar *fname =  gtk_entry_get_text(GTK_ENTRY(entry));
+		const gchar *fname =  inputfilename_get();
 		GList *song_list = NULL;
 		song_list = g_list_append(song_list, strdup(fname));
 		gstreamer_add_files(song_list);

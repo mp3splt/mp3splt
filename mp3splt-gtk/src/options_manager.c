@@ -42,12 +42,12 @@
 #include "main_win.h"
 #include "preferences_tab.h"
 #include "special_split.h"
+#include "player_tab.h"
 
 extern gint debug_is_active;
 
 extern splt_state *the_state;
 
-extern GtkWidget *entry;
 extern GtkWidget *output_entry;
 extern gchar *filename_to_split;
 extern gint selected_split_mode;
@@ -63,7 +63,7 @@ extern GtkWidget *create_dirs_from_output_files;
 
 void update_output_options()
 {
-  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  filename_to_split = inputfilename_get();
   mp3splt_set_filename_to_split(the_state, filename_to_split);
 
   if (get_checked_output_radio_box() == 0)

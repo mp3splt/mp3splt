@@ -156,7 +156,6 @@ gfloat silence_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
 gboolean silence_remove_silence_between_tracks = FALSE;
 
 //options for splitting
-extern GtkWidget *entry;
 extern gint timer_active;
 extern gint player_seconds, player_minutes,
   player_hundr_secs;
@@ -1050,7 +1049,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
   gtk_widget_set_sensitive(cancel_button, TRUE);
-  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  filename_to_split = inputfilename_get();
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
 
   gdk_threads_leave();
@@ -1576,7 +1575,7 @@ gpointer split_preview(gpointer data)
     fname_path[strlen(fname_path)-18] = '\0';
 
     remove_all_split_rows();  
-    filename_to_split = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
+    filename_to_split = inputfilename_get();
 
     gdk_threads_leave();
 
