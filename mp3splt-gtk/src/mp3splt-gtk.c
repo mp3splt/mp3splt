@@ -418,6 +418,9 @@ void put_message_from_library(const char *message, splt_message_type mess_type)
  - Handle the case that more than one input file is specified at the 
    command line
  - Handle the case that the specified inputfile is a playlist file
+ - Set the full path to the file to make sure that the player will find 
+   it even if we are called in a different directory than the file is in
+   and stuff.
  */
 gint main(gint argc, gchar *argv[], gchar **envp)
 {
