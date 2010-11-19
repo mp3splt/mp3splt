@@ -35,6 +35,7 @@
 #include <locale.h>
 #include <glib/gi18n.h>
 #include <string.h>
+#include <ctype.h>
 #include <glib.h>
 
 #ifdef __WIN32__
@@ -53,6 +54,7 @@
 #include "preferences_tab.h"
 #include "multiple_files.h"
 #include "preferences_manager.h"
+#include "player_tab.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -410,9 +412,15 @@ void put_message_from_library(const char *message, splt_message_type mess_type)
   }
 }
 
+/*! The traditional C main function
+
+\todo 
+ - Handle the case that more than one input file is specified at the 
+   command line
+ - Handle the case that the specified inputfile is a playlist file
+ */
 gint main(gint argc, gchar *argv[], gchar **envp)
 {
-  int OptionIndex;
   int OptionChar;
 
   //init threads
@@ -507,29 +515,42 @@ gint main(gint argc, gchar *argv[], gchar **envp)
     switch (OptionChar)
       {
       case 'd':
-	fprintf (stderr, "Trying ti set the output directory to %s.\n", optarg);
+	fprintf (stderr, _("Trying to set the output directory to %s.\n"), optarg);
 	outputdirectory_set((gchar *)optarg);
 	mkdir(optarg,0777);
 	if(!check_if_dir((guchar *)optarg))
 	  {
-	    fprintf(stderr,"Error: The specified output directory is inaccessible!\n");
+	    fprintf(stderr,_("Error: The specified output directory is inaccessible!\n"));
 	    exit(-1);
 	  }
 	break;
       case '?':
 	if (optopt == 'd')
-	  fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+	  fprintf (stderr, _("Option -%c requires an argument.\n"), optopt);
 	else if (isprint (optopt))
-	  fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+	  fprintf (stderr, _("Unknown option `-%c'.\n"), optopt);
 	else
 	  fprintf (stderr,
-		   "Unknown option character `\\x%x'.\n",
+		   _("Unknown option character `\\x%x'.\n"),
 		   optopt);
 	return 1;
       default:
 	abort ();
       }
   
+  // Now let's see if we found a filename at the command line.
+  if (optind != argc) 
+    {
+      if(!check_if_file((guchar *)argv[optind]))
+	{
+	  fprintf (stderr,
+		   _("Cannot open input file %s\n"),
+		   argv[optind]);
+	return 1;
+	}
+      inputfilename_set(argv[optind]);
+    }
+
   //we initialise the splitpoints array
   splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
  
