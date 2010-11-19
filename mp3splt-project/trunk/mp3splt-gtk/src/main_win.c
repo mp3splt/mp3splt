@@ -77,6 +77,7 @@
 #include "messages.h"
 #include "import.h"
 #include "preferences_manager.h"
+#include "player_tab.h"
 
 //main window
 GtkWidget *window = NULL;
@@ -114,7 +115,6 @@ GtkWidget *cancel_button = NULL;
 
 extern GtkWidget *mess_history_dialog;
 
-extern GtkWidget *entry;
 extern GArray *splitpoints;
 extern gint selected_id;
 extern splt_state *the_state;
@@ -439,7 +439,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
       }
     }
 
-    filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+    filename_to_split = inputfilename_get();
 
     filename_path_of_split = outputdirectory_get();
 

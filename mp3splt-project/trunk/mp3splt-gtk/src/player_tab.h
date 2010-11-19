@@ -35,7 +35,9 @@
  *
  *********************************************************/
 
-//time structure
+#ifndef _PLAYER_TAB_H
+#define _PLAYER_TAB_H
+//!time structure
 typedef struct
 {
   long time;
@@ -203,3 +205,6 @@ void show_connect_button();
 void hide_disconnect_button();
 void show_disconnect_button();
 
+void inputfilename_set(gchar *filename);
+gchar *inputfilename_get();
+#endif

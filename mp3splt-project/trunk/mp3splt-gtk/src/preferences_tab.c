@@ -52,41 +52,42 @@
 #include "main_win.h"
 #include "preferences_manager.h"
 
+/*! The name of the output directory.
+  
+  Can be accessed by void outputdirectory_set() and 
+  outputdirectory_get().
+ */
 GString *outputdirname = NULL;
 
-/* split preferences for choosing directory */
-//directory entry
+//! The textbox that shows the name of the output directory
 GtkWidget *directory_entry = NULL;
 
-//output for the cddb,cue and freedb file output
+//!output for the cddb,cue and freedb file output
 GtkWidget *output_entry = NULL;
 GtkWidget *output_label = NULL;
 
-//if we have selected a correct file
-gint incorrect_selected_dir = FALSE;
-
-//choose the player box
+//!choose the player box
 GtkWidget *player_combo_box = NULL;
 
-//list where we stock the preferences combo box content
+//!list where we stock the preferences combo box content
 GList *player_pref_list = NULL;
 //selected player
 gint selected_player = PLAYER_GSTREAMER;
 
-//the language radio button
+//!the language radio button
 GtkWidget *radio_button = NULL;
 
-//radio button for choosing default or custom output options
+//!radio button for choosing default or custom output options
 GtkWidget *radio_output = NULL;
 
-//radio button for tags options
+//!radio button for tags options
 GtkWidget *tags_radio = NULL;
 GtkWidget *tags_version_radio = NULL;
 
 //split options
-//frame mode option
+//!frame mode option
 GtkWidget *frame_mode = NULL;
-//auto-adjust option
+//!auto-adjust option
 GtkWidget *adjust_mode = NULL;
 
 GtkWidget *create_dirs_from_output_files = NULL;
@@ -107,8 +108,10 @@ extern gint split_file_mode;
 extern GtkWidget *spinner_time;
 extern GtkWidget *spinner_equal_tracks;
 
-//returns the selected language
-//must be free() after
+/*!Returns the selected language
+
+must be free() the result after using it.
+*/
 GString *get_checked_language()
 {
   GSList *radio_button_list;
@@ -133,7 +136,7 @@ GString *get_checked_language()
   return g_string_new("en");
 }
 
-//returns the checked output radio box
+//!returns the checked output radio box
 gboolean get_checked_output_radio_box()
 {
   //get the radio buttons
@@ -156,7 +159,7 @@ gboolean get_checked_output_radio_box()
   return selected;
 }
 
-//returns the checked tags radio box
+//!returns the checked tags radio box
 gint get_checked_tags_radio_box()
 {
   //get the radio buttons
@@ -182,7 +185,7 @@ gint get_checked_tags_radio_box()
   return selected;
 }
 
-//returns the checked tags radio box
+//!returns the checked tags radio box
 gint get_checked_tags_version_radio_box()
 {
   //get the radio buttons
@@ -208,7 +211,7 @@ gint get_checked_tags_version_radio_box()
   return selected;
 }
 
-//! \brief Set the name of the output directory
+//! Set the name of the output directory
 void outputdirectory_set(gchar *dirname)
 {
   if(dirname!=NULL)
@@ -225,7 +228,7 @@ void outputdirectory_set(gchar *dirname)
     }
 }
 
-/*! \brief Get the name of the output directory
+/*! Get the name of the output directory
 
 \return 
  - The name of the output directory, if a directory is set.
@@ -417,7 +420,7 @@ GtkWidget *create_pref_language_page()
   return language_hbox;
 }
 
-//! \brief events for browse dir button
+//! Events for browse dir button
 void browse_dir_button_event(GtkWidget *widget, gpointer data)
 {
   // file chooser

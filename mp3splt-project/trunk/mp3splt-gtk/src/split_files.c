@@ -64,7 +64,6 @@ GtkWidget *remove_file_button;
 //remove file button
 GtkWidget *remove_all_files_button;
 
-extern GtkWidget *entry;
 extern gint selected_player;
 extern gint split_files;
 extern gboolean timer_active;

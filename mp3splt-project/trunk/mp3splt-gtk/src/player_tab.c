@@ -58,14 +58,14 @@
 #include "split_files.h"
 #include "mp3splt-gtk.h"
 
-//filename entry
+//! The text box showing the filename of the current input file.
 GtkWidget *entry;
-//browse button
+//! The browse button
 GtkWidget *browse_button;
-//fix ogg stream button
+//! The fix ogg stream button
 GtkWidget *fix_ogg_stream_button;
 
-//tells us if the file was browsed or not
+//! Tells us if the file was browsed or not
 gint file_browsed = FALSE;
 gint file_in_entry = FALSE;
 
@@ -237,6 +237,13 @@ gint checkbox_ypos;
 gint text_ypos;
 gint wave_ypos;
 
+/*! The storage for the name of the input file.
+
+Designed to be accessed using inputfilename_set() and
+inputfilename_get().
+ */
+GString *inputfilename;
+
 //remove file button
 GtkWidget *playlist_remove_file_button;
 //remove file button
@@ -252,6 +259,42 @@ enum
 
 //function declarations
 gint mytimer(gpointer data);
+
+
+//! Set the name of the input file
+void inputfilename_set(gchar *filename)
+{
+  // Paranoia test.
+  if(filename!=NULL)
+    {
+      // Free the old string before allocating memory for the new one
+      if(inputfilename!=NULL)g_string_free(inputfilename,TRUE);
+      inputfilename=g_string_new(filename);
+
+      // Update the text in the gui field displaying the output 
+      // directory - if this field is already there and thus can 
+      // be updated.
+      if(entry!=NULL)
+	gtk_entry_set_text(GTK_ENTRY(entry), filename);
+    }
+  fprintf(stderr,"Filename: %s",filename);
+}
+
+/*! Get the name of the input file
+
+\return 
+ - The name of the input file, if set.
+ - "", otherwise.
+*/
+gchar* inputfilename_get()
+{
+  if(inputfilename!=NULL)
+    return(inputfilename->str);
+  else
+    return "";
+}
+
+
 
 //function called from the library when scanning for the silence level
 void get_silence_level(long time, float level, void *user_data)
@@ -289,7 +332,7 @@ gpointer detect_silence(gpointer data)
   gdk_threads_enter();
 
   gtk_widget_set_sensitive(cancel_button, TRUE);
-  filename_to_split = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
+  filename_to_split = inputfilename_get();
 
   gdk_threads_leave();
 
@@ -331,15 +374,24 @@ void scan_for_silence_wave()
 
 void change_current_filename(const gchar *fname)
 {
-  const gchar *old_fname = gtk_entry_get_text(GTK_ENTRY(entry));
-  if (strcmp(old_fname,fname) != 0)
-  {
-    gtk_entry_set_text(GTK_ENTRY(entry), fname);
-    if (show_silence_wave)
+  const gchar *old_fname = inputfilename_get();
+
+  if(old_fname==NULL)
     {
-      scan_for_silence_wave();
-    }
-  }
+      inputfilename_set(fname);
+      if (show_silence_wave)
+	{
+	  scan_for_silence_wave();
+	}
+    } else
+    if (strcmp(old_fname,fname) != 0)
+      {
+	inputfilename_set(fname);
+	if (show_silence_wave)
+	  {
+	    scan_for_silence_wave();
+	  }
+      }
 }
 
 //resets and sets inactive the progress bar
@@ -503,7 +555,7 @@ void connect_with_song(const gchar *fname, gint i)
 //if i = 0 then start playing, else dont start playing
 void connect_to_player_with_song(gint i)
 {
-  const gchar *fname = fname = gtk_entry_get_text(GTK_ENTRY(entry));
+  const gchar *fname = fname = inputfilename_get();
 
   //connect with the song fname
   connect_with_song(fname,i);
@@ -655,7 +707,7 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
         "");
   }
 
-  const gchar *fname = gtk_entry_get_text(GTK_ENTRY(entry));
+  const gchar *fname = inputfilename_get();
   if (is_filee(fname))
   {
     file_in_entry = TRUE;
@@ -1073,7 +1125,7 @@ void check_update_down_progress_bar()
       {
         //TODO ugly code in 'fname' usage !
         gchar *fname;
-        fname = (gchar *)gtk_entry_get_text(GTK_ENTRY(entry));
+        fname = inputfilename_get();
         fname = (gchar *)get_real_name_from_filename((guchar *)fname);
         g_snprintf(description_shorted,60,"%s",fname);
         if (fname != NULL)
@@ -3819,7 +3871,7 @@ gpointer fix_ogg_stream(gpointer data)
   gdk_threads_enter();
 
   remove_all_split_rows();  
-  filename_to_split = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
+  filename_to_split = (gchar *) inputfilename_get();
 
   gdk_threads_leave();
   
@@ -3862,7 +3914,13 @@ GtkWidget *create_choose_file_frame()
   entry = gtk_entry_new();
   gtk_entry_set_editable(GTK_ENTRY(entry), FALSE);
   gtk_box_pack_start(GTK_BOX(choose_file_hbox), entry , TRUE, TRUE, 4);
- 
+
+  // Display the input file name if  we already have gotten one
+  // from the command line
+  if(inputfilename_get()!=NULL)
+    gtk_entry_set_text(GTK_ENTRY(entry), inputfilename_get());
+
+
   /* browse button */
   browse_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_OPEN,_("_Browse"), FALSE);
