@@ -273,7 +273,7 @@ void gstreamer_get_song_infos(gchar *total_infos)
 //must be freed after
 gchar *gstreamer_get_filename()
 {
-  return strdup(inputfilename_get();
+  return strdup(inputfilename_get());
 }
 
 //returns the number of songs of the playlist

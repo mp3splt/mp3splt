@@ -359,6 +359,10 @@ gpointer detect_silence(gpointer data)
   return NULL;
 }
 
+/*! Initialize scanning for silence in the background.
+
+  If showing the silence wave is disabled this function won't do anything.
+ */
 void scan_for_silence_wave()
 {
   if (we_scan_for_silence)
@@ -372,6 +376,11 @@ void scan_for_silence_wave()
   }
 }
 
+/*! Change the name of the song that is to be cut and played
+
+Manages changing the filename itselves as well as recalculating the silence
+wave if needed.
+*/
 void change_current_filename(const gchar *fname)
 {
   const gchar *old_fname = inputfilename_get();
@@ -394,21 +403,21 @@ void change_current_filename(const gchar *fname)
       }
 }
 
-//resets and sets inactive the progress bar
+//!resets and sets inactive the progress bar
 void reset_inactive_progress_bar()
 {
   gtk_widget_set_sensitive(GTK_WIDGET(progress_bar), FALSE);
   gtk_adjustment_set_value(GTK_ADJUSTMENT(progress_adj),0);
 }
 
-//resets and sets inactive the volume bar
+//!resets and sets inactive the volume bar
 void reset_inactive_volume_bar()
 {
   gtk_widget_set_sensitive(GTK_WIDGET(volume_bar), FALSE);
   gtk_adjustment_set_value(GTK_ADJUSTMENT(volume_adj),0);
 }
 
-//resets the label time
+//!resets the label time
 void reset_label_time()
 {
   if (strcmp(gtk_label_get_text(GTK_LABEL(label_time)),"") == 0)
@@ -417,19 +426,19 @@ void reset_label_time()
   }
 }
 
-//resets song infos, frequency, etc..
+//!resets song infos, frequency, etc..
 void reset_song_infos()
 {
   gtk_label_set_text(GTK_LABEL(song_infos),"");
 }
 
-//resets the song name label
+//!resets the song name label
 void reset_song_name_label()
 {
   gtk_label_set_text(GTK_LABEL(song_name_label), "");
 }
 
-//clear song data and makes inactive progress bar
+//!clear song data and makes inactive progress bar
 void clear_data_player()
 {
   //set browse button available
@@ -442,7 +451,7 @@ void clear_data_player()
   reset_label_time();
 }
 
-//enables the buttons of the player
+//!enables the buttons of the player
 void enable_player_buttons()
 {
   gtk_widget_set_sensitive(stop_button, TRUE);
@@ -455,7 +464,7 @@ void enable_player_buttons()
   gtk_widget_set_sensitive(play_button, TRUE);
 }
 
-//disables the buttons of the player
+//!disables the buttons of the player
 void disable_player_buttons()
 {
   gtk_widget_set_sensitive(stop_button, FALSE);
@@ -467,7 +476,7 @@ void disable_player_buttons()
   gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
 }
 
-//changes connect and disconnect buttons when connecting to player
+//! Switches between connect and disconnect button when connecting to player
 void connect_change_buttons()
 {
   if (selected_player != PLAYER_GSTREAMER)
@@ -487,9 +496,14 @@ void disconnect_change_buttons()
   }
 }
 
-//connect with the song fname
-//if i = 0 then start playing, else dont start playing
-void connect_with_song(const gchar *fname, gint i)
+/*!connect with the song fname
+
+\param fname the file name of the song 
+\param start_playing 
+-  start playing
+- else dont start playing right now.
+*/
+void connect_with_song(const gchar *fname, gint start_playing)
 {
   //list with songs
   GList *song_list = NULL;
@@ -499,7 +513,7 @@ void connect_with_song(const gchar *fname, gint i)
       song_list = g_list_append(song_list, strdup(fname));
       
       //if we must also play the song
-      if (i == 0)
+      if (start_playing == 0)
         {
           //if the player is not running, start it ,queue to playlist and
           //play the file
@@ -561,7 +575,7 @@ void connect_to_player_with_song(gint i)
   connect_with_song(fname,i);
 }
 
-//play button event
+//!play button event
 void connect_button_event(GtkWidget *widget, gpointer data)
 {
   //we open the player if its not done
@@ -674,7 +688,7 @@ void check_stream()
     stream = FALSE;
 }
 
-//disconnect button event
+//!disconnect button event
 void disconnect_button_event(GtkWidget *widget, gpointer data)
 {
   //if the timer is active, deactivate the function
@@ -718,7 +732,7 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   player_quit();
 }
 
-//play button event
+//! play button event
 void play_event (GtkWidget *widget, gpointer data)
 {
   //only if connected to player
@@ -744,7 +758,7 @@ void play_event (GtkWidget *widget, gpointer data)
     }
 }
 
-//stop button event
+//! stop button event
 void stop_event (GtkWidget *widget, gpointer data)
 {
   //only if connected to player
@@ -762,7 +776,7 @@ void stop_event (GtkWidget *widget, gpointer data)
     }
 }
 
-//pause button event
+//! pause button event
 void pause_event (GtkWidget *widget, gpointer data)
 {
   //only if connected to player
@@ -778,7 +792,7 @@ void pause_event (GtkWidget *widget, gpointer data)
     }
 }
 
-//previous button event
+//! Event for the "previous" button 
 void prev_button_event (GtkWidget *widget, gpointer data)
 {
   //only if connected to player
@@ -787,7 +801,7 @@ void prev_button_event (GtkWidget *widget, gpointer data)
       player_prev();
 }
 
-//next button event
+//! event for the "next" button
 void next_button_event (GtkWidget *widget, gpointer data)
 {
   //only if connected to player
@@ -796,7 +810,7 @@ void next_button_event (GtkWidget *widget, gpointer data)
       player_next();
 }
 
-//changes the song position
+//!changes the position inside the song
 void change_song_position()
 {
   //new position of the song
@@ -809,7 +823,7 @@ void change_song_position()
   player_jump(position);  
 }
 
-//adds a splitpoint from the player
+//!adds a splitpoint from the player
 void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
 {
   if (gtk_toggle_button_get_active(widget))
@@ -838,7 +852,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
   da_expose_event(da, NULL, NULL);
 }
 
-//creates the player buttons hbox
+//!creates the player buttons hbox
 GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
 {
   player_buttons_hbox = gtk_hbox_new(FALSE, 0);
