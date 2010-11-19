@@ -10,7 +10,12 @@ appsdir = $(datadir)/applications
 apps_DATA = mp3splt-gtk.desktop
 
 
-html/index.html: FORCE
-	doxygen
+doc: FORCE
+	$(MAKE) -C doc doc
+
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper
+
+# A make target that always needs to be rebuilt
+FORCE:
+.PHONY: FORCE
