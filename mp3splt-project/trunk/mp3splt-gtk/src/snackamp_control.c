@@ -29,12 +29,12 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: snackamp_control.c
+/*!********************************************************
+ * \file
  *
- * this file has functions to control the snackamp player
- *
- *********************************************************/
+ * this file contains functions to control the snackamp 
+ * player
+ **********************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>

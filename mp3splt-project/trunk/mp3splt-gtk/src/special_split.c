@@ -29,13 +29,12 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: special_split.c
+/*!********************************************************
+ * \file
  *
- * this file is for the special split tab, where we have special
- * splits 
- *
- *********************************************************/
+ * this file is for the special split tab, where automatic
+ * split modes can be selected
+ *..*******************************************************/
 
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
