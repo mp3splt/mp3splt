@@ -71,7 +71,10 @@ gint is_filee(const gchar *fname)
   }
 }
 
-//!check if a string points to a directory
+/*!check if a string points to a directory
+
+\todo why guchar?
+*/
 gint check_if_dir(guchar *fname)
 {
   struct stat buffer;
@@ -91,7 +94,7 @@ gint check_if_dir(guchar *fname)
  - Why guchar ?
  - And what is the difference to is_filee?
 */
-gint check_if_file(guchar *fname)
+gnt check_if_file(guchar *fname)
 {
   struct stat buffer;
   gint         status;
