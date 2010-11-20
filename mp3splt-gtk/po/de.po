@@ -532,9 +532,8 @@ msgid "_Split !"
 msgstr "_Teilen!"
 
 #: src/main_win.c:526
-#, fuzzy
 msgid "_Import splitpoints..."
-msgstr "Teilungspunkte hinzu_fügen"
+msgstr "Teilungspunkte h_inzufügen"
 
 #: src/main_win.c:526
 msgid "Import"
@@ -565,13 +564,12 @@ msgid "Quit"
 msgstr "Beenden"
 
 #: src/main_win.c:537
-#, fuzzy
 msgid "_Contents"
-msgstr "_Verbinden"
+msgstr "_Inhalt"
 
 #: src/main_win.c:537
 msgid "Contents"
-msgstr ""
+msgstr "Inhalt"
 
 #: src/main_win.c:541
 msgid "_About"
@@ -844,8 +842,7 @@ msgstr "Alle Dateien"
 #~ msgstr "Einstellungen speichern:"
 
 #~ msgid " popup save dialog confirmation if preferences have changed"
-#~ msgstr ""
-#~ "Bestätigungsdialog zum Speichern, falls Einstellungen geändert wurden"
+#~ msgstr " Bestätigungsdialog zum Speichern, falls Einstellungen geändert wurden"
 
 #~ msgid "english"
 #~ msgstr "Englisch"
