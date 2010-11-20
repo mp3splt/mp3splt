@@ -47,7 +47,7 @@
 
 #include <string.h>
 
-#ifndef NO_GNOME
+#ifdef HAVE_GNOME
 #include <libgnomeui/gnome-help.h>
 #endif
 
@@ -501,7 +501,7 @@ void show_messages_history_dialog(GtkWidget *widget, gpointer data)
   gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
 }
 
-#ifndef NO_GNOME
+#ifdef HAVE_GNOME
 /*! The function that starts the help browser on clicking help/help
  */
 void ShowHelp()
@@ -532,7 +532,7 @@ GtkWidget *create_menu_bar()
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
       G_CALLBACK(quit) },
 
-#ifndef NO_GNOME
+#ifdef HAVE_GNOME
     //name, stock id, label, accelerator
     { "Contents", GTK_STOCK_HELP, N_("_Contents"), "F1", N_("Contents"),
       G_CALLBACK(ShowHelp)},
@@ -554,7 +554,9 @@ GtkWidget *create_menu_bar()
     "      <menuitem action='Quit'/>"
     "    </menu>"
     "    <menu action='HelpMenu'>"
+#ifdef HAVE_GNOME
     "      <menuitem action='Contents'/>"
+#endif
     "      <menuitem action='About'/>"
     "    </menu>"
     "  </menubar>"
