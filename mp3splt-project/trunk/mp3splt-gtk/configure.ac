@@ -33,7 +33,7 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt-gtk, 0.6.1, io_fx@yahoo.fr)
+AC_INIT(mp3splt-gtk, 0.6.1, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;

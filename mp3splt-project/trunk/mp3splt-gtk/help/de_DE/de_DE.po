@@ -11,23 +11,23 @@ msgstr ""
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:13(title)
 msgid "mp3splt-gtk Manual"
-msgstr ""
+msgstr "Handbuch von mp3splt-gtk"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:15(para)
 msgid "mp3splt-gtk."
-msgstr ""
+msgstr "mp3splt-gtk."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:18(para)
 msgid "A tool that allows to losslessly cut MP3 or Ogg Vorbis files. This means that the selected audio frames or packets are extracted without the need to re-encode the file - which would loose quality."
-msgstr ""
+msgstr "Ein Hilfsprogramm, das das verlustfreie Schneiden von MP3 und Ogg Vorbis-Dateien ermöglicht, sprich: Das Extrahieren der gewünschten Datenpakete und Audio-Frames ohne dafür die Datei neu komprimieren zu müssen - da hierbei Qualität verloren gehen würde."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:25(year)
 msgid "2010"
-msgstr ""
+msgstr "2010"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:26(holder)
 msgid "Gunter Königsmann"
-msgstr ""
+msgstr "Gunter Königsmann"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:2(para)
 msgid "Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any later version published by the Free Software Foundation with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy of the GFDL at this <ulink url=\"ghelp:fdl\">link</ulink> or in the file COPYING-DOCS distributed with this manual."
@@ -55,47 +55,47 @@ msgstr ""
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:40(firstname)
 msgid "Alexandru Ionut"
-msgstr ""
+msgstr "Alexandru Ionut"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:41(surname)
 msgid "Munteanu"
-msgstr ""
+msgstr "Munteanu"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:44(firstname)
 msgid "Trotta"
-msgstr ""
+msgstr "Trotta"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:45(surname)
 msgid "Matteo"
-msgstr ""
+msgstr "Matteo"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:50(revnumber)
 msgid "mp3splt-gtk Manual 0.1"
-msgstr ""
+msgstr "Handbuch von mp3splt-gtk V. 0.1"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:51(date)
 msgid "2010-11-16"
-msgstr ""
+msgstr "16.11.2010"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:57(title)
 msgid "Introduction"
-msgstr ""
+msgstr "Einführung"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:58(para)
 msgid "The <application>mp3splt-gtk</application> application is a tool that allows to cut MP3 and Ogg Vorbis files without the need to re-encode them (which would loose them quality)."
-msgstr ""
+msgstr "Die <application>mp3splt-gtk</application> Applikation erlaubt es, MP3 und Ogg Vorbis Dateien zu Schneiden und kommt dabei ohne ein erneutes Komprimieren der Dateien aus, bei dem jedes Mal Qualität verlorengeht."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:62(para)
 msgid "Features include graphical selection of split points, automatic splitting of music recordings into tracks and automatic adjustment of split points to fall into pauses."
-msgstr ""
+msgstr "Sie unterstützt unter Anderem das manuelle Schneiden in einer graphischen Benutzeroberfläche, die automatische Aufteilung eines Albums in Tracks und eine Feinabstimmung der von Hand gewählten Stellen, an denen geschnitten werden soll, so, dass sie in Pausen fallen."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:68(title)
 msgid "Starting mp3splt-gtk"
-msgstr ""
+msgstr "Aufruf von mp3splt-gtk"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:69(para)
 msgid "You can start <application>mp3splt-gtk</application> in - at least - the following ways:"
-msgstr ""
+msgstr "mp3splt-gtk kann unter Anderem auf die folgenden Weisen aufgerufen werden:"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:74(para)
 msgid "Choose <menuchoice><guimenu>Sound and Video</guimenu><guimenuitem>mp3splt-gtk</guimenuitem></menuchoice> from the <guimenu>Applications</guimenu> menu."
