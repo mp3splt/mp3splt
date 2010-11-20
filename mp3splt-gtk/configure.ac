@@ -141,6 +141,13 @@ if test x$enable_gnome = xyes;then
       [AC_MSG_ERROR([gnomeui development files are not installed.
 
     Install it or configure with "--disable-gnome".])])
+
+    AC_DEFINE(HAVE_GNOME, 1,
+       [Undefined if we cannot use gnome functions.])
+else
+	# If anybody knows why I need this please fix the original problem.
+	AM_CONDITIONAL(ENABLE_SK,false)
+	AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS,false)
 fi
 
 #################################################
@@ -217,7 +224,7 @@ fi
 # Generate Makefiles
 #################################################
 
-AC_OUTPUT(Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile)
+AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile])
 
 #################################################
 # Define some useful constants
@@ -228,6 +235,7 @@ top_builddir=`pwd`
 AC_SUBST(top_builddir)
 AC_SUBST(PACKAGE)
 AC_SUBST(LOCALEDIR)
+AC_SUBST(HAVE_GNOME)
 
 
 #################################################
@@ -253,3 +261,5 @@ echo
 echo "---------------------------------------------------------"
 echo
 
+# Tell autoconf to start outputting whatever it has to.
+AC_OUTPUT

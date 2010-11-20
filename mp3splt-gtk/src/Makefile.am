@@ -48,10 +48,6 @@ else
 INCLUDES += -DNO_AUDACIOUS
 endif
 
-if ! GNOME
-INCLUDES += -DNO_GNOME
-endif
-
 if GSTREAMER
 mp3splt_gtk_LDADD += @GST_LIBS@
 INCLUDES += @GST_CFLAGS@

@@ -13,8 +13,9 @@ apps_DATA = mp3splt-gtk.desktop
 doc: FORCE
 	$(MAKE) -C doc doc
 
-
+#if GNOME
 DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper
+#endif
 
 # A make target that always needs to be rebuilt
 FORCE:
