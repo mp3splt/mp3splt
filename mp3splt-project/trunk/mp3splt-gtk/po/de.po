@@ -39,24 +39,24 @@ msgstr "kHz"
 
 #: src/tree_tab.c:656 src/tree_tab.c:1015
 msgid " error: you already have the splitpoint in table"
-msgstr " Fehler: Es existiert bereits ein Teilungspunkt in der Tabelle"
+msgstr " Fehler: Schnittpunkt existiert bereits"
 
 #: src/tree_tab.c:727 src/tree_tab.c:1018 src/freedb_tab.c:507
 #: src/freedb_tab.c:529
 msgid "description here"
-msgstr "Beschreibung hier"
+msgstr "Bitte Name eingeben"
 
 #: src/tree_tab.c:1136 src/tree_tab.c:1490
 msgid "Set splitpoints from silence detection"
-msgstr "Teilungspunkte aus erkannter Stille erzeugen"
+msgstr "Schnittpunte mittels Stille-detektion erzeugen"
 
 #: src/tree_tab.c:1163 src/preferences_tab.c:602
 msgid "Threshold level (dB):"
-msgstr "Ansprechschwelle (dB):"
+msgstr "Schwelle (dB):"
 
 #: src/tree_tab.c:1180
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
-msgstr "Schnittpunkt-Versatz (0 ist Beginn der Stille und 1 Ende):"
+msgstr "Schnittpunkt-Versatz (0=Beginn der Stille und 1=Ende):"
 
 #: src/tree_tab.c:1197
 msgid "Number of tracks (0 means all tracks):"
@@ -88,7 +88,7 @@ msgstr "_Hinzufügen"
 
 #: src/tree_tab.c:1449
 msgid "Add splitpoint"
-msgstr "Teilungspunkt hinzufügen"
+msgstr "Schnittpunkt hinzufügen"
 
 #: src/tree_tab.c:1453
 msgid "_Remove"
@@ -116,11 +116,11 @@ msgstr " Beendet"
 
 #: src/tree_tab.c:1627
 msgid " cannot split preview last splitpoint"
-msgstr " Vorschau für letzten Teilungspunkt kann nicht angezeigt werden"
+msgstr " Vorschau für letzten Teilungspunkt nicht möglich"
 
 #: src/tree_tab.c:1671
 msgid " cannot preview, not connected to player"
-msgstr " Vorschau nicht möglich, keine Verbindung zum Abspielprogramm"
+msgstr " Vorschau nicht möglich: Keine Verbindung zum Abspielprogramm"
 
 #: src/tree_tab.c:1736
 msgid "Keep"
@@ -132,15 +132,15 @@ msgstr "Dateiname"
 
 #: src/tree_tab.c:1764
 msgid "Secs"
-msgstr "Sekunden"
+msgstr "Sek"
 
 #: src/tree_tab.c:1778
 msgid "Mins"
-msgstr "Minuten"
+msgstr "Min"
 
 #: src/tree_tab.c:1792
 msgid "Hundr"
-msgstr "Hundertstel"
+msgstr "1/100s"
 
 #: src/tree_tab.c:1802
 msgid "Length"
@@ -172,7 +172,7 @@ msgstr "<b>Sprache wählen (erfordert Neustart)</b>"
 
 #: src/preferences_tab.c:428
 msgid "Choose split directory"
-msgstr "Teilingsordner wählen"
+msgstr "Wählen des Ausgabeordners"
 
 #: src/preferences_tab.c:551
 msgid "Br_owse dir"
@@ -184,7 +184,7 @@ msgstr "Titel_ordner"
 
 #: src/preferences_tab.c:564
 msgid "<b>Directory for split files</b>"
-msgstr "<b>Ordner für erzeugte Teilungsdateien</b>"
+msgstr "<b>Ordner für Dateiausgabe</b>"
 
 #: src/preferences_tab.c:572
 msgid "_Create directories from filenames "
@@ -196,9 +196,7 @@ msgstr "F_rame-Modus (nützlich für mp3-VBR) (nur für mp3)"
 
 #: src/preferences_tab.c:585
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr ""
-"Selbst_regulierender Modus (verwendet die Stille-Erkennung zum automatischen "
-"Setzen von Teilungspunkten)"
+msgstr "_Automatische Feinabstimmung der Schnittpunkte mittels der Stille-Detektion"
 
 #: src/preferences_tab.c:617
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
@@ -226,11 +224,11 @@ msgstr "<b>Wiedergabeoptionen</b>"
 
 #: src/preferences_tab.c:808
 msgid "Default format"
-msgstr "Vorgegebenes Format"
+msgstr "Standardformat"
 
 #: src/preferences_tab.c:812
 msgid "Custom format"
-msgstr "Benutzerdefiniertes Format"
+msgstr "Benutzerdefiniert"
 
 #: src/preferences_tab.c:829
 msgid ""
@@ -243,7 +241,7 @@ msgid ""
 msgstr ""
 "    @f - Dateiname\n"
 "    @a - Künstlername\n"
-"    @p - Interpret eines Titels (nicht immer verfügbar)\n"
+"    @p - Interpret des Titels (nicht immer verfügbar)\n"
 "    @b - Albumtitel\n"
 "    @t - Songtitel\n"
 "    @n - Titelnummer"
@@ -266,7 +264,7 @@ msgstr "Keine Tags"
 
 #: src/preferences_tab.c:888
 msgid "<b>Split files tags</b>"
-msgstr "<b>Dateien nach Tags teilen</b>"
+msgstr "<b>Tags in ausgegebenen Dateien</b>"
 
 #: src/preferences_tab.c:896
 msgid "ID3v1 & ID3v2 tags"
@@ -389,11 +387,11 @@ msgstr "Nächste"
 
 #: src/player_tab.c:861
 msgid "Add splitpoint from player"
-msgstr "Teilungspunkt vom Abspielprogramm hinzufügen"
+msgstr "Schnittpunkt hier hinzufügen"
 
 #: src/player_tab.c:865
 msgid "_Show amplitude wave"
-msgstr "_Pegelkurve"
+msgstr "_Pegelkurve anzeigen"
 
 #: src/player_tab.c:873
 msgid "Shows the amplitude level wave"
@@ -445,7 +443,7 @@ msgstr "Linksklick aktiviert/deaktiviert »Teilungspunkt behalten«"
 
 #: src/player_tab.c:2790
 msgid " quick preview..."
-msgstr " Schnellvorschau …"
+msgstr " Schnellvorschau..."
 
 #: src/player_tab.c:3323
 msgid "History"
@@ -497,7 +495,7 @@ msgstr " Info: Teilungsvorgang wird vor dem Beenden abgebrochen"
 
 #: src/main_win.c:332
 msgid "using"
-msgstr "verwendet"
+msgstr "unter Verwendung von"
 
 #: src/main_win.c:336
 msgid "release of"
@@ -513,7 +511,7 @@ msgstr " Fehler: Keine Datei ausgewählt"
 
 #: src/main_win.c:459
 msgid " error: split in progress..."
-msgstr " Fehler: Teilung läuft …"
+msgstr " Fehler: Teilung läuft..."
 
 #: src/main_win.c:478
 msgid "Split !"
@@ -537,15 +535,15 @@ msgstr "Teilungspunkte h_inzufügen"
 
 #: src/main_win.c:526
 msgid "Import"
-msgstr "Imprtieren"
+msgstr "Importieren"
 
 #: src/main_win.c:528
 msgid "_Open..."
-msgstr ""
+msgstr "_Öffnen"
 
 #: src/main_win.c:528
 msgid "Open"
-msgstr ""
+msgstr "Öffnen"
 
 #: src/main_win.c:530
 msgid "Messages _history"

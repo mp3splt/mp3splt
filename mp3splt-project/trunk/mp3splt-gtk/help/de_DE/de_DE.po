@@ -107,74 +107,74 @@ msgstr ""
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:87(title)
 msgid "Closing mp3splt-gtk"
-msgstr ""
+msgstr "Beenden von mp3splt-gtk"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:88(para)
 msgid "To close the <application>mp3splt-gtk</application> window there are many options, too:"
-msgstr ""
+msgstr "Auch zum Schließen von <application>mp3splt-gtk</application> gibt es mehrere Optionen"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:92(guimenu)
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:92(guimenuitem)
 msgid "Close"
-msgstr ""
+msgstr "Beenden"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:91(listitem)
 msgid "choose <menuchoice><placeholder-1/><placeholder-2/></menuchoice>"
-msgstr ""
+msgstr "<menuchoice><placeholder-1/><placeholder-2/></menuchoice> auswählen"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:95(keycap)
 msgid "Ctrl"
-msgstr ""
+msgstr "Strg"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:95(keycap)
 msgid "W"
-msgstr ""
+msgstr "W"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:94(listitem)
 msgid "press <keycombo><placeholder-1/><placeholder-2/></keycombo>"
-msgstr ""
+msgstr "<keycombo><placeholder-1/><placeholder-2/></keycombo> drücken"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:97(listitem)
 msgid "press on the X-shaped button the window manager of your choise provides you with"
-msgstr ""
+msgstr "Drücken des X-förmigen Knopfes in der Titelleiste"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:104(title)
 msgid "mp3splt-gtk Features"
-msgstr ""
+msgstr "Funktionen von mp3splt-gtk"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:112(listitem)
 msgid "The ability to use your favourite audio playback application for playback of the file that is to be cut."
-msgstr ""
+msgstr "Die Fähigkeit, diverse Abspielprogramme anzusteuern."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:116(listitem)
 msgid "Automatic detection of the right places to split."
-msgstr ""
+msgstr "Automatische Detektion der Punkte, an denen geschnitten werden muss."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:119(listitem)
 msgid "Automatic adjustment of manually set split points to fall into a nearby pause - which allows the user to work with less than milisecond-accuracy when specifying the split points."
-msgstr ""
+msgstr "Automatisches Feinabstimmen der Position von Schnittpunkten, dass sie in eine Stille fallen - so, dass der Benutzer nicht gezwungen ist, auf die Millisekunde genau zu arbeiten."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:125(listitem)
 msgid "Importing splitpoints for a known album from a database like freedb."
-msgstr ""
+msgstr "Der Import von Schnittpunkten eines bekannten Albums aus einer Internet-Datenbank wie freedb."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:129(listitem)
 msgid "Automatically split albums that have been joined by albumwrap or mp3wrap into the original files."
-msgstr ""
+msgstr "Automatisches Trennen von Alben, die von albumwrap order mp3wrap in eine Datei zusammengefasst worden sind."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:108(para)
 msgid "It was designed with usability in Mind and contains the followning features <placeholder-1/>"
-msgstr ""
+msgstr "Es wurde auf einfache Benutzung hin ausgelegt und stellt die folgenden Funktionen bereit"
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:105(para)
 msgid "<application>mp3splt-gtk</application> will allow you to manipulate audio files without loosing any quality. <placeholder-1/>"
-msgstr ""
+msgstr "<application>mp3splt-gtk</application> erlaubt es, Audiodateien zu bearbeiten, ohne ihre Qualität zu beeinträchtigen. <placeholder-1/>"
 
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:0(None)
 msgid "translator-credits"
-msgstr ""
+msgstr "Danksagungen an die Übersetzer"
 
