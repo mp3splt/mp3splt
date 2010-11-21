@@ -429,7 +429,14 @@ void put_message_from_library(const char *message, splt_message_type mess_type)
 
 \todo 
  - Handle the case that more than one input file is specified at the 
-   command line
+   command line. Until now we just open the first one of the specified 
+   files which on windows is basically what notepad does.\n
+   And decide what to do in this case: 
+   - Going into the multiple files mode will mean that our functionality
+     is enabled if several files are opened at once in Windows
+   - And opening a separate instance of our program would mean that
+     windows and nautilus behaviour are consistent (nautilus seems to
+     open every file separately) but - does this really make sense?
  - Handle the case that the specified inputfile is a playlist file
  - Set the full path to the file to make sure that the player will find 
    it even if we are called in a different directory than the file is in

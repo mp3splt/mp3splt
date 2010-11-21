@@ -83,6 +83,7 @@ GtkWidget *create_main_vbox();
 void create_all();
 void print_status_bar_confirmation(gint confirmation);
 void cancel_button_event(GtkWidget *widget, gpointer data);
+void put_status_message(const gchar *text);
 
 #endif
 

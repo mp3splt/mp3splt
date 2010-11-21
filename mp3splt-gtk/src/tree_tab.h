@@ -28,14 +28,19 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: tree_tab.h
+/*!********************************************************
+ * \file
  *
  * header of tree_tab.c
  * the tree_tab.c file is used for the Splitpoints tab
  * (for the splitpoints table)
  *
  *********************************************************/
+
+#ifndef _TREE_TAB_H
+#define _TREE_TAB_H
+
+#include "util.h"
 
 void add_splitpoint(Split_point my_split_point,
                     gint old_index);
@@ -100,3 +105,27 @@ void handle_detached_event (GtkHandleBox *handlebox,
 GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view);
 void put_splitpoints_in_the_state(splt_state *state);
 GtkTreeView *create_tree_view();
+
+//!The enum telling which item is kept in which column of the splitpoint tree
+enum {
+  /*! if we enable this splitpoint for split */
+  COL_CHECK,
+  /*! the filename of the split */
+  COL_DESCRIPTION,
+  /*! minutes*/
+  COL_MINUTES,
+  /*! seconds*/
+  COL_SECONDS,
+  /*! hundreths of a second */
+  COL_HUNDR_SECS,
+  /*! length of the split song */
+  COL_NUMBER,
+  /*! preview button */
+  COL_PREVIEW,
+  /*! split preview button */
+  COL_SPLIT_PREVIEW,
+  NUM_COLUMNS = 8
+};
+extern GtkTreeView *tree_view;
+
+#endif

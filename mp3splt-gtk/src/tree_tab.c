@@ -61,27 +61,11 @@
 #include "split_files.h"
 #include "preferences_tab.h"
 #include "preferences_manager.h"
+#include "tree_tab.h"
+/*! The array all splitpoints are kept in.
 
-//tree column enumeration
-enum {
-  /* if we enable this splitpoint for split */
-  COL_CHECK,
-  /* the filename of the split */
-  COL_DESCRIPTION,
-  /* splitpoints, minutes, seconds,hundr */
-  COL_MINUTES,
-  COL_SECONDS,
-  COL_HUNDR_SECS,
-  /* length of the split song */
-  COL_NUMBER,
-  /* preview button */
-  COL_PREVIEW,
-  /* split preview button */
-  COL_SPLIT_PREVIEW,
-  NUM_COLUMNS = 8
-};
-
-//splitpoints
+The splitpoints themself will be in the 
+ */
 GArray *splitpoints = NULL;
 //minutes and seconds reflected by the spinners
 gint spin_mins = 0;
@@ -92,7 +76,7 @@ gint splitpoint_checked = TRUE;
 //current description
 gchar current_description[255] = "description here";
 
-//splitpoints elements number
+//! The total number of splitpoints
 gint splitnumber = 0;
 
 //buttons for adding and removing rows
@@ -106,8 +90,10 @@ GtkWidget *scan_silence_button = NULL;
 //handle box for detaching window
 GtkWidget *handle_box;
 
-//our tree view, used global for 
-//the update_*_from_spinner
+/*! The tree view (which is the table all split points are stored inside)
+
+Used globally for the update_*_from_spinner
+*/
 GtkTreeView *tree_view;
 
 //minutes and seconds spinner
@@ -416,6 +402,8 @@ gboolean check_if_description_exists(gchar *descr,
   //get iter number
   if(gtk_tree_model_get_iter_first(model, &iter))
     {
+      // Todo: Do the next 2 lines make any sense?
+      // I mean: They will be repeated later.
       gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
                          COL_DESCRIPTION,&description,
                          -1);
