@@ -29,6 +29,14 @@
  *
  *********************************************************/
 
+/*!********************************************************
+ * \file Get the current state of all GUI buttons
+ *
+ * The code contained in this file reads out the current 
+ * state of all GUI buttons and saves it into the structure
+ * the_state.
+ ********************************************************/
+
 #include <string.h>
 
 #include <gtk/gtk.h>
@@ -61,6 +69,13 @@ extern GtkWidget *spinner_time;
 extern GtkWidget *spinner_equal_tracks;
 extern GtkWidget *create_dirs_from_output_files;
 
+/*! Update the output options
+
+  Update the output options in the_state by reading out the state of
+  the GUI controls.
+
+  All other options are read out in put_options_from_preferences()
+ */
 void update_output_options()
 {
   filename_to_split = inputfilename_get();
@@ -85,6 +100,13 @@ void update_output_options()
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
 }
 
+/*! Update the the_state structure
+
+  Updates the the_state structure by reading out the state of the GUI
+  controls. The only exception is that all options that are directly
+  connected to audio output have been split into a separate function:
+  update_output_options()
+ *//
 void put_options_from_preferences()
 {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))

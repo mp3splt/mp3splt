@@ -32,10 +32,10 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: gstreamer_control.c
+ * \file Control the gstreamer framework
  *
- * this file has functions to control the 'internal' gstreamer player
- *
+ * this file has functions to control the 'internal' 
+ + gstreamer player
  *********************************************************/
 
 #include <stdlib.h>

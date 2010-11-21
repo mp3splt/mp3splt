@@ -30,7 +30,7 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: main_win.c
+ * \file The main window
  *
  * main file that initialises the menubar, the toolbar, 
  * the tabs, about window, status error messages

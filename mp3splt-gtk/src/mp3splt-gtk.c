@@ -29,6 +29,13 @@
  *
  *********************************************************/
 
+/**********************************************************
+ * Filename: mp3splt-gtk.c
+ *
+ * this file contains the main() function as well as some 
+ * globally used functions.
+ *********************************************************/
+
 #include <signal.h>
 #include <gtk/gtk.h>
 #include <libmp3splt/mp3splt.h>
@@ -127,7 +134,7 @@ extern gint multiple_files_tree_number;
 //how many split files
 gint split_files = 0;
 
-//put the split file in the split_file tab
+/! Add another file to the split_file tab
 void put_split_filename(const char *filename,int progress_data)
 {
   gdk_threads_enter();
@@ -158,7 +165,7 @@ void put_split_filename(const char *filename,int progress_data)
   gdk_threads_leave();
 }
 
-//changes the progress bar
+//!Allows to set the value shown by the progress bar
 void change_window_progress_bar(splt_progress *p_bar)
 {
   gchar progress_text[1024] = " ";
@@ -205,7 +212,7 @@ void change_window_progress_bar(splt_progress *p_bar)
   gdk_threads_leave();
 }
 
-//effective split of the file
+//! Split the file
 gpointer split_it(gpointer data)
 {
   gint confirmation = SPLT_OK;
@@ -337,7 +344,8 @@ gpointer split_it(gpointer data)
     }
   }
 
-  //reenable default output if necessary
+  /*! reenable default output if necessary
+   */
   mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
   
   gdk_threads_enter();
@@ -368,7 +376,10 @@ gpointer split_it(gpointer data)
   return NULL;
 }
 
-//handler for the SIGPIPE signal
+/*!handler for the SIGPIPE signal
+
+  This signal is issued by snackamp on close.
+ */
 void sigpipe_handler(gint sig)
 {
   if (player_is_running() && selected_player == PLAYER_SNACKAMP)
@@ -378,7 +389,7 @@ void sigpipe_handler(gint sig)
 }
 
 gboolean sigint_called = FALSE;
-//handler for the SIGINT signal
+//!handler for the SIGINT signal
 void sigint_handler(gint sig)
 {
   if (!sigint_called)
@@ -389,7 +400,7 @@ void sigint_handler(gint sig)
   }
 }
 
-//prints a message from the library
+//!prints a message from the library
 void put_message_from_library(const char *message, splt_message_type mess_type)
 {
   gchar *mess = g_strdup(message);

@@ -30,10 +30,10 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: multiple_files.c
+ * \file
  *
- * this file is for the multiple files management
- *
+ * this file is for management for the the multiple files
+ * mode that currently allows only for batch processing.
  *********************************************************/
 
 #include <gtk/gtk.h>

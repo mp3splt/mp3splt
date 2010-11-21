@@ -30,11 +30,10 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: cddb_tab.c
+ * \file The freedb tab
  *
  * this file is used for the cddb tab 
  *   (for searching on freedb)
- *
  *********************************************************/
 
 #include <stdlib.h>

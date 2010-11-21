@@ -34,7 +34,7 @@
  *
  * this file is used for the Splitpoints tab
  * (which in turn contains the splitpoints table)
- ********************************************************/
+ **********************************************************/
 
 #include <string.h>
 #include <stdlib.h>

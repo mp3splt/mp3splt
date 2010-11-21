@@ -29,14 +29,12 @@
  *
  *********************************************************/
 
-// *******************************************************
-/*! \file
-
-  this file contains the code for the preferences tab where 
-  the preferences can be chosen.
-
- */
-// *******************************************************
+/*!********************************************************
+ * \file The preferences tab
+ *
+ * this file contains the code for the preferences tab where 
+ * the preferences can be chosen.
+ ********************************************************/
 
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
