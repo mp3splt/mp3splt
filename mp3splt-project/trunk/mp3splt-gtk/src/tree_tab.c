@@ -30,7 +30,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file
+ * \file 
+ * The splitpoints tab
  *
  * this file is used for the Splitpoints tab
  * (which in turn contains the splitpoints table)

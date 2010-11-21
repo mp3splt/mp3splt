@@ -30,7 +30,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file The preferences tab
+ * \file 
+ * The preferences tab
  *
  * this file contains the code for the preferences tab where 
  * the preferences can be chosen.

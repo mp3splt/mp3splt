@@ -30,7 +30,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file
+ * \file 
+ * Snackamp control
  *
  * this file contains functions to control the snackamp 
  * player

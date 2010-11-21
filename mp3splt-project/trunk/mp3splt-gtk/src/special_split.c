@@ -30,7 +30,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file
+ * \file 
+ * The batch processing tab
  *
  * this file is for the special split tab, where automatic
  * split modes can be selected

@@ -31,8 +31,9 @@
  *
  *********************************************************/
 
-/**********************************************************
- * \file Control the gstreamer framework
+/*!*******************************************************
+ * \file 
+ * Control the gstreamer framework
  *
  * this file has functions to control the 'internal' 
  + gstreamer player
