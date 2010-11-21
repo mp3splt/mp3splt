@@ -29,6 +29,13 @@
  *
  *********************************************************/
 
+/**********************************************************
+ * \file The magic behind the splitpoint input
+ *
+ * All functions that are needed in order to read in
+ * cddb, cue or similar files.
+ *********************************************************/
+
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
@@ -49,6 +56,7 @@ static gpointer add_audacity_labels_splitpoints(gpointer data);
 static gpointer add_cddb_splitpoints(gpointer data);
 static gpointer add_cue_splitpoints(gpointer data);
 
+//! What happens if the "Import" button is pressed
 void import_event(GtkWidget *widget, gpointer *data)
 {
   GtkWidget *file_chooser =
@@ -74,6 +82,10 @@ void import_event(GtkWidget *widget, gpointer *data)
   gtk_widget_destroy(file_chooser);
 }
 
+/*! Handles the import of an input file (audio or splitpoint)
+ 
+  The file type is determined by the extension of the file.
+ */
 void handle_import(gchar *filename)
 {
   if (filename == NULL)
@@ -113,6 +125,7 @@ void handle_import(gchar *filename)
   }
 }
 
+//! Set the file chooser filters to "splitpoint file"
 static void set_import_filters(GtkFileChooser *chooser)
 {
   GtkFileFilter *all_filter = gtk_file_filter_new();
@@ -165,7 +178,10 @@ static void build_import_filter(GtkFileChooser *chooser,
   *filters = g_list_append(*filters, filter);
 }
 
-//data pointer will be freed
+/*! Add splitpoints from audacity
+
+data pointer will be freed by g_free() after doung this.
+*/
 static gpointer add_audacity_labels_splitpoints(gpointer data)
 {
   gchar *filename = data;
@@ -193,6 +209,7 @@ static gpointer add_audacity_labels_splitpoints(gpointer data)
   return NULL;
 }
 
+//! Add splitpoints from cddb
 static gpointer add_cddb_splitpoints(gpointer data)
 {
   gchar *filename = data;
@@ -219,6 +236,7 @@ static gpointer add_cddb_splitpoints(gpointer data)
   return NULL;
 }
 
+//! Add splitpoints from cue file
 static gpointer add_cue_splitpoints(gpointer data)
 {
   gchar *filename = data;
