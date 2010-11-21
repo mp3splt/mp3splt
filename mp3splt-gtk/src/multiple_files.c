@@ -29,8 +29,9 @@
  *
  *********************************************************/
 
-/**********************************************************
- * \file
+/*!********************************************************
+ * \file 
+ * Batch processing internals
  *
  * this file is for management for the the multiple files
  * mode that currently allows only for batch processing.

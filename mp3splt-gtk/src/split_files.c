@@ -30,9 +30,11 @@
  *********************************************************/
 
 /*!********************************************************
- * \file
+ * \file 
+ * The split tab
  *
- * file that handles the split files tab from the main window
+ * file that handles the split files tab from the main 
+ * window
  **********************************************************/
 
 #include <gtk/gtk.h>

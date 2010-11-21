@@ -32,7 +32,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file
+ * \file 
+ * xmms control
  *
  * this file contains the functions that control the xmms
  * player

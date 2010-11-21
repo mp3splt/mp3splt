@@ -30,7 +30,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file Get the current state of all GUI buttons
+ * \file
+ *  Get the current state of all GUI buttons
  *
  * The code contained in this file reads out the current 
  * state of all GUI buttons and saves it into the structure

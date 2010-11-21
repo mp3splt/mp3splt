@@ -29,8 +29,9 @@
  *
  *********************************************************/
 
-/**********************************************************
- * \file The magic behind the splitpoint input
+/*!********************************************************
+ * \file 
+ * The magic behind the splitpoint input
  *
  * All functions that are needed in order to read in
  * cddb, cue or similar files.

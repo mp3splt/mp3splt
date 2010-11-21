@@ -30,7 +30,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file Save and read preferences
+ * \file 
+ * Save and read preferences
  *
  * This file contains the functions to save the preferences
  * on the hard disk and to read them again at the next 

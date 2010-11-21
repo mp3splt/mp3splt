@@ -31,7 +31,8 @@
  *********************************************************/
 
 /*!********************************************************
- * \file Functions to access the currently selected player
+ * \file
+ * Functions to access the currently selected player
  *
  * this file is used to play for the appropriate player, 
  * for example if we choose snackamp, the player will use 

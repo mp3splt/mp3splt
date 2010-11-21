@@ -31,6 +31,7 @@
 
 /*!********************************************************
  * \file
+ *  miscellaneous utilities
  *
  * Miscellaneous utilities like the check if a string may 
  * contain a valid file- or directory name.

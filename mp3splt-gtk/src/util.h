@@ -28,8 +28,9 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: util.h
+/*!********************************************************
+ * \file
+ * Structs and definitions shared amongst files
  *
  * this file has some structures and/or definition used by
  * more than one file

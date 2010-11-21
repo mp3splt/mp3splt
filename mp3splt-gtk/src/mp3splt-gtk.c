@@ -29,8 +29,9 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: mp3splt-gtk.c
+/*!********************************************************
+ * \file 
+ * The main file,
  *
  * this file contains the main() function as well as some 
  * globally used functions.
