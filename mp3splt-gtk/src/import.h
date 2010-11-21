@@ -29,6 +29,8 @@
  *
  *********************************************************/
 
+#ifndef _IMPORT_H
+#define _IMPORT_H
 void import_event(GtkWidget *widget, gpointer *data);
 void handle_import(gchar *filename);
-
+#endif
