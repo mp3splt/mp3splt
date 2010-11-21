@@ -62,6 +62,7 @@
 #include "multiple_files.h"
 #include "preferences_manager.h"
 #include "player_tab.h"
+#include "import.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -134,7 +135,7 @@ extern gint multiple_files_tree_number;
 //how many split files
 gint split_files = 0;
 
-/! Add another file to the split_file tab
+//! Add another file to the split_file tab
 void put_split_filename(const char *filename,int progress_data)
 {
   gdk_threads_enter();
@@ -558,21 +559,8 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 	abort ();
       }
   
-  // Now let's see if we found a filename at the command line.
-  if (optind != argc) 
-    {
-      char *inputfilename;
-      if(!check_if_file((guchar *)argv[optind]))
-	{
-	  fprintf (stderr,
-		   _("Cannot open input file %s\n"),
-		   argv[optind]);
-	return 1;
-	}
-      inputfilename=realpath(argv[optind],NULL);
-      inputfilename_set(inputfilename);
-      free(inputfilename);
-    }
+  // If we have a filename at the command line is checked after the
+  // GUI is up.
 
   //We initialise the splitpoints array
   splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
@@ -613,6 +601,26 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   {
     print_status_bar_confirmation(error);
   }
+
+  // Now let's see if we found a filename at the command line.
+  if (optind != argc) 
+    {
+      char *inputfilename;
+      if(!check_if_file((guchar *)argv[optind]))
+	{
+	  fprintf (stderr,
+		   _("Cannot open input file %s\n"),
+		   argv[optind]);
+	return 1;
+	}
+      
+      // If we start the player it will find a file with a relative
+      // pathname. But if the player is already running it might
+      // need an absolute path.
+      inputfilename=realpath(argv[optind],NULL);
+      handle_import(inputfilename);
+      free(inputfilename);
+    }
   
   gdk_threads_enter();
   gtk_main();

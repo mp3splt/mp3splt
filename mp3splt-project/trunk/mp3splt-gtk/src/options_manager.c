@@ -106,7 +106,7 @@ void update_output_options()
   controls. The only exception is that all options that are directly
   connected to audio output have been split into a separate function:
   update_output_options()
- *//
+ */
 void put_options_from_preferences()
 {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
