@@ -36,6 +36,9 @@
  *
  *********************************************************/
 
+#ifndef _MP3SPLT_GTK_H
+#define _MP3SPLT_GTK_H
 void put_options_from_preferences();
 gpointer split_it(gpointer data);
 void sigpipe_handler(gint sig);
+#endif

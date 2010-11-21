@@ -20,12 +20,12 @@ mp3splt_gtk_SOURCES = \
 	special_split.c special_split.h\
 	mp3splt-gtk.c mp3splt-gtk.h \
 	util.h \
-  multiple_files.c multiple_files.h \
-  messages.c messages.h \
-  import.c import.h \
-  options_manager.c options_manager.h \
-  preferences_manager.c preferences_manager.h
-
+	multiple_files.c multiple_files.h \
+	messages.c messages.h \
+	import.c import.h \
+	options_manager.c options_manager.h \
+	preferences_manager.c preferences_manager.h
+#	export.c export.h \
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 

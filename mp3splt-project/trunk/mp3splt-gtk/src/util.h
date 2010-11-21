@@ -37,6 +37,9 @@
  *
  *********************************************************/
 
+#ifndef _UTIL_H
+#define _UTIL_H
+
 //splitpoint structure
 typedef struct
 {
@@ -48,3 +51,4 @@ typedef struct
   gint hundr_secs;
 } Split_point;
 
+#endif

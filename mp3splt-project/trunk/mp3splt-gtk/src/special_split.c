@@ -273,7 +273,7 @@ static GtkWidget *create_single_multiple_split_modes()
  
   //multiple files
   file_mode_radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(file_mode_radio_button), _("Multiple files"));
+    (GTK_RADIO_BUTTON(file_mode_radio_button), _("Batch processing"));
   gtk_box_pack_start(GTK_BOX(local_vbox), file_mode_radio_button,
       FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(file_mode_radio_button),

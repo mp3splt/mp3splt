@@ -237,9 +237,44 @@
 	  &appname; is to work completely lossless even if anything
 	  goes wrong not much is lost.
       </para>
+    </sect2>
+  </sect1>
+  <sect1 id="mp3splt_gtk-BatchProcessing">
+    <title>Batch processing of files</title>
+    <para>
+      Besides manual and automatic splitting of a single file
+      &appname; also supports automatic batch-processing of multiple
+      files at once.
+    </para>
+    <sect2 id="mp3splt_gtk-BatchProcessingEnable">
+      <title>Enabling batch processing mode</title>
+      <para>Go to the <guilabel>Type of split</guilabel> tab and there
+      to the <guilabel>File mode</guilabel> tab. After selecting
+      <guilabel>Batch processing</guilabel> here batch processing mode
+      is enabled</para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-BatchProcessingModeSet">
+      <title>Adding files in batch processing mode</title>
       <para>
-	If you want to change the start or end position of a track
-	or give it a name just do it at any time you want.
+	Go to the <guilabel>Type of split</guilabel> tab and there
+	to the <guilabel>Split mode</guilabel> tab and select after
+	which criteria you want the files to be split.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-BatchProcessingFileAdd">
+      <title>Adding files in batch processing mode</title>
+      <para>Go to the <guilabel>Batch Processing</guilabel> tab and
+      add all files you want to be automatically processed.</para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-TrackExportII">
+      <title>Exporting the tracks</title>
+      <para>
+	Now press the button with the green <guibutton>check
+	mark</guibutton> that is always visible in the menu
+	line. &appname; will output all tracks into single files. If
+	anything goes wrong don't despair: Since one of the goals of
+	&appname; is to work completely lossless even if anything
+	goes wrong not much is lost.
       </para>
     </sect2>
   </sect1>
@@ -261,13 +296,16 @@
       <title>Splitting doesn't work</title>
       <para>
 	Try to make sure that the version of libmp3splt is installed
-	correspondends to the version of mp3splt-gtk.
-      </para>
-      <para>
+	correspondends to the version of &appname;.
 	Even if (for newer versions of the program) the configure
 	script makes sure that both versions match it might still
 	be possible to have the wrong combination of these elements
 	installed on the same system.
+      </para>
+      <para>
+	If that is the case make sure that in the <guilabel>File
+	mode</guilabel> tab of the <guilabel>Type of split</guilabel>
+	tab <guilabel>Single file</guilabel> mode is selected.
       </para>
     </sect2>
     <sect2 id="mp3splt_gtk-SplittingDoesntWorkII">
@@ -285,8 +323,16 @@
 	quality.
       </para>
       <para>
-	Since there is no direct need mp3splt-gtk still does not
+	Since there is no direct need &appname; still does not
 	support cutting flac files.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-AddingFilesDoesntWork">
+      <title>Adding a file to the files view doesn't work</title>
+      <para>
+	Make sure that in the <guilabel>File mode</guilabel> tab of
+	the <guilabel>Type of split</guilabel> tab
+	<guilabel>Batch processing</guilabel> mode is selected.
       </para>
     </sect2>
   </sect1>

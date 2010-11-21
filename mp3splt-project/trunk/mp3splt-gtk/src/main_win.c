@@ -374,14 +374,21 @@ void about_window(GtkWidget *widget, gpointer *data)
   gtk_widget_destroy(dialog);
 }
 
-//used  for the ok button event
-//removes status bar message
+/*! Removes status bar message
+
+Used for the ok button event.
+*/
 void remove_status_message()
 {
   guint status_id =
     gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), "mess");
   gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_id);
 }
+
+/*! Output a text to the status message bar
+
+\param text The text that has to be displayed.
+*/
 
 void put_status_message(const gchar *text)
 {
@@ -695,7 +702,7 @@ GtkWidget *create_main_vbox()
   frame = (GtkWidget *)create_split_files();
   gtk_container_add(GTK_CONTAINER(split_files_vbox), frame);
   
-  notebook_label = gtk_label_new((gchar *)_("Split files"));
+  notebook_label = gtk_label_new((gchar *)_("Batch processing"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            split_files_vbox,
                            (GtkWidget *)notebook_label);
@@ -785,7 +792,7 @@ GtkWidget *create_main_vbox()
   return main_vbox;
 }
 
-//main function, creates all the window
+//! Main function that creates all the windows
 void create_all()
 {
 #ifdef __WIN32__
@@ -822,7 +829,10 @@ void create_all()
   }
 }
 
-//print the status bar confirmation
+/*!Output an error message from libmp3splt to the status bar
+
+  \param The error number from the library.
+ */
 void print_status_bar_confirmation(gint confirmation)
 {
   char *error_from_library = mp3splt_get_strerror(the_state, confirmation);
@@ -833,4 +843,3 @@ void print_status_bar_confirmation(gint confirmation)
     error_from_library = NULL;
   }
 }
-
