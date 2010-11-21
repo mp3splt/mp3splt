@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-11-20 18:31+0100\n"
+"POT-Creation-Date: 2010-11-21 04:20+0100\n"
 "PO-Revision-Date: 2010-02-15 01:54+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -39,8 +39,8 @@ msgid " error: you already have the splitpoint in table"
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:725 src/tree_tab.c:1016 src/freedb_tab.c:507
-#: src/freedb_tab.c:529
+#: src/tree_tab.c:725 src/tree_tab.c:1016 src/freedb_tab.c:506
+#: src/freedb_tab.c:528
 msgid "description here"
 msgstr "description"
 
@@ -48,7 +48,7 @@ msgstr "description"
 msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/tree_tab.c:1161 src/preferences_tab.c:604
+#: src/tree_tab.c:1161 src/preferences_tab.c:602
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
@@ -108,7 +108,7 @@ msgstr "Effacer toutes les lignes"
 msgid "_Silence detection"
 msgstr "Détection du _silence"
 
-#: src/tree_tab.c:1610 src/mp3splt-gtk.c:361
+#: src/tree_tab.c:1610 src/mp3splt-gtk.c:370
 msgid " finished"
 msgstr " fini"
 
@@ -164,73 +164,73 @@ msgstr "_Effacer les fichiers sélectionnées"
 msgid "D_elete all files"
 msgstr "Effa_cer tous les fichiers"
 
-#: src/preferences_tab.c:396
+#: src/preferences_tab.c:394
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Choisir la langue (nécessite redémarrage)</b>"
 
-#: src/preferences_tab.c:430
+#: src/preferences_tab.c:428
 msgid "Choose split directory"
 msgstr "Choisir le répertoire pour les fichiers coupés"
 
-#: src/preferences_tab.c:553
+#: src/preferences_tab.c:551
 msgid "Br_owse dir"
 msgstr "Parc_ourir dossier"
 
-#: src/preferences_tab.c:561
+#: src/preferences_tab.c:559
 msgid "_Song dir"
 msgstr "Rép_ertoire du fichier"
 
-#: src/preferences_tab.c:566
+#: src/preferences_tab.c:564
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Répertoire des fichiers coupés</b>"
 
-#: src/preferences_tab.c:574
+#: src/preferences_tab.c:572
 msgid "_Create directories from filenames "
 msgstr "_Créér les répertoires à partir des noms de fichiers"
 
-#: src/preferences_tab.c:580
+#: src/preferences_tab.c:578
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Mode 'f_rame' (utile pour mp3 VBR) (seulement mp3)"
 
-#: src/preferences_tab.c:587
+#: src/preferences_tab.c:585
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 "Aj_ustement automatique (utilise la détection du silence pour ajuster les "
 "points)"
 
-#: src/preferences_tab.c:619
+#: src/preferences_tab.c:617
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr "Compensation du point de coupure (0 - début du silence, 1 - la fin) :"
 
-#: src/preferences_tab.c:636
+#: src/preferences_tab.c:634
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "Niveau d'écart (secondes autour du point à chercher du silence) :"
 
-#: src/preferences_tab.c:655
+#: src/preferences_tab.c:653
 msgid "Set _default split options"
 msgstr "Options par _défaut"
 
-#: src/preferences_tab.c:661
+#: src/preferences_tab.c:659
 msgid "<b>Split options</b>"
 msgstr "<b>Options de coupure</b>"
 
-#: src/preferences_tab.c:739
+#: src/preferences_tab.c:737
 msgid "Choose a player:"
 msgstr "Choisir un lecteur :"
 
-#: src/preferences_tab.c:763
+#: src/preferences_tab.c:761
 msgid "<b>Player options</b>"
 msgstr "<b>Options du lecteur</b>"
 
-#: src/preferences_tab.c:810
+#: src/preferences_tab.c:808
 msgid "Default format"
 msgstr "Format par défaut"
 
-#: src/preferences_tab.c:814
+#: src/preferences_tab.c:812
 msgid "Custom format"
 msgstr "Format personnalisé"
 
-#: src/preferences_tab.c:831
+#: src/preferences_tab.c:829
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -246,63 +246,63 @@ msgstr ""
 "    @t - titre\n"
 "    @n - identifiant de piste"
 
-#: src/preferences_tab.c:843
+#: src/preferences_tab.c:841
 msgid "<b>Output filename format</b>"
 msgstr "<b>Format des fichiers divisés</b>"
 
-#: src/preferences_tab.c:873
+#: src/preferences_tab.c:871
 msgid "Original file tags"
 msgstr "Tags du fichier d'entrée"
 
-#: src/preferences_tab.c:879
+#: src/preferences_tab.c:877
 msgid "Default tags (cddb or cue tags)"
 msgstr "Tags par défaut (cddb ou cue)"
 
-#: src/preferences_tab.c:885
+#: src/preferences_tab.c:883
 msgid "No tags"
 msgstr "Aucun tag"
 
-#: src/preferences_tab.c:890
+#: src/preferences_tab.c:888
 msgid "<b>Split files tags</b>"
 msgstr "<b>Tags des fichiers coupés</b>"
 
-#: src/preferences_tab.c:898
+#: src/preferences_tab.c:896
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Tags ID3v1 & ID3v2"
 
-#: src/preferences_tab.c:905
+#: src/preferences_tab.c:903
 msgid "ID3v2 tags"
 msgstr "Tags ID3v2"
 
-#: src/preferences_tab.c:911
+#: src/preferences_tab.c:909
 msgid "ID3v1 tags"
 msgstr "Tags ID3v1"
 
-#: src/preferences_tab.c:917
+#: src/preferences_tab.c:915
 msgid "Same tags version as the input file"
 msgstr "Même version des tags que le fichier d'entrée"
 
-#: src/preferences_tab.c:922
+#: src/preferences_tab.c:920
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:963 src/main_win.c:524
+#: src/preferences_tab.c:961 src/main_win.c:524
 msgid "Split"
 msgstr "Coupure"
 
-#: src/preferences_tab.c:969
+#: src/preferences_tab.c:967
 msgid "Tags"
 msgstr "Tags"
 
-#: src/preferences_tab.c:975
+#: src/preferences_tab.c:973
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:981 src/main_win.c:671
+#: src/preferences_tab.c:979 src/main_win.c:671
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/preferences_tab.c:988
+#: src/preferences_tab.c:986
 msgid "Language"
 msgstr "Langue"
 
@@ -545,7 +545,7 @@ msgstr ""
 msgid "Messages _history"
 msgstr "_Historique des messages"
 
-#: src/main_win.c:530 src/main_win.c:777 src/messages.c:185
+#: src/main_win.c:530 src/main_win.c:777 src/messages.c:182
 msgid "Messages history"
 msgstr "Historique des messages"
 
@@ -598,40 +598,40 @@ msgstr "Préférences"
 msgid "S_top"
 msgstr "S_top"
 
-#: src/freedb_tab.c:125
+#: src/freedb_tab.c:124
 #, c-format
 msgid "%s Revision %d"
 msgstr "%s Révision %d"
 
-#: src/freedb_tab.c:179
+#: src/freedb_tab.c:178
 msgid "Album title"
 msgstr "Titre de l'album"
 
-#: src/freedb_tab.c:199
+#: src/freedb_tab.c:198
 msgid "No"
 msgstr "Numéro"
 
-#: src/freedb_tab.c:305 src/freedb_tab.c:389
+#: src/freedb_tab.c:304 src/freedb_tab.c:388
 msgid "please wait... contacting tracktype.org"
 msgstr "veuillez attendre... connexion avec tracktype.org"
 
-#: src/freedb_tab.c:592
+#: src/freedb_tab.c:591
 msgid "Search tracktype.org:"
 msgstr "Chercher sur tracktype.org :"
 
-#: src/freedb_tab.c:603
+#: src/freedb_tab.c:602
 msgid "_Search"
 msgstr "_Recherche"
 
-#: src/freedb_tab.c:642
+#: src/freedb_tab.c:641
 msgid "Selected album:"
 msgstr "Album sélectionné :"
 
-#: src/freedb_tab.c:650
+#: src/freedb_tab.c:649
 msgid "_Add splitpoints"
 msgstr "Aj_outer les points"
 
-#: src/freedb_tab.c:657
+#: src/freedb_tab.c:656
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Mettre les points au tableau de points de coupure"
 
@@ -682,11 +682,11 @@ msgstr "Mode de division"
 msgid "File mode"
 msgstr "Mode fichier(s)"
 
-#: src/messages.c:165
+#: src/messages.c:162
 msgid "Show _debug messages"
 msgstr "Voir les messages de _déboggage"
 
-#: src/messages.c:172
+#: src/messages.c:169
 msgid "C_lear"
 msgstr "_Effacer"
 
@@ -729,60 +729,60 @@ msgstr "Info: %s"
 msgid " error: cannot create gstreamer playbin\n"
 msgstr " erreur: impossible de créer 'playbin' de gstreamer\n"
 
-#: src/mp3splt-gtk.c:150
+#: src/mp3splt-gtk.c:158
 #, c-format
 msgid " File '%s' created"
 msgstr "Fichier '%s' créé"
 
-#: src/mp3splt-gtk.c:169
+#: src/mp3splt-gtk.c:177
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr " préparation de \"%s\" (%d sur %d)"
 
-#: src/mp3splt-gtk.c:175
+#: src/mp3splt-gtk.c:183
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr " création de \"%s\" (%d sur %d)"
 
-#: src/mp3splt-gtk.c:181
+#: src/mp3splt-gtk.c:189
 msgid " searching for sync errors..."
 msgstr " recherche d'erreurs de synchronisation..."
 
-#: src/mp3splt-gtk.c:185
+#: src/mp3splt-gtk.c:193
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
-#: src/mp3splt-gtk.c:335
+#: src/mp3splt-gtk.c:343
 msgid " error: no files found in multiple files mode"
 msgstr " erreur: aucun fichier trouvé avec le mode 'fichiers multiples'"
 
-#: src/mp3splt-gtk.c:527
+#: src/mp3splt-gtk.c:539
 #, c-format
 msgid "Trying to set the output directory to %s.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:532
+#: src/mp3splt-gtk.c:544
 #, c-format
 msgid "Error: The specified output directory is inaccessible!\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:538
+#: src/mp3splt-gtk.c:550
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:540
+#: src/mp3splt-gtk.c:552
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:543
+#: src/mp3splt-gtk.c:555
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:557
+#: src/mp3splt-gtk.c:612
 #, fuzzy, c-format
 msgid "Cannot open input file %s\n"
 msgstr " erreur: ne peut pas ouvrir le fichier"
@@ -792,27 +792,27 @@ msgstr " erreur: ne peut pas ouvrir le fichier"
 msgid "Processing file '%s' ..."
 msgstr "Fichier '%s' ..."
 
-#: src/import.c:55
+#: src/import.c:63
 msgid "Choose file to import"
 msgstr "Choisir un fichier à importer"
 
-#: src/import.c:120
+#: src/import.c:133
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr "CDDB (*.cddb), CUE (*.cue), Marqueurs Audacity (*.txt)"
 
-#: src/import.c:124
+#: src/import.c:137
 msgid "CDDB files (*.cddb)"
 msgstr "Fichier CDDB (*.cddb)"
 
-#: src/import.c:126
+#: src/import.c:139
 msgid "CUE files (*.cue)"
 msgstr "Fichiers CUE (*.cue)"
 
-#: src/import.c:128
+#: src/import.c:141
 msgid "Audacity labels files (*.txt)"
 msgstr "Fichiers marqueurs Audacity (*.txt)"
 
-#: src/import.c:130
+#: src/import.c:143
 msgid "All files"
 msgstr "Tous les fichiers"
 
