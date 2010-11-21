@@ -11,6 +11,6 @@ Categories=Application;AudioVideo;Audio;AudioVideoEditing;
 Exec=mp3splt-gtk
 StartupNotify=false
 Terminal=false
-MimeType=application/ogg;audio/x-mp3;audio/ogg;x-vorbis+ogg;audio/mpeg
+MimeType=application/ogg;audio/x-mp3;audio/ogg;x-vorbis+ogg;audio/mpeg;application/x-cue;application/x-cddb
 
 
