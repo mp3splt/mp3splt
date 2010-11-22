@@ -108,7 +108,7 @@ AC_ARG_ENABLE(oggsplt_symlink,
 AC_HELP_STRING([--enable-oggsplt_symlink], [Enable symlink of oggsplt to mp3splt. ]),
 [enable_ogg_symlink=$enableval],[enable_ogg_symlink="no"])
 
-if test x$enable_ogg_symlink = xyes;then
+if test "x$enable_ogg_symlink" = xyes;then
   AM_CONDITIONAL(DO_SYMLINK, true)
 else
   AM_CONDITIONAL(DO_SYMLINK, false)

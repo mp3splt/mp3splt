@@ -24,7 +24,7 @@ clean:
 
 dist:
 #copy iconv & intl & ltdl
-	cp /bin/iconv.dll /bin/libintl-8.dll /bin/libltdl-7.dll .
+	cp /bin/iconv.dll /bin/libintl-8.dll /bin/libltdl-7.dll /bin/pcre3.dll .
 #copying vorbis and ogg libraries
 	cp /bin/libvorbisfile-3.dll /bin/libogg-0.dll /bin/libvorbis-0.dll /bin/libvorbisenc-2.dll .
 #copying libmad and libid3tag libraries

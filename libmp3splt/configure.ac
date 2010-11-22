@@ -133,7 +133,7 @@ AM_CONDITIONAL(IS_ON_WINDOWS, false)
 AC_ARG_ENABLE(win, [AC_HELP_STRING([--enable-win],[ Enable if compiling on windows with mingw. ]) ],
     [enable_win=$enableval],[enable_win="no"])
 
-if test x$enable_win = xyes;then
+if test "x$enable_win" = xyes;then
   AM_CONDITIONAL(IS_ON_WINDOWS, true)
 fi
 
@@ -147,7 +147,7 @@ mp3="no"
 AC_ARG_ENABLE(mp3, [AC_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ], 
     [enable_mp3_plugin=$enableval],[enable_mp3_plugin="yes"])
 
-if test x$enable_mp3_plugin = xyes;then
+if test "x$enable_mp3_plugin" = xyes;then
   MAD_CHECK([ AM_CONDITIONAL(MP3_PLUGIN,true) mp3="yes" ],
       [ AC_MSG_WARN([libmad not found ! Will build without mp3 support.]) ])
 fi
@@ -158,7 +158,7 @@ id3="no";
 AC_ARG_ENABLE(id3tag, [AC_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
     [enable_id3tag=$enableval],[enable_id3tag="yes"])
 
-if test x$enable_id3tag = xyes;then
+if test "x$enable_id3tag" = xyes;then
   ID3_CHECK([ AM_CONDITIONAL(ID3TAG,true) id3="yes"; ],
       [ AC_MSG_WARN([libid3tag not found ! Will build without id3 support.]) ])
 fi
@@ -174,7 +174,7 @@ ogg="no"
 AC_ARG_ENABLE(ogg, [AC_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
     [enable_ogg_plugin=$enableval],[enable_ogg_plugin="yes"])
 
-if test x$enable_ogg_plugin = xyes;then
+if test "x$enable_ogg_plugin" = xyes;then
   XIPH_PATH_OGG(,AC_MSG_WARN([Ogg not found! Download the latest version of libogg at http://www.xiph.org.]))
   XIPH_PATH_VORBIS(AM_CONDITIONAL(OGG_PLUGIN,true) ogg="yes",
       AC_MSG_WARN(Vorbis not found! Will build without ogg/vorbis support.))
@@ -189,10 +189,10 @@ AM_CONDITIONAL(HAS_CUTTER, false)
 AC_ARG_ENABLE(cutter, [AC_HELP_STRING([--disable-cutter],[ Disable Cutter unit testing. ]) ],
     [enable_cutter=$enableval],[enable_cutter="yes"])
 
-if test x$enable_cutter = xyes;then
+if test "x$enable_cutter" = xyes;then
 
 AC_CHECK_CUTTER
-if test x$CUTTER != x;then
+if test "x$CUTTER" != x;then
   AM_CONDITIONAL(HAS_CUTTER, true)
 fi
 
@@ -207,7 +207,7 @@ pcre="no"
 AC_ARG_ENABLE(pcre, AC_HELP_STRING([--disable-pcre], [Disable pcre support to set tags from input filename. ]),
     [enable_pcre=$enableval],[enable_pcre="yes"])
 
-if test x$enable_pcre = xyes;then
+if test "x$enable_pcre" = xyes;then
   PKG_PROG_PKG_CONFIG
   PKG_CHECK_MODULES([PCRE], [libpcre >= 1.0],
       [AM_CONDITIONAL(PCRE, true) pcre="yes" ],

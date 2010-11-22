@@ -131,13 +131,18 @@ gnome="no"
 AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
     [enable_gnome=$enableval],[enable_gnome="yes"])
 
-if test x$enable_gnome = xyes;then
+if test "x$enable_gnome" = xyes;then
+
+ifdef([GNOME_DOC_INIT],
+[
   #Prepare building the gnome documentation of this program
   GNOME_DOC_INIT([],
                  [],
                  [AC_MSG_ERROR([gnome-doc-utils not found.
 
     Install it or configure with "--disable-gnome".])])
+],
+[])
 
   #Check for libgnome, the library for displaying the "help" dialogue
   PKG_CHECK_MODULES([GNOMEUI],
@@ -148,12 +153,13 @@ if test x$enable_gnome = xyes;then
     Install it or configure with "--disable-gnome".])])
 
   AC_CHECK_PROGS(SCROLLKEEPER, scrollkeeper-config scrollkeeper-update scrollkeeper-uninstall)
-  if test x"$SCROLLKEEPER" = x; then
+  if test "x$SCROLLKEEPER" = x; then
     AC_MSG_ERROR([One of the following scrollkeeper commands not found:
  scrollkeeper-config, scrollkeeper-update, scrollkeeper-uninstall.
 
     Install rarian or configure with "--disable-scrollkeeper".])
   fi
+
 else
   AC_DEFINE(HAVE_GNOME, false, [Undefined if we cannot use gnome functions.])
 	AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
@@ -182,7 +188,7 @@ audacious="no"
 AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audacious player support. ]),
     [enable_audacious=$enableval],[enable_audacious="yes"])
 
-if test x$enable_audacious = xyes;then
+if test "x$enable_audacious" = xyes;then
   PKG_CHECK_MODULES([AUDACIOUS], [audacious >= 0.1 audclient],
       [AM_CONDITIONAL(AUDACIOUS, true) audacious="yes" ],
       [AC_MSG_ERROR([Audacious player development files are not installed.
@@ -199,7 +205,7 @@ gstreamer="no"
 AC_ARG_ENABLE(gstreamer, AC_HELP_STRING([--disable-gstreamer], [Disable gstreamer 'internal' player support. ]),
     [enable_gstreamer=$enableval],[enable_gstreamer="yes"])
 
-if test x$enable_gstreamer = xyes;then
+if test "x$enable_gstreamer" = xyes;then
   PKG_CHECK_MODULES(GST, [gstreamer-0.10 >= 0.10
       gstreamer-base-0.10 >= 0.10
       gstreamer-plugins-base-0.10 >= 0.10],
