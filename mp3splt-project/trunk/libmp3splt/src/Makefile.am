@@ -27,7 +27,7 @@ else
 libmp3splt_la_LIBADD += -lz
 endif
 
-libmp3splt_la_LIBADD += -lws2_32 -lintl
+libmp3splt_la_LIBADD += -lws2_32 -lintl -lshlwapi
 
 else
 libmp3splt_la_LIBADD += @LIBLTDL@ 
