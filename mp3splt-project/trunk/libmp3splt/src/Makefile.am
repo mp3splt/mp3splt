@@ -10,6 +10,13 @@ libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:5:0
 libmp3splt_la_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt
 libmp3splt_la_LIBADD = @LIBINTL@ -lm
 
+if PCRE
+libmp3splt_la_LIBADD += @PCRE_LIBS@ 
+INCLUDES += @PCRE_CFLAGS@
+else
+INCLUDES += -DNO_PCRE
+endif
+
 if WIN32
 
 libmp3splt_la_LIBADD += -lltdl 
@@ -56,7 +63,8 @@ libmp3splt_la_SOURCES = \
   tags_parser.c $(top_srcdir)/include/libmp3splt/tags_parser.h \
   oformat_parser.c $(top_srcdir)/include/libmp3splt/oformat_parser.h \
   pair.c $(top_srcdir)/include/libmp3splt/pair.h \
-  debug.c $(top_srcdir)/include/libmp3splt/debug.h
+  debug.c $(top_srcdir)/include/libmp3splt/debug.h \
+  filename_regex.c $(top_srcdir)/include/libmp3splt/filename_regex.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale

@@ -60,6 +60,7 @@
 #include "tags_parser.h"
 #include "oformat_parser.h"
 #include "debug.h"
+#include "filename_regex.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

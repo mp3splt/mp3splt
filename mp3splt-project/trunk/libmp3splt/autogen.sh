@@ -42,7 +42,7 @@ echo -n "1/6 Running autopoint... " \
 && autopoint -f && echo "done" \
 && echo -n "2/6 Running aclocal... " \
 && aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
-&& if test -z $win ;then sed "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4 > libmp3splt_aclocal.m4 && mv libmp3splt_aclocal.m4 aclocal.m4;fi \
+&& if x=x$win;then sed "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4 > libmp3splt_aclocal.m4 && mv libmp3splt_aclocal.m4 aclocal.m4;fi \
 && echo -n "3/6 Running autoheader... " \
 && autoheader && echo "done" \
 && echo -n "4/6 Running libtoolize... " \

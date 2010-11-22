@@ -1,6 +1,7 @@
 #if GNOME
 include $(top_srcdir)/build-aux/gnome-doc-utils.make
-dist-hook: doc-dist-hook
+#make dist fails with doc-dist-hook ...
+#dist-hook: doc-dist-hook
 
 DOC_MODULE = mp3splt-gtk
 DOC_ENTITIES = legal.xml

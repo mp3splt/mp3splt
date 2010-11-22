@@ -30,6 +30,7 @@ BASIC_FILES="
 mp3splt-gtk/src/mp3splt-gtk.exe
 libmp3splt/src/.libs/libmp3splt${DLL_SUFFIX}.dll
 libltdl-7.dll
+pcre3.dll
 mp3splt-gtk/src/mp3splt-gtk.png
 mp3splt-gtk/src/mp3splt-gtk_ico.png
 mp3splt-gtk/windows/mp3splt-gtk.ico

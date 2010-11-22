@@ -3,8 +3,8 @@
  * libmp3splt -- library based on mp3splt,
  *               for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2010 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2010 David Belohrad
  *
  * http://mp3splt.sourceforge.net
  *
@@ -30,45 +30,15 @@
  *
  *********************************************************/
 
-#include "splt.h"
+#ifndef NO_PCRE
 
-splt_pair *splt_pair_new(void *first, void *second)
-{
-  splt_pair *pair = malloc(sizeof(splt_pair));
-  if (pair == NULL)
-  {
-    return NULL;
-  }
+#ifndef SPLT_FILENAME_REGEX_H
 
-  pair->first = first;
-  pair->second = second;
+//TODO
 
-  return pair;
-}
+#define SPLT_FILENAME_REGEX_H
 
-void splt_pair_free(splt_pair **pair)
-{
-  if (!pair)
-  {
-    return;
-  }
+#endif
 
-  if (!*pair)
-  {
-    return;
-  }
-
-  free(*pair);
-  *pair = NULL;
-}
-
-void *splt_pair_first(splt_pair *pair)
-{
-  return pair->first;
-}
-
-void *splt_pair_second(splt_pair *pair)
-{
-  return pair->second;
-}
+#endif
 

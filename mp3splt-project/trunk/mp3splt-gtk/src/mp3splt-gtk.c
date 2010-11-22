@@ -38,13 +38,19 @@
  *********************************************************/
 
 #include <signal.h>
-#include <gtk/gtk.h>
-#include <libmp3splt/mp3splt.h>
 #include <locale.h>
-#include <glib/gi18n.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
+
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include <glib/gi18n.h>
 #include <glib.h>
+
+#include <gtk/gtk.h>
+#include <libmp3splt/mp3splt.h>
 
 #ifdef __WIN32__
 #include <windows.h>
@@ -64,8 +70,6 @@
 #include "preferences_manager.h"
 #include "player_tab.h"
 #include "import.h"
-#include <sys/stat.h>
-#include <sys/types.h>
 
 //the state
 splt_state *the_state = NULL;
@@ -546,7 +550,11 @@ gint main(gint argc, gchar *argv[], gchar **envp)
       case 'd':
 	fprintf (stderr, _("Trying to set the output directory to %s.\n"), optarg);
 	outputdirectory_set((gchar *)optarg);
-	mkdir(optarg,0777);
+#ifdef __WIN32__
+	mkdir(optarg);
+#else
+	mkdir(optarg, 0777);
+#endif
 	if(!check_if_dir((guchar *)optarg))
 	  {
 	    fprintf(stderr,_("Error: The specified output directory is inaccessible!\n"));
@@ -621,15 +629,19 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 		   argv[optind]);
 	return 1;
 	}
-      
+
+#ifndef __WIN32__
       // If we start the player it will find a file with a relative
       // pathname. But if the player is already running it might
       // need an absolute path.
       inputfilename=realpath(argv[optind],NULL);
       handle_import(inputfilename);
       free(inputfilename);
+#else
+      handle_import(argv[optind]);
+#endif
     }
-  
+
   gdk_threads_enter();
   gtk_main();
   gdk_threads_leave();
