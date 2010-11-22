@@ -18,7 +18,7 @@ cd $script_dir/../..
 put_package "cross_windows"
 
 #we run autoconf and automake..
-cd mp3splt-gtk && ./autogen.sh || exit 1 && cd ..
+cd mp3splt-gtk && ./autogen.sh win || exit 1 && cd ..
 
 #untar and copy the required libraries
 cd ../libs
@@ -47,7 +47,7 @@ done
 #we compile mp3splt-gtk
 cd trunk/mp3splt-gtk &&\
 cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
-./configure --disable-audacious --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
+./configure --disable-audacious --disable-gnome --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
 make clean && make && make install &&\
 ${HOST}-strip ./src/mp3splt-gtk.exe || exit 1
 

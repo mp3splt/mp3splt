@@ -1,14 +1,14 @@
 #include <cutter.h>
 #include <splt_array.h>
 
-static splt_array *array;
+static splt_array *array = NULL;
 
 void cut_setup()
 {
-  array = NULL;
+  array = splt_array_new();
 }
 
-void cut_shutdown()
+void cut_teardown()
 {
   if (array)
   {
@@ -18,14 +18,12 @@ void cut_shutdown()
 
 void test_new()
 {
-  array = splt_array_new();
+  cut_assert_not_null(array);
   cut_assert_equal_int(0, splt_array_length(array));
 }
 
 void test_append_and_get()
 {
-  array = splt_array_new();
-
   int element1 = 183;
   splt_array_append(array, &element1);
   int element2 = 87;
@@ -42,8 +40,6 @@ void test_append_and_get()
 
 void test_clear()
 {
-  array = splt_array_new();
-
   int element1 = 183;
   splt_array_append(array, &element1);
   int element2 = 87;
@@ -59,7 +55,6 @@ void test_clear()
 
 void test_free()
 {
-  array = splt_array_new();
   splt_array_free(&array);
 
   cut_assert_null(array);

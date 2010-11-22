@@ -5,8 +5,10 @@ AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -no-undefined
 
 if HAS_CUTTER
 
-noinst_LTLIBRARIES = test_splt_array.la
-test_splt_array_la_SOURCES = test_splt_array.c
+noinst_LTLIBRARIES = test_splt_array.la test_pair.la
+
+test_splt_array_la_SOURCES = test_splt_array.c tests.h
+test_pair_la_SOURCES = test_pair.c tests.h
 
 endif
 

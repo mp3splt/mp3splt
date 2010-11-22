@@ -49,7 +49,7 @@
 #define PACKAGE_NAME "mp3splt"
 #endif
 
-#define MP3SPLT_DATE "14/11/10"
+#define MP3SPLT_DATE "22/11/10"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"

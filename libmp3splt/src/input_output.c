@@ -398,18 +398,13 @@ int splt_io_create_directories(splt_state *state, const char *dir)
 
       if (! splt_io_check_if_directory(dir_to_create))
       {
-        //don't create output directories if we pretend to split
-        //TODO: remove if
-        if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
-        {
-          splt_d_print_debug(state,"Creating directory _%s_ ...\n", dir_to_create);
+        splt_d_print_debug(state,"Creating directory _%s_ ...\n", dir_to_create);
 
-          if ((splt_io_mkdir(state, dir_to_create)) == -1)
-          {
-            splt_e_set_strerror_msg_with_data(state, dir_to_create);
-            result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
-            goto end;
-          }
+        if ((splt_io_mkdir(state, dir_to_create)) == -1)
+        {
+          splt_e_set_strerror_msg_with_data(state, dir_to_create);
+          result = SPLT_ERROR_CANNOT_CREATE_DIRECTORY;
+          goto end;
         }
       }
     }

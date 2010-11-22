@@ -1491,6 +1491,13 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
       long temp = (long)
         (((double)(mp3state->mp3file.len - mp3state->mp3file.firsth)
           / (double)mp3state->mp3file.bitrate) * 100.0);
+
+      /*fprintf(stdout,"firsth = %lf\n", mp3state->mp3file.firsth);
+      fprintf(stdout,"length = %lf\n", mp3state->mp3file.len);
+      fprintf(stdout,"bitrate = %lf\n", mp3state->mp3file.bitrate);
+      fprintf(stdout,"total length = %ld\n", temp);
+      fflush(stdout);*/
+
       splt_t_set_total_time(state, temp);
     }
   }

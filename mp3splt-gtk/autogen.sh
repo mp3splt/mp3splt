@@ -42,7 +42,7 @@ echo -n "Running aclocal again after adding the help files... "; aclocal -I m4 $
 && autoheader && echo "done" \
 && echo -n "Running autoconf... " \
 && autoconf && echo "done" \
-&& if ! test -z $win; then touch build-aux/gnome-doc-utils.make; fi \
+&& if test x!=x$win; then touch build-aux/gnome-doc-utils.make; fi \
 && echo -n "Running automake... " \
 && automake -a -c && echo "done"
 

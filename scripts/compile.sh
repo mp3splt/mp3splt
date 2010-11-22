@@ -433,11 +433,11 @@ fi
 ###################################
 #build packages
 
-if [[ $BUILD_UBUNTU_PACKAGES -eq 1 ]];then
-  ubuntu_packages
-fi
 if [[ $BUILD_DEBIAN_PACKAGES -eq 1 ]];then
   debian_packages
+fi
+if [[ $BUILD_UBUNTU_PACKAGES -eq 1 ]];then
+  ubuntu_packages
 fi
 if [[ $BUILD_WINDOWS_PACKAGES -eq 1 ]];then
   windows_cross_installers

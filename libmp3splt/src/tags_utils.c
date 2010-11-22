@@ -33,8 +33,6 @@
 static char *splt_tu_get_replaced_with_tags(const char *word,
     const splt_tags *tags, int track, int *err, int replace_tags_in_tags);
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state);
-static int splt_tu_set_on_tags_field(splt_tags *tags,
-    int tags_field, const void *data);
 static void splt_tu_set_empty_tags(splt_state *state, int index);
 static void splt_tu_free_one_tags(splt_tags *tags);
 
@@ -299,6 +297,19 @@ void splt_tu_reset_tags(splt_tags *tags)
   tags->tags_version = 0;
 }
 
+splt_tags *splt_tu_new_tags(int *error)
+{
+  splt_tags *tags = malloc(sizeof(splt_tags));
+
+  if (tags == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  return tags;
+}
+
 int splt_tu_new_tags_if_necessary(splt_state *state, int index)
 {
   int error = SPLT_OK;
@@ -311,9 +322,9 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
     }
     else
     {
-      if ((state->split.tags = malloc(sizeof(splt_tags))) == NULL)
+      state->split.tags = splt_tu_new_tags(&error);
+      if (error < 0)
       {
-        error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         return error;
       }
       else
@@ -379,7 +390,7 @@ int splt_tu_set_tags_field(splt_state *state, int index,
   }
   else
   {
-    splt_tu_set_on_tags_field(&state->split.tags[index], tags_field, data);
+    splt_tu_set_field_on_tags(&state->split.tags[index], tags_field, data);
   }
 
   if (error != SPLT_OK)
@@ -392,12 +403,12 @@ int splt_tu_set_tags_field(splt_state *state, int index,
 
 int splt_tu_set_like_x_tags_field(splt_state *state, int tags_field, const void *data)
 {
-  return splt_tu_set_on_tags_field(&state->split.tags_like_x, tags_field, data);
+  return splt_tu_set_field_on_tags(&state->split.tags_like_x, tags_field, data);
 }
 
 int splt_tu_set_original_tags_field(splt_state *state, int tags_field, const void *data)
 {
-  return splt_tu_set_on_tags_field(&state->original_tags, tags_field, data);
+  return splt_tu_set_field_on_tags(&state->original_tags, tags_field, data);
 }
 
 int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
@@ -645,6 +656,47 @@ function_end:
   return err;
 }
 
+int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data)
+{
+  int err = SPLT_OK;
+
+  switch (tags_field)
+  {
+    case SPLT_TAGS_TITLE:
+      err = splt_su_copy((char *)data, &tags->title);
+      break;
+    case SPLT_TAGS_ARTIST:
+      err = splt_su_copy((char *)data, &tags->artist);
+      break;
+    case SPLT_TAGS_ALBUM:
+      err = splt_su_copy((char *)data, &tags->album);
+      break;
+    case SPLT_TAGS_YEAR:
+      err = splt_su_copy((char *)data, &tags->year);
+      break;
+    case SPLT_TAGS_COMMENT:
+      err = splt_su_copy((char *)data, &tags->comment);
+      break;
+    case SPLT_TAGS_PERFORMER:
+      err = splt_su_copy((char *)data, &tags->performer);
+      break;
+    case SPLT_TAGS_TRACK:
+      tags->track = *((int *)data);
+      break;
+    case SPLT_TAGS_GENRE:
+      tags->genre = *((unsigned char *)data);
+      break;
+    case SPLT_TAGS_VERSION:
+      tags->tags_version = *((int *)data);
+      break;
+    default:
+      splt_e_error(SPLT_IERROR_INT,__func__, -500, NULL);
+      break;
+  }
+
+  return err;
+}
+
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
@@ -836,45 +888,4 @@ static void splt_tu_set_empty_tags(splt_state *state, int index)
   splt_tu_reset_tags(&state->split.tags[index]);
 }
 
-static int splt_tu_set_on_tags_field(splt_tags *tags,
-    int tags_field, const void *data)
-{
-  int err = SPLT_OK;
-
-  switch (tags_field)
-  {
-    case SPLT_TAGS_TITLE:
-      err = splt_su_copy((char *)data, &tags->title);
-      break;
-    case SPLT_TAGS_ARTIST:
-      err = splt_su_copy((char *)data, &tags->artist);
-      break;
-    case SPLT_TAGS_ALBUM:
-      err = splt_su_copy((char *)data, &tags->album);
-      break;
-    case SPLT_TAGS_YEAR:
-      err = splt_su_copy((char *)data, &tags->year);
-      break;
-    case SPLT_TAGS_COMMENT:
-      err = splt_su_copy((char *)data, &tags->comment);
-      break;
-    case SPLT_TAGS_PERFORMER:
-      err = splt_su_copy((char *)data, &tags->performer);
-      break;
-    case SPLT_TAGS_TRACK:
-      tags->track = *((int *)data);
-      break;
-    case SPLT_TAGS_GENRE:
-      tags->genre = *((unsigned char *)data);
-      break;
-    case SPLT_TAGS_VERSION:
-      tags->tags_version = *((int *)data);
-      break;
-    default:
-      splt_e_error(SPLT_IERROR_INT,__func__, -500, NULL);
-      break;
-  }
-
-  return err;
-}
 

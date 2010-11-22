@@ -33,6 +33,7 @@ libintl-8.dll
 iconv.dll
 libltdl-7.dll
 zlib1.dll
+pcre3.dll
 "
 
 MP3_PLUGIN_FILES="

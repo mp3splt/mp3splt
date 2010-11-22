@@ -68,7 +68,9 @@ AC_C_CONST
 #################################################################
 
 AC_WITH_LTDL
-LT_INIT([win32-dll])
+ifdef([LT_INIT],
+      [ LT_INIT([win32-dll]) ],
+      [ AC_PROG_LIBTOOL ])
 
 #################################################################
 # Check for the type of the host
@@ -196,6 +198,25 @@ fi
 
 fi
 
+#################################################################
+# Check for pcre - perl compatible regular expressions
+#################################################################
+
+AM_CONDITIONAL(PCRE, false)
+pcre="no"
+AC_ARG_ENABLE(pcre, AC_HELP_STRING([--disable-pcre], [Disable pcre support to set tags from input filename. ]),
+    [enable_pcre=$enableval],[enable_pcre="yes"])
+
+if test x$enable_pcre = xyes;then
+  PKG_PROG_PKG_CONFIG
+  PKG_CHECK_MODULES([PCRE], [libpcre >= 1.0],
+      [AM_CONDITIONAL(PCRE, true) pcre="yes" ],
+      [AC_MSG_ERROR([libpcre is not installed. It is used for setting tags from input filename.
+
+    Install it or configure with "--disable-pcre".])])
+fi
+
+
 #################################################
 # Print the configuration to the screen
 #################################################
@@ -211,9 +232,12 @@ echo
 echo "    libmad (.mp3 format)                                    $mp3"
 echo "    libogg, libvorbis (.ogg/vorbis format)                  $ogg"
 echo
+echo " Other :"
+
+echo
+echo "    pcre (for setting tags from the input filename)         $pcre"
+
 if test "x$mp3" = "xyes"; then
-  echo " Other :"
-  echo
   echo "    libid3tag (for handling id3 tags)                       $id3"
   if test "x$id3" = "xno" && test "x$with_id3" = "xyes"; then
     echo
@@ -222,6 +246,7 @@ if test "x$mp3" = "xyes"; then
   fi
   echo
 fi
+
 echo "---------------------------------------------------------"
 echo
 

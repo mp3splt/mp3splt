@@ -9,9 +9,9 @@ Package: mp3splt-gtk
 Architecture: any
 Depends: ${shlibs:Depends}, libmp3splt (>= 0.6.1)
 Suggests: mp3splt
-Description: GTK2 gui that uses libmp3splt for lossless linear editing 
+Description: GTK2 gui that uses libmp3splt for lossless linear editing
  of audio files (cut an audio file into several tracks.)
- Since there is no decoding step involved this means that MP3 (including 
+ Since there is no decoding step involved this means that MP3 (including
  VBR) and Ogg Vorbis can be split into smaller files without
  loosing any quality. Useful for splitting albums into tracks which
  can be done either manually, using freedb.org data from the net

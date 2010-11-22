@@ -25,13 +25,18 @@ mp3splt_gtk_SOURCES = \
 	import.c import.h \
 	options_manager.c options_manager.h \
 	preferences_manager.c preferences_manager.h
-#	export.c export.h \
+#	export.c export.h 
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 
-AM_CPPFLAGS = $(GNOMEUI_CFLAGS)
+mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm
 
-mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm @GNOMEUI_LIBS@
+if GNOME
+mp3splt_gtk_LDADD += @GNOMEUI_LIBS@
+INCLUDES += $(GNOMEUI_CFLAGS)
+else
+INCLUDES += -DNO_GNOME
+endif
 
 if WIN32
 INCLUDES += -mms-bitfields -enable-stdcall-fixup
