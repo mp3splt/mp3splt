@@ -31,6 +31,10 @@
 #include <dirent.h>
 #include <errno.h>
 
+#ifdef __WIN32__
+#include <shlwapi.h>
+#endif
+
 #include "splt.h"
 #include "win32.h"
 
@@ -229,18 +233,45 @@ static int splt_io_linked_file_type_is(const char *fname, int file_type)
 
 int splt_io_check_if_directory(const char *fname)
 {
-  if (fname != NULL)
+#ifdef __WIN32__
+  int is_file = splt_io_check_if_file(NULL, fname);
+  if (is_file)
   {
-#ifndef __WIN32__
-    int is_link = splt_io_file_type_is(fname, S_IFLNK);
+    return SPLT_FALSE;
+  }
+
+  if (splt_w32_check_if_encoding_is_utf8(fname))
+  {
+    wchar_t *wpath = splt_w32_utf8_to_utf16(fname);
+    if (PathFileExistsW(wpath) == 1)
+    {
+      free(wpath);
+      return SPLT_TRUE;
+    }
+
+    free(wpath);
+    return SPLT_FALSE;
+  }
+  else
+  {
+    if (PathFileExistsA(fname) == 1)
+    {
+      return SPLT_TRUE;
+    }
+
+    return SPLT_FALSE;
+  }
 #endif
 
+  if (fname != NULL)
+  {
     if (splt_io_file_type_is(fname, S_IFDIR))
     {
       return SPLT_TRUE;
     }
 
 #ifndef __WIN32__
+    int is_link = splt_io_file_type_is(fname, S_IFLNK);
     if (is_link && splt_io_linked_file_type_is(fname, S_IFDIR))
     {
       return SPLT_TRUE;
@@ -263,16 +294,13 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
       return SPLT_TRUE;
     }
 
-#ifndef __WIN32__
-    int is_link = splt_io_file_type_is(fname, S_IFLNK);
-#endif
-
     if (splt_io_file_type_is(fname, S_IFREG))
     {
       return SPLT_TRUE;
     }
 
 #ifndef __WIN32__
+    int is_link = splt_io_file_type_is(fname, S_IFLNK);
     if (is_link && splt_io_linked_file_type_is(fname, S_IFREG))
     {
       return SPLT_TRUE;
@@ -280,7 +308,10 @@ int splt_io_check_if_file(splt_state *state, const char *fname)
 #endif
   }
 
-  splt_e_set_strerror_msg_with_data(state, fname);
+  if (state != NULL)
+  {
+    splt_e_set_strerror_msg_with_data(state, fname);
+  }
 
   return SPLT_FALSE;
 }
