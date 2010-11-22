@@ -506,9 +506,10 @@ static void splt_s_split_by_time(splt_state *state, int *error,
     //we put the time split error
     switch (*error)
     {
-      case SPLT_MIGHT_BE_VBR: 
+/*      case SPLT_MIGHT_BE_VBR: 
         *error = SPLT_TIME_SPLIT_OK;
-        break;
+        break; */
+
       case SPLT_OK_SPLIT: 
         *error = SPLT_TIME_SPLIT_OK;
         break;
@@ -910,9 +911,9 @@ void splt_s_silence_split(splt_state *state, int *error)
       //we put the silence split errors
       switch (*error)
       {
-        case SPLT_MIGHT_BE_VBR:
+/*        case SPLT_MIGHT_BE_VBR:
           *error = SPLT_SILENCE_OK;
-          break;
+          break;*/
         case SPLT_OK_SPLIT:
           *error = SPLT_SILENCE_OK;
           break;
