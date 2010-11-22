@@ -54,6 +54,7 @@
  - If we have previously imported the file... ...do we 
    want to handle all the tags we do not use --- but that
    have been there. And if yes: How do we handle them best?
+ - Is there really no simple C/GTK+ function for quoting quotes?
 */
 void export_file(const gchar* filename)
 {
@@ -61,9 +62,6 @@ void export_file(const gchar* filename)
   GtkTreeModel *model;
   GtkTreeIter iter;
   
-  // The track number
-  gint count = 1;
-
   if((outfile=fopen(filename,"w")))
     {
       put_status_message((gchar *)strerror(errno));
@@ -71,7 +69,7 @@ void export_file(const gchar* filename)
     };
   gdk_threads_enter();
 
-  if(fprintf(outfile,"FILE ",inputfilename_get())<0)
+  if(fprintf(outfile,"FILE %s\n",inputfilename_get())<0)
     {
       put_status_message((gchar *)strerror(errno));
       return;
@@ -79,18 +77,75 @@ void export_file(const gchar* filename)
 
   model = gtk_tree_view_get_model(tree_view);
   
-  gchar *description;
-  //we count the rows
-  gint count = 0;
-  //if the table is not empty
-  //get iter number
+  //if the table is not empty get iter number
   if(gtk_tree_model_get_iter_first(model, &iter))
     {
-      {
-	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-			   COL_DESCRIPTION,&description,
-			   -1);
-      } until(!gtk_tree_model_iter_next(model, &iter));
+      // The track number
+      gint count = 1;
+
+      do 
+	{
+	  // All information we need for this track
+	  gchar *description;
+	  gint mins,secs,hundr;
+	  gboolean keep;
+
+	  gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+			     COL_DESCRIPTION,&description,
+                             COL_MINUTES, &mins,
+                             COL_SECONDS, &secs,
+                             COL_HUNDR_SECS, &hundr,
+			     COL_CHECK, &keep,
+			     -1);
+	  if(keep)
+	    {
+	      gchar *outputchar;
+	      
+	      // Output the track header
+	      if(fprintf(outfile,"\tTRACK %2i AUDIO",count++)<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		};
+	      
+	      
+	      // Output the track description excaping any quotes
+	      if(fprintf(outfile,"\t\tTITLE %1i \"",count++)<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		}
+	      for(outputchar=description;*outputchar!='\0';outputchar++)
+		{
+		  if(*outputchar=='"')
+		    {
+		      if(fprintf(outfile,"\\\"")<0)
+			{
+			  put_status_message((gchar *)strerror(errno));
+			  return;
+			}
+		    }
+		  else
+		    {
+		      if(fprintf(outfile,"%c",*outputchar)<0)
+			{
+			  put_status_message((gchar *)strerror(errno));
+			  return;
+			}
+		    }
+		}    
+	      if(fprintf(outfile,"\"\n")<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		};
+
+	      //Now output the track duration and length
+	      // (TODO)
+	    }
+	  
+	} while(!gtk_tree_model_iter_next(model, &iter));
+    }
 
   gdk_threads_leave();
   fclose(outfile);

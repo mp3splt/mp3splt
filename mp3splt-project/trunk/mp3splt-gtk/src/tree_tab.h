@@ -125,7 +125,8 @@ enum {
   /*! split preview button */
   COL_SPLIT_PREVIEW,
   NUM_COLUMNS = 8
-};
+} tree_columns;
+
 extern GtkTreeView *tree_view;
 
 #endif
