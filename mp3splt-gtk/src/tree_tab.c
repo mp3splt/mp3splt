@@ -92,7 +92,8 @@ GtkWidget *handle_box;
 
 /*! The tree view (which is the table all split points are stored inside)
 
-Used globally for the update_*_from_spinner
+Used globally for the update_*_from_spinner; the information about the
+order of items is kept in the enum tree_columns.
 */
 GtkTreeView *tree_view;
 
