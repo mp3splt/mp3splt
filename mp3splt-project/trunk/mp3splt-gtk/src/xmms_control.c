@@ -56,10 +56,8 @@ static DBusGConnection *dbus_connection = NULL;
 
 #include "player.h"
 
-extern int selected_player;
-
 #ifndef NO_AUDACIOUS
-//Gets informations about the song
+//!Acquires informations about the song
 void myxmms_get_song_infos(gchar *total_infos)
 {
   //the frequency
@@ -103,8 +101,10 @@ void myxmms_get_song_infos(gchar *total_infos)
   }
 }
 
-//returns the filename
-//must be freed after
+/*!returns the filename
+
+The filename is allocated by this function and must be g_free'ed after use.
+*/
 gchar *myxmms_get_filename()
 {
   gchar *fname;
@@ -124,14 +124,16 @@ gchar *myxmms_get_filename()
   return fname2;
 }
 
-//returns the number of songs of the playlist
+//!returns the number of songs in the playlist
 gint myxmms_get_playlist_number()
 {
   return audacious_remote_get_playlist_length(dbus_proxy);
 }
 
-//returns the title of the song
-//must be freed after
+/*!returns the title of the song
+
+The filename is allocated by this function and must be g_free'ed after use.
+*/
 gchar *myxmms_get_title_song()
 {
   gchar *title;
@@ -145,13 +147,13 @@ gchar *myxmms_get_title_song()
   return title;
 }
 
-//returns elapsed time
+//!returns elapsed time
 gint myxmms_get_time_elapsed()
 {
   return audacious_remote_get_output_time(dbus_proxy);
 }
 
-//starts xmms
+//!starts xmms
 void myxmms_start()
 {
   gint timer;
@@ -172,7 +174,7 @@ void myxmms_start()
   g_free(exec_this);
 }
 
-//selects the last file in the playlist
+//!selects the last file in the playlist
 void myxmms_select_last_file()
 {
   gint number;
@@ -180,14 +182,14 @@ void myxmms_select_last_file()
   audacious_remote_set_playlist_pos(dbus_proxy,(number-1));
 }
 
-//plays the last file of the playlist
+//!plays the last file of the playlist
 void myxmms_play_last_file()
 {
   myxmms_select_last_file();
   audacious_remote_play(dbus_proxy);
 }
 
-//add files to the xmms playlist
+//!add files to the xmms playlist
 void myxmms_add_files(GList *list)
 {
   //change filenames into URLs
@@ -212,26 +214,30 @@ void myxmms_add_files(GList *list)
   audacious_remote_playlist_add(dbus_proxy, list); 
 }
 
-//sets volume
+//!sets the volume level
 void myxmms_set_volume(gint volume)
 {
   audacious_remote_set_main_volume(dbus_proxy, volume);
 }
 
-//returns volume
+//!returns volume level
 gint myxmms_get_volume()
 {
   return audacious_remote_get_main_volume(dbus_proxy);
 }
 
-//starts xmms with songs
+/*!starts xmms with songs
+
+  \param list The list of the songs to start xmms with
+  \todo Which format is this list in?
+ */
 void myxmms_start_with_songs(GList *list)
 {
   myxmms_start();
   myxmms_add_files(list);
 }
 
-//returns TRUE if xmms is running; if not, FALSE 
+//!returns TRUE if xmms is running; if not, FALSE 
 gint myxmms_is_running()
 {
   if (!dbus_connection)
@@ -251,7 +257,7 @@ gint myxmms_is_running()
         return TRUE;
 }
 
-//returns TRUE if xmms is paused, if not, FALSE 
+//!returns TRUE if xmms is paused, if not, FALSE 
 gint myxmms_is_paused()
 {
   if (!audacious_remote_is_paused(dbus_proxy))
@@ -260,43 +266,43 @@ gint myxmms_is_paused()
     return TRUE;
 }
 
-//plays a song
+//!Start playing the current song
 void myxmms_play()
 {
   audacious_remote_play(dbus_proxy);
 }
 
-//stops a song
+//!Stop playing the current song
 void myxmms_stop()
 {
   audacious_remote_stop(dbus_proxy);
 }
 
-//pause a song
+//!Pause playing the current song
 void myxmms_pause()
 {
   audacious_remote_pause(dbus_proxy);
 }
 
-//changes to next song
+//!Switch to the next song
 void myxmms_next()
 {
   audacious_remote_playlist_next(dbus_proxy);
 }
 
-//changes to previous song
+//!Switch to the previous song
 void myxmms_prev()
 {
   audacious_remote_playlist_prev(dbus_proxy);
 }
 
-//jump to time
+//!jump to time
 void myxmms_jump(gint position)
 {
   audacious_remote_jump_to_time(dbus_proxy, position);
 }
 
-//returns total time of the current song
+//!returns the total duration of the current song
 gint myxmms_get_total_time()
 {
   gint playlist_position;
@@ -304,7 +310,7 @@ gint myxmms_get_total_time()
   return audacious_remote_get_playlist_time(dbus_proxy,playlist_position);
 }
 
-//returns TRUE if xmms is playing, else FALSE
+//!returns TRUE if xmms is playing, else FALSE
 gint myxmms_is_playing()
 {
   if(audacious_remote_is_playing(dbus_proxy))
@@ -313,7 +319,7 @@ gint myxmms_is_playing()
     return FALSE;
 }
 
-//quits player
+//!quits the player
 void myxmms_quit()
 {
   audacious_remote_quit(dbus_proxy);
