@@ -215,10 +215,12 @@ void remove_end_slash_n_r_from_filename(char *filename)
 /*! transform text to utf8
 
 \param text The text thet has to be converted
-\param free_or_not:  TRUE if we free text before and 
-otherwise FALSE
-the third result returns us if the result must be freed 
-or not.
+\param free_or_not: TRUE if this function has to g_free() the text if
+during conversion it has to copy the text to a new (e.G. larger) buffer.
+\param must_be_freed reads true, if this function has allocated a new
+chunk of memory to have somewhere to put the output string in - which
+means that the memory the output string is in has to be freed after usage. 
+\return 
 */
 gchar *transform_to_utf8(gchar *text, gint free_or_not,
     gint *must_be_freed)
