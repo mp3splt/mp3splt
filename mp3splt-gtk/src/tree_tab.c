@@ -97,52 +97,74 @@ order of items is kept in the enum tree_columns.
 */
 GtkTreeView *tree_view;
 
-//minutes and seconds spinner
+/*!\defgroup{} splitpointview Variables for the splitpoint view
+@{
+*/
+//!The minutes spinner
 GtkWidget *spinner_minutes;
+//!The seconds spinner
 GtkWidget *spinner_seconds;
+//!The hundreths of seconds spinner
 GtkWidget *spinner_hundr_secs;
 
-//if we have a preview, preview = TRUE
+//!if we have a preview, preview = TRUE
 gboolean quick_preview = FALSE;
-//the end of the preview
-//preview_end_position = -1 means don't stop until the
-//end of the song
+/*! the end of the preview
+
+preview_end_position = -1 means don't stop until the
+end of the song
+*/
 gint quick_preview_end_splitpoint = -1;
 
-//for the preview
+//! The number of the split point for the preview
 gint this_row = 0;
-//the position transmitted to the player
+//! the position transmitted to the player
 gint preview_start_position;
+//! Which splitpoint we started the preview at
 gint preview_start_splitpoint = -1;
 
-//if we add a new splitpoint at the left and we are currently
-//previewing, we should increment quick_preview start and end
+/*! A bool that helps us catch the case that we add splitpoints during preview
+
+if we add a new splitpoint at the left and we are currently
+previewing, we should increment quick_preview start and end
+*/
 gboolean new_left_splitpoint_added = FALSE;
 
-//the splitpoint selected, used when we move the splitpoint
-//we have selected
+/*!  The selected splitpoint
+
+used when we move the splitpoint we have selected
+*/
 gint first_splitpoint_selected = -1;
+//@}
 
-//silence detection parameters widgets
-//number of tracks parameter
+/*! \defgroup silencedetectiongroup silence detection parameters widgets
+@{
+*/
+//!number of tracks parameter
 GtkWidget *spinner_silence_number_tracks;
-//number of tracks parameter
+//!number of tracks parameter
 GtkWidget *spinner_silence_minimum;
-//offset parameter
+//!offset parameter
 GtkWidget *spinner_silence_offset;
-//threshold parameter
+//!threshold parameter
 GtkWidget *spinner_silence_threshold;
-//remove silence check button (silence mode parameter
+//!remove silence check button (silence mode parameter
 GtkWidget *silence_remove_silence;
+// @}
 
-//silence split parameters
+/*!\defgroup silencesplitparameters silence split parameters
+  @{
+*/
 gfloat silence_threshold_value = SPLT_DEFAULT_PARAM_THRESHOLD; 
 gfloat silence_offset_value = SPLT_DEFAULT_PARAM_OFFSET;
 gint silence_number_of_tracks = SPLT_DEFAULT_PARAM_TRACKS;
 gfloat silence_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
 gboolean silence_remove_silence_between_tracks = FALSE;
+//@}
 
-//options for splitting
+/*!\defgroup SplitOptionGroup options for splitting
+\{
+*/
 extern gint timer_active;
 extern gint player_seconds, player_minutes,
   player_hundr_secs;
@@ -161,9 +183,13 @@ extern gint we_are_splitting;
 extern GtkWidget *window;
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
+//@}
 
-//updates add button, wether the spinners splitpoint is already
-//in the table or not
+/*! updates add button
+
+Makes the add button show whether the spinners splitpoint is already
+in the table or not
+*/
 void update_add_button()
 {
   if (check_if_splitpoint_does_not_exists(tree_view,
@@ -179,7 +205,7 @@ void update_add_button()
     }
 }
 
-//updates the minutes from the spinner
+//!updates the minutes from the spinner
 void update_minutes_from_spinner( GtkWidget *widget,
                                   gpointer   data )
 {
@@ -188,7 +214,7 @@ void update_minutes_from_spinner( GtkWidget *widget,
   update_add_button();
 }
 
-//updates the seconds from the spinner
+//!updates the seconds from the spinner
 void update_seconds_from_spinner( GtkWidget *widget,
                                   gpointer   data )
 {
@@ -197,7 +223,7 @@ void update_seconds_from_spinner( GtkWidget *widget,
   update_add_button();
 }
 
-//updates the hundredth of seconds for the spinner
+//!updates the hundredth of seconds for the spinner
 void update_hundr_secs_from_spinner( GtkWidget *widget,
                                      gpointer   data )
 {
@@ -206,7 +232,7 @@ void update_hundr_secs_from_spinner( GtkWidget *widget,
   update_add_button();
 }
 
-//creates the model for the tree, gtkliststore
+//!creates the model for the tree, gtkliststore
 GtkTreeModel *create_model()
 {
   GtkListStore *model;
@@ -222,7 +248,7 @@ GtkTreeModel *create_model()
   return GTK_TREE_MODEL (model);
 }
 
-//order the number column
+//!order the number column
 void order_length_column(GtkTreeView *tree_view)
 {
   //number to be put in the number column
@@ -317,8 +343,7 @@ void order_length_column(GtkTreeView *tree_view)
     }
 }
 
-//checks if splitpoints exists in the table
-//and different from current_split
+//! checks if splitpoints exists in the table and is different from current_split
 gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
     gint minutes, 
     gint seconds,
@@ -386,8 +411,10 @@ gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
   return TRUE;
 }
 
-//checks if description exists
-//we dont check the count = number
+/*! checks if description exists
+
+we dont check the count = number
+*/
 gboolean check_if_description_exists(gchar *descr,
                                      gint number)
 {
@@ -443,7 +470,7 @@ gboolean check_if_description_exists(gchar *descr,
   return TRUE;
 }
 
-//returns the first splitpoint selected
+//!returns the first splitpoint selected
 gint get_first_splitpoint_selected()
 {
   gint splitpoint_selected = -1;
@@ -479,7 +506,7 @@ gint get_first_splitpoint_selected()
   return splitpoint_selected;
 }
 
-//row selection event
+//!row selection event
 void row_selection_event()
 {
   if(!GTK_WIDGET_SENSITIVE(remove_row_button))
@@ -516,8 +543,10 @@ void update_current_description(gchar *descr, gint number)
     }
 }
 
-//returns secs, mins, hundr of secs from a time
-//not used for now
+/*!returns secs, mins, hundr of secs from a time
+
+not used for now
+*/
 void get_hundr_secs_mins_time(gint time_pos, gint *time_hundr,
                               gint *time_secs,gint *time_mins)
 {
@@ -528,7 +557,7 @@ void get_hundr_secs_mins_time(gint time_pos, gint *time_hundr,
   *time_mins = time_pos;
 }
 
-//selects a splitpoint
+//!selects a splitpoint
 void select_splitpoint(gint index)
 {
   GtkTreeModel *model;
@@ -551,8 +580,10 @@ void select_splitpoint(gint index)
   remove_status_message();
 }
 
-//removes a splitpoint
-//stop preview means we stop preview if necessary
+/*! removes a splitpoint
+\param index Number of the split point
+\param stop_preview means we stop preview if necessary
+*/
 void remove_splitpoint(gint index,gint stop_preview)
 {
   //remove values from the splitpoint array
@@ -608,7 +639,10 @@ void remove_splitpoint(gint index,gint stop_preview)
   refresh_drawing_area();
 }
 
-//updates a splipoint
+/*!updates a splipoint
+
+Read out the splitpoint's properties to match the values from tree_view.
+*/
 void update_splitpoint(gint index, Split_point new_point)
 {
   int splitpoint_does_not_exists = check_if_splitpoint_does_not_exists(tree_view,
