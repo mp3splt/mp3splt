@@ -115,6 +115,15 @@ gint check_if_file(guchar *fname)
     return FALSE;
 }
 
+/*! Generates a window portion containing a caption and a vbox
+
+This function works like a chapter heading in a text processing
+system: You specify a title and the text processor returns an object
+consisting of a title and a vbox you can put the chapter contents
+in.\n
+Is used to generate the consecutive named sections in a preferences
+tab.
+ */
 GtkWidget *set_title_and_get_vbox(GtkWidget *widget, gchar *title)
 {
   GtkWidget *label = gtk_label_new(NULL);
@@ -134,6 +143,10 @@ GtkWidget *set_title_and_get_vbox(GtkWidget *widget, gchar *title)
   return vbox;
 }
 
+/*! Issues the message "Processing file <filename>" into the message bar
+
+\param filename The filename that has to be printed.
+ */
 void print_processing_file(gchar *filename)
 {
   gint fname_status_size = (strlen(filename) + 255);
@@ -148,6 +161,12 @@ void print_processing_file(gchar *filename)
   }
 }
 
+/*! Does this GtkContainer contain that object?
+
+\param GtkContainer The Container that has to be searched for the
+child object.
+\param my_child The child that has to be searched for.
+ */
 gboolean container_has_child(GtkContainer *container, GtkWidget *my_child)
 {
   GList *children = gtk_container_get_children(GTK_CONTAINER(container));
@@ -164,7 +183,11 @@ gboolean container_has_child(GtkContainer *container, GtkWidget *my_child)
 
   return FALSE;
 }
+/*! Removes trailing \\r or \\n characters from a filename
 
+\todo Cannot find any code that removes a trailing slash as this
+function would suggest
+ */
 void remove_end_slash_n_r_from_filename(char *filename)
 {
   if (filename == NULL)
@@ -189,11 +212,14 @@ void remove_end_slash_n_r_from_filename(char *filename)
   }
 }
 
-//transform text to utf8
-//free_or_not:  TRUE if we free text before and 
-//otherwise FALSE
-//the third result returns us if the result must be freed 
-//or not
+/*! transform text to utf8
+
+\param text The text thet has to be converted
+\param free_or_not:  TRUE if we free text before and 
+otherwise FALSE
+the third result returns us if the result must be freed 
+or not.
+*/
 gchar *transform_to_utf8(gchar *text, gint free_or_not,
     gint *must_be_freed)
 {

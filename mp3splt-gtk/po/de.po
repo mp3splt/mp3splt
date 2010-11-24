@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-11-22 00:22+0100\n"
+"POT-Creation-Date: 2010-11-24 07:26+0100\n"
 "PO-Revision-Date: 2010-02-14 18:18+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -37,120 +37,120 @@ msgstr "kbit/s"
 msgid "Khz"
 msgstr "kHz"
 
-#: src/tree_tab.c:643 src/tree_tab.c:1002
+#: src/tree_tab.c:644 src/tree_tab.c:1003
 msgid " error: you already have the splitpoint in table"
 msgstr " Fehler: Schnittpunkt existiert bereits"
 
-#: src/tree_tab.c:714 src/tree_tab.c:1005 src/freedb_tab.c:507
+#: src/tree_tab.c:715 src/tree_tab.c:1006 src/freedb_tab.c:507
 #: src/freedb_tab.c:529
 msgid "description here"
 msgstr "Bitte Name eingeben"
 
-#: src/tree_tab.c:1123 src/tree_tab.c:1477
+#: src/tree_tab.c:1124 src/tree_tab.c:1478
 msgid "Set splitpoints from silence detection"
 msgstr "Schnittpunte mittels Stille-detektion erzeugen"
 
-#: src/tree_tab.c:1150 src/preferences_tab.c:603
+#: src/tree_tab.c:1151 src/preferences_tab.c:603
 msgid "Threshold level (dB):"
 msgstr "Schwelle (dB):"
 
-#: src/tree_tab.c:1167
+#: src/tree_tab.c:1168
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr "Schnittpunkt-Versatz (0=Beginn der Stille und 1=Ende):"
 
-#: src/tree_tab.c:1184
+#: src/tree_tab.c:1185
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Anzahl der Titel (0 bedeutet alle):"
 
-#: src/tree_tab.c:1199
+#: src/tree_tab.c:1200
 msgid "Minimum silence length (seconds):"
 msgstr "Mindestlänge der Stille (Sekunden):"
 
-#: src/tree_tab.c:1212
+#: src/tree_tab.c:1213
 msgid "_Remove silence between tracks"
 msgstr "_Stille zwischen Titeln entfernen"
 
-#: src/tree_tab.c:1413
+#: src/tree_tab.c:1414
 msgid "Minutes:"
 msgstr "Minuten:"
 
-#: src/tree_tab.c:1418
+#: src/tree_tab.c:1419
 msgid "Seconds:"
 msgstr "Sekunden:"
 
-#: src/tree_tab.c:1424
+#: src/tree_tab.c:1425
 msgid "Hundredths:"
 msgstr "Hundertstel:"
 
-#: src/tree_tab.c:1430 src/player_tab.c:920
+#: src/tree_tab.c:1431 src/player_tab.c:920
 msgid "_Add"
 msgstr "_Hinzufügen"
 
-#: src/tree_tab.c:1436
+#: src/tree_tab.c:1437
 msgid "Add splitpoint"
 msgstr "Schnittpunkt hinzufügen"
 
-#: src/tree_tab.c:1440
+#: src/tree_tab.c:1441
 msgid "_Remove"
 msgstr "_Löschen"
 
-#: src/tree_tab.c:1446
+#: src/tree_tab.c:1447
 msgid "Remove rows"
 msgstr "Spalten löschen"
 
-#: src/tree_tab.c:1450
+#: src/tree_tab.c:1451
 msgid "R_emove all"
 msgstr "_Alle löschen"
 
-#: src/tree_tab.c:1456
+#: src/tree_tab.c:1457
 msgid "Remove all rows"
 msgstr "Alle Spalten löschen"
 
-#: src/tree_tab.c:1471
+#: src/tree_tab.c:1472
 msgid "_Silence detection"
 msgstr "_Stille erkennen"
 
-#: src/tree_tab.c:1599 src/mp3splt-gtk.c:375
+#: src/tree_tab.c:1600 src/mp3splt-gtk.c:375
 msgid " finished"
 msgstr " Beendet"
 
-#: src/tree_tab.c:1614
+#: src/tree_tab.c:1615
 msgid " cannot split preview last splitpoint"
 msgstr " Vorschau für letzten Teilungspunkt nicht möglich"
 
-#: src/tree_tab.c:1658
+#: src/tree_tab.c:1659
 msgid " cannot preview, not connected to player"
 msgstr " Vorschau nicht möglich: Keine Verbindung zum Abspielprogramm"
 
-#: src/tree_tab.c:1723
+#: src/tree_tab.c:1724
 msgid "Keep"
 msgstr "Behalten"
 
-#: src/tree_tab.c:1737 src/split_files.c:111
+#: src/tree_tab.c:1738 src/split_files.c:111
 msgid "Filename"
 msgstr "Dateiname"
 
-#: src/tree_tab.c:1751
+#: src/tree_tab.c:1752
 msgid "Secs"
 msgstr "Sek"
 
-#: src/tree_tab.c:1765
+#: src/tree_tab.c:1766
 msgid "Mins"
 msgstr "Min"
 
-#: src/tree_tab.c:1779
+#: src/tree_tab.c:1780
 msgid "Hundr"
 msgstr "1/100s"
 
-#: src/tree_tab.c:1789
+#: src/tree_tab.c:1790
 msgid "Length"
 msgstr "Länge"
 
-#: src/tree_tab.c:1800
+#: src/tree_tab.c:1801
 msgid "LiveP"
 msgstr "LiveP"
 
-#: src/tree_tab.c:1811
+#: src/tree_tab.c:1812
 msgid "SplitP"
 msgstr "SplitP"
 

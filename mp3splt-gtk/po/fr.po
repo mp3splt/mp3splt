@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk 0.5.6\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2010-11-22 00:22+0100\n"
+"POT-Creation-Date: 2010-11-24 07:26+0100\n"
 "PO-Revision-Date: 2010-02-15 01:54+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -34,121 +34,121 @@ msgstr "Kbps"
 msgid "Khz"
 msgstr "Khz"
 
-#: src/tree_tab.c:643 src/tree_tab.c:1002
+#: src/tree_tab.c:644 src/tree_tab.c:1003
 msgid " error: you already have the splitpoint in table"
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
 # ici, une description
-#: src/tree_tab.c:714 src/tree_tab.c:1005 src/freedb_tab.c:507
+#: src/tree_tab.c:715 src/tree_tab.c:1006 src/freedb_tab.c:507
 #: src/freedb_tab.c:529
 msgid "description here"
 msgstr "description"
 
-#: src/tree_tab.c:1123 src/tree_tab.c:1477
+#: src/tree_tab.c:1124 src/tree_tab.c:1478
 msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/tree_tab.c:1150 src/preferences_tab.c:603
+#: src/tree_tab.c:1151 src/preferences_tab.c:603
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
-#: src/tree_tab.c:1167
+#: src/tree_tab.c:1168
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr "Compensation du point de coupure (0 - début du silence, 1 - la fin) :"
 
-#: src/tree_tab.c:1184
+#: src/tree_tab.c:1185
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Nombre de pistes (0 signifie toutes les pistes) :"
 
-#: src/tree_tab.c:1199
+#: src/tree_tab.c:1200
 msgid "Minimum silence length (seconds):"
 msgstr "Taille minimum du silence (secondes) :"
 
-#: src/tree_tab.c:1212
+#: src/tree_tab.c:1213
 msgid "_Remove silence between tracks"
 msgstr "_Effacer le silence entre les pistes"
 
-#: src/tree_tab.c:1413
+#: src/tree_tab.c:1414
 msgid "Minutes:"
 msgstr "Minutes :"
 
-#: src/tree_tab.c:1418
+#: src/tree_tab.c:1419
 msgid "Seconds:"
 msgstr "Secondes :"
 
-#: src/tree_tab.c:1424
+#: src/tree_tab.c:1425
 msgid "Hundredths:"
 msgstr "Centièmes :"
 
-#: src/tree_tab.c:1430 src/player_tab.c:920
+#: src/tree_tab.c:1431 src/player_tab.c:920
 msgid "_Add"
 msgstr "Aj_outer"
 
-#: src/tree_tab.c:1436
+#: src/tree_tab.c:1437
 msgid "Add splitpoint"
 msgstr "Ajouter le point"
 
-#: src/tree_tab.c:1440
+#: src/tree_tab.c:1441
 msgid "_Remove"
 msgstr "_Effacer"
 
-#: src/tree_tab.c:1446
+#: src/tree_tab.c:1447
 msgid "Remove rows"
 msgstr "Effacer les lignes"
 
-#: src/tree_tab.c:1450
+#: src/tree_tab.c:1451
 msgid "R_emove all"
 msgstr "Effa_cer tout"
 
-#: src/tree_tab.c:1456
+#: src/tree_tab.c:1457
 msgid "Remove all rows"
 msgstr "Effacer toutes les lignes"
 
-#: src/tree_tab.c:1471
+#: src/tree_tab.c:1472
 msgid "_Silence detection"
 msgstr "Détection du _silence"
 
-#: src/tree_tab.c:1599 src/mp3splt-gtk.c:375
+#: src/tree_tab.c:1600 src/mp3splt-gtk.c:375
 msgid " finished"
 msgstr " fini"
 
-#: src/tree_tab.c:1614
+#: src/tree_tab.c:1615
 msgid " cannot split preview last splitpoint"
 msgstr " impossible d'écouter l'aperçu du dernier point de coupure"
 
-#: src/tree_tab.c:1658
+#: src/tree_tab.c:1659
 msgid " cannot preview, not connected to player"
 msgstr " impossible d'écouter l'aperçu, déconnecté du lecteur"
 
-#: src/tree_tab.c:1723
+#: src/tree_tab.c:1724
 msgid "Keep"
 msgstr "Garder"
 
-#: src/tree_tab.c:1737 src/split_files.c:111
+#: src/tree_tab.c:1738 src/split_files.c:111
 msgid "Filename"
 msgstr "Nom fichier"
 
-#: src/tree_tab.c:1751
+#: src/tree_tab.c:1752
 msgid "Secs"
 msgstr "Secondes"
 
-#: src/tree_tab.c:1765
+#: src/tree_tab.c:1766
 msgid "Mins"
 msgstr "Minutes"
 
-#: src/tree_tab.c:1779
+#: src/tree_tab.c:1780
 msgid "Hundr"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:1789
+#: src/tree_tab.c:1790
 msgid "Length"
 msgstr "Durée"
 
-#: src/tree_tab.c:1800
+#: src/tree_tab.c:1801
 msgid "LiveP"
 msgstr "ALive"
 
-#: src/tree_tab.c:1811
+#: src/tree_tab.c:1812
 msgid "SplitP"
 msgstr "ACoupure"
 
