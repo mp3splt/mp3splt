@@ -844,9 +844,12 @@ void add_splitpoint_from_player(GtkWidget *widget,
     }
 }
 
-//adds a splitpoint
-//old_index is used when we update a splitpoint
-//to see where we had the play_preview point
+/*! adds a splitpoint
+
+\param my_split_point The data for our new split point
+\param old_index used when we update a splitpoint to see where we had
+the play_preview point 
+*/
 void add_splitpoint(Split_point my_split_point,
                     gint old_index)
 {
@@ -1067,7 +1070,7 @@ void add_splitpoint(Split_point my_split_point,
   check_update_down_progress_bar();
 }
 
-//adds a row to the table
+//!adds a row to the table
 void add_row(gboolean checked)
 {
   Split_point my_split_point;
@@ -1085,7 +1088,7 @@ void add_row_clicked(GtkWidget *button, gpointer data)
   add_row(TRUE);
 }
 
-//set splitpints from silence detection
+//!set splitpints from silence detection
 gpointer detect_silence_and_set_splitpoints(gpointer data)
 {
   gint err = SPLT_OK;
@@ -1145,14 +1148,14 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   return NULL;
 }
 
-//start thread with 'set splitpints from silence detection'
+//!start thread with 'set splitpints from silence detection'
 void detect_silence_and_add_splitpoints_start_thread()
 {
   g_thread_create(detect_silence_and_set_splitpoints,
                   NULL, TRUE, NULL);
 }
 
-//update silence parameters when 'widget' changes
+//!update silence parameters when 'widget' changes
 void update_silence_parameters(GtkWidget *widget, gpointer data)
 {
   silence_threshold_value = 
@@ -1167,13 +1170,13 @@ void update_silence_parameters(GtkWidget *widget, gpointer data)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(silence_remove_silence));
 }
 
-//action when checking the 'remove silence' button
+//!action when checking the 'remove silence' button
 void silence_remove_silence_checked(GtkToggleButton *button, gpointer data)
 {
   update_silence_parameters(GTK_WIDGET(button), data);
 }
 
-//event for clicking the 'detect silence and add splitpoints' button
+//!event for clicking the 'detect silence and add splitpoints' button
 void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointer *data)
 {
   GtkWidget *silence_detection_window =
@@ -1326,7 +1329,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   }
 }
 
-//remove a row from the table
+//!remove a row from the table
 void remove_row(GtkWidget *widget, gpointer data)
 {
   GtkTreeSelection *selection;
@@ -1371,7 +1374,7 @@ void remove_row(GtkWidget *widget, gpointer data)
   g_list_free (selected_list);
 }
 
-//removes all rows from the table
+//!removes all rows from the table
 void remove_all_rows (GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
@@ -1405,7 +1408,7 @@ void remove_all_rows (GtkWidget *widget, gpointer data)
   check_update_down_progress_bar();
 }
 
-//creates and and initialise a spinner
+//!creates and and initialise a spinner
 GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, 
                                gint min, gint max, 
                                gchar *label_text,
@@ -1456,7 +1459,7 @@ GtkWidget *create_init_spinner(GtkWidget *bottomhbox1,
   return spinner;
 }
 
-//minutes ,seconds spinners ; add, delete buttons
+//!minutes ,seconds spinners ; add, delete buttons
 GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 {
   GtkWidget *hbox;
@@ -1515,7 +1518,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
   return hbox;
 }
 
-//special buttons like 'set silence from silence detection'
+//!special buttons like 'set silence from silence detection'
 GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
 {
   GtkWidget *hbox;
@@ -1536,15 +1539,17 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
   return hbox;
 }
 
-//returns the hundreths of seconds from a Split_point
+//!returns the hundreths of seconds from a Split_point
 gint splitpoint_to_hundreths(Split_point point)
 {
   return (point.secs + point.mins*60)*1000+
     point.hundr_secs * 10;
 }
 
-//returns the name of the splitpoint
-//result must be freed
+/*! returns the name of the splitpoint
+
+result must be g_free'd after use
+*/
 gchar *get_splitpoint_name(gint index)
 {
   GtkTreeModel *model;
@@ -1575,7 +1580,7 @@ gchar *get_splitpoint_name(gint index)
   return description;
 }
 
-//returns a splitpoint from the table
+//!returns a splitpoint from the table
 gint get_splitpoint_time(gint this_splitpoint)
 {
   if (this_splitpoint != -1)
@@ -1676,7 +1681,7 @@ gpointer split_preview(gpointer data)
   return NULL;
 }
 
-//the row clicked event, preview the song
+//!the row clicked event, preview the song
 void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
     GtkTreeViewColumn *col, gpointer user_data)
 {
@@ -1717,7 +1722,7 @@ void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
   }
 }
 
-//toggle 'check' button
+//!toggle 'check' button
 static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
     gchar *path_str, gpointer data)
 {
@@ -1751,7 +1756,7 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
   gtk_tree_path_free(path);
 }
 
-//creates columns for the tree
+//!creates columns for the tree
 void create_columns (GtkTreeView *tree_view)
 {
   //cells renderer
@@ -1931,7 +1936,7 @@ void create_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_expand (column_description, TRUE);
 }
 
-//when closing the new window after detaching
+//!Issued when closing the new window after detaching
 void close_popup_window_event( GtkWidget *window,
                                gpointer data )
 {
@@ -1944,7 +1949,7 @@ void close_popup_window_event( GtkWidget *window,
   gtk_widget_destroy(window);
 }
 
-//when we detach the handle
+//!Issued when we detach the handle
 void handle_detached_event (GtkHandleBox *handlebox,
                             GtkWidget *widget,
                             gpointer data)
@@ -1964,8 +1969,11 @@ void handle_detached_event (GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-//creates the choose splitpoints frame, who has the spinners, arrows,
-//the tree, add, remove buttons
+/*!creates the choose splitpoints frame
+
+This frame contains the spinners, arrows, the tree, add, remove
+buttons
+*/
 GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
 {
   //choose splitpoints box, has tree, spinner, arrows..
@@ -2045,7 +2053,7 @@ static void garray_to_array(GArray *spltpoints, glong *hundredth)
     }
 }
 
-//puts the splitpoints in the state
+//!puts the splitpoints into the state
 void put_splitpoints_in_the_state(splt_state *state)
 {
   glong hundr[splitnumber];
@@ -2088,7 +2096,7 @@ void put_splitpoints_in_the_state(splt_state *state)
     }
 }
 
-//creates the tree view
+//!creates the tree view
 GtkTreeView *create_tree_view()
 {
   GtkTreeModel *model;
