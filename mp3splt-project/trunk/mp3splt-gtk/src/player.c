@@ -49,7 +49,7 @@
 
 extern int selected_player;
 
-//returns the elapsed time of the player
+//!returns the elapsed time of the player
 gint player_get_elapsed_time()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -74,7 +74,7 @@ gint player_get_elapsed_time()
   return 0;
 }
 
-//returns total time of the song
+//!returns total time of the song
 gint player_get_total_time()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -99,7 +99,7 @@ gint player_get_total_time()
   return 0;
 }
 
-//returns FALSE if the player is not running, else TRUE
+//!returns FALSE if the player is not running, else TRUE
 gint player_is_running()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -124,7 +124,7 @@ gint player_is_running()
   return 0;
 }
 
-//starts the player
+//!starts the player
 void player_start()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -147,7 +147,7 @@ void player_start()
     }
 }
 
-//start player and add files to playlist
+//!start player and add files to playlist
 void player_start_add_files(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -170,7 +170,7 @@ void player_start_add_files(GList *list)
     }
 }
 
-//add files to playlist
+//!add files to playlist
 void player_add_files(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -193,7 +193,7 @@ void player_add_files(GList *list)
     }
 }
 
-//add files to playlist
+//!add files to playlist
 void player_add_files_and_select(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -219,7 +219,7 @@ void player_add_files_and_select(GList *list)
     }
 }
 
-//add files to playlist
+//!add files to playlist
 void player_add_play_files(GList *list)
 {
   player_add_files(list);
@@ -247,7 +247,7 @@ void player_add_play_files(GList *list)
     }
 }
 
-//starts the player
+//!starts the player
 void player_start_play_with_songs(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -273,7 +273,7 @@ void player_start_play_with_songs(GList *list)
     }
 }
 
-//plays the song
+//!plays the song
 void player_play()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -296,7 +296,7 @@ void player_play()
     }
 }
 
-//stops the song
+//!stops the song
 void player_stop()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -319,7 +319,7 @@ void player_stop()
     }
 }
 
-//pause the song
+//!pause the song
 void player_pause()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -342,7 +342,7 @@ void player_pause()
     }
 }
 
-//pass to the next song
+//!pass to the next song
 void player_next()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -365,7 +365,7 @@ void player_next()
     }
 }
 
-//pass to the previous song
+//!pass to the previous song
 void player_prev()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -388,7 +388,7 @@ void player_prev()
     }
 }
 
-//jumps to a position in the song
+//!jumps to a position in the song
 void player_jump(gint position)
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -411,8 +411,10 @@ void player_jump(gint position)
     }
 }
 
-//get infos about the song
-//in the total_infos variable
+/*!get infos about the song
+
+\param total_infos The result of this function call
+*/
 void player_get_song_infos(gchar *total_infos)
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -436,7 +438,7 @@ void player_get_song_infos(gchar *total_infos)
 }
 
 #include <stdio.h>
-//returns TRUE if the player is playing, else FALSE
+//!returns TRUE if the player is playing, else FALSE
 gint player_is_playing()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -461,7 +463,7 @@ gint player_is_playing()
   return 0;
 }
 
-//if the player is paused
+//! Check if the player is paused
 gint player_is_paused()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -486,8 +488,10 @@ gint player_is_paused()
   return 0;
 }
 
-//gets the filename of the current song
-//must be freed after
+/*!gets the filename of the current song
+
+The returned string must be g_free'd after use
+*/
 gchar *player_get_filename()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -512,8 +516,10 @@ gchar *player_get_filename()
   return 0;
 }
 
-//gets the title of the song
-//must be freed after
+/*!Get the title of the song
+
+The returned string must be g_freed after use
+*/
 gchar *player_get_title()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -538,7 +544,7 @@ gchar *player_get_title()
   return 0;
 }
 
-//gets the volume of the player
+//!gets the volume of the player
 gint player_get_volume()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -563,7 +569,7 @@ gint player_get_volume()
   return 0;
 }
 
-//sets the volume of the player
+//!sets the volume of the player
 void player_set_volume(gint volume)
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -586,7 +592,7 @@ void player_set_volume(gint volume)
     }
 }
 
-//returns the number of songs in the playlist
+//!returns the number of songs in the playlist
 gint player_get_playlist_number()
 {
   if (selected_player == PLAYER_SNACKAMP)
@@ -611,7 +617,7 @@ gint player_get_playlist_number()
   return 0;
 }
 
-//quits the player
+//!quits the player
 gint player_quit()
 {
   /*if (selected_player == PLAYER_SNACKAMP)

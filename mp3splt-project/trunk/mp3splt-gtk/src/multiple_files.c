@@ -54,6 +54,7 @@ GtkWidget *multiple_files_remove_all_files_button = NULL;
 
 #define MY_GTK_RESPONSE 200
 
+//!Create the model for the batch processing file list
 GtkTreeModel *create_multiple_files_model()
 {
   GtkListStore *model;

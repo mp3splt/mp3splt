@@ -60,6 +60,7 @@ GtkWidget *file_mode_radio_button = NULL;
 
 GtkWidget *multiple_files_component = NULL;
 
+//! Get the split mode
 static gint get_selected_split_mode(GtkToggleButton *radio_b)
 {
   GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
@@ -78,6 +79,7 @@ static gint get_selected_split_mode(GtkToggleButton *radio_b)
   return selected;
 }
 
+//! Set the split mode
 void select_split_mode(int split_mode)
 {
   GSList *split_mode_radio_button_list =
@@ -96,7 +98,7 @@ void select_split_mode(int split_mode)
   }
 }
 
-//when the split mode selection changed
+//! Issued when the split mode selection changed
 void split_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
   selected_split_mode = get_selected_split_mode(radio_b);
@@ -112,6 +114,7 @@ void split_mode_changed(GtkToggleButton *radio_b, gpointer data)
   save_preferences(NULL, NULL);
 }
 
+//! Issued when the track duration for split after every n seconds is changed
 static void spinner_time_changed(GtkSpinButton *spinner, gpointer data)
 {
   gint time = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
@@ -122,6 +125,7 @@ static void spinner_time_changed(GtkSpinButton *spinner, gpointer data)
   save_preferences(NULL, NULL);
 }
 
+//! Issued when the number of tracks for equal length splitting is changed
 static void spinner_equal_tracks_changed(GtkSpinButton *spinner, gpointer data)
 {
   gint equal_tracks = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
@@ -132,6 +136,7 @@ static void spinner_equal_tracks_changed(GtkSpinButton *spinner, gpointer data)
   save_preferences(NULL, NULL);
 }
 
+//! Issued when channge between single file and batch processing mode is requested
 static void split_file_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
   GSList *radio_button_list =
@@ -153,6 +158,7 @@ static void split_file_mode_changed(GtkToggleButton *radio_b, gpointer data)
   save_preferences(NULL, NULL);
 }
 
+//! Creates the split mode window part
 static GtkWidget *create_split_mode()
 {
   GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
@@ -258,6 +264,7 @@ static GtkWidget *create_split_mode()
   return scrolled_window;
 }
 
+//! Creates the selection between single file split and batch processing
 static GtkWidget *create_single_multiple_split_modes()
 {
   GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
@@ -294,7 +301,7 @@ static GtkWidget *create_single_multiple_split_modes()
   return scrolled_window;
 }
 
-//creates the special split page
+//!creates the special split page
 GtkWidget *create_special_split_page()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;

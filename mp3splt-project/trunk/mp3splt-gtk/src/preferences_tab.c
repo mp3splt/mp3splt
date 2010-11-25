@@ -91,13 +91,16 @@ GtkWidget *adjust_mode = NULL;
 
 GtkWidget *create_dirs_from_output_files = NULL;
 
-//adjust mode parameters
+/*!defgroup modeparameters adjust mode parameters
+@{
+*/
 GtkWidget *spinner_adjust_gap = NULL;
 GtkWidget *gap_label = NULL;
 GtkWidget *spinner_adjust_offset = NULL;
 GtkWidget *offset_label = NULL;
 GtkWidget *spinner_adjust_threshold = NULL;
 GtkWidget *threshold_label = NULL;
+//@}
 
 extern GtkWidget *player_box;
 extern GtkWidget *queue_files_button;
@@ -241,7 +244,7 @@ gchar* outputdirectory_get()
     return NULL;
 }
 
-//save preferences event
+//!save preferences event
 void save_preferences(GtkWidget *widget, gpointer data)
 {
   gchar *filename = get_preferences_filename();
@@ -332,7 +335,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
   }
 }
 
-//creates a scrolled window
+//!creates a scrolled window
 GtkWidget *create_scrolled_window()
 {
   GtkWidget *scrolled_window;
@@ -344,7 +347,7 @@ GtkWidget *create_scrolled_window()
   return scrolled_window;
 }
 
-//cddb and cue output mode radio box event
+//!cddb and cue output mode radio box event
 void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
 {
   GtkWidget *output_label = (GtkWidget *)data;
@@ -370,6 +373,7 @@ void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
   save_preferences(NULL, NULL);
 }
 
+//! Create the "select language" box
 GtkWidget *create_language_box()
 {
   GtkWidget *radio_vbox = gtk_vbox_new (FALSE, 0);
@@ -395,6 +399,7 @@ GtkWidget *create_language_box()
       _("<b>Choose language (requires restart)</b>"));
 }
 
+//! Creates the language preferences page
 GtkWidget *create_pref_language_page()
 {
   GtkWidget *language_hbox = gtk_hbox_new(FALSE, 0);;
@@ -452,7 +457,7 @@ void browse_dir_button_event(GtkWidget *widget, gpointer data)
   gtk_widget_destroy(dir_chooser);
 }
 
-//disables adjust parameters
+//!disables adjust parameters
 void disable_adjust_spinners()
 {
   gtk_widget_set_sensitive(spinner_adjust_threshold, FALSE);
@@ -463,7 +468,7 @@ void disable_adjust_spinners()
   gtk_widget_set_sensitive(gap_label, FALSE);
 }
 
-//enables adjust parameters
+//!enables adjust parameters
 void enable_adjust_spinners()
 {
   gtk_widget_set_sensitive(spinner_adjust_threshold, TRUE);
@@ -474,7 +479,7 @@ void enable_adjust_spinners()
   gtk_widget_set_sensitive(gap_label, TRUE);
 }
 
-//adjust event
+//!adjust event
 void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data)
 {
   //if it is toggled
@@ -495,7 +500,7 @@ void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data)
   save_preferences(NULL, NULL);
 }
 
-//frame mode event
+//!frame mode event
 void frame_event(GtkToggleButton *frame_mode, gpointer user_data)
 {
   if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
@@ -509,7 +514,7 @@ void frame_event(GtkToggleButton *frame_mode, gpointer user_data)
   save_preferences(NULL, NULL);
 }
 
-//action for the set default prefs button
+//!action for the set default prefs button
 void set_default_prefs_event(GtkWidget *widget, gpointer data)
 {
   //set frame mode inactive
@@ -527,13 +532,14 @@ void set_default_prefs_event(GtkWidget *widget, gpointer data)
   save_preferences(NULL, NULL);
 }
 
-//events for the "set current song directory"
+//!events for the "set current song directory"
 void song_dir_button_event(GtkWidget *widget, gpointer data)
 {
     outputdirectory_set("");
     save_preferences(NULL, NULL);
 }
 
+//!Creates the box the output directory can be choosen in
 GtkWidget *create_directory_box()
 {
   GtkWidget *dir_hbox = gtk_hbox_new(FALSE, 0);
@@ -565,6 +571,7 @@ GtkWidget *create_directory_box()
   return set_title_and_get_vbox(dir_hbox, _("<b>Directory for split files</b>"));
 }
 
+//! Creates the box for split mode selection
 GtkWidget *create_split_options_box()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
@@ -660,7 +667,7 @@ GtkWidget *create_split_options_box()
   return set_title_and_get_vbox(vbox, _("<b>Split options</b>"));
 }
 
-//creates the splitpoints preferences page
+//!creates the splitpoints preferences page
 GtkWidget *create_pref_splitpoints_page()
 {
   GtkWidget *general_hbox = gtk_hbox_new(FALSE,0);
@@ -684,7 +691,7 @@ GtkWidget *create_pref_splitpoints_page()
   return general_hbox;
 }
 
-//removes unavailable players from the combo
+//!removes unavailable players from the combo
 void combo_remove_unavailable_players()
 {
   //if we dont have GSTREAMER 
@@ -704,7 +711,7 @@ void combo_remove_unavailable_players()
 #endif
 }
 
-//event when changing the combo box player
+//!event when changing the combo box player
 void player_combo_box_event(GtkComboBox *widget, gpointer data)
 {
   //disconnect from player
@@ -731,6 +738,7 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
   save_preferences(NULL, NULL);
 }
 
+//!Create the box the player backend can be selected with
 GtkWidget *create_player_options_box()
 {
   GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
@@ -762,7 +770,7 @@ GtkWidget *create_player_options_box()
   return set_title_and_get_vbox(horiz_fake, _("<b>Player options</b>"));
 }
 
-//creates the player preferences page
+//!creates the player preferences page
 GtkWidget *create_pref_player_page()
 {
   GtkWidget *player_hbox = gtk_hbox_new(FALSE, 0);;
@@ -785,7 +793,7 @@ GtkWidget *create_pref_player_page()
   return player_hbox;
 }
 
-//update the save buttons when output entry event
+//!update the save buttons on an output entry event
 gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
     gpointer user_data)
 {
@@ -801,6 +809,7 @@ gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
   return FALSE;
 }
 
+//!Create the box the output file name is displayed in
 GtkWidget *create_output_filename_box()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
@@ -842,7 +851,7 @@ GtkWidget *create_output_filename_box()
   return set_title_and_get_vbox(vbox, _("<b>Output filename format</b>"));
 }
 
-//creates the output preferences page
+//!creates the output preferences page
 GtkWidget *create_pref_output_page()
 {
   GtkWidget *output_hbox = gtk_hbox_new(FALSE, 0);;
@@ -862,6 +871,7 @@ GtkWidget *create_pref_output_page()
   return output_hbox;
 }
 
+//!Create the box for the Tags options
 GtkWidget *create_tags_options_box()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
@@ -889,6 +899,7 @@ GtkWidget *create_tags_options_box()
   return set_title_and_get_vbox(vbox, _("<b>Split files tags</b>"));
 }
 
+//!Create the box we can select with if to create ID1 and/or ID2 Tags
 GtkWidget *create_tags_version_box()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
@@ -921,6 +932,7 @@ GtkWidget *create_tags_version_box()
   return set_title_and_get_vbox(vbox, _("<b>Tags version (mp3 only)</b>"));
 }
 
+//! Create the tags settings tab
 GtkWidget *create_pref_tags_page()
 {
   GtkWidget *outside_vbox = gtk_vbox_new(FALSE, 0);;
@@ -943,7 +955,7 @@ GtkWidget *create_pref_tags_page()
   return outside_vbox;
 }
 
-//creates the preferences 
+//!creates the preferences tab
 GtkWidget *create_choose_preferences()
 {
   //our preferences vbox
@@ -991,9 +1003,3 @@ GtkWidget *create_choose_preferences()
   
   return pref_vbox;
 }
-
-// Emacs indentation style
-//
-// Local Variables:
-// c-indentation-style:whitesmith
-// End:

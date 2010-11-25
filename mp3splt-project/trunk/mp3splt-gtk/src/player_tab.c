@@ -296,7 +296,7 @@ gchar* inputfilename_get()
 
 
 
-//function called from the library when scanning for the silence level
+//!function called from the library when scanning for the silence level
 void get_silence_level(long time, float level, void *user_data)
 {
   if (! silence_points)
@@ -486,7 +486,7 @@ void connect_change_buttons()
   }
 }
 
-//disconnecting changing buttons
+//!disconnecting changing buttons
 void disconnect_change_buttons()
 {
   if (selected_player != PLAYER_GSTREAMER)
@@ -565,8 +565,11 @@ void connect_with_song(const gchar *fname, gint start_playing)
   g_list_free(song_list);
 }
 
-//connects to player with the song from the filename entry
-//if i = 0 then start playing, else dont start playing
+/*! connects to player with the song from the filename entry
+
+  \param i 0 means then start playing, != 0 means dont start playing
+  right now
+ */
 void connect_to_player_with_song(gint i)
 {
   const gchar *fname = fname = inputfilename_get();
@@ -674,7 +677,7 @@ void connect_button_event(GtkWidget *widget, gpointer data)
   check_update_down_progress_bar();
 }
 
-//checks if we have a stream
+//!checks if we have a stream
 void check_stream()
 {
   //if we have a stream
@@ -956,7 +959,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   return player_buttons_hbox;
 }
 
-//song information about frequency, rate, stereo, etc
+//!song information about frequency, rate, stereo, etc
 GtkWidget *create_song_informations_hbox()
 {
   GtkWidget *song_info_hbox;
@@ -973,7 +976,7 @@ GtkWidget *create_song_informations_hbox()
   return song_info_hbox;
 }
 
-//when we unclick the progress bar
+//!when we unclick the progress bar
 gboolean progress_bar_unclick_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
                                    gpointer user_data)
@@ -989,7 +992,7 @@ gboolean progress_bar_unclick_event (GtkWidget *widget,
   return FALSE;
 }
 
-//when we click the progress bar
+//!when we click the progress bar
 gboolean progress_bar_click_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
                                    gpointer user_data)
@@ -998,13 +1001,13 @@ gboolean progress_bar_click_event (GtkWidget *widget,
   return FALSE;
 }
 
-//returns the total time in hundreths of second
+//!returns the total time in hundreths of second
 gfloat get_total_time()
 {
   return total_time;
 }
 
-//returns the total elapsed time
+//!returns the total elapsed time
 gfloat get_elapsed_time()
 {
   //progress position
@@ -1019,7 +1022,7 @@ gfloat get_elapsed_time()
   return current_time;
 }
 
-//refreshes the drawing area
+//!refreshes the drawing area
 void refresh_drawing_area()
 {
   GdkRectangle update_rect;
@@ -1040,7 +1043,7 @@ void refresh_drawing_area()
                               FALSE);
 }
 
-//updates bottom progress bar
+//!updates bottom progress bar
 void check_update_down_progress_bar()
 {
   //if we are not currently splitting
@@ -1173,7 +1176,7 @@ void check_update_down_progress_bar()
   }
 }
 
-//event when the progress bar value changed
+//!event when the progress bar value changed
 void progress_bar_value_changed_event (GtkRange *range,
                                        gpointer user_data)
 {
@@ -1199,7 +1202,7 @@ void progress_bar_value_changed_event (GtkRange *range,
   check_update_down_progress_bar();
 }
 
-//scroll event for the progress bar
+//!scroll event for the progress bar
 gboolean progress_bar_scroll_event (GtkWidget *widget,
                                     GdkEventScroll *event,
                                     gpointer user_data)
@@ -1208,7 +1211,7 @@ gboolean progress_bar_scroll_event (GtkWidget *widget,
   return FALSE;
 }
 
-//when we enter the progress bar
+//!when we enter the progress bar
 gboolean progress_bar_enter_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
                                    gpointer user_data)
@@ -1217,7 +1220,7 @@ gboolean progress_bar_enter_event (GtkWidget *widget,
   return FALSE;
 }
 
-//when we leave the progress bar
+//!when we leave the progress bar
 gboolean progress_bar_leave_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
                                    gpointer user_data)
@@ -1226,7 +1229,7 @@ gboolean progress_bar_leave_event (GtkWidget *widget,
   return FALSE;
 }
 
-//song progress bar
+//!song progress bar
 GtkWidget *create_song_bar_hbox()
 {
   GtkWidget *song_bar_hbox;
@@ -1263,7 +1266,7 @@ GtkWidget *create_song_bar_hbox()
   return song_bar_hbox;
 }
 
-//prints information about the song, frequency, kbps, stereo
+//!prints information about the song, frequency, kbps, stereo
 void print_about_the_song()
 {
   gchar total_infos[512];
@@ -1273,7 +1276,7 @@ void print_about_the_song()
   gtk_label_set_text(GTK_LABEL(song_infos), total_infos);
 }
 
-//prints the player filename
+//!prints the player filename
 void print_player_filename()
 {
   gchar *fname = player_get_filename();
@@ -1304,9 +1307,10 @@ void print_player_filename()
   g_free(title);
 }
 
-//get time elapsed from the song
-//and prints it on the screen
-//prints filename, frequency, bitrate, mono, stereo
+/*! get time elapsed from the song and print it on the screen
+
+Also prints filename, frequency, bitrate, mono, stereo
+*/
 void print_all_song_infos()
 {
   //prints frequency, stereo, etc
@@ -1314,9 +1318,12 @@ void print_all_song_infos()
   print_player_filename();
 }
 
-//prints the song time elapsed
-//i=0 means normal state
-//i=1 means we reset the time
+/*! prints the song time elapsed
+
+\param i 
+ - 0 means normal state
+ - 1 means we reset the time
+*/
 void print_song_time_elapsed()
 {
   //temp is temporary
@@ -1353,7 +1360,7 @@ void print_song_time_elapsed()
   gtk_label_set_text(GTK_LABEL(label_time), seconds_minutes);
 }
 
-//change volume to be the players volume
+//!change volume to match the players volume
 void change_volume_bar()
 {
   if (player_is_running())
@@ -1368,7 +1375,7 @@ void change_volume_bar()
     }
 }
 
-//progress bar synchronisation with player
+//!progress bar synchronisation with player
 void change_progress_bar()
 {
   if ((player_is_running())
@@ -1405,7 +1412,7 @@ void change_progress_bar()
     }
 }
 
-//creates the filename player hbox
+//!creates the filename player hbox
 GtkWidget *create_filename_player_hbox()
 {
   GtkWidget *filename_player_hbox;
@@ -1419,7 +1426,7 @@ GtkWidget *create_filename_player_hbox()
   return filename_player_hbox;
 }
 
-//changes the volume of the player
+//!changes the volume of the player
 void change_volume_event(GtkWidget *widget,
                          gpointer data)
 {
@@ -1431,7 +1438,7 @@ void change_volume_event(GtkWidget *widget,
     }
 }
 
-//when we unclick the volume bar
+//!when we unclick the volume bar
 gboolean volume_bar_unclick_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
                                    gpointer user_data)
@@ -1440,7 +1447,7 @@ gboolean volume_bar_unclick_event (GtkWidget *widget,
   return FALSE;
 }
 
-//when we click the volume bar
+//!when we click the volume bar
 gboolean volume_bar_click_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
                                    gpointer user_data)
@@ -1449,7 +1456,7 @@ gboolean volume_bar_click_event (GtkWidget *widget,
   return FALSE;
 }
 
-//when we enter the volume bar
+//!when we enter the volume bar
 gboolean volume_bar_enter_event (GtkWidget *widget,
                                  GdkEventCrossing *event,
                                  gpointer user_data)
@@ -1459,7 +1466,7 @@ gboolean volume_bar_enter_event (GtkWidget *widget,
   return FALSE;
 }
 
-//when we leave the volume bar
+//!when we leave the volume bar
 gboolean volume_bar_leave_event (GtkWidget *widget,
                                  GdkEventCrossing *event,
                                  gpointer user_data)
@@ -1469,7 +1476,7 @@ gboolean volume_bar_leave_event (GtkWidget *widget,
   return FALSE;
 }
 
-//scroll event for the volume bar
+//!scroll event for the volume bar
 gboolean volume_bar_scroll_event (GtkWidget *widget,
                                   GdkEventScroll *event,
                                   gpointer user_data)
@@ -1479,7 +1486,7 @@ gboolean volume_bar_scroll_event (GtkWidget *widget,
   return FALSE;
 }
 
-//creates the volume vertical bar
+//!creates the volume vertical bar
 GtkWidget *create_volume_control_box()
 {
   //our vertical box
@@ -1514,7 +1521,7 @@ GtkWidget *create_volume_control_box()
   return vbox;
 }
 
-//when closing the new window after detaching
+//!when closing the new window after detaching
 void close_player_popup_window_event( GtkWidget *window,
                                       gpointer data )
 {
@@ -1527,7 +1534,7 @@ void close_player_popup_window_event( GtkWidget *window,
   gtk_widget_destroy(window);
 }
 
-//when we detach the handle
+//!when we detach the handle
 void handle_player_detached_event(GtkHandleBox *handlebox,
                                   GtkWidget *widget,
                                   gpointer data)
@@ -1546,8 +1553,8 @@ void handle_player_detached_event(GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-//returns a drawable string from a string
-//that we will draw on the drawing area
+//!returns a drawable string from a string
+//!that we will draw on the drawing area
 PangoLayout *get_drawing_text(gchar *str)
 {
 #define FONT "Sans 9"
@@ -1572,7 +1579,7 @@ PangoLayout *get_drawing_text(gchar *str)
   return layout;
 }
 
-//returns the value of the right drawing area
+//!returns the value of the right drawing area
 gfloat get_right_drawing_time()
 {
   gfloat left = 0;
@@ -1584,7 +1591,7 @@ gfloat get_right_drawing_time()
   return right;
 }
 
-//returns the value of the left drawing area
+//!returns the value of the left drawing area
 gfloat get_left_drawing_time()
 {
   gfloat right = total_time / zoom_coeff;
@@ -1594,29 +1601,38 @@ gfloat get_left_drawing_time()
   return left;
 }
 
-//returns the hundreth of seconds rest
-//of a time (in hundreth of seconds)
+/*!returns the hundreth of seconds rest of a time value
+
+\param time The time in hundreths of a second
+*/
 gint get_time_hundrsecs(gint time)
 {
   return time % 100;
 }
 
-//returns the seconds rest
-//of a time (in hundreth of seconds)
+/*!returns the seconds rest of a time
+
+\param time The time in hundreths of a second
+*/
 gint get_time_secs(gint time)
 {
   return (time / 100) % 60;
 }
 
-//returns the minutes
-//of a time (in hundreth of seconds)
+/*!returns the minutes of a time 
+
+\param time The time in hundreth of a second
+*/
 gint get_time_mins(gint time)
 {
   return time / 6000;
 }
 
-//returns a string for a 
-//hundr_or_not = TRUE means we also draw hundr of secs
+/*!Converts a time value to a string we can display 
+
+\param hundr_or_not = TRUE means we also draw hundr of secs
+\param time The time in hundreths of a second
+*/
 gchar *get_time_for_drawing(gchar *str,
                             gint time,
                             gboolean hundr_or_not,
@@ -1642,7 +1658,7 @@ gchar *get_time_for_drawing(gchar *str,
   return str;
 }
 
-//transform time to pixels
+//!Convert time into to pixels
 gint time_to_pixels(gint width, gfloat time)
 {
   return (width * time * zoom_coeff)/total_time;
@@ -1654,8 +1670,11 @@ gfloat pixels_to_time(gfloat width, gint pixels)
   return (total_time * (gfloat)pixels)/(width * zoom_coeff);
 }
 
-//returns the position of a line given the width drawing 
-//area and a time (x position)
+/*!returns the position of a time mark on the screen
+
+\param width The width of the drawing 
+\param The time in hundreths of a second
+*/
 gint get_draw_line_position(gint width,
                             gfloat time)
 {
@@ -1734,7 +1753,7 @@ void draw_motif(GtkWidget *da,
   gdk_gc_set_rgb_fg_color (gc, &color);
 }
 
-//draw the marks, minutes, seconds...
+//!draw the marks, minutes, seconds...
 void draw_marks(gint time_interval, gint left_mark,
                 gint right_mark, gint ylimit,
                 GtkWidget *da, GdkGC *gc)
@@ -1775,7 +1794,7 @@ void draw_marks(gint time_interval, gint left_mark,
     }
 }
 
-//full cancel of the quick preview
+//!full cancel of the quick preview
 void cancel_quick_preview_all()
 {
   cancel_quick_preview();
@@ -1783,18 +1802,20 @@ void cancel_quick_preview_all()
   preview_start_splitpoint = -1;
 }
 
-//cancels quick preview
+//!cancels quick preview
 void cancel_quick_preview()
 {
   quick_preview = FALSE;
 }
 
-//motif for splitpoints
-//draw is false if we draw the splitpoint we move
-//move = FALSE means we don't move the splitpoint,
-//move = TRUE means we move the splitpoint
-//number_splitpoint is the current splitpoint we draw
-//-splitpoint_checked = TRUE if the splitpoint is checked
+/*!motif for splitpoints
+
+\param draw false if we draw the splitpoint we move
+\param move FALSE means we don't move the splitpoint,
+\param move = TRUE means we move the splitpoint
+\param number_splitpoint is the current splitpoint we draw
+\param splitpoint_checked = TRUE if the splitpoint is checked
+*/
 void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
                             gint x,gint draw,
                             gint current_point_hundr_secs,
@@ -1995,7 +2016,7 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
   }
 }
 
-//left, right mark in hundreth of seconds
+//!left, right mark in hundreths of seconds
 void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc)
 {
   Split_point current_point;
@@ -2076,6 +2097,7 @@ gint get_silence_wave_coeff()
   return points_coeff;
 }
 
+//! Draws the silence wave
 void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc)
 {
   if (silence_points && ! we_scan_for_silence)
@@ -2132,7 +2154,7 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc
   }
 }
 
-//event for drawing the progress drawing area
+//!event for drawing the progress drawing area
 gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
 {
   int width = 0, height = 0;
@@ -2713,13 +2735,16 @@ void get_splitpoint_time_left_right(gint *time_left,
     }
 }
 
-//second argument:
-//3 means right button
-//1 means left button
-//third 'type' argument:
-// 1 means erase splitpoint area,
-// 2 means move splitpoint area,
-// 3 means check splitpoint area
+/*!Acquire the number of the splitpoint that has been clicked on
+
+\param type_clicked
+ - 3 means right button
+ - 1 means left button
+\param type
+ - 1 means erase splitpoint area,
+ - 2 means move splitpoint area,
+ - 3 means check splitpoint area
+*/
 gint get_splitpoint_clicked(gint button_y, gint type_clicked,
                             gint type)
 {
@@ -2817,7 +2842,7 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked,
   return splitpoint_returned;
 }
 
-//makes a quick preview of the song
+//!makes a quick preview of the song
 void player_quick_preview(gint splitpoint_to_preview)
 {  
   //if we have found splitpoints
@@ -2871,7 +2896,7 @@ void player_quick_preview(gint splitpoint_to_preview)
     }
 }
 
-//drawing area press event
+//!drawing area press event
 gboolean da_press_event (GtkWidget    *da,
                          GdkEventButton *event,
                          gpointer     data)
@@ -2987,7 +3012,7 @@ gboolean da_press_event (GtkWidget    *da,
   return TRUE;
 }
 
-//drawing area release event
+//!drawing area release event
 gboolean da_unpress_event (GtkWidget    *da,
                            GdkEventButton *event,
                            gpointer     data)
@@ -3071,7 +3096,7 @@ gboolean da_unpress_event (GtkWidget    *da,
   return TRUE;
 }
 
-//on drawing area event
+//!on drawing area event
 gboolean da_notify_event (GtkWidget     *da,
                           GdkEventMotion *event,
                           gpointer      data)
@@ -3174,7 +3199,7 @@ gboolean da_notify_event (GtkWidget     *da,
   return TRUE;
 }
 
-//creates the progress drawing area under the player buttons
+//!creates the progress drawing area under the player buttons
 GtkWidget *create_drawing_area()
 {
   GtkWidget *frame = gtk_frame_new(NULL);
@@ -3202,7 +3227,7 @@ GtkWidget *create_drawing_area()
   return frame;
 }
 
-//creates the control player frame, stop button, play button, etc.
+//!creates the control player frame, stop button, play button, etc.
 GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
 {
   //main horizontal box of the frame (contains volume control + others)
@@ -3266,7 +3291,7 @@ GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
   return player_handle;
 }
 
-//add a row to the table
+//!add a row to the table
 void add_playlist_file(const gchar *name)
 {
   if (is_filee(name))
@@ -3314,7 +3339,7 @@ void add_playlist_file(const gchar *name)
   }
 }
 
-//when closing the new window after detaching
+//!when closing the new window after detaching
 void close_playlist_popup_window_event(GtkWidget *window,
                                        gpointer data)
 {
@@ -3328,7 +3353,7 @@ void close_playlist_popup_window_event(GtkWidget *window,
 }
 
 
-//when we detach the handle
+//!when we detach the handle
 void handle_playlist_detached_event(GtkHandleBox *handlebox,
                                     GtkWidget *widget,
                                     gpointer data)
@@ -3347,7 +3372,7 @@ void handle_playlist_detached_event(GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-//creates the model for the playlist
+//!creates the model for the playlist
 GtkTreeModel *create_playlist_model()
 {
   GtkListStore *model;
@@ -3359,7 +3384,7 @@ GtkTreeModel *create_playlist_model()
   return GTK_TREE_MODEL(model);
 }
 
-//creates the playlist tree
+//!creates the playlist tree
 GtkTreeView *create_playlist_tree()
 {
   GtkTreeView *tree_view;
@@ -3373,7 +3398,7 @@ GtkTreeView *create_playlist_tree()
   return tree_view;
 }
 
-//creates playlist columns
+//!creates playlist columns
 void create_playlist_columns (GtkTreeView *tree_view)
 {
   //cells renderer
@@ -3410,7 +3435,7 @@ void create_playlist_columns (GtkTreeView *tree_view)
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 }
 
-//split selection has changed
+//!split selection has changed
 void playlist_selection_changed(GtkTreeSelection *selec,
                                 gpointer data)
 {
@@ -3435,7 +3460,7 @@ void playlist_selection_changed(GtkTreeSelection *selec,
   }
 }
 
-//event for the remove file button
+//!event for the remove file button
 void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
@@ -3492,7 +3517,7 @@ void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
   g_list_free(selected_list);  
 }
 
-//event for the remove file button
+//!event for the remove file button
 void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
@@ -3517,7 +3542,7 @@ void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
 }
 
-//creates the horizontal queue buttons horizontal box
+//!creates the horizontal queue buttons horizontal box
 GtkWidget *create_delete_buttons_hbox()
 {
   //our horizontal box
@@ -3546,7 +3571,7 @@ GtkWidget *create_delete_buttons_hbox()
 }
 
 
-//creates the playlist of the player
+//!creates the playlist of the player
 GtkWidget *create_player_playlist_frame()
 {
   //the main vbox inside the handle
@@ -3595,8 +3620,10 @@ GtkWidget *create_player_playlist_frame()
   return playlist_handle;
 }
 
-//timer used to print infos about the song, like time elapsed and
-//variable bitrate
+/*! timer used to print infos about the song
+
+Examples are the elapsed time and if it uses variable bitrate
+*/
 gint mytimer(gpointer data)
 {
   //if connected and player running
@@ -3748,8 +3775,10 @@ gint mytimer(gpointer data)
 }
 
 
-//MOVED FROM THE FILE TAB
-//event for the file chooser cancel button
+/*!event for the file chooser cancel button
+
+Moved here from the file tab
+*/
 void file_chooser_cancel_event()
 {
   gtk_widget_set_sensitive(browse_button, TRUE);
@@ -3839,7 +3868,7 @@ void close_file_popup_window_event( GtkWidget *window,
   gtk_widget_destroy(window);
 }
 
-//when we detach the handle
+//!when we detach the handle
 void handle_file_detached_event (GtkHandleBox *handlebox,
                                  GtkWidget *widget,
                                  gpointer data)
@@ -3858,8 +3887,10 @@ void handle_file_detached_event (GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-//fix ogg stream action
-//we split from 0 to a big number
+/*!fix ogg stream action
+
+we split from 0 to a big number
+*/
 gpointer fix_ogg_stream(gpointer data)
 {
   we_are_splitting = TRUE;
@@ -3907,7 +3938,7 @@ gpointer fix_ogg_stream(gpointer data)
   return NULL;
 }
 
-//we make a thread with fix_ogg_stream
+//!we make a thread with fix_ogg_stream
 void fix_ogg_stream_button_event(GtkWidget *widget, gpointer   data)
 {
   g_thread_create(fix_ogg_stream, NULL, TRUE, NULL);
@@ -3960,11 +3991,13 @@ GtkWidget *create_choose_file_frame()
   return file_handle_box;
 }
 
+//! Hide the connect button
 void hide_connect_button()
 {
   gtk_widget_hide(connect_button);
 }
 
+//! Show the connect button
 void show_connect_button()
 {
   if (! container_has_child(GTK_CONTAINER(player_buttons_hbox), connect_button))
@@ -3974,11 +4007,13 @@ void show_connect_button()
   gtk_widget_show_all(connect_button);
 }
 
+//! Hide the disconnect button
 void hide_disconnect_button()
 {
   gtk_widget_hide(disconnect_button);
 }
 
+//! Show the disconnec button
 void show_disconnect_button()
 {
   if (! container_has_child(GTK_CONTAINER(player_buttons_hbox), disconnect_button))

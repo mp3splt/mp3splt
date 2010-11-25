@@ -72,8 +72,10 @@ SOCKET socket_id;
 gint socket_id;
 #endif
 
-//connecting to the player to the port port
-//returns possible error
+/*!connecting to the player to the port port
+
+Might possibley return an error
+*/
 gint connect_snackamp(gint port)
 {
   //socket and internet structures
@@ -175,8 +177,9 @@ gchar *cut_begin_end(gchar *result)
   return result;
 }
 
-//disconnecting with the player
-//returns possible error
+/*! disconnecting with the player
+possibly returns an error
+*/
 gint disconnect_snackamp()
 {
   connected = FALSE;
@@ -188,9 +191,11 @@ gint disconnect_snackamp()
 #endif
 }
 
-//send a message to snackamp through the socket interface
-//returns the result, must be freed after
-//must rewrite
+/*! send a message to snackamp through the socket interface
+
+\return the result; must be g_freed after use
+\todo rewrite this function
+*/
 gchar *snackamp_socket_send_message(gchar *message)
 {
   gchar *result = malloc(1024 * sizeof(gchar *));
@@ -238,7 +243,7 @@ gchar *snackamp_socket_send_message(gchar *message)
   return result;
 }
 
-//gets an integer from the string
+//!gets an integer from the string
 gint get_integer_from_string(gchar *result)
 {
   gint our_integer = 0;
@@ -258,13 +263,13 @@ gint get_integer_from_string(gchar *result)
   return our_integer;
 }
 
-//if we are connected to snackamp or not
+//!Test if we are connected to snackamp
 gboolean snackamp_is_connected()
 {
   return connected;
 }
 
-//gets informations about the song
+//!gets informations about the song
 void snackamp_get_song_infos(gchar *total_infos)
 {
   gchar rate_str[32] = { '\0' };
@@ -344,8 +349,10 @@ void snackamp_get_song_infos(gchar *total_infos)
   g_free(result);
 }
 
-//returns the filename
-//must be freed after
+/*!returns the filename
+
+The result of this query must be freed after use.
+*/
 gchar *snackamp_get_filename()
 {
   //we get the current song position
@@ -364,7 +371,7 @@ gchar *snackamp_get_filename()
   return result;
 }
 
-//returns current song position in the playlist
+//!returns current song position in the playlist
 gint snackamp_get_playlist_pos()
 {
   gchar *result;
@@ -376,7 +383,7 @@ gint snackamp_get_playlist_pos()
   return number;
 }
 
-//stops a song
+//!stops playing a song
 void snackamp_stop()
 {
   gchar *result;
@@ -384,7 +391,7 @@ void snackamp_stop()
   g_free(result);
 }
 
-//returns the number of songs of the playlist
+//!returns the number of songs of the playlist
 gint snackamp_get_playlist_number()
 {
   gchar *result;
@@ -402,8 +409,10 @@ gint snackamp_get_playlist_number()
   return number;
 }
 
-//returns the title of the song
-//must be freed after
+/*!returns the title of the song
+
+The return value must be g_free'd after use.
+*/
 gchar *snackamp_get_title_song()
 {
   gchar *result;
@@ -419,7 +428,7 @@ gchar *snackamp_get_title_song()
   return result;
 }
 
-//returns elapsed time
+//!returns elapsed time
 gint snackamp_get_time_elapsed()
 {
   gchar *result;
@@ -431,7 +440,7 @@ gint snackamp_get_time_elapsed()
   return pos;
 }
 
-//starts snackamp
+//!starts snackamp
 void snackamp_start()
 {
   gint timer;
@@ -452,7 +461,7 @@ void snackamp_start()
   g_free(exec_this);
 }
 
-//jumps to the position pos in the playlist
+//!jumps to the position pos in the playlist
 void snackamp_set_playlist_pos(gint pos)
 {
   gchar *result;
@@ -463,7 +472,7 @@ void snackamp_set_playlist_pos(gint pos)
   g_free(result);
 }
 
-//selects the last file in the playlist
+//!selects the last file in the playlist
 void snackamp_select_last_file()
 {
   //we get last song position
@@ -471,7 +480,7 @@ void snackamp_select_last_file()
   snackamp_set_playlist_pos(last_song-1);
 }
 
-//plays a song
+//!plays a song
 void snackamp_play()
 {
   gchar *result;
@@ -479,14 +488,14 @@ void snackamp_play()
   g_free(result);
 }
 
-//plays the last file of the playlist
+//!plays the last file of the playlist
 void snackamp_play_last_file()
 {
   snackamp_select_last_file();
   snackamp_play();
 }
 
-//add files to the snackamp playlist
+//!add files to the snackamp playlist
 void snackamp_add_files(GList *list)
 {
   gchar *song;
@@ -510,7 +519,7 @@ void snackamp_add_files(GList *list)
     }
 }
 
-//sets volume
+//!sets volume
 void snackamp_set_volume(gint volume)
 {
   //we get the current file
@@ -522,7 +531,7 @@ void snackamp_set_volume(gint volume)
   g_free(result);
 }
 
-//returns volume
+//!returns volume
 gint snackamp_get_volume()
 {
   gchar *result;
@@ -534,14 +543,14 @@ gint snackamp_get_volume()
   return vol;
 }
 
-//starts snackamp with songs
+//!starts snackamp with songs
 void snackamp_start_with_songs(GList *list)
 {
   snackamp_start();
   snackamp_add_files(list);
 }
 
-//returns TRUE if snackamp is running; if not, FALSE 
+//!returns TRUE if snackamp is running; if not, FALSE 
 gint snackamp_is_running()
 {
   gint result = FALSE;
@@ -564,7 +573,7 @@ gint snackamp_is_running()
   return result;
 }
 
-//pause a song
+//!pause a song
 void snackamp_pause()
 {
   gchar *result;
@@ -572,7 +581,7 @@ void snackamp_pause()
   g_free(result);
 }
 
-//changes to next song
+//!changes to next song
 void snackamp_next()
 {
   gchar *result;
@@ -580,7 +589,7 @@ void snackamp_next()
   g_free(result);
 }
 
-//changes to previous song
+//!changes to previous song
 void snackamp_prev()
 {
   gint playlist_pos = snackamp_get_playlist_pos();
@@ -599,7 +608,7 @@ void snackamp_prev()
     }
 }
 
-//jump to time
+//!jump to time
 void snackamp_jump(gint position)
 {
   //we have the position in miliseconds, we get it in hundreths of
@@ -626,7 +635,7 @@ void snackamp_jump(gint position)
   g_free(result);
 }
 
-//returns total time of the current song
+//!returns total time of the current song
 gint snackamp_get_total_time()
 {
   gchar *result;
@@ -639,7 +648,7 @@ gint snackamp_get_total_time()
   return hundr_secs;
 }
 
-//returns TRUE if snackamp is playing, else FALSE
+//!returns TRUE if snackamp is playing, else FALSE
 gint snackamp_is_playing()
 {
   //if we are connected to snackamp
@@ -660,8 +669,10 @@ gint snackamp_is_playing()
     return FALSE;
 }
 
-//returns TRUE if snackamp is paused, else FALSE
-//not yet implemented in snackamp
+/*! returns TRUE if snackamp is paused, else FALSE
+
+not yet implemented in snackamp
+*/
 gint snackamp_is_paused()
 {
   //if we are connected to snackamp

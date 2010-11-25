@@ -50,26 +50,26 @@
 #include "utilities.h"
 #include "main_win.h"
 
-//our split tree
+//!our split tree
 GtkWidget *split_tree;
 
-//number of rows in the split table
+//!number of rows in the split table
 gint split_table_number = 0;
 
-//handle box for detaching window
+//!handle box for detaching window
 GtkWidget *split_handle_box;
-//queue files button
+//!queue files button
 GtkWidget *queue_files_button;
-//remove file button
+//!remove file button
 GtkWidget *remove_file_button;
-//remove file button
+//!remove file button
 GtkWidget *remove_all_files_button;
 
 extern gint selected_player;
 extern gint split_files;
 extern gboolean timer_active;
 
-//split files enumeration
+//!split files enumeration
 enum
 {
   COL_NAME,
@@ -77,7 +77,7 @@ enum
   SPLIT_COLUMNS
 };
 
-//creates the model for the split tree
+//!creates the model for the split tree
 GtkTreeModel *create_split_model()
 {
   GtkListStore *model;
@@ -87,7 +87,7 @@ GtkTreeModel *create_split_model()
   return GTK_TREE_MODEL (model);
 }
 
-//creates the tree
+//!creates the tree
 GtkTreeView *create_split_files_tree()
 {
   GtkTreeView *tree_view;
@@ -101,7 +101,7 @@ GtkTreeView *create_split_files_tree()
   return tree_view;
 }
 
-//creates split columns
+//!creates split columns
 void create_split_columns (GtkTreeView *tree_view)
 {
   GtkCellRendererText *renderer =
@@ -120,7 +120,7 @@ void create_split_columns (GtkTreeView *tree_view)
   gtk_tree_view_column_set_resizable(name_column, TRUE);
 }
 
-//removes all rows from the split files table
+//!removes all rows from the split files table
 void remove_all_split_rows ()
 {
   GtkTreeIter iter;
@@ -140,8 +140,10 @@ void remove_all_split_rows ()
     }
 }
 
-//finding the real name of the file, without the path
-//TODO: why guchar instead of gchar ?
+/*! finding the real name of the file, without the path
+
+\todo why guchar instead of gchar ?
+*/
 guchar *get_real_name_from_filename(guchar *filename)
 {
   while (strchr((gchar *) filename, G_DIR_SEPARATOR)!=NULL)
@@ -150,7 +152,7 @@ guchar *get_real_name_from_filename(guchar *filename)
   return filename;
 }
 
-//add a row to the table
+//!add a row to the table
 void add_split_row(const gchar *name)
 {
   GtkTreeIter iter;
@@ -168,7 +170,7 @@ void add_split_row(const gchar *name)
   split_table_number++;
 }
 
-//return the n_th filename from the split files
+//!return the n_th filename from the split files
 gchar *get_filename_from_split_files(gint number)
 {
   gchar *filename = NULL;
@@ -190,7 +192,7 @@ gchar *get_filename_from_split_files(gint number)
   return filename;
 }
 
-//queue button event
+//!queue button event
 void queue_files_button_event( GtkWidget *widget,
                                gpointer   data )
 {
@@ -241,7 +243,7 @@ void queue_files_button_event( GtkWidget *widget,
   g_list_free(file_list);
 }
 
-//event for the remove file button
+//!event for the remove file button
 void remove_file_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
@@ -300,7 +302,7 @@ void remove_file_button_event(GtkWidget *widget, gpointer data)
   g_list_free (selected_list);  
 }
 
-//event for the remove file button
+//!event for the remove file button
 void remove_all_files_button_event(GtkWidget *widget,
                                    gpointer data)
 {
@@ -327,7 +329,7 @@ void remove_all_files_button_event(GtkWidget *widget,
   gtk_widget_set_sensitive(queue_files_button,FALSE);
 }
 
-//creates the horizontal queue buttons horizontal box
+//!creates the horizontal queue buttons horizontal box
 GtkWidget *create_queue_buttons_hbox()
 {
   //our horizontal box
@@ -367,7 +369,7 @@ GtkWidget *create_queue_buttons_hbox()
   return hbox;
 }
 
-//when clicking on a row
+//! Issued when a row is clicked on
 void split_tree_row_activated(GtkTreeView *tree_view, GtkTreePath *arg1,
     GtkTreeViewColumn *arg2, gpointer data)
 {
@@ -411,7 +413,7 @@ void split_tree_row_activated(GtkTreeView *tree_view, GtkTreePath *arg1,
   }
 }
 
-//split selection has changed
+//!split selection has changed
 void split_selection_changed(GtkTreeSelection *selec,
                              gpointer data)
 {
@@ -432,7 +434,7 @@ void split_selection_changed(GtkTreeSelection *selec,
     }
 }
 
-//when closing the new window after detaching
+//!Issued when closing the new window after detaching
 void close_split_popup_window_event( GtkWidget *window,
                                     gpointer data )
 {
@@ -446,7 +448,7 @@ void close_split_popup_window_event( GtkWidget *window,
   gtk_widget_destroy(window);
 }
 
-//when we detach the handle
+//!Issued when we detach the handle
 void handle_split_detached_event (GtkHandleBox *handlebox,
                                      GtkWidget *widget,
                                      gpointer data)
@@ -465,7 +467,7 @@ void handle_split_detached_event (GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-//creates the split files tab
+//!creates the split files tab
 GtkWidget *create_split_files()
 {
   //our vertical box
