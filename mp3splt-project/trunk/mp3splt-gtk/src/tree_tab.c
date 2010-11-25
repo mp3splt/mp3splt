@@ -411,9 +411,12 @@ gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
   return TRUE;
 }
 
-/*! checks if description exists
+/*! checks if the name of the current track is already in use
 
-we dont check the count = number
+\param descr The name of the current track
+\param number The number of the track we don't want to compare our
+track name with
+\result TRUE if the new track name for track (number) is unique
 */
 gboolean check_if_description_exists(gchar *descr,
                                      gint number)
@@ -470,7 +473,7 @@ gboolean check_if_description_exists(gchar *descr,
   return TRUE;
 }
 
-//!returns the first splitpoint selected
+//!Gets the number of the first splitpoint with selected "Keep" checkbox 
 gint get_first_splitpoint_selected()
 {
   gint splitpoint_selected = -1;
@@ -513,7 +516,16 @@ void row_selection_event()
     gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), TRUE); 
 }
 
-//we dont check count = number
+/*! Set the name of the splitpoint (number) to (descr)
+
+\param descr the new name of the split point
+\param number The number of the split point
+
+If any split point with a different number already uses the name we
+want we chose for this split point this function adds a number as a
+postfix (or updates the already-existing postfix) to force the new
+splitpoint's name. do be unique.
+*/
 void update_current_description(gchar *descr, gint number)
 {
   gint ll = 0;
@@ -639,9 +651,14 @@ void remove_splitpoint(gint index,gint stop_preview)
   refresh_drawing_area();
 }
 
-/*!updates a splipoint
+/*!Set all values of a split point
 
-Read out the splitpoint's properties to match the values from tree_view.
+\param new_point All values for this split point
+\param index The number of this split point
+
+Will display an error in the message bar if a splitpoint with a
+different index number with exactly the same time value exists and
+otherwise update the split point.
 */
 void update_splitpoint(gint index, Split_point new_point)
 {
@@ -680,8 +697,10 @@ void update_splitpoint(gint index, Split_point new_point)
   }
 }
 
-//updates a splitpoint
-//index is the position in the GArray with splitpoints
+/*!Set a splitpoint's time value
+\param index The split point's number
+\param time the new time value
+*/
 void update_splitpoint_from_time(gint index, gdouble time)
 {
   //if we have another splitpoint on the same place
@@ -696,8 +715,11 @@ void update_splitpoint_from_time(gint index, gdouble time)
   update_splitpoint(index, new_point);
 }
 
-//updates a splitpoint
-//index is the position in the GArray with splitpoints
+/*!Toggles a splitpoint's "Keep" flag
+
+\param index is the position in the GArray with splitpoints aka the
+split point's number
+*/
 void update_splitpoint_check(gint index)
 {
   Split_point old_point = g_array_index(splitpoints, Split_point, index);
@@ -705,7 +727,7 @@ void update_splitpoint_check(gint index)
   update_splitpoint(index, old_point);
 }
 
-//event for editing a cell
+//!event for editing a cell
 void cell_edited_event (GtkCellRendererText *cell,
                         gchar               *path_string,
                         gchar               *new_text,
