@@ -45,7 +45,7 @@
 
 #ifdef __WIN32__
 #include <winsock2.h>
-#define usleep(x) Sleep(x*1000)
+#define usleep(x) Sleep(x/1000)
 #endif
 
 #include "util.h"
@@ -2844,56 +2844,47 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked,
 
 //!makes a quick preview of the song
 void player_quick_preview(gint splitpoint_to_preview)
-{  
-  //if we have found splitpoints
+{
   if (splitpoint_to_preview != -1)
+  {
+    preview_start_position = get_splitpoint_time(splitpoint_to_preview);
+    preview_start_splitpoint = splitpoint_to_preview;
+
+    if (!player_is_playing())
     {
-      preview_start_position = 
-        get_splitpoint_time(splitpoint_to_preview);
-      preview_start_splitpoint = splitpoint_to_preview;
-      
-      //we make the player play
-      if (!player_is_playing())
-        {
-          player_play();
-          usleep(50000);
-        }
-      if (player_is_paused())
-        {
-          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button),
-                                       FALSE);
-        }
-      
-      //
-      if (splitpoint_to_preview
-          < splitnumber-1)
-        {
-          //we stop at the next splitpoint
-          quick_preview_end_splitpoint = 
-            splitpoint_to_preview+1;
-        }
-      else
-        {
-          quick_preview_end_splitpoint = -1;
-        }
-      
-      player_jump(preview_start_position);
-      change_progress_bar();
-      put_status_message(_(" quick preview..."));
-      
-      quick_preview = FALSE;
-      if (quick_preview_end_splitpoint != -1)
-        {
-          quick_preview = TRUE;
-        }
-      
-      //if we preview the last splitpoint
-      //we cancel the preview
-      if (preview_start_splitpoint == (splitnumber-1))
-        {
-          cancel_quick_preview_all();
-        }
+      player_play();
+      usleep(50000);
     }
+
+    if (player_is_paused())
+    {
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button), FALSE);
+    }
+
+    if (splitpoint_to_preview < splitnumber-1)
+    {
+      quick_preview_end_splitpoint = splitpoint_to_preview + 1;
+    }
+    else
+    {
+      quick_preview_end_splitpoint = -1;
+    }
+
+    player_jump(preview_start_position);
+    change_progress_bar();
+    put_status_message(_(" quick preview..."));
+
+    quick_preview = FALSE;
+    if (quick_preview_end_splitpoint != -1)
+    {
+      quick_preview = TRUE;
+    }
+
+    if (preview_start_splitpoint == (splitnumber-1))
+    {
+      cancel_quick_preview_all();
+    }
+  }
 }
 
 //!drawing area press event
