@@ -20,12 +20,10 @@ win=$1
 }
 
 #msgfmt check
+HAS_MSGFMT=yes
 (msgfmt --version) > /dev/null 2>&1 ||
 {
-    echo
-    echo "Error: you must have gettext(msgfmt) installed to compile mp3splt-gtk !"
-    echo
-    exit 1
+  HAS_MSGFMT=no
 }
 
 #remove old libtool generated files
@@ -42,7 +40,7 @@ echo -n "1/6 Running autopoint... " \
 && autopoint -f && echo "done" \
 && echo -n "2/6 Running aclocal... " \
 && aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
-&& if x=x$win;then sed "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4 > libmp3splt_aclocal.m4 && mv libmp3splt_aclocal.m4 aclocal.m4;fi \
+&& if test "x$win" = x;then sed "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4 > libmp3splt_aclocal.m4 && mv libmp3splt_aclocal.m4 aclocal.m4;fi \
 && echo -n "3/6 Running autoheader... " \
 && autoheader && echo "done" \
 && echo -n "4/6 Running libtoolize... " \
@@ -51,6 +49,8 @@ echo -n "1/6 Running autopoint... " \
 && autoconf && echo "done" \
 && echo -n "6/6 Running automake... " \
 && automake -a -c && echo "done"
+
+if test "x$HAS_MSGFMT" = xyes;then
 
 echo -n "Formatting language files with msgfmt... " && \
 {
@@ -63,4 +63,6 @@ echo -n "Formatting language files with msgfmt... " && \
     done
     cd ..
 } && echo "done"
+
+fi
 
