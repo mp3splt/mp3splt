@@ -247,12 +247,6 @@ gpointer split_it(gpointer data)
   gdk_threads_enter();
   print_status_bar_confirmation(err);
   
-  //we put the splitpoints in the state only if the normal mode
-  if (split_mode == SPLT_OPTION_NORMAL_MODE)
-  {
-    put_splitpoints_in_the_state(the_state);
-  }
-
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
   gdk_threads_leave();
 
@@ -279,6 +273,12 @@ gpointer split_it(gpointer data)
   if (split_file_mode == FILE_MODE_SINGLE)
   {
     gdk_threads_enter();
+
+    if (split_mode == SPLT_OPTION_NORMAL_MODE)
+    {
+      put_splitpoints_in_the_state(the_state);
+    }
+
     print_processing_file(filename_to_split);
     gdk_threads_leave();
 
@@ -303,6 +303,11 @@ gpointer split_it(gpointer data)
       while (row_number < multiple_files_tree_number)
       {
         gdk_threads_enter();
+
+        if (split_mode == SPLT_OPTION_NORMAL_MODE)
+        {
+          put_splitpoints_in_the_state(the_state);
+        }
 
         path = gtk_tree_path_new_from_indices(row_number ,-1);
         gtk_tree_model_get_iter(model, &iter, path);

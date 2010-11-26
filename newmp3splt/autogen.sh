@@ -19,12 +19,10 @@
 }
 
 #msgfmt check
+HAS_MSGFMT=yes
 (msgfmt --version) > /dev/null 2>&1 ||
 {
-    echo
-    echo "Error: you must have gettext(msgfmt) installed to compile mp3splt-gtk !"
-    echo
-    exit 1
+  HAS_MSGFMT=no
 }
 
 #we run aclocal, autoconf and automake
@@ -39,6 +37,8 @@ echo -n "1/5 Running autopoint... " \
 && echo -n "5/5 Running automake... " \
 && automake -a -c && echo "done"
 
+if test "x$HAS_MSGFMT" = xyes;then
+
 echo -n "Formatting language files with msgfmt... " && \
 {
     cd po
@@ -50,4 +50,6 @@ echo -n "Formatting language files with msgfmt... " && \
     done
     cd ..
 } && echo "done"
+
+fi
 

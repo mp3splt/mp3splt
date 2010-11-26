@@ -60,6 +60,17 @@ GtkWidget *file_mode_radio_button = NULL;
 
 GtkWidget *multiple_files_component = NULL;
 
+GtkWidget *all_spinner_silence_number_tracks;
+GtkWidget *all_spinner_silence_minimum;
+GtkWidget *all_spinner_silence_offset;
+GtkWidget *all_spinner_silence_threshold;
+GtkWidget *all_silence_remove_silence;
+
+GtkWidget *all_threshold_label;
+GtkWidget *all_offset_label;
+GtkWidget *all_number_of_tracks_label;
+GtkWidget *all_min_silence_label;
+
 //! Get the split mode
 static gint get_selected_split_mode(GtkToggleButton *radio_b)
 {
@@ -98,6 +109,32 @@ void select_split_mode(int split_mode)
   }
 }
 
+void deactivate_silence_parameters()
+{
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_number_tracks), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_minimum), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_offset), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_threshold), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_silence_remove_silence), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_threshold_label), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_offset_label), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_number_of_tracks_label), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_min_silence_label), FALSE);
+}
+
+void activate_silence_parameters()
+{
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_number_tracks), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_minimum), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_offset), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_spinner_silence_threshold), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_silence_remove_silence), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_threshold_label), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_offset_label), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_number_of_tracks_label), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(all_min_silence_label), TRUE);
+}
+
 //! Issued when the split mode selection changed
 void split_mode_changed(GtkToggleButton *radio_b, gpointer data)
 {
@@ -110,6 +147,15 @@ void split_mode_changed(GtkToggleButton *radio_b, gpointer data)
   int enable_split_equal_time = (selected_split_mode == SELECTED_SPLIT_EQUAL_TIME_TRACKS);
   gtk_widget_set_sensitive(GTK_WIDGET(spinner_equal_tracks), enable_split_equal_time);
   gtk_widget_set_sensitive(GTK_WIDGET(equal_tracks_label), enable_split_equal_time);
+
+  if (selected_split_mode == SELECTED_SPLIT_SILENCE)
+  {
+    activate_silence_parameters();
+  }
+  else
+  {
+    deactivate_silence_parameters();
+  }
 
   save_preferences(NULL, NULL);
 }
@@ -233,6 +279,76 @@ static GtkWidget *create_split_mode()
   gtk_widget_set_sensitive(equal_tracks_label, FALSE);
   g_signal_connect(G_OBJECT(spinner_equal_tracks), "value-changed",
       G_CALLBACK(spinner_equal_tracks_changed), NULL);
+
+  //silence split
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button), (gchar *)_("Silence - split with silence detection"));
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+      G_CALLBACK(split_mode_changed), NULL);
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_SILENCE));
+
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
+  
+  GtkWidget *param_vbox = gtk_vbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
+
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+
+  all_threshold_label = gtk_label_new("Threshold level (dB) : ");
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_threshold_label, FALSE, FALSE, 0);
+  
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  all_spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_threshold, FALSE, FALSE, 0);
+ 
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+  
+  all_offset_label = gtk_label_new("Cutpoint offset (0 is the begin of silence,and 1 the end) : ");
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_offset_label, FALSE, FALSE, 0);
+
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
+  all_spinner_silence_offset = gtk_spin_button_new(adj, 0.05, 2);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_offset, FALSE, FALSE, 0);
+ 
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+
+  all_number_of_tracks_label = gtk_label_new("Number of tracks (0 means all tracks) : ");
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_number_of_tracks_label, FALSE, FALSE, 0);
+  
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
+  all_spinner_silence_number_tracks = gtk_spin_button_new(adj, 1, 0);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_number_tracks, FALSE, FALSE, 0);
+  
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+  
+  all_min_silence_label = gtk_label_new("Minimum silence length (seconds) : ");
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_min_silence_label, FALSE, FALSE, 0);
+
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  all_spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_minimum, FALSE, FALSE, 0);
+
+  all_silence_remove_silence =
+    gtk_check_button_new_with_label(_("Remove silence between tracks"));
+  gtk_box_pack_start(GTK_BOX(param_vbox), all_silence_remove_silence, FALSE, FALSE, 0);
+
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(all_spinner_silence_number_tracks),
+                            SPLT_DEFAULT_PARAM_TRACKS);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(all_spinner_silence_minimum),
+                            SPLT_DEFAULT_PARAM_MINIMUM_LENGTH);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(all_spinner_silence_offset),
+                            SPLT_DEFAULT_PARAM_OFFSET);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(all_spinner_silence_threshold),
+                            SPLT_DEFAULT_PARAM_THRESHOLD);
+
+  deactivate_silence_parameters();
 
   //wrap split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget

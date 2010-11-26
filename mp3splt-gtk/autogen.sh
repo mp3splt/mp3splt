@@ -32,21 +32,18 @@ if test "x$win" != x;then
  WIN_ACLOCAL_FLAGS="-I /usr/share/aclocal"
 fi
 
-function run_gnome_doc_prepare
-{
-	echo -n "Running gnome-doc-prepare... "
+echo -n "Running autopoint... ";
+autopoint -f && echo "done";
+echo -n "Running aclocal... " \
+&& aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
+&& if test "x$win" = x; then {
+ 	echo -n "Running gnome-doc-prepare... "
 	gnome-doc-prepare --automake 
 	echo "done"
 	echo -n "Running aclocal again after adding the help files... "
 	aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS
 	echo "done"
-}
-
-echo -n "Running autopoint... ";
-autopoint -f && echo "done";
-echo -n "Running aclocal... " \
-&& aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
-&& if test "x$win" = x; then run_gnome_doc_prepare; fi \
+}; fi \
 && echo -n "Running autoheader... " \
 && autoheader && echo "done" \
 && echo -n "Running autoconf... " \

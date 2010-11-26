@@ -70,6 +70,12 @@ extern GtkWidget *spinner_time;
 extern GtkWidget *spinner_equal_tracks;
 extern GtkWidget *create_dirs_from_output_files;
 
+extern GtkWidget *all_spinner_silence_number_tracks;
+extern GtkWidget *all_spinner_silence_minimum;
+extern GtkWidget *all_spinner_silence_offset;
+extern GtkWidget *all_spinner_silence_threshold;
+extern GtkWidget *all_silence_remove_silence;
+
 /*! Update the output options
 
   Update the output options in the_state by reading out the state of
@@ -159,6 +165,25 @@ void put_options_from_preferences()
           SPLT_OPTION_LENGTH_MODE);
       mp3splt_set_int_option(the_state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER,
           gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_equal_tracks)));
+      break;
+    case SELECTED_SPLIT_SILENCE:
+      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
+      mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
+          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_silence_threshold)));
+      mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_OFFSET,
+          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_silence_offset)));
+      mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_NUMBER_TRACKS,
+          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(all_spinner_silence_number_tracks)));
+      mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_MIN_LENGTH,
+          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_silence_minimum)));
+      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(all_silence_remove_silence)))
+      {
+        mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_TRUE);
+      }
+      else
+      {
+        mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_FALSE);
+      }
       break;
     case SELECTED_SPLIT_ERROR:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
