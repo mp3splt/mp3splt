@@ -49,6 +49,7 @@ gint debug_is_active = FALSE;
 
 extern splt_state *the_state;
 
+//! Returns the current local time in form of a string
 const char *get_current_time()
 {
   time_t cur_time = { 0 };
@@ -60,6 +61,7 @@ const char *get_current_time()
   return time_str;
 }
 
+//! Record this message in the message history
 void put_message_in_history(const gchar *message, splt_message_type mess_type)
 {
   if (mess_type == SPLT_MESSAGE_INFO ||
@@ -86,16 +88,24 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type)
   }
 }
 
+//! Hide the message history dialog
 void mess_history_hide(GtkDialog *dialog, gint response_id, gpointer data)
 {
   gtk_widget_hide(mess_history_dialog);
 }
 
+/*! Hide the message history dialog
+
+Takes less arguments than mess_history_hide. 
+\todo Do we really still need both functions doing the same? They
+do not seem to use the arguments they differ in at all
+ */
 void mess_history_hide2(GtkWidget *widget, gpointer data)
 {
   mess_history_hide(NULL, 0, NULL);
 }
 
+//! Add tags to the message history entry
 void add_mess_hist_tags()
 {
   GtkTextTag *tag = gtk_text_tag_new("gray_bold");
@@ -108,6 +118,7 @@ void add_mess_hist_tags()
   gtk_text_tag_table_add(mess_hist_tag_table, tag);
 }
 
+//! The event that is issued if the user clicks on a message tag
 void debug_check_event(GtkToggleButton *debug_toggle, gpointer user_data)
 {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(debug_toggle)))
@@ -120,6 +131,7 @@ void debug_check_event(GtkToggleButton *debug_toggle, gpointer user_data)
   }
 }
 
+//! The event issued when the "Clear messages" button is clicked
 void clear_messages_event(GtkWidget *widget, gpointer data)
 {
   GtkTextIter start_iter;
@@ -128,7 +140,8 @@ void clear_messages_event(GtkWidget *widget, gpointer data)
   gtk_text_buffer_get_end_iter(mess_hist_buffer, &end_iter);
   gtk_text_buffer_delete(mess_hist_buffer, &start_iter, &end_iter);
 }
- 
+
+//! The portion of the message history dialog that contains the messages
 GtkWidget *create_text_component()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
@@ -178,6 +191,7 @@ GtkWidget *create_text_component()
   return vbox;
 }
 
+//! Create the message history dialog
 void create_mess_history_dialog()
 {
   mess_history_dialog = gtk_dialog_new_with_buttons(_("Messages history"), NULL,
