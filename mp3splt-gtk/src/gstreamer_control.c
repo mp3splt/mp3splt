@@ -72,6 +72,7 @@ extern GtkWidget *player_vbox;
 
 extern void add_playlist_file(const gchar *name);
 
+//! Send a call over the dbus
 static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 {
   switch (GST_MESSAGE_TYPE(msg))
@@ -199,7 +200,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
   return TRUE;
 }
 
-//Gets informations about the song
+//!Gets information about the< song
 void gstreamer_get_song_infos(gchar *total_infos)
 {
 	if (play)
@@ -270,21 +271,25 @@ void gstreamer_get_song_infos(gchar *total_infos)
 	}
 }
 
-//returns the filename
-//must be freed after
+/*! returns the filename
+
+The result must be g_free'd after use.
+*/
 gchar *gstreamer_get_filename()
 {
   return strdup(inputfilename_get());
 }
 
-//returns the number of songs of the playlist
+//!returns the number of songs of the playlist
 gint gstreamer_get_playlist_number()
 {
   return 1;
 }
 
-//returns the title of the song
-//must be freed after
+/*!returns the title of the song
+
+The result must be g_free'd after use
+*/
 gchar *gstreamer_get_title_song()
 {
   if (song_artist || song_title)
@@ -344,7 +349,7 @@ gchar *gstreamer_get_title_song()
   }
 }
 
-//returns elapsed time
+//!returns elapsed time
 gint gstreamer_get_time_elapsed()
 {
 	if (play)
@@ -367,7 +372,7 @@ gint gstreamer_get_time_elapsed()
 	}
 }
 
-//starts gstreamer
+//!starts gstreamer
 void gstreamer_start()
 {
   if (play)
@@ -412,19 +417,19 @@ void gstreamer_start()
 	}
 }
 
-//selects the last file in the playlist
+//!selects the last file in the playlist
 void gstreamer_select_last_file()
 {
 }
 
-//plays the last file of the playlist
+//!plays the last file of the playlist
 void gstreamer_play_last_file()
 {
   gstreamer_stop();
   gstreamer_play();
 }
 
-//add files to the gstreamer playlist
+//!add files to the gstreamer playlist
 void gstreamer_add_files(GList *list)
 {
   gchar *song = NULL;
@@ -464,7 +469,7 @@ void gstreamer_add_files(GList *list)
   }
 }
 
-//sets volume
+//!sets volume
 void gstreamer_set_volume(gint volume)
 {
 	if (play)
@@ -475,7 +480,7 @@ void gstreamer_set_volume(gint volume)
 	}
 }
 
-//returns volume
+//!returns volume
 gint gstreamer_get_volume()
 {
 	if (play)
@@ -493,7 +498,7 @@ gint gstreamer_get_volume()
 	}
 }
 
-//starts gstreamer with songs
+//!starts gstreamer with songs
 void gstreamer_start_with_songs(GList *list)
 {
   gstreamer_start();
@@ -501,13 +506,13 @@ void gstreamer_start_with_songs(GList *list)
   gstreamer_play();
 }
 
-//returns TRUE if gstreamer is running; if not, FALSE 
+//!returns TRUE if gstreamer is running; if not, FALSE 
 gint gstreamer_is_running()
 {
   return _gstreamer_is_running;
 }
 
-//returns TRUE if gstreamer is paused, if not, FALSE 
+//!returns TRUE if gstreamer is paused, if not, FALSE 
 gint gstreamer_is_paused()
 {
 	if (play)
@@ -530,7 +535,7 @@ gint gstreamer_is_paused()
 	}
 }
 
-//plays a song
+//!plays a song
 void gstreamer_play()
 {
 	if (play)
@@ -549,7 +554,7 @@ void gstreamer_play()
   }
 }
 
-//stops a song
+//!stops a song
 void gstreamer_stop()
 {
 	if (play)
@@ -558,7 +563,7 @@ void gstreamer_stop()
 	}
 }
 
-//pause a song
+//!pause a song
 void gstreamer_pause()
 {
 	if (play)
@@ -577,17 +582,17 @@ void gstreamer_pause()
   }
 }
 
-//changes to next song
+//!changes to next song
 void gstreamer_next()
 {
 }
 
-//changes to previous song
+//!changes to previous song
 void gstreamer_prev()
 {
 }
 
-//jump to time
+//!jump to time
 void gstreamer_jump(gint position)
 {
 	if (play)
@@ -598,7 +603,7 @@ void gstreamer_jump(gint position)
 	}
 }
 
-//returns total time of the current song
+//!returns total time of the current song
 gint gstreamer_get_total_time()
 {
 	if (play)
@@ -623,7 +628,7 @@ gint gstreamer_get_total_time()
 	}
 }
 
-//returns TRUE if gstreamer is playing, else FALSE
+//!returns TRUE if gstreamer is playing, else FALSE
 gint gstreamer_is_playing()
 {
 	if (play)
@@ -646,7 +651,7 @@ gint gstreamer_is_playing()
 	}
 }
 
-//quits player
+//!quits player
 void gstreamer_quit()
 {
   if (play)

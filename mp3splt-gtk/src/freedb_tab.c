@@ -91,7 +91,7 @@ extern gchar current_description[255];
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
 
-//add a row to the table
+//!add a row to the table
 void add_freedb_row(gchar *album_name, 
                     gint album_id,
                     gint *revisions,
@@ -138,7 +138,7 @@ void add_freedb_row(gchar *album_name,
   g_free(number);
 }
 
-//creates the model for the freedb tree
+//!creates the model for the freedb tree
 GtkTreeModel *create_freedb_model()
 {
   GtkTreeStore *model;
@@ -149,7 +149,7 @@ GtkTreeModel *create_freedb_model()
   return GTK_TREE_MODEL (model);
 }
 
-//creates the freedb tree
+//!creates the freedb tree
 GtkTreeView *create_freedb_tree()
 {
   GtkTreeView *tree_view;
@@ -163,7 +163,7 @@ GtkTreeView *create_freedb_tree()
   return tree_view;
 }
 
-//creates freedb columns
+//!creates freedb columns
 void create_freedb_columns (GtkTreeView *tree_view)
 {
   //cells renderer
@@ -214,7 +214,7 @@ void create_freedb_columns (GtkTreeView *tree_view)
                                       TRUE);
 }
 
-//when closing the new window after detaching
+//!when closing the new window after detaching
 void close_freedb_popup_window_event( GtkWidget *window,
                                       gpointer data )
 {
@@ -228,7 +228,7 @@ void close_freedb_popup_window_event( GtkWidget *window,
   gtk_widget_destroy(window);
 }
 
-//when we detach the handle
+//!when we detach the handle
 void handle_freedb_detached_event (GtkHandleBox *handlebox,
                                  GtkWidget *widget,
                                  gpointer data)
@@ -245,7 +245,7 @@ void handle_freedb_detached_event (GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-//freedb selection has changed
+//!freedb selection has changed
 void freedb_selection_changed(GtkTreeSelection *selection,
                               gpointer data)
 {
@@ -275,7 +275,7 @@ void freedb_selection_changed(GtkTreeSelection *selection,
     }
 }
 
-//removes all rows from the freedb table
+//!removes all rows from the freedb table
 void remove_all_freedb_rows ()
 {
   GtkTreeIter iter;
@@ -293,7 +293,7 @@ void remove_all_freedb_rows ()
     }
 }
 
-//search the freedb.org
+//!search the freedb.org
 gpointer freedb_search(gpointer data)
 {
   gdk_threads_enter();
@@ -359,27 +359,32 @@ gpointer freedb_search(gpointer data)
   return NULL;
 }
 
+//! Start a thread for the freedb search
 void freedb_search_start_thread()
 {
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
   g_thread_create(freedb_search, NULL, TRUE, NULL);
 }
 
-//we push the search button
+//!we push the search button
 void freedb_search_button_event(GtkWidget *widget, gpointer   data)
 {
   freedb_search_start_thread();
 }
 
-//search entry backspace event
-//when we push Enter for the search entry
+/*!search entry backspace event
+
+when we push Enter for the search entry
+*/
 void freedb_entry_activate_event(GtkEntry *entry, gpointer data)
 {
   freedb_search_start_thread();
 }
 
-//returns the number of splitpoints
-//we put the new splitpoints in "the_state"
+/*!returns the number of splitpoints
+
+we put the new splitpoints in "the_state"
+*/
 void write_freedbfile(int *err)
 {
   gchar *filename = NULL;
@@ -441,7 +446,7 @@ void write_freedbfile(int *err)
   }
 }
 
-//returns the seconds, minutes, and hudreths
+//!returns the seconds, minutes, and hudreths
 void get_secs_mins_hundr(gfloat time,
                          gint *mins,gint *secs, 
                          gint *hundr)
@@ -453,9 +458,12 @@ void get_secs_mins_hundr(gfloat time,
                   - (*secs * 100));
 }
 
-//updates the current splitpoints int the table,
-//from the state splitpoints
-//max_splits is the maximum splitpoints to update
+/*!updates the current splitpoints in the_state
+
+Takes the splitpoints from the table displayed in the gui
+
+max_splits is the maximum number of splitpoints to update
+*/
 void update_splitpoints_from_the_state()
 {
   gint max_splits = 0;
@@ -556,14 +564,14 @@ gpointer put_freedb_splitpoints(gpointer data)
   return NULL;
 }
 
-//event for the freedb add button when clicked
+//!event for the freedb add button when clicked
 void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 {
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
   g_thread_create(put_freedb_splitpoints, NULL, TRUE, NULL);
 }
 
-//creates the freedb box
+//!creates the freedb box
 GtkWidget *create_freedb_frame()
 {
   //main freedb box

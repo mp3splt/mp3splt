@@ -385,8 +385,10 @@ void remove_status_message()
   gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_id);
 }
 
-/*! Output a text to the status message bar
+/*! Output a info message to the status message bar
 
+The message type is automatically set to SPLT_MESSAGE_INFO.
+If you don't want that use put_status_message instead.
 \param text The text that has to be displayed.
 */
 
@@ -395,6 +397,15 @@ void put_status_message(const gchar *text)
   put_status_message_with_type(text, SPLT_MESSAGE_INFO);
 }
 
+/*! Output a message to the status message bar.
+
+\param text The text that has to be displayed.
+\param splt_message_type The type of the message.
+
+If the type is to be set to SPLT_MESSAGE_INFO put_status_message
+can be used instead; The enum for the message types is defined in
+libmp3splt.h
+ */
 void put_status_message_with_type(const gchar *text, splt_message_type mess_type)
 {
   if (mess_type == SPLT_MESSAGE_INFO)
@@ -409,7 +420,7 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
   put_message_in_history(text, mess_type);
 }
 
-//event for the split button
+//!event for the cancel button
 void cancel_button_event(GtkWidget *widget, gpointer data)
 {
   gint err = SPLT_OK;
@@ -423,7 +434,7 @@ void cancel_button_event(GtkWidget *widget, gpointer data)
   put_status_message(_(" info: stopping the split process.. please wait"));
 }
 
-//event for the split button
+//!event for the split button
 void split_button_event(GtkWidget *widget, gpointer data)
 {
   //if we are not splitting
@@ -468,7 +479,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
   }
 }
 
-//creates the toolbar
+//!creates the toolbar
 GtkWidget *create_toolbar()
 {
   //the toolbar
@@ -503,7 +514,7 @@ GtkWidget *create_toolbar()
   return toolbar;
 }
 
-//event for the split button
+//!event for the "messages history" button
 void show_messages_history_dialog(GtkWidget *widget, gpointer data)
 {
   gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
@@ -518,7 +529,7 @@ void ShowHelp()
 }
 #endif
 
-//creates the menu bar
+//!creates the menu bar
 GtkWidget *create_menu_bar()
 {
   GtkWidget *menu_box = gtk_hbox_new(FALSE,0);
@@ -600,8 +611,13 @@ GtkWidget *create_menu_bar()
   return menu_box;
 }
 
-//creates a cool button with image from stock
-//toggle_or_not = TRUE means we create a toggle button
+/*!creates a cool button with image from stock
+
+\param label_text The text that has to be displayed on the button
+\param stock_id The name of the stock image to be displayed on the
+	button 
+\param toggle_or_not TRUE means we create a toggle button
+*/
 GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
     gint toggle_or_not)
 {
@@ -637,7 +653,7 @@ GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
   return button;
 }
 
-//main vbox
+//!main vbox
 GtkWidget *create_main_vbox()
 {
   //big ain box contailning all with statusbar
