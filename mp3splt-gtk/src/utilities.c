@@ -115,34 +115,6 @@ gint check_if_file(guchar *fname)
     return FALSE;
 }
 
-/*! Generates a window portion containing a caption and a vbox
-
-This function works like a chapter heading in a text processing
-system: You specify a title and the text processor returns an object
-consisting of a title and a vbox you can put the chapter contents
-in.\n
-Is used to generate the consecutive named sections in a preferences
-tab.
- */
-GtkWidget *set_title_and_get_vbox(GtkWidget *widget, gchar *title)
-{
-  GtkWidget *label = gtk_label_new(NULL);
-  gtk_label_set_markup(GTK_LABEL(label), title);
-
-  GtkWidget *label_hbox = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(label_hbox), label, FALSE, FALSE, 0);
-
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 5);
-
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 16);
-
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-  return vbox;
-}
-
 /*! Issues the message "Processing file <filename>" into the message bar
 
 \param filename The filename that has to be printed.

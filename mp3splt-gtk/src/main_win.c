@@ -121,6 +121,7 @@ extern gint selected_id;
 extern splt_state *the_state;
 extern splt_freedb_results *search_results;
 extern GList *player_pref_list;
+extern GList *text_options_list;
 extern gchar **split_files;
 extern gint max_split_files;
 extern gint selected_player;
@@ -151,6 +152,7 @@ void quit(GtkWidget *widget, gpointer   data)
   }
 
   g_list_free(player_pref_list);
+  g_list_free(text_options_list);
   g_array_free(splitpoints, TRUE);
 
   if (silence_points)

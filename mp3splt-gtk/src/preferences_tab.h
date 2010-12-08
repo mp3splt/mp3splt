@@ -37,9 +37,16 @@
 
 #ifndef _PREFERENCES_TAB_H
 #define _PREFERENCES_TAB_H
+
+#define NUMBER_OF_TAGS_MODES 4
+
+#define NO_TAGS 0
+#define DEFAULT_TAGS 1
+#define ORIGINAL_FILE_TAGS 2
+#define TAGS_FROM_FILENAME 3
+
 GtkWidget *create_scrolled_window();
 gboolean get_checked_output_radio_box();
-gint get_checked_tags_radio_box();
 gint get_checked_tags_version_radio_box();
 void radio_box_changed_event(GtkToggleButton *radio_b, gpointer data);
 GtkWidget *create_pref_general_page();

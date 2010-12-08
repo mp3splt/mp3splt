@@ -79,7 +79,6 @@ GtkWidget *progress_bar;
 
 extern GArray *splitpoints;
 extern gint splitnumber;
-extern GList *player_pref_list;
 extern GtkWidget *queue_files_button;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;

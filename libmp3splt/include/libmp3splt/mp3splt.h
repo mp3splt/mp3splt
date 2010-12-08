@@ -477,7 +477,12 @@ typedef enum {
   /**
    * Does not put any tags
    */
-  SPLT_NO_TAGS
+  SPLT_NO_TAGS,
+  /**
+   * Sets tags from filename regex.
+   * See #mp3splt_set_input_filename_regex.
+   */
+  SPLT_TAGS_FROM_FILENAME_REGEX,
 } splt_tags_options;
 
 #define SPLT_ORIGINAL_TAGS_DEFAULT "%[@o,@N=1]"
@@ -570,6 +575,19 @@ typedef struct {
   //(positive float of the minimum number of seconds to be considered
   //a valid splitpoint)
   float parameter_minimum_length;
+
+  //possible values are #splt_str_format
+  int artist_tag_format;
+  //possible values are #splt_str_format
+  int album_tag_format;
+  //possible values are #splt_str_format
+  int title_tag_format;
+  //possible values are #splt_str_format
+  int comment_tag_format;
+
+  //replace underscores with space
+  int replace_underscores_tag_format;
+
   //allows you to remove the silence between split tracks
   int parameter_remove_silence;
 
@@ -699,6 +717,11 @@ typedef struct {
 
   //if this is non null, we write a m3u from the split files
   char *m3u_filename;
+  
+  //setting tags from input filename regex
+  char *input_fname_regex;
+
+  char *default_comment_tag;
 
   //tags of the original file to split
   splt_tags original_tags;
@@ -1062,8 +1085,41 @@ typedef enum {
    *
    * Default is #SPLT_DEFAULT_PARAM_MINIMUM_LENGTH
    */
-  SPLT_OPT_PARAM_MIN_LENGTH
+  SPLT_OPT_PARAM_MIN_LENGTH,
+  /**
+   * Format of the artist tag from filename.
+   * Possible values are #splt_str_format
+   */
+  SPLT_OPT_ARTIST_TAG_FORMAT,
+  /**
+   * Format of the album tag from filename.
+   * Possible values are #splt_str_format
+   */
+  SPLT_OPT_ALBUM_TAG_FORMAT,
+  /**
+   * Format of the title tag from filename.
+   * Possible values are #splt_str_format
+   */
+  SPLT_OPT_TITLE_TAG_FORMAT,
+  /**
+   * Format of the comment tag from filename.
+   * Possible values are #splt_str_format
+   */
+  SPLT_OPT_COMMENT_TAG_FORMAT,
+  /**
+   * Replace underscores with space when setting tags
+   * from filename regex.
+   */
+  SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT,
 } splt_int_options;
+
+typedef enum {
+  SPLT_NO_CONVERSION,
+  SPLT_TO_LOWERCASE,
+  SPLT_TO_UPPERCASE,
+  SPLT_TO_FIRST_UPPERCASE,
+  SPLT_TO_WORD_FIRST_UPPERCASE
+} splt_str_format;
 
 /**
  * we define a 'skippoint' as a splitpoint that is not taken into
@@ -1195,6 +1251,17 @@ int mp3splt_set_path_of_split(splt_state *state, const char *path);
 int mp3splt_set_filename_to_split(splt_state *state, const char *filename);
 int mp3splt_set_m3u_filename(splt_state *state, const char *filename);
 int mp3splt_set_silence_log_filename(splt_state *state, const char *filename);
+
+/**
+ * Defines the regex that will be used for #SPLT_TAGS_FROM_FILENAME_REGEX
+ * to get out tags.
+ *
+ * Example: (?<artist>.*?) _ (?<album>.*?) will extract
+ * 'one artist' and 'one album' from 'one artist _ one album',
+ */
+int mp3splt_set_input_filename_regex(splt_state *state, const char *regex);
+
+int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comment_tag);
 
 /************************************/
 /* Set callback functions           */

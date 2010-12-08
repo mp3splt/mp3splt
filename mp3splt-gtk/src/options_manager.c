@@ -52,6 +52,7 @@
 #include "preferences_tab.h"
 #include "special_split.h"
 #include "player_tab.h"
+#include "combo_helper.h"
 
 extern gint debug_is_active;
 
@@ -75,6 +76,17 @@ extern GtkWidget *all_spinner_silence_minimum;
 extern GtkWidget *all_spinner_silence_offset;
 extern GtkWidget *all_spinner_silence_threshold;
 extern GtkWidget *all_silence_remove_silence;
+
+extern GList *text_options_list;
+extern GtkWidget *replace_underscore_by_space_check_box;
+extern GtkComboBox *artist_text_properties_combo;
+extern GtkComboBox *album_text_properties_combo;
+extern GtkComboBox *title_text_properties_combo;
+extern GtkComboBox *comment_text_properties_combo;
+extern GtkWidget *comment_tag_entry;
+extern GtkWidget *regex_entry;
+
+static void put_tags_from_filename_regex_options();
 
 /*! Update the output options
 
@@ -193,56 +205,72 @@ void put_options_from_preferences()
       break;
   }
 
-  if (get_checked_tags_radio_box() == 0)
+  gint selected_tags_value = get_checked_output_radio_box();
+  if (selected_tags_value == NO_TAGS)
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_NO_TAGS);
   }
-  else
+  else if (selected_tags_value == DEFAULT_TAGS)
   {
-    if (get_checked_tags_radio_box() == 1)
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
-    }
-    else
-    {
-      if (get_checked_tags_radio_box() == 2)
-      {
-        mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
-      }
-    }
+    mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
+  }
+  else if (selected_tags_value == ORIGINAL_FILE_TAGS)
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
+  }
+  else if (selected_tags_value == TAGS_FROM_FILENAME)
+  {
+    put_tags_from_filename_regex_options();
   }
 
-  //tag version options
   gint tags_radio_choice = get_checked_tags_version_radio_box();
   if (tags_radio_choice == 0)
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 0);
   }
-  else
+  else if (tags_radio_choice == 1)
   {
-    if (tags_radio_choice == 1)
-    {
-      mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
-    }
-    else
-    {
-      if (tags_radio_choice == 2)
-      {
-        mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
-      }
-      else
-      {
-        if (tags_radio_choice == 3)
-        {
-          mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 12);
-        }
-      }
-    }
+    mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 1);
+  }
+  else if (tags_radio_choice == 2)
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 2);
+  }
+  else if (tags_radio_choice == 3)
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_FORCE_TAGS_VERSION, 12);
   }
 
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
 
   mp3splt_set_int_option(the_state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, 
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
+}
+
+static void put_tags_from_filename_regex_options()
+{
+  mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_TAGS_FROM_FILENAME_REGEX);
+
+  gint underscores = gtk_toggle_button_get_active(
+      GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box));
+  mp3splt_set_int_option(the_state, SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT, underscores);
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT, 
+      ch_get_active_value(artist_text_properties_combo));
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT, 
+      ch_get_active_value(album_text_properties_combo));
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT,
+      ch_get_active_value(title_text_properties_combo));
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT, 
+      ch_get_active_value(comment_text_properties_combo));
+
+  const gchar *regular_expression = gtk_entry_get_text(GTK_ENTRY(regex_entry));
+  mp3splt_set_input_filename_regex(the_state, regular_expression);
+
+  const gchar *default_comment = gtk_entry_get_text(GTK_ENTRY(comment_tag_entry));
+  mp3splt_set_default_comment_tag(the_state, default_comment);
 }
 

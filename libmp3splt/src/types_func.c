@@ -196,6 +196,28 @@ char *splt_t_get_m3u_filename(splt_state *state)
   return state->m3u_filename;
 }
 
+int splt_t_set_input_filename_regex(splt_state *state, const char *regex)
+{
+  splt_d_print_debug(state,"Setting input filename regex to _%s_\n", regex);
+  return splt_su_copy(regex, &state->input_fname_regex);
+}
+
+char *splt_t_get_input_filename_regex(splt_state *state)
+{
+  return state->input_fname_regex;
+}
+
+int splt_t_set_default_comment_tag(splt_state *state, const char *default_comment)
+{
+  splt_d_print_debug(state,"Setting default comment tag to _%s_\n", default_comment);
+  return splt_su_copy(default_comment, &state->default_comment_tag);
+}
+
+char *splt_t_get_default_comment_tag(splt_state *state)
+{
+  return state->default_comment_tag;
+}
+
 char *splt_t_get_m3u_file_with_path(splt_state *state, int *error)
 {
   char *m3u_file = splt_t_get_m3u_filename(state);
@@ -339,6 +361,7 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->fname_to_split = NULL;
   state->path_of_split = NULL;
   state->m3u_filename = NULL;
+  state->input_fname_regex = NULL;
   state->silence_log_fname = NULL;
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
@@ -387,6 +410,11 @@ static void splt_t_free_state_struct(splt_state *state)
     {
       free(state->m3u_filename);
       state->m3u_filename = NULL;
+    }
+    if (state->input_fname_regex)
+    {
+      free(state->input_fname_regex);
+      state->input_fname_regex = NULL;
     }
     if (state->silence_log_fname)
     {

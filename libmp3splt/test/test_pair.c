@@ -1,5 +1,6 @@
 #include <cutter.h>
-#include <pair.h>
+
+#include "pair.h"
 
 #include "tests.h"
 
