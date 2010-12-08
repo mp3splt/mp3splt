@@ -46,6 +46,25 @@ static int splt_su_append_one(char **str, const char *to_append,
 static void splt_su_clean_string_(splt_state *state, char *s, int *error,
     int ignore_dirchar);
 static int splt_su_is_illegal_char(char c, int ignore_dirchar);
+static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int),
+    int *error);
+
+void splt_su_replace_all_char(char *str, char to_replace, char replacement)
+{
+  if (str == NULL)
+  {
+    return;
+  }
+
+  int i = 0;
+  for (i = 0;i < strlen(str);i++)
+  {
+    if (str[i] == to_replace)
+    {
+      str[i] = replacement;
+    }
+  }
+}
 
 char *splt_su_replace_all(const char *str, char *to_replace,
     char *replacement, int *error)
@@ -346,32 +365,6 @@ void splt_su_cut_extension(char *str)
   }
 }
 
-char *splt_su_str_to_upper(const char *str, int *error)
-{
-  int err = SPLT_OK;
-
-  if (!str)
-  {
-    return NULL;
-  }
-
-  char *result = NULL;
-  err = splt_su_copy(str, &result);
-  if (err < 0)
-  {
-    *error = err;
-    return NULL;
-  }
-
-  int i = 0;
-  for (i = 0;i < strlen(str);i++)
-  {
-    result[i] = toupper(str[i]);
-  }
-
-  return result;
-}
-
 void splt_su_str_cut_last_char(char *str)
 {
   if (!str)
@@ -506,6 +499,93 @@ char *splt_su_get_formatted_message(splt_state *state, char *message, ...)
   va_end(ap);
 
   return mess;
+}
+
+char *splt_su_convert(const char *str, splt_str_format format, int *error)
+{
+  if (str == NULL)
+  {
+    return NULL;
+  }
+
+  char *new_str = NULL;
+
+  int lastspace = 1;
+  int i = 0;
+
+  if (format != SPLT_TO_LOWERCASE && format != SPLT_TO_UPPERCASE)
+  {
+    int err = splt_su_copy(str, &new_str);
+    if (err < 0)
+    {
+      *error = err;
+      return NULL;
+    }
+  }
+
+  switch (format)
+  {
+    case SPLT_NO_CONVERSION:
+      return new_str;
+      break;
+    case SPLT_TO_LOWERCASE:
+      return splt_su_str_to_func(str, tolower, error);
+      break;
+    case SPLT_TO_UPPERCASE:
+      return splt_su_str_to_func(str, toupper, error);
+      break;
+    case SPLT_TO_FIRST_UPPERCASE:
+      new_str[0] = toupper(new_str[0]);
+      return new_str;
+      break;
+    case SPLT_TO_WORD_FIRST_UPPERCASE:
+      for (i = 0; i < strlen(new_str); i++)
+      {
+        if (lastspace && new_str[i] != ' ')
+        {
+          new_str[i] = toupper(new_str[i]);
+        }
+
+        if (new_str[i] == ' ')
+        {
+          lastspace = 1;
+        }
+        else
+        {
+          lastspace = 0;
+        }
+      }
+      return new_str;
+      break;
+  }
+
+  return NULL;
+}
+
+static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int), int *error)
+{
+  int err = SPLT_OK;
+
+  if (!str)
+  {
+    return NULL;
+  }
+
+  char *result = NULL;
+  err = splt_su_copy(str, &result);
+  if (err < 0)
+  {
+    *error = err;
+    return NULL;
+  }
+
+  int i = 0;
+  for (i = 0;i < strlen(str);i++)
+  {
+    result[i] = conversion_func(str[i]);
+  }
+
+  return result;
 }
 
 static int splt_su_append_one(char **str, const char *to_append, size_t to_append_size)

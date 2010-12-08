@@ -38,6 +38,29 @@
 static char *splt_tp_parse_tag_word(const char *cur_pos,
     const char *end_paranthesis, int *ambiguous, int *error);
 
+void splt_tp_put_tags_from_filename(splt_state *state, int *error)
+{
+  char *regex = splt_t_get_input_filename_regex(state);
+  const char *fname_to_split =
+    splt_su_get_fname_without_path(splt_t_get_filename_to_split(state));
+  char *default_comment = splt_t_get_default_comment_tag(state);
+
+  splt_tags *tags =
+    splt_fr_parse(state, fname_to_split, regex, default_comment, error);
+  if (*error < 0) { return; }
+
+  splt_su_get_formatted_message(state,
+      "%%[@a=%s,@b=%s,@t=%s,@y=%s,@c=%s,@n=%d]",
+      tags->artist,
+      tags->album,
+      tags->title,
+      tags->year,
+      tags->comment,
+      tags->track);
+
+  splt_tu_free_one_tags(tags);
+}
+
 int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
 {
   if (tags != NULL)

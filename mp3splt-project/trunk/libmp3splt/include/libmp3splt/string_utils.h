@@ -34,6 +34,7 @@
 
 #include <stdarg.h>
 
+void splt_su_replace_all_char(char *str, char to_replace, char replacement);
 char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error);
 int splt_su_append(char **str, const char *to_append, ...);
 int splt_su_append_str(char **str, const char *to_append, ...);
@@ -51,7 +52,7 @@ const char *splt_su_get_fname_without_path(const char *filename);
 char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error);
 
 void splt_su_cut_extension(char *str);
-char *splt_su_str_to_upper(const char *str, int *error);
+char *splt_su_convert(const char *str, splt_str_format format, int *error);
 void splt_su_str_cut_last_char(char *str);
 double splt_su_str_line_to_double(const char *str);
 

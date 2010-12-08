@@ -51,6 +51,8 @@
 #include "player.h"
 #include "preferences_tab.h"
 #include "special_split.h"
+#include "combo_helper.h"
+#include "radio_helper.h"
 
 extern GtkWidget *player_combo_box;
 extern gint selected_player;
@@ -75,6 +77,14 @@ extern GtkWidget *tags_radio;
 extern GtkWidget *tags_version_radio;
 
 extern splt_state *the_state;
+
+extern GtkWidget *replace_underscore_by_space_check_box;
+extern GtkComboBox *artist_text_properties_combo;
+extern GtkComboBox *album_text_properties_combo;
+extern GtkComboBox *title_text_properties_combo;
+extern GtkComboBox *comment_text_properties_combo;
+extern GtkWidget *comment_tag_entry;
+extern GtkWidget *regex_entry;
 
 /*! Get the name of the preferences file.
 
@@ -231,11 +241,10 @@ void load_preferences()
     if (item == GPOINTER_TO_INT(g_list_nth_data(player_pref_list, i)))
     {
       selected_player = GPOINTER_TO_INT(g_list_nth_data(player_pref_list, i));
-      goto jump_near;
+      break;
     }
   }
 
-jump_near:
   gtk_combo_box_set_active(GTK_COMBO_BOX(player_combo_box), i);
 
   //frame mode
@@ -276,18 +285,88 @@ jump_near:
 
   //tags options
   gint tag_pref_file = g_key_file_get_integer(key_file, "split", "tags", NULL);
-  GSList *tags_radio_button_list = 
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(tags_radio));
-  GtkWidget *the_selection = 
-    (GtkWidget *)g_slist_nth_data(tags_radio_button_list, tag_pref_file);
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(the_selection), TRUE);
+  GtkWidget *radio = rh_get_radio_from_value(tags_radio, tag_pref_file);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
+
+  //replace underscores by spaces
+  item = g_key_file_get_boolean(key_file, "split", "replace_underscore_by_space", NULL);
+  if (item)
+  {
+    gtk_toggle_button_set_active(
+        GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box), TRUE);
+  }
+  else
+  {
+    gtk_toggle_button_set_active(
+        GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box), FALSE);
+  }
+
+  //artist text properties
+  item = g_key_file_get_integer(key_file, "split", "artist_text_properties",NULL);
+  if (item)
+  {
+    ch_set_active_value(artist_text_properties_combo, item);
+  }
+  else
+  {
+    ch_set_active_value(artist_text_properties_combo, SPLT_NO_CONVERSION);
+  }
+  //album text properties
+  item = g_key_file_get_integer(key_file, "split", "album_text_properties",NULL);
+  if (item)
+  {
+    ch_set_active_value(album_text_properties_combo, item);
+  }
+  else
+  {
+    ch_set_active_value(album_text_properties_combo, SPLT_NO_CONVERSION);
+  }
+  //title text properties
+  item = g_key_file_get_integer(key_file, "split", "title_text_properties",NULL);
+  if (item)
+  {
+    ch_set_active_value(title_text_properties_combo, item);
+  }
+  else
+  {
+    ch_set_active_value(title_text_properties_combo, SPLT_NO_CONVERSION);
+  }
+  //comment text properties
+  item = g_key_file_get_integer(key_file, "split", "comment_text_properties",NULL);
+  if (item)
+  {
+    ch_set_active_value(comment_text_properties_combo, item);
+  }
+  else
+  {
+    ch_set_active_value(comment_text_properties_combo, SPLT_NO_CONVERSION);
+  }
+
+  //default comment tag
+  gchar *default_comment_tag = g_key_file_get_string(key_file, "split", "default_comment_tag", NULL);
+  if (default_comment_tag)
+  {
+    gtk_entry_set_text(GTK_ENTRY(comment_tag_entry), default_comment_tag);
+    g_free(default_comment_tag);
+    default_comment_tag = NULL;
+  }
+
+  //regexp to parse filename into tags
+  gchar *tags_from_fname_regex =
+    g_key_file_get_string(key_file, "split", "tags_from_filename_regex", NULL);
+  if (tags_from_fname_regex)
+  {
+    gtk_entry_set_text(GTK_ENTRY(regex_entry), tags_from_fname_regex);
+    g_free(tags_from_fname_regex);
+    tags_from_fname_regex = NULL;
+  }
 
   //tags version
   tag_pref_file = g_key_file_get_integer(key_file, "split", "tags_version", NULL);
 
   GSList *tags_version_radio_button_list = 
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(tags_version_radio));
-  the_selection = 
+  GtkWidget *the_selection = 
     (GtkWidget *)g_slist_nth_data(tags_version_radio_button_list, tag_pref_file);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(the_selection), TRUE);
 
@@ -307,9 +386,12 @@ jump_near:
 
   //output format
   gchar *output_format = g_key_file_get_string(key_file, "output", "output_format", NULL);
-  gtk_entry_set_text(GTK_ENTRY(output_entry), output_format);
-  g_free(output_format);
-  output_format = NULL;
+  if (output_format)
+  {
+    gtk_entry_set_text(GTK_ENTRY(output_entry), output_format);
+    g_free(output_format);
+    output_format = NULL;
+  }
 
   //create directories if needed
   item = g_key_file_get_boolean(key_file, "output", "create_dirs_if_needed", NULL);
@@ -472,8 +554,10 @@ void write_default_preferences_file()
   {
     g_key_file_set_integer(my_key_file, "split", "tags", 1);
     g_key_file_set_comment(my_key_file, "split", "tags",
-        "\n 0 - No tags, 1 - Default tags, 2 - Original tags", NULL);
+        "\n 0 - No tags, 1 - Default tags, 2 - Original tags, 3 - Tags from filename", NULL);
   }
+
+  //TODO: replace_underscore... + ... + tags_from_filename_regex
 
   //tags version
   if (!g_key_file_has_key(my_key_file, "split", "tags_version",NULL))

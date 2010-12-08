@@ -1,5 +1,6 @@
 #include <cutter.h>
-#include <splt_array.h>
+
+#include "splt_array.h"
 
 static splt_array *array = NULL;
 

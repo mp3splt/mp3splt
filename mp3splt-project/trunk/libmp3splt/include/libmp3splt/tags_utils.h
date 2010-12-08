@@ -73,6 +73,8 @@ int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks);
 
 int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data);
 
+void splt_tu_free_one_tags(splt_tags *tags);
+
 #define MP3SPLT_PLUGIN_UTILS_H
 
 #endif

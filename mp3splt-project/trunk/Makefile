@@ -173,3 +173,13 @@ distclean:
 vim:
 	screen vim libmp3splt/src/*.c libmp3splt/plugins/*.{c,h} newmp3splt/src/*.c mp3splt-gtk/src/*.{c,h}
 
+compile_all:
+	cd ${LIBMP3SPLT_DIR} && ./autogen.sh && ./configure && make clean && make
+	cd ${MP3SPLT_DIR} && ./autogen.sh && ./configure && make clean && make
+	cd ${MP3SPLT_GTK_DIR} && ./autogen.sh && ./configure && make clean && make
+
+compile:
+	cd ${LIBMP3SPLT_DIR} && make
+	cd ${MP3SPLT_DIR} && make
+	cd ${MP3SPLT_GTK_DIR} && make
+

@@ -52,6 +52,13 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.parameter_offset = SPLT_DEFAULT_PARAM_OFFSET;
   state->options.parameter_number_tracks = SPLT_DEFAULT_PARAM_TRACKS;
   state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
+
+  state->options.artist_tag_format = SPLT_NO_CONVERSION;
+  state->options.album_tag_format = SPLT_NO_CONVERSION;
+  state->options.title_tag_format = SPLT_NO_CONVERSION;
+  state->options.comment_tag_format = SPLT_NO_CONVERSION;
+  state->options.replace_underscores_tag_format = SPLT_FALSE;
+
   state->options.parameter_remove_silence = SPLT_FALSE;
   state->options.parameter_gap = SPLT_DEFAULT_PARAM_GAP;
   state->options.remaining_tags_like_x = -1;
@@ -143,7 +150,21 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
     case SPLT_OPT_PARAM_MIN_LENGTH:
       state->options.parameter_minimum_length = *((float *)data);
       break;
-
+    case SPLT_OPT_ARTIST_TAG_FORMAT:
+      state->options.artist_tag_format = *((int *)data);
+      break;
+    case SPLT_OPT_ALBUM_TAG_FORMAT:
+      state->options.album_tag_format = *((int *)data);
+      break;
+    case SPLT_OPT_TITLE_TAG_FORMAT:
+      state->options.title_tag_format = *((int *)data);
+      break;
+    case SPLT_OPT_COMMENT_TAG_FORMAT:
+      state->options.comment_tag_format = *((int *)data);
+      break;
+    case SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT:
+      state->options.replace_underscores_tag_format = *((int *)data);
+      break;
     default:
       splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
@@ -242,6 +263,20 @@ static void *splt_o_get_option(splt_state *state, int option_name)
     case SPLT_OPT_PARAM_MIN_LENGTH:
       return &state->options.parameter_minimum_length;
       break;
+    case SPLT_OPT_ARTIST_TAG_FORMAT:
+      return &state->options.artist_tag_format;
+      break;
+    case SPLT_OPT_ALBUM_TAG_FORMAT:
+      return &state->options.album_tag_format;
+      break;
+    case SPLT_OPT_TITLE_TAG_FORMAT:
+      return &state->options.title_tag_format;
+      break;
+    case SPLT_OPT_COMMENT_TAG_FORMAT:
+      return &state->options.comment_tag_format;
+      break;
+    case SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT:
+      return &state->options.replace_underscores_tag_format;
     default:
       splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;

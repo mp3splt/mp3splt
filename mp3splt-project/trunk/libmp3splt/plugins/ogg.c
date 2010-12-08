@@ -2016,7 +2016,7 @@ void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
     return;
   }
 
-  info->upper_extension = splt_su_str_to_upper(info->extension, error);
+  info->upper_extension = splt_su_convert(info->extension, SPLT_TO_UPPERCASE, error);
 }
 
 //check if file is ogg vorbis

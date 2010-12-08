@@ -1,12 +1,12 @@
 /**********************************************************
  *
- * libmp3splt -- library based on mp3splt,
- *               for mp3/ogg splitting without decoding
+ * mp3splt-gtk -- utility based on mp3splt,
+ *                for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
+ * Copyright: (C) 2005-2010 Alexandru Munteanu
+ * Contact: io_fx@yahoo.fr
  *
- * http://mp3splt.sourceforge.net
+ * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
 
@@ -24,18 +24,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307,
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
  *
  *********************************************************/
 
-#ifndef SPLT_TAGS_PARSER_H
+#ifndef WIDGETS_HELPER_H
 
-int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error);
-void splt_tp_put_tags_from_filename(splt_state *state, int *error);
+#include <gtk/gtk.h>
 
-#define SPLT_TAGS_PARSER_H
+GtkWidget *wh_set_title_and_get_vbox(GtkWidget *widget, const gchar *title);
 
+GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_level);
+
+GtkWidget *wh_new_table();
+void wh_add_in_table(GtkWidget *table, GtkWidget *widget);
+void wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
+    GtkWidget *widget);
+void wh_add_in_table_with_label_expand(GtkWidget *table, const gchar *label_text,
+    GtkWidget *widget);
+
+GtkWidget *wh_new_entry(gpointer callback);
+
+GtkWidget *wh_new_button(const gchar *button_label);
+
+#define WIDGETS_HELPER_H
 #endif
 

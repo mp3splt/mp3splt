@@ -50,6 +50,12 @@ int splt_t_set_m3u_filename(splt_state *state, const char *filename);
 char *splt_t_get_m3u_filename(splt_state *state);
 char *splt_t_get_m3u_file_with_path(splt_state *state, int *error);
 
+int splt_t_set_input_filename_regex(splt_state *state, const char *regex);
+char *splt_t_get_input_filename_regex(splt_state *state);
+
+int splt_t_set_default_comment_tag(splt_state *state, const char *default_comment);
+char *splt_t_get_default_comment_tag(splt_state *state);
+
 int splt_t_set_silence_log_fname(splt_state *state, const char *filename);
 char *splt_t_get_silence_log_fname(splt_state *state);
 

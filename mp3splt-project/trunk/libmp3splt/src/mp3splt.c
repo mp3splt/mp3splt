@@ -226,6 +226,60 @@ int mp3splt_set_filename_to_split(splt_state *state, const char *filename)
   return error;
 }
 
+int mp3splt_set_input_filename_regex(splt_state *state, const char *regex)
+{
+  int error = SPLT_OK;
+
+  if (state != NULL)
+  {
+    if (!splt_o_library_locked(state))
+    {
+      splt_o_lock_library(state);
+
+      error = splt_t_set_input_filename_regex(state, regex);
+
+      splt_o_unlock_library(state);
+    }
+    else
+    {
+      error = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    error = SPLT_ERROR_STATE_NULL;
+  }
+
+  return error;
+}
+
+int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comment)
+{
+  int error = SPLT_OK;
+
+  if (state != NULL)
+  {
+    if (!splt_o_library_locked(state))
+    {
+      splt_o_lock_library(state);
+
+      error = splt_t_set_default_comment_tag(state, default_comment);
+
+      splt_o_unlock_library(state);
+    }
+    else
+    {
+      error = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    error = SPLT_ERROR_STATE_NULL;
+  }
+
+  return error;
+}
+
 /************************************/
 /* Set callback functions           */
 
@@ -707,9 +761,19 @@ int mp3splt_split(splt_state *state)
       splt_check_if_fname_path_is_correct(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
-      if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE)
+      int tags_option = splt_o_get_int_option(state, SPLT_OPT_TAGS);
+      if (tags_option == SPLT_TAGS_ORIGINAL_FILE)
       {
         splt_tp_put_tags_from_string(state, SPLT_ORIGINAL_TAGS_DEFAULT, &error);
+        if (error < 0)
+        {
+          splt_p_end(state, &error);
+          goto function_end;
+        }
+      }
+      else if (tags_option == SPLT_TAGS_FROM_FILENAME_REGEX)
+      {
+        splt_tp_put_tags_from_filename(state, &error);
         if (error < 0)
         {
           splt_p_end(state, &error);

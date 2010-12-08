@@ -1,12 +1,12 @@
 /**********************************************************
  *
- * libmp3splt -- library based on mp3splt,
- *               for mp3/ogg splitting without decoding
+ * mp3splt-gtk -- utility based on mp3splt,
+ *                for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2010 Munteanu Alexandru - io_fx@yahoo.fr
+ * Copyright: (C) 2005-2010 Alexandru Munteanu
+ * Contact: io_fx@yahoo.fr
  *
- * http://mp3splt.sourceforge.net
+ * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
 
@@ -24,18 +24,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307,
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
  *
  *********************************************************/
 
-#ifndef SPLT_TAGS_PARSER_H
+#ifndef COMBO_HELPER_H
 
-int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error);
-void splt_tp_put_tags_from_filename(splt_state *state, int *error);
+#include <gtk/gtk.h>
 
-#define SPLT_TAGS_PARSER_H
+GtkComboBox *ch_new_combo();
+void ch_append_to_combo(GtkComboBox *combo, const gchar *text, gint value);
 
+gint ch_get_active_value(GtkComboBox *combo);
+void ch_set_active_value(GtkComboBox *combo, gint value);
+
+#define COMBO_HELPER_H
 #endif
 

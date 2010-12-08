@@ -39,7 +39,6 @@ void remove_end_slash_n_r_from_filename(char *filename);
 gchar *transform_to_utf8(gchar *text, gint free_or_not,
     gint *must_be_freed);
 
-GtkWidget *set_title_and_get_vbox(GtkWidget *widget, gchar *title);
 gboolean container_has_child(GtkContainer *cont, GtkWidget *my_child);
 
 #define UTILITIES_H

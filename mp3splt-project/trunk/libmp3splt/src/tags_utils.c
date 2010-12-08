@@ -34,7 +34,6 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
     const splt_tags *tags, int track, int *err, int replace_tags_in_tags);
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state);
 static void splt_tu_set_empty_tags(splt_state *state, int index);
-static void splt_tu_free_one_tags(splt_tags *tags);
 
 void splt_tu_free_original_tags(splt_state *state)
 {
@@ -697,6 +696,43 @@ int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data)
   return err;
 }
 
+void splt_tu_free_one_tags(splt_tags *tags)
+{
+  if (tags)
+  {
+    if (tags->title)
+    {
+      free(tags->title);
+      tags->title = NULL;
+    }
+    if (tags->artist)
+    {
+      free(tags->artist);
+      tags->artist = NULL;
+    }
+    if (tags->album)
+    {
+      free(tags->album);
+      tags->album = NULL;
+    }
+    if (tags->performer)
+    {
+      free(tags->performer);
+      tags->performer = NULL;
+    }
+    if (tags->year)
+    {
+      free(tags->year);
+      tags->year = NULL;
+    }
+    if (tags->comment)
+    {
+      free(tags->comment);
+      tags->comment = NULL;
+    }
+  }
+}
+
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
@@ -844,43 +880,6 @@ error:
   *error = err;
 
   return NULL;
-}
-
-static void splt_tu_free_one_tags(splt_tags *tags)
-{
-  if (tags)
-  {
-    if (tags->title)
-    {
-      free(tags->title);
-      tags->title = NULL;
-    }
-    if (tags->artist)
-    {
-      free(tags->artist);
-      tags->artist = NULL;
-    }
-    if (tags->album)
-    {
-      free(tags->album);
-      tags->album = NULL;
-    }
-    if (tags->performer)
-    {
-      free(tags->performer);
-      tags->performer = NULL;
-    }
-    if (tags->year)
-    {
-      free(tags->year);
-      tags->year = NULL;
-    }
-    if (tags->comment)
-    {
-      free(tags->comment);
-      tags->comment = NULL;
-    }
-  }
 }
 
 static void splt_tu_set_empty_tags(splt_state *state, int index)

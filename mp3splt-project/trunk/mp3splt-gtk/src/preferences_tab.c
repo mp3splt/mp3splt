@@ -42,7 +42,9 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <string.h>
+
 #include <libmp3splt/mp3splt.h>
+
 #include "preferences_tab.h"
 #include "player.h"
 #include "util.h"
@@ -50,6 +52,9 @@
 #include "utilities.h"
 #include "main_win.h"
 #include "preferences_manager.h"
+#include "widgets_helper.h"
+#include "combo_helper.h"
+#include "radio_helper.h"
 
 /*! The name of the output directory.
   
@@ -70,6 +75,7 @@ GtkWidget *player_combo_box = NULL;
 
 //!list where we stock the preferences combo box content
 GList *player_pref_list = NULL;
+GList *text_options_list = NULL;
 //selected player
 gint selected_player = PLAYER_GSTREAMER;
 
@@ -102,6 +108,22 @@ GtkWidget *spinner_adjust_threshold = NULL;
 GtkWidget *threshold_label = NULL;
 //@}
 
+/*!defgroup options for tags from filename
+@{
+*/
+GtkWidget *replace_underscore_by_space_check_box = NULL;
+GtkComboBox *artist_text_properties_combo = NULL;
+GtkComboBox *album_text_properties_combo = NULL;
+GtkComboBox *title_text_properties_combo = NULL;
+GtkComboBox *comment_text_properties_combo = NULL;
+GtkWidget *comment_tag_entry = NULL;
+GtkWidget *regex_entry = NULL;
+GtkWidget *test_regex_entry = NULL;
+GtkWidget *sample_result_label = NULL;
+
+GtkWidget *extract_tags_box = NULL;
+//@}
+
 extern GtkWidget *player_box;
 extern GtkWidget *queue_files_button;
 extern splt_state *the_state;
@@ -109,6 +131,8 @@ extern gint selected_split_mode;
 extern gint split_file_mode;
 extern GtkWidget *spinner_time;
 extern GtkWidget *spinner_equal_tracks;
+
+static GtkWidget *create_extract_tags_from_filename_options_box();
 
 /*!Returns the selected language
 
@@ -158,32 +182,6 @@ gboolean get_checked_output_radio_box()
     }
   }
 
-  return selected;
-}
-
-//!returns the checked tags radio box
-gint get_checked_tags_radio_box()
-{
-  //get the radio buttons
-  GSList *radio_button_list;
-  radio_button_list = 
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(tags_radio));
-  //we check which bubble is checked
-  GtkToggleButton *test;
-  gint i, selected = 0;
-  //O = No tags
-  //1 = Default tags
-  //2 = Original file tags
-  for(i = 0; i<3;i++)
-    {
-      test = (GtkToggleButton *)
-        g_slist_nth_data(radio_button_list,i);
-      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(test)))
-        {
-          selected = i;
-        }
-    }
-  
   return selected;
 }
 
@@ -295,8 +293,33 @@ void save_preferences(GtkWidget *widget, gpointer data)
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
 
   //tags
-  g_key_file_set_integer(my_key_file, "split", "tags",
-      get_checked_tags_radio_box());
+  g_key_file_set_integer(my_key_file, "split", "tags", rh_get_active_value(tags_radio));
+
+  //replace underscores by space
+  g_key_file_set_boolean(my_key_file, "split", "replace_underscore_by_space",
+  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box)));
+
+  //artist text properties
+  g_key_file_set_integer(my_key_file, "split", "artist_text_properties",
+      ch_get_active_value(artist_text_properties_combo));
+  //album text properties
+  g_key_file_set_integer(my_key_file, "split", "album_text_properties",
+      ch_get_active_value(album_text_properties_combo));
+  //title text properties
+  g_key_file_set_integer(my_key_file, "split", "title_text_properties",
+      ch_get_active_value(title_text_properties_combo));
+  //comment text properties
+  g_key_file_set_integer(my_key_file, "split", "comment_text_properties",
+      ch_get_active_value(comment_text_properties_combo));
+
+  //default comment tag
+  g_key_file_set_string(my_key_file, "split", "default_comment_tag",
+      gtk_entry_get_text(GTK_ENTRY(comment_tag_entry)));
+
+  //regex to parse filename into tags
+  g_key_file_set_string(my_key_file, "split", "tags_from_filename_regex",
+      gtk_entry_get_text(GTK_ENTRY(regex_entry)));
+
   //tags version
   g_key_file_set_integer(my_key_file, "split", "tags_version",
       get_checked_tags_version_radio_box());
@@ -395,7 +418,7 @@ GtkWidget *create_language_box()
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(radio_vbox), radio_button, TRUE, TRUE, 0);
 
-  return set_title_and_get_vbox(radio_vbox,
+  return wh_set_title_and_get_vbox(radio_vbox,
       _("<b>Choose language (requires restart)</b>"));
 }
 
@@ -568,7 +591,7 @@ GtkWidget *create_directory_box()
       G_CALLBACK(song_dir_button_event), NULL);
   gtk_box_pack_start(GTK_BOX(dir_hbox), song_dir_button, FALSE, FALSE, 0);
 
-  return set_title_and_get_vbox(dir_hbox, _("<b>Directory for split files</b>"));
+  return wh_set_title_and_get_vbox(dir_hbox, _("<b>Directory for split files</b>"));
 }
 
 //! Creates the box for split mode selection
@@ -664,7 +687,7 @@ GtkWidget *create_split_options_box()
   gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button,
                       FALSE, FALSE, 5);
 
-  return set_title_and_get_vbox(vbox, _("<b>Split options</b>"));
+  return wh_set_title_and_get_vbox(vbox, _("<b>Split options</b>"));
 }
 
 //!creates the splitpoints preferences page
@@ -767,7 +790,7 @@ GtkWidget *create_player_options_box()
 
   gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 12);
  
-  return set_title_and_get_vbox(horiz_fake, _("<b>Player options</b>"));
+  return wh_set_title_and_get_vbox(horiz_fake, _("<b>Player options</b>"));
 }
 
 //!creates the player preferences page
@@ -848,7 +871,7 @@ GtkWidget *create_output_filename_box()
   g_signal_connect(GTK_TOGGLE_BUTTON(radio_output),
       "toggled", G_CALLBACK(output_radio_box_event), output_label);
 
-  return set_title_and_get_vbox(vbox, _("<b>Output filename format</b>"));
+  return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format</b>"));
 }
 
 //!creates the output preferences page
@@ -871,32 +894,133 @@ GtkWidget *create_pref_output_page()
   return output_hbox;
 }
 
+void change_tags_options(GtkToggleButton *button, gpointer data)
+{
+  if (extract_tags_box != NULL)
+  {
+    if (rh_get_active_value(tags_radio) == TAGS_FROM_FILENAME)
+    {
+      gtk_widget_set_sensitive(extract_tags_box, SPLT_TRUE);
+    }
+    else
+    {
+      gtk_widget_set_sensitive(extract_tags_box, SPLT_FALSE);
+    }
+  }
+
+  save_preferences(NULL, NULL);
+}
+
 //!Create the box for the Tags options
 GtkWidget *create_tags_options_box()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
 
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
+  tags_radio = rh_append_radio_to_vbox(tags_radio, _("Original file tags"),
+      ORIGINAL_FILE_TAGS, change_tags_options, vbox);
 
-  tags_radio = gtk_radio_button_new_with_label(NULL, _("Original file tags"));
-  gtk_box_pack_start(GTK_BOX(vbox), tags_radio, FALSE, FALSE, 0);
-  g_signal_connect(GTK_TOGGLE_BUTTON(tags_radio), "toggled", 
-      G_CALLBACK(save_preferences), NULL);
-  
-  tags_radio = gtk_radio_button_new_with_label_from_widget
-       (GTK_RADIO_BUTTON(tags_radio), _("Default tags (cddb or cue tags)"));
-  g_signal_connect(GTK_TOGGLE_BUTTON(tags_radio), "toggled", 
-      G_CALLBACK(save_preferences), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox), tags_radio, FALSE, FALSE, 0);
-  
-  tags_radio = gtk_radio_button_new_with_label_from_widget(
-      GTK_RADIO_BUTTON(tags_radio),_("No tags"));
-  g_signal_connect(GTK_TOGGLE_BUTTON(tags_radio), "toggled", 
-      G_CALLBACK(save_preferences), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox), tags_radio, FALSE, FALSE, 0);
+  tags_radio = rh_append_radio_to_vbox(tags_radio, _("Default tags (cddb or cue tags)"),
+      DEFAULT_TAGS, change_tags_options, vbox);
 
-  return set_title_and_get_vbox(vbox, _("<b>Split files tags</b>"));
+  tags_radio = rh_append_radio_to_vbox(tags_radio, _("No tags"),
+      NO_TAGS, change_tags_options, vbox);
+
+  tags_radio = rh_append_radio_to_vbox(tags_radio, _("Extract tags from filename"),
+      TAGS_FROM_FILENAME, change_tags_options, vbox);
+
+  extract_tags_box = create_extract_tags_from_filename_options_box();
+  gtk_widget_set_sensitive(extract_tags_box, SPLT_FALSE);
+  gtk_box_pack_start(GTK_BOX(vbox), extract_tags_box, FALSE, FALSE, 2);
+
+  return wh_set_title_and_get_vbox(vbox, _("<b>Split files tags</b>"));
+}
+
+static GtkComboBox *create_text_preferences_combo()
+{
+  GtkComboBox *combo = ch_new_combo();
+
+  ch_append_to_combo(combo, _("No change"), SPLT_NO_CONVERSION);
+  ch_append_to_combo(combo, _("lowercase"), SPLT_TO_LOWERCASE);
+  ch_append_to_combo(combo, _("UPPERCASE"), SPLT_TO_UPPERCASE);
+  ch_append_to_combo(combo, _("First uppercase"), SPLT_TO_FIRST_UPPERCASE);
+  ch_append_to_combo(combo, _("Word Uppercase"), SPLT_TO_WORD_FIRST_UPPERCASE);
+
+  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), NULL);
+
+  return combo;
+}
+
+static GtkWidget *create_extract_tags_from_filename_options_box()
+{
+  GtkWidget *table = wh_new_table();
+
+  text_options_list =
+    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_NO_CONVERSION));
+  text_options_list = 
+    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_LOWERCASE));
+  text_options_list = 
+    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_UPPERCASE));
+  text_options_list =
+    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_FIRST_UPPERCASE));
+  text_options_list =
+    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_WORD_FIRST_UPPERCASE));
+
+  replace_underscore_by_space_check_box =
+    gtk_check_button_new_with_mnemonic(_("_Replace underscores by spaces"));
+  g_signal_connect(G_OBJECT(replace_underscore_by_space_check_box), "toggled",
+      G_CALLBACK(save_preferences), NULL);
+ 
+  wh_add_in_table(table, replace_underscore_by_space_check_box);
+
+  artist_text_properties_combo = create_text_preferences_combo();
+  wh_add_in_table_with_label(table, 
+      _("Artist text properties:"), GTK_WIDGET(artist_text_properties_combo));
+
+  album_text_properties_combo = create_text_preferences_combo();
+  wh_add_in_table_with_label(table,
+      _("Album text properties:"), GTK_WIDGET(album_text_properties_combo));
+
+  title_text_properties_combo = create_text_preferences_combo();
+  wh_add_in_table_with_label(table,
+      _("Title text properties:"), GTK_WIDGET(title_text_properties_combo));
+
+  comment_text_properties_combo = create_text_preferences_combo();
+  wh_add_in_table_with_label(table,
+      _("Comment text properties:"), GTK_WIDGET(comment_text_properties_combo));
+
+  //TODO: genre
+
+  comment_tag_entry = wh_new_entry(save_preferences);
+  wh_add_in_table_with_label_expand(table, _("Comment tag:"), comment_tag_entry);
+
+  regex_entry = wh_new_entry(save_preferences);
+  wh_add_in_table_with_label_expand(table, _("Regular expression:"), regex_entry);
+
+  GtkWidget *regex_label = gtk_label_new(_(
+        "Above enter PERL-like regular expression using named subgroups.\nFollowing names are recognized:\n"
+        "    (?<artist>)    - artist name\n"
+        "    (?<album>)    - album title\n"
+        "    (?<title>)    - track title\n"
+        "    (?<tracknum>) - current track number\n"
+        "    (?<tracks>)   - total number of tracks\n"
+        "    (?<year>)     - year of emission\n"
+        "    (?<comment>)  - comment"));
+  gtk_misc_set_alignment(GTK_MISC(regex_label), 0.0, 0.5);
+  wh_add_in_table(table, wh_put_in_new_hbox_with_margin_level(regex_label, 2));
+
+  GtkWidget *sample_test_hbox = gtk_hbox_new(FALSE, 0);
+  test_regex_entry = wh_new_entry(save_preferences);
+  gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_entry, TRUE, TRUE, 5);
+
+  GtkWidget *test_regex_button = wh_new_button(_("Test"));
+  gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_button, FALSE, FALSE, 5);
+
+  wh_add_in_table_with_label_expand(table, _("Sample filename:"), sample_test_hbox);
+
+  sample_result_label = gtk_label_new("");
+  wh_add_in_table_with_label_expand(table, _("Sample result:"), sample_result_label);
+
+  return wh_put_in_new_hbox_with_margin_level(GTK_WIDGET(table), 3);
 }
 
 //!Create the box we can select with if to create ID1 and/or ID2 Tags
@@ -929,7 +1053,7 @@ GtkWidget *create_tags_version_box()
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
 
-  return set_title_and_get_vbox(vbox, _("<b>Tags version (mp3 only)</b>"));
+  return wh_set_title_and_get_vbox(vbox, _("<b>Tags version (mp3 only)</b>"));
 }
 
 //! Create the tags settings tab
