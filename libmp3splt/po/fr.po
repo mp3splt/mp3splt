@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt 0.5.6\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-11-27 00:35+0100\n"
+"POT-Creation-Date: 2010-12-09 14:40+0100\n"
 "PO-Revision-Date: 2010-02-15 01:40+0100\n"
 "Last-Translator: alex <io_fx@yahoo.fr>\n"
 "Language-Team: French <io_fx@yahoo.fr>\n"
@@ -15,22 +15,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:648
+#: ../src/mp3splt.c:702
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " info: le fichier du lien symbolique est '%s'\n"
 
-#: src/mp3splt.c:728
+#: ../src/mp3splt.c:792
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " info : le fichier correspond au module '%s'\n"
 
-#: src/mp3splt.c:736
+#: ../src/mp3splt.c:800
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " Le fichier M3U '%s' sera créé.\n"
 
-#: src/mp3splt.c:756
+#: ../src/mp3splt.c:820
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -39,16 +39,16 @@ msgstr ""
 " Avec ajustement du silence (Seuil : %.1f dB Ecart : %d sec Compensation : "
 "%.2f)\n"
 
-#: src/checks.c:142
+#: ../src/checks.c:142
 msgid "directory does not exists"
 msgstr "le dossier n'existe pas"
 
-#: src/cddb.c:59 src/cddb.c:653
+#: ../src/cddb.c:59 ../src/cddb.c:653
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " lecture des informations du fichier CDDB %s ...\n"
 
-#: src/cddb.c:503 src/cddb.c:1089 src/cddb.c:1333 src/cue.c:282
+#: ../src/cddb.c:503 ../src/cddb.c:1089 ../src/cddb.c:1333 ../src/cue.c:282
 #, c-format
 msgid ""
 "\n"
@@ -57,12 +57,12 @@ msgstr ""
 "\n"
 "  Artiste : %s\n"
 
-#: src/cddb.c:519 src/cddb.c:1105 src/cddb.c:1342 src/cue.c:286
+#: ../src/cddb.c:519 ../src/cddb.c:1105 ../src/cddb.c:1342 ../src/cue.c:286
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album : %s\n"
 
-#: src/cddb.c:640 src/cddb.c:1223 src/cue.c:137
+#: ../src/cddb.c:640 ../src/cddb.c:1223 ../src/cue.c:137
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -71,44 +71,44 @@ msgstr ""
 "  Pistes : %d\n"
 "\n"
 
-#: src/splt.c:142
+#: ../src/splt.c:142
 msgid " info: starting normal split\n"
 msgstr " info : début de la division normale\n"
 
-#: src/splt.c:229
+#: ../src/splt.c:229
 msgid " info: starting error mode split\n"
 msgstr ""
 " info : début de la division avec recherche d'erreurs de synchronisation\n"
 
-#: src/splt.c:537
+#: ../src/splt.c:537
 msgid " info: starting time mode split\n"
 msgstr " info : début de la division en plusieurs pistes de même taille\n"
 
-#: src/splt.c:554
+#: ../src/splt.c:554
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr " info : début de la division en morceaux egaux\n"
 
-#: src/splt.c:660
+#: ../src/splt.c:660
 #, c-format
 msgid "YES"
 msgstr "OUI"
 
-#: src/splt.c:664
+#: ../src/splt.c:664
 #, c-format
 msgid "NO"
 msgstr "NON"
 
-#: src/splt.c:670
+#: ../src/splt.c:670
 #, c-format
 msgid "User"
 msgstr "Utilisateur"
 
-#: src/splt.c:674
+#: ../src/splt.c:674
 #, c-format
 msgid "Auto"
 msgstr "Automatique"
 
-#: src/splt.c:680
+#: ../src/splt.c:680
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: "
@@ -117,7 +117,7 @@ msgstr ""
 " Division avec recherche du silence : mode %s (Seuil : %.1f dB, Ecart : "
 "%.2f, Min : %.2f, Suppression : %s)\n"
 
-#: src/splt.c:698
+#: ../src/splt.c:698
 #, fuzzy, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -126,130 +126,131 @@ msgstr ""
 " Fichier de log avec silences trouvé '%s' ! Lecture des points de silence du "
 "fichier ;)"
 
-#: src/splt.c:728
+#: ../src/splt.c:728
 #, fuzzy, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 "\n"
 " Points de silence trouvés : %d."
 
-#: src/splt.c:740
+#: ../src/splt.c:740
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d pistes sélectionnées)\n"
 
-#: src/splt.c:836
+#: ../src/splt.c:836
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr " Ecriture du fichier de log avec les points de silence '%s' ...\n"
 
-#: src/splt.c:889
+#. print some useful infos to the client
+#: ../src/splt.c:889
 msgid " info: starting silence mode split\n"
 msgstr " info : début de la division avec recherche de silence\n"
 
-#: src/splt.c:945
+#: ../src/splt.c:945
 msgid " info: starting wrap mode split\n"
 msgstr " info : début de la division 'wrap'\n"
 
-#: src/utils.c:59
+#: ../src/utils.c:59
 #, c-format
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 
-#: src/cue.c:56
+#: ../src/cue.c:56
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " lecture des informations du fichier CUE %s ...\n"
 
-#: src/cue.c:103
+#: ../src/cue.c:103
 msgid "description here"
 msgstr "description"
 
-#: src/cue.c:226
+#: ../src/cue.c:226
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " Fichier CUE '%s' créé.\n"
 
-#: plugins/mp3.c:1424
+#: ../plugins/mp3.c:1424
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr " info: entête Xing ou Info trouvée. Activation du mode \"frame\"...\n"
 
-#: plugins/mp3.c:1560
+#: ../plugins/mp3.c:1560
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " info : MPEG %d couche %d - %d Hz - %s"
 
-#: plugins/mp3.c:1568
+#: ../plugins/mp3.c:1568
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - MODE 'FRAME' NS (sans changement de position)"
 
-#: plugins/mp3.c:1572
+#: ../plugins/mp3.c:1572
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - MODE 'FRAME'"
 
-#: plugins/mp3.c:1577
+#: ../plugins/mp3.c:1577
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d Kb/s"
 
-#: plugins/mp3.c:1582
+#: ../plugins/mp3.c:1582
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1590 plugins/ogg.c:186
+#: ../plugins/mp3.c:1590 ../plugins/ogg.c:186
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
 
-#: plugins/mp3.c:3094
+#: ../plugins/mp3.c:3094
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Le fichier reconnu a le format Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:3132
+#: ../plugins/mp3.c:3132
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 " Vérification de l'intégrité du fichier : calcul du CRC (contrôle de "
 "redondance cyclique), veuillez attendre..."
 
-#: plugins/mp3.c:3151
+#: ../plugins/mp3.c:3151
 msgid " OK\n"
 msgstr " Succès\n"
 
-#: plugins/mp3.c:3170
+#: ../plugins/mp3.c:3170
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Le fichier reconnu a le format : AlbumWrap\n"
 
-#: plugins/mp3.c:3192
+#: ../plugins/mp3.c:3192
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Nombre de fichiers : %d\n"
 
-#: plugins/mp3.c:3599
+#: ../plugins/mp3.c:3599
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux mp3.\n"
 
-#: plugins/mp3.c:3624
+#: ../plugins/mp3.c:3624
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
 
-#: plugins/ogg.c:178
+#: ../plugins/ogg.c:178
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " info : flux Ogg Vorbis - %ld - %ld Kb/s - %d canaux"
 
-#: plugins/ogg.c:881
+#: ../plugins/ogg.c:881
 msgid ""
 " warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
 "to fix.\n"
 msgstr ""
 
-#: plugins/ogg.c:2078
+#: ../plugins/ogg.c:2078
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux ogg.\n"
