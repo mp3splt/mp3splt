@@ -135,6 +135,8 @@ if test "x$enable_gnome" = xyes;then
 
 ifdef([GNOME_DOC_INIT],
 [
+  # Tell help/Makefile that we have the gnome doc utils.
+  AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, true)
   #Prepare building the gnome documentation of this program
   GNOME_DOC_INIT([],
                  [],
@@ -159,6 +161,7 @@ ifdef([GNOME_DOC_INIT],
 
     Install rarian or configure with "--disable-scrollkeeper".])
   fi
+	AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
 
 else
   AC_DEFINE(HAVE_GNOME, false, [Undefined if we cannot use gnome functions.])
