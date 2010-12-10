@@ -1,4 +1,4 @@
-#if GNOME
+#if HAVE_GNOME_DOC_UTILS
 include $(top_srcdir)/build-aux/gnome-doc-utils.make
 
 # Include the help files in the tarball
