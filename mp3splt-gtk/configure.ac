@@ -161,7 +161,6 @@ ifdef([GNOME_DOC_INIT],
 
     Install rarian or configure with "--disable-scrollkeeper".])
   fi
-	AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
 
 else
   AC_DEFINE(HAVE_GNOME, false, [Undefined if we cannot use gnome functions.])
