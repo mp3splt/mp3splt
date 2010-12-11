@@ -36,21 +36,23 @@ echo -n "Running autopoint... ";
 autopoint -f && echo "done";
 echo -n "Running aclocal... " \
 && aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
-&& if test "x$win" = x; then {
- 	echo -n "Running gnome-doc-prepare... "
-	gnome-doc-prepare --automake 
-	echo "done"
-	echo -n "Running aclocal again after adding the help files... "
-	aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS
-	echo "done"
-}; fi \
 && echo -n "Running autoheader... " \
-&& autoheader && echo "done" \
-&& echo -n "Running autoconf... " \
+&& autoheader && echo "done"
+echo "Trying to initialize the help file builder... " 
+echo " " 
+echo -n "Running gnome-doc-prepare... " \
+&& gnome-doc-prepare --automake \
+&& echo "done" \
+&& echo -n "Running aclocal again after adding the help files... " \
+&& aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS \
+&& echo "done"
+
+echo -n "Running autoconf... " \
 && autoconf && echo "done" \
-&& if test "x$win" = x; then touch build-aux/gnome-doc-utils.make; fi \
+&& if test -e build-aux/gnome-doc-utils.make; then echo "Seems like we found working gnome documentation build utilities."; else echo "doc-dist-hook:" > build-aux/gnome-doc-utils.make; fi \
 && echo -n "Running automake... " \
 && automake -a -c && echo "done"
+
 
 echo -n "Formatting language files with msgfmt... " && \
 {
