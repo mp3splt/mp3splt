@@ -21,5 +21,3 @@ Description: GTK2 gui that uses libmp3splt for lossless linear editing
  loosing any quality. Useful for splitting albums into tracks which
  can be done either manually, using freedb.org data from the net
  or using .cue files ...
- Homepage: http://mp3splt.sourceforge.net/
-
