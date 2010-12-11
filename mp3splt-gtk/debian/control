@@ -3,8 +3,8 @@ Section: sound
 Priority: optional
 Maintainer: Ryan Niebur <ryanryan52@gmail.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.2), libmp3splt-dev (>= 0.6.1), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev, quilt
-Standards-Version: 3.8.1
+Build-Depends: debhelper (>= 7.2), libmp3splt-dev (>= 0.6.1), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev
+Standards-Version: 3.9.1
 Homepage: http://mp3splt.sourceforge.net/
 Vcs-Git: git://git.ryan52.info/git/mp3splt-gtk
 Vcs-Browser: http://git.ryan52.info/?p=mp3splt-gtk;a=summary
