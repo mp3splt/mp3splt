@@ -3,7 +3,8 @@ Section: sound
 Priority: optional
 Maintainer: Munteanu Alexandru Ionut (io_alex_2002@yahoo.fr)
 Build-Depends: debhelper (>= 4.0.0), libmp3splt (>= 0.6.1)
-Standards-Version: 3.6.1.1
+Standards-Version: 3.9.1
+Homepage: http://mp3splt.sourceforge.net/
 
 Package: mp3splt
 Architecture: any
@@ -12,6 +13,4 @@ Description: Command line program that splits MP3 and Ogg Vorbis files without r
  Used to split MP3 (VBR supported) and Ogg Vorbis
  files into smaller files without decoding. Useful for splitting albums, either
  manually, using freedb.org data, or .cue files ...
- .
- Homepage: http://mp3splt.sourceforge.net/
 

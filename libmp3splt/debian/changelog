@@ -3,3 +3,18 @@ libmp3splt (0.6.1) unstable; urgency=low
   * test
 
  -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Thu, 21 Dec 2006 22:35:40 +0100
+
+libmp3splt (0.5.6-1) unstable; urgency=low
+
+  * New Upstream Version
+  * add DM-Upload-Allowed field
+  * remove libmp3splt0's dependency on libmp3splt-mp3 | libmp3splt-
+    plugin, fixing the circular dependency (Closes: #529058)
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Thu, 21 May 2009 18:50:28 -0700
+
+libmp3splt (0.5.4-1) unstable; urgency=low
+
+  * Initial release (Closes: #515242)
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Fri, 10 Apr 2009 08:41:01 -0700
