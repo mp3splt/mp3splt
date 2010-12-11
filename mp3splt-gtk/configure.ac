@@ -135,8 +135,6 @@ if test "x$enable_gnome" = xyes;then
 
 ifdef([GNOME_DOC_INIT],
 [
-  # Tell help/Makefile that we have the gnome doc utils.
-  AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, true)
   #Prepare building the gnome documentation of this program
   GNOME_DOC_INIT([],
                  [],
@@ -164,7 +162,6 @@ ifdef([GNOME_DOC_INIT],
 
 else
   AC_DEFINE(HAVE_GNOME, false, [Undefined if we cannot use gnome functions.])
-	AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
 fi
 
 AM_CONDITIONAL(ENABLE_SK, test "x$packager_mode" = "xfalse" -a "x$enable_scrollkeeper" = "xyes")
