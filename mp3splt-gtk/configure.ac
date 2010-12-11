@@ -59,8 +59,8 @@ DEBUG_FLAGS="-g"
 #OPTIMISE_FLAGS="-O2"
 #WARNING_FLAGS="-Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
 WARNING_FLAGS="-Wall"
-CFLAGS="$DEBUG_FLAGS $WARNING_FLAGS $OPTIMISE_FLAGS $CFLAGS -I../libmp3splt/include/ -I../../libmp3splt/include/"
-LDFLAGS="$LDFLAGS -L../libmp3splt/src/.libs -L../../libmp3splt/src/.libs/"
+CFLAGS="$DEBUG_FLAGS $WARNING_FLAGS $OPTIMISE_FLAGS $CFLAGS"
+LDFLAGS="$LDFLAGS"
 
 #################################################
 # Check for programs
