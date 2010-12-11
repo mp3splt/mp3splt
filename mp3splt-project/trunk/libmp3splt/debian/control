@@ -1,18 +1,30 @@
 Source: libmp3splt
 Section: sound
 Priority: optional
-Maintainer: Munteanu Alexandru Ionut (io_alex_2002@yahoo.fr)
-Build-Depends: debhelper (>= 4.0.0), libvorbis-dev, libmad0-dev
-Standards-Version: 3.6.1.1
+Maintainer: Ryan Niebur <ryanryan52@gmail.com>
+DM-Upload-Allowed: yes
+Build-Depends: debhelper (>= 7.2), gawk, libogg-dev, libvorbis-dev, libmad0-dev, libltdl3-dev, libid3tag0-dev
+Standards-Version: 3.9.1
+Section: libs
+Homepage: http://mp3splt.sourceforge.net/
+Vcs-Git: git://git.ryan52.info/git/libmp3splt
+Vcs-Browser: http://git.ryan52.info/?p=libmp3splt;a=summary
 
-Package: libmp3splt
+Package: libmp3splt-dev
+Section: libdevel
 Architecture: any
-Depends: ${shlibs:Depends}
-Enhances: mp3splt, mp3splt-gtk
-Description: Library that splits MP3 and Ogg Vorbis files without reencoding
- Used to split MP3 (VBR supported) and Ogg Vorbis
- files into smaller files without decoding. Useful for splitting albums, either
- manually, using freedb.org data, or .cue files ...
- .
- Homepage: http://mp3splt.sourceforge.net/
-
+Conflicts: libmp3splt
+Replaces: libmp3splt
+Depends: libmp3splt0 (= ${binary:Version}), ${misc:Depends}, libogg-dev, libvorbis-dev, libmad0-dev, libltdl3-dev, libid3tag0-dev
+Description: development files for libmp3splt0
+ Mp3Splt-project is a utility to split mp3 and ogg files selecting a
+ begin and an end time position, without decoding. It's very useful to
+ split large mp3/ogg to make smaller files or to split entire albums to
+ obtain original tracks. If you want to split an album, you can select
+ split points and filenames manually or you can get them automatically
+ from CDDB (internet or a local file) or from .cue files. Supports also
+ automatic silence split, that can be used also to adjust cddb/cue
+ splitpoints. You can extract tracks from Mp3Wrap or AlbumWrap files in
+ few seconds. For mp3 files, both ID3v1 & ID3v2 tags are
+ supported. Mp3splt-project is split in 3 parts: libmp3splt, mp3splt
+ and mp3splt-gtk.
