@@ -40,6 +40,7 @@ static char *splt_tp_parse_tag_word(const char *cur_pos,
 
 void splt_tp_put_tags_from_filename(splt_state *state, int *error)
 {
+#ifndef NO_PCRE
   char *regex = splt_t_get_input_filename_regex(state);
   const char *fname_to_split =
     splt_su_get_fname_without_path(splt_t_get_filename_to_split(state));
@@ -59,6 +60,9 @@ void splt_tp_put_tags_from_filename(splt_state *state, int *error)
       tags->track);
 
   splt_tu_free_one_tags(tags);
+#else
+  //TODO: no pcre error ?
+#endif
 }
 
 int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
