@@ -192,8 +192,14 @@ AC_ARG_ENABLE(cutter, [AC_HELP_STRING([--disable-cutter],[ Disable Cutter unit t
 if test "x$enable_cutter" = xyes;then
 
 AC_CHECK_CUTTER
+
+cutter_command="no"
+AC_CHECK_FILE([$CUTTER], [cutter_command="yes"])
+
 if test "x$CUTTER" != x;then
-  AM_CONDITIONAL(HAS_CUTTER, true)
+  if test "x$cutter_command" = xyes;then
+    AM_CONDITIONAL(HAS_CUTTER, true)
+  fi
 fi
 
 fi
