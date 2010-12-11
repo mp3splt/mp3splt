@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = m4 po doc src help
 
-EXTRA_DIST = mp3splt-gtk.desktop autogen.sh build-aux/gnome-doc-utils.make m4
+EXTRA_DIST = mp3splt-gtk.desktop autogen.sh build-aux/gnome-doc-utils.make m4 debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
 
 appsdir = $(datadir)/applications
 apps_DATA = mp3splt-gtk.desktop
