@@ -1,5 +1,4 @@
 Source: libmp3splt
-Section: sound
 Priority: optional
 Maintainer: Ryan Niebur <ryanryan52@gmail.com>
 DM-Upload-Allowed: yes
@@ -15,7 +14,7 @@ Section: libdevel
 Architecture: any
 Conflicts: libmp3splt
 Replaces: libmp3splt
-Depends: libmp3splt0 (= ${binary:Version}), ${misc:Depends}, libogg-dev, libvorbis-dev, libmad0-dev, libltdl3-dev, libid3tag0-dev
+Depends: libmp3splt0 (= ${binary:Version}), ${misc:Depends}, ${shlib:Depends}, libogg-dev, libvorbis-dev, libmad0-dev, libltdl3-dev, libid3tag0-dev
 Description: development files for libmp3splt0
  Mp3Splt-project is a utility to split mp3 and ogg files selecting a
  begin and an end time position, without decoding. It's very useful to
