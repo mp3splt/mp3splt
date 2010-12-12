@@ -20,6 +20,19 @@
 	A tool that allows to losslessly cut MP3 or Ogg Vorbis files.
 	This means that the selected audio frames or packets are extracted
 	without the need to re-encode the file - which would loose quality.
+    <figure id="Player-fig">
+      <title>&appname; directly after startup</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+	    <imagedata fileref="figures/mp3splt-gtk.png" format="PNG"/>
+          </imageobject>
+          <textobject>
+	    <phrase>Shows <application>&appname;</application> directly after startup.</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
       </para>
     </abstract>
     <copyright>
