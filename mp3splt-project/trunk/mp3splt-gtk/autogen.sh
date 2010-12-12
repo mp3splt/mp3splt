@@ -43,7 +43,7 @@ if test "x$win" = x; then {
   echo "Trying to initialize the help file builder... " 
   echo " " 
   echo -n "Running gnome-doc-prepare... " \
-  && gnome-doc-prepare --automake \
+  && gnome-doc-prepare --force --automake \
   && echo "done" \
   && echo -n "Running aclocal again after adding the help files... " \
   && aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS \
@@ -58,7 +58,7 @@ echo -n "Running autoconf... " \
   else
     echo "doc-dist-hook:" > build-aux/gnome-doc-utils.make;
   fi
-}; fi \
+}; else rm -f build-aux/gnome-doc-utils.make && touch build-aux/gnome-doc-utils.make; fi \
 && echo -n "Running automake... " \
 && automake -a -c && echo "done"
 
