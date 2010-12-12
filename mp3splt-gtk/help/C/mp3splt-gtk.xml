@@ -92,6 +92,20 @@
       Features include graphical selection of split points, automatic
       splitting of music recordings into tracks and automatic adjustment
       of split points to fall into pauses. 
+      <figure id="Player-fig2">
+	<title>&appname; directly after startup</title>
+	<screenshot>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="figures/mp3splt-gtk.png" format="PNG"/>
+	    </imageobject>
+	    <textobject>
+	      <phrase>Shows <application>&appname;</application> directly after startup.</phrase>
+	    </textobject>
+	  </mediaobject>
+	</screenshot>
+      </figure>
+
     </para>
     <sect2 id="audiorec-tostartapp">
       <title>Starting &appname;</title>
