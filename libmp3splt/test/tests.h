@@ -1,7 +1,7 @@
 
 #ifndef SPLT_TESTS_H
 
-#include "mp3splt.h"
+#include <libmp3splt/mp3splt.h>
 
 #define DOUBLE_PRECISION 1E-8
 

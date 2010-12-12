@@ -21,12 +21,12 @@ DEBIAN_VERSION=$(sed -n "s/.*(\(${LIBMP3SPLT_VERSION}.*\)).*/\1/ p" ./debian/cha
 #if we don't have the distribution file
 DIST_FILE="../libmp3splt_${DEBIAN_VERSION}_${ARCH}.deb"
 if [[ ! -f $DIST_FILE ]];then
-    #we compile
-    ./autogen.sh && \
-        ./configure --prefix=/usr && make clean && make && \
-        #we create the debian package
-    fakeroot debian/rules binary &&\
-        #we install for mp3splt and mp3splt-gtk
+
+    #prepare & clean
+    ./autogen.sh && ./configure --prefix=/usr && make clean && \
+    #create the debian package
+    debuild -i -us -uc -b &&\
+    #install for mp3splt and mp3splt-gtk
     make install DESTDIR=/tmp/temp || exit 1
 else
     put_is_package_warning "We already have the $DIST_FILE distribution file !"

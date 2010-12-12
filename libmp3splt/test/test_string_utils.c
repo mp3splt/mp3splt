@@ -1,7 +1,7 @@
 #include <cutter.h>
 
-#include "mp3splt.h"
-#include "string_utils.h"
+#include <libmp3splt/mp3splt.h>
+#include <libmp3splt/string_utils.h>
 
 static int error = SPLT_OK;
 static splt_state *state = NULL;

@@ -1,6 +1,6 @@
 #include <cutter.h>
 
-#include "splt_array.h"
+#include <libmp3splt/splt_array.h>
 
 static splt_array *array = NULL;
 
