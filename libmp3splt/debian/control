@@ -14,7 +14,7 @@ Section: sound
 Architecture: any
 Conflicts: libmp3splt
 Replaces: libmp3splt
-Depends: libmp3splt0 (= ${binary:Version}), ${misc:Depends}, ${shlib:Depends}
+Depends: ${misc:Depends}, ${shlib:Depends}
 Description:
  Mp3Splt-project is a utility to split mp3 and ogg files selecting a
  begin and an end time position, without decoding. It's very useful to
