@@ -1,11 +1,11 @@
 #include <cutter.h>
 
-#include "tests.h"
+#include <libmp3splt/mp3splt.h>
+#include <libmp3splt/options.h>
+#include <libmp3splt/filename_regex.h>
+#include <libmp3splt/tags_utils.h>
 
-#include "mp3splt.h"
-#include "options.h"
-#include "filename_regex.h"
-#include "tags_utils.h"
+#include "tests.h"
 
 static int error = SPLT_OK;
 static splt_state *state = NULL;

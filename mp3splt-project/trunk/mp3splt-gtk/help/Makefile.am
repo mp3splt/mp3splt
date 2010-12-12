@@ -11,7 +11,7 @@ doc-dist-hook: en_GB
 DOC_MODULE = mp3splt-gtk
 DOC_ENTITIES = legal.xml
 DOC_INCLUDES = 
-DOC_FIGURES = figures/FreeDBSearch.png figures/mp3splt-gtk.png figures/Preferences.png figures/SplitType.png figures/Tracklist.png
+#DOC_FIGURES = figures/FreeDBSearch.png figures/mp3splt-gtk.png figures/Preferences.png figures/SplitType.png figures/Tracklist.png
 DOC_LINGUAS = en_GB de_DE
 EXTRA_DIST = $(DOC_FIGURES)
 #else

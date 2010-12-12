@@ -10,6 +10,8 @@ LIBMP3SPLT_REAL_VERSION=0.6.1
 MP3SPLT_REAL_VERSION=2.3
 MP3SPLT_GTK_REAL_VERSION=0.6.1
 
+BUILD_SOURCE_PACKAGES=1
+
 RUN_UNIT_TESTS=1
 RUN_FUNCTIONAL_TESTS=1
 BUILD_BINARY_PACKAGES=1
@@ -17,6 +19,8 @@ BUILD_BINARY_PACKAGES=1
 BUILD_UBUNTU_PACKAGES=$BUILD_BINARY_PACKAGES
 BUILD_DEBIAN_PACKAGES=$BUILD_BINARY_PACKAGES
 BUILD_WINDOWS_PACKAGES=$BUILD_BINARY_PACKAGES
+
+CHROOT_FLAGS=-d
 
 unset SHELL
 
@@ -158,7 +162,7 @@ function make_debian_flavor()
           ! -f "libmp3splt-${LIBMP3SPLT_REAL_VERSION}.${2}_${3}.deb" ]];then
         
         put_debian_version "$2"
-        dchroot -d -c $2_$3 "export LC_ALL=\"C\" && make -s debian_packages " || \
+        dchroot $CHROOT_FLAGS -c $2_$3 "export LC_ALL=\"C\" && make -s debian_packages " || \
         {
           clean_debian_version "$2"
           exit 1
@@ -209,7 +213,7 @@ function gentoo_packages()
   print_yellow "Creating gentoo ebuilds..."
   echo
 
-  dchroot -d -c gentoo "make -s gentoo_ebuilds" || exit 1
+  dchroot $CHROOT_FLAGS -c gentoo "make -s gentoo_ebuilds" || exit 1
   cd $PROJECT_DIR
 }
 ############# end gentoo ebuilds ################
@@ -261,7 +265,7 @@ function archlinux_packages()
     print_yellow "Creating archlinux packages..."
     echo
     
-    dchroot -d -c arch "make -s arch_packages" || exit 1
+    dchroot $CHROOT_FLAGS -c arch "make -s arch_packages" || exit 1
     cd $PROJECT_DIR
 }
 ############# end archlinux packages #########
@@ -273,7 +277,7 @@ function slackware_packages()
     print_yellow "Creating slackware packages..."
     echo
     
-    dchroot -d -c slackware "make -s slackware_fakeroot_packages" || exit 1
+    dchroot $CHROOT_FLAGS -c slackware "make -s slackware_fakeroot_packages" || exit 1
     cd $PROJECT_DIR
 }
 ############# end slackware packages #####
@@ -376,7 +380,7 @@ function run_functional_tests
   print_yellow "Running functional tests..."
   echo
 
-  cd ../tests && ./tests.sh
+  cd ../tests && ./tests.sh || exit 1
 
   cd $PROJECT_DIR
 }
@@ -387,7 +391,7 @@ function run_unit_tests
   print_yellow "Running unit tests..."
   echo
 
-  ${LIBMP3SPLT_DIR}/test/run-tests.sh
+  ${LIBMP3SPLT_DIR}/test/run-tests.sh || exit 1
 }
 
 ###########
@@ -417,7 +421,9 @@ remove_pot_files
 ###################################
 #build source packages
 
-source_packages
+if [[ $BUILD_SOURCE_PACKAGES -eq 1 ]];then
+  source_packages
+fi
 
 ###################################
 #tests

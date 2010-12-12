@@ -162,6 +162,7 @@ ifdef([GNOME_DOC_INIT],
 
 else
   AC_DEFINE(HAVE_GNOME, false, [Undefined if we cannot use gnome functions.])
+  AM_CONDITIONAL([HAVE_GNOME_DOC_UTILS],[false])
 fi
 
 AM_CONDITIONAL(ENABLE_SK, test "x$packager_mode" = "xfalse" -a "x$enable_scrollkeeper" = "xyes")
