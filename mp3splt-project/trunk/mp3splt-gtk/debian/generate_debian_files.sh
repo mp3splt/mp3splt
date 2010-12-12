@@ -21,7 +21,7 @@ Homepage: http://mp3splt.sourceforge.net/
 
 Package: mp3splt-gtk
 Architecture: any
-Depends: \${shlibs:Depends}, \${misc:Depends}, libmp3splt0 (>= $LIBMP3SPLT_VERSION), libmp3splt0-mp3 | libmp3splt0-plugin
+Depends: \${shlibs:Depends}, \${misc:Depends}, libmp3splt0 (>= $LIBMP3SPLT_VERSION), libmp3splt0-mp3 | libmp3splt-plugin
 Recommends: gstreamer0.10-plugins-good, libmp3splt0-ogg
 Suggests: audacious
 Description: GTK2 gui that uses libmp3splt for lossless linear editing
