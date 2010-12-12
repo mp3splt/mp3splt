@@ -3,16 +3,14 @@ Section: sound
 Priority: optional
 Maintainer: Ryan Niebur <ryanryan52@gmail.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.2), libmp3splt-dev (>= 0.6.1), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev
+Build-Depends: debhelper (>= 7.2), libmp3splt-dev (>= 0.6.1), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev, gnome-doc-utils
 Standards-Version: 3.9.1
 Homepage: http://mp3splt.sourceforge.net/
-Vcs-Git: git://git.ryan52.info/git/mp3splt-gtk
-Vcs-Browser: http://git.ryan52.info/?p=mp3splt-gtk;a=summary
 
 Package: mp3splt-gtk
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libmp3splt-mp3 | libmp3splt-plugin
-Recommends: gstreamer0.10-plugins-good
+Depends: ${shlibs:Depends}, ${misc:Depends}, libmp3splt0-mp3 | libmp3splt0-plugin
+Recommends: gstreamer0.10-plugins-good, libmp3splt0-ogg
 Suggests: audacious
 Description: GTK2 gui that uses libmp3splt for lossless linear editing
  of audio files (cut an audio file into several tracks.)

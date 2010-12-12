@@ -53,7 +53,7 @@
       Munteanu
     </surname>
   </author>
-  <author> 
+  <author role="maintainer"> 
     <firstname> 
       Gunter
     </firstname> 
