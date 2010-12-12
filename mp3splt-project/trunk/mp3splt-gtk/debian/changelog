@@ -3,7 +3,7 @@ mp3splt-gtk (0.6.1) unstable; urgency=low
   * Non-maintainer upload.
   * Updated the debian directory to follow the current rules.
 
- -- Munteanu Alexandru Ionut <io_alex_2002@yahoo.fr>  Sat, 11 Dec 2010 22:35:40 +0100
+ -- Gunter Königsmann <gunter@peterpall.de>  Sat, 11 Dec 2010 22:35:40 +0100
 
 mp3splt-gtk (0.5.6-1.2) unstable; urgency=low
 
