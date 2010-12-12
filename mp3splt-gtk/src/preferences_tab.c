@@ -285,7 +285,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
 
   //output format
   g_key_file_set_string(my_key_file, "output", "output_format",
-			outputdirectory_get());
+      gtk_entry_get_text(GTK_ENTRY(output_entry)));
   //default output format
   g_key_file_set_boolean(my_key_file, "output", "default_output_format",
       get_checked_output_radio_box());
