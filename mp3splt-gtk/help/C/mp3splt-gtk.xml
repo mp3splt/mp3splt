@@ -36,24 +36,8 @@
     -->
     
     &legal;
-    
-  <author>
-    <firstname> 
-      Matteo
-    </firstname>
-    <surname>
-      Trotta
-    </surname>
-  </author>
-  <author> 
-    <firstname> 
-      Alexandru Ionut 
-    </firstname> 
-    <surname>
-      Munteanu
-    </surname>
-  </author>
-  <author role="maintainer"> 
+ 
+  <author role="maintainer">
     <firstname> 
       Gunter
     </firstname> 
