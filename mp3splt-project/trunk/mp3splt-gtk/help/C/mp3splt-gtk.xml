@@ -220,6 +220,19 @@
 	  information if this piece of the audio file is to be kept
 	  and how the corresponding track has to be named.
       </para>
+      <figure id="Splitpoints">
+	<title>The split point tab</title>
+	<screenshot>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="figures/Tracklist.png" format="PNG"/>
+	    </imageobject>
+	    <textobject>
+	      <phrase>Shows all split points and track names.</phrase>
+	    </textobject>
+	  </mediaobject>
+	</screenshot>
+      </figure>
       <para>
 	If you want to change the start or end position of a track
 	or give it a name just do it at any time you want.
