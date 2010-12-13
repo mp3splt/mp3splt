@@ -4,10 +4,6 @@ include $(top_srcdir)/build-aux/gnome-doc-utils.make
 # Include the help files in the tarball
 dist-hook: doc-dist-hook
 
-# Either an empty dependency or a dummy doc-dist-hook, depending
-# on what make needs.
-doc-dist-hook: en_GB
-
 DOC_MODULE = mp3splt-gtk
 DOC_ENTITIES = legal.xml
 DOC_INCLUDES = 
