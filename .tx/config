@@ -11,4 +11,6 @@ trans.fr = mp3splt-gtk/po/fr.po
 [mp3splt-gtk.Onlinehelp]
 file_filter = translations/mp3splt-gtk.Onlinehelp/<lang>.po
 source_lang = en
+trans.de = mp3splt-gtk/help/de/de.po
+trans.fr = mp3splt-gtk/help/fr/fr.po
 
