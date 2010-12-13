@@ -3,7 +3,10 @@ host = http://www.transifex.net
 
 [mp3splt-gtk.ButtonsAndMessages]
 file_filter = translations/mp3splt-gtk.ButtonsAndMessages/<lang>.po
+source_file = mp3splt-gtk/po/mp3splt-gtk.pot
 source_lang = en
+trans.de = mp3splt-gtk/po/de.po
+trans.fr = mp3splt-gtk/po/fr.po
 
 [mp3splt-gtk.Onlinehelp]
 file_filter = translations/mp3splt-gtk.Onlinehelp/<lang>.po
