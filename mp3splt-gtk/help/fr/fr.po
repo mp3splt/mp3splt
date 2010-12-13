@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "POT-Creation-Date: 2010-11-16 21:38+0100\n"
-"PO-Revision-Date: 2010-12-13 21:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-12-13 21:13+0000\n"
+"Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml15(para)
 msgid "mp3splt-gtk."
-msgstr ""
+msgstr "mp3splt-gtk."
 
 #: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml18(para)
 msgid "A tool that allows to losslessly cut MP3 or Ogg Vorbis files. This means that the selected audio frames or packets are extracted without the need to re-encode the file - which would loose quality."
