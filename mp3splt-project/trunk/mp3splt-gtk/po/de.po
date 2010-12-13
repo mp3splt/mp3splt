@@ -1,21 +1,21 @@
-# German translation of mp3splt-gtk.
-# Mario Blättermann <mariobl@gnome.org>, 2009, 2010.
-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Munteanu Alexandru
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
 "POT-Creation-Date: 2010-12-13 19:06+0100\n"
-"PO-Revision-Date: 2010-12-09 14:37+0100\n"
-"Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
-"Language-Team: German <gnome-de@gnome.org>\n"
-"Language: de\n"
+"PO-Revision-Date: 2010-12-13 19:54+0000\n"
+"Last-Translator: peterpall <gunter@peterpall.de>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Language: German\n"
-"X-Poedit-Country: GERMANY\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:253
 #: src/snackamp_control.c:328
@@ -196,8 +196,7 @@ msgstr "F_rame-Modus (nützlich für mp3-VBR) (nur für mp3)"
 
 #: src/preferences_tab.c:616
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr ""
-"_Automatische Feinabstimmung der Schnittpunkte mittels der Stille-Detektion"
+msgstr "_Automatische Feinabstimmung der Schnittpunkte mittels der Stille-Detektion"
 
 #: src/preferences_tab.c:648
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
@@ -285,11 +284,11 @@ msgstr "GROSSSCHREIBUNG"
 
 #: src/preferences_tab.c:945
 msgid "First uppercase"
-msgstr ""
+msgstr "Großschreibung/erster Buchstabe"
 
 #: src/preferences_tab.c:946
 msgid "Word Uppercase"
-msgstr ""
+msgstr "Großschreibung/Wort"
 
 #: src/preferences_tab.c:969
 msgid "_Replace underscores by spaces"
@@ -331,6 +330,15 @@ msgid ""
 "    (?<year>)     - year of emission\n"
 "    (?<comment>)  - comment"
 msgstr ""
+"Hier können PERL-ähnlichen regular expressions mit Untergruppen  eingegeben werden.\n"
+"Die folgenden Namen werden erkannt:\n"
+"    (?<artist>)    - Der Name des Künstlers\n"
+"    (?<album>)    - Der Titel des Albums\n"
+"    (?<title>)    - Der Titel des Tracks\n"
+"    (?<tracknum>) - Die Nummer des Tracks\n"
+"    (?<tracks>)   - Gesamtzahl der Tracks\n"
+"    (?<year>)     - Erscheinungsjahr\n"
+"    (?<comment>)  - Kommentar"
 
 #: src/preferences_tab.c:1015
 msgid "Test"
@@ -431,8 +439,7 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
 msgstr ""
 "\n"
 " Keine Verbindung zum Audacious-Wiedergabeprogramm.\n"
@@ -498,22 +505,15 @@ msgstr "vor %s"
 
 #: src/player_tab.c:2651
 msgid " left click on splitpoint selects it, right click erases it"
-msgstr ""
-"Linksklick auf Teilungspunkt wählt aus, Rechtsklick löscht Teilungspunkt"
+msgstr "Linksklick auf Teilungspunkt wählt aus, Rechtsklick löscht Teilungspunkt"
 
 #: src/player_tab.c:2661
-msgid ""
-" left click + move changes song position, right click + move changes zoom"
-msgstr ""
-"Linksklick + Verschieben ändert die Position des Titels, Rechtsklick + "
-"Verschieben ändert den Vergrößerungsfaktor"
+msgid " left click + move changes song position, right click + move changes zoom"
+msgstr "Linksklick + Verschieben ändert die Position des Titels, Rechtsklick + Verschieben ändert den Vergrößerungsfaktor"
 
 #: src/player_tab.c:2672
-msgid ""
-" left click on point + move changes point position, right click play preview"
-msgstr ""
-"Linksklick + Verschieben ändert die Position des Punktes, Rechtsklick spielt "
-"Vorschau ab"
+msgid " left click on point + move changes point position, right click play preview"
+msgstr "Linksklick + Verschieben ändert die Position des Punktes, Rechtsklick spielt Vorschau ab"
 
 #: src/player_tab.c:2684
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
@@ -899,156 +899,3 @@ msgstr "Audacity-Labeldateien (*.txt)"
 #: src/import.c:144
 msgid "All files"
 msgstr "Alle Dateien"
-
-#~ msgid "Split files"
-#~ msgstr "Dateien teilen"
-
-#~ msgid "Multiple files"
-#~ msgstr "Mehrere Dateien"
-
-#~ msgid "_Import..."
-#~ msgstr "_Importieren …"
-
-#~ msgid "mp3 and ogg files(*.mp3 *.ogg)"
-#~ msgstr "mp3- und ogg-Dateien (*.mp3 *.ogg)"
-
-#~ msgid "ogg files(*.ogg)"
-#~ msgstr "ogg-Dateien (*.ogg)"
-
-#~ msgid "cddb & cue"
-#~ msgstr "CDDB und CUE"
-
-#~ msgid "Browse .c_ue file"
-#~ msgstr "Nach .c_ue-Datei suchen"
-
-#~ msgid "Select CUE file"
-#~ msgstr "CUE-Datei auswählen"
-
-#~ msgid "Add cue _splitpoints"
-#~ msgstr "CUE-Teilungspunkte _hinzufügen"
-
-#~ msgid "Set cue splitpoints to the splitpoints table"
-#~ msgstr "CUE-Teilungspunkte zur Tabelle hinzufügen"
-
-#~ msgid "CUE"
-#~ msgstr "CUE"
-
-#~ msgid "Browse .c_ddb file"
-#~ msgstr "Nach .cddb-_Datei suchen"
-
-#~ msgid "Select CDDB file"
-#~ msgstr "CDDB-Datei auswählen"
-
-#~ msgid "_Add cddb splitpoints"
-#~ msgstr "CDDB-Teilungspunkte _hinzufügen"
-
-#~ msgid "Set cddb splitpoints to the splitpoints table"
-#~ msgstr "CDDB-Teilungspunkte zur Tabelle hinzufügen"
-
-#~ msgid "CDDB"
-#~ msgstr "CDDB"
-
-#~ msgid "created from"
-#~ msgstr "erzeugt aus"
-
-#~ msgid "add splitpoint"
-#~ msgstr "Teilungspunkt hinzufügen"
-
-#~ msgid "Save preferences :"
-#~ msgstr "Einstellungen speichern:"
-
-#~ msgid " popup save dialog confirmation if preferences have changed"
-#~ msgstr ""
-#~ " Bestätigungsdialog zum Speichern, falls Einstellungen geändert wurden"
-
-#~ msgid "english"
-#~ msgstr "Englisch"
-
-#~ msgid "french"
-#~ msgstr "Französisch"
-
-#~ msgid ""
-#~ " input not seekable (for streams that can be read only one time)\n"
-#~ "(works only with normal and time split modes) (mp3 only)"
-#~ msgstr ""
-#~ "Eingabe ist nicht durchsuchbar (für Datenströme, die nur einmal gelesen "
-#~ "werden können)\n"
-#~ "(nur im Normal- und Zeit-Teilungsmodus) (nur mp3)"
-
-#~ msgid "Tags options :"
-#~ msgstr "Tag-Optionen:"
-
-#~ msgid "Save preferences ?"
-#~ msgstr "Einstellungen speichern?"
-
-#~ msgid ""
-#~ "\n"
-#~ "\tPreferences have changed.\n"
-#~ "Save preferences or revert to saved ?\n"
-#~ msgstr ""
-#~ "\n"
-#~ "\tEinstellungen wurden geändert.\n"
-#~ "Einstellungen speichern oder gespeicherte wiederherstellen?\n"
-
-#~ msgid "Save"
-#~ msgstr "Speichern"
-
-#~ msgid "save preferences"
-#~ msgstr "Einstellungen speichern"
-
-#~ msgid "Revert to saved"
-#~ msgstr "Zurücksetzen"
-
-#~ msgid "revert to saved preferences"
-#~ msgstr "Auf gespeicherte Einstellungen zurücksetzen"
-
-#~ msgid "Audacious"
-#~ msgstr "Audacious"
-
-#~ msgid "SnackAmp"
-#~ msgstr "SnackAmp"
-
-#~ msgid "GStreamer"
-#~ msgstr "GStreamer"
-
-#~ msgid "General"
-#~ msgstr "Allgemein"
-
-#~ msgid "play"
-#~ msgstr "Wiedergabe"
-
-#~ msgid "stop"
-#~ msgstr "Stop"
-
-#~ msgid "Add"
-#~ msgstr "Hinzufügen"
-
-#~ msgid " info: starting normal split... "
-#~ msgstr " Info: Normale Teilung wird gestartet …"
-
-#~ msgid " info: starting wrap mode split... "
-#~ msgstr " Info: Teilung im Wrap-Modus wird gestartet …"
-
-#~ msgid " info: starting time mode split... "
-#~ msgstr " Info: Teilung im Zeitmodus wird gestartet …"
-
-#~ msgid " info: starting error mode split... "
-#~ msgstr " Info: Teilung im Fehlermodus wird gestartet …"
-
-#~ msgid "set window default size"
-#~ msgstr "Standard-Fenstergröße festlegen"
-
-#~ msgid "really wanna quit ?"
-#~ msgstr "Wirklich beenden?"
-
-#~ msgid "CDDB file : "
-#~ msgstr "CDDB-Datei: "
-
-#~ msgid "CUE file : "
-#~ msgstr "CUE-Datei: "
-
-#~ msgid "Split mode :"
-#~ msgstr "Teilungsmodus:"
-
-#~ msgid "Set default options"
-#~ msgstr "Vorgegebene Optionen setzen"
