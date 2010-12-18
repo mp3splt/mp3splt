@@ -1,35 +1,35 @@
-# German translation of newmp3splt.
-# Mario Blättermann <mariobl@gnome.org>, 2009, 2010.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Alexandru Munteanu
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: newmp3splt\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
 "POT-Creation-Date: 2010-12-18 17:15+0100\n"
-"PO-Revision-Date: 2010-12-09 14:42+0100\n"
-"Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
-"Language-Team: German <gnome-de@gnome.org>\n"
-"Language: de\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Language: German\n"
-"X-Poedit-Country: GERMANY\n"
 
 #: src/mp3splt.c:296
 #, c-format
 msgid " Warning: %s\n"
-msgstr " Warnung: %s\n"
+msgstr ""
 
 #: src/mp3splt.c:303
 #, c-format
 msgid " Error: %s\n"
-msgstr " Fehler: %s\n"
+msgstr ""
 
 #: src/mp3splt.c:326 src/mp3splt.c:341 src/mp3splt.c:2030
 msgid "cannot allocate memory !"
-msgstr "Speicher kann nicht zugewiesen werden!"
+msgstr ""
 
 #: src/mp3splt.c:356
 msgid ""
@@ -40,12 +40,6 @@ msgid ""
 "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
 "                   (or EOF for End Of File). "
 msgstr ""
-"\n"
-"AUFRUF:\n"
-"      mp3splt [OPTIONEN] DATEI1 [DATEI2] ... [STARTZEIT] [ZEIT] ... "
-"[ENDZEIT]\n"
-"      ZEITFORMAT: min.sec[.0-99], auch wenn Minuten über 59 hinausgehen\n"
-"                   (oder EOF für Ende der Datei). "
 
 #: src/mp3splt.c:361
 msgid ""
@@ -58,13 +52,6 @@ msgid ""
 "      filenames from a .cddb or .cue file or from Internet (\"query\").\n"
 "      Use -a to auto-adjust splitpoints."
 msgstr ""
-"\n"
-"OPTIONEN (Teilungsmodus)\n"
-" -t + ZEIT: Dateien in festen Zeitabständen teilen. (Zeitformat wie oben). \n"
-" -c + Datei.cddb, Datei.cue oder »Abfrage« oder »Abfrage{Album}«. \n"
-"      Teilungspunkte und Dateinamen aus einer .cddb- oder .cue-Datei "
-"im       Internet abfragen (»Abfrage«).\n"
-"      Benutzen Sie -a, um Teilungspunkte automatisch einzustellen."
 
 #: src/mp3splt.c:366
 msgid ""
@@ -74,23 +61,15 @@ msgid ""
 " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
 " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"
 msgstr ""
-" -s   Stille-Erkennung: Automatisches Finden von Teilungspunkten.\n"
-"      (Benutzen Sie -p für weitere Argumente)\n"
-" -w   Teilt mit Mp3Wrap oder AlbumWrap erstellte Dateien.\n"
-" -l   Listet die Titel ohne Extrahieren auf (Nur für »wrapped mp3«)\n"
-" -e   Fehlermodus: Teilt mp3 mit Erkennung von Synchronisationsfehlern.\n"
-"      (Für zusammengefügtes mp3)"
 
 #: src/mp3splt.c:370
 msgid ""
 " -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
 msgstr ""
-" -A + AUDACITY-DATEI: Teilungspunkte anhand einer Labels-Datei von\n"
-"      Audacity festzulegen."
 
 #: src/mp3splt.c:371
 msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"
-msgstr " -S + TEIL_ANZAHL: In TEIL_ANZAHL gleich lange Teile teilen"
+msgstr ""
 
 #: src/mp3splt.c:372
 msgid ""
@@ -99,10 +78,6 @@ msgid ""
 " -v   Prints current version and exits\n"
 " -h   Shows this help"
 msgstr ""
-" -i   Zählt die durch Stille-Erkennung ermittelbaren Teilungspunkte\n"
-"      (-p für weitere Argumente)\n"
-" -v   Aktuelle Version ausgeben und beenden\n"
-" -h   Diese Hilfe anzeigen"
 
 #: src/mp3splt.c:376
 msgid ""
@@ -113,11 +88,6 @@ msgid ""
 "      TAGS_VERSION can be 1, 2 or 12\n"
 "      (default is to set the same version as the file to split)"
 msgstr ""
-"\n"
-"(Weitere Optionen)\n"
-" -T + TAGS_VERSION: für mp3-Dateien, Ausgabe-Tags als Version 1, 2 oder 1\n"
-"      & 2 erzwingen. TAGS_VERSION kann 1, 2 oder 12 sein\n"
-"      (Vorgabe ist die gleiche Version wie die der zu teilenden Datei)"
 
 #: src/mp3splt.c:380
 msgid ""
@@ -126,12 +96,6 @@ msgid ""
 "VBR.\n"
 " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"
 msgstr ""
-" -m + M3U_DATEI: Hängt an die angegebene m3u-Datei die Namen der geteilten "
-"Dateien an.\n"
-" -f   Frame-Modus (nur mp3): Alle Frames verarbeiten.\n"
-"      Für höhere Genauigkeit und VBR.\n"
-" -a   Automatische Einstellung der Teilungspunkte durch Stille-Erkennung.\n"
-"      (-p für weitere Argumente)"
 
 #: src/mp3splt.c:383
 msgid ""
@@ -143,15 +107,6 @@ msgid ""
 "output),\n"
 "      @f: original filename"
 msgstr ""
-" -p + PARAMETER (th, nt, off, min, rm, gap): Benutzerargumente für -s und -"
-"a.\n"
-" -o + FORMAT: Namensmuster der Ausgabedatei. Kann folgende Variablen "
-"enthalten:\n"
-"      @a: Künstler, @p: Interpret (optional), @b: Album\n"
-"      @t: Titel, @n: Titelnummer, @N: Titel-Tagnummer\n"
-"      (auf eine Ziffer kann »n« oder »N« für die Anzahl der auszugebenden\n"
-"      Ziffern folgen),\n"
-"      @f: Original-Dateiname"
 
 #: src/mp3splt.c:389
 msgid ""
@@ -162,12 +117,6 @@ msgid ""
 "      TAGS format is like [@a=artist1,@t=title1]%[@o,@N=2,@a=artist2]\n"
 "       (% means that we set the tags for all remaining files)"
 msgstr ""
-" -g + TAGS : Benutzerdefinierte Tags für die geteilten Dateien.\n"
-"      TAGS kann folgende Variablen enthalten : \n"
-"         @a, @b, @t, @y, @c, @n, @o (Original-Tags setzen),\n"
-"         @N (Automatisches Weiterzählen der Titelnummer).\n"
-"      TAGS-Format: [@a=Künstler1,@t=Titel1]%[@o,@N=2, @a=Künstler2]\n"
-"       (% bedeutet das Setzen von Tags für alle verbleibenden Dateien)"
 
 #: src/mp3splt.c:395
 msgid ""
@@ -176,10 +125,6 @@ msgid ""
 "(-).\n"
 " -O + TIME: Overlap split files with TIME (slower)."
 msgstr ""
-" -d + ORDNERNAME: Alle Ausgabedateien in ORDNERNAME schreiben.\n"
-" -k   Eingabe als nicht durchsuchbar annehmen (langsamer).\n"
-"       Vorgabe, wenn Eingabe STDIN ist (-).\n"
-" -O + ZEIT : Teilungsdateien um ZEIT überlappen (langsamer)."
 
 #: src/mp3splt.c:398
 msgid ""
@@ -190,24 +135,16 @@ msgid ""
 "      to concatenate the split files\n"
 " -N   Don't create the 'mp3splt.log' log file when using '-s'."
 msgstr ""
-" -n   Kein Tag: keine ID3v1- oder Vorbis-Kommentare. Für »saubere« Dateien.\n"
-" -x   Kein Xing-Header: Keinen Xing-Header schreiben. Mit -n aufrufen,\n"
-"      falls Sie die Teilungsdateien zusammenführen wollen\n"
-" -N   Keine Protokolldatei »mp3splt.log« schreiben bei »-s«."
 
 #: src/mp3splt.c:402
 msgid ""
 " -P   Pretend to split: simulation of the process, without creating any\n"
 "      files or directories"
 msgstr ""
-" -P   Teilung simulieren: Der Vorgang wird simuliert, ohne dass\n"
-"      Dateien oder Ordner erstellt werden"
 
 #: src/mp3splt.c:404
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
 msgstr ""
-" -E + CUE_DATEI: Exportiert Teilungspunkte in eine CUE-Datei,\n"
-"      wenn nötig, zusammen mit -P verwenden"
 
 #: src/mp3splt.c:405
 msgid ""
@@ -218,182 +155,155 @@ msgid ""
 "\n"
 "      Please read man page for complete documentation.\n"
 msgstr ""
-" -q   Stiller Modus: nicht nachfragen (falls möglich) und weniger "
-"Meldungen.\n"
-" -Q   Sehr stiller Modus: nichts ausgeben, auch keine Fortschrittsleiste\n"
-"       (aktiviert auch -q).\n"
-" -D   Diagnosemodus: zum Debuggen des Programms.\n"
-"\n"
-"      Lesen Die die Handbuchseite für eine vollständige Dokumentation.\n"
 
 #: src/mp3splt.c:464
 msgid "bad gap argument. It will be ignored !"
-msgstr "Falsches gap-Argument. Wird ignoriert!"
+msgstr ""
 
 #: src/mp3splt.c:479
 msgid "bad threshold argument. It will be ignored !"
-msgstr "Falsches threshold-Argument. Wird ignoriert!"
+msgstr ""
 
 #: src/mp3splt.c:494
 msgid "bad tracknumber argument. It will be ignored !"
-msgstr "Falsches tracknumber-Argument. Wird ignoriert!"
+msgstr ""
 
 #: src/mp3splt.c:518
 msgid "bad offset argument. It will be ignored!"
-msgstr "Falsches offset-Argument. Wird ignoriert!"
+msgstr ""
 
 #: src/mp3splt.c:533
 msgid "bad minimum silence length argument. It will be ignored !"
-msgstr "Falsches minimum silence length-Argument. Wird ignoriert!"
+msgstr ""
 
 #: src/mp3splt.c:566 src/mp3splt.c:2343
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -w -"
 "l -e -i -a -p"
 msgstr ""
-"Option -k (oder STDIN) kann nicht mit einer der folgenden Optionen verwendet "
-"werden : -S -s -w -l -e -i -a -p"
 
 #: src/mp3splt.c:583
 msgid "the -w option can only be used with -m, -d, -q and -Q"
-msgstr "Die Option -w kann nur zusammen mit -m, -d, -q und -Q verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:600
 msgid "the -l option can only be used with -q"
-msgstr "Die Option -l kann nur zusammen mit -q verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:614
 msgid "the -e option can only be used with -m, -f, -o, -d, -q, -Q"
 msgstr ""
-"Die Option -e kann nur zusammen mit -m, -f, -o, -d, -q, -Q verwendet werden"
 
 #: src/mp3splt.c:630
 msgid "the -c option cannot be used with -t, -g, -s, -A, -i or -S"
 msgstr ""
-"Die Option -c kann nicht zusammen mit -t, -g, -s, -A, -i oder -S verwendet "
-"werden"
 
 #: src/mp3splt.c:638
 msgid "the -A option cannot be used with -t, -s, -i or -S"
 msgstr ""
-"Die Option -A kann nicht zusammen mit -t, -s, -i oder -S verwendet werden"
 
 #: src/mp3splt.c:647
 msgid "the -t option cannot be used with -s, -i or -S"
-msgstr "Die Option -t kann nicht zusammen mit -s, -i oder -S verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:656
 msgid "-s option cannot be used with -a, -i or -S"
-msgstr "Die Option -s kann nicht zusammen mit -a, -i oder -S verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:665
 msgid "-a option cannot be used with -i"
-msgstr "Die Option -a kann nicht zusammen mit -i verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:678
 msgid "the -p option cannot be used without -a, -s or -i"
-msgstr "Die Option -p kann nicht ohne -a, -s oder -i verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:687
 msgid "the -o option cannot be used with -i"
-msgstr "Die Option -o kann nicht zusammen mit -i verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:693
 msgid "cannot use '-o -' (STDOUT) with -m or -d"
 msgstr ""
-"»-o« (Standardausgabe) kann nicht zusammen mit -m oder -d verwendet werden"
 
 #: src/mp3splt.c:703
 msgid "the -g option cannot be used with -n or -i"
-msgstr "Die Option -g kann nicht zusammen mit -n oder -i verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:712
 msgid "the -d option cannot be used with -i"
-msgstr "Die Option -d kann nicht zusammen mit -i verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:721
 msgid "the -n option cannot be used with -i or -T"
-msgstr "Die Option -n kann nicht zusammen mit -i oder -T verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:730
 msgid "the -m option cannot be used with -i"
-msgstr "Die Option -m kann nicht zusammen mit -i verwendet werden"
+msgstr ""
 
 #: src/mp3splt.c:751
 msgid "the -Q option cannot be used with STDOUT output ('-o -')"
 msgstr ""
-"Die Option -Q kann nicht zusammen mit -o verwendet werden (Standardausgabe)"
 
 #: src/mp3splt.c:759
 msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
 msgstr ""
-"Die Option -Q kann nicht zusammen mit -c verwendet werden (interaktive "
-"Freedb-Abfrage)"
 
 #: src/mp3splt.c:769
 msgid "the -N option must be used with silence detection (-s option)"
 msgstr ""
-"Die Option -N muss zusammen mit -s verwendet werden (Erkennung von Stille)"
 
 #: src/mp3splt.c:779
 msgid "the -O option cannot be used with -w, -e, -l or -i"
 msgstr ""
-"Die Option -O kann nicht zusammen mit -w, -e, -l oder -i verwendet werden"
 
 #: src/mp3splt.c:824
 msgid ""
 "\n"
 "All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
 msgstr ""
-"\n"
-"Alle Dateien wurden korrekt geteilt. Besuchen Sie http://mp3wrap.sourceforge."
-"net!"
 
 #: src/mp3splt.c:1045
 msgid "found non digits characters in port ! (switched to default)"
-msgstr "Keine verwertbaren Zeichen im Port gefunden! (Vorgabe wird benutzt)"
+msgstr ""
 
 #: src/mp3splt.c:1070
 msgid "unknown search type ! (switched to default)"
-msgstr "Unbekannter Suchtyp! (Vorgabe wird benutzt)"
+msgstr ""
 
 #: src/mp3splt.c:1086
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
-"Die Freedb-Websuche wird noch nicht unterstützt! (Vorgabe wird verwendet)"
 
 #: src/mp3splt.c:1092
 msgid "unknown get type ! (switched to default)"
-msgstr "Unbekannter Ermittlungstyp (Vorgabe wird verwendet)"
+msgstr ""
 
 #: src/mp3splt.c:1248
 #, c-format
 msgid " Freedb search type: %s , Site: %s , Port: %d\n"
-msgstr " Freedb-Suchtyp: %s , Seite: %s , Port: %d\n"
+msgstr ""
 
 #: src/mp3splt.c:1251
 #, c-format
 msgid " Freedb get type: %s , Site: %s , Port: %d\n"
-msgstr " Freedb-Ermittlungstyp: %s , Seite: %s , Port: %d\n"
+msgstr ""
 
 #: src/mp3splt.c:1261
 msgid "CDDB QUERY. Insert album and artist informations to find cd."
 msgstr ""
-"CDDB-Abfrage. Geben Sie Informationen über Album und Künstler an, um eine CD "
-"zu finden."
 
 #: src/mp3splt.c:1269
 msgid ""
 "\n"
 "Please search something ..."
 msgstr ""
-"\n"
-"Bitte suchen Sie nach etwas …"
 
 #: src/mp3splt.c:1275
 #, c-format
 msgid "\r Search: ["
-msgstr "\r Suche: ["
+msgstr ""
 
 #: src/mp3splt.c:1292
 #, c-format
@@ -401,8 +311,6 @@ msgid ""
 "\n"
 "  Search string: %s\n"
 msgstr ""
-"\n"
-"  Zu suchende Zeichenkette: %s\n"
 
 #: src/mp3splt.c:1293
 #, c-format
@@ -410,37 +318,35 @@ msgid ""
 "\n"
 "Searching from %s on port %d using %s ...\n"
 msgstr ""
-"\n"
-"Suchen von %s auf Port %d mittels %s ...\n"
 
 #: src/mp3splt.c:1313
 msgid "List of found cd:"
-msgstr "Liste der gefundenen CDs:"
+msgstr ""
 
 #: src/mp3splt.c:1327
 #, c-format
 msgid "Revision: %d\n"
-msgstr "Revision: %d\n"
+msgstr ""
 
 #: src/mp3splt.c:1334
 #, c-format
 msgid "-- 'q' to select cd, Enter for more:"
-msgstr "-- »q« zur Auswahl einer CD, Eingabetaste für mehr:"
+msgstr ""
 
 #: src/mp3splt.c:1352
 #, c-format
 msgid "-- 'q' to select cd, Enter for more: "
-msgstr "-- »q« zur Auswahl einer CD, Eingabetaste für mehr:"
+msgstr ""
 
 #: src/mp3splt.c:1379
 #, c-format
 msgid "Select cd #: "
-msgstr "CD-Nummer wählen:"
+msgstr ""
 
 #: src/mp3splt.c:1394
 #, c-format
 msgid "Please "
-msgstr "Bitte"
+msgstr ""
 
 #: src/mp3splt.c:1419
 #, c-format
@@ -448,57 +354,53 @@ msgid ""
 "\n"
 "Getting file from %s on port %d using %s ...\n"
 msgstr ""
-"\n"
-"Holen der Datei von %s auf Port %d mittels %s ...\n"
 
 #: src/mp3splt.c:1459
 #, c-format
 msgid "   File \"%s\" created%s\n"
-msgstr "   Datei »%s« erzeugt%s\n"
+msgstr ""
 
 #: src/mp3splt.c:1472
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
-msgstr "»%s« wird vorbereitet (%d von %d)"
+msgstr ""
 
 #: src/mp3splt.c:1479
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
-msgstr "»%s« wird erzeugt (%d von %d)"
+msgstr ""
 
 #: src/mp3splt.c:1486
 #, c-format
 msgid " searching for sync errors..."
-msgstr "Nach Synchronfehlern wird gesucht …"
+msgstr ""
 
 #: src/mp3splt.c:1490
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
-msgstr "S: %02d, Pegel: %.2f dB; nach Stille suchen …"
+msgstr ""
 
 #: src/mp3splt.c:1590
 msgid "using"
-msgstr "verwendet"
+msgstr ""
 
 #: src/mp3splt.c:1602
 #, c-format
 msgid ""
 "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n"
 msgstr ""
-"FÜR DIESE SOFTWARE ÜBERNEHMEN WIR KEINERLEI GARANTIE! BENUTZUNG NUR AUF "
-"EIGENE GEFAHR!\n"
 
 #: src/mp3splt.c:1694
 msgid "CommandLineToArgvW failed (oh !)"
-msgstr "CommandLineToArgvW gescheitert (oh !)"
+msgstr ""
 
 #: src/mp3splt.c:1703
 msgid "failed to allocate argv_utf8 memory"
-msgstr "argv_utf8-Speicher kann nicht zugewiesen werden"
+msgstr ""
 
 #: src/mp3splt.c:1751
 msgid "List of found files:\n"
-msgstr "Liste der gefundenen Dateien:\n"
+msgstr ""
 
 #: src/mp3splt.c:1759
 #, c-format
@@ -506,16 +408,12 @@ msgid ""
 "\n"
 "-- 'Enter' for more, 's' to split, 'c' to cancel:"
 msgstr ""
-"\n"
-"-- »Eingabetaste« für mehr, »s« zum Teilen, »c« zum Abbrechen:"
 
 #: src/mp3splt.c:1768 src/mp3splt.c:1791
 msgid ""
 "\n"
 " split aborted."
 msgstr ""
-"\n"
-" Teilen abgebrochen."
 
 #: src/mp3splt.c:1782
 #, c-format
@@ -523,59 +421,55 @@ msgid ""
 "\n"
 "-- 's' to split, 'c' to cancel:"
 msgstr ""
-"\n"
-"-- »s« für Teilen, »c« für Abbrechen:"
 
 #: src/mp3splt.c:2060
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec, read man page for details."
 msgstr ""
-"Falscher Zeit-Ausdruck für Teilung nach Zeit.\n"
-"\tMuss in min.sec angegeben werden, bitte die Handbuchseite lesen."
 
 #: src/mp3splt.c:2102
 msgid "read man page for documentation or type 'mp3splt -h'."
-msgstr "Lesen Sie die Handbuchseite oder geben Sie »mp3splt -h« ein."
+msgstr ""
 
 #: src/mp3splt.c:2159
 msgid "bad argument for -p option. No valid value was recognized !"
-msgstr "Falsches Argument für Option -p. Kein gültiger Wert erkannt!"
+msgstr ""
 
 #: src/mp3splt.c:2295
 msgid "no input filename(s)."
-msgstr "Kein(e) Name(n) für Eingabedateien."
+msgstr ""
 
 #: src/mp3splt.c:2308
 msgid "multiple splitpoints with stdout !"
-msgstr "Mehrere Teilungspunkte mit Standardausgabe!"
+msgstr ""
 
 #: src/mp3splt.c:2312
 msgid "using time mode with stdout !"
-msgstr "Zeitmodus mit Standardausgabe wird verwendet!"
+msgstr ""
 
 #: src/mp3splt.c:2332
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
-msgstr " Teilung der Datei »%s« wird simuliert …\n"
+msgstr ""
 
 #: src/mp3splt.c:2336
 #, c-format
 msgid " Processing file '%s' ...\n"
-msgstr " Datei »%s« wird verarbeitet …\n"
+msgstr ""
 
 #: src/mp3splt.c:2406
 msgid "freedb query format ambigous !"
-msgstr "Format der Freedb-Abfrage ist nicht eindeutig!"
+msgstr ""
 
 #: src/mp3splt.c:2452
 msgid "tags format ambiguous !"
-msgstr "Tag-Format ist nicht eindeutig!"
+msgstr ""
 
 #: src/mp3splt.c:2484
 #, c-format
 msgid " Average silence level: %.2f dB"
-msgstr " Durchschnittlicher Pegel der Stille: %.2f dB"
+msgstr ""
 
 #: src/mp3splt.c:2501
 msgid ""
@@ -602,38 +496,3 @@ msgid ""
 " +-----------------------------------------------------------------------------"
 "+\n"
 msgstr ""
-"\n"
-" +-----------------------------------------------------------------------------"
-"+\n"
-" |ACHTUNG: Wenn Sie cddb/cue benutzen, kann die Teilung aus folgenden "
-"Gründen  |\n"
-" |  ungenau "
-"sein:                                                              |\n"
-" |1) Zum Extrahieren von CDs können Sie die Option »Stille entfernen« "
-"benutzen.|\n"
-" |   Dadurch wird die mp3-Datei kürzer sein als die Gesamtzeit der "
-"CD.         |\n"
-" |   Benutzen Sie nie diese "
-"Option.                                            |\n"
-" |2) Beim Brennen von CDs können zusätzliche Pausen zwischen den "
-"Titeln        |\n"
-" |   eingefügt werden. Bitte tun Sie dies "
-"nicht.                               |\n"
-" |3) Encoder benutzen zusätzliche Frames zum Auffüllen, so dass die "
-"Datei      |\n"
-" |   länger ist als die Gesamtspielzeit der "
-"CD.                                |\n"
-" |4) Für die gleiche CD gibt es oft mehrere Einträge in der CDDB, finden "
-"Sie   |\n"
-" |   den für Sie geeigneten Eintrag heraus. Normalerweise finden "
-"Sie           |\n"
-" |   die richtigen Teilungspunkte, also viel "
-"Glück!                            |\n"
-" +-----------------------------------------------------------------------------"
-"+\n"
-" | VERSUCHEN SIE, MIT DER OPTION -a DIE RICHTIGEN "
-"TEILUNGSPUNKTE               |\n"
-" | ZU FINDEN. In der Handbuchseite finden Sie weitere "
-"Details.                 |\n"
-" +-----------------------------------------------------------------------------"
-"+\n"
