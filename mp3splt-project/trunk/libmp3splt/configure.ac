@@ -34,6 +34,7 @@
 
 AC_PREREQ(2.56)
 AC_INIT([libmp3splt],[0.6.1],[io_fx@yahoo.fr])
+AC_CONFIG_AUX_DIR([libltdl/config])
 AM_INIT_AUTOMAKE(libmp3splt, 0.6.1)
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
@@ -67,10 +68,13 @@ AC_C_CONST
 # Enable libtool, check for libltdl and define @LIBLTDL@ and @INCLTDL@
 #################################################################
 
-AC_WITH_LTDL
+LT_CONFIG_LTDL_DIR([libltdl])
+
 ifdef([LT_INIT],
       [ LT_INIT([win32-dll]) ],
       [ AC_PROG_LIBTOOL ])
+
+AC_WITH_LTDL
 
 #################################################################
 # Check for the type of the host
