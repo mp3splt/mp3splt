@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Munteanu Alexandru
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
+"POT-Creation-Date: 2010-12-18 13:55+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/mp3splt.c:702
+#, c-format
+msgid " info: resolving linked filename to '%s'\n"
+msgstr ""
+
+#: src/mp3splt.c:792
+#, c-format
+msgid " info: file matches the plugin '%s'\n"
+msgstr ""
+
+#: src/mp3splt.c:800
+#, c-format
+msgid " M3U file '%s' will be created.\n"
+msgstr ""
+
+#: src/mp3splt.c:820
+#, c-format
+msgid ""
+" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
+"%.2f)\n"
+msgstr ""
+
+#: src/checks.c:142
+msgid "directory does not exists"
+msgstr ""
+
+#: src/cddb.c:59 src/cddb.c:653
+#, c-format
+msgid " reading informations from CDDB file %s ...\n"
+msgstr ""
+
+#: src/cddb.c:503 src/cddb.c:1089 src/cddb.c:1333 src/cue.c:282
+#, c-format
+msgid ""
+"\n"
+"  Artist: %s\n"
+msgstr ""
+
+#: src/cddb.c:519 src/cddb.c:1105 src/cddb.c:1342 src/cue.c:286
+#, c-format
+msgid "  Album: %s\n"
+msgstr ""
+
+#: src/cddb.c:640 src/cddb.c:1223 src/cue.c:137
+#, c-format
+msgid ""
+"  Tracks: %d\n"
+"\n"
+msgstr ""
+
+#: src/splt.c:142
+msgid " info: starting normal split\n"
+msgstr ""
+
+#: src/splt.c:229
+msgid " info: starting error mode split\n"
+msgstr ""
+
+#: src/splt.c:537
+msgid " info: starting time mode split\n"
+msgstr ""
+
+#: src/splt.c:554
+msgid " info: starting 'split in equal tracks' mode\n"
+msgstr ""
+
+#: src/splt.c:660
+#, c-format
+msgid "YES"
+msgstr ""
+
+#: src/splt.c:664
+#, c-format
+msgid "NO"
+msgstr ""
+
+#: src/splt.c:670
+#, c-format
+msgid "User"
+msgstr ""
+
+#: src/splt.c:674
+#, c-format
+msgid "Auto"
+msgstr ""
+
+#: src/splt.c:680
+#, c-format
+msgid ""
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: "
+"%s)\n"
+msgstr ""
+
+#: src/splt.c:698
+#, c-format
+msgid ""
+" Found silence log file '%s' ! Reading silence points from file to save "
+"time ;)\n"
+msgstr ""
+
+#: src/splt.c:728
+#, c-format
+msgid " Total silence points found: %d."
+msgstr ""
+
+#: src/splt.c:740
+#, c-format
+msgid " (Selected %d tracks)\n"
+msgstr ""
+
+#: src/splt.c:836
+#, c-format
+msgid " Writing silence log file '%s' ...\n"
+msgstr ""
+
+#: src/splt.c:889
+msgid " info: starting silence mode split\n"
+msgstr ""
+
+#: src/splt.c:945
+msgid " info: starting wrap mode split\n"
+msgstr ""
+
+#: src/utils.c:59
+#, c-format
+msgid " info: overlapping split files with %ld.%ld.%ld\n"
+msgstr ""
+
+#: src/cue.c:56
+#, c-format
+msgid " reading informations from CUE file %s ...\n"
+msgstr ""
+
+#: src/cue.c:103
+msgid "description here"
+msgstr ""
+
+#: src/cue.c:226
+#, c-format
+msgid " CUE file '%s' created.\n"
+msgstr ""
+
+#: plugins/mp3.c:1424
+msgid " info: found Xing or Info header. Switching to frame mode... \n"
+msgstr ""
+
+#: plugins/mp3.c:1560
+#, c-format
+msgid " info: MPEG %d Layer %d - %d Hz - %s"
+msgstr ""
+
+#: plugins/mp3.c:1568
+#, c-format
+msgid " - FRAME MODE NS"
+msgstr ""
+
+#: plugins/mp3.c:1572
+#, c-format
+msgid " - FRAME MODE"
+msgstr ""
+
+#: plugins/mp3.c:1577
+#, c-format
+msgid " - NS - %d Kb/s"
+msgstr ""
+
+#: plugins/mp3.c:1582
+#, c-format
+msgid " - %d Kb/s"
+msgstr ""
+
+#: plugins/mp3.c:1590 plugins/ogg.c:186
+#, c-format
+msgid " - Total time: %dm.%02ds"
+msgstr ""
+
+#: plugins/mp3.c:3094
+#, c-format
+msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
+msgstr ""
+
+#: plugins/mp3.c:3132
+msgid " Check for file integrity: calculating CRC please wait... "
+msgstr ""
+
+#: plugins/mp3.c:3151
+msgid " OK\n"
+msgstr ""
+
+#: plugins/mp3.c:3170
+msgid " Detected file created with: AlbumWrap\n"
+msgstr ""
+
+#: plugins/mp3.c:3192
+#, c-format
+msgid " Total files: %d\n"
+msgstr ""
+
+#: plugins/mp3.c:3599
+msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
+msgstr ""
+
+#: plugins/mp3.c:3624
+#, c-format
+msgid " Processed %lu frames - Sync errors: %lu\n"
+msgstr ""
+
+#: plugins/ogg.c:178
+#, c-format
+msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
+msgstr ""
+
+#: plugins/ogg.c:881
+msgid ""
+" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
+"to fix.\n"
+msgstr ""
+
+#: plugins/ogg.c:2078
+msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
+msgstr ""
