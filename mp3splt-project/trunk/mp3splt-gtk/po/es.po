@@ -2,19 +2,19 @@
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2010-12-13 19:06+0100\n"
+"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"POT-Creation-Date: 2010-12-25 23:17+0100\n"
 "PO-Revision-Date: 2010-12-25 00:12+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:253
@@ -56,7 +56,8 @@ msgstr "Nivel umbral (dB):"
 
 #: src/tree_tab.c:1227
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
-msgstr "Punto de corte de desplazamiento (0 es el inicio de silencio, y 1 al final):"
+msgstr ""
+"Punto de corte de desplazamiento (0 es el inicio de silencio, y 1 al final):"
 
 #: src/tree_tab.c:1244
 msgid "Number of tracks (0 means all tracks):"
@@ -196,7 +197,9 @@ msgstr "modo F_rame (útil para mp3 VBR) (mp3 solamente)"
 
 #: src/preferences_tab.c:616
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr "_Auto-El modo de ajuste (detección de silencio utiliza para auto-ajuste splitpoints)"
+msgstr ""
+"_Auto-El modo de ajuste (detección de silencio utiliza para auto-ajuste "
+"splitpoints)"
 
 #: src/preferences_tab.c:648
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
@@ -238,7 +241,10 @@ msgid ""
 "    @b - album title\n"
 "    @t - song title\n"
 "    @n - track number"
-msgstr "@ F - un nombre de archivo @ - el nombre del artista @ p - intérprete de cada canción (no siempre existe) @ b - título del álbum @ t - título de la canción @ n - número de pista"
+msgstr ""
+"@ F - un nombre de archivo @ - el nombre del artista @ p - intérprete de "
+"cada canción (no siempre existe) @ b - título del álbum @ t - título de la "
+"canción @ n - número de pista"
 
 #: src/preferences_tab.c:874
 msgid "<b>Output filename format</b>"
@@ -323,7 +329,13 @@ msgid ""
 "    (?<tracks>)   - total number of tracks\n"
 "    (?<year>)     - year of emission\n"
 "    (?<comment>)  - comment"
-msgstr "<html> Por encima de introducir expresiones regulares PERL-como el uso de subgrupos con nombre. Los siguientes nombres son reconocidos: (? <artist> ) - El nombre del artista (? <album> ) - Título del álbum (? <title> ) - Título de la pista (&lt;tracknum&gt;) -? Número de pista actual (&lt;tracks&gt;) -? Número total de pistas (&lt;año&gt;) -? Año de emisión (&lt;comment&gt;) -? Comentario &lt;/ html&gt;"
+msgstr ""
+"<html> Por encima de introducir expresiones regulares PERL-como el uso de "
+"subgrupos con nombre. Los siguientes nombres son reconocidos: (? <artist> ) "
+"- El nombre del artista (? <album> ) - Título del álbum (? <title> ) - "
+"Título de la pista (&lt;tracknum&gt;) -? Número de pista actual (&lt;"
+"tracks&gt;) -? Número total de pistas (&lt;año&gt;) -? Año de emisión (&lt;"
+"comment&gt;) -? Comentario &lt;/ html&gt;"
 
 #: src/preferences_tab.c:1015
 msgid "Test"
@@ -357,7 +369,7 @@ msgstr ""
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr ""
 
-#: src/preferences_tab.c:1098 src/main_win.c:545
+#: src/preferences_tab.c:1098 src/main_win.c:546
 msgid "Split"
 msgstr ""
 
@@ -369,7 +381,7 @@ msgstr ""
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1116 src/main_win.c:697
+#: src/preferences_tab.c:1116 src/main_win.c:701
 msgid "Player"
 msgstr ""
 
@@ -407,7 +419,8 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to connect.\n"
+" If you don't know how to do that, start audacious manually and then try to "
+"connect.\n"
 msgstr ""
 
 #: src/player_tab.c:873
@@ -465,19 +478,28 @@ msgstr ""
 
 #: src/player_tab.c:2651
 msgid " left click on splitpoint selects it, right click erases it"
-msgstr "haga clic en la izquierda en splitpoint se selecciona, haga clic en él borra"
+msgstr ""
+"haga clic en la izquierda en splitpoint se selecciona, haga clic en él borra"
 
 #: src/player_tab.c:2661
-msgid " left click + move changes song position, right click + move changes zoom"
-msgstr "botón izquierdo del ratón + movimiento posición de la canción, los cambios haga clic derecho + movimiento de zoom"
+msgid ""
+" left click + move changes song position, right click + move changes zoom"
+msgstr ""
+"botón izquierdo del ratón + movimiento posición de la canción, los cambios "
+"haga clic derecho + movimiento de zoom"
 
 #: src/player_tab.c:2672
-msgid " left click on point + move changes point position, right click play preview"
-msgstr "haga clic en la izquierda en la posición del punto + mover el punto de los cambios, haga clic en vista previa jugar"
+msgid ""
+" left click on point + move changes point position, right click play preview"
+msgstr ""
+"haga clic en la izquierda en la posición del punto + mover el punto de los "
+"cambios, haga clic en vista previa jugar"
 
 #: src/player_tab.c:2684
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
-msgstr "botón izquierdo del ratón sobre los controles rectángulo / 'splitpoint mantener' desactiva"
+msgstr ""
+"botón izquierdo del ratón sobre los controles rectángulo / 'splitpoint "
+"mantener' desactiva"
 
 #: src/player_tab.c:2875
 msgid " quick preview..."
@@ -527,115 +549,125 @@ msgstr "Seleccione el archivo"
 msgid "_Fix ogg stream"
 msgstr "_Fix Flujo ogg"
 
-#: src/main_win.c:145
+#: src/main_win.c:146
 msgid " info: stopping the split process before exiting"
 msgstr "Info: detener el proceso de división antes de salir"
 
-#: src/main_win.c:335
+#: src/main_win.c:336
 msgid "using"
 msgstr "utilizando"
 
-#: src/main_win.c:339
+#: src/main_win.c:340
 msgid "release of"
 msgstr "liberación de"
 
-#: src/main_win.c:436
+#: src/main_win.c:437
 msgid " info: stopping the split process.. please wait"
 msgstr "Info: detener el proceso de división .. por favor espere"
 
-#: src/main_win.c:475
+#: src/main_win.c:476
 msgid " error: no file selected"
 msgstr "error: no hay ningún archivo seleccionado"
 
-#: src/main_win.c:480
+#: src/main_win.c:481
 msgid " error: split in progress..."
 msgstr "error: dividida en curso ..."
 
-#: src/main_win.c:499
+#: src/main_win.c:500
 msgid "Split !"
 msgstr "Split!"
 
-#: src/main_win.c:542
+#: src/main_win.c:543
 msgid "_File"
 msgstr ""
 
-#: src/main_win.c:543
+#: src/main_win.c:544
 msgid "_Help"
 msgstr "_Help"
 
-#: src/main_win.c:545
+#: src/main_win.c:546
 msgid "_Split !"
 msgstr "_Split!"
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "_Import splitpoints..."
 msgstr "splitpoints _Import ..."
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "Import"
 msgstr "Importar"
 
-#: src/main_win.c:549
+#: src/main_win.c:550
 msgid "_Open..."
 msgstr "_Abrir ..."
 
-#: src/main_win.c:549
+#: src/main_win.c:550
 msgid "Open"
 msgstr "Abierto"
 
-#: src/main_win.c:551
+#: src/main_win.c:552
+#, fuzzy
+msgid "_Export splitpoints..."
+msgstr "splitpoints _Import ..."
+
+#: src/main_win.c:552
+#, fuzzy
+msgid "Export"
+msgstr "Importar"
+
+#: src/main_win.c:554
 msgid "Messages _history"
 msgstr "Mensajes _history"
 
-#: src/main_win.c:551 src/main_win.c:803 src/messages.c:197
+#: src/main_win.c:554 src/main_win.c:807 src/messages.c:197
 msgid "Messages history"
 msgstr "Mensajes de la historia"
 
-#: src/main_win.c:553
+#: src/main_win.c:556
 msgid "_Quit"
 msgstr "_Quit"
 
-#: src/main_win.c:553
+#: src/main_win.c:556
 msgid "Quit"
 msgstr "Salir"
 
-#: src/main_win.c:558
+#: src/main_win.c:561
 msgid "_Contents"
 msgstr "_Contents"
 
-#: src/main_win.c:558
+#: src/main_win.c:561
 msgid "Contents"
 msgstr "Contenido"
 
-#: src/main_win.c:562
+#: src/main_win.c:565
 msgid "_About"
 msgstr "_about"
 
-#: src/main_win.c:562
+#: src/main_win.c:565
 msgid "About"
 msgstr ""
 
-#: src/main_win.c:710
+#: src/main_win.c:714
 msgid "Splitpoints"
 msgstr "Splitpoints"
 
-#: src/main_win.c:723 src/special_split.c:399
+#: src/main_win.c:727 src/special_split.c:399
 msgid "Batch processing"
 msgstr "Procesamiento por lotes"
 
-#: src/main_win.c:736
+#: src/main_win.c:740
 msgid "FreeDB"
 msgstr ""
 
-#: src/main_win.c:747
+#: src/main_win.c:751
 msgid "Type of split"
 msgstr "Tipo de división"
 
-#: src/main_win.c:760
+#: src/main_win.c:764
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/main_win.c:781
+#: src/main_win.c:785
 msgid "S_top"
 msgstr ""
 
@@ -859,3 +891,13 @@ msgstr ""
 #: src/import.c:144
 msgid "All files"
 msgstr "Todos los archivos"
+
+#: src/export.c:181
+#, fuzzy
+msgid "Select cue file name"
+msgstr "Seleccione el archivo"
+
+#: src/export.c:192
+#, fuzzy
+msgid "cue files (*.cue)"
+msgstr "archivos MP3 (*. mp3)"

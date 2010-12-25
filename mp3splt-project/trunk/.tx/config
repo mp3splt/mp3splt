@@ -5,20 +5,20 @@ host = http://www.transifex.net
 file_filter = translations/mp3splt-gtk.ButtonsAndMessages/<lang>.po
 source_file = mp3splt-gtk/po/mp3splt-gtk.pot
 source_lang = en
-trans.de = mp3splt-gtk/po/de.po
-trans.es = mp3splt-gtk/po/es.po
 trans.cs = mp3splt-gtk/po/cs.po
+trans.de_DE = mp3splt-gtk/po/de_DE.po
+trans.es = mp3splt-gtk/po/es.po
 trans.es_CL = mp3splt-gtk/help/es_CL/es_CL.po
-trans.fr = mp3splt-gtk/po/fr.po
+trans.fr_FR = mp3splt-gtk/po/fr_FR.po
 trans.ru_RU = mp3splt-gtk/po/ru_RU.po
 
 [mp3splt-gtk.Onlinehelp]
 file_filter = translations/mp3splt-gtk.Onlinehelp/<lang>.po
 source_file = mp3splt-gtk/help/mp3splt-gtk.pot
 source_lang = en
+trans.cs = mp3splt-gtk/help/cs/cs.po
 trans.de = mp3splt-gtk/help/de/de.po
 trans.es = mp3splt-gtk/help/es/es.po
-trans.cs = mp3splt-gtk/help/cs/cs.po
 trans.es_CL = mp3splt-gtk/help/es_CL/es_CL.po
 trans.fr = mp3splt-gtk/help/fr/fr.po
 trans.ru_RU = mp3splt-gtk/help/ru_RU/ru_RU.po
