@@ -2,19 +2,19 @@
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
 "POT-Creation-Date: 2010-12-13 19:06+0100\n"
-"PO-Revision-Date: 2010-12-18 12:28+0000\n"
+"PO-Revision-Date: 2010-12-18 16:51+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:253
@@ -407,8 +407,7 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
 msgstr ""
 
 #: src/player_tab.c:873
@@ -469,13 +468,11 @@ msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 
 #: src/player_tab.c:2661
-msgid ""
-" left click + move changes song position, right click + move changes zoom"
+msgid " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 
 #: src/player_tab.c:2672
-msgid ""
-" left click on point + move changes point position, right click play preview"
+msgid " left click on point + move changes point position, right click play preview"
 msgstr ""
 
 #: src/player_tab.c:2684

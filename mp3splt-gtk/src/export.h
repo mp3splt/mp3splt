@@ -32,4 +32,5 @@
 #ifndef _EXPORT_H
 #define _EXPORT_H
 void export_file(const gchar* filename);
+void ChooseCueExportFile(GtkWidget *widget, gpointer data);
 #endif
