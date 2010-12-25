@@ -8,6 +8,7 @@ source_lang = en
 trans.de = mp3splt-gtk/po/de.po
 trans.es_CL = mp3splt-gtk/help/es_CL/es_CL.po
 trans.fr = mp3splt-gtk/po/fr.po
+trans.es = mp3splt-gtk/po/es.po
 
 [mp3splt-gtk.Onlinehelp]
 file_filter = translations/mp3splt-gtk.Onlinehelp/<lang>.po
@@ -16,4 +17,21 @@ source_lang = en
 trans.de = mp3splt-gtk/help/de/de.po
 trans.es_CL = mp3splt-gtk/help/es_CL/es_CL.po
 trans.fr = mp3splt-gtk/help/fr/fr.po
+trans.es = mp3splt-gtk/help/fr/es.po
+
+[mp3splt-gtk.libmp3splt]
+file_filter = translations/mp3splt-gtk.libmp3splt/<lang>.po
+source_file = libmp3splt/po/libmp3splt.pot
+source_lang = en
+trans.de = libmp3splt/po/de.po
+trans.fr = libmp3splt/po/fr.po
+trans.es = libmp3splt/po/es.po
+
+[mp3splt-gtk.mp3splt]
+file_filter = translations/mp3splt-gtk.mp3splt/<lang>.po
+source_file = newmp3splt/po/mp3splt.pot
+source_lang = en
+trans.de = newmp3splt/po/de.po
+trans.fr = newmp3splt/po/fr.po
+trans.es = newmp3splt/po/es.po
 

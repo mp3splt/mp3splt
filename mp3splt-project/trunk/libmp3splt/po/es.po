@@ -6,45 +6,45 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2010-12-18 13:55+0100\n"
-"PO-Revision-Date: 2010-12-18 16:51+0000\n"
-"Last-Translator: peterpall <gunter@peterpall.de>\n"
+"PO-Revision-Date: 2010-12-25 00:13+0000\n"
+"Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
+"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/mp3splt.c:702
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
-msgstr " Info: Verknüpfter Dateiname wird in »%s« aufgelöst\n"
+msgstr ""
 
 #: src/mp3splt.c:792
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
-msgstr " Info: Datei passt zum Plugin »%s«\n"
+msgstr ""
 
 #: src/mp3splt.c:800
 #, c-format
 msgid " M3U file '%s' will be created.\n"
-msgstr " M3U-Datei »%s« wird erstellt.\n"
+msgstr ""
 
 #: src/mp3splt.c:820
 #, c-format
 msgid " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: %.2f)\n"
-msgstr "Mit SILENCE AUTO-ADJUST wird gearbeitet (Ansprechschwelle: %.1f dB Pause: %d s Versatz: %.2f)\n"
+msgstr ""
 
 #: src/checks.c:142
 msgid "directory does not exists"
-msgstr "Ordner existiert nicht"
+msgstr ""
 
 #: src/cddb.c:59 src/cddb.c:653
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
-msgstr " Informationen aus CDDB-Datei %s werden gelesen …\n"
+msgstr ""
 
 #: src/cddb.c:503 src/cddb.c:1089 src/cddb.c:1333 src/cue.c:282
 #, c-format
@@ -52,13 +52,11 @@ msgid ""
 "\n"
 "  Artist: %s\n"
 msgstr ""
-"\n"
-"  Künstler: %s\n"
 
 #: src/cddb.c:519 src/cddb.c:1105 src/cddb.c:1342 src/cue.c:286
 #, c-format
 msgid "  Album: %s\n"
-msgstr "  Album: %s\n"
+msgstr ""
 
 #: src/cddb.c:640 src/cddb.c:1223 src/cue.c:137
 #, c-format
@@ -66,171 +64,169 @@ msgid ""
 "  Tracks: %d\n"
 "\n"
 msgstr ""
-"  Titel: %d\n"
-"\n"
 
 #: src/splt.c:142
 msgid " info: starting normal split\n"
-msgstr " Info: Teilung im normalen Modus wird gestartet\n"
+msgstr ""
 
 #: src/splt.c:229
 msgid " info: starting error mode split\n"
-msgstr " Info: Teilung im Fehlermodus wird gestartet\n"
+msgstr ""
 
 #: src/splt.c:537
 msgid " info: starting time mode split\n"
-msgstr " Info: Teilung im Zeitmodus wird gestartet\n"
+msgstr ""
 
 #: src/splt.c:554
 msgid " info: starting 'split in equal tracks' mode\n"
-msgstr " Info: Teilung im Modus »Gleich große Teile« wird gestartet\n"
+msgstr ""
 
 #: src/splt.c:660
 #, c-format
 msgid "YES"
-msgstr "JA"
+msgstr "SÍ"
 
 #: src/splt.c:664
 #, c-format
 msgid "NO"
-msgstr "NEIN"
+msgstr "NO"
 
 #: src/splt.c:670
 #, c-format
 msgid "User"
-msgstr "Benutzer"
+msgstr "Usuario"
 
 #: src/splt.c:674
 #, c-format
 msgid "Auto"
-msgstr "Automatisch"
+msgstr "Auto"
 
 #: src/splt.c:680
 #, c-format
 msgid " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s)\n"
-msgstr " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: %.2f, Entfernen: %s)\n"
+msgstr ""
 
 #: src/splt.c:698
 #, c-format
 msgid " Found silence log file '%s' ! Reading silence points from file to save time ;)\n"
-msgstr " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden die Teilungspunkte aus dieser Datei gelesen ;)\n"
+msgstr ""
 
 #: src/splt.c:728
 #, c-format
 msgid " Total silence points found: %d."
-msgstr " Insgesamt gefundene Teilungspunkte: %d."
+msgstr ""
 
 #: src/splt.c:740
 #, c-format
 msgid " (Selected %d tracks)\n"
-msgstr " (%d Titel ausgewählt)\n"
+msgstr ""
 
 #: src/splt.c:836
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
-msgstr "Stille-Protokolldatei »%s« wird geschrieben …\n"
+msgstr ""
 
 #: src/splt.c:889
 msgid " info: starting silence mode split\n"
-msgstr " Info: Teilung im Stille-Modus wird gestartet\n"
+msgstr ""
 
 #: src/splt.c:945
 msgid " info: starting wrap mode split\n"
-msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
+msgstr ""
 
 #: src/utils.c:59
 #, c-format
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
-msgstr " Info: Überlappung der Dateiteilung mit %ld.%ld.%ld\n"
+msgstr ""
 
 #: src/cue.c:56
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
-msgstr " Informationen aus CUE-Datei %s werden gelesen …\n"
+msgstr ""
 
 #: src/cue.c:103
 msgid "description here"
-msgstr "Beschreibung hier"
+msgstr ""
 
 #: src/cue.c:226
 #, c-format
 msgid " CUE file '%s' created.\n"
-msgstr " CUE-Datei »%s« wurde erstellt.\n"
+msgstr ""
 
 #: plugins/mp3.c:1424
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
-msgstr " Hinweis: Xing- oder Info-Header wurde gefunden. Wechsel zum Frame-Modus…\n"
+msgstr ""
 
 #: plugins/mp3.c:1560
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
-msgstr " Info: MPEG %d Layer %d - %d Hz - %s"
+msgstr ""
 
 #: plugins/mp3.c:1568
 #, c-format
 msgid " - FRAME MODE NS"
-msgstr " - FRAME-MODUS NS"
+msgstr ""
 
 #: plugins/mp3.c:1572
 #, c-format
 msgid " - FRAME MODE"
-msgstr " - FRAME-MODUS"
+msgstr ""
 
 #: plugins/mp3.c:1577
 #, c-format
 msgid " - NS - %d Kb/s"
-msgstr " - NS - %d kB/s"
+msgstr ""
 
 #: plugins/mp3.c:1582
 #, c-format
 msgid " - %d Kb/s"
-msgstr " - %d kB/s"
+msgstr ""
 
 #: plugins/mp3.c:1590 plugins/ogg.c:186
 #, c-format
 msgid " - Total time: %dm.%02ds"
-msgstr " - Zeit gesamt: %dm.%02ds"
+msgstr ""
 
 #: plugins/mp3.c:3094
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
-msgstr " Erkannte Datei erzeugt mit: Mp3Wrap v. %c.%c\n"
+msgstr ""
 
 #: plugins/mp3.c:3132
 msgid " Check for file integrity: calculating CRC please wait... "
-msgstr " Integritätsprüfung der Datei: CRC wird berechnet, bitte warten …"
+msgstr ""
 
 #: plugins/mp3.c:3151
 msgid " OK\n"
-msgstr " OK\n"
+msgstr ""
 
 #: plugins/mp3.c:3170
 msgid " Detected file created with: AlbumWrap\n"
-msgstr " Erkannte Datei erzeugt mit: AlbumWrap\n"
+msgstr ""
 
 #: plugins/mp3.c:3192
 #, c-format
 msgid " Total files: %d\n"
-msgstr " Dateien gesamt: %d\n"
+msgstr ""
 
 #: plugins/mp3.c:3599
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
-msgstr " Warnung: stdin »-« wird als mp3-Datenstrom angenommen.\n"
+msgstr ""
 
 #: plugins/mp3.c:3624
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
-msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
+msgstr ""
 
 #: plugins/ogg.c:178
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
-msgstr " Info: OggVorbis-Datenstrom - %ld - %ld kB/s - %d Kanäle"
+msgstr ""
 
 #: plugins/ogg.c:881
 msgid " warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.\n"
-msgstr " Warnung: Unerwartete Position im OggVorbis-Datenstrom - Teilung von 0.0 bis Dateiende.\n"
+msgstr ""
 
 #: plugins/ogg.c:2078
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
-msgstr " Warnung: stdin »o-« wird als Ogg-Datenstrom angenommen.\n"
+msgstr ""
