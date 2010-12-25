@@ -49,11 +49,12 @@
 
 \param filename The name of the file to write to.
 \todo 
- - finish writing the file
- - Is the gdk_threads_enter() really needed here?
  - If we have previously imported the file... ...do we 
    want to handle all the tags we do not use --- but that
-   have been there. And if yes: How do we handle them best?
+   have been there? And if yes: How do we handle them best?
+ - Is there any file format that better suits us than a cue file?
+ - if our input file does not have an extension... ...how to handle
+   this? (we output the extension in the "FILE" line.)
  - Is there really no simple C/GTK+ function for quoting quotes?
 */
 void export_file(const gchar* filename)
@@ -62,14 +63,21 @@ void export_file(const gchar* filename)
   GtkTreeModel *model;
   GtkTreeIter iter;
   
-  if((outfile=fopen(filename,"w")))
+  if((outfile=fopen(filename,"w"))==0)
     {
       put_status_message((gchar *)strerror(errno));
       return;
     };
-  gdk_threads_enter();
 
-  if(fprintf(outfile,"FILE %s\n",inputfilename_get())<0)
+  // Determine which type our input file is of.
+  gchar *extension=inputfilename_get();
+  gchar *tmp;
+  while((tmp=strchr(extension,'.')))
+    {
+      extension=++tmp;
+    }
+
+  if(fprintf(outfile,"FILE \"%s\" %s\n",inputfilename_get(),extension)<0)
     {
       put_status_message((gchar *)strerror(errno));
       return;
@@ -102,7 +110,7 @@ void export_file(const gchar* filename)
 	      gchar *outputchar;
 	      
 	      // Output the track header
-	      if(fprintf(outfile,"\tTRACK %2i AUDIO",count++)<0)
+	      if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
 		  return;
@@ -110,7 +118,7 @@ void export_file(const gchar* filename)
 	      
 	      
 	      // Output the track description escaping any quotes
-	      if(fprintf(outfile,"\t\tTITLE %1i \"",count++)<0)
+	      if(fprintf(outfile,"\t\tTITLE \"")<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
 		  return;
@@ -134,17 +142,11 @@ void export_file(const gchar* filename)
 			}
 		    }
 		}    
-	      if(fprintf(outfile,"\"\n")<0)
+	      if(fprintf(outfile,"\" \n")<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
 		  return;
 		};
-
-	      if(fprintf(outfile,"\t\tTITLE %1i \"",count++)<0)
-		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		}
 
 	      if(!keep)
 		{
@@ -155,7 +157,7 @@ void export_file(const gchar* filename)
 		    }
 		}
 
-	      if(fprintf(outfile,"\t\tINDEX %d:%02d:%02d",mins,secs,hundr)<0)
+	      if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
 		  return;
@@ -163,10 +165,9 @@ void export_file(const gchar* filename)
 
 	    }
 	  
-	} while(!gtk_tree_model_iter_next(model, &iter));
+	} while(gtk_tree_model_iter_next(model, &iter));
     }
 
-  gdk_threads_leave();
   fclose(outfile);
 }
 
@@ -174,22 +175,30 @@ void export_file(const gchar* filename)
 void ChooseCueExportFile(GtkWidget *widget, gpointer data)
 {
   // file chooser
-  GtkWidget *dir_chooser;
+  GtkWidget *file_chooser;
 
-  //creates and shows the dialog
-  dir_chooser = gtk_file_chooser_dialog_new(_("Choose split directory"),
+  //creates the dialog
+  file_chooser = gtk_file_chooser_dialog_new(_("Select splitpoint filename"),
       NULL,
-      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+      GTK_FILE_CHOOSER_ACTION_SAVE,
       GTK_STOCK_CANCEL,
       GTK_RESPONSE_CANCEL,
       GTK_STOCK_SAVE,
       GTK_RESPONSE_ACCEPT,
       NULL);
 
-  if (gtk_dialog_run(GTK_DIALOG(dir_chooser)) == GTK_RESPONSE_ACCEPT)
+  // tells the dialog to list only cue files
+  GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cue files (*.cue)"));
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cue");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(file_chooser),TRUE);
+
+
+  if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *filename =
-      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dir_chooser));
+      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
 
     //Write the output file
     export_file(filename);
@@ -197,6 +206,6 @@ void ChooseCueExportFile(GtkWidget *widget, gpointer data)
   }
   
   //destroy the dialog
-  gtk_widget_destroy(dir_chooser);
+  gtk_widget_destroy(file_chooser);
 
 }
