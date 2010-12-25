@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2010-12-25 23:17+0100\n"
-"PO-Revision-Date: 2010-12-25 23:27+0000\n"
+"PO-Revision-Date: 2010-12-25 23:30+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -625,11 +625,11 @@ msgstr "Öffnen"
 
 #: src/main_win.c:552
 msgid "_Export splitpoints..."
-msgstr ""
+msgstr "_Exportiere die Teilungspunkte..."
 
 #: src/main_win.c:552
 msgid "Export"
-msgstr ""
+msgstr "Exportieren"
 
 #: src/main_win.c:554
 msgid "Messages _history"
@@ -910,8 +910,8 @@ msgstr "Alle Dateien"
 
 #: src/export.c:181
 msgid "Select cue file name"
-msgstr ""
+msgstr "Wählen eines Namens für die .cue-Datei"
 
 #: src/export.c:192
 msgid "cue files (*.cue)"
-msgstr ""
+msgstr "cue-Dateien (*.cue)"
