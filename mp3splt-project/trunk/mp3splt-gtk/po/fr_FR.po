@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2010-12-13 19:06+0100\n"
-"PO-Revision-Date: 2010-12-25 22:38+0000\n"
+"POT-Creation-Date: 2010-12-25 23:17+0100\n"
+"PO-Revision-Date: 2010-12-25 23:27+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -363,7 +363,7 @@ msgstr "Même version des tags que le fichier d'entrée"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:1098 src/main_win.c:545
+#: src/preferences_tab.c:1098 src/main_win.c:546
 msgid "Split"
 msgstr "Coupure"
 
@@ -375,7 +375,7 @@ msgstr "Tags"
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:1116 src/main_win.c:697
+#: src/preferences_tab.c:1116 src/main_win.c:701
 msgid "Player"
 msgstr "Lecteur"
 
@@ -551,115 +551,123 @@ msgstr "Sélection fichier"
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
-#: src/main_win.c:145
+#: src/main_win.c:146
 msgid " info: stopping the split process before exiting"
 msgstr " info : arrêt du processus de division avant de sortir"
 
-#: src/main_win.c:335
+#: src/main_win.c:336
 msgid "using"
 msgstr "utilisant"
 
-#: src/main_win.c:339
+#: src/main_win.c:340
 msgid "release of"
 msgstr "version du"
 
-#: src/main_win.c:436
+#: src/main_win.c:437
 msgid " info: stopping the split process.. please wait"
 msgstr " info : arrêt du processus de division... veuillez attendre"
 
-#: src/main_win.c:475
+#: src/main_win.c:476
 msgid " error: no file selected"
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:480
+#: src/main_win.c:481
 msgid " error: split in progress..."
 msgstr " erreur : division en cours..."
 
-#: src/main_win.c:499
+#: src/main_win.c:500
 msgid "Split !"
 msgstr "Couper !"
 
-#: src/main_win.c:542
+#: src/main_win.c:543
 msgid "_File"
 msgstr "_Fichier"
 
-#: src/main_win.c:543
+#: src/main_win.c:544
 msgid "_Help"
 msgstr "_Aide"
 
-#: src/main_win.c:545
+#: src/main_win.c:546
 msgid "_Split !"
 msgstr "_Couper"
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "_Import splitpoints..."
 msgstr ""
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "Import"
 msgstr "Importer"
 
-#: src/main_win.c:549
+#: src/main_win.c:550
 msgid "_Open..."
 msgstr ""
 
-#: src/main_win.c:549
+#: src/main_win.c:550
 msgid "Open"
 msgstr ""
 
-#: src/main_win.c:551
+#: src/main_win.c:552
+msgid "_Export splitpoints..."
+msgstr ""
+
+#: src/main_win.c:552
+msgid "Export"
+msgstr ""
+
+#: src/main_win.c:554
 msgid "Messages _history"
 msgstr "_Historique des messages"
 
-#: src/main_win.c:551 src/main_win.c:803 src/messages.c:197
+#: src/main_win.c:554 src/main_win.c:807 src/messages.c:197
 msgid "Messages history"
 msgstr "Historique des messages"
 
-#: src/main_win.c:553
+#: src/main_win.c:556
 msgid "_Quit"
 msgstr "_Quitter"
 
-#: src/main_win.c:553
+#: src/main_win.c:556
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:558
+#: src/main_win.c:561
 msgid "_Contents"
 msgstr ""
 
-#: src/main_win.c:558
+#: src/main_win.c:561
 msgid "Contents"
 msgstr ""
 
-#: src/main_win.c:562
+#: src/main_win.c:565
 msgid "_About"
 msgstr "_A propos de"
 
-#: src/main_win.c:562
+#: src/main_win.c:565
 msgid "About"
 msgstr "A propos de"
 
-#: src/main_win.c:710
+#: src/main_win.c:714
 msgid "Splitpoints"
 msgstr "Points de coupure"
 
-#: src/main_win.c:723 src/special_split.c:399
+#: src/main_win.c:727 src/special_split.c:399
 msgid "Batch processing"
 msgstr ""
 
-#: src/main_win.c:736
+#: src/main_win.c:740
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:747
+#: src/main_win.c:751
 msgid "Type of split"
 msgstr "Type de division"
 
-#: src/main_win.c:760
+#: src/main_win.c:764
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:781
+#: src/main_win.c:785
 msgid "S_top"
 msgstr "S_top"
 
@@ -883,3 +891,11 @@ msgstr "Fichiers marqueurs Audacity (*.txt)"
 #: src/import.c:144
 msgid "All files"
 msgstr "Tous les fichiers"
+
+#: src/export.c:181
+msgid "Select cue file name"
+msgstr ""
+
+#: src/export.c:192
+msgid "cue files (*.cue)"
+msgstr ""
