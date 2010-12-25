@@ -109,7 +109,7 @@ void export_file(const gchar* filename)
 		};
 	      
 	      
-	      // Output the track description excaping any quotes
+	      // Output the track description escaping any quotes
 	      if(fprintf(outfile,"\t\tTITLE %1i \"",count++)<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
@@ -140,8 +140,27 @@ void export_file(const gchar* filename)
 		  return;
 		};
 
-	      //Now output the track duration and length
-	      // (TODO)
+	      if(fprintf(outfile,"\t\tTITLE %1i \"",count++)<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		}
+
+	      if(!keep)
+		{
+		  if(fprintf(outfile,"\t\tREM nokeep")<0)
+		    {
+		      put_status_message((gchar *)strerror(errno));
+		      return;
+		    }
+		}
+
+	      if(fprintf(outfile,"\t\tINDEX %d:%02d:%02d",mins,secs,hundr)<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		}
+
 	    }
 	  
 	} while(!gtk_tree_model_iter_next(model, &iter));
@@ -149,4 +168,35 @@ void export_file(const gchar* filename)
 
   gdk_threads_leave();
   fclose(outfile);
+}
+
+//! Choose the file to save the session to
+void ChooseCueExportFile(GtkWidget *widget, gpointer data)
+{
+  // file chooser
+  GtkWidget *dir_chooser;
+
+  //creates and shows the dialog
+  dir_chooser = gtk_file_chooser_dialog_new(_("Choose split directory"),
+      NULL,
+      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+      GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL,
+      GTK_STOCK_SAVE,
+      GTK_RESPONSE_ACCEPT,
+      NULL);
+
+  if (gtk_dialog_run(GTK_DIALOG(dir_chooser)) == GTK_RESPONSE_ACCEPT)
+  {
+    gchar *filename =
+      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dir_chooser));
+
+    //Write the output file
+    export_file(filename);
+    g_free (filename);
+  }
+  
+  //destroy the dialog
+  gtk_widget_destroy(dir_chooser);
+
 }

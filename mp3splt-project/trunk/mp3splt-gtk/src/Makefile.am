@@ -25,10 +25,10 @@ mp3splt_gtk_SOURCES = \
 	import.c import.h \
 	options_manager.c options_manager.h \
 	preferences_manager.c preferences_manager.h \
-  widgets_helper.c widgets_helper.h \
-  combo_helper.c combo_helper.h \
-  radio_helper.c radio_helper.h
-#	export.c export.h 
+	widgets_helper.c widgets_helper.h \
+	combo_helper.c combo_helper.h \
+	radio_helper.c radio_helper.h \
+	export.c export.h 
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 
