@@ -2,40 +2,22 @@
 host = http://www.transifex.net
 
 [mp3splt-gtk.ButtonsAndMessages]
-file_filter = translations/mp3splt-gtk.ButtonsAndMessages/<lang>.po
+file_filter = mp3splt-gtk/po/<lang>.po
 source_file = mp3splt-gtk/po/mp3splt-gtk.pot
 source_lang = en
-trans.cs = mp3splt-gtk/po/cs.po
-trans.de_DE = mp3splt-gtk/po/de_DE.po
-trans.es = mp3splt-gtk/po/es.po
-trans.es_CL = mp3splt-gtk/help/es_CL/es_CL.po
-trans.fr_FR = mp3splt-gtk/po/fr_FR.po
-trans.ru_RU = mp3splt-gtk/po/ru_RU.po
 
 [mp3splt-gtk.Onlinehelp]
-file_filter = translations/mp3splt-gtk.Onlinehelp/<lang>.po
+file_filter = mp3splt-gtk/help/<lang>/<lang>.po
 source_file = mp3splt-gtk/help/mp3splt-gtk.pot
 source_lang = en
-trans.cs = mp3splt-gtk/help/cs/cs.po
-trans.de = mp3splt-gtk/help/de/de.po
-trans.es = mp3splt-gtk/help/es/es.po
-trans.es_CL = mp3splt-gtk/help/es_CL/es_CL.po
-trans.fr = mp3splt-gtk/help/fr/fr.po
-trans.ru_RU = mp3splt-gtk/help/ru_RU/ru_RU.po
 
 [mp3splt-gtk.libmp3splt]
-file_filter = translations/mp3splt-gtk.libmp3splt/<lang>.po
+file_filter = libmp3splt/po/<lang>.po
 source_file = libmp3splt/po/libmp3splt.pot
 source_lang = en
-trans.de = libmp3splt/po/de.po
-trans.es = libmp3splt/po/es.po
-trans.fr = libmp3splt/po/fr.po
 
 [mp3splt-gtk.mp3splt]
-file_filter = translations/mp3splt-gtk.mp3splt/<lang>.po
+file_filter = newmp3splt/po/<lang>.po
 source_file = newmp3splt/po/mp3splt.pot
 source_lang = en
-trans.de = newmp3splt/po/de.po
-trans.es = newmp3splt/po/es.po
-trans.fr = newmp3splt/po/fr.po
 
