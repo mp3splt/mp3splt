@@ -47,6 +47,7 @@
 #endif
 
 #include <string.h>
+#include "export.h"
 
 #ifndef NO_GNOME
 #include <libgnomeui/gnome-help.h>
@@ -548,6 +549,8 @@ GtkWidget *create_menu_bar()
       G_CALLBACK(import_event) },
     { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>F", N_("Open"),
       G_CALLBACK(browse_button_event) },
+    { "Export", GTK_STOCK_OPEN, N_("_Export splitpoints..."), "<Ctrl>E", N_("Export"),
+      G_CALLBACK(ChooseCueExportFile) },
     { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
       G_CALLBACK(show_messages_history_dialog) },
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
@@ -570,6 +573,7 @@ GtkWidget *create_menu_bar()
     "      <menuitem action='Open'/>"
     "      <menuitem action='Import'/>"
     "      <menuitem action='Split'/>"
+    "      <menuitem action='Export'/>"
     "      <menuitem action='Messages history'/>"
     "      <separator/>"
     "      <menuitem action='Quit'/>"
