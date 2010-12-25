@@ -634,14 +634,12 @@ msgid "Open"
 msgstr "Öffnen"
 
 #: src/main_win.c:552
-#, fuzzy
 msgid "_Export splitpoints..."
-msgstr "Teilungspunkte h_inzufügen"
+msgstr "Teilungspunkte exportieren..."
 
 #: src/main_win.c:552
-#, fuzzy
 msgid "Export"
-msgstr "Importieren"
+msgstr "Exportieren"
 
 #: src/main_win.c:554
 msgid "Messages _history"
@@ -921,11 +919,9 @@ msgid "All files"
 msgstr "Alle Dateien"
 
 #: src/export.c:181
-#, fuzzy
 msgid "Select cue file name"
-msgstr "Datei wählen"
+msgstr "Wählen des Namens der Cue-Datei"
 
 #: src/export.c:192
-#, fuzzy
 msgid "cue files (*.cue)"
 msgstr "CUE-Dateien (*.cue)"
