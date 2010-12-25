@@ -1,324 +1,183 @@
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-12-18 16:06+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Project-Id-Version: mp3splt-gtk\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
+"POT-Creation-Date: 2010-11-16 21:38+0100\n"
+"PO-Revision-Date: 2010-12-25 21:57+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:72(None)
-msgid "@@image: 'figures/mp3splt-gtk.png'; md5=377dbd4b902606dadf9d03cdd9c13ad9"
-msgstr ""
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:228(None)
-msgid "@@image: 'figures/Tracklist.png'; md5=1f97eed40ca5d67989a5ddd384f481b5"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:14(title)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml13(title)
 msgid "mp3splt-gtk Manual"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:16(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml15(para)
 msgid "mp3splt-gtk."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:19(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml18(para)
 msgid "A tool that allows to losslessly cut MP3 or Ogg Vorbis files. This means that the selected audio frames or packets are extracted without the need to re-encode the file - which would loose quality."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:26(year)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml25(year)
 msgid "2010"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:27(holder)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml26(holder)
 msgid "Gunter Königsmann"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:2(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml2(para)
 msgid "Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any later version published by the Free Software Foundation with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy of the GFDL at this <ulink url=\"ghelp:fdl\">link</ulink> or in the file COPYING-DOCS distributed with this manual."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:11(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml11(para)
 msgid "This manual is part of a collection of GNOME manuals distributed under the GFDL. If you want to distribute this manual separately from the collection, you can do so by adding a copy of the license to the manual, as described in section 6 of the license."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:17(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml17(para)
 msgid "Many of the names used by companies to distinguish their products and services are claimed as trademarks. Where those names appear in any GNOME documentation, and the members of the GNOME Documentation Project are made aware of those trademarks, then the names are in capital letters or initial capital letters."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:30(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml30(para)
 msgid "DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:47(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml47(para)
 msgid "UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGES."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:24(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml24(para)
 msgid "DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: <placeholder-1/>"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:41(firstname)
-msgid "Gunter"
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml40(firstname)
+msgid "Alexandru Ionut"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:44(surname)
-msgid "Königsmann"
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml41(surname)
+msgid "Munteanu"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:50(revnumber)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml44(firstname)
+msgid "Trotta"
+msgstr ""
+
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml45(surname)
+msgid "Matteo"
+msgstr ""
+
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml50(revnumber)
 msgid "mp3splt-gtk Manual 0.1"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:51(date)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml51(date)
 msgid "2010-11-16"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:57(title)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml57(title)
 msgid "Introduction"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:58(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml58(para)
 msgid "The <application>mp3splt-gtk</application> application is a tool that allows to cut MP3 and Ogg Vorbis files without the need to re-encode them (which would loose them quality)."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:62(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml62(para)
 msgid "Features include graphical selection of split points, automatic splitting of music recordings into tracks and automatic adjustment of split points to fall into pauses."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:68(title)
-msgid "mp3splt-gtk directly after startup"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:75(application)
-msgid "mp3splt-gtk"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:75(phrase)
-msgid "Shows <placeholder-1/> directly after startup."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:82(title)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml68(title)
 msgid "Starting mp3splt-gtk"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:83(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml69(para)
 msgid "You can start <application>mp3splt-gtk</application> in - at least - the following ways:"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:89(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml74(para)
 msgid "Choose <menuchoice><guimenu>Sound and Video</guimenu><guimenuitem>mp3splt-gtk</guimenuitem></menuchoice> from the <guimenu>Applications</guimenu> menu."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:96(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml79(para)
 msgid "Run <command>mp3splt-gtk</command> at the prompt in a terminal such as <application>gnome-terminal</application>, or from the <application>Run Application</application> dialogue."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:106(title)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml87(title)
 msgid "Closing mp3splt-gtk"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:107(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml88(para)
 msgid "To close the <application>mp3splt-gtk</application> window there are many options, too:"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:111(para)
-msgid "choose <menuchoice><guimenu>File</guimenu><guimenuitem>Quit</guimenuitem></menuchoice>"
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml92(guimenu)
+msgid "File"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:117(para)
-msgid "press <keycombo><keycap>Ctrl</keycap><keycap>W</keycap></keycombo>"
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml92(guimenuitem)
+msgid "Close"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:123(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml91(listitem)
+msgid "choose <menuchoice><placeholder-1/><placeholder-2/></menuchoice>"
+msgstr ""
+
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml95(keycap)
+msgid "Ctrl"
+msgstr ""
+
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml95(keycap)
+msgid "W"
+msgstr ""
+
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml94(listitem)
+msgid "press <keycombo><placeholder-1/><placeholder-2/></keycombo>"
+msgstr ""
+
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml97(listitem)
 msgid "press on the X-shaped button the window manager of your choise provides you with"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:131(title)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml104(title)
 msgid "mp3splt-gtk Features"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:132(para)
-msgid "<application>mp3splt-gtk</application> will allow you to manipulate audio files without loosing any quality."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:141(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml112(listitem)
 msgid "The ability to use your favourite audio playback application for playback of the file that is to be cut."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:147(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml116(listitem)
 msgid "Automatic detection of the right places to split."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:152(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml119(listitem)
 msgid "Automatic adjustment of manually set split points to fall into a nearby pause - which allows the user to work with less than milisecond-accuracy when specifying the split points."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:160(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml125(listitem)
 msgid "Importing splitpoints for a known album from a database like freedb."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:166(para)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml129(listitem)
 msgid "Automatically split albums that have been joined by albumwrap or mp3wrap into the original files."
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:136(para)
-msgid "This program was designed with usability in Mind and contains the followning features <placeholder-1/>"
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml108(para)
+msgid "It was designed with usability in Mind and contains the followning features <placeholder-1/>"
 msgstr ""
 
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:176(title)
-msgid "Basic Workflow"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:178(title)
-msgid "Opening a file"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:179(para)
-msgid "Just press the <guibutton> Choose </guibutton> button and select a file to open."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:185(title)
-msgid "Choose the right split points"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:187(title)
-msgid "Choosing split points manually"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:188(para)
-msgid "Press the <guibutton> Play </guibutton> button (a gray triangle pointing to the right) on the <guilabel>Player</guilabel> tab, listen to the music and press the <guibutton>add</guibutton> button (which is on the <guilabel>Player</guilabel> tab, too) every time a new audio track should begin."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:196(para)
-msgid "If you don't want to be made to press the button exactly at the right centisecond the <guibutton>add</guibutton> Preferences tab gives you the possibility to let the program fine-tune the split points you choose."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:204(title)
-msgid "Automatical setting of split points"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:205(para)
-msgid "The <guilabel>Type of Split</guilabel> tab provides you with a wide choices of ways to select where to split a file into tracks. If you want to split a media into tracks others might have had access to before you can try searching for splitpoint readymades in the <guilabel>FreeDB</guilabel> tab instead."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:216(title)
-msgid "Tweaking split points and entering track information"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:217(para)
-msgid "The <guilabel>Splitpoints</guilabel> tab now contains a list of points where tracks start or end. It also contains the information if this piece of the audio file is to be kept and how the corresponding track has to be named."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:224(title)
-msgid "The split point tab"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:231(phrase)
-msgid "Shows all split points and track names."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:236(para)
-msgid "If you want to change the start or end position of a track or give it a name just do it at any time you want."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:242(title) /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:281(title)
-msgid "Exporting the tracks"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:243(para) /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:282(para)
-msgid "Now press the button with the green <guibutton>check mark</guibutton> that is always visible in the menu line. mp3splt-gtk will output all tracks into single files. If anything goes wrong don't despair: Since one of the goals of mp3splt-gtk is to work completely lossless even if anything goes wrong not much is lost."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:254(title)
-msgid "Batch processing of files"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:255(para)
-msgid "Besides manual and automatic splitting of a single file mp3splt-gtk also supports automatic batch-processing of multiple files at once."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:261(title)
-msgid "Enabling batch processing mode"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:262(para)
-msgid "Go to the <guilabel>Type of split</guilabel> tab and there to the <guilabel>File mode</guilabel> tab. After selecting <guilabel>Batch processing</guilabel> here batch processing mode is enabled"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:268(title) /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:276(title)
-msgid "Adding files in batch processing mode"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:269(para)
-msgid "Go to the <guilabel>Type of split</guilabel> tab and there to the <guilabel>Split mode</guilabel> tab and select after which criteria you want the files to be split."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:277(para)
-msgid "Go to the <guilabel>Batch Processing</guilabel> tab and add all files you want to be automatically processed."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:293(title)
-msgid "Troubleshooting"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:295(title)
-msgid "The player won't start"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:296(para)
-msgid "If the player won't start even if the play button is pressed try starting the player independently from mp3splt-gtk and pressing play thereafter."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:301(para)
-msgid "mp3splt-gtk knows how to remote-control SnackAmp and Audacious to automatically switch to the file that is about to be split."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:307(title)
-msgid "Splitting doesn't work"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:308(para)
-msgid "Try to make sure that the version of libmp3splt is installed correspondends to the version of mp3splt-gtk. Even if (for newer versions of the program) the configure script makes sure that both versions match it might still be possible to have the wrong combination of these elements installed on the same system."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:316(para)
-msgid "If that is the case make sure that in the <guilabel>File mode</guilabel> tab of the <guilabel>Type of split</guilabel> tab <guilabel>Single file</guilabel> mode is selected."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:323(title)
-msgid "Splitting a certain Ogg file doesn't work"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:324(para)
-msgid "Next to the lossy ogg vorbis format that gives good compression while keeping file sizes extremely low there are other file formats that can be kept inside an ogg container as well, notably ogg flac."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:330(para)
-msgid "Flac is a completely lossless codec which means that the output files are sonewhat larger than Ogg vorbis ones but these files can be cut on any information without loosing any quality."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:336(para)
-msgid "Since there is no direct need mp3splt-gtk still does not support cutting flac files."
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:342(title)
-msgid "Adding a file to the files view doesn't work"
-msgstr ""
-
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:343(para)
-msgid "Make sure that in the <guilabel>File mode</guilabel> tab of the <guilabel>Type of split</guilabel> tab <guilabel>Batch processing</guilabel> mode is selected."
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml105(para)
+msgid "<application>mp3splt-gtk</application> will allow you to manipulate audio files without loosing any quality. <placeholder-1/>"
 msgstr ""
 
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
-#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml:0(None)
+#: /home/gunter/mp3splt-project/mp3splt-gtk/help/C/mp3splt-gtk.xml0(None)
 msgid "translator-credits"
 msgstr ""
-

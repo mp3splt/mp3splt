@@ -178,7 +178,7 @@ void ChooseCueExportFile(GtkWidget *widget, gpointer data)
   GtkWidget *file_chooser;
 
   //creates the dialog
-  file_chooser = gtk_file_chooser_dialog_new(_("Select splitpoint filename"),
+  file_chooser = gtk_file_chooser_dialog_new(_("Select cue file name"),
       NULL,
       GTK_FILE_CHOOSER_ACTION_SAVE,
       GTK_STOCK_CANCEL,

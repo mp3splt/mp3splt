@@ -18,4 +18,5 @@ src/snackamp_control.c
 src/utilities.c
 src/import.c
 src/preferences_manager.c
+src/export.c
 
