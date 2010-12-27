@@ -25,7 +25,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = mp3splt-gtk
+PROJECT_NAME           = libmp3splt
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -880,7 +880,7 @@ DOCSET_FEEDNAME        = "Doxygen generated docs"
 # reverse domain-name style string, e.g. com.mycompany.MyDocSet. Doxygen
 # will append .docset to the name.
 
-DOCSET_BUNDLE_ID       = org.doxygen.mp3splt-gtk
+DOCSET_BUNDLE_ID       = org.doxygen.libmp3splt
 
 # When GENERATE_PUBLISHER_ID tag specifies a string that should uniquely identify
 # the documentation publisher. This should be a reverse domain-name style
@@ -1004,7 +1004,7 @@ GENERATE_ECLIPSEHELP   = NO
 # the directory name containing the HTML and XML files should also have
 # this name.
 
-ECLIPSE_DOC_ID         = org.doxygen.mp3splt_gtk
+ECLIPSE_DOC_ID         = org.doxygen.libmp3splt
 
 # The DISABLE_INDEX tag can be used to turn on/off the condensed index at
 # top of each HTML page. The value NO (the default) enables the index and
