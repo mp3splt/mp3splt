@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+Actually split the input file
+*/
+
 #include <sys/stat.h>
 #include <string.h>
 #include <math.h>
@@ -37,7 +41,7 @@
 #include "splt.h"
 
 /****************************/
-/* splt normal split */
+/*! normal split */
 
 static long splt_s_real_split(double splt_beg, double splt_end, 
     int save_end_point, int *error, splt_state *state)
@@ -70,6 +74,7 @@ static long splt_s_real_split(double splt_beg, double splt_end,
   return new_end_point;
 }
 
+//! Extract the file portion between two split points
 static long splt_s_split(splt_state *state, int first_splitpoint,
     int second_splitpoint, int *error)
 {
@@ -129,7 +134,7 @@ static long splt_s_split(splt_state *state, int first_splitpoint,
   return new_end_point;
 }
 
-//splits the file with multiple points
+//!splits the file with multiple points
 void splt_s_multiple_split(splt_state *state, int *error)
 {
   int split_type = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
@@ -223,7 +228,7 @@ void splt_s_normal_split(splt_state *state, int *error)
   splt_s_multiple_split(state, error);
 }
 
-//the sync error mode
+//!the sync error mode
 void splt_s_error_split(splt_state *state, int *error)
 {
   splt_c_put_info_message_to_client(state, _(" info: starting error mode split\n"));
@@ -344,7 +349,7 @@ bloc_end:
 }
 
 /************************************/
-/* splt time and length split */
+/*! time and length split           */
 
 static void splt_s_split_by_time(splt_state *state, int *error,
     double split_time_length, int number_of_files)
@@ -529,9 +534,11 @@ static void splt_s_split_by_time(splt_state *state, int *error,
   }
 }
 
-//function used with the -t option (time split
-//create an indefinite number of smaller files with a fixed time
-//length specified by options.split_time in seconds
+/*! function used with the -t option (time split)
+
+create an indefinite number of smaller files with a fixed time
+length specified by options.split_time in seconds
+*/
 void splt_s_time_split(splt_state *state, int *error)
 {
   splt_c_put_info_message_to_client(state, _(" info: starting time mode split\n"));
@@ -546,9 +553,11 @@ void splt_s_time_split(splt_state *state, int *error)
   splt_s_split_by_time(state, error, split_time_length, -1);
 }
 
-//function used with the -L option (length split
-//split into X files
-//X is defined by SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER
+/*! function used with the -L option (length split)
+
+split into X files
+X is defined by SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER
+*/
 void splt_s_equal_length_split(splt_state *state, int *error)
 {
   splt_c_put_info_message_to_client(state, _(" info: starting 'split in equal tracks' mode\n"));
@@ -583,11 +592,13 @@ void splt_s_equal_length_split(splt_state *state, int *error)
 }
 
 /************************************/
-/* splt silence detection and split */
+/*! Split with split points setermined by silence detection
 
-//returns the number of silence splits found
-//or the number of tracks specified in the options
-//sets the silence splitpoints in state->split.splitpoints
+Sets the silence splitpoints in state->split.splitpoints
+
+\return the number of split points found or the number of tracks
+specified in the options  
+*/
 int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 {
   splt_d_print_debug(state,"Search and set silence splitpoints...\n");
@@ -879,8 +890,10 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   return found;
 }
 
-//do the silence split
-//possible error in error
+/*! Do the silence split
+
+\param error The code of a eventual error that has occoured
+*/ 
 void splt_s_silence_split(splt_state *state, int *error)
 {
   splt_d_print_debug(state,"Starting silence split ...\n");
@@ -932,9 +945,10 @@ void splt_s_silence_split(splt_state *state, int *error)
 }
 
 /****************************/
-/* splt wrap split */
+/*! Automatically split a file that has been created by mp3wrap
 
-//do the wrap split
+do the wrap split
+*/
 void splt_s_wrap_split(splt_state *state, int *error)
 {
   char *new_filename_path = splt_t_get_new_filename_path(state);

@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src plugins test m4 po
+SUBDIRS = src plugins test m4 po doc
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = mp3splt.m4
