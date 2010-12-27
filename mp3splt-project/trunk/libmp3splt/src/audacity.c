@@ -31,6 +31,11 @@
  *
  *********************************************************/
 
+/*!\file 
+
+Input splitpoints from audacity.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
