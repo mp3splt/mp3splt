@@ -30,6 +30,16 @@
  *
  *********************************************************/
 
+/*! \file All user-accessible functions
+
+The functions that are actually meant to be called by the user. If
+this was C++ it would be the "public" section of our object.
+
+Actually this whole library seems to be written with object orientied
+programming in mind: All functions expect the address of the object as
+the first parameter etc. Actually changing the library to be c++
+should therefore not be too hard a task...
+ */
 #include <sys/stat.h>
 #include <string.h>
 
@@ -37,13 +47,19 @@
 
 int global_debug = SPLT_FALSE;
 
-/************************************/
-/* Initialisation and free          */
+/*! Initialisation
 
-/**
- * creates and returns the new mp3splt state
- * \param error A possible error.
- */
+ creates and returns the new central splt_state structure this
+ library keeps all its data in. 
+
+ The next step after initialization is to do a
+ mp3splt_find_plugins() to find any plugins;
+
+ At the end of the program all data we allocate here is freed by
+ calling mp3splt_free_state()
+
+ \param error Contains the error code if an error occours.
+*/
 splt_state *mp3splt_new_state(int *error)
 {
   splt_state *state = NULL;
@@ -72,17 +88,24 @@ splt_state *mp3splt_new_state(int *error)
   return state;
 }
 
-//find plugins and initialise them
-//-returns possible error
+/*! find plugins and initialise them
+
+\return The error code if necessary
+*/
 int mp3splt_find_plugins(splt_state *state)
 {
   return splt_p_find_get_plugins_data(state);
 }
 
-//this function frees the left variables in the library
-//call this function ONLY at the end of the program
-//and don't forget to call it
-//Returns possible error in *error
+/*! this function frees all variables malloc'ed by the library
+
+call this function ONLY at the end of the program
+and don't forget to call it.
+
+\param error The code of any error that might have occoured 
+\param state the splt_state structure that keeps all data for 
+ our library
+*/
 void mp3splt_free_state(splt_state *state, int *error)
 {  
   int erro = SPLT_OK;
@@ -108,9 +131,7 @@ void mp3splt_free_state(splt_state *state, int *error)
   }
 }
 
-/************************************/
-/* Set path                         */
-
+//! Set the output path
 int mp3splt_set_path_of_split(splt_state *state, const char *path)
 {
   int error = SPLT_OK;
@@ -138,10 +159,11 @@ int mp3splt_set_path_of_split(splt_state *state, const char *path)
   return error;
 }
 
-/************************************/
-/* Set filename                     */
+/*! Set the m3u filename
 
-//sets the m3u filename
+\param state the splt_state structure that keeps all our data
+\param filename Constains the file name that is to be set
+ */
 int mp3splt_set_m3u_filename(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
@@ -169,7 +191,7 @@ int mp3splt_set_m3u_filename(splt_state *state, const char *filename)
   return error;
 }
 
-//sets the m3u filename
+//!sets the m3u filename
 int mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
@@ -198,7 +220,11 @@ int mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
 }
 
 
-//puts the filename to split in the state
+/*! Sets the name of the file that is about to be split
+
+\param state The central data structure this library keeps its data in
+\param filename The filename we want to save in state
+*/
 int mp3splt_set_filename_to_split(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
@@ -283,8 +309,12 @@ int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comme
 /************************************/
 /* Set callback functions           */
 
-//sets the function that sends messages to the client
-//returns possible error
+/*! Register the callback that is called for messages to the client
+
+\param state The central structure this library keeps all its data in
+\param message_cb The callback function
+\return The error code if any error occours
+*/
 int mp3splt_set_message_function(splt_state *state, 
     void (*message_cb)(const char *, splt_message_type))
 {
@@ -302,8 +332,12 @@ int mp3splt_set_message_function(splt_state *state,
   return error;
 }
 
-//sets the function that sends the split filename after a split
-//returns possible error
+/*! Register the callback called with the split filename after split
+
+\param state The central structure this library keeps all its data in
+\param file_cb The callback function
+\return The error code if any error occours
+*/
 int mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *,int b))
 {
@@ -321,7 +355,12 @@ int mp3splt_set_split_filename_function(splt_state *state,
   return error;
 }
 
-//sets the function that sends progress messages to the client
+/*! Register the callback called with progress messages
+
+\param state The central structure this library keeps all its data in
+\param progress_cb The callback function
+\return The error code if any error occours
+*/
 int mp3splt_set_progress_function(splt_state *state,
     void (*progress_cb)(splt_progress *p_bar))
 {
@@ -339,7 +378,13 @@ int mp3splt_set_progress_function(splt_state *state,
   return error;
 }
 
-int mp3splt_set_silence_level_function(splt_state *state,
+/*! Register the callback for the function that calculates silence
+    levels 
+
+\param state The central structure this library keeps all its data in
+\param get_silence_cb The callback function
+\return The error code if any error occours
+*/int mp3splt_set_silence_level_function(splt_state *state,
   void (*get_silence_cb)(long time, float level, void *user_data),
   void *data)
 {
@@ -361,9 +406,15 @@ int mp3splt_set_silence_level_function(splt_state *state,
 /************************************/
 /* Splitpoints                      */
 
-//puts a splitpoint in the state with an eventual file name
-//split_value is which splitpoint hundreths of seconds
-//if split_value is LONG_MAX, we put the end of the song (EOF)
+/*! puts a splitpoint in the state 
+
+\param state The central data structure this library keeps all its
+data in
+\param name The file name if we want to set it, else NULL
+\param split_value The time of this splitpoint in hundreths of
+seconds. If this walue is LONG_MAX we put the splitpoint to the end of
+the song (EOF)
+*/
 int mp3splt_append_splitpoint(splt_state *state,
     long split_value, const char *name, int type)
 {
@@ -392,7 +443,13 @@ int mp3splt_append_splitpoint(splt_state *state,
   return error;
 }
 
-//returns a list containing all the splitpoints
+/*!returns a list containing all the splitpoints
+
+\param state The structure this library keeps all its data in
+\param splitpoints_number Will be set to the number of splitpoints by
+this function
+\param error Is set to the error code if any error occours
+ */
 const splt_point *mp3splt_get_splitpoints(splt_state *state,
     int *splitpoints_number, int *error)
 {
@@ -411,8 +468,11 @@ const splt_point *mp3splt_get_splitpoints(splt_state *state,
   }
 }
 
-//erase all the splitpoints
-//returns possible errors
+/*! erase all the splitpoints
+
+\param state The structure this library keeps all its data in
+\param error Is set to the error code if any error occours
+*/
 void mp3splt_erase_all_splitpoints(splt_state *state, int *error)
 {
   int erro = SPLT_OK;
@@ -443,7 +503,7 @@ void mp3splt_erase_all_splitpoints(splt_state *state, int *error)
 /************************************/
 /* Tags                             */
 
-//append tags
+//!append tags
 int mp3splt_append_tags(splt_state *state, 
     const char *title, const char *artist,
     const char *album, const char *performer,
@@ -476,7 +536,7 @@ int mp3splt_append_tags(splt_state *state,
   return error;
 }
 
-//returns a list containing all the tags
+//!returns a list containing all the tags
 const splt_tags *mp3splt_get_tags(splt_state *state,
     int *tags_number, int *error)
 {
@@ -495,7 +555,7 @@ const splt_tags *mp3splt_get_tags(splt_state *state,
   }
 }
 
-//puts tags from a string
+//!puts tags from a string
 int mp3splt_put_tags_from_string(splt_state *state, const char *tags, int *error)
 {
   int ambigous = SPLT_FALSE;
@@ -526,7 +586,7 @@ int mp3splt_put_tags_from_string(splt_state *state, const char *tags, int *error
   return ambigous;
 }
 
-//erase all the tags
+//!erase all the tags
 void mp3splt_erase_all_tags(splt_state *state, int *error)
 {
   int erro = SPLT_OK;
@@ -653,9 +713,11 @@ float mp3splt_get_float_option(splt_state *state, int option_name, int *error)
 /************************************/
 /* Split functions                  */
 
-//main function, split the file
-//splitnumber = how many splits
-//returns possible error
+/*! main function: Call it and it splits the file for you
+
+state-> splitnumber tells how many splits to do
+\return the error code if any error has occoured
+*/
 int mp3splt_split(splt_state *state)
 {
   int error = SPLT_OK;
@@ -878,8 +940,9 @@ function_end:
   return error;
 }
 
-//cancels the current split
-//returns possible errors
+/*! cancels the current split
+\return The error code if any error occours
+*/
 void mp3splt_stop_split(splt_state *state, int *error)
 {
   int erro = SPLT_OK;
@@ -899,8 +962,12 @@ void mp3splt_stop_split(splt_state *state, int *error)
 /************************************/
 /*    Cddb and Cue functions        */
 
-//we get the cue splitpoints from the file
-//returns possible error in err
+/*! Fetch the splitpoints from a cue file
+\param state The central structure that keeps all data this library
+uses 
+\param file The name of the input file
+\param error Is set to the error code this action results in
+*/
 void mp3splt_put_cue_splitpoints_from_file(splt_state *state,
     const char *file, int *error)
 {
@@ -929,7 +996,13 @@ void mp3splt_put_cue_splitpoints_from_file(splt_state *state,
   }
 }
 
-//we get the cddb splitpoints from the file
+/*! get the cddb splitpoints from the file
+
+\param state The central structure that keeps all data this library
+uses 
+\param file The name of the input file
+\param error Is set to the error code this action results in
+*/
 void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
     const char *file, int *error)
 {
@@ -958,6 +1031,13 @@ void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
   }
 }
 
+/*! get the splitpoints from a audacity splitpoint file
+
+\param state The central structure that keeps all data this library
+uses 
+\param file The name of the input file
+\param error Is set to the error code this action results in
+*/
 void mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state,
     const char *file, int *error)
 {
@@ -989,19 +1069,25 @@ void mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state,
 /************************************/
 /*    Freedb functions              */
 
-//get freedb search
+/*!Do a freedb search
+
+After dong the search continue by calling
+mp3splt_write_freedb_file_result().
+\param state The central structure this library keeps all its data in
+\param search_string The string that is to be searched for
+\param error The error code this action returns in
+\param search_type the type of the search. Usually set to
+SPLT_SEARCH_TYPE_FREEDB2
+\param search_server The URL of the search server or NULL to select
+the default
+\param port The port on the server. -1 means default (Which should be
+80). 
+ */
 const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
-    //our search
     const char *search_string,
-    //possible errors
     int *error,
-    //the type of the search
-    //usually SPLT_SEARCH_TYPE_FREEDB2
     int search_type,
-    //if strlen(search_server) == 0, we put the default
-    //or null
     const char search_server[256],
-    //if port=-1, we use 80
     int port)
 {
   int erro = SPLT_OK;
@@ -1041,20 +1127,27 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
   }
 }
 
-//must be called after get_freedb_search,
-//otherwise, it will fail (seg fault!?)
-//result must be freed
-//returns the content of a cddb file
-//you need to write it on the disk in 
-//a cddb file to use it
-//we return possible errors in err
-//the cddb_file is the file to write
-//
-//cddb_get_type specifies the type of the get 
-// -it can be SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI (that works for both
-//  freedb and freedb2 at the moment - 18_10_06)
-//  or SPLT_FREEDB_GET_FILE_TYPE_CDDB (that only work for freedb at
-//  the moment - 18_10_06)
+/*! returns the content of a cddb file
+
+must be called after running get_freedb_search
+otherwise, it will fail (seg fault!?)
+
+you need to write the cddb entry to the disk in 
+a cddb file to use it be able to use it
+
+\param state The central structure that keeps all data this library
+uses 
+\param error Is set to the error code this action results in
+\param disc_id The freedb disc ID.
+\param cddb_get_type specifies the type of the get:
+  it can be SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI (that works for both
+  freedb and freedb2 at the moment - 18_10_06)
+  or SPLT_FREEDB_GET_FILE_TYPE_CDDB (that only work for freedb at
+  the moment - 18_10_06)
+
+\attention result is malloc'ed and must be freed by the caller after
+use.
+*/
 void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
     const char *cddb_file, int *error, int cddb_get_type,
     const char cddb_get_server[256], int port)
@@ -1118,6 +1211,16 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
   }
 }
 
+/*! Export our split points to a cue file
+
+  \param out_file The name of the file to output the split points to
+  \param state The splt_state structure containing the split points
+  \param error Contains the error code if anything goes wrong
+  \param stop_at_total_time If this parameter is !=0 we don't output
+  splitpoints that lie beyond the end of the audio data. Note that the
+  last splitpoint can be slightly beyond the calculated end of audio
+  data.
+*/
 void mp3splt_export_to_cue(splt_state *state, const char *out_file,
     short stop_at_total_time, int *error)
 {
@@ -1146,7 +1249,7 @@ void mp3splt_export_to_cue(splt_state *state, const char *out_file,
   }
 }
 
-//puts output format
+//! Sets the output format
 void mp3splt_set_oformat(splt_state *state,
     const char *format_string, int *error)
 {
@@ -1178,8 +1281,11 @@ void mp3splt_set_oformat(splt_state *state,
 /************************************/
 /* Other utilities                  */
 
-//returns the syncerrors found
-//puts error in the error variable
+/*! Determines if syncerrors are found
+
+  \param state The splt_state structure containing the split points
+  \param error The error code
+*/
 const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
     int *error)
 {
@@ -1234,7 +1340,11 @@ const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
   }
 }
 
-//puts possible error in the error variable
+/*! Split a file that has been generated by mp3wrap
+
+  \param state The splt_state structure containing the split points
+  \param error The error code
+*/
 const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
     int *error)
 {
@@ -1286,7 +1396,7 @@ const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
   }
 }
 
-//set the silence splitpoints without splitting
+//!set the silence splitpoints without actually splitting
 int mp3splt_set_silence_points(splt_state *state, int *error)
 {
   int erro = SPLT_OK;
@@ -1333,7 +1443,7 @@ int mp3splt_set_silence_points(splt_state *state, int *error)
   return found_splitpoints;
 }
 
-//count how many silence splitpoints we have with silence detection
+//!count how many silence splitpoints silence detection results in
 int mp3splt_count_silence_points(splt_state *state, int *error)
 {
   int number_of_tracks = mp3splt_set_silence_points(state, error) - 1;
@@ -1341,33 +1451,64 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
   return number_of_tracks;
 }
 
-//returns libmp3splt version, max 20 chars
+//!returns libmp3splt version, max 20 chars
 void mp3splt_get_version(char *version)
 {
   snprintf(version,20,"%s",SPLT_PACKAGE_VERSION);
 }
 
-//result must be freed
+/*! Returns the error string that matches an error code
+
+\param state The splt_state The central structure containing all data
+for our library
+\param error The error code
+
+\attention The resulting string is malloc'ed and must be freed by the
+caller after use.
+*/
+
 char *mp3splt_get_strerror(splt_state *state, int error_code)
 {
   return splt_e_strerror(state, error_code);
 }
 
-//returns possible error or SPLT_OK if no error
+/*! Tell where to scan for plug-ins
+
+\param state The splt_state The central structure containing all data
+for our library
+\return The error code in case that anything goes wrong, else SPLT_OK
+*/
 int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir)
 {
   return splt_p_append_plugin_scan_dir(state, dir);
 }
 
 #ifdef __WIN32__
-//returned result must be free'd
+/*! Converts a string from win32 to utf8
+
+\param The UTF16 string from Windows 
+\result The same string in UTF8
+\attention The resulting string is malloc'ed and must be freed by the
+caller after use.
+*/
 char *mp3splt_win32_utf16_to_utf8(const wchar_t *source)
 {
   return splt_w32_utf16_to_utf8(source);
 }
 #endif
 
-//returned result must be freed
+/*! TODO: What does this function do
+
+\param state The splt_state The central structure containing all data
+for our library
+\param num_of_files_found The number of files this library has found
+\param error The error code
+
+\attention The resulting string is malloc'ed and must be freed by the
+caller after use.
+
+\todo What does this function do?
+*/
 char **mp3splt_find_filenames(splt_state *state, const char *filename,
     int *num_of_files_found, int *error)
 {
@@ -1449,6 +1590,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
   return found_files;
 }
 
+//! Checks if a name points to a directory
 int mp3splt_u_check_if_directory(const char *fname)
 {
   return splt_io_check_if_directory(fname);

@@ -42,10 +42,6 @@
 #include "win32.h"
 #endif
 
-static int splt_p_alloc_init_new_plugin(splt_plugins *pl);
-static void splt_p_free_plugin_data_info(splt_plugin_data *pl_data);
-static void splt_p_free_plugin_data(splt_plugin_data *pl_data);
-
 int splt_p_append_plugin_scan_dir(splt_state *state, const char *dir)
 {
   if (dir == NULL)
@@ -133,8 +129,45 @@ static int splt_p_filter_plugin_files(const struct dirent *de)
   return 0;
 }
 
-//scans the directory *directory for plugins
-//-directory must not be NULL
+static int splt_p_alloc_init_new_plugin(splt_plugins *pl)
+{
+  int return_value = SPLT_OK;
+
+  if (pl->data == NULL)
+  {
+    pl->data = malloc(sizeof(splt_plugin_data) * (pl->number_of_plugins_found+1));
+    if (pl->data == NULL)
+    {
+      return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return return_value;
+    }
+  }
+  else
+  {
+    pl->data = realloc(pl->data,sizeof(splt_plugin_data) *
+        (pl->number_of_plugins_found+1));
+    if (pl->data == NULL)
+    {
+      return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return return_value;
+    }
+  }
+
+  pl->data[pl->number_of_plugins_found].func = NULL;
+  pl->data[pl->number_of_plugins_found].plugin_handle = NULL;
+  pl->data[pl->number_of_plugins_found].info.version = 0;
+  pl->data[pl->number_of_plugins_found].info.name = NULL;
+  pl->data[pl->number_of_plugins_found].info.extension = NULL;
+  pl->data[pl->number_of_plugins_found].info.upper_extension = NULL;
+  pl->data[pl->number_of_plugins_found].plugin_filename = NULL;
+
+  return return_value;
+}
+
+/*! scans the directory *directory for plugins
+
+directory must not be NULL
+*/
 static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, const char *directory)
 {
   int return_value = SPLT_OK;
@@ -296,6 +329,46 @@ static int splt_p_find_plugins(splt_state *state)
   }
 
   return return_value;
+}
+
+//! Used by splt_p_free_plugin_data
+static void splt_p_free_plugin_data_info(splt_plugin_data *pl_data)
+{
+  if (pl_data->info.name)
+  {
+    free(pl_data->info.name);
+    pl_data->info.name = NULL;
+  }
+  if (pl_data->info.extension)
+  {
+    free(pl_data->info.extension);
+    pl_data->info.extension = NULL;
+  }
+  if (pl_data->info.upper_extension)
+  {
+    free(pl_data->info.upper_extension);
+    pl_data->info.upper_extension = NULL;
+  }
+}
+
+static void splt_p_free_plugin_data(splt_plugin_data *pl_data)
+{
+  splt_p_free_plugin_data_info(pl_data);
+  if (pl_data->plugin_filename)
+  {
+    free(pl_data->plugin_filename);
+    pl_data->plugin_filename = NULL;
+  }
+  if (pl_data->plugin_handle)
+  {
+    lt_dlclose(pl_data->plugin_handle);
+    pl_data->plugin_handle = NULL;
+  }
+  if (pl_data->func)
+  {
+    free(pl_data->func);
+    pl_data->func = NULL;
+  }
 }
 
 int splt_p_move_replace_plugin_data(splt_state *state, int old, int new)
@@ -874,80 +947,6 @@ int splt_p_set_default_values(splt_state *state)
   state->plug->number_of_dirs_to_scan = 0;
 
   return splt_p_set_default_plugins_scan_dirs(state);
-}
-
-static int splt_p_alloc_init_new_plugin(splt_plugins *pl)
-{
-  int return_value = SPLT_OK;
-
-  if (pl->data == NULL)
-  {
-    pl->data = malloc(sizeof(splt_plugin_data) * (pl->number_of_plugins_found+1));
-    if (pl->data == NULL)
-    {
-      return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return return_value;
-    }
-  }
-  else
-  {
-    pl->data = realloc(pl->data,sizeof(splt_plugin_data) *
-        (pl->number_of_plugins_found+1));
-    if (pl->data == NULL)
-    {
-      return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return return_value;
-    }
-  }
-
-  pl->data[pl->number_of_plugins_found].func = NULL;
-  pl->data[pl->number_of_plugins_found].plugin_handle = NULL;
-  pl->data[pl->number_of_plugins_found].info.version = 0;
-  pl->data[pl->number_of_plugins_found].info.name = NULL;
-  pl->data[pl->number_of_plugins_found].info.extension = NULL;
-  pl->data[pl->number_of_plugins_found].info.upper_extension = NULL;
-  pl->data[pl->number_of_plugins_found].plugin_filename = NULL;
-
-  return return_value;
-}
-
-static void splt_p_free_plugin_data_info(splt_plugin_data *pl_data)
-{
-  if (pl_data->info.name)
-  {
-    free(pl_data->info.name);
-    pl_data->info.name = NULL;
-  }
-  if (pl_data->info.extension)
-  {
-    free(pl_data->info.extension);
-    pl_data->info.extension = NULL;
-  }
-  if (pl_data->info.upper_extension)
-  {
-    free(pl_data->info.upper_extension);
-    pl_data->info.upper_extension = NULL;
-  }
-}
-
-static void splt_p_free_plugin_data(splt_plugin_data *pl_data)
-{
-  splt_p_free_plugin_data_info(pl_data);
-  if (pl_data->plugin_filename)
-  {
-    free(pl_data->plugin_filename);
-    pl_data->plugin_filename = NULL;
-  }
-  if (pl_data->plugin_handle)
-  {
-    lt_dlclose(pl_data->plugin_handle);
-    pl_data->plugin_handle = NULL;
-  }
-  if (pl_data->func)
-  {
-    free(pl_data->func);
-    pl_data->func = NULL;
-  }
 }
 
 void splt_p_free_plugins(splt_state *state)
