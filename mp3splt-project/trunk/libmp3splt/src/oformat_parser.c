@@ -36,13 +36,37 @@
 
 #include "splt.h"
 
-static short splt_u_output_variable_is_valid(char v, int *amb);
-static const char *splt_u_get_format_ptr(const char *format, char *temp);
-static int splt_u_get_requested_num_of_digits(splt_state *state, const char *format,
-    int *requested_num_of_digits, int is_alpha);
-static void splt_u_alpha_track(splt_state *state, int nfield,
-    char *fm, int fm_length, int number_of_digits, int tracknumber);
-static char splt_of_get_number_of_digits_from_total_time(splt_state *state);
+static short splt_u_output_variable_is_valid(char v, int *amb)
+{
+  switch (v)
+  {
+    case 's':
+    case 'S':
+    case 'm':
+    case 'M':
+    case 'h':
+    case 'H':
+    case 'a':
+    case 'A':
+    case 'b':
+    case 'f':
+    case 'p':
+      break;
+    case 't':
+    case 'l':
+    case 'L':
+    case 'u':
+    case 'U':
+    case 'n':
+    case 'N':
+      *amb = SPLT_OUTPUT_FORMAT_OK;
+      break;
+    default:
+      return SPLT_FALSE;
+  }
+
+  return SPLT_TRUE;
+}
 
 int splt_of_parse_outformat(char *s, splt_state *state)
 {
@@ -151,6 +175,127 @@ int splt_of_parse_outformat(char *s, splt_state *state)
   }
 
   return amb;
+}
+
+static const char *splt_u_get_format_ptr(const char *format, char *temp)
+{
+  int format_length = strlen(format);
+  const char *format_ptr = format;
+
+  if ((format_length > 2) && isdigit(format[2]))
+  {
+    temp[2] = format[2];
+    format_ptr = format + 1;
+  }
+
+  return format_ptr;
+}
+
+static int splt_u_get_requested_num_of_digits(splt_state *state, const char *format,
+    int *requested_num_of_digits, int is_alpha)
+{
+  int format_length = strlen(format);
+  int number_of_digits = 0;
+  if (is_alpha)
+  {
+    number_of_digits = state->oformat.output_alpha_format_digits;
+  }
+  else
+  {
+    number_of_digits = splt_of_get_oformat_number_of_digits_as_int(state);
+  }
+  int max_number_of_digits = number_of_digits;
+  *requested_num_of_digits = number_of_digits;
+
+  if ((format_length > 2) && isdigit(format[2]))
+  {
+    *requested_num_of_digits = format[2] - '0';
+  }
+
+  if (*requested_num_of_digits > number_of_digits)
+  {
+    max_number_of_digits = *requested_num_of_digits;
+  }
+
+  return max_number_of_digits;
+}
+
+/*! Encode track number as 'A', 'B', ... 'Z', 'AA, 'AB', ...
+ *
+ * This is not simply "base 26"; note that the lowest 'digit' is from 'A' to
+ * 'Z' (base 26), but all higher digits are 'A' to 'Z' plus 'nothing', i.e.,
+ * base 27. In other words, since after 'Z' comes 'AA', we cannot use 'AA'
+ * as the padded version of track number 1 ('A').
+ *
+ * This means that there are two distinct work modes:
+ * - The normal encoding is as described above.
+ * - When the user has specified the number of digits (padding), we encode
+ *   the track number as simple base-26: 'AAA', 'AAB', ... 'AAZ', 'ABA',
+ *   'ABB', ...
+ */
+static void splt_u_alpha_track(splt_state *state, int nfield,
+    char *fm, int fm_length, int number_of_digits, int tracknumber)
+{
+  char *format = state->oformat.format[nfield];
+  int lowercase = (toupper(format[1]) == 'L');
+  char a = lowercase ? 'a' : 'A';
+  int zerobased = tracknumber - 1;
+  int i = 1, min_digits = state->oformat.output_alpha_format_digits;
+
+  if (number_of_digits > 1)
+  {
+    /* Padding required => simple base-26 encoding */
+    if (number_of_digits < min_digits)
+      number_of_digits = min_digits;
+    for (i = 1; i <= number_of_digits; ++ i, zerobased /= 26)
+    {
+      int digit = (zerobased % 26);
+      fm[number_of_digits - i] = a + digit;
+    }
+  }
+  else
+  {
+    /* No padding: First letter base-26, others base-27 */
+    number_of_digits = min_digits;
+
+    /* Start with the first, base-26 'digit' */
+    fm[number_of_digits - 1] = a + (zerobased % 26);
+
+    /* Now handle all other digits */
+    zerobased /= 26;
+    for (i = 2; i <= number_of_digits; ++ i, zerobased /= 27)
+    {
+      int digit = (zerobased % 27);
+      fm[number_of_digits - i] = a + digit - 1;
+    }
+  }
+
+  int offset = 0;
+  if ((strlen(format) > 2) && isdigit(format[2]))
+  {
+    offset = 1;
+  }
+  snprintf(fm + number_of_digits, fm_length - number_of_digits,
+      "%s", format + 2 + offset);
+}
+
+static char splt_of_get_number_of_digits_from_total_time(splt_state *state)
+{
+  long total_time = splt_t_get_total_time(state);
+  if (total_time > 0)
+  {
+    long minutes = total_time / 100 / 60;
+    int i = (int) (log10l((long double) minutes));
+    char number_of_digits = (char) (i + '1');
+    if (number_of_digits == '1')
+    {
+      return '2';
+    }
+
+    return number_of_digits;
+  }
+
+  return '2';
 }
 
 int splt_of_put_output_format_filename(splt_state *state, int current_split)
@@ -753,159 +898,4 @@ end:
 
   return error;
 }
-
-static char splt_of_get_number_of_digits_from_total_time(splt_state *state)
-{
-  long total_time = splt_t_get_total_time(state);
-  if (total_time > 0)
-  {
-    long minutes = total_time / 100 / 60;
-    int i = (int) (log10l((long double) minutes));
-    char number_of_digits = (char) (i + '1');
-    if (number_of_digits == '1')
-    {
-      return '2';
-    }
-
-    return number_of_digits;
-  }
-
-  return '2';
-}
-
-static short splt_u_output_variable_is_valid(char v, int *amb)
-{
-  switch (v)
-  {
-    case 's':
-    case 'S':
-    case 'm':
-    case 'M':
-    case 'h':
-    case 'H':
-    case 'a':
-    case 'A':
-    case 'b':
-    case 'f':
-    case 'p':
-      break;
-    case 't':
-    case 'l':
-    case 'L':
-    case 'u':
-    case 'U':
-    case 'n':
-    case 'N':
-      *amb = SPLT_OUTPUT_FORMAT_OK;
-      break;
-    default:
-      return SPLT_FALSE;
-  }
-
-  return SPLT_TRUE;
-}
-
-static const char *splt_u_get_format_ptr(const char *format, char *temp)
-{
-  int format_length = strlen(format);
-  const char *format_ptr = format;
-
-  if ((format_length > 2) && isdigit(format[2]))
-  {
-    temp[2] = format[2];
-    format_ptr = format + 1;
-  }
-
-  return format_ptr;
-}
-
-static int splt_u_get_requested_num_of_digits(splt_state *state, const char *format,
-    int *requested_num_of_digits, int is_alpha)
-{
-  int format_length = strlen(format);
-  int number_of_digits = 0;
-  if (is_alpha)
-  {
-    number_of_digits = state->oformat.output_alpha_format_digits;
-  }
-  else
-  {
-    number_of_digits = splt_of_get_oformat_number_of_digits_as_int(state);
-  }
-  int max_number_of_digits = number_of_digits;
-  *requested_num_of_digits = number_of_digits;
-
-  if ((format_length > 2) && isdigit(format[2]))
-  {
-    *requested_num_of_digits = format[2] - '0';
-  }
-
-  if (*requested_num_of_digits > number_of_digits)
-  {
-    max_number_of_digits = *requested_num_of_digits;
-  }
-
-  return max_number_of_digits;
-}
-
-/*
- * Encode track number as 'A', 'B', ... 'Z', 'AA, 'AB', ...
- *
- * This is not simply "base 26"; note that the lowest 'digit' is from 'A' to
- * 'Z' (base 26), but all higher digits are 'A' to 'Z' plus 'nothing', i.e.,
- * base 27. In other words, since after 'Z' comes 'AA', we cannot use 'AA'
- * as the padded version of track number 1 ('A').
- *
- * This means that there are two distinct work modes:
- * - The normal encoding is as described above.
- * - When the user has specified the number of digits (padding), we encode
- *   the track number as simple base-26: 'AAA', 'AAB', ... 'AAZ', 'ABA',
- *   'ABB', ...
- */
-static void splt_u_alpha_track(splt_state *state, int nfield,
-    char *fm, int fm_length, int number_of_digits, int tracknumber)
-{
-  char *format = state->oformat.format[nfield];
-  int lowercase = (toupper(format[1]) == 'L');
-  char a = lowercase ? 'a' : 'A';
-  int zerobased = tracknumber - 1;
-  int i = 1, min_digits = state->oformat.output_alpha_format_digits;
-
-  if (number_of_digits > 1)
-  {
-    /* Padding required => simple base-26 encoding */
-    if (number_of_digits < min_digits)
-      number_of_digits = min_digits;
-    for (i = 1; i <= number_of_digits; ++ i, zerobased /= 26)
-    {
-      int digit = (zerobased % 26);
-      fm[number_of_digits - i] = a + digit;
-    }
-  }
-  else
-  {
-    /* No padding: First letter base-26, others base-27 */
-    number_of_digits = min_digits;
-
-    /* Start with the first, base-26 'digit' */
-    fm[number_of_digits - 1] = a + (zerobased % 26);
-
-    /* Now handle all other digits */
-    zerobased /= 26;
-    for (i = 2; i <= number_of_digits; ++ i, zerobased /= 27)
-    {
-      int digit = (zerobased % 27);
-      fm[number_of_digits - i] = a + digit - 1;
-    }
-  }
-
-  int offset = 0;
-  if ((strlen(format) > 2) && isdigit(format[2]))
-  {
-    offset = 1;
-  }
-  snprintf(fm + number_of_digits, fm_length - number_of_digits,
-      "%s", format + 2 + offset);
-}
-
 

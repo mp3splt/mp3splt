@@ -35,8 +35,6 @@
 
 #include "splt.h"
 
-static int splt_of_new_oformat(splt_state *state, const char *format_string);
-
 int splt_of_set_default_values(splt_state *state)
 {
   int err = SPLT_OK;
@@ -76,6 +74,12 @@ void splt_of_set_oformat_digits_tracks(splt_state *state, int tracks)
 void splt_of_set_oformat_digits(splt_state *state)
 {
   splt_of_set_oformat_digits_tracks(state, splt_t_get_splitnumber(state));
+}
+
+static int splt_of_new_oformat(splt_state *state, const char *format_string)
+{
+  splt_of_free_oformat(state);
+  return splt_su_copy(format_string, &state->oformat.format_string);
 }
 
 void splt_of_set_oformat(splt_state *state, const char *format_string,
@@ -149,11 +153,5 @@ char splt_of_get_oformat_number_of_digits_as_char(splt_state *state)
 const char *splt_of_get_oformat(splt_state *state)
 {
   return state->oformat.format_string;
-}
-
-static int splt_of_new_oformat(splt_state *state, const char *format_string)
-{
-  splt_of_free_oformat(state);
-  return splt_su_copy(format_string, &state->oformat.format_string);
 }
 
