@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2010-12-25 23:17+0100\n"
-"PO-Revision-Date: 2010-12-25 23:27+0000\n"
+"PO-Revision-Date: 2010-12-28 06:14+0000\n"
 "Last-Translator: marselles <marselles@mail.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -469,7 +469,7 @@ msgstr ""
 
 #: src/player_tab.c:2661
 msgid " left click + move changes song position, right click + move changes zoom"
-msgstr ""
+msgstr "кликните левой кнопкой мыши + перемещение позиции композиции, кликните правой кнопкой мыши + изменить зум"
 
 #: src/player_tab.c:2672
 msgid " left click on point + move changes point position, right click play preview"
@@ -481,51 +481,51 @@ msgstr ""
 
 #: src/player_tab.c:2875
 msgid " quick preview..."
-msgstr ""
+msgstr "быстрый просмотр ..."
 
 #: src/player_tab.c:3406
 msgid "History"
-msgstr ""
+msgstr "История"
 
 #: src/player_tab.c:3545
 msgid "_Erase selected entries"
-msgstr ""
+msgstr "_Удалить выделенные записи"
 
 #: src/player_tab.c:3554
 msgid "E_rase all history"
-msgstr ""
+msgstr "У_далить всю историю"
 
 #: src/player_tab.c:3677
 msgid " quick preview finished, song paused"
-msgstr ""
+msgstr "быстрый просмотр закончен, проигрование приостановлено"
 
 #: src/player_tab.c:3803
 msgid "Choose File"
-msgstr ""
+msgstr "Выберите Файл"
 
 #: src/player_tab.c:3808 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
-msgstr ""
+msgstr "mp3 и ogg файлы (*.mp3 *.ogg)"
 
 #: src/player_tab.c:3816 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
-msgstr ""
+msgstr "mp3 файлы (*.mp3)"
 
 #: src/player_tab.c:3822 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
-msgstr ""
+msgstr "ogg файлы (*.ogg)"
 
 #: src/player_tab.c:3963
 msgid "_Browse"
-msgstr ""
+msgstr "_Обзор"
 
 #: src/player_tab.c:3967
 msgid "Select file"
-msgstr ""
+msgstr "Выделить файл"
 
 #: src/player_tab.c:3974
 msgid "_Fix ogg stream"
-msgstr ""
+msgstr "_Фиксированный ogg поток"
 
 #: src/main_win.c:146
 msgid " info: stopping the split process before exiting"
@@ -533,11 +533,11 @@ msgstr ""
 
 #: src/main_win.c:336
 msgid "using"
-msgstr ""
+msgstr "использование"
 
 #: src/main_win.c:340
 msgid "release of"
-msgstr ""
+msgstr "релиз от"
 
 #: src/main_win.c:437
 msgid " info: stopping the split process.. please wait"
@@ -545,7 +545,7 @@ msgstr ""
 
 #: src/main_win.c:476
 msgid " error: no file selected"
-msgstr ""
+msgstr "ошибка: файл не выбран"
 
 #: src/main_win.c:481
 msgid " error: split in progress..."
@@ -557,11 +557,11 @@ msgstr ""
 
 #: src/main_win.c:543
 msgid "_File"
-msgstr ""
+msgstr "_Файл"
 
 #: src/main_win.c:544
 msgid "_Help"
-msgstr ""
+msgstr "_Справка"
 
 #: src/main_win.c:546
 msgid "_Split !"
@@ -573,15 +573,15 @@ msgstr ""
 
 #: src/main_win.c:548
 msgid "Import"
-msgstr ""
+msgstr "Импорт"
 
 #: src/main_win.c:550
 msgid "_Open..."
-msgstr ""
+msgstr "_Открыть"
 
 #: src/main_win.c:550
 msgid "Open"
-msgstr ""
+msgstr "Открыть"
 
 #: src/main_win.c:552
 msgid "_Export splitpoints..."
@@ -589,39 +589,39 @@ msgstr ""
 
 #: src/main_win.c:552
 msgid "Export"
-msgstr ""
+msgstr "Экспорт"
 
 #: src/main_win.c:554
 msgid "Messages _history"
-msgstr ""
+msgstr "_История сообщений"
 
 #: src/main_win.c:554 src/main_win.c:807 src/messages.c:197
 msgid "Messages history"
-msgstr ""
+msgstr "История сообщений"
 
 #: src/main_win.c:556
 msgid "_Quit"
-msgstr ""
+msgstr "_Выход"
 
 #: src/main_win.c:556
 msgid "Quit"
-msgstr ""
+msgstr "ВЫход"
 
 #: src/main_win.c:561
 msgid "_Contents"
-msgstr ""
+msgstr "_Контент"
 
 #: src/main_win.c:561
 msgid "Contents"
-msgstr ""
+msgstr "Контент"
 
 #: src/main_win.c:565
 msgid "_About"
-msgstr ""
+msgstr "_О программе"
 
 #: src/main_win.c:565
 msgid "About"
-msgstr ""
+msgstr "О программе"
 
 #: src/main_win.c:714
 msgid "Splitpoints"
@@ -629,11 +629,11 @@ msgstr ""
 
 #: src/main_win.c:727 src/special_split.c:399
 msgid "Batch processing"
-msgstr ""
+msgstr "Пакетная обработка"
 
 #: src/main_win.c:740
 msgid "FreeDB"
-msgstr ""
+msgstr "FreeDB"
 
 #: src/main_win.c:751
 msgid "Type of split"
@@ -641,7 +641,7 @@ msgstr ""
 
 #: src/main_win.c:764
 msgid "Preferences"
-msgstr ""
+msgstr "Настройки"
 
 #: src/main_win.c:785
 msgid "S_top"
@@ -650,31 +650,31 @@ msgstr ""
 #: src/freedb_tab.c:125
 #, c-format
 msgid "%s Revision %d"
-msgstr ""
+msgstr "%s версия %d"
 
 #: src/freedb_tab.c:179
 msgid "Album title"
-msgstr ""
+msgstr "Название альбома"
 
 #: src/freedb_tab.c:199
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
 #: src/freedb_tab.c:305 src/freedb_tab.c:394
 msgid "please wait... contacting tracktype.org"
-msgstr ""
+msgstr "Пожалуйста, подождите ... cвязь с tracktype.org"
 
 #: src/freedb_tab.c:600
 msgid "Search tracktype.org:"
-msgstr ""
+msgstr "Поиск в tracktype.org:"
 
 #: src/freedb_tab.c:611
 msgid "_Search"
-msgstr ""
+msgstr "_Поиск"
 
 #: src/freedb_tab.c:650
 msgid "Selected album:"
-msgstr ""
+msgstr "Выбранный альбом:"
 
 #: src/freedb_tab.c:658
 msgid "_Add splitpoints"
@@ -696,15 +696,15 @@ msgstr ""
 
 #: src/special_split.c:214
 msgid "Normal"
-msgstr ""
+msgstr "Нормальный"
 
 #: src/special_split.c:224
 msgid "Time"
-msgstr ""
+msgstr "Время"
 
 #: src/special_split.c:255
 msgid "Equal time tracks"
-msgstr ""
+msgstr "Одинаковая длительность треков"
 
 #: src/special_split.c:285
 msgid "Silence - split with silence detection"
@@ -712,7 +712,7 @@ msgstr ""
 
 #: src/special_split.c:339
 msgid "Remove silence between tracks"
-msgstr ""
+msgstr "Убрать задержку между треками"
 
 #: src/special_split.c:356
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
@@ -720,11 +720,11 @@ msgstr ""
 
 #: src/special_split.c:366
 msgid "Error mode (mp3 only)"
-msgstr ""
+msgstr "Режим ошибок (только mp3)"
 
 #: src/special_split.c:391
 msgid "Single file"
-msgstr ""
+msgstr "Один файл"
 
 #: src/special_split.c:433
 msgid "Split mode"
@@ -732,35 +732,35 @@ msgstr ""
 
 #: src/special_split.c:437
 msgid "File mode"
-msgstr ""
+msgstr "Режим файла"
 
 #: src/messages.c:176
 msgid "Show _debug messages"
-msgstr ""
+msgstr "Показать _отладочные сообщения"
 
 #: src/messages.c:183
 msgid "C_lear"
-msgstr ""
+msgstr "О_чистить"
 
 #: src/multiple_files.c:106
 msgid "Choose file or directory"
-msgstr ""
+msgstr "Выберите файл или каталог"
 
 #: src/multiple_files.c:146
 msgid "All Files"
-msgstr ""
+msgstr "Все файлы"
 
 #: src/multiple_files.c:290
 msgid "_Add files"
-msgstr ""
+msgstr "_Добавить файлы"
 
 #: src/multiple_files.c:298
 msgid "_Remove selected entries"
-msgstr ""
+msgstr "_Удалить выбранные записи"
 
 #: src/multiple_files.c:307
 msgid "R_emove all entries"
-msgstr ""
+msgstr "У_далить все записи"
 
 #: src/gstreamer_control.c:96
 #, c-format
@@ -775,7 +775,7 @@ msgstr ""
 #: src/gstreamer_control.c:152
 #, c-format
 msgid "Info: %s"
-msgstr ""
+msgstr "Информация:%s"
 
 #: src/gstreamer_control.c:415
 msgid " error: cannot create gstreamer playbin\n"
@@ -784,7 +784,7 @@ msgstr ""
 #: src/mp3splt-gtk.c:162
 #, c-format
 msgid " File '%s' created"
-msgstr ""
+msgstr "Файл '%s' создан"
 
 #: src/mp3splt-gtk.c:181
 #, c-format
@@ -812,41 +812,41 @@ msgstr ""
 #: src/mp3splt-gtk.c:555
 #, c-format
 msgid "Trying to set the output directory to %s.\n"
-msgstr ""
+msgstr "Попытка установить выходной каталог на %s.\n"
 
 #: src/mp3splt-gtk.c:564
 #, c-format
 msgid "Error: The specified output directory is inaccessible!\n"
-msgstr ""
+msgstr "Ошибка: указанный выходной каталог недоступен!\n"
 
 #: src/mp3splt-gtk.c:570
 #, c-format
 msgid "Option -%c requires an argument.\n"
-msgstr ""
+msgstr "Опция -%c требует значение.\n"
 
 #: src/mp3splt-gtk.c:572
 #, c-format
 msgid "Unknown option `-%c'.\n"
-msgstr ""
+msgstr "Неизвестная опция `-%c'.\n"
 
 #: src/mp3splt-gtk.c:575
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
-msgstr ""
+msgstr "Неизвестный символ опции `\\x%x'.\n"
 
 #: src/mp3splt-gtk.c:632
 #, c-format
 msgid "Cannot open input file %s\n"
-msgstr ""
+msgstr "Не могу открыть входной файл %s\n"
 
 #: src/utilities.c:127
 #, c-format
 msgid "Processing file '%s' ..."
-msgstr ""
+msgstr "Обработка файла '%s' ..."
 
 #: src/import.c:64
 msgid "Choose file to import"
-msgstr ""
+msgstr "Выберите файл для импорта"
 
 #: src/import.c:134
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
@@ -854,11 +854,11 @@ msgstr ""
 
 #: src/import.c:138
 msgid "CDDB files (*.cddb)"
-msgstr ""
+msgstr "CDDB файлы (*.cddb)"
 
 #: src/import.c:140
 msgid "CUE files (*.cue)"
-msgstr ""
+msgstr "CUE файлов (*.cue)"
 
 #: src/import.c:142
 msgid "Audacity labels files (*.txt)"
@@ -866,12 +866,12 @@ msgstr ""
 
 #: src/import.c:144
 msgid "All files"
-msgstr ""
+msgstr "Все файлы"
 
 #: src/export.c:181
 msgid "Select cue file name"
-msgstr ""
+msgstr "Выберите имя файла c расширением cue"
 
 #: src/export.c:192
 msgid "cue files (*.cue)"
-msgstr ""
+msgstr "cue файлы (*.cue)"
