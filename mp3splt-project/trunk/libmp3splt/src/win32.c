@@ -35,9 +35,6 @@
 #include "splt.h"
 #include "win32.h"
 
-static wchar_t *splt_w32_encoding_to_utf16(UINT encoding, const char *source);
-static char *splt_w32_utf16_to_encoding(UINT encoding, const wchar_t *source);
-
 int scandir(const char *dir, struct dirent ***namelist,
 		int(*filter)(const struct dirent *),
 		int(*compar)(const struct dirent **, const struct dirent **))
@@ -250,9 +247,44 @@ int walphasort(const struct _wdirent **a, const struct _wdirent **b)
   return ret;
 }
 
+static wchar_t *splt_w32_encoding_to_utf16(UINT encoding, const char *source)
+{
+  wchar_t *dest = NULL;
+
+  int converted_size = MultiByteToWideChar(encoding, 0, source, -1, NULL, 0);
+  if (converted_size > 0)
+  {
+    dest = malloc(sizeof(wchar_t) * converted_size);
+    if (dest)
+    {
+      MultiByteToWideChar(encoding, 0, source, -1, dest, converted_size);
+    }
+  }
+
+  return dest;
+}
+
 wchar_t *splt_w32_utf8_to_utf16(const char *source)
 {
   return splt_w32_encoding_to_utf16(CP_UTF8, source);
+}
+
+
+static char *splt_w32_utf16_to_encoding(UINT encoding, const wchar_t *source)
+{
+  char *dest = NULL;
+
+  int converted_size = WideCharToMultiByte(encoding, 0, source, -1, NULL, 0, NULL, NULL);
+  if (converted_size > 0)
+  {
+    dest = malloc(sizeof(char *) * converted_size);
+    if (dest)
+    {
+      WideCharToMultiByte(encoding, 0, source, -1, dest, converted_size, NULL, NULL);
+    }
+  }
+
+  return dest;
 }
 
 char *splt_w32_utf16_to_utf8(const wchar_t *source)
@@ -305,40 +337,6 @@ int splt_w32_str_is_drive_root_directory(const char *str)
 {
   return strlen(str) == 3 &&
     splt_w32_str_starts_with_drive_root_directory(str);
-}
-
-static wchar_t *splt_w32_encoding_to_utf16(UINT encoding, const char *source)
-{
-  wchar_t *dest = NULL;
-
-  int converted_size = MultiByteToWideChar(encoding, 0, source, -1, NULL, 0);
-  if (converted_size > 0)
-  {
-    dest = malloc(sizeof(wchar_t) * converted_size);
-    if (dest)
-    {
-      MultiByteToWideChar(encoding, 0, source, -1, dest, converted_size);
-    }
-  }
-
-  return dest;
-}
-
-static char *splt_w32_utf16_to_encoding(UINT encoding, const wchar_t *source)
-{
-  char *dest = NULL;
-
-  int converted_size = WideCharToMultiByte(encoding, 0, source, -1, NULL, 0, NULL, NULL);
-  if (converted_size > 0)
-  {
-    dest = malloc(sizeof(char *) * converted_size);
-    if (dest)
-    {
-      WideCharToMultiByte(encoding, 0, source, -1, dest, converted_size, NULL, NULL);
-    }
-  }
-
-  return dest;
 }
 
 #endif

@@ -30,11 +30,6 @@
 #include "splt.h"
 #include "tags_utils.h"
 
-static char *splt_tu_get_replaced_with_tags(const char *word,
-    const splt_tags *tags, int track, int *err, int replace_tags_in_tags);
-static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state);
-static void splt_tu_set_empty_tags(splt_state *state, int index);
-
 void splt_tu_free_original_tags(splt_state *state)
 {
   if (state->original_tags.year)
@@ -65,6 +60,12 @@ void splt_tu_free_original_tags(splt_state *state)
   state->original_tags.track = -INT_MAX;
   //12 means "other"
   state->original_tags.genre = 12;
+}
+
+splt_tags *splt_tu_get_tags(splt_state *state, int *tags_number)
+{
+  *tags_number = state->split.real_tagsnumber;
+  return state->split.tags;
 }
 
 void splt_tu_auto_increment_tracknumber(splt_state *state)
@@ -309,6 +310,11 @@ splt_tags *splt_tu_new_tags(int *error)
   return tags;
 }
 
+static void splt_tu_set_empty_tags(splt_state *state, int index)
+{
+  splt_tu_reset_tags(&state->split.tags[index]);
+}
+
 int splt_tu_new_tags_if_necessary(splt_state *state, int index)
 {
   int error = SPLT_OK;
@@ -410,6 +416,155 @@ int splt_tu_set_original_tags_field(splt_state *state, int tags_field, const voi
   return splt_tu_set_field_on_tags(&state->original_tags, tags_field, data);
 }
 
+static char *splt_tu_get_replaced_with_tags(const char *word,
+    const splt_tags *tags, int track, int *error, int replace_tags_in_tags)
+{
+  int err = SPLT_OK;
+
+  char *word_with_tags = NULL;
+
+  if (!replace_tags_in_tags)
+  {
+    err = splt_su_copy(word, &word_with_tags);
+    if (err < 0) { *error = err; }
+    return word_with_tags;
+  }
+
+  char buffer[256] = { '\0' };
+
+  if (word == NULL)
+  {
+    return NULL;
+  }
+
+  const char *title = tags->title;
+  const char *artist = tags->artist;
+  const char *album= tags->album;
+  const char *performer = tags->performer;
+  const char *year = tags->year;
+  const char *comment = tags->comment;
+
+  int counter = 0;
+  const char *ptr = NULL;
+  for (ptr = word; *ptr != '\0'; ptr++)
+  {
+    if (*ptr == '@')
+    {
+      err = splt_su_append(&word_with_tags, buffer, counter, NULL);
+      if (err != SPLT_OK) { goto error; }
+
+      memset(buffer, 256, '\0');
+      counter = 0;
+
+      ptr++;
+
+      switch (*ptr)
+      {
+        case 'a':
+          if (artist != NULL)
+          {
+            err = splt_su_append_str(&word_with_tags, artist, NULL);
+            if (err != SPLT_OK) { goto error; }
+          }
+          break;
+        case 'p':
+          if (performer != NULL)
+          {
+            err = splt_su_append_str(&word_with_tags, performer, NULL);
+            if (err != SPLT_OK) { goto error; }
+          }
+          break;
+        case 'b':
+          if (album != NULL)
+          {
+            err = splt_su_append_str(&word_with_tags, album, NULL);
+            if (err != SPLT_OK) { goto error; }
+          }
+          break;
+        case 't':
+          if (title != NULL)
+          {
+            err = splt_su_append_str(&word_with_tags, title, NULL);
+            if (err != SPLT_OK) { goto error; }
+          }
+          break;
+        case 'c':
+          if (comment != NULL)
+          {
+            err = splt_su_append_str(&word_with_tags, comment, NULL);
+            if (err != SPLT_OK) { goto error; }
+          }
+          break;
+        case 'y':
+          if (year != NULL)
+          {
+            err = splt_su_append(&word_with_tags, year, NULL);
+            if (err != SPLT_OK) { goto error; }
+          }
+          break;
+        case 'N':
+        case 'n':
+          ;
+          char track_str[10] = { '\0' };
+          snprintf(track_str, 10, "%d",track);
+          err = splt_su_append_str(&word_with_tags, track_str, NULL);
+          if (err != SPLT_OK) { goto error; }
+          break;
+        case '@':
+          err = splt_su_append_str(&word_with_tags, "@", NULL);
+          if (err != SPLT_OK) { goto error; }
+          break;
+        default:
+          err = splt_su_append(&word_with_tags, (ptr-1), 2, NULL);
+          if (err != SPLT_OK) { goto error; }
+          break;
+      }
+    }
+    else
+    {
+      buffer[counter] = *ptr;
+      counter++;
+
+      if (counter == 255)
+      {
+        err = splt_su_append(&word_with_tags, buffer, counter, NULL);
+        if (err != SPLT_OK) { goto error; }
+        memset(buffer, 256, '\0');
+        counter = 0;
+      }
+    }
+  }
+
+  err = splt_su_append(&word_with_tags, buffer, counter, NULL);
+  if (err != SPLT_OK) { goto error; }
+
+  return word_with_tags;
+
+error:
+  if (word_with_tags)
+  {
+    free(word_with_tags);
+  }
+
+  *error = err;
+
+  return NULL;
+}
+
+static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
+{
+  int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
+
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  if ((current_tags_number >= state->split.real_tagsnumber) &&
+      (remaining_tags_like_x != -1))
+  {
+    return splt_tu_get_tags_like_x(state);
+  }
+
+  return splt_tu_get_tags_at(state, current_tags_number);
+}
+
 int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
 {
   int err = SPLT_OK;
@@ -461,12 +616,6 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
   }
 
   return err;
-}
-
-splt_tags *splt_tu_get_tags(splt_state *state, int *tags_number)
-{
-  *tags_number = state->split.real_tagsnumber;
-  return state->split.tags;
 }
 
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index)
@@ -731,160 +880,6 @@ void splt_tu_free_one_tags(splt_tags *tags)
       tags->comment = NULL;
     }
   }
-}
-
-static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
-{
-  int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
-
-  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
-  if ((current_tags_number >= state->split.real_tagsnumber) &&
-      (remaining_tags_like_x != -1))
-  {
-    return splt_tu_get_tags_like_x(state);
-  }
-
-  return splt_tu_get_tags_at(state, current_tags_number);
-}
-
-static char *splt_tu_get_replaced_with_tags(const char *word,
-    const splt_tags *tags, int track, int *error, int replace_tags_in_tags)
-{
-  int err = SPLT_OK;
-
-  char *word_with_tags = NULL;
-
-  if (!replace_tags_in_tags)
-  {
-    err = splt_su_copy(word, &word_with_tags);
-    if (err < 0) { *error = err; }
-    return word_with_tags;
-  }
-
-  char buffer[256] = { '\0' };
-
-  if (word == NULL)
-  {
-    return NULL;
-  }
-
-  const char *title = tags->title;
-  const char *artist = tags->artist;
-  const char *album= tags->album;
-  const char *performer = tags->performer;
-  const char *year = tags->year;
-  const char *comment = tags->comment;
-
-  int counter = 0;
-  const char *ptr = NULL;
-  for (ptr = word; *ptr != '\0'; ptr++)
-  {
-    if (*ptr == '@')
-    {
-      err = splt_su_append(&word_with_tags, buffer, counter, NULL);
-      if (err != SPLT_OK) { goto error; }
-
-      memset(buffer, 256, '\0');
-      counter = 0;
-
-      ptr++;
-
-      switch (*ptr)
-      {
-        case 'a':
-          if (artist != NULL)
-          {
-            err = splt_su_append_str(&word_with_tags, artist, NULL);
-            if (err != SPLT_OK) { goto error; }
-          }
-          break;
-        case 'p':
-          if (performer != NULL)
-          {
-            err = splt_su_append_str(&word_with_tags, performer, NULL);
-            if (err != SPLT_OK) { goto error; }
-          }
-          break;
-        case 'b':
-          if (album != NULL)
-          {
-            err = splt_su_append_str(&word_with_tags, album, NULL);
-            if (err != SPLT_OK) { goto error; }
-          }
-          break;
-        case 't':
-          if (title != NULL)
-          {
-            err = splt_su_append_str(&word_with_tags, title, NULL);
-            if (err != SPLT_OK) { goto error; }
-          }
-          break;
-        case 'c':
-          if (comment != NULL)
-          {
-            err = splt_su_append_str(&word_with_tags, comment, NULL);
-            if (err != SPLT_OK) { goto error; }
-          }
-          break;
-        case 'y':
-          if (year != NULL)
-          {
-            err = splt_su_append(&word_with_tags, year, NULL);
-            if (err != SPLT_OK) { goto error; }
-          }
-          break;
-        case 'N':
-        case 'n':
-          ;
-          char track_str[10] = { '\0' };
-          snprintf(track_str, 10, "%d",track);
-          err = splt_su_append_str(&word_with_tags, track_str, NULL);
-          if (err != SPLT_OK) { goto error; }
-          break;
-        case '@':
-          err = splt_su_append_str(&word_with_tags, "@", NULL);
-          if (err != SPLT_OK) { goto error; }
-          break;
-        default:
-          err = splt_su_append(&word_with_tags, (ptr-1), 2, NULL);
-          if (err != SPLT_OK) { goto error; }
-          break;
-      }
-    }
-    else
-    {
-      buffer[counter] = *ptr;
-      counter++;
-
-      if (counter == 255)
-      {
-        err = splt_su_append(&word_with_tags, buffer, counter, NULL);
-        if (err != SPLT_OK) { goto error; }
-        memset(buffer, 256, '\0');
-        counter = 0;
-      }
-    }
-  }
-
-  err = splt_su_append(&word_with_tags, buffer, counter, NULL);
-  if (err != SPLT_OK) { goto error; }
-
-  return word_with_tags;
-
-error:
-  if (word_with_tags)
-  {
-    free(word_with_tags);
-  }
-
-  *error = err;
-
-  return NULL;
-}
-
-static void splt_tu_set_empty_tags(splt_state *state, int index)
-{
-  splt_tu_reset_tags(&state->split.tags[index]);
 }
 
 

@@ -24,6 +24,9 @@
  * 02111-1307, USA.
  *********************************************************/
 
+/*!\file
+All that is needed in order to be able to read and write cue files.
+ */
 #include <string.h>
 #include <ctype.h>
 
@@ -32,18 +35,286 @@
 
 #include "cue.h"
 
-static int splt_cue_store_value(splt_state *state, char *in,
-    int index, int tag_field);
-static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
-    int tags_index, short with_spaces, short write_album);
-static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state);
-static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_state *state);
-static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_state *state);
-static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, splt_state *state);
-static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_state *state);
-static cue_utils *splt_cue_cu_new(splt_state *state, int *error);
-static void splt_cue_cu_free(cue_utils **cu);
+//! Process the rest of a cue line that begins with the word TRACK
+static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_state *state)
+{
+  line_content += 5;
 
+  if (cu->tracks == -1) 
+  {
+    cu->tracks = 0;
+  }
+
+  if (!cu->time_for_track) 
+  {
+    splt_e_set_error_data(state, cu->file);
+    cu->error = SPLT_INVALID_CUE_FILE;
+  }
+
+  cu->performer = SPLT_FALSE;
+  cu->title = SPLT_FALSE;
+  cu->time_for_track = SPLT_FALSE;
+  cu->tracks++;
+
+  splt_tu_new_tags_if_necessary(state, cu->tracks - 1);
+}
+
+//! Update data for a track in the central splt_state structure.
+static int splt_cue_store_value(splt_state *state, char *in,
+    int index, int tag_field)
+{
+  int error = SPLT_OK;
+
+  char *ptr_b = in;
+  char *ptr_e = NULL;
+
+  if (!in)
+  {
+    return SPLT_OK;
+  }
+
+  while (*ptr_b == ' ')
+  {
+    ptr_b++;
+  }
+
+  if (*ptr_b == '"')
+  {
+    ptr_b++;
+  }
+
+  ptr_e = strchr(ptr_b + 1, '\0');
+  if (ptr_e)
+  {
+    while (*ptr_e == ' ' && ptr_e > in)
+    {
+      ptr_e--;
+    }
+
+    if (ptr_e > in)
+    {
+      if (*(ptr_e-1) == '"')
+      {
+        ptr_e--;
+      }
+      *ptr_e = '\0';
+    }
+  }
+
+  char *out = NULL;
+  error = splt_su_append(&out, ptr_b, strlen(ptr_b) + 1, NULL);
+  if (error < 0) { return error; }
+
+  if (tag_field == SPLT_TAGS_ARTIST)
+  {
+    splt_c_put_info_message_to_client(state, _("\n  Artist: %s\n"), out);
+  }
+  else if (tag_field == SPLT_TAGS_ALBUM)
+  {
+    splt_c_put_info_message_to_client(state, _("  Album: %s\n"), out);
+  }
+
+  error = splt_tu_set_tags_field(state, index, tag_field, out);
+  if (out)
+  {
+    free(out);
+    out = NULL;
+  }
+
+  return error;
+}
+
+//! Process the rest of a cue line that begins with the word TITLE
+static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_state *state)
+{
+  int err = SPLT_OK;
+  line_content += 5;
+
+  if (cu->tracks == -1)
+  {
+    if ((err = splt_cue_store_value(state, line_content, 
+            0, SPLT_TAGS_ALBUM)) != SPLT_OK)
+    {
+      cu->error = err;
+      return;
+    }
+  }
+  else
+  {
+    if (cu->tracks > 0)
+    {
+      if ((err = splt_cue_store_value(state, line_content,
+              cu->tracks-1, SPLT_TAGS_TITLE)) != SPLT_OK)
+      {
+        cu->error = err;
+        return;
+      }
+    }
+
+    cu->title = SPLT_TRUE;
+  }
+}
+
+//! Process the rest of a cue line that begins with the word PERFORMER
+static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, splt_state *state)
+{
+  int err = SPLT_OK;
+  line_content += 9;
+
+  if (cu->tracks == -1)
+  {
+    //we always have one artist in a cue file, we
+    //put the performers if more than one artist
+    if ((err = splt_cue_store_value(state, line_content,
+            0, SPLT_TAGS_ARTIST)) != SPLT_OK)
+    {
+      cu->error = err;
+      return;
+    }
+  }
+  else
+  {
+    if (cu->tracks > 0)
+    {
+      if ((err = splt_cue_store_value(state, line_content,
+              cu->tracks - 1, SPLT_TAGS_PERFORMER)) != SPLT_OK)
+      {
+        cu->error = err;
+        return;
+      }
+    }
+ 
+    cu->performer = SPLT_TRUE;
+  }
+
+}
+
+
+//! Process the rest of a cue line that begins with the word INDEX
+static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_state *state)
+{
+  int err = SPLT_OK;
+
+  line_content += 9;
+
+  char *dot = NULL;
+  if ((dot = strchr(line_content, ':')) == NULL)
+  {
+    splt_e_set_error_data(state, cu->file);
+    cu->error = SPLT_INVALID_CUE_FILE;
+    return;
+  }
+
+  if (cu->tracks <= 0)
+  {
+    return;
+  }
+
+  line_content[dot - line_content] = line_content[dot - line_content+3] = '.';
+
+  long hundr_seconds = splt_co_convert_to_hundreths(line_content);
+  if (hundr_seconds == -1)
+  {
+    splt_e_set_error_data(state, cu->file);
+    cu->error = SPLT_INVALID_CUE_FILE;
+    return;
+  }
+
+  err = splt_sp_append_splitpoint(state, hundr_seconds, NULL, SPLT_SPLITPOINT);
+  if (err < 0) { cu->error = err; return; }
+
+  cu->time_for_track = SPLT_TRUE;
+  cu->counter++;
+}
+
+/*! Analyze a line from a cue file
+
+ */
+static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
+{
+  if (!l || !*l) { return; }
+
+  char *line = *l;
+
+  splt_su_line_to_unix(line);
+  splt_su_str_cut_last_char(line);
+
+  splt_t_clean_one_split_data(state, cu->tracks);
+
+  char *line_content = NULL;
+  if (((line_content = strstr(line, "TRACK")) != NULL)
+      && (strstr(line, "AUDIO") != NULL))
+  {
+    splt_cue_process_track_line(line_content, cu, state);
+  }
+  else if ((line_content = strstr(line, "TITLE")) != NULL)
+  {
+    splt_cue_process_title_line(line_content, cu, state);
+  }
+  else if ((line_content = strstr(line, "PERFORMER")) != NULL)
+  {
+    splt_cue_process_performer_line(line_content, cu, state);
+  }
+  else if ((line_content = strstr(line, "INDEX 01")) != NULL)
+  {
+    splt_cue_process_index_line(line_content, cu, state);
+  }
+
+  free(*l);
+  *l = NULL;
+}
+
+
+/* Malloc memory for and initialize a cue_utils structure
+
+\param state The address of the "state" structure. Currently unused.
+\param error Contains the libmp3splt error number if any error
+       occoured in this step.
+\return The address of the structure
+ */
+static cue_utils *splt_cue_cu_new(splt_state *state, int *error)
+{
+  cue_utils *cu = malloc(sizeof(cue_utils));
+  if (cu == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  cu->tracks = -1;
+  cu->time_for_track = SPLT_TRUE;
+  cu->performer = SPLT_FALSE;
+  cu->title = SPLT_FALSE;
+  cu->counter = 0;
+  cu->file = NULL;
+  cu->error = SPLT_OK;
+
+  return cu;
+}
+
+/*! Free the memory allocated by a cue_utils structure
+
+This function frees the memory that has been allocated by
+splt_cue_cu_new.
+ */
+static void splt_cue_cu_free(cue_utils **cu)
+{
+  if (!cu || !*cu)
+  {
+    return;
+  }
+
+  free(*cu);
+  *cu = NULL;
+}
+
+/*! Read in split points from a cue file
+
+  \param state the splt_state structure the split points have to be
+  output to.
+  \param error Contains the error code if anything goes wrong
+  \param file The name of the file we have to analyze
+ */
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 {
   if (file == NULL)
@@ -140,6 +411,73 @@ function_end:
   return tracks;
 }
 
+/*! Write title and performer information to a file
+
+\param state The splt_state struct to take the track info from
+\param file_output The file descriptor to output the track info to
+\param tags_index The number of the split point we have to output
+       information for
+\param with_spaces !=0 means we use indentation to make the cue file
+       look nicer
+ */
+static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
+    int tags_index, short with_spaces, short write_album)
+{
+  splt_tags *tags = NULL;
+  if (tags_index >= 0)
+  {
+    tags = splt_tu_get_tags_at(state, tags_index);
+  }
+  else
+  {
+    tags = splt_tu_get_current_tags(state);
+  }
+
+  if (tags)
+  {
+    if (write_album)
+    {
+      if (tags->album)
+      {
+        if (with_spaces) { fprintf(file_output, "    "); }
+        fprintf(file_output, "TITLE \"%s\"\n", tags->album);
+      }
+    }
+    else
+    {
+      if (tags->title)
+      {
+        if (with_spaces) { fprintf(file_output, "    "); }
+        fprintf(file_output, "TITLE \"%s\"\n", tags->title);
+      }
+    }
+
+    char *performer = splt_tu_get_artist_or_performer_ptr(tags);
+    if (performer)
+    {
+      if (with_spaces) { fprintf(file_output, "    "); }
+      fprintf(file_output, "PERFORMER \"%s\"\n", performer);
+    }
+  }
+  else
+  {
+    if (with_spaces) { fprintf(file_output, "    "); }
+    fprintf(file_output, "TITLE \"\"\n");
+    if (with_spaces) { fprintf(file_output, "    "); }
+    fprintf(file_output, "PERFORMER \"\"\n");
+  }
+}
+
+/*! Export all split points to a cue file
+
+  \param out_file The name of the file to output the split points to
+  \param state The splt_state structure containing the split points
+  \param error Contains the error code if anything goes wrong
+  \param stop_at_total_time If this parameter is !=0 we don't output
+  splitpoints that lie beyond the end of the audio data. Note that the
+  last splitpoint can be slightly beyond the calculated end of audio
+  data.
+ */
 void splt_cue_export_to_file(splt_state *state, const char *out_file,
     short stop_at_total_time, int *error)
 {
@@ -230,304 +568,5 @@ end:
     free(cue_out_file);
     cue_out_file = NULL;
   }
-}
-
-static int splt_cue_store_value(splt_state *state, char *in,
-    int index, int tag_field)
-{
-  int error = SPLT_OK;
-
-  char *ptr_b = in;
-  char *ptr_e = NULL;
-
-  if (!in)
-  {
-    return SPLT_OK;
-  }
-
-  while (*ptr_b == ' ')
-  {
-    ptr_b++;
-  }
-
-  if (*ptr_b == '"')
-  {
-    ptr_b++;
-  }
-
-  ptr_e = strchr(ptr_b + 1, '\0');
-  if (ptr_e)
-  {
-    while (*ptr_e == ' ' && ptr_e > in)
-    {
-      ptr_e--;
-    }
-
-    if (ptr_e > in)
-    {
-      if (*(ptr_e-1) == '"')
-      {
-        ptr_e--;
-      }
-      *ptr_e = '\0';
-    }
-  }
-
-  char *out = NULL;
-  error = splt_su_append(&out, ptr_b, strlen(ptr_b) + 1, NULL);
-  if (error < 0) { return error; }
-
-  if (tag_field == SPLT_TAGS_ARTIST)
-  {
-    splt_c_put_info_message_to_client(state, _("\n  Artist: %s\n"), out);
-  }
-  else if (tag_field == SPLT_TAGS_ALBUM)
-  {
-    splt_c_put_info_message_to_client(state, _("  Album: %s\n"), out);
-  }
-
-  error = splt_tu_set_tags_field(state, index, tag_field, out);
-  if (out)
-  {
-    free(out);
-    out = NULL;
-  }
-
-  return error;
-}
-
-static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
-    int tags_index, short with_spaces, short write_album)
-{
-  splt_tags *tags = NULL;
-  if (tags_index >= 0)
-  {
-    tags = splt_tu_get_tags_at(state, tags_index);
-  }
-  else
-  {
-    tags = splt_tu_get_current_tags(state);
-  }
-
-  if (tags)
-  {
-    if (write_album)
-    {
-      if (tags->album)
-      {
-        if (with_spaces) { fprintf(file_output, "    "); }
-        fprintf(file_output, "TITLE \"%s\"\n", tags->album);
-      }
-    }
-    else
-    {
-      if (tags->title)
-      {
-        if (with_spaces) { fprintf(file_output, "    "); }
-        fprintf(file_output, "TITLE \"%s\"\n", tags->title);
-      }
-    }
-
-    char *performer = splt_tu_get_artist_or_performer_ptr(tags);
-    if (performer)
-    {
-      if (with_spaces) { fprintf(file_output, "    "); }
-      fprintf(file_output, "PERFORMER \"%s\"\n", performer);
-    }
-  }
-  else
-  {
-    if (with_spaces) { fprintf(file_output, "    "); }
-    fprintf(file_output, "TITLE \"\"\n");
-    if (with_spaces) { fprintf(file_output, "    "); }
-    fprintf(file_output, "PERFORMER \"\"\n");
-  }
-}
-
-static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
-{
-  if (!l || !*l) { return; }
-
-  char *line = *l;
-
-  splt_su_line_to_unix(line);
-  splt_su_str_cut_last_char(line);
-
-  splt_t_clean_one_split_data(state, cu->tracks);
-
-  char *line_content = NULL;
-  if (((line_content = strstr(line, "TRACK")) != NULL)
-      && (strstr(line, "AUDIO") != NULL))
-  {
-    splt_cue_process_track_line(line_content, cu, state);
-  }
-  else if ((line_content = strstr(line, "TITLE")) != NULL)
-  {
-    splt_cue_process_title_line(line_content, cu, state);
-  }
-  else if ((line_content = strstr(line, "PERFORMER")) != NULL)
-  {
-    splt_cue_process_performer_line(line_content, cu, state);
-  }
-  else if ((line_content = strstr(line, "INDEX 01")) != NULL)
-  {
-    splt_cue_process_index_line(line_content, cu, state);
-  }
-
-  free(*l);
-  *l = NULL;
-}
-
-static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_state *state)
-{
-  line_content += 5;
-
-  if (cu->tracks == -1) 
-  {
-    cu->tracks = 0;
-  }
-
-  if (!cu->time_for_track) 
-  {
-    splt_e_set_error_data(state, cu->file);
-    cu->error = SPLT_INVALID_CUE_FILE;
-  }
-
-  cu->performer = SPLT_FALSE;
-  cu->title = SPLT_FALSE;
-  cu->time_for_track = SPLT_FALSE;
-  cu->tracks++;
-
-  splt_tu_new_tags_if_necessary(state, cu->tracks - 1);
-}
-
-static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_state *state)
-{
-  int err = SPLT_OK;
-  line_content += 5;
-
-  if (cu->tracks == -1)
-  {
-    if ((err = splt_cue_store_value(state, line_content, 
-            0, SPLT_TAGS_ALBUM)) != SPLT_OK)
-    {
-      cu->error = err;
-      return;
-    }
-  }
-  else
-  {
-    if (cu->tracks > 0)
-    {
-      if ((err = splt_cue_store_value(state, line_content,
-              cu->tracks-1, SPLT_TAGS_TITLE)) != SPLT_OK)
-      {
-        cu->error = err;
-        return;
-      }
-    }
-
-    cu->title = SPLT_TRUE;
-  }
-}
-
-static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, splt_state *state)
-{
-  int err = SPLT_OK;
-  line_content += 9;
-
-  if (cu->tracks == -1)
-  {
-    //we always have one artist in a cue file, we
-    //put the performers if more than one artist
-    if ((err = splt_cue_store_value(state, line_content,
-            0, SPLT_TAGS_ARTIST)) != SPLT_OK)
-    {
-      cu->error = err;
-      return;
-    }
-  }
-  else
-  {
-    if (cu->tracks > 0)
-    {
-      if ((err = splt_cue_store_value(state, line_content,
-              cu->tracks - 1, SPLT_TAGS_PERFORMER)) != SPLT_OK)
-      {
-        cu->error = err;
-        return;
-      }
-    }
- 
-    cu->performer = SPLT_TRUE;
-  }
-
-}
-
-static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_state *state)
-{
-  int err = SPLT_OK;
-
-  line_content += 9;
-
-  char *dot = NULL;
-  if ((dot = strchr(line_content, ':')) == NULL)
-  {
-    splt_e_set_error_data(state, cu->file);
-    cu->error = SPLT_INVALID_CUE_FILE;
-    return;
-  }
-
-  if (cu->tracks <= 0)
-  {
-    return;
-  }
-
-  line_content[dot - line_content] = line_content[dot - line_content+3] = '.';
-
-  long hundr_seconds = splt_co_convert_to_hundreths(line_content);
-  if (hundr_seconds == -1)
-  {
-    splt_e_set_error_data(state, cu->file);
-    cu->error = SPLT_INVALID_CUE_FILE;
-    return;
-  }
-
-  err = splt_sp_append_splitpoint(state, hundr_seconds, NULL, SPLT_SPLITPOINT);
-  if (err < 0) { cu->error = err; return; }
-
-  cu->time_for_track = SPLT_TRUE;
-  cu->counter++;
-}
-
-static cue_utils *splt_cue_cu_new(splt_state *state, int *error)
-{
-  cue_utils *cu = malloc(sizeof(cue_utils));
-  if (cu == NULL)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return NULL;
-  }
-
-  cu->tracks = -1;
-  cu->time_for_track = SPLT_TRUE;
-  cu->performer = SPLT_FALSE;
-  cu->title = SPLT_FALSE;
-  cu->counter = 0;
-  cu->file = NULL;
-  cu->error = SPLT_OK;
-
-  return cu;
-}
-
-static void splt_cue_cu_free(cue_utils **cu)
-{
-  if (!cu || !*cu)
-  {
-    return;
-  }
-
-  free(*cu);
-  *cu = NULL;
 }
 

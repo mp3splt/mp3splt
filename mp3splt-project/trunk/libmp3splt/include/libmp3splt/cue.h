@@ -31,6 +31,7 @@
  *********************************************************/
 
 #ifndef SPLT_CUE_H
+#define SPLT_CUE_H
 
 typedef struct {
   int tracks;
@@ -52,8 +53,6 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 #define SPLT_CUE_TITLE 2
 #define SPLT_CUE_PERFORMER 3
 #define SPLT_CUE_INDEX 4
-
-#define SPLT_CUE_H
 
 #endif
 

@@ -34,10 +34,44 @@
 
 #include "splt.h"
 
-static void splt_t_set_default_state_values(splt_state *state, int *error);
-static void splt_t_free_state_struct(splt_state *state);
-static void splt_t_set_current_split_file_number(splt_state *state, int index);
-static void splt_t_set_current_split_file_number_next(splt_state *state);
+static void splt_t_set_default_state_values(splt_state *state, int *error)
+{
+  state->split.tags = NULL;
+  splt_tu_reset_tags(splt_tu_get_tags_like_x(state));
+  state->split.points = NULL;
+  state->fname_to_split = NULL;
+  state->path_of_split = NULL;
+  state->m3u_filename = NULL;
+  state->input_fname_regex = NULL;
+  state->silence_log_fname = NULL;
+  state->split.real_tagsnumber = 0;
+  state->split.real_splitnumber = 0;
+  state->split.splitnumber = 0;
+  state->split.current_split_file_number = 1;
+  state->split.get_silence_level = NULL;
+  state->split.put_message = NULL;
+  state->split.file_split = NULL;
+  state->split.p_bar->progress_text_max_char = 40;
+  snprintf(state->split.p_bar->filename_shorted,512, "%s","");
+  state->split.p_bar->percent_progress = 0;
+  state->split.p_bar->current_split = 0;
+  state->split.p_bar->max_splits = 0;
+  state->split.p_bar->progress_type = SPLT_PROGRESS_PREPARE;
+  state->split.p_bar->silence_found_tracks = 0;
+  state->split.p_bar->silence_db_level = 0;
+  state->split.p_bar->user_data = 0;
+  state->split.p_bar->progress = NULL;
+  state->cancel_split = SPLT_FALSE;
+
+  splt_w_set_wrap_default_values(state);
+  splt_se_set_sync_errors_default_values(state);
+  if (splt_of_set_default_values(state) < 0) { return; }
+  splt_e_set_errors_default_values(state);
+  splt_fu_set_default_values(state);
+  splt_o_set_options_default_values(state);
+  splt_o_set_ioptions_default_values(state);
+  splt_p_set_default_values(state);
+}
 
 splt_state *splt_t_new_state(splt_state *state, int *error)
 {
@@ -89,6 +123,56 @@ splt_state *splt_t_new_state(splt_state *state, int *error)
   splt_t_set_default_state_values(state, error);
 
   return state;
+}
+
+static void splt_t_free_state_struct(splt_state *state)
+{
+  if (state)
+  {
+    if (state->fname_to_split)
+    {
+      free(state->fname_to_split);
+      state->fname_to_split = NULL;
+    }
+    if (state->path_of_split)
+    {
+      free(state->path_of_split);
+      state->path_of_split = NULL;
+    }
+    if (state->m3u_filename)
+    {
+      free(state->m3u_filename);
+      state->m3u_filename = NULL;
+    }
+    if (state->input_fname_regex)
+    {
+      free(state->input_fname_regex);
+      state->input_fname_regex = NULL;
+    }
+    if (state->silence_log_fname)
+    {
+      free(state->silence_log_fname);
+      state->silence_log_fname = NULL;
+    }
+    if (state->wrap)
+    {
+      free(state->wrap);
+      state->wrap = NULL;
+    }
+    if (state->serrors)
+    {
+      free(state->serrors);
+      state->serrors = NULL;
+    }
+    if (state->plug)
+    {
+      free(state->plug);
+      state->plug = NULL;
+    }
+
+    free(state);
+    state = NULL;
+  }
 }
 
 void splt_t_free_state(splt_state *state)
@@ -246,6 +330,16 @@ char *splt_t_get_filename_to_split(splt_state *state)
   return state->fname_to_split;
 }
 
+static void splt_t_set_current_split_file_number(splt_state *state, int index)
+{
+  state->split.current_split_file_number = index;
+}
+
+static void splt_t_set_current_split_file_number_next(splt_state *state)
+{
+  splt_t_set_current_split_file_number(state, state->split.current_split_file_number+1);
+}
+
 void splt_t_set_current_split(splt_state *state, int index)
 {
   if (index >= 0)
@@ -351,104 +445,5 @@ int splt_t_split_is_canceled(splt_state *state)
 void splt_t_set_stop_split(splt_state *state, int bool_value)
 {
   state->cancel_split = bool_value;
-}
-
-static void splt_t_set_default_state_values(splt_state *state, int *error)
-{
-  state->split.tags = NULL;
-  splt_tu_reset_tags(splt_tu_get_tags_like_x(state));
-  state->split.points = NULL;
-  state->fname_to_split = NULL;
-  state->path_of_split = NULL;
-  state->m3u_filename = NULL;
-  state->input_fname_regex = NULL;
-  state->silence_log_fname = NULL;
-  state->split.real_tagsnumber = 0;
-  state->split.real_splitnumber = 0;
-  state->split.splitnumber = 0;
-  state->split.current_split_file_number = 1;
-  state->split.get_silence_level = NULL;
-  state->split.put_message = NULL;
-  state->split.file_split = NULL;
-  state->split.p_bar->progress_text_max_char = 40;
-  snprintf(state->split.p_bar->filename_shorted,512, "%s","");
-  state->split.p_bar->percent_progress = 0;
-  state->split.p_bar->current_split = 0;
-  state->split.p_bar->max_splits = 0;
-  state->split.p_bar->progress_type = SPLT_PROGRESS_PREPARE;
-  state->split.p_bar->silence_found_tracks = 0;
-  state->split.p_bar->silence_db_level = 0;
-  state->split.p_bar->user_data = 0;
-  state->split.p_bar->progress = NULL;
-  state->cancel_split = SPLT_FALSE;
-
-  splt_w_set_wrap_default_values(state);
-  splt_se_set_sync_errors_default_values(state);
-  if (splt_of_set_default_values(state) < 0) { return; }
-  splt_e_set_errors_default_values(state);
-  splt_fu_set_default_values(state);
-  splt_o_set_options_default_values(state);
-  splt_o_set_ioptions_default_values(state);
-  splt_p_set_default_values(state);
-}
-
-static void splt_t_free_state_struct(splt_state *state)
-{
-  if (state)
-  {
-    if (state->fname_to_split)
-    {
-      free(state->fname_to_split);
-      state->fname_to_split = NULL;
-    }
-    if (state->path_of_split)
-    {
-      free(state->path_of_split);
-      state->path_of_split = NULL;
-    }
-    if (state->m3u_filename)
-    {
-      free(state->m3u_filename);
-      state->m3u_filename = NULL;
-    }
-    if (state->input_fname_regex)
-    {
-      free(state->input_fname_regex);
-      state->input_fname_regex = NULL;
-    }
-    if (state->silence_log_fname)
-    {
-      free(state->silence_log_fname);
-      state->silence_log_fname = NULL;
-    }
-    if (state->wrap)
-    {
-      free(state->wrap);
-      state->wrap = NULL;
-    }
-    if (state->serrors)
-    {
-      free(state->serrors);
-      state->serrors = NULL;
-    }
-    if (state->plug)
-    {
-      free(state->plug);
-      state->plug = NULL;
-    }
-
-    free(state);
-    state = NULL;
-  }
-}
-
-static void splt_t_set_current_split_file_number(splt_state *state, int index)
-{
-  state->split.current_split_file_number = index;
-}
-
-static void splt_t_set_current_split_file_number_next(splt_state *state)
-{
-  splt_t_set_current_split_file_number(state, state->split.current_split_file_number+1);
 }
 
