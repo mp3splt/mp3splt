@@ -35,9 +35,6 @@
 
 #include "splt.h"
 
-static char *splt_tp_parse_tag_word(const char *cur_pos,
-    const char *end_paranthesis, int *ambiguous, int *error);
-
 void splt_tp_put_tags_from_filename(splt_state *state, int *error)
 {
 #ifndef NO_PCRE
@@ -63,6 +60,76 @@ void splt_tp_put_tags_from_filename(splt_state *state, int *error)
 #else
   //TODO: no pcre error ?
 #endif
+}
+
+static char *splt_tp_parse_tag_word(const char *cur_pos,
+    const char *end_paranthesis, int *ambiguous, int *error)
+{
+  char *word = NULL;
+  char *word_end = NULL;
+  char *word_end2 = NULL;
+  const char *equal_sign = NULL;
+
+  if ((word_end = strchr(cur_pos,',')))
+  {
+    if ((word_end2 = strchr(cur_pos,']')) < word_end)
+    {
+      word_end = word_end2;
+      if ((strchr(word_end+1,']') && !strchr(word_end+1,'['))
+          || (strchr(word_end+1,']') < strchr(word_end+1,'[')))
+      {
+        *ambiguous = SPLT_TRUE;
+      }
+    }
+
+    if (*word_end == ',')
+    {
+      if (*(word_end+1) != '@')
+      {
+        *ambiguous = SPLT_TRUE;
+      }
+    }
+  }
+  else
+  {
+    word_end = strchr(cur_pos,']');
+  }
+
+  if (word_end <= end_paranthesis)
+  {
+    if (*(cur_pos+1) == '=')
+    {
+      equal_sign = cur_pos+1;
+      int string_length = word_end-(equal_sign+1);
+      if (string_length > 0)
+      {
+        word = malloc((string_length+1)*sizeof(char));
+        memset(word,'\0',(string_length+1)*sizeof(char));
+        if (word)
+        {
+          memcpy(word,equal_sign+1,string_length);
+          word[string_length] = '\0';
+        }
+        else
+        {
+          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+          return NULL;
+        }
+      }
+      else
+      {
+        *ambiguous = SPLT_TRUE;
+      }
+    }
+    else
+    {
+      *ambiguous = SPLT_TRUE;
+    }
+  }
+
+  cur_pos = word_end;
+
+  return word;
 }
 
 int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
@@ -589,74 +656,5 @@ end_while:
   return SPLT_FALSE;
 }
 
-static char *splt_tp_parse_tag_word(const char *cur_pos,
-    const char *end_paranthesis, int *ambiguous, int *error)
-{
-  char *word = NULL;
-  char *word_end = NULL;
-  char *word_end2 = NULL;
-  const char *equal_sign = NULL;
-
-  if ((word_end = strchr(cur_pos,',')))
-  {
-    if ((word_end2 = strchr(cur_pos,']')) < word_end)
-    {
-      word_end = word_end2;
-      if ((strchr(word_end+1,']') && !strchr(word_end+1,'['))
-          || (strchr(word_end+1,']') < strchr(word_end+1,'[')))
-      {
-        *ambiguous = SPLT_TRUE;
-      }
-    }
-
-    if (*word_end == ',')
-    {
-      if (*(word_end+1) != '@')
-      {
-        *ambiguous = SPLT_TRUE;
-      }
-    }
-  }
-  else
-  {
-    word_end = strchr(cur_pos,']');
-  }
-
-  if (word_end <= end_paranthesis)
-  {
-    if (*(cur_pos+1) == '=')
-    {
-      equal_sign = cur_pos+1;
-      int string_length = word_end-(equal_sign+1);
-      if (string_length > 0)
-      {
-        word = malloc((string_length+1)*sizeof(char));
-        memset(word,'\0',(string_length+1)*sizeof(char));
-        if (word)
-        {
-          memcpy(word,equal_sign+1,string_length);
-          word[string_length] = '\0';
-        }
-        else
-        {
-          *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-          return NULL;
-        }
-      }
-      else
-      {
-        *ambiguous = SPLT_TRUE;
-      }
-    }
-    else
-    {
-      *ambiguous = SPLT_TRUE;
-    }
-  }
-
-  cur_pos = word_end;
-
-  return word;
-}
 
 

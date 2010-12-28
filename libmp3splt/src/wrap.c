@@ -30,12 +30,16 @@
  *
  *********************************************************/
 
+/*! \file
+
+\todo Is this file responsible for splitting files created with
+mp3wrap?
+ */
 #include <string.h>
 
 #include "splt.h"
 
-static void splt_w_free_files(char **files, int number);
-
+//! \todo document this function.
 void splt_w_set_wrap_default_values(splt_state *state)
 {
   splt_wrap *wrap = state->wrap;
@@ -43,6 +47,7 @@ void splt_w_set_wrap_default_values(splt_state *state)
   wrap->wrap_files_num = 0;
 }
 
+//! \todo document this function.
 int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
     const char *filename)
 {
@@ -67,13 +72,7 @@ int splt_w_wrap_put_file(splt_state *state, int wrapfiles, int index,
   return SPLT_OK;
 }
 
-void splt_w_wrap_free(splt_state *state)
-{
-  splt_wrap *wrap = state->wrap;
-  splt_w_free_files(wrap->wrap_files, wrap->wrap_files_num);
-  wrap->wrap_files_num = 0;
-}
-
+//! \todo document this function.
 static void splt_w_free_files(char **files, int number)
 {
   if (files != NULL)
@@ -94,5 +93,13 @@ static void splt_w_free_files(char **files, int number)
     free(files);
     files = NULL;
   }
+}
+
+//! \todo document this function.
+void splt_w_wrap_free(splt_state *state)
+{
+  splt_wrap *wrap = state->wrap;
+  splt_w_free_files(wrap->wrap_files, wrap->wrap_files_num);
+  wrap->wrap_files_num = 0;
 }
 

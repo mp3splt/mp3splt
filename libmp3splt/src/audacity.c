@@ -45,159 +45,20 @@ Input splitpoints from audacity.
 
 #include "splt.h"
 
-static int splt_audacity_append_splitpoints(splt_state *state,
-    splt_audacity *previous_aud, splt_audacity *aud, int *append_start_point);
 
-static splt_audacity *splt_audacity_process_line(splt_state *state, char *line,
-    splt_audacity *previous_aud, int *append_start_point, int *error);
-
-static splt_audacity *splt_audacity_new();
-static void splt_audacity_free(splt_audacity **sa);
-
-static int splt_audacity_set_name(splt_audacity *sa, const char *name);
-static void splt_audacity_set_begin(splt_audacity *sa, double begin);
-static void splt_audacity_set_end(splt_audacity *sa, double end);
-
-static long splt_audacity_get_begin(splt_audacity *sa);
-static long splt_audacity_get_end(splt_audacity *sa);
-static const char *splt_audacity_get_name(splt_audacity *sa);
-
-int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *error)
+static long splt_audacity_get_begin(splt_audacity *sa)
 {
-	int tracks = -1;
-
-  if (file == NULL)
-  {
-    *error = SPLT_INVALID_AUDACITY_FILE;
-    return tracks;
-  }
-
-  splt_t_free_splitpoints_tags(state);
-
-  *error = SPLT_AUDACITY_OK;
-
-  splt_c_put_info_message_to_client(state, 
-      _(" reading informations from audacity labels file '%s' ...\n"), file);
-
-	FILE *file_input = NULL;
-
-	if (!(file_input = splt_io_fopen(file, "r")))
-  {
-    splt_e_set_strerror_msg_with_data(state, file);
-    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-    return tracks;
-  }
-
-	if (fseek(file_input, 0, SEEK_SET) != 0)
-  {
-    splt_e_set_strerror_msg_with_data(state, file);
-    *error = SPLT_ERROR_SEEKING_FILE;
-    goto end;
-  }
-
-  int append_begin_point = SPLT_TRUE;
-  int err = SPLT_OK;
-
-  splt_audacity *aud = NULL;
-  splt_audacity *previous_aud = NULL;
-
-  tracks = 0;
-  char *line = NULL;
-  while ((line = splt_io_readline(file_input, error)) != NULL)
-  {
-    if (*error < 0) { goto end; }
-
-    if (splt_su_is_empty_line(line))
-    {
-      free(line);
-      line = NULL;
-      continue;
-    }
-
-    aud = splt_audacity_process_line(state, line, previous_aud,
-        &append_begin_point, &err);
-    if (err < 0) { goto end; }
-
-    if (previous_aud)
-    {
-      splt_audacity_free(&previous_aud);
-    }
-    previous_aud = aud;
-
-    free(line);
-    line = NULL;
-
-    tracks++;
-	}
-
-  if (previous_aud)
-  {
-    err = splt_audacity_append_splitpoints(state, previous_aud, aud, &append_begin_point);
-    if (err < 0) { *error = err; }
-  }
-
-end:
-  if (line)
-  {
-    free(line);
-    line = NULL;
-  }
-
-  if (previous_aud)
-  {
-    splt_audacity_free(&previous_aud);
-  }
-
-  if (fclose(file_input) != 0)
-  {
-    splt_e_set_strerror_msg_with_data(state, file);
-    *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
-  }
-  file_input = NULL;
-
-	return tracks;
+  return sa->begin;
 }
 
-static splt_audacity *splt_audacity_process_line(splt_state *state, char *line,
-    splt_audacity *previous_aud, int *append_begin_point, int *error)
+static long splt_audacity_get_end(splt_audacity *sa)
 {
-  splt_audacity *aud = splt_audacity_new();
-  if (!aud)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return NULL;
-  }
+  return sa->end;
+}
 
-  char *ptr = line;
-
-  errno = 0;
-  splt_audacity_set_begin(aud, strtod(ptr, &ptr));
-  if (errno != 0) {
-    *error = SPLT_INVALID_AUDACITY_FILE;
-    goto error;
-  }
-
-  errno = 0;
-  splt_audacity_set_end(aud, strtod(ptr, &ptr));
-  if (errno != 0)
-  {
-    *error = SPLT_INVALID_AUDACITY_FILE;
-    goto error;
-  }
-
-  ptr = splt_su_trim_spaces(ptr);
-
-  int err = splt_audacity_set_name(aud, ptr);
-  if (err < 0) { *error = err; goto error; }
-
-  err = splt_audacity_append_splitpoints(state, previous_aud, aud, append_begin_point);
-  if (err < 0) { *error = err; goto error; }
-
-  return aud;
-
-error:
-  splt_audacity_free(&aud);
-  return NULL;
+static const char *splt_audacity_get_name(splt_audacity *sa)
+{
+  return sa->name;
 }
 
 static int splt_audacity_append_splitpoints(splt_state *state,
@@ -293,18 +154,141 @@ static void splt_audacity_set_end(splt_audacity *sa, double end)
   sa->end = (long) (floorf(end) * 100.0);
 }
 
-static long splt_audacity_get_begin(splt_audacity *sa)
+static splt_audacity *splt_audacity_process_line(splt_state *state, char *line,
+    splt_audacity *previous_aud, int *append_begin_point, int *error)
 {
-  return sa->begin;
+  splt_audacity *aud = splt_audacity_new();
+  if (!aud)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  char *ptr = line;
+
+  errno = 0;
+  splt_audacity_set_begin(aud, strtod(ptr, &ptr));
+  if (errno != 0) {
+    *error = SPLT_INVALID_AUDACITY_FILE;
+    goto error;
+  }
+
+  errno = 0;
+  splt_audacity_set_end(aud, strtod(ptr, &ptr));
+  if (errno != 0)
+  {
+    *error = SPLT_INVALID_AUDACITY_FILE;
+    goto error;
+  }
+
+  ptr = splt_su_trim_spaces(ptr);
+
+  int err = splt_audacity_set_name(aud, ptr);
+  if (err < 0) { *error = err; goto error; }
+
+  err = splt_audacity_append_splitpoints(state, previous_aud, aud, append_begin_point);
+  if (err < 0) { *error = err; goto error; }
+
+  return aud;
+
+error:
+  splt_audacity_free(&aud);
+  return NULL;
 }
 
-static long splt_audacity_get_end(splt_audacity *sa)
+int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *error)
 {
-  return sa->end;
-}
+	int tracks = -1;
 
-static const char *splt_audacity_get_name(splt_audacity *sa)
-{
-  return sa->name;
+  if (file == NULL)
+  {
+    *error = SPLT_INVALID_AUDACITY_FILE;
+    return tracks;
+  }
+
+  splt_t_free_splitpoints_tags(state);
+
+  *error = SPLT_AUDACITY_OK;
+
+  splt_c_put_info_message_to_client(state, 
+      _(" reading informations from audacity labels file '%s' ...\n"), file);
+
+	FILE *file_input = NULL;
+
+	if (!(file_input = splt_io_fopen(file, "r")))
+  {
+    splt_e_set_strerror_msg_with_data(state, file);
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    return tracks;
+  }
+
+	if (fseek(file_input, 0, SEEK_SET) != 0)
+  {
+    splt_e_set_strerror_msg_with_data(state, file);
+    *error = SPLT_ERROR_SEEKING_FILE;
+    goto end;
+  }
+
+  int append_begin_point = SPLT_TRUE;
+  int err = SPLT_OK;
+
+  splt_audacity *aud = NULL;
+  splt_audacity *previous_aud = NULL;
+
+  tracks = 0;
+  char *line = NULL;
+  while ((line = splt_io_readline(file_input, error)) != NULL)
+  {
+    if (*error < 0) { goto end; }
+
+    if (splt_su_is_empty_line(line))
+    {
+      free(line);
+      line = NULL;
+      continue;
+    }
+
+    aud = splt_audacity_process_line(state, line, previous_aud,
+        &append_begin_point, &err);
+    if (err < 0) { goto end; }
+
+    if (previous_aud)
+    {
+      splt_audacity_free(&previous_aud);
+    }
+    previous_aud = aud;
+
+    free(line);
+    line = NULL;
+
+    tracks++;
+	}
+
+  if (previous_aud)
+  {
+    err = splt_audacity_append_splitpoints(state, previous_aud, aud, &append_begin_point);
+    if (err < 0) { *error = err; }
+  }
+
+end:
+  if (line)
+  {
+    free(line);
+    line = NULL;
+  }
+
+  if (previous_aud)
+  {
+    splt_audacity_free(&previous_aud);
+  }
+
+  if (fclose(file_input) != 0)
+  {
+    splt_e_set_strerror_msg_with_data(state, file);
+    *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+  }
+  file_input = NULL;
+
+	return tracks;
 }
 

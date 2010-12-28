@@ -41,14 +41,6 @@
 
 #include "splt.h"
 
-static int splt_su_append_one(char **str, const char *to_append,
-    size_t to_append_size);
-static void splt_su_clean_string_(splt_state *state, char *s, int *error,
-    int ignore_dirchar);
-static int splt_su_is_illegal_char(char c, int ignore_dirchar);
-static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int),
-    int *error);
-
 void splt_su_replace_all_char(char *str, char to_replace, char replacement)
 {
   if (str == NULL)
@@ -133,6 +125,41 @@ int splt_su_append_str(char **str, const char *to_append, ...)
   return err;
 }
 
+static int splt_su_append_one(char **str, const char *to_append, size_t to_append_size)
+{
+  if (str == NULL || to_append == NULL || to_append[0] == '\0' || to_append_size == 0)
+  {
+    return SPLT_OK;
+  }
+
+  size_t new_size = 0;
+
+  if (*str == NULL)
+  {
+    new_size = to_append_size + 1;
+    *str = malloc(new_size);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+
+    *str[0] = '\0';
+  }
+  else
+  {
+    new_size = to_append_size + strlen(*str) + 1;
+    *str = realloc(*str, new_size);
+    if (*str == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+  }
+
+  strncat(*str, to_append, to_append_size);
+
+  return SPLT_OK;
+}
+
 int splt_su_append(char **str, const char *to_append, ...)
 {
   int err = SPLT_OK;
@@ -196,6 +223,68 @@ int splt_su_copy(const char *src, char **dest)
   snprintf(*dest, length, "%s", src);
 
   return SPLT_OK;
+}
+
+static int splt_su_is_illegal_char(char c, int ignore_dirchar)
+{
+  if ((ignore_dirchar) && (c == SPLT_DIRCHAR))
+  {
+    return SPLT_FALSE;
+  }
+
+  //for the sake of filename portability, we take the the windows illegal
+  //characters (will be changed upon feature request)
+  if ((c == '\\') || (c == '/') || (c == ':') || (c == '*') ||
+      (c == '?') || (c == '"') || (c == '<') ||
+      (c == '>') || (c == '|') || (c == '\r'))
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
+}
+
+static void splt_su_clean_string_(splt_state *state, char *s, int *error, int ignore_dirchar)
+{
+  int i = 0, j=0;
+  char *copy = NULL;
+  if (s)
+  {
+    copy = strdup(s);
+    if (copy)
+    {
+      for (i=0; i<=strlen(copy); i++)
+      {
+        if (! splt_su_is_illegal_char(copy[i], ignore_dirchar))
+        {
+          s[j++] = copy[i];
+        }
+        else
+        {
+          s[j++] = '_';
+        }
+      }
+      free(copy);
+      copy = NULL;
+
+      // Trim string. I will never stop to be surprised about cddb strings dirtiness! ;-)
+      for (i=strlen(s)-1; i >= 0; i--) 
+      {
+        if (s[i]==' ')
+        {
+          s[i] = '\0';
+        }
+        else 
+        {
+          break;
+        }
+      }
+    }
+    else
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+  }
 }
 
 void splt_su_clean_string(splt_state *state, char *s, int *error)
@@ -501,6 +590,33 @@ char *splt_su_get_formatted_message(splt_state *state, char *message, ...)
   return mess;
 }
 
+static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int), int *error)
+{
+  int err = SPLT_OK;
+
+  if (!str)
+  {
+    return NULL;
+  }
+
+  char *result = NULL;
+  err = splt_su_copy(str, &result);
+  if (err < 0)
+  {
+    *error = err;
+    return NULL;
+  }
+
+  int i = 0;
+  for (i = 0;i < strlen(str);i++)
+  {
+    result[i] = conversion_func(str[i]);
+  }
+
+  return result;
+}
+
+
 char *splt_su_convert(const char *str, splt_str_format format, int *error)
 {
   if (str == NULL)
@@ -560,128 +676,5 @@ char *splt_su_convert(const char *str, splt_str_format format, int *error)
   }
 
   return NULL;
-}
-
-static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int), int *error)
-{
-  int err = SPLT_OK;
-
-  if (!str)
-  {
-    return NULL;
-  }
-
-  char *result = NULL;
-  err = splt_su_copy(str, &result);
-  if (err < 0)
-  {
-    *error = err;
-    return NULL;
-  }
-
-  int i = 0;
-  for (i = 0;i < strlen(str);i++)
-  {
-    result[i] = conversion_func(str[i]);
-  }
-
-  return result;
-}
-
-static int splt_su_append_one(char **str, const char *to_append, size_t to_append_size)
-{
-  if (str == NULL || to_append == NULL || to_append[0] == '\0' || to_append_size == 0)
-  {
-    return SPLT_OK;
-  }
-
-  size_t new_size = 0;
-
-  if (*str == NULL)
-  {
-    new_size = to_append_size + 1;
-    *str = malloc(new_size);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-
-    *str[0] = '\0';
-  }
-  else
-  {
-    new_size = to_append_size + strlen(*str) + 1;
-    *str = realloc(*str, new_size);
-    if (*str == NULL)
-    {
-      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
-
-  strncat(*str, to_append, to_append_size);
-
-  return SPLT_OK;
-}
-
-static int splt_su_is_illegal_char(char c, int ignore_dirchar)
-{
-  if ((ignore_dirchar) && (c == SPLT_DIRCHAR))
-  {
-    return SPLT_FALSE;
-  }
-
-  //for the sake of filename portability, we take the the windows illegal
-  //characters (will be changed upon feature request)
-  if ((c == '\\') || (c == '/') || (c == ':') || (c == '*') ||
-      (c == '?') || (c == '"') || (c == '<') ||
-      (c == '>') || (c == '|') || (c == '\r'))
-  {
-    return SPLT_TRUE;
-  }
-
-  return SPLT_FALSE;
-}
-
-static void splt_su_clean_string_(splt_state *state, char *s, int *error, int ignore_dirchar)
-{
-  int i = 0, j=0;
-  char *copy = NULL;
-  if (s)
-  {
-    copy = strdup(s);
-    if (copy)
-    {
-      for (i=0; i<=strlen(copy); i++)
-      {
-        if (! splt_su_is_illegal_char(copy[i], ignore_dirchar))
-        {
-          s[j++] = copy[i];
-        }
-        else
-        {
-          s[j++] = '_';
-        }
-      }
-      free(copy);
-      copy = NULL;
-
-      // Trim string. I will never stop to be surprised about cddb strings dirtiness! ;-)
-      for (i=strlen(s)-1; i >= 0; i--) 
-      {
-        if (s[i]==' ')
-        {
-          s[i] = '\0';
-        }
-        else 
-        {
-          break;
-        }
-      }
-    }
-    else
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    }
-  }
 }
 

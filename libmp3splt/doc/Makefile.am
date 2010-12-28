@@ -3,6 +3,8 @@ EXTRA_DIST = Doxyfile.in
 DOC_DIR=$(HTML_DIR)
 
 if HAVE_DOXYGEN
+html: doc
+
 doc:
 	cat Doxyfile.in >Doxyfile
 if HAVE_GRAPHVIZ
