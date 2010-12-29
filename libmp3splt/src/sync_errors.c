@@ -30,6 +30,21 @@
  *
  *********************************************************/
 
+/*! \file
+
+Handle sync errors and thus ID3 tags
+
+When MP3 was invented there were no plans to include artist, genre and
+similar information there. But there is a mechanism that makes MP3
+players skip broken packets that are detected by "sync errors".
+
+And it is rather easy to fill broken packets with information about
+the current track - which is exactly what id3 tags do. 
+
+So this file handles deliberately broken audio packets - that contain
+plain text and images instead.
+*/
+
 #include "splt.h"
 
 void splt_se_set_sync_errors_default_values(splt_state *state)

@@ -24,6 +24,10 @@
  * 02111-1307, USA.
  *********************************************************/
 
+/*! \file
+
+  The cddb search functionality
+ */
 #include <string.h>
 #include <ctype.h>
 #include <math.h>

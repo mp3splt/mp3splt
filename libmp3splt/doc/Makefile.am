@@ -12,6 +12,9 @@ if HAVE_GRAPHVIZ
 else
 	echo "HAVE_DOT = NO" >> Doxyfile
 endif
+
+	echo "STRIP_FROM_PATH = $(top_builddir)" >> Doxyfile
+
 	@echo "Running doxygen to generate the code documentation"
 	doxygen
 else

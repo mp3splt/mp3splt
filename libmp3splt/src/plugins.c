@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+
+Loading and unloading of plug-ins
+*/
 #include <string.h>
 #include <dirent.h>
 #include <errno.h>

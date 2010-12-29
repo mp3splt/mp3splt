@@ -25,6 +25,10 @@
  * USA.
  *********************************************************/
 
+/*! \file
+
+This file contains all I/O functions this library uses.
+*/
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>

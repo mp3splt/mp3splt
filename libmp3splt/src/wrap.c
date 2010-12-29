@@ -32,9 +32,9 @@
 
 /*! \file
 
-\todo Is this file responsible for splitting files created with
-mp3wrap?
- */
+Automatically split mp3 files created with mp3wrap into the original 
+tracks
+*/
 #include <string.h>
 
 #include "splt.h"

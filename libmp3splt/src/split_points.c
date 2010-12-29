@@ -30,6 +30,11 @@
  *
  *********************************************************/
 
+/*! \file
+
+All functions needed for handling split points (adding to the list,
+checking, of this split point already exists,...)
+*/
 #include <string.h>
 
 #include "splt.h"

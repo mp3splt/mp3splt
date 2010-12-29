@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+
+Handle all options (like split type, silence detection level,...)
+*/
 #include "splt.h"
 
 extern int global_debug;

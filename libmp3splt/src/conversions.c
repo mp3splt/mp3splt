@@ -30,11 +30,17 @@
  *
  *********************************************************/
 
+/*! \file
+
+  All conversions we need (text to hundreths of a second,...)
+
+ */
 #include <math.h>
 #include <string.h>
 
 #include "splt.h"
 
+//! Convert a string to an integer containing the hundreths of a second
 long splt_co_convert_to_hundreths(const char *s)
 {
   long minutes = 0, seconds = 0, hundredths = 0, i = 0;
@@ -73,6 +79,7 @@ long splt_co_convert_to_hundreths(const char *s)
   return hun;
 }
 
+//! Convert a factor to the corresponding dB value
 float splt_co_convert_to_dB(double input)
 {
   float level;
@@ -88,6 +95,7 @@ float splt_co_convert_to_dB(double input)
   return level;
 }
 
+//! Convert a dB value to a factor
 double splt_co_convert_from_dB(float input)
 {
   double amp;
@@ -103,6 +111,7 @@ double splt_co_convert_from_dB(float input)
   return amp;
 }
 
+//! Split a long containing a time value in 1/100s to seconds, mins and 100's
 void splt_co_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *hundr)
 {
   long h = split_hundr % 100;
@@ -123,11 +132,13 @@ void splt_co_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long 
   }
 }
 
+//! Convert float time in fractions of a second to a 1/100 seconds int
 long splt_co_time_to_long(double time)
 {
   return (long) (time * 100.0);
 }
 
+//! Convert float time in fractions of a second to a 1/100 seconds int rounding upwards
 long splt_co_time_to_long_ceil(double time)
 {
   return (long) ceil(time * 100);

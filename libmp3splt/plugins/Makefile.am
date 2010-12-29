@@ -4,7 +4,7 @@ plugin_LTLIBRARIES =
 INCLUDES =
 
 #ccommon_LDFLAGS = -module -export-dynamic -avoid-version
-common_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt
+common_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt -I$(top_srcdir)/src
 common_LDFLAGS = -L$(top_builddir)/src -L$(top_builddir)/src/.libs -L/lib \
    -no-undefined -lm -lmp3splt @LIBINTL@
 

@@ -30,6 +30,12 @@
  *
  *********************************************************/
 
+/*! \file
+
+  All functions needed to handle the array of split points.
+  
+  Growing and shrinking this array is done with realloc().
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

@@ -30,6 +30,11 @@
  *
  *********************************************************/
 
+/*! \file
+
+\todo What does this file do?
+ */
+
 #include <string.h>
 
 #include "splt.h"

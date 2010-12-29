@@ -31,6 +31,7 @@
  *********************************************************/
 
 /*! \file
+
 Actually split the input file
 */
 
@@ -42,7 +43,6 @@ Actually split the input file
 
 /****************************/
 /*! normal split */
-
 static long splt_s_real_split(double splt_beg, double splt_end, 
     int save_end_point, int *error, splt_state *state)
 {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2010-12-18 13:55+0100\n"
+"POT-Creation-Date: 2010-12-28 13:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:702
+#: src/mp3splt.c:766
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:792
+#: src/mp3splt.c:856
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:800
+#: src/mp3splt.c:864
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:820
+#: src/mp3splt.c:884
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -43,118 +43,118 @@ msgstr ""
 msgid "directory does not exists"
 msgstr ""
 
-#: src/cddb.c:59 src/cddb.c:653
+#: src/cddb.c:63 src/cddb.c:657
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:503 src/cddb.c:1089 src/cddb.c:1333 src/cue.c:282
+#: src/cddb.c:507 src/cddb.c:1093 src/cddb.c:1337 src/cue.c:111
 #, c-format
 msgid ""
 "\n"
 "  Artist: %s\n"
 msgstr ""
 
-#: src/cddb.c:519 src/cddb.c:1105 src/cddb.c:1342 src/cue.c:286
+#: src/cddb.c:523 src/cddb.c:1109 src/cddb.c:1346 src/cue.c:115
 #, c-format
 msgid "  Album: %s\n"
 msgstr ""
 
-#: src/cddb.c:640 src/cddb.c:1223 src/cue.c:137
+#: src/cddb.c:644 src/cddb.c:1227 src/cue.c:409
 #, c-format
 msgid ""
 "  Tracks: %d\n"
 "\n"
 msgstr ""
 
-#: src/splt.c:142
+#: src/splt.c:147
 msgid " info: starting normal split\n"
 msgstr ""
 
-#: src/splt.c:229
+#: src/splt.c:234
 msgid " info: starting error mode split\n"
 msgstr ""
 
-#: src/splt.c:537
+#: src/splt.c:544
 msgid " info: starting time mode split\n"
 msgstr ""
 
-#: src/splt.c:554
+#: src/splt.c:563
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr ""
 
-#: src/splt.c:660
+#: src/splt.c:671
 #, c-format
 msgid "YES"
 msgstr ""
 
-#: src/splt.c:664
+#: src/splt.c:675
 #, c-format
 msgid "NO"
 msgstr ""
 
-#: src/splt.c:670
+#: src/splt.c:681
 #, c-format
 msgid "User"
 msgstr ""
 
-#: src/splt.c:674
+#: src/splt.c:685
 #, c-format
 msgid "Auto"
 msgstr ""
 
-#: src/splt.c:680
+#: src/splt.c:691
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: "
 "%s)\n"
 msgstr ""
 
-#: src/splt.c:698
+#: src/splt.c:709
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)\n"
 msgstr ""
 
-#: src/splt.c:728
+#: src/splt.c:739
 #, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 
-#: src/splt.c:740
+#: src/splt.c:751
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr ""
 
-#: src/splt.c:836
+#: src/splt.c:847
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr ""
 
-#: src/splt.c:889
+#: src/splt.c:902
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:945
+#: src/splt.c:959
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
-#: src/utils.c:59
+#: src/utils.c:63
 #, c-format
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:56
+#: src/cue.c:328
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:103
+#: src/cue.c:375
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:226
+#: src/cue.c:565
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
