@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file 
+
+  Parse tags (Artist, Album, Year,...)
+ */
 #include <string.h>
 #include <ctype.h>
 

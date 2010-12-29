@@ -30,6 +30,12 @@
  *
  *********************************************************/
 
+/*! Error handling
+
+Don't use these functions directly. The version of these functions
+that is meant to be used directly are all in mp3splt.c.
+*/
+
 #include <string.h>
 #include <errno.h>
 

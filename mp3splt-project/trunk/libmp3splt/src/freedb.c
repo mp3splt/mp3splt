@@ -24,6 +24,14 @@
  * 02111-1307, USA.
  *********************************************************/
 
+/*! \file 
+
+All functions that are needed in order to do a Freedb search
+
+Don't use these functions directly. The version of these functions
+that is meant to be used directly are all in mp3splt.c.
+*/
+
 #include <string.h>
 #include <unistd.h>
 
@@ -60,7 +68,7 @@
 #define closesocket close
 #endif
 
-//used the base64 algorithm - for proxy (proxy not implemented)
+// The alphabet fpr the base64 algorithm - for proxy (proxy not implemented)
 //
 // Base64 Algorithm: Base64.java v. 1.3.6 by Robert Harder
 // Ported and optimized for C by Matteo Trotta
@@ -116,7 +124,7 @@
 //}
 // End of Base64 Algorithm
 
-//we analyse the freedb2 buffer for the CDs results
+//! we analyse the freedb2 buffer for the CDs results
 static int splt_freedb2_analyse_cd_buffer (char *buf, int size,
     splt_state *state, int *error)
 {
@@ -285,14 +293,18 @@ static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
   return dest;
 }
 
-//search the freedb according to "search"
-//returns possible errors
-//we have possible errors in result
-//search_type can be SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI
-// - it is the search type to perform on the server
-//search_server is the server on which to search for,
-// if search_server == NULL, it will be freedb2.org by default
-//port is the port where to connect to the server; by default is 80
+/*! search the freedb according to "search"
+
+\param state The central structure this library keeps all its data in
+\param search_string The string that is to be searched for
+\param error The error code this action returns in
+\param search_type the type of the search. Can be ert to
+SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI
+\param search_server The URL of the search server or NULL to select
+the default which currently means freedb2.org
+\param port The port on the server. -1 means default (Which should be
+80). 
+*/
 int splt_freedb_process_search(splt_state *state, char *search,
                                int search_type, const char search_server[256],
                                int port)
@@ -537,21 +549,23 @@ function_end1:
   return error;
 }
 
-//must only be called after process_freedb_search
-//returns the cddb file content corresponding to the last search, for
-//the disc_id i (parameter of the function)
-//we return possible error in err
-//result must be freed
-//cddb_get_server is the server from where we get the cddb file
-// -if it's null, we will use freedb2.org
-//the port is 80 by default, is the port where to connect to the server
-//get_type specifies the type of the get 
-// -it can be SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI (that works for both
-//  freedb and freedb2 at the moment - 18_10_06)
-//  or SPLT_FREEDB_GET_FILE_TYPE_CDDB (that only work for freedb at
-//  the moment - 18_10_06)
-//
-//TODO: see when we don't have a valid port or get_type
+/*! must only be called after process_freedb_search
+
+returns the cddb file content corresponding to the last search, for
+the disc_id i (parameter of the function)
+
+\param state The central structure that keeps all data this library
+uses 
+\param error Is set to the error code this action results in
+\param disc_id The freedb disc ID.
+\param cddb_get_type specifies the type of the get:
+  it can be SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI (that works for both
+  freedb and freedb2 at the moment - 18_10_06)
+  or SPLT_FREEDB_GET_FILE_TYPE_CDDB (that only work for freedb at
+  the moment - 18_10_06)
+
+\todo see when we don't have a valid port or get_type
+*/
 char *splt_freedb_get_file(splt_state *state, int i, int *error,
     int get_type, const char cddb_get_server[256], int port)
 {

@@ -286,54 +286,67 @@ struct splt_ssplit {
 /* Structure for the split        */
 
 /**
- * @brief must be documented
+ * @brief The data structure for the progress bar
+
+  The meanings of the values are:
+
+  float  = fraction in percent
+  char * = string (name on the progress bar)
+
  */
 typedef struct splt_progres {
-  //maximum number of characters for the filename(without the
-  //extension) when displaying the progress
-  //warning; default is 40
+  /*!maximum number of characters for the filename
+  
+    (without the extension) when displaying the 
+    progress warning; default is 40 */
   int progress_text_max_char;
-  //filename that we are currently splitting
+  //! Name of the file  we are currently splitting
   char filename_shorted[512];
-  //the current percent of the progress
+  //!the current percent of the progress
   float percent_progress;
-  //the splitpoint that we are currently splitting
+  //!the splitpoint we are currently splitting
   int current_split;
-  //the maximum number of splits
+  //!the maximum number of splits
   int max_splits;
-  //the progress type
-  //can be:
-  //SPLT_PROGRESS_PREPARE
-  //SPLT_PROGRESS_CREATE
-  //SPLT_PROGRESS_SEARCH_SYNC
-  //SPLT_PROGRESS_SCAN_SILENCE
+  /*!the progress bar type
+
+    can be:
+    - SPLT_PROGRESS_PREPARE
+    - SPLT_PROGRESS_CREATE
+    - SPLT_PROGRESS_SEARCH_SYNC
+    - SPLT_PROGRESS_SCAN_SILENCE */
   int progress_type;
-  //infos for the silence split
+  //!infos for the silence split
   int silence_found_tracks;
+  //! The silence leven in dB
   float silence_db_level;
-  //use this variable as you wish
-  //this variable will not be modified by the library
-  //but is 0 at the start
+  /*! use this variable as you wish
+  
+    this variable will not be modified by the library
+    but it will be 0 at the start
+  */
   int user_data;
-  //float = fraction of how much %
-  //char * = name on the progress bar
+  //! A pointer to the callback function
   void (*progress)(struct splt_progres*);
 } splt_progress;
 
-//proxy informations
+//!proxy information
 typedef struct {
-  //if we use proxy or not
+  //! True if we use a proxy
   int use_proxy;
+  //! The name of the proxy
   char hostname[256];
+  //! The port we use to access the procy
   int port;
-  //if we need authentification or not
+  //! True if we need authentification
   int authentification;
-  //the user and password needed for authentification
+  //! the username needed for authentification
   char user[256];
+  //! the password needed for authentification
   char password[256];
 } splt_proxy;
 
-//used with the 'put_message' function
+//!used with the 'put_message' function
 typedef enum {
   /**
    * Info message
@@ -345,40 +358,45 @@ typedef enum {
   SPLT_MESSAGE_DEBUG
 } splt_message_type;
 
+//! The data libmp3splt keeps all its internal data in
 typedef struct {
-  //total time of the song
+  //! total time of the song
   long total_time;
-  //the part of file that we are currently splitting
-  //1 if the first, 2 if the second
-  //the number of splitpoints
+  //!When splitting: the number of the last splitpoint we arrived at.
   int current_split;
-  //for the user feedback: the current split file number
+  //! for user feedback: the number of the file we are splitting
   int current_split_file_number;
-  //how many splits, this will be modified
-  //by check_splitpts_inf_song_length()
-  //to really see how many splitpoints we have
-  //look at real_splitnumber
+  /*! how many split points do we have?
+    
+    this is updated only by
+    check_splitpts_inf_song_length()
+    If this function has not been called
+    look at real_splitnumber instead.
+  */
   int splitnumber;
-  //how many splitpoints we have
+  //!how many splitpoints do we have?
   int real_splitnumber;
-  //put this function if you want that the library
-  //tells you when a file has been split
-  //the char* is the filename
+  /*! Pointer to the fallback function that is 
+      called when the library starts to split
+      a new file.
+      
+      the char* is the filename that is currently
+      being split.
+  */
   void (*file_split)(const char *,int);
-  //for the progress bar
+  //!All infos for the progress bar
   splt_progress *p_bar;
-  //callback for sending the silence level to the client
+  //!callback for sending the silence level to the client
   void (*get_silence_level)(long time, float level, void *user_data);
-  //user data set by the client for the 'get_silence_level' function
+  //!user data set by the client for the 'get_silence_level' function
   void *silence_level_client_data;
-  //sends a message to the main program to tell him what
-  //he is doing; the second parameter is the type of split
+  //!sends a message to the main program to tell what we are doing
   void (*put_message)(const char *, splt_message_type );
-  //structure in which we have all the splitpoints
+  //!structure in which we have all the splitpoints
   splt_point *points;
-  //how many tags we have
+  //!how many tags do we have?
   int real_tagsnumber;
-  //structure in which we have all the tags
+  //!structure in which we have all the tags
   splt_tags *tags;
   splt_tags tags_like_x;
 } splt_struct;
@@ -428,13 +446,15 @@ typedef enum {
  * Values for the #SPLT_OPT_OUTPUT_FILENAMES option
  */
 typedef enum {
-  //output specified by the set_oformat
+  //!output specified by the set_oformat
   SPLT_OUTPUT_FORMAT,
-  //the default output
-  //it depends of the type of the split
+  //!the default output. depends of the type of the split.
   SPLT_OUTPUT_DEFAULT,
-  //we don't change anything, must put the filenames with
-  //the functions set_..
+  /*!we don't change anything
+    
+    Of course we use our internal logic to generate at 
+    least unique names in this case
+  */
   SPLT_OUTPUT_CUSTOM
 } splt_output_filenames_options;
 
@@ -505,108 +525,134 @@ typedef enum {
  */
 #define SPLT_DEFAULT_SILENCE_OUTPUT "@f_silence_@n"
 
-//structure with all the options supplied to split the file
+//!structure with all the options supplied to split the file
 typedef struct {
-  //this can take the following values:
-  //SPLT_OPTION_NORMAL_MODE
-  //SPLT_OPTION_WRAP_MODE
-  //SPLT_OPTION_SILENCE_MODE
-  //SPLT_OPTION_ERROR_MODE
-  //SPLT_OPTION_TIME_MODE
+  /*! this field can take the following values:
+     - SPLT_OPTION_NORMAL_MODE
+     - SPLT_OPTION_WRAP_MODE
+     - SPLT_OPTION_SILENCE_MODE
+     - SPLT_OPTION_ERROR_MODE
+     - SPLT_OPTION_TIME_MODE
+  */
   splt_split_mode_options split_mode;
 
-  //might be:
-  //SPLT_TAGS_ORIGINAL_FILE - write tags from original file
-  //SPLT_NO_TAGS - does not write any tags
-  //SPLT_CURRENT_TAGS - tags issued from the cddb or cue for example
-  //or that we set manually with the functions
+  /*! might be:
+       - SPLT_TAGS_ORIGINAL_FILE - write tags from original file
+       - SPLT_NO_TAGS - does not write any tags
+       - SPLT_CURRENT_TAGS - tags issued from the cddb or cue for example
+       - or be set manually with the functions
+         splt_tags_options tags;
+  */
   splt_tags_options tags;
 
   int xing;
 
-  //defines the output filenames
+  //!defines the output filenames
   splt_output_filenames_options output_filenames;
 
-  //quiet mode: don't perform CRC check or other interaction with the user
+  //!quiet mode: don't perform CRC check or other interaction with the user
   int quiet_mode;
 
-  //Pretend to split the file, without real split: this option works in
-  //all modes except error mode and dewrap split.
+  /*!Pretend to split the file, without real split
+
+    this option works in all modes except error mode and dewrap split. 
+  */
   int pretend_to_split;
 
-  //frame mode (mp3 only). Process all frames, seeking split positions
-  //by counting frames and not with bitrate guessing.
+  /*! frame mode (mp3 only). 
+
+    Process all frames, seeking split positions by counting frames
+    instead of bitrate guessing.
+  */
   int option_frame_mode;
-  //the time of split when split_mode = OPTION_TIME_SPLIT
+  //!the time of split when split_mode = OPTION_TIME_SPLIT
   float split_time;
   long overlap_time;
-  //this option uses silence detection to auto-adjust splitpoints.
+  //!this option uses silence detection to auto-adjust splitpoints.
   int option_auto_adjust;
-  //input not seekable. enabling this allows you to split mp3 and ogg streams
-  //which can be read only one time and canât be seeked.
-  //WARNING!
-  //if you don't know what this means, set it to FALSE
+  /*! True means: input not seekable. 
+
+    enabling this allows you to split mp3 and ogg streams
+    which can be read only one time and canât be seeked.
+    WARNING!
+    if you don't know what this means you know why it is wise
+    to set this to FALSE.
+  */
   int option_input_not_seekable;
 
-  //If this option is SPLT_TRUE, we create directories from the output
-  //file names without parsing for illegal characters the output filenames.
-  //Otherwise, we parse for illegal characters the filenames and replace
-  //them with '_'. The tags are always checked for illegal characters when
-  //set into filenames.
+  /*! SPLT_TRUE= don't patse output filenames for illegal characters.
+
+    Otherwise, we parse for illegal characters the filenames and replace
+    them with '_'. The tags are always checked for illegal characters when
+    set into filenames.
+  */
   int create_dirs_from_filenames;
 
   //PARAMETERS---------------------------------------
   //PARAMETERS for option_auto_adjust and option_silence_mode:
-  //the sound level to be considered silence
-  //(it is a float number between -96 and 0. Default is -48 dB)
+  /*! the sound level to be considered silence
+ 
+   (is a float number between -96 and 0. Default is -48 dB)*/
   float parameter_threshold;
-  //the offset of cutpoint in silence
-  //Float number between -2 and 2 and allows you to adjust the offset
-  //of cutpoint in silence time.0 is the begin of silence, and 1 the
-  //end;default is 0.8. 
+  /*! the offset of cutpoint in silence
+
+    Float number between -2 and 2 and allows you to adjust the offset
+    of cutpoint in silence time.0 is the begin of silence, and 1 the
+    end;default is 0.8. 
+
+    Used for option_auto_adjust and option_silence_mode
+  */
   float parameter_offset;
 
   //PARAMETERS for option_silence_mode:
-  //the desired number of tracks
-  //(positive integer number of tracks to be split;by default all
-  //tracks are split)
+  /*! the desired number of tracks for option_silence_mode
+
+  (positive integer number of tracks to be split;by default all
+  tracks are split)
+  */
   int parameter_number_tracks;
-  //the minimum silence length in seconds
-  //(positive float of the minimum number of seconds to be considered
-  //a valid splitpoint)
+  /*! The minimum silence length for option_silence_mode [in seconds]
+    
+    A positive float of the minimum number of seconds to be considered
+    a valid splitpoint
+  */
   float parameter_minimum_length;
 
-  //possible values are #splt_str_format
+  //!possible values are #splt_str_format
   int artist_tag_format;
-  //possible values are #splt_str_format
+  //!possible values are #splt_str_format
   int album_tag_format;
-  //possible values are #splt_str_format
+  //!possible values are #splt_str_format
   int title_tag_format;
-  //possible values are #splt_str_format
+  //!possible values are #splt_str_format
   int comment_tag_format;
 
-  //replace underscores with space
+  //!true=replace underscores with space
   int replace_underscores_tag_format;
 
-  //allows you to remove the silence between split tracks
+  //!true=remove the silence between split tracks
   int parameter_remove_silence;
 
   //PARAMETERS for option_auto_adjust:
-  //the gap value around splitpoint to search for silence
-  //(positive integer for the time to decode before and after
-  //splitpoint;default gap is 30 seconds)
+  /*! Auto-Adjust: the gap value around splitpoint to search for
+    silence 
+    
+    (positive integer for the time to decode before and after
+    splitpoint;default gap is 30 seconds)
+  */
   int parameter_gap;
 
-  //-if we set all the remaining tags (for which we have no tags structure
-  //like the tag number 'remaining_tags_like_x'
-  //- set to -1 to disable
+  /*! Copy all tags from tag number 'remaining_tags_like_x'
+    
+    set to -1 to disable
+  */
   int remaining_tags_like_x;
 
-  //if to auto increment the tracknumber of the tags
+  //!true=auto-increment the tracknumber of the tags
   int auto_increment_tracknumber_tags;
 
   /**
-   * if we enable the silence points log ('mp3splt.log')
+   * true=enable the silence points log ('mp3splt.log')
    */
   int enable_silence_log;
 
@@ -630,23 +676,21 @@ typedef struct {
 //internal structures
 typedef struct
 {
-  //if we have send the message frame mode enabled
+  //!Do we have send the message frame mode enabled?
   int frame_mode_enabled;
-  //if current_refresh_rate = refresh_rate, we call
-  //the progress callback
+  //!if current_refresh_rate = refresh_rate, we call the progress callback
   int current_refresh_rate;
-  //if set to SPLT_TRUE,
-  //then we don't send messages to clients
+  //! if set to SPLT_TRUE then we don't send messages to clients
   int messages_locked;
-  //if we currently use the library, we lock it
+  //!if we currently use the library, we lock it
   int library_locked;
-  //the new filename path (internal)
+  //!the new filename path (internal)
   char *new_filename_path;
 } splt_internal;
 
-/*
+/**
  * Structure containing information about one plugin.
- * Must be filled up at plugin initialisation.
+ * Is filled with values at plugin initialisation.
  */
 typedef struct
 {
@@ -656,7 +700,7 @@ typedef struct
   char *upper_extension;
 } splt_plugin_info;
 
-//contains pointers to the plugin functions
+//!contains pointers to the plugin functions
 typedef struct {
   int (*check_plugin_is_for_file)(void *state, int *error);
   void (*set_plugin_info)(splt_plugin_info *info, int *error);
@@ -672,104 +716,105 @@ typedef struct {
   void (*end)(void *state, int *error);
 } splt_plugin_func;
 
-//structure containing all the data about one plugin
+//!structure containing all the data about a plugin
 typedef struct
 {
   splt_plugin_info info;
-  //complete filename of the plugin shared object
+  //!complete filename of the plugin shared object
   char *plugin_filename;
-  //plugin handle get with lt_dlopen
-  //-would be closed with lt_dlclose
+  //! plugin handle get with lt_dlopen, used later for lt_dlclose
   void *plugin_handle;
-  //plugin functions
+  //! plugin functions
   splt_plugin_func *func;
 } splt_plugin_data;
 
-//internal plugins structure
+//!internal plugins structure
 typedef struct
 {
-  //directories where we scan for plugins
+  //!directories where we scan for plugins
   char **plugins_scan_dirs;
   int number_of_dirs_to_scan;
-  //the number of plugins found
+  //!the number of plugins found
   int number_of_plugins_found;
-  //data structure about all the plugins
+  //!data structure about all the plugins
   splt_plugin_data *data;
 } splt_plugins;
 
-//structure containing error strings for error messages
+//!structure containing error strings for error messages
 typedef struct
 {
   char *error_data;
   char *strerror_msg;
 } splt_error;
 
-//structure for the splt state
+//!structure for the splt state
 typedef struct {
 
-  //if we cancel split or not
-  //set to SPLT_TRUE cancels the split
+  //!setting to SPLT_TRUE cancels the split
   int cancel_split;
-  //filename to split
+  //!filename to split
   char *fname_to_split;
-  //where the split file will be split
+  //!where the split file will be split
   char *path_of_split;
 
   //if this is non null, we write a m3u from the split files
   char *m3u_filename;
   
-  //setting tags from input filename regex
+  //!setting tags from input filename regex
   char *input_fname_regex;
 
   char *default_comment_tag;
 
-  //tags of the original file to split
+  //!tags of the original file to split
   splt_tags original_tags;
 
-  //options for the split
+  //!options for the split
   splt_options options;
-  //split related
+  //!split related
   splt_struct split;
-  //output format  
+  //!output format  
   splt_oformat oformat;
-  //wrap related
+  //!wrap related
   splt_wrap *wrap;
-  //syncerror related
+  //!syncerror related
   splt_syncerrors *serrors;
-  //counter for the number of sync errors found
-  //-the state->serros->serrors_points_num must be used when processing the
-  //syncerrors from 'serrors' 
-  //-this is just a standalone counter
+  /*! counter for the number of sync errors found
+
+    - the state->serros->serrors_points_num must be used when processing the
+      syncerrors from 'serrors' 
+    - this is just a standalone counter
+  */
   unsigned long syncerrors;
-  //freedb related
+  //!freedb related
   splt_freedb fdb;
 
-  //internal options
+  //!internal options
   splt_internal iopts;
 
-  //see the ssplit structure
+  //!see the ssplit structure
   struct splt_ssplit *silence_list;
 
   //proxy infos
   //splt_proxy proxy;
 
-  //file format states, mp3,ogg..
+  //!file format states, mp3,ogg..
   void *codec;
 
-  //error strings for error code messages
+  //!error strings for error code messages
   splt_error err;
 
-  //plugins structure
+  //!plugins structure
   splt_plugins *plug;
   int current_plugin;
 
-  //filename of the silence log: 'mp3splt.log' in the original mp3splt
+  //!filename of the silence log: 'mp3splt.log' in the original mp3splt
   char *silence_log_fname;
 } splt_state;
 
 /*****************************************/
 /* Confirmations, errors and messages    */
 
+//! All error codes we can generate
 typedef enum {
   SPLT_OK = 0,
 

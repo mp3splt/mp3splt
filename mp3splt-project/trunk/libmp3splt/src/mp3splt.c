@@ -30,7 +30,9 @@
  *
  *********************************************************/
 
-/*! \file All user-accessible functions
+/*! \file 
+
+All user-accessible functions
 
 The functions that are actually meant to be called by the user. If
 this was C++ it would be the "public" section of our object.
@@ -40,12 +42,43 @@ programming in mind: All functions expect the address of the object as
 the first parameter etc. Actually changing the library to be c++
 should therefore not be too hard a task...
  */
+
+/*! \mainpage Using libmp3splt
+
+This is the documentation for the library that stands behind
+mp3splt-gtk and mp3splt.\n
+Features include
+ - losslessly editing mp3 and og files
+ - extensibility to other formats using plug-ins
+ - freedb search
+
+Documentation can be found at several points:
+- A minimal example on how to use this library can be found in \ref test_library.c
+- There is a \ref API
+- For plug-in writers there is a \ref PluginAPI_MP3
+- And --- also for plugin-writers there is a \ref PluginAPI_MP3 as well.
+ */
+
+/*!   \example test_library.c
+
+  A minimal usage example
+ */
+
 #include <sys/stat.h>
 #include <string.h>
 
 #include "splt.h"
 
 int global_debug = SPLT_FALSE;
+
+/*! 
+\defgroup API The API of libmp3splt
+
+This group contains all functions of libmp3splt that are meant to be
+accessed by the user
+
+@{
+*/
 
 /*! Initialisation
 
@@ -1129,7 +1162,7 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
 
 /*! returns the content of a cddb file
 
-must be called after running get_freedb_search
+must only be called \emph{after} running get_freedb_search
 otherwise, it will fail (seg fault!?)
 
 you need to write the cddb entry to the disk in 
@@ -1589,6 +1622,8 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 
   return found_files;
 }
+
+//@}
 
 //! Checks if a name points to a directory
 int mp3splt_u_check_if_directory(const char *fname)

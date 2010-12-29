@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+
+Utilities needed for silence detection.
+*/
 #include "splt.h"
 
 int splt_siu_ssplit_new(struct splt_ssplit **silence_list, 

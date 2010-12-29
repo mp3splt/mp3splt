@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+
+Utilities used by the functions in freedb.c
+ */
 #include <string.h>
 
 #include "splt.h"

@@ -24,6 +24,10 @@
  * 02111-1307,
  * USA.
  *********************************************************/
+/*! \file
+
+The Plug-in that handles mp3 files
+*/
 
 #include <string.h>
 #include <unistd.h>
@@ -43,7 +47,10 @@
 /****************************/
 /* mp3 constants */
 
-//TODO: translation
+/*! The names of all mono/stereo modes supported by mp3 
+
+\todo translation
+*/
 static const char *splt_mp3_chan[] =
 {
 	"Mono",
@@ -53,7 +60,7 @@ static const char *splt_mp3_chan[] =
 	"?"
 };
 
-//layer, bitrate..
+//! The layer- and-bitrate-table
 static const int splt_mp3_tabsel_123[2][3][16] = {
   { {128,32,64,96,128,160,192,224,256,288,320,352,384,416,448,},
     {128,32,48,56, 64, 80, 96,112,128,160,192,224,256,320,384,},
@@ -66,8 +73,10 @@ static const int splt_mp3_tabsel_123[2][3][16] = {
 
 #define DEFAULT_ID3V1_CATEGORY_INDEX 12
 
-//categories of mp3 songs
-//TODO: translation ?
+/*! categories of mp3 songs
+
+\todo Does it make sense to translate them? 
+*/
 static const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
   {"Blues"}, {"Classic Rock"}, {"Country"}, {"Dance"}, 
   {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
@@ -90,6 +99,7 @@ static const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
   {"Musical"},{"Rock & Roll"},{"Hard Rock"}, {"misc"}, {"misc"},
 };
 
+//! A list of genre numbers
 static const char unsigned splt_mp3_id3genre[SPLT_MP3_GENRENUM] = 
 { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
   0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
@@ -98,6 +108,9 @@ static const char unsigned splt_mp3_id3genre[SPLT_MP3_GENRENUM] =
   0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
   0xFF };
 
+/*! A table needed for fast crc32 computation
+
+ */
 static const unsigned long splt_mp3_crctab[256] = {
   0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
   0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
@@ -178,9 +191,13 @@ static void splt_mp3_save_end_point(splt_state *state, splt_mp3_state *mp3state,
   }
 }
 
-//-filename must not be null; if filename is NULL, then this plugin should
-//not have been detected
-//-returns NULL if error
+/*! Open a mp3 file for reading
+
+\attention filename must not be null.
+But it actually should never need to: If filename is NULL, then this
+plugin should not have been detected
+\return NULL on error
+*/
 static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
     int *error)
 {
@@ -207,6 +224,9 @@ static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
   return file_input;
 }
 
+/*! Open a mp3 file for writing
+
+ */
 static FILE *splt_mp3_open_file_write(splt_state *state, const char *output_fname, int *error)
 {
   FILE *file_output = NULL;
@@ -235,6 +255,7 @@ static FILE *splt_mp3_open_file_write(splt_state *state, const char *output_fnam
 /****************************/
 /* CRC functions */
 
+//! Calculate the CRC of an mp3 file
 static unsigned long splt_mp3_c_crc(splt_state *state,
     FILE *in, off_t begin, off_t end, int *error)
 {
@@ -262,20 +283,24 @@ static unsigned long splt_mp3_c_crc(splt_state *state,
 /****************************/
 /* mp3 utils */
 
+//! Initializes a stream frame
 static void splt_mp3_init_stream_frame(splt_mp3_state *mp3state)
 {
   mad_stream_init(&mp3state->stream);
   mad_frame_init(&mp3state->frame);
 }
 
+//! Finishes a stream frame
 static void splt_mp3_finish_stream_frame(splt_mp3_state *mp3state)
 {
   mad_stream_finish(&mp3state->stream);
   mad_frame_finish(&mp3state->frame);
 }
 
-//does nothing important for libmp3splt
-//review this..
+/*! does nothing important for libmp3splt
+
+\todo review this..
+*/
 static void splt_mp3_checksync (splt_mp3_state *mp3state)
 {
   //char junk[32];
@@ -290,7 +315,7 @@ static void splt_mp3_checksync (splt_mp3_state *mp3state)
   //else error("Aborted.",125);
 }
 
-//calculates bitrate
+//!calculates bitrate
 static int splt_mp3_c_bitrate (unsigned long head)
 {
   if ((head & 0xffe00000) != 0xffe00000) return 0;
@@ -305,7 +330,7 @@ static int splt_mp3_c_bitrate (unsigned long head)
   return ((head>>12)&0xf);
 }
 
-//make mp3 header bitrate, padding, offset, framesize
+//!make mp3 header bitrate, padding, offset, framesize
 static struct splt_header splt_mp3_makehead (unsigned long headword, 
     struct splt_mp3 mp3f, struct splt_header head, off_t ptr)
 {
@@ -318,7 +343,7 @@ static struct splt_header splt_mp3_makehead (unsigned long headword,
   return head;
 }
 
-//finds first header from start_pos. Returns -1 if no header is found
+//!finds first header from start_pos. Returns -1 if no header is found
 static off_t splt_mp3_findhead (splt_mp3_state *mp3state, off_t start)
 {
   if (splt_io_get_word(mp3state->file_input, 
@@ -344,7 +369,7 @@ static off_t splt_mp3_findhead (splt_mp3_state *mp3state, off_t start)
   return start;
 }
 
-// Finds first valid header from start. Will work with high probabilty, i hope :)
+//! Finds first valid header from start. Will work with high probabilty, i hope :)
 static off_t splt_mp3_findvalidhead (splt_mp3_state *mp3state, off_t start)
 {
   off_t begin;
@@ -365,7 +390,7 @@ static off_t splt_mp3_findvalidhead (splt_mp3_state *mp3state, off_t start)
   return start;
 }
 
-//finds xing info offset and returns it?
+//!finds xing info offset and returns it?
 static int splt_mp3_xing_info_off(splt_mp3_state *mp3state)
 {
   unsigned long headw = 0;
@@ -385,8 +410,10 @@ static int splt_mp3_xing_info_off(splt_mp3_state *mp3state)
   return 0;
 }
 
-//get a frame
-//-returns a negative value if error
+/*! Get a frame
+
+\return  negative value means: error
+*/
 static int splt_mp3_get_frame(splt_mp3_state *mp3state)
 {
   if(mp3state->stream.buffer==NULL || 
@@ -432,12 +459,23 @@ static int splt_mp3_get_frame(splt_mp3_state *mp3state)
   return mad_frame_decode(&mp3state->frame,&mp3state->stream);
 }
 
-//used by mp3split and mp3_scan_silence
-//gets a frame and checks for its validity
-//returns 1 if ok, -1 if end of file, 0 if nothing ?
-//and -3 if other error; the error will be set in the '*error' parameter
-//sets the mp3state->data_ptr the pointer to the frame
-//and the mp3state->data_len the length of the frame
+/*! used by mp3split and mp3_scan_silence
+
+gets a frame and checks for its validity; sets the mp3state->data_ptr
+the pointer to the frame  and the mp3state->data_len the length of the
+frame 
+
+\param state The central structure libmp3splt keeps all its data in
+\param error Contains the error number for libmp3splt
+
+\return  
+ - 1 if ok, 
+ - -1 if end of file, 
+ - 0 if nothing (???) 
+ - and -3 if other error; 
+ .
+On error the error number will be set in the '*error' parameter
+*/
 static int splt_mp3_get_valid_frame(splt_state *state, int *error)
 {
   splt_mp3_state *mp3state = state->codec;
@@ -494,10 +532,14 @@ static int splt_mp3_get_valid_frame(splt_state *state, int *error)
   return ok;
 }
 
-//search for ID3 v1 tag, "TAG" sequence
-//if found returns offset of mp3 data
-//-else returns 0
-//-we don't check fseeko error
+/*!search for ID3 v1 tag, "TAG" sequence
+
+we don't check fseeko error
+
+\return 
+ - if ID3 v1 Tag is found the offset of mp3 data
+ - else 0
+*/
 static int splt_mp3_getid3v1_offset(FILE *file_input)
 {
   if (fseeko(file_input, (off_t) -128, SEEK_END)==-1)
@@ -513,10 +555,14 @@ static int splt_mp3_getid3v1_offset(FILE *file_input)
   return 0;
 }
 
-//check if there is a ID3v2. 
-//if found, it returns offset of mp3 data.
-//-else returns 0
-//-we don't check fseeko error
+/*!search for ID3 v2 tag sequence
+
+we don't check fseeko error
+
+\return 
+ - if ID3 v1 Tag is found the offset of mp3 data
+ - else 0
+*/
 static off_t splt_mp3_getid3v2_end_offset(FILE *in, off_t start)
 {
   unsigned long oword = 0;
@@ -546,8 +592,10 @@ static off_t splt_mp3_getid3v2_end_offset(FILE *in, off_t start)
   return 0;
 }
 
-//frees the splt_mp3_state structure,
-//used in the splt_t_state_free() function
+/*! frees the splt_mp3_state structure
+
+used by the splt_t_state_free() function
+*/
 static void splt_mp3_state_free(splt_state *state)
 {
   splt_mp3_state *mp3state = state->codec;
@@ -569,7 +617,7 @@ static void splt_mp3_state_free(splt_state *state)
 /****************************/
 /* mp3 tags */
 
-//returns the genre of the song, mp3splt used this in cddb search
+//!returns the genre of the song, mp3splt used this in cddb search
 static unsigned char splt_mp3_getgenre(const char *genre_string)
 {
   if (genre_string == NULL)
@@ -592,8 +640,7 @@ static unsigned char splt_mp3_getgenre(const char *genre_string)
 
 #ifndef NO_ID3TAG
 
-/* get libid3tag original tags */
-
+/*! get libid3tag original tags */
 static id3_byte_t *splt_mp3_get_id3v2_tag_bytes(FILE *file, id3_length_t *length)
 {
   id3_byte_t *bytes = NULL;
@@ -656,8 +703,15 @@ static id3_byte_t *splt_mp3_get_id3v1_tag_bytes(FILE *file, id3_length_t *length
   return bytes;
 }
 
-//returns the tag bytes from file 'filename' and sets the 'tags_version' to
-//the version of the tags
+/*! returns the tag bytes from a file
+
+\param filename the name of the file to search for tags
+\param state The central structure libmp3splt keeps all of its data in
+\param error Contains the error number if an error has occoured
+\param Is filled with the length of the id3 structure
+\param tags_version Is filled with the version of the tag by this function.
+\return The string containing the tags
+*/
 static id3_byte_t *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *filename,
     id3_length_t *length, int *error, int *tags_version)
 {
@@ -718,7 +772,7 @@ end:
   return bytes;
 }
 
-//puts a original field on id3 conforming to frame_type
+//!puts a original field on id3 conforming to frame_type
 static int splt_mp3_put_original_libid3_frame(splt_state *state,
     const struct id3_tag *id3tag, const char *frame_type, int id_type)
 {
@@ -809,7 +863,7 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
   return err;
 }
 
-//macro used only in the following function splt_mp3_get_original_tags
+//!macro used only in the following function splt_mp3_get_original_tags
 #define MP3_VERIFY_ERROR() \
 if (err != SPLT_OK) \
 { \
@@ -817,8 +871,11 @@ if (err != SPLT_OK) \
 goto end; \
 };
 
-//this function puts the original id3 tags if we have libid3tag enabled
-//at compilation time
+/*! this function reads the original id3 tags 
+
+This function only does do anything if we have libid3tag enabled
+at compilation time
+*/
 static void splt_mp3_get_original_tags(const char *filename,
     splt_state *state, int *tag_error)
 {
@@ -881,8 +938,7 @@ end:
   }
 }
 
-/* build ID3 tags */
-
+/*! build ID3 tags */
 void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
     const char *frame_type, int field_number, const char *content, int *error)
 {
@@ -1038,9 +1094,12 @@ error:
 
 #else
 
-//returns a id3v1 buffer as string
-//return must be freed
-//-returns NULL if error
+/*! returns a id3v1 buffer as string
+
+\attention The string this function returns is malloc()'ed and must be
+freed by the caller after use.
+\return The string or NULL on error
+*/
 static char *splt_mp3_build_simple_id3v1(const char *title, const char *artist,
     const char *album, const char *year, unsigned char genre, 
     const char *comment, int track, int *error, unsigned long *number_of_bytes)
@@ -1099,9 +1158,12 @@ static char *splt_mp3_build_simple_id3v1(const char *title, const char *artist,
 }
 #endif
 
-//returns a id3v2 or id3v1 buffer as array of char
-//return must be freed
-//-returns NULL if error
+/*! returns a id3v1 or id3v2 buffer as string
+
+\attention The string this function returns is malloc()'ed and must be
+freed by the caller after use.
+\return The string or NULL on error
+*/
 static char *splt_mp3_build_id3_tags(splt_state *state,
     const char *title, const char *artist,
     const char *album, const char *year, unsigned char genre, 
@@ -1135,8 +1197,12 @@ static char *splt_mp3_build_id3_tags(splt_state *state,
   return id;
 }
 
-//put the song tags
-//return a buffer containing the tags: must be freed
+/*! put the song tags
+
+\return a buffer containing the tags
+\attention The string this function returns is malloc()'ed and must be
+freed by the caller after use.
+*/
 static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *error,
     unsigned long *number_of_bytes, int id3_version)
 {
@@ -1159,7 +1225,7 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
   return id3_data;
 }
 
-//writes id3v1 tags to 'file_output'
+//!writes id3v1 tags to 'file_output'
 int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output,
     const char *output_fname)
 {
@@ -1234,7 +1300,7 @@ int splt_mp3_write_id3v2_tags(splt_state *state, FILE *file_output,
 }
 #endif
 
-//returns the output tags version
+//!returns the output tags version
 int splt_mp3_get_output_tags_version(splt_state *state)
 {
 #ifdef NO_ID3TAG
@@ -1269,10 +1335,14 @@ int splt_mp3_get_output_tags_version(splt_state *state)
 /****************************/
 /* mp3 infos */
 
-//puts in the state informations about mp3 file
-//must be called before splt_mp3_split()
-//enables framemode if xing header found 
-//xing header is often associated with VBR (variable bit rate)
+/*! Reads all information about a mp3 file
+
+The information is put into the "state" structure.
+
+ - This function must be called before splt_mp3_split()
+ - enables framemode if xing header is found 
+ - xing header is often associated with VBR (variable bit rate)
+*/
 static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
     int framemode, int *error)
 {
@@ -1505,6 +1575,7 @@ function_end:
   return mp3state;
 }
 
+//! End writing a mp3 file
 static void splt_mp3_end(splt_state *state, int *error)
 {
   splt_mp3_state *mp3state = state->codec;
@@ -1529,7 +1600,7 @@ static void splt_mp3_end(splt_state *state, int *error)
   state->codec = NULL;
 }
 
-//gets the mp3 info and puts it in the state
+//!gets the mp3 info and puts it in the state
 static void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 {
   //checks if valid mp3 file
@@ -1598,9 +1669,16 @@ static void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
 /****************************/
 /* mp3 scan for silence */
 
-//used by mp3_scan_silence, and compare with threshold, returns 0 if
-//silence spot > threshold, 1 otherwise
-//-computes one frame
+/*!  Compare the noise level with threshold
+
+Used by mp3_scan_silence
+
+\return 
+ - 0 if silence spot > threshold, 
+ - 1 otherwise
+
+Always computes only one frame
+*/
 static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t threshold)
 {
   int i, j;
@@ -1625,9 +1703,16 @@ static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t 
   return silence;
 }
 
-//scan for silence
-//-returns the number of silence points found
-//and -1 if error; the error is set in the '*error' parameter
+/*! scan for silence
+
+\return 
+ - the number of silence points found
+ - -1 on error
+\param state The central structure libmp3splt keeps all of its data in
+\param error Contains the error number if an error has occoured
+\param length The time length to scan [in seconds]
+\param threshold The threshold that tells noise from silence
+*/
 static int splt_mp3_scan_silence(splt_state *state, off_t begin, 
     unsigned long length, float threshold, 
     float min, short output, int *error)
@@ -1840,11 +1925,18 @@ static off_t splt_mp3_write_data_ptr(splt_state *state, const char *filename,
 }
 
 
-//used for the mp3 sync errors, dewrap and mp3 seekable split(for header)
-//returns 0 if no errors, SPLT_ defined errors if ones
-//It justs copies the data of the input file from a begin offset
-//to an end offset, and, eventually, a Xing frame (for VBR)
-//at the beginning and a ID3v1 at the end, to an outputfile.
+/*! Copies a file portion to the output
+
+Justs copies the data of the input file from a begin offset
+to an end offset, and, eventually, a Xing frame (for VBR)
+at the beginning and a ID3v1 at the end, to an outputfile.
+
+used for the mp3 sync errors, dewrap and mp3 seekable split(for header)
+
+\return 
+ - 0 if no errors, 
+ - SPLT_ defined errors on error.
+*/
 static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
     off_t begin, off_t end, int do_write_tags, short write_first_frame)
 {
@@ -2061,16 +2153,21 @@ function_end:
   return error;
 }
 
-//the main mp3 split function
-//filename is our filename
-//state is our state
-//fbegin_sec is the begin splitpoint
-//fend_sec is the end splitpoint
-//adjustoption is if we adjust with silence detection or not
-//seekable is if we split in seekable mode or not
-//threshold - see manual
-//must be called after splt_mp3_info()
-//returns possible error in '*error'
+/*!  the main mp3 split function
+
+\param filename our filename
+\param fbegin_sec the begin splitpoint
+\param fend_sec the end splitpoint
+\param adjustoption True if we want to fine-tune split points using
+silence detection 
+\param seekable True if the input file is seekable
+\param threshold See manual
+\param state The central structure libmp3splt keeps all its data in
+\param error The error code if there has been an error
+\return The number of seconds we ended our task at
+\attention splt_mp3_info() must be called before calling this function 
+*/
+
 static double splt_mp3_split(const char *output_fname, splt_state *state,
     double fbegin_sec, double fend_sec, int *error, int save_end_point)
 {
@@ -2815,7 +2912,8 @@ bloc_end2:
 /****************************/
 /* mp3 syncerror */
 
-//this function is searching for the id3v1 and id3v2 and returns the offset
+/*! this function searches for the id3v1 and id3v2 and returns the offset
+*/
 static off_t splt_mp3_adjustsync(splt_mp3_state *mp3state, off_t begin, off_t end)
 {
   off_t position;
@@ -2874,8 +2972,7 @@ static off_t splt_mp3_adjustsync(splt_mp3_state *mp3state, off_t begin, off_t en
   return end;
 }
 
-//the function counts the number of sync error splits, 
-//and sets the offsets
+//!This function counts the number of sync error splits and sets the offsets
 static void splt_mp3_syncerror_search(splt_state *state, int *error)
 {
   off_t offset = 0;
@@ -2979,13 +3076,17 @@ static void splt_mp3_syncerror_search(splt_state *state, int *error)
 /****************************/
 /* mp3 dewrap */
 
+//! The header that tells this album was generated with mp3wrap
 static const unsigned char splt_mp3_albumwraphead[22] =
 {
   0xa, 0x23, 0x54, 0x49, 0x54, 0x32, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x41, 0x6c, 0x62, 0x75, 0x6d, 0x57, 0x72, 0x61, 0x70,
 };
 
-//this function dewraps a file
-//we return the possible error in the process_result parameter
+/*! this function dewraps a file
+
+\param state The central structure libmp3splt keeps all its data in
+\param error The error code if there has been an error
+*/
 static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_state *state)
 {
   if (listonly)
@@ -3523,6 +3624,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
   }
 }
 
+//! Initialize this plugin
 void splt_mp3_init(splt_state *state, int *error)
 {
   FILE *file_input = NULL;
@@ -3549,11 +3651,18 @@ void splt_mp3_init(splt_state *state, int *error)
   }
 }
 
-/****************************/
-/* External plugin API */
+/*! 
+\defgroup PluginAPI_MP3 The MP3 plugin's API
 
-//returns the plugin infos (name, version, extension)
-//-alloced data in splt_plugin_info will be freed at the end of the program
+@{
+*/
+
+/*! Plugin API: returns the plugin infos (name, version, extension)
+
+alloced data in splt_plugin_info will be freed by splt_t_state_free()
+at the end of the program 
+*/
+
 void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
 {
   float plugin_version = 1.0;
@@ -3588,6 +3697,7 @@ void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
   info->upper_extension = splt_su_convert(info->extension, SPLT_TO_UPPERCASE, error);
 }
 
+//! Plugin API: Initialize this plugin
 void splt_pl_init(splt_state *state, int *error)
 {
   if (splt_io_input_is_stdin(state))
@@ -3603,6 +3713,7 @@ void splt_pl_init(splt_state *state, int *error)
   splt_mp3_init(state, error);
 }
 
+//! Plugin API: Uninitialize this plugin
 void splt_pl_end(splt_state *state, int *error)
 {
   //put infos about the frames processed and the number of sync errors
@@ -3630,7 +3741,7 @@ void splt_pl_end(splt_state *state, int *error)
   splt_mp3_end(state, error);
 }
 
-//check if file is mp3
+//! Plugin API: check if file can be handled by this plugin
 int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
 {
   char *filename = splt_t_get_filename_to_split(state);
@@ -3659,14 +3770,14 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
   return is_mp3;
 }
 
-//search for syncerrors
+//! Plugin API: search for syncerrors
 void splt_pl_search_syncerrors(splt_state *state, int *error)
 {
   //we detect sync errors
   splt_mp3_syncerror_search(state, error);
 }
 
-//get wrap files or dewrap
+//! Plugin API: get wrap files or dewrap
 void splt_pl_dewrap(splt_state *state, int listonly, const char *dir, int *error)
 {
   splt_w_wrap_free(state);
@@ -3679,6 +3790,7 @@ double splt_pl_split(splt_state *state, const char *final_fname,
   return splt_mp3_split(final_fname, state, begin_point, end_point, error, save_end_point);
 }
 
+//! Plugin API: Output a portion of the file
 int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off_t end)
 {
   int error = SPLT_OK;
@@ -3698,6 +3810,7 @@ int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off
   return error;
 }
 
+//! Plugin API: Scan for silence
 int splt_pl_scan_silence(splt_state *state, int *error)
 {
   float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
@@ -3714,6 +3827,7 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   return found;
 }
 
+//! Plugin API: Read the original Tags from the file
 void splt_pl_set_original_tags(splt_state *state, int *error)
 {
   splt_d_print_debug(state, "Getting original tags ...");
@@ -3726,3 +3840,4 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 #endif
 }
 
+//@}

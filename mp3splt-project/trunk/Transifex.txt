@@ -24,7 +24,8 @@ tx push -t
 
 5) PUSHING THE CURRENT LIST OF UNTRANSLATED STRINGS TO THE SERVER
 This step should not be necessary as long as the server is able
-to automatically the source files for our translations. It it 
-still is - the command to transfer these sources manually is:
+to automatically fetch the source files for our translations from 
+our svn server. It it still is - the command to transfer these 
+sources manually is:
 tx push -s
 

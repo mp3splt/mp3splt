@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+
+\todo What is a split pair?
+*/
 #include "splt.h"
 
 splt_pair *splt_pair_new(void *first, void *second)

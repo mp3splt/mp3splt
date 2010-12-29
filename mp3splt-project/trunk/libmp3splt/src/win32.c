@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+
+  Utilities that are needed when we want to talk to win32.
+ */
 #ifdef __WIN32__
 
 #include "splt.h"

@@ -32,6 +32,10 @@
 
 #include "splt.h"
 
+/*! \file 
+
+Miscelaneous utilities.
+ */
 int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int current_split)
 {
   int err = splt_tu_set_tags_in_tags(state, current_split);
@@ -60,6 +64,14 @@ void splt_u_print_overlap_time(splt_state *state)
       mins, secs, hundr);
 }
 
+/*! Is a time value [in seconds] after the end of our file?
+
+\param fend_sec The time [in seconds] we have to compare with the end
+of file 
+\param state The central structure that keeps all data for this library.
+
+\return SPLT_TRUE or SPLT_FALSE
+*/
 short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state, double fend_sec)
 {
   double total_time = splt_t_get_total_time_as_double_secs(state);

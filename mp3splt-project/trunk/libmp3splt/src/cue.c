@@ -25,6 +25,7 @@
  *********************************************************/
 
 /*!\file
+
 All that is needed in order to be able to read and write cue files.
  */
 #include <string.h>

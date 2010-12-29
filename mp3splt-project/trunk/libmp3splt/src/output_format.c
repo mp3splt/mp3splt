@@ -30,6 +30,10 @@
  *
  *********************************************************/
 
+/*! \file
+
+The format of output file names
+*/
 #include <string.h>
 #include <math.h>
 
