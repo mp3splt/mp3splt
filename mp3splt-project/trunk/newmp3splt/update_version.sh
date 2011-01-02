@@ -37,10 +37,10 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 sed -i "s/\[ AC_MSG_ERROR(libmp3splt version .* needed/\
 \[ AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
 #source code
-#./src/mp3splt.c:#define VERSION "2.2"
-sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/mp3splt.c || exit 1
-#./src/mp3splt.c:#define MP3SPLT_DATE "14/04/2006"
-sed -i "s/#define MP3SPLT_DATE \".*\"/#define MP3SPLT_DATE \"$DATE\"/" ./src/mp3splt.c || exit 1
+#./src/common.h:#define VERSION "2.2"
+sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/common.h || exit 1
+#./src/common.h:#define MP3SPLT_DATE "14/04/2006"
+sed -i "s/#define MP3SPLT_DATE \".*\"/#define MP3SPLT_DATE \"$DATE\"/" ./src/common.h || exit 1
 
 #slackware description
 cd ./slackware
