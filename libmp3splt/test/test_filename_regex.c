@@ -1,9 +1,9 @@
 #include <cutter.h>
 
-#include <libmp3splt/mp3splt.h>
-#include <libmp3splt/options.h>
-#include <libmp3splt/filename_regex.h>
-#include <libmp3splt/tags_utils.h>
+#include "libmp3splt/mp3splt.h"
+#include "options.h"
+#include "filename_regex.h"
+#include "tags_utils.h"
 
 #include "tests.h"
 
@@ -38,7 +38,7 @@ void test_all_fields_no_conversion()
 
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
 
   cut_assert_equal_string("artist", tags->artist);
   cut_assert_equal_string("geek", tags->title);
@@ -62,7 +62,7 @@ void test_all_fields_to_uppercase()
 
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
 
   cut_assert_equal_string("ARTIST", tags->artist);
   cut_assert_equal_string("GEEK", tags->title);
@@ -86,7 +86,7 @@ void test_all_fields_to_lowercase()
 
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
 
   cut_assert_equal_string("artist", tags->artist);
   cut_assert_equal_string("geek", tags->title);
@@ -110,7 +110,7 @@ void test_all_fields_to_first_uppercase()
 
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
 
   cut_assert_equal_string("ArTist good", tags->artist);
   cut_assert_equal_string("GEEK", tags->title);
@@ -134,7 +134,7 @@ void test_all_fields_to_word_first_uppercase()
 
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
 
   cut_assert_equal_string("ArTist Good", tags->artist);
   cut_assert_equal_string("GEEK Y", tags->title);
@@ -153,7 +153,7 @@ void test_invalid_regex()
 
   cut_assert_equal_int(SPLT_INVALID_REGEX, error);
   mp3splt_assert_equal_error_message(state, error, 
-      " regular expression error: '@2: unrecognized character after (? or (?-'");
+      " regular expression error: @2: unrecognized character after (? or (?-");
 }
 
 void test_no_regex_match()
@@ -171,7 +171,7 @@ void test_no_title_with_total_tracks()
       "track (?<tracknum>.*?) of (?<tracks>.*)",
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
   cut_assert_equal_string("Track 3 of 6", tags->title);
   cut_assert_equal_int(3, tags->track);
   //tags->total_tracks
@@ -183,7 +183,7 @@ void test_no_title_no_total_tracks()
       "track (?<tracknum>.*)",
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
   cut_assert_equal_string("Track 3", tags->title);
   cut_assert_equal_int(3, tags->track);
 }
@@ -194,7 +194,7 @@ void test_default_comment()
       "track (?<tracknum>.*)",
       "default_comment", &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
   cut_assert_equal_string("default_comment", tags->comment);
 }
 
@@ -213,7 +213,7 @@ void test_mixed_formats()
 
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
 
   cut_assert_equal_string("ARTIST_GOOD", tags->artist);
   cut_assert_equal_string("geek", tags->title);
@@ -242,7 +242,7 @@ void test_with_replace_underscores()
 
       NO_DEFAULT_COMMENT, &error);
 
-  cut_assert_equal_int(SPLT_OK, error);
+  cut_assert_equal_int(SPLT_REGEX_OK, error);
 
   cut_assert_equal_string("ARTIST GOOD", tags->artist);
   cut_assert_equal_string("ge ek", tags->title);

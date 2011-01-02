@@ -55,6 +55,7 @@
 #include "widgets_helper.h"
 #include "combo_helper.h"
 #include "radio_helper.h"
+#include "options_manager.h"
 
 /*! The name of the output directory.
   
@@ -118,7 +119,7 @@ GtkComboBox *title_text_properties_combo = NULL;
 GtkComboBox *comment_text_properties_combo = NULL;
 GtkWidget *comment_tag_entry = NULL;
 GtkWidget *regex_entry = NULL;
-GtkWidget *test_regex_entry = NULL;
+GtkWidget *test_regex_fname_entry = NULL;
 GtkWidget *sample_result_label = NULL;
 
 GtkWidget *extract_tags_box = NULL;
@@ -133,6 +134,7 @@ extern GtkWidget *spinner_time;
 extern GtkWidget *spinner_equal_tracks;
 
 static GtkWidget *create_extract_tags_from_filename_options_box();
+static GtkWidget *create_test_regex_table();
 
 /*!Returns the selected language
 
@@ -148,14 +150,14 @@ GString *get_checked_language()
   our_button = (GtkWidget *)g_slist_nth_data(radio_button_list, 0);
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(our_button)))
   {
-    return g_string_new("de");
+    return g_string_new("de_DE");
   }
   else 
   {
     our_button = (GtkWidget *)g_slist_nth_data(radio_button_list, 1);
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(our_button)))
     {
-      return g_string_new("fr");
+      return g_string_new("fr_FR");
     }
   }
 
@@ -319,6 +321,9 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //regex to parse filename into tags
   g_key_file_set_string(my_key_file, "split", "tags_from_filename_regex",
       gtk_entry_get_text(GTK_ENTRY(regex_entry)));
+
+  g_key_file_set_string(my_key_file, "split", "test_regex_fname",
+      gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry)));
 
   //tags version
   g_key_file_set_integer(my_key_file, "split", "tags_version",
@@ -950,9 +955,95 @@ static GtkComboBox *create_text_preferences_combo()
   return combo;
 }
 
+void test_regex_event(GtkWidget *widget, gpointer data)
+{
+  put_tags_from_filename_regex_options();
+  const gchar *test_regex_filename = gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry));
+  mp3splt_set_filename_to_split(the_state, test_regex_filename);
+
+  gint error = SPLT_OK;
+  splt_tags *tags = mp3splt_parse_filename_regex(the_state, &error);
+  print_status_bar_confirmation(error);
+
+  if (error >= 0)
+  {
+    GString *regex_result = g_string_new(NULL);
+
+    g_string_append(regex_result, _("<artist>: "));
+    if (tags->artist)
+    {
+      g_string_append(regex_result, tags->artist);
+    }
+    g_string_append(regex_result, "\n");
+
+    g_string_append(regex_result, _("<album>: "));
+    if (tags->album)
+    {
+      g_string_append(regex_result, tags->album);
+    }
+    g_string_append(regex_result, "\n");
+
+
+    g_string_append(regex_result, _("<title>: "));
+    if (tags->title)
+    {
+      g_string_append(regex_result, tags->title);
+    }
+    g_string_append(regex_result, "\n");
+
+    g_string_append(regex_result, _("<comment>: "));
+    if (tags->comment)
+    {
+      g_string_append(regex_result, tags->comment);
+    }
+    g_string_append(regex_result, "\n");
+
+    g_string_append(regex_result, _("<year>: "));
+    if (tags->year)
+    {
+      g_string_append(regex_result, tags->year);
+    }
+    g_string_append(regex_result, "\n");
+
+    g_string_append(regex_result, _("<track>: "));
+    if (tags->track >= 0)
+    {
+      g_string_append_printf(regex_result, "%d", tags->track);
+    }
+
+    gchar *regex_result_text = g_string_free(regex_result, FALSE);
+    if (regex_result_text)
+    {
+      gtk_label_set_text(GTK_LABEL(sample_result_label), regex_result_text);
+      g_free(regex_result_text);
+    }
+  }
+  else
+  {
+    gtk_label_set_text(GTK_LABEL(sample_result_label), "");
+  }
+
+  mp3splt_free_one_tag(tags);
+}
+
 static GtkWidget *create_extract_tags_from_filename_options_box()
 {
   GtkWidget *table = wh_new_table();
+
+  regex_entry = wh_new_entry(save_preferences);
+  wh_add_in_table_with_label_expand(table, _("Regular expression:"), regex_entry);
+
+  GtkWidget *regex_label = gtk_label_new(_(
+        "Above enter PERL-like regular expression using named subgroups.\nFollowing names are recognized:\n"
+        "    (?<artist>)    - artist name\n"
+        "    (?<album>)    - album title\n"
+        "    (?<title>)    - track title\n"
+        "    (?<tracknum>) - current track number\n"
+        //"    (?<tracks>)   - total number of tracks\n"
+        "    (?<year>)     - year of emission\n"
+        "    (?<comment>)  - comment"));
+  gtk_misc_set_alignment(GTK_MISC(regex_label), 0.0, 0.5);
+  wh_add_in_table(table, wh_put_in_new_hbox_with_margin_level(regex_label, 2));
 
   text_options_list =
     g_list_append(text_options_list, GINT_TO_POINTER(SPLT_NO_CONVERSION));
@@ -993,31 +1084,30 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
   comment_tag_entry = wh_new_entry(save_preferences);
   wh_add_in_table_with_label_expand(table, _("Comment tag:"), comment_tag_entry);
 
-  regex_entry = wh_new_entry(save_preferences);
-  wh_add_in_table_with_label_expand(table, _("Regular expression:"), regex_entry);
+  GtkWidget *test_regex_expander = gtk_expander_new(_("Regular expression test"));
+  gtk_container_add(GTK_CONTAINER(test_regex_expander), create_test_regex_table());
+  wh_add_in_table(table, test_regex_expander);
 
-  GtkWidget *regex_label = gtk_label_new(_(
-        "Above enter PERL-like regular expression using named subgroups.\nFollowing names are recognized:\n"
-        "    (?<artist>)    - artist name\n"
-        "    (?<album>)    - album title\n"
-        "    (?<title>)    - track title\n"
-        "    (?<tracknum>) - current track number\n"
-        "    (?<tracks>)   - total number of tracks\n"
-        "    (?<year>)     - year of emission\n"
-        "    (?<comment>)  - comment"));
-  gtk_misc_set_alignment(GTK_MISC(regex_label), 0.0, 0.5);
-  wh_add_in_table(table, wh_put_in_new_hbox_with_margin_level(regex_label, 2));
+  return wh_put_in_new_hbox_with_margin_level(GTK_WIDGET(table), 3);
+}
+
+static GtkWidget *create_test_regex_table()
+{
+  GtkWidget *table = wh_new_table();
 
   GtkWidget *sample_test_hbox = gtk_hbox_new(FALSE, 0);
-  test_regex_entry = wh_new_entry(save_preferences);
-  gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_entry, TRUE, TRUE, 5);
+  test_regex_fname_entry = wh_new_entry(save_preferences);
+  gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_fname_entry, TRUE, TRUE, 0);
 
-  GtkWidget *test_regex_button = wh_new_button(_("Test"));
+  GtkWidget *test_regex_button = wh_new_button(_("_Test"));
   gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_button, FALSE, FALSE, 5);
+  g_signal_connect(G_OBJECT(test_regex_button), "clicked",
+      G_CALLBACK(test_regex_event), NULL);
 
   wh_add_in_table_with_label_expand(table, _("Sample filename:"), sample_test_hbox);
 
   sample_result_label = gtk_label_new("");
+  gtk_misc_set_alignment(GTK_MISC(sample_result_label), 0.0, 0.5);
   wh_add_in_table_with_label_expand(table, _("Sample result:"), sample_result_label);
 
   return wh_put_in_new_hbox_with_margin_level(GTK_WIDGET(table), 3);
@@ -1070,11 +1160,11 @@ GtkWidget *create_pref_tags_page()
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
   gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 10);
 
-  GtkWidget *tags_opts_box = create_tags_options_box();
-  gtk_box_pack_start(GTK_BOX(vbox), tags_opts_box, FALSE, FALSE, 10);
-
   GtkWidget *tags_version_box = create_tags_version_box();
-  gtk_box_pack_start(GTK_BOX(vbox), tags_version_box, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), tags_version_box, FALSE, FALSE, 10);
+
+  GtkWidget *tags_opts_box = create_tags_options_box();
+  gtk_box_pack_start(GTK_BOX(vbox), tags_opts_box, FALSE, FALSE, 0);
   
   return outside_vbox;
 }

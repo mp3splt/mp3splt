@@ -42,17 +42,11 @@
 void splt_tp_put_tags_from_filename(splt_state *state, int *error)
 {
 #ifndef NO_PCRE
-  char *regex = splt_t_get_input_filename_regex(state);
-  const char *fname_to_split =
-    splt_su_get_fname_without_path(splt_t_get_filename_to_split(state));
-  char *default_comment = splt_t_get_default_comment_tag(state);
-
-  splt_tags *tags =
-    splt_fr_parse(state, fname_to_split, regex, default_comment, error);
+  splt_tags *tags = splt_fr_parse_from_state(state, error);
   if (*error < 0) { return; }
 
-  splt_su_get_formatted_message(state,
-      "%%[@a=%s,@b=%s,@t=%s,@y=%s,@c=%s,@n=%d]",
+  char *tags_format = splt_su_get_formatted_message(state,
+      "%%[@o,@a=%s,@b=%s,@t=%s,@y=%s,@c=%s,@n=%d]",
       tags->artist,
       tags->album,
       tags->title,
@@ -60,9 +54,20 @@ void splt_tp_put_tags_from_filename(splt_state *state, int *error)
       tags->comment,
       tags->track);
 
+  if (tags_format == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    splt_tu_free_one_tags(tags);
+    return;
+  }
+
+  splt_tp_put_tags_from_string(state, tags_format, error);
+  free(tags_format);
+
   splt_tu_free_one_tags(tags);
 #else
-  //TODO: no pcre error ?
+  splt_c_put_info_message_to_client(state,
+      _(" warning: cannot set tags from filename regular expression - compiled without pcre support\n"));
 #endif
 }
 

@@ -24,7 +24,7 @@ else
   put_package "cross_windows_installer"
 fi
 
-LANGUAGES="fr de"
+LANGUAGES="fr_FR de_DE"
 
 for lang in $LANGUAGES;do
   mkdir -p ../../translations/${lang}/translations/$lang/LC_MESSAGES
@@ -430,12 +430,12 @@ SubSection "Translations" translations_section
 
 start_section "French" "french_translation_section" "yes"
 set_out_path '$INSTDIR'
-recursive_copy_files_from_directory "../../translations/fr" "translations"
+recursive_copy_files_from_directory "../../translations/fr_FR" "translations"
 end_section "french_translation_section" "yes"
 
 start_section "German" "german_translation_section" "yes"
 set_out_path '$INSTDIR'
-recursive_copy_files_from_directory "../../translations/de" "translations"
+recursive_copy_files_from_directory "../../translations/de_DE" "translations"
 end_section "german_translation_section" "yes"
 
 echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE

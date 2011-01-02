@@ -140,7 +140,7 @@ and don't forget to call it.
  our library
 */
 void mp3splt_free_state(splt_state *state, int *error)
-{  
+{
   int erro = SPLT_OK;
   int *err = &erro;
   if (error != NULL) { err = error; }
@@ -862,16 +862,20 @@ int mp3splt_split(splt_state *state)
         splt_tp_put_tags_from_string(state, SPLT_ORIGINAL_TAGS_DEFAULT, &error);
         if (error < 0)
         {
-          splt_p_end(state, &error);
+          int e;
+          splt_p_end(state, &e);
           goto function_end;
         }
       }
       else if (tags_option == SPLT_TAGS_FROM_FILENAME_REGEX)
       {
-        splt_tp_put_tags_from_filename(state, &error);
-        if (error < 0)
+        int regex_error;
+        splt_tp_put_tags_from_filename(state, &regex_error);
+        if (regex_error < 0)
         {
-          splt_p_end(state, &error);
+          error = regex_error;
+          int e;
+          splt_p_end(state, &e);
           goto function_end;
         }
       }
@@ -1629,5 +1633,40 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 int mp3splt_u_check_if_directory(const char *fname)
 {
   return splt_io_check_if_directory(fname);
+}
+
+void mp3splt_free_one_tag(splt_tags *tags)
+{
+  splt_tu_free_one_tags(tags);
+}
+
+splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error)
+{
+  splt_tags *tags = NULL;
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  if (state != NULL)
+  {
+    if (!splt_o_library_locked(state))
+    {
+      splt_o_lock_library(state);
+
+      tags = splt_fr_parse_from_state(state, error);
+
+      splt_o_unlock_library(state);
+    }
+    else
+    {
+      *err = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    *err = SPLT_ERROR_STATE_NULL;
+  }
+
+  return tags;
 }
 

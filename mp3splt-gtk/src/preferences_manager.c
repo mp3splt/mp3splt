@@ -85,6 +85,7 @@ extern GtkComboBox *title_text_properties_combo;
 extern GtkComboBox *comment_text_properties_combo;
 extern GtkWidget *comment_tag_entry;
 extern GtkWidget *regex_entry;
+extern GtkWidget *test_regex_fname_entry;
 
 /*! Get the name of the preferences file.
 
@@ -195,11 +196,13 @@ void load_preferences()
 
   //0 = german, 1 = french, 2 = english
   gint list_number = 2;
-  if (g_string_equal(lang,g_string_new("de")))
+  if (g_string_equal(lang,g_string_new("de")) ||
+      g_string_equal(lang,g_string_new("de_DE")))
   {
     list_number = 0;
   }
-  else if (g_string_equal(lang, g_string_new("fr")))
+  else if (g_string_equal(lang, g_string_new("fr")) ||
+      g_string_equal(lang, g_string_new("fr_FR")))
   {
     list_number = 1;
   }
@@ -361,6 +364,15 @@ void load_preferences()
     tags_from_fname_regex = NULL;
   }
 
+  gchar *test_regex_fname = 
+    g_key_file_get_string(key_file, "split", "test_regex_fname", NULL);
+  if (test_regex_fname)
+  {
+    gtk_entry_set_text(GTK_ENTRY(test_regex_fname_entry), test_regex_fname);
+    g_free(test_regex_fname);
+    test_regex_fname = NULL;
+  }
+
   //tags version
   tag_pref_file = g_key_file_get_integer(key_file, "split", "tags_version", NULL);
 
@@ -461,11 +473,14 @@ void write_default_preferences_file()
 
     if((!g_string_equal(lang_char,g_string_new("en")))
         &&(!g_string_equal(lang_char, g_string_new("fr")))
-        &&(!g_string_equal(lang_char, g_string_new("de"))))
+        &&(!g_string_equal(lang_char, g_string_new("fr_FR")))
+        &&(!g_string_equal(lang_char, g_string_new("de")))
+        &&(!g_string_equal(lang_char, g_string_new("de_DE")))
+        )
     {
       g_key_file_set_string(my_key_file, "general", "language", "en");
       g_key_file_set_comment(my_key_file, "general", "language",
-          "\n language of the gui: en = english, fr = french, de = german",
+          "\n language of the gui: en = english, fr_FR = french, de_DE = german",
           NULL);
     }
 

@@ -68,7 +68,9 @@ AC_C_CONST
 # Enable libtool, check for libltdl and define @LIBLTDL@ and @INCLTDL@
 #################################################################
 
-LT_CONFIG_LTDL_DIR([libltdl])
+ifdef([LT_CONFIG_LTDL_DIR],
+      [ LT_CONFIG_LTDL_DIR([libltdl]) ],
+      [])
 
 ifdef([LT_INIT],
       [ LT_INIT([win32-dll]) ],

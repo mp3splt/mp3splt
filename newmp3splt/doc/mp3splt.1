@@ -485,6 +485,22 @@ Without the 'r' option, output artists are 'artist_@b_@N'.
 Replacement is not recursive: \fBr%[@o,@N=1,@b=album_@N,@a=artist_@b]\fP
 will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'.
 
+.IP "\fB\-G regex=REGEX\fP         " 10
+\fBTags from filename regex\fP. Set tags from input filename regular expression.
+REGEX can contain those variables:
+   (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>)
+
+Example: if the input filename is \fBartist1__album2__title3__comment4__2__2004.ogg\fP, 
+.br
+the following regular expression
+\fB(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*)\fP extracts the tags:
+  (?<artist>): artist1
+  (?<album>): album2
+  (?<title>): title3
+  (?<comment>): comment4
+  (?<tracknum>): 2
+  (?<year>): 2004
+
 .IP "\fB\-m M3U\fP         " 10
 \fBCreate .m3u file\fP. Creates a .m3u file containing the split
 files. The generated .m3u file only contains the split filenames without

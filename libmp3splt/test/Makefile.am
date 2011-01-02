@@ -1,5 +1,5 @@
 
-INCLUDES = $(CUTTER_CFLAGS) -I$(top_srcdir)/include
+INCLUDES = $(CUTTER_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src
 LIBS = $(CUTTER_LIBS) $(top_builddir)/src/libmp3splt.la
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -no-undefined
 

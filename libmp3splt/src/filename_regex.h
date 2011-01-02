@@ -34,8 +34,9 @@
 
 #ifndef SPLT_FILENAME_REGEX_H
 
-splt_tags *splt_fr_parse(splt_state *state, const char *filename,
-    const char *regex, const char *default_comment, int *error);
+splt_tags *splt_fr_parse_from_state(splt_state *state, int *error);
+splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *regex,
+    const char *default_comment, int *error);
 
 #define SPLT_FILENAME_REGEX_H
 

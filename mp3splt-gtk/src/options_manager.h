@@ -35,6 +35,8 @@
 void update_output_options();
 void put_options_from_preferences();
 
+void put_tags_from_filename_regex_options();
+
 #define OPTIONS_MANAGER_H
 #endif
 
