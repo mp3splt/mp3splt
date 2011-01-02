@@ -845,6 +845,8 @@ typedef enum {
   SPLT_OUTPUT_FORMAT_OK = 400,
   SPLT_OUTPUT_FORMAT_AMBIGUOUS = 401,
 
+  SPLT_REGEX_OK = 800,
+
   SPLT_ERROR_SPLITPOINTS = -1,
   SPLT_ERROR_CANNOT_OPEN_FILE = -2,
   SPLT_ERROR_INVALID = -3,
@@ -1455,6 +1457,9 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
     int *num_of_files_found, int *error);
 
 int mp3splt_u_check_if_directory(const char *fname);
+
+void mp3splt_free_one_tag(splt_tags *tags);
+splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error);
 
 #define MP3SPLT_MP3SPLT_H
 

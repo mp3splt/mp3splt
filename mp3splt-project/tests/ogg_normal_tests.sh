@@ -1001,6 +1001,47 @@ function test_normal_split_in_equal_parts
   echo
 }
 
+function test_normal_with_tags_from_filename_regex
+{
+  remove_output_dir
+
+  test_name="with tags from filename regex"
+
+  NEW_O_FILE="artist1__album2__title3__comment4__2__2004"
+  NEW_OGG_FILE=$SONGS_DIR/${NEW_O_FILE}.ogg
+
+  cp $OGG_FILE $NEW_OGG_FILE
+
+  expected=" Processing file 'songs/${NEW_O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${NEW_O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${NEW_O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${NEW_O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  regex_option="(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*)"
+  mp3splt_args="-d $OUTPUT_DIR -G \"regex=$regex_option\" $NEW_OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${NEW_O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_current_ogg_length "1m:01.200s"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Swing" "2" "comment4"
+
+  current_file="$OUTPUT_DIR/${NEW_O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_current_ogg_length "0m:58.899s"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Swing" "2" "comment4"
+
+  current_file="$OUTPUT_DIR/${NEW_O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Swing" "2" "comment4"
+
+  rm -f $NEW_OGG_FILE
+
+  p_green "OK"
+  echo
+}
+
 function run_normal_tests
 {
   p_blue " NORMAL ogg tests ..."

@@ -1,6 +1,6 @@
 #include <cutter.h>
 
-#include <libmp3splt/pair.h>
+#include "pair.h"
 
 #include "tests.h"
 

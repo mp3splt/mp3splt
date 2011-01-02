@@ -373,6 +373,22 @@ const char *splt_su_get_fname_without_path(const char *filename)
   return filename;
 }
 
+char *splt_su_get_fname_without_path_and_extension(const char *filename, int *error)
+{
+  const char *fname_without_path = splt_su_get_fname_without_path(filename);
+
+  char *fname_without_path_and_extension = NULL;
+  int err = splt_su_copy(fname_without_path, &fname_without_path_and_extension);
+  if (err < 0) {
+    *error = err;
+    return NULL;
+  }
+
+  splt_su_cut_extension(fname_without_path_and_extension);
+
+  return fname_without_path_and_extension;
+}
+
 char *splt_su_get_fname_with_path_and_extension(splt_state *state, int *error)
 {
   int err = SPLT_OK;

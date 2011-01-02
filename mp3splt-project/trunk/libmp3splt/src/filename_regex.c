@@ -46,11 +46,43 @@ static int splt_fr_get_int_pattern(pcre *re, const char *filename,
 static void splt_fr_set_char_field_on_tags_and_convert(splt_tags *tags,
     int tags_field, char *pattern, int format, int replace_underscores, int *error);
 
-splt_tags *splt_fr_parse(splt_state *state, const char *filename,
-    const char *regex, const char *default_comment, int *error)
+splt_tags *splt_fr_parse_from_state(splt_state *state, int *error)
+{
+  const char *filename_to_split = splt_t_get_filename_to_split(state);
+  char *regex = splt_t_get_input_filename_regex(state);
+  char *default_comment = splt_t_get_default_comment_tag(state);
+
+  char *filename = splt_su_get_fname_without_path_and_extension(filename_to_split, error);
+  if (*error < 0)
+  {
+    return NULL;
+  }
+
+  splt_tags *tags = splt_fr_parse(state, filename, regex, default_comment, error);
+
+  if (filename)
+  {
+    free(filename);
+    filename = NULL;
+  }
+
+  return tags;
+}
+
+splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *regex,
+    const char *default_comment, int *error)
 {
   const char *errorbits;
   int erroroffset;
+
+  splt_d_print_debug(state, "regex = _%s_\n", regex);
+
+  if (regex == NULL)
+  {
+    *error = SPLT_INVALID_REGEX;
+    splt_e_set_error_data(state, _("no regular expression provided"));
+    return NULL;
+  }
 
   pcre *re = pcre_compile(regex, PCRE_CASELESS | PCRE_UTF8, &errorbits, &erroroffset, NULL);
   if (!re)
@@ -157,6 +189,8 @@ splt_tags *splt_fr_parse(splt_state *state, const char *filename,
   //TODO: genre
 
   pcre_free(re);
+
+  *error = SPLT_REGEX_OK;
 
   return tags;
 

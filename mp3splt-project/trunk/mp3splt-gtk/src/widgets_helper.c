@@ -117,7 +117,7 @@ GtkWidget *wh_new_entry(void *callback)
 
 GtkWidget *wh_new_button(const gchar *button_label)
 {
-  return gtk_button_new_with_label(button_label);
+  return gtk_button_new_with_mnemonic(button_label);
 }
 
 static guint _wh_add_row_to_table(GtkWidget *table)

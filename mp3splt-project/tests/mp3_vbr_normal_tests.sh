@@ -1170,6 +1170,54 @@ function test_normal_vbr_split_in_equal_parts
   echo
 }
 
+function test_normal_vbr_tags_from_filename_regex
+{
+  remove_output_dir
+
+  test_name="vbr tags from filename regex"
+
+  NEW_M_FILE="artist1__album2__title3__comment4__2__2004"
+  NEW_MP3_FILE=$SONGS_DIR/${NEW_M_FILE}.mp3
+
+  cp $MP3_FILE $NEW_MP3_FILE
+
+  F1="title3-artist1-album2-2-1.mp3"
+  F2="title3-artist1-album2-2-2.mp3"
+  F3="title3-artist1-album2-2-3.mp3"
+
+  expected=" Processing file 'songs/${NEW_M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  regex_option="(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*)"
+  output_option="@t-@a-@b-@N-@n"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -G \"regex=$regex_option\" ${NEW_MP3_FILE} 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_all_mp3_tags_with_version "2" "artist1" "album2" "title3" "2004"\
+  "Rock" "17" "2" "comment4"
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_all_mp3_tags_with_version "2" "artist1" "album2" "title3" "2004"\
+  "Rock" "17" "2" "comment4"
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_all_mp3_tags_with_version "2" "artist1" "album2" "title3" "2004"\
+  "Rock" "17" "2" "comment4"
+
+  rm -f $NEW_MP3_FILE
+
+  p_green "OK"
+  echo
+}
+
 function run_normal_vbr_tests
 {
   p_blue " NORMAL VBR mp3 tests ..."

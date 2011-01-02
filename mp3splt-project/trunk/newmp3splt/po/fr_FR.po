@@ -3,78 +3,84 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
 "POT-Creation-Date: 2011-01-02 22:43+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-12-25 22:43+0000\n"
+"Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: src/mp3splt.c:270 src/utils.c:36 src/utils.c:52
 msgid "cannot allocate memory !"
-msgstr ""
+msgstr "impossible d'allouer de la mémoire !"
 
 #: src/mp3splt.c:300
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec, read man page for details."
 msgstr ""
+"mauvaise valeur pour la division en plusieurs pistes de même taille.\n"
+"\tDoit être min.sec, lisez le manuel pour les détails."
 
 #: src/mp3splt.c:363
 msgid "read man page for documentation or type 'mp3splt -h'."
-msgstr ""
+msgstr "lisez le manuel pour la documentation ou tapez 'mp3splt -h'."
 
 #: src/mp3splt.c:420
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
+"mauvais argument pour l'option -p. Aucune valeur valide n'a été réconnue !"
 
 #: src/mp3splt.c:546
 msgid "no input filename(s)."
-msgstr ""
+msgstr "aucun fichier d'entrée."
 
 #: src/mp3splt.c:559
 msgid "multiple splitpoints with stdout !"
-msgstr ""
+msgstr "plusieurs points de coupure avec le flux de sortie standard (stdout) !"
 
 #: src/mp3splt.c:563
 msgid "using time mode with stdout !"
 msgstr ""
+"utilisation du mode de division 'temps' avec la sortie standard (stdout) !"
 
 #: src/mp3splt.c:604
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
-msgstr ""
+msgstr " Simulation de division du fichier '%s' ...\n"
 
 #: src/mp3splt.c:608
 #, c-format
 msgid " Processing file '%s' ...\n"
-msgstr ""
+msgstr " Fichier '%s' ...\n"
 
 #: src/mp3splt.c:615 src/options_checker.c:49
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -w -"
 "l -e -i -a -p"
 msgstr ""
+"impossible d'utiliser l'option -k (ou flux d'entrée standard) avec une des "
+"options suivantes : -S -s -w -l -e -i -a -p"
 
 #: src/mp3splt.c:671
 msgid "freedb query format ambigous !"
-msgstr ""
+msgstr "format freedb 'query' ambigu !"
 
 #: src/mp3splt.c:715
 msgid "tags format ambiguous !"
-msgstr ""
+msgstr "format des tags ambigu !"
 
 #: src/mp3splt.c:747
 #, c-format
 msgid " Average silence level: %.2f dB"
-msgstr ""
+msgstr " Niveau de silence moyen : %.2f dB"
 
 #: src/mp3splt.c:764
 msgid ""
@@ -101,31 +107,60 @@ msgid ""
 " +-----------------------------------------------------------------------------"
 "+\n"
 msgstr ""
+"\n"
+" +-----------------------------------------------------------------------------"
+"+\n"
+" NOTE: A l'utilisation de cddb/cue, les fichiers divisés peuvent ne pas être "
+"très précis à cause de :\n"
+"  1) A l'extraction du CD, les pistes peuvent utiliser l'option \"Supprimer "
+"le silence\". Cela signifie\n"
+"      que le temps du fichier mp3 est inférieur au temps total sur le CD. Ne "
+"jamais utiliser\n"
+"      cette option.\n"
+"  2) Celui qui grave le CD peut ajouter du silence entre les pistes. Ne "
+"jamais le faire.\n"
+"  3) Les encodeurs peuvent ajouter des trames supplémentaires, ce qui rend "
+"le fichier plus\n"
+"      long que sur le CD.\n"
+"  4) Il existe plusieurs fichiers résultats CDDB pour le même CD. Trouvez le "
+"meilleur pour\n"
+"      vos besoins. D'habitude, on peut trouver les points de coupure "
+"corrects.\n"
+" +-----------------------------------------------------------------------------"
+"+\n"
+"    ESSAYEZ D'ADJUSTER LES POINTS AVEC L'OPTION -a.\n"
+"    Lisez le manuel pour plus de détails !\n"
+" +-----------------------------------------------------------------------------"
+"+\n"
 
 #: src/freedb.c:58
 #, c-format
 msgid " Freedb search type: %s , Site: %s , Port: %d\n"
-msgstr ""
+msgstr " Type de recherche freedb : %s , Site : %s , Port : %d\n"
 
 #: src/freedb.c:61
 #, c-format
 msgid " Freedb get type: %s , Site: %s , Port: %d\n"
-msgstr ""
+msgstr " Type de récupération freedb : %s , Site : %s , Port : %d\n"
 
 #: src/freedb.c:71
 msgid "CDDB QUERY. Insert album and artist informations to find cd."
 msgstr ""
+"RECHERCHE CDDB. Entrez des informations sur l'album et l'artiste pour "
+"trouver un CD."
 
 #: src/freedb.c:79
 msgid ""
 "\n"
 "Please search something ..."
 msgstr ""
+"\n"
+"S'il vous plaît, cherchez quelque chose ..."
 
 #: src/freedb.c:85
 #, c-format
 msgid "\r Search: ["
-msgstr ""
+msgstr "\r Chercher : ["
 
 #: src/freedb.c:102
 #, c-format
@@ -133,6 +168,8 @@ msgid ""
 "\n"
 "  Search string: %s\n"
 msgstr ""
+"\n"
+"  Chaîne cherchée : %s\n"
 
 #: src/freedb.c:103
 #, c-format
@@ -140,35 +177,37 @@ msgid ""
 "\n"
 "Searching from %s on port %d using %s ...\n"
 msgstr ""
+"\n"
+"Recherche sur %s et le port %d utilisant %s ...\n"
 
 #: src/freedb.c:123
 msgid "List of found cd:"
-msgstr ""
+msgstr "Liste de CD trouvés :"
 
 #: src/freedb.c:137
 #, c-format
 msgid "Revision: %d\n"
-msgstr ""
+msgstr "Révision : %d\n"
 
 #: src/freedb.c:144
 #, c-format
 msgid "-- 'q' to select cd, Enter for more:"
-msgstr ""
+msgstr "-- 'q' pour sélectionner un CD, Entrée pour plus de CDs :"
 
 #: src/freedb.c:162
 #, c-format
 msgid "-- 'q' to select cd, Enter for more: "
-msgstr ""
+msgstr "-- 'q' pour sélectionner un CD, Entrée pour plus de CDs :"
 
 #: src/freedb.c:189
 #, c-format
 msgid "Select cd #: "
-msgstr ""
+msgstr "Sélectionnez le CD numéro # :"
 
 #: src/freedb.c:204
 #, c-format
 msgid "Please "
-msgstr ""
+msgstr "S'il vous plaît "
 
 #: src/freedb.c:229
 #, c-format
@@ -176,102 +215,108 @@ msgid ""
 "\n"
 "Getting file from %s on port %d using %s ...\n"
 msgstr ""
+"\n"
+"Récupération du fichier à partir de %s et le port %d utilisant %s ...\n"
 
 #: src/options_checker.c:66
 msgid "the -w option can only be used with -m, -d, -q and -Q"
-msgstr ""
+msgstr "l'option -w peut seulement être utilisée avec -m, -d, -q et -Q"
 
 #: src/options_checker.c:82
 msgid "the -l option can only be used with -q"
-msgstr ""
+msgstr "l'option -l peut seulement être utilisée avec -q"
 
 #: src/options_checker.c:95
 msgid "the -e option can only be used with -m, -f, -o, -d, -q, -Q"
-msgstr ""
+msgstr "l'option -e peut seulement être utilisée avec -m, -f, -o, -d, -q, -Q"
 
 #: src/options_checker.c:110
+#, fuzzy
 msgid "the -c option cannot be used with -t, -g, -G, -s, -A, -i or -S"
-msgstr ""
+msgstr "l'option -c ne peut pas être utilisée avec -t, -g, -s, -A, -i ou -S"
 
 #: src/options_checker.c:118
 msgid "the -A option cannot be used with -t, -s, -i or -S"
-msgstr ""
+msgstr "l'option -A ne peut pas être utilisée avec -t, -s, -i ou -S"
 
 #: src/options_checker.c:126
 msgid "the -t option cannot be used with -s, -i or -S"
-msgstr ""
+msgstr "l'option -t ne peut pas être utilisée avec -s, -i ou -S"
 
 #: src/options_checker.c:134
 msgid "-s option cannot be used with -a, -i or -S"
-msgstr ""
+msgstr "l'option -s ne peut être utilisée avec -a, -i ou -S"
 
 #: src/options_checker.c:142
 msgid "-a option cannot be used with -i"
-msgstr ""
+msgstr "l'option -a ne peut être utilisée avec -i"
 
 #: src/options_checker.c:154
 msgid "the -p option cannot be used without -a, -s or -i"
-msgstr ""
+msgstr "l'option -p ne peut être utilisée sans -a, -s ou -i"
 
 #: src/options_checker.c:162
 msgid "the -o option cannot be used with -i"
-msgstr ""
+msgstr "l'option -o ne peut être utilisée sans -i"
 
 #: src/options_checker.c:168
 msgid "cannot use '-o -' (STDOUT) with -m or -d"
-msgstr ""
+msgstr "impossible d'utiliser '-o -' (flux de sortie standard) avec -m ou -d"
 
 #: src/options_checker.c:177
+#, fuzzy
 msgid "the -g option cannot be used with -n, -i or -G"
-msgstr ""
+msgstr "l'option -t ne peut pas être utilisée avec -s, -i ou -S"
 
 #: src/options_checker.c:185
 msgid "the -d option cannot be used with -i"
-msgstr ""
+msgstr "l'option -d ne peut être utilisée avec -i"
 
 #: src/options_checker.c:193
 msgid "the -n option cannot be used with -i or -T"
-msgstr ""
+msgstr "l'option -n ne peut être utilisée avec -i ou -T"
 
 #: src/options_checker.c:201
 msgid "the -m option cannot be used with -i"
-msgstr ""
+msgstr "l'option -m ne peut être utilisée avec -i"
 
 #: src/options_checker.c:219
 msgid "the -Q option cannot be used with STDOUT output ('-o -')"
 msgstr ""
+"l'option -Q ne peut être utilisée avec le flux standard de sortie ('-o -')"
 
 #: src/options_checker.c:227
 msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
-msgstr ""
+msgstr "l'option -Q ne peut être utilisée avec la requête freedb ('-c query')"
 
 #: src/options_checker.c:237
 msgid "the -N option must be used with silence detection (-s option)"
 msgstr ""
+"l'option -N doit être utilisée avec la détection de silence (option -s)"
 
 #: src/options_checker.c:247
 msgid "the -O option cannot be used with -w, -e, -l or -i"
-msgstr ""
+msgstr "l'option -O ne peut être utilisée avec -w, -e, -l ou -i"
 
 #: src/options_parsers.c:45
 msgid "bad gap argument. It will be ignored !"
-msgstr ""
+msgstr "mauvais argument pour l'écart. Sera ignoré !"
 
 #: src/options_parsers.c:60
 msgid "bad threshold argument. It will be ignored !"
-msgstr ""
+msgstr "mauvais argument pour le seuil. Sera ignoré !"
 
 #: src/options_parsers.c:75
 msgid "bad tracknumber argument. It will be ignored !"
-msgstr ""
+msgstr "mauvais argument pour le nombre de pistes. Sera ignoré !"
 
 #: src/options_parsers.c:99
 msgid "bad offset argument. It will be ignored!"
-msgstr ""
+msgstr "mauvais argument pour la compensation. Sera ignoré !"
 
 #: src/options_parsers.c:114
 msgid "bad minimum silence length argument. It will be ignored !"
-msgstr ""
+msgstr "mauvais argument pour la taille minimum du silence. Sera ignoré !"
 
 #: src/options_parsers.c:136
 msgid "no regular expression found as argument."
@@ -280,69 +325,78 @@ msgstr ""
 #: src/options_parsers.c:312
 msgid "found non digits characters in port ! (switched to default)"
 msgstr ""
+"détection des caractères autre que des chiffres dans le port ! (utilisation "
+"du port par défaut)"
 
 #: src/options_parsers.c:337
 msgid "unknown search type ! (switched to default)"
-msgstr ""
+msgstr "type de recherche freedb inconnu ! (utilisation du type par défaut)"
 
 #: src/options_parsers.c:353
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
+"recherche web freedb pas encore implementée ! (utilisation de la recherche "
+"par défaut)"
 
 #: src/options_parsers.c:359
 msgid "unknown get type ! (switched to default)"
-msgstr ""
+msgstr "type de récupération freedb inconnu ! (utilisation du type par défaut)"
 
 #: src/print_utils.c:39
 #, c-format
 msgid " Warning: %s\n"
-msgstr ""
+msgstr " Attention : %s\n"
 
 #: src/print_utils.c:45
 #, c-format
 msgid " Error: %s\n"
-msgstr ""
+msgstr " Erreur : %s\n"
 
 #: src/print_utils.c:75
 #, c-format
 msgid "   File \"%s\" created%s\n"
-msgstr ""
+msgstr "   Fichier \"%s\" créé%s\n"
 
 #: src/print_utils.c:87
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
-msgstr ""
+msgstr " préparation de \"%s\" (%d sur %d)"
 
 #: src/print_utils.c:94
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
-msgstr ""
+msgstr " création de \"%s\" (%d sur %d)"
 
 #: src/print_utils.c:101
 #, c-format
 msgid " searching for sync errors..."
-msgstr ""
+msgstr " recherche des erreurs de synchronisation ..."
 
 #: src/print_utils.c:105
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
-msgstr ""
+msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
 #: src/print_utils.c:147
 msgid "using"
-msgstr ""
+msgstr "utilisant"
 
 #: src/print_utils.c:159
 #, c-format
 msgid ""
 "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n"
 msgstr ""
+"CE PROGRAMME EST FOURNI SANS AUCUNE GARANTIE ! UTILISEZ-LE SOUS VOTRE "
+"RESPONSABILITE !\n"
 
 #: src/print_utils.c:208
 msgid ""
 "\n"
 "All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
 msgstr ""
+"\n"
+"Tous les fichiers ont été divisés avec succès. Visitez http://mp3wrap."
+"sourceforge.net!"
 
 #: src/print_utils.c:217
 msgid ""
@@ -353,6 +407,13 @@ msgid ""
 "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
 "                   (or EOF for End Of File). "
 msgstr ""
+"\n"
+"UTILISATION :\n"
+"      mp3splt [OPTIONS] FICHIER1 [FICHIER2] ... [TEMPS_DEBUT] [TEMPS] ... "
+"[TEMPS_FIN]\n"
+"      Format du TEMPS: min.sec[.0-99], même si les minutes sont supérieurs à "
+"59\n"
+"                    (ou EOF pour la fin du fichier). "
 
 #: src/print_utils.c:222
 msgid ""
@@ -365,6 +426,15 @@ msgid ""
 "      filenames from a .cddb or .cue file or from Internet (\"query\").\n"
 "      Use -a to auto-adjust splitpoints."
 msgstr ""
+"\n"
+"OPTIONS (options du mode de division)\n"
+" -t + TEMPS : pour diviser le fichier en plusieurs pistes de même taille "
+"(taille égale à TEMPS)\n"
+" -c + fichier.cddb, fichier.cue ou \"query\" ou \"query{album}\". Récupérer "
+"les\n"
+"      points de coupure à partir d'un fichier .cddb ou .cue ou à partir "
+"d'internet (\"query\").\n"
+"      Utiliser -a pour ajuster les points de coupure en fonction du silence."
 
 #: src/print_utils.c:227
 msgid ""
@@ -374,23 +444,37 @@ msgid ""
 " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
 " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"
 msgstr ""
+" -s   Trouver les points de coupure automatiquement en recherchant le "
+"silence\n"
+"      (Utiliser -p pour les arguments)\n"
+" -w   Division 'wrap' : diviser les fichiers crées avec Mp3Wrap ou "
+"AlbumWrap.\n"
+" -l   Lister les pistes du fichier 'wrap' sans extraction.\n"
+" -e   Mode de division par recherche des erreurs de synchronisation (pour "
+"les fichiers mp3\n"
+"      concaténés)"
 
 #: src/print_utils.c:231
 msgid ""
 " -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
-msgstr ""
+msgstr " -A + FICHIER_AUDACITY : division à partir de marqueurs audacity"
 
 #: src/print_utils.c:232
 msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"
-msgstr ""
+msgstr " -S + NOMBRE : diviser en NOMBRE morceaux egaux"
 
 #: src/print_utils.c:233
+#, fuzzy
 msgid ""
 " -i   Count how many silence splitpoints we have with silence detection\n"
 "      (Use -p for arguments) - DEPRECATED: use -s with -P)\n"
 " -v   Prints current version and exits\n"
 " -h   Shows this help"
 msgstr ""
+" -i   Afficher le nombre de points trouvés en recherchant le silence\n"
+"      (Utiliser -p pour les arguments)\n"
+" -v   Afficher la version courante\n"
+" -h   Affiche cette aide"
 
 #: src/print_utils.c:237
 msgid ""
@@ -401,6 +485,11 @@ msgid ""
 "      TAGS_VERSION can be 1, 2 or 12\n"
 "      (default is to set the same version as the file to split)"
 msgstr ""
+"\n"
+"(autres options)\n"
+" -T + VERSION_TAGS : pour les fichiers mp3, forcer la version des tags\n"
+"      comme 1, 2 ou 1 et 2. VERSION_TAGS peut être 1, 2 ou 12\n"
+"      (par défaut: la même version que dans le fichier d'entrée)"
 
 #: src/print_utils.c:241
 msgid ""
@@ -409,6 +498,13 @@ msgid ""
 "VBR.\n"
 " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"
 msgstr ""
+" -m + FICHIER_M3U : ajoute à la fin du fichier FICHIER_M3U les noms des\n"
+"      fichiers obtenus.\n"
+" -f   Mode 'frame' (seulement mp3) : parcourir toutes les 'frames'. Pour une "
+"meilleure\n"
+"      précision et fichiers VBR (taux d'échantillonnage variable)\n"
+" -a   Ajustement des points de coupure avec recherche du silence.\n"
+"      (Utiliser -p pour les arguments)"
 
 #: src/print_utils.c:244
 msgid ""
@@ -420,6 +516,15 @@ msgid ""
 "output),\n"
 "      @f: original filename"
 msgstr ""
+" -p + PARAMETRES (th, nt, off, min, rm, gap) : arguments utilisateur pour -s "
+"et -a.\n"
+" -o + FORMAT_DE_SORTIE : modèle du format de sortie. Peut contenir\n"
+"      ces variables : @a: artiste, @p: interprète (peut ne pas exister), @b: "
+"album\n"
+"      @t: titre, @n: identifiant de la piste, @N: numéro de la piste\n"
+"      (un chiffre peut suivre 'n' ou 'N' pour le nombre de chiffres à "
+"afficher),\n"
+"      @f: nom du fichier d'entrée"
 
 #: src/print_utils.c:250
 msgid ""
@@ -430,6 +535,15 @@ msgid ""
 "      TAGS format is like [@a=artist1,@t=title1]%[@o,@N=2,@a=artist2]\n"
 "       (% means that we set the tags for all remaining files)"
 msgstr ""
+" -g + TAGS : tags personnalisées pour les fichiers obtenus.\n"
+"      TAGS peut contenir ces variables : \n"
+"         @a, @b, @t, @y, @c, @n, @o (tags du fichier d'entrée),\n"
+"         @N (incrémenter automatiquement le nombre de la piste).\n"
+"      Le format TAGS est comme [@a=artiste1,@t=titre1]%[@o,@N=2,"
+"@a=artiste2]\n"
+"      (% signifie que les tags définis entre les crochets qui suivent seront "
+"utilisés\n"
+"      pour tous les autres fichiers)"
 
 #: src/print_utils.c:256
 msgid ""
@@ -447,6 +561,13 @@ msgid ""
 "(-).\n"
 " -O + TIME: Overlap split files with TIME (slower)."
 msgstr ""
+" -d + REPERTOIRE : créer les fichiers dans le répertoire REPERTOIRE.\n"
+" -k + Considérer l'entrée comme un flux sur lequel on ne peut pas\n"
+"      changer la position (plus lent). Par défaut quand l'entrée est le flux "
+"standard\n"
+"      d'entrée (STDIN, '-').\n"
+" -O + TEMPS : Chevaucher les fichiers créés sur un intervalle de TEMPS (plus "
+"lent)."
 
 #: src/print_utils.c:263
 msgid ""
@@ -457,16 +578,26 @@ msgid ""
 "      to concatenate the split files\n"
 " -N   Don't create the 'mp3splt.log' log file when using '-s'."
 msgstr ""
+" -n   Pas de tag : n'écrit pas de tag ID3 ou vorbis dans les fichiers "
+"crées.\n"
+" -x   Pas d'entête Xing : n'écrit pas l'entête Xing. Utiliser avec -n si "
+"besoin de concaténer\n"
+"      les fichiers divisés.\n"
+" -N   Ne pas créer le fichier de log 'mp3splt.log' avec les points desilence "
+"quand -s est utilisé."
 
 #: src/print_utils.c:267
 msgid ""
 " -P   Pretend to split: simulation of the process, without creating any\n"
 "      files or directories"
 msgstr ""
+" -P   Simulation du processus de division, sans créer des fichiers ou\n"
+"      des répertoires"
 
 #: src/print_utils.c:269
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
 msgstr ""
+" -E + FICHIER_CUE : exporter les points vers un fichier CUE (voir aussi -P)"
 
 #: src/print_utils.c:270
 msgid ""
@@ -477,10 +608,18 @@ msgid ""
 "\n"
 "      Please read man page for complete documentation.\n"
 msgstr ""
+" -q   Mode silencieux: affiche moins de messages et moins d'intéraction "
+"utilisateur\n"
+" -Q   Mode très silencieux: n'affiche rien sur la sortie standard et pas de "
+"barre de\n"
+"      progression (active l'option -q).\n"
+" -D   Mode 'débogage' : utilisé pour débogguer le programme.\n"
+"\n"
+"      Lire le manuel pour une documentation complète.\n"
 
 #: src/utils.c:114
 msgid "List of found files:\n"
-msgstr ""
+msgstr "Liste de CD trouvés :\n"
 
 #: src/utils.c:122
 #, c-format
@@ -488,12 +627,16 @@ msgid ""
 "\n"
 "-- 'Enter' for more, 's' to split, 'c' to cancel:"
 msgstr ""
+"\n"
+"-- 'Entrée' pour voir plus de fichiers, 's' pour diviser, 'c' pour annuler :"
 
 #: src/utils.c:131 src/utils.c:154
 msgid ""
 "\n"
 " split aborted."
 msgstr ""
+"\n"
+" processus de division annulé."
 
 #: src/utils.c:145
 #, c-format
@@ -501,11 +644,16 @@ msgid ""
 "\n"
 "-- 's' to split, 'c' to cancel:"
 msgstr ""
+"\n"
+"-- 's' pour diviser, 'c' pour annuler :"
 
 #: src/windows_utils.c:45
 msgid "CommandLineToArgvW failed (oh !)"
-msgstr ""
+msgstr "CommandLineToArgvW a échoué (oh !)"
 
 #: src/windows_utils.c:54
 msgid "failed to allocate argv_utf8 memory"
-msgstr ""
+msgstr "impossible d'allouer de la mémoire pour argv_utf8"
+
+#~ msgid "the -g option cannot be used with -n or -i"
+#~ msgstr "l'option -g ne peut être utilisée avec -n ou -i"

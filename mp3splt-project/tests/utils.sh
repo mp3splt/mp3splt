@@ -361,7 +361,7 @@ function _check_mp3_tags
   else
     case "$tags_field" in 
       Artist*)
-        actual_tag_value=$(_mp3_get_tag_value "$tags" "artist" 3)
+        actual_tag_value=$(_mp3_get_tag_value "$tags" "artist:" 3)
       ;;
       Album*)
         actual_tag_value=$(_mp3_get_tag_value "$tags" "album:" 1)

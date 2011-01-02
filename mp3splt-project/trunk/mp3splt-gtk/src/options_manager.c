@@ -53,6 +53,7 @@
 #include "special_split.h"
 #include "player_tab.h"
 #include "combo_helper.h"
+#include "options_manager.h"
 
 extern gint debug_is_active;
 
@@ -85,8 +86,6 @@ extern GtkComboBox *title_text_properties_combo;
 extern GtkComboBox *comment_text_properties_combo;
 extern GtkWidget *comment_tag_entry;
 extern GtkWidget *regex_entry;
-
-static void put_tags_from_filename_regex_options();
 
 /*! Update the output options
 
@@ -247,7 +246,7 @@ void put_options_from_preferences()
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
 }
 
-static void put_tags_from_filename_regex_options()
+void put_tags_from_filename_regex_options()
 {
   mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_TAGS_FROM_FILENAME_REGEX);
 
@@ -258,19 +257,23 @@ static void put_tags_from_filename_regex_options()
   mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT, 
       ch_get_active_value(artist_text_properties_combo));
 
-  mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT, 
+  mp3splt_set_int_option(the_state, SPLT_OPT_ALBUM_TAG_FORMAT, 
       ch_get_active_value(album_text_properties_combo));
 
-  mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT,
+  mp3splt_set_int_option(the_state, SPLT_OPT_TITLE_TAG_FORMAT,
       ch_get_active_value(title_text_properties_combo));
 
-  mp3splt_set_int_option(the_state, SPLT_OPT_ARTIST_TAG_FORMAT, 
+  mp3splt_set_int_option(the_state, SPLT_OPT_COMMENT_TAG_FORMAT, 
       ch_get_active_value(comment_text_properties_combo));
 
   const gchar *regular_expression = gtk_entry_get_text(GTK_ENTRY(regex_entry));
   mp3splt_set_input_filename_regex(the_state, regular_expression);
 
   const gchar *default_comment = gtk_entry_get_text(GTK_ENTRY(comment_tag_entry));
+  if (strlen(default_comment) == 0)
+  {
+    default_comment = NULL;
+  }
   mp3splt_set_default_comment_tag(the_state, default_comment);
 }
 
