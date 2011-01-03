@@ -10,10 +10,10 @@ TITLE ${Q}Gentoo${Q}
 FILE ${Q}$OGG_FILE${Q} OGG
   TRACK 01 AUDIO
     TITLE ${Q}Our piano${Q}
-    PERFORMER ${Q}First performer${Q}
+    PERFORMER ${Q}First performer${Q}  
     INDEX 01 00:00:00
   TRACK 02 AUDIO
-    TITLE ${Q}Our guitar${Q}
+    TITLE ${Q}Our guitar${Q}  
     INDEX 01 01:43:00
   TRACK 03 AUDIO
     TITLE ${Q}Our laptop${Q}
