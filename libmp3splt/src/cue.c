@@ -87,6 +87,8 @@ static int splt_cue_store_value(splt_state *state, char *in,
   ptr_e = strchr(ptr_b + 1, '\0');
   if (ptr_e)
   {
+    ptr_e--;
+
     while (*ptr_e == ' ' && ptr_e > in)
     {
       ptr_e--;
@@ -94,11 +96,14 @@ static int splt_cue_store_value(splt_state *state, char *in,
 
     if (ptr_e > in)
     {
-      if (*(ptr_e-1) == '"')
+      if (*ptr_e == '"')
       {
-        ptr_e--;
+        *ptr_e = '\0';
       }
-      *ptr_e = '\0';
+      else
+      {
+        *(ptr_e + 1) = '\0';
+      }
     }
   }
 
