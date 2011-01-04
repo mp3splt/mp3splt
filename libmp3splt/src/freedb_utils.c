@@ -243,8 +243,8 @@ static int splt_fu_append_first_result(splt_freedb_results *res,
   error = splt_su_copy(album_name, &res->results[0].name);
   if (error < 0) { return error; }
 
-  res->results[res->number].revision_number = 0;
-  res->results[res->number].id = 0;
+  res->results[0].revision_number = 0;
+  res->results[0].id = 0;
   res->number++;
 
   return error;

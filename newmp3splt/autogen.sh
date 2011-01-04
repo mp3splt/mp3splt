@@ -1,5 +1,14 @@
 #!/bin/sh
 
+#autopoint check
+(autopoint --version) > /dev/null 2>&1 ||
+{
+    echo
+    echo "Error: you must have autopoint installed to compile mp3splt !"
+    echo
+    exit 1
+}
+
 #autoconf check
 (autoconf --version && autoheader --version) > /dev/null 2>&1 ||
 {

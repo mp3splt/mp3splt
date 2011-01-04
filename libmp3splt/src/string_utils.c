@@ -329,7 +329,7 @@ char *splt_su_trim_spaces(char *c)
   return splt_su_cut_spaces(c);
 }
 
-int splt_su_is_empty_line(char *line)
+int splt_su_is_empty_line(const char *line)
 {
   if (!line)
   {
@@ -608,6 +608,21 @@ char *splt_su_get_formatted_message(splt_state *state, char *message, ...)
   va_end(ap);
 
   return mess;
+}
+
+int splt_su_str_line_has_digit(const char *str)
+{
+  while (*str != '\0')
+  {
+    if (isdigit(*str))
+    {
+      return SPLT_TRUE;
+    }
+
+    str++;
+  }
+
+  return SPLT_FALSE;
 }
 
 static char *splt_su_str_to_func(const char *str, int (*conversion_func)(int), int *error)

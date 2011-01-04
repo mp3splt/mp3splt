@@ -297,7 +297,7 @@ void splt_tu_reset_tags(splt_tags *tags)
   tags->tags_version = 0;
 }
 
-splt_tags *splt_tu_new_tags(int *error)
+splt_tags *splt_tu_new_tags(splt_state *state, int *error)
 {
   splt_tags *tags = malloc(sizeof(splt_tags));
 
@@ -306,6 +306,10 @@ splt_tags *splt_tu_new_tags(int *error)
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
   }
+
+  memset(tags, sizeof(splt_tags), '\0');
+
+  splt_tu_reset_tags(tags);
 
   return tags;
 }
@@ -327,7 +331,7 @@ int splt_tu_new_tags_if_necessary(splt_state *state, int index)
     }
     else
     {
-      state->split.tags = splt_tu_new_tags(&error);
+      state->split.tags = splt_tu_new_tags(state, &error);
       if (error < 0)
       {
         return error;
@@ -551,6 +555,100 @@ error:
   return NULL;
 }
 
+void splt_tu_free_one_tags(splt_tags **tags)
+{
+  if (!tags || !*tags)
+  {
+    return;
+  }
+
+  splt_tu_free_one_tags_content(*tags);
+
+  free(*tags);
+  *tags = NULL;
+}
+
+void splt_tu_free_one_tags_content(splt_tags *tags)
+{
+  if (tags)
+  {
+    if (tags->title)
+    {
+      free(tags->title);
+      tags->title = NULL;
+    }
+    if (tags->artist)
+    {
+      free(tags->artist);
+      tags->artist = NULL;
+    }
+    if (tags->album)
+    {
+      free(tags->album);
+      tags->album = NULL;
+    }
+    if (tags->performer)
+    {
+      free(tags->performer);
+      tags->performer = NULL;
+    }
+    if (tags->year)
+    {
+      free(tags->year);
+      tags->year = NULL;
+    }
+    if (tags->comment)
+    {
+      free(tags->comment);
+      tags->comment = NULL;
+    }
+  }
+}
+
+void splt_tu_copy_tags(splt_tags *from, splt_tags *to, int *error)
+{
+  int err = SPLT_OK;
+
+  err = splt_tu_set_field_on_tags(to, SPLT_TAGS_TITLE, from->title);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to, SPLT_TAGS_ARTIST, from->artist);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to, SPLT_TAGS_ALBUM,
+      from->album);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to, SPLT_TAGS_YEAR,
+      from->year);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to, SPLT_TAGS_COMMENT,
+      from->comment);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to,
+      SPLT_TAGS_PERFORMER, from->performer);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to,
+      SPLT_TAGS_TRACK, &from->track);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to,
+      SPLT_TAGS_GENRE, &from->genre);
+  if (err < 0) { goto error; }
+
+  err = splt_tu_set_field_on_tags(to,
+      SPLT_TAGS_VERSION, &from->tags_version);
+  if (err < 0) { goto error; }
+
+  return;
+
+error:
+  *error = err;
+}
+
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
 {
   int current_tags_number = splt_t_get_current_split_file_number(state) - 1;
@@ -692,7 +790,7 @@ void splt_tu_free_tags(splt_state *state)
     int i = 0;
     for (i = 0; i < state->split.real_tagsnumber; i++)
     {
-      splt_tu_free_one_tags(&state->split.tags[i]);
+      splt_tu_free_one_tags_content(&state->split.tags[i]);
     }
     free(state->split.tags);
     state->split.tags = NULL;
@@ -700,7 +798,7 @@ void splt_tu_free_tags(splt_state *state)
 
   state->split.real_tagsnumber = 0;
 
-  splt_tu_free_one_tags(splt_tu_get_tags_like_x(state));
+  splt_tu_free_one_tags_content(splt_tu_get_tags_like_x(state));
 }
 
 splt_tags *splt_tu_get_current_tags(splt_state *state)
@@ -843,43 +941,6 @@ int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data)
   }
 
   return err;
-}
-
-void splt_tu_free_one_tags(splt_tags *tags)
-{
-  if (tags)
-  {
-    if (tags->title)
-    {
-      free(tags->title);
-      tags->title = NULL;
-    }
-    if (tags->artist)
-    {
-      free(tags->artist);
-      tags->artist = NULL;
-    }
-    if (tags->album)
-    {
-      free(tags->album);
-      tags->album = NULL;
-    }
-    if (tags->performer)
-    {
-      free(tags->performer);
-      tags->performer = NULL;
-    }
-    if (tags->year)
-    {
-      free(tags->year);
-      tags->year = NULL;
-    }
-    if (tags->comment)
-    {
-      free(tags->comment);
-      tags->comment = NULL;
-    }
-  }
 }
 
 

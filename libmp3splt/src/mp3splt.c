@@ -1637,7 +1637,7 @@ int mp3splt_u_check_if_directory(const char *fname)
 
 void mp3splt_free_one_tag(splt_tags *tags)
 {
-  splt_tu_free_one_tags(tags);
+  splt_tu_free_one_tags(&tags);
 }
 
 splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error)

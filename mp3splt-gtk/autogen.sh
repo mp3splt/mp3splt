@@ -1,6 +1,15 @@
 #!/bin/sh
 win=$1
 
+#autopoint check
+(autopoint --version) > /dev/null 2>&1 ||
+{
+    echo
+    echo "Error: you must have autopoint installed to compile mp3splt-gtk !"
+    echo
+    exit 1
+}
+
 #autoconf check
 (autoconf --version && autoheader --version) > /dev/null 2>&1 ||
 {

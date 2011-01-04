@@ -45,7 +45,7 @@ void splt_su_clean_string(splt_state *state, char *s, int *error);
 void splt_su_cut_spaces_from_end(char *c);
 char *splt_su_cut_spaces(char *c);
 char *splt_su_trim_spaces(char *c);
-int splt_su_is_empty_line(char *line);
+int splt_su_is_empty_line(const char *line);
 void splt_su_line_to_unix(char *line);
 
 const char *splt_su_get_fname_without_path(const char *filename);
@@ -63,6 +63,7 @@ char *splt_su_get_file_with_output_path(splt_state *state,
 int splt_su_str_ends_with(const char *str1, const char *str2);
 
 char *splt_su_get_formatted_message(splt_state *state, char *message, ...);
+int splt_su_str_line_has_digit(const char *str);
 char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap);
 
 #define SPLT_STRING_UTILS_H

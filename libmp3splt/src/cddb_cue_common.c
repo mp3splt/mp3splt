@@ -28,7 +28,7 @@
 
 #include "splt.h"
 
-void splt_tag_put_filenames_from_tags(splt_state *state, int tracks, int *error)
+void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error)
 {
   int err = splt_tu_copy_first_common_tags_on_all_tracks(state, tracks);
   if (err < 0) { *error = err; return; }

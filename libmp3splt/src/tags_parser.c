@@ -39,6 +39,26 @@
 
 #include "splt.h"
 
+static void splt_tp_process_tags(const char *tags,
+    tags_parser_utils *tpu, splt_state *state, int *error);
+static void splt_tp_process_tag_variable(const char *tag_variable_start, const char *end_paranthesis,
+    tags_parser_utils *tpu, splt_state *state, int *error);
+static void splt_tp_process_tags_variable(tags_parser_utils *tpu,
+    splt_state *state, int *error);
+static void splt_tp_check_ambigous_next_position(const char *tag_variable_start,
+    tags_parser_utils *tpu);
+static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
+    splt_state *state, int *error);
+static void splt_tp_get_original_tags(splt_state *state, int *error);
+static int splt_tp_tpu_has_one_current_tag_set(tags_parser_utils *tpu);
+static char *splt_tp_look_for_end_paranthesis(tags_parser_utils *tpu);
+static void splt_tp_look_for_all_remaining_tags_char(const char *tags,
+tags_parser_utils *tpu, splt_state *state);
+
+static tags_parser_utils *splt_tp_tpu_new(splt_state *state, int *error);
+static void splt_tp_tpu_reset_for_new_tags(splt_state *state, tags_parser_utils *tpu, int *error);
+static void splt_tp_tpu_free(tags_parser_utils **tpu);
+
 void splt_tp_put_tags_from_filename(splt_state *state, int *error)
 {
 #ifndef NO_PCRE
@@ -57,14 +77,14 @@ void splt_tp_put_tags_from_filename(splt_state *state, int *error)
   if (tags_format == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    splt_tu_free_one_tags(tags);
+    splt_tu_free_one_tags(&tags);
     return;
   }
 
   splt_tp_put_tags_from_string(state, tags_format, error);
   free(tags_format);
 
-  splt_tu_free_one_tags(tags);
+  splt_tu_free_one_tags(&tags);
 #else
   splt_c_put_info_message_to_client(state,
       _(" warning: cannot set tags from filename regular expression - compiled without pcre support\n"));
@@ -139,6 +159,207 @@ static char *splt_tp_parse_tag_word(const char *cur_pos,
   cur_pos = word_end;
 
   return word;
+}
+
+int new_splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
+{
+  if (tags == NULL)
+  {
+    return SPLT_FALSE;
+  }
+
+  tags_parser_utils *tpu = splt_tp_tpu_new(state, error);
+  if (*error < 0) { goto end; }
+
+  tpu->position = tags;
+  while ((tpu->position = strchr(tpu->position, '[')))
+  {
+    splt_tp_process_tags(tags, tpu, state, error);
+    if (*error < 0) { goto end; }
+
+    tpu->tags_counter++;
+  }
+
+end:
+  ;
+  int ambigous = tpu->ambigous;
+  splt_tp_tpu_free(&tpu);
+
+  return ambigous;
+}
+
+static void splt_tp_process_tags(const char *tags, tags_parser_utils *tpu,
+    splt_state *state, int *error)
+{
+  splt_tp_look_for_all_remaining_tags_char(tags, tpu, state);
+
+  splt_tp_tpu_reset_for_new_tags(state, tpu, error);
+  if (*error < 0) { return; }
+
+  tpu->position++;
+
+  const char *end_paranthesis = splt_tp_look_for_end_paranthesis(tpu);
+
+  char *tag_start = NULL;
+  while ((tag_start = strchr(tpu->position-1,'@')))
+  {
+    if (tag_start >= end_paranthesis)
+    {
+      break;
+    }
+
+    tpu->position = tag_start + 1;
+
+    splt_tp_process_tag_variable(tpu->position, end_paranthesis, tpu, state, error);
+    //TODO:review
+    if (*error < 0)
+    {
+      break;
+    }
+
+    //TODO: review
+    tpu->position++;
+  }
+
+}
+
+static void splt_tp_process_tag_variable(const char *tag_variable_start,
+    const char *end_paranthesis, tags_parser_utils *tpu, splt_state *state,
+    int *error)
+{
+  char tag_variable = *tag_variable_start;
+  switch (tag_variable)
+  {
+    case 'o':
+      splt_tp_process_original_tags_variable(tpu, state, error);
+      if (*error < 0) { return; }
+      break;
+    case 'a':
+      splt_tp_process_tags_variable(tpu, state, error);
+      break;
+  }
+
+  splt_tp_check_ambigous_next_position(tag_variable_start, tpu);
+}
+
+static void splt_tp_process_tags_variable(tags_parser_utils *tpu,
+    splt_state *state, int *error)
+{
+  /*//TODO
+  artist = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
+  if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
+  if (artist != NULL)
+  {
+    if (all_tags)
+    {
+      if (all_artist) { free(all_artist); all_artist = NULL; }
+      all_artist = strdup(artist);
+    }
+    cur_pos += strlen(artist)+2;
+    s_artist++;
+  }
+  else
+  {
+    cur_pos++;
+  }*/
+}
+
+static void splt_tp_check_ambigous_next_position(const char *tag_variable_start,
+    tags_parser_utils *tpu)
+{
+  char next_position = *(tag_variable_start+1);
+  if ((next_position != ',') &&
+      (next_position != ']'))
+  {
+    tpu->ambigous = SPLT_TRUE;
+  }
+}
+
+static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
+    splt_state *state, int *error)
+{
+  if (tpu->original_tags_found)
+  {
+    tpu->ambigous = SPLT_TRUE;
+  }
+
+  if (splt_io_input_is_stdin(state))
+  {
+    return;
+  }
+
+  splt_tp_get_original_tags(state, error);
+  if (*error < 0) { return; }
+
+  int err = splt_tu_append_original_tags(state);
+  if (err < 0) { *error = err; return; }
+
+  if (tpu->set_all_tags)
+  {
+    splt_tags last_tags = splt_tu_get_last_tags(state);
+    splt_tu_copy_tags(&last_tags, tpu->all_tags, error);
+    if (*error < 0) { return; }
+  }
+
+  tpu->original_tags_found = SPLT_TRUE;
+
+  if (splt_tp_tpu_has_one_current_tag_set(tpu))
+  {
+    tpu->ambigous = SPLT_TRUE;
+  }
+}
+
+static void splt_tp_get_original_tags(splt_state *state, int *error)
+{
+  splt_o_lock_messages(state);
+
+  splt_check_file_type(state, error);
+  if (*error < 0) { goto end; }
+
+  splt_p_init(state, error);
+  if (*error < 0) { goto end; }
+
+  splt_tu_get_original_tags(state, error);
+
+  splt_p_end(state, error);
+
+end:
+  splt_o_unlock_messages(state);
+  return;
+}
+
+static char *splt_tp_look_for_end_paranthesis(tags_parser_utils *tpu)
+{
+  char *end_paranthesis = strchr(tpu->position,']');
+  if (!end_paranthesis)
+  {
+    tpu->ambigous = SPLT_TRUE;
+  }
+  else
+  {
+    char after_end_paranthesis = *(end_paranthesis+1);
+    if ((after_end_paranthesis != '[') &&
+        (after_end_paranthesis != '%') &&
+        (after_end_paranthesis != '\0'))
+    {
+      tpu->ambigous = SPLT_TRUE;
+    }
+  }
+
+  return end_paranthesis;
+}
+
+static void splt_tp_look_for_all_remaining_tags_char(const char *tags,
+    tags_parser_utils *tpu, splt_state *state)
+{
+  if ((tpu->position != tags) && (*(tpu->position-1) == '%'))
+  {
+    splt_o_set_int_option(state,
+        SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X, tpu->tags_counter);
+    tpu->set_all_tags = SPLT_TRUE;
+
+    splt_tu_free_one_tags_content(tpu->all_tags);
+  }
 }
 
 int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
@@ -665,5 +886,85 @@ end_while:
   return SPLT_FALSE;
 }
 
+static tags_parser_utils *splt_tp_tpu_new(splt_state *state, int *error)
+{
+  tags_parser_utils *tpu = NULL;
 
+  tpu = malloc(sizeof(tags_parser_utils));
+  if (tpu == NULL)
+  {
+    goto mem_error;
+  }
+
+  tpu->ambigous = SPLT_FALSE;
+  tpu->tags_counter = 0;
+  tpu->set_all_tags = SPLT_FALSE;
+  tpu->current_tags = NULL;
+  tpu->all_tags = NULL;
+
+  tpu->current_tags = splt_tu_new_tags(state, error);
+  if (*error < 0) { goto mem_error; }
+
+  tpu->all_tags = splt_tu_new_tags(state, error);
+  if (*error < 0) { goto mem_error; }
+
+  splt_tp_tpu_reset_for_new_tags(state, tpu, error);
+  if (*error < 0) { goto mem_error; }
+
+  tpu->position = NULL;
+
+  return tpu;
+
+mem_error:
+  splt_tp_tpu_free(&tpu);
+  return NULL;
+}
+
+static void splt_tp_tpu_reset_for_new_tags(splt_state *state, tags_parser_utils *tpu, int *error)
+{
+  tpu->title_counter = 0;
+  tpu->artist_counter = 0;
+  tpu->album_counter = 0;
+  tpu->performer_counter = 0;
+  tpu->year_counter = 0;
+  tpu->comment_counter = 0;
+  tpu->tracknumber_counter = 0;
+
+  splt_tu_free_one_tags_content(tpu->current_tags);
+
+  tpu->original_tags_found = SPLT_FALSE;
+}
+
+static void splt_tp_tpu_free(tags_parser_utils **tpu)
+{
+  if (!tpu || !*tpu)
+  {
+    return;
+  }
+
+  splt_tu_free_one_tags(&(*tpu)->current_tags);
+  splt_tu_free_one_tags(&(*tpu)->all_tags);
+
+  free(*tpu);
+  *tpu = NULL;
+}
+
+static int splt_tp_tpu_has_one_current_tag_set(tags_parser_utils *tpu)
+{
+  splt_tags *current_tags = tpu->current_tags;
+
+  if (current_tags->title != NULL ||
+      current_tags->artist != NULL ||
+      current_tags->album != NULL ||
+      current_tags->performer != NULL ||
+      current_tags->year != NULL ||
+      current_tags->comment != NULL ||
+      current_tags->track != -INT_MAX ||
+      current_tags->genre != 0x0)
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
+}
 

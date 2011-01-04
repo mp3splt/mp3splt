@@ -105,7 +105,7 @@ splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *re
     return NULL;
   }
 
-  splt_tags *tags = splt_tu_new_tags(error);
+  splt_tags *tags = splt_tu_new_tags(state, error);
   if (*error < 0)
   {
     pcre_free(re);
@@ -196,7 +196,7 @@ splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *re
 
 error:
   pcre_free(re);
-  splt_tu_free_one_tags(tags); 
+  splt_tu_free_one_tags(&tags); 
   return NULL;
 }
 

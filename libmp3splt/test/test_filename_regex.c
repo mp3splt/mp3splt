@@ -24,7 +24,7 @@ void cut_setup()
 void cut_teardown()
 {
   mp3splt_free_state(state, NULL);
-  splt_tu_free_one_tags(tags);
+  splt_tu_free_one_tags(&tags);
   tags = NULL;
 }
 

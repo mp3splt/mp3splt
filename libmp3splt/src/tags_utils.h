@@ -46,8 +46,10 @@ int splt_tu_append_only_non_null_previous_tags(splt_state *state,
     const char *year, const char *comment,
     int track, unsigned char genre);
 void splt_tu_reset_tags(splt_tags *tags);
-
-splt_tags *splt_tu_new_tags(int *error);
+splt_tags *splt_tu_new_tags(splt_state *state, int *error);
+void splt_tu_free_one_tags(splt_tags **tags);
+void splt_tu_free_one_tags_content(splt_tags *tags);
+void splt_tu_copy_tags(splt_tags *from, splt_tags *to, int *error);
 int splt_tu_new_tags_if_necessary(splt_state *state, int index);
 int splt_tu_tags_exists(splt_state *state, int index);
 int splt_tu_set_tags_field(splt_state *state, int index,
@@ -73,9 +75,8 @@ int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks);
 
 int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data);
 
-void splt_tu_free_one_tags(splt_tags *tags);
-
 #define MP3SPLT_PLUGIN_UTILS_H
 
 #endif
+
 
