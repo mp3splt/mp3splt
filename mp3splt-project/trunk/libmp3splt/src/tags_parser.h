@@ -32,6 +32,26 @@
 
 #ifndef SPLT_TAGS_PARSER_H
 
+typedef struct {
+  splt_tags *current_tags;
+  splt_tags *all_tags;
+  int ambigous;
+  int tags_counter;
+  int set_all_tags;
+
+  short title_counter;
+  short artist_counter;
+  short album_counter;
+  short performer_counter;
+  short year_counter;
+  short comment_counter;
+  short tracknumber_counter;
+
+  int original_tags_found;
+
+  const char *position;
+} tags_parser_utils;
+
 int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error);
 void splt_tp_put_tags_from_filename(splt_state *state, int *error);
 

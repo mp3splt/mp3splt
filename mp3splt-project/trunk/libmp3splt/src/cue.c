@@ -391,7 +391,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     tracks--;
   }
 
-  splt_tag_put_filenames_from_tags(state, tracks, error);
+  splt_cc_put_filenames_from_tags(state, tracks, error);
 
 function_end:
   splt_cue_cu_free(&cu);

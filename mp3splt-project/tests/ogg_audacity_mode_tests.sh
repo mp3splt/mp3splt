@@ -312,7 +312,7 @@ function test_audacity_and_custom_tags_and_output_format
 
   O_FILE="Kelly_Allyn__Whiskey_Can"
 
-  test_name="audacity mode & custom tags"
+  test_name="audacity mode & custom tags & output format"
 
   expected=" Processing file 'songs/${O_FILE}.ogg' ...
  reading informations from audacity labels file '$AUDACITY_FILE' ...
