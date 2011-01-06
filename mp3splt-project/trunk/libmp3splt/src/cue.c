@@ -39,6 +39,8 @@ All that is needed in order to be able to read and write cue files.
 //! Process the rest of a cue line that begins with the word TRACK
 static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_state *state)
 {
+
+  // Skip the word TRACK
   line_content += 5;
 
   if (cu->tracks == -1) 
@@ -134,6 +136,8 @@ static int splt_cue_store_value(splt_state *state, char *in,
 static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_state *state)
 {
   int err = SPLT_OK;
+
+  // Skip the word TITLE
   line_content += 5;
 
   if (cu->tracks == -1)
@@ -165,6 +169,8 @@ static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_
 static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, splt_state *state)
 {
   int err = SPLT_OK;
+
+  // Skip the word PERFORMER
   line_content += 9;
 
   if (cu->tracks == -1)
@@ -201,6 +207,7 @@ static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_
 {
   int err = SPLT_OK;
 
+  // Skip the word INDEX and the 01 that follows 
   line_content += 9;
 
   char *dot = NULL;
@@ -231,6 +238,49 @@ static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_
 
   cu->time_for_track = SPLT_TRUE;
   cu->counter++;
+}
+
+//! Process the rest of a cue line that begins with the word REM
+static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_state *state)
+{
+  char *cu;
+
+  // Skip the word REM
+  line_content += 4;
+
+  // Skip all leading whitespace after the word REM
+  while ((*line_content=' ')||(*line_content='\t')) line_content++;
+
+  if((cu=strstr(line_content,"CREATOR"))!=NULL)
+    {
+      // Skip the word "CREATOR"
+      cu += 7;
+
+      if(strstr(cu,"MP3SPLT_GTK")!=NULL)
+	{
+	  // TODO: Do we really want to do something in this
+	  // case? Normally it is best to look at the propoerties
+	  // of a program, not at its name.
+	}
+    }
+  else
+  if((cu=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
+    {
+      // TODO: What do we want to do in this case?
+    }
+  else
+  if((cu=strstr(line_content,"NOKEEP"))!=NULL)
+    {
+      if (cu->tracks > 0)
+	{
+	  /* if ((err = splt_cue_store_value(state, line_content, */
+	  /* 				  cu->tracks - 1, SPLT_TAGS_PERFORMER)) != SPLT_OK) */
+	  /*   { */
+	  /*     cu->error = err; */
+	  /*     return; */
+	  /*   } */
+	}
+    }
 }
 
 /*! Analyze a line from a cue file
@@ -264,6 +314,10 @@ static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
   else if ((line_content = strstr(line, "INDEX 01")) != NULL)
   {
     splt_cue_process_index_line(line_content, cu, state);
+  }
+  else if ((line_content = strstr(line, "REM")) != NULL)
+  {
+    splt_cue_process_rem_line(line_content, cu, state);
   }
 
   free(*l);

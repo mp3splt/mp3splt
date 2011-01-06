@@ -69,6 +69,18 @@ void export_file(const gchar* filename)
       return;
     };
 
+  if(fprintf(outfile,"REM CREATOR \"MP3SPLT_GTK\"\n")<0)
+    {
+      put_status_message((gchar *)strerror(errno));
+      return;
+    }
+
+  if(fprintf(outfile,"REM SPLT_TITLE_IS_FILENAME\n")<0)
+    {
+      put_status_message((gchar *)strerror(errno));
+      return;
+    }
+
   // Determine which type our input file is of.
   gchar *extension=inputfilename_get();
   gchar *tmp;
@@ -150,7 +162,7 @@ void export_file(const gchar* filename)
 
 	      if(!keep)
 		{
-		  if(fprintf(outfile,"\t\tREM nokeep")<0)
+		  if(fprintf(outfile,"\t\tREM NOKEEP")<0)
 		    {
 		      put_status_message((gchar *)strerror(errno));
 		      return;
