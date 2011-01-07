@@ -36,6 +36,13 @@
 
 Miscelaneous utilities.
  */
+
+/*! Finish Tags and provide splitpoints with a filename generated from them
+
+  \param state The central structure that keeps all variables for 
+  libmp3splt.
+  \param current_splt The number of the split point to run this function for..
+ */
 int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int current_split)
 {
   int err = splt_tu_set_tags_in_tags(state, current_split);
@@ -47,6 +54,7 @@ int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int cur
   return splt_of_put_output_format_filename(state, current_split);
 }
 
+//! Output the amount of time all split files are set to overlap
 void splt_u_print_overlap_time(splt_state *state)
 {
   long overlap_time = splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME);

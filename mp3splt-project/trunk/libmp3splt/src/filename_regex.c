@@ -46,6 +46,11 @@ static int splt_fr_get_int_pattern(pcre *re, const char *filename,
 static void splt_fr_set_char_field_on_tags_and_convert(splt_tags *tags,
     int tags_field, char *pattern, int format, int replace_underscores, int *error);
 
+/*!
+
+\todo Support calculating of the total number of tracks
+\todo What does this function do?
+*/
 splt_tags *splt_fr_parse_from_state(splt_state *state, int *error)
 {
   const char *filename_to_split = splt_t_get_filename_to_split(state);

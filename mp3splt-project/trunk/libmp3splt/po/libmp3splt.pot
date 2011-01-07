@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-01-02 23:42+0100\n"
+"POT-Creation-Date: 2011-01-07 15:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,28 +43,28 @@ msgstr ""
 msgid "directory does not exists"
 msgstr ""
 
-#: src/cddb.c:63 src/cddb.c:657
+#: src/cddb.c:64
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:507 src/cddb.c:1093 src/cddb.c:1337 src/cue.c:111
+#: src/cddb.c:125 src/cue.c:487
+#, c-format
+msgid ""
+"  Tracks: %d\n"
+"\n"
+msgstr ""
+
+#: src/cddb.c:262 src/cue.c:118
 #, c-format
 msgid ""
 "\n"
 "  Artist: %s\n"
 msgstr ""
 
-#: src/cddb.c:523 src/cddb.c:1109 src/cddb.c:1346 src/cue.c:115
+#: src/cddb.c:265 src/cue.c:122
 #, c-format
 msgid "  Album: %s\n"
-msgstr ""
-
-#: src/cddb.c:644 src/cddb.c:1227 src/cue.c:409
-#, c-format
-msgid ""
-"  Tracks: %d\n"
-"\n"
 msgstr ""
 
 #: src/splt.c:147
@@ -140,21 +140,21 @@ msgstr ""
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
-#: src/utils.c:63
+#: src/utils.c:71
 #, c-format
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:328
+#: src/cue.c:387
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:375
+#: src/cue.c:435
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:565
+#: src/cue.c:643
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -513,7 +513,7 @@ msgstr ""
 msgid " regular expression ok"
 msgstr ""
 
-#: src/filename_regex.c:83
+#: src/filename_regex.c:88
 msgid "no regular expression provided"
 msgstr ""
 
@@ -521,7 +521,7 @@ msgstr ""
 msgid "not enough memory"
 msgstr ""
 
-#: src/tags_parser.c:70
+#: src/tags_parser.c:90
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"

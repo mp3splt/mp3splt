@@ -24,10 +24,20 @@
  * 02111-1307, USA.
  *********************************************************/
 
+/*! \file
+Everything that importing from cddb and importing from cue files have
+in common.
+ */
+
 #include <string.h>
 
 #include "splt.h"
 
+/*! Convert the tags to sensible filenames. 
+
+  What we deem to be a sensible file name can be controlled by the
+  user using the format that is handled by oformat_parser.c
+ */
 void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error)
 {
   int err = splt_tu_copy_first_common_tags_on_all_tracks(state, tracks);

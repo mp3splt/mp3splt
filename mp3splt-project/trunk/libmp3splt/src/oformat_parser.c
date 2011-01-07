@@ -30,12 +30,24 @@
  *
  *********************************************************/
 
+/*! \file
+
+Automatic generation of filenams for split files from tags.
+ */
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
 
 #include "splt.h"
 
+/*! \brief Is a placeholder char valid in a filename format string?
+
+\param v The character that is to be tested
+\param amb True, if the character is valid
+\return The value that is returned in amb, as well.
+
+\todo Why do we need amb?
+ */
 static short splt_u_output_variable_is_valid(char v, int *amb)
 {
   switch (v)
@@ -298,6 +310,15 @@ static char splt_of_get_number_of_digits_from_total_time(splt_state *state)
   return '2';
 }
 
+/*! \brief Automagically set the filename for a split point
+
+  The filename is generated from the tags and the output format
+  string.
+
+  \param state The central structure libmp3splt keeps all its data in
+  \param current_splt The number of the split point to determine the
+  filename for.
+ */
 int splt_of_put_output_format_filename(splt_state *state, int current_split)
 {
   int error = SPLT_OK;
