@@ -33,6 +33,7 @@
 #ifndef SPLT_CUE_H
 #define SPLT_CUE_H
 
+//! Internal structure that bundles all variables the cue utils need
 typedef struct {
   int tracks;
   int time_for_track;
@@ -41,6 +42,8 @@ typedef struct {
   int title;
   const char *file;
   int counter;
+  //! 0 means we build a filename from the tags 1 means filename is track name
+  int title_is_filename;
 } cue_utils;
 
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error);

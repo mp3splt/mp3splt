@@ -243,20 +243,20 @@ static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_
 //! Process the rest of a cue line that begins with the word REM
 static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_state *state)
 {
-  char *cu;
+  char *linetail;
 
   // Skip the word REM
-  line_content += 4;
+  line_content += 3;
 
   // Skip all leading whitespace after the word REM
-  while ((*line_content=' ')||(*line_content='\t')) line_content++;
+  while ((*line_content==' ')||(*line_content=='\t')) line_content++;
 
-  if((cu=strstr(line_content,"CREATOR"))!=NULL)
+  if((linetail=strstr(line_content,"CREATOR"))!=NULL)
     {
       // Skip the word "CREATOR"
-      cu += 7;
+      linetail += 7;
 
-      if(strstr(cu,"MP3SPLT_GTK")!=NULL)
+      if(strstr(linetail,"MP3SPLT_GTK")!=NULL)
 	{
 	  // TODO: Do we really want to do something in this
 	  // case? Normally it is best to look at the propoerties
@@ -264,12 +264,12 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
 	}
     }
   else
-  if((cu=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
+  if((linetail=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
     {
-      // TODO: What do we want to do in this case?
+      cu->title_is_filename = 1;
     }
   else
-  if((cu=strstr(line_content,"NOKEEP"))!=NULL)
+  if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
     {
       if (cu->tracks > 0)
 	{
@@ -396,6 +396,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   int tracks = -1;
 
   cue_utils *cu = splt_cue_cu_new(state, &err);
+  
   if (err < 0) { *error = err; return tracks; }
   cu->file = file;
 
@@ -445,7 +446,25 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     tracks--;
   }
 
+  // Generate filenames using the tags we got
   splt_cc_put_filenames_from_tags(state, tracks, error);
+  
+  // If mp3splt_gtk has generated the cue file 
+  // splt_cc_put_filenames_from_tags has now auto-generated
+  // filenames that contain the intended filename (that was
+  // written to the TITLE tag).
+  // Which means we have to correct this by copying the
+  // TITLE tags to the filenames.
+
+    if(cu->title_is_filename)
+      {
+    	int i;
+    	for(i=0;i<tracks;i++)
+    	  {
+    	    splt_sp_set_splitpoint_name(state, i,
+    					splt_tu_get_tags_field(state, i, SPLT_TAGS_TITLE));
+    	  }
+      }
 
 function_end:
   splt_cue_cu_free(&cu);
@@ -473,7 +492,7 @@ function_end:
 
 /*! Write title and performer information to a file
 
-\param state The splt_state struct to take the track info from
+\param state The central struct that keeps all variables for this library
 \param file_output The file descriptor to output the track info to
 \param tags_index The number of the split point we have to output
        information for

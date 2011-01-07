@@ -62,6 +62,7 @@ void splt_tu_free_original_tags(splt_state *state)
   state->original_tags.genre = 12;
 }
 
+//! Get all tags for split point number x
 splt_tags *splt_tu_get_tags(splt_state *state, int *tags_number)
 {
   *tags_number = state->split.real_tagsnumber;
