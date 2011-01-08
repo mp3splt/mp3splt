@@ -242,7 +242,7 @@ typedef struct {
   /**
    * @brief The genre
    */
-  unsigned char genre;
+  char *genre;
 
   /*
    * @brief tags version (for mp3): 1 or 2 or 1 & 2
@@ -1179,6 +1179,35 @@ typedef enum {
   SPLT_SKIPPOINT,
 } splt_type_of_splitpoint;
 
+
+#define SPLT_UNDEFINED_GENRE "Other"
+
+#define SPLT_ID3V1_NUMBER_OF_GENRES 82
+
+/*! ID3v1 genres
+*/
+static const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
+  {"Blues"}, {"Classic Rock"}, {"Country"}, {"Dance"}, 
+  {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
+  {"Metal"},{"New Age"},{"Oldies"}, {"Other"}, {"Pop"},
+  {"R&B"}, {"Rap"}, {"Reggae"}, {"Rock"}, {"Techno"},
+  {"Industrial"}, {"Alternative"}, {"Ska"}, {"Death metal"},
+  {"Pranks"}, {"Soundtrack"}, {"Euro-Techno"},
+  {"Ambient"}, {"Trip-hop"}, {"Vocal"}, {"Jazz+Funk"},
+  {"Fusion"}, {"Trance"}, {"Classical"}, {"Instrumental"},
+  {"Acid"}, {"House"}, {"Game"}, {"Sound clip"}, {"Gospel"},
+  {"Noise"}, {"Alt. Rock"}, {"Bass"}, {"Soul"}, {"Punk"}, 
+  {"Space"}, {"Meditative"}, {"Instrumental pop"}, 
+  {"Instrumental rock"}, {"Ethnic"}, {"Gothic"},{"Darkwave"},
+  {"Techno-Industrial"},{"Electronic"},{"Pop-Folk"},{"Eurodance"},
+  {"Dream"},{"Southern Rock"},{"Comedy"}, {"Cult"},{"Gangsta"},
+  {"Top 40"},{"Christian Rap"},{"Pop/Funk"}, {"Jungle"},
+  {"Native American"},{"Cabaret"},{"New Wave"}, {"Psychedelic"},
+  {"Rave"},{"Showtunes"},{"Trailer"}, {"Lo-Fi"},{"Tribal"},
+  {"Acid Punk"},{"Acid Jazz"}, {"Polka"}, {"Retro"},
+  {"Musical"},{"Rock & Roll"},{"Hard Rock"}, {"misc"}, {"misc"},
+};
+
 /**
  * Freedb constants
  */
@@ -1415,7 +1444,7 @@ int mp3splt_append_tags(splt_state *state,
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
-    int track, unsigned char genre);
+    int track, const char *genre);
 
 //returns a pointer to all the current tags
 const splt_tags *mp3splt_get_tags(splt_state *state,

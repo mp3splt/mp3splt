@@ -561,12 +561,10 @@ function test_normal_vbr_custom_tags
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "t1"\
-  "2000" "Other" "12" "10" "my_comment"
+  check_all_mp3_tags_with_version "2" "a1" "b1" "t1" "2000" "" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "2" "" "" "" ""\
-  "Other" "12" "2" ""
+  check_all_mp3_tags_with_version "2" "" "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -636,11 +634,10 @@ FILE "songs/La_Verue__Today.mp3" MP3
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
   check_all_mp3_tags_with_version "2" "a1" "b1" "t1"\
-  "2000" "Other" "12" "10" "my_comment"
+  "2000" "" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "2" "" "" "" ""\
-  "Other" "12" "2" ""
+  check_all_mp3_tags_with_version "2" "" "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -683,20 +680,20 @@ function test_normal_vbr_custom_tags_and_input_no_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
   check_all_mp3_tags_with_version "1 2" "a1" "b1" "t1"\
-  "2000" "Other" "12" "10" "my_comment"
+  "2000" "" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "1 2" "" "" "" "" "Other" "12" "2" ""
+  check_all_mp3_tags_with_version "1 2" "" "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
-  check_all_mp3_tags_with_version "1 2" "" "album" "" "" "Other" "12" "7" ""
+  check_all_mp3_tags_with_version "1 2" "" "album" "" "" "" "" "7" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
   check_all_mp3_tags_with_version "1 2" "custom_artist" "album" "" ""\
-  "Other" "12" "8" ""
+  "" "" "8" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3"
-  check_all_mp3_tags_with_version "1 2" "" "" "" "" "Other" "12" "20" ""
+  check_all_mp3_tags_with_version "1 2" "" "" "" "" "" "" "20" ""
 
   p_green "OK"
   echo
@@ -726,12 +723,10 @@ function test_normal_vbr_custom_tags_multiple_percent
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "" ""\
-  "Other" "12" "10" ""
+  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "" ""\
-  "Other" "12" "2" ""
+  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -825,33 +820,33 @@ function _test_normal_vbr_stdin_and_tags
 
   current_file="$OUTPUT_DIR/-_01m_00s__02m_00s_20h.mp3"
   check_all_mp3_tags_with_version $tags_version "a1" "b1" "" "1070"\
-  "Other" "12" "1" ""
+  "" "" "1" ""
   check_current_mp3_length "01.00"
   check_current_file_has_xing
   if [[ $tags_version -eq 2 ]];then
-    check_current_file_size "1366020"
+    check_current_file_size "1365997"
   else
     check_current_file_size "1366045"
   fi
 
   current_file="$OUTPUT_DIR/-_02m_00s_20h__03m_30s.mp3"
   check_all_mp3_tags_with_version $tags_version "a1" "b1" "" "1070"\
-  "Other" "12" "2" ""
+  "" "" "2" ""
   check_current_mp3_length "01.29"
   check_current_file_has_xing
   if [[ $tags_version -eq 2 ]];then
-    check_current_file_size "2113837"
+    check_current_file_size "2113814"
   else
     check_current_file_size "2113862"
   fi
 
   current_file="$OUTPUT_DIR/-_03m_30s__04m_05s_58h.mp3"
   check_all_mp3_tags_with_version $tags_version "a1" "b1" "" "1070"\
-  "Other" "12" "3" ""
+  "" "" "3" ""
   check_current_mp3_length "00.35"
   check_current_file_has_xing
   if [[ $tags_version -eq 2 ]];then
-    check_current_file_size "806244"
+    check_current_file_size "806221"
   else
     check_current_file_size "806269"
   fi
@@ -1068,8 +1063,7 @@ function test_normal_vbr_custom_tags_with_replace_tags_in_tags
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/$F1"
-  check_all_mp3_tags_with_version "2" "a_10" "b_a_@n" "" ""\
-  "Other" "12" "10" "cc_b_@a"
+  check_all_mp3_tags_with_version "2" "a_10" "b_a_@n" "" "" "" "" "10" "cc_b_@a"
 
   current_file="$OUTPUT_DIR/$F2"
   check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "Today" "2007"\
@@ -1111,7 +1105,7 @@ function test_normal_vbr_custom_tags_without_replace_tags_in_tags
 
   current_file="$OUTPUT_DIR/$F1"
   check_all_mp3_tags_with_version "2" "a_@n" "b_@a" "" ""\
-  "Other" "12" "10" "cc_@b"
+  "" "" "10" "cc_@b"
 
   current_file="$OUTPUT_DIR/$F2"
   check_all_mp3_tags_with_version "2" "La Verue" "album_@c" "Today" "2007"\

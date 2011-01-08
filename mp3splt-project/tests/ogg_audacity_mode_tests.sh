@@ -37,22 +37,22 @@ function test_audacity
   current_file="$OUTPUT_DIR/zero.ogg"
   check_current_ogg_length "0m:57.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "1" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "1" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/first.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "2" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "2" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/second.ogg"
   check_current_ogg_length "0m:17.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "3" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "3" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/.ogg"
   check_current_ogg_length "0m:18.853s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "4" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "4" "http://www.jamendo.com"
 
   p_green "OK"
   echo
@@ -140,22 +140,22 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   current_file="$OUTPUT_DIR/zero.ogg"
   check_current_ogg_length "0m:57.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "1" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "1" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/first.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "2" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "2" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/second.ogg"
   check_current_ogg_length "0m:17.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "3" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "3" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/.ogg"
   check_current_ogg_length "0m:18.853s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
-  "2007-07-10 15:45:07" "Swing" "4" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "4" "http://www.jamendo.com"
 
   p_green "OK"
   echo
@@ -283,22 +283,22 @@ function test_audacity_and_custom_tags
   current_file="$OUTPUT_DIR/zero.ogg"
   check_current_ogg_length "0m:57.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "title1"\
-  "2007-07-10 15:45:07" "Swing" "6" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "6" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/first.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "tit2"\
-  "2007-07-10 15:45:07" "Swing" "7" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "7" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/second.ogg"
   check_current_ogg_length "0m:17.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "tit3"\
-  "2007-07-10 15:45:07" "Swing" "8" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "8" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/.ogg"
   check_current_ogg_length "0m:18.853s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "title1"\
-  "2007-07-10 15:45:07" "Swing" "9" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "9" "http://www.jamendo.com"
 
   p_green "OK"
   echo
@@ -331,22 +331,22 @@ function test_audacity_and_custom_tags_and_output_format
   current_file="$OUTPUT_DIR/title1/Kelly Allyn_Getting Back From Where I've Been_title1_1.ogg"
   check_current_ogg_length "0m:57.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "title1"\
-  "2007-07-10 15:45:07" "Swing" "6" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "6" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/tit2/Kelly Allyn_Getting Back From Where I've Been_tit2_2.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "tit2"\
-  "2007-07-10 15:45:07" "Swing" "7" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "7" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/tit3/Kelly Allyn_Getting Back From Where I've Been_tit3_3.ogg"
   check_current_ogg_length "0m:17.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "tit3"\
-  "2007-07-10 15:45:07" "Swing" "8" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "8" "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/title1/Kelly Allyn_Getting Back From Where I've Been_title1_4.ogg"
   check_current_ogg_length "0m:18.853s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "title1"\
-  "2007-07-10 15:45:07" "Swing" "9" "http://www.jamendo.com"
+  "2007-07-10 15:45:07" "Southern Rock" "9" "http://www.jamendo.com"
 
   p_green "OK"
   echo

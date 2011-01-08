@@ -25,25 +25,24 @@ function test_normal_with_tags
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
-  #TODO bug genre !
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "1"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "1637898"
+  check_current_file_size "1637906"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "2"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "1513279"
+  check_current_file_size "1513287"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "3"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "53170"
+  check_current_file_size "53178"
 
   p_green "OK"
   echo
@@ -153,23 +152,23 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "1"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "1637898"
+  check_current_file_size "1637906"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "2"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "1513279"
+  check_current_file_size "1513287"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "3"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "53170"
+  check_current_file_size "53178"
 
   p_green "OK"
   echo
@@ -238,11 +237,11 @@ function test_normal_overlap_split
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
   check_current_ogg_length "1m:31.199s"
-  check_current_file_size "2421533"
+  check_current_file_size "2421541"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
   check_current_ogg_length "1m:03.653s"
-  check_current_file_size "1561314"
+  check_current_file_size "1561322"
 
   p_green "OK"
   echo
@@ -282,11 +281,11 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
   check_current_ogg_length "1m:31.199s"
-  check_current_file_size "2421533"
+  check_current_file_size "2421541"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
   check_current_ogg_length "1m:03.653s"
-  check_current_file_size "1561314"
+  check_current_file_size "1561322"
 
   p_green "OK"
   echo
@@ -408,24 +407,24 @@ function test_normal_custom_tags
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
-  check_all_ogg_tags "a1" "b1" "t1" "2000" "Other" "10" "my_comment"
+  check_all_ogg_tags "a1" "b1" "t1" "2000" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
-  check_all_ogg_tags "" "" "" "" "Other" "2" ""
+  check_all_ogg_tags "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_all_ogg_tags "Kelly Allyn" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "7"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_all_ogg_tags "custom_artist" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "20"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "20"\
                      "http://www.jamendo.com"
 
   p_green "OK"
@@ -478,24 +477,24 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     INDEX 01 03:00:10'
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
-  check_all_ogg_tags "a1" "b1" "t1" "2000" "Other" "10" "my_comment"
+  check_all_ogg_tags "a1" "b1" "t1" "2000" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
-  check_all_ogg_tags "" "" "" "" "Other" "2" ""
+  check_all_ogg_tags "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_all_ogg_tags "Kelly Allyn" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "7"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_all_ogg_tags "custom_artist" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "20"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "20"\
                      "http://www.jamendo.com"
 
   p_green "OK"
@@ -525,19 +524,19 @@ function test_normal_custom_tags_and_input_no_tags
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
-  check_all_ogg_tags "a1" "b1" "t1" "2000" "Other" "10" "my_comment"
+  check_all_ogg_tags "a1" "b1" "t1" "2000" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
-  check_all_ogg_tags "" "" "" "" "Other" "2" ""
+  check_all_ogg_tags "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
-  check_all_ogg_tags "" "album" "" "" "Other" "7" ""
+  check_all_ogg_tags "" "album" "" "" "" "7" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
-  check_all_ogg_tags "custom_artist" "album" "" "" "Other" "8" ""
+  check_all_ogg_tags "custom_artist" "album" "" "" "" "8" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
-  check_all_ogg_tags "" "" "" "" "Other" "20" ""
+  check_all_ogg_tags "" "" "" "" "" "20" ""
 
   p_green "OK"
   echo
@@ -565,19 +564,19 @@ function test_normal_custom_tags_multiple_percent
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
-  check_all_ogg_tags "a1" "b1" "" "" "Other" "10" ""
+  check_all_ogg_tags "a1" "b1" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
-  check_all_ogg_tags "a1" "b1" "" "" "Other" "2" ""
+  check_all_ogg_tags "a1" "b1" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_all_ogg_tags "Kelly Allyn" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "7"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_all_ogg_tags "custom_artist" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8"\
                      "http://www.jamendo.com"
 
   p_green "OK"
@@ -682,18 +681,18 @@ function test_normal_stdin_with_custom_tags
 
   current_file="$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
-  check_all_ogg_tags "a1" "b1" "" "1070" "Other" "1" ""
-  check_current_file_size "1637788"
+  check_all_ogg_tags "a1" "b1" "" "1070" "" "1" ""
+  check_current_file_size "1637773"
 
   current_file="$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
-  check_all_ogg_tags "a1" "b1" "" "1070" "Other" "2" ""
-  check_current_file_size "1513169"
+  check_all_ogg_tags "a1" "b1" "" "1070" "" "2" ""
+  check_current_file_size "1513154"
 
   current_file="$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg" 
   check_current_ogg_length "0m:04.753s"
-  check_all_ogg_tags "a1" "b1" "" "1070" "Other" "3" ""
-  check_current_file_size "53060"
+  check_all_ogg_tags "a1" "b1" "" "1070" "" "3" ""
+  check_current_file_size "53045"
 
   p_green "OK"
   echo
@@ -842,7 +841,7 @@ function test_normal_stdout
 
   current_file="$OUTPUT_DIR/stdout.ogg"
   check_current_ogg_length "1m:30.199s"
-  check_current_file_size "2396187"
+  check_current_file_size "2396195"
 
   p_green "OK"
   echo
@@ -871,7 +870,7 @@ function test_normal_stdout_multiple_splitpoints
 #TODO: 2 outputs are concatenated in the same file ? should we do something ?
   check_current_ogg_length "1m:30.199s
 0m:19.800s"
-  check_current_file_size "2916412"
+  check_current_file_size "2916428"
 
   p_green "OK"
   echo
@@ -903,13 +902,13 @@ function test_normal_custom_tags_with_replace_tags_in_tags
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/$F1"
-  check_all_ogg_tags "a_10" "b_a_@n" "" "" "Other" "10" "cc_b_@a"
+  check_all_ogg_tags "a_10" "b_a_@n" "" "" "" "10" "cc_b_@a"
 
   current_file="$OUTPUT_DIR/$F2"
-  check_all_ogg_tags "Kelly Allyn" "album_cc_@t" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7" "cc_Whiskey Can"
+  check_all_ogg_tags "Kelly Allyn" "album_cc_@t" "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "7" "cc_Whiskey Can"
 
   current_file="$OUTPUT_DIR/$F3"
-  check_all_ogg_tags "Kelly Allyn" "album_cc_@t" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8" "cc_Whiskey Can"
+  check_all_ogg_tags "Kelly Allyn" "album_cc_@t" "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8" "cc_Whiskey Can"
 
   p_green "OK"
   echo
@@ -941,13 +940,13 @@ function test_normal_custom_tags_without_replace_tags_in_tags
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/$F1"
-  check_all_ogg_tags "a_@n" "b_@a" "" "" "Other" "10" "cc_@b"
+  check_all_ogg_tags "a_@n" "b_@a" "" "" "" "10" "cc_@b"
 
   current_file="$OUTPUT_DIR/$F2"
-  check_all_ogg_tags "Kelly Allyn" "album_@c" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "7" "cc_@t"
+  check_all_ogg_tags "Kelly Allyn" "album_@c" "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "7" "cc_@t"
 
   current_file="$OUTPUT_DIR/$F3"
-  check_all_ogg_tags "Kelly Allyn" "album_@c" "Whiskey Can" "2007-07-10 15:45:07" "Swing" "8" "cc_@t"
+  check_all_ogg_tags "Kelly Allyn" "album_@c" "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8" "cc_@t"
 
   p_green "OK"
   echo
@@ -976,25 +975,25 @@ function test_normal_split_in_equal_parts
   current_file="$OUTPUT_DIR/1.ogg"
   check_current_ogg_length "0m:46.219s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "1"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/2.ogg" 
   check_current_ogg_length "0m:46.217s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "2"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/3.ogg" 
   check_current_ogg_length "0m:46.214s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "3"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/4.ogg" 
   check_current_ogg_length "0m:46.200s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Swing" "4"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "4"\
                      "http://www.jamendo.com"
 
   p_green "OK"
@@ -1026,15 +1025,15 @@ function test_normal_with_tags_from_filename_regex
 
   current_file="$OUTPUT_DIR/${NEW_O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
-  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Swing" "2" "comment4"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Southern Rock" "2" "comment4"
 
   current_file="$OUTPUT_DIR/${NEW_O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
-  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Swing" "2" "comment4"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Southern Rock" "2" "comment4"
 
   current_file="$OUTPUT_DIR/${NEW_O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
-  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Swing" "2" "comment4"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Southern Rock" "2" "comment4"
 
   rm -f $NEW_OGG_FILE
 

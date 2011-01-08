@@ -125,7 +125,14 @@ function check_all_mp3_tags_with_version
       id_str=""
     fi
 
-    _check_all_current_mp3_tags "$2" "$3" "$4" "$new_year" "$6 (${id_str}$7)" "$8" "$9"
+    local genre=""
+    if [[ ! -z $6 ]];then
+      genre="$6 (${id_str}$7)"
+    elif [[ $tags_v -eq 1 ]];then
+      genre="Unknown (255)"
+    fi
+
+    _check_all_current_mp3_tags "$2" "$3" "$4" "$new_year" "$genre" "$8" "$9"
   done
 }
 

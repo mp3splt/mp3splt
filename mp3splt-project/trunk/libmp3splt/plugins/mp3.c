@@ -71,43 +71,6 @@ static const int splt_mp3_tabsel_123[2][3][16] = {
     {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,} }
 };
 
-#define DEFAULT_ID3V1_CATEGORY_INDEX 12
-
-/*! categories of mp3 songs
-
-\todo Does it make sense to translate them? 
-*/
-static const char splt_mp3_id3v1_categories[SPLT_MP3_GENRENUM][25] = {
-  {"Blues"}, {"Classic Rock"}, {"Country"}, {"Dance"}, 
-  {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
-  {"Metal"},{"New Age"},{"Oldies"}, {"Other"}, {"Pop"},
-  {"R&B"}, {"Rap"}, {"Reggae"}, {"Rock"}, {"Techno"},
-  {"Industrial"}, {"Alternative"}, {"Ska"}, {"Death metal"},
-  {"Pranks"}, {"Soundtrack"}, {"Euro-Techno"},
-  {"Ambient"}, {"Trip-hop"}, {"Vocal"}, {"Jazz+Funk"},
-  {"Fusion"}, {"Trance"}, {"Classical"}, {"Instrumental"},
-  {"Acid"}, {"House"}, {"Game"}, {"Sound clip"}, {"Gospel"},
-  {"Noise"}, {"Alt. Rock"}, {"Bass"}, {"Soul"}, {"Punk"}, 
-  {"Space"}, {"Meditative"}, {"Instrumental pop"}, 
-  {"Instrumental rock"}, {"Ethnic"}, {"Gothic"},{"Darkwave"},
-  {"Techno-Industrial"},{"Electronic"},{"Pop-Folk"},{"Eurodance"},
-  {"Dream"},{"Southern Rock"},{"Comedy"}, {"Cult"},{"Gangsta"},
-  {"Top 40"},{"Christian Rap"},{"Pop/Funk"}, {"Jungle"},
-  {"Native American"},{"Cabaret"},{"New Wave"}, {"Psychedelic"},
-  {"Rave"},{"Showtunes"},{"Trailer"}, {"Lo-Fi"},{"Tribal"},
-  {"Acid Punk"},{"Acid Jazz"}, {"Polka"}, {"Retro"},
-  {"Musical"},{"Rock & Roll"},{"Hard Rock"}, {"misc"}, {"misc"},
-};
-
-//! A list of genre numbers
-static const char unsigned splt_mp3_id3genre[SPLT_MP3_GENRENUM] = 
-{ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
-  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
-  0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
-  0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
-  0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
-  0xFF };
-
 /*! A table needed for fast crc32 computation
 
  */
@@ -617,27 +580,6 @@ static void splt_mp3_state_free(splt_state *state)
 /****************************/
 /* mp3 tags */
 
-//!returns the genre of the song, mp3splt used this in cddb search
-static unsigned char splt_mp3_getgenre(const char *genre_string)
-{
-  if (genre_string == NULL)
-  {
-    return 0xFF;
-  }
-
-  int i = 0;
-  for (i=0; i < SPLT_MP3_GENRENUM; i++)
-  {
-    if (strncmp(genre_string, splt_mp3_id3v1_categories[i],
-          strlen(genre_string)) == 0)
-    {
-      return splt_mp3_id3genre[i];
-    }
-  }
-
-  return 0xFF;
-}
-
 #ifndef NO_ID3TAG
 
 /*! get libid3tag original tags */
@@ -829,22 +771,22 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
             break;
           case SPLT_MP3_ID3_GENRE:
             ;
-            unsigned char genre = splt_mp3_getgenre((char *)tag_value);
-            err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE, &genre);
+            char *genre = (char *)tag_value;
 
-            int number = 80;
-            number = atoi((char *)tag_value);
-            //if we have a number returned by tag_value
-            if ((number != 0) &&
-                (state->original_tags.genre == 0xFF))
+            int id3v1 = atoi(genre);
+            if ((id3v1 != 0) &&
+                (id3v1 < SPLT_ID3V1_NUMBER_OF_GENRES) &&
+                (state->original_tags.genre == NULL))
             {
-              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE, &number);
+              err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, splt_id3v1_genres[id3v1]);
             }
-            //if we have 0 returned
-            if (strcmp((char*)tag_value, "0") == 0)
+            else if (strcmp(genre, "0") == 0)
             {
-              number = DEFAULT_ID3V1_CATEGORY_INDEX;
-              err = splt_tu_set_original_tags_field(state,SPLT_TAGS_GENRE, &number);
+              err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, SPLT_UNDEFINED_GENRE);
+            }
+            else
+            {
+              err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, genre);
             }
             break;
           default:
@@ -1010,7 +952,7 @@ error:
 }
 
 static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
-    const char *album, const char *year, unsigned char genre, 
+    const char *album, const char *year, const char *genre, 
     const char *comment, int track, int *error, unsigned long *number_of_bytes,
     int tags_version)
 {
@@ -1050,12 +992,8 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
     if (*error < 0) { goto error; }
   }
 
-  if (genre < SPLT_MP3_GENRENUM)
-  {
-    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1,
-        splt_mp3_id3v1_categories[genre], error);
-    if (*error < 0) { goto error; }
-  }
+  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1, genre, error);
+  if (*error < 0) { goto error; }
 
   //get the number of bytes needed for the tags
   bytes_length = id3_tag_render(id, NULL);
@@ -1094,6 +1032,35 @@ error:
 
 #else
 
+//! A list of genre numbers
+static const char unsigned splt_mp3_id3v1_genre_mapping[SPLT_ID3V1_NUMBER_OF_GENRES] = 
+{ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
+  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+  0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+  0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
+  0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
+  0xFF };
+
+//!returns the genre of the song, mp3splt used this in cddb search
+static unsigned char splt_mp3_get_id3v1_mapping(const char *genre_string)
+{
+  if (genre_string == NULL)
+  {
+    return 0xFF;
+  }
+
+  int i = 0;
+  for (i = 0; i < SPLT_ID3V1_NUMBER_OF_GENRES; i++)
+  {
+    if (strncmp(genre_string, splt_id3v1_genres[i], strlen(genre_string)) == 0)
+    {
+      return splt_mp3_id3v1_genre_mapping[i];
+    }
+  }
+
+  return 0xFF;
+}
+
 /*! returns a id3v1 buffer as string
 
 \attention The string this function returns is malloc()'ed and must be
@@ -1101,7 +1068,7 @@ freed by the caller after use.
 \return The string or NULL on error
 */
 static char *splt_mp3_build_simple_id3v1(const char *title, const char *artist,
-    const char *album, const char *year, unsigned char genre, 
+    const char *album, const char *year, const char *genre, 
     const char *comment, int track, int *error, unsigned long *number_of_bytes)
 {
   char *id = NULL;
@@ -1143,8 +1110,8 @@ static char *splt_mp3_build_simple_id3v1(const char *title, const char *artist,
       {
         id[j-1] = (char) track;
       }
-    }      
-    id[j] = (char) genre;
+    }
+    id[j] = (char) splt_mp3_get_id3v1_mapping(genre);
   }
   else
   {
@@ -1166,7 +1133,7 @@ freed by the caller after use.
 */
 static char *splt_mp3_build_id3_tags(splt_state *state,
     const char *title, const char *artist,
-    const char *album, const char *year, unsigned char genre, 
+    const char *album, const char *year, const char *genre,
     const char *comment, int track, int *error,
     unsigned long *number_of_bytes, int version)
 {

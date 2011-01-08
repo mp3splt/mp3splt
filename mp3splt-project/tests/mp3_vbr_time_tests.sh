@@ -592,11 +592,10 @@ function test_time_vbr_custom_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3"
   check_all_mp3_tags_with_version "2" "a1" "b1" "t1"\
-  "2000" "Other" "12" "10" "my_comment"
+  "2000" "" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "" "" "" ""\
-  "Other" "12" "2" ""
+  check_all_mp3_tags_with_version "2" "" "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -638,12 +637,10 @@ function test_time_vbr_custom_tags_multiple_percent
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "" ""\
-  "Other" "12" "10" ""
+  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "" ""\
-  "Other" "12" "2" ""
+  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -726,33 +723,33 @@ function _test_time_vbr_stdin_and_tags
 
   current_file="$OUTPUT_DIR/-_00m_00s__02m_00s.mp3"
   check_all_mp3_tags_with_version $tags_version "a1" "b1" "" "1070"\
-  "Other" "12" "1" ""
+  "" "" "1" ""
   check_current_mp3_length "02.00"
   check_current_file_has_xing
   if [[ $tags_version -eq 2 ]];then
-    check_current_file_size "2687115"
+    check_current_file_size "2687092"
   else
     check_current_file_size "2687140"
   fi
 
   current_file="$OUTPUT_DIR/-_02m_00s__04m_00s.mp3"
   check_all_mp3_tags_with_version $tags_version "a1" "b1" "" "1070"\
-  "Other" "12" "2" ""
+  "" "" "2" ""
   check_current_mp3_length "02.00"
   check_current_file_has_xing
   if [[ $tags_version -eq 2 ]];then
-    check_current_file_size "2826739"
+    check_current_file_size "2826716"
   else
     check_current_file_size "2826764"
   fi
 
   current_file="$OUTPUT_DIR/-_04m_00s__04m_05s_58h.mp3"
   check_all_mp3_tags_with_version $tags_version "a1" "b1" "" "1070"\
-  "Other" "12" "3" ""
+  "" "" "3" ""
   check_current_mp3_length "00.05"
   check_current_file_has_xing
   if [[ $tags_version -eq 2 ]];then
-    check_current_file_size "97412"
+    check_current_file_size "97389"
   else
     check_current_file_size "97437"
   fi
