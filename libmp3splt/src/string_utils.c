@@ -308,6 +308,11 @@ char *splt_su_cut_spaces(char *c)
 
 void splt_su_cut_spaces_from_end(char *c)
 {
+  if (c == NULL || *c == '\0')
+  {
+    return;
+  }
+
   char *end = strchr(c, '\0');
   if (!end)
   {

@@ -128,7 +128,6 @@ typedef struct {
    */
 
 #define SPLT_MP3_TAG "TAG"
-#define SPLT_MP3_GENRENUM 82
 #define SPLT_MP3_PCM 1152
 #define SPLT_MP3_BYTE 8
 

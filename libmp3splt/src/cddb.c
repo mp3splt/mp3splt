@@ -37,7 +37,6 @@
 
 #include "cddb.h"
 
-static int splt_cddb_set_default_genre(splt_state *state);
 static void splt_cddb_process_line(char **l, cddb_utils *cdu, splt_state *state);
 static void splt_cddb_process_disc_length_line(const char *line_content, cddb_utils *cdu, splt_state *state);
 static void splt_cddb_convert_points(cddb_utils *cdu, splt_state *state);
@@ -46,8 +45,7 @@ static cddb_utils *splt_cddb_cdu_new(splt_state *state, int *error);
 static void splt_cddb_cdu_free(cddb_utils **cdu);
 static void splt_cddb_process_year_line(const char *line_content,
     cddb_utils *cdu, splt_state *state);
-static void splt_cddb_process_genre_line(const char *line_content,
-    cddb_utils *cdu, splt_state *state);
+static void splt_cddb_process_genre_line(char *line_content, cddb_utils *cdu, splt_state *state);
 static void splt_cddb_process_dtitle_line(const char *line_content, cddb_utils *cdu, splt_state *state);
 static void splt_cddb_process_ttitle_line(const char *line_content, cddb_utils *cdu, splt_state *state);
 static void splt_cddb_process_id3g_line(const char *line_content, cddb_utils *cdu, splt_state *state);
@@ -90,7 +88,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
     goto function_end;
   }
 
-  err = splt_cddb_set_default_genre(state);
+  err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, SPLT_UNDEFINED_GENRE);
   if (err < 0) { *error = err; goto function_end; }
  
   while ((line = splt_io_readline(file_input, error)) != NULL)
@@ -126,12 +124,6 @@ function_end:
   }
 
   return tracks;
-}
-
-static int splt_cddb_set_default_genre(splt_state *state)
-{
-  unsigned char default_genre = 12;
-  return splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &default_genre);
 }
 
 static void splt_cddb_process_line(char **l, cddb_utils *cdu, splt_state *state)
@@ -185,9 +177,12 @@ static void splt_cddb_process_id3g_line(const char *line_content, cddb_utils *cd
 {
   int err = SPLT_OK;
 
-  int id3g = atoi(line_content+6);
-  err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &id3g);
-  if (err < 0) { cdu->error = err; return; }
+  int id3g = atoi(line_content + 6);
+  if (id3g < SPLT_ID3V1_NUMBER_OF_GENRES)
+  {
+    err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, splt_id3v1_genres[id3g]);
+    if (err < 0) { cdu->error = err; return; }
+  }
 }
 
 static void splt_cddb_process_ttitle_line(const char *line_content, cddb_utils *cdu, splt_state *state)
@@ -267,22 +262,17 @@ static void splt_cddb_process_dtitle_line(const char *line_content, cddb_utils *
   }
 }
 
-static void splt_cddb_process_genre_line(const char *line_content,
-    cddb_utils *cdu, splt_state *state)
+static void splt_cddb_process_genre_line(char *line_content, cddb_utils *cdu, splt_state *state)
 {
-  int err = SPLT_OK;
+  char *genre = line_content + 6;
+  splt_su_cut_spaces_from_end(genre);
 
-  char a[4] = { '\0' };
-  strncpy(a, line_content + 6, 3);
-
-  if (splt_su_is_empty_line(a))
+  if (*genre == '\0')
   {
     return;
   }
 
-  //this tag doesn't work correctly because GENRE is not a number
-  int t = atoi(a);
-  err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &t);
+  int err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, genre);
   if (err < 0) { cdu->error = err; }
 }
 

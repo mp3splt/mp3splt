@@ -39,12 +39,12 @@ int splt_tu_append_tags(splt_state *state,
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
-    int track, unsigned char genre);
+    int track, const char *genre);
 int splt_tu_append_only_non_null_previous_tags(splt_state *state, 
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
-    int track, unsigned char genre);
+    int track, const char *genre);
 void splt_tu_reset_tags(splt_tags *tags);
 splt_tags *splt_tu_new_tags(splt_state *state, int *error);
 void splt_tu_free_one_tags(splt_tags **tags);

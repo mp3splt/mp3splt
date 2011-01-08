@@ -432,8 +432,8 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   if (err < 0) { *error = err; return tracks; }
   cu->file = file;
 
-  int default_genre = 12;
-  err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, &default_genre);
+  //TODO: .cue #REM GENRE support
+  err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, SPLT_UNDEFINED_GENRE);
   if (err != SPLT_OK)
   {
     *error = err;

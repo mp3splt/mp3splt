@@ -386,9 +386,9 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
     char *all_performer = NULL;
     char *all_year = NULL;
     char *all_comment = NULL;
+    char *all_genre = NULL;
     int all_tracknumber = -1;
     int auto_incremented_tracknumber = -1;
-    unsigned char all_genre = 12;
     //when using 'N', auto increment the track number
     short auto_increment_tracknumber = SPLT_FALSE;
     short first_time_auto_increment_tracknumber = SPLT_TRUE;
@@ -414,6 +414,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
             if (all_performer) { free(all_performer); all_performer = NULL; }
             if (all_year) { free(all_year); all_year = NULL; }
             if (all_comment) { free(all_comment); all_comment = NULL; }
+            if (all_genre) { free(all_genre); all_genre = NULL; }
           }
         }
       }
@@ -425,8 +426,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
       char *year = NULL;
       char *comment = NULL;
       char *tracknumber = NULL;
-      //means "other"
-      unsigned char genre = 12;
+      char *genre = NULL;
 
       //how many we have found in one [..]
       short s_title = 0;
@@ -435,6 +435,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
       short s_performer = 0;
       short s_year = 0;
       short s_comment = 0;
+      short s_genre = 0;
       short s_tracknumber = 0;
 
       cur_pos++;
@@ -475,6 +476,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
           switch (*cur_pos)
           {
             case 'o':
+              ;
               //if we have twice @o
               if (original_tags)
               {
@@ -531,6 +533,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
                     if (all_performer) { free(all_performer); all_performer = NULL; }
                     if (all_year) { free(all_year); all_year = NULL; }
                     if (all_comment) { free(all_comment); all_comment = NULL; }
+                    if (all_genre) { free(all_genre); all_genre = NULL; }
                     if (last_tags.title != NULL)
                     {
                       all_title = strdup(last_tags.title);
@@ -555,7 +558,10 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
                     {
                       all_comment = strdup(last_tags.comment);
                     }
-                    all_genre = last_tags.genre;
+                    if (last_tags.genre != NULL)
+                    {
+                      all_genre = strdup(last_tags.genre);
+                    }
                     all_tracknumber = last_tags.track;
                   }
                   original_tags = SPLT_TRUE;
@@ -575,7 +581,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
               if ((artist != NULL) || (performer != NULL) ||
                   (album != NULL) || (title != NULL) ||
                   (comment != NULL) || (year != NULL) ||
-                  (tracknumber != NULL))
+                  (tracknumber != NULL) || (genre != NULL))
               {
                 ambiguous = SPLT_TRUE;
               }
@@ -667,6 +673,25 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
 
                 cur_pos += strlen(comment)+2;
                 s_comment++;
+              }
+              else
+              {
+                cur_pos++;
+              }
+              break;
+            case 'g':
+              genre = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
+              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
+              if (genre != NULL)
+              {
+                if (all_tags)
+                {
+                  if (all_genre) { free(all_genre); all_genre = NULL; }
+                  all_genre = strdup(genre);
+                }
+
+                cur_pos += strlen(genre)+2;
+                s_genre++;
               }
               else
               {
@@ -774,7 +799,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
       if ((s_title > 1) || (s_artist > 1)
           || (s_album > 1) || (s_performer > 1)
           || (s_year > 1) || (s_comment > 1)
-          || (s_tracknumber > 1))
+          || (s_tracknumber > 1) || (s_genre > 1))
       {
         ambiguous = SPLT_TRUE;
       }
@@ -836,9 +861,9 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
         {
           splt_tu_set_tags_field(state, index, SPLT_TAGS_TRACK, &all_tracknumber);
         }
-        if (genre == 12)
+        if (!genre)
         {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_GENRE, &all_genre);
+          splt_tu_set_tags_field(state, index, SPLT_TAGS_GENRE, all_genre);
         }
       }
 
@@ -849,6 +874,7 @@ end_while:
       if (performer) { free(performer); performer = NULL; }
       if (year) { free(year); year = NULL; }
       if (comment) { free(comment); comment = NULL; }
+      if (genre) { free(genre); genre = NULL; }
       if (tracknumber) { free(tracknumber); tracknumber = NULL; }
 
       if (get_out_from_while)
@@ -867,7 +893,7 @@ end_while:
         splt_tu_set_like_x_tags_field(state, SPLT_TAGS_YEAR, all_year);
         splt_tu_set_like_x_tags_field(state, SPLT_TAGS_COMMENT, all_comment);
         splt_tu_set_like_x_tags_field(state, SPLT_TAGS_TRACK, &all_tracknumber);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_GENRE, &all_genre);
+        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_GENRE, all_genre);
       }
 
       tags_appended++;
@@ -879,6 +905,7 @@ end_while:
     if (all_performer) { free(all_performer); all_performer = NULL; }
     if (all_year) { free(all_year); all_year = NULL; }
     if (all_comment) { free(all_comment); all_comment = NULL; }
+    if (all_genre) { free(all_genre); all_genre = NULL; }
 
     return ambiguous;
   }
@@ -960,7 +987,7 @@ static int splt_tp_tpu_has_one_current_tag_set(tags_parser_utils *tpu)
       current_tags->year != NULL ||
       current_tags->comment != NULL ||
       current_tags->track != -INT_MAX ||
-      current_tags->genre != 0x0)
+      current_tags->genre != NULL)
   {
     return SPLT_TRUE;
   }

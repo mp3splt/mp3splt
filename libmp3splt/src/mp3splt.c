@@ -549,7 +549,7 @@ int mp3splt_append_tags(splt_state *state,
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
-    int track, unsigned char genre)
+    int track, const char *genre)
 {
   int error = SPLT_OK;
 
