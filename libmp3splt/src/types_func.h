@@ -61,6 +61,7 @@ char *splt_t_get_silence_log_fname(splt_state *state);
 
 int splt_t_set_filename_to_split(splt_state *state, const char *filename);
 char *splt_t_get_filename_to_split(splt_state *state);
+char *splt_t_get_filename_to_split(splt_state *state);
 
 void splt_t_set_current_split(splt_state *state, int index);
 void splt_t_current_split_next(splt_state *state);

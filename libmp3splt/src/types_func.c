@@ -32,7 +32,8 @@
 
 /*! \file
 
-\todo What does this file do?
+Set global parameters like the name of the file that has to be 
+split.
  */
 
 #include <string.h>
@@ -324,13 +325,15 @@ char *splt_t_get_silence_log_fname(splt_state *state)
   return state->silence_log_fname;
 }
 
+//! Sets the name of the file that has to be split.
 int splt_t_set_filename_to_split(splt_state *state, const char *filename)
 {
   splt_d_print_debug(state,"Setting filename to split to _%s_\n", filename);
   return splt_su_copy(filename, &state->fname_to_split);
 }
 
-char *splt_t_get_filename_to_split(splt_state *state)
+//! returns the name of the file that has to be split.
+char * splt_t_get_filename_to_split(splt_state *state)
 {
   return state->fname_to_split;
 }
