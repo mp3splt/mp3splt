@@ -277,7 +277,6 @@ void inputfilename_set(gchar *filename)
       if(entry!=NULL)
 	gtk_entry_set_text(GTK_ENTRY(entry), filename);
     }
-  fprintf(stderr,"Filename: %s",filename);
 }
 
 /*! Get the name of the input file
