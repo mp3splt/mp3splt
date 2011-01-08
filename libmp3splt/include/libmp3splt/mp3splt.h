@@ -1284,17 +1284,25 @@ int mp3splt_find_plugins(splt_state *state);
 void mp3splt_free_state(splt_state *state, int *error);
 
 /************************************/
-/* Set path                         */
+/** \defgrout splt_filepaths Set filenames and paths
 
-//puts the path for the new split files
-//returns possible error
+@{
+*/
+
+/** Sets the path for the creation of new split files
+
+@param state The central struct libmp3splt keeps all its data in
+@param path The new output path
+@return The error code
+ */
 int mp3splt_set_path_of_split(splt_state *state, const char *path);
 
-/************************************/
-/* Set filename                     */
+/** Sets path to the input file
 
-//put the filename to split
-//returns possible error
+@param state The central struct libmp3splt keeps all its data in
+@param path The new input file name
+@return The error code
+ */
 int mp3splt_set_filename_to_split(splt_state *state, const char *filename);
 int mp3splt_set_m3u_filename(splt_state *state, const char *filename);
 int mp3splt_set_silence_log_filename(splt_state *state, const char *filename);
@@ -1310,34 +1318,82 @@ int mp3splt_set_input_filename_regex(splt_state *state, const char *regex);
 
 int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comment_tag);
 
-/************************************/
-/* Set callback functions           */
+//@}
 
+/************************************/
+/*! @defgroup splt_callback_ The registeringof callback functions
+
+@{
+ */
+
+/** Register the function that is to be called if we got a text message
+
+@param state The central struct libmp3splt keeps all its data in
+@param message_cb The callback function
+@return The error code
+ */
 int mp3splt_set_message_function(splt_state *state, 
     void (*message_cb)(const char *, splt_message_type));
+
+/** Register the function that is to be called on creation of a output file
+
+@param state The central struct libmp3splt keeps all its data in
+@param file_cb The callback function
+@return The error code
+ */
 int mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *,int));
+
+/** Register the progress bar callback
+
+@param state The central struct libmp3splt keeps all its data in
+@param progress_cb The callback function
+@return The error code
+ */
 int mp3splt_set_progress_function(splt_state *state,
     void (*progress_cb)(splt_progress *p_bar));
+
 int mp3splt_set_silence_level_function(splt_state *state,
   void (*get_silence_cb)(long time, float level, void *user_data),
   void *user_data);
 
-/************************************/
-/* Splitpoints                      */
+//!@}
 
-//puts a splitpoint
-//returns possible error
+/************************************/
+/*! @defgroup splt_splitpoints_ Splitpoint manipulation
+
+@{
+ */
+
+/** Sets a new splitpoint
+@param state The central struct libmp3splt keeps all its data in
+@param type @see splt_type_of_splitpoint
+@param split_value The position of the split point in 1/100s
+@param name The name of the split point
+@return The error code of any error that might have occoured
+*/
 int mp3splt_append_splitpoint(splt_state *state,
     long split_value, const char *name, int type);
 
-//returns a pointer to all the current splitpoints
+/** returns a pointer to a list of all splitpoints
+
+@param state The central struct libmp3splt keeps all its data in
+@param error Is filled with the error code of any error that might
+             have occoured
+@param splitpoints_number The number of split points in the list
+@return A pointer to the split point list
+ */
 const splt_point *mp3splt_get_splitpoints(splt_state *state,
     int *splitpoints_number, int *error);
 
-//erase all the splitpoints
+/** erase all splitpoints
+@param state The central struct libmp3splt keeps all its data in
+@param error Is filled with the error code of any error that might
+             have occoured
+ */
 void mp3splt_erase_all_splitpoints(splt_state *state,
     int *error);
+//@}
 
 /************************************/
 /* Tags                             */

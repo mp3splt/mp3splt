@@ -109,7 +109,7 @@ void export_file(const gchar* filename)
 	  gchar *description;
 	  gint mins,secs,hundr;
 	  gboolean keep;
-
+	  
 	  gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
 			     COL_DESCRIPTION,&description,
                              COL_MINUTES, &mins,
@@ -117,69 +117,66 @@ void export_file(const gchar* filename)
                              COL_HUNDR_SECS, &hundr,
 			     COL_CHECK, &keep,
 			     -1);
-	  if(keep)
+	      
+	  // Output the track header
+	  if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
 	    {
-	      gchar *outputchar;
-	      
-	      // Output the track header
-	      if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
-		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		};
+	      put_status_message((gchar *)strerror(errno));
+	      return;
+	    };
 	      
 	      
-	      // Output the track description escaping any quotes
-	      if(fprintf(outfile,"\t\tTITLE \"")<0)
+	  // Output the track description escaping any quotes
+	  if(fprintf(outfile,"\t\tTITLE \"")<0)
+	    {
+	      put_status_message((gchar *)strerror(errno));
+	      return;
+	    }
+	      
+	  gchar *outputchar;
+	  for(outputchar=description;*outputchar!='\0';outputchar++)
+	    {
+	      if(*outputchar=='"')
 		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		}
-	      for(outputchar=description;*outputchar!='\0';outputchar++)
-		{
-		  if(*outputchar=='"')
-		    {
-		      if(fprintf(outfile,"\\\"")<0)
-			{
-			  put_status_message((gchar *)strerror(errno));
-			  return;
-			}
-		    }
-		  else
-		    {
-		      if(fprintf(outfile,"%c",*outputchar)<0)
-			{
-			  put_status_message((gchar *)strerror(errno));
-			  return;
-			}
-		    }
-		}    
-	      if(fprintf(outfile,"\" \n")<0)
-		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		};
-
-	      if(!keep)
-		{
-		  if(fprintf(outfile,"\t\tREM NOKEEP")<0)
+		  if(fprintf(outfile,"\\\"")<0)
 		    {
 		      put_status_message((gchar *)strerror(errno));
 		      return;
 		    }
 		}
+	      else
+		{
+		  if(fprintf(outfile,"%c",*outputchar)<0)
+		    {
+		      put_status_message((gchar *)strerror(errno));
+		      return;
+		    }
+		}
+	    }    
+	  if(fprintf(outfile,"\" \n")<0)
+	    {
+	      put_status_message((gchar *)strerror(errno));
+	      return;
+	    };
 
-	      if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
+	  if(!keep)
+	    {
+	      if(fprintf(outfile,"\t\t")<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
 		  return;
 		}
-
 	    }
-	  
+
+	  if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
+	    {
+	      put_status_message((gchar *)strerror(errno));
+	      return;
+	    }
+	   
 	} while(gtk_tree_model_iter_next(model, &iter));
     }
-
+  
   fclose(outfile);
 }
 
