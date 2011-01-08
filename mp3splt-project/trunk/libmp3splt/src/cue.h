@@ -42,11 +42,21 @@ typedef struct {
   int title;
   const char *file;
   int counter;
-  /*! Do we have to build the file name from the tags?
+  /*! \brief Do we have to build the file name from the tags?
+
     - 0 means we build a filename from the tags 
     - 1 means filename is track name
   */
   int title_is_filename;
+
+  /*! \brief The type of the current track.
+
+    The track type determines if this track will be output in the end
+    or not. For a list of possible track types
+    \see splt_type_of_splitpoint
+
+   */
+  int current_track_type;
 } cue_utils;
 
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error);

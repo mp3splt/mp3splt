@@ -253,7 +253,13 @@ static gpointer add_cue_splitpoints(gpointer data)
   }
   print_status_bar_confirmation(err);
  
+  // The cue file has provided libmp3splt with a input filename.
+  // But since we use the filename from the gui instead we need to set
+  // the value the gui uses, too, which we do in the next line.
+  inputfilename_set(mp3splt_get_filename_to_split(the_state));
+  
   gdk_threads_leave();
+  enable_player_buttons();
 
   return NULL;
 }

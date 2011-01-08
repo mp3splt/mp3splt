@@ -58,6 +58,7 @@ static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_
   cu->title = SPLT_FALSE;
   cu->time_for_track = SPLT_FALSE;
   cu->tracks++;
+  cu->current_track_type=SPLT_SPLITPOINT;
 
   splt_tu_new_tags_if_necessary(state, cu->tracks - 1);
 }
@@ -272,10 +273,42 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
     {
       if (cu->tracks > 0)
-	{
-	  splt_sp_set_splitpoint_type(state, cu->counter, SPLT_SKIPPOINT);
-	}
+	  cu->current_track_type=SPLT_SKIPPOINT;
     }
+}
+
+//! Process the rest of a cue line that begins with the word FILE
+static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_state *state)
+{
+  char *filenametail;
+
+  // Skip the word FILE
+  line_content += 4;
+
+  // Jump to the "
+  while ((*line_content!=' ')&&(*line_content!='\0')) line_content++;
+
+  // Complain if we didn't find a "
+  if(*line_content=='0')
+    { cu->error = SPLT_INVALID_CUE_FILE; return; }
+  
+  // Skip to the first character after the "
+  line_content++;
+
+  filenametail=line_content;
+
+  // Find the second "
+  while ((*filenametail!=' ')&&(*filenametail!='\0')) filenametail++;
+
+  // Complain if we didn't find a second "
+  if(*filenametail=='0')
+    { cu->error = SPLT_INVALID_CUE_FILE; return; }
+
+  // End the string at the end of the filename
+  *(--filenametail)='\0';
+
+  // Set the new filename.
+  splt_t_set_filename_to_split(state, ++line_content);
 }
 
 /*! Analyze a line from a cue file
@@ -313,6 +346,10 @@ static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
   else if ((line_content = strstr(line, "REM")) != NULL)
   {
     splt_cue_process_rem_line(line_content, cu, state);
+  }
+  else if ((line_content = strstr(line, "FILE")) != NULL)
+  {
+    splt_cue_process_file_line(line_content, cu, state);
   }
 
   free(*l);
@@ -427,7 +464,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   }
 
   err = splt_sp_append_splitpoint(state, LONG_MAX,
-      _("description here"), SPLT_SPLITPOINT);
+      _("description here"), cu->current_track_type);
 
   if (cu->counter == 0)
   {

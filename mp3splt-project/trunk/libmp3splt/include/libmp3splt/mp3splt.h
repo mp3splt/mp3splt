@@ -1304,6 +1304,18 @@ int mp3splt_set_path_of_split(splt_state *state, const char *path);
 @return The error code
  */
 int mp3splt_set_filename_to_split(splt_state *state, const char *filename);
+
+/** Reads out the path to the input file
+
+Is very practical after importing a cue file: The cue file provides an
+input filename but does not tell us about this.
+
+@param state The central struct libmp3splt keeps all its data in
+@param path The new input file name
+@return The error code
+ */
+char *mp3splt_get_filename_to_split(splt_state *state);
+
 int mp3splt_set_m3u_filename(splt_state *state, const char *filename);
 int mp3splt_set_silence_log_filename(splt_state *state, const char *filename);
 
