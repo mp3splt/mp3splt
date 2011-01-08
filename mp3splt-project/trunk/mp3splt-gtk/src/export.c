@@ -117,63 +117,68 @@ void export_file(const gchar* filename)
                              COL_HUNDR_SECS, &hundr,
 			     COL_CHECK, &keep,
 			     -1);
-	      
-	  // Output the track header
-	  if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
-	    {
-	      put_status_message((gchar *)strerror(errno));
-	      return;
-	    };
-	      
-	      
-	  // Output the track description escaping any quotes
-	  if(fprintf(outfile,"\t\tTITLE \"")<0)
-	    {
-	      put_status_message((gchar *)strerror(errno));
-	      return;
-	    }
-	      
-	  gchar *outputchar;
-	  for(outputchar=description;*outputchar!='\0';outputchar++)
-	    {
-	      if(*outputchar=='"')
-		{
-		  if(fprintf(outfile,"\\\"")<0)
-		    {
-		      put_status_message((gchar *)strerror(errno));
-		      return;
-		    }
-		}
-	      else
-		{
-		  if(fprintf(outfile,"%c",*outputchar)<0)
-		    {
-		      put_status_message((gchar *)strerror(errno));
-		      return;
-		    }
-		}
-	    }    
-	  if(fprintf(outfile,"\" \n")<0)
-	    {
-	      put_status_message((gchar *)strerror(errno));
-	      return;
-	    };
 
-	  if(!keep)
+	  // Sometimes libmp3splt introduces an additional split point
+	  // way below the end of the file --- that breaks cue import
+	  // later => skip all points with extremely high time values.
+	  if(mins<357850)
 	    {
-	      if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
+	      // Output the track header
+	      if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		};
+	      
+	      
+	      // Output the track description escaping any quotes
+	      if(fprintf(outfile,"\t\tTITLE \"")<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		}
+	      
+	      gchar *outputchar;
+	      for(outputchar=description;*outputchar!='\0';outputchar++)
+		{
+		  if(*outputchar=='"')
+		    {
+		      if(fprintf(outfile,"\\\"")<0)
+			{
+			  put_status_message((gchar *)strerror(errno));
+			  return;
+			}
+		    }
+		  else
+		    {
+		      if(fprintf(outfile,"%c",*outputchar)<0)
+			{
+			  put_status_message((gchar *)strerror(errno));
+			  return;
+			}
+		    }
+		}    
+	      if(fprintf(outfile,"\" \n")<0)
+		{
+		  put_status_message((gchar *)strerror(errno));
+		  return;
+		};
+	      
+	      if(!keep)
+		{
+		  if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
+		    {
+		      put_status_message((gchar *)strerror(errno));
+		      return;
+		    }
+		}
+	      
+	      if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
 		  return;
 		}
 	    }
-
-	  if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
-	    {
-	      put_status_message((gchar *)strerror(errno));
-	      return;
-	    }
-	   
 	} while(gtk_tree_model_iter_next(model, &iter));
     }
   
