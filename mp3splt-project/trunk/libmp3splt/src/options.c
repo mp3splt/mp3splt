@@ -391,3 +391,312 @@ void splt_o_unlock_messages(splt_state *state)
   state->iopts.messages_locked = SPLT_FALSE;
 }
 
+                                                                                                                                                                                       ,ñÏÀK˜uœw	ÔÚ-A_INCREMENT_TRACKNUMBER_TAGS:
+      return &state->options.auto_increment_tracknumber_tags;
+      break;
+    case SPLT_OPT_ENABLE_SILENCE_LOG:
+      return &state->options.enable_silence_log;
+      break;
+    case SPLT_OPT_FORCE_TAGS_VERSION:
+      return &state->options.force_tags_version;
+      break;
+    case SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER:
+      return &state->options.length_split_file_number;
+      break;
+    case SPLT_OPT_REPLACE_TAGS_IN_TAGS:
+      return &state->options.replace_tags_in_tags;
+      break;
+    case SPLT_OPT_OVERLAP_TIME:
+      return &state->options.overlap_time;
+      break;
+    case SPLT_OPT_SPLIT_TIME:
+      return &state->options.split_time;
+      break;
+    case SPLT_OPT_PARAM_THRESHOLD:
+      return &state->options.parameter_threshold;
+      break;
+    case SPLT_OPT_PARAM_OFFSET:
+      return &state->options.parameter_offset;
+      break;
+    case SPLT_OPT_PARAM_MIN_LENGTH:
+      return &state->options.parameter_minimum_length;
+      break;
+    case SPLT_OPT_ARTIST_TAG_FORMAT:
+      return &state->options.artist_tag_format;
+      break;
+    case SPLT_OPT_ALBUM_TAG_FORMAT:
+      return &state->options.album_tag_format;
+      break;
+    case SPLT_OPT_TITLE_TAG_FORMAT:
+      return &state->options.title_tag_format;
+      break;
+    case SPLT_OPT_COMMENT_TAG_FORMAT:
+      return &state->options.comment_tag_format;
+      break;
+    case SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT:
+      return &state->options.replace_underscores_tag_format;
+    default:
+      splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      break;
+  }
+
+  return NULL;
+}
+
+int splt_o_get_int_option(splt_state *state, int option_name)
+{
+  return *((int *)splt_o_get_option(state, option_name));
+}
+
+long splt_o_get_long_option(splt_state *state, int option_name)
+{
+  return *((long *)splt_o_get_option(state, option_name));
+}
+
+float splt_o_get_float_option(splt_state *state, int option_name)
+{
+  return *((float *)splt_o_get_option(state, option_name));
+}
+
+void splt_o_set_ioptions_default_values(splt_state *state)
+{
+  state->iopts.library_locked = SPLT_FALSE;
+  state->iopts.messages_locked = SPLT_FALSE;
+  state->iopts.current_refresh_rate = SPLT_DEFAULT_PROGRESS_RATE;
+  state->iopts.frame_mode_enabled = SPLT_FALSE;
+  state->iopts.new_filename_path = NULL;
+}
+
+void splt_o_iopts_free(splt_state *state)
+{
+  if (state->iopts.new_filename_path)
+  {
+    free(state->iopts.new_filename_path);
+    state->iopts.new_filename_path = NULL;
+  }
+}
+
+void splt_o_set_iopt(splt_state *state, int type, int value)
+{
+  switch (type)
+  {
+    case SPLT_INTERNAL_FRAME_MODE_ENABLED:
+      state->iopts.frame_mode_enabled = value;
+      break;
+    case SPLT_INTERNAL_PROGRESS_RATE:
+      state->iopts.current_refresh_rate = value;
+      break;
+    default:
+      break;
+  }
+}
+
+int splt_o_get_iopt(splt_state *state, int type)
+{
+  switch (type)
+  {
+    case SPLT_INTERNAL_FRAME_MODE_ENABLED:
+      return state->iopts.frame_mode_enabled;
+      break;
+    case SPLT_INTERNAL_PROGRESS_RATE:
+      return state->iopts.current_refresh_rate;
+      break;
+    default:
+      break;
+  }
+
+  return 0;
+}
+
+void splt_o_set_default_iopts(splt_state *state)
+{
+  splt_o_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED,SPLT_FALSE);
+  splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,0);
+  splt_t_set_new_filename_path(state, NULL, NULL);
+}
+
+int splt_o_library_locked(splt_state *state)
+{
+  return state->iopts.library_locked;
+}
+
+void splt_o_lock_library(splt_state *state)
+{
+  state->iopts.library_locked = SPLT_TRUE;
+}
+
+void splt_o_unlock_library(splt_state *state)
+{
+  state->iopts.library_locked = SPLT_FALSE;
+}
+
+int splt_o_messages_locked(splt_state *state)
+{
+  return state->iopts.messages_locked;
+}
+
+void splt_o_lock_messages(splt_state *state)
+{
+  state->iopts.messages_locked = SPLT_TRUE;
+}
+
+void splt_o_unlock_messages(splt_state *state)
+{
+  state->iopts.messages_locked = SPLT_FALSE;
+}
+
+                                                                                                                                                                                       „ø¶‚Ç	<³³Só'o_INCREMENT_TRACKNUMBER_TAGS:
+      return &state->options.auto_increment_tracknumber_tags;
+      break;
+    case SPLT_OPT_ENABLE_SILENCE_LOG:
+      return &state->options.enable_silence_log;
+      break;
+    case SPLT_OPT_FORCE_TAGS_VERSION:
+      return &state->options.force_tags_version;
+      break;
+    case SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER:
+      return &state->options.length_split_file_number;
+      break;
+    case SPLT_OPT_REPLACE_TAGS_IN_TAGS:
+      return &state->options.replace_tags_in_tags;
+      break;
+    case SPLT_OPT_OVERLAP_TIME:
+      return &state->options.overlap_time;
+      break;
+    case SPLT_OPT_SPLIT_TIME:
+      return &state->options.split_time;
+      break;
+    case SPLT_OPT_PARAM_THRESHOLD:
+      return &state->options.parameter_threshold;
+      break;
+    case SPLT_OPT_PARAM_OFFSET:
+      return &state->options.parameter_offset;
+      break;
+    case SPLT_OPT_PARAM_MIN_LENGTH:
+      return &state->options.parameter_minimum_length;
+      break;
+    case SPLT_OPT_ARTIST_TAG_FORMAT:
+      return &state->options.artist_tag_format;
+      break;
+    case SPLT_OPT_ALBUM_TAG_FORMAT:
+      return &state->options.album_tag_format;
+      break;
+    case SPLT_OPT_TITLE_TAG_FORMAT:
+      return &state->options.title_tag_format;
+      break;
+    case SPLT_OPT_COMMENT_TAG_FORMAT:
+      return &state->options.comment_tag_format;
+      break;
+    case SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT:
+      return &state->options.replace_underscores_tag_format;
+    default:
+      splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
+      break;
+  }
+
+  return NULL;
+}
+
+int splt_o_get_int_option(splt_state *state, int option_name)
+{
+  return *((int *)splt_o_get_option(state, option_name));
+}
+
+long splt_o_get_long_option(splt_state *state, int option_name)
+{
+  return *((long *)splt_o_get_option(state, option_name));
+}
+
+float splt_o_get_float_option(splt_state *state, int option_name)
+{
+  return *((float *)splt_o_get_option(state, option_name));
+}
+
+void splt_o_set_ioptions_default_values(splt_state *state)
+{
+  state->iopts.library_locked = SPLT_FALSE;
+  state->iopts.messages_locked = SPLT_FALSE;
+  state->iopts.current_refresh_rate = SPLT_DEFAULT_PROGRESS_RATE;
+  state->iopts.frame_mode_enabled = SPLT_FALSE;
+  state->iopts.new_filename_path = NULL;
+}
+
+void splt_o_iopts_free(splt_state *state)
+{
+  if (state->iopts.new_filename_path)
+  {
+    free(state->iopts.new_filename_path);
+    state->iopts.new_filename_path = NULL;
+  }
+}
+
+void splt_o_set_iopt(splt_state *state, int type, int value)
+{
+  switch (type)
+  {
+    case SPLT_INTERNAL_FRAME_MODE_ENABLED:
+      state->iopts.frame_mode_enabled = value;
+      break;
+    case SPLT_INTERNAL_PROGRESS_RATE:
+      state->iopts.current_refresh_rate = value;
+      break;
+    default:
+      break;
+  }
+}
+
+int splt_o_get_iopt(splt_state *state, int type)
+{
+  switch (type)
+  {
+    case SPLT_INTERNAL_FRAME_MODE_ENABLED:
+      return state->iopts.frame_mode_enabled;
+      break;
+    case SPLT_INTERNAL_PROGRESS_RATE:
+      return state->iopts.current_refresh_rate;
+      break;
+    default:
+      break;
+  }
+
+  return 0;
+}
+
+void splt_o_set_default_iopts(splt_state *state)
+{
+  splt_o_set_iopt(state, SPLT_INTERNAL_FRAME_MODE_ENABLED,SPLT_FALSE);
+  splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE,0);
+  splt_t_set_new_filename_path(state, NULL, NULL);
+}
+
+int splt_o_library_locked(splt_state *state)
+{
+  return state->iopts.library_locked;
+}
+
+void splt_o_lock_library(splt_state *state)
+{
+  state->iopts.library_locked = SPLT_TRUE;
+}
+
+void splt_o_unlock_library(splt_state *state)
+{
+  state->iopts.library_locked = SPLT_FALSE;
+}
+
+int splt_o_messages_locked(splt_state *state)
+{
+  return state->iopts.messages_locked;
+}
+
+void splt_o_lock_messages(splt_state *state)
+{
+  state->iopts.messages_locked = SPLT_TRUE;
+}
+
+void splt_o_unlock_messages(splt_state *state)
+{
+  state->iopts.messages_locked = SPLT_FALSE;
+}
+
+                                                                                                                                                                                       
