@@ -2,19 +2,19 @@
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-01-02 23:42+0100\n"
+"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"POT-Creation-Date: 2011-01-08 06:48+0100\n"
 "PO-Revision-Date: 2011-01-03 19:55+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:253
@@ -457,7 +457,8 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to connect.\n"
+" If you don't know how to do that, start audacious manually and then try to "
+"connect.\n"
 msgstr ""
 "\n"
 " Žádné spojení s přehrávacím programem Audacious.\n"
@@ -523,15 +524,23 @@ msgstr "před %s"
 
 #: src/player_tab.c:2651
 msgid " left click on splitpoint selects it, right click erases it"
-msgstr "Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení jej vymaže"
+msgstr ""
+"Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení "
+"jej vymaže"
 
 #: src/player_tab.c:2661
-msgid " left click + move changes song position, right click + move changes zoom"
-msgstr "Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní násobek zvětšení"
+msgid ""
+" left click + move changes song position, right click + move changes zoom"
+msgstr ""
+"Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní "
+"násobek zvětšení"
 
 #: src/player_tab.c:2672
-msgid " left click on point + move changes point position, right click play preview"
-msgstr "Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje náhled"
+msgid ""
+" left click on point + move changes point position, right click play preview"
+msgstr ""
+"Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje "
+"náhled"
 
 #: src/player_tab.c:2684
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
@@ -926,10 +935,10 @@ msgstr "Soubory Audacity label (*.txt)"
 msgid "All files"
 msgstr "Všechny soubory"
 
-#: src/export.c:181
+#: src/export.c:190
 msgid "Select cue file name"
 msgstr ""
 
-#: src/export.c:192
+#: src/export.c:201
 msgid "cue files (*.cue)"
 msgstr ""

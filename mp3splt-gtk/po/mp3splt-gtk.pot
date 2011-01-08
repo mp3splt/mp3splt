@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-02 23:42+0100\n"
+"POT-Creation-Date: 2011-01-08 06:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -898,10 +898,10 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
-#: src/export.c:181
+#: src/export.c:190
 msgid "Select cue file name"
 msgstr ""
 
-#: src/export.c:192
+#: src/export.c:201
 msgid "cue files (*.cue)"
 msgstr ""

@@ -161,7 +161,7 @@ void export_file(const gchar* filename)
 
 	  if(!keep)
 	    {
-	      if(fprintf(outfile,"\t\t")<0)
+	      if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
 		{
 		  put_status_message((gchar *)strerror(errno));
 		  return;

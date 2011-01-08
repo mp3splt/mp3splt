@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-01-07 15:20+0100\n"
+"POT-Creation-Date: 2011-01-08 06:43+0100\n"
 "PO-Revision-Date: 2010-12-25 22:43+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:125 src/cue.c:487
+#: src/cddb.c:125 src/cue.c:482
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -145,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:387
+#: src/cue.c:382
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:435
+#: src/cue.c:430
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:643
+#: src/cue.c:638
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""

@@ -2,19 +2,19 @@
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-01-02 23:42+0100\n"
+"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"POT-Creation-Date: 2011-01-08 06:48+0100\n"
 "PO-Revision-Date: 2011-01-03 19:55+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:253
@@ -196,7 +196,8 @@ msgstr "F_rame-Modus (nützlich für mp3-VBR) (nur für mp3)"
 
 #: src/preferences_tab.c:621
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr "_Automatische Feinabstimmung der Schnittpunkte mittels der Stille-Detektion"
+msgstr ""
+"_Automatische Feinabstimmung der Schnittpunkte mittels der Stille-Detektion"
 
 #: src/preferences_tab.c:653
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
@@ -457,7 +458,8 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to connect.\n"
+" If you don't know how to do that, start audacious manually and then try to "
+"connect.\n"
 msgstr ""
 "\n"
 " Keine Verbindung zum Audacious-Wiedergabeprogramm.\n"
@@ -523,15 +525,22 @@ msgstr "vor %s"
 
 #: src/player_tab.c:2651
 msgid " left click on splitpoint selects it, right click erases it"
-msgstr "Linksklick auf Teilungspunkt wählt aus, Rechtsklick löscht Teilungspunkt"
+msgstr ""
+"Linksklick auf Teilungspunkt wählt aus, Rechtsklick löscht Teilungspunkt"
 
 #: src/player_tab.c:2661
-msgid " left click + move changes song position, right click + move changes zoom"
-msgstr "Linksklick + Verschieben ändert die Position des Titels, Rechtsklick + Verschieben ändert den Vergrößerungsfaktor"
+msgid ""
+" left click + move changes song position, right click + move changes zoom"
+msgstr ""
+"Linksklick + Verschieben ändert die Position des Titels, Rechtsklick + "
+"Verschieben ändert den Vergrößerungsfaktor"
 
 #: src/player_tab.c:2672
-msgid " left click on point + move changes point position, right click play preview"
-msgstr "Linksklick + Verschieben ändert die Position des Punktes, Rechtsklick spielt Vorschau ab"
+msgid ""
+" left click on point + move changes point position, right click play preview"
+msgstr ""
+"Linksklick + Verschieben ändert die Position des Punktes, Rechtsklick spielt "
+"Vorschau ab"
 
 #: src/player_tab.c:2684
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
@@ -926,10 +935,10 @@ msgstr "Audacity-Labeldateien (*.txt)"
 msgid "All files"
 msgstr "Alle Dateien"
 
-#: src/export.c:181
+#: src/export.c:190
 msgid "Select cue file name"
 msgstr "Wählen eines Namens für die .cue-Datei"
 
-#: src/export.c:192
+#: src/export.c:201
 msgid "cue files (*.cue)"
 msgstr "cue-Dateien (*.cue)"

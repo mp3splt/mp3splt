@@ -1321,7 +1321,7 @@ int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comme
 //@}
 
 /************************************/
-/*! @defgroup splt_callback_ The registeringof callback functions
+/*! @defgroup splt_callback_ The registering of callback functions
 
 @{
  */

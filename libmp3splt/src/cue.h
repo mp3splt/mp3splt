@@ -42,7 +42,10 @@ typedef struct {
   int title;
   const char *file;
   int counter;
-  //! 0 means we build a filename from the tags 1 means filename is track name
+  /*! Do we have to build the file name from the tags?
+    - 0 means we build a filename from the tags 
+    - 1 means filename is track name
+  */
   int title_is_filename;
 } cue_utils;
 

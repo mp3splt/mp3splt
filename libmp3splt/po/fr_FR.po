@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-01-07 15:20+0100\n"
+"POT-Creation-Date: 2011-01-08 06:43+0100\n"
 "PO-Revision-Date: 2011-01-03 19:56+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,7 +50,7 @@ msgstr "le dossier n'existe pas"
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " lecture des informations du fichier CDDB %s ...\n"
 
-#: src/cddb.c:125 src/cue.c:487
+#: src/cddb.c:125 src/cue.c:482
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -154,16 +154,16 @@ msgstr " info : début de la division 'wrap'\n"
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 
-#: src/cue.c:387
+#: src/cue.c:382
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " lecture des informations du fichier CUE %s ...\n"
 
-#: src/cue.c:435
+#: src/cue.c:430
 msgid "description here"
 msgstr "description"
 
-#: src/cue.c:643
+#: src/cue.c:638
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " Fichier CUE '%s' créé.\n"
