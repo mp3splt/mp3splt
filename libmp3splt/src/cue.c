@@ -39,7 +39,7 @@ All that is needed in order to be able to read and write cue files.
 //! Process the rest of a cue line that begins with the word TRACK
 static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_state *state)
 {
-
+  fprintf(stderr,"Track\n");
   // Skip the word TRACK
   line_content += 5;
 
@@ -138,6 +138,8 @@ static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_
 {
   int err = SPLT_OK;
 
+  fprintf(stderr,"Title\n");
+
   // Skip the word TITLE
   line_content += 5;
 
@@ -170,6 +172,8 @@ static void splt_cue_process_title_line(char *line_content, cue_utils *cu, splt_
 static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, splt_state *state)
 {
   int err = SPLT_OK;
+
+  fprintf(stderr,"Performer\n");
 
   // Skip the word PERFORMER
   line_content += 9;
@@ -207,6 +211,8 @@ static void splt_cue_process_performer_line(char *line_content, cue_utils *cu, s
 static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_state *state)
 {
   int err = SPLT_OK;
+
+  fprintf(stderr,"Index\n");
 
   // Skip the word INDEX and the 01 that follows 
   line_content += 9;
@@ -246,6 +252,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
 {
   char *linetail;
 
+  fprintf(stderr,"REM\n");
+
   // Skip the word REM
   line_content += 3;
 
@@ -273,7 +281,7 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
     {
       if (cu->tracks > 0)
-	  cu->current_track_type=SPLT_SKIPPOINT;
+	cu->current_track_type=SPLT_SKIPPOINT;
     }
 }
 
@@ -281,6 +289,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
 static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_state *state)
 {
   char *filenametail;
+
+  fprintf(stderr,"File\n");
 
   // Skip the word FILE
   line_content += 4;
