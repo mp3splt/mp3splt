@@ -273,12 +273,7 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
     {
       if (cu->tracks > 0)
 	{
-	  /* if ((err = splt_cue_store_value(state, line_content, */
-	  /* 				  cu->tracks - 1, SPLT_TAGS_PERFORMER)) != SPLT_OK) */
-	  /*   { */
-	  /*     cu->error = err; */
-	  /*     return; */
-	  /*   } */
+	  splt_sp_set_splitpoint_type(state, cu->counter, SPLT_SKIPPOINT);
 	}
     }
 }
