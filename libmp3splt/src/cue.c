@@ -267,7 +267,7 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   else
   if((linetail=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
     {
-      cu->title_is_filename = 1;
+      cu->title_is_filename = SPLT_TRUE;
     }
   else
   if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
@@ -288,27 +288,42 @@ static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_s
   // Jump to the "
   while ((*line_content!=' ')&&(*line_content!='\0')) line_content++;
 
-  // Complain if we didn't find a "
-  if(*line_content=='0')
-    { cu->error = SPLT_INVALID_CUE_FILE; return; }
-  
-  // Skip to the first character after the "
-  line_content++;
+  if (*line_content == '\0')
+  {
+    return;
+  }
 
-  filenametail=line_content;
+  //remove extra spaces
+  while ((*line_content==' ')) line_content++;
+
+  //if we have optional quote, skip it
+  if (*line_content == '"')
+  {
+    line_content++;
+  }
+
+  filenametail = line_content;
 
   // Find the second "
   while ((*filenametail!=' ')&&(*filenametail!='\0')) filenametail++;
 
-  // Complain if we didn't find a second "
-  if(*filenametail=='0')
-    { cu->error = SPLT_INVALID_CUE_FILE; return; }
+  //extra check
+  if (filenametail <= line_content)
+  {
+    return;
+  }
+
+  //go back to the optional quote (if we have a quote)
+  if (*(filenametail-1) == '"')
+  {
+    filenametail--;
+  }
 
   // End the string at the end of the filename
-  *(--filenametail)='\0';
+  *filenametail = '\0';
 
   // Set the new filename.
-  splt_t_set_filename_to_split(state, ++line_content);
+  splt_t_set_filename_to_split(state, line_content);
 }
 
 /*! Analyze a line from a cue file
@@ -380,6 +395,8 @@ static cue_utils *splt_cue_cu_new(splt_state *state, int *error)
   cu->counter = 0;
   cu->file = NULL;
   cu->error = SPLT_OK;
+  cu->current_track_type = SPLT_SPLITPOINT;
+  cu->title_is_filename = SPLT_FALSE;
 
   return cu;
 }
