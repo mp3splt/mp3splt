@@ -297,7 +297,7 @@ function test_silence_threshold
   check_current_file_size "951677"
 
   current_file="$OUTPUT_DIR/${O_FILE}_silence_2.ogg" 
-  check_current_ogg_length "0m:45.790s"
+  check_current_ogg_length "0m:45.789s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
