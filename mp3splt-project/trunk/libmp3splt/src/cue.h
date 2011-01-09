@@ -44,8 +44,8 @@ typedef struct {
   int counter;
   /*! \brief Do we have to build the file name from the tags?
 
-    - 0 means we build a filename from the tags 
-    - 1 means filename is track name
+    - SPLT_FALSE means we build a filename from the tags 
+    - SPLT_TRUE means filename is track name
   */
   int title_is_filename;
 

@@ -666,52 +666,54 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
   int err = SPLT_OK;
 
   splt_tags *tags = splt_tu_get_tags_to_replace_in_tags(state);
+  splt_tags *cur_tags = splt_tu_get_current_tags(state);
 
-  if (tags)
+  if (!tags || !cur_tags)
   {
-    int track = 0;
-    if (tags->track > 0)
+    return err;
+  }
+
+  int track = 0;
+  if (tags->track > 0)
+  {
+    track = tags->track;
+  }
+  else
+  {
+    if (current_split != -1)
     {
-      track = tags->track;
+      track = current_split + 1;
     }
     else
     {
-      if (current_split != -1)
-      {
-        track = current_split + 1;
-      }
-      else
-      {
-        track = splt_t_get_current_split_file_number(state);
-      }
+      track = splt_t_get_current_split_file_number(state);
     }
-
-    splt_tags *cur_tags = splt_tu_get_current_tags(state);
-    cur_tags->track = track;
-    cur_tags->tags_version = tags->tags_version;
-
-    int replace_tags_in_tags = splt_o_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
-
-    char *t = splt_tu_get_replaced_with_tags(tags->title, tags, track, &err, replace_tags_in_tags);
-    if (err != SPLT_OK) { return err; }
-    char *y = splt_tu_get_replaced_with_tags(tags->year, tags, track, &err, replace_tags_in_tags);
-    if (err != SPLT_OK) { return err; }
-    char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, track, &err, replace_tags_in_tags);
-    if (err != SPLT_OK) { return err; }
-    char *al = splt_tu_get_replaced_with_tags(tags->album, tags, track, &err, replace_tags_in_tags);
-    if (err != SPLT_OK) { return err; }
-    char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, track, &err, replace_tags_in_tags);
-    if (err != SPLT_OK) { return err; }
-    char *g = splt_tu_get_replaced_with_tags(tags->genre, tags, track, &err, replace_tags_in_tags);
-    if (err != SPLT_OK) { return err; }
-
-    splt_su_free_replace(&cur_tags->title, t);
-    splt_su_free_replace(&cur_tags->year, y);
-    splt_su_free_replace(&cur_tags->artist, a);
-    splt_su_free_replace(&cur_tags->album, al);
-    splt_su_free_replace(&cur_tags->comment, c);
-    splt_su_free_replace(&cur_tags->genre, g);
   }
+
+  cur_tags->track = track;
+  cur_tags->tags_version = tags->tags_version;
+
+  int replace_tags_in_tags = splt_o_get_int_option(state, SPLT_OPT_REPLACE_TAGS_IN_TAGS);
+
+  char *t = splt_tu_get_replaced_with_tags(tags->title, tags, track, &err, replace_tags_in_tags);
+  if (err != SPLT_OK) { return err; }
+  char *y = splt_tu_get_replaced_with_tags(tags->year, tags, track, &err, replace_tags_in_tags);
+  if (err != SPLT_OK) { return err; }
+  char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, track, &err, replace_tags_in_tags);
+  if (err != SPLT_OK) { return err; }
+  char *al = splt_tu_get_replaced_with_tags(tags->album, tags, track, &err, replace_tags_in_tags);
+  if (err != SPLT_OK) { return err; }
+  char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, track, &err, replace_tags_in_tags);
+  if (err != SPLT_OK) { return err; }
+  char *g = splt_tu_get_replaced_with_tags(tags->genre, tags, track, &err, replace_tags_in_tags);
+  if (err != SPLT_OK) { return err; }
+
+  splt_su_free_replace(&cur_tags->title, t);
+  splt_su_free_replace(&cur_tags->year, y);
+  splt_su_free_replace(&cur_tags->artist, a);
+  splt_su_free_replace(&cur_tags->album, al);
+  splt_su_free_replace(&cur_tags->comment, c);
+  splt_su_free_replace(&cur_tags->genre, g);
 
   return err;
 }

@@ -54,6 +54,7 @@
 #include "player_tab.h"
 #include "combo_helper.h"
 #include "options_manager.h"
+#include "radio_helper.h"
 
 extern gint debug_is_active;
 
@@ -86,6 +87,8 @@ extern GtkComboBox *title_text_properties_combo;
 extern GtkComboBox *comment_text_properties_combo;
 extern GtkWidget *comment_tag_entry;
 extern GtkWidget *regex_entry;
+
+extern GtkWidget *tags_radio;
 
 /*! Update the output options
 
@@ -204,7 +207,7 @@ void put_options_from_preferences()
       break;
   }
 
-  gint selected_tags_value = get_checked_output_radio_box();
+  gint selected_tags_value = rh_get_active_value(tags_radio);
   if (selected_tags_value == NO_TAGS)
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_NO_TAGS);

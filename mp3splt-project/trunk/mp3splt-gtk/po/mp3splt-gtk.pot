@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-08 06:48+0100\n"
+"POT-Creation-Date: 2011-01-09 14:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,7 +82,7 @@ msgstr ""
 msgid "Hundredths:"
 msgstr ""
 
-#: src/tree_tab.c:1490 src/player_tab.c:923
+#: src/tree_tab.c:1490 src/player_tab.c:922
 msgid "_Add"
 msgstr ""
 
@@ -404,11 +404,11 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: src/player_tab.c:627 src/player_tab.c:661
+#: src/player_tab.c:626 src/player_tab.c:660
 msgid "Cannot connect to player"
 msgstr ""
 
-#: src/player_tab.c:638
+#: src/player_tab.c:637
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -427,7 +427,7 @@ msgid ""
 " After that, restart snackamp and mp3splt-gtk should work.\n"
 msgstr ""
 
-#: src/player_tab.c:653
+#: src/player_tab.c:652
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -438,122 +438,122 @@ msgid ""
 "connect.\n"
 msgstr ""
 
-#: src/player_tab.c:873
+#: src/player_tab.c:872
 msgid "Previous"
 msgstr ""
 
-#: src/player_tab.c:885
+#: src/player_tab.c:884
 msgid "Play"
 msgstr ""
 
-#: src/player_tab.c:896
+#: src/player_tab.c:895
 msgid "Pause"
 msgstr ""
 
-#: src/player_tab.c:908
+#: src/player_tab.c:907
 msgid "Stop"
 msgstr ""
 
-#: src/player_tab.c:920
+#: src/player_tab.c:919
 msgid "Next"
 msgstr ""
 
-#: src/player_tab.c:931
+#: src/player_tab.c:930
 msgid "Add splitpoint from player"
 msgstr ""
 
-#: src/player_tab.c:935
+#: src/player_tab.c:934
 msgid "_Show amplitude wave"
 msgstr ""
 
-#: src/player_tab.c:943
+#: src/player_tab.c:942
 msgid "Shows the amplitude level wave"
 msgstr ""
 
-#: src/player_tab.c:947
+#: src/player_tab.c:946
 msgid "_Connect"
 msgstr ""
 
-#: src/player_tab.c:950
+#: src/player_tab.c:949
 msgid "Connect to player"
 msgstr ""
 
-#: src/player_tab.c:954
+#: src/player_tab.c:953
 msgid "_Disconnect"
 msgstr ""
 
-#: src/player_tab.c:957
+#: src/player_tab.c:956
 msgid "Disconnect from player"
 msgstr ""
 
-#: src/player_tab.c:1121
+#: src/player_tab.c:1120
 #, c-format
 msgid "before %s"
 msgstr ""
 
-#: src/player_tab.c:2651
+#: src/player_tab.c:2650
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 
-#: src/player_tab.c:2661
+#: src/player_tab.c:2660
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 
-#: src/player_tab.c:2672
+#: src/player_tab.c:2671
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 
-#: src/player_tab.c:2684
+#: src/player_tab.c:2683
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 
-#: src/player_tab.c:2875
+#: src/player_tab.c:2874
 msgid " quick preview..."
 msgstr ""
 
-#: src/player_tab.c:3406
+#: src/player_tab.c:3405
 msgid "History"
 msgstr ""
 
-#: src/player_tab.c:3545
+#: src/player_tab.c:3544
 msgid "_Erase selected entries"
 msgstr ""
 
-#: src/player_tab.c:3554
+#: src/player_tab.c:3553
 msgid "E_rase all history"
 msgstr ""
 
-#: src/player_tab.c:3677
+#: src/player_tab.c:3676
 msgid " quick preview finished, song paused"
 msgstr ""
 
-#: src/player_tab.c:3803
+#: src/player_tab.c:3802
 msgid "Choose File"
 msgstr ""
 
-#: src/player_tab.c:3808 src/multiple_files.c:125
+#: src/player_tab.c:3807 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr ""
 
-#: src/player_tab.c:3816 src/multiple_files.c:133
+#: src/player_tab.c:3815 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
 msgstr ""
 
-#: src/player_tab.c:3822 src/multiple_files.c:139
+#: src/player_tab.c:3821 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
 msgstr ""
 
-#: src/player_tab.c:3963
+#: src/player_tab.c:3962
 msgid "_Browse"
 msgstr ""
 
-#: src/player_tab.c:3967
+#: src/player_tab.c:3966
 msgid "Select file"
 msgstr ""
 
-#: src/player_tab.c:3974
+#: src/player_tab.c:3973
 msgid "_Fix ogg stream"
 msgstr ""
 
@@ -898,10 +898,10 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
-#: src/export.c:190
+#: src/export.c:195
 msgid "Select cue file name"
 msgstr ""
 
-#: src/export.c:201
+#: src/export.c:206
 msgid "cue files (*.cue)"
 msgstr ""

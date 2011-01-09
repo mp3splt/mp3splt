@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-01-08 06:43+0100\n"
+"POT-Creation-Date: 2011-01-09 14:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:797
+#: src/mp3splt.c:805
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:891
+#: src/mp3splt.c:899
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:899
+#: src/mp3splt.c:907
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:919
+#: src/mp3splt.c:927
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -43,26 +43,26 @@ msgstr ""
 msgid "directory does not exists"
 msgstr ""
 
-#: src/cddb.c:64
+#: src/cddb.c:62
 #, c-format
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:125 src/cue.c:482
+#: src/cddb.c:123 src/cue.c:536
 #, c-format
 msgid ""
 "  Tracks: %d\n"
 "\n"
 msgstr ""
 
-#: src/cddb.c:262 src/cue.c:118
+#: src/cddb.c:257 src/cue.c:118
 #, c-format
 msgid ""
 "\n"
 "  Artist: %s\n"
 msgstr ""
 
-#: src/cddb.c:265 src/cue.c:122
+#: src/cddb.c:260 src/cue.c:122
 #, c-format
 msgid "  Album: %s\n"
 msgstr ""
@@ -145,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:382
+#: src/cue.c:436
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:430
+#: src/cue.c:484
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:638
+#: src/cue.c:692
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -517,7 +517,7 @@ msgstr ""
 msgid "no regular expression provided"
 msgstr ""
 
-#: src/string_utils.c:570 src/string_utils.c:591
+#: src/string_utils.c:575 src/string_utils.c:596
 msgid "not enough memory"
 msgstr ""
 
@@ -527,82 +527,82 @@ msgid ""
 "without pcre support\n"
 msgstr ""
 
-#: plugins/mp3.c:1494
+#: plugins/mp3.c:1461
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 
-#: plugins/mp3.c:1631
+#: plugins/mp3.c:1598
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr ""
 
-#: plugins/mp3.c:1639
+#: plugins/mp3.c:1606
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr ""
 
-#: plugins/mp3.c:1643
+#: plugins/mp3.c:1610
 #, c-format
 msgid " - FRAME MODE"
 msgstr ""
 
-#: plugins/mp3.c:1648
+#: plugins/mp3.c:1615
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1653
+#: plugins/mp3.c:1620
 #, c-format
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1661 plugins/ogg.c:191
+#: plugins/mp3.c:1628 plugins/ogg.c:133
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
 
-#: plugins/mp3.c:3195
+#: plugins/mp3.c:3162
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr ""
 
-#: plugins/mp3.c:3233
+#: plugins/mp3.c:3200
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 
-#: plugins/mp3.c:3252
+#: plugins/mp3.c:3219
 msgid " OK\n"
 msgstr ""
 
-#: plugins/mp3.c:3271
+#: plugins/mp3.c:3238
 msgid " Detected file created with: AlbumWrap\n"
 msgstr ""
 
-#: plugins/mp3.c:3293
+#: plugins/mp3.c:3260
 #, c-format
 msgid " Total files: %d\n"
 msgstr ""
 
-#: plugins/mp3.c:3709
+#: plugins/mp3.c:3676
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 
-#: plugins/mp3.c:3735
+#: plugins/mp3.c:3702
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr ""
 
-#: plugins/ogg.c:183
+#: plugins/ogg.c:125
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:886
+#: plugins/ogg.c:826
 msgid ""
 " warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
 "to fix.\n"
 msgstr ""
 
-#: plugins/ogg.c:2090
+#: plugins/ogg.c:2030
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
