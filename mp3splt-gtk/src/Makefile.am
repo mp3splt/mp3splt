@@ -6,7 +6,7 @@ image_DATA+= play.svg     play_inactive.svg
 image_DATA+= stop.svg     stop_inactive.svg
 image_DATA+= pause.svg    pause_inactive.svg 
 
-appicon_DATA = mp3splt-gtk_ico.png mp3splt-gtk.png
+appicon_DATA = mp3splt-gtk_ico.png mp3splt-gtk.png mp3splt-gtk_ico.svg
 SOURCES = $(appicon_DATA) $(image_DATA)
 EXTRA_DIST = $(appicon_DATA) $(image_DATA)
 
