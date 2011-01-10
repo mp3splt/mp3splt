@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-08 06:48+0100\n"
+"POT-Creation-Date: 2011-01-09 14:46+0100\n"
 "PO-Revision-Date: 2011-01-03 19:55+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,7 +82,7 @@ msgstr "Sekundy:"
 msgid "Hundredths:"
 msgstr "Setina:"
 
-#: src/tree_tab.c:1490 src/player_tab.c:923
+#: src/tree_tab.c:1490 src/player_tab.c:922
 msgid "_Add"
 msgstr "_Přidat"
 
@@ -410,11 +410,11 @@ msgstr "Přehrávač"
 msgid "Language"
 msgstr "Jazyk"
 
-#: src/player_tab.c:627 src/player_tab.c:661
+#: src/player_tab.c:626 src/player_tab.c:660
 msgid "Cannot connect to player"
 msgstr "Žádné spojení s přehrávacím programem"
 
-#: src/player_tab.c:638
+#: src/player_tab.c:637
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -450,7 +450,7 @@ msgstr ""
 " Potom spusťte SnackAmp znovu a mp3splt-gtk\n"
 " by měl pracovat.\n"
 
-#: src/player_tab.c:653
+#: src/player_tab.c:652
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -469,128 +469,128 @@ msgstr ""
 " jak se to má udělat, spusťte Audacious ručně\n"
 " a pokuste se spojení vytvořit.\n"
 
-#: src/player_tab.c:873
+#: src/player_tab.c:872
 msgid "Previous"
 msgstr "Předchozí"
 
-#: src/player_tab.c:885
+#: src/player_tab.c:884
 msgid "Play"
 msgstr "Přehrát"
 
-#: src/player_tab.c:896
+#: src/player_tab.c:895
 msgid "Pause"
 msgstr "Pozastavit"
 
-#: src/player_tab.c:908
+#: src/player_tab.c:907
 msgid "Stop"
 msgstr "Zastavit"
 
-#: src/player_tab.c:920
+#: src/player_tab.c:919
 msgid "Next"
 msgstr "Další"
 
-#: src/player_tab.c:931
+#: src/player_tab.c:930
 msgid "Add splitpoint from player"
 msgstr "Přidat bod rozdělení zde"
 
-#: src/player_tab.c:935
+#: src/player_tab.c:934
 msgid "_Show amplitude wave"
 msgstr "_Ukázat vlnu s rozkmitem"
 
-#: src/player_tab.c:943
+#: src/player_tab.c:942
 msgid "Shows the amplitude level wave"
 msgstr "Ukáže vlnu s rozkmitem zvuku"
 
-#: src/player_tab.c:947
+#: src/player_tab.c:946
 msgid "_Connect"
 msgstr "_Spojit"
 
-#: src/player_tab.c:950
+#: src/player_tab.c:949
 msgid "Connect to player"
 msgstr "Spojit s přehrávačem"
 
-#: src/player_tab.c:954
+#: src/player_tab.c:953
 msgid "_Disconnect"
 msgstr "_Odpojit"
 
-#: src/player_tab.c:957
+#: src/player_tab.c:956
 msgid "Disconnect from player"
 msgstr "Odpojit od přehrávače"
 
-#: src/player_tab.c:1121
+#: src/player_tab.c:1120
 #, c-format
 msgid "before %s"
 msgstr "před %s"
 
-#: src/player_tab.c:2651
+#: src/player_tab.c:2650
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 "Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení "
 "jej vymaže"
 
-#: src/player_tab.c:2661
+#: src/player_tab.c:2660
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 "Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní "
 "násobek zvětšení"
 
-#: src/player_tab.c:2672
+#: src/player_tab.c:2671
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 "Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje "
 "náhled"
 
-#: src/player_tab.c:2684
+#: src/player_tab.c:2683
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr "Levé klepnutí na obdélník zapne/vypne »Ponechat bod rozdělení«"
 
-#: src/player_tab.c:2875
+#: src/player_tab.c:2874
 msgid " quick preview..."
 msgstr " Rychlý náhled..."
 
-#: src/player_tab.c:3406
+#: src/player_tab.c:3405
 msgid "History"
 msgstr "Historie"
 
-#: src/player_tab.c:3545
+#: src/player_tab.c:3544
 msgid "_Erase selected entries"
 msgstr "Vymazat vybrané _záznamy"
 
-#: src/player_tab.c:3554
+#: src/player_tab.c:3553
 msgid "E_rase all history"
 msgstr "Vymazat celou _historii"
 
-#: src/player_tab.c:3677
+#: src/player_tab.c:3676
 msgid " quick preview finished, song paused"
 msgstr "Rychlý náhled ukončen, přehrávání pozastaveno"
 
-#: src/player_tab.c:3803
+#: src/player_tab.c:3802
 msgid "Choose File"
 msgstr "Vybrat soubor"
 
-#: src/player_tab.c:3808 src/multiple_files.c:125
+#: src/player_tab.c:3807 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "Soubory mp3 a ogg (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3816 src/multiple_files.c:133
+#: src/player_tab.c:3815 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
 msgstr "Soubory mp3 (*.mp3)"
 
-#: src/player_tab.c:3822 src/multiple_files.c:139
+#: src/player_tab.c:3821 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
 msgstr "Soubory ogg (*.ogg)"
 
-#: src/player_tab.c:3963
+#: src/player_tab.c:3962
 msgid "_Browse"
 msgstr "_Procházet"
 
-#: src/player_tab.c:3967
+#: src/player_tab.c:3966
 msgid "Select file"
 msgstr "Vybrat soubor"
 
-#: src/player_tab.c:3974
+#: src/player_tab.c:3973
 msgid "_Fix ogg stream"
 msgstr "_Opravit datový proud ogg"
 
@@ -935,10 +935,10 @@ msgstr "Soubory Audacity label (*.txt)"
 msgid "All files"
 msgstr "Všechny soubory"
 
-#: src/export.c:190
+#: src/export.c:195
 msgid "Select cue file name"
 msgstr ""
 
-#: src/export.c:201
+#: src/export.c:206
 msgid "cue files (*.cue)"
 msgstr ""

@@ -1,7 +1,14 @@
 appicondir = $(datadir)/pixmaps
+imagedir   = $(datadir)/mp3splt-gtk
+image_DATA = backward.svg backward_inactive.svg  
+image_DATA+= forward.svg  forward_inactive.svg
+image_DATA+= play.svg     play_inactive.svg
+image_DATA+= stop.svg     stop_inactive.svg
+image_DATA+= pause.svg    pause_inactive.svg 
+
 appicon_DATA = mp3splt-gtk_ico.png mp3splt-gtk.png
-SOURCES = mp3splt-gtk_ico.png mp3splt-gtk.png
-EXTRA_DIST = $(appicon_DATA)
+SOURCES = $(appicon_DATA) $(image_DATA)
+EXTRA_DIST = $(appicon_DATA) $(image_DATA)
 
 bin_PROGRAMS = mp3splt-gtk
 
@@ -67,3 +74,5 @@ endif
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
+# Where to find the new svg images
+AM_CFLAGS = -DIMAGEDIR=\"$(imagedir)\"
