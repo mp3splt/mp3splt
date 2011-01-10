@@ -49,6 +49,8 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->path_of_split = NULL;
   state->m3u_filename = NULL;
   state->input_fname_regex = NULL;
+  state->default_comment_tag = NULL;
+  state->default_genre_tag = NULL;
   state->silence_log_fname = NULL;
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
@@ -154,6 +156,16 @@ static void splt_t_free_state_struct(splt_state *state)
     {
       free(state->input_fname_regex);
       state->input_fname_regex = NULL;
+    }
+    if (state->default_comment_tag)
+    {
+      free(state->default_comment_tag);
+      state->default_comment_tag = NULL;
+    }
+    if (state->default_genre_tag)
+    {
+      free(state->default_genre_tag);
+      state->default_genre_tag = NULL;
     }
     if (state->silence_log_fname)
     {
@@ -303,9 +315,20 @@ int splt_t_set_default_comment_tag(splt_state *state, const char *default_commen
   return splt_su_copy(default_comment, &state->default_comment_tag);
 }
 
+int splt_t_set_default_genre_tag(splt_state *state, const char *default_genre)
+{
+  splt_d_print_debug(state,"Setting default genre tag to _%s_\n", default_genre);
+  return splt_su_copy(default_genre, &state->default_genre_tag);
+}
+
 char *splt_t_get_default_comment_tag(splt_state *state)
 {
   return state->default_comment_tag;
+}
+
+char *splt_t_get_default_genre_tag(splt_state *state)
+{
+  return state->default_genre_tag;
 }
 
 char *splt_t_get_m3u_file_with_path(splt_state *state, int *error)

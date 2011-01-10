@@ -402,24 +402,24 @@ function test_normal_custom_tags
    File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
    File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
  file split (EOF)"
-  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10,@g=Reggae][]%[@o,@b=album,@N=7,@g=special_genre][@a=custom_artist][@o,@n=20]"
   mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $OGG_FILE 0.05 0.30 1.0 2.1.2 3.0.1 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"
-  check_all_ogg_tags "a1" "b1" "t1" "2000" "" "10" "my_comment"
+  check_all_ogg_tags "a1" "b1" "t1" "2000" "Reggae" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
   check_all_ogg_tags "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_all_ogg_tags "Kelly Allyn" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "7"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "special_genre" "7"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_all_ogg_tags "custom_artist" "album"\
-                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "special_genre" "8"\
                      "http://www.jamendo.com"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
@@ -763,24 +763,25 @@ function test_normal_output_fnames_and_dirs
   local artist="Kelly Allyn"
   local album="Getting Back From Where I've Been"
   local title="Whiskey Can"
+  local genre="Southern Rock"
 
   expected=" Processing file 'songs/${O_FILE}.ogg' ...
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
  info: starting normal split
-   File \"$OUTPUT_DIR/$artist/$album/$artist-$title 1.ogg\" created
-   File \"$OUTPUT_DIR/$artist/$album/$artist-$title 2.ogg\" created
-   File \"$OUTPUT_DIR/$artist/$album/$artist-$title 3.ogg\" created
+   File \"$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 1.ogg\" created
+   File \"$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 2.ogg\" created
+   File \"$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 3.ogg\" created
  file split (EOF)"
-  output_option="@a/@b/@a-@t @n"
+  output_option="@a/@b/@a-@t-@g @n"
   mp3splt_args="-o '$output_option' -d $OUTPUT_DIR $OGG_FILE 1.0 2.0.2 3.0 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
   check_if_directory_exist "$OUTPUT_DIR/$artist"
   check_if_directory_exist "$OUTPUT_DIR/$artist/$album"
-  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title 1.ogg"
-  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title 2.ogg"
-  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title 3.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 1.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 2.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 3.ogg"
 
   p_green "OK"
   echo
@@ -801,12 +802,12 @@ function test_normal_output_fnames_and_custom_tags_and_dirs
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
  info: starting normal split
-   File \"$OUTPUT_DIR/$artist/album1/$artist-$title 1.ogg\" created
-   File \"$OUTPUT_DIR/$artist/album2/$artist-$title 2.ogg\" created
-   File \"$OUTPUT_DIR/$artist/album3/$artist-$title 3.ogg\" created
+   File \"$OUTPUT_DIR/$artist/album1/$artist-$title-Southern Rock 1.ogg\" created
+   File \"$OUTPUT_DIR/$artist/album2/$artist-$title-Southern Rock 2.ogg\" created
+   File \"$OUTPUT_DIR/$artist/album3/$artist-$title-Speech 3.ogg\" created
  file split (EOF)"
-  output_option="@a/@b/@a-@t @n"
-  tags_option="%[@o,@b=album1][@b=album2][@b=album3]"
+  output_option="@a/@b/@a-@t-@g @n"
+  tags_option="%[@o,@b=album1][@b=album2][@b=album3,@g=Speech]"
   mp3splt_args="-o '$output_option' -g \"$tags_option\" -d $OUTPUT_DIR $OGG_FILE 1.0 2.0.2 3.0 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -814,9 +815,9 @@ function test_normal_output_fnames_and_custom_tags_and_dirs
   check_if_directory_exist "$OUTPUT_DIR/$artist/album1"
   check_if_directory_exist "$OUTPUT_DIR/$artist/album2"
   check_if_directory_exist "$OUTPUT_DIR/$artist/album3"
-  check_if_file_exist "$OUTPUT_DIR/$artist/album1/$artist-$title 1.ogg"
-  check_if_file_exist "$OUTPUT_DIR/$artist/album2/$artist-$title 2.ogg"
-  check_if_file_exist "$OUTPUT_DIR/$artist/album3/$artist-$title 3.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/album1/$artist-$title-Southern Rock 1.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/album2/$artist-$title-Southern Rock 2.ogg"
+  check_if_file_exist "$OUTPUT_DIR/$artist/album3/$artist-$title-Speech 3.ogg"
 
   p_green "OK"
   echo
@@ -1006,7 +1007,7 @@ function test_normal_with_tags_from_filename_regex
 
   test_name="with tags from filename regex"
 
-  NEW_O_FILE="artist1__album2__title3__comment4__2__2004"
+  NEW_O_FILE="artist1__album2__title3__comment4__2__2004__Samba"
   NEW_OGG_FILE=$SONGS_DIR/${NEW_O_FILE}.ogg
 
   cp $OGG_FILE $NEW_OGG_FILE
@@ -1019,21 +1020,21 @@ function test_normal_with_tags_from_filename_regex
    File \"$OUTPUT_DIR/${NEW_O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
    File \"$OUTPUT_DIR/${NEW_O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
  file split (EOF)"
-  regex_option="(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*)"
+  regex_option="(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*?)__(?<genre>.*)"
   mp3splt_args="-d $OUTPUT_DIR -G \"regex=$regex_option\" $NEW_OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${NEW_O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
-  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Southern Rock" "2" "comment4"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Samba" "2" "comment4"
 
   current_file="$OUTPUT_DIR/${NEW_O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
-  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Southern Rock" "2" "comment4"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Samba" "2" "comment4"
 
   current_file="$OUTPUT_DIR/${NEW_O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
-  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Southern Rock" "2" "comment4"
+  check_all_ogg_tags "artist1" "album2" "title3" "2004" "Samba" "2" "comment4"
 
   rm -f $NEW_OGG_FILE
 

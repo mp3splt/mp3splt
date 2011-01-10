@@ -377,6 +377,8 @@ It can contain name variables, that must begin with @ char and that can be:
 .br
 @b: album title
 .br
+@g: genre
+.br
 @t: song title*
 .br
 @n: track number identifier* (not the real ID3 track number)**
@@ -460,6 +462,8 @@ replace tags in tags. The 'replace tags in tags' option is not recursive. The va
 .br
 @c: comment
 .br
+@g: genre
+.br
 @n: track number
 .br
 @o: set original tags
@@ -488,15 +492,16 @@ will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'
 .IP "\fB\-G regex=REGEX\fP         " 10
 \fBTags from filename regex\fP. Set tags from input filename regular expression.
 REGEX can contain those variables:
-   (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>)
+   (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>), (?<genre>)
 
-Example: if the input filename is \fBartist1__album2__title3__comment4__2__2004.ogg\fP, 
+Example: if the input filename is \fBartist1__album2__title3__comment4__2__2004__Samba.ogg\fP, 
 .br
 the following regular expression
-\fB(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*)\fP extracts the tags:
+\fB(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*?)__(?<genre>.*)\fP extracts the tags:
   (?<artist>): artist1
   (?<album>): album2
   (?<title>): title3
+  (?<genre>): Samba
   (?<comment>): comment4
   (?<tracknum>): 2
   (?<year>): 2004

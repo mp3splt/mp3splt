@@ -764,6 +764,7 @@ typedef struct {
   char *input_fname_regex;
 
   char *default_comment_tag;
+  char *default_genre_tag;
 
   //!tags of the original file to split
   splt_tags original_tags;
@@ -1182,12 +1183,13 @@ typedef enum {
 
 #define SPLT_UNDEFINED_GENRE "Other"
 
-#define SPLT_ID3V1_NUMBER_OF_GENRES 82
+#define SPLT_ID3V1_NUMBER_OF_GENRES 127
 
 /*! ID3v1 genres
 */
 static const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
-  {"Blues"}, {"Classic Rock"}, {"Country"}, {"Dance"}, 
+  {"Blues"},
+  {"Classic Rock"}, {"Country"}, {"Dance"}, 
   {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
   {"Metal"},{"New Age"},{"Oldies"}, {"Other"}, {"Pop"},
   {"R&B"}, {"Rap"}, {"Reggae"}, {"Rock"}, {"Techno"},
@@ -1205,7 +1207,22 @@ static const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
   {"Native American"},{"Cabaret"},{"New Wave"}, {"Psychedelic"},
   {"Rave"},{"Showtunes"},{"Trailer"}, {"Lo-Fi"},{"Tribal"},
   {"Acid Punk"},{"Acid Jazz"}, {"Polka"}, {"Retro"},
-  {"Musical"},{"Rock & Roll"},{"Hard Rock"}, {"misc"}, {"misc"},
+  {"Musical"},{"Rock & Roll"},{"Hard Rock"},
+
+  {"Folk"}, {"Folk-Rock"}, {"National Folk"}, {"Swing"},
+  {"Fast Fusion"}, {"Bebob"}, {"Latin"}, {"Revival"},
+  {"Celtic"}, {"Bluegrass"}, {"Avantgarde"}, {"Gothic Rock"},
+  {"Progressive Rock"}, {"Psychedelic Rock"}, {"Symphonic Rock"},
+  {"Slow Rock"}, {"Big Band"}, {"Chorus"}, {"Easy Listening"},
+  {"Acoustic"}, {"Humour"}, {"Speech"}, {"Chanson"}, {"Opera"},
+  {"Chamber Music"}, {"Sonata"}, {"Symphony"}, {"Booty Bass"},
+  {"Primus"}, {"Porn Groove"}, {"Satire"}, {"Slow Jam"},
+  {"Club"}, {"Tango"}, {"Samba"}, {"Folklore"}, {"Ballad"},
+  {"Power Ballad"}, {"Rhythmic Soul"}, {"Freestyle"}, {"Duet"},
+  {"Punk Rock"}, {"Drum Solo"}, {"A capella"}, {"Euro-House"},
+  {"Dance Hall"},
+
+  {"misc"},
 };
 
 /**
@@ -1358,6 +1375,8 @@ int mp3splt_set_silence_log_filename(splt_state *state, const char *filename);
 int mp3splt_set_input_filename_regex(splt_state *state, const char *regex);
 
 int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comment_tag);
+
+int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_tag);
 
 //@}
 

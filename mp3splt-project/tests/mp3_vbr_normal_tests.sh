@@ -556,23 +556,24 @@ function test_normal_vbr_custom_tags
    File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3\" created
  Processed 7084 frames - Sync errors: 0
  file split"
-  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10][]%[@o,@b=album,@N=7][@a=custom_artist][@o,@n=20]"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10,@g=Slow Rock][]%[@o,@b=album,@N=7,@g=Humour][@a=custom_artist][@o,@n=20]"
   mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "t1" "2000" "" "" "10" "my_comment"
+  check_all_mp3_tags_with_version "2" "a1" "b1" "t1" "2000"\
+  "Slow Rock" "95" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
   check_all_mp3_tags_with_version "2" "" "" "" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
-  "2007" "Rock" "17" "7" "http://www.jamendo.com/"
+  "2007" "Humour" "100" "7" "http://www.jamendo.com/"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
   check_all_mp3_tags_with_version "2" "custom_artist" "album" "Today"\
-  "2007" "Rock" "17" "8" "http://www.jamendo.com/"
+  "2007" "Humour" "100" "8" "http://www.jamendo.com/"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
@@ -581,6 +582,53 @@ function test_normal_vbr_custom_tags
   p_green "OK"
   echo
 }
+
+function test_normal_vbr_custom_tags_id3v1
+{
+  remove_output_dir
+
+  test_name="vbr custom tags & id3v1"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3\" created
+ Processed 7084 frames - Sync errors: 0
+ file split"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10,@g=Country][]%[@o,@b=album,@N=7,@g=Humour][@a=custom_artist,@g=doesnotexists][@o,@n=20]"
+  mp3splt_args="-d $OUTPUT_DIR -T 1 -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0 3.0 3.5"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
+  check_all_mp3_tags_with_version "1" "a1" "b1" "t1" "2000"\
+  "Country" "2" "10" "my_comment"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
+  check_all_mp3_tags_with_version "1" "" "" "" "" "" "" "2" ""
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
+  check_all_mp3_tags_with_version "1" "La Verue" "album" "Today"\
+  "2007" "Humour" "100" "7" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
+  check_all_mp3_tags_with_version "1" "custom_artist" "album" "Today"\
+  "2007" "Other" "12" "8" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3"
+  check_all_mp3_tags_with_version "1" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "20" "http://www.jamendo.com/"
+
+  p_green "OK"
+  echo
+}
+
 
 function test_normal_vbr_custom_tags_and_cue_export
 {
@@ -928,20 +976,20 @@ function test_normal_vbr_output_fnames_and_dirs
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
-   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 1.mp3\" created
-   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 2.mp3\" created
-   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 3.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 1.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 2.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 3.mp3\" created
  Processed 9402 frames - Sync errors: 0
  file split (EOF)"
-  output_option="@a/@b/@a-@t @n"
+  output_option="@a/@b/@a-@t-@g @n"
   mp3splt_args="-o '$output_option' -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
   check_if_directory_exist "$OUTPUT_DIR/La Verue"
   check_if_directory_exist "$OUTPUT_DIR/La Verue/Riez Noir"
-  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 1.mp3"
-  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 2.mp3"
-  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 3.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 1.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 2.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 3.mp3"
 
   p_green "OK"
   echo
@@ -959,13 +1007,13 @@ function test_normal_vbr_output_fnames_and_custom_tags_and_dirs
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
  info: starting normal split
-   File \"$OUTPUT_DIR/La Verue/album1/La Verue-Today 1.mp3\" created
-   File \"$OUTPUT_DIR/La Verue/album2/La Verue-Today 2.mp3\" created
-   File \"$OUTPUT_DIR/La Verue/album3/La Verue-Today 3.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/album1/La Verue-Today-Rock 1.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/album2/La Verue-Today-Rock 2.mp3\" created
+   File \"$OUTPUT_DIR/La Verue/album3/La Verue-Today-Soundtrack 3.mp3\" created
  Processed 9402 frames - Sync errors: 0
  file split (EOF)"
-  output_option="@a/@b/@a-@t @n"
-  tags_option="%[@o,@b=album1][@b=album2][@b=album3]"
+  output_option="@a/@b/@a-@t-@g @n"
+  tags_option="%[@o,@b=album1][@b=album2][@b=album3,@g=Soundtrack]"
   mp3splt_args="-o '$output_option' -g \"$tags_option\" -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -973,9 +1021,9 @@ function test_normal_vbr_output_fnames_and_custom_tags_and_dirs
   check_if_directory_exist "$OUTPUT_DIR/La Verue/album1"
   check_if_directory_exist "$OUTPUT_DIR/La Verue/album2"
   check_if_directory_exist "$OUTPUT_DIR/La Verue/album3"
-  check_if_file_exist "$OUTPUT_DIR/La Verue/album1/La Verue-Today 1.mp3"
-  check_if_file_exist "$OUTPUT_DIR/La Verue/album2/La Verue-Today 2.mp3"
-  check_if_file_exist "$OUTPUT_DIR/La Verue/album3/La Verue-Today 3.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/album1/La Verue-Today-Rock 1.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/album2/La Verue-Today-Rock 2.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue/album3/La Verue-Today-Soundtrack 3.mp3"
 
   p_green "OK"
   echo
@@ -1170,7 +1218,7 @@ function test_normal_vbr_tags_from_filename_regex
 
   test_name="vbr tags from filename regex"
 
-  NEW_M_FILE="artist1__album2__title3__comment4__2__2004"
+  NEW_M_FILE="artist1__album2__title3__comment4__2__2004__Samba"
   NEW_MP3_FILE=$SONGS_DIR/${NEW_M_FILE}.mp3
 
   cp $MP3_FILE $NEW_MP3_FILE
@@ -1189,22 +1237,22 @@ function test_normal_vbr_tags_from_filename_regex
    File \"$OUTPUT_DIR/$F3\" created
  Processed 4595 frames - Sync errors: 0
  file split"
-  regex_option="(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*)"
+  regex_option="(?<artist>.*?)__(?<album>.*?)__(?<title>.*?)__(?<comment>.*?)__(?<tracknum>.*?)__(?<year>.*?)__(?<genre>.*)"
   output_option="@t-@a-@b-@N-@n"
   mp3splt_args="-d $OUTPUT_DIR -o $output_option -G \"regex=$regex_option\" ${NEW_MP3_FILE} 0.5 1.0 1.5 2.0"
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/$F1"
   check_all_mp3_tags_with_version "2" "artist1" "album2" "title3" "2004"\
-  "Rock" "17" "2" "comment4"
+  "Samba" "114" "2" "comment4"
 
   current_file="$OUTPUT_DIR/$F2"
   check_all_mp3_tags_with_version "2" "artist1" "album2" "title3" "2004"\
-  "Rock" "17" "2" "comment4"
+  "Samba" "114" "2" "comment4"
 
   current_file="$OUTPUT_DIR/$F3"
   check_all_mp3_tags_with_version "2" "artist1" "album2" "title3" "2004"\
-  "Rock" "17" "2" "comment4"
+  "Samba" "114" "2" "comment4"
 
   rm -f $NEW_MP3_FILE
 

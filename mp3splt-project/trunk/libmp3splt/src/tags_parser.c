@@ -66,13 +66,14 @@ void splt_tp_put_tags_from_filename(splt_state *state, int *error)
   if (*error < 0) { return; }
 
   char *tags_format = splt_su_get_formatted_message(state,
-      "%%[@o,@a=%s,@b=%s,@t=%s,@y=%s,@c=%s,@n=%d]",
+      "%%[@o,@a=%s,@b=%s,@t=%s,@y=%s,@c=%s,@n=%d,@g=%s]",
       tags->artist,
       tags->album,
       tags->title,
       tags->year,
       tags->comment,
-      tags->track);
+      tags->track,
+      tags->genre);
 
   if (tags_format == NULL)
   {

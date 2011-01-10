@@ -246,17 +246,17 @@ void show_small_help_exit(main_data *data)
         "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
         "      @t: title tag, @n: track number identifier, @N: track tag number\n"
         "      (a digit may follow the 'n' or 'N' for the number of digits to output),\n"
-        "      @f: original filename"));
+        "      @f: original filename, @g: genre"));
   print_message(_(" -g + TAGS: custom tags for the split files.\n"
         "      TAGS can contain those variables: \n"
-        "         @a, @b, @t, @y, @c, @n, @o (set original tags),\n"
+        "         @a, @b, @t, @y, @c, @n, @g, @o (set original tags),\n"
         "         @N (auto increment track number).\n"
         "      TAGS format is like [@a=artist1,@t=title1]%[@o,@N=2,@a=artist2]\n"
         "       (% means that we set the tags for all remaining files)"));
   print_message(_(" -G + regex=REGEX: set tags from input filename. REGEX defines how to extract\n"
         "      the tags from the filename. It can contain those variables:\n"
-        //"         (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<tracks>),\n"
-        "         (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>)"));
+        //"       (?<tracks>),\n"
+        "         (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>), (?<genre>)"));
   print_message(_(" -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
         " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
         " -O + TIME: Overlap split files with TIME (slower)."));
