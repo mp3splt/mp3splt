@@ -237,6 +237,22 @@ gint checkbox_ypos;
 gint text_ypos;
 gint wave_ypos;
 
+/*! \defgroup Playerbuttons Button images for the player
+
+\@{
+*/
+GtkWidget *Go_BegButton_active;
+GtkWidget *Go_BegButton_inactive;
+GtkWidget *Go_EndButton_active;
+GtkWidget *Go_EndButton_inactive;
+GtkWidget *PlayButton_active;
+GtkWidget *PlayButton_inactive;
+GtkWidget *StopButton_active;
+GtkWidget *StopButton_inactive;
+GtkWidget *PauseButton_active;
+GtkWidget *PauseButton_inactive;
+//@}
+
 /*! The storage for the name of the input file.
 
 Designed to be accessed using inputfilename_set() and
@@ -454,23 +470,35 @@ void clear_data_player()
 void enable_player_buttons()
 {
   gtk_widget_set_sensitive(stop_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_active));
+  
   gtk_widget_set_sensitive(pause_button, TRUE);
-  if (selected_player != PLAYER_GSTREAMER)
+  gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_active));
+ 
+ if (selected_player != PLAYER_GSTREAMER)
   {
     gtk_widget_set_sensitive(go_beg_button, TRUE);
+    gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_active));
     gtk_widget_set_sensitive(go_end_button, TRUE);
+    gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_active));
   }
   gtk_widget_set_sensitive(play_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
 }
 
 //!disables the buttons of the player
 void disable_player_buttons()
 {
   gtk_widget_set_sensitive(stop_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
   gtk_widget_set_sensitive(pause_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
   gtk_widget_set_sensitive(go_beg_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_inactive));
   gtk_widget_set_sensitive(go_end_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_inactive));
   gtk_widget_set_sensitive(play_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
   gtk_widget_set_sensitive(player_add_button, FALSE);
   gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
 }
@@ -729,6 +757,7 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   {
     file_in_entry = TRUE;
     gtk_widget_set_sensitive(play_button, TRUE);
+    gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
   }
 
   player_quit();
@@ -860,8 +889,15 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   player_buttons_hbox = gtk_hbox_new(FALSE, 0);
 
   //go at the beginning button
-  go_beg_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_MEDIA_PREVIOUS, NULL, FALSE);
+  GString *Imagefile=g_string_new(IMAGEDIR);
+  g_string_append(Imagefile,"/backward.svg");
+  Go_BegButton_active= gtk_image_new_from_file(Imagefile->str);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/backward_inactive.svg");
+  Go_BegButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  go_beg_button = gtk_button_new();
+  gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_inactive));
+
   //put the new button in the box
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), go_beg_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(go_beg_button), GTK_RELIEF_NONE);
@@ -872,8 +908,15 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(go_beg_button, _("Previous"));
 
   //play button
-  play_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_MEDIA_PLAY, NULL, FALSE);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/play.svg");
+  PlayButton_active= gtk_image_new_from_file(Imagefile->str);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/play_inactive.svg");
+  PlayButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  play_button = gtk_button_new();
+  gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_inactive));
+
   //put the new button in the box
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), play_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(play_button), GTK_RELIEF_NONE);
@@ -884,8 +927,14 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(play_button,_("Play"));
 
   //pause button
-  pause_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_MEDIA_PAUSE, NULL, TRUE);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/pause.svg");
+  PauseButton_active= gtk_image_new_from_file(Imagefile->str);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/pause_inactive.svg");
+  PauseButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  pause_button = gtk_button_new();
+  gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
   //put the new button in the box
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), pause_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(pause_button), GTK_RELIEF_NONE);
@@ -895,8 +944,14 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(pause_button,_("Pause"));
 
   //stop button
-  stop_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_MEDIA_STOP, NULL, FALSE);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/stop.svg");
+  StopButton_active= gtk_image_new_from_file(Imagefile->str);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/stop_inactive.svg");
+  StopButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  stop_button = gtk_button_new();
+  gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
   //put the new button in the box
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), stop_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(stop_button), GTK_RELIEF_NONE);
@@ -907,8 +962,14 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(stop_button,_("Stop"));
 
   //go at the end button
-  go_end_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_MEDIA_NEXT, NULL, FALSE);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/forward.svg");
+  Go_EndButton_active= gtk_image_new_from_file(Imagefile->str);
+  g_string_assign(Imagefile,IMAGEDIR);
+  g_string_append(Imagefile,"/forward_inactive.svg");
+  Go_EndButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  go_end_button = gtk_button_new();
+  gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_inactive));
   //put the new button in the box
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), go_end_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(go_end_button), GTK_RELIEF_NONE);
@@ -917,6 +978,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    NULL);
   gtk_widget_set_sensitive(go_end_button, FALSE);
   gtk_widget_set_tooltip_text(go_end_button,_("Next"));
+  g_string_free(Imagefile,TRUE);
 
   //add button
   player_add_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
@@ -3780,6 +3842,7 @@ void file_chooser_ok_event(gchar *fname)
   change_current_filename(fname);
   gtk_widget_set_sensitive(browse_button, TRUE);
   gtk_widget_set_sensitive(play_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
 
   file_browsed = TRUE;
 
