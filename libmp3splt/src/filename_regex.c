@@ -56,6 +56,7 @@ splt_tags *splt_fr_parse_from_state(splt_state *state, int *error)
   const char *filename_to_split = splt_t_get_filename_to_split(state);
   char *regex = splt_t_get_input_filename_regex(state);
   char *default_comment = splt_t_get_default_comment_tag(state);
+  char *default_genre = splt_t_get_default_genre_tag(state);
 
   char *filename = splt_su_get_fname_without_path_and_extension(filename_to_split, error);
   if (*error < 0)
@@ -63,7 +64,7 @@ splt_tags *splt_fr_parse_from_state(splt_state *state, int *error)
     return NULL;
   }
 
-  splt_tags *tags = splt_fr_parse(state, filename, regex, default_comment, error);
+  splt_tags *tags = splt_fr_parse(state, filename, regex, default_comment, default_genre, error);
 
   if (filename)
   {
@@ -75,7 +76,7 @@ splt_tags *splt_fr_parse_from_state(splt_state *state, int *error)
 }
 
 splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *regex,
-    const char *default_comment, int *error)
+    const char *default_comment, const char *default_genre, int *error)
 {
   const char *errorbits;
   int erroroffset;
@@ -191,7 +192,17 @@ splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *re
     }
   }
 
-  //TODO: genre
+  char *genre = splt_fr_get_pattern(re, filename, ovector, rc, "genre");
+  if (genre)
+  {
+    splt_tu_set_field_on_tags(tags, SPLT_TAGS_GENRE, genre);
+    pcre_free_substring(genre);
+    if (*error < 0) { goto error; }
+  }
+  else
+  {
+    splt_tu_set_field_on_tags(tags, SPLT_TAGS_GENRE, default_genre);
+  }
 
   pcre_free(re);
 

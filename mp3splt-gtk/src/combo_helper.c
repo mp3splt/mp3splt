@@ -58,6 +58,22 @@ void ch_append_to_combo(GtkComboBox *combo, const gchar *text, gint value)
   gtk_list_store_set(store, &iter, 0, text, 1, value, -1); 
 }
 
+gchar *ch_get_active_str_value(GtkComboBox *combo)
+{
+  gchar *value = NULL;
+
+  GtkTreeIter iter;
+  gboolean has_selection = gtk_combo_box_get_active_iter(combo, &iter);
+
+  if (has_selection)
+  {
+    GtkTreeModel *store = gtk_combo_box_get_model(combo);
+    gtk_tree_model_get(store, &iter, 0, &value, -1);
+  }
+ 
+  return value;
+}
+
 gint ch_get_active_value(GtkComboBox *combo)
 {
   gint value = -1;
@@ -72,6 +88,27 @@ gint ch_get_active_value(GtkComboBox *combo)
   }
  
   return value;
+}
+
+void ch_set_active_str_value(GtkComboBox *combo, gchar *new_value)
+{
+  GtkTreeIter iter;
+  GtkTreeModel *store = gtk_combo_box_get_model(combo);
+
+  gboolean valid_row = gtk_tree_model_get_iter_first(store, &iter);
+  while (valid_row)
+  {
+    gchar *value;
+    gtk_tree_model_get(store, &iter, 0, &value, -1);
+
+    if (strcmp(value, new_value) == 0)
+    {
+      gtk_combo_box_set_active_iter(combo, &iter);
+      return;
+    }
+
+    valid_row = gtk_tree_model_iter_next(store, &iter);
+  }
 }
 
 void ch_set_active_value(GtkComboBox *combo, gint new_value)

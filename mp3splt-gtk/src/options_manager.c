@@ -85,6 +85,7 @@ extern GtkComboBox *artist_text_properties_combo;
 extern GtkComboBox *album_text_properties_combo;
 extern GtkComboBox *title_text_properties_combo;
 extern GtkComboBox *comment_text_properties_combo;
+extern GtkComboBox *genre_combo;
 extern GtkWidget *comment_tag_entry;
 extern GtkWidget *regex_entry;
 
@@ -278,5 +279,7 @@ void put_tags_from_filename_regex_options()
     default_comment = NULL;
   }
   mp3splt_set_default_comment_tag(the_state, default_comment);
+
+  mp3splt_set_default_genre_tag(the_state, ch_get_active_str_value(genre_combo));
 }
 

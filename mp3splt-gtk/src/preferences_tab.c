@@ -117,6 +117,7 @@ GtkComboBox *artist_text_properties_combo = NULL;
 GtkComboBox *album_text_properties_combo = NULL;
 GtkComboBox *title_text_properties_combo = NULL;
 GtkComboBox *comment_text_properties_combo = NULL;
+GtkComboBox *genre_combo = NULL;
 GtkWidget *comment_tag_entry = NULL;
 GtkWidget *regex_entry = NULL;
 GtkWidget *test_regex_fname_entry = NULL;
@@ -313,6 +314,13 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //comment text properties
   g_key_file_set_integer(my_key_file, "split", "comment_text_properties",
       ch_get_active_value(comment_text_properties_combo));
+
+  //genre
+  gchar *genre_value = ch_get_active_str_value(genre_combo);
+  if (genre_value != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "genre", genre_value);
+  }
 
   //default comment tag
   g_key_file_set_string(my_key_file, "split", "default_comment_tag",
@@ -870,6 +878,7 @@ GtkWidget *create_output_filename_box()
         " always exist)\n"
         "    @b - album title\n"
         "    @t - song title\n"
+        "    @g - genre\n"
         "    @n - track number"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_label, FALSE, FALSE, 0);
 
@@ -940,6 +949,21 @@ GtkWidget *create_tags_options_box()
   return wh_set_title_and_get_vbox(vbox, _("<b>Split files tags</b>"));
 }
 
+static GtkComboBox *create_genre_combo()
+{
+  GtkComboBox *combo = ch_new_combo();
+
+  int i = 0;
+  for (i = 0;i < SPLT_ID3V1_NUMBER_OF_GENRES;i++)
+  {
+    ch_append_to_combo(combo, splt_id3v1_genres[i], 0);
+  }
+
+  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), NULL);
+
+  return combo;
+}
+
 static GtkComboBox *create_text_preferences_combo()
 {
   GtkComboBox *combo = ch_new_combo();
@@ -991,6 +1015,13 @@ void test_regex_event(GtkWidget *widget, gpointer data)
     }
     g_string_append(regex_result, "\n");
 
+    g_string_append(regex_result, _("<genre>: "));
+    if (tags->genre)
+    {
+      g_string_append(regex_result, tags->genre);
+    }
+    g_string_append(regex_result, "\n");
+
     g_string_append(regex_result, _("<comment>: "));
     if (tags->comment)
     {
@@ -1035,12 +1066,13 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
 
   GtkWidget *regex_label = gtk_label_new(_(
         "Above enter PERL-like regular expression using named subgroups.\nFollowing names are recognized:\n"
-        "    (?<artist>)    - artist name\n"
+        "    (?<artist>)   - artist name\n"
         "    (?<album>)    - album title\n"
         "    (?<title>)    - track title\n"
         "    (?<tracknum>) - current track number\n"
         //"    (?<tracks>)   - total number of tracks\n"
         "    (?<year>)     - year of emission\n"
+        "    (?<genre>)    - genre\n"
         "    (?<comment>)  - comment"));
   gtk_misc_set_alignment(GTK_MISC(regex_label), 0.0, 0.5);
   wh_add_in_table(table, wh_put_in_new_hbox_with_margin_level(regex_label, 2));
@@ -1079,7 +1111,8 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
   wh_add_in_table_with_label(table,
       _("Comment text properties:"), GTK_WIDGET(comment_text_properties_combo));
 
-  //TODO: genre
+  genre_combo = create_genre_combo();
+  wh_add_in_table_with_label(table, _("Genre tag:"), GTK_WIDGET(genre_combo));
 
   comment_tag_entry = wh_new_entry(save_preferences);
   wh_add_in_table_with_label_expand(table, _("Comment tag:"), comment_tag_entry);

@@ -56,6 +56,9 @@ char *splt_t_get_input_filename_regex(splt_state *state);
 int splt_t_set_default_comment_tag(splt_state *state, const char *default_comment);
 char *splt_t_get_default_comment_tag(splt_state *state);
 
+int splt_t_set_default_genre_tag(splt_state *state, const char *default_genre);
+char *splt_t_get_default_genre_tag(splt_state *state);
+
 int splt_t_set_silence_log_fname(splt_state *state, const char *filename);
 char *splt_t_get_silence_log_fname(splt_state *state);
 

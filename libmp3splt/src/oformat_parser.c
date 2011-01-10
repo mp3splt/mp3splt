@@ -62,6 +62,7 @@ static short splt_u_output_variable_is_valid(char v, int *amb)
     case 'A':
     case 'b':
     case 'f':
+    case 'g':
     case 'p':
       break;
     case 't':
@@ -338,6 +339,7 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
   char *title = NULL;
   char *artist = NULL;
   char *album = NULL;
+  char *genre = NULL;
   char *performer = NULL;
   char *artist_or_performer = NULL;
   char *original_filename = NULL;
@@ -649,6 +651,51 @@ put_value:
           if (album != NULL)
           {
             snprintf(fm, fm_length, temp, album);
+          }
+          else
+          {
+            snprintf(fm, fm_length, "%s", temp);
+          }
+          break;
+        case 'g':
+          if (splt_tu_tags_exists(state,tags_index))
+          {
+            //we get the genre
+            genre =
+              (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_GENRE);
+            splt_su_clean_string(state, genre, &error);
+            if (error < 0) { goto end; };
+          }
+          else
+          {
+            genre = NULL;
+          }
+
+          //
+          if (genre != NULL)
+          {
+            int genre_length = 0;
+            genre_length = strlen(genre);
+            snprintf(temp+2, temp_len, state->oformat.format[i]+2);
+
+            fm_length = strlen(temp) + genre_length + 1;
+          }
+          else
+          {
+            snprintf(temp,temp_len, state->oformat.format[i]+2);
+            fm_length = strlen(temp) + 1;
+          }
+
+          if ((fm = malloc(fm_length * sizeof(char))) == NULL)
+          {
+            error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+            goto end;
+          }
+
+          //
+          if (genre != NULL)
+          {
+            snprintf(fm, fm_length, temp, genre);
           }
           else
           {

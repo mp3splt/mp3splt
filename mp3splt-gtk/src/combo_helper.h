@@ -37,7 +37,9 @@ GtkComboBox *ch_new_combo();
 void ch_append_to_combo(GtkComboBox *combo, const gchar *text, gint value);
 
 gint ch_get_active_value(GtkComboBox *combo);
+gchar *ch_get_active_str_value(GtkComboBox *combo);
 void ch_set_active_value(GtkComboBox *combo, gint value);
+void ch_set_active_str_value(GtkComboBox *combo, gchar *new_value);
 
 #define COMBO_HELPER_H
 #endif

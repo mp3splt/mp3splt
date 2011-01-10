@@ -347,6 +347,34 @@ int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comme
   return error;
 }
 
+int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_tag)
+{
+  int error = SPLT_OK;
+
+  if (state != NULL)
+  {
+    if (!splt_o_library_locked(state))
+    {
+      splt_o_lock_library(state);
+
+      error = splt_t_set_default_genre_tag(state, default_genre_tag);
+
+      splt_o_unlock_library(state);
+    }
+    else
+    {
+      error = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    error = SPLT_ERROR_STATE_NULL;
+  }
+
+  return error;
+}
+
+
 /************************************/
 /* Set callback functions           */
 

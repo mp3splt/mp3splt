@@ -83,6 +83,7 @@ extern GtkComboBox *artist_text_properties_combo;
 extern GtkComboBox *album_text_properties_combo;
 extern GtkComboBox *title_text_properties_combo;
 extern GtkComboBox *comment_text_properties_combo;
+extern GtkComboBox *genre_combo;
 extern GtkWidget *comment_tag_entry;
 extern GtkWidget *regex_entry;
 extern GtkWidget *test_regex_fname_entry;
@@ -343,6 +344,19 @@ void load_preferences()
   else
   {
     ch_set_active_value(comment_text_properties_combo, SPLT_NO_CONVERSION);
+  }
+
+  //genre
+  gchar *default_genre = g_key_file_get_string(key_file, "split", "genre", NULL);
+  if (default_genre)
+  {
+    ch_set_active_str_value(genre_combo, default_genre);
+    g_free(default_genre);
+    default_genre = NULL;
+  }
+  else
+  {
+    ch_set_active_str_value(genre_combo, SPLT_UNDEFINED_GENRE);
   }
 
   //default comment tag
@@ -620,7 +634,7 @@ void write_default_preferences_file()
         SPLT_DEFAULT_OUTPUT);
     g_key_file_set_comment (my_key_file, "output", "output_format",
         "\n the output format, contains @a,"
-        "@b, @p, @t and @n, see the program for"
+        "@b, @g, @p, @t and @n, see the program for"
         " more details",
         NULL);
   }
