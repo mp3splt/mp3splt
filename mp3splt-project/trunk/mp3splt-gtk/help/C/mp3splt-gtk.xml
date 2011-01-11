@@ -295,26 +295,27 @@
 	&appname; contains an export feature that saves the current
 	project's state as a cue file. This cue file can later be
 	re-opened by &appname; or be used by any cd burner or other
-	application that can read cue files.
+	application that can read cue files. 
+    </para>      
+    <para>      
+      If the cue file is used in a different application than
+      &appname; there is one feature that most probably won't work,
+      though: 
     </para>
     <para>      
+      The cue standard does provide commentary fields that allow
+      applications to store private data (which we use for to remember
+      which part of the file is not to be output).
+      But since there is no standartized way to exclude parts of a
+      file from the CD burning process other applications most
+      probably won't know if you want to do so.
+    </para>
+    <para>
       To export the current split points as a cue file press
       <menuchoice><guimenu>File</guimenu><guimenuitem>Export
       Splitpoints</guimenuitem></menuchoice>
     </para>
   </sect1>
-
-
-
-
-
-
-
-
-
-
-
-
   <sect1 id="mp3splt_gtk-Troubleshooting">
     <title>Troubleshooting</title>
     <sect2 id="mp3splt_gtk-PlayerWontStart">
