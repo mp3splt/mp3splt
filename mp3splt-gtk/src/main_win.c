@@ -243,7 +243,7 @@ void initialize_window()
  
   //for the bitmap
   GdkPixbuf *pixbuf =
-    gdk_pixbuf_new_from_file(PIXMAP_PATH"mp3splt-gtk_ico.png", NULL);
+    gdk_pixbuf_new_from_file(PIXMAP_PATH"mp3splt-gtk_ico.svg", NULL);
   gtk_window_set_default_icon(pixbuf);
 }
 
