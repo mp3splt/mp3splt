@@ -252,6 +252,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   // Skip all leading whitespace after the word REM
   while ((*line_content==' ')||(*line_content=='\t')) line_content++;
 
+  fprintf(stderr,"REM %s\n",line_content);
+
   if((linetail=strstr(line_content,"CREATOR"))!=NULL)
     {
       // Skip the word "CREATOR"
@@ -268,6 +270,7 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   if((linetail=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
     {
       cu->title_is_filename = SPLT_TRUE;
+      fprintf(stderr,"Title_IS_Filename\n");
     }
   else
   if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
@@ -346,6 +349,10 @@ static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
   {
     splt_cue_process_track_line(line_content, cu, state);
   }
+  else if ((line_content = strstr(line, "REM")) != NULL)
+  {
+    splt_cue_process_rem_line(line_content, cu, state);
+  }
   else if ((line_content = strstr(line, "TITLE")) != NULL)
   {
     splt_cue_process_title_line(line_content, cu, state);
@@ -357,10 +364,6 @@ static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
   else if ((line_content = strstr(line, "INDEX 01")) != NULL)
   {
     splt_cue_process_index_line(line_content, cu, state);
-  }
-  else if ((line_content = strstr(line, "REM")) != NULL)
-  {
-    splt_cue_process_rem_line(line_content, cu, state);
   }
   else if ((line_content = strstr(line, "FILE")) != NULL)
   {
@@ -423,6 +426,8 @@ static void splt_cue_cu_free(cue_utils **cu)
   output to.
   \param error Contains the error code if anything goes wrong
   \param file The name of the file we have to analyze
+  \todo REM Genre support
+
  */
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 {
