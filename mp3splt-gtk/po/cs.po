@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-09 14:46+0100\n"
+"POT-Creation-Date: 2011-01-10 21:51+0100\n"
 "PO-Revision-Date: 2011-01-03 19:55+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,7 +50,7 @@ msgstr "Zadejte, prosím, název"
 msgid "Set splitpoints from silence detection"
 msgstr "Nastavit body rozdělení s pomocí zjištění ticha"
 
-#: src/tree_tab.c:1210 src/preferences_tab.c:638
+#: src/tree_tab.c:1210 src/preferences_tab.c:646
 msgid "Threshold level (dB):"
 msgstr "Úroveň prahu (dB):"
 
@@ -166,77 +166,79 @@ msgstr "_Smazat vybrané soubory"
 msgid "D_elete all files"
 msgstr "S_mazat všechny soubory"
 
-#: src/preferences_tab.c:427
+#: src/preferences_tab.c:435
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Vybrat jazyk (vyžaduje nové spuštění)</b>"
 
-#: src/preferences_tab.c:462
+#: src/preferences_tab.c:470
 msgid "Choose split directory"
 msgstr "Vybrat výstupní adresář"
 
-#: src/preferences_tab.c:586
+#: src/preferences_tab.c:594
 msgid "Br_owse dir"
 msgstr "_Vybrat adresář"
 
-#: src/preferences_tab.c:594
+#: src/preferences_tab.c:602
 msgid "_Song dir"
 msgstr "Adresář _pro skladbu"
 
-#: src/preferences_tab.c:599
+#: src/preferences_tab.c:607
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Adresář pro rozdělené soubory</b>"
 
-#: src/preferences_tab.c:608
+#: src/preferences_tab.c:616
 msgid "_Create directories from filenames "
 msgstr "_Vytvořit adresáře z názvů souborů"
 
-#: src/preferences_tab.c:614
+#: src/preferences_tab.c:622
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Režim F_rame (užitečný pro mp3-VBR) (jen pro mp3)"
 
-#: src/preferences_tab.c:621
+#: src/preferences_tab.c:629
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr "_Automatické přesné nastavení bodu rozdělení pomocí zjištění ticha"
 
-#: src/preferences_tab.c:653
+#: src/preferences_tab.c:661
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec):"
 
-#: src/preferences_tab.c:670
+#: src/preferences_tab.c:678
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "Přestávka (sekundy okolo bodu rozdělení k prohledání na ticho):"
 
-#: src/preferences_tab.c:689
+#: src/preferences_tab.c:697
 msgid "Set _default split options"
 msgstr "Nastavit výchozí volby pro rozdělení"
 
-#: src/preferences_tab.c:695
+#: src/preferences_tab.c:703
 msgid "<b>Split options</b>"
 msgstr "<b>Volby pro rozdělení</b>"
 
-#: src/preferences_tab.c:774
+#: src/preferences_tab.c:782
 msgid "Choose a player:"
 msgstr "Vybrat přehrávač:"
 
-#: src/preferences_tab.c:798
+#: src/preferences_tab.c:806
 msgid "<b>Player options</b>"
 msgstr "<b>Volby pro přehrávač</b>"
 
-#: src/preferences_tab.c:846
+#: src/preferences_tab.c:854
 msgid "Default format"
 msgstr "Výchozí formát"
 
-#: src/preferences_tab.c:850
+#: src/preferences_tab.c:858
 msgid "Custom format"
 msgstr "Vlastní formát"
 
-#: src/preferences_tab.c:867
+#: src/preferences_tab.c:875
+#, fuzzy
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
 "    @p - performer of each song (does not always exist)\n"
 "    @b - album title\n"
 "    @t - song title\n"
+"    @g - genre\n"
 "    @n - track number"
 msgstr ""
 "    @f - název souboru\n"
@@ -246,167 +248,177 @@ msgstr ""
 "    @t - název písničky\n"
 "    @n - číslo skladby"
 
-#: src/preferences_tab.c:879
+#: src/preferences_tab.c:888
 msgid "<b>Output filename format</b>"
 msgstr "<b>Formát výstupního souboru</b>"
 
-#: src/preferences_tab.c:924
+#: src/preferences_tab.c:933
 msgid "Original file tags"
 msgstr "Původní značky k souboru"
 
-#: src/preferences_tab.c:927
+#: src/preferences_tab.c:936
 msgid "Default tags (cddb or cue tags)"
 msgstr "Výchozí značky (cddb nebo značky cue)"
 
-#: src/preferences_tab.c:930
+#: src/preferences_tab.c:939
 msgid "No tags"
 msgstr "Žádné značky"
 
-#: src/preferences_tab.c:933
+#: src/preferences_tab.c:942
 msgid "Extract tags from filename"
 msgstr "Vytáhnout značky z názvu souboru"
 
-#: src/preferences_tab.c:940
+#: src/preferences_tab.c:949
 msgid "<b>Split files tags</b>"
 msgstr "<b>Značky v rozdělených souborech</b>"
 
-#: src/preferences_tab.c:947
+#: src/preferences_tab.c:971
 msgid "No change"
 msgstr "Žádná změna"
 
-#: src/preferences_tab.c:948
+#: src/preferences_tab.c:972
 msgid "lowercase"
 msgstr "Malá písmena"
 
-#: src/preferences_tab.c:949
+#: src/preferences_tab.c:973
 msgid "UPPERCASE"
 msgstr "VELKÁ PÍSMENA"
 
-#: src/preferences_tab.c:950
+#: src/preferences_tab.c:974
 msgid "First uppercase"
 msgstr "První písmeno velké"
 
-#: src/preferences_tab.c:951
+#: src/preferences_tab.c:975
 msgid "Word Uppercase"
 msgstr "Písmena slov velká"
 
-#: src/preferences_tab.c:972
+#: src/preferences_tab.c:996
 msgid "<artist>: "
 msgstr ""
 
-#: src/preferences_tab.c:979
+#: src/preferences_tab.c:1003
 msgid "<album>: "
 msgstr ""
 
-#: src/preferences_tab.c:987
+#: src/preferences_tab.c:1011
 msgid "<title>: "
 msgstr ""
 
-#: src/preferences_tab.c:994
+#: src/preferences_tab.c:1018
+msgid "<genre>: "
+msgstr ""
+
+#: src/preferences_tab.c:1025
 msgid "<comment>: "
 msgstr ""
 
-#: src/preferences_tab.c:1001
+#: src/preferences_tab.c:1032
 msgid "<year>: "
 msgstr ""
 
-#: src/preferences_tab.c:1008
+#: src/preferences_tab.c:1039
 msgid "<track>: "
 msgstr ""
 
-#: src/preferences_tab.c:1034
+#: src/preferences_tab.c:1065
 msgid "Regular expression:"
 msgstr "Regulární výraz:"
 
-#: src/preferences_tab.c:1037
+#: src/preferences_tab.c:1068
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
-"    (?<artist>)    - artist name\n"
+"    (?<artist>)   - artist name\n"
 "    (?<album>)    - album title\n"
 "    (?<title>)    - track title\n"
 "    (?<tracknum>) - current track number\n"
 "    (?<year>)     - year of emission\n"
+"    (?<genre>)    - genre\n"
 "    (?<comment>)  - comment"
 msgstr ""
 
-#: src/preferences_tab.c:1060
+#: src/preferences_tab.c:1092
 msgid "_Replace underscores by spaces"
 msgstr "_Nahradit podtržítka mezerami"
 
-#: src/preferences_tab.c:1068
+#: src/preferences_tab.c:1100
 msgid "Artist text properties:"
 msgstr "Vlastnosti textu umělce:"
 
-#: src/preferences_tab.c:1072
+#: src/preferences_tab.c:1104
 msgid "Album text properties:"
 msgstr "Vlastnosti textu alba:"
 
-#: src/preferences_tab.c:1076
+#: src/preferences_tab.c:1108
 msgid "Title text properties:"
 msgstr "Vlastnosti textu názvu:"
 
-#: src/preferences_tab.c:1080
+#: src/preferences_tab.c:1112
 msgid "Comment text properties:"
 msgstr "Vlastnosti textu poznámky:"
 
-#: src/preferences_tab.c:1085
+#: src/preferences_tab.c:1115
+#, fuzzy
+msgid "Genre tag:"
+msgstr "Značka poznámky:"
+
+#: src/preferences_tab.c:1118
 msgid "Comment tag:"
 msgstr "Značka poznámky:"
 
-#: src/preferences_tab.c:1087
+#: src/preferences_tab.c:1120
 msgid "Regular expression test"
 msgstr ""
 
-#: src/preferences_tab.c:1102
+#: src/preferences_tab.c:1135
 msgid "_Test"
 msgstr ""
 
-#: src/preferences_tab.c:1107
+#: src/preferences_tab.c:1140
 msgid "Sample filename:"
 msgstr "Název souboru s příkladem:"
 
-#: src/preferences_tab.c:1111
+#: src/preferences_tab.c:1144
 msgid "Sample result:"
 msgstr "Výsledek příkladu:"
 
-#: src/preferences_tab.c:1122
+#: src/preferences_tab.c:1155
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Značky ID3v1 a ID3v2"
 
-#: src/preferences_tab.c:1129
+#: src/preferences_tab.c:1162
 msgid "ID3v2 tags"
 msgstr "Značky ID3v2"
 
-#: src/preferences_tab.c:1135
+#: src/preferences_tab.c:1168
 msgid "ID3v1 tags"
 msgstr "Značky ID3v1"
 
-#: src/preferences_tab.c:1141
+#: src/preferences_tab.c:1174
 msgid "Same tags version as the input file"
 msgstr "Stejná verze značky jako u vstupního souboru"
 
-#: src/preferences_tab.c:1146
+#: src/preferences_tab.c:1179
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Verze značky (jen pro mp3)</b>"
 
-#: src/preferences_tab.c:1188 src/main_win.c:546
+#: src/preferences_tab.c:1221 src/main_win.c:546
 msgid "Split"
 msgstr "Rozdělení"
 
-#: src/preferences_tab.c:1194
+#: src/preferences_tab.c:1227
 msgid "Tags"
 msgstr "Značky"
 
-#: src/preferences_tab.c:1200
+#: src/preferences_tab.c:1233
 msgid "Output"
 msgstr "Výstup"
 
-#: src/preferences_tab.c:1206 src/main_win.c:701
+#: src/preferences_tab.c:1239 src/main_win.c:701
 msgid "Player"
 msgstr "Přehrávač"
 
-#: src/preferences_tab.c:1213
+#: src/preferences_tab.c:1246
 msgid "Language"
 msgstr "Jazyk"
 

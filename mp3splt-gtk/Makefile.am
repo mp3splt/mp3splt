@@ -9,6 +9,8 @@ EXTRA_DIST = mp3splt-gtk.desktop autogen.sh build-aux/gnome-doc-utils.make m4 de
 appsdir = $(datadir)/applications
 apps_DATA = mp3splt-gtk.desktop
 
+mp3splt-gtk.desktop: mp3splt-gtk.desktop.in FORCE
+	sed -e "s#PREFIX/#$(datadir)/pixmaps/#" $< > $@
 
 doc: FORCE
 	$(MAKE) -C doc doc

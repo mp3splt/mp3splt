@@ -3,7 +3,7 @@ Name=Mp3splt-gtk audio splitter
 GenericName=Sound Splitter
 Comment=Split mp3 and ogg files without decoding
 
-Icon=/usr/share/pixmaps/mp3splt-gtk_ico.svg
+Icon=PREFIX/mp3splt-gtk_ico.svg
 
 Type=Application
 Categories=Application;AudioVideo;Audio;AudioVideoEditing;
