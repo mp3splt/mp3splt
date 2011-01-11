@@ -49,6 +49,12 @@ typedef struct {
   */
   int title_is_filename;
 
+  /*! \brief Has this file been created by us?
+
+    If not we append a splitpoint at the end of the file.
+  */
+  int file_has_been_created_by_us;
+
   /*! \brief The type of the current track.
 
     The track type determines if this track will be output in the end

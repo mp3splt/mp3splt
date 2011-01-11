@@ -261,9 +261,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
 
       if(strstr(linetail,"MP3SPLT_GTK")!=NULL)
 	{
-	  // TODO: Do we really want to do something in this
-	  // case? Normally it is best to look at the propoerties
-	  // of a program, not at its name.
+	  cu->file_has_been_created_by_us = SPLT_TRUE;
+	  fprintf(stderr,"Our file!\n");
 	}
     }
   else
@@ -485,9 +484,14 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     if (cu->error < 0) { *error = cu->error; goto function_end; }
   }
 
-  err = splt_sp_append_splitpoint(state, LONG_MAX,
-      _("description here"), cu->current_track_type);
-
+  // Append a split point at the end of the file
+  // if the file hasn't been created by us.
+  //
+  // TODO: Why do we ever need to do this?
+  if(!cu->file_has_been_created_by_us)
+    err = splt_sp_append_splitpoint(state, LONG_MAX,
+				    _("description here"), cu->current_track_type);
+  
   if (cu->counter == 0)
   {
     splt_e_set_error_data(state, file);
