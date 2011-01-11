@@ -485,9 +485,8 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   }
 
   // Append a split point at the end of the file
-  // if the file hasn't been created by us.
-  //
-  // TODO: Why do we ever need to do this?
+  // If the file has been created by us this has already been done
+  // and we can skip this step.
   if(!cu->file_has_been_created_by_us)
     err = splt_sp_append_splitpoint(state, LONG_MAX,
 				    _("description here"), cu->current_track_type);

@@ -289,6 +289,32 @@
       </para>
     </sect2>
   </sect1>
+  <sect1 id="mp3splt_gtk-SaveResume">
+    <title>Saving and resuming your work</title>
+    <para>      
+	&appname; contains an export feature that saves the current
+	project's state as a cue file. This cue file can later be
+	re-opened by &appname; or be used by any cd burner or other
+	application that can read cue files.
+    </para>
+    <para>      
+      To export the current split points as a cue file press
+      <menuchoice><guimenu>File</guimenu><guimenuitem>Export
+      Splitpoints</guimenuitem></menuchoice>
+    </para>
+  </sect1>
+
+
+
+
+
+
+
+
+
+
+
+
   <sect1 id="mp3splt_gtk-Troubleshooting">
     <title>Troubleshooting</title>
     <sect2 id="mp3splt_gtk-PlayerWontStart">
