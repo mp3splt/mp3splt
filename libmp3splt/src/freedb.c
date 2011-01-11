@@ -445,6 +445,9 @@ int splt_freedb_process_search(splt_state *state, char *search,
             snprintf(message, malloc_number,
                 SPLT_FREEDB2_SEARCH,cgi_path,search);
 
+            //fprintf(stdout,"message = _%s_\n",message);
+            //fflush(stdout);
+
             //message sent
             if((send(fd, message, strlen(message), 0))==-1)
             {
@@ -473,11 +476,15 @@ int splt_freedb_process_search(splt_state *state, char *search,
                       error = SPLT_FREEDB_ERROR_CANNOT_RECV_MESSAGE;
                       goto function_end1;
                     }
+
                     tot += i;
                     buffer[tot]='\0';
                     c += i;
                   } while ((i>0)&&(tot<SPLT_FREEDB_BUFFERSIZE-1)
                       &&((e=strstr(buffer, "\n."))==NULL));
+
+                  //fprintf(stdout,"buffer = %s\n",buffer);
+                  //fflush(stdout);
 
                   //we analyse the buffer
                   tot = splt_freedb2_analyse_cd_buffer(buffer, tot, state,&error);

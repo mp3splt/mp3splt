@@ -44,6 +44,7 @@
 
 #ifdef __WIN32__
 #define PIXMAP_PATH ""
+#define IMAGEDIR ""
 #endif
 
 #define WINDOW_X 700

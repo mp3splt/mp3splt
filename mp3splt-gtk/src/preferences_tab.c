@@ -95,6 +95,8 @@ GtkWidget *tags_version_radio = NULL;
 GtkWidget *frame_mode = NULL;
 //!auto-adjust option
 GtkWidget *adjust_mode = NULL;
+// when ticked, name for split tag derived from filename
+GtkWidget *names_from_filename = NULL;
 
 GtkWidget *create_dirs_from_output_files = NULL;
 
@@ -134,8 +136,13 @@ extern gint split_file_mode;
 extern GtkWidget *spinner_time;
 extern GtkWidget *spinner_equal_tracks;
 
+extern gint file_browsed;
+
 static GtkWidget *create_extract_tags_from_filename_options_box();
 static GtkWidget *create_test_regex_table();
+
+extern void clear_current_description(void);
+extern void copy_filename_to_current_description(const gchar *fname);
 
 /*!Returns the selected language
 
@@ -285,6 +292,9 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //adjust gap
   g_key_file_set_integer(my_key_file, "split", "adjust_gap",
       gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_gap)));
+
+  g_key_file_set_boolean(my_key_file, "output", "splitpoint_names_from_filename",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)));
 
   //output format
   g_key_file_set_string(my_key_file, "output", "output_format",
@@ -550,6 +560,31 @@ void frame_event(GtkToggleButton *frame_mode, gpointer user_data)
   save_preferences(NULL, NULL);
 }
 
+void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_data)
+{
+  gint splitpoints_from_filename = FALSE;
+
+  if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)))
+  {
+    splitpoints_from_filename = FALSE;
+  }
+  else
+  {
+    splitpoints_from_filename = TRUE;
+  }
+
+  if (splitpoints_from_filename == TRUE && file_browsed == TRUE)
+  {
+    copy_filename_to_current_description(inputfilename_get());
+  }
+  else
+  {
+    clear_current_description();
+  }
+
+  save_preferences(NULL, NULL);
+}
+
 //!action for the set default prefs button
 void set_default_prefs_event(GtkWidget *widget, gpointer data)
 {
@@ -564,6 +599,7 @@ void set_default_prefs_event(GtkWidget *widget, gpointer data)
                             SPLT_DEFAULT_PARAM_OFFSET);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_gap),
                             SPLT_DEFAULT_PARAM_GAP);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(names_from_filename), FALSE);
 
   save_preferences(NULL, NULL);
 }
@@ -611,6 +647,12 @@ GtkWidget *create_directory_box()
 GtkWidget *create_split_options_box()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+
+  //names from filename
+  names_from_filename = gtk_check_button_new_with_mnemonic(_("_Splitpoint name from filename (testing)"));
+  gtk_box_pack_start(GTK_BOX(vbox), names_from_filename, FALSE, FALSE, 0);
+  g_signal_connect(G_OBJECT(names_from_filename), "toggled",
+      G_CALLBACK(splitpoints_from_filename_event), NULL);
 
   create_dirs_from_output_files =
     gtk_check_button_new_with_mnemonic(_("_Create directories from filenames "));
