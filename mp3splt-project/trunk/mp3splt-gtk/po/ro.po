@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-09 14:46+0100\n"
+"POT-Creation-Date: 2011-01-10 21:51+0100\n"
 "PO-Revision-Date: 2011-01-03 19:55+0000\n"
 "Last-Translator: snowiulian <snow.iulian@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr "descriere aici"
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1210 src/preferences_tab.c:638
+#: src/tree_tab.c:1210 src/preferences_tab.c:646
 msgid "Threshold level (dB):"
 msgstr ""
 
@@ -167,241 +167,251 @@ msgstr ""
 msgid "D_elete all files"
 msgstr ""
 
-#: src/preferences_tab.c:427
+#: src/preferences_tab.c:435
 msgid "<b>Choose language (requires restart)</b>"
 msgstr ""
 
-#: src/preferences_tab.c:462
+#: src/preferences_tab.c:470
 msgid "Choose split directory"
 msgstr ""
 
-#: src/preferences_tab.c:586
+#: src/preferences_tab.c:594
 msgid "Br_owse dir"
 msgstr ""
 
-#: src/preferences_tab.c:594
+#: src/preferences_tab.c:602
 msgid "_Song dir"
 msgstr ""
 
-#: src/preferences_tab.c:599
+#: src/preferences_tab.c:607
 msgid "<b>Directory for split files</b>"
 msgstr ""
 
-#: src/preferences_tab.c:608
+#: src/preferences_tab.c:616
 msgid "_Create directories from filenames "
 msgstr ""
 
-#: src/preferences_tab.c:614
+#: src/preferences_tab.c:622
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr ""
 
-#: src/preferences_tab.c:621
+#: src/preferences_tab.c:629
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 
-#: src/preferences_tab.c:653
+#: src/preferences_tab.c:661
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr ""
 
-#: src/preferences_tab.c:670
+#: src/preferences_tab.c:678
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr ""
 
-#: src/preferences_tab.c:689
+#: src/preferences_tab.c:697
 msgid "Set _default split options"
 msgstr ""
 
-#: src/preferences_tab.c:695
+#: src/preferences_tab.c:703
 msgid "<b>Split options</b>"
 msgstr ""
 
-#: src/preferences_tab.c:774
+#: src/preferences_tab.c:782
 msgid "Choose a player:"
 msgstr ""
 
-#: src/preferences_tab.c:798
+#: src/preferences_tab.c:806
 msgid "<b>Player options</b>"
 msgstr ""
 
-#: src/preferences_tab.c:846
+#: src/preferences_tab.c:854
 msgid "Default format"
 msgstr ""
 
-#: src/preferences_tab.c:850
+#: src/preferences_tab.c:858
 msgid "Custom format"
 msgstr ""
 
-#: src/preferences_tab.c:867
+#: src/preferences_tab.c:875
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
 "    @p - performer of each song (does not always exist)\n"
 "    @b - album title\n"
 "    @t - song title\n"
+"    @g - genre\n"
 "    @n - track number"
 msgstr ""
 
-#: src/preferences_tab.c:879
+#: src/preferences_tab.c:888
 msgid "<b>Output filename format</b>"
 msgstr ""
 
-#: src/preferences_tab.c:924
+#: src/preferences_tab.c:933
 msgid "Original file tags"
 msgstr ""
 
-#: src/preferences_tab.c:927
+#: src/preferences_tab.c:936
 msgid "Default tags (cddb or cue tags)"
 msgstr ""
 
-#: src/preferences_tab.c:930
+#: src/preferences_tab.c:939
 msgid "No tags"
 msgstr ""
 
-#: src/preferences_tab.c:933
+#: src/preferences_tab.c:942
 msgid "Extract tags from filename"
 msgstr ""
 
-#: src/preferences_tab.c:940
+#: src/preferences_tab.c:949
 msgid "<b>Split files tags</b>"
 msgstr ""
 
-#: src/preferences_tab.c:947
+#: src/preferences_tab.c:971
 msgid "No change"
 msgstr ""
 
-#: src/preferences_tab.c:948
+#: src/preferences_tab.c:972
 msgid "lowercase"
 msgstr ""
 
-#: src/preferences_tab.c:949
+#: src/preferences_tab.c:973
 msgid "UPPERCASE"
 msgstr ""
 
-#: src/preferences_tab.c:950
+#: src/preferences_tab.c:974
 msgid "First uppercase"
 msgstr ""
 
-#: src/preferences_tab.c:951
+#: src/preferences_tab.c:975
 msgid "Word Uppercase"
 msgstr ""
 
-#: src/preferences_tab.c:972
+#: src/preferences_tab.c:996
 msgid "<artist>: "
 msgstr ""
 
-#: src/preferences_tab.c:979
+#: src/preferences_tab.c:1003
 msgid "<album>: "
 msgstr ""
 
-#: src/preferences_tab.c:987
+#: src/preferences_tab.c:1011
 msgid "<title>: "
 msgstr ""
 
-#: src/preferences_tab.c:994
+#: src/preferences_tab.c:1018
+msgid "<genre>: "
+msgstr ""
+
+#: src/preferences_tab.c:1025
 msgid "<comment>: "
 msgstr ""
 
-#: src/preferences_tab.c:1001
+#: src/preferences_tab.c:1032
 msgid "<year>: "
 msgstr ""
 
-#: src/preferences_tab.c:1008
+#: src/preferences_tab.c:1039
 msgid "<track>: "
 msgstr ""
 
-#: src/preferences_tab.c:1034
+#: src/preferences_tab.c:1065
 msgid "Regular expression:"
 msgstr ""
 
-#: src/preferences_tab.c:1037
+#: src/preferences_tab.c:1068
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
-"    (?<artist>)    - artist name\n"
+"    (?<artist>)   - artist name\n"
 "    (?<album>)    - album title\n"
 "    (?<title>)    - track title\n"
 "    (?<tracknum>) - current track number\n"
 "    (?<year>)     - year of emission\n"
+"    (?<genre>)    - genre\n"
 "    (?<comment>)  - comment"
 msgstr ""
 
-#: src/preferences_tab.c:1060
+#: src/preferences_tab.c:1092
 msgid "_Replace underscores by spaces"
 msgstr ""
 
-#: src/preferences_tab.c:1068
+#: src/preferences_tab.c:1100
 msgid "Artist text properties:"
 msgstr ""
 
-#: src/preferences_tab.c:1072
+#: src/preferences_tab.c:1104
 msgid "Album text properties:"
 msgstr ""
 
-#: src/preferences_tab.c:1076
+#: src/preferences_tab.c:1108
 msgid "Title text properties:"
 msgstr ""
 
-#: src/preferences_tab.c:1080
+#: src/preferences_tab.c:1112
 msgid "Comment text properties:"
 msgstr ""
 
-#: src/preferences_tab.c:1085
+#: src/preferences_tab.c:1115
+msgid "Genre tag:"
+msgstr ""
+
+#: src/preferences_tab.c:1118
 msgid "Comment tag:"
 msgstr ""
 
-#: src/preferences_tab.c:1087
+#: src/preferences_tab.c:1120
 msgid "Regular expression test"
 msgstr ""
 
-#: src/preferences_tab.c:1102
+#: src/preferences_tab.c:1135
 msgid "_Test"
 msgstr ""
 
-#: src/preferences_tab.c:1107
+#: src/preferences_tab.c:1140
 msgid "Sample filename:"
 msgstr ""
 
-#: src/preferences_tab.c:1111
+#: src/preferences_tab.c:1144
 msgid "Sample result:"
 msgstr ""
 
-#: src/preferences_tab.c:1122
+#: src/preferences_tab.c:1155
 msgid "ID3v1 & ID3v2 tags"
 msgstr ""
 
-#: src/preferences_tab.c:1129
+#: src/preferences_tab.c:1162
 msgid "ID3v2 tags"
 msgstr ""
 
-#: src/preferences_tab.c:1135
+#: src/preferences_tab.c:1168
 msgid "ID3v1 tags"
 msgstr ""
 
-#: src/preferences_tab.c:1141
+#: src/preferences_tab.c:1174
 msgid "Same tags version as the input file"
 msgstr ""
 
-#: src/preferences_tab.c:1146
+#: src/preferences_tab.c:1179
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr ""
 
-#: src/preferences_tab.c:1188 src/main_win.c:546
+#: src/preferences_tab.c:1221 src/main_win.c:546
 msgid "Split"
 msgstr ""
 
-#: src/preferences_tab.c:1194
+#: src/preferences_tab.c:1227
 msgid "Tags"
 msgstr ""
 
-#: src/preferences_tab.c:1200
+#: src/preferences_tab.c:1233
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1206 src/main_win.c:701
+#: src/preferences_tab.c:1239 src/main_win.c:701
 msgid "Player"
 msgstr ""
 
-#: src/preferences_tab.c:1213
+#: src/preferences_tab.c:1246
 msgid "Language"
 msgstr ""
 
