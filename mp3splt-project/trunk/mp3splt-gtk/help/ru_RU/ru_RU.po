@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2010-12-18 16:12+0100\n"
-"PO-Revision-Date: 2011-01-11 20:01+0000\n"
+"POT-Creation-Date: 2011-01-11 21:44+0100\n"
+"PO-Revision-Date: 2011-01-11 20:55+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -272,54 +272,74 @@ msgid "Go to the <guilabel>Batch Processing</guilabel> tab and add all files you
 msgstr ""
 
 #: C/mp3splt-gtk.xml293(title)
+msgid "Saving and resuming your work"
+msgstr ""
+
+#: C/mp3splt-gtk.xml294(para)
+msgid "mp3splt-gtk contains an export feature that saves the current project's state as a cue file. This cue file can later be re-opened by mp3splt-gtk or be used by any cd burner or other application that can read cue files."
+msgstr ""
+
+#: C/mp3splt-gtk.xml300(para)
+msgid "If the cue file is used in a different application than mp3splt-gtk there is one feature that most probably won't work, though:"
+msgstr ""
+
+#: C/mp3splt-gtk.xml305(para)
+msgid "The cue standard does provide commentary fields that allow applications to store private data (which we use for to remember which part of the file is not to be output). But since there is no standartized way to exclude parts of a file from the CD burning process other applications most probably won't know if you want to do so."
+msgstr ""
+
+#: C/mp3splt-gtk.xml313(para)
+msgid "To export the current split points as a cue file press <menuchoice><guimenu>File</guimenu><guimenuitem>Export Splitpoints</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/mp3splt-gtk.xml320(title)
 msgid "Troubleshooting"
 msgstr ""
 
-#: C/mp3splt-gtk.xml295(title)
+#: C/mp3splt-gtk.xml322(title)
 msgid "The player won't start"
 msgstr ""
 
-#: C/mp3splt-gtk.xml296(para)
+#: C/mp3splt-gtk.xml323(para)
 msgid "If the player won't start even if the play button is pressed try starting the player independently from mp3splt-gtk and pressing play thereafter."
 msgstr ""
 
-#: C/mp3splt-gtk.xml301(para)
+#: C/mp3splt-gtk.xml328(para)
 msgid "mp3splt-gtk knows how to remote-control SnackAmp and Audacious to automatically switch to the file that is about to be split."
 msgstr ""
 
-#: C/mp3splt-gtk.xml307(title)
+#: C/mp3splt-gtk.xml334(title)
 msgid "Splitting doesn't work"
 msgstr ""
 
-#: C/mp3splt-gtk.xml308(para)
+#: C/mp3splt-gtk.xml335(para)
 msgid "Try to make sure that the version of libmp3splt is installed correspondends to the version of mp3splt-gtk. Even if (for newer versions of the program) the configure script makes sure that both versions match it might still be possible to have the wrong combination of these elements installed on the same system."
 msgstr ""
 
-#: C/mp3splt-gtk.xml316(para)
+#: C/mp3splt-gtk.xml343(para)
 msgid "If that is the case make sure that in the <guilabel>File mode</guilabel> tab of the <guilabel>Type of split</guilabel> tab <guilabel>Single file</guilabel> mode is selected."
 msgstr ""
 
-#: C/mp3splt-gtk.xml323(title)
+#: C/mp3splt-gtk.xml350(title)
 msgid "Splitting a certain Ogg file doesn't work"
 msgstr ""
 
-#: C/mp3splt-gtk.xml324(para)
+#: C/mp3splt-gtk.xml351(para)
 msgid "Next to the lossy ogg vorbis format that gives good compression while keeping file sizes extremely low there are other file formats that can be kept inside an ogg container as well, notably ogg flac."
 msgstr ""
 
-#: C/mp3splt-gtk.xml330(para)
+#: C/mp3splt-gtk.xml357(para)
 msgid "Flac is a completely lossless codec which means that the output files are sonewhat larger than Ogg vorbis ones but these files can be cut on any information without loosing any quality."
 msgstr ""
 
-#: C/mp3splt-gtk.xml336(para)
+#: C/mp3splt-gtk.xml363(para)
 msgid "Since there is no direct need mp3splt-gtk still does not support cutting flac files."
 msgstr ""
 
-#: C/mp3splt-gtk.xml342(title)
+#: C/mp3splt-gtk.xml369(title)
 msgid "Adding a file to the files view doesn't work"
 msgstr ""
 
-#: C/mp3splt-gtk.xml343(para)
+#: C/mp3splt-gtk.xml370(para)
 msgid "Make sure that in the <guilabel>File mode</guilabel> tab of the <guilabel>Type of split</guilabel> tab <guilabel>Batch processing</guilabel> mode is selected."
 msgstr ""
 
