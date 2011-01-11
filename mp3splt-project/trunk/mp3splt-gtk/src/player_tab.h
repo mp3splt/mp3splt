@@ -205,6 +205,7 @@ void show_connect_button();
 void hide_disconnect_button();
 void show_disconnect_button();
 
-void inputfilename_set(gchar *filename);
+void inputfilename_set(const gchar *filename);
 gchar *inputfilename_get();
 #endif
+

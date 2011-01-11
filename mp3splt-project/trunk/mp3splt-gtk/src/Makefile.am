@@ -1,5 +1,12 @@
+
+if NO_IMAGES_DIR
+appicondir =
+imagedir   =
+else
 appicondir = $(datadir)/pixmaps
 imagedir   = $(datadir)/mp3splt-gtk
+endif
+
 image_DATA = backward.svg backward_inactive.svg  
 image_DATA+= forward.svg  forward_inactive.svg
 image_DATA+= play.svg     play_inactive.svg
@@ -41,11 +48,15 @@ INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 
 mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm
 
+# Define a C macro LOCALEDIR indicating where catalogs will be installed.
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
 if GNOME
 mp3splt_gtk_LDADD += @GNOMEUI_LIBS@
 INCLUDES += $(GNOMEUI_CFLAGS)
 else
-INCLUDES += -DNO_GNOME
+DEFS += -DNO_GNOME
 endif
 
 if WIN32
@@ -53,26 +64,20 @@ INCLUDES += -mms-bitfields -enable-stdcall-fixup
 mp3splt_gtk_LDFLAGS = -mwindows
 mp3splt_gtk_LDADD += -lwsock32 -lshlwapi
 else
-INCLUDES += -DPIXMAP_PATH=\""$(datadir)/pixmaps/"\"
+DEFS += -DPIXMAP_PATH=\"$(appicondir)\" -DIMAGEDIR=\"$(imagedir)\"
 endif
 
 if AUDACIOUS
 mp3splt_gtk_LDADD += @AUDACIOUS_LIBS@
 INCLUDES += @AUDACIOUS_CFLAGS@ -I/usr/include/dbus-1.0 -I/usr/include/dbus-1.0/include
 else
-INCLUDES += -DNO_AUDACIOUS
+DEFS += -DNO_AUDACIOUS
 endif
 
 if GSTREAMER
 mp3splt_gtk_LDADD += @GST_LIBS@
 INCLUDES += @GST_CFLAGS@
 else
-INCLUDES += -DNO_GSTREAMER
+DEFS += -DNO_GSTREAMER
 endif
 
-# Define a C macro LOCALEDIR indicating where catalogs will be installed.
-localedir = $(datadir)/locale
-DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
-
-# Where to find the new svg images
-AM_CFLAGS = -DIMAGEDIR=\"$(imagedir)\"

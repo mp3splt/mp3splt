@@ -183,7 +183,11 @@ extern gint we_are_splitting;
 extern GtkWidget *window;
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
+
+extern GtkWidget *names_from_filename;
 //@}
+
+void copy_filename_to_current_description(const gchar *fname);
 
 /*! updates add button
 
@@ -529,30 +533,34 @@ splitpoint's name. do be unique.
 void update_current_description(gchar *descr, gint number)
 {
   gint ll = 0;
-  
+
   g_snprintf(current_description,255,"%s",descr);
-  
+
   while (ll < splitnumber)
+  {
+    //if we already have the description
+    if(!check_if_description_exists(current_description, number))
     {
-      //if we already have the description
-      if(!check_if_description_exists(current_description,
-                                      number))
-        {
-          //we cut the part _* from the string and put
-          //it back
-          gchar *tmp;
-          tmp = strchr(current_description,'_');
-          if (tmp != NULL)
-            {
-              *tmp = '\0';
-            }
-          gchar *temp = g_strdup(current_description);
-          g_snprintf(current_description,255, "%s_%d_",temp,ll);
-          //freeing memory
-          g_free(temp);
-        }
-      ll++;
+      //we cut the part _* from the string and put
+      //it back
+      gchar *tmp = NULL;
+      gchar *t = current_description;
+      while ((t = strstr(t, "_part")) != NULL)
+      {
+        tmp = t++;
+      }
+
+      if (tmp != NULL)
+      {
+        *tmp = '\0';
+      }
+
+      gchar *temp = g_strdup(current_description);
+      g_snprintf(current_description, 255, "%s_part%d", temp, ll + 2);
+      g_free(temp);
     }
+    ll++;
+  }
 }
 
 /*!returns secs, mins, hundr of secs from a time
@@ -767,8 +775,16 @@ void cell_edited_event (GtkCellRendererText *cell,
                           &iter,
                           col, current_description,
                           -1);
-      
-      g_snprintf(current_description, 255, "%s", _("description here"));      
+     
+      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)))
+      {
+        const gchar *fname = inputfilename_get();
+        copy_filename_to_current_description(fname);
+      }
+      else
+      {
+        g_snprintf(current_description, 255, "%s", _("description here"));
+      }
       break;
       //seconds column
     case COL_SECONDS:
@@ -842,6 +858,37 @@ void add_splitpoint_from_player(GtkWidget *widget,
       my_split_point.checked = TRUE;
       add_splitpoint(my_split_point,-1);
     }
+}
+
+void clear_current_description(void)
+{
+  update_current_description(_("description here"), -1);
+}
+
+void copy_filename_to_current_description(const gchar *fname)
+{
+  if (strcmp(fname, "") == 0)
+  {
+    clear_current_description();
+  }
+
+  gchar *tmp;
+  gchar *basename = g_path_get_basename(fname);
+
+  // create copy of this string
+  gchar *temp = g_strdup(basename);
+
+  // last occurence of '.' distinguishes the extensions
+  tmp = strrchr(temp,'.');
+  if (tmp != NULL)
+  {
+    // there is a dot, kill the rest of the word (which is
+    // extension)
+    *tmp = '\0';
+  }
+
+  g_snprintf(current_description, 255, "%s", temp);
+  g_free(temp);
 }
 
 /*! adds a splitpoint
@@ -1062,7 +1109,15 @@ void add_splitpoint(Split_point my_split_point,
       put_status_message(_(" error: you already have the splitpoint in table"));
     }
   
-  g_snprintf(current_description, 255, "%s", _("description here"));
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)))
+  {
+    const gchar *fname = inputfilename_get();
+    copy_filename_to_current_description(fname);
+  }
+  else
+  {
+    g_snprintf(current_description, 255, "%s", _("description here"));
+  }
   
   //
   update_add_button();

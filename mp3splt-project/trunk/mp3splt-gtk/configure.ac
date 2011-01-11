@@ -238,6 +238,17 @@ if test x$HAVE_DOT = "xfalse"; then
 fi
 
 #################################################
+# 
+#################################################
+
+AM_CONDITIONAL(NO_IMAGES_DIR, false)
+AC_ARG_WITH([no_images_dir],
+    [AS_HELP_STRING([--with-no_images_dir],
+      [take images from the directory where the application is run])],
+    [AM_CONDITIONAL(NO_IMAGES_DIR, true)],
+    [])
+
+#################################################
 # Generate Makefiles
 #################################################
 

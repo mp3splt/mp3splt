@@ -258,7 +258,7 @@ int mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
  */
 char *mp3splt_get_filename_to_split(splt_state *state)
 {
-  splt_t_get_filename_to_split(state); 
+  return splt_t_get_filename_to_split(state); 
 }
 
 /*! \brief Sets the name of the file that is about to be split

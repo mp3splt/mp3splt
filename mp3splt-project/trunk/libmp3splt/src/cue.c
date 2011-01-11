@@ -57,7 +57,8 @@ static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_
   cu->title = SPLT_FALSE;
   cu->time_for_track = SPLT_FALSE;
   cu->tracks++;
-  cu->current_track_type=SPLT_SPLITPOINT;
+  cu->current_track_type = SPLT_SPLITPOINT;
+  cu->file_has_been_created_by_us = SPLT_FALSE;
 
   splt_tu_new_tags_if_necessary(state, cu->tracks - 1);
 }
