@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#this scripts generates the "control" and "docs" files
+#this scripts generates "docs" files
 
 #we move in the current script directory
 script_dir=$(readlink -f $0) || exit 1
