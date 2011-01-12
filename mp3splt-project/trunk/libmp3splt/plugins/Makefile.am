@@ -1,7 +1,6 @@
 plugindir=$(libdir)/libmp3splt
 
 plugin_LTLIBRARIES = 
-INCLUDES =
 
 #ccommon_LDFLAGS = -module -export-dynamic -avoid-version
 common_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt -I$(top_srcdir)/src
@@ -15,17 +14,17 @@ endif
 #mp3 plugin
 if MP3_PLUGIN
 
-INCLUDES += @MAD_CFLAGS@
 plugin_LTLIBRARIES += libsplt_mp3.la
 libsplt_mp3_la_SOURCES = mp3.c mp3.h
-libsplt_mp3_la_CPPFLAGS = $(common_CPPFLAGS)
+
+libsplt_mp3_la_CPPFLAGS = $(common_CPPFLAGS) @MAD_CFLAGS@
 libsplt_mp3_la_LDFLAGS = $(common_LDFLAGS) @MAD_LIBS@
 
 if ID3TAG
-INCLUDES += @ID3_CFLAGS@
+libsplt_mp3_la_CPPFLAGS += @ID3_CFLAGS@
 libsplt_mp3_la_LIBADD = @ID3_LIBS@
 else
-INCLUDES += -DNO_ID3TAG
+libsplt_mp3_la_CPPFLAGS += -DNO_ID3TAG
 endif
 
 endif
@@ -33,10 +32,10 @@ endif
 #OGG plugin
 if OGG_PLUGIN
 
-INCLUDES += @OGG_CFLAGS@ @VORBIS_CFLAGS@
 plugin_LTLIBRARIES += libsplt_ogg.la
 libsplt_ogg_la_SOURCES = ogg.c ogg.h
-libsplt_ogg_la_CPPFLAGS = $(common_CPPFLAGS)
+
+libsplt_ogg_la_CPPFLAGS = $(common_CPPFLAGS) @OGG_CFLAGS@ @VORBIS_CFLAGS@
 libsplt_ogg_la_LDFLAGS = $(common_LDFLAGS) @VORBISFILE_LIBS@ @VORBIS_LIBS@ @OGG_LIBS@ 
 
 endif

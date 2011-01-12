@@ -31,7 +31,7 @@ Description: development files for libmp3splt0
 
 Package: libmp3splt0-ogg
 Architecture: any
-Depends: libmp3splt0 (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}, libmp3splt0 (= ${binary:Version})
 Conflicts: libmp3splt
 Replaces: libmp3splt
 Provides: libmp3splt-plugin, libmp3splt-plugin-ogg
@@ -52,7 +52,7 @@ Description: Ogg Vorbis plugin for mp3splt
 
 Package: libmp3splt0-mp3
 Architecture: any
-Depends: libmp3splt0 (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}, libmp3splt0 (= ${binary:Version}), 
 Conflicts: libmp3splt
 Replaces: libmp3splt
 Provides: libmp3splt-plugin, libmp3splt-plugin-mp3

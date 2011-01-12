@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-01-11 07:06+0100\n"
+"POT-Creation-Date: 2011-01-12 22:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:123 src/cue.c:536
+#: src/cddb.c:123 src/cue.c:545
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -145,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:436
+#: src/cue.c:441
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:484
+#: src/cue.c:493
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:692
+#: src/cue.c:701
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
