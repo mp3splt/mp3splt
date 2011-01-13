@@ -12,8 +12,8 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libmp3splt0 (>= 0.6.1), libmp3splt0-mp3 | libmp3splt-plugin
 Recommends: gstreamer0.10-plugins-good, libmp3splt0-ogg
 Suggests: audacious
-Description: GTK2 gui that uses libmp3splt for lossless linear editing
- of audio files (cut an audio file into several tracks.)
+Description: Gnome application for lossless linear editing of audio files
+ This application allows to cut an audio file into several tracks.
  Since there is no decoding step involved this means that MP3 (including
  VBR) and Ogg Vorbis can be split into smaller files without
  loosing any quality. Useful for splitting albums into tracks which

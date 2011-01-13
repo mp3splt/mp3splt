@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-10 21:51+0100\n"
+"POT-Creation-Date: 2011-01-11 07:06+0100\n"
 "PO-Revision-Date: 2011-01-03 19:55+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,7 +82,7 @@ msgstr "Secondes :"
 msgid "Hundredths:"
 msgstr "Centièmes :"
 
-#: src/tree_tab.c:1490 src/player_tab.c:922
+#: src/tree_tab.c:1490 src/player_tab.c:984
 msgid "_Add"
 msgstr "Aj_outer"
 
@@ -423,11 +423,11 @@ msgstr "Lecteur"
 msgid "Language"
 msgstr "Langue"
 
-#: src/player_tab.c:626 src/player_tab.c:660
+#: src/player_tab.c:654 src/player_tab.c:688
 msgid "Cannot connect to player"
 msgstr "Impossible de se connecter au lecteur"
 
-#: src/player_tab.c:637
+#: src/player_tab.c:665
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -461,7 +461,7 @@ msgstr ""
 " Seulement le port par défaut fonctionne (8775)\n"
 " Après, redémarrer snackamp et réessayer.\n"
 
-#: src/player_tab.c:652
+#: src/player_tab.c:680
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -475,126 +475,126 @@ msgstr ""
 " Impossible de se connecter au lecteur Audacious.\n"
 " Vérifiez l'installation d'audacious.\n"
 
-#: src/player_tab.c:872
+#: src/player_tab.c:908
 msgid "Previous"
 msgstr "Précédent"
 
-#: src/player_tab.c:884
+#: src/player_tab.c:927
 msgid "Play"
 msgstr "Lire"
 
-#: src/player_tab.c:895
+#: src/player_tab.c:944
 msgid "Pause"
 msgstr "Pause"
 
-#: src/player_tab.c:907
+#: src/player_tab.c:962
 msgid "Stop"
 msgstr "Stop"
 
-#: src/player_tab.c:919
+#: src/player_tab.c:980
 msgid "Next"
 msgstr "Suivant"
 
-#: src/player_tab.c:930
+#: src/player_tab.c:992
 msgid "Add splitpoint from player"
 msgstr "Ajouter point de coupure du lecteur"
 
-#: src/player_tab.c:934
+#: src/player_tab.c:996
 msgid "_Show amplitude wave"
 msgstr "Montrer l'amplitude du _signal"
 
-#: src/player_tab.c:942
+#: src/player_tab.c:1004
 msgid "Shows the amplitude level wave"
 msgstr "Montre le niveau du signal audio"
 
-#: src/player_tab.c:946
+#: src/player_tab.c:1008
 msgid "_Connect"
 msgstr "_Connecter"
 
-#: src/player_tab.c:949
+#: src/player_tab.c:1011
 msgid "Connect to player"
 msgstr "Se connecter au lecteur"
 
-#: src/player_tab.c:953
+#: src/player_tab.c:1015
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:956
+#: src/player_tab.c:1018
 msgid "Disconnect from player"
 msgstr "Se déconnecter du lecteur"
 
-#: src/player_tab.c:1120
+#: src/player_tab.c:1182
 #, c-format
 msgid "before %s"
 msgstr "avant %s"
 
-#: src/player_tab.c:2650
+#: src/player_tab.c:2712
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr " click gauche sur le point le sélectionne, click droit l'efface"
 
-#: src/player_tab.c:2660
+#: src/player_tab.c:2722
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " click gauche + déplacement change la position, click droit + déplacement "
 "change le zoom"
 
-#: src/player_tab.c:2671
+#: src/player_tab.c:2733
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " click gauche sur le point + déplacement change la position du point, click "
 "droit aperçu"
 
-#: src/player_tab.c:2683
+#: src/player_tab.c:2745
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr " click gauche sur rectangle coche/décoche 'garder le point'"
 
-#: src/player_tab.c:2874
+#: src/player_tab.c:2936
 msgid " quick preview..."
 msgstr " aperçu rapide..."
 
-#: src/player_tab.c:3405
+#: src/player_tab.c:3467
 msgid "History"
 msgstr "Historique"
 
-#: src/player_tab.c:3544
+#: src/player_tab.c:3606
 msgid "_Erase selected entries"
 msgstr "_Effacer les éléments sélectionnées"
 
-#: src/player_tab.c:3553
+#: src/player_tab.c:3615
 msgid "E_rase all history"
 msgstr "Effa_cer tout l'historique"
 
-#: src/player_tab.c:3676
+#: src/player_tab.c:3738
 msgid " quick preview finished, song paused"
 msgstr " aperçu rapide fini, lecteur sur pause"
 
-#: src/player_tab.c:3802
+#: src/player_tab.c:3865
 msgid "Choose File"
 msgstr "Choisir fichier"
 
-#: src/player_tab.c:3807 src/multiple_files.c:125
+#: src/player_tab.c:3870 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr ""
 
-#: src/player_tab.c:3815 src/multiple_files.c:133
+#: src/player_tab.c:3878 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
 msgstr ""
 
-#: src/player_tab.c:3821 src/multiple_files.c:139
+#: src/player_tab.c:3884 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
 msgstr ""
 
-#: src/player_tab.c:3962
+#: src/player_tab.c:4025
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:3966
+#: src/player_tab.c:4029
 msgid "Select file"
 msgstr "Sélection fichier"
 
-#: src/player_tab.c:3973
+#: src/player_tab.c:4036
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
