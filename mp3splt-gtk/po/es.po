@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-10 21:51+0100\n"
+"POT-Creation-Date: 2011-01-11 07:06+0100\n"
 "PO-Revision-Date: 2011-01-03 19:55+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -83,7 +83,7 @@ msgstr "Segundos:"
 msgid "Hundredths:"
 msgstr "Centésimas:"
 
-#: src/tree_tab.c:1490 src/player_tab.c:922
+#: src/tree_tab.c:1490 src/player_tab.c:984
 msgid "_Add"
 msgstr "_añada"
 
@@ -422,11 +422,11 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: src/player_tab.c:626 src/player_tab.c:660
+#: src/player_tab.c:654 src/player_tab.c:688
 msgid "Cannot connect to player"
 msgstr ""
 
-#: src/player_tab.c:637
+#: src/player_tab.c:665
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -445,7 +445,7 @@ msgid ""
 " After that, restart snackamp and mp3splt-gtk should work.\n"
 msgstr ""
 
-#: src/player_tab.c:652
+#: src/player_tab.c:680
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -456,129 +456,129 @@ msgid ""
 "connect.\n"
 msgstr ""
 
-#: src/player_tab.c:872
+#: src/player_tab.c:908
 msgid "Previous"
 msgstr "Anterior"
 
-#: src/player_tab.c:884
+#: src/player_tab.c:927
 msgid "Play"
 msgstr "Escuchar"
 
-#: src/player_tab.c:895
+#: src/player_tab.c:944
 msgid "Pause"
 msgstr "Pausa"
 
-#: src/player_tab.c:907
+#: src/player_tab.c:962
 msgid "Stop"
 msgstr "Detener"
 
-#: src/player_tab.c:919
+#: src/player_tab.c:980
 msgid "Next"
 msgstr "Siguiente"
 
-#: src/player_tab.c:930
+#: src/player_tab.c:992
 msgid "Add splitpoint from player"
 msgstr "Añadir splitpoint del jugador"
 
-#: src/player_tab.c:934
+#: src/player_tab.c:996
 msgid "_Show amplitude wave"
 msgstr "_Mostrar Amplitud de la onda"
 
-#: src/player_tab.c:942
+#: src/player_tab.c:1004
 msgid "Shows the amplitude level wave"
 msgstr "Muestra el nivel de amplitud de onda"
 
-#: src/player_tab.c:946
+#: src/player_tab.c:1008
 msgid "_Connect"
 msgstr "_connect"
 
-#: src/player_tab.c:949
+#: src/player_tab.c:1011
 msgid "Connect to player"
 msgstr "Conecte al jugador"
 
-#: src/player_tab.c:953
+#: src/player_tab.c:1015
 msgid "_Disconnect"
 msgstr "_ Desconecte"
 
-#: src/player_tab.c:956
+#: src/player_tab.c:1018
 msgid "Disconnect from player"
 msgstr "Desconecte del jugador"
 
-#: src/player_tab.c:1120
+#: src/player_tab.c:1182
 #, c-format
 msgid "before %s"
 msgstr ""
 
-#: src/player_tab.c:2650
+#: src/player_tab.c:2712
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 "haga clic en la izquierda en splitpoint se selecciona, haga clic en él borra"
 
-#: src/player_tab.c:2660
+#: src/player_tab.c:2722
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 "botón izquierdo del ratón + movimiento posición de la canción, los cambios "
 "haga clic derecho + movimiento de zoom"
 
-#: src/player_tab.c:2671
+#: src/player_tab.c:2733
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 "haga clic en la izquierda en la posición del punto + mover el punto de los "
 "cambios, haga clic en vista previa jugar"
 
-#: src/player_tab.c:2683
+#: src/player_tab.c:2745
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 "botón izquierdo del ratón sobre los controles rectángulo / 'splitpoint "
 "mantener' desactiva"
 
-#: src/player_tab.c:2874
+#: src/player_tab.c:2936
 msgid " quick preview..."
 msgstr "vista previa rápida ..."
 
-#: src/player_tab.c:3405
+#: src/player_tab.c:3467
 msgid "History"
 msgstr "Historia"
 
-#: src/player_tab.c:3544
+#: src/player_tab.c:3606
 msgid "_Erase selected entries"
 msgstr "_Erase Seleccionados de las entradas"
 
-#: src/player_tab.c:3553
+#: src/player_tab.c:3615
 msgid "E_rase all history"
 msgstr "E_rase toda la historia"
 
-#: src/player_tab.c:3676
+#: src/player_tab.c:3738
 msgid " quick preview finished, song paused"
 msgstr "vista previa rápida de terminar, una canción en pausa"
 
-#: src/player_tab.c:3802
+#: src/player_tab.c:3865
 msgid "Choose File"
 msgstr "Elija Archivo"
 
-#: src/player_tab.c:3807 src/multiple_files.c:125
+#: src/player_tab.c:3870 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "archivos mp3 y ogg (*. mp3 *. ogg)"
 
-#: src/player_tab.c:3815 src/multiple_files.c:133
+#: src/player_tab.c:3878 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
 msgstr "archivos MP3 (*. mp3)"
 
-#: src/player_tab.c:3821 src/multiple_files.c:139
+#: src/player_tab.c:3884 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
 msgstr "ogg archivo(*. ogg)"
 
-#: src/player_tab.c:3962
+#: src/player_tab.c:4025
 msgid "_Browse"
 msgstr "_Browse"
 
-#: src/player_tab.c:3966
+#: src/player_tab.c:4029
 msgid "Select file"
 msgstr "Seleccione el archivo"
 
-#: src/player_tab.c:3973
+#: src/player_tab.c:4036
 msgid "_Fix ogg stream"
 msgstr "_Fix Flujo ogg"
 
