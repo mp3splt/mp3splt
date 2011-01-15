@@ -67,6 +67,8 @@ Documentation can be found at several points:
 #include <sys/stat.h>
 #include <string.h>
 
+#include <ltdl.h>
+
 #include "splt.h"
 
 int global_debug = SPLT_FALSE;

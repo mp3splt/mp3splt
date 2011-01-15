@@ -37,7 +37,6 @@
 #ifdef __WIN32__
 
 #include "splt.h"
-#include "win32.h"
 
 int scandir(const char *dir, struct dirent ***namelist,
 		int(*filter)(const struct dirent *),

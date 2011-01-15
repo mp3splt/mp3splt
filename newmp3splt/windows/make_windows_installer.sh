@@ -311,6 +311,7 @@ SetCompressor /SOLID "lzma"
 #main section
 MAIN_SECTION_FILES="
 newmp3splt\src\mp3splt.exe
+newmp3splt\windows\mp3splt.ico
 libmp3splt\src\.libs\libmp3splt${DLL_SUFFIX}.dll
 libintl-8.dll
 iconv.dll

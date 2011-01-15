@@ -40,7 +40,6 @@ This file contains all I/O functions this library uses.
 #endif
 
 #include "splt.h"
-#include "win32.h"
 
 static int splt_u_fname_is_directory_parent(char *fname, int fname_size);
 
