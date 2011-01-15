@@ -37,6 +37,8 @@
  * cddb, cue or similar files.
  *********************************************************/
 
+#include <string.h>
+
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 

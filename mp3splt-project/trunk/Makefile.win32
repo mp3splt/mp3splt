@@ -1,9 +1,10 @@
 all:
+	export CFLAGS=-I/usr/include && export LDFLAGS=-L/usr/lib && \
 	cd libmp3splt && ./autogen.sh win && ./configure --prefix=/usr --disable-cutter --enable-win && make clean && make && \
 	cp src/.libs/libmp3splt* /lib && rm -rf /include/libmp3splt && cp -a include/libmp3splt /include && \
 	\
 	cd ../newmp3splt && ./autogen.sh && \
-	cp /lib/libmp3splt* . && \
+	cp -r /lib/libmp3splt* . && \
 	./configure --host=mingw32 && make clean && make && make install && \
 	\
 	cd ../mp3splt-gtk && ./autogen.sh win && \

@@ -61,6 +61,7 @@
 #include "oformat_parser.h"
 #include "debug.h"
 #include "filename_regex.h"
+#include "win32.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

@@ -38,13 +38,14 @@ Loading and unloading of plug-ins
 #include <dirent.h>
 #include <errno.h>
 
-#include "splt.h"
-#include "plugins.h"
+#include <ltdl.h>
 
 #ifdef __WIN32__
 #include <direct.h>
-#include "win32.h"
 #endif
+
+#include "splt.h"
+#include "plugins.h"
 
 int splt_p_append_plugin_scan_dir(splt_state *state, const char *dir)
 {

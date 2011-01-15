@@ -625,7 +625,6 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   // Now let's see if we found a filename at the command line.
   if (optind != argc) 
     {
-      char *inputfilename;
       if(!check_if_file((guchar *)argv[optind]))
 	{
 	  fprintf (stderr,
@@ -638,7 +637,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
       // If we start the player it will find a file with a relative
       // pathname. But if the player is already running it might
       // need an absolute path.
-      inputfilename=realpath(argv[optind],NULL);
+      char *inputfilename=realpath(argv[optind],NULL);
       handle_import(inputfilename);
       free(inputfilename);
 #else

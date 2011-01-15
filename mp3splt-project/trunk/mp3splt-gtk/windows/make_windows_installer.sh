@@ -319,6 +319,17 @@ libltdl-7.dll
 pcre3.dll
 mp3splt-gtk\src\mp3splt-gtk.png
 mp3splt-gtk\src\mp3splt-gtk_ico.png
+mp3splt-gtk\src\mp3splt-gtk_ico.svg
+mp3splt-gtk\src\backward.svg
+mp3splt-gtk\src\backward_inactive.svg
+mp3splt-gtk\src\forward.svg
+mp3splt-gtk\src\forward_inactive.svg
+mp3splt-gtk\src\pause.svg
+mp3splt-gtk\src\pause_inactive.svg
+mp3splt-gtk\src\play.svg
+mp3splt-gtk\src\play_inactive.svg
+mp3splt-gtk\src\stop.svg
+mp3splt-gtk\src\stop_inactive.svg
 mp3splt-gtk\windows\mp3splt-gtk.ico
 "
 
