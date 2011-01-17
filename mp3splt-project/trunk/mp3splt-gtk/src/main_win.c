@@ -241,10 +241,15 @@ void initialize_window()
  
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
  
+
+  GString *Imagefile = g_string_new(PIXMAP_PATH);
+  build_svg_path(Imagefile, "mp3splt-gtk_ico"ICON_EXT);
+
   //for the bitmap
-  GdkPixbuf *pixbuf =
-    gdk_pixbuf_new_from_file(PIXMAP_PATH"/mp3splt-gtk_ico"ICON_EXT, NULL);
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(Imagefile->str, NULL);
   gtk_window_set_default_icon(pixbuf);
+
+  g_string_free(Imagefile,TRUE);
 }
 
 void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
