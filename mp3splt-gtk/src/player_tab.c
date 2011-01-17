@@ -104,6 +104,8 @@ extern guchar *get_real_name_from_filename(guchar *filename);
 extern GtkWidget *cancel_button;
 extern gint debug_is_active;
 
+extern gchar *executable_dir;
+
 //our progress bar
 GtkWidget *progress_bar;
 //our progress bar adjustment
@@ -871,6 +873,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     show_silence_wave = TRUE;
     if (number_of_silence_points == 0)
     {
+
       scan_for_silence_wave();
     }
   }
@@ -889,20 +892,21 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     }
     number_of_silence_points = 0;
   }
+
   da_expose_event(da, NULL, NULL);
 }
 
-static void build_svg_path(GString *imagefile, gchar *svg_filename)
+void build_svg_path(GString *imagefile, gchar *svg_filename)
 {
-  if (strcmp(IMAGEDIR, "") == 0)
-  {
-    g_string_assign(imagefile, svg_filename);
-    return;
-  }
-
+#ifdef __WIN32__
+  g_string_assign(imagefile, executable_dir);
+  g_string_append(imagefile, G_DIR_SEPARATOR_S);
+  g_string_append(imagefile, svg_filename);
+#else
   g_string_assign(imagefile, IMAGEDIR);
   g_string_append(imagefile, G_DIR_SEPARATOR_S);
   g_string_append(imagefile, svg_filename);
+#endif
 }
 
 //!creates the player buttons hbox

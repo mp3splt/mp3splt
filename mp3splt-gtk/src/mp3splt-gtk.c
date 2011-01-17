@@ -77,6 +77,8 @@ splt_state *the_state = NULL;
 //the progress bar
 GtkWidget *progress_bar;
 
+gchar *executable_dir = NULL;
+
 extern GArray *splitpoints;
 extern gint splitnumber;
 extern GtkWidget *queue_files_button;
@@ -494,7 +496,6 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   if (end) { *end = '\0'; }
 
   gchar *executable = strdup(argv[0]);
-  gchar *executable_dir = NULL;
 
   end = strrchr(executable, SPLT_DIRCHAR);
   if (end)
@@ -604,8 +605,6 @@ gint main(gint argc, gchar *argv[], gchar **envp)
       g_setenv("GST_PLUGIN_PATH",executable,TRUE);
       mp3splt_append_plugins_scan_dir(the_state, executable);
     }
-    free(executable);
-    executable = NULL;
   }
 
   if (mp3splt_uninstall_file[0] != '\0')
