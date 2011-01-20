@@ -2,21 +2,20 @@
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-01-11 07:06+0100\n"
-"PO-Revision-Date: 2011-01-03 19:55+0000\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
+"POT-Creation-Date: 2011-01-12 22:30+0100\n"
+"PO-Revision-Date: 2011-01-20 19:56+0000\n"
 "Last-Translator: marselles <marselles@mail.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:253
 #: src/snackamp_control.c:328
@@ -38,120 +37,120 @@ msgstr "Кбит/с"
 msgid "Khz"
 msgstr "КГц"
 
-#: src/tree_tab.c:695 src/tree_tab.c:1062
+#: src/tree_tab.c:703 src/tree_tab.c:1109
 msgid " error: you already have the splitpoint in table"
 msgstr ""
 
-#: src/tree_tab.c:771 src/tree_tab.c:1065 src/freedb_tab.c:515
-#: src/freedb_tab.c:537
+#: src/tree_tab.c:786 src/tree_tab.c:865 src/tree_tab.c:1119
+#: src/freedb_tab.c:515 src/freedb_tab.c:537
 msgid "description here"
 msgstr "описание здесь"
 
-#: src/tree_tab.c:1183 src/tree_tab.c:1537
+#: src/tree_tab.c:1238 src/tree_tab.c:1592
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1210 src/preferences_tab.c:646
+#: src/tree_tab.c:1265 src/preferences_tab.c:688
 msgid "Threshold level (dB):"
 msgstr "Пороговый уровень (дБ):"
 
-#: src/tree_tab.c:1227
+#: src/tree_tab.c:1282
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 
-#: src/tree_tab.c:1244
+#: src/tree_tab.c:1299
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Количество композиций (0 означает, что все треки):"
 
-#: src/tree_tab.c:1259
+#: src/tree_tab.c:1314
 msgid "Minimum silence length (seconds):"
 msgstr "Минимальная длина задержки (секунды): "
 
-#: src/tree_tab.c:1272
+#: src/tree_tab.c:1327
 msgid "_Remove silence between tracks"
 msgstr "Убрать задержку между треками"
 
-#: src/tree_tab.c:1473
+#: src/tree_tab.c:1528
 msgid "Minutes:"
 msgstr "Минуты:"
 
-#: src/tree_tab.c:1478
+#: src/tree_tab.c:1533
 msgid "Seconds:"
 msgstr "Секунды:"
 
-#: src/tree_tab.c:1484
+#: src/tree_tab.c:1539
 msgid "Hundredths:"
 msgstr "Милисекунды:"
 
-#: src/tree_tab.c:1490 src/player_tab.c:984
+#: src/tree_tab.c:1545 src/player_tab.c:1003
 msgid "_Add"
 msgstr "Добавить"
 
-#: src/tree_tab.c:1496
+#: src/tree_tab.c:1551
 msgid "Add splitpoint"
 msgstr ""
 
-#: src/tree_tab.c:1500
+#: src/tree_tab.c:1555
 msgid "_Remove"
 msgstr "Удалить"
 
-#: src/tree_tab.c:1506
+#: src/tree_tab.c:1561
 msgid "Remove rows"
 msgstr "Удалить строки"
 
-#: src/tree_tab.c:1510
+#: src/tree_tab.c:1565
 msgid "R_emove all"
 msgstr "Удалить все"
 
-#: src/tree_tab.c:1516
+#: src/tree_tab.c:1571
 msgid "Remove all rows"
 msgstr "Удалить все строки"
 
-#: src/tree_tab.c:1531
+#: src/tree_tab.c:1586
 msgid "_Silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1661 src/mp3splt-gtk.c:379
+#: src/tree_tab.c:1716 src/mp3splt-gtk.c:379
 msgid " finished"
 msgstr "завершенный"
 
-#: src/tree_tab.c:1676
+#: src/tree_tab.c:1731
 msgid " cannot split preview last splitpoint"
 msgstr ""
 
-#: src/tree_tab.c:1720
+#: src/tree_tab.c:1775
 msgid " cannot preview, not connected to player"
 msgstr ""
 
-#: src/tree_tab.c:1785
+#: src/tree_tab.c:1840
 msgid "Keep"
 msgstr ""
 
-#: src/tree_tab.c:1799 src/split_files.c:111
+#: src/tree_tab.c:1854 src/split_files.c:111
 msgid "Filename"
 msgstr "Имя файла"
 
-#: src/tree_tab.c:1813
+#: src/tree_tab.c:1868
 msgid "Secs"
 msgstr "Сек."
 
-#: src/tree_tab.c:1827
+#: src/tree_tab.c:1882
 msgid "Mins"
 msgstr "Мин."
 
-#: src/tree_tab.c:1841
+#: src/tree_tab.c:1896
 msgid "Hundr"
 msgstr "мсек."
 
-#: src/tree_tab.c:1851
+#: src/tree_tab.c:1906
 msgid "Length"
 msgstr "Длина"
 
-#: src/tree_tab.c:1862
+#: src/tree_tab.c:1917
 msgid "LiveP"
 msgstr ""
 
-#: src/tree_tab.c:1873
+#: src/tree_tab.c:1928
 msgid "SplitP"
 msgstr ""
 
@@ -167,72 +166,75 @@ msgstr "Удалить выделенные файлы"
 msgid "D_elete all files"
 msgstr "Удалить все файлы"
 
-#: src/preferences_tab.c:435
+#: src/preferences_tab.c:445
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Выбрать язык (необходима перезагрузка)</b>"
 
-#: src/preferences_tab.c:470
+#: src/preferences_tab.c:480
 msgid "Choose split directory"
 msgstr ""
 
-#: src/preferences_tab.c:594
+#: src/preferences_tab.c:630
 msgid "Br_owse dir"
 msgstr "Обзор каталога"
 
-#: src/preferences_tab.c:602
+#: src/preferences_tab.c:638
 msgid "_Song dir"
 msgstr "Каталог композиции"
 
-#: src/preferences_tab.c:607
+#: src/preferences_tab.c:643
 msgid "<b>Directory for split files</b>"
 msgstr ""
 
-#: src/preferences_tab.c:616
+#: src/preferences_tab.c:652
+msgid "_Splitpoint name from filename (testing)"
+msgstr ""
+
+#: src/preferences_tab.c:658
 msgid "_Create directories from filenames "
 msgstr ""
 
-#: src/preferences_tab.c:622
+#: src/preferences_tab.c:664
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Кадровый режим (использовать для MP3 VBR) (только MP3)"
 
-#: src/preferences_tab.c:629
+#: src/preferences_tab.c:671
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 
-#: src/preferences_tab.c:661
+#: src/preferences_tab.c:703
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr ""
 
-#: src/preferences_tab.c:678
+#: src/preferences_tab.c:720
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr ""
 
-#: src/preferences_tab.c:697
+#: src/preferences_tab.c:739
 msgid "Set _default split options"
 msgstr ""
 
-#: src/preferences_tab.c:703
+#: src/preferences_tab.c:745
 msgid "<b>Split options</b>"
 msgstr ""
 
-#: src/preferences_tab.c:782
+#: src/preferences_tab.c:824
 msgid "Choose a player:"
 msgstr "Выберите плеер:"
 
-#: src/preferences_tab.c:806
+#: src/preferences_tab.c:848
 msgid "<b>Player options</b>"
 msgstr "<b>Настройки плеера</b>"
 
-#: src/preferences_tab.c:854
+#: src/preferences_tab.c:896
 msgid "Default format"
 msgstr "Формат по умолчанию "
 
-#: src/preferences_tab.c:858
+#: src/preferences_tab.c:900
 msgid "Custom format"
 msgstr "Пользоватеьский формат"
 
-#: src/preferences_tab.c:875
-#, fuzzy
+#: src/preferences_tab.c:917
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -242,87 +244,84 @@ msgid ""
 "    @g - genre\n"
 "    @n - track number"
 msgstr ""
-"@ F - имя файла @ - имя исполнителя @ P - исполнитель каждой песни (не "
-"всегда существует) @ B - название альбома @ T - название композиции @ N - "
-"номер трека"
 
-#: src/preferences_tab.c:888
+#: src/preferences_tab.c:930
 msgid "<b>Output filename format</b>"
 msgstr "<b>Выходной формат файла</b>"
 
-#: src/preferences_tab.c:933
+#: src/preferences_tab.c:975
 msgid "Original file tags"
 msgstr ""
 
-#: src/preferences_tab.c:936
+#: src/preferences_tab.c:978
 msgid "Default tags (cddb or cue tags)"
 msgstr ""
 
-#: src/preferences_tab.c:939
+#: src/preferences_tab.c:981
 msgid "No tags"
 msgstr "Нет меток"
 
-#: src/preferences_tab.c:942
+#: src/preferences_tab.c:984
 msgid "Extract tags from filename"
 msgstr "Извлечь метки из имени файла"
 
-#: src/preferences_tab.c:949
+#: src/preferences_tab.c:991
 msgid "<b>Split files tags</b>"
 msgstr ""
 
-#: src/preferences_tab.c:971
+#: src/preferences_tab.c:1013
 msgid "No change"
 msgstr "Без изменений"
 
-#: src/preferences_tab.c:972
+#: src/preferences_tab.c:1014
 msgid "lowercase"
 msgstr "строчные"
 
-#: src/preferences_tab.c:973
+#: src/preferences_tab.c:1015
 msgid "UPPERCASE"
 msgstr "ЗАГЛАВНЫЕ"
 
-#: src/preferences_tab.c:974
+#: src/preferences_tab.c:1016
 msgid "First uppercase"
 msgstr "Первый заглавный символ"
 
-#: src/preferences_tab.c:975
+#: src/preferences_tab.c:1017
 msgid "Word Uppercase"
 msgstr "Слово из заглавных букв"
 
-#: src/preferences_tab.c:996
+#: src/preferences_tab.c:1038
 msgid "<artist>: "
 msgstr ""
 
-#: src/preferences_tab.c:1003
+#: src/preferences_tab.c:1045
 msgid "<album>: "
 msgstr ""
 
-#: src/preferences_tab.c:1011
+#: src/preferences_tab.c:1053
 msgid "<title>: "
 msgstr ""
 
-#: src/preferences_tab.c:1018
+#: src/preferences_tab.c:1060
 msgid "<genre>: "
 msgstr ""
 
-#: src/preferences_tab.c:1025
+#: src/preferences_tab.c:1067
 msgid "<comment>: "
 msgstr ""
 
-#: src/preferences_tab.c:1032
+#: src/preferences_tab.c:1074
 msgid "<year>: "
 msgstr ""
 
-#: src/preferences_tab.c:1039
+#: src/preferences_tab.c:1081
 msgid "<track>: "
 msgstr ""
 
-#: src/preferences_tab.c:1065
+#: src/preferences_tab.c:1107
 msgid "Regular expression:"
 msgstr "Регулярное выражение:"
 
-#: src/preferences_tab.c:1068
+#: src/preferences_tab.c:1110
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -335,96 +334,95 @@ msgid ""
 "    (?<comment>)  - comment"
 msgstr ""
 
-#: src/preferences_tab.c:1092
+#: src/preferences_tab.c:1134
 msgid "_Replace underscores by spaces"
 msgstr ""
 
-#: src/preferences_tab.c:1100
+#: src/preferences_tab.c:1142
 msgid "Artist text properties:"
 msgstr "Свойства имени исполнителя:"
 
-#: src/preferences_tab.c:1104
+#: src/preferences_tab.c:1146
 msgid "Album text properties:"
 msgstr "Свойства названия альбома:"
 
-#: src/preferences_tab.c:1108
+#: src/preferences_tab.c:1150
 msgid "Title text properties:"
 msgstr "Свойства названия композиции:"
 
-#: src/preferences_tab.c:1112
+#: src/preferences_tab.c:1154
 msgid "Comment text properties:"
 msgstr "Свойства текста комментариев"
 
-#: src/preferences_tab.c:1115
-#, fuzzy
+#: src/preferences_tab.c:1157
 msgid "Genre tag:"
-msgstr "Метки комментариев"
+msgstr ""
 
-#: src/preferences_tab.c:1118
+#: src/preferences_tab.c:1160
 msgid "Comment tag:"
 msgstr "Метки комментариев"
 
-#: src/preferences_tab.c:1120
+#: src/preferences_tab.c:1162
 msgid "Regular expression test"
 msgstr ""
 
-#: src/preferences_tab.c:1135
+#: src/preferences_tab.c:1177
 msgid "_Test"
 msgstr ""
 
-#: src/preferences_tab.c:1140
+#: src/preferences_tab.c:1182
 msgid "Sample filename:"
 msgstr "Пример имени файла:"
 
-#: src/preferences_tab.c:1144
+#: src/preferences_tab.c:1186
 msgid "Sample result:"
 msgstr "Пример результата:"
 
-#: src/preferences_tab.c:1155
+#: src/preferences_tab.c:1197
 msgid "ID3v1 & ID3v2 tags"
 msgstr "ID3v1 и ID3v2 теги"
 
-#: src/preferences_tab.c:1162
+#: src/preferences_tab.c:1204
 msgid "ID3v2 tags"
 msgstr "ID3v2 теги"
 
-#: src/preferences_tab.c:1168
+#: src/preferences_tab.c:1210
 msgid "ID3v1 tags"
 msgstr "ID3v1 теги"
 
-#: src/preferences_tab.c:1174
+#: src/preferences_tab.c:1216
 msgid "Same tags version as the input file"
 msgstr "То же"
 
-#: src/preferences_tab.c:1179
+#: src/preferences_tab.c:1221
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Версия тегов(только MP3)</b>"
 
-#: src/preferences_tab.c:1221 src/main_win.c:546
+#: src/preferences_tab.c:1263 src/main_win.c:546
 msgid "Split"
 msgstr ""
 
-#: src/preferences_tab.c:1227
+#: src/preferences_tab.c:1269
 msgid "Tags"
 msgstr "Теги"
 
-#: src/preferences_tab.c:1233
+#: src/preferences_tab.c:1275
 msgid "Output"
 msgstr "Выход"
 
-#: src/preferences_tab.c:1239 src/main_win.c:701
+#: src/preferences_tab.c:1281 src/main_win.c:701
 msgid "Player"
 msgstr "Плеер"
 
-#: src/preferences_tab.c:1246
+#: src/preferences_tab.c:1288
 msgid "Language"
 msgstr "Язык"
 
-#: src/player_tab.c:654 src/player_tab.c:688
+#: src/player_tab.c:663 src/player_tab.c:697
 msgid "Cannot connect to player"
 msgstr "Не удается подключиться к плееру"
 
-#: src/player_tab.c:665
+#: src/player_tab.c:674
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -443,135 +441,130 @@ msgid ""
 " After that, restart snackamp and mp3splt-gtk should work.\n"
 msgstr ""
 
-#: src/player_tab.c:680
+#: src/player_tab.c:689
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
 msgstr ""
 
-#: src/player_tab.c:908
+#: src/player_tab.c:931
 msgid "Previous"
 msgstr "Предыдущая"
 
-#: src/player_tab.c:927
+#: src/player_tab.c:949
 msgid "Play"
 msgstr "Слушать"
 
-#: src/player_tab.c:944
+#: src/player_tab.c:965
 msgid "Pause"
 msgstr "Пауза"
 
-#: src/player_tab.c:962
+#: src/player_tab.c:982
 msgid "Stop"
 msgstr "Остановить"
 
-#: src/player_tab.c:980
+#: src/player_tab.c:999
 msgid "Next"
 msgstr "Следующая"
 
-#: src/player_tab.c:992
+#: src/player_tab.c:1011
 msgid "Add splitpoint from player"
 msgstr ""
 
-#: src/player_tab.c:996
+#: src/player_tab.c:1015
 msgid "_Show amplitude wave"
 msgstr "Показать амплитуду волны"
 
-#: src/player_tab.c:1004
+#: src/player_tab.c:1023
 msgid "Shows the amplitude level wave"
 msgstr "Показывает уровень амплитуды волны"
 
-#: src/player_tab.c:1008
+#: src/player_tab.c:1027
 msgid "_Connect"
 msgstr "Сединение"
 
-#: src/player_tab.c:1011
+#: src/player_tab.c:1030
 msgid "Connect to player"
 msgstr "Подключение к плееру"
 
-#: src/player_tab.c:1015
+#: src/player_tab.c:1034
 msgid "_Disconnect"
 msgstr "Отключение"
 
-#: src/player_tab.c:1018
+#: src/player_tab.c:1037
 msgid "Disconnect from player"
 msgstr "Отключение от плеера"
 
-#: src/player_tab.c:1182
+#: src/player_tab.c:1201
 #, c-format
 msgid "before %s"
 msgstr ""
 
-#: src/player_tab.c:2712
+#: src/player_tab.c:2731
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 
-#: src/player_tab.c:2722
-msgid ""
-" left click + move changes song position, right click + move changes zoom"
-msgstr ""
-"кликните левой кнопкой мыши + перемещение позиции композиции, кликните "
-"правой кнопкой мыши + изменить зум"
+#: src/player_tab.c:2741
+msgid " left click + move changes song position, right click + move changes zoom"
+msgstr "кликните левой кнопкой мыши + перемещение позиции композиции, кликните правой кнопкой мыши + изменить зум"
 
-#: src/player_tab.c:2733
-msgid ""
-" left click on point + move changes point position, right click play preview"
+#: src/player_tab.c:2752
+msgid " left click on point + move changes point position, right click play preview"
 msgstr ""
 
-#: src/player_tab.c:2745
+#: src/player_tab.c:2764
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 
-#: src/player_tab.c:2936
+#: src/player_tab.c:2955
 msgid " quick preview..."
 msgstr "быстрый просмотр ..."
 
-#: src/player_tab.c:3467
+#: src/player_tab.c:3486
 msgid "History"
 msgstr "История"
 
-#: src/player_tab.c:3606
+#: src/player_tab.c:3625
 msgid "_Erase selected entries"
 msgstr "_Удалить выделенные записи"
 
-#: src/player_tab.c:3615
+#: src/player_tab.c:3634
 msgid "E_rase all history"
 msgstr "У_далить всю историю"
 
-#: src/player_tab.c:3738
+#: src/player_tab.c:3757
 msgid " quick preview finished, song paused"
 msgstr "быстрый просмотр закончен, проигрование приостановлено"
 
-#: src/player_tab.c:3865
+#: src/player_tab.c:3884
 msgid "Choose File"
 msgstr "Выберите Файл"
 
-#: src/player_tab.c:3870 src/multiple_files.c:125
+#: src/player_tab.c:3889 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "mp3 и ogg файлы (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3878 src/multiple_files.c:133
+#: src/player_tab.c:3897 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
 msgstr "mp3 файлы (*.mp3)"
 
-#: src/player_tab.c:3884 src/multiple_files.c:139
+#: src/player_tab.c:3903 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
 msgstr "ogg файлы (*.ogg)"
 
-#: src/player_tab.c:4025
+#: src/player_tab.c:4044
 msgid "_Browse"
 msgstr "_Обзор"
 
-#: src/player_tab.c:4029
+#: src/player_tab.c:4048
 msgid "Select file"
 msgstr "Выделить файл"
 
-#: src/player_tab.c:4036
+#: src/player_tab.c:4055
 msgid "_Fix ogg stream"
 msgstr "_Фиксированный ogg поток"
 
