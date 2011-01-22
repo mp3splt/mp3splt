@@ -38,11 +38,7 @@
 #ifndef _PLAYER_TAB_H
 #define _PLAYER_TAB_H
 
-#ifdef __WIN32__
-#define ICON_EXT ".png"
-#else
 #define ICON_EXT ".svg"
-#endif
 
 //!time structure
 typedef struct
