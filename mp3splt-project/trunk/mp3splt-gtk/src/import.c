@@ -47,6 +47,7 @@
 #include "freedb_tab.h"
 #include "import.h"
 #include "options_manager.h"
+#include "mp3splt-gtk.h"
 
 extern splt_state *the_state;
 
@@ -110,16 +111,16 @@ void handle_import(gchar *filename)
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {
     update_output_options();
-    g_thread_create(add_cue_splitpoints, strdup(filename), TRUE, NULL);
+    create_thread(add_cue_splitpoints, strdup(filename), TRUE, NULL);
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
   {
     update_output_options();
-    g_thread_create(add_cddb_splitpoints, strdup(filename), TRUE, NULL);
+    create_thread(add_cddb_splitpoints, strdup(filename), TRUE, NULL);
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
-    g_thread_create(add_audacity_labels_splitpoints, strdup(filename), TRUE, NULL);
+    create_thread(add_audacity_labels_splitpoints, strdup(filename), TRUE, NULL);
   }
 
   if (ext_str)
@@ -192,7 +193,7 @@ static gpointer add_audacity_labels_splitpoints(gpointer data)
   gint err = SPLT_OK;
   mp3splt_put_audacity_labels_splitpoints_from_file(the_state, filename, &err);
  
-  gdk_threads_enter();
+  enter_threads();
  
   if (err >= 0)
   {
@@ -201,7 +202,7 @@ static gpointer add_audacity_labels_splitpoints(gpointer data)
  
   print_status_bar_confirmation(err);
  
-  gdk_threads_leave();
+  exit_threads();
 
   if (filename)
   {
@@ -220,7 +221,7 @@ static gpointer add_cddb_splitpoints(gpointer data)
   gint err = SPLT_OK;
   mp3splt_put_cddb_splitpoints_from_file(the_state, filename, &err);
 
-  gdk_threads_enter();
+  enter_threads();
  
   if (err >= 0)
   {
@@ -228,7 +229,7 @@ static gpointer add_cddb_splitpoints(gpointer data)
   }
   print_status_bar_confirmation(err);
 
-  gdk_threads_leave();
+  exit_threads();
 
   if (filename)
   {
@@ -247,7 +248,7 @@ static gpointer add_cue_splitpoints(gpointer data)
   gint err = SPLT_OK;
   mp3splt_put_cue_splitpoints_from_file(the_state,filename, &err);
  
-  gdk_threads_enter();
+  enter_threads();
  
   if (err >= 0)
   {
@@ -260,7 +261,7 @@ static gpointer add_cue_splitpoints(gpointer data)
   // the value the gui uses, too, which we do in the next line.
   inputfilename_set(mp3splt_get_filename_to_split(the_state));
   
-  gdk_threads_leave();
+  exit_threads();
   enable_player_buttons();
 
   return NULL;

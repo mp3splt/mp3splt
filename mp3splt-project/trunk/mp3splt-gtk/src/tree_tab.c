@@ -1148,14 +1148,14 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 {
   gint err = SPLT_OK;
 
-  gdk_threads_enter();
+  enter_threads();
 
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
   gtk_widget_set_sensitive(cancel_button, TRUE);
   filename_to_split = inputfilename_get();
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
 
-  gdk_threads_leave();
+  exit_threads();
 
   mp3splt_set_filename_to_split(the_state, filename_to_split);
   mp3splt_erase_all_splitpoints(the_state, &err);
@@ -1186,7 +1186,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
   mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_FALSE);
 
-  gdk_threads_enter();
+  enter_threads();
 
   if (err >= 0)
   {
@@ -1198,7 +1198,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   gtk_widget_set_sensitive(cancel_button, FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
 
-  gdk_threads_leave();
+  exit_threads();
 
   return NULL;
 }
@@ -1206,7 +1206,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 //!start thread with 'set splitpints from silence detection'
 void detect_silence_and_add_splitpoints_start_thread()
 {
-  g_thread_create(detect_silence_and_set_splitpoints,
+  create_thread(detect_silence_and_set_splitpoints,
                   NULL, TRUE, NULL);
 }
 
@@ -1670,7 +1670,7 @@ gpointer split_preview(gpointer data)
     mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
         SPLT_OPTION_NORMAL_MODE);
 
-    gdk_threads_enter();
+    enter_threads();
 
     put_options_from_preferences();
 
@@ -1682,13 +1682,13 @@ gpointer split_preview(gpointer data)
     remove_all_split_rows();  
     filename_to_split = inputfilename_get();
 
-    gdk_threads_leave();
+    exit_threads();
 
     mp3splt_set_path_of_split(the_state,fname_path);
     mp3splt_set_filename_to_split(the_state,filename_to_split);
     confirmation = mp3splt_split(the_state);
 
-    gdk_threads_enter();
+    enter_threads();
 
     print_status_bar_confirmation(confirmation);
 
@@ -1722,15 +1722,15 @@ gpointer split_preview(gpointer data)
       fname_path = NULL;
     }
 
-    gdk_threads_leave();
+    exit_threads();
   }
   else
   {
-    gdk_threads_enter();
+    enter_threads();
 
     put_status_message(_(" cannot split preview last splitpoint"));
 
-    gdk_threads_leave();
+    exit_threads();
   }
 
   return NULL;
@@ -1766,7 +1766,7 @@ void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
         {
           preview_start_position = get_splitpoint_time(this_row);
           quick_preview_end_splitpoint = this_row+1;
-          g_thread_create(split_preview, NULL, TRUE, NULL);
+          create_thread(split_preview, NULL, TRUE, NULL);
         }
       }
     }
@@ -2142,9 +2142,9 @@ void put_splitpoints_in_the_state(splt_state *state)
         splitpoint_type = SPLT_SKIPPOINT;
       }
 
-      gdk_threads_leave();
+      exit_threads();
       mp3splt_append_splitpoint(state,hundr[i], description, splitpoint_type);
-      gdk_threads_enter();
+      enter_threads();
        
       //free memory
       gtk_tree_path_free(path);

@@ -348,12 +348,12 @@ gpointer detect_silence(gpointer data)
     number_of_silence_points = 0;
   }
 
-  gdk_threads_enter();
+  enter_threads();
 
   gtk_widget_set_sensitive(cancel_button, TRUE);
   filename_to_split = inputfilename_get();
 
-  gdk_threads_leave();
+  exit_threads();
 
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
   mp3splt_set_filename_to_split(the_state, filename_to_split);
@@ -368,12 +368,12 @@ gpointer detect_silence(gpointer data)
   we_are_splitting = FALSE;
   mp3splt_set_silence_level_function(the_state, NULL, NULL);
 
-  gdk_threads_enter();
+  enter_threads();
 
   print_status_bar_confirmation(err);
   gtk_widget_set_sensitive(cancel_button, FALSE);
 
-  gdk_threads_leave();
+  exit_threads();
 
   return NULL;
 }
@@ -391,7 +391,7 @@ void scan_for_silence_wave()
 
   if (timer_active)
   {
-    g_thread_create(detect_silence, NULL, TRUE, NULL);
+    create_thread(detect_silence, NULL, TRUE, NULL);
   }
 }
 
@@ -3971,12 +3971,12 @@ gpointer fix_ogg_stream(gpointer data)
 {
   we_are_splitting = TRUE;
 
-  gdk_threads_enter();
+  enter_threads();
 
   gtk_widget_set_sensitive(GTK_WIDGET(fix_ogg_stream_button), FALSE);
   put_options_from_preferences();
 
-  gdk_threads_leave();
+  exit_threads();
 
   gint err = 0;
 
@@ -3990,24 +3990,24 @@ gpointer fix_ogg_stream(gpointer data)
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
                          SPLT_OPTION_NORMAL_MODE);
  
-  gdk_threads_enter();
+  enter_threads();
 
   remove_all_split_rows();  
   filename_to_split = (gchar *) inputfilename_get();
 
-  gdk_threads_leave();
+  exit_threads();
   
   gint confirmation = SPLT_OK;
   mp3splt_set_path_of_split(the_state,filename_path_of_split);
   mp3splt_set_filename_to_split(the_state,filename_to_split);
   confirmation = mp3splt_split(the_state);
   
-  gdk_threads_enter();
+  enter_threads();
 
   print_status_bar_confirmation(confirmation);
   gtk_widget_set_sensitive(GTK_WIDGET(fix_ogg_stream_button), TRUE);
 
-  gdk_threads_leave();
+  exit_threads();
 
   we_are_splitting = FALSE;
 
@@ -4017,7 +4017,7 @@ gpointer fix_ogg_stream(gpointer data)
 //!we make a thread with fix_ogg_stream
 void fix_ogg_stream_button_event(GtkWidget *widget, gpointer   data)
 {
-  g_thread_create(fix_ogg_stream, NULL, TRUE, NULL);
+  create_thread(fix_ogg_stream, NULL, TRUE, NULL);
 }
 
 GtkWidget *create_choose_file_frame()
