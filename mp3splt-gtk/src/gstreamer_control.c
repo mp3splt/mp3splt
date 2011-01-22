@@ -55,6 +55,7 @@
 #include "main_win.h"
 #include "utilities.h"
 #include "player_tab.h"
+#include "mp3splt-gtk.h"
 
 extern int selected_player;
 
@@ -95,9 +96,9 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("gstreamer error: %s"),error->message);
 
-          gdk_threads_enter();
+          enter_threads();
           put_status_message(message);
-          gdk_threads_leave();
+          exit_threads();
 
           g_free(message);
         }
@@ -123,9 +124,9 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("Warning: %s"),error->message);
 
-          gdk_threads_enter();
+          enter_threads();
           put_status_message(message);
-          gdk_threads_leave();
+          exit_threads();
 
           g_free(message);
         }
@@ -151,9 +152,9 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("Info: %s"),error->message);
 
-          gdk_threads_enter();
+          enter_threads();
           put_status_message(message);
-          gdk_threads_leave();
+          exit_threads();
 
           g_free(message);
         }
@@ -411,9 +412,9 @@ void gstreamer_start()
 	}
 	else
 	{
-		gdk_threads_enter();
+		enter_threads();
 		put_status_message(_(" error: cannot create gstreamer playbin\n"));
-		gdk_threads_leave();
+		exit_threads();
 	}
 }
 

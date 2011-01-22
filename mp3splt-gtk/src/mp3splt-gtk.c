@@ -70,6 +70,7 @@
 #include "preferences_manager.h"
 #include "player_tab.h"
 #include "import.h"
+#include "mp3splt-gtk.h"
 
 //the state
 splt_state *the_state = NULL;
@@ -144,7 +145,7 @@ gint split_files = 0;
 //! Add another file to the split_file tab
 void put_split_filename(const char *filename,int progress_data)
 {
-  gdk_threads_enter();
+  enter_threads();
 
   if (!GTK_WIDGET_SENSITIVE(queue_files_button))
   {
@@ -169,7 +170,15 @@ void put_split_filename(const char *filename,int progress_data)
     fname_status = NULL;
   }
 
-  gdk_threads_leave();
+#ifdef __WIN32__
+  while (gtk_events_pending())
+  {
+	  gtk_main_iteration();
+  }
+  gdk_flush();
+#endif
+
+  exit_threads();
 }
 
 //!Allows to set the value shown by the progress bar
@@ -195,9 +204,9 @@ void change_window_progress_bar(splt_progress *p_bar)
       g_snprintf(progress_text,1023, _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE:
-      g_snprintf(progress_text,2047,
-          _("S: %02d, Level: %.2f dB; scanning for silence..."),
-          p_bar->silence_found_tracks, p_bar->silence_db_level);
+      g_snprintf(progress_text,1023,
+		      _("S: %02d, Level: %.2f dB; scanning for silence..."),
+		      p_bar->silence_found_tracks, p_bar->silence_db_level);
       break;
     default:
       g_snprintf(progress_text,1023, " ");
@@ -206,7 +215,7 @@ void change_window_progress_bar(splt_progress *p_bar)
 
   gchar printed_value[1024] = { '\0' };
 
-  gdk_threads_enter();
+  enter_threads();
 
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
       p_bar->percent_progress);
@@ -216,7 +225,15 @@ void change_window_progress_bar(splt_progress *p_bar)
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
       printed_value);
 
-  gdk_threads_leave();
+#ifdef __WIN32__
+  while (gtk_events_pending())
+  {
+	  gtk_main_iteration();
+  }
+  gdk_flush();
+#endif
+
+  exit_threads();
 }
 
 //! Split the file
@@ -224,11 +241,11 @@ gpointer split_it(gpointer data)
 {
   gint confirmation = SPLT_OK;
   
-  gdk_threads_enter();
+  enter_threads();
 
   remove_all_split_rows();
 
-  gdk_threads_leave();
+  exit_threads();
  
   gint err = SPLT_OK;
 
@@ -245,11 +262,11 @@ gpointer split_it(gpointer data)
   gint split_mode =
     mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err);
 
-  gdk_threads_enter();
+  enter_threads();
   print_status_bar_confirmation(err);
   
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
-  gdk_threads_leave();
+  exit_threads();
 
   mp3splt_set_oformat(the_state, format, &err);
   if (format)
@@ -273,7 +290,7 @@ gpointer split_it(gpointer data)
   gint multiple_files_error = SPLT_FALSE;
   if (split_file_mode == FILE_MODE_SINGLE)
   {
-    gdk_threads_enter();
+    enter_threads();
 
     if (split_mode == SPLT_OPTION_NORMAL_MODE)
     {
@@ -281,7 +298,7 @@ gpointer split_it(gpointer data)
     }
 
     print_processing_file(filename_to_split);
-    gdk_threads_leave();
+    exit_threads();
 
     mp3splt_set_filename_to_split(the_state, filename_to_split);
     confirmation = mp3splt_split(the_state);
@@ -290,7 +307,7 @@ gpointer split_it(gpointer data)
   {
     if (multiple_files_tree_number > 0)
     {
-      gdk_threads_enter();
+      enter_threads();
 
       gchar *filename = NULL;
       GtkTreeIter iter;
@@ -298,12 +315,12 @@ gpointer split_it(gpointer data)
       GtkTreeModel *model =
         gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
 
-      gdk_threads_leave();
+      exit_threads();
 
       gint row_number = 0;
       while (row_number < multiple_files_tree_number)
       {
-        gdk_threads_enter();
+        enter_threads();
 
         if (split_mode == SPLT_OPTION_NORMAL_MODE)
         {
@@ -317,7 +334,7 @@ gpointer split_it(gpointer data)
 
         print_processing_file(filename);
 
-        gdk_threads_leave();
+        exit_threads();
 
         mp3splt_set_filename_to_split(the_state, filename);
         confirmation = mp3splt_split(the_state);
@@ -335,7 +352,7 @@ gpointer split_it(gpointer data)
 
         row_number++;
 
-        gdk_threads_enter();
+        enter_threads();
 
         mp3splt_erase_all_tags(the_state, &err);
         print_status_bar_confirmation(err);
@@ -343,16 +360,16 @@ gpointer split_it(gpointer data)
         mp3splt_erase_all_splitpoints(the_state, &err);
         print_status_bar_confirmation(err);
 
-        gdk_threads_leave();
+        exit_threads();
       }
     }
     else
     {
       multiple_files_error = SPLT_TRUE;
 
-      gdk_threads_enter();
+      enter_threads();
       put_status_message(_(" error: no files found in multiple files mode"));
-      gdk_threads_leave();
+      exit_threads();
     }
   }
 
@@ -360,7 +377,7 @@ gpointer split_it(gpointer data)
    */
   mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
   
-  gdk_threads_enter();
+  enter_threads();
 
   //we show infos about the split action
   print_status_bar_confirmation(confirmation);
@@ -383,7 +400,7 @@ gpointer split_it(gpointer data)
 
   we_are_splitting = FALSE;
 
-  gdk_threads_leave();
+  exit_threads();
  
   return NULL;
 }
@@ -427,12 +444,44 @@ void put_message_from_library(const char *message, splt_message_type mess_type)
         mess[i] = ' ';
       }
     }
-    gdk_threads_enter();
+    enter_threads();
+
     put_status_message_with_type(mess, mess_type);
-    gdk_threads_leave();
+
+#ifdef __WIN32__
+  while (gtk_events_pending())
+  {
+	  gtk_main_iteration();
+  }
+  gdk_flush();
+#endif
+
+    exit_threads();
     g_free(mess);
     mess = NULL;
   }
+}
+
+GThread *create_thread(GThreadFunc func, gpointer data,
+		gboolean joinable, GError **error)
+{
+/*#ifdef __WIN32__
+	func(data);
+	return NULL;
+	return g_thread_create(func, data, joinable, error);
+#else*/
+	return g_thread_create(func, data, joinable, error);
+//#endif
+}
+
+void enter_threads()
+{
+	gdk_threads_enter();
+}
+
+void exit_threads()
+{
+	gdk_threads_leave();
 }
 
 /*! The traditional C main function
@@ -646,7 +695,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 
   gdk_threads_enter();
   gtk_main();
-  gdk_threads_leave();
+  exit_threads();
   
   return 0;
 }

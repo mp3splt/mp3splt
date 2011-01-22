@@ -473,7 +473,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
     if (filename_path_of_split != NULL)
     {
       we_are_splitting = TRUE;
-      g_thread_create(split_it, NULL, TRUE, NULL);
+      create_thread(split_it, NULL, TRUE, NULL);
       gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), TRUE);
     }
     else
