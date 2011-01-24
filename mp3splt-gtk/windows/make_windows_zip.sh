@@ -24,27 +24,27 @@ else
   put_package "cross_windows_zip"
 fi
 
-LANGUAGES="fr de"
+LANGUAGES="fr_FR de_DE"
 
 BASIC_FILES="
 mp3splt-gtk/src/mp3splt-gtk.exe
 libmp3splt/src/.libs/libmp3splt${DLL_SUFFIX}.dll
 libltdl-7.dll
 pcre3.dll
-mp3splt-gtk\src\mp3splt-gtk.png
-mp3splt-gtk\src\mp3splt-gtk_ico.svg
-mp3splt-gtk\src\mp3splt-gtk_ico.svg
-mp3splt-gtk\src\backward.svg
-mp3splt-gtk\src\backward_inactive.svg
-mp3splt-gtk\src\forward.svg
-mp3splt-gtk\src\forward_inactive.svg
-mp3splt-gtk\src\pause.svg
-mp3splt-gtk\src\pause_inactive.svg
-mp3splt-gtk\src\play.svg
-mp3splt-gtk\src\play_inactive.svg
-mp3splt-gtk\src\stop.svg
-mp3splt-gtk\src\stop_inactive.svg
-mp3splt-gtk\windows\mp3splt-gtk.ico
+mp3splt-gtk/src/mp3splt-gtk.png
+mp3splt-gtk/src/mp3splt-gtk_ico.svg
+mp3splt-gtk/src/mp3splt-gtk_ico.svg
+mp3splt-gtk/src/backward.svg
+mp3splt-gtk/src/backward_inactive.svg
+mp3splt-gtk/src/forward.svg
+mp3splt-gtk/src/forward_inactive.svg
+mp3splt-gtk/src/pause.svg
+mp3splt-gtk/src/pause_inactive.svg
+mp3splt-gtk/src/play.svg
+mp3splt-gtk/src/play_inactive.svg
+mp3splt-gtk/src/stop.svg
+mp3splt-gtk/src/stop_inactive.svg
+mp3splt-gtk/windows/mp3splt-gtk.ico
 "
 
 MP3_PLUGIN_FILES="

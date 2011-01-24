@@ -550,7 +550,8 @@ void splt_ogg_get_original_tags(const char *filename,
   tr = vorbis_comment_query(vc_local, "tracknumber",0);
   if (tr != NULL)
   {
-    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_TRACK, tr);
+    int track = atoi(tr);
+    err = splt_tu_set_original_tags_field(state, SPLT_TAGS_TRACK, &track);
     has_tags = SPLT_TRUE;
     OGG_VERIFY_ERROR();
   }
