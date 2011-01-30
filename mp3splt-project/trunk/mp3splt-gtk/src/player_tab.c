@@ -903,9 +903,16 @@ void build_svg_path(GString *imagefile, gchar *svg_filename)
   g_string_append(imagefile, G_DIR_SEPARATOR_S);
   g_string_append(imagefile, svg_filename);
 #else
-  g_string_assign(imagefile, IMAGEDIR);
-  g_string_append(imagefile, G_DIR_SEPARATOR_S);
-  g_string_append(imagefile, svg_filename);
+  if (strlen(IMAGEDIR) == 0)
+  {
+    g_string_assign(imagefile, svg_filename);
+  }
+  else 
+  {
+    g_string_assign(imagefile, IMAGEDIR);
+    g_string_append(imagefile, G_DIR_SEPARATOR_S);
+    g_string_append(imagefile, svg_filename);
+  }
 #endif
 }
 
