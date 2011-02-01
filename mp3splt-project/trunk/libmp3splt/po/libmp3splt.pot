@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-01-31 23:01+0100\n"
+"POT-Creation-Date: 2011-02-01 22:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:123 src/cue.c:520
+#: src/cddb.c:123 src/cue.c:560
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -145,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:416
+#: src/cue.c:456
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:468
+#: src/cue.c:508
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:676
+#: src/cue.c:716
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -517,7 +517,7 @@ msgstr ""
 msgid "no regular expression provided"
 msgstr ""
 
-#: src/string_utils.c:575 src/string_utils.c:596
+#: src/string_utils.c:586 src/string_utils.c:607
 msgid "not enough memory"
 msgstr ""
 

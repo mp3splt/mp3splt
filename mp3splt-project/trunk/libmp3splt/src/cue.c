@@ -304,6 +304,7 @@ static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_s
   int err = SPLT_OK;
 
   const char *file_from_cue = splt_cue_parse_value(line_content, SPLT_TRUE);
+
   if (splt_io_check_if_file(NULL, file_from_cue))
   {
     err = splt_t_set_filename_to_split(state, file_from_cue);
@@ -314,31 +315,17 @@ static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_s
   char *file_from_cue_with_path = NULL;
   splt_su_copy(cu->file, &file_from_cue_with_path);
   splt_su_keep_path_and_remove_filename(file_from_cue_with_path);
-  splt_su_append_str(&file_from_cue_with_path, file_from_cue, NULL);
+  splt_su_append_str(&file_from_cue_with_path, SPLT_DIRSTR, file_from_cue, NULL);
 
-  char *final_file_from_cue =
-    splt_su_replace_all(file_from_cue_with_path, SPLT_DIRSTR""SPLT_DIRSTR, SPLT_DIRSTR, &cu->error);
+  if (splt_io_check_if_file(NULL, file_from_cue_with_path))
+  {
+    err = splt_t_set_filename_to_split(state, file_from_cue_with_path);
+  }
 
   if (file_from_cue_with_path)
   {
     free(file_from_cue_with_path);
     file_from_cue_with_path = NULL;
-  }
-
-  if (cu->error < 0)
-  { 
-    return;
-  }
-
-  if (splt_io_check_if_file(NULL, final_file_from_cue))
-  {
-    err = splt_t_set_filename_to_split(state, final_file_from_cue);
-  }
-
-  if (final_file_from_cue)
-  {
-    free(final_file_from_cue);
-    final_file_from_cue = NULL;
   }
 
   if (err < 0) { cu->error = err; return; }

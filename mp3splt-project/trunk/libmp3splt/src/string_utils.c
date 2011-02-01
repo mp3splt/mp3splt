@@ -376,6 +376,18 @@ void splt_su_keep_path_and_remove_filename(char *path)
   }
 
   *(last_dirchar+1) = '\0';
+
+#ifdef __WIN32__
+  if (!splt_w32_str_is_drive_root_directory(path))
+  {
+    *last_dirchar = '\0';
+  }
+#else
+  if (last_dirchar != path)
+  {
+    *last_dirchar = '\0';
+  }
+#endif
 }
 
 const char *splt_su_get_fname_without_path(const char *filename)
