@@ -630,6 +630,9 @@ typedef struct {
   //!true=replace underscores with space
   int replace_underscores_tag_format;
 
+  //!SPLT_TRUE=set the current filename to split from FILE tag - if found in the CUE file
+  int set_file_from_cue_if_file_tag_found;
+
   //!true=remove the silence between split tracks
   int parameter_remove_silence;
 
@@ -1159,6 +1162,11 @@ typedef enum {
    * from filename regex.
    */
   SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT,
+  /**
+   * If SPLT_TRUE, parse the FILE line and set the filename to split
+   * from the CUE file.
+   */
+  SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND,
 } splt_int_options;
 
 typedef enum {

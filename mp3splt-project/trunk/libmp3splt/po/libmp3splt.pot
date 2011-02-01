@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-01-12 22:29+0100\n"
+"POT-Creation-Date: 2011-01-31 23:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:833
+#: src/mp3splt.c:835
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:927
+#: src/mp3splt.c:929
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:935
+#: src/mp3splt.c:937
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:955
+#: src/mp3splt.c:957
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -48,21 +48,21 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:123 src/cue.c:545
+#: src/cddb.c:123 src/cue.c:520
 #, c-format
 msgid ""
 "  Tracks: %d\n"
 "\n"
 msgstr ""
 
-#: src/cddb.c:257 src/cue.c:118
+#: src/cddb.c:257 src/cue.c:135
 #, c-format
 msgid ""
 "\n"
 "  Artist: %s\n"
 msgstr ""
 
-#: src/cddb.c:260 src/cue.c:122
+#: src/cddb.c:260 src/cue.c:139
 #, c-format
 msgid "  Album: %s\n"
 msgstr ""
@@ -145,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:441
+#: src/cue.c:416
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:493
+#: src/cue.c:468
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:701
+#: src/cue.c:676
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -597,12 +597,12 @@ msgstr ""
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:826
+#: plugins/ogg.c:827
 msgid ""
 " warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
 "to fix.\n"
 msgstr ""
 
-#: plugins/ogg.c:2030
+#: plugins/ogg.c:2031
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""

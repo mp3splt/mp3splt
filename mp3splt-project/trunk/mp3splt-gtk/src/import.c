@@ -48,6 +48,7 @@
 #include "import.h"
 #include "options_manager.h"
 #include "mp3splt-gtk.h"
+#include "utilities.h"
 
 extern splt_state *the_state;
 
@@ -246,7 +247,8 @@ static gpointer add_cue_splitpoints(gpointer data)
   gchar *filename = data;
 
   gint err = SPLT_OK;
-  mp3splt_put_cue_splitpoints_from_file(the_state,filename, &err);
+  mp3splt_set_filename_to_split(the_state, NULL);
+  mp3splt_put_cue_splitpoints_from_file(the_state, filename, &err);
  
   enter_threads();
  
@@ -255,11 +257,15 @@ static gpointer add_cue_splitpoints(gpointer data)
     update_splitpoints_from_the_state();
   }
   print_status_bar_confirmation(err);
- 
+
   // The cue file has provided libmp3splt with a input filename.
   // But since we use the filename from the gui instead we need to set
   // the value the gui uses, too, which we do in the next line.
-  inputfilename_set(mp3splt_get_filename_to_split(the_state));
+  char *filename_to_split = mp3splt_get_filename_to_split(the_state);
+  if (is_filee(filename_to_split))
+  {
+    inputfilename_set(filename_to_split);
+  }
   
   exit_threads();
   enable_player_buttons();

@@ -58,6 +58,7 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.title_tag_format = SPLT_NO_CONVERSION;
   state->options.comment_tag_format = SPLT_NO_CONVERSION;
   state->options.replace_underscores_tag_format = SPLT_FALSE;
+  state->options.set_file_from_cue_if_file_tag_found = SPLT_FALSE;
 
   state->options.parameter_remove_silence = SPLT_FALSE;
   state->options.parameter_gap = SPLT_DEFAULT_PARAM_GAP;
@@ -165,6 +166,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
     case SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT:
       state->options.replace_underscores_tag_format = *((int *)data);
       break;
+    case SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND:
+      state->options.set_file_from_cue_if_file_tag_found = *((int *)data);
+      break;
     default:
       splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
@@ -192,91 +196,64 @@ static void *splt_o_get_option(splt_state *state, int option_name)
   {
     case SPLT_OPT_QUIET_MODE:
       return &state->options.quiet_mode;
-      break;
     case SPLT_OPT_PRETEND_TO_SPLIT:
-    ;
       return &state->options.pretend_to_split;
-      break;
     case SPLT_OPT_OUTPUT_FILENAMES:
       return &state->options.output_filenames;
-      break;
     case SPLT_OPT_SPLIT_MODE:
       return &state->options.split_mode;
-      break;
     case SPLT_OPT_TAGS:
       return &state->options.tags;
-      break;
     case SPLT_OPT_XING:
       return &state->options.xing;
-      break;
     case SPLT_OPT_CREATE_DIRS_FROM_FILENAMES:
       return &state->options.create_dirs_from_filenames;
-      break;
     case SPLT_OPT_FRAME_MODE:
       return &state->options.option_frame_mode;
-      break;
     case SPLT_OPT_AUTO_ADJUST:
       return &state->options.option_auto_adjust;
-      break;
     case SPLT_OPT_INPUT_NOT_SEEKABLE:
       return &state->options.option_input_not_seekable;
-      break;
     case SPLT_OPT_PARAM_NUMBER_TRACKS:
       return &state->options.parameter_number_tracks;
-      break;
     case SPLT_OPT_PARAM_REMOVE_SILENCE:
       return &state->options.parameter_remove_silence;
-      break;
     case SPLT_OPT_PARAM_GAP:
       return &state->options.parameter_gap;
-      break;
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:
       return &state->options.remaining_tags_like_x;
-      break;
     case SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS:
       return &state->options.auto_increment_tracknumber_tags;
-      break;
     case SPLT_OPT_ENABLE_SILENCE_LOG:
       return &state->options.enable_silence_log;
-      break;
     case SPLT_OPT_FORCE_TAGS_VERSION:
       return &state->options.force_tags_version;
-      break;
     case SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER:
       return &state->options.length_split_file_number;
-      break;
     case SPLT_OPT_REPLACE_TAGS_IN_TAGS:
       return &state->options.replace_tags_in_tags;
-      break;
     case SPLT_OPT_OVERLAP_TIME:
       return &state->options.overlap_time;
-      break;
     case SPLT_OPT_SPLIT_TIME:
       return &state->options.split_time;
-      break;
     case SPLT_OPT_PARAM_THRESHOLD:
       return &state->options.parameter_threshold;
-      break;
     case SPLT_OPT_PARAM_OFFSET:
       return &state->options.parameter_offset;
-      break;
     case SPLT_OPT_PARAM_MIN_LENGTH:
       return &state->options.parameter_minimum_length;
-      break;
     case SPLT_OPT_ARTIST_TAG_FORMAT:
       return &state->options.artist_tag_format;
-      break;
     case SPLT_OPT_ALBUM_TAG_FORMAT:
       return &state->options.album_tag_format;
-      break;
     case SPLT_OPT_TITLE_TAG_FORMAT:
       return &state->options.title_tag_format;
-      break;
     case SPLT_OPT_COMMENT_TAG_FORMAT:
       return &state->options.comment_tag_format;
-      break;
     case SPLT_OPT_REPLACE_UNDERSCORES_TAG_FORMAT:
       return &state->options.replace_underscores_tag_format;
+    case SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND:
+      return &state->options.set_file_from_cue_if_file_tag_found;
     default:
       splt_e_error(SPLT_IERROR_INT,__func__, option_name, NULL);
       break;
