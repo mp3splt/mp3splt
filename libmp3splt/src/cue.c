@@ -62,31 +62,8 @@ static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_
   splt_tu_new_tags_if_necessary(state, cu->tracks - 1);
 }
 
-//! Update data for a track in the central splt_state structure.
-static int splt_cue_store_value(splt_state *state, char *in,
-    int index, int tag_field)
+static void remove_trailing_spaces_and_quote(char *ptr_e, char *in)
 {
-  int error = SPLT_OK;
-
-  char *ptr_b = in;
-  char *ptr_e = NULL;
-
-  if (!in)
-  {
-    return SPLT_OK;
-  }
-
-  while (*ptr_b == ' ')
-  {
-    ptr_b++;
-  }
-
-  if (*ptr_b == '"')
-  {
-    ptr_b++;
-  }
-
-  ptr_e = strchr(ptr_b + 1, '\0');
   if (ptr_e)
   {
     ptr_e--;
@@ -108,9 +85,49 @@ static int splt_cue_store_value(splt_state *state, char *in,
       }
     }
   }
+}
+
+static const char *splt_cue_parse_value(char *in, int skip_last_word)
+{
+  char *ptr_b = in;
+  char *ptr_e = NULL;
+
+  while (*ptr_b == ' ')
+  {
+    ptr_b++;
+  }
+
+  if (*ptr_b == '"')
+  {
+    ptr_b++;
+  }
+
+  ptr_e = strchr(ptr_b + 1, '\0');
+
+  remove_trailing_spaces_and_quote(ptr_e, in);
+
+  if (skip_last_word)
+  {
+    ptr_e = strrchr(ptr_b, ' ');
+    remove_trailing_spaces_and_quote(ptr_e, in);
+  }
+
+  return ptr_b;
+}
+
+//! Update data for a track in the central splt_state structure.
+static int splt_cue_store_value(splt_state *state, char *in,
+    int index, int tag_field)
+{
+  if (!in)
+  {
+    return SPLT_OK;
+  }
+
+  const char *ptr_b = splt_cue_parse_value(in, SPLT_FALSE);
 
   char *out = NULL;
-  error = splt_su_append(&out, ptr_b, strlen(ptr_b) + 1, NULL);
+  int error = splt_su_append(&out, ptr_b, strlen(ptr_b) + 1, NULL);
   if (error < 0) { return error; }
 
   if (tag_field == SPLT_TAGS_ARTIST)
@@ -252,80 +269,39 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
   // Skip all leading whitespace after the word REM
   while ((*line_content==' ')||(*line_content=='\t')) line_content++;
 
-  fprintf(stderr,"REM %s\n",line_content);
-
   if((linetail=strstr(line_content,"CREATOR"))!=NULL)
-    {
-      // Skip the word "CREATOR"
-      linetail += 7;
+  {
+    // Skip the word "CREATOR"
+    linetail += 7;
 
-      if(strstr(linetail,"MP3SPLT_GTK")!=NULL)
-	{
-	  cu->file_has_been_created_by_us = SPLT_TRUE;
-	  fprintf(stderr,"Our file!\n");
-	}
-    }
-  else
-  if((linetail=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
+    if(strstr(linetail,"MP3SPLT_GTK")!=NULL)
     {
-      cu->title_is_filename = SPLT_TRUE;
-      fprintf(stderr,"Title_IS_Filename\n");
+      cu->file_has_been_created_by_us = SPLT_TRUE;
     }
-  else
-  if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
-    {
-      if (cu->tracks >= 0)
-	cu->current_track_type=SPLT_SKIPPOINT;
-    }
+  }
+  else if((linetail=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
+  {
+    cu->title_is_filename = SPLT_TRUE;
+  }
+  else if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
+  {
+    if (cu->tracks >= 0)
+      cu->current_track_type=SPLT_SKIPPOINT;
+  }
 }
 
 //! Process the rest of a cue line that begins with the word FILE
 static void splt_cue_process_file_line(char *line_content, cue_utils *cu, splt_state *state)
 {
-  char *filenametail;
+  if (!splt_o_get_int_option(state, SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND))
+  {
+    return;
+  }
 
   // Skip the word FILE
   line_content += 4;
 
-  // Jump to the "
-  while ((*line_content!=' ')&&(*line_content!='\0')) line_content++;
-
-  if (*line_content == '\0')
-  {
-    return;
-  }
-
-  //remove extra spaces
-  while ((*line_content==' ')) line_content++;
-
-  //if we have optional quote, skip it
-  if (*line_content == '"')
-  {
-    line_content++;
-  }
-
-  filenametail = line_content;
-
-  // Find the second "
-  while ((*filenametail!=' ')&&(*filenametail!='\0')) filenametail++;
-
-  //extra check
-  if (filenametail <= line_content)
-  {
-    return;
-  }
-
-  //go back to the optional quote (if we have a quote)
-  if (*(filenametail-1) == '"')
-  {
-    filenametail--;
-  }
-
-  // End the string at the end of the filename
-  *filenametail = '\0';
-
-  // Set the new filename.
-  splt_t_set_filename_to_split(state, line_content);
+  splt_t_set_filename_to_split(state, splt_cue_parse_value(line_content, SPLT_TRUE));
 }
 
 /*! Analyze a line from a cue file
@@ -376,12 +352,11 @@ static void splt_cue_process_line(char **l, cue_utils *cu, splt_state *state)
 
 /* Malloc memory for and initialize a cue_utils structure
 
-\param state The address of the "state" structure. Currently unused.
 \param error Contains the libmp3splt error number if any error
        occoured in this step.
 \return The address of the structure
  */
-static cue_utils *splt_cue_cu_new(splt_state *state, int *error)
+static cue_utils *splt_cue_cu_new(int *error)
 {
   cue_utils *cu = malloc(sizeof(cue_utils));
   if (cu == NULL)
@@ -449,7 +424,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   char *line = NULL;
   int tracks = -1;
 
-  cue_utils *cu = splt_cue_cu_new(state, &err);
+  cue_utils *cu = splt_cue_cu_new(&err);
   
   if (err < 0) { *error = err; return tracks; }
   cu->file = file;
