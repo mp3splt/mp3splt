@@ -38,6 +38,17 @@ void test_replace_all()
   }
 }
 
+void test_keep_path_and_remove_filename()
+{
+  char path[20] = { "/test.cue" };
+  splt_su_keep_path_and_remove_filename(path);
+  cut_assert_equal_string("/", path);
+
+  char path2[20] = { "/home/my/test.cue" };
+  splt_su_keep_path_and_remove_filename(path2);
+  cut_assert_equal_string("/home/my", path2);
+}
+
 void test_convert_with_null_str()
 {
   converted_str = splt_su_convert(NULL, SPLT_TO_LOWERCASE, &error);
