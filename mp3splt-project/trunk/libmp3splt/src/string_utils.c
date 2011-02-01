@@ -367,6 +367,17 @@ void splt_su_line_to_unix(char *line)
   }
 }
 
+void splt_su_keep_path_and_remove_filename(char *path)
+{
+  char *last_dirchar = strrchr(path, SPLT_DIRCHAR);
+  if (last_dirchar == NULL)
+  {
+    return;
+  }
+
+  *(last_dirchar+1) = '\0';
+}
+
 const char *splt_su_get_fname_without_path(const char *filename)
 {
   char *c = NULL;

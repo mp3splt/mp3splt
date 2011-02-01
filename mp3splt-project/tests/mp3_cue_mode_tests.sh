@@ -7,7 +7,7 @@ function _create_cue_file
   Q='"'
   echo "PERFORMER ${Q}GNU_Linux${Q}
 TITLE ${Q}Gentoo${Q}
-FILE ${Q}$MP3_FILE${Q} MP3
+FILE ${Q}xx$MP3_FILE${Q} MP3
   TRACK 01 AUDIO
     TITLE ${Q}Our piano${Q}
     PERFORMER ${Q}First performer${Q}  
@@ -27,7 +27,7 @@ function _create_incomplete_cue_file
   Q=$1
   echo "PERFORMER ${Q}GNU_Linux${Q}
 TITLE ${Q}Gentoo${Q}
-FILE ${Q}$MP3_FILE${Q} MP3
+FILE ${Q}xx$MP3_FILE${Q} MP3
   TRACK 01 AUDIO
     TITLE ${Q}Our piano${Q}
     PERFORMER ${Q}First performer${Q}
