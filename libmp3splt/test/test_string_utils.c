@@ -26,6 +26,18 @@ void cut_teardown()
   }
 }
 
+void test_replace_all()
+{
+  char *path = splt_su_replace_all("/my//new//path", "//", "/", &error);
+  cut_assert_equal_int(SPLT_OK, error);
+
+  if (path)
+  {
+    cut_assert_equal_string("/my/new/path", path);
+    free(path);
+  }
+}
+
 void test_convert_with_null_str()
 {
   converted_str = splt_su_convert(NULL, SPLT_TO_LOWERCASE, &error);

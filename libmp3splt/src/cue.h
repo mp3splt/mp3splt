@@ -40,6 +40,8 @@ typedef struct {
   int error;
   int performer;
   int title;
+  /*! \brief cue input filename
+  */
   const char *file;
   int counter;
   /*! \brief Do we have to build the file name from the tags?
