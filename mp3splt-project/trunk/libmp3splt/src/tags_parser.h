@@ -39,17 +39,24 @@ typedef struct {
   int tags_counter;
   int set_all_tags;
 
-  short title_counter;
-  short artist_counter;
-  short album_counter;
-  short performer_counter;
-  short year_counter;
-  short comment_counter;
-  short tracknumber_counter;
+  int title_counter;
+  int artist_counter;
+  int album_counter;
+  int performer_counter;
+  int year_counter;
+  int comment_counter;
+  int tracknumber_counter;
+  int genre_counter;
 
   int original_tags_found;
 
+  int auto_increment_tracknumber;
+
+  int we_had_all_tags;
+
   const char *position;
+
+  char *current_tracknumber;
 } tags_parser_utils;
 
 int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error);

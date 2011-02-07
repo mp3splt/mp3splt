@@ -595,7 +595,7 @@ function test_time_vbr_custom_tags
   "2000" "" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "" "" "" "" "" "" "2" ""
+  check_current_mp3_no_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -640,7 +640,7 @@ function test_time_vbr_custom_tags_multiple_percent
   check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "2" ""
+  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\

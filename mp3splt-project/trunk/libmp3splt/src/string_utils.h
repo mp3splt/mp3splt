@@ -44,6 +44,7 @@ int splt_su_copy(const char *src, char **dest);
 void splt_su_clean_string(splt_state *state, char *s, int *error);
 void splt_su_cut_spaces_from_end(char *c);
 char *splt_su_cut_spaces(char *c);
+char *splt_su_skip_spaces(char *c);
 char *splt_su_trim_spaces(char *c);
 int splt_su_is_empty_line(const char *line);
 void splt_su_line_to_unix(char *line);

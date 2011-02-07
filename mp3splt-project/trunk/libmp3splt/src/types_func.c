@@ -300,7 +300,7 @@ char *splt_t_get_m3u_filename(splt_state *state)
 
 int splt_t_set_input_filename_regex(splt_state *state, const char *regex)
 {
-  splt_d_print_debug(state,"Setting input filename regex to _%s_\n", regex);
+  splt_d_print_debug(state, "Setting input filename regex to _%s_\n", regex);
   return splt_su_copy(regex, &state->input_fname_regex);
 }
 

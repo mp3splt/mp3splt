@@ -907,7 +907,7 @@ int mp3splt_split(splt_state *state)
       }
       else if (tags_option == SPLT_TAGS_FROM_FILENAME_REGEX)
       {
-        int regex_error;
+        int regex_error = SPLT_OK;
         splt_tp_put_tags_from_filename(state, &regex_error);
         if (regex_error < 0)
         {

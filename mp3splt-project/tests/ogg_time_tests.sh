@@ -399,7 +399,7 @@ function test_time_custom_tags
   check_all_ogg_tags "a1" "b1" "t1" "2000" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_40s__01m_20s.ogg"
-  check_all_ogg_tags "" "" "" "" "" "2" ""
+  check_current_ogg_no_tags
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_20s__02m_00s.ogg"
   check_all_ogg_tags "Kelly Allyn" "album" "Whiskey Can"\
@@ -443,7 +443,7 @@ function test_time_custom_tags_multiple_percent
   check_all_ogg_tags "a1" "b1" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_40s__01m_20s.ogg"
-  check_all_ogg_tags "a1" "b1" "" "" "" "2" ""
+  check_all_ogg_tags "a1" "b1" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_20s__02m_00s.ogg"
   check_all_ogg_tags "Kelly Allyn" "album" "Whiskey Can"\

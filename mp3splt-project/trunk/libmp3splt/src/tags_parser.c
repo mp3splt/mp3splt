@@ -43,8 +43,16 @@ static void splt_tp_process_tags(const char *tags,
     tags_parser_utils *tpu, splt_state *state, int *error);
 static void splt_tp_process_tag_variable(const char *tag_variable_start, const char *end_paranthesis,
     tags_parser_utils *tpu, splt_state *state, int *error);
-static void splt_tp_process_tags_variable(tags_parser_utils *tpu,
-    splt_state *state, int *error);
+static void splt_tp_process_str_tags_variable(const char *tag_variable_start,
+    const char *end_paranthesis, int tags_field,
+    tags_parser_utils *tpu, splt_state *state, int *error);
+static void splt_tp_process_tracknumber_variable(const char *tag_variable_start,
+    const char *end_paranthesis, tags_parser_utils *tpu, splt_state *state, 
+    int *error);
+static void splt_tp_process_auto_increment_tracknumber_variable(
+    const char *tag_variable_start, const char *end_paranthesis, 
+    tags_parser_utils *tpu, splt_state *state, int *error);
+
 static void splt_tp_check_ambigous_next_position(const char *tag_variable_start,
     tags_parser_utils *tpu);
 static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
@@ -52,12 +60,21 @@ static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
 static void splt_tp_get_original_tags(splt_state *state, int *error);
 static int splt_tp_tpu_has_one_current_tag_set(tags_parser_utils *tpu);
 static char *splt_tp_look_for_end_paranthesis(tags_parser_utils *tpu);
-static void splt_tp_look_for_all_remaining_tags_char(const char *tags,
+static void splt_tp_look_for_all_tags_char(const char *tags,
 tags_parser_utils *tpu, splt_state *state);
+static void splt_tp_tpu_increment_tags_field_counter(tags_parser_utils *tpu,
+    int tags_field);
 
 static tags_parser_utils *splt_tp_tpu_new(splt_state *state, int *error);
 static void splt_tp_tpu_reset_for_new_tags(splt_state *state, tags_parser_utils *tpu, int *error);
 static void splt_tp_tpu_free(tags_parser_utils **tpu);
+static void splt_tp_tpu_set_tracknumber(tags_parser_utils *tpu, 
+    const char *tracknumber, int *error);
+static const char *splt_tp_tpu_get_tracknumber(tags_parser_utils *tpu);
+static void splt_tp_tpu_set_tags_value(tags_parser_utils *tpu,
+    int tags_field, const void *tag_value);
+static void splt_tp_set_track_from_parsed_tracknumber(tags_parser_utils *tpu,
+    splt_state *state, int *error);
 
 void splt_tp_put_tags_from_filename(splt_state *state, int *error)
 {
@@ -157,12 +174,10 @@ static char *splt_tp_parse_tag_word(const char *cur_pos,
     }
   }
 
-  cur_pos = word_end;
-
   return word;
 }
 
-int new_splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
+int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
 {
   if (tags == NULL)
   {
@@ -178,6 +193,25 @@ int new_splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *e
     splt_tp_process_tags(tags, tpu, state, error);
     if (*error < 0) { goto end; }
 
+    splt_tu_append_tags_to_state(state, tpu->current_tags, 
+        !tpu->original_tags_found, error);
+    if (*error < 0) { goto end; }
+
+    if (tpu->set_all_tags)
+    {
+      tpu->we_had_all_tags = SPLT_TRUE;
+      tpu->set_all_tags = SPLT_FALSE;
+      splt_tu_copy_tags(tpu->all_tags, splt_tu_get_tags_like_x(state), error);
+      if (*error < 0) { goto end; }
+    }
+    else if (tpu->we_had_all_tags && !tpu->original_tags_found)
+    {
+      int index = state->split.real_tagsnumber - 1;
+      splt_tu_set_new_tags_where_current_tags_are_null(state, 
+          tpu->current_tags, tpu->all_tags, index, error);
+      if (*error < 0) { goto end; }
+    }
+
     tpu->tags_counter++;
   }
 
@@ -189,20 +223,60 @@ end:
   return ambigous;
 }
 
+static void splt_tp_tpu_set_ambigous_if_more_than_one_variable(tags_parser_utils *tpu)
+{
+  if ((tpu->title_counter > 1) ||
+      (tpu->artist_counter > 1) ||
+      (tpu->album_counter > 1) ||
+      (tpu->performer_counter > 1) ||
+      (tpu->year_counter > 1) ||
+      (tpu->comment_counter > 1) ||
+      (tpu->tracknumber_counter > 1) ||
+      (tpu->genre_counter > 1))
+  {
+    tpu->ambigous = SPLT_TRUE;
+  }
+}
+
+static char *splt_tp_find_tag_start(const char *position, const char *end_paranthesis)
+{
+  const char *ptr = position;
+
+  int comma_or_open_bracket_found = SPLT_FALSE;
+
+  while (ptr <= end_paranthesis)
+  {
+    if (*ptr == ',' || *ptr == '[')
+    {
+      comma_or_open_bracket_found = SPLT_TRUE;
+      break;
+    }
+    ptr++;
+  }
+
+  if (!comma_or_open_bracket_found)
+  {
+    return NULL;
+  }
+
+  return strchr(ptr, '@');
+}
+
 static void splt_tp_process_tags(const char *tags, tags_parser_utils *tpu,
     splt_state *state, int *error)
 {
-  splt_tp_look_for_all_remaining_tags_char(tags, tpu, state);
+  splt_tp_look_for_all_tags_char(tags, tpu, state);
 
   splt_tp_tpu_reset_for_new_tags(state, tpu, error);
   if (*error < 0) { return; }
 
+  const char *end_paranthesis = splt_tp_look_for_end_paranthesis(tpu);
+  if (!end_paranthesis) { return; }
+
   tpu->position++;
 
-  const char *end_paranthesis = splt_tp_look_for_end_paranthesis(tpu);
-
   char *tag_start = NULL;
-  while ((tag_start = strchr(tpu->position-1,'@')))
+  while ((tag_start = splt_tp_find_tag_start(tpu->position-1, end_paranthesis)))
   {
     if (tag_start >= end_paranthesis)
     {
@@ -212,16 +286,54 @@ static void splt_tp_process_tags(const char *tags, tags_parser_utils *tpu,
     tpu->position = tag_start + 1;
 
     splt_tp_process_tag_variable(tpu->position, end_paranthesis, tpu, state, error);
-    //TODO:review
     if (*error < 0)
     {
-      break;
+      return;
     }
 
-    //TODO: review
-    tpu->position++;
+    if (tpu->position == tag_start + 1)
+    {
+      tpu->position++;
+    }
   }
 
+  splt_tp_set_track_from_parsed_tracknumber(tpu, state, error);
+
+  splt_tp_tpu_set_ambigous_if_more_than_one_variable(tpu);
+}
+
+static void splt_tp_set_track_from_parsed_tracknumber(tags_parser_utils *tpu,
+    splt_state *state, int *error)
+{
+  const char *tracknumber = splt_tp_tpu_get_tracknumber(tpu);
+
+  if (tracknumber)
+  {
+    int is_number = SPLT_TRUE;
+    int i = 0;
+    for (i = 0;i < strlen(tracknumber);i++)
+    {
+      if (!isdigit(tracknumber[i]))
+      {
+        is_number = SPLT_FALSE;
+        tpu->ambigous = SPLT_TRUE;
+      }
+    }
+
+    int track = 1;
+    if (is_number)
+    {
+      track = atoi(tracknumber);
+    }
+
+    splt_tp_tpu_set_tags_value(tpu, SPLT_TAGS_TRACK, &track);
+  }
+  else if (tpu->auto_increment_tracknumber)
+  {
+    splt_tags last_tags = splt_tu_get_last_tags(state);
+    int track = last_tags.track + 1;
+    splt_tp_tpu_set_tags_value(tpu, SPLT_TAGS_TRACK, &track);
+  }
 }
 
 static void splt_tp_process_tag_variable(const char *tag_variable_start,
@@ -236,39 +348,131 @@ static void splt_tp_process_tag_variable(const char *tag_variable_start,
       if (*error < 0) { return; }
       break;
     case 'a':
-      splt_tp_process_tags_variable(tpu, state, error);
+      splt_tp_process_str_tags_variable(tag_variable_start, end_paranthesis,
+          SPLT_TAGS_ARTIST, tpu, state, error);
+      break;
+    case 'p':
+      splt_tp_process_str_tags_variable(tag_variable_start, end_paranthesis,
+          SPLT_TAGS_PERFORMER, tpu, state, error);
+      break;
+    case 'b':
+      splt_tp_process_str_tags_variable(tag_variable_start, end_paranthesis,
+          SPLT_TAGS_ALBUM, tpu, state, error);
+      break;
+    case 't':
+      splt_tp_process_str_tags_variable(tag_variable_start, end_paranthesis,
+          SPLT_TAGS_TITLE, tpu, state, error);
+      break;
+    case 'c':
+      splt_tp_process_str_tags_variable(tag_variable_start, end_paranthesis,
+          SPLT_TAGS_COMMENT, tpu, state, error);
+      break;
+    case 'g':
+      splt_tp_process_str_tags_variable(tag_variable_start, end_paranthesis,
+          SPLT_TAGS_GENRE, tpu, state, error);
+      break;
+    case 'y':
+      splt_tp_process_str_tags_variable(tag_variable_start, end_paranthesis,
+          SPLT_TAGS_YEAR, tpu, state, error);
+      break;
+    case 'n':
+      splt_tp_process_tracknumber_variable(tag_variable_start,
+          end_paranthesis, tpu, state, error);
+      break;
+    case 'N':
+      splt_tp_process_auto_increment_tracknumber_variable(tag_variable_start,
+          end_paranthesis, tpu, state, error);
+      break;
+    default:
+      tpu->ambigous = SPLT_TRUE;
       break;
   }
 
   splt_tp_check_ambigous_next_position(tag_variable_start, tpu);
 }
 
-static void splt_tp_process_tags_variable(tags_parser_utils *tpu,
-    splt_state *state, int *error)
+static void splt_tp_process_tracknumber_variable(const char *tag_variable_start,
+    const char *end_paranthesis, tags_parser_utils *tpu, splt_state *state, 
+    int *error)
 {
-  /*//TODO
-  artist = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-  if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-  if (artist != NULL)
+  char *tag_value = splt_tp_parse_tag_word(tag_variable_start, end_paranthesis,
+      &tpu->ambigous, error);
+  if (*error < 0) { return; }
+
+  if (tag_value)
   {
-    if (all_tags)
-    {
-      if (all_artist) { free(all_artist); all_artist = NULL; }
-      all_artist = strdup(artist);
-    }
-    cur_pos += strlen(artist)+2;
-    s_artist++;
+    tpu->position += strlen(tag_value) + 1;
+    splt_tp_tpu_increment_tags_field_counter(tpu, SPLT_TAGS_TRACK);
+    splt_tp_tpu_set_tracknumber(tpu, tag_value, error);
+    if (*error < 0) { return; }
+
+    free(tag_value);
+    tag_value = NULL;
   }
-  else
+}
+
+static void splt_tp_process_auto_increment_tracknumber_variable(
+    const char *tag_variable_start, const char *end_paranthesis, 
+    tags_parser_utils *tpu, splt_state *state, int *error)
+{
+  char *tag_value = splt_tp_parse_tag_word(tag_variable_start, end_paranthesis,
+      &tpu->ambigous, error);
+  if (*error < 0) { return; }
+
+  splt_o_set_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS, SPLT_TRUE);
+
+  if (tag_value)
   {
-    cur_pos++;
-  }*/
+    tpu->position += strlen(tag_value) + 1;
+    splt_tp_tpu_set_tracknumber(tpu, tag_value, error);
+    if (*error < 0) { return; }
+
+    free(tag_value);
+    tag_value = NULL;
+  }
+
+  if (tpu->set_all_tags)
+  {
+    tpu->auto_increment_tracknumber = SPLT_TRUE;
+  }
+}
+
+static const char *splt_tp_tpu_get_tracknumber(tags_parser_utils *tpu)
+{
+  return tpu->current_tracknumber;
+}
+
+static void splt_tp_tpu_set_tracknumber(tags_parser_utils *tpu, 
+    const char *tracknumber, int *error)
+{
+  int err = splt_su_copy(tracknumber, &tpu->current_tracknumber);
+  if (err < 0) { *error = err; return; }
+}
+
+static void splt_tp_process_str_tags_variable(const char *tag_variable_start,
+    const char *end_paranthesis, int tags_field,
+    tags_parser_utils *tpu, splt_state *state, int *error)
+{
+  char *tag_value = splt_tp_parse_tag_word(tag_variable_start, end_paranthesis,
+      &tpu->ambigous, error);
+  if (*error < 0) { return; }
+
+  if (tag_value)
+  {
+    splt_tp_tpu_set_tags_value(tpu, tags_field, tag_value);
+
+    tpu->position += strlen(tag_value) + 1;
+    splt_tp_tpu_increment_tags_field_counter(tpu, tags_field);
+
+    free(tag_value);
+    tag_value = NULL;
+  }
 }
 
 static void splt_tp_check_ambigous_next_position(const char *tag_variable_start,
     tags_parser_utils *tpu)
 {
-  char next_position = *(tag_variable_start+1);
+  char next_position = *(tpu->position+1);
   if ((next_position != ',') &&
       (next_position != ']'))
   {
@@ -289,17 +493,19 @@ static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
     return;
   }
 
+  splt_o_lock_messages(state);
+
   splt_tp_get_original_tags(state, error);
-  if (*error < 0) { return; }
+  if (*error < 0) { goto end; }
 
   int err = splt_tu_append_original_tags(state);
-  if (err < 0) { *error = err; return; }
+  if (err < 0) { *error = err; goto end; }
 
   if (tpu->set_all_tags)
   {
     splt_tags last_tags = splt_tu_get_last_tags(state);
     splt_tu_copy_tags(&last_tags, tpu->all_tags, error);
-    if (*error < 0) { return; }
+    if (*error < 0) { goto end; }
   }
 
   tpu->original_tags_found = SPLT_TRUE;
@@ -308,24 +514,25 @@ static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
   {
     tpu->ambigous = SPLT_TRUE;
   }
+
+end:
+  splt_o_unlock_messages(state);
 }
 
 static void splt_tp_get_original_tags(splt_state *state, int *error)
 {
+  splt_check_file_type(state, error);
+  if (*error < 0) { return; }
+
   splt_o_lock_messages(state);
 
-  splt_check_file_type(state, error);
-  if (*error < 0) { goto end; }
-
   splt_p_init(state, error);
-  if (*error < 0) { goto end; }
+  if (*error < 0) { return; }
 
   splt_tu_get_original_tags(state, error);
 
   splt_p_end(state, error);
 
-end:
-  splt_o_unlock_messages(state);
   return;
 }
 
@@ -350,7 +557,7 @@ static char *splt_tp_look_for_end_paranthesis(tags_parser_utils *tpu)
   return end_paranthesis;
 }
 
-static void splt_tp_look_for_all_remaining_tags_char(const char *tags,
+static void splt_tp_look_for_all_tags_char(const char *tags,
     tags_parser_utils *tpu, splt_state *state)
 {
   if ((tpu->position != tags) && (*(tpu->position-1) == '%'))
@@ -361,557 +568,6 @@ static void splt_tp_look_for_all_remaining_tags_char(const char *tags,
 
     splt_tu_free_one_tags_content(tpu->all_tags);
   }
-}
-
-int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error)
-{
-  if (tags != NULL)
-  {
-    const char *cur_pos = NULL;
-    int all_tags = SPLT_FALSE;
-    int we_had_all_tags = SPLT_FALSE;
-
-    cur_pos = tags;
-
-    int ambiguous = SPLT_FALSE;
-    const char *end_paranthesis = NULL;
-    if (!strchr(cur_pos,'['))
-    {
-      ambiguous = SPLT_TRUE;
-    }
-
-    //tags that we put to all the others: %[@t=tag1,@b=album1]
-    char *all_artist = NULL;
-    char *all_album = NULL;
-    char *all_title = NULL;
-    char *all_performer = NULL;
-    char *all_year = NULL;
-    char *all_comment = NULL;
-    char *all_genre = NULL;
-    int all_tracknumber = -1;
-    int auto_incremented_tracknumber = -1;
-    //when using 'N', auto increment the track number
-    short auto_increment_tracknumber = SPLT_FALSE;
-    short first_time_auto_increment_tracknumber = SPLT_TRUE;
-
-    int tags_appended = 0;
-    int get_out_from_while = SPLT_FALSE;
-
-    while ((cur_pos = strchr(cur_pos,'[')))
-    {
-      //if we set the tags for all the files
-      if (cur_pos != tags)
-      {
-        //if we have % before [
-        if (*(cur_pos-1) == '%')
-        {
-          splt_o_set_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X, tags_appended);
-          all_tags = SPLT_TRUE;
-          if (we_had_all_tags)
-          {
-            if (all_title) { free(all_title); all_title = NULL; }
-            if (all_artist) { free(all_artist); all_artist = NULL; }
-            if (all_album) { free(all_album); all_album = NULL; }
-            if (all_performer) { free(all_performer); all_performer = NULL; }
-            if (all_year) { free(all_year); all_year = NULL; }
-            if (all_comment) { free(all_comment); all_comment = NULL; }
-            if (all_genre) { free(all_genre); all_genre = NULL; }
-          }
-        }
-      }
-
-      char *title = NULL;
-      char *artist = NULL;
-      char *album = NULL;
-      char *performer = NULL;
-      char *year = NULL;
-      char *comment = NULL;
-      char *tracknumber = NULL;
-      char *genre = NULL;
-
-      //how many we have found in one [..]
-      short s_title = 0;
-      short s_artist = 0;
-      short s_album = 0;
-      short s_performer = 0;
-      short s_year = 0;
-      short s_comment = 0;
-      short s_genre = 0;
-      short s_tracknumber = 0;
-
-      cur_pos++;
-
-      end_paranthesis = strchr(cur_pos,']');
-      if (!end_paranthesis)
-      {
-        ambiguous = SPLT_TRUE;
-      }
-      else
-      {
-        if ((*(end_paranthesis+1) != '[') &&
-            (*(end_paranthesis+1) != '%') &&
-            (*(end_paranthesis+1) != '\0'))
-        {
-          ambiguous = SPLT_TRUE;
-        }
-      }
-
-      int track = -1;
-
-      char *tag = NULL;
-      int original_tags = SPLT_FALSE;
-      while ((tag = strchr(cur_pos-1,'@')))
-      {
-        if (tag >= end_paranthesis)
-        {
-          break;
-        }
-        else
-        {
-          cur_pos = tag+1;
-        }
-
-        const char *old_pos = cur_pos;
-        if (*(cur_pos-1) == '@')
-        {
-          switch (*cur_pos)
-          {
-            case 'o':
-              ;
-              //if we have twice @o
-              if (original_tags)
-              {
-                ambiguous = SPLT_TRUE;
-              }
-              if ((*(cur_pos+1) != ',') &&
-                  (*(cur_pos+1) != ']'))
-              {
-                ambiguous = SPLT_TRUE;
-              }
-
-              if (! splt_io_input_is_stdin(state))
-              {
-                int err = SPLT_OK;
-                splt_o_lock_messages(state);
-                splt_check_file_type(state, &err);
-                if (err < 0)
-                {
-                  *error = err;
-                  splt_o_unlock_messages(state);
-                  get_out_from_while = SPLT_TRUE;
-                  goto end_while;
-                }
-                splt_o_unlock_messages(state);
-
-                splt_o_lock_messages(state);
-                splt_p_init(state, &err);
-                if (err >= 0)
-                {
-                  splt_tu_get_original_tags(state, &err);
-                  if (err < 0) 
-                  {
-                    *error = err;
-                    splt_o_unlock_messages(state);
-                    get_out_from_while = SPLT_TRUE;
-                    goto end_while;
-                  }
-                  splt_p_end(state, &err);
-                  err = splt_tu_append_original_tags(state);
-                  if (err < 0)
-                  {
-                    *error = err;
-                    splt_o_unlock_messages(state);
-                    get_out_from_while = SPLT_TRUE;
-                    goto end_while;
-                  }
-
-                  if (all_tags)
-                  {
-                    splt_tags last_tags = splt_tu_get_last_tags(state);
-                    if (all_title) { free(all_title); all_title = NULL; }
-                    if (all_artist) { free(all_artist); all_artist = NULL; }
-                    if (all_album) { free(all_album); all_album = NULL; }
-                    if (all_performer) { free(all_performer); all_performer = NULL; }
-                    if (all_year) { free(all_year); all_year = NULL; }
-                    if (all_comment) { free(all_comment); all_comment = NULL; }
-                    if (all_genre) { free(all_genre); all_genre = NULL; }
-                    if (last_tags.title != NULL)
-                    {
-                      all_title = strdup(last_tags.title);
-                    }
-                    if (last_tags.artist != NULL)
-                    {
-                      all_artist = strdup(last_tags.artist);
-                    }
-                    if (last_tags.album != NULL)
-                    {
-                      all_album = strdup(last_tags.album);
-                    }
-                    if (last_tags.performer != NULL)
-                    {
-                      all_performer = strdup(last_tags.performer);
-                    }
-                    if (last_tags.year != NULL)
-                    {
-                      all_year = strdup(last_tags.year);
-                    }
-                    if (last_tags.comment != NULL)
-                    {
-                      all_comment = strdup(last_tags.comment);
-                    }
-                    if (last_tags.genre != NULL)
-                    {
-                      all_genre = strdup(last_tags.genre);
-                    }
-                    all_tracknumber = last_tags.track;
-                  }
-                  original_tags = SPLT_TRUE;
-                  splt_o_unlock_messages(state);
-                }
-                else
-                {
-                  *error = err;
-                  splt_o_unlock_messages(state);
-                  get_out_from_while = SPLT_TRUE;
-                  goto end_while;
-                }
-              }
-
-              //if we have a @a,@p,.. before @n
-              //then ambiguous
-              if ((artist != NULL) || (performer != NULL) ||
-                  (album != NULL) || (title != NULL) ||
-                  (comment != NULL) || (year != NULL) ||
-                  (tracknumber != NULL) || (genre != NULL))
-              {
-                ambiguous = SPLT_TRUE;
-              }
-              break;
-            case 'a':
-              //TODO: memory leak
-              artist = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (artist != NULL)
-              {
-                if (all_tags)
-                {
-                  if (all_artist) { free(all_artist); all_artist = NULL; }
-                  all_artist = strdup(artist);
-                }
-                cur_pos += strlen(artist)+2;
-                s_artist++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              break;
-            case 'p':
-              performer = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (performer != NULL)
-              {
-                if (all_tags)
-                {
-                  if (all_performer) { free(all_performer); all_performer = NULL; }
-                  all_performer = strdup(performer);
-                }
-                cur_pos += strlen(performer)+2;
-                s_performer++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              break;
-            case 'b':
-              album = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (album != NULL)
-              {
-                if (all_tags)
-                {
-                  if (all_album) { free(all_album); all_album = NULL; }
-                  all_album = strdup(album);
-                }
-                cur_pos += strlen(album)+2;
-                s_album++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              break;
-            case 't':
-              title = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (title != NULL)
-              {
-                if (all_tags)
-                {
-                  if (all_title) { free(all_title); all_title = NULL; }
-                  all_title = strdup(title);
-                }
-
-                cur_pos += strlen(title)+2;
-                s_title++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              break;
-            case 'c':
-              comment = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (comment != NULL)
-              {
-                if (all_tags)
-                {
-                  if (all_comment) { free(all_comment); all_comment = NULL; }
-                  all_comment = strdup(comment);
-                }
-
-                cur_pos += strlen(comment)+2;
-                s_comment++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              break;
-            case 'g':
-              genre = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (genre != NULL)
-              {
-                if (all_tags)
-                {
-                  if (all_genre) { free(all_genre); all_genre = NULL; }
-                  all_genre = strdup(genre);
-                }
-
-                cur_pos += strlen(genre)+2;
-                s_genre++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              break;
-            case 'y':
-              year = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (year != NULL)
-              {
-                if (all_tags)
-                {
-                  if (all_year) { free(all_year); all_year = NULL; }
-                  all_year = strdup(year);
-                }
-
-                cur_pos += strlen(year)+2;
-                s_year++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              break;
-            case 'n':
-              tracknumber = splt_tp_parse_tag_word(cur_pos,end_paranthesis,&ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              if (tracknumber != NULL)
-              {
-                cur_pos += strlen(tracknumber)+2;
-                s_tracknumber++;
-              }
-              else
-              {
-                cur_pos++;
-              }
-              if (auto_increment_tracknumber)
-              {
-                first_time_auto_increment_tracknumber = SPLT_TRUE;
-              }
-              break;
-            case 'N':
-              tracknumber = splt_tp_parse_tag_word(cur_pos,end_paranthesis, &ambiguous, error);
-              if (*error < 0) { get_out_from_while = SPLT_TRUE; goto end_while; }
-              splt_o_set_int_option(state, SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS,
-                  SPLT_TRUE);
-              if (auto_increment_tracknumber)
-              {
-                first_time_auto_increment_tracknumber = SPLT_TRUE;
-              }
-              else if (all_tags)
-              {
-                auto_increment_tracknumber = SPLT_TRUE;
-                first_time_auto_increment_tracknumber = SPLT_TRUE;
-              }
-              break;
-            default:
-              ambiguous = SPLT_TRUE;
-              break;
-          }
-        }
-
-        if (cur_pos <= old_pos)
-        {
-          cur_pos++;
-        }
-      }
-
-      //we check that we really have the tracknumber as integer
-      if (tracknumber)
-      {
-        int is_number = SPLT_TRUE;
-        int i = 0;
-        for (i = 0;i < strlen(tracknumber);i++)
-        {
-          if (!isdigit(tracknumber[i]))
-          {
-            is_number = SPLT_FALSE;
-            ambiguous = SPLT_TRUE;
-          }
-        }
-        if (is_number)
-        {
-          track = atoi(tracknumber);
-
-          if (all_tags || auto_increment_tracknumber)
-          {
-            all_tracknumber = track;
-          }
-        }
-      }
-
-      //
-      if (auto_increment_tracknumber)
-      {
-        if (first_time_auto_increment_tracknumber)
-        {
-          auto_incremented_tracknumber = all_tracknumber;
-          first_time_auto_increment_tracknumber = SPLT_FALSE;
-        }
-        track = auto_incremented_tracknumber++;
-      }
-
-      if ((s_title > 1) || (s_artist > 1)
-          || (s_album > 1) || (s_performer > 1)
-          || (s_year > 1) || (s_comment > 1)
-          || (s_tracknumber > 1) || (s_genre > 1))
-      {
-        ambiguous = SPLT_TRUE;
-      }
-
-      if (!original_tags)
-      {
-        if (track == -1)
-        {
-          track = 0;
-        }
-
-        int err = splt_tu_append_tags(state, title, artist,
-            album, performer, year, comment, track, genre);
-        if (err < 0)
-        {
-          *error = err;
-          get_out_from_while = SPLT_TRUE;
-        }
-      }
-      else
-      {
-        int err = splt_tu_append_only_non_null_previous_tags(state, title, artist,
-            album, performer, year, comment, track, genre);
-        if (err < 0)
-        {
-          *error = err;
-          get_out_from_while = SPLT_TRUE;
-        }
-      }
-
-      if (we_had_all_tags && !original_tags)
-      {
-        int index = state->split.real_tagsnumber - 1;
-        if (!title)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_TITLE, all_title);
-        }
-        if (!artist)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_ARTIST, all_artist);
-        }
-        if (!album)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_ALBUM, all_album);
-        }
-        if (!performer)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_PERFORMER, all_performer);
-        }
-        if (!year)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_YEAR, all_year);
-        }
-        if (!comment)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_COMMENT, all_comment);
-        }
-        if (!tracknumber && ! auto_incremented_tracknumber)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_TRACK, &all_tracknumber);
-        }
-        if (!genre)
-        {
-          splt_tu_set_tags_field(state, index, SPLT_TAGS_GENRE, all_genre);
-        }
-      }
-
-end_while:
-      if (title) { free(title); title = NULL; }
-      if (artist) { free(artist); artist = NULL; }
-      if (album) { free(album); album = NULL; }
-      if (performer) { free(performer); performer = NULL; }
-      if (year) { free(year); year = NULL; }
-      if (comment) { free(comment); comment = NULL; }
-      if (genre) { free(genre); genre = NULL; }
-      if (tracknumber) { free(tracknumber); tracknumber = NULL; }
-
-      if (get_out_from_while)
-      {
-        break;
-      }
-
-      if (all_tags)
-      {
-        we_had_all_tags = SPLT_TRUE;
-        all_tags = SPLT_FALSE;
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_TITLE, all_title);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_ARTIST, all_artist);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_ALBUM, all_album);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_PERFORMER, all_performer);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_YEAR, all_year);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_COMMENT, all_comment);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_TRACK, &all_tracknumber);
-        splt_tu_set_like_x_tags_field(state, SPLT_TAGS_GENRE, all_genre);
-      }
-
-      tags_appended++;
-    }
-
-    if (all_title) { free(all_title); all_title = NULL; }
-    if (all_artist) { free(all_artist); all_artist = NULL; }
-    if (all_album) { free(all_album); all_album = NULL; }
-    if (all_performer) { free(all_performer); all_performer = NULL; }
-    if (all_year) { free(all_year); all_year = NULL; }
-    if (all_comment) { free(all_comment); all_comment = NULL; }
-    if (all_genre) { free(all_genre); all_genre = NULL; }
-
-    return ambiguous;
-  }
-
-  return SPLT_FALSE;
 }
 
 static tags_parser_utils *splt_tp_tpu_new(splt_state *state, int *error)
@@ -927,17 +583,20 @@ static tags_parser_utils *splt_tp_tpu_new(splt_state *state, int *error)
   tpu->ambigous = SPLT_FALSE;
   tpu->tags_counter = 0;
   tpu->set_all_tags = SPLT_FALSE;
-  tpu->current_tags = NULL;
-  tpu->all_tags = NULL;
-
-  tpu->current_tags = splt_tu_new_tags(state, error);
-  if (*error < 0) { goto mem_error; }
+  tpu->we_had_all_tags = SPLT_FALSE;
 
   tpu->all_tags = splt_tu_new_tags(state, error);
   if (*error < 0) { goto mem_error; }
 
+  tpu->current_tags = splt_tu_new_tags(state, error);
+  if (*error < 0) { goto mem_error; }
+
+  tpu->current_tracknumber = NULL;
+
   splt_tp_tpu_reset_for_new_tags(state, tpu, error);
   if (*error < 0) { goto mem_error; }
+
+  tpu->auto_increment_tracknumber = SPLT_FALSE;
 
   tpu->position = NULL;
 
@@ -957,10 +616,75 @@ static void splt_tp_tpu_reset_for_new_tags(splt_state *state, tags_parser_utils 
   tpu->year_counter = 0;
   tpu->comment_counter = 0;
   tpu->tracknumber_counter = 0;
+  tpu->genre_counter = 0;
 
   splt_tu_free_one_tags_content(tpu->current_tags);
 
   tpu->original_tags_found = SPLT_FALSE;
+
+  if (tpu->current_tracknumber)
+  {
+    free(tpu->current_tracknumber);
+    tpu->current_tracknumber = NULL;
+  }
+}
+
+static void splt_tp_tpu_increment_tags_field_counter(tags_parser_utils *tpu,
+    int tags_field)
+{
+  switch(tags_field)
+  {
+    case SPLT_TAGS_TITLE:
+      tpu->title_counter++;
+      break;
+    case SPLT_TAGS_ARTIST:
+      tpu->artist_counter++;
+      break;
+    case SPLT_TAGS_ALBUM:
+      tpu->album_counter++;
+      break;
+    case SPLT_TAGS_YEAR:
+      tpu->year_counter++;
+      break;
+    case SPLT_TAGS_COMMENT:
+      tpu->comment_counter++;
+      break;
+    case SPLT_TAGS_PERFORMER:
+      tpu->performer_counter++;
+      break;
+    case SPLT_TAGS_TRACK:
+      tpu->tracknumber_counter++;
+      break;
+    case SPLT_TAGS_VERSION:
+      ;
+      break;
+    case SPLT_TAGS_GENRE:
+      tpu->genre_counter++;
+      ;
+      break;
+  }
+}
+
+static void splt_tp_tpu_set_all_tags_field(tags_parser_utils *tpu,
+    int tags_field, const void *tag_value)
+{
+  if (tpu->set_all_tags)
+  {
+    splt_tu_set_field_on_tags(tpu->all_tags, tags_field, tag_value);
+  }
+}
+
+static void splt_tp_tpu_set_current_tags_field(tags_parser_utils *tpu,
+    int tags_field, const void *tag_value)
+{
+  splt_tu_set_field_on_tags(tpu->current_tags, tags_field, tag_value);
+}
+
+static void splt_tp_tpu_set_tags_value(tags_parser_utils *tpu,
+    int tags_field, const void *tag_value)
+{
+  splt_tp_tpu_set_all_tags_field(tpu, tags_field, tag_value);
+  splt_tp_tpu_set_current_tags_field(tpu, tags_field, tag_value);
 }
 
 static void splt_tp_tpu_free(tags_parser_utils **tpu)
@@ -973,26 +697,18 @@ static void splt_tp_tpu_free(tags_parser_utils **tpu)
   splt_tu_free_one_tags(&(*tpu)->current_tags);
   splt_tu_free_one_tags(&(*tpu)->all_tags);
 
+  if ((*tpu)->current_tracknumber)
+  {
+    free((*tpu)->current_tracknumber);
+    (*tpu)->current_tracknumber = NULL;
+  }
+
   free(*tpu);
   *tpu = NULL;
 }
 
 static int splt_tp_tpu_has_one_current_tag_set(tags_parser_utils *tpu)
 {
-  splt_tags *current_tags = tpu->current_tags;
-
-  if (current_tags->title != NULL ||
-      current_tags->artist != NULL ||
-      current_tags->album != NULL ||
-      current_tags->performer != NULL ||
-      current_tags->year != NULL ||
-      current_tags->comment != NULL ||
-      current_tags->track != -INT_MAX ||
-      current_tags->genre != NULL)
-  {
-    return SPLT_TRUE;
-  }
-
-  return SPLT_FALSE;
+  return splt_tu_has_one_tag_set(tpu->current_tags);
 }
 

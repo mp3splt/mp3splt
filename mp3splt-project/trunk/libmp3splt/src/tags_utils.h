@@ -30,25 +30,16 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_PLUGIN_UTILS_H
+#ifndef MP3SPLT_TAGS_UTILS_H
 
 void splt_tu_free_original_tags(splt_state *state);
 void splt_tu_auto_increment_tracknumber(splt_state *state);
 int splt_tu_append_original_tags(splt_state *state);
-int splt_tu_append_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, const char *genre);
-int splt_tu_append_only_non_null_previous_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, const char *genre);
 void splt_tu_reset_tags(splt_tags *tags);
 splt_tags *splt_tu_new_tags(splt_state *state, int *error);
 void splt_tu_free_one_tags(splt_tags **tags);
 void splt_tu_free_one_tags_content(splt_tags *tags);
+int splt_tu_has_one_tag_set(splt_tags *tags);
 void splt_tu_copy_tags(splt_tags *from, splt_tags *to, int *error);
 int splt_tu_new_tags_if_necessary(splt_state *state, int index);
 int splt_tu_tags_exists(splt_state *state, int index);
@@ -75,7 +66,26 @@ int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks);
 
 int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data);
 
-#define MP3SPLT_PLUGIN_UTILS_H
+int splt_tu_append_tags(splt_state *state, 
+    const char *title, const char *artist,
+    const char *album, const char *performer,
+    const char *year, const char *comment,
+    int track, const char *genre);
+
+void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
+    int append_null_tags, int *error);
+
+void splt_tu_set_new_tags_where_current_tags_are_null(splt_state *state,
+    splt_tags *current_tags, splt_tags *new_tags, 
+    int index, int *error);
+
+int splt_tu_append_only_non_null_previous_tags(splt_state *state, 
+    const char *title, const char *artist,
+    const char *album, const char *performer,
+    const char *year, const char *comment,
+    int track, const char *genre);
+
+#define MP3SPLT_TAGS_UTILS_H
 
 #endif
 

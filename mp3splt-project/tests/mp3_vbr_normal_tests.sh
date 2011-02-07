@@ -565,7 +565,7 @@ function test_normal_vbr_custom_tags
   "Slow Rock" "95" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "2" "" "" "" "" "" "" "2" ""
+  check_current_mp3_no_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -611,7 +611,7 @@ function test_normal_vbr_custom_tags_id3v1
   "Country" "2" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "1" "" "" "" "" "" "" "2" ""
+  check_current_mp3_no_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "1" "La Verue" "album" "Today"\
@@ -685,7 +685,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   "2000" "" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "2" "" "" "" "" "" "" "2" ""
+  check_current_mp3_no_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -731,7 +731,7 @@ function test_normal_vbr_custom_tags_and_input_no_tags
   "2000" "" "" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "1 2" "" "" "" "" "" "" "2" ""
+  check_current_mp3_no_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "1 2" "" "album" "" "" "" "" "7" ""
@@ -774,7 +774,7 @@ function test_normal_vbr_custom_tags_multiple_percent
   check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "2" ""
+  check_all_mp3_tags_with_version "2" "a1" "b1" "" "" "" "" "10" ""
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
   check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
@@ -1162,6 +1162,44 @@ function test_normal_vbr_custom_tags_without_replace_tags_in_tags
   current_file="$OUTPUT_DIR/$F3"
   check_all_mp3_tags_with_version "2" "La Verue" "album_@c" "Today" "2007"\
   "Rock" "17" "8" "cc_@t"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_custom_empty_tags
+{
+  remove_output_dir
+
+  test_name="vbr custom tags empty tags"
+  M_FILE="La_Verue__Today"
+
+  F1="1.mp3"
+  F2="2.mp3"
+  F3="3.mp3"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  output_option="@n"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g \"%[]\" $MP3_FILE 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_current_mp3_no_tags
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_current_mp3_no_tags
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_current_mp3_no_tags
 
   p_green "OK"
   echo
