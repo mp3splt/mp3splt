@@ -983,7 +983,7 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
   if (*error < 0) { goto error; }
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_COMMENT, 3, comment, error);
   if (*error < 0) { goto error; }
-  if (track != -INT_MAX)
+  if (track != -1)
   {
     char track_str[255] = { '\0' };
     snprintf(track_str,254,"%d",track);
@@ -1010,10 +1010,10 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
 
     bytes_length = id3_tag_render(id, bytes);
 
-    id3_tag_delete(id);
-
     *number_of_bytes = (unsigned long) bytes_length;
   }
+
+  id3_tag_delete(id);
 
   return (char *) bytes;
 
@@ -1116,7 +1116,7 @@ static char *splt_mp3_build_simple_id3v1(const char *title, const char *artist,
       id[j++]=buffer[i];
     }
     //if we have a positive track
-    if (track != -INT_MAX)
+    if (track != -1)
     {
       if (track != 0x00)
       {

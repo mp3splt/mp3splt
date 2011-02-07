@@ -306,6 +306,16 @@ char *splt_su_cut_spaces(char *c)
   return c;
 }
 
+char *splt_su_skip_spaces(char *c)
+{
+  while (*c == ' ' || *c == '\t')
+  {
+    c++;
+  }
+
+  return c;
+}
+
 void splt_su_cut_spaces_from_end(char *c)
 {
   if (c == NULL || *c == '\0')

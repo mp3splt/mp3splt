@@ -137,17 +137,18 @@ void splt_ogg_get_info(splt_state *state, FILE *file_input, int *error)
   }
 }
 
-static char *splt_ogg_trackstring(int number)
+static char *splt_ogg_trackstring(int number, int *error)
 {
   char *track = NULL;
 
-  if (number != 0)
+  if (number > 0)
   {
     int len = 0, i;
     len = ((int) (log10((double) (number)))) + 1;
 
     if ((track = malloc(len + 1))==NULL)
     {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       return NULL;
     }
     memset(track, 0, len + 1);
@@ -159,22 +160,6 @@ static char *splt_ogg_trackstring(int number)
   }
 
   return track;
-}
-
-//for the moment we only omit invalid character
-static char *splt_ogg_checkutf(char *s)
-{
-  int i, j=0;
-  for (i=0; i < strlen(s); i++)
-  {
-    if (s[i]<0x7F)
-    {
-      s[j++] = s[i];
-    }
-  }
-  s[j] = '\0';
-
-  return s;
 }
 
 //saves a packet
@@ -454,15 +439,15 @@ static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *arti
 
   if (title != NULL)
   {
-    vorbis_comment_add_tag(vc, "title", splt_ogg_checkutf(title));
+    vorbis_comment_add_tag(vc, "title", title);
   }
   if (artist != NULL)
   {
-    vorbis_comment_add_tag(vc, "artist", splt_ogg_checkutf(artist));
+    vorbis_comment_add_tag(vc, "artist", artist);
   }
   if (album != NULL)
   {
-    vorbis_comment_add_tag(vc, "album", splt_ogg_checkutf(album));
+    vorbis_comment_add_tag(vc, "album", album);
   }
   if (date != NULL)
   {
@@ -576,31 +561,30 @@ void splt_ogg_put_tags(splt_state *state, int *error)
 
   vorbis_comment_clear(&oggstate->vc);
 
-  if (splt_o_get_int_option(state, SPLT_OPT_TAGS) != SPLT_NO_TAGS)
+  if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_NO_TAGS)
   {
-    splt_tags *tags = splt_tu_get_current_tags(state);
-
-    if (tags)
-    {
-      char *track_string = splt_ogg_trackstring(tags->track);
-      if (track_string)
-      {
-        char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
-        vorbis_comment_init(&oggstate->vc);
-        splt_ogg_v_comment(state, &oggstate->vc,
-            artist_or_performer, tags->album, tags->title, track_string,
-            tags->year, tags->genre, tags->comment, error);
-
-        free(track_string);
-        track_string = NULL;
-      }
-      else
-      {
-        *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        return;
-      }
-    }
+    return;
   }
+
+  splt_tags *tags = splt_tu_get_current_tags(state);
+  if (!tags)
+  {
+    return;
+  }
+
+  char *track_string = splt_ogg_trackstring(tags->track, error);
+  if (*error < 0) { return; }
+
+  char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
+
+  vorbis_comment_init(&oggstate->vc);
+
+  splt_ogg_v_comment(state, &oggstate->vc,
+      artist_or_performer, tags->album, tags->title, track_string,
+      tags->year, tags->genre, tags->comment, error);
+
+  free(track_string);
+  track_string = NULL;
 }
 
 /****************************/

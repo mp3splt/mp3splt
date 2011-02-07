@@ -130,6 +130,7 @@ regex_options *parse_tags_from_fname_regex_options(const char *parameters, int *
     char *regex = ptr+6;
     regex_options->regex = my_malloc(sizeof(char) * (strlen(regex)+1));
     strncpy(regex_options->regex, regex, strlen(regex));
+    regex_options->regex[strlen(regex)] = '\0';
   }
   else
   {

@@ -46,10 +46,9 @@ void splt_d_print_debug(splt_state *state, const char *message, ...)
   if (global_debug)
   {
     va_list ap;
-    char *mess = NULL;
 
     va_start(ap, message);
-    mess = splt_su_format_messagev(state, message, ap);
+    char *mess = splt_su_format_messagev(state, message, ap);
     va_end(ap);
 
     if (mess)

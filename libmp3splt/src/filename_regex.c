@@ -81,6 +81,7 @@ splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *re
   const char *errorbits;
   int erroroffset;
 
+  splt_d_print_debug(state, "filename for regex = _%s_\n", filename);
   splt_d_print_debug(state, "regex = _%s_\n", regex);
 
   if (regex == NULL)
