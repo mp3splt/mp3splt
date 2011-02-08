@@ -72,6 +72,8 @@
 #include "import.h"
 #include "mp3splt-gtk.h"
 
+#include "ui_manager.h"
+
 //the state
 splt_state *the_state = NULL;
 
@@ -141,6 +143,9 @@ extern gint multiple_files_tree_number;
 
 //how many split files
 gint split_files = 0;
+
+//! move all options inside
+ui_state *ui = NULL;
 
 //! Add another file to the split_file tab
 void put_split_filename(const char *filename,int progress_data)
@@ -509,6 +514,8 @@ void exit_threads()
  */
 gint main(gint argc, gchar *argv[], gchar **envp)
 {
+  ui = ui_state_new();
+
   int OptionChar;
 
   //init threads
@@ -698,6 +705,11 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   gdk_threads_enter();
   gtk_main();
   exit_threads();
+
+  mp3splt_free_state(the_state, &error);
+
+  ui_state_free(ui);
   
   return 0;
 }
+
