@@ -99,6 +99,10 @@ static void splt_w_free_files(char **files, int number)
 void splt_w_wrap_free(splt_state *state)
 {
   splt_wrap *wrap = state->wrap;
+  if (!wrap)
+  {
+    return;
+  }
   splt_w_free_files(wrap->wrap_files, wrap->wrap_files_num);
   wrap->wrap_files_num = 0;
 }
