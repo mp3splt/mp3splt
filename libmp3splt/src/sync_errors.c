@@ -111,6 +111,11 @@ void splt_se_serrors_free(splt_state *state)
 {
   splt_syncerrors *serrors = state->serrors;
 
+  if (!serrors)
+  {
+    return;
+  }
+
   if (serrors->serrors_points)
   {
     free(serrors->serrors_points);
