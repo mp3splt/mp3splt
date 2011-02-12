@@ -163,10 +163,6 @@ void quit(GtkWidget *widget, gpointer   data)
     number_of_silence_points = 0;
   }
 
-  gint err = SPLT_OK;
-  mp3splt_free_state(the_state, &err);
-  print_status_bar_confirmation(err);
-
   gtk_main_quit();
 }
 
@@ -542,22 +538,25 @@ GtkWidget *create_menu_bar()
 {
   GtkWidget *menu_box = gtk_hbox_new(FALSE,0);
   
-  //define the menu
   static GtkActionEntry const entries[] = {
     //name, stock id,   label
     { "FileMenu", NULL, N_("_File") },  
     { "HelpMenu", NULL, N_("_Help") },
+
     //name, stock id, label, accelerator, tooltip
-    { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
-      G_CALLBACK(split_button_event) },
+    { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
+      G_CALLBACK(browse_button_event) },
+
     { "Import", GTK_STOCK_FILE, N_("_Import splitpoints..."), "<Ctrl>I", N_("Import"),
       G_CALLBACK(import_event) },
-    { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>F", N_("Open"),
-      G_CALLBACK(browse_button_event) },
-    { "Export", GTK_STOCK_OPEN, N_("_Export splitpoints..."), "<Ctrl>E", N_("Export"),
+    { "Export", GTK_STOCK_SAVE_AS, N_("_Export splitpoints..."), "<Ctrl>E", N_("Export"),
       G_CALLBACK(ChooseCueExportFile) },
+
+    { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
+      G_CALLBACK(split_button_event) },
     { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
       G_CALLBACK(show_messages_history_dialog) },
+
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
       G_CALLBACK(quit) },
 
@@ -570,15 +569,17 @@ GtkWidget *create_menu_bar()
     { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
       G_CALLBACK(about_window)},
   };
-  //build the menu
+
   static const gchar *ui_info = 
     "<ui>"
     "  <menubar name='MenuBar'>"
     "    <menu action='FileMenu'>"
     "      <menuitem action='Open'/>"
+    "      <separator/>"
     "      <menuitem action='Import'/>"
-    "      <menuitem action='Split'/>"
     "      <menuitem action='Export'/>"
+    "      <separator/>"
+    "      <menuitem action='Split'/>"
     "      <menuitem action='Messages history'/>"
     "      <separator/>"
     "      <menuitem action='Quit'/>"

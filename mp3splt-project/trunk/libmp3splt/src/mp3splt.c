@@ -143,6 +143,11 @@ and don't forget to call it.
 */
 void mp3splt_free_state(splt_state *state, int *error)
 {
+  if (!state)
+  {
+    return;
+  }
+
   int erro = SPLT_OK;
   int *err = &erro;
   if (error != NULL) { err = error; }

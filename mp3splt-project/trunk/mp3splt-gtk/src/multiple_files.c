@@ -103,7 +103,7 @@ void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
   GtkWidget *file_chooser;
   GtkWidget *our_filter;
  
-  file_chooser = gtk_file_chooser_dialog_new (_("Choose file or directory"),
+  file_chooser = gtk_file_chooser_dialog_new(_("Choose file or directory"),
                                               NULL,
                                               GTK_FILE_CHOOSER_ACTION_OPEN,
                                               GTK_STOCK_CANCEL,

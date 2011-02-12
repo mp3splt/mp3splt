@@ -3893,8 +3893,13 @@ void browse_button_event(GtkWidget *widget, gpointer data)
   gtk_widget_set_sensitive(widget, FALSE);
 
   GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
-      NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+      NULL,
+      GTK_FILE_CHOOSER_ACTION_OPEN,
+      GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL,
+      GTK_STOCK_OPEN,
+      GTK_RESPONSE_ACCEPT,
+      NULL);
 
   GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
   gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files (*.mp3 *.ogg)"));
