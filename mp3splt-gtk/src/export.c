@@ -216,10 +216,10 @@ void ChooseCueExportFile(GtkWidget *widget, gpointer data)
 
     //Write the output file
     export_file(filename);
-    g_free (filename);
+    g_free(filename);
   }
   
   //destroy the dialog
   gtk_widget_destroy(file_chooser);
-
 }
+
