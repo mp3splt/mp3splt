@@ -3,7 +3,7 @@ Section: sound
 Priority: optional
 Maintainer: Ryan Niebur <ryanryan52@gmail.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= 0.6.1), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev, gnome-doc-utils, libgnomeui-dev
+Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= 0.6.1~ppa1~natty), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev, gnome-doc-utils, libgnomeui-dev, rarian-compat
 Standards-Version: 3.9.1
 Homepage: http://mp3splt.sourceforge.net/
 

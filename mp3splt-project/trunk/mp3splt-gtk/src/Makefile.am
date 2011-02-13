@@ -43,8 +43,8 @@ mp3splt_gtk_SOURCES = \
 	combo_helper.c combo_helper.h \
 	radio_helper.c radio_helper.h \
 	export.c export.h \
-  ui_manager.c ui_manager.h \
-  dialog_helper.c dialog_helper.h
+	ui_manager.c ui_manager.h \
+	dialog_helper.c dialog_helper.h
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 
