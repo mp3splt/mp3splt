@@ -3,7 +3,7 @@ Section: sound
 Priority: optional
 Maintainer: Ryan Niebur <ryanryan52@gmail.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= 0.6.1~ppa1~natty)
+Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= 0.6.1~ppa1~maverick)
 Standards-Version: 3.9.1
 Homepage: http://mp3splt.sourceforge.net/
 
