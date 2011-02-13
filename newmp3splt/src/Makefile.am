@@ -2,7 +2,7 @@ bin_PROGRAMS = mp3splt
 
 mp3splt_SOURCES = \
 	options_parsers.c options_parsers.h \
-	options_manager.c options_manager.h
+	options_manager.c options_manager.h \
 	print_utils.c print_utils.h \
 	utils.c utils.h \
 	options_checker.h options_checker.c \
