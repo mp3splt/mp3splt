@@ -174,7 +174,7 @@ function make_debian_flavor()
 
 function debian_packages()
 {
-    DEBIAN_FLAVORS="lenny squeeze unstable"
+    DEBIAN_FLAVORS="squeeze wheezy unstable"
 
     echo
     print_yellow "Creating debian packages..."
