@@ -1,7 +1,9 @@
-mp3splt-gtk (0.6.1) unstable; urgency=low
+mp3splt-gtk (0.6.1~ppa4~natty) natty; urgency=low
 
-  * Non-maintainer upload.
-  * Updated the debian directory to follow the current rules.
+  * mp3splt-gtk: Changed the formatting of the Makefile to allow for stupid build tools
+  * debian: Added the dependency for rarian-compat
+  * debian: Allowed the package to use transitionaly libs from the ppa
+  * debian: Updated the debian directory to follow the current rules.
 
  -- Gunter Königsmann <gunter@peterpall.de>  Sat, 11 Dec 2010 22:35:40 +0100
 
