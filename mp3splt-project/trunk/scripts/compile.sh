@@ -133,9 +133,9 @@ function source_packages()
 #$1=.sarge or $1=.etch
 function put_debian_version()
 {
-    sed -i "1,4s/libmp3splt (\(.*\))/libmp3splt (\1.$1)/" ${LIBMP3SPLT_DIR}/debian/changelog
-    sed -i "1,4s/mp3splt (\(.*\))/mp3splt (\1.$1)/" ${MP3SPLT_DIR}/debian/changelog
-    sed -i "1,4s/mp3splt-gtk (\(.*\))/mp3splt-gtk (\1.$1)/" ${MP3SPLT_GTK_DIR}/debian/changelog
+    sed -i "1,4s/libmp3splt (\(.*\)) .*;/libmp3splt (\1.$1) $1;/" ${LIBMP3SPLT_DIR}/debian/changelog
+    sed -i "1,4s/mp3splt (\(.*\)) .*;/mp3splt (\1.$1) $1;/" ${MP3SPLT_DIR}/debian/changelog
+    sed -i "1,4s/mp3splt-gtk (\(.*\)) .*;/mp3splt-gtk (\1.$1) $1;/" ${MP3SPLT_GTK_DIR}/debian/changelog
 }
 
 #cleans .sarge or .etch
