@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-02-01 22:39+0100\n"
+"POT-Creation-Date: 2011-02-15 20:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -273,23 +273,23 @@ msgstr ""
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr ""
 
-#: src/options_parsers.c:136
+#: src/options_parsers.c:137
 msgid "no regular expression found as argument."
 msgstr ""
 
-#: src/options_parsers.c:312
+#: src/options_parsers.c:313
 msgid "found non digits characters in port ! (switched to default)"
 msgstr ""
 
-#: src/options_parsers.c:337
+#: src/options_parsers.c:338
 msgid "unknown search type ! (switched to default)"
 msgstr ""
 
-#: src/options_parsers.c:353
+#: src/options_parsers.c:354
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
 
-#: src/options_parsers.c:359
+#: src/options_parsers.c:360
 msgid "unknown get type ! (switched to default)"
 msgstr ""
 

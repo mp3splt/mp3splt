@@ -74,7 +74,7 @@ Description: MP3 plugin for mp3splt
 Package: libmp3splt0
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: libmp3splt-mp3, libmp3splt-ogg
+Recommends: libmp3splt0-mp3, libmp3splt0-ogg
 Suggests: mp3splt, mp3splt-gtk
 Conflicts: libmp3splt
 Replaces: libmp3splt
