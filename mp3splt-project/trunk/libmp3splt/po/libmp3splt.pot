@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-02-01 22:39+0100\n"
+"POT-Creation-Date: 2011-02-15 20:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:835
+#: src/mp3splt.c:840
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:929
+#: src/mp3splt.c:934
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:937
+#: src/mp3splt.c:942
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:957
+#: src/mp3splt.c:962
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -48,7 +48,7 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:123 src/cue.c:560
+#: src/cddb.c:123 src/cue.c:547
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -145,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:456
+#: src/cue.c:443
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:508
+#: src/cue.c:495
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:716
+#: src/cue.c:703
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -513,15 +513,15 @@ msgstr ""
 msgid " regular expression ok"
 msgstr ""
 
-#: src/filename_regex.c:89
+#: src/filename_regex.c:90
 msgid "no regular expression provided"
 msgstr ""
 
-#: src/string_utils.c:586 src/string_utils.c:607
+#: src/string_utils.c:608 src/string_utils.c:629
 msgid "not enough memory"
 msgstr ""
 
-#: src/tags_parser.c:91
+#: src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -597,12 +597,12 @@ msgstr ""
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:827
+#: plugins/ogg.c:811
 msgid ""
 " warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
 "to fix.\n"
 msgstr ""
 
-#: plugins/ogg.c:2031
+#: plugins/ogg.c:2015
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
