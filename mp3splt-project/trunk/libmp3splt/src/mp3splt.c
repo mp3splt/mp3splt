@@ -899,33 +899,22 @@ int mp3splt_split(splt_state *state)
       splt_check_if_fname_path_is_correct(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
+      //we check if mp3 or ogg
+      splt_check_file_type(state, &error);
+      if (error < 0) { goto function_end; }
+
       int tags_option = splt_o_get_int_option(state, SPLT_OPT_TAGS);
       if (tags_option == SPLT_TAGS_ORIGINAL_FILE)
       {
         splt_tp_put_tags_from_string(state, SPLT_ORIGINAL_TAGS_DEFAULT, &error);
-        if (error < 0)
-        {
-          int e;
-          splt_p_end(state, &e);
-          goto function_end;
-        }
+        if (error < 0) { goto function_end; }
       }
       else if (tags_option == SPLT_TAGS_FROM_FILENAME_REGEX)
       {
         int regex_error = SPLT_OK;
         splt_tp_put_tags_from_filename(state, &regex_error);
-        if (regex_error < 0)
-        {
-          error = regex_error;
-          int e;
-          splt_p_end(state, &e);
-          goto function_end;
-        }
+        if (regex_error < 0) { error = regex_error; goto function_end; }
       }
-
-      //we check if mp3 or ogg
-      splt_check_file_type(state, &error);
-      if (error < 0) { goto function_end; }
 
       const char *plugin_name = splt_p_get_name(state,&error);
       if (error < 0) { goto function_end; }
