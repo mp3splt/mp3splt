@@ -522,21 +522,11 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
   {
     int index_to_remove = plugin_index_to_remove[i] - left_shift;
 
-    splt_d_print_debug(state,"Removing the plugin _%s_\n",
-        pl->data[index_to_remove].plugin_filename);
+    splt_d_print_debug(state,"Removing the plugin _%s_ at index %d\n",
+        pl->data[index_to_remove].plugin_filename, index_to_remove);
 
-    if (i == number_of_plugins_to_remove-1)
-    {
-      splt_p_free_plugin_data(&pl->data[index_to_remove]);
-    }
-    else
-    {
-      error = splt_p_shift_left_plugins_data(state, index_to_remove);
-      if (error != SPLT_OK)
-      {
-        goto end;
-      }
-    }
+    error = splt_p_shift_left_plugins_data(state, index_to_remove);
+    if (error < SPLT_OK) { break; }
 
     pl->number_of_plugins_found--;
     left_shift++;
