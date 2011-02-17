@@ -1604,7 +1604,6 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
 
   ogg_page og;
   ogg_packet op;
-  ogg_stream_state os;
   vorbis_dsp_state vd;
   vorbis_block vb;
   ogg_int64_t end_position, begin_position, pos, end, begin, page_granpos;
@@ -1614,6 +1613,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
   int saveW = oggstate->prevW;
   float th = splt_co_convert_from_dB(threshold);
 
+  ogg_stream_state os;
   ogg_stream_init(&os, oggstate->serial);
 
   char *filename = splt_t_get_filename_to_split(state);
@@ -1631,6 +1631,8 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
 
   ogg_sync_state oy;
   ogg_sync_init(&oy);
+
+  int auto_adjust_option = splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST);
 
   int split_type = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
   short option_silence_mode = (split_type == SPLT_OPTION_SILENCE_MODE);
@@ -1706,13 +1708,20 @@ int splt_ogg_scan_silence(splt_state *state, short seconds,
           if (result > 0)
           {
             int bs = splt_ogg_get_blocksize(oggstate, oggstate->vi, &op);
-            long first_granpos = 
-              splt_ogg_compute_first_granulepos(state, oggstate, &op, bs);
-            if (first_cut_granpos == 0 && first_granpos != 0)
+
+            //we currently loose the first packet when using the
+            //auto adjust option because we are out of sync,
+            //so we disable the continuity check
+            if (!auto_adjust_option)
             {
-              is_stream = SPLT_TRUE;
-              first_cut_granpos = first_granpos;
-              pos += first_cut_granpos;
+              long first_granpos = 
+                splt_ogg_compute_first_granulepos(state, oggstate, &op, bs);
+              if (first_cut_granpos == 0 && first_granpos != 0)
+              {
+                is_stream = SPLT_TRUE;
+                first_cut_granpos = first_granpos;
+                pos += first_cut_granpos;
+              }
             }
 
             pos += bs;                      
