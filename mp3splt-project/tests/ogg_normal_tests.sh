@@ -1042,6 +1042,52 @@ function test_normal_with_tags_from_filename_regex
   echo
 }
 
+function test_normal_with_auto_adjust
+{
+  remove_output_dir
+
+  test_name="normal with auto adjust"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_silence"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 30 sec Offset: 0.80)
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $SILENCE_OGG_FILE -a 1.0 2.0 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg"
+  check_current_ogg_length "0m:44.154s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "698471"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg" 
+  check_current_ogg_length "1m:00.000s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1049088"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_85h.ogg" 
+  check_current_ogg_length "0m:20.699s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
+                     "http://www.jamendo.com"
+  check_current_file_size "327542"
+
+  p_green "OK"
+  echo
+}
+
+
 function run_normal_tests
 {
   p_blue " NORMAL ogg tests ..."

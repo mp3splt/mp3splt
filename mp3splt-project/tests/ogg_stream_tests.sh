@@ -277,18 +277,18 @@ function test_stream_auto_adjust_silence
   check_current_file_size "134336"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_07s__01m_00s.ogg"
-  check_current_ogg_length "1m:20.572s"
+  check_current_ogg_length "1m:20.064s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "520650"
+  check_current_file_size "517375"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg"
-  check_current_ogg_length "0m:44.882s"
+  check_current_ogg_length "0m:45.377s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "310877"
+  check_current_file_size "314137"
 
   p_green "OK"
   echo
