@@ -31,8 +31,19 @@
 
 #ifndef _UI_MANAGER_H
 
+#define UI_DEFAULT_WIDTH 550
+#define UI_DEFAULT_HEIGHT 420
+
+typedef struct {
+  gint root_x_pos;
+  gint root_y_pos;
+  gint width;
+  gint height;
+} ui_main_window;
+
 typedef struct {
   gchar *browser_directory;
+  ui_main_window *main_win;
 } ui_infos;
 
 typedef struct {
@@ -44,6 +55,10 @@ void ui_state_free(ui_state *ui);
 
 void ui_set_browser_directory(ui_state *ui, const gchar *directory);
 const gchar *ui_get_browser_directory(ui_state *ui);
+
+void ui_set_main_win_position(ui_state *ui, gint x, gint y);
+void ui_set_main_win_size(ui_state *ui, gint width, gint height);
+const ui_main_window *ui_get_main_window_infos(ui_state *ui);
 
 #define _UI_MANAGER_H
 #endif

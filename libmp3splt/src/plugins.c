@@ -532,7 +532,6 @@ static int splt_p_open_get_valid_plugins(splt_state *state)
     left_shift++;
   }
 
-end:
   //free the plugin index to remove
   if (plugin_index_to_remove)
   {

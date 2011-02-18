@@ -53,6 +53,7 @@
 #include "special_split.h"
 #include "combo_helper.h"
 #include "radio_helper.h"
+#include "ui_manager.h"
 
 extern GtkWidget *player_combo_box;
 extern gint selected_player;
@@ -88,6 +89,8 @@ extern GtkComboBox *genre_combo;
 extern GtkWidget *comment_tag_entry;
 extern GtkWidget *regex_entry;
 extern GtkWidget *test_regex_fname_entry;
+
+extern ui_state *ui;
 
 /*! Get the name of the preferences file.
 
@@ -224,18 +227,18 @@ void load_preferences()
   // If outputdirectory_get()!=NULL the path where to output the split file
   // to has been set from command line
   if(outputdirectory_get()==NULL)
+  {
+    // No output_path from command-line => get the path from the preferences
+    gchar *save_path = g_key_file_get_string(key_file, "split", "save_path", NULL);
     {
-      // No output_path from command-line => get the path from the preferences
-      gchar *save_path = g_key_file_get_string(key_file, "split", "save_path", NULL);
+      if (save_path != NULL)
       {
-	if (save_path != NULL)
-	  {
-	    outputdirectory_set(save_path);
-	  }
-	g_free(save_path);
-	save_path = NULL;
+        outputdirectory_set(save_path);
       }
+      g_free(save_path);
+      save_path = NULL;
     }
+  }
 
   //selected player
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
@@ -464,6 +467,20 @@ void load_preferences()
       "split_mode_equal_time_tracks", NULL);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_equal_tracks), equal_tracks);
 
+  gint root_x = g_key_file_get_integer(key_file, "gui", "root_x_position", NULL);
+  gint root_y = g_key_file_get_integer(key_file, "gui", "root_y_position", NULL);
+  if (root_x && root_y)
+  {
+    ui_set_main_win_position(ui, root_x, root_y);
+  }
+
+  gint width = g_key_file_get_integer(key_file, "gui", "width", NULL);
+  gint height = g_key_file_get_integer(key_file, "gui", "height", NULL);
+  if (width && height)
+  {
+    ui_set_main_win_size(ui, width, height);
+  }
+
   g_key_file_free(key_file);
   key_file = NULL;
 }
@@ -596,8 +613,6 @@ void write_default_preferences_file()
     g_key_file_set_comment(my_key_file, "split", "tags",
         "\n 0 - No tags, 1 - Default tags, 2 - Original tags, 3 - Tags from filename", NULL);
   }
-
-  //TODO: replace_underscore... + ... + tags_from_filename_regex
 
   //tags version
   if (!g_key_file_has_key(my_key_file, "split", "tags_version",NULL))
