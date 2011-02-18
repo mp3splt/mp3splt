@@ -56,9 +56,43 @@ const gchar *ui_get_browser_directory(ui_state *ui)
   return ui->infos->browser_directory;
 }
 
+void ui_set_main_win_position(ui_state *ui, gint x, gint y)
+{
+  ui_main_window *main_win = ui->infos->main_win;
+  main_win->root_x_pos = x;
+  main_win->root_y_pos = y;
+}
+
+void ui_set_main_win_size(ui_state *ui, gint width, gint height)
+{
+  ui_main_window *main_win = ui->infos->main_win;
+  main_win->width = width;
+  main_win->height = height;
+}
+
+const ui_main_window *ui_get_main_window_infos(ui_state *ui)
+{
+  return ui->infos->main_win;
+}
+
+static void ui_main_window_new(ui_infos *infos)
+{
+  ui_main_window *main_win = g_malloc0(sizeof(ui_main_window));
+
+  main_win->root_x_pos = 0;
+  main_win->root_y_pos = 0;
+
+  main_win->width = UI_DEFAULT_WIDTH;
+  main_win->height = UI_DEFAULT_HEIGHT;
+
+  infos->main_win = main_win;
+}
+
 static void ui_infos_new(ui_state *ui)
 {
   ui_infos *infos = g_malloc0(sizeof(ui_infos));
+
+  ui_main_window_new(infos);
 
   infos->browser_directory = NULL;
 
@@ -74,17 +108,28 @@ ui_state *ui_state_new()
   return ui;
 }
 
+static void ui_main_window_free(ui_main_window **main_win)
+{
+  if (!main_win || !*main_win)
+  {
+    return;
+  }
+
+  g_free(*main_win);
+  *main_win = NULL;
+}
+
 static void ui_infos_free(ui_infos **infos)
 {
-  if (infos)
+  if (!infos || !*infos)
   {
-    if (*infos)
-    {
-      g_free(*infos);
-    }
-
-    *infos = NULL;
+    return;
   }
+
+  ui_main_window_free(&(*infos)->main_win);
+
+  g_free(*infos);
+  *infos = NULL;
 }
 
 void ui_state_free(ui_state *ui)

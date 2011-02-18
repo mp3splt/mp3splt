@@ -81,6 +81,8 @@
 #include "preferences_manager.h"
 #include "player_tab.h"
 
+#include "ui_manager.h"
+
 //main window
 GtkWidget *window = NULL;
 GtkAccelGroup *window_accel_group = NULL;
@@ -129,19 +131,21 @@ extern gint selected_player;
 extern silence_wave *silence_points;
 extern gint number_of_silence_points;
 
+extern ui_state *ui;
+
 GtkWidget *playlist_box = NULL;
 
 //close the window and exit button function
 void quit(GtkWidget *widget, gpointer   data)
 {
-  //if we are in the middle of the split
+  save_preferences(NULL, NULL);
+
   if (we_are_splitting)
   {
     gint err = SPLT_OK;
     mp3splt_stop_split(the_state,&err);
     print_status_bar_confirmation(err);
 
-    //wait to finish split then quit
     we_quit_main_program = TRUE;
     put_status_message(_(" info: stopping the split process before exiting"));
   }
@@ -219,13 +223,27 @@ void main_window_drag_data_received(GtkWidget *window,
   }
 }
 
-//initializes window
+gboolean configure_window_callback(GtkWindow *window, GdkEvent *event,
+    gpointer data)
+{
+  ui_state *ui = (ui_state *)data;
+
+  ui_set_main_win_position(ui, event->configure.x, event->configure.y); 
+  ui_set_main_win_size(ui, event->configure.height, event->configure.width);
+
+  return FALSE;
+}
+
 void initialize_window()
 {
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+  g_signal_connect(G_OBJECT(window), "configure-event",
+      G_CALLBACK(configure_window_callback), ui);
+
   window_accel_group = gtk_accel_group_new();
   gtk_window_add_accel_group(GTK_WINDOW(window), window_accel_group);
-   
+ 
   gtk_window_set_title(GTK_WINDOW(window), PACKAGE_NAME" "VERSION);
   gtk_container_set_border_width (GTK_CONTAINER (window), 0);
 
@@ -235,17 +253,11 @@ void initialize_window()
   gtk_drag_dest_set(window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
       drop_types, 3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
  
-  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
- 
-
   GString *Imagefile = g_string_new(PIXMAP_PATH);
   build_svg_path(Imagefile, "mp3splt-gtk_ico"ICON_EXT);
-
-  //for the bitmap
   GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(Imagefile->str, NULL);
   gtk_window_set_default_icon(pixbuf);
-
-  g_string_free(Imagefile,TRUE);
+  g_string_free(Imagefile, TRUE);
 }
 
 void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
@@ -820,7 +832,24 @@ GtkWidget *create_main_vbox()
   return main_vbox;
 }
 
-//! Main function that creates all the windows
+static void move_and_resize_main_window()
+{
+  const ui_main_window *main_win = ui_get_main_window_infos(ui);
+
+  gint x = main_win->root_x_pos;
+  gint y = main_win->root_y_pos;
+  if (x != 0 && y != 0)
+  {
+    gtk_window_move(GTK_WINDOW(window), x, y);
+  }
+  else
+  {
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+  }
+
+  gtk_window_resize(GTK_WINDOW(window), main_win->width, main_win->height);
+}
+
 void create_all()
 {
 #ifdef __WIN32__
@@ -832,29 +861,28 @@ void create_all()
   GtkWidget *window_vbox = gtk_vbox_new(FALSE, 0);
   gtk_container_add(GTK_CONTAINER(window), window_vbox);
 
-  /* menu bar */
   GtkWidget *menu_bar;
   menu_bar = (GtkWidget *)create_menu_bar();
   gtk_box_pack_start(GTK_BOX(window_vbox), menu_bar, FALSE, FALSE, 0);  
-  
-  /* main vbox */
+ 
   GtkWidget *main_vbox = (GtkWidget *)create_main_vbox();
   gtk_box_pack_start(GTK_BOX(window_vbox), main_vbox, TRUE, TRUE, 0);
   
-  gtk_widget_show_all(window);
- 
-  hide_disconnect_button();
-  gtk_widget_hide(playlist_box);
-
-  //load preferences
   load_preferences();
+
+  move_and_resize_main_window();
+
   combo_remove_unavailable_players();
 
-  //hide connect button if player is gstreamer
+  gtk_widget_show_all(window);
+
   if (selected_player == PLAYER_GSTREAMER)
   {
     hide_connect_button();
   }
+
+  hide_disconnect_button();
+  gtk_widget_hide(playlist_box);
 }
 
 /*!Output an error message from libmp3splt to the status bar

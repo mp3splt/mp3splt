@@ -56,6 +56,7 @@
 #include "combo_helper.h"
 #include "radio_helper.h"
 #include "options_manager.h"
+#include "ui_manager.h"
 
 /*! The name of the output directory.
   
@@ -143,6 +144,8 @@ static GtkWidget *create_test_regex_table();
 
 extern void clear_current_description(void);
 extern void copy_filename_to_current_description(const gchar *fname);
+
+extern ui_state *ui;
 
 /*!Returns the selected language
 
@@ -252,7 +255,6 @@ gchar* outputdirectory_get()
     return NULL;
 }
 
-//!save preferences event
 void save_preferences(GtkWidget *widget, gpointer data)
 {
   gchar *filename = get_preferences_filename();
@@ -359,6 +361,17 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //equal time tracks value
   g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_equal_tracks)));
+
+  const ui_main_window *main_win = ui_get_main_window_infos(ui);
+  g_key_file_set_integer(my_key_file, "gui", "root_x_position", 
+      main_win->root_x_pos);
+  g_key_file_set_integer(my_key_file, "gui", "root_y_position", 
+      main_win->root_y_pos);
+  g_key_file_set_integer(my_key_file, "gui", "width", 
+      main_win->width);
+  g_key_file_set_integer(my_key_file, "gui", "height", 
+      main_win->height);
+
 
   //our data
   gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);
