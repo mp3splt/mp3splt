@@ -1,5 +1,5 @@
 mp3splt (2.3) maverick; urgency=low
 
-  * test
+  * mp3splt: Made it build on launchpad's build server
 
  -- Gunter Königsmann <gunter@peterpall.de>  Thu, 11 Dec 2010 22:35:40 +0100
