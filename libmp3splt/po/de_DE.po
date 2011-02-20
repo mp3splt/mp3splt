@@ -2,44 +2,40 @@
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-02-01 22:39+0100\n"
-"PO-Revision-Date: 2011-01-24 05:24+0000\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
+"POT-Creation-Date: 2011-02-15 20:20+0100\n"
+"PO-Revision-Date: 2011-02-20 11:28+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:835
+#: src/mp3splt.c:840
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Info: Verknüpfter Dateiname wird in »%s« aufgelöst\n"
 
-#: src/mp3splt.c:929
+#: src/mp3splt.c:934
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Info: Datei passt zum Plugin »%s«\n"
 
-#: src/mp3splt.c:937
+#: src/mp3splt.c:942
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " M3U-Datei »%s« wird erstellt.\n"
 
-#: src/mp3splt.c:957
+#: src/mp3splt.c:962
 #, c-format
-msgid ""
-" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
-"%.2f)\n"
-msgstr ""
-"Mit SILENCE AUTO-ADJUST wird gearbeitet (Ansprechschwelle: %.1f dB Pause: %d "
-"s Versatz: %.2f)\n"
+msgid " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: %.2f)\n"
+msgstr "Mit SILENCE AUTO-ADJUST wird gearbeitet (Ansprechschwelle: %.1f dB Pause: %d s Versatz: %.2f)\n"
 
 #: src/checks.c:142
 msgid "directory does not exists"
@@ -50,7 +46,7 @@ msgstr "Ordner existiert nicht"
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " Informationen aus CDDB-Datei %s werden gelesen …\n"
 
-#: src/cddb.c:123 src/cue.c:560
+#: src/cddb.c:123 src/cue.c:547
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -111,21 +107,13 @@ msgstr "Automatisch"
 
 #: src/splt.c:691
 #, c-format
-msgid ""
-" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: "
-"%s)\n"
-msgstr ""
-" Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: "
-"%.2f, Entfernen: %s)\n"
+msgid " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s)\n"
+msgstr " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: %.2f, Entfernen: %s)\n"
 
 #: src/splt.c:709
 #, c-format
-msgid ""
-" Found silence log file '%s' ! Reading silence points from file to save "
-"time ;)\n"
-msgstr ""
-" Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden die "
-"Teilungspunkte aus dieser Datei gelesen ;)\n"
+msgid " Found silence log file '%s' ! Reading silence points from file to save time ;)\n"
+msgstr " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden die Teilungspunkte aus dieser Datei gelesen ;)\n"
 
 #: src/splt.c:739
 #, c-format
@@ -155,16 +143,16 @@ msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " Info: Überlappung der Dateiteilung mit %ld.%ld.%ld\n"
 
-#: src/cue.c:456
+#: src/cue.c:443
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " Informationen aus CUE-Datei %s werden gelesen …\n"
 
-#: src/cue.c:508
+#: src/cue.c:495
 msgid "description here"
 msgstr "Beschreibung hier"
 
-#: src/cue.c:716
+#: src/cue.c:703
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " CUE-Datei »%s« wurde erstellt.\n"
@@ -523,24 +511,21 @@ msgstr ""
 msgid " regular expression ok"
 msgstr ""
 
-#: src/filename_regex.c:89
+#: src/filename_regex.c:90
 msgid "no regular expression provided"
 msgstr ""
 
-#: src/string_utils.c:586 src/string_utils.c:607
+#: src/string_utils.c:608 src/string_utils.c:629
 msgid "not enough memory"
 msgstr ""
 
-#: src/tags_parser.c:91
-msgid ""
-" warning: cannot set tags from filename regular expression - compiled "
-"without pcre support\n"
+#: src/tags_parser.c:108
+msgid " warning: cannot set tags from filename regular expression - compiled without pcre support\n"
 msgstr ""
 
 #: plugins/mp3.c:1473
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
-msgstr ""
-" Hinweis: Xing- oder Info-Header wurde gefunden. Wechsel zum Frame-Modus…\n"
+msgstr " Hinweis: Xing- oder Info-Header wurde gefunden. Wechsel zum Frame-Modus…\n"
 
 #: plugins/mp3.c:1610
 #, c-format
@@ -608,14 +593,10 @@ msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Info: OggVorbis-Datenstrom - %ld - %ld kB/s - %d Kanäle"
 
-#: plugins/ogg.c:827
-msgid ""
-" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
-"to fix.\n"
-msgstr ""
-" Warnung: Unerwartete Position im OggVorbis-Datenstrom - Teilung von 0.0 bis "
-"Dateiende.\n"
+#: plugins/ogg.c:811
+msgid " warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.\n"
+msgstr " Warnung: Unerwartete Position im OggVorbis-Datenstrom - Teilung von 0.0 bis Dateiende.\n"
 
-#: plugins/ogg.c:2031
+#: plugins/ogg.c:2015
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Warnung: stdin »o-« wird als Ogg-Datenstrom angenommen.\n"

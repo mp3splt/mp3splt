@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-02-01 22:39+0100\n"
-"PO-Revision-Date: 2011-02-08 06:11+0000\n"
+"POT-Creation-Date: 2011-02-15 20:20+0100\n"
+"PO-Revision-Date: 2011-02-20 11:28+0000\n"
 "Last-Translator: rahermosillac <ra.hermosillac@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -110,7 +110,7 @@ msgstr "Eliminar todas las filas"
 msgid "_Silence detection"
 msgstr "Detección de _Silencio"
 
-#: src/tree_tab.c:1716 src/mp3splt-gtk.c:398
+#: src/tree_tab.c:1716 src/mp3splt-gtk.c:403
 msgid " finished"
 msgstr " terminado"
 
@@ -398,7 +398,7 @@ msgstr "Mismas etiquetas que el archivo de entrada"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Versión Etiquetas (sólo mp3)</b>"
 
-#: src/preferences_tab.c:1263 src/main_win.c:551
+#: src/preferences_tab.c:1263 src/main_win.c:555
 msgid "Split"
 msgstr "Dividir"
 
@@ -410,7 +410,7 @@ msgstr "Etiquetas"
 msgid "Output"
 msgstr "Salida"
 
-#: src/preferences_tab.c:1281 src/main_win.c:706
+#: src/preferences_tab.c:1281 src/main_win.c:707
 msgid "Player"
 msgstr "Reproductor"
 
@@ -565,27 +565,27 @@ msgstr " vista previa rápida terminada, canción pausada"
 msgid "Choose File"
 msgstr "Escoja un Archivo"
 
-#: src/player_tab.c:3900 src/multiple_files.c:125
+#: src/player_tab.c:3905 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "archivos mp3 y ogg (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3908 src/multiple_files.c:133
+#: src/player_tab.c:3913 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
 msgstr "mp3 (*.mp3)"
 
-#: src/player_tab.c:3914 src/multiple_files.c:139
+#: src/player_tab.c:3919 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
 msgstr "ogg (*.ogg)"
 
-#: src/player_tab.c:4055
+#: src/player_tab.c:4060
 msgid "_Browse"
 msgstr "_Examinar"
 
-#: src/player_tab.c:4059
+#: src/player_tab.c:4064
 msgid "Select file"
 msgstr "Seleccionar archivo"
 
-#: src/player_tab.c:4066
+#: src/player_tab.c:4071
 msgid "_Fix ogg stream"
 msgstr "_Corregir flujo ogg"
 
@@ -593,119 +593,119 @@ msgstr "_Corregir flujo ogg"
 msgid " info: stopping the split process before exiting"
 msgstr " Info: deteniendo el proceso de división antes de salir"
 
-#: src/main_win.c:341
+#: src/main_win.c:337
 msgid "using"
 msgstr "utilizando"
 
-#: src/main_win.c:345
+#: src/main_win.c:341
 msgid "release of"
 msgstr "liberación de"
 
-#: src/main_win.c:442
+#: src/main_win.c:438
 msgid " info: stopping the split process.. please wait"
 msgstr " Info: deteniendo el proceso de división .. por favor espere"
 
-#: src/main_win.c:481
+#: src/main_win.c:477
 msgid " error: no file selected"
 msgstr " error: no hay ningún archivo seleccionado"
 
-#: src/main_win.c:486
+#: src/main_win.c:482
 msgid " error: split in progress..."
 msgstr " error: división en proceso..."
 
-#: src/main_win.c:505
+#: src/main_win.c:501
 msgid "Split !"
 msgstr "¡Dividir!"
 
-#: src/main_win.c:548
+#: src/main_win.c:543
 msgid "_File"
 msgstr "_Archivo"
 
-#: src/main_win.c:549
+#: src/main_win.c:544
 msgid "_Help"
 msgstr "_Ayuda"
 
-#: src/main_win.c:551
-msgid "_Split !"
-msgstr "_Dividir!"
-
-#: src/main_win.c:553
-msgid "_Import splitpoints..."
-msgstr "_Importar puntos de división..."
-
-#: src/main_win.c:553
-msgid "Import"
-msgstr "Importar"
-
-#: src/main_win.c:555
+#: src/main_win.c:547
 msgid "_Open..."
 msgstr "_Abrir..."
 
-#: src/main_win.c:555
+#: src/main_win.c:547
 msgid "Open"
 msgstr "Abrir"
 
-#: src/main_win.c:557
+#: src/main_win.c:550
+msgid "_Import splitpoints..."
+msgstr "_Importar puntos de división..."
+
+#: src/main_win.c:550
+msgid "Import"
+msgstr "Importar"
+
+#: src/main_win.c:552
 msgid "_Export splitpoints..."
 msgstr ""
 
-#: src/main_win.c:557
+#: src/main_win.c:552
 msgid "Export"
 msgstr ""
 
-#: src/main_win.c:559
+#: src/main_win.c:555
+msgid "_Split !"
+msgstr "_Dividir!"
+
+#: src/main_win.c:557
 msgid "Messages _history"
 msgstr "_Historial de mensajes"
 
-#: src/main_win.c:559 src/main_win.c:812 src/messages.c:197
+#: src/main_win.c:557 src/main_win.c:813 src/messages.c:197
 msgid "Messages history"
 msgstr "Historial de mensajes"
 
-#: src/main_win.c:561
+#: src/main_win.c:560
 msgid "_Quit"
 msgstr "_Salir"
 
-#: src/main_win.c:561
+#: src/main_win.c:560
 msgid "Quit"
 msgstr "Salir"
 
-#: src/main_win.c:566
+#: src/main_win.c:565
 msgid "_Contents"
 msgstr "_Contenidos"
 
-#: src/main_win.c:566
+#: src/main_win.c:565
 msgid "Contents"
 msgstr "Contenidos"
 
-#: src/main_win.c:570
+#: src/main_win.c:569
 msgid "_About"
 msgstr "_Acerca de"
 
-#: src/main_win.c:570
+#: src/main_win.c:569
 msgid "About"
 msgstr "Acerca de"
 
-#: src/main_win.c:719
+#: src/main_win.c:720
 msgid "Splitpoints"
 msgstr "Puntos de división"
 
-#: src/main_win.c:732 src/special_split.c:399
+#: src/main_win.c:733 src/special_split.c:399
 msgid "Batch processing"
 msgstr "Procesamiento por lotes"
 
-#: src/main_win.c:745
+#: src/main_win.c:746
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:756
+#: src/main_win.c:757
 msgid "Type of split"
 msgstr "Tipo de división"
 
-#: src/main_win.c:769
+#: src/main_win.c:770
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/main_win.c:790
+#: src/main_win.c:791
 msgid "S_top"
 msgstr "De_tener"
 
@@ -843,60 +843,60 @@ msgstr "Información: %s"
 msgid " error: cannot create gstreamer playbin\n"
 msgstr " error: No se puede crear playbin gstreamer\n"
 
-#: src/mp3splt-gtk.c:165
+#: src/mp3splt-gtk.c:170
 #, c-format
 msgid " File '%s' created"
 msgstr " Archivo '%s' creado"
 
-#: src/mp3splt-gtk.c:192
+#: src/mp3splt-gtk.c:197
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr " preparando \"%s\" (%d de %d)"
 
-#: src/mp3splt-gtk.c:198
+#: src/mp3splt-gtk.c:203
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr " creando \"%s\" (%d de %d)"
 
-#: src/mp3splt-gtk.c:204
+#: src/mp3splt-gtk.c:209
 msgid " searching for sync errors..."
 msgstr " buscando por errores de sincronización..."
 
-#: src/mp3splt-gtk.c:208
+#: src/mp3splt-gtk.c:213
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S: %02d, Nivel: %.2f dB; escaneando por silencios..."
 
-#: src/mp3splt-gtk.c:371
+#: src/mp3splt-gtk.c:376
 msgid " error: no files found in multiple files mode"
 msgstr " error: no hay archivos encontrados en el modo múltiples archivos"
 
-#: src/mp3splt-gtk.c:605
+#: src/mp3splt-gtk.c:612
 #, c-format
 msgid "Trying to set the output directory to %s.\n"
 msgstr "Intentando establecer directorio de salida a %s.\n"
 
-#: src/mp3splt-gtk.c:614
+#: src/mp3splt-gtk.c:621
 #, c-format
 msgid "Error: The specified output directory is inaccessible!\n"
 msgstr "Error: El directorio de salida especificado no es accesible!\n"
 
-#: src/mp3splt-gtk.c:620
+#: src/mp3splt-gtk.c:627
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr "Opción -%c requiere un argumento.\n"
 
-#: src/mp3splt-gtk.c:622
+#: src/mp3splt-gtk.c:629
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr "Opción '-%c' desconocida.\n"
 
-#: src/mp3splt-gtk.c:625
+#: src/mp3splt-gtk.c:632
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr "Carácter de opción desconocido: '\\x%x'.\n"
 
-#: src/mp3splt-gtk.c:681
+#: src/mp3splt-gtk.c:688
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr "No se puede abrir el archivo de entrada %s\n"
@@ -910,23 +910,23 @@ msgstr "Procesando archivo '%s'..."
 msgid "Choose file to import"
 msgstr "Escoja un archivo a importar"
 
-#: src/import.c:138
+#: src/import.c:143
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr "CDDB (*.cddb), CUE (*.cue), Etiquetas Audacity (*.txt)"
 
-#: src/import.c:142
+#: src/import.c:147
 msgid "CDDB files (*.cddb)"
 msgstr "Archivos CDDB (*.cddb)"
 
-#: src/import.c:144
+#: src/import.c:149
 msgid "CUE files (*.cue)"
 msgstr "Archivos CUE (*.cue)"
 
-#: src/import.c:146
+#: src/import.c:151
 msgid "Audacity labels files (*.txt)"
 msgstr "Archivos de etiquetas Audacity (*.txt)"
 
-#: src/import.c:148
+#: src/import.c:153
 msgid "All files"
 msgstr "Todos los archivos"
 

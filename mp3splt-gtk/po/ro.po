@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-02-01 22:39+0100\n"
-"PO-Revision-Date: 2011-02-08 06:11+0000\n"
+"POT-Creation-Date: 2011-02-15 20:20+0100\n"
+"PO-Revision-Date: 2011-02-20 11:28+0000\n"
 "Last-Translator: snowiulian <snow.iulian@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -110,7 +110,7 @@ msgstr ""
 msgid "_Silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1716 src/mp3splt-gtk.c:398
+#: src/tree_tab.c:1716 src/mp3splt-gtk.c:403
 msgid " finished"
 msgstr ""
 
@@ -398,7 +398,7 @@ msgstr ""
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr ""
 
-#: src/preferences_tab.c:1263 src/main_win.c:551
+#: src/preferences_tab.c:1263 src/main_win.c:555
 msgid "Split"
 msgstr ""
 
@@ -410,7 +410,7 @@ msgstr ""
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1281 src/main_win.c:706
+#: src/preferences_tab.c:1281 src/main_win.c:707
 msgid "Player"
 msgstr ""
 
@@ -544,27 +544,27 @@ msgstr ""
 msgid "Choose File"
 msgstr ""
 
-#: src/player_tab.c:3900 src/multiple_files.c:125
+#: src/player_tab.c:3905 src/multiple_files.c:125
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr ""
 
-#: src/player_tab.c:3908 src/multiple_files.c:133
+#: src/player_tab.c:3913 src/multiple_files.c:133
 msgid "mp3 files (*.mp3)"
 msgstr ""
 
-#: src/player_tab.c:3914 src/multiple_files.c:139
+#: src/player_tab.c:3919 src/multiple_files.c:139
 msgid "ogg files (*.ogg)"
 msgstr ""
 
-#: src/player_tab.c:4055
+#: src/player_tab.c:4060
 msgid "_Browse"
 msgstr ""
 
-#: src/player_tab.c:4059
+#: src/player_tab.c:4064
 msgid "Select file"
 msgstr ""
 
-#: src/player_tab.c:4066
+#: src/player_tab.c:4071
 msgid "_Fix ogg stream"
 msgstr ""
 
@@ -572,119 +572,119 @@ msgstr ""
 msgid " info: stopping the split process before exiting"
 msgstr ""
 
-#: src/main_win.c:341
+#: src/main_win.c:337
 msgid "using"
 msgstr ""
 
-#: src/main_win.c:345
+#: src/main_win.c:341
 msgid "release of"
 msgstr ""
 
-#: src/main_win.c:442
+#: src/main_win.c:438
 msgid " info: stopping the split process.. please wait"
 msgstr ""
 
-#: src/main_win.c:481
+#: src/main_win.c:477
 msgid " error: no file selected"
 msgstr ""
 
-#: src/main_win.c:486
+#: src/main_win.c:482
 msgid " error: split in progress..."
 msgstr ""
 
-#: src/main_win.c:505
+#: src/main_win.c:501
 msgid "Split !"
 msgstr ""
 
-#: src/main_win.c:548
+#: src/main_win.c:543
 msgid "_File"
 msgstr ""
 
-#: src/main_win.c:549
+#: src/main_win.c:544
 msgid "_Help"
 msgstr ""
 
-#: src/main_win.c:551
-msgid "_Split !"
-msgstr ""
-
-#: src/main_win.c:553
-msgid "_Import splitpoints..."
-msgstr ""
-
-#: src/main_win.c:553
-msgid "Import"
-msgstr ""
-
-#: src/main_win.c:555
+#: src/main_win.c:547
 msgid "_Open..."
 msgstr ""
 
-#: src/main_win.c:555
+#: src/main_win.c:547
 msgid "Open"
 msgstr ""
 
-#: src/main_win.c:557
+#: src/main_win.c:550
+msgid "_Import splitpoints..."
+msgstr ""
+
+#: src/main_win.c:550
+msgid "Import"
+msgstr ""
+
+#: src/main_win.c:552
 msgid "_Export splitpoints..."
 msgstr ""
 
-#: src/main_win.c:557
+#: src/main_win.c:552
 msgid "Export"
 msgstr ""
 
-#: src/main_win.c:559
+#: src/main_win.c:555
+msgid "_Split !"
+msgstr ""
+
+#: src/main_win.c:557
 msgid "Messages _history"
 msgstr ""
 
-#: src/main_win.c:559 src/main_win.c:812 src/messages.c:197
+#: src/main_win.c:557 src/main_win.c:813 src/messages.c:197
 msgid "Messages history"
 msgstr ""
 
-#: src/main_win.c:561
+#: src/main_win.c:560
 msgid "_Quit"
 msgstr ""
 
-#: src/main_win.c:561
+#: src/main_win.c:560
 msgid "Quit"
 msgstr ""
 
-#: src/main_win.c:566
+#: src/main_win.c:565
 msgid "_Contents"
 msgstr ""
 
-#: src/main_win.c:566
+#: src/main_win.c:565
 msgid "Contents"
 msgstr ""
 
-#: src/main_win.c:570
+#: src/main_win.c:569
 msgid "_About"
 msgstr ""
 
-#: src/main_win.c:570
+#: src/main_win.c:569
 msgid "About"
 msgstr ""
 
-#: src/main_win.c:719
+#: src/main_win.c:720
 msgid "Splitpoints"
 msgstr ""
 
-#: src/main_win.c:732 src/special_split.c:399
+#: src/main_win.c:733 src/special_split.c:399
 msgid "Batch processing"
 msgstr ""
 
-#: src/main_win.c:745
+#: src/main_win.c:746
 msgid "FreeDB"
 msgstr ""
 
-#: src/main_win.c:756
+#: src/main_win.c:757
 msgid "Type of split"
 msgstr ""
 
-#: src/main_win.c:769
+#: src/main_win.c:770
 msgid "Preferences"
 msgstr ""
 
-#: src/main_win.c:790
+#: src/main_win.c:791
 msgid "S_top"
 msgstr ""
 
@@ -822,60 +822,60 @@ msgstr ""
 msgid " error: cannot create gstreamer playbin\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:165
+#: src/mp3splt-gtk.c:170
 #, c-format
 msgid " File '%s' created"
 msgstr ""
 
-#: src/mp3splt-gtk.c:192
+#: src/mp3splt-gtk.c:197
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/mp3splt-gtk.c:198
+#: src/mp3splt-gtk.c:203
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/mp3splt-gtk.c:204
+#: src/mp3splt-gtk.c:209
 msgid " searching for sync errors..."
 msgstr ""
 
-#: src/mp3splt-gtk.c:208
+#: src/mp3splt-gtk.c:213
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr ""
 
-#: src/mp3splt-gtk.c:371
+#: src/mp3splt-gtk.c:376
 msgid " error: no files found in multiple files mode"
 msgstr ""
 
-#: src/mp3splt-gtk.c:605
+#: src/mp3splt-gtk.c:612
 #, c-format
 msgid "Trying to set the output directory to %s.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:614
+#: src/mp3splt-gtk.c:621
 #, c-format
 msgid "Error: The specified output directory is inaccessible!\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:620
+#: src/mp3splt-gtk.c:627
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:622
+#: src/mp3splt-gtk.c:629
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:625
+#: src/mp3splt-gtk.c:632
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:681
+#: src/mp3splt-gtk.c:688
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr ""
@@ -889,23 +889,23 @@ msgstr ""
 msgid "Choose file to import"
 msgstr ""
 
-#: src/import.c:138
+#: src/import.c:143
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr ""
 
-#: src/import.c:142
+#: src/import.c:147
 msgid "CDDB files (*.cddb)"
 msgstr ""
 
-#: src/import.c:144
+#: src/import.c:149
 msgid "CUE files (*.cue)"
 msgstr ""
 
-#: src/import.c:146
+#: src/import.c:151
 msgid "Audacity labels files (*.txt)"
 msgstr ""
 
-#: src/import.c:148
+#: src/import.c:153
 msgid "All files"
 msgstr ""
 
