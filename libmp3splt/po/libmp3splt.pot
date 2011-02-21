@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-02-15 20:20+0100\n"
+"POT-Creation-Date: 2011-02-21 21:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,17 +22,17 @@ msgstr ""
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:934
+#: src/mp3splt.c:923
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:942
+#: src/mp3splt.c:931
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:962
+#: src/mp3splt.c:951
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -48,7 +48,7 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:123 src/cue.c:547
+#: src/cddb.c:123 src/cue.c:538
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -145,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:443
+#: src/cue.c:434
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:495
+#: src/cue.c:486
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:703
+#: src/cue.c:694
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -603,6 +603,6 @@ msgid ""
 "to fix.\n"
 msgstr ""
 
-#: plugins/ogg.c:2015
+#: plugins/ogg.c:2024
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
