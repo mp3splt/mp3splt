@@ -47,13 +47,13 @@ long splt_co_convert_to_hundreths(const char *s)
 
   for(i=0; i< strlen(s); i++)
   {
-    if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!='.'))
+    if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!=':'))
     {
       return -1;
     }
   }
 
-  if (sscanf(s, "%ld.%ld.%ld", &minutes, &seconds, &hundredths) < 2)
+  if (sscanf(s, "%ld:%ld:%ld", &minutes, &seconds, &hundredths) < 2)
   {
     return -1;
   }
@@ -68,7 +68,7 @@ long splt_co_convert_to_hundreths(const char *s)
     return -1;
   }
 
-  if (s[strlen(s)-2]=='.')
+  if (s[strlen(s)-2]==':')
   {
     hundredths *= 10;
   }

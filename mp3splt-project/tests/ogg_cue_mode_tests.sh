@@ -14,7 +14,7 @@ FILE ${Q}xx$OGG_FILE${Q} OGG
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE ${Q}Our guitar${Q}  
-    INDEX 01 01:43:00
+    INDEX 01   01:43:00  
   TRACK 03 AUDIO
     TITLE ${Q}Our laptop${Q}
     PERFORMER ${Q}Third performer${Q}

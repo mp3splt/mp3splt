@@ -224,25 +224,16 @@ static void splt_cue_process_index_line(char *line_content, cue_utils *cu, splt_
 {
   int err = SPLT_OK;
 
-  // Skip the word INDEX and the 01 that follows 
   line_content += 9;
-
-  char *dot = NULL;
-  if ((dot = strchr(line_content, ':')) == NULL)
-  {
-    splt_e_set_error_data(state, cu->file);
-    cu->error = SPLT_INVALID_CUE_FILE;
-    return;
-  }
 
   if (cu->tracks <= 0)
   {
     return;
   }
 
-  line_content[dot - line_content] = line_content[dot - line_content+3] = '.';
+  char *trimmed_line = splt_su_trim_spaces(line_content);
 
-  long hundr_seconds = splt_co_convert_to_hundreths(line_content);
+  long hundr_seconds = splt_co_convert_to_hundreths(trimmed_line);
   if (hundr_seconds == -1)
   {
     splt_e_set_error_data(state, cu->file);
