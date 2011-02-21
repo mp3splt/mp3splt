@@ -315,7 +315,7 @@ void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
         if (! CreateProcess(NULL, browser_command,
               NULL, NULL, FALSE, 0, NULL, NULL, &si, &pinf))
         {
-          put_status_message("Error launching external command");
+          put_status_message(_("Error launching external command"));
         }
 
         CloseHandle(pinf.hProcess);
@@ -741,8 +741,8 @@ GtkWidget *create_main_vbox()
   
   frame = (GtkWidget *)create_split_files();
   gtk_container_add(GTK_CONTAINER(split_files_vbox), frame);
-  
-  notebook_label = gtk_label_new((gchar *)_("Batch processing"));
+
+  notebook_label = gtk_label_new((gchar *)_("Split files"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            split_files_vbox,
                            (GtkWidget *)notebook_label);

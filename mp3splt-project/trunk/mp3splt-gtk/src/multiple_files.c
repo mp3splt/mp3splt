@@ -82,7 +82,7 @@ void create_multiple_files_columns(GtkTreeView *tree_view)
   GtkCellRendererText *renderer =
     GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   GtkTreeViewColumn *filename_column = gtk_tree_view_column_new_with_attributes 
-    ("Complete filename", GTK_CELL_RENDERER(renderer),
+    (_("Complete filename"), GTK_CELL_RENDERER(renderer),
      "text", MULTIPLE_COL_FILENAME, NULL);
   gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
       GTK_TREE_VIEW_COLUMN(filename_column),MULTIPLE_COL_FILENAME);

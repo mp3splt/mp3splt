@@ -74,6 +74,7 @@ gint spin_hundr_secs = 0;
 //if we have a skippoint or a splitpoint
 gint splitpoint_checked = TRUE;
 //current description
+//TODO: not translated
 gchar current_description[255] = "description here";
 
 //! The total number of splitpoints
@@ -545,7 +546,7 @@ void update_current_description(gchar *descr, gint number)
       //it back
       gchar *tmp = NULL;
       gchar *t = current_description;
-      while ((t = strstr(t, "_part")) != NULL)
+      while ((t = strstr(t, _("_part"))) != NULL)
       {
         tmp = t++;
       }
@@ -556,7 +557,7 @@ void update_current_description(gchar *descr, gint number)
       }
 
       gchar *temp = g_strdup(current_description);
-      g_snprintf(current_description, 255, "%s_part%d", temp, ll + 2);
+      g_snprintf(current_description, 255, _("%s_part%d"), temp, ll + 2);
       g_free(temp);
     }
     ll++;

@@ -298,7 +298,7 @@ static GtkWidget *create_split_mode()
   horiz_fake = gtk_hbox_new(FALSE,0);
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
 
-  all_threshold_label = gtk_label_new("Threshold level (dB) : ");
+  all_threshold_label = gtk_label_new(_("Threshold level (dB) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_threshold_label, FALSE, FALSE, 0);
   
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
@@ -308,7 +308,7 @@ static GtkWidget *create_split_mode()
   horiz_fake = gtk_hbox_new(FALSE,0);
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  all_offset_label = gtk_label_new("Cutpoint offset (0 is the begin of silence,and 1 the end) : ");
+  all_offset_label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence,and 1 the end) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_offset_label, FALSE, FALSE, 0);
 
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
@@ -318,7 +318,7 @@ static GtkWidget *create_split_mode()
   horiz_fake = gtk_hbox_new(FALSE,0);
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
 
-  all_number_of_tracks_label = gtk_label_new("Number of tracks (0 means all tracks) : ");
+  all_number_of_tracks_label = gtk_label_new(_("Number of tracks (0 means all tracks) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_number_of_tracks_label, FALSE, FALSE, 0);
   
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
@@ -328,7 +328,7 @@ static GtkWidget *create_split_mode()
   horiz_fake = gtk_hbox_new(FALSE,0);
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  all_min_silence_label = gtk_label_new("Minimum silence length (seconds) : ");
+  all_min_silence_label = gtk_label_new(_("Minimum silence length (seconds) : "));
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_min_silence_label, FALSE, FALSE, 0);
 
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);

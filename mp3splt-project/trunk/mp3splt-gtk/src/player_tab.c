@@ -3500,7 +3500,7 @@ void create_playlist_columns (GtkTreeView *tree_view)
   //we dont insert the column to the tree view
   /*  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
       filename_column = gtk_tree_view_column_new_with_attributes 
-      ("Complete filename", GTK_CELL_RENDERER(renderer),
+      (_("Complete filename"), GTK_CELL_RENDERER(renderer),
       "text", COL_FILENAME,
       NULL);*/
   /*  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
