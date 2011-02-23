@@ -22,6 +22,7 @@ mp3splt-gtk version 0.6.1
 - fixed windows bug #3118436: LiveP freezing GUI
 - fixed bug #3105771: uppercase filters
 - doxygen documentation
+- registering the program in the system's mimetype database.
 - more translations (project mp3splt-gtk on transifex)
 - added --with-no-images_dir to mp3splt-gtk configure, in order to run the
 application with the new icons without installing

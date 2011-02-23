@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-02-15 20:20+0100\n"
-"PO-Revision-Date: 2011-02-20 11:28+0000\n"
+"POT-Creation-Date: 2011-02-21 21:49+0100\n"
+"PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -22,19 +22,21 @@ msgstr ""
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:934
+#: src/mp3splt.c:923
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:942
+#: src/mp3splt.c:931
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:962
+#: src/mp3splt.c:951
 #, c-format
-msgid " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: %.2f)\n"
+msgid ""
+" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
+"%.2f)\n"
 msgstr ""
 
 #: src/checks.c:142
@@ -46,7 +48,7 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:123 src/cue.c:547
+#: src/cddb.c:123 src/cue.c:538
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -103,12 +105,16 @@ msgstr "Auto"
 
 #: src/splt.c:691
 #, c-format
-msgid " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s)\n"
+msgid ""
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: "
+"%s)\n"
 msgstr ""
 
 #: src/splt.c:709
 #, c-format
-msgid " Found silence log file '%s' ! Reading silence points from file to save time ;)\n"
+msgid ""
+" Found silence log file '%s' ! Reading silence points from file to save time"
+" ;)\n"
 msgstr ""
 
 #: src/splt.c:739
@@ -139,16 +145,16 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:443
+#: src/cue.c:434
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:495
+#: src/cue.c:486
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:703
+#: src/cue.c:694
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -516,7 +522,9 @@ msgid "not enough memory"
 msgstr ""
 
 #: src/tags_parser.c:108
-msgid " warning: cannot set tags from filename regular expression - compiled without pcre support\n"
+msgid ""
+" warning: cannot set tags from filename regular expression - compiled "
+"without pcre support\n"
 msgstr ""
 
 #: plugins/mp3.c:1473
@@ -590,9 +598,11 @@ msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
 #: plugins/ogg.c:811
-msgid " warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.\n"
+msgid ""
+" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
+"to fix.\n"
 msgstr ""
 
-#: plugins/ogg.c:2015
+#: plugins/ogg.c:2024
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""

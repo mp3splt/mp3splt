@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-02-15 20:20+0100\n"
-"PO-Revision-Date: 2011-02-20 11:28+0000\n"
+"POT-Creation-Date: 2011-02-21 21:49+0100\n"
+"PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,7 +25,10 @@ msgstr "no puede asignar memoria!"
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec, read man page for details."
-msgstr "expresión mal momento para la división del tiempo. <span class=\"whitespace other\" title=\"Ficha\">»Debe</span> ser min.sec, lea la página man para más detalles."
+msgstr ""
+"expresión mal momento para la división del tiempo. <span class=\"whitespace "
+"other\" title=\"Ficha\">»Debe</span> ser min.sec, lea la página man para más"
+" detalles."
 
 #: src/mp3splt.c:363
 msgid "read man page for documentation or type 'mp3splt -h'."
@@ -58,8 +61,12 @@ msgid " Processing file '%s' ...\n"
 msgstr ""
 
 #: src/mp3splt.c:615 src/options_checker.c:49
-msgid "cannot use -k option (or STDIN) with one of the following options: -S -s -w -l -e -i -a -p"
-msgstr "no puede utilizar la opción-k (o STDIN) con una de las siguientes opciones:-S-s-w-l-e-i-p-"
+msgid ""
+"cannot use -k option (or STDIN) with one of the following options: -S -s -w "
+"-l -e -i -a -p"
+msgstr ""
+"no puede utilizar la opción-k (o STDIN) con una de las siguientes "
+"opciones:-S-s-w-l-e-i-p-"
 
 #: src/mp3splt.c:671
 msgid "freedb query format ambigous !"
@@ -102,7 +109,9 @@ msgstr ""
 
 #: src/freedb.c:71
 msgid "CDDB QUERY. Insert album and artist informations to find cd."
-msgstr "PREGUNTA CDDB. Introduzca la información de álbum y artista para encontrar cd."
+msgstr ""
+"PREGUNTA CDDB. Introduzca la información de álbum y artista para encontrar "
+"cd."
 
 #: src/freedb.c:79
 msgid ""
@@ -232,12 +241,16 @@ msgid "the -Q option cannot be used with STDOUT output ('-o -')"
 msgstr "la opción-Q-no se puede utilizar con salida STDOUT ('-o -')"
 
 #: src/options_checker.c:227
-msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
-msgstr "la opción-Q-no se puede utilizar con la consulta interactiva freedb ('c-consulta')"
+msgid ""
+"the -Q option cannot be used with interactive freedb query ('-c query')"
+msgstr ""
+"la opción-Q-no se puede utilizar con la consulta interactiva freedb "
+"('c-consulta')"
 
 #: src/options_checker.c:237
 msgid "the -N option must be used with silence detection (-s option)"
-msgstr "opción de la N-debe ser utilizado con la detección de silencio (opción-s)"
+msgstr ""
+"opción de la N-debe ser utilizado con la detección de silencio (opción-s)"
 
 #: src/options_checker.c:247
 msgid "the -O option cannot be used with -w, -e, -l or -i"
@@ -269,7 +282,8 @@ msgstr ""
 
 #: src/options_parsers.c:313
 msgid "found non digits characters in port ! (switched to default)"
-msgstr "dígitos que se encuentran personajes no en el puerto! (Activado por defecto)"
+msgstr ""
+"dígitos que se encuentran personajes no en el puerto! (Activado por defecto)"
 
 #: src/options_parsers.c:338
 msgid "unknown search type ! (switched to default)"
@@ -358,11 +372,18 @@ msgid ""
 " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
 " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
 " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"
-msgstr "-S de detección de silencio: encontrar automáticamente splitpoint. (Uso-p para argumentos) Divide-w envueltos los archivos creados con Mp3Wrap o AlbumWrap. -L Enumera las pistas de archivo sin extracción. (Sólo para envuelto mp3)-e modo de error: dividir mp3 con la detección de errores de sincronización. (Para concatenados mp3)"
+msgstr ""
+"-S de detección de silencio: encontrar automáticamente splitpoint. (Uso-p "
+"para argumentos) Divide-w envueltos los archivos creados con Mp3Wrap o "
+"AlbumWrap. -L Enumera las pistas de archivo sin extracción. (Sólo para "
+"envuelto mp3)-e modo de error: dividir mp3 con la detección de errores de "
+"sincronización. (Para concatenados mp3)"
 
 #: src/print_utils.c:231
-msgid " -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
-msgstr "-A + AUDACITY_FILE: se separó de splitpoints del archivo audacia etiquetas"
+msgid ""
+" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
+msgstr ""
+"-A + AUDACITY_FILE: se separó de splitpoints del archivo audacia etiquetas"
 
 #: src/print_utils.c:232
 msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"
@@ -390,7 +411,11 @@ msgid ""
 " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
 " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
 " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"
-msgstr "-M + M3U_FILE: Anexa a la m3u especifica los nombres de archivo dividido. -F modo de marco (sólo MP3): proceso de todos los marcos. Para una mayor precisión y VBR. -Un auto-ajuste splitpoints con detección de silencio. (Uso-p para los argumentos)"
+msgstr ""
+"-M + M3U_FILE: Anexa a la m3u especifica los nombres de archivo dividido. -F"
+" modo de marco (sólo MP3): proceso de todos los marcos. Para una mayor "
+"precisión y VBR. -Un auto-ajuste splitpoints con detección de silencio. "
+"(Uso-p para los argumentos)"
 
 #: src/print_utils.c:244
 msgid ""
@@ -424,7 +449,11 @@ msgid ""
 " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
 " -k   Consider input not seekable (slower). Default when input is STDIN (-).\n"
 " -O + TIME: Overlap split files with TIME (slower)."
-msgstr "-D + DirName: poner todos los archivos de salida en el directorio que la guía. -Tenga en cuenta k no reubicable de entrada (más lento). Por defecto cuando la entrada es STDIN (-). -O + TIME: Los archivos de superposición dividir con el tiempo (más lento)."
+msgstr ""
+"-D + DirName: poner todos los archivos de salida en el directorio que la "
+"guía. -Tenga en cuenta k no reubicable de entrada (más lento). Por defecto "
+"cuando la entrada es STDIN (-). -O + TIME: Los archivos de superposición "
+"dividir con el tiempo (más lento)."
 
 #: src/print_utils.c:263
 msgid ""
@@ -432,17 +461,25 @@ msgid ""
 " -x   No Xing header: does not write the Xing header. Use with -n if you wish\n"
 "      to concatenate the split files\n"
 " -N   Don't create the 'mp3splt.log' log file when using '-s'."
-msgstr "-N No Tag: no escribe un comentario ID3v1 o vorbis. Si necesita archivos limpios. -X n encabezado XING: no escribe la cabecera de Xing. Usar con-n si desea concatenar el dividir los archivos-N No cree el archivo 'mp3splt.log' registro cuando se utiliza '-s'."
+msgstr ""
+"-N No Tag: no escribe un comentario ID3v1 o vorbis. Si necesita archivos "
+"limpios. -X n encabezado XING: no escribe la cabecera de Xing. Usar con-n si"
+" desea concatenar el dividir los archivos-N No cree el archivo 'mp3splt.log'"
+" registro cuando se utiliza '-s'."
 
 #: src/print_utils.c:267
 msgid ""
 " -P   Pretend to split: simulation of the process, without creating any\n"
 "      files or directories"
-msgstr "-P Pretende dividida: la simulación del proceso, sin crear archivos o directorios"
+msgstr ""
+"-P Pretende dividida: la simulación del proceso, sin crear archivos o "
+"directorios"
 
 #: src/print_utils.c:269
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
-msgstr "-E + CUE_FILE: splitpoints exportación a archivo CUE (uso con-P, si es necesario)"
+msgstr ""
+"-E + CUE_FILE: splitpoints exportación a archivo CUE (uso con-P, si es "
+"necesario)"
 
 #: src/print_utils.c:270
 msgid ""
