@@ -3,7 +3,7 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *                for mp3/ogg splitting without decoding
  *
- * Copyright: (C) 2005-2010 Alexandru Munteanu
+ * Copyright: (C) 2005-2011 Alexandru Munteanu
  * Contact: io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net/
@@ -341,7 +341,7 @@ void about_window(GtkWidget *widget, gpointer *data)
   gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
   gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),
-                                 PACKAGE_NAME" : Copyright © 2005-2010 Alexandru"
+                                 PACKAGE_NAME" : Copyright © 2005-2011 Alexandru"
                                  " Munteanu \n mp3splt : Copyright © 2002-2005 Matteo Trotta");
 
   gchar *b1 = NULL;

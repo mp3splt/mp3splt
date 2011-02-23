@@ -7,6 +7,17 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.3
+
+- new '-G' option: set tags from filename regular expression
+- more translations (project mp3splt-gtk on transifex)
+- added genre tag to custom tags and to output format (libmp3splt)
+- support for the FILE attribute in CUE files (libmp3splt)
+- fixed CUE import bug - spaces at the end are now correctly wiped out (libmp3splt)
+- fixed bug #3114384: introduced back the 'file might be VBR' warning (libmp3splt)
+- fixed bug #3034474: genre tag problems (libmp3splt)
+- fixed ogg stream issues (libmp3splt)
+
 #mp3splt version 2.2.9
 
 - allow auto adjusting when splitting in equal parts
