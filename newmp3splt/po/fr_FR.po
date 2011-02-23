@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-02-15 20:20+0100\n"
-"PO-Revision-Date: 2011-02-20 11:28+0000\n"
+"POT-Creation-Date: 2011-02-21 21:49+0100\n"
+"PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -35,7 +35,8 @@ msgstr "lisez le manuel pour la documentation ou tapez 'mp3splt -h'."
 
 #: src/mp3splt.c:420
 msgid "bad argument for -p option. No valid value was recognized !"
-msgstr "mauvais argument pour l'option -p. Aucune valeur valide n'a été réconnue !"
+msgstr ""
+"mauvais argument pour l'option -p. Aucune valeur valide n'a été réconnue !"
 
 #: src/mp3splt.c:546
 msgid "no input filename(s)."
@@ -43,11 +44,13 @@ msgstr "aucun fichier d'entrée."
 
 #: src/mp3splt.c:559
 msgid "multiple splitpoints with stdout !"
-msgstr "plusieurs points de coupure avec le flux de sortie standard (stdout) !"
+msgstr ""
+"plusieurs points de coupure avec le flux de sortie standard (stdout) !"
 
 #: src/mp3splt.c:563
 msgid "using time mode with stdout !"
-msgstr "utilisation du mode de division 'temps' avec la sortie standard (stdout) !"
+msgstr ""
+"utilisation du mode de division 'temps' avec la sortie standard (stdout) !"
 
 #: src/mp3splt.c:604
 #, c-format
@@ -60,8 +63,12 @@ msgid " Processing file '%s' ...\n"
 msgstr " Fichier '%s' ...\n"
 
 #: src/mp3splt.c:615 src/options_checker.c:49
-msgid "cannot use -k option (or STDIN) with one of the following options: -S -s -w -l -e -i -a -p"
-msgstr "impossible d'utiliser l'option -k (ou flux d'entrée standard) avec une des options suivantes : -S -s -w -l -e -i -a -p"
+msgid ""
+"cannot use -k option (or STDIN) with one of the following options: -S -s -w "
+"-l -e -i -a -p"
+msgstr ""
+"impossible d'utiliser l'option -k (ou flux d'entrée standard) avec une des "
+"options suivantes : -S -s -w -l -e -i -a -p"
 
 #: src/mp3splt.c:671
 msgid "freedb query format ambigous !"
@@ -119,7 +126,9 @@ msgstr " Type de récupération freedb : %s , Site : %s , Port : %d\n"
 
 #: src/freedb.c:71
 msgid "CDDB QUERY. Insert album and artist informations to find cd."
-msgstr "RECHERCHE CDDB. Entrez des informations sur l'album et l'artiste pour trouver un CD."
+msgstr ""
+"RECHERCHE CDDB. Entrez des informations sur l'album et l'artiste pour "
+"trouver un CD."
 
 #: src/freedb.c:79
 msgid ""
@@ -256,15 +265,18 @@ msgstr "l'option -m ne peut être utilisée avec -i"
 
 #: src/options_checker.c:219
 msgid "the -Q option cannot be used with STDOUT output ('-o -')"
-msgstr "l'option -Q ne peut être utilisée avec le flux standard de sortie ('-o -')"
+msgstr ""
+"l'option -Q ne peut être utilisée avec le flux standard de sortie ('-o -')"
 
 #: src/options_checker.c:227
-msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
+msgid ""
+"the -Q option cannot be used with interactive freedb query ('-c query')"
 msgstr "l'option -Q ne peut être utilisée avec la requête freedb ('-c query')"
 
 #: src/options_checker.c:237
 msgid "the -N option must be used with silence detection (-s option)"
-msgstr "l'option -N doit être utilisée avec la détection de silence (option -s)"
+msgstr ""
+"l'option -N doit être utilisée avec la détection de silence (option -s)"
 
 #: src/options_checker.c:247
 msgid "the -O option cannot be used with -w, -e, -l or -i"
@@ -296,7 +308,9 @@ msgstr ""
 
 #: src/options_parsers.c:313
 msgid "found non digits characters in port ! (switched to default)"
-msgstr "détection des caractères autre que des chiffres dans le port ! (utilisation du port par défaut)"
+msgstr ""
+"détection des caractères autre que des chiffres dans le port ! (utilisation "
+"du port par défaut)"
 
 #: src/options_parsers.c:338
 msgid "unknown search type ! (switched to default)"
@@ -304,11 +318,14 @@ msgstr "type de recherche freedb inconnu ! (utilisation du type par défaut)"
 
 #: src/options_parsers.c:354
 msgid "freedb web search not implemented yet ! (switched to default)"
-msgstr "recherche web freedb pas encore implementée ! (utilisation de la recherche par défaut)"
+msgstr ""
+"recherche web freedb pas encore implementée ! (utilisation de la recherche "
+"par défaut)"
 
 #: src/options_parsers.c:360
 msgid "unknown get type ! (switched to default)"
-msgstr "type de récupération freedb inconnu ! (utilisation du type par défaut)"
+msgstr ""
+"type de récupération freedb inconnu ! (utilisation du type par défaut)"
 
 #: src/print_utils.c:39
 #, c-format
@@ -352,7 +369,9 @@ msgstr "utilisant"
 #: src/print_utils.c:159
 #, c-format
 msgid "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n"
-msgstr "CE PROGRAMME EST FOURNI SANS AUCUNE GARANTIE ! UTILISEZ-LE SOUS VOTRE RESPONSABILITE !\n"
+msgstr ""
+"CE PROGRAMME EST FOURNI SANS AUCUNE GARANTIE ! UTILISEZ-LE SOUS VOTRE "
+"RESPONSABILITE !\n"
 
 #: src/print_utils.c:208
 msgid ""
@@ -407,7 +426,8 @@ msgstr ""
 "      concaténés)"
 
 #: src/print_utils.c:231
-msgid " -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
+msgid ""
+" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
 msgstr " -A + FICHIER_AUDACITY : division à partir de marqueurs audacity"
 
 #: src/print_utils.c:232
@@ -510,7 +530,8 @@ msgstr ""
 
 #: src/print_utils.c:269
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
-msgstr " -E + FICHIER_CUE : exporter les points vers un fichier CUE (voir aussi -P)"
+msgstr ""
+" -E + FICHIER_CUE : exporter les points vers un fichier CUE (voir aussi -P)"
 
 #: src/print_utils.c:270
 msgid ""

@@ -1,4 +1,4 @@
-mp3splt (2.3) maverick; urgency=low
+mp3splt (2.3~ppa8~maverick) maverick; urgency=low
 
   * mp3splt: Made it build on launchpad's build server
 
