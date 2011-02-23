@@ -3,8 +3,8 @@
  * libmp3splt -- library based on mp3splt,
  *               for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2010 Alexandru Munteanu - io_fx@yahoo.fr
  * Copyright (c) 2010 David Belohrad
+ * Copyright (c) 2010-2011 Alexandru Munteanu - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net
  *
