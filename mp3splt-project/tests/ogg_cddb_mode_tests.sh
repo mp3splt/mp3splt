@@ -67,17 +67,17 @@ $auto_adjust_warning"
 
   current_file="$OUTPUT_DIR/Don't worry - 1 - A famous title.ogg"
   check_current_ogg_length "1m:04.670s"
-  check_current_file_size "1747618"
+  check_current_file_size "1747391"
   check_all_ogg_tags "Don't worry" "Hack me" "A famous title" "2009" "Other" "1" ""
 
   current_file="$OUTPUT_DIR/Don't worry - 2 - Yeah, split me !.ogg"
   check_current_ogg_length "1m:06.670s"
-  check_current_file_size "1784291"
+  check_current_file_size "1784037"
   check_all_ogg_tags "Don't worry" "Hack me" "Yeah, split me !" "2009" "Other" "2" ""
 
   current_file="$OUTPUT_DIR/MS - 3 - 7 sins campaign.ogg"
   check_current_ogg_length "0m:53.513s"
-  check_current_file_size "1297049"
+  check_current_file_size "1296876"
   check_all_ogg_tags "MS" "Hack me" "7 sins campaign" "2009" "Other" "3" ""
 
   p_green "OK"
@@ -169,17 +169,17 @@ FILE \"songs/Kelly_Allyn__Whiskey_Can.ogg\" OGG
 
   current_file="$OUTPUT_DIR/Don't worry - 1 - A famous title.ogg"
   check_current_ogg_length "1m:04.670s"
-  check_current_file_size "1747618"
+  check_current_file_size "1747391"
   check_all_ogg_tags "Don't worry" "Hack me" "A famous title" "2009" "Other" "1" ""
 
   current_file="$OUTPUT_DIR/Don't worry - 2 - Yeah, split me !.ogg"
   check_current_ogg_length "1m:06.670s"
-  check_current_file_size "1784291"
+  check_current_file_size "1784037"
   check_all_ogg_tags "Don't worry" "Hack me" "Yeah, split me !" "2009" "Other" "2" ""
 
   current_file="$OUTPUT_DIR/MS - 3 - 7 sins campaign.ogg"
   check_current_ogg_length "0m:53.513s"
-  check_current_file_size "1297049"
+  check_current_file_size "1296876"
   check_all_ogg_tags "MS" "Hack me" "7 sins campaign" "2009" "Other" "3" ""
 
   p_green "OK"

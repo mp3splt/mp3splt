@@ -9,21 +9,21 @@ function _check_silence_last_output_files
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "282736"
+  check_current_file_size "282752"
 
   current_file="$OUTPUT_DIR/${O_FILE}_silence_3.ogg"
   check_current_ogg_length "0m:35.920s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "254459"
+  check_current_file_size "254475"
 
   current_file="$OUTPUT_DIR/${O_FILE}_silence_4.ogg"
   check_current_ogg_length "0m:43.222s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "4"\
                      "http://www.jamendo.com"
-  check_current_file_size "298473"
+  check_current_file_size "298489"
 }
 
 function test_stream_with_tags
@@ -51,21 +51,21 @@ function test_stream_with_tags
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "236189"
+  check_current_file_size "236205"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__01m_10s.ogg" 
   check_current_ogg_length "0m:10.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "82300"
+  check_current_file_size "82316"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_10s__01m_36s_20h.ogg" 
   check_current_ogg_length "0m:25.690s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "207571"
+  check_current_file_size "207587"
 
   p_green "OK"
   echo
@@ -94,7 +94,7 @@ function test_stream_starting_from_0
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "168807"
+  check_current_file_size "168823"
 
   p_green "OK"
   echo
@@ -123,7 +123,7 @@ function test_stream_from_0_to_EOF
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "761806"
+  check_current_file_size "761822"
 
   p_green "OK"
   echo
@@ -155,21 +155,21 @@ function test_stream_time_mode
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "248831"
+  check_current_file_size "248847"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_30s__01m_00s.ogg"
   check_current_ogg_length "0m:30.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "236189"
+  check_current_file_size "236205"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__01m_30s.ogg"
   check_current_ogg_length "0m:30.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "240798"
+  check_current_file_size "240814"
 
   p_green "OK"
   echo
@@ -207,7 +207,7 @@ function test_stream_silence_mode
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "130280"
+  check_current_file_size "130296"
 
   _check_silence_last_output_files
 
@@ -239,7 +239,7 @@ function test_stream_silence_mode
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "134380"
+  check_current_file_size "134396"
 
   _check_silence_last_output_files
 
@@ -274,21 +274,21 @@ function test_stream_auto_adjust_silence
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "134336"
+  check_current_file_size "134352"
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_07s__01m_00s.ogg"
   check_current_ogg_length "1m:20.064s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "517375"
+  check_current_file_size "517391"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg"
   check_current_ogg_length "0m:45.377s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "314137"
+  check_current_file_size "314153"
 
   p_green "OK"
   echo

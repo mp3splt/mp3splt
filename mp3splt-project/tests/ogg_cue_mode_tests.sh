@@ -78,17 +78,17 @@ $auto_adjust_warning"
 
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.ogg"
   check_current_ogg_length "1m:43.000s"
-  check_current_file_size "2784660"
+  check_current_file_size "2784325"
   check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "Other" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.ogg"
   check_current_ogg_length "1m:18.000s"
-  check_current_file_size "2011644"
+  check_current_file_size "2011390"
   check_all_ogg_tags "GNU_Linux" "Gentoo" "Our guitar" "" "Other" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg"
   check_current_ogg_length "0m:03.853s"
-  check_current_file_size "33256"
+  check_current_file_size "33272"
   check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
 
   p_green "OK"
@@ -183,17 +183,17 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
 
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.ogg"
   check_current_ogg_length "1m:43.000s"
-  check_current_file_size "2784660"
+  check_current_file_size "2784325"
   check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "Other" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.ogg"
   check_current_ogg_length "1m:18.000s"
-  check_current_file_size "2011644"
+  check_current_file_size "2011390"
   check_all_ogg_tags "GNU_Linux" "Gentoo" "Our guitar" "" "Other" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg"
   check_current_ogg_length "0m:03.853s"
-  check_current_file_size "33256"
+  check_current_file_size "33272"
   check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
 
   p_green "OK"

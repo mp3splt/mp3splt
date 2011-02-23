@@ -28,21 +28,21 @@ function test_normal_with_tags
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "1637906"
+  check_current_file_size "1637679"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "1513287"
+  check_current_file_size "1513060"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "53178"
+  check_current_file_size "53167"
 
   p_green "OK"
   echo
@@ -70,17 +70,17 @@ function test_normal_no_output_tags
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
   check_current_ogg_no_tags
-  check_current_file_size "1637718"
+  check_current_file_size "1637491"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_current_ogg_no_tags
-  check_current_file_size "1513099"
+  check_current_file_size "1512872"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_current_ogg_no_tags
-  check_current_file_size "52990"
+  check_current_file_size "52979"
 
   p_green "OK"
   echo
@@ -154,21 +154,21 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "1637906"
+  check_current_file_size "1637679"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "1513287"
+  check_current_file_size "1513060"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "53178"
+  check_current_file_size "53167"
 
   p_green "OK"
   echo
@@ -237,11 +237,11 @@ function test_normal_overlap_split
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
   check_current_ogg_length "1m:31.199s"
-  check_current_file_size "2421541"
+  check_current_file_size "2421260"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
   check_current_ogg_length "1m:03.653s"
-  check_current_file_size "1561322"
+  check_current_file_size "1561095"
 
   p_green "OK"
   echo
@@ -281,11 +281,11 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
   check_current_ogg_length "1m:31.199s"
-  check_current_file_size "2421541"
+  check_current_file_size "2421260"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
   check_current_ogg_length "1m:03.653s"
-  check_current_file_size "1561322"
+  check_current_file_size "1561095"
 
   p_green "OK"
   echo
@@ -368,17 +368,17 @@ function test_normal_no_input_tags
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
   check_current_ogg_no_tags
-  check_current_file_size "1637718"
+  check_current_file_size "1637491"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_current_ogg_no_tags
-  check_current_file_size "1513099"
+  check_current_file_size "1512872"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_current_ogg_no_tags
-  check_current_file_size "52990"
+  check_current_file_size "52979"
 
   p_green "OK"
   echo
@@ -606,17 +606,17 @@ function test_normal_stdin
   current_file="$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
   check_current_ogg_no_tags
-  check_current_file_size "1637718"
+  check_current_file_size "1637491"
 
   current_file="$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_current_ogg_no_tags
-  check_current_file_size "1513099"
+  check_current_file_size "1512872"
 
   current_file="$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_current_ogg_no_tags
-  check_current_file_size "52990"
+  check_current_file_size "52979"
 
   p_green "OK"
   echo
@@ -644,17 +644,17 @@ function test_normal_stdin_no_input_tags
   current_file="$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
   check_current_ogg_no_tags
-  check_current_file_size "1637718"
+  check_current_file_size "1637491"
 
   current_file="$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_current_ogg_no_tags
-  check_current_file_size "1513099"
+  check_current_file_size "1512872"
 
   current_file="$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_current_ogg_no_tags
-  check_current_file_size "52990"
+  check_current_file_size "52979"
 
   p_green "OK"
   echo
@@ -682,17 +682,17 @@ function test_normal_stdin_with_custom_tags
   current_file="$OUTPUT_DIR/o-_01m_00s__02m_01s_20h.ogg"
   check_current_ogg_length "1m:01.200s"
   check_all_ogg_tags "a1" "b1" "" "1070" "" "1" ""
-  check_current_file_size "1637773"
+  check_current_file_size "1637546"
 
   current_file="$OUTPUT_DIR/o-_02m_01s_20h__03m_00s_10h.ogg" 
   check_current_ogg_length "0m:58.899s"
   check_all_ogg_tags "a1" "b1" "" "1070" "" "2" ""
-  check_current_file_size "1513154"
+  check_current_file_size "1512927"
 
   current_file="$OUTPUT_DIR/o-_03m_00s_10h__EOF.ogg" 
   check_current_ogg_length "0m:04.753s"
   check_all_ogg_tags "a1" "b1" "" "1070" "" "3" ""
-  check_current_file_size "53045"
+  check_current_file_size "53034"
 
   p_green "OK"
   echo
@@ -842,7 +842,7 @@ function test_normal_stdout
 
   current_file="$OUTPUT_DIR/stdout.ogg"
   check_current_ogg_length "1m:30.199s"
-  check_current_file_size "2396195"
+  check_current_file_size "2395887"
 
   p_green "OK"
   echo
@@ -871,7 +871,7 @@ function test_normal_stdout_multiple_splitpoints
 #TODO: 2 outputs are concatenated in the same file ? should we do something ?
   check_current_ogg_length "1m:30.199s
 0m:19.800s"
-  check_current_file_size "2916428"
+  check_current_file_size "2916028"
 
   p_green "OK"
   echo
@@ -1067,21 +1067,21 @@ function test_normal_with_auto_adjust
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "698471"
+  check_current_file_size "698379"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg" 
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "1049088"
+  check_current_file_size "1048969"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_85h.ogg" 
   check_current_ogg_length "0m:20.699s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "327542"
+  check_current_file_size "327477"
 
   p_green "OK"
   echo
