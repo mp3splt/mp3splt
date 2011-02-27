@@ -229,7 +229,7 @@ gboolean configure_window_callback(GtkWindow *window, GdkEvent *event,
   ui_state *ui = (ui_state *)data;
 
   ui_set_main_win_position(ui, event->configure.x, event->configure.y); 
-  ui_set_main_win_size(ui, event->configure.height, event->configure.width);
+  ui_set_main_win_size(ui, event->configure.width, event->configure.height);
 
   return FALSE;
 }
@@ -545,6 +545,11 @@ void ShowHelp()
 }
 #endif
 
+static gchar *my_dgettext(const gchar *key, const gchar *domain)
+{
+  return dgettext("mp3splt-gtk", key);
+}
+
 //!creates the menu bar
 GtkWidget *create_menu_bar()
 {
@@ -606,8 +611,11 @@ GtkWidget *create_menu_bar()
     "</ui>";
 
   GtkActionGroup *actions = gtk_action_group_new ("Actions");
-  //translation
+
   gtk_action_group_set_translation_domain(actions, "mp3splt-gtk");
+  gtk_action_group_set_translate_func(actions,
+                  (GtkTranslateFunc)my_dgettext, NULL, NULL);
+
   //adding the GtkActionEntry to GtkActionGroup
   gtk_action_group_add_actions (actions, entries, G_N_ELEMENTS(entries), NULL);
   GtkUIManager *ui = gtk_ui_manager_new ();
@@ -838,6 +846,7 @@ static void move_and_resize_main_window()
 
   gint x = main_win->root_x_pos;
   gint y = main_win->root_y_pos;
+
   if (x != 0 && y != 0)
   {
     gtk_window_move(GTK_WINDOW(window), x, y);
@@ -870,11 +879,7 @@ void create_all()
   
   load_preferences();
 
-  move_and_resize_main_window();
-
   combo_remove_unavailable_players();
-
-  gtk_widget_show_all(window);
 
   if (selected_player == PLAYER_GSTREAMER)
   {
@@ -883,6 +888,10 @@ void create_all()
 
   hide_disconnect_button();
   gtk_widget_hide(playlist_box);
+
+  move_and_resize_main_window();
+
+  gtk_widget_show_all(window);
 }
 
 /*!Output an error message from libmp3splt to the status bar

@@ -58,6 +58,11 @@ const gchar *ui_get_browser_directory(ui_state *ui)
 
 void ui_set_main_win_position(ui_state *ui, gint x, gint y)
 {
+  if (x == 0 && y == 0)
+  {
+    return;
+  }
+
   ui_main_window *main_win = ui->infos->main_win;
   main_win->root_x_pos = x;
   main_win->root_y_pos = y;
