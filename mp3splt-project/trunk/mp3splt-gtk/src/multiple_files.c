@@ -43,8 +43,11 @@
 
 #include "multiple_files.h"
 #include "main_win.h"
+#include "ui_manager.h"
+#include "widgets_helper.h"
 
 extern splt_state *the_state;
+extern ui_state *ui;
 
 GtkWidget *multiple_files_tree = NULL;
 gint multiple_files_tree_number = 0;
@@ -109,6 +112,8 @@ void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
                                               GTK_STOCK_CANCEL,
                                               GTK_RESPONSE_CANCEL,
                                               NULL);
+
+  wh_set_browser_directory_handler(ui, file_chooser);
 
   GtkWidget *button = gtk_dialog_add_button(GTK_DIALOG(file_chooser),
       GTK_STOCK_ADD, MY_GTK_RESPONSE);

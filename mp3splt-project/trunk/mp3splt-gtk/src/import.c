@@ -49,8 +49,11 @@
 #include "options_manager.h"
 #include "mp3splt-gtk.h"
 #include "utilities.h"
+#include "ui_manager.h"
+#include "widgets_helper.h"
 
 extern splt_state *the_state;
+extern ui_state *ui;
 
 static void set_import_filters(GtkFileChooser *chooser);
 static void build_import_filter(GtkFileChooser *chooser,
@@ -73,6 +76,8 @@ void import_event(GtkWidget *widget, gpointer *data)
         GTK_STOCK_OPEN,
         GTK_RESPONSE_ACCEPT,
         NULL);
+
+  wh_set_browser_directory_handler(ui, file_chooser);
 
   set_import_filters(GTK_FILE_CHOOSER(file_chooser));
 
