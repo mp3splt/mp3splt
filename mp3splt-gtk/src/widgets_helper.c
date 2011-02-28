@@ -120,6 +120,24 @@ GtkWidget *wh_new_button(const gchar *button_label)
   return gtk_button_new_with_mnemonic(button_label);
 }
 
+static void _wh_folder_changed_event(GtkFileChooser *chooser, gpointer data)
+{
+  ui_state *ui = (ui_state *) data;
+  ui_set_browser_directory(ui, gtk_file_chooser_get_current_folder(chooser));
+}
+
+void wh_set_browser_directory_handler(ui_state *ui, GtkWidget* dialog)
+{
+  const gchar *browser_dir = ui_get_browser_directory(ui);
+  if (browser_dir)
+  {
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), browser_dir);
+  }
+
+  g_signal_connect(GTK_FILE_CHOOSER(dialog), "current-folder-changed",
+      G_CALLBACK(_wh_folder_changed_event), ui);
+}
+
 static guint _wh_add_row_to_table(GtkWidget *table)
 {
   guint rows;

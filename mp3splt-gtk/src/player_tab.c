@@ -57,6 +57,8 @@
 #include "utilities.h"
 #include "split_files.h"
 #include "mp3splt-gtk.h"
+#include "ui_manager.h"
+#include "widgets_helper.h"
 
 //! The text box showing the filename of the current input file.
 GtkWidget *entry;
@@ -105,6 +107,8 @@ extern GtkWidget *cancel_button;
 extern gint debug_is_active;
 
 extern gchar *executable_dir;
+
+extern ui_state *ui;
 
 //our progress bar
 GtkWidget *progress_bar;
@@ -3900,6 +3904,8 @@ void browse_button_event(GtkWidget *widget, gpointer data)
       GTK_STOCK_OPEN,
       GTK_RESPONSE_ACCEPT,
       NULL);
+
+  wh_set_browser_directory_handler(ui, file_chooser);
 
   GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
   gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files (*.mp3 *.ogg)"));

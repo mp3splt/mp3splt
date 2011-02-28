@@ -44,6 +44,10 @@
 #include "main_win.h"
 #include "player_tab.h"
 #include "tree_tab.h"
+#include "ui_manager.h"
+#include "widgets_helper.h"
+
+extern ui_state *ui;
 
 /*! Export the current split points into a cue file
 
@@ -200,6 +204,8 @@ void ChooseCueExportFile(GtkWidget *widget, gpointer data)
       GTK_STOCK_SAVE,
       GTK_RESPONSE_ACCEPT,
       NULL);
+
+  wh_set_browser_directory_handler(ui, file_chooser);
 
   // tells the dialog to list only cue files
   GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();

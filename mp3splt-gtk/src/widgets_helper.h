@@ -33,6 +33,8 @@
 
 #include <gtk/gtk.h>
 
+#include "ui_manager.h"
+
 GtkWidget *wh_set_title_and_get_vbox(GtkWidget *widget, const gchar *title);
 
 GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_level);
@@ -47,6 +49,8 @@ void wh_add_in_table_with_label_expand(GtkWidget *table, const gchar *label_text
 GtkWidget *wh_new_entry(gpointer callback);
 
 GtkWidget *wh_new_button(const gchar *button_label);
+
+void wh_set_browser_directory_handler(ui_state *ui, GtkWidget* dialog);
 
 #define WIDGETS_HELPER_H
 #endif

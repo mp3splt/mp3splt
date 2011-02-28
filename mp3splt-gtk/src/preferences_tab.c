@@ -57,6 +57,7 @@
 #include "radio_helper.h"
 #include "options_manager.h"
 #include "ui_manager.h"
+#include "widgets_helper.h"
 
 /*! The name of the output directory.
   
@@ -334,16 +335,23 @@ void save_preferences(GtkWidget *widget, gpointer data)
     g_key_file_set_string(my_key_file, "split", "genre", genre_value);
   }
 
-  //default comment tag
-  g_key_file_set_string(my_key_file, "split", "default_comment_tag",
-      gtk_entry_get_text(GTK_ENTRY(comment_tag_entry)));
+  const gchar *comment = gtk_entry_get_text(GTK_ENTRY(comment_tag_entry));
+  if (comment != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "default_comment_tag", comment);
+  }
 
-  //regex to parse filename into tags
-  g_key_file_set_string(my_key_file, "split", "tags_from_filename_regex",
-      gtk_entry_get_text(GTK_ENTRY(regex_entry)));
+  const gchar *regex_text = gtk_entry_get_text(GTK_ENTRY(regex_entry));
+  if (regex_text != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "tags_from_filename_regex", regex_text);
+  }
 
-  g_key_file_set_string(my_key_file, "split", "test_regex_fname",
-      gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry)));
+  const gchar *test_regex_fname = gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry));
+  if (test_regex_fname_entry != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "test_regex_fname", test_regex_fname);
+  }
 
   //tags version
   g_key_file_set_integer(my_key_file, "split", "tags_version",
@@ -372,8 +380,12 @@ void save_preferences(GtkWidget *widget, gpointer data)
   g_key_file_set_integer(my_key_file, "gui", "height", 
       main_win->height);
 
+  const char *browser_directory = ui_get_browser_directory(ui);
+  if (browser_directory != NULL)
+  {
+    g_key_file_set_string(my_key_file, "gui", "browser_directory", browser_directory);
+  }
 
-  //our data
   gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);
 
   //we write to the preference file
@@ -498,6 +510,8 @@ void browse_dir_button_event(GtkWidget *widget, gpointer data)
       GTK_STOCK_OPEN,
       GTK_RESPONSE_ACCEPT,
       NULL);
+
+  wh_set_browser_directory_handler(ui, dir_chooser);
 
   if (gtk_dialog_run(GTK_DIALOG(dir_chooser)) == GTK_RESPONSE_ACCEPT)
   {

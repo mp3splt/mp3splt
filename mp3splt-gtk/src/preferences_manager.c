@@ -481,6 +481,14 @@ void load_preferences()
     ui_set_main_win_size(ui, width, height);
   }
 
+  gchar *browser_directory =
+    g_key_file_get_string(key_file, "gui", "browser_directory", NULL);
+  if (browser_directory)
+  {
+    ui_set_browser_directory(ui, browser_directory);
+    g_free(browser_directory);
+  }
+
   g_key_file_free(key_file);
   key_file = NULL;
 }
