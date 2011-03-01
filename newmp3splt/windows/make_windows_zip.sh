@@ -24,7 +24,7 @@ else
   put_package "cross_windows_zip"
 fi
 
-LANGUAGES="fr de"
+LANGUAGES="fr_FR de_DE"
 
 BASIC_FILES="
 newmp3splt/src/mp3splt.exe
