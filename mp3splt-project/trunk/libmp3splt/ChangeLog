@@ -6,13 +6,13 @@ libmp3splt version 0.6.1
 -------------------------------------------------------------
 
 - added genre tag to custom tags and to output format (@g)
-- support for the FILE attribute in CUE files
+- support for the FILE attribute in CUE files - #1353726
 - support for setting tags from filename regular expression
 - added cutter as unit testing framework in libmp3splt
 - fixed CUE import bug - spaces at the end are now correctly wiped out
 - fixed bug #3114384: introduced back the 'file might be VBR' warning
 - fixed bug #3034474: genre tag problems
-- fixed ogg stream issues
+- fixed ogg stream issues - #2861898 & #1078018
 - fixed bug: setting the saved end time on wrong splitpoint indexes
 - more translations (project mp3splt-gtk on transifex)
 - and many other bugs ...
