@@ -11,7 +11,7 @@
 <H2>NAME</H2>
 
 <P>
-mp3splt --- Utility for mp3/ogg splitting without decoding
+mp3splt, oggsplt - utility for mp3/ogg vorbis splitting without decoding
 <A NAME="lbAC">&nbsp;</A>
 <H2>SYNOPSIS</H2>
 
@@ -74,6 +74,10 @@ of a Xing or Info header and will consequently start in framemode, but if this i
 mp3splt will start in standard mode.
 This means that splitting process will be quicker, but imprecise due to variable bitrate,
 you can split those VBR files only with framemode (see -f option).
+<P>
+<B>NOTE for OGG:</B> in some cases, mp3splt does not manage to split
+ogg vorbis streams correctly. Splitting the input file from 0.0 to EOF
+might fix the issues.
 <P>
 <B>NOTE about TAGS:</B> by default, mp3splt will put the original tags in
 the split files. Custom tags for the split files can be set with the -g option.
@@ -349,6 +353,9 @@ It can contain name variables, that must begin with @ char and that can be:
 @b: album title
 <BR>
 
+@g: genre
+<BR>
+
 @t: song title*
 <BR>
 
@@ -449,6 +456,9 @@ replace tags in tags. The 'replace tags in tags' option is not recursive. The va
 @c: comment
 <BR>
 
+@g: genre
+<BR>
+
 @n: track number
 <BR>
 
@@ -475,6 +485,24 @@ Without the 'r' option, output artists are 'artist_@b_@N'.
 <P>
 Replacement is not recursive: <B>r%[@o,@N=1,@b=album_@N,@a=artist_@b]</B>
 will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'.
+<P>
+<DT><B>-G regex=REGEX</B>         <DD>
+<B>Tags from filename regex</B>. Set tags from input filename regular expression.
+REGEX can contain those variables:
+<BR>&nbsp;&nbsp;&nbsp;(?&lt;artist&gt;),&nbsp;(?&lt;album&gt;),&nbsp;(?&lt;title&gt;),&nbsp;(?&lt;tracknum&gt;),&nbsp;(?&lt;year&gt;),&nbsp;(?&lt;comment&gt;),&nbsp;(?&lt;genre&gt;)
+<P>
+Example: if the input filename is <B>artist1__album2__title3__comment4__2__2004__Samba.ogg</B>, 
+<BR>
+
+the following regular expression
+<B>(?&lt;artist&gt;.*?)__(?&lt;album&gt;.*?)__(?&lt;title&gt;.*?)__(?&lt;comment&gt;.*?)__(?&lt;tracknum&gt;.*?)__(?&lt;year&gt;.*?)__(?&lt;genre&gt;.*)</B> extracts the tags:
+<BR>&nbsp;&nbsp;(?&lt;artist&gt;):&nbsp;artist1
+<BR>&nbsp;&nbsp;(?&lt;album&gt;):&nbsp;album2
+<BR>&nbsp;&nbsp;(?&lt;title&gt;):&nbsp;title3
+<BR>&nbsp;&nbsp;(?&lt;genre&gt;):&nbsp;Samba
+<BR>&nbsp;&nbsp;(?&lt;comment&gt;):&nbsp;comment4
+<BR>&nbsp;&nbsp;(?&lt;tracknum&gt;):&nbsp;2
+<BR>&nbsp;&nbsp;(?&lt;year&gt;):&nbsp;2004
 <P>
 <DT><B>-m M3U</B>         <DD>
 <B>Create .m3u file</B>. Creates a .m3u file containing the split
@@ -640,7 +668,7 @@ for latest release.
 (C) 2002-2005 by Matteo Trotta
 <BR>
 
-(C) 2005-2009 by Alexandru Ionut Munteanu
+(C) 2005-2011 by Alexandru Ionut Munteanu
 <P>
 
 Permission is granted to copy, distribute and/or modify
@@ -668,6 +696,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 19:33:22 GMT, September 26, 2010
+Time: 06:58:50 GMT, March 02, 2011
 </BODY>
 </HTML>
