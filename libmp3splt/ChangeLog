@@ -2,7 +2,7 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
-libmp3splt version 0.6.1-a
+libmp3splt version 0.6.1a
 -------------------------------------------------------------
 
 - fixed tracktype.org issue
