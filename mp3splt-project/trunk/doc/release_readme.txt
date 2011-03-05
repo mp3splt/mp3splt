@@ -29,6 +29,7 @@ Release instructions:
      $ ./scripts/compile.sh
 11) upload to sourceforge
 12) change web site & upload web pages to sourceforge
-13) make release announcement on sourceforge
-14) make release announcement on mailing list
+13) update debian repository
+14) make release announcement on sourceforge
+15) make release announcement on mailing list
 
