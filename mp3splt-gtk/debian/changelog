@@ -1,11 +1,10 @@
-mp3splt-gtk (0.6.1~ppa8~maverick) maverick; urgency=low
+mp3splt-gtk (0.6.1-1) unstable; urgency=low
 
-  * mp3splt-gtk: Changed the formatting of the Makefile to allow for stupid build tools
-  * debian: Added the dependency for rarian-compat
-  * debian: Allowed the package to use transitionaly libs from the ppa
-  * debian: Updated the debian directory to follow the current rules.
+  * Non-maintainer upload.
+  * New Upstream Version
+  * Updated the debian control file
 
- -- Gunter Königsmann <gunter@peterpall.de>  Sat, 11 Dec 2010 22:35:40 +0100
+ -- Gunter Königsmann <gunter@peterpall.de>  Sat, 3 Mar 2011 23:04:40 +0100
 
 mp3splt-gtk (0.5.6-1.2) unstable; urgency=low
 
