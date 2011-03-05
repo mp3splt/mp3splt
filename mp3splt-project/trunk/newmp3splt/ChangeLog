@@ -7,6 +7,10 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.3-a
+
+- fixed tracktype.org issue (libmp3splt)
+
 #mp3splt version 2.3
 
 - new '-G' option: set tags from filename regular expression
