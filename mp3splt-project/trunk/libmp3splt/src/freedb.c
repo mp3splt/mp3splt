@@ -432,7 +432,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
         if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI)
         {
           malloc_number = strlen(search)+
-            strlen(SPLT_FREEDB2_SEARCH)+strlen(cgi_path)+3;
+            strlen(SPLT_FREEDB2_SEARCH)+strlen(cgi_path)+strlen(dest.hostname)+3;
 
           //we allocate the memory for the query string
           if ((message = malloc(malloc_number)) == NULL)
@@ -443,7 +443,7 @@ int splt_freedb_process_search(splt_state *state, char *search,
           {
             //we write the search query
             snprintf(message, malloc_number,
-                SPLT_FREEDB2_SEARCH,cgi_path,search);
+                SPLT_FREEDB2_SEARCH,cgi_path,search, dest.hostname);
 
             //fprintf(stdout,"message = _%s_\n",message);
             //fflush(stdout);
@@ -463,6 +463,8 @@ int splt_freedb_process_search(splt_state *state, char *search,
               int init_err = splt_fu_freedb_init_search(state);
               if (init_err == SPLT_OK)
               {
+                int content_start = SPLT_FALSE;
+
                 //we read what we receive from the server
                 do {
                   tot=0;
@@ -486,8 +488,23 @@ int splt_freedb_process_search(splt_state *state, char *search,
                   //fprintf(stdout,"buffer = %s\n",buffer);
                   //fflush(stdout);
 
+                  char *buf_start = buffer;
+                  if (!content_start)
+                  {
+                    char *start = strstr(buffer, "\r\n\r\n");
+                    if (start)
+                    {
+                      buf_start = strstr(start+4, "\r\n");
+                      if (!buf_start)
+                      {
+                        buf_start = buffer;
+                      }
+                      content_start = SPLT_TRUE;
+                    }
+                  }
+
                   //we analyse the buffer
-                  tot = splt_freedb2_analyse_cd_buffer(buffer, tot, state,&error);
+                  tot = splt_freedb2_analyse_cd_buffer(buf_start, tot, state,&error);
                   if (error < 0)
                   {
                     goto function_end1;
@@ -607,6 +624,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
   int tot=0;
   //the buffer that we are using to read incoming transmission
   char buffer[SPLT_FREEDB_BUFFERSIZE] = { '\0' };
+  char *buf_start = buffer;
   //e is used for the end of the buffer
   //c is used for the buffer read
   char *c = NULL, *e=NULL;
@@ -677,7 +695,7 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
     {
       //if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
       malloc_number = strlen(cd_category) + strlen(cd_id) +
-        strlen(SPLT_FREEDB_CDDB_CGI_GET_FILE) + strlen(cgi_path);
+        strlen(SPLT_FREEDB_CDDB_CGI_GET_FILE) + strlen(cgi_path) + strlen(dest.hostname);
     }
     message = malloc(malloc_number);
     if (message != NULL)
@@ -877,7 +895,7 @@ bloc_end:
         if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
         {
           snprintf(message, malloc_number, SPLT_FREEDB_CDDB_CGI_GET_FILE, 
-              cgi_path, cd_category, cd_id);
+              cgi_path, cd_category, cd_id, dest.hostname);
 
           //open socket
           if((fd=socket(AF_INET, SOCK_STREAM, 0))==-1)
@@ -911,6 +929,8 @@ bloc_end:
                 c = buffer;
                 tot=0;
 
+                int content_start = SPLT_FALSE;
+
                 //we read 
                 //we read what we receive from the server
                 do {
@@ -926,14 +946,29 @@ bloc_end:
                       goto bloc_end2;
                     }
 
+                    buf_start = buffer;
+                    if (!content_start)
+                    {
+                      char *start = strstr(buffer, "\r\n\r\n");
+                      if (start)
+                      {
+                        buf_start = strstr(start+4, "\r\n");
+                        if (!buf_start)
+                        {
+                          buf_start = buffer;
+                        }
+                        content_start = SPLT_TRUE;
+                      }
+                    }
+
                     //if errors
                     if (tot == 0)
                     {
-                      if ((strncmp(buffer,"50",2) == 0)
-                          || (strncmp(buffer,"40",2) == 0))
+                      if ((strncmp(buf_start,"50",2) == 0)
+                          || (strncmp(buf_start,"40",2) == 0))
                       {
                         //if "No such CD entry in database"
-                        if (strncmp(buffer,"401",3) == 0)
+                        if (strncmp(buf_start,"401",3) == 0)
                         {
                           *error = SPLT_FREEDB_NO_SUCH_CD_IN_DATABASE;
                         }
@@ -974,7 +1009,7 @@ bloc_end2:
                 goto end_function;
               }
 
-              if ((c = strchr (buffer, '#'))==NULL)
+              if ((c = strchr (buf_start, '#'))==NULL)
               {
                 output = NULL;
                 *error = SPLT_FREEDB_ERROR_BAD_COMMUNICATION;
