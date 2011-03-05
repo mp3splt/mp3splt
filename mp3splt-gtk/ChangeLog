@@ -8,6 +8,11 @@ Known issues :
 - menus translation 'N_' not working : how to fix ?
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.6.1-a
+
+- fixed tracktype.org issue (libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.6.1
 
 - new CUE export: save current state - #3101612 & #1763318
