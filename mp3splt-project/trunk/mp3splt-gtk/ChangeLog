@@ -8,7 +8,7 @@ Known issues :
 - menus translation 'N_' not working : how to fix ?
 
 -------------------------------------------------------------
-mp3splt-gtk version 0.6.1-a
+mp3splt-gtk version 0.6.1a
 
 - fixed tracktype.org issue (libmp3splt)
 
