@@ -1,8 +1,10 @@
-libmp3splt (0.6.1~ppa8~maverick) maverick; urgency=low
+libmp3splt (0.6.1-1) unstable; urgency=low
 
-  * test
+  * Non-maintainer upload.
+  * New Upstream Version
+  * Updated the debian control file
 
- -- Gunter Königsmann <gunter@peterpall.de>  Thu, 11 Dec 2010 22:35:40 +0100
+ -- Gunter Königsmann <gunter@peterpall.de>  Sat, 3 Mar 2011 23:04:40 +0100
 
 libmp3splt (0.5.6-1) unstable; urgency=low
 
