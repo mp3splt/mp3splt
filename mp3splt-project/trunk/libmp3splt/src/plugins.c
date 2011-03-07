@@ -84,55 +84,98 @@ int splt_p_append_plugin_scan_dir(splt_state *state, const char *dir)
   return SPLT_OK;
 }
 
-//function to filter the plugin files
-static int splt_p_filter_plugin_files(const struct dirent *de)
-{
-  char *file = (char *) de->d_name;
-  const char *p_end = NULL;
-  const char *p_start = NULL;
-  if (file)
-  {
-    if (strlen(file) >= 8)
-    {
-      //if the name starts with splt_and contains .so or .sl or .dll or .dylib
-      if (strncmp(file,"libsplt_",8) == 0)
-      {
-        splt_d_print_debug(NULL, "Looking at the file _%s_\n", file);
-
-        p_start = strchr(file,'.');
-
-#ifndef __WIN32__
-        //gnu/linux .so.0
-        p_end = strstr(file, ".so.0");
-        if (p_end != NULL && (p_start == p_end) && (*(p_end+5) == '\0'))
-        {
-          return 1;
-        }
-#endif
-
-        p_end = strrchr(file,'.');
-        if ((p_end != NULL) && (p_start == p_end))
-        {
-          //windows .dll
 #ifdef __WIN32__
-          if (strcmp(p_end,".dll") == 0)
-          {
-            return 1;
-          }
-#else
-          //bsd .sl & darwin .dylib
-          if ((strcmp(p_end,".sl") == 0) || (strcmp(p_end,".dylib") == 0))
-          {
-            return 1;
-          }
-#endif
-        }
-      }
+static int splt_p_filter_plugin_files(const struct _wdirent *de)
+{
+  wchar_t *file = (wchar_t *) de->d_name;
+  const wchar_t *p_end = NULL;
+  const wchar_t *p_start = NULL;
+
+  if (!file)
+  {
+    return 0;
+  }
+
+  if (wcslen(file) < 8)
+  {
+    return 0;
+  }
+
+  if (wcsncmp(file, L"libsplt_", 8) != 0)
+  {
+    return 0;
+  }
+
+  splt_d_print_debug(NULL, "Looking at the file _%s_\n", splt_w32_utf16_to_utf8(file));
+
+  p_start = wcschr(file,'.');
+  p_end = wcsrchr(file,'.');
+  if ((p_end != NULL) && (p_start == p_end))
+  {
+    if (wcscmp(p_end, L".dll") == 0)
+    {
+      return 1;
     }
   }
 
   return 0;
 }
+#else
+static int splt_p_filter_plugin_files(const struct dirent *de)
+{
+  char *file = (char *) de->d_name;
+  const char *p_end = NULL;
+  const char *p_start = NULL;
+
+  if (!file)
+  {
+    return 0;
+  }
+
+  if (strlen(file) < 8)
+  {
+    return 0;
+  }
+
+  if (strncmp(file,"libsplt_", 8) != 0)
+  {
+    return 0;
+  }
+
+  splt_d_print_debug(NULL, "Looking at the file _%s_\n", file);
+
+  p_start = strchr(file,'.');
+
+#ifndef __WIN32__
+  //gnu/linux .so.0
+  p_end = strstr(file, ".so.0");
+  if (p_end != NULL && (p_start == p_end) && (*(p_end+5) == '\0'))
+  {
+    return 1;
+  }
+#endif
+
+  p_end = strrchr(file,'.');
+  if ((p_end != NULL) && (p_start == p_end))
+  {
+    //windows .dll
+#ifdef __WIN32__
+    if (strcmp(p_end,".dll") == 0)
+    {
+      return 1;
+    }
+#else
+    //bsd .sl & darwin .dylib
+    if ((strcmp(p_end,".sl") == 0) || (strcmp(p_end,".dylib") == 0))
+    {
+      return 1;
+    }
+#endif
+  }
+
+  return 0;
+}
+#endif
 
 static int splt_p_alloc_init_new_plugin(splt_plugins *pl)
 {
@@ -177,12 +220,19 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
 {
   int return_value = SPLT_OK;
 
+#ifdef __WIN32__
+  struct _wdirent **files = NULL;
+#else
   struct dirent **files = NULL;
+#endif
 
   int number_of_files = 0;
   errno = 0;
+#ifdef __WIN32__
+  number_of_files = wscandir(directory, &files, splt_p_filter_plugin_files, walphasort);
+#else
   number_of_files = scandir(directory, &files, splt_p_filter_plugin_files, alphasort);
-  int directory_len = strlen(directory);
+#endif
   int new_number_of_files = number_of_files;
 
   if (number_of_files == -1)
@@ -194,35 +244,32 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
   }
   else if (new_number_of_files >= 0)
   {
-    char *fname = NULL;
+    char *dir_and_fname = NULL;
 
     //for all the filtered found plugins,
     //copy their name
     while (new_number_of_files--)
     {
-      fname = files[new_number_of_files]->d_name;
-      int fname_len = strlen(fname);
+#ifdef __WIN32__
+      char *fname = splt_w32_utf16_to_utf8(files[new_number_of_files]->d_name);
+#else
+      char *fname = files[new_number_of_files]->d_name;
+#endif
 
-      //get the full directory + filename
-      int dir_and_fname_len = fname_len + directory_len + 3;
-      char *dir_and_fname = malloc(sizeof(char) * dir_and_fname_len);
-      if (dir_and_fname == NULL)
-      {
-        return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        goto end;
-      }
-      snprintf(dir_and_fname, dir_and_fname_len - 1, "%s%c%s",directory,SPLT_DIRCHAR,fname);
+#ifdef __WIN32__
+      splt_su_copy(fname, &dir_and_fname);
+#else
+      splt_su_copy(directory, &dir_and_fname);
+      splt_su_append_str(&dir_and_fname, SPLT_DIRSTR, fname, NULL);
+#endif
 
-      //check if we already have a plugin with the same file
-      int we_already_have_this_plugin_file = SPLT_FALSE;
       int i = 0;
       int err = SPLT_OK;
       for (i = 0;i < pl->number_of_plugins_found;i++)
       {
         if (splt_check_is_the_same_file(state, dir_and_fname, pl->data[i].plugin_filename, &err))
         {
-          we_already_have_this_plugin_file = SPLT_TRUE;
-          break;
+          goto loop_end;
         }
 
         if (err != SPLT_OK)
@@ -232,53 +279,41 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
         }
       }
 
-      //if we don't have a plugin from the same file, add this new plugin
-      if (! we_already_have_this_plugin_file)
+      int alloc_err = splt_p_alloc_init_new_plugin(pl);
+      if (alloc_err < 0)
       {
-        int alloc_err = splt_p_alloc_init_new_plugin(pl);
-        if (alloc_err < 0)
-        {
-          return_value = alloc_err;
-          goto end;
-        }
-
-        pl->data[pl->number_of_plugins_found].func = malloc(sizeof(splt_plugin_func));
-        if (pl->data[pl->number_of_plugins_found].func == NULL)
-        {
-          return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-          goto end;
-        }
-        memset(pl->data[pl->number_of_plugins_found].func,0,sizeof(splt_plugin_func));
-
-        pl->data[pl->number_of_plugins_found].plugin_filename = malloc(sizeof(char) *
-            dir_and_fname_len);
-        if (pl->data[pl->number_of_plugins_found].plugin_filename == NULL)
-        {
-          return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-          goto end;
-        }
-
-        //set the plugin path
-        snprintf(pl->data[pl->number_of_plugins_found].plugin_filename,
-            dir_and_fname_len - 1,"%s%c%s",directory,SPLT_DIRCHAR,fname);
-
-        pl->number_of_plugins_found++;
+        return_value = alloc_err;
+        goto end;
       }
 
-      //free some memory
-      if (dir_and_fname)
+      pl->data[pl->number_of_plugins_found].func = malloc(sizeof(splt_plugin_func));
+      if (pl->data[pl->number_of_plugins_found].func == NULL)
       {
-        free(dir_and_fname);
-        dir_and_fname = NULL;
+        return_value = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        goto end;
       }
+      memset(pl->data[pl->number_of_plugins_found].func, 0, sizeof(splt_plugin_func));
+
+      splt_su_copy(dir_and_fname, 
+          &pl->data[pl->number_of_plugins_found].plugin_filename);
+
+      pl->number_of_plugins_found++;
+
+loop_end:
+      ;
     }
 
 end:
     ;
 
+    if (dir_and_fname)
+    {
+      free(dir_and_fname);
+      dir_and_fname = NULL;
+    }
+
     if (files)
     {
-      //free memory
       while (number_of_files--)
       {
         if (files[number_of_files])

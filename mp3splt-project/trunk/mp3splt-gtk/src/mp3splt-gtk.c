@@ -662,6 +662,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
     {
       g_setenv("GST_PLUGIN_PATH",executable,TRUE);
       mp3splt_append_plugins_scan_dir(the_state, executable);
+      _chdir(executable);
     }
   }
 

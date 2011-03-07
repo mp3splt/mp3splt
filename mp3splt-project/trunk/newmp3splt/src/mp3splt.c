@@ -393,6 +393,7 @@ int main(int argc, char **orig_argv)
     if (executable[0] != '\0')
     {
       mp3splt_append_plugins_scan_dir(state, executable);
+      _chdir(executable);
     }
     free(executable);
     executable = NULL;
