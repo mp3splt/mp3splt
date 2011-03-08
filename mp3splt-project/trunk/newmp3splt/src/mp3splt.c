@@ -398,12 +398,6 @@ int main(int argc, char **orig_argv)
     free(executable);
     executable = NULL;
   }
-
-  //also add the installation directory that we take from the registry
-  if (mp3splt_uninstall_file[0] != '\0')
-  {
-    mp3splt_append_plugins_scan_dir(state, mp3splt_uninstall_file);
-  }
 #endif
 
   //after getting the options (especially the debug option), find plugins

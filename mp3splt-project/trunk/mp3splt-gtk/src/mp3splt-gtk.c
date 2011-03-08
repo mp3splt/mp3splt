@@ -80,8 +80,6 @@ splt_state *the_state = NULL;
 //the progress bar
 GtkWidget *progress_bar;
 
-gchar *executable_dir = NULL;
-
 extern GArray *splitpoints;
 extern gint splitnumber;
 extern GtkWidget *queue_files_button;
@@ -551,6 +549,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   gchar *end = strrchr(mp3splt_uninstall_file, SPLT_DIRCHAR);
   if (end) { *end = '\0'; }
 
+  gchar *executable_dir = NULL;
   gchar *executable = strdup(argv[0]);
 
   end = strrchr(executable, SPLT_DIRCHAR);
@@ -593,10 +592,10 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   }
 
 #else
-  bindtextdomain ("mp3splt-gtk", LOCALEDIR);
+  bindtextdomain("mp3splt-gtk", LOCALEDIR);
 #endif
 
-  bind_textdomain_codeset ("mp3splt-gtk", "UTF-8");
+  bind_textdomain_codeset("mp3splt-gtk", "UTF-8");
  
   // Allow the gtk to parse all gtk arguments from the command 
   // line first
@@ -660,15 +659,10 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   {
     if (executable[0] != '\0')
     {
-      g_setenv("GST_PLUGIN_PATH",executable,TRUE);
+      g_setenv("GST_PLUGIN_PATH", ".\\", TRUE);
       mp3splt_append_plugins_scan_dir(the_state, executable);
       _chdir(executable);
     }
-  }
-
-  if (mp3splt_uninstall_file[0] != '\0')
-  {
-    mp3splt_append_plugins_scan_dir(the_state, mp3splt_uninstall_file);
   }
 #endif
 
