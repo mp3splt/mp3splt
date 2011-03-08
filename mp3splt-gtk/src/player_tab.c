@@ -106,8 +106,6 @@ extern guchar *get_real_name_from_filename(guchar *filename);
 extern GtkWidget *cancel_button;
 extern gint debug_is_active;
 
-extern gchar *executable_dir;
-
 extern ui_state *ui;
 
 //our progress bar
@@ -903,7 +901,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
 void build_svg_path(GString *imagefile, gchar *svg_filename)
 {
 #ifdef __WIN32__
-  g_string_assign(imagefile, executable_dir);
+  g_string_assign(imagefile, ".");
   g_string_append(imagefile, G_DIR_SEPARATOR_S);
   g_string_append(imagefile, svg_filename);
 #else
