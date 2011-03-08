@@ -566,30 +566,8 @@ gint main(gint argc, gchar *argv[], gchar **envp)
     }
   }
 
-  if (executable_dir != NULL)
-  {
-    gint translation_dir_length = strlen(executable_dir) + 30;
-    gchar *translation_dir = malloc(sizeof(gchar) * translation_dir_length);
-    if (translation_dir)
-    {
-      g_snprintf(translation_dir,translation_dir_length,
-          "%s%ctranslations",executable_dir,SPLT_DIRCHAR);
-
-      bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, translation_dir);
-      bindtextdomain("mp3splt-gtk", translation_dir);
-
-      if (translation_dir)
-      {
-        free(translation_dir);
-        translation_dir = NULL;
-      }
-    }
-  }
-  else
-  {
-    bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, "translations");
-    bindtextdomain("mp3splt-gtk", "translations");
-  }
+  bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, "translations");
+  bindtextdomain("mp3splt-gtk", "translations");
 
 #else
   bindtextdomain("mp3splt-gtk", LOCALEDIR);
