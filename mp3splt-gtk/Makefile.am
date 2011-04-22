@@ -2,9 +2,9 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = m4 po doc src help
+SUBDIRS = m4 po doc src
 
-EXTRA_DIST = mp3splt-gtk.desktop.in autogen.sh build-aux/gnome-doc-utils.make m4 debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
+EXTRA_DIST = mp3splt-gtk.desktop.in autogen.sh m4 debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
 
 appsdir = $(datadir)/applications
 apps_DATA = mp3splt-gtk.desktop
@@ -15,10 +15,13 @@ mp3splt-gtk.desktop: mp3splt-gtk.desktop.in FORCE
 doc: FORCE
 	$(MAKE) -C doc doc
 
-#if GNOME
+if GNOME
 DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper
-#endif
+EXTRA_DIST += build-aux/gnome-doc-utils.make
+SUBDIRS += help
+endif
 
 # A make target that always needs to be rebuilt
 FORCE:
 .PHONY: FORCE
+
