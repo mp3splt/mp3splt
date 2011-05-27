@@ -40,6 +40,12 @@ typedef struct {
   char *auth;
 } splt_addr;
 
+typedef struct {
+  int err;
+  char *file;
+  int stop_on_dot;
+} splt_get_file;
+
 int splt_freedb_process_search(splt_state *state, char *search, 
     int search_type, const char *cddb_get_server,
     int port);
@@ -57,13 +63,9 @@ char *splt_freedb_get_file(splt_state *state, int i, int *error,
 #define SPLT_FREEDB_GET_FILE "CDDB READ %s %s\n"
 
 //cddb.cgi
-#define SPLT_HTTP_VERSION_AND_HOST "HTTP/1.0\r\nHost: %s\r\n\r\n"
+#define SPLT_FREEDB2_SEARCH "GET %s?cmd=cddb+album+%s"SPLT_FREEDB_HELLO_PROTO
 #define SPLT_FREEDB_HELLO_PROTO "&hello=nouser+mp3splt.sf.net+"SPLT_PACKAGE_NAME"+"SPLT_PACKAGE_VERSION"&proto=5"
-
-#define SPLT_GET_SUFFIX SPLT_FREEDB_HELLO_PROTO" "SPLT_HTTP_VERSION_AND_HOST
-
-#define SPLT_FREEDB2_SEARCH "GET %s?cmd=cddb+album+%s"SPLT_GET_SUFFIX
-#define SPLT_FREEDB_CDDB_CGI_GET_FILE "GET %s?cmd=cddb+read+%s+%s"SPLT_GET_SUFFIX
+#define SPLT_FREEDB_CDDB_CGI_GET_FILE "GET %s?cmd=cddb+read+%s+%s"SPLT_FREEDB_HELLO_PROTO
 
 //proxy stuff
 //#define PROXYCONFIG ".mp3splt"

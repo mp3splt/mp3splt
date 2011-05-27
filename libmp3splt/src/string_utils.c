@@ -184,6 +184,37 @@ int splt_su_append(char **str, const char *to_append, ...)
   return err;
 }
 
+int splt_su_set(char **str, const char *to_append, ...)
+{
+  if (!str)
+  {
+    return SPLT_OK;
+  }
+
+  if (*str)
+  {
+    free(*str);
+    *str = NULL;
+  }
+
+  int err = SPLT_OK;
+  va_list ap;
+
+  va_start(ap, to_append);
+
+  while (to_append)
+  {
+    size_t to_append_size = va_arg(ap, size_t);
+    err = splt_su_append_one(str, to_append, to_append_size);
+    if (err < 0) { break; }
+    to_append = va_arg(ap, const char *);
+  }
+
+  va_end(ap);
+
+  return err;
+}
+
 void splt_su_free_replace(char **str, char *replacement)
 {
   if (!str)
@@ -306,7 +337,7 @@ char *splt_su_cut_spaces(char *c)
   return c;
 }
 
-char *splt_su_skip_spaces(char *c)
+const char *splt_su_skip_spaces(const char *c)
 {
   while (*c == ' ' || *c == '\t')
   {

@@ -644,6 +644,7 @@ int main(int argc, char **orig_argv)
                 {
                   print_warning(_("freedb query format ambigous !"));
                 }
+
                 do_freedb_search(data);
               }
 
@@ -675,8 +676,7 @@ int main(int argc, char **orig_argv)
 
         //we set the path of split for the -d option
         if (opt->d_option)
-        {
-          err = mp3splt_set_path_of_split(state, opt->dir_arg);
+        { err = mp3splt_set_path_of_split(state, opt->dir_arg);
           process_confirmation_error(err, data);
         }
 

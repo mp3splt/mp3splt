@@ -209,11 +209,15 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
           state->err.error_data, state->err.strerror_msg);
     case SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET:
       return splt_su_get_formatted_message(state,
-          _(" freedb error: cannot open socket"));
+          _(" freedb error: cannot open socket (%s)"));
     case SPLT_FREEDB_ERROR_CANNOT_CONNECT:
       return splt_su_get_formatted_message(state,
           _(" freedb error: cannot connect to host '%s' (%s)"),
           state->err.error_data, state->err.strerror_msg);
+    case SPLT_FREEDB_ERROR_CANNOT_DISCONNECT:
+      return splt_su_get_formatted_message(state,
+          _(" freedb error: cannot disconnect from host (%s)"),
+          state->err.strerror_msg);
     case SPLT_FREEDB_ERROR_CANNOT_SEND_MESSAGE:
       return splt_su_get_formatted_message(state,
           _(" freedb error: cannot send message to host '%s' (%s)"),

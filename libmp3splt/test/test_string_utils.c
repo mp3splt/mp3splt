@@ -26,6 +26,42 @@ void cut_teardown()
   }
 }
 
+void test_su_append()
+{
+  char *source = NULL;
+  splt_su_copy("category discid", &source);
+
+  char *end = strstr(source, " ");
+
+  char *dest = NULL;
+  splt_su_append(&dest, source, end - source, NULL);
+
+  cut_assert_equal_string("category\0", dest);
+
+  free(source);
+  free(dest);
+}
+
+void test_su_set()
+{
+  char *first = NULL;
+
+  splt_su_set(&first, "part", 3, " one", 3, NULL);
+  cut_assert_equal_string("par on", first);
+
+  splt_su_set(&first, "second", 4, "1234", 2, NULL);
+  cut_assert_equal_string("seco12", first);
+
+  splt_su_set(&first, "third", 0, "bike", 4, NULL);
+  cut_assert_equal_string("bike", first);
+
+  if (first)
+  {
+    free(first);
+    first = NULL;
+  }
+}
+
 void test_replace_all()
 {
   char *path = splt_su_replace_all("/my//new//path", "//", "/", &error);

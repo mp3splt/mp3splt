@@ -104,14 +104,17 @@ void do_freedb_search(main_data *data)
       opt->freedb_search_server,opt->freedb_search_port, search_type);
   fflush(console_out);
 
-  //the freedb results
   const splt_freedb_results *f_results = NULL;
-  //we search the freedb
+
   f_results = mp3splt_get_freedb_search(state, freedb_search_string,
       &err, opt->freedb_search_type,
       opt->freedb_search_server,
       opt->freedb_search_port);
   process_confirmation_error(err, data);
+  if (!f_results)
+  {
+    print_message_exit(_("No results found"), data);
+  }
 
   //if we don't have an auto-select the result X from the arguments:
   // (query{artist}(resultX)
@@ -124,7 +127,7 @@ void do_freedb_search(main_data *data)
 
     int cd_number = 0;
     short end = SPLT_FALSE;
-    do {
+    while (cd_number < f_results->number) {
       fprintf(console_out,"%3d) %s\n",
           f_results->results[cd_number].id,
           f_results->results[cd_number].name);
@@ -178,7 +181,7 @@ end:
       }
 
       cd_number++;
-    } while (cd_number < f_results->number);
+    };
 
     //select the CD
     //input of the selected cd
@@ -230,7 +233,6 @@ end:
       opt->freedb_get_server,opt->freedb_get_port, get_type);
   fflush(console_out);
 
-  //here we have the selected cd in selected_cd
   mp3splt_write_freedb_file_result(state, selected_cd,
       MP3SPLT_CDDBFILE, &err, opt->freedb_get_type,
       opt->freedb_get_server, opt->freedb_get_port);

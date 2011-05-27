@@ -426,6 +426,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 {
   if (file == NULL)
   { 
+    splt_e_set_error_data(state, file);
     *error = SPLT_INVALID_CUE_FILE;
     return 0;
   }
