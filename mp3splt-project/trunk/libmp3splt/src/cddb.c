@@ -54,6 +54,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 {
   if (file == NULL)
   {
+    splt_e_set_error_data(state, file);
     *error = SPLT_INVALID_CDDB_FILE;
     return 0;
   }
@@ -76,6 +77,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
 
   if (!(file_input=splt_io_fopen(file, "r")))
   {
+    splt_cddb_cdu_free(&cdu);
     splt_e_set_strerror_msg_with_data(state, file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;

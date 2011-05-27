@@ -36,6 +36,7 @@
 
 void splt_su_replace_all_char(char *str, char to_replace, char replacement);
 char *splt_su_replace_all(const char *str, char *to_replace, char *replacement, int *error);
+int splt_su_set(char **str, const char *to_append, ...);
 int splt_su_append(char **str, const char *to_append, ...);
 int splt_su_append_str(char **str, const char *to_append, ...);
 void splt_su_free_replace(char **str, char *replacement);
@@ -44,7 +45,7 @@ int splt_su_copy(const char *src, char **dest);
 void splt_su_clean_string(splt_state *state, char *s, int *error);
 void splt_su_cut_spaces_from_end(char *c);
 char *splt_su_cut_spaces(char *c);
-char *splt_su_skip_spaces(char *c);
+const char *splt_su_skip_spaces(const char *c);
 char *splt_su_trim_spaces(char *c);
 int splt_su_is_empty_line(const char *line);
 void splt_su_line_to_unix(char *line);

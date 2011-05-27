@@ -710,7 +710,7 @@ char *splt_io_readline(FILE *stream, int *error)
   }
 
   int err = SPLT_OK;
-  int bufsize = 255;
+  int bufsize = 1024;
   char *buffer = malloc(sizeof(char) * bufsize);
   buffer[0] = '\0';
 
