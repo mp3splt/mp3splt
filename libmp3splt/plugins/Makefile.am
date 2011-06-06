@@ -15,7 +15,7 @@ endif
 if MP3_PLUGIN
 
 plugin_LTLIBRARIES += libsplt_mp3.la
-libsplt_mp3_la_SOURCES = mp3.c mp3.h
+libsplt_mp3_la_SOURCES = mp3.c mp3.h mp3_silence.c mp3_silence.h mp3_utils.c mp3_utils.h
 
 libsplt_mp3_la_CPPFLAGS = $(common_CPPFLAGS) @MAD_CFLAGS@
 libsplt_mp3_la_LDFLAGS = $(common_LDFLAGS) @MAD_LIBS@

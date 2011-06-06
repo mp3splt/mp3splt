@@ -32,6 +32,18 @@
 
 #ifndef MP3SPLT_MP3_H
 
+#include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <math.h>
+#include <ctype.h>
+
+#ifdef __WIN32__
+#include <io.h>
+#include <fcntl.h>
+#endif
+
 #ifndef NO_ID3TAG
 #include <id3tag.h>
 #endif
@@ -152,6 +164,17 @@ typedef struct {
 #define SPLT_MP3_READBSIZE 1024
 
 #define SPLT_MP3EXT ".mp3"
+
+//! The layer- and-bitrate-table
+static const int splt_mp3_tabsel_123[2][3][16] = {
+  { {128,32,64,96,128,160,192,224,256,288,320,352,384,416,448,},
+    {128,32,48,56, 64, 80, 96,112,128,160,192,224,256,320,384,},
+    {128,32,40,48, 56, 64, 80, 96,112,128,160,192,224,256,320,} },
+
+  { {128,32,48,56,64,80,96,112,128,144,160,176,192,224,256,},
+    {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,},
+    {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,} }
+};
 
 #define MP3SPLT_MP3_H
 
