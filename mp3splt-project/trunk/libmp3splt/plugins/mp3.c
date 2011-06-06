@@ -29,20 +29,11 @@
 The Plug-in that handles mp3 files
 */
 
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <math.h>
-#include <ctype.h>
-
-#ifdef __WIN32__
-#include <io.h>
-#include <fcntl.h>
-#endif
-
 #include "splt.h"
+
 #include "mp3.h"
+#include "mp3_silence.h"
+#include "mp3_utils.h"
 
 /****************************/
 /* mp3 constants */
@@ -58,17 +49,6 @@ static const char *splt_mp3_chan[] =
 	"Joint Stereo",
 	"Stereo",
 	"?"
-};
-
-//! The layer- and-bitrate-table
-static const int splt_mp3_tabsel_123[2][3][16] = {
-  { {128,32,64,96,128,160,192,224,256,288,320,352,384,416,448,},
-    {128,32,48,56, 64, 80, 96,112,128,160,192,224,256,320,384,},
-    {128,32,40,48, 56, 64, 80, 96,112,128,160,192,224,256,320,} },
-
-  { {128,32,48,56,64,80,96,112,128,144,160,176,192,224,256,},
-    {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,},
-    {128,8,16,24,32,40,48,56,64,80,96,112,128,144,160,} }
 };
 
 /*! A table needed for fast crc32 computation
@@ -214,7 +194,6 @@ static FILE *splt_mp3_open_file_write(splt_state *state, const char *output_fnam
   return file_output;
 }
 
-
 /****************************/
 /* CRC functions */
 
@@ -243,257 +222,30 @@ static unsigned long splt_mp3_c_crc(splt_state *state,
   return (crc ^ 0xFFFFFFFF);
 }
 
-/****************************/
-/* mp3 utils */
+/*! frees the splt_mp3_state structure
 
-//! Initializes a stream frame
-static void splt_mp3_init_stream_frame(splt_mp3_state *mp3state)
-{
-  mad_stream_init(&mp3state->stream);
-  mad_frame_init(&mp3state->frame);
-}
-
-//! Finishes a stream frame
-static void splt_mp3_finish_stream_frame(splt_mp3_state *mp3state)
-{
-  mad_stream_finish(&mp3state->stream);
-  mad_frame_finish(&mp3state->frame);
-}
-
-/*! does nothing important for libmp3splt
-
-\todo review this..
+used by the splt_t_state_free() function
 */
-static void splt_mp3_checksync (splt_mp3_state *mp3state)
-{
-  //char junk[32];
-  //fprintf(stderr, "\nWarning: Too many sync errors! This may not be a mp3 file. Continue? (y/n) ");
-  //fgets(junk, 31, stdin);
-  //if (junk[0]=='y')
-
-  //we don't use user interactivity in a library
-  //always continue
-  mp3state->syncdetect = 0;
-
-  //else error("Aborted.",125);
-}
-
-//!calculates bitrate
-static int splt_mp3_c_bitrate (unsigned long head)
-{
-  if ((head & 0xffe00000) != 0xffe00000) return 0;
-  if (!((head>>17)&3)) return 0;
-  if (((head>>12)&0xf) == 0xf) return 0;
-  if (!((head >> 12) & 0xf)) return 0;
-  if (((head>>10)&0x3) == 0x3 ) return 0;
-  if (((head >> 19) & 1)==1 && ((head>>17)&3)==3 && 
-      ((head>>16)&1)==1) return 0;
-  if ((head & 0xffff0000) == 0xfffe0000) return 0;
-
-  return ((head>>12)&0xf);
-}
-
-//!make mp3 header bitrate, padding, offset, framesize
-static struct splt_header splt_mp3_makehead (unsigned long headword, 
-    struct splt_mp3 mp3f, struct splt_header head, off_t ptr)
-{
-  head.ptr = ptr;
-  head.bitrate = splt_mp3_tabsel_123[1 - mp3f.mpgid][mp3f.layer-1][splt_mp3_c_bitrate(headword)];
-  head.padding = ((headword>>9)&0x1);
-  head.framesize = (head.bitrate*144000)/
-    (mp3f.freq<<(1 - mp3f.mpgid)) + head.padding;
-
-  return head;
-}
-
-//!finds first header from start_pos. Returns -1 if no header is found
-static off_t splt_mp3_findhead (splt_mp3_state *mp3state, off_t start)
-{
-  if (splt_io_get_word(mp3state->file_input, 
-        start, SEEK_SET, &mp3state->headw) == -1)
-  {
-    return -1;
-  }
-  if (feof(mp3state->file_input)) 
-  {
-    return -1;
-  }
-  while (!(splt_mp3_c_bitrate(mp3state->headw)))
-  {
-    if (feof(mp3state->file_input)) 
-    {
-      return -1;
-    }
-    mp3state->headw <<= 8;
-    mp3state->headw |= fgetc(mp3state->file_input);
-    start++;
-  }
-
-  return start;
-}
-
-//! Finds first valid header from start. Will work with high probabilty, i hope :)
-static off_t splt_mp3_findvalidhead (splt_mp3_state *mp3state, off_t start)
-{
-  off_t begin;
-  struct splt_header h;
-
-  begin = splt_mp3_findhead(mp3state, start);
-
-  do {
-    start = begin;
-    if (start == -1) 
-    {
-      break;
-    }
-    h = splt_mp3_makehead (mp3state->headw, mp3state->mp3file, h, start);
-    begin = splt_mp3_findhead(mp3state, (start + 1));
-  } while (begin!=(start + h.framesize));
-
-  return start;
-}
-
-//!finds xing info offset and returns it?
-static int splt_mp3_xing_info_off(splt_mp3_state *mp3state)
-{
-  unsigned long headw = 0;
-  int i;
-
-  for (i=0; i<mp3state->mp3file.xing; i++)
-  {
-    if ((headw == SPLT_MP3_XING_MAGIC) || 
-        (headw == SPLT_MP3_INFO_MAGIC)) // "Xing" or "Info"
-    {
-      return i;
-    }
-    headw <<= 8;
-    headw |= mp3state->mp3file.xingbuffer[i];
-  }
-
-  return 0;
-}
-
-/*! Get a frame
-
-\return  negative value means: error
-*/
-static int splt_mp3_get_frame(splt_mp3_state *mp3state)
-{
-  if(mp3state->stream.buffer==NULL || 
-      mp3state->stream.error==MAD_ERROR_BUFLEN)
-  {
-    size_t readSize, remaining;
-    unsigned char *readStart;
-
-    if (feof(mp3state->file_input))
-    {
-      return -2;
-    }
-
-    if(mp3state->stream.next_frame!=NULL)
-    {
-      remaining = mp3state->stream.bufend - mp3state->stream.next_frame;
-      memmove(mp3state->inputBuffer, mp3state->stream.next_frame, remaining);
-      readStart = mp3state->inputBuffer + remaining;
-      readSize = SPLT_MAD_BSIZE - remaining;
-    }
-    else
-    {
-      readSize = SPLT_MAD_BSIZE;
-      readStart=mp3state->inputBuffer;
-      remaining=0;
-    }
-
-    readSize=fread(readStart, 1, readSize, mp3state->file_input);
-    if (readSize <= 0)
-    {
-      return -2;
-    }
-
-    mp3state->buf_len = readSize + remaining;
-    mp3state->bytes += readSize;
-    //does not set any error
-    mad_stream_buffer(&mp3state->stream, mp3state->inputBuffer, 
-        readSize+remaining);
-    mp3state->stream.error = MAD_ERROR_NONE;
-  }
-
-  //mad_frame_decode() returns -1 if error, 0 if no error
-  return mad_frame_decode(&mp3state->frame,&mp3state->stream);
-}
-
-/*! used by mp3split and mp3_scan_silence
-
-gets a frame and checks for its validity; sets the mp3state->data_ptr
-the pointer to the frame  and the mp3state->data_len the length of the
-frame 
-
-\param state The central structure libmp3splt keeps all its data in
-\param error Contains the error number for libmp3splt
-
-\return  
- - 1 if ok, 
- - -1 if end of file, 
- - 0 if nothing (???) 
- - and -3 if other error; 
- .
-On error the error number will be set in the '*error' parameter
-*/
-static int splt_mp3_get_valid_frame(splt_state *state, int *error)
+static void splt_mp3_state_free(splt_state *state)
 {
   splt_mp3_state *mp3state = state->codec;
-  int ok = 0;
-  do
+
+  if (mp3state)
   {
-    int ret = splt_mp3_get_frame(mp3state);
-    if(ret != 0)
+    if (mp3state->mp3file.xingbuffer)
     {
-      if (ret == -2)
-      {
-        return -1;
-      }
-      if (mp3state->stream.error == MAD_ERROR_LOSTSYNC)
-      {
-        //syncerrors
-        state->syncerrors++;
-        if ((mp3state->syncdetect) && (state->syncerrors>SPLT_MAXSYNC))
-        {
-          splt_mp3_checksync(mp3state);
-        }
-      }
-      if(MAD_RECOVERABLE(mp3state->stream.error))
-      {
-        continue;
-      }
-      else
-      {
-        if(mp3state->stream.error==MAD_ERROR_BUFLEN)
-        {
-          continue;
-        }
-        else
-        {
-          splt_e_set_error_data(state, mad_stream_errorstr(&mp3state->stream));
-          *error = SPLT_ERROR_PLUGIN_ERROR;
-          return -3;
-        }
-      }
-    }
-    else
-    {
-      //the important stuff
-      mp3state->data_ptr = (unsigned char *) mp3state->stream.this_frame;
-      if (mp3state->stream.next_frame!=NULL)
-      {
-        mp3state->data_len = (long) (mp3state->stream.next_frame - mp3state->stream.this_frame);
-      }
-      ok = 1;
+      free(mp3state->mp3file.xingbuffer);
+      mp3state->mp3file.xingbuffer = NULL;
     }
 
-  } while (!ok);
-
-  return ok;
+    //we free the state
+    free(mp3state);
+    state->codec = NULL;
+  }
 }
+
+/****************************/
+/* mp3 tags */
 
 /*!search for ID3 v1 tag, "TAG" sequence
 
@@ -555,30 +307,6 @@ static off_t splt_mp3_getid3v2_end_offset(FILE *in, off_t start)
   return 0;
 }
 
-/*! frees the splt_mp3_state structure
-
-used by the splt_t_state_free() function
-*/
-static void splt_mp3_state_free(splt_state *state)
-{
-  splt_mp3_state *mp3state = state->codec;
-
-  if (mp3state)
-  {
-    if (mp3state->mp3file.xingbuffer)
-    {
-      free(mp3state->mp3file.xingbuffer);
-      mp3state->mp3file.xingbuffer = NULL;
-    }
-
-    //we free the state
-    free(mp3state);
-    state->codec = NULL;
-  }
-}
-
-/****************************/
-/* mp3 tags */
 
 #ifndef NO_ID3TAG
 
@@ -1643,235 +1371,6 @@ static void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
           "%s%s%s\n", mpeg_infos, frame_mode_infos, total_time);
     }
   }
-}
-
-/****************************/
-/* mp3 scan for silence */
-
-/*!  Compare the noise level with threshold
-
-Used by mp3_scan_silence
-
-\return 
- - 0 if silence spot > threshold, 
- - 1 otherwise
-
-Always computes only one frame
-*/
-static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t threshold)
-{
-  int i, j;
-  mad_fixed_t sample;
-  int silence = 1;
-
-  for (j=0; j<channels; j++)
-  {
-    for(i=0; i<mp3state->synth.pcm.length; i++)
-    {
-      //get silence spot ?
-      sample = mad_f_abs(mp3state->synth.pcm.samples[j][i]);
-      mp3state->temp_level = mp3state->temp_level * 0.999 + sample * 0.001;
-
-      if (sample > threshold)
-      {
-        silence = 0;
-      }
-    }
-  }
-
-  return silence;
-}
-
-/*! scan for silence
-
-\return 
- - the number of silence points found
- - -1 on error
-\param state The central structure libmp3splt keeps all of its data in
-\param error Contains the error number if an error has occoured
-\param length The time length to scan [in seconds]
-\param threshold The threshold that tells noise from silence
-*/
-static int splt_mp3_scan_silence(splt_state *state, off_t begin, 
-    unsigned long length, float threshold, 
-    float min, short output, int *error)
-{
-  int len = 0, found = 0, shot;
-  short first, flush = 0, stop = 0;
-  unsigned long silence_begin = 0, silence_end = 0, time;
-  //unsigned long count = 0;
-  off_t pos;
-  mad_fixed_t th;
-
-  splt_mp3_state *mp3state = state->codec;
-
-  splt_c_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
-
-  pos = begin;
-  th = mad_f_tofixed(splt_co_convert_from_dB(threshold));
-
-  //we seek to the begin
-  if (fseeko(mp3state->file_input, begin, SEEK_SET)==-1)
-  {
-    splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
-    *error = SPLT_ERROR_SEEKING_FILE;
-    return -1;
-  }
-
-  first = output;
-  shot = SPLT_DEFAULTSHOT;
-
-  //initialise mad stuff
-  splt_mp3_init_stream_frame(mp3state);
-  mad_synth_init(&mp3state->synth);
-
-  mad_timer_reset(&mp3state->timer);
-
-  mp3state->temp_level = 0.0;
-
-  //we do the effective scan
-  do
-  {
-    int mad_err = SPLT_OK;
-    switch (splt_mp3_get_valid_frame(state, &mad_err))
-    {
-      case 1:
-        //1 we have a valid frame
-        //we get mad infos and put them in the mp3state
-        mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
-        mad_synth_frame(&mp3state->synth,&mp3state->frame);
-        time = (unsigned long) mad_timer_count(mp3state->timer, MAD_UNITS_CENTISECONDS);
-
-        if (length > 0)
-        {
-          if (time >= length)
-          {
-            flush = 1;
-            stop = 1;
-          }
-        }
-
-        if ((!flush) && (splt_mp3_silence(mp3state, MAD_NCHANNELS(&mp3state->frame.header), th)))
-        {
-          if (len == 0) silence_begin = time;
-          if (first == 0) 
-          {
-            len++;
-          }
-          if (shot < SPLT_DEFAULTSHOT)
-            shot+=2;
-          silence_end = time;
-        }
-        else
-        {
-          if (len > SPLT_DEFAULTSILLEN)
-          {
-            if ((flush) || (shot <= 0))
-            {
-              double begin_position, end_position;
-              begin_position = (double) (silence_begin / 100.f);
-              end_position = (double) (silence_end / 100.f);
-              len = (int) (silence_end - silence_begin);
-
-              if ((end_position - begin_position - min) >= 0.f)
-              {
-                if (splt_siu_ssplit_new(&state->silence_list, begin_position, end_position,
-                      len, error) == -1)
-                {
-                  stop = 1;
-                  found = -1;
-                  break;
-                }
-                found++;
-              }
-
-              len = 0;
-              shot = SPLT_DEFAULTSHOT;
-            }
-          }
-          else 
-          {
-            len = 0;
-          }
-
-          if ((first) && (shot <= 0))
-          {
-            first = 0;
-          }
-
-          if (shot > 0) 
-          {
-            shot--;
-          }
-        }
-
-        if (mp3state->mp3file.len > 0)
-        {
-          pos = ftello(mp3state->file_input);
-
-          //if (count++ % 10 == 0)
-          {
-            float level = splt_co_convert_to_dB(mad_f_todouble(mp3state->temp_level));
-            if (state->split.get_silence_level)
-            {
-              state->split.get_silence_level(time, level, state->split.silence_level_client_data);
-            }
-            state->split.p_bar->silence_db_level = level;
-            state->split.p_bar->silence_found_tracks = found;
-          }
-
-          //if we don't have silence split,
-          //put the 1/4 of progress
-          if (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != 
-              SPLT_OPTION_SILENCE_MODE)
-          {
-            splt_c_update_progress(state,(double)(time),
-                (double)(length), 4,1/(float)4,
-                SPLT_DEFAULT_PROGRESS_RATE);
-          }
-          else
-          {
-            //if we have cancelled the split
-            if (splt_t_split_is_canceled(state))
-            {
-              stop = 1;
-            }
-            splt_c_update_progress(state,(double)pos,
-                (double)(mp3state->mp3file.len),
-                1,0,SPLT_DEFAULT_PROGRESS_RATE);
-          }
-        }
-        break;
-      case 0:
-        //0 we do nothing
-        break;
-      case -1:
-        // -1 means eof
-        stop = 1;
-        break;
-      case -3:
-        //error from libmad
-        stop = 1;
-        *error = mad_err;
-        found = -1;
-        break;
-      default:
-        break;
-    }
-  } while (!stop && (found < SPLT_MAXSILENCE));
-
-  //only if we have silence mode, we set progress to 100%
-  if (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) == 
-      SPLT_OPTION_SILENCE_MODE)
-  {
-    splt_c_update_progress(state,1.0,1.0,1,1,1);
-  }
-
-  //we finish with mad_*
-  splt_mp3_finish_stream_frame(mp3state);
-  mad_synth_finish(&mp3state->synth);
-
-  return found;
 }
 
 /****************************/
