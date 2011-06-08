@@ -31,13 +31,13 @@
 #include "mp3_silence.h"
 #include "mp3_utils.h"
 
-static short scan_silence_processor(unsigned long time, int silence_was_found, void *data, 
+static short splt_mp3_scan_silence_processor(unsigned long time, int silence_was_found, void *data, 
     int *found_silence_points, int *error);
 
-static scan_silence_data *scan_silence_data_new(splt_state *state, short first, unsigned long length, float min);
-static void free_scan_silence_data(scan_silence_data **ssd);
+static mp3_scan_silence_data *scan_silence_data_new(splt_state *state, short first, unsigned long length, float min);
+static void free_scan_silence_data(mp3_scan_silence_data **ssd);
 
-static void splt_scan_silence_and_process(splt_state *state, off_t begin_offset, 
+static void splt_mp3_scan_silence_and_process(splt_state *state, off_t begin_offset, 
     float max_threshold, unsigned long length, 
     short process_silence(unsigned long time, int silence_was_found, void *data, int *found, int *error),
     void *data, int *error);
@@ -56,23 +56,28 @@ static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t 
 int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length,
     float threshold, float min, short output, int *error)
 {
-  scan_silence_data *ssd = scan_silence_data_new(state, output, length, min); 
+  mp3_scan_silence_data *ssd = scan_silence_data_new(state, output, length, min); 
   if (ssd == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return -1;
   }
 
-  splt_scan_silence_and_process(state, begin, threshold, length, scan_silence_processor, ssd, error);
+  splt_mp3_scan_silence_and_process(state, begin, threshold, length, splt_mp3_scan_silence_processor, ssd, error);
 
   int found = ssd->found;
 
   free_scan_silence_data(&ssd);
 
+  if (*error < 0)
+  {
+    found = -1;
+  }
+
   return found;
 }
 
-static void splt_scan_silence_and_process(splt_state *state, off_t begin_offset, 
+static void splt_mp3_scan_silence_and_process(splt_state *state, off_t begin_offset, 
     float max_threshold, unsigned long length, 
     short process_silence(unsigned long time, int silence_was_found, void *data, int *found, int *error),
     void *data, int *error)
@@ -179,10 +184,10 @@ static void splt_scan_silence_and_process(splt_state *state, off_t begin_offset,
   mad_synth_finish(&mp3state->synth);
 }
 
-static short scan_silence_processor(unsigned long time, int silence_was_found, void *data, 
+static short splt_mp3_scan_silence_processor(unsigned long time, int silence_was_found, void *data, 
     int *found_silence_points, int *error)
 {
-  scan_silence_data *ssd = (scan_silence_data *) data;
+  mp3_scan_silence_data *ssd = (mp3_scan_silence_data *) data;
 
   short stop = SPLT_FALSE;
 
@@ -260,10 +265,10 @@ static short scan_silence_processor(unsigned long time, int silence_was_found, v
   return stop;
 }
 
-static scan_silence_data *scan_silence_data_new(splt_state *state, 
+static mp3_scan_silence_data *scan_silence_data_new(splt_state *state, 
     short first, unsigned long length, float min)
 {
-  scan_silence_data *ssd = malloc(sizeof(scan_silence_data));
+  mp3_scan_silence_data *ssd = malloc(sizeof(mp3_scan_silence_data));
   if (!ssd)
   {
     return NULL;
@@ -284,7 +289,7 @@ static scan_silence_data *scan_silence_data_new(splt_state *state,
   return ssd;
 }
 
-static void free_scan_silence_data(scan_silence_data **ssd)
+static void free_scan_silence_data(mp3_scan_silence_data **ssd)
 {
   if (!ssd || !*ssd)
   {

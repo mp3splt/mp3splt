@@ -4,7 +4,14 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2011 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2011 Alexandru Munteanu - <io_fx@yahoo.fr>
+ *
+ * Parts of this file have been copied from the 'vcut' 1.6
+ * program provided with 'vorbis-tools' :
+ *      vcut (c) 2000-2001 Michael Smith <msmith@xiph.org>
+ *
+ * Some parts from a more recent version of vcut :
+ *           (c) 2008 Michael Gold <mgold@ncf.ca>
  *
  * http://mp3splt.sourceforge.net
  *
@@ -32,19 +39,10 @@
 
 #include "splt.h"
 
-typedef struct {
-  short first;
-  short flush;
-  unsigned long silence_begin;
-  unsigned long silence_end;
-  int len;
-  int found;
-  int shot;
-  unsigned long length;
-  float min;
-  splt_state *state;
-} mp3_scan_silence_data;
+#include "ogg.h"
 
-int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length,
-    float threshold, float min, short output, int *error);
+long splt_ogg_get_blocksize(splt_ogg_state *oggstate, vorbis_info *vi, ogg_packet *op);
+ogg_int64_t splt_ogg_compute_first_granulepos(splt_state *state, splt_ogg_state *oggstate,
+    ogg_packet *packet, int bs);
+int splt_ogg_update_sync(splt_state *state, ogg_sync_state *sync_in, FILE *f, int *error);
 
