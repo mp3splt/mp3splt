@@ -33,7 +33,7 @@ endif
 if OGG_PLUGIN
 
 plugin_LTLIBRARIES += libsplt_ogg.la
-libsplt_ogg_la_SOURCES = ogg.c ogg.h
+libsplt_ogg_la_SOURCES = ogg.c ogg.h ogg_silence.c ogg_silence.h ogg_utils.c ogg_utils.h
 
 libsplt_ogg_la_CPPFLAGS = $(common_CPPFLAGS) @OGG_CFLAGS@ @VORBIS_CFLAGS@
 libsplt_ogg_la_LDFLAGS = $(common_LDFLAGS) @VORBISFILE_LIBS@ @VORBIS_LIBS@ @OGG_LIBS@ 
