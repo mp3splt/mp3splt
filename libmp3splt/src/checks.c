@@ -56,7 +56,6 @@ void splt_check_points_inf_song_length(splt_state *state, int *error)
   }
 
   int err = SPLT_OK;
-  int found_max_splitpoint = SPLT_FALSE;
   long total_time = splt_t_get_total_time(state);
 
   int i = 0;
@@ -67,7 +66,6 @@ void splt_check_points_inf_song_length(splt_state *state, int *error)
 
     if (splitpoint_value > total_time)
     {
-      found_max_splitpoint = SPLT_TRUE;
       splt_t_set_splitnumber(state, i+1);
 
       *error = SPLT_SPLITPOINT_BIGGER_THAN_LENGTH;

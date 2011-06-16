@@ -958,9 +958,6 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
   //TODO: eos not set on ripped streams on last split file
 
-  //for the progress
-  int progress_adjust = 1;
-
   splt_ogg_state *oggstate = state->codec;
 
   ogg_packet packet;
@@ -1186,7 +1183,6 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
               splt_siu_ssplit_free(&state->silence_list);
               adjust = 0;
-              progress_adjust = 0;
               splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
 
               if (*error < 0) { return -1; }
