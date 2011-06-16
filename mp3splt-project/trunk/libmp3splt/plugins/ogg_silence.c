@@ -43,28 +43,20 @@
 #include "ogg.h"
 #include "ogg_silence.h"
 #include "ogg_utils.h"
-
-static short ogg_scan_silence_processor(ogg_int64_t begin, ogg_int64_t end, 
-      ogg_int64_t current_position, ogg_int64_t first_cut_granpos, 
-      int silence_was_found, void *data, int *error);
-
-static ogg_scan_silence_data *scan_silence_data_new(splt_state *state, short first, 
-    float min, ogg_int64_t granpos);
-static void free_scan_silence_data(ogg_scan_silence_data **ssd);
+#include "silence_processors.h"
 
 static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
     float max_threshold, ogg_page *page,  ogg_int64_t granpos, ogg_int64_t first_cut_granpos,
-    short process_silence(ogg_int64_t begin, ogg_int64_t end, 
-      ogg_int64_t current_position, ogg_int64_t first_cut_granpos, 
-      int silence_was_found, void *data, int *error),
-    void *data, int *error);
+    short process_silence(double time, int silence_was_found, short must_flush,
+      splt_scan_silence_data *ssd, int *found, int *error),
+    splt_scan_silence_data *ssd, int *error);
 static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, float threshold);
 
 int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold, 
     float min, short output, ogg_page *page, ogg_int64_t granpos,
     int *error, ogg_int64_t first_cut_granpos)
 {
-  ogg_scan_silence_data *ssd = scan_silence_data_new(state, output, min, granpos); 
+  splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, SPLT_FALSE);
   if (ssd == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -72,11 +64,11 @@ int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold,
   }
 
   splt_ogg_scan_silence_and_process(state, seconds, threshold, page, granpos, first_cut_granpos, 
-      ogg_scan_silence_processor, ssd, error);
+      splt_scan_silence_processor, ssd, error);
 
   int found = ssd->found;
 
-  free_scan_silence_data(&ssd);
+  splt_free_scan_silence_data(&ssd);
 
   if (*error < 0)
   {
@@ -88,10 +80,9 @@ int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold,
 
 static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
     float max_threshold, ogg_page *page,  ogg_int64_t granpos, ogg_int64_t first_cut_granpos,
-    short process_silence(ogg_int64_t begin, ogg_int64_t end, 
-      ogg_int64_t current_position, ogg_int64_t first_cut_granpos, 
-      int silence_was_found, void *data, int *error),
-    void *data, int *error)
+    short process_silence(double time, int silence_was_found, short must_flush,
+      splt_scan_silence_data *ssd, int *found, int *error),
+    splt_scan_silence_data *ssd, int *error)
 {
   splt_c_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
 
@@ -234,11 +225,14 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
             int silence_was_found = splt_ogg_silence(oggstate, &vd, threshold);
 
             int err = SPLT_OK;
-            int stop = process_silence(begin, end, pos, first_cut_granpos, silence_was_found, data, &err);
+            short must_flush = (end && begin > end);
+            double time_in_double = (double) (pos - first_cut_granpos);
+            time_in_double /= oggstate->vi->rate;
+            int stop = process_silence(time_in_double, silence_was_found, must_flush, ssd, &found, &err);
             if (stop || stop == -1)
             {
               eos = 1;
-              if (err < 0) { *error = err; }
+              if (err < 0) { *error = err; goto function_end; }
 
               if (stop == -1)
                 break;
@@ -314,6 +308,11 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
     }
   }
 
+  int junk;
+  int err = SPLT_OK;
+  process_silence(-1, SPLT_FALSE, SPLT_FALSE, ssd, &junk, &err);
+  if (err < 0) { *error = err; }
+
 function_end:
 
   ogg_stream_clear(&os);
@@ -337,133 +336,6 @@ function_end:
     splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
     *error = SPLT_ERROR_SEEKING_FILE;
   }
-}
-
-static short ogg_scan_silence_processor(ogg_int64_t begin, ogg_int64_t end, 
-      ogg_int64_t current_position, ogg_int64_t first_cut_granpos, 
-      int silence_was_found, void *data, int *error)
-{
-  ogg_scan_silence_data *ssd = (ogg_scan_silence_data *) data;
-
-  short stop = SPLT_FALSE;
-
-  if (!ssd->flush && silence_was_found) 
-  {
-    if (ssd->len == 0) 
-    {
-      ssd->begin_position = current_position;
-    }
-
-    if (ssd->first == SPLT_FALSE) 
-    {
-      ssd->len++;
-    }
-
-    if (ssd->shot < SPLT_DEFAULTSHOT)
-    {
-      ssd->shot += 2;
-    }
-
-    ssd->end_position = current_position;
-  }
-  else 
-  {
-    if (ssd->len > SPLT_DEFAULTSILLEN)
-    {
-      if (ssd->flush || (ssd->shot <= 0))
-      {
-        splt_ogg_state *oggstate = ssd->state->codec;
-
-        double temp = (double) (ssd->begin_position - first_cut_granpos);
-        temp /= oggstate->vi->rate;
-        float b_position = (float) temp;
-
-        temp = (double) (ssd->end_position - first_cut_granpos);
-        temp /= oggstate->vi->rate;
-        float e_position = (float) temp;
-
-        if ((e_position - b_position - ssd->min) >= 0.f)
-        {
-          if (splt_siu_ssplit_new(&ssd->state->silence_list, b_position, e_position, 
-                ssd->len, error) == -1)
-          {
-            ssd->found = -1;
-            return SPLT_TRUE;
-          }
-
-          ssd->found++;
-        }
-
-        ssd->len = 0;
-        ssd->shot = SPLT_DEFAULTSHOT;
-      }
-    } 
-    else 
-    {
-      ssd->len = 0;
-    }
- 
-    if (ssd->flush)
-    {
-      return -1;
-    }
-
-    if (ssd->first && (ssd->shot <= 0))
-    {
-      ssd->first = SPLT_FALSE;
-    }
-
-    if (ssd->shot > 0) 
-    {
-      ssd->shot--;
-    }
-  }
-
-  if (end && begin > end)
-  {
-    ssd->flush = SPLT_TRUE;
-  }
-
-  if (ssd->found >= SPLT_MAXSILENCE) 
-  {
-    stop = SPLT_TRUE;
-  }
-
-  return stop;
-}
-
-static ogg_scan_silence_data *scan_silence_data_new(splt_state *state, 
-    short first, float min, ogg_int64_t granpos)
-{
-  ogg_scan_silence_data *ssd = malloc(sizeof(ogg_scan_silence_data));
-  if (!ssd)
-  {
-    return NULL;
-  }
-
-  ssd->first = first;
-  ssd->flush = SPLT_FALSE;
-  ssd->begin_position = granpos;
-  ssd->end_position = granpos;
-  ssd->len = 0;
-  ssd->found = 0;
-  ssd->shot = SPLT_DEFAULTSHOT;
-
-  ssd->min = min;
-  ssd->state = state;
-
-  return ssd;
-}
-
-static void free_scan_silence_data(ogg_scan_silence_data **ssd)
-{
-  if (!ssd || !*ssd)
-  {
-    return;
-  }
-
-  free(*ssd);
-  *ssd = NULL;
 }
 
 static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, float threshold)

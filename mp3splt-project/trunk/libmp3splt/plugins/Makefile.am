@@ -15,7 +15,8 @@ endif
 if MP3_PLUGIN
 
 plugin_LTLIBRARIES += libsplt_mp3.la
-libsplt_mp3_la_SOURCES = mp3.c mp3.h mp3_silence.c mp3_silence.h mp3_utils.c mp3_utils.h
+libsplt_mp3_la_SOURCES = mp3.c mp3.h mp3_silence.c mp3_silence.h mp3_utils.c mp3_utils.h \
+silence_processors.c silence_processors.h
 
 libsplt_mp3_la_CPPFLAGS = $(common_CPPFLAGS) @MAD_CFLAGS@
 libsplt_mp3_la_LDFLAGS = $(common_LDFLAGS) @MAD_LIBS@
@@ -33,7 +34,8 @@ endif
 if OGG_PLUGIN
 
 plugin_LTLIBRARIES += libsplt_ogg.la
-libsplt_ogg_la_SOURCES = ogg.c ogg.h ogg_silence.c ogg_silence.h ogg_utils.c ogg_utils.h
+libsplt_ogg_la_SOURCES = ogg.c ogg.h ogg_silence.c ogg_silence.h ogg_utils.c ogg_utils.h \
+silence_processors.c silence_processors.h
 
 libsplt_ogg_la_CPPFLAGS = $(common_CPPFLAGS) @OGG_CFLAGS@ @VORBIS_CFLAGS@
 libsplt_ogg_la_LDFLAGS = $(common_LDFLAGS) @VORBISFILE_LIBS@ @VORBIS_LIBS@ @OGG_LIBS@ 

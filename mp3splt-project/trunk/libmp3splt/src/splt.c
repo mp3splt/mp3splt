@@ -722,7 +722,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     if (state->split.get_silence_level)
     {
-      //TODO
       state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
     }
     found = splt_p_scan_silence(state, error);
@@ -795,12 +794,11 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             if (append_error < 0) { *error = append_error; found = i; break;}
             append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
-            splt_sp_set_splitpoint_value(state, 2*i-1,splt_co_time_to_long(temp->begin_position));
+            splt_sp_set_splitpoint_value(state, 2*i-1, splt_co_time_to_long(temp->begin_position));
             splt_sp_set_splitpoint_value(state, 2*i, splt_co_time_to_long(temp->end_position));
           }
           else
           {
-            //TODO
             long temp_silence_pos = splt_siu_silence_position(temp, offset) * 100;
             append_error = splt_sp_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
             if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
