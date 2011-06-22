@@ -52,6 +52,7 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->default_comment_tag = NULL;
   state->default_genre_tag = NULL;
   state->silence_log_fname = NULL;
+
   state->split.real_tagsnumber = 0;
   state->split.real_splitnumber = 0;
   state->split.splitnumber = 0;
@@ -70,6 +71,10 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->split.p_bar->user_data = 0;
   state->split.p_bar->progress = NULL;
   state->cancel_split = SPLT_FALSE;
+
+  splt_original_tags *original_tags = &state->original_tags;
+  splt_tu_reset_tags(&original_tags->tags);
+  original_tags->all_original_tags = NULL;
 
   splt_w_set_wrap_default_values(state);
   splt_se_set_sync_errors_default_values(state);

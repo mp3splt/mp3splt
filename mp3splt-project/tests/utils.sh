@@ -141,13 +141,13 @@ function check_all_ogg_tags
   _run_command "vorbiscomment -l \"$current_file\"" "vorbiscomment command"
   tags=$command_output
 
-  _check_ogg_tags "$current_file" "artist" "$1" "$tags"
-  _check_ogg_tags "$current_file" "album" "$2" "$tags"
-  _check_ogg_tags "$current_file" "title" "$3" "$tags"
-  _check_ogg_tags "$current_file" "date" "$4" "$tags"
-  _check_ogg_tags "$current_file" "genre" "$5" "$tags"
-  _check_ogg_tags "$current_file" "tracknumber" "$6" "$tags"
-  _check_ogg_tags "$current_file" "comment" "$7" "$tags"
+  _check_ogg_tags "$current_file" "ARTIST" "$1" "$tags"
+  _check_ogg_tags "$current_file" "ALBUM" "$2" "$tags"
+  _check_ogg_tags "$current_file" "TITLE" "$3" "$tags"
+  _check_ogg_tags "$current_file" "DATE" "$4" "$tags"
+  _check_ogg_tags "$current_file" "GENRE" "$5" "$tags"
+  _check_ogg_tags "$current_file" "TRACKNUMBER" "$6" "$tags"
+  _check_ogg_tags "$current_file" "COMMENT" "$7" "$tags"
 }
 
 function check_current_mp3_length
@@ -411,7 +411,7 @@ function _check_ogg_tags
   actual_tag_value=""
 
   case "$tags_field" in 
-    artist|album|title|date|genre|tracknumber|comment)
+    ARTIST|ALBUM|TITLE|DATE|GENRE|TRACKNUMBER|COMMENT)
     actual_tag_value=$(_ogg_get_tag_value "$tags" "$tags_field")
     ;;
     *)

@@ -46,7 +46,7 @@ function test_time_vbr
     "2007" "Rock" "17" "1" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "1325798"
+      check_current_file_size "1371766"
     else
       check_current_file_size "1325710"
     fi
@@ -64,7 +64,7 @@ function test_time_vbr
     "2007" "Rock" "17" "2" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "1361541"
+      check_current_file_size "1407509"
     else
       check_current_file_size "1361453"
     fi
@@ -82,7 +82,7 @@ function test_time_vbr
     "2007" "Rock" "17" "3" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "1393053"
+      check_current_file_size "1439021"
     else
       check_current_file_size "1392965"
     fi
@@ -100,7 +100,7 @@ function test_time_vbr
     "2007" "Rock" "17" "4" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "1434119"
+      check_current_file_size "1480087"
     else
       check_current_file_size "1434031"
     fi
@@ -118,7 +118,7 @@ function test_time_vbr
     "2007" "Rock" "17" "4" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "1434119"
+      check_current_file_size "1480087"
     else
       check_current_file_size "1434031"
     fi
@@ -136,7 +136,7 @@ function test_time_vbr
     "2007" "Rock" "17" "5" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "98777"
+      check_current_file_size "144745"
     else
       check_current_file_size "98689"
     fi
@@ -230,42 +230,42 @@ FILE "songs/La_Verue__Today.mp3" MP3
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1325798"
+  check_current_file_size "1371766"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "1361541"
+  check_current_file_size "1407509"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "1393053"
+  check_current_file_size "1439021"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
-  check_current_file_size "1434119"
+  check_current_file_size "1480087"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
   check_current_mp3_length "01.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
-  check_current_file_size "1434119"
+  check_current_file_size "1480087"
 
   current_file="$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3" 
   check_current_mp3_length "00.05"
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "5" "http://www.jamendo.com/"
-  check_current_file_size "98777"
+  check_current_file_size "144745"
 
   p_green "OK"
   echo
@@ -345,11 +345,11 @@ function test_time_vbr_overlap_split
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_30s.mp3"
   check_current_mp3_length "02.30"
-  check_current_file_size "3328252"
+  check_current_file_size "3374220"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__04m_05s_58h.mp3"
   check_current_mp3_length "02.05"
-  check_current_file_size "2925727"
+  check_current_file_size "2971695"
 
   p_green "OK"
   echo
@@ -389,11 +389,11 @@ FILE "songs/La_Verue__Today.mp3" MP3
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_30s.mp3"
   check_current_mp3_length "02.30"
-  check_current_file_size "3328252"
+  check_current_file_size "3374220"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__04m_05s_58h.mp3"
   check_current_mp3_length "02.05"
-  check_current_file_size "2925727"
+  check_current_file_size "2971695"
 
   p_green "OK"
   echo
@@ -428,7 +428,7 @@ function test_time_vbr_original_tags
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1325926"
+  check_current_file_size "1371894"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3" 
   check_current_mp3_length "01.00"
@@ -437,7 +437,7 @@ function test_time_vbr_original_tags
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "1361669"
+  check_current_file_size "1407637"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3" 
   check_current_mp3_length "01.00"
@@ -446,7 +446,7 @@ function test_time_vbr_original_tags
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "1393181"
+  check_current_file_size "1439149"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
   check_current_mp3_length "01.00"
@@ -455,7 +455,7 @@ function test_time_vbr_original_tags
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
-  check_current_file_size "1434247"
+  check_current_file_size "1480215"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
   check_current_mp3_length "01.00"
@@ -464,7 +464,7 @@ function test_time_vbr_original_tags
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
-  check_current_file_size "1434247"
+  check_current_file_size "1480215"
 
   current_file="$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3" 
   check_current_mp3_length "00.05"
@@ -473,7 +473,7 @@ function test_time_vbr_original_tags
   "2007" "Rock" "17" "5" "http://www.jamendo.com/"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "5" "http://www.jamendo.com/"
-  check_current_file_size "98905"
+  check_current_file_size "144873"
 
   p_green "OK"
   echo
@@ -492,17 +492,17 @@ function test_time_vbr_no_xing
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_00s.mp3" 
   check_current_mp3_length "02.48"
   check_current_file_has_no_xing
-  check_current_file_size "2686289"
+  check_current_file_size "2732257"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__04m_00s.mp3" 
   check_current_mp3_length "02.57"
   check_current_file_has_no_xing
-  check_current_file_size "2826122"
+  check_current_file_size "2872090"
 
   current_file="$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3" 
   check_current_mp3_length "00.04"
   check_current_file_has_no_xing
-  check_current_file_size "98360"
+  check_current_file_size "144328"
 
   p_green "OK"
   echo
@@ -849,7 +849,7 @@ expected=" Warning: using time mode with stdout !
 
   current_file="$OUTPUT_DIR/stdout.mp3"
   check_current_mp3_length "02.00"
-  check_current_file_size "5612022"
+  check_current_file_size "5749926"
 
   p_green "OK"
   echo

@@ -60,6 +60,7 @@ typedef struct {
   splt_v_packet **headers; /* 3 */
   OggVorbis_File vf;
   vorbis_comment vc;
+  short cloned_vorbis_comment;
   FILE *in,*out;
   short end;
   float off;
@@ -71,6 +72,14 @@ typedef struct {
 } splt_ogg_state;
 
 #define SPLT_OGG_BUFSIZE 4096
+
+#define SPLT_OGG_ARTIST "ARTIST"
+#define SPLT_OGG_TITLE "TITLE"
+#define SPLT_OGG_ALBUM "ALBUM"
+#define SPLT_OGG_DATE "DATE"
+#define SPLT_OGG_GENRE "GENRE"
+#define SPLT_OGG_TRACKNUMBER "TRACKNUMBER"
+#define SPLT_OGG_COMMENT "COMMENT"
 
 #define MP3SPLT_OGG_H
 

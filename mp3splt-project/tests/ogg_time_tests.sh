@@ -28,28 +28,28 @@ function test_time_simple
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "1630436"
+  check_current_file_size "1631025"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "1604982"
+  check_current_file_size "1605571"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "1542381"
+  check_current_file_size "1542970"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_85h.ogg"
   check_current_ogg_length "0m:04.853s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "4"\
                      "http://www.jamendo.com"
-  check_current_file_size "55798"
+  check_current_file_size "56387"
 
   p_green "OK"
   echo
@@ -171,28 +171,28 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
                      "http://www.jamendo.com"
-  check_current_file_size "1630436"
+  check_current_file_size "1631025"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
                      "http://www.jamendo.com"
-  check_current_file_size "1604982"
+  check_current_file_size "1605571"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg"
   check_current_ogg_length "1m:00.000s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
-  check_current_file_size "1542381"
+  check_current_file_size "1542970"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_85h.ogg"
   check_current_ogg_length "0m:04.853s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "4"\
                      "http://www.jamendo.com"
-  check_current_file_size "55798"
+  check_current_file_size "56387"
 
   p_green "OK"
   echo
@@ -266,11 +266,11 @@ function test_time_overlap_split
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_00s__02m_30s.ogg"
   check_current_ogg_length "2m:30.000s"
-  check_current_file_size "4015834"
+  check_current_file_size "4016423"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_04s_85h.ogg"
   check_current_ogg_length "1m:04.853s"
-  check_current_file_size "1593056"
+  check_current_file_size "1593645"
 
   p_green "OK"
   echo
@@ -310,11 +310,11 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_00s__02m_30s.ogg"
   check_current_ogg_length "2m:30.000s"
-  check_current_file_size "4015834"
+  check_current_file_size "4016423"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_04s_85h.ogg"
   check_current_ogg_length "1m:04.853s"
-  check_current_file_size "1593056"
+  check_current_file_size "1593645"
 
   p_green "OK"
   echo
@@ -629,7 +629,7 @@ function test_time_stdout_multiple_splitpoints
   current_file="$OUTPUT_DIR/stdout.ogg"
   check_current_ogg_length "2m:00.000s
 1m:04.853s"
-  check_current_file_size "4823429"
+  check_current_file_size "4824607"
 
   p_green "OK"
   echo

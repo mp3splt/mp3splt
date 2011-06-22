@@ -9,21 +9,21 @@ function _check_silence_output_files
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791231"
+  check_current_file_size "1792229"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.50"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "3145274"
+  check_current_file_size "3146272"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
   check_current_mp3_length "01.10"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "1974988"
+  check_current_file_size "1975986"
 }
 
 function test_silence
@@ -241,21 +241,21 @@ function test_silence_offset
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1614445"
+  check_current_file_size "1615443"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.51"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "3165412"
+  check_current_file_size "3166410"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
   check_current_mp3_length "01.17"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "2131636"
+  check_current_file_size "2132634"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48.00\t0.00
@@ -299,28 +299,28 @@ function test_silence_threshold
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791231"
+  check_current_file_size "1792229"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.50"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "3145274"
+  check_current_file_size "3146272"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
   check_current_mp3_length "00.27"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "794597"
+  check_current_file_size "795595"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_4.mp3"
   check_current_mp3_length "00.42"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
-  check_current_file_size "1181024"
+  check_current_file_size "1182022"
 
   expected="songs/La_Verue__Today_silence.mp3
 -18.00\t0.00
@@ -363,14 +363,14 @@ function test_silence_nt
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791231"
+  check_current_file_size "1792229"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "03.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "5119629"
+  check_current_file_size "5120627"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48.00\t0.00
@@ -413,21 +413,21 @@ function test_silence_rm
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1614445"
+  check_current_file_size "1615443"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "01.41"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "2945006"
+  check_current_file_size "2946004"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
   check_current_mp3_length "01.08"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
-  check_current_file_size "1935336"
+  check_current_file_size "1936334"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48.00\t0.00
@@ -629,14 +629,14 @@ function test_silence_min
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "1" "http://www.jamendo.com/"
-  check_current_file_size "1791231"
+  check_current_file_size "1792229"
 
   current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
   check_current_mp3_length "03.00"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
-  check_current_file_size "5119629"
+  check_current_file_size "5120627"
 
   expected="songs/La_Verue__Today_silence.mp3
 -48.00\t9.00

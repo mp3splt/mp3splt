@@ -504,7 +504,7 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
             int id3v1 = atoi(genre);
             if ((id3v1 != 0) &&
                 (id3v1 < SPLT_ID3V1_NUMBER_OF_GENRES) &&
-                (state->original_tags.genre == NULL))
+                (state->original_tags.tags.genre == NULL))
             {
               err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, splt_id3v1_genres[id3v1]);
             }
@@ -549,6 +549,8 @@ at compilation time
 static void splt_mp3_get_original_tags(const char *filename,
     splt_state *state, int *tag_error)
 {
+  int err = SPLT_OK;
+
   //we get the id3 from the original file using libid3tag
   struct id3_tag *id3tag = NULL;
 
@@ -567,8 +569,6 @@ static void splt_mp3_get_original_tags(const char *filename,
 
       if (id3tag)
       {
-        int err = SPLT_OK;
-
         err = splt_tu_set_original_tags_field(state,SPLT_TAGS_VERSION, &tags_version);
         MP3_VERIFY_ERROR();
         err = splt_mp3_put_original_libid3_frame(state,id3tag,ID3_FRAME_ARTIST,
@@ -595,13 +595,24 @@ static void splt_mp3_get_original_tags(const char *filename,
 
         id3_tag_delete(id3tag);
       }
+
+      tag_bytes_and_size *bytes_and_size = malloc(sizeof(tag_bytes_and_size));
+      if (bytes_and_size == NULL)
+      {
+        err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+        MP3_VERIFY_ERROR();
+      }
+
+      bytes_and_size->tag_bytes = id3_tag_bytes;
+      bytes_and_size->tag_length = id3_tag_length;
+
+      splt_tu_set_original_tags_data(state, bytes_and_size);
     }
 
 end: 
     ;
   }
-
-  if (id3_tag_bytes)
+  else if (id3_tag_bytes)
   {
     free(id3_tag_bytes);
     id3_tag_bytes = NULL;
@@ -609,7 +620,18 @@ end:
 }
 
 /*! build ID3 tags */
-void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
+
+static void splt_mp3_delete_existing_frames(struct id3_tag *id, const char *frame_type)
+{
+  struct id3_frame *frame = NULL;
+  while ((frame = id3_tag_findframe(id, frame_type, 0)))
+  {
+    id3_tag_detachframe(id, frame);
+    id3_frame_delete(frame);
+  }
+}
+
+static void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
     const char *frame_type, int field_number, const char *content, int *error)
 {
   struct id3_frame *id_frame = NULL;
@@ -618,6 +640,8 @@ void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
 
   if (content)
   {
+    splt_mp3_delete_existing_frames(id, frame_type);
+
     id_frame = id3_frame_new(frame_type);
     if (!id_frame)
     {
@@ -651,22 +675,22 @@ void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
         goto error;
       }
     }
-    if (field_content)
-    {
-      free(field_content);
-      field_content = NULL;
-    }
+
+    free(field_content);
+    field_content = NULL;
+
     if (id3_tag_attachframe(id, id_frame) == -1)
     {
       goto error;
     }
+
     id3_frame_delete(id_frame);
   }
 
   return;
 
 error:
-  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  *error = SPLT_ERROR_LIBID3;
   if (id_frame)
   {
     id3_frame_delete(id_frame);
@@ -676,15 +700,29 @@ error:
     free(field_content);
     field_content = NULL;
   }
+
   return;
 }
 
 static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
     const char *album, const char *year, const char *genre, 
-    const char *comment, int track, int *error, unsigned long *number_of_bytes,
-    int tags_version)
+    const char *comment, int track, int set_original_tags, 
+    int *error, unsigned long *number_of_bytes, int tags_version,
+    splt_state *state)
 {
-  struct id3_tag *id = id3_tag_new();
+  struct id3_tag *id = NULL;
+
+  tag_bytes_and_size *bytes_and_size = 
+    (tag_bytes_and_size *) splt_tu_get_original_tags_data(state);
+
+  if (set_original_tags && bytes_and_size)
+  {
+    id = id3_tag_parse(bytes_and_size->tag_bytes, bytes_and_size->tag_length);
+  }
+  else
+  {
+    id = id3_tag_new();
+  }
 
   id3_byte_t *bytes = NULL;
   id3_length_t bytes_length = 0;
@@ -732,6 +770,7 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
     bytes = malloc(sizeof(id3_byte_t) * bytes_length);
     if (!bytes)
     {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       goto error;
     }
     memset(bytes, '\0', sizeof(id3_byte_t) * bytes_length);
@@ -746,7 +785,6 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
   return (char *) bytes;
 
 error:
-  *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
   id3_tag_delete(id);
   *number_of_bytes = 0;
   if (bytes)
@@ -874,8 +912,8 @@ freed by the caller after use.
 static char *splt_mp3_build_id3_tags(splt_state *state,
     const char *title, const char *artist,
     const char *album, const char *year, const char *genre,
-    const char *comment, int track, int *error,
-    unsigned long *number_of_bytes, int version)
+    const char *comment, int track, int set_original_tags,
+    int *error, unsigned long *number_of_bytes, int version)
 {
   char *id = NULL;
 
@@ -891,13 +929,13 @@ static char *splt_mp3_build_id3_tags(splt_state *state,
   {
     splt_d_print_debug(state,"Setting ID3v1 tags with libid3tag\n");
     id = splt_mp3_build_libid3tag(title, artist, album, year, genre, comment, track,
-        error, number_of_bytes, 1);
+        set_original_tags, error, number_of_bytes, 1, state);
   }
   else
   {
     splt_d_print_debug(state,"Setting ID3v2 tags with libid3tag\n");
     id = splt_mp3_build_libid3tag(title, artist, album, year, genre, comment, track,
-        error, number_of_bytes, 2);
+        set_original_tags, error, number_of_bytes, 2, state);
   }
 #endif
 
@@ -925,7 +963,7 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
       id3_data = splt_mp3_build_id3_tags(state,
           tags->title, artist_or_performer, tags->album,
           tags->year, tags->genre, tags->comment,
-          tags->track, error, number_of_bytes, id3_version);
+          tags->track, tags->set_original_tags ,error, number_of_bytes, id3_version);
     }
   }
 
@@ -1014,7 +1052,7 @@ int splt_mp3_get_output_tags_version(splt_state *state)
   splt_d_print_debug(state,"Output tags version is ID3v1 without libid3tag\n");
   return 1;
 #else
-  int original_tags_version = state->original_tags.tags_version;
+  int original_tags_version = state->original_tags.tags.tags_version;
   int force_tags_version = splt_o_get_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION);
 
   int output_tags_version = original_tags_version;
@@ -3316,6 +3354,27 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
   splt_d_print_debug(state, "Warning ! NO_ID3TAG");
   //splt_e_error(SPLT_IERROR_SET_ORIGINAL_TAGS,__func__, 0, NULL);
 #endif
+}
+
+void splt_pl_clear_original_tags(splt_original_tags *original_tags)
+{
+  tag_bytes_and_size *bytes_and_size = 
+    (tag_bytes_and_size *) original_tags->all_original_tags;
+
+  if (!bytes_and_size) {
+    return;
+  }
+
+  if (bytes_and_size->tag_bytes)
+  {
+    free(bytes_and_size->tag_bytes);
+    bytes_and_size->tag_bytes = NULL;
+  }
+
+  bytes_and_size->tag_length = 0;
+
+  free(original_tags->all_original_tags);
+  original_tags->all_original_tags = NULL;
 }
 
 //@}

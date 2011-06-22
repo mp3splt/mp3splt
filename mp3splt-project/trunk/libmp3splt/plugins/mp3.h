@@ -55,6 +55,11 @@
 
 #define SPLT_MAD_BSIZE 4032
 
+typedef struct {
+  id3_byte_t *tag_bytes;
+  id3_length_t tag_length;
+} tag_bytes_and_size;
+
 // Struct that will contain header's useful infos
 struct splt_header {
   off_t ptr;    // Offset of header
