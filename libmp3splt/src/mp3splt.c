@@ -595,7 +595,7 @@ int mp3splt_append_tags(splt_state *state,
       splt_o_lock_library(state);
 
       error = splt_tu_append_tags(state, title, artist,
-          album, performer, year, comment, track, genre);
+          album, performer, year, comment, track, genre, SPLT_FALSE);
 
       splt_o_unlock_library(state);
     }

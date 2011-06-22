@@ -148,6 +148,7 @@ void splt_s_wrap_split(splt_state *state, int *error);
 #define SPLT_TAGS_GENRE 6
 #define SPLT_TAGS_PERFORMER 7
 #define SPLT_TAGS_VERSION 8
+#define SPLT_TAGS_ORIGINAL 9
 
 #define MP3SPLT_SPLT_H
 

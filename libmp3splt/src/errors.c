@@ -322,6 +322,9 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
     case SPLT_ERROR_CANNOT_GET_TOTAL_TIME:
       return splt_su_get_formatted_message(state,
           _(" error: cannot get total audio length"));
+    case SPLT_ERROR_LIBID3:
+      return splt_su_get_formatted_message(state,
+          _(" error: unknown error while setting tags with libid3"));
     case SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER:
       return splt_su_get_formatted_message(state,
           _(" error: the splitpoints are not in order (%s)"),

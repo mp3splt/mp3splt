@@ -32,13 +32,16 @@
 
 typedef struct {
   void **elements;
-  int number_of_elements;
+  long number_of_elements;
 } splt_array;
 
 splt_array *splt_array_new();
 void splt_array_free(splt_array **array);
-int splt_array_append(splt_array *array, void *element);
-void *splt_array_get(splt_array *array, int index);
-int splt_array_length(splt_array *array);
+long splt_array_append(splt_array *array, void *element);
+void *splt_array_get(splt_array *array, long index);
+long splt_array_length(splt_array *array);
 void splt_array_clear(splt_array *array);
+
+void **splt_array_get_elements(splt_array *array);
+long splt_array_get_number_of_elements(splt_array *array);
 

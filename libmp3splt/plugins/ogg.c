@@ -74,6 +74,8 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error);
 int splt_ogg_scan_silence(splt_state *state, short seconds, 
     float threshold, float min, short output, ogg_page *page,
     ogg_int64_t granpos, int *error, ogg_int64_t first_cut_granpos);
+static vorbis_comment *clone_vorbis_comment(vorbis_comment *comment);
+static void free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_comment);
 
 /****************************/
 /* ogg utils */
@@ -291,7 +293,10 @@ static void splt_ogg_v_free(splt_ogg_state *oggstate)
       free(oggstate->headers);
       oggstate->headers = NULL;
     }
-    vorbis_comment_clear(&oggstate->vc);
+
+    free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
+    oggstate->cloned_vorbis_comment = SPLT_FALSE;
+
     if(oggstate->vb)
     {
       vorbis_block_clear(oggstate->vb);
@@ -368,6 +373,8 @@ static splt_ogg_state *splt_ogg_v_new(int *error)
   }
   memset(oggstate->packets, 0, sizeof(splt_v_packet)*2);
 
+  oggstate->cloned_vorbis_comment = SPLT_FALSE;
+
   return oggstate;
 
 error:
@@ -392,6 +399,137 @@ void splt_ogg_state_free(splt_state *state)
 /****************************/
 /* ogg tags */
 
+static void add_tag_and_equal(const char *tag_name, const char *value, splt_array *to_delete, 
+    int *error)
+{
+  if (value == NULL) { return; }
+
+  size_t size = strlen(tag_name) + 2;
+  char *tag_and_equal = malloc(size);
+  if (tag_and_equal == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
+  snprintf(tag_and_equal, size, "%s=", tag_name);
+
+  int err = splt_array_append(to_delete, tag_and_equal);
+  if (err == -1)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+}
+
+static splt_array *build_tag_and_equal_to_delete(const char *artist, 
+    const char *album, const char *title, const char *tracknum,
+    const char *date, const char *genre, const char *comment, int *error)
+{
+  splt_array *to_delete = splt_array_new();
+
+  add_tag_and_equal(SPLT_OGG_TITLE, title, to_delete, error);
+  if (*error < 0) { goto error; }
+  add_tag_and_equal(SPLT_OGG_ARTIST, artist, to_delete, error);
+  if (*error < 0) { goto error; }
+  add_tag_and_equal(SPLT_OGG_ALBUM, album, to_delete, error);
+  if (*error < 0) { goto error; }
+  if (date != NULL && strlen(date) > 0) { add_tag_and_equal(SPLT_OGG_DATE, date, to_delete, error); }
+  if (*error < 0) { goto error; }
+  add_tag_and_equal(SPLT_OGG_GENRE, genre, to_delete, error);
+  if (*error < 0) { goto error; }
+  add_tag_and_equal(SPLT_OGG_TRACKNUMBER, tracknum, to_delete, error);
+  if (*error < 0) { goto error; }
+  add_tag_and_equal(SPLT_OGG_COMMENT, comment, to_delete, error);
+  if (*error < 0) { goto error; }
+
+  return to_delete;
+
+error:
+  splt_array_free(&to_delete);
+  return NULL;
+}
+
+static void delete_all_non_null_tags(vorbis_comment *vc, 
+    const char *artist, const char *album, const char *title,
+    const char *tracknum, const char *date, const char *genre, 
+    const char *comment, int *error)
+{
+  char *vendor_backup = NULL;
+  splt_array *tag_and_equal_to_delete = NULL;
+  splt_array *comments = NULL;
+  long i = 0, j = 0;
+
+  tag_and_equal_to_delete = 
+    build_tag_and_equal_to_delete(artist, album, title, tracknum, date, genre, comment, error);
+  if (*error < 0) { return; }
+
+  comments = splt_array_new();
+  if (comments == NULL) { goto end; }
+
+  for (i = 0;i < vc->comments; i++)
+  {
+    short keep_comment = SPLT_TRUE;
+
+    long number_of_tags_to_delete = splt_array_get_number_of_elements(tag_and_equal_to_delete);
+    for (j = 0;j < number_of_tags_to_delete; j++)
+    {
+      char *tag_and_equal = (char *) splt_array_get(tag_and_equal_to_delete, j);
+
+      if (strncasecmp(vc->user_comments[i], 
+            tag_and_equal, strlen(tag_and_equal)) == 0)
+      {
+        keep_comment = SPLT_FALSE;
+        break;
+      }
+    }
+
+    if (keep_comment)
+    {
+      char *user_comment = NULL;
+      int err = splt_su_append(&user_comment, 
+          vc->user_comments[i], vc->comment_lengths[i], NULL);
+      if (err <  0) { *error = err; goto end; }
+      err = splt_array_append(comments, user_comment);
+      if (err == -1) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; goto end; }
+    }
+  }
+
+  int err = splt_su_copy(vc->vendor, &vendor_backup);
+  if (err < 0) { *error = err; goto end; }
+
+  vorbis_comment_clear(vc);
+
+  long tags_to_keep = splt_array_get_number_of_elements(comments);
+  for (i = 0;i < tags_to_keep; i++)
+  {
+    char *user_comment = splt_array_get(comments, i);
+    vorbis_comment_add(vc, user_comment);
+    free(user_comment);
+    user_comment = NULL;
+  }
+
+  if (vendor_backup)
+  {
+    splt_su_set(&vc->vendor, vendor_backup, strlen(vendor_backup), NULL);
+  }
+
+end:
+  if (vendor_backup)
+  {
+    free(vendor_backup);
+    vendor_backup = NULL;
+  }
+
+  splt_array_free(&comments);
+
+  long number_of_tags_to_delete = splt_array_get_number_of_elements(tag_and_equal_to_delete);
+  for (j = 0;j < number_of_tags_to_delete; j++)
+  {
+    char *tag_and_equal = (char *) splt_array_get(tag_and_equal_to_delete, j);
+    if (tag_and_equal) { free(tag_and_equal); }
+  }
+  splt_array_free(&tag_and_equal_to_delete);
+}
+
 //puts tags in vc
 //what happens if 'vorbis_comment_add_tag(..)' fails ?
 //- ask vorbis developers
@@ -400,42 +538,20 @@ static void splt_ogg_v_comment(splt_state *state, vorbis_comment *vc, char *arti
     int *error)
 {
   if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_TAGS_ORIGINAL_FILE &&
-      state->original_tags.tags_version == 0)
+      state->original_tags.tags.tags_version == 0)
   {
     return;
   }
 
-  if (title != NULL)
-  {
-    vorbis_comment_add_tag(vc, "title", title);
-  }
-  if (artist != NULL)
-  {
-    vorbis_comment_add_tag(vc, "artist", artist);
-  }
-  if (album != NULL)
-  {
-    vorbis_comment_add_tag(vc, "album", album);
-  }
-  if (date != NULL)
-  {
-    if (strlen(date) > 0)
-    {
-      vorbis_comment_add_tag(vc, "date", date);
-    }
-  }
-  if (genre != NULL)
-  {
-    vorbis_comment_add_tag(vc, "genre", genre);
-  }
-  if (tracknum != NULL)
-  {
-    vorbis_comment_add_tag(vc, "tracknumber", tracknum);
-  }
-  if (comment != NULL)
-  {
-    vorbis_comment_add_tag(vc, "comment", comment);
-  }
+  delete_all_non_null_tags(vc, artist, album, title, tracknum, date, genre, comment, error);
+
+  if (title != NULL) { vorbis_comment_add_tag(vc, SPLT_OGG_TITLE, title); }
+  if (artist != NULL) { vorbis_comment_add_tag(vc, SPLT_OGG_ARTIST, artist); }
+  if (album != NULL) { vorbis_comment_add_tag(vc, SPLT_OGG_ALBUM, album); }
+  if (date != NULL && strlen(date) > 0) { vorbis_comment_add_tag(vc, SPLT_OGG_DATE, date); }
+  if (genre != NULL) { vorbis_comment_add_tag(vc, SPLT_OGG_GENRE, genre); }
+  if (tracknum != NULL) { vorbis_comment_add_tag(vc, SPLT_OGG_TRACKNUMBER, tracknum); }
+  if (comment != NULL) { vorbis_comment_add_tag(vc, SPLT_OGG_COMMENT, comment); }
 }
 
 //macro used only in the following function splt_ogg_get_original_tags
@@ -460,7 +576,7 @@ void splt_ogg_get_original_tags(const char *filename,
 
   int has_tags = SPLT_FALSE;
 
-  a = vorbis_comment_query(vc_local, "artist",0);
+  a = vorbis_comment_query(vc_local, SPLT_OGG_ARTIST, 0);
   if (a != NULL)
   {
     err = splt_tu_set_original_tags_field(state, SPLT_TAGS_ARTIST, a);
@@ -468,7 +584,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  t = vorbis_comment_query(vc_local, "title",0);
+  t = vorbis_comment_query(vc_local, SPLT_OGG_TITLE, 0);
   if (t != NULL)
   {
     err = splt_tu_set_original_tags_field(state, SPLT_TAGS_TITLE, t);
@@ -476,7 +592,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  al = vorbis_comment_query(vc_local, "album",0);
+  al = vorbis_comment_query(vc_local, SPLT_OGG_ALBUM, 0);
   if (al != NULL)
   {
     err = splt_tu_set_original_tags_field(state, SPLT_TAGS_ALBUM, al);
@@ -484,7 +600,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  da = vorbis_comment_query(vc_local, "date",0);
+  da = vorbis_comment_query(vc_local, SPLT_OGG_DATE, 0);
   if (da != NULL)
   {
     err = splt_tu_set_original_tags_field(state, SPLT_TAGS_YEAR, da);
@@ -492,7 +608,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  g = vorbis_comment_query(vc_local, "genre",0);
+  g = vorbis_comment_query(vc_local, SPLT_OGG_GENRE, 0);
   if (g != NULL)
   {
     err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, g);
@@ -500,7 +616,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  tr = vorbis_comment_query(vc_local, "tracknumber",0);
+  tr = vorbis_comment_query(vc_local, SPLT_OGG_TRACKNUMBER, 0);
   if (tr != NULL)
   {
     int track = atoi(tr);
@@ -509,7 +625,7 @@ void splt_ogg_get_original_tags(const char *filename,
     OGG_VERIFY_ERROR();
   }
 
-  com = vorbis_comment_query(vc_local, "comment",0);
+  com = vorbis_comment_query(vc_local, SPLT_OGG_COMMENT, 0);
   if (com != NULL)
   {
     err = splt_tu_set_original_tags_field(state, SPLT_TAGS_COMMENT, com);
@@ -518,6 +634,15 @@ void splt_ogg_get_original_tags(const char *filename,
   }
 
   splt_tu_set_original_tags_field(state, SPLT_TAGS_VERSION, &has_tags);
+
+  vorbis_comment *cloned_comment = clone_vorbis_comment(vc_local);
+  if (cloned_comment == NULL)
+  {
+    err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    OGG_VERIFY_ERROR();
+  }
+
+  splt_tu_set_original_tags_data(state, cloned_comment);
 }
 
 //puts the ogg tags
@@ -527,7 +652,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
 
   splt_ogg_state *oggstate = state->codec;
 
-  vorbis_comment_clear(&oggstate->vc);
+  free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
 
   if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_NO_TAGS)
   {
@@ -545,12 +670,32 @@ void splt_ogg_put_tags(splt_state *state, int *error)
 
   char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
 
-  vorbis_comment_init(&oggstate->vc);
+  vorbis_comment *original_vc = 
+    (vorbis_comment *) splt_tu_get_original_tags_data(state);
+
+  if (tags->set_original_tags && original_vc)
+  {
+    vorbis_comment *cloned_vc = clone_vorbis_comment(original_vc);
+    if (cloned_vc == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      goto error;
+    }
+
+    oggstate->vc = *cloned_vc;
+    free(cloned_vc);
+    oggstate->cloned_vorbis_comment = SPLT_TRUE;
+  }
+  else {
+    vorbis_comment_init(&oggstate->vc);
+    oggstate->cloned_vorbis_comment = SPLT_FALSE;
+  }
 
   splt_ogg_v_comment(state, &oggstate->vc,
       artist_or_performer, tags->album, tags->title, track_string,
       tags->year, tags->genre, tags->comment, error);
 
+error:
   free(track_string);
   track_string = NULL;
 }
@@ -756,6 +901,112 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error)
   srand(time(NULL));
 
   return oggstate;
+}
+
+static void free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_comment)
+{
+  if (!vc)
+  {
+    return;
+  }
+
+  vorbis_comment *comment = vc;
+
+  if (!cloned_vorbis_comment)
+  {
+    vorbis_comment_clear(comment);
+    return;
+  }
+
+  long i = 0;
+  for (i = 0;i < comment->comments; i++)
+  {
+    if (comment->user_comments[i])
+    {
+      free(comment->user_comments[i]);
+      comment->user_comments[i] = NULL;
+    }
+  }
+
+  if (comment->user_comments)
+  {
+    free(comment->user_comments);
+    comment->user_comments = NULL;
+  }
+
+  if (comment->comment_lengths)
+  {
+    free(comment->comment_lengths);
+    comment->comment_lengths = NULL;
+  }
+
+  if (comment->vendor)
+  {
+    free(comment->vendor);
+    comment->vendor = NULL;
+  }
+}
+
+static vorbis_comment *clone_vorbis_comment(vorbis_comment *comment)
+{
+  vorbis_comment *cloned_comment = malloc(sizeof(vorbis_comment));
+  if (cloned_comment == NULL)
+  {
+    return NULL;
+  }
+  memset(cloned_comment, 0x0, sizeof(vorbis_comment));
+
+  vorbis_comment_init(cloned_comment);
+
+  int err = splt_su_copy(comment->vendor, &cloned_comment->vendor);
+  if (err < 0)
+  {
+    free(cloned_comment);
+    return NULL;
+  }
+
+  long number_of_comments = comment->comments; 
+  cloned_comment->comments = number_of_comments;
+
+  if (number_of_comments <= 0)
+  {
+    cloned_comment->comment_lengths = NULL;
+    cloned_comment->user_comments = NULL;
+    return cloned_comment;
+  }
+
+  cloned_comment->comment_lengths = malloc(sizeof(int) * number_of_comments);
+  if (cloned_comment->comment_lengths == NULL)
+  {
+    free_vorbis_comment(cloned_comment, SPLT_TRUE);
+    free(cloned_comment);
+    return NULL;
+  }
+  memset(cloned_comment->comment_lengths, 0x0, sizeof(int) * number_of_comments);
+
+  cloned_comment->user_comments = malloc(sizeof(char *) * number_of_comments);
+  if (cloned_comment->user_comments == NULL)
+  {
+    free_vorbis_comment(cloned_comment, SPLT_TRUE);
+    free(cloned_comment);
+    return NULL;
+  }
+  memset(cloned_comment->user_comments, 0x0, sizeof(char *) * number_of_comments);
+
+  int i = 0;
+  for (i = 0;i < number_of_comments; i++)
+  {
+    int err = splt_su_copy(comment->user_comments[i], &cloned_comment->user_comments[i]);
+    if (err < 0)
+    {
+      free_vorbis_comment(cloned_comment, SPLT_TRUE);
+      free(cloned_comment);
+      return NULL;
+    }
+    cloned_comment->comment_lengths[i] = comment->comment_lengths[i];
+  }
+
+  return cloned_comment;
 }
 
 /****************************/
@@ -1433,7 +1684,10 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
   splt_ogg_free_packet(&oggstate->headers[1]);
   oggstate->headers[1] = splt_ogg_save_packet(&header_comm, &packet_err);
   ogg_packet_clear(&header_comm);
-  vorbis_comment_clear(&oggstate->vc);
+
+  free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
+  oggstate->cloned_vorbis_comment = SPLT_FALSE;
+
   if (packet_err < 0)
   {
     *error = packet_err;
@@ -1650,6 +1904,14 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
   splt_d_print_debug(state,"Taking ogg original tags... \n");
   char *filename = splt_t_get_filename_to_split(state);
   splt_ogg_get_original_tags(filename, state, error);
+}
+
+void splt_pl_clear_original_tags(splt_original_tags *original_tags)
+{
+  vorbis_comment *comment = (vorbis_comment *)original_tags->all_original_tags;
+  free_vorbis_comment(comment, SPLT_TRUE);
+  free(original_tags->all_original_tags);
+  original_tags->all_original_tags = NULL;
 }
 
 //@}

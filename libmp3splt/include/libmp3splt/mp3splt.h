@@ -248,7 +248,14 @@ typedef struct {
    * @brief tags version (for mp3): 1 or 2 or 1 & 2
    */
   int tags_version;
+
+  int set_original_tags;
 } splt_tags;
+
+typedef struct {
+  splt_tags tags;
+  void *all_original_tags;
+} splt_original_tags;
 
 /**
  * @brief Definition of a splitpoint
@@ -715,6 +722,7 @@ typedef struct {
       double end_point, int *error, int save_end_point);
   int (*scan_silence)(void *state, int *error);
   void (*set_original_tags)(void *state, int *error);
+  void (*clear_original_tags)(splt_original_tags *original_tags);
   void (*init)(void *state, int *error);
   void (*end)(void *state, int *error);
 } splt_plugin_func;
@@ -770,7 +778,7 @@ typedef struct {
   char *default_genre_tag;
 
   //!tags of the original file to split
-  splt_tags original_tags;
+  splt_original_tags original_tags;
 
   //!options for the split
   splt_options options;
@@ -881,6 +889,7 @@ typedef enum {
   SPLT_ERROR_TIME_SPLIT_VALUE_INVALID = -34,
   SPLT_ERROR_LENGTH_SPLIT_VALUE_INVALID = -35,
   SPLT_ERROR_CANNOT_GET_TOTAL_TIME = -36,
+  SPLT_ERROR_LIBID3 = -37,
 
   SPLT_FREEDB_ERROR_INITIALISE_SOCKET = -101,
   SPLT_FREEDB_ERROR_CANNOT_GET_HOST = -102,

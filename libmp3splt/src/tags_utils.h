@@ -49,6 +49,8 @@ int splt_tu_set_like_x_tags_field(splt_state *state,
     int tags_field, const void *data);
 int splt_tu_set_original_tags_field(splt_state *state,
     int tags_field, const void *data);
+void splt_tu_set_original_tags_data(splt_state *state, void *data);
+void *splt_tu_get_original_tags_data(splt_state *state);
 splt_tags *splt_tu_get_tags(splt_state *state, int *tags_number);
 
 int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
@@ -70,7 +72,7 @@ int splt_tu_append_tags(splt_state *state,
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
-    int track, const char *genre);
+    int track, const char *genre, int set_original_tags);
 
 void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
     int append_null_tags, int *error);
@@ -83,7 +85,7 @@ int splt_tu_append_only_non_null_previous_tags(splt_state *state,
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
-    int track, const char *genre);
+    int track, const char *genre, int set_original_tags);
 
 #define MP3SPLT_TAGS_UTILS_H
 

@@ -135,7 +135,7 @@ that is meant to be used directly are all in mp3splt.c.
 //      return s;
 //}
 
-static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
+/*static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
     const char search_server[256], int port)
 {
   dest.proxy=0;
@@ -145,7 +145,6 @@ static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
   //if (proxy->use_proxy)
   if (proxy)
   {
-    /*
     //TODO
     strncpy(dest.hostname, proxy->hostname, 255);
     dest.port = proxy->port;
@@ -161,7 +160,7 @@ static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
     }
     memset(dest.auth, 0x0, strlen(line)+1);
     strncpy(dest.auth, line, strlen(line));
-    //dest.auth = b64(line, strlen(line));*/
+    //dest.auth = b64(line, strlen(line));
   }
 
   if (!dest.proxy) 
@@ -186,7 +185,7 @@ static splt_addr splt_freedb_useproxy(splt_proxy *proxy, splt_addr dest,
   }
 
   return dest;
-}
+}*/
 
 char *get_cgi_path_and_cut_server(int type, const char *search_server)
 {

@@ -193,7 +193,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
     splt_tp_process_tags(tags, tpu, state, error);
     if (*error < 0) { goto end; }
 
-    splt_tu_append_tags_to_state(state, tpu->current_tags, 
+    splt_tu_append_tags_to_state(state, tpu->current_tags,
         !tpu->original_tags_found, error);
     if (*error < 0) { goto end; }
 
@@ -505,6 +505,7 @@ static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
   {
     splt_tags last_tags = splt_tu_get_last_tags(state);
     splt_tu_copy_tags(&last_tags, tpu->all_tags, error);
+    tpu->all_tags->set_original_tags = SPLT_TRUE;
     if (*error < 0) { goto end; }
   }
 
