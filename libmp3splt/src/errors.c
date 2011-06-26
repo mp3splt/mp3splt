@@ -286,6 +286,8 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
       return splt_su_get_formatted_message(state, _(" split in equal tracks ok"));
     case SPLT_SILENCE_OK:
       return splt_su_get_formatted_message(state, _(" silence split ok"));
+    case SPLT_TRIM_SILENCE_OK:
+      return splt_su_get_formatted_message(state, _(" trim using silence split ok"));
     case SPLT_SPLITPOINT_BIGGER_THAN_LENGTH:
       return splt_su_get_formatted_message(state,
           _(" file split, splitpoints bigger than length"));

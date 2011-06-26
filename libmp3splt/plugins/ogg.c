@@ -55,6 +55,7 @@ The Plug-in that handles ogg vorbis files
 #include "splt.h"
 #include "ogg.h"
 #include "ogg_utils.h"
+#include "ogg_silence.h"
 
 #define FIRST_GRANPOS 1
 
@@ -71,9 +72,6 @@ The Plug-in that handles ogg vorbis files
 /* some function prototypes */
 
 splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error);
-int splt_ogg_scan_silence(splt_state *state, short seconds, 
-    float threshold, float min, short output, ogg_page *page,
-    ogg_int64_t granpos, int *error, ogg_int64_t first_cut_granpos);
 static vorbis_comment *clone_vorbis_comment(vorbis_comment *comment);
 static void free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_comment);
 
@@ -1375,8 +1373,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                   packet.packetno = packetnum++;
 
                   //progress
-                  if ((splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE)
-                        == SPLT_OPTION_SILENCE_MODE) ||
+                  if ((splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE) ||
+                      (splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_TRIM_SILENCE_MODE) ||
                       (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
                   {
                     splt_c_update_progress(state, (double)page_granpos,
@@ -1413,7 +1411,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
             if (adjust)
             {
               if (splt_ogg_scan_silence(state,
-                    (2 * adjust), threshold, 0.f, 0, &page, current_granpos, error, first_cut_granpos) > 0)
+                    (2 * adjust), threshold, 0.f, 0, &page, current_granpos, error, first_cut_granpos,
+                    splt_scan_silence_processor) > 0)
               {
                 cutpoint = (splt_siu_silence_position(state->silence_list, 
                       oggstate->off) * oggstate->vi->rate);
@@ -1887,12 +1886,24 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
   float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
   float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
-  int found = 0;
 
   splt_ogg_state *oggstate = state->codec;
   oggstate->off = offset;
 
-  found = splt_ogg_scan_silence(state, 0, threshold, min_length, 1, NULL, 0, error, 0);
+  int found = splt_ogg_scan_silence(state, 0, threshold, min_length, 1, NULL, 0, error, 0,
+      splt_scan_silence_processor);
+  if (*error < 0) { return -1; }
+
+  return found;
+}
+
+//! Plugin API: Scan trim using silence
+int splt_pl_scan_trim_silence(splt_state *state, int *error)
+{
+  float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+
+  int found = splt_ogg_scan_silence(state, 0, threshold, 0, 1, NULL, 0, error, 0,
+      splt_trim_silence_processor);
   if (*error < 0) { return -1; }
 
   return found;

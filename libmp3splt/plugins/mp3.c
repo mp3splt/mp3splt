@@ -2243,7 +2243,8 @@ bloc_end:
         //split
         int split_mode = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
         if (((split_mode == SPLT_OPTION_TIME_MODE) || 
-              (split_mode == SPLT_OPTION_SILENCE_MODE))
+              (split_mode == SPLT_OPTION_SILENCE_MODE) ||
+              (split_mode == SPLT_OPTION_TRIM_SILENCE_MODE))
             && (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
         {
           splt_c_update_progress(state, (double)(mp3state->frames-fbegin),
@@ -2286,7 +2287,8 @@ bloc_end:
         if ((adjust) && (mp3state->frames >= fend))
         {
           int silence_points_found =
-            splt_mp3_scan_silence(state, end, 2 * adjust, threshold, 0.f, 0, error);
+            splt_mp3_scan_silence(state, end, 2 * adjust, threshold, 0.f, 0, error,
+                splt_scan_silence_processor);
           //if error, go out
           if (silence_points_found == -1)
           {
@@ -3234,7 +3236,8 @@ void splt_pl_end(splt_state *state, int *error)
 {
   //put infos about the frames processed and the number of sync errors
   //ONLY if framemode
-  if ((splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_SILENCE_MODE)
+  if ((splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_SILENCE_MODE) 
+      && (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_TRIM_SILENCE_MODE)
       && (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_ERROR_MODE)
       && (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_WRAP_MODE))
   {
@@ -3332,13 +3335,27 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
   float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
   float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
-  int found = 0;
 
   splt_mp3_state *mp3state = state->codec;
   mp3state->off = offset;
 
-  found = splt_mp3_scan_silence(state, mp3state->mp3file.firsthead.ptr, 0,
-      threshold, min_length, 1, error);
+  int found = splt_mp3_scan_silence(state, mp3state->mp3file.firsthead.ptr, 0,
+      threshold, min_length, 1, error, splt_scan_silence_processor);
+  if (*error < 0) { return -1; }
+
+  return found;
+}
+
+//! Plugin API: Scan trim using silence
+int splt_pl_scan_trim_silence(splt_state *state, int *error)
+{
+  float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+
+  splt_mp3_state *mp3state = state->codec;
+
+  int found = splt_mp3_scan_silence(state, mp3state->mp3file.firsthead.ptr, 0,
+      threshold, 0, 1, error, splt_trim_silence_processor);
+  if (*error < 0) { return -1; }
 
   return found;
 }

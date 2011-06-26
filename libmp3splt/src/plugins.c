@@ -603,7 +603,7 @@ int splt_p_find_get_plugins_data(splt_state *state)
   if (return_value >= 0)
   {
     splt_plugins *pl = state->plug;
-    splt_d_print_debug(state,"\nNumber of plugins found: _%d_\n",pl->number_of_plugins_found);
+    splt_d_print_debug(state,"\nNumber of plugins found: _%d_\n", pl->number_of_plugins_found);
     int i = 0;
     int err = 0;
     for (i = 0;i < pl->number_of_plugins_found;i++)
@@ -626,6 +626,8 @@ int splt_p_find_get_plugins_data(splt_state *state)
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_end");
       pl->data[i].func->scan_silence =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_silence");
+      pl->data[i].func->scan_trim_silence =
+        lt_dlsym(pl->data[i].plugin_handle, "splt_pl_scan_trim_silence");
       pl->data[i].func->set_original_tags =
         lt_dlsym(pl->data[i].plugin_handle, "splt_pl_set_original_tags");
       pl->data[i].func->clear_original_tags =
@@ -912,6 +914,30 @@ int splt_p_scan_silence(splt_state *state, int *error)
     if (pl->data[current_plugin].func->scan_silence != NULL)
     {
       return pl->data[current_plugin].func->scan_silence(state, error);
+    }
+    else
+    {
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
+    }
+  }
+
+  return 0;
+}
+
+int splt_p_scan_trim_silence(splt_state *state, int *error)
+{
+  splt_plugins *pl = state->plug;
+  int current_plugin = splt_p_get_current_plugin(state);
+  if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
+  {
+    *error = SPLT_ERROR_NO_PLUGIN_FOUND;
+    return 0;
+  }
+  else
+  {
+    if (pl->data[current_plugin].func->scan_trim_silence != NULL)
+    {
+      return pl->data[current_plugin].func->scan_trim_silence(state, error);
     }
     else
     {

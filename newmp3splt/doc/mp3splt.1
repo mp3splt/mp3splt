@@ -96,8 +96,8 @@ automatically from servers on internet like freedb.org, tracktype.org
 or from a local .XMCD (.CDDB) or .CUE file (see \-c option), with the possibility to adjust them automatically with silence
 detection (see \-a option).
 
-You can also try to split files automatically with silence detection (see \-s option), or by a fixed
-time length (see \-t option)
+You can also try to split files automatically with silence detection (see \-s option),
+trim files using silence detection (see \-r option), or by a fixed time length (see \-t option)
 
 Or if you have a file created either with Mp3Wrap or AlbumWrap, you can easily split it
 just with one command (see \-w option).
@@ -172,6 +172,14 @@ can be used to adjust splitpoints with silence detection.
 \fBEqual time tracks mode\fP.
 Split in SPLIT_NUMBER files.
 
+.IP "\fB-r\fP         " 10
+\fBTrim using silence detection\fP,
+to trim using silence detection. To trim using silence detection we need to decode
+files, so this option can be really slow if used with big files.
+It accepts some parameters with \-p option (see below for a detailed description):
+.I threshold
+level (th) which is the sound level to be considered silence.
+
 .IP "\fB-s\fP         " 10
 \fBSilence mode\fP,
 to split with silence detection. When you use \-s option, mp3splt attempts to detect
@@ -198,7 +206,7 @@ was not detected because too short, you can manually split the long track in the
 Or if file is an MP3 (not with ogg) and there are too many silence points that can't be discarded reducing
 track number (because are longer than right points) you can safely concatenate
 them with 'cat' programs or similar ('copy /b file1+file2' for dos) because split files are consecutive,
-no data is lost and no ID3 is written for this purpose.
+no data is lost.
 This option is intended to split small/medium size (but even large if you can wait ;)  mp3 and ogg files
 where tracks are separated by a reasonable silence time. To try to split mixed albums or files
 with consecutive tracks (such as live performances) might be only a waste of time.
@@ -287,19 +295,22 @@ With \-a option splitting process is the same, but for each splitpoint mp3splt w
 some time (gap) before and some after to find silence and adjust splitpoints.
 
 .IP "\fB-p PARAMETERS\fP         " 10
-\fBParameters for \-a and \-s option\fP. When using \-a and \-s option some users parameters can be specified in
+\fBParameters for \-a, \-s and \-r option\fP. When using \-a, \-s and \-r option some users parameters can be specified in
 the argument and must be in the form:
 
 \fB<name1=value,name2=value,..>\fP
 
 You can specify an indefinite number of them, with no spaces and separated by comma. Available parameters are:
 
-.IP "\fBBoth -s and -a\fP"
+.IP "\fBFor -s, -a and -r\fP"
 
 .IP \fBth=FLOAT\fP
 Threshold level (dB) to be considered silence. It is a float number
 between \-96 and 0. Default is \-48 dB, which is a value found by tests and should be good in most
 cases.
+
+.IP "\fBBoth -s and -a\fP"
+
 .IP \fBoff=FLOAT\fP
 Float number between \-2 and 2 and allows
 you to adjust the offset of cutpoint in silence time. 0 is the begin of silence, and 1 the end. Default is 0.8.

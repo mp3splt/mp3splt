@@ -430,6 +430,10 @@ typedef enum {
    */
   SPLT_OPTION_SILENCE_MODE,
   /**
+   * Split with trim silence detection
+   */
+  SPLT_OPTION_TRIM_SILENCE_MODE,
+  /**
    * Split with error mode 
    * It is useful to split large file derivated from a concatenation of
    * smaller files
@@ -531,6 +535,11 @@ typedef enum {
  * See #mp3splt_set_oformat
  */
 #define SPLT_DEFAULT_SILENCE_OUTPUT "@f_silence_@n"
+/**
+ * @brief Default output for the trim silence split.
+ * See #mp3splt_set_oformat
+ */
+#define SPLT_DEFAULT_TRIM_SILENCE_OUTPUT "@f_trimmed"
 
 //!structure with all the options supplied to split the file
 typedef struct {
@@ -538,6 +547,7 @@ typedef struct {
      - SPLT_OPTION_NORMAL_MODE
      - SPLT_OPTION_WRAP_MODE
      - SPLT_OPTION_SILENCE_MODE
+     - SPLT_OPTION_TRIM_SILENCE_MODE
      - SPLT_OPTION_ERROR_MODE
      - SPLT_OPTION_TIME_MODE
   */
@@ -721,6 +731,7 @@ typedef struct {
   double (*split)(void *state, const char *final_fname, double begin_point,
       double end_point, int *error, int save_end_point);
   int (*scan_silence)(void *state, int *error);
+  int (*scan_trim_silence)(void *state, int *error);
   void (*set_original_tags)(void *state, int *error);
   void (*clear_original_tags)(splt_original_tags *original_tags);
   void (*init)(void *state, int *error);
@@ -837,6 +848,7 @@ typedef enum {
   SPLT_NO_SILENCE_SPLITPOINTS_FOUND = 7,
   SPLT_OK_SPLIT_EOF = 8,
   SPLT_LENGTH_SPLIT_OK = 9,
+  SPLT_TRIM_SILENCE_OK = 10,
 
   SPLT_FREEDB_OK = 100,
   SPLT_FREEDB_FILE_OK = 101,
@@ -1119,8 +1131,8 @@ typedef enum {
   /**
    * The threshold  level (dB) to be considered silence\n
    * It is a float number between -96 and 0. It is used when
-   * having a #SPLT_OPTION_SILENCE_MODE split or when having the
-   * #SPLT_OPT_AUTO_ADJUST option
+   * having a #SPLT_OPTION_SILENCE_MODE or a #SPLT_OPTION_TRIM_SILENCE_MODE split
+   * or when having the #SPLT_OPT_AUTO_ADJUST option
    *
    * The option can take float values between -96 and 0
    *
@@ -1129,8 +1141,8 @@ typedef enum {
   SPLT_OPT_PARAM_THRESHOLD,
   /**
    * Allows you to adjust the offset of cutpoint in silence time when
-   * having a #SPLT_OPTION_SILENCE_MODE split or when having the
-   * #SPLT_OPT_AUTO_ADJUST option
+   * having a #SPLT_OPTION_SILENCE_MODE or a #SPLT_OPTION_TRIM_SILENCE_MODE split
+   * or when having the #SPLT_OPT_AUTO_ADJUST option
    *
    * The option can take float values between -2 and 2\n
    * 0  is  the begin of silence, and 1 the end

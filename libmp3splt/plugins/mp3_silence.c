@@ -50,7 +50,9 @@ static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t 
 \param threshold The threshold that tells noise from silence
 */
 int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length,
-    float threshold, float min, short output, int *error)
+    float threshold, float min, short output, int *error,
+    short silence_processor(double time, int silence_was_found, short must_flush,
+      splt_scan_silence_data *ssd, int *found, int *error))
 {
   splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, SPLT_TRUE); 
   if (ssd == NULL)
@@ -59,8 +61,7 @@ int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length,
     return -1;
   }
 
-  splt_mp3_scan_silence_and_process(state, begin, threshold, length, splt_scan_silence_processor, ssd, error);
-  //splt_mp3_scan_silence_and_process(state, begin, threshold, length, splt_trim_silence_processor, ssd, error);
+  splt_mp3_scan_silence_and_process(state, begin, threshold, length, silence_processor, ssd, error);
 
   int found = ssd->found;
 
@@ -142,7 +143,8 @@ static void splt_mp3_scan_silence_and_process(splt_state *state, off_t begin_off
 
           //if we don't have silence split,
           //put the 1/4 of progress
-          if (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_SILENCE_MODE)
+          if ((splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_SILENCE_MODE) &&
+              (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) != SPLT_OPTION_TRIM_SILENCE_MODE))
           {
             splt_c_update_progress(state,(double)(time),
                 (double)(length), 4,1/(float)4, SPLT_DEFAULT_PROGRESS_RATE);
@@ -183,7 +185,8 @@ static void splt_mp3_scan_silence_and_process(splt_state *state, off_t begin_off
   if (err < 0) { *error = err; }
  
   //only if we have silence mode, we set progress to 100%
-  if (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE)
+  if ((splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE) ||
+      (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_TRIM_SILENCE_MODE))
   {
     splt_c_update_progress(state,1.0,1.0,1,1,1);
   }

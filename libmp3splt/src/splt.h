@@ -112,6 +112,7 @@ void splt_s_equal_length_split(splt_state *state, int *error);
 
 int splt_s_set_silence_splitpoints(splt_state *state, int *error);
 void splt_s_silence_split(splt_state *state, int *error);
+void splt_s_trim_silence_split(splt_state *state, int *error);
 
 /****************************/
 /* splt wrap split */
