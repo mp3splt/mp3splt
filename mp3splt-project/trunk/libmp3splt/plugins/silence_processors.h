@@ -27,6 +27,8 @@
 
 #include "splt.h"
 
+#ifndef SPLT_SILENCE_PROCESSORS_H
+
 typedef struct {
   short first;
   short flush;
@@ -52,4 +54,7 @@ splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short firs
 
 void splt_free_scan_silence_data(splt_scan_silence_data **ssd);
 
+#define SPLT_SILENCE_PROCESSORS_H
+
+#endif
 

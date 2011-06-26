@@ -806,6 +806,7 @@ put_value:
               ((split_mode != SPLT_OPTION_TIME_MODE) &&
                (split_mode != SPLT_OPTION_NORMAL_MODE) &&
                (split_mode != SPLT_OPTION_SILENCE_MODE) &&
+               (split_mode != SPLT_OPTION_TRIM_SILENCE_MODE) &&
                (split_mode != SPLT_OPTION_ERROR_MODE) &&
                (split_mode != SPLT_OPTION_LENGTH_MODE)))
           {

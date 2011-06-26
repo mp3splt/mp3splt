@@ -128,7 +128,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   while ((option = getopt(data->argc, data->argv,
-          "m:O:Dvifkwleqnasc:d:o:t:p:g:hQN12T:XxPE:A:S:G:")) != -1)
+          "m:O:Dvifkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:")) != -1)
   {
     switch (option)
     {
@@ -199,6 +199,10 @@ int main(int argc, char **orig_argv)
       case 's':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
         opt->s_option = SPLT_TRUE;
+        break;
+      case 'r':
+        mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
+        opt->r_option = SPLT_TRUE;
         break;
       case 'i':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
@@ -504,7 +508,8 @@ int main(int argc, char **orig_argv)
   int normal_split = SPLT_FALSE;
   if (!opt->l_option && !opt->i_option && !opt->c_option &&
       !opt->e_option && !opt->t_option && !opt->w_option &&
-      !opt->s_option && !opt->A_option && !opt->S_option)
+      !opt->s_option && !opt->A_option && !opt->S_option &&
+      !opt->r_option)
   {
     if (data->number_of_splitpoints < 2)
     {
@@ -587,7 +592,7 @@ int main(int argc, char **orig_argv)
         we_have_incompatible_stdin_option(opt))
     {
       print_error_exit(_("cannot use -k option (or STDIN) with"
-            " one of the following options: -S -s -w -l -e -i -a -p"), data);
+            " one of the following options: -S -s -r -w -l -e -i -a -p"), data);
     }
 
     //we put the filename

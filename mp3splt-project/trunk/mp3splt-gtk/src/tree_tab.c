@@ -87,6 +87,7 @@ GtkWidget *remove_row_button = NULL;
 
 //special buttons like 'set splitpoints from silence detection
 GtkWidget *scan_silence_button = NULL;
+GtkWidget *scan_trim_silence_button = NULL;
 
 //handle box for detaching window
 GtkWidget *handle_box;
@@ -142,15 +143,15 @@ gint first_splitpoint_selected = -1;
 @{
 */
 //!number of tracks parameter
-GtkWidget *spinner_silence_number_tracks;
+GtkWidget *spinner_silence_number_tracks = NULL;
 //!number of tracks parameter
-GtkWidget *spinner_silence_minimum;
+GtkWidget *spinner_silence_minimum = NULL;
 //!offset parameter
-GtkWidget *spinner_silence_offset;
+GtkWidget *spinner_silence_offset = NULL;
 //!threshold parameter
 GtkWidget *spinner_silence_threshold;
 //!remove silence check button (silence mode parameter
-GtkWidget *silence_remove_silence;
+GtkWidget *silence_remove_silence = NULL;
 // @}
 
 /*!\defgroup silencesplitparameters silence split parameters
@@ -1147,11 +1148,14 @@ void add_row_clicked(GtkWidget *button, gpointer data)
 //!set splitpints from silence detection
 gpointer detect_silence_and_set_splitpoints(gpointer data)
 {
+  gint should_trim = GPOINTER_TO_INT(data);
+
   gint err = SPLT_OK;
 
   enter_threads();
 
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), FALSE);
   gtk_widget_set_sensitive(cancel_button, TRUE);
   filename_to_split = inputfilename_get();
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
@@ -1173,7 +1177,14 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 
   mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
   int old_split_mode = mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err);
-  mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
+  if (should_trim)
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
+  }
+  else
+  {
+    mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
+  }
   int old_tags_option = mp3splt_get_int_option(the_state, SPLT_OPT_TAGS, &err);
   mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
   if (err >= 0)
@@ -1198,6 +1209,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 
   gtk_widget_set_sensitive(cancel_button, FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
 
   exit_threads();
 
@@ -1207,8 +1219,12 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 //!start thread with 'set splitpints from silence detection'
 void detect_silence_and_add_splitpoints_start_thread()
 {
-  create_thread(detect_silence_and_set_splitpoints,
-                  NULL, TRUE, NULL);
+  create_thread(detect_silence_and_set_splitpoints, GINT_TO_POINTER(SPLT_FALSE), TRUE, NULL);
+}
+
+void detect_silence_and_add_trim_splitpoints_start_thread()
+{
+  create_thread(detect_silence_and_set_splitpoints, GINT_TO_POINTER(SPLT_TRUE), TRUE, NULL);
 }
 
 //!update silence parameters when 'widget' changes
@@ -1216,20 +1232,103 @@ void update_silence_parameters(GtkWidget *widget, gpointer data)
 {
   silence_threshold_value = 
     gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_threshold));
-  silence_offset_value =
-    gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_offset));
-  silence_number_of_tracks =
-    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_silence_number_tracks));
-  silence_minimum_length = 
-    gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_minimum));
-  silence_remove_silence_between_tracks = 
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(silence_remove_silence));
+  if (spinner_silence_offset != NULL)
+  {
+    silence_offset_value =
+      gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_offset));
+  }
+  if (spinner_silence_number_tracks != NULL)
+  {
+    silence_number_of_tracks =
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_silence_number_tracks));
+  }
+  if (spinner_silence_minimum != NULL)
+  {
+    silence_minimum_length = 
+      gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_minimum));
+  }
+  if (silence_remove_silence != NULL)
+  {
+    silence_remove_silence_between_tracks = 
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(silence_remove_silence));
+  }
 }
 
 //!action when checking the 'remove silence' button
 void silence_remove_silence_checked(GtkToggleButton *button, gpointer data)
 {
   update_silence_parameters(GTK_WIDGET(button), data);
+}
+
+void create_trim_silence_window(GtkWidget *button, gpointer *data)
+{
+  GtkWidget *silence_detection_window =
+    gtk_dialog_new_with_buttons(_("Set trim splitpoints using silence detection"),
+        GTK_WINDOW(window),
+        GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+        GTK_STOCK_OK,
+        GTK_RESPONSE_YES,
+        GTK_STOCK_CANCEL,
+        GTK_RESPONSE_CANCEL,
+        NULL);
+
+  gtk_widget_set_size_request(silence_detection_window, 300, 90);
+
+  GtkWidget *general_inside_vbox = gtk_vbox_new(FALSE, 0);
+  //add silence parameters
+  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(general_inside_vbox), horiz_fake, FALSE, FALSE, 10);
+  
+  //vertical parameter box
+  GtkWidget *param_vbox;
+  param_vbox = gtk_vbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
+  
+  //horizontal box fake for threshold level
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), 
+      horiz_fake, FALSE, FALSE, 0);
+  
+  //threshold level
+  GtkWidget *label = gtk_label_new(_("Threshold level (dB):"));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+  
+  //adjustement for the threshold spinner
+  GtkAdjustment *adj = (GtkAdjustment *)
+    gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  //the threshold spinner
+  spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
+  //set not editable
+  gtk_box_pack_start(GTK_BOX(horiz_fake), 
+      spinner_silence_threshold, FALSE, FALSE, 6);
+  
+  //we set the default parameters for the silence split
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_threshold),
+      silence_threshold_value);
+
+  //add actions when changing the values
+  g_signal_connect(G_OBJECT(spinner_silence_threshold), "value_changed",
+      G_CALLBACK(update_silence_parameters), NULL);
+
+  gtk_widget_show_all(general_inside_vbox);
+  gtk_container_add(GTK_CONTAINER(GTK_DIALOG(silence_detection_window)->vbox),
+      general_inside_vbox);
+
+  //result of the dialog window
+  gint result = gtk_dialog_run(GTK_DIALOG(silence_detection_window));
+
+  //we set the silence parameters
+  mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
+      silence_threshold_value);
+
+  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+
+  gtk_widget_destroy(silence_detection_window);
+
+  if (result == GTK_RESPONSE_YES)
+  {
+    detect_silence_and_add_trim_splitpoints_start_thread();
+  }
 }
 
 //!event for clicking the 'detect silence and add splitpoints' button
@@ -1254,8 +1353,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   //vertical parameter box
   GtkWidget *param_vbox;
   param_vbox = gtk_vbox_new(FALSE,0);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), 
-                      param_vbox, FALSE, FALSE, 25);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
   
   //horizontal box fake for threshold level
   horiz_fake = gtk_hbox_new(FALSE,0);
@@ -1379,9 +1477,6 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   if (result == GTK_RESPONSE_YES)
   {
     detect_silence_and_add_splitpoints_start_thread();
-  }
-  else if (result == GTK_RESPONSE_CANCEL)
-  {
   }
 }
 
@@ -1583,14 +1678,24 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
 
   /* set splitpoints from silence detection */
-  scan_silence_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
-                                               _("_Silence detection"), FALSE);
+  scan_silence_button =
+    (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
       G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);
   gtk_box_pack_end(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(scan_silence_button,
       _("Set splitpoints from silence detection"));
+
+  /* set splitpoints from trim silence detection */
+  scan_trim_silence_button =
+    (GtkWidget *)create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
+  g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
+      G_CALLBACK(create_trim_silence_window), NULL);
+  gtk_box_pack_end(GTK_BOX(hbox), scan_trim_silence_button, FALSE, FALSE, 5);
+  gtk_widget_set_tooltip_text(scan_trim_silence_button,
+      _("Set trim splitpoints using silence detection"));
 
   return hbox;
 }

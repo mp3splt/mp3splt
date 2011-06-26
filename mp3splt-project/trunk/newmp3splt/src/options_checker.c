@@ -47,7 +47,7 @@ void check_args(int argc, main_data *data)
       if (we_have_incompatible_stdin_option(opt))
       {
         print_error_exit(_("cannot use -k option (or STDIN) with"
-              " one of the following options: -S -s -w -l -e -i -a -p"), data);
+              " one of the following options: -S -s -r -w -l -e -i -a -p"), data);
       }
     }
 
@@ -61,7 +61,7 @@ void check_args(int argc, main_data *data)
           opt->g_option || opt->n_option ||
           opt->x_option || opt->A_option ||
           opt->E_option || opt->S_option ||
-          opt->G_option)
+          opt->G_option || opt->r_option)
       {
         print_error_exit(_("the -w option can only be used with -m, -d, -q and -Q"), data);
       }
@@ -77,7 +77,7 @@ void check_args(int argc, main_data *data)
           opt->g_option || opt->d_option ||
           opt->n_option || opt->qq_option ||
           opt->x_option || opt->A_option ||
-          opt->S_option || opt->G_option)
+          opt->S_option || opt->G_option || opt->r_option)
       {
         print_error_exit(_("the -l option can only be used with -q"), data);
       }
@@ -90,7 +90,8 @@ void check_args(int argc, main_data *data)
           opt->a_option || opt->p_option ||
           opt->g_option || opt->n_option ||
           opt->A_option || opt->E_option ||
-          opt->S_option || opt->G_option)
+          opt->S_option || opt->G_option ||
+          opt->r_option)
       {
         print_error_exit(_("the -e option can only be used with -m, -f, -o, -d, -q, -Q"), data);
       }
@@ -105,33 +106,33 @@ void check_args(int argc, main_data *data)
       if (opt->t_option || opt->s_option ||
           opt->i_option || opt->g_option ||
           opt->A_option || opt->S_option ||
-          opt->G_option)
+          opt->G_option || opt->r_option)
       {
-        print_error_exit(_("the -c option cannot be used with -t, -g, -G, -s, -A, -i or -S"), data);
+        print_error_exit(_("the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i or -S"), data);
       }
     }
 
     if (opt->A_option)
     {
-      if (opt->t_option || opt->s_option || opt->i_option || opt->S_option)
+      if (opt->t_option || opt->s_option || opt->i_option || opt->S_option || opt->r_option)
       {
-        print_error_exit(_("the -A option cannot be used with -t, -s, -i or -S"), data);
+        print_error_exit(_("the -A option cannot be used with -t, -s, -r, -i or -S"), data);
       }
     }
 
     if (opt->t_option)
     {
-      if (opt->s_option || opt->i_option || opt->S_option)
+      if (opt->s_option || opt->i_option || opt->S_option || opt->r_option)
       {
-        print_error_exit(_("the -t option cannot be used with -s, -i or -S"), data);
+        print_error_exit(_("the -t option cannot be used with -s, -r, -i or -S"), data);
       }
     }
 
     if (opt->s_option)
     {
-      if (opt->a_option || opt->i_option || opt->S_option)
+      if (opt->a_option || opt->i_option || opt->S_option || opt->r_option)
       {
-        print_error_exit(_("-s option cannot be used with -a, -i or -S"), data);
+        print_error_exit(_("-s option cannot be used with -a, -r, -i or -S"), data);
       }
     }
 
@@ -149,9 +150,9 @@ void check_args(int argc, main_data *data)
 
     if (opt->p_option)
     {
-      if (!opt->a_option && !opt->s_option && !opt->i_option)
+      if (!opt->a_option && !opt->s_option && !opt->i_option && !opt->r_option)
       {
-        print_error_exit(_("the -p option cannot be used without -a, -s or -i"), data);
+        print_error_exit(_("the -p option cannot be used without -a, -s, -r  or -i"), data);
       }
     }
 
@@ -274,6 +275,6 @@ int we_have_incompatible_stdin_option(options *opt)
   return opt->s_option || opt->w_option ||
     opt->l_option || opt->e_option ||
     opt->i_option || opt->a_option ||
-    opt->p_option || opt->S_option;
+    opt->p_option || opt->S_option || opt->r_option;
 }
 

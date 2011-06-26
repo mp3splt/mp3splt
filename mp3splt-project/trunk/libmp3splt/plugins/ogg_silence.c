@@ -54,7 +54,9 @@ static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, floa
 
 int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold, 
     float min, short output, ogg_page *page, ogg_int64_t granpos,
-    int *error, ogg_int64_t first_cut_granpos)
+    int *error, ogg_int64_t first_cut_granpos,
+    short silence_processor(double time, int silence_was_found, short must_flush,
+      splt_scan_silence_data *ssd, int *found, int *error))
 {
   splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, SPLT_FALSE);
   if (ssd == NULL)
@@ -64,7 +66,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold,
   }
 
   splt_ogg_scan_silence_and_process(state, seconds, threshold, page, granpos, first_cut_granpos, 
-      splt_scan_silence_processor, ssd, error);
+      silence_processor, ssd, error);
 
   int found = ssd->found;
 
@@ -112,7 +114,8 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
   ogg_sync_init(&oy);
 
   int split_type = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
-  short option_silence_mode = (split_type == SPLT_OPTION_SILENCE_MODE);
+  short option_silence_mode =
+    (split_type == SPLT_OPTION_SILENCE_MODE || split_type == SPLT_OPTION_TRIM_SILENCE_MODE);
 
   int found = 0;
 

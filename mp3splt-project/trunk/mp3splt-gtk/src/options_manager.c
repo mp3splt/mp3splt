@@ -77,6 +77,7 @@ extern GtkWidget *all_spinner_silence_number_tracks;
 extern GtkWidget *all_spinner_silence_minimum;
 extern GtkWidget *all_spinner_silence_offset;
 extern GtkWidget *all_spinner_silence_threshold;
+extern GtkWidget *all_spinner_trim_silence_threshold;
 extern GtkWidget *all_silence_remove_silence;
 
 extern GList *text_options_list;
@@ -199,6 +200,11 @@ void put_options_from_preferences()
       {
         mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_FALSE);
       }
+      break;
+    case SELECTED_SPLIT_TRIM_SILENCE:
+      mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
+      mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
+          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_trim_silence_threshold)));
       break;
     case SELECTED_SPLIT_ERROR:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,

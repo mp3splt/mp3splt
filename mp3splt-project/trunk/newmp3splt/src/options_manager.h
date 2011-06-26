@@ -33,6 +33,8 @@ typedef struct {
   short f_option; short c_option; short t_option;
   //silence split, adjust option, parameters
   short s_option; short a_option; short p_option;
+  //trim silence split
+  short r_option;
   //output filename, output directory, seekable
   short o_option; short d_option; short k_option;
   //custom tags, no tags, quiet option

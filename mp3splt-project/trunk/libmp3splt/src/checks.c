@@ -182,7 +182,8 @@ void splt_check_set_correct_options(splt_state *state)
 
   int split_mode = splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE);
 
-  if (( split_mode == SPLT_OPTION_SILENCE_MODE)
+  if ((split_mode == SPLT_OPTION_SILENCE_MODE)
+      || (split_mode == SPLT_OPTION_TRIM_SILENCE_MODE)
       || splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST))
   {
     splt_o_set_int_option(state, SPLT_OPT_FRAME_MODE, SPLT_OPT_FRAME_MODE);
@@ -219,6 +220,7 @@ void splt_check_set_correct_options(splt_state *state)
   if ((splt_o_get_int_option(state,SPLT_OPT_INPUT_NOT_SEEKABLE)) &&
       (splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST) ||
        (split_mode == SPLT_OPTION_SILENCE_MODE) ||
+       (split_mode == SPLT_OPTION_TRIM_SILENCE_MODE) ||
        (split_mode == SPLT_OPTION_ERROR_MODE) ||
        (split_mode == SPLT_OPTION_WRAP_MODE)))
   {

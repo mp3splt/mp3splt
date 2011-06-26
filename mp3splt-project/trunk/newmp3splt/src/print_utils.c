@@ -101,9 +101,17 @@ void put_progress_bar(splt_progress *p_bar)
           _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE:
-      snprintf(progress_text,2047,
-          _("S: %02d, Level: %.2f dB; scanning for silence..."),
-          p_bar->silence_found_tracks, p_bar->silence_db_level);
+      if (p_bar->silence_found_tracks > 0)
+      {
+        snprintf(progress_text,2047,
+            _("S: %02d, Level: %.2f dB; scanning for silence..."),
+            p_bar->silence_found_tracks, p_bar->silence_db_level);
+      }
+      else {
+        snprintf(progress_text,2047,
+            _("Level: %.2f dB; scanning for silence..."),
+            p_bar->silence_db_level);
+      }
       break;
     default:
       snprintf(progress_text,2047, " ");
@@ -228,6 +236,8 @@ void show_small_help_exit(main_data *data)
         " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
         " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
         " -e   Error mode: split mp3 with sync error detection. (For concatenated mp3)"));
+  print_message(_(" -r   Trim using silence detection (Use -p for arguments)"));
+
   print_message(_(" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"));
   print_message(_(" -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"));
   print_message(_(" -i   Count how many silence splitpoints we have with silence detection\n"

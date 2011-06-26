@@ -37,18 +37,12 @@
  *
  *********************************************************/
 
+#include "silence_processors.h"
 #include "splt.h"
 
-typedef struct {
-  short first;
-  short flush;
-  ogg_int64_t begin_position;
-  ogg_int64_t end_position;
-  int len;
-  int found;
-  int shot;
-  float min;
-  splt_state *state;
-} ogg_scan_silence_data;
-
+int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold, 
+    float min, short output, ogg_page *page, ogg_int64_t granpos,
+    int *error, ogg_int64_t first_cut_granpos,
+    short silence_processor(double time, int silence_was_found, short must_flush,
+      splt_scan_silence_data *ssd, int *found, int *error));
 

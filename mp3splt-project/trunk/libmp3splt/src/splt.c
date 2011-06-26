@@ -591,6 +591,58 @@ void splt_s_equal_length_split(splt_state *state, int *error)
   }
 }
 
+int splt_s_set_trim_silence_splitpoints(splt_state *state, int *error)
+{
+  splt_d_print_debug(state, "Search and set trim silence splitpoints...\n");
+
+  int found = 0;
+  struct splt_ssplit *temp = NULL;
+  int append_error = SPLT_OK;
+
+  if (! splt_o_get_int_option(state,SPLT_OPT_QUIET_MODE))
+  {
+    splt_c_put_info_message_to_client(state, 
+        _(" Trim silence split - Th: %.1f dB\n"),
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD));
+  }
+
+  if (state->split.get_silence_level)
+  {
+    state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
+  }
+  found = splt_p_scan_trim_silence(state, error);
+  if (*error < 0) { goto end; }
+
+  if (splt_t_split_is_canceled(state))
+  {
+    *error = SPLT_SPLIT_CANCELLED;
+    goto end;
+  }
+
+  temp = state->silence_list;
+  int i;
+  for (i = 1; i < found + 1; i++)
+  {
+    if (temp == NULL)
+    {
+      found = i;
+      break;
+    }
+
+    long temp_silence_pos = splt_siu_silence_position(temp, 0) * 100;
+    append_error = splt_sp_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
+    if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
+
+    temp = temp->next;
+  }
+
+end:
+  splt_siu_ssplit_free(&state->silence_list);
+  splt_t_set_splitnumber(state, found);
+
+  return found;
+}
+
 /************************************/
 /*! Split with split points setermined by silence detection
 
@@ -922,9 +974,6 @@ void splt_s_silence_split(splt_state *state, int *error)
       //we put the silence split errors
       switch (*error)
       {
-/*        case SPLT_MIGHT_BE_VBR:
-          *error = SPLT_SILENCE_OK;
-          break;*/
         case SPLT_OK_SPLIT:
           *error = SPLT_SILENCE_OK;
           break;
@@ -939,6 +988,47 @@ void splt_s_silence_split(splt_state *state, int *error)
     {
       *error = SPLT_NO_SILENCE_SPLITPOINTS_FOUND;
     }
+  }
+}
+
+/*! Do the trim silence split
+
+\param error The code of a eventual error that has occoured
+*/ 
+void splt_s_trim_silence_split(splt_state *state, int *error)
+{
+  splt_c_put_info_message_to_client(state, _(" info: starting trim using silence mode split\n"));
+
+  int found = splt_s_set_trim_silence_splitpoints(state, error);
+  if (*error < 0) { return; }
+
+  if (found < 1)
+  {
+    *error = SPLT_NO_SILENCE_SPLITPOINTS_FOUND;
+    return;
+  }
+
+  splt_d_print_debug(state,"Writing tracks...\n");
+
+  int output_filenames = splt_o_get_int_option(state,SPLT_OPT_OUTPUT_FILENAMES);
+  if (output_filenames == SPLT_OUTPUT_DEFAULT)
+  {
+    splt_of_set_oformat(state, SPLT_DEFAULT_TRIM_SILENCE_OUTPUT, error, SPLT_TRUE);
+    if (*error < 0) { return; }
+  }
+
+  splt_s_multiple_split(state, error);
+
+  switch (*error)
+  {
+    case SPLT_OK_SPLIT:
+      *error = SPLT_TRIM_SILENCE_OK;
+      break;
+    case SPLT_OK_SPLIT_EOF:
+      *error = SPLT_TRIM_SILENCE_OK;
+      break;
+    default:
+      break;
   }
 }
 

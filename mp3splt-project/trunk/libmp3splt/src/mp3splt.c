@@ -945,6 +945,7 @@ int mp3splt_split(splt_state *state)
       {
         if ((split_type != SPLT_OPTION_WRAP_MODE)
             && (split_type != SPLT_OPTION_SILENCE_MODE)
+            && (split_type != SPLT_OPTION_TRIM_SILENCE_MODE)
             && (split_type != SPLT_OPTION_ERROR_MODE))
         {
           splt_c_put_info_message_to_client(state, 
@@ -964,6 +965,9 @@ int mp3splt_split(splt_state *state)
         case SPLT_OPTION_SILENCE_MODE:
           splt_s_silence_split(state, &error);
           break; 
+        case SPLT_OPTION_TRIM_SILENCE_MODE:
+          splt_s_trim_silence_split(state, &error);
+          break;
         case SPLT_OPTION_TIME_MODE:
           splt_s_time_split(state, &error);
           break;
