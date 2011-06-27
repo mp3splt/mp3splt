@@ -48,6 +48,7 @@ splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short firs
   ssd->found = 0;
   ssd->shot = SPLT_DEFAULTSHOT;
   ssd->silence_begin_was_found = SPLT_FALSE;
+  ssd->continue_after_silence = SPLT_FALSE;
 
   return ssd;
 }
@@ -211,6 +212,7 @@ static short splt_detect_where_end_silence_begins(double time, int silence_was_f
     if (ssd->len == 0)
     {
       ssd->silence_begin = time;
+      ssd->continue_after_silence = SPLT_FALSE;
     }
 
     if (ssd->first == SPLT_FALSE) 
@@ -225,6 +227,10 @@ static short splt_detect_where_end_silence_begins(double time, int silence_was_f
 
     return SPLT_FALSE;
   }
+  else if (ssd->continue_after_silence)
+  {
+    ssd->silence_begin = time;
+  }
 
   if (ssd->len > SPLT_DEFAULTSILLEN)
   {
@@ -232,6 +238,7 @@ static short splt_detect_where_end_silence_begins(double time, int silence_was_f
     {
       ssd->len = 0;
       ssd->shot = SPLT_DEFAULTSHOT;
+      ssd->continue_after_silence = SPLT_TRUE;
     }
   }
   else

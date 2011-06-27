@@ -41,6 +41,8 @@ typedef struct {
   splt_state *state;
   short silence_begin_was_found;
   short set_new_length;
+
+  short continue_after_silence;
 } splt_scan_silence_data;
 
 short splt_scan_silence_processor(double time, int silence_was_found, short must_flush, 

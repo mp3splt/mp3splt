@@ -621,6 +621,7 @@ int splt_s_set_trim_silence_splitpoints(splt_state *state, int *error)
 
   temp = state->silence_list;
   int i;
+  long previous = 0;
   for (i = 1; i < found + 1; i++)
   {
     if (temp == NULL)
@@ -630,10 +631,18 @@ int splt_s_set_trim_silence_splitpoints(splt_state *state, int *error)
     }
 
     long temp_silence_pos = splt_siu_silence_position(temp, 0) * 100;
+
+    if (i > 1 && temp_silence_pos < previous)
+    {
+      temp_silence_pos = LONG_MAX;
+    }
+
     append_error = splt_sp_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
     if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
 
     temp = temp->next;
+
+    previous = temp_silence_pos;
   }
 
 end:
