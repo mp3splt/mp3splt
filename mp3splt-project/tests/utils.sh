@@ -136,6 +136,22 @@ function check_all_mp3_tags_with_version
   done
 }
 
+function check_mp3_tags_v2_equal_between_files
+{
+  original_file=$1
+  created_file=$2
+
+  _run_command "eyeD3 -2 --no-color \"$original_file\" |"\
+"grep -E -v \"MB ]|Time|ID3 v\" " "eyeD3 command on $original_file"
+  original_file_tags=$command_output
+ 
+  _run_command "eyeD3 -2 --no-color \"$created_file\" |"\
+"grep -E -v \"MB ]|Time|ID3 v\" " "eyeD3 command on $created_file"
+  created_file_tags=$command_output
+
+  _check_equal_variables "$original_file_tags" "$created_file_tags"
+}
+
 function check_all_ogg_tags
 {
   _run_command "vorbiscomment -l \"$current_file\"" "vorbiscomment command"
@@ -148,6 +164,20 @@ function check_all_ogg_tags
   _check_ogg_tags "$current_file" "GENRE" "$5" "$tags"
   _check_ogg_tags "$current_file" "TRACKNUMBER" "$6" "$tags"
   _check_ogg_tags "$current_file" "COMMENT" "$7" "$tags"
+}
+
+function check_ogg_tags_equal_between_files
+{
+  original_file=$1
+  created_file=$2
+
+  _run_command "vorbiscomment \"$original_file\" | sort" "vorbiscomment command on $original_file"
+  original_file_tags=$command_output
+ 
+  _run_command "vorbiscomment \"$created_file\" | sort" "vorbiscomment command on $created_file"
+  created_file_tags=$command_output
+
+  _check_equal_variables "$original_file_tags" "$created_file_tags"
 }
 
 function check_current_mp3_length

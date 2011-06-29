@@ -48,6 +48,38 @@ function test_normal_with_tags
   echo
 }
 
+function test_normal_with_original_tags
+{
+  remove_output_dir
+
+  test_name="with original tags %[@o]"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-g %[@o] -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
+  check_ogg_tags_equal_between_files "songs/${O_FILE}.ogg" $current_file
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_00s_10h.ogg" 
+  check_ogg_tags_equal_between_files "songs/${O_FILE}.ogg" $current_file
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_ogg_tags_equal_between_files "songs/${O_FILE}.ogg" $current_file
+
+  p_green "OK"
+  echo
+}
+
 function test_normal_no_output_tags
 {
   remove_output_dir

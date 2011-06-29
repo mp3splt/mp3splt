@@ -375,7 +375,7 @@ function test_normal_vbr_pretend_and_m3u
   echo
 }
 
-function test_normal_vbr_original_tags
+function test_normal_vbr_default_tags
 {
   remove_output_dir
 
@@ -415,6 +415,47 @@ function test_normal_vbr_original_tags
   check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
   check_current_file_size "1445483"
+
+  p_green "OK"
+  echo
+}
+
+function test_normal_vbr_original_tags
+{
+  remove_output_dir
+
+  test_name="vbr original tags %[@o]"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-g %[@o] -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="songs/${M_FILE}.mp3"
+  #8/14: we don't support yet the total tracknumber
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "8/14" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
+  check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "8" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
+  check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "8" "http://www.jamendo.com/"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
+  check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "8" "http://www.jamendo.com/"
 
   p_green "OK"
   echo
