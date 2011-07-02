@@ -20,9 +20,9 @@ Release instructions:
      libmp3splt/configure.ac
      mp3splt-gtk/configure.ac
 8) edit 'scripts/compile.sh' file and modify the following variables as needed:
-     LIBMP3SPLT_REAL_VERSION=0.6.8
-     MP3SPLT_REAL_VERSION=2.2.7
-     MP3SPLT_GTK_REAL_VERSION=0.5.8
+     LIBMP3SPLT_REAL_VERSION=0.7
+     MP3SPLT_REAL_VERSION=2.4
+     MP3SPLT_GTK_REAL_VERSION=0.7
      BUILD_BINARY_PACKAGES=0
 9) optional: update debian/ubuntu chroot installation for binary packages
 10) create the distribution files:
