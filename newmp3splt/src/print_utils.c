@@ -226,7 +226,7 @@ void show_small_help_exit(main_data *data)
         "USAGE:\n"
         "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... [END_TIME]\n"
         "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
-        "                   (or EOF for End Of File). "));
+        "                   or EOF-min.sec[.0-99] (or EOF for End Of File). "));
   print_message(_("\nOPTIONS (split mode options)\n"
         " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
         " -c + file.cddb, file.cue or \"query\" or \"query{album}\". Get splitpoints and\n"

@@ -61,41 +61,34 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
   splt_d_print_debug(state,"Appending splitpoint _%s_ with value _%ld_\n",
       name, split_value);
 
-  if (split_value >= 0)
+  split->real_splitnumber++;
+
+  if (!split->points)
   {
-    split->real_splitnumber++;
-
-    if (!split->points)
+    if ((split->points = malloc(sizeof(splt_point))) == NULL)
     {
-      if ((split->points = malloc(sizeof(splt_point))) == NULL)
-      {
-        return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
-    else
-    {
-      if ((split->points = realloc(split->points,
-              split->real_splitnumber * sizeof(splt_point))) == NULL)
-      {
-        return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      }
-    }
-
-    int index = split->real_splitnumber - 1;
-    split->points[index].name = NULL;
-
-    error = splt_sp_set_splitpoint_value(state, index, split_value);
-    if (error != SPLT_OK) { return error; }
-
-    error = splt_sp_set_splitpoint_name(state, index, name);
-    if (error < 0) { return error; }
-
-    splt_sp_set_splitpoint_type(state, index, type);
   }
   else
   {
-    return SPLT_ERROR_NEGATIVE_SPLITPOINT;
+    if ((split->points = realloc(split->points,
+            split->real_splitnumber * sizeof(splt_point))) == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
   }
+
+  int index = split->real_splitnumber - 1;
+  split->points[index].name = NULL;
+
+  error = splt_sp_set_splitpoint_value(state, index, split_value);
+  if (error != SPLT_OK) { return error; }
+
+  error = splt_sp_set_splitpoint_name(state, index, name);
+  if (error < 0) { return error; }
+
+  splt_sp_set_splitpoint_type(state, index, type);
 
   return error;
 }

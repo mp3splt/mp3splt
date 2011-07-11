@@ -67,41 +67,54 @@ long c_hundreths(const char *s)
   long minutes=0, seconds=0, hundredths=0, i;
   long hun = -1;
 
+  if (!s)
+  {
+    return -LONG_MAX;
+  }
+
   if (strcmp(s,"EOF") == 0)
   {
     return LONG_MAX;
   }
 
-  for(i=0; i<strlen(s); i++) // Some checking
+  short negative = SPLT_FALSE;
+  const char *scan_start = s;
+  if (strlen(s) > 4 && strncmp(s, "EOF-", 4) == 0)
   {
-    if ((s[i]<0x30 || s[i] > 0x39) && (s[i]!='.'))
+    negative = SPLT_TRUE;
+    scan_start = s+4;
+  }
+
+  for(i=0; i<strlen(scan_start); i++)
+  {
+    if ((scan_start[i]<0x30 || scan_start[i] > 0x39) && (scan_start[i]!='.'))
     {
-      return -1;
+      return -LONG_MAX;
     }
   }
 
-  if (sscanf(s, "%ld.%ld.%ld", &minutes, &seconds, &hundredths) < 2)
+  if (sscanf(scan_start, "%ld.%ld.%ld", &minutes, &seconds, &hundredths) < 2)
   {
-    return -1;
-  }
-
-  if ((minutes < 0) || (seconds < 0) || (hundredths < 0))
-  {
-    return -1;
+    return -LONG_MAX;
   }
 
   if ((seconds > 59) || (hundredths > 99))
   {
-    return -1;
+    return -LONG_MAX;
   }
 
-  if (s[strlen(s)-2] == '.')
+  if (scan_start[strlen(scan_start)-2] == '.')
   {
     hundredths *= 10;
   }
 
   hun = hundredths;
   hun += (minutes*60 + seconds) * 100;
+
+  if (negative)
+  {
+    return -hun;
+  }
 
   return hun;
 }

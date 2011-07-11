@@ -42,7 +42,7 @@
 static void close_files(splt_state *state, const char *file1, FILE **f1,
     const char *file2, FILE **f2, int *error);
 
-void splt_check_points_inf_song_length(splt_state *state, int *error)
+void splt_check_points_inf_song_length_and_convert_negatives(splt_state *state, int *error)
 {
   if (splt_io_input_is_stdin(state))
   {
@@ -58,11 +58,29 @@ void splt_check_points_inf_song_length(splt_state *state, int *error)
   int err = SPLT_OK;
   long total_time = splt_t_get_total_time(state);
 
+  if (total_time == 0)
+  {
+    return;
+  }
+
   int i = 0;
-  for (i = 0; i < splitnumber - 1; i++)
+  for (i = 0; i < splitnumber; i++)
   {
     long splitpoint_value = splt_sp_get_splitpoint_value(state, i, &err);
     if (err < SPLT_OK) { *error = err; return; }
+
+    if (splitpoint_value < 0)
+    {
+      splitpoint_value = total_time + splitpoint_value;
+      splt_sp_set_splitpoint_value(state, i, splitpoint_value);
+    }
+
+    if (splitpoint_value == LONG_MAX)
+    {
+      splitpoint_value = total_time;
+      splt_sp_set_splitpoint_value(state, i, total_time);
+      continue;
+    }
 
     if (splitpoint_value > total_time)
     {
@@ -101,15 +119,16 @@ void splt_check_if_points_in_order(splt_state *state, int *error)
       return;
     }
 
-    if (splitpoint_value == LONG_MAX)
+    if (next_splitpoint_value < 0)
     {
-      splt_sp_set_splitpoint_value(state, i, splt_t_get_total_time(state));
+      splt_e_set_error_data_from_splitpoint(state, next_splitpoint_value);
+      *error = SPLT_ERROR_NEGATIVE_SPLITPOINT;
+      return;
     }
 
     if (splitpoint_value > next_splitpoint_value) 
     {
-      splt_e_set_error_data_from_splitpoints(state,
-          splitpoint_value, next_splitpoint_value);
+      splt_e_set_error_data_from_splitpoints(state, splitpoint_value, next_splitpoint_value);
       *error = SPLT_ERROR_SPLITPOINTS_NOT_IN_ORDER;
       return;
     }

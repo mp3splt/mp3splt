@@ -66,12 +66,12 @@ mp3splt, oggsplt - utility for mp3/ogg vorbis splitting without decoding
 If you want to specify STDIN as input, you can use "m-" (or "-")
 when input is mp3, and "o-" when ogg. Multiple files can be specified, all files will be split
 with the same criterion. If a directory is specified, a recursive scan is performed in that
-directory to find out all the supported formats files.
+directory to find out all the supported file formats.
 
 .PP
-\fBTIME FORMAT\fP: begin_time and end_time must be in this form:
+\fBTIME FORMAT\fP:
 .PP
-\fBminutes.seconds[.hundredths]\fP
+\fBminutes.seconds[.hundredths]\fP or \fBEOF-minutes.seconds[.hundredths]\fP
 .IP
 \fBMinutes\fP (required): There is no limit to minutes. (You must use this format also for minutes over 59)
 .IP
@@ -83,6 +83,7 @@ directory to find out all the supported formats files.
 Multiple split points can be specified. After the minimal 2, another indefinite number of split points can
 be specified. Each split point will be an end time for the previous, and a begin for the following.
 If you want to reach the end of file, you can use "EOF" as last splitpoint.
+EOF-minutes.seconds[.hundredths] only works when input is seekable.
 .SH "DESCRIPTION"
 .PP
 \fBmp3splt\fP is a free command-line utility that allows you to
@@ -112,14 +113,16 @@ you can split those VBR files only with framemode (see \-f option).
 ogg vorbis streams correctly. Splitting the input file from 0.0 to EOF
 might fix the issues.
 
-\fBNOTE about TAGS:\fP by default, mp3splt will put the original tags in
+\fBNOTES about TAGS:\fP by default, mp3splt will put the original tags in
 the split files. Custom tags for the split files can be set with the \-g option.
+When copying the original file tags, only one artist, album, title are
+supported.
 
 \fBNOTE about MP3 TAGS:\fP in order to extract the original tags from mp3 files,
 libmp3splt must be compiled with 'id3tag' support. By default, the output
 files will have the same ID3 tag version as the input file; this behaviour can be changed
 with the \-T option. If the input file has no tags and the \-g option is used, then both
-ID3v1 and ID3v2 are written.
+ID3v1 and ID3v2 are written. Total tracknumber is not yet supported.
 
 \fBNOTE about the OUTPUT DIRECTORY:\fP by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
