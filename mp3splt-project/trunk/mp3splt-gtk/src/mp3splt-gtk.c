@@ -131,8 +131,6 @@ extern GtkWidget *cancel_button;
 //the output entry
 extern GtkWidget *output_entry;
 
-extern GtkWidget *split_button;
-
 extern GtkWidget *remove_all_files_button;
 
 extern gint split_file_mode;
