@@ -509,11 +509,13 @@ GtkWidget *create_toolbar()
                                    FALSE);
   
   //split button
-  split_button = (GtkWidget *)gtk_tool_button_new_from_stock(GTK_STOCK_APPLY);
-  gtk_widget_set_tooltip_text(split_button, _("Split !"));
+  //split_button = (GtkWidget *)gtk_tool_button_new_from_stock(GTK_STOCK_APPLY);
+  split_button = (GtkWidget *)gtk_tool_button_new(NULL, _("Split !"));
+
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(split_button), 1);
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(split_button_event), NULL);
+  gtk_tool_button_set_label(GTK_TOOL_BUTTON(split_button), _("Split !"));
   
   //separator
   toolbar_button = (GtkWidget *)gtk_separator_tool_item_new();

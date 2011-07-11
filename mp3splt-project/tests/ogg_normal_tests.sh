@@ -1119,6 +1119,34 @@ function test_normal_with_auto_adjust
   echo
 }
 
+function test_normal_vbr_with_negative_splitpoints
+{
+  remove_output_dir
+
+  test_name="normal with negative splitpoints"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__01m_04s_85h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_01m_04s_85h__02m_04s_85h.ogg\" created
+ file split"
+  mp3splt_args="-d $OUTPUT_DIR $OGG_FILE 1.0 EOF-2.0 EOF-1.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__01m_04s_85h.ogg"
+  check_current_ogg_length "0m:04.849s"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_04s_85h__02m_04s_85h.ogg" 
+  check_current_ogg_length "1m:00.000s"
+
+  p_green "OK"
+  echo
+}
+
 
 function run_normal_tests
 {

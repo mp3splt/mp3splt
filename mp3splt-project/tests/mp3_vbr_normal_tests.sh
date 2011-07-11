@@ -1398,6 +1398,37 @@ function test_normal_vbr_with_auto_adjust
   echo
 }
 
+function test_normal_vbr_with_negative_splitpoints
+{
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="normal with negative splitpoints"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_05s_58h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_05s_58h__03m_05s_58h.mp3\" created
+ Processed 7106 frames - Sync errors: 0
+ file split"
+  mp3splt_args=" -d $OUTPUT_DIR $MP3_FILE 1.0 EOF-2.0 EOF-1.0" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_05s_58h.mp3" 
+  check_current_mp3_length "01.05"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_05s_58h__03m_05s_58h.mp3" 
+  check_current_mp3_length "01.00"
+
+  p_green "OK"
+  echo
+}
+
+
 function run_normal_vbr_tests
 {
   p_blue " NORMAL VBR mp3 tests ..."

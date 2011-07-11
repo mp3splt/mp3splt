@@ -35,7 +35,7 @@
 /****************************/
 /* splitpoints checks */
 
-void splt_check_points_inf_song_length(splt_state *state,
+void splt_check_points_inf_song_length_and_convert_negatives(splt_state *state,
     int *error);
 void splt_check_if_points_in_order(splt_state *state,
     int *error);

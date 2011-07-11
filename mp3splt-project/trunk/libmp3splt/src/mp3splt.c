@@ -870,24 +870,6 @@ int mp3splt_split(splt_state *state)
 
       int split_type = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
 
-      //normal split checks
-      if (split_type == SPLT_OPTION_NORMAL_MODE)
-      {
-        if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
-        {
-          //check if we have at least 2 splitpoints
-          if (splt_t_get_splitnumber(state) < 2)
-          {
-            error = SPLT_ERROR_SPLITPOINTS;
-            goto function_end;
-          }
-        }
-
-        //we check if the splitpoints are in order
-        splt_check_if_points_in_order(state, &error);
-        if (error < 0) { goto function_end; }
-      }
-
       splt_t_set_new_filename_path(state, new_filename_path, &error);
       if (error < 0) { goto function_end; }
 
@@ -980,7 +962,20 @@ int mp3splt_split(splt_state *state)
         default:
           if (split_type == SPLT_OPTION_NORMAL_MODE)
           {
-            splt_check_points_inf_song_length(state, &error);
+            if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+            {
+              //check if we have at least 2 splitpoints
+              if (splt_t_get_splitnumber(state) < 2)
+              {
+                error = SPLT_ERROR_SPLITPOINTS;
+                goto function_end;
+              }
+            }
+
+            splt_check_points_inf_song_length_and_convert_negatives(state, &error);
+            if (error < 0) { goto function_end; }
+
+            splt_check_if_points_in_order(state, &error);
             if (error < 0) { goto function_end; }
           }
 

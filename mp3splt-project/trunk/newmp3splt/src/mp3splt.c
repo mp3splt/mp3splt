@@ -273,7 +273,7 @@ int main(int argc, char **orig_argv)
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
         float converted_time = c_hundreths(optarg);
 
-        if (converted_time != -1)
+        if (converted_time != -LONG_MAX)
         {
           float split_time = converted_time / 100.0;
           mp3splt_set_float_option(state, SPLT_OPT_SPLIT_TIME, split_time);
@@ -281,7 +281,7 @@ int main(int argc, char **orig_argv)
         else
         {
           print_error_exit(_("bad time expression for the time split.\n"
-                "\tMust be min.sec, read man page for details."), data);
+                "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."), data);
         }
         opt->t_option = SPLT_TRUE;
         break;
@@ -463,7 +463,7 @@ int main(int argc, char **orig_argv)
   {
     argument = data->argv[i];
     long hundreths = c_hundreths(argument);
-    if (hundreths != -1)
+    if (hundreths != -LONG_MAX)
     {
       append_splitpoint(data, hundreths);
     }
