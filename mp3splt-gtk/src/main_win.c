@@ -96,8 +96,6 @@ gint preferences_tab = FALSE;
 //player box
 GtkWidget *player_box;
 
-//the split button
-GtkWidget *split_button;
 //the split freedb button
 GtkWidget *split_freedb_button;
 
@@ -498,38 +496,29 @@ void split_button_event(GtkWidget *widget, gpointer data)
 //!creates the toolbar
 GtkWidget *create_toolbar()
 {
-  //the toolbar
-  GtkWidget *toolbar = gtk_toolbar_new();
-  
-  //separator
-  GtkWidget *toolbar_button = (GtkWidget *)gtk_separator_tool_item_new();
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(toolbar_button), 0);
-  gtk_tool_item_set_expand(GTK_TOOL_ITEM(toolbar_button), TRUE);
-  gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(toolbar_button),
-                                   FALSE);
-  
-  //split button
-  //split_button = (GtkWidget *)gtk_tool_button_new_from_stock(GTK_STOCK_APPLY);
-  split_button = (GtkWidget *)gtk_tool_button_new(NULL, _("Split !"));
+  GtkWidget *box = gtk_hbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(box), 0);
+  gtk_box_pack_start(GTK_BOX(box), 
+      gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_SMALL_TOOLBAR), 
+      FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(box), gtk_label_new(_("Split !")), FALSE, FALSE, 0);
 
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(split_button), 1);
+  GtkWidget *split_button = gtk_button_new();
+  gtk_container_add(GTK_CONTAINER(split_button), box);
+  gtk_widget_set_tooltip_text(split_button,_("Split !"));
+  gtk_container_set_border_width(GTK_CONTAINER(split_button), 0);
+  gtk_button_set_relief(GTK_BUTTON(split_button), GTK_RELIEF_HALF);
+
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(split_button_event), NULL);
-  gtk_tool_button_set_label(GTK_TOOL_BUTTON(split_button), _("Split !"));
-  
-  //separator
-  toolbar_button = (GtkWidget *)gtk_separator_tool_item_new();
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(toolbar_button), 2);
-  gtk_tool_item_set_expand(GTK_TOOL_ITEM(toolbar_button), TRUE);
-  gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(toolbar_button),
-                                   FALSE);
 
-  //toolbar preferences
-  gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
-  gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
-  gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
-  
-  return toolbar;
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+
+  gtk_box_pack_start(GTK_BOX(hbox), split_button, TRUE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+  return vbox;
 }
 
 //!event for the "messages history" button
@@ -634,13 +623,8 @@ GtkWidget *create_menu_bar()
                       gtk_ui_manager_get_widget(ui, "/MenuBar"),
                       FALSE, FALSE, 0);
   
-  //our toolbar
-  GtkWidget *toolbar;
-  toolbar = (GtkWidget *)create_toolbar();
-  
-  //attach the toolbar
-  gtk_box_pack_start (GTK_BOX (menu_box), toolbar,
-                      TRUE, TRUE, 0);
+  GtkWidget *toolbar = (GtkWidget *)create_toolbar();
+  gtk_box_pack_start(GTK_BOX(menu_box), toolbar, TRUE, TRUE, 0);
   
   return menu_box;
 }
