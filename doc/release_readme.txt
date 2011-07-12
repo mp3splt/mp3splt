@@ -32,4 +32,5 @@ Release instructions:
 13) update debian repository
 14) make release announcement on sourceforge
 15) make release announcement on mailing list
+16) create branch ?
 
