@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-07-12 20:37+0200\n"
+"POT-Creation-Date: 2011-07-12 21:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,137 +37,137 @@ msgstr ""
 msgid "Khz"
 msgstr ""
 
-#: src/tree_tab.c:550
+#: src/tree_tab.c:553
 msgid "_part"
 msgstr ""
 
-#: src/tree_tab.c:561
+#: src/tree_tab.c:564
 #, c-format
 msgid "%s_part%d"
 msgstr ""
 
-#: src/tree_tab.c:705 src/tree_tab.c:1111
+#: src/tree_tab.c:708 src/tree_tab.c:1114
 msgid " error: you already have the splitpoint in table"
 msgstr ""
 
-#: src/tree_tab.c:788 src/tree_tab.c:867 src/tree_tab.c:1121
+#: src/tree_tab.c:791 src/tree_tab.c:870 src/tree_tab.c:1124
 #: src/freedb_tab.c:516 src/freedb_tab.c:538
 msgid "description here"
 msgstr ""
 
-#: src/tree_tab.c:1266 src/tree_tab.c:1698
+#: src/tree_tab.c:1271 src/tree_tab.c:1703
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1293 src/tree_tab.c:1364 src/preferences_tab.c:715
+#: src/tree_tab.c:1298 src/tree_tab.c:1369 src/preferences_tab.c:715
 msgid "Threshold level (dB):"
 msgstr ""
 
-#: src/tree_tab.c:1338 src/tree_tab.c:1688
+#: src/tree_tab.c:1343 src/tree_tab.c:1693
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1381
+#: src/tree_tab.c:1386
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 
-#: src/tree_tab.c:1398
+#: src/tree_tab.c:1403
 msgid "Number of tracks (0 means all tracks):"
 msgstr ""
 
-#: src/tree_tab.c:1413
+#: src/tree_tab.c:1418
 msgid "Minimum silence length (seconds):"
 msgstr ""
 
-#: src/tree_tab.c:1426
+#: src/tree_tab.c:1431
 msgid "_Remove silence between tracks"
 msgstr ""
 
-#: src/tree_tab.c:1624
+#: src/tree_tab.c:1629
 msgid "Minutes:"
 msgstr ""
 
-#: src/tree_tab.c:1629
+#: src/tree_tab.c:1634
 msgid "Seconds:"
 msgstr ""
 
-#: src/tree_tab.c:1635
+#: src/tree_tab.c:1640
 msgid "Hundredths:"
 msgstr ""
 
-#: src/tree_tab.c:1641 src/player_tab.c:1016
+#: src/tree_tab.c:1646 src/player_tab.c:1016
 msgid "_Add"
 msgstr ""
 
-#: src/tree_tab.c:1647
+#: src/tree_tab.c:1652
 msgid "Add splitpoint"
 msgstr ""
 
-#: src/tree_tab.c:1651
+#: src/tree_tab.c:1656
 msgid "_Remove"
 msgstr ""
 
-#: src/tree_tab.c:1657
+#: src/tree_tab.c:1662
 msgid "Remove rows"
 msgstr ""
 
-#: src/tree_tab.c:1661
+#: src/tree_tab.c:1666
 msgid "R_emove all"
 msgstr ""
 
-#: src/tree_tab.c:1667
+#: src/tree_tab.c:1672
 msgid "Remove all rows"
 msgstr ""
 
-#: src/tree_tab.c:1682
+#: src/tree_tab.c:1687
 msgid "_Silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1692
+#: src/tree_tab.c:1697
 msgid "_Trim splitpoints"
 msgstr ""
 
-#: src/tree_tab.c:1822 src/mp3splt-gtk.c:399
+#: src/tree_tab.c:1827 src/mp3splt-gtk.c:399
 msgid " finished"
 msgstr ""
 
-#: src/tree_tab.c:1837
+#: src/tree_tab.c:1842
 msgid " cannot split preview last splitpoint"
 msgstr ""
 
-#: src/tree_tab.c:1881
+#: src/tree_tab.c:1886
 msgid " cannot preview, not connected to player"
 msgstr ""
 
-#: src/tree_tab.c:1946
+#: src/tree_tab.c:1951
 msgid "Keep"
 msgstr ""
 
-#: src/tree_tab.c:1960 src/split_files.c:111
+#: src/tree_tab.c:1965 src/split_files.c:111
 msgid "Filename"
 msgstr ""
 
-#: src/tree_tab.c:1974
+#: src/tree_tab.c:1979
 msgid "Secs"
 msgstr ""
 
-#: src/tree_tab.c:1988
+#: src/tree_tab.c:1993
 msgid "Mins"
 msgstr ""
 
-#: src/tree_tab.c:2002
+#: src/tree_tab.c:2007
 msgid "Hundr"
 msgstr ""
 
-#: src/tree_tab.c:2012
+#: src/tree_tab.c:2017
 msgid "Length"
 msgstr ""
 
-#: src/tree_tab.c:2023
+#: src/tree_tab.c:2028
 msgid "LiveP"
 msgstr ""
 
-#: src/tree_tab.c:2034
+#: src/tree_tab.c:2039
 msgid "SplitP"
 msgstr ""
 

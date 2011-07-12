@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-07-02 11:50+0200\n"
+"POT-Creation-Date: 2011-07-12 21:24+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,17 +22,17 @@ msgstr ""
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Info: Verknüpfter Dateiname wird in »%s« aufgelöst\n"
 
-#: src/mp3splt.c:923
+#: src/mp3splt.c:905
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Info: Datei passt zum Plugin »%s«\n"
 
-#: src/mp3splt.c:931
+#: src/mp3splt.c:913
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " M3U-Datei »%s« wird erstellt.\n"
 
-#: src/mp3splt.c:952
+#: src/mp3splt.c:934
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -41,7 +41,7 @@ msgstr ""
 "Mit SILENCE AUTO-ADJUST wird gearbeitet (Ansprechschwelle: %.1f dB Pause: %d "
 "s Versatz: %.2f)\n"
 
-#: src/checks.c:140
+#: src/checks.c:159
 msgid "directory does not exists"
 msgstr "Ordner existiert nicht"
 
