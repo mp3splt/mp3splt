@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-07-02 11:50+0200\n"
+"POT-Creation-Date: 2011-07-12 21:24+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,9 +22,10 @@ msgid "cannot allocate memory !"
 msgstr "impossible d'allouer de la mémoire !"
 
 #: src/mp3splt.c:283
+#, fuzzy
 msgid ""
 "bad time expression for the time split.\n"
-"\tMust be min.sec, read man page for details."
+"\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 "mauvaise valeur pour la division en plusieurs pistes de même taille.\n"
 "\tDoit être min.sec, lisez le manuel pour les détails."
@@ -412,13 +413,14 @@ msgstr ""
 "sourceforge.net!"
 
 #: src/print_utils.c:225
+#, fuzzy
 msgid ""
 "\n"
 "USAGE:\n"
 "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... "
 "[END_TIME]\n"
 "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
-"                   (or EOF for End Of File). "
+"                   or EOF-min.sec[.0-99] (or EOF for End Of File). "
 msgstr ""
 "\n"
 "UTILISATION :\n"
@@ -611,11 +613,11 @@ msgstr ""
 "\n"
 "      Lire le manuel pour une documentation complète.\n"
 
-#: src/utils.c:114
+#: src/utils.c:127
 msgid "List of found files:\n"
 msgstr "Liste de CD trouvés :\n"
 
-#: src/utils.c:122
+#: src/utils.c:135
 #, c-format
 msgid ""
 "\n"
@@ -624,7 +626,7 @@ msgstr ""
 "\n"
 "-- 'Entrée' pour voir plus de fichiers, 's' pour diviser, 'c' pour annuler :"
 
-#: src/utils.c:131 src/utils.c:154
+#: src/utils.c:144 src/utils.c:167
 msgid ""
 "\n"
 " split aborted."
@@ -632,7 +634,7 @@ msgstr ""
 "\n"
 " processus de division annulé."
 
-#: src/utils.c:145
+#: src/utils.c:158
 #, c-format
 msgid ""
 "\n"

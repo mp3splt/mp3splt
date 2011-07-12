@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-07-02 11:51+0200\n"
+"POT-Creation-Date: 2011-07-12 21:24+0200\n"
 "PO-Revision-Date: 2011-02-22 00:00+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,139 +37,139 @@ msgstr "Kbps"
 msgid "Khz"
 msgstr "Khz"
 
-#: src/tree_tab.c:550
+#: src/tree_tab.c:553
 msgid "_part"
 msgstr ""
 
-#: src/tree_tab.c:561
+#: src/tree_tab.c:564
 #, c-format
 msgid "%s_part%d"
 msgstr ""
 
-#: src/tree_tab.c:705 src/tree_tab.c:1111
+#: src/tree_tab.c:708 src/tree_tab.c:1114
 msgid " error: you already have the splitpoint in table"
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
-#: src/tree_tab.c:788 src/tree_tab.c:867 src/tree_tab.c:1121
+#: src/tree_tab.c:791 src/tree_tab.c:870 src/tree_tab.c:1124
 #: src/freedb_tab.c:516 src/freedb_tab.c:538
 msgid "description here"
 msgstr "description"
 
-#: src/tree_tab.c:1266 src/tree_tab.c:1698
+#: src/tree_tab.c:1271 src/tree_tab.c:1703
 #, fuzzy
 msgid "Set trim splitpoints using silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/tree_tab.c:1293 src/tree_tab.c:1364 src/preferences_tab.c:715
+#: src/tree_tab.c:1298 src/tree_tab.c:1369 src/preferences_tab.c:715
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
-#: src/tree_tab.c:1338 src/tree_tab.c:1688
+#: src/tree_tab.c:1343 src/tree_tab.c:1693
 msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/tree_tab.c:1381
+#: src/tree_tab.c:1386
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr "Compensation du point de coupure (0 - début du silence, 1 - la fin) :"
 
-#: src/tree_tab.c:1398
+#: src/tree_tab.c:1403
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Nombre de pistes (0 signifie toutes les pistes) :"
 
-#: src/tree_tab.c:1413
+#: src/tree_tab.c:1418
 msgid "Minimum silence length (seconds):"
 msgstr "Taille minimum du silence (secondes) :"
 
-#: src/tree_tab.c:1426
+#: src/tree_tab.c:1431
 msgid "_Remove silence between tracks"
 msgstr "_Effacer le silence entre les pistes"
 
-#: src/tree_tab.c:1624
+#: src/tree_tab.c:1629
 msgid "Minutes:"
 msgstr "Minutes :"
 
-#: src/tree_tab.c:1629
+#: src/tree_tab.c:1634
 msgid "Seconds:"
 msgstr "Secondes :"
 
-#: src/tree_tab.c:1635
+#: src/tree_tab.c:1640
 msgid "Hundredths:"
 msgstr "Centièmes :"
 
-#: src/tree_tab.c:1641 src/player_tab.c:1016
+#: src/tree_tab.c:1646 src/player_tab.c:1016
 msgid "_Add"
 msgstr "Aj_outer"
 
-#: src/tree_tab.c:1647
+#: src/tree_tab.c:1652
 msgid "Add splitpoint"
 msgstr "Ajouter le point"
 
-#: src/tree_tab.c:1651
+#: src/tree_tab.c:1656
 msgid "_Remove"
 msgstr "_Effacer"
 
-#: src/tree_tab.c:1657
+#: src/tree_tab.c:1662
 msgid "Remove rows"
 msgstr "Effacer les lignes"
 
-#: src/tree_tab.c:1661
+#: src/tree_tab.c:1666
 msgid "R_emove all"
 msgstr "Effa_cer tout"
 
-#: src/tree_tab.c:1667
+#: src/tree_tab.c:1672
 msgid "Remove all rows"
 msgstr "Effacer toutes les lignes"
 
-#: src/tree_tab.c:1682
+#: src/tree_tab.c:1687
 msgid "_Silence detection"
 msgstr "Détection du _silence"
 
-#: src/tree_tab.c:1692
+#: src/tree_tab.c:1697
 #, fuzzy
 msgid "_Trim splitpoints"
 msgstr "Aj_outer les points"
 
-#: src/tree_tab.c:1822 src/mp3splt-gtk.c:401
+#: src/tree_tab.c:1827 src/mp3splt-gtk.c:399
 msgid " finished"
 msgstr " fini"
 
-#: src/tree_tab.c:1837
+#: src/tree_tab.c:1842
 msgid " cannot split preview last splitpoint"
 msgstr " impossible d'écouter l'aperçu du dernier point de coupure"
 
-#: src/tree_tab.c:1881
+#: src/tree_tab.c:1886
 msgid " cannot preview, not connected to player"
 msgstr " impossible d'écouter l'aperçu, déconnecté du lecteur"
 
-#: src/tree_tab.c:1946
+#: src/tree_tab.c:1951
 msgid "Keep"
 msgstr "Garder"
 
-#: src/tree_tab.c:1960 src/split_files.c:111
+#: src/tree_tab.c:1965 src/split_files.c:111
 msgid "Filename"
 msgstr "Nom fichier"
 
-#: src/tree_tab.c:1974
+#: src/tree_tab.c:1979
 msgid "Secs"
 msgstr "Secondes"
 
-#: src/tree_tab.c:1988
+#: src/tree_tab.c:1993
 msgid "Mins"
 msgstr "Minutes"
 
-#: src/tree_tab.c:2002
+#: src/tree_tab.c:2007
 msgid "Hundr"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:2012
+#: src/tree_tab.c:2017
 msgid "Length"
 msgstr "Durée"
 
-#: src/tree_tab.c:2023
+#: src/tree_tab.c:2028
 msgid "LiveP"
 msgstr "ALive"
 
-#: src/tree_tab.c:2034
+#: src/tree_tab.c:2039
 msgid "SplitP"
 msgstr "ACoupure"
 
@@ -436,7 +436,7 @@ msgstr "Même version des tags que le fichier d'entrée"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:1290 src/main_win.c:572
+#: src/preferences_tab.c:1290 src/main_win.c:563
 msgid "Split"
 msgstr "Coupure"
 
@@ -448,7 +448,7 @@ msgstr "Tags"
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:1308 src/main_win.c:727
+#: src/preferences_tab.c:1308 src/main_win.c:713
 msgid "Player"
 msgstr "Lecteur"
 
@@ -631,127 +631,127 @@ msgstr "Sélection fichier"
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
-#: src/main_win.c:150
+#: src/main_win.c:148
 msgid " info: stopping the split process before exiting"
 msgstr " info : arrêt du processus de découpage avant de sortir"
 
-#: src/main_win.c:318
+#: src/main_win.c:316
 msgid "Error launching external command"
 msgstr ""
 
-#: src/main_win.c:349
+#: src/main_win.c:347
 msgid "using"
 msgstr "utilisant"
 
-#: src/main_win.c:353
+#: src/main_win.c:351
 msgid "release of"
 msgstr "version du"
 
-#: src/main_win.c:450
+#: src/main_win.c:448
 msgid " info: stopping the split process.. please wait"
 msgstr " info : arrêt du processus de découpage... veuillez attendre"
 
-#: src/main_win.c:489
+#: src/main_win.c:487
 msgid " error: no file selected"
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:494
+#: src/main_win.c:492
 msgid " error: split in progress..."
 msgstr " erreur : découpage en cours..."
 
-#: src/main_win.c:513
+#: src/main_win.c:504 src/main_win.c:508
 msgid "Split !"
 msgstr "Couper !"
 
-#: src/main_win.c:560
+#: src/main_win.c:551
 msgid "_File"
 msgstr "_Fichier"
 
-#: src/main_win.c:561
+#: src/main_win.c:552
 msgid "_Help"
 msgstr "_Aide"
 
-#: src/main_win.c:564
+#: src/main_win.c:555
 msgid "_Open..."
 msgstr "_Ouvrir..."
 
-#: src/main_win.c:564
+#: src/main_win.c:555
 msgid "Open"
 msgstr "Ouvrir"
 
-#: src/main_win.c:567
+#: src/main_win.c:558
 msgid "_Import splitpoints..."
 msgstr "_Importer points de coupure..."
 
-#: src/main_win.c:567
+#: src/main_win.c:558
 msgid "Import"
 msgstr "Importer"
 
-#: src/main_win.c:569
+#: src/main_win.c:560
 msgid "_Export splitpoints..."
 msgstr "_Exporter points de coupure..."
 
-#: src/main_win.c:569
+#: src/main_win.c:560
 msgid "Export"
 msgstr "Exporter"
 
-#: src/main_win.c:572
+#: src/main_win.c:563
 msgid "_Split !"
 msgstr "_Couper"
 
-#: src/main_win.c:574
+#: src/main_win.c:565
 msgid "Messages _history"
 msgstr "_Historique des messages"
 
-#: src/main_win.c:574 src/main_win.c:833 src/messages.c:197
+#: src/main_win.c:565 src/main_win.c:819 src/messages.c:197
 msgid "Messages history"
 msgstr "Historique des messages"
 
-#: src/main_win.c:577
+#: src/main_win.c:568
 msgid "_Quit"
 msgstr "_Quitter"
 
-#: src/main_win.c:577
+#: src/main_win.c:568
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:582
+#: src/main_win.c:573
 msgid "_Contents"
 msgstr "_Contenus"
 
-#: src/main_win.c:582
+#: src/main_win.c:573
 msgid "Contents"
 msgstr "Contenus"
 
-#: src/main_win.c:586
+#: src/main_win.c:577
 msgid "_About"
 msgstr "_A propos de"
 
-#: src/main_win.c:586
+#: src/main_win.c:577
 msgid "About"
 msgstr "A propos de"
 
-#: src/main_win.c:740
+#: src/main_win.c:726
 msgid "Splitpoints"
 msgstr "Points de coupure"
 
-#: src/main_win.c:753
+#: src/main_win.c:739
 msgid "Split files"
 msgstr ""
 
-#: src/main_win.c:766
+#: src/main_win.c:752
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:777
+#: src/main_win.c:763
 msgid "Type of split"
 msgstr "Type de découpage"
 
-#: src/main_win.c:790
+#: src/main_win.c:776
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:811
+#: src/main_win.c:797
 msgid "S_top"
 msgstr "S_top"
 
@@ -919,60 +919,60 @@ msgstr "Info: %s"
 msgid " error: cannot create gstreamer playbin\n"
 msgstr " erreur: impossible de créer 'playbin' de gstreamer\n"
 
-#: src/mp3splt-gtk.c:168
+#: src/mp3splt-gtk.c:166
 #, c-format
 msgid " File '%s' created"
 msgstr "Fichier '%s' créé"
 
-#: src/mp3splt-gtk.c:195
+#: src/mp3splt-gtk.c:193
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr " préparation de \"%s\" (%d sur %d)"
 
-#: src/mp3splt-gtk.c:201
+#: src/mp3splt-gtk.c:199
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr " création de \"%s\" (%d sur %d)"
 
-#: src/mp3splt-gtk.c:207
+#: src/mp3splt-gtk.c:205
 msgid " searching for sync errors..."
 msgstr " recherche d'erreurs de synchronisation..."
 
-#: src/mp3splt-gtk.c:211
+#: src/mp3splt-gtk.c:209
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
-#: src/mp3splt-gtk.c:374
+#: src/mp3splt-gtk.c:372
 msgid " error: no files found in multiple files mode"
 msgstr " erreur: aucun fichier trouvé avec le mode 'fichiers multiples'"
 
-#: src/mp3splt-gtk.c:589
+#: src/mp3splt-gtk.c:587
 #, c-format
 msgid "Trying to set the output directory to %s.\n"
 msgstr "Essaie d'utiliser le dossier de sortie %s.\n"
 
-#: src/mp3splt-gtk.c:598
+#: src/mp3splt-gtk.c:596
 #, c-format
 msgid "Error: The specified output directory is inaccessible!\n"
 msgstr "Erreur : le dossier de sortie spécifié est inaccessible !\n"
 
-#: src/mp3splt-gtk.c:604
+#: src/mp3splt-gtk.c:602
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr "L'option -%c doit être suivie d'un paramètre.\n"
 
-#: src/mp3splt-gtk.c:606
+#: src/mp3splt-gtk.c:604
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr "Option inconnue `-%c'.\n"
 
-#: src/mp3splt-gtk.c:609
+#: src/mp3splt-gtk.c:607
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr "Caractère d'option inconnu `\\x%x'.\n"
 
-#: src/mp3splt-gtk.c:661
+#: src/mp3splt-gtk.c:659
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr "Impossible d'ouvrir le fichier %s.\n"

@@ -1,20 +1,20 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # fri <pavelfric@seznam.cz>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2011-07-02 11:50+0200\n"
+"Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
+"POT-Creation-Date: 2011-07-12 21:24+0200\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
 #: src/mp3splt.c:840
@@ -22,17 +22,17 @@ msgstr ""
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Informace: Spojený název souboru je vyřešen do »%s«\n"
 
-#: src/mp3splt.c:923
+#: src/mp3splt.c:905
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Informace: Soubor odpovídá přídavnému modulu »%s«\n"
 
-#: src/mp3splt.c:931
+#: src/mp3splt.c:913
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " Soubor M3U »%s« bude vytvořen.\n"
 
-#: src/mp3splt.c:952
+#: src/mp3splt.c:934
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -40,7 +40,7 @@ msgid ""
 msgstr ""
 "Pracuje se s SILENCE AUTO-ADJUST (Práh: %.1f dB Mezera: %d s Posun: %.2f)\n"
 
-#: src/checks.c:140
+#: src/checks.c:159
 msgid "directory does not exists"
 msgstr "Adresář neexistuje"
 
@@ -126,11 +126,11 @@ msgstr ""
 #: src/splt.c:770
 #, c-format
 msgid ""
-" Found silence log file '%s' ! Reading silence points from file to save time"
-" ;)\n"
+" Found silence log file '%s' ! Reading silence points from file to save "
+"time ;)\n"
 msgstr ""
-" Byl nalezen soubor se zápisem pro ticho »%s«! Aby se ušetřil čas, jsou body"
-" rozdělení čteny z tohoto souboru ;)\n"
+" Byl nalezen soubor se zápisem pro ticho »%s«! Aby se ušetřil čas, jsou body "
+"rozdělení čteny z tohoto souboru ;)\n"
 
 #: src/splt.c:799
 #, c-format
@@ -642,5 +642,3 @@ msgstr " Informace: Datový proud OggVorbis - %ld - %ld kB/s - %d kanály"
 #: plugins/ogg.c:1843
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »o-« je datový proud Ogg.\n"
-
-
