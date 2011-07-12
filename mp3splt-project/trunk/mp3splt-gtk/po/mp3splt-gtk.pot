@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-07-02 11:51+0200\n"
+"POT-Creation-Date: 2011-07-12 20:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -127,7 +127,7 @@ msgstr ""
 msgid "_Trim splitpoints"
 msgstr ""
 
-#: src/tree_tab.c:1822 src/mp3splt-gtk.c:401
+#: src/tree_tab.c:1822 src/mp3splt-gtk.c:399
 msgid " finished"
 msgstr ""
 
@@ -415,7 +415,7 @@ msgstr ""
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr ""
 
-#: src/preferences_tab.c:1290 src/main_win.c:572
+#: src/preferences_tab.c:1290 src/main_win.c:563
 msgid "Split"
 msgstr ""
 
@@ -427,7 +427,7 @@ msgstr ""
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1308 src/main_win.c:727
+#: src/preferences_tab.c:1308 src/main_win.c:713
 msgid "Player"
 msgstr ""
 
@@ -588,127 +588,127 @@ msgstr ""
 msgid "_Fix ogg stream"
 msgstr ""
 
-#: src/main_win.c:150
+#: src/main_win.c:148
 msgid " info: stopping the split process before exiting"
 msgstr ""
 
-#: src/main_win.c:318
+#: src/main_win.c:316
 msgid "Error launching external command"
 msgstr ""
 
-#: src/main_win.c:349
+#: src/main_win.c:347
 msgid "using"
 msgstr ""
 
-#: src/main_win.c:353
+#: src/main_win.c:351
 msgid "release of"
 msgstr ""
 
-#: src/main_win.c:450
+#: src/main_win.c:448
 msgid " info: stopping the split process.. please wait"
 msgstr ""
 
-#: src/main_win.c:489
+#: src/main_win.c:487
 msgid " error: no file selected"
 msgstr ""
 
-#: src/main_win.c:494
+#: src/main_win.c:492
 msgid " error: split in progress..."
 msgstr ""
 
-#: src/main_win.c:513
+#: src/main_win.c:504 src/main_win.c:508
 msgid "Split !"
 msgstr ""
 
-#: src/main_win.c:560
+#: src/main_win.c:551
 msgid "_File"
 msgstr ""
 
-#: src/main_win.c:561
+#: src/main_win.c:552
 msgid "_Help"
 msgstr ""
 
-#: src/main_win.c:564
+#: src/main_win.c:555
 msgid "_Open..."
 msgstr ""
 
-#: src/main_win.c:564
+#: src/main_win.c:555
 msgid "Open"
 msgstr ""
 
-#: src/main_win.c:567
+#: src/main_win.c:558
 msgid "_Import splitpoints..."
 msgstr ""
 
-#: src/main_win.c:567
+#: src/main_win.c:558
 msgid "Import"
 msgstr ""
 
-#: src/main_win.c:569
+#: src/main_win.c:560
 msgid "_Export splitpoints..."
 msgstr ""
 
-#: src/main_win.c:569
+#: src/main_win.c:560
 msgid "Export"
 msgstr ""
 
-#: src/main_win.c:572
+#: src/main_win.c:563
 msgid "_Split !"
 msgstr ""
 
-#: src/main_win.c:574
+#: src/main_win.c:565
 msgid "Messages _history"
 msgstr ""
 
-#: src/main_win.c:574 src/main_win.c:833 src/messages.c:197
+#: src/main_win.c:565 src/main_win.c:819 src/messages.c:197
 msgid "Messages history"
 msgstr ""
 
-#: src/main_win.c:577
+#: src/main_win.c:568
 msgid "_Quit"
 msgstr ""
 
-#: src/main_win.c:577
+#: src/main_win.c:568
 msgid "Quit"
 msgstr ""
 
-#: src/main_win.c:582
+#: src/main_win.c:573
 msgid "_Contents"
 msgstr ""
 
-#: src/main_win.c:582
+#: src/main_win.c:573
 msgid "Contents"
 msgstr ""
 
-#: src/main_win.c:586
+#: src/main_win.c:577
 msgid "_About"
 msgstr ""
 
-#: src/main_win.c:586
+#: src/main_win.c:577
 msgid "About"
 msgstr ""
 
-#: src/main_win.c:740
+#: src/main_win.c:726
 msgid "Splitpoints"
 msgstr ""
 
-#: src/main_win.c:753
+#: src/main_win.c:739
 msgid "Split files"
 msgstr ""
 
-#: src/main_win.c:766
+#: src/main_win.c:752
 msgid "FreeDB"
 msgstr ""
 
-#: src/main_win.c:777
+#: src/main_win.c:763
 msgid "Type of split"
 msgstr ""
 
-#: src/main_win.c:790
+#: src/main_win.c:776
 msgid "Preferences"
 msgstr ""
 
-#: src/main_win.c:811
+#: src/main_win.c:797
 msgid "S_top"
 msgstr ""
 
@@ -874,60 +874,60 @@ msgstr ""
 msgid " error: cannot create gstreamer playbin\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:168
+#: src/mp3splt-gtk.c:166
 #, c-format
 msgid " File '%s' created"
 msgstr ""
 
-#: src/mp3splt-gtk.c:195
+#: src/mp3splt-gtk.c:193
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/mp3splt-gtk.c:201
+#: src/mp3splt-gtk.c:199
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/mp3splt-gtk.c:207
+#: src/mp3splt-gtk.c:205
 msgid " searching for sync errors..."
 msgstr ""
 
-#: src/mp3splt-gtk.c:211
+#: src/mp3splt-gtk.c:209
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr ""
 
-#: src/mp3splt-gtk.c:374
+#: src/mp3splt-gtk.c:372
 msgid " error: no files found in multiple files mode"
 msgstr ""
 
-#: src/mp3splt-gtk.c:589
+#: src/mp3splt-gtk.c:587
 #, c-format
 msgid "Trying to set the output directory to %s.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:598
+#: src/mp3splt-gtk.c:596
 #, c-format
 msgid "Error: The specified output directory is inaccessible!\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:604
+#: src/mp3splt-gtk.c:602
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:606
+#: src/mp3splt-gtk.c:604
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:609
+#: src/mp3splt-gtk.c:607
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr ""
 
-#: src/mp3splt-gtk.c:661
+#: src/mp3splt-gtk.c:659
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr ""
