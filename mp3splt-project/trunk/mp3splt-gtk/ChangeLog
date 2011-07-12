@@ -8,6 +8,18 @@ Known issues :
 - menus translation 'N_' not working : how to fix ?
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.7
+
+- added trimming using silence detection
+- fixed bug #3034474: genre tag problem + original tags are now correctly copied, with two exceptions: (libmp3splt)
+* only one artist, album, title are supported
+* for mp3's, the total tracknumber is not yet supported
+- fixed bug: don't show split files when setting silence splitpoints or trim splitpoints
+- fixed #3355210 - gtk not intuitive - split button with text and shadow
+- fixed windows bug to take translations from the current directory (+libmp3splt)
+- fixed windows bug with wide characters in directory path of executable (+libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.6.1a
 
 - fixed tracktype.org issue (libmp3splt)

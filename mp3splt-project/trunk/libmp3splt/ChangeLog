@@ -2,6 +2,18 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.7
+-------------------------------------------------------------
+
+- added negative splitpoints support: closes #3005266, #1659204
+- added trimming using silence detection: closes #3016524, #3141369, #880051, #1576489
+- fixed bug #3034474: genre tag problem + original tags are now correctly copied, with two exceptions:
+* only one artist, album, title are supported
+* for mp3's, the total tracknumber is not yet supported
+- rewritten internet part (tracktype, freedb)
+- fixed windows bug to take translations from the current directory
+- fixed windows bug with wide characters in directory path of executable
+
 libmp3splt version 0.6.1a
 -------------------------------------------------------------
 

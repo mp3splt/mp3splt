@@ -24,14 +24,14 @@ mp3splt, oggsplt - utility for mp3/ogg vorbis splitting without decoding
 If you want to specify STDIN as input, you can use &quot;m-&quot; (or &quot;-&quot;)
 when input is mp3, and &quot;o-&quot; when ogg. Multiple files can be specified, all files will be split
 with the same criterion. If a directory is specified, a recursive scan is performed in that
-directory to find out all the supported formats files.
+directory to find out all the supported file formats.
 <P>
 <P>
 
-<B>TIME FORMAT</B>: begin_time and end_time must be in this form:
+<B>TIME FORMAT</B>:
 <P>
 
-<B>minutes.seconds[.hundredths]</B>
+<B>minutes.seconds[.hundredths]</B> or <B>EOF-minutes.seconds[.hundredths]</B>
 <DL COMPACT>
 <DT><DD>
 <B>Minutes</B> (required): There is no limit to minutes. (You must use this format also for minutes over 59)
@@ -46,6 +46,7 @@ directory to find out all the supported formats files.
 Multiple split points can be specified. After the minimal 2, another indefinite number of split points can
 be specified. Each split point will be an end time for the previous, and a begin for the following.
 If you want to reach the end of file, you can use &quot;EOF&quot; as last splitpoint.
+EOF-minutes.seconds[.hundredths] only works when input is seekable.
 <A NAME="lbAD">&nbsp;</A>
 <H2>DESCRIPTION</H2>
 
@@ -62,8 +63,8 @@ automatically from servers on internet like freedb.org, tracktype.org
 or from a local .XMCD (.CDDB) or .CUE file (see -c option), with the possibility to adjust them automatically with silence
 detection (see -a option).
 <P>
-You can also try to split files automatically with silence detection (see -s option), or by a fixed
-time length (see -t option)
+You can also try to split files automatically with silence detection (see -s option),
+trim files using silence detection (see -r option), or by a fixed time length (see -t option)
 <P>
 Or if you have a file created either with Mp3Wrap or AlbumWrap, you can easily split it
 just with one command (see -w option).
@@ -79,14 +80,16 @@ you can split those VBR files only with framemode (see -f option).
 ogg vorbis streams correctly. Splitting the input file from 0.0 to EOF
 might fix the issues.
 <P>
-<B>NOTE about TAGS:</B> by default, mp3splt will put the original tags in
+<B>NOTES about TAGS:</B> by default, mp3splt will put the original tags in
 the split files. Custom tags for the split files can be set with the -g option.
+When copying the original file tags, only one artist, album, title are
+supported.
 <P>
 <B>NOTE about MP3 TAGS:</B> in order to extract the original tags from mp3 files,
 libmp3splt must be compiled with 'id3tag' support. By default, the output
 files will have the same ID3 tag version as the input file; this behaviour can be changed
 with the -T option. If the input file has no tags and the -g option is used, then both
-ID3v1 and ID3v2 are written.
+ID3v1 and ID3v2 are written. Total tracknumber is not yet supported.
 <P>
 <B>NOTE about the OUTPUT DIRECTORY:</B> by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
@@ -142,6 +145,16 @@ can be used to adjust splitpoints with silence detection.
 <B>Equal time tracks mode</B>.
 Split in SPLIT_NUMBER files.
 <P>
+<DT><B>-r</B>         <DD>
+<B>Trim using silence detection</B>,
+to trim using silence detection. To trim using silence detection we need to decode
+files, so this option can be really slow if used with big files.
+It accepts some parameters with -p option (see below for a detailed description):
+<I>threshold</I>
+
+level (th) which is the sound level to be considered silence. This feature is new and
+probably still needs tweaking; please report any bugs, suggestions, ...
+<P>
 <DT><B>-s</B>         <DD>
 <B>Silence mode</B>,
 to split with silence detection. When you use -s option, mp3splt attempts to detect
@@ -173,7 +186,7 @@ was not detected because too short, you can manually split the long track in the
 Or if file is an MP3 (not with ogg) and there are too many silence points that can't be discarded reducing
 track number (because are longer than right points) you can safely concatenate
 them with 'cat' programs or similar ('copy /b file1+file2' for dos) because split files are consecutive,
-no data is lost and no ID3 is written for this purpose.
+no data is lost.
 This option is intended to split small/medium size (but even large if you can wait ;)  mp3 and ogg files
 where tracks are separated by a reasonable silence time. To try to split mixed albums or files
 with consecutive tracks (such as live performances) might be only a waste of time.
@@ -270,19 +283,22 @@ With -a option splitting process is the same, but for each splitpoint mp3splt wi
 some time (gap) before and some after to find silence and adjust splitpoints.
 <P>
 <DT><B>-p PARAMETERS</B>         <DD>
-<B>Parameters for -a and -s option</B>. When using -a and -s option some users parameters can be specified in
+<B>Parameters for -a, -s and -r option</B>. When using -a, -s and -r option some users parameters can be specified in
 the argument and must be in the form:
 <P>
 <B>&lt;name1=value,name2=value,..&gt;</B>
 <P>
 You can specify an indefinite number of them, with no spaces and separated by comma. Available parameters are:
 <P>
-<DT><B>Both -s and -a</B><DD>
+<DT><B>For -s, -a and -r</B><DD>
 <P>
 <DT><B>th=FLOAT</B><DD>
 Threshold level (dB) to be considered silence. It is a float number
 between -96 and 0. Default is -48 dB, which is a value found by tests and should be good in most
 cases.
+<P>
+<DT><B>Both -s and -a</B><DD>
+<P>
 <DT><B>off=FLOAT</B><DD>
 Float number between -2 and 2 and allows
 you to adjust the offset of cutpoint in silence time. 0 is the begin of silence, and 1 the end. Default is 0.8.
@@ -696,6 +712,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 06:58:50 GMT, March 02, 2011
+Time: 19:53:32 GMT, July 12, 2011
 </BODY>
 </HTML>

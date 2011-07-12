@@ -7,6 +7,16 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.4
+
+- added negative splitpoints support with EOF-min.sec[.0-99] (only works when the input is not seekable)
+- added trimming using silence detection with -r (use with -p th to set the threshold)
+- fixed bug #3034474: genre tag problem + original tags are now correctly copied, with two exceptions: (libmp3splt)
+* only one artist, album, title are supported
+* for mp3's, the total tracknumber is not yet supported
+- fixed windows bug to take translations from the current directory (+libmp3splt)
+- fixed windows bug with wide characters in directory path of executable (+libmp3splt)
+
 #mp3splt version 2.3a
 
 - fixed tracktype.org issue (libmp3splt)
