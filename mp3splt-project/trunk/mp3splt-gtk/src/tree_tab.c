@@ -189,6 +189,9 @@ extern gint debug_is_active;
 extern GtkWidget *names_from_filename;
 //@}
 
+extern void put_split_filename(const char *filename,int progress_data);
+
+
 void copy_filename_to_current_description(const gchar *fname);
 
 /*! updates add button
@@ -1176,6 +1179,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   }
 
   mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
+  mp3splt_set_split_filename_function(the_state, NULL);
   int old_split_mode = mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err);
   if (should_trim)
   {
@@ -1197,7 +1201,8 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, old_tags_option);
   mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
   mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_FALSE);
-
+  mp3splt_set_split_filename_function(the_state,put_split_filename);
+ 
   enter_threads();
 
   if (err >= 0)
