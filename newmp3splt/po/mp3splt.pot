@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-07-02 11:50+0200\n"
+"POT-Creation-Date: 2011-07-12 20:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: src/mp3splt.c:283
 msgid ""
 "bad time expression for the time split.\n"
-"\tMust be min.sec, read man page for details."
+"\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
 #: src/mp3splt.c:346
@@ -360,7 +360,7 @@ msgid ""
 "      mp3splt [OPTIONS] FILE1 [FILE2] ... [BEGIN_TIME] [TIME] ... "
 "[END_TIME]\n"
 "      TIME FORMAT: min.sec[.0-99], even if minutes are over 59\n"
-"                   (or EOF for End Of File). "
+"                   or EOF-min.sec[.0-99] (or EOF for End Of File). "
 msgstr ""
 
 #: src/print_utils.c:230
@@ -491,24 +491,24 @@ msgid ""
 "      Please read man page for complete documentation.\n"
 msgstr ""
 
-#: src/utils.c:114
+#: src/utils.c:127
 msgid "List of found files:\n"
 msgstr ""
 
-#: src/utils.c:122
+#: src/utils.c:135
 #, c-format
 msgid ""
 "\n"
 "-- 'Enter' for more, 's' to split, 'c' to cancel:"
 msgstr ""
 
-#: src/utils.c:131 src/utils.c:154
+#: src/utils.c:144 src/utils.c:167
 msgid ""
 "\n"
 " split aborted."
 msgstr ""
 
-#: src/utils.c:145
+#: src/utils.c:158
 #, c-format
 msgid ""
 "\n"
