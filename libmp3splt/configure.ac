@@ -39,7 +39,7 @@ AM_INIT_AUTOMAKE(libmp3splt, 0.7)
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
 
-DEBUG_FLAGS="-g"
+#DEBUG_FLAGS="-g"
 #OPTIMISE_FLAGS="-O2"
 #WARNING_FLAGS="-Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
 WARNING_FLAGS="-Wall"
