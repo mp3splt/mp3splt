@@ -31,6 +31,10 @@
 #include "freedb.h"
 #include "windows_utils.h"
 
+#ifdef __WIN32__
+#include <direct.h>
+#endif
+
 //in case of STDIN/STDOUT usage, we change the console file handle
 FILE *console_out = NULL;
 FILE *console_err = NULL;

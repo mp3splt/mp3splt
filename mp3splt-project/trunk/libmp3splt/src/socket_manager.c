@@ -55,6 +55,7 @@ Manages a socket connection
 #define SPLT_BUFFER_SIZE 1024
 #define SPLT_MAXIMUM_NUMBER_OF_LINES_READ 1000
 
+
 void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port,
     splt_state *state)
 {
@@ -70,7 +71,7 @@ void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port,
   {
     splt_e_set_strerror_msg(state);
     sh->error = SPLT_FREEDB_ERROR_INITIALISE_SOCKET;
-    return -1;
+    return;
   }
 #endif
 
@@ -81,7 +82,7 @@ void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port,
     splt_e_set_strherror_msg(state);
     splt_e_set_error_data(state, hostname);
     sh->error = SPLT_FREEDB_ERROR_CANNOT_GET_HOST;
-    goto error;
+    return;
   }
 
   struct sockaddr_in my_socket;
@@ -91,12 +92,11 @@ void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port,
   my_socket.sin_port = htons(port);
 
   sh->fd = socket(AF_INET, SOCK_STREAM, 0);
-
   if (sh->fd == -1)
   {
     splt_e_set_strerror_msg(state);
     sh->error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
-    goto error;
+    return;
   }
 
   if (connect(sh->fd, (void *)&my_socket, sizeof(my_socket)) < 0)
@@ -104,15 +104,8 @@ void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port,
     splt_e_set_strerror_msg(state);
     splt_e_set_error_data(state, hostname);
     sh->error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
-    closesocket(sh->fd);
-    goto error;
+    return;
   }
-
-error:
-#ifdef __WIN32__
-  WSACleanup();
-#endif
-  ;
 }
 
 void splt_sm_send(splt_socket_handler *sh, const char *message, 
@@ -238,8 +231,11 @@ void splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *
 
   while (number_of_lines_read < SPLT_MAXIMUM_NUMBER_OF_LINES_READ) {
     memset(buffer, '\0', SPLT_BUFFER_SIZE);
-
+#ifdef __WIN32__
+    int received_bytes = recv(sh->fd, buffer, SPLT_BUFFER_SIZE, 0);
+#else
     int received_bytes = recv_func(sh->fd, buffer, SPLT_BUFFER_SIZE, 0);
+#endif
     if (received_bytes == -1)
     {
       splt_e_set_strerror_msg(state);
@@ -337,6 +333,7 @@ splt_socket_handler *splt_sm_socket_handler_new(int *error)
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return NULL;
   }
+  memset(sh, 0x0, sizeof(splt_socket_handler));
 
   sh->error = SPLT_OK;
   sh->hostname = NULL;
