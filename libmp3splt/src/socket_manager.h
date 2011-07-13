@@ -34,7 +34,9 @@
 #if defined(__BEOS__) && (IPPROTO_UDP==1)
 // net_server has a weird order for IPPROTO_
 #else
-#define closesocket close
+ #ifndef __WIN32__
+  #define closesocket close
+ #endif
 #endif
 
 typedef struct {

@@ -26,6 +26,8 @@
 #include "data_manager.h"
 #include "utils.h"
 
+#include "windows_utils.h"
+
 main_data *create_main_struct(int argc, char **orig_argv)
 {
   main_data *data = NULL;

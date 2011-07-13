@@ -25,6 +25,7 @@
 
 #include "windows_utils.h"
 #include "utils.h"
+#include "print_utils.h"
 
 char **win32_get_utf8_args(main_data *data)
 {

@@ -293,7 +293,7 @@ static void splt_ogg_v_free(splt_ogg_state *oggstate)
     }
 
     free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
-    oggstate->cloned_vorbis_comment = SPLT_FALSE;
+    oggstate->cloned_vorbis_comment = 2;
 
     if(oggstate->vb)
     {
@@ -371,7 +371,7 @@ static splt_ogg_state *splt_ogg_v_new(int *error)
   }
   memset(oggstate->packets, 0, sizeof(splt_v_packet)*2);
 
-  oggstate->cloned_vorbis_comment = SPLT_FALSE;
+  oggstate->cloned_vorbis_comment = 2;
 
   return oggstate;
 
@@ -651,6 +651,7 @@ void splt_ogg_put_tags(splt_state *state, int *error)
   splt_ogg_state *oggstate = state->codec;
 
   free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
+  oggstate->cloned_vorbis_comment = 2;
 
   if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_NO_TAGS)
   {
@@ -903,7 +904,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error)
 
 static void free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_comment)
 {
-  if (!vc)
+  if (!vc || cloned_vorbis_comment == 2)
   {
     return;
   }
@@ -1685,7 +1686,7 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
   ogg_packet_clear(&header_comm);
 
   free_vorbis_comment(&oggstate->vc, oggstate->cloned_vorbis_comment);
-  oggstate->cloned_vorbis_comment = SPLT_FALSE;
+  oggstate->cloned_vorbis_comment = 2;
 
   if (packet_err < 0)
   {
