@@ -753,6 +753,8 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate, int *error)
   {
     goto error_invalid_file;
   }
+  oggstate->cloned_vorbis_comment = SPLT_FALSE;
+
   int packet_err = SPLT_OK;
   oggstate->headers[0] = splt_ogg_save_packet(&packet, &packet_err);
   if (packet_err < 0)
@@ -801,6 +803,7 @@ static int splt_ogg_process_headers(splt_ogg_state *oggstate, int *error)
           {
             goto error_invalid_file;
           }
+          oggstate->cloned_vorbis_comment = SPLT_FALSE;
           i++;
         }
       }
