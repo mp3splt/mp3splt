@@ -58,7 +58,7 @@
 #  define _(STR) ((const char *)STR)
 #endif
 
-#define MP3SPLT_DATE "12/07/11"
+#define MP3SPLT_DATE "14/07/11"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
