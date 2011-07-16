@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY legal SYSTEM "legal.xml">
+  <!ENTITY appversion "0.0.1">
+  <!ENTITY manrevision "0.1">
+  <!ENTITY date "November 2010">
+  <!ENTITY app "<application>&appname;</application>">
+  <!ENTITY appname "mp3splt-gtk">
+]>
+
+<article id="index" lang="en_GB">
+  <articleinfo>
+    <title>&appname; Manual</title>
+    <abstract role="description">
+      <para>
+	&appname;.
+      </para>
+      <para>
+	A tool that allows to losslessly cut MP3 or Ogg Vorbis files.
+	This means that the selected audio frames or packets are extracted
+	without the need to re-encode the file - which would loose quality.
+      </para>
+    </abstract>
+    <copyright>
+      <year>2010</year>
+      <holder>Gunter Königsmann</holder>
+    </copyright>
+    <!-- translators: uncomment this:
+	 
+	 <copyright>
+	 <year>2010</year>
+	 <holder>ME-THE-TRANSLATOR (Latin translation)</holder>
+	 </copyright>
+	 
+    -->
+    
+    &legal;
+ 
+  <author role="maintainer">
+    <firstname> 
+      Gunter
+    </firstname> 
+    <surname>
+      Königsmann
+    </surname>
+  </author>
+    <revhistory>
+      <revision>
+        <revnumber>&appname; Manual &manrevision;</revnumber>
+        <date>2010-11-16</date>
+      </revision>
+    </revhistory>
+  </articleinfo>
+
+  <sect1 id="mp3splt_gtk-introduction">
+    <title>Introduction</title>
+    <para>The <application>&appname;</application> application is a
+    tool that allows to cut MP3 and Ogg Vorbis files without the need
+    to re-encode them (which would loose them quality). 
+    </para>
+    <para>
+      Features include graphical selection of split points, automatic
+      splitting of music recordings into tracks and automatic adjustment
+      of split points to fall into pauses. 
+    </para>
+    <figure id="Player-fig2">
+      <title>&appname; directly after startup</title>
+      <screenshot>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="figures/mp3splt-gtk.png" format="PNG"/>
+	  </imageobject>
+	  <textobject>
+	    <phrase>Shows <application>&appname;</application> directly after startup.</phrase>
+	  </textobject>
+	</mediaobject>
+      </screenshot>
+    </figure>
+
+    <sect2 id="audiorec-tostartapp">
+      <title>Starting &appname;</title>
+      <para>
+	You can start <application>&appname;</application> in - at
+	least - the following ways: 
+      </para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    Choose <menuchoice><guimenu>Sound and
+	    Video</guimenu><guimenuitem>&appname;</guimenuitem></menuchoice>
+	    from the <guimenu>Applications</guimenu> menu.
+	  </para> 
+	</listitem>
+	<listitem>
+	  <para>
+	    Run <command>&appname;</command> at the prompt in a
+	    terminal such as <application>gnome-terminal</application>, or
+	    from the <application>Run Application</application>
+	    dialogue.
+	  </para> 
+	</listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2 id="mp3splt_gtk-closeapp">
+      <title>Closing &appname;</title>
+      <para>To close the <application>&appname;</application> window
+      there are many options, too:</para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    choose
+	    <menuchoice><guimenu>File</guimenu><guimenuitem>Quit</guimenuitem></menuchoice>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    press
+	    <keycombo><keycap>Ctrl</keycap><keycap>W</keycap></keycombo>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    press on the X-shaped button the window manager of your choise
+	    provides you with
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2 id="mp3splt-features">
+      <title>&appname; Features</title>
+      <para>
+	<application>&appname;</application> will allow you to
+	manipulate audio files without loosing any quality.
+      </para>
+      <para>
+	This program was designed with usability in Mind and contains the
+	followning features
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      The ability to use your favourite audio playback application
+	      for playback of the file that is to be cut.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Automatic detection of the right places to split.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Automatic adjustment of manually set split points to fall
+	      into a nearby pause - which allows the user to work with
+	      less than milisecond-accuracy when specifying the split
+	      points.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Importing splitpoints for a known album from a database like
+	      freedb.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      Automatically split albums that have been joined by
+	      albumwrap or mp3wrap into the original files.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para> 
+    </sect2>
+  </sect1>
+  <sect1 id="mp3splt_gtk-BasicWorkflow">
+    <title>Basic Workflow</title>
+    <sect2 id="mp3splt_gtk-OpenFile">
+      <title>Opening a file</title>
+      <para>
+	Just press the <guibutton> Choose </guibutton> button and
+	select a file to open.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-SetSplitPoints">
+      <title>Choose the right split points</title>
+      <sect3 id="mp3splt_gtk-SetSplitPointsManually">
+	<title>Choosing split points manually</title>
+	<para>
+	  Press the <guibutton> Play </guibutton> button (a gray
+	  triangle pointing to the right) on the
+	  <guilabel>Player</guilabel> tab, listen to the music and press
+	  the <guibutton>add</guibutton> button (which is on the
+	  <guilabel>Player</guilabel> tab, too) every time a new audio
+	  track should begin.
+	</para>
+	<para>
+	  If you don't want to be made to press the button exactly at
+	  the right centisecond the <guibutton>add</guibutton>
+	  Preferences tab gives you the possibility to let the program
+	  fine-tune the split points you choose.
+	</para>
+      </sect3>
+      <sect3 id="mp3splt_gtk-SetSplitPointsAutomatically">
+	<title>Automatical setting of split points</title>
+	<para>
+	  The <guilabel>Type of Split</guilabel> tab provides you with
+	  a wide choices of ways to select where to split a file into
+	  tracks. If you want to split a media into tracks others
+	  might have had access to before you can try searching for
+	  splitpoint readymades in the <guilabel>FreeDB</guilabel> tab
+	  instead.
+	</para>
+      </sect3>
+    </sect2>
+    <sect2 id="mp3splt_gtk-TrackInfos">
+      <title>Tweaking split points and entering track information</title>
+      <para>
+	  The <guilabel>Splitpoints</guilabel> tab now contains a list
+	  of points where tracks start or end. It also contains the
+	  information if this piece of the audio file is to be kept
+	  and how the corresponding track has to be named.
+      </para>
+      <figure id="Splitpoints">
+	<title>The split point tab</title>
+	<screenshot>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="figures/Tracklist.png" format="PNG"/>
+	    </imageobject>
+	    <textobject>
+	      <phrase>Shows all split points and track names.</phrase>
+	    </textobject>
+	  </mediaobject>
+	</screenshot>
+      </figure>
+      <para>
+	If you want to change the start or end position of a track
+	or give it a name just do it at any time you want.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-TrackExport">
+      <title>Exporting the tracks</title>
+      <para>
+	  Now press the button with the green <guibutton>check
+	  mark</guibutton> that is always visible in the menu
+	  line. &appname; will output all tracks into single files. If
+	  anything goes wrong don't despair: Since one of the goals of
+	  &appname; is to work completely lossless even if anything
+	  goes wrong not much is lost.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="mp3splt_gtk-BatchProcessing">
+    <title>Batch processing of files</title>
+    <para>
+      Besides manual and automatic splitting of a single file
+      &appname; also supports automatic batch-processing of multiple
+      files at once.
+    </para>
+    <sect2 id="mp3splt_gtk-BatchProcessingEnable">
+      <title>Enabling batch processing mode</title>
+      <para>Go to the <guilabel>Type of split</guilabel> tab and there
+      to the <guilabel>File mode</guilabel> tab. After selecting
+      <guilabel>Batch processing</guilabel> here batch processing mode
+      is enabled</para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-BatchProcessingModeSet">
+      <title>Adding files in batch processing mode</title>
+      <para>
+	Go to the <guilabel>Type of split</guilabel> tab and there
+	to the <guilabel>Split mode</guilabel> tab and select after
+	which criteria you want the files to be split.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-BatchProcessingFileAdd">
+      <title>Adding files in batch processing mode</title>
+      <para>Go to the <guilabel>Batch Processing</guilabel> tab and
+      add all files you want to be automatically processed.</para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-TrackExportII">
+      <title>Exporting the tracks</title>
+      <para>
+	Now press the button with the green <guibutton>check
+	mark</guibutton> that is always visible in the menu
+	line. &appname; will output all tracks into single files. If
+	anything goes wrong don't despair: Since one of the goals of
+	&appname; is to work completely lossless even if anything
+	goes wrong not much is lost.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1 id="mp3splt_gtk-SaveResume">
+    <title>Saving and resuming your work</title>
+    <para>      
+	&appname; contains an export feature that saves the current
+	project's state as a cue file. This cue file can later be
+	re-opened by &appname; or be used by any cd burner or other
+	application that can read cue files. 
+    </para>      
+    <para>      
+      If the cue file is used in a different application than
+      &appname; there is one feature that most probably won't work,
+      though: 
+    </para>
+    <para>      
+      The cue standard does provide commentary fields that allow
+      applications to store private data (which we use for to remember
+      which part of the file is not to be output).
+      But since there is no standartized way to exclude parts of a
+      file from the CD burning process other applications most
+      probably won't know if you want to do so.
+    </para>
+    <para>
+      To export the current split points as a cue file press
+      <menuchoice><guimenu>File</guimenu><guimenuitem>Export
+      Splitpoints</guimenuitem></menuchoice>
+    </para>
+  </sect1>
+  <sect1 id="mp3splt_gtk-Troubleshooting">
+    <title>Troubleshooting</title>
+    <sect2 id="mp3splt_gtk-PlayerWontStart">
+      <title>The player won't start</title>
+      <para>
+	If the player won't start even if the play button is pressed try
+	starting the player independently from &appname; and pressing
+	play thereafter.
+      </para>
+      <para>
+	&appname; knows how to remote-control SnackAmp and Audacious to
+	automatically switch to the file that is about to be split.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-SplittingDoesntWork">
+      <title>Splitting doesn't work</title>
+      <para>
+	Try to make sure that the version of libmp3splt is installed
+	correspondends to the version of &appname;.
+	Even if (for newer versions of the program) the configure
+	script makes sure that both versions match it might still
+	be possible to have the wrong combination of these elements
+	installed on the same system.
+      </para>
+      <para>
+	If that is the case make sure that in the <guilabel>File
+	mode</guilabel> tab of the <guilabel>Type of split</guilabel>
+	tab <guilabel>Single file</guilabel> mode is selected.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-SplittingDoesntWorkII">
+      <title>Splitting a certain Ogg file doesn't work</title>
+      <para>
+	Next to the lossy ogg vorbis format that gives good
+	compression while keeping file sizes extremely low there are
+	other file formats that can be kept inside an ogg container as
+	well, notably ogg flac. 
+      </para>
+      <para>
+	Flac is a completely lossless codec which means that the
+	output files are sonewhat larger than Ogg vorbis ones but
+	these files can be cut on any information without loosing any
+	quality.
+      </para>
+      <para>
+	Since there is no direct need &appname; still does not
+	support cutting flac files.
+      </para>
+    </sect2>
+    <sect2 id="mp3splt_gtk-AddingFilesDoesntWork">
+      <title>Adding a file to the files view doesn't work</title>
+      <para>
+	Make sure that in the <guilabel>File mode</guilabel> tab of
+	the <guilabel>Type of split</guilabel> tab
+	<guilabel>Batch processing</guilabel> mode is selected.
+      </para>
+    </sect2>
+  </sect1>
+</article>

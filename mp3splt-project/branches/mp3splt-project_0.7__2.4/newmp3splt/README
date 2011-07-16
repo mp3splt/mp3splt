@@ -1,0 +1,45 @@
+	mp3splt version 2.4
+
+	     Copyright (C) 2002-2005 Matteo Trotta
+	     Copyright (C) 2005-2011 Alexandru Ionut Munteanu
+
+   Visit http://mp3splt.sourceforge.net for latest realease!
+
+DISCLAIMER
+
+This software comes with absolutely no warranty, and is intended
+only to help people handling mp3 files. Author despises any use
+of mp3 technology for illegal purposes and will not be rensposible
+for any illegal action you can do with this software (if there are).
+
+LICENSE INFORMATION
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
+
+See COPYING for more details.
+
+HELP INFORMATION
+
+Read INSTALL for installation and compile instructions.
+Run program without arguments to view HELP informations
+or read man.html.
+
+Author will be pleased to receive any comments, bugs,
+advices and new functions to add to this program.
+
+Enjoy!
+
+Matteo Trotta - <mtrotta@users.sourceforge.net>
+Alexandru Ionut Munteanu - <io_fx@yahoo.fr>

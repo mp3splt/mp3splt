@@ -1,0 +1,31 @@
+Our translations are managed using transifex.
+To pull these translations into our main svn tree
+the transifex command line client is the most comfortable
+method,
+
+The documentation of the transifex client can be found here:
+http://help.transifex.net/user-guide/client/
+Using the client involves at maximum 5 steps:
+
+1) INSTALLATION
+sudo easy_install -U transifex-client
+
+2) CONFIGURATION
+Get yourself a transifex.net account and then execute:
+tx init
+The rest of the needed configuration is already part of the
+.tx directory.
+ 
+3) PULLING NEW TRANSLATIONS FROM THE SERVER
+tx pull -a
+
+4) PUSHING TRANSLATIONS FROM THE .po-FILES TO THE SERVER
+tx push -t
+
+5) PUSHING THE CURRENT LIST OF UNTRANSLATED STRINGS TO THE SERVER
+This step should not be necessary as long as the server is able
+to automatically fetch the source files for our translations from 
+our svn server. It it still is - the command to transfer these 
+sources manually is:
+tx push -s
+
