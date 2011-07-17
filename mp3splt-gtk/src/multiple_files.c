@@ -218,7 +218,6 @@ void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
   GtkTreeModel *model;
-  gint i;
   GtkTreePath *path;
   GList *selected_list = NULL;
   GList *current_element = NULL;
@@ -236,7 +235,6 @@ void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
     //get the last element
     current_element = g_list_last(selected_list);
     path = current_element->data;
-    i = gtk_tree_path_get_indices(path)[0];
     //get the iter correspondig to the path
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME, &filename, -1);

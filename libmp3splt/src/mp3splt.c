@@ -1511,6 +1511,49 @@ int mp3splt_set_silence_points(splt_state *state, int *error)
   return found_splitpoints;
 }
 
+//!set the trim silence splitpoints without actually splitting
+void mp3splt_set_trim_silence_points(splt_state *state, int *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  int silence_mode = SPLT_OPTION_TRIM_SILENCE_MODE;
+  mp3splt_set_option(state, SPLT_OPT_SPLIT_MODE, &silence_mode);
+
+  if (state != NULL)
+  {
+    if (!splt_o_library_locked(state))
+    {
+      splt_o_lock_library(state);
+
+      splt_t_set_stop_split(state, SPLT_FALSE);
+
+      splt_check_file_type(state, err);
+
+      if (*err >= 0)
+      {
+        splt_p_init(state, err);
+        if (*err >= 0)
+        {
+          splt_s_set_trim_silence_splitpoints(state, err);
+          splt_p_end(state, err);
+        }
+      }
+
+      splt_o_unlock_library(state);
+    }
+    else
+    {
+      *err = SPLT_ERROR_LIBRARY_LOCKED;
+    }
+  }
+  else
+  {
+    *err = SPLT_ERROR_STATE_NULL;
+  }
+}
+
 //!count how many silence splitpoints silence detection results in
 int mp3splt_count_silence_points(splt_state *state, int *error)
 {
