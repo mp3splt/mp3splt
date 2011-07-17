@@ -878,8 +878,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
         }
 
         splt_d_print_debug(state,"Order splitpoints...\n");
-        int err = splt_sp_order_splitpoints(state, splitpoints_appended);
-        if (err < 0) { *error = err; }
+        splt_sp_order_splitpoints(state, splitpoints_appended);
 
         if (*error >= 0)
         {

@@ -49,7 +49,7 @@ int splt_sp_get_splitpoint_type(splt_state *state, int index, int *error);
 
 int splt_sp_cut_splitpoint_extension(splt_state *state, int index);
 
-int splt_sp_order_splitpoints(splt_state *state, int len);
+void splt_sp_order_splitpoints(splt_state *state, int len);
 
 void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
     long *mins, long *secs, long *hudr);

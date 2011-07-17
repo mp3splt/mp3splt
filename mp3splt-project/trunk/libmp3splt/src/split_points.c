@@ -265,37 +265,18 @@ int splt_sp_cut_splitpoint_extension(splt_state *state, int index)
   return error;
 }
 
-int splt_sp_order_splitpoints(splt_state *state, int len)
+static int splt_point_value_sort(const void *p1, const void *p2)
 {
-  //TODO: use quicksort ?
+  splt_point *point1 = (splt_point *)p1;
+  splt_point *point2 = (splt_point *)p2;
 
-  int error = SPLT_OK;
+  return point1->value - point2->value;
+}
 
-  int i = 0, j = 1;
-  float key;
-  for (j = 1; j < len; j++)
-  {
-    key = splt_sp_get_splitpoint_value(state, j, &error);
-
-    if (error < 0) { return error; }
-
-    i = j - 1;
-    while ((i >= 0) && 
-        (splt_sp_get_splitpoint_value(state,i, &error) > key))
-    {
-      if (error < 0) { return error; }
-
-      long temp = splt_sp_get_splitpoint_value(state, i, &error);
-      if (error < 0) { return error; }
-
-      splt_sp_set_splitpoint_value(state, i+1, temp);
-      i--;
-    }
-
-    splt_sp_set_splitpoint_value(state, i+1, key);
-  }
-
-  return error;
+void splt_sp_order_splitpoints(splt_state *state, int len)
+{
+  qsort(state->split.points, state->split.real_splitnumber, 
+      sizeof *state->split.points, splt_point_value_sort);
 }
 
 long splt_sp_overlap_time(splt_state *state, int splitpoint_index)

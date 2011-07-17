@@ -1181,21 +1181,19 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   mp3splt_set_int_option(the_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
   mp3splt_set_split_filename_function(the_state, NULL);
   int old_split_mode = mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE, &err);
-  if (should_trim)
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
-  }
-  else
-  {
-    mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
-  }
   int old_tags_option = mp3splt_get_int_option(the_state, SPLT_OPT_TAGS, &err);
   mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
   if (err >= 0)
   {
     we_are_splitting = TRUE;
-    //real work
-    err = mp3splt_split(the_state);
+    if (should_trim)
+    {
+      mp3splt_set_trim_silence_points(the_state, &err);
+    }
+    else
+    {
+      mp3splt_set_silence_points(the_state, &err);
+    }
     we_are_splitting = FALSE;
   }
   mp3splt_set_int_option(the_state, SPLT_OPT_TAGS, old_tags_option);
@@ -1851,9 +1849,6 @@ gpointer split_preview(gpointer data)
 void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
     GtkTreeViewColumn *col, gpointer user_data)
 {
-  GtkTreeModel *model;
-  model = gtk_tree_view_get_model(tree_view);
-  
   gint number = GPOINTER_TO_INT(g_object_get_data (G_OBJECT(col), "col"));
 
   //only when clicking on the PREVIEW or SPLIT_PREVIEW columns

@@ -86,9 +86,9 @@ gint is_filee(const gchar *fname)
 gint check_if_dir(guchar *fname)
 {
   struct stat buffer;
-  gint         status;
-  
-  status = g_stat((gchar *)fname, &buffer);
+
+  g_stat((gchar *)fname, &buffer);
+
   //if it is a directory
   if (S_ISDIR(buffer.st_mode) != 0)
     return TRUE;
@@ -105,9 +105,8 @@ gint check_if_dir(guchar *fname)
 gint check_if_file(guchar *fname)
 {
   struct stat buffer;
-  gint         status;
 
-  status = g_stat((gchar *)fname, &buffer);
+  g_stat((gchar *)fname, &buffer);
   //if it is a file
   if (S_ISREG(buffer.st_mode) != 0)
     return TRUE;
