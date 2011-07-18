@@ -432,9 +432,6 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
   }
 
   put_message_in_history(text, mess_type);
-
-  fprintf(stdout,"%s\n", text);
-  fflush(stdout);
 }
 
 //!event for the cancel button
