@@ -1,22 +1,22 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Александр Прокудин <alexandre.prokoudine@gmail.com>, 2011.
+# marselles <marselles@mail.ru>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2011-07-12 21:24+0200\n"
-"PO-Revision-Date: 2011-02-22 00:00+0000\n"
-"Last-Translator: marselles <marselles@mail.ru>\n"
+"PO-Revision-Date: 2011-07-18 19:25+0000\n"
+"Last-Translator: optimix <io_fx@yahoo.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:254
 #: src/snackamp_control.c:328
@@ -40,12 +40,12 @@ msgstr "КГц"
 
 #: src/tree_tab.c:553
 msgid "_part"
-msgstr ""
+msgstr "_часть"
 
 #: src/tree_tab.c:564
 #, c-format
 msgid "%s_part%d"
-msgstr ""
+msgstr "%s_часть%d"
 
 #: src/tree_tab.c:708 src/tree_tab.c:1114
 msgid " error: you already have the splitpoint in table"
@@ -54,7 +54,7 @@ msgstr ""
 #: src/tree_tab.c:791 src/tree_tab.c:870 src/tree_tab.c:1124
 #: src/freedb_tab.c:516 src/freedb_tab.c:538
 msgid "description here"
-msgstr "описание здесь"
+msgstr "здесь могло быть описание"
 
 #: src/tree_tab.c:1271 src/tree_tab.c:1703
 msgid "Set trim splitpoints using silence detection"
@@ -74,7 +74,7 @@ msgstr ""
 
 #: src/tree_tab.c:1403
 msgid "Number of tracks (0 means all tracks):"
-msgstr "Количество композиций (0 означает, что все треки):"
+msgstr "Количество дорожек (0 означает все дорожки):"
 
 #: src/tree_tab.c:1418
 msgid "Minimum silence length (seconds):"
@@ -94,7 +94,7 @@ msgstr "Секунды:"
 
 #: src/tree_tab.c:1640
 msgid "Hundredths:"
-msgstr "Милисекунды:"
+msgstr "Миллисекунды:"
 
 #: src/tree_tab.c:1646 src/player_tab.c:1016
 msgid "_Add"
@@ -102,7 +102,7 @@ msgstr "Добавить"
 
 #: src/tree_tab.c:1652
 msgid "Add splitpoint"
-msgstr ""
+msgstr "Добавить точку разделения"
 
 #: src/tree_tab.c:1656
 msgid "_Remove"
@@ -122,11 +122,11 @@ msgstr "Удалить все строки"
 
 #: src/tree_tab.c:1687
 msgid "_Silence detection"
-msgstr ""
+msgstr "О_пределение тишины"
 
 #: src/tree_tab.c:1697
 msgid "_Trim splitpoints"
-msgstr ""
+msgstr "О_брезать точки разделения"
 
 #: src/tree_tab.c:1827 src/mp3splt-gtk.c:399
 msgid " finished"
@@ -142,7 +142,7 @@ msgstr ""
 
 #: src/tree_tab.c:1951
 msgid "Keep"
-msgstr ""
+msgstr "Сохранить"
 
 #: src/tree_tab.c:1965 src/split_files.c:111
 msgid "Filename"
@@ -150,19 +150,19 @@ msgstr "Имя файла"
 
 #: src/tree_tab.c:1979
 msgid "Secs"
-msgstr "Сек."
+msgstr "С"
 
 #: src/tree_tab.c:1993
 msgid "Mins"
-msgstr "Мин."
+msgstr "мин"
 
 #: src/tree_tab.c:2007
 msgid "Hundr"
-msgstr "мсек."
+msgstr "мс"
 
 #: src/tree_tab.c:2017
 msgid "Length"
-msgstr "Длина"
+msgstr "Длительность"
 
 #: src/tree_tab.c:2028
 msgid "LiveP"
@@ -190,7 +190,7 @@ msgstr "<b>Выбрать язык (необходима перезагрузк�
 
 #: src/preferences_tab.c:505
 msgid "Choose split directory"
-msgstr ""
+msgstr "Выберите каталог для разделённых файлов"
 
 #: src/preferences_tab.c:657
 msgid "Br_owse dir"
@@ -202,23 +202,23 @@ msgstr "Каталог композиции"
 
 #: src/preferences_tab.c:670
 msgid "<b>Directory for split files</b>"
-msgstr ""
+msgstr "<b>Каталог для разделённых файлов</b>"
 
 #: src/preferences_tab.c:679
 msgid "_Splitpoint name from filename (testing)"
-msgstr ""
+msgstr "_Имя точки разделения от имени файла (экспериментально)"
 
 #: src/preferences_tab.c:685
 msgid "_Create directories from filenames "
-msgstr ""
+msgstr "_Создать каталоги по именам файлов"
 
 #: src/preferences_tab.c:691
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
-msgstr "Кадровый режим (использовать для MP3 VBR) (только MP3)"
+msgstr "По_кадровый режим (использовать для VBR) (только MP3)"
 
 #: src/preferences_tab.c:698
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr ""
+msgstr "Режим _автокоррекции точек разделения с помощью определения тишины"
 
 #: src/preferences_tab.c:730
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
@@ -226,15 +226,15 @@ msgstr ""
 
 #: src/preferences_tab.c:747
 msgid "Gap level (seconds around splitpoint to search for silence):"
-msgstr ""
+msgstr "На сколько секунд вокруг точки разделения искать искать тишину:"
 
 #: src/preferences_tab.c:766
 msgid "Set _default split options"
-msgstr ""
+msgstr "_Вернуть исходные параметры"
 
 #: src/preferences_tab.c:772
 msgid "<b>Split options</b>"
-msgstr ""
+msgstr "<b>Параметры разделения</b>"
 
 #: src/preferences_tab.c:851
 msgid "Choose a player:"
@@ -250,7 +250,7 @@ msgstr "Формат по умолчанию "
 
 #: src/preferences_tab.c:927
 msgid "Custom format"
-msgstr "Пользоватеьский формат"
+msgstr "Пользовательский формат"
 
 #: src/preferences_tab.c:944
 msgid ""
@@ -262,6 +262,13 @@ msgid ""
 "    @g - genre\n"
 "    @n - track number"
 msgstr ""
+"    @f — имя файла\n"
+"    @a — имя исполнителя\n"
+"    @p — исполнитель каждой песни\n"
+"    @b — название альбома\n"
+"    @t — название песни\n"
+"    @g — жанр\n"
+"    @n — номер дорожки"
 
 #: src/preferences_tab.c:957
 msgid "<b>Output filename format</b>"
@@ -269,11 +276,11 @@ msgstr "<b>Выходной формат файла</b>"
 
 #: src/preferences_tab.c:1002
 msgid "Original file tags"
-msgstr ""
+msgstr "Исходные теги файлов"
 
 #: src/preferences_tab.c:1005
 msgid "Default tags (cddb or cue tags)"
-msgstr ""
+msgstr "Теги по умолчанию (CDDB или из Cue)"
 
 #: src/preferences_tab.c:1008
 msgid "No tags"
@@ -285,7 +292,7 @@ msgstr "Извлечь метки из имени файла"
 
 #: src/preferences_tab.c:1018
 msgid "<b>Split files tags</b>"
-msgstr ""
+msgstr "<b>Теги разделённых файлов</b>"
 
 #: src/preferences_tab.c:1040
 msgid "No change"
@@ -351,10 +358,20 @@ msgid ""
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - comment"
 msgstr ""
+"Введите выше регулярное выражение по правилам PERL,\n"
+"используя именованные подгруппы.\n"
+"Распознаются следующшие имена:\n"
+"    (?<artist>)   — имя исполнителя\n"
+"    (?<album>)    — название альбома\n"
+"    (?<title>)    — назщвание дорожки\n"
+"    (?<tracknum>) — номер текущей дорожки\n"
+"    (?<year>)     — год выпуска\n"
+"    (?<genre>)    — жанр\n"
+"    (?<comment>)  — комментарий"
 
 #: src/preferences_tab.c:1161
 msgid "_Replace underscores by spaces"
-msgstr ""
+msgstr "_Заменить подчёркивания на пробелы"
 
 #: src/preferences_tab.c:1169
 msgid "Artist text properties:"
@@ -374,7 +391,7 @@ msgstr "Свойства текста комментариев"
 
 #: src/preferences_tab.c:1184
 msgid "Genre tag:"
-msgstr ""
+msgstr "Тег жанра:"
 
 #: src/preferences_tab.c:1187
 msgid "Comment tag:"
@@ -382,11 +399,11 @@ msgstr "Метки комментариев"
 
 #: src/preferences_tab.c:1189
 msgid "Regular expression test"
-msgstr ""
+msgstr "Тест регулярных выражений"
 
 #: src/preferences_tab.c:1204
 msgid "_Test"
-msgstr ""
+msgstr "_Проверить"
 
 #: src/preferences_tab.c:1209
 msgid "Sample filename:"
@@ -398,27 +415,27 @@ msgstr "Пример результата:"
 
 #: src/preferences_tab.c:1224
 msgid "ID3v1 & ID3v2 tags"
-msgstr "ID3v1 и ID3v2 теги"
+msgstr "Теги ID3v1 и ID3v2"
 
 #: src/preferences_tab.c:1231
 msgid "ID3v2 tags"
-msgstr "ID3v2 теги"
+msgstr "Теги ID3v2"
 
 #: src/preferences_tab.c:1237
 msgid "ID3v1 tags"
-msgstr "ID3v1 теги"
+msgstr "Теги ID3v1"
 
 #: src/preferences_tab.c:1243
 msgid "Same tags version as the input file"
-msgstr "То же"
+msgstr "Та же, что у исходных файлов"
 
 #: src/preferences_tab.c:1248
 msgid "<b>Tags version (mp3 only)</b>"
-msgstr "<b>Версия тегов(только MP3)</b>"
+msgstr "<b>Версия тегов (только MP3)</b>"
 
 #: src/preferences_tab.c:1290 src/main_win.c:563
 msgid "Split"
-msgstr ""
+msgstr "Разделение"
 
 #: src/preferences_tab.c:1296
 msgid "Tags"
@@ -426,7 +443,7 @@ msgstr "Теги"
 
 #: src/preferences_tab.c:1302
 msgid "Output"
-msgstr "Выход"
+msgstr "Вывод"
 
 #: src/preferences_tab.c:1308 src/main_win.c:713
 msgid "Player"
@@ -466,8 +483,7 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
 msgstr ""
 
 #: src/player_tab.c:944
@@ -492,7 +508,7 @@ msgstr "Следующая"
 
 #: src/player_tab.c:1024
 msgid "Add splitpoint from player"
-msgstr ""
+msgstr "Добавить точку разделения из плеера"
 
 #: src/player_tab.c:1028
 msgid "_Show amplitude wave"
@@ -521,27 +537,32 @@ msgstr "Отключение от плеера"
 #: src/player_tab.c:1214
 #, c-format
 msgid "before %s"
-msgstr ""
+msgstr "до %s"
 
 #: src/player_tab.c:2744
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
+" щелчок левой клавишей мыши выделяет точку разделения, правой — удаляет её"
 
 #: src/player_tab.c:2754
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
-"кликните левой кнопкой мыши + перемещение позиции композиции, кликните "
-"правой кнопкой мыши + изменить зум"
+" щелчок левой клавишей мыши и перемещение меняет позицию, правой — меняет "
+"масштаб"
 
 #: src/player_tab.c:2765
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
+" щелчок левой клавишей мыши по точке меняет её позицию, правой — включает "
+"прослушивание"
 
 #: src/player_tab.c:2777
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
+" щелчок левой клавишей мыши по прямоугольнику переключает сохранение точки "
+"разделения"
 
 #: src/player_tab.c:2968
 msgid " quick preview..."
@@ -597,7 +618,7 @@ msgstr ""
 
 #: src/main_win.c:316
 msgid "Error launching external command"
-msgstr ""
+msgstr "Ошибка при запуске внешней команды"
 
 #: src/main_win.c:347
 msgid "using"
@@ -621,7 +642,7 @@ msgstr ""
 
 #: src/main_win.c:504 src/main_win.c:508
 msgid "Split !"
-msgstr ""
+msgstr "Разделить"
 
 #: src/main_win.c:551
 msgid "_File"
@@ -641,7 +662,7 @@ msgstr "Открыть"
 
 #: src/main_win.c:558
 msgid "_Import splitpoints..."
-msgstr ""
+msgstr "_Импортировать точки разделения..."
 
 #: src/main_win.c:558
 msgid "Import"
@@ -649,7 +670,7 @@ msgstr "Импорт"
 
 #: src/main_win.c:560
 msgid "_Export splitpoints..."
-msgstr ""
+msgstr "_Экспортировать точки разделения..."
 
 #: src/main_win.c:560
 msgid "Export"
@@ -657,7 +678,7 @@ msgstr "Экспорт"
 
 #: src/main_win.c:563
 msgid "_Split !"
-msgstr ""
+msgstr "_Разделить!"
 
 #: src/main_win.c:565
 msgid "Messages _history"
@@ -693,11 +714,11 @@ msgstr "О программе"
 
 #: src/main_win.c:726
 msgid "Splitpoints"
-msgstr ""
+msgstr "Точки разделения"
 
 #: src/main_win.c:739
 msgid "Split files"
-msgstr ""
+msgstr "Разделённые файлы"
 
 #: src/main_win.c:752
 msgid "FreeDB"
@@ -705,15 +726,15 @@ msgstr "FreeDB"
 
 #: src/main_win.c:763
 msgid "Type of split"
-msgstr ""
+msgstr "Тип разделения"
 
 #: src/main_win.c:776
 msgid "Preferences"
-msgstr "Настройки"
+msgstr "Параметры"
 
 #: src/main_win.c:797
 msgid "S_top"
-msgstr ""
+msgstr "_Стоп"
 
 #: src/freedb_tab.c:126
 #, c-format
@@ -746,7 +767,7 @@ msgstr "Выбранный альбом:"
 
 #: src/freedb_tab.c:659
 msgid "_Add splitpoints"
-msgstr ""
+msgstr "_Добавить точки разделения"
 
 #: src/freedb_tab.c:666
 msgid "Set splitpoints to the splitpoints table"
@@ -772,35 +793,35 @@ msgstr "Время"
 
 #: src/special_split.c:278
 msgid "Equal time tracks"
-msgstr "Одинаковая длительность треков"
+msgstr "Одинаковая длительность дорожек"
 
 #: src/special_split.c:308
 msgid "Trim using silence detection"
-msgstr ""
+msgstr "Обрезать с помощью вычисления тишины"
 
 #: src/special_split.c:324 src/special_split.c:349
 msgid "Threshold level (dB) : "
-msgstr ""
+msgstr "Уровень порога (Дб): "
 
 #: src/special_split.c:333
 msgid "Silence - split with silence detection"
-msgstr ""
+msgstr "Тишина — разделить, найдя тишину"
 
 #: src/special_split.c:359
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
-msgstr ""
+msgstr "Смещение точки разреза (0 — начало тишины. 1 — конец): "
 
 #: src/special_split.c:369
 msgid "Number of tracks (0 means all tracks) : "
-msgstr ""
+msgstr "Количество дорожек (0 значит все): "
 
 #: src/special_split.c:379
 msgid "Minimum silence length (seconds) : "
-msgstr ""
+msgstr "Мин. длительность тишины (секунды) : "
 
 #: src/special_split.c:387
 msgid "Remove silence between tracks"
-msgstr "Убрать задержку между треками"
+msgstr "Убрать задержку между дорожками"
 
 #: src/special_split.c:408
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
@@ -820,7 +841,7 @@ msgstr "Пакетная обработка"
 
 #: src/special_split.c:485
 msgid "Split mode"
-msgstr ""
+msgstr "Режим разделения"
 
 #: src/special_split.c:489
 msgid "File mode"
@@ -836,7 +857,7 @@ msgstr "О_чистить"
 
 #: src/multiple_files.c:88
 msgid "Complete filename"
-msgstr ""
+msgstr "Полное имя файла"
 
 #: src/multiple_files.c:109
 msgid "Choose file or directory"
@@ -861,12 +882,12 @@ msgstr "У_далить все записи"
 #: src/gstreamer_control.c:97
 #, c-format
 msgid "gstreamer error: %s"
-msgstr ""
+msgstr "Ошибка GStreamer: %s"
 
 #: src/gstreamer_control.c:125
 #, c-format
 msgid "Warning: %s"
-msgstr ""
+msgstr "Предупреждение: %s"
 
 #: src/gstreamer_control.c:153
 #, c-format
@@ -946,19 +967,19 @@ msgstr "Выберите файл для импорта"
 
 #: src/import.c:148
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
-msgstr ""
+msgstr "CDDB (*.cddb), CUE (*.cue), Метки Audacity (*.txt)"
 
 #: src/import.c:152
 msgid "CDDB files (*.cddb)"
-msgstr "CDDB файлы (*.cddb)"
+msgstr "Файлы CDDB (*.cddb)"
 
 #: src/import.c:154
 msgid "CUE files (*.cue)"
-msgstr "CUE файлов (*.cue)"
+msgstr "Файлы CUE (*.cue)"
 
 #: src/import.c:156
 msgid "Audacity labels files (*.txt)"
-msgstr ""
+msgstr "Файлы меток Audacity (*.txt)"
 
 #: src/import.c:158
 msgid "All files"
@@ -971,3 +992,5 @@ msgstr "Выберите имя файла c расширением cue"
 #: src/export.c:212
 msgid "cue files (*.cue)"
 msgstr "cue файлы (*.cue)"
+
+
