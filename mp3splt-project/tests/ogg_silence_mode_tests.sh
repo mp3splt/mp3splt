@@ -43,7 +43,7 @@ function test_silence
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -63,7 +63,7 @@ function test_silence
 98.005623\t105.996193\t353"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 
   test_name="silence mode - check reading from mp3splt.log"
@@ -74,7 +74,7 @@ function test_silence
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
  Found silence log file 'mp3splt.log' ! Reading silence points from file to save time ;)
  Total silence points found: 2. (Selected 3 tracks)
    File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
@@ -86,7 +86,7 @@ function test_silence
 
   _check_silence_output_files
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -103,7 +103,7 @@ function test_silence_and_pretend
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -118,7 +118,7 @@ function test_silence_and_pretend
   check_output_directory_is_empty
   check_if_file_does_not_exist "mp3splt.log"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -135,7 +135,7 @@ function test_silence_and_cue_export
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -170,7 +170,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can_silence.ogg" OGG
     PERFORMER "Kelly Allyn"
     INDEX 01 01:44:39'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -187,7 +187,7 @@ function test_silence_and_pretend_and_cue_export
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -203,7 +203,7 @@ function test_silence_and_pretend_and_cue_export
   check_output_directory_number_of_files 1
   check_if_file_does_not_exist "mp3splt.log"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -220,7 +220,7 @@ function test_silence_offset
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.00, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.00, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -259,7 +259,7 @@ function test_silence_offset
 98.005623\t105.996193\t353"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -276,7 +276,7 @@ function test_silence_threshold
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -22.3 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -22.3 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 3. (Selected 4 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -324,7 +324,7 @@ function test_silence_threshold
 137.620316\t137.941040\t15"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -341,7 +341,7 @@ function test_silence_nt
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: User mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: User mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -372,7 +372,7 @@ function test_silence_nt
 98.005623\t105.996193\t353"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -389,7 +389,7 @@ function test_silence_rm
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -428,7 +428,7 @@ function test_silence_rm
 98.005623\t105.996193\t353"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -445,7 +445,7 @@ function test_silence_rm_and_output_format
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -466,7 +466,7 @@ function test_silence_rm_and_output_format
   current_file="$OUTPUT_DIR/silence_3_01:45:99 03:04:85.ogg"
   check_current_ogg_length "1m:18.863s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -483,7 +483,7 @@ function test_silence_rm_and_overlap
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -505,7 +505,7 @@ function test_silence_rm_and_overlap
   current_file="$OUTPUT_DIR/silence_3_01:45:99 03:04:85.ogg"
   check_current_ogg_length "1m:18.863s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -522,7 +522,7 @@ function test_silence_rm_and_custom_tags
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -549,7 +549,7 @@ function test_silence_rm_and_custom_tags
                      "title1" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -566,7 +566,7 @@ function test_silence_rm_and_custom_tags_and_output_format
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -587,7 +587,7 @@ function test_silence_rm_and_custom_tags_and_output_format
   current_file="$OUTPUT_DIR/artist3__Getting Back From Where I've Been__title1_3.ogg" 
   check_current_ogg_length "1m:18.863s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -604,7 +604,7 @@ function test_silence_min
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 9.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 9.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 1. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -634,7 +634,50 @@ function test_silence_min
 50.649979\t60.609886\t433"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
+  echo
+}
+
+function test_silence_with_trackmin
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_silence"
+
+  test_name="silence mode - checking trackmin"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 46.00)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ info: track too short (0.45.78 < 0.46.0); skipped.
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${O_FILE}_silence_1.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_silence_2.ogg\" created
+ silence split ok
+ Average silence level: -20.26 dB"
+  mp3splt_args="-d $OUTPUT_DIR -p trackmin=46 -s $SILENCE_OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_silence_1.ogg"
+  check_current_ogg_length "0m:58.609s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "952201"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_silence_2.ogg" 
+  check_current_ogg_length "1m:20.463s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1372213"
+
+  print_ok
   echo
 }
 
@@ -658,6 +701,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_silence_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

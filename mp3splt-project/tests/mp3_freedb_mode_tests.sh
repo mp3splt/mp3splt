@@ -56,7 +56,7 @@ Getting file from $get_url on port $get_port using $get_type ...
   current_file="$OUTPUT_DIR/Various - 03 - Spew Culture.mp3"
   check_current_mp3_length "00.12"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -101,6 +101,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_freedb_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

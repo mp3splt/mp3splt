@@ -59,7 +59,7 @@ $cur_dir/songs/$F3
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -89,7 +89,7 @@ All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
 
   _check_dewrapped_files_sizes $OUTPUT_DIR
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -119,7 +119,7 @@ All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -149,7 +149,7 @@ All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
 
   _check_dewrapped_files_sizes $OUTPUT_DIR
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -179,7 +179,7 @@ All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
 
   _check_dewrapped_files_sizes "$OUTPUT_DIR/wrapped"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -215,7 +215,7 @@ Merci_Bonsoir__Je_veux_Only_love.mp3"
 
   _check_dewrapped_files_sizes "$OUTPUT_DIR"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -239,6 +239,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_wrap_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

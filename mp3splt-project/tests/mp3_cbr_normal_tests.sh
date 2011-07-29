@@ -90,7 +90,7 @@ function test_normal_cbr
     fi
   fi
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -119,7 +119,7 @@ function test_normal_cbr_pretend
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -185,7 +185,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
   "2009" "Rock" "17" "3" "http://www.jamendo.com"
   check_current_file_size "700359"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -226,7 +226,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
     PERFORMER "Merci Bonsoir"
     INDEX 01 03:00:00'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -278,7 +278,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
   check_current_mp3_length "00.13"
   check_current_file_size "220960"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -313,7 +313,7 @@ function test_normal_cbr_overlap_splitpoints
   check_current_mp3_length "00.13"
   check_current_file_size "220960"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -353,7 +353,7 @@ function test_normal_cbr_stdin
   check_current_mp3_no_tags
   check_current_file_size "216503"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -377,7 +377,7 @@ function test_normal_cbr_stdout
   check_current_mp3_length "01.30"
   check_current_file_size "1443072"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -403,7 +403,7 @@ function test_normal_cbr_stdout_multiple_splitpoints
   check_current_mp3_length "02.43"
   check_current_file_size "2621158"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -427,6 +427,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_normal_cbr_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

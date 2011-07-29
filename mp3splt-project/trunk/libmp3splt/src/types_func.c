@@ -380,15 +380,23 @@ void splt_t_set_current_split(splt_state *state, int index)
 {
   if (index >= 0)
   {
+    int err = SPLT_OK;
 	  if (index == 0)
 	  {
-		  splt_t_set_current_split_file_number(state,1);
+      if (splt_sp_splitpoint_exists(state, index) &&
+          splt_sp_get_splitpoint_type(state, index, &err) == SPLT_SKIPPOINT)
+      {
+        splt_t_set_current_split_file_number(state, 0);
+      }
+      else
+      {
+        splt_t_set_current_split_file_number(state, 1);
+      }
 	  }
 	  else
 	  {
 		  if (splt_sp_splitpoint_exists(state, index))
 		  {
-			  int err = SPLT_OK;
 			  if (splt_sp_get_splitpoint_type(state, index, &err) != SPLT_SKIPPOINT)
 			  {
 				  splt_t_set_current_split_file_number_next(state);

@@ -87,7 +87,7 @@ function test_normal_vbr
     fi
   fi
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -117,7 +117,7 @@ function test_normal_vbr_pretend
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -181,7 +181,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
   check_current_file_size "1445355"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -224,7 +224,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     PERFORMER "La Verue"
     INDEX 01 03:05:00'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -260,7 +260,7 @@ function test_normal_vbr_overlap_split
   check_current_mp3_length "00.35"
   check_current_file_size "855248"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -314,7 +314,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   check_current_mp3_length "00.35"
   check_current_file_size "855248"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -344,7 +344,7 @@ La_Verue__Today_02m_00s_20h__03m_05s.mp3
 La_Verue__Today_03m_05s__04m_05s_58h.mp3"
   check_file_content "$OUTPUT_DIR/m3u/playlist.m3u" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -371,7 +371,7 @@ function test_normal_vbr_pretend_and_m3u
  
   check_output_directory_number_of_files 0
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -416,7 +416,7 @@ function test_normal_vbr_default_tags
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
   check_current_file_size "1445483"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -457,7 +457,7 @@ function test_normal_vbr_original_tags
   check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "8" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -503,7 +503,7 @@ function test_normal_vbr_id3v1_and_id3v2
   check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -545,7 +545,7 @@ function test_normal_vbr_no_input_tags
   check_current_mp3_no_tags
   check_current_file_size "1399171"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -574,7 +574,7 @@ function test_normal_vbr_no_xing
   check_current_file_has_no_xing
   check_current_file_size "1444938"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -620,7 +620,7 @@ function test_normal_vbr_custom_tags
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "20" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -666,7 +666,7 @@ function test_normal_vbr_custom_tags_id3v1
   check_all_mp3_tags_with_version "1" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "20" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -740,7 +740,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "20" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -784,7 +784,7 @@ function test_normal_vbr_custom_tags_and_input_no_tags
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3"
   check_all_mp3_tags_with_version "1 2" "" "" "" "" "" "" "20" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -825,7 +825,7 @@ function test_normal_vbr_custom_tags_multiple_percent
   check_all_mp3_tags_with_version "2" "custom_artist" "album" "Today"\
   "2007" "Rock" "17" "8" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -878,7 +878,7 @@ function test_normal_vbr_stdin
   check_current_mp3_no_tags
   check_current_file_size "$last_file_size"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -940,7 +940,7 @@ function _test_normal_vbr_stdin_and_tags
     check_current_file_size "806269"
   fi
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -971,7 +971,7 @@ function test_normal_vbr_output_fname
   current_file="$OUTPUT_DIR/test.mp3" 
   check_current_mp3_length "01.00"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1001,7 +1001,7 @@ function test_normal_vbr_output_fnames_and_custom_tags
   check_if_file_exist "$OUTPUT_DIR/___2_2_${M_FILE} 01:00:30 01:05:00.mp3"
   check_if_file_exist "$OUTPUT_DIR/La Verue_album_Today_3_7_${M_FILE} 01:05:00 02:00:00.mp3"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1032,7 +1032,7 @@ function test_normal_vbr_output_fnames_and_dirs
   check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 2.mp3"
   check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today-Rock 3.mp3"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1066,7 +1066,7 @@ function test_normal_vbr_output_fnames_and_custom_tags_and_dirs
   check_if_file_exist "$OUTPUT_DIR/La Verue/album2/La Verue-Today-Rock 2.mp3"
   check_if_file_exist "$OUTPUT_DIR/La Verue/album3/La Verue-Today-Soundtrack 3.mp3"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1092,7 +1092,7 @@ function test_normal_vbr_stdout
   check_current_mp3_length "01.30"
   check_current_file_size "2054691"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1121,7 +1121,7 @@ function test_normal_vbr_stdout_multiple_splitpoints
   check_current_mp3_length "01.30"
   check_current_file_size "2582245"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1162,7 +1162,7 @@ function test_normal_vbr_custom_tags_with_replace_tags_in_tags
   check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "Today" "2007"\
   "Rock" "17" "8" "cc_Today"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1204,7 +1204,7 @@ function test_normal_vbr_custom_tags_without_replace_tags_in_tags
   check_all_mp3_tags_with_version "2" "La Verue" "album_@c" "Today" "2007"\
   "Rock" "17" "8" "cc_@t"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1242,7 +1242,7 @@ function test_normal_vbr_custom_empty_tags
   current_file="$OUTPUT_DIR/$F3"
   check_current_mp3_no_tags
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1287,7 +1287,7 @@ function test_normal_vbr_split_in_equal_parts
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir"\
   "Today" "2007" "Rock" "17" "4" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1339,7 +1339,7 @@ function test_normal_vbr_tags_from_filename_regex
 
   rm -f $NEW_MP3_FILE
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1394,7 +1394,7 @@ function test_normal_vbr_with_auto_adjust
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
   check_current_file_size "1976114"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1424,7 +1424,7 @@ function test_normal_vbr_with_negative_splitpoints
   current_file="$OUTPUT_DIR/${M_FILE}_02m_05s_58h__03m_05s_58h.mp3" 
   check_current_mp3_length "01.00"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1449,6 +1449,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_normal_vbr_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

@@ -27,7 +27,7 @@
 #include "utils.h"
 
 int parse_silence_options(char *arg, float *th, int *gap,
-    int *nt, float *off, int *rm, float *min)
+    int *nt, float *off, int *rm, float *min, float *min_track_length)
 {
   char *ptr = NULL;
   int found = 0;
@@ -101,8 +101,27 @@ int parse_silence_options(char *arg, float *th, int *gap,
     }
   }
 
+  if ((min!=NULL) && ((ptr=strstr(arg, "trackmin"))!=NULL))
+  {
+    if ((ptr=strchr(ptr, '='))!=NULL)
+    {
+      if (sscanf(ptr+1, "%f", min_track_length)==1)
+      {
+        found++;
+      }
+      else 
+      {
+        print_warning(_("bad minimum track length argument. It will be ignored !"));
+      }
+    }
+  }
+
   if ((min!=NULL) && ((ptr=strstr(arg, "min"))!=NULL))
   {
+    if (ptr > arg && *(ptr-1) == 'k') {
+      return found;
+    }
+
     if ((ptr=strchr(ptr, '='))!=NULL)
     {
       if (sscanf(ptr+1, "%f", min)==1)

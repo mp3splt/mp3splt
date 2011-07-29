@@ -51,7 +51,7 @@ function test_time_simple
                      "http://www.jamendo.com"
   check_current_file_size "56387"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -95,7 +95,7 @@ function test_time_no_output_tags
   check_current_ogg_no_tags
   check_current_file_size "55610"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -121,7 +121,7 @@ function test_time_pretend
 
   check_output_directory_is_empty
  
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -194,7 +194,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
                      "http://www.jamendo.com"
   check_current_file_size "56387"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -241,7 +241,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     PERFORMER "Kelly Allyn"
     INDEX 01 03:00:00'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -272,7 +272,7 @@ function test_time_overlap_split
   check_current_ogg_length "1m:04.853s"
   check_current_file_size "1593645"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -316,7 +316,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   check_current_ogg_length "1m:04.853s"
   check_current_file_size "1593645"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -343,7 +343,7 @@ function test_time_m3u
 Kelly_Allyn__Whiskey_Can_01m_50s__03m_04s_85h.ogg"
   check_file_content "$OUTPUT_DIR/m3u/playlist.m3u" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -369,7 +369,7 @@ function test_time_create_directories
   check_if_file_exist "$OUTPUT_DIR/a/b/c/${O_FILE}_00m_00s__02m_00s.ogg"
   check_if_file_exist "$OUTPUT_DIR/a/b/c/${O_FILE}_02m_00s__03m_04s_85h.ogg"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -413,7 +413,7 @@ function test_time_custom_tags
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
   "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "20" "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -457,7 +457,7 @@ function test_time_custom_tags_multiple_percent
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
   "2007-07-10 15:45:07" "Southern Rock" "20" "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -501,7 +501,7 @@ function test_time_stdin
   check_current_ogg_no_tags
   check_current_file_size "55610"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -546,7 +546,7 @@ function test_time_stdin_and_tags
   check_all_ogg_tags "a1" "b1" "" "1070" "" "4" ""
   check_current_file_size "55665"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -573,7 +573,7 @@ function test_time_output_fnames_and_dirs
   check_if_file_exist "$OUTPUT_DIR/Kelly Allyn/Getting Back From Where I've Been/Kelly Allyn-Whiskey Can 1.ogg"
   check_if_file_exist "$OUTPUT_DIR/Kelly Allyn/Getting Back From Where I've Been/Kelly Allyn-Whiskey Can 2.ogg"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -603,7 +603,7 @@ function test_time_output_fnames_and_custom_tags_dirs
   check_if_file_exist "$OUTPUT_DIR/Kelly Allyn/album1/Kelly Allyn-Whiskey Can 1.ogg"
   check_if_file_exist "$OUTPUT_DIR/Kelly Allyn/album2/Kelly Allyn-Whiskey Can 2.ogg"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -631,7 +631,7 @@ function test_time_stdout_multiple_splitpoints
 1m:04.853s"
   check_current_file_size "4824607"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -655,6 +655,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_time_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

@@ -142,7 +142,7 @@ function test_time_vbr
     fi
   fi
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -174,7 +174,7 @@ function test_time_vbr_pretend
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -267,7 +267,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   "2007" "Rock" "17" "5" "http://www.jamendo.com/"
   check_current_file_size "144745"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -320,7 +320,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     PERFORMER "La Verue"
     INDEX 01 04:00:00'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -351,7 +351,7 @@ function test_time_vbr_overlap_split
   check_current_mp3_length "02.05"
   check_current_file_size "2971695"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -395,7 +395,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   check_current_mp3_length "02.05"
   check_current_file_size "2971695"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -475,7 +475,7 @@ function test_time_vbr_original_tags
   "2007" "Rock" "17" "5" "http://www.jamendo.com/"
   check_current_file_size "144873"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -504,7 +504,7 @@ function test_time_vbr_no_xing
   check_current_file_has_no_xing
   check_current_file_size "144328"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -534,7 +534,7 @@ La_Verue__Today_01m_50s__03m_40s.mp3
 La_Verue__Today_03m_40s__04m_05s_58h.mp3"
   check_file_content "$OUTPUT_DIR/m3u/playlist.m3u" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -563,7 +563,7 @@ function test_time_vbr_create_directories
   check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_02m_00s__04m_00s.mp3"
   check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_04m_00s__04m_05s_58h.mp3"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -609,7 +609,7 @@ function test_time_vbr_custom_tags
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "20" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -654,7 +654,7 @@ function test_time_vbr_custom_tags_multiple_percent
   check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "20" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -694,7 +694,7 @@ function test_time_vbr_stdin
   check_current_mp3_no_tags
   check_current_file_size "97309"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -754,7 +754,7 @@ function _test_time_vbr_stdin_and_tags
     check_current_file_size "97437"
   fi
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -788,7 +788,7 @@ function test_time_vbr_output_fnames_and_dirs
   check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 2.mp3"
   check_if_file_exist "$OUTPUT_DIR/La Verue/Riez Noir/La Verue-Today 3.mp3"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -822,7 +822,7 @@ function test_time_vbr_output_fnames_and_custom_tags_dirs
   check_if_file_exist "$OUTPUT_DIR/La Verue/album2/La Verue-Today 2.mp3"
   check_if_file_exist "$OUTPUT_DIR/La Verue/album3/La Verue-Today 3.mp3"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -851,7 +851,7 @@ expected=" Warning: using time mode with stdout !
   check_current_mp3_length "02.00"
   check_current_file_size "5749926"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -875,6 +875,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_time_vbr_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-RUN_INTERNET_TESTS=1
+RUN_INTERNET_TESTS=0
+FAIL_FAST=1
 
 DIFF_CMD="diff"
 VIEW_DIFF_CMD="acoc diff"
@@ -39,11 +40,13 @@ EXPECTED_FILE="/tmp/mp3splt_expected.txt"
 COM_ACTUAL_FILE="/tmp/mp3splt_com_actual.txt"
 COM_EXPECTED_FILE="/tmp/mp3splt_com_expected.txt"
 TEMP_FILE="/tmp/mp3splt_temp.txt"
+FAILED_TESTS_TEMP_FILE="/tmp/mp3splt_failed_tests.txt"
 
 test_name=""
 current_file=""
 current_tags_version=0
 command_output=""
+failed_tests=0
 
 auto_adjust_warning="
  +-----------------------------------------------------------------------------+

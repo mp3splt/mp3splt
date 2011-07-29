@@ -48,7 +48,7 @@ function test_syncerror
 
   _check_syncerror_split_files_sizes $OUTPUT_DIR "syncerror_error"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -73,7 +73,7 @@ function test_syncerror_and_pretend
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -98,7 +98,7 @@ function test_syncerror_with_output_format
 
   _check_syncerror_split_files_sizes $OUTPUT_DIR "syncerror"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -123,7 +123,7 @@ function test_syncerror_and_create_output_dir
 
   _check_syncerror_split_files_sizes "$OUTPUT_DIR/sync" "syncerror_error"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -148,7 +148,7 @@ function test_syncerror_and_output_format_and_create_output_dir
 
   _check_syncerror_split_files_sizes "$OUTPUT_DIR/sync/syncerror" "syncerror_error"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -179,7 +179,7 @@ syncerror_error_2.mp3
 syncerror_error_3.mp3"
   check_file_content "$OUTPUT_DIR/playlist.m3u" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -203,6 +203,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_syncerror_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

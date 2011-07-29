@@ -279,6 +279,51 @@ void splt_sp_order_splitpoints(splt_state *state, int len)
       sizeof *state->split.points, splt_point_value_sort);
 }
 
+void splt_sp_skip_minimum_track_length_splitpoints(splt_state *state, int *error)
+{
+  if (state->split.real_splitnumber <= 0) { return; }
+
+  long min_track_length = 
+    splt_co_time_to_long(splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH));
+
+  int i = 1;
+  for (i = 1;i < state->split.real_splitnumber; i++)
+  {
+    int begin_index = i-1;
+    int end_index = i;
+
+    int begin_point_type = splt_sp_get_splitpoint_type(state, begin_index, error);
+    if (*error < 0) { return; }
+
+    if (begin_point_type == SPLT_SKIPPOINT)
+    {
+      continue;
+    }
+
+    long begin_track_point = splt_sp_get_splitpoint_value(state, begin_index, error);
+    if (*error < 0) { return; }
+    long end_track_point = splt_sp_get_splitpoint_value(state, end_index, error);
+    if (*error < 0) { return; }
+
+    long track_length = end_track_point - begin_track_point;
+    if (track_length >= min_track_length)
+    {
+      continue;
+    }
+
+    long mins1, secs1, hundr1;
+    splt_co_get_mins_secs_hundr(track_length, &mins1, &secs1, &hundr1);
+    long mins2, secs2, hundr2;
+    splt_co_get_mins_secs_hundr(min_track_length, &mins2, &secs2, &hundr2);
+
+    splt_c_put_info_message_to_client(state, 
+        _(" info: track too short (%ld.%ld.%ld < %ld.%ld.%ld); skipped.\n"),
+        mins1, secs1, hundr1, mins2, secs2, hundr2);
+
+    splt_sp_set_splitpoint_type(state, begin_index, SPLT_SKIPPOINT);
+  }
+}
+
 long splt_sp_overlap_time(splt_state *state, int splitpoint_index)
 {
   int error = SPLT_OK;

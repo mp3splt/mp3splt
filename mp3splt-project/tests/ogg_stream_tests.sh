@@ -67,7 +67,7 @@ function test_stream_with_tags
                      "http://www.jamendo.com"
   check_current_file_size "208176"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -96,7 +96,7 @@ function test_stream_starting_from_0
                      "http://www.jamendo.com"
   check_current_file_size "169412"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -125,7 +125,7 @@ function test_stream_from_0_to_EOF
                      "http://www.jamendo.com"
   check_current_file_size "762411"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -171,7 +171,7 @@ function test_stream_time_mode
                      "http://www.jamendo.com"
   check_current_file_size "241403"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -188,7 +188,7 @@ function test_stream_silence_mode
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 2m.29s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
  warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.
 
  Total silence points found: 3. (Selected 4 tracks)
@@ -211,7 +211,7 @@ function test_stream_silence_mode
 
   _check_silence_last_output_files
 
-  p_green "OK"
+  print_ok
   echo
 
   test_name="stream silence mode - check reading from mp3splt.log"
@@ -222,7 +222,7 @@ function test_stream_silence_mode
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 2m.29s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
  Found silence log file 'mp3splt.log' ! Reading silence points from file to save time ;)
  Total silence points found: 3. (Selected 4 tracks)
  warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.
@@ -243,7 +243,7 @@ function test_stream_silence_mode
 
   _check_silence_last_output_files
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -290,7 +290,7 @@ function test_stream_auto_adjust_silence
                      "http://www.jamendo.com"
   check_current_file_size "314742"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -314,6 +314,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_stream_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

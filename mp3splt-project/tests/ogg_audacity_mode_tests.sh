@@ -54,7 +54,7 @@ function test_audacity
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
   "2007-07-10 15:45:07" "Southern Rock" "4" "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -84,7 +84,7 @@ function test_audacity_and_pretend
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -157,7 +157,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "Whiskey Can"\
   "2007-07-10 15:45:07" "Southern Rock" "4" "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -212,7 +212,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
 
   check_output_directory_number_of_files 1
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -252,7 +252,7 @@ function test_audacity_and_output_format
   current_file="$OUTPUT_DIR/4_Whiskey Can_02:46:00__03:04:85.ogg"
   check_current_ogg_length "0m:18.853s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -300,7 +300,7 @@ function test_audacity_and_custom_tags
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "title1"\
   "2007-07-10 15:45:07" "Southern Rock" "9" "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -348,7 +348,7 @@ function test_audacity_and_custom_tags_and_output_format
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been" "title1"\
   "2007-07-10 15:45:07" "Southern Rock" "9" "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -372,6 +372,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_audacity_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

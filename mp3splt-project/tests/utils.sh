@@ -2,6 +2,8 @@
 
 . ./constants_variables.sh
 
+exit_status=0
+
 function remove_output_dir
 {
   rm -rf ./$OUTPUT_DIR || exit 1
@@ -24,6 +26,16 @@ function p_green
 {
   echo -n -e "\033[1;32m${@}\033[0m"
 }
+function print_ok
+{
+  if [[ $exit_status -ne 0 ]];then
+    p_red "FAILED"
+    exit_status=0
+    return
+  fi
+
+  p_green "OK"
+}
 function p_red
 {
   echo -n -e "\033[1;31m${@}\033[0m"
@@ -31,6 +43,19 @@ function p_red
 function p_yellow
 {
   echo -n -e "\033[33m${@}\033[0m"
+}
+
+function p_failed_tests
+{
+  if [[ $failed_tests -ne 0 ]];then
+    p_red "$failed_tests failed tests."
+    echo
+  else
+    p_green " Tests OK."
+    echo
+  fi
+
+  echo -n "+$failed_tests" >> $FAILED_TESTS_TEMP_FILE
 }
 
 function p_time_diff_cyan
@@ -41,7 +66,7 @@ function p_time_diff_cyan
 
   date_diff=$(($end_date - $start_date))
 
-  p_cyan "\n${prefix}Tests took $date_diff seconds."
+  p_cyan "${prefix}Tests took $date_diff seconds."
 }
 
 function p_time_diff_green
@@ -112,7 +137,7 @@ function check_all_mp3_tags_with_version
 
     if [[ $tags_v -ne 1 && $tags_v -ne 2 ]];then
       echo "Bad test; tags_version = $tags_v";
-      exit 1
+      _fail 1
     fi
 
     new_year=$year
@@ -305,14 +330,23 @@ function _diff_files
   diff_result_lines=$($DIFF_CMD $expected_file $actual_file 2>&1 | wc -l)
 
   if [[ $diff_result_lines -ne 0 ]];then
+    if [[ $FAIL_FAST -eq 0 ]]; then
+      failed_tests=$(($failed_tests+1))
+      _fail 1
+      return
+    fi
+
     p_red "FAILED"
+
     echo
     $VIEW_DIFF_CMD $expected_file $actual_file 2>$TEMP_FILE
     echo
+
     if [[ $USE_GRAPHIC_DIFF -eq 1 ]];then
       $GRAPHIC_DIFF_CMD $expected_file $actual_file
     fi
-    exit 1
+
+    _fail 1
   fi
 }
 
@@ -392,7 +426,7 @@ function _check_mp3_tags
       ;;
       *)
         p_red "Error: unrecognized tags field '$tags_field' (for id3 tags) " 2>&1
-        exit 1
+        _fail 1 
       ;;
     esac
   else
@@ -420,7 +454,7 @@ function _check_mp3_tags
       ;;
       *)
         p_red "Error: unrecognized tags field '$tags_field' (for id3v2 tags) " 2>&1
-        exit 1
+        _fail 1 
       ;;
     esac
   fi
@@ -446,7 +480,7 @@ function _check_ogg_tags
     ;;
     *)
       p_red "Error: unrecognized tags field '$tags_field' (ogg) " 2>&1
-      exit 1
+      _fail 1 
     ;;
   esac
 
@@ -504,6 +538,15 @@ function _run_check_output
 
   if [[ ! -z $expected ]];then
     _check_files_content $EXPECTED_FILE $ACTUAL_FILE
+  fi
+}
+
+function _fail
+{
+  exit_status=$1
+
+  if [[ $FAIL_FAST -eq 1 ]];then
+    exit $exit_status
   fi
 }
 

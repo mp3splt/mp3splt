@@ -482,6 +482,10 @@ typedef enum {
  */
 #define SPLT_DEFAULT_PARAM_MINIMUM_LENGTH 0.0
 /**
+ * @brief Default value for the #SPLT_OPT_PARAM_MIN_TRACK_LENGTH option
+ */
+#define SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH 0.0
+/**
  * @brief Default value for the #SPLT_OPT_PARAM_GAP option
  */
 #define SPLT_DEFAULT_PARAM_GAP 30
@@ -634,6 +638,12 @@ typedef struct {
     a valid splitpoint
   */
   float parameter_minimum_length;
+  /*! The minimum track length for option_silence_mode [in seconds]
+ 
+    A positive float of the minimum number of seconds to be considered
+    a valid splitpoint
+  */
+  float parameter_min_track_length;
 
   //!possible values are #splt_str_format
   int artist_tag_format;
@@ -1159,6 +1169,15 @@ typedef enum {
    * Default is #SPLT_DEFAULT_PARAM_MINIMUM_LENGTH
    */
   SPLT_OPT_PARAM_MIN_LENGTH,
+  /**
+   * Minimum number of seconds to be considered a valid track\n
+   * All tracks shorter than this value are discarded.
+   *
+   * The option can take positive float values.
+   *
+   * Default is #SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH
+   */
+  SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
   /**
    * Format of the artist tag from filename.
    * Possible values are #splt_str_format

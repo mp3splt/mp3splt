@@ -96,7 +96,7 @@ $auto_adjust_warning"
   check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "What the hack _"\
   "2009" "Other" "12" "4" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -134,7 +134,7 @@ $auto_adjust_warning"
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -225,7 +225,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
   check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "What the hack _"\
   "2009" "Other" "12" "4" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -288,7 +288,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     PERFORMER \"\"
     INDEX 01 04:05:00"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -323,7 +323,7 @@ function test_cddb_mode_quiet
   mp3splt_args="-d $OUTPUT_DIR -q -c $CDDB_FILE $MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -371,7 +371,7 @@ $auto_adjust_warning"
   current_file="$OUTPUT_DIR/004-Don't worry--Hack me-What the hack _.mp3"
   check_current_mp3_length "00.30"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -407,7 +407,7 @@ $auto_adjust_warning"
   mp3splt_args="-d $OUTPUT_DIR -o @n3-@A-@t -c $CDDB_FILE $MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -425,7 +425,7 @@ function test_cddb_mode_and_output_format_error
   mp3splt_args="-d $OUTPUT_DIR -o @n3-@a-@p-@b-@t-@x -c $CDDB_FILE $MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -475,7 +475,7 @@ $auto_adjust_warning"
   current_file="$out_dir/4/004-Don't worry--Hack me-What the hack _.mp3"
   check_current_mp3_length "00.30"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -499,6 +499,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_cddb_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

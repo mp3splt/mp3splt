@@ -91,7 +91,7 @@ $auto_adjust_warning"
   check_current_file_size "33272"
   check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -129,7 +129,7 @@ $auto_adjust_warning"
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -196,7 +196,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   check_current_file_size "33272"
   check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -248,7 +248,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     PERFORMER "Third performer"
     INDEX 01 03:01:00'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -293,7 +293,7 @@ $auto_adjust_warning"
   check_current_ogg_length "0m:03.853s"
   check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -325,7 +325,7 @@ function test_cue_mode_quiet
   mp3splt_args="-d $OUTPUT_DIR -q -c $CUE_FILE $OGG_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -366,7 +366,7 @@ function test_cue_mode_and_output_format
   current_file="$OUTPUT_DIR/GNU_Linux/3/003-GNU_Linux-Third performer-Gentoo-Our laptop.ogg"
   check_current_ogg_length "0m:03.853s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -390,6 +390,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_cue_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

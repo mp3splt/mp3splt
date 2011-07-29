@@ -44,7 +44,7 @@ function test_normal_with_tags
                      "http://www.jamendo.com"
   check_current_file_size "53756"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -76,7 +76,7 @@ function test_normal_with_original_tags
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_ogg_tags_equal_between_files "songs/${O_FILE}.ogg" $current_file
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -114,7 +114,7 @@ function test_normal_no_output_tags
   check_current_ogg_no_tags
   check_current_file_size "52979"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -139,7 +139,7 @@ function test_normal_pretend
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -202,7 +202,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
                      "http://www.jamendo.com"
   check_current_file_size "53756"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -244,7 +244,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     PERFORMER "Kelly Allyn"
     INDEX 01 03:00:10'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -275,7 +275,7 @@ function test_normal_overlap_split
   check_current_ogg_length "1m:03.653s"
   check_current_file_size "1561684"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -319,7 +319,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   check_current_ogg_length "1m:03.653s"
   check_current_file_size "1561684"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -348,7 +348,7 @@ Kelly_Allyn__Whiskey_Can_02m_01s_20h__03m_00s_10h.ogg
 Kelly_Allyn__Whiskey_Can_03m_00s_10h__03m_04s_85h.ogg"
   check_file_content "$OUTPUT_DIR/m3u/playlist.m3u" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -374,7 +374,7 @@ function test_normal_pretend_and_m3u
 
   check_output_directory_number_of_files 0
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -412,7 +412,7 @@ function test_normal_no_input_tags
   check_current_ogg_no_tags
   check_current_file_size "52979"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -459,7 +459,7 @@ function test_normal_custom_tags
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "20"\
                      "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -529,7 +529,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "20"\
                      "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -570,7 +570,7 @@ function test_normal_custom_tags_and_input_no_tags
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
   check_all_ogg_tags "" "" "" "" "" "20" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -611,7 +611,7 @@ function test_normal_custom_tags_multiple_percent
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8"\
                      "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -650,7 +650,7 @@ function test_normal_stdin
   check_current_ogg_no_tags
   check_current_file_size "52979"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -688,7 +688,7 @@ function test_normal_stdin_no_input_tags
   check_current_ogg_no_tags
   check_current_file_size "52979"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -726,7 +726,7 @@ function test_normal_stdin_with_custom_tags
   check_all_ogg_tags "a1" "b1" "" "1070" "" "3" ""
   check_current_file_size "53034"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -751,7 +751,7 @@ function test_normal_output_fname
   current_file="$OUTPUT_DIR/test.ogg"
   check_current_ogg_length "1m:00.000s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -780,7 +780,7 @@ function test_normal_output_fnames_and_custom_tags
   check_if_file_exist "$OUTPUT_DIR/___2_2_${O_FILE} 02:01:20 03:00:10.ogg"
   check_if_file_exist "$OUTPUT_DIR/Kelly Allyn_album_Whiskey Can_3_7_${O_FILE} 03:00:10 03:04:85.ogg"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -815,7 +815,7 @@ function test_normal_output_fnames_and_dirs
   check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 2.ogg"
   check_if_file_exist "$OUTPUT_DIR/$artist/$album/$artist-$title-$genre 3.ogg"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -851,7 +851,7 @@ function test_normal_output_fnames_and_custom_tags_and_dirs
   check_if_file_exist "$OUTPUT_DIR/$artist/album2/$artist-$title-Southern Rock 2.ogg"
   check_if_file_exist "$OUTPUT_DIR/$artist/album3/$artist-$title-Speech 3.ogg"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -876,7 +876,7 @@ function test_normal_stdout
   check_current_ogg_length "1m:30.199s"
   check_current_file_size "2396476"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -905,7 +905,7 @@ function test_normal_stdout_multiple_splitpoints
 0m:19.800s"
   check_current_file_size "2917206"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -943,7 +943,7 @@ function test_normal_custom_tags_with_replace_tags_in_tags
   current_file="$OUTPUT_DIR/$F3"
   check_all_ogg_tags "Kelly Allyn" "album_cc_@t" "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8" "cc_Whiskey Can"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -981,7 +981,7 @@ function test_normal_custom_tags_without_replace_tags_in_tags
   current_file="$OUTPUT_DIR/$F3"
   check_all_ogg_tags "Kelly Allyn" "album_@c" "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "8" "cc_@t"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1029,7 +1029,7 @@ function test_normal_split_in_equal_parts
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "4"\
                      "http://www.jamendo.com"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1070,7 +1070,7 @@ function test_normal_with_tags_from_filename_regex
 
   rm -f $NEW_OGG_FILE
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1115,7 +1115,7 @@ function test_normal_with_auto_adjust
                      "http://www.jamendo.com"
   check_current_file_size "328066"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1143,7 +1143,7 @@ function test_normal_vbr_with_negative_splitpoints
   current_file="$OUTPUT_DIR/${O_FILE}_01m_04s_85h__02m_04s_85h.ogg" 
   check_current_ogg_length "1m:00.000s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -1168,6 +1168,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_normal_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

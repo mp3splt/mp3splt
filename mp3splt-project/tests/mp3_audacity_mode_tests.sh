@@ -56,7 +56,7 @@ function test_audacity
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -88,7 +88,7 @@ function test_audacity_and_pretend
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -167,7 +167,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -228,7 +228,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
 
   check_output_directory_number_of_files 1
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -270,7 +270,7 @@ function test_audacity_and_output_format
   current_file="$OUTPUT_DIR/4_Today_03:26:00__03:56:00.mp3"
   check_current_mp3_length "00.30"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -320,7 +320,7 @@ function test_audacity_and_custom_tags
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "title1"\
   "2007" "Rock" "17" "9" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -370,7 +370,7 @@ function test_audacity_and_custom_tags_and_output_format
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "title1"\
   "2007" "Rock" "17" "9" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -394,6 +394,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_audacity_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

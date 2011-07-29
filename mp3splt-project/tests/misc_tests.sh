@@ -12,7 +12,7 @@ function _test_misc_version
   mp3splt_args=" -v" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -41,7 +41,7 @@ function test_misc_create_directories
   check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_02m_00s_20h__03m_05s.mp3"
   check_if_file_exist "$OUTPUT_DIR/a/b/c/${M_FILE}_03m_05s__04m_05s_58h.mp3"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -69,7 +69,7 @@ function test_misc_with_symlink_input_dir
 
   rm -f symlink_dir
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -98,7 +98,7 @@ function test_misc_with_symlink_input_file
 
   rm -f $SONGS_DIR/symlink_file
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -130,7 +130,7 @@ function test_misc_with_symlink_input_dir_and_symlink_input_file
   rm -f $SONGS_DIR/symlink_file
   rm -f symlink_dir
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -158,7 +158,7 @@ function test_misc_with_symlink_output_dir
 
   rm -f symlink_dir
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -186,7 +186,7 @@ function test_with_symlink_output_dir_last
 
   rm -f symlink_dir
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -220,7 +220,7 @@ function test_misc_with_complex_input_symlink
   rm -f symlink_dir1 symlink_dir2
   rm -f symlink_file1 symlink_file2
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -243,7 +243,7 @@ function test_misc_with_loop_symlink_file
 
   rm -f symlink_file
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -267,7 +267,7 @@ function test_misc_with_loop_symlink_dir
 
   rm -f symlink_dir1 symlink_dir2
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -288,7 +288,7 @@ function test_misc_input_output_same_file
   mp3splt_args="-d songs -o '$M_FILE' $CBR_MP3_FILE 1.0 2.0" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -305,7 +305,7 @@ function test_misc_inexistent_file
   mp3splt_args="-d songs ${M_FILE}.mp3 1.0 2.0" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -329,6 +329,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_misc_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

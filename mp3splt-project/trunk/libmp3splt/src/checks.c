@@ -229,6 +229,12 @@ void splt_check_set_correct_options(splt_state *state)
       splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, SPLT_DEFAULT_PARAM_MINIMUM_LENGTH);
       splt_o_set_int_option(state, SPLT_OPT_AUTO_ADJUST, SPLT_FALSE);
     }
+
+    if (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH) < 0.f)
+    {
+      splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
+          SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH);
+    }
   }
 
   if (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST))

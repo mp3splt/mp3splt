@@ -155,6 +155,7 @@ void splt_s_multiple_split(splt_state *state, int *error)
 
   int i = 0;
   int number_of_splitpoints = splt_t_get_splitnumber(state);
+
   while (i  < number_of_splitpoints - 1)
   {
     splt_t_set_current_split(state, i);
@@ -750,12 +751,13 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     splt_c_put_info_message_to_client(state, 
         _(" Silence split type: %s mode (Th: %.1f dB,"
-          " Off: %.2f, Min: %.2f, Remove: %s)\n"),
+          " Off: %.2f, Min: %.2f, Remove: %s, Min track: %.2f)\n"),
         auto_user_str,
         splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
-        remove_str);
+        remove_str,
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH));
   }
  
   short read_silence_from_logs = SPLT_FALSE;
@@ -828,67 +830,78 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
         }
       }
 
-      //put first splitpoint
-      append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
-      if (append_error != SPLT_OK)
-      {
-        *error = append_error;
-      }
-      else
-      {
-        temp = state->silence_list;
-        int i;
+      temp = state->silence_list;
 
-        //we take all splitpoints found and we remove silence 
-        //if needed
-        for (i = 1; i < found; i++)
+      int i;
+
+      //we take all splitpoints found and we remove silence 
+      //if needed
+      for (i = 1; i < found; i++)
+      {
+        if (temp == NULL)
         {
-          if (temp == NULL)
-          {
-            found = i;
-            break;
-          }
-
-          if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
-          {
-            append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SKIPPOINT);
-            if (append_error < 0) { *error = append_error; found = i; break;}
-            append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
-            if (append_error < 0) { *error = append_error; found = i; break;}
-            splt_sp_set_splitpoint_value(state, 2*i-1, splt_co_time_to_long(temp->begin_position));
-            splt_sp_set_splitpoint_value(state, 2*i, splt_co_time_to_long(temp->end_position));
-          }
-          else
-          {
-            long temp_silence_pos = splt_siu_silence_position(temp, offset) * 100;
-            append_error = splt_sp_append_splitpoint(state, temp_silence_pos, NULL, SPLT_SPLITPOINT);
-            if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
-          }
-          temp = temp->next;
+          found = i;
+          break;
         }
 
-        //we order the splitpoints
+        long end_track_point = 0;
+        long end_track_point_after_silence = 0;
         if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
         {
-          splitpoints_appended = (found-1)*2+1;
+          end_track_point = splt_co_time_to_long(temp->begin_position);
+          end_track_point_after_silence = splt_co_time_to_long(temp->end_position);
         }
         else 
         {
-          splitpoints_appended = found;
+          end_track_point = splt_co_time_to_long(splt_siu_silence_position(temp, offset));
         }
 
-        splt_d_print_debug(state,"Order splitpoints...\n");
-        splt_sp_order_splitpoints(state, splitpoints_appended);
-
-        if (*error >= 0)
+        if (i == 1)
         {
-          //last splitpoint, end of file
-          append_error =
-            splt_sp_append_splitpoint(state, splt_t_get_total_time(state),
-                NULL, SPLT_SPLITPOINT);
-          if (append_error != SPLT_OK) { *error = append_error; }
+          append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
+          if (append_error < 0) { *error = append_error; found = i; break;}
         }
+
+        if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+        {
+          append_error = splt_sp_append_splitpoint(state, end_track_point, NULL, SPLT_SKIPPOINT);
+          if (append_error < 0) { *error = append_error; found = i; break;}
+          append_error =
+            splt_sp_append_splitpoint(state, end_track_point_after_silence, NULL, SPLT_SPLITPOINT);
+          if (append_error < 0) { *error = append_error; found = i; break;}
+        }
+        else
+        {
+          append_error = splt_sp_append_splitpoint(state, end_track_point, NULL, SPLT_SPLITPOINT);
+          if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
+        }
+
+        temp = temp->next;
       }
+
+      //we order the splitpoints
+      if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
+      {
+        splitpoints_appended = (found-1)*2+1;
+      }
+      else 
+      {
+        splitpoints_appended = found;
+      }
+
+      splt_d_print_debug(state,"Order splitpoints...\n");
+      splt_sp_order_splitpoints(state, splitpoints_appended);
+
+      if (*error >= 0)
+      {
+        //last splitpoint, end of file
+        append_error =
+          splt_sp_append_splitpoint(state, splt_t_get_total_time(state),
+              NULL, SPLT_SPLITPOINT);
+        if (append_error != SPLT_OK) { *error = append_error; }
+      }
+
+      splt_sp_skip_minimum_track_length_splitpoints(state, error);
     }
     else
     {
@@ -896,7 +909,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     }
 
     //if splitpoints are found
-    if ((found > 0) && !we_read_silence_from_logs)
+    if ((*error >= 0) && (found > 0) && !we_read_silence_from_logs)
     {
       //if we write the silence points log file
       if (splt_o_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))

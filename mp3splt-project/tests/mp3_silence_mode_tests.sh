@@ -40,7 +40,7 @@ function test_silence
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -60,7 +60,7 @@ function test_silence
 168.350006\t177.240005\t889"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 
   test_name="silence mode - check reading from mp3splt.log"
@@ -72,7 +72,7 @@ function test_silence
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
  Found silence log file 'mp3splt.log' ! Reading silence points from file to save time ;)
  Total silence points found: 2. (Selected 3 tracks)
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
@@ -84,7 +84,7 @@ function test_silence
 
   _check_silence_output_files
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -102,7 +102,7 @@ function test_silence_and_pretend
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -117,7 +117,7 @@ function test_silence_and_pretend
   check_output_directory_is_empty
   check_if_file_does_not_exist "mp3splt.log"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -135,7 +135,7 @@ function test_silence_and_cue_export
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -172,7 +172,7 @@ FILE "songs/La_Verue__Today_silence.mp3" MP3
     PERFORMER "La Verue"
     INDEX 01 02:55:46'
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -190,7 +190,7 @@ function test_silence_and_pretend_and_cue_export
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -206,7 +206,7 @@ function test_silence_and_pretend_and_cue_export
   check_output_directory_number_of_files 1
   check_if_file_does_not_exist "mp3splt.log"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -224,7 +224,7 @@ function test_silence_offset
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.00, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.00, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -263,7 +263,7 @@ function test_silence_offset
 168.350006\t177.240005\t889"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -281,7 +281,7 @@ function test_silence_threshold
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -18.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: Auto mode (Th: -18.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 3. (Selected 4 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -329,7 +329,7 @@ function test_silence_threshold
 202.649994\t202.990005\t34"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -347,7 +347,7 @@ function test_silence_nt
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: User mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO)
+ Silence split type: User mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 2. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -378,7 +378,7 @@ function test_silence_nt
 168.350006\t177.240005\t889"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -396,7 +396,7 @@ function test_silence_rm
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -435,7 +435,7 @@ function test_silence_rm
 168.350006\t177.240005\t889"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -453,7 +453,7 @@ function test_silence_rm_and_output_format
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -474,7 +474,7 @@ function test_silence_rm_and_output_format
   current_file="$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3"
   check_current_mp3_length "01.08"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -492,7 +492,7 @@ function test_silence_rm_and_overlap
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -514,7 +514,7 @@ function test_silence_rm_and_overlap
   current_file="$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3"
   check_current_mp3_length "01.08"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -532,7 +532,7 @@ function test_silence_rm_and_custom_tags
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -556,7 +556,7 @@ function test_silence_rm_and_custom_tags
   check_all_mp3_tags_with_version "2" "artist3" "Riez Noir" "title1"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -574,7 +574,7 @@ function test_silence_rm_and_custom_tags_and_output_format
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -595,7 +595,7 @@ function test_silence_rm_and_custom_tags_and_output_format
   current_file="$OUTPUT_DIR/artist3__Riez Noir__title1_3.mp3"
   check_current_mp3_length "01.08"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -613,7 +613,7 @@ function test_silence_min
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 9.00, Remove: NO)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 9.00, Remove: NO, Min track: 0.00)
 
  Total silence points found: 1. (Selected 2 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -643,7 +643,100 @@ function test_silence_min
 56.840000\t66.790001\t995"
   check_file_content "mp3splt.log" "$expected"
 
-  p_green "OK"
+  print_ok
+  echo
+}
+
+function test_silence_with_trackmin
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode - checking trackmin"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 71.00)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ info: track too short (1.4.80 < 1.11.0); skipped.
+ info: track too short (1.10.23 < 1.11.0); skipped.
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackmin=71 -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_1.mp3"
+  check_current_mp3_length "01.50"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "3147420"
+
+  expected="songs/La_Verue__Today_silence.mp3
+-48.00\t0.00
+56.840000\t66.790001\t995
+168.350006\t177.240005\t889"
+  check_file_content "mp3splt.log" "$expected"
+
+  print_ok
+  echo
+}
+
+function test_silence_with_rm_and_trackmin
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode & rm"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 57.00)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ info: track too short (0.56.84 < 0.57.0); skipped.
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p rm,trackmin=57 -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_1.mp3"
+  check_current_mp3_length "01.41"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "2946004"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
+  check_current_mp3_length "01.08"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "1936334"
+
+  expected="songs/La_Verue__Today_silence.mp3
+-48.00\t0.00
+56.840000\t66.790001\t995
+168.350006\t177.240005\t889"
+  check_file_content "mp3splt.log" "$expected"
+
+  print_ok
   echo
 }
 
@@ -667,6 +760,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_silence_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 

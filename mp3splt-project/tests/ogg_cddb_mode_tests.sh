@@ -80,7 +80,7 @@ $auto_adjust_warning"
   check_current_file_size "1296876"
   check_all_ogg_tags "MS" "Hack me" "7 sins campaign" "2009" "Other" "3" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -115,7 +115,7 @@ $auto_adjust_warning"
 
   check_output_directory_is_empty
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -182,7 +182,7 @@ FILE \"songs/Kelly_Allyn__Whiskey_Can.ogg\" OGG
   check_current_file_size "1296876"
   check_all_ogg_tags "MS" "Hack me" "7 sins campaign" "2009" "Other" "3" ""
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -234,7 +234,7 @@ FILE \"songs/Kelly_Allyn__Whiskey_Can.ogg\" OGG
     PERFORMER \"MS\"
     INDEX 01 02:11:34"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -266,7 +266,7 @@ function test_cddb_mode_quiet
   mp3splt_args="-q -d $OUTPUT_DIR -c $CDDB_FILE $OGG_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -308,7 +308,7 @@ $auto_adjust_warning"
   current_file="$OUTPUT_DIR/003-Don't worry-MS-Hack me-7 sins campaign.ogg"
   check_current_ogg_length "0m:53.513s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -341,7 +341,7 @@ $auto_adjust_warning"
   mp3splt_args="-d $OUTPUT_DIR -o @n3-@A-@t -c $CDDB_FILE $OGG_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -385,7 +385,7 @@ $auto_adjust_warning"
   current_file="$out_dir/3/003-Don't worry-MS-Hack me-7 sins campaign.ogg"
   check_current_ogg_length "0m:53.513s"
 
-  p_green "OK"
+  print_ok
   echo
 }
 
@@ -409,6 +409,8 @@ export LC_ALL="C"
 start_date=$(date +%s)
 
 run_cddb_mode_tests
+
+p_failed_tests
 
 end_date=$(date +%s)
 
