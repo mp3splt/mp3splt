@@ -340,6 +340,10 @@ Positive integer number of tracks to be split when using \-s option. By default 
 Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded. Default is 0.
 .IP \fBrm\fP
 Does not require an additional number and it used to remove silence when using \-s option.
+.IP \fBtrackmin=FLOAT\fP
+Positive float of the minimum number of seconds for a track to be written out.
+Tracks shorter than trackmin will be skipped during the output phase.
+The default value 0.0 means to not skip any tracks.
 
 .IP "\fBOnly \-a\fP"
 

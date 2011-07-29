@@ -52,6 +52,7 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.parameter_offset = SPLT_DEFAULT_PARAM_OFFSET;
   state->options.parameter_number_tracks = SPLT_DEFAULT_PARAM_TRACKS;
   state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
+  state->options.parameter_min_track_length = SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH;
 
   state->options.artist_tag_format = SPLT_NO_CONVERSION;
   state->options.album_tag_format = SPLT_NO_CONVERSION;
@@ -151,6 +152,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
     case SPLT_OPT_PARAM_MIN_LENGTH:
       state->options.parameter_minimum_length = *((float *)data);
       break;
+    case SPLT_OPT_PARAM_MIN_TRACK_LENGTH:
+      state->options.parameter_min_track_length = *((float *)data);
+      break;
     case SPLT_OPT_ARTIST_TAG_FORMAT:
       state->options.artist_tag_format = *((int *)data);
       break;
@@ -242,6 +246,8 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.parameter_offset;
     case SPLT_OPT_PARAM_MIN_LENGTH:
       return &state->options.parameter_minimum_length;
+    case SPLT_OPT_PARAM_MIN_TRACK_LENGTH:
+      return &state->options.parameter_min_track_length;
     case SPLT_OPT_ARTIST_TAG_FORMAT:
       return &state->options.artist_tag_format;
     case SPLT_OPT_ALBUM_TAG_FORMAT:

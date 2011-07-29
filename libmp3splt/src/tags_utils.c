@@ -82,7 +82,7 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
   int current_split = splt_t_get_current_split_file_number(state) - 1;
   int old_current_split = current_split;
 
-  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X); 
+  int remaining_tags_like_x = splt_o_get_int_option(state, SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
   if (remaining_tags_like_x != -1)
   {
     if (current_split >= state->split.real_tagsnumber)

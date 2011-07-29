@@ -43,6 +43,7 @@ int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
 int splt_sp_set_splitpoint_name(splt_state *state, int index, const char *name);
 int splt_sp_set_splitpoint_type(splt_state *state, int index, int type);
 
+
 long splt_sp_get_splitpoint_value(splt_state *state, int index, int *error);
 const char *splt_sp_get_splitpoint_name(splt_state *state, int index, int *error);
 int splt_sp_get_splitpoint_type(splt_state *state, int index, int *error);
@@ -50,6 +51,7 @@ int splt_sp_get_splitpoint_type(splt_state *state, int index, int *error);
 int splt_sp_cut_splitpoint_extension(splt_state *state, int index);
 
 void splt_sp_order_splitpoints(splt_state *state, int len);
+void splt_sp_skip_minimum_track_length_splitpoints(splt_state *state, int *error);
 
 void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
     long *mins, long *secs, long *hudr);

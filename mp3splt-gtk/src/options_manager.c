@@ -75,6 +75,7 @@ extern GtkWidget *create_dirs_from_output_files;
 
 extern GtkWidget *all_spinner_silence_number_tracks;
 extern GtkWidget *all_spinner_silence_minimum;
+extern GtkWidget *all_spinner_track_minimum;
 extern GtkWidget *all_spinner_silence_offset;
 extern GtkWidget *all_spinner_silence_threshold;
 extern GtkWidget *all_spinner_trim_silence_threshold;
@@ -192,6 +193,8 @@ void put_options_from_preferences()
           gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(all_spinner_silence_number_tracks)));
       mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_MIN_LENGTH,
           gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_silence_minimum)));
+      mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
+          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_track_minimum)));
       if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(all_silence_remove_silence)))
       {
         mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_TRUE);

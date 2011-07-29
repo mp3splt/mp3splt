@@ -144,8 +144,8 @@ gint first_splitpoint_selected = -1;
 */
 //!number of tracks parameter
 GtkWidget *spinner_silence_number_tracks = NULL;
-//!number of tracks parameter
 GtkWidget *spinner_silence_minimum = NULL;
+GtkWidget *spinner_silence_minimum_track = NULL;
 //!offset parameter
 GtkWidget *spinner_silence_offset = NULL;
 //!threshold parameter
@@ -161,6 +161,7 @@ gfloat silence_threshold_value = SPLT_DEFAULT_PARAM_THRESHOLD;
 gfloat silence_offset_value = SPLT_DEFAULT_PARAM_OFFSET;
 gint silence_number_of_tracks = SPLT_DEFAULT_PARAM_TRACKS;
 gfloat silence_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
+gfloat silence_minimum_track_length = SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH;
 gboolean silence_remove_silence_between_tracks = FALSE;
 //@}
 
@@ -1250,6 +1251,11 @@ void update_silence_parameters(GtkWidget *widget, gpointer data)
     silence_minimum_length = 
       gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_minimum));
   }
+  if (spinner_silence_minimum_track != NULL)
+  {
+    silence_minimum_track_length = 
+      gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_minimum_track));
+  }
   if (silence_remove_silence != NULL)
   {
     silence_remove_silence_between_tracks = 
@@ -1423,6 +1429,18 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum,
       FALSE, FALSE, 6);
   
+  //the minimum track length parameter
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+ 
+  label = gtk_label_new(_("Minimum track length (seconds):"));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+  
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  spinner_silence_minimum_track = gtk_spin_button_new(adj, 1, 2);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum_track,
+      FALSE, FALSE, 6);
+ 
   //remove silence (rm): allows you to remove the silence between
   //tracks
   silence_remove_silence =
@@ -1439,6 +1457,8 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
                             silence_number_of_tracks);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_minimum),
                             silence_minimum_length);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_minimum_track),
+                            silence_minimum_track_length);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(silence_remove_silence),
       silence_remove_silence_between_tracks);
 
@@ -1450,6 +1470,8 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   g_signal_connect(G_OBJECT(spinner_silence_number_tracks), "value_changed",
       G_CALLBACK(update_silence_parameters), NULL);
   g_signal_connect(G_OBJECT(spinner_silence_minimum), "value_changed",
+      G_CALLBACK(update_silence_parameters), NULL);
+  g_signal_connect(G_OBJECT(spinner_silence_minimum_track), "value_changed",
       G_CALLBACK(update_silence_parameters), NULL);
   g_signal_connect(G_OBJECT(silence_remove_silence), "toggled",
       G_CALLBACK(silence_remove_silence_checked), NULL);
@@ -1470,6 +1492,8 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       silence_number_of_tracks);
   mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_MIN_LENGTH,
       silence_minimum_length);
+  mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
+      silence_minimum_track_length);
   mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
       silence_remove_silence_between_tracks);
 

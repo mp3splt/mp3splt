@@ -394,9 +394,10 @@ int main(int argc, char **orig_argv)
   //if we have parameter options
   if (opt->p_option)
   {
-    float th = -200,off = -200,min = -200;
+    float th = -200,off = -200,min = -200, min_track_length = -200;
     int gap = -200,nt = -200,rm = -200;
-    int parsed_p_options = parse_silence_options(opt->param_args, &th, &gap, &nt, &off, &rm, &min);
+    int parsed_p_options = parse_silence_options(opt->param_args, &th, &gap,
+        &nt, &off, &rm, &min, &min_track_length);
     if (parsed_p_options < 1)
     {
       print_error_exit(_("bad argument for -p option. No valid value"
@@ -414,6 +415,10 @@ int main(int argc, char **orig_argv)
     if (min != -200)
     {
       mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
+    }
+    if (min_track_length != -200)
+    {
+      mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH, min_track_length);
     }
     if (gap != -200)
     {

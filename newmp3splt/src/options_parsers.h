@@ -27,7 +27,7 @@
 #include "options_manager.h"
 
 int parse_silence_options(char *arg, float *th, int *gap,
-    int *nt, float *off, int *rm, float *min);
+    int *nt, float *off, int *rm, float *min, float *min_track_length);
 int parse_query_arg(options *opt, const char *query);
 regex_options *parse_tags_from_fname_regex_options(const char *parameters, int *error);
 
