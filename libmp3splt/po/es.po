@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-07-12 21:24+0200\n"
+"POT-Creation-Date: 2011-07-30 23:28+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,81 +71,81 @@ msgstr ""
 msgid " info: starting normal split\n"
 msgstr ""
 
-#: src/splt.c:234
+#: src/splt.c:235
 msgid " info: starting error mode split\n"
 msgstr ""
 
-#: src/splt.c:544
+#: src/splt.c:545
 msgid " info: starting time mode split\n"
 msgstr ""
 
-#: src/splt.c:563
+#: src/splt.c:564
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr ""
 
-#: src/splt.c:605
+#: src/splt.c:606
 #, c-format
 msgid " Trim silence split - Th: %.1f dB\n"
 msgstr ""
 
-#: src/splt.c:732
+#: src/splt.c:733
 #, c-format
 msgid "YES"
 msgstr "SÍ"
 
-#: src/splt.c:736
+#: src/splt.c:737
 #, c-format
 msgid "NO"
 msgstr "NO"
 
-#: src/splt.c:742
+#: src/splt.c:743
 #, c-format
 msgid "User"
 msgstr "Usuario"
 
-#: src/splt.c:746
+#: src/splt.c:747
 #, c-format
 msgid "Auto"
 msgstr "Auto"
 
-#: src/splt.c:752
+#: src/splt.c:753
 #, c-format
 msgid ""
-" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: "
-"%s)\n"
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
+"Min track: %.2f)\n"
 msgstr ""
 
-#: src/splt.c:770
+#: src/splt.c:772
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)\n"
 msgstr ""
 
-#: src/splt.c:799
+#: src/splt.c:801
 #, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 
-#: src/splt.c:811
+#: src/splt.c:813
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr ""
 
-#: src/splt.c:906
+#: src/splt.c:918
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr ""
 
-#: src/splt.c:961
+#: src/splt.c:973
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1009
+#: src/splt.c:1021
 msgid " info: starting trim using silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1056
+#: src/splt.c:1068
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
@@ -620,6 +620,6 @@ msgstr ""
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:1843
+#: plugins/ogg.c:1847
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
