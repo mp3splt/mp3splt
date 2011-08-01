@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-07-12 21:24+0200\n"
+"POT-Creation-Date: 2011-07-30 23:28+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: src/mp3splt.c:253 src/utils.c:36 src/utils.c:52
+#: src/mp3splt.c:257 src/utils.c:36 src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "impossible d'allouer de la mémoire !"
 
-#: src/mp3splt.c:283
+#: src/mp3splt.c:287
 #, fuzzy
 msgid ""
 "bad time expression for the time split.\n"
@@ -30,39 +30,39 @@ msgstr ""
 "mauvaise valeur pour la division en plusieurs pistes de même taille.\n"
 "\tDoit être min.sec, lisez le manuel pour les détails."
 
-#: src/mp3splt.c:346
+#: src/mp3splt.c:350
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "lisez le manuel pour la documentation ou tapez 'mp3splt -h'."
 
-#: src/mp3splt.c:398
+#: src/mp3splt.c:403
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 "mauvais argument pour l'option -p. Aucune valeur valide n'a été réconnue !"
 
-#: src/mp3splt.c:525
+#: src/mp3splt.c:534
 msgid "no input filename(s)."
 msgstr "aucun fichier d'entrée."
 
-#: src/mp3splt.c:538
+#: src/mp3splt.c:547
 msgid "multiple splitpoints with stdout !"
 msgstr "plusieurs points de coupure avec le flux de sortie standard (stdout) !"
 
-#: src/mp3splt.c:542
+#: src/mp3splt.c:551
 msgid "using time mode with stdout !"
 msgstr ""
 "utilisation du mode de division 'temps' avec la sortie standard (stdout) !"
 
-#: src/mp3splt.c:583
+#: src/mp3splt.c:592
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr " Simulation de division du fichier '%s' ...\n"
 
-#: src/mp3splt.c:587
+#: src/mp3splt.c:596
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Fichier '%s' ...\n"
 
-#: src/mp3splt.c:594 src/options_checker.c:49
+#: src/mp3splt.c:603 src/options_checker.c:49
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
@@ -71,20 +71,20 @@ msgstr ""
 "impossible d'utiliser l'option -k (ou flux d'entrée standard) avec une des "
 "options suivantes : -S -s -w -l -e -i -a -p"
 
-#: src/mp3splt.c:650
+#: src/mp3splt.c:659
 msgid "freedb query format ambigous !"
 msgstr "format freedb 'query' ambigu !"
 
-#: src/mp3splt.c:694
+#: src/mp3splt.c:703
 msgid "tags format ambiguous !"
 msgstr "format des tags ambigu !"
 
-#: src/mp3splt.c:726
+#: src/mp3splt.c:735
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr " Niveau de silence moyen : %.2f dB"
 
-#: src/mp3splt.c:743
+#: src/mp3splt.c:752
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -324,30 +324,35 @@ msgid "bad offset argument. It will be ignored!"
 msgstr "mauvais argument pour la compensation. Sera ignoré !"
 
 #: src/options_parsers.c:114
+#, fuzzy
+msgid "bad minimum track length argument. It will be ignored !"
+msgstr "mauvais argument pour la taille minimum du silence. Sera ignoré !"
+
+#: src/options_parsers.c:133
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr "mauvais argument pour la taille minimum du silence. Sera ignoré !"
 
-#: src/options_parsers.c:137
+#: src/options_parsers.c:156
 msgid "no regular expression found as argument."
 msgstr ""
 
-#: src/options_parsers.c:313
+#: src/options_parsers.c:332
 msgid "found non digits characters in port ! (switched to default)"
 msgstr ""
 "détection des caractères autre que des chiffres dans le port ! (utilisation "
 "du port par défaut)"
 
-#: src/options_parsers.c:338
+#: src/options_parsers.c:357
 msgid "unknown search type ! (switched to default)"
 msgstr "type de recherche freedb inconnu ! (utilisation du type par défaut)"
 
-#: src/options_parsers.c:354
+#: src/options_parsers.c:373
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
 "recherche web freedb pas encore implementée ! (utilisation de la recherche "
 "par défaut)"
 
-#: src/options_parsers.c:360
+#: src/options_parsers.c:379
 msgid "unknown get type ! (switched to default)"
 msgstr "type de récupération freedb inconnu ! (utilisation du type par défaut)"
 
@@ -522,7 +527,8 @@ msgstr ""
 
 #: src/print_utils.c:254
 msgid ""
-" -p + PARAMETERS (th, nt, off, min, rm, gap): user arguments for -s and -a.\n"
+" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin): user arguments for -"
+"s and -a.\n"
 " -o + FORMAT: output filename pattern. Can contain those variables:\n"
 "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
 "      @t: title tag, @n: track number identifier, @N: track tag number\n"
@@ -643,10 +649,10 @@ msgstr ""
 "\n"
 "-- 's' pour diviser, 'c' pour annuler :"
 
-#: src/windows_utils.c:45
+#: src/windows_utils.c:46
 msgid "CommandLineToArgvW failed (oh !)"
 msgstr "CommandLineToArgvW a échoué (oh !)"
 
-#: src/windows_utils.c:54
+#: src/windows_utils.c:55
 msgid "failed to allocate argv_utf8 memory"
 msgstr "impossible d'allouer de la mémoire pour argv_utf8"
