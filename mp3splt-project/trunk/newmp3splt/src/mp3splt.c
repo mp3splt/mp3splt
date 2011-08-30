@@ -375,12 +375,14 @@ int main(int argc, char **orig_argv)
 
   //add special directory search for plugins on Windows
 #ifdef __WIN32__
-  if (executable != NULL)
+  wchar_t *current_dir = NULL;
+  if (executable_dir != NULL)
   {
-    if (executable[0] != '\0')
+    if (executable_dir[0] != '\0')
     {
-      mp3splt_append_plugins_scan_dir(state, executable);
-      _chdir(executable);
+      mp3splt_append_plugins_scan_dir(state, executable_dir);
+      current_dir = win32_get_current_directory();
+      _chdir(executable_dir);
     }
     free(executable);
     executable = NULL;
@@ -390,6 +392,15 @@ int main(int argc, char **orig_argv)
   //after getting the options (especially the debug option), find plugins
   err = mp3splt_find_plugins(state);
   process_confirmation_error(err, data);
+
+#ifdef __WIN32__
+  if (current_dir)
+  {
+    win32_set_current_working_directory(current_dir);
+    free(current_dir);
+    current_dir = NULL;
+  }
+#endif
 
   //if we have parameter options
   if (opt->p_option)
