@@ -23,6 +23,9 @@
 
 #ifdef __WIN32__
 
+#include <errno.h>
+#include <direct.h>
+
 #include "windows_utils.h"
 #include "utils.h"
 #include "print_utils.h"
@@ -61,6 +64,45 @@ char **win32_get_utf8_args(main_data *data)
   }
 
   return argv_utf8;
+}
+
+wchar_t *win32_get_current_directory()
+{
+  size_t max_buffer_size = 256 * 12;
+  size_t buffer_size = 256;
+  wchar_t *dir_name = NULL;
+
+  while (buffer_size < max_buffer_size)
+  {
+    dir_name = malloc(sizeof(wchar_t) * buffer_size);
+    memset(dir_name, sizeof(wchar_t) * buffer_size, '\0');
+
+    if (!dir_name)
+    {
+      return NULL;
+    }
+
+    errno=0;
+    if (_wgetcwd(dir_name, buffer_size-1) != NULL)
+    {
+      return dir_name;
+    }
+
+    free(dir_name);
+    buffer_size += 256;
+
+    if (errno != ERANGE)
+    {
+      break;
+    }
+  }
+
+  return NULL;
+}
+
+void win32_set_current_working_directory(const wchar_t *dir)
+{
+  _wchdir(dir);
 }
 
 #endif

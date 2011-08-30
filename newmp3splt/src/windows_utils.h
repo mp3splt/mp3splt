@@ -29,7 +29,8 @@
 #include "common.h"
 #include "data_manager.h"
 
-char **win32_get_utf8_args(main_data *data);
+wchar_t *win32_get_current_directory();
+void win32_set_current_working_directory(const wchar_t *dir);
 
 #define WINDOWS_UTILS_H
 #endif
