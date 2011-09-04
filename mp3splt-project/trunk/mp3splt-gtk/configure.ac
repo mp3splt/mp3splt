@@ -32,7 +32,7 @@
 # Basic initialisations 
 #################################################
 
-AC_PREREQ(2.56)
+AC_PREREQ(2.62)
 AC_INIT(mp3splt-gtk, 0.7.1, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
@@ -217,25 +217,37 @@ if test "x$enable_gstreamer" = xyes;then
 fi
 
 #################################################
-# Documentation of the code using 'make doxygen'
+# Documentation of the code
 # (but only if doxygen is installed)
 #################################################
 
-# Check for doxygen, so we can decide if we add it to the "doc" 
-# make target.
-AC_PATH_PROG([DOXYGEN],[doxygen])
-AC_ARG_VAR(DOXYGEN,
-           [Location of the 'doxygen' program; if found we can generate documentation for the C code])
-AM_CONDITIONAL(HAVE_DOXYGEN, [ test "x$DOXYGEN" != "x" ])
+doxygen_doc="no" 
+with_graphviz="no"
+AC_ARG_ENABLE(doxygen_doc, [AC_HELP_STRING([--disable-doxygen_doc],[ Disable doxygen code documentation. ]) ], 
+    [enable_doxygen_doc=$enableval],[enable_doxygen_doc="yes"])
 
-# Check for dot, the tool that makes the nice little caller graphs for the
-# doxygen documentation.
-AC_PATH_PROG([GRAPHVIZ],[dot])
-AC_ARG_VAR(GRAPHVIZ,
-           [Location of the 'dot' program from the graphviz suite; if found we can generate caller graphs for the documentation of the C code])
-AM_CONDITIONAL(HAVE_GRAPHVIZ, [ test "x$GRAPHVIZ" != "x" ])
-if test x$HAVE_DOT = "xfalse"; then
-   AC_MSG_WARN([*** dot from the graphviz package not found, inheritance diagrams will not be generated in code documentation])
+AM_CONDITIONAL(HAVE_DOXYGEN, false)
+AM_CONDITIONAL(HAVE_GRAPHVIZ, false)
+if test "x$enable_doxygen_doc" = xyes;then
+  AC_PATH_PROG([DOXYGEN],[doxygen])
+  AC_ARG_VAR(DOXYGEN,
+             [Location of the 'doxygen' program; if found we can generate documentation for the C code])
+  
+  if test "x$DOXYGEN" != "x"; then
+   AM_CONDITIONAL(HAVE_DOXYGEN, true)
+   doxygen_doc="yes"
+
+   AC_PATH_PROG([GRAPHVIZ],[dot])
+   AC_ARG_VAR(GRAPHVIZ,
+              [Location of the 'dot' program from the graphviz suite; if found we can generate caller graphs for the documentation of the C code])
+   if test "x$GRAPHVIZ" = "x"; then
+     AC_MSG_WARN([*** dot from the graphviz package not found, inheritance diagrams will not be generated in code documentation])
+   else
+     AM_CONDITIONAL(HAVE_GRAPHVIZ, true)
+     with_graphviz="yes"
+   fi
+
+  fi
 fi
 
 #################################################
@@ -286,7 +298,8 @@ echo
 echo " Other :"
 echo
 echo "    gnome support            $gnome"
-echo
+echo "    doxygen documentation    $doxygen_doc"
+echo "        with graphviz        $with_graphviz"
 echo "---------------------------------------------------------"
 echo
 
