@@ -32,7 +32,7 @@
 # Basic initialisations 
 #################################################
 
-AC_PREREQ(2.56)
+AC_PREREQ(2.62)
 AC_INIT([libmp3splt],[0.7.1],[io_fx@yahoo.fr])
 AC_CONFIG_AUX_DIR([libltdl/config])
 AM_INIT_AUTOMAKE(libmp3splt, 0.7.1)
@@ -228,6 +228,39 @@ if test "x$enable_pcre" = xyes;then
     Install it or configure with "--disable-pcre".])])
 fi
 
+#################################################
+# Documentation of the code
+# (but only if doxygen is installed)
+#################################################
+
+doxygen_doc="no" 
+with_graphviz="no"
+AC_ARG_ENABLE(doxygen_doc, [AC_HELP_STRING([--disable-doxygen_doc],[ Disable doxygen code documentation. ]) ], 
+    [enable_doxygen_doc=$enableval],[enable_doxygen_doc="yes"])
+
+AM_CONDITIONAL(HAVE_DOXYGEN, false)
+AM_CONDITIONAL(HAVE_GRAPHVIZ, false)
+if test "x$enable_doxygen_doc" = xyes;then
+  AC_PATH_PROG([DOXYGEN],[doxygen])
+  AC_ARG_VAR(DOXYGEN,
+             [Location of the 'doxygen' program; if found we can generate documentation for the C code])
+  
+  if test "x$DOXYGEN" != "x"; then
+   AM_CONDITIONAL(HAVE_DOXYGEN, true)
+   doxygen_doc="yes"
+
+   AC_PATH_PROG([GRAPHVIZ],[dot])
+   AC_ARG_VAR(GRAPHVIZ,
+              [Location of the 'dot' program from the graphviz suite; if found we can generate caller graphs for the documentation of the C code])
+   if test "x$GRAPHVIZ" = "x"; then
+     AC_MSG_WARN([*** dot from the graphviz package not found, inheritance diagrams will not be generated in code documentation])
+   else
+     AM_CONDITIONAL(HAVE_GRAPHVIZ, true)
+     with_graphviz="yes"
+   fi
+
+  fi
+fi
 
 #################################################
 # Print the configuration to the screen
@@ -245,7 +278,6 @@ echo "    libmad (.mp3 format)                                    $mp3"
 echo "    libogg, libvorbis (.ogg/vorbis format)                  $ogg"
 echo
 echo " Other :"
-
 echo
 echo "    pcre (for setting tags from the input filename)         $pcre"
 
@@ -259,30 +291,10 @@ if test "x$mp3" = "xyes"; then
   echo
 fi
 
+echo "    doxygen documentation                                   $doxygen_doc"
+echo "        with graphviz                                       $with_graphviz"
 echo "---------------------------------------------------------"
 echo
-
-#################################################
-# Documentation of the code using 'make doxygen'
-# (but only if doxygen is installed)
-#################################################
-
-# Check for doxygen, so we can decide if we add it to the "doc" 
-# make target.
-AC_PATH_PROG([DOXYGEN],[doxygen])
-AC_ARG_VAR(DOXYGEN,
-           [Location of the 'doxygen' program; if found we can generate documentation for the C code])
-AM_CONDITIONAL(HAVE_DOXYGEN, [ test "x$DOXYGEN" != "x" ])
-
-# Check for dot, the tool that makes the nice little caller graphs for the
-# doxygen documentation.
-AC_PATH_PROG([GRAPHVIZ],[dot])
-AC_ARG_VAR(GRAPHVIZ,
-           [Location of the 'dot' program from the graphviz suite; if found we can generate caller graphs for the documentation of the C code])
-AM_CONDITIONAL(HAVE_GRAPHVIZ, [ test "x$GRAPHVIZ" != "x" ])
-if test x$HAVE_DOT = "xfalse"; then
-   AC_MSG_WARN([*** dot from the graphviz package not found, inheritance diagrams will not be generated in code documentation])
-fi
 
 #################################################
 # Generate Makefile
