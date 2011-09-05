@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-08-28 01:04+0200\n"
+"POT-Creation-Date: 2011-09-05 22:01+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,33 +35,33 @@ msgstr ""
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "lea la página del manual de documentación o de tipo 'Mp3Splt-h'."
 
-#: src/mp3splt.c:403
+#: src/mp3splt.c:414
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "mal argumento para la opción-p. No fue reconocido valor válido!"
 
-#: src/mp3splt.c:534
+#: src/mp3splt.c:545
 msgid "no input filename(s)."
 msgstr "sin entrada de nombre de archivo (s)."
 
-#: src/mp3splt.c:547
+#: src/mp3splt.c:558
 msgid "multiple splitpoints with stdout !"
 msgstr "splitpoints múltiples con la salida estándar!"
 
-#: src/mp3splt.c:551
+#: src/mp3splt.c:562
 msgid "using time mode with stdout !"
 msgstr "usando el modo de tiempo con la salida estándar!"
 
-#: src/mp3splt.c:592
+#: src/mp3splt.c:603
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:596
+#: src/mp3splt.c:607
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:603 src/options_checker.c:49
+#: src/mp3splt.c:614 src/options_checker.c:49
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
@@ -70,20 +70,20 @@ msgstr ""
 "no puede utilizar la opción-k (o STDIN) con una de las siguientes opciones:-"
 "S-s-w-l-e-i-p-"
 
-#: src/mp3splt.c:659
+#: src/mp3splt.c:670
 msgid "freedb query format ambigous !"
 msgstr "freedb ambigua consulta formato!"
 
-#: src/mp3splt.c:703
+#: src/mp3splt.c:714
 msgid "tags format ambiguous !"
 msgstr "Etiquetas de formato ambiguo!"
 
-#: src/mp3splt.c:735
+#: src/mp3splt.c:746
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:752
+#: src/mp3splt.c:763
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -561,10 +561,10 @@ msgid ""
 "-- 's' to split, 'c' to cancel:"
 msgstr ""
 
-#: src/windows_utils.c:46
+#: src/windows_utils.c:49
 msgid "CommandLineToArgvW failed (oh !)"
 msgstr "CommandLineToArgvW no (oh!)"
 
-#: src/windows_utils.c:55
+#: src/windows_utils.c:58
 msgid "failed to allocate argv_utf8 memory"
 msgstr "No se pudo asignar memoria argv_utf8"

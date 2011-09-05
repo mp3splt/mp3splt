@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-08-28 01:04+0200\n"
+"POT-Creation-Date: 2011-09-05 22:01+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,33 +34,33 @@ msgstr ""
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "Lesen Sie die Handbuchseite oder geben Sie »mp3splt -h« ein."
 
-#: src/mp3splt.c:403
+#: src/mp3splt.c:414
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "Falsches Argument für Option -p. Kein gültiger Wert erkannt!"
 
-#: src/mp3splt.c:534
+#: src/mp3splt.c:545
 msgid "no input filename(s)."
 msgstr "Kein(e) Name(n) für Eingabedateien."
 
-#: src/mp3splt.c:547
+#: src/mp3splt.c:558
 msgid "multiple splitpoints with stdout !"
 msgstr "Mehrere Teilungspunkte mit Standardausgabe!"
 
-#: src/mp3splt.c:551
+#: src/mp3splt.c:562
 msgid "using time mode with stdout !"
 msgstr "Zeitmodus mit Standardausgabe wird verwendet!"
 
-#: src/mp3splt.c:592
+#: src/mp3splt.c:603
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr " Teilung der Datei »%s« wird simuliert …\n"
 
-#: src/mp3splt.c:596
+#: src/mp3splt.c:607
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Datei »%s« wird verarbeitet …\n"
 
-#: src/mp3splt.c:603 src/options_checker.c:49
+#: src/mp3splt.c:614 src/options_checker.c:49
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
@@ -69,20 +69,20 @@ msgstr ""
 "Option -k (oder STDIN) kann nicht mit einer der folgenden Optionen verwendet "
 "werden : -S -s -w -l -e -i -a -p"
 
-#: src/mp3splt.c:659
+#: src/mp3splt.c:670
 msgid "freedb query format ambigous !"
 msgstr "Format der Freedb-Abfrage ist nicht eindeutig!"
 
-#: src/mp3splt.c:703
+#: src/mp3splt.c:714
 msgid "tags format ambiguous !"
 msgstr "Tag-Format ist nicht eindeutig!"
 
-#: src/mp3splt.c:735
+#: src/mp3splt.c:746
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr " Durchschnittlicher Pegel der Stille: %.2f dB"
 
-#: src/mp3splt.c:752
+#: src/mp3splt.c:763
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -650,10 +650,10 @@ msgstr ""
 "\n"
 "-- »s« für Teilen, »c« für Abbrechen:"
 
-#: src/windows_utils.c:46
+#: src/windows_utils.c:49
 msgid "CommandLineToArgvW failed (oh !)"
 msgstr "CommandLineToArgvW gescheitert (oh !)"
 
-#: src/windows_utils.c:55
+#: src/windows_utils.c:58
 msgid "failed to allocate argv_utf8 memory"
 msgstr "argv_utf8-Speicher kann nicht zugewiesen werden"
