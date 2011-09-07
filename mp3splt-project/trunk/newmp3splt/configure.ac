@@ -40,13 +40,6 @@ AM_INIT_AUTOMAKE(mp3splt, 2.4.0.920)
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE([enable])
 
-#DEBUG_FLAGS="-g"
-#OPTIMISE_FLAGS="-O2"
-#WARNING_FLAGS="-Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
-WARNING_FLAGS="-Wall"
-CFLAGS="$DEBUG_FLAGS $WARNING_FLAGS $OPTIMISE_FLAGS $CFLAGS"
-LDFLAGS="$LDFLAGS"
-
 #################################################
 # Check for programs
 #################################################
@@ -114,6 +107,27 @@ else
   AM_CONDITIONAL(DO_SYMLINK, false)
 fi
 
+#################################################################
+# Check for some debugging, warnings and optimise options
+#################################################################
+
+AC_ARG_ENABLE(c-debug, [AC_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
+    [enable_c_debug=$enableval],[enable_c_debug="no"])
+if test "x$enable_c_debug" = xyes;then
+  CFLAGS="$CFLAGS -g"
+fi
+
+AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--enable-optimise],[ Enable O2 optimise. ]) ],
+    [enable_optimise=$enableval],[enable_optimise="no"])
+if test "x$enable_optimise" = xyes;then
+  CFLAGS="$CFLAGS -O2"
+fi
+
+AC_ARG_ENABLE(extra-warnings, [AC_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
+    [enable_extra_warnings=$enableval],[enable_extra_warnings="no"])
+if test "x$enable_extra_warnings" = xyes;then
+  CFLAGS="$CFLAGS -Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
+fi
 
 #################################################
 # Generate Makefiles

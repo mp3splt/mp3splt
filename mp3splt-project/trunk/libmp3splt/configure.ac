@@ -39,12 +39,6 @@ AM_INIT_AUTOMAKE(libmp3splt, 0.7.0.920)
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
 
-#DEBUG_FLAGS="-g"
-#OPTIMISE_FLAGS="-O2"
-#WARNING_FLAGS="-Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
-WARNING_FLAGS="-Wall"
-CFLAGS="$DEBUG_FLAGS $WARNING_FLAGS $OPTIMISE_FLAGS $CFLAGS"
-
 #################################################
 # Check for programs
 #################################################
@@ -111,6 +105,27 @@ case $host in
 esac
 AC_MSG_RESULT($HOST)
 
+#################################################################
+# Check for some debugging, warnings and optimise options
+#################################################################
+
+AC_ARG_ENABLE(c-debug, [AC_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
+    [enable_c_debug=$enableval],[enable_c_debug="no"])
+if test "x$enable_c_debug" = xyes;then
+  CFLAGS="$CFLAGS -g"
+fi
+
+AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--enable-optimise],[ Enable O2 optimise. ]) ],
+    [enable_optimise=$enableval],[enable_optimise="no"])
+if test "x$enable_optimise" = xyes;then
+  CFLAGS="$CFLAGS -O2"
+fi
+
+AC_ARG_ENABLE(extra-warnings, [AC_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
+    [enable_extra_warnings=$enableval],[enable_extra_warnings="no"])
+if test "x$enable_extra_warnings" = xyes;then
+  CFLAGS="$CFLAGS -Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
+fi
 
 #################################################################
 # Check for some functions
