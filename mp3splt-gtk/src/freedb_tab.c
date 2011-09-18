@@ -301,7 +301,7 @@ gpointer freedb_search(gpointer data)
  
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_search_button), FALSE);
-  gtk_entry_set_editable(GTK_ENTRY(freedb_entry), FALSE);
+  gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), FALSE);
  
   put_status_message(_("please wait... contacting tracktype.org"));
  
@@ -353,7 +353,7 @@ gpointer freedb_search(gpointer data)
   }
  
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_search_button), TRUE);
-  gtk_entry_set_editable(GTK_ENTRY(freedb_entry), TRUE);
+  gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), TRUE);
  
   exit_threads();
 
@@ -602,7 +602,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start(GTK_BOX(search_hbox), label, FALSE, FALSE, 0);
   //top entry
   freedb_entry = gtk_entry_new();
-  gtk_entry_set_editable(GTK_ENTRY(freedb_entry), TRUE);
+  gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), TRUE);
   gtk_box_pack_start(GTK_BOX(search_hbox), freedb_entry, TRUE, TRUE, 6);
   g_signal_connect(G_OBJECT(freedb_entry), "activate",
       G_CALLBACK(freedb_entry_activate_event), NULL);
@@ -652,7 +652,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start(GTK_BOX(selected_hbox), label_selected , FALSE, FALSE, 0);
   //freedb selected entry
   freedb_selected_entry = gtk_entry_new();
-  gtk_entry_set_editable(GTK_ENTRY(freedb_selected_entry), FALSE);
+  gtk_editable_set_editable(GTK_EDITABLE(freedb_selected_entry), FALSE);
   gtk_box_pack_start(GTK_BOX(selected_hbox), freedb_selected_entry, TRUE, TRUE, 6);
   //add button
   freedb_add_button = (GtkWidget *)

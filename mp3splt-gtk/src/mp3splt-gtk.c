@@ -148,11 +148,11 @@ void put_split_filename(const char *filename,int progress_data)
 {
   enter_threads();
 
-  if (!GTK_WIDGET_SENSITIVE(queue_files_button))
+  if (!gtk_widget_get_sensitive(queue_files_button))
   {
     gtk_widget_set_sensitive(queue_files_button, TRUE);
   }
-  if (!GTK_WIDGET_SENSITIVE(remove_all_files_button))
+  if (!gtk_widget_get_sensitive(remove_all_files_button))
   {
     gtk_widget_set_sensitive(remove_all_files_button,TRUE);
   }

@@ -47,6 +47,8 @@ GtkTextTagTable *mess_hist_tag_table = NULL;
 GtkWidget *mess_hist_view = NULL;
 gint debug_is_active = FALSE;
 
+void create_mess_history_dialog();
+
 extern splt_state *the_state;
 
 //! Returns the current local time in form of a string
@@ -103,6 +105,8 @@ do not seem to use the arguments they differ in at all
 void mess_history_hide2(GtkWidget *widget, gpointer data)
 {
   mess_history_hide(NULL, 0, NULL);
+  //TODO: ugly HACK!
+  create_mess_history_dialog();
 }
 
 //! Add tags to the message history entry
@@ -195,8 +199,7 @@ GtkWidget *create_text_component()
 void create_mess_history_dialog()
 {
   mess_history_dialog = gtk_dialog_new_with_buttons(_("Messages history"), NULL,
-      GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+      GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 
   gtk_window_set_default_size(GTK_WINDOW(mess_history_dialog), 550, 300);
 
@@ -208,7 +211,7 @@ void create_mess_history_dialog()
   gtk_window_set_position(GTK_WINDOW(mess_history_dialog), GTK_WIN_POS_CENTER);
 
   GtkWidget *text_component = create_text_component();
-  gtk_container_add(GTK_CONTAINER(GTK_DIALOG(mess_history_dialog)->vbox),
-      text_component);
+  GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(mess_history_dialog));
+  gtk_box_pack_start(GTK_BOX(area), text_component, TRUE, TRUE, 0);
 }
 
