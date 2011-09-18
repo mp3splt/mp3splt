@@ -491,6 +491,10 @@ replace tags in tags. The 'replace tags in tags' option is not recursive. The va
 this variable has to be placed inside the %[] field in order to have the track
 number auto incremented for all the split files following it
 
+You can also use the following variables, which are replaced by the data from
+the original tags: #a, #b, #t, #y, #c, #g. Note that this will only work if
+@o has been found before.
+
 Example of tags format:
 \fB%[@o,@N=1,@b=special_album][@a=foo,@b=bar][@t=footitle]\fP. In this
 example, the first split file will have the original tags with album
@@ -507,6 +511,11 @@ Without the 'r' option, output artists are 'artist_@b_@N'.
 
 Replacement is not recursive: \fBr%[@o,@N=1,@b=album_@N,@a=artist_@b]\fP
 will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'.
+
+Example of replacing tags in tags with # variables:
+\fBr%[@o,@N=1,@t=@N_#t]\fPThis will prepend the auto incremented track number to the
+original input file title; supposing that the input file title is 'one_title',
+this will set the titles as follows: '1_one_title', '2_one_title', ...
 
 .IP "\fB\-G regex=REGEX\fP         " 10
 \fBTags from filename regex\fP. Set tags from input filename regular expression.

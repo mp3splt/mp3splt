@@ -16,7 +16,6 @@ doc: FORCE
 	$(MAKE) -C doc doc
 
 if GNOME
-DISTCHECK_CONFIGURE_FLAGS = --disable-scrollkeeper
 EXTRA_DIST += build-aux/gnome-doc-utils.make
 SUBDIRS += help
 endif

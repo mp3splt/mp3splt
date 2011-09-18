@@ -52,6 +52,7 @@ int splt_tu_set_original_tags_field(splt_state *state,
 void splt_tu_set_original_tags_data(splt_state *state, void *data);
 void *splt_tu_get_original_tags_data(splt_state *state);
 splt_tags *splt_tu_get_tags(splt_state *state, int *tags_number);
+splt_tags *splt_tu_get_original_tags_tags(splt_state *state);
 
 int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index);
