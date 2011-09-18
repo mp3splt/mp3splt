@@ -105,7 +105,7 @@ GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_l
 GtkWidget *wh_new_entry(void *callback)
 {
   GtkWidget *entry = gtk_entry_new();
-  gtk_entry_set_editable(GTK_ENTRY(entry), TRUE);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
   
   if (callback)
   {
@@ -118,6 +118,34 @@ GtkWidget *wh_new_entry(void *callback)
 GtkWidget *wh_new_button(const gchar *button_label)
 {
   return gtk_button_new_with_mnemonic(button_label);
+}
+
+void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height)
+{
+#if GTK_MAJOR_VERSION <= 2
+  GtkAllocation allocation;
+  gtk_widget_get_allocation(widget, &allocation);
+
+  if (width != NULL)
+  {
+    *width = allocation.width;
+  }
+
+  if (height != NULL)
+  {
+    *height= allocation.height;
+  }
+#else
+  if (width != NULL)
+  {
+    *width = gtk_widget_get_allocated_width(widget);
+  }
+
+  if (height != NULL)
+  {
+    *height = gtk_widget_get_allocated_height(widget);
+  }
+#endif
 }
 
 static void _wh_folder_changed_event(GtkFileChooser *chooser, gpointer data)

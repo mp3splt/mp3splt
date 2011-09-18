@@ -76,10 +76,6 @@ GtkWidget *create_toolbar();
 GtkWidget *create_menu_bar();
 GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
     gint toggle_or_not);
-void notebook_page_changed_event(GtkNotebook *notebook,
-                                 GtkNotebookPage *page,
-                                 guint page_num,
-                                 gpointer user_data);
 GtkWidget *create_main_vbox();
 void create_all();
 void print_status_bar_confirmation(gint confirmation);

@@ -645,7 +645,7 @@ GtkWidget *create_directory_box()
   
   //directory entry
   directory_entry = gtk_entry_new();
-  gtk_entry_set_editable(GTK_ENTRY(directory_entry), FALSE);
+  gtk_editable_set_editable(GTK_EDITABLE(directory_entry), FALSE);
   gtk_box_pack_start(GTK_BOX(dir_hbox), directory_entry, TRUE, TRUE, 0);
   // Put the right text into the text box containing the output directory
   // name if this name was provided on command line
@@ -851,21 +851,21 @@ GtkWidget *create_player_options_box()
   GtkWidget *label = gtk_label_new(_("Choose a player:"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  player_combo_box = gtk_combo_box_new_text();
+  player_combo_box = gtk_combo_box_text_new();
   g_signal_connect(G_OBJECT(player_combo_box), "changed",
       G_CALLBACK(player_combo_box_event), NULL);
   
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
+  gtk_combo_box_text_insert_text(GTK_COMBO_BOX_TEXT(player_combo_box),
                             PLAYER_AUDACIOUS,"Audacious");
   player_pref_list =
     g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_AUDACIOUS));
 
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
+  gtk_combo_box_text_insert_text(GTK_COMBO_BOX_TEXT(player_combo_box),
                             PLAYER_SNACKAMP,"SnackAmp");
   player_pref_list =
     g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_SNACKAMP));
 
-  gtk_combo_box_insert_text(GTK_COMBO_BOX(player_combo_box),
+  gtk_combo_box_text_insert_text(GTK_COMBO_BOX_TEXT(player_combo_box),
                             PLAYER_GSTREAMER,"GStreamer");
   player_pref_list =
     g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_GSTREAMER));
@@ -932,7 +932,7 @@ GtkWidget *create_output_filename_box()
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
   output_entry = gtk_entry_new();
-  gtk_entry_set_editable(GTK_ENTRY(output_entry), TRUE);
+  gtk_editable_set_editable(GTK_EDITABLE(output_entry), TRUE);
   g_signal_connect(G_OBJECT(output_entry), "key_release_event",
       G_CALLBACK(output_entry_event), NULL);
   gtk_entry_set_max_length(GTK_ENTRY(output_entry),244);

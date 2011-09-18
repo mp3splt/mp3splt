@@ -50,6 +50,8 @@ GtkWidget *wh_new_entry(gpointer callback);
 
 GtkWidget *wh_new_button(const gchar *button_label);
 
+void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height);
+
 void wh_set_browser_directory_handler(ui_state *ui, GtkWidget* dialog);
 
 #define WIDGETS_HELPER_H

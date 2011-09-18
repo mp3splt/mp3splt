@@ -522,7 +522,7 @@ gint get_first_splitpoint_selected()
 //!row selection event
 void row_selection_event()
 {
-  if(!GTK_WIDGET_SENSITIVE(remove_row_button))
+  if(!gtk_widget_get_sensitive(remove_row_button))
     gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), TRUE); 
 }
 
@@ -644,7 +644,7 @@ void remove_splitpoint(gint index,gint stop_preview)
   //if we don't have the first selected, we hide remove button
   if (get_first_splitpoint_selected() == -1)
     {
-      if(GTK_WIDGET_SENSITIVE(remove_row_button))
+      if(gtk_widget_get_sensitive(remove_row_button))
         gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), 
                                  FALSE);  
     }
@@ -653,7 +653,7 @@ void remove_splitpoint(gint index,gint stop_preview)
   if (splitnumber == 0)
     {
       //disable remove all button
-      if(GTK_WIDGET_SENSITIVE(remove_all_button))
+      if(gtk_widget_get_sensitive(remove_all_button))
         gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
     }
   
@@ -1101,7 +1101,7 @@ void add_splitpoint(Split_point my_split_point,
                           -1);
                 
       //enable remove all rows button if needed
-      if(!GTK_WIDGET_SENSITIVE(remove_all_button))
+      if(!gtk_widget_get_sensitive(remove_all_button))
         {
           gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), TRUE);
         }
@@ -1235,11 +1235,11 @@ void detect_silence_and_add_trim_splitpoints_start_thread()
 void update_silence_parameters(GtkWidget *widget, gpointer data)
 {
   silence_threshold_value = 
-    gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_threshold));
+    gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_threshold));
   if (spinner_silence_offset != NULL)
   {
     silence_offset_value =
-      gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_offset));
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_offset));
   }
   if (spinner_silence_number_tracks != NULL)
   {
@@ -1249,12 +1249,12 @@ void update_silence_parameters(GtkWidget *widget, gpointer data)
   if (spinner_silence_minimum != NULL)
   {
     silence_minimum_length = 
-      gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_minimum));
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_minimum));
   }
   if (spinner_silence_minimum_track != NULL)
   {
     silence_minimum_track_length = 
-      gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_silence_minimum_track));
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_minimum_track));
   }
   if (silence_remove_silence != NULL)
   {
@@ -1320,7 +1320,8 @@ void create_trim_silence_window(GtkWidget *button, gpointer *data)
       G_CALLBACK(update_silence_parameters), NULL);
 
   gtk_widget_show_all(general_inside_vbox);
-  gtk_container_add(GTK_CONTAINER(GTK_DIALOG(silence_detection_window)->vbox),
+  gtk_container_add(GTK_CONTAINER(
+        gtk_dialog_get_content_area(GTK_DIALOG(silence_detection_window))),
       general_inside_vbox);
 
   //result of the dialog window
@@ -1477,7 +1478,8 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       G_CALLBACK(silence_remove_silence_checked), NULL);
 
   gtk_widget_show_all(general_inside_vbox);
-  gtk_container_add(GTK_CONTAINER(GTK_DIALOG(silence_detection_window)->vbox),
+  gtk_container_add(GTK_CONTAINER(
+        gtk_dialog_get_content_area(GTK_DIALOG(silence_detection_window))),
       general_inside_vbox);
 
   //result of the dialog window
@@ -1571,11 +1573,11 @@ void remove_all_rows (GtkWidget *widget, gpointer data)
   }
   
   //disable remove all button
-  if(GTK_WIDGET_SENSITIVE(remove_all_button))
+  if(gtk_widget_get_sensitive(remove_all_button))
     gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   
   //disable remove button
-  if(GTK_WIDGET_SENSITIVE(remove_row_button))
+  if(gtk_widget_get_sensitive(remove_row_button))
     gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
   
   remove_status_message();

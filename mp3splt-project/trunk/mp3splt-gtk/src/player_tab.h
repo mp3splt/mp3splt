@@ -157,14 +157,14 @@ gfloat pixels_to_time(gfloat width,
                       gint pixels);
 gint get_draw_line_position(gint width,
                             gfloat time);
-void draw_motif(GtkWidget *da,GdkGC *gc,
+void draw_motif(GtkWidget *da,cairo_t *gc,
                 gint ylimit,gint x,gint model);
 void draw_marks(gint time_interval,
                 gint left_mark,gint right_mark,
-                gint ylimit, GtkWidget *da, GdkGC *gc);
+                gint ylimit, GtkWidget *da, cairo_t *gc);
 //motif for splitpoints
 //draw is false if we draw the splitpoint we move
-void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
+void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
                             gint x,gint draw,
                             gint current_point_hundr_secs,
                             gboolean move,
@@ -172,7 +172,7 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
 void draw_splitpoints(gint left_mark,
                       gint right_mark,
                       GtkWidget *da,
-                      GdkGC *gc);
+                      cairo_t *gc);
 gboolean da_expose_event (GtkWidget      *da,
                           GdkEventExpose *event,
                           gpointer       data);

@@ -117,6 +117,9 @@ GtkWidget *cancel_button = NULL;
 
 extern GtkWidget *mess_history_dialog;
 
+extern GtkWidget *da;
+extern GtkWidget *progress_bar;
+
 extern GArray *splitpoints;
 extern gint selected_id;
 extern splt_state *the_state;
@@ -172,7 +175,7 @@ void main_window_drag_data_received(GtkWidget *window,
     GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint
     info, guint time, gpointer user_data)
 {
-  const gchar *received_data = (gchar *) data->data;
+  const gchar *received_data = (gchar *) gtk_selection_data_get_text(data);
 
   if (received_data != NULL)
   {
@@ -221,8 +224,7 @@ void main_window_drag_data_received(GtkWidget *window,
   }
 }
 
-gboolean configure_window_callback(GtkWindow *window, GdkEvent *event,
-    gpointer data)
+gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, gpointer data)
 {
   ui_state *ui = (ui_state *)data;
 
@@ -236,8 +238,7 @@ void initialize_window()
 {
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-  g_signal_connect(G_OBJECT(window), "configure-event",
-      G_CALLBACK(configure_window_callback), ui);
+  g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(configure_window_callback), ui);
 
   window_accel_group = gtk_accel_group_new();
   gtk_window_add_accel_group(GTK_WINDOW(window), window_accel_group);
@@ -336,7 +337,7 @@ void about_window(GtkWidget *widget, gpointer *data)
       NULL);
   gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
   
-  gtk_about_dialog_set_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
+  gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
   gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),
                                  PACKAGE_NAME" : Copyright © 2005-2011 Alexandru"
@@ -374,7 +375,7 @@ void about_window(GtkWidget *widget, gpointer *data)
                                 "Suite 330, Boston, MA  02111-1307, "
                                 "USA.");
 
-  gtk_about_dialog_set_url_hook(activate_url, NULL, NULL);
+  g_signal_connect(G_OBJECT(dialog), "activate-link", G_CALLBACK(activate_url), NULL);
 
   gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog),
       "http://mp3splt.sourceforge.net");
@@ -811,7 +812,9 @@ GtkWidget *create_main_vbox()
  
   /* statusbar */
   status_bar = gtk_statusbar_new();
-  gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(status_bar), FALSE);
+
+  //TODO: gtk+ >= 3
+  //gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(status_bar), FALSE);
 
   GtkWidget *mess_history_button =
     create_cool_button(GTK_STOCK_INFO, NULL, FALSE);

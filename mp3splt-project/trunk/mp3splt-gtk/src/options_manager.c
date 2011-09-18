@@ -146,11 +146,11 @@ void put_options_from_preferences()
   {
     mp3splt_set_int_option(the_state, SPLT_OPT_AUTO_ADJUST, SPLT_TRUE);
     mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_OFFSET,
-        gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_offset)));
+        gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_offset)));
     mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_GAP,
         gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_adjust_gap)));
     mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
-        gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner_adjust_threshold)));
+        gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_threshold)));
   }
   else
   {
@@ -186,15 +186,15 @@ void put_options_from_preferences()
     case SELECTED_SPLIT_SILENCE:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
       mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
-          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_silence_threshold)));
+          gtk_spin_button_get_value(GTK_SPIN_BUTTON(all_spinner_silence_threshold)));
       mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_OFFSET,
-          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_silence_offset)));
+          gtk_spin_button_get_value(GTK_SPIN_BUTTON(all_spinner_silence_offset)));
       mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_NUMBER_TRACKS,
           gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(all_spinner_silence_number_tracks)));
       mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_MIN_LENGTH,
-          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_silence_minimum)));
+          gtk_spin_button_get_value(GTK_SPIN_BUTTON(all_spinner_silence_minimum)));
       mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
-          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_track_minimum)));
+          gtk_spin_button_get_value(GTK_SPIN_BUTTON(all_spinner_track_minimum)));
       if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(all_silence_remove_silence)))
       {
         mp3splt_set_int_option(the_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_TRUE);
@@ -207,7 +207,7 @@ void put_options_from_preferences()
     case SELECTED_SPLIT_TRIM_SILENCE:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
       mp3splt_set_float_option(the_state, SPLT_OPT_PARAM_THRESHOLD,
-          gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(all_spinner_trim_silence_threshold)));
+          gtk_spin_button_get_value(GTK_SPIN_BUTTON(all_spinner_trim_silence_threshold)));
       break;
     case SELECTED_SPLIT_ERROR:
       mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,

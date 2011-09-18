@@ -60,6 +60,10 @@
 #include "ui_manager.h"
 #include "widgets_helper.h"
 
+#define DRAWING_AREA_WIDTH 400
+#define DRAWING_AREA_HEIGHT 123 
+#define DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE 232 
+
 //! The text box showing the filename of the current input file.
 GtkWidget *entry;
 //! The browse button
@@ -704,7 +708,8 @@ void connect_button_event(GtkWidget *widget, gpointer data)
     
       g_signal_connect_swapped(dialog, "response", 
           G_CALLBACK(gtk_widget_destroy), dialog);
-      gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), label);
+      gtk_container_add(GTK_CONTAINER(
+            gtk_dialog_get_content_area(GTK_DIALOG(dialog))), label);
       gtk_widget_show_all(dialog);
     }
   else
@@ -895,7 +900,8 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     number_of_silence_points = 0;
   }
 
-  da_expose_event(da, NULL, NULL);
+  //TODO: call draw event on da
+  //da_draw_event(da, NULL, NULL);
 }
 
 void build_svg_path(GString *imagefile, gchar *svg_filename)
@@ -1122,18 +1128,14 @@ void refresh_drawing_area()
   
   gint width_drawing_area;
   gint height_drawing_area;
-  //draw..
-  width_drawing_area = da->allocation.width;
-  height_drawing_area = da->allocation.height;
-  
+  wh_get_widget_size(da, &width_drawing_area, &height_drawing_area);
+ 
   update_rect.x = 0;
   update_rect.y = 0;
   update_rect.width = width_drawing_area;
   update_rect.height = height_drawing_area;
   
-  gdk_window_invalidate_rect (da->window,
-                              &update_rect,
-                              FALSE);
+  gdk_window_invalidate_rect(gtk_widget_get_window(da), &update_rect, FALSE);
 }
 
 //!updates bottom progress bar
@@ -1331,7 +1333,6 @@ GtkWidget *create_song_bar_hbox()
   song_bar_hbox = gtk_hbox_new (FALSE, 0);
   progress_adj = (GtkWidget *)gtk_adjustment_new (0.0, 0.0, 100001.0, 0, 10000, 1000);
   progress_bar = gtk_hscale_new (GTK_ADJUSTMENT (progress_adj));
-  gtk_range_set_update_policy(GTK_RANGE(progress_bar), GTK_UPDATE_CONTINUOUS);
   g_object_set(progress_bar, "draw-value", FALSE, NULL);
   //when we click on the bar
   g_signal_connect (G_OBJECT (progress_bar), "button-press-event",
@@ -1523,7 +1524,7 @@ GtkWidget *create_filename_player_hbox()
 void change_volume_event(GtkWidget *widget,
                          gpointer data)
 {
-  if (GTK_WIDGET_SENSITIVE(volume_bar))
+  if (gtk_widget_get_sensitive(volume_bar))
     {
       gint volume_adj_position;
       volume_adj_position = (gint)gtk_adjustment_get_value(GTK_ADJUSTMENT(volume_adj));
@@ -1646,31 +1647,20 @@ void handle_player_detached_event(GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-//!returns a drawable string from a string
-//!that we will draw on the drawing area
-PangoLayout *get_drawing_text(gchar *str)
-{
-#define FONT "Sans 9"
-  //the pango context
-  PangoContext *context;
-  context = gtk_widget_create_pango_context(da);
-  //the font
-  PangoFontDescription *desc;
-  desc = pango_font_description_from_string (FONT);
-  //our layout
-  PangoLayout *layout;
-  layout = pango_layout_new(context);
-  
+/*PangoLayout *get_drawing_text(gchar *str)
+  {
+  PangoContext *context = gtk_widget_create_pango_context(da);
+  PangoFontDescription *desc = pango_font_description_from_string("Sans 9");
+  PangoLayout *layout = pango_layout_new(context);
+
   pango_layout_set_text(layout, str,-1);
   pango_layout_set_font_description (layout, desc);
-  
-  //we free the context
+
   g_object_unref (context);
-  //we free the description
   pango_font_description_free (desc);
-  
+
   return layout;
-}
+  }*/
 
 //!returns the value of the right drawing area
 gfloat get_right_drawing_time()
@@ -1768,8 +1758,7 @@ gfloat pixels_to_time(gfloat width, gint pixels)
 \param width The width of the drawing 
 \param The time in hundreths of a second
 */
-gint get_draw_line_position(gint width,
-                            gfloat time)
+gint get_draw_line_position(gint width, gfloat time)
 {
   //position to return
   gint position;
@@ -1781,11 +1770,68 @@ gint get_draw_line_position(gint width,
   return position;
 }
 
-void draw_motif(GtkWidget *da,
-                GdkGC *gc,
-                gint ylimit,
-                gint x,
-                gint model)
+static void set_color(cairo_t *cairo, GdkColor *color)
+{
+  gdk_cairo_set_source_color(cairo, color);
+}
+
+static void draw_rectangle(cairo_t *cairo, gboolean filled, gint x, gint y, 
+    gint width, gint height)
+{
+  cairo_rectangle(cairo, x, y, width, height);
+
+  if (filled)
+  {
+    cairo_fill(cairo);
+  }
+}
+
+static void draw_arc(cairo_t *cairo, gboolean filled, gint x, gint y,
+    double radius, double angle1, double angle2)
+{
+  cairo_arc(cairo, x, y, radius, angle1, angle2);
+
+  if (filled)
+  {
+    cairo_fill(cairo);
+  }
+}
+
+static void draw_text(cairo_t *cairo, const gchar *text, gint x, gint y)
+{
+  cairo_select_font_face(cairo, "Sans 11", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_set_font_size(cairo, 11.0);
+
+  cairo_move_to(cairo, x, y + 13);
+  cairo_show_text(cairo, text);
+}
+
+static void draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
+    gboolean line_is_dashed)
+{
+  double dashes[] = { 1.0, 3.0 };
+  if (line_is_dashed)
+  {
+    cairo_set_dash(cairo, dashes, 2, -50.0);
+  }
+  else
+  {
+    cairo_set_dash(cairo, dashes, 0, 0.0);
+  }
+
+  cairo_set_line_width(cairo, 1.3);
+  cairo_set_line_cap(cairo, CAIRO_LINE_CAP_ROUND);
+  cairo_move_to(cairo, x1, y1);
+  cairo_line_to(cairo, x2, y2);
+  cairo_stroke(cairo);
+}
+
+static void draw_point(cairo_t *cairo, gint x, gint y)
+{
+  draw_line(cairo, x, y, x, y, FALSE);
+}
+
+void draw_motif(GtkWidget *da, cairo_t *gc, gint ylimit, gint x, gint model)
 {
   GdkColor color;
   switch(model){
@@ -1818,38 +1864,37 @@ void draw_motif(GtkWidget *da,
     color.red = 0;color.green = 0;color.blue = 0;
     break;
   }
-  //set the color for the graphic context
-  gdk_gc_set_rgb_fg_color (gc, &color);
-  
-  gdk_draw_point (da->window,gc,x,ylimit+6);
-  gdk_draw_point (da->window,gc,x,ylimit+7);
-  gdk_draw_point (da->window,gc,x,ylimit+8);
-  gdk_draw_point (da->window,gc,x-1,ylimit+8);
-  gdk_draw_point (da->window,gc,x+1,ylimit+8);
-  gdk_draw_point (da->window,gc,x,ylimit+9);
-  gdk_draw_point (da->window,gc,x-1,ylimit+9);
-  gdk_draw_point (da->window,gc,x+1,ylimit+9);
-  gdk_draw_point (da->window,gc,x-2,ylimit+9);
-  gdk_draw_point (da->window,gc,x+2,ylimit+9);
-  gdk_draw_point (da->window,gc,x-3,ylimit+9);
-  gdk_draw_point (da->window,gc,x+3,ylimit+9);
-  gdk_draw_point (da->window,gc,x,ylimit+10);
-  gdk_draw_point (da->window,gc,x-1,ylimit+10);
-  gdk_draw_point (da->window,gc,x+1,ylimit+10);
-  gdk_draw_point (da->window,gc,x-2,ylimit+10);
-  gdk_draw_point (da->window,gc,x+2,ylimit+10);
-  gdk_draw_point (da->window,gc,x-3,ylimit+10);
-  gdk_draw_point (da->window,gc,x+3,ylimit+10);
-  
+
+  set_color (gc, &color);
+
+  draw_point(gc,x,ylimit+6);
+  draw_point(gc,x,ylimit+7);
+  draw_point(gc,x,ylimit+8);
+  draw_point(gc,x-1,ylimit+8);
+  draw_point(gc,x+1,ylimit+8);
+  draw_point(gc,x,ylimit+9);
+  draw_point(gc,x-1,ylimit+9);
+  draw_point(gc,x+1,ylimit+9);
+  draw_point(gc,x-2,ylimit+9);
+  draw_point(gc,x+2,ylimit+9);
+  draw_point(gc,x-3,ylimit+9);
+  draw_point(gc,x+3,ylimit+9);
+  draw_point(gc,x,ylimit+10);
+  draw_point(gc,x-1,ylimit+10);
+  draw_point(gc,x+1,ylimit+10);
+  draw_point(gc,x-2,ylimit+10);
+  draw_point(gc,x+2,ylimit+10);
+  draw_point(gc,x-3,ylimit+10);
+  draw_point(gc,x+3,ylimit+10);
+
   color.red = 0;color.green = 0;color.blue = 0;
-  //set the color for the graphic context
-  gdk_gc_set_rgb_fg_color (gc, &color);
+  set_color(gc, &color);
 }
 
 //!draw the marks, minutes, seconds...
 void draw_marks(gint time_interval, gint left_mark,
                 gint right_mark, gint ylimit,
-                GtkWidget *da, GdkGC *gc)
+                GtkWidget *da, cairo_t *gc)
 {
   gint left2 = (left_mark/time_interval) * time_interval;
   if (left2 < left_mark)
@@ -1909,7 +1954,7 @@ void cancel_quick_preview()
 \param number_splitpoint is the current splitpoint we draw
 \param splitpoint_checked = TRUE if the splitpoint is checked
 */
-void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
+void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
                             gint x,gint draw,
                             gint current_point_hundr_secs,
                             gboolean move,
@@ -1925,21 +1970,21 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
   color.green = 255 * 100;
   color.blue = 255 * 200;
   //set the color for the graphic context
-  gdk_gc_set_rgb_fg_color (gc, &color);
+  set_color (gc, &color);
   
   //if it' the splitpoint we move, don't fill in the circle and
   //the square
   if (!draw)
   {
     //top buttons
-    gdk_draw_rectangle (da->window,gc,
+    draw_rectangle (gc,
         FALSE, x-6,4,
         11,11);
   }
   else
   {
     //top buttons
-    gdk_draw_rectangle (da->window,gc,
+    draw_rectangle (gc,
         TRUE, x-6,4,
         12,12);
     //if it's the splitpoint selected
@@ -1950,9 +1995,9 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
       color.green = 255 * 220;
       color.blue = 255 * 255;
       //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
+      set_color (gc, &color);
 
-      gdk_draw_rectangle (da->window,gc,
+      draw_rectangle (gc,
           TRUE, x-4,6,
           8,8);
     }
@@ -1963,15 +2008,15 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
   color.green = 255 * 196;
   color.blue = 255 * 221;
   //set the color for the graphic context
-  gdk_gc_set_rgb_fg_color (gc, &color);
+  set_color (gc, &color);
   
   gint i;
   for(i = 0;i<5;i++)
   {
-    gdk_draw_point (da->window,gc,x+i,erase_split_ylimit + m + 3);
-    gdk_draw_point (da->window,gc,x-i,erase_split_ylimit + m + 3);
-    gdk_draw_point (da->window,gc,x+i,erase_split_ylimit + m + 4);
-    gdk_draw_point (da->window,gc,x-i,erase_split_ylimit + m + 4);
+    draw_point (gc,x+i,erase_split_ylimit + m + 3);
+    draw_point (gc,x-i,erase_split_ylimit + m + 3);
+    draw_point (gc,x+i,erase_split_ylimit + m + 4);
+    draw_point (gc,x-i,erase_split_ylimit + m + 4);
   }
   
   //if we are currently moving this splitpoint
@@ -1986,57 +2031,53 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
     {
       color.red = 25000;color.green = 25000;color.blue = 40000;
     }
-    gdk_gc_set_rgb_fg_color (gc, &color);
+    set_color (gc, &color);
 
-    gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-    gdk_draw_line(da->window, gc,
-        x,erase_split_ylimit + m -8,
-        x,progress_ylimit + m);
-    gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+    draw_line(gc, x,erase_split_ylimit + m -8, x,progress_ylimit + m, TRUE);
   }
   
   color.red = 255 * 22;
   color.green = 255 * 35;
   color.blue = 255 * 91;
   //set the color for the graphic context
-  gdk_gc_set_rgb_fg_color (gc, &color);
+  set_color (gc, &color);
   
   //draw the splitpoint motif
   for (i = -3;i <= 1;i++)
   {
-    gdk_draw_point (da->window,gc,x,erase_split_ylimit + m +i);
+    draw_point (gc,x,erase_split_ylimit + m +i);
   }
   for (i = 2;i <= 5;i++)
   {
-    gdk_draw_point (da->window,gc,x,erase_split_ylimit + m + i);
+    draw_point (gc,x,erase_split_ylimit + m + i);
   }
   for (i = 3;i <= 4;i++)
   {
-    gdk_draw_point (da->window,gc,x-1,erase_split_ylimit + m + i);
-    gdk_draw_point (da->window,gc,x+1,erase_split_ylimit + m + i);
+    draw_point (gc,x-1,erase_split_ylimit + m + i);
+    draw_point (gc,x+1,erase_split_ylimit + m + i);
   }
   for (i = 6;i <= 11;i++)
   {
-    gdk_draw_point (da->window,gc,x,erase_split_ylimit + m + i);
+    draw_point (gc,x,erase_split_ylimit + m + i);
   }
   
   //bottom splitpoint vertical bar
   for (i = 0;i < margin;i++)
   {
-    gdk_draw_point (da->window,gc,x,progress_ylimit + m - i);
+    draw_point (gc,x,progress_ylimit + m - i);
   }
 
   //bottom checkbox vertical bar
   for (i = 0;i < margin;i++)
   {
-    gdk_draw_point (da->window,gc,x,splitpoint_ypos + m - i - 1);
+    draw_point (gc,x,splitpoint_ypos + m - i - 1);
   }
 
   //bottom rectangle
-  gdk_gc_set_rgb_fg_color (gc, &color);
+  set_color (gc, &color);
   color.red = 25000;color.green = 25000;color.blue = 25000;
   //bottom check rectangle
-  gdk_draw_rectangle (da->window,gc,
+  draw_rectangle (gc,
       FALSE, x-6,splitpoint_ypos + m, 12,12);
 
   //draw a cross with 2 lines if the splitpoint is checked
@@ -2048,8 +2089,8 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
     //
     gint top = splitpoint_ypos + m;
     gint bottom = splitpoint_ypos + m + 12;
-    gdk_draw_line(da->window, gc, left, top, right, bottom);
-    gdk_draw_line(da->window, gc, left, bottom, right, top);
+    draw_line(gc, left, top, right, bottom, FALSE);
+    draw_line(gc, left, bottom, right, top, FALSE);
   }
   
   //we set the color
@@ -2062,55 +2103,38 @@ void draw_motif_splitpoints(GtkWidget *da, GdkGC *gc,
   {
     color.red = 25000;color.green = 25000;color.blue = 40000;
   }
-  gdk_gc_set_rgb_fg_color(gc, &color);
+  set_color(gc, &color);
   
-  gdk_draw_arc (da->window,gc,FALSE,
-      x-7,progress_ylimit + m+ 1,14,14, 0,360*64);
+  draw_arc(gc, FALSE, x, progress_ylimit + m+ 1 + 7, 14 / 2, 0, 2 * G_PI);
+
   //only fill the circle if we don't move that splitpoint
   if (draw)
   {
-    gdk_draw_arc(da->window,gc,TRUE,
-        x-8,progress_ylimit + m + 1,16,16, 0,360*64);
+    draw_arc(gc, TRUE, x, progress_ylimit + m + 1 + 8, 16 / 2, 0, 2 * G_PI);
   }
   
   if (draw)
   {
     gint number_of_chars = 0;
-    PangoLayout *layout;
-    gchar str[30];
-    layout = get_drawing_text(get_time_for_drawing(str,
-            current_point_hundr_secs, TRUE, &number_of_chars));
-    //left text
-    gdk_draw_layout(da->window, gc,
-        x - (number_of_chars * 3),
-        checkbox_ypos + margin - 1, layout);
-    //we free the memory for the layout
-    g_object_unref (layout);
+    gchar str[30] = { '\0' };
+    get_time_for_drawing(str, current_point_hundr_secs, TRUE, &number_of_chars);
+    draw_text(gc, str, x - (number_of_chars * 3), checkbox_ypos + margin - 1);
   }
 
   if (show_silence_wave)
   {
     //we set the black color
     color.red = 0;color.green = 0;color.blue = 0;
-    gdk_gc_set_rgb_fg_color(gc, &color);
+    set_color(gc, &color);
 
-    if (move)
-    {
-      gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-    }
-
-    //the draw silence wave middle line
-    gdk_draw_line(da->window, gc, x,text_ypos + margin, x,wave_ypos);
-
-    if (move)
-    {
-      gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-    }
+    gboolean dashed = FALSE;
+    if (move) { dashed = TRUE; }
+    draw_line(gc, x,text_ypos + margin, x,wave_ypos, dashed);
   }
 }
 
 //!left, right mark in hundreths of seconds
-void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc)
+void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *gc)
 {
   Split_point current_point;
   //current point in hundreth of seconds
@@ -2191,80 +2215,80 @@ gint get_silence_wave_coeff()
 }
 
 //! Draws the silence wave
-void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, GdkGC *gc)
+void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *gc)
 {
-  if (silence_points && ! we_scan_for_silence)
+  if (!silence_points || we_scan_for_silence)
   {
-    GdkPoint *points = NULL;
-    gint number_of_points = 0;
+    return;
+  }
 
-    //we set default black color
-    GdkColor color;
-    color.red = 0;color.green = 0;color.blue = 0;
-    gdk_gc_set_rgb_fg_color(gc, &color);
-    gdk_gc_set_line_attributes(gc, 0.1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+  GdkColor color;
+  color.red = 0;color.green = 0;color.blue = 0;
+  set_color(gc, &color);
 
-    gint i = 0;
-    gint points_coeff = get_silence_wave_coeff();
+  gint i = 0;
+  gint points_coeff = get_silence_wave_coeff();
 
-    for (i = 0;i < number_of_silence_points;i++)
+  gint times = 0;
+
+  gint previous_x = 0;
+  gint previous_y = 0;
+
+  for (i = 0;i < number_of_silence_points;i++)
+  {
+    long time = silence_points[i].time;
+    float level = silence_points[i].level;
+
+    if ((time <= right_mark) && (time >= left_mark))
     {
-      long time = silence_points[i].time;
-      float level = silence_points[i].level;
 
-      if ((time <= right_mark) && (time >= left_mark))
+      if (i % points_coeff == 0)
       {
-        if (i % points_coeff == 0)
+        gint x = get_draw_line_position(width_drawing_area, (gfloat) time);
+        gint y = text_ypos + margin + (gint)floorf(level);
+
+        if (times == 0)
         {
-          if (! points)
-          {
-            points = g_malloc(sizeof(GdkPoint));
-          }
-          else
-          {
-            points = g_realloc(points, sizeof(GdkPoint) * (number_of_points + 1));
-          }
-
-          points[number_of_points].x =
-            get_draw_line_position(width_drawing_area, (gfloat) time);
-
-          points[number_of_points].y = text_ypos + margin + (gint)floorf(level);
-
-          number_of_points++;
+          cairo_move_to(gc, x, y);
         }
+        else
+        {
+          draw_line(gc, previous_x, previous_y, x, y, FALSE);
+        }
+
+        previous_x = x;
+        previous_y = y;
+
+        times++;
       }
-    }
 
-    if (points)
-    {
-      //draw the points
-      gdk_draw_lines(da->window, gc, points, number_of_points);
-
-      g_free(points);
-      points = NULL;
-      number_of_points = 0;
     }
   }
 }
 
-//!event for drawing the progress drawing area
-gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
+#if GTK_MAJOR_VERSION <= 2
+gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
 {
+  cairo_t *gc = gdk_cairo_create(da->window);
+#else
+gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
+{
+#endif
   int width = 0, height = 0;
-  gtk_widget_get_size_request(da, &width, &height);
-
+  wh_get_widget_size(da, &width, &height);
   if (show_silence_wave)
   {
-    if (height != 232)
+    if (height != DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE)
     {
-      gtk_widget_set_size_request(da,400,232);
+      gtk_widget_set_size_request(da, 
+          DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE);
     }
   }
   else
   {
-    if (height != 123)
+    if (height != DRAWING_AREA_HEIGHT)
     {
-      gtk_widget_set_size_request(da,400,123);
+      gtk_widget_set_size_request(da, DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT);
     }
   }
 
@@ -2300,58 +2324,51 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
     bottom_left_middle_right_text_ypos = wave_ypos;
   }
   
-  PangoLayout *layout;
-  //graphic context
-  GdkGC *gc;
-  //the color
   GdkColor color;
-  gc = gdk_gc_new (da->window);
-  //
   gint nbr_chars = 0;
   
-  //draw..
-  width_drawing_area = da->allocation.width;
+  wh_get_widget_size(da, &width_drawing_area, NULL);
   
   color.red = 255 * 235;color.green = 255 * 235;
   color.blue = 255 * 235;
-  gdk_gc_set_rgb_fg_color (gc, &color);
+  set_color (gc, &color);
   //background rectangle
-  gdk_draw_rectangle (da->window,gc,
+  draw_rectangle (gc,
                       TRUE, 0,0,
                       width_drawing_area, wave_ypos + text_length + 2);
 
   color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 255;
-  gdk_gc_set_rgb_fg_color (gc, &color);
+  set_color (gc, &color);
   
   //background white rectangles
-  gdk_draw_rectangle (da->window,gc,
+  draw_rectangle (gc,
                       TRUE,
                       0,margin,
                       width_drawing_area,
                       real_erase_split_length);
-  gdk_draw_rectangle (da->window,gc,
+  draw_rectangle (gc,
                       TRUE,
                       0,erase_split_ylimit,
                       width_drawing_area,
                       progress_length);
-  gdk_draw_rectangle (da->window,gc,
+  draw_rectangle (gc,
                       TRUE,
                       0,progress_ylimit+margin,
                       width_drawing_area,
                       real_move_split_length);
-  gdk_draw_rectangle (da->window,gc,
+  draw_rectangle (gc,
                       TRUE,
                       0,splitpoint_ypos+margin,
                       width_drawing_area,
                       real_checkbox_length);
-  gdk_draw_rectangle (da->window,gc,
+  draw_rectangle (gc,
                       TRUE,
                       0,checkbox_ypos+margin,
                       width_drawing_area,
                       text_length);
   if (show_silence_wave)
   {
-    gdk_draw_rectangle (da->window,gc, TRUE, 0, text_ypos + margin,
+    draw_rectangle (gc, TRUE, 0, text_ypos + margin,
         width_drawing_area, wave_length);
   }
  
@@ -2381,7 +2398,7 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
     //total draw time
     total_draw_time = right_time - left_time;
 
-    gchar str[30];
+    gchar str[30] = { '\0' };
     gint beg_pixel = get_draw_line_position(width_drawing_area,0);
 
     gint splitpoint_time_left = -1;
@@ -2410,8 +2427,8 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
       color.red = 255 * 255;color.green = 255 * 255;
       color.blue = 255 * 210;
       //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
-      gdk_draw_rectangle (da->window,gc,
+      set_color (gc, &color);
+      draw_rectangle (gc,
           TRUE,splitpoint_pixels_left,
           erase_split_ylimit,
           splitpoint_pixels_length,
@@ -2424,7 +2441,7 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
     color.green = 255 * 150;
     color.blue = 255 * 255;
     //set the color for the graphic context
-    gdk_gc_set_rgb_fg_color (gc, &color);
+    set_color (gc, &color);
 
     //if it's the first splitpoint from play preview
     if (quick_preview_end_splitpoint != -1)
@@ -2440,7 +2457,7 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
         right_pixel - left_pixel + 1;
 
       //top buttons
-      gdk_draw_rectangle (da->window,gc,
+      draw_rectangle (gc,
           TRUE, left_pixel,
           progress_ylimit-2,
           preview_splitpoint_length,3);
@@ -2450,9 +2467,9 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
       {
         color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
         //set the color for the graphic context
-        gdk_gc_set_rgb_fg_color (gc, &color);
+        set_color (gc, &color);
         //top buttons
-        gdk_draw_rectangle (da->window,gc,
+        draw_rectangle (gc,
             TRUE, left_pixel,
             erase_split_ylimit,
             preview_splitpoint_length,
@@ -2469,7 +2486,7 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
           get_draw_line_position(width_drawing_area,
               get_splitpoint_time(preview_start_splitpoint) /10);
         //top buttons
-        gdk_draw_rectangle (da->window,gc,
+        draw_rectangle (gc,
             TRUE, left_pixel,
             progress_ylimit-2,
             width_drawing_area-left_pixel,
@@ -2479,9 +2496,9 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
         {
           color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
           //set the color for the graphic context
-          gdk_gc_set_rgb_fg_color (gc, &color);
+          set_color (gc, &color);
           //top buttons
-          gdk_draw_rectangle (da->window,gc,
+          draw_rectangle (gc,
               TRUE, left_pixel,
               erase_split_ylimit,
               width_drawing_area-left_pixel,
@@ -2496,8 +2513,8 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
       color.red = 255 * 235;color.green = 255 * 235;
       color.blue = 255 * 235;
       //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
-      gdk_draw_rectangle (da->window,gc,
+      set_color (gc, &color);
+      draw_rectangle (gc,
           TRUE,
           0,0,
           beg_pixel,
@@ -2507,15 +2524,10 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
     {
       color.red = 30000;color.green = 0;color.blue = 30000;
       //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
+      set_color (gc, &color);
 
-      layout = get_drawing_text(get_time_for_drawing(str,
-              left_time, FALSE, &nbr_chars));
-      //left text
-      gdk_draw_layout(da->window, gc,
-          15,bottom_left_middle_right_text_ypos,layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
+      get_time_for_drawing(str, left_time, FALSE, &nbr_chars);
+      draw_text(gc, str, 15, bottom_left_middle_right_text_ypos);
     }
 
     gint end_pixel = 
@@ -2526,9 +2538,9 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
       color.red = 255 * 235;color.green = 255 * 235;
       color.blue = 255 * 235;
       //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
+      set_color (gc, &color);
 
-      gdk_draw_rectangle (da->window,gc,
+      draw_rectangle (gc,
           TRUE, end_pixel,0,
           width_drawing_area,
           bottom_left_middle_right_text_ypos);
@@ -2537,16 +2549,10 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
     {
       color.red = 30000;color.green = 0;color.blue = 30000;
       //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
+      set_color (gc, &color);
 
-      layout = get_drawing_text(get_time_for_drawing(str,
-              right_time, FALSE, &nbr_chars));
-      //right text
-      gdk_draw_layout(da->window, gc,
-          width_drawing_area - 52,
-          bottom_left_middle_right_text_ypos, layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
+      get_time_for_drawing(str, right_time, FALSE, &nbr_chars);
+      draw_text(gc, str, width_drawing_area - 52, bottom_left_middle_right_text_ypos);
     }
 
     if (total_draw_time < hundr_secs_th)
@@ -2633,55 +2639,32 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
         //we set default black color
         color.red = 0;color.green = 0;color.blue = 0;
         //set the color for the graphic context
-        gdk_gc_set_rgb_fg_color (gc, &color);
+        set_color (gc, &color);
 
-        //we put the current middle text
-        layout =
-          get_drawing_text(get_time_for_drawing(str,
-                current_time, FALSE, &nbr_chars));
-        gdk_draw_layout(da->window, gc,
-            width_drawing_area/2-11,
-            bottom_left_middle_right_text_ypos, layout);
-        //we free the memory for the layout
-        g_object_unref (layout);
+        get_time_for_drawing(str, current_time, FALSE, &nbr_chars);
+        draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
       }
       else
       //we move the time
       { 
         //we set the red color
         color.red = 255 * 255;color.green = 0;color.blue = 0;
-        gdk_gc_set_rgb_fg_color(gc, &color);
+        set_color(gc, &color);
 
-        gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-
-        gdk_draw_line(da->window, gc,
-            move_pixel,erase_split_ylimit,
-            move_pixel,progress_ylimit);
+        draw_line(gc, move_pixel,erase_split_ylimit, move_pixel,progress_ylimit, TRUE);
 
         if (show_silence_wave)
         {
-          //the draw silence wave middle line
-          gdk_draw_line(da->window, gc,
-              move_pixel,text_ypos + margin,
-              move_pixel,wave_ypos);
+          draw_line(gc, move_pixel,text_ypos + margin, move_pixel,wave_ypos, TRUE);
         }
-
-        gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 
         //we set default black color
         color.red = 0;color.green = 0;color.blue = 0;
         //set the color for the graphic context
-        gdk_gc_set_rgb_fg_color (gc, &color);
+        set_color (gc, &color);
 
-        //move time text
-        layout =
-          get_drawing_text(get_time_for_drawing(str,
-                move_time, FALSE, &nbr_chars));
-        gdk_draw_layout(da->window, gc,
-            width_drawing_area/2-11,
-            bottom_left_middle_right_text_ypos, layout);
-        //we free the memory for the layout
-        g_object_unref (layout);
+        get_time_for_drawing(str, move_time, FALSE, &nbr_chars);
+        draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
       }
     }
     else
@@ -2689,31 +2672,24 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
       //we set default black color
       color.red = 0;color.green = 0;color.blue = 0;
       //set the color for the graphic context
-      gdk_gc_set_rgb_fg_color (gc, &color);
+      set_color (gc, &color);
 
-      layout = get_drawing_text(get_time_for_drawing(str,
-              center_time, FALSE, &nbr_chars));
-      //center text
-      gdk_draw_layout(da->window, gc,
-          width_drawing_area/2-11,
-          bottom_left_middle_right_text_ypos, layout);
-      //we free the memory for the layout
-      g_object_unref (layout);
+      get_time_for_drawing(str, center_time, FALSE, &nbr_chars);
+      draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
     }
 
     //we set default black color
     color.red = 0;color.green = 0;color.blue = 0;
     //set the color for the graphic context
-    gdk_gc_set_rgb_fg_color (gc, &color);
+    set_color (gc, &color);
 
     //we set the red color
     color.red = 255 * 255;color.green = 0;color.blue = 0;
-    gdk_gc_set_rgb_fg_color(gc, &color);
+    set_color(gc, &color);
 
     //the top middle line, current position
-    gdk_draw_line(da->window, gc,
-        width_drawing_area/2,erase_split_ylimit,
-        width_drawing_area/2,progress_ylimit);
+    draw_line(gc, width_drawing_area/2,erase_split_ylimit,
+        width_drawing_area/2,progress_ylimit, FALSE);
 
     //we draw the silence wave if we have it 
     if (show_silence_wave)
@@ -2722,66 +2698,38 @@ gboolean da_expose_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
 
       //we set the red color
       color.red = 255 * 255;color.green = 0;color.blue = 0;
-      gdk_gc_set_rgb_fg_color(gc, &color);
+      set_color(gc, &color);
 
       //the draw silence wave middle line
-      gdk_draw_line(da->window, gc,
-          width_drawing_area/2,text_ypos + margin,
-          width_drawing_area/2,wave_ypos);
+      draw_line(gc, width_drawing_area/2,text_ypos + margin, width_drawing_area/2, wave_ypos, FALSE);
     }
 
     //we draw the splitpoints
     draw_splitpoints(left_mark, right_mark, da, gc);
   }
   else
-  //if not playing and timer not active
   {      
-    //top color
     color.red = 255 * 212; color.green = 255 * 100; color.blue = 255 * 200;
-    //set the color for the graphic context
-    gdk_gc_set_rgb_fg_color (gc, &color);
-
-    layout = get_drawing_text(_(" left click on splitpoint selects it,"
-          " right click erases it"));
-    gdk_draw_layout(da->window, gc, 0, margin - 3, layout);
-    //we free the memory for the layout
-    g_object_unref(layout);
+    set_color (gc, &color);
+    draw_text(gc, _(" left click on splitpoint selects it, right click erases it"),
+        0, margin - 3);
 
     color.red = 0;color.green = 0;color.blue = 0;
-    //set the color for the graphic context
-    gdk_gc_set_rgb_fg_color (gc, &color);
+    set_color (gc, &color);
+    draw_text(gc, _(" left click + move changes song position, right click + move changes zoom"),
+        0, erase_split_ylimit + margin);
 
-    layout = get_drawing_text(_(" left click + move changes song"
-            " position, right click + move changes zoom"));
-    gdk_draw_layout(da->window, gc,
-        0, erase_split_ylimit + margin, layout);
-    //we free the memory for the layout
-    g_object_unref (layout);
-
-    //we set the color
     color.red = 15000;color.green = 40000;color.blue = 25000;
-    gdk_gc_set_rgb_fg_color (gc, &color);
+    set_color (gc, &color);
+    draw_text(gc, 
+        _(" left click on point + move changes point position, right click play preview"),
+        0, progress_ylimit + margin);
 
-    layout = get_drawing_text(_(" left click on point + move changes point"
-            " position, right click play preview"));
-    gdk_draw_layout(da->window, gc,
-        0, progress_ylimit + margin, layout);
-    //we free the memory for the layout
-    g_object_unref (layout);
-
-    //bottom rectangle color
     color.red = 0; color.green = 0; color.blue = 0;
-    //set the color for the graphic context
-    gdk_gc_set_rgb_fg_color (gc, &color);
-
-    layout = get_drawing_text(_(" left click on rectangle checks/unchecks 'keep splitpoint'"));
-    gdk_draw_layout(da->window, gc,
-        0, splitpoint_ypos + 1, layout);
-    //we free the memory for the layout
-    g_object_unref(layout);
+    set_color (gc, &color);
+    draw_text(gc, _(" left click on rectangle checks/unchecks 'keep splitpoint'"),
+        0, splitpoint_ypos + 1);
   }
-  
-  g_object_unref(gc);
   
   return TRUE;
 }
@@ -3195,7 +3143,9 @@ gboolean da_notify_event (GtkWidget     *da,
     gdk_window_get_pointer (event->window, &x, &y, &state);
 
     //drawing area width
-    gfloat width_drawing_area = (gfloat) da->allocation.width;
+    gint width = 0;
+    wh_get_widget_size(da, &width, NULL);
+    gfloat width_drawing_area = (gfloat) width;
 
     if (state)
     {
@@ -3287,19 +3237,28 @@ gboolean da_notify_event (GtkWidget     *da,
 GtkWidget *create_drawing_area()
 {
   GtkWidget *frame = gtk_frame_new(NULL);
+ 
+  GdkColor color;
+  color.red = 65000;
+  color.green = 0;
+  color.blue = 0;
+  gtk_widget_modify_bg(frame, GTK_STATE_NORMAL, &color);
+
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 
-  //drawing area
   da = gtk_drawing_area_new();
-  gtk_widget_set_size_request(da,400,123);
-  g_signal_connect(da, "expose_event",
-      G_CALLBACK(da_expose_event), NULL);
-  g_signal_connect(da, "button_press_event",
-      G_CALLBACK(da_press_event), NULL);
-  g_signal_connect(da, "button_release_event",
-      G_CALLBACK(da_unpress_event), NULL);
-  g_signal_connect(da, "motion_notify_event",
-      G_CALLBACK(da_notify_event), NULL);
+
+  gtk_widget_set_size_request(da, DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT);
+
+#if GTK_MAJOR_VERSION <= 2
+  g_signal_connect(da, "expose_event", G_CALLBACK(da_draw_event), NULL);
+#else
+  g_signal_connect(da, "draw", G_CALLBACK(da_draw_event), NULL);
+#endif
+
+  g_signal_connect(da, "button_press_event", G_CALLBACK(da_press_event), NULL);
+  g_signal_connect(da, "button_release_event", G_CALLBACK(da_unpress_event), NULL);
+  g_signal_connect(da, "motion_notify_event", G_CALLBACK(da_notify_event), NULL);
 
   gtk_widget_set_events(da, gtk_widget_get_events(da)
       | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK
@@ -3720,7 +3679,7 @@ gint mytimer(gpointer data)
                 {
                   print_all_song_infos();
                   print_song_time_elapsed();
-                  if(!GTK_WIDGET_IS_SENSITIVE(progress_bar))
+                  if(!gtk_widget_is_sensitive(progress_bar))
                     gtk_widget_set_sensitive(GTK_WIDGET(progress_bar), TRUE);
                 }
               check_stream();
@@ -3769,7 +3728,7 @@ gint mytimer(gpointer data)
                 }
               
               //enable volume bar if needed
-              if(!GTK_WIDGET_IS_SENSITIVE(volume_bar))
+              if(!gtk_widget_is_sensitive(volume_bar))
                 gtk_widget_set_sensitive(GTK_WIDGET(volume_bar), TRUE);
                 
             }
@@ -3829,11 +3788,11 @@ gint mytimer(gpointer data)
       //we set the add button to sensitive
       if (playing)
         {
-          if (!GTK_WIDGET_SENSITIVE(player_add_button))
+          if (!gtk_widget_get_sensitive(player_add_button))
             {
               gtk_widget_set_sensitive(player_add_button, TRUE);
             }
-            if (!GTK_WIDGET_SENSITIVE(silence_wave_check_button))
+            if (!gtk_widget_get_sensitive(silence_wave_check_button))
             {
               gtk_widget_set_sensitive(silence_wave_check_button, TRUE);
             }
@@ -4047,7 +4006,7 @@ GtkWidget *create_choose_file_frame()
 
   /* filename entry */
   entry = gtk_entry_new();
-  gtk_entry_set_editable(GTK_ENTRY(entry), FALSE);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), FALSE);
   gtk_box_pack_start(GTK_BOX(choose_file_hbox), entry , TRUE, TRUE, 4);
 
   // Display the input file name if  we already have gotten one

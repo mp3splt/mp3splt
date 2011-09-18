@@ -163,7 +163,14 @@ AM_CONDITIONAL(ENABLE_SK, test "x$packager_mode" = "xfalse" -a "x$enable_scrollk
 
 #################################################
 #Check for GTK
-AM_PATH_GTK_2_0(2.12.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.12.0))
+ifdef([AM_PATH_GTK_3_0],
+[
+  CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
+  AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
+],
+[
+  AM_PATH_GTK_2_0(2.24.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.24.0))
+])
 
 #################################################
 #Check for libmp3splt
