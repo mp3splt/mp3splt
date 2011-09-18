@@ -118,6 +118,7 @@ AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 # Initialize the gnome integration
 #################################################
 
+AM_CONDITIONAL([HAVE_GNOME_DOC_UTILS],[false])
 AM_CONDITIONAL(GNOME,false)
 gnome="no"
 
@@ -125,41 +126,25 @@ AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]
     [enable_gnome=$enableval],[enable_gnome="yes"])
 
 if test "x$enable_gnome" = xyes;then
+  ifdef([GNOME_DOC_INIT],
+  [
+    GNOME_DOC_INIT([],
+                   [],
+                   [AC_MSG_ERROR([gnome-doc-utils not found.
+  
+      Install it or configure with "--disable-gnome".])])
+  ],
+  [
+    AM_CONDITIONAL([HAVE_GNOME_DOC_UTILS],[true])
+  ])
 
-ifdef([GNOME_DOC_INIT],
-[
-  #Prepare building the gnome documentation of this program
-  GNOME_DOC_INIT([],
-                 [],
-                 [AC_MSG_ERROR([gnome-doc-utils not found.
-
-    Install it or configure with "--disable-gnome".])])
-],
-[])
-
-  #Check for libgnome, the library for displaying the "help" dialogue
   PKG_CHECK_MODULES([GNOMEUI],
                     [libgnomeui-2.0], 
                     [AM_CONDITIONAL(GNOME, true) gnome="yes" ],
       [AC_MSG_ERROR([gnomeui development files are not installed.
 
     Install it or configure with "--disable-gnome".])])
-
-  AC_CHECK_PROGS(SCROLLKEEPER, scrollkeeper-config scrollkeeper-update scrollkeeper-uninstall)
-  if test "x$SCROLLKEEPER" = x; then
-    AC_MSG_ERROR([One of the following scrollkeeper commands not found:
- scrollkeeper-config, scrollkeeper-update, scrollkeeper-uninstall.
-
-    Install rarian or configure with "--disable-scrollkeeper".])
-  fi
-
-  AM_CONDITIONAL([HAVE_GNOME_DOC_UTILS],[true])
-else
-  AC_DEFINE(HAVE_GNOME, false, [Undefined if we cannot use gnome functions.])
-  AM_CONDITIONAL([HAVE_GNOME_DOC_UTILS],[false])
 fi
-
-AM_CONDITIONAL(ENABLE_SK, test "x$packager_mode" = "xfalse" -a "x$enable_scrollkeeper" = "xyes")
 
 #################################################
 #Check for GTK
@@ -298,7 +283,6 @@ top_builddir=`pwd`
 AC_SUBST(top_builddir)
 AC_SUBST(PACKAGE)
 AC_SUBST(LOCALEDIR)
-AC_SUBST(HAVE_GNOME)
 
 
 #################################################
