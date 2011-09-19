@@ -456,9 +456,39 @@ splt_tags *splt_tu_get_original_tags_tags(splt_state *state)
 
 static char *splt_tu_get_replaced_with_tags(const char *word,
     const splt_tags *tags, const splt_tags *original_tags,
-    int track, int *error, int replace_tags_in_tags, splt_state *state)
+    int track, int *error, int replace_tags_in_tags, 
+    int current_split, splt_state *state)
 {
   int err = SPLT_OK;
+
+  if (current_split == -1)
+  {
+    current_split = splt_t_get_current_split_file_number(state) - 1;
+  }
+
+  long mins = -1; long secs = -1; long hundr = -1;
+  long point_value = splt_sp_get_splitpoint_value(state, current_split, &err);
+  splt_co_get_mins_secs_hundr(point_value, &mins, &secs, &hundr);
+  long next_mins = -1; long next_secs = -1; long next_hundr = -1;
+  long next_point_value = -1;
+  if (splt_sp_splitpoint_exists(state, current_split + 1))
+  {
+    next_point_value = splt_sp_get_splitpoint_value(state, current_split + 1, &err);
+    long total_time = splt_t_get_total_time(state);
+    if (total_time > 0 && next_point_value > total_time)
+    {
+      next_point_value = total_time;
+    }
+    splt_co_get_mins_secs_hundr(next_point_value, &next_mins, &next_secs, &next_hundr);
+  }
+  short write_eof = SPLT_FALSE;
+  if (next_point_value == LONG_MAX)
+  {
+    write_eof = SPLT_TRUE;
+  }
+
+  long mMsShH_value = 1;
+  short eof_written = SPLT_FALSE;
 
   char *word_with_tags = NULL;
 
@@ -512,6 +542,57 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
 
       switch (*ptr)
       {
+        case 's':
+          mMsShH_value = secs;
+          goto put_value;
+        case 'S':
+          mMsShH_value = next_secs;
+          goto put_value;
+        case 'm':
+          mMsShH_value = mins;
+          goto put_value;
+        case 'M':
+          mMsShH_value = next_mins;
+          goto put_value;
+        case 'h':
+          mMsShH_value = hundr;
+          goto put_value;
+        case 'H':
+          mMsShH_value = next_hundr;
+put_value:
+          if (!eof_written)
+          {
+            if (write_eof &&
+                (*ptr == 'S' || *ptr == 'M' || *ptr == 'H'))
+            {
+              write_eof = SPLT_FALSE;
+              eof_written = SPLT_TRUE;
+
+              err = splt_su_append_str(&word_with_tags, "EOF", NULL);
+              if (err != SPLT_OK) { goto error; }
+            }
+            else if (mMsShH_value != -1)
+            {
+              char temp[6] = { '\0' };
+              temp[0] = '%';
+              temp[1] = '0';
+              char number_of_digits = '2';
+              if (*ptr == 'M' || *ptr == 'm')
+              {
+                number_of_digits = splt_of_get_number_of_digits_from_total_time(state);
+              }
+              temp[2] = number_of_digits;
+              temp[3] = 'l';
+              temp[4] = 'd';
+
+              char mMsShH_str[100] = { '\0' };
+              snprintf(mMsShH_str, 100, temp, mMsShH_value);
+
+              err = splt_su_append_str(&word_with_tags, mMsShH_str, NULL);
+              if (err != SPLT_OK) { goto error; }
+            }
+          }
+          break;
         case 'a':
           if (artist != NULL)
           {
@@ -854,17 +935,23 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
 
   splt_tags *original_tags = splt_tu_get_original_tags_tags(state);
 
-  char *t = splt_tu_get_replaced_with_tags(tags->title, tags, original_tags, track, &err, replace_tags_in_tags, state);
+  char *t = splt_tu_get_replaced_with_tags(tags->title, tags, original_tags,
+      track, &err, replace_tags_in_tags, current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *y = splt_tu_get_replaced_with_tags(tags->year, tags, original_tags, track, &err, replace_tags_in_tags, state);
+  char *y = splt_tu_get_replaced_with_tags(tags->year, tags, original_tags, track, &err, replace_tags_in_tags, 
+      current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, original_tags, track, &err, replace_tags_in_tags, state);
+  char *a = splt_tu_get_replaced_with_tags(tags->artist, tags, original_tags, track, &err, replace_tags_in_tags, 
+      current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *al = splt_tu_get_replaced_with_tags(tags->album, tags, original_tags, track, &err, replace_tags_in_tags, state);
+  char *al = splt_tu_get_replaced_with_tags(tags->album, tags, original_tags, track, &err, replace_tags_in_tags, 
+      current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, original_tags, track, &err, replace_tags_in_tags, state);
+  char *c = splt_tu_get_replaced_with_tags(tags->comment, tags, original_tags, track, &err, replace_tags_in_tags,
+      current_split, state);
   if (err != SPLT_OK) { return err; }
-  char *g = splt_tu_get_replaced_with_tags(tags->genre, tags, original_tags, track, &err, replace_tags_in_tags, state);
+  char *g = splt_tu_get_replaced_with_tags(tags->genre, tags, original_tags, track, &err, replace_tags_in_tags,
+      current_split, state);
   if (err != SPLT_OK) { return err; }
 
   splt_su_free_replace(&cur_tags->title, t);
