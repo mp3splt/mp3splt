@@ -292,7 +292,7 @@ static void splt_u_alpha_track(splt_state *state, int nfield,
       "%s", format + 2 + offset);
 }
 
-static char splt_of_get_number_of_digits_from_total_time(splt_state *state)
+char splt_of_get_number_of_digits_from_total_time(splt_state *state)
 {
   long total_time = splt_t_get_total_time(state);
   if (total_time > 0)
@@ -352,14 +352,10 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
     current_split = splt_t_get_current_split_file_number(state) - 1;
   }
 
-  long mins = -1;
-  long secs = -1;
-  long hundr = -1;
+  long mins = -1; long secs = -1; long hundr = -1;
   long point_value = splt_sp_get_splitpoint_value(state, current_split, &error);
   splt_co_get_mins_secs_hundr(point_value, &mins, &secs, &hundr);
-  long next_mins = -1;
-  long next_secs = -1;
-  long next_hundr = -1;
+  long next_mins = -1; long next_secs = -1; long next_hundr = -1;
   long next_point_value = -1;
   if (splt_sp_splitpoint_exists(state, current_split + 1))
   {

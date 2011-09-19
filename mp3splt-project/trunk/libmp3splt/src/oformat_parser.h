@@ -35,6 +35,8 @@
 int splt_of_parse_outformat(char *s, splt_state *state);
 int splt_of_put_output_format_filename(splt_state *state, int current_split);
 
+char splt_of_get_number_of_digits_from_total_time(splt_state *state);
+
 #define SPLT_OFORMAT_PARSER_H
 
 #endif

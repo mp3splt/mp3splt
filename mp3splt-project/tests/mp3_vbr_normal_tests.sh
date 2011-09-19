@@ -1428,6 +1428,89 @@ function test_normal_vbr_with_negative_splitpoints
   echo
 }
 
+function test_normal_vbr_custom_tags_with_replace_tags_in_tags_and_original_tags
+{
+  remove_output_dir
+
+  test_name="vbr custom tags & replace tags in tags & original tags"
+  M_FILE="La_Verue__Today"
+
+  F1="-a_10-b_a_@n-10.mp3"
+  F2="Today_7_8-La Verue-album_cc_@t-7.mp3"
+  F3="Today_8_8-La Verue-album_cc_@t-8.mp3"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  tags_option="r[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@t=#t_@n_#n,@N=7]"
+  output_option="@t-@a-@b-@N"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_all_mp3_tags_with_version "2" "a_10" "b_a_@n" "" "" "" "" "10" "cc_b_@a"
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "Today_7_8" "2007"\
+  "Rock" "17" "7" "cc_#t_@n_#n"
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "Today_8_8" "2007"\
+  "Rock" "17" "8" "cc_#t_@n_#n"
+
+  print_ok
+  echo
+}
+
+function test_normal_vbr_custom_tags_with_replace_tags_in_tags_and_time_variables
+{
+  remove_output_dir
+
+  test_name="vbr custom tags & replace tags in tags & time variables"
+  M_FILE="La_Verue__Today"
+
+  F1="-a_10-b_a_@n-10.mp3"
+  F2="7__01_00__01_05-La Verue-album_cc_@t-7.mp3"
+  F3="8__01_05__02_00-La Verue-album_cc_@t-8.mp3"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/$F1\" created
+   File \"$OUTPUT_DIR/$F2\" created
+   File \"$OUTPUT_DIR/$F3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  tags_option="r[@a=a_@n,@b=b_@a,@c=cc_@b,@n=10]%[@o,@c=cc_@t,@b=album_@c,@t=@n__@m_@s__@M_@S,@N=7]"
+  output_option="@t-@a-@b-@N"
+  mp3splt_args="-d $OUTPUT_DIR -o $output_option -g \"$tags_option\" $MP3_FILE 0.5 1.0 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/$F1"
+  check_all_mp3_tags_with_version "2" "a_10" "b_a_@n" "" "" "" "" "10" "cc_b_@a"
+
+  current_file="$OUTPUT_DIR/$F2"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "7__01_00__01_05" "2007"\
+  "Rock" "17" "7" "cc_@n__@m_@s__@M_@S"
+
+  current_file="$OUTPUT_DIR/$F3"
+  check_all_mp3_tags_with_version "2" "La Verue" "album_cc_@t" "8__01_05__02_00" "2007"\
+  "Rock" "17" "8" "cc_@n__@m_@s__@M_@S"
+
+  print_ok
+  echo
+}
+
+
 
 function run_normal_vbr_tests
 {
