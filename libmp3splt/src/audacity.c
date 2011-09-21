@@ -144,14 +144,35 @@ static int splt_audacity_set_name(splt_audacity *sa, const char *name)
   return splt_su_copy(name, &sa->name);
 }
 
-static void splt_audacity_set_begin(splt_audacity *sa, double begin)
+static long to_hundreths(char *str)
 {
-  sa->begin = (long) (floorf(begin) * 100.0);
+  long hun = 0;
+  long seconds = 0, hundreths = 0;
+  sscanf(str, "%ld.%4ld", &seconds, &hundreths);
+
+  if (hundreths >= 100)
+  {
+    double hun_in_double = (double)hundreths;
+    hundreths = round(hun_in_double / 100.0);
+  }
+
+  return seconds * 100 + hundreths;
 }
 
-static void splt_audacity_set_end(splt_audacity *sa, double end)
+static char *splt_audacity_set_begin(splt_audacity *sa, char *str)
 {
-  sa->end = (long) (floorf(end) * 100.0);
+  int hun = to_hundreths(str);
+  if (hun == -1) { return NULL; }
+  sa->begin = hun;
+  return strchr(str, '\t');
+}
+
+static char *splt_audacity_set_end(splt_audacity *sa, char *str)
+{
+  int hun = to_hundreths(str);
+  if (hun == -1) { return NULL; }
+  sa->end  = hun;
+  return strchr(str, '\t');
 }
 
 static splt_audacity *splt_audacity_process_line(splt_state *state, char *line,
@@ -167,19 +188,21 @@ static splt_audacity *splt_audacity_process_line(splt_state *state, char *line,
   char *ptr = line;
 
   errno = 0;
-  splt_audacity_set_begin(aud, strtod(ptr, &ptr));
-  if (errno != 0) {
+  ptr = splt_audacity_set_begin(aud, ptr);
+  if (ptr == NULL || *ptr == '\0') {
     *error = SPLT_INVALID_AUDACITY_FILE;
     goto error;
   }
+  ptr++;
 
   errno = 0;
-  splt_audacity_set_end(aud, strtod(ptr, &ptr));
-  if (errno != 0)
+  ptr = splt_audacity_set_end(aud, ptr);
+  if (ptr == NULL || *ptr == '\0')
   {
     *error = SPLT_INVALID_AUDACITY_FILE;
     goto error;
   }
+  ptr++;
 
   ptr = splt_su_trim_spaces(ptr);
 
