@@ -242,18 +242,7 @@ void load_preferences()
 
   //selected player
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
-  //if its the first time we load preferences
-  gint i;
-  for(i = 0; i < 4; i++)
-  {
-    if (item == GPOINTER_TO_INT(g_list_nth_data(player_pref_list, i)))
-    {
-      selected_player = GPOINTER_TO_INT(g_list_nth_data(player_pref_list, i));
-      break;
-    }
-  }
-
-  gtk_combo_box_set_active(GTK_COMBO_BOX(player_combo_box), i);
+  ch_set_active_value(GTK_COMBO_BOX(player_combo_box), item);
 
   //frame mode
   item = g_key_file_get_boolean(key_file, "split", "frame_mode", NULL);

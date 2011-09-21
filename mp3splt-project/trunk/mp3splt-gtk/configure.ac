@@ -33,7 +33,7 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.7.0.920, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.7.0.930, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
@@ -48,7 +48,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 
 # Initialize automake
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.0.920)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.0.930)
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
@@ -125,6 +125,8 @@ gnome="no"
 AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
     [enable_gnome=$enableval],[enable_gnome="yes"])
 
+AM_CONDITIONAL(ENABLE_SK, true)
+
 if test "x$enable_gnome" = xyes;then
   ifdef([GNOME_DOC_INIT],
   [
@@ -154,13 +156,13 @@ ifdef([AM_PATH_GTK_3_0],
   AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
 ],
 [
-  AM_PATH_GTK_2_0(2.24.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.24.0))
+  AM_PATH_GTK_2_0(2.20.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.20.0))
 ])
 
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.0.920 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.0.930 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])

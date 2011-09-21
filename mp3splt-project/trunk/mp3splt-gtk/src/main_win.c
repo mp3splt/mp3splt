@@ -42,7 +42,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "0.7.0.920"
+#define VERSION "0.7.0.930"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
@@ -867,8 +867,6 @@ void create_all()
   gtk_box_pack_start(GTK_BOX(window_vbox), main_vbox, TRUE, TRUE, 0);
   
   load_preferences();
-
-  combo_remove_unavailable_players();
 
   if (selected_player == PLAYER_GSTREAMER)
   {

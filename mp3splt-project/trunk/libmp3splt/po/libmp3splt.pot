@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-09-05 22:00+0200\n"
+"POT-Creation-Date: 2011-09-21 21:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,7 +168,7 @@ msgstr ""
 msgid " CUE file '%s' created.\n"
 msgstr ""
 
-#: src/audacity.c:214
+#: src/audacity.c:237
 #, c-format
 msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr ""
