@@ -796,37 +796,12 @@ GtkWidget *create_pref_splitpoints_page()
   return general_hbox;
 }
 
-//!removes unavailable players from the combo
-void combo_remove_unavailable_players()
-{
-  //if we dont have GSTREAMER 
-#ifdef NO_GSTREAMER
-  gtk_combo_box_remove_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_GSTREAMER-1);
-  player_pref_list =
-    g_list_remove(player_pref_list, GINT_TO_POINTER(PLAYER_GSTREAMER));
-#endif
-
-  //if we dont have AUDACIOUS
-#ifdef NO_AUDACIOUS
-  gtk_combo_box_remove_text(GTK_COMBO_BOX(player_combo_box),
-                            PLAYER_AUDACIOUS-1);
-  player_pref_list =
-    g_list_remove(player_pref_list, GINT_TO_POINTER(PLAYER_AUDACIOUS));
-#endif
-}
-
 //!event when changing the combo box player
 void player_combo_box_event(GtkComboBox *widget, gpointer data)
 {
-  //disconnect from player
   disconnect_button_event(NULL, NULL);
 
-  gint selected_item;
-  selected_item = gtk_combo_box_get_active(widget);
-  gint sel_pl = GPOINTER_TO_INT(g_list_nth_data(player_pref_list, selected_item));
-
-  selected_player = sel_pl;
+  selected_player = ch_get_active_value(widget);
 
   if (selected_player == PLAYER_GSTREAMER)
   {
@@ -851,24 +826,18 @@ GtkWidget *create_player_options_box()
   GtkWidget *label = gtk_label_new(_("Choose a player:"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  player_combo_box = gtk_combo_box_text_new();
+  player_combo_box = ch_new_combo();
+
+#ifndef NO_AUDACIOUS
+  ch_append_to_combo(player_combo_box, "Audacious", PLAYER_AUDACIOUS);
+#endif
+  ch_append_to_combo(player_combo_box, "SnackAmp", PLAYER_SNACKAMP);
+#ifndef NO_GSTREAMER
+  ch_append_to_combo(player_combo_box, "GStreamer", PLAYER_GSTREAMER);
+#endif
+
   g_signal_connect(G_OBJECT(player_combo_box), "changed",
       G_CALLBACK(player_combo_box_event), NULL);
-  
-  gtk_combo_box_text_insert_text(GTK_COMBO_BOX_TEXT(player_combo_box),
-                            PLAYER_AUDACIOUS,"Audacious");
-  player_pref_list =
-    g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_AUDACIOUS));
-
-  gtk_combo_box_text_insert_text(GTK_COMBO_BOX_TEXT(player_combo_box),
-                            PLAYER_SNACKAMP,"SnackAmp");
-  player_pref_list =
-    g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_SNACKAMP));
-
-  gtk_combo_box_text_insert_text(GTK_COMBO_BOX_TEXT(player_combo_box),
-                            PLAYER_GSTREAMER,"GStreamer");
-  player_pref_list =
-    g_list_append(player_pref_list, GINT_TO_POINTER(PLAYER_GSTREAMER));
 
   gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 12);
  
