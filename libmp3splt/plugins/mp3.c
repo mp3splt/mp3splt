@@ -124,6 +124,8 @@ static const unsigned long splt_mp3_crctab[256] = {
 static void splt_mp3_save_end_point(splt_state *state, splt_mp3_state *mp3state,
     int save_end_point, off_t end)
 {
+  mp3state->end_non_zero = end;
+
   if (save_end_point)
   {
     mp3state->end = end;
@@ -1111,6 +1113,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
   //we initialise default values
   mp3state->frames = 1;
   mp3state->end = 0;
+  mp3state->end_non_zero = 0;
   mp3state->first = 1;
   mp3state->file_input = file_input;
   mp3state->framemode = framemode;
@@ -2158,6 +2161,12 @@ bloc_end:
         }
 
         splt_c_put_progress_text(state,SPLT_PROGRESS_PREPARE);
+
+        //this happens when we end and start on the same frame
+        if (mp3state->frames == fbegin && mp3state->end_non_zero != 0)
+        {
+          begin = mp3state->end_non_zero;
+        }
 
         // Finds begin by counting frames
         while (mp3state->frames < fbegin)
