@@ -826,14 +826,14 @@ GtkWidget *create_player_options_box()
   GtkWidget *label = gtk_label_new(_("Choose a player:"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  player_combo_box = ch_new_combo();
+  player_combo_box = GTK_WIDGET(ch_new_combo());
 
 #ifndef NO_AUDACIOUS
-  ch_append_to_combo(player_combo_box, "Audacious", PLAYER_AUDACIOUS);
+  ch_append_to_combo(GTK_COMBO_BOX(player_combo_box), "Audacious", PLAYER_AUDACIOUS);
 #endif
-  ch_append_to_combo(player_combo_box, "SnackAmp", PLAYER_SNACKAMP);
+  ch_append_to_combo(GTK_COMBO_BOX(player_combo_box), "SnackAmp", PLAYER_SNACKAMP);
 #ifndef NO_GSTREAMER
-  ch_append_to_combo(player_combo_box, "GStreamer", PLAYER_GSTREAMER);
+  ch_append_to_combo(GTK_COMBO_BOX(player_combo_box), "GStreamer", PLAYER_GSTREAMER);
 #endif
 
   g_signal_connect(G_OBJECT(player_combo_box), "changed",
