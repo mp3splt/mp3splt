@@ -667,7 +667,7 @@ char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap
   return mess;
 }
 
-char *splt_su_get_formatted_message(splt_state *state, char *message, ...)
+char *splt_su_get_formatted_message(splt_state *state, const char *message, ...)
 {
   char *mess = NULL;
 

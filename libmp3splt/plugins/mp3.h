@@ -55,10 +55,12 @@
 
 #define SPLT_MAD_BSIZE 4032
 
+#ifndef NO_ID3TAG
 typedef struct {
   id3_byte_t *tag_bytes;
   id3_length_t tag_length;
 } tag_bytes_and_size;
+#endif
 
 // Struct that will contain header's useful infos
 struct splt_header {

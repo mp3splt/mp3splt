@@ -65,7 +65,7 @@ char *splt_su_get_file_with_output_path(splt_state *state,
 
 int splt_su_str_ends_with(const char *str1, const char *str2);
 
-char *splt_su_get_formatted_message(splt_state *state, char *message, ...);
+char *splt_su_get_formatted_message(splt_state *state, const char *message, ...);
 int splt_su_str_line_has_digit(const char *str);
 char *splt_su_format_messagev(splt_state *state, const char *message, va_list ap);
 

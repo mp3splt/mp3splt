@@ -1924,7 +1924,13 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 {
   vorbis_comment *comment = (vorbis_comment *)original_tags->all_original_tags;
+  if (!comment)
+  {
+    return;
+  }
+
   free_vorbis_comment(comment, SPLT_TRUE);
+
   free(original_tags->all_original_tags);
   original_tags->all_original_tags = NULL;
 }
