@@ -3384,8 +3384,8 @@ void splt_pl_set_original_tags(splt_state *state, int *error)
 
 void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 {
-  tag_bytes_and_size *bytes_and_size = 
-    (tag_bytes_and_size *) original_tags->all_original_tags;
+#ifndef NO_ID3TAG
+  tag_bytes_and_size *bytes_and_size = (tag_bytes_and_size *) original_tags->all_original_tags;
 
   if (!bytes_and_size) {
     return;
@@ -3401,6 +3401,7 @@ void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 
   free(original_tags->all_original_tags);
   original_tags->all_original_tags = NULL;
+#endif
 }
 
 //@}

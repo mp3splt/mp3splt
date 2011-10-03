@@ -143,7 +143,7 @@ void splt_e_set_strerror_msg_with_data(splt_state *state, const char *data)
 }
 
 void splt_e_error(int error_type, const char *function,
-    int arg_int, char *arg_char)
+    int arg_int, const char *arg_char)
 {
   switch (error_type)
   {
