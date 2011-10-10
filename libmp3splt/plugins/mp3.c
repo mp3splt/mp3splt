@@ -2163,7 +2163,7 @@ bloc_end:
         splt_c_put_progress_text(state,SPLT_PROGRESS_PREPARE);
 
         //this happens when we end and start on the same frame
-        if (mp3state->frames == fbegin && mp3state->end_non_zero != 0)
+        if (mp3state->frames >= fbegin && mp3state->end_non_zero != 0)
         {
           begin = mp3state->end_non_zero;
         }
