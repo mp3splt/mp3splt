@@ -267,19 +267,28 @@ int main(int argc, char **orig_argv)
         break;
       case 'O':
         opt->O_option = SPLT_TRUE;
-        mp3splt_set_long_option(state, SPLT_OPT_OVERLAP_TIME,
-            c_hundreths(optarg));
+        long overlap_time = c_hundreths(optarg);
+
+        if (overlap_time != -LONG_MAX)
+        {
+          mp3splt_set_long_option(state, SPLT_OPT_OVERLAP_TIME, overlap_time);
+        }
+        else
+        {
+          print_error_exit(_("bad overlap time expression.\n"
+                "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."), data);
+        }
         break;
       case 'X':
         opt->X_option = SPLT_TRUE;
         break;
       case 't':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
-        float converted_time = c_hundreths(optarg);
+        long converted_time = c_hundreths(optarg);
 
         if (converted_time != -LONG_MAX)
         {
-          float split_time = converted_time / 100.0;
+          float split_time = (float)converted_time / 100.0;
           mp3splt_set_float_option(state, SPLT_OPT_SPLIT_TIME, split_time);
         }
         else
