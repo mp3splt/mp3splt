@@ -37,19 +37,33 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_OGG_SILENCE_H
+#ifndef MP3SPLT_OGG_NEW_STREAM_HANDLER_H
 
-#include "silence_processors.h"
 #include "splt.h"
-#include "ogg_new_stream_handler.h"
 
-int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold, 
-    float min, short output, ogg_page *page, ogg_int64_t granpos,
-    int *error, ogg_int64_t first_cut_granpos,
-    short silence_processor(double time, int silence_was_found, short must_flush,
-      splt_scan_silence_data *ssd, int *found, int *error));
+#include "ogg.h"
+#include "ogg_utils.h"
 
-#define MP3SPLT_OGG_SILENCE_H
+typedef struct {
+  int header_packet_counter;
+  splt_state *state;
+  splt_ogg_state *oggstate;
+  ogg_stream_state *stream_out;
+  const char *output_fname;
+  int write_header_packets;
+  ogg_stream_state *optional_stream_in;
+} splt_ogg_new_stream_handler;
+
+splt_ogg_new_stream_handler *splt_ogg_nsh_new(splt_state *state, 
+    splt_ogg_state *oggstate, ogg_stream_state *stream_out, const char *output_fname,
+    int write_header_packets, ogg_stream_state *optional_stream_in);
+
+void splt_ogg_initialise_for_new_stream(splt_ogg_new_stream_handler *nsh, 
+    ogg_page *page, long *cutpoint, long previous_granulepos);
+int splt_ogg_new_stream_needs_header_packet();
+void splt_ogg_new_stream_handle_header_packet(splt_ogg_new_stream_handler *nsh, ogg_packet *packet, int *error);
+
+#define MP3SPLT_OGG_NEW_STREAM_HANDLER_H
 
 #endif
 

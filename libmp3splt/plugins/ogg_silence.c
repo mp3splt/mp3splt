@@ -44,6 +44,7 @@
 #include "ogg_silence.h"
 #include "ogg_utils.h"
 #include "silence_processors.h"
+#include "ogg_new_stream_handler.h"
 
 static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
     float max_threshold, ogg_page *page,  ogg_int64_t granpos, ogg_int64_t first_cut_granpos,
@@ -86,12 +87,20 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
       splt_scan_silence_data *ssd, int *found, int *error),
     splt_scan_silence_data *ssd, int *error)
 {
-  splt_c_put_progress_text(state,SPLT_PROGRESS_SCAN_SILENCE);
+  splt_c_put_progress_text(state, SPLT_PROGRESS_SCAN_SILENCE);
 
   splt_ogg_state *oggstate = state->codec;
 
   ogg_stream_state os;
   ogg_stream_init(&os, oggstate->serial);
+
+  splt_ogg_new_stream_handler *ogg_new_stream_handler = 
+    splt_ogg_nsh_new(state, oggstate, NULL, NULL, SPLT_FALSE, &os);
+  if (ogg_new_stream_handler == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
 
   ogg_int64_t pos = granpos;
 
@@ -158,6 +167,9 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
   ogg_int64_t page_granpos;
   ogg_packet op;
 
+  double previous_streams_time_in_double = 0;
+  double time_in_double = 0;
+
   while (!eos)
   {
     while (!eos)
@@ -169,9 +181,11 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 
       if (result > 0)
       {
-        if (ogg_page_eos(&og)) 
+        if (ogg_page_bos(&og))
         {
-          eos = 1;
+          splt_ogg_initialise_for_new_stream(ogg_new_stream_handler, &og, NULL, 0);
+          oggstate->cutpoint_begin = 0;
+          previous_streams_time_in_double = time_in_double;
         }
 
         page_granpos = ogg_page_granulepos(&og) - oggstate->cutpoint_begin;
@@ -194,12 +208,19 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 
           if (result > 0)
           {
+            if (splt_ogg_new_stream_needs_header_packet(ogg_new_stream_handler))
+            {
+              splt_ogg_new_stream_handle_header_packet(ogg_new_stream_handler, &op, error);
+              if (*error < 0) { goto function_end; }
+              continue;
+            }
+
             int bs = splt_ogg_get_blocksize(oggstate, oggstate->vi, &op);
 
             //we currently loose the first packet when using the
             //auto adjust option because we are out of sync,
             //so we disable the continuity check
-            if (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST))
+            if (!splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST))
             {
               ogg_int64_t first_granpos = splt_ogg_compute_first_granulepos(state, oggstate, &op, bs);
               if (first_cut_granpos == 0 && first_granpos != 0)
@@ -219,8 +240,8 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 
             if (vorbis_synthesis(&vb, &op) != 0)
             {
-              *error = SPLT_ERROR_INVALID;
               splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+              *error = SPLT_ERROR_INVALID;
               goto function_end;
             }
 
@@ -229,8 +250,9 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 
             int err = SPLT_OK;
             short must_flush = (end && begin > end);
-            double time_in_double = (double) (pos - first_cut_granpos);
+            time_in_double = (double) (pos - first_cut_granpos);
             time_in_double /= oggstate->vi->rate;
+            time_in_double += previous_streams_time_in_double;
             int stop = process_silence(time_in_double, silence_was_found, must_flush, ssd, &found, &err);
             if (stop || stop == -1)
             {
@@ -245,8 +267,6 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
       }
 
       result = ogg_sync_pageout(&oy, &og);
-      //result == -1 is NOT a fatal error
-
 //      long page_number = ogg_page_pageno(&og);
 //      fprintf(stdout,"X page number = %ld\n", page_number);
 //      fflush(stdout);
@@ -265,7 +285,6 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
       }
 
       result = ogg_sync_pageout(&oy, &og);
-      //result == -1 is NOT a fatal error
 
 //      if (result != -1)
 //      {
@@ -339,6 +358,8 @@ function_end:
     splt_e_set_strerror_msg_with_data(state, splt_t_get_filename_to_split(state));
     *error = SPLT_ERROR_SEEKING_FILE;
   }
+
+  splt_ogg_nsh_free(&ogg_new_stream_handler);
 }
 
 static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, float threshold)
@@ -353,7 +374,7 @@ static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, floa
       int i, j;
       for (i = 0; i < oggstate->vi->channels; i++)
       {
-        float  *mono=pcm[i];
+        float *mono=pcm[i];
         if (!silence) 
         {
           break;
