@@ -37,12 +37,29 @@
  *
  *********************************************************/
 
-#include "splt.h"
+#ifndef MP3SPLT_OGG_UTILS_H
 
+#include "splt.h"
 #include "ogg.h"
+
+#define TOTAL_HEADER_PACKETS 3
 
 long splt_ogg_get_blocksize(splt_ogg_state *oggstate, vorbis_info *vi, ogg_packet *op);
 ogg_int64_t splt_ogg_compute_first_granulepos(splt_state *state, splt_ogg_state *oggstate,
     ogg_packet *packet, int bs);
 int splt_ogg_update_sync(splt_state *state, ogg_sync_state *sync_in, FILE *f, int *error);
+splt_v_packet *splt_ogg_clone_packet(ogg_packet *packet, int *error);
+void splt_ogg_free_packet(splt_v_packet **p);
+void splt_ogg_free_oggstate_headers(splt_ogg_state *oggstate);
+int splt_ogg_write_pages_to_file(splt_state *state, ogg_stream_state *stream,
+    FILE *file, int flush, int *error, const char *output_fname);
+int splt_ogg_write_header_packets(splt_state *state, splt_ogg_state *oggstate,
+    ogg_stream_state *stream_out, const char *output_fname, int *error);
+void splt_ogg_put_tags(splt_state *state, int *error);
+void splt_ogg_set_tags_in_headers(splt_ogg_state *oggstate, int *error);
+vorbis_comment *splt_ogg_clone_vorbis_comment(vorbis_comment *comment);
+void splt_ogg_free_vorbis_comment(vorbis_comment *vc, short cloned_vorbis_comment);
 
+#define MP3SPLT_OGG_UTILS_H
+
+#endif

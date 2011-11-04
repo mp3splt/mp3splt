@@ -35,7 +35,7 @@ if OGG_PLUGIN
 
 plugin_LTLIBRARIES += libsplt_ogg.la
 libsplt_ogg_la_SOURCES = ogg.c ogg.h ogg_silence.c ogg_silence.h ogg_utils.c ogg_utils.h \
-silence_processors.c silence_processors.h
+silence_processors.c silence_processors.h ogg_new_stream_handler.c ogg_new_stream_handler.h
 
 libsplt_ogg_la_CPPFLAGS = $(common_CPPFLAGS) @OGG_CFLAGS@ @VORBIS_CFLAGS@
 libsplt_ogg_la_LDFLAGS = $(common_LDFLAGS) @VORBISFILE_LIBS@ @VORBIS_LIBS@ @OGG_LIBS@ 
