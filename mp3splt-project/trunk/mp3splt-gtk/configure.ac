@@ -150,28 +150,14 @@ fi
 
 #################################################
 #Check for GTK
-AC_ARG_ENABLE(gtk3, [
-AC_HELP_STRING([--enable-gtk3],  [Compile against GTK 3.x explicitly (default: use GTK 3.x if available)])
-AC_HELP_STRING([--disable-gtk3], [Compile against GTK 2.x explicitly (default: use GTK 3.x if available)])],
-    [enable_gtk3=$enableval],[enable_gtk3="auto"])
-
-if test "x$enable_gtk3" = xauto; then
-  AC_MSG_NOTICE([selecting GTK 2.x/3.x automatically])
-  ifdef([AM_PATH_GTK_3_0],[enable_gtk3=yes],[enable_gtk3=no])
-fi
-
-if test "x$enable_gtk3" = xyes; then
-  ifdef([AM_PATH_GTK_3_0],
-  [
-    CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
-    AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
-  ],
-  [
-    AC_MSG_ERROR([AM_PATH_GTK_3_0 macro not found !])
-  ])
-else
+ifdef([AM_PATH_GTK_3_0],
+[
+  CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
+  AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
+],
+[
   AM_PATH_GTK_2_0(2.20.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.20.0))
-fi
+])
 
 #################################################
 #Check for libmp3splt
