@@ -23,6 +23,7 @@ SYNCERR_FILE="$SONGS_DIR/syncerror.mp3"
 #OGG
 OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can.ogg"
 SILENCE_OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can_silence.ogg"
+MULTIPLE_LOGICAL_STREAMS_OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can_multiple_logical_streams.ogg"
 STREAM_OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can__stream.ogg"
 STREAM_OGG_SILENCE_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can__stream_silence.ogg"
 NO_TAGS_OGG_FILE="$SONGS_DIR/Kelly_Allyn__Whiskey_Can__no_tags.ogg"

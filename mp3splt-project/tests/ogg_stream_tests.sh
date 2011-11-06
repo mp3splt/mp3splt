@@ -294,6 +294,96 @@ function test_stream_auto_adjust_silence
   echo
 }
 
+function test_multiple_logical_streams
+{
+  remove_output_dir
+
+  test_name="multiple logical streams split"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_multiple_logical_streams"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_37h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $MULTIPLE_LOGICAL_STREAMS_OGG_FILE 1.0 2.0 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg"
+  check_current_ogg_length \
+"0m:01.621s
+0m:30.813s
+0m:27.564s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "501453"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg" 
+  check_current_ogg_length \
+"0m:03.250s
+0m:30.816s
+0m:25.933s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "482670"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_37h.ogg" 
+  check_current_ogg_length "0m:04.375s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
+                     "http://www.jamendo.com"
+  check_current_file_size "11035"
+
+  print_ok
+  echo
+}
+
+function test_multiple_logical_streams_from_0_to_EOF
+{
+  remove_output_dir
+
+  test_name="multiple logical streams split from 0 to EOF"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_multiple_logical_streams"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting normal split
+   File \"$OUTPUT_DIR/all_Whiskey Can.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR -o all_@t $MULTIPLE_LOGICAL_STREAMS_OGG_FILE 0.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  original_file_ogg_lengths=\
+"0m:30.809s
+0m:30.811s
+0m:30.813s
+0m:30.815s
+0m:30.816s
+0m:30.309s"
+
+  current_file="$MULTIPLE_LOGICAL_STREAMS_OGG_FILE"
+  check_current_ogg_length "$original_file_ogg_lengths"
+
+  current_file="$OUTPUT_DIR/all_Whiskey Can.ogg"
+  check_current_ogg_length "$original_file_ogg_lengths"
+
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1480411"
+
+  print_ok
+  echo
+}
+
 function run_stream_tests
 {
   p_blue " STREAM ogg tests ..."
