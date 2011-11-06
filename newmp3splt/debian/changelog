@@ -1,10 +1,12 @@
-mp3splt (2.4.0.934) natty; urgency=low
+mp3splt (2.4.0.938) oneiric; urgency=low
 
   * Non-maintainer upload.
   * New Upstream Version
   * Updated the debian control file
 
  -- Gunter Königsmann <gunter@peterpall.de>  Sat, 3 Mar 2011 23:04:40 +0100
+
+mp3splt (2.2.5) unstable; urgency=low
 
   * New Upstream Version
   * add DM-Upload-Allowed field

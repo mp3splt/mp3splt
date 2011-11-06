@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-10-10 00:11+0200\n"
+"POT-Creation-Date: 2011-11-06 08:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -620,6 +620,6 @@ msgstr ""
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:1847
+#: plugins/ogg.c:1458
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""

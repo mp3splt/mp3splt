@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-10-10 00:12+0200\n"
+"POT-Creation-Date: 2011-11-06 08:54+0100\n"
 "PO-Revision-Date: 2011-09-11 11:11+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,62 +22,68 @@ msgstr ""
 msgid "cannot allocate memory !"
 msgstr "Nelze přidělit paměť!"
 
-#: src/mp3splt.c:287
+#: src/mp3splt.c:278
+msgid ""
+"bad overlap time expression.\n"
+"\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
+msgstr ""
+
+#: src/mp3splt.c:296
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:350
+#: src/mp3splt.c:359
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr ""
 
-#: src/mp3splt.c:414
+#: src/mp3splt.c:423
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 
-#: src/mp3splt.c:545
+#: src/mp3splt.c:554
 msgid "no input filename(s)."
 msgstr ""
 
-#: src/mp3splt.c:558
+#: src/mp3splt.c:567
 msgid "multiple splitpoints with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:562
+#: src/mp3splt.c:571
 msgid "using time mode with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:603
+#: src/mp3splt.c:612
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:607
+#: src/mp3splt.c:616
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:614 src/options_checker.c:49
+#: src/mp3splt.c:623 src/options_checker.c:49
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p"
 msgstr ""
 
-#: src/mp3splt.c:670
+#: src/mp3splt.c:679
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:714
+#: src/mp3splt.c:723
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:746
+#: src/mp3splt.c:755
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:763
+#: src/mp3splt.c:772
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
