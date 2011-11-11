@@ -1263,6 +1263,8 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
 
   //we put useful infos in the state
   mp3state->mp3file.firsth = (off_t) (mp3state->bytes - len);
+  splt_d_print_debug(state, "mp3 firsth bytes = %ld\n", mp3state->bytes);
+  splt_d_print_debug(state, "mp3 firsth len = %ld\n", len);
   mp3state->bytes = mp3state->mp3file.firsth;
   mp3state->headw = 
     (unsigned long) ((mp3state->data_ptr[0] << 24) | 
@@ -1309,6 +1311,11 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
       long temp = (long)
         (((double)(mp3state->mp3file.len - mp3state->mp3file.firsth)
           / (double)mp3state->mp3file.bitrate) * 100.0);
+
+      splt_d_print_debug(state, "mp3file.firsth = %ld\n", mp3state->mp3file.firsth);
+      splt_d_print_debug(state, "mp3file.len = %ld\n", mp3state->mp3file.len);
+      splt_d_print_debug(state, "mp3file.bitrate = %ld\n", mp3state->mp3file.bitrate);
+      splt_d_print_debug(state, "total time = %ld\n", temp);
 
       splt_t_set_total_time(state, temp);
     }
