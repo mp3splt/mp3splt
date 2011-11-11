@@ -295,20 +295,20 @@ static void splt_u_alpha_track(splt_state *state, int nfield,
 char splt_of_get_number_of_digits_from_total_time(splt_state *state)
 {
   long total_time = splt_t_get_total_time(state);
-  if (total_time > 0)
+  if (total_time <= 0)
   {
-    long minutes = total_time / 100 / 60;
-    int i = (int) (log10l((long double) minutes));
-    char number_of_digits = (char) (i + '1');
-    if (number_of_digits == '1')
-    {
-      return '2';
-    }
-
-    return number_of_digits;
+    return '2';
   }
 
-  return '2';
+  long minutes = total_time / 100 / 60;
+  int i = (int) (log10l((long double) minutes));
+  char number_of_digits = (char) (i + '1');
+  if (number_of_digits == '1')
+  {
+    return '2';
+  }
+
+  return number_of_digits;
 }
 
 /*! \brief Automagically set the filename for a split point

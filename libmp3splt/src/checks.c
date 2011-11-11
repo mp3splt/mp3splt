@@ -57,7 +57,6 @@ void splt_check_points_inf_song_length_and_convert_negatives(splt_state *state, 
 
   int err = SPLT_OK;
   long total_time = splt_t_get_total_time(state);
-
   if (total_time == 0)
   {
     return;
@@ -75,7 +74,7 @@ void splt_check_points_inf_song_length_and_convert_negatives(splt_state *state, 
       splt_sp_set_splitpoint_value(state, i, splitpoint_value);
     }
 
-    if (splitpoint_value == LONG_MAX)
+    /*if (splitpoint_value == LONG_MAX)
     {
       splitpoint_value = total_time;
       splt_sp_set_splitpoint_value(state, i, total_time);
@@ -91,7 +90,7 @@ void splt_check_points_inf_song_length_and_convert_negatives(splt_state *state, 
       splt_sp_set_splitpoint_value(state, i, total_time);
 
       break;
-    }
+    }*/
   }
 }
 
