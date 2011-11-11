@@ -855,6 +855,49 @@ expected=" Warning: using time mode with stdout !
   echo
 }
 
+function test_time_vbr_with_sync_errors
+{
+  remove_output_dir
+
+  test_name="vbr time with sync errors"
+  M_FILE="syncerror"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting time mode split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__04m_05s_58h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_06m_00s__04m_05s_58h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_09m_00s__04m_05s_58h.mp3\" created
+ Processed 27372 frames - Sync errors: 2
+ time split ok"
+  mp3splt_args="-d $OUTPUT_DIR $SYNCERR_FILE -t 3.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__03m_00s.mp3"
+  check_current_mp3_length "03.00"
+  check_current_file_size "4125094"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_05s_58h.mp3"
+  check_current_mp3_length "03.00"
+  check_current_file_has_xing
+  check_current_file_size "4148398"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_06m_00s__04m_05s_58h.mp3"
+  check_current_mp3_length "03.00"
+  check_current_file_size "3868490"
+  
+  current_file="$OUTPUT_DIR/${M_FILE}_09m_00s__04m_05s_58h.mp3"
+  check_current_mp3_length "02.55"
+  check_current_file_size "2846510"
+
+  print_ok
+  echo
+}
+
+
 function run_time_vbr_tests
 {
   p_blue " TIME VBR mp3 tests ..."

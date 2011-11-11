@@ -269,7 +269,7 @@ function test_time_overlap_split
   check_current_file_size "4016423"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_04s_85h.ogg"
-  check_current_ogg_length "1m:04.853s"
+  check_current_ogg_length "1m:04.849s"
   check_current_file_size "1593645"
 
   print_ok
@@ -313,7 +313,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   check_current_file_size "4016423"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_00s__03m_04s_85h.ogg"
-  check_current_ogg_length "1m:04.853s"
+  check_current_ogg_length "1m:04.849s"
   check_current_file_size "1593645"
 
   print_ok

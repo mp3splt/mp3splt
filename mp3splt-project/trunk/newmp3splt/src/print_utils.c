@@ -240,10 +240,10 @@ void show_small_help_exit(main_data *data)
 
   print_message(_(" -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"));
   print_message(_(" -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"));
-  print_message(_(" -i   Count how many silence splitpoints we have with silence detection\n"
-        "      (Use -p for arguments) - DEPRECATED: use -s with -P)\n"
-        " -v   Prints current version and exits\n"
-        " -h   Shows this help"));
+/*  print_message(_(" -i   Count how many silence splitpoints we have with silence detection\n"
+        "      (Use -p for arguments) - DEPRECATED: use -s with -P)\n"*/
+  print_message(" -v   Prints current version and exits\n"
+      " -h   Shows this help");
   print_message(_("\n(other options)\n"
         " -T + TAGS_VERSION: for mp3 files, force output tags as version 1, 2 or 1 & 2.\n"
         "      TAGS_VERSION can be 1, 2 or 12\n"

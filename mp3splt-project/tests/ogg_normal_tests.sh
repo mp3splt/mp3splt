@@ -263,6 +263,7 @@ function test_normal_overlap_split
  info: overlapping split files with 0.30.0
    File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg\" created
    File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
  file split (EOF)"
   mp3splt_args="-O 0.30 -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
   run_check_output "$mp3splt_args" "$expected"
@@ -272,8 +273,12 @@ function test_normal_overlap_split
   check_current_file_size "2421849"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
-  check_current_ogg_length "1m:03.653s"
+  check_current_ogg_length "1m:03.649s"
   check_current_file_size "1561684"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg" 
+  check_current_ogg_length "0m:04.753s"
+  check_current_file_size "53756"
 
   print_ok
   echo
@@ -294,6 +299,7 @@ function test_normal_overlap_and_cue_export
  info: overlapping split files with 0.30.0
    File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg\" created
    File \"$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_03m_00s_10h__03m_04s_85h.ogg\" created
  file split (EOF)
  CUE file 'output/output_out.cue' created."
   mp3splt_args="-E output/out.cue -O 0.30 -d $OUTPUT_DIR $OGG_FILE 1.0 2.1.2 3.0.1 EOF" 
@@ -309,14 +315,18 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
-    INDEX 01 02:01:20'
+    INDEX 01 02:01:20
+  TRACK 03 AUDIO
+    TITLE "Whiskey Can"
+    PERFORMER "Kelly Allyn"
+    INDEX 01 03:00:10'
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
   check_current_ogg_length "1m:31.199s"
   check_current_file_size "2421849"
 
   current_file="$OUTPUT_DIR/${O_FILE}_02m_01s_20h__03m_04s_85h.ogg" 
-  check_current_ogg_length "1m:03.653s"
+  check_current_ogg_length "1m:03.649s"
   check_current_file_size "1561684"
 
   print_ok

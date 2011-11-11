@@ -1510,6 +1510,49 @@ function test_normal_vbr_custom_tags_with_replace_tags_in_tags_and_time_variable
   echo
 }
 
+function test_normal_with_sync_errors
+{
+  local tags_version=$1
+
+  remove_output_dir
+
+  M_FILE="syncerror"
+
+  test_name="vbr with sync errors"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_07m_00s__04m_05s_58h.mp3\" created
+ Processed 27372 frames - Sync errors: 2
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $SYNCERR_FILE 1.0 2.0.2 3.5 7.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
+  check_current_mp3_length "01.00"
+  check_current_file_size "1412518"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_05s.mp3" 
+  check_current_mp3_length "01.04"
+  check_current_file_size "1567932"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3" 
+  check_current_mp3_length "03.55"
+  check_current_file_size "5375652"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_07m_00s__04m_05s_58h.mp3" 
+  check_current_mp3_length "04.55"
+  check_current_file_size "5308269"
+
+  print_ok
+  echo
+}
 
 
 function run_normal_vbr_tests

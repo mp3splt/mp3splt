@@ -82,7 +82,12 @@ of file
 */
 short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state, double fend_sec)
 {
-  double total_time = splt_t_get_total_time_as_double_secs(state);
+  return fend_sec == -1.0;
+
+  //TODO: comparing with the total time does not work: for example for concatenated
+  //mp3's, the total time is WRONG !
+
+/*  double total_time = splt_t_get_total_time_as_double_secs(state);
 
   if (total_time - 0.01 > 0)
   {
@@ -109,6 +114,6 @@ short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state, double fend_s
     }
   }
 
-  return SPLT_FALSE;
+  return SPLT_FALSE;*/
 }
 

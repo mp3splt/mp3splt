@@ -53,7 +53,15 @@ static long splt_s_real_split(double splt_beg, double splt_end,
   {
     double new_sec_end_point = 
       splt_p_split(state, final_fname, splt_beg, splt_end, error, save_end_point);
-    new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
+
+    if (new_sec_end_point == -1.0)
+    {
+      new_end_point = LONG_MAX;
+    }
+    else
+    {
+      new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
+    }
 
     if (*error >= 0)
     {
@@ -108,8 +116,7 @@ static long splt_s_split(splt_state *state, int first_splitpoint,
         //LONG_MAX == EOF
         if (split_end == LONG_MAX)
         {
-          //Warning : we might not always have total time with input not seekable
-          splt_end = splt_t_get_total_time_as_double_secs(state);
+          splt_end = -1;
         }
         else
         {
@@ -368,7 +375,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
     int err = SPLT_OK;
 
     int temp_int = number_of_files + 1;
-    if (number_of_files == -1)
+    if (total_time > 0 && number_of_files == -1)
     {
       temp_int = (int)floor(((total_time / 100.0) / (split_time_length))+1) + 1;
     }
@@ -394,8 +401,6 @@ static void splt_s_split_by_time(splt_state *state, int *error,
         save_end_point = SPLT_FALSE;
       }
 
-      int last_file = SPLT_FALSE;
-
       splt_array *new_end_points = splt_array_new();
 
       do {
@@ -413,16 +418,14 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           splt_sp_set_splitpoint_value(state, current_split,
               splt_co_time_to_long_ceil(begin));
           long end_splitpoint = splt_co_time_to_long_ceil(end);
-          if (total_time > 0 && end_splitpoint >= total_time)
-          {
-            end_splitpoint = total_time;
-            //avoid worst scenarios where floor & SPLT_OK_SPLIT_EOF do not work
-            last_file = SPLT_TRUE;
-          }
           splt_sp_set_splitpoint_value(state, current_split+1, end_splitpoint);
 
-          double overlapped_end = (double)
-            ((double)splt_sp_overlap_time(state, current_split+1) / 100.0);
+          long overlapped_time = splt_sp_overlap_time(state, current_split+1);
+          double overlapped_end = -1;
+          if (overlapped_time != LONG_MAX)
+          {
+            overlapped_end = (double) ((double) overlapped_time / 100.0);
+          }
 
           err = splt_u_finish_tags_and_put_output_format_filename(state, -1);
           if (err < 0) { *error = err; break; }
@@ -432,7 +435,15 @@ static void splt_s_split_by_time(splt_state *state, int *error,
 
           double new_sec_end_point = splt_p_split(state, final_fname,
               begin, overlapped_end, error, save_end_point);
-          long new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
+          long new_end_point = 0;
+          if (new_sec_end_point == -1.0)
+          {
+            new_end_point = LONG_MAX;
+          }
+          else
+          {
+            new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
+          }
 
           int end_point_index = current_split + 1;
           splt_pair *index_end_point =
@@ -469,11 +480,6 @@ static void splt_s_split_by_time(splt_state *state, int *error,
             //free memory
             free(final_fname);
             final_fname = NULL;
-          }
-
-          if (last_file)
-          {
-            break;
           }
         }
         else
@@ -894,10 +900,15 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 
       if (*error >= 0)
       {
+        long total_time = splt_t_get_total_time(state);
+        if (total_time <= 0)
+        {
+          total_time = LONG_MAX;
+        }
+
         //last splitpoint, end of file
         append_error =
-          splt_sp_append_splitpoint(state, splt_t_get_total_time(state),
-              NULL, SPLT_SPLITPOINT);
+          splt_sp_append_splitpoint(state, total_time, NULL, SPLT_SPLITPOINT);
         if (append_error != SPLT_OK) { *error = append_error; }
       }
 
