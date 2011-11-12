@@ -49,10 +49,6 @@
 #include <string.h>
 #include "export.h"
 
-#ifndef NO_GNOME
-#include <libgnomeui/gnome-help.h>
-#endif
-
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <libmp3splt/mp3splt.h>
@@ -528,12 +524,11 @@ void show_messages_history_dialog(GtkWidget *widget, gpointer data)
   gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
 }
 
-#ifndef NO_GNOME
-/*! The function that starts the help browser on clicking help/help
- */
+#ifndef GNOME
 void ShowHelp()
 {
-	gnome_help_display_uri("ghelp:mp3splt-gtk",NULL);
+  GError* gerror = NULL;
+  gtk_show_uri(gdk_screen_get_default(), "ghelp:mp3splt-gtk",  gtk_get_current_event_time(), &gerror);
 }
 #endif
 
@@ -569,8 +564,7 @@ GtkWidget *create_menu_bar()
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
       G_CALLBACK(quit) },
 
-#ifndef NO_GNOME
-    //name, stock id, label, accelerator
+#ifndef GNOME
     { "Contents", GTK_STOCK_HELP, N_("_Contents"), "F1", N_("Contents"),
       G_CALLBACK(ShowHelp)},
 #endif

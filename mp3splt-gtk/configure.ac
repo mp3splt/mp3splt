@@ -118,8 +118,7 @@ AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 # Initialize the gnome integration
 #################################################
 
-AM_CONDITIONAL([HAVE_GNOME_DOC_UTILS],[false])
-AM_CONDITIONAL(GNOME,false)
+AM_CONDITIONAL(GNOME, false)
 gnome="no"
 
 AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
@@ -131,33 +130,47 @@ if test "x$enable_gnome" = xyes;then
   ifdef([GNOME_DOC_INIT],
   [
     GNOME_DOC_INIT([],
-                   [],
+                   [
+                     AM_CONDITIONAL(GNOME, true)
+                     gnome="yes"
+                   ],
                    [AC_MSG_ERROR([gnome-doc-utils not found.
   
       Install it or configure with "--disable-gnome".])])
   ],
-  [
-    AM_CONDITIONAL([HAVE_GNOME_DOC_UTILS],[true])
-  ])
-
-  PKG_CHECK_MODULES([GNOMEUI],
-                    [libgnomeui-2.0], 
-                    [AM_CONDITIONAL(GNOME, true) gnome="yes" ],
-      [AC_MSG_ERROR([gnomeui development files are not installed.
-
-    Install it or configure with "--disable-gnome".])])
+  [])
 fi
 
 #################################################
-#Check for GTK
-ifdef([AM_PATH_GTK_3_0],
-[
-  CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
-  AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
-],
-[
+#Check for GTK & audacious
+
+AC_ARG_ENABLE(gtk3, [
+ AC_HELP_STRING([--enable-gtk3],  [Compile against GTK 3.x explicitly (default: use GTK 3.x if available)])
+ AC_HELP_STRING([--disable-gtk3], [Compile against GTK 2.x explicitly (default: use GTK 3.x if available)])],
+     [enable_gtk3=$enableval],[enable_gtk3="auto"])
+
+if test "x$enable_gtk3" = xauto; then
+  AC_MSG_NOTICE([selecting GTK 2.x/3.x automatically])
+  ifdef([AM_PATH_GTK_3_0],[enable_gtk3=yes],[enable_gtk3=no])
+fi
+
+audacious_check="audacious < 3.0"
+if test "x$enable_gtk3" = xyes; then
+  AC_MSG_NOTICE([GTK 3.x selected])
+
+  ifdef([AM_PATH_GTK_3_0],
+  [
+    CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
+    AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
+    audacious_check="audacious >= 3.0"
+  ],
+  [
+    AC_MSG_ERROR([Cannot find GTK 3.x])
+  ])
+else
+  AC_MSG_NOTICE([GTK 2.x selected])
   AM_PATH_GTK_2_0(2.20.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.20.0))
-])
+fi
 
 #################################################
 #Check for libmp3splt
@@ -177,11 +190,15 @@ AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audaciou
     [enable_audacious=$enableval],[enable_audacious="yes"])
 
 if test "x$enable_audacious" = xyes;then
-  PKG_CHECK_MODULES([AUDACIOUS], [audacious >= 0.1 audclient],
+  PKG_CHECK_MODULES([AUDACIOUS], [$audacious_check audclient],
       [AM_CONDITIONAL(AUDACIOUS, true) audacious="yes" ],
-      [AC_MSG_ERROR([Audacious player development files are not installed.
+      [AC_MSG_ERROR([Audacious player development files for $audacious_check not found.
 
-    Install it or configure with "--disable-audacious".])])
+    Install it or configure with "--disable-audacious".
+    Also check that if you want to compile with GTK 3.x, you will need audacious >= 3.0.
+    For GTK 2.x, you will need audacious < 3.0.
+    You can force the GTK version using --enable-gtk3 and --disable-gtk3.
+]) ])
 fi
 
 #################################################
