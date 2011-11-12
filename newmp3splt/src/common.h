@@ -43,7 +43,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "2.4.0.941"
+#define VERSION "2.4.0.943"
 #define PACKAGE_NAME "mp3splt"
 #endif
 
@@ -58,7 +58,7 @@
 #  define _(STR) ((const char *)STR)
 #endif
 
-#define MP3SPLT_DATE "11/11/11"
+#define MP3SPLT_DATE "12/11/11"
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"

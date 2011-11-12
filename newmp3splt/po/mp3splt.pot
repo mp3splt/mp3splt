@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-11-11 08:31+0100\n"
+"POT-Creation-Date: 2011-11-12 07:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -405,14 +405,6 @@ msgstr ""
 
 #: src/print_utils.c:242
 msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"
-msgstr ""
-
-#: src/print_utils.c:243
-msgid ""
-" -i   Count how many silence splitpoints we have with silence detection\n"
-"      (Use -p for arguments) - DEPRECATED: use -s with -P)\n"
-" -v   Prints current version and exits\n"
-" -h   Shows this help"
 msgstr ""
 
 #: src/print_utils.c:247
