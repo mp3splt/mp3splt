@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-11-11 08:30+0100\n"
+"POT-Creation-Date: 2011-11-12 07:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgid ""
 "%.2f)\n"
 msgstr ""
 
-#: src/checks.c:159
+#: src/checks.c:158
 msgid "directory does not exists"
 msgstr ""
 
@@ -67,85 +67,85 @@ msgstr ""
 msgid "  Album: %s\n"
 msgstr ""
 
-#: src/splt.c:147
+#: src/splt.c:154
 msgid " info: starting normal split\n"
 msgstr ""
 
-#: src/splt.c:235
+#: src/splt.c:242
 msgid " info: starting error mode split\n"
 msgstr ""
 
-#: src/splt.c:545
+#: src/splt.c:551
 msgid " info: starting time mode split\n"
 msgstr ""
 
-#: src/splt.c:564
+#: src/splt.c:570
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr ""
 
-#: src/splt.c:606
+#: src/splt.c:612
 #, c-format
 msgid " Trim silence split - Th: %.1f dB\n"
 msgstr ""
 
-#: src/splt.c:733
+#: src/splt.c:739
 #, c-format
 msgid "YES"
 msgstr ""
 
-#: src/splt.c:737
+#: src/splt.c:743
 #, c-format
 msgid "NO"
 msgstr ""
 
-#: src/splt.c:743
+#: src/splt.c:749
 #, c-format
 msgid "User"
 msgstr ""
 
-#: src/splt.c:747
+#: src/splt.c:753
 #, c-format
 msgid "Auto"
 msgstr ""
 
-#: src/splt.c:753
+#: src/splt.c:759
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
 "Min track: %.2f)\n"
 msgstr ""
 
-#: src/splt.c:772
+#: src/splt.c:778
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)\n"
 msgstr ""
 
-#: src/splt.c:801
+#: src/splt.c:807
 #, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 
-#: src/splt.c:813
+#: src/splt.c:819
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr ""
 
-#: src/splt.c:918
+#: src/splt.c:929
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr ""
 
-#: src/splt.c:973
+#: src/splt.c:984
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1021
+#: src/splt.c:1032
 msgid " info: starting trim using silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1068
+#: src/splt.c:1079
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
@@ -163,7 +163,7 @@ msgstr ""
 msgid "description here"
 msgstr ""
 
-#: src/cue.c:695
+#: src/cue.c:700
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""
@@ -554,63 +554,63 @@ msgstr ""
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 
-#: plugins/mp3.c:1386
+#: plugins/mp3.c:1381
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr ""
 
-#: plugins/mp3.c:1394
+#: plugins/mp3.c:1389
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr ""
 
-#: plugins/mp3.c:1398
+#: plugins/mp3.c:1393
 #, c-format
 msgid " - FRAME MODE"
 msgstr ""
 
-#: plugins/mp3.c:1403
+#: plugins/mp3.c:1398
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1408
+#: plugins/mp3.c:1403
 #, c-format
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1416 plugins/ogg.c:134
+#: plugins/mp3.c:1411 plugins/ogg.c:134
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
 
-#: plugins/mp3.c:2729
+#: plugins/mp3.c:2724
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr ""
 
-#: plugins/mp3.c:2767
+#: plugins/mp3.c:2762
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 
-#: plugins/mp3.c:2786
+#: plugins/mp3.c:2781
 msgid " OK\n"
 msgstr ""
 
-#: plugins/mp3.c:2805
+#: plugins/mp3.c:2800
 msgid " Detected file created with: AlbumWrap\n"
 msgstr ""
 
-#: plugins/mp3.c:2827
+#: plugins/mp3.c:2822
 #, c-format
 msgid " Total files: %d\n"
 msgstr ""
 
-#: plugins/mp3.c:3243
+#: plugins/mp3.c:3238
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 
-#: plugins/mp3.c:3270
+#: plugins/mp3.c:3265
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr ""
