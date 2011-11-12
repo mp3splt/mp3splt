@@ -524,7 +524,7 @@ void show_messages_history_dialog(GtkWidget *widget, gpointer data)
   gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
 }
 
-#ifndef GNOME
+#ifndef NO_GNOME
 void ShowHelp()
 {
   GError* gerror = NULL;
@@ -564,7 +564,7 @@ GtkWidget *create_menu_bar()
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
       G_CALLBACK(quit) },
 
-#ifndef GNOME
+#ifndef NO_GNOME
     { "Contents", GTK_STOCK_HELP, N_("_Contents"), "F1", N_("Contents"),
       G_CALLBACK(ShowHelp)},
 #endif
