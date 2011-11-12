@@ -54,10 +54,7 @@ mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
-if GNOME
-mp3splt_gtk_LDADD += @GNOMEUI_LIBS@
-INCLUDES += $(GNOMEUI_CFLAGS)
-else
+if !GNOME
 DEFS += -DNO_GNOME
 endif
 
