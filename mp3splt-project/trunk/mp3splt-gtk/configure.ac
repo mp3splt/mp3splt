@@ -119,6 +119,7 @@ AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 #################################################
 
 AM_CONDITIONAL(GNOME, false)
+AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
 gnome="no"
 
 AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
@@ -132,6 +133,7 @@ if test "x$enable_gnome" = xyes;then
     GNOME_DOC_INIT([],
                    [
                      AM_CONDITIONAL(GNOME, true)
+                     AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, true)
                      gnome="yes"
                    ],
                    [AC_MSG_ERROR([gnome-doc-utils not found.
