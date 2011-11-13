@@ -17,7 +17,7 @@ mp3splt-gtk:  without loosing any quality. Useful for splitting albums into
 mp3splt-gtk: tracks which can be done either manually, using freedb.org data 
 mp3splt-gtk: from the net or using .cue files ...
 mp3splt-gtk:
-mp3splt-gtk: Requirements: libmp3splt version 0.7.0.949,
+mp3splt-gtk: Requirements: libmp3splt version 0.7.0.950,
 
 
  
