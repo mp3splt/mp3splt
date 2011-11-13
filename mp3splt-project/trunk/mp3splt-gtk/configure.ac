@@ -156,7 +156,6 @@ if test "x$enable_gtk3" = xauto; then
   ifdef([AM_PATH_GTK_3_0],[enable_gtk3=yes],[enable_gtk3=no])
 fi
 
-audacious_check="audacious < 3.0"
 if test "x$enable_gtk3" = xyes; then
   AC_MSG_NOTICE([GTK 3.x selected])
 
@@ -164,7 +163,6 @@ if test "x$enable_gtk3" = xyes; then
   [
     CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
     AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
-    audacious_check="audacious >= 3.0"
   ],
   [
     AC_MSG_ERROR([Cannot find GTK 3.x])
@@ -192,7 +190,7 @@ AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audaciou
     [enable_audacious=$enableval],[enable_audacious="yes"])
 
 if test "x$enable_audacious" = xyes;then
-  PKG_CHECK_MODULES([AUDACIOUS], [$audacious_check audclient],
+  PKG_CHECK_MODULES([AUDACIOUS], [audclient],
       [AM_CONDITIONAL(AUDACIOUS, true) audacious="yes" ],
       [AC_MSG_ERROR([Audacious player development files for $audacious_check not found.
 
