@@ -3,9 +3,22 @@ Check http://mp3splt.sourceforge.net for the latest release.
 Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
-Known issues :
+-------------------------------------------------------------
+mp3splt-gtk version 0.7.1
 
-- menus translation 'N_' not working : how to fix ?
+- added minimum track length option for silence scan - closes #2393766
+- added gtk3 support (auto detection or --enable-gtk3, --disable-gtk3) - almost closes #3385903
+(some tests still need to be done)
+- fixed #3385841 - removed scrollkeeper warnings
+- fixed #3385827 - added --disable-doxygen_doc
+- fixed #3385829 - building doxygen documentation by itself + installing doxygen files
+- fixed #3385833 - don't apply debugging flags or warnings flags by default:
+added --enable-c-debug --enable-optimise --enable-extra-warnings
+- fixed mp3 frame mode with skippoint when skippoint too small (on the same frame as previous) (libmp3splt)
+- fixed several audacity labels issues (libmp3splt)
+- fixed some regression regarding mp3splt v2.1c - removed some checks relative to the total
+time - we cannot rely on the total time - for example with concatenated mp3s (libmp3splt)
+
 
 -------------------------------------------------------------
 mp3splt-gtk version 0.7
