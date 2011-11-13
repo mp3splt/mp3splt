@@ -33,7 +33,7 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.7.0.950, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.7.0.951, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
@@ -48,7 +48,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 
 # Initialize automake
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.0.950)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.0.951)
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
@@ -156,6 +156,7 @@ if test "x$enable_gtk3" = xauto; then
   ifdef([AM_PATH_GTK_3_0],[enable_gtk3=yes],[enable_gtk3=no])
 fi
 
+audacious_check="audclient < 3.0"
 if test "x$enable_gtk3" = xyes; then
   AC_MSG_NOTICE([GTK 3.x selected])
 
@@ -163,6 +164,7 @@ if test "x$enable_gtk3" = xyes; then
   [
     CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
     AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
+    audacious_check="audclient >= 3.0"
   ],
   [
     AC_MSG_ERROR([Cannot find GTK 3.x])
@@ -175,7 +177,7 @@ fi
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.0.950 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.0.951 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
@@ -190,11 +192,14 @@ AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audaciou
     [enable_audacious=$enableval],[enable_audacious="yes"])
 
 if test "x$enable_audacious" = xyes;then
-  PKG_CHECK_MODULES([AUDACIOUS], [audclient],
+  PKG_CHECK_MODULES([AUDACIOUS], [$audacious_check ],
       [AM_CONDITIONAL(AUDACIOUS, true) audacious="yes" ],
-      [AC_MSG_ERROR([Audacious player development files not found (libaudclient needed).
+      [AC_MSG_ERROR([Audacious player development files for $audacious_check not found.
 
     Install it or configure with "--disable-audacious".
+    Also check that if you want to compile with GTK 3.x, you will need audacious >= 3.0.
+    For GTK 2.x, you will need audacious < 3.0.
+    You can force the GTK version using --enable-gtk3 and --disable-gtk3.
 ]) ])
 fi
 
