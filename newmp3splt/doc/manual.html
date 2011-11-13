@@ -313,6 +313,10 @@ Positive integer number of tracks to be split when using -s option. By default a
 Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded. Default is 0.
 <DT><B>rm</B><DD>
 Does not require an additional number and it used to remove silence when using -s option.
+<DT><B>trackmin=FLOAT</B><DD>
+Positive float of the minimum number of seconds for a track to be written out.
+Tracks shorter than trackmin will be skipped during the output phase.
+The default value 0.0 means to not skip any tracks.
 <P>
 <DT><B>Only -a</B><DD>
 <P>
@@ -484,6 +488,16 @@ replace tags in tags. The 'replace tags in tags' option is not recursive. The va
 @N: auto increment track number: 
 this variable has to be placed inside the %[] field in order to have the track
 number auto incremented for all the split files following it
+<BR>
+
+@m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint
+<BR>
+
+@M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint
+<P>
+Using the 'replace tags in tags' option, you can also use the following variables,
+which are replaced by the data from the original tags: #a, #b, #t, #y, #c, #g.
+Note that this will only work if @o has been found before.
 <P>
 Example of tags format:
 <B>%[@o,@N=1,@b=special_album][@a=foo,@b=bar][@t=footitle]</B>. In this
@@ -501,6 +515,11 @@ Without the 'r' option, output artists are 'artist_@b_@N'.
 <P>
 Replacement is not recursive: <B>r%[@o,@N=1,@b=album_@N,@a=artist_@b]</B>
 will output albums as 'album_1', 'album_2', ... but artists as 'artist_album_@N'.
+<P>
+Example of replacing tags in tags with # variables:
+<B>r%[@o,@N=1,@t=@N_#t]</B>This will prepend the auto incremented track number to the
+original input file title; supposing that the input file title is 'one_title',
+this will set the titles as follows: '1_one_title', '2_one_title', ...
 <P>
 <DT><B>-G regex=REGEX</B>         <DD>
 <B>Tags from filename regex</B>. Set tags from input filename regular expression.
@@ -712,6 +731,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 19:53:32 GMT, July 12, 2011
+Time: 21:17:34 GMT, November 13, 2011
 </BODY>
 </HTML>

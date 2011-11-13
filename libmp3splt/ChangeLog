@@ -2,6 +2,23 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.7.1
+-------------------------------------------------------------
+
+- added minimum track length option for silence scan - closes #2393766
+- added option to set original tags when using 'replace tags in tags' - closes #3407314
+- added support for multiple ogg/vorbis logical streams (mail)
+- fixed mp3 frame mode with skippoint when skippoint too small (on the same frame as previous)
+- fixed some regression regarding mp3splt v2.1c - removed some checks relative to the total
+time - we cannot rely on the total time - for example with concatenated mp3s
+- fixed several audacity labels issues
+- fixed inconsistency (extra 0 padding) between @n of custom tags and @n of output filename (mail)
+- fixed compilation error without libid3tag
+- fixed #3385833 - don't apply debugging flags or warnings flags by default:
+added --enable-c-debug --enable-optimise --enable-extra-warnings
+- fixed #3385827 - added --disable-doxygen_doc
+- fixed #3385829 - building doxygen documentation by itself + installing doxygen files
+
 libmp3splt version 0.7
 -------------------------------------------------------------
 
