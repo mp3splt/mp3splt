@@ -33,7 +33,7 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.7.0.946, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.7.0.949, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
@@ -48,7 +48,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 
 # Initialize automake
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.0.946)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.0.949)
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
@@ -175,7 +175,7 @@ fi
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.0.946 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.0.949 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
@@ -192,12 +192,9 @@ AC_ARG_ENABLE(audacious, AC_HELP_STRING([--disable-audacious], [Disable audaciou
 if test "x$enable_audacious" = xyes;then
   PKG_CHECK_MODULES([AUDACIOUS], [audclient],
       [AM_CONDITIONAL(AUDACIOUS, true) audacious="yes" ],
-      [AC_MSG_ERROR([Audacious player development files for $audacious_check not found.
+      [AC_MSG_ERROR([Audacious player development files not found (libaudclient needed).
 
     Install it or configure with "--disable-audacious".
-    Also check that if you want to compile with GTK 3.x, you will need audacious >= 3.0.
-    For GTK 2.x, you will need audacious < 3.0.
-    You can force the GTK version using --enable-gtk3 and --disable-gtk3.
 ]) ])
 fi
 
