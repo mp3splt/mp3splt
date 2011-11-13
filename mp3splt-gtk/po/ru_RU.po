@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-12 07:42+0100\n"
+"POT-Creation-Date: 2011-11-13 09:11+0100\n"
 "PO-Revision-Date: 2011-07-18 19:25+0000\n"
 "Last-Translator: optimix <io_fx@yahoo.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -439,7 +439,7 @@ msgstr "Та же, что у исходных файлов"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Версия тегов (только MP3)</b>"
 
-#: src/preferences_tab.c:1259 src/main_win.c:564
+#: src/preferences_tab.c:1259 src/main_win.c:559
 msgid "Split"
 msgstr "Разделение"
 
@@ -451,7 +451,7 @@ msgstr "Теги"
 msgid "Output"
 msgstr "Вывод"
 
-#: src/preferences_tab.c:1277 src/main_win.c:714
+#: src/preferences_tab.c:1277 src/main_win.c:708
 msgid "Player"
 msgstr "Плеер"
 
@@ -619,127 +619,127 @@ msgstr "Выделить файл"
 msgid "_Fix ogg stream"
 msgstr "_Фиксированный ogg поток"
 
-#: src/main_win.c:151
+#: src/main_win.c:147
 msgid " info: stopping the split process before exiting"
 msgstr ""
 
-#: src/main_win.c:317
+#: src/main_win.c:313
 msgid "Error launching external command"
 msgstr "Ошибка при запуске внешней команды"
 
-#: src/main_win.c:348
+#: src/main_win.c:344
 msgid "using"
 msgstr "использование"
 
-#: src/main_win.c:352
+#: src/main_win.c:348
 msgid "release of"
 msgstr "релиз от"
 
-#: src/main_win.c:449
+#: src/main_win.c:445
 msgid " info: stopping the split process.. please wait"
 msgstr ""
 
-#: src/main_win.c:488
+#: src/main_win.c:484
 msgid " error: no file selected"
 msgstr "ошибка: файл не выбран"
 
-#: src/main_win.c:493
+#: src/main_win.c:489
 msgid " error: split in progress..."
 msgstr ""
 
-#: src/main_win.c:505 src/main_win.c:509
+#: src/main_win.c:501 src/main_win.c:505
 msgid "Split !"
 msgstr "Разделить"
 
-#: src/main_win.c:552
+#: src/main_win.c:547
 msgid "_File"
 msgstr "_Файл"
 
-#: src/main_win.c:553
+#: src/main_win.c:548
 msgid "_Help"
 msgstr "_Справка"
 
-#: src/main_win.c:556
+#: src/main_win.c:551
 msgid "_Open..."
 msgstr "_Открыть"
 
-#: src/main_win.c:556
+#: src/main_win.c:551
 msgid "Open"
 msgstr "Открыть"
 
-#: src/main_win.c:559
+#: src/main_win.c:554
 msgid "_Import splitpoints..."
 msgstr "_Импортировать точки разделения..."
 
-#: src/main_win.c:559
+#: src/main_win.c:554
 msgid "Import"
 msgstr "Импорт"
 
-#: src/main_win.c:561
+#: src/main_win.c:556
 msgid "_Export splitpoints..."
 msgstr "_Экспортировать точки разделения..."
 
-#: src/main_win.c:561
+#: src/main_win.c:556
 msgid "Export"
 msgstr "Экспорт"
 
-#: src/main_win.c:564
+#: src/main_win.c:559
 msgid "_Split !"
 msgstr "_Разделить!"
 
-#: src/main_win.c:566
+#: src/main_win.c:561
 msgid "Messages _history"
 msgstr "_История сообщений"
 
-#: src/main_win.c:566 src/main_win.c:822 src/messages.c:201
+#: src/main_win.c:561 src/main_win.c:816 src/messages.c:201
 msgid "Messages history"
 msgstr "История сообщений"
 
-#: src/main_win.c:569
+#: src/main_win.c:564
 msgid "_Quit"
 msgstr "_Выход"
 
-#: src/main_win.c:569
+#: src/main_win.c:564
 msgid "Quit"
 msgstr "ВЫход"
 
-#: src/main_win.c:574
+#: src/main_win.c:568
 msgid "_Contents"
 msgstr "_Контент"
 
-#: src/main_win.c:574
+#: src/main_win.c:568
 msgid "Contents"
 msgstr "Контент"
 
-#: src/main_win.c:578
+#: src/main_win.c:572
 msgid "_About"
 msgstr "_О программе"
 
-#: src/main_win.c:578
+#: src/main_win.c:572
 msgid "About"
 msgstr "О программе"
 
-#: src/main_win.c:727
+#: src/main_win.c:721
 msgid "Splitpoints"
 msgstr "Точки разделения"
 
-#: src/main_win.c:740
+#: src/main_win.c:734
 msgid "Split files"
 msgstr "Разделённые файлы"
 
-#: src/main_win.c:753
+#: src/main_win.c:747
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:764
+#: src/main_win.c:758
 msgid "Type of split"
 msgstr "Тип разделения"
 
-#: src/main_win.c:777
+#: src/main_win.c:771
 msgid "Preferences"
 msgstr "Параметры"
 
-#: src/main_win.c:798
+#: src/main_win.c:792
 msgid "S_top"
 msgstr "_Стоп"
 
