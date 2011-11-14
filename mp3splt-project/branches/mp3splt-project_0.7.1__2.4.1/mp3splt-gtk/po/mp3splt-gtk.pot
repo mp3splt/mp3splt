@@ -1,0 +1,978 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Munteanu Alexandru
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"POT-Creation-Date: 2011-11-14 00:12+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/xmms_control.c:82 src/gstreamer_control.c:254
+#: src/snackamp_control.c:328
+msgid "stereo"
+msgstr ""
+
+#: src/xmms_control.c:86 src/gstreamer_control.c:258
+#: src/snackamp_control.c:332
+msgid "mono"
+msgstr ""
+
+#: src/xmms_control.c:89 src/gstreamer_control.c:223
+#: src/snackamp_control.c:335
+msgid "Kbps"
+msgstr ""
+
+#: src/xmms_control.c:90 src/gstreamer_control.c:224
+#: src/snackamp_control.c:336
+msgid "Khz"
+msgstr ""
+
+#: src/tree_tab.c:554
+msgid "_part"
+msgstr ""
+
+#: src/tree_tab.c:565
+#, c-format
+msgid "%s_part%d"
+msgstr ""
+
+#: src/tree_tab.c:709 src/tree_tab.c:1115
+msgid " error: you already have the splitpoint in table"
+msgstr ""
+
+#: src/tree_tab.c:792 src/tree_tab.c:871 src/tree_tab.c:1125
+#: src/freedb_tab.c:516 src/freedb_tab.c:538
+msgid "description here"
+msgstr ""
+
+#: src/tree_tab.c:1275 src/tree_tab.c:1727
+msgid "Set trim splitpoints using silence detection"
+msgstr ""
+
+#: src/tree_tab.c:1302 src/tree_tab.c:1374 src/preferences_tab.c:715
+msgid "Threshold level (dB):"
+msgstr ""
+
+#: src/tree_tab.c:1348 src/tree_tab.c:1717
+msgid "Set splitpoints from silence detection"
+msgstr ""
+
+#: src/tree_tab.c:1391
+msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
+msgstr ""
+
+#: src/tree_tab.c:1408
+msgid "Number of tracks (0 means all tracks):"
+msgstr ""
+
+#: src/tree_tab.c:1423
+msgid "Minimum silence length (seconds):"
+msgstr ""
+
+#: src/tree_tab.c:1437
+msgid "Minimum track length (seconds):"
+msgstr ""
+
+#: src/tree_tab.c:1448
+msgid "_Remove silence between tracks"
+msgstr ""
+
+#: src/tree_tab.c:1653
+msgid "Minutes:"
+msgstr ""
+
+#: src/tree_tab.c:1658
+msgid "Seconds:"
+msgstr ""
+
+#: src/tree_tab.c:1664
+msgid "Hundredths:"
+msgstr ""
+
+#: src/tree_tab.c:1670 src/player_tab.c:1022
+msgid "_Add"
+msgstr ""
+
+#: src/tree_tab.c:1676
+msgid "Add splitpoint"
+msgstr ""
+
+#: src/tree_tab.c:1680
+msgid "_Remove"
+msgstr ""
+
+#: src/tree_tab.c:1686
+msgid "Remove rows"
+msgstr ""
+
+#: src/tree_tab.c:1690
+msgid "R_emove all"
+msgstr ""
+
+#: src/tree_tab.c:1696
+msgid "Remove all rows"
+msgstr ""
+
+#: src/tree_tab.c:1711
+msgid "_Silence detection"
+msgstr ""
+
+#: src/tree_tab.c:1721
+msgid "_Trim splitpoints"
+msgstr ""
+
+#: src/tree_tab.c:1851 src/mp3splt-gtk.c:399
+msgid " finished"
+msgstr ""
+
+#: src/tree_tab.c:1866
+msgid " cannot split preview last splitpoint"
+msgstr ""
+
+#: src/tree_tab.c:1907
+msgid " cannot preview, not connected to player"
+msgstr ""
+
+#: src/tree_tab.c:1972
+msgid "Keep"
+msgstr ""
+
+#: src/tree_tab.c:1986 src/split_files.c:111
+msgid "Filename"
+msgstr ""
+
+#: src/tree_tab.c:2000
+msgid "Secs"
+msgstr ""
+
+#: src/tree_tab.c:2014
+msgid "Mins"
+msgstr ""
+
+#: src/tree_tab.c:2028
+msgid "Hundr"
+msgstr ""
+
+#: src/tree_tab.c:2038
+msgid "Length"
+msgstr ""
+
+#: src/tree_tab.c:2049
+msgid "LiveP"
+msgstr ""
+
+#: src/tree_tab.c:2060
+msgid "SplitP"
+msgstr ""
+
+#: src/split_files.c:339
+msgid "_Queue files to player"
+msgstr ""
+
+#: src/split_files.c:349
+msgid "_Delete selected files"
+msgstr ""
+
+#: src/split_files.c:359
+msgid "D_elete all files"
+msgstr ""
+
+#: src/preferences_tab.c:470
+msgid "<b>Choose language (requires restart)</b>"
+msgstr ""
+
+#: src/preferences_tab.c:505
+msgid "Choose split directory"
+msgstr ""
+
+#: src/preferences_tab.c:657
+msgid "Br_owse dir"
+msgstr ""
+
+#: src/preferences_tab.c:665
+msgid "_Song dir"
+msgstr ""
+
+#: src/preferences_tab.c:670
+msgid "<b>Directory for split files</b>"
+msgstr ""
+
+#: src/preferences_tab.c:679
+msgid "_Splitpoint name from filename (testing)"
+msgstr ""
+
+#: src/preferences_tab.c:685
+msgid "_Create directories from filenames "
+msgstr ""
+
+#: src/preferences_tab.c:691
+msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
+msgstr ""
+
+#: src/preferences_tab.c:698
+msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
+msgstr ""
+
+#: src/preferences_tab.c:730
+msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
+msgstr ""
+
+#: src/preferences_tab.c:747
+msgid "Gap level (seconds around splitpoint to search for silence):"
+msgstr ""
+
+#: src/preferences_tab.c:766
+msgid "Set _default split options"
+msgstr ""
+
+#: src/preferences_tab.c:772
+msgid "<b>Split options</b>"
+msgstr ""
+
+#: src/preferences_tab.c:826
+msgid "Choose a player:"
+msgstr ""
+
+#: src/preferences_tab.c:844
+msgid "<b>Player options</b>"
+msgstr ""
+
+#: src/preferences_tab.c:892
+msgid "Default format"
+msgstr ""
+
+#: src/preferences_tab.c:896
+msgid "Custom format"
+msgstr ""
+
+#: src/preferences_tab.c:913
+msgid ""
+"    @f - file name\n"
+"    @a - artist name\n"
+"    @p - performer of each song (does not always exist)\n"
+"    @b - album title\n"
+"    @t - song title\n"
+"    @g - genre\n"
+"    @n - track number"
+msgstr ""
+
+#: src/preferences_tab.c:926
+msgid "<b>Output filename format</b>"
+msgstr ""
+
+#: src/preferences_tab.c:971
+msgid "Original file tags"
+msgstr ""
+
+#: src/preferences_tab.c:974
+msgid "Default tags (cddb or cue tags)"
+msgstr ""
+
+#: src/preferences_tab.c:977
+msgid "No tags"
+msgstr ""
+
+#: src/preferences_tab.c:980
+msgid "Extract tags from filename"
+msgstr ""
+
+#: src/preferences_tab.c:987
+msgid "<b>Split files tags</b>"
+msgstr ""
+
+#: src/preferences_tab.c:1009
+msgid "No change"
+msgstr ""
+
+#: src/preferences_tab.c:1010
+msgid "lowercase"
+msgstr ""
+
+#: src/preferences_tab.c:1011
+msgid "UPPERCASE"
+msgstr ""
+
+#: src/preferences_tab.c:1012
+msgid "First uppercase"
+msgstr ""
+
+#: src/preferences_tab.c:1013
+msgid "Word Uppercase"
+msgstr ""
+
+#: src/preferences_tab.c:1034
+msgid "<artist>: "
+msgstr ""
+
+#: src/preferences_tab.c:1041
+msgid "<album>: "
+msgstr ""
+
+#: src/preferences_tab.c:1049
+msgid "<title>: "
+msgstr ""
+
+#: src/preferences_tab.c:1056
+msgid "<genre>: "
+msgstr ""
+
+#: src/preferences_tab.c:1063
+msgid "<comment>: "
+msgstr ""
+
+#: src/preferences_tab.c:1070
+msgid "<year>: "
+msgstr ""
+
+#: src/preferences_tab.c:1077
+msgid "<track>: "
+msgstr ""
+
+#: src/preferences_tab.c:1103
+msgid "Regular expression:"
+msgstr ""
+
+#: src/preferences_tab.c:1106
+msgid ""
+"Above enter PERL-like regular expression using named subgroups.\n"
+"Following names are recognized:\n"
+"    (?<artist>)   - artist name\n"
+"    (?<album>)    - album title\n"
+"    (?<title>)    - track title\n"
+"    (?<tracknum>) - current track number\n"
+"    (?<year>)     - year of emission\n"
+"    (?<genre>)    - genre\n"
+"    (?<comment>)  - comment"
+msgstr ""
+
+#: src/preferences_tab.c:1130
+msgid "_Replace underscores by spaces"
+msgstr ""
+
+#: src/preferences_tab.c:1138
+msgid "Artist text properties:"
+msgstr ""
+
+#: src/preferences_tab.c:1142
+msgid "Album text properties:"
+msgstr ""
+
+#: src/preferences_tab.c:1146
+msgid "Title text properties:"
+msgstr ""
+
+#: src/preferences_tab.c:1150
+msgid "Comment text properties:"
+msgstr ""
+
+#: src/preferences_tab.c:1153
+msgid "Genre tag:"
+msgstr ""
+
+#: src/preferences_tab.c:1156
+msgid "Comment tag:"
+msgstr ""
+
+#: src/preferences_tab.c:1158
+msgid "Regular expression test"
+msgstr ""
+
+#: src/preferences_tab.c:1173
+msgid "_Test"
+msgstr ""
+
+#: src/preferences_tab.c:1178
+msgid "Sample filename:"
+msgstr ""
+
+#: src/preferences_tab.c:1182
+msgid "Sample result:"
+msgstr ""
+
+#: src/preferences_tab.c:1193
+msgid "ID3v1 & ID3v2 tags"
+msgstr ""
+
+#: src/preferences_tab.c:1200
+msgid "ID3v2 tags"
+msgstr ""
+
+#: src/preferences_tab.c:1206
+msgid "ID3v1 tags"
+msgstr ""
+
+#: src/preferences_tab.c:1212
+msgid "Same tags version as the input file"
+msgstr ""
+
+#: src/preferences_tab.c:1217
+msgid "<b>Tags version (mp3 only)</b>"
+msgstr ""
+
+#: src/preferences_tab.c:1259 src/main_win.c:559
+msgid "Split"
+msgstr ""
+
+#: src/preferences_tab.c:1265
+msgid "Tags"
+msgstr ""
+
+#: src/preferences_tab.c:1271
+msgid "Output"
+msgstr ""
+
+#: src/preferences_tab.c:1277 src/main_win.c:708
+msgid "Player"
+msgstr ""
+
+#: src/preferences_tab.c:1284
+msgid "Language"
+msgstr ""
+
+#: src/player_tab.c:671 src/player_tab.c:705
+msgid "Cannot connect to player"
+msgstr ""
+
+#: src/player_tab.c:682
+msgid ""
+"\n"
+" Cannot connect to snackAmp player.\n"
+" Please download and install snackamp from\n"
+"\thttp://snackamp.sourceforge.net\n"
+"\n"
+" Verify that snackamp is running.\n"
+" Verify that your snackamp version is >= 3.1.3\n"
+"\n"
+" Verify that you have enabled socket interface in snackamp:\n"
+" You have to go to\n"
+"\tTools->Preferences->Miscellaneous\n"
+" from the snackamp menu and check\n"
+"\tEnable Socket Interface\n"
+" Only default port is supported for now(8775)\n"
+" After that, restart snackamp and mp3splt-gtk should work.\n"
+msgstr ""
+
+#: src/player_tab.c:697
+msgid ""
+"\n"
+" Cannot connect to Audacious player.\n"
+" Verify that you have installed audacious.\n"
+"\n"
+" Put in your PATH variable the directory where the audacious executable is.\n"
+" If you don't know how to do that, start audacious manually and then try to "
+"connect.\n"
+msgstr ""
+
+#: src/player_tab.c:950
+msgid "Previous"
+msgstr ""
+
+#: src/player_tab.c:968
+msgid "Play"
+msgstr ""
+
+#: src/player_tab.c:984
+msgid "Pause"
+msgstr ""
+
+#: src/player_tab.c:1001
+msgid "Stop"
+msgstr ""
+
+#: src/player_tab.c:1018
+msgid "Next"
+msgstr ""
+
+#: src/player_tab.c:1030
+msgid "Add splitpoint from player"
+msgstr ""
+
+#: src/player_tab.c:1034
+msgid "_Show amplitude wave"
+msgstr ""
+
+#: src/player_tab.c:1042
+msgid "Shows the amplitude level wave"
+msgstr ""
+
+#: src/player_tab.c:1046
+msgid "_Connect"
+msgstr ""
+
+#: src/player_tab.c:1049
+msgid "Connect to player"
+msgstr ""
+
+#: src/player_tab.c:1053
+msgid "_Disconnect"
+msgstr ""
+
+#: src/player_tab.c:1056
+msgid "Disconnect from player"
+msgstr ""
+
+#: src/player_tab.c:1216
+#, c-format
+msgid "before %s"
+msgstr ""
+
+#: src/player_tab.c:2714
+msgid " left click on splitpoint selects it, right click erases it"
+msgstr ""
+
+#: src/player_tab.c:2719
+msgid ""
+" left click + move changes song position, right click + move changes zoom"
+msgstr ""
+
+#: src/player_tab.c:2725
+msgid ""
+" left click on point + move changes point position, right click play preview"
+msgstr ""
+
+#: src/player_tab.c:2730
+msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
+msgstr ""
+
+#: src/player_tab.c:2916
+msgid " quick preview..."
+msgstr ""
+
+#: src/player_tab.c:3458
+msgid "History"
+msgstr ""
+
+#: src/player_tab.c:3594
+msgid "_Erase selected entries"
+msgstr ""
+
+#: src/player_tab.c:3603
+msgid "E_rase all history"
+msgstr ""
+
+#: src/player_tab.c:3726
+msgid " quick preview finished, song paused"
+msgstr ""
+
+#: src/player_tab.c:3853
+msgid "Choose File"
+msgstr ""
+
+#: src/player_tab.c:3865 src/multiple_files.c:130
+msgid "mp3 and ogg files (*.mp3 *.ogg)"
+msgstr ""
+
+#: src/player_tab.c:3873 src/multiple_files.c:138
+msgid "mp3 files (*.mp3)"
+msgstr ""
+
+#: src/player_tab.c:3879 src/multiple_files.c:144
+msgid "ogg files (*.ogg)"
+msgstr ""
+
+#: src/player_tab.c:4020
+msgid "_Browse"
+msgstr ""
+
+#: src/player_tab.c:4024
+msgid "Select file"
+msgstr ""
+
+#: src/player_tab.c:4031
+msgid "_Fix ogg stream"
+msgstr ""
+
+#: src/main_win.c:147
+msgid " info: stopping the split process before exiting"
+msgstr ""
+
+#: src/main_win.c:313
+msgid "Error launching external command"
+msgstr ""
+
+#: src/main_win.c:344
+msgid "using"
+msgstr ""
+
+#: src/main_win.c:348
+msgid "release of "
+msgstr ""
+
+#: src/main_win.c:445
+msgid " info: stopping the split process.. please wait"
+msgstr ""
+
+#: src/main_win.c:484
+msgid " error: no file selected"
+msgstr ""
+
+#: src/main_win.c:489
+msgid " error: split in progress..."
+msgstr ""
+
+#: src/main_win.c:501 src/main_win.c:505
+msgid "Split !"
+msgstr ""
+
+#: src/main_win.c:547
+msgid "_File"
+msgstr ""
+
+#: src/main_win.c:548
+msgid "_Help"
+msgstr ""
+
+#: src/main_win.c:551
+msgid "_Open..."
+msgstr ""
+
+#: src/main_win.c:551
+msgid "Open"
+msgstr ""
+
+#: src/main_win.c:554
+msgid "_Import splitpoints..."
+msgstr ""
+
+#: src/main_win.c:554
+msgid "Import"
+msgstr ""
+
+#: src/main_win.c:556
+msgid "_Export splitpoints..."
+msgstr ""
+
+#: src/main_win.c:556
+msgid "Export"
+msgstr ""
+
+#: src/main_win.c:559
+msgid "_Split !"
+msgstr ""
+
+#: src/main_win.c:561
+msgid "Messages _history"
+msgstr ""
+
+#: src/main_win.c:561 src/main_win.c:816 src/messages.c:201
+msgid "Messages history"
+msgstr ""
+
+#: src/main_win.c:564
+msgid "_Quit"
+msgstr ""
+
+#: src/main_win.c:564
+msgid "Quit"
+msgstr ""
+
+#: src/main_win.c:568
+msgid "_Contents"
+msgstr ""
+
+#: src/main_win.c:568
+msgid "Contents"
+msgstr ""
+
+#: src/main_win.c:572
+msgid "_About"
+msgstr ""
+
+#: src/main_win.c:572
+msgid "About"
+msgstr ""
+
+#: src/main_win.c:721
+msgid "Splitpoints"
+msgstr ""
+
+#: src/main_win.c:734
+msgid "Split files"
+msgstr ""
+
+#: src/main_win.c:747
+msgid "FreeDB"
+msgstr ""
+
+#: src/main_win.c:758
+msgid "Type of split"
+msgstr ""
+
+#: src/main_win.c:771
+msgid "Preferences"
+msgstr ""
+
+#: src/main_win.c:792
+msgid "S_top"
+msgstr ""
+
+#: src/freedb_tab.c:126
+#, c-format
+msgid "%s Revision %d"
+msgstr ""
+
+#: src/freedb_tab.c:180
+msgid "Album title"
+msgstr ""
+
+#: src/freedb_tab.c:200
+msgid "No"
+msgstr ""
+
+#: src/freedb_tab.c:306 src/freedb_tab.c:395
+msgid "please wait... contacting tracktype.org"
+msgstr ""
+
+#: src/freedb_tab.c:601
+msgid "Search tracktype.org:"
+msgstr ""
+
+#: src/freedb_tab.c:612
+msgid "_Search"
+msgstr ""
+
+#: src/freedb_tab.c:651
+msgid "Selected album:"
+msgstr ""
+
+#: src/freedb_tab.c:659
+msgid "_Add splitpoints"
+msgstr ""
+
+#: src/freedb_tab.c:666
+msgid "Set splitpoints to the splitpoints table"
+msgstr ""
+
+#: src/special_split.c:197 src/special_split.c:268
+#, c-format
+msgid "\tSplit every %2d seconds."
+msgstr ""
+
+#: src/special_split.c:208 src/special_split.c:299
+#, c-format
+msgid "\tSplit in %2d equal time tracks."
+msgstr ""
+
+#: src/special_split.c:243
+msgid "Normal"
+msgstr ""
+
+#: src/special_split.c:253
+msgid "Time"
+msgstr ""
+
+#: src/special_split.c:284
+msgid "Equal time tracks"
+msgstr ""
+
+#: src/special_split.c:314
+msgid "Trim using silence detection"
+msgstr ""
+
+#: src/special_split.c:330 src/special_split.c:355
+msgid "Threshold level (dB) : "
+msgstr ""
+
+#: src/special_split.c:339
+msgid "Silence - split with silence detection"
+msgstr ""
+
+#: src/special_split.c:365
+msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
+msgstr ""
+
+#: src/special_split.c:375
+msgid "Number of tracks (0 means all tracks) : "
+msgstr ""
+
+#: src/special_split.c:385
+msgid "Minimum silence length (seconds) : "
+msgstr ""
+
+#: src/special_split.c:395
+msgid "Minimum track length (seconds) : "
+msgstr ""
+
+#: src/special_split.c:403
+msgid "Remove silence between tracks"
+msgstr ""
+
+#: src/special_split.c:424
+msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
+msgstr ""
+
+#: src/special_split.c:434
+msgid "Error mode (mp3 only)"
+msgstr ""
+
+#: src/special_split.c:459
+msgid "Single file"
+msgstr ""
+
+#: src/special_split.c:467
+msgid "Batch processing"
+msgstr ""
+
+#: src/special_split.c:501
+msgid "Split mode"
+msgstr ""
+
+#: src/special_split.c:505
+msgid "File mode"
+msgstr ""
+
+#: src/messages.c:180
+msgid "Show _debug messages"
+msgstr ""
+
+#: src/messages.c:187
+msgid "C_lear"
+msgstr ""
+
+#: src/multiple_files.c:88
+msgid "Complete filename"
+msgstr ""
+
+#: src/multiple_files.c:109
+msgid "Choose file or directory"
+msgstr ""
+
+#: src/multiple_files.c:151
+msgid "All Files"
+msgstr ""
+
+#: src/multiple_files.c:293
+msgid "_Add files"
+msgstr ""
+
+#: src/multiple_files.c:301
+msgid "_Remove selected entries"
+msgstr ""
+
+#: src/multiple_files.c:310
+msgid "R_emove all entries"
+msgstr ""
+
+#: src/gstreamer_control.c:97
+#, c-format
+msgid "gstreamer error: %s"
+msgstr ""
+
+#: src/gstreamer_control.c:125
+#, c-format
+msgid "Warning: %s"
+msgstr ""
+
+#: src/gstreamer_control.c:153
+#, c-format
+msgid "Info: %s"
+msgstr ""
+
+#: src/gstreamer_control.c:416
+msgid " error: cannot create gstreamer playbin\n"
+msgstr ""
+
+#: src/mp3splt-gtk.c:166
+#, c-format
+msgid " File '%s' created"
+msgstr ""
+
+#: src/mp3splt-gtk.c:193
+#, c-format
+msgid " preparing \"%s\" (%d of %d)"
+msgstr ""
+
+#: src/mp3splt-gtk.c:199
+#, c-format
+msgid " creating \"%s\" (%d of %d)"
+msgstr ""
+
+#: src/mp3splt-gtk.c:205
+msgid " searching for sync errors..."
+msgstr ""
+
+#: src/mp3splt-gtk.c:209
+#, c-format
+msgid "S: %02d, Level: %.2f dB; scanning for silence..."
+msgstr ""
+
+#: src/mp3splt-gtk.c:372
+msgid " error: no files found in multiple files mode"
+msgstr ""
+
+#: src/mp3splt-gtk.c:587
+#, c-format
+msgid "Trying to set the output directory to %s.\n"
+msgstr ""
+
+#: src/mp3splt-gtk.c:596
+#, c-format
+msgid "Error: The specified output directory is inaccessible!\n"
+msgstr ""
+
+#: src/mp3splt-gtk.c:602
+#, c-format
+msgid "Option -%c requires an argument.\n"
+msgstr ""
+
+#: src/mp3splt-gtk.c:604
+#, c-format
+msgid "Unknown option `-%c'.\n"
+msgstr ""
+
+#: src/mp3splt-gtk.c:607
+#, c-format
+msgid "Unknown option character `\\x%x'.\n"
+msgstr ""
+
+#: src/mp3splt-gtk.c:659
+#, c-format
+msgid "Cannot open input file %s\n"
+msgstr ""
+
+#: src/utilities.c:126
+#, c-format
+msgid "Processing file '%s' ..."
+msgstr ""
+
+#: src/import.c:71
+msgid "Choose file to import"
+msgstr ""
+
+#: src/import.c:148
+msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
+msgstr ""
+
+#: src/import.c:152
+msgid "CDDB files (*.cddb)"
+msgstr ""
+
+#: src/import.c:154
+msgid "CUE files (*.cue)"
+msgstr ""
+
+#: src/import.c:156
+msgid "Audacity labels files (*.txt)"
+msgstr ""
+
+#: src/import.c:158
+msgid "All files"
+msgstr ""
+
+#: src/export.c:199
+msgid "Select cue file name"
+msgstr ""
+
+#: src/export.c:212
+msgid "cue files (*.cue)"
+msgstr ""

@@ -1,0 +1,119 @@
+.\" This -*- nroff -*- file has been generated from
+.\" DocBook SGML with docbook-to-man on Debian GNU/Linux.
+.\"
+.\"	transcript compatibility for postscript use.
+.\"
+.\"	synopsis:  .P! <file.ps>
+.\"
+.de P!
+\\&.
+.fl			\" force out current output buffer
+\\!%PB
+\\!/showpage{}def
+.\" the following is from Ken Flowers -- it prevents dictionary overflows
+\\!/tempdict 200 dict def tempdict begin
+.fl			\" prolog
+.sy cat \\$1\" bring in postscript file
+.\" the following line matches the tempdict above
+\\!end % tempdict %
+\\!PE
+\\!.
+.sp \\$2u	\" move below the image
+..
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+'\" t
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n
+
+.TH "MP3SPLT-GTK" "1"
+.SH "NAME"
+
+mp3splt\(hygtk \(em Gtk utility for mp3/ogg splitting without decoding.
+.SH "SYNOPSIS"
+.PP
+\fBmp3splt\(hygtk\fP
+.RB [\| \-d
+.IR Directory
+.RB \|]
+.RB [\| 
+.IR Filename
+.RB \|]
+
+.PP
+.SH "DESCRIPTION"
+.PP
+\fBmp3splt\(hygtk\fP is a free software that allows you to
+split mp3 and ogg files from several splitpoints,
+without need of decoding and reencoding.
+It is useful to split large mp3/ogg to make smaller files or to split
+entire albums to obtain original tracks.
+
+If you are splitting an album you can get splitpoints and filenames
+automatically from servers on internet like tracktype.org
+or from a local .XMCD (.CDDB) or .CUE file, with the possibility to adjust
+them automatically with silence detection.
+
+You can also split files automatically with silence detection, or by a fixed
+time length.
+
+If you have a file created either with Mp3Wrap or AlbumWrap, you can easily split it.
+.PP
+The whole program is controlled by a self-describing GUI and documented in the
+gnome help system. Optionally the name of the input file and the output
+directory can be specified on the command line (see above). 
+.SH "BUGS"
+.PP
+Report any bugs you find to the authors (see below). Advices, info requests and
+contributions are welcome.
+.SH "SEE ALSO"
+.PP
+\fBmp3splt\fP(1) \fBmp3wrap\fP(1)
+.SH "AUTHORS"
+.PP
+Alexandru Ionut Munteanu <io_fx@yahoo.fr>
+.SH "DISTRIBUTION"
+.PP
+Visit
+.I http://mp3splt.sourceforge.net for latest release.
+.PP
+.I mp3splt-project is
+.PP
+(C) 2002-2005 by Matteo Trotta
+.br
+(C) 2005-2011 by Alexandru Ionut Munteanu
+.PP
+Permission is granted to copy, distribute and/or modify
+this document under the terms of the GNU General Public License.
+This can be found as COPYING in mp3splt packages.
+
+.\" created by instant / docbook-to-man, Sun 17 Feb 2002, 11:18
+.\" modified by Matteo and Alex

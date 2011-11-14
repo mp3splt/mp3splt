@@ -1,0 +1,39 @@
+	mp3splt-gtk version 0.7.1
+
+	     Copyright (C) 2005-2011 Alexandru Ionut Munteanu
+	
+   Visit http://mp3splt.sourceforge.net for latest releases
+
+Note : you have to install libmp3splt for mp3splt-gtk
+-some versions of libmp3splt are not compatible with mp3splt-gtk.
+Be sure to have the same version of the library as mp3splt-gtk
+  Example : mp3splt-gtk v0.2 with libmp3splt v0.2
+
+DISCLAIMER
+
+This software comes with absolutely no warranty, and is intended 
+only to help people handling mp3 and ogg files. Author despises any use
+of mp3 technology for illegal purposes and will not be rensposible
+for any illegal action you can do with this software (if there are).
+
+LICENSE INFORMATION
+
+You can redistribute this software and/or modify it under the
+terms of the GNU General Public License as published
+by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+This software is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this library; if not, write to the
+Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+
+See COPYING for more details.
+
+Read INSTALL for installation and compile instructions.
+

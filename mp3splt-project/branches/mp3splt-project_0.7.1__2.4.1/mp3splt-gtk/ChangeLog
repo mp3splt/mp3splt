@@ -1,0 +1,324 @@
+Check http://mp3splt.sourceforge.net for the latest release.
+
+Please read the ChangeLog of libmp3splt for more information.
+Some changes are implemented in libmp3splt, but reported here for convenience.
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.7.1
+
+- added minimum track length option for silence scan - closes #2393766
+- added gtk3 support (auto detection or --enable-gtk3, --disable-gtk3) - almost closes #3385903
+(some tests still need to be done)
+- fixed #3385841 - removed scrollkeeper warnings
+- fixed #3385827 - added --disable-doxygen_doc
+- fixed #3385829 - building doxygen documentation by itself + installing doxygen files
+- fixed #3385833 - don't apply debugging flags or warnings flags by default:
+added --enable-c-debug --enable-optimise --enable-extra-warnings
+- added support for multiple ogg/vorbis logical streams (mail) (libmp3splt)
+- fixed mp3 frame mode with skippoint when skippoint too small (on the same frame as previous) (libmp3splt)
+- fixed several audacity labels issues (libmp3splt)
+- fixed some regression regarding mp3splt v2.1c - removed some checks relative to the total
+time - we cannot rely on the total time - for example with concatenated mp3s (libmp3splt)
+
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.7
+
+- added trimming using silence detection
+- fixed bug #3034474: genre tag problem + original tags are now correctly copied, with two exceptions: (libmp3splt)
+* only one artist, album, title are supported
+* for mp3's, the total tracknumber is not yet supported
+- fixed bug: don't show split files when setting silence splitpoints or trim splitpoints
+- fixed #3355210 - gtk not intuitive - split button with text and shadow
+- fixed windows bug to take translations from the current directory (+libmp3splt)
+- fixed windows bug with wide characters in directory path of executable (+libmp3splt)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.6.1a
+
+- fixed tracktype.org issue (libmp3splt)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.6.1
+
+- new CUE export: save current state - #3101612 & #1763318
+- new gnome help
+- new player buttons svg images + new program icon
+- added experimental option - splitpoint names from filename
+- added back the silence split mode for batch processing
+- support for setting tags from filename regular expression
+- keep browsing path - related to #1353726
+- new option '-d' to specify the output directory from the command line
+- specify input filenames from the command line - #3108936
+- remember screen size and position - #2991763
+- a file/open menu entry - #3108935
+- fixed pcre bug #3134156
+- fixed windows bug #3118436: LiveP freezing GUI
+- fixed bug #3105771: uppercase filters
+- doxygen documentation
+- registering the program in the system's mimetype database.
+- more translations (project mp3splt-gtk on transifex)
+- added --with-no-images_dir to mp3splt-gtk configure, in order to run the
+application with the new icons without installing
+- added genre tag to custom tags and to output format (libmp3splt)
+- support for the FILE attribute in CUE files - #1353726 (libmp3splt)
+- fixed CUE import bug - spaces at the end are now correctly wiped out (libmp3splt)
+- fixed bug #3114384: introduced back the 'file might be VBR' warning (libmp3splt)
+- fixed bug #3034474: genre tag problems (libmp3splt)
+- fixed ogg stream issues - #2861898 & #1078018 (libmp3splt)
+- fixed bug: setting the saved end time on wrong splitpoint indexes (libmp3splt)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.6
+
+- fixed important bug with tags and multiple files split
+- fixed auto adjusting when splitting in equal parts
+
+- fixed bug #3028775 & #3028078: naming conventions for files > 100 minutes confuses sort (libmp3splt)
+- fixed bug #3025671: getting original ID3v2 tags was not working on Windows (libmp3splt)
+- fixed bug #2969223: 'invalid dir I:' (libmp3splt)
+- added > 2Gb support on Windows (libmp3splt)
+mp3splt-gtk version (Next)
+- Made the gui more gnome-like (help/contents menu entry, File/open
+  dialog that is redundand since there is a "browse" button as well)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.9
+
+- added split in equal time tracks mode 
+- fixed important problem with ogg comments not written in the output files (related to #2925104) (libmp3splt)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.8a
+
+- fixed ogg streams stdin time mode bug (libmp3splt)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.8
+
+- removed CDDB & CUE tab & added 'Import...' in the 'File' menu
+- added audacity labels support
+- fixed bug #2844232: Desktop folder not found in localized Windows
+- fixed bug #2861898: no amplitude wave with ogg streams (one point still remains)
+- fixed bug with wrong time on silence level detection for mp3 streams (libmp3splt)
+- fixed bug with sync error mode & output format (not creating output files) (libmp3splt)
+- fixed important bug with the 'rm' parameter - SPLT_SKIPPOINT in general (libmp3splt)
+- fixed issue with mp3 frame mode: frame mode is not any more enabled by default (libmp3splt)
+- fixed mp3 non seekable stdin bug (libmp3splt)
+- fixed bug #1078018 with ogg negative granulepos packets (libmp3splt)
+- fixed ogg streams bug #2801293 (libmp3splt)
+- both ID3v1 & ID3v2 are now written if the input file contains both (libmp3splt)
+- small adjustment on the mp3 seekable non frame mode & non seekable frame mode (libmp3splt)
+- removed unuseful 'frame mode enabled' message for dewrapping & sync error mode (libmp3splt)
+- fixed bug #2881113: crash when no genre (libmp3splt)
+- fixed cue mode bug when no PERFORMER or TITLE (libmp3splt)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.7a
+
+- fixed important regression bug with the gap parameter of auto adjust (libmp3splt)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.7
+
+- major GUI usability improvements
+- multiple files split : split recursively files from directories
+- added basic Drag & Drop support for .mp3, .ogg, .cue, .cddb files
+- turned upside down silence wave & optimizations
+- added option in the GUI to create directories from filenames 
+- added messages history window 
+- updated french translation & added german translation
+- improved preferences to save automatically + saving the split mode state
+- added default UTF-8 encoding on all OSes
+- removed the language chooser in the preferences on most OSes
+- removed the 'input not seekable' option from the preferences
+- added patch for output format variables @u, @U, @l, @L (libmp3splt)
+- added support to output both ID3v1 and ID3v2 tags
+- fixed bug #2809816 with cue file : artist tags were the same (libmp3splt)
+- fixed important bug when detecting the total time : the last split file was shorter (libmp3splt)
+- fixed compilation bug for libmp3splt detection to look for 'libmp3splt/mp3splt.h' instead of mp3splt.h (libmp3splt)
+- tweaked --enable-xxx and --disable-xxx options to act correctly : --enable-gstreamer was acting like --disable-gstreamer
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.6
+
+libmp3splt fixes :
+- Xing header is now written even if 'No tags' option is used
+- fixed dewrap error message
+- fixed dewrap bug to not attempt to create output directories
+- fixed minor bug #2790952 : time mode creating an empty file (at the end)
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.5
+
+- IMPORTANT : by default gstreamer and audacious are now enabled for mp3splt-gtk :
+configure options changed from --enable-gstreamer to --disable-gstreamer
+and from --enable-audacious to --disable-audacious
+- fixed issue with CUE file not being imported correctly : \r and \n
+problem (bug #2778717)
+- fixed bug #2691576 - CUE file seg fault if no artist
+- added a basic mp3splt-gtk man page
+- removed encoding from '.desktop' file
+- added --with-mp3splt(-libraries|-includes)?, --disable-mp3splttest configure options
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.4
+
+- added the tags version option in the Preferences->Split : if to split
+using the version of the original file, to force ID3v2 or ID3v1 output
+- fixed CUE & CDDB not always setting the correct number of digits for @n
+in the GUI
+- fixed all tags/filenames "unicode" encoding issues on windows
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.3
+
+- moved 'silence split' in the 'splitpoints' tab to set the splitpoints
+from silence detection before splitting the file
+- added a silence wave in the player
+- added 'skippoint' option : allows the user to skip some splitpoints from
+creating the split file if the 'Keep' column is unchecked in the 'splitpoints' tab
+- created a completely new windows installer allowing to install only some
+components and to uninstall only the installed files
+- fixed the 'quit' button which did not always quit
+- fixed playlist hide on player change
+- fixed bug #2407192 : 'mp3splt-gtk loose the last split file with CUE files'
+- fixed an error coding in the gstreamer player infos
+- removed most of the warnings from the compilation (+ removed unuseful and
+dangerous casts)
+- small renames in the gtk player tab help
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.2
+
+- released to follow the same version with libmp3splt
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5.1
+
+- implemented 'internal' player using gstreamer
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.5
+
+- Beep Media Player has been dropped for Audacious
+- moved the filename entry and browse button on top of all tabs
+- fixed bug when pushing the 'Close' button in the About window
+- added mp3splt-gtk.desktop
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.4_rc1
+
+- no major change; changed code to follow libmp3splt API
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.3.1
+
+-fixes important bugs with the tags, the user can now choose 
+	to put the original tags, cddb or cue tags or no tags
+-the update splitpoints was optimised, no more trouble when we
+have many splitpoints
+-the split files tab can erase multiple selected files or 
+all the files
+-important bug fix with the output filename for cddb and cue
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.3
+
+-progress bar when splitting
+-support for stopping the split process
+-advanced player progress bar with possibility to move, select,
+erase and play preview the splitpoints
+-output support for cddb and cue (includes freedb)
+-more user friendly (does not "block" anymore, it uses threads)
+-bug fixes
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.2.1
+
+-this is a stable release	
+-it is mainly a bug fix release, many many bugs were fixed
+-play preview and split preview added
+-length column in the split tab added
+-split in the same directory as the song support
+-added a search button on the freedb tab	
+-please update your snackAmp version with the latest testing 
+version, bugs have been solved in snackAmp
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.2
+	
+-snackamp player support both on GNU/Linux and Windows
+ -download and install snackamp :
+	http://snackamp.sourceforge.net/
+   Make sure to download snackamp version >= 3.1.3
+ -to get the player working, you have to go to 
+   Tools->Preferences->Miscellaneous
+	from the snackamp menu and check
+   "Enable Socket Interface"
+	-only default port is supported for now(8775)
+ -after that, restart snackamp and mp3splt-gtk should work
+	
+-snackamp is the default player for now, and beep media player is no
+ longer compiled as default. To enable it you have to 
+ compile with beep media player support : "./configure --enable-bmp"
+-xmms is no longer supported
+ (however, compiling with beep media player library supports xmms)
+-windows installer
+-debian package added
+-compiles with gcc-4.0.1 without warnings
+-some icons stuff
+-some bugs fixed
+-wrap mode split
+-error mode split(mp3)
+-time split
+-silence auto detection split
+-auto-adjust silence split
+-frame mode option
+-input not seekable option
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.1.4
+
+-zoom progress bar with splitpoints added for the player	
+-cddb file and cue file support added
+-freedb support added
+-split and give name for the split files
+-all code revised
+-player optimised
+-bugs fixed
+
+-------------------------------------------------------------
+mp3splt-gtk version 0.1.3
+
+-fixes mp3 VBR bug
+-support for internationalization and translation to french.
+You can now easily translate mp3splt-gtk in your language.
+-added support for hundredth of seconds
+-better version of the player progress bar and the player volume bar
+-some other minor changes
+	
+-------------------------------------------------------------
+mp3splt-gtk version 0.1.2
+
+- fixes major bugs
+- added support for beep-media-player and made as default at compiling
+- created preferences tab
+- ability to choose the directory for split files
+- moved choose player to preferences tab
+- created split files tab where you can see split files, 
+	and erase them or listen them by click
+- also support for queuing split files to player
+- detachable player, splitpoints ... added
+- added support for saving preferences in .mp3splt-gtk directory
+.....          autoloading ...
+	
+	
+-------------------------------------------------------------
+mp3splt-gtk version 0.1.1
+
+- this is the first release, no change from the last version :)
+
+however, the version supports :
+	-integrated xmms player control
+	-supports mp3 and ogg split with unlimited splipoints for a song

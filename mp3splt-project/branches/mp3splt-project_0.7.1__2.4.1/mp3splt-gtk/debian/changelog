@@ -1,0 +1,46 @@
+mp3splt-gtk (0.7.1) oneiric; urgency=low
+
+  * Non-maintainer upload.
+  * New Upstream Version
+  * Updated the debian control file
+
+ -- Gunter Königsmann <gunter@peterpall.de>  Sat, 3 Mar 2011 23:04:40 +0100
+
+mp3splt-gtk (0.5.6-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * debian/control: Add Recommends on gstreamer0.10-plugins-good.
+    (Closes: #585614)
+
+ -- Tim Retout <diocles@debian.org>  Sun, 03 Oct 2010 12:46:50 +0100
+
+mp3splt-gtk (0.5.6-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Adjust pkconfig call to flags to properly set flags to link against
+    audacious shlib, fixes FTBFS (Closes: #581292).
+  * Build-depend on quilt.
+
+ -- Alessio Treglia <alessio@debian.org>  Mon, 20 Sep 2010 10:50:25 +0200
+
+mp3splt-gtk (0.5.6-1) unstable; urgency=low
+
+  * New Upstream Version
+  * add DM-Upload-Allowed field
+  * remove quilt patching, patches are applied upstream
+  * remove Debian man page, upstream wrote one now
+  * pass --disable-mp3splttest, those tests look for ../libmp3splt
+  * stop passing --enable-gstreamer and --enable-audacious, those cause
+    those features to be disabled...they are now enabled by default
+    anyway
+  * add dependency on libmp3splt-mp3 | libmp3splt-plugin, since the
+    dependency was removed from the libmp3splt0 package due to a
+    circular dependency
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Thu, 21 May 2009 18:50:42 -0700
+
+mp3splt-gtk (0.5.4-1) unstable; urgency=low
+
+  * Initial release (Closes: #515243, #500446) (LP: 319177)
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Fri, 10 Apr 2009 08:43:39 -0700

@@ -1,0 +1,22 @@
+libmp3splt (0.7.1) oneiric; urgency=low
+
+  * Non-maintainer upload.
+  * New Upstream Version
+  * Updated the debian control file
+
+ -- Gunter Königsmann <gunter@peterpall.de>  Sat, 3 Mar 2011 23:04:40 +0100
+
+libmp3splt (0.5.6-1) unstable; urgency=low
+
+  * New Upstream Version
+  * add DM-Upload-Allowed field
+  * remove libmp3splt0's dependency on libmp3splt-mp3 | libmp3splt-
+    plugin, fixing the circular dependency (Closes: #529058)
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Thu, 21 May 2009 18:50:28 -0700
+
+libmp3splt (0.5.4-1) unstable; urgency=low
+
+  * Initial release (Closes: #515242)
+
+ -- Ryan Niebur <ryanryan52@gmail.com>  Fri, 10 Apr 2009 08:41:01 -0700

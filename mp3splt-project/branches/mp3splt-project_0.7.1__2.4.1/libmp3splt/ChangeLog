@@ -1,0 +1,274 @@
+Known issues :
+
+- C library error messages not translated on windows : won't fix
+
+libmp3splt version 0.7.1
+-------------------------------------------------------------
+
+- added minimum track length option for silence scan - closes #2393766
+- added option to set original tags when using 'replace tags in tags' - closes #3407314
+- added support for multiple ogg/vorbis logical streams (mail)
+- fixed mp3 frame mode with skippoint when skippoint too small (on the same frame as previous)
+- fixed some regression regarding mp3splt v2.1c - removed some checks relative to the total
+time - we cannot rely on the total time - for example with concatenated mp3s
+- fixed several audacity labels issues
+- fixed inconsistency (extra 0 padding) between @n of custom tags and @n of output filename (mail)
+- fixed compilation error without libid3tag
+- fixed #3385833 - don't apply debugging flags or warnings flags by default:
+added --enable-c-debug --enable-optimise --enable-extra-warnings
+- fixed #3385827 - added --disable-doxygen_doc
+- fixed #3385829 - building doxygen documentation by itself + installing doxygen files
+
+libmp3splt version 0.7
+-------------------------------------------------------------
+
+- added negative splitpoints support: closes #3005266, #1659204
+- added trimming using silence detection: closes #3016524, #3141369, #880051, #1576489
+- fixed bug #3034474: genre tag problem + original tags are now correctly copied, with two exceptions:
+* only one artist, album, title are supported
+* for mp3's, the total tracknumber is not yet supported
+- rewritten internet part (tracktype, freedb)
+- fixed windows bug to take translations from the current directory
+- fixed windows bug with wide characters in directory path of executable
+
+libmp3splt version 0.6.1a
+-------------------------------------------------------------
+
+- fixed tracktype.org issue
+
+libmp3splt version 0.6.1
+-------------------------------------------------------------
+
+- added genre tag to custom tags and to output format (@g)
+- support for the FILE attribute in CUE files - #1353726
+- support for setting tags from filename regular expression
+- added cutter as unit testing framework in libmp3splt
+- fixed CUE import bug - spaces at the end are now correctly wiped out
+- fixed bug #3114384: introduced back the 'file might be VBR' warning
+- fixed bug #3034474: genre tag problems
+- fixed ogg stream issues - #2861898 & #1078018
+- fixed bug: setting the saved end time on wrong splitpoint indexes
+- more translations (project mp3splt-gtk on transifex)
+- and many other bugs ...
+
+libmp3splt version 0.6
+-------------------------------------------------------------
+
+- fixed bug #3028775 & #3028078: naming conventions for files > 100 minutes confuses sort
+- fixed bug #3025671: getting original ID3v2 tags was not working on Windows
+- fixed bug #3012688: wrong include and lib path using --with-mp3splt
+- fixed bug #2969968: build failed with --disable-nls
+- fixed bug #2969223: 'invalid dir I:'
+- added > 2Gb support on Windows
+
+libmp3splt version 0.5.9
+-------------------------------------------------------------
+
+- added cue export option - feature #1374959 and #1763318
+- added pretend to split option (useful with cue export)
+- added replace tags in tags option SPLT_OPT_REPLACE_TAGS_IN_TAGS - feature #2909015
+- added SPLIT_OPTION_LENGTH_MODE to split in equal time parts - feature #2908857 and #2809465
+- fixed important problem with ogg comments not written in the output files (related to #2925104)
+- fixed bugs with symlink issues - #2913697 and #2943791
+
+libmp3splt version 0.5.8a
+-------------------------------------------------------------
+
+- fixed ogg streams stdin time mode bug
+
+libmp3splt version 0.5.8
+-------------------------------------------------------------
+
+- added audacity labels support
+- fixed bug with wrong time on silence level detection for mp3 streams
+- fixed bug with sync error mode & output format (not creating output files)
+- fixed important bug with the 'rm' parameter - SPLT_SKIPPOINT in general
+- fixed issue with mp3 frame mode: frame mode is not any more enabled by default
+- fixed mp3 non seekable stdin bug
+- fixed bug #1078018 with ogg negative granulepos packets
+- fixed ogg streams bug #2801293
+- both ID3v1 & ID3v2 are now written if the input file contains both
+- small adjustment on the mp3 seekable non frame mode & non seekable frame mode
+- removed unuseful 'frame mode enabled' message for dewrapping & sync error mode
+- fixed bug #2881113: crash when no genre
+- fixed cue mode bug when no PERFORMER or TITLE
+
+libmp3splt version 0.5.7a
+-------------------------------------------------------------
+
+- fixed important regression bug with the gap parameter of auto adjust
+
+libmp3splt version 0.5.7
+-------------------------------------------------------------
+
+- added internationalization support (gettext) + french & german translations
+- added patch for output format variables @u, @U, @l, @L
+- added support to output both ID3v1 and ID3v2 tags
+- changed code to look for '.so.0' instead of '.so' for the plugins
+- fixed compilation bug for libmp3splt detection to look for 'libmp3splt/mp3splt.h' instead of mp3splt.h 
+- fixed bug #2809816 with cue file : artist tags were the same
+- fixed important bug when detecting the total time : the last split file was shorter
+
+libmp3splt version 0.5.6
+-------------------------------------------------------------
+
+- fixed compilation problem, bug #2785683
+- fixed critical bug with overlap splitpoints not working (feature #1530782 => bug)
+- fixed critical bug with mp3 stdin (& framemode)
+- fixed bug #2786300 in plugins compilation (added -lm)
+- Xing header is now written even if SPLT_NO_TAGS option is used
+- added SPLT_OPT_XING option to not write Xing header
+- fixed bug with custom tags and multiple usages of @o
+- fixed bug with stdin & id3v2 & xing
+- fixed a small bug with genre in custom tags
+- fixed some warning messages & added some more
+- fixed dewrap error message
+- fixed dewrap bug to not attempt to create output directories when '-d' option is used
+- fixed minor bug #2790952 : time mode creating an empty file (at the end)
+
+libmp3splt version 0.5.5
+-------------------------------------------------------------
+
+- fixed issue with CUE file not being imported correctly : \r and \n
+problem (bug #2778717)
+- fixed bug #2691576 - CUE file seg fault if no artist
+- fixed bug #2520183 : wrong size in snprintf call
+- fixed bug with ID3v1 and '@N' (was 1,3,5,... instead of 1,2,3,...)
+- fixed time split with '0.0' was infinite looping
+- fixed empty output format '' seg fault
+- added options @m,@M,@s,@S,@H,@h + no @h or @H in output filenames if hundreths are 0
+- added --with-(mad|id3)(-libraries|-includes)?, --disable-[mad|id3]test configure options
+- added overlapping option of split files (feature request #1530782)
+
+libmp3splt version 0.5.4
+-------------------------------------------------------------
+
+- fixed all tags/filenames "unicode" encoding issues on windows
+- the default behaviour of the tags on the split files has changed :
+by default, we set the tags version of the file to split in the
+split files (for example if the file for split has ID3 version X, the
+tags in the split files will be ID3vX)
+- the tags in the output files can be changed with the
+SPLT_OPT_FORCE_TAGS_VERSION option
+- fixed issue when the input file is erased if the output is the same as the original file
+- fixed small track issue in tags
+
+libmp3splt version 0.5.3
+-------------------------------------------------------------
+
+- added ID3v2 support when compiling with 'libid3tag' support
+- added '@nX' to '-o' option to specify the number of digits (X) in the
+output track identifier number
+- added the '@N' variable when using the '-g' option for auto incrementing
+the track number in the tags
+- fixed bug #2398397 : 'license version broken in README'
+- fixed the zeroes not being added before the number when using @n
+- fixed a lot of ugly codings and compiler warnings
+- fixed problem with configure yielding error when libid3tag not found
+- fixed libtool incompatibility issue (libtool: link: cannot find the
+library `../libltdl/libltdlc.la'), bug #2144760
+- updated to check for illegal characters in output filenames
+
+libmp3splt version 0.5.2
+-------------------------------------------------------------
+- fixed bug crashing the applications on the silence split when
+no 'get_silence_level' function defined
+
+libmp3splt version 0.5.1
+-------------------------------------------------------------
+- fixed bug settings custom tags to split files
+- fixed bug for mac compilation (#2099498 : no plugin matches the file 'xxx')
+
+-------------------------------------------------------------
+libmp3splt version 0.5
+- added plugin system for audio formats
+(currently supports ogg vorbis and mp3)
+-implemented STDIN and STDOUT (like in the original mp3splt)
+-moved translation of error codes to string into the library
+-implemented experimental version of 'mp3splt.log'
+(like in the original mp3splt)
+-return codes of many functions were checked
+-option '-o' now creates directories if necessary
+-fixed a log of bugs, including :
+(some are related to mp3splt command line, but I post them here)
+	#1807288 : one-off bug
+	#1483040 : problems with output file path(mp3splt is removing '/')
+	#1665006 & #1665002 : corrected return codes & const correctness
+	#2000246 : changed 'splitted' to 'split'
+	#118157 : unplayable stdin files on windows (+ same problem for stdin)
+
+-------------------------------------------------------------
+libmp3splt version 0.4_rc1
+-support for freedb2.org (now tracktype.org) implemented
+-fixed splits of ogg streams 
+-experimental .m3u support implemented
+-added @f in the output format (-o option)
+-on the fly code review
+-option to add custom tags to output files
+
+-------------------------------------------------------------
+libmp3splt version 0.3.1
+-code completely reviewed and reorganised
+-fixed bugs with the tags
+-fixed some other bugs
+
+-------------------------------------------------------------
+libmp3splt version 0.3
+-added split progress bar support
+-added support for sending messages to main program from the library
+-support for writing id3v1 tags from the original song if libid3tag installed
+-support for stopping the split process
+-cddb/freedb search supports performer if title is performer / title
+-desired output cddb and cue (includes freedb)
+-many bugs fixed
+
+-------------------------------------------------------------
+libmp3splt version 0.2.1
+	
+-this is mainly a bug fix release
+-many memory leak are fixed
+-many other bugs solved
+-support to split file in the same directory as the file 
+to split
+
+-------------------------------------------------------------
+libmp3splt version 0.2
+
+-compilation with gcc-4.0.1 with no warnings	
+-debian package created	
+-wrap mode split
+-error mode split(mp3)
+-time split
+-silence auto detection split
+-auto-adjust silence split
+-frame mode option
+-input not seekable option
+-some bugs fixed
+
+------------------------------------------------------------
+libmp3splt version 0.1.4
+
+-added support for reading cddb and cue files
+-freedb support added
+-code revised
+-possibility to split filenames and giving them a 
+  specific filename
+-bugs fixed
+
+-------------------------------------------------------------
+libmp3splt version 0.1.3
+
+- support for splitting with hundredth of seconds
+- fixed mp3 VBR bug
+	
+-------------------------------------------------------------
+libmp3splt version 0.1.2
+
+- support for splitting in a chosen directory
+- support for getting the split filenames	
+	
+-------------------------------------------------------------
+libmp3splt version 0.1.1
+
+- this is the first release, no change from the last version :)
+      -supports mp3/ogg split with multiple splitpoints

@@ -1,0 +1,566 @@
+# 
+# Ricardo A. Hermosilla Carrillo <ra.hermosillac@gmail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: mp3splt-gtk\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
+"POT-Creation-Date: 2011-01-11 21:44+0100\n"
+"PO-Revision-Date: 2011-03-22 15:36+0000\n"
+"Last-Translator: rahermosillac <ra.hermosillac@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_CL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#. When image changes, this message will be marked fuzzy or untranslated for
+#. you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mp3splt-gtk.xml72(None)
+msgid ""
+"@@image: 'figures/mp3splt-gtk.png'; md5=377dbd4b902606dadf9d03cdd9c13ad9"
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for
+#. you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: C/mp3splt-gtk.xml228(None)
+msgid "@@image: 'figures/Tracklist.png'; md5=1f97eed40ca5d67989a5ddd384f481b5"
+msgstr ""
+
+#: C/mp3splt-gtk.xml14(title)
+msgid "mp3splt-gtk Manual"
+msgstr "Manual de mp3splt-gtk"
+
+#: C/mp3splt-gtk.xml16(para)
+msgid "mp3splt-gtk."
+msgstr "mp3splt-gtk."
+
+#: C/mp3splt-gtk.xml19(para)
+msgid ""
+"A tool that allows to losslessly cut MP3 or Ogg Vorbis files. This means "
+"that the selected audio frames or packets are extracted without the need to "
+"re-encode the file - which would loose quality."
+msgstr ""
+"Una herramienta que permite cortar sin pérdida de datos en archivos MP3 o "
+"Ogg Vorbis. Esto significa que los cuadros seleccionados de audio o paquetes"
+" se extraen, sin necesidad de volver a codificar el archivo - que perdería "
+"calidad."
+
+#: C/mp3splt-gtk.xml26(year)
+msgid "2010"
+msgstr "2010"
+
+#: C/mp3splt-gtk.xml27(holder)
+msgid "Gunter Königsmann"
+msgstr "Gunter Königsmann"
+
+#: C/mp3splt-gtk.xml2(para)
+msgid ""
+"Permission is granted to copy, distribute and/or modify this document under "
+"the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any "
+"later version published by the Free Software Foundation with no Invariant "
+"Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy"
+" of the GFDL at this <ulink url=\"ghelp:fdl\">link</ulink> or in the file "
+"COPYING-DOCS distributed with this manual."
+msgstr ""
+"Se concede permiso para copiar, distribuir y/o modificar este documento bajo"
+" los términos de la Licencia de Documentación Libre GNU (GFDL), en su "
+"versión 1.1 o posterior publicado por la Free Software Foundation sin "
+"Secciones invariantes, sin textos con portada y sin textos con portada "
+"trasera. Usted puede encontrar una copia de la GFDL en este <ulink "
+"url=\"ghelp:fdl\">enlace</ulink> o en el archivo COPYING-DOCS distribuido "
+"con este manual."
+
+#: C/mp3splt-gtk.xml11(para)
+msgid ""
+"This manual is part of a collection of GNOME manuals distributed under the "
+"GFDL. If you want to distribute this manual separately from the collection, "
+"you can do so by adding a copy of the license to the manual, as described in"
+" section 6 of the license."
+msgstr ""
+"Este manual es parte de una colección de manuales para GNOME distribuidos "
+"bajo la GFDL. Si usted quiere distribuir este manual separadamente de la "
+"colección, puede hacerlo añadiendo una copia de la licencia al manual como "
+"se describe en la sección 6 de la licencia."
+
+#: C/mp3splt-gtk.xml17(para)
+msgid ""
+"Many of the names used by companies to distinguish their products and "
+"services are claimed as trademarks. Where those names appear in any GNOME "
+"documentation, and the members of the GNOME Documentation Project are made "
+"aware of those trademarks, then the names are in capital letters or initial "
+"capital letters."
+msgstr ""
+"Muchos de los nombres usados por compañías para distinguir sus productos y "
+"servicios son demandados como marcas. Cuando estos nombres aparecen en la "
+"documentación de GNOME, y los miembros del Proyecto de documentación de "
+"GNOME están al corriente de esas marcas, los nombres están en mayúsculas o "
+"con letra inicial mayúscula."
+
+#: C/mp3splt-gtk.xml30(para)
+msgid ""
+"DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, "
+"EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT "
+"THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS "
+"MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE "
+"RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR "
+"MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR "
+"MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL "
+"WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY "
+"SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN "
+"ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION "
+"OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND"
+msgstr ""
+"EL DOCUMENTO SE PROPORCIONARÁ \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, YA "
+"SEA EXPRESA O IMPLÍCITA, INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS QUE EL "
+"DOCUMENTO O LA VERSIÓN MODIFICADA ES LIBRE DE DEFECTOS COMERCIALES, "
+"ADECUADOS PARA UN PROPÓSITO PARTICULAR O NO-INFRACCIÓN. EL RIESGO EN CUANTO "
+"A LA CALIDAD, LA PRECISIÓN Y EJECUCIÓN DEL DOCUMENTO O VERSIÓN MODIFICADA "
+"DEL DOCUMENTO ES SUYO. SI CUALQUIER DOCUMENTO O VERSIÓN MODIFICADA PRUEBA "
+"DEFECTUOSO EN CUALQUIER ASPECTO, USTED (NO  ESCRITOR INICIAL, AUTOR O "
+"CONTRIBUYENTE) ASUME EL COSTO DE CUALQUIER SERVICIO, REPARACIÓN o "
+"CORRECCIÓN. LA RENUNCIA DE GARANTÍA ES UNA PARTE ESENCIAL DE ESTA LICENCIA. "
+"EL USO DE CUALQUIER DOCUMENTO O VERSIÓN MODIFICADA NO ES AUTORIZADA "
+"EXCEPTUANDO BAJO ESTA RENUNCIA DE RESPONSABILIDAD; Y"
+
+#: C/mp3splt-gtk.xml47(para)
+msgid ""
+"UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING"
+" NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY "
+"CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE "
+"DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON "
+"FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF "
+"ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, "
+"WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES"
+" OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED "
+"VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE"
+" POSSIBILITY OF SUCH DAMAGES."
+msgstr ""
+"BAJO NINGUNA CIRCUNSTANCIA Y BAJO NINGUNA TEORÍA LEGAL, YA SEA EN AGRAVIO "
+"(INCLUYENDO NEGLIGENCIA), CONTRATO O DE OTRA MANERA, EL AUTOR, EL ESCRITOR "
+"INICIAL, CUALQUIER CONTRIBUYENTE O CUALQUIER DISTRIBUIDOR DEL DOCUMENTO O DE"
+" VERSIONES MODIFICADAS, O CUALQUIER PROVEEDOR DE CUALQUIERA DE ESAS PARTES, "
+"SERÁ RESPONSABLE DE CUALQUIER PERSONA POR DAÑOS DIRECTOS, INDIRECTOS, "
+"ESPECIALES, INCIDENTALES O DERIVADOS DE CUALQUIER TIPO, INCLUYENDO, SIN "
+"LIMITACIONES, DAÑOS POR PÉRDIDA DE BUENA VOLUNTAD, TRABAJO, FALLOS EN EL "
+"COMPUTADOR O MAL FUNCIONAMIENTO, O CUALQUIER OTRO DAÑO O DERIVADO DE O EN "
+"RELACIÓN CON EL USO DEL DOCUMENTO Y VERSIONES MODIFICADAS, AÚN CUANDO DICHA "
+"PARTE HAYA SIDO INFORMADA DE LA POSIBILIDAD DE TALES DAÑOS."
+
+#: C/mp3splt-gtk.xml24(para)
+msgid ""
+"DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS "
+"OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: "
+"<placeholder-1/>"
+msgstr ""
+"EL DOCUMENTO Y LAS VERSIONES MODIFICADAS SON PROPORCIONADAS BAJO LOS "
+"TÉRMINOS DE LA LICENCIA DE DOCUMENTACIÓN LIBRE GNU CON LA PROMOCIÓN "
+"ENTENDIENDO QUE: <placeholder-1/>"
+
+#: C/mp3splt-gtk.xml41(firstname)
+msgid "Gunter"
+msgstr ""
+
+#: C/mp3splt-gtk.xml44(surname)
+msgid "Königsmann"
+msgstr ""
+
+#: C/mp3splt-gtk.xml50(revnumber)
+msgid "mp3splt-gtk Manual 0.1"
+msgstr "Manual mp3splt-gtk 0.1"
+
+#: C/mp3splt-gtk.xml51(date)
+msgid "2010-11-16"
+msgstr "2010-11-16"
+
+#: C/mp3splt-gtk.xml57(title)
+msgid "Introduction"
+msgstr "Introducción"
+
+#: C/mp3splt-gtk.xml58(para)
+msgid ""
+"The <application>mp3splt-gtk</application> application is a tool that allows"
+" to cut MP3 and Ogg Vorbis files without the need to re-encode them (which "
+"would loose them quality)."
+msgstr ""
+"La aplicación <application>mp3splt-gtk</application> es una herramienta que "
+"le permite cortar archivos MP3 y Ogg Vorbis sin la necesidad de re-"
+"codificarlos (lo que provocaría pérdida de calidad)."
+
+#: C/mp3splt-gtk.xml62(para)
+msgid ""
+"Features include graphical selection of split points, automatic splitting of"
+" music recordings into tracks and automatic adjustment of split points to "
+"fall into pauses."
+msgstr ""
+"Las características incluyen la selección gráfica de los puntos de división,"
+" división automática de grabaciones musicales en las pistas y el ajuste "
+"automático de los puntos de división al caer en las pausas."
+
+#: C/mp3splt-gtk.xml68(title)
+msgid "mp3splt-gtk directly after startup"
+msgstr ""
+
+#: C/mp3splt-gtk.xml75(application)
+msgid "mp3splt-gtk"
+msgstr ""
+
+#: C/mp3splt-gtk.xml75(phrase)
+msgid "Shows <placeholder-1/> directly after startup."
+msgstr ""
+
+#: C/mp3splt-gtk.xml82(title)
+msgid "Starting mp3splt-gtk"
+msgstr "Iniciando mp3splt-gtk"
+
+#: C/mp3splt-gtk.xml83(para)
+msgid ""
+"You can start <application>mp3splt-gtk</application> in - at least - the "
+"following ways:"
+msgstr ""
+"Usted puede iniciar <application>mp3splt-gtk</application> en - a lo menos -"
+" las siguientes maneras:"
+
+#: C/mp3splt-gtk.xml89(para)
+msgid ""
+"Choose <menuchoice><guimenu>Sound and Video</guimenu><guimenuitem>mp3splt-"
+"gtk</guimenuitem></menuchoice> from the <guimenu>Applications</guimenu> "
+"menu."
+msgstr ""
+"Escoja <menuchoice><guimenu>Sonido y Video</guimenu><guimenuitem>mp3splt-"
+"gtk</guimenuitem></menuchoice> desde el menú "
+"<guimenu>Aplicaciones</guimenu>."
+
+#: C/mp3splt-gtk.xml96(para)
+msgid ""
+"Run <command>mp3splt-gtk</command> at the prompt in a terminal such as "
+"<application>gnome-terminal</application>, or from the <application>Run "
+"Application</application> dialogue."
+msgstr ""
+"Ejecute <command>mp3splt-gtk</command> en una terminal como <application"
+">gnome-terminal</application> o desde el diálogo "
+"<application>Ejecutar</application>."
+
+#: C/mp3splt-gtk.xml106(title)
+msgid "Closing mp3splt-gtk"
+msgstr "Cerrando mp3splt-gtk"
+
+#: C/mp3splt-gtk.xml107(para)
+msgid ""
+"To close the <application>mp3splt-gtk</application> window there are many "
+"options, too:"
+msgstr ""
+"Para cerrar la aplicación <application>mp3splt-gtk</application> hay muchas "
+"opciones:"
+
+#: C/mp3splt-gtk.xml111(para)
+msgid ""
+"choose "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Quit</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/mp3splt-gtk.xml117(para)
+msgid "press <keycombo><keycap>Ctrl</keycap><keycap>W</keycap></keycombo>"
+msgstr ""
+
+#: C/mp3splt-gtk.xml123(para)
+msgid ""
+"press on the X-shaped button the window manager of your choise provides you "
+"with"
+msgstr "pulse sobre el botón en forma de X el gestor de ventanas"
+
+#: C/mp3splt-gtk.xml131(title)
+msgid "mp3splt-gtk Features"
+msgstr "Características de mp3splt-gtk"
+
+#: C/mp3splt-gtk.xml132(para)
+msgid ""
+"<application>mp3splt-gtk</application> will allow you to manipulate audio "
+"files without loosing any quality."
+msgstr ""
+
+#: C/mp3splt-gtk.xml141(para)
+msgid ""
+"The ability to use your favourite audio playback application for playback of"
+" the file that is to be cut."
+msgstr ""
+"Habilidad de utilizar su reproductor favorito de música para la reproducción"
+" de archivos que serán cortados."
+
+#: C/mp3splt-gtk.xml147(para)
+msgid "Automatic detection of the right places to split."
+msgstr "Detección automática de los lugares correctos para dividir."
+
+#: C/mp3splt-gtk.xml152(para)
+msgid ""
+"Automatic adjustment of manually set split points to fall into a nearby "
+"pause - which allows the user to work with less than milisecond-accuracy "
+"when specifying the split points."
+msgstr ""
+"Ajuste automático de puntos de división establecidos manualmente para caer "
+"en pausas cercanas - que permite al usuario trabajar con menos de "
+"milisegundos de precisión al especificar los puntos de división."
+
+#: C/mp3splt-gtk.xml160(para)
+msgid "Importing splitpoints for a known album from a database like freedb."
+msgstr ""
+"Importación de puntos de división para un álbum conocido desde una base de "
+"datos como FreeDB."
+
+#: C/mp3splt-gtk.xml166(para)
+msgid ""
+"Automatically split albums that have been joined by albumwrap or mp3wrap "
+"into the original files."
+msgstr ""
+"División automática de albums que fueron pegados con albumwrap o mp3wrap en "
+"archivos originales."
+
+#: C/mp3splt-gtk.xml136(para)
+msgid ""
+"This program was designed with usability in Mind and contains the followning"
+" features <placeholder-1/>"
+msgstr ""
+
+#: C/mp3splt-gtk.xml176(title)
+msgid "Basic Workflow"
+msgstr ""
+
+#: C/mp3splt-gtk.xml178(title)
+msgid "Opening a file"
+msgstr ""
+
+#: C/mp3splt-gtk.xml179(para)
+msgid ""
+"Just press the <guibutton> Choose </guibutton> button and select a file to "
+"open."
+msgstr ""
+
+#: C/mp3splt-gtk.xml185(title)
+msgid "Choose the right split points"
+msgstr ""
+
+#: C/mp3splt-gtk.xml187(title)
+msgid "Choosing split points manually"
+msgstr ""
+
+#: C/mp3splt-gtk.xml188(para)
+msgid ""
+"Press the <guibutton> Play </guibutton> button (a gray triangle pointing to "
+"the right) on the <guilabel>Player</guilabel> tab, listen to the music and "
+"press the <guibutton>add</guibutton> button (which is on the "
+"<guilabel>Player</guilabel> tab, too) every time a new audio track should "
+"begin."
+msgstr ""
+
+#: C/mp3splt-gtk.xml196(para)
+msgid ""
+"If you don't want to be made to press the button exactly at the right "
+"centisecond the <guibutton>add</guibutton> Preferences tab gives you the "
+"possibility to let the program fine-tune the split points you choose."
+msgstr ""
+
+#: C/mp3splt-gtk.xml204(title)
+msgid "Automatical setting of split points"
+msgstr ""
+
+#: C/mp3splt-gtk.xml205(para)
+msgid ""
+"The <guilabel>Type of Split</guilabel> tab provides you with a wide choices "
+"of ways to select where to split a file into tracks. If you want to split a "
+"media into tracks others might have had access to before you can try "
+"searching for splitpoint readymades in the <guilabel>FreeDB</guilabel> tab "
+"instead."
+msgstr ""
+
+#: C/mp3splt-gtk.xml216(title)
+msgid "Tweaking split points and entering track information"
+msgstr ""
+
+#: C/mp3splt-gtk.xml217(para)
+msgid ""
+"The <guilabel>Splitpoints</guilabel> tab now contains a list of points where"
+" tracks start or end. It also contains the information if this piece of the "
+"audio file is to be kept and how the corresponding track has to be named."
+msgstr ""
+
+#: C/mp3splt-gtk.xml224(title)
+msgid "The split point tab"
+msgstr ""
+
+#: C/mp3splt-gtk.xml231(phrase)
+msgid "Shows all split points and track names."
+msgstr ""
+
+#: C/mp3splt-gtk.xml236(para)
+msgid ""
+"If you want to change the start or end position of a track or give it a name"
+" just do it at any time you want."
+msgstr ""
+
+#: C/mp3splt-gtk.xml242(title) C/mp3splt-gtk.xml281(title)
+msgid "Exporting the tracks"
+msgstr ""
+
+#: C/mp3splt-gtk.xml243(para) C/mp3splt-gtk.xml282(para)
+msgid ""
+"Now press the button with the green <guibutton>check mark</guibutton> that "
+"is always visible in the menu line. mp3splt-gtk will output all tracks into "
+"single files. If anything goes wrong don't despair: Since one of the goals "
+"of mp3splt-gtk is to work completely lossless even if anything goes wrong "
+"not much is lost."
+msgstr ""
+
+#: C/mp3splt-gtk.xml254(title)
+msgid "Batch processing of files"
+msgstr ""
+
+#: C/mp3splt-gtk.xml255(para)
+msgid ""
+"Besides manual and automatic splitting of a single file mp3splt-gtk also "
+"supports automatic batch-processing of multiple files at once."
+msgstr ""
+
+#: C/mp3splt-gtk.xml261(title)
+msgid "Enabling batch processing mode"
+msgstr ""
+
+#: C/mp3splt-gtk.xml262(para)
+msgid ""
+"Go to the <guilabel>Type of split</guilabel> tab and there to the "
+"<guilabel>File mode</guilabel> tab. After selecting <guilabel>Batch "
+"processing</guilabel> here batch processing mode is enabled"
+msgstr ""
+
+#: C/mp3splt-gtk.xml268(title) C/mp3splt-gtk.xml276(title)
+msgid "Adding files in batch processing mode"
+msgstr ""
+
+#: C/mp3splt-gtk.xml269(para)
+msgid ""
+"Go to the <guilabel>Type of split</guilabel> tab and there to the "
+"<guilabel>Split mode</guilabel> tab and select after which criteria you want"
+" the files to be split."
+msgstr ""
+
+#: C/mp3splt-gtk.xml277(para)
+msgid ""
+"Go to the <guilabel>Batch Processing</guilabel> tab and add all files you "
+"want to be automatically processed."
+msgstr ""
+
+#: C/mp3splt-gtk.xml293(title)
+msgid "Saving and resuming your work"
+msgstr ""
+
+#: C/mp3splt-gtk.xml294(para)
+msgid ""
+"mp3splt-gtk contains an export feature that saves the current project's "
+"state as a cue file. This cue file can later be re-opened by mp3splt-gtk or "
+"be used by any cd burner or other application that can read cue files."
+msgstr ""
+
+#: C/mp3splt-gtk.xml300(para)
+msgid ""
+"If the cue file is used in a different application than mp3splt-gtk there is"
+" one feature that most probably won't work, though:"
+msgstr ""
+
+#: C/mp3splt-gtk.xml305(para)
+msgid ""
+"The cue standard does provide commentary fields that allow applications to "
+"store private data (which we use for to remember which part of the file is "
+"not to be output). But since there is no standartized way to exclude parts "
+"of a file from the CD burning process other applications most probably won't"
+" know if you want to do so."
+msgstr ""
+
+#: C/mp3splt-gtk.xml313(para)
+msgid ""
+"To export the current split points as a cue file press "
+"<menuchoice><guimenu>File</guimenu><guimenuitem>Export "
+"Splitpoints</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/mp3splt-gtk.xml320(title)
+msgid "Troubleshooting"
+msgstr ""
+
+#: C/mp3splt-gtk.xml322(title)
+msgid "The player won't start"
+msgstr ""
+
+#: C/mp3splt-gtk.xml323(para)
+msgid ""
+"If the player won't start even if the play button is pressed try starting "
+"the player independently from mp3splt-gtk and pressing play thereafter."
+msgstr ""
+
+#: C/mp3splt-gtk.xml328(para)
+msgid ""
+"mp3splt-gtk knows how to remote-control SnackAmp and Audacious to "
+"automatically switch to the file that is about to be split."
+msgstr ""
+
+#: C/mp3splt-gtk.xml334(title)
+msgid "Splitting doesn't work"
+msgstr ""
+
+#: C/mp3splt-gtk.xml335(para)
+msgid ""
+"Try to make sure that the version of libmp3splt is installed correspondends "
+"to the version of mp3splt-gtk. Even if (for newer versions of the program) "
+"the configure script makes sure that both versions match it might still be "
+"possible to have the wrong combination of these elements installed on the "
+"same system."
+msgstr ""
+
+#: C/mp3splt-gtk.xml343(para)
+msgid ""
+"If that is the case make sure that in the <guilabel>File mode</guilabel> tab"
+" of the <guilabel>Type of split</guilabel> tab <guilabel>Single "
+"file</guilabel> mode is selected."
+msgstr ""
+
+#: C/mp3splt-gtk.xml350(title)
+msgid "Splitting a certain Ogg file doesn't work"
+msgstr ""
+
+#: C/mp3splt-gtk.xml351(para)
+msgid ""
+"Next to the lossy ogg vorbis format that gives good compression while "
+"keeping file sizes extremely low there are other file formats that can be "
+"kept inside an ogg container as well, notably ogg flac."
+msgstr ""
+
+#: C/mp3splt-gtk.xml357(para)
+msgid ""
+"Flac is a completely lossless codec which means that the output files are "
+"sonewhat larger than Ogg vorbis ones but these files can be cut on any "
+"information without loosing any quality."
+msgstr ""
+
+#: C/mp3splt-gtk.xml363(para)
+msgid ""
+"Since there is no direct need mp3splt-gtk still does not support cutting "
+"flac files."
+msgstr ""
+
+#: C/mp3splt-gtk.xml369(title)
+msgid "Adding a file to the files view doesn't work"
+msgstr ""
+
+#: C/mp3splt-gtk.xml370(para)
+msgid ""
+"Make sure that in the <guilabel>File mode</guilabel> tab of the "
+"<guilabel>Type of split</guilabel> tab <guilabel>Batch processing</guilabel>"
+" mode is selected."
+msgstr ""
+
+#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
+#: C/mp3splt-gtk.xml0(None)
+msgid "translator-credits"
+msgstr "Ricardo A. Hermosilla Carrillo <ra.hermosillac@gmail.com>"
+
+
