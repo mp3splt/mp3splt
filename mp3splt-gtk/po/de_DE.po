@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-13 18:54+0100\n"
+"POT-Creation-Date: 2011-11-14 00:12+0100\n"
 "PO-Revision-Date: 2011-09-15 23:08+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
@@ -652,7 +652,8 @@ msgid "using"
 msgstr "unter Verwendung von"
 
 #: src/main_win.c:348
-msgid "release of"
+#, fuzzy
+msgid "release of "
 msgstr "Veröffentlichung von"
 
 #: src/main_win.c:445

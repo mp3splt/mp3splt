@@ -14,6 +14,7 @@ mp3splt-gtk version 0.7.1
 - fixed #3385829 - building doxygen documentation by itself + installing doxygen files
 - fixed #3385833 - don't apply debugging flags or warnings flags by default:
 added --enable-c-debug --enable-optimise --enable-extra-warnings
+- added support for multiple ogg/vorbis logical streams (mail) (libmp3splt)
 - fixed mp3 frame mode with skippoint when skippoint too small (on the same frame as previous) (libmp3splt)
 - fixed several audacity labels issues (libmp3splt)
 - fixed some regression regarding mp3splt v2.1c - removed some checks relative to the total
