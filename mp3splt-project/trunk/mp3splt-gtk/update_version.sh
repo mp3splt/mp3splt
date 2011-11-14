@@ -41,6 +41,10 @@ sed -i "s/\[ AC_MSG_ERROR(libmp3splt version .* needed/\
 sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/main_win.c || exit 1
 sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_win.c || exit 1
 
+DATE=$(date +%d\\/%m\\/%y)
+#./src/mp3splt-gtk.h:#define MP3SPLT_GTK_DATE "14/04/2006"
+sed -i "s/#define MP3SPLT_GTK_DATE \".*\"/#define MP3SPLT_GTK_DATE \"$DATE\"/" ./src/mp3splt-gtk.h || exit 1
+
 #slackware description
 cd ./slackware
 sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc || exit 1

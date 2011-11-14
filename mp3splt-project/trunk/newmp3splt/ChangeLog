@@ -16,6 +16,7 @@ Known issues :
 - fixed #3385833 - don't apply debugging flags or warnings flags by default:
 added --enable-c-debug --enable-optimise --enable-extra-warnings
 - fixed #3424143 - added a small check for the -O option
+- added support for multiple ogg/vorbis logical streams (mail) (libmp3splt)
 - fixed mp3 frame mode with skippoint when skippoint too small (on the same frame as previous) (libmp3splt)
 - fixed several audacity labels issues (libmp3splt)
 - fixed inconsistency (extra 0 padding) between @n of -g and @n of -o (mail)

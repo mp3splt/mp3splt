@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-13 18:54+0100\n"
+"POT-Creation-Date: 2011-11-14 00:12+0100\n"
 "PO-Revision-Date: 2011-02-22 00:00+0000\n"
 "Last-Translator: rahermosillac <ra.hermosillac@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -640,7 +640,8 @@ msgid "using"
 msgstr "utilizando"
 
 #: src/main_win.c:348
-msgid "release of"
+#, fuzzy
+msgid "release of "
 msgstr "liberación de"
 
 #: src/main_win.c:445
