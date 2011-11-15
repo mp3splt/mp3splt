@@ -211,7 +211,7 @@ void show_disconnect_button();
 void inputfilename_set(const gchar *filename);
 gchar *inputfilename_get();
 
-void build_svg_path(GString *imagefile, gchar *svg_filename);
+void build_path(GString *path, const gchar *dir, const gchar *filename);
 
 #endif
 

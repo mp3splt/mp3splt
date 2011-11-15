@@ -248,8 +248,8 @@ void initialize_window()
   gtk_drag_dest_set(window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
       drop_types, 3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
  
-  GString *Imagefile = g_string_new(PIXMAP_PATH);
-  build_svg_path(Imagefile, "mp3splt-gtk_ico"ICON_EXT);
+  GString *Imagefile = g_string_new("");
+  build_path(Imagefile, PIXMAP_PATH, "mp3splt-gtk_ico"ICON_EXT);
   GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(Imagefile->str, NULL);
   gtk_window_set_default_icon(pixbuf);
   g_string_free(Imagefile, TRUE);
@@ -328,10 +328,11 @@ void about_window(GtkWidget *widget, gpointer *data)
 {
   GtkWidget *dialog = gtk_about_dialog_new();
 
-  //for the bitmap
-  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (PIXMAP_PATH"mp3splt-gtk.png",
-      NULL);
+  GString *Imagefile = g_string_new("");
+  build_path(Imagefile, PIXMAP_PATH, "mp3splt-gtk.png");
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(Imagefile->str, NULL);
   gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
+  g_string_free(Imagefile, TRUE);
   
   gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
