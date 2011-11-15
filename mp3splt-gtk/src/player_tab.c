@@ -904,22 +904,22 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
   //da_draw_event(da, NULL, NULL);
 }
 
-void build_svg_path(GString *imagefile, gchar *svg_filename)
+void build_path(GString *path, const gchar *dir, const gchar *filename)
 {
 #ifdef __WIN32__
-  g_string_assign(imagefile, ".");
-  g_string_append(imagefile, G_DIR_SEPARATOR_S);
-  g_string_append(imagefile, svg_filename);
+  g_string_assign(path, ".");
+  g_string_append(path, G_DIR_SEPARATOR_S);
+  g_string_append(path, filename);
 #else
-  if (strlen(IMAGEDIR) == 0)
+  if (strlen(dir) == 0)
   {
-    g_string_assign(imagefile, svg_filename);
+    g_string_assign(path, filename);
   }
   else 
   {
-    g_string_assign(imagefile, IMAGEDIR);
-    g_string_append(imagefile, G_DIR_SEPARATOR_S);
-    g_string_append(imagefile, svg_filename);
+    g_string_assign(path, dir);
+    g_string_append(path, G_DIR_SEPARATOR_S);
+    g_string_append(path, filename);
   }
 #endif
 }
@@ -930,12 +930,12 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   player_buttons_hbox = gtk_hbox_new(FALSE, 0);
 
   //go at the beginning button
-  GString *Imagefile = g_string_new(IMAGEDIR);
+  GString *Imagefile = g_string_new("");
 
-  build_svg_path(Imagefile, "backward"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "backward"ICON_EXT);
   Go_BegButton_active= gtk_image_new_from_file(Imagefile->str);
 
-  build_svg_path(Imagefile, "backward_inactive"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "backward_inactive"ICON_EXT);
   Go_BegButton_inactive= gtk_image_new_from_file(Imagefile->str);
   go_beg_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_inactive));
@@ -950,10 +950,10 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(go_beg_button, _("Previous"));
 
   //play button
-  build_svg_path(Imagefile, "play"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "play"ICON_EXT);
   PlayButton_active= gtk_image_new_from_file(Imagefile->str);
 
-  build_svg_path(Imagefile, "play_inactive"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "play_inactive"ICON_EXT);
   PlayButton_inactive= gtk_image_new_from_file(Imagefile->str);
   play_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_inactive));
@@ -968,10 +968,10 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(play_button,_("Play"));
 
   //pause button
-  build_svg_path(Imagefile, "pause"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "pause"ICON_EXT);
   PauseButton_active= gtk_image_new_from_file(Imagefile->str);
 
-  build_svg_path(Imagefile, "pause_inactive"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "pause_inactive"ICON_EXT);
   PauseButton_inactive= gtk_image_new_from_file(Imagefile->str);
   pause_button = gtk_toggle_button_new();
   gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
@@ -984,10 +984,10 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(pause_button,_("Pause"));
 
   //stop button
-  build_svg_path(Imagefile, "stop"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "stop"ICON_EXT);
   StopButton_active= gtk_image_new_from_file(Imagefile->str);
 
-  build_svg_path(Imagefile, "stop_inactive"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "stop_inactive"ICON_EXT);
   StopButton_inactive= gtk_image_new_from_file(Imagefile->str);
   stop_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
@@ -1001,10 +1001,10 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(stop_button,_("Stop"));
 
   //go at the end button
-  build_svg_path(Imagefile, "forward"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "forward"ICON_EXT);
   Go_EndButton_active= gtk_image_new_from_file(Imagefile->str);
 
-  build_svg_path(Imagefile, "forward_inactive"ICON_EXT);
+  build_path(Imagefile, IMAGEDIR, "forward_inactive"ICON_EXT);
   Go_EndButton_inactive= gtk_image_new_from_file(Imagefile->str);
   go_end_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_inactive));
