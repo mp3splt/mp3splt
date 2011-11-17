@@ -368,7 +368,7 @@ This allows you to split mp3 and ogg streams which can be read only one time and
 seeked. Both framemode and standard mode are available, but framemode can be really slow if used with big
 files, because to seek splitpoints we need to process all bytes and all frames. \-k option
 (so STDIN as input too) can't be used together with \-s \-a \-w \-e, because input must be seekable for
-those options.
+those options. Copying original tags is not yet supported for the non seekable option.
 
 .IP "\fB\-O TIME\fP         " 10
 \fBOverlap split files\fP. TIME will be added to each end splitpoint.
