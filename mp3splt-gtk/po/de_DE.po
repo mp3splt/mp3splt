@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-14 00:12+0100\n"
+"POT-Creation-Date: 2011-11-17 23:43+0100\n"
 "PO-Revision-Date: 2011-09-15 23:08+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
@@ -436,7 +436,7 @@ msgstr "Gleiche Tag-Version wie Eingabedatei"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Tag-Version (nur für mp3)</b>"
 
-#: src/preferences_tab.c:1259 src/main_win.c:559
+#: src/preferences_tab.c:1259 src/main_win.c:560
 msgid "Split"
 msgstr "Teilung"
 
@@ -448,7 +448,7 @@ msgstr "Tags"
 msgid "Output"
 msgstr "Ausgabe"
 
-#: src/preferences_tab.c:1277 src/main_win.c:708
+#: src/preferences_tab.c:1277 src/main_win.c:709
 msgid "Player"
 msgstr "Abspieler"
 
@@ -647,120 +647,120 @@ msgstr " Info: Teilungsvorgang wird vor dem Beenden abgebrochen"
 msgid "Error launching external command"
 msgstr "Fehler beim Ausführen des externen Befehls"
 
-#: src/main_win.c:344
+#: src/main_win.c:345
 msgid "using"
 msgstr "unter Verwendung von"
 
-#: src/main_win.c:348
+#: src/main_win.c:349
 #, fuzzy
 msgid "release of "
 msgstr "Veröffentlichung von"
 
-#: src/main_win.c:445
+#: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
 msgstr " Info: Teilungsvorgang wird beendet, bitte warten"
 
-#: src/main_win.c:484
+#: src/main_win.c:485
 msgid " error: no file selected"
 msgstr " Fehler: Keine Datei ausgewählt"
 
-#: src/main_win.c:489
+#: src/main_win.c:490
 msgid " error: split in progress..."
 msgstr " Fehler: Teilung läuft …"
 
-#: src/main_win.c:501 src/main_win.c:505
+#: src/main_win.c:502 src/main_win.c:506
 msgid "Split !"
 msgstr "Teilen!"
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "_File"
 msgstr "_Datei"
 
-#: src/main_win.c:548
+#: src/main_win.c:549
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "_Open..."
 msgstr "_Öffnen"
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "_Import splitpoints..."
 msgstr "Teilungspunkte _importieren …"
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "Import"
 msgstr "Importieren"
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "_Export splitpoints..."
 msgstr "Teilungspunkte _exportieren …"
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "Export"
 msgstr "Exportieren"
 
-#: src/main_win.c:559
+#: src/main_win.c:560
 msgid "_Split !"
 msgstr "_Teilen!"
 
-#: src/main_win.c:561
+#: src/main_win.c:562
 msgid "Messages _history"
 msgstr "C_hronik der Meldungen"
 
-#: src/main_win.c:561 src/main_win.c:816 src/messages.c:201
+#: src/main_win.c:562 src/main_win.c:817 src/messages.c:201
 msgid "Messages history"
 msgstr "Chronik der Meldungen"
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "_Quit"
 msgstr "_Beenden"
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "Quit"
 msgstr "Beenden"
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "_Contents"
 msgstr "_Inhalt"
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "Contents"
 msgstr "Inhalt"
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "_About"
 msgstr "_Info"
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "About"
 msgstr "Info"
 
-#: src/main_win.c:721
+#: src/main_win.c:722
 msgid "Splitpoints"
 msgstr "Teilungspunkte"
 
-#: src/main_win.c:734
+#: src/main_win.c:735
 msgid "Split files"
 msgstr "Dateien teilen"
 
-#: src/main_win.c:747
+#: src/main_win.c:748
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:758
+#: src/main_win.c:759
 msgid "Type of split"
 msgstr "Teilungstyp"
 
-#: src/main_win.c:771
+#: src/main_win.c:772
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: src/main_win.c:792
+#: src/main_win.c:793
 msgid "S_top"
 msgstr "S_top"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-14 00:12+0100\n"
+"POT-Creation-Date: 2011-11-17 23:43+0100\n"
 "PO-Revision-Date: 2011-02-22 00:00+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -441,7 +441,7 @@ msgstr "Même version des tags que le fichier d'entrée"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:1259 src/main_win.c:559
+#: src/preferences_tab.c:1259 src/main_win.c:560
 msgid "Split"
 msgstr "Coupure"
 
@@ -453,7 +453,7 @@ msgstr "Tags"
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:1277 src/main_win.c:708
+#: src/preferences_tab.c:1277 src/main_win.c:709
 msgid "Player"
 msgstr "Lecteur"
 
@@ -644,120 +644,120 @@ msgstr " info : arrêt du processus de découpage avant de sortir"
 msgid "Error launching external command"
 msgstr ""
 
-#: src/main_win.c:344
+#: src/main_win.c:345
 msgid "using"
 msgstr "utilisant"
 
-#: src/main_win.c:348
+#: src/main_win.c:349
 #, fuzzy
 msgid "release of "
 msgstr "version du"
 
-#: src/main_win.c:445
+#: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
 msgstr " info : arrêt du processus de découpage... veuillez attendre"
 
-#: src/main_win.c:484
+#: src/main_win.c:485
 msgid " error: no file selected"
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:489
+#: src/main_win.c:490
 msgid " error: split in progress..."
 msgstr " erreur : découpage en cours..."
 
-#: src/main_win.c:501 src/main_win.c:505
+#: src/main_win.c:502 src/main_win.c:506
 msgid "Split !"
 msgstr "Couper !"
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "_File"
 msgstr "_Fichier"
 
-#: src/main_win.c:548
+#: src/main_win.c:549
 msgid "_Help"
 msgstr "_Aide"
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "_Open..."
 msgstr "_Ouvrir..."
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "Open"
 msgstr "Ouvrir"
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "_Import splitpoints..."
 msgstr "_Importer points de coupure..."
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "Import"
 msgstr "Importer"
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "_Export splitpoints..."
 msgstr "_Exporter points de coupure..."
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "Export"
 msgstr "Exporter"
 
-#: src/main_win.c:559
+#: src/main_win.c:560
 msgid "_Split !"
 msgstr "_Couper"
 
-#: src/main_win.c:561
+#: src/main_win.c:562
 msgid "Messages _history"
 msgstr "_Historique des messages"
 
-#: src/main_win.c:561 src/main_win.c:816 src/messages.c:201
+#: src/main_win.c:562 src/main_win.c:817 src/messages.c:201
 msgid "Messages history"
 msgstr "Historique des messages"
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "_Quit"
 msgstr "_Quitter"
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "_Contents"
 msgstr "_Contenus"
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "Contents"
 msgstr "Contenus"
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "_About"
 msgstr "_A propos de"
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "About"
 msgstr "A propos de"
 
-#: src/main_win.c:721
+#: src/main_win.c:722
 msgid "Splitpoints"
 msgstr "Points de coupure"
 
-#: src/main_win.c:734
+#: src/main_win.c:735
 msgid "Split files"
 msgstr ""
 
-#: src/main_win.c:747
+#: src/main_win.c:748
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:758
+#: src/main_win.c:759
 msgid "Type of split"
 msgstr "Type de découpage"
 
-#: src/main_win.c:771
+#: src/main_win.c:772
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:792
+#: src/main_win.c:793
 msgid "S_top"
 msgstr "S_top"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-14 00:12+0100\n"
+"POT-Creation-Date: 2011-11-17 23:43+0100\n"
 "PO-Revision-Date: 2011-02-22 00:00+0000\n"
 "Last-Translator: snowiulian <snow.iulian@yahoo.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -420,7 +420,7 @@ msgstr ""
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr ""
 
-#: src/preferences_tab.c:1259 src/main_win.c:559
+#: src/preferences_tab.c:1259 src/main_win.c:560
 msgid "Split"
 msgstr ""
 
@@ -432,7 +432,7 @@ msgstr ""
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1277 src/main_win.c:708
+#: src/preferences_tab.c:1277 src/main_win.c:709
 msgid "Player"
 msgstr ""
 
@@ -601,119 +601,119 @@ msgstr ""
 msgid "Error launching external command"
 msgstr ""
 
-#: src/main_win.c:344
+#: src/main_win.c:345
 msgid "using"
 msgstr ""
 
-#: src/main_win.c:348
+#: src/main_win.c:349
 msgid "release of "
 msgstr ""
 
-#: src/main_win.c:445
+#: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
 msgstr ""
 
-#: src/main_win.c:484
+#: src/main_win.c:485
 msgid " error: no file selected"
 msgstr ""
 
-#: src/main_win.c:489
+#: src/main_win.c:490
 msgid " error: split in progress..."
 msgstr ""
 
-#: src/main_win.c:501 src/main_win.c:505
+#: src/main_win.c:502 src/main_win.c:506
 msgid "Split !"
 msgstr ""
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "_File"
 msgstr ""
 
-#: src/main_win.c:548
+#: src/main_win.c:549
 msgid "_Help"
 msgstr ""
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "_Open..."
 msgstr ""
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "Open"
 msgstr ""
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "_Import splitpoints..."
 msgstr ""
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "Import"
 msgstr ""
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "_Export splitpoints..."
 msgstr ""
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "Export"
 msgstr ""
 
-#: src/main_win.c:559
+#: src/main_win.c:560
 msgid "_Split !"
 msgstr ""
 
-#: src/main_win.c:561
+#: src/main_win.c:562
 msgid "Messages _history"
 msgstr ""
 
-#: src/main_win.c:561 src/main_win.c:816 src/messages.c:201
+#: src/main_win.c:562 src/main_win.c:817 src/messages.c:201
 msgid "Messages history"
 msgstr ""
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "_Quit"
 msgstr ""
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "Quit"
 msgstr ""
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "_Contents"
 msgstr ""
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "Contents"
 msgstr ""
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "_About"
 msgstr ""
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "About"
 msgstr ""
 
-#: src/main_win.c:721
+#: src/main_win.c:722
 msgid "Splitpoints"
 msgstr ""
 
-#: src/main_win.c:734
+#: src/main_win.c:735
 msgid "Split files"
 msgstr ""
 
-#: src/main_win.c:747
+#: src/main_win.c:748
 msgid "FreeDB"
 msgstr ""
 
-#: src/main_win.c:758
+#: src/main_win.c:759
 msgid "Type of split"
 msgstr ""
 
-#: src/main_win.c:771
+#: src/main_win.c:772
 msgid "Preferences"
 msgstr ""
 
-#: src/main_win.c:792
+#: src/main_win.c:793
 msgid "S_top"
 msgstr ""
 

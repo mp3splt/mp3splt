@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-11-14 00:12+0100\n"
+"POT-Creation-Date: 2011-11-17 23:42+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -567,70 +567,76 @@ msgstr ""
 "avertissement : impossible de remplir les tags avec l'expression régulière "
 "fichier - compilé sans support pcre\n"
 
-#: plugins/mp3.c:1242
+#: plugins/mp3.c:1158
+msgid ""
+" warning: lost sync and compiled without id3tag support - the split might be "
+"corrupt\n"
+msgstr ""
+
+#: plugins/mp3.c:1254
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr " info: entête Xing ou Info trouvée. Activation du mode \"frame\"...\n"
 
-#: plugins/mp3.c:1381
+#: plugins/mp3.c:1393
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " info : MPEG %d couche %d - %d Hz - %s"
 
-#: plugins/mp3.c:1389
+#: plugins/mp3.c:1401
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - MODE 'FRAME' NS (sans changement de position)"
 
-#: plugins/mp3.c:1393
+#: plugins/mp3.c:1405
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - MODE 'FRAME'"
 
-#: plugins/mp3.c:1398
+#: plugins/mp3.c:1410
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d Kb/s"
 
-#: plugins/mp3.c:1403
+#: plugins/mp3.c:1415
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1411 plugins/ogg.c:134
+#: plugins/mp3.c:1423 plugins/ogg.c:134
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
 
-#: plugins/mp3.c:2724
+#: plugins/mp3.c:2736
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Le fichier reconnu a le format Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2762
+#: plugins/mp3.c:2774
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 " Vérification de l'intégrité du fichier : calcul du CRC (contrôle de "
 "redondance cyclique), veuillez attendre..."
 
-#: plugins/mp3.c:2781
+#: plugins/mp3.c:2793
 msgid " OK\n"
 msgstr " Succès\n"
 
-#: plugins/mp3.c:2800
+#: plugins/mp3.c:2812
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Le fichier reconnu a le format : AlbumWrap\n"
 
-#: plugins/mp3.c:2822
+#: plugins/mp3.c:2834
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Nombre de fichiers : %d\n"
 
-#: plugins/mp3.c:3238
+#: plugins/mp3.c:3250
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux mp3.\n"
 
-#: plugins/mp3.c:3265
+#: plugins/mp3.c:3277
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
