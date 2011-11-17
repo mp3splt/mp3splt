@@ -16,4 +16,4 @@ mp3splt: -split an album with splitpoints from the freedb.org server
 mp3splt: -split an album with local .XMCD, .CDDB or .CUE file
 mp3splt: -split files automatically with silence detection, ...
 mp3splt: 
-mp3splt: Requirements: libmp3splt version 0.7.1,
+mp3splt: Requirements: libmp3splt version 0.7.1.960,

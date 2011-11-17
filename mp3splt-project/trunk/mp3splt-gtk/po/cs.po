@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-14 00:12+0100\n"
+"POT-Creation-Date: 2011-11-17 23:43+0100\n"
 "PO-Revision-Date: 2011-09-18 11:17+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -438,7 +438,7 @@ msgstr "Stejná verze značky jako u vstupního souboru"
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Verze značky (jen pro mp3)</b>"
 
-#: src/preferences_tab.c:1259 src/main_win.c:559
+#: src/preferences_tab.c:1259 src/main_win.c:560
 msgid "Split"
 msgstr "Rozdělení"
 
@@ -450,7 +450,7 @@ msgstr "Značky"
 msgid "Output"
 msgstr "Výstup"
 
-#: src/preferences_tab.c:1277 src/main_win.c:708
+#: src/preferences_tab.c:1277 src/main_win.c:709
 msgid "Player"
 msgstr "Přehrávač"
 
@@ -650,120 +650,120 @@ msgstr " Informace: Proces rozdělení se zastavuje před ukončením"
 msgid "Error launching external command"
 msgstr "Chyba při spuštění vnějšího příkazu"
 
-#: src/main_win.c:344
+#: src/main_win.c:345
 msgid "using"
 msgstr "za použití"
 
-#: src/main_win.c:348
+#: src/main_win.c:349
 #, fuzzy
 msgid "release of "
 msgstr "vydání"
 
-#: src/main_win.c:445
+#: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
 msgstr " Informace: Proces rozdělení se zastavuje, prosím, čekejte"
 
-#: src/main_win.c:484
+#: src/main_win.c:485
 msgid " error: no file selected"
 msgstr " Chyba: Není vybrán žádný soubor"
 
-#: src/main_win.c:489
+#: src/main_win.c:490
 msgid " error: split in progress..."
 msgstr " Chyba: Probíhá rozdělování..."
 
-#: src/main_win.c:501 src/main_win.c:505
+#: src/main_win.c:502 src/main_win.c:506
 msgid "Split !"
 msgstr "Rozdělit!"
 
-#: src/main_win.c:547
+#: src/main_win.c:548
 msgid "_File"
 msgstr "_Soubor"
 
-#: src/main_win.c:548
+#: src/main_win.c:549
 msgid "_Help"
 msgstr "_Nápověda"
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "_Open..."
 msgstr "_Otevřít..."
 
-#: src/main_win.c:551
+#: src/main_win.c:552
 msgid "Open"
 msgstr "Otevřít"
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "_Import splitpoints..."
 msgstr "_Zavést body rozdělení..."
 
-#: src/main_win.c:554
+#: src/main_win.c:555
 msgid "Import"
 msgstr "Zavést"
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "_Export splitpoints..."
 msgstr "_Vyvést body rozdělení..."
 
-#: src/main_win.c:556
+#: src/main_win.c:557
 msgid "Export"
 msgstr "Vyvést"
 
-#: src/main_win.c:559
+#: src/main_win.c:560
 msgid "_Split !"
 msgstr "_Rozdělit!"
 
-#: src/main_win.c:561
+#: src/main_win.c:562
 msgid "Messages _history"
 msgstr "_Historie zpráv"
 
-#: src/main_win.c:561 src/main_win.c:816 src/messages.c:201
+#: src/main_win.c:562 src/main_win.c:817 src/messages.c:201
 msgid "Messages history"
 msgstr "Historie zpráv"
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "_Quit"
 msgstr "_Ukončit"
 
-#: src/main_win.c:564
+#: src/main_win.c:565
 msgid "Quit"
 msgstr "Ukončit"
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "_Contents"
 msgstr "_Obsah"
 
-#: src/main_win.c:568
+#: src/main_win.c:569
 msgid "Contents"
 msgstr "Obsah"
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "_About"
 msgstr "_O programu"
 
-#: src/main_win.c:572
+#: src/main_win.c:573
 msgid "About"
 msgstr "O programu"
 
-#: src/main_win.c:721
+#: src/main_win.c:722
 msgid "Splitpoints"
 msgstr "Body rozdělení"
 
-#: src/main_win.c:734
+#: src/main_win.c:735
 msgid "Split files"
 msgstr "Rozdělené soubory"
 
-#: src/main_win.c:747
+#: src/main_win.c:748
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:758
+#: src/main_win.c:759
 msgid "Type of split"
 msgstr "Druh rozdělení"
 
-#: src/main_win.c:771
+#: src/main_win.c:772
 msgid "Preferences"
 msgstr "Nastavení"
 
-#: src/main_win.c:792
+#: src/main_win.c:793
 msgid "S_top"
 msgstr "Za_stavit"
 
