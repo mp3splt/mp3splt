@@ -143,8 +143,7 @@ But it actually should never need to: If filename is NULL, then this
 plugin should not have been detected
 \return NULL on error
 */
-static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename,
-    int *error)
+static FILE *splt_mp3_open_file_read(splt_state *state, const char *filename, int *error)
 {
   FILE *file_input = NULL;
 
@@ -1090,8 +1089,7 @@ The information is put into the "state" structure.
  - enables framemode if xing header is found 
  - xing header is often associated with VBR (variable bit rate)
 */
-static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
-    int framemode, int *error)
+static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state, int framemode, int *error)
 {
   splt_mp3_state *mp3state = state->codec;
 
@@ -1110,7 +1108,6 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
   //always quiet
   mp3state->syncdetect = 0;
 
-  //we initialise default values
   mp3state->frames = 1;
   mp3state->end = 0;
   mp3state->end_non_zero = 0;
@@ -1145,6 +1142,21 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state,
       splt_e_set_error_data(state,filename);
       *error = SPLT_ERROR_INVALID;
       goto function_end;
+    }
+
+    if (mp3state->stream.error == MAD_ERROR_LOSTSYNC)
+    {
+#ifndef NO_ID3TAG
+      signed long tag_size = id3_tag_query(mp3state->stream.this_frame,
+          mp3state->stream.bufend - mp3state->stream.this_frame);
+      if (tag_size > 0)
+      {
+        mad_stream_skip(&mp3state->stream, tag_size);
+      }
+#else
+      splt_c_put_info_message_to_client(state,
+          _(" warning: lost sync and compiled without id3tag support - the split might be corrupt\n"));
+#endif
     }
 
     if ((prev == 0) &&
@@ -1356,8 +1368,8 @@ static void splt_mp3_get_info(splt_state *state, FILE *file_input, int *error)
   //checks if valid mp3 file
   //before last argument, if framemode or not
   //last argument if we put messages to clients or not
-  state->codec = splt_mp3_info(file_input, state,
-        splt_o_get_int_option(state,SPLT_OPT_FRAME_MODE), error);
+  state->codec = splt_mp3_info(file_input, state, 
+      splt_o_get_int_option(state, SPLT_OPT_FRAME_MODE), error);
   //if error
   if ((*error < 0) || (state->codec == NULL))
   {
@@ -3161,21 +3173,21 @@ void splt_mp3_init(splt_state *state, int *error)
 
   state->syncerrors = 0;
 
-  //if we can open the file
-  if ((file_input = splt_mp3_open_file_read(state, filename, error)) != NULL)
+  if ((file_input = splt_mp3_open_file_read(state, filename, error)) == NULL)
   {
-    splt_mp3_get_info(state, file_input, error);
+    return;
+  }
 
-    if (*error >= 0)
+  splt_mp3_get_info(state, file_input, error);
+
+  if (*error >= 0)
+  {
+    splt_mp3_state *mp3state = state->codec;
+    mp3state->off = splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET);
+
+    if (splt_t_get_total_time(state) > 0)
     {
-      splt_mp3_state *mp3state = state->codec;
-      mp3state->off = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
-
-      //we initialise frames to 1
-      if (splt_t_get_total_time(state) > 0)
-      {
-        mp3state->frames = 1;
-      }
+      mp3state->frames = 1;
     }
   }
 }
