@@ -140,7 +140,9 @@ if test "x$enable_gnome" = xyes;then
   
       Install it or configure with "--disable-gnome".])])
   ],
-  [])
+  [ 
+    AC_MSG_NOTICE([No GNOME_DOC_INIT found.])
+  ])
 fi
 
 #################################################
