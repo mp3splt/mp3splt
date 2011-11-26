@@ -123,6 +123,8 @@ libmp3splt must be compiled with 'id3tag' support. By default, the output
 files will have the same ID3 tag version as the input file; this behaviour can be changed
 with the \-T option. If the input file has no tags and the \-g option is used, then both
 ID3v1 and ID3v2 are written. Total tracknumber is not yet supported.
+Only writing ID3v2.4 is supported; note that some software only support ID3v2.3 and will not
+be able to read them.
 
 \fBNOTE about the OUTPUT DIRECTORY:\fP by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
