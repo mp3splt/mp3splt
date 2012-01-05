@@ -155,25 +155,31 @@ AC_ARG_ENABLE(gtk3, [
 
 if test "x$enable_gtk3" = xauto; then
   AC_MSG_NOTICE([selecting GTK 2.x/3.x automatically])
-  ifdef([AM_PATH_GTK_3_0],[enable_gtk3=yes],[enable_gtk3=no])
+
+  PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0],
+    [enable_gtk3=yes], [enable_gtk3=no])
 fi
 
 audacious_check="audclient < 3.0"
 if test "x$enable_gtk3" = xyes; then
   AC_MSG_NOTICE([GTK 3.x selected])
 
-  ifdef([AM_PATH_GTK_3_0],
+  PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0],
   [
     CFLAGS="$CFLAGS -DGTK_DISABLE_SINGLE_INCLUDES -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
-    AM_PATH_GTK_3_0(3.0.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 3.0.0))
     audacious_check="audclient >= 3.0"
   ],
   [
-    AC_MSG_ERROR([Cannot find GTK 3.x])
+    AC_MSG_ERROR([Cannot find GTK >= 3.0])
   ])
 else
   AC_MSG_NOTICE([GTK 2.x selected])
-  AM_PATH_GTK_2_0(2.20.0,,AC_MSG_ERROR(mp3splt-gtk needs GTK+ >= 2.20.0))
+
+  PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.20],
+  [ ],
+  [
+    AC_MSG_ERROR([Cannot find GTK >= 2.20])
+  ])
 fi
 
 #################################################
