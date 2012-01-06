@@ -175,10 +175,10 @@ if test "x$enable_gtk3" = xyes; then
 else
   AC_MSG_NOTICE([GTK 2.x selected])
 
-  PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.20],
+  PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18],
   [ ],
   [
-    AC_MSG_ERROR([Cannot find GTK >= 2.20])
+    AC_MSG_ERROR([Cannot find GTK >= 2.18])
   ])
 fi
 
