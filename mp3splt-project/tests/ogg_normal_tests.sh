@@ -1119,7 +1119,7 @@ function test_normal_with_auto_adjust
   check_current_file_size "1049558"
 
   current_file="$OUTPUT_DIR/${O_FILE}_03m_00s__03m_04s_85h.ogg" 
-  check_current_ogg_length "0m:20.699s"
+  check_current_ogg_length "0m:20.698s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"

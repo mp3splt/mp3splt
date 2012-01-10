@@ -315,6 +315,11 @@ Threshold level (dB) to be considered silence. It is a float number
 between \-96 and 0. Default is \-48 dB, which is a value found by tests and should be good in most
 cases.
 
+.IP \fBshots=INTEGER\fP
+Positive integer of the number of the minimum number of shots to be found as non silence
+after the silence. Default is 25. Decrease this value if you need to split files having
+closer silence points.
+
 .IP "\fBBoth -s and -a\fP"
 
 .IP \fBoff=FLOAT\fP

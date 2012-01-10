@@ -188,7 +188,7 @@ function test_stream_silence_mode
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 2m.29s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
+ Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00, Shots: 25)
  warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.
 
  Total silence points found: 3. (Selected 4 tracks)
@@ -222,7 +222,7 @@ function test_stream_silence_mode
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 2m.29s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00)
+ Silence split type: Auto mode (Th: -16.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00, Shots: 25)
  Found silence log file 'mp3splt.log' ! Reading silence points from file to save time ;)
  Total silence points found: 3. (Selected 4 tracks)
  warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.
@@ -284,7 +284,7 @@ function test_stream_auto_adjust_silence
   check_current_file_size "517980"
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg"
-  check_current_ogg_length "0m:45.377s"
+  check_current_ogg_length "0m:45.372s"
   check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"

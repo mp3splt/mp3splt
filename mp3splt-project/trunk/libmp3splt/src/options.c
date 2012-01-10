@@ -51,6 +51,7 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.parameter_threshold = SPLT_DEFAULT_PARAM_THRESHOLD;
   state->options.parameter_offset = SPLT_DEFAULT_PARAM_OFFSET;
   state->options.parameter_number_tracks = SPLT_DEFAULT_PARAM_TRACKS;
+  state->options.parameter_shots = SPLT_DEFAULT_PARAM_SHOTS;
   state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
   state->options.parameter_min_track_length = SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH;
 
@@ -110,6 +111,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       break;
     case SPLT_OPT_PARAM_NUMBER_TRACKS:
       state->options.parameter_number_tracks = *((int *)data);
+      break;
+    case SPLT_OPT_PARAM_SHOTS:
+      state->options.parameter_shots = *((int *)data);
       break;
     case SPLT_OPT_PARAM_REMOVE_SILENCE:
       state->options.parameter_remove_silence = *((int *)data);
@@ -220,6 +224,8 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.option_input_not_seekable;
     case SPLT_OPT_PARAM_NUMBER_TRACKS:
       return &state->options.parameter_number_tracks;
+    case SPLT_OPT_PARAM_SHOTS:
+      return &state->options.parameter_shots;
     case SPLT_OPT_PARAM_REMOVE_SILENCE:
       return &state->options.parameter_remove_silence;
     case SPLT_OPT_PARAM_GAP:

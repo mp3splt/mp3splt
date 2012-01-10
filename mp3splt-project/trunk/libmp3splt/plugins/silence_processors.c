@@ -28,7 +28,7 @@
 #include "silence_processors.h"
 
 splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short first, 
-    float min, short set_new_length)
+    float min, int shots, short set_new_length)
 {
   splt_scan_silence_data *ssd = malloc(sizeof(splt_scan_silence_data));
   if (!ssd)
@@ -39,6 +39,7 @@ splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short firs
   ssd->state = state;
   ssd->first = first;
   ssd->min = min;
+  ssd->number_of_shots = shots;
   ssd->set_new_length = set_new_length;
 
   ssd->flush = SPLT_FALSE;
@@ -46,7 +47,7 @@ splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short firs
   ssd->silence_end = 0;
   ssd->len = 0;
   ssd->found = 0;
-  ssd->shot = SPLT_DEFAULTSHOT;
+  ssd->shot = shots;
   ssd->silence_begin_was_found = SPLT_FALSE;
   ssd->continue_after_silence = SPLT_FALSE;
 
@@ -89,7 +90,7 @@ short splt_scan_silence_processor(double time, int silence_was_found,
       ssd->len++;
     }
 
-    if (ssd->shot < SPLT_DEFAULTSHOT)
+    if (ssd->shot < ssd->number_of_shots)
     {
       ssd->shot += 2;
     }
@@ -126,7 +127,7 @@ short splt_scan_silence_processor(double time, int silence_was_found,
       }
 
       ssd->len = 0;
-      ssd->shot = SPLT_DEFAULTSHOT;
+      ssd->shot = ssd->number_of_shots;
     }
   }
   else 
@@ -164,7 +165,7 @@ static short splt_detect_where_begin_silence_ends(double time, int silence_was_f
 {
   if (silence_was_found)
   {
-    if (ssd->shot < SPLT_DEFAULTSHOT)
+    if (ssd->shot < ssd->number_of_shots)
     {
       ssd->shot += 2;
     }
@@ -181,7 +182,7 @@ static short splt_detect_where_begin_silence_ends(double time, int silence_was_f
 
     ssd->found++;
     ssd->silence_begin_was_found = SPLT_TRUE;
-    ssd->shot = SPLT_DEFAULTSHOT;
+    ssd->shot = ssd->number_of_shots;
   }
 
   if (ssd->shot > 0)
@@ -220,7 +221,7 @@ static short splt_detect_where_end_silence_begins(double time, int silence_was_f
       ssd->len++;
     }
 
-    if (ssd->shot < SPLT_DEFAULTSHOT)
+    if (ssd->shot < ssd->number_of_shots)
     {
       ssd->shot += 2;
     }
@@ -237,7 +238,7 @@ static short splt_detect_where_end_silence_begins(double time, int silence_was_f
     if (ssd->shot <= 0)
     {
       ssd->len = 0;
-      ssd->shot = SPLT_DEFAULTSHOT;
+      ssd->shot = ssd->number_of_shots;
       ssd->continue_after_silence = SPLT_TRUE;
     }
   }

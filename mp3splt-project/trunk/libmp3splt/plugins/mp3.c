@@ -503,13 +503,13 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
             char *genre = (char *)tag_value;
 
             int id3v1 = atoi(genre);
-            if ((id3v1 != 0) &&
+            if ((id3v1 > 0) &&
                 (id3v1 < SPLT_ID3V1_NUMBER_OF_GENRES) &&
                 (state->original_tags.tags.genre == NULL))
             {
               err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, splt_id3v1_genres[id3v1]);
             }
-            else if (strcmp(genre, "0") == 0)
+            else if (strlen(genre) == 0)
             {
               err = splt_tu_set_original_tags_field(state, SPLT_TAGS_GENRE, SPLT_UNDEFINED_GENRE);
             }
@@ -1714,6 +1714,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
   int adjustoption = splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP);
   short seekable = ! splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE);
   float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+  int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
 
   short fend_sec_is_not_eof =
     !splt_u_fend_sec_is_bigger_than_total_time(state, fend_sec);
@@ -2310,7 +2311,7 @@ bloc_end:
         if ((adjust) && (mp3state->frames >= fend))
         {
           int silence_points_found =
-            splt_mp3_scan_silence(state, end, 2 * adjust, threshold, 0.f, 0, error,
+            splt_mp3_scan_silence(state, end, 2 * adjust, threshold, 0.f, shots, 0, error,
                 splt_scan_silence_processor);
           //if error, go out
           if (silence_points_found == -1)
@@ -3358,12 +3359,13 @@ int splt_pl_scan_silence(splt_state *state, int *error)
   float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
   float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
   float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
+  int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
 
   splt_mp3_state *mp3state = state->codec;
   mp3state->off = offset;
 
   int found = splt_mp3_scan_silence(state, mp3state->mp3file.firsthead.ptr, 0,
-      threshold, min_length, 1, error, splt_scan_silence_processor);
+      threshold, min_length, shots, 1, error, splt_scan_silence_processor);
   if (*error < 0) { return -1; }
 
   return found;
@@ -3373,11 +3375,12 @@ int splt_pl_scan_silence(splt_state *state, int *error)
 int splt_pl_scan_trim_silence(splt_state *state, int *error)
 {
   float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+  int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
 
   splt_mp3_state *mp3state = state->codec;
 
   int found = splt_mp3_scan_silence(state, mp3state->mp3file.firsthead.ptr, 0,
-      threshold, 0, 1, error, splt_trim_silence_processor);
+      threshold, 0, shots, 1, error, splt_trim_silence_processor);
   if (*error < 0) { return -1; }
 
   return found;

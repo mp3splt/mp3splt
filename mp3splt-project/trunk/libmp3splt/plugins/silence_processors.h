@@ -37,6 +37,7 @@ typedef struct {
   int len;
   int found;
   int shot;
+  int number_of_shots;
   float min;
   splt_state *state;
   short silence_begin_was_found;
@@ -52,7 +53,7 @@ short splt_trim_silence_processor(double time, int silence_was_found, short must
     splt_scan_silence_data *data, int *found_silence_points, int *error);
 
 splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short first, 
-    float min, short set_new_length);
+    float min, int shots, short set_new_length);
 
 void splt_free_scan_silence_data(splt_scan_silence_data **ssd);
 

@@ -126,7 +126,6 @@ void splt_s_wrap_split(splt_state *state, int *error);
 #define SPLT_DEFAULT_PROGRESS_RATE2 50
 
 #define SPLT_DEFAULTSILLEN 10
-#define SPLT_DEFAULTSHOT 25
 
 #define SPLT_VARCHAR '@'
 

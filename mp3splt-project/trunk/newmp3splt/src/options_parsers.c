@@ -27,7 +27,7 @@
 #include "utils.h"
 
 int parse_silence_options(char *arg, float *th, int *gap,
-    int *nt, float *off, int *rm, float *min, float *min_track_length)
+    int *nt, float *off, int *rm, float *min, float *min_track_length, int *shots)
 {
   char *ptr = NULL;
   int found = 0;
@@ -43,6 +43,21 @@ int parse_silence_options(char *arg, float *th, int *gap,
       else 
       {
         print_warning(_("bad gap argument. It will be ignored !"));
+      }
+    }
+  }
+
+  if ((shots != NULL) && ((ptr = strstr(arg, "shots"))!=NULL))
+  {
+    if ((ptr=strchr(ptr, '='))!=NULL)
+    {
+      if (sscanf(ptr+1, "%d", shots)==1)
+      {
+        found++;
+      }
+      else 
+      {
+        print_warning(_("bad shots argument. It will be ignored !"));
       }
     }
   }

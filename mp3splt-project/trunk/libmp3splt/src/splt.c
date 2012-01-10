@@ -707,10 +707,16 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           we_read_silence_from_logs = SPLT_TRUE;
           float threshold = SPLT_DEFAULT_PARAM_THRESHOLD;
           float min = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
-          int i = fscanf(log_file, "%f\t%f", &threshold, &min);
+          int shots = SPLT_DEFAULT_PARAM_SHOTS;
+          int i = fscanf(log_file, "%f\t%f\t%d", &threshold, &min, &shots);
 
-          if ((i < 2) || (threshold != splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD))
-              || (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH) != min))
+          //compatibility with older versions; allow missing shots
+          if (i == 2) { shots = SPLT_DEFAULT_PARAM_SHOTS; }
+
+          if ((i < 2) ||
+              (threshold != splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD)) ||
+              (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH) != min) ||
+              (splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS) != shots))
           {
             we_read_silence_from_logs = SPLT_FALSE;
           }
@@ -718,6 +724,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           {
             splt_o_set_float_option(state, SPLT_OPT_PARAM_THRESHOLD, threshold);
             splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
+            splt_o_set_int_option(state, SPLT_OPT_PARAM_SHOTS, shots);
           }
         }
 
@@ -757,13 +764,14 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   {
     splt_c_put_info_message_to_client(state, 
         _(" Silence split type: %s mode (Th: %.1f dB,"
-          " Off: %.2f, Min: %.2f, Remove: %s, Min track: %.2f)\n"),
+          " Off: %.2f, Min: %.2f, Remove: %s, Min track: %.2f, Shots: %d)\n"),
         auto_user_str,
         splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
         remove_str,
-        splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH));
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH),
+        splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS));
   }
  
   short read_silence_from_logs = SPLT_FALSE;
@@ -943,9 +951,10 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
             //do the effective write
             struct splt_ssplit *temp = state->silence_list;
             fprintf(log_file, "%s\n", splt_t_get_filename_to_split(state));
-            fprintf(log_file, "%.2f\t%.2f\n", 
+            fprintf(log_file, "%.2f\t%.2f\t%d\n", 
                 splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
-                splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
+                splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
+                splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS));
             while (temp != NULL)
             {
               fprintf(log_file, "%f\t%f\t%ld\n",
