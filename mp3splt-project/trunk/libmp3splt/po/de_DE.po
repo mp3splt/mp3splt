@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-11-17 23:42+0100\n"
+"POT-Creation-Date: 2012-01-10 10:22+0100\n"
 "PO-Revision-Date: 2011-09-16 00:13+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -94,36 +94,36 @@ msgstr " Info: Teilung im Modus »Gleich große Teile« wird gestartet\n"
 msgid " Trim silence split - Th: %.1f dB\n"
 msgstr "Trimmen nach Stille-Erkennung - Ansprechschwelle: %.1f dB\n"
 
-#: src/splt.c:739
+#: src/splt.c:746
 #, c-format
 msgid "YES"
 msgstr "JA"
 
-#: src/splt.c:743
+#: src/splt.c:750
 #, c-format
 msgid "NO"
 msgstr "NEIN"
 
-#: src/splt.c:749
+#: src/splt.c:756
 #, c-format
 msgid "User"
 msgstr "Benutzer"
 
-#: src/splt.c:753
+#: src/splt.c:760
 #, c-format
 msgid "Auto"
 msgstr "Automatisch"
 
-#: src/splt.c:759
-#, c-format
+#: src/splt.c:766
+#, fuzzy, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
-"Min track: %.2f)\n"
+"Min track: %.2f, Shots: %d)\n"
 msgstr ""
 " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: "
 "%.2f, Entfernen: %s, Min-Titel: %.2f)\n"
 
-#: src/splt.c:778
+#: src/splt.c:786
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -132,30 +132,30 @@ msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden die "
 "Teilungspunkte aus dieser Datei gelesen ;)\n"
 
-#: src/splt.c:807
+#: src/splt.c:815
 #, c-format
 msgid " Total silence points found: %d."
 msgstr " Insgesamt gefundene Teilungspunkte: %d."
 
-#: src/splt.c:819
+#: src/splt.c:827
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d Titel ausgewählt)\n"
 
-#: src/splt.c:929
+#: src/splt.c:937
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr "Stille-Protokolldatei »%s« wird geschrieben …\n"
 
-#: src/splt.c:984
+#: src/splt.c:993
 msgid " info: starting silence mode split\n"
 msgstr " Info: Teilung im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:1032
+#: src/splt.c:1041
 msgid " info: starting trim using silence mode split\n"
 msgstr " Info: Trimmen im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:1079
+#: src/splt.c:1088
 msgid " info: starting wrap mode split\n"
 msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 
@@ -607,33 +607,33 @@ msgstr " - %d kB/s"
 msgid " - Total time: %dm.%02ds"
 msgstr " - Zeit gesamt: %dm.%02ds"
 
-#: plugins/mp3.c:2736
+#: plugins/mp3.c:2737
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Erkannte Datei erzeugt mit: Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2774
+#: plugins/mp3.c:2775
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Integritätsprüfung der Datei: CRC wird berechnet, bitte warten …"
 
-#: plugins/mp3.c:2793
+#: plugins/mp3.c:2794
 msgid " OK\n"
 msgstr " OK\n"
 
-#: plugins/mp3.c:2812
+#: plugins/mp3.c:2813
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Erkannte Datei erzeugt mit: AlbumWrap\n"
 
-#: plugins/mp3.c:2834
+#: plugins/mp3.c:2835
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Dateien gesamt: %d\n"
 
-#: plugins/mp3.c:3250
+#: plugins/mp3.c:3251
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Warnung: stdin »-« wird als mp3-Datenstrom angenommen.\n"
 
-#: plugins/mp3.c:3277
+#: plugins/mp3.c:3278
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
@@ -643,6 +643,6 @@ msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Info: OggVorbis-Datenstrom - %ld - %ld kB/s - %d Kanäle"
 
-#: plugins/ogg.c:1458
+#: plugins/ogg.c:1457
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Warnung: stdin »o-« wird als Ogg-Datenstrom angenommen.\n"

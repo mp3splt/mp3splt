@@ -1345,7 +1345,7 @@ static const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
 /**
  * @brief Package version
  */
-#define SPLT_PACKAGE_VERSION "0.7.1.960"
+#define SPLT_PACKAGE_VERSION "0.7.1.966"
 #endif
 /**
  * @brief Package authors
