@@ -50,11 +50,11 @@ static int splt_mp3_silence(splt_mp3_state *mp3state, int channels, mad_fixed_t 
 \param threshold The threshold that tells noise from silence
 */
 int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length,
-    float threshold, float min, short output, int *error,
+    float threshold, float min, int shots, short output, int *error,
     short silence_processor(double time, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error))
 {
-  splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, SPLT_TRUE); 
+  splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, shots, SPLT_TRUE); 
   if (ssd == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;

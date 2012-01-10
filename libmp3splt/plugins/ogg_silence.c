@@ -54,20 +54,19 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, float threshold);
 
 int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold, 
-    float min, short output, ogg_page *page, ogg_int64_t granpos,
+    float min, int shots, short output, ogg_page *page, ogg_int64_t granpos,
     int *error, ogg_int64_t first_cut_granpos,
     short silence_processor(double time, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error))
 {
-  splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, SPLT_FALSE);
+  splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, shots, SPLT_FALSE);
   if (ssd == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return -1;
   }
 
-  splt_ogg_scan_silence_and_process(state, seconds, threshold, page, granpos, first_cut_granpos, 
-      silence_processor, ssd, error);
+  splt_ogg_scan_silence_and_process(state, seconds, threshold, page, granpos, first_cut_granpos, silence_processor, ssd, error);
 
   int found = ssd->found;
 
