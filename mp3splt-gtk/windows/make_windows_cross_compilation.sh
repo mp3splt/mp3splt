@@ -35,6 +35,7 @@ cd ..
 export CFLAGS=" -mms-bitfields -enable-stdcall-fixup -I`pwd`/libs/include -D_WIN32 -D__MINGW32__ $CFLAGS"
 export LDFLAGS="-L`pwd`/libs/lib $LDFLAGS"
 export PKG_CONFIG_PATH="`pwd`/libs/lib/pkgconfig"
+export PKG_CONFIG=/usr/bin/pkg-config
 export PATH="`pwd`/libs/bin:$PATH"
 
 #modify pkg-config files path

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2011-11-17 23:42+0100\n"
+"POT-Creation-Date: 2012-01-10 10:22+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,29 +49,29 @@ msgstr "lea la página del manual de documentación o de tipo 'Mp3Splt-h'."
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "mal argumento para la opción-p. No fue reconocido valor válido!"
 
-#: src/mp3splt.c:554
+#: src/mp3splt.c:557
 msgid "no input filename(s)."
 msgstr "sin entrada de nombre de archivo (s)."
 
-#: src/mp3splt.c:567
+#: src/mp3splt.c:570
 msgid "multiple splitpoints with stdout !"
 msgstr "splitpoints múltiples con la salida estándar!"
 
-#: src/mp3splt.c:571
+#: src/mp3splt.c:574
 msgid "using time mode with stdout !"
 msgstr "usando el modo de tiempo con la salida estándar!"
 
-#: src/mp3splt.c:612
+#: src/mp3splt.c:615
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:616
+#: src/mp3splt.c:619
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:623 src/options_checker.c:49
+#: src/mp3splt.c:626 src/options_checker.c:49
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
@@ -80,20 +80,20 @@ msgstr ""
 "no puede utilizar la opción-k (o STDIN) con una de las siguientes opciones:-"
 "S-s-w-l-e-i-p-"
 
-#: src/mp3splt.c:679
+#: src/mp3splt.c:682
 msgid "freedb query format ambigous !"
 msgstr "freedb ambigua consulta formato!"
 
-#: src/mp3splt.c:723
+#: src/mp3splt.c:726
 msgid "tags format ambiguous !"
 msgstr "Etiquetas de formato ambiguo!"
 
-#: src/mp3splt.c:755
+#: src/mp3splt.c:758
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:772
+#: src/mp3splt.c:775
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -289,44 +289,49 @@ msgid "bad gap argument. It will be ignored !"
 msgstr "argumento brecha mal. Será tenida en cuenta!"
 
 #: src/options_parsers.c:60
-msgid "bad threshold argument. It will be ignored !"
+#, fuzzy
+msgid "bad shots argument. It will be ignored !"
 msgstr "argumento umbral mal. Será tenida en cuenta!"
 
 #: src/options_parsers.c:75
+msgid "bad threshold argument. It will be ignored !"
+msgstr "argumento umbral mal. Será tenida en cuenta!"
+
+#: src/options_parsers.c:90
 msgid "bad tracknumber argument. It will be ignored !"
 msgstr "argumento de número de pista mal. Será tenida en cuenta!"
 
-#: src/options_parsers.c:99
+#: src/options_parsers.c:114
 msgid "bad offset argument. It will be ignored!"
 msgstr "mal argumento de compensación. Será tenida en cuenta!"
 
-#: src/options_parsers.c:114
+#: src/options_parsers.c:129
 #, fuzzy
 msgid "bad minimum track length argument. It will be ignored !"
 msgstr "mala silencio mínimo argumento de longitud. Será tenida en cuenta!"
 
-#: src/options_parsers.c:133
+#: src/options_parsers.c:148
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr "mala silencio mínimo argumento de longitud. Será tenida en cuenta!"
 
-#: src/options_parsers.c:156
+#: src/options_parsers.c:171
 msgid "no regular expression found as argument."
 msgstr ""
 
-#: src/options_parsers.c:332
+#: src/options_parsers.c:347
 msgid "found non digits characters in port ! (switched to default)"
 msgstr ""
 "dígitos que se encuentran personajes no en el puerto! (Activado por defecto)"
 
-#: src/options_parsers.c:357
+#: src/options_parsers.c:372
 msgid "unknown search type ! (switched to default)"
 msgstr "tipo de búsqueda desconocido! (Activado por defecto)"
 
-#: src/options_parsers.c:373
+#: src/options_parsers.c:388
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr "búsqueda freedb web no se ha aplicado todavía! (Activado por defecto)"
 
-#: src/options_parsers.c:379
+#: src/options_parsers.c:394
 msgid "unknown get type ! (switched to default)"
 msgstr "desconocidos obtener el tipo! (Activado por defecto)"
 
@@ -460,8 +465,8 @@ msgstr ""
 
 #: src/print_utils.c:254
 msgid ""
-" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin): user arguments for -"
-"s and -a.\n"
+" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots): user "
+"arguments for -s and -a.\n"
 " -o + FORMAT: output filename pattern. Can contain those variables:\n"
 "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
 "      @t: title tag, @n: track number identifier, @N: track tag number\n"
