@@ -114,39 +114,9 @@ AC_MSG_RESULT($HOST)
 #check for -lm
 AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 
-#################################################
-# Initialize the gnome integration
-#################################################
-
-AM_CONDITIONAL(GNOME, false)
-AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
-gnome="no"
-
-AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
-    [enable_gnome=$enableval],[enable_gnome="yes"])
-
-AM_CONDITIONAL(ENABLE_SK, true)
-
-if test "x$enable_gnome" = xyes;then
-  ifdef([GNOME_DOC_INIT],
-  [
-    GNOME_DOC_INIT([],
-                   [
-                     AM_CONDITIONAL(GNOME, true)
-                     AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, true)
-                     gnome="yes"
-                   ],
-                   [AC_MSG_ERROR([gnome-doc-utils not found.
-  
-      Install it or configure with "--disable-gnome".])])
-  ],
-  [ 
-    AC_MSG_NOTICE([No GNOME_DOC_INIT found.])
-  ])
-fi
 
 #################################################
-#Check for GTK & audacious
+#Check for GTK
 
 AC_ARG_ENABLE(gtk3, [
  AC_HELP_STRING([--enable-gtk3],  [Compile against GTK 3.x explicitly (default: use GTK 3.x if available)])
@@ -182,6 +152,39 @@ else
   ])
 fi
 
+
+#################################################
+# Initialize the gnome integration
+#################################################
+
+AM_CONDITIONAL(GNOME, false)
+AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, false)
+gnome="no"
+
+AC_ARG_ENABLE(gnome, AC_HELP_STRING([--disable-gnome], [Disable gnome support. ]),
+    [enable_gnome=$enableval],[enable_gnome="yes"])
+
+AM_CONDITIONAL(ENABLE_SK, true)
+
+if test "x$enable_gnome" = xyes;then
+  ifdef([GNOME_DOC_INIT],
+  [
+    GNOME_DOC_INIT([],
+                   [
+                     AM_CONDITIONAL(GNOME, true)
+                     AM_CONDITIONAL(HAVE_GNOME_DOC_UTILS, true)
+                     gnome="yes"
+                   ],
+                   [AC_MSG_ERROR([gnome-doc-utils not found.
+  
+      Install it or configure with "--disable-gnome".])])
+  ],
+  [ 
+    AC_MSG_NOTICE([No GNOME_DOC_INIT found.])
+  ])
+fi
+
+
 #################################################
 #Check for libmp3splt
 
@@ -189,6 +192,7 @@ MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.1.966 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
+
 
 #################################################
 #Check for audacious
@@ -211,6 +215,7 @@ if test "x$enable_audacious" = xyes;then
 ]) ])
 fi
 
+
 #################################################
 #Check for gstreamer
 
@@ -229,6 +234,7 @@ if test "x$enable_gstreamer" = xyes;then
 
     Install it or configure with "--disable-gstreamer".])])
 fi
+
 
 #################################################
 # Documentation of the code
@@ -264,6 +270,7 @@ if test "x$enable_doxygen_doc" = xyes;then
   fi
 fi
 
+
 #################################################
 # 
 #################################################
@@ -274,6 +281,7 @@ AC_ARG_WITH([no_images_dir],
       [take images from the directory where the application is run])],
     [AM_CONDITIONAL(NO_IMAGES_DIR, true)],
     [])
+
 
 #################################################################
 # Check for some debugging, warnings and optimise options
@@ -297,11 +305,13 @@ if test "x$enable_extra_warnings" = xyes;then
   CFLAGS="$CFLAGS -Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
 fi
 
+
 #################################################
 # Generate Makefiles
 #################################################
 
 AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile])
+
 
 #################################################
 # Define some useful constants
