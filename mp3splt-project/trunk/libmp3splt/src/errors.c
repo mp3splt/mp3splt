@@ -431,6 +431,8 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
     case SPLT_INVALID_REGEX:
       return splt_su_get_formatted_message(state,
           _(" regular expression error: %s"), state->err.error_data);
+    case SPLT_REGEX_UNAVAILABLE:
+      return splt_su_get_formatted_message(state, _(" regular expressions are not supported"));
     case SPLT_REGEX_NO_MATCH:
       return splt_su_get_formatted_message(state, _(" regular expression error: no match"));
     case SPLT_REGEX_OK:

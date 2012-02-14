@@ -958,6 +958,7 @@ typedef enum {
 
   SPLT_INVALID_REGEX = -800,
   SPLT_REGEX_NO_MATCH = -801,
+  SPLT_REGEX_UNAVAILABLE = -802,
 } splt_code;
 
 //internal

@@ -1727,7 +1727,13 @@ splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error)
     {
       splt_o_lock_library(state);
 
+#ifndef NO_PCRE
       tags = splt_fr_parse_from_state(state, error);
+#else
+      splt_c_put_info_message_to_client(state,
+          _(" warning: cannot set tags from filename regular expression - compiled without pcre support\n"));
+      *error = SPLT_REGEX_UNAVAILABLE;
+#endif
 
       splt_o_unlock_library(state);
     }
