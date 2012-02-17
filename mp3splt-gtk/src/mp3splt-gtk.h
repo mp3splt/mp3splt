@@ -48,6 +48,6 @@ GThread *create_thread(GThreadFunc func, gpointer data,
 void enter_threads();
 void exit_threads();
 
-#define MP3SPLT_GTK_DATE "10/01/12"
+#define MP3SPLT_GTK_DATE "14/02/12"
 
 #endif

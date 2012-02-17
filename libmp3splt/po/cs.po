@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-01-10 10:22+0100\n"
+"POT-Creation-Date: 2012-02-14 22:35+0100\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,6 +39,14 @@ msgid ""
 "%.2f)\n"
 msgstr ""
 "Pracuje se s SILENCE AUTO-ADJUST (Práh: %.1f dB Mezera: %d s Posun: %.2f)\n"
+
+#: src/mp3splt.c:1734 src/tags_parser.c:108
+msgid ""
+" warning: cannot set tags from filename regular expression - compiled "
+"without pcre support\n"
+msgstr ""
+" Varování: Značky nelze naplnit z regulárního výrazu souboru  - sestaveno "
+"bez podpory pcre\n"
 
 #: src/checks.c:158
 msgid "directory does not exists"
@@ -545,10 +553,15 @@ msgid " regular expression error: %s"
 msgstr " Chyba regulárního výrazu: %s"
 
 #: src/errors.c:435
+#, fuzzy
+msgid " regular expressions are not supported"
+msgstr " Chyba regulárního výrazu: %s"
+
+#: src/errors.c:437
 msgid " regular expression error: no match"
 msgstr " Chyba regulárního výrazu: žádná shoda"
 
-#: src/errors.c:437
+#: src/errors.c:439
 msgid " regular expression ok"
 msgstr " Regulární výraz OK"
 
@@ -559,14 +572,6 @@ msgstr "Neposkytnut žádný regulární výraz"
 #: src/string_utils.c:639 src/string_utils.c:660
 msgid "not enough memory"
 msgstr "Nedostatek paměti"
-
-#: src/tags_parser.c:108
-msgid ""
-" warning: cannot set tags from filename regular expression - compiled "
-"without pcre support\n"
-msgstr ""
-" Varování: Značky nelze naplnit z regulárního výrazu souboru  - sestaveno "
-"bez podpory pcre\n"
 
 #: plugins/mp3.c:1158
 msgid ""
