@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-01-10 10:22+0100\n"
+"POT-Creation-Date: 2012-02-14 22:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,6 +37,12 @@ msgstr ""
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
 "%.2f)\n"
+msgstr ""
+
+#: src/mp3splt.c:1734 src/tags_parser.c:108
+msgid ""
+" warning: cannot set tags from filename regular expression - compiled "
+"without pcre support\n"
 msgstr ""
 
 #: src/checks.c:158
@@ -529,10 +535,14 @@ msgid " regular expression error: %s"
 msgstr ""
 
 #: src/errors.c:435
-msgid " regular expression error: no match"
+msgid " regular expressions are not supported"
 msgstr ""
 
 #: src/errors.c:437
+msgid " regular expression error: no match"
+msgstr ""
+
+#: src/errors.c:439
 msgid " regular expression ok"
 msgstr ""
 
@@ -542,12 +552,6 @@ msgstr ""
 
 #: src/string_utils.c:639 src/string_utils.c:660
 msgid "not enough memory"
-msgstr ""
-
-#: src/tags_parser.c:108
-msgid ""
-" warning: cannot set tags from filename regular expression - compiled "
-"without pcre support\n"
 msgstr ""
 
 #: plugins/mp3.c:1158
