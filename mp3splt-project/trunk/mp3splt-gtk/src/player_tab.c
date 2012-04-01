@@ -1811,7 +1811,7 @@ static void draw_text(cairo_t *cairo, const gchar *text, gint x, gint y)
 }
 
 static void draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
-    gboolean line_is_dashed)
+    gboolean line_is_dashed, gboolean stroke)
 {
   double dashes[] = { 1.0, 3.0 };
   if (line_is_dashed)
@@ -1823,16 +1823,20 @@ static void draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
     cairo_set_dash(cairo, dashes, 0, 0.0);
   }
 
-  cairo_set_line_width(cairo, 1.3);
+  cairo_set_line_width(cairo, 1.0);
   cairo_set_line_cap(cairo, CAIRO_LINE_CAP_ROUND);
   cairo_move_to(cairo, x1, y1);
   cairo_line_to(cairo, x2, y2);
-  cairo_stroke(cairo);
+
+  if (stroke)
+  {
+    cairo_stroke(cairo);
+  }
 }
 
 static void draw_point(cairo_t *cairo, gint x, gint y)
 {
-  draw_line(cairo, x, y, x, y, FALSE);
+  draw_line(cairo, x, y, x, y, FALSE, FALSE);
 }
 
 void draw_motif(GtkWidget *da, cairo_t *gc, gint ylimit, gint x, gint model)
@@ -1890,6 +1894,8 @@ void draw_motif(GtkWidget *da, cairo_t *gc, gint ylimit, gint x, gint model)
   draw_point(gc,x+2,ylimit+10);
   draw_point(gc,x-3,ylimit+10);
   draw_point(gc,x+3,ylimit+10);
+
+  cairo_stroke(gc);
 
   color.red = 0;color.green = 0;color.blue = 0;
   set_color(gc, &color);
@@ -2021,6 +2027,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
     draw_point (gc,x+i,erase_split_ylimit + m + 4);
     draw_point (gc,x-i,erase_split_ylimit + m + 4);
   }
+  cairo_stroke(gc);
   
   //if we are currently moving this splitpoint
   if (move)
@@ -2036,7 +2043,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
     }
     set_color (gc, &color);
 
-    draw_line(gc, x,erase_split_ylimit + m -8, x,progress_ylimit + m, TRUE);
+    draw_line(gc, x,erase_split_ylimit + m -8, x,progress_ylimit + m, TRUE, TRUE);
   }
   
   color.red = 255 * 22;
@@ -2075,6 +2082,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
   {
     draw_point (gc,x,splitpoint_ypos + m - i - 1);
   }
+  cairo_stroke(gc);
 
   //bottom rectangle
   set_color (gc, &color);
@@ -2092,8 +2100,8 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
     //
     gint top = splitpoint_ypos + m;
     gint bottom = splitpoint_ypos + m + 12;
-    draw_line(gc, left, top, right, bottom, FALSE);
-    draw_line(gc, left, bottom, right, top, FALSE);
+    draw_line(gc, left, top, right, bottom, FALSE, TRUE);
+    draw_line(gc, left, bottom, right, top, FALSE, TRUE);
   }
   
   //we set the color
@@ -2132,7 +2140,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
 
     gboolean dashed = FALSE;
     if (move) { dashed = TRUE; }
-    draw_line(gc, x,text_ypos + margin, x,wave_ypos, dashed);
+    draw_line(gc, x,text_ypos + margin, x,wave_ypos, dashed, TRUE);
   }
 }
 
@@ -2256,7 +2264,7 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
         }
         else
         {
-          draw_line(gc, previous_x, previous_y, x, y, FALSE);
+          draw_line(gc, previous_x, previous_y, x, y, FALSE, TRUE);
         }
 
         previous_x = x;
@@ -2654,11 +2662,11 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
         color.red = 255 * 255;color.green = 0;color.blue = 0;
         set_color(gc, &color);
 
-        draw_line(gc, move_pixel,erase_split_ylimit, move_pixel,progress_ylimit, TRUE);
+        draw_line(gc, move_pixel,erase_split_ylimit, move_pixel,progress_ylimit, TRUE, TRUE);
 
         if (show_silence_wave)
         {
-          draw_line(gc, move_pixel,text_ypos + margin, move_pixel,wave_ypos, TRUE);
+          draw_line(gc, move_pixel,text_ypos + margin, move_pixel,wave_ypos, TRUE, TRUE);
         }
 
         //we set default black color
@@ -2692,7 +2700,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
 
     //the top middle line, current position
     draw_line(gc, width_drawing_area/2,erase_split_ylimit,
-        width_drawing_area/2,progress_ylimit, FALSE);
+        width_drawing_area/2,progress_ylimit, FALSE, TRUE);
 
     //we draw the silence wave if we have it 
     if (show_silence_wave)
@@ -2704,7 +2712,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       set_color(gc, &color);
 
       //the draw silence wave middle line
-      draw_line(gc, width_drawing_area/2,text_ypos + margin, width_drawing_area/2, wave_ypos, FALSE);
+      draw_line(gc, width_drawing_area/2,text_ypos + margin, width_drawing_area/2, wave_ypos, FALSE, TRUE);
     }
 
     //we draw the splitpoints
