@@ -52,8 +52,16 @@ echo -n "1/6 Running autopoint... " \
 && if test "x$win" = x;then sed "s/lt_dlcaller_register/lt_dlcaller_set_data/" aclocal.m4 > libmp3splt_aclocal.m4 && mv libmp3splt_aclocal.m4 aclocal.m4;fi \
 && echo -n "3/6 Running autoheader... " \
 && autoheader && echo "done" \
-&& echo -n "4/6 Running libtoolize... " \
-&& libtoolize -c --force && echo "done" \
+&& {
+ `which glibtoolize 2>&1 >/dev/null`
+ if [ $? -eq 0 ]; then
+   echo -n "4/6 Running glibtoolize... " 
+   glibtoolize -c --force
+ else
+   echo -n "4/6 Running libtoolize... " 
+   libtoolize -c --force
+ fi
+} && echo "done" \
 && echo -n "5/6 Running autoconf... " \
 && autoconf && echo "done" \
 && echo -n "6/6 Running automake... " \
