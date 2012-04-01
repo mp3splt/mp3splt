@@ -1784,6 +1784,8 @@ static void draw_rectangle(cairo_t *cairo, gboolean filled, gint x, gint y,
   {
     cairo_fill(cairo);
   }
+
+  cairo_stroke(cairo);
 }
 
 static void draw_arc(cairo_t *cairo, gboolean filled, gint x, gint y,
@@ -1795,6 +1797,8 @@ static void draw_arc(cairo_t *cairo, gboolean filled, gint x, gint y,
   {
     cairo_fill(cairo);
   }
+
+  cairo_stroke(cairo);
 }
 
 static void draw_text(cairo_t *cairo, const gchar *text, gint x, gint y)
@@ -1969,7 +1973,6 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
   color.red = 255 * 212;
   color.green = 255 * 100;
   color.blue = 255 * 200;
-  //set the color for the graphic context
   set_color (gc, &color);
   
   //if it' the splitpoint we move, don't fill in the circle and
