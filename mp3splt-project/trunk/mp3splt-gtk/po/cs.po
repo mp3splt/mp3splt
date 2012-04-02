@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-02-14 22:36+0100\n"
+"POT-Creation-Date: 2012-04-01 23:47+0200\n"
 "PO-Revision-Date: 2011-09-18 11:17+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -570,75 +570,75 @@ msgstr "Odpojit od přehrávače"
 msgid "before %s"
 msgstr "před %s"
 
-#: src/player_tab.c:2714
+#: src/player_tab.c:2725
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 "Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení "
 "jej vymaže"
 
-#: src/player_tab.c:2719
+#: src/player_tab.c:2730
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 "Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní "
 "násobek zvětšení"
 
-#: src/player_tab.c:2725
+#: src/player_tab.c:2736
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 "Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje "
 "náhled"
 
-#: src/player_tab.c:2730
+#: src/player_tab.c:2741
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr "Levé klepnutí na obdélník zapne/vypne »Ponechat bod rozdělení«"
 
-#: src/player_tab.c:2916
+#: src/player_tab.c:2927
 msgid " quick preview..."
 msgstr " Rychlý náhled..."
 
-#: src/player_tab.c:3458
+#: src/player_tab.c:3469
 msgid "History"
 msgstr "Historie"
 
-#: src/player_tab.c:3594
+#: src/player_tab.c:3605
 msgid "_Erase selected entries"
 msgstr "Vymazat vybrané _záznamy"
 
-#: src/player_tab.c:3603
+#: src/player_tab.c:3614
 msgid "E_rase all history"
 msgstr "Vymazat celou _historii"
 
-#: src/player_tab.c:3726
+#: src/player_tab.c:3737
 msgid " quick preview finished, song paused"
 msgstr "Rychlý náhled ukončen, přehrávání pozastaveno"
 
-#: src/player_tab.c:3853
+#: src/player_tab.c:3864
 msgid "Choose File"
 msgstr "Vybrat soubor"
 
-#: src/player_tab.c:3865 src/multiple_files.c:130
+#: src/player_tab.c:3876 src/multiple_files.c:130
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "Soubory mp3 a ogg (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3873 src/multiple_files.c:138
+#: src/player_tab.c:3884 src/multiple_files.c:138
 msgid "mp3 files (*.mp3)"
 msgstr "Soubory mp3 (*.mp3)"
 
-#: src/player_tab.c:3879 src/multiple_files.c:144
+#: src/player_tab.c:3890 src/multiple_files.c:144
 msgid "ogg files (*.ogg)"
 msgstr "Soubory ogg (*.ogg)"
 
-#: src/player_tab.c:4020
+#: src/player_tab.c:4031
 msgid "_Browse"
 msgstr "_Procházet"
 
-#: src/player_tab.c:4024
+#: src/player_tab.c:4035
 msgid "Select file"
 msgstr "Vybrat soubor"
 
-#: src/player_tab.c:4031
+#: src/player_tab.c:4042
 msgid "_Fix ogg stream"
 msgstr "_Opravit datový proud ogg"
 

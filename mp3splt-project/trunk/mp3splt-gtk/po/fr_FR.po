@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-02-14 22:36+0100\n"
+"POT-Creation-Date: 2012-04-01 23:47+0200\n"
 "PO-Revision-Date: 2011-02-22 00:00+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -566,73 +566,73 @@ msgstr "Se déconnecter du lecteur"
 msgid "before %s"
 msgstr "avant %s"
 
-#: src/player_tab.c:2714
+#: src/player_tab.c:2725
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr " click gauche sur le point le sélectionne, click droit l'efface"
 
-#: src/player_tab.c:2719
+#: src/player_tab.c:2730
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " click gauche + déplacement change la position, click droit + déplacement "
 "change le zoom"
 
-#: src/player_tab.c:2725
+#: src/player_tab.c:2736
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " click gauche sur le point + déplacement change la position du point, click "
 "droit aperçu"
 
-#: src/player_tab.c:2730
+#: src/player_tab.c:2741
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr " click gauche sur rectangle coche/décoche 'garder le point'"
 
-#: src/player_tab.c:2916
+#: src/player_tab.c:2927
 msgid " quick preview..."
 msgstr " aperçu rapide..."
 
-#: src/player_tab.c:3458
+#: src/player_tab.c:3469
 msgid "History"
 msgstr "Historique"
 
-#: src/player_tab.c:3594
+#: src/player_tab.c:3605
 msgid "_Erase selected entries"
 msgstr "_Effacer les éléments sélectionnées"
 
-#: src/player_tab.c:3603
+#: src/player_tab.c:3614
 msgid "E_rase all history"
 msgstr "Effa_cer tout l'historique"
 
-#: src/player_tab.c:3726
+#: src/player_tab.c:3737
 msgid " quick preview finished, song paused"
 msgstr " aperçu rapide fini, lecteur sur pause"
 
-#: src/player_tab.c:3853
+#: src/player_tab.c:3864
 msgid "Choose File"
 msgstr "Choisir fichier"
 
-#: src/player_tab.c:3865 src/multiple_files.c:130
+#: src/player_tab.c:3876 src/multiple_files.c:130
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "fichiers mp3 et ogg (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3873 src/multiple_files.c:138
+#: src/player_tab.c:3884 src/multiple_files.c:138
 msgid "mp3 files (*.mp3)"
 msgstr "fichiers mp3 (*.mp3)"
 
-#: src/player_tab.c:3879 src/multiple_files.c:144
+#: src/player_tab.c:3890 src/multiple_files.c:144
 msgid "ogg files (*.ogg)"
 msgstr "fichiers ogg (*.ogg)"
 
-#: src/player_tab.c:4020
+#: src/player_tab.c:4031
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:4024
+#: src/player_tab.c:4035
 msgid "Select file"
 msgstr "Sélection fichier"
 
-#: src/player_tab.c:4031
+#: src/player_tab.c:4042
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
