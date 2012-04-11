@@ -590,7 +590,6 @@ void connect_with_song(const gchar *fname, gint start_playing)
       //we start the timer
       if (!timer_active)
         {
-          //30 = cursive
           timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
           timer_active = TRUE;
         }
@@ -1647,21 +1646,6 @@ void handle_player_detached_event(GtkHandleBox *handlebox,
   gtk_widget_show(GTK_WIDGET(window));
 }
 
-/*PangoLayout *get_drawing_text(gchar *str)
-  {
-  PangoContext *context = gtk_widget_create_pango_context(da);
-  PangoFontDescription *desc = pango_font_description_from_string("Sans 9");
-  PangoLayout *layout = pango_layout_new(context);
-
-  pango_layout_set_text(layout, str,-1);
-  pango_layout_set_font_description (layout, desc);
-
-  g_object_unref (context);
-  pango_font_description_free (desc);
-
-  return layout;
-  }*/
-
 //!returns the value of the right drawing area
 gfloat get_right_drawing_time()
 {
@@ -1909,14 +1893,14 @@ void draw_marks(gint time_interval, gint left_mark,
   gint left2 = (left_mark/time_interval) * time_interval;
   if (left2 < left_mark)
     left2 += time_interval;
-  
+
   gint i;
   gint i_pixel;
   for (i=left2;i<=right_mark;i+=time_interval)
-    {
-      i_pixel = get_draw_line_position(width_drawing_area,i);
-      
-      switch(time_interval){
+  {
+    i_pixel = get_draw_line_position(width_drawing_area,i);
+
+    switch(time_interval){
       case 1:
         draw_motif(da, gc, ylimit, i_pixel,0);
         break;
@@ -1938,8 +1922,8 @@ void draw_marks(gint time_interval, gint left_mark,
       default:
         draw_motif(da, gc, ylimit,i_pixel,6);
         break;
-      }
     }
+  }
 }
 
 //!full cancel of the quick preview
@@ -2264,7 +2248,7 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
         }
         else
         {
-          draw_line(gc, previous_x, previous_y, x, y, FALSE, TRUE);
+          draw_line(gc, previous_x, previous_y, x, y, FALSE, FALSE);
         }
 
         previous_x = x;
@@ -2275,6 +2259,8 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
 
     }
   }
+
+  cairo_stroke(gc);
 }
 
 #if GTK_MAJOR_VERSION <= 2
@@ -2741,7 +2727,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     draw_text(gc, _(" left click on rectangle checks/unchecks 'keep splitpoint'"),
         0, splitpoint_ypos + 1);
   }
-  
+
   return TRUE;
 }
 

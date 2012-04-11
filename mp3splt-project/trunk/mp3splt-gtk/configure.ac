@@ -116,14 +116,19 @@ AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
 
 
 #################################################
-#Check for GTK
+
+#enable/disable gtk3
 
 AC_ARG_ENABLE(gtk3, [
  AC_HELP_STRING([--enable-gtk3],  [Compile against GTK 3.x explicitly (default: use GTK 3.x if available)])
  AC_HELP_STRING([--disable-gtk3], [Compile against GTK 2.x explicitly (default: use GTK 3.x if available)])],
      [enable_gtk3=$enableval],[enable_gtk3="auto"])
 
+#we must keep this as the first call to PKG_CHECK_MODULES in order to force the searching of pkg-config
+PKG_CHECK_MODULES(FAKE_GTK, [gtk+-3.0], [pkg_config_found=yes], [pkg_config_found=no])
+ 
 if test "x$enable_gtk3" = xauto; then
+  #auto gtk version detection
   AC_MSG_NOTICE([selecting GTK 2.x/3.x automatically])
 
   PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0],
@@ -132,6 +137,7 @@ fi
 
 audacious_check="audclient < 3.0"
 if test "x$enable_gtk3" = xyes; then
+  #gtk 3.x check
   AC_MSG_NOTICE([GTK 3.x selected])
 
   PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0],
@@ -143,6 +149,7 @@ if test "x$enable_gtk3" = xyes; then
     AC_MSG_ERROR([Cannot find GTK >= 3.0])
   ])
 else
+  #gtk 2.x check
   AC_MSG_NOTICE([GTK 2.x selected])
 
   PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18],

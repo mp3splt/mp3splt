@@ -141,7 +141,6 @@ void close_player_popup_window_event( GtkWidget *window,
 void handle_player_detached_event (GtkHandleBox *handlebox,
                                    GtkWidget *widget,
                                    gpointer data);
-PangoLayout *get_drawing_text(gchar *str);
 gfloat get_right_drawing_time();
 gfloat get_left_drawing_time();
 gint get_time_hundrsecs(gint time);
