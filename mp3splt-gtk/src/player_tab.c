@@ -1794,8 +1794,8 @@ static void draw_text(cairo_t *cairo, const gchar *text, gint x, gint y)
   cairo_show_text(cairo, text);
 }
 
-static void draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
-    gboolean line_is_dashed, gboolean stroke)
+static void draw_line_with_width(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
+    gboolean line_is_dashed, gboolean stroke, double line_width)
 {
   double dashes[] = { 1.0, 3.0 };
   if (line_is_dashed)
@@ -1807,7 +1807,7 @@ static void draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
     cairo_set_dash(cairo, dashes, 0, 0.0);
   }
 
-  cairo_set_line_width(cairo, 1.0);
+  cairo_set_line_width(cairo, line_width);
   cairo_set_line_cap(cairo, CAIRO_LINE_CAP_ROUND);
   cairo_move_to(cairo, x1, y1);
   cairo_line_to(cairo, x2, y2);
@@ -1816,6 +1816,12 @@ static void draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
   {
     cairo_stroke(cairo);
   }
+}
+
+static void draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
+    gboolean line_is_dashed, gboolean stroke)
+{
+  draw_line_with_width(cairo, x1, y1, x2, y2, line_is_dashed, stroke, 1.2);
 }
 
 static void draw_point(cairo_t *cairo, gint x, gint y)
@@ -2236,8 +2242,8 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
 
     if ((time <= right_mark) && (time >= left_mark))
     {
-
       if (i % points_coeff == 0)
+
       {
         gint x = get_draw_line_position(width_drawing_area, (gfloat) time);
         gint y = text_ypos + margin + (gint)floorf(level);
@@ -2248,7 +2254,7 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
         }
         else
         {
-          draw_line(gc, previous_x, previous_y, x, y, FALSE, FALSE);
+          draw_line_with_width(gc, previous_x, previous_y, x, y, FALSE, FALSE, 1.0);
         }
 
         previous_x = x;
