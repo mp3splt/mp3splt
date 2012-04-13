@@ -2728,6 +2728,10 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
         0, splitpoint_ypos + 1);
   }
 
+#if GTK_MAJOR_VERSION <= 2
+  cairo_destroy(gc);
+#endif
+
   return TRUE;
 }
 

@@ -1289,8 +1289,7 @@ void create_trim_silence_window(GtkWidget *button, gpointer *data)
   gtk_box_pack_start(GTK_BOX(general_inside_vbox), horiz_fake, FALSE, FALSE, 10);
   
   //vertical parameter box
-  GtkWidget *param_vbox;
-  param_vbox = gtk_vbox_new(FALSE,0);
+  GtkWidget *param_vbox = gtk_vbox_new(FALSE,0);
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
   
   //horizontal box fake for threshold level
