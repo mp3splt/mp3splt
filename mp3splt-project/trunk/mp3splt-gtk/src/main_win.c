@@ -874,6 +874,8 @@ void create_all()
   move_and_resize_main_window();
 
   gtk_widget_show_all(window);
+
+  hide_freedb_spinner();
 }
 
 /*!Output an error message from libmp3splt to the status bar

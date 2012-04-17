@@ -1125,7 +1125,6 @@ void add_splitpoint(Split_point my_split_point,
     g_snprintf(current_description, 255, "%s", _("description here"));
   }
   
-  //
   update_add_button();
   refresh_drawing_area();
   check_update_down_progress_bar();
@@ -1700,10 +1699,8 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 //!special buttons like 'set silence from silence detection'
 GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
 {
-  GtkWidget *hbox;
-
-  hbox = gtk_hbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
+  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
   /* set splitpoints from silence detection */
   scan_silence_button =
@@ -2202,15 +2199,15 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_AUTOMATIC);
-  gtk_box_pack_start (GTK_BOX (tree_hbox), scrolled_window, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(tree_hbox), scrolled_window, TRUE, TRUE, 0);
 
   //get the selection
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
   //create columns
-  create_columns (tree_view);
+  create_columns(tree_view);
   //add the tree to the scrolled window
-  gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET(tree_view));
+  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(tree_view));
 
   /* special buttons like 'set silence from silence detection' */
   special_buttons_hbox = create_init_special_buttons(tree_view);

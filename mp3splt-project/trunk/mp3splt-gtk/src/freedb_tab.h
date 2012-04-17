@@ -67,3 +67,6 @@ void update_splitpoints_from_the_state();
 void freedb_add_button_clicked_event(GtkButton *button,
                                      gpointer data);
 GtkWidget *create_freedb_frame();
+
+void hide_freedb_spinner();
+
