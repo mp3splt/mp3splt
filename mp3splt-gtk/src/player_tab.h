@@ -66,7 +66,7 @@ void get_splitpoint_time_left_right(gint *time_left,
                                     gint *splitpoint_left);
 gint mytimer(gpointer data);
 void reset_inactive_progress_bar();
-void reset_inactive_volume_bar();
+void reset_inactive_volume_button();
 void reset_label_time();
 void reset_song_infos();
 void reset_song_name_label();
@@ -115,24 +115,24 @@ void print_about_the_song();
 void print_player_filename();
 void print_all_song_infos();
 void print_song_time_elapsed();
-void change_volume_bar();
+void change_volume_button();
 void change_progress_bar();
 GtkWidget *create_filename_player_hbox();
-void change_volume_event(GtkWidget *widget,
-                         gpointer data);
-gboolean volume_bar_unclick_event (GtkWidget *widget,
+void change_volume_event(GtkScaleButton *volume_button, gdouble value, gpointer data);
+
+gboolean volume_button_unclick_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
                                    gpointer user_data);
-gboolean volume_bar_click_event (GtkWidget *widget,
+gboolean volume_button_click_event (GtkWidget *widget,
                                  GdkEventCrossing *event,
                                  gpointer user_data);
-gboolean volume_bar_enter_event (GtkWidget *widget,
+gboolean volume_button_enter_event (GtkWidget *widget,
                                  GdkEventCrossing *event,
                                  gpointer user_data);
-gboolean volume_bar_leave_event (GtkWidget *widget,
+gboolean volume_button_leave_event (GtkWidget *widget,
                                  GdkEventCrossing *event,
                                  gpointer user_data);
-gboolean volume_bar_scroll_event (GtkWidget *widget,
+gboolean volume_button_scroll_event (GtkWidget *widget,
                                   GdkEventScroll *event,
                                   gpointer user_data);
 GtkWidget *create_volume_control_box();

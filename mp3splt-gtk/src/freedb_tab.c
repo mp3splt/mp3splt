@@ -58,8 +58,6 @@ GtkWidget *freedb_handle_box;
 
 //filename entry
 GtkWidget *freedb_entry;
-//filename selected entry
-GtkWidget *freedb_selected_entry;
 
 //our freedb tree
 GtkWidget *freedb_tree;
@@ -81,6 +79,9 @@ gint selected_id = -1;
 //the add splitpoint button
 GtkWidget *freedb_add_button;
 GtkWidget *freedb_search_button;
+GtkWidget *spinner;
+
+gboolean executed_lock = FALSE;
 
 //the state main mp3splt state
 extern splt_state *the_state;
@@ -142,165 +143,108 @@ void add_freedb_row(gchar *album_name,
 //!creates the model for the freedb tree
 GtkTreeModel *create_freedb_model()
 {
-  GtkTreeStore *model;
-  model = gtk_tree_store_new (FREEDB_TABLE,
-                              G_TYPE_STRING,
-                              G_TYPE_INT);
-
-  return GTK_TREE_MODEL (model);
+  GtkTreeStore *model = gtk_tree_store_new(FREEDB_TABLE, G_TYPE_STRING, G_TYPE_INT);
+  return GTK_TREE_MODEL(model);
 }
 
 //!creates the freedb tree
 GtkTreeView *create_freedb_tree()
 {
-  GtkTreeView *tree_view;
-  GtkTreeModel *model;
-  //create the model
-  model = (GtkTreeModel *)create_freedb_model();
-  //create the tree view
-  tree_view = (GtkTreeView *)
-    gtk_tree_view_new_with_model (model);
-
+  GtkTreeModel *model = (GtkTreeModel *)create_freedb_model();
+  GtkTreeView *tree_view = (GtkTreeView *)gtk_tree_view_new_with_model(model);
   return tree_view;
 }
 
 //!creates freedb columns
-void create_freedb_columns (GtkTreeView *tree_view)
+void create_freedb_columns(GtkTreeView *tree_view)
 {
-  //cells renderer
-  GtkCellRendererText *renderer;
-  //columns
-  GtkTreeViewColumn *name_column;
-  GtkTreeViewColumn *number_column;
-  
-  //album title
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
+  GtkCellRendererText *renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(ALBUM_NAME));
-  name_column = gtk_tree_view_column_new_with_attributes 
+  GtkTreeViewColumn *name_column = gtk_tree_view_column_new_with_attributes 
     (_("Album title"), GTK_CELL_RENDERER(renderer),
      "text", ALBUM_NAME, NULL);
 
   //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (name_column),
-                               ALBUM_NAME);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
+      GTK_TREE_VIEW_COLUMN(name_column), ALBUM_NAME);
 
   //middle alignment of the column name
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column),
-                                     0.5);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(name_column),
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column), 0.5);
+  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN(name_column),
-                                   TRUE);
+  gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
 
-  //number of the album title
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(NUMBER));
-  number_column = gtk_tree_view_column_new_with_attributes
-    (_("No"), GTK_CELL_RENDERER(renderer), "text", NUMBER, NULL);
-
-  //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (number_column),
-                               NUMBER);
-
-  //middle alignment of the number name
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(number_column),
-                                     0.5);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(number_column),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  
-  //resize.
-  gtk_tree_view_column_set_resizable (GTK_TREE_VIEW_COLUMN(name_column),
-                                      TRUE);
+  gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
 }
 
 //!when closing the new window after detaching
-void close_freedb_popup_window_event( GtkWidget *window,
-                                      gpointer data )
+void close_freedb_popup_window_event(GtkWidget *window, gpointer data)
 {
-  GtkWidget *window_child;
-
-  window_child = gtk_bin_get_child(GTK_BIN(window));
-
-  gtk_widget_reparent(GTK_WIDGET(window_child),
-                      GTK_WIDGET(freedb_handle_box));
-
+  GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(window));
+  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(freedb_handle_box));
   gtk_widget_destroy(window);
 }
 
 //!when we detach the handle
-void handle_freedb_detached_event (GtkHandleBox *handlebox,
-                                 GtkWidget *widget,
-                                 gpointer data)
+void handle_freedb_detached_event(GtkHandleBox *handlebox, GtkWidget *widget,
+    gpointer data)
 {
-  //new window
-  GtkWidget *window;
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
-
-  g_signal_connect (G_OBJECT (window), "delete_event",
-                    G_CALLBACK (close_freedb_popup_window_event),
-                    NULL);
-
+  g_signal_connect(G_OBJECT(window), "delete_event",
+      G_CALLBACK(close_freedb_popup_window_event), NULL);
   gtk_widget_show(GTK_WIDGET(window));
 }
 
 //!freedb selection has changed
-void freedb_selection_changed(GtkTreeSelection *selection,
-                              gpointer data)
+void freedb_selection_changed(GtkTreeSelection *selection, gpointer data)
 {
   GtkTreeIter iter;
-  GtkTreeModel *model;
-  
-  //get the model
-  model = 
-    gtk_tree_view_get_model(GTK_TREE_VIEW(freedb_tree));
-  
-  //if we have selected
-  if(gtk_tree_selection_get_selected(selection,
-                                     &model,
-                                     &iter))
-    {
-      gchar *info;
-      gtk_tree_model_get (model, &iter,
-                          ALBUM_NAME, &info,
-                          NUMBER, &selected_id,
-                          -1);
-      
-      gtk_entry_set_text(GTK_ENTRY(freedb_selected_entry),
-                         info);
-      g_free(info);
-      
-      gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
-    }
+  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(freedb_tree));
+
+  if (gtk_tree_selection_get_selected(selection, &model, &iter))
+  {
+    gchar *info;
+    gtk_tree_model_get (model, &iter,
+        ALBUM_NAME, &info,
+        NUMBER, &selected_id,
+        -1);
+
+    g_free(info);
+    gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
+  }
+  else {
+    gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
+  }
 }
 
 //!removes all rows from the freedb table
-void remove_all_freedb_rows ()
+void remove_all_freedb_rows()
 {
-  GtkTreeIter iter;
   GtkTreeView *tree_view = (GtkTreeView *)freedb_tree;
-  GtkTreeModel *model;
-  
-  model = gtk_tree_view_get_model(tree_view);
-  
-  //while we still have rows in the table
+  GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
+
   while (freedb_table_number > 0)
-    {
-      gtk_tree_model_get_iter_first(model, &iter);
-      gtk_tree_store_remove (GTK_TREE_STORE (model), &iter);
-      freedb_table_number--;
-    }
+  {
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter_first(model, &iter);
+    gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
+    freedb_table_number--;
+  }
 }
 
 //!search the freedb.org
 gpointer freedb_search(gpointer data)
 {
   enter_threads();
+
+  executed_lock = TRUE;
  
+  gtk_widget_hide(freedb_search_button);
+  gtk_widget_show(spinner);
+  gtk_spinner_start(GTK_SPINNER(spinner));
+
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
-  gtk_widget_set_sensitive(GTK_WIDGET(freedb_search_button), FALSE);
   gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), FALSE);
  
   put_status_message(_("please wait... contacting tracktype.org"));
@@ -318,7 +262,6 @@ gpointer freedb_search(gpointer data)
   print_status_bar_confirmation(err);
  
   remove_all_freedb_rows();
-  gtk_entry_set_text(GTK_ENTRY(freedb_selected_entry), "");
  
   if (err >= 0)
   {
@@ -352,9 +295,14 @@ gpointer freedb_search(gpointer data)
     }
   }
  
-  gtk_widget_set_sensitive(GTK_WIDGET(freedb_search_button), TRUE);
+  gtk_widget_show(freedb_search_button);
+  gtk_spinner_stop(GTK_SPINNER(spinner));
+  gtk_widget_hide(spinner);
+
   gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), TRUE);
  
+  executed_lock = FALSE;
+
   exit_threads();
 
   return NULL;
@@ -363,6 +311,8 @@ gpointer freedb_search(gpointer data)
 //! Start a thread for the freedb search
 void freedb_search_start_thread()
 {
+  if (executed_lock) { return; }
+
   mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
   create_thread(freedb_search, NULL, TRUE, NULL);
 }
@@ -575,96 +525,81 @@ void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 //!creates the freedb box
 GtkWidget *create_freedb_frame()
 {
-  //main freedb box
-  GtkWidget *freedb_hbox;
-  freedb_hbox = gtk_hbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (freedb_hbox), 5);
+  GtkWidget *freedb_hbox = gtk_hbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(freedb_hbox), 0);
   
   /* handle box for detaching */
   freedb_handle_box = gtk_handle_box_new();
-  gtk_container_add(GTK_CONTAINER (freedb_handle_box), GTK_WIDGET(freedb_hbox));
-  //handle event
+  gtk_container_add(GTK_CONTAINER(freedb_handle_box), GTK_WIDGET(freedb_hbox));
   g_signal_connect(freedb_handle_box, "child-detached",
                    G_CALLBACK(handle_freedb_detached_event),
                    NULL);
   
-  //vertical box
-  GtkWidget *freedb_vbox;
-  freedb_vbox = gtk_vbox_new(FALSE,0);
-  gtk_box_pack_start (GTK_BOX(freedb_hbox), freedb_vbox , TRUE, TRUE, 4);
+  GtkWidget *freedb_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(freedb_hbox), freedb_vbox, TRUE, TRUE, 4);
   
   /* search box */
-  //horizontal search box
-  GtkWidget *search_hbox = gtk_hbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 3);
-  //top label
+  GtkWidget *search_hbox = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 3);
+
   GtkWidget *label = gtk_label_new(_("Search tracktype.org:"));
   gtk_box_pack_start(GTK_BOX(search_hbox), label, FALSE, FALSE, 0);
-  //top entry
+
   freedb_entry = gtk_entry_new();
   gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), TRUE);
   gtk_box_pack_start(GTK_BOX(search_hbox), freedb_entry, TRUE, TRUE, 6);
+
   g_signal_connect(G_OBJECT(freedb_entry), "activate",
       G_CALLBACK(freedb_entry_activate_event), NULL);
-  
-  //search button
+
   freedb_search_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
   g_signal_connect(G_OBJECT(freedb_search_button), "clicked",
       G_CALLBACK(freedb_search_button_event), NULL);
-  gtk_box_pack_start(GTK_BOX(search_hbox), freedb_search_button,
-                      FALSE, FALSE, 0);
-  
+  gtk_box_pack_start(GTK_BOX(search_hbox), freedb_search_button, FALSE, FALSE, 0);
+ 
+  spinner = gtk_spinner_new();
+  gtk_box_pack_start(GTK_BOX(search_hbox), spinner, FALSE, FALSE, 4);
+
   /* freedb scrolled window and the tree */
-  //create the tree and add it to the scrolled window
   freedb_tree = (GtkWidget *) create_freedb_tree();
-  //scrolled window for the tree
+
   GtkWidget *scrolled_window;
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+  scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_box_pack_start (GTK_BOX (freedb_vbox),
-                      scrolled_window, TRUE, TRUE, 5);
-  //create columns
-  create_freedb_columns (GTK_TREE_VIEW(freedb_tree));
-  //add the tree to the scrolled window
-  gtk_container_add (GTK_CONTAINER (scrolled_window), 
-                     GTK_WIDGET(freedb_tree));
+  gtk_box_pack_start(GTK_BOX(freedb_vbox), scrolled_window, TRUE, TRUE, 3);
+
+  create_freedb_columns(GTK_TREE_VIEW(freedb_tree));
+
+  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(freedb_tree));
   
-  /* expand all rows after the treeview widget has been realized */
-  /*g_signal_connect (freedb_tree, "realize",
-    G_CALLBACK (gtk_tree_view_expand_all), NULL);*/
-  
-  //selection for the tree
   GtkWidget *freedb_tree_selection;
   freedb_tree_selection = (GtkWidget *)
     gtk_tree_view_get_selection(GTK_TREE_VIEW(freedb_tree));
-  g_signal_connect (G_OBJECT (freedb_tree_selection), "changed",
-                    G_CALLBACK (freedb_selection_changed), NULL);
+  g_signal_connect(G_OBJECT(freedb_tree_selection), "changed",
+                    G_CALLBACK(freedb_selection_changed), NULL);
 
-  /* selected album box */
-  //horizontal selected box
+  /* add button */
   GtkWidget *selected_hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 3);
-  //top selected label
-  GtkWidget *label_selected = gtk_label_new(_("Selected album:"));
-  gtk_box_pack_start(GTK_BOX(selected_hbox), label_selected , FALSE, FALSE, 0);
-  //freedb selected entry
-  freedb_selected_entry = gtk_entry_new();
-  gtk_editable_set_editable(GTK_EDITABLE(freedb_selected_entry), FALSE);
-  gtk_box_pack_start(GTK_BOX(selected_hbox), freedb_selected_entry, TRUE, TRUE, 6);
-  //add button
+
   freedb_add_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
-  //gtk_button_set_relief(GTK_BUTTON(freedb_add_button), GTK_RELIEF_NONE);
+
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   g_signal_connect(G_OBJECT(freedb_add_button), "clicked",
       G_CALLBACK(freedb_add_button_clicked_event), NULL);
-  gtk_box_pack_start(GTK_BOX(selected_hbox), freedb_add_button, FALSE, FALSE, 0);
+  gtk_box_pack_end(GTK_BOX(selected_hbox), freedb_add_button, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(freedb_add_button, 
       _("Set splitpoints to the splitpoints table"));
   
   return freedb_handle_box;
+}
+
+void hide_freedb_spinner()
+{
+  gtk_widget_hide(spinner);
 }
 
