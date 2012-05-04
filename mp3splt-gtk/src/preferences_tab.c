@@ -791,7 +791,7 @@ GtkWidget *create_pref_splitpoints_page()
   gtk_box_pack_start(GTK_BOX(inside_vbox), dir_box, FALSE, FALSE, 2);
 
   GtkWidget *split_options_box = create_split_options_box();
-  gtk_box_pack_start(GTK_BOX(inside_vbox), split_options_box, FALSE, FALSE, 2);
+  gtk_box_pack_start(GTK_BOX(inside_vbox), split_options_box, FALSE, FALSE, 1);
  
   return general_hbox;
 }
@@ -839,7 +839,7 @@ GtkWidget *create_player_options_box()
   g_signal_connect(G_OBJECT(player_combo_box), "changed",
       G_CALLBACK(player_combo_box_event), NULL);
 
-  gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 12);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 5);
  
   return wh_set_title_and_get_vbox(horiz_fake, _("<b>Player options</b>"));
 }
@@ -862,7 +862,7 @@ GtkWidget *create_pref_player_page()
   
   //choose player combo box
   GtkWidget *player_options_box = create_player_options_box();
-  gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 2);
+  gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 3);
  
   return player_hbox;
 }
