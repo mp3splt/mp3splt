@@ -3553,7 +3553,7 @@ GtkWidget *create_delete_buttons_hbox()
   playlist_remove_file_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
-                     playlist_remove_file_button, TRUE, FALSE, 5);
+                     playlist_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
   g_signal_connect(G_OBJECT(playlist_remove_file_button), "clicked",
                    G_CALLBACK(playlist_remove_file_button_event), NULL);
@@ -3562,7 +3562,7 @@ GtkWidget *create_delete_buttons_hbox()
   playlist_remove_all_files_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
-                     playlist_remove_all_files_button, TRUE, FALSE, 5);
+                     playlist_remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);
   g_signal_connect(G_OBJECT(playlist_remove_all_files_button), "clicked",
                    G_CALLBACK(playlist_remove_all_files_button_event), NULL);
@@ -3614,7 +3614,7 @@ GtkWidget *create_player_playlist_frame()
   //horizontal box with delete buttons
   GtkWidget *delete_buttons_hbox;
   delete_buttons_hbox = (GtkWidget *)create_delete_buttons_hbox();
-  gtk_box_pack_start(GTK_BOX(vbox), delete_buttons_hbox, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), delete_buttons_hbox, FALSE, FALSE, 2);
 
   return playlist_handle;
 }

@@ -1640,9 +1640,7 @@ GtkWidget *create_init_spinner(GtkWidget *bottomhbox1,
 //!minutes ,seconds spinners ; add, delete buttons
 GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 {
-  GtkWidget *hbox;
-
-  hbox = gtk_hbox_new (FALSE, 0);
+  GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
 
   /* minutes and seconds spinners */
@@ -1702,25 +1700,25 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
   GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
-  /* set splitpoints from silence detection */
-  scan_silence_button =
-    (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
-  gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
-  g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
-      G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);
-  gtk_box_pack_end(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
-  gtk_widget_set_tooltip_text(scan_silence_button,
-      _("Set splitpoints from silence detection"));
-
   /* set splitpoints from trim silence detection */
   scan_trim_silence_button =
     (GtkWidget *)create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
   g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
       G_CALLBACK(create_trim_silence_window), NULL);
-  gtk_box_pack_end(GTK_BOX(hbox), scan_trim_silence_button, FALSE, FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(hbox), scan_trim_silence_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(scan_trim_silence_button,
       _("Set trim splitpoints using silence detection"));
+
+  /* set splitpoints from silence detection */
+  scan_silence_button =
+    (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
+  g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
+      G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);
+  gtk_box_pack_start(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
+  gtk_widget_set_tooltip_text(scan_silence_button,
+      _("Set splitpoints from silence detection"));
 
   return hbox;
 }
@@ -2159,23 +2157,9 @@ buttons
 */
 GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
 {
-  //choose splitpoints box, has tree, spinner, arrows..
-  GtkWidget *choose_splitpoints_vbox = NULL;
-  //scrolled window used for the tree
-  GtkWidget *scrolled_window = NULL;
-  //spinners + add and remove buttons box
-  GtkWidget *spinners_buttons_hbox = NULL;
-  //horizontal box for tree and arrows
-  GtkWidget *tree_hbox = NULL;
-  //special buttons like 'Add splitpoints from silence detection'
-  GtkWidget *special_buttons_hbox = NULL;
-
-  /* the tree */
-  GtkTreeSelection *selection = NULL;
-
   /* choose splitpoins vbox */
-  choose_splitpoints_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (choose_splitpoints_vbox), 0);
+  GtkWidget *choose_splitpoints_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(choose_splitpoints_vbox), 0);
 
   /* handle box for detaching */
   handle_box = gtk_handle_box_new();
@@ -2186,15 +2170,15 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
                    NULL);
 
   /* spinner buttons hbox */
-  spinners_buttons_hbox = create_init_spinners_buttons(tree_view);
-  gtk_box_pack_start (GTK_BOX (choose_splitpoints_vbox), spinners_buttons_hbox, FALSE, FALSE, 7);
+  GtkWidget *spinners_buttons_hbox = create_init_spinners_buttons(tree_view);
+  gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), spinners_buttons_hbox, FALSE, FALSE, 3);
   
   /* horizontal box for the tree */
-  tree_hbox = gtk_hbox_new (FALSE, 0);
+  GtkWidget *tree_hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (choose_splitpoints_vbox), tree_hbox, TRUE, TRUE, 0);
 
   /* scrolled window for the tree */
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
@@ -2202,7 +2186,7 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   gtk_box_pack_start(GTK_BOX(tree_hbox), scrolled_window, TRUE, TRUE, 0);
 
   //get the selection
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
+  GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
   //create columns
   create_columns(tree_view);
@@ -2210,8 +2194,8 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(tree_view));
 
   /* special buttons like 'set silence from silence detection' */
-  special_buttons_hbox = create_init_special_buttons(tree_view);
-  gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), special_buttons_hbox, FALSE, FALSE, 7);
+  GtkWidget *special_buttons_hbox = create_init_special_buttons(tree_view);
+  gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), special_buttons_hbox, FALSE, FALSE, 2);
 
   return handle_box;
 }

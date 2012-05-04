@@ -784,11 +784,11 @@ GtkWidget *create_pref_splitpoints_page()
   gtk_box_pack_start(GTK_BOX(general_hbox), scrolled_window, TRUE, TRUE, 0);
  
   //vertical box inside the horizontal box from the scrolled window
-  GtkWidget *inside_vbox = gtk_vbox_new(FALSE, 0);;
-  gtk_box_pack_start(GTK_BOX(inside_hbox), inside_vbox, TRUE, TRUE, 10);
+  GtkWidget *inside_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(inside_hbox), inside_vbox, TRUE, TRUE, 5);
  
   GtkWidget *dir_box = create_directory_box();
-  gtk_box_pack_start(GTK_BOX(inside_vbox), dir_box, FALSE, FALSE, 10);
+  gtk_box_pack_start(GTK_BOX(inside_vbox), dir_box, FALSE, FALSE, 2);
 
   GtkWidget *split_options_box = create_split_options_box();
   gtk_box_pack_start(GTK_BOX(inside_vbox), split_options_box, FALSE, FALSE, 2);
@@ -823,7 +823,7 @@ GtkWidget *create_player_options_box()
 {
   GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
 
-  GtkWidget *label = gtk_label_new(_("Choose a player:"));
+  GtkWidget *label = gtk_label_new(_("Player:"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
   player_combo_box = GTK_WIDGET(ch_new_combo());
@@ -858,11 +858,11 @@ GtkWidget *create_pref_player_page()
   
   //vertical box inside the horizontal box from the scrolled window
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
-  gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 10);
+  gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 5);
   
   //choose player combo box
   GtkWidget *player_options_box = create_player_options_box();
-  gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 10);
+  gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 2);
  
   return player_hbox;
 }
@@ -938,10 +938,10 @@ GtkWidget *create_pref_output_page()
   gtk_box_pack_start(GTK_BOX(output_hbox), scrolled_window, TRUE, TRUE, 0);
  
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
-  gtk_box_pack_start(GTK_BOX(output_inside_hbox), vbox, TRUE, TRUE, 10);
+  gtk_box_pack_start(GTK_BOX(output_inside_hbox), vbox, TRUE, TRUE, 5);
 
   GtkWidget *output_fname_box = create_output_filename_box();
-  gtk_box_pack_start(GTK_BOX(vbox), output_fname_box, FALSE, FALSE, 10);
+  gtk_box_pack_start(GTK_BOX(vbox), output_fname_box, FALSE, FALSE, 2);
 
   return output_hbox;
 }
@@ -1229,13 +1229,13 @@ GtkWidget *create_pref_tags_page()
   gtk_box_pack_start(GTK_BOX(outside_vbox), scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
-  gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 10);
+  gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 5);
 
   GtkWidget *tags_version_box = create_tags_version_box();
-  gtk_box_pack_start(GTK_BOX(vbox), tags_version_box, FALSE, FALSE, 10);
+  gtk_box_pack_start(GTK_BOX(vbox), tags_version_box, FALSE, FALSE, 2);
 
   GtkWidget *tags_opts_box = create_tags_options_box();
-  gtk_box_pack_start(GTK_BOX(vbox), tags_opts_box, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), tags_opts_box, FALSE, FALSE, 1);
   
   return outside_vbox;
 }

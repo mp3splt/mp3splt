@@ -725,9 +725,8 @@ GtkWidget *create_main_vbox()
                            (GtkWidget *)notebook_label);
 
   /* split files frame */
-  GtkWidget *split_files_vbox;
-  split_files_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (split_files_vbox), 0);
+  GtkWidget *split_files_vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(split_files_vbox), 0);
   
   frame = (GtkWidget *)create_split_files();
   gtk_container_add(GTK_CONTAINER(split_files_vbox), frame);
@@ -784,10 +783,9 @@ GtkWidget *create_main_vbox()
                             "");
   
   //hbox for progress bar and cancel button
-  GtkWidget *hbox;
-  hbox = gtk_hbox_new (FALSE,0);
+  GtkWidget *hbox = gtk_hbox_new (FALSE,0);
   //we put the progress bar in the hbox
-  gtk_box_pack_start(GTK_BOX(hbox), percent_progress_bar, TRUE, TRUE, 3);
+  gtk_box_pack_start(GTK_BOX(hbox), percent_progress_bar, TRUE, TRUE, 0);
   
   //stop button
   cancel_button = create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
@@ -800,7 +798,7 @@ GtkWidget *create_main_vbox()
   gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), FALSE);
   
   //we put progress bar hbox in the main box
-  gtk_box_pack_start(GTK_BOX(main_vbox), hbox, FALSE, FALSE, 3);  
+  gtk_box_pack_start(GTK_BOX(main_vbox), hbox, FALSE, FALSE, 2);
 
   /* show messages history dialog */
   create_mess_history_dialog();
