@@ -540,7 +540,7 @@ GtkWidget *create_freedb_frame()
   
   /* search box */
   GtkWidget *search_hbox = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 3);
+  gtk_box_pack_start(GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 2);
 
   GtkWidget *label = gtk_label_new(_("Search tracktype.org:"));
   gtk_box_pack_start(GTK_BOX(search_hbox), label, FALSE, FALSE, 0);
@@ -569,7 +569,7 @@ GtkWidget *create_freedb_frame()
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_box_pack_start(GTK_BOX(freedb_vbox), scrolled_window, TRUE, TRUE, 3);
+  gtk_box_pack_start(GTK_BOX(freedb_vbox), scrolled_window, TRUE, TRUE, 1);
 
   create_freedb_columns(GTK_TREE_VIEW(freedb_tree));
 
@@ -583,7 +583,7 @@ GtkWidget *create_freedb_frame()
 
   /* add button */
   GtkWidget *selected_hbox = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 3);
+  gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 2);
 
   freedb_add_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
@@ -591,7 +591,7 @@ GtkWidget *create_freedb_frame()
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   g_signal_connect(G_OBJECT(freedb_add_button), "clicked",
       G_CALLBACK(freedb_add_button_clicked_event), NULL);
-  gtk_box_pack_end(GTK_BOX(selected_hbox), freedb_add_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(selected_hbox), freedb_add_button, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(freedb_add_button, 
       _("Set splitpoints to the splitpoints table"));
   

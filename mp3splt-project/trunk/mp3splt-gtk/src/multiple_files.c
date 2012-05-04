@@ -285,13 +285,12 @@ void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer data)
 
 GtkWidget *create_multiple_files_buttons_hbox()
 {
-  GtkWidget *hbox;
-  hbox = gtk_hbox_new(FALSE,0);
+  GtkWidget *hbox = gtk_hbox_new(FALSE,0);
 
   //button for adding file(s)
   GtkWidget *multiple_files_add_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_ADD, _("_Add files"), FALSE);
-  gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, TRUE, FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
   g_signal_connect(G_OBJECT(multiple_files_add_button), "clicked",
                    G_CALLBACK(multiple_files_add_button_event), NULL);
@@ -300,7 +299,7 @@ GtkWidget *create_multiple_files_buttons_hbox()
   multiple_files_remove_file_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE, _("_Remove selected entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
-      multiple_files_remove_file_button, TRUE, FALSE, 5);
+      multiple_files_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
   g_signal_connect(G_OBJECT(multiple_files_remove_file_button), "clicked",
                    G_CALLBACK(multiple_files_remove_button_event), NULL);
@@ -309,7 +308,7 @@ GtkWidget *create_multiple_files_buttons_hbox()
   multiple_files_remove_all_files_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE, _("R_emove all entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
-      TRUE, FALSE, 5);
+      FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_all_files_button,FALSE);
   g_signal_connect(G_OBJECT(multiple_files_remove_all_files_button), "clicked",
                    G_CALLBACK(multiple_files_remove_all_button_event), NULL);
@@ -365,7 +364,7 @@ GtkWidget *create_multiple_files_component()
 
   //bottom horizontal box with buttons
   GtkWidget *buttons_hbox = (GtkWidget *)create_multiple_files_buttons_hbox();
-  gtk_box_pack_start(GTK_BOX(vbox), buttons_hbox, FALSE, FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(vbox), buttons_hbox, FALSE, FALSE, 2);
 
   return vbox;
 }

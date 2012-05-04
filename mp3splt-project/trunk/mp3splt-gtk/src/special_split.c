@@ -194,7 +194,7 @@ static void spinner_time_changed(GtkSpinButton *spinner, gpointer data)
 {
   gint time = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
   gchar time_text[1024] = { '\0' };
-  g_snprintf(time_text, 1024, _("\tSplit every %2d seconds."), time);
+  g_snprintf(time_text, 1024, _("Split every %2d seconds."), time);
   gtk_label_set_text(GTK_LABEL(time_label), time_text);
 
   save_preferences(NULL, NULL);
@@ -205,7 +205,7 @@ static void spinner_equal_tracks_changed(GtkSpinButton *spinner, gpointer data)
 {
   gint equal_tracks = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
   gchar equal_tracks_text[1024] = { '\0' };
-  g_snprintf(equal_tracks_text, 1024, _("\tSplit in %2d equal time tracks."), equal_tracks);
+  g_snprintf(equal_tracks_text, 1024, _("Split in %2d equal time tracks."), equal_tracks);
   gtk_label_set_text(GTK_LABEL(equal_tracks_label), equal_tracks_text);
 
   save_preferences(NULL, NULL);
@@ -237,7 +237,7 @@ static void split_file_mode_changed(GtkToggleButton *radio_b, gpointer data)
 static GtkWidget *create_split_mode()
 {
   GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
-  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 5);
+  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
 
   //normal split
   split_mode_radio_button = gtk_radio_button_new_with_label(NULL, _("Normal"));
@@ -259,13 +259,16 @@ static GtkWidget *create_split_mode()
       GINT_TO_POINTER(SELECTED_SPLIT_TIME));
  
   //
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
+  GtkWidget *big_horiz_fake = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(local_vbox), big_horiz_fake, FALSE, FALSE, 0);
+
+  GtkWidget *horiz_fake = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(big_horiz_fake), horiz_fake, FALSE, FALSE, 25);
   
   gint default_time = 60;
 
   gchar time_text[1024] = { '\0' };
-  g_snprintf(time_text, 1024, _("\tSplit every %2d seconds."), default_time);
+  g_snprintf(time_text, 1024, _("Split every %2d seconds."), default_time);
   time_label = gtk_label_new(time_text);
   gtk_box_pack_start(GTK_BOX(horiz_fake), time_label, FALSE, FALSE, 0);
   
@@ -290,13 +293,16 @@ static GtkWidget *create_split_mode()
       GINT_TO_POINTER(SELECTED_SPLIT_EQUAL_TIME_TRACKS));
  
   //
+  big_horiz_fake = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(local_vbox), big_horiz_fake, FALSE, FALSE, 0);
+
   horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(big_horiz_fake), horiz_fake, FALSE, FALSE, 25);
   
   gint default_tracks = 10;
 
   gchar equal_length_text[1024] = { '\0' };
-  g_snprintf(equal_length_text, 1024, _("\tSplit in %2d equal time tracks."), default_tracks);
+  g_snprintf(equal_length_text, 1024, _("Split in %2d equal time tracks."), default_tracks);
   equal_tracks_label = gtk_label_new(time_text);
   gtk_box_pack_start(GTK_BOX(horiz_fake), equal_tracks_label, FALSE, FALSE, 0);
   
@@ -452,7 +458,7 @@ static GtkWidget *create_split_mode()
 static GtkWidget *create_single_multiple_split_modes()
 {
   GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
-  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 5);
+  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
 
   //single file
   file_mode_radio_button = 
@@ -476,7 +482,7 @@ static GtkWidget *create_single_multiple_split_modes()
   multiple_files_component = create_multiple_files_component();
   gtk_widget_set_sensitive(multiple_files_component, FALSE);
   gtk_box_pack_start(GTK_BOX(multiple_files_hbox), multiple_files_component,
-      TRUE, TRUE, 20);
+      TRUE, TRUE, 5);
 
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 

@@ -338,7 +338,7 @@ GtkWidget *create_queue_buttons_hbox()
     create_cool_button(GTK_STOCK_UNINDENT, 
                        _("_Queue files to player"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
-                      queue_files_button, TRUE, FALSE, 5);
+                      queue_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(queue_files_button, FALSE);
   g_signal_connect (G_OBJECT (queue_files_button), "clicked",
                     G_CALLBACK (queue_files_button_event), NULL);
@@ -348,7 +348,7 @@ GtkWidget *create_queue_buttons_hbox()
     create_cool_button(GTK_STOCK_DELETE,
                        _("_Delete selected files"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
-                      remove_file_button, TRUE, FALSE, 5);
+                      remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(remove_file_button,FALSE);
   g_signal_connect (G_OBJECT (remove_file_button), "clicked",
                     G_CALLBACK (remove_file_button_event), NULL);
@@ -358,7 +358,7 @@ GtkWidget *create_queue_buttons_hbox()
     create_cool_button(GTK_STOCK_DELETE,
                        _("D_elete all files"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
-                      remove_all_files_button, TRUE, FALSE, 5);
+                      remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(remove_all_files_button,FALSE);
   g_signal_connect (G_OBJECT (remove_all_files_button), "clicked",
                     G_CALLBACK (remove_all_files_button_event), NULL);
@@ -515,7 +515,7 @@ GtkWidget *create_split_files()
   queue_buttons_hbox = 
     (GtkWidget *)create_queue_buttons_hbox();
   gtk_box_pack_start (GTK_BOX (vbox),
-                      queue_buttons_hbox, FALSE, FALSE, 5);
+                      queue_buttons_hbox, FALSE, FALSE, 2);
   
   return split_handle_box;
 }
