@@ -770,35 +770,29 @@ GtkWidget *create_main_vbox()
   gtk_container_add(GTK_CONTAINER(preferences_vbox), frame);
 
   notebook_label = gtk_label_new((gchar *)_("Preferences"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           preferences_vbox,
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), preferences_vbox,
                            (GtkWidget *)notebook_label);
   
   /* progress bar */
   percent_progress_bar = gtk_progress_bar_new();
-  //we begin at 0
-  gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-                                0.0);
-  //we write 0 on the bar
-  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-                            "");
-  
-  //hbox for progress bar and cancel button
-  GtkWidget *hbox = gtk_hbox_new (FALSE,0);
-  //we put the progress bar in the hbox
+  gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 0.0);
+  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), "");
+
+#if GTK_MAJOR_VERSION >= 3
+  gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(percent_progress_bar), TRUE);
+#endif
+
+  GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), percent_progress_bar, TRUE, TRUE, 0);
-  
+
   //stop button
   cancel_button = create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
-  //action for the cancel button
   g_signal_connect(G_OBJECT(cancel_button), "clicked",
                    G_CALLBACK(cancel_button_event), NULL);
-  
-  //we put the stop button in the hbox
+
   gtk_box_pack_start(GTK_BOX(hbox), cancel_button, FALSE, TRUE, 3);
   gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), FALSE);
-  
-  //we put progress bar hbox in the main box
+
   gtk_box_pack_start(GTK_BOX(main_vbox), hbox, FALSE, FALSE, 2);
 
   /* show messages history dialog */
@@ -806,9 +800,6 @@ GtkWidget *create_main_vbox()
  
   /* statusbar */
   status_bar = gtk_statusbar_new();
-
-  //TODO: gtk+ >= 3
-  //gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(status_bar), FALSE);
 
   GtkWidget *mess_history_button =
     create_cool_button(GTK_STOCK_INFO, NULL, FALSE);

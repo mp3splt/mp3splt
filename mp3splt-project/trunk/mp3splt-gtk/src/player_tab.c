@@ -764,11 +764,8 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   //update bottom progress bar to 0 and ""
   if (!we_are_splitting)
   {
-    //fraction update
-    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-        0);
-    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-        "");
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 0);
+    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), "");
   }
 
   const gchar *fname = inputfilename_get();
@@ -1140,16 +1137,8 @@ gfloat get_total_time()
 //!returns the total elapsed time
 gfloat get_elapsed_time()
 {
-  //progress position
-  gfloat adj_position;
-  adj_position =
-    gtk_adjustment_get_value(GTK_ADJUSTMENT(progress_adj));
-  
-  //the current time
-  current_time =
-    (adj_position * total_time)/100000;
-  
-  return current_time;
+  gfloat adj_position = gtk_adjustment_get_value(GTK_ADJUSTMENT(progress_adj));
+  return (adj_position * total_time) / 100000;
 }
 
 void refresh_drawing_area()
@@ -1160,7 +1149,6 @@ void refresh_drawing_area()
 //!updates bottom progress bar
 void check_update_down_progress_bar()
 {
-  //if we are not currently splitting
   if (!we_are_splitting)
   {
     //if we are between 2 splitpoints,
@@ -1171,8 +1159,7 @@ void check_update_down_progress_bar()
     gint splitpoint_time_right = -1;
     gint splitpoint_left_index = -1;
     get_splitpoint_time_left_right(&splitpoint_time_left,
-        &splitpoint_time_right,
-        &splitpoint_left_index);
+        &splitpoint_time_right, &splitpoint_left_index);
 
     if ((splitpoint_time_left != -1) && 
         (splitpoint_time_right != -1))
@@ -1205,7 +1192,8 @@ void check_update_down_progress_bar()
         }
       }
     }
-    //we update the percent progress bar  
+
+    //update the percent progress bar  
     if (progress_time < 0)
     {
       progress_time = 0;
@@ -1216,13 +1204,10 @@ void check_update_down_progress_bar()
     }
     if ((progress_time >= 0) && (progress_time <= 1))
     {
-      //fraction update
-      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-          progress_time);
+      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), progress_time);
     }
 
-    gchar *progress_description =
-      get_splitpoint_name(splitpoint_left_index-1);
+    gchar *progress_description = get_splitpoint_name(splitpoint_left_index-1);
     gchar description_shorted[512] = { '\0' };
     //if we have a splitpoint on our right
     //and we are before the first splitpoint
@@ -1232,8 +1217,7 @@ void check_update_down_progress_bar()
       {
         if (progress_description != NULL)
         {
-          g_snprintf(description_shorted,60, _("before %s"),
-              progress_description);
+          g_snprintf(description_shorted,60, _("before %s"), progress_description);
         }
       }
       else
@@ -1282,8 +1266,6 @@ void check_update_down_progress_bar()
       }
     }
 
-    //progress text
-    //we write the name and the progress on the bar
     gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
         description_shorted);
     g_free(progress_description);
@@ -1291,8 +1273,7 @@ void check_update_down_progress_bar()
 }
 
 //!event when the progress bar value changed
-void progress_bar_value_changed_event (GtkRange *range,
-                                       gpointer user_data)
+void progress_bar_value_changed_event(GtkRange *range, gpointer user_data)
 {
   refresh_drawing_area();
   

@@ -1553,7 +1553,7 @@ void remove_row(GtkWidget *widget, gpointer data)
 }
 
 //!removes all rows from the table
-void remove_all_rows (GtkWidget *widget, gpointer data)
+void remove_all_rows(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
   GtkTreeModel *model;
@@ -1839,10 +1839,8 @@ gpointer split_preview(gpointer data)
 
     if (confirmation > 0)
     {
-      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-          1.0);
-      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-          _(" finished"));
+      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 1.0);
+      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), _(" finished"));
     }
 
     if (fname_path)
