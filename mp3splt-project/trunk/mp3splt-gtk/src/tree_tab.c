@@ -1632,7 +1632,7 @@ GtkWidget *create_init_spinner(GtkWidget *bottomhbox1,
   //adds spinner to the spinner box
   gtk_box_pack_start (GTK_BOX (spinner_box), spinner, TRUE, FALSE, 0);
   //adds spinner box to the horizontal box1
-  gtk_box_pack_start (GTK_BOX (bottomhbox1), spinner_box, TRUE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (bottomhbox1), spinner_box, FALSE, FALSE, 5);
   
   return spinner;
 }
@@ -1668,7 +1668,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
   gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
   g_signal_connect(G_OBJECT(add_button), "clicked",
                     G_CALLBACK(add_row_clicked), tree_view);
-  gtk_box_pack_start (GTK_BOX (hbox), add_button, TRUE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (hbox), add_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(add_button,_("Add splitpoint"));
 
   /* remove row button */
@@ -1678,7 +1678,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
   gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
   g_signal_connect (G_OBJECT (remove_row_button), "clicked",
                     G_CALLBACK (remove_row), tree_view);
-  gtk_box_pack_start (GTK_BOX (hbox), remove_row_button, TRUE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (hbox), remove_row_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(remove_row_button, _("Remove rows"));
 
   /* remove all rows button */
@@ -1688,7 +1688,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
   gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   g_signal_connect (G_OBJECT (remove_all_button), "clicked",
                     G_CALLBACK (remove_all_rows), tree_view);
-  gtk_box_pack_start (GTK_BOX (hbox), remove_all_button, TRUE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (hbox), remove_all_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(remove_all_button, _("Remove all rows"));
 
   return hbox;
