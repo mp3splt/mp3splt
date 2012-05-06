@@ -714,6 +714,7 @@ GtkWidget *create_main_vbox()
 
   //playlist control frame
   playlist_box = (GtkWidget *)create_player_playlist_frame();
+  gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox,
       (GtkWidget *)notebook_label);
@@ -861,17 +862,14 @@ void create_all()
   
   load_preferences();
 
-  if (selected_player == PLAYER_GSTREAMER)
-  {
-    hide_connect_button();
-  }
-
-  hide_disconnect_button();
-  gtk_widget_hide(playlist_box);
-
   move_and_resize_main_window();
 
   gtk_widget_show_all(window);
+
+  if (selected_player != PLAYER_GSTREAMER)
+  {
+    gtk_widget_hide(playlist_box);
+  }
 
   hide_freedb_spinner();
 }
