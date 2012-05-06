@@ -212,5 +212,7 @@ gchar *inputfilename_get();
 
 void build_path(GString *path, const gchar *dir, const gchar *filename);
 
+void close_playlist_popup_window_event(GtkWidget *window, gpointer data);
+
 #endif
 

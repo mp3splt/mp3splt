@@ -175,6 +175,7 @@ GtkWidget *player_handle;
 
 //handle for detaching playlist
 GtkWidget *playlist_handle;
+GtkWidget *playlist_handle_window;
 
 extern gint file_browsed;
 extern gint selected_player;
@@ -2243,7 +2244,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
 #endif
 
   if (drawing_area_expander != NULL &&
-      !gtk_expander_get_expanded(drawing_area_expander))
+      !gtk_expander_get_expanded(GTK_EXPANDER(drawing_area_expander)))
   {
     return;
   }
@@ -3371,36 +3372,29 @@ void add_playlist_file(const gchar *name)
 }
 
 //!when closing the new window after detaching
-void close_playlist_popup_window_event(GtkWidget *window,
-                                       gpointer data)
+void close_playlist_popup_window_event(GtkWidget *window, gpointer data)
 {
-  GtkWidget *window_child;
+  if (playlist_handle_window == NULL)
+  {
+    return;
+  }
 
-  window_child = gtk_bin_get_child(GTK_BIN(window));
-
+  GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(playlist_handle_window));
   gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(playlist_handle));
-
-  gtk_widget_destroy(window);
+  gtk_widget_destroy(playlist_handle_window);
 }
 
-
 //!when we detach the handle
-void handle_playlist_detached_event(GtkHandleBox *handlebox,
-                                    GtkWidget *widget,
-                                    gpointer data)
+void handle_playlist_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, gpointer data)
 {
-  //new window
-  GtkWidget *window;
+  playlist_handle_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(playlist_handle_window));
 
-  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
-
-  g_signal_connect(G_OBJECT(window), "delete_event",
-                   G_CALLBACK(close_playlist_popup_window_event),
-                   NULL);
+  g_signal_connect(G_OBJECT(playlist_handle_window), "delete_event",
+                   G_CALLBACK(close_playlist_popup_window_event), NULL);
   
-  gtk_widget_show(GTK_WIDGET(window));
+  gtk_widget_show(GTK_WIDGET(playlist_handle_window));
 }
 
 //!creates the model for the playlist
@@ -3418,29 +3412,21 @@ GtkTreeModel *create_playlist_model()
 //!creates the playlist tree
 GtkTreeView *create_playlist_tree()
 {
-  GtkTreeView *tree_view;
-  GtkTreeModel *model;
-
-  //create the model
-  model = (GtkTreeModel *)create_playlist_model();
-  //create the tree view
-  tree_view = (GtkTreeView *) gtk_tree_view_new_with_model(model);
-
+  GtkTreeModel *model = (GtkTreeModel *)create_playlist_model();
+  GtkTreeView *tree_view = (GtkTreeView *) gtk_tree_view_new_with_model(model);
+  gtk_tree_view_set_headers_visible(tree_view, FALSE);
   return tree_view;
 }
 
 //!creates playlist columns
-void create_playlist_columns (GtkTreeView *tree_view)
+void create_playlist_columns(GtkTreeView *tree_view)
 {
-  //cells renderer
   GtkCellRendererText *renderer;
-  //columns
   GtkTreeViewColumn *name_column;
   //GtkTreeViewColumn *filename_column;
 
-  /* minutes */
   //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
+  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NAME));
   name_column = gtk_tree_view_column_new_with_attributes 
     (_("History"), GTK_CELL_RENDERER(renderer),
@@ -3456,14 +3442,13 @@ void create_playlist_columns (GtkTreeView *tree_view)
       GTK_TREE_VIEW_COLUMN (filename_column),COL_FILENAME);*/
   
   //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (name_column),COL_NAME);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
+      GTK_TREE_VIEW_COLUMN(name_column), COL_NAME);
 
   //middle alignment of the column name
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column),
-                                     0.5);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(name_column),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column), 0.5);
+  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column),
+      GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 }
 
 //!split selection has changed

@@ -131,6 +131,7 @@ GtkWidget *extract_tags_box = NULL;
 //@}
 
 extern GtkWidget *player_box;
+extern GtkWidget *playlist_box;
 extern GtkWidget *queue_files_button;
 extern splt_state *the_state;
 extern gint selected_split_mode;
@@ -806,10 +807,13 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
   if (selected_player == PLAYER_GSTREAMER)
   {
     hide_connect_button();
+    gtk_widget_show(playlist_box);
   }
   else
   {
     show_connect_button();
+    close_playlist_popup_window_event(NULL, NULL);
+    gtk_widget_hide(playlist_box);
   }
   
   gtk_widget_show(player_box);

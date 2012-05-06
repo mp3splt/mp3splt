@@ -391,25 +391,21 @@ void gstreamer_start()
   play = gst_element_factory_make("playbin", "play");
 	//if we have started the player
   if (play)
-	{
-    if (! container_has_child(GTK_CONTAINER(player_vbox), playlist_box))
-    {
-      gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
-    }
+  {
     gtk_widget_show_all(playlist_box);
 
-		_gstreamer_is_running = TRUE;
-		bus = gst_pipeline_get_bus (GST_PIPELINE (play));
-		gst_bus_add_watch(bus, bus_call, NULL);
-		gst_object_unref(bus);
+    _gstreamer_is_running = TRUE;
+    bus = gst_pipeline_get_bus (GST_PIPELINE (play));
+    gst_bus_add_watch(bus, bus_call, NULL);
+    gst_object_unref(bus);
 
-		//add the current filename
-		const gchar *fname =  inputfilename_get();
-		GList *song_list = NULL;
-		song_list = g_list_append(song_list, strdup(fname));
-		gstreamer_add_files(song_list);
+    //add the current filename
+    const gchar *fname =  inputfilename_get();
+    GList *song_list = NULL;
+    song_list = g_list_append(song_list, strdup(fname));
+    gstreamer_add_files(song_list);
     //TODO: free memory from GList *song_list
-	}
+  }
 	else
 	{
 		enter_threads();
@@ -660,8 +656,6 @@ void gstreamer_quit()
     gst_element_set_state(play, GST_STATE_NULL);
   }
   _gstreamer_is_running = FALSE;
-
-  gtk_widget_hide(playlist_box);
 }
 
 #endif
