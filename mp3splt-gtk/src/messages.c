@@ -149,6 +149,7 @@ void clear_messages_event(GtkWidget *widget, gpointer data)
 GtkWidget *create_text_component()
 {
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width(GTK_CONTAINER(vbox), 3);
 
   //text view
   mess_hist_tag_table = gtk_text_tag_table_new();
@@ -173,11 +174,10 @@ GtkWidget *create_text_component()
 
   //top
   GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
-  gtk_container_set_border_width(GTK_CONTAINER(hbox), 3);
 
   //debug option
   GtkWidget *debug_check_button =
-    gtk_check_button_new_with_mnemonic(_("Show _debug messages"));
+    gtk_check_button_new_with_mnemonic(_("Enable _debug messages"));
   g_signal_connect(G_OBJECT(debug_check_button), "toggled",
       G_CALLBACK(debug_check_event), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), debug_check_button, FALSE, FALSE, 0);

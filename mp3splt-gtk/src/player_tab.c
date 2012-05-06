@@ -80,6 +80,8 @@ GtkWidget *file_handle_box;
 
 GtkWidget *player_buttons_hbox = NULL;
 
+GtkWidget *drawing_area_expander;
+
 //if we have selected a correct file
 gint incorrect_selected_file = FALSE;
 
@@ -2239,6 +2241,13 @@ gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
 gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
 {
 #endif
+
+  if (drawing_area_expander != NULL &&
+      !gtk_expander_get_expanded(drawing_area_expander))
+  {
+    return;
+  }
+
   int width = 0, height = 0;
   wh_get_widget_size(da, &width, &height);
   if (show_silence_wave)
@@ -3199,6 +3208,24 @@ gboolean da_notify_event (GtkWidget     *da,
   return TRUE;
 }
 
+static void drawing_area_expander_event(GObject *object, GParamSpec *param_spec, gpointer data)
+{
+  if (object == NULL)
+  {
+    return;
+  }
+
+  GtkExpander *expander = GTK_EXPANDER(object);
+  if (gtk_expander_get_expanded(expander))
+  {
+    gtk_widget_show(silence_wave_check_button);
+  }
+  else
+  {
+    gtk_widget_hide(silence_wave_check_button);
+  }
+}
+
 //!creates the progress drawing area under the player buttons
 GtkWidget *create_drawing_area()
 {
@@ -3232,31 +3259,31 @@ GtkWidget *create_drawing_area()
       | GDK_POINTER_MOTION_HINT_MASK);
 
   gtk_container_add(GTK_CONTAINER(frame), drawing_area);
-  
-  return frame;
+
+  drawing_area_expander = gtk_expander_new_with_mnemonic(_("Splitpoints _view"));
+  gtk_expander_set_expanded(GTK_EXPANDER(drawing_area_expander), TRUE);
+  g_signal_connect(drawing_area_expander, "notify::expanded", G_CALLBACK(drawing_area_expander_event), NULL);
+  gtk_container_add(GTK_CONTAINER(drawing_area_expander), frame);
+
+  return drawing_area_expander;
 }
 
 //!creates the control player frame, stop button, play button, etc.
 GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
 {
-  //main horizontal box of the frame (contains volume control + others)
-  GtkWidget *main_hbox;
   //the vbox has hboxes in it
   GtkWidget *vbox;
   GtkWidget *hbox;
 
-  //really big hbox, containing all from the frame
-  GtkWidget *really_big_hbox;
-
   //really big hbox
-  really_big_hbox = gtk_hbox_new(FALSE, 0);
-  
+  GtkWidget *really_big_hbox = gtk_hbox_new(FALSE, 0);
+ 
   //main hbox
-  main_hbox = gtk_hbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (really_big_hbox), main_hbox, TRUE, TRUE, 4);
+  GtkWidget *main_hbox = gtk_hbox_new (FALSE, 0);
+  gtk_box_pack_start (GTK_BOX(really_big_hbox), main_hbox, TRUE, TRUE, 4);
   
   vbox = gtk_vbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (main_hbox), vbox, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(main_hbox), vbox, TRUE, TRUE, 0);
 
   /* handle box for detaching */
   player_handle = gtk_handle_box_new();
@@ -3283,9 +3310,9 @@ GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 
   //horizontal drawing area
-  hbox = (GtkWidget *)create_drawing_area();
-  gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+  GtkWidget *drawing_area = create_drawing_area();
+  gtk_container_set_border_width(GTK_CONTAINER(drawing_area), 0);
+  gtk_box_pack_start(GTK_BOX(vbox), drawing_area, FALSE, FALSE, 0);
 
   //our horizontal player button hbox
   hbox = (GtkWidget *)create_player_buttons_hbox(tree_view);
@@ -3557,7 +3584,7 @@ GtkWidget *create_delete_buttons_hbox()
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
   g_signal_connect(G_OBJECT(playlist_remove_file_button), "clicked",
                    G_CALLBACK(playlist_remove_file_button_event), NULL);
-  
+ 
   //button for removing a file
   playlist_remove_all_files_button = (GtkWidget *)
     create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
@@ -3573,23 +3600,13 @@ GtkWidget *create_delete_buttons_hbox()
 //!creates the playlist of the player
 GtkWidget *create_player_playlist_frame()
 {
-  //the main vbox inside the handle
   GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-
-  /* handle box for detaching */
-  playlist_handle = gtk_handle_box_new();
-  gtk_container_add(GTK_CONTAINER(playlist_handle), GTK_WIDGET(vbox));
-  //handle event
-  g_signal_connect(playlist_handle, "child-detached",
-                   G_CALLBACK(handle_playlist_detached_event),
-                   NULL);
 
   // scrolled window and the tree 
   //create the tree and add it to the scrolled window
   playlist_tree = (GtkWidget *) create_playlist_tree();
   //scrolled window for the tree
-  GtkWidget *scrolled_window;
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
@@ -3603,8 +3620,7 @@ GtkWidget *create_player_playlist_frame()
                    G_CALLBACK(split_tree_row_activated), NULL);
 
   //selection for the tree
-  GtkWidget *playlist_tree_selection;
-  playlist_tree_selection = (GtkWidget *)
+  GtkWidget *playlist_tree_selection = (GtkWidget *)
     gtk_tree_view_get_selection(GTK_TREE_VIEW(playlist_tree));
   g_signal_connect(G_OBJECT(playlist_tree_selection), "changed",
                    G_CALLBACK(playlist_selection_changed), NULL);
@@ -3612,9 +3628,21 @@ GtkWidget *create_player_playlist_frame()
                               GTK_SELECTION_MULTIPLE);
 
   //horizontal box with delete buttons
-  GtkWidget *delete_buttons_hbox;
-  delete_buttons_hbox = (GtkWidget *)create_delete_buttons_hbox();
+  GtkWidget *delete_buttons_hbox = (GtkWidget *)create_delete_buttons_hbox();
   gtk_box_pack_start(GTK_BOX(vbox), delete_buttons_hbox, FALSE, FALSE, 2);
+
+  GtkWidget *history_expander = gtk_expander_new_with_mnemonic(_("H_istory"));
+  gtk_expander_set_expanded(GTK_EXPANDER(history_expander), FALSE);
+  gtk_container_add(GTK_CONTAINER(history_expander), vbox);
+
+  GtkWidget *main_hbox = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(main_hbox), history_expander, TRUE, TRUE, 4);
+
+  /* handle box for detaching */
+  playlist_handle = gtk_handle_box_new();
+  gtk_container_add(GTK_CONTAINER(playlist_handle), GTK_WIDGET(main_hbox));
+  g_signal_connect(playlist_handle, "child-detached",
+                   G_CALLBACK(handle_playlist_detached_event), NULL);
 
   return playlist_handle;
 }
@@ -3830,7 +3858,10 @@ Also used for the cddb and cue browses.
 */
 void browse_button_event(GtkWidget *widget, gpointer data)
 {
-  gtk_widget_set_sensitive(widget, FALSE);
+  if (GTK_IS_WIDGET(widget))
+  {
+    gtk_widget_set_sensitive(widget, FALSE);
+  }
 
   GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
       NULL,
