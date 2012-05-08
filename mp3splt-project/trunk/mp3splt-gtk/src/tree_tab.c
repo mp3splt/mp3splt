@@ -216,8 +216,7 @@ void update_add_button()
 }
 
 //!updates the minutes from the spinner
-void update_minutes_from_spinner( GtkWidget *widget,
-                                  gpointer   data )
+void update_minutes_from_spinner(GtkWidget *widget, gpointer data)
 {
   spin_mins = 
     gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_minutes));
@@ -1589,51 +1588,36 @@ void remove_all_rows(GtkWidget *widget, gpointer data)
 //!creates and and initialise a spinner
 GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, 
                                gint min, gint max, 
-                               gchar *label_text,
-                               gint type)
+                               gchar *label_text, gint type)
 {
-  //the spinner
-  GtkWidget *spinner;
-  //the adjustment
-  GtkAdjustment *adj;
-  //vertical box for the label
-  GtkWidget *spinner_box;
-  //spinner label
-  GtkWidget *label;
+  GtkWidget *spinner_box = gtk_vbox_new(FALSE, 0); 
+  GtkWidget *label = gtk_label_new(label_text);
+  gtk_box_pack_start(GTK_BOX(spinner_box), label, TRUE, FALSE, 0);
 
-  spinner_box = gtk_vbox_new (FALSE, 0); 
-  label = gtk_label_new (label_text);
-  //adds label to spinner box
-  gtk_box_pack_start (GTK_BOX (spinner_box), label, TRUE, FALSE, 0);
-  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, min, max, 1.0,
-                                              10.0, 0.0);
-  spinner = gtk_spin_button_new (adj, 0, 0);
-  gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), TRUE);
+  GtkAdjustment *adj =
+    (GtkAdjustment *) gtk_adjustment_new(0.0, min, max, 1.0, 10.0, 0.0);
+  GtkWidget *spinner = gtk_spin_button_new(adj, 0, 0);
+  gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(spinner), TRUE);
 
-  //0 means minutes
   if (type == 0)
-    {
-      g_signal_connect (G_OBJECT (spinner), "value_changed",
-                        G_CALLBACK (update_minutes_from_spinner), NULL);
-    }
-  else 
-    //1 means seconds
-    if (type == 1)
-      {
-        g_signal_connect (G_OBJECT (spinner), "value_changed",
-                          G_CALLBACK (update_seconds_from_spinner), NULL);
-      }
-    else
-      {
-        g_signal_connect (G_OBJECT (spinner), "value_changed",
-                          G_CALLBACK (update_hundr_secs_from_spinner), NULL);
-      }
-  
-  //adds spinner to the spinner box
-  gtk_box_pack_start (GTK_BOX (spinner_box), spinner, TRUE, FALSE, 0);
-  //adds spinner box to the horizontal box1
-  gtk_box_pack_start (GTK_BOX (bottomhbox1), spinner_box, FALSE, FALSE, 5);
-  
+  {
+    g_signal_connect(G_OBJECT(spinner), "value_changed",
+        G_CALLBACK(update_minutes_from_spinner), NULL);
+  }
+  else if (type == 1)
+  {
+    g_signal_connect(G_OBJECT(spinner), "value_changed",
+        G_CALLBACK(update_seconds_from_spinner), NULL);
+  }
+  else
+  {
+    g_signal_connect(G_OBJECT(spinner), "value_changed",
+        G_CALLBACK(update_hundr_secs_from_spinner), NULL);
+  }
+
+  gtk_box_pack_start(GTK_BOX(spinner_box), spinner, TRUE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(bottomhbox1), spinner_box, FALSE, FALSE, 5);
+
   return spinner;
 }
 

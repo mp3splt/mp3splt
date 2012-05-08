@@ -217,10 +217,10 @@ gfloat move_time;
 extern gboolean quick_preview;
 extern gint quick_preview_end_splitpoint;
 
-gint timeout_value = 200;
+gint timeout_value = DEFAULT_TIMEOUT_VALUE;
 
-//the splitpoints to move on the zoom progress bar
 gint splitpoint_to_move = -1;
+//the splitpoints to move on the zoom progress bar
 gboolean move_splitpoints = FALSE;
 gboolean remove_splitpoints = FALSE;
 gboolean select_splitpoints = FALSE;
@@ -555,57 +555,53 @@ void connect_with_song(const gchar *fname, gint start_playing)
   GList *song_list = NULL;
 
   if (fname != NULL)
+  {
+    song_list = g_list_append(song_list, strdup(fname));
+
+    //if we must also play the song
+    if (start_playing == 0)
     {
-      song_list = g_list_append(song_list, strdup(fname));
-      
-      //if we must also play the song
-      if (start_playing == 0)
-        {
-          //if the player is not running, start it ,queue to playlist and
-          //play the file
-          if (!player_is_running())
-          {
-            player_start_play_with_songs(song_list);
-          }
-          else
-          {
-            player_add_play_files(song_list);
-          }
-        }
+      //if the player is not running, start it ,queue to playlist and
+      //play the file
+      if (!player_is_running())
+      {
+        player_start_play_with_songs(song_list);
+      }
       else
-        {
-          if (file_browsed)
-            {
-              //if the player is not running, start it ,queue to playlist and
-              //play the file
-              if (!player_is_running())
-                player_start_add_files(song_list);
-              else
-                if(!playing)
-                  player_add_files_and_select(song_list);
-                else
-                  player_add_files(song_list);
-            }
-        }
-      playing = TRUE;
-      
-      //we start the timer
-      if (!timer_active)
-        {
-          timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
-          timer_active = TRUE;
-        }
-      
-      //enable player buttons
-      enable_player_buttons();
-      //here we check if we have been connected
-      if (player_is_running())
-        {
-          //change connect/disconnect buttons
-          connect_change_buttons();
-        }
+      {
+        player_add_play_files(song_list);
+      }
     }
-  
+    else
+    {
+      if (file_browsed)
+      {
+        //if the player is not running, start it ,queue to playlist and
+        //play the file
+        if (!player_is_running())
+          player_start_add_files(song_list);
+        else
+          if(!playing)
+            player_add_files_and_select(song_list);
+          else
+            player_add_files(song_list);
+      }
+    }
+    playing = TRUE;
+
+    if (!timer_active)
+    {
+      timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
+      timer_active = TRUE;
+    }
+
+    enable_player_buttons();
+    if (player_is_running())
+    {
+      connect_change_buttons();
+    }
+  }
+
   //TODO: free elements of list
   g_list_free(song_list);
 }
@@ -626,7 +622,6 @@ void connect_to_player_with_song(gint i)
 //!play button event
 void connect_button_event(GtkWidget *widget, gpointer data)
 {
-  //we open the player if its not done
   if (!player_is_running())
   {
     player_start();
@@ -634,16 +629,13 @@ void connect_button_event(GtkWidget *widget, gpointer data)
  
   mytimer(NULL);
  
-  //we start the timer
   if (!timer_active)
   {
-    //we open socket channel  if dealing with snackamp
     if (selected_player == PLAYER_SNACKAMP)
     {
       connect_snackamp(8775);
     }
 
-    //30 = cursive
     timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
     timer_active = TRUE;
   }
@@ -777,6 +769,15 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   }
 
   player_quit();
+}
+
+void restart_player_timer()
+{
+  if (timer_active)
+  {
+    g_source_remove(timeout_id);
+    timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
+  }
 }
 
 //! play button event
@@ -3619,175 +3620,162 @@ Examples are the elapsed time and if it uses variable bitrate
 */
 gint mytimer(gpointer data)
 {
-  //if connected and player running
   if (player_is_running())
+  {
+    if (playing)
     {
-      if (playing)
+      //if we have at least one song on the playlist
+      if (player_get_playlist_number() > -1)
+      {
+        //if the player is playing, print the time
+        if (player_is_playing())
         {
-          //if we have at least one song on the playlist
-          if (player_get_playlist_number() > -1)
-            {
-              //if the player is playing, print the time
-              if (player_is_playing())
-                {
-                  print_all_song_infos();
-                  print_song_time_elapsed();
-                  if(!gtk_widget_is_sensitive(progress_bar))
-                    gtk_widget_set_sensitive(GTK_WIDGET(progress_bar), TRUE);
-                }
-              check_stream();
-              //if we have a stream, we must not change the progress bar
-              if(!stream)
-                {
-                  change_progress_bar();
-                }
-              
-              //part of quick preview
-              if (preview_start_splitpoint != -1)
-                {
-                  //if we have a splitpoint after the current
-                  //previewed one, update quick_preview_end
-                  if (preview_start_splitpoint+1 <
-                      splitnumber)
-                    {
-                      quick_preview_end_splitpoint =
-                        preview_start_splitpoint+1;
-                    }
-                  else
-                    {
-                      if (preview_start_splitpoint+1 == 
-                          splitnumber)
-                        {
-                          quick_preview_end_splitpoint = -1;
-                        }
-                    }
-                }
-              
-              //if we have a preview, stop if needed
-              if (quick_preview)
-                {
-                  gint stop_splitpoint
-                    = get_splitpoint_time(quick_preview_end_splitpoint) 
-                    / 10;
-                  
-                  if ((stop_splitpoint < (gint)current_time)
-                      && (quick_preview_end_splitpoint != -1))
-                    {
-                      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button),
-                                                   TRUE);
-                      cancel_quick_preview();
-                      put_status_message(_(" quick preview finished, song paused"));
-                    }
-                }
-              
-              //enable volume bar if needed
-              if(!gtk_widget_is_sensitive(volume_button))
-                gtk_widget_set_sensitive(GTK_WIDGET(volume_button), TRUE);
-                
-            }
-          else
-            {
-              playing = FALSE;
-              reset_label_time();
-            }
-          
-          if (player_is_paused())
-            {
-              if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pause_button)))
-                {
-                  only_press_pause = TRUE;
-                  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button),
-                                               TRUE);
-                  only_press_pause = FALSE;
-                }
-            }
-          else
-            {
-              if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pause_button)))
-                {
-                  only_press_pause = TRUE;
-                  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button),
-                                               FALSE);
-                  only_press_pause = FALSE;
-                }
-            }
+          print_all_song_infos();
+          print_song_time_elapsed();
+          if(!gtk_widget_is_sensitive(progress_bar))
+            gtk_widget_set_sensitive(GTK_WIDGET(progress_bar), TRUE);
         }
-      else
-        //if not playing but still connected
+        check_stream();
+        //if we have a stream, we must not change the progress bar
+        if(!stream)
         {
-          //reset player minutes and seconds if needed
-          if ((player_minutes != 0) || (player_seconds != 0))
+          change_progress_bar();
+        }
+
+        //part of quick preview
+        if (preview_start_splitpoint != -1)
+        {
+          //if we have a splitpoint after the current
+          //previewed one, update quick_preview_end
+          if (preview_start_splitpoint+1 < splitnumber)
           {
-            player_minutes = 0;
-            player_seconds = 0;
+            quick_preview_end_splitpoint = preview_start_splitpoint+1;
           }
-          print_player_filename();
-          reset_song_infos();
-          reset_label_time();
-          //reset progress bar
-          reset_inactive_progress_bar();
-          gtk_widget_set_sensitive(player_add_button, FALSE);
-          gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
+          else
+          {
+            if (preview_start_splitpoint+1 == splitnumber)
+            {
+              quick_preview_end_splitpoint = -1;
+            }
+          }
         }
-      
-      //if connected,almost always change volume bar
-      if ((change_volume)&&
-          (!on_the_volume_button))
+
+        //if we have a preview, stop if needed
+        if (quick_preview)
+        {
+          gint stop_splitpoint
+            = get_splitpoint_time(quick_preview_end_splitpoint) / 10;
+
+          if ((stop_splitpoint < (gint)current_time)
+              && (quick_preview_end_splitpoint != -1))
+          {
+            gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button), TRUE);
+            cancel_quick_preview();
+            put_status_message(_(" quick preview finished, song paused"));
+          }
+        }
+
+        //enable volume bar if needed
+        if(!gtk_widget_is_sensitive(volume_button))
+          gtk_widget_set_sensitive(GTK_WIDGET(volume_button), TRUE);
+      }
+      else
       {
-        change_volume_button();
+        playing = FALSE;
+        reset_label_time();
       }
 
-      playing = player_is_playing();
-
-      if (playing)
+      if (player_is_paused())
       {
-        if (!gtk_widget_get_sensitive(player_add_button))
+        if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pause_button)))
         {
-          gtk_widget_set_sensitive(player_add_button, TRUE);
-        }
-        if (!gtk_widget_get_sensitive(silence_wave_check_button))
-        {
-          gtk_widget_set_sensitive(silence_wave_check_button, TRUE);
-        }
-
-        if (!gtk_widget_get_sensitive(stop_button))
-        {
-          gtk_widget_set_sensitive(stop_button, TRUE);
-          gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_active));
-        }
-        if (!gtk_widget_get_sensitive(pause_button))
-        {
-          gtk_widget_set_sensitive(pause_button, TRUE);
-          gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_active));
+          only_press_pause = TRUE;
+          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button), TRUE);
+          only_press_pause = FALSE;
         }
       }
-      else {
-        if (gtk_widget_get_sensitive(stop_button))
+      else
+      {
+        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pause_button)))
         {
-          gtk_widget_set_sensitive(stop_button, FALSE);
-          gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
-        }
-        if (gtk_widget_get_sensitive(pause_button))
-        {
-          gtk_widget_set_sensitive(pause_button, FALSE);
-          gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
+          only_press_pause = TRUE;
+          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button), FALSE);
+          only_press_pause = FALSE;
         }
       }
-
-      return TRUE;
     }
-  else
-    //if connected and player not running, disconnect..
+    else
     {
-      //clear player data
-      clear_data_player();
-      //setting playing to false
-      playing = FALSE;
-      
-      //disconnect from player
-      disconnect_button_event(disconnect_button, NULL);
-      return FALSE;
+      //if not playing but still connected
+      if ((player_minutes != 0) || (player_seconds != 0))
+      {
+        player_minutes = 0;
+        player_seconds = 0;
+      }
+      print_player_filename();
+      reset_song_infos();
+      reset_label_time();
+      //reset progress bar
+      reset_inactive_progress_bar();
+      gtk_widget_set_sensitive(player_add_button, FALSE);
+      gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
     }
+
+    //if connected, almost always change volume bar
+    if ((change_volume)&& (!on_the_volume_button))
+    {
+      change_volume_button();
+    }
+
+    playing = player_is_playing();
+
+    if (playing)
+    {
+      if (!gtk_widget_get_sensitive(player_add_button))
+      {
+        gtk_widget_set_sensitive(player_add_button, TRUE);
+      }
+      if (!gtk_widget_get_sensitive(silence_wave_check_button))
+      {
+        gtk_widget_set_sensitive(silence_wave_check_button, TRUE);
+      }
+
+      if (!gtk_widget_get_sensitive(stop_button))
+      {
+        gtk_widget_set_sensitive(stop_button, TRUE);
+        gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_active));
+      }
+      if (!gtk_widget_get_sensitive(pause_button))
+      {
+        gtk_widget_set_sensitive(pause_button, TRUE);
+        gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_active));
+      }
+    }
+    else {
+      if (gtk_widget_get_sensitive(stop_button))
+      {
+        gtk_widget_set_sensitive(stop_button, FALSE);
+        gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
+      }
+      if (gtk_widget_get_sensitive(pause_button))
+      {
+        gtk_widget_set_sensitive(pause_button, FALSE);
+        gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
+      }
+    }
+
+    return TRUE;
+  }
+  else
+  {
+    //if connected and player not running, disconnect..
+
+    clear_data_player();
+    playing = FALSE;
+    disconnect_button_event(disconnect_button, NULL);
+
+    return FALSE;
+  }
 }
 
 

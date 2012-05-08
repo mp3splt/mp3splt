@@ -24,8 +24,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  *
  *********************************************************/
 
@@ -49,6 +49,7 @@
 #include <libmp3splt/mp3splt.h>
 
 #include "player.h"
+#include "player_tab.h"
 #include "preferences_tab.h"
 #include "special_split.h"
 #include "combo_helper.h"
@@ -56,6 +57,7 @@
 #include "ui_manager.h"
 
 extern GtkWidget *player_combo_box;
+extern GtkWidget *player_refresh_rate_spinner;
 extern gint selected_player;
 extern GList *player_pref_list;
 extern GtkWidget *radio_button;
@@ -240,10 +242,14 @@ void load_preferences()
     }
   }
 
-  //selected player
+  //player
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
   ch_set_active_value(GTK_COMBO_BOX(player_combo_box), item);
 
+  item = g_key_file_get_integer(key_file, "player", "refresh_rate", NULL);  
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(player_refresh_rate_spinner), item);
+  update_timeout_value(NULL, NULL);
+ 
   //frame mode
   item = g_key_file_get_boolean(key_file, "split", "frame_mode", NULL);
   if (item)
@@ -648,6 +654,11 @@ void write_default_preferences_file()
       g_key_file_set_integer(my_key_file, "player", "default_player",
           PLAYER_GSTREAMER);
     }
+  }
+
+  if (!g_key_file_has_key(my_key_file, "player", "refresh_rate", NULL))
+  {
+    g_key_file_set_integer(my_key_file, "player", "refresh_rate", DEFAULT_TIMEOUT_VALUE);
   }
 
   //output format
