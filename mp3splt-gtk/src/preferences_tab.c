@@ -22,8 +22,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
+ * You should have received a copy of the GNU General Public License
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
  *
@@ -75,6 +75,7 @@ GtkWidget *output_label = NULL;
 
 //!choose the player box
 GtkWidget *player_combo_box = NULL;
+GtkWidget *player_refresh_rate_spinner = NULL;
 
 //!list where we stock the preferences combo box content
 GList *player_pref_list = NULL;
@@ -130,6 +131,7 @@ GtkWidget *sample_result_label = NULL;
 GtkWidget *extract_tags_box = NULL;
 //@}
 
+extern gint timeout_value;
 extern GtkWidget *player_box;
 extern GtkWidget *playlist_box;
 extern GtkWidget *queue_files_button;
@@ -267,9 +269,12 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //save_path
   g_key_file_set_string(my_key_file, "split", "save_path",
 			outputdirectory_get());
-  //default_player
-  g_key_file_set_integer(my_key_file, "player", "default_player", selected_player);
 
+  //player
+  g_key_file_set_integer(my_key_file, "player", "default_player", selected_player);
+  g_key_file_set_integer(my_key_file, "player", "refresh_rate",
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(player_refresh_rate_spinner)));
+ 
 #ifdef __WIN32__
   //language
   GString *selected_lang;
@@ -822,10 +827,21 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
   save_preferences(NULL, NULL);
 }
 
+void update_timeout_value(GtkWidget *refresh_rate_spinner, gpointer data)
+{
+  timeout_value = 
+    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(player_refresh_rate_spinner));
+
+  restart_player_timer();
+  save_preferences(NULL, NULL);
+}
+
 //!Create the box the player backend can be selected with
 GtkWidget *create_player_options_box()
 {
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+
+  GtkWidget *horiz_fake = gtk_hbox_new(FALSE, 0);
 
   GtkWidget *label = gtk_label_new(_("Player:"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
@@ -844,8 +860,32 @@ GtkWidget *create_player_options_box()
       G_CALLBACK(player_combo_box_event), NULL);
 
   gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
+
+  //Player Splitpoints view refresh rate
+  horiz_fake = gtk_hbox_new(FALSE,0);
+
+  label = gtk_label_new(_("Refresh player every "));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+
+  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0,
+      20, 1000, 10.0, 100.0, 0.0);
+  player_refresh_rate_spinner = gtk_spin_button_new(adj, 0, 0);
+  gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(player_refresh_rate_spinner), TRUE);
+  g_signal_connect(G_OBJECT(player_refresh_rate_spinner), "value_changed",
+      G_CALLBACK(update_timeout_value), NULL);
+
+  gtk_box_pack_start(GTK_BOX(horiz_fake), player_refresh_rate_spinner, FALSE, FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(_("milliseconds.")), FALSE, FALSE, 3);
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
+
+  horiz_fake = gtk_hbox_new(FALSE,0);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), 
+      gtk_label_new(_("Higher refresh rate decreases CPU usage - default is 200.")),
+      FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
  
-  return wh_set_title_and_get_vbox(horiz_fake, _("<b>Player options</b>"));
+  return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
 }
 
 //!creates the player preferences page
