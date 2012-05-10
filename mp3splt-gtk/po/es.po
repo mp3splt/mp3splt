@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-04-01 23:47+0200\n"
+"POT-Creation-Date: 2012-05-10 20:02+0200\n"
 "PO-Revision-Date: 2011-02-22 00:00+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,145 +37,145 @@ msgstr "Kbps."
 msgid "Khz"
 msgstr "Khz"
 
-#: src/tree_tab.c:554
+#: src/tree_tab.c:553
 msgid "_part"
 msgstr ""
 
-#: src/tree_tab.c:565
+#: src/tree_tab.c:564
 #, c-format
 msgid "%s_part%d"
 msgstr ""
 
-#: src/tree_tab.c:709 src/tree_tab.c:1115
+#: src/tree_tab.c:708 src/tree_tab.c:1114
 msgid " error: you already have the splitpoint in table"
 msgstr ""
 
-#: src/tree_tab.c:792 src/tree_tab.c:871 src/tree_tab.c:1125
-#: src/freedb_tab.c:516 src/freedb_tab.c:538
+#: src/tree_tab.c:791 src/tree_tab.c:870 src/tree_tab.c:1124
+#: src/freedb_tab.c:466 src/freedb_tab.c:488
 msgid "description here"
 msgstr "descripción aquí"
 
-#: src/tree_tab.c:1275 src/tree_tab.c:1727
+#: src/tree_tab.c:1273 src/tree_tab.c:1695
 #, fuzzy
 msgid "Set trim splitpoints using silence detection"
 msgstr "Establecer splitpoints de detección de silencio"
 
-#: src/tree_tab.c:1302 src/tree_tab.c:1374 src/preferences_tab.c:715
+#: src/tree_tab.c:1299 src/tree_tab.c:1371 src/preferences_tab.c:721
 msgid "Threshold level (dB):"
 msgstr "Nivel umbral (dB):"
 
-#: src/tree_tab.c:1348 src/tree_tab.c:1717
+#: src/tree_tab.c:1345 src/tree_tab.c:1705
 msgid "Set splitpoints from silence detection"
 msgstr "Establecer splitpoints de detección de silencio"
 
-#: src/tree_tab.c:1391
+#: src/tree_tab.c:1388
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 "Punto de corte de desplazamiento (0 es el inicio de silencio, y 1 al final):"
 
-#: src/tree_tab.c:1408
+#: src/tree_tab.c:1405
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Número de pistas (0 significa que todas las pistas):"
 
-#: src/tree_tab.c:1423
+#: src/tree_tab.c:1420
 msgid "Minimum silence length (seconds):"
 msgstr "Duración mínima de silencio (segundos):"
 
-#: src/tree_tab.c:1437
+#: src/tree_tab.c:1434
 #, fuzzy
 msgid "Minimum track length (seconds):"
 msgstr "Duración mínima de silencio (segundos):"
 
-#: src/tree_tab.c:1448
+#: src/tree_tab.c:1445
 msgid "_Remove silence between tracks"
 msgstr "_Remove Silencio entre pistas"
 
-#: src/tree_tab.c:1653
+#: src/tree_tab.c:1633
 msgid "Minutes:"
 msgstr "Minutos:"
 
-#: src/tree_tab.c:1658
+#: src/tree_tab.c:1638
 msgid "Seconds:"
 msgstr "Segundos:"
 
-#: src/tree_tab.c:1664
+#: src/tree_tab.c:1644
 msgid "Hundredths:"
 msgstr "Centésimas:"
 
-#: src/tree_tab.c:1670 src/player_tab.c:1022
+#: src/tree_tab.c:1650 src/player_tab.c:1052
 msgid "_Add"
 msgstr "_añada"
 
-#: src/tree_tab.c:1676
+#: src/tree_tab.c:1656
 msgid "Add splitpoint"
 msgstr "Añadir splitpoint"
 
-#: src/tree_tab.c:1680
+#: src/tree_tab.c:1660
 msgid "_Remove"
 msgstr "_Remove"
 
-#: src/tree_tab.c:1686
+#: src/tree_tab.c:1666
 msgid "Remove rows"
 msgstr "Eliminar las filas"
 
-#: src/tree_tab.c:1690
+#: src/tree_tab.c:1670
 msgid "R_emove all"
 msgstr "R_emove todos"
 
-#: src/tree_tab.c:1696
+#: src/tree_tab.c:1676
 msgid "Remove all rows"
 msgstr "Eliminar todas las filas"
 
-#: src/tree_tab.c:1711
-msgid "_Silence detection"
-msgstr "_Silence Detección"
-
-#: src/tree_tab.c:1721
+#: src/tree_tab.c:1689
 #, fuzzy
 msgid "_Trim splitpoints"
 msgstr "splitpoints _Import ..."
 
-#: src/tree_tab.c:1851 src/mp3splt-gtk.c:399
+#: src/tree_tab.c:1699
+msgid "_Silence detection"
+msgstr "_Silence Detección"
+
+#: src/tree_tab.c:1827 src/mp3splt-gtk.c:399
 msgid " finished"
 msgstr "terminado"
 
-#: src/tree_tab.c:1866
+#: src/tree_tab.c:1842
 msgid " cannot split preview last splitpoint"
 msgstr "No se puede dividir splitpoint última vista previa"
 
-#: src/tree_tab.c:1907
+#: src/tree_tab.c:1883
 msgid " cannot preview, not connected to player"
 msgstr "no puede ver, no está conectado al reproductor"
 
-#: src/tree_tab.c:1972
+#: src/tree_tab.c:1948
 msgid "Keep"
 msgstr "Mantenga"
 
-#: src/tree_tab.c:1986 src/split_files.c:111
+#: src/tree_tab.c:1962 src/split_files.c:111
 msgid "Filename"
 msgstr "Nombre de archivo"
 
-#: src/tree_tab.c:2000
+#: src/tree_tab.c:1976
 msgid "Secs"
 msgstr "Segundos"
 
-#: src/tree_tab.c:2014
+#: src/tree_tab.c:1990
 msgid "Mins"
 msgstr "Minutos"
 
-#: src/tree_tab.c:2028
+#: src/tree_tab.c:2004
 msgid "Hundr"
 msgstr "Hundr"
 
-#: src/tree_tab.c:2038
+#: src/tree_tab.c:2014
 msgid "Length"
 msgstr "Longitud"
 
-#: src/tree_tab.c:2049
+#: src/tree_tab.c:2025
 msgid "LiveP"
 msgstr "LiveP"
 
-#: src/tree_tab.c:2060
+#: src/tree_tab.c:2036
 msgid "SplitP"
 msgstr "SplitP"
 
@@ -191,77 +191,90 @@ msgstr "_delete Archivos seleccionados"
 msgid "D_elete all files"
 msgstr "D_elete todos los archivos"
 
-#: src/preferences_tab.c:470
+#: src/preferences_tab.c:476
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Elija idioma (requiere reiniciar)</b>"
 
-#: src/preferences_tab.c:505
+#: src/preferences_tab.c:511
 msgid "Choose split directory"
 msgstr "Elija un directorio de dividir"
 
-#: src/preferences_tab.c:657
+#: src/preferences_tab.c:663
 msgid "Br_owse dir"
 msgstr "Br_owse dir"
 
-#: src/preferences_tab.c:665
+#: src/preferences_tab.c:671
 msgid "_Song dir"
 msgstr "_Song Dir"
 
-#: src/preferences_tab.c:670
+#: src/preferences_tab.c:676
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Directorio para dividir archivos</b>"
 
-#: src/preferences_tab.c:679
+#: src/preferences_tab.c:685
 msgid "_Splitpoint name from filename (testing)"
 msgstr ""
 
-#: src/preferences_tab.c:685
+#: src/preferences_tab.c:691
 msgid "_Create directories from filenames "
 msgstr "_create Directorios de nombres de archivo"
 
-#: src/preferences_tab.c:691
+#: src/preferences_tab.c:697
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "modo F_rame (útil para mp3 VBR) (mp3 solamente)"
 
-#: src/preferences_tab.c:698
+#: src/preferences_tab.c:704
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 "_Auto-El modo de ajuste (detección de silencio utiliza para auto-ajuste "
 "splitpoints)"
 
-#: src/preferences_tab.c:730
+#: src/preferences_tab.c:736
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr ""
 
-#: src/preferences_tab.c:747
+#: src/preferences_tab.c:753
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "nivel de Gap (segundos en splitpoint para buscar el silencio):"
 
-#: src/preferences_tab.c:766
+#: src/preferences_tab.c:772
 msgid "Set _default split options"
 msgstr "Establecer las opciones de dividir _default"
 
-#: src/preferences_tab.c:772
+#: src/preferences_tab.c:778
 msgid "<b>Split options</b>"
 msgstr "<b>Split opciones</b>"
 
-#: src/preferences_tab.c:826
-msgid "Choose a player:"
-msgstr "Elige un jugador:"
+#: src/preferences_tab.c:846
+#, fuzzy
+msgid "Player:"
+msgstr "Escuchar"
 
-#: src/preferences_tab.c:844
+#: src/preferences_tab.c:868
+msgid "Refresh player every "
+msgstr ""
+
+#: src/preferences_tab.c:879
+msgid "milliseconds."
+msgstr ""
+
+#: src/preferences_tab.c:884
+msgid "Higher refresh rate decreases CPU usage - default is 200."
+msgstr ""
+
+#: src/preferences_tab.c:888
 msgid "<b>Player options</b>"
 msgstr "<b>Reproductor de opciones</b>"
 
-#: src/preferences_tab.c:892
+#: src/preferences_tab.c:936
 msgid "Default format"
 msgstr "Formato predeterminado"
 
-#: src/preferences_tab.c:896
+#: src/preferences_tab.c:940
 msgid "Custom format"
 msgstr "De formato"
 
-#: src/preferences_tab.c:913
+#: src/preferences_tab.c:957
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -272,83 +285,83 @@ msgid ""
 "    @n - track number"
 msgstr ""
 
-#: src/preferences_tab.c:926
+#: src/preferences_tab.c:970
 msgid "<b>Output filename format</b>"
 msgstr "<b>Nombre de archivo del formato de salida</b>"
 
-#: src/preferences_tab.c:971
+#: src/preferences_tab.c:1015
 msgid "Original file tags"
 msgstr "Original file tags"
 
-#: src/preferences_tab.c:974
+#: src/preferences_tab.c:1018
 msgid "Default tags (cddb or cue tags)"
 msgstr "Predefinida, las etiquetas (tags CDDB o de referencia)"
 
-#: src/preferences_tab.c:977
+#: src/preferences_tab.c:1021
 msgid "No tags"
 msgstr "No hay ninguna etiqueta"
 
-#: src/preferences_tab.c:980
+#: src/preferences_tab.c:1024
 msgid "Extract tags from filename"
 msgstr "Extracto de las etiquetas de nombre de archivo"
 
-#: src/preferences_tab.c:987
+#: src/preferences_tab.c:1031
 msgid "<b>Split files tags</b>"
 msgstr "<b>Dividir archivos de etiquetas</b>"
 
-#: src/preferences_tab.c:1009
+#: src/preferences_tab.c:1053
 msgid "No change"
 msgstr "Sin cambios"
 
-#: src/preferences_tab.c:1010
+#: src/preferences_tab.c:1054
 msgid "lowercase"
 msgstr "minúsculas"
 
-#: src/preferences_tab.c:1011
+#: src/preferences_tab.c:1055
 msgid "UPPERCASE"
 msgstr "MAYÚSCULAS"
 
-#: src/preferences_tab.c:1012
+#: src/preferences_tab.c:1056
 msgid "First uppercase"
 msgstr "En primer lugar mayúsculas"
 
-#: src/preferences_tab.c:1013
+#: src/preferences_tab.c:1057
 msgid "Word Uppercase"
 msgstr "La palabra en mayúsculas"
 
-#: src/preferences_tab.c:1034
+#: src/preferences_tab.c:1078
 msgid "<artist>: "
 msgstr ""
 
-#: src/preferences_tab.c:1041
+#: src/preferences_tab.c:1085
 msgid "<album>: "
 msgstr ""
 
-#: src/preferences_tab.c:1049
+#: src/preferences_tab.c:1093
 msgid "<title>: "
 msgstr ""
 
-#: src/preferences_tab.c:1056
+#: src/preferences_tab.c:1100
 msgid "<genre>: "
 msgstr ""
 
-#: src/preferences_tab.c:1063
+#: src/preferences_tab.c:1107
 msgid "<comment>: "
 msgstr ""
 
-#: src/preferences_tab.c:1070
+#: src/preferences_tab.c:1114
 msgid "<year>: "
 msgstr ""
 
-#: src/preferences_tab.c:1077
+#: src/preferences_tab.c:1121
 msgid "<track>: "
 msgstr ""
 
-#: src/preferences_tab.c:1103
+#: src/preferences_tab.c:1147
 msgid "Regular expression:"
 msgstr "Expresión regular:"
 
-#: src/preferences_tab.c:1106
+#: src/preferences_tab.c:1150
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -361,95 +374,95 @@ msgid ""
 "    (?<comment>)  - comment"
 msgstr ""
 
-#: src/preferences_tab.c:1130
+#: src/preferences_tab.c:1174
 msgid "_Replace underscores by spaces"
 msgstr "_Replace Destaca por espacios"
 
-#: src/preferences_tab.c:1138
+#: src/preferences_tab.c:1182
 msgid "Artist text properties:"
 msgstr "propiedades del artista texto:"
 
-#: src/preferences_tab.c:1142
+#: src/preferences_tab.c:1186
 msgid "Album text properties:"
 msgstr "Álbum de las propiedades del texto:"
 
-#: src/preferences_tab.c:1146
+#: src/preferences_tab.c:1190
 msgid "Title text properties:"
 msgstr "Título de las propiedades del texto:"
 
-#: src/preferences_tab.c:1150
+#: src/preferences_tab.c:1194
 msgid "Comment text properties:"
 msgstr "Comentar las propiedades del texto:"
 
-#: src/preferences_tab.c:1153
+#: src/preferences_tab.c:1197
 msgid "Genre tag:"
 msgstr ""
 
-#: src/preferences_tab.c:1156
+#: src/preferences_tab.c:1200
 msgid "Comment tag:"
 msgstr "Comentario de etiquetas:"
 
-#: src/preferences_tab.c:1158
+#: src/preferences_tab.c:1202
 msgid "Regular expression test"
 msgstr ""
 
-#: src/preferences_tab.c:1173
+#: src/preferences_tab.c:1217
 msgid "_Test"
 msgstr ""
 
-#: src/preferences_tab.c:1178
+#: src/preferences_tab.c:1222
 msgid "Sample filename:"
 msgstr "Ejemplo de nombre de archivo:"
 
-#: src/preferences_tab.c:1182
+#: src/preferences_tab.c:1226
 msgid "Sample result:"
 msgstr "Resultado de la muestra:"
 
-#: src/preferences_tab.c:1193
+#: src/preferences_tab.c:1237
 msgid "ID3v1 & ID3v2 tags"
 msgstr ""
 
-#: src/preferences_tab.c:1200
+#: src/preferences_tab.c:1244
 msgid "ID3v2 tags"
 msgstr ""
 
-#: src/preferences_tab.c:1206
+#: src/preferences_tab.c:1250
 msgid "ID3v1 tags"
 msgstr ""
 
-#: src/preferences_tab.c:1212
+#: src/preferences_tab.c:1256
 msgid "Same tags version as the input file"
 msgstr ""
 
-#: src/preferences_tab.c:1217
+#: src/preferences_tab.c:1261
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr ""
 
-#: src/preferences_tab.c:1259 src/main_win.c:560
+#: src/preferences_tab.c:1303 src/main_win.c:560
 msgid "Split"
 msgstr ""
 
-#: src/preferences_tab.c:1265
+#: src/preferences_tab.c:1309
 msgid "Tags"
 msgstr ""
 
-#: src/preferences_tab.c:1271
+#: src/preferences_tab.c:1315
 msgid "Output"
 msgstr ""
 
-#: src/preferences_tab.c:1277 src/main_win.c:709
+#: src/preferences_tab.c:1321 src/main_win.c:709
 msgid "Player"
 msgstr ""
 
-#: src/preferences_tab.c:1284
+#: src/preferences_tab.c:1328
 msgid "Language"
 msgstr ""
 
-#: src/player_tab.c:671 src/player_tab.c:705
+#: src/player_tab.c:664 src/player_tab.c:698
 msgid "Cannot connect to player"
 msgstr ""
 
-#: src/player_tab.c:682
+#: src/player_tab.c:675
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -468,7 +481,7 @@ msgid ""
 " After that, restart snackamp and mp3splt-gtk should work.\n"
 msgstr ""
 
-#: src/player_tab.c:697
+#: src/player_tab.c:690
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -479,129 +492,140 @@ msgid ""
 "connect.\n"
 msgstr ""
 
-#: src/player_tab.c:950
+#: src/player_tab.c:977
 msgid "Previous"
 msgstr "Anterior"
 
-#: src/player_tab.c:968
+#: src/player_tab.c:995
 msgid "Play"
 msgstr "Escuchar"
 
-#: src/player_tab.c:984
+#: src/player_tab.c:1011
 msgid "Pause"
 msgstr "Pausa"
 
-#: src/player_tab.c:1001
+#: src/player_tab.c:1028
 msgid "Stop"
 msgstr "Detener"
 
-#: src/player_tab.c:1018
+#: src/player_tab.c:1045
 msgid "Next"
 msgstr "Siguiente"
 
-#: src/player_tab.c:1030
+#: src/player_tab.c:1060
 msgid "Add splitpoint from player"
 msgstr "Añadir splitpoint del jugador"
 
-#: src/player_tab.c:1034
-msgid "_Show amplitude wave"
+#: src/player_tab.c:1064
+#, fuzzy
+msgid "Amplitude _wave"
 msgstr "_Mostrar Amplitud de la onda"
 
-#: src/player_tab.c:1042
+#: src/player_tab.c:1071
 msgid "Shows the amplitude level wave"
 msgstr "Muestra el nivel de amplitud de onda"
 
-#: src/player_tab.c:1046
+#: src/player_tab.c:1075
 msgid "_Connect"
 msgstr "_connect"
 
-#: src/player_tab.c:1049
+#: src/player_tab.c:1078
 msgid "Connect to player"
 msgstr "Conecte al jugador"
 
-#: src/player_tab.c:1053
+#: src/player_tab.c:1082
 msgid "_Disconnect"
 msgstr "_ Desconecte"
 
-#: src/player_tab.c:1056
+#: src/player_tab.c:1085
 msgid "Disconnect from player"
 msgstr "Desconecte del jugador"
 
-#: src/player_tab.c:1216
+#: src/player_tab.c:1221
 #, c-format
 msgid "before %s"
 msgstr ""
 
-#: src/player_tab.c:2725
+#: src/player_tab.c:2671
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 "haga clic en la izquierda en splitpoint se selecciona, haga clic en él borra"
 
-#: src/player_tab.c:2730
+#: src/player_tab.c:2676
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 "botón izquierdo del ratón + movimiento posición de la canción, los cambios "
 "haga clic derecho + movimiento de zoom"
 
-#: src/player_tab.c:2736
+#: src/player_tab.c:2682
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 "haga clic en la izquierda en la posición del punto + mover el punto de los "
 "cambios, haga clic en vista previa jugar"
 
-#: src/player_tab.c:2741
+#: src/player_tab.c:2687
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 "botón izquierdo del ratón sobre los controles rectángulo / 'splitpoint "
 "mantener' desactiva"
 
-#: src/player_tab.c:2927
+#: src/player_tab.c:2877
 msgid " quick preview..."
 msgstr "vista previa rápida ..."
 
-#: src/player_tab.c:3469
+#: src/player_tab.c:3246
+#, fuzzy
+msgid "Splitpoints _view"
+msgstr "Splitpoints"
+
+#: src/player_tab.c:3414
 msgid "History"
 msgstr "Historia"
 
-#: src/player_tab.c:3605
+#: src/player_tab.c:3548
 msgid "_Erase selected entries"
 msgstr "_Erase Seleccionados de las entradas"
 
-#: src/player_tab.c:3614
+#: src/player_tab.c:3557
 msgid "E_rase all history"
 msgstr "E_rase toda la historia"
 
-#: src/player_tab.c:3737
+#: src/player_tab.c:3601
+#, fuzzy
+msgid "H_istory"
+msgstr "Historia"
+
+#: src/player_tab.c:3674
 msgid " quick preview finished, song paused"
 msgstr "vista previa rápida de terminar, una canción en pausa"
 
-#: src/player_tab.c:3864
+#: src/player_tab.c:3820
 msgid "Choose File"
 msgstr "Elija Archivo"
 
-#: src/player_tab.c:3876 src/multiple_files.c:130
+#: src/player_tab.c:3832 src/multiple_files.c:130
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "archivos mp3 y ogg (*. mp3 *. ogg)"
 
-#: src/player_tab.c:3884 src/multiple_files.c:138
+#: src/player_tab.c:3840 src/multiple_files.c:138
 msgid "mp3 files (*.mp3)"
 msgstr "archivos MP3 (*. mp3)"
 
-#: src/player_tab.c:3890 src/multiple_files.c:144
+#: src/player_tab.c:3846 src/multiple_files.c:144
 msgid "ogg files (*.ogg)"
 msgstr "ogg archivo(*. ogg)"
 
-#: src/player_tab.c:4031
+#: src/player_tab.c:3987
 msgid "_Browse"
 msgstr "_Browse"
 
-#: src/player_tab.c:4035
+#: src/player_tab.c:3991
 msgid "Select file"
 msgstr "Seleccione el archivo"
 
-#: src/player_tab.c:4042
+#: src/player_tab.c:3998
 msgid "_Fix ogg stream"
 msgstr "_Fix Flujo ogg"
 
@@ -678,7 +702,7 @@ msgstr "_Split!"
 msgid "Messages _history"
 msgstr "Mensajes _history"
 
-#: src/main_win.c:562 src/main_win.c:817 src/messages.c:201
+#: src/main_win.c:562 src/main_win.c:807 src/messages.c:201
 msgid "Messages history"
 msgstr "Mensajes de la historia"
 
@@ -706,7 +730,7 @@ msgstr "_about"
 msgid "About"
 msgstr ""
 
-#: src/main_win.c:722
+#: src/main_win.c:723
 msgid "Splitpoints"
 msgstr "Splitpoints"
 
@@ -726,56 +750,48 @@ msgstr "Tipo de división"
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/main_win.c:793
+#: src/main_win.c:789
 msgid "S_top"
 msgstr ""
 
-#: src/freedb_tab.c:126
+#: src/freedb_tab.c:127
 #, c-format
 msgid "%s Revision %d"
 msgstr ""
 
-#: src/freedb_tab.c:180
+#: src/freedb_tab.c:164
 msgid "Album title"
 msgstr "Título del álbum"
 
-#: src/freedb_tab.c:200
-msgid "No"
-msgstr ""
-
-#: src/freedb_tab.c:306 src/freedb_tab.c:395
+#: src/freedb_tab.c:250 src/freedb_tab.c:345
 msgid "please wait... contacting tracktype.org"
 msgstr "por favor espere ... ponerse en contacto con tracktype.org"
 
-#: src/freedb_tab.c:601
+#: src/freedb_tab.c:545
 msgid "Search tracktype.org:"
 msgstr ""
 
-#: src/freedb_tab.c:612
+#: src/freedb_tab.c:556
 msgid "_Search"
 msgstr ""
 
-#: src/freedb_tab.c:651
-msgid "Selected album:"
-msgstr "Seleccionado disco:"
-
-#: src/freedb_tab.c:659
+#: src/freedb_tab.c:589
 msgid "_Add splitpoints"
 msgstr ""
 
-#: src/freedb_tab.c:666
+#: src/freedb_tab.c:596
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Establecer splitpoints a la mesa de splitpoints"
 
-#: src/special_split.c:197 src/special_split.c:268
+#: src/special_split.c:197 src/special_split.c:271
 #, c-format
-msgid "\tSplit every %2d seconds."
+msgid "Split every %2d seconds."
 msgstr ""
 
-#: src/special_split.c:208 src/special_split.c:299
-#, c-format
-msgid "\tSplit in %2d equal time tracks."
-msgstr ""
+#: src/special_split.c:208 src/special_split.c:305
+#, fuzzy, c-format
+msgid "Split in %2d equal time tracks."
+msgstr "tiempo de Igualdad de pistas"
 
 #: src/special_split.c:243
 msgid "Normal"
@@ -785,70 +801,70 @@ msgstr ""
 msgid "Time"
 msgstr "Tiempo"
 
-#: src/special_split.c:284
+#: src/special_split.c:287
 msgid "Equal time tracks"
 msgstr "tiempo de Igualdad de pistas"
 
-#: src/special_split.c:314
+#: src/special_split.c:320
 #, fuzzy
 msgid "Trim using silence detection"
 msgstr "_Silence Detección"
 
-#: src/special_split.c:330 src/special_split.c:355
+#: src/special_split.c:336 src/special_split.c:361
 msgid "Threshold level (dB) : "
 msgstr ""
 
-#: src/special_split.c:339
+#: src/special_split.c:345
 msgid "Silence - split with silence detection"
 msgstr "El silencio - se separó de la detección de silencio"
 
-#: src/special_split.c:365
+#: src/special_split.c:371
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
 msgstr ""
 
-#: src/special_split.c:375
+#: src/special_split.c:381
 msgid "Number of tracks (0 means all tracks) : "
 msgstr ""
 
-#: src/special_split.c:385
+#: src/special_split.c:391
 msgid "Minimum silence length (seconds) : "
 msgstr ""
 
-#: src/special_split.c:395
+#: src/special_split.c:401
 #, fuzzy
 msgid "Minimum track length (seconds) : "
 msgstr "Duración mínima de silencio (segundos):"
 
-#: src/special_split.c:403
+#: src/special_split.c:409
 msgid "Remove silence between tracks"
 msgstr "Quitar silencio entre las pistas"
 
-#: src/special_split.c:424
+#: src/special_split.c:430
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
 msgstr "Envuelva - dividir archivos creados con mp3wrap o albumwrap (sólo MP3)"
 
-#: src/special_split.c:434
+#: src/special_split.c:440
 msgid "Error mode (mp3 only)"
 msgstr "Modo de error (sólo MP3)"
 
-#: src/special_split.c:459
+#: src/special_split.c:465
 msgid "Single file"
 msgstr "archivo único"
 
-#: src/special_split.c:467
+#: src/special_split.c:473
 msgid "Batch processing"
 msgstr "Procesamiento por lotes"
 
-#: src/special_split.c:501
+#: src/special_split.c:507
 msgid "Split mode"
 msgstr "Dividir el modo de"
 
-#: src/special_split.c:505
+#: src/special_split.c:511
 msgid "File mode"
 msgstr "El modo de archivo"
 
 #: src/messages.c:180
-msgid "Show _debug messages"
+msgid "Enable _debug messages"
 msgstr ""
 
 #: src/messages.c:187
@@ -867,15 +883,15 @@ msgstr "Elija el archivo o directorio"
 msgid "All Files"
 msgstr "Todos los archivos"
 
-#: src/multiple_files.c:293
+#: src/multiple_files.c:292
 msgid "_Add files"
 msgstr ""
 
-#: src/multiple_files.c:301
+#: src/multiple_files.c:300
 msgid "_Remove selected entries"
 msgstr ""
 
-#: src/multiple_files.c:310
+#: src/multiple_files.c:309
 msgid "R_emove all entries"
 msgstr ""
 
@@ -894,7 +910,7 @@ msgstr ""
 msgid "Info: %s"
 msgstr ""
 
-#: src/gstreamer_control.c:416
+#: src/gstreamer_control.c:412
 msgid " error: cannot create gstreamer playbin\n"
 msgstr ""
 
@@ -992,3 +1008,9 @@ msgstr ""
 #: src/export.c:212
 msgid "cue files (*.cue)"
 msgstr ""
+
+#~ msgid "Choose a player:"
+#~ msgstr "Elige un jugador:"
+
+#~ msgid "Selected album:"
+#~ msgstr "Seleccionado disco:"
