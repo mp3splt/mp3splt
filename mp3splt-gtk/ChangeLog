@@ -4,6 +4,17 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.7.2
+
+- fixed an important bug of memory leak in player drawing when using GTK+-2
+- fixed bug not showing icon and image in the about dialog
+- fix for the '--disable-gtk3' option; also fixed the gtk 2.x/3.x check
+- made some player graphic optimisations
+- added player refresh rate option in Preferences->Player
+- added expanders to the player history and player splitpoints view
+- we don't need gtk 2 version >= 2.20; changed it to 2.18
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.7.1
 
 - added minimum track length option for silence scan - closes #2393766

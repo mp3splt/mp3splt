@@ -2,6 +2,14 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.7.2
+-------------------------------------------------------------
+
+- fixed error when ID3v2 was containing what appears a valid frame; make sure we skip the ID3v2 after looking for the first frames
+- fixed bug #3497957 libtoolize vs glibtoolize
+- fixed #3487543 - compilation without pcre support
+- added the shots parameter to silence detection
+
 libmp3splt version 0.7.1
 -------------------------------------------------------------
 

@@ -6,9 +6,9 @@ LIBMP3SPLT_DIR=libmp3splt
 MP3SPLT_DIR=newmp3splt
 MP3SPLT_GTK_DIR=mp3splt-gtk
 
-LIBMP3SPLT_REAL_VERSION="0.7.1.976"
-MP3SPLT_REAL_VERSION="2.4.1.976"
-MP3SPLT_GTK_REAL_VERSION="0.7.1.976"
+LIBMP3SPLT_REAL_VERSION="0.7.2"
+MP3SPLT_REAL_VERSION="2.4.2"
+MP3SPLT_GTK_REAL_VERSION="0.7.2"
 
 BUILD_SOURCE_PACKAGES=1
 
@@ -191,7 +191,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="maverick natty oneiric"
+    UBUNTU_FLAVORS="natty oneiric precise"
 
     echo
     print_yellow "Creating ubuntu packages..."

@@ -7,6 +7,12 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.4.2
+
+- fixed error when ID3v2 was containing what appears a valid frame; make sure we skip the ID3v2 after looking for the first frames (libmp3splt)
+- added the shots parameter to silence detection
+(-p shots=INTEGER - minimum number of shots to be found as non silence after the silence)
+
 #mp3splt version 2.4.1
 
 - added minimum track length option for silence scan: 'trackmin' parameter to '-p' - closes #2393766
