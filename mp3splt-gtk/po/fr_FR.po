@@ -1,20 +1,22 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Chris38 <ch.daudin@free.fr>, 2011.
+# Peter Pall <gunter@peterpall.de>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2012-05-10 20:02+0200\n"
-"PO-Revision-Date: 2011-02-22 00:00+0000\n"
+"PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:254
@@ -39,12 +41,12 @@ msgstr "Khz"
 
 #: src/tree_tab.c:553
 msgid "_part"
-msgstr ""
+msgstr "_partie"
 
 #: src/tree_tab.c:564
 #, c-format
 msgid "%s_part%d"
-msgstr ""
+msgstr "%s_partie%d"
 
 #: src/tree_tab.c:708 src/tree_tab.c:1114
 msgid " error: you already have the splitpoint in table"
@@ -56,9 +58,8 @@ msgid "description here"
 msgstr "description"
 
 #: src/tree_tab.c:1273 src/tree_tab.c:1695
-#, fuzzy
 msgid "Set trim splitpoints using silence detection"
-msgstr "Points à partir de la recherche du silence"
+msgstr ""
 
 #: src/tree_tab.c:1299 src/tree_tab.c:1371 src/preferences_tab.c:721
 msgid "Threshold level (dB):"
@@ -70,7 +71,7 @@ msgstr "Points à partir de la recherche du silence"
 
 #: src/tree_tab.c:1388
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
-msgstr "Compensation du point de coupure (0 - début du silence, 1 - la fin) :"
+msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 
 #: src/tree_tab.c:1405
 msgid "Number of tracks (0 means all tracks):"
@@ -78,12 +79,11 @@ msgstr "Nombre de pistes (0 signifie toutes les pistes) :"
 
 #: src/tree_tab.c:1420
 msgid "Minimum silence length (seconds):"
-msgstr "Taille minimum du silence (secondes) :"
+msgstr "Durée minimum du silence (secondes) :"
 
 #: src/tree_tab.c:1434
-#, fuzzy
 msgid "Minimum track length (seconds):"
-msgstr "Taille minimum du silence (secondes) :"
+msgstr ""
 
 #: src/tree_tab.c:1445
 msgid "_Remove silence between tracks"
@@ -126,9 +126,8 @@ msgid "Remove all rows"
 msgstr "Effacer toutes les lignes"
 
 #: src/tree_tab.c:1689
-#, fuzzy
 msgid "_Trim splitpoints"
-msgstr "Aj_outer les points"
+msgstr ""
 
 #: src/tree_tab.c:1699
 msgid "_Silence detection"
@@ -224,17 +223,15 @@ msgstr "Mode 'f_rame' (utile pour mp3 VBR) (seulement mp3)"
 
 #: src/preferences_tab.c:704
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr ""
-"Aj_ustement automatique (utilise la détection du silence pour ajuster les "
-"points)"
+msgstr "Aj_ustement automatique (utilise la détection du silence pour ajuster les points)"
 
 #: src/preferences_tab.c:736
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
-msgstr "Compensation du point de coupure (0 - début du silence, 1 - la fin) :"
+msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 
 #: src/preferences_tab.c:753
 msgid "Gap level (seconds around splitpoint to search for silence):"
-msgstr "Niveau d'écart (secondes autour du point à chercher du silence) :"
+msgstr "Fourchette (secondes autour du point pour chercher un silence) :"
 
 #: src/preferences_tab.c:772
 msgid "Set _default split options"
@@ -245,9 +242,8 @@ msgid "<b>Split options</b>"
 msgstr "<b>Options de coupure</b>"
 
 #: src/preferences_tab.c:846
-#, fuzzy
 msgid "Player:"
-msgstr "Lecteur"
+msgstr ""
 
 #: src/preferences_tab.c:868
 msgid "Refresh player every "
@@ -282,14 +278,7 @@ msgid ""
 "    @t - song title\n"
 "    @g - genre\n"
 "    @n - track number"
-msgstr ""
-"    @f - nom du fichier\n"
-"    @a - nom de l'artiste\n"
-"    @p - nom de l'interprète pour chaque titre (n'existe pas toujours)\n"
-"    @b - titre de l'album\n"
-"    @t - titre du morceau\n"
-"    @g - genre\n"
-"    @n - numéro de la piste"
+msgstr "    @f - nom du fichier\n    @a - nom de l'artiste\n    @p - nom de l'interprète pour chaque titre (n'existe pas toujours)\n    @b - titre de l'album\n    @t - titre du morceau\n    @g - genre\n    @n - numéro de la piste"
 
 #: src/preferences_tab.c:970
 msgid "<b>Output filename format</b>"
@@ -378,17 +367,7 @@ msgid ""
 "    (?<year>)     - year of emission\n"
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - comment"
-msgstr ""
-"Saisir ci-dessus une expression régulière type-PERL utilisant des mots-"
-"clés.\n"
-"Les mots-clés suivants sont reconnus :\n"
-"    (?<artist>)   -  nom de l'artiste\n"
-"    (?<album>)    - titre de l'album\n"
-"    (?<title>)    - titre du morceau (=piste)\n"
-"    (?<tracknum>) - numéro du morceau courant\n"
-"    (?<year>)     - année de création\n"
-"    (?<genre>)    - genre\n"
-"    (?<comment>)  - commentaire"
+msgstr "Saisir ci-dessus une expression régulière type-PERL utilisant des mots-clés.\nLes mots-clés suivants sont reconnus :\n    (?<artist>)   -  nom de l'artiste\n    (?<album>)    - titre de l'album\n    (?<title>)    - titre du morceau (=piste)\n    (?<tracknum>) - numéro du morceau courant\n    (?<year>)     - année de création\n    (?<genre>)    - genre\n    (?<comment>)  - commentaire"
 
 #: src/preferences_tab.c:1174
 msgid "_Replace underscores by spaces"
@@ -495,22 +474,7 @@ msgid ""
 "\tEnable Socket Interface\n"
 " Only default port is supported for now(8775)\n"
 " After that, restart snackamp and mp3splt-gtk should work.\n"
-msgstr ""
-"\n"
-" Impossible de se connecter au lecteur snackAmp.\n"
-" Téléchargez et installez snackamp à partir de\n"
-"\thttp://snackamp.sourceforge.net\n"
-"\n"
-" Vérifiez que snackamp est lancé.\n"
-" Vérifiez que la version de snackamp est >= 3.1.3\n"
-"\n"
-" Vérifiez que l'option de snackamp 'enable socket interface' est activée :\n"
-" Aller dans\n"
-"\tTools->Preferences->Miscellaneous\n"
-" à partir du menu snackamp et cocher\n"
-"\tEnable Socket Interface\n"
-" Seulement le port par défaut fonctionne (8775)\n"
-" Après, redémarrer snackamp et réessayer.\n"
+msgstr "\n Impossible de se connecter au lecteur snackAmp.\n Téléchargez et installez snackamp à partir de\n\thttp://snackamp.sourceforge.net\n\n Vérifiez que snackamp est lancé.\n Vérifiez que la version de snackamp est >= 3.1.3\n\n Vérifiez que l'option de snackamp 'enable socket interface' est activée :\n Aller dans\n\tTools->Preferences->Miscellaneous\n à partir du menu snackamp et cocher\n\tEnable Socket Interface\n Seulement le port par défaut fonctionne (8775)\n Après, redémarrer snackamp et réessayer.\n"
 
 #: src/player_tab.c:690
 msgid ""
@@ -519,12 +483,8 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
-msgstr ""
-"\n"
-" Impossible de se connecter au lecteur Audacious.\n"
-" Vérifiez l'installation d'audacious.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
+msgstr "\n Impossible de se connecter au lecteur Audacious.\n Vérifiez l'installation d'audacious.\n"
 
 #: src/player_tab.c:977
 msgid "Previous"
@@ -551,9 +511,8 @@ msgid "Add splitpoint from player"
 msgstr "Ajouter point de coupure du lecteur"
 
 #: src/player_tab.c:1064
-#, fuzzy
 msgid "Amplitude _wave"
-msgstr "Montrer l'amplitude du _signal"
+msgstr ""
 
 #: src/player_tab.c:1071
 msgid "Shows the amplitude level wave"
@@ -587,16 +546,12 @@ msgstr " click gauche sur le point le sélectionne, click droit l'efface"
 #: src/player_tab.c:2676
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
-msgstr ""
-" click gauche + déplacement change la position, click droit + déplacement "
-"change le zoom"
+msgstr " click gauche + déplacement change la position, click droit + déplacement change le zoom"
 
 #: src/player_tab.c:2682
 msgid ""
 " left click on point + move changes point position, right click play preview"
-msgstr ""
-" click gauche sur le point + déplacement change la position du point, click "
-"droit aperçu"
+msgstr " click gauche sur le point + déplacement change la position du point, click droit aperçu"
 
 #: src/player_tab.c:2687
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
@@ -607,9 +562,8 @@ msgid " quick preview..."
 msgstr " aperçu rapide..."
 
 #: src/player_tab.c:3246
-#, fuzzy
 msgid "Splitpoints _view"
-msgstr "Points de coupure"
+msgstr ""
 
 #: src/player_tab.c:3414
 msgid "History"
@@ -624,9 +578,8 @@ msgid "E_rase all history"
 msgstr "Effa_cer tout l'historique"
 
 #: src/player_tab.c:3601
-#, fuzzy
 msgid "H_istory"
-msgstr "Historique"
+msgstr ""
 
 #: src/player_tab.c:3674
 msgid " quick preview finished, song paused"
@@ -666,16 +619,15 @@ msgstr " info : arrêt du processus de découpage avant de sortir"
 
 #: src/main_win.c:313
 msgid "Error launching external command"
-msgstr ""
+msgstr "Erreur en lançant un programme externe"
 
 #: src/main_win.c:345
 msgid "using"
 msgstr "utilisant"
 
 #: src/main_win.c:349
-#, fuzzy
 msgid "release of "
-msgstr "version du"
+msgstr ""
 
 #: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
@@ -767,7 +719,7 @@ msgstr "Points de coupure"
 
 #: src/main_win.c:735
 msgid "Split files"
-msgstr ""
+msgstr "Fichiers découpés"
 
 #: src/main_win.c:748
 msgid "FreeDB"
@@ -815,14 +767,14 @@ msgid "Set splitpoints to the splitpoints table"
 msgstr "Mettre les points au tableau de points de coupure"
 
 #: src/special_split.c:197 src/special_split.c:271
-#, fuzzy, c-format
+#, c-format
 msgid "Split every %2d seconds."
-msgstr "\tCouper toutes les %2d secondes"
+msgstr ""
 
 #: src/special_split.c:208 src/special_split.c:305
-#, fuzzy, c-format
+#, c-format
 msgid "Split in %2d equal time tracks."
-msgstr "\tDécouper en %2d morceaux égaux"
+msgstr ""
 
 #: src/special_split.c:243
 msgid "Normal"
@@ -837,13 +789,12 @@ msgid "Equal time tracks"
 msgstr "Nombre de morceaux "
 
 #: src/special_split.c:320
-#, fuzzy
 msgid "Trim using silence detection"
-msgstr "Détection du _silence"
+msgstr ""
 
 #: src/special_split.c:336 src/special_split.c:361
 msgid "Threshold level (dB) : "
-msgstr ""
+msgstr "Niveau seuil (dB) :"
 
 #: src/special_split.c:345
 msgid "Silence - split with silence detection"
@@ -851,20 +802,19 @@ msgstr "Silence - couper par détection des silences"
 
 #: src/special_split.c:371
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
-msgstr ""
+msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 
 #: src/special_split.c:381
 msgid "Number of tracks (0 means all tracks) : "
-msgstr ""
+msgstr "Nombre de pistes (0 signifie toutes les pistes) :"
 
 #: src/special_split.c:391
 msgid "Minimum silence length (seconds) : "
-msgstr ""
+msgstr "Durée minimum du silence (secondes) :"
 
 #: src/special_split.c:401
-#, fuzzy
 msgid "Minimum track length (seconds) : "
-msgstr "Taille minimum du silence (secondes) :"
+msgstr ""
 
 #: src/special_split.c:409
 msgid "Remove silence between tracks"
@@ -872,8 +822,7 @@ msgstr "Effacer les silences entre les morceaux"
 
 #: src/special_split.c:430
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
-msgstr ""
-"Wrap - diviser les fichiers créés avec mp3wrap ou albumwrap (seulement mp3)"
+msgstr "Wrap - diviser les fichiers créés avec mp3wrap ou albumwrap (seulement mp3)"
 
 #: src/special_split.c:440
 msgid "Error mode (mp3 only)"
@@ -896,9 +845,8 @@ msgid "File mode"
 msgstr "Mode fichier(s)"
 
 #: src/messages.c:180
-#, fuzzy
 msgid "Enable _debug messages"
-msgstr "Voir les messages de _déboggage"
+msgstr ""
 
 #: src/messages.c:187
 msgid "C_lear"
@@ -906,7 +854,7 @@ msgstr "_Effacer"
 
 #: src/multiple_files.c:88
 msgid "Complete filename"
-msgstr ""
+msgstr "Nom de fichier complet"
 
 #: src/multiple_files.c:109
 msgid "Choose file or directory"
@@ -1041,12 +989,3 @@ msgstr "Sélectionner le fichier cue"
 #: src/export.c:212
 msgid "cue files (*.cue)"
 msgstr "Fichiers cue (*.cue)"
-
-#~ msgid "Choose a player:"
-#~ msgstr "Choisir un lecteur :"
-
-#~ msgid "No"
-#~ msgstr "Numéro"
-
-#~ msgid "Selected album:"
-#~ msgstr "Album sélectionné :"

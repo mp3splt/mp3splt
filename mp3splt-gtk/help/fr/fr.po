@@ -1,12 +1,13 @@
 # 
+# Translators:
 # Peter Pall <gunter@peterpall.de>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2011-01-11 21:44+0100\n"
-"PO-Revision-Date: 2011-03-22 15:36+0000\n"
-"Last-Translator: peterpall <gunter@peterpall.de>\n"
+"PO-Revision-Date: 2012-02-14 08:58+0000\n"
+"Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -493,5 +494,3 @@ msgstr ""
 #: C/mp3splt-gtk.xml0(None)
 msgid "translator-credits"
 msgstr ""
-
-

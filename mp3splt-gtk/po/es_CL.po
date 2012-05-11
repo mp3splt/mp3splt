@@ -1,20 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Ricardo A. Hermosilla Carrillo <ra.hermosillac@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2012-05-10 20:02+0200\n"
-"PO-Revision-Date: 2011-02-22 00:00+0000\n"
-"Last-Translator: rahermosillac <ra.hermosillac@gmail.com>\n"
+"PO-Revision-Date: 2012-05-11 08:29+0000\n"
+"Last-Translator: Ricardo A. Hermosilla Carrillo <ra.hermosillac@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: es_CL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es_CL\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:254
@@ -56,9 +57,8 @@ msgid "description here"
 msgstr "descripción aquí"
 
 #: src/tree_tab.c:1273 src/tree_tab.c:1695
-#, fuzzy
 msgid "Set trim splitpoints using silence detection"
-msgstr "Establecer puntos de divisiones desde detección de silencio"
+msgstr ""
 
 #: src/tree_tab.c:1299 src/tree_tab.c:1371 src/preferences_tab.c:721
 msgid "Threshold level (dB):"
@@ -70,8 +70,7 @@ msgstr "Establecer puntos de divisiones desde detección de silencio"
 
 #: src/tree_tab.c:1388
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
-msgstr ""
-"Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
+msgstr "Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
 
 #: src/tree_tab.c:1405
 msgid "Number of tracks (0 means all tracks):"
@@ -82,9 +81,8 @@ msgid "Minimum silence length (seconds):"
 msgstr "Duración mínima de silencio (segundos):"
 
 #: src/tree_tab.c:1434
-#, fuzzy
 msgid "Minimum track length (seconds):"
-msgstr "Duración mínima de silencio (segundos):"
+msgstr ""
 
 #: src/tree_tab.c:1445
 msgid "_Remove silence between tracks"
@@ -127,9 +125,8 @@ msgid "Remove all rows"
 msgstr "Eliminar todas las filas"
 
 #: src/tree_tab.c:1689
-#, fuzzy
 msgid "_Trim splitpoints"
-msgstr "_Añadir puntos de división"
+msgstr ""
 
 #: src/tree_tab.c:1699
 msgid "_Silence detection"
@@ -225,19 +222,15 @@ msgstr "Modo ma_rco (útil para mp3 VBR) (mp3 solamente)"
 
 #: src/preferences_tab.c:704
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr ""
-"Modo _Auto-ajustar (utiliza detección de silencios para auto-ajustar puntos "
-"de división)"
+msgstr "Modo _Auto-ajustar (utiliza detección de silencios para auto-ajustar puntos de división)"
 
 #: src/preferences_tab.c:736
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
-msgstr ""
-"Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
+msgstr "Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
 
 #: src/preferences_tab.c:753
 msgid "Gap level (seconds around splitpoint to search for silence):"
-msgstr ""
-"Nivel de Omisión (segundos en punto de división para buscar un silencio):"
+msgstr "Nivel de Omisión (segundos en punto de división para buscar un silencio):"
 
 #: src/preferences_tab.c:772
 msgid "Set _default split options"
@@ -248,9 +241,8 @@ msgid "<b>Split options</b>"
 msgstr "<b>Opciones de División</b>"
 
 #: src/preferences_tab.c:846
-#, fuzzy
 msgid "Player:"
-msgstr "Reproductor"
+msgstr ""
 
 #: src/preferences_tab.c:868
 msgid "Refresh player every "
@@ -481,22 +473,7 @@ msgid ""
 "\tEnable Socket Interface\n"
 " Only default port is supported for now(8775)\n"
 " After that, restart snackamp and mp3splt-gtk should work.\n"
-msgstr ""
-"\n"
-"No se puede conectar al reproductor snackAmp.\n"
-"Por favor, descargue e instale el reproductor desde\n"
-"http://snackamp.sourceforge.net\n"
-"\n"
-"Verifique que snackamp se está ejecutando.\n"
-"Verifique que la versión del programa es >= 3.1.3\n"
-"\n"
-"Verifique que tiene habilitada la interfaz socket en snackAmp:\n"
-"Tiene que ir a:\n"
-"Herramientas->Preferencias->Otros\n"
-"desde el menú del programa y marcar la casilla\n"
-"Habilitar Interfaz Socket\n"
-"Sólo se admite el puerto por defecto por ahora (8775)\n"
-"Después de eso, reinicie snackAmp y mp3split-gtk funcionará.\n"
+msgstr "\nNo se puede conectar al reproductor snackAmp.\nPor favor, descargue e instale el reproductor desde\nhttp://snackamp.sourceforge.net\n\nVerifique que snackamp se está ejecutando.\nVerifique que la versión del programa es >= 3.1.3\n\nVerifique que tiene habilitada la interfaz socket en snackAmp:\nTiene que ir a:\nHerramientas->Preferencias->Otros\ndesde el menú del programa y marcar la casilla\nHabilitar Interfaz Socket\nSólo se admite el puerto por defecto por ahora (8775)\nDespués de eso, reinicie snackAmp y mp3split-gtk funcionará.\n"
 
 #: src/player_tab.c:690
 msgid ""
@@ -505,17 +482,8 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
-msgstr ""
-"\n"
-"No se puede conectar al reproductor Audacious.\n"
-"Verifique que lo tiene instalado.\n"
-"\n"
-"Ponga en su variable PATH el directorio dónde se encuentra instalado "
-"Audacious.\n"
-"Si no sabe cómo hacer esto, inicie Audacious manualmente y luego intente "
-"conectar.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
+msgstr "\nNo se puede conectar al reproductor Audacious.\nVerifique que lo tiene instalado.\n\nPonga en su variable PATH el directorio dónde se encuentra instalado Audacious.\nSi no sabe cómo hacer esto, inicie Audacious manualmente y luego intente conectar.\n"
 
 #: src/player_tab.c:977
 msgid "Previous"
@@ -542,9 +510,8 @@ msgid "Add splitpoint from player"
 msgstr "Añadir punto de división desde el reproductor"
 
 #: src/player_tab.c:1064
-#, fuzzy
 msgid "Amplitude _wave"
-msgstr "_Mostrar amplitud de onda"
+msgstr ""
 
 #: src/player_tab.c:1071
 msgid "Shows the amplitude level wave"
@@ -578,16 +545,12 @@ msgstr " clic en el punto de división lo selecciona, clic derecho lo elimina"
 #: src/player_tab.c:2676
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
-msgstr ""
-" clic + mover cambia la posición de la canción, clic derecho + mover cambia "
-"el zoom"
+msgstr " clic + mover cambia la posición de la canción, clic derecho + mover cambia el zoom"
 
 #: src/player_tab.c:2682
 msgid ""
 " left click on point + move changes point position, right click play preview"
-msgstr ""
-" clic en el punto + mover cambia la posición del punto, clic derecho "
-"reproduce la vista previa"
+msgstr " clic en el punto + mover cambia la posición del punto, clic derecho reproduce la vista previa"
 
 #: src/player_tab.c:2687
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
@@ -598,9 +561,8 @@ msgid " quick preview..."
 msgstr " vista previa rápida..."
 
 #: src/player_tab.c:3246
-#, fuzzy
 msgid "Splitpoints _view"
-msgstr "Puntos de división"
+msgstr ""
 
 #: src/player_tab.c:3414
 msgid "History"
@@ -615,9 +577,8 @@ msgid "E_rase all history"
 msgstr "Elimina_r todo el historial"
 
 #: src/player_tab.c:3601
-#, fuzzy
 msgid "H_istory"
-msgstr "Historial"
+msgstr ""
 
 #: src/player_tab.c:3674
 msgid " quick preview finished, song paused"
@@ -664,9 +625,8 @@ msgid "using"
 msgstr "utilizando"
 
 #: src/main_win.c:349
-#, fuzzy
 msgid "release of "
-msgstr "liberación de"
+msgstr ""
 
 #: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
@@ -806,14 +766,14 @@ msgid "Set splitpoints to the splitpoints table"
 msgstr "Establecer puntos de división a la tabla"
 
 #: src/special_split.c:197 src/special_split.c:271
-#, fuzzy, c-format
+#, c-format
 msgid "Split every %2d seconds."
-msgstr "Dividir cada %2d segundos."
+msgstr ""
 
 #: src/special_split.c:208 src/special_split.c:305
-#, fuzzy, c-format
+#, c-format
 msgid "Split in %2d equal time tracks."
-msgstr "Dividir en %2d tiempos iguales."
+msgstr ""
 
 #: src/special_split.c:243
 msgid "Normal"
@@ -828,9 +788,8 @@ msgid "Equal time tracks"
 msgstr "Pistas con el mismo tiempo"
 
 #: src/special_split.c:320
-#, fuzzy
 msgid "Trim using silence detection"
-msgstr "Detección de _Silencio"
+msgstr ""
 
 #: src/special_split.c:336 src/special_split.c:361
 msgid "Threshold level (dB) : "
@@ -853,9 +812,8 @@ msgid "Minimum silence length (seconds) : "
 msgstr ""
 
 #: src/special_split.c:401
-#, fuzzy
 msgid "Minimum track length (seconds) : "
-msgstr "Duración mínima de silencio (segundos):"
+msgstr ""
 
 #: src/special_split.c:409
 msgid "Remove silence between tracks"
@@ -886,9 +844,8 @@ msgid "File mode"
 msgstr "Modo archivo"
 
 #: src/messages.c:180
-#, fuzzy
 msgid "Enable _debug messages"
-msgstr "Mostrar mensajes de _depuración"
+msgstr ""
 
 #: src/messages.c:187
 msgid "C_lear"
@@ -1031,12 +988,3 @@ msgstr ""
 #: src/export.c:212
 msgid "cue files (*.cue)"
 msgstr ""
-
-#~ msgid "Choose a player:"
-#~ msgstr "Escoja un reproductor:"
-
-#~ msgid "No"
-#~ msgstr "No"
-
-#~ msgid "Selected album:"
-#~ msgstr "Álbum seleccionado:"

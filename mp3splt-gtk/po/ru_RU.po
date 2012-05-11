@@ -1,23 +1,23 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-#
-# Александр Прокудин <alexandre.prokoudine@gmail.com>, 2011.
+# 
+# Translators:
 # marselles <marselles@mail.ru>, 2011.
+# Александр Прокудин <alexandre.prokoudine@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
 "POT-Creation-Date: 2012-05-10 20:02+0200\n"
-"PO-Revision-Date: 2011-07-18 19:25+0000\n"
+"PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: optimix <io_fx@yahoo.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:254
 #: src/snackamp_control.c:328
@@ -82,9 +82,8 @@ msgid "Minimum silence length (seconds):"
 msgstr "Минимальная длина задержки (секунды): "
 
 #: src/tree_tab.c:1434
-#, fuzzy
 msgid "Minimum track length (seconds):"
-msgstr "Минимальная длина задержки (секунды): "
+msgstr ""
 
 #: src/tree_tab.c:1445
 msgid "_Remove silence between tracks"
@@ -243,9 +242,8 @@ msgid "<b>Split options</b>"
 msgstr "<b>Параметры разделения</b>"
 
 #: src/preferences_tab.c:846
-#, fuzzy
 msgid "Player:"
-msgstr "Плеер"
+msgstr ""
 
 #: src/preferences_tab.c:868
 msgid "Refresh player every "
@@ -280,14 +278,7 @@ msgid ""
 "    @t - song title\n"
 "    @g - genre\n"
 "    @n - track number"
-msgstr ""
-"    @f — имя файла\n"
-"    @a — имя исполнителя\n"
-"    @p — исполнитель каждой песни\n"
-"    @b — название альбома\n"
-"    @t — название песни\n"
-"    @g — жанр\n"
-"    @n — номер дорожки"
+msgstr "    @f — имя файла\n    @a — имя исполнителя\n    @p — исполнитель каждой песни\n    @b — название альбома\n    @t — название песни\n    @g — жанр\n    @n — номер дорожки"
 
 #: src/preferences_tab.c:970
 msgid "<b>Output filename format</b>"
@@ -376,17 +367,7 @@ msgid ""
 "    (?<year>)     - year of emission\n"
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - comment"
-msgstr ""
-"Введите выше регулярное выражение по правилам PERL,\n"
-"используя именованные подгруппы.\n"
-"Распознаются следующшие имена:\n"
-"    (?<artist>)   — имя исполнителя\n"
-"    (?<album>)    — название альбома\n"
-"    (?<title>)    — назщвание дорожки\n"
-"    (?<tracknum>) — номер текущей дорожки\n"
-"    (?<year>)     — год выпуска\n"
-"    (?<genre>)    — жанр\n"
-"    (?<comment>)  — комментарий"
+msgstr "Введите выше регулярное выражение по правилам PERL,\nиспользуя именованные подгруппы.\nРаспознаются следующшие имена:\n    (?<artist>)   — имя исполнителя\n    (?<album>)    — название альбома\n    (?<title>)    — назщвание дорожки\n    (?<tracknum>) — номер текущей дорожки\n    (?<year>)     — год выпуска\n    (?<genre>)    — жанр\n    (?<comment>)  — комментарий"
 
 #: src/preferences_tab.c:1174
 msgid "_Replace underscores by spaces"
@@ -502,8 +483,7 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
 msgstr ""
 
 #: src/player_tab.c:977
@@ -531,9 +511,8 @@ msgid "Add splitpoint from player"
 msgstr "Добавить точку разделения из плеера"
 
 #: src/player_tab.c:1064
-#, fuzzy
 msgid "Amplitude _wave"
-msgstr "Показать амплитуду волны"
+msgstr ""
 
 #: src/player_tab.c:1071
 msgid "Shows the amplitude level wave"
@@ -562,37 +541,29 @@ msgstr "до %s"
 
 #: src/player_tab.c:2671
 msgid " left click on splitpoint selects it, right click erases it"
-msgstr ""
-" щелчок левой клавишей мыши выделяет точку разделения, правой — удаляет её"
+msgstr " щелчок левой клавишей мыши выделяет точку разделения, правой — удаляет её"
 
 #: src/player_tab.c:2676
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
-msgstr ""
-" щелчок левой клавишей мыши и перемещение меняет позицию, правой — меняет "
-"масштаб"
+msgstr " щелчок левой клавишей мыши и перемещение меняет позицию, правой — меняет масштаб"
 
 #: src/player_tab.c:2682
 msgid ""
 " left click on point + move changes point position, right click play preview"
-msgstr ""
-" щелчок левой клавишей мыши по точке меняет её позицию, правой — включает "
-"прослушивание"
+msgstr " щелчок левой клавишей мыши по точке меняет её позицию, правой — включает прослушивание"
 
 #: src/player_tab.c:2687
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
-msgstr ""
-" щелчок левой клавишей мыши по прямоугольнику переключает сохранение точки "
-"разделения"
+msgstr " щелчок левой клавишей мыши по прямоугольнику переключает сохранение точки разделения"
 
 #: src/player_tab.c:2877
 msgid " quick preview..."
 msgstr "быстрый просмотр ..."
 
 #: src/player_tab.c:3246
-#, fuzzy
 msgid "Splitpoints _view"
-msgstr "Точки разделения"
+msgstr ""
 
 #: src/player_tab.c:3414
 msgid "History"
@@ -607,9 +578,8 @@ msgid "E_rase all history"
 msgstr "У_далить всю историю"
 
 #: src/player_tab.c:3601
-#, fuzzy
 msgid "H_istory"
-msgstr "История"
+msgstr ""
 
 #: src/player_tab.c:3674
 msgid " quick preview finished, song paused"
@@ -656,9 +626,8 @@ msgid "using"
 msgstr "использование"
 
 #: src/main_win.c:349
-#, fuzzy
 msgid "release of "
-msgstr "релиз от"
+msgstr ""
 
 #: src/main_win.c:446
 msgid " info: stopping the split process.. please wait"
@@ -803,9 +772,9 @@ msgid "Split every %2d seconds."
 msgstr ""
 
 #: src/special_split.c:208 src/special_split.c:305
-#, fuzzy, c-format
+#, c-format
 msgid "Split in %2d equal time tracks."
-msgstr "Одинаковая длительность дорожек"
+msgstr ""
 
 #: src/special_split.c:243
 msgid "Normal"
@@ -844,9 +813,8 @@ msgid "Minimum silence length (seconds) : "
 msgstr "Мин. длительность тишины (секунды) : "
 
 #: src/special_split.c:401
-#, fuzzy
 msgid "Minimum track length (seconds) : "
-msgstr "Мин. длительность тишины (секунды) : "
+msgstr ""
 
 #: src/special_split.c:409
 msgid "Remove silence between tracks"
@@ -877,9 +845,8 @@ msgid "File mode"
 msgstr "Режим файла"
 
 #: src/messages.c:180
-#, fuzzy
 msgid "Enable _debug messages"
-msgstr "Показать _отладочные сообщения"
+msgstr ""
 
 #: src/messages.c:187
 msgid "C_lear"
@@ -1022,12 +989,3 @@ msgstr "Выберите имя файла c расширением cue"
 #: src/export.c:212
 msgid "cue files (*.cue)"
 msgstr "cue файлы (*.cue)"
-
-#~ msgid "Choose a player:"
-#~ msgstr "Выберите плеер:"
-
-#~ msgid "No"
-#~ msgstr "Нет"
-
-#~ msgid "Selected album:"
-#~ msgstr "Выбранный альбом:"
