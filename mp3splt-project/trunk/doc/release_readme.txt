@@ -10,6 +10,7 @@ Release instructions:
     $ ./newmp3splt/doc/generate_manual.sh
 5) translate (string freeze)
     (with 'poedit' for example)
+5') update transifex translations 
 6) update the following files if necessary:
      ChangeLog
      NEWS
