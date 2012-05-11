@@ -90,6 +90,8 @@ libmp3splt must be compiled with 'id3tag' support. By default, the output
 files will have the same ID3 tag version as the input file; this behaviour can be changed
 with the -T option. If the input file has no tags and the -g option is used, then both
 ID3v1 and ID3v2 are written. Total tracknumber is not yet supported.
+Only writing ID3v2.4 is supported; note that some software only support ID3v2.3 and will not
+be able to read them.
 <P>
 <B>NOTE about the OUTPUT DIRECTORY:</B> by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
@@ -297,6 +299,11 @@ Threshold level (dB) to be considered silence. It is a float number
 between -96 and 0. Default is -48 dB, which is a value found by tests and should be good in most
 cases.
 <P>
+<DT><B>shots=INTEGER</B><DD>
+Positive integer of  the minimum number of shots to be found as non silence
+after the silence. Default is 25. Decrease this value if you need to split files having
+closer silence points.
+<P>
 <DT><B>Both -s and -a</B><DD>
 <P>
 <DT><B>off=FLOAT</B><DD>
@@ -341,7 +348,7 @@ This allows you to split mp3 and ogg streams which can be read only one time and
 seeked. Both framemode and standard mode are available, but framemode can be really slow if used with big
 files, because to seek splitpoints we need to process all bytes and all frames. -k option
 (so STDIN as input too) can't be used together with -s -a -w -e, because input must be seekable for
-those options.
+those options. Copying original tags is not yet supported for the non seekable option.
 <P>
 <DT><B>-O TIME</B>         <DD>
 <B>Overlap split files</B>. TIME will be added to each end splitpoint.
@@ -703,7 +710,7 @@ for latest release.
 (C) 2002-2005 by Matteo Trotta
 <BR>
 
-(C) 2005-2011 by Alexandru Ionut Munteanu
+(C) 2005-2012 by Alexandru Ionut Munteanu
 <P>
 
 Permission is granted to copy, distribute and/or modify
@@ -731,6 +738,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 21:17:34 GMT, November 13, 2011
+Time: 21:09:44 GMT, May 11, 2012
 </BODY>
 </HTML>
