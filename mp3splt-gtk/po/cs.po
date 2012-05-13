@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # fri <pavelfric@seznam.cz>, 2011.
 # Pavel Fric <fripohled.blogspot.com>, 2011.
@@ -9,15 +9,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2012-05-10 20:02+0200\n"
+"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"POT-Creation-Date: 2012-05-13 00:32+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:254
@@ -279,7 +279,14 @@ msgid ""
 "    @t - song title\n"
 "    @g - genre\n"
 "    @n - track number"
-msgstr "    @f - název souboru\n    @a - jméno umělce\n    @p - účinkující u každé skladby (ne vždy je)\n    @b - název alba\n    @t - název písně\n    @g - žánr\n    @n - číslo skladby"
+msgstr ""
+"    @f - název souboru\n"
+"    @a - jméno umělce\n"
+"    @p - účinkující u každé skladby (ne vždy je)\n"
+"    @b - název alba\n"
+"    @t - název písně\n"
+"    @g - žánr\n"
+"    @n - číslo skladby"
 
 #: src/preferences_tab.c:970
 msgid "<b>Output filename format</b>"
@@ -368,7 +375,16 @@ msgid ""
 "    (?<year>)     - year of emission\n"
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - comment"
-msgstr "Výše zadejte regulární výraz jako PERL za použití jmenovaných podskupin.\nJsou rozpoznána následující klíčová slova:\n    (?<artist>)   - jméno umělce\n    (?<album>)    - název alba\n    (?<title>)    - název skladby\n    (?<tracknum>) - číslo současné skladby\n    (?<year>)     - rok vydání\n    (?<genre>)    - žánr\n    (?<comment>)  - poznámka"
+msgstr ""
+"Výše zadejte regulární výraz jako PERL za použití jmenovaných podskupin.\n"
+"Jsou rozpoznána následující klíčová slova:\n"
+"    (?<artist>)   - jméno umělce\n"
+"    (?<album>)    - název alba\n"
+"    (?<title>)    - název skladby\n"
+"    (?<tracknum>) - číslo současné skladby\n"
+"    (?<year>)     - rok vydání\n"
+"    (?<genre>)    - žánr\n"
+"    (?<comment>)  - poznámka"
 
 #: src/preferences_tab.c:1174
 msgid "_Replace underscores by spaces"
@@ -475,7 +491,24 @@ msgid ""
 "\tEnable Socket Interface\n"
 " Only default port is supported for now(8775)\n"
 " After that, restart snackamp and mp3splt-gtk should work.\n"
-msgstr "\n Žádné spojení s přehrávacím programem SnackAmp.\n Stáhněte si, prosím, SnackAmp ze stránek\n\thttp://snackamp.sourceforge.net\n a nainstalujte jej.\n\n Ujistěte se, že SnackAmp běží\n a že jej máte alespoň ve verzi 3.1.3\n\n Ujistěte se, že máte v SnacAmpu zapnuto\n rozhraní zdířky (socket): Musíte jít do\n\tNástroje->Nastavení->Různé\n v nabídce SnackAmpu a zapnout povolení rozhraní\n\tzdířky (socket)\n Nyní je podporována pouze výchozí přípojka (8775)\n Potom spusťte SnackAmp znovu a mp3splt-gtk\n by měl pracovat.\n"
+msgstr ""
+"\n"
+" Žádné spojení s přehrávacím programem SnackAmp.\n"
+" Stáhněte si, prosím, SnackAmp ze stránek\n"
+"\thttp://snackamp.sourceforge.net\n"
+" a nainstalujte jej.\n"
+"\n"
+" Ujistěte se, že SnackAmp běží\n"
+" a že jej máte alespoň ve verzi 3.1.3\n"
+"\n"
+" Ujistěte se, že máte v SnacAmpu zapnuto\n"
+" rozhraní zdířky (socket): Musíte jít do\n"
+"\tNástroje->Nastavení->Různé\n"
+" v nabídce SnackAmpu a zapnout povolení rozhraní\n"
+"\tzdířky (socket)\n"
+" Nyní je podporována pouze výchozí přípojka (8775)\n"
+" Potom spusťte SnackAmp znovu a mp3splt-gtk\n"
+" by měl pracovat.\n"
 
 #: src/player_tab.c:690
 msgid ""
@@ -484,8 +517,17 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to connect.\n"
-msgstr "\n Žádné spojení s přehrávacím programem Audacious.\n Ujistěte se, že je Audacious nainstalován.\n\n Přidejte do proměnné CESTY místo instalace spustitelného\n souboru pro Audacious. V případě že nevíte,\n jak se to má udělat, spusťte Audacious ručně\n a pokuste se spojení vytvořit.\n"
+" If you don't know how to do that, start audacious manually and then try to "
+"connect.\n"
+msgstr ""
+"\n"
+" Žádné spojení s přehrávacím programem Audacious.\n"
+" Ujistěte se, že je Audacious nainstalován.\n"
+"\n"
+" Přidejte do proměnné CESTY místo instalace spustitelného\n"
+" souboru pro Audacious. V případě že nevíte,\n"
+" jak se to má udělat, spusťte Audacious ručně\n"
+" a pokuste se spojení vytvořit.\n"
 
 #: src/player_tab.c:977
 msgid "Previous"
@@ -542,17 +584,23 @@ msgstr "před %s"
 
 #: src/player_tab.c:2671
 msgid " left click on splitpoint selects it, right click erases it"
-msgstr "Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení jej vymaže"
+msgstr ""
+"Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení "
+"jej vymaže"
 
 #: src/player_tab.c:2676
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
-msgstr "Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní násobek zvětšení"
+msgstr ""
+"Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní "
+"násobek zvětšení"
 
 #: src/player_tab.c:2682
 msgid ""
 " left click on point + move changes point position, right click play preview"
-msgstr "Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje náhled"
+msgstr ""
+"Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje "
+"náhled"
 
 #: src/player_tab.c:2687
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"

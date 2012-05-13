@@ -1,22 +1,23 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # gogo <trebelnik2@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2012-05-10 20:02+0200\n"
+"Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
+"POT-Creation-Date: 2012-05-13 00:31+0200\n"
 "PO-Revision-Date: 2012-04-15 12:44+0000\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: hr\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2\n"
 
 #: src/mp3splt.c:840
 #, c-format
@@ -60,14 +61,18 @@ msgstr " čitanje informacija iz CDDB datoteke %s ...\n"
 msgid ""
 "  Tracks: %d\n"
 "\n"
-msgstr "  Pjesme: %d\n\n"
+msgstr ""
+"  Pjesme: %d\n"
+"\n"
 
 #: src/cddb.c:259 src/cue.c:135
 #, c-format
 msgid ""
 "\n"
 "  Artist: %s\n"
-msgstr "\n  Izvođač: %s\n"
+msgstr ""
+"\n"
+"  Izvođač: %s\n"
 
 #: src/cddb.c:262 src/cue.c:139
 #, c-format
@@ -118,16 +123,20 @@ msgstr "Auto"
 #: src/splt.c:766
 #, c-format
 msgid ""
-" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s,"
-" Min track: %.2f, Shots: %d)\n"
-msgstr " Vrsta podjele tišine: %s način (Th: %.1f dB, Isključeno: %.2f, Min: %.2f, Ukloni: %s, Min pjesma: %.2f, Pogotci: %d)\n"
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
+"Min track: %.2f, Shots: %d)\n"
+msgstr ""
+" Vrsta podjele tišine: %s način (Th: %.1f dB, Isključeno: %.2f, Min: %.2f, "
+"Ukloni: %s, Min pjesma: %.2f, Pogotci: %d)\n"
 
 #: src/splt.c:786
 #, c-format
 msgid ""
-" Found silence log file '%s' ! Reading silence points from file to save time"
-" ;)\n"
-msgstr " Peonađena datoteka popisa tišine '%s' ! Očitavnje točaka tišine iz datoteke, radi bržeg očitavanja ;)\n"
+" Found silence log file '%s' ! Reading silence points from file to save "
+"time ;)\n"
+msgstr ""
+" Peonađena datoteka popisa tišine '%s' ! Očitavnje točaka tišine iz "
+"datoteke, radi bržeg očitavanja ;)\n"
 
 #: src/splt.c:815
 #, c-format
@@ -557,8 +566,8 @@ msgstr "nedovoljno memorije"
 
 #: plugins/mp3.c:1158
 msgid ""
-" warning: lost sync and compiled without id3tag support - the split might be"
-" corrupt\n"
+" warning: lost sync and compiled without id3tag support - the split might be "
+"corrupt\n"
 msgstr ""
 
 #: plugins/mp3.c:1254
