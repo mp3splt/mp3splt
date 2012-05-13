@@ -380,7 +380,7 @@ function run_functional_tests
   print_yellow "Running functional tests..."
   echo
 
-  cd ../tests && ./tests.sh || exit 1
+  cd tests && ./tests.sh || exit 1
 
   cd $PROJECT_DIR
 }
