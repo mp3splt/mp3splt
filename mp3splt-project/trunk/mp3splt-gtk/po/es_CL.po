@@ -1,21 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Ricardo A. Hermosilla Carrillo <ra.hermosillac@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2012-05-10 20:02+0200\n"
+"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
+"POT-Creation-Date: 2012-05-13 00:32+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Ricardo A. Hermosilla Carrillo <ra.hermosillac@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: es_CL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_CL\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/xmms_control.c:82 src/gstreamer_control.c:254
@@ -70,7 +70,8 @@ msgstr "Establecer puntos de divisiones desde detección de silencio"
 
 #: src/tree_tab.c:1388
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
-msgstr "Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
+msgstr ""
+"Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
 
 #: src/tree_tab.c:1405
 msgid "Number of tracks (0 means all tracks):"
@@ -222,15 +223,19 @@ msgstr "Modo ma_rco (útil para mp3 VBR) (mp3 solamente)"
 
 #: src/preferences_tab.c:704
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
-msgstr "Modo _Auto-ajustar (utiliza detección de silencios para auto-ajustar puntos de división)"
+msgstr ""
+"Modo _Auto-ajustar (utiliza detección de silencios para auto-ajustar puntos "
+"de división)"
 
 #: src/preferences_tab.c:736
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
-msgstr "Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
+msgstr ""
+"Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
 
 #: src/preferences_tab.c:753
 msgid "Gap level (seconds around splitpoint to search for silence):"
-msgstr "Nivel de Omisión (segundos en punto de división para buscar un silencio):"
+msgstr ""
+"Nivel de Omisión (segundos en punto de división para buscar un silencio):"
 
 #: src/preferences_tab.c:772
 msgid "Set _default split options"
@@ -473,7 +478,22 @@ msgid ""
 "\tEnable Socket Interface\n"
 " Only default port is supported for now(8775)\n"
 " After that, restart snackamp and mp3splt-gtk should work.\n"
-msgstr "\nNo se puede conectar al reproductor snackAmp.\nPor favor, descargue e instale el reproductor desde\nhttp://snackamp.sourceforge.net\n\nVerifique que snackamp se está ejecutando.\nVerifique que la versión del programa es >= 3.1.3\n\nVerifique que tiene habilitada la interfaz socket en snackAmp:\nTiene que ir a:\nHerramientas->Preferencias->Otros\ndesde el menú del programa y marcar la casilla\nHabilitar Interfaz Socket\nSólo se admite el puerto por defecto por ahora (8775)\nDespués de eso, reinicie snackAmp y mp3split-gtk funcionará.\n"
+msgstr ""
+"\n"
+"No se puede conectar al reproductor snackAmp.\n"
+"Por favor, descargue e instale el reproductor desde\n"
+"http://snackamp.sourceforge.net\n"
+"\n"
+"Verifique que snackamp se está ejecutando.\n"
+"Verifique que la versión del programa es >= 3.1.3\n"
+"\n"
+"Verifique que tiene habilitada la interfaz socket en snackAmp:\n"
+"Tiene que ir a:\n"
+"Herramientas->Preferencias->Otros\n"
+"desde el menú del programa y marcar la casilla\n"
+"Habilitar Interfaz Socket\n"
+"Sólo se admite el puerto por defecto por ahora (8775)\n"
+"Después de eso, reinicie snackAmp y mp3split-gtk funcionará.\n"
 
 #: src/player_tab.c:690
 msgid ""
@@ -482,8 +502,17 @@ msgid ""
 " Verify that you have installed audacious.\n"
 "\n"
 " Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to connect.\n"
-msgstr "\nNo se puede conectar al reproductor Audacious.\nVerifique que lo tiene instalado.\n\nPonga en su variable PATH el directorio dónde se encuentra instalado Audacious.\nSi no sabe cómo hacer esto, inicie Audacious manualmente y luego intente conectar.\n"
+" If you don't know how to do that, start audacious manually and then try to "
+"connect.\n"
+msgstr ""
+"\n"
+"No se puede conectar al reproductor Audacious.\n"
+"Verifique que lo tiene instalado.\n"
+"\n"
+"Ponga en su variable PATH el directorio dónde se encuentra instalado "
+"Audacious.\n"
+"Si no sabe cómo hacer esto, inicie Audacious manualmente y luego intente "
+"conectar.\n"
 
 #: src/player_tab.c:977
 msgid "Previous"
@@ -545,12 +574,16 @@ msgstr " clic en el punto de división lo selecciona, clic derecho lo elimina"
 #: src/player_tab.c:2676
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
-msgstr " clic + mover cambia la posición de la canción, clic derecho + mover cambia el zoom"
+msgstr ""
+" clic + mover cambia la posición de la canción, clic derecho + mover cambia "
+"el zoom"
 
 #: src/player_tab.c:2682
 msgid ""
 " left click on point + move changes point position, right click play preview"
-msgstr " clic en el punto + mover cambia la posición del punto, clic derecho reproduce la vista previa"
+msgstr ""
+" clic en el punto + mover cambia la posición del punto, clic derecho "
+"reproduce la vista previa"
 
 #: src/player_tab.c:2687
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
