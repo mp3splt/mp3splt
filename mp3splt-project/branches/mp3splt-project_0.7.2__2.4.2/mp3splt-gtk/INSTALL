@@ -1,0 +1,155 @@
+mp3splt-gtk - INSTALLATION INFORMATION
+
+====================================================================
+
+	To install the program, you can to compile the source code.
+
+  Installing the program using the binary '.deb' debian packages :
+
+    0) Installation on Debian GNU/Linux
+
+	Installing the program on GNU/Linux is made in 3 steps :
+
+    1) Install needed libraries
+
+		2) Compile the source
+
+		3) Install the binary
+
+    4) Troubleshooting 
+
+  Installing the program on Windows :
+
+    5) Installation on Windows
+
+  Notes :
+
+    6) Notes for using the snackAmp player
+
+
+--------------------------------------------------------------------
+0) Installation on Debian GNU/Linux :
+
+  Download the libmp3splt debian package from the mp3splt site
+  (http://mp3splt.sourceforge.net) and install it with :
+
+    dpkg -i libmp3splt.deb
+
+  Download the mp3splt-gtk debian package from the mp3splt site and
+  install it with :
+
+    dpkg -i mp3splt-gtk.deb
+
+
+--------------------------------------------------------------------
+1) Install needed libraries :
+
+  Before compiling the source code, verify that you have the following
+  libraries installed :
+
+    libmp3splt (http://mp3splt.sourceforge.net)
+
+  In order to have more features, you can also install the following
+  optional libraries/programs :
+
+    gstreamer (http://www.gstreamer.net/)
+    audacious (http://audacious-media-player.org/)
+
+
+--------------------------------------------------------------------
+2) Compiling the source :
+
+	Move into the mp3splt-gtk directory and type :
+	
+		./configure
+
+	    Main configure options :
+        --disable-gstreamer
+        --disable-audacious
+
+	    Other configure options :
+        --with-mp3splt=PFX
+        --with-mp3splt-libraries=DIR
+        --with-mp3splt-includes=DIR
+
+        --disable-mp3splttest
+
+
+	This will create the Makefile used to compile the program
+
+	After that, type :
+	
+		make
+
+
+--------------------------------------------------------------------
+3) Install the binary :
+
+	To install the binary type :
+	
+		make install
+
+
+--------------------------------------------------------------------
+4) Compiling from svn
+
+In order to generate a "./configure" command you have to type
+
+./autogen.sh
+
+before trying step 2)
+
+If due to a broken installation of the 
+gnome-documentation-build-utilities you get the following error 
+message:
+
+touch: cannot touch `build-aux/gnome-doc-utils.make': Permission denied
+
+replace the said symlink by a "real" file of the same contents.
+--------------------------------------------------------------------
+5) Troubleshooting :
+	
+  If when running the application you get an error message like
+    "cannot open shared library...", try the following :
+
+  as root, type :
+
+	  echo "/usr/local/lib" >> /etc/ld.so.conf
+
+  then :
+
+	  ldconfig
+
+
+--------------------------------------------------------------------
+6) Installation on Windows
+
+  Download the windows installer and install it.
+  The windows binary supports an 'internal' player with gstreamer.
+  It is recommended to use the 'gstreamer' player.
+
+
+--------------------------------------------------------------------
+7) Notes for using the snackAmp player :
+
+ To make SnackAmp work with mp3splt-gtk :
+ download it from :
+   http://snackamp.sourceforge.net/
+  Make sure to download snackamp version >= 3.1.3 otherwise it will not work
+
+ -to get the player working, you have to go to 
+   Tools->Preferences->Miscellaneous
+	from the snackamp menu and check
+   "Enable Socket Interface"
+	-only default port is supported for now(8775)
+ -after that, restart snackamp and mp3splt-gtk should work
+
+///////////////////////////////////////////
+for any problems, contact me or send bugs/suggestions to :
+
+Alexandru Munteanu <io_fx@yahoo.fr>
+
+	http://mp3splt.sourceforge.net/
+
+///////////////////////////////////////////
+

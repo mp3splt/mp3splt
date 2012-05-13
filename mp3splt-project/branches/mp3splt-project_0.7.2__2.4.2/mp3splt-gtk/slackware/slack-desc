@@ -1,0 +1,27 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in. You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+           |-----handy-ruler------------------------------------------------------|
+mp3splt-gtk: mp3splt-gtk
+mp3splt-gtk:
+mp3splt-gtk: Homepage: http://mp3splt.sourceforge.net
+mp3splt-gtk: GTK2 gui that uses libmp3splt for lossless linear editing  
+mp3splt-gtk: of audio files (cut an audio file into several tracks.)
+mp3splt-gtk: Since there is no decoding step involved this means that MP3 
+mp3splt-gtk: (including VBR) and Ogg Vorbis can be split into smaller files
+mp3splt-gtk:  without loosing any quality. Useful for splitting albums into 
+mp3splt-gtk: tracks which can be done either manually, using freedb.org data 
+mp3splt-gtk: from the net or using .cue files ...
+mp3splt-gtk:
+mp3splt-gtk: Requirements: libmp3splt version 0.7.2,
+
+
+ 
+ 
+ 
+
+ 

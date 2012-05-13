@@ -1,0 +1,22 @@
+# List of files which contain translatable strings.
+
+src/xmms_control.c
+src/tree_tab.c
+src/split_files.c
+src/preferences_tab.c
+src/player_tab.c
+src/main_win.c
+src/options_manager.c
+src/freedb_tab.c
+src/special_split.c
+src/messages.c
+src/multiple_files.c
+src/gstreamer_control.c
+src/mp3splt-gtk.c
+src/player.c
+src/snackamp_control.c
+src/utilities.c
+src/import.c
+src/preferences_manager.c
+src/export.c
+

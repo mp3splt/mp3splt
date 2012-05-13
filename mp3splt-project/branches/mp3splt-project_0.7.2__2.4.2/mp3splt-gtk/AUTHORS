@@ -1,0 +1,22 @@
+* Alexandru Ionut Munteanu - <io_fx@yahoo.fr>: Author and main maintainer of mp3splt-gtk
+* Matteo Trotta - <mtrotta@users.sourceforge.net>: Author and main maintainer of Mp3Splt Project
+
+People who contributed to mp3splt-project development :
+
+  - Marco Papa Manzillo <mpapamanz@users.sourceforge.net>: rpm and deb packager.
+  - François Revol <revol@free.fr>: added list option and worked on BeOS porting.
+  - Remo Laubacher <laubi@users.sourceforge.net>: ported mp3splt v. 0.4 for Windows.
+  - Davide Magatti <gilgamesh@notme.com>: "official" mp3splt beta tester
+  - Markus Elfring: code checking for return codes, some bad coding techniques and suggestions
+  - Roberto Neri : patch from BMP to audacious support
+  - Mario Blättermann <mariobl@gnome.org>: german translation and suggestions
+  - Erez Volk <erez_v@users.sourceforge.net>: alphabetic track number output variables patch
+  - Federico Grau <donfede@casagrau.org>: audacity labels support
+  - David Belohrad <david.belohrad@cern.ch>: set tags from filename regular expression
+  - Gunter Königsmann <ubuntu@peterpall.de>: gui improvement and debian packaging
+
+  and others ...
+
+Homepage :
+	http://mp3splt.sourceforge.net/
+
