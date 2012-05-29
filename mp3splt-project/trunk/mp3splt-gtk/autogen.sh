@@ -84,3 +84,14 @@ echo -n "Formatting language files with msgfmt... " && \
     cd ..
 } && echo "done"
 
+{
+   `which glibtoolize 2>&1 >/dev/null`
+    if [ $? -eq 0 ]; then
+      echo -n "Running glibtoolize (in case we use the cutter testing framework) ... "
+      glibtoolize -c --force
+    else
+      echo -n "Running glibtoolize (in case we use the cutter testing framework) ... "
+      libtoolize -c --force
+    fi
+} && echo "done"
+
