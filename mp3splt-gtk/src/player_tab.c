@@ -59,6 +59,7 @@
 #include "mp3splt-gtk.h"
 #include "ui_manager.h"
 #include "widgets_helper.h"
+#include "douglas_peucker.h"
 
 #define DRAWING_AREA_WIDTH 400
 #define DRAWING_AREA_HEIGHT 123 
@@ -276,6 +277,8 @@ GtkWidget *playlist_remove_file_button;
 //remove file button
 GtkWidget *playlist_remove_all_files_button;
 
+GPtrArray *filtered_points_presence = NULL;
+
 //playlist tree enumeration
 enum
   {
@@ -325,6 +328,12 @@ gchar* inputfilename_get()
 //!function called from the library when scanning for the silence level
 void get_silence_level(long time, float level, void *user_data)
 {
+  gint converted_level = (gint)floorf(abs(level));
+  if (converted_level < 0)
+  {
+    return;
+  }
+
   if (! silence_points)
   {
     silence_points = g_malloc(sizeof(silence_wave) * 3000);
@@ -341,6 +350,37 @@ void get_silence_level(long time, float level, void *user_data)
   silence_points[number_of_silence_points].level = abs(level);
 
   number_of_silence_points++;
+}
+
+static GArray *build_gdk_points_for_douglas_peucker()
+{
+  GArray *points = g_array_new(TRUE, TRUE, sizeof(GdkPoint));
+
+  gint i = 0;
+  for (i = 0;i < number_of_silence_points;i++)
+  {
+    long time = silence_points[i].time;
+    float level = silence_points[i].level;
+
+    GdkPoint point;
+    point.x = (gint)time;
+    point.y = (gint)floorf(level);
+    g_array_append_val(points, point);
+  }
+
+  return points;
+}
+
+static void compute_douglas_peucker_filters()
+{
+  GArray *gdk_points_for_douglas_peucker = build_gdk_points_for_douglas_peucker();
+
+  splt_douglas_peucker_free(filtered_points_presence);
+  //19
+  filtered_points_presence = splt_douglas_peucker(gdk_points_for_douglas_peucker, 
+      5.0, 8.0, 12.0, 18.0, 23.0, -1.0);
+
+  g_array_free(gdk_points_for_douglas_peucker, TRUE);
 }
 
 gpointer detect_silence(gpointer data)
@@ -376,6 +416,8 @@ gpointer detect_silence(gpointer data)
   mp3splt_set_silence_level_function(the_state, NULL, NULL);
 
   enter_threads();
+
+  compute_douglas_peucker_filters();
 
   print_status_bar_confirmation(err);
   gtk_widget_set_sensitive(cancel_button, FALSE);
@@ -2162,6 +2204,42 @@ gint get_silence_wave_coeff()
   return points_coeff;
 }
 
+gint point_is_filtered(gint index)
+{
+  //mp3: 1, 8, 64, 128, 512
+  //ogg: 1, 2, 16, 32, 128
+  gint silence_wave_coeff = get_silence_wave_coeff();
+  if (silence_wave_coeff < 8)
+  {
+    return FALSE;
+  }
+
+  gint filtered_index = 0;
+  if (silence_wave_coeff < 8)
+  {
+    filtered_index = 0;
+  }
+  else if (silence_wave_coeff < 20)
+  {
+    filtered_index = 1;
+  }
+  else if (silence_wave_coeff < 100)
+  {
+    filtered_index = 2;
+  }
+  else if (silence_wave_coeff < 150)
+  {
+    filtered_index = 3;
+  }
+  else
+  {
+    filtered_index = 4;
+  }
+
+  GArray *points_presence = g_ptr_array_index(filtered_points_presence, filtered_index);
+  return !g_array_index(points_presence, gint, index);
+}
+
 //! Draws the silence wave
 void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *gc)
 {
@@ -2170,46 +2248,43 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
     return;
   }
 
+  double dashes[] = { 1.0, 3.0 };
+  cairo_set_dash(gc, dashes, 0, 0.0);
+  cairo_set_line_width(gc, 1.0);
+  cairo_set_line_cap(gc, CAIRO_LINE_CAP_ROUND);
+
   GdkColor color;
   color.red = 0;color.green = 0;color.blue = 0;
   set_color(gc, &color);
 
+  gint first_time = SPLT_TRUE;
   gint i = 0;
-  gint points_coeff = get_silence_wave_coeff();
-
-  gint times = 0;
-
-  gint previous_x = 0;
-  gint previous_y = 0;
-
   for (i = 0;i < number_of_silence_points;i++)
   {
+    if (point_is_filtered(i))
+    {
+      continue;
+    }
+
     long time = silence_points[i].time;
+    if ((time > right_mark) || (time < left_mark)) 
+    {
+      continue;
+    }
+
     float level = silence_points[i].level;
 
-    if ((time <= right_mark) && (time >= left_mark))
+    gint x = get_draw_line_position(width_drawing_area, (gfloat) time);
+    gint y = text_ypos + margin + (gint)floorf(level);
+
+    if (first_time)
     {
-      if (i % points_coeff == 0)
-
-      {
-        gint x = get_draw_line_position(width_drawing_area, (gfloat) time);
-        gint y = text_ypos + margin + (gint)floorf(level);
-
-        if (times == 0)
-        {
-          cairo_move_to(gc, x, y);
-        }
-        else
-        {
-          draw_line_with_width(gc, previous_x, previous_y, x, y, FALSE, FALSE, 1.0);
-        }
-
-        previous_x = x;
-        previous_y = y;
-
-        times++;
-      }
-
+      cairo_move_to(gc, x, y);
+      first_time = SPLT_FALSE;
+    }
+    else
+    {
+      cairo_line_to(gc, x, y);
     }
   }
 

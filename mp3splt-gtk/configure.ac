@@ -313,11 +313,44 @@ if test "x$enable_extra_warnings" = xyes;then
 fi
 
 
+#################################################################
+# Check for cutter
+#################################################################
+
+AM_CONDITIONAL(HAS_CUTTER, false)
+
+AC_ARG_ENABLE(cutter, [AC_HELP_STRING([--disable-cutter],[ Disable Cutter unit testing. ]) ],
+    [enable_cutter=$enableval],[enable_cutter="yes"])
+
+if test "x$enable_cutter" = xyes;then
+
+AC_CHECK_CUTTER
+
+cutter_command="no"
+AC_CHECK_FILE([$CUTTER], [cutter_command="yes"])
+
+if test "x$CUTTER" != x;then
+  if test "x$cutter_command" = xyes;then
+    AM_CONDITIONAL(HAS_CUTTER, true)
+
+    ifdef([LT_CONFIG_LTDL_DIR],
+          [ LT_CONFIG_LTDL_DIR([libltdl]) ],
+                [])
+    ifdef([LT_INIT],
+          [ LT_INIT([win32-dll]) ],
+                [ AC_PROG_LIBTOOL ])
+    AC_WITH_LTDL
+  fi
+fi
+
+fi
+
+
 #################################################
 # Generate Makefiles
 #################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile test/Makefile])
 
 
 #################################################

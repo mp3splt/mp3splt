@@ -388,10 +388,16 @@ function run_functional_tests
 function run_unit_tests
 {
   echo
-  print_yellow "Running unit tests..."
+  print_yellow "Running libmp3splt unit tests..."
   echo
 
   ${LIBMP3SPLT_DIR}/test/run-tests.sh || exit 1
+
+  echo
+  print_yellow "Running mp3splt-gtk unit tests..."
+  echo
+
+  ${MP3SPLT_GTK_DIR}/test/run-tests.sh || exit 1
 }
 
 ###########

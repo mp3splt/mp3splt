@@ -44,7 +44,8 @@ mp3splt_gtk_SOURCES = \
 	radio_helper.c radio_helper.h \
 	export.c export.h \
 	ui_manager.c ui_manager.h \
-	dialog_helper.c dialog_helper.h
+	dialog_helper.c dialog_helper.h \
+  douglas_peucker.c douglas_peucker.h
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 
