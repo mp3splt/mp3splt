@@ -401,6 +401,7 @@ static int splt_ogg_read_headers_and_save_them(splt_state *state, splt_ogg_state
   }
 
   oggstate->serial = ogg_page_serialno(&page);
+  oggstate->saved_serial = ogg_page_serialno(&page);
   //how to handle alloc memory problem ?
   ogg_stream_init(oggstate->stream_in, oggstate->serial);
   if(ogg_stream_pagein(oggstate->stream_in, &page) < 0)
@@ -620,7 +621,8 @@ static int splt_ogg_find_begin_cutpoint(splt_state *state, splt_ogg_state *oggst
         //result==1 means that we have a good page
         if (result > 0)
         {
-          if (ogg_page_bos(&page))
+          if (ogg_page_bos(&page) &&
+              (oggstate->saved_serial != ogg_page_serialno(&page)))
           {
             splt_ogg_initialise_for_new_stream(ogg_new_stream_handler, 
                 &page, &cutpoint, prevgranpos);
@@ -915,7 +917,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
       {
         if (result != -1)
         {
-          if (ogg_page_bos(&page))
+          if (ogg_page_bos(&page) &&
+              (oggstate->saved_serial != ogg_page_serialno(&page)))
           {
             splt_ogg_initialise_for_new_stream(ogg_new_stream_handler, &page, &cutpoint, prev_granpos);
             oggstate->cutpoint_begin = 0;

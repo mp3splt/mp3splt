@@ -180,7 +180,8 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 
       if (result > 0)
       {
-        if (ogg_page_bos(&og))
+        if (ogg_page_bos(&og) &&
+            (oggstate->saved_serial != ogg_page_serialno(&og)))
         {
           splt_ogg_initialise_for_new_stream(ogg_new_stream_handler, &og, NULL, 0);
           oggstate->cutpoint_begin = 0;

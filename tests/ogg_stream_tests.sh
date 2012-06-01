@@ -294,7 +294,7 @@ function test_stream_auto_adjust_silence
   echo
 }
 
-function test_multiple_logical_streams
+function test_stream_multiple_logical_streams
 {
   remove_output_dir
 
@@ -344,7 +344,7 @@ function test_multiple_logical_streams
   echo
 }
 
-function test_multiple_logical_streams_from_0_to_EOF
+function test_stream_multiple_logical_streams_from_0_to_EOF
 {
   remove_output_dir
 
