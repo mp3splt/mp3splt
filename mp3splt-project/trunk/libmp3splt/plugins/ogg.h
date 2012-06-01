@@ -56,6 +56,7 @@ typedef struct {
   ogg_int64_t len;
   ogg_int64_t cutpoint_begin;
   unsigned int serial;
+  unsigned int saved_serial;
   splt_v_packet **packets; /* 2 */
   splt_v_packet **headers; /* 3 */
   OggVorbis_File vf;
