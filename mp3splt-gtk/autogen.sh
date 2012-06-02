@@ -37,6 +37,10 @@ win=$1
     exit 1
 }
 
+#remove old libtool generated files
+rm -f m4/{libtool,argz,ltdl,ltoptions,lt~obsolete,ltversion,ltsugar}.m4
+rm -f libtool aclocal.m4 config.status configure autom4te.cache/* ltmain.sh
+
 if test "x$win" != x;then
  WIN_ACLOCAL_FLAGS="-I /usr/share/aclocal"
 fi
