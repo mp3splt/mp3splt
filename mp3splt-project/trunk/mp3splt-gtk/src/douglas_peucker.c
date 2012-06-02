@@ -55,6 +55,7 @@ static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_poin
 GPtrArray *splt_douglas_peucker(GArray *gdk_points, gdouble threshold_to_discard_points, ...)
 {
   GArray *input_douglas_points = build_input_douglas_points(gdk_points);
+  guint length = input_douglas_points->len;
 
   GPtrArray *presence_points_by_threshold = g_ptr_array_new();
 
@@ -62,8 +63,12 @@ GPtrArray *splt_douglas_peucker(GArray *gdk_points, gdouble threshold_to_discard
   va_start(ap, threshold_to_discard_points);
   while (threshold_to_discard_points > 0)
   {
-    GArray *presence_array =
+    GArray *output_douglas_points =
       splt_douglas_peucker_for_one_threshold(input_douglas_points, threshold_to_discard_points);
+
+    GArray *presence_array = build_presence_array(output_douglas_points, length);
+    g_array_free(output_douglas_points, TRUE);
+
     g_ptr_array_add(presence_points_by_threshold, (gpointer) presence_array);
 
     threshold_to_discard_points = va_arg(ap, gdouble);
@@ -95,31 +100,51 @@ static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_poin
 {
   GArray *output_douglas_points =
     splt_recursive_douglas_peucker(splt_copy_as_new_array(input_douglas_points), threshold_to_discard_point);
-  GArray *presence_array = build_presence_array(output_douglas_points, input_douglas_points->len);
-  g_array_free(output_douglas_points, TRUE);
-  return presence_array;
+
+  return output_douglas_points;
+}
+
+static gint douglas_points_sort(gconstpointer first, gconstpointer second)
+{
+  douglas_point *first_douglas_point = (douglas_point *)first;
+  douglas_point *second_douglas_point = (douglas_point *)second;
+
+  return first_douglas_point->index - second_douglas_point->index;
 }
 
 static GArray *build_presence_array(GArray *output_douglas_points, guint length)
 {
-  GArray *presence_array = g_array_sized_new(TRUE, TRUE, sizeof(gint), length);
-  presence_array->len = length;
+  g_array_sort(output_douglas_points, douglas_points_sort);
 
-  gint i = 0;
+  GArray *presence_array = g_array_new(TRUE, TRUE, sizeof(gint));
 
-  gint false_value = 0;
-  for (i = 0; i < presence_array->len; i++)
+  gint current_point_index = -1;
+  gint output_douglas_points_index = 0;
+
+  if (output_douglas_points->len > 0)
   {
-    g_array_remove_index(presence_array, i);
-    g_array_insert_val(presence_array, i, false_value);
+    douglas_point current_point =
+      g_array_index(output_douglas_points, douglas_point, output_douglas_points_index);
+    current_point_index = current_point.index;
   }
 
+  gint false_value = 0;
   gint true_value = 1;
-  for (i = 0; i < output_douglas_points->len; i++)
+
+  gint i = 0;
+  for (i = 0;i < length; i++)
   {
-    douglas_point point = g_array_index(output_douglas_points, douglas_point, i);
-    g_array_remove_index(presence_array, point.index);
-    g_array_insert_val(presence_array, point.index, true_value);
+    if (current_point_index == i)
+    {
+      output_douglas_points_index++;
+      douglas_point point =
+        g_array_index(output_douglas_points, douglas_point, output_douglas_points_index);
+      current_point_index = point.index;
+      g_array_append_val(presence_array, true_value);
+      continue;
+    }
+
+    g_array_append_val(presence_array, false_value);
   }
 
   return presence_array;
