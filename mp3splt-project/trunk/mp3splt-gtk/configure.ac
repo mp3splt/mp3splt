@@ -33,13 +33,14 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.7.2, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.7.2.1002, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
 # One of this files is gnome-doc-utils.make, which is needed to 
 # compile the help files.
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_AUX_DIR([libltdl/config])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -48,7 +49,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 
 # Initialize automake
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.2)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.2.1002)
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
@@ -60,6 +61,7 @@ AM_MAINTAINER_MODE([enable])
 #################################################
 
 AC_PROG_CC
+AC_PROG_INSTALL
 
 # Include all m4 macros that have to do with the language C
 AC_LANG_C
@@ -68,6 +70,20 @@ AC_LANG_C
 AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.13.1])
+
+#################################################################
+# Enable libtool, check for libltdl and define @LIBLTDL@ and @INCLTDL@
+#################################################################
+
+ifdef([LT_CONFIG_LTDL_DIR],
+      [ LT_CONFIG_LTDL_DIR([libltdl]) ],
+      [])
+
+ifdef([LT_INIT],
+      [ LT_INIT([win32-dll]) ],
+      [ AC_PROG_LIBTOOL ])
+
+AC_WITH_LTDL
 
 #################################################################
 # Check for the type of the host
@@ -113,6 +129,9 @@ AC_MSG_RESULT($HOST)
 
 #check for -lm
 AC_CHECK_LIB(m, pow, [ haslm="yes" ] , [ AC_MSG_ERROR([libm not found !]) ] )
+
+#check for -ltld
+AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not found - check libtool installation !]) ] ) 
 
 
 #################################################
@@ -195,7 +214,7 @@ fi
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.2 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.2.1002 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
@@ -332,14 +351,6 @@ AC_CHECK_FILE([$CUTTER], [cutter_command="yes"])
 if test "x$CUTTER" != x;then
   if test "x$cutter_command" = xyes;then
     AM_CONDITIONAL(HAS_CUTTER, true)
-
-    ifdef([LT_CONFIG_LTDL_DIR],
-          [ LT_CONFIG_LTDL_DIR([libltdl]) ],
-                [])
-    ifdef([LT_INIT],
-          [ LT_INIT([win32-dll]) ],
-                [ AC_PROG_LIBTOOL ])
-    AC_WITH_LTDL
   fi
 fi
 
@@ -351,7 +362,6 @@ fi
 #################################################
 
 AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile test/Makefile])
-
 
 #################################################
 # Define some useful constants

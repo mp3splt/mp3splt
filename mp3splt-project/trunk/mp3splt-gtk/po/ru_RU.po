@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-05-13 00:32+0200\n"
+"POT-Creation-Date: 2012-06-01 21:45+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: optimix <io_fx@yahoo.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -102,7 +102,7 @@ msgstr "Секунды:"
 msgid "Hundredths:"
 msgstr "Миллисекунды:"
 
-#: src/tree_tab.c:1650 src/player_tab.c:1052
+#: src/tree_tab.c:1650 src/player_tab.c:1094
 msgid "_Add"
 msgstr "Добавить"
 
@@ -471,11 +471,11 @@ msgstr "Плеер"
 msgid "Language"
 msgstr "Язык"
 
-#: src/player_tab.c:664 src/player_tab.c:698
+#: src/player_tab.c:706 src/player_tab.c:740
 msgid "Cannot connect to player"
 msgstr "Не удается подключиться к плееру"
 
-#: src/player_tab.c:675
+#: src/player_tab.c:717
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -494,7 +494,7 @@ msgid ""
 " After that, restart snackamp and mp3splt-gtk should work.\n"
 msgstr ""
 
-#: src/player_tab.c:690
+#: src/player_tab.c:732
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -505,137 +505,137 @@ msgid ""
 "connect.\n"
 msgstr ""
 
-#: src/player_tab.c:977
+#: src/player_tab.c:1019
 msgid "Previous"
 msgstr "Предыдущая"
 
-#: src/player_tab.c:995
+#: src/player_tab.c:1037
 msgid "Play"
 msgstr "Слушать"
 
-#: src/player_tab.c:1011
+#: src/player_tab.c:1053
 msgid "Pause"
 msgstr "Пауза"
 
-#: src/player_tab.c:1028
+#: src/player_tab.c:1070
 msgid "Stop"
 msgstr "Остановить"
 
-#: src/player_tab.c:1045
+#: src/player_tab.c:1087
 msgid "Next"
 msgstr "Следующая"
 
-#: src/player_tab.c:1060
+#: src/player_tab.c:1102
 msgid "Add splitpoint from player"
 msgstr "Добавить точку разделения из плеера"
 
-#: src/player_tab.c:1064
+#: src/player_tab.c:1106
 msgid "Amplitude _wave"
 msgstr ""
 
-#: src/player_tab.c:1071
+#: src/player_tab.c:1113
 msgid "Shows the amplitude level wave"
 msgstr "Показывает уровень амплитуды волны"
 
-#: src/player_tab.c:1075
+#: src/player_tab.c:1117
 msgid "_Connect"
 msgstr "Сединение"
 
-#: src/player_tab.c:1078
+#: src/player_tab.c:1120
 msgid "Connect to player"
 msgstr "Подключение к плееру"
 
-#: src/player_tab.c:1082
+#: src/player_tab.c:1124
 msgid "_Disconnect"
 msgstr "Отключение"
 
-#: src/player_tab.c:1085
+#: src/player_tab.c:1127
 msgid "Disconnect from player"
 msgstr "Отключение от плеера"
 
-#: src/player_tab.c:1221
+#: src/player_tab.c:1263
 #, c-format
 msgid "before %s"
 msgstr "до %s"
 
-#: src/player_tab.c:2671
+#: src/player_tab.c:2746
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 " щелчок левой клавишей мыши выделяет точку разделения, правой — удаляет её"
 
-#: src/player_tab.c:2676
+#: src/player_tab.c:2751
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " щелчок левой клавишей мыши и перемещение меняет позицию, правой — меняет "
 "масштаб"
 
-#: src/player_tab.c:2682
+#: src/player_tab.c:2757
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " щелчок левой клавишей мыши по точке меняет её позицию, правой — включает "
 "прослушивание"
 
-#: src/player_tab.c:2687
+#: src/player_tab.c:2762
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 " щелчок левой клавишей мыши по прямоугольнику переключает сохранение точки "
 "разделения"
 
-#: src/player_tab.c:2877
+#: src/player_tab.c:2952
 msgid " quick preview..."
 msgstr "быстрый просмотр ..."
 
-#: src/player_tab.c:3246
+#: src/player_tab.c:3321
 msgid "Splitpoints _view"
 msgstr ""
 
-#: src/player_tab.c:3414
+#: src/player_tab.c:3489
 msgid "History"
 msgstr "История"
 
-#: src/player_tab.c:3548
+#: src/player_tab.c:3623
 msgid "_Erase selected entries"
 msgstr "_Удалить выделенные записи"
 
-#: src/player_tab.c:3557
+#: src/player_tab.c:3632
 msgid "E_rase all history"
 msgstr "У_далить всю историю"
 
-#: src/player_tab.c:3601
+#: src/player_tab.c:3676
 msgid "H_istory"
 msgstr ""
 
-#: src/player_tab.c:3674
+#: src/player_tab.c:3749
 msgid " quick preview finished, song paused"
 msgstr "быстрый просмотр закончен, проигрование приостановлено"
 
-#: src/player_tab.c:3820
+#: src/player_tab.c:3895
 msgid "Choose File"
 msgstr "Выберите Файл"
 
-#: src/player_tab.c:3832 src/multiple_files.c:130
+#: src/player_tab.c:3907 src/multiple_files.c:130
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "mp3 и ogg файлы (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3840 src/multiple_files.c:138
+#: src/player_tab.c:3915 src/multiple_files.c:138
 msgid "mp3 files (*.mp3)"
 msgstr "mp3 файлы (*.mp3)"
 
-#: src/player_tab.c:3846 src/multiple_files.c:144
+#: src/player_tab.c:3921 src/multiple_files.c:144
 msgid "ogg files (*.ogg)"
 msgstr "ogg файлы (*.ogg)"
 
-#: src/player_tab.c:3987
+#: src/player_tab.c:4062
 msgid "_Browse"
 msgstr "_Обзор"
 
-#: src/player_tab.c:3991
+#: src/player_tab.c:4066
 msgid "Select file"
 msgstr "Выделить файл"
 
-#: src/player_tab.c:3998
+#: src/player_tab.c:4073
 msgid "_Fix ogg stream"
 msgstr "_Фиксированный ogg поток"
 
