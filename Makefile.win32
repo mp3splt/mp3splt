@@ -9,7 +9,7 @@ all:
 	\
 	cd ../mp3splt-gtk && ./autogen.sh win && \
 	cp /lib/libmp3splt* . && \
-	./configure --disable-gtk3 --disable-audacious --disable-gnome && make clean && make && make install
+	./configure --disable-gtk3 --disable-audacious --disable-gnome --disable-cutter && make clean && make && make install
 
 recompile:
 	cd libmp3splt && make && \
