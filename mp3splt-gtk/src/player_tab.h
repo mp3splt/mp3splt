@@ -152,10 +152,9 @@ gchar *get_time_for_drawing(gchar *str,
                             gint time,
                             gboolean hundr_or_not,
                             gint *number_of_chars);
-gint time_to_pixels(gint width,
-                    gfloat time);
 gfloat pixels_to_time(gfloat width,
                       gint pixels);
+gint time_to_pixels(gint width, gfloat time);
 gint get_draw_line_position(gint width,
                             gfloat time);
 void draw_motif(GtkWidget *da,cairo_t *gc,

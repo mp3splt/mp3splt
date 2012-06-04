@@ -95,6 +95,12 @@ static const gint ten_secs_th = 3 * 6000;
 static const gint minutes_th = 20 * 6000;
 static const gint ten_minutes_th = 3 * 3600 * 100;
 
+static const gint three_minutes_time = 3 * 6000;
+static const gint six_minutes_time = 6 * 6000;
+static const gint ten_minutes_time = 10 * 6000;
+static const gint twenty_minutes_time = 20 * 6000;
+static const gint fourty_minutes_time = 40 * 6000;
+
 extern GtkWidget *names_from_filename;
 
 extern splt_state *the_state;
@@ -376,9 +382,8 @@ static void compute_douglas_peucker_filters()
   GArray *gdk_points_for_douglas_peucker = build_gdk_points_for_douglas_peucker();
 
   splt_douglas_peucker_free(filtered_points_presence);
-  //19
   filtered_points_presence = splt_douglas_peucker(gdk_points_for_douglas_peucker, 
-      5.0, 8.0, 12.0, 18.0, 23.0, -1.0);
+      3.0, 5.0, 8.0, 11.0, 16.0, -1.0);
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
 }
@@ -1733,14 +1738,7 @@ gfloat pixels_to_time(gfloat width, gint pixels)
 */
 gint get_draw_line_position(gint width, gfloat time)
 {
-  //position to return
-  gint position;
-  
-  gfloat offset_time = time - current_time;
-  gint offset_pixel = time_to_pixels(width, offset_time);
-  position = width/2 + offset_pixel;
-  
-  return position;
+  return width/2 + time_to_pixels(width, time - current_time);
 }
 
 static void set_color(cairo_t *cairo, GdkColor *color)
@@ -2166,76 +2164,63 @@ void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *g
   }
 }
 
-gint get_silence_wave_coeff()
+gint get_silence_filtered_presence_index()
 {
-  gint points_coeff = 1;
-
   //num_of_points_coeff_f : ogg ~= 1, mp3 ~= 4
   gfloat num_of_points_coeff_f =
     ceil((number_of_silence_points / total_time) * 10);
   gint num_of_points_coeff = (gint) num_of_points_coeff_f;
-  gint coeff_adjust = 4;
-  if (num_of_points_coeff == 1)
+
+  if (total_draw_time > fourty_minutes_time)
   {
-    coeff_adjust = 1;
+    if (num_of_points_coeff < 3)
+    {
+      return 2;
+    }
+    return 4;
   }
 
-  if (total_draw_time < secs_th)
+  if (total_draw_time > twenty_minutes_time)
   {
-    points_coeff = 1;
-  }
-  else if (total_draw_time < ten_secs_th)
-  {
-    points_coeff = 2 * num_of_points_coeff;
-  }
-  else if (total_draw_time < minutes_th)
-  {
-    points_coeff = 4 * coeff_adjust * num_of_points_coeff;
-  }
-  else if (total_draw_time < ten_minutes_th)
-  {
-    points_coeff = 8 * coeff_adjust * num_of_points_coeff;
-  }
-  else
-  {
-    points_coeff = 32 * coeff_adjust * num_of_points_coeff;
+    if (num_of_points_coeff < 3)
+    {
+      return 1;
+    }
+    return 3;
   }
 
-  return points_coeff;
+  if (total_draw_time > ten_minutes_time)
+  {
+    if (num_of_points_coeff < 3)
+    {
+      return 0;
+    }
+    return 2;
+  }
+
+  if (total_draw_time > six_minutes_time)
+  {
+    if (num_of_points_coeff < 3)
+    {
+      return -1;
+    }
+    return 1;
+  }
+
+  if (total_draw_time > three_minutes_time)
+  {
+    if (num_of_points_coeff < 3)
+    {
+      return -1;
+    }
+    return 0;
+  }
+
+  return -1;
 }
 
-gint point_is_filtered(gint index)
+gint point_is_filtered(gint index, gint filtered_index)
 {
-  //mp3: 1, 8, 64, 128, 512
-  //ogg: 1, 2, 16, 32, 128
-  gint silence_wave_coeff = get_silence_wave_coeff();
-  if (silence_wave_coeff < 8)
-  {
-    return FALSE;
-  }
-
-  gint filtered_index = 0;
-  if (silence_wave_coeff < 8)
-  {
-    filtered_index = 0;
-  }
-  else if (silence_wave_coeff < 20)
-  {
-    filtered_index = 1;
-  }
-  else if (silence_wave_coeff < 100)
-  {
-    filtered_index = 2;
-  }
-  else if (silence_wave_coeff < 150)
-  {
-    filtered_index = 3;
-  }
-  else
-  {
-    filtered_index = 4;
-  }
-
   GArray *points_presence = g_ptr_array_index(filtered_points_presence, filtered_index);
   return !g_array_index(points_presence, gint, index);
 }
@@ -2259,9 +2244,13 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
 
   gint first_time = SPLT_TRUE;
   gint i = 0;
+
+  gint filtered_index = get_silence_filtered_presence_index();
+
+  gint stroke_counter = 0;
   for (i = 0;i < number_of_silence_points;i++)
   {
-    if (point_is_filtered(i))
+    if (filtered_index >= 0 && point_is_filtered(i, filtered_index))
     {
       continue;
     }
@@ -2285,6 +2274,13 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
     else
     {
       cairo_line_to(gc, x, y);
+    }
+
+    stroke_counter++;
+    if (stroke_counter % 4 == 0)
+    {
+      cairo_stroke(gc);
+      cairo_move_to(gc, x, y);
     }
   }
 
