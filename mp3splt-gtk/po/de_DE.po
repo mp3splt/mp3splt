@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-06-03 07:05+0200\n"
+"POT-Creation-Date: 2012-06-05 00:00+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,7 +100,7 @@ msgstr "Sekunden:"
 msgid "Hundredths:"
 msgstr "Hundertstel:"
 
-#: src/tree_tab.c:1650 src/player_tab.c:1094
+#: src/tree_tab.c:1650 src/player_tab.c:1099
 msgid "_Add"
 msgstr "_Hinzufügen"
 
@@ -453,11 +453,11 @@ msgstr "Abspieler"
 msgid "Language"
 msgstr "Sprache"
 
-#: src/player_tab.c:706 src/player_tab.c:740
+#: src/player_tab.c:711 src/player_tab.c:745
 msgid "Cannot connect to player"
 msgstr "Keine Verbindung zum Abspielprogramm möglich"
 
-#: src/player_tab.c:717
+#: src/player_tab.c:722
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -493,7 +493,7 @@ msgstr ""
 " Danach starten Sie SnackAmp neu und mp3splt-gtk\n"
 " sollte funktionieren.\n"
 
-#: src/player_tab.c:732
+#: src/player_tab.c:737
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -512,135 +512,135 @@ msgstr ""
 " wie Sie das tun können, starten Sie Audacious manuell\n"
 " und versuchen Sie, eine Verbindung herzustellen.\n"
 
-#: src/player_tab.c:1019
+#: src/player_tab.c:1024
 msgid "Previous"
 msgstr "Vorherige"
 
-#: src/player_tab.c:1037
+#: src/player_tab.c:1042
 msgid "Play"
 msgstr "Wiedergabe"
 
-#: src/player_tab.c:1053
+#: src/player_tab.c:1058
 msgid "Pause"
 msgstr "Pause"
 
-#: src/player_tab.c:1070
+#: src/player_tab.c:1075
 msgid "Stop"
 msgstr "Stop"
 
-#: src/player_tab.c:1087
+#: src/player_tab.c:1092
 msgid "Next"
 msgstr "Nächste"
 
-#: src/player_tab.c:1102
+#: src/player_tab.c:1107
 msgid "Add splitpoint from player"
 msgstr "Schnittpunkt hier hinzufügen"
 
-#: src/player_tab.c:1106
+#: src/player_tab.c:1111
 msgid "Amplitude _wave"
 msgstr ""
 
-#: src/player_tab.c:1113
+#: src/player_tab.c:1118
 msgid "Shows the amplitude level wave"
 msgstr "Zeigt die Audio-Pegelkurve"
 
-#: src/player_tab.c:1117
+#: src/player_tab.c:1122
 msgid "_Connect"
 msgstr "_Verbinden"
 
-#: src/player_tab.c:1120
+#: src/player_tab.c:1125
 msgid "Connect to player"
 msgstr "Zum Abspielprogramm verbinden"
 
-#: src/player_tab.c:1124
+#: src/player_tab.c:1129
 msgid "_Disconnect"
 msgstr "Verbindung _trennen"
 
-#: src/player_tab.c:1127
+#: src/player_tab.c:1132
 msgid "Disconnect from player"
 msgstr "Verbindung zum Abspielprogramm trennen"
 
-#: src/player_tab.c:1263
+#: src/player_tab.c:1268
 #, c-format
 msgid "before %s"
 msgstr "vor %s"
 
-#: src/player_tab.c:2746
+#: src/player_tab.c:2742
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 "Linksklick auf Teilungspunkt wählt aus, Rechtsklick löscht Teilungspunkt"
 
-#: src/player_tab.c:2751
+#: src/player_tab.c:2747
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 "Linksklick + Verschieben ändert die Position des Titels, Rechtsklick + "
 "Verschieben ändert den Vergrößerungsfaktor"
 
-#: src/player_tab.c:2757
+#: src/player_tab.c:2753
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 "Linksklick + Verschieben ändert die Position des Punktes, Rechtsklick spielt "
 "Vorschau ab"
 
-#: src/player_tab.c:2762
+#: src/player_tab.c:2758
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr "Linksklick aktiviert/deaktiviert »Teilungspunkt behalten«"
 
-#: src/player_tab.c:2952
+#: src/player_tab.c:2948
 msgid " quick preview..."
 msgstr " Schnellvorschau..."
 
-#: src/player_tab.c:3321
+#: src/player_tab.c:3317
 msgid "Splitpoints _view"
 msgstr ""
 
-#: src/player_tab.c:3489
+#: src/player_tab.c:3485
 msgid "History"
 msgstr "Chronik"
 
-#: src/player_tab.c:3623
+#: src/player_tab.c:3619
 msgid "_Erase selected entries"
 msgstr "Ausgewählte _Einträge löschen"
 
-#: src/player_tab.c:3632
+#: src/player_tab.c:3628
 msgid "E_rase all history"
 msgstr "_Gesamte Chronik löschen"
 
-#: src/player_tab.c:3676
+#: src/player_tab.c:3672
 msgid "H_istory"
 msgstr ""
 
-#: src/player_tab.c:3749
+#: src/player_tab.c:3745
 msgid " quick preview finished, song paused"
 msgstr "Schnellvorschau beendet, Wiedergabe pausiert"
 
-#: src/player_tab.c:3895
+#: src/player_tab.c:3891
 msgid "Choose File"
 msgstr "Datei wählen"
 
-#: src/player_tab.c:3907 src/multiple_files.c:130
+#: src/player_tab.c:3903 src/multiple_files.c:130
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "mp3- und ogg-Dateien (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3915 src/multiple_files.c:138
+#: src/player_tab.c:3911 src/multiple_files.c:138
 msgid "mp3 files (*.mp3)"
 msgstr "mp3-Dateien (*.mp3)"
 
-#: src/player_tab.c:3921 src/multiple_files.c:144
+#: src/player_tab.c:3917 src/multiple_files.c:144
 msgid "ogg files (*.ogg)"
 msgstr "ogg-Dateien (*.ogg)"
 
-#: src/player_tab.c:4062
+#: src/player_tab.c:4058
 msgid "_Browse"
 msgstr "_Durchsuchen"
 
-#: src/player_tab.c:4066
+#: src/player_tab.c:4062
 msgid "Select file"
 msgstr "Datei wählen"
 
-#: src/player_tab.c:4073
+#: src/player_tab.c:4069
 msgid "_Fix ogg stream"
 msgstr "Ogg-Datenstrom _reparieren"
 

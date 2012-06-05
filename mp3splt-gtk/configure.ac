@@ -33,7 +33,7 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.7.2.1004, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.7.2.1008, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
@@ -49,7 +49,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 
 # Initialize automake
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.2.1004)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.7.2.1008)
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
@@ -214,7 +214,7 @@ fi
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.2.1004 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.7.2.1008 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
