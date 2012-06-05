@@ -27,7 +27,7 @@ fi
 LANGUAGES="fr_FR de_DE"
 
 BASIC_FILES="
-mp3splt-gtk/src/mp3splt-gtk.exe
+mp3splt-gtk/src/.libs/mp3splt-gtk.exe
 libmp3splt/src/.libs/libmp3splt${DLL_SUFFIX}.dll
 libltdl-7.dll
 pcre3.dll
