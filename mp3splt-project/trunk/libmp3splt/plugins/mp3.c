@@ -719,6 +719,7 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
   if (set_original_tags && bytes_and_size)
   {
     id = id3_tag_parse(bytes_and_size->tag_bytes, bytes_and_size->tag_length);
+    splt_mp3_delete_existing_frames(id, "TLEN");
   }
   else
   {
