@@ -48,7 +48,7 @@ function test_normal_cbr
     "2009" "Rock" "17" "1" "http://www.jamendo.com"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "1512035"
+      check_current_file_size "1512014"
     else
       check_current_file_size "1511886"
     fi
@@ -66,7 +66,7 @@ function test_normal_cbr
     "2009" "Rock" "17" "2" "http://www.jamendo.com"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "888858"
+      check_current_file_size "888837"
     else
       check_current_file_size "888709"
     fi
@@ -84,7 +84,7 @@ function test_normal_cbr
     "2009" "Rock" "17" "3" "http://www.jamendo.com"
 
     if [[ $tags_version -eq 2 ]];then
-      check_current_file_size "700359"
+      check_current_file_size "700338"
     else
       check_current_file_size "700210"
     fi
@@ -167,7 +167,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
 
   check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
   "2009" "Rock" "17" "1" "http://www.jamendo.com"
-  check_current_file_size "1512035"
+  check_current_file_size "1512014"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_04s_50h__03m_00s.mp3" 
   check_current_mp3_length "00.55"
@@ -175,7 +175,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
 
   check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
   "2009" "Rock" "17" "2" "http://www.jamendo.com"
-  check_current_file_size "888858"
+  check_current_file_size "888837"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_43s_81h.mp3"
   check_current_mp3_length "00.43"
@@ -183,7 +183,7 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
 
   check_all_mp3_tags_with_version 2 "Merci Bonsoir" "Merci album" "Je veux (only love)"\
   "2009" "Rock" "17" "3" "http://www.jamendo.com"
-  check_current_file_size "700359"
+  check_current_file_size "700338"
 
   print_ok
   echo
@@ -268,15 +268,15 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
   check_current_mp3_length "01.30"
-  check_current_file_size "1443072"
+  check_current_file_size "1443051"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_43s_81h.mp3"
   check_current_mp3_length "01.43"
-  check_current_file_size "1657903"
+  check_current_file_size "1657882"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__03m_43s_81h.mp3"
   check_current_mp3_length "00.13"
-  check_current_file_size "220960"
+  check_current_file_size "220939"
 
   print_ok
   echo
@@ -303,15 +303,15 @@ function test_normal_cbr_overlap_splitpoints
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
   check_current_mp3_length "01.30"
-  check_current_file_size "1443072"
+  check_current_file_size "1443051"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s_20h__03m_43s_81h.mp3"
   check_current_mp3_length "01.43"
-  check_current_file_size "1657903"
+  check_current_file_size "1657882"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_30s__03m_43s_81h.mp3"
   check_current_mp3_length "00.13"
-  check_current_file_size "220960"
+  check_current_file_size "220939"
 
   print_ok
   echo
@@ -375,7 +375,7 @@ function test_normal_cbr_stdout
 
   current_file="$OUTPUT_DIR/stdout.mp3"
   check_current_mp3_length "01.30"
-  check_current_file_size "1443072"
+  check_current_file_size "1443051"
 
   print_ok
   echo
@@ -401,7 +401,7 @@ function test_normal_cbr_stdout_multiple_splitpoints
 
   current_file="$OUTPUT_DIR/stdout.mp3"
   check_current_mp3_length "02.43"
-  check_current_file_size "2621158"
+  check_current_file_size "2621116"
 
   print_ok
   echo
