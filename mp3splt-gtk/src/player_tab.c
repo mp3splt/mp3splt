@@ -65,6 +65,8 @@
 #define DRAWING_AREA_HEIGHT 123 
 #define DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE 232 
 
+#define SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD 5000
+
 //! The text box showing the filename of the current input file.
 GtkWidget *entry;
 //! The browse button
@@ -2246,6 +2248,9 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
   gint i = 0;
 
   gint filtered_index = get_silence_filtered_presence_index();
+  /*filtered_index = 
+    adjust_filtered_index_according_to_number_of_points(filtered_index, left_mark,
+    right_mark);*/
 
   gint stroke_counter = 0;
   for (i = 0;i < number_of_silence_points;i++)
@@ -2285,6 +2290,56 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
   }
 
   cairo_stroke(gc);
+}
+
+gint adjust_filtered_index_according_to_number_of_points(gint filtered_index, 
+    gint left_mark, gint right_mark)
+{
+  if (filtered_index == 4)
+  {
+    return filtered_index;
+  }
+
+  gint number_of_points = 0;
+  gint number_of_filtered_points = 0;
+
+  gint i = 0;
+  for (i = 0;i < number_of_silence_points;i++)
+  {
+    long time = silence_points[i].time;
+    if ((time > right_mark) || (time < left_mark)) 
+    {
+      continue;
+    }
+
+    if (filtered_index >= 0 && point_is_filtered(i, filtered_index))
+    {
+      number_of_filtered_points++;
+    }
+
+    number_of_points++;
+  }
+
+  fprintf(stdout, "number of points = %d\n", number_of_points);
+  fprintf(stdout, "number of remaining after filter = %d\n",
+      number_of_points - number_of_filtered_points);
+  fflush(stdout);
+
+  if (number_of_points <= SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD)
+  {
+    return -1;
+  }
+
+  if (number_of_points - number_of_filtered_points > SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD)
+  {
+    fprintf(stdout, "number of remaining = %d\n",
+        number_of_points - number_of_filtered_points);
+    fprintf(stdout, "return %d\n", filtered_index + 1);
+    fflush(stdout);
+    return filtered_index + 1;
+  }
+
+  return filtered_index;
 }
 
 #if GTK_MAJOR_VERSION <= 2
