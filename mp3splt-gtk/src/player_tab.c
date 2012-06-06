@@ -385,7 +385,7 @@ static void compute_douglas_peucker_filters()
 
   splt_douglas_peucker_free(filtered_points_presence);
   filtered_points_presence = splt_douglas_peucker(gdk_points_for_douglas_peucker, 
-      3.0, 5.0, 8.0, 11.0, 16.0, -1.0);
+      2.0, 5.0, 8.0, 11.0, 15.0, -1.0);
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
 }
@@ -2248,9 +2248,8 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
   gint i = 0;
 
   gint filtered_index = get_silence_filtered_presence_index();
-  /*filtered_index = 
-    adjust_filtered_index_according_to_number_of_points(filtered_index, left_mark,
-    right_mark);*/
+  filtered_index = 
+    adjust_filtered_index_according_to_number_of_points(filtered_index, left_mark, right_mark);
 
   gint stroke_counter = 0;
   for (i = 0;i < number_of_silence_points;i++)
@@ -2320,11 +2319,6 @@ gint adjust_filtered_index_according_to_number_of_points(gint filtered_index,
     number_of_points++;
   }
 
-  fprintf(stdout, "number of points = %d\n", number_of_points);
-  fprintf(stdout, "number of remaining after filter = %d\n",
-      number_of_points - number_of_filtered_points);
-  fflush(stdout);
-
   if (number_of_points <= SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD)
   {
     return -1;
@@ -2332,10 +2326,6 @@ gint adjust_filtered_index_according_to_number_of_points(gint filtered_index,
 
   if (number_of_points - number_of_filtered_points > SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD)
   {
-    fprintf(stdout, "number of remaining = %d\n",
-        number_of_points - number_of_filtered_points);
-    fprintf(stdout, "return %d\n", filtered_index + 1);
-    fflush(stdout);
     return filtered_index + 1;
   }
 
