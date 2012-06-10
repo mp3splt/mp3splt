@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-06-05 00:00+0200\n"
+"POT-Creation-Date: 2012-06-10 22:15+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,7 +61,7 @@ msgstr "description"
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1299 src/tree_tab.c:1371 src/preferences_tab.c:721
+#: src/tree_tab.c:1299 src/tree_tab.c:1371 src/preferences_tab.c:573
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
@@ -101,7 +101,7 @@ msgstr "Secondes :"
 msgid "Hundredths:"
 msgstr "Centièmes :"
 
-#: src/tree_tab.c:1650 src/player_tab.c:1099
+#: src/tree_tab.c:1650 src/player_tab.c:1141
 msgid "_Add"
 msgstr "Aj_outer"
 
@@ -189,89 +189,129 @@ msgstr "_Effacer les fichiers sélectionnées"
 msgid "D_elete all files"
 msgstr "Effa_cer tous les fichiers"
 
-#: src/preferences_tab.c:476
+#: src/preferences_tab.c:328
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Choisir la langue (nécessite redémarrage)</b>"
 
-#: src/preferences_tab.c:511
+#: src/preferences_tab.c:363
 msgid "Choose split directory"
 msgstr "Choisir dossier pour les fichiers coupés"
 
-#: src/preferences_tab.c:663
+#: src/preferences_tab.c:515
 msgid "Br_owse dir"
 msgstr "Parc_ourir dossier"
 
-#: src/preferences_tab.c:671
+#: src/preferences_tab.c:523
 msgid "_Song dir"
 msgstr "Dossier du _fichier"
 
-#: src/preferences_tab.c:676
+#: src/preferences_tab.c:528
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Répertoire des fichiers coupés</b>"
 
-#: src/preferences_tab.c:685
+#: src/preferences_tab.c:537
 msgid "_Splitpoint name from filename (testing)"
 msgstr "_Noms points de coupure à partir du nom fichier (en test)"
 
-#: src/preferences_tab.c:691
+#: src/preferences_tab.c:543
 msgid "_Create directories from filenames "
 msgstr "_Créér les dossiers à partir des noms de fichiers"
 
-#: src/preferences_tab.c:697
+#: src/preferences_tab.c:549
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Mode 'f_rame' (utile pour mp3 VBR) (seulement mp3)"
 
-#: src/preferences_tab.c:704
+#: src/preferences_tab.c:556
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr ""
 "Aj_ustement automatique (utilise la détection du silence pour ajuster les "
 "points)"
 
-#: src/preferences_tab.c:736
+#: src/preferences_tab.c:588
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 
-#: src/preferences_tab.c:753
+#: src/preferences_tab.c:605
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "Fourchette (secondes autour du point pour chercher un silence) :"
 
-#: src/preferences_tab.c:772
+#: src/preferences_tab.c:624
 msgid "Set _default split options"
 msgstr "Options par _défaut"
 
-#: src/preferences_tab.c:778
+#: src/preferences_tab.c:630
 msgid "<b>Split options</b>"
 msgstr "<b>Options de coupure</b>"
 
-#: src/preferences_tab.c:846
+#: src/preferences_tab.c:713
 msgid "Player:"
 msgstr ""
 
-#: src/preferences_tab.c:868
+#: src/preferences_tab.c:732
 msgid "Refresh player every "
 msgstr ""
 
-#: src/preferences_tab.c:879
+#: src/preferences_tab.c:733
 msgid "milliseconds."
 msgstr ""
 
-#: src/preferences_tab.c:884
-msgid "Higher refresh rate decreases CPU usage - default is 200."
+#: src/preferences_tab.c:735
+msgid "\t(higher refresh rate decreases CPU usage - default is 200)"
 msgstr ""
 
-#: src/preferences_tab.c:888
+#: src/preferences_tab.c:740
 msgid "<b>Player options</b>"
 msgstr "<b>Options du lecteur</b>"
 
-#: src/preferences_tab.c:936
+#: src/preferences_tab.c:748
+msgid "Number of points to draw without interpolation:"
+msgstr ""
+
+#: src/preferences_tab.c:751
+msgid "\t(less points decreases CPU usage - default is 4000)"
+msgstr ""
+
+#: src/preferences_tab.c:763
+#, c-format
+msgid "Douglas-Peucker algorithm threshold for level %d:"
+msgstr ""
+
+#: src/preferences_tab.c:766
+#, c-format
+msgid "(default is %d)"
+msgstr ""
+
+#: src/preferences_tab.c:774
+#, c-format
+msgid "douglas_peucker_level%d_threshold"
+msgstr ""
+
+#: src/preferences_tab.c:781
+msgid "Douglas-Peucker options are not applied instantly."
+msgstr ""
+
+#: src/preferences_tab.c:786
+msgid "You have to recompute the amplitude wave or to recompute the filters."
+msgstr ""
+
+#: src/preferences_tab.c:792
+msgid "_Recompute Douglas-Peucker filters"
+msgstr ""
+
+#: src/preferences_tab.c:800
+#, fuzzy
+msgid "<b>Amplitude wave options</b>"
+msgstr "<b>Options de coupure</b>"
+
+#: src/preferences_tab.c:850
 msgid "Default format"
 msgstr "Format par défaut"
 
-#: src/preferences_tab.c:940
+#: src/preferences_tab.c:854
 msgid "Custom format"
 msgstr "Format personnalisé"
 
-#: src/preferences_tab.c:957
+#: src/preferences_tab.c:871
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -289,83 +329,83 @@ msgstr ""
 "    @g - genre\n"
 "    @n - numéro de la piste"
 
-#: src/preferences_tab.c:970
+#: src/preferences_tab.c:884
 msgid "<b>Output filename format</b>"
 msgstr "<b>Format des fichiers divisés</b>"
 
-#: src/preferences_tab.c:1015
+#: src/preferences_tab.c:929
 msgid "Original file tags"
 msgstr "Tags du fichier d'entrée"
 
-#: src/preferences_tab.c:1018
+#: src/preferences_tab.c:932
 msgid "Default tags (cddb or cue tags)"
 msgstr "Tags par défaut (cddb ou cue)"
 
-#: src/preferences_tab.c:1021
+#: src/preferences_tab.c:935
 msgid "No tags"
 msgstr "Aucun tag"
 
-#: src/preferences_tab.c:1024
+#: src/preferences_tab.c:938
 msgid "Extract tags from filename"
 msgstr "Extraire les tags à partir du nom de fichier"
 
-#: src/preferences_tab.c:1031
+#: src/preferences_tab.c:945
 msgid "<b>Split files tags</b>"
 msgstr "<b>Tags des fichiers coupés</b>"
 
-#: src/preferences_tab.c:1053
+#: src/preferences_tab.c:967
 msgid "No change"
 msgstr "Sans changement"
 
-#: src/preferences_tab.c:1054
+#: src/preferences_tab.c:968
 msgid "lowercase"
 msgstr "minuscules"
 
-#: src/preferences_tab.c:1055
+#: src/preferences_tab.c:969
 msgid "UPPERCASE"
 msgstr "MAJUSCULES"
 
-#: src/preferences_tab.c:1056
+#: src/preferences_tab.c:970
 msgid "First uppercase"
 msgstr "1ère lettre en majuscule"
 
-#: src/preferences_tab.c:1057
+#: src/preferences_tab.c:971
 msgid "Word Uppercase"
 msgstr "1ère lettre des Mots en majuscule"
 
-#: src/preferences_tab.c:1078
+#: src/preferences_tab.c:992
 msgid "<artist>: "
 msgstr "<artiste>: "
 
-#: src/preferences_tab.c:1085
+#: src/preferences_tab.c:999
 msgid "<album>: "
 msgstr "<album>: "
 
-#: src/preferences_tab.c:1093
+#: src/preferences_tab.c:1007
 msgid "<title>: "
 msgstr "<titre>: "
 
-#: src/preferences_tab.c:1100
+#: src/preferences_tab.c:1014
 msgid "<genre>: "
 msgstr "<genre>: "
 
-#: src/preferences_tab.c:1107
+#: src/preferences_tab.c:1021
 msgid "<comment>: "
 msgstr "<commentaire>: "
 
-#: src/preferences_tab.c:1114
+#: src/preferences_tab.c:1028
 msgid "<year>: "
 msgstr "<année>:"
 
-#: src/preferences_tab.c:1121
+#: src/preferences_tab.c:1035
 msgid "<track>: "
 msgstr "<piste>:"
 
-#: src/preferences_tab.c:1147
+#: src/preferences_tab.c:1061
 msgid "Regular expression:"
 msgstr "Expression régulière :"
 
-#: src/preferences_tab.c:1150
+#: src/preferences_tab.c:1064
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -388,95 +428,95 @@ msgstr ""
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - commentaire"
 
-#: src/preferences_tab.c:1174
+#: src/preferences_tab.c:1088
 msgid "_Replace underscores by spaces"
 msgstr "_Remplacer les souslignés par des espaces"
 
-#: src/preferences_tab.c:1182
+#: src/preferences_tab.c:1096
 msgid "Artist text properties:"
 msgstr "Propriétés texte auteur :"
 
-#: src/preferences_tab.c:1186
+#: src/preferences_tab.c:1100
 msgid "Album text properties:"
 msgstr "Propriétés texte album :"
 
-#: src/preferences_tab.c:1190
+#: src/preferences_tab.c:1104
 msgid "Title text properties:"
 msgstr "Propriétés texte titre :"
 
-#: src/preferences_tab.c:1194
+#: src/preferences_tab.c:1108
 msgid "Comment text properties:"
 msgstr "Propriétés commentaire :"
 
-#: src/preferences_tab.c:1197
+#: src/preferences_tab.c:1111
 msgid "Genre tag:"
 msgstr "Tag genre :"
 
-#: src/preferences_tab.c:1200
+#: src/preferences_tab.c:1114
 msgid "Comment tag:"
 msgstr "Tag commentaire :"
 
-#: src/preferences_tab.c:1202
+#: src/preferences_tab.c:1116
 msgid "Regular expression test"
 msgstr "Test expression régulière"
 
-#: src/preferences_tab.c:1217
+#: src/preferences_tab.c:1131
 msgid "_Test"
 msgstr "_Test"
 
-#: src/preferences_tab.c:1222
+#: src/preferences_tab.c:1136
 msgid "Sample filename:"
 msgstr "Exemple nom de fichier :"
 
-#: src/preferences_tab.c:1226
+#: src/preferences_tab.c:1140
 msgid "Sample result:"
 msgstr "Exemple résultat :"
 
-#: src/preferences_tab.c:1237
+#: src/preferences_tab.c:1151
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Tags ID3v1 & ID3v2"
 
-#: src/preferences_tab.c:1244
+#: src/preferences_tab.c:1158
 msgid "ID3v2 tags"
 msgstr "Tags ID3v2"
 
-#: src/preferences_tab.c:1250
+#: src/preferences_tab.c:1164
 msgid "ID3v1 tags"
 msgstr "Tags ID3v1"
 
-#: src/preferences_tab.c:1256
+#: src/preferences_tab.c:1170
 msgid "Same tags version as the input file"
 msgstr "Même version des tags que le fichier d'entrée"
 
-#: src/preferences_tab.c:1261
+#: src/preferences_tab.c:1175
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:1303 src/main_win.c:560
+#: src/preferences_tab.c:1217 src/main_win.c:560
 msgid "Split"
 msgstr "Coupure"
 
-#: src/preferences_tab.c:1309
+#: src/preferences_tab.c:1223
 msgid "Tags"
 msgstr "Tags"
 
-#: src/preferences_tab.c:1315
+#: src/preferences_tab.c:1229
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:1321 src/main_win.c:709
+#: src/preferences_tab.c:1235 src/main_win.c:709
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/preferences_tab.c:1328
+#: src/preferences_tab.c:1242
 msgid "Language"
 msgstr "Langue"
 
-#: src/player_tab.c:711 src/player_tab.c:745
+#: src/player_tab.c:753 src/player_tab.c:787
 msgid "Cannot connect to player"
 msgstr "Impossible de se connecter au lecteur"
 
-#: src/player_tab.c:722
+#: src/player_tab.c:764
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -510,7 +550,7 @@ msgstr ""
 " Seulement le port par défaut fonctionne (8775)\n"
 " Après, redémarrer snackamp et réessayer.\n"
 
-#: src/player_tab.c:737
+#: src/player_tab.c:779
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -524,134 +564,143 @@ msgstr ""
 " Impossible de se connecter au lecteur Audacious.\n"
 " Vérifiez l'installation d'audacious.\n"
 
-#: src/player_tab.c:1024
+#: src/player_tab.c:1066
 msgid "Previous"
 msgstr "Précédent"
 
-#: src/player_tab.c:1042
+#: src/player_tab.c:1084
 msgid "Play"
 msgstr "Lire"
 
-#: src/player_tab.c:1058
+#: src/player_tab.c:1100
 msgid "Pause"
 msgstr "Pause"
 
-#: src/player_tab.c:1075
+#: src/player_tab.c:1117
 msgid "Stop"
 msgstr "Stop"
 
-#: src/player_tab.c:1092
+#: src/player_tab.c:1134
 msgid "Next"
 msgstr "Suivant"
 
-#: src/player_tab.c:1107
+#: src/player_tab.c:1149
 msgid "Add splitpoint from player"
 msgstr "Ajouter point de coupure du lecteur"
 
-#: src/player_tab.c:1111
+#: src/player_tab.c:1153
 msgid "Amplitude _wave"
 msgstr ""
 
-#: src/player_tab.c:1118
+#: src/player_tab.c:1160
 msgid "Shows the amplitude level wave"
 msgstr "Montre le niveau du signal audio"
 
-#: src/player_tab.c:1122
+#: src/player_tab.c:1164
 msgid "_Connect"
 msgstr "_Connecter"
 
-#: src/player_tab.c:1125
+#: src/player_tab.c:1167
 msgid "Connect to player"
 msgstr "Se connecter au lecteur"
 
-#: src/player_tab.c:1129
+#: src/player_tab.c:1171
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_tab.c:1132
+#: src/player_tab.c:1174
 msgid "Disconnect from player"
 msgstr "Se déconnecter du lecteur"
 
-#: src/player_tab.c:1268
+#: src/player_tab.c:1313
 #, c-format
 msgid "before %s"
 msgstr "avant %s"
 
-#: src/player_tab.c:2742
+#: src/player_tab.c:2840
+msgid "No wave interpolation"
+msgstr ""
+
+#: src/player_tab.c:2847
+#, c-format
+msgid "Wave interpolation level %d"
+msgstr ""
+
+#: src/player_tab.c:2862
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr " click gauche sur le point le sélectionne, click droit l'efface"
 
-#: src/player_tab.c:2747
+#: src/player_tab.c:2867
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " click gauche + déplacement change la position, click droit + déplacement "
 "change le zoom"
 
-#: src/player_tab.c:2753
+#: src/player_tab.c:2873
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " click gauche sur le point + déplacement change la position du point, click "
 "droit aperçu"
 
-#: src/player_tab.c:2758
+#: src/player_tab.c:2878
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr " click gauche sur rectangle coche/décoche 'garder le point'"
 
-#: src/player_tab.c:2948
+#: src/player_tab.c:3068
 msgid " quick preview..."
 msgstr " aperçu rapide..."
 
-#: src/player_tab.c:3317
+#: src/player_tab.c:3437
 msgid "Splitpoints _view"
 msgstr ""
 
-#: src/player_tab.c:3485
+#: src/player_tab.c:3605
 msgid "History"
 msgstr "Historique"
 
-#: src/player_tab.c:3619
+#: src/player_tab.c:3739
 msgid "_Erase selected entries"
 msgstr "_Effacer les éléments sélectionnées"
 
-#: src/player_tab.c:3628
+#: src/player_tab.c:3748
 msgid "E_rase all history"
 msgstr "Effa_cer tout l'historique"
 
-#: src/player_tab.c:3672
+#: src/player_tab.c:3792
 msgid "H_istory"
 msgstr ""
 
-#: src/player_tab.c:3745
+#: src/player_tab.c:3870
 msgid " quick preview finished, song paused"
 msgstr " aperçu rapide fini, lecteur sur pause"
 
-#: src/player_tab.c:3891
+#: src/player_tab.c:4016
 msgid "Choose File"
 msgstr "Choisir fichier"
 
-#: src/player_tab.c:3903 src/multiple_files.c:130
+#: src/player_tab.c:4028 src/multiple_files.c:130
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "fichiers mp3 et ogg (*.mp3 *.ogg)"
 
-#: src/player_tab.c:3911 src/multiple_files.c:138
+#: src/player_tab.c:4036 src/multiple_files.c:138
 msgid "mp3 files (*.mp3)"
 msgstr "fichiers mp3 (*.mp3)"
 
-#: src/player_tab.c:3917 src/multiple_files.c:144
+#: src/player_tab.c:4042 src/multiple_files.c:144
 msgid "ogg files (*.ogg)"
 msgstr "fichiers ogg (*.ogg)"
 
-#: src/player_tab.c:4058
+#: src/player_tab.c:4183
 msgid "_Browse"
 msgstr "_Parcourir"
 
-#: src/player_tab.c:4062
+#: src/player_tab.c:4187
 msgid "Select file"
 msgstr "Sélection fichier"
 
-#: src/player_tab.c:4069
+#: src/player_tab.c:4194
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
@@ -991,7 +1040,7 @@ msgstr "Option inconnue `-%c'.\n"
 msgid "Unknown option character `\\x%x'.\n"
 msgstr "Caractère d'option inconnu `\\x%x'.\n"
 
-#: src/mp3splt-gtk.c:659
+#: src/mp3splt-gtk.c:655
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr "Impossible d'ouvrir le fichier %s.\n"
