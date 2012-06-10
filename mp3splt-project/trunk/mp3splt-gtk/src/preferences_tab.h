@@ -59,7 +59,6 @@ void set_default_prefs_event(GtkWidget *widget, gpointer data);
 void song_dir_button_event(GtkWidget *widget, gpointer data);
 GtkWidget *create_pref_splitpoints_page();
 GString *get_checked_language();
-void save_preferences(GtkWidget *widget, gpointer data);
 GtkWidget *create_save_buttons_hbox();
 void combo_remove_unavailable_players();
 void player_combo_box_event(GtkComboBox *widget, gpointer data);

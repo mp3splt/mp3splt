@@ -30,12 +30,37 @@
 
 #ifndef PREFERENCES_MANAGER_H
 
+typedef struct {
+  gchar* main_key;
+  gchar* second_key;
+  gint default_value;
+  GtkWidget *spinner;
+  void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data);
+} spinner_int_preference;
+
+typedef struct {
+  GArray *spinner_int_preferences;
+} preferences_state;
+
 gchar *get_preferences_filename();
 void load_preferences();
+void save_preferences(GtkWidget *widget, gpointer data);
 void write_default_preferences_file();
 void check_pref_file();
 
 void set_language();
+
+preferences_state *pm_state_new();
+void pm_free(preferences_state **pm);
+
+void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *spinner,
+    void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
+    preferences_state *pm);
+
+void pm_load(GKeyFile *key_file, preferences_state *pm);
+void pm_save(GKeyFile *key_file, preferences_state *pm);
+void pm_write_default(GKeyFile *key_file, preferences_state *pm);
 
 #define PREFERENCES_MANAGER_H
 #endif

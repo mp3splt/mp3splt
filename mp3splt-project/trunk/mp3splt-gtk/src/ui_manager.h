@@ -31,6 +31,8 @@
 
 #ifndef _UI_MANAGER_H
 
+#include "preferences_manager.h"
+
 #define UI_DEFAULT_WIDTH 550
 #define UI_DEFAULT_HEIGHT 420
 
@@ -48,6 +50,7 @@ typedef struct {
 
 typedef struct {
   ui_infos *infos;
+  preferences_state *preferences;
 } ui_state;
 
 ui_state *ui_state_new();
@@ -59,6 +62,15 @@ const gchar *ui_get_browser_directory(ui_state *ui);
 void ui_set_main_win_position(ui_state *ui, gint x, gint y);
 void ui_set_main_win_size(ui_state *ui, gint width, gint height);
 const ui_main_window *ui_get_main_window_infos(ui_state *ui);
+
+void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *spinner,
+    void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
+    ui_state *ui);
+
+void ui_load_preferences(GKeyFile *key_file, ui_state *ui);
+void ui_save_preferences(GKeyFile *key_file, ui_state *ui);
+void ui_write_default_preferences(GKeyFile *key_file, ui_state *ui);
 
 #define _UI_MANAGER_H
 #endif
