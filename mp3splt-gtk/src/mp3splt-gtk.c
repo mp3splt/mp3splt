@@ -617,10 +617,6 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   //We initialise the splitpoints array
   splitpoints = g_array_new(FALSE, FALSE, sizeof (Split_point));
  
-  //check if preferences file exists
-  //and if it does not create it
-  check_pref_file();
- 
   mp3splt_set_progress_function(the_state,change_window_progress_bar);
   mp3splt_set_split_filename_function(the_state,put_split_filename);
   mp3splt_set_message_function(the_state, put_message_from_library);

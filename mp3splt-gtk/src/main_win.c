@@ -850,7 +850,7 @@ void create_all()
  
   GtkWidget *main_vbox = (GtkWidget *)create_main_vbox();
   gtk_box_pack_start(GTK_BOX(window_vbox), main_vbox, TRUE, TRUE, 0);
-  
+ 
   load_preferences();
 
   move_and_resize_main_window();

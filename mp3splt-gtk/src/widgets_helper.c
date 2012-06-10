@@ -148,23 +148,27 @@ void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height)
 #endif
 }
 
-GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
+GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gchar *after_label,
+    gdouble initial_value,
     gdouble minimum_value, gdouble maximum_value, 
     gdouble step_increment, gdouble page_increment,
     gchar *after_newline_label, 
     void (*spinner_callback)(GtkWidget *spinner, gpointer data),
-    GtkWidget *box)
+    gpointer user_data_for_cb,
+    GtkWidget *box, gint top_width)
 {
   GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
   GtkWidget *label = gtk_label_new(before_label);
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
   GtkAdjustment *adj = (GtkAdjustment *) 
-    gtk_adjustment_new(0.0, minimum_value, maximum_value, step_increment, page_increment, 0.0);
+    gtk_adjustment_new(initial_value, minimum_value, maximum_value, step_increment, page_increment, 0.0);
 
   GtkWidget *spinner = gtk_spin_button_new(adj, 0, 0);
+ 
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(spinner), TRUE);
-  g_signal_connect(G_OBJECT(spinner), "value_changed", G_CALLBACK(spinner_callback), NULL);
+  g_signal_connect(G_OBJECT(spinner), "value_changed",
+      G_CALLBACK(spinner_callback), user_data_for_cb);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner, FALSE, FALSE, 5);
 
   if (after_label != NULL)
@@ -172,16 +176,36 @@ GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
     gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(after_label), FALSE, FALSE, 3);
   }
 
-  gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 5);
+  GtkWidget *fake = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(box), fake, FALSE, FALSE, top_width);
+
+  gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 1);
 
   if (after_newline_label != NULL)
   {
     horiz_fake = gtk_hbox_new(FALSE,0);
     gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(after_newline_label), FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 2);
   }
 
+  fake = gtk_hbox_new(FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(box), fake, FALSE, FALSE, 2);
+
   return spinner;
+}
+
+GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
+    gdouble initial_value,
+    gdouble minimum_value, gdouble maximum_value, 
+    gdouble step_increment, gdouble page_increment,
+    gchar *after_newline_label, 
+    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
+    gpointer user_data_for_cb,
+    GtkWidget *box)
+{
+  return wh_create_int_spinner_in_box_with_top_width(before_label, after_label,
+      initial_value, minimum_value, maximum_value, step_increment, page_increment,
+      after_newline_label, spinner_callback, user_data_for_cb, box, 2);
 }
 
 static void _wh_folder_changed_event(GtkFileChooser *chooser, gpointer data)

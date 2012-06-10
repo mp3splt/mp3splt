@@ -66,7 +66,7 @@ const ui_main_window *ui_get_main_window_infos(ui_state *ui);
 void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *spinner,
     void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
-    ui_state *ui);
+    gpointer user_data_for_cb, ui_state *ui);
 
 void ui_load_preferences(GKeyFile *key_file, ui_state *ui);
 void ui_save_preferences(GKeyFile *key_file, ui_state *ui);

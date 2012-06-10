@@ -65,7 +65,7 @@
 #define DRAWING_AREA_HEIGHT 123 
 #define DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE 232 
 
-#define SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD 5000
+gint silence_wave_number_of_points_threshold = DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD;
 
 //! The text box showing the filename of the current input file.
 GtkWidget *entry;
@@ -287,13 +287,15 @@ GtkWidget *playlist_remove_all_files_button;
 
 GPtrArray *filtered_points_presence = NULL;
 
+gdouble douglas_peucker_thresholds[5] = { 2.0, 5.0, 8.0, 11.0, 15.0 };
+gdouble douglas_peucker_thresholds_defaults[5] = { 2.0, 5.0, 8.0, 11.0, 15.0 };
+
 //playlist tree enumeration
-enum
-  {
-    COL_NAME,
-    COL_FILENAME,
-    PLAYLIST_COLUMNS 
-  };
+enum {
+  COL_NAME,
+  COL_FILENAME,
+  PLAYLIST_COLUMNS 
+};
 
 //function declarations
 gint mytimer(gpointer data);
@@ -304,17 +306,17 @@ void inputfilename_set(const gchar *filename)
 {
   // Paranoia test.
   if(filename!=NULL)
-    {
-      // Free the old string before allocating memory for the new one
-      if(inputfilename!=NULL)g_string_free(inputfilename,TRUE);
-      inputfilename=g_string_new(filename);
+  {
+    // Free the old string before allocating memory for the new one
+    if(inputfilename!=NULL)g_string_free(inputfilename,TRUE);
+    inputfilename=g_string_new(filename);
 
-      // Update the text in the gui field displaying the output 
-      // directory - if this field is already there and thus can 
-      // be updated.
-      if(entry!=NULL)
-	gtk_entry_set_text(GTK_ENTRY(entry), filename);
-    }
+    // Update the text in the gui field displaying the output 
+    // directory - if this field is already there and thus can 
+    // be updated.
+    if(entry!=NULL)
+      gtk_entry_set_text(GTK_ENTRY(entry), filename);
+  }
 }
 
 /*! Get the name of the input file
@@ -379,13 +381,21 @@ static GArray *build_gdk_points_for_douglas_peucker()
   return points;
 }
 
-static void compute_douglas_peucker_filters()
+void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data)
 {
+  if (!show_silence_wave)
+  {
+    return;
+  }
+
   GArray *gdk_points_for_douglas_peucker = build_gdk_points_for_douglas_peucker();
 
   splt_douglas_peucker_free(filtered_points_presence);
   filtered_points_presence = splt_douglas_peucker(gdk_points_for_douglas_peucker, 
-      2.0, 5.0, 8.0, 11.0, 15.0, -1.0);
+      douglas_peucker_thresholds[0], douglas_peucker_thresholds[1],
+      douglas_peucker_thresholds[2], douglas_peucker_thresholds[3],
+      douglas_peucker_thresholds[4],
+      -1.0);
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
 }
@@ -424,7 +434,7 @@ gpointer detect_silence(gpointer data)
 
   enter_threads();
 
-  compute_douglas_peucker_filters();
+  compute_douglas_peucker_filters(NULL, NULL);
 
   print_status_bar_confirmation(err);
   gtk_widget_set_sensitive(cancel_button, FALSE);
@@ -1783,6 +1793,16 @@ static void draw_text(cairo_t *cairo, const gchar *text, gint x, gint y)
   cairo_show_text(cairo, text);
 }
 
+static void draw_text_with_size(cairo_t *cairo, const gchar *text, gint x, gint y, 
+    gdouble font_size)
+{
+  cairo_select_font_face(cairo, "Sans 11", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_set_font_size(cairo, font_size);
+
+  cairo_move_to(cairo, x, y + 13);
+  cairo_show_text(cairo, text);
+}
+
 static void draw_line_with_width(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
     gboolean line_is_dashed, gboolean stroke, double line_width)
 {
@@ -2228,7 +2248,7 @@ gint point_is_filtered(gint index, gint filtered_index)
 }
 
 //! Draws the silence wave
-void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *gc)
+gint draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *gc)
 {
   if (!silence_points || we_scan_for_silence)
   {
@@ -2248,13 +2268,13 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
   gint i = 0;
 
   gint filtered_index = get_silence_filtered_presence_index();
-  filtered_index = 
+  gint interpolation_level = 
     adjust_filtered_index_according_to_number_of_points(filtered_index, left_mark, right_mark);
 
   gint stroke_counter = 0;
   for (i = 0;i < number_of_silence_points;i++)
   {
-    if (filtered_index >= 0 && point_is_filtered(i, filtered_index))
+    if (interpolation_level >= 0 && point_is_filtered(i, interpolation_level))
     {
       continue;
     }
@@ -2289,6 +2309,8 @@ void draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *
   }
 
   cairo_stroke(gc);
+
+  return interpolation_level;
 }
 
 gint adjust_filtered_index_according_to_number_of_points(gint filtered_index, 
@@ -2319,12 +2341,12 @@ gint adjust_filtered_index_according_to_number_of_points(gint filtered_index,
     number_of_points++;
   }
 
-  if (number_of_points <= SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD)
+  if (number_of_points <= silence_wave_number_of_points_threshold)
   {
     return -1;
   }
 
-  if (number_of_points - number_of_filtered_points > SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD)
+  if (number_of_points - number_of_filtered_points > silence_wave_number_of_points_threshold)
   {
     return filtered_index + 1;
   }
@@ -2767,14 +2789,30 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     //we draw the silence wave if we have it 
     if (show_silence_wave)
     {
-      draw_silence_wave(left_mark, right_mark, da, gc);
+      gint interpolation_level = draw_silence_wave(left_mark, right_mark, da, gc);
 
-      //we set the red color
+      //draw silence wave middle line
       color.red = 255 * 255;color.green = 0;color.blue = 0;
       set_color(gc, &color);
-
-      //the draw silence wave middle line
       draw_line(gc, width_drawing_area/2,text_ypos + margin, width_drawing_area/2, wave_ypos, FALSE, TRUE);
+
+      color.red = 0;color.green = 0;color.blue = 0;
+      set_color(gc, &color);
+      if (interpolation_level < 0)
+      {
+        draw_text_with_size(gc,_("No wave interpolation"), 
+            width_drawing_area/2 + 3, wave_ypos - margin * 4,
+            13);
+      }
+      else
+      {
+        gchar interpolation_text[128] = { '\0' };
+        g_snprintf(interpolation_text, 128, _("Wave interpolation level %d"),
+            interpolation_level + 1);
+        draw_text_with_size(gc, interpolation_text, 
+            width_drawing_area/2 + 3, wave_ypos - margin * 4,
+            13);
+      }
     }
 
     //we draw the splitpoints
@@ -3456,7 +3494,7 @@ void add_playlist_file(const gchar *name)
     if (! name_already_exists_in_playlist)
     {
       gtk_widget_set_sensitive(playlist_remove_all_files_button,TRUE);
-      gtk_list_store_append (GTK_LIST_STORE(model), &iter);
+      gtk_list_store_append(GTK_LIST_STORE(model), &iter);
 
       //sets text in the minute, second and milisecond column
       gtk_list_store_set (GTK_LIST_STORE(model), 
