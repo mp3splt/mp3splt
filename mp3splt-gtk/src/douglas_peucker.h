@@ -44,7 +44,9 @@ typedef struct {
   gint index;
 } douglas_point;
 
-GPtrArray *splt_douglas_peucker(GArray *douglas_points, gdouble threshold_to_discard_point, ...);
+GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(), 
+    gdouble threshold_to_discard_points, ...);
+
 void splt_douglas_peucker_free(GPtrArray *douglas_peucker_ptr_array);
 
 gdouble splt_find_distance(GdkPoint first, GdkPoint second);
