@@ -748,7 +748,7 @@ GtkWidget *create_wave_options_box()
       _("Number of points to draw without interpolation:"), NULL,
       (gdouble)DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD, 
       1000.0, 50000.0, 100.0, 1000.0,
-      _("\t(less points decreases CPU usage - default is 5000)"),
+      _("\t(less points decreases CPU usage - default is 4000)"),
       update_number_of_points_threshold, NULL, vbox, 0);
   ui_register_spinner_int_preference("player", "number_of_points_threshold",
       DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD,

@@ -772,7 +772,7 @@ GtkWidget *create_main_vbox()
   notebook_label = gtk_label_new((gchar *)_("Preferences"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), preferences_vbox,
                            (GtkWidget *)notebook_label);
-  
+ 
   /* progress bar */
   percent_progress_bar = gtk_progress_bar_new();
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 0.0);

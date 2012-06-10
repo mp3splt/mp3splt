@@ -90,6 +90,8 @@ gint incorrect_selected_file = FALSE;
 
 gfloat total_draw_time = 0;
 
+gint douglas_callback_counter = 0;
+
 static const gint hundr_secs_th = 20;
 static const gint tens_of_secs_th = 3 * 100;
 static const gint secs_th = 40 * 100;
@@ -172,6 +174,7 @@ silence_wave *silence_points = NULL;
 gint number_of_silence_points = 0;
 gint malloced_num_of_silence_points = 0;
 gint show_silence_wave = FALSE;
+gint currently_compute_douglas_peucker_filters = FALSE;
 gint we_scan_for_silence = FALSE;
 
 //stock if the timer is active or not
@@ -381,23 +384,50 @@ static GArray *build_gdk_points_for_douglas_peucker()
   return points;
 }
 
+void douglas_peucker_callback()
+{
+  douglas_callback_counter++;
+
+  if (douglas_callback_counter % 400 == 0)
+  {
+    gtk_progress_bar_pulse(percent_progress_bar);
+    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), 
+        "Processing Douglas-Peucker filters ...");
+    gtk_widget_queue_draw(percent_progress_bar);
+    while (gtk_events_pending())
+    {
+      gtk_main_iteration();
+    }
+
+    douglas_callback_counter = 0;
+  }
+}
+
 void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data)
 {
+  douglas_callback_counter = 0;
+
   if (!show_silence_wave)
   {
     return;
   }
 
+  currently_compute_douglas_peucker_filters = TRUE;
+
   GArray *gdk_points_for_douglas_peucker = build_gdk_points_for_douglas_peucker();
 
   splt_douglas_peucker_free(filtered_points_presence);
   filtered_points_presence = splt_douglas_peucker(gdk_points_for_douglas_peucker, 
+      douglas_peucker_callback,
       douglas_peucker_thresholds[0], douglas_peucker_thresholds[1],
       douglas_peucker_thresholds[2], douglas_peucker_thresholds[3],
-      douglas_peucker_thresholds[4],
-      -1.0);
+      douglas_peucker_thresholds[4], -1.0);
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
+
+  currently_compute_douglas_peucker_filters = FALSE;
+
+  check_update_down_progress_bar();
 }
 
 gpointer detect_silence(gpointer data)
@@ -1209,23 +1239,37 @@ void refresh_drawing_area()
 //!updates bottom progress bar
 void check_update_down_progress_bar()
 {
-  if (!we_are_splitting)
+  if (we_are_splitting || currently_compute_douglas_peucker_filters)
   {
-    //if we are between 2 splitpoints,
-    //we draw yellow rectangle
-    gfloat total_interval = 0;
-    gfloat progress_time = 0;
-    gint splitpoint_time_left = -1;
-    gint splitpoint_time_right = -1;
-    gint splitpoint_left_index = -1;
-    get_splitpoint_time_left_right(&splitpoint_time_left,
-        &splitpoint_time_right, &splitpoint_left_index);
+    return;
+  }
 
-    if ((splitpoint_time_left != -1) && 
-        (splitpoint_time_right != -1))
+  //if we are between 2 splitpoints,
+  //we draw yellow rectangle
+  gfloat total_interval = 0;
+  gfloat progress_time = 0;
+  gint splitpoint_time_left = -1;
+  gint splitpoint_time_right = -1;
+  gint splitpoint_left_index = -1;
+  get_splitpoint_time_left_right(&splitpoint_time_left,
+      &splitpoint_time_right, &splitpoint_left_index);
+
+  if ((splitpoint_time_left != -1) && 
+      (splitpoint_time_right != -1))
+  {
+    //percent progress bar stuff
+    total_interval = splitpoint_time_right - splitpoint_time_left;
+    if (total_interval != 0)
     {
-      //percent progress bar stuff
-      total_interval = splitpoint_time_right - splitpoint_time_left;
+      progress_time = (current_time-splitpoint_time_left)/
+        total_interval;
+    }
+  }
+  else
+  {
+    if (splitpoint_time_right == -1)
+    {
+      total_interval = total_time - splitpoint_time_left;
       if (total_interval != 0)
       {
         progress_time = (current_time-splitpoint_time_left)/
@@ -1234,107 +1278,100 @@ void check_update_down_progress_bar()
     }
     else
     {
-      if (splitpoint_time_right == -1)
+      total_interval = splitpoint_time_right;
+      if (total_interval != 0)
       {
-        total_interval = total_time - splitpoint_time_left;
-        if (total_interval != 0)
-        {
-          progress_time = (current_time-splitpoint_time_left)/
-            total_interval;
-        }
-      }
-      else
-      {
-        total_interval = splitpoint_time_right;
-        if (total_interval != 0)
-        {
-          progress_time = current_time/total_interval;
-        }
+        progress_time = current_time/total_interval;
       }
     }
+  }
 
-    //update the percent progress bar  
-    if (progress_time < 0)
-    {
-      progress_time = 0;
-    }
-    if (progress_time > 1)
-    {
-      progress_time = 1;
-    }
-    if ((progress_time >= 0) && (progress_time <= 1))
-    {
-      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), progress_time);
-    }
+  //update the percent progress bar  
+  if (progress_time < 0)
+  {
+    progress_time = 0;
+  }
+  if (progress_time > 1)
+  {
+    progress_time = 1;
+  }
+  if ((progress_time >= 0) && (progress_time <= 1))
+  {
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), progress_time);
+  }
 
-    gchar *progress_description = get_splitpoint_name(splitpoint_left_index-1);
-    gchar description_shorted[512] = { '\0' };
-    //if we have a splitpoint on our right
-    //and we are before the first splitpoint
-    if (splitpoint_time_right != -1)
+  gchar *progress_description = get_splitpoint_name(splitpoint_left_index-1);
+  gchar description_shorted[512] = { '\0' };
+  //if we have a splitpoint on our right
+  //and we are before the first splitpoint
+  if (splitpoint_time_right != -1)
+  {
+    if (splitpoint_time_left == -1)
     {
-      if (splitpoint_time_left == -1)
+      if (progress_description != NULL)
       {
-        if (progress_description != NULL)
-        {
-          g_snprintf(description_shorted,60, _("before %s"), progress_description);
-        }
-      }
-      else
-      {
-        if (progress_description != NULL)
-        {
-          g_snprintf(description_shorted, 60,"%s", progress_description);
-        }
+        g_snprintf(description_shorted,60, _("before %s"), progress_description);
       }
     }
     else
     {
-      if (splitpoint_time_left != -1)
+      if (progress_description != NULL)
       {
-        if (progress_description != NULL)
-        {
-          g_snprintf(description_shorted, 60,"%s", progress_description);
-        }
-      }
-      else
-      {
-        //TODO ugly code in 'fname' usage !
-        gchar *fname;
-        fname = inputfilename_get();
-        fname = (gchar *)get_real_name_from_filename((guchar *)fname);
-        g_snprintf(description_shorted,60,"%s",fname);
-        if (fname != NULL)
-        {
-          if (strlen(fname) > 60)
-          {
-            description_shorted[strlen(description_shorted)-1] = '.';
-            description_shorted[strlen(description_shorted)-2] = '.';
-            description_shorted[strlen(description_shorted)-3] = '.';
-          }
-        }
+        g_snprintf(description_shorted, 60,"%s", progress_description);
       }
     }
-    //we put "..."
-    if (progress_description != NULL)
-    {
-      if (strlen(progress_description) > 60)
-      {
-        description_shorted[strlen(description_shorted)-1] = '.';
-        description_shorted[strlen(description_shorted)-2] = '.';
-        description_shorted[strlen(description_shorted)-3] = '.';
-      }
-    }
-
-    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-        description_shorted);
-    g_free(progress_description);
   }
+  else
+  {
+    if (splitpoint_time_left != -1)
+    {
+      if (progress_description != NULL)
+      {
+        g_snprintf(description_shorted, 60,"%s", progress_description);
+      }
+    }
+    else
+    {
+      //TODO ugly code in 'fname' usage !
+      gchar *fname;
+      fname = inputfilename_get();
+      fname = (gchar *)get_real_name_from_filename((guchar *)fname);
+      g_snprintf(description_shorted,60,"%s",fname);
+      if (fname != NULL)
+      {
+        if (strlen(fname) > 60)
+        {
+          description_shorted[strlen(description_shorted)-1] = '.';
+          description_shorted[strlen(description_shorted)-2] = '.';
+          description_shorted[strlen(description_shorted)-3] = '.';
+        }
+      }
+    }
+  }
+  //we put "..."
+  if (progress_description != NULL)
+  {
+    if (strlen(progress_description) > 60)
+    {
+      description_shorted[strlen(description_shorted)-1] = '.';
+      description_shorted[strlen(description_shorted)-2] = '.';
+      description_shorted[strlen(description_shorted)-3] = '.';
+    }
+  }
+
+  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
+      description_shorted);
+  g_free(progress_description);
 }
 
 //!event when the progress bar value changed
 void progress_bar_value_changed_event(GtkRange *range, gpointer user_data)
 {
+  if (currently_compute_douglas_peucker_filters)
+  {
+    return;
+  }
+
   refresh_drawing_area();
   
   //progress position
@@ -2250,7 +2287,7 @@ gint point_is_filtered(gint index, gint filtered_index)
 //! Draws the silence wave
 gint draw_silence_wave(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *gc)
 {
-  if (!silence_points || we_scan_for_silence)
+  if (!silence_points || we_scan_for_silence || currently_compute_douglas_peucker_filters)
   {
     return;
   }
@@ -3774,6 +3811,11 @@ Examples are the elapsed time and if it uses variable bitrate
 */
 gint mytimer(gpointer data)
 {
+  if (currently_compute_douglas_peucker_filters)
+  {
+    return TRUE;
+  }
+
   if (player_is_running())
   {
     if (playing)

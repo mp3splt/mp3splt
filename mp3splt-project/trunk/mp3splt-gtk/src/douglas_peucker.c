@@ -44,15 +44,17 @@
 static GArray *splt_copy_as_new_array(GArray *array);
 static GArray *splt_merge_arrays_with_bounds(GArray *first, gint first_end_bound, 
     GArray *second, gint second_end_bound);
-static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, gdouble threshold_to_discard_point);
+static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, 
+    void (*callback)(), gdouble threshold_to_discard_point);
 static GArray *splt_split_as_new_array(GArray *array, gint start_index, gint end_index);
 static GArray *build_input_douglas_points(GArray *gdk_points);
 static GArray *build_presence_array(GArray *output_douglas_points, guint length);
-static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points, gdouble threshold_to_discard_point);
+static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points, 
+    void (*callback)(), gdouble threshold_to_discard_point);
 
 //returns an array of arrays of ints
 //for each threshold, an [arrays of int] set to 1 if the point has been chosen, 0 otherwise
-GPtrArray *splt_douglas_peucker(GArray *gdk_points, gdouble threshold_to_discard_points, ...)
+GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(), gdouble threshold_to_discard_points, ...)
 {
   GArray *input_douglas_points = build_input_douglas_points(gdk_points);
   guint length = input_douglas_points->len;
@@ -64,7 +66,7 @@ GPtrArray *splt_douglas_peucker(GArray *gdk_points, gdouble threshold_to_discard
   while (threshold_to_discard_points > 0)
   {
     GArray *output_douglas_points =
-      splt_douglas_peucker_for_one_threshold(input_douglas_points, threshold_to_discard_points);
+      splt_douglas_peucker_for_one_threshold(input_douglas_points, callback, threshold_to_discard_points);
 
     GArray *presence_array = build_presence_array(output_douglas_points, length);
     g_array_free(output_douglas_points, TRUE);
@@ -96,10 +98,11 @@ void splt_douglas_peucker_free(GPtrArray *douglas_peucker_ptr_array)
   g_ptr_array_free(douglas_peucker_ptr_array, TRUE);
 }
 
-static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points, gdouble threshold_to_discard_point)
+static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_points, 
+    void (*callback)(), gdouble threshold_to_discard_point)
 {
   GArray *output_douglas_points =
-    splt_recursive_douglas_peucker(splt_copy_as_new_array(input_douglas_points), threshold_to_discard_point);
+    splt_recursive_douglas_peucker(splt_copy_as_new_array(input_douglas_points), callback, threshold_to_discard_point);
 
   return output_douglas_points;
 }
@@ -169,7 +172,7 @@ static GArray *build_input_douglas_points(GArray *gdk_points)
   return input_douglas_points;
 }
 
-static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, gdouble threshold_to_discard_point)
+static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, void (*callback)(), gdouble threshold_to_discard_point)
 {
   GArray *new_points = NULL;
 
@@ -178,6 +181,11 @@ static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, gdouble th
     new_points = splt_copy_as_new_array(douglas_points);
     g_array_free(douglas_points, TRUE);
     return new_points;
+  }
+
+  if (callback != NULL)
+  {
+    callback();
   }
 
   douglas_point first_point = g_array_index(douglas_points, douglas_point, 0);
@@ -201,12 +209,12 @@ static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, gdouble th
     GArray *first_half_points = 
       splt_split_as_new_array(douglas_points, 0, max_distance_point->index);
     GArray *first_half_filtered_points = 
-      splt_recursive_douglas_peucker(first_half_points, threshold_to_discard_point);
+      splt_recursive_douglas_peucker(first_half_points, callback, threshold_to_discard_point);
 
     GArray *second_half_points =
       splt_split_as_new_array(douglas_points, max_distance_point->index, douglas_points->len - 1);
     GArray *second_half_filtered_points = 
-      splt_recursive_douglas_peucker(second_half_points, threshold_to_discard_point);
+      splt_recursive_douglas_peucker(second_half_points, callback, threshold_to_discard_point);
 
     new_points = 
       splt_merge_arrays_with_bounds(first_half_filtered_points, first_half_filtered_points->len - 2,
