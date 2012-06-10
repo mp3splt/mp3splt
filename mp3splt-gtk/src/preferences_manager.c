@@ -48,6 +48,7 @@
 
 #include <libmp3splt/mp3splt.h>
 
+#include "preferences_manager.h"
 #include "player.h"
 #include "player_tab.h"
 #include "preferences_tab.h"
@@ -57,7 +58,6 @@
 #include "ui_manager.h"
 
 extern GtkWidget *player_combo_box;
-extern GtkWidget *player_refresh_rate_spinner;
 extern gint selected_player;
 extern GList *player_pref_list;
 extern GtkWidget *radio_button;
@@ -92,7 +92,96 @@ extern GtkWidget *comment_tag_entry;
 extern GtkWidget *regex_entry;
 extern GtkWidget *test_regex_fname_entry;
 
+extern gint selected_split_mode;
+extern gint split_file_mode;
+
 extern ui_state *ui;
+
+void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *spinner,
+    void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
+    preferences_state *pm)
+{
+  spinner_int_preference preference;
+
+  preference.main_key = main_key;
+  preference.second_key = second_key;
+  preference.default_value = default_value;
+  preference.spinner = spinner;
+  preference.update_spinner_value_cb = update_spinner_value_cb;
+
+  g_array_append_val(pm->spinner_int_preferences, preference);
+}
+
+preferences_state *pm_state_new()
+{
+  preferences_state *pm = g_malloc0(sizeof(preferences_state));
+  pm->spinner_int_preferences = g_array_new(TRUE, TRUE, sizeof(spinner_int_preference));
+  return pm;
+}
+
+void pm_free(preferences_state **pm)
+{
+  if (!pm || !*pm)
+  {
+    return;
+  }
+
+  g_array_free((*pm)->spinner_int_preferences, TRUE);
+
+  g_free(*pm);
+  *pm = NULL;
+}
+
+void pm_load(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *spinner_int_preferences = pm->spinner_int_preferences;
+
+  gint i = 0;
+  for (i = 0; i < spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(spinner_int_preferences, spinner_int_preference, i);
+
+    gint value =
+      g_key_file_get_integer(key_file, preference.main_key, preference.second_key, NULL);  
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(preference.spinner), value);
+    preference.update_spinner_value_cb(preference.spinner, NULL);
+  }
+}
+
+void pm_save(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *spinner_int_preferences = pm->spinner_int_preferences;
+
+  gint i = 0;
+  for (i = 0; i < spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(spinner_int_preferences, spinner_int_preference, i);
+
+    g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
+        gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(preference.spinner)));
+  }
+}
+
+void pm_write_default(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *spinner_int_preferences = pm->spinner_int_preferences;
+
+  gint i = 0;
+  for (i = 0; i < spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(spinner_int_preferences, spinner_int_preference, i);
+
+    if (!g_key_file_has_key(key_file, preference.main_key, preference.second_key, NULL))
+    {
+      g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
+          preference.default_value);
+    }
+  }
+}
 
 /*! Get the name of the preferences file.
 
@@ -246,9 +335,7 @@ void load_preferences()
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
   ch_set_active_value(GTK_COMBO_BOX(player_combo_box), item);
 
-  item = g_key_file_get_integer(key_file, "player", "refresh_rate", NULL);  
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(player_refresh_rate_spinner), item);
-  update_timeout_value(NULL, NULL);
+  ui_load_preferences(key_file, ui);
  
   //frame mode
   item = g_key_file_get_boolean(key_file, "split", "frame_mode", NULL);
@@ -488,6 +575,159 @@ void load_preferences()
   key_file = NULL;
 }
 
+void save_preferences(GtkWidget *widget, gpointer data)
+{
+  gchar *filename = get_preferences_filename();
+
+  GKeyFile *my_key_file = g_key_file_new();
+  g_key_file_load_from_file(my_key_file, filename, G_KEY_FILE_KEEP_COMMENTS, NULL);
+
+  //save_path
+  g_key_file_set_string(my_key_file, "split", "save_path",
+			outputdirectory_get());
+
+  //player
+  g_key_file_set_integer(my_key_file, "player", "default_player", selected_player);
+
+  ui_save_preferences(my_key_file, ui);
+ 
+#ifdef __WIN32__
+  //language
+  GString *selected_lang;
+  selected_lang = (GString *)get_checked_language();
+  g_key_file_set_string(my_key_file, "general", "language", selected_lang->str);
+  g_string_free(selected_lang, TRUE);
+  selected_lang = NULL;
+#endif
+
+  //frame mode
+  g_key_file_set_boolean(my_key_file, "split", "frame_mode",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)));
+
+  //adjust mode
+  g_key_file_set_boolean(my_key_file, "split", "adjust_mode",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)));
+
+  //adjust threshold
+  g_key_file_set_integer(my_key_file, "split", "adjust_threshold",
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_threshold)) * 100);
+  //adjust offset
+  g_key_file_set_integer(my_key_file, "split", "adjust_offset",
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_offset)) * 100);
+  //adjust gap
+  g_key_file_set_integer(my_key_file, "split", "adjust_gap",
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_gap)));
+
+  g_key_file_set_boolean(my_key_file, "output", "splitpoint_names_from_filename",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)));
+
+  //output format
+  g_key_file_set_string(my_key_file, "output", "output_format",
+      gtk_entry_get_text(GTK_ENTRY(output_entry)));
+  //default output format
+  g_key_file_set_boolean(my_key_file, "output", "default_output_format",
+      get_checked_output_radio_box());
+  g_key_file_set_boolean(my_key_file, "output", "create_dirs_if_needed",
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
+
+  //tags
+  g_key_file_set_integer(my_key_file, "split", "tags", rh_get_active_value(tags_radio));
+
+  //replace underscores by space
+  g_key_file_set_boolean(my_key_file, "split", "replace_underscore_by_space",
+  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box)));
+
+  //artist text properties
+  g_key_file_set_integer(my_key_file, "split", "artist_text_properties",
+      ch_get_active_value(artist_text_properties_combo));
+  //album text properties
+  g_key_file_set_integer(my_key_file, "split", "album_text_properties",
+      ch_get_active_value(album_text_properties_combo));
+  //title text properties
+  g_key_file_set_integer(my_key_file, "split", "title_text_properties",
+      ch_get_active_value(title_text_properties_combo));
+  //comment text properties
+  g_key_file_set_integer(my_key_file, "split", "comment_text_properties",
+      ch_get_active_value(comment_text_properties_combo));
+
+  //genre
+  gchar *genre_value = ch_get_active_str_value(genre_combo);
+  if (genre_value != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "genre", genre_value);
+  }
+
+  const gchar *comment = gtk_entry_get_text(GTK_ENTRY(comment_tag_entry));
+  if (comment != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "default_comment_tag", comment);
+  }
+
+  const gchar *regex_text = gtk_entry_get_text(GTK_ENTRY(regex_entry));
+  if (regex_text != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "tags_from_filename_regex", regex_text);
+  }
+
+  const gchar *test_regex_fname = gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry));
+  if (test_regex_fname_entry != NULL)
+  {
+    g_key_file_set_string(my_key_file, "split", "test_regex_fname", test_regex_fname);
+  }
+
+  //tags version
+  g_key_file_set_integer(my_key_file, "split", "tags_version",
+      get_checked_tags_version_radio_box());
+
+  //type of split: split mode
+  g_key_file_set_integer(my_key_file, "split", "split_mode",
+      selected_split_mode);
+  //time value
+  g_key_file_set_integer(my_key_file, "split", "split_mode_time_value",
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
+  //type of split: file mode
+  g_key_file_set_integer(my_key_file, "split", "file_mode",
+      split_file_mode);
+  //equal time tracks value
+  g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks",
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_equal_tracks)));
+
+  const ui_main_window *main_win = ui_get_main_window_infos(ui);
+  g_key_file_set_integer(my_key_file, "gui", "root_x_position", 
+      main_win->root_x_pos);
+  g_key_file_set_integer(my_key_file, "gui", "root_y_position", 
+      main_win->root_y_pos);
+  g_key_file_set_integer(my_key_file, "gui", "width", 
+      main_win->width);
+  g_key_file_set_integer(my_key_file, "gui", "height", 
+      main_win->height);
+
+  const char *browser_directory = ui_get_browser_directory(ui);
+  if (browser_directory != NULL)
+  {
+    g_key_file_set_string(my_key_file, "gui", "browser_directory", browser_directory);
+  }
+
+  gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);
+
+  //we write to the preference file
+  FILE *preferences_file;
+  preferences_file = (FILE *)g_fopen(filename,"w");
+  g_fprintf(preferences_file,"%s", key_data);
+  fclose(preferences_file);
+  preferences_file = NULL;
+
+  //we free memory
+  g_free(key_data);
+  g_key_file_free(my_key_file);
+
+  if (filename)
+  {
+    g_free(filename);
+    filename = NULL;
+  }
+}
+
 /* \brief writes a default configuration file
 
 Also is used to write good values on a bad existing configuration file
@@ -656,10 +896,7 @@ void write_default_preferences_file()
     }
   }
 
-  if (!g_key_file_has_key(my_key_file, "player", "refresh_rate", NULL))
-  {
-    g_key_file_set_integer(my_key_file, "player", "refresh_rate", DEFAULT_TIMEOUT_VALUE);
-  }
+  ui_write_default_preferences(my_key_file, ui);
 
   //output format
   if (!g_key_file_has_key(my_key_file, "output", "output_format",NULL))

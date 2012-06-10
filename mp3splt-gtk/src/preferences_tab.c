@@ -39,8 +39,8 @@
 
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#include <glib.h>
 #include <glib/gstdio.h>
+#include <glib.h>
 #include <string.h>
 
 #include <libmp3splt/mp3splt.h>
@@ -51,8 +51,8 @@
 #include "player_tab.h"
 #include "utilities.h"
 #include "main_win.h"
-#include "preferences_manager.h"
 #include "widgets_helper.h"
+#include "preferences_manager.h"
 #include "combo_helper.h"
 #include "radio_helper.h"
 #include "options_manager.h"
@@ -75,7 +75,6 @@ GtkWidget *output_label = NULL;
 
 //!choose the player box
 GtkWidget *player_combo_box = NULL;
-GtkWidget *player_refresh_rate_spinner = NULL;
 
 //!list where we stock the preferences combo box content
 GList *player_pref_list = NULL;
@@ -257,159 +256,6 @@ gchar* outputdirectory_get()
     return(outputdirname->str);
   else
     return NULL;
-}
-
-void save_preferences(GtkWidget *widget, gpointer data)
-{
-  gchar *filename = get_preferences_filename();
-
-  GKeyFile *my_key_file = g_key_file_new();
-  g_key_file_load_from_file(my_key_file, filename, G_KEY_FILE_KEEP_COMMENTS, NULL);
-
-  //save_path
-  g_key_file_set_string(my_key_file, "split", "save_path",
-			outputdirectory_get());
-
-  //player
-  g_key_file_set_integer(my_key_file, "player", "default_player", selected_player);
-  g_key_file_set_integer(my_key_file, "player", "refresh_rate",
-      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(player_refresh_rate_spinner)));
- 
-#ifdef __WIN32__
-  //language
-  GString *selected_lang;
-  selected_lang = (GString *)get_checked_language();
-  g_key_file_set_string(my_key_file, "general", "language", selected_lang->str);
-  g_string_free(selected_lang, TRUE);
-  selected_lang = NULL;
-#endif
-
-  //frame mode
-  g_key_file_set_boolean(my_key_file, "split", "frame_mode",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)));
-
-  //adjust mode
-  g_key_file_set_boolean(my_key_file, "split", "adjust_mode",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)));
-
-  //adjust threshold
-  g_key_file_set_integer(my_key_file, "split", "adjust_threshold",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_threshold)) * 100);
-  //adjust offset
-  g_key_file_set_integer(my_key_file, "split", "adjust_offset",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_offset)) * 100);
-  //adjust gap
-  g_key_file_set_integer(my_key_file, "split", "adjust_gap",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_gap)));
-
-  g_key_file_set_boolean(my_key_file, "output", "splitpoint_names_from_filename",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)));
-
-  //output format
-  g_key_file_set_string(my_key_file, "output", "output_format",
-      gtk_entry_get_text(GTK_ENTRY(output_entry)));
-  //default output format
-  g_key_file_set_boolean(my_key_file, "output", "default_output_format",
-      get_checked_output_radio_box());
-  g_key_file_set_boolean(my_key_file, "output", "create_dirs_if_needed",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
-
-  //tags
-  g_key_file_set_integer(my_key_file, "split", "tags", rh_get_active_value(tags_radio));
-
-  //replace underscores by space
-  g_key_file_set_boolean(my_key_file, "split", "replace_underscore_by_space",
-  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box)));
-
-  //artist text properties
-  g_key_file_set_integer(my_key_file, "split", "artist_text_properties",
-      ch_get_active_value(artist_text_properties_combo));
-  //album text properties
-  g_key_file_set_integer(my_key_file, "split", "album_text_properties",
-      ch_get_active_value(album_text_properties_combo));
-  //title text properties
-  g_key_file_set_integer(my_key_file, "split", "title_text_properties",
-      ch_get_active_value(title_text_properties_combo));
-  //comment text properties
-  g_key_file_set_integer(my_key_file, "split", "comment_text_properties",
-      ch_get_active_value(comment_text_properties_combo));
-
-  //genre
-  gchar *genre_value = ch_get_active_str_value(genre_combo);
-  if (genre_value != NULL)
-  {
-    g_key_file_set_string(my_key_file, "split", "genre", genre_value);
-  }
-
-  const gchar *comment = gtk_entry_get_text(GTK_ENTRY(comment_tag_entry));
-  if (comment != NULL)
-  {
-    g_key_file_set_string(my_key_file, "split", "default_comment_tag", comment);
-  }
-
-  const gchar *regex_text = gtk_entry_get_text(GTK_ENTRY(regex_entry));
-  if (regex_text != NULL)
-  {
-    g_key_file_set_string(my_key_file, "split", "tags_from_filename_regex", regex_text);
-  }
-
-  const gchar *test_regex_fname = gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry));
-  if (test_regex_fname_entry != NULL)
-  {
-    g_key_file_set_string(my_key_file, "split", "test_regex_fname", test_regex_fname);
-  }
-
-  //tags version
-  g_key_file_set_integer(my_key_file, "split", "tags_version",
-      get_checked_tags_version_radio_box());
-
-  //type of split: split mode
-  g_key_file_set_integer(my_key_file, "split", "split_mode",
-      selected_split_mode);
-  //time value
-  g_key_file_set_integer(my_key_file, "split", "split_mode_time_value",
-      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
-  //type of split: file mode
-  g_key_file_set_integer(my_key_file, "split", "file_mode",
-      split_file_mode);
-  //equal time tracks value
-  g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks",
-      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_equal_tracks)));
-
-  const ui_main_window *main_win = ui_get_main_window_infos(ui);
-  g_key_file_set_integer(my_key_file, "gui", "root_x_position", 
-      main_win->root_x_pos);
-  g_key_file_set_integer(my_key_file, "gui", "root_y_position", 
-      main_win->root_y_pos);
-  g_key_file_set_integer(my_key_file, "gui", "width", 
-      main_win->width);
-  g_key_file_set_integer(my_key_file, "gui", "height", 
-      main_win->height);
-
-  const char *browser_directory = ui_get_browser_directory(ui);
-  if (browser_directory != NULL)
-  {
-    g_key_file_set_string(my_key_file, "gui", "browser_directory", browser_directory);
-  }
-
-  gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);
-
-  //we write to the preference file
-  FILE *preferences_file;
-  preferences_file = (FILE *)g_fopen(filename,"w");
-  g_fprintf(preferences_file,"%s", key_data);
-  fclose(preferences_file);
-  preferences_file = NULL;
-
-  //we free memory
-  g_free(key_data);
-  g_key_file_free(my_key_file);
-
-  if (filename)
-  {
-    g_free(filename);
-    filename = NULL;
-  }
 }
 
 //!creates a scrolled window
@@ -829,8 +675,7 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
 
 void update_timeout_value(GtkWidget *refresh_rate_spinner, gpointer data)
 {
-  timeout_value = 
-    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(player_refresh_rate_spinner));
+  timeout_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(refresh_rate_spinner));
 
   restart_player_timer();
   save_preferences(NULL, NULL);
@@ -862,29 +707,20 @@ GtkWidget *create_player_options_box()
   gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 5);
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
-  //Player Splitpoints view refresh rate
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  //player view refresh rate
+  GtkWidget *spinner = wh_create_int_spinner_in_box(_("Refresh player every "),
+      _("milliseconds."),
+      20.0, 1000.0, 10.0, 100.0,
+      _("\t(higher refresh rate decreases CPU usage - default is 200)"),
+      update_timeout_value, vbox);
 
-  label = gtk_label_new(_("Refresh player every "));
-  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-
-  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0,
-      20, 1000, 10.0, 100.0, 0.0);
-  player_refresh_rate_spinner = gtk_spin_button_new(adj, 0, 0);
-  gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(player_refresh_rate_spinner), TRUE);
-  g_signal_connect(G_OBJECT(player_refresh_rate_spinner), "value_changed",
-      G_CALLBACK(update_timeout_value), NULL);
-
-  gtk_box_pack_start(GTK_BOX(horiz_fake), player_refresh_rate_spinner, FALSE, FALSE, 5);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(_("milliseconds.")), FALSE, FALSE, 3);
-  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
-
-  horiz_fake = gtk_hbox_new(FALSE,0);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), 
-      gtk_label_new(_("Higher refresh rate decreases CPU usage - default is 200.")),
-      FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
+  ui_register_spinner_int_preference("player", "refresh_rate", 200,
+      spinner, update_timeout_value, ui);
  
+  //player wave number of points threshold
+  //TODO
+
+
   return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
 }
 

@@ -109,11 +109,13 @@ ui_state *ui_state_new()
   ui_state *ui = g_malloc0(sizeof(ui_state));
 
   ui_infos_new(ui);
+  ui->preferences = pm_state_new();
 
   return ui;
 }
 
 static void ui_main_window_free(ui_main_window **main_win)
+
 {
   if (!main_win || !*main_win)
   {
@@ -142,8 +144,33 @@ void ui_state_free(ui_state *ui)
   if (ui)
   {
     ui_infos_free(&ui->infos);
+    pm_free(&ui->preferences);
 
     g_free(ui);
   }
+}
+
+void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *spinner,
+    void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
+    ui_state *ui)
+{
+  pm_register_spinner_int_preference(main_key, second_key,
+      default_value, spinner, update_spinner_value_cb, ui->preferences);
+}
+
+void ui_load_preferences(GKeyFile *key_file, ui_state *ui)
+{
+  pm_load(key_file, ui->preferences);
+}
+
+void ui_save_preferences(GKeyFile *key_file, ui_state *ui)
+{
+  pm_save(key_file, ui->preferences);
+}
+
+void ui_write_default_preferences(GKeyFile *key_file, ui_state *ui)
+{
+  pm_write_default(key_file, ui->preferences);
 }
 

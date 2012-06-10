@@ -148,6 +148,42 @@ void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height)
 #endif
 }
 
+GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
+    gdouble minimum_value, gdouble maximum_value, 
+    gdouble step_increment, gdouble page_increment,
+    gchar *after_newline_label, 
+    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
+    GtkWidget *box)
+{
+  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  GtkWidget *label = gtk_label_new(before_label);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+
+  GtkAdjustment *adj = (GtkAdjustment *) 
+    gtk_adjustment_new(0.0, minimum_value, maximum_value, step_increment, page_increment, 0.0);
+
+  GtkWidget *spinner = gtk_spin_button_new(adj, 0, 0);
+  gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(spinner), TRUE);
+  g_signal_connect(G_OBJECT(spinner), "value_changed", G_CALLBACK(spinner_callback), NULL);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner, FALSE, FALSE, 5);
+
+  if (after_label != NULL)
+  {
+    gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(after_label), FALSE, FALSE, 3);
+  }
+
+  gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 5);
+
+  if (after_newline_label != NULL)
+  {
+    horiz_fake = gtk_hbox_new(FALSE,0);
+    gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(after_newline_label), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 5);
+  }
+
+  return spinner;
+}
+
 static void _wh_folder_changed_event(GtkFileChooser *chooser, gpointer data)
 {
   ui_state *ui = (ui_state *) data;
