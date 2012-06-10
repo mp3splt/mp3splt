@@ -36,6 +36,7 @@ typedef struct {
   gint default_value;
   GtkWidget *spinner;
   void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data);
+  gpointer user_data_for_cb;
 } spinner_int_preference;
 
 typedef struct {
@@ -46,7 +47,6 @@ gchar *get_preferences_filename();
 void load_preferences();
 void save_preferences(GtkWidget *widget, gpointer data);
 void write_default_preferences_file();
-void check_pref_file();
 
 void set_language();
 
@@ -56,7 +56,7 @@ void pm_free(preferences_state **pm);
 void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *spinner,
     void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
-    preferences_state *pm);
+    gpointer user_data_for_cb, preferences_state *pm);
 
 void pm_load(GKeyFile *key_file, preferences_state *pm);
 void pm_save(GKeyFile *key_file, preferences_state *pm);

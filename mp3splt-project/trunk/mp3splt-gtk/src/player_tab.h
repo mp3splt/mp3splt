@@ -41,6 +41,7 @@
 #define ICON_EXT ".svg"
 
 #define DEFAULT_TIMEOUT_VALUE 200
+#define DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD 5000
 
 //!time structure
 typedef struct
@@ -215,6 +216,8 @@ void build_path(GString *path, const gchar *dir, const gchar *filename);
 
 void close_playlist_popup_window_event(GtkWidget *window, gpointer data);
 void restart_player_timer();
+
+void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data);
 
 #endif
 

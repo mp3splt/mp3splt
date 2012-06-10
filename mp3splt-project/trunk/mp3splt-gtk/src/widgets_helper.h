@@ -54,6 +54,24 @@ void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height);
 
 void wh_set_browser_directory_handler(ui_state *ui, GtkWidget* dialog);
 
+GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
+    gdouble initial_value,
+    gdouble minimum_value, gdouble maximum_value, 
+    gdouble step_increment, gdouble page_increment,
+    gchar *after_newline_label, 
+    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
+    gpointer user_data_for_cb,
+    GtkWidget *box);
+
+GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gchar *after_label,
+    gdouble initial_value,
+    gdouble minimum_value, gdouble maximum_value, 
+    gdouble step_increment, gdouble page_increment,
+    gchar *after_newline_label, 
+    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
+    gpointer user_data_for_cb,
+    GtkWidget *box, gint top_width);
+
 #define WIDGETS_HELPER_H
 #endif
 

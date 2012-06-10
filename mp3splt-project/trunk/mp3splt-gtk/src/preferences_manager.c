@@ -97,18 +97,21 @@ extern gint split_file_mode;
 
 extern ui_state *ui;
 
+static void check_pref_file_and_write_default();
+
 void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *spinner,
     void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
-    preferences_state *pm)
+    gpointer user_data_for_cb, preferences_state *pm)
 {
   spinner_int_preference preference;
 
-  preference.main_key = main_key;
-  preference.second_key = second_key;
+  preference.main_key = strdup(main_key);
+  preference.second_key = strdup(second_key);
   preference.default_value = default_value;
   preference.spinner = spinner;
   preference.update_spinner_value_cb = update_spinner_value_cb;
+  preference.user_data_for_cb = user_data_for_cb;
 
   g_array_append_val(pm->spinner_int_preferences, preference);
 }
@@ -125,6 +128,19 @@ void pm_free(preferences_state **pm)
   if (!pm || !*pm)
   {
     return;
+  }
+
+  gint i = 0;
+  for (i = 0; i < (*pm)->spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index((*pm)->spinner_int_preferences, spinner_int_preference, i);
+
+    g_free(preference.main_key);
+    preference.main_key = NULL;
+
+    g_free(preference.second_key);
+    preference.second_key = NULL;
   }
 
   g_array_free((*pm)->spinner_int_preferences, TRUE);
@@ -146,7 +162,7 @@ void pm_load(GKeyFile *key_file, preferences_state *pm)
     gint value =
       g_key_file_get_integer(key_file, preference.main_key, preference.second_key, NULL);  
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(preference.spinner), value);
-    preference.update_spinner_value_cb(preference.spinner, NULL);
+    preference.update_spinner_value_cb(preference.spinner, preference.user_data_for_cb);
   }
 }
 
@@ -272,6 +288,8 @@ gchar *get_preferences_filename()
  */
 void load_preferences()
 {
+  check_pref_file_and_write_default();
+ 
   GKeyFile *key_file = g_key_file_new();
 
   gchar *filename = get_preferences_filename();
@@ -879,8 +897,8 @@ void write_default_preferences_file()
   else
   {
     //check if we support selected player
-    gint the_player = g_key_file_get_integer(my_key_file, "player",
-        "default_player", NULL);
+    gint the_player = 
+      g_key_file_get_integer(my_key_file, "player", "default_player", NULL);
     if (the_player == PLAYER_AUDACIOUS)
     {
 #ifdef NO_AUDACIOUS
@@ -1016,7 +1034,7 @@ void write_default_preferences_file()
 
 checks if preferences file exists and if it does not, create it
 */
-void check_pref_file()
+static void check_pref_file_and_write_default()
 {
   //used to see if the file exists
   struct stat buffer;

@@ -52,9 +52,9 @@
 #include "utilities.h"
 #include "main_win.h"
 #include "widgets_helper.h"
-#include "preferences_manager.h"
 #include "combo_helper.h"
 #include "radio_helper.h"
+#include "preferences_manager.h"
 #include "options_manager.h"
 #include "ui_manager.h"
 #include "widgets_helper.h"
@@ -130,7 +130,13 @@ GtkWidget *sample_result_label = NULL;
 GtkWidget *extract_tags_box = NULL;
 //@}
 
+gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4 , 5};
+
 extern gint timeout_value;
+extern gint silence_wave_number_of_points_threshold;
+extern gdouble douglas_peucker_thresholds[];
+extern gdouble douglas_peucker_thresholds_defaults[];
+
 extern GtkWidget *player_box;
 extern GtkWidget *playlist_box;
 extern GtkWidget *queue_files_button;
@@ -673,11 +679,27 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
   save_preferences(NULL, NULL);
 }
 
-void update_timeout_value(GtkWidget *refresh_rate_spinner, gpointer data)
+void update_timeout_value(GtkWidget *spinner, gpointer data)
 {
-  timeout_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(refresh_rate_spinner));
+  timeout_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
 
   restart_player_timer();
+  save_preferences(NULL, NULL);
+}
+
+void update_number_of_points_threshold(GtkWidget *spinner, gpointer data)
+{
+  silence_wave_number_of_points_threshold = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+  save_preferences(NULL, NULL);
+}
+
+void update_douglas_peucker_level(GtkWidget *spinner, gpointer data)
+{
+  gint level_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+
+  gint *level_index = (gint *) data;
+  douglas_peucker_thresholds[*level_index] = level_value;
+
   save_preferences(NULL, NULL);
 }
 
@@ -707,21 +729,75 @@ GtkWidget *create_player_options_box()
   gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 5);
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
-  //player view refresh rate
   GtkWidget *spinner = wh_create_int_spinner_in_box(_("Refresh player every "),
       _("milliseconds."),
-      20.0, 1000.0, 10.0, 100.0,
+      (gdouble)DEFAULT_TIMEOUT_VALUE, 20.0, 1000.0, 10.0, 100.0,
       _("\t(higher refresh rate decreases CPU usage - default is 200)"),
-      update_timeout_value, vbox);
-
-  ui_register_spinner_int_preference("player", "refresh_rate", 200,
-      spinner, update_timeout_value, ui);
+      update_timeout_value, NULL, vbox);
+  ui_register_spinner_int_preference("player", "refresh_rate", DEFAULT_TIMEOUT_VALUE,
+      spinner, update_timeout_value, NULL, ui);
  
-  //player wave number of points threshold
-  //TODO
-
-
   return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
+}
+
+GtkWidget *create_wave_options_box()
+{
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+
+  GtkWidget *spinner = wh_create_int_spinner_in_box_with_top_width(
+      _("Number of points to draw without interpolation:"), NULL,
+      (gdouble)DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD, 
+      1000.0, 50000.0, 100.0, 1000.0,
+      _("\t(less points decreases CPU usage - default is 5000)"),
+      update_number_of_points_threshold, NULL, vbox, 0);
+  ui_register_spinner_int_preference("player", "number_of_points_threshold",
+      DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD,
+      spinner, update_number_of_points_threshold, NULL, ui);
+ 
+  gint level = 1;
+  for(level = 1; level <= 5; level++)
+  {
+    gdouble default_value = douglas_peucker_thresholds_defaults[level-1];
+
+    gchar label[128] = { '\0' };
+    snprintf(label, 128, _("Douglas-Peucker algorithm threshold for level %d:"), (gint)level);
+
+    gchar default_label[128] = { '\0' };
+    snprintf(default_label, 128, _("(default is %d)"), (gint)default_value);
+
+    spinner = wh_create_int_spinner_in_box_with_top_width(label , default_label,
+        default_value, 1.0, 100.0, 1.0, 5.0, NULL,
+        update_douglas_peucker_level, 
+        &douglas_peucker_indexes[level-1], vbox, 0);
+
+    gchar key[128] = { '\0' };
+    snprintf(key, 128, _("douglas_peucker_level%d_threshold"), level);
+    ui_register_spinner_int_preference("player", key,
+        default_value, spinner, update_douglas_peucker_level, 
+        &douglas_peucker_indexes[level-1], ui);
+  }
+
+  GtkWidget *horiz_fake = gtk_hbox_new(FALSE, 0);
+  GtkWidget *label = gtk_label_new(_("Douglas-Peucker options are not applied instantly."));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
+
+  horiz_fake = gtk_hbox_new(FALSE, 0);
+  label = gtk_label_new(_("You have to recompute the amplitude wave or to recompute the filters."));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
+
+  horiz_fake = gtk_hbox_new(FALSE, 0);
+  GtkWidget *compute_douglas_filters_button =
+    create_cool_button(GTK_STOCK_EXECUTE, _("_Recompute Douglas-Peucker filters"), FALSE);
+
+  g_signal_connect(G_OBJECT(compute_douglas_filters_button), "clicked",
+      G_CALLBACK(compute_douglas_peucker_filters), NULL);
+
+  gtk_box_pack_start(GTK_BOX(horiz_fake), compute_douglas_filters_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 6);
+
+  return wh_set_title_and_get_vbox(vbox, _("<b>Amplitude wave options</b>"));
 }
 
 //!creates the player preferences page
@@ -743,6 +819,8 @@ GtkWidget *create_pref_player_page()
   //choose player combo box
   GtkWidget *player_options_box = create_player_options_box();
   gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 3);
+  GtkWidget *wave_options_box = create_wave_options_box();
+  gtk_box_pack_start(GTK_BOX(vbox), wave_options_box, FALSE, FALSE, 3);
  
   return player_hbox;
 }
