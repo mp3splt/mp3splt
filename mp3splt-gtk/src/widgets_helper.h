@@ -75,6 +75,7 @@ GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gcha
 GtkWidget *wh_hbox_new();
 GtkWidget *wh_vbox_new();
 GtkWidget *wh_hscale_new(GtkAdjustment *adjustment);
+GtkWidget *wh_hscale_new_with_range(gdouble min, gdouble max, gdouble step);
 void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *state);
 
 #define WIDGETS_HELPER_H

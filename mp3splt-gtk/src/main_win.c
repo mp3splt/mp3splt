@@ -703,7 +703,7 @@ GtkWidget *create_main_vbox()
   gtk_container_set_border_width (GTK_CONTAINER (splitpoints_vbox), 0);
   tree_view = (GtkTreeView *)create_tree_view();
   frame = (GtkWidget *)create_choose_splitpoints_frame(tree_view);
-  gtk_container_add(GTK_CONTAINER(splitpoints_vbox), frame);
+  gtk_box_pack_start(GTK_BOX(splitpoints_vbox), frame, TRUE, TRUE, 0);
   
   /* player page */
   player_vbox = wh_vbox_new();
@@ -731,7 +731,7 @@ GtkWidget *create_main_vbox()
   gtk_container_set_border_width(GTK_CONTAINER(split_files_vbox), 0);
   
   frame = (GtkWidget *)create_split_files();
-  gtk_container_add(GTK_CONTAINER(split_files_vbox), frame);
+  gtk_box_pack_start(GTK_BOX(split_files_vbox), frame, TRUE, TRUE, 0);
 
   notebook_label = gtk_label_new((gchar *)_("Split files"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
@@ -741,11 +741,11 @@ GtkWidget *create_main_vbox()
   /* freedb page */
   GtkWidget *freedb_vbox;
   freedb_vbox = wh_vbox_new();
-  gtk_container_set_border_width (GTK_CONTAINER (freedb_vbox), 0);
+  gtk_container_set_border_width(GTK_CONTAINER(freedb_vbox), 0);
   
   frame = (GtkWidget *)create_freedb_frame();
-  gtk_container_add(GTK_CONTAINER(freedb_vbox), frame);
-  
+  gtk_box_pack_start(GTK_BOX(freedb_vbox), frame, TRUE, TRUE, 0);
+
   notebook_label = gtk_label_new((gchar *)_("FreeDB"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            freedb_vbox,
@@ -756,7 +756,7 @@ GtkWidget *create_main_vbox()
   special_split_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (special_split_vbox), 0);
   frame = (GtkWidget *)create_special_split_page();
-  gtk_container_add(GTK_CONTAINER(special_split_vbox), frame);
+  gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
   notebook_label = gtk_label_new(_("Type of split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
                            special_split_vbox,
@@ -768,7 +768,7 @@ GtkWidget *create_main_vbox()
   gtk_container_set_border_width (GTK_CONTAINER (preferences_vbox), 0);
 
   frame = (GtkWidget *)create_choose_preferences();
-  gtk_container_add(GTK_CONTAINER(preferences_vbox), frame);
+  gtk_box_pack_start(GTK_BOX(preferences_vbox), frame, TRUE, TRUE, 0);
 
   notebook_label = gtk_label_new((gchar *)_("Preferences"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), preferences_vbox,

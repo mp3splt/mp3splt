@@ -528,10 +528,11 @@ GtkWidget *create_freedb_frame()
 {
   GtkWidget *freedb_hbox = gtk_box_new(FALSE, 0);
   gtk_container_set_border_width(GTK_CONTAINER(freedb_hbox), 0);
-  
+ 
   /* handle box for detaching */
   freedb_handle_box = gtk_handle_box_new();
   gtk_container_add(GTK_CONTAINER(freedb_handle_box), GTK_WIDGET(freedb_hbox));
+
   g_signal_connect(freedb_handle_box, "child-detached",
                    G_CALLBACK(handle_freedb_detached_event),
                    NULL);
@@ -565,8 +566,7 @@ GtkWidget *create_freedb_frame()
   /* freedb scrolled window and the tree */
   freedb_tree = (GtkWidget *) create_freedb_tree();
 
-  GtkWidget *scrolled_window;
-  scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+  GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
