@@ -213,7 +213,9 @@ GtkWidget *wh_hbox_new()
 #if GTK_MAJOR_VERSION <= 2
   return gtk_hbox_new(FALSE, 0);
 #else
-  return gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_set_homogeneous(GTK_BOX(hbox), FALSE);
+  return hbox;
 #endif
 }
 
@@ -222,7 +224,9 @@ GtkWidget *wh_vbox_new()
 #if GTK_MAJOR_VERSION <= 2
   return gtk_vbox_new(FALSE, 0);
 #else
-  return gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_box_set_homogeneous(GTK_BOX(vbox), FALSE);
+  return vbox;
 #endif
 }
 
@@ -235,12 +239,21 @@ GtkWidget *wh_hscale_new(GtkAdjustment *adjustment)
 #endif
 }
 
+GtkWidget *wh_hscale_new_with_range(gdouble min, gdouble max, gdouble step)
+{
+#if GTK_MAJOR_VERSION <= 2
+  return gtk_hscale_new_with_range(min, max, step);
+#else
+  return gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, step);
+#endif
+}
+
 void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *state)
 {
 #if GTK_MAJOR_VERSION <= 2
   gdk_window_get_pointer(event->window, x, y, state);
 #else
-  gdk_window_get_device_position(event->window, GDK_SOURCE_MOUSE, x, y, state);
+  gdk_window_get_device_position(event->window, event->device, x, y, state);
 #endif
 }
 

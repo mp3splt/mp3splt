@@ -797,11 +797,11 @@ GtkWidget *create_wave_options_box()
   gtk_box_pack_start(GTK_BOX(horiz_fake), compute_douglas_filters_button, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 6);
 
-/*  GtkWidget *range_hbox = wh_hbox_new();
-  GtkWidget *hscale = gtk_hscale_new_with_range(1.0, 5.0, 1.0);
+  GtkWidget *range_hbox = wh_hbox_new();
+  GtkWidget *hscale = wh_hscale_new_with_range(1.0, 5.0, 1.0);
   gtk_box_pack_start(GTK_BOX(range_hbox), hscale, FALSE, FALSE, 0);
 
-  gtk_box_pack_start(GTK_BOX(vbox), range_hox, FALSE, FALSE, 6);*/
+  gtk_box_pack_start(GTK_BOX(vbox), range_hbox, FALSE, FALSE, 6);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Amplitude wave options</b>"));
 }
