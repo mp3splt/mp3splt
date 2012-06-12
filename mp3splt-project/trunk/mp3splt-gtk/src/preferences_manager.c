@@ -98,6 +98,14 @@ extern gint split_file_mode;
 extern ui_state *ui;
 
 static void check_pref_file_and_write_default();
+static void pm_free_spinner_int_preferences(GArray *spinner_int_preferences);
+static void pm_free_range_preferences(GArray *range_preferences);
+static void pm_load_spinner_int_preferences(GKeyFile *key_file, preferences_state *pm);
+static void pm_save_spinner_int_preferences(GKeyFile *key_file, preferences_state *pm);
+static void pm_write_default_spinner_int_preferences(GKeyFile *key_file, preferences_state *pm);
+static void pm_load_range_preferences(GKeyFile *key_file, preferences_state *pm);
+static void pm_save_range_preferences(GKeyFile *key_file, preferences_state *pm);
+static void pm_write_default_range_preferences(GKeyFile *key_file, preferences_state *pm);
 
 void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *spinner,
@@ -116,10 +124,30 @@ void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
   g_array_append_val(pm->spinner_int_preferences, preference);
 }
 
+void pm_register_range_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *range,
+    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
+    gpointer user_data_for_cb, preferences_state *pm)
+{
+  range_preference preference;
+
+  preference.main_key = strdup(main_key);
+  preference.second_key = strdup(second_key);
+  preference.default_value = default_value;
+  preference.range = range;
+  preference.update_adjustment_value = update_adjustment_value;
+  preference.user_data_for_cb = user_data_for_cb;
+
+  g_array_append_val(pm->range_preferences, preference);
+}
+
 preferences_state *pm_state_new()
 {
   preferences_state *pm = g_malloc0(sizeof(preferences_state));
+
   pm->spinner_int_preferences = g_array_new(TRUE, TRUE, sizeof(spinner_int_preference));
+  pm->range_preferences = g_array_new(TRUE, TRUE, sizeof(range_preference));
+
   return pm;
 }
 
@@ -130,20 +158,8 @@ void pm_free(preferences_state **pm)
     return;
   }
 
-  gint i = 0;
-  for (i = 0; i < (*pm)->spinner_int_preferences->len; i++)
-  {
-    spinner_int_preference preference =
-      g_array_index((*pm)->spinner_int_preferences, spinner_int_preference, i);
-
-    g_free(preference.main_key);
-    preference.main_key = NULL;
-
-    g_free(preference.second_key);
-    preference.second_key = NULL;
-  }
-
-  g_array_free((*pm)->spinner_int_preferences, TRUE);
+  pm_free_spinner_int_preferences((*pm)->spinner_int_preferences);
+  pm_free_range_preferences((*pm)->range_preferences);
 
   g_free(*pm);
   *pm = NULL;
@@ -151,52 +167,20 @@ void pm_free(preferences_state **pm)
 
 void pm_load(GKeyFile *key_file, preferences_state *pm)
 {
-  GArray *spinner_int_preferences = pm->spinner_int_preferences;
-
-  gint i = 0;
-  for (i = 0; i < spinner_int_preferences->len; i++)
-  {
-    spinner_int_preference preference =
-      g_array_index(spinner_int_preferences, spinner_int_preference, i);
-
-    gint value =
-      g_key_file_get_integer(key_file, preference.main_key, preference.second_key, NULL);  
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(preference.spinner), value);
-    preference.update_spinner_value_cb(preference.spinner, preference.user_data_for_cb);
-  }
+  pm_load_spinner_int_preferences(key_file, pm);
+  pm_load_range_preferences(key_file, pm);
 }
 
 void pm_save(GKeyFile *key_file, preferences_state *pm)
 {
-  GArray *spinner_int_preferences = pm->spinner_int_preferences;
-
-  gint i = 0;
-  for (i = 0; i < spinner_int_preferences->len; i++)
-  {
-    spinner_int_preference preference =
-      g_array_index(spinner_int_preferences, spinner_int_preference, i);
-
-    g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
-        gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(preference.spinner)));
-  }
+  pm_save_spinner_int_preferences(key_file, pm);
+  pm_save_range_preferences(key_file, pm);
 }
 
 void pm_write_default(GKeyFile *key_file, preferences_state *pm)
 {
-  GArray *spinner_int_preferences = pm->spinner_int_preferences;
-
-  gint i = 0;
-  for (i = 0; i < spinner_int_preferences->len; i++)
-  {
-    spinner_int_preference preference =
-      g_array_index(spinner_int_preferences, spinner_int_preference, i);
-
-    if (!g_key_file_has_key(key_file, preference.main_key, preference.second_key, NULL))
-    {
-      g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
-          preference.default_value);
-    }
-  }
+  pm_write_default_spinner_int_preferences(key_file, pm);
+  pm_write_default_range_preferences(key_file, pm);
 }
 
 /*! Get the name of the preferences file.
@@ -1099,5 +1083,141 @@ void set_language()
   //freeing memory
   g_free(lang);
   g_key_file_free(key_file);
+}
+
+static void pm_free_spinner_int_preferences(GArray *spinner_int_preferences)
+{
+  gint i = 0;
+  for (i = 0; i < spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(spinner_int_preferences, spinner_int_preference, i);
+
+    g_free(preference.main_key);
+    preference.main_key = NULL;
+
+    g_free(preference.second_key);
+    preference.second_key = NULL;
+  }
+
+  g_array_free(spinner_int_preferences, TRUE);
+}
+
+static void pm_free_range_preferences(GArray *range_preferences)
+{
+  gint i = 0;
+  for (i = 0; i < range_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(range_preferences, spinner_int_preference, i);
+
+    g_free(preference.main_key);
+    preference.main_key = NULL;
+
+    g_free(preference.second_key);
+    preference.second_key = NULL;
+  }
+
+  g_array_free(range_preferences, TRUE);
+}
+
+static void pm_load_spinner_int_preferences(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *spinner_int_preferences = pm->spinner_int_preferences;
+
+  gint i = 0;
+  for (i = 0; i < spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(spinner_int_preferences, spinner_int_preference, i);
+
+    gint value =
+      g_key_file_get_integer(key_file, preference.main_key, preference.second_key, NULL);  
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(preference.spinner), value);
+    preference.update_spinner_value_cb(preference.spinner, preference.user_data_for_cb);
+  }
+}
+
+static void pm_save_spinner_int_preferences(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *spinner_int_preferences = pm->spinner_int_preferences;
+
+  gint i = 0;
+  for (i = 0; i < spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(spinner_int_preferences, spinner_int_preference, i);
+
+    g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
+        gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(preference.spinner)));
+  }
+}
+
+static void pm_write_default_spinner_int_preferences(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *spinner_int_preferences = pm->spinner_int_preferences;
+
+  gint i = 0;
+  for (i = 0; i < spinner_int_preferences->len; i++)
+  {
+    spinner_int_preference preference =
+      g_array_index(spinner_int_preferences, spinner_int_preference, i);
+
+    if (!g_key_file_has_key(key_file, preference.main_key, preference.second_key, NULL))
+    {
+      g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
+          preference.default_value);
+    }
+  }
+}
+
+static void pm_load_range_preferences(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *range_preferences = pm->range_preferences;
+
+  gint i = 0;
+  for (i = 0; i < range_preferences->len; i++)
+  {
+    range_preference preference = g_array_index(range_preferences, range_preference, i);
+
+    gint value =
+      g_key_file_get_integer(key_file, preference.main_key, preference.second_key, NULL);  
+
+    gtk_range_set_value(GTK_RANGE(preference.range), value);
+    GtkAdjustment *adj = gtk_range_get_adjustment(GTK_RANGE(preference.range));
+    preference.update_adjustment_value(adj, preference.user_data_for_cb);
+  }
+}
+
+static void pm_save_range_preferences(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *range_preferences = pm->range_preferences;
+
+  gint i = 0;
+  for (i = 0; i < range_preferences->len; i++)
+  {
+    range_preference preference = g_array_index(range_preferences, range_preference, i);
+
+    GtkAdjustment *adj = gtk_range_get_adjustment(GTK_RANGE(preference.range));
+    g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
+        (gint)gtk_adjustment_get_value(adj));
+  }
+}
+
+static void pm_write_default_range_preferences(GKeyFile *key_file, preferences_state *pm)
+{
+  GArray *range_preferences = pm->range_preferences;
+
+  gint i = 0;
+  for (i = 0; i < range_preferences->len; i++)
+  {
+    range_preference preference = g_array_index(range_preferences, range_preference, i);
+
+    if (!g_key_file_has_key(key_file, preference.main_key, preference.second_key, NULL))
+    {
+      g_key_file_set_integer(key_file, preference.main_key, preference.second_key,
+          preference.default_value);
+    }
+  }
 }
 

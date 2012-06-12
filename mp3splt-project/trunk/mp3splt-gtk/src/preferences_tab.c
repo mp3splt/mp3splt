@@ -740,11 +740,42 @@ GtkWidget *create_player_options_box()
   return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
 }
 
+void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer user_data)
+{
+  gint quality_level = (gint)gtk_adjustment_get_value(GTK_ADJUSTMENT(wave_quality_adjustment));
+
+  gint level = 0;
+  for (level = 0; level <= 4; level++)
+  {
+    gdouble default_value = douglas_peucker_thresholds_defaults[level];
+    gdouble final_value = default_value - quality_level;
+    if (final_value <= 0)
+    {
+      final_value = 0.1;
+    }
+
+    douglas_peucker_thresholds[level] = final_value;
+  }
+
+  gint default_number_of_points_th = DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD;
+  gint number_of_points_th = default_number_of_points_th + (quality_level * 1000);
+  if (number_of_points_th <= 0)
+  {
+    number_of_points_th = 0;
+  }
+
+  silence_wave_number_of_points_threshold = number_of_points_th;
+
+  compute_douglas_peucker_filters(NULL, NULL);
+
+  save_preferences(NULL, NULL);
+}
+
 GtkWidget *create_wave_options_box()
 {
   GtkWidget *vbox = wh_vbox_new();
 
-  GtkWidget *spinner = wh_create_int_spinner_in_box_with_top_width(
+/*  GtkWidget *spinner = wh_create_int_spinner_in_box_with_top_width(
       _("Number of points to draw without interpolation:"), NULL,
       (gdouble)DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD, 
       1000.0, 50000.0, 100.0, 1000.0,
@@ -755,7 +786,7 @@ GtkWidget *create_wave_options_box()
       spinner, update_number_of_points_threshold, NULL, ui);
  
   gint level = 1;
-  for(level = 1; level <= 5; level++)
+  for (level = 1; level <= 5; level++)
   {
     gdouble default_value = douglas_peucker_thresholds_defaults[level-1];
 
@@ -795,13 +826,29 @@ GtkWidget *create_wave_options_box()
       G_CALLBACK(compute_douglas_peucker_filters), NULL);
 
   gtk_box_pack_start(GTK_BOX(horiz_fake), compute_douglas_filters_button, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 6);
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 6);*/
 
   GtkWidget *range_hbox = wh_hbox_new();
-  GtkWidget *hscale = wh_hscale_new_with_range(1.0, 5.0, 1.0);
-  gtk_box_pack_start(GTK_BOX(range_hbox), hscale, FALSE, FALSE, 0);
 
-  gtk_box_pack_start(GTK_BOX(vbox), range_hbox, FALSE, FALSE, 6);
+  GtkWidget *wave_quality_label =
+    gtk_label_new(_("Wave quality (higher is better but consumes more CPU):"));
+  gtk_box_pack_start(GTK_BOX(range_hbox), wave_quality_label, FALSE, FALSE, 0);
+ 
+  GtkWidget *wave_quality_hscale = wh_hscale_new_with_range(-6.0, 6.0, 1.0);
+  gtk_scale_set_draw_value(GTK_SCALE(wave_quality_hscale), TRUE);
+  gtk_box_pack_start(GTK_BOX(range_hbox), wave_quality_hscale, FALSE, FALSE, 4);
+  gtk_widget_set_size_request(wave_quality_hscale, 160, 0);
+
+  gtk_range_set_increments(GTK_RANGE(wave_quality_hscale), 1.0, 1.0);
+
+  ui_register_range_preference("player", "wave_quality", 0.0,
+      wave_quality_hscale, wave_quality_changed_event, NULL, ui);
+
+  GtkAdjustment *wave_quality_adjustment = gtk_range_get_adjustment(GTK_RANGE(wave_quality_hscale));
+  g_signal_connect(G_OBJECT(wave_quality_adjustment), "value-changed",
+      G_CALLBACK(wave_quality_changed_event), NULL);
+
+  gtk_box_pack_start(GTK_BOX(vbox), range_hbox, FALSE, FALSE, 0);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Amplitude wave options</b>"));
 }

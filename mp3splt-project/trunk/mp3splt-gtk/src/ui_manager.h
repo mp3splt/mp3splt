@@ -68,6 +68,11 @@ void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
     void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
     gpointer user_data_for_cb, ui_state *ui);
 
+void ui_register_range_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *range,
+    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
+    gpointer user_data_for_cb, ui_state *ui);
+
 void ui_load_preferences(GKeyFile *key_file, ui_state *ui);
 void ui_save_preferences(GKeyFile *key_file, ui_state *ui);
 void ui_write_default_preferences(GKeyFile *key_file, ui_state *ui);
