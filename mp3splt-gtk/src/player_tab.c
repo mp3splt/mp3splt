@@ -1377,10 +1377,10 @@ void progress_bar_value_changed_event(GtkRange *range, gpointer user_data)
   //progress position
   gfloat adj_position =
     (gint)gtk_adjustment_get_value(GTK_ADJUSTMENT(progress_adj));
-  
+ 
   //we get out the hundredth
   player_hundr_secs2 = (gint)current_time % 100;
-  
+ 
   gint tt2;
   //we keep only the seconds
   tt2 = total_time / 100;

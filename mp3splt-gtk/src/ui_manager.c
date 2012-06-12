@@ -159,6 +159,15 @@ void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
       default_value, spinner, update_spinner_value_cb, user_data_for_cb, ui->preferences);
 }
 
+void ui_register_range_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *range,
+    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
+    gpointer user_data_for_cb, ui_state *ui)
+{
+  pm_register_range_preference(main_key, second_key,
+      default_value, range, update_adjustment_value, user_data_for_cb, ui->preferences);
+}
+
 void ui_load_preferences(GKeyFile *key_file, ui_state *ui)
 {
   pm_load(key_file, ui->preferences);

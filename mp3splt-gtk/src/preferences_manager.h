@@ -40,7 +40,17 @@ typedef struct {
 } spinner_int_preference;
 
 typedef struct {
+  gchar* main_key;
+  gchar* second_key;
+  gint default_value;
+  GtkWidget *range;
+  void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data);
+  gpointer user_data_for_cb;
+} range_preference;
+
+typedef struct {
   GArray *spinner_int_preferences;
+  GArray *range_preferences;
 } preferences_state;
 
 gchar *get_preferences_filename();
@@ -56,6 +66,11 @@ void pm_free(preferences_state **pm);
 void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *spinner,
     void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data),
+    gpointer user_data_for_cb, preferences_state *pm);
+
+void pm_register_range_preference(gchar *main_key, gchar *second_key,
+    gint default_value, GtkWidget *range,
+    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
     gpointer user_data_for_cb, preferences_state *pm);
 
 void pm_load(GKeyFile *key_file, preferences_state *pm);
