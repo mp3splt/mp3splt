@@ -285,7 +285,7 @@ void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer data)
 
 GtkWidget *create_multiple_files_buttons_hbox()
 {
-  GtkWidget *hbox = gtk_hbox_new(FALSE,0);
+  GtkWidget *hbox = wh_hbox_new();
 
   //button for adding file(s)
   GtkWidget *multiple_files_add_button = (GtkWidget *)
@@ -338,7 +338,7 @@ void multiple_files_selection_changed(GtkTreeSelection *selec, gpointer data)
 
 GtkWidget *create_multiple_files_component()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   multiple_files_tree = (GtkWidget *)create_multiple_files_tree();
 

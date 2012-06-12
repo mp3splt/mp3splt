@@ -390,7 +390,7 @@ void douglas_peucker_callback()
 
   if (douglas_callback_counter % 400 == 0)
   {
-    gtk_progress_bar_pulse(percent_progress_bar);
+    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(percent_progress_bar));
     gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), 
         "Processing Douglas-Peucker filters ...");
     gtk_widget_queue_draw(percent_progress_bar);
@@ -1043,7 +1043,7 @@ GtkWidget *create_volume_button()
 //!creates the player buttons hbox
 GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
 {
-  player_buttons_hbox = gtk_hbox_new(FALSE, 0);
+  player_buttons_hbox = wh_hbox_new();
 
   //go at the beginning button
   GString *Imagefile = g_string_new("");
@@ -1181,7 +1181,7 @@ GtkWidget *create_song_informations_hbox()
 {
   GtkWidget *song_info_hbox;
 
-  song_info_hbox = gtk_hbox_new (FALSE, 0);
+  song_info_hbox = wh_hbox_new();
 
   song_infos = gtk_label_new ("");
   gtk_box_pack_start (GTK_BOX (song_info_hbox), song_infos, FALSE, FALSE, 40);
@@ -1427,9 +1427,9 @@ GtkWidget *create_song_bar_hbox()
   GtkWidget *song_bar_hbox;
 
   //our progress bar
-  song_bar_hbox = gtk_hbox_new (FALSE, 0);
-  progress_adj = (GtkWidget *)gtk_adjustment_new (0.0, 0.0, 100001.0, 0, 10000, 1000);
-  progress_bar = gtk_hscale_new (GTK_ADJUSTMENT (progress_adj));
+  song_bar_hbox = wh_hbox_new();
+  progress_adj = (GtkWidget *)gtk_adjustment_new(0.0, 0.0, 100001.0, 0, 10000, 1000);
+  progress_bar = wh_hscale_new(GTK_ADJUSTMENT(progress_adj));
   g_object_set(progress_bar, "draw-value", FALSE, NULL);
   //when we click on the bar
   g_signal_connect (G_OBJECT (progress_bar), "button-press-event",
@@ -1610,7 +1610,7 @@ GtkWidget *create_filename_player_hbox()
   GtkWidget *filename_player_hbox;
 
   //horizontal filename's player box and filename label(song_name_label)
-  filename_player_hbox = gtk_hbox_new (FALSE, 0);
+  filename_player_hbox = wh_hbox_new();
   song_name_label = gtk_label_new ("");
   g_object_set(G_OBJECT(song_name_label), "selectable", FALSE, NULL);
   gtk_box_pack_start (GTK_BOX (filename_player_hbox), song_name_label, FALSE, FALSE, 15);
@@ -3291,7 +3291,7 @@ gboolean da_notify_event (GtkWidget     *da,
   {
     gint x, y;
     GdkModifierType state;
-    gdk_window_get_pointer (event->window, &x, &y, &state);
+    wh_get_pointer(event, &x, &y, &state);
 
     //drawing area width
     gint width = 0;
@@ -3450,13 +3450,13 @@ GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
   GtkWidget *hbox;
 
   //really big hbox
-  GtkWidget *really_big_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *really_big_hbox = wh_hbox_new();
  
   //main hbox
-  GtkWidget *main_hbox = gtk_hbox_new (FALSE, 0);
+  GtkWidget *main_hbox = wh_hbox_new();
   gtk_box_pack_start (GTK_BOX(really_big_hbox), main_hbox, TRUE, TRUE, 4);
   
-  vbox = gtk_vbox_new (FALSE, 0);
+  vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(main_hbox), vbox, TRUE, TRUE, 0);
 
   /* handle box for detaching */
@@ -3732,7 +3732,7 @@ void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
 GtkWidget *create_delete_buttons_hbox()
 {
   //our horizontal box
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *hbox = wh_hbox_new();
 
   //button for removing a file
   playlist_remove_file_button = (GtkWidget *)
@@ -3758,7 +3758,7 @@ GtkWidget *create_delete_buttons_hbox()
 //!creates the playlist of the player
 GtkWidget *create_player_playlist_frame()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   // scrolled window and the tree 
   //create the tree and add it to the scrolled window
@@ -3793,7 +3793,7 @@ GtkWidget *create_player_playlist_frame()
   gtk_expander_set_expanded(GTK_EXPANDER(history_expander), FALSE);
   gtk_container_add(GTK_CONTAINER(history_expander), vbox);
 
-  GtkWidget *main_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *main_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(main_hbox), history_expander, TRUE, TRUE, 4);
 
   /* handle box for detaching */
@@ -4158,7 +4158,7 @@ void fix_ogg_stream_button_event(GtkWidget *widget, gpointer   data)
 GtkWidget *create_choose_file_frame()
 {
   /* file entry and browse button hbox */
-  GtkWidget *choose_file_hbox = gtk_hbox_new (FALSE, 0);
+  GtkWidget *choose_file_hbox = wh_hbox_new();
   //gtk_container_set_border_width(GTK_CONTAINER(choose_file_hbox), 6);
   
   /* handle box for detaching */
@@ -4187,7 +4187,7 @@ GtkWidget *create_choose_file_frame()
   gtk_widget_set_tooltip_text(browse_button,_("Select file"));
  
   /* bottom buttons hbox */
-  //GtkWidget *bottom_buttons_hbox = gtk_hbox_new(FALSE,0);
+  //GtkWidget *bottom_buttons_hbox = wh_hbox_new();
   
   /* fix ogg stream button */
   fix_ogg_stream_button = (GtkWidget *)

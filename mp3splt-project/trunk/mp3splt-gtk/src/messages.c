@@ -40,6 +40,7 @@
 #include <libmp3splt/mp3splt.h>
 
 #include "main_win.h"
+#include "widgets_helper.h"
 
 GtkWidget *mess_history_dialog = NULL;
 GtkTextBuffer *mess_hist_buffer = NULL;
@@ -50,8 +51,8 @@ gint debug_is_active = FALSE;
 void create_mess_history_dialog();
 
 extern splt_state *the_state;
-
 //! Returns the current local time in form of a string
+
 const char *get_current_time()
 {
   time_t cur_time = { 0 };
@@ -148,7 +149,7 @@ void clear_messages_event(GtkWidget *widget, gpointer data)
 //! The portion of the message history dialog that contains the messages
 GtkWidget *create_text_component()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 3);
 
   //text view
@@ -173,7 +174,7 @@ GtkWidget *create_text_component()
   gtk_container_add(GTK_CONTAINER(scrolled_window), mess_hist_view);
 
   //top
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *hbox = wh_hbox_new();
 
   //debug option
   GtkWidget *debug_check_button =

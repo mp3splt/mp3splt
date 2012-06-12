@@ -130,7 +130,7 @@ GtkWidget *sample_result_label = NULL;
 GtkWidget *extract_tags_box = NULL;
 //@}
 
-gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4 , 5};
+gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 
 extern gint timeout_value;
 extern gint silence_wave_number_of_points_threshold;
@@ -305,7 +305,7 @@ void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
 //! Create the "select language" box
 GtkWidget *create_language_box()
 {
-  GtkWidget *radio_vbox = gtk_vbox_new (FALSE, 0);
+  GtkWidget *radio_vbox = wh_vbox_new();
 
   radio_button = gtk_radio_button_new_with_label(NULL, "English");
   g_signal_connect(GTK_TOGGLE_BUTTON(radio_button), "toggled",
@@ -331,10 +331,10 @@ GtkWidget *create_language_box()
 //! Creates the language preferences page
 GtkWidget *create_pref_language_page()
 {
-  GtkWidget *language_hbox = gtk_hbox_new(FALSE, 0);;
+  GtkWidget *language_hbox = wh_hbox_new();;
  
   //vertical box inside the scrolled window
-  GtkWidget *language_inside_hbox = gtk_hbox_new(FALSE, 0);;
+  GtkWidget *language_inside_hbox = wh_hbox_new();;
 
   //scrolled window
   GtkWidget *scrolled_window;
@@ -344,7 +344,7 @@ GtkWidget *create_pref_language_page()
   gtk_box_pack_start(GTK_BOX(language_hbox), scrolled_window, TRUE, TRUE, 0);
  
   //vertical box inside the horizontal box from the scrolled window
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
+  GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(language_inside_hbox), vbox, TRUE, TRUE, 10);
 
   GtkWidget *lang_box = create_language_box();
@@ -499,7 +499,7 @@ void song_dir_button_event(GtkWidget *widget, gpointer data)
 //!Creates the box the output directory can be choosen in
 GtkWidget *create_directory_box()
 {
-  GtkWidget *dir_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *dir_hbox = wh_hbox_new();
   
   //directory entry
   directory_entry = gtk_entry_new();
@@ -531,7 +531,7 @@ GtkWidget *create_directory_box()
 //! Creates the box for split mode selection
 GtkWidget *create_split_options_box()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   //names from filename
   names_from_filename = gtk_check_button_new_with_mnemonic(_("_Splitpoint name from filename (testing)"));
@@ -560,14 +560,14 @@ GtkWidget *create_split_options_box()
       G_CALLBACK(adjust_event), NULL);
   
   //parameters for the adjust option
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
   
-  GtkWidget *param_vbox = gtk_vbox_new(FALSE,0);
+  GtkWidget *param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
   
   //threshold level
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   threshold_label = gtk_label_new(_("Threshold level (dB):"));
@@ -582,7 +582,7 @@ GtkWidget *create_split_options_box()
                       FALSE, FALSE, 6);
   
   //offset level
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   offset_label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence "
@@ -599,7 +599,7 @@ GtkWidget *create_split_options_box()
       FALSE, FALSE, 6);
   
   //gap level (seconds)
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   gap_label = gtk_label_new(_("Gap level (seconds around splitpoint to "
@@ -616,7 +616,7 @@ GtkWidget *create_split_options_box()
  
   //set default preferences button
   //horizontal box fake for the gap level
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
   
   GtkWidget *set_default_prefs_button =
@@ -633,8 +633,8 @@ GtkWidget *create_split_options_box()
 //!creates the splitpoints preferences page
 GtkWidget *create_pref_splitpoints_page()
 {
-  GtkWidget *general_hbox = gtk_hbox_new(FALSE,0);
-  GtkWidget *inside_hbox = gtk_hbox_new(FALSE,0);
+  GtkWidget *general_hbox = wh_hbox_new();
+  GtkWidget *inside_hbox = wh_hbox_new();
   
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
@@ -642,7 +642,7 @@ GtkWidget *create_pref_splitpoints_page()
   gtk_box_pack_start(GTK_BOX(general_hbox), scrolled_window, TRUE, TRUE, 0);
  
   //vertical box inside the horizontal box from the scrolled window
-  GtkWidget *inside_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *inside_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(inside_hbox), inside_vbox, TRUE, TRUE, 5);
  
   GtkWidget *dir_box = create_directory_box();
@@ -706,9 +706,9 @@ void update_douglas_peucker_level(GtkWidget *spinner, gpointer data)
 //!Create the box the player backend can be selected with
 GtkWidget *create_player_options_box()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE, 0);
+  GtkWidget *horiz_fake = wh_hbox_new();
 
   GtkWidget *label = gtk_label_new(_("Player:"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
@@ -742,7 +742,7 @@ GtkWidget *create_player_options_box()
 
 GtkWidget *create_wave_options_box()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   GtkWidget *spinner = wh_create_int_spinner_in_box_with_top_width(
       _("Number of points to draw without interpolation:"), NULL,
@@ -777,17 +777,17 @@ GtkWidget *create_wave_options_box()
         &douglas_peucker_indexes[level-1], ui);
   }
 
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE, 0);
+  GtkWidget *horiz_fake = wh_hbox_new();
   GtkWidget *label = gtk_label_new(_("Douglas-Peucker options are not applied instantly."));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
-  horiz_fake = gtk_hbox_new(FALSE, 0);
+  horiz_fake = wh_hbox_new();
   label = gtk_label_new(_("You have to recompute the amplitude wave or to recompute the filters."));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
-  horiz_fake = gtk_hbox_new(FALSE, 0);
+  horiz_fake = wh_hbox_new();
   GtkWidget *compute_douglas_filters_button =
     create_cool_button(GTK_STOCK_EXECUTE, _("_Recompute Douglas-Peucker filters"), FALSE);
 
@@ -797,15 +797,21 @@ GtkWidget *create_wave_options_box()
   gtk_box_pack_start(GTK_BOX(horiz_fake), compute_douglas_filters_button, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 6);
 
+/*  GtkWidget *range_hbox = wh_hbox_new();
+  GtkWidget *hscale = gtk_hscale_new_with_range(1.0, 5.0, 1.0);
+  gtk_box_pack_start(GTK_BOX(range_hbox), hscale, FALSE, FALSE, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox), range_hox, FALSE, FALSE, 6);*/
+
   return wh_set_title_and_get_vbox(vbox, _("<b>Amplitude wave options</b>"));
 }
 
 //!creates the player preferences page
 GtkWidget *create_pref_player_page()
 {
-  GtkWidget *player_hbox = gtk_hbox_new(FALSE, 0);;
+  GtkWidget *player_hbox = wh_hbox_new();;
 
-  GtkWidget *inside_hbox = gtk_hbox_new(FALSE, 0);;
+  GtkWidget *inside_hbox = wh_hbox_new();;
   
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
@@ -813,7 +819,7 @@ GtkWidget *create_pref_player_page()
   gtk_box_pack_start(GTK_BOX(player_hbox), scrolled_window, TRUE, TRUE, 0);
   
   //vertical box inside the horizontal box from the scrolled window
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
+  GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 5);
   
   //choose player combo box
@@ -844,7 +850,7 @@ gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
 //!Create the box the output file name is displayed in
 GtkWidget *create_output_filename_box()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   //default/custom radio buttons
   radio_output = gtk_radio_button_new_with_label(NULL, _("Default format"));
@@ -855,7 +861,7 @@ GtkWidget *create_output_filename_box()
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
   //output entry
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
   output_entry = gtk_entry_new();
@@ -866,7 +872,7 @@ GtkWidget *create_output_filename_box()
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_entry, TRUE, TRUE, 0);
 
   //output label
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
   output_label = gtk_label_new(_("    @f - file name\n"
         "    @a - artist name\n"
@@ -887,15 +893,15 @@ GtkWidget *create_output_filename_box()
 //!creates the output preferences page
 GtkWidget *create_pref_output_page()
 {
-  GtkWidget *output_hbox = gtk_hbox_new(FALSE, 0);;
-  GtkWidget *output_inside_hbox = gtk_hbox_new(FALSE, 0);;
+  GtkWidget *output_hbox = wh_hbox_new();;
+  GtkWidget *output_inside_hbox = wh_hbox_new();;
   
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(output_inside_hbox));
   gtk_box_pack_start(GTK_BOX(output_hbox), scrolled_window, TRUE, TRUE, 0);
  
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
+  GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(output_inside_hbox), vbox, TRUE, TRUE, 5);
 
   GtkWidget *output_fname_box = create_output_filename_box();
@@ -924,7 +930,7 @@ void change_tags_options(GtkToggleButton *button, gpointer data)
 //!Create the box for the Tags options
 GtkWidget *create_tags_options_box()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Original file tags"),
       ORIGINAL_FILE_TAGS, change_tags_options, vbox);
@@ -1124,7 +1130,7 @@ static GtkWidget *create_test_regex_table()
 {
   GtkWidget *table = wh_new_table();
 
-  GtkWidget *sample_test_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *sample_test_hbox = wh_hbox_new();
   test_regex_fname_entry = wh_new_entry(save_preferences);
   gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_fname_entry, TRUE, TRUE, 0);
 
@@ -1145,7 +1151,7 @@ static GtkWidget *create_test_regex_table()
 //!Create the box we can select with if to create ID1 and/or ID2 Tags
 GtkWidget *create_tags_version_box()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   tags_version_radio = 
     gtk_radio_button_new_with_label(NULL, _("ID3v1 & ID3v2 tags"));
@@ -1178,15 +1184,15 @@ GtkWidget *create_tags_version_box()
 //! Create the tags settings tab
 GtkWidget *create_pref_tags_page()
 {
-  GtkWidget *outside_vbox = gtk_vbox_new(FALSE, 0);;
-  GtkWidget *inside_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *outside_vbox = wh_vbox_new();;
+  GtkWidget *inside_hbox = wh_hbox_new();
 
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(inside_hbox));
   gtk_box_pack_start(GTK_BOX(outside_vbox), scrolled_window, TRUE, TRUE, 0);
 
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
+  GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 5);
 
   GtkWidget *tags_version_box = create_tags_version_box();
@@ -1202,7 +1208,7 @@ GtkWidget *create_pref_tags_page()
 GtkWidget *create_choose_preferences()
 {
   //our preferences vbox
-  GtkWidget *pref_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *pref_vbox = wh_vbox_new();
 
   GtkWidget *notebook = gtk_notebook_new();
   gtk_box_pack_start(GTK_BOX(pref_vbox), notebook, TRUE, TRUE, 0);

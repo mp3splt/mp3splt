@@ -52,6 +52,7 @@
 #include "preferences_tab.h"
 #include "utilities.h"
 #include "mp3splt-gtk.h"
+#include "widgets_helper.h"
 
 //handle box for detaching window
 GtkWidget *freedb_handle_box;
@@ -525,7 +526,7 @@ void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 //!creates the freedb box
 GtkWidget *create_freedb_frame()
 {
-  GtkWidget *freedb_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *freedb_hbox = gtk_box_new(FALSE, 0);
   gtk_container_set_border_width(GTK_CONTAINER(freedb_hbox), 0);
   
   /* handle box for detaching */
@@ -535,11 +536,11 @@ GtkWidget *create_freedb_frame()
                    G_CALLBACK(handle_freedb_detached_event),
                    NULL);
   
-  GtkWidget *freedb_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *freedb_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(freedb_hbox), freedb_vbox, TRUE, TRUE, 4);
   
   /* search box */
-  GtkWidget *search_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *search_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 2);
 
   GtkWidget *label = gtk_label_new(_("Search tracktype.org:"));
@@ -582,7 +583,7 @@ GtkWidget *create_freedb_frame()
                     G_CALLBACK(freedb_selection_changed), NULL);
 
   /* add button */
-  GtkWidget *selected_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *selected_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 2);
 
   freedb_add_button = (GtkWidget *)

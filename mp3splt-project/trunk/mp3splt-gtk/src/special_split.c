@@ -45,6 +45,7 @@
 #include "preferences_tab.h"
 #include "main_win.h"
 #include "multiple_files.h"
+#include "widgets_helper.h"
 
 GtkWidget *time_label = NULL;
 GtkWidget *spinner_time = NULL;
@@ -236,7 +237,7 @@ static void split_file_mode_changed(GtkToggleButton *radio_b, gpointer data)
 //! Creates the split mode window part
 static GtkWidget *create_split_mode()
 {
-  GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *local_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
 
   //normal split
@@ -259,10 +260,10 @@ static GtkWidget *create_split_mode()
       GINT_TO_POINTER(SELECTED_SPLIT_TIME));
  
   //
-  GtkWidget *big_horiz_fake = gtk_hbox_new(FALSE, 0);
+  GtkWidget *big_horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(local_vbox), big_horiz_fake, FALSE, FALSE, 0);
 
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE, 0);
+  GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(big_horiz_fake), horiz_fake, FALSE, FALSE, 25);
   
   gint default_time = 60;
@@ -293,10 +294,10 @@ static GtkWidget *create_split_mode()
       GINT_TO_POINTER(SELECTED_SPLIT_EQUAL_TIME_TRACKS));
  
   //
-  big_horiz_fake = gtk_hbox_new(FALSE, 0);
+  big_horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(local_vbox), big_horiz_fake, FALSE, FALSE, 0);
 
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(big_horiz_fake), horiz_fake, FALSE, FALSE, 25);
   
   gint default_tracks = 10;
@@ -324,13 +325,13 @@ static GtkWidget *create_split_mode()
   g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
       GINT_TO_POINTER(SELECTED_SPLIT_TRIM_SILENCE));
 
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  GtkWidget *param_vbox = gtk_vbox_new(FALSE,0);
+  GtkWidget *param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
 
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
 
   all_trim_threshold_label = gtk_label_new(_("Threshold level (dB) : "));
@@ -349,13 +350,13 @@ static GtkWidget *create_split_mode()
   g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
       GINT_TO_POINTER(SELECTED_SPLIT_SILENCE));
 
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(local_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  param_vbox = gtk_vbox_new(FALSE,0);
+  param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
 
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
 
   all_threshold_label = gtk_label_new(_("Threshold level (dB) : "));
@@ -365,7 +366,7 @@ static GtkWidget *create_split_mode()
   all_spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_threshold, FALSE, FALSE, 0);
  
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   all_offset_label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence,and 1 the end) : "));
@@ -375,7 +376,7 @@ static GtkWidget *create_split_mode()
   all_spinner_silence_offset = gtk_spin_button_new(adj, 0.05, 2);
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_offset, FALSE, FALSE, 0);
  
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
 
   all_number_of_tracks_label = gtk_label_new(_("Number of tracks (0 means all tracks) : "));
@@ -385,7 +386,7 @@ static GtkWidget *create_split_mode()
   all_spinner_silence_number_tracks = gtk_spin_button_new(adj, 1, 0);
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_number_tracks, FALSE, FALSE, 0);
   
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   all_min_silence_label = gtk_label_new(_("Minimum silence length (seconds) : "));
@@ -395,7 +396,7 @@ static GtkWidget *create_split_mode()
   all_spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
   gtk_box_pack_start(GTK_BOX(horiz_fake), all_spinner_silence_minimum, FALSE, FALSE, 0);
 
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   all_min_track_label = gtk_label_new(_("Minimum track length (seconds) : "));
@@ -457,7 +458,7 @@ static GtkWidget *create_split_mode()
 //! Creates the selection between single file split and batch processing
 static GtkWidget *create_single_multiple_split_modes()
 {
-  GtkWidget *local_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *local_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
 
   //single file
@@ -476,7 +477,7 @@ static GtkWidget *create_single_multiple_split_modes()
   g_signal_connect(GTK_TOGGLE_BUTTON(file_mode_radio_button),
       "toggled", G_CALLBACK(split_file_mode_changed), NULL);
 
-  GtkWidget *multiple_files_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *multiple_files_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(local_vbox), multiple_files_hbox, TRUE, TRUE, 2);
 
   multiple_files_component = create_multiple_files_component();
@@ -494,7 +495,7 @@ static GtkWidget *create_single_multiple_split_modes()
 //!creates the special split page
 GtkWidget *create_special_split_page()
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);;
+  GtkWidget *vbox = wh_vbox_new();;
 
   /* tabbed notebook */
   GtkWidget *notebook = gtk_notebook_new();
