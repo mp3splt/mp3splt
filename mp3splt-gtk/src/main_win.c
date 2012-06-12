@@ -76,6 +76,7 @@
 #include "import.h"
 #include "preferences_manager.h"
 #include "player_tab.h"
+#include "widgets_helper.h"
 
 #include "ui_manager.h"
 
@@ -494,7 +495,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
 //!creates the toolbar
 GtkWidget *create_toolbar()
 {
-  GtkWidget *box = gtk_hbox_new(FALSE, 0);
+  GtkWidget *box = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(box), 0);
   gtk_box_pack_start(GTK_BOX(box), 
       gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_SMALL_TOOLBAR), 
@@ -510,8 +511,8 @@ GtkWidget *create_toolbar()
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(split_button_event), NULL);
 
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
+  GtkWidget *hbox = wh_hbox_new();
 
   gtk_box_pack_start(GTK_BOX(hbox), split_button, TRUE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -541,7 +542,7 @@ static gchar *my_dgettext(const gchar *key, const gchar *domain)
 //!creates the menu bar
 GtkWidget *create_menu_bar()
 {
-  GtkWidget *menu_box = gtk_hbox_new(FALSE,0);
+  GtkWidget *menu_box = wh_hbox_new();
   
   static GtkActionEntry const entries[] = {
     //name, stock id,   label
@@ -640,7 +641,7 @@ GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
   GtkWidget *image;
   GtkWidget *button;
 
-  box = gtk_hbox_new(FALSE, 0);
+  box = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER (box), 2);
 
   image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
@@ -682,7 +683,7 @@ GtkWidget *create_main_vbox()
   GtkWidget *notebook_label;
 
   /* main vertical box with statusbar */
-  main_vbox = gtk_vbox_new (FALSE, 0);
+  main_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 0);
 
   frame = (GtkWidget *)create_choose_file_frame();
@@ -698,14 +699,14 @@ GtkWidget *create_main_vbox()
   
   //creating the tree view
   GtkWidget *splitpoints_vbox;
-  splitpoints_vbox = gtk_vbox_new (FALSE, 0);
+  splitpoints_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (splitpoints_vbox), 0);
   tree_view = (GtkTreeView *)create_tree_view();
   frame = (GtkWidget *)create_choose_splitpoints_frame(tree_view);
   gtk_container_add(GTK_CONTAINER(splitpoints_vbox), frame);
   
   /* player page */
-  player_vbox = gtk_vbox_new(FALSE,0);
+  player_vbox = wh_vbox_new();
   notebook_label = gtk_label_new((gchar *)_("Player"));
       
   //player control frame
@@ -726,7 +727,7 @@ GtkWidget *create_main_vbox()
                            (GtkWidget *)notebook_label);
 
   /* split files frame */
-  GtkWidget *split_files_vbox = gtk_vbox_new (FALSE, 0);
+  GtkWidget *split_files_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(split_files_vbox), 0);
   
   frame = (GtkWidget *)create_split_files();
@@ -739,7 +740,7 @@ GtkWidget *create_main_vbox()
   
   /* freedb page */
   GtkWidget *freedb_vbox;
-  freedb_vbox = gtk_vbox_new (FALSE, 0);
+  freedb_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (freedb_vbox), 0);
   
   frame = (GtkWidget *)create_freedb_frame();
@@ -752,7 +753,7 @@ GtkWidget *create_main_vbox()
   
   /* special split page */
   GtkWidget *special_split_vbox;
-  special_split_vbox = gtk_vbox_new (FALSE, 0);
+  special_split_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (special_split_vbox), 0);
   frame = (GtkWidget *)create_special_split_page();
   gtk_container_add(GTK_CONTAINER(special_split_vbox), frame);
@@ -763,7 +764,7 @@ GtkWidget *create_main_vbox()
  
   /* preferences page */
   GtkWidget *preferences_vbox;
-  preferences_vbox = gtk_vbox_new (FALSE, 0);
+  preferences_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (preferences_vbox), 0);
 
   frame = (GtkWidget *)create_choose_preferences();
@@ -782,7 +783,7 @@ GtkWidget *create_main_vbox()
   gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(percent_progress_bar), TRUE);
 #endif
 
-  GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+  GtkWidget *hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(hbox), percent_progress_bar, TRUE, TRUE, 0);
 
   //stop button
@@ -841,7 +842,7 @@ void create_all()
 
   initialize_window();
  
-  GtkWidget *window_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *window_vbox = wh_vbox_new();
   gtk_container_add(GTK_CONTAINER(window), window_vbox);
 
   GtkWidget *menu_bar;

@@ -49,6 +49,7 @@
 #include "split_files.h"
 #include "utilities.h"
 #include "main_win.h"
+#include "widgets_helper.h"
 
 //!our split tree
 GtkWidget *split_tree;
@@ -330,8 +331,7 @@ void remove_all_files_button_event(GtkWidget *widget,
 GtkWidget *create_queue_buttons_hbox()
 {
   //our horizontal box
-  GtkWidget *hbox;
-  hbox = gtk_hbox_new(FALSE,0);
+  GtkWidget *hbox = wh_hbox_new();
 
   //button for queueing all files
   queue_files_button = (GtkWidget *)
@@ -468,8 +468,7 @@ void handle_split_detached_event (GtkHandleBox *handlebox,
 GtkWidget *create_split_files()
 {
   //our vertical box
-  GtkWidget *vbox;
-  vbox = gtk_vbox_new(FALSE,0);
+  GtkWidget *vbox = wh_vbox_new();
 
   /* handle box for detaching */
   split_handle_box = gtk_handle_box_new();

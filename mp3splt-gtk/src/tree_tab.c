@@ -62,6 +62,8 @@
 #include "preferences_tab.h"
 #include "preferences_manager.h"
 #include "tree_tab.h"
+#include "widgets_helper.h"
+
 /*! The array all splitpoints are kept in.
 
 The splitpoints themself will be in the 
@@ -1281,17 +1283,17 @@ void create_trim_silence_window(GtkWidget *button, gpointer *data)
 
   gtk_widget_set_size_request(silence_detection_window, 300, 90);
 
-  GtkWidget *general_inside_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *general_inside_vbox = wh_vbox_new();
   //add silence parameters
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(general_inside_vbox), horiz_fake, FALSE, FALSE, 10);
   
   //vertical parameter box
-  GtkWidget *param_vbox = gtk_vbox_new(FALSE,0);
+  GtkWidget *param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
   
   //horizontal box fake for threshold level
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), 
       horiz_fake, FALSE, FALSE, 0);
   
@@ -1351,19 +1353,18 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
         GTK_RESPONSE_CANCEL,
         NULL);
 
-  GtkWidget *general_inside_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *general_inside_vbox = wh_vbox_new();
   //add silence parameters
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(general_inside_vbox), 
                       horiz_fake, FALSE, FALSE, 10);
   
   //vertical parameter box
-  GtkWidget *param_vbox;
-  param_vbox = gtk_vbox_new(FALSE,0);
+  GtkWidget *param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
   
   //horizontal box fake for threshold level
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), 
       horiz_fake, FALSE, FALSE, 0);
   
@@ -1381,7 +1382,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       spinner_silence_threshold, FALSE, FALSE, 6);
   
   //horizontal box fake for the offset level
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   //offset level
@@ -1397,7 +1398,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       FALSE, FALSE, 6);
   
   //horizontal box fake for the number of tracks
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), 
       horiz_fake, FALSE, FALSE, 0);
   
@@ -1413,7 +1414,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       FALSE, FALSE, 6);
  
   //horizontal box fake for minimum length parameter
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
   //the minimum length parameter
@@ -1428,7 +1429,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
       FALSE, FALSE, 6);
   
   //the minimum track length parameter
-  horiz_fake = gtk_hbox_new(FALSE,0);
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
  
   label = gtk_label_new(_("Minimum track length (seconds):"));
@@ -1590,7 +1591,7 @@ GtkWidget *create_init_spinner(GtkWidget *bottomhbox1,
                                gint min, gint max, 
                                gchar *label_text, gint type)
 {
-  GtkWidget *spinner_box = gtk_vbox_new(FALSE, 0); 
+  GtkWidget *spinner_box = wh_vbox_new(); 
   GtkWidget *label = gtk_label_new(label_text);
   gtk_box_pack_start(GTK_BOX(spinner_box), label, TRUE, FALSE, 0);
 
@@ -1624,8 +1625,8 @@ GtkWidget *create_init_spinner(GtkWidget *bottomhbox1,
 //!minutes ,seconds spinners ; add, delete buttons
 GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 {
-  GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
+  GtkWidget *hbox = wh_hbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
   /* minutes and seconds spinners */
   spinner_minutes = create_init_spinner(hbox, 
@@ -1681,7 +1682,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 //!special buttons like 'set silence from silence detection'
 GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
 {
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
   /* set splitpoints from trim silence detection */
@@ -2140,7 +2141,7 @@ buttons
 GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
 {
   /* choose splitpoins vbox */
-  GtkWidget *choose_splitpoints_vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *choose_splitpoints_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(choose_splitpoints_vbox), 0);
 
   /* handle box for detaching */
@@ -2156,7 +2157,7 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), spinners_buttons_hbox, FALSE, FALSE, 3);
   
   /* horizontal box for the tree */
-  GtkWidget *tree_hbox = gtk_hbox_new (FALSE, 0);
+  GtkWidget *tree_hbox = wh_hbox_new();
   gtk_box_pack_start (GTK_BOX (choose_splitpoints_vbox), tree_hbox, TRUE, TRUE, 0);
 
   /* scrolled window for the tree */

@@ -55,16 +55,16 @@ tab.
  */
 GtkWidget *wh_set_title_and_get_vbox(GtkWidget *widget, const gchar *title)
 {
-  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *vbox = wh_vbox_new();
 
   GtkWidget *label = gtk_label_new(NULL);
   gtk_label_set_markup(GTK_LABEL(label), title);
 
-  GtkWidget *label_hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *label_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(label_hbox), label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 5);
 
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 16);
 
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -157,7 +157,7 @@ GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gcha
     gpointer user_data_for_cb,
     GtkWidget *box, gint top_width)
 {
-  GtkWidget *horiz_fake = gtk_hbox_new(FALSE,0);
+  GtkWidget *horiz_fake = wh_hbox_new();
   GtkWidget *label = gtk_label_new(before_label);
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
@@ -176,19 +176,19 @@ GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gcha
     gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(after_label), FALSE, FALSE, 3);
   }
 
-  GtkWidget *fake = gtk_hbox_new(FALSE, 0);
+  GtkWidget *fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(box), fake, FALSE, FALSE, top_width);
 
   gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 1);
 
   if (after_newline_label != NULL)
   {
-    horiz_fake = gtk_hbox_new(FALSE,0);
+    horiz_fake = wh_hbox_new();
     gtk_box_pack_start(GTK_BOX(horiz_fake), gtk_label_new(after_newline_label), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), horiz_fake, FALSE, FALSE, 2);
   }
 
-  fake = gtk_hbox_new(FALSE, 0);
+  fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(box), fake, FALSE, FALSE, 2);
 
   return spinner;
@@ -206,6 +206,42 @@ GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
   return wh_create_int_spinner_in_box_with_top_width(before_label, after_label,
       initial_value, minimum_value, maximum_value, step_increment, page_increment,
       after_newline_label, spinner_callback, user_data_for_cb, box, 2);
+}
+
+GtkWidget *wh_hbox_new()
+{
+#if GTK_MAJOR_VERSION <= 2
+  return gtk_hbox_new(FALSE, 0);
+#else
+  return gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+#endif
+}
+
+GtkWidget *wh_vbox_new()
+{
+#if GTK_MAJOR_VERSION <= 2
+  return gtk_vbox_new(FALSE, 0);
+#else
+  return gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#endif
+}
+
+GtkWidget *wh_hscale_new(GtkAdjustment *adjustment)
+{
+#if GTK_MAJOR_VERSION <= 2
+  return gtk_hscale_new(adjustment);
+#else
+  return gtk_scale_new(GTK_ORIENTATION_HORIZONTAL, adjustment);
+#endif
+}
+
+void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *state)
+{
+#if GTK_MAJOR_VERSION <= 2
+  gdk_window_get_pointer(event->window, x, y, state);
+#else
+  gdk_window_get_device_position(event->window, GDK_SOURCE_MOUSE, x, y, state);
+#endif
 }
 
 static void _wh_folder_changed_event(GtkFileChooser *chooser, gpointer data)
@@ -246,7 +282,7 @@ static guint _wh_add_row_to_table(GtkWidget *table)
 
 static GtkWidget *_wh_put_in_new_hbox_with_margin(GtkWidget *widget, gint margin)
 {
-  GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+  GtkWidget *hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, margin);
   return hbox;
 }
@@ -276,7 +312,7 @@ static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
   }
   else
   {
-    hbox = gtk_hbox_new(FALSE, 0);
+    hbox = wh_hbox_new();
     gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, FALSE, 0);
     my_widget = hbox;
   }
