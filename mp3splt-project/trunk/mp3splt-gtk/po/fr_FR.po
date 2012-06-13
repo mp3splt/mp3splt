@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-06-10 22:15+0200\n"
+"POT-Creation-Date: 2012-06-13 21:57+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,141 +39,141 @@ msgstr "Kbps"
 msgid "Khz"
 msgstr "Khz"
 
-#: src/tree_tab.c:553
+#: src/tree_tab.c:555
 msgid "_part"
 msgstr "_partie"
 
-#: src/tree_tab.c:564
+#: src/tree_tab.c:566
 #, c-format
 msgid "%s_part%d"
 msgstr "%s_partie%d"
 
-#: src/tree_tab.c:708 src/tree_tab.c:1114
+#: src/tree_tab.c:710 src/tree_tab.c:1116
 msgid " error: you already have the splitpoint in table"
 msgstr " erreur : vous avez déjà ce point de coupure dans le tableau"
 
-#: src/tree_tab.c:791 src/tree_tab.c:870 src/tree_tab.c:1124
-#: src/freedb_tab.c:466 src/freedb_tab.c:488
+#: src/tree_tab.c:793 src/tree_tab.c:872 src/tree_tab.c:1126
+#: src/freedb_tab.c:467 src/freedb_tab.c:489
 msgid "description here"
 msgstr "description"
 
-#: src/tree_tab.c:1273 src/tree_tab.c:1695
+#: src/tree_tab.c:1275 src/tree_tab.c:1696
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/tree_tab.c:1299 src/tree_tab.c:1371 src/preferences_tab.c:573
+#: src/tree_tab.c:1301 src/tree_tab.c:1372 src/preferences_tab.c:573
 msgid "Threshold level (dB):"
 msgstr "Niveau seuil (dB) :"
 
-#: src/tree_tab.c:1345 src/tree_tab.c:1705
+#: src/tree_tab.c:1347 src/tree_tab.c:1706
 msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/tree_tab.c:1388
+#: src/tree_tab.c:1389
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 
-#: src/tree_tab.c:1405
+#: src/tree_tab.c:1406
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Nombre de pistes (0 signifie toutes les pistes) :"
 
-#: src/tree_tab.c:1420
+#: src/tree_tab.c:1421
 msgid "Minimum silence length (seconds):"
 msgstr "Durée minimum du silence (secondes) :"
 
-#: src/tree_tab.c:1434
+#: src/tree_tab.c:1435
 msgid "Minimum track length (seconds):"
 msgstr ""
 
-#: src/tree_tab.c:1445
+#: src/tree_tab.c:1446
 msgid "_Remove silence between tracks"
 msgstr "_Effacer le silence entre les pistes"
 
-#: src/tree_tab.c:1633
+#: src/tree_tab.c:1634
 msgid "Minutes:"
 msgstr "Minutes :"
 
-#: src/tree_tab.c:1638
+#: src/tree_tab.c:1639
 msgid "Seconds:"
 msgstr "Secondes :"
 
-#: src/tree_tab.c:1644
+#: src/tree_tab.c:1645
 msgid "Hundredths:"
 msgstr "Centièmes :"
 
-#: src/tree_tab.c:1650 src/player_tab.c:1141
+#: src/tree_tab.c:1651 src/player_tab.c:1141
 msgid "_Add"
 msgstr "Aj_outer"
 
-#: src/tree_tab.c:1656
+#: src/tree_tab.c:1657
 msgid "Add splitpoint"
 msgstr "Ajouter le point"
 
-#: src/tree_tab.c:1660
+#: src/tree_tab.c:1661
 msgid "_Remove"
 msgstr "_Effacer"
 
-#: src/tree_tab.c:1666
+#: src/tree_tab.c:1667
 msgid "Remove rows"
 msgstr "Effacer les lignes"
 
-#: src/tree_tab.c:1670
+#: src/tree_tab.c:1671
 msgid "R_emove all"
 msgstr "Effa_cer tout"
 
-#: src/tree_tab.c:1676
+#: src/tree_tab.c:1677
 msgid "Remove all rows"
 msgstr "Effacer toutes les lignes"
 
-#: src/tree_tab.c:1689
+#: src/tree_tab.c:1690
 msgid "_Trim splitpoints"
 msgstr ""
 
-#: src/tree_tab.c:1699
+#: src/tree_tab.c:1700
 msgid "_Silence detection"
 msgstr "Détection du _silence"
 
-#: src/tree_tab.c:1827 src/mp3splt-gtk.c:399
+#: src/tree_tab.c:1828 src/mp3splt-gtk.c:399
 msgid " finished"
 msgstr " fini"
 
-#: src/tree_tab.c:1842
+#: src/tree_tab.c:1843
 msgid " cannot split preview last splitpoint"
 msgstr " impossible d'écouter l'aperçu du dernier point de coupure"
 
-#: src/tree_tab.c:1883
+#: src/tree_tab.c:1884
 msgid " cannot preview, not connected to player"
 msgstr " impossible d'écouter l'aperçu, déconnecté du lecteur"
 
-#: src/tree_tab.c:1948
+#: src/tree_tab.c:1949
 msgid "Keep"
 msgstr "Garder"
 
-#: src/tree_tab.c:1962 src/split_files.c:111
+#: src/tree_tab.c:1963 src/split_files.c:112
 msgid "Filename"
 msgstr "Nom fichier"
 
-#: src/tree_tab.c:1976
+#: src/tree_tab.c:1977
 msgid "Secs"
 msgstr "Secondes"
 
-#: src/tree_tab.c:1990
+#: src/tree_tab.c:1991
 msgid "Mins"
 msgstr "Minutes"
 
-#: src/tree_tab.c:2004
+#: src/tree_tab.c:2005
 msgid "Hundr"
 msgstr "Centièmes"
 
-#: src/tree_tab.c:2014
+#: src/tree_tab.c:2015
 msgid "Length"
 msgstr "Durée"
 
-#: src/tree_tab.c:2025
+#: src/tree_tab.c:2026
 msgid "LiveP"
 msgstr "ALive"
 
-#: src/tree_tab.c:2036
+#: src/tree_tab.c:2037
 msgid "SplitP"
 msgstr "ACoupure"
 
@@ -263,55 +263,24 @@ msgstr ""
 msgid "<b>Player options</b>"
 msgstr "<b>Options du lecteur</b>"
 
-#: src/preferences_tab.c:748
-msgid "Number of points to draw without interpolation:"
+#: src/preferences_tab.c:834
+msgid "Wave quality (higher is better but consumes more CPU):"
 msgstr ""
 
-#: src/preferences_tab.c:751
-msgid "\t(less points decreases CPU usage - default is 4000)"
-msgstr ""
-
-#: src/preferences_tab.c:763
-#, c-format
-msgid "Douglas-Peucker algorithm threshold for level %d:"
-msgstr ""
-
-#: src/preferences_tab.c:766
-#, c-format
-msgid "(default is %d)"
-msgstr ""
-
-#: src/preferences_tab.c:774
-#, c-format
-msgid "douglas_peucker_level%d_threshold"
-msgstr ""
-
-#: src/preferences_tab.c:781
-msgid "Douglas-Peucker options are not applied instantly."
-msgstr ""
-
-#: src/preferences_tab.c:786
-msgid "You have to recompute the amplitude wave or to recompute the filters."
-msgstr ""
-
-#: src/preferences_tab.c:792
-msgid "_Recompute Douglas-Peucker filters"
-msgstr ""
-
-#: src/preferences_tab.c:800
+#: src/preferences_tab.c:853
 #, fuzzy
 msgid "<b>Amplitude wave options</b>"
 msgstr "<b>Options de coupure</b>"
 
-#: src/preferences_tab.c:850
+#: src/preferences_tab.c:903
 msgid "Default format"
 msgstr "Format par défaut"
 
-#: src/preferences_tab.c:854
+#: src/preferences_tab.c:907
 msgid "Custom format"
 msgstr "Format personnalisé"
 
-#: src/preferences_tab.c:871
+#: src/preferences_tab.c:924
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -329,83 +298,83 @@ msgstr ""
 "    @g - genre\n"
 "    @n - numéro de la piste"
 
-#: src/preferences_tab.c:884
+#: src/preferences_tab.c:937
 msgid "<b>Output filename format</b>"
 msgstr "<b>Format des fichiers divisés</b>"
 
-#: src/preferences_tab.c:929
+#: src/preferences_tab.c:982
 msgid "Original file tags"
 msgstr "Tags du fichier d'entrée"
 
-#: src/preferences_tab.c:932
+#: src/preferences_tab.c:985
 msgid "Default tags (cddb or cue tags)"
 msgstr "Tags par défaut (cddb ou cue)"
 
-#: src/preferences_tab.c:935
+#: src/preferences_tab.c:988
 msgid "No tags"
 msgstr "Aucun tag"
 
-#: src/preferences_tab.c:938
+#: src/preferences_tab.c:991
 msgid "Extract tags from filename"
 msgstr "Extraire les tags à partir du nom de fichier"
 
-#: src/preferences_tab.c:945
+#: src/preferences_tab.c:998
 msgid "<b>Split files tags</b>"
 msgstr "<b>Tags des fichiers coupés</b>"
 
-#: src/preferences_tab.c:967
+#: src/preferences_tab.c:1020
 msgid "No change"
 msgstr "Sans changement"
 
-#: src/preferences_tab.c:968
+#: src/preferences_tab.c:1021
 msgid "lowercase"
 msgstr "minuscules"
 
-#: src/preferences_tab.c:969
+#: src/preferences_tab.c:1022
 msgid "UPPERCASE"
 msgstr "MAJUSCULES"
 
-#: src/preferences_tab.c:970
+#: src/preferences_tab.c:1023
 msgid "First uppercase"
 msgstr "1ère lettre en majuscule"
 
-#: src/preferences_tab.c:971
+#: src/preferences_tab.c:1024
 msgid "Word Uppercase"
 msgstr "1ère lettre des Mots en majuscule"
 
-#: src/preferences_tab.c:992
+#: src/preferences_tab.c:1045
 msgid "<artist>: "
 msgstr "<artiste>: "
 
-#: src/preferences_tab.c:999
+#: src/preferences_tab.c:1052
 msgid "<album>: "
 msgstr "<album>: "
 
-#: src/preferences_tab.c:1007
+#: src/preferences_tab.c:1060
 msgid "<title>: "
 msgstr "<titre>: "
 
-#: src/preferences_tab.c:1014
+#: src/preferences_tab.c:1067
 msgid "<genre>: "
 msgstr "<genre>: "
 
-#: src/preferences_tab.c:1021
+#: src/preferences_tab.c:1074
 msgid "<comment>: "
 msgstr "<commentaire>: "
 
-#: src/preferences_tab.c:1028
+#: src/preferences_tab.c:1081
 msgid "<year>: "
 msgstr "<année>:"
 
-#: src/preferences_tab.c:1035
+#: src/preferences_tab.c:1088
 msgid "<track>: "
 msgstr "<piste>:"
 
-#: src/preferences_tab.c:1061
+#: src/preferences_tab.c:1114
 msgid "Regular expression:"
 msgstr "Expression régulière :"
 
-#: src/preferences_tab.c:1064
+#: src/preferences_tab.c:1117
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -428,87 +397,87 @@ msgstr ""
 "    (?<genre>)    - genre\n"
 "    (?<comment>)  - commentaire"
 
-#: src/preferences_tab.c:1088
+#: src/preferences_tab.c:1141
 msgid "_Replace underscores by spaces"
 msgstr "_Remplacer les souslignés par des espaces"
 
-#: src/preferences_tab.c:1096
+#: src/preferences_tab.c:1149
 msgid "Artist text properties:"
 msgstr "Propriétés texte auteur :"
 
-#: src/preferences_tab.c:1100
+#: src/preferences_tab.c:1153
 msgid "Album text properties:"
 msgstr "Propriétés texte album :"
 
-#: src/preferences_tab.c:1104
+#: src/preferences_tab.c:1157
 msgid "Title text properties:"
 msgstr "Propriétés texte titre :"
 
-#: src/preferences_tab.c:1108
+#: src/preferences_tab.c:1161
 msgid "Comment text properties:"
 msgstr "Propriétés commentaire :"
 
-#: src/preferences_tab.c:1111
+#: src/preferences_tab.c:1164
 msgid "Genre tag:"
 msgstr "Tag genre :"
 
-#: src/preferences_tab.c:1114
+#: src/preferences_tab.c:1167
 msgid "Comment tag:"
 msgstr "Tag commentaire :"
 
-#: src/preferences_tab.c:1116
+#: src/preferences_tab.c:1169
 msgid "Regular expression test"
 msgstr "Test expression régulière"
 
-#: src/preferences_tab.c:1131
+#: src/preferences_tab.c:1184
 msgid "_Test"
 msgstr "_Test"
 
-#: src/preferences_tab.c:1136
+#: src/preferences_tab.c:1189
 msgid "Sample filename:"
 msgstr "Exemple nom de fichier :"
 
-#: src/preferences_tab.c:1140
+#: src/preferences_tab.c:1193
 msgid "Sample result:"
 msgstr "Exemple résultat :"
 
-#: src/preferences_tab.c:1151
+#: src/preferences_tab.c:1204
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Tags ID3v1 & ID3v2"
 
-#: src/preferences_tab.c:1158
+#: src/preferences_tab.c:1211
 msgid "ID3v2 tags"
 msgstr "Tags ID3v2"
 
-#: src/preferences_tab.c:1164
+#: src/preferences_tab.c:1217
 msgid "ID3v1 tags"
 msgstr "Tags ID3v1"
 
-#: src/preferences_tab.c:1170
+#: src/preferences_tab.c:1223
 msgid "Same tags version as the input file"
 msgstr "Même version des tags que le fichier d'entrée"
 
-#: src/preferences_tab.c:1175
+#: src/preferences_tab.c:1228
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Version des tags (seulement mp3)</b>"
 
-#: src/preferences_tab.c:1217 src/main_win.c:560
+#: src/preferences_tab.c:1270 src/main_win.c:561
 msgid "Split"
 msgstr "Coupure"
 
-#: src/preferences_tab.c:1223
+#: src/preferences_tab.c:1276
 msgid "Tags"
 msgstr "Tags"
 
-#: src/preferences_tab.c:1229
+#: src/preferences_tab.c:1282
 msgid "Output"
 msgstr "Format"
 
-#: src/preferences_tab.c:1235 src/main_win.c:709
+#: src/preferences_tab.c:1288 src/main_win.c:710
 msgid "Player"
 msgstr "Lecteur"
 
-#: src/preferences_tab.c:1242
+#: src/preferences_tab.c:1295
 msgid "Language"
 msgstr "Langue"
 
@@ -704,243 +673,243 @@ msgstr "Sélection fichier"
 msgid "_Fix ogg stream"
 msgstr "_Fixer un stream ogg"
 
-#: src/main_win.c:147
+#: src/main_win.c:148
 msgid " info: stopping the split process before exiting"
 msgstr " info : arrêt du processus de découpage avant de sortir"
 
-#: src/main_win.c:313
+#: src/main_win.c:314
 msgid "Error launching external command"
 msgstr "Erreur en lançant un programme externe"
 
-#: src/main_win.c:345
+#: src/main_win.c:346
 msgid "using"
 msgstr "utilisant"
 
-#: src/main_win.c:349
+#: src/main_win.c:350
 msgid "release of "
 msgstr ""
 
-#: src/main_win.c:446
+#: src/main_win.c:447
 msgid " info: stopping the split process.. please wait"
 msgstr " info : arrêt du processus de découpage... veuillez attendre"
 
-#: src/main_win.c:485
+#: src/main_win.c:486
 msgid " error: no file selected"
 msgstr " erreur : aucun fichier sélectionné"
 
-#: src/main_win.c:490
+#: src/main_win.c:491
 msgid " error: split in progress..."
 msgstr " erreur : découpage en cours..."
 
-#: src/main_win.c:502 src/main_win.c:506
+#: src/main_win.c:503 src/main_win.c:507
 msgid "Split !"
 msgstr "Couper !"
 
-#: src/main_win.c:548
+#: src/main_win.c:549
 msgid "_File"
 msgstr "_Fichier"
 
-#: src/main_win.c:549
+#: src/main_win.c:550
 msgid "_Help"
 msgstr "_Aide"
 
-#: src/main_win.c:552
+#: src/main_win.c:553
 msgid "_Open..."
 msgstr "_Ouvrir..."
 
-#: src/main_win.c:552
+#: src/main_win.c:553
 msgid "Open"
 msgstr "Ouvrir"
 
-#: src/main_win.c:555
+#: src/main_win.c:556
 msgid "_Import splitpoints..."
 msgstr "_Importer points de coupure..."
 
-#: src/main_win.c:555
+#: src/main_win.c:556
 msgid "Import"
 msgstr "Importer"
 
-#: src/main_win.c:557
+#: src/main_win.c:558
 msgid "_Export splitpoints..."
 msgstr "_Exporter points de coupure..."
 
-#: src/main_win.c:557
+#: src/main_win.c:558
 msgid "Export"
 msgstr "Exporter"
 
-#: src/main_win.c:560
+#: src/main_win.c:561
 msgid "_Split !"
 msgstr "_Couper"
 
-#: src/main_win.c:562
+#: src/main_win.c:563
 msgid "Messages _history"
 msgstr "_Historique des messages"
 
-#: src/main_win.c:562 src/main_win.c:807 src/messages.c:201
+#: src/main_win.c:563 src/main_win.c:808 src/messages.c:202
 msgid "Messages history"
 msgstr "Historique des messages"
 
-#: src/main_win.c:565
+#: src/main_win.c:566
 msgid "_Quit"
 msgstr "_Quitter"
 
-#: src/main_win.c:565
+#: src/main_win.c:566
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/main_win.c:569
+#: src/main_win.c:570
 msgid "_Contents"
 msgstr "_Contenus"
 
-#: src/main_win.c:569
+#: src/main_win.c:570
 msgid "Contents"
 msgstr "Contenus"
 
-#: src/main_win.c:573
+#: src/main_win.c:574
 msgid "_About"
 msgstr "_A propos de"
 
-#: src/main_win.c:573
+#: src/main_win.c:574
 msgid "About"
 msgstr "A propos de"
 
-#: src/main_win.c:723
+#: src/main_win.c:724
 msgid "Splitpoints"
 msgstr "Points de coupure"
 
-#: src/main_win.c:735
+#: src/main_win.c:736
 msgid "Split files"
 msgstr "Fichiers découpés"
 
-#: src/main_win.c:748
+#: src/main_win.c:749
 msgid "FreeDB"
 msgstr "FreeDB"
 
-#: src/main_win.c:759
+#: src/main_win.c:760
 msgid "Type of split"
 msgstr "Type de découpage"
 
-#: src/main_win.c:772
+#: src/main_win.c:773
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/main_win.c:789
+#: src/main_win.c:790
 msgid "S_top"
 msgstr "S_top"
 
-#: src/freedb_tab.c:127
+#: src/freedb_tab.c:128
 #, c-format
 msgid "%s Revision %d"
 msgstr "%s Révision %d"
 
-#: src/freedb_tab.c:164
+#: src/freedb_tab.c:165
 msgid "Album title"
 msgstr "Titre de l'album"
 
-#: src/freedb_tab.c:250 src/freedb_tab.c:345
+#: src/freedb_tab.c:251 src/freedb_tab.c:346
 msgid "please wait... contacting tracktype.org"
 msgstr "veuillez attendre... connexion avec tracktype.org"
 
-#: src/freedb_tab.c:545
+#: src/freedb_tab.c:547
 msgid "Search tracktype.org:"
 msgstr "Chercher sur tracktype.org :"
 
-#: src/freedb_tab.c:556
+#: src/freedb_tab.c:558
 msgid "_Search"
 msgstr "_Recherche"
 
-#: src/freedb_tab.c:589
+#: src/freedb_tab.c:590
 msgid "_Add splitpoints"
 msgstr "Aj_outer les points"
 
-#: src/freedb_tab.c:596
+#: src/freedb_tab.c:597
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Mettre les points au tableau de points de coupure"
 
-#: src/special_split.c:197 src/special_split.c:271
+#: src/special_split.c:198 src/special_split.c:272
 #, c-format
 msgid "Split every %2d seconds."
 msgstr ""
 
-#: src/special_split.c:208 src/special_split.c:305
+#: src/special_split.c:209 src/special_split.c:306
 #, c-format
 msgid "Split in %2d equal time tracks."
 msgstr ""
 
-#: src/special_split.c:243
+#: src/special_split.c:244
 msgid "Normal"
 msgstr "Normal"
 
-#: src/special_split.c:253
+#: src/special_split.c:254
 msgid "Time"
 msgstr "Durée"
 
-#: src/special_split.c:287
+#: src/special_split.c:288
 msgid "Equal time tracks"
 msgstr "Nombre de morceaux "
 
-#: src/special_split.c:320
+#: src/special_split.c:321
 msgid "Trim using silence detection"
 msgstr ""
 
-#: src/special_split.c:336 src/special_split.c:361
+#: src/special_split.c:337 src/special_split.c:362
 msgid "Threshold level (dB) : "
 msgstr "Niveau seuil (dB) :"
 
-#: src/special_split.c:345
+#: src/special_split.c:346
 msgid "Silence - split with silence detection"
 msgstr "Silence - couper par détection des silences"
 
-#: src/special_split.c:371
+#: src/special_split.c:372
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
 msgstr "Position de la coupure dans le silence (0 = au début, 1 = à la fin) :"
 
-#: src/special_split.c:381
+#: src/special_split.c:382
 msgid "Number of tracks (0 means all tracks) : "
 msgstr "Nombre de pistes (0 signifie toutes les pistes) :"
 
-#: src/special_split.c:391
+#: src/special_split.c:392
 msgid "Minimum silence length (seconds) : "
 msgstr "Durée minimum du silence (secondes) :"
 
-#: src/special_split.c:401
+#: src/special_split.c:402
 msgid "Minimum track length (seconds) : "
 msgstr ""
 
-#: src/special_split.c:409
+#: src/special_split.c:410
 msgid "Remove silence between tracks"
 msgstr "Effacer les silences entre les morceaux"
 
-#: src/special_split.c:430
+#: src/special_split.c:431
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
 msgstr ""
 "Wrap - diviser les fichiers créés avec mp3wrap ou albumwrap (seulement mp3)"
 
-#: src/special_split.c:440
+#: src/special_split.c:441
 msgid "Error mode (mp3 only)"
 msgstr "Mode recherche erreurs de synchronisation (seulement mp3)"
 
-#: src/special_split.c:465
+#: src/special_split.c:466
 msgid "Single file"
 msgstr "Fichier unique"
 
-#: src/special_split.c:473
+#: src/special_split.c:474
 msgid "Batch processing"
 msgstr "Traitement par lot"
 
-#: src/special_split.c:507
+#: src/special_split.c:508
 msgid "Split mode"
 msgstr "Mode de découpage"
 
-#: src/special_split.c:511
+#: src/special_split.c:512
 msgid "File mode"
 msgstr "Mode fichier(s)"
 
-#: src/messages.c:180
+#: src/messages.c:181
 msgid "Enable _debug messages"
 msgstr ""
 
-#: src/messages.c:187
+#: src/messages.c:188
 msgid "C_lear"
 msgstr "_Effacer"
 
