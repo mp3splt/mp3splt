@@ -526,7 +526,7 @@ void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 //!creates the freedb box
 GtkWidget *create_freedb_frame()
 {
-  GtkWidget *freedb_hbox = gtk_box_new(FALSE, 0);
+  GtkWidget *freedb_hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(freedb_hbox), 0);
  
   /* handle box for detaching */
