@@ -58,6 +58,8 @@
 #include "options_manager.h"
 #include "ui_manager.h"
 #include "widgets_helper.h"
+#include "drawing_helper.h"
+#include "player_tab.h"
 
 /*! The name of the output directory.
   
@@ -130,6 +132,9 @@ GtkWidget *sample_result_label = NULL;
 GtkWidget *extract_tags_box = NULL;
 //@}
 
+GPtrArray *wave_quality_das = NULL;
+GPtrArray *time_windows = NULL;
+
 gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 
 extern gint timeout_value;
@@ -153,6 +158,16 @@ static GtkWidget *create_test_regex_table();
 
 extern void clear_current_description(void);
 extern void copy_filename_to_current_description(const gchar *fname);
+
+extern gfloat total_time;
+extern gfloat zoom_coeff;
+
+extern gint one_minute_time;
+extern gint three_minutes_time;
+extern gint six_minutes_time;
+extern gint ten_minutes_time;
+extern gint twenty_minutes_time;
+extern gint fourty_minutes_time;
 
 extern ui_state *ui;
 
@@ -768,66 +783,115 @@ void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer
 
   compute_douglas_peucker_filters(NULL, NULL);
 
+  gint i = 0;
+  for (i = 0; i < wave_quality_das->len; i++)
+  {
+    GtkWidget *wave_quality_da = g_ptr_array_index(wave_quality_das, i);
+    gtk_widget_queue_draw(wave_quality_da);
+  }
+
   save_preferences(NULL, NULL);
+}
+
+#if GTK_MAJOR_VERSION <= 2
+gboolean wave_quality_draw_event(GtkWidget *drawing_area, GdkEventExpose *event, gpointer data)
+{
+  cairo_t *cairo_surface = gdk_cairo_create(drawing_area->window);
+#else
+gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface, gpointer data)
+{
+#endif
+  gint *expected_drawing_time_int = (gint *)data;
+  gfloat expected_drawing_time = (gfloat)(*expected_drawing_time_int);
+
+  dh_set_white_color(cairo_surface);
+
+  gint width_drawing_area = 500;
+  dh_draw_rectangle(cairo_surface, TRUE, 0, 0, width_drawing_area, 70);
+
+  gfloat current_time = total_time / 2.0;
+
+  gfloat drawing_time = 0;
+  gfloat zoom_coeff = 0.2;
+
+  gfloat left_time = 0;
+  gfloat right_time = 0;
+
+  gint count = 0;
+  while ((drawing_time == 0) || (drawing_time > expected_drawing_time))
+  {
+    left_time = get_left_drawing_time(current_time, total_time, zoom_coeff);
+    right_time = get_right_drawing_time(current_time, total_time, zoom_coeff);
+    drawing_time = right_time - left_time;
+    zoom_coeff += 0.2;
+
+    if (count == 10000)
+    {
+      break;
+    }
+    count++;
+  }
+
+  dh_set_red_color(cairo_surface);
+  gchar minutes_text[128] = { '\0' };
+  g_snprintf(minutes_text, 128, _("%d minute(s) window"), (*expected_drawing_time_int) / 100 / 60);
+  dh_draw_text_with_size(cairo_surface, minutes_text, 0, 50, 13);
+
+  draw_silence_wave((gint)left_time, (gint)right_time, width_drawing_area / 2, 50,
+      drawing_time, width_drawing_area, 0,
+      current_time, total_time, zoom_coeff,
+      drawing_area, cairo_surface);
+
+#if GTK_MAJOR_VERSION <= 2
+  cairo_destroy(cairo_surface);
+#endif
+
+  return TRUE;
+}
+
+GtkWidget *create_wave_quality_preview_box()
+{
+  GtkWidget *vbox = wh_vbox_new();
+
+  time_windows = g_ptr_array_new();
+  g_ptr_array_add(time_windows, (gpointer) &one_minute_time);
+  g_ptr_array_add(time_windows, (gpointer) &three_minutes_time);
+  g_ptr_array_add(time_windows, (gpointer) &six_minutes_time);
+  g_ptr_array_add(time_windows, (gpointer) &ten_minutes_time);
+  g_ptr_array_add(time_windows, (gpointer) &twenty_minutes_time);
+  g_ptr_array_add(time_windows, (gpointer) &fourty_minutes_time);
+
+  wave_quality_das = g_ptr_array_new();
+
+  gint i = 0;
+  for (i = 0; i < time_windows->len; i++)
+  {
+    GtkWidget *wave_quality_da = gtk_drawing_area_new(); 
+    g_ptr_array_add(wave_quality_das, (gpointer)wave_quality_da);
+
+    gtk_widget_set_size_request(wave_quality_da, 500, 70);
+
+    gint *time_window = g_ptr_array_index(time_windows, i);
+
+#if GTK_MAJOR_VERSION <= 2
+    g_signal_connect(wave_quality_da, "expose_event", G_CALLBACK(wave_quality_draw_event),
+        time_window);
+#else
+    g_signal_connect(wave_quality_da, "draw", G_CALLBACK(wave_quality_draw_event),
+        time_window);
+#endif
+
+    GtkWidget *wave_hbox = wh_hbox_new();
+    gtk_box_pack_start(GTK_BOX(wave_hbox), wave_quality_da, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), wave_hbox, FALSE, FALSE, 4);
+  }
+
+  return vbox;
 }
 
 GtkWidget *create_wave_options_box()
 {
   GtkWidget *vbox = wh_vbox_new();
-
-/*  GtkWidget *spinner = wh_create_int_spinner_in_box_with_top_width(
-      _("Number of points to draw without interpolation:"), NULL,
-      (gdouble)DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD, 
-      1000.0, 50000.0, 100.0, 1000.0,
-      _("\t(less points decreases CPU usage - default is 4000)"),
-      update_number_of_points_threshold, NULL, vbox, 0);
-  ui_register_spinner_int_preference("player", "number_of_points_threshold",
-      DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD,
-      spinner, update_number_of_points_threshold, NULL, ui);
- 
-  gint level = 1;
-  for (level = 1; level <= 5; level++)
-  {
-    gdouble default_value = douglas_peucker_thresholds_defaults[level-1];
-
-    gchar label[128] = { '\0' };
-    snprintf(label, 128, _("Douglas-Peucker algorithm threshold for level %d:"), (gint)level);
-
-    gchar default_label[128] = { '\0' };
-    snprintf(default_label, 128, _("(default is %d)"), (gint)default_value);
-
-    spinner = wh_create_int_spinner_in_box_with_top_width(label , default_label,
-        default_value, 1.0, 100.0, 1.0, 5.0, NULL,
-        update_douglas_peucker_level, 
-        &douglas_peucker_indexes[level-1], vbox, 0);
-
-    gchar key[128] = { '\0' };
-    snprintf(key, 128, _("douglas_peucker_level%d_threshold"), level);
-    ui_register_spinner_int_preference("player", key,
-        default_value, spinner, update_douglas_peucker_level, 
-        &douglas_peucker_indexes[level-1], ui);
-  }
-
-  GtkWidget *horiz_fake = wh_hbox_new();
-  GtkWidget *label = gtk_label_new(_("Douglas-Peucker options are not applied instantly."));
-  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
-
-  horiz_fake = wh_hbox_new();
-  label = gtk_label_new(_("You have to recompute the amplitude wave or to recompute the filters."));
-  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
-
-  horiz_fake = wh_hbox_new();
-  GtkWidget *compute_douglas_filters_button =
-    create_cool_button(GTK_STOCK_EXECUTE, _("_Recompute Douglas-Peucker filters"), FALSE);
-
-  g_signal_connect(G_OBJECT(compute_douglas_filters_button), "clicked",
-      G_CALLBACK(compute_douglas_peucker_filters), NULL);
-
-  gtk_box_pack_start(GTK_BOX(horiz_fake), compute_douglas_filters_button, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 6);*/
-
   GtkWidget *range_hbox = wh_hbox_new();
 
   GtkWidget *wave_quality_label =
@@ -849,6 +913,10 @@ GtkWidget *create_wave_options_box()
       G_CALLBACK(wave_quality_changed_event), NULL);
 
   gtk_box_pack_start(GTK_BOX(vbox), range_hbox, FALSE, FALSE, 0);
+
+  GtkWidget *wave_quality_box = create_wave_quality_preview_box();
+
+  gtk_box_pack_start(GTK_BOX(vbox), wave_quality_box, FALSE, FALSE, 0);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Amplitude wave options</b>"));
 }
