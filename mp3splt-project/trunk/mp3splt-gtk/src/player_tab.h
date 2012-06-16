@@ -144,8 +144,9 @@ void close_player_popup_window_event( GtkWidget *window,
 void handle_player_detached_event (GtkHandleBox *handlebox,
                                    GtkWidget *widget,
                                    gpointer data);
-gfloat get_right_drawing_time();
-gfloat get_left_drawing_time();
+gfloat get_right_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
+gfloat get_left_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
+
 gint get_time_hundrsecs(gint time);
 gint get_time_secs(gint time);
 gint get_time_mins(gint time);
@@ -155,9 +156,8 @@ gchar *get_time_for_drawing(gchar *str,
                             gint *number_of_chars);
 gfloat pixels_to_time(gfloat width,
                       gint pixels);
-gint time_to_pixels(gint width, gfloat time);
-gint get_draw_line_position(gint width,
-                            gfloat time);
+gint convert_time_to_pixels(gint width, gfloat time, 
+    gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 void draw_motif(GtkWidget *da,cairo_t *gc,
                 gint ylimit,gint x,gint model);
 void draw_marks(gint time_interval,
@@ -218,6 +218,12 @@ void close_playlist_popup_window_event(GtkWidget *window, gpointer data);
 void restart_player_timer();
 
 void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data);
+
+void draw_silence_wave(gint left_mark, gint right_mark, 
+    gint interpolation_text_x, gint interpolation_text_y,
+    gfloat draw_time, gint width_drawing_area, gint y_margin,
+    gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
+    GtkWidget *da, cairo_t *gc);
 
 #endif
 

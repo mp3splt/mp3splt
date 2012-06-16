@@ -40,6 +40,7 @@ mp3splt_gtk_SOURCES = \
 	options_manager.c options_manager.h \
 	preferences_manager.c preferences_manager.h \
 	widgets_helper.c widgets_helper.h \
+  drawing_helper.c drawing_helper.h \
 	combo_helper.c combo_helper.h \
 	radio_helper.c radio_helper.h \
 	export.c export.h \
