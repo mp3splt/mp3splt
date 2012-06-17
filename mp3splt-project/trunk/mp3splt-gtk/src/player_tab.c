@@ -468,7 +468,9 @@ gpointer detect_silence(gpointer data)
 
   print_status_bar_confirmation(err);
   gtk_widget_set_sensitive(cancel_button, FALSE);
+
   refresh_drawing_area();
+  refresh_preview_drawing_areas();
 
   exit_threads();
 
@@ -963,9 +965,7 @@ void change_song_position()
   //new position of the song
   gint position;
   
-  position = (player_seconds2 + 
-              player_minutes2*60)*1000
-    +player_hundr_secs2*10;
+  position = (player_seconds2 + player_minutes2*60)*1000 + player_hundr_secs2*10;
   
   player_jump(position);  
 }
@@ -997,6 +997,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     number_of_silence_points = 0;
 
     refresh_drawing_area();
+    refresh_preview_drawing_areas();
   }
 }
 
@@ -2191,6 +2192,7 @@ void draw_silence_wave(gint left_mark, gint right_mark,
     gint interpolation_text_x, gint interpolation_text_y,
     gfloat draw_time, gint width_drawing_area, gint y_margin,
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
+    gint with_wave_interpolation_threshold,
     GtkWidget *da, cairo_t *gc)
 {
   GdkColor color;
@@ -2271,8 +2273,18 @@ void draw_silence_wave(gint left_mark, gint right_mark,
   else
   {
     gchar interpolation_text[128] = { '\0' };
-    g_snprintf(interpolation_text, 128, _("Wave interpolation level %d"),
-        interpolation_level + 1);
+
+    if (with_wave_interpolation_threshold)
+    {
+      g_snprintf(interpolation_text, 128, _("Wave interpolation level %d, th=%.0lf"),
+          interpolation_level + 1, douglas_peucker_thresholds[interpolation_level]);
+    }
+    else
+    {
+      g_snprintf(interpolation_text, 128, _("Wave interpolation level %d"),
+          interpolation_level + 1);
+    }
+
     dh_draw_text_with_size(gc, interpolation_text, 
         interpolation_text_x, interpolation_text_y, 13);
   }
@@ -2746,7 +2758,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
           width_drawing_area/2 + 3, wave_ypos - margin * 4,
           total_draw_time, 
           width_drawing_area, text_ypos + margin,
-          current_time, total_time, zoom_coeff,
+          current_time, total_time, zoom_coeff, FALSE,
           da, gc);
 
       //draw silence wave middle line
@@ -3100,9 +3112,7 @@ gboolean da_press_event (GtkWidget    *da,
 }
 
 //!drawing area release event
-gboolean da_unpress_event (GtkWidget    *da,
-                           GdkEventButton *event,
-                           gpointer     data)
+gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, gpointer data)
 {
   //only if we are playing
   //and the timer active(connected to player)
@@ -3183,9 +3193,7 @@ gboolean da_unpress_event (GtkWidget    *da,
 }
 
 //!on drawing area event
-gboolean da_notify_event (GtkWidget     *da,
-                          GdkEventMotion *event,
-                          gpointer      data)
+gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
 {
   //only if we are playing
   //and the timer active(connected to player)

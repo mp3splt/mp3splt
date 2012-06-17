@@ -133,7 +133,6 @@ GtkWidget *extract_tags_box = NULL;
 //@}
 
 GPtrArray *wave_quality_das = NULL;
-GPtrArray *time_windows = NULL;
 
 gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 
@@ -782,15 +781,18 @@ void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer
   silence_wave_number_of_points_threshold = number_of_points_th;
 
   compute_douglas_peucker_filters(NULL, NULL);
+  refresh_preview_drawing_areas();
 
+  save_preferences(NULL, NULL);
+}
+
+void refresh_preview_drawing_areas()
+{
   gint i = 0;
   for (i = 0; i < wave_quality_das->len; i++)
   {
-    GtkWidget *wave_quality_da = g_ptr_array_index(wave_quality_das, i);
-    gtk_widget_queue_draw(wave_quality_da);
+    gtk_widget_queue_draw(g_ptr_array_index(wave_quality_das, i));
   }
-
-  save_preferences(NULL, NULL);
 }
 
 #if GTK_MAJOR_VERSION <= 2
@@ -817,7 +819,6 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
   gfloat left_time = 0;
   gfloat right_time = 0;
 
-  gint count = 0;
   while ((drawing_time == 0) || (drawing_time > expected_drawing_time))
   {
     left_time = get_left_drawing_time(current_time, total_time, zoom_coeff);
@@ -825,21 +826,17 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
     drawing_time = right_time - left_time;
     zoom_coeff += 0.2;
 
-    if (count == 10000)
-    {
-      break;
-    }
-    count++;
+    if (zoom_coeff > 100) { break; }
   }
 
   dh_set_red_color(cairo_surface);
   gchar minutes_text[128] = { '\0' };
   g_snprintf(minutes_text, 128, _("%d minute(s) window"), (*expected_drawing_time_int) / 100 / 60);
-  dh_draw_text_with_size(cairo_surface, minutes_text, 0, 50, 13);
+  dh_draw_text_with_size(cairo_surface, minutes_text, 10, 50, 13);
 
   draw_silence_wave((gint)left_time, (gint)right_time, width_drawing_area / 2, 50,
       drawing_time, width_drawing_area, 0,
-      current_time, total_time, zoom_coeff,
+      current_time, total_time, zoom_coeff, TRUE,
       drawing_area, cairo_surface);
 
 #if GTK_MAJOR_VERSION <= 2
@@ -853,7 +850,14 @@ GtkWidget *create_wave_quality_preview_box()
 {
   GtkWidget *vbox = wh_vbox_new();
 
-  time_windows = g_ptr_array_new();
+  GtkWidget *label_hbox = wh_hbox_new();
+  GtkWidget *wave_preview_label = gtk_label_new(NULL);
+  gtk_label_set_markup(GTK_LABEL(wave_preview_label),
+      _("<span style='italic' color='#0000AA'>Wave preview is only available if the user has the amplitude wave ticked in the player</span>"));
+  gtk_box_pack_start(GTK_BOX(label_hbox), wave_preview_label, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 4);
+ 
+  GPtrArray *time_windows = g_ptr_array_new();
   g_ptr_array_add(time_windows, (gpointer) &one_minute_time);
   g_ptr_array_add(time_windows, (gpointer) &three_minutes_time);
   g_ptr_array_add(time_windows, (gpointer) &six_minutes_time);
@@ -885,6 +889,8 @@ GtkWidget *create_wave_quality_preview_box()
     gtk_box_pack_start(GTK_BOX(wave_hbox), wave_quality_da, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), wave_hbox, FALSE, FALSE, 4);
   }
+
+  g_ptr_array_free(time_windows, TRUE);
 
   return vbox;
 }
