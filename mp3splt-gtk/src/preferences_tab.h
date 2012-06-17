@@ -67,4 +67,7 @@ GtkWidget *create_pref_player_page();
 GtkWidget *create_choose_preferences();
 void outputdirectory_set(gchar *dirname);
 gchar *outputdirectory_get();
+
+void refresh_preview_drawing_areas();
+
 #endif
