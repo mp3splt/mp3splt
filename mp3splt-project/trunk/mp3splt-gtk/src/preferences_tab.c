@@ -701,22 +701,6 @@ void update_timeout_value(GtkWidget *spinner, gpointer data)
   save_preferences(NULL, NULL);
 }
 
-void update_number_of_points_threshold(GtkWidget *spinner, gpointer data)
-{
-  silence_wave_number_of_points_threshold = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-  save_preferences(NULL, NULL);
-}
-
-void update_douglas_peucker_level(GtkWidget *spinner, gpointer data)
-{
-  gint level_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-
-  gint *level_index = (gint *) data;
-  douglas_peucker_thresholds[*level_index] = level_value;
-
-  save_preferences(NULL, NULL);
-}
-
 //!Create the box the player backend can be selected with
 GtkWidget *create_player_options_box()
 {

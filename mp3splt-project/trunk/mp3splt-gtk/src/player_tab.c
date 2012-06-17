@@ -2276,7 +2276,7 @@ void draw_silence_wave(gint left_mark, gint right_mark,
 
     if (with_wave_interpolation_threshold)
     {
-      g_snprintf(interpolation_text, 128, _("Wave interpolation level %d, th=%.0lf"),
+      g_snprintf(interpolation_text, 128, _("Wave interpolation level %d, th=%.1lf"),
           interpolation_level + 1, douglas_peucker_thresholds[interpolation_level]);
     }
     else
