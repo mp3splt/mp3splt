@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-06-13 21:57+0200\n"
+"POT-Creation-Date: 2012-06-17 11:00+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,7 +62,7 @@ msgstr "Zadejte, prosím, název"
 msgid "Set trim splitpoints using silence detection"
 msgstr "Nastavit zastřižení bodů rozdělení s pomocí zjištění ticha"
 
-#: src/tree_tab.c:1301 src/tree_tab.c:1372 src/preferences_tab.c:573
+#: src/tree_tab.c:1301 src/tree_tab.c:1372 src/preferences_tab.c:587
 msgid "Threshold level (dB):"
 msgstr "Úroveň prahu (dB):"
 
@@ -102,7 +102,7 @@ msgstr "Sekundy:"
 msgid "Hundredths:"
 msgstr "Setina:"
 
-#: src/tree_tab.c:1651 src/player_tab.c:1141
+#: src/tree_tab.c:1651 src/player_tab.c:1142
 msgid "_Add"
 msgstr "_Přidat"
 
@@ -190,96 +190,107 @@ msgstr "_Smazat vybrané soubory"
 msgid "D_elete all files"
 msgstr "S_mazat všechny soubory"
 
-#: src/preferences_tab.c:328
+#: src/preferences_tab.c:342
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Vybrat jazyk (vyžaduje nové spuštění)</b>"
 
-#: src/preferences_tab.c:363
+#: src/preferences_tab.c:377
 msgid "Choose split directory"
 msgstr "Vybrat výstupní adresář"
 
-#: src/preferences_tab.c:515
+#: src/preferences_tab.c:529
 msgid "Br_owse dir"
 msgstr "_Vybrat adresář"
 
-#: src/preferences_tab.c:523
+#: src/preferences_tab.c:537
 msgid "_Song dir"
 msgstr "Adresář _pro skladbu"
 
-#: src/preferences_tab.c:528
+#: src/preferences_tab.c:542
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Adresář pro rozdělené soubory</b>"
 
-#: src/preferences_tab.c:537
+#: src/preferences_tab.c:551
 msgid "_Splitpoint name from filename (testing)"
 msgstr "_Bod rozdělení z názvu souboru (zkušební)"
 
-#: src/preferences_tab.c:543
+#: src/preferences_tab.c:557
 msgid "_Create directories from filenames "
 msgstr "_Vytvořit adresáře z názvů souborů"
 
-#: src/preferences_tab.c:549
+#: src/preferences_tab.c:563
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "Režim F_rame (užitečný pro mp3-VBR) (jen pro mp3)"
 
-#: src/preferences_tab.c:556
+#: src/preferences_tab.c:570
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr "_Automatické přesné nastavení bodu rozdělení pomocí zjištění ticha"
 
-#: src/preferences_tab.c:588
+#: src/preferences_tab.c:602
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec):"
 
-#: src/preferences_tab.c:605
+#: src/preferences_tab.c:619
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "Přestávka (sekundy okolo bodu rozdělení k prohledání na ticho):"
 
-#: src/preferences_tab.c:624
+#: src/preferences_tab.c:638
 msgid "Set _default split options"
 msgstr "Nastavit výchozí volby pro rozdělení"
 
-#: src/preferences_tab.c:630
+#: src/preferences_tab.c:644
 msgid "<b>Split options</b>"
 msgstr "<b>Volby pro rozdělení</b>"
 
-#: src/preferences_tab.c:713
+#: src/preferences_tab.c:711
 msgid "Player:"
 msgstr ""
 
-#: src/preferences_tab.c:732
+#: src/preferences_tab.c:730
 msgid "Refresh player every "
 msgstr ""
 
-#: src/preferences_tab.c:733
+#: src/preferences_tab.c:731
 msgid "milliseconds."
 msgstr ""
 
-#: src/preferences_tab.c:735
+#: src/preferences_tab.c:733
 msgid "\t(higher refresh rate decreases CPU usage - default is 200)"
 msgstr ""
 
-#: src/preferences_tab.c:740
+#: src/preferences_tab.c:738
 msgid "<b>Player options</b>"
 msgstr "<b>Volby pro přehrávač</b>"
 
-#: src/preferences_tab.c:834
+#: src/preferences_tab.c:818
+#, c-format
+msgid "%d minute(s) window"
+msgstr ""
+
+#: src/preferences_tab.c:840
+msgid ""
+"<span style='italic' color='#0000AA'>Wave preview is only available if the "
+"user has the amplitude wave ticked in the player</span>"
+msgstr ""
+
+#: src/preferences_tab.c:888
 msgid "Wave quality (higher is better but consumes more CPU):"
 msgstr ""
 
-#: src/preferences_tab.c:853
+#: src/preferences_tab.c:911
 #, fuzzy
 msgid "<b>Amplitude wave options</b>"
 msgstr "<b>Volby pro rozdělení</b>"
 
-#: src/preferences_tab.c:903
+#: src/preferences_tab.c:961
 msgid "Default format"
 msgstr "Výchozí formát"
 
-#: src/preferences_tab.c:907
+#: src/preferences_tab.c:965
 msgid "Custom format"
 msgstr "Vlastní formát"
 
-#: src/preferences_tab.c:924
+#: src/preferences_tab.c:982
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -297,83 +308,83 @@ msgstr ""
 "    @g - žánr\n"
 "    @n - číslo skladby"
 
-#: src/preferences_tab.c:937
+#: src/preferences_tab.c:995
 msgid "<b>Output filename format</b>"
 msgstr "<b>Formát výstupního souboru</b>"
 
-#: src/preferences_tab.c:982
+#: src/preferences_tab.c:1040
 msgid "Original file tags"
 msgstr "Původní značky k souboru"
 
-#: src/preferences_tab.c:985
+#: src/preferences_tab.c:1043
 msgid "Default tags (cddb or cue tags)"
 msgstr "Výchozí značky (cddb nebo značky cue)"
 
-#: src/preferences_tab.c:988
+#: src/preferences_tab.c:1046
 msgid "No tags"
 msgstr "Žádné značky"
 
-#: src/preferences_tab.c:991
+#: src/preferences_tab.c:1049
 msgid "Extract tags from filename"
 msgstr "Vytáhnout značky z názvu souboru"
 
-#: src/preferences_tab.c:998
+#: src/preferences_tab.c:1056
 msgid "<b>Split files tags</b>"
 msgstr "<b>Značky v rozdělených souborech</b>"
 
-#: src/preferences_tab.c:1020
+#: src/preferences_tab.c:1078
 msgid "No change"
 msgstr "Žádná změna"
 
-#: src/preferences_tab.c:1021
+#: src/preferences_tab.c:1079
 msgid "lowercase"
 msgstr "Malá písmena"
 
-#: src/preferences_tab.c:1022
+#: src/preferences_tab.c:1080
 msgid "UPPERCASE"
 msgstr "VELKÁ PÍSMENA"
 
-#: src/preferences_tab.c:1023
+#: src/preferences_tab.c:1081
 msgid "First uppercase"
 msgstr "První písmeno velké"
 
-#: src/preferences_tab.c:1024
+#: src/preferences_tab.c:1082
 msgid "Word Uppercase"
 msgstr "Písmena slov velká"
 
-#: src/preferences_tab.c:1045
+#: src/preferences_tab.c:1103
 msgid "<artist>: "
 msgstr "<artist>: "
 
-#: src/preferences_tab.c:1052
+#: src/preferences_tab.c:1110
 msgid "<album>: "
 msgstr "<album>: "
 
-#: src/preferences_tab.c:1060
+#: src/preferences_tab.c:1118
 msgid "<title>: "
 msgstr "<title>: "
 
-#: src/preferences_tab.c:1067
+#: src/preferences_tab.c:1125
 msgid "<genre>: "
 msgstr "<genre>: "
 
-#: src/preferences_tab.c:1074
+#: src/preferences_tab.c:1132
 msgid "<comment>: "
 msgstr "<comment>: "
 
-#: src/preferences_tab.c:1081
+#: src/preferences_tab.c:1139
 msgid "<year>: "
 msgstr "<year>: "
 
-#: src/preferences_tab.c:1088
+#: src/preferences_tab.c:1146
 msgid "<track>: "
 msgstr "<track>: "
 
-#: src/preferences_tab.c:1114
+#: src/preferences_tab.c:1172
 msgid "Regular expression:"
 msgstr "Regulární výraz:"
 
-#: src/preferences_tab.c:1117
+#: src/preferences_tab.c:1175
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -395,95 +406,95 @@ msgstr ""
 "    (?<genre>)    - žánr\n"
 "    (?<comment>)  - poznámka"
 
-#: src/preferences_tab.c:1141
+#: src/preferences_tab.c:1199
 msgid "_Replace underscores by spaces"
 msgstr "_Nahradit podtržítka mezerami"
 
-#: src/preferences_tab.c:1149
+#: src/preferences_tab.c:1207
 msgid "Artist text properties:"
 msgstr "Vlastnosti textu umělce:"
 
-#: src/preferences_tab.c:1153
+#: src/preferences_tab.c:1211
 msgid "Album text properties:"
 msgstr "Vlastnosti textu alba:"
 
-#: src/preferences_tab.c:1157
+#: src/preferences_tab.c:1215
 msgid "Title text properties:"
 msgstr "Vlastnosti textu názvu:"
 
-#: src/preferences_tab.c:1161
+#: src/preferences_tab.c:1219
 msgid "Comment text properties:"
 msgstr "Vlastnosti textu poznámky:"
 
-#: src/preferences_tab.c:1164
+#: src/preferences_tab.c:1222
 msgid "Genre tag:"
 msgstr "Značka žánru:"
 
-#: src/preferences_tab.c:1167
+#: src/preferences_tab.c:1225
 msgid "Comment tag:"
 msgstr "Značka poznámky:"
 
-#: src/preferences_tab.c:1169
+#: src/preferences_tab.c:1227
 msgid "Regular expression test"
 msgstr "Zkouška regulárního výrazu"
 
-#: src/preferences_tab.c:1184
+#: src/preferences_tab.c:1242
 msgid "_Test"
 msgstr "_Zkouška"
 
-#: src/preferences_tab.c:1189
+#: src/preferences_tab.c:1247
 msgid "Sample filename:"
 msgstr "Název souboru s příkladem:"
 
-#: src/preferences_tab.c:1193
+#: src/preferences_tab.c:1251
 msgid "Sample result:"
 msgstr "Výsledek příkladu:"
 
-#: src/preferences_tab.c:1204
+#: src/preferences_tab.c:1262
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Značky ID3v1 a ID3v2"
 
-#: src/preferences_tab.c:1211
+#: src/preferences_tab.c:1269
 msgid "ID3v2 tags"
 msgstr "Značky ID3v2"
 
-#: src/preferences_tab.c:1217
+#: src/preferences_tab.c:1275
 msgid "ID3v1 tags"
 msgstr "Značky ID3v1"
 
-#: src/preferences_tab.c:1223
+#: src/preferences_tab.c:1281
 msgid "Same tags version as the input file"
 msgstr "Stejná verze značky jako u vstupního souboru"
 
-#: src/preferences_tab.c:1228
+#: src/preferences_tab.c:1286
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Verze značky (jen pro mp3)</b>"
 
-#: src/preferences_tab.c:1270 src/main_win.c:561
+#: src/preferences_tab.c:1328 src/main_win.c:561
 msgid "Split"
 msgstr "Rozdělení"
 
-#: src/preferences_tab.c:1276
+#: src/preferences_tab.c:1334
 msgid "Tags"
 msgstr "Značky"
 
-#: src/preferences_tab.c:1282
+#: src/preferences_tab.c:1340
 msgid "Output"
 msgstr "Výstup"
 
-#: src/preferences_tab.c:1288 src/main_win.c:710
+#: src/preferences_tab.c:1346 src/main_win.c:710
 msgid "Player"
 msgstr "Přehrávač"
 
-#: src/preferences_tab.c:1295
+#: src/preferences_tab.c:1353
 msgid "Language"
 msgstr "Jazyk"
 
-#: src/player_tab.c:753 src/player_tab.c:787
+#: src/player_tab.c:755 src/player_tab.c:789
 msgid "Cannot connect to player"
 msgstr "Žádné spojení s přehrávacím programem"
 
-#: src/player_tab.c:764
+#: src/player_tab.c:766
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -519,7 +530,7 @@ msgstr ""
 " Potom spusťte SnackAmp znovu a mp3splt-gtk\n"
 " by měl pracovat.\n"
 
-#: src/player_tab.c:779
+#: src/player_tab.c:781
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -538,145 +549,154 @@ msgstr ""
 " jak se to má udělat, spusťte Audacious ručně\n"
 " a pokuste se spojení vytvořit.\n"
 
-#: src/player_tab.c:1066
+#: src/player_tab.c:1067
 msgid "Previous"
 msgstr "Předchozí"
 
-#: src/player_tab.c:1084
+#: src/player_tab.c:1085
 msgid "Play"
 msgstr "Přehrát"
 
-#: src/player_tab.c:1100
+#: src/player_tab.c:1101
 msgid "Pause"
 msgstr "Pozastavit"
 
-#: src/player_tab.c:1117
+#: src/player_tab.c:1118
 msgid "Stop"
 msgstr "Zastavit"
 
-#: src/player_tab.c:1134
+#: src/player_tab.c:1135
 msgid "Next"
 msgstr "Další"
 
-#: src/player_tab.c:1149
+#: src/player_tab.c:1150
 msgid "Add splitpoint from player"
 msgstr "Přidat bod rozdělení zde"
 
-#: src/player_tab.c:1153
+#: src/player_tab.c:1154
 msgid "Amplitude _wave"
 msgstr ""
 
-#: src/player_tab.c:1160
+#: src/player_tab.c:1161
 msgid "Shows the amplitude level wave"
 msgstr "Ukáže vlnu s rozkmitem zvuku"
 
-#: src/player_tab.c:1164
+#: src/player_tab.c:1165
 msgid "_Connect"
 msgstr "_Spojit"
 
-#: src/player_tab.c:1167
+#: src/player_tab.c:1168
 msgid "Connect to player"
 msgstr "Spojit s přehrávačem"
 
-#: src/player_tab.c:1171
+#: src/player_tab.c:1172
 msgid "_Disconnect"
 msgstr "_Odpojit"
 
-#: src/player_tab.c:1174
+#: src/player_tab.c:1175
 msgid "Disconnect from player"
 msgstr "Odpojit od přehrávače"
 
-#: src/player_tab.c:1313
+#: src/player_tab.c:1314
 #, c-format
 msgid "before %s"
 msgstr "před %s"
 
-#: src/player_tab.c:2840
+#: src/player_tab.c:2204
+msgid "No available wave"
+msgstr ""
+
+#: src/player_tab.c:2270
 msgid "No wave interpolation"
 msgstr ""
 
-#: src/player_tab.c:2847
+#: src/player_tab.c:2279
+#, c-format
+msgid "Wave interpolation level %d, th=%.1lf"
+msgstr ""
+
+#: src/player_tab.c:2284
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr ""
 
-#: src/player_tab.c:2862
+#: src/player_tab.c:2777
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 "Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení "
 "jej vymaže"
 
-#: src/player_tab.c:2867
+#: src/player_tab.c:2782
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 "Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní "
 "násobek zvětšení"
 
-#: src/player_tab.c:2873
+#: src/player_tab.c:2788
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 "Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje "
 "náhled"
 
-#: src/player_tab.c:2878
+#: src/player_tab.c:2793
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr "Levé klepnutí na obdélník zapne/vypne »Ponechat bod rozdělení«"
 
-#: src/player_tab.c:3068
+#: src/player_tab.c:2983
 msgid " quick preview..."
 msgstr " Rychlý náhled..."
 
-#: src/player_tab.c:3437
+#: src/player_tab.c:3348
 msgid "Splitpoints _view"
 msgstr ""
 
-#: src/player_tab.c:3605
+#: src/player_tab.c:3516
 msgid "History"
 msgstr "Historie"
 
-#: src/player_tab.c:3739
+#: src/player_tab.c:3650
 msgid "_Erase selected entries"
 msgstr "Vymazat vybrané _záznamy"
 
-#: src/player_tab.c:3748
+#: src/player_tab.c:3659
 msgid "E_rase all history"
 msgstr "Vymazat celou _historii"
 
-#: src/player_tab.c:3792
+#: src/player_tab.c:3703
 msgid "H_istory"
 msgstr ""
 
-#: src/player_tab.c:3870
+#: src/player_tab.c:3781
 msgid " quick preview finished, song paused"
 msgstr "Rychlý náhled ukončen, přehrávání pozastaveno"
 
-#: src/player_tab.c:4016
+#: src/player_tab.c:3927
 msgid "Choose File"
 msgstr "Vybrat soubor"
 
-#: src/player_tab.c:4028 src/multiple_files.c:130
+#: src/player_tab.c:3939 src/multiple_files.c:130
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "Soubory mp3 a ogg (*.mp3 *.ogg)"
 
-#: src/player_tab.c:4036 src/multiple_files.c:138
+#: src/player_tab.c:3947 src/multiple_files.c:138
 msgid "mp3 files (*.mp3)"
 msgstr "Soubory mp3 (*.mp3)"
 
-#: src/player_tab.c:4042 src/multiple_files.c:144
+#: src/player_tab.c:3953 src/multiple_files.c:144
 msgid "ogg files (*.ogg)"
 msgstr "Soubory ogg (*.ogg)"
 
-#: src/player_tab.c:4183
+#: src/player_tab.c:4094
 msgid "_Browse"
 msgstr "_Procházet"
 
-#: src/player_tab.c:4187
+#: src/player_tab.c:4098
 msgid "Select file"
 msgstr "Vybrat soubor"
 
-#: src/player_tab.c:4194
+#: src/player_tab.c:4105
 msgid "_Fix ogg stream"
 msgstr "_Opravit datový proud ogg"
 
