@@ -2346,6 +2346,8 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     return;
   }
 
+  gint old_width_drawing_area = width_drawing_area;
+
   int width = 0, height = 0;
   wh_get_widget_size(da, &width, &height);
   if (show_silence_wave)
@@ -2398,9 +2400,14 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
   
   GdkColor color;
   gint nbr_chars = 0;
-  
+
   wh_get_widget_size(da, &width_drawing_area, NULL);
-  
+
+  if (width_drawing_area != old_width_drawing_area)
+  {
+    refresh_preview_drawing_areas();
+  }
+
   color.red = 255 * 235;color.green = 255 * 235;
   color.blue = 255 * 235;
   dh_set_color(gc, &color);
