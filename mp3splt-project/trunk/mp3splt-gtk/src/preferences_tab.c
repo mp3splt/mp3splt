@@ -168,6 +168,8 @@ extern gint ten_minutes_time;
 extern gint twenty_minutes_time;
 extern gint fourty_minutes_time;
 
+extern gint width_drawing_area;
+
 extern ui_state *ui;
 
 /*!Returns the selected language
@@ -787,14 +789,14 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, GdkEventExpose *event,
 gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface, gpointer data)
 {
 #endif
+  gtk_widget_set_size_request(drawing_area, width_drawing_area, 70);
+
   gint *expected_drawing_time_int = (gint *)data;
   gfloat expected_drawing_time = (gfloat)(*expected_drawing_time_int);
 
   dh_set_white_color(cairo_surface);
 
-  gint width_drawing_area = 500;
-  dh_draw_rectangle(cairo_surface, TRUE, 0, 0, width_drawing_area, 70);
-
+  dh_draw_rectangle(cairo_surface, TRUE, 0, 0, width_drawing_area, 70); 
   gfloat current_time = total_time / 2.0;
 
   gfloat drawing_time = 0;
@@ -837,7 +839,7 @@ GtkWidget *create_wave_quality_preview_box()
   GtkWidget *label_hbox = wh_hbox_new();
   GtkWidget *wave_preview_label = gtk_label_new(NULL);
   gtk_label_set_markup(GTK_LABEL(wave_preview_label),
-      _("<span style='italic' color='#0000AA'>Wave preview is only available if the user has the amplitude wave ticked in the player</span>"));
+      _("<span style='italic' color='#0000AA'>Wave preview is only available if the amplitude wave is ticked in the player</span>"));
   gtk_box_pack_start(GTK_BOX(label_hbox), wave_preview_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 4);
  
@@ -857,7 +859,7 @@ GtkWidget *create_wave_quality_preview_box()
     GtkWidget *wave_quality_da = gtk_drawing_area_new(); 
     g_ptr_array_add(wave_quality_das, (gpointer)wave_quality_da);
 
-    gtk_widget_set_size_request(wave_quality_da, 500, 70);
+    gtk_widget_set_size_request(wave_quality_da, width_drawing_area, 70);
 
     gint *time_window = g_ptr_array_index(time_windows, i);
 
@@ -904,10 +906,6 @@ GtkWidget *create_wave_options_box()
 
   gtk_box_pack_start(GTK_BOX(vbox), range_hbox, FALSE, FALSE, 0);
 
-  GtkWidget *wave_quality_box = create_wave_quality_preview_box();
-
-  gtk_box_pack_start(GTK_BOX(vbox), wave_quality_box, FALSE, FALSE, 0);
-
   return wh_set_title_and_get_vbox(vbox, _("<b>Amplitude wave options</b>"));
 }
 
@@ -916,22 +914,25 @@ GtkWidget *create_pref_player_page()
 {
   GtkWidget *player_hbox = wh_hbox_new();;
 
-  GtkWidget *inside_hbox = wh_hbox_new();;
+  GtkWidget *inside_vbox = wh_vbox_new();;
   
   GtkWidget *scrolled_window = create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-                                        GTK_WIDGET(inside_hbox));
+                                        GTK_WIDGET(inside_vbox));
   gtk_box_pack_start(GTK_BOX(player_hbox), scrolled_window, TRUE, TRUE, 0);
   
   //vertical box inside the horizontal box from the scrolled window
   GtkWidget *vbox = wh_vbox_new();;
-  gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 5);
+  gtk_box_pack_start(GTK_BOX(inside_vbox), vbox, TRUE, TRUE, 5);
   
   //choose player combo box
   GtkWidget *player_options_box = create_player_options_box();
   gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 3);
   GtkWidget *wave_options_box = create_wave_options_box();
   gtk_box_pack_start(GTK_BOX(vbox), wave_options_box, FALSE, FALSE, 3);
+
+  GtkWidget *wave_quality_box = create_wave_quality_preview_box();
+  gtk_box_pack_start(GTK_BOX(inside_vbox), wave_quality_box, FALSE, FALSE, 0);
  
   return player_hbox;
 }

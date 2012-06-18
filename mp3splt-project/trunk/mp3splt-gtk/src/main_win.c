@@ -228,6 +228,9 @@ gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, gpointer 
   ui_set_main_win_position(ui, event->configure.x, event->configure.y); 
   ui_set_main_win_size(ui, event->configure.width, event->configure.height);
 
+  refresh_drawing_area();
+  refresh_preview_drawing_areas();
+
   return FALSE;
 }
 
