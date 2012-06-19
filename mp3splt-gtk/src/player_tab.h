@@ -219,11 +219,10 @@ void restart_player_timer();
 
 void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data);
 
-void draw_silence_wave(gint left_mark, gint right_mark, 
+gint draw_silence_wave(gint left_mark, gint right_mark, 
     gint interpolation_text_x, gint interpolation_text_y,
     gfloat draw_time, gint width_drawing_area, gint y_margin,
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
-    gint with_wave_interpolation_threshold,
     GtkWidget *da, cairo_t *gc);
 
 #endif

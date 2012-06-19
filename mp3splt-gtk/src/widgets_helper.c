@@ -102,6 +102,26 @@ GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_l
   return _wh_put_in_new_hbox_with_margin(widget, 6 * margin_level);
 }
 
+void *wh_put_in_hbox_and_attach_to_vbox(GtkWidget *widget, GtkWidget *vbox, gint vertical_margin)
+{
+  wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(widget, vbox, vertical_margin, -1);
+}
+
+void *wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, GtkWidget *vbox,
+    gint vertical_margin, gint bottom_margin)
+{
+  GtkWidget *hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, vertical_margin);
+
+  if (bottom_margin > 0)
+  {
+    GtkWidget *fake_hbox = wh_hbox_new();
+    gtk_box_pack_start(GTK_BOX(vbox), fake_hbox, FALSE, FALSE, bottom_margin);
+  }
+}
+
+
 GtkWidget *wh_new_entry(void *callback)
 {
   GtkWidget *entry = gtk_entry_new();
