@@ -137,6 +137,8 @@ extern gint split_file_mode;
 extern GtkWidget *multiple_files_tree;
 extern gint multiple_files_tree_number;
 
+extern gint we_scan_for_silence;
+
 //how many split files
 gint split_files = 0;
 
@@ -205,9 +207,16 @@ void change_window_progress_bar(splt_progress *p_bar)
       g_snprintf(progress_text,1023, _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE:
-      g_snprintf(progress_text,1023,
-		      _("S: %02d, Level: %.2f dB; scanning for silence..."),
-		      p_bar->silence_found_tracks, p_bar->silence_db_level);
+      if (we_scan_for_silence)
+      {
+        g_snprintf(progress_text,1023, _("Computing amplitude wave data..."));
+      }
+      else
+      {
+        g_snprintf(progress_text,1023,
+            _("S: %02d, Level: %.2f dB; scanning for silence..."),
+            p_bar->silence_found_tracks, p_bar->silence_db_level);
+      }
       break;
     default:
       g_snprintf(progress_text,1023, " ");

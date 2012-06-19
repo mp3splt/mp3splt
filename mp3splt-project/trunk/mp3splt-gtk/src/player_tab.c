@@ -91,6 +91,8 @@ gint incorrect_selected_file = FALSE;
 
 gint douglas_callback_counter = 0;
 
+gint currently_compute_amplitude_data = FALSE;
+
 static const gint hundr_secs_th = 20;
 static const gint tens_of_secs_th = 3 * 100;
 static const gint secs_th = 40 * 100;
@@ -2188,11 +2190,10 @@ gint point_is_filtered(gint index, gint filtered_index)
 }
 
 //! Draws the silence wave
-void draw_silence_wave(gint left_mark, gint right_mark, 
+gint draw_silence_wave(gint left_mark, gint right_mark, 
     gint interpolation_text_x, gint interpolation_text_y,
     gfloat draw_time, gint width_drawing_area, gint y_margin,
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
-    gint with_wave_interpolation_threshold,
     GtkWidget *da, cairo_t *gc)
 {
   GdkColor color;
@@ -2203,7 +2204,7 @@ void draw_silence_wave(gint left_mark, gint right_mark,
     dh_set_color(gc, &color);
     dh_draw_text_with_size(gc,_("No available wave"), 
         interpolation_text_x, interpolation_text_y, 13);
-    return;
+    return -1;
   }
 
   double dashes[] = { 1.0, 3.0 };
@@ -2229,8 +2230,8 @@ void draw_silence_wave(gint left_mark, gint right_mark,
     {
       continue;
     }
-
     long time = silence_points[i].time;
+
     if ((time > right_mark) || (time < left_mark)) 
     {
       continue;
@@ -2273,21 +2274,12 @@ void draw_silence_wave(gint left_mark, gint right_mark,
   else
   {
     gchar interpolation_text[128] = { '\0' };
+    g_snprintf(interpolation_text, 128, _("Wave interpolation level %d"), interpolation_level + 1);
 
-    if (with_wave_interpolation_threshold)
-    {
-      g_snprintf(interpolation_text, 128, _("Wave interpolation level %d, th=%.1lf"),
-          interpolation_level + 1, douglas_peucker_thresholds[interpolation_level]);
-    }
-    else
-    {
-      g_snprintf(interpolation_text, 128, _("Wave interpolation level %d"),
-          interpolation_level + 1);
-    }
-
-    dh_draw_text_with_size(gc, interpolation_text, 
-        interpolation_text_x, interpolation_text_y, 13);
+    dh_draw_text_with_size(gc, interpolation_text, interpolation_text_x, interpolation_text_y, 13);
   }
+
+  return interpolation_level;
 }
 
 gint adjust_filtered_index_according_to_number_of_points(gint filtered_index, 
@@ -2682,20 +2674,8 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     //draw mobile button1 position line
     if (button1_pressed)
     {
-      gint move_time_bis = (gint)move_time;
-
-      //if we don't move the splitpoints
-      if (!move_splitpoints && !remove_splitpoints)
-      {
-        //if we have Audacious player selected as player,
-        //we move only by seconds
-        if (selected_player == PLAYER_AUDACIOUS)
-          move_time_bis = (move_time_bis / 100) * 100;
-      }
-
       gint move_pixel = 
-        convert_time_to_pixels(width_drawing_area, move_time_bis, 
-            current_time, total_time, zoom_coeff);
+        convert_time_to_pixels(width_drawing_area, move_time, current_time, total_time, zoom_coeff);
 
       //if we move the splitpoints
       if (move_splitpoints)
@@ -2713,7 +2693,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       }
       else
       //we move the time
-      { 
+      {
         //we set the red color
         color.red = 255 * 255;color.green = 0;color.blue = 0;
         dh_set_color(gc, &color);
@@ -2765,7 +2745,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
           width_drawing_area/2 + 3, wave_ypos - margin * 4,
           total_draw_time, 
           width_drawing_area, text_ypos + margin,
-          current_time, total_time, zoom_coeff, FALSE,
+          current_time, total_time, zoom_coeff,
           da, gc);
 
       //draw silence wave middle line
