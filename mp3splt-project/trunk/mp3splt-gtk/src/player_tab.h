@@ -64,7 +64,7 @@ void set_preview_active_if_needed();
 void cancel_quick_preview_all();
 void cancel_quick_preview();
 void check_cancel_quick_preview(gint i);
-void get_splitpoint_time_left_right(gint *time_left,
+void get_current_splitpoints_time_left_right(gint *time_left,
                                     gint *time_right,
                                     gint *splitpoint_left);
 gint mytimer(gpointer data);

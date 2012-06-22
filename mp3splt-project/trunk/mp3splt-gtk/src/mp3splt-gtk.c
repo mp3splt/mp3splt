@@ -227,13 +227,9 @@ void change_window_progress_bar(splt_progress *p_bar)
 
   enter_threads();
 
-  gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar),
-      p_bar->percent_progress);
-  g_snprintf(printed_value,1023,"%6.2f %% %s", p_bar->percent_progress * 100,
-      progress_text);
-
-  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-      printed_value);
+  gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), p_bar->percent_progress);
+  g_snprintf(printed_value, 1023, "%6.2f %% %s", p_bar->percent_progress * 100, progress_text);
+  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), printed_value);
 
 #ifdef __WIN32__
   while (gtk_events_pending())
