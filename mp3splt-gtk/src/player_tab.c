@@ -306,6 +306,9 @@ enum {
 gint mytimer(gpointer data);
 extern void copy_filename_to_current_description(const gchar *fname);
 
+static void draw_small_rectangle(gint time_left, gint time_right, 
+    GdkColor color, cairo_t *cairo_surface);
+
 //! Set the name of the input file
 void inputfilename_set(const gchar *filename)
 {
@@ -1254,8 +1257,7 @@ void check_update_down_progress_bar()
   gint splitpoint_time_left = -1;
   gint splitpoint_time_right = -1;
   gint splitpoint_left_index = -1;
-  get_splitpoint_time_left_right(&splitpoint_time_left,
-      &splitpoint_time_right, &splitpoint_left_index);
+  get_current_splitpoints_time_left_right(&splitpoint_time_left, &splitpoint_time_right, &splitpoint_left_index);
 
   if ((splitpoint_time_left != -1) && 
       (splitpoint_time_right != -1))
@@ -1474,31 +1476,21 @@ void print_about_the_song()
 void print_player_filename()
 {
   gchar *fname = player_get_filename();
-  
-  if ((fname != NULL) &&
-      (strcmp(fname, "disconnect")))
+  if (fname != NULL)
   {
-    change_current_filename(fname);
-  }
-  
-  gchar *title;
-  title = player_get_title();
-  gchar new_title[90];
-  g_snprintf(new_title,75, "%s",title);
-  if (title != NULL)
+    if (strcmp(fname, "disconnect"))
     {
-      if (strlen(title) > 75)
-        {
-          new_title[strlen(new_title)-1] = '.';
-          new_title[strlen(new_title)-2] = '.';
-          new_title[strlen(new_title)-3] = '.';
-        }
+      change_current_filename(fname);
     }
-  gtk_label_set_text(GTK_LABEL(song_name_label), 
-                     new_title);
-  
-  g_free(fname);
-  g_free(title);
+    g_free(fname);
+  }
+
+  gchar *title = player_get_title();
+  if (title != NULL)
+  {
+    gtk_label_set_text(GTK_LABEL(song_name_label), title);
+    g_free(title);
+  }
 }
 
 /*! get time elapsed from the song and print it on the screen
@@ -1507,7 +1499,6 @@ Also prints filename, frequency, bitrate, mono, stereo
 */
 void print_all_song_infos()
 {
-  //prints frequency, stereo, etc
   print_about_the_song();
   print_player_filename();
 }
@@ -1574,50 +1565,39 @@ void change_volume_button()
 //!progress bar synchronisation with player
 void change_progress_bar()
 {
-  if ((player_is_running())
-      && (!mouse_on_progress_bar))
-    {
-      //new position of the progress bar
-      gdouble adj_position;
-      
-      //total time in hundredths of seconds
-      total_time = player_get_total_time() / 10;
-      
-      current_time = ((player_seconds + player_minutes*60)*100
-                      + player_hundr_secs);
-      
-      adj_position = (current_time *100000) / total_time;
-      
-      gtk_adjustment_set_value(GTK_ADJUSTMENT(progress_adj), (gdouble) adj_position);
-      
-      current_time = get_elapsed_time();
-      //we check if the current time is between the preview
-      //splitpoints, we cancel the preview
-      gint stop_splitpoint
-        = get_splitpoint_time(quick_preview_end_splitpoint) 
-        / 10;
-      gint start_splitpoint
-        = get_splitpoint_time(preview_start_splitpoint) 
-        / 10;
-      if ((stop_splitpoint < (gint)(current_time-150))
-          || (start_splitpoint > (gint)(current_time+150)))
-        {
-          cancel_quick_preview();
-        }
-    }
+  if (!player_is_running() || mouse_on_progress_bar)
+  {
+    return;
+  }
+
+  //total time in hundredths of seconds
+  total_time = player_get_total_time() / 10;
+
+  current_time = ((player_seconds + player_minutes*60) * 100 + player_hundr_secs);
+
+  gdouble adj_position = (current_time *100000) / total_time;
+  gtk_adjustment_set_value(GTK_ADJUSTMENT(progress_adj), adj_position);
+
+  current_time = get_elapsed_time();
+  //check if the current time is between the preview
+  //splitpoints, we cancel the preview
+  gint stop_splitpoint = get_splitpoint_time(quick_preview_end_splitpoint);
+  gint start_splitpoint = get_splitpoint_time(preview_start_splitpoint);
+  if ((stop_splitpoint < (gint)(current_time-150)) ||
+      (start_splitpoint > (gint)(current_time+150)))
+  {
+    cancel_quick_preview();
+  }
 }
 
 //!creates the filename player hbox
 GtkWidget *create_filename_player_hbox()
 {
-  GtkWidget *filename_player_hbox;
-
-  //horizontal filename's player box and filename label(song_name_label)
-  filename_player_hbox = wh_hbox_new();
-  song_name_label = gtk_label_new ("");
+  GtkWidget *filename_player_hbox = wh_hbox_new();
+  song_name_label = gtk_label_new("");
+  gtk_label_set_ellipsize(GTK_LABEL(song_name_label), PANGO_ELLIPSIZE_END);
   g_object_set(G_OBJECT(song_name_label), "selectable", FALSE, NULL);
-  gtk_box_pack_start (GTK_BOX (filename_player_hbox), song_name_label, FALSE, FALSE, 15);
-
+  gtk_box_pack_start(GTK_BOX(filename_player_hbox), song_name_label, FALSE, FALSE, 15);
   return filename_player_hbox;
 }
 
@@ -2090,28 +2070,17 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
 void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *gc)
 {
   Split_point current_point;
-  //current point in hundreth of seconds
-  gint current_point_hundr_secs;
-  
-  gint i;
-  //we get all splitpoints
+
+  gint i = 0;
   for(i = 0; i < splitnumber; i++ )
   {
-    current_point =
-      g_array_index(splitpoints, Split_point, i);
-    current_point_hundr_secs = 
-      current_point.hundr_secs +
-      current_point.secs * 100 +
-      current_point.mins * 6000;
+    gint current_point_hundr_secs = get_splitpoint_time(i);
 
     //if the splitpoint is > left and < right
     //it must be visible !
     if ((current_point_hundr_secs <= right_mark)
         &&(current_point_hundr_secs >= left_mark))
     {
-      //our split pixel (Ox)
-      gint split_pixel;
-
       //if it's the splitpoint we move, we draw it differently
       gboolean draw = TRUE;
       if (splitpoint_to_move == i)
@@ -2119,7 +2088,7 @@ void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *g
         draw = FALSE;
       }
 
-      split_pixel = 
+      gint split_pixel = 
         convert_time_to_pixels(width_drawing_area, current_point_hundr_secs, current_time,
             total_time, zoom_coeff);
       draw_motif_splitpoints(da, gc, split_pixel, draw,
@@ -2323,6 +2292,42 @@ gint adjust_filtered_index_according_to_number_of_points(gint filtered_index,
   return filtered_index;
 }
 
+static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface)
+{
+  GdkColor color;
+
+  //yellow small rectangle
+  gint point_time_left = -1;
+  gint point_time_right = -1;
+  get_current_splitpoints_time_left_right(&point_time_left, &point_time_right, NULL);
+  color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 210;
+  draw_small_rectangle(point_time_left, point_time_right, color, cairo_surface);
+
+  gint gray_factor = 210;
+  color.red = 255 * gray_factor;color.green = 255 * gray_factor;color.blue = 255 * gray_factor;
+
+  //gray areas
+  if (splitnumber == 0)
+  {
+    draw_small_rectangle(0, total_time, color, cairo_surface);
+    return;
+  }
+
+  draw_small_rectangle(0, get_splitpoint_time(0), color, cairo_surface);
+  draw_small_rectangle(get_splitpoint_time(splitnumber-1), total_time, color, cairo_surface);
+  gint i = 0;
+  for (i = 0; i < splitnumber - 1; i++ )
+  {
+    Split_point point = g_array_index(splitpoints, Split_point, i);
+    if (!point.checked)
+    {
+      gint left_time = get_splitpoint_time(i);
+      gint right_time = get_splitpoint_time(i+1);
+      draw_small_rectangle(left_time, right_time, color, cairo_surface);
+    }
+  }
+}
+
 #if GTK_MAJOR_VERSION <= 2
 gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
 {
@@ -2405,23 +2410,17 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
   dh_set_color(gc, &color);
 
   //background rectangle
-  dh_draw_rectangle(gc, TRUE, 0,0,
-      width_drawing_area, wave_ypos + text_length + 2);
+  dh_draw_rectangle(gc, TRUE, 0,0, width_drawing_area, wave_ypos + text_length + 2);
 
   color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 255;
   dh_set_color(gc, &color);
   
   //background white rectangles
-  dh_draw_rectangle(gc, TRUE, 0, margin,
-      width_drawing_area, real_erase_split_length);
-  dh_draw_rectangle(gc, TRUE, 0, erase_split_ylimit,
-      width_drawing_area, progress_length);
-  dh_draw_rectangle(gc, TRUE, 0, progress_ylimit+margin,
-      width_drawing_area, real_move_split_length);
-  dh_draw_rectangle(gc, TRUE, 0, splitpoint_ypos+margin,
-      width_drawing_area, real_checkbox_length);
-  dh_draw_rectangle(gc, TRUE, 0, checkbox_ypos+margin,
-      width_drawing_area, text_length);
+  dh_draw_rectangle(gc, TRUE, 0, margin, width_drawing_area, real_erase_split_length);
+  dh_draw_rectangle(gc, TRUE, 0, erase_split_ylimit, width_drawing_area, progress_length);
+  dh_draw_rectangle(gc, TRUE, 0, progress_ylimit+margin, width_drawing_area, real_move_split_length);
+  dh_draw_rectangle(gc, TRUE, 0, splitpoint_ypos+margin, width_drawing_area, real_checkbox_length);
+  dh_draw_rectangle(gc, TRUE, 0, checkbox_ypos+margin, width_drawing_area, text_length);
   if (show_silence_wave)
   {
     dh_draw_rectangle(gc, TRUE, 0, text_ypos + margin, width_drawing_area, wave_length);
@@ -2429,7 +2428,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
  
   //only if we are playing
   //and the timer active(connected to player)
-  if(playing && timer_active)
+  if (playing && timer_active)
   {
     gfloat left_time;
     gfloat right_time;
@@ -2453,43 +2452,9 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     gfloat total_draw_time = right_time - left_time;
 
     gchar str[30] = { '\0' };
-    gint beg_pixel =
-      convert_time_to_pixels(width_drawing_area, 0, current_time, total_time, zoom_coeff);
+    gint beg_pixel = convert_time_to_pixels(width_drawing_area, 0, current_time, total_time, zoom_coeff);
 
-    gint splitpoint_time_left = -1;
-    gint splitpoint_time_right = -1;
-    gint splitpoint_pixels_left = -1;
-    gint splitpoint_pixels_right = -1;
-    gint splitpoint_pixels_length = -1;
-    gint splitpoint_left_index = -1;
-    get_splitpoint_time_left_right(&splitpoint_time_left,
-        &splitpoint_time_right,
-        &splitpoint_left_index);
-
-    if ((splitpoint_time_left != -1) && 
-        (splitpoint_time_right != -1))
-    {
-      //
-      splitpoint_pixels_left = convert_time_to_pixels(width_drawing_area,
-          splitpoint_time_left, current_time, total_time, zoom_coeff);
-      splitpoint_pixels_right = convert_time_to_pixels(width_drawing_area,
-          splitpoint_time_right, current_time, total_time, zoom_coeff);
-      splitpoint_pixels_length = 
-        splitpoint_pixels_right - splitpoint_pixels_left;
-
-      //we put yellow rectangle between splitpoints
-      //we set default black color
-      color.red = 255 * 255;color.green = 255 * 255;
-      color.blue = 255 * 210;
-      //set the color for the graphic context
-      dh_set_color(gc, &color);
-      dh_draw_rectangle(gc,
-          TRUE,splitpoint_pixels_left,
-          erase_split_ylimit,
-          splitpoint_pixels_length,
-          progress_ylimit-
-          erase_split_ylimit+1);
-    }
+    draw_rectangles_between_splitpoints(gc);
 
     //we set blue color
     color.red = 255 * 150;
@@ -2503,18 +2468,17 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     {
       gint right_pixel =
         convert_time_to_pixels(width_drawing_area,
-            get_splitpoint_time(quick_preview_end_splitpoint)/10, 
+            get_splitpoint_time(quick_preview_end_splitpoint),
             current_time, total_time, zoom_coeff);
       gint left_pixel =
         convert_time_to_pixels(width_drawing_area,
-            get_splitpoint_time(preview_start_splitpoint) /10,
+            get_splitpoint_time(preview_start_splitpoint),
             current_time, total_time, zoom_coeff);
 
-      gint preview_splitpoint_length = 
-        right_pixel - left_pixel + 1;
+      gint preview_splitpoint_length = right_pixel - left_pixel + 1;
 
       //top buttons
-      dh_draw_rectangle (gc,
+      dh_draw_rectangle(gc,
           TRUE, left_pixel,
           progress_ylimit-2,
           preview_splitpoint_length,3);
@@ -2523,7 +2487,6 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       if (quick_preview)
       {
         color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
-        //set the color for the graphic context
         dh_set_color(gc, &color);
         //top buttons
         dh_draw_rectangle (gc,
@@ -2541,7 +2504,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       {
         gint left_pixel =
           convert_time_to_pixels(width_drawing_area,
-              get_splitpoint_time(preview_start_splitpoint) /10, 
+              get_splitpoint_time(preview_start_splitpoint),
               current_time, total_time, zoom_coeff);
         //top buttons
         dh_draw_rectangle (gc,
@@ -2788,46 +2751,55 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
   return TRUE;
 }
 
-//returns the left splitpoint of the current play
-void get_splitpoint_time_left_right(gint *time_left,
-                                    gint *time_right,
-                                    gint *splitpoint_left)
+static void draw_small_rectangle(gint time_left, gint time_right, 
+    GdkColor color, cairo_t *cairo_surface)
 {
-  gint i;
-  Split_point current_point;
-  gint current_point_hundr_secs;
-  
-  //we look at all splitpoints
-  for(i = 0; i < splitnumber; i++ )
+  if (time_left == -1 || time_right == -1)
+  {
+    return;
+  }
+
+  gint pixels_left = convert_time_to_pixels(width_drawing_area, time_left, 
+      current_time, total_time, zoom_coeff);
+  gint pixels_right = convert_time_to_pixels(width_drawing_area, time_right, 
+      current_time, total_time, zoom_coeff);
+  gint pixels_length = pixels_right - pixels_left;
+
+  dh_set_color(cairo_surface, &color);
+  dh_draw_rectangle(cairo_surface, TRUE, pixels_left, erase_split_ylimit,
+      pixels_length, progress_ylimit - erase_split_ylimit+1);
+
+  if (show_silence_wave)
+  {
+    dh_draw_rectangle(cairo_surface, TRUE, pixels_left, text_ypos + margin,
+        pixels_length, real_wave_length + margin);
+  }
+}
+
+void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, gint *splitpoint_left)
+{
+  gint i = 0;
+  for (i = 0; i < splitnumber; i++ )
+  {
+    gint current_point_hundr_secs = get_splitpoint_time(i);
+    if (current_point_hundr_secs < current_time + DELTA)
     {
-      current_point =
-        g_array_index(splitpoints, Split_point, i);
-      current_point_hundr_secs = 
-        current_point.hundr_secs +
-        current_point.secs * 100 +
-        current_point.mins * 6000;
-      
-      //if we found a valid splitpoint, we put them in a
-      //list
-      if (current_point_hundr_secs < current_time+DELTA)
-        {
-          *time_left = current_point_hundr_secs;
-        }
-      else
-        {
-          if (current_point_hundr_secs > current_time)
-            {
-              *time_right = current_point_hundr_secs;
-              *splitpoint_left = i;
-              break;
-            }
-        }
+      *time_left = current_point_hundr_secs;
+      continue;
     }
-  
-  if (*splitpoint_left == -1)
+
+    if (current_point_hundr_secs > current_time)
     {
-      *splitpoint_left = splitnumber;
+      *time_right = current_point_hundr_secs;
+      if (splitpoint_left != NULL) { *splitpoint_left = i; }
+      break;
     }
+  }
+
+  if (splitpoint_left != NULL && *splitpoint_left == -1)
+  {
+    *splitpoint_left = splitnumber;
+  }
 }
 
 /*!Acquire the number of the splitpoint that has been clicked on
@@ -2840,8 +2812,7 @@ void get_splitpoint_time_left_right(gint *time_left,
  - 2 means move splitpoint area,
  - 3 means check splitpoint area
 */
-gint get_splitpoint_clicked(gint button_y, gint type_clicked,
-                            gint type)
+gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type)
 {
   //the time current position
   gint time_pos,time_right_pos,time_margin;
@@ -2907,19 +2878,12 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked,
   //if we are in the area to move the split 
   if ((but_y > margin1) && (but_y < margin2))
   {
-    //we check what splitpoints we found
-    Split_point current_point;
-    //current point in hundreth of seconds
-    gint current_point_hundr_secs;
-    gint current_point_left,current_point_right;
+    gint current_point_left, current_point_right;
 
-    gint i;
-    //we look at all splitpoints
+    gint i = 0;
     for(i = 0; i < splitnumber; i++ )
     {
-      current_point = g_array_index(splitpoints, Split_point, i);
-      current_point_hundr_secs = current_point.hundr_secs +
-        current_point.secs * 100 + current_point.mins * 6000;
+      gint current_point_hundr_secs = get_splitpoint_time(i);
       //left margin
       current_point_left = current_point_hundr_secs - time_margin;
       //right margin
@@ -2965,7 +2929,7 @@ void player_quick_preview(gint splitpoint_to_preview)
       quick_preview_end_splitpoint = -1;
     }
 
-    player_jump(preview_start_position);
+    player_jump(preview_start_position * 10);
     change_progress_bar();
     put_status_message(_(" quick preview..."));
 
@@ -3048,7 +3012,7 @@ gboolean da_press_event (GtkWidget    *da,
       }
       else
       {
-        move_time = get_splitpoint_time(splitpoint_to_move) / 10;
+        move_time = get_splitpoint_time(splitpoint_to_move);
       }
     }
     else
@@ -3121,15 +3085,15 @@ gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, gpointer data)
         //cancel split preview
         if (quick_preview_end_splitpoint == -1)
         {
-          if (move_time < get_splitpoint_time(preview_start_splitpoint) /10)
+          if (move_time < get_splitpoint_time(preview_start_splitpoint))
           {
             cancel_quick_preview_all();
           }
         }
         else
         {
-          if ((move_time < get_splitpoint_time(preview_start_splitpoint) /10) ||
-              (move_time > get_splitpoint_time(quick_preview_end_splitpoint) /10))
+          if ((move_time < get_splitpoint_time(preview_start_splitpoint)) ||
+              (move_time > get_splitpoint_time(quick_preview_end_splitpoint)))
           {
             cancel_quick_preview_all();
           }
@@ -3204,11 +3168,8 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
         //if we move the splitpoints
         if (move_splitpoints)
         {
-          gdouble splitpoint_time = 
-            get_splitpoint_time(splitpoint_to_move) / 10;
-
-          move_time = splitpoint_time + 
-            pixels_to_time(width_drawing_area,(x - button_x));
+          gdouble splitpoint_time = get_splitpoint_time(splitpoint_to_move);
+          move_time = splitpoint_time + pixels_to_time(width_drawing_area,(x - button_x));
         }
         else
         {
@@ -3757,8 +3718,7 @@ gint mytimer(gpointer data)
         //if we have a preview, stop if needed
         if (quick_preview)
         {
-          gint stop_splitpoint
-            = get_splitpoint_time(quick_preview_end_splitpoint) / 10;
+          gint stop_splitpoint = get_splitpoint_time(quick_preview_end_splitpoint);
 
           if ((stop_splitpoint < (gint)current_time)
               && (quick_preview_end_splitpoint != -1))

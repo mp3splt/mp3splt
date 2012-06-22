@@ -904,8 +904,7 @@ void copy_filename_to_current_description(const gchar *fname)
 \param old_index used when we update a splitpoint to see where we had
 the play_preview point 
 */
-void add_splitpoint(Split_point my_split_point,
-                    gint old_index)
+void add_splitpoint(Split_point my_split_point, gint old_index)
 {
   GtkTreeIter iter;
   GtkTreeModel *model;
@@ -990,28 +989,27 @@ void add_splitpoint(Split_point my_split_point,
       splitnumber++;
       
       //we keep the selection on the previous splipoint
-      if ((first_splitpoint_selected == old_index)
-          && (old_index != -1))
-        {
-          GtkTreePath *path;
-          path = gtk_tree_model_get_path(model, &iter);
-          gtk_tree_view_set_cursor (tree_view,path,NULL,FALSE);
-          gtk_tree_path_free(path);
-        }
+      if ((first_splitpoint_selected == old_index) &&
+          (old_index != -1))
+      {
+        GtkTreePath *path;
+        path = gtk_tree_model_get_path(model, &iter);
+        gtk_tree_view_set_cursor (tree_view,path,NULL,FALSE);
+        gtk_tree_path_free(path);
+      }
 
       if (quick_preview)
+      {
+        //if we move the current start preview splitpoint
+        //at the right of the current time, we cancel preview
+        if (old_index == preview_start_splitpoint)
         {
-          //if we move the current start preview splitpoint
-          //at the right of the current time, we cancel preview
-          if (old_index == preview_start_splitpoint)
-            {
-              if (current_time < 
-                  get_splitpoint_time(preview_start_splitpoint)/10)
-                {
-                  cancel_quick_preview();
-                }
-            }
+          if (current_time < get_splitpoint_time(preview_start_splitpoint))
+          {
+            cancel_quick_preview();
+          }
         }
+      }
       
       //we manage the play preview here
       if (old_index != -1)
@@ -1708,13 +1706,6 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
   return hbox;
 }
 
-//!returns the hundreths of seconds from a Split_point
-gint splitpoint_to_hundreths(Split_point point)
-{
-  return (point.secs + point.mins*60)*1000+
-    point.hundr_secs * 10;
-}
-
 /*! returns the name of the splitpoint
 
 result must be g_free'd after use
@@ -1750,17 +1741,16 @@ gchar *get_splitpoint_name(gint index)
 }
 
 //!returns a splitpoint from the table
-gint get_splitpoint_time(gint this_splitpoint)
+gint get_splitpoint_time(gint splitpoint_index)
 {
-  if (this_splitpoint != -1)
-  {
-    return splitpoint_to_hundreths(
-        g_array_index(splitpoints, Split_point, this_splitpoint));
-  }
-  else
+  if (splitpoint_index < 0 ||
+      splitpoint_index >= splitpoints->len)
   {
     return -1;
   }
+
+  Split_point point = g_array_index(splitpoints, Split_point, splitpoint_index);
+  return point.mins * 6000 + point.secs * 100 + point.hundr_secs;
 }
 
 gpointer split_preview(gpointer data)
@@ -1773,10 +1763,10 @@ gpointer split_preview(gpointer data)
     mp3splt_erase_all_splitpoints(the_state, &err);
     mp3splt_erase_all_tags(the_state, &err);
 
-    mp3splt_append_splitpoint(the_state, preview_start_position / 10,
+    mp3splt_append_splitpoint(the_state, preview_start_position,
         "preview", SPLT_SPLITPOINT);
     mp3splt_append_splitpoint(the_state,
-        get_splitpoint_time(quick_preview_end_splitpoint)/10,
+        get_splitpoint_time(quick_preview_end_splitpoint),
         NULL, SPLT_SKIPPOINT);
 
     mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,

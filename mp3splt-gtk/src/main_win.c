@@ -511,8 +511,7 @@ GtkWidget *create_toolbar()
   gtk_container_set_border_width(GTK_CONTAINER(split_button), 0);
   gtk_button_set_relief(GTK_BUTTON(split_button), GTK_RELIEF_HALF);
 
-  g_signal_connect(G_OBJECT(split_button), "clicked",
-      G_CALLBACK(split_button_event), NULL);
+  g_signal_connect(G_OBJECT(split_button), "clicked", G_CALLBACK(split_button_event), NULL);
 
   GtkWidget *vbox = wh_vbox_new();
   GtkWidget *hbox = wh_hbox_new();
