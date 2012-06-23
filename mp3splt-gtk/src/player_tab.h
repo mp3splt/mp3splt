@@ -80,14 +80,12 @@ void connect_change_buttons();
 void disconnect_change_buttons();
 void connect_with_song(const gchar *fname, gint i);
 void connect_to_player_with_song(gint i);
-void connect_button_event (GtkWidget *widget,
-                           gpointer data);
+void connect_button_event(GtkWidget *widget, gpointer data);
 void check_stream();
-void disconnect_button_event (GtkWidget *widget, 
-                              gpointer data);
-void play_event (GtkWidget *widget, gpointer data);
-void stop_event (GtkWidget *widget, gpointer data);
-void pause_event (GtkWidget *widget, gpointer data);
+void disconnect_button_event(GtkWidget *widget, gpointer data);
+void play_event(GtkWidget *widget, gpointer data);
+void stop_event(GtkWidget *widget, gpointer data);
+void pause_event(GtkWidget *widget, gpointer data);
 void prev_button_event (GtkWidget *widget, gpointer data);
 void next_button_event (GtkWidget *widget, gpointer data);
 void change_song_position();
@@ -224,6 +222,11 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     gfloat draw_time, gint width_drawing_area, gint y_margin,
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
     GtkWidget *da, cairo_t *gc);
+
+void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
+    gint *splitpoint_left);
+void player_key_actions_set_sensitivity(gboolean sensitivity);
+void adjust_zoom_coeff();
 
 #endif
 

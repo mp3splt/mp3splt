@@ -124,6 +124,7 @@ extern gchar *filename_path_of_split;
 extern guchar *get_real_name_from_filename(guchar *filename);
 extern GtkWidget *cancel_button;
 extern gint debug_is_active;
+extern GtkActionGroup *action_group;
 
 extern ui_state *ui;
 
@@ -599,6 +600,8 @@ void enable_player_buttons()
   }
   gtk_widget_set_sensitive(play_button, TRUE);
   gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
+
+  player_key_actions_set_sensitivity(TRUE);
 }
 
 //!disables the buttons of the player
@@ -616,6 +619,8 @@ void disable_player_buttons()
   gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_inactive));
   gtk_widget_set_sensitive(player_add_button, FALSE);
   gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
+
+  player_key_actions_set_sensitivity(FALSE);
 }
 
 //! Switches between connect and disconnect button when connecting to player
@@ -931,19 +936,13 @@ void stop_event(GtkWidget *widget, gpointer data)
 }
 
 //! pause button event
-void pause_event (GtkWidget *widget, gpointer data)
+void pause_event(GtkWidget *widget, gpointer data)
 {
-  //only if connected to player
-  if (timer_active)
-    {
-      if (player_is_running())
-        {
-          if (!only_press_pause)
-            {
-              player_pause();
-            }
-        }
-    }
+  if (!timer_active) { return; }
+  if (!player_is_running()) { return; }
+  if (only_press_pause) { return; }
+
+  player_pause();
 }
 
 //! Event for the "previous" button 
@@ -967,11 +966,7 @@ void next_button_event (GtkWidget *widget, gpointer data)
 //!changes the position inside the song
 void change_song_position()
 {
-  //new position of the song
-  gint position;
-  
-  position = (player_seconds2 + player_minutes2*60)*1000 + player_hundr_secs2*10;
-  
+  gint position = (player_seconds2 + player_minutes2*60)*1000 + player_hundr_secs2*10;
   player_jump(position);  
 }
 
@@ -2782,13 +2777,13 @@ void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
   for (i = 0; i < splitnumber; i++ )
   {
     gint current_point_hundr_secs = get_splitpoint_time(i);
-    if (current_point_hundr_secs < current_time + DELTA)
+    if (current_point_hundr_secs < current_time - (DELTA * 2))
     {
       *time_left = current_point_hundr_secs;
       continue;
     }
 
-    if (current_point_hundr_secs > current_time)
+    if (current_point_hundr_secs > current_time + (DELTA * 2))
     {
       *time_right = current_point_hundr_secs;
       if (splitpoint_left != NULL) { *splitpoint_left = i; }
@@ -3223,14 +3218,7 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
 
           zoom_coeff = zoom_coeff_old * zoom_coeff;
 
-          if (zoom_coeff < 0.2)
-          {
-            zoom_coeff = 0.2;
-          }
-          if (zoom_coeff > 10 * total_time / 6000)
-          {
-            zoom_coeff = 10 * total_time / 6000;
-          }
+          adjust_zoom_coeff();
 
           refresh_drawing_area();
         }
@@ -3240,6 +3228,19 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
   
   return TRUE;
 }
+
+void adjust_zoom_coeff()
+{
+  if (zoom_coeff < 0.2)
+  {
+    zoom_coeff = 0.2;
+  }
+  if (zoom_coeff > 10 * total_time / 6000)
+  {
+    zoom_coeff = 10 * total_time / 6000;
+  }
+}
+
 
 static void drawing_area_expander_event(GObject *object, GParamSpec *param_spec, gpointer data)
 {
@@ -3664,6 +3665,27 @@ GtkWidget *create_player_playlist_frame()
   return playlist_handle;
 }
 
+static void action_set_sensitivity(gchar *name, gboolean sensitivity)
+{
+  GtkAction *action = gtk_action_group_get_action(action_group, name);
+  gtk_action_set_sensitive(action, sensitivity);
+}
+
+void player_key_actions_set_sensitivity(gboolean sensitivity)
+{
+  action_set_sensitivity("Player_pause", sensitivity);
+  action_set_sensitivity("Player_forward", sensitivity);
+  action_set_sensitivity("Player_backward", sensitivity);
+  action_set_sensitivity("Player_big_forward", sensitivity);
+  action_set_sensitivity("Player_big_backward", sensitivity);
+  action_set_sensitivity("Player_next_splitpoint", sensitivity);
+  action_set_sensitivity("Player_previous_splitpoint", sensitivity);
+  action_set_sensitivity("Add_splitpoint", sensitivity);
+  action_set_sensitivity("Delete_closest_splitpoint", sensitivity);
+  action_set_sensitivity("Zoom_in", sensitivity);
+  action_set_sensitivity("Zoom_out", sensitivity);
+}
+
 /*! timer used to print infos about the song
 
 Examples are the elapsed time and if it uses variable bitrate
@@ -3804,8 +3826,11 @@ gint mytimer(gpointer data)
         gtk_widget_set_sensitive(pause_button, TRUE);
         gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_active));
       }
+
+      player_key_actions_set_sensitivity(TRUE);
     }
-    else {
+    else
+    {
       if (gtk_widget_get_sensitive(stop_button))
       {
         gtk_widget_set_sensitive(stop_button, FALSE);
@@ -3816,6 +3841,8 @@ gint mytimer(gpointer data)
         gtk_widget_set_sensitive(pause_button, FALSE);
         gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
       }
+  
+      player_key_actions_set_sensitivity(FALSE);
     }
 
     return TRUE;
@@ -3831,7 +3858,6 @@ gint mytimer(gpointer data)
     return FALSE;
   }
 }
-
 
 /*!event for the file chooser cancel button
 

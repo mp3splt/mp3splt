@@ -64,8 +64,8 @@
 #include "main_win.h"
 #include "mp3splt-gtk.h"
 #include "tree_tab.h"
-#include "split_files.h"
 #include "utilities.h"
+#include "split_files.h"
 #include "preferences_tab.h"
 #include "freedb_tab.h"
 #include "special_split.h"
@@ -82,7 +82,6 @@
 
 //main window
 GtkWidget *window = NULL;
-GtkAccelGroup *window_accel_group = NULL;
 
 //status bar
 GtkWidget *status_bar;
@@ -111,6 +110,7 @@ GtkWidget *player_vbox = NULL;
 
 //stop button to cancel the split
 GtkWidget *cancel_button = NULL;
+GtkActionGroup *action_group = NULL;
 
 extern GtkWidget *mess_history_dialog;
 
@@ -128,6 +128,11 @@ extern gint max_split_files;
 extern gint selected_player;
 extern silence_wave *silence_points;
 extern gint number_of_silence_points;
+
+extern gfloat current_time;
+extern gfloat total_time;
+extern gint splitnumber;
+extern gfloat zoom_coeff;
 
 extern ui_state *ui;
 
@@ -240,9 +245,6 @@ void initialize_window()
 
   g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(configure_window_callback), ui);
 
-  window_accel_group = gtk_accel_group_new();
-  gtk_window_add_accel_group(GTK_WINDOW(window), window_accel_group);
- 
   gtk_window_set_title(GTK_WINDOW(window), PACKAGE_NAME" "VERSION);
   gtk_container_set_border_width (GTK_CONTAINER (window), 0);
 
@@ -541,6 +543,143 @@ static gchar *my_dgettext(const gchar *key, const gchar *domain)
   return dgettext("mp3splt-gtk", key);
 }
 
+void player_pause_action(GtkWidget *widget, gpointer *data)
+{
+  pause_event(NULL, NULL);
+}
+ 
+void player_seek_forward_action(GtkWidget *widget, gpointer *data)
+{
+  gfloat new_time = current_time * 10 + 2./100. * total_time * 10;
+  if (new_time > total_time * 10) { new_time = total_time * 10; }
+  player_jump(new_time);
+}
+ 
+void player_seek_backward_action(GtkWidget *widget, gpointer *data)
+{
+  gfloat new_time = current_time * 10 - 2./100. * total_time * 10;
+  if (new_time <= 0) { new_time = 0; }
+  player_jump(new_time);
+}
+
+void player_big_seek_forward_action(GtkWidget *widget, gpointer *data)
+{
+  gfloat new_time = current_time * 10 + 15./100. * total_time * 10;
+  if (new_time > total_time * 10) { new_time = total_time * 10; }
+  player_jump(new_time);
+}
+ 
+void player_big_seek_backward_action(GtkWidget *widget, gpointer *data)
+{
+  gfloat new_time = current_time * 10 - 15./100. * total_time * 10;
+  if (new_time <= 0) { new_time = 0; }
+  player_jump(new_time);
+}
+
+void player_seek_to_next_splitpoint_action(GtkWidget *widget, gpointer data)
+{
+  gint time_left = -1;
+  gint time_right = -1;
+  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL);
+
+  if (time_right != -1)
+  {
+    player_jump(time_right * 10);
+  }
+}
+
+void player_seek_to_previous_splitpoint_action(GtkWidget *widget, gpointer data)
+{
+  gint time_left = -1;
+  gint time_right = -1;
+  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL);
+
+  if (time_left != -1)
+  {
+    player_jump(time_left * 10);
+  }
+}
+
+void delete_closest_splitpoint(GtkWidget *widget, gpointer data)
+{
+  gint left_index_point = -1;
+  gint right_index_point = -1;
+
+  gint i = 0;
+  for (i = 0; i < splitnumber; i++ )
+  {
+    gint current_point_hundr_secs = get_splitpoint_time(i);
+    if (current_point_hundr_secs <= current_time)
+    {
+      left_index_point = i;
+      continue;
+    }
+
+    if (current_point_hundr_secs > current_time + (DELTA * 2))
+    {
+      right_index_point = i;
+      break;
+    }
+  }
+
+  gint time_to_left = INT_MAX;
+  if (left_index_point != -1)
+  {
+    time_to_left = current_time - get_splitpoint_time(left_index_point);
+  }
+
+  gint time_to_right = INT_MAX;
+  if (right_index_point != -1)
+  {
+    time_to_right = get_splitpoint_time(right_index_point) - current_time;
+  }
+
+  if (time_to_right > time_to_left)
+  {
+    remove_splitpoint(left_index_point, TRUE);
+  }
+  else
+  {
+    remove_splitpoint(right_index_point, TRUE);
+  }
+}
+
+void zoom_in(GtkWidget *widget, gpointer data)
+{
+  gdouble fraction = 40./100. * zoom_coeff;
+  zoom_coeff += fraction;
+  adjust_zoom_coeff();
+}
+
+void zoom_out(GtkWidget *widget, gpointer data)
+{
+  gdouble fraction = 40./100. * zoom_coeff;
+  zoom_coeff -= fraction; 
+  adjust_zoom_coeff();
+}
+
+gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, gpointer *data)
+{
+  if (event->type != GDK_KEY_PRESS) { return; }
+
+  if (event->state != 0)
+  {
+    return FALSE;
+  }
+
+  switch (event->keyval)
+  {
+    case GDK_KEY_Left:
+      player_seek_backward_action(NULL, NULL);
+      return TRUE;
+    case GDK_KEY_Right:
+      player_seek_forward_action(NULL, NULL);
+      return TRUE;
+    default:
+      return FALSE;
+  }
+}
+
 //!creates the menu bar
 GtkWidget *create_menu_bar()
 {
@@ -548,8 +687,9 @@ GtkWidget *create_menu_bar()
   
   static GtkActionEntry const entries[] = {
     //name, stock id,   label
-    { "FileMenu", NULL, N_("_File") },  
-    { "HelpMenu", NULL, N_("_Help") },
+    { "FileMenu", NULL, N_("_File"), NULL, NULL },
+    { "PlayerMenu", NULL, N_("_Player"), NULL, NULL },
+    { "HelpMenu", NULL, N_("_Help"), NULL, NULL },
 
     //name, stock id, label, accelerator, tooltip
     { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
@@ -575,6 +715,34 @@ GtkWidget *create_menu_bar()
 
     { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
       G_CALLBACK(about_window)},
+
+    //player key bindings
+    { "Player_pause", NULL, N_("P_ause/Play"), "space", N_("Pause/Play"),
+      G_CALLBACK(player_pause_action)},
+
+    { "Player_forward", NULL, N_("Seek _forward"), "Right", N_("Seek forward"),
+      G_CALLBACK(player_seek_forward_action)},
+    { "Player_backward", NULL, N_("Seek _backward"), "Left", N_("Seek backward"),
+      G_CALLBACK(player_seek_backward_action)},
+
+    { "Player_big_forward", NULL, N_("Big seek fo_rward"), "<Shift>Right", N_("Big seek forward"),
+      G_CALLBACK(player_big_seek_forward_action)},
+    { "Player_big_backward", NULL, N_("Big Seek bac_kward"), "<Shift>Left", N_("Big seek backward"),
+      G_CALLBACK(player_big_seek_backward_action)},
+
+    { "Player_next_splitpoint", NULL, N_("Seek to _next splitpoint"), "<Ctrl>Right", 
+      N_("Seek to next splitpoint"), G_CALLBACK(player_seek_to_next_splitpoint_action)},
+    { "Player_previous_splitpoint", NULL, N_("Seek to _previous splitpoint"), "<Ctrl>Left", 
+      N_("Seek to previous splitpoint"), G_CALLBACK(player_seek_to_previous_splitpoint_action)},
+
+    { "Add_splitpoint", NULL, N_("Add _splitpoint"), "s", 
+      N_("Add splitpoint"), G_CALLBACK(add_splitpoint_from_player)},
+
+    { "Delete_closest_splitpoint", NULL, N_("_Delete closest splitpoint"), "d", 
+      N_("Delete closest splitpoint"), G_CALLBACK(delete_closest_splitpoint)},
+
+    { "Zoom_in", NULL, N_("Zoom _in"), "<Ctrl>plus", N_("Zoom in"), G_CALLBACK(zoom_in)},
+    { "Zoom_out", NULL, N_("Zoom _out"), "<Ctrl>minus", N_("Zoom out"), G_CALLBACK(zoom_out)},
   };
 
   static const gchar *ui_info = 
@@ -591,6 +759,22 @@ GtkWidget *create_menu_bar()
     "      <separator/>"
     "      <menuitem action='Quit'/>"
     "    </menu>"
+    "    <menu action='PlayerMenu'>"
+    "      <menuitem action='Player_pause'/>"
+    "      <separator/>"
+    "      <menuitem action='Player_forward'/>"
+    "      <menuitem action='Player_backward'/>"
+    "      <menuitem action='Player_big_forward'/>"
+    "      <menuitem action='Player_big_backward'/>"
+    "      <menuitem action='Player_next_splitpoint'/>"
+    "      <menuitem action='Player_previous_splitpoint'/>"
+    "      <separator/>"
+    "      <menuitem action='Add_splitpoint'/>"
+    "      <menuitem action='Delete_closest_splitpoint'/>"
+    "      <separator/>"
+    "      <menuitem action='Zoom_in'/>"
+    "      <menuitem action='Zoom_out'/>"
+    "    </menu>"
     "    <menu action='HelpMenu'>"
 #ifndef NO_GNOME
     "      <menuitem action='Contents'/>"
@@ -600,31 +784,28 @@ GtkWidget *create_menu_bar()
     "  </menubar>"
     "</ui>";
 
-  GtkActionGroup *actions = gtk_action_group_new ("Actions");
-
-  gtk_action_group_set_translation_domain(actions, "mp3splt-gtk");
-  gtk_action_group_set_translate_func(actions,
+  action_group = gtk_action_group_new("Actions");
+  gtk_action_group_set_translation_domain(action_group, "mp3splt-gtk");
+  gtk_action_group_set_translate_func(action_group,
                   (GtkTranslateFunc)my_dgettext, NULL, NULL);
 
-  //adding the GtkActionEntry to GtkActionGroup
-  gtk_action_group_add_actions (actions, entries, G_N_ELEMENTS(entries), NULL);
-  GtkUIManager *ui = gtk_ui_manager_new ();
-  //set action to the ui
-  gtk_ui_manager_insert_action_group (ui, actions, 0);
-  //set the actions to the window
-  gtk_window_add_accel_group (GTK_WINDOW (window), 
-                              gtk_ui_manager_get_accel_group (ui));
-  //add ui from string
+  gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS(entries), NULL);
+  GtkUIManager *ui = gtk_ui_manager_new();
+  gtk_ui_manager_insert_action_group(ui, action_group, 0);
+
+  g_signal_connect(G_OBJECT(window), "key_press_event",
+      G_CALLBACK(window_key_press_event), NULL);
+
+  gtk_window_add_accel_group(GTK_WINDOW(window), gtk_ui_manager_get_accel_group(ui));
   gtk_ui_manager_add_ui_from_string(ui, ui_info, -1, NULL);
-  
-  //attach the menu
-  gtk_box_pack_start (GTK_BOX (menu_box), 
-                      gtk_ui_manager_get_widget(ui, "/MenuBar"),
-                      FALSE, FALSE, 0);
+ 
+  gtk_box_pack_start(GTK_BOX(menu_box), gtk_ui_manager_get_widget(ui, "/MenuBar"), FALSE, FALSE, 0);
   
   GtkWidget *toolbar = (GtkWidget *)create_toolbar();
   gtk_box_pack_start(GTK_BOX(menu_box), toolbar, TRUE, TRUE, 0);
-  
+ 
+  player_key_actions_set_sensitivity(FALSE);
+
   return menu_box;
 }
 
