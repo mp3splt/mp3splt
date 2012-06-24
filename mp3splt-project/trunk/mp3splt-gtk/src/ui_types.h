@@ -51,17 +51,39 @@ typedef struct {
   gint width;
   gint height;
 } ui_main_window;
-typedef struct {
 
+typedef struct {
+  long time;
+  float level;
+} silence_wave;
+
+typedef struct {
   gchar *browser_directory;
   ui_main_window *main_win;
+  GList *text_options_list;
+
+  silence_wave *silence_points;
+  gint number_of_silence_points;
+  gint malloced_num_of_silence_points;
 } ui_infos;
 
 typedef struct {
+  GtkWidget *window;
+} gui_state;
+
+typedef struct {
+  gint splitting;
+  gint quit_main_program;
+} gui_status;
+
+typedef struct {
+  gint return_code;
   ui_infos *infos;
   preferences_state *preferences;
   splt_state *mp3splt_state;
   GArray *splitpoints;
+  gui_state *gui;
+  gui_status *status;
 } ui_state;
 
 #endif

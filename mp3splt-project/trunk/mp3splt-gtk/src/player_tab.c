@@ -89,11 +89,7 @@ extern gint preview_start_position;
 extern gint preview_start_splitpoint;
 extern GtkWidget *browse_cddb_button;
 extern GtkWidget *browse_cue_button;
-//main window
-extern GtkWidget *window;
 extern GtkWidget *percent_progress_bar;
-//if we are currently splitting
-extern gint we_are_splitting;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 extern guchar *get_real_name_from_filename(guchar *filename);
@@ -148,9 +144,7 @@ GtkWidget *go_end_button;
 
 //silence wave
 GtkWidget *silence_wave_check_button = NULL;
-silence_wave *silence_points = NULL;
-gint number_of_silence_points = 0;
-gint malloced_num_of_silence_points = 0;
+
 gint show_silence_wave = FALSE;
 gint currently_compute_douglas_peucker_filters = FALSE;
 gint we_scan_for_silence = FALSE;
@@ -326,22 +320,22 @@ void get_silence_level(long time, float level, void *user_data)
     return;
   }
 
-  if (! silence_points)
+  if (!ui->infos->silence_points)
   {
-    silence_points = g_malloc(sizeof(silence_wave) * 3000);
-    malloced_num_of_silence_points = 3000;
+    ui->infos->silence_points = g_malloc(sizeof(silence_wave) * 3000);
+    ui->infos->malloced_num_of_silence_points = 3000;
   }
-  else if (number_of_silence_points >= malloced_num_of_silence_points)
+  else if (ui->infos->number_of_silence_points >= ui->infos->malloced_num_of_silence_points)
   {
-    silence_points = g_realloc(silence_points,
-        sizeof(silence_wave) * (number_of_silence_points + 3000));
-    malloced_num_of_silence_points = number_of_silence_points + 3000;
+    ui->infos->silence_points = g_realloc(ui->infos->silence_points,
+        sizeof(silence_wave) * (ui->infos->number_of_silence_points + 3000));
+    ui->infos->malloced_num_of_silence_points = ui->infos->number_of_silence_points + 3000;
   }
 
-  silence_points[number_of_silence_points].time = time;
-  silence_points[number_of_silence_points].level = abs(level);
+  ui->infos->silence_points[ui->infos->number_of_silence_points].time = time;
+  ui->infos->silence_points[ui->infos->number_of_silence_points].level = abs(level);
 
-  number_of_silence_points++;
+  ui->infos->number_of_silence_points++;
 }
 
 static GArray *build_gdk_points_for_douglas_peucker()
@@ -349,10 +343,10 @@ static GArray *build_gdk_points_for_douglas_peucker()
   GArray *points = g_array_new(TRUE, TRUE, sizeof(GdkPoint));
 
   gint i = 0;
-  for (i = 0;i < number_of_silence_points;i++)
+  for (i = 0;i < ui->infos->number_of_silence_points;i++)
   {
-    long time = silence_points[i].time;
-    float level = silence_points[i].level;
+    long time = ui->infos->silence_points[i].time;
+    float level = ui->infos->silence_points[i].level;
 
     GdkPoint point;
     point.x = (gint)time;
@@ -413,12 +407,11 @@ gpointer detect_silence(gpointer data)
 {
   gint err = SPLT_OK;
 
-  //erase previous points
-  if (silence_points)
+  if (ui->infos->silence_points)
   {
-    g_free(silence_points);
-    silence_points = NULL;
-    number_of_silence_points = 0;
+    g_free(ui->infos->silence_points);
+    ui->infos->silence_points = NULL;
+    ui->infos->number_of_silence_points = 0;
   }
 
   enter_threads();
@@ -432,13 +425,13 @@ gpointer detect_silence(gpointer data)
   mp3splt_set_filename_to_split(ui->mp3splt_state, filename_to_split);
 
   mp3splt_set_silence_level_function(ui->mp3splt_state, get_silence_level, NULL);
-  we_are_splitting = TRUE;
+  ui->status->splitting = TRUE;
   we_scan_for_silence = TRUE;
 
   mp3splt_set_silence_points(ui->mp3splt_state, &err);
 
   we_scan_for_silence = FALSE;
-  we_are_splitting = FALSE;
+  ui->status->splitting = FALSE;
   mp3splt_set_silence_level_function(ui->mp3splt_state, NULL, NULL);
 
   enter_threads();
@@ -700,9 +693,9 @@ void connect_button_event(GtkWidget *widget, gpointer data)
   {
     player_start();
   }
- 
+
   mytimer(NULL);
- 
+
   if (!timer_active)
   {
     if (selected_player == PLAYER_SNACKAMP)
@@ -713,11 +706,11 @@ void connect_button_event(GtkWidget *widget, gpointer data)
     timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
     timer_active = TRUE;
   }
- 
+
   //connect to player with song
   //1 means dont start playing
   connect_to_player_with_song(1);
- 
+
   //set browse button unavailable
   if (selected_player != PLAYER_GSTREAMER)
   {
@@ -727,26 +720,26 @@ void connect_button_event(GtkWidget *widget, gpointer data)
   enable_player_buttons();
 
   file_browsed = FALSE;
-  
+
   change_volume = TRUE;
-  
+
   //here we check if we have been connected
   if (!player_is_running())
+  {
+    //if not, we put a message
+    GtkWidget *dialog, *label;
+    dialog = gtk_dialog_new_with_buttons(_("Cannot connect to player"),
+        GTK_WINDOW(ui->gui->window),
+        GTK_DIALOG_MODAL,
+        GTK_STOCK_OK,
+        GTK_RESPONSE_NONE,
+        NULL);
+
+    switch(selected_player)
     {
-      //if not, we put a message
-      GtkWidget *dialog, *label;
-      dialog = gtk_dialog_new_with_buttons (_("Cannot connect to player"),
-                                            (GtkWindow *)window,
-                                            GTK_DIALOG_MODAL,
-                                            GTK_STOCK_OK,
-                                            GTK_RESPONSE_NONE,
-                                            NULL);
-      
-      switch(selected_player)
-        {
-        case PLAYER_SNACKAMP:
-          label = gtk_label_new
-            (_("\n Cannot connect to snackAmp player.\n"
+      case PLAYER_SNACKAMP:
+        label = gtk_label_new
+          (_("\n Cannot connect to snackAmp player.\n"
              " Please download and install snackamp from\n"
              "\thttp://snackamp.sourceforge.net\n\n"
              " Verify that snackamp is running.\n"
@@ -758,33 +751,33 @@ void connect_button_event(GtkWidget *widget, gpointer data)
              "\tEnable Socket Interface\n"
              " Only default port is supported for now(8775)\n"
              " After that, restart snackamp and mp3splt-gtk should work.\n"));
-          break;
-        case PLAYER_AUDACIOUS:
-          label = gtk_label_new 
-            (_("\n Cannot connect to Audacious player.\n"
+        break;
+      case PLAYER_AUDACIOUS:
+        label = gtk_label_new 
+          (_("\n Cannot connect to Audacious player.\n"
              " Verify that you have installed audacious.\n\n"
              " Put in your PATH variable the directory where the audacious"
              " executable is.\n"
              " If you don't know how to do that, start audacious manually"
              " and then try to connect.\n"));
-          break;
-        default:
-          label = gtk_label_new(_("Cannot connect to player"));
-          break;
-        }
-    
-      g_signal_connect_swapped(dialog, "response", 
-          G_CALLBACK(gtk_widget_destroy), dialog);
-      gtk_container_add(GTK_CONTAINER(
-            gtk_dialog_get_content_area(GTK_DIALOG(dialog))), label);
-      gtk_widget_show_all(dialog);
+        break;
+      default:
+        label = gtk_label_new(_("Cannot connect to player"));
+        break;
     }
+
+    g_signal_connect_swapped(dialog, "response", 
+        G_CALLBACK(gtk_widget_destroy), dialog);
+    gtk_container_add(GTK_CONTAINER(
+          gtk_dialog_get_content_area(GTK_DIALOG(dialog))), label);
+    gtk_widget_show_all(dialog);
+  }
   else
-    {
-      //changes connect/disconnect buttons
-      connect_change_buttons();
-    }
-  
+  {
+    //changes connect/disconnect buttons
+    connect_change_buttons();
+  }
+
   current_time = -1;
   check_update_down_progress_bar();
 }
@@ -828,7 +821,7 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   disable_player_buttons();
 
   //update bottom progress bar to 0 and ""
-  if (!we_are_splitting)
+  if (!ui->status->splitting)
   {
     gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 0);
     gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), "");
@@ -949,7 +942,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
   if (gtk_toggle_button_get_active(widget))
   {
     show_silence_wave = TRUE;
-    if (number_of_silence_points == 0)
+    if (ui->infos->number_of_silence_points == 0)
     {
       scan_for_silence_wave();
     }
@@ -961,37 +954,17 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     {
       cancel_button_event(NULL, NULL);
     }
-    //free the previous silence points if any
-    if (silence_points != NULL)
+
+    if (ui->infos->silence_points != NULL)
     {
-      g_free(silence_points);
-      silence_points = NULL;
+      g_free(ui->infos->silence_points);
+      ui->infos->silence_points = NULL;
     }
-    number_of_silence_points = 0;
+    ui->infos->number_of_silence_points = 0;
 
     refresh_drawing_area();
     refresh_preview_drawing_areas();
   }
-}
-
-void build_path(GString *path, const gchar *dir, const gchar *filename)
-{
-#ifdef __WIN32__
-  g_string_assign(path, ".");
-  g_string_append(path, G_DIR_SEPARATOR_S);
-  g_string_append(path, filename);
-#else
-  if (strlen(dir) == 0)
-  {
-    g_string_assign(path, filename);
-  }
-  else 
-  {
-    g_string_assign(path, dir);
-    g_string_append(path, G_DIR_SEPARATOR_S);
-    g_string_append(path, filename);
-  }
-#endif
 }
 
 GtkWidget *create_volume_button()
@@ -1020,13 +993,13 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   player_buttons_hbox = wh_hbox_new();
 
   //go at the beginning button
-  GString *Imagefile = g_string_new("");
+  GString *imagefile = g_string_new("");
 
-  build_path(Imagefile, IMAGEDIR, "backward"ICON_EXT);
-  Go_BegButton_active= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "backward"ICON_EXT);
+  Go_BegButton_active= gtk_image_new_from_file(imagefile->str);
 
-  build_path(Imagefile, IMAGEDIR, "backward_inactive"ICON_EXT);
-  Go_BegButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "backward_inactive"ICON_EXT);
+  Go_BegButton_inactive= gtk_image_new_from_file(imagefile->str);
   go_beg_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_inactive));
 
@@ -1040,11 +1013,11 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(go_beg_button, _("Previous"));
 
   //play button
-  build_path(Imagefile, IMAGEDIR, "play"ICON_EXT);
-  PlayButton_active= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "play"ICON_EXT);
+  PlayButton_active= gtk_image_new_from_file(imagefile->str);
 
-  build_path(Imagefile, IMAGEDIR, "play_inactive"ICON_EXT);
-  PlayButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "play_inactive"ICON_EXT);
+  PlayButton_inactive= gtk_image_new_from_file(imagefile->str);
   play_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_inactive));
 
@@ -1058,11 +1031,11 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(play_button,_("Play"));
 
   //pause button
-  build_path(Imagefile, IMAGEDIR, "pause"ICON_EXT);
-  PauseButton_active= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "pause"ICON_EXT);
+  PauseButton_active= gtk_image_new_from_file(imagefile->str);
 
-  build_path(Imagefile, IMAGEDIR, "pause_inactive"ICON_EXT);
-  PauseButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "pause_inactive"ICON_EXT);
+  PauseButton_inactive= gtk_image_new_from_file(imagefile->str);
   pause_button = gtk_toggle_button_new();
   gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
   //put the new button in the box
@@ -1074,11 +1047,11 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(pause_button,_("Pause"));
 
   //stop button
-  build_path(Imagefile, IMAGEDIR, "stop"ICON_EXT);
-  StopButton_active= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "stop"ICON_EXT);
+  StopButton_active= gtk_image_new_from_file(imagefile->str);
 
-  build_path(Imagefile, IMAGEDIR, "stop_inactive"ICON_EXT);
-  StopButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "stop_inactive"ICON_EXT);
+  StopButton_inactive= gtk_image_new_from_file(imagefile->str);
   stop_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
   //put the new button in the box
@@ -1091,11 +1064,11 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_widget_set_tooltip_text(stop_button,_("Stop"));
 
   //go at the end button
-  build_path(Imagefile, IMAGEDIR, "forward"ICON_EXT);
-  Go_EndButton_active= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "forward"ICON_EXT);
+  Go_EndButton_active= gtk_image_new_from_file(imagefile->str);
 
-  build_path(Imagefile, IMAGEDIR, "forward_inactive"ICON_EXT);
-  Go_EndButton_inactive= gtk_image_new_from_file(Imagefile->str);
+  build_path(imagefile, IMAGEDIR, "forward_inactive"ICON_EXT);
+  Go_EndButton_inactive= gtk_image_new_from_file(imagefile->str);
   go_end_button = gtk_button_new();
   gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_inactive));
   //put the new button in the box
@@ -1106,7 +1079,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
                    NULL);
   gtk_widget_set_sensitive(go_end_button, FALSE);
   gtk_widget_set_tooltip_text(go_end_button,_("Next"));
-  g_string_free(Imagefile,TRUE);
+  g_string_free(imagefile,TRUE);
 
   GtkWidget *vol_button = (GtkWidget *)create_volume_button();
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), vol_button, FALSE, FALSE, 5);
@@ -1213,7 +1186,7 @@ void refresh_drawing_area()
 //!updates bottom progress bar
 void check_update_down_progress_bar()
 {
-  if (we_are_splitting || currently_compute_douglas_peucker_filters)
+  if (ui->status->splitting || currently_compute_douglas_peucker_filters)
   {
     return;
   }
@@ -2067,7 +2040,7 @@ void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *g
 gint get_silence_filtered_presence_index(gfloat draw_time)
 {
   //num_of_points_coeff_f : ogg ~= 1, mp3 ~= 4
-  gfloat num_of_points_coeff_f = ceil((number_of_silence_points / total_time) * 10);
+  gfloat num_of_points_coeff_f = ceil((ui->infos->number_of_silence_points / total_time) * 10);
   gint num_of_points_coeff = (gint)num_of_points_coeff_f;
 
   if (draw_time > fourty_minutes_time)
@@ -2133,7 +2106,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 {
   GdkColor color;
 
-  if (!silence_points || we_scan_for_silence || currently_compute_douglas_peucker_filters)
+  if (!ui->infos->silence_points || we_scan_for_silence || currently_compute_douglas_peucker_filters)
   {
     color.red = 0;color.green = 0;color.blue = 0;
     dh_set_color(gc, &color);
@@ -2159,20 +2132,20 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
   gint stroke_counter = 0;
 
   gint i = 0;
-  for (i = 0;i < number_of_silence_points;i++)
+  for (i = 0;i < ui->infos->number_of_silence_points;i++)
   {
     if (interpolation_level >= 0 && point_is_filtered(i, interpolation_level))
     {
       continue;
     }
-    long time = silence_points[i].time;
+    long time = ui->infos->silence_points[i].time;
 
     if ((time > right_mark) || (time < left_mark)) 
     {
       continue;
     }
 
-    float level = silence_points[i].level;
+    float level = ui->infos->silence_points[i].level;
 
     gint x = convert_time_to_pixels(width_drawing_area, 
         (gfloat)time, current_time, total_time, zoom_coeff);
@@ -2229,9 +2202,9 @@ gint adjust_filtered_index_according_to_number_of_points(gint filtered_index,
   gint number_of_filtered_points = 0;
 
   gint i = 0;
-  for (i = 0;i < number_of_silence_points;i++)
+  for (i = 0;i < ui->infos->number_of_silence_points;i++)
   {
-    long time = silence_points[i].time;
+    long time = ui->infos->silence_points[i].time;
     if ((time > right_mark) || (time < left_mark)) 
     {
       continue;
@@ -3951,7 +3924,7 @@ we split from 0 to a big number
 */
 gpointer fix_ogg_stream(gpointer data)
 {
-  we_are_splitting = TRUE;
+  ui->status->splitting = TRUE;
 
   enter_threads();
 
@@ -3991,7 +3964,7 @@ gpointer fix_ogg_stream(gpointer data)
 
   exit_threads();
 
-  we_are_splitting = FALSE;
+  ui->status->splitting = FALSE;
 
   return NULL;
 }

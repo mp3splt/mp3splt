@@ -150,10 +150,6 @@ extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 extern gchar *filename_path_of_split;
 extern GtkWidget *cancel_button;
-//if we are currently splitting
-extern gint we_are_splitting;
-//main window
-extern GtkWidget *window;
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
 
@@ -1134,7 +1130,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
   if (err >= 0)
   {
-    we_are_splitting = TRUE;
+    ui->status->splitting = TRUE;
     if (should_trim)
     {
       mp3splt_set_trim_silence_points(ui->mp3splt_state, &err);
@@ -1143,7 +1139,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
     {
       mp3splt_set_silence_points(ui->mp3splt_state, &err);
     }
-    we_are_splitting = FALSE;
+    ui->status->splitting = FALSE;
   }
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, old_tags_option);
@@ -1222,7 +1218,7 @@ void create_trim_silence_window(GtkWidget *button, gpointer *data)
 {
   GtkWidget *silence_detection_window =
     gtk_dialog_new_with_buttons(_("Set trim splitpoints using silence detection"),
-        GTK_WINDOW(window),
+        GTK_WINDOW(ui->gui->window),
         GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
         GTK_STOCK_OK,
         GTK_RESPONSE_YES,
@@ -1294,7 +1290,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
 {
   GtkWidget *silence_detection_window =
     gtk_dialog_new_with_buttons(_("Set splitpoints from silence detection"),
-        GTK_WINDOW(window),
+        GTK_WINDOW(ui->gui->window),
         GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
         GTK_STOCK_OK,
         GTK_RESPONSE_YES,

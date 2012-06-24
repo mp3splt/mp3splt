@@ -157,3 +157,24 @@ gchar *transform_to_utf8(gchar *text, gint free_or_not,
   return text;
 }
 
+void build_path(GString *path, const gchar *dir, const gchar *filename)
+{
+#ifdef __WIN32__
+  g_string_assign(path, ".");
+  g_string_append(path, G_DIR_SEPARATOR_S);
+  g_string_append(path, filename);
+#else
+  if (strlen(dir) == 0)
+  {
+    g_string_assign(path, filename);
+  }
+  else 
+  {
+    g_string_assign(path, dir);
+    g_string_append(path, G_DIR_SEPARATOR_S);
+    g_string_append(path, filename);
+  }
+#endif
+}
+
+

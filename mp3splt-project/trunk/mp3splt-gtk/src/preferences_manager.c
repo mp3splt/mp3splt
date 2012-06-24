@@ -44,7 +44,6 @@
 
 extern GtkWidget *player_combo_box;
 extern gint selected_player;
-extern GList *player_pref_list;
 extern GtkWidget *radio_button;
 
 extern GtkWidget *file_mode_radio_button;
@@ -1030,40 +1029,6 @@ static void check_pref_file_and_write_default()
   }
 
   write_default_preferences_file();
-}
-
-//!sets the language, loaded only at start
-void set_language()
-{
-  GKeyFile *key_file = g_key_file_new();
-  //filename
-  gchar *filename = get_preferences_filename();
-
-  //load config
-  g_key_file_load_from_file(key_file, filename,
-                            G_KEY_FILE_KEEP_COMMENTS,
-                            NULL);
-
-  if (filename)
-  {
-    g_free(filename);
-    filename = NULL;
-  }
-  
-  gchar *lang = g_key_file_get_string(key_file, "general", "language", NULL);
- 
- //NOTE: current function is only used for windows: code needs cleanup ?
-#ifdef __WIN32__
-  gchar lang_env[32] = { '\0' };
-  g_snprintf(lang_env, 32, "LANG=%s", lang);
-  putenv(lang_env);
-#else
-  setenv("LANGUAGE", lang,1);
-#endif
-
-  //freeing memory
-  g_free(lang);
-  g_key_file_free(key_file);
 }
 
 static void pm_free_spinner_int_preferences(GArray *spinner_int_preferences)

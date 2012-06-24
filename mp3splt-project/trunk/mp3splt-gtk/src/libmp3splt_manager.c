@@ -60,6 +60,13 @@ void lmanager_init_and_find_plugins(ui_state *ui)
   }
 }
 
+void lmanager_stop_split(ui_state *ui)
+{
+  gint err = SPLT_OK;
+  mp3splt_stop_split(ui->mp3splt_state, &err);
+  print_status_bar_confirmation(err);
+}
+
 //! Add another file to the split_file tab
 void lmanager_put_split_filename(const char *filename,int progress_data)
 {
