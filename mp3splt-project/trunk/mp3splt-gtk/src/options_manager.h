@@ -34,7 +34,7 @@
 
 #define OPTIONS_MANAGER_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 void update_output_options();
 void put_options_from_preferences();

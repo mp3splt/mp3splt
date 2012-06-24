@@ -33,7 +33,7 @@
 
 #define RADIO_HELPER_H
 
-#include "ui_manager.h"
+#include "external_includes.h"
 
 GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
     gint value,

@@ -534,7 +534,7 @@ GtkWidget *create_freedb_frame()
       G_CALLBACK(freedb_entry_activate_event), NULL);
 
   freedb_search_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
+    wh_create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
   g_signal_connect(G_OBJECT(freedb_search_button), "clicked",
       G_CALLBACK(freedb_search_button_event), NULL);
   gtk_box_pack_start(GTK_BOX(search_hbox), freedb_search_button, FALSE, FALSE, 0);
@@ -566,7 +566,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 2);
 
   freedb_add_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
+    wh_create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
 
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   g_signal_connect(G_OBJECT(freedb_add_button), "clicked",

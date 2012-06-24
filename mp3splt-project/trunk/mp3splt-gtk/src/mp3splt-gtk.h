@@ -39,7 +39,7 @@
 #ifndef MP3SPLT_GTK_H
 #define MP3SPLT_GTK_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 void put_options_from_preferences();
 gpointer split_it(gpointer data);

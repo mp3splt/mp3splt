@@ -32,7 +32,7 @@
 #ifndef IMPORT_H
 #define IMPORT_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 void import_event(GtkWidget *widget, gpointer *data);
 void import_file(gchar *filename);

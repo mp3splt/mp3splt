@@ -264,18 +264,6 @@ gchar* outputdirectory_get()
     return NULL;
 }
 
-//!creates a scrolled window
-GtkWidget *create_scrolled_window()
-{
-  GtkWidget *scrolled_window;
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-                                  GTK_POLICY_AUTOMATIC,
-                                  GTK_POLICY_AUTOMATIC);
-  return scrolled_window;
-}
-
 //!cddb and cue output mode radio box event
 void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
 {
@@ -338,7 +326,7 @@ GtkWidget *create_pref_language_page()
 
   //scrolled window
   GtkWidget *scrolled_window;
-  scrolled_window = create_scrolled_window();
+  scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(language_inside_hbox));
   gtk_box_pack_start(GTK_BOX(language_hbox), scrolled_window, TRUE, TRUE, 0);
@@ -505,7 +493,7 @@ GtkWidget *create_directory_box()
   
   //browse dir button
   GtkWidget *browse_dir_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DIRECTORY,_("Br_owse dir"), FALSE);
+    wh_create_cool_button(GTK_STOCK_DIRECTORY,_("Br_owse dir"), FALSE);
   g_signal_connect(G_OBJECT(browse_dir_button), "clicked",
       G_CALLBACK(browse_dir_button_event), NULL);
   gtk_box_pack_start(GTK_BOX(dir_hbox), browse_dir_button, FALSE, FALSE, 8);
@@ -513,7 +501,7 @@ GtkWidget *create_directory_box()
   //to set the directory for split files to the current song
   //directory
   GtkWidget *song_dir_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_CLEAR, _("_Song dir"), FALSE);
+    wh_create_cool_button(GTK_STOCK_CLEAR, _("_Song dir"), FALSE);
   g_signal_connect(G_OBJECT(song_dir_button), "clicked",
       G_CALLBACK(song_dir_button_event), NULL);
   gtk_box_pack_start(GTK_BOX(dir_hbox), song_dir_button, FALSE, FALSE, 0);
@@ -613,7 +601,7 @@ GtkWidget *create_split_options_box()
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
   
   GtkWidget *set_default_prefs_button =
-    (GtkWidget *)create_cool_button(GTK_STOCK_PREFERENCES,
+    (GtkWidget *)wh_create_cool_button(GTK_STOCK_PREFERENCES,
         _("Set _default split" " options"),FALSE); 
   g_signal_connect(G_OBJECT(set_default_prefs_button), "clicked",
       G_CALLBACK(set_default_prefs_event), NULL);
@@ -629,7 +617,7 @@ GtkWidget *create_pref_splitpoints_page()
   GtkWidget *general_hbox = wh_hbox_new();
   GtkWidget *inside_hbox = wh_hbox_new();
   
-  GtkWidget *scrolled_window = create_scrolled_window();
+  GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(inside_hbox));
   gtk_box_pack_start(GTK_BOX(general_hbox), scrolled_window, TRUE, TRUE, 0);
@@ -933,7 +921,7 @@ GtkWidget *create_pref_player_page()
 
   GtkWidget *inside_vbox = wh_vbox_new();;
   
-  player_scrolled_window = create_scrolled_window();
+  player_scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(player_scrolled_window), 
                                         GTK_WIDGET(inside_vbox));
   gtk_box_pack_start(GTK_BOX(player_hbox), player_scrolled_window, TRUE, TRUE, 0);
@@ -1019,7 +1007,7 @@ GtkWidget *create_pref_output_page()
   GtkWidget *output_hbox = wh_hbox_new();;
   GtkWidget *output_inside_hbox = wh_hbox_new();;
   
-  GtkWidget *scrolled_window = create_scrolled_window();
+  GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(output_inside_hbox));
   gtk_box_pack_start(GTK_BOX(output_hbox), scrolled_window, TRUE, TRUE, 0);
@@ -1310,7 +1298,7 @@ GtkWidget *create_pref_tags_page()
   GtkWidget *outside_vbox = wh_vbox_new();;
   GtkWidget *inside_hbox = wh_hbox_new();
 
-  GtkWidget *scrolled_window = create_scrolled_window();
+  GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(inside_hbox));
   gtk_box_pack_start(GTK_BOX(outside_vbox), scrolled_window, TRUE, TRUE, 0);

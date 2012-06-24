@@ -39,7 +39,7 @@
 
 #define PLAYER_TAB_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 #define ICON_EXT ".svg"
 

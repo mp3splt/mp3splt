@@ -33,7 +33,7 @@
 
 #define DRAWING_HELPER_H
 
-#include "ui_manager.h"
+#include "external_includes.h"
 
 void dh_set_color(cairo_t *cairo, GdkColor *color);
 void dh_set_white_color(cairo_t *cairo_surface);

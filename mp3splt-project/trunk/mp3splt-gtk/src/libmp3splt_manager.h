@@ -33,7 +33,8 @@
 
 #define LIBMP3SPLT_MANAGER_H
 
-#include "ui_manager.h"
+#include "external_includes.h"
+#include "ui_types.h"
 
 void lmanager_init_and_find_plugins(ui_state *ui);
 void lmanager_put_split_filename(const char *filename,int progress_data);

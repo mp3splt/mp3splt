@@ -40,7 +40,7 @@
 
 #define MAIN_WIN_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 #ifdef __WIN32__
 #define PIXMAP_PATH ""
@@ -82,8 +82,6 @@ void put_status_message_with_type(const gchar *text,
 void split_button_event();
 GtkWidget *create_toolbar();
 GtkWidget *create_menu_bar();
-GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
-    gint toggle_or_not);
 GtkWidget *create_main_vbox();
 void create_main_window();
 void print_status_bar_confirmation(gint error);

@@ -31,7 +31,7 @@
 #ifndef DOUGLAS_PEUCKER_H
 #define DOUGLAS_PEUCKER_H
 
-#include "ui_manager.h"
+#include "external_includes.h"
 
 typedef struct {
   gdouble distance;

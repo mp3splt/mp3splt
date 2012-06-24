@@ -32,17 +32,15 @@
 
 #define UTILITIES_H
 
-#include "ui_manager.h"
+#include "external_includes.h"
+
+gint directory_exists(const gchar *directory);
+gint file_exists(const gchar *fname);
 
 gint check_if_we_have_player();
-gint directory_exists(gchar *directory);
-gint check_if_file(guchar *fname);
 void print_processing_file(gchar *filename);
 void remove_end_slash_n_r_from_filename(char *filename);
-gchar *transform_to_utf8(gchar *text, gint free_or_not,
-    gint *must_be_freed);
-
-gboolean container_has_child(GtkContainer *cont, GtkWidget *my_child);
+gchar *transform_to_utf8(gchar *text, gint free_or_not, gint *must_be_freed);
 
 #endif
 

@@ -6,7 +6,6 @@
  * Copyright: (C) 2005-2012 Alexandru Munteanu
  * Contact: io_fx@yahoo.fr
  *
- *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
@@ -30,51 +29,40 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: player.h
- *
- * header of player.c, defines constants, etc..
- *
- *********************************************************/
+#ifndef ALL_INCLUDES_H
 
-#ifndef PLAYER_H
-
-#define PLAYER_H
+#define ALL_INCLUDES_H
 
 #include "external_includes.h"
 
-#include "snackamp_control.h"    
-#include "xmms_control.h"   
+#include "ui_types.h"
+
+#include "ui_manager.h"
+#include "preferences_manager.h"
+#include "main_win.h"
+#include "player_tab.h"
+#include "tree_tab.h"
+#include "widgets_helper.h"
+#include "preferences_tab.h"
+#include "utilities.h"
+#include "mp3splt-gtk.h"
+#include "player.h"
+#include "freedb_tab.h"
+#include "import.h"
+#include "options_manager.h"
+#include "export.h"
+#include "split_files.h"
+#include "special_split.h"
+#include "messages.h"
+#include "snackamp_control.h"
+#include "xmms_control.h"
 #include "gstreamer_control.h"
-
-#define PLAYER_AUDACIOUS 1
-#define PLAYER_SNACKAMP 2
-#define PLAYER_GSTREAMER 3
-
-gint player_get_elapsed_time();
-gint player_get_total_time();
-gint player_is_running();
-void player_start();
-void player_start_add_files(GList *list);
-void player_add_files(GList *list);
-void player_add_files_and_select(GList *list);
-void player_add_play_files(GList *list);
-void player_start_play_with_songs(GList *list);
-void player_play();
-void player_stop();
-void player_pause();
-void player_next();
-void player_prev();
-void player_jump(gint position);
-void player_get_song_infos(gchar *total_infos);
-gint player_is_playing();
-gint player_is_paused();
-gchar *player_get_filename();
-gchar *player_get_title();
-gint player_get_volume();
-void player_set_volume(gint volume);
-gint player_get_playlist_number();
-gint player_quit();
+#include "multiple_files.h"
+#include "libmp3splt_manager.h"
+#include "combo_helper.h"
+#include "radio_helper.h"
+#include "drawing_helper.h"
+#include "douglas_peucker.h"
 
 #endif
 

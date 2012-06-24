@@ -39,7 +39,7 @@
 
 #define PREFERENCES_TAB_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 #define NUMBER_OF_TAGS_MODES 4
 
@@ -48,7 +48,6 @@
 #define ORIGINAL_FILE_TAGS 2
 #define TAGS_FROM_FILENAME 3
 
-GtkWidget *create_scrolled_window();
 gboolean get_checked_output_radio_box();
 gint get_checked_tags_version_radio_box();
 void radio_box_changed_event(GtkToggleButton *radio_b, gpointer data);

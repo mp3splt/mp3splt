@@ -41,7 +41,7 @@
 
 /*!check if specified directory exists
 */
-gint directory_exists(gchar *directory)
+gint directory_exists(const gchar *directory)
 {
   if (directory == NULL)
   {
@@ -49,7 +49,7 @@ gint directory_exists(gchar *directory)
   }
 
   struct stat buffer;
-  gint status = g_stat((gchar *)directory, &buffer);
+  gint status = g_stat(directory, &buffer);
 
   if (status == 0 && S_ISDIR(buffer.st_mode) != 0)
     return TRUE;
@@ -59,7 +59,7 @@ gint directory_exists(gchar *directory)
 
 /*! check if specified file exists
 */
-gint file_exists(guchar *fname)
+gint file_exists(const gchar *fname)
 {
   if (fname == NULL)
   {
@@ -67,7 +67,7 @@ gint file_exists(guchar *fname)
   }
 
   struct stat buffer;
-  gint status = g_stat((gchar *)fname, &buffer);
+  gint status = g_stat(fname, &buffer);
 
   if (status == 0 && S_ISREG(buffer.st_mode) != 0)
     return TRUE;
@@ -93,28 +93,6 @@ void print_processing_file(gchar *filename)
   }
 }
 
-/*! Does this GtkContainer contain that object?
-
-\param GtkContainer The Container that has to be searched for the
-child object.
-\param my_child The child that has to be searched for.
- */
-gboolean container_has_child(GtkContainer *container, GtkWidget *my_child)
-{
-  GList *children = gtk_container_get_children(GTK_CONTAINER(container));
-  int i = 0;
-  GtkWidget *child = NULL;
-  while ((child = g_list_nth_data(children, i)) != NULL)
-  {
-    if (child == my_child)
-    {
-      return TRUE;
-    }
-    i++;
-  }
-
-  return FALSE;
-}
 /*! Removes trailing \\r or \\n characters from a filename
 
 \todo Cannot find any code that removes a trailing slash as this

@@ -50,7 +50,7 @@ GtkWidget *multiple_files_remove_all_files_button = NULL;
 #define MY_GTK_RESPONSE 200
 
 //!Create the model for the batch processing file list
-GtkTreeModel *create_multiple_files_model()
+static GtkTreeModel *create_multiple_files_model()
 {
   GtkListStore *model;
 
@@ -61,7 +61,7 @@ GtkTreeModel *create_multiple_files_model()
   return GTK_TREE_MODEL(model);
 }
 
-GtkTreeView *create_multiple_files_tree()
+static GtkTreeView *create_multiple_files_tree()
 {
   GtkTreeView *tree_view;
   GtkTreeModel *model;
@@ -72,7 +72,7 @@ GtkTreeView *create_multiple_files_tree()
   return tree_view;
 }
 
-void create_multiple_files_columns(GtkTreeView *tree_view)
+static void create_multiple_files_columns(GtkTreeView *tree_view)
 {
   GtkCellRendererText *renderer =
     GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
@@ -88,12 +88,12 @@ void create_multiple_files_columns(GtkTreeView *tree_view)
   gtk_tree_view_column_set_sort_column_id(filename_column, MULTIPLE_COL_FILENAME);
 }
 
-void multiple_files_open_button_event(GtkWidget *widget, gpointer data)
+static void multiple_files_open_button_event(GtkWidget *widget, gpointer data)
 {
   gtk_dialog_response(GTK_DIALOG(data), MY_GTK_RESPONSE);
 }
 
-void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
+static void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
 {
   GtkWidget *file_chooser;
   GtkWidget *our_filter;
@@ -206,7 +206,7 @@ void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
   gtk_widget_destroy(file_chooser);
 }
 
-void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
+static void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
   GtkTreeModel *model;
@@ -252,7 +252,7 @@ void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
   g_list_free(selected_list);  
 }
 
-void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer data)
+static void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
   GtkTreeModel *model;
@@ -275,13 +275,13 @@ void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer data)
   gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
 }
 
-GtkWidget *create_multiple_files_buttons_hbox()
+static GtkWidget *create_multiple_files_buttons_hbox()
 {
   GtkWidget *hbox = wh_hbox_new();
 
   //button for adding file(s)
   GtkWidget *multiple_files_add_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_ADD, _("_Add files"), FALSE);
+    wh_create_cool_button(GTK_STOCK_ADD, _("_Add files"), FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
   g_signal_connect(G_OBJECT(multiple_files_add_button), "clicked",
@@ -289,7 +289,7 @@ GtkWidget *create_multiple_files_buttons_hbox()
 
   //button for removing a file
   multiple_files_remove_file_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("_Remove selected entries"),FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("_Remove selected entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
       multiple_files_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
@@ -298,7 +298,7 @@ GtkWidget *create_multiple_files_buttons_hbox()
   
   //button for removing a file
   multiple_files_remove_all_files_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("R_emove all entries"),FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
       FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_all_files_button,FALSE);
@@ -308,7 +308,7 @@ GtkWidget *create_multiple_files_buttons_hbox()
   return hbox;
 }
 
-void multiple_files_selection_changed(GtkTreeSelection *selec, gpointer data)
+static void multiple_files_selection_changed(GtkTreeSelection *selec, gpointer data)
 {
   GtkTreeModel *model;
   GtkTreeSelection *selection;

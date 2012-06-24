@@ -40,7 +40,7 @@
 
 #define FREEDB_TAB_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 void add_freedb_row(gchar *album_name, 
                     gint album_id,

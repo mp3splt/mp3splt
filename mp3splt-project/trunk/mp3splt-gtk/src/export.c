@@ -56,137 +56,133 @@ void export_file(const gchar* filename)
   FILE *outfile;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  
+
   if((outfile=fopen(filename,"w"))==0)
-    {
-      put_status_message((gchar *)strerror(errno));
-      return;
-    };
+  {
+    put_status_message((gchar *)strerror(errno));
+    return;
+  };
 
   if(fprintf(outfile,"REM CREATOR \"MP3SPLT_GTK\"\n")<0)
-    {
-      put_status_message((gchar *)strerror(errno));
-      return;
-    }
+  {
+    put_status_message((gchar *)strerror(errno));
+    return;
+  }
 
   if(fprintf(outfile,"REM SPLT_TITLE_IS_FILENAME\n")<0)
-    {
-      put_status_message((gchar *)strerror(errno));
-      return;
-    }
+  {
+    put_status_message((gchar *)strerror(errno));
+    return;
+  }
 
   // Determine which type our input file is of.
   gchar *extension=inputfilename_get();
   gchar *tmp;
   while((tmp=strchr(extension,'.')))
-    {
-      extension=++tmp;
-    }
+  {
+    extension=++tmp;
+  }
 
   if(fprintf(outfile,"FILE \"%s\" %s\n",inputfilename_get(),extension)<0)
-    {
-      put_status_message((gchar *)strerror(errno));
-      return;
-    };
+  {
+    put_status_message((gchar *)strerror(errno));
+    return;
+  };
 
   model = gtk_tree_view_get_model(tree_view);
-  
+
   //if the table is not empty get iter number
   if(gtk_tree_model_get_iter_first(model, &iter))
+  {
+    // The track number
+    gint count = 1;
+
+    do 
     {
-      // The track number
-      gint count = 1;
+      // All information we need for this track
+      gchar *description;
+      gint mins,secs,hundr;
+      gboolean keep;
 
-      do 
-	{
-	  // All information we need for this track
-	  gchar *description;
-	  gint mins,secs,hundr;
-	  gboolean keep;
-	  
-	  gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-			     COL_DESCRIPTION,&description,
-                             COL_MINUTES, &mins,
-                             COL_SECONDS, &secs,
-                             COL_HUNDR_SECS, &hundr,
-			     COL_CHECK, &keep,
-			     -1);
+      gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+          COL_DESCRIPTION,&description,
+          COL_MINUTES, &mins,
+          COL_SECONDS, &secs,
+          COL_HUNDR_SECS, &hundr,
+          COL_CHECK, &keep,
+          -1);
 
-	  // Sometimes libmp3splt introduces an additional split point
-	  // way below the end of the file --- that breaks cue import
-	  // later => skip all points with extremely high time values.
-	  if(mins<357850)
-	    {
-	      // Output the track header
-	      if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
-		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		};
-	      
-	      
-	      // Output the track description escaping any quotes
-	      if(fprintf(outfile,"\t\tTITLE \"")<0)
-		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		}
-	      
-	      gchar *outputchar;
-	      for(outputchar=description;*outputchar!='\0';outputchar++)
-		{
-		  if(*outputchar=='"')
-		    {
-		      if(fprintf(outfile,"\\\"")<0)
-			{
-			  put_status_message((gchar *)strerror(errno));
-			  return;
-			}
-		    }
-		  else
-		    {
-		      if(fprintf(outfile,"%c",*outputchar)<0)
-			{
-			  put_status_message((gchar *)strerror(errno));
-			  return;
-			}
-		    }
-		}    
-	      if(fprintf(outfile,"\" \n")<0)
-		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		};
-	      
-	      if(!keep)
-		{
-		  if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
-		    {
-		      put_status_message((gchar *)strerror(errno));
-		      return;
-		    }
-		}
-	      
-	      if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
-		{
-		  put_status_message((gchar *)strerror(errno));
-		  return;
-		}
-	    }
-	} while(gtk_tree_model_iter_next(model, &iter));
-    }
-  
+      // Sometimes libmp3splt introduces an additional split point
+      // way below the end of the file --- that breaks cue import
+      // later => skip all points with extremely high time values.
+      if(mins<357850)
+      {
+        // Output the track header
+        if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
+        {
+          put_status_message((gchar *)strerror(errno));
+          return;
+        };
+
+
+        // Output the track description escaping any quotes
+        if(fprintf(outfile,"\t\tTITLE \"")<0)
+        {
+          put_status_message((gchar *)strerror(errno));
+          return;
+        }
+
+        gchar *outputchar;
+        for(outputchar=description;*outputchar!='\0';outputchar++)
+        {
+          if(*outputchar=='"')
+          {
+            if(fprintf(outfile,"\\\"")<0)
+            {
+              put_status_message((gchar *)strerror(errno));
+              return;
+            }
+          }
+          else
+          {
+            if(fprintf(outfile,"%c",*outputchar)<0)
+            {
+              put_status_message((gchar *)strerror(errno));
+              return;
+            }
+          }
+        }    
+        if(fprintf(outfile,"\" \n")<0)
+        {
+          put_status_message((gchar *)strerror(errno));
+          return;
+        };
+
+        if(!keep)
+        {
+          if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
+          {
+            put_status_message((gchar *)strerror(errno));
+            return;
+          }
+        }
+
+        if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
+        {
+          put_status_message((gchar *)strerror(errno));
+          return;
+        }
+      }
+    } while(gtk_tree_model_iter_next(model, &iter));
+  }
+
   fclose(outfile);
 }
 
 //! Choose the file to save the session to
 void ChooseCueExportFile(GtkWidget *widget, gpointer data)
 {
-  // file chooser
-  GtkWidget *file_chooser;
-
-  //creates the dialog
-  file_chooser = gtk_file_chooser_dialog_new(_("Select cue file name"),
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Select cue file name"),
       NULL,
       GTK_FILE_CHOOSER_ACTION_SAVE,
       GTK_STOCK_CANCEL,
@@ -197,25 +193,19 @@ void ChooseCueExportFile(GtkWidget *widget, gpointer data)
 
   wh_set_browser_directory_handler(ui, file_chooser);
 
-  // tells the dialog to list only cue files
   GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
   gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cue files (*.cue)"));
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cue");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
   gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(file_chooser),TRUE);
 
-
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    gchar *filename =
-      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-
-    //Write the output file
+    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
     export_file(filename);
     g_free(filename);
   }
-  
-  //destroy the dialog
+
   gtk_widget_destroy(file_chooser);
 }
 
