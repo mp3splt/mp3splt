@@ -42,7 +42,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "0.7.2.1027"
+#define VERSION "0.7.2.1030"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
@@ -79,8 +79,8 @@
 #include "widgets_helper.h"
 
 #include "ui_manager.h"
-
 //main window
+
 GtkWidget *window = NULL;
 
 //status bar
@@ -669,10 +669,10 @@ gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, gpointer 
 
   switch (event->keyval)
   {
-    case GDK_KEY_Left:
+    case GDK_Left:
       player_seek_backward_action(NULL, NULL);
       return TRUE;
-    case GDK_KEY_Right:
+    case GDK_Right:
       player_seek_forward_action(NULL, NULL);
       return TRUE;
     default:
