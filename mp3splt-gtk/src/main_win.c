@@ -622,6 +622,11 @@ void delete_closest_splitpoint(GtkWidget *widget, gpointer data)
     }
   }
 
+  if (left_index_point == -1 && right_index_point == -1)
+  {
+    return;
+  }
+
   gint time_to_left = INT_MAX;
   if (left_index_point != -1)
   {
