@@ -38,7 +38,7 @@
 
 #define SPLIT_FILES_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 GtkTreeModel *create_split_model();
 GtkTreeView *create_split_files_tree();

@@ -440,7 +440,7 @@ static GtkWidget *create_split_mode()
  
   select_split_mode(SELECTED_SPLIT_NORMAL);
 
-  GtkWidget *scrolled_window = create_scrolled_window();
+  GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(local_vbox));
  
@@ -477,7 +477,7 @@ static GtkWidget *create_single_multiple_split_modes()
   gtk_box_pack_start(GTK_BOX(multiple_files_hbox), multiple_files_component,
       TRUE, TRUE, 5);
 
-  GtkWidget *scrolled_window = create_scrolled_window();
+  GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
                                         GTK_WIDGET(local_vbox));
 

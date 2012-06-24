@@ -6,7 +6,6 @@
  * Copyright: (C) 2005-2012 Alexandru Munteanu
  * Contact: io_fx@yahoo.fr
  *
- *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
@@ -30,51 +29,50 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: player.h
- *
- * header of player.c, defines constants, etc..
- *
- *********************************************************/
+#ifndef EXTERNAL_INCLUDES_H
 
-#ifndef PLAYER_H
+#define EXTERNAL_INCLUDES_H
 
-#define PLAYER_H
+#include <signal.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+#include <locale.h>
+#include <ctype.h>
 
-#include "external_includes.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
-#include "snackamp_control.h"    
-#include "xmms_control.h"   
-#include "gstreamer_control.h"
+#ifdef __WIN32__
 
-#define PLAYER_AUDACIOUS 1
-#define PLAYER_SNACKAMP 2
-#define PLAYER_GSTREAMER 3
+#include <windows.h>
+#include <shlwapi.h>
+#include <winsock2.h>
+#define usleep(x) Sleep(x/1000)
 
-gint player_get_elapsed_time();
-gint player_get_total_time();
-gint player_is_running();
-void player_start();
-void player_start_add_files(GList *list);
-void player_add_files(GList *list);
-void player_add_files_and_select(GList *list);
-void player_add_play_files(GList *list);
-void player_start_play_with_songs(GList *list);
-void player_play();
-void player_stop();
-void player_pause();
-void player_next();
-void player_prev();
-void player_jump(gint position);
-void player_get_song_infos(gchar *total_infos);
-gint player_is_playing();
-gint player_is_paused();
-gchar *player_get_filename();
-gchar *player_get_title();
-gint player_get_volume();
-void player_set_volume(gint volume);
-gint player_get_playlist_number();
-gint player_quit();
+#else
+
+#include <netdb.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+
+#endif
+
+#include <gtk/gtk.h>
+
+#include <glib.h>
+#include <glib/gi18n.h>
+#include <glib/gstdio.h>
+#include <glib/gprintf.h>
+
+#include <gdk/gdkkeysyms.h>
+
+#include <libmp3splt/mp3splt.h>
 
 #endif
 

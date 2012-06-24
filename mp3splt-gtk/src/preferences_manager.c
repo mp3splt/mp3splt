@@ -39,7 +39,8 @@
  ********************************************************/
 
 #include "preferences_manager.h"
-#include "ui_manager.h"
+
+#include "all_includes.h"
 
 extern GtkWidget *player_combo_box;
 extern gint selected_player;

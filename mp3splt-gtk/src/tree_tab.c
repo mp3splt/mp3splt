@@ -1595,7 +1595,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
                                            2);
 
   /* add button */
-  add_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD,
+  add_button = (GtkWidget *)wh_create_cool_button(GTK_STOCK_ADD,
                                                _("_Add"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(add_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
@@ -1606,7 +1606,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 
   /* remove row button */
   remove_row_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_REMOVE, _("_Remove"), FALSE);
+    wh_create_cool_button(GTK_STOCK_REMOVE, _("_Remove"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_row_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
   g_signal_connect (G_OBJECT (remove_row_button), "clicked",
@@ -1616,7 +1616,7 @@ GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
 
   /* remove all rows button */
   remove_all_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("R_emove all"), FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_all_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   g_signal_connect (G_OBJECT (remove_all_button), "clicked",
@@ -1635,7 +1635,7 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
 
   /* set splitpoints from trim silence detection */
   scan_trim_silence_button =
-    (GtkWidget *)create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
+    (GtkWidget *)wh_create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
   g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
       G_CALLBACK(create_trim_silence_window), NULL);
@@ -1645,7 +1645,7 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
 
   /* set splitpoints from silence detection */
   scan_silence_button =
-    (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
+    (GtkWidget *)wh_create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
       G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);

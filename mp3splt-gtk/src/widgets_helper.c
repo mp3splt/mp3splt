@@ -277,6 +277,41 @@ void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *st
 #endif
 }
 
+//!creates a scrolled window
+GtkWidget *wh_create_scrolled_window()
+{
+  GtkWidget *scrolled_window;
+  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+                                  GTK_POLICY_AUTOMATIC,
+                                  GTK_POLICY_AUTOMATIC);
+  return scrolled_window;
+}
+
+/*! Does this GtkContainer contain that object?
+
+\param GtkContainer The Container that has to be searched for the
+child object.
+\param my_child The child that has to be searched for.
+ */
+gboolean wh_container_has_child(GtkContainer *container, GtkWidget *my_child)
+{
+  GList *children = gtk_container_get_children(GTK_CONTAINER(container));
+  int i = 0;
+  GtkWidget *child = NULL;
+  while ((child = g_list_nth_data(children, i)) != NULL)
+  {
+    if (child == my_child)
+    {
+      return TRUE;
+    }
+    i++;
+  }
+
+  return FALSE;
+}
+
 static void _wh_folder_changed_event(GtkFileChooser *chooser, gpointer data)
 {
   ui_state *ui = (ui_state *) data;
@@ -293,6 +328,48 @@ void wh_set_browser_directory_handler(ui_state *ui, GtkWidget* dialog)
 
   g_signal_connect(GTK_FILE_CHOOSER(dialog), "current-folder-changed",
       G_CALLBACK(_wh_folder_changed_event), ui);
+}
+
+/*!creates a cool button with image from stock
+
+\param label_text The text that has to be displayed on the button
+\param stock_id The name of the stock image to be displayed on the
+	button 
+\param toggle_or_not TRUE means we create a toggle button
+*/
+GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
+    gint toggle_or_not)
+{
+  GtkWidget *box;
+  GtkWidget *label;
+  GtkWidget *image;
+  GtkWidget *button;
+
+  box = wh_hbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER (box), 2);
+
+  image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
+  gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 3);
+
+  if (label_text != NULL)
+  {
+    label = gtk_label_new (label_text);
+    gtk_label_set_text_with_mnemonic(GTK_LABEL(label),label_text);
+    gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 3);
+  }
+  
+  if (toggle_or_not)
+  {
+    button = gtk_toggle_button_new();
+  }
+  else
+  {
+    button = gtk_button_new();
+  }
+ 
+  gtk_container_add(GTK_CONTAINER(button),box);
+ 
+  return button;
 }
 
 static guint _wh_add_row_to_table(GtkWidget *table)

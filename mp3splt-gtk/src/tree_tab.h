@@ -40,7 +40,7 @@
 
 #define TREE_TAB_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 void add_splitpoint(Split_point my_split_point, gint old_index);
 gchar *get_splitpoint_name(gint index);

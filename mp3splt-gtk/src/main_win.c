@@ -801,48 +801,6 @@ GtkWidget *create_menu_bar()
   return menu_box;
 }
 
-/*!creates a cool button with image from stock
-
-\param label_text The text that has to be displayed on the button
-\param stock_id The name of the stock image to be displayed on the
-	button 
-\param toggle_or_not TRUE means we create a toggle button
-*/
-GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
-    gint toggle_or_not)
-{
-  GtkWidget *box;
-  GtkWidget *label;
-  GtkWidget *image;
-  GtkWidget *button;
-
-  box = wh_hbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER (box), 2);
-
-  image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
-  gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 3);
-
-  if (label_text != NULL)
-  {
-    label = gtk_label_new (label_text);
-    gtk_label_set_text_with_mnemonic(GTK_LABEL(label),label_text);
-    gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 3);
-  }
-  
-  if (toggle_or_not)
-  {
-    button = gtk_toggle_button_new();
-  }
-  else
-  {
-    button = gtk_button_new();
-  }
- 
-  gtk_container_add(GTK_CONTAINER(button),box);
- 
-  return button;
-}
-
 //!main vbox
 GtkWidget *create_main_vbox()
 {
@@ -962,7 +920,7 @@ GtkWidget *create_main_vbox()
   gtk_box_pack_start(GTK_BOX(hbox), percent_progress_bar, TRUE, TRUE, 0);
 
   //stop button
-  cancel_button = create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
+  cancel_button = wh_create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
   g_signal_connect(G_OBJECT(cancel_button), "clicked",
                    G_CALLBACK(cancel_button_event), NULL);
 
@@ -978,7 +936,7 @@ GtkWidget *create_main_vbox()
   status_bar = gtk_statusbar_new();
 
   GtkWidget *mess_history_button =
-    create_cool_button(GTK_STOCK_INFO, NULL, FALSE);
+    wh_create_cool_button(GTK_STOCK_INFO, NULL, FALSE);
   gtk_button_set_relief(GTK_BUTTON(mess_history_button), GTK_RELIEF_NONE);
   gtk_widget_set_tooltip_text(mess_history_button,_("Messages history"));
   gtk_box_pack_start(GTK_BOX(status_bar), mess_history_button, FALSE, FALSE, 0);

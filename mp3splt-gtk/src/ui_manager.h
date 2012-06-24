@@ -33,103 +33,11 @@
 
 #define UI_MANAGER_H
 
-#include <signal.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <errno.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
-#include <locale.h>
-#include <ctype.h>
-
-#include <sys/stat.h>
-#include <sys/types.h>
-
-#ifdef __WIN32__
-
-#include <windows.h>
-#include <shlwapi.h>
-#include <winsock2.h>
-#define usleep(x) Sleep(x/1000)
-
-#else
-
-#include <netdb.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-
-#endif
-
-#include <gtk/gtk.h>
-
-#include <glib.h>
-#include <glib/gi18n.h>
-#include <glib/gstdio.h>
-#include <glib/gprintf.h>
-
-#include <gdk/gdkkeysyms.h>
-
-#include <libmp3splt/mp3splt.h>
-
-#include "preferences_manager.h"
+#include "external_includes.h"
+#include "ui_types.h"
 
 #define UI_DEFAULT_WIDTH 550
 #define UI_DEFAULT_HEIGHT 420
-
-typedef struct
-{
-  gboolean checked;
-  gint mins;
-  gint secs;
-  gint hundr_secs;
-} Split_point;
-
-typedef struct {
-  gint root_x_pos;
-  gint root_y_pos;
-  gint width;
-  gint height;
-} ui_main_window;
-
-typedef struct {
-  gchar *browser_directory;
-  ui_main_window *main_win;
-} ui_infos;
-
-typedef struct {
-  ui_infos *infos;
-  preferences_state *preferences;
-  splt_state *mp3splt_state;
-  GArray *splitpoints;
-} ui_state;
-
-#include "main_win.h"
-#include "player_tab.h"
-#include "tree_tab.h"
-#include "widgets_helper.h"
-#include "preferences_tab.h"
-#include "utilities.h"
-#include "mp3splt-gtk.h"
-#include "player.h"
-#include "freedb_tab.h"
-#include "import.h"
-#include "options_manager.h"
-#include "export.h"
-#include "split_files.h"
-#include "special_split.h"
-#include "messages.h"
-#include "snackamp_control.h"
-#include "xmms_control.h"
-#include "gstreamer_control.h"
-#include "multiple_files.h"
-#include "libmp3splt_manager.h"
-#include "combo_helper.h"
-#include "radio_helper.h"
-#include "drawing_helper.h"
-#include "douglas_peucker.h"
 
 ui_state *ui_state_new();
 void ui_state_free(ui_state *ui);

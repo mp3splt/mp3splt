@@ -41,7 +41,7 @@
 
 #define GSTREAMER_CONTROL_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 void gstreamer_get_song_infos(gchar *total_infos);
 gchar *gstreamer_get_filename();

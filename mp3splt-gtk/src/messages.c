@@ -165,7 +165,6 @@ GtkWidget *create_text_component()
 
   gtk_container_add(GTK_CONTAINER(scrolled_window), mess_hist_view);
 
-  //top
   GtkWidget *hbox = wh_hbox_new();
 
   //debug option
@@ -177,7 +176,7 @@ GtkWidget *create_text_component()
 
   //clear button
   GtkWidget *clear_button =
-    create_cool_button(GTK_STOCK_CLEAR, _("C_lear"), FALSE);
+    wh_create_cool_button(GTK_STOCK_CLEAR, _("C_lear"), FALSE);
   g_signal_connect(G_OBJECT(clear_button), "clicked",
       G_CALLBACK(clear_messages_event), NULL);
   gtk_box_pack_end(GTK_BOX(hbox), clear_button, FALSE, FALSE, 0);

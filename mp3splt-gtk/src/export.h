@@ -32,7 +32,7 @@
 #ifndef EXPORT_H
 #define EXPORT_H
 
-#include "ui_manager.h"
+#include "all_includes.h"
 
 void export_file(const gchar* filename);
 void ChooseCueExportFile(GtkWidget *widget, gpointer data);

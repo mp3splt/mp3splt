@@ -38,7 +38,7 @@
 
 #define MULTIPLE_FILES_H
 
-#include "ui_manager.h"
+#include "widgets_helper.h"
 
 GtkWidget *create_multiple_files_component();
 

@@ -40,7 +40,7 @@
 
 #define XMMS_CONTROL_H
 
-#include "ui_manager.h"
+#include "external_includes.h"
 
 void myxmms_get_song_infos(gchar *total_infos);
 gchar *myxmms_get_filename();

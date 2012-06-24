@@ -1112,7 +1112,7 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), vol_button, FALSE, FALSE, 5);
  
   //add button
-  player_add_button = (GtkWidget *)create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
+  player_add_button = (GtkWidget *)wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
   //put the new button in the box
   gtk_box_pack_start (GTK_BOX(player_buttons_hbox), player_add_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(player_add_button), GTK_RELIEF_NONE);
@@ -1135,14 +1135,14 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
 
   /* connect player button */
   connect_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_CONNECT,_("_Connect"), FALSE);
+    wh_create_cool_button(GTK_STOCK_CONNECT,_("_Connect"), FALSE);
   g_signal_connect(G_OBJECT(connect_button), "clicked",
       G_CALLBACK(connect_button_event), NULL);
   gtk_widget_set_tooltip_text(connect_button,_("Connect to player"));
   
   /* disconnect player button */
   disconnect_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DISCONNECT,_("_Disconnect"), FALSE);
+    wh_create_cool_button(GTK_STOCK_DISCONNECT,_("_Disconnect"), FALSE);
   g_signal_connect(G_OBJECT (disconnect_button), "clicked",
       G_CALLBACK(disconnect_button_event), NULL);
   gtk_widget_set_tooltip_text(disconnect_button,_("Disconnect from player"));
@@ -3557,7 +3557,7 @@ GtkWidget *create_delete_buttons_hbox()
 
   //button for removing a file
   playlist_remove_file_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
                      playlist_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
@@ -3566,7 +3566,7 @@ GtkWidget *create_delete_buttons_hbox()
  
   //button for removing a file
   playlist_remove_all_files_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
                      playlist_remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);
@@ -4027,7 +4027,7 @@ GtkWidget *create_choose_file_frame()
 
   /* browse button */
   browse_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_OPEN,_("_Browse"), FALSE);
+    wh_create_cool_button(GTK_STOCK_OPEN,_("_Browse"), FALSE);
   g_signal_connect(G_OBJECT (browse_button), "clicked",
       G_CALLBACK(browse_button_event), (gpointer *)BROWSE_SONG);
   gtk_box_pack_start(GTK_BOX(choose_file_hbox), browse_button, FALSE, FALSE, 4);
@@ -4038,7 +4038,7 @@ GtkWidget *create_choose_file_frame()
   
   /* fix ogg stream button */
   fix_ogg_stream_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_HARDDISK,_("_Fix ogg stream"), FALSE);
+    wh_create_cool_button(GTK_STOCK_HARDDISK,_("_Fix ogg stream"), FALSE);
   g_signal_connect(G_OBJECT(fix_ogg_stream_button), "clicked",
       G_CALLBACK(fix_ogg_stream_button_event), NULL);
  /* gtk_box_pack_start (GTK_BOX(bottom_buttons_hbox), 
@@ -4058,7 +4058,7 @@ void hide_connect_button()
 //! Show the connect button
 void show_connect_button()
 {
-  if (! container_has_child(GTK_CONTAINER(player_buttons_hbox), connect_button))
+  if (! wh_container_has_child(GTK_CONTAINER(player_buttons_hbox), connect_button))
   {
     gtk_box_pack_start(GTK_BOX(player_buttons_hbox), connect_button, FALSE, FALSE, 7);
   }
@@ -4074,7 +4074,7 @@ void hide_disconnect_button()
 //! Show the disconnec button
 void show_disconnect_button()
 {
-  if (! container_has_child(GTK_CONTAINER(player_buttons_hbox), disconnect_button))
+  if (! wh_container_has_child(GTK_CONTAINER(player_buttons_hbox), disconnect_button))
   {
     gtk_box_pack_start(GTK_BOX(player_buttons_hbox), disconnect_button, FALSE, FALSE, 7);
   }

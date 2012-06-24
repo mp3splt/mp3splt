@@ -39,7 +39,7 @@
 
 #define SNACKAMP_CONTROL_H
 
-#include "ui_manager.h"
+#include "external_includes.h"
 
 gint connect_snackamp(gint port);
 gchar *cut_begin_end(gchar *result);

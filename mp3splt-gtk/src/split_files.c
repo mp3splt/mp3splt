@@ -323,7 +323,7 @@ GtkWidget *create_queue_buttons_hbox()
 
   //button for queueing all files
   queue_files_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_UNINDENT, 
+    wh_create_cool_button(GTK_STOCK_UNINDENT, 
                        _("_Queue files to player"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       queue_files_button, FALSE, FALSE, 5);
@@ -333,7 +333,7 @@ GtkWidget *create_queue_buttons_hbox()
   
   //button for removing a file
   remove_file_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE,
+    wh_create_cool_button(GTK_STOCK_DELETE,
                        _("_Delete selected files"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       remove_file_button, FALSE, FALSE, 5);
@@ -343,7 +343,7 @@ GtkWidget *create_queue_buttons_hbox()
   
   //button for removing a file
   remove_all_files_button = (GtkWidget *)
-    create_cool_button(GTK_STOCK_DELETE,
+    wh_create_cool_button(GTK_STOCK_DELETE,
                        _("D_elete all files"),FALSE);
   gtk_box_pack_start (GTK_BOX (hbox),
                       remove_all_files_button, FALSE, FALSE, 5);
