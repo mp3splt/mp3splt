@@ -9,10 +9,10 @@
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
-
 /**********************************************************
  *
  * This program is free software; you can redistribute it and/or
+
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
@@ -48,9 +48,6 @@
 
 #include "main_win.h"
 
-//main window
-GtkWidget *window = NULL;
-
 //status bar
 GtkWidget *status_bar;
 
@@ -70,10 +67,6 @@ GtkWidget *percent_progress_bar;
 gchar *filename_to_split;
 gchar *filename_path_of_split;
 
-//if we are currently splitting
-gint we_are_splitting = FALSE;
-gint we_quit_main_program = FALSE;
-
 GtkWidget *player_vbox = NULL;
 
 //stop button to cancel the split
@@ -87,13 +80,9 @@ extern GtkWidget *progress_bar;
 
 extern gint selected_id;
 extern splt_freedb_results *search_results;
-extern GList *player_pref_list;
-extern GList *text_options_list;
 extern gchar **split_files;
 extern gint max_split_files;
 extern gint selected_player;
-extern silence_wave *silence_points;
-extern gint number_of_silence_points;
 
 extern gfloat current_time;
 extern gfloat total_time;
@@ -104,97 +93,61 @@ extern ui_state *ui;
 
 GtkWidget *playlist_box = NULL;
 
-//close the window and exit button function
-void quit(GtkWidget *widget, gpointer   data)
-{
-  save_preferences(NULL, NULL);
-
-  if (we_are_splitting)
-  {
-    gint err = SPLT_OK;
-    mp3splt_stop_split(ui->mp3splt_state,&err);
-    print_status_bar_confirmation(err);
-
-    we_quit_main_program = TRUE;
-    put_status_message(_(" info: stopping the split process before exiting"));
-  }
-
-  //quit the player: currently closes gstreamer
-  if (player_is_running())
-  {
-    player_quit();
-  }
-
-  g_list_free(player_pref_list);
-  g_list_free(text_options_list);
-
-  if (silence_points)
-  {
-    g_free(silence_points);
-    silence_points = NULL;
-    number_of_silence_points = 0;
-  }
-
-  gtk_main_quit();
-}
-
 void main_window_drag_data_received(GtkWidget *window,
     GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint
     info, guint time, gpointer user_data)
 {
   const gchar *received_data = (gchar *) gtk_selection_data_get_text(data);
-
-  if (received_data != NULL)
+  if (received_data == NULL)
   {
-    gchar **drop_filenames = NULL;
-    drop_filenames = g_strsplit(received_data, "\n", 0);
+    return;
+  }
 
-    gint current_index = 0;
-    gchar *current_filename = drop_filenames[current_index];
-    while (current_filename != NULL)
+  gchar **drop_filenames = g_strsplit(received_data, "\n", 0);
+
+  gint current_index = 0;
+  gchar *current_filename = drop_filenames[current_index];
+  while (current_filename != NULL)
+  {
+    gchar *filename = NULL;
+    if (strstr(current_filename, "file:") == current_filename)
     {
-      gchar *filename = NULL;
-      if (strstr(current_filename, "file:") == current_filename)
-      {
-        filename = g_filename_from_uri(current_filename, NULL, NULL);
-      }
-      else
-      {
-        gint fname_malloc_size = strlen(current_filename) + 1;
-        filename = g_malloc(sizeof(gchar) * fname_malloc_size);
-        g_snprintf(filename, fname_malloc_size, "%s", current_filename);
-      }
-
-      remove_end_slash_n_r_from_filename(filename);
-
-      if (file_exists(filename))
-      {
-        import_file(filename);
-      }
-
-      if (filename)
-      {
-        g_free(filename);
-        filename = NULL;
-      }
-
-      g_free(current_filename);
-      current_index++;
-      current_filename = drop_filenames[current_index];
+      filename = g_filename_from_uri(current_filename, NULL, NULL);
+    }
+    else
+    {
+      gint fname_malloc_size = strlen(current_filename) + 1;
+      filename = g_malloc(sizeof(gchar) * fname_malloc_size);
+      g_snprintf(filename, fname_malloc_size, "%s", current_filename);
     }
 
-    if (drop_filenames)
+    remove_end_slash_n_r_from_filename(filename);
+
+    if (file_exists(filename))
     {
-      g_free(drop_filenames);
-      drop_filenames = NULL;
+      import_file(filename);
     }
+
+    if (filename)
+    {
+      g_free(filename);
+      filename = NULL;
+    }
+
+    g_free(current_filename);
+    current_index++;
+    current_filename = drop_filenames[current_index];
+  }
+
+  if (drop_filenames)
+  {
+    g_free(drop_filenames);
+    drop_filenames = NULL;
   }
 }
 
-gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, gpointer data)
+static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui_state *ui)
 {
-  ui_state *ui = (ui_state *)data;
-
   ui_set_main_win_position(ui, event->configure.x, event->configure.y); 
   ui_set_main_win_size(ui, event->configure.width, event->configure.height);
 
@@ -204,26 +157,26 @@ gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, gpointer 
   return FALSE;
 }
 
-void initialize_window()
+static void initialize_window(gui_state *gui)
 {
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-  g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(configure_window_callback), ui);
+  g_signal_connect(G_OBJECT(gui->window), "configure-event", G_CALLBACK(configure_window_callback), ui);
 
-  gtk_window_set_title(GTK_WINDOW(window), PACKAGE_NAME" "VERSION);
-  gtk_container_set_border_width (GTK_CONTAINER (window), 0);
+  gtk_window_set_title(GTK_WINDOW(gui->window), PACKAGE_NAME" "VERSION);
+  gtk_container_set_border_width(GTK_CONTAINER(gui->window), 0);
 
-  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(quit), NULL);
-  g_signal_connect(G_OBJECT(window), "drag-data-received",
+  g_signal_connect(G_OBJECT(gui->window), "delete_event", G_CALLBACK(exit_application), NULL);
+  g_signal_connect(G_OBJECT(gui->window), "drag-data-received",
       G_CALLBACK(main_window_drag_data_received), NULL);
-  gtk_drag_dest_set(window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
+  gtk_drag_dest_set(gui->window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
       drop_types, 3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
  
-  GString *Imagefile = g_string_new("");
-  build_path(Imagefile, PIXMAP_PATH, "mp3splt-gtk_ico"ICON_EXT);
-  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(Imagefile->str, NULL);
+  GString *imagefile = g_string_new("");
+  build_path(imagefile, PIXMAP_PATH, "mp3splt-gtk_ico"ICON_EXT);
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(imagefile->str, NULL);
   gtk_window_set_default_icon(pixbuf);
-  g_string_free(Imagefile, TRUE);
+  g_string_free(imagefile, TRUE);
 }
 
 void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
@@ -299,11 +252,11 @@ void about_window(GtkWidget *widget, gpointer *data)
 {
   GtkWidget *dialog = gtk_about_dialog_new();
 
-  GString *Imagefile = g_string_new("");
-  build_path(Imagefile, PIXMAP_PATH, "mp3splt-gtk.png");
-  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(Imagefile->str, NULL);
+  GString *imagefile = g_string_new("");
+  build_path(imagefile, PIXMAP_PATH, "mp3splt-gtk.png");
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(imagefile->str, NULL);
   gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(dialog), pixbuf);
-  g_string_free(Imagefile, TRUE);
+  g_string_free(imagefile, TRUE);
   
   gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
@@ -406,59 +359,56 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
 //!event for the cancel button
 void cancel_button_event(GtkWidget *widget, gpointer data)
 {
-  gint err = SPLT_OK;
-  mp3splt_stop_split(ui->mp3splt_state,&err);
-  print_status_bar_confirmation(err);
-  
+  lmanager_stop_split(ui);
+
   if (widget != NULL)
   {
     gtk_widget_set_sensitive(widget, FALSE);
   }
+
   put_status_message(_(" info: stopping the split process.. please wait"));
 }
 
 //!event for the split button
 void split_button_event(GtkWidget *widget, gpointer data)
 {
-  //if we are not splitting
-  if (!we_are_splitting)
+  if (ui->status->splitting)
   {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_DEFAULT);
+    put_status_message((gchar *)_(" error: split in progress..."));
+    return;
+  }
 
-    gint err = SPLT_OK;
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
+      SPLT_OUTPUT_DEFAULT);
 
-    put_options_from_preferences();
+  gint err = SPLT_OK;
 
-    //output format
-    if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err)
-        != SPLT_OPTION_NORMAL_MODE)
+  put_options_from_preferences();
+
+  //output format
+  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err)
+      != SPLT_OPTION_NORMAL_MODE)
+  {
+    if (!get_checked_output_radio_box())
     {
-      if (!get_checked_output_radio_box())
-      {
-        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-            SPLT_OUTPUT_FORMAT);
-      }
+      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
+          SPLT_OUTPUT_FORMAT);
     }
+  }
 
-    filename_to_split = inputfilename_get();
+  filename_to_split = inputfilename_get();
 
-    filename_path_of_split = outputdirectory_get();
+  filename_path_of_split = outputdirectory_get();
 
-    if (filename_path_of_split != NULL)
-    {
-      we_are_splitting = TRUE;
-      create_thread(split_it, NULL, TRUE, NULL);
-      gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), TRUE);
-    }
-    else
-    {
-      put_status_message((gchar *)_(" error: no file selected"));
-    }
+  if (filename_path_of_split != NULL)
+  {
+    ui->status->splitting = TRUE;
+    create_thread(split_it, NULL, TRUE, NULL);
+    gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), TRUE);
   }
   else
   {
-    put_status_message((gchar *)_(" error: split in progress..."));
+    put_status_message((gchar *)_(" error: no file selected"));
   }
 }
 
@@ -666,7 +616,7 @@ gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, gpointer 
 }
 
 //!creates the menu bar
-GtkWidget *create_menu_bar()
+static GtkWidget *create_menu_bar()
 {
   GtkWidget *menu_box = wh_hbox_new();
   
@@ -691,7 +641,7 @@ GtkWidget *create_menu_bar()
       G_CALLBACK(show_messages_history_dialog) },
 
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
-      G_CALLBACK(quit) },
+      G_CALLBACK(exit_application) },
 
 #ifndef NO_GNOME
     { "Contents", GTK_STOCK_HELP, N_("_Contents"), "F1", N_("Contents"),
@@ -781,17 +731,17 @@ GtkWidget *create_menu_bar()
   gtk_action_group_set_translate_func(action_group,
                   (GtkTranslateFunc)my_dgettext, NULL, NULL);
 
-  gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS(entries), NULL);
-  GtkUIManager *ui = gtk_ui_manager_new();
-  gtk_ui_manager_insert_action_group(ui, action_group, 0);
+  gtk_action_group_add_actions(action_group, entries, G_N_ELEMENTS(entries), ui);
+  GtkUIManager *uim = gtk_ui_manager_new();
+  gtk_ui_manager_insert_action_group(uim, action_group, 0);
 
-  g_signal_connect(G_OBJECT(window), "key_press_event",
+  g_signal_connect(G_OBJECT(ui->gui->window), "key_press_event",
       G_CALLBACK(window_key_press_event), NULL);
 
-  gtk_window_add_accel_group(GTK_WINDOW(window), gtk_ui_manager_get_accel_group(ui));
-  gtk_ui_manager_add_ui_from_string(ui, ui_info, -1, NULL);
+  gtk_window_add_accel_group(GTK_WINDOW(ui->gui->window), gtk_ui_manager_get_accel_group(uim));
+  gtk_ui_manager_add_ui_from_string(uim, ui_info, -1, NULL);
  
-  gtk_box_pack_start(GTK_BOX(menu_box), gtk_ui_manager_get_widget(ui, "/MenuBar"), FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(menu_box), gtk_ui_manager_get_widget(uim, "/MenuBar"), FALSE, FALSE, 0);
   
   GtkWidget *toolbar = (GtkWidget *)create_toolbar();
   gtk_box_pack_start(GTK_BOX(menu_box), toolbar, TRUE, TRUE, 0);
@@ -957,29 +907,24 @@ static void move_and_resize_main_window()
 
   if (x != 0 && y != 0)
   {
-    gtk_window_move(GTK_WINDOW(window), x, y);
+    gtk_window_move(GTK_WINDOW(ui->gui->window), x, y);
   }
   else
   {
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+    gtk_window_set_position(GTK_WINDOW(ui->gui->window), GTK_WIN_POS_CENTER);
   }
 
-  gtk_window_resize(GTK_WINDOW(window), main_win->width, main_win->height);
+  gtk_window_resize(GTK_WINDOW(ui->gui->window), main_win->width, main_win->height);
 }
 
-void create_main_window()
+void create_application(ui_state *ui)
 {
-#ifdef __WIN32__
-  set_language();
-#endif
-
-  initialize_window();
+  initialize_window(ui->gui);
  
   GtkWidget *window_vbox = wh_vbox_new();
-  gtk_container_add(GTK_CONTAINER(window), window_vbox);
+  gtk_container_add(GTK_CONTAINER(ui->gui->window), window_vbox);
 
-  GtkWidget *menu_bar;
-  menu_bar = (GtkWidget *)create_menu_bar();
+  GtkWidget *menu_bar = (GtkWidget *)create_menu_bar();
   gtk_box_pack_start(GTK_BOX(window_vbox), menu_bar, FALSE, FALSE, 0);  
  
   GtkWidget *main_vbox = (GtkWidget *)create_main_vbox();
@@ -989,7 +934,7 @@ void create_main_window()
 
   move_and_resize_main_window();
 
-  gtk_widget_show_all(window);
+  gtk_widget_show_all(ui->gui->window);
 
   if (selected_player != PLAYER_GSTREAMER)
   {

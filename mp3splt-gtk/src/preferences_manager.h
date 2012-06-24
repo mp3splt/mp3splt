@@ -62,8 +62,6 @@ void load_preferences();
 void save_preferences(GtkWidget *widget, gpointer data);
 void write_default_preferences_file();
 
-void set_language();
-
 preferences_state *pm_state_new();
 void pm_free(preferences_state **pm);
 

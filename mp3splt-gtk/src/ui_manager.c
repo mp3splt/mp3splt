@@ -30,8 +30,13 @@
 
 #include "ui_manager.h"
 
+static void ui_main_window_new(ui_infos *infos);
+static void ui_infos_new(ui_state *ui);
+static void ui_status_new(ui_state *ui);
+
 static void ui_main_window_free(ui_main_window **main_win);
 static void ui_infos_free(ui_infos **infos);
+static void ui_status_free(gui_status **status);
 
 void ui_set_browser_directory(ui_state *ui, const gchar *directory)
 {
@@ -81,30 +86,6 @@ const ui_main_window *ui_get_main_window_infos(ui_state *ui)
   return ui->infos->main_win;
 }
 
-static void ui_main_window_new(ui_infos *infos)
-{
-  ui_main_window *main_win = g_malloc0(sizeof(ui_main_window));
-
-  main_win->root_x_pos = 0;
-  main_win->root_y_pos = 0;
-
-  main_win->width = UI_DEFAULT_WIDTH;
-  main_win->height = UI_DEFAULT_HEIGHT;
-
-  infos->main_win = main_win;
-}
-
-static void ui_infos_new(ui_state *ui)
-{
-  ui_infos *infos = g_malloc0(sizeof(ui_infos));
-
-  ui_main_window_new(infos);
-
-  infos->browser_directory = NULL;
-
-  ui->infos = infos;
-}
-
 ui_state *ui_state_new()
 {
   ui_state *ui = g_malloc0(sizeof(ui_state));
@@ -120,6 +101,11 @@ ui_state *ui_state_new()
   }
 
   ui->splitpoints = g_array_new(FALSE, FALSE, sizeof(Split_point));
+  ui->gui = g_malloc0(sizeof(gui_state));
+
+  ui_status_new(ui);
+
+  ui->return_code = EXIT_SUCCESS;
 
   return ui;
 }
@@ -137,6 +123,9 @@ void ui_state_free(ui_state *ui)
   }
 
   g_array_free(ui->splitpoints, TRUE);
+  g_free(ui->gui);
+
+  ui_status_free(&ui->status);
 
   g_free(ui);
 }
@@ -189,9 +178,50 @@ void ui_fail(ui_state *ui, const gchar *message, ...)
     fflush(stderr);
   }
 
+  ui->return_code = EXIT_FAILURE;
+
   ui_state_free(ui);
 
   exit(1);
+}
+
+static void ui_main_window_new(ui_infos *infos)
+{
+  ui_main_window *main_win = g_malloc0(sizeof(ui_main_window));
+
+  main_win->root_x_pos = 0;
+  main_win->root_y_pos = 0;
+
+  main_win->width = UI_DEFAULT_WIDTH;
+  main_win->height = UI_DEFAULT_HEIGHT;
+
+  infos->main_win = main_win;
+}
+
+static void ui_infos_new(ui_state *ui)
+{
+  ui_infos *infos = g_malloc0(sizeof(ui_infos));
+
+  ui_main_window_new(infos);
+
+  infos->browser_directory = NULL;
+  infos->text_options_list = NULL;
+
+  infos->silence_points = NULL;
+  infos->malloced_num_of_silence_points = 0;
+  infos->number_of_silence_points = 0;
+
+  ui->infos = infos;
+}
+
+static void ui_status_new(ui_state *ui)
+{
+  gui_status *status = g_malloc0(sizeof(gui_status));
+
+  status->splitting = FALSE;
+  status->quit_main_program = FALSE;
+
+  ui->status = status;
 }
 
 static void ui_main_window_free(ui_main_window **main_win)
@@ -214,7 +244,30 @@ static void ui_infos_free(ui_infos **infos)
 
   ui_main_window_free(&(*infos)->main_win);
 
+  if ((*infos)->text_options_list)
+  {
+    g_list_free((*infos)->text_options_list);
+  }
+
+  if ((*infos)->silence_points)
+  {
+    g_free((*infos)->silence_points);
+    (*infos)->silence_points = NULL;
+    (*infos)->number_of_silence_points = 0;
+  }
+
   g_free(*infos);
   *infos = NULL;
+}
+
+static void ui_status_free(gui_status **status)
+{
+  if (!status || !*status)
+  {
+    return;
+  }
+
+  g_free(*status);
+  *status = NULL;
 }
 

@@ -56,9 +56,6 @@ GtkWidget *output_label = NULL;
 //!choose the player box
 GtkWidget *player_combo_box = NULL;
 
-//!list where we stock the preferences combo box content
-GList *player_pref_list = NULL;
-GList *text_options_list = NULL;
 //selected player
 gint selected_player = PLAYER_GSTREAMER;
 
@@ -1190,16 +1187,18 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
   gtk_misc_set_alignment(GTK_MISC(regex_label), 0.0, 0.5);
   wh_add_in_table(table, wh_put_in_new_hbox_with_margin_level(regex_label, 2));
 
-  text_options_list =
-    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_NO_CONVERSION));
-  text_options_list = 
-    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_LOWERCASE));
-  text_options_list = 
-    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_UPPERCASE));
-  text_options_list =
-    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_FIRST_UPPERCASE));
-  text_options_list =
-    g_list_append(text_options_list, GINT_TO_POINTER(SPLT_TO_WORD_FIRST_UPPERCASE));
+  ui_infos *infos = ui->infos;
+ 
+  infos->text_options_list =
+    g_list_append(infos->text_options_list, GINT_TO_POINTER(SPLT_NO_CONVERSION));
+  infos->text_options_list =
+    g_list_append(infos->text_options_list, GINT_TO_POINTER(SPLT_TO_LOWERCASE));
+  infos->text_options_list =
+    g_list_append(infos->text_options_list, GINT_TO_POINTER(SPLT_TO_UPPERCASE));
+  infos->text_options_list =
+    g_list_append(infos->text_options_list, GINT_TO_POINTER(SPLT_TO_FIRST_UPPERCASE));
+  infos->text_options_list =
+    g_list_append(infos->text_options_list, GINT_TO_POINTER(SPLT_TO_WORD_FIRST_UPPERCASE));
 
   replace_underscore_by_space_check_box =
     gtk_check_button_new_with_mnemonic(_("_Replace underscores by spaces"));

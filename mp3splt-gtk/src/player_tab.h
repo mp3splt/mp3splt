@@ -46,11 +46,6 @@
 #define DEFAULT_TIMEOUT_VALUE 200
 #define DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD 4000
 
-typedef struct {
-  long time;
-  float level;
-} silence_wave;
-
 //float comparison
 #define DELTA 5
 
@@ -208,8 +203,6 @@ void show_disconnect_button();
 
 void inputfilename_set(const gchar *filename);
 gchar *inputfilename_get();
-
-void build_path(GString *path, const gchar *dir, const gchar *filename);
 
 void close_playlist_popup_window_event(GtkWidget *window, gpointer data);
 void restart_player_timer();

@@ -63,7 +63,6 @@ extern GtkWidget *all_spinner_silence_threshold;
 extern GtkWidget *all_spinner_trim_silence_threshold;
 extern GtkWidget *all_silence_remove_silence;
 
-extern GList *text_options_list;
 extern GtkWidget *replace_underscore_by_space_check_box;
 extern GtkComboBox *artist_text_properties_combo;
 extern GtkComboBox *album_text_properties_combo;

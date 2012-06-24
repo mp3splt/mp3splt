@@ -78,10 +78,6 @@ extern GtkWidget *spinner_time;
 //player
 extern gint selected_player;
 
-//if we are currently splitting
-extern gint we_are_splitting;
-//if we quit the main program while splitting
-extern gint we_quit_main_program;
 extern GtkWidget *percent_progress_bar;
 
 //stop button to cancel the split
@@ -244,10 +240,9 @@ gpointer split_it(gpointer data)
   //see the cancel button
   gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), FALSE);
   
-  //we look if we have pushed the exit button
-  if (we_quit_main_program)
+  if (ui->status->quit_main_program)
   {
-    quit(NULL,NULL);
+    exit_application(NULL, NULL);
   }
   
   if (confirmation >= 0 && !multiple_files_error)
@@ -257,7 +252,7 @@ gpointer split_it(gpointer data)
         _(" finished"));
   }
 
-  we_are_splitting = FALSE;
+  ui->status->splitting = FALSE;
 
   exit_threads();
  
@@ -286,14 +281,34 @@ void exit_threads()
 	gdk_threads_leave();
 }
 
+//close the window and exit button function
+void exit_application(GtkWidget *widget, gpointer *data)
+{
+  save_preferences(NULL, NULL);
+
+  if (ui->status->splitting)
+  {
+    lmanager_stop_split(ui);
+    ui->status->quit_main_program = TRUE;
+    put_status_message(_(" info: stopping the split process before exiting"));
+  }
+
+  if (player_is_running())
+  {
+    player_quit();
+  }
+
+  gtk_main_quit();
+}
+
 static gboolean sigint_called = FALSE;
 static void sigint_handler(gint sig)
 {
   if (!sigint_called)
   {
     sigint_called = TRUE;
-    we_quit_main_program = TRUE;
-    quit(NULL,NULL);
+    ui->status->quit_main_program = TRUE;
+    exit_application(NULL, NULL);
   }
 }
 
@@ -423,6 +438,32 @@ static void parse_command_line_options(gint argc, gchar * argv[])
 #endif
 }
 
+#ifdef __WIN32__
+//!sets the language, loaded only at start
+static void set_language_env_variable_from_preferences()
+{
+  GKeyFile *key_file = g_key_file_new();
+  gchar *filename = get_preferences_filename();
+
+  g_key_file_load_from_file(key_file, filename, G_KEY_FILE_KEEP_COMMENTS, NULL);
+
+  if (filename)
+  {
+    g_free(filename);
+    filename = NULL;
+  }
+  
+  gchar *lang = g_key_file_get_string(key_file, "general", "language", NULL);
+ 
+  gchar lang_env[32] = { '\0' };
+  g_snprintf(lang_env, 32, "LANG=%s", lang);
+  putenv(lang_env);
+
+  g_free(lang);
+  g_key_file_free(key_file);
+}
+#endif
+
 /*! The traditional C main function
 
 \todo 
@@ -460,7 +501,11 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 
   lmanager_init_and_find_plugins(ui);
 
-  create_main_window();
+#ifdef __WIN32__
+  set_language_env_variable_from_preferences();
+#endif
+
+  create_application(ui);
 
   parse_command_line_options(argc, argv);
 
@@ -468,8 +513,9 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   gtk_main();
   exit_threads();
 
+  gint return_code = ui->return_code;
   ui_state_free(ui);
 
-  return EXIT_SUCCESS;
+  return return_code;
 }
 
