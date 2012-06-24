@@ -576,6 +576,21 @@ void player_big_seek_backward_action(GtkWidget *widget, gpointer *data)
   player_jump(new_time);
 }
 
+void player_small_seek_forward_action(GtkWidget *widget, gpointer *data)
+{
+  gfloat new_time = current_time * 10 + 100 * 5 * 10;
+  if (new_time > total_time * 10) { new_time = total_time * 10; }
+  player_jump(new_time);
+}
+ 
+void player_small_seek_backward_action(GtkWidget *widget, gpointer *data)
+{
+  gfloat new_time = current_time * 10 - 100 * 5 * 10;
+  if (new_time <= 0) { new_time = 0; }
+  player_jump(new_time);
+}
+
+
 void player_seek_to_next_splitpoint_action(GtkWidget *widget, gpointer data)
 {
   gint time_left = -1;
@@ -730,6 +745,11 @@ GtkWidget *create_menu_bar()
     { "Player_backward", NULL, N_("Seek _backward"), "Left", N_("Seek backward"),
       G_CALLBACK(player_seek_backward_action)},
 
+    { "Player_small_forward", NULL, N_("Small seek f_orward"), "<Alt>Right", N_("Small seek forward"),
+      G_CALLBACK(player_small_seek_forward_action)},
+    { "Player_small_backward", NULL, N_("Small seek back_ward"), "<Alt>Left", N_("Small seek backward"),
+      G_CALLBACK(player_small_seek_backward_action)},
+
     { "Player_big_forward", NULL, N_("Big seek fo_rward"), "<Shift>Right", N_("Big seek forward"),
       G_CALLBACK(player_big_seek_forward_action)},
     { "Player_big_backward", NULL, N_("Big Seek bac_kward"), "<Shift>Left", N_("Big seek backward"),
@@ -769,6 +789,8 @@ GtkWidget *create_menu_bar()
     "      <separator/>"
     "      <menuitem action='Player_forward'/>"
     "      <menuitem action='Player_backward'/>"
+    "      <menuitem action='Player_small_forward'/>"
+    "      <menuitem action='Player_small_backward'/>"
     "      <menuitem action='Player_big_forward'/>"
     "      <menuitem action='Player_big_backward'/>"
     "      <menuitem action='Player_next_splitpoint'/>"
