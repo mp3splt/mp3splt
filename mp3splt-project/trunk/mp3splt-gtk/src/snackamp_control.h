@@ -35,6 +35,12 @@
  *
  *********************************************************/
 
+#ifndef SNACKAMP_CONTROL_H
+
+#define SNACKAMP_CONTROL_H
+
+#include "ui_manager.h"
+
 gint connect_snackamp(gint port);
 gchar *cut_begin_end(gchar *result);
 gint disconnect_snackamp();
@@ -67,4 +73,5 @@ gint snackamp_is_playing();
 gint snackamp_is_paused();
 void snackamp_quit();
 
+#endif
 

@@ -34,8 +34,13 @@
  * header to xmms_control.c
  *
  * xmms_control.c controls the xmms player
- *
  *********************************************************/
+
+#ifndef XMMS_CONTROL_H
+
+#define XMMS_CONTROL_H
+
+#include "ui_manager.h"
 
 void myxmms_get_song_infos(gchar *total_infos);
 gchar *myxmms_get_filename();
@@ -61,5 +66,5 @@ gint myxmms_get_total_time();
 gint myxmms_is_playing();
 void myxmms_quit();
 
-
+#endif
 

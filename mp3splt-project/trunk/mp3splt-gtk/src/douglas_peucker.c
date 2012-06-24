@@ -36,9 +36,6 @@
  *
  **********************************************************/
 
-#include <stdlib.h>
-#include <math.h>
-
 #include "douglas_peucker.h"
 
 static GArray *splt_copy_as_new_array(GArray *array);

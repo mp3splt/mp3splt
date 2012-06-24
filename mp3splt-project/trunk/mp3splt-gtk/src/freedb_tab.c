@@ -37,22 +37,7 @@
  *   (for searching on freedb)
  *********************************************************/
 
-#include <stdlib.h>
-#include <string.h>
-
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <glib/gstdio.h>
-
-#include <libmp3splt/mp3splt.h>
-
-#include "util.h"
-#include "main_win.h"
-#include "tree_tab.h"
-#include "preferences_tab.h"
-#include "utilities.h"
-#include "mp3splt-gtk.h"
-#include "widgets_helper.h"
+#include "freedb_tab.h"
 
 //handle box for detaching window
 GtkWidget *freedb_handle_box;
@@ -84,8 +69,6 @@ GtkWidget *spinner;
 
 gboolean executed_lock = FALSE;
 
-//the state main mp3splt state
-extern splt_state *the_state;
 //the spin values
 extern gint spin_mins,spin_secs,
   spin_hundr_secs;
@@ -93,6 +76,8 @@ extern gchar current_description[255];
 //output for the cddb,cue and freedb file output
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
+
+extern ui_state *ui;
 
 //!add a row to the table
 void add_freedb_row(gchar *album_name, 
@@ -255,7 +240,7 @@ gpointer freedb_search(gpointer data)
   exit_threads();
   
   gint err = SPLT_OK;
-  search_results = mp3splt_get_freedb_search(the_state, freedb_search, &err,
+  search_results = mp3splt_get_freedb_search(ui->mp3splt_state, freedb_search, &err,
       SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0",-1);
  
   enter_threads();
@@ -314,7 +299,7 @@ void freedb_search_start_thread()
 {
   if (executed_lock) { return; }
 
-  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
   create_thread(freedb_search, NULL, TRUE, NULL);
 }
 
@@ -333,10 +318,6 @@ void freedb_entry_activate_event(GtkEntry *entry, gpointer data)
   freedb_search_start_thread();
 }
 
-/*!returns the number of splitpoints
-
-we put the new splitpoints in "the_state"
-*/
 void write_freedbfile(int *err)
 {
   gchar *filename = NULL;
@@ -361,7 +342,7 @@ void write_freedbfile(int *err)
   exit_threads();
 
   //we write the freedb file ...
-  mp3splt_write_freedb_file_result(the_state, selected_id,
+  mp3splt_write_freedb_file_result(ui->mp3splt_state, selected_id,
                                    filename, err,
                                    //for now cddb.cgi get file type
                                    SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI,
@@ -373,23 +354,23 @@ void write_freedbfile(int *err)
 
   if(get_checked_output_radio_box())
   {
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
         SPLT_OUTPUT_DEFAULT);
   }
   else
   {
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
         SPLT_OUTPUT_FORMAT);
 
     const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
     gint error = SPLT_OUTPUT_FORMAT_OK;
-    mp3splt_set_oformat(the_state, data, &error);
+    mp3splt_set_oformat(ui->mp3splt_state, data, &error);
     enter_threads();
     print_status_bar_confirmation(error);
     exit_threads();
   }
 
-  mp3splt_put_cddb_splitpoints_from_file(the_state,filename, err);
+  mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state,filename, err);
  
   if (filename)
   {
@@ -410,27 +391,25 @@ void get_secs_mins_hundr(gfloat time,
                   - (*secs * 100));
 }
 
-/*!updates the current splitpoints in the_state
+/*!updates the current splitpoints in ui->mp3splt_state
 
 Takes the splitpoints from the table displayed in the gui
 
 max_splits is the maximum number of splitpoints to update
 */
-void update_splitpoints_from_the_state()
+void update_splitpoints_from_mp3splt_state()
 {
   gint max_splits = 0;
   gint err = SPLT_OK;
 
   exit_threads();
-  const splt_point *points = mp3splt_get_splitpoints(the_state, &max_splits,&err);
+  const splt_point *points = mp3splt_get_splitpoints(ui->mp3splt_state, &max_splits,&err);
   enter_threads();
 
   print_status_bar_confirmation(err);
   
-  //only if we have splitpoints
   if (max_splits > 0)
   {
-    //erase rows from the splitpoints table
     remove_all_rows(NULL,NULL);
     gint i;
 
@@ -507,7 +486,7 @@ gpointer put_freedb_splitpoints(gpointer data)
  
   enter_threads();
  
-  update_splitpoints_from_the_state();
+  update_splitpoints_from_mp3splt_state();
   print_status_bar_confirmation(err);
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
 
@@ -519,7 +498,7 @@ gpointer put_freedb_splitpoints(gpointer data)
 //!event for the freedb add button when clicked
 void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 {
-  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
   create_thread(put_freedb_splitpoints, NULL, TRUE, NULL);
 }
 

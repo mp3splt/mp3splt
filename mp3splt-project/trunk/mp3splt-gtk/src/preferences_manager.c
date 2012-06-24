@@ -38,23 +38,7 @@
  * start of the program.
  ********************************************************/
 
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <glib/gstdio.h>
-
-#include <libmp3splt/mp3splt.h>
-
 #include "preferences_manager.h"
-#include "player.h"
-#include "player_tab.h"
-#include "preferences_tab.h"
-#include "special_split.h"
-#include "combo_helper.h"
-#include "radio_helper.h"
 #include "ui_manager.h"
 
 extern GtkWidget *player_combo_box;
@@ -79,8 +63,6 @@ extern GtkWidget *output_label;
 extern GtkWidget *radio_output;
 extern GtkWidget *tags_radio;
 extern GtkWidget *tags_version_radio;
-
-extern splt_state *the_state;
 
 extern GtkWidget *replace_underscore_by_space_check_box;
 extern GtkComboBox *artist_text_properties_combo;
@@ -319,18 +301,16 @@ void load_preferences()
 
   // If outputdirectory_get()!=NULL the path where to output the split file
   // to has been set from command line
-  if(outputdirectory_get()==NULL)
+  if (outputdirectory_get() == NULL)
   {
     // No output_path from command-line => get the path from the preferences
     gchar *save_path = g_key_file_get_string(key_file, "split", "save_path", NULL);
+    if (save_path != NULL)
     {
-      if (save_path != NULL)
-      {
-        outputdirectory_set(save_path);
-      }
-      g_free(save_path);
-      save_path = NULL;
+      set_output_directory(save_path);
     }
+    g_free(save_path);
+    save_path = NULL;
   }
 
   //player

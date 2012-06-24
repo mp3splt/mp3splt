@@ -35,8 +35,6 @@
  * this file contains the code for the combo helpers.
  ********************************************************/
 
-#include <string.h>
-
 #include "combo_helper.h"
 
 GtkComboBox *ch_new_combo()

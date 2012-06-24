@@ -35,8 +35,11 @@
  *
  *********************************************************/
 
-#ifndef _PREFERENCES_TAB_H
-#define _PREFERENCES_TAB_H
+#ifndef PREFERENCES_TAB_H
+
+#define PREFERENCES_TAB_H
+
+#include "ui_manager.h"
 
 #define NUMBER_OF_TAGS_MODES 4
 
@@ -65,9 +68,10 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data);
 GtkWidget *create_choose_player_combo();
 GtkWidget *create_pref_player_page();
 GtkWidget *create_choose_preferences();
-void outputdirectory_set(gchar *dirname);
+void set_output_directory(gchar *dirname);
 gchar *outputdirectory_get();
 
 void refresh_preview_drawing_areas();
 
 #endif
+

@@ -39,12 +39,7 @@
  * player
  ********************************************************/
 
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <time.h>
-#include <unistd.h>
-#include <string.h>
+#include "xmms_control.h"
 
 #ifndef NO_AUDACIOUS
 #include <audacious/audctrl.h>
@@ -53,8 +48,6 @@
 DBusGProxy *dbus_proxy = NULL;
 static DBusGConnection *dbus_connection = NULL;
 #endif
-
-#include "player.h"
 
 #ifndef NO_AUDACIOUS
 //!Acquires informations about the song

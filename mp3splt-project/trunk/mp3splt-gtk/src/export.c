@@ -35,17 +35,7 @@
  * splitpoints as a Cue sheet.
  *********************************************************/
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
 #include "export.h"
-#include "main_win.h"
-#include "player_tab.h"
-#include "tree_tab.h"
-#include "ui_manager.h"
-#include "widgets_helper.h"
 
 extern ui_state *ui;
 

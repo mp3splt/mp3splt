@@ -34,13 +34,7 @@
  * The messages history dialog
  *********************************************************/
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-
-#include <libmp3splt/mp3splt.h>
-
-#include "main_win.h"
-#include "widgets_helper.h"
+#include "messages.h"
 
 GtkWidget *mess_history_dialog = NULL;
 GtkTextBuffer *mess_hist_buffer = NULL;
@@ -50,9 +44,7 @@ gint debug_is_active = FALSE;
 
 void create_mess_history_dialog();
 
-extern splt_state *the_state;
 //! Returns the current local time in form of a string
-
 const char *get_current_time()
 {
   time_t cur_time = { 0 };

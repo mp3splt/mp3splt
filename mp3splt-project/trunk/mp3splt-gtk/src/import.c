@@ -37,22 +37,8 @@
  * cddb, cue or similar files.
  *********************************************************/
 
-#include <string.h>
-
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-
-#include "player_tab.h"
-#include "main_win.h"
-#include "freedb_tab.h"
 #include "import.h"
-#include "options_manager.h"
-#include "mp3splt-gtk.h"
-#include "utilities.h"
-#include "ui_manager.h"
-#include "widgets_helper.h"
 
-extern splt_state *the_state;
 extern ui_state *ui;
 
 static void set_import_filters(GtkFileChooser *chooser);
@@ -83,10 +69,9 @@ void import_event(GtkWidget *widget, gpointer *data)
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    gchar *filename =
-      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
  
-    handle_import(filename);
+    import_file(filename);
 
     g_free(filename);
     filename = NULL;
@@ -101,7 +86,7 @@ void import_event(GtkWidget *widget, gpointer *data)
  
   The file type is determined by the extension of the file.
  */
-void handle_import(gchar *filename)
+void import_file(gchar *filename)
 {
   if (filename == NULL)
   {
@@ -202,13 +187,13 @@ static gpointer add_audacity_labels_splitpoints(gpointer data)
   gchar *filename = data;
 
   gint err = SPLT_OK;
-  mp3splt_put_audacity_labels_splitpoints_from_file(the_state, filename, &err);
+  mp3splt_put_audacity_labels_splitpoints_from_file(ui->mp3splt_state, filename, &err);
  
   enter_threads();
  
   if (err >= 0)
   {
-    update_splitpoints_from_the_state();
+    update_splitpoints_from_mp3splt_state();
   }
  
   print_status_bar_confirmation(err);
@@ -230,13 +215,13 @@ static gpointer add_cddb_splitpoints(gpointer data)
   gchar *filename = data;
 
   gint err = SPLT_OK;
-  mp3splt_put_cddb_splitpoints_from_file(the_state, filename, &err);
+  mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, &err);
 
   enter_threads();
  
   if (err >= 0)
   {
-    update_splitpoints_from_the_state();
+    update_splitpoints_from_mp3splt_state();
   }
   print_status_bar_confirmation(err);
 
@@ -257,22 +242,22 @@ static gpointer add_cue_splitpoints(gpointer data)
   gchar *filename = data;
 
   gint err = SPLT_OK;
-  mp3splt_set_filename_to_split(the_state, NULL);
-  mp3splt_put_cue_splitpoints_from_file(the_state, filename, &err);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
+  mp3splt_put_cue_splitpoints_from_file(ui->mp3splt_state, filename, &err);
  
   enter_threads();
  
   if (err >= 0)
   {
-    update_splitpoints_from_the_state();
+    update_splitpoints_from_mp3splt_state();
   }
   print_status_bar_confirmation(err);
 
   // The cue file has provided libmp3splt with a input filename.
   // But since we use the filename from the gui instead we need to set
   // the value the gui uses, too, which we do in the next line.
-  char *filename_to_split = mp3splt_get_filename_to_split(the_state);
-  if (is_filee(filename_to_split))
+  char *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
+  if (file_exists(filename_to_split))
   {
     inputfilename_set(filename_to_split);
   }

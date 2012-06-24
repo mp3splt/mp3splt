@@ -31,7 +31,7 @@
 
 #ifndef WIDGETS_HELPER_H
 
-#include <gtk/gtk.h>
+#define WIDGETS_HELPER_H
 
 #include "ui_manager.h"
 
@@ -81,6 +81,5 @@ GtkWidget *wh_hscale_new(GtkAdjustment *adjustment);
 GtkWidget *wh_hscale_new_with_range(gdouble min, gdouble max, gdouble step);
 void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *state);
 
-#define WIDGETS_HELPER_H
 #endif
 

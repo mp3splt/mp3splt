@@ -31,7 +31,9 @@
 
 #ifndef DRAWING_HELPER_H
 
-#include <gtk/gtk.h>
+#define DRAWING_HELPER_H
+
+#include "ui_manager.h"
 
 void dh_set_color(cairo_t *cairo, GdkColor *color);
 void dh_set_white_color(cairo_t *cairo_surface);
@@ -52,6 +54,5 @@ void dh_draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
 void dh_draw_line_with_width(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
     gboolean line_is_dashed, gboolean stroke, double line_width);
 
-#define DRAWING_HELPER_H
 #endif
 

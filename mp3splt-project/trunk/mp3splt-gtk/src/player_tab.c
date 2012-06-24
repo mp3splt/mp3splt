@@ -36,31 +36,7 @@
  * this file is used for the player control tab
  **********************************************************/
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <string.h>
-#include <libmp3splt/mp3splt.h>
-#include <unistd.h>
-#include <math.h>
-
-#ifdef __WIN32__
-#include <winsock2.h>
-#define usleep(x) Sleep(x/1000)
-#endif
-
-#include "util.h"
-#include "tree_tab.h"
-#include "player.h"
 #include "player_tab.h"
-#include "main_win.h"
-#include "snackamp_control.h"
-#include "utilities.h"
-#include "split_files.h"
-#include "mp3splt-gtk.h"
-#include "ui_manager.h"
-#include "widgets_helper.h"
-#include "douglas_peucker.h"
-#include "drawing_helper.h"
 
 #define DRAWING_AREA_WIDTH 400
 #define DRAWING_AREA_HEIGHT 123 
@@ -109,7 +85,6 @@ const gint fourty_minutes_time = 40 * 6000;
 
 extern GtkWidget *names_from_filename;
 
-extern splt_state *the_state;
 extern gint preview_start_position;
 extern gint preview_start_splitpoint;
 extern GtkWidget *browse_cddb_button;
@@ -194,7 +169,6 @@ GtkWidget *playlist_handle_window;
 
 extern gint file_browsed;
 extern gint selected_player;
-extern GArray *splitpoints;
 extern gint splitnumber;
 
 //total time of the current song
@@ -235,7 +209,6 @@ extern gint quick_preview_end_splitpoint;
 gint timeout_value = DEFAULT_TIMEOUT_VALUE;
 
 gint splitpoint_to_move = -1;
-//the splitpoints to move on the zoom progress bar
 gboolean move_splitpoints = FALSE;
 gboolean remove_splitpoints = FALSE;
 gboolean select_splitpoints = FALSE;
@@ -455,18 +428,18 @@ gpointer detect_silence(gpointer data)
 
   exit_threads();
 
-  mp3splt_set_int_option(the_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
-  mp3splt_set_filename_to_split(the_state, filename_to_split);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, filename_to_split);
 
-  mp3splt_set_silence_level_function(the_state, get_silence_level, NULL);
+  mp3splt_set_silence_level_function(ui->mp3splt_state, get_silence_level, NULL);
   we_are_splitting = TRUE;
   we_scan_for_silence = TRUE;
 
-  mp3splt_set_silence_points(the_state, &err);
+  mp3splt_set_silence_points(ui->mp3splt_state, &err);
 
   we_scan_for_silence = FALSE;
   we_are_splitting = FALSE;
-  mp3splt_set_silence_level_function(the_state, NULL, NULL);
+  mp3splt_set_silence_level_function(ui->mp3splt_state, NULL, NULL);
 
   enter_threads();
 
@@ -862,7 +835,7 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   }
 
   const gchar *fname = inputfilename_get();
-  if (is_filee(fname))
+  if (file_exists(fname))
   {
     file_in_entry = TRUE;
     gtk_widget_set_sensitive(play_button, TRUE);
@@ -1245,8 +1218,7 @@ void check_update_down_progress_bar()
     return;
   }
 
-  //if we are between 2 splitpoints,
-  //we draw yellow rectangle
+  //draw yellow rectangle
   gfloat total_interval = 0;
   gfloat progress_time = 0;
   gint splitpoint_time_left = -1;
@@ -1574,8 +1546,7 @@ void change_progress_bar()
   gtk_adjustment_set_value(GTK_ADJUSTMENT(progress_adj), adj_position);
 
   current_time = get_elapsed_time();
-  //check if the current time is between the preview
-  //splitpoints, we cancel the preview
+
   gint stop_splitpoint = get_splitpoint_time(quick_preview_end_splitpoint);
   gint start_splitpoint = get_splitpoint_time(preview_start_splitpoint);
   if ((stop_splitpoint < (gint)(current_time-150)) ||
@@ -1902,7 +1873,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
 {
   int m = margin - 1;
   GdkColor color;
-  Split_point point = g_array_index(splitpoints, Split_point, number_splitpoint);
+  Split_point point = g_array_index(ui->splitpoints, Split_point, number_splitpoint);
   gboolean splitpoint_checked = point.checked;
   
   //top color
@@ -2313,7 +2284,7 @@ static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface)
   gint i = 0;
   for (i = 0; i < splitnumber - 1; i++ )
   {
-    Split_point point = g_array_index(splitpoints, Split_point, i);
+    Split_point point = g_array_index(ui->splitpoints, Split_point, i);
     if (!point.checked)
     {
       gint left_time = get_splitpoint_time(i);
@@ -2635,24 +2606,19 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       gint move_pixel = 
         convert_time_to_pixels(width_drawing_area, move_time, current_time, total_time, zoom_coeff);
 
-      //if we move the splitpoints
       if (move_splitpoints)
       {
         draw_motif_splitpoints(da, gc, move_pixel,TRUE, move_time,
             TRUE, splitpoint_to_move);
 
-        //we set default black color
         color.red = 0;color.green = 0;color.blue = 0;
-        //set the color for the graphic context
         dh_set_color(gc, &color);
 
         get_time_for_drawing(str, current_time, FALSE, &nbr_chars);
         dh_draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
       }
       else
-      //we move the time
       {
-        //we set the red color
         color.red = 255 * 255;color.green = 0;color.blue = 0;
         dh_set_color(gc, &color);
 
@@ -2712,7 +2678,6 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       dh_draw_line(gc, width_drawing_area/2,text_ypos + margin, width_drawing_area/2, wave_ypos, FALSE, TRUE);
     }
 
-    //we draw the splitpoints
     draw_splitpoints(left_mark, right_mark, da, gc);
   }
   else
@@ -2960,7 +2925,6 @@ gboolean da_press_event (GtkWidget    *da,
           (button_y < progress_ylimit + margin + real_move_split_length))
       {
         splitpoint_to_move = get_splitpoint_clicked(button_y,1, 2);
-        //if we have found splitpoints
         if (splitpoint_to_move != -1)
         {
           move_splitpoints = TRUE;
@@ -2972,10 +2936,8 @@ gboolean da_press_event (GtkWidget    *da,
         if ((button_y > margin) && (button_y < margin + real_erase_split_length))
         {
           gint splitpoint_selected;
-          //TRUE means remove splitpoint area
           splitpoint_selected = get_splitpoint_clicked(button_y, 1, 1);
 
-          //if we have found a splitpoint to select
           if (splitpoint_selected != -1)
           {
             select_splitpoints = TRUE;
@@ -3157,10 +3119,8 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
 
     if (state)
     {
-      //we push left button
       if (button1_pressed)
       {
-        //if we move the splitpoints
         if (move_splitpoints)
         {
           gdouble splitpoint_time = get_splitpoint_time(splitpoint_to_move);
@@ -3179,7 +3139,7 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
               pixels_to_time(width_drawing_area,(x - button_x));
           }
         }
-        //if too left or too right
+
         if (move_time < 0)
         {
           move_time = 0;
@@ -3188,6 +3148,7 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
         {
           move_time = total_time;
         }
+
         refresh_drawing_area();
       }
       else
@@ -3359,7 +3320,7 @@ GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
 //!add a row to the table
 void add_playlist_file(const gchar *name)
 {
-  if (is_filee(name))
+  if (file_exists(name))
   {
     //check if the name already exists in the playlist
     gboolean name_already_exists_in_playlist = FALSE;
@@ -4001,14 +3962,14 @@ gpointer fix_ogg_stream(gpointer data)
 
   gint err = 0;
 
-  mp3splt_erase_all_splitpoints(the_state,&err);
+  mp3splt_erase_all_splitpoints(ui->mp3splt_state,&err);
   
-  mp3splt_append_splitpoint(the_state, 0, NULL, SPLT_SPLITPOINT);
-  mp3splt_append_splitpoint(the_state, LONG_MAX-1, NULL, SPLT_SKIPPOINT);
+  mp3splt_append_splitpoint(ui->mp3splt_state, 0, NULL, SPLT_SPLITPOINT);
+  mp3splt_append_splitpoint(ui->mp3splt_state, LONG_MAX-1, NULL, SPLT_SKIPPOINT);
  
-  mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
                          SPLT_OUTPUT_DEFAULT);
-  mp3splt_set_int_option(the_state, SPLT_OPT_SPLIT_MODE,
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,
                          SPLT_OPTION_NORMAL_MODE);
  
   enter_threads();
@@ -4019,9 +3980,9 @@ gpointer fix_ogg_stream(gpointer data)
   exit_threads();
   
   gint confirmation = SPLT_OK;
-  mp3splt_set_path_of_split(the_state,filename_path_of_split);
-  mp3splt_set_filename_to_split(the_state,filename_to_split);
-  confirmation = mp3splt_split(the_state);
+  mp3splt_set_path_of_split(ui->mp3splt_state,filename_path_of_split);
+  mp3splt_set_filename_to_split(ui->mp3splt_state,filename_to_split);
+  confirmation = mp3splt_split(ui->mp3splt_state);
   
   enter_threads();
 

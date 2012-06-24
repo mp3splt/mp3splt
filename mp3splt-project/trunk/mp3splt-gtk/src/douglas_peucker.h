@@ -28,11 +28,10 @@
  *
  *********************************************************/
 
-#ifndef _DOUGLAS_PEUCKER_H
-#define _DOUGLAS_PEUCKER_H
+#ifndef DOUGLAS_PEUCKER_H
+#define DOUGLAS_PEUCKER_H
 
-#include <glib.h>
-#include <gtk/gtk.h>
+#include "ui_manager.h"
 
 typedef struct {
   gdouble distance;

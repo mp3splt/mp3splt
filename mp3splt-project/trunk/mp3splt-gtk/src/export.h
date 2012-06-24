@@ -29,10 +29,13 @@
  *
  *********************************************************/
 
-#ifndef _EXPORT_H
-#define _EXPORT_H
-#include <gtk/gtk.h>
+#ifndef EXPORT_H
+#define EXPORT_H
+
+#include "ui_manager.h"
 
 void export_file(const gchar* filename);
 void ChooseCueExportFile(GtkWidget *widget, gpointer data);
+
 #endif
+

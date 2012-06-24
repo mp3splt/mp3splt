@@ -36,6 +36,10 @@
 
 #ifndef MULTIPLE_FILES_H
 
+#define MULTIPLE_FILES_H
+
+#include "ui_manager.h"
+
 GtkWidget *create_multiple_files_component();
 
 enum {
@@ -44,7 +48,5 @@ enum {
   MULTIPLE_FILES_COLUMNS
 };
 
-
-#define MULTIPLE_FILES_H
 #endif
 

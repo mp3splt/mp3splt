@@ -34,16 +34,15 @@
  * header of tree_tab.c
  * the tree_tab.c file is used for the Splitpoints tab
  * (for the splitpoints table)
- *
  *********************************************************/
 
-#ifndef _TREE_TAB_H
-#define _TREE_TAB_H
+#ifndef TREE_TAB_H
 
-#include "util.h"
+#define TREE_TAB_H
 
-void add_splitpoint(Split_point my_split_point,
-                    gint old_index);
+#include "ui_manager.h"
+
+void add_splitpoint(Split_point my_split_point, gint old_index);
 gchar *get_splitpoint_name(gint index);
 gint get_first_splitpoint_selected();
 void select_splitpoint(gint index);
@@ -53,12 +52,9 @@ void update_splitpoint(gint index, Split_point new_point);
 void update_splitpoint_from_time(gint index, gdouble time);
 void update_splitpoint_check(gint index);
 void update_add_button();
-void update_minutes_from_spinner( GtkWidget *widget,
-                                  gpointer   data );
-void update_seconds_from_spinner( GtkWidget *widget,
-                                  gpointer   data );
-void update_hundr_secs_from_spinner( GtkWidget *widget,
-                                     gpointer   data );
+void update_minutes_from_spinner(GtkWidget *widget, gpointer data);
+void update_seconds_from_spinner(GtkWidget *widget, gpointer data);
+void update_hundr_secs_from_spinner(GtkWidget *widget, gpointer data);
 GtkTreeModel *create_model();
 void order_length_column(GtkTreeView *tree_view);
 gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
@@ -71,9 +67,7 @@ gboolean check_if_description_exists(gchar *descr,
 void exchange_elements_from_array(gint element_number1,
                                   gint element_number2);
 void row_selection_event();
-void exchange_rows_in_the_tree(gint i, 
-                               gint j,
-                               GtkTreeView *tree_view);
+void exchange_rows_in_the_tree(gint i, gint j, GtkTreeView *tree_view);
 void sort_tree(GtkTreeView *tree_view);
 void update_current_description(gchar *descr, gint number);
 void cell_edited_event (GtkCellRendererText *cell,
@@ -103,7 +97,7 @@ void handle_detached_event (GtkHandleBox *handlebox,
                             GtkWidget *widget,
                             gpointer data);
 GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view);
-void put_splitpoints_in_the_state(splt_state *state);
+void put_splitpoints_in_mp3splt_state(splt_state *state);
 GtkTreeView *create_tree_view();
 
 //!The enum telling which item is kept in which column of the splitpoint tree

@@ -32,8 +32,13 @@
  * Filename: split_files.h
  *
  * header of split_files.c
- *
  *********************************************************/
+
+#ifndef SPLIT_FILES_H
+
+#define SPLIT_FILES_H
+
+#include "ui_manager.h"
 
 GtkTreeModel *create_split_model();
 GtkTreeView *create_split_files_tree();
@@ -60,3 +65,6 @@ void handle_split_detached_event (GtkHandleBox *handlebox,
                                      gpointer data);
 GtkWidget *create_split_files();
 gchar *get_filename_from_split_files(gint number);
+
+#endif
+

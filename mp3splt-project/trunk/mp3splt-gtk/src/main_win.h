@@ -40,7 +40,7 @@
 
 #define MAIN_WIN_H
 
-#include <libmp3splt/mp3splt.h>
+#include "ui_manager.h"
 
 #ifdef __WIN32__
 #define PIXMAP_PATH ""
@@ -85,8 +85,8 @@ GtkWidget *create_menu_bar();
 GtkWidget *create_cool_button(gchar *stock_id, gchar *label_text,
     gint toggle_or_not);
 GtkWidget *create_main_vbox();
-void create_all();
-void print_status_bar_confirmation(gint confirmation);
+void create_main_window();
+void print_status_bar_confirmation(gint error);
 void cancel_button_event(GtkWidget *widget, gpointer data);
 void put_status_message(const gchar *text);
 

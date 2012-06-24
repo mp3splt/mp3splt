@@ -31,7 +31,9 @@
 
 #ifndef RADIO_HELPER_H
 
-#include <gtk/gtk.h>
+#define RADIO_HELPER_H
+
+#include "ui_manager.h"
 
 GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
     gint value,
@@ -40,6 +42,5 @@ GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
 gint rh_get_active_value(GtkWidget *radio_button);
 GtkWidget *rh_get_radio_from_value(GtkWidget *radio_button, gint value);
 
-#define RADIO_HELPER_H
 #endif
 

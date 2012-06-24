@@ -46,41 +46,9 @@
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
-#include <string.h>
-#include "export.h"
-
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <libmp3splt/mp3splt.h>
-#include <gdk/gdkkeysyms.h>
-
-#ifdef __WIN32__
-#include <windows.h>
-#include <shlwapi.h>
-#endif
-
-
-#include "util.h"
 #include "main_win.h"
-#include "mp3splt-gtk.h"
-#include "tree_tab.h"
-#include "utilities.h"
-#include "split_files.h"
-#include "preferences_tab.h"
-#include "freedb_tab.h"
-#include "special_split.h"
-#include "utilities.h"
-#include "player_tab.h"
-#include "player.h"
-#include "messages.h"
-#include "import.h"
-#include "preferences_manager.h"
-#include "player_tab.h"
-#include "widgets_helper.h"
 
-#include "ui_manager.h"
 //main window
-
 GtkWidget *window = NULL;
 
 //status bar
@@ -117,9 +85,7 @@ extern GtkWidget *mess_history_dialog;
 extern GtkWidget *da;
 extern GtkWidget *progress_bar;
 
-extern GArray *splitpoints;
 extern gint selected_id;
-extern splt_state *the_state;
 extern splt_freedb_results *search_results;
 extern GList *player_pref_list;
 extern GList *text_options_list;
@@ -146,7 +112,7 @@ void quit(GtkWidget *widget, gpointer   data)
   if (we_are_splitting)
   {
     gint err = SPLT_OK;
-    mp3splt_stop_split(the_state,&err);
+    mp3splt_stop_split(ui->mp3splt_state,&err);
     print_status_bar_confirmation(err);
 
     we_quit_main_program = TRUE;
@@ -161,7 +127,6 @@ void quit(GtkWidget *widget, gpointer   data)
 
   g_list_free(player_pref_list);
   g_list_free(text_options_list);
-  g_array_free(splitpoints, TRUE);
 
   if (silence_points)
   {
@@ -202,9 +167,9 @@ void main_window_drag_data_received(GtkWidget *window,
 
       remove_end_slash_n_r_from_filename(filename);
 
-      if (is_filee(filename))
+      if (file_exists(filename))
       {
-        handle_import(filename);
+        import_file(filename);
       }
 
       if (filename)
@@ -442,7 +407,7 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
 void cancel_button_event(GtkWidget *widget, gpointer data)
 {
   gint err = SPLT_OK;
-  mp3splt_stop_split(the_state,&err);
+  mp3splt_stop_split(ui->mp3splt_state,&err);
   print_status_bar_confirmation(err);
   
   if (widget != NULL)
@@ -458,7 +423,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
   //if we are not splitting
   if (!we_are_splitting)
   {
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
         SPLT_OUTPUT_DEFAULT);
 
     gint err = SPLT_OK;
@@ -466,12 +431,12 @@ void split_button_event(GtkWidget *widget, gpointer data)
     put_options_from_preferences();
 
     //output format
-    if (mp3splt_get_int_option(the_state, SPLT_OPT_SPLIT_MODE,&err)
+    if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err)
         != SPLT_OPTION_NORMAL_MODE)
     {
       if (!get_checked_output_radio_box())
       {
-        mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
             SPLT_OUTPUT_FORMAT);
       }
     }
@@ -1044,7 +1009,7 @@ static void move_and_resize_main_window()
   gtk_window_resize(GTK_WINDOW(window), main_win->width, main_win->height);
 }
 
-void create_all()
+void create_main_window()
 {
 #ifdef __WIN32__
   set_language();
@@ -1080,13 +1045,13 @@ void create_all()
 
   \param The error number from the library.
  */
-void print_status_bar_confirmation(gint confirmation)
+void print_status_bar_confirmation(gint error)
 {
-  char *error_from_library = mp3splt_get_strerror(the_state, confirmation);
-  if (error_from_library != NULL)
-  {
-    put_status_message(error_from_library);
-    free(error_from_library);
-    error_from_library = NULL;
-  }
+  char *error_from_library = mp3splt_get_strerror(ui->mp3splt_state, error);
+  if (error_from_library == NULL) { return; }
+
+  put_status_message(error_from_library);
+  free(error_from_library);
+  error_from_library = NULL;
 }
+

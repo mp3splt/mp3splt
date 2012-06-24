@@ -37,20 +37,29 @@
  * contain a valid file- or directory name.
  ********************************************************/
 
-#include <gtk/gtk.h>
-#include <stdlib.h>
-#include <string.h>
-#include <libmp3splt/mp3splt.h>
-#include <glib.h>
-#include <glib/gi18n.h>
-#include <glib/gstdio.h>
+#include "utilities.h"
 
-#include "player.h"
-#include "preferences_tab.h"
-#include "main_win.h"
+/*!check if specified directory exists
+*/
+gint directory_exists(gchar *directory)
+{
+  if (directory == NULL)
+  {
+    return FALSE;
+  }
 
-//!check if the string passed as an argument points to a file
-gint is_filee(const gchar *fname)
+  struct stat buffer;
+  gint status = g_stat((gchar *)directory, &buffer);
+
+  if (status == 0 && S_ISDIR(buffer.st_mode) != 0)
+    return TRUE;
+
+  return FALSE;
+}
+
+/*! check if specified file exists
+*/
+gint file_exists(guchar *fname)
 {
   if (fname == NULL)
   {
@@ -58,60 +67,12 @@ gint is_filee(const gchar *fname)
   }
 
   struct stat buffer;
-  gint         status;
+  gint status = g_stat((gchar *)fname, &buffer);
 
-  status = g_stat(fname, &buffer);
-  if (status == 0)
-  {
-    //if it is a file
-    if (S_ISREG(buffer.st_mode) != 0)
-    {
-      return TRUE;
-    }
-    else
-    {
-      return FALSE;
-    }
-  }
-  else
-  {
-    return FALSE;
-  }
-}
-
-/*!check if a string points to a directory
-
-\todo why guchar?
-*/
-gint check_if_dir(guchar *fname)
-{
-  struct stat buffer;
-
-  g_stat((gchar *)fname, &buffer);
-
-  //if it is a directory
-  if (S_ISDIR(buffer.st_mode) != 0)
+  if (status == 0 && S_ISREG(buffer.st_mode) != 0)
     return TRUE;
-  else
-    return FALSE;
-}
 
-/*! check if a sting points to a file
-
-\todo
- - Why guchar ?
- - And what is the difference to is_filee?
-*/
-gint check_if_file(guchar *fname)
-{
-  struct stat buffer;
-
-  g_stat((gchar *)fname, &buffer);
-  //if it is a file
-  if (S_ISREG(buffer.st_mode) != 0)
-    return TRUE;
-  else
-    return FALSE;
+  return FALSE;
 }
 
 /*! Issues the message "Processing file <filename>" into the message bar
@@ -217,5 +178,4 @@ gchar *transform_to_utf8(gchar *text, gint free_or_not,
   
   return text;
 }
-
 

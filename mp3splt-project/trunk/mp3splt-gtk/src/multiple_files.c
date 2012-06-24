@@ -37,16 +37,8 @@
  * mode that currently allows only for batch processing.
  *********************************************************/
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <libmp3splt/mp3splt.h>
-
 #include "multiple_files.h"
-#include "main_win.h"
-#include "ui_manager.h"
-#include "widgets_helper.h"
 
-extern splt_state *the_state;
 extern ui_state *ui;
 
 GtkWidget *multiple_files_tree = NULL;
@@ -171,7 +163,7 @@ void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
         int err = SPLT_OK;
         int num_of_files_found = 0;
         char **splt_filenames =
-          mp3splt_find_filenames(the_state, filename, &num_of_files_found, &err);
+          mp3splt_find_filenames(ui->mp3splt_state, filename, &num_of_files_found, &err);
         
         if (splt_filenames)
         {

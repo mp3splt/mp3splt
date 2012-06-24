@@ -29,8 +29,13 @@
  *
  *********************************************************/
 
-#ifndef _IMPORT_H
-#define _IMPORT_H
+#ifndef IMPORT_H
+#define IMPORT_H
+
+#include "ui_manager.h"
+
 void import_event(GtkWidget *widget, gpointer *data);
-void handle_import(gchar *filename);
+void import_file(gchar *filename);
+
 #endif
+

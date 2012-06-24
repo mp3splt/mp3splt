@@ -31,6 +31,10 @@
 
 #ifndef SPECIAL_SPLIT_H
 
+#define SPECIAL_SPLIT_H
+
+#include "ui_manager.h"
+
 #define FILE_MODE_SINGLE 1
 #define FILE_MODE_MULTIPLE 0
 
@@ -51,6 +55,5 @@ void activate_silence_parameters();
 void split_mode_changed (GtkToggleButton *radio_b, gpointer data);
 GtkWidget *create_special_split_page();
 
-#define SPECIAL_SPLIT_H
 #endif
 
