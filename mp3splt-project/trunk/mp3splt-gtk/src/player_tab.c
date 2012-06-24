@@ -3676,6 +3676,8 @@ void player_key_actions_set_sensitivity(gboolean sensitivity)
   action_set_sensitivity("Player_pause", sensitivity);
   action_set_sensitivity("Player_forward", sensitivity);
   action_set_sensitivity("Player_backward", sensitivity);
+  action_set_sensitivity("Player_small_forward", sensitivity);
+  action_set_sensitivity("Player_small_backward", sensitivity);
   action_set_sensitivity("Player_big_forward", sensitivity);
   action_set_sensitivity("Player_big_backward", sensitivity);
   action_set_sensitivity("Player_next_splitpoint", sensitivity);
