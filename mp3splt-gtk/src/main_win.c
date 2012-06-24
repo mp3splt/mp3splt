@@ -578,14 +578,14 @@ void player_big_seek_backward_action(GtkWidget *widget, gpointer *data)
 
 void player_small_seek_forward_action(GtkWidget *widget, gpointer *data)
 {
-  gfloat new_time = current_time * 10 + 100 * 5 * 10;
+  gfloat new_time = current_time * 10 + 100 * 3 * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_jump(new_time);
 }
  
 void player_small_seek_backward_action(GtkWidget *widget, gpointer *data)
 {
-  gfloat new_time = current_time * 10 - 100 * 5 * 10;
+  gfloat new_time = current_time * 10 - 100 * 3 * 10;
   if (new_time <= 0) { new_time = 0; }
   player_jump(new_time);
 }
