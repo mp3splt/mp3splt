@@ -36,6 +36,12 @@
  *
  *********************************************************/
 
+#ifndef FREEDB_TAB_H
+
+#define FREEDB_TAB_H
+
+#include "ui_manager.h"
+
 void add_freedb_row(gchar *album_name, 
                     gint album_id,
                     gint *revisions,
@@ -54,7 +60,6 @@ void remove_all_freedb_rows ();
 gchar *transform_to_utf8(gchar *text, 
                          gint free_or_not,
                          gint *must_be_freed);
-void freedb_search();
 void freedb_search_button_event( GtkWidget *widget,
                                  gpointer   data );
 void freedb_entry_activate_event (GtkEntry *entry,
@@ -63,10 +68,12 @@ gint write_freedbfile_and_get_splitpoints(int *err);
 void get_secs_mins_hundr(gfloat time,
                          gint *mins,gint *secs, 
                          gint *hundr);
-void update_splitpoints_from_the_state();
+void update_splitpoints_from_mp3splt_state();
 void freedb_add_button_clicked_event(GtkButton *button,
                                      gpointer data);
 GtkWidget *create_freedb_frame();
 
 void hide_freedb_spinner();
+
+#endif
 

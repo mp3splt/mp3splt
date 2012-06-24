@@ -31,7 +31,7 @@
 
 #ifndef COMBO_HELPER_H
 
-#include <gtk/gtk.h>
+#include "ui_manager.h"
 
 GtkComboBox *ch_new_combo();
 void ch_append_to_combo(GtkComboBox *combo, const gchar *text, gint value);

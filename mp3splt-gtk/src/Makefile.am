@@ -33,7 +33,6 @@ mp3splt_gtk_SOURCES = \
 	snackamp_control.c snackamp_control.h \
 	special_split.c special_split.h\
 	mp3splt-gtk.c mp3splt-gtk.h \
-	util.h \
 	multiple_files.c multiple_files.h \
 	messages.c messages.h \
 	import.c import.h \
@@ -45,8 +44,8 @@ mp3splt_gtk_SOURCES = \
 	radio_helper.c radio_helper.h \
 	export.c export.h \
 	ui_manager.c ui_manager.h \
-	dialog_helper.c dialog_helper.h \
-  douglas_peucker.c douglas_peucker.h
+  douglas_peucker.c douglas_peucker.h \
+  libmp3splt_manager.c libmp3splt_manager.h
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 

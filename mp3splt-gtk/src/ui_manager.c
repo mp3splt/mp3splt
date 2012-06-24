@@ -28,9 +28,10 @@
  *
  *********************************************************/
 
-#include <gtk/gtk.h>
-
 #include "ui_manager.h"
+
+static void ui_main_window_free(ui_main_window **main_win);
+static void ui_infos_free(ui_infos **infos);
 
 void ui_set_browser_directory(ui_state *ui, const gchar *directory)
 {
@@ -111,43 +112,33 @@ ui_state *ui_state_new()
   ui_infos_new(ui);
   ui->preferences = pm_state_new();
 
+  gint error = SPLT_OK;
+  ui->mp3splt_state = mp3splt_new_state(&error);
+  if (error < 0)
+  {
+    ui_fail(ui, "mp3splt state initialization failed\n", NULL);
+  }
+
+  ui->splitpoints = g_array_new(FALSE, FALSE, sizeof(Split_point));
+
   return ui;
-}
-
-static void ui_main_window_free(ui_main_window **main_win)
-
-{
-  if (!main_win || !*main_win)
-  {
-    return;
-  }
-
-  g_free(*main_win);
-  *main_win = NULL;
-}
-
-static void ui_infos_free(ui_infos **infos)
-{
-  if (!infos || !*infos)
-  {
-    return;
-  }
-
-  ui_main_window_free(&(*infos)->main_win);
-
-  g_free(*infos);
-  *infos = NULL;
 }
 
 void ui_state_free(ui_state *ui)
 {
-  if (ui)
-  {
-    ui_infos_free(&ui->infos);
-    pm_free(&ui->preferences);
+  if (!ui) { return; }
 
-    g_free(ui);
+  ui_infos_free(&ui->infos);
+  pm_free(&ui->preferences);
+
+  if (ui->mp3splt_state)
+  {
+    mp3splt_free_state(ui->mp3splt_state, NULL);
   }
+
+  g_array_free(ui->splitpoints, TRUE);
+
+  g_free(ui);
 }
 
 void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
@@ -181,5 +172,49 @@ void ui_save_preferences(GKeyFile *key_file, ui_state *ui)
 void ui_write_default_preferences(GKeyFile *key_file, ui_state *ui)
 {
   pm_write_default(key_file, ui->preferences);
+}
+
+void ui_fail(ui_state *ui, const gchar *message, ...)
+{
+  if (message != NULL)
+  {
+    gchar formatted_message[1024] = { '\0' };
+
+    va_list ap;
+    va_start(ap, message);
+    g_vsnprintf(formatted_message, 1024, message, ap);
+    va_end(ap);
+
+    fprintf(stderr, formatted_message);
+    fflush(stderr);
+  }
+
+  ui_state_free(ui);
+
+  exit(1);
+}
+
+static void ui_main_window_free(ui_main_window **main_win)
+{
+  if (!main_win || !*main_win)
+  {
+    return;
+  }
+
+  g_free(*main_win);
+  *main_win = NULL;
+}
+
+static void ui_infos_free(ui_infos **infos)
+{
+  if (!infos || !*infos)
+  {
+    return;
+  }
+
+  ui_main_window_free(&(*infos)->main_win);
+
+  g_free(*infos);
+  *infos = NULL;
 }
 

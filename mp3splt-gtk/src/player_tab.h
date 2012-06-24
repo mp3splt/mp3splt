@@ -35,17 +35,18 @@
  *
  *********************************************************/
 
-#ifndef _PLAYER_TAB_H
-#define _PLAYER_TAB_H
+#ifndef PLAYER_TAB_H
+
+#define PLAYER_TAB_H
+
+#include "ui_manager.h"
 
 #define ICON_EXT ".svg"
 
 #define DEFAULT_TIMEOUT_VALUE 200
 #define DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD 4000
 
-//!time structure
-typedef struct
-{
+typedef struct {
   long time;
   float level;
 } silence_wave;
@@ -161,8 +162,6 @@ void draw_motif(GtkWidget *da,cairo_t *gc,
 void draw_marks(gint time_interval,
                 gint left_mark,gint right_mark,
                 gint ylimit, GtkWidget *da, cairo_t *gc);
-//motif for splitpoints
-//draw is false if we draw the splitpoint we move
 void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
                             gint x,gint draw,
                             gint current_point_hundr_secs,

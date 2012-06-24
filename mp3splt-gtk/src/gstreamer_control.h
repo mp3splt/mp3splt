@@ -37,6 +37,12 @@
  *
  *********************************************************/
 
+#ifndef GSTREAMER_CONTROL_H
+
+#define GSTREAMER_CONTROL_H
+
+#include "ui_manager.h"
+
 void gstreamer_get_song_infos(gchar *total_infos);
 gchar *gstreamer_get_filename();
 gint gstreamer_get_playlist_number();
@@ -60,4 +66,6 @@ void gstreamer_jump(gint position);
 gint gstreamer_get_total_time();
 gint gstreamer_is_playing();
 void gstreamer_quit();
+
+#endif
 

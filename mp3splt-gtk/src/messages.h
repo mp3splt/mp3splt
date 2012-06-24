@@ -40,7 +40,8 @@
 
 #define MESSAGES_H
 
-GtkWidget *create_mess_history_dialog();
+#include "ui_manager.h"
+
 void put_message_in_history(const gchar *message,
     splt_message_type mess_type);
 

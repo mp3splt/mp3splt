@@ -29,12 +29,14 @@
  *
  *********************************************************/
 
-/*!********************************************************
- * \file 
- *
- * this file contains the code for the widgets helpers.
- ********************************************************/
+#ifndef LIBMP3SPLT_MANAGER_H
 
-#include "dialog_helper.h"
+#define LIBMP3SPLT_MANAGER_H
 
+#include "ui_manager.h"
+
+void lmanager_init_and_find_plugins(ui_state *ui);
+void lmanager_put_split_filename(const char *filename,int progress_data);
+
+#endif
 

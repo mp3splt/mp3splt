@@ -39,13 +39,7 @@
  * snackamp
  **********************************************************/
 
-#include <glib.h>
-#include <stdio.h>
-
 #include "player.h"
-#include "snackamp_control.h"
-#include "xmms_control.h"
-#include "gstreamer_control.h"
 
 extern int selected_player;
 
@@ -437,7 +431,6 @@ void player_get_song_infos(gchar *total_infos)
     }
 }
 
-#include <stdio.h>
 //!returns TRUE if the player is playing, else FALSE
 gint player_is_playing()
 {

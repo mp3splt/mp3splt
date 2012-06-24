@@ -37,15 +37,7 @@
  * split modes can be selected
  *..*******************************************************/
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <libmp3splt/mp3splt.h>
-
 #include "special_split.h"
-#include "preferences_tab.h"
-#include "main_win.h"
-#include "multiple_files.h"
-#include "widgets_helper.h"
 
 GtkWidget *time_label = NULL;
 GtkWidget *spinner_time = NULL;

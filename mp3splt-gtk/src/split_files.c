@@ -37,19 +37,7 @@
  * window
  **********************************************************/
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <string.h>
-#include <glib.h>
-#include <glib/gstdio.h>
-
-#include "util.h"
-#include "player.h"
-#include "player_tab.h"
 #include "split_files.h"
-#include "utilities.h"
-#include "main_win.h"
-#include "widgets_helper.h"
 
 //!our split tree
 GtkWidget *split_tree;

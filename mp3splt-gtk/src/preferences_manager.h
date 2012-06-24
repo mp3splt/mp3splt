@@ -30,6 +30,10 @@
 
 #ifndef PREFERENCES_MANAGER_H
 
+#define PREFERENCES_MANAGER_H
+
+#include <gtk/gtk.h>
+
 typedef struct {
   gchar* main_key;
   gchar* second_key;
@@ -77,6 +81,5 @@ void pm_load(GKeyFile *key_file, preferences_state *pm);
 void pm_save(GKeyFile *key_file, preferences_state *pm);
 void pm_write_default(GKeyFile *key_file, preferences_state *pm);
 
-#define PREFERENCES_MANAGER_H
 #endif
 

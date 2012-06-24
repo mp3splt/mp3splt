@@ -37,33 +37,11 @@
  * the preferences can be chosen.
  ********************************************************/
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <glib/gstdio.h>
-#include <glib.h>
-#include <string.h>
-
-#include <libmp3splt/mp3splt.h>
-
 #include "preferences_tab.h"
-#include "player.h"
-#include "util.h"
-#include "player_tab.h"
-#include "main_win.h"
-#include "utilities.h"
-#include "widgets_helper.h"
-#include "combo_helper.h"
-#include "preferences_manager.h"
-#include "radio_helper.h"
-#include "options_manager.h"
-#include "ui_manager.h"
-#include "widgets_helper.h"
-#include "drawing_helper.h"
-#include "player_tab.h"
 
 /*! The name of the output directory.
 
-  Can be accessed by void outputdirectory_set() and 
+  Can be accessed by void set_output_directory() and 
   outputdirectory_get().
  */
 GString *outputdirname = NULL;
@@ -149,7 +127,6 @@ extern gdouble douglas_peucker_thresholds_defaults[];
 extern GtkWidget *player_box;
 extern GtkWidget *playlist_box;
 extern GtkWidget *queue_files_button;
-extern splt_state *the_state;
 extern gint selected_split_mode;
 extern gint split_file_mode;
 extern GtkWidget *spinner_time;
@@ -257,20 +234,20 @@ gint get_checked_tags_version_radio_box()
 }
 
 //! Set the name of the output directory
-void outputdirectory_set(gchar *dirname)
+void set_output_directory(gchar *dirname)
 {
-  if(dirname!=NULL)
-    {
-      // Free the old string before allocating memory for the new one
-      if(outputdirname!=NULL)g_string_free(outputdirname,TRUE);
-      outputdirname=g_string_new(dirname);
+  if (dirname == NULL)
+  {
+    return;
+  }
 
-      // Update the text in the gui field displaying the output 
-      // directory - if this field is already there and thus can 
-      // be updated.
-      if(directory_entry!=NULL)
-	gtk_entry_set_text(GTK_ENTRY(directory_entry), dirname);
-    }
+  if (outputdirname != NULL)
+  {
+    g_string_free(outputdirname,TRUE);
+  }
+  outputdirname = g_string_new(dirname);
+
+  gtk_entry_set_text(GTK_ENTRY(directory_entry), dirname);
 }
 
 /*! Get the name of the output directory
@@ -311,14 +288,14 @@ void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
   {
     gtk_widget_set_sensitive(GTK_WIDGET(output_entry), TRUE);
     gtk_widget_set_sensitive(GTK_WIDGET(output_label), TRUE);
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
         SPLT_OUTPUT_FORMAT);
   }
   else
   {
     gtk_widget_set_sensitive(GTK_WIDGET(output_entry), FALSE);
     gtk_widget_set_sensitive(GTK_WIDGET(output_label), FALSE);
-    mp3splt_set_int_option(the_state, SPLT_OPT_OUTPUT_FILENAMES,
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
         SPLT_OUTPUT_DEFAULT);
   }
 
@@ -379,11 +356,7 @@ GtkWidget *create_pref_language_page()
 //! Events for browse dir button
 void browse_dir_button_event(GtkWidget *widget, gpointer data)
 {
-  // file chooser
-  GtkWidget *dir_chooser;
-
-  //creates and shows the dialog
-  dir_chooser = gtk_file_chooser_dialog_new(_("Choose split directory"),
+  GtkWidget *dir_chooser = gtk_file_chooser_dialog_new(_("Choose split directory"),
       NULL,
       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
       GTK_STOCK_CANCEL,
@@ -396,18 +369,15 @@ void browse_dir_button_event(GtkWidget *widget, gpointer data)
 
   if (gtk_dialog_run(GTK_DIALOG(dir_chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    gchar *filename =
-      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dir_chooser));
+    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dir_chooser));
+    set_output_directory(filename);
 
-    outputdirectory_set(filename);
-
-    g_free (filename);
+    g_free(filename);
     filename = NULL;
 
     save_preferences(NULL, NULL);
   }
 
-  //destroys dialog
   gtk_widget_destroy(dir_chooser);
 }
 
@@ -515,8 +485,8 @@ void set_default_prefs_event(GtkWidget *widget, gpointer data)
 //!events for the "set current song directory"
 void song_dir_button_event(GtkWidget *widget, gpointer data)
 {
-    outputdirectory_set("");
-    save_preferences(NULL, NULL);
+  set_output_directory("");
+  save_preferences(NULL, NULL);
 }
 
 //!Creates the box the output directory can be choosen in
@@ -991,7 +961,7 @@ gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
   //we check if the output format is correct
   const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
   gint error = SPLT_OUTPUT_FORMAT_OK;
-  mp3splt_set_oformat(the_state, data, &error);
+  mp3splt_set_oformat(ui->mp3splt_state, data, &error);
   remove_status_message();
   print_status_bar_confirmation(error);
 
@@ -1138,10 +1108,10 @@ void test_regex_event(GtkWidget *widget, gpointer data)
 {
   put_tags_from_filename_regex_options();
   const gchar *test_regex_filename = gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry));
-  mp3splt_set_filename_to_split(the_state, test_regex_filename);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, test_regex_filename);
 
   gint error = SPLT_OK;
-  splt_tags *tags = mp3splt_parse_filename_regex(the_state, &error);
+  splt_tags *tags = mp3splt_parse_filename_regex(ui->mp3splt_state, &error);
   print_status_bar_confirmation(error);
 
   if (error >= 0)

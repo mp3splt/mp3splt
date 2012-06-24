@@ -37,6 +37,12 @@
  *
  *********************************************************/
 
+#ifndef PLAYER_H
+
+#define PLAYER_H
+
+#include "ui_manager.h"
+
 #define PLAYER_AUDACIOUS 1
 #define PLAYER_SNACKAMP 2
 #define PLAYER_GSTREAMER 3
@@ -65,3 +71,6 @@ gint player_get_volume();
 void player_set_volume(gint volume);
 gint player_get_playlist_number();
 gint player_quit();
+
+#endif
+

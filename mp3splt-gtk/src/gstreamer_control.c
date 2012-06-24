@@ -39,27 +39,12 @@
  + gstreamer player
  *********************************************************/
 
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <time.h>
-#include <unistd.h>
-#include <string.h>
-
 #ifndef NO_GSTREAMER
+
 #include <gst/gst.h>
 #include "gstreamer_control.h"
-#endif
-
-#include "player.h"
-#include "main_win.h"
-#include "utilities.h"
-#include "player_tab.h"
-#include "mp3splt-gtk.h"
 
 extern int selected_player;
-
-#ifndef NO_GSTREAMER
 
 const gchar *song_artist = NULL;
 const gchar *song_title = NULL;

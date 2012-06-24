@@ -37,28 +37,6 @@
  * player
  **********************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-#include <glib.h>
-#include <glib/gprintf.h>
-#include <string.h>
-#include <time.h>
-#include <ctype.h>
-#include <unistd.h>
-
-#ifdef __WIN32__
-#include <winsock2.h>
-#define usleep(x) Sleep(x*1000)
-#else
-#include <netdb.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#endif
-
-#include "player.h"
 #include "snackamp_control.h"
 
 //file descriptors for line buffering
