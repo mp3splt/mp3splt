@@ -44,6 +44,8 @@
 #include <gst/gst.h>
 #include "gstreamer_control.h"
 
+extern ui_state *ui;
+
 extern int selected_player;
 
 const gchar *song_artist = NULL;
@@ -53,8 +55,6 @@ gint rate = 0;
 GstElement *play = NULL;
 GstBus *bus = NULL;
 gint _gstreamer_is_running = FALSE;
-extern GtkWidget *playlist_box;
-extern GtkWidget *player_vbox;
 
 extern void add_playlist_file(const gchar *name);
 
@@ -263,7 +263,7 @@ The result must be g_free'd after use.
 */
 gchar *gstreamer_get_filename()
 {
-  return strdup(inputfilename_get());
+  return strdup(get_input_filename(ui->gui));
 }
 
 //!returns the number of songs of the playlist
@@ -374,10 +374,9 @@ void gstreamer_start()
 #endif
 
   play = gst_element_factory_make("playbin", "play");
-	//if we have started the player
   if (play)
   {
-    gtk_widget_show_all(playlist_box);
+    gtk_widget_show_all(ui->gui->playlist_box);
 
     _gstreamer_is_running = TRUE;
     bus = gst_pipeline_get_bus (GST_PIPELINE (play));
@@ -385,7 +384,7 @@ void gstreamer_start()
     gst_object_unref(bus);
 
     //add the current filename
-    const gchar *fname =  inputfilename_get();
+    const gchar *fname =  get_input_filename(ui->gui);
     GList *song_list = NULL;
     song_list = g_list_append(song_list, strdup(fname));
     gstreamer_add_files(song_list);

@@ -54,9 +54,6 @@ GtkWidget *status_bar;
 //if we are on the preferences tab, then TRUE
 gint preferences_tab = FALSE;
 
-//player box
-GtkWidget *player_box;
-
 //the split freedb button
 GtkWidget *split_freedb_button;
 
@@ -67,11 +64,7 @@ GtkWidget *percent_progress_bar;
 gchar *filename_to_split;
 gchar *filename_path_of_split;
 
-GtkWidget *player_vbox = NULL;
-
-//stop button to cancel the split
 GtkWidget *cancel_button = NULL;
-GtkActionGroup *action_group = NULL;
 
 extern GtkWidget *mess_history_dialog;
 
@@ -90,8 +83,6 @@ extern gint splitnumber;
 extern gfloat zoom_coeff;
 
 extern ui_state *ui;
-
-GtkWidget *playlist_box = NULL;
 
 void main_window_drag_data_received(GtkWidget *window,
     GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint
@@ -146,6 +137,42 @@ void main_window_drag_data_received(GtkWidget *window,
   }
 }
 
+//! Set the name of the input file
+void set_input_filename(const gchar *filename, gui_state *gui)
+{
+  if (filename == NULL)
+  {
+    return;
+  }
+
+  if (gui->input_filename != NULL)
+  {
+    g_string_free(gui->input_filename,TRUE);
+  }
+  gui->input_filename = g_string_new(filename);
+
+  if (gui->browse_entry != NULL)
+  {
+    gtk_entry_set_text(GTK_ENTRY(gui->browse_entry), filename);
+  }
+}
+
+/*! Get the name of the input file
+
+\return 
+ - The name of the input file, if set.
+ - "", otherwise.
+*/
+gchar* get_input_filename(gui_state *gui)
+{
+  if (gui->input_filename != NULL)
+  {
+    return gui->input_filename->str;
+  }
+
+  return "";
+}
+
 static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui_state *ui)
 {
   ui_set_main_win_position(ui, event->configure.x, event->configure.y); 
@@ -159,17 +186,18 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
 
 static void initialize_window(gui_state *gui)
 {
-  gui->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gui->window = window;
 
-  g_signal_connect(G_OBJECT(gui->window), "configure-event", G_CALLBACK(configure_window_callback), ui);
+  g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(configure_window_callback), ui);
 
-  gtk_window_set_title(GTK_WINDOW(gui->window), PACKAGE_NAME" "VERSION);
-  gtk_container_set_border_width(GTK_CONTAINER(gui->window), 0);
+  gtk_window_set_title(GTK_WINDOW(window), PACKAGE_NAME" "VERSION);
+  gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
-  g_signal_connect(G_OBJECT(gui->window), "delete_event", G_CALLBACK(exit_application), NULL);
-  g_signal_connect(G_OBJECT(gui->window), "drag-data-received",
+  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(exit_application), NULL);
+  g_signal_connect(G_OBJECT(window), "drag-data-received",
       G_CALLBACK(main_window_drag_data_received), NULL);
-  gtk_drag_dest_set(gui->window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
+  gtk_drag_dest_set(window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
       drop_types, 3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
  
   GString *imagefile = g_string_new("");
@@ -248,7 +276,7 @@ void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
 #endif
 }
 
-void about_window(GtkWidget *widget, gpointer *data)
+static void about_window(GtkWidget *widget, ui_state *ui)
 {
   GtkWidget *dialog = gtk_about_dialog_new();
 
@@ -370,7 +398,7 @@ void cancel_button_event(GtkWidget *widget, gpointer data)
 }
 
 //!event for the split button
-void split_button_event(GtkWidget *widget, gpointer data)
+static void split_button_event(GtkWidget *widget, ui_state *ui)
 {
   if (ui->status->splitting)
   {
@@ -396,7 +424,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
     }
   }
 
-  filename_to_split = inputfilename_get();
+  filename_to_split = get_input_filename(ui->gui);
 
   filename_path_of_split = outputdirectory_get();
 
@@ -413,7 +441,7 @@ void split_button_event(GtkWidget *widget, gpointer data)
 }
 
 //!creates the toolbar
-GtkWidget *create_toolbar()
+static GtkWidget *create_toolbar()
 {
   GtkWidget *box = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(box), 0);
@@ -428,25 +456,25 @@ GtkWidget *create_toolbar()
   gtk_container_set_border_width(GTK_CONTAINER(split_button), 0);
   gtk_button_set_relief(GTK_BUTTON(split_button), GTK_RELIEF_HALF);
 
-  g_signal_connect(G_OBJECT(split_button), "clicked", G_CALLBACK(split_button_event), NULL);
+  g_signal_connect(G_OBJECT(split_button), "clicked", G_CALLBACK(split_button_event), ui);
+
+  GtkWidget *hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(hbox), split_button, TRUE, FALSE, 0);
 
   GtkWidget *vbox = wh_vbox_new();
-  GtkWidget *hbox = wh_hbox_new();
-
-  gtk_box_pack_start(GTK_BOX(hbox), split_button, TRUE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
   return vbox;
 }
 
 //!event for the "messages history" button
-void show_messages_history_dialog(GtkWidget *widget, gpointer data)
+static void show_messages_history_dialog(GtkWidget *widget, ui_state *ui)
 {
   gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
 }
 
 #ifndef NO_GNOME
-void ShowHelp()
+static void ShowHelp(GtkWidget *widget, ui_state *ui)
 {
   GError* gerror = NULL;
   gtk_show_uri(gdk_screen_get_default(), "ghelp:mp3splt-gtk",  gtk_get_current_event_time(), &gerror);
@@ -458,55 +486,54 @@ static gchar *my_dgettext(const gchar *key, const gchar *domain)
   return dgettext("mp3splt-gtk", key);
 }
 
-void player_pause_action(GtkWidget *widget, gpointer *data)
+static void player_pause_action(GtkWidget *widget, ui_state *ui)
 {
-  pause_event(NULL, NULL);
+  pause_event(NULL, ui);
 }
  
-void player_seek_forward_action(GtkWidget *widget, gpointer *data)
+static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat new_time = current_time * 10 + 2./100. * total_time * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_jump(new_time);
 }
  
-void player_seek_backward_action(GtkWidget *widget, gpointer *data)
+static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat new_time = current_time * 10 - 2./100. * total_time * 10;
   if (new_time <= 0) { new_time = 0; }
   player_jump(new_time);
 }
 
-void player_big_seek_forward_action(GtkWidget *widget, gpointer *data)
+static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat new_time = current_time * 10 + 15./100. * total_time * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_jump(new_time);
 }
  
-void player_big_seek_backward_action(GtkWidget *widget, gpointer *data)
+static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat new_time = current_time * 10 - 15./100. * total_time * 10;
   if (new_time <= 0) { new_time = 0; }
   player_jump(new_time);
 }
 
-void player_small_seek_forward_action(GtkWidget *widget, gpointer *data)
+static void player_small_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat new_time = current_time * 10 + 100 * 3 * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_jump(new_time);
 }
  
-void player_small_seek_backward_action(GtkWidget *widget, gpointer *data)
+static void player_small_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat new_time = current_time * 10 - 100 * 3 * 10;
   if (new_time <= 0) { new_time = 0; }
   player_jump(new_time);
 }
 
-
-void player_seek_to_next_splitpoint_action(GtkWidget *widget, gpointer data)
+static void player_seek_to_next_splitpoint_action(GtkWidget *widget, ui_state *ui)
 {
   gint time_left = -1;
   gint time_right = -1;
@@ -518,7 +545,7 @@ void player_seek_to_next_splitpoint_action(GtkWidget *widget, gpointer data)
   }
 }
 
-void player_seek_to_previous_splitpoint_action(GtkWidget *widget, gpointer data)
+static void player_seek_to_previous_splitpoint_action(GtkWidget *widget, ui_state *ui)
 {
   gint time_left = -1;
   gint time_right = -1;
@@ -530,7 +557,7 @@ void player_seek_to_previous_splitpoint_action(GtkWidget *widget, gpointer data)
   }
 }
 
-void delete_closest_splitpoint(GtkWidget *widget, gpointer data)
+static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
 {
   gint left_index_point = -1;
   gint right_index_point = -1;
@@ -579,21 +606,21 @@ void delete_closest_splitpoint(GtkWidget *widget, gpointer data)
   }
 }
 
-void zoom_in(GtkWidget *widget, gpointer data)
+static void zoom_in(GtkWidget *widget, ui_state *ui)
 {
   gdouble fraction = 40./100. * zoom_coeff;
   zoom_coeff += fraction;
   adjust_zoom_coeff();
 }
 
-void zoom_out(GtkWidget *widget, gpointer data)
+static void zoom_out(GtkWidget *widget, ui_state *ui)
 {
   gdouble fraction = 40./100. * zoom_coeff;
   zoom_coeff -= fraction; 
   adjust_zoom_coeff();
 }
 
-gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, gpointer *data)
+static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui_state *ui)
 {
   if (event->type != GDK_KEY_PRESS) { return; }
 
@@ -605,28 +632,89 @@ gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, gpointer 
   switch (event->keyval)
   {
     case GDK_Left:
-      player_seek_backward_action(NULL, NULL);
+      player_seek_backward_action(NULL, ui);
       return TRUE;
     case GDK_Right:
-      player_seek_forward_action(NULL, NULL);
+      player_seek_forward_action(NULL, ui);
       return TRUE;
     default:
       return FALSE;
   }
 }
 
-//!creates the menu bar
-static GtkWidget *create_menu_bar()
+/*! \brief Events for browse button
+
+Also used for the cddb and cue browses.
+*/
+static void browse_button_event(GtkWidget *widget, ui_state *ui)
 {
-  GtkWidget *menu_box = wh_hbox_new();
-  
-  static GtkActionEntry const entries[] = {
-    //name, stock id,   label
+  if (GTK_IS_WIDGET(widget))
+  {
+    gtk_widget_set_sensitive(widget, FALSE);
+  }
+
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
+      NULL,
+      GTK_FILE_CHOOSER_ACTION_OPEN,
+      GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL,
+      GTK_STOCK_OPEN,
+      GTK_RESPONSE_ACCEPT,
+      NULL);
+
+  wh_set_browser_directory_handler(ui, file_chooser);
+
+  GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files (*.mp3 *.ogg)"));
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+
+  our_filter = (GtkWidget *)gtk_file_filter_new();
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files (*.mp3)"));
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+
+  our_filter = (GtkWidget *)gtk_file_filter_new();
+  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files (*.ogg)"));
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
+  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+
+  if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
+  {
+    gchar *filename =
+      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+
+    file_chooser_ok_event(filename);
+
+    if (filename)
+    {
+      g_free(filename);
+      filename = NULL;
+    }
+  }
+  else
+  {
+    file_chooser_cancel_event();
+  }
+
+  gtk_widget_destroy(file_chooser);
+  remove_status_message();
+}
+
+//!creates the menu bar
+static GtkWidget *create_menu_bar(ui_state *ui)
+{
+  static const GtkActionEntry entries[] = {
+    //name, stock id, label, accelerator, tooltip
     { "FileMenu", NULL, N_("_File"), NULL, NULL },
     { "PlayerMenu", NULL, N_("_Player"), NULL, NULL },
     { "HelpMenu", NULL, N_("_Help"), NULL, NULL },
 
-    //name, stock id, label, accelerator, tooltip
     { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
       G_CALLBACK(browse_button_event) },
 
@@ -726,7 +814,9 @@ static GtkWidget *create_menu_bar()
     "  </menubar>"
     "</ui>";
 
-  action_group = gtk_action_group_new("Actions");
+  GtkActionGroup *action_group = gtk_action_group_new("Actions");
+  ui->gui->action_group = action_group;
+
   gtk_action_group_set_translation_domain(action_group, "mp3splt-gtk");
   gtk_action_group_set_translate_func(action_group,
                   (GtkTranslateFunc)my_dgettext, NULL, NULL);
@@ -736,84 +826,87 @@ static GtkWidget *create_menu_bar()
   gtk_ui_manager_insert_action_group(uim, action_group, 0);
 
   g_signal_connect(G_OBJECT(ui->gui->window), "key_press_event",
-      G_CALLBACK(window_key_press_event), NULL);
+      G_CALLBACK(window_key_press_event), ui);
 
   gtk_window_add_accel_group(GTK_WINDOW(ui->gui->window), gtk_ui_manager_get_accel_group(uim));
   gtk_ui_manager_add_ui_from_string(uim, ui_info, -1, NULL);
  
+  GtkWidget *menu_box = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(menu_box), gtk_ui_manager_get_widget(uim, "/MenuBar"), FALSE, FALSE, 0);
-  
-  GtkWidget *toolbar = (GtkWidget *)create_toolbar();
-  gtk_box_pack_start(GTK_BOX(menu_box), toolbar, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(menu_box), create_toolbar(), TRUE, TRUE, 0);
  
-  player_key_actions_set_sensitivity(FALSE);
+  player_key_actions_set_sensitivity(FALSE, ui->gui);
 
   return menu_box;
 }
 
-//!main vbox
-GtkWidget *create_main_vbox()
+static GtkWidget *create_choose_file_frame(ui_state *ui)
 {
-  //big ain box contailning all with statusbar
-  GtkWidget *main_vbox;
-  //used for pages
-  GtkWidget *frame;
-  //the tree view
-  GtkTreeView *tree_view;
-  //the main window tabbed notebook
-  GtkWidget *notebook;
-  /* label for the notebook */
-  GtkWidget *notebook_label;
+  GtkWidget *hbox = wh_hbox_new();
 
-  /* main vertical box with statusbar */
-  main_vbox = wh_vbox_new();
-  gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 0);
+  GtkWidget *browse_entry = gtk_entry_new();
+  ui->gui->browse_entry = browse_entry;
 
-  frame = (GtkWidget *)create_choose_file_frame();
-  gtk_box_pack_start(GTK_BOX(main_vbox), frame, FALSE, FALSE, 0);
+  gtk_editable_set_editable(GTK_EDITABLE(browse_entry), FALSE);
+  gtk_box_pack_start(GTK_BOX(hbox), browse_entry, TRUE, TRUE, 4);
+  if (get_input_filename(ui->gui) != NULL)
+  {
+    gtk_entry_set_text(GTK_ENTRY(browse_entry), get_input_filename(ui->gui));
+  }
+
+  GtkWidget *browse_button = wh_create_cool_button(GTK_STOCK_OPEN, _("_Browse"), FALSE);
+  ui->gui->browse_button = browse_button;
+
+  g_signal_connect(G_OBJECT(browse_button), "clicked", G_CALLBACK(browse_button_event), ui);
+  gtk_box_pack_start(GTK_BOX(hbox), browse_button, FALSE, FALSE, 4);
+  gtk_widget_set_tooltip_text(browse_button, _("Select file"));
+ 
+  return hbox;
+}
+
+//!main vbox
+static GtkWidget *create_main_vbox(ui_state *ui)
+{
+  GtkWidget *main_vbox = wh_vbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER(main_vbox), 0);
+
+  gtk_box_pack_start(GTK_BOX(main_vbox), 
+      create_choose_file_frame(ui), FALSE, FALSE, 0);
 
   /* tabbed notebook */
-  notebook = gtk_notebook_new();
-  gtk_box_pack_start (GTK_BOX (main_vbox), notebook, TRUE, TRUE, 0);
+  GtkWidget *notebook = gtk_notebook_new();
+  gtk_box_pack_start(GTK_BOX(main_vbox), notebook, TRUE, TRUE, 0);
   gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
   gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);
   gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
-  
-  //creating the tree view
-  GtkWidget *splitpoints_vbox;
-  splitpoints_vbox = wh_vbox_new();
-  gtk_container_set_border_width (GTK_CONTAINER (splitpoints_vbox), 0);
-  tree_view = (GtkTreeView *)create_tree_view();
-  frame = (GtkWidget *)create_choose_splitpoints_frame(tree_view);
-  gtk_box_pack_start(GTK_BOX(splitpoints_vbox), frame, TRUE, TRUE, 0);
-  
+   
   /* player page */
-  player_vbox = wh_vbox_new();
-  notebook_label = gtk_label_new((gchar *)_("Player"));
-      
-  //player control frame
-  player_box = (GtkWidget *)create_player_control_frame(tree_view);
-  gtk_box_pack_start(GTK_BOX(player_vbox), player_box, FALSE, FALSE, 0);
+  GtkWidget *player_vbox = wh_vbox_new();
+  GtkWidget *notebook_label = gtk_label_new((gchar *)_("Player"));
 
-  //playlist control frame
-  playlist_box = (GtkWidget *)create_player_playlist_frame();
-  gtk_box_pack_start(GTK_BOX(player_vbox), playlist_box, TRUE, TRUE, 0);
+  ui->gui->player_box = create_player_control_frame();
+  gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->player_box, FALSE, FALSE, 0);
 
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox,
-      (GtkWidget *)notebook_label);
-      
+  ui->gui->playlist_box = (GtkWidget *)create_player_playlist_frame();
+  gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->playlist_box, TRUE, TRUE, 0);
+
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox, notebook_label);
+
   /* splitpoints page */
+  GtkWidget *splitpoints_vbox = wh_vbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER(splitpoints_vbox), 0);
+  gtk_box_pack_start(GTK_BOX(splitpoints_vbox), 
+      create_splitpoints_frame(ui), TRUE, TRUE, 0);
+ 
   notebook_label = gtk_label_new((gchar *)_("Splitpoints"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           splitpoints_vbox,
-                           (GtkWidget *)notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), splitpoints_vbox, notebook_label);
 
-  /* split files frame */
+  /* split files page */
   GtkWidget *split_files_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(split_files_vbox), 0);
   
-  frame = (GtkWidget *)create_split_files();
+  GtkWidget *frame = (GtkWidget *)create_split_files();
   gtk_box_pack_start(GTK_BOX(split_files_vbox), frame, TRUE, TRUE, 0);
 
   notebook_label = gtk_label_new((gchar *)_("Split files"));
@@ -885,13 +978,12 @@ GtkWidget *create_main_vbox()
   /* statusbar */
   status_bar = gtk_statusbar_new();
 
-  GtkWidget *mess_history_button =
-    wh_create_cool_button(GTK_STOCK_INFO, NULL, FALSE);
+  GtkWidget *mess_history_button = wh_create_cool_button(GTK_STOCK_INFO, NULL, FALSE);
   gtk_button_set_relief(GTK_BUTTON(mess_history_button), GTK_RELIEF_NONE);
   gtk_widget_set_tooltip_text(mess_history_button,_("Messages history"));
   gtk_box_pack_start(GTK_BOX(status_bar), mess_history_button, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(mess_history_button), "clicked",
-      G_CALLBACK(show_messages_history_dialog), NULL);
+      G_CALLBACK(show_messages_history_dialog), ui);
 
   gtk_box_pack_start(GTK_BOX(main_vbox), status_bar, FALSE, FALSE, 0);
 
@@ -924,11 +1016,8 @@ void create_application(ui_state *ui)
   GtkWidget *window_vbox = wh_vbox_new();
   gtk_container_add(GTK_CONTAINER(ui->gui->window), window_vbox);
 
-  GtkWidget *menu_bar = (GtkWidget *)create_menu_bar();
-  gtk_box_pack_start(GTK_BOX(window_vbox), menu_bar, FALSE, FALSE, 0);  
- 
-  GtkWidget *main_vbox = (GtkWidget *)create_main_vbox();
-  gtk_box_pack_start(GTK_BOX(window_vbox), main_vbox, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(window_vbox), create_menu_bar(ui), FALSE, FALSE, 0);  
+  gtk_box_pack_start(GTK_BOX(window_vbox), create_main_vbox(ui), TRUE, TRUE, 0);
  
   load_preferences();
 
@@ -938,7 +1027,7 @@ void create_application(ui_state *ui)
 
   if (selected_player != PLAYER_GSTREAMER)
   {
-    gtk_widget_hide(playlist_box);
+    gtk_widget_hide(ui->gui->playlist_box);
   }
 
   hide_freedb_spinner();

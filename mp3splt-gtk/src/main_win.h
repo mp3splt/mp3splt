@@ -70,18 +70,17 @@ static const GtkTargetEntry drop_types[] = {
   { "text/uri-list", 0, DROP_URI_LIST }
 };
 
-void about_window(GtkWidget *widget, gpointer *data);
 void remove_status_message();
 void put_status_message(const gchar *text);
 void put_status_message_with_type(const gchar *text,
     splt_message_type mess_type);
-void split_button_event();
-GtkWidget *create_toolbar();
-GtkWidget *create_main_vbox();
 void create_application();
 void print_status_bar_confirmation(gint error);
 void cancel_button_event(GtkWidget *widget, gpointer data);
 void put_status_message(const gchar *text);
+
+gchar* get_input_filename(gui_state *gui);
+void set_input_filename(const gchar *filename, gui_state *gui);
 
 #endif
 

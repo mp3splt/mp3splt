@@ -51,7 +51,7 @@ static gpointer add_cddb_splitpoints(gpointer data);
 static gpointer add_cue_splitpoints(gpointer data);
 
 //! What happens if the "Import" button is pressed
-void import_event(GtkWidget *widget, gpointer *data)
+void import_event(GtkWidget *widget, ui_state *ui)
 {
   GtkWidget *file_chooser =
     gtk_file_chooser_dialog_new(_("Choose file to import"),
@@ -259,7 +259,7 @@ static gpointer add_cue_splitpoints(gpointer data)
   char *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
   if (file_exists(filename_to_split))
   {
-    inputfilename_set(filename_to_split);
+    set_input_filename(filename_to_split, ui->gui);
   }
   
   exit_threads();

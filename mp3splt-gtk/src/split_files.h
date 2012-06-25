@@ -40,9 +40,8 @@
 
 #include "all_includes.h"
 
-GtkTreeModel *create_split_model();
 GtkTreeView *create_split_files_tree();
-void create_split_columns (GtkTreeView *tree_view);
+void create_split_columns (GtkTreeView *split_tree);
 void remove_all_split_rows ();
 guchar *get_real_naame(guchar *filename);
 void add_split_row(const gchar *name);
@@ -52,7 +51,7 @@ void queue_files_button_event( GtkWidget *widget,
 void remove_file_button_event(GtkWidget *widget,
                               gpointer data);
 GtkWidget *create_queue_buttons_hbox();
-void split_tree_row_activated (GtkTreeView *tree_view,
+void split_tree_row_activated (GtkTreeView *split_tree,
                                   GtkTreePath *arg1,
                                   GtkTreeViewColumn *arg2,
                                   gpointer data);

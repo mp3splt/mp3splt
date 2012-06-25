@@ -44,13 +44,6 @@
 
 gint silence_wave_number_of_points_threshold = DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD;
 
-//! The text box showing the filename of the current input file.
-GtkWidget *entry;
-//! The browse button
-GtkWidget *browse_button;
-//! The fix ogg stream button
-GtkWidget *fix_ogg_stream_button;
-
 //! Tells us if the file was browsed or not
 gint file_browsed = FALSE;
 gint file_in_entry = FALSE;
@@ -95,7 +88,6 @@ extern gchar *filename_path_of_split;
 extern guchar *get_real_name_from_filename(guchar *filename);
 extern GtkWidget *cancel_button;
 extern gint debug_is_active;
-extern GtkActionGroup *action_group;
 
 extern ui_state *ui;
 
@@ -211,7 +203,7 @@ gboolean check_splitpoint = FALSE;
 gint only_press_pause = FALSE;
 
 //our playlist tree
-GtkWidget *playlist_tree = NULL;
+GtkTreeView *playlist_tree = NULL;
 gint playlist_tree_number = 0;
 
 //drawing area variables
@@ -246,13 +238,6 @@ GtkWidget *PauseButton_active;
 GtkWidget *PauseButton_inactive;
 //@}
 
-/*! The storage for the name of the input file.
-
-Designed to be accessed using inputfilename_set() and
-inputfilename_get().
- */
-GString *inputfilename;
-
 //remove file button
 GtkWidget *playlist_remove_file_button;
 //remove file button
@@ -276,40 +261,6 @@ extern void copy_filename_to_current_description(const gchar *fname);
 
 static void draw_small_rectangle(gint time_left, gint time_right, 
     GdkColor color, cairo_t *cairo_surface);
-
-//! Set the name of the input file
-void inputfilename_set(const gchar *filename)
-{
-  // Paranoia test.
-  if(filename!=NULL)
-  {
-    // Free the old string before allocating memory for the new one
-    if(inputfilename!=NULL)g_string_free(inputfilename,TRUE);
-    inputfilename=g_string_new(filename);
-
-    // Update the text in the gui field displaying the output 
-    // directory - if this field is already there and thus can 
-    // be updated.
-    if(entry!=NULL)
-      gtk_entry_set_text(GTK_ENTRY(entry), filename);
-  }
-}
-
-/*! Get the name of the input file
-
-\return 
- - The name of the input file, if set.
- - "", otherwise.
-*/
-gchar* inputfilename_get()
-{
-  if(inputfilename!=NULL)
-    return(inputfilename->str);
-  else
-    return "";
-}
-
-
 
 //!function called from the library when scanning for the silence level
 void get_silence_level(long time, float level, void *user_data)
@@ -417,7 +368,7 @@ gpointer detect_silence(gpointer data)
   enter_threads();
 
   gtk_widget_set_sensitive(cancel_button, TRUE);
-  filename_to_split = inputfilename_get();
+  filename_to_split = get_input_filename(ui->gui);
 
   exit_threads();
 
@@ -473,10 +424,10 @@ wave if needed.
 */
 void change_current_filename(const gchar *fname)
 {
-  const gchar *old_fname = inputfilename_get();
+  const gchar *old_fname = get_input_filename(ui->gui);
   if (!old_fname)
   {
-    inputfilename_set(fname);
+    set_input_filename(fname, ui->gui);
     if (show_silence_wave)
     {
       scan_for_silence_wave();
@@ -486,9 +437,9 @@ void change_current_filename(const gchar *fname)
       copy_filename_to_current_description(fname);
     }
   }
-  else if (strcmp(old_fname,fname) != 0)
+  else if (strcmp(old_fname, fname) != 0)
   {
-    inputfilename_set(fname);
+    set_input_filename(fname, ui->gui);
     if (show_silence_wave)
     {
       scan_for_silence_wave();
@@ -538,8 +489,7 @@ void reset_song_name_label()
 //!clear song data and makes inactive progress bar
 void clear_data_player()
 {
-  //set browse button available
-  gtk_widget_set_sensitive(browse_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
 
   reset_song_name_label();
   reset_song_infos();
@@ -567,7 +517,7 @@ void enable_player_buttons()
   gtk_widget_set_sensitive(play_button, TRUE);
   gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
 
-  player_key_actions_set_sensitivity(TRUE);
+  player_key_actions_set_sensitivity(TRUE, ui->gui);
 }
 
 //!disables the buttons of the player
@@ -586,7 +536,7 @@ void disable_player_buttons()
   gtk_widget_set_sensitive(player_add_button, FALSE);
   gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
 
-  player_key_actions_set_sensitivity(FALSE);
+  player_key_actions_set_sensitivity(FALSE, ui->gui);
 }
 
 //! Switches between connect and disconnect button when connecting to player
@@ -680,10 +630,7 @@ void connect_with_song(const gchar *fname, gint start_playing)
  */
 void connect_to_player_with_song(gint i)
 {
-  const gchar *fname = fname = inputfilename_get();
-
-  //connect with the song fname
-  connect_with_song(fname,i);
+  connect_with_song(get_input_filename(ui->gui), i);
 }
 
 //!play button event
@@ -711,12 +658,10 @@ void connect_button_event(GtkWidget *widget, gpointer data)
   //1 means dont start playing
   connect_to_player_with_song(1);
 
-  //set browse button unavailable
   if (selected_player != PLAYER_GSTREAMER)
   {
-    gtk_widget_set_sensitive(browse_button, FALSE);
+    gtk_widget_set_sensitive(ui->gui->browse_button, FALSE);
   }
-  //!enable player buttons
   enable_player_buttons();
 
   file_browsed = FALSE;
@@ -813,11 +758,8 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   }
 
   clear_data_player();
-  //set browse button available
-  gtk_widget_set_sensitive(browse_button, TRUE);
-  //changes connect/disconnect buttons
+  gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
   disconnect_change_buttons();
-  //disable player buttons
   disable_player_buttons();
 
   //update bottom progress bar to 0 and ""
@@ -827,7 +769,7 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
     gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), "");
   }
 
-  const gchar *fname = inputfilename_get();
+  const gchar *fname = get_input_filename(ui->gui);
   if (file_exists(fname))
   {
     file_in_entry = TRUE;
@@ -864,10 +806,9 @@ void play_event (GtkWidget *widget, gpointer data)
     //connects to player with the song
     //0 means also start playing
     connect_to_player_with_song(0);
-    //set browse button unavailable
     if (selected_player != PLAYER_GSTREAMER)
     {
-      gtk_widget_set_sensitive(browse_button, FALSE);
+      gtk_widget_set_sensitive(ui->gui->browse_button, FALSE);
     }
   }
 
@@ -988,7 +929,7 @@ GtkWidget *create_volume_button()
 }
 
 //!creates the player buttons hbox
-GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
+static GtkWidget *create_player_buttons_hbox()
 {
   player_buttons_hbox = wh_hbox_new();
 
@@ -1085,13 +1026,12 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
   gtk_box_pack_start(GTK_BOX(player_buttons_hbox), vol_button, FALSE, FALSE, 5);
  
   //add button
-  player_add_button = (GtkWidget *)wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
+  player_add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
   //put the new button in the box
   gtk_box_pack_start (GTK_BOX(player_buttons_hbox), player_add_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(player_add_button), GTK_RELIEF_NONE);
   g_signal_connect(G_OBJECT(player_add_button), "clicked",
-                   G_CALLBACK(add_splitpoint_from_player),
-                   tree_view);
+                   G_CALLBACK(add_splitpoint_from_player), NULL);
   gtk_widget_set_sensitive(player_add_button, FALSE);
   gtk_widget_set_tooltip_text(player_add_button,_("Add splitpoint from player"));
   
@@ -1107,15 +1047,13 @@ GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view)
       _("Shows the amplitude level wave"));
 
   /* connect player button */
-  connect_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_CONNECT,_("_Connect"), FALSE);
+  connect_button = wh_create_cool_button(GTK_STOCK_CONNECT,_("_Connect"), FALSE);
   g_signal_connect(G_OBJECT(connect_button), "clicked",
       G_CALLBACK(connect_button_event), NULL);
   gtk_widget_set_tooltip_text(connect_button,_("Connect to player"));
   
   /* disconnect player button */
-  disconnect_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_DISCONNECT,_("_Disconnect"), FALSE);
+  disconnect_button = wh_create_cool_button(GTK_STOCK_DISCONNECT,_("_Disconnect"), FALSE);
   g_signal_connect(G_OBJECT (disconnect_button), "clicked",
       G_CALLBACK(disconnect_button_event), NULL);
   gtk_widget_set_tooltip_text(disconnect_button,_("Disconnect from player"));
@@ -1278,8 +1216,7 @@ void check_update_down_progress_bar()
     else
     {
       //TODO ugly code in 'fname' usage !
-      gchar *fname;
-      fname = inputfilename_get();
+      gchar *fname = get_input_filename(ui->gui);
       fname = (gchar *)get_real_name_from_filename((guchar *)fname);
       g_snprintf(description_shorted,60,"%s",fname);
       if (fname != NULL)
@@ -3237,7 +3174,7 @@ GtkWidget *create_drawing_area()
 }
 
 //!creates the control player frame, stop button, play button, etc.
-GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
+GtkWidget *create_player_control_frame()
 {
   //the vbox has hboxes in it
   GtkWidget *vbox;
@@ -3283,7 +3220,7 @@ GtkWidget *create_player_control_frame(GtkTreeView *tree_view)
   gtk_box_pack_start(GTK_BOX(vbox), drawing_area, FALSE, FALSE, 0);
 
   //our horizontal player button hbox
-  hbox = (GtkWidget *)create_player_buttons_hbox(tree_view);
+  hbox = (GtkWidget *)create_player_buttons_hbox();
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
@@ -3295,29 +3232,27 @@ void add_playlist_file(const gchar *name)
 {
   if (file_exists(name))
   {
-    //check if the name already exists in the playlist
     gboolean name_already_exists_in_playlist = FALSE;
 
-    GtkTreeIter iter;
-    GtkTreeModel *model;
-    GtkTreeView *tree_view = (GtkTreeView *)playlist_tree;
-
-    model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
+    GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
 
     gchar *filename = NULL;
+
+    GtkTreeIter iter;
+
     gint i = 0;
-    GtkTreePath *path = NULL;
-    //for all the files from the playlist,
     while (i < playlist_tree_number)
     {
-      path = gtk_tree_path_new_from_indices(i ,-1);
+      GtkTreePath *path = gtk_tree_path_new_from_indices(i ,-1);
       gtk_tree_model_get_iter(model, &iter, path);
       gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+
       if (strcmp(filename,name) == 0)
       {
         name_already_exists_in_playlist = TRUE;
         break;
       }
+
       g_free(filename);
       i++;
     }
@@ -3367,11 +3302,10 @@ void handle_playlist_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, 
 //!creates the model for the playlist
 GtkTreeModel *create_playlist_model()
 {
-  GtkListStore *model;
-
-  model = gtk_list_store_new(PLAYLIST_COLUMNS,
-                             G_TYPE_STRING,
-                             G_TYPE_STRING);
+  GtkListStore * model =
+    gtk_list_store_new(PLAYLIST_COLUMNS,
+        G_TYPE_STRING,
+        G_TYPE_STRING);
 
   return GTK_TREE_MODEL(model);
 }
@@ -3379,14 +3313,14 @@ GtkTreeModel *create_playlist_model()
 //!creates the playlist tree
 GtkTreeView *create_playlist_tree()
 {
-  GtkTreeModel *model = (GtkTreeModel *)create_playlist_model();
-  GtkTreeView *tree_view = (GtkTreeView *) gtk_tree_view_new_with_model(model);
-  gtk_tree_view_set_headers_visible(tree_view, FALSE);
-  return tree_view;
+  GtkTreeModel *model = create_playlist_model();
+  GtkTreeView *playlist_tree = GTK_TREE_VIEW(gtk_tree_view_new_with_model(model));
+  gtk_tree_view_set_headers_visible(playlist_tree, FALSE);
+  return playlist_tree;
 }
 
 //!creates playlist columns
-void create_playlist_columns(GtkTreeView *tree_view)
+void create_playlist_columns(GtkTreeView *playlist_tree)
 {
   GtkCellRendererText *renderer;
   GtkTreeViewColumn *name_column;
@@ -3405,11 +3339,11 @@ void create_playlist_columns(GtkTreeView *tree_view)
       (_("Complete filename"), GTK_CELL_RENDERER(renderer),
       "text", COL_FILENAME,
       NULL);*/
-  /*  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
+  /*  gtk_tree_view_insert_column (GTK_TREE_VIEW (playlist_tree),
       GTK_TREE_VIEW_COLUMN (filename_column),COL_FILENAME);*/
   
   //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
+  gtk_tree_view_insert_column(playlist_tree,
       GTK_TREE_VIEW_COLUMN(name_column), COL_NAME);
 
   //middle alignment of the column name
@@ -3422,16 +3356,9 @@ void create_playlist_columns(GtkTreeView *tree_view)
 void playlist_selection_changed(GtkTreeSelection *selec,
                                 gpointer data)
 {
-  GtkTreeModel *model;
-  GtkTreeSelection *selection;
-  GList *selected_list = NULL;
-  
-  //get the model
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(playlist_tree));
-  //get the selection
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(playlist_tree));
-  //get selected rows
-  selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
+  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(playlist_tree);
+  GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
 
   if (g_list_length(selected_list) > 0)
   {
@@ -3445,20 +3372,10 @@ void playlist_selection_changed(GtkTreeSelection *selec,
 
 //!event for the remove file button
 void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
-{
-  GtkTreeIter iter;
-  GtkTreeModel *model;
-  GtkTreePath *path;
-  GList *selected_list = NULL;
-  GList *current_element = NULL;
-  GtkTreeSelection *selection;
-  
-  //get the model
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(playlist_tree));
-  //get the selection
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(playlist_tree));
-  //get selected rows
-  selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
+{ 
+  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(playlist_tree);
+  GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
   
   //the name of the file that we have clicked on
   gchar *filename = NULL;
@@ -3467,13 +3384,14 @@ void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
   //(splitnumber >0)
   while (g_list_length(selected_list) > 0)
     {
-      //get the last element
-      current_element = g_list_last(selected_list);
-      path = current_element->data;
-      //get the iter correspondig to the path
+      GList *current_element = g_list_last(selected_list);
+      GtkTreePath *path = current_element->data;
+
+      GtkTreeIter iter;
       gtk_tree_model_get_iter(model, &iter, path);
       gtk_tree_model_get(model, &iter, 
                          COL_FILENAME, &filename, -1);
+
       //remove the path from the selected list
       gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
       selected_list = g_list_remove(selected_list, path);
@@ -3500,16 +3418,12 @@ void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
 //!event for the remove file button
 void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
 {
-  GtkTreeIter iter;
-  GtkTreeModel *model;
+  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
   
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(playlist_tree));
-  
-  //filename to erase
   gchar *filename = NULL;
-  //for all the splitnumbers
   while (playlist_tree_number > 0)
   {
+    GtkTreeIter iter;
     gtk_tree_model_get_iter_first(model, &iter);
     gtk_tree_model_get(model, &iter, 
         COL_FILENAME, &filename, -1);
@@ -3518,8 +3432,8 @@ void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
     g_free(filename);
   }
   
-  gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);
-  gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
+  gtk_widget_set_sensitive(playlist_remove_all_files_button, FALSE);
+  gtk_widget_set_sensitive(playlist_remove_file_button, FALSE);
 }
 
 //!creates the horizontal queue buttons horizontal box
@@ -3529,7 +3443,7 @@ GtkWidget *create_delete_buttons_hbox()
   GtkWidget *hbox = wh_hbox_new();
 
   //button for removing a file
-  playlist_remove_file_button = (GtkWidget *)
+  playlist_remove_file_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
                      playlist_remove_file_button, FALSE, FALSE, 5);
@@ -3538,7 +3452,7 @@ GtkWidget *create_delete_buttons_hbox()
                    G_CALLBACK(playlist_remove_file_button_event), NULL);
  
   //button for removing a file
-  playlist_remove_all_files_button = (GtkWidget *)
+  playlist_remove_all_files_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
                      playlist_remove_all_files_button, FALSE, FALSE, 5);
@@ -3556,8 +3470,7 @@ GtkWidget *create_player_playlist_frame()
 
   // scrolled window and the tree 
   //create the tree and add it to the scrolled window
-  playlist_tree = (GtkWidget *) create_playlist_tree();
-  //scrolled window for the tree
+  playlist_tree = create_playlist_tree();
   GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
@@ -3565,7 +3478,7 @@ GtkWidget *create_player_playlist_frame()
                                   GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
   //create columns
-  create_playlist_columns(GTK_TREE_VIEW(playlist_tree));
+  create_playlist_columns(playlist_tree);
   //add the tree to the scrolled window
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(playlist_tree));
   g_signal_connect(G_OBJECT(playlist_tree), "row-activated",
@@ -3573,7 +3486,7 @@ GtkWidget *create_player_playlist_frame()
 
   //selection for the tree
   GtkWidget *playlist_tree_selection = (GtkWidget *)
-    gtk_tree_view_get_selection(GTK_TREE_VIEW(playlist_tree));
+    gtk_tree_view_get_selection(playlist_tree);
   g_signal_connect(G_OBJECT(playlist_tree_selection), "changed",
                    G_CALLBACK(playlist_selection_changed), NULL);
   gtk_tree_selection_set_mode(GTK_TREE_SELECTION(playlist_tree_selection),
@@ -3599,27 +3512,27 @@ GtkWidget *create_player_playlist_frame()
   return playlist_handle;
 }
 
-static void action_set_sensitivity(gchar *name, gboolean sensitivity)
+static void action_set_sensitivity(gchar *name, gboolean sensitivity, gui_state *gui)
 {
-  GtkAction *action = gtk_action_group_get_action(action_group, name);
+  GtkAction *action = gtk_action_group_get_action(gui->action_group, name);
   gtk_action_set_sensitive(action, sensitivity);
 }
 
-void player_key_actions_set_sensitivity(gboolean sensitivity)
+void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui)
 {
-  action_set_sensitivity("Player_pause", sensitivity);
-  action_set_sensitivity("Player_forward", sensitivity);
-  action_set_sensitivity("Player_backward", sensitivity);
-  action_set_sensitivity("Player_small_forward", sensitivity);
-  action_set_sensitivity("Player_small_backward", sensitivity);
-  action_set_sensitivity("Player_big_forward", sensitivity);
-  action_set_sensitivity("Player_big_backward", sensitivity);
-  action_set_sensitivity("Player_next_splitpoint", sensitivity);
-  action_set_sensitivity("Player_previous_splitpoint", sensitivity);
-  action_set_sensitivity("Add_splitpoint", sensitivity);
-  action_set_sensitivity("Delete_closest_splitpoint", sensitivity);
-  action_set_sensitivity("Zoom_in", sensitivity);
-  action_set_sensitivity("Zoom_out", sensitivity);
+  action_set_sensitivity("Player_pause", sensitivity, gui);
+  action_set_sensitivity("Player_forward", sensitivity, gui);
+  action_set_sensitivity("Player_backward", sensitivity, gui);
+  action_set_sensitivity("Player_small_forward", sensitivity, gui);
+  action_set_sensitivity("Player_small_backward", sensitivity, gui);
+  action_set_sensitivity("Player_big_forward", sensitivity, gui);
+  action_set_sensitivity("Player_big_backward", sensitivity, gui);
+  action_set_sensitivity("Player_next_splitpoint", sensitivity, gui);
+  action_set_sensitivity("Player_previous_splitpoint", sensitivity, gui);
+  action_set_sensitivity("Add_splitpoint", sensitivity, gui);
+  action_set_sensitivity("Delete_closest_splitpoint", sensitivity, gui);
+  action_set_sensitivity("Zoom_in", sensitivity, gui);
+  action_set_sensitivity("Zoom_out", sensitivity, gui);
 }
 
 /*! timer used to print infos about the song
@@ -3763,7 +3676,7 @@ gint mytimer(gpointer data)
         gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_active));
       }
 
-      player_key_actions_set_sensitivity(TRUE);
+      player_key_actions_set_sensitivity(TRUE, ui->gui);
     }
     else
     {
@@ -3778,7 +3691,7 @@ gint mytimer(gpointer data)
         gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
       }
   
-      player_key_actions_set_sensitivity(FALSE);
+      player_key_actions_set_sensitivity(FALSE, ui->gui);
     }
 
     return TRUE;
@@ -3801,14 +3714,14 @@ Moved here from the file tab
 */
 void file_chooser_cancel_event()
 {
-  gtk_widget_set_sensitive(browse_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
 }
 
 //event for the file chooser ok button
 void file_chooser_ok_event(gchar *fname)
 {
   change_current_filename(fname);
-  gtk_widget_set_sensitive(browse_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
   gtk_widget_set_sensitive(play_button, TRUE);
   gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
 
@@ -3820,70 +3733,6 @@ void file_chooser_ok_event(gchar *fname)
     song_list = g_list_append(song_list, fname);
     player_start_add_files(song_list);
   }
-}
-
-/*! \brief Events for browse button
-
-Also used for the cddb and cue browses.
-*/
-void browse_button_event(GtkWidget *widget, gpointer data)
-{
-  if (GTK_IS_WIDGET(widget))
-  {
-    gtk_widget_set_sensitive(widget, FALSE);
-  }
-
-  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
-      NULL,
-      GTK_FILE_CHOOSER_ACTION_OPEN,
-      GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL,
-      GTK_STOCK_OPEN,
-      GTK_RESPONSE_ACCEPT,
-      NULL);
-
-  wh_set_browser_directory_handler(ui, file_chooser);
-
-  GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files (*.mp3 *.ogg)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files (*.mp3)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files (*.ogg)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
-
-  if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
-  {
-    gchar *filename =
-      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-
-    file_chooser_ok_event(filename);
-
-    if (filename)
-    {
-      g_free(filename);
-      filename = NULL;
-    }
-  }
-  else
-  {
-    file_chooser_cancel_event();
-  }
-
-  gtk_widget_destroy(file_chooser);
-  remove_status_message();
 }
 
 //when closing the new window after detaching
@@ -3899,25 +3748,6 @@ void close_file_popup_window_event( GtkWidget *window,
   gtk_widget_destroy(window);
 }
 
-//!when we detach the handle
-void handle_file_detached_event (GtkHandleBox *handlebox,
-                                 GtkWidget *widget,
-                                 gpointer data)
-{
-  //new window
-  GtkWidget *window;
-
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
-
-  g_signal_connect (G_OBJECT (window), "delete_event",
-                    G_CALLBACK (close_file_popup_window_event),
-                    NULL);
-
-  gtk_widget_show(GTK_WIDGET(window));
-}
-
 /*!fix ogg stream action
 
 we split from 0 to a big number
@@ -3928,7 +3758,6 @@ gpointer fix_ogg_stream(gpointer data)
 
   enter_threads();
 
-  gtk_widget_set_sensitive(GTK_WIDGET(fix_ogg_stream_button), FALSE);
   put_options_from_preferences();
 
   exit_threads();
@@ -3948,7 +3777,7 @@ gpointer fix_ogg_stream(gpointer data)
   enter_threads();
 
   remove_all_split_rows();  
-  filename_to_split = (gchar *) inputfilename_get();
+  filename_to_split = get_input_filename(ui->gui);
 
   exit_threads();
   
@@ -3960,66 +3789,12 @@ gpointer fix_ogg_stream(gpointer data)
   enter_threads();
 
   print_status_bar_confirmation(confirmation);
-  gtk_widget_set_sensitive(GTK_WIDGET(fix_ogg_stream_button), TRUE);
 
   exit_threads();
 
   ui->status->splitting = FALSE;
 
   return NULL;
-}
-
-//!we make a thread with fix_ogg_stream
-void fix_ogg_stream_button_event(GtkWidget *widget, gpointer   data)
-{
-  create_thread(fix_ogg_stream, NULL, TRUE, NULL);
-}
-
-GtkWidget *create_choose_file_frame()
-{
-  /* file entry and browse button hbox */
-  GtkWidget *choose_file_hbox = wh_hbox_new();
-  //gtk_container_set_border_width(GTK_CONTAINER(choose_file_hbox), 6);
-  
-  /* handle box for detaching */
-  file_handle_box = gtk_handle_box_new();
-  gtk_container_add(GTK_CONTAINER(file_handle_box), GTK_WIDGET(choose_file_hbox));
-  g_signal_connect(file_handle_box, "child-detached",
-      G_CALLBACK(handle_file_detached_event), NULL);
-
-  /* filename entry */
-  entry = gtk_entry_new();
-  gtk_editable_set_editable(GTK_EDITABLE(entry), FALSE);
-  gtk_box_pack_start(GTK_BOX(choose_file_hbox), entry , TRUE, TRUE, 4);
-
-  // Display the input file name if  we already have gotten one
-  // from the command line
-  if(inputfilename_get()!=NULL)
-    gtk_entry_set_text(GTK_ENTRY(entry), inputfilename_get());
-
-
-  /* browse button */
-  browse_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_OPEN,_("_Browse"), FALSE);
-  g_signal_connect(G_OBJECT (browse_button), "clicked",
-      G_CALLBACK(browse_button_event), (gpointer *)BROWSE_SONG);
-  gtk_box_pack_start(GTK_BOX(choose_file_hbox), browse_button, FALSE, FALSE, 4);
-  gtk_widget_set_tooltip_text(browse_button,_("Select file"));
- 
-  /* bottom buttons hbox */
-  //GtkWidget *bottom_buttons_hbox = wh_hbox_new();
-  
-  /* fix ogg stream button */
-  fix_ogg_stream_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_HARDDISK,_("_Fix ogg stream"), FALSE);
-  g_signal_connect(G_OBJECT(fix_ogg_stream_button), "clicked",
-      G_CALLBACK(fix_ogg_stream_button_event), NULL);
- /* gtk_box_pack_start (GTK_BOX(bottom_buttons_hbox), 
-                      fix_ogg_stream_button, FALSE, FALSE, 7);
-  gtk_box_pack_start (GTK_BOX(main_choose_file_vbox), 
-                      bottom_buttons_hbox, FALSE, FALSE, 0);*/
-  
-  return file_handle_box;
 }
 
 //! Hide the connect button
