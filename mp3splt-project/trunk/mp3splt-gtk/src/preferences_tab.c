@@ -144,8 +144,6 @@ extern gint ten_minutes_time;
 extern gint twenty_minutes_time;
 extern gint fourty_minutes_time;
 
-extern gint width_drawing_area;
-
 extern ui_state *ui;
 
 static void update_wave_preview_label_markup(gint index, gint interpolation_level);
@@ -725,12 +723,12 @@ void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer
   silence_wave_number_of_points_threshold = number_of_points_th;
 
   compute_douglas_peucker_filters(NULL, NULL);
-  refresh_preview_drawing_areas();
+  refresh_preview_drawing_areas(ui);
 
   save_preferences(NULL, NULL);
 }
 
-void refresh_preview_drawing_areas()
+void refresh_preview_drawing_areas(ui_state *ui)
 {
   gint i = 0;
   for (i = 0; i < wave_quality_das->len; i++)
@@ -749,7 +747,6 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, GdkEventExpose *event,
 gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface, gpointer data)
 {
 #endif
-
   gint width = get_wave_preview_width_drawing_area();
   gtk_widget_set_size_request(ui->gui->drawing_area, width, 70);
 
@@ -793,12 +790,12 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
 
 gint get_wave_preview_width_drawing_area()
 {
-  if (width_drawing_area < 50)
+  if (ui->infos->width_drawing_area < 50)
   {
     return 500;
   }
 
-  return width_drawing_area;
+  return ui->infos->width_drawing_area;
 }
 
 GtkWidget *create_wave_quality_preview_box()

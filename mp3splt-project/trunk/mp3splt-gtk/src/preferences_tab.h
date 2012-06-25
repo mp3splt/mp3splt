@@ -70,7 +70,7 @@ GtkWidget *create_choose_preferences();
 void set_output_directory(gchar *dirname);
 gchar *outputdirectory_get();
 
-void refresh_preview_drawing_areas();
+void refresh_preview_drawing_areas(ui_state *ui);
 
 #endif
 

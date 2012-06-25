@@ -79,6 +79,7 @@ typedef struct {
   gfloat current_time;
 
   gint splitnumber;
+  gint width_drawing_area;
 } ui_infos;
 
 typedef struct {
@@ -103,6 +104,21 @@ typedef struct {
 
   GtkWidget *drawing_area;
   GtkProgressBar *percent_progress_bar;
+  GtkWidget *drawing_area_expander;
+
+  //drawing area variables
+  gint margin;
+  gint real_erase_split_length;
+  gint real_move_split_length;
+  gint real_checkbox_length;
+  gint real_wave_length;
+  //
+  gint erase_split_ylimit;
+  gint progress_ylimit;
+  gint splitpoint_ypos;
+  gint checkbox_ypos;
+  gint text_ypos;
+  gint wave_ypos;
 } gui_state;
 
 typedef struct {
@@ -110,6 +126,7 @@ typedef struct {
   gint quit_main_program;
   gint mouse_on_progress_bar;
   gint currently_compute_douglas_peucker_filters;
+  gint show_silence_wave;
 } gui_status;
 
 typedef struct {
