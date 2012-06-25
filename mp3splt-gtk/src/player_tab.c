@@ -82,32 +82,16 @@ extern gint preview_start_position;
 extern gint preview_start_splitpoint;
 extern GtkWidget *browse_cddb_button;
 extern GtkWidget *browse_cue_button;
-extern GtkWidget *percent_progress_bar;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
-extern guchar *get_real_name_from_filename(guchar *filename);
 extern GtkWidget *cancel_button;
 extern gint debug_is_active;
 
 extern ui_state *ui;
 
-//our progress bar
-GtkWidget *progress_bar;
-//our progress bar adjustment
-GtkWidget *progress_adj;
-
 //volume bar
 GtkWidget *volume_button;
 
-//the time label
-GtkWidget *label_time;
-//minutes and seconds for the player
-gint player_seconds = 0, 
-  player_minutes = 0, player_hundr_secs = 0;
-//only for internal use when we change manually we have the real
-//time which is player_seconds and the imaginary time player_seconds2
-gint player_seconds2 = 0, 
-  player_minutes2 = 0, player_hundr_secs2 = 0;
 //wether to change the volume of the player
 gboolean change_volume = TRUE;
 //to see if we are on the volume bar
@@ -116,15 +100,10 @@ gboolean on_the_volume_button = FALSE;
 gboolean playing = FALSE;
 //to see if we have a stream
 gboolean stream = FALSE;
-//the name of the song
-GtkWidget *song_name_label;
 
 //connect and disconnect to player buttons
 GtkWidget *connect_button;
 GtkWidget *disconnect_button;
-
-//informations about the playing song
-GtkWidget *song_infos;
 
 //player buttons
 GtkWidget *play_button;
@@ -138,7 +117,6 @@ GtkWidget *go_end_button;
 GtkWidget *silence_wave_check_button = NULL;
 
 gint show_silence_wave = FALSE;
-gint currently_compute_douglas_peucker_filters = FALSE;
 gint we_scan_for_silence = FALSE;
 
 //stock if the timer is active or not
@@ -155,24 +133,12 @@ GtkWidget *playlist_handle_window;
 
 extern gint file_browsed;
 extern gint selected_player;
-extern gint splitnumber;
-
-//total time of the current song
-gfloat total_time = 0;
-//current time
-gfloat current_time = 0;
-
-//to see if the mouse has clicked on the progress bar
-gboolean mouse_on_progress_bar = FALSE;
 
 //just used here for the timer hack
 gint stay_turn = 0;
 
 //the witdh of the drawing area
 gint width_drawing_area = 0;
-
-//our drawing area
-GtkWidget *drawing_area = NULL;
 
 //drawing zoom coefficient
 gfloat zoom_coeff = 2.0;
@@ -314,10 +280,10 @@ void douglas_peucker_callback()
 
   if (douglas_callback_counter % 400 == 0)
   {
-    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(percent_progress_bar));
-    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), 
-        "Processing Douglas-Peucker filters ...");
-    gtk_widget_queue_draw(percent_progress_bar);
+    gtk_progress_bar_pulse(ui->gui->percent_progress_bar);
+    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, 
+        _("Processing Douglas-Peucker filters ..."));
+    gtk_widget_queue_draw(GTK_WIDGET(ui->gui->percent_progress_bar));
     while (gtk_events_pending())
     {
       gtk_main_iteration();
@@ -336,7 +302,7 @@ void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data)
     return;
   }
 
-  currently_compute_douglas_peucker_filters = TRUE;
+  ui->status->currently_compute_douglas_peucker_filters = TRUE;
 
   GArray *gdk_points_for_douglas_peucker = build_gdk_points_for_douglas_peucker();
 
@@ -349,9 +315,9 @@ void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data)
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
 
-  currently_compute_douglas_peucker_filters = FALSE;
+  ui->status->currently_compute_douglas_peucker_filters = FALSE;
 
-  check_update_down_progress_bar();
+  check_update_down_progress_bar(ui);
 }
 
 gpointer detect_silence(gpointer data)
@@ -392,7 +358,7 @@ gpointer detect_silence(gpointer data)
   print_status_bar_confirmation(err);
   gtk_widget_set_sensitive(cancel_button, FALSE);
 
-  refresh_drawing_area();
+  refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas();
 
   exit_threads();
@@ -454,8 +420,8 @@ void change_current_filename(const gchar *fname)
 //!resets and sets inactive the progress bar
 void reset_inactive_progress_bar()
 {
-  gtk_widget_set_sensitive(GTK_WIDGET(progress_bar), FALSE);
-  gtk_adjustment_set_value(GTK_ADJUSTMENT(progress_adj), 0);
+  gtk_widget_set_sensitive(GTK_WIDGET(ui->gui->progress_bar), FALSE);
+  gtk_adjustment_set_value(ui->gui->progress_adj, 0);
 }
 
 //!resets and sets inactive the volume bar
@@ -466,24 +432,24 @@ void reset_inactive_volume_button()
 }
 
 //!resets the label time
-void reset_label_time()
+static void reset_label_time(gui_state *gui)
 {
-  if (strcmp(gtk_label_get_text(GTK_LABEL(label_time)),"") == 0)
+  if (strcmp(gtk_label_get_text(GTK_LABEL(gui->label_time)), "") == 0)
   {
-    gtk_label_set_text(GTK_LABEL(label_time), "");
+    gtk_label_set_text(GTK_LABEL(gui->label_time), "");
   }
 }
 
 //!resets song infos, frequency, etc..
-void reset_song_infos()
+static void reset_song_infos(gui_state *gui)
 {
-  gtk_label_set_text(GTK_LABEL(song_infos),"");
+  gtk_label_set_text(GTK_LABEL(gui->song_infos),"");
 }
 
 //!resets the song name label
-void reset_song_name_label()
+static void reset_song_name_label(gui_state *gui)
 {
-  gtk_label_set_text(GTK_LABEL(song_name_label), "");
+  gtk_label_set_text(GTK_LABEL(gui->song_name_label), "");
 }
 
 //!clear song data and makes inactive progress bar
@@ -491,11 +457,11 @@ void clear_data_player()
 {
   gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
 
-  reset_song_name_label();
-  reset_song_infos();
+  reset_song_name_label(ui->gui);
+  reset_song_infos(ui->gui);
   reset_inactive_volume_button();
   reset_inactive_progress_bar();
-  reset_label_time();
+  reset_label_time(ui->gui);
 }
 
 //!enables the buttons of the player
@@ -719,26 +685,25 @@ void connect_button_event(GtkWidget *widget, gpointer data)
   }
   else
   {
-    //changes connect/disconnect buttons
     connect_change_buttons();
   }
 
-  current_time = -1;
-  check_update_down_progress_bar();
+  ui->infos->current_time = -1;
+  check_update_down_progress_bar(ui);
 }
 
 //!checks if we have a stream
 void check_stream()
 {
-  //if we have a stream
-  if (total_time == -1)
-    {
-      stream = TRUE;
-      //reset progress bar
-      reset_inactive_progress_bar();
-    }
+  if (ui->infos->total_time == -1)
+  {
+    stream = TRUE;
+    reset_inactive_progress_bar();
+  }
   else
+  {
     stream = FALSE;
+  }
 }
 
 //!disconnect button event
@@ -765,8 +730,8 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   //update bottom progress bar to 0 and ""
   if (!ui->status->splitting)
   {
-    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 0);
-    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), "");
+    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 0);
+    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, "");
   }
 
   const gchar *fname = get_input_filename(ui->gui);
@@ -871,10 +836,14 @@ void next_button_event (GtkWidget *widget, gpointer data)
 }
 
 //!changes the position inside the song
-void change_song_position()
+static void change_song_position(ui_state *ui)
 {
-  gint position = (player_seconds2 + player_minutes2*60)*1000 + player_hundr_secs2*10;
-  player_jump(position);  
+  gint position = 
+    ui->infos->player_seconds2 * 1000 + 
+    ui->infos->player_minutes2 * 60000 +
+    ui->infos->player_hundr_secs2 * 10;
+
+  player_seek(position);  
 }
 
 //!adds a splitpoint from the player
@@ -903,7 +872,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     }
     ui->infos->number_of_silence_points = 0;
 
-    refresh_drawing_area();
+    refresh_drawing_area(ui->gui);
     refresh_preview_drawing_areas();
   }
 }
@@ -1062,114 +1031,101 @@ static GtkWidget *create_player_buttons_hbox()
 }
 
 //!song information about frequency, rate, stereo, etc
-GtkWidget *create_song_informations_hbox()
+static GtkWidget *create_song_informations_hbox(gui_state *gui)
 {
-  GtkWidget *song_info_hbox;
+  GtkWidget *song_info_hbox = wh_hbox_new();
 
-  song_info_hbox = wh_hbox_new();
+  GtkWidget *song_infos = gtk_label_new("");
+  gui->song_infos = song_infos;
+  gtk_box_pack_start(GTK_BOX(song_info_hbox), song_infos, FALSE, FALSE, 40);
 
-  song_infos = gtk_label_new ("");
-  gtk_box_pack_start (GTK_BOX (song_info_hbox), song_infos, FALSE, FALSE, 40);
-
-  //the label time
-  label_time = gtk_label_new("");
-  gtk_box_pack_start (GTK_BOX (song_info_hbox), label_time, FALSE, FALSE, 5);
+  GtkWidget *label_time = gtk_label_new("");
+  gui->label_time = label_time;
+  gtk_box_pack_start(GTK_BOX(song_info_hbox), label_time, FALSE, FALSE, 5);
 
   return song_info_hbox;
 }
 
 //!when we unclick the progress bar
-gboolean progress_bar_unclick_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data)
+static gboolean progress_bar_unclick_event(GtkWidget *widget, GdkEventCrossing *event, ui_state *ui)
 {
-  change_song_position();
+  change_song_position(ui);
 
-  player_minutes = player_minutes2;
-  player_seconds = player_seconds2; 
-  player_hundr_secs = player_hundr_secs2; 
-  
-  mouse_on_progress_bar = FALSE;
-  
+  ui_infos *infos = ui->infos;
+
+  infos->player_minutes = infos->player_minutes2;
+  infos->player_seconds = infos->player_seconds2; 
+  infos->player_hundr_secs = infos->player_hundr_secs2; 
+ 
+  ui->status->mouse_on_progress_bar = FALSE;
+ 
   return FALSE;
 }
 
 //!when we click the progress bar
-gboolean progress_bar_click_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data)
+static gboolean progress_bar_click_event(GtkWidget *widget, GdkEventCrossing *event, ui_state *ui)
 {
-  mouse_on_progress_bar = TRUE;
+  ui->status->mouse_on_progress_bar = TRUE;
   return FALSE;
 }
 
-//!returns the total time in hundreths of second
-gfloat get_total_time()
-{
-  return total_time;
-}
-
 //!returns the total elapsed time
-gfloat get_elapsed_time()
+static gfloat get_elapsed_time(ui_state *ui)
 {
-  gfloat adj_position = gtk_adjustment_get_value(GTK_ADJUSTMENT(progress_adj));
-  return (adj_position * total_time) / 100000;
+  gfloat adj_position = gtk_adjustment_get_value(ui->gui->progress_adj);
+  return (adj_position * ui->infos->total_time) / 100000;
 }
 
-void refresh_drawing_area()
+void refresh_drawing_area(gui_state *gui)
 {
-  gtk_widget_queue_draw(drawing_area);
+  gtk_widget_queue_draw(gui->drawing_area);
 }
 
 //!updates bottom progress bar
-void check_update_down_progress_bar()
+void check_update_down_progress_bar(ui_state *ui)
 {
-  if (ui->status->splitting || currently_compute_douglas_peucker_filters)
+  if (ui->status->splitting || 
+      ui->status->currently_compute_douglas_peucker_filters)
   {
     return;
   }
 
-  //draw yellow rectangle
   gfloat total_interval = 0;
   gfloat progress_time = 0;
   gint splitpoint_time_left = -1;
   gint splitpoint_time_right = -1;
   gint splitpoint_left_index = -1;
-  get_current_splitpoints_time_left_right(&splitpoint_time_left, &splitpoint_time_right, &splitpoint_left_index);
+  get_current_splitpoints_time_left_right(&splitpoint_time_left, &splitpoint_time_right, 
+      &splitpoint_left_index, ui->infos);
 
-  if ((splitpoint_time_left != -1) && 
-      (splitpoint_time_right != -1))
+  if ((splitpoint_time_left != -1) && (splitpoint_time_right != -1))
   {
-    //percent progress bar stuff
-    total_interval = splitpoint_time_right - splitpoint_time_left;
+    gfloat total_interval = splitpoint_time_right - splitpoint_time_left;
     if (total_interval != 0)
     {
-      progress_time = (current_time-splitpoint_time_left)/
-        total_interval;
+      progress_time = (ui->infos->current_time-splitpoint_time_left) / total_interval;
     }
   }
   else
   {
     if (splitpoint_time_right == -1)
     {
-      total_interval = total_time - splitpoint_time_left;
+      gfloat total_interval = ui->infos->total_time - splitpoint_time_left;
       if (total_interval != 0)
       {
-        progress_time = (current_time-splitpoint_time_left)/
-          total_interval;
+        progress_time = (ui->infos->current_time-splitpoint_time_left)/ total_interval;
       }
     }
     else
     {
-      total_interval = splitpoint_time_right;
+      gfloat total_interval = splitpoint_time_right;
       if (total_interval != 0)
       {
-        progress_time = current_time/total_interval;
+        progress_time = ui->infos->current_time/total_interval;
       }
     }
   }
 
-  //update the percent progress bar  
   if (progress_time < 0)
   {
     progress_time = 0;
@@ -1180,27 +1136,26 @@ void check_update_down_progress_bar()
   }
   if ((progress_time >= 0) && (progress_time <= 1))
   {
-    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), progress_time);
+    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, progress_time);
   }
 
-  gchar *progress_description = get_splitpoint_name(splitpoint_left_index-1);
+  gchar *progress_description = get_splitpoint_name(splitpoint_left_index-1, ui);
   gchar description_shorted[512] = { '\0' };
-  //if we have a splitpoint on our right
-  //and we are before the first splitpoint
+
   if (splitpoint_time_right != -1)
   {
     if (splitpoint_time_left == -1)
     {
       if (progress_description != NULL)
       {
-        g_snprintf(description_shorted,60, _("before %s"), progress_description);
+        g_snprintf(description_shorted, 60, _("before %s"), progress_description);
       }
     }
     else
     {
       if (progress_description != NULL)
       {
-        g_snprintf(description_shorted, 60,"%s", progress_description);
+        g_snprintf(description_shorted, 60, "%s", progress_description);
       }
     }
   }
@@ -1210,132 +1165,106 @@ void check_update_down_progress_bar()
     {
       if (progress_description != NULL)
       {
-        g_snprintf(description_shorted, 60,"%s", progress_description);
+        g_snprintf(description_shorted, 60, "%s", progress_description);
       }
     }
     else
     {
-      //TODO ugly code in 'fname' usage !
       gchar *fname = get_input_filename(ui->gui);
-      fname = (gchar *)get_real_name_from_filename((guchar *)fname);
-      g_snprintf(description_shorted,60,"%s",fname);
-      if (fname != NULL)
+      g_snprintf(description_shorted, 60, "%s", get_real_name_from_filename(fname));
+      if (fname != NULL && strlen(fname) > 60)
       {
-        if (strlen(fname) > 60)
-        {
-          description_shorted[strlen(description_shorted)-1] = '.';
-          description_shorted[strlen(description_shorted)-2] = '.';
-          description_shorted[strlen(description_shorted)-3] = '.';
-        }
+        description_shorted[strlen(description_shorted)-1] = '.';
+        description_shorted[strlen(description_shorted)-2] = '.';
+        description_shorted[strlen(description_shorted)-3] = '.';
       }
     }
   }
-  //we put "..."
-  if (progress_description != NULL)
+
+  if (progress_description != NULL && strlen(progress_description) > 60)
   {
-    if (strlen(progress_description) > 60)
-    {
-      description_shorted[strlen(description_shorted)-1] = '.';
-      description_shorted[strlen(description_shorted)-2] = '.';
-      description_shorted[strlen(description_shorted)-3] = '.';
-    }
+    description_shorted[strlen(description_shorted)-1] = '.';
+    description_shorted[strlen(description_shorted)-2] = '.';
+    description_shorted[strlen(description_shorted)-3] = '.';
   }
 
-  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-      description_shorted);
+  gtk_progress_bar_set_text(ui->gui->percent_progress_bar, description_shorted);
   g_free(progress_description);
 }
 
 //!event when the progress bar value changed
-void progress_bar_value_changed_event(GtkRange *range, gpointer user_data)
+static void progress_bar_value_changed_event(GtkRange *range, ui_state *ui)
 {
-  if (currently_compute_douglas_peucker_filters)
+  if (ui->status->currently_compute_douglas_peucker_filters)
   {
     return;
   }
 
-  refresh_drawing_area();
+  refresh_drawing_area(ui->gui);
+
+  ui_infos *infos = ui->infos;
   
-  //progress position
-  gfloat adj_position =
-    (gint)gtk_adjustment_get_value(GTK_ADJUSTMENT(progress_adj));
+  infos->player_hundr_secs2 = (gint)infos->current_time % 100;
  
-  //we get out the hundredth
-  player_hundr_secs2 = (gint)current_time % 100;
- 
-  gint tt2;
-  //we keep only the seconds
-  tt2 = total_time / 100;
-  current_time = (adj_position * tt2) / 100000;
+  gint tt2 = infos->total_time / 100;
+  gfloat adj_position = (gint)gtk_adjustment_get_value(ui->gui->progress_adj);
+  infos->current_time = (adj_position * tt2) / 100000;
   
-  player_seconds2 = (gint)current_time % 60;
-  player_minutes2 = (gint)current_time / 60;
+  infos->player_seconds2 = (gint)infos->current_time % 60;
+  infos->player_minutes2 = (gint)infos->current_time / 60;
   
-  current_time = get_elapsed_time();
+  infos->current_time = get_elapsed_time(ui);
   
-  check_update_down_progress_bar();
+  check_update_down_progress_bar(ui);
 }
 
 //!scroll event for the progress bar
-gboolean progress_bar_scroll_event (GtkWidget *widget,
-                                    GdkEventScroll *event,
-                                    gpointer user_data)
+static gboolean progress_bar_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 {
-  //--
   return FALSE;
 }
 
 //!when we enter the progress bar
-gboolean progress_bar_enter_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data)
+static gboolean progress_bar_enter_event(GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
 {
-  //--
   return FALSE;
 }
 
 //!when we leave the progress bar
-gboolean progress_bar_leave_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data)
+static gboolean progress_bar_leave_event(GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
 {
-  //--
   return FALSE;
 }
 
 //!song progress bar
-GtkWidget *create_song_bar_hbox()
+static GtkWidget *create_song_bar_hbox(ui_state *ui)
 {
-  GtkWidget *song_bar_hbox;
+  GtkAdjustment *progress_adj = 
+    GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 100001.0, 0, 10000, 1000));
+  ui->gui->progress_adj = progress_adj;
 
-  //our progress bar
-  song_bar_hbox = wh_hbox_new();
-  progress_adj = (GtkWidget *)gtk_adjustment_new(0.0, 0.0, 100001.0, 0, 10000, 1000);
-  progress_bar = wh_hscale_new(GTK_ADJUSTMENT(progress_adj));
+  GtkWidget *progress_bar = wh_hscale_new(progress_adj);
+  ui->gui->progress_bar = progress_bar;
   g_object_set(progress_bar, "draw-value", FALSE, NULL);
-  //when we click on the bar
-  g_signal_connect (G_OBJECT (progress_bar), "button-press-event",
-                    G_CALLBACK (progress_bar_click_event), NULL);
-  //when we unclick on the bar
-  g_signal_connect (G_OBJECT (progress_bar), "button-release-event",
-                    G_CALLBACK (progress_bar_unclick_event), NULL);
-  //when are on the bar
-  g_signal_connect (G_OBJECT (progress_bar), "enter-notify-event",
-                    G_CALLBACK (progress_bar_enter_event), NULL);
-  //when move away from the bar
-  g_signal_connect (G_OBJECT (progress_bar), "leave-notify-event",
-                    G_CALLBACK (progress_bar_leave_event), NULL);
-  //when the bar is modified
-  g_signal_connect (G_OBJECT (progress_bar), "value-changed",
-                    G_CALLBACK (progress_bar_value_changed_event), NULL);
-  //when we scroll
-  g_signal_connect (G_OBJECT (progress_bar), "scroll-event",
-                    G_CALLBACK (progress_bar_scroll_event), NULL);
+
+  g_signal_connect(G_OBJECT(progress_bar), "button-press-event",
+      G_CALLBACK(progress_bar_click_event), ui);
+  g_signal_connect(G_OBJECT(progress_bar), "button-release-event",
+      G_CALLBACK(progress_bar_unclick_event), ui);
+  g_signal_connect(G_OBJECT(progress_bar), "value-changed",
+      G_CALLBACK(progress_bar_value_changed_event), ui);
+
+  g_signal_connect(G_OBJECT(progress_bar), "enter-notify-event",
+      G_CALLBACK(progress_bar_enter_event), NULL);
+  g_signal_connect(G_OBJECT(progress_bar), "leave-notify-event",
+      G_CALLBACK(progress_bar_leave_event), NULL);
+  g_signal_connect(G_OBJECT(progress_bar), "scroll-event",
+      G_CALLBACK(progress_bar_scroll_event), NULL);
 
   gtk_widget_set_sensitive(GTK_WIDGET(progress_bar), FALSE);
 
-  gtk_box_pack_start (GTK_BOX (song_bar_hbox), progress_bar, TRUE, TRUE, 5);
-
+  GtkWidget *song_bar_hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(song_bar_hbox), progress_bar, TRUE, TRUE, 5);
   return song_bar_hbox;
 }
 
@@ -1343,10 +1272,9 @@ GtkWidget *create_song_bar_hbox()
 void print_about_the_song()
 {
   gchar total_infos[512];
-  
   player_get_song_infos(total_infos);
   
-  gtk_label_set_text(GTK_LABEL(song_infos), total_infos);
+  gtk_label_set_text(GTK_LABEL(ui->gui->song_infos), total_infos);
 }
 
 //!prints the player filename
@@ -1365,7 +1293,7 @@ void print_player_filename()
   gchar *title = player_get_title();
   if (title != NULL)
   {
-    gtk_label_set_text(GTK_LABEL(song_name_label), title);
+    gtk_label_set_text(GTK_LABEL(ui->gui->song_name_label), title);
     g_free(title);
   }
 }
@@ -1388,38 +1316,32 @@ void print_all_song_infos()
 */
 void print_song_time_elapsed()
 {
-  //temp is temporary
   gint time, temp;
   gchar seconds[16], minutes[16], seconds_minutes[64];
-  
-  time = player_get_elapsed_time();
-  
-  //the hundredth of seconds
-  player_hundr_secs = (time % 1000) / 10;
-  
+
+  time = player_get_elapsed_time(ui);
+
+  ui->infos->player_hundr_secs = (time % 1000) / 10;
+
   temp = (time/1000)/60;
-  //sets the global variables
-  //for the minutes and the seconds
-  player_minutes = temp;
-  player_seconds = (time/1000) - (temp*60); 
-  //calculate time and print time
+  ui->infos->player_minutes = temp;
+  ui->infos->player_seconds = (time/1000) - (temp*60); 
+
   g_snprintf(minutes, 16, "%d", temp);
   g_snprintf(seconds, 16, "%d", (time/1000) - (temp*60));
-  
-  //variables for the total time
+
   gchar total_seconds[16], total_minutes[16];
-  
-  gint tt;
-  tt = total_time * 10;
+
+  gint tt = ui->infos->total_time * 10;
   temp = (tt/1000)/60;
-  
+
   //calculate time and print time
   g_snprintf(total_minutes, 16, "%d", temp);
   g_snprintf(total_seconds, 16, "%d", (tt/1000) - (temp*60));
   g_snprintf(seconds_minutes, 64, "%s  :  %s  /  %s  :  %s", 
-             minutes, seconds, total_minutes, total_seconds);
-      
-  gtk_label_set_text(GTK_LABEL(label_time), seconds_minutes);
+      minutes, seconds, total_minutes, total_seconds);
+
+  gtk_label_set_text(GTK_LABEL(ui->gui->label_time), seconds_minutes);
 }
 
 //!change volume to match the players volume
@@ -1442,38 +1364,43 @@ void change_volume_button()
 //!progress bar synchronisation with player
 void change_progress_bar()
 {
-  if (!player_is_running() || mouse_on_progress_bar)
+  if (!player_is_running() || ui->status->mouse_on_progress_bar)
   {
     return;
   }
 
-  //total time in hundredths of seconds
-  total_time = player_get_total_time() / 10;
+  ui->infos->total_time = player_get_total_time() / 10;
 
-  current_time = ((player_seconds + player_minutes*60) * 100 + player_hundr_secs);
+  ui->infos->current_time = ui->infos->player_seconds * 100 + 
+    ui->infos->player_minutes * 6000 +
+    ui->infos->player_hundr_secs;
 
-  gdouble adj_position = (current_time *100000) / total_time;
-  gtk_adjustment_set_value(GTK_ADJUSTMENT(progress_adj), adj_position);
+  gdouble adj_position = (ui->infos->current_time *100000) / ui->infos->total_time;
+  gtk_adjustment_set_value(ui->gui->progress_adj, adj_position);
 
-  current_time = get_elapsed_time();
+  ui->infos->current_time = get_elapsed_time(ui);
 
   gint stop_splitpoint = get_splitpoint_time(quick_preview_end_splitpoint);
   gint start_splitpoint = get_splitpoint_time(preview_start_splitpoint);
-  if ((stop_splitpoint < (gint)(current_time-150)) ||
-      (start_splitpoint > (gint)(current_time+150)))
+  if ((stop_splitpoint < (gint)(ui->infos->current_time-150)) ||
+      (start_splitpoint > (gint)(ui->infos->current_time+150)))
   {
     cancel_quick_preview();
   }
 }
 
 //!creates the filename player hbox
-GtkWidget *create_filename_player_hbox()
+static GtkWidget *create_filename_player_hbox(gui_state *gui)
 {
-  GtkWidget *filename_player_hbox = wh_hbox_new();
-  song_name_label = gtk_label_new("");
+  GtkWidget *song_name_label = gtk_label_new("");
+  gui->song_name_label = song_name_label;
+
   gtk_label_set_ellipsize(GTK_LABEL(song_name_label), PANGO_ELLIPSIZE_END);
   g_object_set(G_OBJECT(song_name_label), "selectable", FALSE, NULL);
+
+  GtkWidget *filename_player_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(filename_player_hbox), song_name_label, FALSE, FALSE, 15);
+
   return filename_player_hbox;
 }
 
@@ -1630,7 +1557,7 @@ gchar *get_time_for_drawing(gchar *str,
 //transform pixels to time
 gfloat pixels_to_time(gfloat width, gint pixels)
 {
-  return (total_time * (gfloat)pixels)/(width * zoom_coeff);
+  return (ui->infos->total_time * (gfloat)pixels)/(width * zoom_coeff);
 }
 
 static gint time_to_pixels(gint width, gfloat time,
@@ -1725,7 +1652,8 @@ void draw_marks(gint time_interval, gint left_mark,
   gint i_pixel;
   for (i=left2;i<=right_mark;i+=time_interval)
   {
-    i_pixel = convert_time_to_pixels(width_drawing_area, i, current_time, total_time, zoom_coeff);
+    i_pixel = convert_time_to_pixels(width_drawing_area, i, 
+        ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
     switch(time_interval){
       case 1:
@@ -1948,7 +1876,7 @@ void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *g
   Split_point current_point;
 
   gint i = 0;
-  for(i = 0; i < splitnumber; i++ )
+  for(i = 0; i < ui->infos->splitnumber; i++ )
   {
     gint current_point_hundr_secs = get_splitpoint_time(i);
 
@@ -1965,8 +1893,8 @@ void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *g
       }
 
       gint split_pixel = 
-        convert_time_to_pixels(width_drawing_area, current_point_hundr_secs, current_time,
-            total_time, zoom_coeff);
+        convert_time_to_pixels(width_drawing_area, current_point_hundr_secs, 
+            ui->infos->current_time, ui->infos->total_time, zoom_coeff);
       draw_motif_splitpoints(da, gc, split_pixel, draw,
           current_point_hundr_secs,
           FALSE, i);
@@ -1977,7 +1905,8 @@ void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *g
 gint get_silence_filtered_presence_index(gfloat draw_time)
 {
   //num_of_points_coeff_f : ogg ~= 1, mp3 ~= 4
-  gfloat num_of_points_coeff_f = ceil((ui->infos->number_of_silence_points / total_time) * 10);
+  gfloat num_of_points_coeff_f =
+    ceil((ui->infos->number_of_silence_points / ui->infos->total_time) * 10);
   gint num_of_points_coeff = (gint)num_of_points_coeff_f;
 
   if (draw_time > fourty_minutes_time)
@@ -2043,7 +1972,8 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 {
   GdkColor color;
 
-  if (!ui->infos->silence_points || we_scan_for_silence || currently_compute_douglas_peucker_filters)
+  if (!ui->infos->silence_points || we_scan_for_silence || 
+      ui->status->currently_compute_douglas_peucker_filters)
   {
     color.red = 0;color.green = 0;color.blue = 0;
     dh_set_color(gc, &color);
@@ -2175,7 +2105,7 @@ static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface)
   //yellow small rectangle
   gint point_time_left = -1;
   gint point_time_right = -1;
-  get_current_splitpoints_time_left_right(&point_time_left, &point_time_right, NULL);
+  get_current_splitpoints_time_left_right(&point_time_left, &point_time_right, NULL, ui->infos);
   color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 210;
   draw_small_rectangle(point_time_left, point_time_right, color, cairo_surface);
 
@@ -2183,16 +2113,16 @@ static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface)
   color.red = 255 * gray_factor;color.green = 255 * gray_factor;color.blue = 255 * gray_factor;
 
   //gray areas
-  if (splitnumber == 0)
+  if (ui->infos->splitnumber == 0)
   {
-    draw_small_rectangle(0, total_time, color, cairo_surface);
+    draw_small_rectangle(0, ui->infos->total_time, color, cairo_surface);
     return;
   }
 
   draw_small_rectangle(0, get_splitpoint_time(0), color, cairo_surface);
-  draw_small_rectangle(get_splitpoint_time(splitnumber-1), total_time, color, cairo_surface);
+  draw_small_rectangle(get_splitpoint_time(ui->infos->splitnumber-1), ui->infos->total_time, color, cairo_surface);
   gint i = 0;
-  for (i = 0; i < splitnumber - 1; i++ )
+  for (i = 0; i < ui->infos->splitnumber - 1; i++ )
   {
     Split_point point = g_array_index(ui->splitpoints, Split_point, i);
     if (!point.checked)
@@ -2205,14 +2135,13 @@ static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface)
 }
 
 #if GTK_MAJOR_VERSION <= 2
-gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
+static gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
 {
   cairo_t *gc = gdk_cairo_create(da->window);
 #else
-gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
+static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
 {
 #endif
-
   if (drawing_area_expander != NULL &&
       !gtk_expander_get_expanded(GTK_EXPANDER(drawing_area_expander)))
   {
@@ -2227,8 +2156,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
   {
     if (height != DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE)
     {
-      gtk_widget_set_size_request(da, 
-          DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE);
+      gtk_widget_set_size_request(da, DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE);
     }
   }
   else
@@ -2270,7 +2198,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
   {
     bottom_left_middle_right_text_ypos = wave_ypos;
   }
-  
+
   GdkColor color;
   gint nbr_chars = 0;
 
@@ -2290,7 +2218,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
 
   color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 255;
   dh_set_color(gc, &color);
-  
+
   //background white rectangles
   dh_draw_rectangle(gc, TRUE, 0, margin, width_drawing_area, real_erase_split_length);
   dh_draw_rectangle(gc, TRUE, 0, erase_split_ylimit, width_drawing_area, progress_length);
@@ -2301,17 +2229,14 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
   {
     dh_draw_rectangle(gc, TRUE, 0, text_ypos + margin, width_drawing_area, wave_length);
   }
- 
+
   //only if we are playing
   //and the timer active(connected to player)
   if (playing && timer_active)
   {
-    gfloat left_time;
-    gfloat right_time;
-    gfloat center_time;
-    left_time = get_left_drawing_time(current_time, total_time, zoom_coeff);
-    right_time = get_right_drawing_time(current_time, total_time, zoom_coeff);
-    center_time = current_time;
+    gfloat left_time = get_left_drawing_time(ui->infos->current_time, ui->infos->total_time, zoom_coeff);
+    gfloat right_time = get_right_drawing_time(ui->infos->current_time, ui->infos->total_time, zoom_coeff);
+    gfloat center_time = ui->infos->current_time;
 
     //marks to draw seconds, minutes...
     gint left_mark = (gint)left_time;
@@ -2320,23 +2245,21 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     {
       left_mark = 0;
     }
-    if (right_mark > total_time)
+    if (right_mark > ui->infos->total_time)
     {
-      right_mark = (gint)total_time;
+      right_mark = (gint)ui->infos->total_time;
     }
 
     gfloat total_draw_time = right_time - left_time;
 
     gchar str[30] = { '\0' };
-    gint beg_pixel = convert_time_to_pixels(width_drawing_area, 0, current_time, total_time, zoom_coeff);
+    gint beg_pixel = convert_time_to_pixels(width_drawing_area, 0,
+        ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
     draw_rectangles_between_splitpoints(gc);
 
-    //we set blue color
-    color.red = 255 * 150;
-    color.green = 255 * 150;
-    color.blue = 255 * 255;
-    //set the color for the graphic context
+    //blue color
+    color.red = 255 * 150; color.green = 255 * 150; color.blue = 255 * 255;
     dh_set_color(gc, &color);
 
     //if it's the first splitpoint from play preview
@@ -2345,11 +2268,11 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       gint right_pixel =
         convert_time_to_pixels(width_drawing_area,
             get_splitpoint_time(quick_preview_end_splitpoint),
-            current_time, total_time, zoom_coeff);
+            ui->infos->current_time, ui->infos->total_time, zoom_coeff);
       gint left_pixel =
         convert_time_to_pixels(width_drawing_area,
             get_splitpoint_time(preview_start_splitpoint),
-            current_time, total_time, zoom_coeff);
+            ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
       gint preview_splitpoint_length = right_pixel - left_pixel + 1;
 
@@ -2376,14 +2299,13 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     {
       //if we draw until the end
       if ((preview_start_splitpoint != -1)&&
-          (preview_start_splitpoint != (splitnumber-1)))
+          (preview_start_splitpoint != (ui->infos->splitnumber-1)))
       {
         gint left_pixel =
           convert_time_to_pixels(width_drawing_area,
               get_splitpoint_time(preview_start_splitpoint),
-              current_time, total_time, zoom_coeff);
-        //top buttons
-        dh_draw_rectangle (gc,
+              ui->infos->current_time, ui->infos->total_time, zoom_coeff);
+        dh_draw_rectangle(gc,
             TRUE, left_pixel,
             progress_ylimit-2,
             width_drawing_area-left_pixel,
@@ -2392,10 +2314,8 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
         if (quick_preview)
         {
           color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
-          //set the color for the graphic context
           dh_set_color(gc, &color);
-          //top buttons
-          dh_draw_rectangle (gc,
+          dh_draw_rectangle(gc,
               TRUE, left_pixel,
               erase_split_ylimit,
               width_drawing_area-left_pixel,
@@ -2405,13 +2325,12 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     }
 
     //song start
-    if ( left_time <= 0 )
+    if (left_time <= 0)
     {
       color.red = 255 * 235;color.green = 255 * 235;
       color.blue = 255 * 235;
-      //set the color for the graphic context
       dh_set_color(gc, &color);
-      dh_draw_rectangle (gc,
+      dh_draw_rectangle(gc,
           TRUE,
           0,0,
           beg_pixel,
@@ -2420,7 +2339,6 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     else
     {
       color.red = 30000;color.green = 0;color.blue = 30000;
-      //set the color for the graphic context
       dh_set_color(gc, &color);
 
       get_time_for_drawing(str, left_time, FALSE, &nbr_chars);
@@ -2428,14 +2346,13 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     }
 
     gint end_pixel = 
-      convert_time_to_pixels(width_drawing_area, total_time, 
-      current_time, total_time, zoom_coeff);
+      convert_time_to_pixels(width_drawing_area, ui->infos->total_time, 
+          ui->infos->current_time, ui->infos->total_time, zoom_coeff);
     //song end
-    if ( right_time >= total_time )
+    if (right_time >= ui->infos->total_time)
     {
       color.red = 255 * 235;color.green = 255 * 235;
       color.blue = 255 * 235;
-      //set the color for the graphic context
       dh_set_color(gc, &color);
 
       dh_draw_rectangle (gc,
@@ -2446,7 +2363,6 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     else
     {
       color.red = 30000;color.green = 0;color.blue = 30000;
-      //set the color for the graphic context
       dh_set_color(gc, &color);
 
       get_time_for_drawing(str, right_time, FALSE, &nbr_chars);
@@ -2513,8 +2429,8 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     //draw mobile button1 position line
     if (button1_pressed)
     {
-      gint move_pixel = 
-        convert_time_to_pixels(width_drawing_area, move_time, current_time, total_time, zoom_coeff);
+      gint move_pixel = convert_time_to_pixels(width_drawing_area, move_time, 
+          ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
       if (move_splitpoints)
       {
@@ -2524,7 +2440,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
         color.red = 0;color.green = 0;color.blue = 0;
         dh_set_color(gc, &color);
 
-        get_time_for_drawing(str, current_time, FALSE, &nbr_chars);
+        get_time_for_drawing(str, ui->infos->current_time, FALSE, &nbr_chars);
         dh_draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
       }
       else
@@ -2539,9 +2455,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
           dh_draw_line(gc, move_pixel,text_ypos + margin, move_pixel,wave_ypos, TRUE, TRUE);
         }
 
-        //we set default black color
         color.red = 0;color.green = 0;color.blue = 0;
-        //set the color for the graphic context
         dh_set_color(gc, &color);
 
         get_time_for_drawing(str, move_time, FALSE, &nbr_chars);
@@ -2550,21 +2464,13 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     }
     else
     {
-      //we set default black color
       color.red = 0;color.green = 0;color.blue = 0;
-      //set the color for the graphic context
       dh_set_color(gc, &color);
 
       get_time_for_drawing(str, center_time, FALSE, &nbr_chars);
       dh_draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
     }
 
-    //we set default black color
-    color.red = 0;color.green = 0;color.blue = 0;
-    //set the color for the graphic context
-    dh_set_color(gc, &color);
-
-    //we set the red color
     color.red = 255 * 255;color.green = 0;color.blue = 0;
     dh_set_color(gc, &color);
 
@@ -2572,17 +2478,17 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     dh_draw_line(gc, width_drawing_area/2,erase_split_ylimit,
         width_drawing_area/2,progress_ylimit, FALSE, TRUE);
 
-    //we draw the silence wave if we have it 
+    //silence wave
     if (show_silence_wave)
     {
       draw_silence_wave(left_mark, right_mark, 
           width_drawing_area/2 + 3, wave_ypos - margin * 4,
           total_draw_time, 
           width_drawing_area, text_ypos + margin,
-          current_time, total_time, zoom_coeff,
+          ui->infos->current_time, ui->infos->total_time, zoom_coeff,
           da, gc);
 
-      //draw silence wave middle line
+      //silence wave middle line
       color.red = 255 * 255;color.green = 0;color.blue = 0;
       dh_set_color(gc, &color);
       dh_draw_line(gc, width_drawing_area/2,text_ypos + margin, width_drawing_area/2, wave_ypos, FALSE, TRUE);
@@ -2591,7 +2497,7 @@ gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     draw_splitpoints(left_mark, right_mark, da, gc);
   }
   else
-  {      
+  {
     color.red = 255 * 212; color.green = 255 * 100; color.blue = 255 * 200;
     dh_set_color(gc, &color);
     dh_draw_text(gc, _(" left click on splitpoint selects it, right click erases it"),
@@ -2630,9 +2536,9 @@ static void draw_small_rectangle(gint time_left, gint time_right,
   }
 
   gint pixels_left = convert_time_to_pixels(width_drawing_area, time_left, 
-      current_time, total_time, zoom_coeff);
+      ui->infos->current_time, ui->infos->total_time, zoom_coeff);
   gint pixels_right = convert_time_to_pixels(width_drawing_area, time_right, 
-      current_time, total_time, zoom_coeff);
+      ui->infos->current_time, ui->infos->total_time, zoom_coeff);
   gint pixels_length = pixels_right - pixels_left;
 
   dh_set_color(cairo_surface, &color);
@@ -2646,19 +2552,20 @@ static void draw_small_rectangle(gint time_left, gint time_right,
   }
 }
 
-void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, gint *splitpoint_left)
+void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
+    gint *splitpoint_left, ui_infos *infos)
 {
   gint i = 0;
-  for (i = 0; i < splitnumber; i++ )
+  for (i = 0; i < infos->splitnumber; i++ )
   {
     gint current_point_hundr_secs = get_splitpoint_time(i);
-    if (current_point_hundr_secs < current_time - (DELTA * 2))
+    if (current_point_hundr_secs < infos->current_time - (DELTA * 2))
     {
       *time_left = current_point_hundr_secs;
       continue;
     }
 
-    if (current_point_hundr_secs > current_time + (DELTA * 2))
+    if (current_point_hundr_secs > infos->current_time + (DELTA * 2))
     {
       *time_right = current_point_hundr_secs;
       if (splitpoint_left != NULL) { *splitpoint_left = i; }
@@ -2668,7 +2575,7 @@ void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
 
   if (splitpoint_left != NULL && *splitpoint_left == -1)
   {
-    *splitpoint_left = splitnumber;
+    *splitpoint_left = infos->splitnumber;
   }
 }
 
@@ -2684,9 +2591,8 @@ void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
 */
 gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type)
 {
-  //the time current position
   gint time_pos,time_right_pos,time_margin;
-  gint left_time = get_left_drawing_time(current_time, total_time, zoom_coeff);
+  gint left_time = get_left_drawing_time(ui->infos->current_time, ui->infos->total_time, zoom_coeff);
   
   gint but_y;
   
@@ -2751,7 +2657,7 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type)
     gint current_point_left, current_point_right;
 
     gint i = 0;
-    for(i = 0; i < splitnumber; i++ )
+    for(i = 0; i < ui->infos->splitnumber; i++ )
     {
       gint current_point_hundr_secs = get_splitpoint_time(i);
       //left margin
@@ -2790,7 +2696,7 @@ void player_quick_preview(gint splitpoint_to_preview)
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button), FALSE);
     }
 
-    if (splitpoint_to_preview < splitnumber-1)
+    if (splitpoint_to_preview < ui->infos->splitnumber-1)
     {
       quick_preview_end_splitpoint = splitpoint_to_preview + 1;
     }
@@ -2799,7 +2705,7 @@ void player_quick_preview(gint splitpoint_to_preview)
       quick_preview_end_splitpoint = -1;
     }
 
-    player_jump(preview_start_position * 10);
+    player_seek(preview_start_position * 10);
     change_progress_bar();
     put_status_message(_(" quick preview..."));
 
@@ -2809,7 +2715,7 @@ void player_quick_preview(gint splitpoint_to_preview)
       quick_preview = TRUE;
     }
 
-    if (preview_start_splitpoint == (splitnumber-1))
+    if (preview_start_splitpoint == (ui->infos->splitnumber-1))
     {
       cancel_quick_preview_all();
     }
@@ -2854,7 +2760,7 @@ gboolean da_press_event (GtkWidget    *da,
             select_splitpoint(splitpoint_selected);
           }
 
-          refresh_drawing_area();
+          refresh_drawing_area(ui->gui);
         }
         else
         {
@@ -2868,14 +2774,14 @@ gboolean da_press_event (GtkWidget    *da,
               check_splitpoint = TRUE;
               update_splitpoint_check(splitpoint_selected);
             }
-            refresh_drawing_area();
+            refresh_drawing_area(ui->gui);
           }
         }
       }
 
       if (!move_splitpoints)
       {
-        move_time = current_time;
+        move_time = ui->infos->current_time;
       }
       else
       {
@@ -2919,7 +2825,7 @@ gboolean da_press_event (GtkWidget    *da,
               remove_splitpoint(splitpoint_to_erase,TRUE);
             }
 
-            refresh_drawing_area();
+            refresh_drawing_area(ui->gui);
           }
         }
       }
@@ -2944,7 +2850,7 @@ gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, gpointer data)
           !select_splitpoints && !check_splitpoint)
       {
         remove_status_message();
-        player_jump((gint)(move_time * 10));
+        player_seek((gint)(move_time * 10));
         change_progress_bar();
 
         //if we have more than 2 splitpoints
@@ -3005,7 +2911,7 @@ gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, gpointer data)
     }
   }
   
-  refresh_drawing_area();
+  refresh_drawing_area(ui->gui);
   
   return TRUE;
 }
@@ -3024,7 +2930,7 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
 
     //drawing area width
     gint width = 0;
-    wh_get_widget_size(drawing_area, &width, NULL);
+    wh_get_widget_size(ui->gui->drawing_area, &width, NULL);
     gfloat width_drawing_area = (gfloat) width;
 
     if (state)
@@ -3041,11 +2947,11 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
           //if we remove a splitpoint
           if (remove_splitpoints || select_splitpoints || check_splitpoint)
           {
-            move_time = current_time;
+            move_time = ui->infos->current_time;
           }
           else
           {
-            move_time = current_time +
+            move_time = ui->infos->current_time +
               pixels_to_time(width_drawing_area,(x - button_x));
           }
         }
@@ -3054,12 +2960,12 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
         {
           move_time = 0;
         }
-        if (move_time > total_time)
+        if (move_time > ui->infos->total_time)
         {
-          move_time = total_time;
+          move_time = ui->infos->total_time;
         }
 
-        refresh_drawing_area();
+        refresh_drawing_area(ui->gui);
       }
       else
       {
@@ -3091,12 +2997,12 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
 
           adjust_zoom_coeff();
 
-          refresh_drawing_area();
+          refresh_drawing_area(ui->gui);
         }
       }
     }
   }
-  
+
   return TRUE;
 }
 
@@ -3106,9 +3012,9 @@ void adjust_zoom_coeff()
   {
     zoom_coeff = 0.2;
   }
-  if (zoom_coeff > 10 * total_time / 6000)
+  if (zoom_coeff > 10 * ui->infos->total_time / 6000)
   {
-    zoom_coeff = 10 * total_time / 6000;
+    zoom_coeff = 10 * ui->infos->total_time / 6000;
   }
 }
 
@@ -3132,19 +3038,18 @@ static void drawing_area_expander_event(GObject *object, GParamSpec *param_spec,
 }
 
 //!creates the progress drawing area under the player buttons
-GtkWidget *create_drawing_area()
+static GtkWidget *create_drawing_area(ui_state *ui)
 {
   GtkWidget *frame = gtk_frame_new(NULL);
  
   GdkColor color;
-  color.red = 65000;
-  color.green = 0;
-  color.blue = 0;
+  color.red = 65000; color.green = 0; color.blue = 0;
   gtk_widget_modify_bg(frame, GTK_STATE_NORMAL, &color);
 
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 
-  drawing_area = gtk_drawing_area_new();
+  GtkWidget *drawing_area = gtk_drawing_area_new();
+  ui->gui->drawing_area = drawing_area;
 
   gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT);
 
@@ -3174,57 +3079,39 @@ GtkWidget *create_drawing_area()
 }
 
 //!creates the control player frame, stop button, play button, etc.
-GtkWidget *create_player_control_frame()
+GtkWidget *create_player_control_frame(ui_state *ui)
 {
-  //the vbox has hboxes in it
-  GtkWidget *vbox;
-  GtkWidget *hbox;
-
-  //really big hbox
-  GtkWidget *really_big_hbox = wh_hbox_new();
- 
-  //main hbox
   GtkWidget *main_hbox = wh_hbox_new();
-  gtk_box_pack_start (GTK_BOX(really_big_hbox), main_hbox, TRUE, TRUE, 4);
   
-  vbox = wh_vbox_new();
+  GtkWidget *vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(main_hbox), vbox, TRUE, TRUE, 0);
 
-  /* handle box for detaching */
-  player_handle = gtk_handle_box_new();
-  gtk_container_add(GTK_CONTAINER (player_handle), GTK_WIDGET(really_big_hbox));
-  //handle event
-  g_signal_connect(player_handle, "child-detached",
-                   G_CALLBACK(handle_player_detached_event),
-                   NULL);
-
-  //the filename player hbox
-  hbox = (GtkWidget *)create_filename_player_hbox();
-  gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 5);
+  //filename player hbox
+  GtkWidget *hbox = create_filename_player_hbox(ui->gui);
+  gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
   //the song informations
-  hbox = (GtkWidget *)create_song_informations_hbox();
-  gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 3);
+  hbox = create_song_informations_hbox(ui->gui);
+  gtk_container_set_border_width(GTK_CONTAINER (hbox), 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 3);
 
-  //the vertical range progress scale
-  //song progress bar
-  hbox = (GtkWidget *)create_song_bar_hbox();
-  gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+  //audio progress bar
+  hbox = create_song_bar_hbox(ui);
+  gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-  //horizontal drawing area
-  GtkWidget *drawing_area = create_drawing_area();
+  //drawing area
+  GtkWidget *drawing_area = create_drawing_area(ui);
   gtk_container_set_border_width(GTK_CONTAINER(drawing_area), 0);
   gtk_box_pack_start(GTK_BOX(vbox), drawing_area, FALSE, FALSE, 0);
 
-  //our horizontal player button hbox
+  //player buttons
   hbox = (GtkWidget *)create_player_buttons_hbox();
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-  return player_handle;
+  return main_hbox;
 }
 
 //!add a row to the table
@@ -3265,7 +3152,7 @@ void add_playlist_file(const gchar *name)
       //sets text in the minute, second and milisecond column
       gtk_list_store_set (GTK_LIST_STORE(model), 
           &iter,
-          COL_NAME,get_real_name_from_filename((guchar *)name),
+          COL_NAME, get_real_name_from_filename(name),
           COL_FILENAME,name,
           -1);
       playlist_tree_number++;
@@ -3376,40 +3263,36 @@ void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
   GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
   GtkTreeSelection *selection = gtk_tree_view_get_selection(playlist_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
-  
-  //the name of the file that we have clicked on
+
   gchar *filename = NULL;
-  
-  //while the list is not empty and we have numbers in the table
-  //(splitnumber >0)
+
   while (g_list_length(selected_list) > 0)
-    {
-      GList *current_element = g_list_last(selected_list);
-      GtkTreePath *path = current_element->data;
+  {
+    GList *current_element = g_list_last(selected_list);
+    GtkTreePath *path = current_element->data;
 
-      GtkTreeIter iter;
-      gtk_tree_model_get_iter(model, &iter, path);
-      gtk_tree_model_get(model, &iter, 
-                         COL_FILENAME, &filename, -1);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, 
+        COL_FILENAME, &filename, -1);
 
-      //remove the path from the selected list
-      gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-      selected_list = g_list_remove(selected_list, path);
-      //remove 1 to the row number of the table
-      playlist_tree_number--;
-      
-      //free memory
-      gtk_tree_path_free(path);
-      g_free(filename);
-    }
-  
+    //remove the path from the selected list
+    gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+    selected_list = g_list_remove(selected_list, path);
+    //remove 1 to the row number of the table
+    playlist_tree_number--;
+
+    gtk_tree_path_free(path);
+    g_free(filename);
+  }
+
   if (playlist_tree_number == 0)
   {
     gtk_widget_set_sensitive(playlist_remove_all_files_button, FALSE);
   }
-  
+
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
-  
+
   //we free the selected elements
   g_list_foreach(selected_list, (GFunc)gtk_tree_path_free, NULL);
   g_list_free(selected_list);  
@@ -3541,7 +3424,7 @@ Examples are the elapsed time and if it uses variable bitrate
 */
 gint mytimer(gpointer data)
 {
-  if (currently_compute_douglas_peucker_filters)
+  if (ui->status->currently_compute_douglas_peucker_filters)
   {
     return TRUE;
   }
@@ -3558,10 +3441,11 @@ gint mytimer(gpointer data)
         {
           print_all_song_infos();
           print_song_time_elapsed();
-          if(!gtk_widget_is_sensitive(progress_bar))
-            gtk_widget_set_sensitive(GTK_WIDGET(progress_bar), TRUE);
+          gtk_widget_set_sensitive(GTK_WIDGET(ui->gui->progress_bar), TRUE);
         }
+
         check_stream();
+
         //if we have a stream, we must not change the progress bar
         if(!stream)
         {
@@ -3573,13 +3457,13 @@ gint mytimer(gpointer data)
         {
           //if we have a splitpoint after the current
           //previewed one, update quick_preview_end
-          if (preview_start_splitpoint+1 < splitnumber)
+          if (preview_start_splitpoint+1 < ui->infos->splitnumber)
           {
             quick_preview_end_splitpoint = preview_start_splitpoint+1;
           }
           else
           {
-            if (preview_start_splitpoint+1 == splitnumber)
+            if (preview_start_splitpoint+1 == ui->infos->splitnumber)
             {
               quick_preview_end_splitpoint = -1;
             }
@@ -3591,7 +3475,7 @@ gint mytimer(gpointer data)
         {
           gint stop_splitpoint = get_splitpoint_time(quick_preview_end_splitpoint);
 
-          if ((stop_splitpoint < (gint)current_time)
+          if ((stop_splitpoint < (gint)ui->infos->current_time)
               && (quick_preview_end_splitpoint != -1))
           {
             gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pause_button), TRUE);
@@ -3607,7 +3491,7 @@ gint mytimer(gpointer data)
       else
       {
         playing = FALSE;
-        reset_label_time();
+        reset_label_time(ui->gui);
       }
 
       if (player_is_paused())
@@ -3632,15 +3516,16 @@ gint mytimer(gpointer data)
     else
     {
       //if not playing but still connected
-      if ((player_minutes != 0) || (player_seconds != 0))
+      if ((ui->infos->player_minutes != 0) ||
+          (ui->infos->player_seconds != 0))
       {
-        player_minutes = 0;
-        player_seconds = 0;
+        ui->infos->player_minutes = 0;
+        ui->infos->player_seconds = 0;
       }
+
       print_player_filename();
-      reset_song_infos();
-      reset_label_time();
-      //reset progress bar
+      reset_song_infos(ui->gui);
+      reset_label_time(ui->gui);
       reset_inactive_progress_bar();
       gtk_widget_set_sensitive(player_add_button, FALSE);
       gtk_widget_set_sensitive(silence_wave_check_button, FALSE);

@@ -211,6 +211,18 @@ static void ui_infos_new(ui_state *ui)
   infos->malloced_num_of_silence_points = 0;
   infos->number_of_silence_points = 0;
 
+  infos->player_seconds = 0;
+  infos->player_minutes = 0;
+  infos->player_hundr_secs = 0;
+  infos->player_seconds2 = 0;
+  infos->player_minutes2 = 0;
+  infos->player_hundr_secs2 = 0;
+
+  infos->total_time = 0;
+  infos->current_time = 0;
+
+  infos->splitnumber = 0;
+
   ui->infos = infos;
 }
 
@@ -220,6 +232,9 @@ static void ui_status_new(ui_state *ui)
 
   status->splitting = FALSE;
   status->quit_main_program = FALSE;
+  status->mouse_on_progress_bar = FALSE;
+
+  status->currently_compute_douglas_peucker_filters = FALSE;
 
   ui->status = status;
 }

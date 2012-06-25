@@ -57,9 +57,6 @@ gint preferences_tab = FALSE;
 //the split freedb button
 GtkWidget *split_freedb_button;
 
-//new window for the progress bar
-GtkWidget *percent_progress_bar;
-
 //filename and path for the file to split
 gchar *filename_to_split;
 gchar *filename_path_of_split;
@@ -69,7 +66,6 @@ GtkWidget *cancel_button = NULL;
 extern GtkWidget *mess_history_dialog;
 
 extern GtkWidget *da;
-extern GtkWidget *progress_bar;
 
 extern gint selected_id;
 extern splt_freedb_results *search_results;
@@ -77,9 +73,6 @@ extern gchar **split_files;
 extern gint max_split_files;
 extern gint selected_player;
 
-extern gfloat current_time;
-extern gfloat total_time;
-extern gint splitnumber;
 extern gfloat zoom_coeff;
 
 extern ui_state *ui;
@@ -178,7 +171,7 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
   ui_set_main_win_position(ui, event->configure.x, event->configure.y); 
   ui_set_main_win_size(ui, event->configure.width, event->configure.height);
 
-  refresh_drawing_area();
+  refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas();
 
   return FALSE;
@@ -493,55 +486,60 @@ static void player_pause_action(GtkWidget *widget, ui_state *ui)
  
 static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
-  gfloat new_time = current_time * 10 + 2./100. * total_time * 10;
+  gfloat total_time = ui->infos->total_time;
+  gfloat new_time = ui->infos->current_time * 10 + 2./100. * total_time * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
-  player_jump(new_time);
+  player_seek(new_time);
 }
  
 static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
-  gfloat new_time = current_time * 10 - 2./100. * total_time * 10;
+  gfloat total_time = ui->infos->total_time;
+  gfloat new_time = ui->infos->current_time * 10 - 2./100. * total_time * 10;
   if (new_time <= 0) { new_time = 0; }
-  player_jump(new_time);
+  player_seek(new_time);
 }
 
 static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
-  gfloat new_time = current_time * 10 + 15./100. * total_time * 10;
+  gfloat total_time = ui->infos->total_time;
+  gfloat new_time = ui->infos->current_time * 10 + 15./100. * total_time * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
-  player_jump(new_time);
+  player_seek(new_time);
 }
  
 static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
-  gfloat new_time = current_time * 10 - 15./100. * total_time * 10;
+  gfloat total_time = ui->infos->total_time;
+  gfloat new_time = ui->infos->current_time * 10 - 15./100. * total_time * 10;
   if (new_time <= 0) { new_time = 0; }
-  player_jump(new_time);
+  player_seek(new_time);
 }
 
 static void player_small_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
-  gfloat new_time = current_time * 10 + 100 * 3 * 10;
+  gfloat total_time = ui->infos->total_time;
+  gfloat new_time = ui->infos->current_time * 10 + 100 * 3 * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
-  player_jump(new_time);
+  player_seek(new_time);
 }
  
 static void player_small_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
-  gfloat new_time = current_time * 10 - 100 * 3 * 10;
+  gfloat new_time = ui->infos->current_time * 10 - 100 * 3 * 10;
   if (new_time <= 0) { new_time = 0; }
-  player_jump(new_time);
+  player_seek(new_time);
 }
 
 static void player_seek_to_next_splitpoint_action(GtkWidget *widget, ui_state *ui)
 {
   gint time_left = -1;
   gint time_right = -1;
-  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL);
+  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui->infos);
 
   if (time_right != -1)
   {
-    player_jump(time_right * 10);
+    player_seek(time_right * 10);
   }
 }
 
@@ -549,11 +547,11 @@ static void player_seek_to_previous_splitpoint_action(GtkWidget *widget, ui_stat
 {
   gint time_left = -1;
   gint time_right = -1;
-  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL);
+  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui->infos);
 
   if (time_left != -1)
   {
-    player_jump(time_left * 10);
+    player_seek(time_left * 10);
   }
 }
 
@@ -563,16 +561,16 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
   gint right_index_point = -1;
 
   gint i = 0;
-  for (i = 0; i < splitnumber; i++ )
+  for (i = 0; i < ui->infos->splitnumber; i++ )
   {
     gint current_point_hundr_secs = get_splitpoint_time(i);
-    if (current_point_hundr_secs <= current_time)
+    if (current_point_hundr_secs <= ui->infos->current_time)
     {
       left_index_point = i;
       continue;
     }
 
-    if (current_point_hundr_secs > current_time + (DELTA * 2))
+    if (current_point_hundr_secs > ui->infos->current_time + (DELTA * 2))
     {
       right_index_point = i;
       break;
@@ -587,13 +585,13 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
   gint time_to_left = INT_MAX;
   if (left_index_point != -1)
   {
-    time_to_left = current_time - get_splitpoint_time(left_index_point);
+    time_to_left = ui->infos->current_time - get_splitpoint_time(left_index_point);
   }
 
   gint time_to_right = INT_MAX;
   if (right_index_point != -1)
   {
-    time_to_right = get_splitpoint_time(right_index_point) - current_time;
+    time_to_right = get_splitpoint_time(right_index_point) - ui->infos->current_time;
   }
 
   if (time_to_right > time_to_left)
@@ -885,7 +883,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   GtkWidget *player_vbox = wh_vbox_new();
   GtkWidget *notebook_label = gtk_label_new((gchar *)_("Player"));
 
-  ui->gui->player_box = create_player_control_frame();
+  ui->gui->player_box = create_player_control_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->player_box, FALSE, FALSE, 0);
 
   ui->gui->playlist_box = (GtkWidget *)create_player_playlist_frame();
@@ -951,16 +949,17 @@ static GtkWidget *create_main_vbox(ui_state *ui)
                            (GtkWidget *)notebook_label);
  
   /* progress bar */
-  percent_progress_bar = gtk_progress_bar_new();
-  gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 0.0);
-  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), "");
+  GtkProgressBar *percent_progress_bar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
+  ui->gui->percent_progress_bar = percent_progress_bar;
+  gtk_progress_bar_set_fraction(percent_progress_bar, 0.0);
+  gtk_progress_bar_set_text(percent_progress_bar, "");
 
 #if GTK_MAJOR_VERSION >= 3
-  gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(percent_progress_bar), TRUE);
+  gtk_progress_bar_set_show_text(percent_progress_bar, TRUE);
 #endif
 
   GtkWidget *hbox = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(hbox), percent_progress_bar, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(percent_progress_bar), TRUE, TRUE, 0);
 
   //stop button
   cancel_button = wh_create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);

@@ -49,8 +49,6 @@ gint splitpoint_checked = TRUE;
 //TODO: not translated
 gchar current_description[255] = "description here";
 
-gint splitnumber = 0;
-
 //buttons for adding and removing rows
 GtkWidget *add_button = NULL;
 GtkWidget *remove_all_button = NULL;
@@ -133,12 +131,7 @@ gboolean silence_remove_silence_between_tracks = FALSE;
 \{
 */
 extern gint timer_active;
-extern gint player_seconds, player_minutes,
-  player_hundr_secs;
 extern int selected_player;
-//the percent progress bar
-extern GtkWidget *percent_progress_bar;
-extern gfloat current_time;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 extern gchar *filename_path_of_split;
@@ -293,12 +286,12 @@ static void order_length_column(ui_state *ui)
 
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
 
-  for (number = 0;number < splitnumber; number++)
+  for (number = 0;number < ui->infos->splitnumber; number++)
   {
     path = gtk_tree_path_new_from_indices (number ,-1);
     gtk_tree_model_get_iter(model, &iter, path);
 
-    if (number != splitnumber-1)
+    if (number != ui->infos->splitnumber-1)
     {
       path2 = gtk_tree_path_new_from_indices (number+1 ,-1);
       gtk_tree_model_get_iter(model, &iter2, path2);
@@ -443,7 +436,7 @@ void update_current_description(gchar *descr, gint number)
 
   g_snprintf(current_description,255,"%s",descr);
 
-  while (ll < splitnumber)
+  while (ll < ui->infos->splitnumber)
   {
     //if we already have the description
     if(!check_if_description_exists(current_description, number))
@@ -519,7 +512,7 @@ void remove_splitpoint(gint index, gint stop_preview)
   if (((index == preview_start_splitpoint) &&
       (stop_preview))||
       ((index == quick_preview_end_splitpoint) &&
-      (quick_preview_end_splitpoint == (splitnumber-1))&&
+      (quick_preview_end_splitpoint == (ui->infos->splitnumber-1))&&
        (stop_preview)))
     {
       cancel_quick_preview_all();
@@ -529,7 +522,7 @@ void remove_splitpoint(gint index, gint stop_preview)
   gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
   //we free the path
   gtk_tree_path_free(path);
-  splitnumber--;
+  ui->infos->splitnumber--;
   
   //if we don't have the first selected, we hide remove button
   if (get_first_splitpoint_selected() == -1)
@@ -537,7 +530,7 @@ void remove_splitpoint(gint index, gint stop_preview)
     gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);  
   }
   
-  if (splitnumber == 0)
+  if (ui->infos->splitnumber == 0)
   {
     gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   }
@@ -546,8 +539,8 @@ void remove_splitpoint(gint index, gint stop_preview)
   order_length_column(ui);
   remove_status_message();
   update_add_button();
-  check_update_down_progress_bar();
-  refresh_drawing_area();
+  check_update_down_progress_bar(ui);
+  refresh_drawing_area(ui->gui);
 }
 
 /*!Set all values of a split point
@@ -572,7 +565,7 @@ void update_splitpoint(gint index, Split_point new_point)
     first_splitpoint_selected = get_first_splitpoint_selected();
 
     gchar *description = NULL;
-    description = get_splitpoint_name(index);
+    description = get_splitpoint_name(index, ui);
     g_snprintf(current_description, 255, "%s", description);
     g_free(description);
 
@@ -737,10 +730,11 @@ void add_splitpoint_from_player(GtkWidget *widget, gpointer data)
   }
 
   Split_point my_split_point;
-  my_split_point.mins = player_minutes;
-  my_split_point.secs = player_seconds;
-  my_split_point.hundr_secs = player_hundr_secs;
+  my_split_point.mins = ui->infos->player_minutes;
+  my_split_point.secs = ui->infos->player_seconds;
+  my_split_point.hundr_secs = ui->infos->player_hundr_secs;
   my_split_point.checked = TRUE;
+
   add_splitpoint(my_split_point,-1);
 }
 
@@ -803,11 +797,9 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
     gint tree_minutes;
     gint tree_seconds;
     gint tree_hundr_secs;
-    //if the table is not empty
-    if(gtk_tree_model_get_iter_first(model, &iter))
+    if (gtk_tree_model_get_iter_first(model, &iter))
     {
-      //for all the splitnumbers
-      while (k < splitnumber)
+      while (k < ui->infos->splitnumber)
       {
         //we get the first
         //get iter number
@@ -857,7 +849,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
       gtk_list_store_append(GTK_LIST_STORE(model), &iter);
       g_array_append_val(ui->splitpoints, my_split_point);
     }
-    splitnumber++;
+    ui->infos->splitnumber++;
 
     //we keep the selection on the previous splipoint
     if ((first_splitpoint_selected == old_index) &&
@@ -875,7 +867,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
       //at the right of the current time, we cancel preview
       if (old_index == preview_start_splitpoint)
       {
-        if (current_time < get_splitpoint_time(preview_start_splitpoint))
+        if (ui->infos->current_time < get_splitpoint_time(preview_start_splitpoint))
         {
           cancel_quick_preview();
         }
@@ -934,7 +926,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
         }
       }
 
-      if (preview_start_splitpoint == (splitnumber-1))
+      if (preview_start_splitpoint == (ui->infos->splitnumber-1))
       {
         cancel_quick_preview_all();
       }
@@ -987,8 +979,8 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
   }
 
   update_add_button();
-  refresh_drawing_area();
-  check_update_down_progress_bar();
+  refresh_drawing_area(ui->gui);
+  check_update_down_progress_bar(ui);
 }
 
 //!adds a row to the table
@@ -1376,9 +1368,7 @@ static void remove_row(GtkWidget *widget, ui_state *ui)
 
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
 
-  //while the list is not empty and we have numbers in the table
-  //(splitnumber >0)
-  while ((g_list_length(selected_list) > 0) && (splitnumber > 0))
+  while ((g_list_length(selected_list) > 0) && (ui->infos->splitnumber > 0))
   {
     GList *current_element = g_list_last(selected_list);
     GtkTreePath *path = current_element->data;
@@ -1400,13 +1390,13 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   
-  while (splitnumber > 0)
+  while (ui->infos->splitnumber > 0)
   {
     GtkTreeIter iter;
     gtk_tree_model_get_iter_first(model, &iter);
     gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
-    g_array_remove_index(ui->splitpoints, (splitnumber-1));
-    splitnumber--;
+    g_array_remove_index(ui->splitpoints, (ui->infos->splitnumber-1));
+    ui->infos->splitnumber--;
   }
   
   gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
@@ -1415,8 +1405,8 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
   remove_status_message();
   cancel_quick_preview_all();
   update_add_button();
-  refresh_drawing_area();
-  check_update_down_progress_bar();
+  refresh_drawing_area(ui->gui);
+  check_update_down_progress_bar(ui);
 }
 
 //!creates and and initialise a spinner
@@ -1539,7 +1529,7 @@ static GtkWidget *create_init_special_buttons()
 
 result must be g_free'd after use
 */
-gchar *get_splitpoint_name(gint index)
+gchar *get_splitpoint_name(gint index, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
 
@@ -1558,7 +1548,7 @@ gchar *get_splitpoint_name(gint index)
 
   if (index >= 0)
   {
-    GtkTreePath *path = gtk_tree_path_new_from_indices (index ,-1);
+    GtkTreePath *path = gtk_tree_path_new_from_indices(index ,-1);
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
         COL_DESCRIPTION,&description,
@@ -1584,7 +1574,7 @@ gint get_splitpoint_time(gint splitpoint_index)
 
 gpointer split_preview(gpointer data)
 {
-  if (this_row+1 != splitnumber)
+  if (this_row+1 != ui->infos->splitnumber)
   {
     gint confirmation;
 
@@ -1643,8 +1633,8 @@ gpointer split_preview(gpointer data)
 
     if (confirmation > 0)
     {
-      gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 1.0);
-      gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), _(" finished"));
+      gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
+      gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
     }
 
     if (fname_path)
@@ -1977,7 +1967,7 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
 static void garray_to_array(GArray *spltpoints, glong *hundredth)
 {
   gint i = 0;
-  for(i = 0; i < splitnumber; i++ )
+  for(i = 0; i < ui->infos->splitnumber; i++ )
   {
     Split_point point = g_array_index(ui->splitpoints, Split_point, i);
     if (point.mins >= (INT_MAX-1)/6000)
@@ -1995,7 +1985,7 @@ static void garray_to_array(GArray *spltpoints, glong *hundredth)
 //!puts the splitpoints into the state
 void put_splitpoints_in_mp3splt_state(splt_state *state)
 {
-  glong hundr[splitnumber];
+  glong hundr[ui->infos->splitnumber];
   garray_to_array(ui->splitpoints, hundr);
   gint i;
 
@@ -2004,7 +1994,7 @@ void put_splitpoints_in_mp3splt_state(splt_state *state)
   GtkTreePath *path = NULL;
   gchar *description = NULL;
 
-  for (i = 0; i < splitnumber; i++)
+  for (i = 0; i < ui->infos->splitnumber; i++)
   {
     path = gtk_tree_path_new_from_indices(i ,-1);
     gtk_tree_model_get_iter(model, &iter, path);

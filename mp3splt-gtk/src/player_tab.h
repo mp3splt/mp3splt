@@ -50,20 +50,14 @@
 #define DELTA 5
 
 void player_quick_preview(gint splitpoint_to_preview);
-void check_update_down_progress_bar();
+void check_update_down_progress_bar(ui_state *ui);
 void set_preview_active_if_needed();
 void cancel_quick_preview_all();
 void cancel_quick_preview();
 void check_cancel_quick_preview(gint i);
-void get_current_splitpoints_time_left_right(gint *time_left,
-                                    gint *time_right,
-                                    gint *splitpoint_left);
 gint mytimer(gpointer data);
 void reset_inactive_progress_bar();
 void reset_inactive_volume_button();
-void reset_label_time();
-void reset_song_infos();
-void reset_song_name_label();
 void clear_data_player();
 void enable_player_buttons();
 void disable_player_buttons();
@@ -79,36 +73,13 @@ void stop_event(GtkWidget *widget, gpointer data);
 void pause_event(GtkWidget *widget, gpointer data);
 void prev_button_event (GtkWidget *widget, gpointer data);
 void next_button_event (GtkWidget *widget, gpointer data);
-void change_song_position();
-GtkWidget *create_song_informations_hbox();
-gboolean progress_bar_unclick_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                     gpointer user_data);
-gboolean progress_bar_click_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data);
-gfloat get_total_time();
-gfloat get_elapsed_time();
-void refresh_drawing_area();
-void progress_bar_value_changed_event (GtkRange *range,
-                                       gpointer user_data);
-gboolean progress_bar_scroll_event (GtkWidget *widget,
-                                    GdkEventScroll *event,
-                                    gpointer user_data);
-gboolean progress_bar_enter_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data);
-gboolean progress_bar_leave_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data);
-GtkWidget *create_song_bar_hbox();
+void refresh_drawing_area(gui_state *gui);
 void print_about_the_song();
 void print_player_filename();
 void print_all_song_infos();
 void print_song_time_elapsed();
 void change_volume_button();
 void change_progress_bar();
-GtkWidget *create_filename_player_hbox();
 void change_volume_event(GtkScaleButton *volume_button, gdouble value, gpointer data);
 
 gboolean volume_button_unclick_event (GtkWidget *widget,
@@ -172,8 +143,7 @@ gboolean da_unpress_event (GtkWidget    *da,
 gboolean da_notify_event (GtkWidget     *da,
                           GdkEventMotion *event,
                           gpointer      data);
-GtkWidget *create_drawing_area();
-GtkWidget *create_player_control_frame();
+GtkWidget *create_player_control_frame(ui_state *ui);
 
 //moved from the file_tab
 void file_chooser_cancel_event();
@@ -201,7 +171,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     GtkWidget *da, cairo_t *gc);
 
 void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
-    gint *splitpoint_left);
+    gint *splitpoint_left, ui_infos *infos);
 void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui);
 void adjust_zoom_coeff();
 

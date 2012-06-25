@@ -65,6 +65,20 @@ typedef struct {
   silence_wave *silence_points;
   gint number_of_silence_points;
   gint malloced_num_of_silence_points;
+
+  gint player_seconds;
+  gint player_minutes;
+  gint player_hundr_secs;
+  //only for internal use when we change manually we have the real
+  //time which is player_seconds and the imaginary time player_seconds2
+  gint player_seconds2;
+  gint player_minutes2;
+  gint player_hundr_secs2;
+
+  gfloat total_time;
+  gfloat current_time;
+
+  gint splitnumber;
 } ui_infos;
 
 typedef struct {
@@ -78,12 +92,24 @@ typedef struct {
   GtkWidget *player_box;
   GtkWidget *playlist_box;
 
+  GtkWidget *song_name_label;
+  GtkWidget *song_infos;
+  GtkWidget *label_time;
+
+  GtkAdjustment *progress_adj;
+  GtkWidget *progress_bar;
+
   GtkTreeView *tree_view;
+
+  GtkWidget *drawing_area;
+  GtkProgressBar *percent_progress_bar;
 } gui_state;
 
 typedef struct {
   gint splitting;
   gint quit_main_program;
+  gint mouse_on_progress_bar;
+  gint currently_compute_douglas_peucker_filters;
 } gui_status;
 
 typedef struct {
