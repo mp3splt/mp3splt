@@ -45,7 +45,7 @@ gint debug_is_active = FALSE;
 void create_mess_history_dialog();
 
 //! Returns the current local time in form of a string
-const char *get_current_time()
+const char *get_current_system_time()
 {
   time_t cur_time = { 0 };
   static char time_str[128] = { '\0' };
@@ -66,10 +66,10 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type)
       gtk_text_tag_table_lookup(mess_hist_tag_table, "gray_bold");
 
     GtkTextIter iter;
-    const char *current_time = get_current_time();
+    const char *current_system_time = get_current_system_time();
     gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(mess_hist_buffer), &iter);
     gtk_text_buffer_insert_with_tags(GTK_TEXT_BUFFER(mess_hist_buffer),
-        &iter, current_time, -1, gray_tag, NULL);
+        &iter, current_system_time, -1, gray_tag, NULL);
 
     gtk_text_buffer_insert(GTK_TEXT_BUFFER(mess_hist_buffer), &iter,
         message, -1);

@@ -111,15 +111,16 @@ void remove_all_split_rows ()
 }
 
 /*! finding the real name of the file, without the path
-
-\todo why guchar instead of gchar ?
 */
-guchar *get_real_name_from_filename(guchar *filename)
+const gchar *get_real_name_from_filename(const gchar *filename)
 {
-  while (strchr((gchar *) filename, G_DIR_SEPARATOR)!=NULL)
-    filename = (guchar *)strchr((gchar *)filename, G_DIR_SEPARATOR) + 1;
+  const gchar *fname = filename;
+  while (strchr(fname, G_DIR_SEPARATOR) != NULL)
+  {
+    fname = strchr(fname, G_DIR_SEPARATOR) + 1;
+  }
 
-  return filename;
+  return fname;
 }
 
 //!add a row to the table
@@ -130,8 +131,8 @@ void add_split_row(const gchar *name)
   gtk_list_store_append(GTK_LIST_STORE(model), &iter);
 
   gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-      COL_NAME,get_real_name_from_filename((guchar *)name),
-      COL_FILENAME,name, -1);
+      COL_NAME, get_real_name_from_filename(name),
+      COL_FILENAME, name, -1);
   split_table_number++;
 }
 
@@ -200,8 +201,6 @@ void remove_file_button_event(GtkWidget *widget, gpointer data)
 
   gchar *filename;
 
-  //while the list is not empty and we have numbers in the table
-  //(splitnumber >0)
   while (g_list_length(selected_list) > 0)
   {
     GList *current_element = g_list_last(selected_list);

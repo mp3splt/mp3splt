@@ -135,7 +135,6 @@ static GtkWidget *create_test_regex_table();
 extern void clear_current_description(void);
 extern void copy_filename_to_current_description(const gchar *fname);
 
-extern gfloat total_time;
 extern gfloat zoom_coeff;
 
 extern gint one_minute_time;
@@ -752,7 +751,7 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
 #endif
 
   gint width = get_wave_preview_width_drawing_area();
-  gtk_widget_set_size_request(drawing_area, width, 70);
+  gtk_widget_set_size_request(ui->gui->drawing_area, width, 70);
 
   gint *index = (gint *)data;
   gint expected_drawing_time_int = g_array_index(preview_time_windows, gint, *index);
@@ -761,7 +760,7 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
   dh_set_white_color(cairo_surface);
 
   dh_draw_rectangle(cairo_surface, TRUE, 0, 0, width, 70); 
-  gfloat current_time = total_time / 2.0;
+  gfloat current_time = ui->infos->total_time / 2.0;
 
   gfloat drawing_time = 0;
   gfloat zoom_coeff = 0.2;
@@ -770,8 +769,8 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
   gfloat right_time = 0;
   while ((drawing_time == 0) || (drawing_time > expected_drawing_time))
   {
-    left_time = get_left_drawing_time(current_time, total_time, zoom_coeff);
-    right_time = get_right_drawing_time(current_time, total_time, zoom_coeff);
+    left_time = get_left_drawing_time(current_time, ui->infos->total_time, zoom_coeff);
+    right_time = get_right_drawing_time(current_time, ui->infos->total_time, zoom_coeff);
     drawing_time = right_time - left_time;
     zoom_coeff += 0.2;
 
@@ -780,8 +779,8 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
 
   gint interpolation_level = draw_silence_wave((gint)left_time, (gint)right_time, width / 2, 50,
       drawing_time, width, 0,
-      current_time, total_time, zoom_coeff,
-      drawing_area, cairo_surface);
+      current_time, ui->infos->total_time, zoom_coeff,
+      ui->gui->drawing_area, cairo_surface);
 
   update_wave_preview_label_markup(*index, interpolation_level);
 

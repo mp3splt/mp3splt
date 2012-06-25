@@ -65,7 +65,7 @@ void player_stop();
 void player_pause();
 void player_next();
 void player_prev();
-void player_jump(gint position);
+void player_seek(gint position);
 void player_get_song_infos(gchar *total_infos);
 gint player_is_playing();
 gint player_is_paused();

@@ -246,9 +246,7 @@ static void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer d
 
   GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
   
-  //filename to erase
   gchar *filename = NULL;
-  //for all the splitnumbers
   while (multiple_files_tree_number > 0)
   {
     gtk_tree_model_get_iter_first(model, &iter);

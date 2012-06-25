@@ -43,7 +43,7 @@
 #include "all_includes.h"
 
 void add_splitpoint(Split_point my_split_point, gint old_index);
-gchar *get_splitpoint_name(gint index);
+gchar *get_splitpoint_name(gint index, ui_state *ui);
 gint get_first_splitpoint_selected();
 void select_splitpoint(gint index);
 gint get_splitpoint_time(gint this_splitpoint);

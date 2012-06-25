@@ -383,26 +383,26 @@ void player_prev()
 }
 
 //!jumps to a position in the song
-void player_jump(gint position)
+void player_seek(gint position)
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_jump(position);
-    }
+  {
+    snackamp_jump(position);
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_jump(position);
+    myxmms_jump(position);
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_jump(position);
+    gstreamer_jump(position);
 #endif
-    }
+  }
 }
 
 /*!get infos about the song

@@ -33,9 +33,10 @@
 
 gint split_files = 0;
 
+extern ui_state *ui;
+
 extern GtkWidget *queue_files_button;
 extern GtkWidget *remove_all_files_button;
-extern GtkWidget *percent_progress_bar;
 extern gint we_scan_for_silence;
 
 static void lmanager_change_window_progress_bar(splt_progress *p_bar);
@@ -181,9 +182,9 @@ static void lmanager_change_window_progress_bar(splt_progress *p_bar)
 
   enter_threads();
 
-  gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), p_bar->percent_progress);
+  gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, p_bar->percent_progress);
   g_snprintf(printed_value, 1023, "%6.2f %% %s", p_bar->percent_progress * 100, progress_text);
-  gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar), printed_value);
+  gtk_progress_bar_set_text(ui->gui->percent_progress_bar, printed_value);
 
 #ifdef __WIN32__
   while (gtk_events_pending())

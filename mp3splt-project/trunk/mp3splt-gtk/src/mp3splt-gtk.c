@@ -39,10 +39,6 @@
 
 #include "mp3splt-gtk.h"
 
-//the progress bar
-GtkWidget *progress_bar;
-
-extern gint splitnumber;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 
@@ -77,8 +73,6 @@ extern GtkWidget *spinner_time;
 
 //player
 extern gint selected_player;
-
-extern GtkWidget *percent_progress_bar;
 
 //stop button to cancel the split
 extern GtkWidget *cancel_button;
@@ -246,9 +240,8 @@ gpointer split_it(gpointer data)
   
   if (confirmation >= 0 && !multiple_files_error)
   {
-    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(percent_progress_bar), 1.0);
-    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(percent_progress_bar),
-        _(" finished"));
+    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
+    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
   }
 
   ui->status->splitting = FALSE;
