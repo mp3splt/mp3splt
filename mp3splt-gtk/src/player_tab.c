@@ -53,8 +53,6 @@ GtkWidget *file_handle_box;
 
 GtkWidget *player_buttons_hbox = NULL;
 
-GtkWidget *drawing_area_expander;
-
 //if we have selected a correct file
 gint incorrect_selected_file = FALSE;
 
@@ -116,7 +114,6 @@ GtkWidget *go_end_button;
 //silence wave
 GtkWidget *silence_wave_check_button = NULL;
 
-gint show_silence_wave = FALSE;
 gint we_scan_for_silence = FALSE;
 
 //stock if the timer is active or not
@@ -136,9 +133,6 @@ extern gint selected_player;
 
 //just used here for the timer hack
 gint stay_turn = 0;
-
-//the witdh of the drawing area
-gint width_drawing_area = 0;
 
 //drawing zoom coefficient
 gfloat zoom_coeff = 2.0;
@@ -171,22 +165,6 @@ gint only_press_pause = FALSE;
 //our playlist tree
 GtkTreeView *playlist_tree = NULL;
 gint playlist_tree_number = 0;
-
-//drawing area variables
-gint margin;
-gint real_erase_split_length;
-gint real_progress_length;
-gint real_move_split_length;
-gint real_checkbox_length;
-gint real_text_length;
-gint real_wave_length;
-//
-gint erase_split_ylimit;
-gint progress_ylimit;
-gint splitpoint_ypos;
-gint checkbox_ypos;
-gint text_ypos;
-gint wave_ypos;
 
 /*! \defgroup Playerbuttons Button images for the player
 
@@ -297,7 +275,7 @@ void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data)
 {
   douglas_callback_counter = 0;
 
-  if (!show_silence_wave)
+  if (!ui->status->show_silence_wave)
   {
     return;
   }
@@ -359,7 +337,7 @@ gpointer detect_silence(gpointer data)
   gtk_widget_set_sensitive(cancel_button, FALSE);
 
   refresh_drawing_area(ui->gui);
-  refresh_preview_drawing_areas();
+  refresh_preview_drawing_areas(ui);
 
   exit_threads();
 
@@ -394,7 +372,7 @@ void change_current_filename(const gchar *fname)
   if (!old_fname)
   {
     set_input_filename(fname, ui->gui);
-    if (show_silence_wave)
+    if (ui->status->show_silence_wave)
     {
       scan_for_silence_wave();
     }
@@ -406,7 +384,7 @@ void change_current_filename(const gchar *fname)
   else if (strcmp(old_fname, fname) != 0)
   {
     set_input_filename(fname, ui->gui);
-    if (show_silence_wave)
+    if (ui->status->show_silence_wave)
     {
       scan_for_silence_wave();
     }
@@ -851,7 +829,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
 {
   if (gtk_toggle_button_get_active(widget))
   {
-    show_silence_wave = TRUE;
+    ui->status->show_silence_wave = TRUE;
     if (ui->infos->number_of_silence_points == 0)
     {
       scan_for_silence_wave();
@@ -859,7 +837,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
   }
   else
   {
-    show_silence_wave = FALSE;
+    ui->status->show_silence_wave = FALSE;
     if (we_scan_for_silence)
     {
       cancel_button_event(NULL, NULL);
@@ -873,7 +851,7 @@ void enable_show_silence_wave(GtkToggleButton *widget, gpointer data)
     ui->infos->number_of_silence_points = 0;
 
     refresh_drawing_area(ui->gui);
-    refresh_preview_drawing_areas();
+    refresh_preview_drawing_areas(ui);
   }
 }
 
@@ -1652,7 +1630,7 @@ void draw_marks(gint time_interval, gint left_mark,
   gint i_pixel;
   for (i=left2;i<=right_mark;i+=time_interval)
   {
-    i_pixel = convert_time_to_pixels(width_drawing_area, i, 
+    i_pixel = convert_time_to_pixels(ui->infos->width_drawing_area, i,
         ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
     switch(time_interval){
@@ -1709,7 +1687,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
                             gboolean move,
                             gint number_splitpoint)
 {
-  int m = margin - 1;
+  int m = ui->gui->margin - 1;
   GdkColor color;
   Split_point point = g_array_index(ui->splitpoints, Split_point, number_splitpoint);
   gboolean splitpoint_checked = point.checked;
@@ -1751,10 +1729,10 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
   gint i;
   for(i = 0;i<5;i++)
   {
-    draw_point (gc,x+i,erase_split_ylimit + m + 3);
-    draw_point (gc,x-i,erase_split_ylimit + m + 3);
-    draw_point (gc,x+i,erase_split_ylimit + m + 4);
-    draw_point (gc,x-i,erase_split_ylimit + m + 4);
+    draw_point (gc,x+i,ui->gui->erase_split_ylimit + m + 3);
+    draw_point (gc,x-i,ui->gui->erase_split_ylimit + m + 3);
+    draw_point (gc,x+i,ui->gui->erase_split_ylimit + m + 4);
+    draw_point (gc,x-i,ui->gui->erase_split_ylimit + m + 4);
   }
   cairo_stroke(gc);
   
@@ -1772,7 +1750,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
     }
     dh_set_color(gc, &color);
 
-    dh_draw_line(gc, x,erase_split_ylimit + m -8, x,progress_ylimit + m, TRUE, TRUE);
+    dh_draw_line(gc, x,ui->gui->erase_split_ylimit + m -8, x,ui->gui->progress_ylimit + m, TRUE, TRUE);
   }
   
   color.red = 255 * 22;
@@ -1783,39 +1761,39 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
   //draw the splitpoint motif
   for (i = -3;i <= 1;i++)
   {
-    draw_point (gc,x,erase_split_ylimit + m +i);
+    draw_point (gc,x,ui->gui->erase_split_ylimit + m +i);
   }
   for (i = 2;i <= 5;i++)
   {
-    draw_point (gc,x,erase_split_ylimit + m + i);
+    draw_point (gc,x,ui->gui->erase_split_ylimit + m + i);
   }
   for (i = 3;i <= 4;i++)
   {
-    draw_point (gc,x-1,erase_split_ylimit + m + i);
-    draw_point (gc,x+1,erase_split_ylimit + m + i);
+    draw_point (gc,x-1,ui->gui->erase_split_ylimit + m + i);
+    draw_point (gc,x+1,ui->gui->erase_split_ylimit + m + i);
   }
   for (i = 6;i <= 11;i++)
   {
-    draw_point (gc,x,erase_split_ylimit + m + i);
+    draw_point (gc,x,ui->gui->erase_split_ylimit + m + i);
   }
   
   //bottom splitpoint vertical bar
-  for (i = 0;i < margin;i++)
+  for (i = 0;i < ui->gui->margin;i++)
   {
-    draw_point (gc,x,progress_ylimit + m - i);
+    draw_point (gc,x,ui->gui->progress_ylimit + m - i);
   }
 
   //bottom checkbox vertical bar
-  for (i = 0;i < margin;i++)
+  for (i = 0;i < ui->gui->margin;i++)
   {
-    draw_point (gc,x,splitpoint_ypos + m - i - 1);
+    draw_point (gc,x,ui->gui->splitpoint_ypos + m - i - 1);
   }
   cairo_stroke(gc);
 
   //bottom rectangle
   dh_set_color(gc, &color);
   color.red = 25000;color.green = 25000;color.blue = 25000;
-  dh_draw_rectangle(gc, FALSE, x-6, splitpoint_ypos + m, 12,12);
+  dh_draw_rectangle(gc, FALSE, x-6, ui->gui->splitpoint_ypos + m, 12,12);
 
   //draw a cross with 2 lines if the splitpoint is checked
   if (splitpoint_checked)
@@ -1824,8 +1802,8 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
     gint left = x - 6;
     gint right = x + 6;
     //
-    gint top = splitpoint_ypos + m;
-    gint bottom = splitpoint_ypos + m + 12;
+    gint top = ui->gui->splitpoint_ypos + m;
+    gint bottom = ui->gui->splitpoint_ypos + m + 12;
     dh_draw_line(gc, left, top, right, bottom, FALSE, TRUE);
     dh_draw_line(gc, left, bottom, right, top, FALSE, TRUE);
   }
@@ -1842,12 +1820,12 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
   }
   dh_set_color(gc, &color);
   
-  dh_draw_arc(gc, FALSE, x, progress_ylimit + m+ 1 + 7, 14 / 2, 0, 2 * G_PI);
+  dh_draw_arc(gc, FALSE, x, ui->gui->progress_ylimit + m+ 1 + 7, 14 / 2, 0, 2 * G_PI);
 
   //only fill the circle if we don't move that splitpoint
   if (draw)
   {
-    dh_draw_arc(gc, TRUE, x, progress_ylimit + m + 1 + 8, 16 / 2, 0, 2 * G_PI);
+    dh_draw_arc(gc, TRUE, x, ui->gui->progress_ylimit + m + 1 + 8, 16 / 2, 0, 2 * G_PI);
   }
   
   if (draw)
@@ -1855,10 +1833,10 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
     gint number_of_chars = 0;
     gchar str[30] = { '\0' };
     get_time_for_drawing(str, current_point_hundr_secs, TRUE, &number_of_chars);
-    dh_draw_text(gc, str, x - (number_of_chars * 3), checkbox_ypos + margin - 1);
+    dh_draw_text(gc, str, x - (number_of_chars * 3), ui->gui->checkbox_ypos + ui->gui->margin - 1);
   }
 
-  if (show_silence_wave)
+  if (ui->status->show_silence_wave)
   {
     //we set the black color
     color.red = 0;color.green = 0;color.blue = 0;
@@ -1866,7 +1844,7 @@ void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
 
     gboolean dashed = FALSE;
     if (move) { dashed = TRUE; }
-    dh_draw_line(gc, x,text_ypos + margin, x,wave_ypos, dashed, TRUE);
+    dh_draw_line(gc, x,ui->gui->text_ypos + ui->gui->margin, x,ui->gui->wave_ypos, dashed, TRUE);
   }
 }
 
@@ -1893,7 +1871,7 @@ void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cairo_t *g
       }
 
       gint split_pixel = 
-        convert_time_to_pixels(width_drawing_area, current_point_hundr_secs, 
+        convert_time_to_pixels(ui->infos->width_drawing_area, current_point_hundr_secs, 
             ui->infos->current_time, ui->infos->total_time, zoom_coeff);
       draw_motif_splitpoints(da, gc, split_pixel, draw,
           current_point_hundr_secs,
@@ -2135,24 +2113,24 @@ static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface)
 }
 
 #if GTK_MAJOR_VERSION <= 2
-static gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, gpointer data)
+static gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, ui_state *ui)
 {
   cairo_t *gc = gdk_cairo_create(da->window);
 #else
-static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
+static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
 {
 #endif
-  if (drawing_area_expander != NULL &&
-      !gtk_expander_get_expanded(GTK_EXPANDER(drawing_area_expander)))
+  if (ui->gui->drawing_area_expander != NULL &&
+      !gtk_expander_get_expanded(GTK_EXPANDER(ui->gui->drawing_area_expander)))
   {
     return;
   }
 
-  gint old_width_drawing_area = width_drawing_area;
+  gint old_width_drawing_area = ui->infos->width_drawing_area;
 
   int width = 0, height = 0;
   wh_get_widget_size(da, &width, &height);
-  if (show_silence_wave)
+  if (ui->status->show_silence_wave)
   {
     if (height != DRAWING_AREA_HEIGHT_WITH_SILENCE_WAVE)
     {
@@ -2168,66 +2146,66 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
   }
 
   //
-  margin = 4;
+  ui->gui->margin = 4;
 
   //
-  real_erase_split_length = 12;
-  real_progress_length = 26;
-  real_move_split_length = 16;
-  real_checkbox_length = 12;
-  real_text_length = 12;
-  real_wave_length = 96;
+  ui->gui->real_erase_split_length = 12;
+  gint real_progress_length = 26;
+  ui->gui->real_move_split_length = 16;
+  ui->gui->real_checkbox_length = 12;
+  gint real_text_length = 12;
+  ui->gui->real_wave_length = 96;
 
-  gint erase_splitpoint_length = real_erase_split_length + (margin * 2);
-  gint progress_length = real_progress_length + margin;
-  gint move_split_length = real_move_split_length + margin;
-  gint text_length = real_text_length + margin;
-  gint checkbox_length = real_checkbox_length + margin;
-  gint wave_length = real_wave_length + margin;
+  gint erase_splitpoint_length = ui->gui->real_erase_split_length + (ui->gui->margin * 2);
+  gint progress_length = real_progress_length + ui->gui->margin;
+  gint move_split_length = ui->gui->real_move_split_length + ui->gui->margin;
+  gint text_length = real_text_length + ui->gui->margin;
+  gint checkbox_length = ui->gui->real_checkbox_length + ui->gui->margin;
+  gint wave_length = ui->gui->real_wave_length + ui->gui->margin;
 
   //
-  erase_split_ylimit = erase_splitpoint_length;
-  progress_ylimit = erase_split_ylimit + progress_length;
-  splitpoint_ypos = progress_ylimit + move_split_length;
-  checkbox_ypos = splitpoint_ypos + checkbox_length;
-  text_ypos = checkbox_ypos + text_length + margin;
-  wave_ypos = text_ypos + wave_length + margin;
+  ui->gui->erase_split_ylimit = erase_splitpoint_length;
+  ui->gui->progress_ylimit = ui->gui->erase_split_ylimit + progress_length;
+  ui->gui->splitpoint_ypos = ui->gui->progress_ylimit + move_split_length;
+  ui->gui->checkbox_ypos = ui->gui->splitpoint_ypos + checkbox_length;
+  ui->gui->text_ypos = ui->gui->checkbox_ypos + text_length + ui->gui->margin;
+  ui->gui->wave_ypos = ui->gui->text_ypos + wave_length + ui->gui->margin;
 
-  gint bottom_left_middle_right_text_ypos = text_ypos;
-  if (show_silence_wave)
+  gint bottom_left_middle_right_text_ypos = ui->gui->text_ypos;
+  if (ui->status->show_silence_wave)
   {
-    bottom_left_middle_right_text_ypos = wave_ypos;
+    bottom_left_middle_right_text_ypos = ui->gui->wave_ypos;
+  }
+
+  gint nbr_chars = 0;
+
+  wh_get_widget_size(da, &ui->infos->width_drawing_area, NULL);
+
+  if (ui->infos->width_drawing_area != old_width_drawing_area)
+  {
+    refresh_preview_drawing_areas(ui);
   }
 
   GdkColor color;
-  gint nbr_chars = 0;
-
-  wh_get_widget_size(da, &width_drawing_area, NULL);
-
-  if (width_drawing_area != old_width_drawing_area)
-  {
-    refresh_preview_drawing_areas();
-  }
-
   color.red = 255 * 235;color.green = 255 * 235;
   color.blue = 255 * 235;
   dh_set_color(gc, &color);
 
   //background rectangle
-  dh_draw_rectangle(gc, TRUE, 0,0, width_drawing_area, wave_ypos + text_length + 2);
+  dh_draw_rectangle(gc, TRUE, 0,0, ui->infos->width_drawing_area, ui->gui->wave_ypos + text_length + 2);
 
   color.red = 255 * 255;color.green = 255 * 255;color.blue = 255 * 255;
   dh_set_color(gc, &color);
 
   //background white rectangles
-  dh_draw_rectangle(gc, TRUE, 0, margin, width_drawing_area, real_erase_split_length);
-  dh_draw_rectangle(gc, TRUE, 0, erase_split_ylimit, width_drawing_area, progress_length);
-  dh_draw_rectangle(gc, TRUE, 0, progress_ylimit+margin, width_drawing_area, real_move_split_length);
-  dh_draw_rectangle(gc, TRUE, 0, splitpoint_ypos+margin, width_drawing_area, real_checkbox_length);
-  dh_draw_rectangle(gc, TRUE, 0, checkbox_ypos+margin, width_drawing_area, text_length);
-  if (show_silence_wave)
+  dh_draw_rectangle(gc, TRUE, 0, ui->gui->margin, ui->infos->width_drawing_area, ui->gui->real_erase_split_length);
+  dh_draw_rectangle(gc, TRUE, 0, ui->gui->erase_split_ylimit, ui->infos->width_drawing_area, progress_length);
+  dh_draw_rectangle(gc, TRUE, 0, ui->gui->progress_ylimit+ui->gui->margin, ui->infos->width_drawing_area, ui->gui->real_move_split_length);
+  dh_draw_rectangle(gc, TRUE, 0, ui->gui->splitpoint_ypos+ui->gui->margin, ui->infos->width_drawing_area, ui->gui->real_checkbox_length);
+  dh_draw_rectangle(gc, TRUE, 0, ui->gui->checkbox_ypos+ui->gui->margin, ui->infos->width_drawing_area, text_length);
+  if (ui->status->show_silence_wave)
   {
-    dh_draw_rectangle(gc, TRUE, 0, text_ypos + margin, width_drawing_area, wave_length);
+    dh_draw_rectangle(gc, TRUE, 0, ui->gui->text_ypos + ui->gui->margin, ui->infos->width_drawing_area, wave_length);
   }
 
   //only if we are playing
@@ -2253,7 +2231,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     gfloat total_draw_time = right_time - left_time;
 
     gchar str[30] = { '\0' };
-    gint beg_pixel = convert_time_to_pixels(width_drawing_area, 0,
+    gint beg_pixel = convert_time_to_pixels(ui->infos->width_drawing_area, 0,
         ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
     draw_rectangles_between_splitpoints(gc);
@@ -2266,11 +2244,11 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     if (quick_preview_end_splitpoint != -1)
     {
       gint right_pixel =
-        convert_time_to_pixels(width_drawing_area,
+        convert_time_to_pixels(ui->infos->width_drawing_area,
             get_splitpoint_time(quick_preview_end_splitpoint),
             ui->infos->current_time, ui->infos->total_time, zoom_coeff);
       gint left_pixel =
-        convert_time_to_pixels(width_drawing_area,
+        convert_time_to_pixels(ui->infos->width_drawing_area,
             get_splitpoint_time(preview_start_splitpoint),
             ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
@@ -2279,7 +2257,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       //top buttons
       dh_draw_rectangle(gc,
           TRUE, left_pixel,
-          progress_ylimit-2,
+          ui->gui->progress_ylimit-2,
           preview_splitpoint_length,3);
 
       //if we have a quick preview on going, put red bar
@@ -2290,7 +2268,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
         //top buttons
         dh_draw_rectangle (gc,
             TRUE, left_pixel,
-            erase_split_ylimit,
+            ui->gui->erase_split_ylimit,
             preview_splitpoint_length,
             3);
       }
@@ -2302,13 +2280,13 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
           (preview_start_splitpoint != (ui->infos->splitnumber-1)))
       {
         gint left_pixel =
-          convert_time_to_pixels(width_drawing_area,
+          convert_time_to_pixels(ui->infos->width_drawing_area,
               get_splitpoint_time(preview_start_splitpoint),
               ui->infos->current_time, ui->infos->total_time, zoom_coeff);
         dh_draw_rectangle(gc,
             TRUE, left_pixel,
-            progress_ylimit-2,
-            width_drawing_area-left_pixel,
+            ui->gui->progress_ylimit-2,
+            ui->infos->width_drawing_area-left_pixel,
             3);
         //if we have a quick preview on going, put red bar
         if (quick_preview)
@@ -2317,8 +2295,8 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
           dh_set_color(gc, &color);
           dh_draw_rectangle(gc,
               TRUE, left_pixel,
-              erase_split_ylimit,
-              width_drawing_area-left_pixel,
+              ui->gui->erase_split_ylimit,
+              ui->infos->width_drawing_area-left_pixel,
               3);
         }
       }
@@ -2334,7 +2312,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
           TRUE,
           0,0,
           beg_pixel,
-          wave_ypos);
+          ui->gui->wave_ypos);
     }
     else
     {
@@ -2346,7 +2324,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     }
 
     gint end_pixel = 
-      convert_time_to_pixels(width_drawing_area, ui->infos->total_time, 
+      convert_time_to_pixels(ui->infos->width_drawing_area, ui->infos->total_time, 
           ui->infos->current_time, ui->infos->total_time, zoom_coeff);
     //song end
     if (right_time >= ui->infos->total_time)
@@ -2357,7 +2335,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
 
       dh_draw_rectangle (gc,
           TRUE, end_pixel,0,
-          width_drawing_area,
+          ui->infos->width_drawing_area,
           bottom_left_middle_right_text_ypos);
     }
     else
@@ -2366,14 +2344,14 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       dh_set_color(gc, &color);
 
       get_time_for_drawing(str, right_time, FALSE, &nbr_chars);
-      dh_draw_text(gc, str, width_drawing_area - 52, bottom_left_middle_right_text_ypos);
+      dh_draw_text(gc, str, ui->infos->width_drawing_area - 52, bottom_left_middle_right_text_ypos);
     }
 
     if (total_draw_time < hundr_secs_th)
     {
       //DRAW HUNDR OF SECONDS
       draw_marks(1, left_mark, right_mark,
-          erase_split_ylimit+ progress_length/4,
+          ui->gui->erase_split_ylimit+ progress_length/4,
           da, gc);
     }
 
@@ -2381,7 +2359,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     {
       //DRAW TENS OF SECONDS
       draw_marks(10, left_mark, right_mark,
-          erase_split_ylimit+ progress_length/4,
+          ui->gui->erase_split_ylimit+ progress_length/4,
           da, gc);
     }
 
@@ -2389,7 +2367,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     {
       //DRAW SECONDS
       draw_marks(100, left_mark, right_mark,
-          erase_split_ylimit+ progress_length/4,
+          ui->gui->erase_split_ylimit+ progress_length/4,
           da, gc);
     }
 
@@ -2398,7 +2376,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       //DRAW TEN SECONDS
       draw_marks(1000,
           left_mark, right_mark,
-          erase_split_ylimit+ progress_length/4,
+          ui->gui->erase_split_ylimit+ progress_length/4,
           da, gc);
     }
 
@@ -2407,7 +2385,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       //DRAW MINUTES
       draw_marks(6000,
           left_mark, right_mark,
-          erase_split_ylimit+ progress_length/4,
+          ui->gui->erase_split_ylimit+ progress_length/4,
           da, gc);
     }
 
@@ -2416,20 +2394,20 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       //DRAW TEN MINUTES
       draw_marks(60000,
           left_mark, right_mark,
-          erase_split_ylimit+ progress_length/4,
+          ui->gui->erase_split_ylimit+ progress_length/4,
           da, gc);
     }
 
     //DRAW HOURS
     draw_marks(100 * 3600,
         left_mark, right_mark,
-        erase_split_ylimit+progress_length/4,
+        ui->gui->erase_split_ylimit+progress_length/4,
         da, gc);
 
     //draw mobile button1 position line
     if (button1_pressed)
     {
-      gint move_pixel = convert_time_to_pixels(width_drawing_area, move_time, 
+      gint move_pixel = convert_time_to_pixels(ui->infos->width_drawing_area, move_time, 
           ui->infos->current_time, ui->infos->total_time, zoom_coeff);
 
       if (move_splitpoints)
@@ -2441,25 +2419,25 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
         dh_set_color(gc, &color);
 
         get_time_for_drawing(str, ui->infos->current_time, FALSE, &nbr_chars);
-        dh_draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
+        dh_draw_text(gc, str, ui->infos->width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
       }
       else
       {
         color.red = 255 * 255;color.green = 0;color.blue = 0;
         dh_set_color(gc, &color);
 
-        dh_draw_line(gc, move_pixel,erase_split_ylimit, move_pixel,progress_ylimit, TRUE, TRUE);
+        dh_draw_line(gc, move_pixel,ui->gui->erase_split_ylimit, move_pixel,ui->gui->progress_ylimit, TRUE, TRUE);
 
-        if (show_silence_wave)
+        if (ui->status->show_silence_wave)
         {
-          dh_draw_line(gc, move_pixel,text_ypos + margin, move_pixel,wave_ypos, TRUE, TRUE);
+          dh_draw_line(gc, move_pixel,ui->gui->text_ypos + ui->gui->margin, move_pixel,ui->gui->wave_ypos, TRUE, TRUE);
         }
 
         color.red = 0;color.green = 0;color.blue = 0;
         dh_set_color(gc, &color);
 
         get_time_for_drawing(str, move_time, FALSE, &nbr_chars);
-        dh_draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
+        dh_draw_text(gc, str, ui->infos->width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
       }
     }
     else
@@ -2468,30 +2446,30 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
       dh_set_color(gc, &color);
 
       get_time_for_drawing(str, center_time, FALSE, &nbr_chars);
-      dh_draw_text(gc, str, width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
+      dh_draw_text(gc, str, ui->infos->width_drawing_area/2-11, bottom_left_middle_right_text_ypos);
     }
 
     color.red = 255 * 255;color.green = 0;color.blue = 0;
     dh_set_color(gc, &color);
 
     //the top middle line, current position
-    dh_draw_line(gc, width_drawing_area/2,erase_split_ylimit,
-        width_drawing_area/2,progress_ylimit, FALSE, TRUE);
+    dh_draw_line(gc, ui->infos->width_drawing_area/2,ui->gui->erase_split_ylimit,
+        ui->infos->width_drawing_area/2,ui->gui->progress_ylimit, FALSE, TRUE);
 
     //silence wave
-    if (show_silence_wave)
+    if (ui->status->show_silence_wave)
     {
       draw_silence_wave(left_mark, right_mark, 
-          width_drawing_area/2 + 3, wave_ypos - margin * 4,
+          ui->infos->width_drawing_area/2 + 3, ui->gui->wave_ypos - ui->gui->margin * 4,
           total_draw_time, 
-          width_drawing_area, text_ypos + margin,
+          ui->infos->width_drawing_area, ui->gui->text_ypos + ui->gui->margin,
           ui->infos->current_time, ui->infos->total_time, zoom_coeff,
           da, gc);
 
       //silence wave middle line
       color.red = 255 * 255;color.green = 0;color.blue = 0;
       dh_set_color(gc, &color);
-      dh_draw_line(gc, width_drawing_area/2,text_ypos + margin, width_drawing_area/2, wave_ypos, FALSE, TRUE);
+      dh_draw_line(gc, ui->infos->width_drawing_area/2,ui->gui->text_ypos + ui->gui->margin, ui->infos->width_drawing_area/2, ui->gui->wave_ypos, FALSE, TRUE);
     }
 
     draw_splitpoints(left_mark, right_mark, da, gc);
@@ -2501,23 +2479,23 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, gpointer data)
     color.red = 255 * 212; color.green = 255 * 100; color.blue = 255 * 200;
     dh_set_color(gc, &color);
     dh_draw_text(gc, _(" left click on splitpoint selects it, right click erases it"),
-        0, margin - 3);
+        0, ui->gui->margin - 3);
 
     color.red = 0;color.green = 0;color.blue = 0;
     dh_set_color(gc, &color);
     dh_draw_text(gc, _(" left click + move changes song position, right click + move changes zoom"),
-        0, erase_split_ylimit + margin);
+        0, ui->gui->erase_split_ylimit + ui->gui->margin);
 
     color.red = 15000;color.green = 40000;color.blue = 25000;
     dh_set_color(gc, &color);
     dh_draw_text(gc, 
         _(" left click on point + move changes point position, right click play preview"),
-        0, progress_ylimit + margin);
+        0, ui->gui->progress_ylimit + ui->gui->margin);
 
     color.red = 0; color.green = 0; color.blue = 0;
     dh_set_color(gc, &color);
     dh_draw_text(gc, _(" left click on rectangle checks/unchecks 'keep splitpoint'"),
-        0, splitpoint_ypos + 1);
+        0, ui->gui->splitpoint_ypos + 1);
   }
 
 #if GTK_MAJOR_VERSION <= 2
@@ -2535,20 +2513,20 @@ static void draw_small_rectangle(gint time_left, gint time_right,
     return;
   }
 
-  gint pixels_left = convert_time_to_pixels(width_drawing_area, time_left, 
+  gint pixels_left = convert_time_to_pixels(ui->infos->width_drawing_area, time_left, 
       ui->infos->current_time, ui->infos->total_time, zoom_coeff);
-  gint pixels_right = convert_time_to_pixels(width_drawing_area, time_right, 
+  gint pixels_right = convert_time_to_pixels(ui->infos->width_drawing_area, time_right, 
       ui->infos->current_time, ui->infos->total_time, zoom_coeff);
   gint pixels_length = pixels_right - pixels_left;
 
   dh_set_color(cairo_surface, &color);
-  dh_draw_rectangle(cairo_surface, TRUE, pixels_left, erase_split_ylimit,
-      pixels_length, progress_ylimit - erase_split_ylimit+1);
+  dh_draw_rectangle(cairo_surface, TRUE, pixels_left, ui->gui->erase_split_ylimit,
+      pixels_length, ui->gui->progress_ylimit - ui->gui->erase_split_ylimit+1);
 
-  if (show_silence_wave)
+  if (ui->status->show_silence_wave)
   {
-    dh_draw_rectangle(cairo_surface, TRUE, pixels_left, text_ypos + margin,
-        pixels_length, real_wave_length + margin);
+    dh_draw_rectangle(cairo_surface, TRUE, pixels_left, ui->gui->text_ypos + ui->gui->margin,
+        pixels_length, ui->gui->real_wave_length + ui->gui->margin);
   }
 }
 
@@ -2600,31 +2578,31 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type)
   if (type_clicked != 3)
   {
     but_y = button_y;
-    time_pos = left_time + pixels_to_time(width_drawing_area,button_x);
+    time_pos = left_time + pixels_to_time(ui->infos->width_drawing_area,button_x);
   }
   else
   {
     but_y = button_y2;
-    time_pos = left_time + pixels_to_time(width_drawing_area,button_x2);
+    time_pos = left_time + pixels_to_time(ui->infos->width_drawing_area,button_x2);
   }
 
   //we get this to find time_right_pos - time_right
   //to see what time we have for X pixels
-  gint pixels_to_look_for = real_erase_split_length / 2;
+  gint pixels_to_look_for = ui->gui->real_erase_split_length / 2;
   if (type == 2)
   {
-    pixels_to_look_for = real_move_split_length / 2;
+    pixels_to_look_for = ui->gui->real_move_split_length / 2;
   }
 
   if (type_clicked != 3)
   {
     time_right_pos = left_time+
-      pixels_to_time(width_drawing_area,button_x + pixels_to_look_for);
+      pixels_to_time(ui->infos->width_drawing_area,button_x + pixels_to_look_for);
   }
   else
   {
     time_right_pos = left_time+
-      pixels_to_time(width_drawing_area,button_x2 + pixels_to_look_for);
+      pixels_to_time(ui->infos->width_drawing_area,button_x2 + pixels_to_look_for);
   }
 
   //the time margin is the margin for the splitpoint,
@@ -2635,18 +2613,18 @@ gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type)
   
   if (type == 2)
   {
-    margin1 = progress_ylimit + margin;
-    margin2 = progress_ylimit + margin + real_move_split_length;
+    margin1 = ui->gui->progress_ylimit + ui->gui->margin;
+    margin2 = ui->gui->progress_ylimit + ui->gui->margin + ui->gui->real_move_split_length;
   }
   else if (type == 1)
   {
-    margin1 = margin;
-    margin2 = margin + real_erase_split_length;
+    margin1 = ui->gui->margin;
+    margin2 = ui->gui->margin + ui->gui->real_erase_split_length;
   }
   else //if (type == 3)
   {
-    margin1 = splitpoint_ypos + margin;
-    margin2 = splitpoint_ypos + margin + real_checkbox_length;
+    margin1 = ui->gui->splitpoint_ypos + ui->gui->margin;
+    margin2 = ui->gui->splitpoint_ypos + ui->gui->margin + ui->gui->real_checkbox_length;
   }
 
   gint splitpoint_returned = -1;
@@ -2737,8 +2715,8 @@ gboolean da_press_event (GtkWidget    *da,
       button_y = event->y;
       button1_pressed = TRUE;
 
-      if ((button_y > progress_ylimit + margin) &&
-          (button_y < progress_ylimit + margin + real_move_split_length))
+      if ((button_y > ui->gui->progress_ylimit + ui->gui->margin) &&
+          (button_y < ui->gui->progress_ylimit + ui->gui->margin + ui->gui->real_move_split_length))
       {
         splitpoint_to_move = get_splitpoint_clicked(button_y,1, 2);
         if (splitpoint_to_move != -1)
@@ -2749,7 +2727,7 @@ gboolean da_press_event (GtkWidget    *da,
       else
       {
         //if we are in the area to remove a splitpoint
-        if ((button_y > margin) && (button_y < margin + real_erase_split_length))
+        if ((button_y > ui->gui->margin) && (button_y < ui->gui->margin + ui->gui->real_erase_split_length))
         {
           gint splitpoint_selected;
           splitpoint_selected = get_splitpoint_clicked(button_y, 1, 1);
@@ -2765,8 +2743,8 @@ gboolean da_press_event (GtkWidget    *da,
         else
         {
           //if we are in the area to check a splitpoint
-          if ((button_y > splitpoint_ypos + margin) &&
-              (button_y < splitpoint_ypos + margin + real_checkbox_length))
+          if ((button_y > ui->gui->splitpoint_ypos + ui->gui->margin) &&
+              (button_y < ui->gui->splitpoint_ypos + ui->gui->margin + ui->gui->real_checkbox_length))
           {
             gint splitpoint_selected = get_splitpoint_clicked(button_y, 1, 3);
             if (splitpoint_selected != -1)
@@ -2798,8 +2776,8 @@ gboolean da_press_event (GtkWidget    *da,
         button2_pressed = TRUE;
         zoom_coeff_old = zoom_coeff;
 
-      if ((button_y2 > progress_ylimit + margin) &&
-          (button_y2 < progress_ylimit + margin + real_move_split_length))
+      if ((button_y2 > ui->gui->progress_ylimit + ui->gui->margin) &&
+          (button_y2 < ui->gui->progress_ylimit + ui->gui->margin + ui->gui->real_move_split_length))
         {
           gint splitpoint_to_preview = -1;
 
@@ -2811,7 +2789,7 @@ gboolean da_press_event (GtkWidget    *da,
         else
         {
           //if we are in the area to remove a splitpoint
-          if ((button_y2 > margin) && (button_y2 < margin + real_erase_split_length))
+          if ((button_y2 > ui->gui->margin) && (button_y2 < ui->gui->margin + ui->gui->real_erase_split_length))
           {
             gint splitpoint_to_erase = -1;
 
@@ -3054,9 +3032,9 @@ static GtkWidget *create_drawing_area(ui_state *ui)
   gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT);
 
 #if GTK_MAJOR_VERSION <= 2
-  g_signal_connect(drawing_area, "expose_event", G_CALLBACK(da_draw_event), NULL);
+  g_signal_connect(drawing_area, "expose_event", G_CALLBACK(da_draw_event), ui);
 #else
-  g_signal_connect(drawing_area, "draw", G_CALLBACK(da_draw_event), NULL);
+  g_signal_connect(drawing_area, "draw", G_CALLBACK(da_draw_event), ui);
 #endif
 
   g_signal_connect(drawing_area, "button_press_event", G_CALLBACK(da_press_event), NULL);
@@ -3070,7 +3048,8 @@ static GtkWidget *create_drawing_area(ui_state *ui)
 
   gtk_container_add(GTK_CONTAINER(frame), drawing_area);
 
-  drawing_area_expander = gtk_expander_new_with_mnemonic(_("Splitpoints _view"));
+  GtkWidget *drawing_area_expander = gtk_expander_new_with_mnemonic(_("Splitpoints _view"));
+  ui->gui->drawing_area_expander = drawing_area_expander;
   gtk_expander_set_expanded(GTK_EXPANDER(drawing_area_expander), TRUE);
   g_signal_connect(drawing_area_expander, "notify::expanded", G_CALLBACK(drawing_area_expander_event), NULL);
   gtk_container_add(GTK_CONTAINER(drawing_area_expander), frame);

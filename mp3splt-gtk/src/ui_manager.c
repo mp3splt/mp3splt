@@ -222,6 +222,7 @@ static void ui_infos_new(ui_state *ui)
   infos->current_time = 0;
 
   infos->splitnumber = 0;
+  infos->width_drawing_area = 0;
 
   ui->infos = infos;
 }
@@ -235,6 +236,7 @@ static void ui_status_new(ui_state *ui)
   status->mouse_on_progress_bar = FALSE;
 
   status->currently_compute_douglas_peucker_filters = FALSE;
+  status->show_silence_wave = FALSE;
 
   ui->status = status;
 }
