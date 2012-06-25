@@ -175,8 +175,7 @@ GtkWidget *create_text_component()
   gtk_box_pack_start(GTK_BOX(hbox), debug_check_button, FALSE, FALSE, 0);
 
   //clear button
-  GtkWidget *clear_button =
-    wh_create_cool_button(GTK_STOCK_CLEAR, _("C_lear"), FALSE);
+  GtkWidget *clear_button = wh_create_cool_button(GTK_STOCK_CLEAR, _("C_lear"), FALSE);
   g_signal_connect(G_OBJECT(clear_button), "clicked",
       G_CALLBACK(clear_messages_event), NULL);
   gtk_box_pack_end(GTK_BOX(hbox), clear_button, FALSE, FALSE, 0);

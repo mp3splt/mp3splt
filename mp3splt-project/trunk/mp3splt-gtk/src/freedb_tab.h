@@ -48,7 +48,7 @@ void add_freedb_row(gchar *album_name,
                     gint revisions_number);
 GtkTreeModel *create_freedb_model();
 GtkTreeView *create_freedb_tree();
-void create_freedb_columns (GtkTreeView *tree_view);
+void create_freedb_columns (GtkTreeView *freedb_tree);
 void close_freedb_popup_window_event( GtkWidget *window,
                                       gpointer data );
 void handle_freedb_detached_event (GtkHandleBox *handlebox,

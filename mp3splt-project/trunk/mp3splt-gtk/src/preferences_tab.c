@@ -121,8 +121,6 @@ extern gint silence_wave_number_of_points_threshold;
 extern gdouble douglas_peucker_thresholds[];
 extern gdouble douglas_peucker_thresholds_defaults[];
 
-extern GtkWidget *player_box;
-extern GtkWidget *playlist_box;
 extern GtkWidget *queue_files_button;
 extern gint selected_split_mode;
 extern gint split_file_mode;
@@ -438,7 +436,7 @@ void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_
 
   if (splitpoints_from_filename == TRUE && file_browsed == TRUE)
   {
-    copy_filename_to_current_description(inputfilename_get());
+    copy_filename_to_current_description(get_input_filename(ui->gui));
   }
   else
   {
@@ -489,7 +487,7 @@ GtkWidget *create_directory_box()
     gtk_entry_set_text(GTK_ENTRY(directory_entry), outputdirectory_get());
   
   //browse dir button
-  GtkWidget *browse_dir_button = (GtkWidget *)
+  GtkWidget *browse_dir_button =
     wh_create_cool_button(GTK_STOCK_DIRECTORY,_("Br_owse dir"), FALSE);
   g_signal_connect(G_OBJECT(browse_dir_button), "clicked",
       G_CALLBACK(browse_dir_button_event), NULL);
@@ -497,7 +495,7 @@ GtkWidget *create_directory_box()
   
   //to set the directory for split files to the current song
   //directory
-  GtkWidget *song_dir_button = (GtkWidget *)
+  GtkWidget *song_dir_button =
     wh_create_cool_button(GTK_STOCK_CLEAR, _("_Song dir"), FALSE);
   g_signal_connect(G_OBJECT(song_dir_button), "clicked",
       G_CALLBACK(song_dir_button_event), NULL);
@@ -598,8 +596,7 @@ GtkWidget *create_split_options_box()
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
   
   GtkWidget *set_default_prefs_button =
-    (GtkWidget *)wh_create_cool_button(GTK_STOCK_PREFERENCES,
-        _("Set _default split" " options"),FALSE); 
+    wh_create_cool_button(GTK_STOCK_PREFERENCES, _("Set _default split" " options"),FALSE); 
   g_signal_connect(G_OBJECT(set_default_prefs_button), "clicked",
       G_CALLBACK(set_default_prefs_event), NULL);
   gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button,
@@ -642,16 +639,16 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
   if (selected_player == PLAYER_GSTREAMER)
   {
     hide_connect_button();
-    gtk_widget_show(playlist_box);
+    gtk_widget_show(ui->gui->playlist_box);
   }
   else
   {
     show_connect_button();
     close_playlist_popup_window_event(NULL, NULL);
-    gtk_widget_hide(playlist_box);
+    gtk_widget_hide(ui->gui->playlist_box);
   }
   
-  gtk_widget_show(player_box);
+  gtk_widget_show(ui->gui->player_box);
   gtk_widget_show(queue_files_button);
 
   save_preferences(NULL, NULL);

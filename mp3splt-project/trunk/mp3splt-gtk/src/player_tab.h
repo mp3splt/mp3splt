@@ -49,11 +49,6 @@
 //float comparison
 #define DELTA 5
 
-//for the browse dir
-#define BROWSE_SONG 1
-#define BROWSE_CDDB_FILE 2
-#define BROWSE_CUE_FILE 3
-
 void player_quick_preview(gint splitpoint_to_preview);
 void check_update_down_progress_bar();
 void set_preview_active_if_needed();
@@ -85,7 +80,6 @@ void pause_event(GtkWidget *widget, gpointer data);
 void prev_button_event (GtkWidget *widget, gpointer data);
 void next_button_event (GtkWidget *widget, gpointer data);
 void change_song_position();
-GtkWidget *create_player_buttons_hbox(GtkTreeView *tree_view);
 GtkWidget *create_song_informations_hbox();
 gboolean progress_bar_unclick_event (GtkWidget *widget,
                                    GdkEventCrossing *event,
@@ -179,19 +173,13 @@ gboolean da_notify_event (GtkWidget     *da,
                           GdkEventMotion *event,
                           gpointer      data);
 GtkWidget *create_drawing_area();
-GtkWidget *create_player_control_frame(GtkTreeView *tree_view);
+GtkWidget *create_player_control_frame();
 
 //moved from the file_tab
 void file_chooser_cancel_event();
 void file_chooser_ok_event(gchar *fname);
-void browse_button_event( GtkWidget *widget,
-                          gpointer   data );
 void close_file_popup_window_event( GtkWidget *window,
                                     gpointer data );
-void handle_file_detached_event (GtkHandleBox *handlebox,
-                                 GtkWidget *widget,
-                                 gpointer data);
-GtkWidget *create_choose_file_frame();
 
 void change_current_filename(const gchar *fname);
 GtkWidget *create_player_playlist_frame();
@@ -200,9 +188,6 @@ void hide_connect_button();
 void show_connect_button();
 void hide_disconnect_button();
 void show_disconnect_button();
-
-void inputfilename_set(const gchar *filename);
-gchar *inputfilename_get();
 
 void close_playlist_popup_window_event(GtkWidget *window, gpointer data);
 void restart_player_timer();
@@ -217,7 +202,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
 void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
     gint *splitpoint_left);
-void player_key_actions_set_sensitivity(gboolean sensitivity);
+void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui);
 void adjust_zoom_coeff();
 
 #endif

@@ -45,17 +45,14 @@ GtkWidget *freedb_handle_box;
 //filename entry
 GtkWidget *freedb_entry;
 
-//our freedb tree
-GtkWidget *freedb_tree;
-//we count the number of rows in the table
+GtkTreeView *freedb_tree;
 gint freedb_table_number = 0;
-//freedb table enumeration
-enum
-  {
-    ALBUM_NAME,
-    NUMBER,
-    FREEDB_TABLE
-  };
+
+enum {
+  ALBUM_NAME,
+  NUMBER,
+  FREEDB_TABLE
+};
 
 //results of the freedb search
 const splt_freedb_results *search_results;
@@ -89,11 +86,8 @@ void add_freedb_row(gchar *album_name,
   GtkTreeIter iter;
   //children iter
   GtkTreeIter child_iter;
-  //our tree and the model
-  GtkTreeView *tree_view = (GtkTreeView *)freedb_tree;
-  GtkTreeModel *model;
 
-  model = gtk_tree_view_get_model(tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
   
   gtk_tree_store_append (GTK_TREE_STORE(model), &iter,NULL);
   //sets the father
@@ -137,12 +131,11 @@ GtkTreeModel *create_freedb_model()
 GtkTreeView *create_freedb_tree()
 {
   GtkTreeModel *model = (GtkTreeModel *)create_freedb_model();
-  GtkTreeView *tree_view = (GtkTreeView *)gtk_tree_view_new_with_model(model);
-  return tree_view;
+  return GTK_TREE_VIEW(gtk_tree_view_new_with_model(model));
 }
 
 //!creates freedb columns
-void create_freedb_columns(GtkTreeView *tree_view)
+void create_freedb_columns(GtkTreeView *freedb_tree)
 {
   GtkCellRendererText *renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(ALBUM_NAME));
@@ -150,8 +143,8 @@ void create_freedb_columns(GtkTreeView *tree_view)
     (_("Album title"), GTK_CELL_RENDERER(renderer),
      "text", ALBUM_NAME, NULL);
 
-  //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
+  //appends columns to the list of columns of freedb_tree
+  gtk_tree_view_insert_column(freedb_tree,
       GTK_TREE_VIEW_COLUMN(name_column), ALBUM_NAME);
 
   //middle alignment of the column name
@@ -185,21 +178,19 @@ void handle_freedb_detached_event(GtkHandleBox *handlebox, GtkWidget *widget,
 //!freedb selection has changed
 void freedb_selection_changed(GtkTreeSelection *selection, gpointer data)
 {
-  GtkTreeIter iter;
-  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(freedb_tree));
+  GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
 
+  GtkTreeIter iter;
   if (gtk_tree_selection_get_selected(selection, &model, &iter))
   {
     gchar *info;
-    gtk_tree_model_get (model, &iter,
-        ALBUM_NAME, &info,
-        NUMBER, &selected_id,
-        -1);
+    gtk_tree_model_get(model, &iter, ALBUM_NAME, &info, NUMBER, &selected_id, -1);
 
     g_free(info);
     gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
   }
-  else {
+  else
+  {
     gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   }
 }
@@ -207,8 +198,7 @@ void freedb_selection_changed(GtkTreeSelection *selection, gpointer data)
 //!removes all rows from the freedb table
 void remove_all_freedb_rows()
 {
-  GtkTreeView *tree_view = (GtkTreeView *)freedb_tree;
-  GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
 
   while (freedb_table_number > 0)
   {
@@ -266,15 +256,11 @@ gpointer freedb_search(gpointer data)
 
     if (search_results->number > 0)
     {
-      //select the first result
-      GtkTreeModel *model;
-      GtkTreePath *path;
-      GtkTreeIter iter;
-      GtkTreeSelection *selection;
-      selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(freedb_tree));
+      GtkTreeSelection *selection = gtk_tree_view_get_selection(freedb_tree);
+      GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
+      GtkTreePath *path = gtk_tree_path_new_from_indices (0 ,-1);
 
-      model = gtk_tree_view_get_model(GTK_TREE_VIEW(freedb_tree));
-      path = gtk_tree_path_new_from_indices (0 ,-1);
+      GtkTreeIter iter;
       gtk_tree_model_get_iter(model, &iter, path);
       gtk_tree_selection_select_iter(selection, &iter);
       gtk_tree_path_free(path);
@@ -410,7 +396,7 @@ void update_splitpoints_from_mp3splt_state()
   
   if (max_splits > 0)
   {
-    remove_all_rows(NULL,NULL);
+    remove_all_rows(NULL, ui);
     gint i;
 
     //for each splitpoint, we put it in the table
@@ -463,9 +449,7 @@ void update_splitpoints_from_mp3splt_state()
       }
     }
 
-    //we reput the "description here" name
-    g_snprintf(current_description, 255, "%s",
-        _("description here"));
+    g_snprintf(current_description, 255, "%s", _("description here"));
 
     update_minutes_from_spinner(NULL,NULL);
     update_seconds_from_spinner(NULL,NULL);
@@ -533,8 +517,7 @@ GtkWidget *create_freedb_frame()
   g_signal_connect(G_OBJECT(freedb_entry), "activate",
       G_CALLBACK(freedb_entry_activate_event), NULL);
 
-  freedb_search_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
+  freedb_search_button = wh_create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
   g_signal_connect(G_OBJECT(freedb_search_button), "clicked",
       G_CALLBACK(freedb_search_button_event), NULL);
   gtk_box_pack_start(GTK_BOX(search_hbox), freedb_search_button, FALSE, FALSE, 0);
@@ -543,7 +526,7 @@ GtkWidget *create_freedb_frame()
   gtk_box_pack_start(GTK_BOX(search_hbox), spinner, FALSE, FALSE, 4);
 
   /* freedb scrolled window and the tree */
-  freedb_tree = (GtkWidget *) create_freedb_tree();
+  freedb_tree = create_freedb_tree();
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
@@ -551,13 +534,12 @@ GtkWidget *create_freedb_frame()
                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(freedb_vbox), scrolled_window, TRUE, TRUE, 1);
 
-  create_freedb_columns(GTK_TREE_VIEW(freedb_tree));
+  create_freedb_columns(freedb_tree);
 
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(freedb_tree));
   
-  GtkWidget *freedb_tree_selection;
-  freedb_tree_selection = (GtkWidget *)
-    gtk_tree_view_get_selection(GTK_TREE_VIEW(freedb_tree));
+  GtkWidget *freedb_tree_selection =
+    (GtkWidget *) gtk_tree_view_get_selection(freedb_tree);
   g_signal_connect(G_OBJECT(freedb_tree_selection), "changed",
                     G_CALLBACK(freedb_selection_changed), NULL);
 
@@ -565,8 +547,7 @@ GtkWidget *create_freedb_frame()
   GtkWidget *selected_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 2);
 
-  freedb_add_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
+  freedb_add_button = wh_create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
 
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   g_signal_connect(G_OBJECT(freedb_add_button), "clicked",

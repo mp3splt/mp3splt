@@ -41,7 +41,7 @@
 
 extern ui_state *ui;
 
-GtkWidget *multiple_files_tree = NULL;
+GtkTreeView *multiple_files_tree = NULL;
 gint multiple_files_tree_number = 0;
 
 GtkWidget *multiple_files_remove_file_button = NULL;
@@ -52,35 +52,28 @@ GtkWidget *multiple_files_remove_all_files_button = NULL;
 //!Create the model for the batch processing file list
 static GtkTreeModel *create_multiple_files_model()
 {
-  GtkListStore *model;
-
-  model = gtk_list_store_new(MULTIPLE_FILES_COLUMNS,
-                             G_TYPE_STRING,
-                             G_TYPE_STRING);
+  GtkListStore *model =
+    gtk_list_store_new(MULTIPLE_FILES_COLUMNS,
+        G_TYPE_STRING,
+        G_TYPE_STRING);
 
   return GTK_TREE_MODEL(model);
 }
 
 static GtkTreeView *create_multiple_files_tree()
 {
-  GtkTreeView *tree_view;
-  GtkTreeModel *model;
-
-  model = (GtkTreeModel *)create_multiple_files_model();
-  tree_view = (GtkTreeView *)gtk_tree_view_new_with_model(model);
-
-  return tree_view;
+  return GTK_TREE_VIEW(gtk_tree_view_new_with_model(create_multiple_files_model()));
 }
 
-static void create_multiple_files_columns(GtkTreeView *tree_view)
+static void create_multiple_files_columns(GtkTreeView *multiple_files_tree)
 {
   GtkCellRendererText *renderer =
     GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   GtkTreeViewColumn *filename_column = gtk_tree_view_column_new_with_attributes 
     (_("Complete filename"), GTK_CELL_RENDERER(renderer),
      "text", MULTIPLE_COL_FILENAME, NULL);
-  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view),
-      GTK_TREE_VIEW_COLUMN(filename_column),MULTIPLE_COL_FILENAME);
+  gtk_tree_view_insert_column(multiple_files_tree,
+      GTK_TREE_VIEW_COLUMN(filename_column), MULTIPLE_COL_FILENAME);
 
   gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(filename_column), 0.5);
   gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(filename_column),
@@ -152,9 +145,7 @@ static void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
     {
       gchar *filename = NULL;
 
-      GtkTreeIter iter;
-      GtkTreeModel *model =
-        gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
+      GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
 
       while (files)
       {
@@ -170,10 +161,10 @@ static void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
           int i = 0;
           for (i = 0;i < num_of_files_found;i++)
           {
+            GtkTreeIter iter;
             gtk_list_store_append(GTK_LIST_STORE(model), &iter);
 
-            gtk_list_store_set (GTK_LIST_STORE(model), 
-                &iter,
+            gtk_list_store_set (GTK_LIST_STORE(model), &iter,
                 MULTIPLE_COL_FILENAME, splt_filenames[i],
                 -1);
             multiple_files_tree_number++;
@@ -209,15 +200,12 @@ static void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
 static void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
-  GtkTreeModel *model;
   GtkTreePath *path;
-  GList *selected_list = NULL;
   GList *current_element = NULL;
-  GtkTreeSelection *selection;
   
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(multiple_files_tree));
-  selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
+  GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(multiple_files_tree);
+  GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
   
   //the name of the file that we have clicked on
   gchar *filename = NULL;
@@ -255,9 +243,8 @@ static void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
 static void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer data)
 {
   GtkTreeIter iter;
-  GtkTreeModel *model;
-  
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
+
+  GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
   
   //filename to erase
   gchar *filename = NULL;
@@ -280,7 +267,7 @@ static GtkWidget *create_multiple_files_buttons_hbox()
   GtkWidget *hbox = wh_hbox_new();
 
   //button for adding file(s)
-  GtkWidget *multiple_files_add_button = (GtkWidget *)
+  GtkWidget *multiple_files_add_button =
     wh_create_cool_button(GTK_STOCK_ADD, _("_Add files"), FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
@@ -288,7 +275,7 @@ static GtkWidget *create_multiple_files_buttons_hbox()
                    G_CALLBACK(multiple_files_add_button_event), NULL);
 
   //button for removing a file
-  multiple_files_remove_file_button = (GtkWidget *)
+  multiple_files_remove_file_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("_Remove selected entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox),
       multiple_files_remove_file_button, FALSE, FALSE, 5);
@@ -297,7 +284,7 @@ static GtkWidget *create_multiple_files_buttons_hbox()
                    G_CALLBACK(multiple_files_remove_button_event), NULL);
   
   //button for removing a file
-  multiple_files_remove_all_files_button = (GtkWidget *)
+  multiple_files_remove_all_files_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all entries"),FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
       FALSE, FALSE, 5);
@@ -310,13 +297,9 @@ static GtkWidget *create_multiple_files_buttons_hbox()
 
 static void multiple_files_selection_changed(GtkTreeSelection *selec, gpointer data)
 {
-  GtkTreeModel *model;
-  GtkTreeSelection *selection;
-  GList *selected_list = NULL;
-  
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(multiple_files_tree));
-  selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
+  GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(multiple_files_tree);
+  GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
 
   if (g_list_length(selected_list) > 0)
   {
@@ -332,7 +315,7 @@ GtkWidget *create_multiple_files_component()
 {
   GtkWidget *vbox = wh_vbox_new();
 
-  multiple_files_tree = (GtkWidget *)create_multiple_files_tree();
+  multiple_files_tree = create_multiple_files_tree();
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
@@ -341,14 +324,14 @@ GtkWidget *create_multiple_files_component()
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
   //create columns
-  create_multiple_files_columns(GTK_TREE_VIEW(multiple_files_tree));
+  create_multiple_files_columns(multiple_files_tree);
 
   //add the tree to the scrolled window
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(multiple_files_tree));
 
   //selection for the tree
   GtkWidget *multiple_files_tree_selection = (GtkWidget *)
-    gtk_tree_view_get_selection(GTK_TREE_VIEW(multiple_files_tree));
+    gtk_tree_view_get_selection(multiple_files_tree);
   g_signal_connect(G_OBJECT(multiple_files_tree_selection), "changed",
                    G_CALLBACK(multiple_files_selection_changed), NULL);
   gtk_tree_selection_set_mode(GTK_TREE_SELECTION(multiple_files_tree_selection),

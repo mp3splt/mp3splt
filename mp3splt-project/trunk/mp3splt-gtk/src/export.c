@@ -54,7 +54,6 @@ extern ui_state *ui;
 void export_file(const gchar* filename)
 {
   FILE *outfile;
-  GtkTreeModel *model;
   GtkTreeIter iter;
 
   if((outfile=fopen(filename,"w"))==0)
@@ -75,112 +74,111 @@ void export_file(const gchar* filename)
     return;
   }
 
-  // Determine which type our input file is of.
-  gchar *extension=inputfilename_get();
+  gchar *extension = get_input_filename(ui->gui);
   gchar *tmp;
-  while((tmp=strchr(extension,'.')))
+  while ((tmp = strchr(extension,'.')))
   {
-    extension=++tmp;
+    extension = ++tmp;
   }
 
-  if(fprintf(outfile,"FILE \"%s\" %s\n",inputfilename_get(),extension)<0)
+  if (fprintf(outfile,"FILE \"%s\" %s\n", get_input_filename(ui->gui), extension) < 0)
   {
     put_status_message((gchar *)strerror(errno));
     return;
   };
 
-  model = gtk_tree_view_get_model(tree_view);
-
-  //if the table is not empty get iter number
-  if(gtk_tree_model_get_iter_first(model, &iter))
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+  if (!gtk_tree_model_get_iter_first(model, &iter))
   {
-    // The track number
-    gint count = 1;
+    goto end;
+  }
 
-    do 
+  gint count = 1;
+
+  do 
+  {
+    // All information we need for this track
+    gchar *description;
+    gint mins,secs,hundr;
+    gboolean keep;
+
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        COL_DESCRIPTION,&description,
+        COL_MINUTES, &mins,
+        COL_SECONDS, &secs,
+        COL_HUNDR_SECS, &hundr,
+        COL_CHECK, &keep,
+        -1);
+
+    // Sometimes libmp3splt introduces an additional split point
+    // way below the end of the file --- that breaks cue import
+    // later => skip all points with extremely high time values.
+    if(mins < 357850)
     {
-      // All information we need for this track
-      gchar *description;
-      gint mins,secs,hundr;
-      gboolean keep;
-
-      gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-          COL_DESCRIPTION,&description,
-          COL_MINUTES, &mins,
-          COL_SECONDS, &secs,
-          COL_HUNDR_SECS, &hundr,
-          COL_CHECK, &keep,
-          -1);
-
-      // Sometimes libmp3splt introduces an additional split point
-      // way below the end of the file --- that breaks cue import
-      // later => skip all points with extremely high time values.
-      if(mins<357850)
+      // Output the track header
+      if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
       {
-        // Output the track header
-        if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
-        {
-          put_status_message((gchar *)strerror(errno));
-          return;
-        };
+        put_status_message((gchar *)strerror(errno));
+        return;
+      };
 
 
-        // Output the track description escaping any quotes
-        if(fprintf(outfile,"\t\tTITLE \"")<0)
-        {
-          put_status_message((gchar *)strerror(errno));
-          return;
-        }
+      // Output the track description escaping any quotes
+      if(fprintf(outfile,"\t\tTITLE \"")<0)
+      {
+        put_status_message((gchar *)strerror(errno));
+        return;
+      }
 
-        gchar *outputchar;
-        for(outputchar=description;*outputchar!='\0';outputchar++)
+      gchar *outputchar;
+      for(outputchar=description;*outputchar!='\0';outputchar++)
+      {
+        if(*outputchar=='"')
         {
-          if(*outputchar=='"')
-          {
-            if(fprintf(outfile,"\\\"")<0)
-            {
-              put_status_message((gchar *)strerror(errno));
-              return;
-            }
-          }
-          else
-          {
-            if(fprintf(outfile,"%c",*outputchar)<0)
-            {
-              put_status_message((gchar *)strerror(errno));
-              return;
-            }
-          }
-        }    
-        if(fprintf(outfile,"\" \n")<0)
-        {
-          put_status_message((gchar *)strerror(errno));
-          return;
-        };
-
-        if(!keep)
-        {
-          if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
+          if(fprintf(outfile,"\\\"")<0)
           {
             put_status_message((gchar *)strerror(errno));
             return;
           }
         }
+        else
+        {
+          if(fprintf(outfile,"%c",*outputchar)<0)
+          {
+            put_status_message((gchar *)strerror(errno));
+            return;
+          }
+        }
+      }    
+      if(fprintf(outfile,"\" \n")<0)
+      {
+        put_status_message((gchar *)strerror(errno));
+        return;
+      };
 
-        if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
+      if(!keep)
+      {
+        if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
         {
           put_status_message((gchar *)strerror(errno));
           return;
         }
       }
-    } while(gtk_tree_model_iter_next(model, &iter));
-  }
 
+      if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
+      {
+        put_status_message((gchar *)strerror(errno));
+        return;
+      }
+    }
+  } while(gtk_tree_model_iter_next(model, &iter));
+
+end:
   fclose(outfile);
 }
 
 //! Choose the file to save the session to
-void ChooseCueExportFile(GtkWidget *widget, gpointer data)
+void ChooseCueExportFile(GtkWidget *widget, ui_state *ui)
 {
   GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Select cue file name"),
       NULL,

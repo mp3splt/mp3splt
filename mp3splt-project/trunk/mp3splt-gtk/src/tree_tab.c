@@ -63,13 +63,6 @@ GtkWidget *scan_trim_silence_button = NULL;
 //handle box for detaching window
 GtkWidget *handle_box;
 
-/*! The tree view (which is the table all split points are stored inside)
-
-Used globally for the update_*_from_spinner; the information about the
-order of items is kept in the enum tree_columns.
-*/
-GtkTreeView *tree_view;
-
 /*!\defgroup{} splitpointview Variables for the splitpoint view
 @{
 */
@@ -160,178 +153,18 @@ extern ui_state *ui;
 
 void copy_filename_to_current_description(const gchar *fname);
 
-/*! updates add button
-
-Makes the add button show whether the spinners splitpoint is already
-in the table or not
-*/
-void update_add_button()
-{
-  if (check_if_splitpoint_does_not_exists(tree_view,
-                                 spin_mins, 
-                                 spin_secs,
-                                 spin_hundr_secs,-1))
-    {
-      gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
-    }
-  else
-    {
-      gtk_widget_set_sensitive(GTK_WIDGET(add_button), FALSE);
-    }
-}
-
-//!updates the minutes from the spinner
-void update_minutes_from_spinner(GtkWidget *widget, gpointer data)
-{
-  spin_mins = 
-    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_minutes));
-  update_add_button();
-}
-
-//!updates the seconds from the spinner
-void update_seconds_from_spinner( GtkWidget *widget,
-                                  gpointer   data )
-{
-  spin_secs = 
-    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_seconds));
-  update_add_button();
-}
-
-//!updates the hundredth of seconds for the spinner
-void update_hundr_secs_from_spinner( GtkWidget *widget,
-                                     gpointer   data )
-{
-  spin_hundr_secs = 
-    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_hundr_secs));
-  update_add_button();
-}
-
-//!creates the model for the tree, gtkliststore
-GtkTreeModel *create_model()
-{
-  GtkListStore *model;
-  model = gtk_list_store_new (NUM_COLUMNS,
-                              G_TYPE_BOOLEAN,
-                              G_TYPE_STRING,
-                              G_TYPE_INT,
-                              G_TYPE_INT, 
-                              G_TYPE_INT, 
-                              G_TYPE_STRING,
-                              GDK_TYPE_PIXBUF,
-                              GDK_TYPE_PIXBUF);
-  return GTK_TREE_MODEL (model);
-}
-
-//!order the number column
-void order_length_column(GtkTreeView *tree_view)
-{
-  //number to be put in the number column
-  //we start at 0
-  gint number = 0;
-  GtkTreeIter iter;
-  GtkTreeIter iter2;
-  GtkTreePath *path = NULL,*path2 = NULL;
-  GtkTreeModel *model;
-  
-  //data from the current line
-  gint line_mins,line_secs,line_hundr;
-  //data from the line+1
-  gint line1_mins,line1_secs,line1_hundr;
-  
-  //final result
-  gint result_mins = 0,
-    result_secs = 0,result_hundr = 0;
-  
-  //the new string that we write
-  gchar new_length_string[30];
-  
-  model = gtk_tree_view_get_model(tree_view);
-  
-  //for each column
-  for(number = 0;number < splitnumber; number++)
-    {
-      path = 
-        gtk_tree_path_new_from_indices (number ,-1);
-      //get the iter correspondig to the path
-      gtk_tree_model_get_iter(model, &iter, path);
-      
-      //if not the last
-      if (number != splitnumber-1)
-        {
-          path2 = 
-            gtk_tree_path_new_from_indices (number+1 ,-1);
-          //get the iter correspondig to the path
-          gtk_tree_model_get_iter(model, &iter2, path2);
-          
-          gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-                             COL_MINUTES, &line_mins,
-                             COL_SECONDS, &line_secs,
-                             COL_HUNDR_SECS, &line_hundr,
-                             -1);
-          gtk_tree_model_get(GTK_TREE_MODEL(model), &iter2,
-                             COL_MINUTES, &line1_mins,
-                             COL_SECONDS, &line1_secs,
-                             COL_HUNDR_SECS, &line1_hundr,
-                             -1);
-          
-          //we put the result in result_*
-          result_mins = line1_mins - line_mins;
-          //if the seconds are less than 0
-          if ((result_secs = line1_secs - line_secs) < 0)
-            {
-              //we calculate the right seconds
-              result_secs = 60 - line_secs + line1_secs;
-              result_mins--;
-            }
-          //if the hundreths are less than 0
-          if ((result_hundr = line1_hundr - line_hundr) < 0)
-            {
-              result_hundr = 100 - line_hundr + line1_hundr;
-              result_secs--;
-              if (result_secs < 0)
-                {
-                  result_mins--;result_secs = 0;                    
-                }
-            }
-          
-          //we write the new string
-          g_snprintf(new_length_string,30, "%d:%02d:%02d",result_mins,
-              result_secs,result_hundr);
-          
-          //free memory
-          gtk_tree_path_free(path2);
-        }
-      else
-        {
-          g_snprintf(new_length_string,30,"%s","-");
-        }
-      
-      //free memory
-      gtk_tree_path_free(path);
-      
-      //we put the string in the case
-      gtk_list_store_set (GTK_LIST_STORE (model), 
-                          &iter,
-                          COL_NUMBER, new_length_string,
-                          -1);
-    }
-}
-
 //! checks if splitpoints exists in the table and is different from current_split
-gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
-    gint minutes, 
-    gint seconds,
-    gint hundr_secs,
-    gint current_split)
+static gboolean check_if_splitpoint_does_not_exists(ui_state *ui, 
+    gint minutes, gint seconds, gint hundr_secs, gint current_split)
 {
-  GtkTreeModel *model;
   GtkTreeIter iter;
+
   //minutes and seconds from the column
   gint tree_minutes;
   gint tree_seconds;
   gint tree_hundr_secs;
   
-  model = gtk_tree_view_get_model(tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   //for getting row number
   GtkTreePath *path = NULL;
   gint i;
@@ -383,6 +216,137 @@ gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
   return TRUE;
 }
 
+/*! updates add button
+
+Makes the add button show whether the spinners splitpoint is already
+in the table or not
+*/
+void update_add_button()
+{
+  if (check_if_splitpoint_does_not_exists(ui, spin_mins, spin_secs, spin_hundr_secs,-1))
+  {
+    gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
+  }
+  else
+  {
+    gtk_widget_set_sensitive(GTK_WIDGET(add_button), FALSE);
+  }
+}
+
+//!updates the minutes from the spinner
+void update_minutes_from_spinner(GtkWidget *widget, gpointer data)
+{
+  spin_mins = 
+    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_minutes));
+  update_add_button();
+}
+
+//!updates the seconds from the spinner
+void update_seconds_from_spinner( GtkWidget *widget,
+                                  gpointer   data )
+{
+  spin_secs = 
+    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_seconds));
+  update_add_button();
+}
+
+//!updates the hundredth of seconds for the spinner
+void update_hundr_secs_from_spinner( GtkWidget *widget,
+                                     gpointer   data )
+{
+  spin_hundr_secs = 
+    gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_hundr_secs));
+  update_add_button();
+}
+
+//!creates the model for the tree, gtkliststore
+GtkTreeModel *create_model()
+{
+  GtkListStore * model =
+    gtk_list_store_new(NUM_COLUMNS,
+        G_TYPE_BOOLEAN,
+        G_TYPE_STRING,
+        G_TYPE_INT,
+        G_TYPE_INT, 
+        G_TYPE_INT, 
+        G_TYPE_STRING,
+        GDK_TYPE_PIXBUF,
+        GDK_TYPE_PIXBUF);
+
+  return GTK_TREE_MODEL(model);
+}
+
+//!order the number column
+static void order_length_column(ui_state *ui)
+{
+  gint number = 0;
+  GtkTreeIter iter;
+  GtkTreeIter iter2;
+  GtkTreePath *path = NULL,*path2 = NULL;
+
+  gint line_mins, line_secs, line_hundr;
+  gint line1_mins, line1_secs, line1_hundr;
+
+  gint result_mins = 0, result_secs = 0,result_hundr = 0;
+
+  gchar new_length_string[30];
+
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+
+  for (number = 0;number < splitnumber; number++)
+  {
+    path = gtk_tree_path_new_from_indices (number ,-1);
+    gtk_tree_model_get_iter(model, &iter, path);
+
+    if (number != splitnumber-1)
+    {
+      path2 = gtk_tree_path_new_from_indices (number+1 ,-1);
+      gtk_tree_model_get_iter(model, &iter2, path2);
+
+      gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+          COL_MINUTES, &line_mins,
+          COL_SECONDS, &line_secs,
+          COL_HUNDR_SECS, &line_hundr,
+          -1);
+      gtk_tree_model_get(GTK_TREE_MODEL(model), &iter2,
+          COL_MINUTES, &line1_mins,
+          COL_SECONDS, &line1_secs,
+          COL_HUNDR_SECS, &line1_hundr,
+          -1);
+
+      result_mins = line1_mins - line_mins;
+      if ((result_secs = line1_secs - line_secs) < 0)
+      {
+        result_secs = 60 - line_secs + line1_secs;
+        result_mins--;
+      }
+
+      if ((result_hundr = line1_hundr - line_hundr) < 0)
+      {
+        result_hundr = 100 - line_hundr + line1_hundr;
+        result_secs--;
+        if (result_secs < 0)
+        {
+          result_mins--;result_secs = 0;                    
+        }
+      }
+
+      g_snprintf(new_length_string,30, "%d:%02d:%02d",result_mins,
+          result_secs,result_hundr);
+
+      gtk_tree_path_free(path2);
+    }
+    else
+    {
+      g_snprintf(new_length_string,30,"%s","-");
+    }
+
+    gtk_tree_path_free(path);
+
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_NUMBER, new_length_string, -1);
+  }
+}
+
 /*! checks if the name of the current track is already in use
 
 \param descr The name of the current track
@@ -390,58 +354,39 @@ gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
 track name with
 \result TRUE if the new track name for track (number) is unique
 */
-gboolean check_if_description_exists(gchar *descr,
-                                     gint number)
+gboolean check_if_description_exists(gchar *descr, gint number)
 {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  
-  model = gtk_tree_view_get_model(tree_view);
-  
-  gchar *description;
-  //we count the rows
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+
+  gchar *description = NULL;
   gint count = 0;
-  //if the table is not empty
-  //get iter number
-  if(gtk_tree_model_get_iter_first(model, &iter))
+
+  GtkTreeIter iter;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+  {
+    return TRUE;
+  }
+
+  while (TRUE)
+  {
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        COL_DESCRIPTION, &description,
+        -1);
+
+    if (description != NULL && strcmp(descr, description) == 0 && count != number)
     {
-      // Todo: Do the next 2 lines make any sense?
-      // I mean: They will be repeated later.
-      gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-                         COL_DESCRIPTION,&description,
-                         -1);
-      //freeing memory
       g_free(description);
-      
-      //supposing we have a finite tree, so it will break somehow
-      while(TRUE)
-        {
-          gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-                             COL_DESCRIPTION,&description,
-                             -1);
-          
-          //if we already have the description in the table
-          //FALSE
-          if (description != NULL)
-            if (strcmp(descr, description) == 0)  
-              if (count != number)
-                {
-                  //freeing memory
-                  g_free(description);
-                  return FALSE;
-                }
-          
-          //freeing memory
-          g_free(description);
-          
-          //go to next iter number(row)
-          if(!gtk_tree_model_iter_next(model, &iter))
-            break;
-          
-          count ++;
-        }
+      return FALSE;
     }
-  
+
+    g_free(description);
+
+    if (!gtk_tree_model_iter_next(model, &iter))
+      break;
+
+    count++;
+  }
+
   return TRUE;
 }
 
@@ -449,43 +394,37 @@ gboolean check_if_description_exists(gchar *descr,
 gint get_first_splitpoint_selected()
 {
   gint splitpoint_selected = -1;
-  //we get the selection and change the selected splitpoint on
-  //the player
-  GtkTreeModel *model;
-  model = gtk_tree_view_get_model(tree_view);
-  GtkTreeSelection *selection;
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-  //our selected list
-  GList *selected_list = NULL;
-  selected_list = 
-    gtk_tree_selection_get_selected_rows(GTK_TREE_SELECTION(selection),
-                                         &model);
-  //if we have something in the selected list
+
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->tree_view);
+
+  GList *selected_list = 
+    gtk_tree_selection_get_selected_rows(GTK_TREE_SELECTION(selection), &model);
+
   if (g_list_length(selected_list) > 0)
-    {
-      //get the first element
-      GList *current_element = NULL;
-      
-      current_element = g_list_first(selected_list);
-      //the path
-      GtkTreePath *path;
-      path = current_element->data;
-      splitpoint_selected = gtk_tree_path_get_indices (path)[0];
-      
-      //we free the selected elements
-      g_list_foreach (selected_list, 
-                      (GFunc)gtk_tree_path_free, NULL);
-      g_list_free (selected_list);
-    }
-  
+  {
+    //get the first element
+    GList *current_element = NULL;
+
+    current_element = g_list_first(selected_list);
+    //the path
+    GtkTreePath *path;
+    path = current_element->data;
+    splitpoint_selected = gtk_tree_path_get_indices (path)[0];
+
+    //we free the selected elements
+    g_list_foreach (selected_list, 
+        (GFunc)gtk_tree_path_free, NULL);
+    g_list_free (selected_list);
+  }
+
   return splitpoint_selected;
 }
 
 //!row selection event
 void row_selection_event()
 {
-  if(!gtk_widget_get_sensitive(remove_row_button))
-    gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), TRUE); 
+  gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), TRUE); 
 }
 
 /*! Set the name of the splitpoint (number) to (descr)
@@ -548,23 +487,17 @@ void get_hundr_secs_mins_time(gint time_pos, gint *time_hundr,
 //!selects a splitpoint
 void select_splitpoint(gint index)
 {
-  GtkTreeModel *model;
-  GtkTreePath *path;
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+  GtkTreePath *path = gtk_tree_path_new_from_indices (index ,-1);
+
   GtkTreeIter iter;
-  GtkTreeSelection *selection;
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-  
-  //we get the model
-  model = gtk_tree_view_get_model(tree_view);
-  //we get the path
-  path = gtk_tree_path_new_from_indices (index ,-1);
-  //we get iter
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_selection_unselect_all(selection);
   gtk_tree_selection_select_iter(selection, &iter);
-  //we free the path
+
   gtk_tree_path_free(path);
-  
+
   remove_status_message();
 }
 
@@ -572,18 +505,14 @@ void select_splitpoint(gint index)
 \param index Number of the split point
 \param stop_preview means we stop preview if necessary
 */
-void remove_splitpoint(gint index,gint stop_preview)
+void remove_splitpoint(gint index, gint stop_preview)
 {
   g_array_remove_index(ui->splitpoints, index);
   
-  GtkTreeModel *model;
-  GtkTreePath *path;
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+  GtkTreePath *path = gtk_tree_path_new_from_indices (index ,-1);
+
   GtkTreeIter iter;
-  //we get the model
-  model = gtk_tree_view_get_model(tree_view);
-  //we get the path
-  path = gtk_tree_path_new_from_indices (index ,-1);
-  //we get iter
   gtk_tree_model_get_iter(model, &iter, path);
   
   //we cancel quick preview if necessary
@@ -604,20 +533,17 @@ void remove_splitpoint(gint index,gint stop_preview)
   
   //if we don't have the first selected, we hide remove button
   if (get_first_splitpoint_selected() == -1)
-    {
-      if(gtk_widget_get_sensitive(remove_row_button))
-        gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), 
-                                 FALSE);  
-    }
+  {
+    gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);  
+  }
   
   if (splitnumber == 0)
   {
-    if (gtk_widget_get_sensitive(remove_all_button))
-      gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   }
   
   remove_status_message();
-  order_length_column(tree_view);
+  order_length_column(ui);
   remove_status_message();
   update_add_button();
   check_update_down_progress_bar();
@@ -635,8 +561,9 @@ otherwise update the split point.
 */
 void update_splitpoint(gint index, Split_point new_point)
 {
-  int splitpoint_does_not_exists = check_if_splitpoint_does_not_exists(tree_view,
-      new_point.mins, new_point.secs, new_point.hundr_secs,-1);
+  int splitpoint_does_not_exists = 
+    check_if_splitpoint_does_not_exists(ui, new_point.mins, new_point.secs, new_point.hundr_secs,-1);
+
   Split_point old_point = g_array_index(ui->splitpoints, Split_point, index);
 
   if (splitpoint_does_not_exists ||
@@ -701,23 +628,17 @@ void update_splitpoint_check(gint index)
 }
 
 //!event for editing a cell
-void cell_edited_event (GtkCellRendererText *cell,
-                        gchar               *path_string,
-                        gchar               *new_text,
-                        gpointer             data)
+static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, ui_state *ui)
 {
-  GtkTreeView *tree_view = (GtkTreeView *)data;
-  GtkTreeModel *model;
-  GtkTreePath *path = 
-    gtk_tree_path_new_from_string (path_string);
+  GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
   GtkTreeIter iter;
-  //indice
+
   gint i;
-  //old splitpoint, and new one that will replace the old one
+
   Split_point old_point;
   Split_point new_point;
   
-  model = gtk_tree_view_get_model(tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   
   //get the column number
   gint col = GPOINTER_TO_INT(g_object_get_data (G_OBJECT(cell), "col"));
@@ -743,8 +664,7 @@ void cell_edited_event (GtkCellRendererText *cell,
      
       if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)))
       {
-        const gchar *fname = inputfilename_get();
-        copy_filename_to_current_description(fname);
+        copy_filename_to_current_description(get_input_filename(ui->gui));
       }
       else
       {
@@ -758,13 +678,13 @@ void cell_edited_event (GtkCellRendererText *cell,
       new_point.hundr_secs = old_point.hundr_secs;
       
       if (new_point.secs < 0)
-        {
-          new_point.secs = 0;
-        }
+      {
+        new_point.secs = 0;
+      }
       if (new_point.secs > 59)
-        {
-          new_point.secs = 59;
-        }
+      {
+        new_point.secs = 59;
+      }
       
       update_splitpoint(i,new_point);
       break;
@@ -809,20 +729,19 @@ void cell_edited_event (GtkCellRendererText *cell,
   gtk_tree_path_free (path);
 }
 
-//adds a splitpoint from the player
-void add_splitpoint_from_player(GtkWidget *widget, 
-                                gpointer data)
+void add_splitpoint_from_player(GtkWidget *widget, gpointer data)
 {
-  if (timer_active)
-    { 
-      Split_point my_split_point;
-      //get minutes and seconds
-      my_split_point.mins = player_minutes;
-      my_split_point.secs = player_seconds;
-      my_split_point.hundr_secs = player_hundr_secs;
-      my_split_point.checked = TRUE;
-      add_splitpoint(my_split_point,-1);
-    }
+  if (!timer_active)
+  { 
+    return;
+  }
+
+  Split_point my_split_point;
+  my_split_point.mins = player_minutes;
+  my_split_point.secs = player_seconds;
+  my_split_point.hundr_secs = player_hundr_secs;
+  my_split_point.checked = TRUE;
+  add_splitpoint(my_split_point,-1);
 }
 
 void clear_current_description(void)
@@ -865,10 +784,8 @@ the play_preview point
 void add_splitpoint(Split_point my_split_point, gint old_index)
 {
   GtkTreeIter iter;
-  GtkTreeModel *model;
 
-  if(check_if_splitpoint_does_not_exists(tree_view,
-        my_split_point.mins,
+  if (check_if_splitpoint_does_not_exists(ui, my_split_point.mins,
         my_split_point.secs,
         my_split_point.hundr_secs,-1))
   {
@@ -880,7 +797,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
       temp = NULL;
     }
 
-    model = gtk_tree_view_get_model(tree_view);
+    GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
 
     int k = 0;
     gint tree_minutes;
@@ -948,7 +865,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
     {
       GtkTreePath *path;
       path = gtk_tree_model_get_path(model, &iter);
-      gtk_tree_view_set_cursor (tree_view,path,NULL,FALSE);
+      gtk_tree_view_set_cursor(ui->gui->tree_view, path, NULL, FALSE);
       gtk_tree_path_free(path);
     }
 
@@ -1051,7 +968,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
       gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), TRUE);
     }
 
-    order_length_column(tree_view);      
+    order_length_column(ui);
     remove_status_message();
   }
   else
@@ -1062,8 +979,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
 
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)))
   {
-    const gchar *fname = inputfilename_get();
-    copy_filename_to_current_description(fname);
+    copy_filename_to_current_description(get_input_filename(ui->gui));
   }
   else
   {
@@ -1088,7 +1004,7 @@ void add_row(gboolean checked)
   add_splitpoint(my_split_point,-1);
 }
 
-void add_row_clicked(GtkWidget *button, gpointer data)
+static void add_row_clicked(GtkWidget *button, ui_state *ui)
 {
   add_row(TRUE);
 }
@@ -1105,7 +1021,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), FALSE);
   gtk_widget_set_sensitive(cancel_button, TRUE);
-  filename_to_split = inputfilename_get();
+  filename_to_split = get_input_filename(ui->gui);
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
 
   exit_threads();
@@ -1453,78 +1369,51 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
 }
 
 //!remove a row from the table
-void remove_row(GtkWidget *widget, gpointer data)
+static void remove_row(GtkWidget *widget, ui_state *ui)
 {
-  GtkTreeSelection *selection;
-  GList *selected_list = NULL;
-  GList *current_element = NULL;
-  GtkTreeView *tree_view = (GtkTreeView *)data;
-  GtkTreeModel *model;
-  //indice
-  gint i;
-  //the path
-  GtkTreePath *path;
-  
-  model = gtk_tree_view_get_model(tree_view);
-  
-  //get the selection
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-  
-  //get selected rows
-  selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
-  
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->tree_view);
+
+  GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
+
   //while the list is not empty and we have numbers in the table
   //(splitnumber >0)
-  while ((g_list_length(selected_list) > 0)
-         && (splitnumber > 0))
-    {
-      //get the last element
-      current_element = g_list_last(selected_list);
-      path = current_element->data;
-      i = gtk_tree_path_get_indices (path)[0];
-      
-      remove_splitpoint(i,TRUE);
-      
-      //remove the path from the selected list
-      selected_list = g_list_remove(selected_list, path);
-      //free memory
-      gtk_tree_path_free(path);
-    }
-  
-  //we free the selected elements
-  g_list_foreach (selected_list, 
-                  (GFunc)gtk_tree_path_free, NULL);
-  g_list_free (selected_list);
+  while ((g_list_length(selected_list) > 0) && (splitnumber > 0))
+  {
+    GList *current_element = g_list_last(selected_list);
+    GtkTreePath *path = current_element->data;
+    gint i = gtk_tree_path_get_indices (path)[0];
+
+    remove_splitpoint(i,TRUE);
+
+    selected_list = g_list_remove(selected_list, path);
+
+    gtk_tree_path_free(path);
+  }
+
+  g_list_foreach(selected_list, (GFunc)gtk_tree_path_free, NULL);
+  g_list_free(selected_list);
 }
 
 //!removes all rows from the table
-void remove_all_rows(GtkWidget *widget, gpointer data)
+void remove_all_rows(GtkWidget *widget, ui_state *ui)
 {
-  GtkTreeIter iter;
-  GtkTreeModel *model;
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   
-  model = gtk_tree_view_get_model(tree_view);
-  
-  //for all the splitnumbers
   while (splitnumber > 0)
   {
+    GtkTreeIter iter;
     gtk_tree_model_get_iter_first(model, &iter);
     gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
     g_array_remove_index(ui->splitpoints, (splitnumber-1));
     splitnumber--;
   }
   
-  //disable remove all button
-  if(gtk_widget_get_sensitive(remove_all_button))
-    gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
-  
-  //disable remove button
-  if(gtk_widget_get_sensitive(remove_row_button))
-    gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
   
   remove_status_message();
   cancel_quick_preview_all();
-  //
   update_add_button();
   refresh_drawing_area();
   check_update_down_progress_bar();
@@ -1567,71 +1456,65 @@ GtkWidget *create_init_spinner(GtkWidget *bottomhbox1,
 }
 
 //!minutes ,seconds spinners ; add, delete buttons
-GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view)
+static GtkWidget *create_init_spinners_buttons(ui_state *ui)
 {
   GtkWidget *hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
   /* minutes and seconds spinners */
   spinner_minutes = create_init_spinner(hbox, 
-                                        0, INT_MAX/6000,
-                                        _("Minutes:"),
-                                        //0 means spinner minutes
-                                        0);
+      0, INT_MAX/6000,
+      _("Minutes:"),
+      //0 means spinner minutes
+      0);
   spinner_seconds = create_init_spinner(hbox, 
-                                        0, 59,
-                                        _("Seconds:"), 
-                                        //1 means spinner seconds
-                                        1);
+      0, 59,
+      _("Seconds:"), 
+      //1 means spinner seconds
+      1);
   //hundredth spinner
   spinner_hundr_secs = create_init_spinner(hbox, 
-                                           0, 99,
-                                           _("Hundredths:"), 
-                                           //2 means spinner hundredth
-                                           2);
+      0, 99,
+      _("Hundredths:"), 
+      //2 means spinner hundredth
+      2);
 
   /* add button */
-  add_button = (GtkWidget *)wh_create_cool_button(GTK_STOCK_ADD,
-                                               _("_Add"), FALSE);
+  add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(add_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
-  g_signal_connect(G_OBJECT(add_button), "clicked",
-                    G_CALLBACK(add_row_clicked), tree_view);
-  gtk_box_pack_start (GTK_BOX (hbox), add_button, FALSE, FALSE, 5);
+  g_signal_connect(G_OBJECT(add_button), "clicked", G_CALLBACK(add_row_clicked), ui);
+  gtk_box_pack_start(GTK_BOX (hbox), add_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(add_button,_("Add splitpoint"));
 
   /* remove row button */
-  remove_row_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_REMOVE, _("_Remove"), FALSE);
+  remove_row_button = wh_create_cool_button(GTK_STOCK_REMOVE, _("_Remove"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_row_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
-  g_signal_connect (G_OBJECT (remove_row_button), "clicked",
-                    G_CALLBACK (remove_row), tree_view);
-  gtk_box_pack_start (GTK_BOX (hbox), remove_row_button, FALSE, FALSE, 5);
+  g_signal_connect(G_OBJECT(remove_row_button), "clicked", G_CALLBACK(remove_row), ui);
+  gtk_box_pack_start(GTK_BOX (hbox), remove_row_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(remove_row_button, _("Remove rows"));
 
   /* remove all rows button */
-  remove_all_button = (GtkWidget *)
-    wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all"), FALSE);
+  remove_all_button = wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all"), FALSE);
   gtk_button_set_relief(GTK_BUTTON(remove_all_button), GTK_RELIEF_NONE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
-  g_signal_connect (G_OBJECT (remove_all_button), "clicked",
-                    G_CALLBACK (remove_all_rows), tree_view);
-  gtk_box_pack_start (GTK_BOX (hbox), remove_all_button, FALSE, FALSE, 5);
+  g_signal_connect(G_OBJECT(remove_all_button), "clicked", G_CALLBACK(remove_all_rows), ui);
+  gtk_box_pack_start(GTK_BOX(hbox), remove_all_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(remove_all_button, _("Remove all rows"));
 
   return hbox;
 }
 
 //!special buttons like 'set silence from silence detection'
-GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
+static GtkWidget *create_init_special_buttons()
 {
   GtkWidget *hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
   /* set splitpoints from trim silence detection */
   scan_trim_silence_button =
-    (GtkWidget *)wh_create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
+    wh_create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
   g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
       G_CALLBACK(create_trim_silence_window), NULL);
@@ -1641,7 +1524,7 @@ GtkWidget *create_init_special_buttons(GtkTreeView *tree_view)
 
   /* set splitpoints from silence detection */
   scan_silence_button =
-    (GtkWidget *)wh_create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
+    wh_create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
       G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);
@@ -1658,31 +1541,31 @@ result must be g_free'd after use
 */
 gchar *get_splitpoint_name(gint index)
 {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  GtkTreePath *path = NULL;
-  model = gtk_tree_view_get_model(tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+
   gchar *description = NULL;
-  if(gtk_tree_model_get_iter_first(model, &iter))
-    {
-      if (index == -1)
-        index = 0;
-      
-      if (index >= 0)
-        {
-          path = 
-            gtk_tree_path_new_from_indices (index ,-1);
-          //get the iter correspondig to the path
-          gtk_tree_model_get_iter(model, &iter, path);
-          //we get the description
-          gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-                             COL_DESCRIPTION,&description,
-                             -1);
-          //free memory
-          gtk_tree_path_free(path);
-        }
-    }
-  
+
+  GtkTreeIter iter;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+  {
+    return NULL;
+  }
+
+  if (index == -1)
+  {
+    index = 0;
+  }
+
+  if (index >= 0)
+  {
+    GtkTreePath *path = gtk_tree_path_new_from_indices (index ,-1);
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        COL_DESCRIPTION,&description,
+        -1);
+    gtk_tree_path_free(path);
+  }
+
   return description;
 }
 
@@ -1730,7 +1613,7 @@ gpointer split_preview(gpointer data)
     fname_path[strlen(fname_path)-18] = '\0';
 
     remove_all_split_rows();  
-    filename_to_split = inputfilename_get();
+    filename_to_split = get_input_filename(ui->gui);
 
     exit_threads();
 
@@ -1824,15 +1707,13 @@ void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
 
 //!toggle 'check' button
 static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
-    gchar *path_str, gpointer data)
+    gchar *path_str, ui_state *ui)
 {
-  GtkTreeView *tree_view = (GtkTreeView *)data;
-  GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
-  GtkTreeIter  iter;
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
   gboolean checked = FALSE;
 
-  //get the current value of the checked
+  GtkTreeIter  iter;
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, COL_CHECK, &checked, -1);
 
@@ -1857,13 +1738,12 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
 }
 
 //!creates columns for the tree
-void create_columns (GtkTreeView *tree_view)
+void create_columns(GtkTreeView *tree_view)
 {
-  //cells renderer
   GtkCellRendererText *renderer;
   GtkCellRendererPixbuf *renderer_pix;
   GtkCellRendererToggle *renderer_toggle;
-  //columns
+
   GtkTreeViewColumn *column_number;
   GtkTreeViewColumn *column_check = NULL;
   GtkTreeViewColumn *column_description;
@@ -1872,27 +1752,18 @@ void create_columns (GtkTreeView *tree_view)
   GtkTreeViewColumn *column_seconds;
   GtkTreeViewColumn *column_preview;
   GtkTreeViewColumn *column_split_preview;
-  
+ 
   /* Check point / skip point */
-  //renderer creation
   renderer_toggle = GTK_CELL_RENDERER_TOGGLE(gtk_cell_renderer_toggle_new());
-  //cell edited events
-  g_signal_connect(renderer_toggle, "toggled",
-      G_CALLBACK(toggled_splitpoint_event), tree_view);
-  //enable cell editing
+  g_signal_connect(renderer_toggle, "toggled", G_CALLBACK(toggled_splitpoint_event), ui);
   g_object_set_data(G_OBJECT(renderer_toggle), "col", GINT_TO_POINTER(COL_CHECK));
   column_check = gtk_tree_view_column_new_with_attributes
     (_("Keep"), GTK_CELL_RENDERER(renderer_toggle),
      "active", COL_CHECK, NULL);
 
   /* description */
-  //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  //cell edited events
-  g_signal_connect(renderer, "edited",
-                   G_CALLBACK(cell_edited_event),
-                   tree_view);
-  //enable cell editing
+  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited_event), ui);
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_DESCRIPTION));
   column_description = gtk_tree_view_column_new_with_attributes
@@ -1900,13 +1771,8 @@ void create_columns (GtkTreeView *tree_view)
      "text", COL_DESCRIPTION, NULL);
   
   /* seconds */
-  //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  //cell edited events
-  g_signal_connect(renderer, "edited",
-                   G_CALLBACK(cell_edited_event),
-                   tree_view);
-  //enable cell editing
+  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited_event), ui);
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_SECONDS));
   column_seconds = gtk_tree_view_column_new_with_attributes
@@ -1914,13 +1780,8 @@ void create_columns (GtkTreeView *tree_view)
      "text", COL_SECONDS, NULL);
   
   /* minutes */
-  //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  //cell edited events
-  g_signal_connect(renderer, "edited",
-                   G_CALLBACK(cell_edited_event),
-                   tree_view);
-  //enable cell editing
+  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited_event), ui);
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_MINUTES));
   column_minutes = gtk_tree_view_column_new_with_attributes 
@@ -1928,13 +1789,8 @@ void create_columns (GtkTreeView *tree_view)
      "text", COL_MINUTES, NULL);
 
   /* hundr secs */
-  //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-  //cell edited events
-  g_signal_connect(renderer, "edited",
-                   G_CALLBACK(cell_edited_event),
-                   tree_view);
-  //enable cell editing
+  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited_event), ui);
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_HUNDR_SECS));
   column_hundr_secs = gtk_tree_view_column_new_with_attributes 
@@ -1943,7 +1799,7 @@ void create_columns (GtkTreeView *tree_view)
   
   /* Length column */
   //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
+  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NUMBER));
   //middle alignment
   g_object_set (G_OBJECT (renderer), "xalign", 1.0, NULL);
@@ -2050,23 +1906,26 @@ void close_popup_window_event( GtkWidget *window,
 }
 
 //!Issued when we detach the handle
-void handle_detached_event (GtkHandleBox *handlebox,
-                            GtkWidget *widget,
-                            gpointer data)
+void handle_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, gpointer data)
 {
-  //new window
-  GtkWidget *window;
-
-  /* window */
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
+  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
 
-  g_signal_connect (G_OBJECT (window), "delete_event",
-                    G_CALLBACK (close_popup_window_event),
-                    NULL);
+  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(close_popup_window_event), NULL);
 
   gtk_widget_show(GTK_WIDGET(window));
+}
+
+//!creates the tree view
+static void create_tree_view(gui_state *gui)
+{
+  GtkTreeView *tree_view = GTK_TREE_VIEW(gtk_tree_view_new_with_model(create_model()));
+  gui->tree_view = tree_view;
+
+  g_signal_connect(tree_view, "row-activated", G_CALLBACK(preview_song), tree_view);
+
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(tree_view);
+  g_signal_connect(selection, "changed", G_CALLBACK(row_selection_event), NULL);
 }
 
 /*!creates the choose splitpoints frame
@@ -2074,8 +1933,10 @@ void handle_detached_event (GtkHandleBox *handlebox,
 This frame contains the spinners, arrows, the tree, add, remove
 buttons
 */
-GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
+GtkWidget *create_splitpoints_frame(ui_state *ui)
 {
+  create_tree_view(ui->gui);
+
   /* choose splitpoins vbox */
   GtkWidget *choose_splitpoints_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(choose_splitpoints_vbox), 0);
@@ -2083,15 +1944,12 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   /* handle box for detaching */
   handle_box = gtk_handle_box_new();
   gtk_container_add(GTK_CONTAINER (handle_box), GTK_WIDGET(choose_splitpoints_vbox));
-  //handle event
-  g_signal_connect(handle_box, "child-detached",
-                   G_CALLBACK(handle_detached_event),
-                   NULL);
+  g_signal_connect(handle_box, "child-detached", G_CALLBACK(handle_detached_event), NULL);
 
   /* spinner buttons hbox */
-  GtkWidget *spinners_buttons_hbox = create_init_spinners_buttons(tree_view);
+  GtkWidget *spinners_buttons_hbox = create_init_spinners_buttons(ui);
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), spinners_buttons_hbox, FALSE, FALSE, 3);
-  
+
   /* horizontal box for the tree */
   GtkWidget *tree_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), tree_hbox, TRUE, TRUE, 0);
@@ -2100,20 +1958,17 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
   GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-                                  GTK_POLICY_AUTOMATIC,
-                                  GTK_POLICY_AUTOMATIC);
+      GTK_POLICY_AUTOMATIC,
+      GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(tree_hbox), scrolled_window, TRUE, TRUE, 0);
 
-  //get the selection
-  GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->tree_view);
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
-  //create columns
-  create_columns(tree_view);
-  //add the tree to the scrolled window
-  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(tree_view));
+  create_columns(ui->gui->tree_view);
+  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(ui->gui->tree_view));
 
   /* special buttons like 'set silence from silence detection' */
-  GtkWidget *special_buttons_hbox = create_init_special_buttons(tree_view);
+  GtkWidget *special_buttons_hbox = create_init_special_buttons();
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), special_buttons_hbox, FALSE, FALSE, 2);
 
   return handle_box;
@@ -2121,22 +1976,20 @@ GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view)
 
 static void garray_to_array(GArray *spltpoints, glong *hundredth)
 {
-  gint i;
-  Split_point point;
-  
+  gint i = 0;
   for(i = 0; i < splitnumber; i++ )
+  {
+    Split_point point = g_array_index(ui->splitpoints, Split_point, i);
+    if (point.mins >= (INT_MAX-1)/6000)
     {
-      point = g_array_index(ui->splitpoints, Split_point, i);
-      if (point.mins >= (INT_MAX-1)/6000)
-      {
-	      hundredth[i] = LONG_MAX;
-      }
-      else
-      {
-	      hundredth[i] = point.mins * 6000 +
-		      point.secs * 100 + point.hundr_secs;
-      }
+      hundredth[i] = LONG_MAX;
     }
+    else
+    {
+      hundredth[i] = point.mins * 6000 +
+        point.secs * 100 + point.hundr_secs;
+    }
+  }
 }
 
 //!puts the splitpoints into the state
@@ -2146,7 +1999,7 @@ void put_splitpoints_in_mp3splt_state(splt_state *state)
   garray_to_array(ui->splitpoints, hundr);
   gint i;
 
-  GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   GtkTreeIter iter;
   GtkTreePath *path = NULL;
   gchar *description = NULL;
@@ -2174,29 +2027,5 @@ void put_splitpoints_in_mp3splt_state(splt_state *state)
 
     gtk_tree_path_free(path);
   }
-}
-
-//!creates the tree view
-GtkTreeView *create_tree_view()
-{
-  GtkTreeModel *model;
-  //create the model
-  model = create_model();
-  //create the tree view
-  tree_view = (GtkTreeView *)gtk_tree_view_new_with_model (model);
-  
-  //preview_song callback when clicking on the row
-  g_signal_connect(tree_view,"row-activated",
-                   G_CALLBACK(preview_song),tree_view);
-  
-  //set the selection signal for enabling/disabling buttons
-  //the tree selection
-  GtkTreeSelection *selection;
-  selection = gtk_tree_view_get_selection(tree_view);
-  g_signal_connect(selection, "changed",
-                   G_CALLBACK(row_selection_event),
-                   NULL);
-  
-  return tree_view;
 }
 

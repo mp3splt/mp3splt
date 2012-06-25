@@ -56,12 +56,6 @@ void update_minutes_from_spinner(GtkWidget *widget, gpointer data);
 void update_seconds_from_spinner(GtkWidget *widget, gpointer data);
 void update_hundr_secs_from_spinner(GtkWidget *widget, gpointer data);
 GtkTreeModel *create_model();
-void order_length_column(GtkTreeView *tree_view);
-gboolean check_if_splitpoint_does_not_exists(GtkTreeView *tree_view,
-                                    gint minutes, 
-                                    gint seconds,
-                                    gint hundr_secs,
-                                    gint current_split);
 gboolean check_if_description_exists(gchar *descr,
                                      gint number);
 void exchange_elements_from_array(gint element_number1,
@@ -70,22 +64,13 @@ void row_selection_event();
 void exchange_rows_in_the_tree(gint i, gint j, GtkTreeView *tree_view);
 void sort_tree(GtkTreeView *tree_view);
 void update_current_description(gchar *descr, gint number);
-void cell_edited_event (GtkCellRendererText *cell,
-                        gchar               *path_string,
-                        gchar               *new_text,
-                        gpointer             data);
-void add_splitpoint_from_player(GtkWidget *widget, 
-                                gpointer data);
+void add_splitpoint_from_player(GtkWidget *widget, gpointer data);
 void add_row(gint checked);
-void remove_row (GtkWidget *widget, gpointer data);
-void remove_all_rows (GtkWidget *widget, 
-                      gpointer data);
 GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, 
                                gint min, 
                                gint max, 
                                gchar *label_text,
                                gint type);
-GtkWidget *create_init_spinners_buttons(GtkTreeView *tree_view);
 void preview_song (GtkTreeView *tree_view,
                    GtkTreePath *path,
                    GtkTreeViewColumn *col,
@@ -96,9 +81,8 @@ void close_popup_window_event( GtkWidget *window,
 void handle_detached_event (GtkHandleBox *handlebox,
                             GtkWidget *widget,
                             gpointer data);
-GtkWidget *create_choose_splitpoints_frame(GtkTreeView *tree_view);
+GtkWidget *create_splitpoints_frame(ui_state *ui);
 void put_splitpoints_in_mp3splt_state(splt_state *state);
-GtkTreeView *create_tree_view();
 
 //!The enum telling which item is kept in which column of the splitpoint tree
 enum {
@@ -121,6 +105,5 @@ enum {
   NUM_COLUMNS = 8
 } tree_columns;
 
-extern GtkTreeView *tree_view;
-
 #endif
+

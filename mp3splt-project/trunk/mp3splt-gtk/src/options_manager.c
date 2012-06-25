@@ -85,7 +85,7 @@ extern ui_state *ui;
  */
 void update_output_options()
 {
-  filename_to_split = inputfilename_get();
+  filename_to_split = get_input_filename(ui->gui);
   mp3splt_set_filename_to_split(ui->mp3splt_state, filename_to_split);
 
   if (get_checked_output_radio_box() == 0)

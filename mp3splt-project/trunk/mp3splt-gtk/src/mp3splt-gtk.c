@@ -166,10 +166,7 @@ gpointer split_it(gpointer data)
       enter_threads();
 
       gchar *filename = NULL;
-      GtkTreeIter iter;
-      GtkTreePath *path;
-      GtkTreeModel *model =
-        gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
+      GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
 
       exit_threads();
 
@@ -183,7 +180,9 @@ gpointer split_it(gpointer data)
           put_splitpoints_in_mp3splt_state(ui->mp3splt_state);
         }
 
-        path = gtk_tree_path_new_from_indices(row_number ,-1);
+        GtkTreePath *path = gtk_tree_path_new_from_indices(row_number ,-1);
+
+        GtkTreeIter iter;
         gtk_tree_model_get_iter(model, &iter, path);
         gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME,
             &filename, -1);

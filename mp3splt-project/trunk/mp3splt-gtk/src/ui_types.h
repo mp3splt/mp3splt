@@ -69,6 +69,16 @@ typedef struct {
 
 typedef struct {
   GtkWidget *window;
+  GtkActionGroup *action_group;
+
+  GtkWidget *browse_entry;
+  GtkWidget *browse_button;
+  GString *input_filename;
+
+  GtkWidget *player_box;
+  GtkWidget *playlist_box;
+
+  GtkTreeView *tree_view;
 } gui_state;
 
 typedef struct {
@@ -78,9 +88,11 @@ typedef struct {
 
 typedef struct {
   gint return_code;
+
   ui_infos *infos;
   preferences_state *preferences;
   splt_state *mp3splt_state;
+
   GArray *splitpoints;
   gui_state *gui;
   gui_status *status;
