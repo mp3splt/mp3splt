@@ -49,6 +49,14 @@
 //float comparison
 #define DELTA 5
 
+#define HUNDR_SECONDS 1
+#define TENS_OF_SECONDS 10
+#define SECONDS 100
+#define TEN_SECONDS 1000
+#define MINUTES 6000
+#define TEN_MINUTES 60000
+#define HOURS 360000
+
 void player_quick_preview(gint splitpoint_to_preview);
 void check_update_down_progress_bar(ui_state *ui);
 void set_preview_active_if_needed();
@@ -106,31 +114,10 @@ void handle_player_detached_event (GtkHandleBox *handlebox,
 gfloat get_right_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 gfloat get_left_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 
-gint get_time_hundrsecs(gint time);
-gint get_time_secs(gint time);
-gint get_time_mins(gint time);
-gchar *get_time_for_drawing(gchar *str,
-                            gint time,
-                            gboolean hundr_or_not,
-                            gint *number_of_chars);
 gfloat pixels_to_time(gfloat width,
                       gint pixels);
 gint convert_time_to_pixels(gint width, gfloat time, 
     gfloat current_time, gfloat total_time, gfloat zoom_coeff);
-void draw_motif(GtkWidget *da,cairo_t *gc,
-                gint ylimit,gint x,gint model);
-void draw_marks(gint time_interval,
-                gint left_mark,gint right_mark,
-                gint ylimit, GtkWidget *da, cairo_t *gc);
-void draw_motif_splitpoints(GtkWidget *da, cairo_t *gc,
-                            gint x,gint draw,
-                            gint current_point_hundr_secs,
-                            gboolean move,
-                            gint number_splitpoint);
-void draw_splitpoints(gint left_mark,
-                      gint right_mark,
-                      GtkWidget *da,
-                      cairo_t *gc);
 gboolean da_expose_event (GtkWidget      *da,
                           GdkEventExpose *event,
                           gpointer       data);

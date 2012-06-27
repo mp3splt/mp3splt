@@ -70,7 +70,7 @@ static const GtkTargetEntry drop_types[] = {
   { "text/uri-list", 0, DROP_URI_LIST }
 };
 
-void remove_status_message();
+void remove_status_message(gui_state *gui);
 void put_status_message(const gchar *text);
 void put_status_message_with_type(const gchar *text,
     splt_message_type mess_type);

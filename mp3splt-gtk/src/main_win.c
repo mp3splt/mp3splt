@@ -48,9 +48,6 @@
 
 #include "main_win.h"
 
-//status bar
-GtkWidget *status_bar;
-
 //if we are on the preferences tab, then TRUE
 gint preferences_tab = FALSE;
 
@@ -72,8 +69,6 @@ extern splt_freedb_results *search_results;
 extern gchar **split_files;
 extern gint max_split_files;
 extern gint selected_player;
-
-extern gfloat zoom_coeff;
 
 extern ui_state *ui;
 
@@ -172,7 +167,7 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
   ui_set_main_win_size(ui, event->configure.width, event->configure.height);
 
   refresh_drawing_area(ui->gui);
-  refresh_preview_drawing_areas(ui);
+  refresh_preview_drawing_areas(ui->gui);
 
   return FALSE;
 }
@@ -335,11 +330,10 @@ static void about_window(GtkWidget *widget, ui_state *ui)
 
 Used for the ok button event.
 */
-void remove_status_message()
+void remove_status_message(gui_state *gui)
 {
-  guint status_id =
-    gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), "mess");
-  gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_id);
+  guint status_id = gtk_statusbar_get_context_id(gui->status_bar, "mess");
+  gtk_statusbar_pop(gui->status_bar, status_id);
 }
 
 /*! Output a info message to the status message bar
@@ -367,11 +361,9 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
 {
   if (mess_type == SPLT_MESSAGE_INFO)
   {
-    guint status_id =
-      gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), "mess");
-
-    gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_id);
-    gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_id, text);
+    guint status_id = gtk_statusbar_get_context_id(ui->gui->status_bar, "mess");
+    gtk_statusbar_pop(ui->gui->status_bar, status_id);
+    gtk_statusbar_push(ui->gui->status_bar, status_id, text);
   }
 
   put_message_in_history(text, mess_type);
@@ -563,7 +555,7 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
   gint i = 0;
   for (i = 0; i < ui->infos->splitnumber; i++ )
   {
-    gint current_point_hundr_secs = get_splitpoint_time(i);
+    gint current_point_hundr_secs = get_splitpoint_time(i, ui);
     if (current_point_hundr_secs <= ui->infos->current_time)
     {
       left_index_point = i;
@@ -585,13 +577,13 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
   gint time_to_left = INT_MAX;
   if (left_index_point != -1)
   {
-    time_to_left = ui->infos->current_time - get_splitpoint_time(left_index_point);
+    time_to_left = ui->infos->current_time - get_splitpoint_time(left_index_point, ui);
   }
 
   gint time_to_right = INT_MAX;
   if (right_index_point != -1)
   {
-    time_to_right = get_splitpoint_time(right_index_point) - ui->infos->current_time;
+    time_to_right = get_splitpoint_time(right_index_point, ui) - ui->infos->current_time;
   }
 
   if (time_to_right > time_to_left)
@@ -606,15 +598,15 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
 
 static void zoom_in(GtkWidget *widget, ui_state *ui)
 {
-  gdouble fraction = 40./100. * zoom_coeff;
-  zoom_coeff += fraction;
+  gdouble fraction = 40./100. * ui->infos->zoom_coeff;
+  ui->infos->zoom_coeff += fraction;
   adjust_zoom_coeff();
 }
 
 static void zoom_out(GtkWidget *widget, ui_state *ui)
 {
-  gdouble fraction = 40./100. * zoom_coeff;
-  zoom_coeff -= fraction; 
+  gdouble fraction = 40./100. * ui->infos->zoom_coeff;
+  ui->infos->zoom_coeff -= fraction; 
   adjust_zoom_coeff();
 }
 
@@ -701,7 +693,7 @@ static void browse_button_event(GtkWidget *widget, ui_state *ui)
   }
 
   gtk_widget_destroy(file_chooser);
-  remove_status_message();
+  remove_status_message(ui->gui);
 }
 
 //!creates the menu bar
@@ -975,7 +967,8 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   create_mess_history_dialog();
  
   /* statusbar */
-  status_bar = gtk_statusbar_new();
+  GtkStatusbar *status_bar = GTK_STATUSBAR(gtk_statusbar_new());
+  ui->gui->status_bar = status_bar;
 
   GtkWidget *mess_history_button = wh_create_cool_button(GTK_STOCK_INFO, NULL, FALSE);
   gtk_button_set_relief(GTK_BUTTON(mess_history_button), GTK_RELIEF_NONE);
@@ -984,7 +977,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   g_signal_connect(G_OBJECT(mess_history_button), "clicked",
       G_CALLBACK(show_messages_history_dialog), ui);
 
-  gtk_box_pack_start(GTK_BOX(main_vbox), status_bar, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(main_vbox), GTK_WIDGET(status_bar), FALSE, FALSE, 0);
 
   return main_vbox;
 }

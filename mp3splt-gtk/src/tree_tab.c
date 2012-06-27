@@ -71,21 +71,10 @@ GtkWidget *spinner_seconds;
 //!The hundreths of seconds spinner
 GtkWidget *spinner_hundr_secs;
 
-//!if we have a preview, preview = TRUE
-gboolean quick_preview = FALSE;
-/*! the end of the preview
-
-preview_end_position = -1 means don't stop until the
-end of the song
-*/
-gint quick_preview_end_splitpoint = -1;
-
 //! The number of the split point for the preview
 gint this_row = 0;
 //! the position transmitted to the player
 gint preview_start_position;
-//! Which splitpoint we started the preview at
-gint preview_start_splitpoint = -1;
 
 /*! A bool that helps us catch the case that we add splitpoints during preview
 
@@ -93,13 +82,6 @@ if we add a new splitpoint at the left and we are currently
 previewing, we should increment quick_preview start and end
 */
 gboolean new_left_splitpoint_added = FALSE;
-
-/*!  The selected splitpoint
-
-used when we move the splitpoint we have selected
-*/
-gint first_splitpoint_selected = -1;
-//@}
 
 /*! \defgroup silencedetectiongroup silence detection parameters widgets
 @{
@@ -130,7 +112,6 @@ gboolean silence_remove_silence_between_tracks = FALSE;
 /*!\defgroup SplitOptionGroup options for splitting
 \{
 */
-extern gint timer_active;
 extern int selected_player;
 extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
@@ -147,24 +128,22 @@ extern ui_state *ui;
 void copy_filename_to_current_description(const gchar *fname);
 
 //! checks if splitpoints exists in the table and is different from current_split
-static gboolean check_if_splitpoint_does_not_exists(ui_state *ui, 
-    gint minutes, gint seconds, gint hundr_secs, gint current_split)
+static gboolean check_if_splitpoint_does_not_exists(gint minutes, gint seconds, gint hundr_secs, 
+    gint current_split, ui_state *ui)
 {
-  GtkTreeIter iter;
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
 
-  //minutes and seconds from the column
+  GtkTreeIter iter;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+  {
+    return TRUE;
+  }
+
   gint tree_minutes;
   gint tree_seconds;
   gint tree_hundr_secs;
-  
-  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
-  //for getting row number
-  GtkTreePath *path = NULL;
-  gint i;
-  
-  //if the table is not empty
-  //get iter number
-  if(gtk_tree_model_get_iter_first(model, &iter))
+
+  while (TRUE)
   {
     gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
         COL_MINUTES, &tree_minutes,
@@ -172,40 +151,26 @@ static gboolean check_if_splitpoint_does_not_exists(ui_state *ui,
         COL_HUNDR_SECS, &tree_hundr_secs,
         -1);
 
-    //supposing we have a finite tree, so it will break somehow
-    while(TRUE)
+    GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+    gint i = gtk_tree_path_get_indices (path)[0];
+
+    if ((minutes == tree_minutes) &&
+        (seconds == tree_seconds) && 
+        (hundr_secs == tree_hundr_secs) &&
+        (i != current_split))
     {
-      gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-          COL_MINUTES, &tree_minutes,
-          COL_SECONDS, &tree_seconds,
-          COL_HUNDR_SECS, &tree_hundr_secs,
-          -1);
+      gtk_tree_path_free(path);
+      return FALSE;
+    }
 
-      //we get the current line
-      path = gtk_tree_model_get_path(model, &iter);
-      i = gtk_tree_path_get_indices (path)[0];
+    gtk_tree_path_free(path);
 
-      if ((minutes == tree_minutes)
-          && (seconds == tree_seconds)
-          && (hundr_secs == tree_hundr_secs)
-          && (i != current_split))
-      {
-        //free memory
-        gtk_tree_path_free (path);
-        return FALSE;
-      }
-
-      //free memory
-      gtk_tree_path_free (path);
-
-      //go to next iter number(row)
-      if(!gtk_tree_model_iter_next(model, &iter))
-        break;
+    if (!gtk_tree_model_iter_next(model, &iter))
+    {
+      break;
     }
   }
-  
-  //if everything is ok, 
-  //and we have no row containing the splitpoint,
+
   return TRUE;
 }
 
@@ -216,7 +181,7 @@ in the table or not
 */
 void update_add_button()
 {
-  if (check_if_splitpoint_does_not_exists(ui, spin_mins, spin_secs, spin_hundr_secs,-1))
+  if (check_if_splitpoint_does_not_exists(spin_mins, spin_secs, spin_hundr_secs,-1, ui))
   {
     gtk_widget_set_sensitive(GTK_WIDGET(add_button), TRUE);
   }
@@ -384,31 +349,24 @@ gboolean check_if_description_exists(gchar *descr, gint number)
 }
 
 //!Gets the number of the first splitpoint with selected "Keep" checkbox 
-gint get_first_splitpoint_selected()
+gint get_first_splitpoint_selected(gui_state *gui)
 {
   gint splitpoint_selected = -1;
 
-  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(gui->tree_view);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->tree_view);
 
   GList *selected_list = 
     gtk_tree_selection_get_selected_rows(GTK_TREE_SELECTION(selection), &model);
 
   if (g_list_length(selected_list) > 0)
   {
-    //get the first element
-    GList *current_element = NULL;
-
-    current_element = g_list_first(selected_list);
-    //the path
-    GtkTreePath *path;
-    path = current_element->data;
+    GList *current_element = g_list_first(selected_list);
+    GtkTreePath *path = current_element->data;
     splitpoint_selected = gtk_tree_path_get_indices (path)[0];
 
-    //we free the selected elements
-    g_list_foreach (selected_list, 
-        (GFunc)gtk_tree_path_free, NULL);
-    g_list_free (selected_list);
+    g_list_foreach(selected_list, (GFunc)gtk_tree_path_free, NULL);
+    g_list_free(selected_list);
   }
 
   return splitpoint_selected;
@@ -478,11 +436,11 @@ void get_hundr_secs_mins_time(gint time_pos, gint *time_hundr,
 }
 
 //!selects a splitpoint
-void select_splitpoint(gint index)
+void select_splitpoint(gint index, gui_state *gui)
 {
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->tree_view);
-  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
-  GtkTreePath *path = gtk_tree_path_new_from_indices (index ,-1);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->tree_view);
+  GtkTreeModel *model = gtk_tree_view_get_model(gui->tree_view);
+  GtkTreePath *path = gtk_tree_path_new_from_indices(index ,-1);
 
   GtkTreeIter iter;
   gtk_tree_model_get_iter(model, &iter, path);
@@ -491,7 +449,7 @@ void select_splitpoint(gint index)
 
   gtk_tree_path_free(path);
 
-  remove_status_message();
+  remove_status_message(ui->gui);
 }
 
 /*! removes a splitpoint
@@ -501,43 +459,39 @@ void select_splitpoint(gint index)
 void remove_splitpoint(gint index, gint stop_preview)
 {
   g_array_remove_index(ui->splitpoints, index);
-  
+
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
   GtkTreePath *path = gtk_tree_path_new_from_indices (index ,-1);
 
   GtkTreeIter iter;
   gtk_tree_model_get_iter(model, &iter, path);
-  
-  //we cancel quick preview if necessary
-  if (((index == preview_start_splitpoint) &&
-      (stop_preview))||
-      ((index == quick_preview_end_splitpoint) &&
-      (quick_preview_end_splitpoint == (ui->infos->splitnumber-1))&&
-       (stop_preview)))
-    {
-      cancel_quick_preview_all();
-    }
 
-  //remove from list
+  //we cancel quick preview if necessary
+  if (((index == ui->status->preview_start_splitpoint) &&
+        (stop_preview))||
+      ((index == ui->status->quick_preview_end_splitpoint) &&
+       (ui->status->quick_preview_end_splitpoint == (ui->infos->splitnumber-1))&&
+       (stop_preview)))
+  {
+    cancel_quick_preview_all();
+  }
+
   gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
-  //we free the path
   gtk_tree_path_free(path);
   ui->infos->splitnumber--;
-  
-  //if we don't have the first selected, we hide remove button
-  if (get_first_splitpoint_selected() == -1)
+
+  if (get_first_splitpoint_selected(ui->gui) == -1)
   {
     gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);  
   }
-  
+
   if (ui->infos->splitnumber == 0)
   {
     gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   }
-  
-  remove_status_message();
+
   order_length_column(ui);
-  remove_status_message();
+  remove_status_message(ui->gui);
   update_add_button();
   check_update_down_progress_bar(ui);
   refresh_drawing_area(ui->gui);
@@ -552,29 +506,27 @@ Will display an error in the message bar if a splitpoint with a
 different index number with exactly the same time value exists and
 otherwise update the split point.
 */
-void update_splitpoint(gint index, Split_point new_point)
+void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
 {
   int splitpoint_does_not_exists = 
-    check_if_splitpoint_does_not_exists(ui, new_point.mins, new_point.secs, new_point.hundr_secs,-1);
+    check_if_splitpoint_does_not_exists(new_point.mins, new_point.secs, new_point.hundr_secs,-1, ui);
 
   Split_point old_point = g_array_index(ui->splitpoints, Split_point, index);
 
   if (splitpoint_does_not_exists ||
-      (!splitpoint_does_not_exists && old_point.checked != new_point.checked))
+      (old_point.checked != new_point.checked))
   {
-    first_splitpoint_selected = get_first_splitpoint_selected();
+    ui->status->first_splitpoint_selected = get_first_splitpoint_selected(ui->gui);
 
-    gchar *description = NULL;
-    description = get_splitpoint_name(index, ui);
+    gchar *description = get_splitpoint_name(index, ui);
     g_snprintf(current_description, 255, "%s", description);
     g_free(description);
 
-    //we remove the splitpoint, then we add it
-    remove_splitpoint(index,FALSE);
-    add_splitpoint(new_point,index);
+    remove_splitpoint(index, FALSE);
+    add_splitpoint(new_point, index);
   }
   else
-  {      
+  {
     //don't put error if we move the same splitpoint
     //on the same place
     if ((new_point.mins == old_point.mins) &&
@@ -584,7 +536,6 @@ void update_splitpoint(gint index, Split_point new_point)
     }
     else
     {
-      //if we already have a equal splitpoint
       put_status_message(_(" error: you already have the splitpoint in table"));
     }
   }
@@ -605,7 +556,7 @@ void update_splitpoint_from_time(gint index, gdouble time)
                            &new_point.mins);
   Split_point old_point = g_array_index(ui->splitpoints, Split_point, index);
   new_point.checked = old_point.checked;
-  update_splitpoint(index, new_point);
+  update_splitpoint(index, new_point, ui);
 }
 
 /*!Toggles a splitpoint's "Keep" flag
@@ -613,11 +564,11 @@ void update_splitpoint_from_time(gint index, gdouble time)
 \param index is the position in the GArray with splitpoints aka the
 split point's number
 */
-void update_splitpoint_check(gint index)
+void update_splitpoint_check(gint index, ui_state *ui)
 {
   Split_point old_point = g_array_index(ui->splitpoints, Split_point, index);
   old_point.checked ^= 1;
-  update_splitpoint(index, old_point);
+  update_splitpoint(index, old_point, ui);
 }
 
 //!event for editing a cell
@@ -679,7 +630,7 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
         new_point.secs = 59;
       }
       
-      update_splitpoint(i,new_point);
+      update_splitpoint(i, new_point, ui);
       break;
       //minutes column
     case COL_MINUTES:
@@ -696,7 +647,7 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
           new_point.mins = INT_MAX/6000;
         }
           
-      update_splitpoint(i,new_point);
+      update_splitpoint(i, new_point, ui);
       break;
       //hundreth column
     case COL_HUNDR_SECS:
@@ -713,7 +664,7 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
           new_point.hundr_secs = 99;
         }
           
-      update_splitpoint(i,new_point);
+      update_splitpoint(i, new_point, ui);
       break;
     default:
       break;
@@ -724,7 +675,7 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
 
 void add_splitpoint_from_player(GtkWidget *widget, gpointer data)
 {
-  if (!timer_active)
+  if (!ui->status->timer_active)
   { 
     return;
   }
@@ -779,9 +730,9 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
 {
   GtkTreeIter iter;
 
-  if (check_if_splitpoint_does_not_exists(ui, my_split_point.mins,
+  if (check_if_splitpoint_does_not_exists(my_split_point.mins,
         my_split_point.secs,
-        my_split_point.hundr_secs,-1))
+        my_split_point.hundr_secs,-1, ui))
   {
     gchar *temp = g_strdup(current_description);
     update_current_description(temp, -1);
@@ -852,7 +803,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
     ui->infos->splitnumber++;
 
     //we keep the selection on the previous splipoint
-    if ((first_splitpoint_selected == old_index) &&
+    if ((ui->status->first_splitpoint_selected == old_index) &&
         (old_index != -1))
     {
       GtkTreePath *path;
@@ -861,13 +812,13 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
       gtk_tree_path_free(path);
     }
 
-    if (quick_preview)
+    if (ui->status->quick_preview)
     {
       //if we move the current start preview splitpoint
       //at the right of the current time, we cancel preview
-      if (old_index == preview_start_splitpoint)
+      if (old_index == ui->status->preview_start_splitpoint)
       {
-        if (ui->infos->current_time < get_splitpoint_time(preview_start_splitpoint))
+        if (ui->infos->current_time < get_splitpoint_time(ui->status->preview_start_splitpoint, ui))
         {
           cancel_quick_preview();
         }
@@ -880,53 +831,53 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
       //if we have a split preview on going
       //if we move the point from the left to the right of the
       //the start preview splitpoint
-      if ((old_index < preview_start_splitpoint))
+      if ((old_index < ui->status->preview_start_splitpoint))
       {
-        if ((k+1) >= preview_start_splitpoint)
+        if ((k+1) >= ui->status->preview_start_splitpoint)
         {
-          preview_start_splitpoint--;
-          quick_preview_end_splitpoint = 
-            preview_start_splitpoint+1;
+          ui->status->preview_start_splitpoint--;
+          ui->status->quick_preview_end_splitpoint = 
+            ui->status->preview_start_splitpoint+1;
         }
       }
       else
       {
         //if we move from the right of the split preview
         //to his left
-        if ((old_index > preview_start_splitpoint))
+        if ((old_index > ui->status->preview_start_splitpoint))
         {
-          if ((k+1) <= preview_start_splitpoint)
+          if ((k+1) <= ui->status->preview_start_splitpoint)
           {
-            preview_start_splitpoint++;
-            quick_preview_end_splitpoint = 
-              preview_start_splitpoint+1;
+            ui->status->preview_start_splitpoint++;
+            ui->status->quick_preview_end_splitpoint = 
+              ui->status->preview_start_splitpoint+1;
           }
         }
         else
         {
           //if we move the start splitpoint on the right of
           //the end splitpoint
-          if (old_index == preview_start_splitpoint)
+          if (old_index == ui->status->preview_start_splitpoint)
           {
-            if ((k+1) > preview_start_splitpoint)
+            if ((k+1) > ui->status->preview_start_splitpoint)
             {
-              preview_start_splitpoint += (k+1) - preview_start_splitpoint;
-              quick_preview_end_splitpoint = preview_start_splitpoint + 1;
+              ui->status->preview_start_splitpoint += (k+1) - ui->status->preview_start_splitpoint;
+              ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
             }
             else
             {
               //if we move the start splitpoint at the left
-              if ((k+1) < preview_start_splitpoint)
+              if ((k+1) < ui->status->preview_start_splitpoint)
               {
-                preview_start_splitpoint -= preview_start_splitpoint - (k + 1);
-                quick_preview_end_splitpoint = preview_start_splitpoint + 1;
+                ui->status->preview_start_splitpoint -= ui->status->preview_start_splitpoint - (k + 1);
+                ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
               }
             }
           }
         }
       }
 
-      if (preview_start_splitpoint == (ui->infos->splitnumber-1))
+      if (ui->status->preview_start_splitpoint == (ui->infos->splitnumber-1))
       {
         cancel_quick_preview_all();
       }
@@ -935,11 +886,11 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
     {
       //if we add a splitpoint at the left of the quick
       //preview start, add 1
-      if ((k+1) <= preview_start_splitpoint)
+      if ((k+1) <= ui->status->preview_start_splitpoint)
       {
-        preview_start_splitpoint ++;
-        quick_preview_end_splitpoint = 
-          preview_start_splitpoint+1;
+        ui->status->preview_start_splitpoint ++;
+        ui->status->quick_preview_end_splitpoint = 
+          ui->status->preview_start_splitpoint+1;
       }
     }
 
@@ -961,7 +912,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index)
     }
 
     order_length_column(ui);
-    remove_status_message();
+    remove_status_message(ui->gui);
   }
   else
   {
@@ -1402,7 +1353,7 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
   gtk_widget_set_sensitive(GTK_WIDGET(remove_all_button), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(remove_row_button), FALSE);
   
-  remove_status_message();
+  remove_status_message(ui->gui);
   cancel_quick_preview_all();
   update_add_button();
   refresh_drawing_area(ui->gui);
@@ -1560,7 +1511,7 @@ gchar *get_splitpoint_name(gint index, ui_state *ui)
 }
 
 //!returns a splitpoint from the table
-gint get_splitpoint_time(gint splitpoint_index)
+gint get_splitpoint_time(gint splitpoint_index, ui_state *ui)
 {
   if (splitpoint_index < 0 ||
       splitpoint_index >= ui->splitpoints->len)
@@ -1585,7 +1536,7 @@ gpointer split_preview(gpointer data)
     mp3splt_append_splitpoint(ui->mp3splt_state, preview_start_position,
         "preview", SPLT_SPLITPOINT);
     mp3splt_append_splitpoint(ui->mp3splt_state,
-        get_splitpoint_time(quick_preview_end_splitpoint),
+        get_splitpoint_time(ui->status->quick_preview_end_splitpoint, ui),
         NULL, SPLT_SKIPPOINT);
 
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
@@ -1667,7 +1618,7 @@ void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
   if (number == COL_PREVIEW || number == COL_SPLIT_PREVIEW)
   {
     //only if connected to player
-    if (timer_active)
+    if (ui->status->timer_active)
     {
       //we get the split begin position to find the 
       //end position
@@ -1682,8 +1633,8 @@ void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
         //if we have the split preview
         if (number == COL_SPLIT_PREVIEW)
         {
-          preview_start_position = get_splitpoint_time(this_row);
-          quick_preview_end_splitpoint = this_row+1;
+          preview_start_position = get_splitpoint_time(this_row, ui);
+          ui->status->quick_preview_end_splitpoint = this_row+1;
           create_thread(split_preview, NULL, TRUE, NULL);
         }
       }
@@ -1720,10 +1671,9 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
   new_point.secs = old_point.secs;
   new_point.hundr_secs = old_point.hundr_secs;
   new_point.checked = checked;
-  //we update the splitpoint
-  update_splitpoint(index, new_point);
 
-  //free memory
+  update_splitpoint(index, new_point, ui);
+
   gtk_tree_path_free(path);
 }
 

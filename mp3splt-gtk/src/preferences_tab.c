@@ -107,17 +107,12 @@ GtkWidget *sample_result_label = NULL;
 GtkWidget *extract_tags_box = NULL;
 //@}
 
-GPtrArray *wave_quality_das = NULL;
 gint preview_indexes[6] = { 0 };
-GArray *preview_time_windows = NULL;
 GPtrArray *wave_preview_labels = NULL;
-
-GtkWidget *player_scrolled_window = NULL;
 
 gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 
 extern gint timeout_value;
-extern gint silence_wave_number_of_points_threshold;
 extern gdouble douglas_peucker_thresholds[];
 extern gdouble douglas_peucker_thresholds_defaults[];
 
@@ -134,15 +129,6 @@ static GtkWidget *create_test_regex_table();
 
 extern void clear_current_description(void);
 extern void copy_filename_to_current_description(const gchar *fname);
-
-extern gfloat zoom_coeff;
-
-extern gint one_minute_time;
-extern gint three_minutes_time;
-extern gint six_minutes_time;
-extern gint ten_minutes_time;
-extern gint twenty_minutes_time;
-extern gint fourty_minutes_time;
 
 extern ui_state *ui;
 
@@ -720,23 +706,23 @@ void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer
     number_of_points_th = 0;
   }
 
-  silence_wave_number_of_points_threshold = number_of_points_th;
+  ui->infos->silence_wave_number_of_points_threshold = number_of_points_th;
 
   compute_douglas_peucker_filters(NULL, NULL);
-  refresh_preview_drawing_areas(ui);
+  refresh_preview_drawing_areas(ui->gui);
 
   save_preferences(NULL, NULL);
 }
 
-void refresh_preview_drawing_areas(ui_state *ui)
+void refresh_preview_drawing_areas(gui_state *gui)
 {
   gint i = 0;
-  for (i = 0; i < wave_quality_das->len; i++)
+  for (i = 0; i < gui->wave_quality_das->len; i++)
   {
-    gtk_widget_queue_draw(g_ptr_array_index(wave_quality_das, i));
+    gtk_widget_queue_draw(g_ptr_array_index(gui->wave_quality_das, i));
   }
 
-  gtk_widget_queue_draw(player_scrolled_window);
+  gtk_widget_queue_draw(gui->player_scrolled_window);
 }
 
 #if GTK_MAJOR_VERSION <= 2
@@ -748,10 +734,11 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
 {
 #endif
   gint width = get_wave_preview_width_drawing_area();
-  gtk_widget_set_size_request(ui->gui->drawing_area, width, 70);
+  gtk_widget_set_size_request(drawing_area, width, 70);
 
   gint *index = (gint *)data;
-  gint expected_drawing_time_int = g_array_index(preview_time_windows, gint, *index);
+  gint expected_drawing_time_int =
+    g_array_index(ui->infos->preview_time_windows, gint, *index);
   gfloat expected_drawing_time = (gfloat)(expected_drawing_time_int);
 
   dh_set_white_color(cairo_surface);
@@ -777,7 +764,7 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
   gint interpolation_level = draw_silence_wave((gint)left_time, (gint)right_time, width / 2, 50,
       drawing_time, width, 0,
       current_time, ui->infos->total_time, zoom_coeff,
-      ui->gui->drawing_area, cairo_surface);
+      drawing_area, cairo_surface);
 
   update_wave_preview_label_markup(*index, interpolation_level);
 
@@ -812,23 +799,14 @@ GtkWidget *create_wave_quality_preview_box()
   gtk_box_pack_start(GTK_BOX(label_hbox), wave_preview_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 4);
 
-  preview_time_windows = g_array_new(TRUE, TRUE, sizeof(gint));
- 
-  g_array_append_val(preview_time_windows, one_minute_time);
-  g_array_append_val(preview_time_windows, three_minutes_time);
-  g_array_append_val(preview_time_windows, six_minutes_time);
-  g_array_append_val(preview_time_windows, ten_minutes_time);
-  g_array_append_val(preview_time_windows, twenty_minutes_time);
-  g_array_append_val(preview_time_windows, fourty_minutes_time);
-
-  wave_quality_das = g_ptr_array_new();
+  ui->gui->wave_quality_das = g_ptr_array_new();
   wave_preview_labels = g_ptr_array_new();
 
   gint i = 0;
-  for (i = 0; i < preview_time_windows->len; i++)
+  for (i = 0; i < ui->infos->preview_time_windows->len; i++)
   {
     GtkWidget *wave_quality_da = gtk_drawing_area_new(); 
-    g_ptr_array_add(wave_quality_das, (gpointer)wave_quality_da);
+    g_ptr_array_add(ui->gui->wave_quality_das, (gpointer)wave_quality_da);
     preview_indexes[i] = i;
 
 #if GTK_MAJOR_VERSION <= 2
@@ -852,7 +830,7 @@ GtkWidget *create_wave_quality_preview_box()
 
 static void update_wave_preview_label_markup(gint index, gint interpolation_level)
 {
-  gint time_window = g_array_index(preview_time_windows, gint, index);
+  gint time_window = g_array_index(ui->infos->preview_time_windows, gint, index);
 
   gchar minutes_text[128] = { '\0' };
   g_snprintf(minutes_text, 128, _("%d minute(s) window"), time_window / 100 / 60);
@@ -911,7 +889,8 @@ GtkWidget *create_pref_player_page()
 
   GtkWidget *inside_vbox = wh_vbox_new();;
   
-  player_scrolled_window = wh_create_scrolled_window();
+  GtkWidget *player_scrolled_window = wh_create_scrolled_window();
+  ui->gui->player_scrolled_window = player_scrolled_window;
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(player_scrolled_window), 
                                         GTK_WIDGET(inside_vbox));
   gtk_box_pack_start(GTK_BOX(player_hbox), player_scrolled_window, TRUE, TRUE, 0);
@@ -940,7 +919,7 @@ gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
   const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
   gint error = SPLT_OUTPUT_FORMAT_OK;
   mp3splt_set_oformat(ui->mp3splt_state, data, &error);
-  remove_status_message();
+  remove_status_message(ui->gui);
   print_status_bar_confirmation(error);
 
   save_preferences(NULL, NULL);
