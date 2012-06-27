@@ -66,10 +66,6 @@ GtkWidget *spinner;
 
 gboolean executed_lock = FALSE;
 
-//the spin values
-extern gint spin_mins,spin_secs,
-  spin_hundr_secs;
-extern gchar current_description[255];
 //output for the cddb,cue and freedb file output
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
@@ -223,7 +219,7 @@ gpointer freedb_search(gpointer data)
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
   gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), FALSE);
  
-  put_status_message(_("please wait... contacting tracktype.org"));
+  put_status_message(_("please wait... contacting tracktype.org"), ui->gui);
  
   const gchar *freedb_search = gtk_entry_get_text(GTK_ENTRY(freedb_entry));
   
@@ -310,7 +306,7 @@ void write_freedbfile(int *err)
  
   enter_threads();
    
-  put_status_message(_("please wait... contacting tracktype.org"));
+  put_status_message(_("please wait... contacting tracktype.org"), ui->gui);
   
   //we suppose directory exists
   //it should be created when mp3splt-gtk starts
@@ -412,9 +408,8 @@ void update_splitpoints_from_mp3splt_state()
       }
 
       //we get the minutes, seconds and hundreths
-      get_secs_mins_hundr(point_value,
-          &spin_mins, &spin_secs,
-          &spin_hundr_secs);
+      get_secs_mins_hundr(point_value, 
+          &ui->status->spin_mins, &ui->status->spin_secs, &ui->status->spin_hundr_secs);
 
       gint must_be_free = FALSE;
       gchar *result_utf8 = points[i].name;
@@ -424,12 +419,11 @@ void update_splitpoints_from_mp3splt_state()
         result_utf8 = transform_to_utf8(result_utf8, 
             FALSE, &must_be_free);
 
-        g_snprintf(current_description,255,
-            "%s", result_utf8);
+        g_snprintf(ui->status->current_description, 255, "%s", result_utf8);
       }
       else
       {
-        g_snprintf(current_description, 255, "%s", _("description here"));
+        g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
       }
 
       if (must_be_free)
@@ -449,12 +443,12 @@ void update_splitpoints_from_mp3splt_state()
       }
     }
 
-    g_snprintf(current_description, 255, "%s", _("description here"));
+    g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
 
     update_minutes_from_spinner(NULL,NULL);
     update_seconds_from_spinner(NULL,NULL);
     update_hundr_secs_from_spinner(NULL,NULL);
-    update_add_button();
+    update_add_button(ui);
   }
 }
 

@@ -72,23 +72,23 @@ gint player_get_elapsed_time()
 gint player_get_total_time()
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      return snackamp_get_total_time();
-    }
+  {
+    return snackamp_get_total_time();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      return myxmms_get_total_time();
+    return myxmms_get_total_time();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      return gstreamer_get_total_time();
+    return gstreamer_get_total_time();
 #endif
-    }
+  }
 
   return 0;
 }
@@ -97,23 +97,23 @@ gint player_get_total_time()
 gint player_is_running()
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      return snackamp_is_running();
-    }
+  {
+    return snackamp_is_running();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      return myxmms_is_running();
+    return myxmms_is_running();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      return gstreamer_is_running();
+    return gstreamer_is_running();
 #endif
-    }
+  }
 
   return 0;
 }
@@ -271,23 +271,23 @@ void player_start_play_with_songs(GList *list)
 void player_play()
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_play();
-    }
+  {
+    snackamp_play();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_play();
+    myxmms_play();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_play();
+    gstreamer_play();
 #endif
-    }
+  }
 }
 
 //!stops the song
@@ -435,48 +435,48 @@ void player_get_song_infos(gchar *total_infos)
 gint player_is_playing()
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      return snackamp_is_playing();
-    }
+  {
+    return snackamp_is_playing();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      return myxmms_is_playing();
+    return myxmms_is_playing();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      return gstreamer_is_playing();
+    return gstreamer_is_playing();
 #endif
-    }
+  }
 
-  return 0;
+  return FALSE;
 }
 
 //! Check if the player is paused
 gint player_is_paused()
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      return snackamp_is_paused();
-    }
+  {
+    return snackamp_is_paused();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      return myxmms_is_paused();
+    return myxmms_is_paused();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      return gstreamer_is_paused();
+    return gstreamer_is_paused();
 #endif
-    }
+  }
 
   return 0;
 }

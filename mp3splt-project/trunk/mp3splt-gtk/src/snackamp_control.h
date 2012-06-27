@@ -42,9 +42,7 @@
 #include "external_includes.h"
 
 gint connect_snackamp(gint port);
-gchar *cut_begin_end(gchar *result);
 gint disconnect_snackamp();
-gchar *snackamp_socket_send_message(gchar *message);
 gint get_integer_from_string(gchar *result);
 gboolean snackamp_is_connected();
 void snackamp_get_song_infos(gchar *total_infos);

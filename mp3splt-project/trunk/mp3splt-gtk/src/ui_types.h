@@ -133,7 +133,7 @@ typedef struct {
   gint real_move_split_length;
   gint real_checkbox_length;
   gint real_wave_length;
-  //
+
   gint erase_split_ylimit;
   gint progress_ylimit;
   gint splitpoint_ypos;
@@ -145,6 +145,17 @@ typedef struct {
   GtkWidget *player_scrolled_window;
 
   GtkStatusbar *status_bar;
+
+  GtkWidget *add_button;
+  GtkWidget *remove_row_button;
+  GtkWidget *remove_all_button;
+
+  GtkTextTagTable *mess_hist_tag_table;
+  GtkTextBuffer *mess_hist_buffer;
+
+  GtkToggleButton *names_from_filename;
+
+  GtkWidget *pause_button;
 } gui_state;
 
 typedef struct {
@@ -177,6 +188,14 @@ typedef struct {
   gboolean check_splitpoint;
 
   gint first_splitpoint_selected;
+
+  gint spin_mins;
+  gint spin_secs;
+  gint spin_hundr_secs;
+
+  gchar current_description[255];
+
+  gint preview_start_position;
 } gui_status;
 
 typedef struct {

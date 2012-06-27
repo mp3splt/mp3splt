@@ -59,7 +59,7 @@ gint _gstreamer_is_running = FALSE;
 extern void add_playlist_file(const gchar *name);
 
 //! Send a call over the dbus
-static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
+static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
 {
   switch (GST_MESSAGE_TYPE(msg))
   {
@@ -82,7 +82,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           g_snprintf(message, malloc_size,_("gstreamer error: %s"),error->message);
 
           enter_threads();
-          put_status_message(message);
+          put_status_message(message, ui->gui);
           exit_threads();
 
           g_free(message);
@@ -110,7 +110,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           g_snprintf(message, malloc_size,_("Warning: %s"),error->message);
 
           enter_threads();
-          put_status_message(message);
+          put_status_message(message, ui->gui);
           exit_threads();
 
           g_free(message);
@@ -138,7 +138,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
           g_snprintf(message, malloc_size,_("Info: %s"),error->message);
 
           enter_threads();
-          put_status_message(message);
+          put_status_message(message, ui->gui);
           exit_threads();
 
           g_free(message);
@@ -393,7 +393,7 @@ void gstreamer_start()
 	else
 	{
 		enter_threads();
-		put_status_message(_(" error: cannot create gstreamer playbin\n"));
+		put_status_message(_(" error: cannot create gstreamer playbin\n"), ui->gui);
 		exit_threads();
 	}
 }
@@ -496,43 +496,38 @@ gint gstreamer_is_running()
 //!returns TRUE if gstreamer is paused, if not, FALSE 
 gint gstreamer_is_paused()
 {
-	if (play)
-	{
-		GstState state;
-		gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+  if (!play)
+  {
+    return FALSE;
+  }
 
-		if (state == GST_STATE_PAUSED)
-		{
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
-	else
-	{
-		return FALSE;
-	}
+  GstState state;
+  gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+
+  if (state == GST_STATE_PAUSED)
+  {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 //!plays a song
 void gstreamer_play()
 {
-	if (play)
-	{
-		GstState state;
-		gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
-
-    if (state == GST_STATE_PLAYING)
-    {
-      gstreamer_jump(0);
-    }
-    else
-    {
-      gst_element_set_state(play, GST_STATE_PLAYING);
-    }
+  if (!play)
+  {
+    return;
   }
+
+  GstState state;
+  gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+  if (state == GST_STATE_PLAYING)
+  {
+    gstreamer_jump(0);
+  }
+
+  gst_element_set_state(play, GST_STATE_PLAYING);
 }
 
 //!stops a song
@@ -576,60 +571,55 @@ void gstreamer_prev()
 //!jump to time
 void gstreamer_jump(gint position)
 {
-	if (play)
-	{
-		gst_element_seek(play,
-				1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-				GST_SEEK_TYPE_SET, position * GST_MSECOND, 0, 0);
-	}
+  if (!play)
+  {
+    return;
+  }
+
+  gst_element_seek(play,
+      1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
+      GST_SEEK_TYPE_SET, position * GST_MSECOND, 0, 0);
 }
 
 //!returns total time of the current song
 gint gstreamer_get_total_time()
 {
-	if (play)
-	{
-		GstQuery *query = gst_query_new_duration(GST_FORMAT_TIME);
-		gint time = 0;
+  if (!play)
+  {
+    return 0;
+  }
 
-		if (gst_element_query(play,query))
-		{
-			gint64 total_time;
-			gst_query_parse_duration (query, NULL, &total_time);
-			time = (gint) (total_time / GST_MSECOND);
-		}
+  GstQuery *query = gst_query_new_duration(GST_FORMAT_TIME);
+  gint time = 0;
 
-		gst_query_unref(query);
+  if (gst_element_query(play, query))
+  {
+    gint64 total_time;
+    gst_query_parse_duration(query, NULL, &total_time);
+    time = (gint) (total_time / GST_MSECOND);
+  }
 
-		return time;
-	}
-	else
-	{
-		return 0;
-	}
+  gst_query_unref(query);
+
+  return time;
 }
 
 //!returns TRUE if gstreamer is playing, else FALSE
 gint gstreamer_is_playing()
 {
-	if (play)
-	{
-		GstState state;
-		gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+  if (!play)
+  {
+    return FALSE;
+  }
 
-		if ((state == GST_STATE_PLAYING) || (state == GST_STATE_PAUSED))
-		{
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
-	else
-	{
-		return FALSE;
-	}
+  GstState state;
+  gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+  if ((state == GST_STATE_PLAYING) || (state == GST_STATE_PAUSED))
+  {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 //!quits player

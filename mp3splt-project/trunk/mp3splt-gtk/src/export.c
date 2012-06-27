@@ -58,19 +58,19 @@ void export_file(const gchar* filename)
 
   if((outfile=fopen(filename,"w"))==0)
   {
-    put_status_message((gchar *)strerror(errno));
+    put_status_message((gchar *)strerror(errno), ui->gui);
     return;
   };
 
   if(fprintf(outfile,"REM CREATOR \"MP3SPLT_GTK\"\n")<0)
   {
-    put_status_message((gchar *)strerror(errno));
+    put_status_message((gchar *)strerror(errno), ui->gui);
     return;
   }
 
   if(fprintf(outfile,"REM SPLT_TITLE_IS_FILENAME\n")<0)
   {
-    put_status_message((gchar *)strerror(errno));
+    put_status_message((gchar *)strerror(errno), ui->gui);
     return;
   }
 
@@ -83,7 +83,7 @@ void export_file(const gchar* filename)
 
   if (fprintf(outfile,"FILE \"%s\" %s\n", get_input_filename(ui->gui), extension) < 0)
   {
-    put_status_message((gchar *)strerror(errno));
+    put_status_message((gchar *)strerror(errno), ui->gui);
     return;
   };
 
@@ -118,7 +118,7 @@ void export_file(const gchar* filename)
       // Output the track header
       if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
       {
-        put_status_message((gchar *)strerror(errno));
+        put_status_message((gchar *)strerror(errno), ui->gui);
         return;
       };
 
@@ -126,7 +126,7 @@ void export_file(const gchar* filename)
       // Output the track description escaping any quotes
       if(fprintf(outfile,"\t\tTITLE \"")<0)
       {
-        put_status_message((gchar *)strerror(errno));
+        put_status_message((gchar *)strerror(errno), ui->gui);
         return;
       }
 
@@ -137,7 +137,7 @@ void export_file(const gchar* filename)
         {
           if(fprintf(outfile,"\\\"")<0)
           {
-            put_status_message((gchar *)strerror(errno));
+            put_status_message((gchar *)strerror(errno), ui->gui);
             return;
           }
         }
@@ -145,14 +145,14 @@ void export_file(const gchar* filename)
         {
           if(fprintf(outfile,"%c",*outputchar)<0)
           {
-            put_status_message((gchar *)strerror(errno));
+            put_status_message((gchar *)strerror(errno), ui->gui);
             return;
           }
         }
       }    
       if(fprintf(outfile,"\" \n")<0)
       {
-        put_status_message((gchar *)strerror(errno));
+        put_status_message((gchar *)strerror(errno), ui->gui);
         return;
       };
 
@@ -160,14 +160,14 @@ void export_file(const gchar* filename)
       {
         if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
         {
-          put_status_message((gchar *)strerror(errno));
+          put_status_message((gchar *)strerror(errno), ui->gui);
           return;
         }
       }
 
       if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
       {
-        put_status_message((gchar *)strerror(errno));
+        put_status_message((gchar *)strerror(errno), ui->gui);
         return;
       }
     }
