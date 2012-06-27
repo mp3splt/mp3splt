@@ -55,7 +55,8 @@ GtkWidget *remove_all_files_button;
 
 extern gint selected_player;
 extern gint split_files;
-extern gboolean timer_active;
+
+extern ui_state *ui;
 
 //!split files enumeration
 enum
@@ -157,7 +158,7 @@ gchar *get_filename_from_split_files(gint number)
 //!queue button event
 void queue_files_button_event(GtkWidget *widget, gpointer data)
 {
-  if (!timer_active)
+  if (!ui->status->timer_active)
   {
     connect_button_event(NULL,NULL);
   }

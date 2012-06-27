@@ -44,13 +44,13 @@
 
 void add_splitpoint(Split_point my_split_point, gint old_index);
 gchar *get_splitpoint_name(gint index, ui_state *ui);
-gint get_first_splitpoint_selected();
-void select_splitpoint(gint index);
-gint get_splitpoint_time(gint this_splitpoint);
+gint get_first_splitpoint_selected(gui_state *gui);
+void select_splitpoint(gint index, gui_state *gui);
+gint get_splitpoint_time(gint this_splitpoint, ui_state *ui);
 void remove_splitpoint(gint index,gint stop_preview);
-void update_splitpoint(gint index, Split_point new_point);
+void update_splitpoint(gint index, Split_point new_point, ui_state *ui);
 void update_splitpoint_from_time(gint index, gdouble time);
-void update_splitpoint_check(gint index);
+void update_splitpoint_check(gint index, ui_state *ui);
 void update_add_button();
 void update_minutes_from_spinner(GtkWidget *widget, gpointer data);
 void update_seconds_from_spinner(GtkWidget *widget, gpointer data);

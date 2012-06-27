@@ -76,7 +76,7 @@ void import_event(GtkWidget *widget, ui_state *ui)
     g_free(filename);
     filename = NULL;
 
-    remove_status_message();
+    remove_status_message(ui->gui);
   }
  
   gtk_widget_destroy(file_chooser);
@@ -102,7 +102,7 @@ void import_file(gchar *filename)
       (strstr(ext_str->str, ".OGG") != NULL))
   {
     file_chooser_ok_event(filename);
-    remove_status_message();
+    remove_status_message(ui->gui);
   }
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {

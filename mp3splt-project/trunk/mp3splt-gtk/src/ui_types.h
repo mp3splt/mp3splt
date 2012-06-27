@@ -80,6 +80,27 @@ typedef struct {
 
   gint splitnumber;
   gint width_drawing_area;
+  gfloat zoom_coeff;
+  gfloat zoom_coeff_old;
+
+  gint hundr_secs_th;
+  gint tens_of_secs_th;
+  gint secs_th;
+  gint ten_secs_th;
+  gint minutes_th;
+  gint ten_minutes_th;
+
+  gint one_minute_time;
+  gint three_minutes_time;
+  gint six_minutes_time;
+  gint ten_minutes_time;
+  gint twenty_minutes_time;
+  gint fourty_minutes_time;
+
+  GArray *preview_time_windows;
+
+  GPtrArray *filtered_points_presence;
+  gint silence_wave_number_of_points_threshold;
 } ui_infos;
 
 typedef struct {
@@ -119,6 +140,11 @@ typedef struct {
   gint checkbox_ypos;
   gint text_ypos;
   gint wave_ypos;
+
+  GPtrArray *wave_quality_das;
+  GtkWidget *player_scrolled_window;
+
+  GtkStatusbar *status_bar;
 } gui_state;
 
 typedef struct {
@@ -127,6 +153,30 @@ typedef struct {
   gint mouse_on_progress_bar;
   gint currently_compute_douglas_peucker_filters;
   gint show_silence_wave;
+  gboolean playing;
+  gboolean timer_active;
+
+  gint quick_preview_end_splitpoint;
+  gint preview_start_splitpoint;
+
+  gfloat move_time;
+
+  gboolean button1_pressed;
+  gboolean button2_pressed;
+  gboolean quick_preview;
+
+  gint button_x;
+  gint button_y;
+  gint button_x2;
+  gint button_y2;
+
+  gboolean move_splitpoints;
+  gint splitpoint_to_move;
+  gboolean remove_splitpoints;
+  gboolean select_splitpoints;
+  gboolean check_splitpoint;
+
+  gint first_splitpoint_selected;
 } gui_status;
 
 typedef struct {

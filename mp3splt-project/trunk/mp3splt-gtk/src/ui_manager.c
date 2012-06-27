@@ -32,11 +32,13 @@
 
 static void ui_main_window_new(ui_infos *infos);
 static void ui_infos_new(ui_state *ui);
-static void ui_status_new(ui_state *ui);
+static gui_status *ui_status_new();
+static gui_state *ui_gui_new();
 
 static void ui_main_window_free(ui_main_window **main_win);
 static void ui_infos_free(ui_infos **infos);
 static void ui_status_free(gui_status **status);
+static void ui_gui_free(gui_state **gui);
 
 void ui_set_browser_directory(ui_state *ui, const gchar *directory)
 {
@@ -101,9 +103,9 @@ ui_state *ui_state_new()
   }
 
   ui->splitpoints = g_array_new(FALSE, FALSE, sizeof(Split_point));
-  ui->gui = g_malloc0(sizeof(gui_state));
 
-  ui_status_new(ui);
+  ui->status = ui_status_new();
+  ui->gui = ui_gui_new();
 
   ui->return_code = EXIT_SUCCESS;
 
@@ -123,9 +125,9 @@ void ui_state_free(ui_state *ui)
   }
 
   g_array_free(ui->splitpoints, TRUE);
-  g_free(ui->gui);
 
   ui_status_free(&ui->status);
+  ui_gui_free(&ui->gui);
 
   g_free(ui);
 }
@@ -223,11 +225,39 @@ static void ui_infos_new(ui_state *ui)
 
   infos->splitnumber = 0;
   infos->width_drawing_area = 0;
+  infos->zoom_coeff = 2.0;
+  infos->zoom_coeff_old = 2.0;
+
+  infos->hundr_secs_th = 20;
+  infos->tens_of_secs_th = 3 * 100;
+  infos->secs_th = 40 * 100;
+  infos->ten_secs_th = 3 * 6000;
+  infos->minutes_th = 20 * 6000;
+  infos->ten_minutes_th = 3 * 3600 * 100;
+
+  infos->one_minute_time = 1 * 6000;
+  infos->three_minutes_time = 3 * 6000;
+  infos->six_minutes_time = 6 * 6000;
+  infos->ten_minutes_time = 10 * 6000;
+  infos->twenty_minutes_time = 20 * 6000;
+  infos->fourty_minutes_time = 40 * 6000;
+
+  GArray *preview_time_windows = g_array_new(TRUE, TRUE, sizeof(gint));
+  g_array_append_val(preview_time_windows, infos->one_minute_time);
+  g_array_append_val(preview_time_windows, infos->three_minutes_time);
+  g_array_append_val(preview_time_windows, infos->six_minutes_time);
+  g_array_append_val(preview_time_windows, infos->ten_minutes_time);
+  g_array_append_val(preview_time_windows, infos->twenty_minutes_time);
+  g_array_append_val(preview_time_windows, infos->fourty_minutes_time);
+  infos->preview_time_windows = preview_time_windows;
+
+  infos->filtered_points_presence = NULL;
+  infos->silence_wave_number_of_points_threshold = DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD;
 
   ui->infos = infos;
 }
 
-static void ui_status_new(ui_state *ui)
+static gui_status *ui_status_new(ui_state *ui)
 {
   gui_status *status = g_malloc0(sizeof(gui_status));
 
@@ -238,7 +268,45 @@ static void ui_status_new(ui_state *ui)
   status->currently_compute_douglas_peucker_filters = FALSE;
   status->show_silence_wave = FALSE;
 
-  ui->status = status;
+  status->playing = FALSE;
+  status->timer_active = FALSE;
+  status->quick_preview_end_splitpoint = -1;
+  status->preview_start_splitpoint = -1;
+
+  status->move_time = 0;
+
+  status->button1_pressed = FALSE;
+  status->button2_pressed = FALSE;
+
+  status->quick_preview = FALSE;
+
+  status->button_x = 0;
+  status->button_x2 = 0;
+  status->button_y = 0;
+  status->button_y2 = 0;
+
+  status->move_splitpoints = FALSE;
+  status->splitpoint_to_move = -1;
+  status->remove_splitpoints = FALSE;
+  status->select_splitpoints = FALSE;
+  status->check_splitpoint = FALSE;
+
+  status->first_splitpoint_selected = -1;
+
+  return status;
+}
+
+static gui_state *ui_gui_new()
+{
+  gui_state *gui = g_malloc0(sizeof(gui_state));
+
+  gui->margin = 4;
+  gui->real_erase_split_length = 12;
+  gui->real_move_split_length = 16;
+  gui->real_checkbox_length = 12;
+  gui->real_wave_length = 96;
+
+  return gui;
 }
 
 static void ui_main_window_free(ui_main_window **main_win)
@@ -273,6 +341,8 @@ static void ui_infos_free(ui_infos **infos)
     (*infos)->number_of_silence_points = 0;
   }
 
+  g_array_free((*infos)->preview_time_windows, TRUE);
+
   g_free(*infos);
   *infos = NULL;
 }
@@ -286,5 +356,16 @@ static void ui_status_free(gui_status **status)
 
   g_free(*status);
   *status = NULL;
+}
+
+static void ui_gui_free(gui_state **gui)
+{
+  if (!gui|| !*gui)
+  {
+    return;
+  }
+
+  g_free(*gui);
+  *gui = NULL;
 }
 
