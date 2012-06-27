@@ -76,7 +76,6 @@ GtkWidget *frame_mode = NULL;
 GtkWidget *adjust_mode = NULL;
 // when ticked, name for split tag derived from filename
 
-GtkWidget *names_from_filename = NULL;
 GtkWidget *create_dirs_from_output_files = NULL;
 
 /*!defgroup modeparameters adjust mode parameters
@@ -126,9 +125,6 @@ extern gint file_browsed;
 
 static GtkWidget *create_extract_tags_from_filename_options_box();
 static GtkWidget *create_test_regex_table();
-
-extern void clear_current_description(void);
-extern void copy_filename_to_current_description(const gchar *fname);
 
 extern ui_state *ui;
 
@@ -408,7 +404,7 @@ void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_
 {
   gint splitpoints_from_filename = FALSE;
 
-  if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)))
+  if (!gtk_toggle_button_get_active(ui->gui->names_from_filename))
   {
     splitpoints_from_filename = FALSE;
   }
@@ -419,11 +415,11 @@ void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_
 
   if (splitpoints_from_filename == TRUE && file_browsed == TRUE)
   {
-    copy_filename_to_current_description(get_input_filename(ui->gui));
+    copy_filename_to_current_description(get_input_filename(ui->gui), ui);
   }
   else
   {
-    clear_current_description();
+    clear_current_description(ui);
   }
 
   save_preferences(NULL, NULL);
@@ -443,7 +439,7 @@ void set_default_prefs_event(GtkWidget *widget, gpointer data)
                             SPLT_DEFAULT_PARAM_OFFSET);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_gap),
                             SPLT_DEFAULT_PARAM_GAP);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(names_from_filename), FALSE);
+  gtk_toggle_button_set_active(ui->gui->names_from_filename, FALSE);
 
   save_preferences(NULL, NULL);
 }
@@ -493,8 +489,11 @@ GtkWidget *create_split_options_box()
   GtkWidget *vbox = wh_vbox_new();
 
   //names from filename
-  names_from_filename = gtk_check_button_new_with_mnemonic(_("_Splitpoint name from filename (testing)"));
-  gtk_box_pack_start(GTK_BOX(vbox), names_from_filename, FALSE, FALSE, 0);
+  GtkToggleButton *names_from_filename = 
+    GTK_TOGGLE_BUTTON(gtk_check_button_new_with_mnemonic(_("_Splitpoint name from filename (testing)")));
+  ui->gui->names_from_filename = names_from_filename;
+
+  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(names_from_filename), FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(names_from_filename), "toggled",
       G_CALLBACK(splitpoints_from_filename_event), NULL);
 

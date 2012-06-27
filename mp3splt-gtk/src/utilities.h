@@ -33,6 +33,7 @@
 #define UTILITIES_H
 
 #include "external_includes.h"
+#include "ui_types.h"
 
 gint directory_exists(const gchar *directory);
 gint file_exists(const gchar *fname);

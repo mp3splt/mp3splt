@@ -42,28 +42,25 @@
 
 #include "all_includes.h"
 
-void add_splitpoint(Split_point my_split_point, gint old_index);
+void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui);
 gchar *get_splitpoint_name(gint index, ui_state *ui);
 gint get_first_splitpoint_selected(gui_state *gui);
 void select_splitpoint(gint index, gui_state *gui);
 gint get_splitpoint_time(gint this_splitpoint, ui_state *ui);
-void remove_splitpoint(gint index,gint stop_preview);
+void remove_splitpoint(gint index,gint stop_preview, ui_state *ui);
 void update_splitpoint(gint index, Split_point new_point, ui_state *ui);
 void update_splitpoint_from_time(gint index, gdouble time);
 void update_splitpoint_check(gint index, ui_state *ui);
-void update_add_button();
+void update_add_button(ui_state *ui);
 void update_minutes_from_spinner(GtkWidget *widget, gpointer data);
 void update_seconds_from_spinner(GtkWidget *widget, gpointer data);
 void update_hundr_secs_from_spinner(GtkWidget *widget, gpointer data);
 GtkTreeModel *create_model();
-gboolean check_if_description_exists(gchar *descr,
-                                     gint number);
 void exchange_elements_from_array(gint element_number1,
                                   gint element_number2);
 void row_selection_event();
 void exchange_rows_in_the_tree(gint i, gint j, GtkTreeView *tree_view);
 void sort_tree(GtkTreeView *tree_view);
-void update_current_description(gchar *descr, gint number);
 void add_splitpoint_from_player(GtkWidget *widget, gpointer data);
 void add_row(gint checked);
 GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, 
@@ -83,6 +80,9 @@ void handle_detached_event (GtkHandleBox *handlebox,
                             gpointer data);
 GtkWidget *create_splitpoints_frame(ui_state *ui);
 void put_splitpoints_in_mp3splt_state(splt_state *state);
+
+void clear_current_description(ui_state *ui);
+void copy_filename_to_current_description(const gchar *fname, ui_state *ui);
 
 //!The enum telling which item is kept in which column of the splitpoint tree
 enum {

@@ -293,6 +293,14 @@ static gui_status *ui_status_new(ui_state *ui)
 
   status->first_splitpoint_selected = -1;
 
+  status->spin_mins = 0;
+  status->spin_secs = 0;
+  status->spin_hundr_secs = 0;
+
+  g_snprintf(status->current_description, 255, "%s", _("description here"));
+
+  status->preview_start_position = 0;
+
   return status;
 }
 

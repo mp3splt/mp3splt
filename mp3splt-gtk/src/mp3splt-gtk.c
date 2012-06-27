@@ -217,7 +217,7 @@ gpointer split_it(gpointer data)
       multiple_files_error = SPLT_TRUE;
 
       enter_threads();
-      put_status_message(_(" error: no files found in multiple files mode"));
+      put_status_message(_(" error: no files found in multiple files mode"), ui->gui);
       exit_threads();
     }
   }
@@ -282,7 +282,7 @@ void exit_application(GtkWidget *widget, gpointer *data)
   {
     lmanager_stop_split(ui);
     ui->status->quit_main_program = TRUE;
-    put_status_message(_(" info: stopping the split process before exiting"));
+    put_status_message(_(" info: stopping the split process before exiting"), ui->gui);
   }
 
   if (player_is_running())

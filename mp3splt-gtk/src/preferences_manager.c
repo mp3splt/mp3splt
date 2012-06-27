@@ -50,7 +50,6 @@ extern GtkWidget *file_mode_radio_button;
 
 extern GtkWidget *frame_mode;
 extern GtkWidget *adjust_mode;
-extern GtkWidget *names_from_filename;
 extern GtkWidget *spinner_adjust_gap;
 extern GtkWidget *spinner_adjust_offset;
 extern GtkWidget *spinner_adjust_threshold;
@@ -344,11 +343,11 @@ void load_preferences()
   item = g_key_file_get_boolean(key_file, "output", "splitpoint_names_from_filename", NULL);
   if (item)
   {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(names_from_filename),TRUE);
+    gtk_toggle_button_set_active(ui->gui->names_from_filename, TRUE);
   }
   else
   {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(names_from_filename),FALSE);
+    gtk_toggle_button_set_active(ui->gui->names_from_filename, FALSE);
   }
 
   //adjust threshold
@@ -601,7 +600,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
       gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_gap)));
 
   g_key_file_set_boolean(my_key_file, "output", "splitpoint_names_from_filename",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(names_from_filename)));
+      gtk_toggle_button_get_active(ui->gui->names_from_filename));
 
   //output format
   g_key_file_set_string(my_key_file, "output", "output_format",

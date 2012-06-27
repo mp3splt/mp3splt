@@ -57,12 +57,11 @@
 #define TEN_MINUTES 60000
 #define HOURS 360000
 
-void player_quick_preview(gint splitpoint_to_preview);
+void player_quick_preview(gint splitpoint_to_preview, ui_state *ui);
 void check_update_down_progress_bar(ui_state *ui);
 void set_preview_active_if_needed();
-void cancel_quick_preview_all();
-void cancel_quick_preview();
-void check_cancel_quick_preview(gint i);
+void cancel_quick_preview_all(gui_status *status);
+void cancel_quick_preview(gui_status *status);
 gint mytimer(gpointer data);
 void reset_inactive_progress_bar();
 void reset_inactive_volume_button();
@@ -87,7 +86,6 @@ void print_player_filename();
 void print_all_song_infos();
 void print_song_time_elapsed();
 void change_volume_button();
-void change_progress_bar();
 void change_volume_event(GtkScaleButton *volume_button, gdouble value, gpointer data);
 
 gboolean volume_button_unclick_event (GtkWidget *widget,

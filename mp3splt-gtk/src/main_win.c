@@ -250,7 +250,7 @@ void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
         if (! CreateProcess(NULL, browser_command,
               NULL, NULL, FALSE, 0, NULL, NULL, &si, &pinf))
         {
-          put_status_message(_("Error launching external command"));
+          put_status_message(_("Error launching external command"), ui->gui);
         }
 
         CloseHandle(pinf.hProcess);
@@ -343,9 +343,9 @@ If you don't want that use put_status_message instead.
 \param text The text that has to be displayed.
 */
 
-void put_status_message(const gchar *text)
+void put_status_message(const gchar *text, gui_state *gui)
 {
-  put_status_message_with_type(text, SPLT_MESSAGE_INFO);
+  put_status_message_with_type(text, SPLT_MESSAGE_INFO, gui);
 }
 
 /*! Output a message to the status message bar.
@@ -357,16 +357,16 @@ If the type is to be set to SPLT_MESSAGE_INFO put_status_message
 can be used instead; The enum for the message types is defined in
 libmp3splt.h
  */
-void put_status_message_with_type(const gchar *text, splt_message_type mess_type)
+void put_status_message_with_type(const gchar *text, splt_message_type mess_type, gui_state *gui)
 {
   if (mess_type == SPLT_MESSAGE_INFO)
   {
-    guint status_id = gtk_statusbar_get_context_id(ui->gui->status_bar, "mess");
-    gtk_statusbar_pop(ui->gui->status_bar, status_id);
-    gtk_statusbar_push(ui->gui->status_bar, status_id, text);
+    guint status_id = gtk_statusbar_get_context_id(gui->status_bar, "mess");
+    gtk_statusbar_pop(gui->status_bar, status_id);
+    gtk_statusbar_push(gui->status_bar, status_id, text);
   }
 
-  put_message_in_history(text, mess_type);
+  put_message_in_history(text, mess_type, gui);
 }
 
 //!event for the cancel button
@@ -379,7 +379,7 @@ void cancel_button_event(GtkWidget *widget, gpointer data)
     gtk_widget_set_sensitive(widget, FALSE);
   }
 
-  put_status_message(_(" info: stopping the split process.. please wait"));
+  put_status_message(_(" info: stopping the split process.. please wait"), ui->gui);
 }
 
 //!event for the split button
@@ -387,7 +387,7 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
 {
   if (ui->status->splitting)
   {
-    put_status_message((gchar *)_(" error: split in progress..."));
+    put_status_message((gchar *)_(" error: split in progress..."), ui->gui);
     return;
   }
 
@@ -421,7 +421,7 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
   }
   else
   {
-    put_status_message((gchar *)_(" error: no file selected"));
+    put_status_message((gchar *)_(" error: no file selected"), ui->gui);
   }
 }
 
@@ -588,11 +588,11 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
 
   if (time_to_right > time_to_left)
   {
-    remove_splitpoint(left_index_point, TRUE);
+    remove_splitpoint(left_index_point, TRUE, ui);
   }
   else
   {
-    remove_splitpoint(right_index_point, TRUE);
+    remove_splitpoint(right_index_point, TRUE, ui);
   }
 }
 
@@ -1034,7 +1034,7 @@ void print_status_bar_confirmation(gint error)
   char *error_from_library = mp3splt_get_strerror(ui->mp3splt_state, error);
   if (error_from_library == NULL) { return; }
 
-  put_status_message(error_from_library);
+  put_status_message(error_from_library, ui->gui);
   free(error_from_library);
   error_from_library = NULL;
 }

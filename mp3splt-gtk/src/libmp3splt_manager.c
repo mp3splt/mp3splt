@@ -88,7 +88,7 @@ void lmanager_put_split_filename(const char *filename,int progress_data)
   gint fname_status_size = (strlen(filename) + 255);
   gchar *fname_status = g_malloc(sizeof(char) * fname_status_size);
   g_snprintf(fname_status, fname_status_size, _(" File '%s' created"), filename);
-  put_status_message(fname_status);
+  put_status_message(fname_status, ui->gui);
   if (fname_status)
   {
     free(fname_status);
@@ -123,7 +123,7 @@ static void lmanager_put_message_from_library(const char *message, splt_message_
     }
     enter_threads();
 
-    put_status_message_with_type(mess, mess_type);
+    put_status_message_with_type(mess, mess_type, ui->gui);
 
 #ifdef __WIN32__
   while (gtk_events_pending())

@@ -237,6 +237,7 @@ gint myxmms_is_running()
   {
     dbus_connection = dbus_g_bus_get(DBUS_BUS_SESSION, NULL);
   }
+
   if (!dbus_proxy)
   {
     dbus_proxy = dbus_g_proxy_new_for_name(dbus_connection,
@@ -244,19 +245,24 @@ gint myxmms_is_running()
         AUDACIOUS_DBUS_PATH,
         AUDACIOUS_DBUS_INTERFACE);
   }
+
   if (!audacious_remote_is_running(dbus_proxy))
-        return FALSE;
-  else
-        return TRUE;
+  {
+    return FALSE;
+  }
+
+  return TRUE;
 }
 
 //!returns TRUE if xmms is paused, if not, FALSE 
 gint myxmms_is_paused()
 {
   if (!audacious_remote_is_paused(dbus_proxy))
+  {
     return FALSE;
-  else
-    return TRUE;
+  }
+
+  return TRUE;
 }
 
 //!Start playing the current song
@@ -298,18 +304,19 @@ void myxmms_jump(gint position)
 //!returns the total duration of the current song
 gint myxmms_get_total_time()
 {
-  gint playlist_position;
-  playlist_position = audacious_remote_get_playlist_pos(dbus_proxy);
-  return audacious_remote_get_playlist_time(dbus_proxy,playlist_position);
+  gint playlist_position = audacious_remote_get_playlist_pos(dbus_proxy);
+  return audacious_remote_get_playlist_time(dbus_proxy, playlist_position);
 }
 
 //!returns TRUE if xmms is playing, else FALSE
 gint myxmms_is_playing()
 {
-  if(audacious_remote_is_playing(dbus_proxy))
+  if (audacious_remote_is_playing(dbus_proxy))
+  {
     return TRUE;
-  else
-    return FALSE;
+  }
+
+  return FALSE;
 }
 
 //!quits the player

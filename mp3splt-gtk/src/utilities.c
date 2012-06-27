@@ -39,6 +39,8 @@
 
 #include "utilities.h"
 
+extern ui_state *ui;
+
 /*!check if specified directory exists
 */
 gint directory_exists(const gchar *directory)
@@ -85,7 +87,7 @@ void print_processing_file(gchar *filename)
   gchar *fname_status = g_malloc(sizeof(char) * fname_status_size);
   g_snprintf(fname_status, fname_status_size,
       _("Processing file '%s' ..."), filename);
-  put_status_message(fname_status);
+  put_status_message(fname_status, ui->gui);
   if (fname_status)
   {
     free(fname_status);

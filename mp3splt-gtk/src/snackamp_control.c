@@ -135,23 +135,21 @@ gint connect_snackamp(gint port)
   return return_err;
 }
 
-gchar *cut_begin_end(gchar *result)
+static gchar *cut_begin_end(gchar *result)
 {
-  //we cut the beginning OK
-  gchar *test;
-  
   if (strchr(result,' ') != NULL)
-    {
-      test = strchr(result, ' ');
-      g_snprintf(result, strlen(result),
-                 "%s",test+1);
-    }
-  
-  //we cut the \n at the end
+  {
+    gchar *test = strchr(result, ' ');
+    g_snprintf(result, strlen(result), "%s",test+1);
+  }
+
+  //cut the \n at the end
   gint result_str = strlen(result);
   if (result_str >= 2)
+  {
     result[result_str - 2] = '\0';
-  
+  }
+
   return result;
 }
 
@@ -174,50 +172,46 @@ gint disconnect_snackamp()
 \return the result; must be g_freed after use
 \todo rewrite this function
 */
-gchar *snackamp_socket_send_message(gchar *message)
+static gchar *snackamp_socket_send_message(gchar *message)
 {
   gchar *result = malloc(1024 * sizeof(gchar *));
   strcpy(result,"disconnected");
-  
+
 #ifdef __WIN32__
   gboolean r = TRUE;
-  
-  gint err1 =
-    send(socket_id, message, strlen(message), 0);
+
+  gint err1 = send(socket_id, message, strlen(message), 0);
   if (err1 <= 0)
+  {
+    disconnect_snackamp();
+  }
+  else
+  {
+    gint err = recv(socket_id, result, 1024, 0);
+    if (err <= 0)
     {
       disconnect_snackamp();
+      r = FALSE;
     }
-  else
-    {
-      gint err = recv(socket_id, result, 1024, 0);
-      if (err <= 0)
-        {
-          disconnect_snackamp();
-          r = FALSE;
-        }
-    }
+  }
 #else
-  //we send message
   fputs(message, out);
-  //we get the result
   fgets(result, 1024, in);
 #endif
 
   //if on win32 we put the \0 when we find \n because no line buffering
 #ifdef __WIN32__
   if (r)
+  {
+    if (strchr(result,'\n') != NULL)
     {
-      if (strchr(result,'\n') != NULL)
-        {
-          gchar *line_end;
-          line_end = strchr(result,'\n') + 1;
-          *line_end = '\0';
-        }
+      gchar *line_end;
+      line_end = strchr(result,'\n') + 1;
+      *line_end = '\0';
     }
+  }
 #endif
-  
-  //must be freed after
+
   return result;
 }
 
@@ -461,8 +455,7 @@ void snackamp_select_last_file()
 //!plays a song
 void snackamp_play()
 {
-  gchar *result;
-  result = snackamp_socket_send_message("xmms_remote_play\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_play\n");
   g_free(result);
 }
 
@@ -531,24 +524,17 @@ void snackamp_start_with_songs(GList *list)
 //!returns TRUE if snackamp is running; if not, FALSE 
 gint snackamp_is_running()
 {
-  gint result = FALSE;
-  
-  //if we are not connected
-  if (!connected)
-    {
-      //if we can connect to snackamp, the player is running
-      if (connect_snackamp(8775) == 0)
-        {
-          result = TRUE;
-        }
-    }
-  else
-    //if we are connected
-    {
-      result = TRUE;
-    }
-  
-  return result;
+  if (connected)
+  {
+    return TRUE;
+  }
+
+  if (connect_snackamp(8775) == 0)
+  {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 //!pause a song
@@ -589,62 +575,52 @@ void snackamp_prev()
 //!jump to time
 void snackamp_jump(gint position)
 {
-  //we have the position in miliseconds, we get it in hundreths of
-  //seconds
   gint hundr_secs_pos = position / 10;
-  //we get only the hundreth of seconds
   gint hundr_secs = hundr_secs_pos % 100;
   if (hundr_secs == 1)
-    {
-      hundr_secs = 0;
-    }
-  //we have the seconds left
+  {
+    hundr_secs = 0;
+  }
+
   gint secs = hundr_secs_pos / 100;
   gfloat total_pos = hundr_secs + secs * 100;
   total_pos /= 100;
-  
-  gchar *result;
+
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %f\n",
-             "xmms_remote_jump_to_time", 
-             total_pos);
-  
-  result = snackamp_socket_send_message(temp);
+  g_snprintf(temp, 100, "%s %f\n", "xmms_remote_jump_to_time", total_pos);
+
+  gchar *result = snackamp_socket_send_message(temp);
   g_free(result);
 }
 
 //!returns total time of the current song
 gint snackamp_get_total_time()
 {
-  gchar *result;
-  gint hundr_secs;
-  result = snackamp_socket_send_message("xmms_remote_get_playlist_time\n");
-  //we get and convert to hundreth of seconds
-  hundr_secs = get_integer_from_string(result) * 1000;
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_time\n");
+  gint hundr_secs = get_integer_from_string(result) * 1000;
   g_free(result);
-  
+
   return hundr_secs;
 }
 
 //!returns TRUE if snackamp is playing, else FALSE
 gint snackamp_is_playing()
 {
-  //if we are connected to snackamp
-  if (snackamp_is_connected())
-    {
-      gchar *result;
-      gint i;
-      result = snackamp_socket_send_message("xmms_remote_is_playing\n");
-      i = atoi(result);
-      g_free(result);
-      
-      if (i == 0)
-        return FALSE;
-      else
-        return TRUE;
-    }
-  else
+  if (!snackamp_is_connected())
+  {
     return FALSE;
+  }
+
+  gchar *result = snackamp_socket_send_message("xmms_remote_is_playing\n");
+  gint i = atoi(result);
+  g_free(result);
+
+  if (i == 0)
+  {
+    return FALSE;
+  }
+
+  return TRUE;
 }
 
 /*! returns TRUE if snackamp is paused, else FALSE
@@ -653,24 +629,23 @@ not yet implemented in snackamp
 */
 gint snackamp_is_paused()
 {
-  //if we are connected to snackamp
-  if (snackamp_is_connected())
-    {
-      gint i;
-      gchar *result;
-      result = snackamp_socket_send_message("xmms_remote_is_paused\n");
-      result = cut_begin_end(result);
-      
-      i = atoi(result);
-      g_free(result);
-      
-      if (i == 1)
-        return TRUE;
-      else
-        return FALSE;
-    }
-  else
+  if (!snackamp_is_connected())
+  {
     return FALSE;
+  }
+
+  gchar *result = snackamp_socket_send_message("xmms_remote_is_paused\n");
+  result = cut_begin_end(result);
+
+  gint i = atoi(result);
+  g_free(result);
+
+  if (i == 1)
+  {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 /*//quits player
