@@ -618,7 +618,6 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
   else
   {
     show_connect_button(ui->gui);
-    close_playlist_popup_window_event(NULL, NULL);
     gtk_widget_hide(ui->gui->playlist_box);
   }
   

@@ -86,11 +86,6 @@ gboolean volume_button_scroll_event (GtkWidget *widget,
                                   GdkEventScroll *event,
                                   gpointer user_data);
 GtkWidget *create_volume_control_box();
-void close_player_popup_window_event( GtkWidget *window,
-                                      gpointer data );
-void handle_player_detached_event (GtkHandleBox *handlebox,
-                                   GtkWidget *widget,
-                                   gpointer data);
 gfloat get_right_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 gfloat get_left_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 
@@ -110,12 +105,11 @@ void close_file_popup_window_event( GtkWidget *window,
                                     gpointer data );
 
 void change_current_filename(const gchar *fname, ui_state *ui);
-GtkWidget *create_player_playlist_frame();
+GtkWidget *create_player_playlist_frame(ui_state *ui);
 
 void hide_connect_button(gui_state *gui);
 void show_connect_button(gui_state *gui);
 
-void close_playlist_popup_window_event(GtkWidget *window, gpointer data);
 void restart_player_timer();
 
 void compute_douglas_peucker_filters(ui_state *ui);

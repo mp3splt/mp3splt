@@ -191,6 +191,11 @@ typedef struct {
   GtkWidget *cancel_button;
 
   GtkWidget *volume_button;
+
+  GtkTreeView *playlist_tree;
+
+  GtkWidget *playlist_remove_file_button;
+  GtkWidget *playlist_remove_all_files_button;
 } gui_state;
 
 typedef struct {

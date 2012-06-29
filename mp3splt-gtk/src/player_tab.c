@@ -57,22 +57,12 @@ extern gint debug_is_active;
 
 extern ui_state *ui;
 
-GtkWidget *player_handle;
-
-//handle for detaching playlist
-GtkWidget *playlist_handle;
-GtkWidget *playlist_handle_window;
-
 //just used here for the timer hack
 gint stay_turn = 0;
 
 gint timeout_value = DEFAULT_TIMEOUT_VALUE;
 
-GtkTreeView *playlist_tree = NULL;
 gint playlist_tree_number = 0;
-
-GtkWidget *playlist_remove_file_button;
-GtkWidget *playlist_remove_all_files_button;
 
 //playlist tree enumeration
 enum {
@@ -1362,38 +1352,6 @@ gboolean volume_button_leave_event(GtkWidget *widget, GdkEventCrossing *event, g
 {
   ui->status->on_the_volume_button = FALSE;
   return FALSE;
-}
-
-//!when closing the new window after detaching
-void close_player_popup_window_event( GtkWidget *window,
-                                      gpointer data )
-{
-  GtkWidget *window_child;
-
-  window_child = gtk_bin_get_child(GTK_BIN(window));
-
-  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(player_handle));
-
-  gtk_widget_destroy(window);
-}
-
-//!when we detach the handle
-void handle_player_detached_event(GtkHandleBox *handlebox,
-                                  GtkWidget *widget,
-                                  gpointer data)
-{
-  //new window
-  GtkWidget *window;
-
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
-
-  g_signal_connect(G_OBJECT(window), "delete_event",
-                   G_CALLBACK(close_player_popup_window_event),
-                   NULL);
-  
-  gtk_widget_show(GTK_WIDGET(window));
 }
 
 //!returns the value of the right drawing area
@@ -2874,7 +2832,7 @@ void add_playlist_file(const gchar *name)
 
   gboolean name_already_exists_in_playlist = FALSE;
 
-  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->playlist_tree);
 
   gchar *filename = NULL;
 
@@ -2899,7 +2857,7 @@ void add_playlist_file(const gchar *name)
 
   if (! name_already_exists_in_playlist)
   {
-    gtk_widget_set_sensitive(playlist_remove_all_files_button,TRUE);
+    gtk_widget_set_sensitive(ui->gui->playlist_remove_all_files_button,TRUE);
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
 
     //sets text in the minute, second and milisecond column
@@ -2912,45 +2870,15 @@ void add_playlist_file(const gchar *name)
   }
 }
 
-//!when closing the new window after detaching
-void close_playlist_popup_window_event(GtkWidget *window, gpointer data)
-{
-  if (playlist_handle_window == NULL)
-  {
-    return;
-  }
-
-  GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(playlist_handle_window));
-  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(playlist_handle));
-  gtk_widget_destroy(playlist_handle_window);
-}
-
-//!when we detach the handle
-void handle_playlist_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, gpointer data)
-{
-  playlist_handle_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(playlist_handle_window));
-
-  g_signal_connect(G_OBJECT(playlist_handle_window), "delete_event",
-                   G_CALLBACK(close_playlist_popup_window_event), NULL);
-  
-  gtk_widget_show(GTK_WIDGET(playlist_handle_window));
-}
-
+static GtkTreeModel *create_playlist_model()
 //!creates the model for the playlist
-GtkTreeModel *create_playlist_model()
 {
-  GtkListStore * model =
-    gtk_list_store_new(PLAYLIST_COLUMNS,
-        G_TYPE_STRING,
-        G_TYPE_STRING);
-
+  GtkListStore * model = gtk_list_store_new(PLAYLIST_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
   return GTK_TREE_MODEL(model);
 }
 
 //!creates the playlist tree
-GtkTreeView *create_playlist_tree()
+static GtkTreeView *create_playlist_tree()
 {
   GtkTreeModel *model = create_playlist_model();
   GtkTreeView *playlist_tree = GTK_TREE_VIEW(gtk_tree_view_new_with_model(model));
@@ -2961,59 +2889,38 @@ GtkTreeView *create_playlist_tree()
 //!creates playlist columns
 void create_playlist_columns(GtkTreeView *playlist_tree)
 {
-  GtkCellRendererText *renderer;
-  GtkTreeViewColumn *name_column;
-  //GtkTreeViewColumn *filename_column;
-
-  //renderer creation
-  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  GtkCellRendererText *renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NAME));
-  name_column = gtk_tree_view_column_new_with_attributes 
-    (_("History"), GTK_CELL_RENDERER(renderer),
-     "text", COL_NAME, NULL);
 
-  //we dont insert the column to the tree view
-  /*  renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
-      filename_column = gtk_tree_view_column_new_with_attributes 
-      (_("Complete filename"), GTK_CELL_RENDERER(renderer),
-      "text", COL_FILENAME,
-      NULL);*/
-  /*  gtk_tree_view_insert_column (GTK_TREE_VIEW (playlist_tree),
-      GTK_TREE_VIEW_COLUMN (filename_column),COL_FILENAME);*/
-  
-  //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column(playlist_tree,
-      GTK_TREE_VIEW_COLUMN(name_column), COL_NAME);
+  GtkTreeViewColumn *name_column = gtk_tree_view_column_new_with_attributes 
+    (_("History"), GTK_CELL_RENDERER(renderer), "text", COL_NAME, NULL);
+  gtk_tree_view_insert_column(playlist_tree, GTK_TREE_VIEW_COLUMN(name_column), COL_NAME);
 
-  //middle alignment of the column name
   gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column), 0.5);
-  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column),
-      GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column), GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 }
 
 //!split selection has changed
-void playlist_selection_changed(GtkTreeSelection *selec,
-                                gpointer data)
+static void playlist_selection_changed(GtkTreeSelection *selec, ui_state *ui)
 {
-  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(playlist_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->playlist_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->playlist_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
-
   if (g_list_length(selected_list) > 0)
   {
-    gtk_widget_set_sensitive(playlist_remove_file_button, TRUE);
+    gtk_widget_set_sensitive(ui->gui->playlist_remove_file_button, TRUE);
   }
   else
   {
-    gtk_widget_set_sensitive(playlist_remove_file_button, FALSE);
+    gtk_widget_set_sensitive(ui->gui->playlist_remove_file_button, FALSE);
   }
 }
 
 //!event for the remove file button
 void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
 { 
-  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(playlist_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->playlist_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->playlist_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
 
   gchar *filename = NULL;
@@ -3040,12 +2947,11 @@ void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
 
   if (playlist_tree_number == 0)
   {
-    gtk_widget_set_sensitive(playlist_remove_all_files_button, FALSE);
+    gtk_widget_set_sensitive(ui->gui->playlist_remove_all_files_button, FALSE);
   }
 
-  gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
+  gtk_widget_set_sensitive(ui->gui->playlist_remove_file_button,FALSE);
 
-  //we free the selected elements
   g_list_foreach(selected_list, (GFunc)gtk_tree_path_free, NULL);
   g_list_free(selected_list);  
 }
@@ -3053,7 +2959,7 @@ void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
 //!event for the remove file button
 void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
 {
-  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->playlist_tree);
   
   gchar *filename = NULL;
   while (playlist_tree_number > 0)
@@ -3067,68 +2973,62 @@ void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
     g_free(filename);
   }
   
-  gtk_widget_set_sensitive(playlist_remove_all_files_button, FALSE);
-  gtk_widget_set_sensitive(playlist_remove_file_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->playlist_remove_all_files_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->playlist_remove_file_button, FALSE);
 }
 
 //!creates the horizontal queue buttons horizontal box
-GtkWidget *create_delete_buttons_hbox()
+static GtkWidget *create_delete_buttons_hbox(gui_state *gui)
 {
-  //our horizontal box
   GtkWidget *hbox = wh_hbox_new();
 
-  //button for removing a file
-  playlist_remove_file_button =
+  GtkWidget *playlist_remove_file_button = 
     wh_create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
-  gtk_box_pack_start(GTK_BOX(hbox),
-                     playlist_remove_file_button, FALSE, FALSE, 5);
+  ui->gui->playlist_remove_file_button = playlist_remove_file_button;
+  gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
   g_signal_connect(G_OBJECT(playlist_remove_file_button), "clicked",
                    G_CALLBACK(playlist_remove_file_button_event), NULL);
  
-  //button for removing a file
-  playlist_remove_all_files_button =
+  GtkWidget *playlist_remove_all_files_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
-  gtk_box_pack_start(GTK_BOX(hbox),
-                     playlist_remove_all_files_button, FALSE, FALSE, 5);
+  ui->gui->playlist_remove_all_files_button = playlist_remove_all_files_button;
+  gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);
   g_signal_connect(G_OBJECT(playlist_remove_all_files_button), "clicked",
                    G_CALLBACK(playlist_remove_all_files_button_event), NULL);
-  
+
   return hbox;
 }
 
 //!creates the playlist of the player
-GtkWidget *create_player_playlist_frame()
+GtkWidget *create_player_playlist_frame(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();
 
-  // scrolled window and the tree 
+  //scrolled window and the tree 
   //create the tree and add it to the scrolled window
-  playlist_tree = create_playlist_tree();
-  GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-                                  GTK_POLICY_AUTOMATIC,
-                                  GTK_POLICY_AUTOMATIC);
+  GtkTreeView *playlist_tree = create_playlist_tree();
+  ui->gui->playlist_tree = playlist_tree;
+  GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+      GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
-  //create columns
+
   create_playlist_columns(playlist_tree);
-  //add the tree to the scrolled window
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(playlist_tree));
   g_signal_connect(G_OBJECT(playlist_tree), "row-activated",
-                   G_CALLBACK(split_tree_row_activated), NULL);
+                   G_CALLBACK(split_tree_row_activated), ui);
 
   //selection for the tree
-  GtkWidget *playlist_tree_selection = (GtkWidget *)
-    gtk_tree_view_get_selection(playlist_tree);
+  GtkTreeSelection *playlist_tree_selection = gtk_tree_view_get_selection(playlist_tree);
   g_signal_connect(G_OBJECT(playlist_tree_selection), "changed",
-                   G_CALLBACK(playlist_selection_changed), NULL);
-  gtk_tree_selection_set_mode(GTK_TREE_SELECTION(playlist_tree_selection),
-                              GTK_SELECTION_MULTIPLE);
+                   G_CALLBACK(playlist_selection_changed), ui);
+  gtk_tree_selection_set_mode(GTK_TREE_SELECTION(playlist_tree_selection), GTK_SELECTION_MULTIPLE);
 
   //horizontal box with delete buttons
-  GtkWidget *delete_buttons_hbox = (GtkWidget *)create_delete_buttons_hbox();
+  GtkWidget *delete_buttons_hbox = create_delete_buttons_hbox(ui->gui);
   gtk_box_pack_start(GTK_BOX(vbox), delete_buttons_hbox, FALSE, FALSE, 2);
 
   GtkWidget *history_expander = gtk_expander_new_with_mnemonic(_("H_istory"));
@@ -3138,13 +3038,7 @@ GtkWidget *create_player_playlist_frame()
   GtkWidget *main_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(main_hbox), history_expander, TRUE, TRUE, 4);
 
-  /* handle box for detaching */
-  playlist_handle = gtk_handle_box_new();
-  gtk_container_add(GTK_CONTAINER(playlist_handle), GTK_WIDGET(main_hbox));
-  g_signal_connect(playlist_handle, "child-detached",
-                   G_CALLBACK(handle_playlist_detached_event), NULL);
-
-  return playlist_handle;
+  return main_hbox;
 }
 
 static void action_set_sensitivity(gchar *name, gboolean sensitivity, gui_state *gui)

@@ -872,7 +872,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   ui->gui->player_box = create_player_control_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->player_box, FALSE, FALSE, 0);
 
-  ui->gui->playlist_box = create_player_playlist_frame();
+  ui->gui->playlist_box = create_player_playlist_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->playlist_box, TRUE, TRUE, 0);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox, notebook_label);

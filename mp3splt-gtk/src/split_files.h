@@ -50,11 +50,8 @@ void queue_files_button_event( GtkWidget *widget,
                                gpointer   data );
 void remove_file_button_event(GtkWidget *widget,
                               gpointer data);
-GtkWidget *create_queue_buttons_hbox();
-void split_tree_row_activated (GtkTreeView *split_tree,
-                                  GtkTreePath *arg1,
-                                  GtkTreeViewColumn *arg2,
-                                  gpointer data);
+void split_tree_row_activated(GtkTreeView *split_tree,
+    GtkTreePath *arg1, GtkTreeViewColumn *arg2, ui_state *ui);
 void split_selection_changed(GtkTreeSelection *selection,
                                 gpointer data);
 void close_split_popup_window_event( GtkWidget *window,
