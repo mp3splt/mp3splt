@@ -37,9 +37,8 @@
 #include "all_includes.h"
 
 void update_output_options();
-void put_options_from_preferences();
-
-void put_tags_from_filename_regex_options();
+void put_options_from_preferences(ui_state *ui);
+void put_tags_from_filename_regex_options(ui_state *ui);
 
 #endif
 

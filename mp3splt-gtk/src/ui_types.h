@@ -106,6 +106,8 @@ typedef struct {
 
   gdouble douglas_peucker_thresholds[5];
   gdouble douglas_peucker_thresholds_defaults[5];
+
+  gint debug_is_active;
 } ui_infos;
 
 typedef struct {
@@ -196,6 +198,55 @@ typedef struct {
 
   GtkWidget *playlist_remove_file_button;
   GtkWidget *playlist_remove_all_files_button;
+
+  GtkWidget *frame_mode;
+  GtkWidget *adjust_mode;
+
+  GtkWidget *spinner_adjust_offset;
+  GtkWidget *spinner_adjust_gap;
+  GtkWidget *spinner_adjust_threshold;
+
+  GtkWidget *gap_label;
+  GtkWidget *offset_label;
+  GtkWidget *threshold_label;
+
+  GtkWidget *spinner_time;
+  GtkWidget *spinner_equal_tracks;
+
+  GtkWidget *all_spinner_silence_number_tracks;
+  GtkWidget *all_spinner_silence_minimum;
+  GtkWidget *all_spinner_track_minimum;
+  GtkWidget *all_spinner_silence_offset;
+  GtkWidget *all_spinner_silence_threshold;
+  GtkWidget *all_spinner_trim_silence_threshold;
+  GtkWidget *all_silence_remove_silence;
+
+  GtkWidget *all_threshold_label;
+  GtkWidget *all_trim_threshold_label;
+  GtkWidget *all_offset_label;
+  GtkWidget *all_number_of_tracks_label;
+  GtkWidget *all_min_silence_label;
+  GtkWidget *all_min_track_label;
+
+  GtkWidget *tags_radio;
+  GtkWidget *tags_version_radio;
+
+  GtkWidget *replace_underscore_by_space_check_box;
+  GtkComboBox *artist_text_properties_combo;
+  GtkComboBox *album_text_properties_combo;
+  GtkComboBox *title_text_properties_combo;
+  GtkComboBox *comment_text_properties_combo;
+  GtkComboBox *genre_combo;
+  GtkWidget *comment_tag_entry;
+  GtkWidget *regex_entry;
+  GtkWidget *test_regex_fname_entry;
+  GtkWidget *sample_result_label;
+  GtkWidget *extract_tags_box;
+
+  GtkWidget *create_dirs_from_output_files;
+
+  GtkWidget *output_entry;
+  GtkWidget *output_label;
 } gui_state;
 
 typedef struct {
@@ -251,8 +302,9 @@ typedef struct {
 
   gboolean change_volume;
   gboolean on_the_volume_button;
-
   gint file_browsed;
+  gint preview_row;
+  gint selected_split_mode;
 } gui_status;
 
 typedef struct {

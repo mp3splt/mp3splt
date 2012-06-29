@@ -41,38 +41,6 @@
 
 extern gchar *filename_path_of_split;
 
-//EXTERNAL OPTIONS
-//frame mode option
-extern GtkWidget *frame_mode;
-//auto-adjust option
-extern GtkWidget *adjust_mode;
-//gap parameter
-extern GtkWidget *spinner_adjust_gap;
-//offset parameter
-extern GtkWidget *spinner_adjust_offset;
-//threshold parameter
-extern GtkWidget *spinner_adjust_threshold;
-
-extern GtkWidget *create_dirs_from_output_files;
-
-//silence mode parameters
-//number of tracks parameter
-extern GtkWidget *spinner_silence_number_tracks;
-//number of tracks parameter
-extern GtkWidget *spinner_silence_minimum;
-//offset parameter
-extern GtkWidget *spinner_silence_offset;
-//threshold parameter
-extern GtkWidget *spinner_silence_threshold;
-//remove silence check button (silence mode parameter
-extern GtkWidget *silence_remove_silence;
-
-//spinner time
-extern GtkWidget *spinner_time;
-
-//the output entry
-extern GtkWidget *output_entry;
-
 extern gint split_file_mode;
 extern GtkWidget *multiple_files_tree;
 extern gint multiple_files_tree_number;
@@ -108,7 +76,7 @@ gpointer split_it(gpointer data)
   enter_threads();
   print_status_bar_confirmation(err);
   
-  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
+  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
   exit_threads();
 
   mp3splt_set_oformat(ui->mp3splt_state, format, &err);

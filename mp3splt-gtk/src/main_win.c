@@ -386,12 +386,11 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
     return;
   }
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-      SPLT_OUTPUT_DEFAULT);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
 
   gint err = SPLT_OK;
 
-  put_options_from_preferences();
+  put_options_from_preferences(ui);
 
   //output format
   if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err)

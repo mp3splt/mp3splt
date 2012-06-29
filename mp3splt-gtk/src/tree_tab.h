@@ -55,7 +55,6 @@ void update_add_button(ui_state *ui);
 void update_minutes_from_spinner(GtkWidget *widget, gpointer data);
 void update_seconds_from_spinner(GtkWidget *widget, gpointer data);
 void update_hundr_secs_from_spinner(GtkWidget *widget, gpointer data);
-GtkTreeModel *create_model();
 void exchange_elements_from_array(gint element_number1,
                                   gint element_number2);
 void row_selection_event();
@@ -68,10 +67,6 @@ GtkWidget *create_init_spinner(GtkWidget *bottomhbox1,
                                gint max, 
                                gchar *label_text,
                                gint type);
-void preview_song (GtkTreeView *tree_view,
-                   GtkTreePath *path,
-                   GtkTreeViewColumn *col,
-                   gpointer user_data);
 void create_columns (GtkTreeView *tree_view);
 void close_popup_window_event( GtkWidget *window,
                                gpointer data );

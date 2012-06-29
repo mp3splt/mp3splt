@@ -38,7 +38,6 @@
 
 GtkWidget *mess_history_dialog = NULL;
 GtkWidget *mess_hist_view = NULL;
-gint debug_is_active = FALSE;
 
 extern ui_state *ui;
 
@@ -61,7 +60,7 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type,
     gui_state *gui)
 {
   if (mess_type == SPLT_MESSAGE_INFO ||
-      (mess_type == SPLT_MESSAGE_DEBUG && debug_is_active))
+      (mess_type == SPLT_MESSAGE_DEBUG && ui->infos->debug_is_active))
   {
     GtkTextTag *gray_tag =
       gtk_text_tag_table_lookup(gui->mess_hist_tag_table, "gray_bold");
@@ -119,12 +118,11 @@ void debug_check_event(GtkToggleButton *debug_toggle, gpointer user_data)
 {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(debug_toggle)))
   {
-    debug_is_active = TRUE;
+    ui->infos->debug_is_active = TRUE;
+    return;
   }
-  else
-  {
-    debug_is_active = FALSE;
-  }
+
+  ui->infos->debug_is_active = FALSE;
 }
 
 //! The event issued when the "Clear messages" button is clicked

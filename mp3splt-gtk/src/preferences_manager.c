@@ -47,32 +47,8 @@ extern GtkWidget *radio_button;
 
 extern GtkWidget *file_mode_radio_button;
 
-extern GtkWidget *frame_mode;
-extern GtkWidget *adjust_mode;
-extern GtkWidget *spinner_adjust_gap;
-extern GtkWidget *spinner_adjust_offset;
-extern GtkWidget *spinner_adjust_threshold;
-extern GtkWidget *create_dirs_from_output_files;
-extern GtkWidget *spinner_time;
-extern GtkWidget *spinner_equal_tracks;
-
-extern GtkWidget *output_entry;
-extern GtkWidget *output_label;
 extern GtkWidget *radio_output;
-extern GtkWidget *tags_radio;
-extern GtkWidget *tags_version_radio;
 
-extern GtkWidget *replace_underscore_by_space_check_box;
-extern GtkComboBox *artist_text_properties_combo;
-extern GtkComboBox *album_text_properties_combo;
-extern GtkComboBox *title_text_properties_combo;
-extern GtkComboBox *comment_text_properties_combo;
-extern GtkComboBox *genre_combo;
-extern GtkWidget *comment_tag_entry;
-extern GtkWidget *regex_entry;
-extern GtkWidget *test_regex_fname_entry;
-
-extern gint selected_split_mode;
 extern gint split_file_mode;
 
 extern ui_state *ui;
@@ -319,25 +295,11 @@ void load_preferences()
  
   //frame mode
   item = g_key_file_get_boolean(key_file, "split", "frame_mode", NULL);
-  if (item)
-  {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode),TRUE);
-  }
-  else
-  {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode),FALSE);
-  }
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode), item);
 
   //adjust mode
   item = g_key_file_get_boolean(key_file, "split", "adjust_mode", NULL);
-  if (item)
-  {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(adjust_mode),TRUE);
-  }
-  else
-  {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(adjust_mode),FALSE);
-  }
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode), item);
 
   item = g_key_file_get_boolean(key_file, "output", "splitpoint_names_from_filename", NULL);
   if (item)
@@ -353,19 +315,19 @@ void load_preferences()
   gfloat item2;
   item = g_key_file_get_integer(key_file, "split", "adjust_threshold", NULL);  
   item2 = item/100 + (item%100)/100.;
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_threshold), item2);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_threshold), item2);
   //adjust offset
   item = g_key_file_get_integer(key_file, "split", "adjust_offset", NULL);
   item2 = item/100 + (item%100)/100.;
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_offset),
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset),
       item2);
   //adjust gap
   item = g_key_file_get_integer(key_file, "split", "adjust_gap", NULL);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_gap), item);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap), item);
 
   //tags options
   gint tag_pref_file = g_key_file_get_integer(key_file, "split", "tags", NULL);
-  GtkWidget *radio = rh_get_radio_from_value(tags_radio, tag_pref_file);
+  GtkWidget *radio = rh_get_radio_from_value(ui->gui->tags_radio, tag_pref_file);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
 
   //replace underscores by spaces
@@ -373,73 +335,73 @@ void load_preferences()
   if (item)
   {
     gtk_toggle_button_set_active(
-        GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box), TRUE);
+        GTK_TOGGLE_BUTTON(ui->gui->replace_underscore_by_space_check_box), TRUE);
   }
   else
   {
     gtk_toggle_button_set_active(
-        GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box), FALSE);
+        GTK_TOGGLE_BUTTON(ui->gui->replace_underscore_by_space_check_box), FALSE);
   }
 
   //artist text properties
   item = g_key_file_get_integer(key_file, "split", "artist_text_properties",NULL);
   if (item)
   {
-    ch_set_active_value(artist_text_properties_combo, item);
+    ch_set_active_value(ui->gui->artist_text_properties_combo, item);
   }
   else
   {
-    ch_set_active_value(artist_text_properties_combo, SPLT_NO_CONVERSION);
+    ch_set_active_value(ui->gui->artist_text_properties_combo, SPLT_NO_CONVERSION);
   }
   //album text properties
   item = g_key_file_get_integer(key_file, "split", "album_text_properties",NULL);
   if (item)
   {
-    ch_set_active_value(album_text_properties_combo, item);
+    ch_set_active_value(ui->gui->album_text_properties_combo, item);
   }
   else
   {
-    ch_set_active_value(album_text_properties_combo, SPLT_NO_CONVERSION);
+    ch_set_active_value(ui->gui->album_text_properties_combo, SPLT_NO_CONVERSION);
   }
   //title text properties
   item = g_key_file_get_integer(key_file, "split", "title_text_properties",NULL);
   if (item)
   {
-    ch_set_active_value(title_text_properties_combo, item);
+    ch_set_active_value(ui->gui->title_text_properties_combo, item);
   }
   else
   {
-    ch_set_active_value(title_text_properties_combo, SPLT_NO_CONVERSION);
+    ch_set_active_value(ui->gui->title_text_properties_combo, SPLT_NO_CONVERSION);
   }
   //comment text properties
   item = g_key_file_get_integer(key_file, "split", "comment_text_properties",NULL);
   if (item)
   {
-    ch_set_active_value(comment_text_properties_combo, item);
+    ch_set_active_value(ui->gui->comment_text_properties_combo, item);
   }
   else
   {
-    ch_set_active_value(comment_text_properties_combo, SPLT_NO_CONVERSION);
+    ch_set_active_value(ui->gui->comment_text_properties_combo, SPLT_NO_CONVERSION);
   }
 
   //genre
   gchar *default_genre = g_key_file_get_string(key_file, "split", "genre", NULL);
   if (default_genre)
   {
-    ch_set_active_str_value(genre_combo, default_genre);
+    ch_set_active_str_value(ui->gui->genre_combo, default_genre);
     g_free(default_genre);
     default_genre = NULL;
   }
   else
   {
-    ch_set_active_str_value(genre_combo, SPLT_UNDEFINED_GENRE);
+    ch_set_active_str_value(ui->gui->genre_combo, SPLT_UNDEFINED_GENRE);
   }
 
   //default comment tag
   gchar *default_comment_tag = g_key_file_get_string(key_file, "split", "default_comment_tag", NULL);
   if (default_comment_tag)
   {
-    gtk_entry_set_text(GTK_ENTRY(comment_tag_entry), default_comment_tag);
+    gtk_entry_set_text(GTK_ENTRY(ui->gui->comment_tag_entry), default_comment_tag);
     g_free(default_comment_tag);
     default_comment_tag = NULL;
   }
@@ -449,7 +411,7 @@ void load_preferences()
     g_key_file_get_string(key_file, "split", "tags_from_filename_regex", NULL);
   if (tags_from_fname_regex)
   {
-    gtk_entry_set_text(GTK_ENTRY(regex_entry), tags_from_fname_regex);
+    gtk_entry_set_text(GTK_ENTRY(ui->gui->regex_entry), tags_from_fname_regex);
     g_free(tags_from_fname_regex);
     tags_from_fname_regex = NULL;
   }
@@ -458,7 +420,7 @@ void load_preferences()
     g_key_file_get_string(key_file, "split", "test_regex_fname", NULL);
   if (test_regex_fname)
   {
-    gtk_entry_set_text(GTK_ENTRY(test_regex_fname_entry), test_regex_fname);
+    gtk_entry_set_text(GTK_ENTRY(ui->gui->test_regex_fname_entry), test_regex_fname);
     g_free(test_regex_fname);
     test_regex_fname = NULL;
   }
@@ -467,7 +429,7 @@ void load_preferences()
   tag_pref_file = g_key_file_get_integer(key_file, "split", "tags_version", NULL);
 
   GSList *tags_version_radio_button_list = 
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(tags_version_radio));
+    gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->tags_version_radio));
   GtkWidget *the_selection = 
     (GtkWidget *)g_slist_nth_data(tags_version_radio_button_list, tag_pref_file);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(the_selection), TRUE);
@@ -482,52 +444,42 @@ void load_preferences()
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(our_selection), TRUE);
   if (default_output_format)
   {
-    gtk_widget_set_sensitive(GTK_WIDGET(output_entry), FALSE);
-    gtk_widget_set_sensitive(GTK_WIDGET(output_label), FALSE);
+    gtk_widget_set_sensitive(ui->gui->output_entry, FALSE);
+    gtk_widget_set_sensitive(ui->gui->output_label, FALSE);
   }
 
   //output format
   gchar *output_format = g_key_file_get_string(key_file, "output", "output_format", NULL);
   if (output_format)
   {
-    gtk_entry_set_text(GTK_ENTRY(output_entry), output_format);
+    gtk_entry_set_text(GTK_ENTRY(ui->gui->output_entry), output_format);
     g_free(output_format);
     output_format = NULL;
   }
 
   //create directories if needed
   item = g_key_file_get_boolean(key_file, "output", "create_dirs_if_needed", NULL);
-  if (item)
-  {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files), TRUE);
-  }
-  else
-  {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files), FALSE);
-  }
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->create_dirs_from_output_files), item);
 
   //type of split: split mode
   gint split_mode = g_key_file_get_integer(key_file, "split", "split_mode", NULL);
   select_split_mode(split_mode);
 
   //time value
-  gint time_value = g_key_file_get_integer(key_file, "split",
-      "split_mode_time_value", NULL);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_time), time_value);
+  gint time_value = g_key_file_get_integer(key_file, "split", "split_mode_time_value", NULL);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_time), time_value);
 
   //file mode
-  gint file_mode = g_key_file_get_integer(key_file, "split",
-      "file_mode", NULL);
+  gint file_mode = g_key_file_get_integer(key_file, "split", "file_mode", NULL);
   GSList *file_mode_radio_button_list = 
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(file_mode_radio_button));
-  our_selection = 
-    (GtkWidget *)g_slist_nth_data(file_mode_radio_button_list, file_mode);
+  our_selection = (GtkWidget *)g_slist_nth_data(file_mode_radio_button_list, file_mode);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_selection), TRUE);
 
   //equal time tracks value
   gint equal_tracks = g_key_file_get_integer(key_file, "split",
       "split_mode_equal_time_tracks", NULL);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_equal_tracks), equal_tracks);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_equal_tracks), equal_tracks);
 
   gint root_x = g_key_file_get_integer(key_file, "gui", "root_x_position", NULL);
   gint root_y = g_key_file_get_integer(key_file, "gui", "root_y_position", NULL);
@@ -582,105 +534,99 @@ void save_preferences(GtkWidget *widget, gpointer data)
 
   //frame mode
   g_key_file_set_boolean(my_key_file, "split", "frame_mode",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)));
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode)));
 
   //adjust mode
   g_key_file_set_boolean(my_key_file, "split", "adjust_mode",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)));
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode)));
 
   //adjust threshold
   g_key_file_set_integer(my_key_file, "split", "adjust_threshold",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_threshold)) * 100);
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_threshold)) * 100);
   //adjust offset
   g_key_file_set_integer(my_key_file, "split", "adjust_offset",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_offset)) * 100);
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset)) * 100);
   //adjust gap
   g_key_file_set_integer(my_key_file, "split", "adjust_gap",
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_adjust_gap)));
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap)));
 
   g_key_file_set_boolean(my_key_file, "output", "splitpoint_names_from_filename",
       gtk_toggle_button_get_active(ui->gui->names_from_filename));
 
   //output format
   g_key_file_set_string(my_key_file, "output", "output_format",
-      gtk_entry_get_text(GTK_ENTRY(output_entry)));
+      gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
   //default output format
   g_key_file_set_boolean(my_key_file, "output", "default_output_format",
       get_checked_output_radio_box());
   g_key_file_set_boolean(my_key_file, "output", "create_dirs_if_needed",
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(create_dirs_from_output_files)));
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->create_dirs_from_output_files)));
 
   //tags
-  g_key_file_set_integer(my_key_file, "split", "tags", rh_get_active_value(tags_radio));
+  g_key_file_set_integer(my_key_file, "split", "tags", rh_get_active_value(ui->gui->tags_radio));
 
   //replace underscores by space
   g_key_file_set_boolean(my_key_file, "split", "replace_underscore_by_space",
-  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(replace_underscore_by_space_check_box)));
+  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->replace_underscore_by_space_check_box)));
 
   //artist text properties
   g_key_file_set_integer(my_key_file, "split", "artist_text_properties",
-      ch_get_active_value(artist_text_properties_combo));
+      ch_get_active_value(ui->gui->artist_text_properties_combo));
   //album text properties
   g_key_file_set_integer(my_key_file, "split", "album_text_properties",
-      ch_get_active_value(album_text_properties_combo));
+      ch_get_active_value(ui->gui->album_text_properties_combo));
   //title text properties
   g_key_file_set_integer(my_key_file, "split", "title_text_properties",
-      ch_get_active_value(title_text_properties_combo));
+      ch_get_active_value(ui->gui->title_text_properties_combo));
   //comment text properties
   g_key_file_set_integer(my_key_file, "split", "comment_text_properties",
-      ch_get_active_value(comment_text_properties_combo));
+      ch_get_active_value(ui->gui->comment_text_properties_combo));
 
   //genre
-  gchar *genre_value = ch_get_active_str_value(genre_combo);
+  gchar *genre_value = ch_get_active_str_value(ui->gui->genre_combo);
   if (genre_value != NULL)
   {
     g_key_file_set_string(my_key_file, "split", "genre", genre_value);
   }
 
-  const gchar *comment = gtk_entry_get_text(GTK_ENTRY(comment_tag_entry));
+  const gchar *comment = gtk_entry_get_text(GTK_ENTRY(ui->gui->comment_tag_entry));
   if (comment != NULL)
   {
     g_key_file_set_string(my_key_file, "split", "default_comment_tag", comment);
   }
 
-  const gchar *regex_text = gtk_entry_get_text(GTK_ENTRY(regex_entry));
+  const gchar *regex_text = gtk_entry_get_text(GTK_ENTRY(ui->gui->regex_entry));
   if (regex_text != NULL)
   {
     g_key_file_set_string(my_key_file, "split", "tags_from_filename_regex", regex_text);
   }
 
-  const gchar *test_regex_fname = gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry));
-  if (test_regex_fname_entry != NULL)
+  const gchar *test_regex_fname = gtk_entry_get_text(GTK_ENTRY(ui->gui->test_regex_fname_entry));
+  if (test_regex_fname != NULL)
   {
     g_key_file_set_string(my_key_file, "split", "test_regex_fname", test_regex_fname);
   }
 
   //tags version
   g_key_file_set_integer(my_key_file, "split", "tags_version",
-      get_checked_tags_version_radio_box());
+      get_checked_tags_version_radio_box(ui->gui));
 
   //type of split: split mode
-  g_key_file_set_integer(my_key_file, "split", "split_mode",
-      selected_split_mode);
+  g_key_file_set_integer(my_key_file, "split", "split_mode", ui->status->selected_split_mode);
   //time value
   g_key_file_set_integer(my_key_file, "split", "split_mode_time_value",
-      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_time)));
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_time)));
   //type of split: file mode
-  g_key_file_set_integer(my_key_file, "split", "file_mode",
-      split_file_mode);
+  g_key_file_set_integer(my_key_file, "split", "file_mode", split_file_mode);
   //equal time tracks value
   g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks",
-      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_equal_tracks)));
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_equal_tracks)));
 
   const ui_main_window *main_win = ui_get_main_window_infos(ui);
-  g_key_file_set_integer(my_key_file, "gui", "root_x_position", 
-      main_win->root_x_pos);
-  g_key_file_set_integer(my_key_file, "gui", "root_y_position", 
-      main_win->root_y_pos);
-  g_key_file_set_integer(my_key_file, "gui", "width", 
-      main_win->width);
-  g_key_file_set_integer(my_key_file, "gui", "height", 
-      main_win->height);
+  g_key_file_set_integer(my_key_file, "gui", "root_x_position", main_win->root_x_pos);
+  g_key_file_set_integer(my_key_file, "gui", "root_y_position", main_win->root_y_pos);
+  g_key_file_set_integer(my_key_file, "gui", "width", main_win->width);
+  g_key_file_set_integer(my_key_file, "gui", "height", main_win->height);
 
   const char *browser_directory = ui_get_browser_directory(ui);
   if (browser_directory != NULL)
