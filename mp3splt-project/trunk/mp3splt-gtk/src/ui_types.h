@@ -1,5 +1,4 @@
 /**********************************************************
- *                for mp3/ogg splitting without decoding
  * mp3splt-gtk -- utility based on mp3splt,
  *
  *
@@ -108,6 +107,16 @@ typedef struct {
   gdouble douglas_peucker_thresholds_defaults[5];
 
   gint debug_is_active;
+
+  gfloat silence_threshold_value;
+  gfloat silence_offset_value;
+  gint silence_number_of_tracks;
+  gfloat silence_minimum_length;
+  gfloat silence_minimum_track_length;
+  gboolean silence_remove_silence_between_tracks;
+
+  gint split_files;
+  gint split_table_number;
 } ui_infos;
 
 typedef struct {
@@ -217,8 +226,8 @@ typedef struct {
   GtkWidget *all_spinner_silence_minimum;
   GtkWidget *all_spinner_track_minimum;
   GtkWidget *all_spinner_silence_offset;
-  GtkWidget *all_spinner_silence_threshold;
   GtkWidget *all_spinner_trim_silence_threshold;
+  GtkWidget *all_spinner_silence_threshold;
   GtkWidget *all_silence_remove_silence;
 
   GtkWidget *all_threshold_label;
@@ -247,6 +256,33 @@ typedef struct {
 
   GtkWidget *output_entry;
   GtkWidget *output_label;
+
+  GtkTreeView *split_tree;
+
+  GtkWidget *handle_box;
+
+  GtkWidget *spinner_minutes;
+  GtkWidget *spinner_seconds;
+  GtkWidget *spinner_hundr_secs;
+
+  GtkWidget *scan_silence_button;
+  GtkWidget *scan_trim_silence_button;
+
+  GtkWidget *spinner_silence_number_tracks;
+  GtkWidget *spinner_silence_minimum;
+  GtkWidget *spinner_silence_minimum_track;
+  GtkWidget *spinner_silence_offset;
+  GtkWidget *spinner_silence_threshold;
+  GtkWidget *silence_remove_silence;
+
+  GtkWidget *split_handle_box;
+
+  GtkWidget *queue_files_button;
+  GtkWidget *remove_file_button;
+  GtkWidget *remove_all_files_button;
+
+  GtkWidget *freedb_handle_box;
+  GtkWidget *freedb_entry;
 } gui_state;
 
 typedef struct {
@@ -305,6 +341,8 @@ typedef struct {
   gint file_browsed;
   gint preview_row;
   gint selected_split_mode;
+
+  gboolean freedb_lock;
 } gui_status;
 
 typedef struct {

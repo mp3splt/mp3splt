@@ -62,7 +62,6 @@ extern GtkWidget *da;
 
 extern gint selected_id;
 extern splt_freedb_results *search_results;
-extern gchar **split_files;
 extern gint max_split_files;
 
 extern ui_state *ui;
@@ -275,9 +274,8 @@ static void about_window(GtkWidget *widget, ui_state *ui)
                                  PACKAGE_NAME" : Copyright © 2005-2011 Alexandru"
                                  " Munteanu \n mp3splt : Copyright © 2002-2005 Matteo Trotta");
 
-  gchar *b1 = NULL;
   gchar b3[100] = { '\0' };
-  b1 = (gchar *)_("using");
+  gchar *b1 = _("using");
   gchar library_version[20] = { '\0' };
   mp3splt_get_version(library_version);
   g_snprintf(b3, 100, "-%s-\n%s libmp3splt %s",
@@ -382,7 +380,7 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
 {
   if (ui->status->splitting)
   {
-    put_status_message((gchar *)_(" error: split in progress..."), ui->gui);
+    put_status_message(_(" error: split in progress..."), ui->gui);
     return;
   }
 
@@ -414,7 +412,7 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
   }
   else
   {
-    put_status_message((gchar *)_(" error: no file selected"), ui->gui);
+    put_status_message(_(" error: no file selected"), ui->gui);
   }
 }
 
@@ -866,7 +864,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
    
   /* player page */
   GtkWidget *player_vbox = wh_vbox_new();
-  GtkWidget *notebook_label = gtk_label_new((gchar *)_("Player"));
+  GtkWidget *notebook_label = gtk_label_new(_("Player"));
 
   ui->gui->player_box = create_player_control_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->player_box, FALSE, FALSE, 0);
@@ -879,59 +877,50 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   /* splitpoints page */
   GtkWidget *splitpoints_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(splitpoints_vbox), 0);
-  gtk_box_pack_start(GTK_BOX(splitpoints_vbox), 
-      create_splitpoints_frame(ui), TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(splitpoints_vbox), create_splitpoints_frame(ui), TRUE, TRUE, 0);
  
-  notebook_label = gtk_label_new((gchar *)_("Splitpoints"));
+  notebook_label = gtk_label_new(_("Splitpoints"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), splitpoints_vbox, notebook_label);
 
   /* split files page */
   GtkWidget *split_files_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(split_files_vbox), 0);
   
-  GtkWidget *frame = (GtkWidget *)create_split_files();
+  GtkWidget *frame = create_split_files_frame(ui);
   gtk_box_pack_start(GTK_BOX(split_files_vbox), frame, TRUE, TRUE, 0);
 
-  notebook_label = gtk_label_new((gchar *)_("Split files"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           split_files_vbox,
-                           (GtkWidget *)notebook_label);
+  notebook_label = gtk_label_new(_("Split files"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), split_files_vbox, notebook_label);
   
   /* freedb page */
-  GtkWidget *freedb_vbox;
-  freedb_vbox = wh_vbox_new();
+  GtkWidget *freedb_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(freedb_vbox), 0);
   
-  frame = (GtkWidget *)create_freedb_frame();
+  frame = create_freedb_frame(ui);
   gtk_box_pack_start(GTK_BOX(freedb_vbox), frame, TRUE, TRUE, 0);
 
-  notebook_label = gtk_label_new((gchar *)_("FreeDB"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           freedb_vbox,
-                           (GtkWidget *)notebook_label);
+  notebook_label = gtk_label_new(_("FreeDB"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), freedb_vbox, notebook_label);
   
   /* special split page */
   GtkWidget *special_split_vbox;
   special_split_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (special_split_vbox), 0);
-  frame = (GtkWidget *)create_special_split_page();
+  frame = create_special_split_page();
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
   notebook_label = gtk_label_new(_("Type of split"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), 
-                           special_split_vbox,
-                           (GtkWidget *)notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
   /* preferences page */
   GtkWidget *preferences_vbox;
   preferences_vbox = wh_vbox_new();
   gtk_container_set_border_width (GTK_CONTAINER (preferences_vbox), 0);
 
-  frame = (GtkWidget *)create_choose_preferences();
+  frame = create_choose_preferences();
   gtk_box_pack_start(GTK_BOX(preferences_vbox), frame, TRUE, TRUE, 0);
 
-  notebook_label = gtk_label_new((gchar *)_("Preferences"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), preferences_vbox,
-                           (GtkWidget *)notebook_label);
+  notebook_label = gtk_label_new(_("Preferences"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), preferences_vbox, notebook_label);
  
   /* progress bar */
   GtkProgressBar *percent_progress_bar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
@@ -1021,7 +1010,7 @@ void create_application(ui_state *ui)
 
   \param The error number from the library.
  */
-void print_status_bar_confirmation(gint error)
+void print_status_bar_confirmation(gint error, gui_state *gui)
 {
   char *error_from_library = mp3splt_get_strerror(ui->mp3splt_state, error);
   if (error_from_library == NULL) { return; }

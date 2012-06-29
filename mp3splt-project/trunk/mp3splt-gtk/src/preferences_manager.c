@@ -151,70 +151,58 @@ gchar *get_preferences_filename()
 {
   gchar mp3splt_dir[14] = ".mp3splt-gtk";
 
-  //used to see if the directory exists
-  struct stat buffer;
-  gint         status;
-  
-  //home directory
   gchar *home_dir = g_strdup(g_get_home_dir());
- 
+
 #ifdef __WIN32__
   //manage c:\ because the gtk dir returns us "c:\"
   //and the normal directories without the "\"
   if (home_dir[strlen(home_dir)-1] == '\\')
-    {
-      home_dir[strlen(home_dir)-1] = '\0';
-    }
+  {
+    home_dir[strlen(home_dir)-1] = '\0';
+  }
 #endif
 
-  gchar *mp3splt_dir_with_path = NULL;
-  gint malloc_number = strlen(home_dir) + strlen(mp3splt_dir)+2;
-  mp3splt_dir_with_path = malloc(malloc_number *sizeof(gchar *));
+  gint malloc_number = strlen(home_dir) + strlen(mp3splt_dir) + 2;
+  gchar *mp3splt_dir_with_path = malloc(malloc_number * sizeof(gchar));
   g_snprintf(mp3splt_dir_with_path, malloc_number,
-             "%s%s%s", home_dir,G_DIR_SEPARATOR_S,
-             mp3splt_dir);
+      "%s%s%s", home_dir, G_DIR_SEPARATOR_S, mp3splt_dir);
 
   if (home_dir)
   {
     g_free(home_dir);
     home_dir = NULL;
   }
-  
-  gint fname_malloc_number = strlen(mp3splt_dir_with_path)+30;
-  gchar *filename = malloc(fname_malloc_number*sizeof(gchar *));
-  
-  status = g_stat(mp3splt_dir_with_path, &buffer);
+
+  gint fname_malloc_number = strlen(mp3splt_dir_with_path) + 30;
+  gchar *filename = malloc(fname_malloc_number * sizeof(gchar));
+
+  struct stat buffer;
+  gint status = g_stat(mp3splt_dir_with_path, &buffer);
   //if it is not a directory
   if ((status != 0) || (S_ISDIR(buffer.st_mode) == 0))
   {
     //if its a file
     if ((status == 0) && (S_ISREG(buffer.st_mode) != 0))
     {
-      gchar *backup_file;
-      malloc_number = strlen(mp3splt_dir_with_path)+5;
-      backup_file = malloc(malloc_number*sizeof(gchar *));
-      snprintf(backup_file,malloc_number,
-          "%s%s", mp3splt_dir_with_path,".bak");
-      //we rename the file
-      g_rename(mp3splt_dir_with_path,
-          backup_file);
+      gint malloc_number = strlen(mp3splt_dir_with_path) + 5;
+      gchar *backup_file = malloc(malloc_number * sizeof(gchar));
+      snprintf(backup_file, malloc_number, "%s%s", mp3splt_dir_with_path,".bak");
+      g_rename(mp3splt_dir_with_path, backup_file);
       g_free(backup_file);
     }
+
     //if it is not a directory and not a file, we suppose we can
     //create the directory
 #ifdef __WIN32__      
     g_mkdir(mp3splt_dir_with_path, 0775);
 #else
-    g_mkdir(mp3splt_dir_with_path,
-        S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    g_mkdir(mp3splt_dir_with_path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 #endif
   }
-  
-  //the config filename+path
-  g_snprintf(filename,fname_malloc_number,
-             "%s%smp3splt-gtk_prefs",
-             mp3splt_dir_with_path, G_DIR_SEPARATOR_S);
-  
+
+  g_snprintf(filename,fname_malloc_number, "%s%smp3splt-gtk_prefs",
+      mp3splt_dir_with_path, G_DIR_SEPARATOR_S);
+
   if (mp3splt_dir_with_path)
   {
     g_free(mp3splt_dir_with_path);

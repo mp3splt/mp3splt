@@ -39,12 +39,6 @@
 
 #include "freedb_tab.h"
 
-//handle box for detaching window
-GtkWidget *freedb_handle_box;
-
-//filename entry
-GtkWidget *freedb_entry;
-
 GtkTreeView *freedb_tree;
 gint freedb_table_number = 0;
 
@@ -63,8 +57,6 @@ gint selected_id = -1;
 GtkWidget *freedb_add_button;
 GtkWidget *freedb_search_button;
 GtkWidget *spinner;
-
-gboolean executed_lock = FALSE;
 
 extern ui_state *ui;
 
@@ -149,21 +141,21 @@ void create_freedb_columns(GtkTreeView *freedb_tree)
 }
 
 //!when closing the new window after detaching
-void close_freedb_popup_window_event(GtkWidget *window, gpointer data)
+static void close_freedb_popup_window_event(GtkWidget *window, ui_state *ui)
 {
   GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(window));
-  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(freedb_handle_box));
+  gtk_widget_reparent(GTK_WIDGET(window_child), ui->gui->freedb_handle_box);
   gtk_widget_destroy(window);
 }
 
 //!when we detach the handle
-void handle_freedb_detached_event(GtkHandleBox *handlebox, GtkWidget *widget,
-    gpointer data)
+static void handle_freedb_detached_event(GtkHandleBox *handlebox, GtkWidget *widget,
+    ui_state *ui)
 {
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
   g_signal_connect(G_OBJECT(window), "delete_event",
-      G_CALLBACK(close_freedb_popup_window_event), NULL);
+      G_CALLBACK(close_freedb_popup_window_event), ui);
   gtk_widget_show(GTK_WIDGET(window));
 }
 
@@ -206,18 +198,18 @@ gpointer freedb_search(gpointer data)
 {
   enter_threads();
 
-  executed_lock = TRUE;
+  ui->status->freedb_lock = TRUE;
  
   gtk_widget_hide(freedb_search_button);
   gtk_widget_show(spinner);
   gtk_spinner_start(GTK_SPINNER(spinner));
 
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
-  gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), FALSE);
+  gtk_editable_set_editable(GTK_EDITABLE(ui->gui->freedb_entry), FALSE);
  
   put_status_message(_("please wait... contacting tracktype.org"), ui->gui);
  
-  const gchar *freedb_search = gtk_entry_get_text(GTK_ENTRY(freedb_entry));
+  const gchar *freedb_search = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
   
   exit_threads();
   
@@ -227,7 +219,7 @@ gpointer freedb_search(gpointer data)
  
   enter_threads();
 
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
  
   remove_all_freedb_rows();
  
@@ -263,9 +255,9 @@ gpointer freedb_search(gpointer data)
   gtk_spinner_stop(GTK_SPINNER(spinner));
   gtk_widget_hide(spinner);
 
-  gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), TRUE);
+  gtk_editable_set_editable(GTK_EDITABLE(ui->gui->freedb_entry), TRUE);
  
-  executed_lock = FALSE;
+  ui->status->freedb_lock = FALSE;
 
   exit_threads();
 
@@ -273,27 +265,27 @@ gpointer freedb_search(gpointer data)
 }
 
 //! Start a thread for the freedb search
-void freedb_search_start_thread()
+static void freedb_search_start_thread(ui_state *ui)
 {
-  if (executed_lock) { return; }
+  if (ui->status->freedb_lock) { return; }
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
   create_thread(freedb_search, ui, TRUE, NULL);
 }
 
 //!we push the search button
-void freedb_search_button_event(GtkWidget *widget, gpointer   data)
+void freedb_search_button_event(GtkWidget *widget, ui_state *ui)
 {
-  freedb_search_start_thread();
+  freedb_search_start_thread(ui);
 }
 
 /*!search entry backspace event
 
 when we push Enter for the search entry
 */
-void freedb_entry_activate_event(GtkEntry *entry, gpointer data)
+static void freedb_entry_activate_event(GtkEntry *entry, ui_state *ui)
 {
-  freedb_search_start_thread();
+  freedb_search_start_thread(ui);
 }
 
 void write_freedbfile(int *err)
@@ -327,7 +319,7 @@ void write_freedbfile(int *err)
                                    "\0",-1);
 
   enter_threads();
-  print_status_bar_confirmation(*err);
+  print_status_bar_confirmation(*err, ui->gui);
   exit_threads();
 
   if(get_checked_output_radio_box())
@@ -342,7 +334,7 @@ void write_freedbfile(int *err)
     gint error = SPLT_OUTPUT_FORMAT_OK;
     mp3splt_set_oformat(ui->mp3splt_state, data, &error);
     enter_threads();
-    print_status_bar_confirmation(error);
+    print_status_bar_confirmation(error, ui->gui);
     exit_threads();
   }
 
@@ -378,7 +370,7 @@ void update_splitpoints_from_mp3splt_state()
   const splt_point *points = mp3splt_get_splitpoints(ui->mp3splt_state, &max_splits,&err);
   enter_threads();
 
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
   
   if (max_splits > 0)
   {
@@ -435,10 +427,9 @@ void update_splitpoints_from_mp3splt_state()
 
     g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
 
-    update_minutes_from_spinner(NULL,NULL);
-    update_seconds_from_spinner(NULL,NULL);
-    update_hundr_secs_from_spinner(NULL,NULL);
-    update_add_button(ui);
+    update_minutes_from_spinner(NULL, ui);
+    update_seconds_from_spinner(NULL, ui);
+    update_hundr_secs_from_spinner(NULL, ui);
   }
 }
 
@@ -455,7 +446,7 @@ gpointer put_freedb_splitpoints(gpointer data)
   enter_threads();
  
   update_splitpoints_from_mp3splt_state();
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
   gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
 
   exit_threads();
@@ -471,39 +462,38 @@ void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 }
 
 //!creates the freedb box
-GtkWidget *create_freedb_frame()
+GtkWidget *create_freedb_frame(ui_state *ui)
 {
   GtkWidget *freedb_hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(freedb_hbox), 0);
  
   /* handle box for detaching */
-  freedb_handle_box = gtk_handle_box_new();
+  GtkWidget *freedb_handle_box = gtk_handle_box_new();
+  ui->gui->freedb_handle_box = freedb_handle_box;
   gtk_container_add(GTK_CONTAINER(freedb_handle_box), GTK_WIDGET(freedb_hbox));
-
   g_signal_connect(freedb_handle_box, "child-detached",
-                   G_CALLBACK(handle_freedb_detached_event),
-                   NULL);
+      G_CALLBACK(handle_freedb_detached_event), ui);
   
   GtkWidget *freedb_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(freedb_hbox), freedb_vbox, TRUE, TRUE, 4);
   
   /* search box */
   GtkWidget *search_hbox = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(freedb_vbox), search_hbox , FALSE, FALSE, 2);
+  gtk_box_pack_start(GTK_BOX(freedb_vbox), search_hbox, FALSE, FALSE, 2);
 
   GtkWidget *label = gtk_label_new(_("Search tracktype.org:"));
   gtk_box_pack_start(GTK_BOX(search_hbox), label, FALSE, FALSE, 0);
 
-  freedb_entry = gtk_entry_new();
+  GtkWidget *freedb_entry = gtk_entry_new();
+  ui->gui->freedb_entry = freedb_entry;
   gtk_editable_set_editable(GTK_EDITABLE(freedb_entry), TRUE);
   gtk_box_pack_start(GTK_BOX(search_hbox), freedb_entry, TRUE, TRUE, 6);
-
   g_signal_connect(G_OBJECT(freedb_entry), "activate",
-      G_CALLBACK(freedb_entry_activate_event), NULL);
+      G_CALLBACK(freedb_entry_activate_event), ui);
 
   freedb_search_button = wh_create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
   g_signal_connect(G_OBJECT(freedb_search_button), "clicked",
-      G_CALLBACK(freedb_search_button_event), NULL);
+      G_CALLBACK(freedb_search_button_event), ui);
   gtk_box_pack_start(GTK_BOX(search_hbox), freedb_search_button, FALSE, FALSE, 0);
  
   spinner = gtk_spinner_new();

@@ -296,7 +296,7 @@ static GtkWidget *create_split_mode()
 
   //trim using silence detection
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(split_mode_radio_button), (gchar *)_("Trim using silence detection"));
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Trim using silence detection"));
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
       G_CALLBACK(split_mode_changed), NULL);
@@ -323,7 +323,7 @@ static GtkWidget *create_split_mode()
 
   //silence split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(split_mode_radio_button), (gchar *)_("Silence - split with silence detection"));
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Silence - split with silence detection"));
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
       G_CALLBACK(split_mode_changed), NULL);

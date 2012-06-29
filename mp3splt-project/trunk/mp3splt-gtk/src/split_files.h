@@ -40,27 +40,12 @@
 
 #include "all_includes.h"
 
-GtkTreeView *create_split_files_tree();
-void create_split_columns (GtkTreeView *split_tree);
-void remove_all_split_rows ();
-guchar *get_real_naame(guchar *filename);
+void remove_all_split_rows(ui_state *ui);
 void add_split_row(const gchar *name);
-void remove_split_selected_row();
-void queue_files_button_event( GtkWidget *widget,
-                               gpointer   data );
-void remove_file_button_event(GtkWidget *widget,
-                              gpointer data);
 void split_tree_row_activated(GtkTreeView *split_tree,
     GtkTreePath *arg1, GtkTreeViewColumn *arg2, ui_state *ui);
-void split_selection_changed(GtkTreeSelection *selection,
-                                gpointer data);
-void close_split_popup_window_event( GtkWidget *window,
-                                        gpointer data );
-void handle_split_detached_event (GtkHandleBox *handlebox,
-                                     GtkWidget *widget,
-                                     gpointer data);
-GtkWidget *create_split_files();
-gchar *get_filename_from_split_files(gint number);
+GtkWidget *create_split_files_frame(ui_state *ui);
+gchar *get_filename_from_split_files(gint number, gui_state *gui);
 
 #endif
 

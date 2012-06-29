@@ -209,7 +209,7 @@ static gpointer detect_silence(ui_state *ui)
 
   compute_douglas_peucker_filters(ui);
 
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
 
   refresh_drawing_area(ui->gui);
@@ -2916,8 +2916,8 @@ static void playlist_selection_changed(GtkTreeSelection *selec, ui_state *ui)
 }
 
 //!event for the remove file button
-void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
-{ 
+static void playlist_remove_file_button_event(GtkWidget *widget, ui_state *ui)
+{
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->playlist_tree);
   GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->playlist_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
@@ -2956,7 +2956,7 @@ void playlist_remove_file_button_event(GtkWidget *widget, gpointer data)
 }
 
 //!event for the remove file button
-void playlist_remove_all_files_button_event(GtkWidget *widget, gpointer data)
+static void playlist_remove_all_files_button_event(GtkWidget *widget, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->playlist_tree);
   
@@ -2982,12 +2982,12 @@ static GtkWidget *create_delete_buttons_hbox(gui_state *gui)
   GtkWidget *hbox = wh_hbox_new();
 
   GtkWidget *playlist_remove_file_button = 
-    wh_create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"),FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"), FALSE);
   ui->gui->playlist_remove_file_button = playlist_remove_file_button;
   gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
   g_signal_connect(G_OBJECT(playlist_remove_file_button), "clicked",
-                   G_CALLBACK(playlist_remove_file_button_event), NULL);
+                   G_CALLBACK(playlist_remove_file_button_event), ui);
  
   GtkWidget *playlist_remove_all_files_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
@@ -2995,7 +2995,7 @@ static GtkWidget *create_delete_buttons_hbox(gui_state *gui)
   gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);
   g_signal_connect(G_OBJECT(playlist_remove_all_files_button), "clicked",
-                   G_CALLBACK(playlist_remove_all_files_button_event), NULL);
+                   G_CALLBACK(playlist_remove_all_files_button_event), ui);
 
   return hbox;
 }

@@ -42,23 +42,6 @@
 //if we have a skippoint or a splitpoint
 gint splitpoint_checked = TRUE;
 
-//special buttons like 'set splitpoints from silence detection
-GtkWidget *scan_silence_button = NULL;
-GtkWidget *scan_trim_silence_button = NULL;
-
-//handle box for detaching window
-GtkWidget *handle_box;
-
-/*!\defgroup{} splitpointview Variables for the splitpoint view
-@{
-*/
-//!The minutes spinner
-GtkWidget *spinner_minutes;
-//!The seconds spinner
-GtkWidget *spinner_seconds;
-//!The hundreths of seconds spinner
-GtkWidget *spinner_hundr_secs;
-
 /*! A bool that helps us catch the case that we add splitpoints during preview
 
 if we add a new splitpoint at the left and we are currently
@@ -66,41 +49,9 @@ previewing, we should increment quick_preview start and end
 */
 gboolean new_left_splitpoint_added = FALSE;
 
-/*! \defgroup silencedetectiongroup silence detection parameters widgets
-@{
-*/
-//!number of tracks parameter
-GtkWidget *spinner_silence_number_tracks = NULL;
-GtkWidget *spinner_silence_minimum = NULL;
-GtkWidget *spinner_silence_minimum_track = NULL;
-//!offset parameter
-GtkWidget *spinner_silence_offset = NULL;
-//!threshold parameter
-GtkWidget *spinner_silence_threshold;
-//!remove silence check button (silence mode parameter
-GtkWidget *silence_remove_silence = NULL;
-// @}
-
-/*!\defgroup silencesplitparameters silence split parameters
-  @{
-*/
-gfloat silence_threshold_value = SPLT_DEFAULT_PARAM_THRESHOLD; 
-gfloat silence_offset_value = SPLT_DEFAULT_PARAM_OFFSET;
-gint silence_number_of_tracks = SPLT_DEFAULT_PARAM_TRACKS;
-gfloat silence_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
-gfloat silence_minimum_track_length = SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH;
-//@}
-gboolean silence_remove_silence_between_tracks = FALSE;
-
-/*!\defgroup SplitOptionGroup options for splitting
-\{
-*/
 extern gchar *filename_path_of_split;
-extern gchar *filename_path_of_split;
-//@}
 
 extern ui_state *ui;
-
 
 //! checks if splitpoints exists in the table and is different from current_split
 static gboolean check_if_splitpoint_does_not_exists(gint minutes, gint seconds, gint hundr_secs, 
@@ -168,23 +119,23 @@ void update_add_button(ui_state *ui)
 }
 
 //!updates the minutes from the spinner
-void update_minutes_from_spinner(GtkWidget *widget, gpointer data)
+void update_minutes_from_spinner(GtkWidget *widget, ui_state *ui)
 {
-  ui->status->spin_mins = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_minutes));
+  ui->status->spin_mins = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_minutes));
   update_add_button(ui);
 }
 
 //!updates the seconds from the spinner
-void update_seconds_from_spinner(GtkWidget *widget, gpointer data)
+void update_seconds_from_spinner(GtkWidget *widget, ui_state *ui)
 {
-  ui->status->spin_secs = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_seconds));
+  ui->status->spin_secs = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_seconds));
   update_add_button(ui);
 }
 
 //!updates the hundredth of seconds for the spinner
-void update_hundr_secs_from_spinner(GtkWidget *widget, gpointer data)
+void update_hundr_secs_from_spinner(GtkWidget *widget, ui_state *ui)
 {
-  ui->status->spin_hundr_secs = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_hundr_secs));
+  ui->status->spin_hundr_secs = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_hundr_secs));
   update_add_button(ui);
 }
 
@@ -339,7 +290,7 @@ gint get_first_splitpoint_selected(gui_state *gui)
 }
 
 //!row selection event
-void row_selection_event()
+static void row_selection_event(ui_state *ui)
 {
   gtk_widget_set_sensitive(ui->gui->remove_row_button, TRUE); 
 }
@@ -560,37 +511,28 @@ void copy_filename_to_current_description(const gchar *fname, ui_state *ui)
 static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, ui_state *ui)
 {
   GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
-  GtkTreeIter iter;
-
-  gint i;
-
-  Split_point old_point;
-  Split_point new_point;
-  
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
-  
-  //get the column number
-  gint col = GPOINTER_TO_INT(g_object_get_data (G_OBJECT(cell), "col"));
 
-  //get iter number
-  gtk_tree_model_get_iter (model, &iter, path);
-  //get the indice
-  i = gtk_tree_path_get_indices (path)[0];
-  old_point = g_array_index(ui->splitpoints, Split_point, i);
+  gint col = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cell), "col"));
+
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(model, &iter, path);
+  gint i = gtk_tree_path_get_indices (path)[0];
+  Split_point old_point = g_array_index(ui->splitpoints, Split_point, i);
+
+  Split_point new_point;
   new_point.checked = old_point.checked;
-  
-  //check which column
+
   switch (col)
-    {
+  {
     case COL_DESCRIPTION:
       update_current_description(new_text, i, ui);
-      
+
       //put the new content in the list
-      gtk_list_store_set (GTK_LIST_STORE (model), 
-                          &iter,
-                          col, ui->status->current_description,
-                          -1);
-     
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+          col, ui->status->current_description,
+          -1);
+
       if (gtk_toggle_button_get_active(ui->gui->names_from_filename))
       {
         copy_filename_to_current_description(get_input_filename(ui->gui), ui);
@@ -605,7 +547,7 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
       new_point.mins = old_point.mins;
       new_point.secs = atoi(new_text);
       new_point.hundr_secs = old_point.hundr_secs;
-      
+
       if (new_point.secs < 0)
       {
         new_point.secs = 0;
@@ -614,7 +556,7 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
       {
         new_point.secs = 59;
       }
-      
+
       update_splitpoint(i, new_point, ui);
       break;
       //minutes column
@@ -622,16 +564,16 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
       new_point.mins = atoi(new_text);
       new_point.secs = old_point.secs;
       new_point.hundr_secs = old_point.hundr_secs;
-      
+
       if (new_point.mins < 0)
-        {
-          new_point.mins = 0;
-        }
+      {
+        new_point.mins = 0;
+      }
       if (new_point.mins > INT_MAX/6000)
-        {
-          new_point.mins = INT_MAX/6000;
-        }
-          
+      {
+        new_point.mins = INT_MAX/6000;
+      }
+
       update_splitpoint(i, new_point, ui);
       break;
       //hundreth column
@@ -639,23 +581,23 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
       new_point.mins = old_point.mins;
       new_point.secs = old_point.secs;
       new_point.hundr_secs = atoi(new_text);
-      
+
       if (new_point.hundr_secs < 0)
-        {
-          new_point.hundr_secs = 0;
-        }
+      {
+        new_point.hundr_secs = 0;
+      }
       if (new_point.hundr_secs > 99)
-        {
-          new_point.hundr_secs = 99;
-        }
-          
+      {
+        new_point.hundr_secs = 99;
+      }
+
       update_splitpoint(i, new_point, ui);
       break;
     default:
       break;
-    }
-  //free memory
-  gtk_tree_path_free (path);
+  }
+
+  gtk_tree_path_free(path);
 }
 
 void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui)
@@ -894,8 +836,8 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 
   enter_threads();
 
-  gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
-  gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), FALSE);
+  gtk_widget_set_sensitive(ui->gui->scan_silence_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, FALSE);
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   ui->status->filename_to_split = get_input_filename(ui->gui);
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
@@ -946,11 +888,11 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
     update_splitpoints_from_mp3splt_state();
   }
 
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
 
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
-  gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
-  gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
+  gtk_widget_set_sensitive(ui->gui->scan_silence_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, TRUE);
 
   exit_threads();
 
@@ -969,44 +911,47 @@ void detect_silence_and_add_trim_splitpoints_start_thread()
 }
 
 //!update silence parameters when 'widget' changes
-void update_silence_parameters(GtkWidget *widget, gpointer data)
+static void update_silence_parameters(GtkWidget *widget, ui_state *ui)
 {
-  silence_threshold_value = 
-    gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_threshold));
-  if (spinner_silence_offset != NULL)
+  ui_infos *infos = ui->infos;
+  gui_state *gui = ui->gui;
+
+  infos->silence_threshold_value = 
+    gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_threshold));
+  if (gui->spinner_silence_offset != NULL)
   {
-    silence_offset_value =
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_offset));
+    infos->silence_offset_value =
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_offset));
   }
-  if (spinner_silence_number_tracks != NULL)
+  if (gui->spinner_silence_number_tracks != NULL)
   {
-    silence_number_of_tracks =
-      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner_silence_number_tracks));
+    infos->silence_number_of_tracks =
+      gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_silence_number_tracks));
   }
-  if (spinner_silence_minimum != NULL)
+  if (gui->spinner_silence_minimum != NULL)
   {
-    silence_minimum_length = 
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_minimum));
+    infos->silence_minimum_length = 
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_minimum));
   }
-  if (spinner_silence_minimum_track != NULL)
+  if (gui->spinner_silence_minimum_track != NULL)
   {
-    silence_minimum_track_length = 
-      gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_silence_minimum_track));
+    infos->silence_minimum_track_length = 
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_silence_minimum_track));
   }
-  if (silence_remove_silence != NULL)
+  if (gui->silence_remove_silence != NULL)
   {
-    silence_remove_silence_between_tracks = 
-      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(silence_remove_silence));
+    infos->silence_remove_silence_between_tracks = 
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->silence_remove_silence));
   }
 }
 
 //!action when checking the 'remove silence' button
-void silence_remove_silence_checked(GtkToggleButton *button, gpointer data)
+static void silence_remove_silence_checked(GtkToggleButton *button, ui_state *ui)
 {
-  update_silence_parameters(GTK_WIDGET(button), data);
+  update_silence_parameters(GTK_WIDGET(button), ui);
 }
 
-void create_trim_silence_window(GtkWidget *button, gpointer *data)
+static void create_trim_silence_window(GtkWidget *button, ui_state *ui)
 {
   GtkWidget *silence_detection_window =
     gtk_dialog_new_with_buttons(_("Set trim splitpoints using silence detection"),
@@ -1021,51 +966,38 @@ void create_trim_silence_window(GtkWidget *button, gpointer *data)
   gtk_widget_set_size_request(silence_detection_window, 300, 90);
 
   GtkWidget *general_inside_vbox = wh_vbox_new();
-  //add silence parameters
+
   GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(general_inside_vbox), horiz_fake, FALSE, FALSE, 10);
-  
+
   //vertical parameter box
   GtkWidget *param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
-  
+
   //horizontal box fake for threshold level
   horiz_fake = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(param_vbox), 
-      horiz_fake, FALSE, FALSE, 0);
-  
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+
   //threshold level
   GtkWidget *label = gtk_label_new(_("Threshold level (dB):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  
-  //adjustement for the threshold spinner
-  GtkAdjustment *adj = (GtkAdjustment *)
-    gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
-  //the threshold spinner
-  spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
-  //set not editable
-  gtk_box_pack_start(GTK_BOX(horiz_fake), 
-      spinner_silence_threshold, FALSE, FALSE, 6);
-  
-  //we set the default parameters for the silence split
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_threshold),
-      silence_threshold_value);
 
-  //add actions when changing the values
+  //adjustement for the threshold spinner
+  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  GtkWidget *spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
+  ui->gui->spinner_silence_threshold = spinner_silence_threshold;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_threshold, FALSE, FALSE, 6);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_threshold), ui->infos->silence_threshold_value);
   g_signal_connect(G_OBJECT(spinner_silence_threshold), "value_changed",
-      G_CALLBACK(update_silence_parameters), NULL);
+      G_CALLBACK(update_silence_parameters), ui);
 
   gtk_widget_show_all(general_inside_vbox);
   gtk_container_add(GTK_CONTAINER(
-        gtk_dialog_get_content_area(GTK_DIALOG(silence_detection_window))),
-      general_inside_vbox);
+        gtk_dialog_get_content_area(GTK_DIALOG(silence_detection_window))), general_inside_vbox);
 
-  //result of the dialog window
   gint result = gtk_dialog_run(GTK_DIALOG(silence_detection_window));
 
-  //we set the silence parameters
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
-      silence_threshold_value);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui->infos->silence_threshold_value);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
 
@@ -1078,11 +1010,14 @@ void create_trim_silence_window(GtkWidget *button, gpointer *data)
 }
 
 //!event for clicking the 'detect silence and add splitpoints' button
-void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointer *data)
+static void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_state *ui)
 {
+  ui_infos *infos = ui->infos;
+  gui_state *gui = ui->gui;
+
   GtkWidget *silence_detection_window =
     gtk_dialog_new_with_buttons(_("Set splitpoints from silence detection"),
-        GTK_WINDOW(ui->gui->window),
+        GTK_WINDOW(gui->window),
         GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
         GTK_STOCK_OK,
         GTK_RESPONSE_YES,
@@ -1091,148 +1026,131 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
         NULL);
 
   GtkWidget *general_inside_vbox = wh_vbox_new();
-  //add silence parameters
   GtkWidget *horiz_fake = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(general_inside_vbox), 
-                      horiz_fake, FALSE, FALSE, 10);
-  
+  gtk_box_pack_start(GTK_BOX(general_inside_vbox), horiz_fake, FALSE, FALSE, 10);
+
   //vertical parameter box
   GtkWidget *param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
-  
+
   //horizontal box fake for threshold level
   horiz_fake = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(param_vbox), 
-      horiz_fake, FALSE, FALSE, 0);
-  
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+
   //threshold level
   GtkWidget *label = gtk_label_new(_("Threshold level (dB):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  
+
   //adjustement for the threshold spinner
-  GtkAdjustment *adj = (GtkAdjustment *)
-    gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
-  //the threshold spinner
-  spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
-  //set not editable
-  gtk_box_pack_start(GTK_BOX(horiz_fake), 
-      spinner_silence_threshold, FALSE, FALSE, 6);
-  
+  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
+  GtkWidget *spinner_silence_threshold = gtk_spin_button_new(adj, 0.5, 2);
+  gui->spinner_silence_threshold = spinner_silence_threshold;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_threshold, FALSE, FALSE, 6);
+
   //horizontal box fake for the offset level
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
-  
+
   //offset level
   label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence,"
         "and 1 the end):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  
+
   //adjustement for the offset spinner
   adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
-  //the offset spinner
-  spinner_silence_offset = gtk_spin_button_new (adj, 0.05, 2);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_offset,
-      FALSE, FALSE, 6);
-  
-  //horizontal box fake for the number of tracks
-  horiz_fake = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(param_vbox), 
-      horiz_fake, FALSE, FALSE, 0);
-  
-  //number of tracks level
-  label = gtk_label_new(_("Number of tracks (0 means all tracks):"));
-  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  
+  GtkWidget *spinner_silence_offset = gtk_spin_button_new(adj, 0.05, 2);
+  gui->spinner_silence_offset = spinner_silence_offset;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_offset, FALSE, FALSE, 6);
+
   //number of tracks
-  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
-  //the number of tracks spinner
-  spinner_silence_number_tracks = gtk_spin_button_new (adj, 1, 0);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_number_tracks,
-      FALSE, FALSE, 6);
- 
-  //horizontal box fake for minimum length parameter
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
-  
-  //the minimum length parameter
+
+  label = gtk_label_new(_("Number of tracks (0 means all tracks):"));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
+
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 1, 10.0, 0.0);
+  GtkWidget *spinner_silence_number_tracks = gtk_spin_button_new(adj, 1, 0);
+  gui->spinner_silence_number_tracks = spinner_silence_number_tracks;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_number_tracks, FALSE, FALSE, 6);
+
+  //minimum length
+  horiz_fake = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+
   label = gtk_label_new(_("Minimum silence length (seconds):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  
-  //minimum silence length (seconds)
+
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
-  //the minimum silence length in seconds
-  spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum,
-      FALSE, FALSE, 6);
-  
+  GtkWidget *spinner_silence_minimum = gtk_spin_button_new(adj, 1, 2);
+  gui->spinner_silence_minimum = spinner_silence_minimum;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum, FALSE, FALSE, 6);
+
   //the minimum track length parameter
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
- 
+
   label = gtk_label_new(_("Minimum track length (seconds):"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
-  
+
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
-  spinner_silence_minimum_track = gtk_spin_button_new(adj, 1, 2);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum_track,
-      FALSE, FALSE, 6);
- 
+  GtkWidget *spinner_silence_minimum_track = gtk_spin_button_new(adj, 1, 2);
+  gui->spinner_silence_minimum_track = spinner_silence_minimum_track;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_silence_minimum_track, FALSE, FALSE, 6);
+
   //remove silence (rm): allows you to remove the silence between
   //tracks
-  silence_remove_silence =
-    gtk_check_button_new_with_mnemonic(_("_Remove silence between tracks"));
-  gtk_box_pack_start(GTK_BOX(param_vbox), silence_remove_silence,
-      FALSE, FALSE, 0);
+  GtkWidget *silence_remove_silence = gtk_check_button_new_with_mnemonic(_("_Remove silence between tracks"));
+  gui->silence_remove_silence = silence_remove_silence;
+  gtk_box_pack_start(GTK_BOX(param_vbox), silence_remove_silence, FALSE, FALSE, 0);
 
   //we set the default parameters for the silence split
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_threshold),
-      silence_threshold_value);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_offset),
-                            silence_offset_value);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_number_tracks),
-                            silence_number_of_tracks);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_minimum),
-                            silence_minimum_length);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_threshold), 
+      infos->silence_threshold_value);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_offset), 
+      infos->silence_offset_value);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_number_tracks), 
+      infos->silence_number_of_tracks);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_minimum), 
+      infos->silence_minimum_length);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_silence_minimum_track),
-                            silence_minimum_track_length);
+      infos->silence_minimum_track_length);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(silence_remove_silence),
-      silence_remove_silence_between_tracks);
+      infos->silence_remove_silence_between_tracks);
 
   //add actions when changing the values
   g_signal_connect(G_OBJECT(spinner_silence_threshold), "value_changed",
-      G_CALLBACK(update_silence_parameters), NULL);
+      G_CALLBACK(update_silence_parameters), ui);
   g_signal_connect(G_OBJECT(spinner_silence_offset), "value_changed",
-      G_CALLBACK(update_silence_parameters), NULL);
+      G_CALLBACK(update_silence_parameters), ui);
   g_signal_connect(G_OBJECT(spinner_silence_number_tracks), "value_changed",
-      G_CALLBACK(update_silence_parameters), NULL);
+      G_CALLBACK(update_silence_parameters), ui);
   g_signal_connect(G_OBJECT(spinner_silence_minimum), "value_changed",
-      G_CALLBACK(update_silence_parameters), NULL);
+      G_CALLBACK(update_silence_parameters), ui);
   g_signal_connect(G_OBJECT(spinner_silence_minimum_track), "value_changed",
-      G_CALLBACK(update_silence_parameters), NULL);
+      G_CALLBACK(update_silence_parameters), ui);
   g_signal_connect(G_OBJECT(silence_remove_silence), "toggled",
-      G_CALLBACK(silence_remove_silence_checked), NULL);
+      G_CALLBACK(silence_remove_silence_checked), ui);
 
   gtk_widget_show_all(general_inside_vbox);
   gtk_container_add(GTK_CONTAINER(
         gtk_dialog_get_content_area(GTK_DIALOG(silence_detection_window))),
       general_inside_vbox);
 
-  //result of the dialog window
   gint result = gtk_dialog_run(GTK_DIALOG(silence_detection_window));
 
-  //we set the silence parameters
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
-      silence_threshold_value);
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET,
-      silence_offset_value);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS,
-      silence_number_of_tracks);
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH,
-      silence_minimum_length);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, 
+      infos->silence_threshold_value);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, 
+      infos->silence_offset_value);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, 
+      infos->silence_number_of_tracks);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, 
+      infos->silence_minimum_length);
   mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
-      silence_minimum_track_length);
+      infos->silence_minimum_track_length);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
-      silence_remove_silence_between_tracks);
+      infos->silence_remove_silence_between_tracks);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
 
@@ -1294,33 +1212,31 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
 }
 
 //!creates and and initialise a spinner
-GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, 
-                               gint min, gint max, 
-                               gchar *label_text, gint type)
+static GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, gint min, gint max, 
+    gchar *label_text, gint type)
 {
   GtkWidget *spinner_box = wh_vbox_new(); 
   GtkWidget *label = gtk_label_new(label_text);
   gtk_box_pack_start(GTK_BOX(spinner_box), label, TRUE, FALSE, 0);
 
-  GtkAdjustment *adj =
-    (GtkAdjustment *) gtk_adjustment_new(0.0, min, max, 1.0, 10.0, 0.0);
+  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, min, max, 1.0, 10.0, 0.0);
   GtkWidget *spinner = gtk_spin_button_new(adj, 0, 0);
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(spinner), TRUE);
 
   if (type == 0)
   {
     g_signal_connect(G_OBJECT(spinner), "value_changed",
-        G_CALLBACK(update_minutes_from_spinner), NULL);
+        G_CALLBACK(update_minutes_from_spinner), ui);
   }
   else if (type == 1)
   {
     g_signal_connect(G_OBJECT(spinner), "value_changed",
-        G_CALLBACK(update_seconds_from_spinner), NULL);
+        G_CALLBACK(update_seconds_from_spinner), ui);
   }
   else
   {
     g_signal_connect(G_OBJECT(spinner), "value_changed",
-        G_CALLBACK(update_hundr_secs_from_spinner), NULL);
+        G_CALLBACK(update_hundr_secs_from_spinner), ui);
   }
 
   gtk_box_pack_start(GTK_BOX(spinner_box), spinner, TRUE, FALSE, 0);
@@ -1335,23 +1251,12 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   GtkWidget *hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
-  /* minutes and seconds spinners */
-  spinner_minutes = create_init_spinner(hbox, 
-      0, INT_MAX/6000,
-      _("Minutes:"),
-      //0 means spinner minutes
-      0);
-  spinner_seconds = create_init_spinner(hbox, 
-      0, 59,
-      _("Seconds:"), 
-      //1 means spinner seconds
-      1);
-  //hundredth spinner
-  spinner_hundr_secs = create_init_spinner(hbox, 
-      0, 99,
-      _("Hundredths:"), 
-      //2 means spinner hundredth
-      2);
+  //0 means spinner minutes
+  ui->gui->spinner_minutes = create_init_spinner(hbox, 0, INT_MAX/6000, _("Minutes:"), 0);
+  //1 means spinner seconds
+  ui->gui->spinner_seconds = create_init_spinner(hbox, 0, 59, _("Seconds:"), 1);
+  //2 means spinner hundredth
+  ui->gui->spinner_hundr_secs = create_init_spinner(hbox, 0, 99, _("Hundredths:"), 2);
 
   /* add button */
   GtkWidget *add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
@@ -1387,27 +1292,29 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
 }
 
 //!special buttons like 'set silence from silence detection'
-static GtkWidget *create_init_special_buttons()
+static GtkWidget *create_init_special_buttons(ui_state *ui)
 {
   GtkWidget *hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
   /* set splitpoints from trim silence detection */
-  scan_trim_silence_button =
+  GtkWidget *scan_trim_silence_button =
     wh_create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
-  gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
+  ui->gui->scan_trim_silence_button = scan_trim_silence_button;
+  gtk_widget_set_sensitive(scan_trim_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
-      G_CALLBACK(create_trim_silence_window), NULL);
+      G_CALLBACK(create_trim_silence_window), ui);
   gtk_box_pack_start(GTK_BOX(hbox), scan_trim_silence_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(scan_trim_silence_button,
       _("Set trim splitpoints using silence detection"));
 
   /* set splitpoints from silence detection */
-  scan_silence_button =
+  GtkWidget *scan_silence_button =
     wh_create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
-  gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
+  ui->gui->scan_silence_button = scan_silence_button;
+  gtk_widget_set_sensitive(scan_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
-      G_CALLBACK(create_detect_silence_and_add_splitpoints_window), NULL);
+      G_CALLBACK(create_detect_silence_and_add_splitpoints_window), ui);
   gtk_box_pack_start(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(scan_silence_button,
       _("Set splitpoints from silence detection"));
@@ -1489,50 +1396,39 @@ static gpointer split_preview(ui_state *ui)
 
   put_options_from_preferences(ui);
 
-  //we cut the preferences filename path
-  //to find the ~/.mp3splt directory
-  gchar *fname_path = get_preferences_filename();
-  fname_path[strlen(fname_path)-18] = '\0';
-
-  remove_all_split_rows();  
+  remove_all_split_rows(ui);
   ui->status->filename_to_split = get_input_filename(ui->gui);
 
   exit_threads();
 
-  mp3splt_set_path_of_split(ui->mp3splt_state,fname_path);
+  gchar *fname_path = get_preferences_filename();
+  fname_path[strlen(fname_path) - 18] = '\0';
+  mp3splt_set_path_of_split(ui->mp3splt_state, fname_path);
+  if (fname_path) { g_free(fname_path); }
+
   mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
   gint confirmation = mp3splt_split(ui->mp3splt_state);
 
   enter_threads();
 
-  print_status_bar_confirmation(confirmation);
+  print_status_bar_confirmation(confirmation, ui->gui);
 
-  gchar *split_file = get_filename_from_split_files(1);
-  if (split_file != NULL)
+  gchar *split_file = get_filename_from_split_files(1, ui->gui);
+  if (split_file != NULL && confirmation > 0)
   {
-    if (confirmation > 0)
-    {
-      connect_button_event(ui->gui->connect_button, ui);
+    connect_button_event(ui->gui->connect_button, ui);
 
-      change_current_filename(split_file, ui);
-      g_free(split_file);
-      split_file = NULL;
+    change_current_filename(split_file, ui);
+    g_free(split_file);
 
-      //starts playing, 0 means start playing
-      connect_to_player_with_song(0, ui);
-    }
+    //starts playing, 0 means start playing
+    connect_to_player_with_song(0, ui);
   }
 
   if (confirmation > 0)
   {
     gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
     gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
-  }
-
-  if (fname_path)
-  {
-    g_free(fname_path);
-    fname_path = NULL;
   }
 
   exit_threads();
@@ -1590,6 +1486,7 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
   gint index = gtk_tree_path_get_indices (path)[0];
   Split_point new_point;
   Split_point old_point;
+
   //put new 'checked' value to splitpoint
   old_point = g_array_index(ui->splitpoints, Split_point, index);
   new_point.mins = old_point.mins;
@@ -1603,8 +1500,10 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
 }
 
 //!creates columns for the tree
-void create_columns(GtkTreeView *tree_view)
+static void create_columns(gui_state *gui)
 {
+  GtkTreeView *tree_view = gui->tree_view;
+
   GtkCellRendererText *renderer;
   GtkCellRendererPixbuf *renderer_pix;
   GtkCellRendererToggle *renderer_toggle;
@@ -1617,14 +1516,13 @@ void create_columns(GtkTreeView *tree_view)
   GtkTreeViewColumn *column_seconds;
   GtkTreeViewColumn *column_preview;
   GtkTreeViewColumn *column_split_preview;
- 
+
   /* Check point / skip point */
   renderer_toggle = GTK_CELL_RENDERER_TOGGLE(gtk_cell_renderer_toggle_new());
   g_signal_connect(renderer_toggle, "toggled", G_CALLBACK(toggled_splitpoint_event), ui);
   g_object_set_data(G_OBJECT(renderer_toggle), "col", GINT_TO_POINTER(COL_CHECK));
   column_check = gtk_tree_view_column_new_with_attributes
-    (_("Keep"), GTK_CELL_RENDERER(renderer_toggle),
-     "active", COL_CHECK, NULL);
+    (_("Keep"), GTK_CELL_RENDERER(renderer_toggle), "active", COL_CHECK, NULL);
 
   /* description */
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
@@ -1632,26 +1530,23 @@ void create_columns(GtkTreeView *tree_view)
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_DESCRIPTION));
   column_description = gtk_tree_view_column_new_with_attributes
-    (_("Filename"), GTK_CELL_RENDERER(renderer),
-     "text", COL_DESCRIPTION, NULL);
-  
+    (_("Filename"), GTK_CELL_RENDERER(renderer), "text", COL_DESCRIPTION, NULL);
+
   /* seconds */
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited_event), ui);
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_SECONDS));
   column_seconds = gtk_tree_view_column_new_with_attributes
-    (_("Secs"), GTK_CELL_RENDERER(renderer),
-     "text", COL_SECONDS, NULL);
-  
+    (_("Secs"), GTK_CELL_RENDERER(renderer), "text", COL_SECONDS, NULL);
+
   /* minutes */
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited_event), ui);
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_MINUTES));
   column_minutes = gtk_tree_view_column_new_with_attributes 
-    (_("Mins"), GTK_CELL_RENDERER(renderer),
-     "text", COL_MINUTES, NULL);
+    (_("Mins"), GTK_CELL_RENDERER(renderer), "text", COL_MINUTES, NULL);
 
   /* hundr secs */
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
@@ -1659,92 +1554,55 @@ void create_columns(GtkTreeView *tree_view)
   g_object_set(renderer, "editable", TRUE, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_HUNDR_SECS));
   column_hundr_secs = gtk_tree_view_column_new_with_attributes 
-    (_("Hundr"), GTK_CELL_RENDERER(renderer),
-     "text", COL_HUNDR_SECS, NULL);
-  
+    (_("Hundr"), GTK_CELL_RENDERER(renderer), "text", COL_HUNDR_SECS, NULL);
+
   /* Length column */
   //renderer creation
   renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  g_object_set(G_OBJECT (renderer), "xalign", 1.0, NULL);
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(COL_NUMBER));
-  //middle alignment
-  g_object_set (G_OBJECT (renderer), "xalign", 1.0, NULL);
   column_number = gtk_tree_view_column_new_with_attributes 
-    (_("Length"), GTK_CELL_RENDERER(renderer),
-     "text", COL_NUMBER, NULL);
-  
+    (_("Length"), GTK_CELL_RENDERER(renderer), "text", COL_NUMBER, NULL);
+
   /* column preview */
-  //renderer creation
   renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
-  //set the icon
   g_object_set(renderer_pix,"stock-id",GTK_STOCK_MEDIA_PLAY,
-               "stock-size",GTK_ICON_SIZE_MENU,NULL);
-  //create the column
+      "stock-size",GTK_ICON_SIZE_MENU,NULL);
   column_preview = gtk_tree_view_column_new_with_attributes 
-    (_("LiveP"), GTK_CELL_RENDERER(renderer_pix), 
-     "pixbuf",COL_PREVIEW, NULL);
+    (_("LiveP"), GTK_CELL_RENDERER(renderer_pix), "pixbuf",COL_PREVIEW, NULL);
   g_object_set_data(G_OBJECT(column_preview), "col", GINT_TO_POINTER(COL_PREVIEW));
-  
+
   /* split preview */
   renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
-  //set the icon
   g_object_set(renderer_pix,"stock-id",GTK_STOCK_MEDIA_PLAY,
-               "stock-size",GTK_ICON_SIZE_MENU,NULL);
-  //create the column
+      "stock-size",GTK_ICON_SIZE_MENU,NULL);
   column_split_preview = gtk_tree_view_column_new_with_attributes 
-    (_("SplitP"), GTK_CELL_RENDERER(renderer_pix), 
-     "pixbuf",COL_SPLIT_PREVIEW, NULL);
+    (_("SplitP"), GTK_CELL_RENDERER(renderer_pix), "pixbuf",COL_SPLIT_PREVIEW, NULL);
   g_object_set_data(G_OBJECT(column_split_preview), "col", GINT_TO_POINTER(COL_SPLIT_PREVIEW));
-  
-  //appends columns to the list of columns of tree_view
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-      GTK_TREE_VIEW_COLUMN(column_check),COL_DESCRIPTION);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (column_description),COL_DESCRIPTION);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (column_minutes),COL_MINUTES);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (column_seconds),COL_SECONDS);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (column_hundr_secs),COL_HUNDR_SECS);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (column_number),COL_NUMBER);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (column_preview),COL_PREVIEW);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (tree_view),
-                               GTK_TREE_VIEW_COLUMN (column_split_preview),
-                               COL_SPLIT_PREVIEW);
-  //middle alignment of the column name
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_check), 0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_description), 0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_minutes), 0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_seconds), 0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_hundr_secs), 0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_number), 0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_preview), 0.5);
-  gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(column_split_preview), 0.5);
 
-  //set the auto resizing for columns
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_check),
-      GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width(GTK_TREE_VIEW_COLUMN(column_check), 70);
-  /*gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_description),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_minutes),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_seconds),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_hundr_secs),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_number),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_preview),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN(column_split_preview),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);*/
-  
-  //sets resize 
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_check, COL_CHECK);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_description, COL_DESCRIPTION);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_minutes, COL_MINUTES);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_seconds, COL_SECONDS);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_hundr_secs, COL_HUNDR_SECS);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_number, COL_NUMBER);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_preview, COL_PREVIEW);
+  gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_split_preview, COL_SPLIT_PREVIEW);
+
+  gtk_tree_view_column_set_alignment(column_check, 0.5);
+  gtk_tree_view_column_set_alignment(column_description, 0.5);
+  gtk_tree_view_column_set_alignment(column_minutes, 0.5);
+  gtk_tree_view_column_set_alignment(column_seconds, 0.5);
+  gtk_tree_view_column_set_alignment(column_hundr_secs, 0.5);
+  gtk_tree_view_column_set_alignment(column_number, 0.5);
+  gtk_tree_view_column_set_alignment(column_preview, 0.5);
+  gtk_tree_view_column_set_alignment(column_split_preview, 0.5);
+
+  gtk_tree_view_column_set_sizing(column_check, GTK_TREE_VIEW_COLUMN_FIXED);
+  gtk_tree_view_column_set_fixed_width(column_check, 70);
+
   gtk_tree_view_column_set_resizable(column_description, TRUE);
-  //set column reorderable
+
   gtk_tree_view_column_set_reorderable(column_check, TRUE);
   gtk_tree_view_column_set_reorderable(column_description, TRUE);
   gtk_tree_view_column_set_reorderable(column_minutes, TRUE);
@@ -1753,31 +1611,25 @@ void create_columns(GtkTreeView *tree_view)
   gtk_tree_view_column_set_reorderable(column_number, TRUE);
   gtk_tree_view_column_set_reorderable(column_preview, TRUE);
   gtk_tree_view_column_set_reorderable(column_split_preview, TRUE);
-  //set column expand
-  gtk_tree_view_column_set_expand (column_description, TRUE);
+
+  gtk_tree_view_column_set_expand(column_description, TRUE);
 }
 
 //!Issued when closing the new window after detaching
-void close_popup_window_event( GtkWidget *window,
-                               gpointer data )
+static void close_popup_window_event(GtkWidget *window, ui_state *ui)
 {
-  GtkWidget *window_child;
-
-  window_child = gtk_bin_get_child(GTK_BIN(window));
-
-  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(handle_box));
-
+  GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(window));
+  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(ui->gui->handle_box));
   gtk_widget_destroy(window);
 }
 
 //!Issued when we detach the handle
-void handle_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, gpointer data)
+static void handle_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, ui_state *ui)
 {
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
 
-  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(close_popup_window_event), NULL);
-
+  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(close_popup_window_event), ui);
   gtk_widget_show(GTK_WIDGET(window));
 }
 
@@ -1790,7 +1642,7 @@ static void create_tree_view(gui_state *gui)
   g_signal_connect(tree_view, "row-activated", G_CALLBACK(preview_song), ui);
 
   GtkTreeSelection *selection = gtk_tree_view_get_selection(tree_view);
-  g_signal_connect(selection, "changed", G_CALLBACK(row_selection_event), NULL);
+  g_signal_connect(selection, "changed", G_CALLBACK(row_selection_event), ui);
 }
 
 /*!creates the choose splitpoints frame
@@ -1800,16 +1652,18 @@ buttons
 */
 GtkWidget *create_splitpoints_frame(ui_state *ui)
 {
-  create_tree_view(ui->gui);
+  gui_state *gui = ui->gui;
+  create_tree_view(gui);
 
   /* choose splitpoins vbox */
   GtkWidget *choose_splitpoints_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(choose_splitpoints_vbox), 0);
 
   /* handle box for detaching */
-  handle_box = gtk_handle_box_new();
-  gtk_container_add(GTK_CONTAINER (handle_box), GTK_WIDGET(choose_splitpoints_vbox));
-  g_signal_connect(handle_box, "child-detached", G_CALLBACK(handle_detached_event), NULL);
+  GtkWidget *handle_box = gtk_handle_box_new();
+  gui->handle_box = handle_box;
+  gtk_container_add(GTK_CONTAINER(handle_box), GTK_WIDGET(choose_splitpoints_vbox));
+  g_signal_connect(handle_box, "child-detached", G_CALLBACK(handle_detached_event), ui);
 
   /* spinner buttons hbox */
   GtkWidget *spinners_buttons_hbox = create_init_spinners_buttons(ui);
@@ -1820,20 +1674,19 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), tree_hbox, TRUE, TRUE, 0);
 
   /* scrolled window for the tree */
-  GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-      GTK_POLICY_AUTOMATIC,
-      GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+      GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(tree_hbox), scrolled_window, TRUE, TRUE, 0);
 
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->tree_view);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->tree_view);
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
-  create_columns(ui->gui->tree_view);
-  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(ui->gui->tree_view));
+  create_columns(gui);
+  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(gui->tree_view));
 
   /* special buttons like 'set silence from silence detection' */
-  GtkWidget *special_buttons_hbox = create_init_special_buttons();
+  GtkWidget *special_buttons_hbox = create_init_special_buttons(ui);
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), special_buttons_hbox, FALSE, FALSE, 2);
 
   return handle_box;
