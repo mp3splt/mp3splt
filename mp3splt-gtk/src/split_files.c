@@ -53,7 +53,6 @@ GtkWidget *remove_file_button;
 //!remove file button
 GtkWidget *remove_all_files_button;
 
-extern gint selected_player;
 extern gint split_files;
 
 extern ui_state *ui;
@@ -160,7 +159,7 @@ void queue_files_button_event(GtkWidget *widget, gpointer data)
 {
   if (!ui->status->timer_active)
   {
-    connect_button_event(NULL,NULL);
+    connect_button_event(ui->gui->connect_button, ui);
   }
 
   GList *file_list = NULL;
@@ -311,8 +310,8 @@ void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
 
   gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
 
-  connect_button_event (NULL, NULL);
-  change_current_filename(filename);
+  connect_button_event(ui->gui->connect_button, ui);
+  change_current_filename(filename, ui);
   connect_to_player_with_song(0, ui);
 
   gtk_tree_path_free(path);

@@ -39,7 +39,6 @@
 
 #include "mp3splt-gtk.h"
 
-extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 
 //EXTERNAL OPTIONS
@@ -70,12 +69,6 @@ extern GtkWidget *silence_remove_silence;
 
 //spinner time
 extern GtkWidget *spinner_time;
-
-//player
-extern gint selected_player;
-
-//stop button to cancel the split
-extern GtkWidget *cancel_button;
 
 //the output entry
 extern GtkWidget *output_entry;
@@ -147,10 +140,10 @@ gpointer split_it(gpointer data)
       put_splitpoints_in_mp3splt_state(ui->mp3splt_state);
     }
 
-    print_processing_file(filename_to_split);
+    print_processing_file(ui->status->filename_to_split);
     exit_threads();
 
-    mp3splt_set_filename_to_split(ui->mp3splt_state, filename_to_split);
+    mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
     confirmation = mp3splt_split(ui->mp3splt_state);
   }
   else
@@ -231,7 +224,7 @@ gpointer split_it(gpointer data)
   print_status_bar_confirmation(confirmation);
   
   //see the cancel button
-  gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), FALSE);
+  gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
   
   if (ui->status->quit_main_program)
   {
@@ -251,16 +244,9 @@ gpointer split_it(gpointer data)
   return NULL;
 }
 
-GThread *create_thread(GThreadFunc func, gpointer data,
-		gboolean joinable, GError **error)
+GThread *create_thread(GThreadFunc func, gpointer data, gboolean joinable, GError **error)
 {
-/*#ifdef __WIN32__
-	func(data);
-	return NULL;
-	return g_thread_create(func, data, joinable, error);
-#else*/
-	return g_thread_create(func, data, joinable, error);
-//#endif
+  return g_thread_create(func, data, joinable, error);
 }
 
 void enter_threads()
@@ -307,7 +293,7 @@ static void sigint_handler(gint sig)
 #ifndef __WIN32__
 static void sigpipe_handler(gint sig)
 {
-  if (player_is_running() && selected_player == PLAYER_SNACKAMP)
+  if (player_is_running() && ui->infos->selected_player == PLAYER_SNACKAMP)
   {
     disconnect_snackamp();
   }

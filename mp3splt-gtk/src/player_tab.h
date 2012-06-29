@@ -62,27 +62,12 @@ void check_update_down_progress_bar(ui_state *ui);
 void set_preview_active_if_needed();
 void cancel_quick_preview_all(gui_status *status);
 void cancel_quick_preview(gui_status *status);
-gint mytimer(gpointer data);
-void reset_inactive_progress_bar();
-void reset_inactive_volume_button();
-void clear_data_player();
 void enable_player_buttons();
-void disable_player_buttons();
-void connect_change_buttons();
-void disconnect_change_buttons();
 void connect_to_player_with_song(gint i, ui_state *ui);
-void connect_button_event(GtkWidget *widget, gpointer data);
-void check_stream();
-void disconnect_button_event(GtkWidget *widget, gpointer data);
-void stop_event(GtkWidget *widget, gpointer data);
-void pause_event(GtkWidget *widget, gpointer data);
-void next_button_event (GtkWidget *widget, gpointer data);
+void connect_button_event(GtkWidget *widget, ui_state *ui);
+void disconnect_button_event(GtkWidget *widget, ui_state *ui);
+void pause_event(GtkWidget *widget, ui_state *ui);
 void refresh_drawing_area(gui_state *gui);
-void print_about_the_song();
-void print_player_filename();
-void print_all_song_infos();
-void print_song_time_elapsed();
-void change_volume_button();
 void change_volume_event(GtkScaleButton *volume_button, gdouble value, gpointer data);
 
 gboolean volume_button_unclick_event (GtkWidget *widget,
@@ -124,18 +109,16 @@ void file_chooser_ok_event(gchar *fname);
 void close_file_popup_window_event( GtkWidget *window,
                                     gpointer data );
 
-void change_current_filename(const gchar *fname);
+void change_current_filename(const gchar *fname, ui_state *ui);
 GtkWidget *create_player_playlist_frame();
 
-void hide_connect_button();
-void show_connect_button();
-void hide_disconnect_button();
-void show_disconnect_button();
+void hide_connect_button(gui_state *gui);
+void show_connect_button(gui_state *gui);
 
 void close_playlist_popup_window_event(GtkWidget *window, gpointer data);
 void restart_player_timer();
 
-void compute_douglas_peucker_filters(GtkWidget *widget, gpointer data);
+void compute_douglas_peucker_filters(ui_state *ui);
 
 gint draw_silence_wave(gint left_mark, gint right_mark, 
     gint interpolation_text_x, gint interpolation_text_y,

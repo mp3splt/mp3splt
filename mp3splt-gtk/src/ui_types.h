@@ -101,6 +101,11 @@ typedef struct {
 
   GPtrArray *filtered_points_presence;
   gint silence_wave_number_of_points_threshold;
+
+  gint selected_player;
+
+  gdouble douglas_peucker_thresholds[5];
+  gdouble douglas_peucker_thresholds_defaults[5];
 } ui_infos;
 
 typedef struct {
@@ -177,6 +182,15 @@ typedef struct {
   GtkWidget *player_add_button;
   GtkWidget *go_beg_button;
   GtkWidget *go_end_button;
+
+  GtkWidget *connect_button;
+  GtkWidget *disconnect_button;
+
+  GtkWidget *silence_wave_check_button;
+
+  GtkWidget *cancel_button;
+
+  GtkWidget *volume_button;
 } gui_state;
 
 typedef struct {
@@ -217,6 +231,23 @@ typedef struct {
   gchar current_description[255];
 
   gint preview_start_position;
+
+  gint timeout_id;
+
+  gint currently_scanning_for_silence;
+
+  gchar *filename_to_split;
+
+  gint douglas_callback_counter;
+
+  gboolean stream;
+
+  gint only_press_pause;
+
+  gboolean change_volume;
+  gboolean on_the_volume_button;
+
+  gint file_browsed;
 } gui_status;
 
 typedef struct {

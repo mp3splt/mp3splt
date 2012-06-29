@@ -159,7 +159,6 @@ possibly returns an error
 gint disconnect_snackamp()
 {
   connected = FALSE;
-  //we close the socket
 #ifdef __WIN32__
   return closesocket(socket_id);
 #else
@@ -243,80 +242,66 @@ gboolean snackamp_is_connected()
 //!gets informations about the song
 void snackamp_get_song_infos(gchar *total_infos)
 {
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_info\n");
+  result = cut_begin_end(result);
+
+  //stereo/mono
+  char *a = strstr(result, " ");
+  if (a == NULL)
+  {
+    g_snprintf(total_infos, 512, "disconnected");
+    g_free(result);
+    return;
+  }
+
   gchar rate_str[32] = { '\0' };
   gchar freq_str[32] = { '\0' };
   gchar nch_str[32] = { '\0' };
   gchar *ptr = NULL;
-  
-  gchar *result;
-  result = snackamp_socket_send_message("xmms_remote_get_info\n");
-  result = cut_begin_end(result);
-  
-  //we get the stereo/mono
-  char *a = strstr(result, " ");
-  if (a != NULL)
-    {
-      if (strstr(a+1, " ") != NULL)
-        ptr = strstr(a+1, " ")+1;
-  
-      gint i = 0;
-      //we get the rate
-      while (result[i] != ' ' 
-             && isdigit(result[i])
-             && i<16)
-        {
-          g_sprintf(rate_str,
-                    "%s%c",rate_str,result[i]);
-          i++;
-        }
-      
-      //we cut the beginning
-      if (strchr(result, ' ') != NULL)
-        {
-          gchar *test;
-          test = strchr(result,' ');
-          g_snprintf(result, strlen(result),
-                     "%s",test+1);
-        }
-      
-      //we get the freq
-      i = 0;
-      while (result[i] != ' ' 
-             && isdigit(result[i])
-             && i<16)
-        {
-          g_sprintf(freq_str,
-                    "%s%c",freq_str,result[i]);
-          i++;
-        }
-  
-      //channels int
-      gint nch;
-      nch = atoi(ptr);
-      
-      if (nch == 2)
-      {
-        snprintf(nch_str, 32, "%s", _("stereo"));
-      }
-      else
-      {
-        snprintf(nch_str, 32, "%s", _("mono"));
-      }
-      
-      gchar *_Kbps = _("Kbps");
-      gchar *_Khz = _("Khz");
-      
-      g_snprintf(total_infos, 512,
-                 "%s %s     %s %s    %s", 
-                 rate_str,_Kbps,freq_str, _Khz,nch_str);
-    }
+
+  if (strstr(a+1, " ") != NULL)
+  {
+    ptr = strstr(a+1, " ") + 1;
+  }
+
+  //rate
+  gint i = 0;
+  while (result[i] != ' ' && isdigit(result[i]) && i < 16)
+  {
+    g_sprintf(rate_str, "%s%c",rate_str,result[i]);
+    i++;
+  }
+
+  //cut the beginning
+  if (strchr(result, ' ') != NULL)
+  {
+    gchar *test = strchr(result,' ');
+    g_snprintf(result, strlen(result), "%s",test+1);
+  }
+
+  //freq
+  i = 0;
+  while (result[i] != ' ' && isdigit(result[i]) && i < 16)
+  {
+    g_sprintf(freq_str, "%s%c",freq_str,result[i]);
+    i++;
+  }
+
+  //channels int
+  gint nch = atoi(ptr);
+  if (nch == 2)
+  {
+    snprintf(nch_str, 32, "%s", _("stereo"));
+  }
   else
-    {
-      g_snprintf(total_infos, 512,
-                 "disconnected");
-    }
-  
-  //free memory
+  {
+    snprintf(nch_str, 32, "%s", _("mono"));
+  }
+
+  gchar *_Kbps = _("Kbps");
+  gchar *_Khz = _("Khz");
+  g_snprintf(total_infos, 512, "%s %s     %s %s    %s", rate_str, _Kbps, freq_str, _Khz, nch_str);
+
   g_free(result);
 }
 
@@ -326,17 +311,13 @@ The result of this query must be freed after use.
 */
 gchar *snackamp_get_filename()
 {
-  //we get the current song position
-  gchar *result;  
   gint playlist_pos = snackamp_get_playlist_pos();
   
   //we get the current file
   gchar temp[100];
-  g_snprintf(temp, 100,
-             "%s %d\n",
-             "xmms_remote_get_playlist_file",playlist_pos);
-  
-  result = snackamp_socket_send_message(temp);
+  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_get_playlist_file", playlist_pos);
+ 
+  gchar *result = snackamp_socket_send_message(temp);
   result = cut_begin_end(result);
 
   return result;
@@ -379,14 +360,12 @@ The return value must be g_free'd after use.
 */
 gchar *snackamp_get_title_song()
 {
-  gchar *result;
   gint playlist_pos = snackamp_get_playlist_pos();
   
-  //we get the current file
   gchar temp[100];
-  g_snprintf(temp, 100,"%s %d\n",
-             "xmms_remote_get_playlist_title",playlist_pos);
-  result = snackamp_socket_send_message(temp);
+  g_snprintf(temp, 100,"%s %d\n", "xmms_remote_get_playlist_title",playlist_pos);
+
+  gchar *result = snackamp_socket_send_message(temp);
   result = cut_begin_end(result);
   
   return result;
@@ -515,8 +494,7 @@ gint snackamp_is_running()
 //!pause a song
 void snackamp_pause()
 {
-  gchar *result;
-  result = snackamp_socket_send_message("xmms_remote_pause\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_pause\n");
   g_free(result);
 }
 

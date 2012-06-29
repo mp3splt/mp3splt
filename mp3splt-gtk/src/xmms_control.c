@@ -53,20 +53,13 @@ static DBusGConnection *dbus_connection = NULL;
 //!Acquires informations about the song
 void myxmms_get_song_infos(gchar *total_infos)
 {
-  //the frequency
-  gint freq;
-  //rate kb/s
-  gint rate;
-  //number of channels (mono/stereo)
-  gint nch;
+  gint freq, rate, nch;
+  audacious_remote_get_info(dbus_proxy, &rate, &freq, &nch);
   
   gchar rate_str[32] = { '\0' };
   gchar freq_str[32] = { '\0' };
   gchar nch_str[32] = { '\0' };
-  
-  //infos about the song
-  audacious_remote_get_info(dbus_proxy, &rate, &freq, &nch);
-  
+
   g_snprintf(rate_str,32, "%d", rate/1000);
   g_snprintf(freq_str,32, "%d", freq/1000);
   
@@ -84,14 +77,11 @@ void myxmms_get_song_infos(gchar *total_infos)
 
   if (rate != 0)
   {
-    g_snprintf(total_infos,512,
-               "%s %s     %s %s    %s", 
-               rate_str,_Kbps,freq_str, _Khz,nch_str);
+    g_snprintf(total_infos,512, "%s %s     %s %s    %s", rate_str,_Kbps,freq_str, _Khz,nch_str);
+    return;
   }
-  else 
-  {
-    total_infos[0] = '\0';
-  }
+
+  total_infos[0] = '\0';
 }
 
 /*!returns the filename
@@ -100,19 +90,11 @@ The filename is allocated by this function and must be g_free'ed after use.
 */
 gchar *myxmms_get_filename()
 {
-  gchar *fname;
-  
-  //position of the song in the playlist
-  gint playlist_position;
-  
-  playlist_position = audacious_remote_get_playlist_pos(dbus_proxy);
-  
-  fname = audacious_remote_get_playlist_file(dbus_proxy, playlist_position);
+  gint playlist_position = audacious_remote_get_playlist_pos(dbus_proxy);
+  gchar *fname = audacious_remote_get_playlist_file(dbus_proxy, playlist_position);
 
-  //erase file:// and replace %20 with spaces
-  gchar *fname2 = g_filename_from_uri(fname,NULL,NULL);
+  gchar *fname2 = g_filename_from_uri(fname, NULL, NULL);
   g_free(fname);
-  fname = NULL;
 
   return fname2;
 }
@@ -129,15 +111,8 @@ The filename is allocated by this function and must be g_free'ed after use.
 */
 gchar *myxmms_get_title_song()
 {
-  gchar *title;
-  
-  //position of the song in the playlist
-  gint playlist_position;
-  
-  playlist_position = audacious_remote_get_playlist_pos(dbus_proxy);
-  title = audacious_remote_get_playlist_title(dbus_proxy,playlist_position);
-  
-  return title;
+  gint playlist_position = audacious_remote_get_playlist_pos(dbus_proxy);
+  return audacious_remote_get_playlist_title(dbus_proxy, playlist_position);
 }
 
 //!returns elapsed time

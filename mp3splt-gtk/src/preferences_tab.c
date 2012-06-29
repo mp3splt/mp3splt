@@ -56,9 +56,6 @@ GtkWidget *output_label = NULL;
 //!choose the player box
 GtkWidget *player_combo_box = NULL;
 
-//selected player
-gint selected_player = PLAYER_GSTREAMER;
-
 //!the language radio button
 GtkWidget *radio_button = NULL;
 
@@ -112,16 +109,12 @@ GPtrArray *wave_preview_labels = NULL;
 gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 
 extern gint timeout_value;
-extern gdouble douglas_peucker_thresholds[];
-extern gdouble douglas_peucker_thresholds_defaults[];
 
 extern GtkWidget *queue_files_button;
 extern gint selected_split_mode;
 extern gint split_file_mode;
 extern GtkWidget *spinner_time;
 extern GtkWidget *spinner_equal_tracks;
-
-extern gint file_browsed;
 
 static GtkWidget *create_extract_tags_from_filename_options_box();
 static GtkWidget *create_test_regex_table();
@@ -413,7 +406,7 @@ void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_
     splitpoints_from_filename = TRUE;
   }
 
-  if (splitpoints_from_filename == TRUE && file_browsed == TRUE)
+  if (splitpoints_from_filename == TRUE && ui->status->file_browsed == TRUE)
   {
     copy_filename_to_current_description(get_input_filename(ui->gui), ui);
   }
@@ -614,18 +607,17 @@ GtkWidget *create_pref_splitpoints_page()
 //!event when changing the combo box player
 void player_combo_box_event(GtkComboBox *widget, gpointer data)
 {
-  disconnect_button_event(NULL, NULL);
+  disconnect_button_event(ui->gui->disconnect_button, ui);
 
-  selected_player = ch_get_active_value(widget);
-
-  if (selected_player == PLAYER_GSTREAMER)
+  ui->infos->selected_player = ch_get_active_value(widget);
+  if (ui->infos->selected_player == PLAYER_GSTREAMER)
   {
-    hide_connect_button();
+    hide_connect_button(ui->gui);
     gtk_widget_show(ui->gui->playlist_box);
   }
   else
   {
-    show_connect_button();
+    show_connect_button(ui->gui);
     close_playlist_popup_window_event(NULL, NULL);
     gtk_widget_hide(ui->gui->playlist_box);
   }
@@ -688,14 +680,14 @@ void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer
   gint level = 0;
   for (level = 0; level <= 4; level++)
   {
-    gdouble default_value = douglas_peucker_thresholds_defaults[level];
+    gdouble default_value = ui->infos->douglas_peucker_thresholds_defaults[level];
     gdouble final_value = default_value - quality_level;
     if (final_value <= 0)
     {
       final_value = 0.1;
     }
 
-    douglas_peucker_thresholds[level] = final_value;
+    ui->infos->douglas_peucker_thresholds[level] = final_value;
   }
 
   gint default_number_of_points_th = DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD;
@@ -707,7 +699,7 @@ void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer
 
   ui->infos->silence_wave_number_of_points_threshold = number_of_points_th;
 
-  compute_douglas_peucker_filters(NULL, NULL);
+  compute_douglas_peucker_filters(ui);
   refresh_preview_drawing_areas(ui->gui);
 
   save_preferences(NULL, NULL);
@@ -838,7 +830,7 @@ static void update_wave_preview_label_markup(gint index, gint interpolation_leve
   if (interpolation_level >= 0)
   {
     g_snprintf(interpolation_text, 256, _("Wave interpolation level %d with threshold of %.1lf"),
-        interpolation_level + 1, douglas_peucker_thresholds[interpolation_level]);
+        interpolation_level + 1, ui->infos->douglas_peucker_thresholds[interpolation_level]);
   }
   else {
     g_snprintf(interpolation_text, 256, _("No wave interpolation"));

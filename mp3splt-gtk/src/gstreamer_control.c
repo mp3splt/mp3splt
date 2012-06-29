@@ -46,8 +46,6 @@
 
 extern ui_state *ui;
 
-extern int selected_player;
-
 const gchar *song_artist = NULL;
 const gchar *song_title = NULL;
 gint rate = 0;
@@ -189,72 +187,73 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
 //!Gets information about the< song
 void gstreamer_get_song_infos(gchar *total_infos)
 {
-	if (play)
-	{
-		gint freq = 0;
-		gint nch = 0;
+  if (!play)
+  {
+    return;
+  }
 
-		gint number_of_stream = 0;
-		g_object_get(play, "current-audio", &number_of_stream, NULL);
+  gint freq = 0;
+  gint nch = 0;
 
-		//get the stream info
-		GList *streaminfo = NULL;
-		g_object_get(play, "stream-info", &streaminfo, NULL);
+  gint number_of_stream = 0;
+  g_object_get(play, "current-audio", &number_of_stream, NULL);
 
-		gchar rate_str[32] = { '\0' };
-		gchar freq_str[32] = { '\0' };
-		gchar nch_str[32] = { '\0' };
+  //get the stream info
+  GList *streaminfo = NULL;
+  g_object_get(play, "stream-info", &streaminfo, NULL);
 
-		gchar *_Kbps = _("Kbps");
-		gchar *_Khz = _("Khz");
+  gchar rate_str[32] = { '\0' };
+  gchar freq_str[32] = { '\0' };
+  gchar nch_str[32] = { '\0' };
 
-		//get the first element of the stream info list
-		GObject *object = g_list_nth_data(streaminfo, number_of_stream); 
-		if (object)
-		{
-			GstObject *obj = NULL; 
-			g_object_get(G_OBJECT(object), "object", &obj, NULL);
+  gchar *_Kbps = _("Kbps");
+  gchar *_Khz = _("Khz");
 
-			//get the caps from the first element
-			GstCaps *caps = NULL;
-			g_object_get(obj, "caps", &caps, NULL);
-			if (caps)
-			{
-				//get the structure from the caps
-				GstStructure *structure = NULL;
-				structure = gst_caps_get_structure(caps, number_of_stream);
+  GObject *object = g_list_nth_data(streaminfo, number_of_stream); 
+  if (object)
+  {
+    GstObject *obj = NULL; 
+    g_object_get(G_OBJECT(object), "object", &obj, NULL);
 
-				//get the rate and the number of channels from the structure
-				gst_structure_get_int(structure, "rate", &freq);
-				gst_structure_get_int(structure, "channels", &nch);
+    //get the caps from the first element
+    GstCaps *caps = NULL;
+    g_object_get(obj, "caps", &caps, NULL);
+    if (caps)
+    {
+      //get the structure from the caps
+      GstStructure *structure = NULL;
+      structure = gst_caps_get_structure(caps, number_of_stream);
 
-				gst_caps_unref(caps);
-			}
+      //get the rate and the number of channels from the structure
+      gst_structure_get_int(structure, "rate", &freq);
+      gst_structure_get_int(structure, "channels", &nch);
 
-			g_snprintf(rate_str,32, "%d", rate/1000);
-			g_snprintf(freq_str,32, "%d", freq/1000);
+      gst_caps_unref(caps);
+    }
 
-			if (nch >= 2)
-			{
-				snprintf(nch_str, 32, "%s", _("stereo"));
-			}
-			else
-			{
-				snprintf(nch_str, 32, "%s", _("mono"));
-			}
-		}
+    g_snprintf(rate_str, 32, "%d", rate / 1000);
+    g_snprintf(freq_str, 32, "%d", freq / 1000);
 
-		if (rate != 0)
-		{
-			g_snprintf(total_infos,512,
-					"%s %s     %s %s    %s", 
-					rate_str,_Kbps,freq_str, _Khz,nch_str);
-		}
-		else 
-		{
-			total_infos[0] = '\0';
-		}
-	}
+    if (nch >= 2)
+    {
+      snprintf(nch_str, 32, "%s", _("stereo"));
+    }
+    else
+    {
+      snprintf(nch_str, 32, "%s", _("mono"));
+    }
+  }
+
+  if (rate != 0)
+  {
+    g_snprintf(total_infos,512,
+        "%s %s     %s %s    %s", 
+        rate_str,_Kbps,freq_str, _Khz,nch_str);
+  }
+  else 
+  {
+    total_infos[0] = '\0';
+  }
 }
 
 /*! returns the filename
@@ -310,28 +309,26 @@ gchar *gstreamer_get_title_song()
 
     return title;
   }
-  else
+
+  gchar *fname = gstreamer_get_filename();
+  if (fname != NULL)
   {
-    gchar *fname = gstreamer_get_filename();
-    if (fname != NULL)
+    gchar *file = strrchr(fname, G_DIR_SEPARATOR);
+    if (file != NULL)
     {
-      gchar *file = strrchr(fname, G_DIR_SEPARATOR);
-      if (file != NULL)
-      {
-        gchar *alloced_file = strdup(file+1);
-        g_free(fname);
-        fname = NULL;
-        return alloced_file;
-      }
-      else
-      {
-        return fname;
-      }
+      gchar *alloced_file = strdup(file+1);
+      g_free(fname);
+      fname = NULL;
+      return alloced_file;
     }
     else
     {
-      return strdup("-");
+      return fname;
     }
+  }
+  else
+  {
+    return strdup("-");
   }
 }
 
@@ -457,19 +454,16 @@ void gstreamer_set_volume(gint volume)
 //!returns volume
 gint gstreamer_get_volume()
 {
-	if (play)
-	{
-		double volume = 0;
-		//values between 0 and 2
-		//-documentation says values can be between 0 and 10
-		g_object_get(G_OBJECT(play), "volume", &volume, NULL);
+  if (!play)
+  {
+    return 0;
+  }
 
-		return (gint) (volume / 2 * 100);
-	}
-	else
-	{
-		return 0;
-	}
+  //values between 0 and 2
+  //-documentation says values can be between 0 and 10
+  double volume = 0;
+  g_object_get(G_OBJECT(play), "volume", &volume, NULL);
+  return (gint) (volume / 2 * 100);
 }
 
 //!starts gstreamer with songs
@@ -537,19 +531,21 @@ void gstreamer_stop()
 //!pause a song
 void gstreamer_pause()
 {
-	if (play)
-	{
-		GstState state;
-		gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+  if (!play)
+  {
+    return;
+  }
 
-    if (state == GST_STATE_PLAYING)
-    {
-      gst_element_set_state(play, GST_STATE_PAUSED);
-    }
-    else
-    {
-      gstreamer_play();
-    }
+  GstState state;
+  gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
+
+  if (state == GST_STATE_PLAYING)
+  {
+    gst_element_set_state(play, GST_STATE_PAUSED);
+  }
+  else
+  {
+    gstreamer_play();
   }
 }
 
@@ -624,6 +620,7 @@ void gstreamer_quit()
   {
     gst_element_set_state(play, GST_STATE_NULL);
   }
+
   _gstreamer_is_running = FALSE;
 }
 

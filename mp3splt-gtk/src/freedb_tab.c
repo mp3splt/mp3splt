@@ -282,7 +282,7 @@ void freedb_search_start_thread()
   if (executed_lock) { return; }
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
-  create_thread(freedb_search, NULL, TRUE, NULL);
+  create_thread(freedb_search, ui, TRUE, NULL);
 }
 
 //!we push the search button
@@ -477,7 +477,7 @@ gpointer put_freedb_splitpoints(gpointer data)
 void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 {
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
-  create_thread(put_freedb_splitpoints, NULL, TRUE, NULL);
+  create_thread(put_freedb_splitpoints, ui, TRUE, NULL);
 }
 
 //!creates the freedb box

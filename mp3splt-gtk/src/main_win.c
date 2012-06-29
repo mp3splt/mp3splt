@@ -54,11 +54,7 @@ gint preferences_tab = FALSE;
 //the split freedb button
 GtkWidget *split_freedb_button;
 
-//filename and path for the file to split
-gchar *filename_to_split;
 gchar *filename_path_of_split;
-
-GtkWidget *cancel_button = NULL;
 
 extern GtkWidget *mess_history_dialog;
 
@@ -68,7 +64,6 @@ extern gint selected_id;
 extern splt_freedb_results *search_results;
 extern gchar **split_files;
 extern gint max_split_files;
-extern gint selected_player;
 
 extern ui_state *ui;
 
@@ -370,7 +365,7 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
 }
 
 //!event for the cancel button
-void cancel_button_event(GtkWidget *widget, gpointer data)
+void cancel_button_event(GtkWidget *widget, ui_state *ui)
 {
   lmanager_stop_split(ui);
 
@@ -409,15 +404,14 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
     }
   }
 
-  filename_to_split = get_input_filename(ui->gui);
-
+  ui->status->filename_to_split = get_input_filename(ui->gui);
   filename_path_of_split = outputdirectory_get();
 
   if (filename_path_of_split != NULL)
   {
     ui->status->splitting = TRUE;
-    create_thread(split_it, NULL, TRUE, NULL);
-    gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), TRUE);
+    create_thread(split_it, ui, TRUE, NULL);
+    gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   }
   else
   {
@@ -473,7 +467,7 @@ static gchar *my_dgettext(const gchar *key, const gchar *domain)
 
 static void player_pause_action(GtkWidget *widget, ui_state *ui)
 {
-  pause_event(NULL, ui);
+  pause_event(ui->gui->pause_button, ui);
 }
  
 static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
@@ -878,7 +872,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   ui->gui->player_box = create_player_control_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->player_box, FALSE, FALSE, 0);
 
-  ui->gui->playlist_box = (GtkWidget *)create_player_playlist_frame();
+  ui->gui->playlist_box = create_player_playlist_frame();
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->playlist_box, TRUE, TRUE, 0);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox, notebook_label);
@@ -954,12 +948,11 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(percent_progress_bar), TRUE, TRUE, 0);
 
   //stop button
-  cancel_button = wh_create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
-  g_signal_connect(G_OBJECT(cancel_button), "clicked",
-                   G_CALLBACK(cancel_button_event), NULL);
-
+  GtkWidget *cancel_button = wh_create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
+  ui->gui->cancel_button = cancel_button;
+  g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_button_event), ui);
   gtk_box_pack_start(GTK_BOX(hbox), cancel_button, FALSE, TRUE, 3);
-  gtk_widget_set_sensitive(GTK_WIDGET(cancel_button), FALSE);
+  gtk_widget_set_sensitive(cancel_button, FALSE);
 
   gtk_box_pack_start(GTK_BOX(main_vbox), hbox, FALSE, FALSE, 2);
 
@@ -1017,7 +1010,7 @@ void create_application(ui_state *ui)
 
   gtk_widget_show_all(ui->gui->window);
 
-  if (selected_player != PLAYER_GSTREAMER)
+  if (ui->infos->selected_player != PLAYER_GSTREAMER)
   {
     gtk_widget_hide(ui->gui->playlist_box);
   }

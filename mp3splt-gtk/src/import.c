@@ -263,7 +263,8 @@ static gpointer add_cue_splitpoints(gpointer data)
   }
   
   exit_threads();
-  enable_player_buttons();
+
+  enable_player_buttons(ui->gui);
 
   return NULL;
 }

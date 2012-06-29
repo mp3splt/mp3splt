@@ -76,7 +76,7 @@ void put_status_message_with_type(const gchar *text,
     splt_message_type mess_type, gui_state *gui);
 void create_application();
 void print_status_bar_confirmation(gint error);
-void cancel_button_event(GtkWidget *widget, gpointer data);
+void cancel_button_event(GtkWidget *widget, ui_state *ui);
 
 gchar* get_input_filename(gui_state *gui);
 void set_input_filename(const gchar *filename, gui_state *gui);
