@@ -49,10 +49,6 @@ GString *outputdirname = NULL;
 //! The textbox that shows the name of the output directory
 GtkWidget *directory_entry = NULL;
 
-//!output for the cddb,cue and freedb file output
-GtkWidget *output_entry = NULL;
-GtkWidget *output_label = NULL;
-
 //!choose the player box
 GtkWidget *player_combo_box = NULL;
 
@@ -62,47 +58,6 @@ GtkWidget *radio_button = NULL;
 //!radio button for choosing default or custom output options
 GtkWidget *radio_output = NULL;
 
-//!radio button for tags options
-GtkWidget *tags_radio = NULL;
-GtkWidget *tags_version_radio = NULL;
-
-//split options
-//!frame mode option
-GtkWidget *frame_mode = NULL;
-//!auto-adjust option
-GtkWidget *adjust_mode = NULL;
-// when ticked, name for split tag derived from filename
-
-GtkWidget *create_dirs_from_output_files = NULL;
-
-/*!defgroup modeparameters adjust mode parameters
-@{
-*/
-GtkWidget *spinner_adjust_gap = NULL;
-GtkWidget *gap_label = NULL;
-GtkWidget *spinner_adjust_offset = NULL;
-GtkWidget *offset_label = NULL;
-GtkWidget *spinner_adjust_threshold = NULL;
-GtkWidget *threshold_label = NULL;
-//@}
-
-/*!defgroup options for tags from filename
-@{
-*/
-GtkWidget *replace_underscore_by_space_check_box = NULL;
-GtkComboBox *artist_text_properties_combo = NULL;
-GtkComboBox *album_text_properties_combo = NULL;
-GtkComboBox *title_text_properties_combo = NULL;
-GtkComboBox *comment_text_properties_combo = NULL;
-GtkComboBox *genre_combo = NULL;
-GtkWidget *comment_tag_entry = NULL;
-GtkWidget *regex_entry = NULL;
-GtkWidget *test_regex_fname_entry = NULL;
-GtkWidget *sample_result_label = NULL;
-
-GtkWidget *extract_tags_box = NULL;
-//@}
-
 gint preview_indexes[6] = { 0 };
 GPtrArray *wave_preview_labels = NULL;
 
@@ -111,10 +66,7 @@ gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 extern gint timeout_value;
 
 extern GtkWidget *queue_files_button;
-extern gint selected_split_mode;
 extern gint split_file_mode;
-extern GtkWidget *spinner_time;
-extern GtkWidget *spinner_equal_tracks;
 
 static GtkWidget *create_extract_tags_from_filename_options_box();
 static GtkWidget *create_test_regex_table();
@@ -175,29 +127,23 @@ gboolean get_checked_output_radio_box()
 }
 
 //!returns the checked tags radio box
-gint get_checked_tags_version_radio_box()
+gint get_checked_tags_version_radio_box(gui_state *gui)
 {
-  //get the radio buttons
-  GSList *radio_button_list;
-  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(tags_version_radio));
+  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(gui->tags_version_radio));
 
-  //we check which bubble is checked
-  GtkToggleButton *test;
-  gint i, selected = 0;
   //O = The same version as the original file
   //1 = ID3v1
   //2 = ID3v2
   //3 = ID3v1 & ID3v2
-  for(i = 0; i<4;i++)
+  gint i = 0;
+  for(i = 0; i < 4;i++)
   {
-    test = (GtkToggleButton *)g_slist_nth_data(radio_button_list,i);
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(test)))
+    GtkToggleButton *button = GTK_TOGGLE_BUTTON(g_slist_nth_data(radio_button_list,i));
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
     {
-      selected = i;
+      return i;
     }
   }
-  
-  return selected;
 }
 
 //! Set the name of the output directory
@@ -241,17 +187,15 @@ void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
   //custom output mode
   if (selected == 0)
   {
-    gtk_widget_set_sensitive(GTK_WIDGET(output_entry), TRUE);
-    gtk_widget_set_sensitive(GTK_WIDGET(output_label), TRUE);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_FORMAT);
+    gtk_widget_set_sensitive(ui->gui->output_entry, TRUE);
+    gtk_widget_set_sensitive(ui->gui->output_label, TRUE);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
   }
   else
   {
-    gtk_widget_set_sensitive(GTK_WIDGET(output_entry), FALSE);
-    gtk_widget_set_sensitive(GTK_WIDGET(output_label), FALSE);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_DEFAULT);
+    gtk_widget_set_sensitive(ui->gui->output_entry, FALSE);
+    gtk_widget_set_sensitive(ui->gui->output_label, FALSE);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
 
   save_preferences(NULL, NULL);
@@ -339,40 +283,35 @@ void browse_dir_button_event(GtkWidget *widget, gpointer data)
 //!disables adjust parameters
 void disable_adjust_spinners()
 {
-  gtk_widget_set_sensitive(spinner_adjust_threshold, FALSE);
-  gtk_widget_set_sensitive(spinner_adjust_offset, FALSE);
-  gtk_widget_set_sensitive(spinner_adjust_gap, FALSE);
-  gtk_widget_set_sensitive(threshold_label, FALSE);
-  gtk_widget_set_sensitive(offset_label, FALSE);
-  gtk_widget_set_sensitive(gap_label, FALSE);
+  gtk_widget_set_sensitive(ui->gui->spinner_adjust_threshold, FALSE);
+  gtk_widget_set_sensitive(ui->gui->spinner_adjust_offset, FALSE);
+  gtk_widget_set_sensitive(ui->gui->spinner_adjust_gap, FALSE);
+  gtk_widget_set_sensitive(ui->gui->threshold_label, FALSE);
+  gtk_widget_set_sensitive(ui->gui->offset_label, FALSE);
+  gtk_widget_set_sensitive(ui->gui->gap_label, FALSE);
 }
 
 //!enables adjust parameters
 void enable_adjust_spinners()
 {
-  gtk_widget_set_sensitive(spinner_adjust_threshold, TRUE);
-  gtk_widget_set_sensitive(spinner_adjust_offset, TRUE);
-  gtk_widget_set_sensitive(spinner_adjust_gap, TRUE);
-  gtk_widget_set_sensitive(threshold_label, TRUE);
-  gtk_widget_set_sensitive(offset_label, TRUE);
-  gtk_widget_set_sensitive(gap_label, TRUE);
+  gtk_widget_set_sensitive(ui->gui->spinner_adjust_threshold, TRUE);
+  gtk_widget_set_sensitive(ui->gui->spinner_adjust_offset, TRUE);
+  gtk_widget_set_sensitive(ui->gui->spinner_adjust_gap, TRUE);
+  gtk_widget_set_sensitive(ui->gui->threshold_label, TRUE);
+  gtk_widget_set_sensitive(ui->gui->offset_label, TRUE);
+  gtk_widget_set_sensitive(ui->gui->gap_label, TRUE);
 }
 
 //!adjust event
 void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data)
 {
-  //if it is toggled
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
   {
-    if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
-    {
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode),TRUE);
-    }
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode),TRUE);
     enable_adjust_spinners();
   }
   else
   {
-    //disable spinners
     disable_adjust_spinners();
   }
 
@@ -384,10 +323,7 @@ void frame_event(GtkToggleButton *frame_mode, gpointer user_data)
 {
   if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
   {
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
-    {
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(adjust_mode),FALSE);
-    }
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode),FALSE);
   }
 
   save_preferences(NULL, NULL);
@@ -421,16 +357,13 @@ void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_
 //!action for the set default prefs button
 void set_default_prefs_event(GtkWidget *widget, gpointer data)
 {
-  //set frame mode inactive
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frame_mode), FALSE);
-  //set adjust mode inactive
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(adjust_mode), FALSE);
-  //set adjust mode preferences
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_threshold),
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode), FALSE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode), FALSE);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_threshold),
                             SPLT_DEFAULT_PARAM_THRESHOLD);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_offset),
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset),
                             SPLT_DEFAULT_PARAM_OFFSET);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner_adjust_gap),
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap),
                             SPLT_DEFAULT_PARAM_GAP);
   gtk_toggle_button_set_active(ui->gui->names_from_filename, FALSE);
 
@@ -490,22 +423,24 @@ GtkWidget *create_split_options_box()
   g_signal_connect(G_OBJECT(names_from_filename), "toggled",
       G_CALLBACK(splitpoints_from_filename_event), NULL);
 
-  create_dirs_from_output_files =
+  GtkWidget *create_dirs_from_output_files =
     gtk_check_button_new_with_mnemonic(_("_Create directories from filenames "));
+  ui->gui->create_dirs_from_output_files = create_dirs_from_output_files;
   gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
       G_CALLBACK(save_preferences), NULL);
 
   //frame mode option
-  frame_mode = gtk_check_button_new_with_mnemonic(_("F_rame mode (useful"
-        " for mp3 VBR) (mp3 only)"));
+  GtkWidget *frame_mode =
+    gtk_check_button_new_with_mnemonic(_("F_rame mode (useful for mp3 VBR) (mp3 only)"));
+  ui->gui->frame_mode = frame_mode;
   gtk_box_pack_start(GTK_BOX(vbox), frame_mode, FALSE, FALSE, 0);
-  g_signal_connect(G_OBJECT(frame_mode), "toggled",
-      G_CALLBACK(frame_event), NULL);
+  g_signal_connect(G_OBJECT(frame_mode), "toggled", G_CALLBACK(frame_event), NULL);
 
   //auto adjust option
-  adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (uses"
+  GtkWidget *adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (uses"
         " silence detection to auto-adjust splitpoints)"));
+  ui->gui->adjust_mode = adjust_mode;
   gtk_box_pack_start(GTK_BOX(vbox), adjust_mode, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(adjust_mode), "toggled",
       G_CALLBACK(adjust_event), NULL);
@@ -521,12 +456,14 @@ GtkWidget *create_split_options_box()
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  threshold_label = gtk_label_new(_("Threshold level (dB):"));
+  GtkWidget *threshold_label = gtk_label_new(_("Threshold level (dB):"));
+  ui->gui->threshold_label = threshold_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), threshold_label, FALSE, FALSE, 0);
   
   GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0,
       0.5, 10.0, 0.0);
-  spinner_adjust_threshold = gtk_spin_button_new (adj, 0.5, 2);
+  GtkWidget *spinner_adjust_threshold = gtk_spin_button_new (adj, 0.5, 2);
+  ui->gui->spinner_adjust_threshold = spinner_adjust_threshold;
   g_signal_connect(G_OBJECT(spinner_adjust_threshold), "value_changed",
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_threshold,
@@ -536,29 +473,31 @@ GtkWidget *create_split_options_box()
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  offset_label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence "
+  GtkWidget *offset_label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence "
         "and 1 the end):"));
+  ui->gui->offset_label = offset_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), offset_label, FALSE, FALSE, 0);
   
   //adjustement for the offset spinner
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
-  //the offset spinner
-  spinner_adjust_offset = gtk_spin_button_new (adj, 0.05, 2);
+  GtkWidget *spinner_adjust_offset = gtk_spin_button_new (adj, 0.05, 2);
+  ui->gui->spinner_adjust_offset = spinner_adjust_offset;
   g_signal_connect(G_OBJECT(spinner_adjust_offset), "value_changed",
       G_CALLBACK(save_preferences), NULL);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_offset,
-      FALSE, FALSE, 6);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_offset, FALSE, FALSE, 6);
   
   //gap level (seconds)
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
   
-  gap_label = gtk_label_new(_("Gap level (seconds around splitpoint to "
+  GtkWidget *gap_label = gtk_label_new(_("Gap level (seconds around splitpoint to "
         "search for silence):"));
+  ui->gui->gap_label = gap_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), gap_label, FALSE, FALSE, 0);
   
   adj = (GtkAdjustment *) gtk_adjustment_new(0.0, 0, 2000, 1.0, 10.0, 0.0);
-  spinner_adjust_gap = gtk_spin_button_new (adj, 1, 0);
+  GtkWidget *spinner_adjust_gap = gtk_spin_button_new (adj, 1, 0);
+  ui->gui->spinner_adjust_gap = spinner_adjust_gap;
   g_signal_connect(G_OBJECT(spinner_adjust_gap), "value_changed",
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_gap, FALSE, FALSE, 6);
@@ -905,8 +844,7 @@ GtkWidget *create_pref_player_page()
 gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
     gpointer user_data)
 {
-  //we check if the output format is correct
-  const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
+  const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
   gint error = SPLT_OUTPUT_FORMAT_OK;
   mp3splt_set_oformat(ui->mp3splt_state, data, &error);
   remove_status_message(ui->gui);
@@ -934,17 +872,17 @@ GtkWidget *create_output_filename_box()
   GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
-  output_entry = gtk_entry_new();
+  GtkWidget *output_entry = gtk_entry_new();
+  ui->gui->output_entry = output_entry;
   gtk_editable_set_editable(GTK_EDITABLE(output_entry), TRUE);
-  g_signal_connect(G_OBJECT(output_entry), "key_release_event",
-      G_CALLBACK(output_entry_event), NULL);
+  g_signal_connect(G_OBJECT(output_entry), "key_release_event", G_CALLBACK(output_entry_event), NULL);
   gtk_entry_set_max_length(GTK_ENTRY(output_entry),244);
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_entry, TRUE, TRUE, 0);
 
   //output label
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
-  output_label = gtk_label_new(_("    @f - file name\n"
+  GtkWidget *output_label = gtk_label_new(_("    @f - file name\n"
         "    @a - artist name\n"
         "    @p - performer of each song (does not"
         " always exist)\n"
@@ -952,6 +890,7 @@ GtkWidget *create_output_filename_box()
         "    @t - song title\n"
         "    @g - genre\n"
         "    @n - track number"));
+  ui->gui->output_label = output_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_label, FALSE, FALSE, 0);
 
   g_signal_connect(GTK_TOGGLE_BUTTON(radio_output),
@@ -982,15 +921,15 @@ GtkWidget *create_pref_output_page()
 
 void change_tags_options(GtkToggleButton *button, gpointer data)
 {
-  if (extract_tags_box != NULL)
+  if (ui->gui->extract_tags_box != NULL)
   {
-    if (rh_get_active_value(tags_radio) == TAGS_FROM_FILENAME)
+    if (rh_get_active_value(ui->gui->tags_radio) == TAGS_FROM_FILENAME)
     {
-      gtk_widget_set_sensitive(extract_tags_box, SPLT_TRUE);
+      gtk_widget_set_sensitive(ui->gui->extract_tags_box, SPLT_TRUE);
     }
     else
     {
-      gtk_widget_set_sensitive(extract_tags_box, SPLT_FALSE);
+      gtk_widget_set_sensitive(ui->gui->extract_tags_box, SPLT_FALSE);
     }
   }
 
@@ -1002,19 +941,19 @@ GtkWidget *create_tags_options_box()
 {
   GtkWidget *vbox = wh_vbox_new();
 
+  GtkWidget *tags_radio = NULL;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Original file tags"),
       ORIGINAL_FILE_TAGS, change_tags_options, vbox);
-
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Default tags (cddb or cue tags)"),
       DEFAULT_TAGS, change_tags_options, vbox);
-
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("No tags"),
       NO_TAGS, change_tags_options, vbox);
-
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Extract tags from filename"),
       TAGS_FROM_FILENAME, change_tags_options, vbox);
+  ui->gui->tags_radio = tags_radio;
 
-  extract_tags_box = create_extract_tags_from_filename_options_box();
+  GtkWidget *extract_tags_box = create_extract_tags_from_filename_options_box();
+  ui->gui->extract_tags_box = extract_tags_box;
   gtk_widget_set_sensitive(extract_tags_box, SPLT_FALSE);
   gtk_box_pack_start(GTK_BOX(vbox), extract_tags_box, FALSE, FALSE, 2);
 
@@ -1053,8 +992,9 @@ static GtkComboBox *create_text_preferences_combo()
 
 void test_regex_event(GtkWidget *widget, gpointer data)
 {
-  put_tags_from_filename_regex_options();
-  const gchar *test_regex_filename = gtk_entry_get_text(GTK_ENTRY(test_regex_fname_entry));
+  put_tags_from_filename_regex_options(ui);
+
+  const gchar *test_regex_filename = gtk_entry_get_text(GTK_ENTRY(ui->gui->test_regex_fname_entry));
   mp3splt_set_filename_to_split(ui->mp3splt_state, test_regex_filename);
 
   gint error = SPLT_OK;
@@ -1117,13 +1057,13 @@ void test_regex_event(GtkWidget *widget, gpointer data)
     gchar *regex_result_text = g_string_free(regex_result, FALSE);
     if (regex_result_text)
     {
-      gtk_label_set_text(GTK_LABEL(sample_result_label), regex_result_text);
+      gtk_label_set_text(GTK_LABEL(ui->gui->sample_result_label), regex_result_text);
       g_free(regex_result_text);
     }
   }
   else
   {
-    gtk_label_set_text(GTK_LABEL(sample_result_label), "");
+    gtk_label_set_text(GTK_LABEL(ui->gui->sample_result_label), "");
   }
 
   mp3splt_free_one_tag(tags);
@@ -1133,7 +1073,8 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
 {
   GtkWidget *table = wh_new_table();
 
-  regex_entry = wh_new_entry(save_preferences);
+  GtkWidget *regex_entry = wh_new_entry(save_preferences);
+  ui->gui->regex_entry = regex_entry;
   wh_add_in_table_with_label_expand(table, _("Regular expression:"), regex_entry);
 
   GtkWidget *regex_label = gtk_label_new(_(
@@ -1162,33 +1103,40 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
   infos->text_options_list =
     g_list_append(infos->text_options_list, GINT_TO_POINTER(SPLT_TO_WORD_FIRST_UPPERCASE));
 
-  replace_underscore_by_space_check_box =
+  GtkWidget *replace_underscore_by_space_check_box =
     gtk_check_button_new_with_mnemonic(_("_Replace underscores by spaces"));
+  ui->gui->replace_underscore_by_space_check_box = replace_underscore_by_space_check_box;
   g_signal_connect(G_OBJECT(replace_underscore_by_space_check_box), "toggled",
       G_CALLBACK(save_preferences), NULL);
  
   wh_add_in_table(table, replace_underscore_by_space_check_box);
 
-  artist_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *artist_text_properties_combo = create_text_preferences_combo();
+  ui->gui->artist_text_properties_combo = artist_text_properties_combo;
   wh_add_in_table_with_label(table, 
       _("Artist text properties:"), GTK_WIDGET(artist_text_properties_combo));
 
-  album_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *album_text_properties_combo = create_text_preferences_combo();
+  ui->gui->album_text_properties_combo = album_text_properties_combo;
   wh_add_in_table_with_label(table,
       _("Album text properties:"), GTK_WIDGET(album_text_properties_combo));
 
-  title_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *title_text_properties_combo = create_text_preferences_combo();
+  ui->gui->title_text_properties_combo = title_text_properties_combo;
   wh_add_in_table_with_label(table,
       _("Title text properties:"), GTK_WIDGET(title_text_properties_combo));
 
-  comment_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *comment_text_properties_combo = create_text_preferences_combo();
+  ui->gui->comment_text_properties_combo = comment_text_properties_combo;
   wh_add_in_table_with_label(table,
       _("Comment text properties:"), GTK_WIDGET(comment_text_properties_combo));
 
-  genre_combo = create_genre_combo();
+  GtkComboBox *genre_combo = create_genre_combo();
+  ui->gui->genre_combo = genre_combo;
   wh_add_in_table_with_label(table, _("Genre tag:"), GTK_WIDGET(genre_combo));
 
-  comment_tag_entry = wh_new_entry(save_preferences);
+  GtkWidget *comment_tag_entry = wh_new_entry(save_preferences);
+  ui->gui->comment_tag_entry = comment_tag_entry;
   wh_add_in_table_with_label_expand(table, _("Comment tag:"), comment_tag_entry);
 
   GtkWidget *test_regex_expander = gtk_expander_new(_("Regular expression test"));
@@ -1203,7 +1151,8 @@ static GtkWidget *create_test_regex_table()
   GtkWidget *table = wh_new_table();
 
   GtkWidget *sample_test_hbox = wh_hbox_new();
-  test_regex_fname_entry = wh_new_entry(save_preferences);
+  GtkWidget *test_regex_fname_entry = wh_new_entry(save_preferences);
+  ui->gui->test_regex_fname_entry = test_regex_fname_entry;
   gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_fname_entry, TRUE, TRUE, 0);
 
   GtkWidget *test_regex_button = wh_new_button(_("_Test"));
@@ -1213,9 +1162,10 @@ static GtkWidget *create_test_regex_table()
 
   wh_add_in_table_with_label_expand(table, _("Sample filename:"), sample_test_hbox);
 
-  sample_result_label = gtk_label_new("");
-  gtk_misc_set_alignment(GTK_MISC(sample_result_label), 0.0, 0.5);
-  wh_add_in_table_with_label_expand(table, _("Sample result:"), sample_result_label);
+  GtkWidget *sample_result_label = gtk_label_new("");
+  ui->gui->sample_result_label = sample_result_label;
+  gtk_misc_set_alignment(GTK_MISC(ui->gui->sample_result_label), 0.0, 0.5);
+  wh_add_in_table_with_label_expand(table, _("Sample result:"), ui->gui->sample_result_label);
 
   return wh_put_in_new_hbox_with_margin_level(GTK_WIDGET(table), 3);
 }
@@ -1225,14 +1175,12 @@ GtkWidget *create_tags_version_box()
 {
   GtkWidget *vbox = wh_vbox_new();
 
-  tags_version_radio = 
-    gtk_radio_button_new_with_label(NULL, _("ID3v1 & ID3v2 tags"));
+  GtkWidget *tags_version_radio = gtk_radio_button_new_with_label(NULL, _("ID3v1 & ID3v2 tags"));
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
 
-  tags_version_radio = 
-    gtk_radio_button_new_with_label_from_widget
+  tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(tags_version_radio), _("ID3v2 tags"));
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
@@ -1249,6 +1197,8 @@ GtkWidget *create_tags_version_box()
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
+
+  ui->gui->tags_version_radio = tags_version_radio;
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Tags version (mp3 only)</b>"));
 }

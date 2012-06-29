@@ -53,7 +53,6 @@ gint currently_compute_amplitude_data = FALSE;
 extern GtkWidget *browse_cddb_button;
 extern GtkWidget *browse_cue_button;
 extern gchar *filename_path_of_split;
-extern gint debug_is_active;
 
 extern ui_state *ui;
 
@@ -193,7 +192,7 @@ static gpointer detect_silence(ui_state *ui)
 
   exit_threads();
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
   mp3splt_set_filename_to_split(ui->mp3splt_state, status->filename_to_split);
 
   mp3splt_set_silence_level_function(ui->mp3splt_state, get_silence_level, NULL);

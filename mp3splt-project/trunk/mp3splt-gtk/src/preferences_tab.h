@@ -49,7 +49,7 @@
 #define TAGS_FROM_FILENAME 3
 
 gboolean get_checked_output_radio_box();
-gint get_checked_tags_version_radio_box();
+gint get_checked_tags_version_radio_box(gui_state *gui);
 void radio_box_changed_event(GtkToggleButton *radio_b, gpointer data);
 GtkWidget *create_pref_general_page();
 void browse_dir_button_event(GtkWidget *widget, gpointer data);

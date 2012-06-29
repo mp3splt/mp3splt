@@ -268,6 +268,8 @@ static void ui_infos_new(ui_state *ui)
   infos->douglas_peucker_thresholds_defaults[3] = 11.0;
   infos->douglas_peucker_thresholds_defaults[4] = 15.0;
 
+  infos->debug_is_active = FALSE;
+
   ui->infos = infos;
 }
 
@@ -328,6 +330,9 @@ static gui_status *ui_status_new(ui_state *ui)
   status->change_volume = TRUE;
   status->on_the_volume_button = FALSE;
   status->file_browsed = FALSE;
+
+  status->preview_row = 0;
+  status->selected_split_mode = SELECTED_SPLIT_NORMAL;
 
   return status;
 }

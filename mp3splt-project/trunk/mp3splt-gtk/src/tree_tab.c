@@ -59,9 +59,6 @@ GtkWidget *spinner_seconds;
 //!The hundreths of seconds spinner
 GtkWidget *spinner_hundr_secs;
 
-//! The number of the split point for the preview
-gint this_row = 0;
-
 /*! A bool that helps us catch the case that we add splitpoints during preview
 
 if we add a new splitpoint at the left and we are currently
@@ -100,8 +97,6 @@ gboolean silence_remove_silence_between_tracks = FALSE;
 */
 extern gchar *filename_path_of_split;
 extern gchar *filename_path_of_split;
-extern GtkWidget *output_entry;
-extern gint debug_is_active;
 //@}
 
 extern ui_state *ui;
@@ -194,18 +189,17 @@ void update_hundr_secs_from_spinner(GtkWidget *widget, gpointer data)
 }
 
 //!creates the model for the tree, gtkliststore
-GtkTreeModel *create_model()
+static GtkTreeModel *create_model()
 {
-  GtkListStore * model =
-    gtk_list_store_new(NUM_COLUMNS,
-        G_TYPE_BOOLEAN,
-        G_TYPE_STRING,
-        G_TYPE_INT,
-        G_TYPE_INT, 
-        G_TYPE_INT, 
-        G_TYPE_STRING,
-        GDK_TYPE_PIXBUF,
-        GDK_TYPE_PIXBUF);
+  GtkListStore * model = gtk_list_store_new(NUM_COLUMNS,
+      G_TYPE_BOOLEAN,
+      G_TYPE_STRING,
+      G_TYPE_INT,
+      G_TYPE_INT, 
+      G_TYPE_INT, 
+      G_TYPE_STRING,
+      GDK_TYPE_PIXBUF,
+      GDK_TYPE_PIXBUF);
 
   return GTK_TREE_MODEL(model);
 }
@@ -904,7 +898,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), FALSE);
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   ui->status->filename_to_split = get_input_filename(ui->gui);
-  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
+  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
 
   exit_threads();
 
@@ -1073,7 +1067,7 @@ void create_trim_silence_window(GtkWidget *button, gpointer *data)
   mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
       silence_threshold_value);
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
 
   gtk_widget_destroy(silence_detection_window);
 
@@ -1240,7 +1234,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, gpointe
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
       silence_remove_silence_between_tracks);
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
 
   gtk_widget_destroy(silence_detection_window);
 
@@ -1468,126 +1462,112 @@ gint get_splitpoint_time(gint splitpoint_index, ui_state *ui)
   return point.mins * 6000 + point.secs * 100 + point.hundr_secs;
 }
 
-gpointer split_preview(gpointer data)
+static gpointer split_preview(ui_state *ui)
 {
-  if (this_row+1 != ui->infos->splitnumber)
+  if (ui->status->preview_row + 1 == ui->infos->splitnumber)
   {
-    gint confirmation;
-
-    int err = 0;
-    mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
-    mp3splt_erase_all_tags(ui->mp3splt_state, &err);
-
-    mp3splt_append_splitpoint(ui->mp3splt_state, ui->status->preview_start_position,
-        "preview", SPLT_SPLITPOINT);
-    mp3splt_append_splitpoint(ui->mp3splt_state,
-        get_splitpoint_time(ui->status->quick_preview_end_splitpoint, ui),
-        NULL, SPLT_SKIPPOINT);
-
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_CUSTOM);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,
-        SPLT_OPTION_NORMAL_MODE);
-
     enter_threads();
-
-    put_options_from_preferences();
-
-    //we cut the preferences filename path
-    //to find the ~/.mp3splt directory
-    gchar *fname_path = get_preferences_filename();
-    fname_path[strlen(fname_path)-18] = '\0';
-
-    remove_all_split_rows();  
-    ui->status->filename_to_split = get_input_filename(ui->gui);
-
+    put_status_message(_(" cannot split preview last splitpoint"), ui->gui);
     exit_threads();
+    return NULL;
+  }
 
-    mp3splt_set_path_of_split(ui->mp3splt_state,fname_path);
-    mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
-    confirmation = mp3splt_split(ui->mp3splt_state);
+  int err = 0;
+  mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
+  mp3splt_erase_all_tags(ui->mp3splt_state, &err);
 
-    enter_threads();
+  mp3splt_append_splitpoint(ui->mp3splt_state, ui->status->preview_start_position,
+      "preview", SPLT_SPLITPOINT);
+  mp3splt_append_splitpoint(ui->mp3splt_state,
+      get_splitpoint_time(ui->status->quick_preview_end_splitpoint, ui),
+      NULL, SPLT_SKIPPOINT);
 
-    print_status_bar_confirmation(confirmation);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
 
-    gchar *split_file = get_filename_from_split_files(1);
-    if (split_file != NULL)
-    {
-      if (confirmation > 0)
-      {
-        connect_button_event(ui->gui->connect_button, ui);
+  enter_threads();
 
-        change_current_filename(split_file, ui);
-        g_free(split_file);
-        split_file = NULL;
+  put_options_from_preferences(ui);
 
-        //starts playing, 0 means start playing
-        connect_to_player_with_song(0, ui);
-      }
-    }
+  //we cut the preferences filename path
+  //to find the ~/.mp3splt directory
+  gchar *fname_path = get_preferences_filename();
+  fname_path[strlen(fname_path)-18] = '\0';
 
+  remove_all_split_rows();  
+  ui->status->filename_to_split = get_input_filename(ui->gui);
+
+  exit_threads();
+
+  mp3splt_set_path_of_split(ui->mp3splt_state,fname_path);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
+  gint confirmation = mp3splt_split(ui->mp3splt_state);
+
+  enter_threads();
+
+  print_status_bar_confirmation(confirmation);
+
+  gchar *split_file = get_filename_from_split_files(1);
+  if (split_file != NULL)
+  {
     if (confirmation > 0)
     {
-      gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
-      gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
-    }
+      connect_button_event(ui->gui->connect_button, ui);
 
-    if (fname_path)
-    {
-      g_free(fname_path);
-      fname_path = NULL;
-    }
+      change_current_filename(split_file, ui);
+      g_free(split_file);
+      split_file = NULL;
 
-    exit_threads();
+      //starts playing, 0 means start playing
+      connect_to_player_with_song(0, ui);
+    }
   }
-  else
+
+  if (confirmation > 0)
   {
-    enter_threads();
-
-    put_status_message(_(" cannot split preview last splitpoint"), ui->gui);
-
-    exit_threads();
+    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
+    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
   }
+
+  if (fname_path)
+  {
+    g_free(fname_path);
+    fname_path = NULL;
+  }
+
+  exit_threads();
 
   return NULL;
 }
 
 //!the row clicked event, preview the song
-void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
-    GtkTreeViewColumn *col, gpointer user_data)
+static void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
+    GtkTreeViewColumn *col, ui_state *ui)
 {
-  gint number = GPOINTER_TO_INT(g_object_get_data (G_OBJECT(col), "col"));
-
-  //only when clicking on the PREVIEW or SPLIT_PREVIEW columns
-  if (number == COL_PREVIEW || number == COL_SPLIT_PREVIEW)
+  gint number = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(col), "col"));
+  if (number != COL_PREVIEW && number != COL_SPLIT_PREVIEW)
   {
-    //only if connected to player
-    if (ui->status->timer_active)
-    {
-      //we get the split begin position to find the 
-      //end position
-      this_row = gtk_tree_path_get_indices (path)[0];
-      //if we click COL_PREVIEW
-      if (number == COL_PREVIEW)
-      {
-        player_quick_preview(this_row, ui);
-      }
-      else
-      {
-        //if we have the split preview
-        if (number == COL_SPLIT_PREVIEW)
-        {
-          ui->status->preview_start_position = get_splitpoint_time(this_row, ui);
-          ui->status->quick_preview_end_splitpoint = this_row+1;
-          create_thread(split_preview, ui, TRUE, NULL);
-        }
-      }
-    }
-    else
-    {
-      put_status_message(_(" cannot preview, not connected to player"), ui->gui);
-    }
+    return;
+  }
+
+  if (!ui->status->timer_active)
+  {
+    put_status_message(_(" cannot preview, not connected to player"), ui->gui);
+    return;
+  }
+
+  //get the split begin position to find the end position
+  gint preview_row = gtk_tree_path_get_indices(path)[0];
+  ui->status->preview_row = preview_row;
+  if (number == COL_PREVIEW)
+  {
+    player_quick_preview(preview_row, ui);
+  }
+  else if (number == COL_SPLIT_PREVIEW)
+  {
+    ui->status->preview_start_position = get_splitpoint_time(preview_row, ui);
+    ui->status->quick_preview_end_splitpoint = preview_row + 1;
+    create_thread((GThreadFunc)split_preview, ui, TRUE, NULL);
   }
 }
 
@@ -1807,7 +1787,7 @@ static void create_tree_view(gui_state *gui)
   GtkTreeView *tree_view = GTK_TREE_VIEW(gtk_tree_view_new_with_model(create_model()));
   gui->tree_view = tree_view;
 
-  g_signal_connect(tree_view, "row-activated", G_CALLBACK(preview_song), tree_view);
+  g_signal_connect(tree_view, "row-activated", G_CALLBACK(preview_song), ui);
 
   GtkTreeSelection *selection = gtk_tree_view_get_selection(tree_view);
   g_signal_connect(selection, "changed", G_CALLBACK(row_selection_event), NULL);

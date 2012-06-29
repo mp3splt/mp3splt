@@ -41,7 +41,6 @@
 
 #include "all_includes.h"
 
-void put_options_from_preferences();
 gpointer split_it(gpointer data);
 
 GThread *create_thread(GThreadFunc func, gpointer data, gboolean joinable, GError **error);

@@ -66,10 +66,6 @@ GtkWidget *spinner;
 
 gboolean executed_lock = FALSE;
 
-//output for the cddb,cue and freedb file output
-extern GtkWidget *output_entry;
-extern gint debug_is_active;
-
 extern ui_state *ui;
 
 //!add a row to the table
@@ -281,7 +277,7 @@ void freedb_search_start_thread()
 {
   if (executed_lock) { return; }
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
   create_thread(freedb_search, ui, TRUE, NULL);
 }
 
@@ -336,15 +332,13 @@ void write_freedbfile(int *err)
 
   if(get_checked_output_radio_box())
   {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_DEFAULT);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
   else
   {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_FORMAT);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
 
-    const char *data = gtk_entry_get_text(GTK_ENTRY(output_entry));
+    const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     gint error = SPLT_OUTPUT_FORMAT_OK;
     mp3splt_set_oformat(ui->mp3splt_state, data, &error);
     enter_threads();
@@ -362,15 +356,11 @@ void write_freedbfile(int *err)
 }
 
 //!returns the seconds, minutes, and hudreths
-void get_secs_mins_hundr(gfloat time,
-                         gint *mins,gint *secs, 
-                         gint *hundr)
+void get_secs_mins_hundr(gfloat time, gint *mins,gint *secs, gint *hundr)
 {
   *mins = (gint)(time / 6000);
-  *secs = (gint)(time - (*mins * 6000))
-    / 100;
-  *hundr = (gint)(time - (*mins * 6000)
-                  - (*secs * 100));
+  *secs = (gint)(time - (*mins * 6000)) / 100;
+  *hundr = (gint)(time - (*mins * 6000) - (*secs * 100));
 }
 
 /*!updates the current splitpoints in ui->mp3splt_state
@@ -476,7 +466,7 @@ gpointer put_freedb_splitpoints(gpointer data)
 //!event for the freedb add button when clicked
 void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
 {
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, debug_is_active);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
   create_thread(put_freedb_splitpoints, ui, TRUE, NULL);
 }
 
