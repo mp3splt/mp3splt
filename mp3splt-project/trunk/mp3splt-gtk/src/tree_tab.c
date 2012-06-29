@@ -98,11 +98,8 @@ gboolean silence_remove_silence_between_tracks = FALSE;
 /*!\defgroup SplitOptionGroup options for splitting
 \{
 */
-extern int selected_player;
-extern gchar *filename_to_split;
 extern gchar *filename_path_of_split;
 extern gchar *filename_path_of_split;
-extern GtkWidget *cancel_button;
 extern GtkWidget *output_entry;
 extern gint debug_is_active;
 //@}
@@ -667,7 +664,7 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
   gtk_tree_path_free (path);
 }
 
-void add_splitpoint_from_player(GtkWidget *widget, gpointer data)
+void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui)
 {
   if (!ui->status->timer_active)
   { 
@@ -905,13 +902,13 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), FALSE);
-  gtk_widget_set_sensitive(cancel_button, TRUE);
-  filename_to_split = get_input_filename(ui->gui);
+  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
+  ui->status->filename_to_split = get_input_filename(ui->gui);
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(output_entry)));
 
   exit_threads();
 
-  mp3splt_set_filename_to_split(ui->mp3splt_state, filename_to_split);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
   mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
 
   if (get_checked_output_radio_box() == 0)
@@ -957,7 +954,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 
   print_status_bar_confirmation(err);
 
-  gtk_widget_set_sensitive(cancel_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_silence_button), TRUE);
   gtk_widget_set_sensitive(GTK_WIDGET(scan_trim_silence_button), TRUE);
 
@@ -1502,12 +1499,12 @@ gpointer split_preview(gpointer data)
     fname_path[strlen(fname_path)-18] = '\0';
 
     remove_all_split_rows();  
-    filename_to_split = get_input_filename(ui->gui);
+    ui->status->filename_to_split = get_input_filename(ui->gui);
 
     exit_threads();
 
     mp3splt_set_path_of_split(ui->mp3splt_state,fname_path);
-    mp3splt_set_filename_to_split(ui->mp3splt_state,filename_to_split);
+    mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
     confirmation = mp3splt_split(ui->mp3splt_state);
 
     enter_threads();
@@ -1519,9 +1516,9 @@ gpointer split_preview(gpointer data)
     {
       if (confirmation > 0)
       {
-        connect_button_event(NULL, NULL);
+        connect_button_event(ui->gui->connect_button, ui);
 
-        change_current_filename(split_file);
+        change_current_filename(split_file, ui);
         g_free(split_file);
         split_file = NULL;
 
@@ -1583,7 +1580,7 @@ void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
         {
           ui->status->preview_start_position = get_splitpoint_time(this_row, ui);
           ui->status->quick_preview_end_splitpoint = this_row+1;
-          create_thread(split_preview, NULL, TRUE, NULL);
+          create_thread(split_preview, ui, TRUE, NULL);
         }
       }
     }

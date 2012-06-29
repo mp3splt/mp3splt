@@ -61,7 +61,7 @@ void exchange_elements_from_array(gint element_number1,
 void row_selection_event();
 void exchange_rows_in_the_tree(gint i, gint j, GtkTreeView *tree_view);
 void sort_tree(GtkTreeView *tree_view);
-void add_splitpoint_from_player(GtkWidget *widget, gpointer data);
+void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui);
 void add_row(gint checked);
 GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, 
                                gint min, 

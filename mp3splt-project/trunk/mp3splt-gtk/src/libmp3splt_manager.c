@@ -37,7 +37,6 @@ extern ui_state *ui;
 
 extern GtkWidget *queue_files_button;
 extern GtkWidget *remove_all_files_button;
-extern gint we_scan_for_silence;
 
 static void lmanager_change_window_progress_bar(splt_progress *p_bar);
 static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type);
@@ -162,7 +161,7 @@ static void lmanager_change_window_progress_bar(splt_progress *p_bar)
       g_snprintf(progress_text,1023, _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE:
-      if (we_scan_for_silence)
+      if (ui->status->currently_scanning_for_silence)
       {
         g_snprintf(progress_text,1023, _("Computing amplitude wave data..."));
       }

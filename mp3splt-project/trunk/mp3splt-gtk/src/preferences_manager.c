@@ -43,7 +43,6 @@
 #include "all_includes.h"
 
 extern GtkWidget *player_combo_box;
-extern gint selected_player;
 extern GtkWidget *radio_button;
 
 extern GtkWidget *file_mode_radio_button;
@@ -568,7 +567,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
 			outputdirectory_get());
 
   //player
-  g_key_file_set_integer(my_key_file, "player", "default_player", selected_player);
+  g_key_file_set_integer(my_key_file, "player", "default_player", ui->infos->selected_player);
 
   ui_save_preferences(my_key_file, ui);
  

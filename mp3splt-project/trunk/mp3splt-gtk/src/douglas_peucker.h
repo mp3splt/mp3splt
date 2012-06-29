@@ -32,6 +32,7 @@
 #define DOUGLAS_PEUCKER_H
 
 #include "external_includes.h"
+#include "ui_types.h"
 
 typedef struct {
   gdouble distance;
@@ -43,8 +44,8 @@ typedef struct {
   gint index;
 } douglas_point;
 
-GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(), 
-    gdouble threshold_to_discard_points, ...);
+GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(ui_state *ui),
+    ui_state *ui, gdouble threshold_to_discard_points, ...);
 
 void splt_douglas_peucker_free(GPtrArray *douglas_peucker_ptr_array);
 

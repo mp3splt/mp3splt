@@ -254,6 +254,20 @@ static void ui_infos_new(ui_state *ui)
   infos->filtered_points_presence = NULL;
   infos->silence_wave_number_of_points_threshold = DEFAULT_SILENCE_WAVE_NUMBER_OF_POINTS_THRESHOLD;
 
+  infos->selected_player = PLAYER_GSTREAMER;
+
+  infos->douglas_peucker_thresholds[0] = 2.0;
+  infos->douglas_peucker_thresholds[1] = 5.0;
+  infos->douglas_peucker_thresholds[2] = 8.0;
+  infos->douglas_peucker_thresholds[3] = 11.0;
+  infos->douglas_peucker_thresholds[4] = 15.0;
+  
+  infos->douglas_peucker_thresholds_defaults[0] = 2.0;
+  infos->douglas_peucker_thresholds_defaults[1] = 5.0;
+  infos->douglas_peucker_thresholds_defaults[2] = 8.0;
+  infos->douglas_peucker_thresholds_defaults[3] = 11.0;
+  infos->douglas_peucker_thresholds_defaults[4] = 15.0;
+
   ui->infos = infos;
 }
 
@@ -300,6 +314,20 @@ static gui_status *ui_status_new(ui_state *ui)
   g_snprintf(status->current_description, 255, "%s", _("description here"));
 
   status->preview_start_position = 0;
+  status->timeout_id = 0;
+
+  status->currently_scanning_for_silence = FALSE;
+
+  status->filename_to_split = NULL;
+
+  status->douglas_callback_counter = 0;
+
+  status->stream = FALSE;
+  status->only_press_pause = FALSE;
+
+  status->change_volume = TRUE;
+  status->on_the_volume_button = FALSE;
+  status->file_browsed = FALSE;
 
   return status;
 }
