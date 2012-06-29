@@ -221,17 +221,16 @@ gint get_integer_from_string(gchar *result)
   gint our_integer = 0;
   gint i = 0;
   gchar *number = NULL;
-  while ((isdigit(result[i])==0) && 
-         (result[i]!='\0') && (result[i]!='-'))
-    {
-      i++;
-      number = result + i;
-    }
+  while ((isdigit(result[i])==0) && (result[i]!='\0') && (result[i]!='-'))
+  {
+    i++;
+    number = result + i;
+  }
   if (! (number == (result + strlen(result))))
-    {
-      our_integer = atoi (number);
-    }
-  
+  {
+    our_integer = atoi (number);
+  }
+
   return our_integer;
 }
 
@@ -346,38 +345,31 @@ gchar *snackamp_get_filename()
 //!returns current song position in the playlist
 gint snackamp_get_playlist_pos()
 {
-  gchar *result;
-  gint number = 0;
-  result = snackamp_socket_send_message("xmms_remote_get_playlist_pos\n");
-  number = get_integer_from_string(result);
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_pos\n");
+  gint number = get_integer_from_string(result);
   g_free(result);
-  
   return number;
 }
 
 //!stops playing a song
 void snackamp_stop()
 {
-  gchar *result;
-  result = snackamp_socket_send_message("xmms_remote_stop\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_stop\n");
   g_free(result);
 }
 
 //!returns the number of songs of the playlist
 gint snackamp_get_playlist_number()
 {
-  gchar *result;
-  gint number = 0;
-  result = snackamp_socket_send_message("xmms_remote_get_playlist_length\n");
-  number = get_integer_from_string(result);
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_length\n");
+  gint number = get_integer_from_string(result);
   g_free(result);
-  
-  //if we have no song in the playlist we stop it
+
   if (number == -1)
-    {
-      snackamp_stop();
-    }
-  
+  {
+    snackamp_stop();
+  }
+
   return number;
 }
 
@@ -415,39 +407,32 @@ gint snackamp_get_time_elapsed()
 //!starts snackamp
 void snackamp_start()
 {
-  gint timer;
-  time_t lt;
-  
-  static gchar *exec_command;
-  exec_command = "snackAmp";
+  static gchar *exec_command = "snackAmp";
   gchar *exec_this = g_strdup_printf("%s &", exec_command);
   system(exec_this);
   
-  timer = time(&lt);
-  while ((!snackamp_is_running()) &&
-         ((time(&lt) - timer) < 8))
-    {
-      usleep(0);
-    }
-  
+  time_t lt;
+  gint timer = time(&lt);
+  while ((!snackamp_is_running()) && ((time(&lt) - timer) < 8))
+  {
+    usleep(0);
+  }
+
   g_free(exec_this);
 }
 
 //!jumps to the position pos in the playlist
 void snackamp_set_playlist_pos(gint pos)
 {
-  gchar *result;
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %d\n",
-          "xmms_remote_set_playlist_pos",pos);
-  result = snackamp_socket_send_message(temp);
+  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_playlist_pos",pos);
+  gchar *result = snackamp_socket_send_message(temp);
   g_free(result);
 }
 
 //!selects the last file in the playlist
 void snackamp_select_last_file()
 {
-  //we get last song position
   gint last_song = snackamp_get_playlist_number();
   snackamp_set_playlist_pos(last_song-1);
 }
@@ -469,48 +454,38 @@ void snackamp_play_last_file()
 //!add files to the snackamp playlist
 void snackamp_add_files(GList *list)
 {
-  gchar *song;
-  gchar *result;
-  
   gint i = 0;
-  gchar *local;
-  gint malloc_int;
-  
-  //for all songs
+  gchar *song = NULL;
   while ((song = g_list_nth_data(list, i)) != NULL)
-    {
-      malloc_int = strlen(song) + 30;
-      local = malloc(malloc_int * sizeof(gchar *));
-      g_snprintf(local,malloc_int,"%s {%s}\n", 
-                 "xmms_remote_playlist_add ", song);
-      result = snackamp_socket_send_message(local);
-      g_free(result);
-      g_free(local);
-      i++;
-    }
+  {
+    gint malloc_int = strlen(song) + 30;
+    gchar *local = malloc(malloc_int * sizeof(gchar *));
+    g_snprintf(local, malloc_int, "%s {%s}\n", "xmms_remote_playlist_add ", song);
+
+    gchar *result = snackamp_socket_send_message(local);
+    g_free(result);
+
+    g_free(local);
+    i++;
+  }
 }
 
 //!sets volume
 void snackamp_set_volume(gint volume)
 {
-  //we get the current file
-  gchar *result;
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %d\n",
-          "xmms_remote_set_main_volume",volume);
-  result = snackamp_socket_send_message(temp);
+  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_main_volume",volume);
+  gchar *result = snackamp_socket_send_message(temp);
   g_free(result);
 }
 
 //!returns volume
 gint snackamp_get_volume()
 {
-  gchar *result;
-  gint vol;
-  result = snackamp_socket_send_message("xmms_remote_get_main_volume\n");
-  vol = get_integer_from_string(result);
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_main_volume\n");
+  gint vol = get_integer_from_string(result);
   g_free(result);
-  
+ 
   return vol;
 }
 
@@ -548,8 +523,7 @@ void snackamp_pause()
 //!changes to next song
 void snackamp_next()
 {
-  gchar *result;
-  result = snackamp_socket_send_message("xmms_remote_playlist_next\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_playlist_next\n");
   g_free(result);
 }
 
@@ -557,19 +531,15 @@ void snackamp_next()
 void snackamp_prev()
 {
   gint playlist_pos = snackamp_get_playlist_pos();
-  
-  //if we are not at the beginning
+
   if (playlist_pos > 0)
-    {
-      gchar *result;
-      result = snackamp_socket_send_message("xmms_remote_playlist_prev\n");
-      g_free(result);
-    }
-  else
-    {
-      //we play the last song
-      snackamp_play_last_file();
-    }
+  {
+    gchar *result = snackamp_socket_send_message("xmms_remote_playlist_prev\n");
+    g_free(result);
+    return;
+  }
+
+  snackamp_play_last_file();
 }
 
 //!jump to time

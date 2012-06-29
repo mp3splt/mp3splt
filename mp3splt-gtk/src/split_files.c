@@ -313,7 +313,7 @@ void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
 
   connect_button_event (NULL, NULL);
   change_current_filename(filename);
-  connect_to_player_with_song(0);
+  connect_to_player_with_song(0, ui);
 
   gtk_tree_path_free(path);
   if (filename)

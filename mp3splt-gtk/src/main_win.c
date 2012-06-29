@@ -600,14 +600,14 @@ static void zoom_in(GtkWidget *widget, ui_state *ui)
 {
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff += fraction;
-  adjust_zoom_coeff();
+  adjust_zoom_coeff(ui->infos);
 }
 
 static void zoom_out(GtkWidget *widget, ui_state *ui)
 {
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff -= fraction; 
-  adjust_zoom_coeff();
+  adjust_zoom_coeff(ui->infos);
 }
 
 static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui_state *ui)
