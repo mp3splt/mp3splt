@@ -31,12 +31,7 @@
 
 #include "libmp3splt_manager.h"
 
-gint split_files = 0;
-
 extern ui_state *ui;
-
-extern GtkWidget *queue_files_button;
-extern GtkWidget *remove_all_files_button;
 
 static void lmanager_change_window_progress_bar(splt_progress *p_bar);
 static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type);
@@ -64,7 +59,7 @@ void lmanager_stop_split(ui_state *ui)
 {
   gint err = SPLT_OK;
   mp3splt_stop_split(ui->mp3splt_state, &err);
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
 }
 
 //! Add another file to the split_file tab
@@ -72,17 +67,11 @@ void lmanager_put_split_filename(const char *filename,int progress_data)
 {
   enter_threads();
 
-  if (!gtk_widget_get_sensitive(queue_files_button))
-  {
-    gtk_widget_set_sensitive(queue_files_button, TRUE);
-  }
-  if (!gtk_widget_get_sensitive(remove_all_files_button))
-  {
-    gtk_widget_set_sensitive(remove_all_files_button,TRUE);
-  }
+  gtk_widget_set_sensitive(ui->gui->queue_files_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->remove_all_files_button,TRUE);
 
   add_split_row(filename);
-  split_files++;
+  ui->infos->split_files++;
 
   gint fname_status_size = (strlen(filename) + 255);
   gchar *fname_status = g_malloc(sizeof(char) * fname_status_size);

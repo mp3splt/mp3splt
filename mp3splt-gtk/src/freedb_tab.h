@@ -49,21 +49,12 @@ void add_freedb_row(gchar *album_name,
 GtkTreeModel *create_freedb_model();
 GtkTreeView *create_freedb_tree();
 void create_freedb_columns (GtkTreeView *freedb_tree);
-void close_freedb_popup_window_event( GtkWidget *window,
-                                      gpointer data );
-void handle_freedb_detached_event (GtkHandleBox *handlebox,
-                                 GtkWidget *widget,
-                                   gpointer data);
 void freedb_selection_changed(GtkTreeSelection *selection,
                               gpointer data);
-void remove_all_freedb_rows ();
+void remove_all_freedb_rows();
 gchar *transform_to_utf8(gchar *text, 
                          gint free_or_not,
                          gint *must_be_freed);
-void freedb_search_button_event( GtkWidget *widget,
-                                 gpointer   data );
-void freedb_entry_activate_event (GtkEntry *entry,
-                                  gpointer data);
 gint write_freedbfile_and_get_splitpoints(int *err);
 void get_secs_mins_hundr(gfloat time,
                          gint *mins,gint *secs, 
@@ -71,7 +62,7 @@ void get_secs_mins_hundr(gfloat time,
 void update_splitpoints_from_mp3splt_state();
 void freedb_add_button_clicked_event(GtkButton *button,
                                      gpointer data);
-GtkWidget *create_freedb_frame();
+GtkWidget *create_freedb_frame(ui_state *ui);
 
 void hide_freedb_spinner();
 

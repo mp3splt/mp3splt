@@ -65,7 +65,6 @@ gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 
 extern gint timeout_value;
 
-extern GtkWidget *queue_files_button;
 extern gint split_file_mode;
 
 static GtkWidget *create_extract_tags_from_filename_options_box();
@@ -561,7 +560,7 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
   }
   
   gtk_widget_show(ui->gui->player_box);
-  gtk_widget_show(queue_files_button);
+  gtk_widget_show(ui->gui->queue_files_button);
 
   save_preferences(NULL, NULL);
 }
@@ -848,7 +847,7 @@ gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
   gint error = SPLT_OUTPUT_FORMAT_OK;
   mp3splt_set_oformat(ui->mp3splt_state, data, &error);
   remove_status_message(ui->gui);
-  print_status_bar_confirmation(error);
+  print_status_bar_confirmation(error, ui->gui);
 
   save_preferences(NULL, NULL);
   
@@ -999,7 +998,7 @@ void test_regex_event(GtkWidget *widget, gpointer data)
 
   gint error = SPLT_OK;
   splt_tags *tags = mp3splt_parse_filename_regex(ui->mp3splt_state, &error);
-  print_status_bar_confirmation(error);
+  print_status_bar_confirmation(error, ui->gui);
 
   if (error >= 0)
   {

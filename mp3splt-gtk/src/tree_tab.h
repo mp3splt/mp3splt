@@ -52,27 +52,15 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui);
 void update_splitpoint_from_time(gint index, gdouble time, ui_state *ui);
 void update_splitpoint_check(gint index, ui_state *ui);
 void update_add_button(ui_state *ui);
-void update_minutes_from_spinner(GtkWidget *widget, gpointer data);
-void update_seconds_from_spinner(GtkWidget *widget, gpointer data);
-void update_hundr_secs_from_spinner(GtkWidget *widget, gpointer data);
+void update_minutes_from_spinner(GtkWidget *widget, ui_state *ui);
+void update_seconds_from_spinner(GtkWidget *widget, ui_state *ui);
+void update_hundr_secs_from_spinner(GtkWidget *widget, ui_state *ui);
 void exchange_elements_from_array(gint element_number1,
                                   gint element_number2);
-void row_selection_event();
 void exchange_rows_in_the_tree(gint i, gint j, GtkTreeView *tree_view);
 void sort_tree(GtkTreeView *tree_view);
 void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui);
 void add_row(gint checked);
-GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, 
-                               gint min, 
-                               gint max, 
-                               gchar *label_text,
-                               gint type);
-void create_columns (GtkTreeView *tree_view);
-void close_popup_window_event( GtkWidget *window,
-                               gpointer data );
-void handle_detached_event (GtkHandleBox *handlebox,
-                            GtkWidget *widget,
-                            gpointer data);
 GtkWidget *create_splitpoints_frame(ui_state *ui);
 void put_splitpoints_in_mp3splt_state(splt_state *state);
 

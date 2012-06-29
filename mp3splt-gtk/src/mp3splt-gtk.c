@@ -54,7 +54,7 @@ gpointer split_it(gpointer data)
   
   enter_threads();
 
-  remove_all_split_rows();
+  remove_all_split_rows(ui);
 
   exit_threads();
  
@@ -74,7 +74,7 @@ gpointer split_it(gpointer data)
     mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
 
   enter_threads();
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
   
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
   exit_threads();
@@ -165,10 +165,10 @@ gpointer split_it(gpointer data)
         enter_threads();
 
         mp3splt_erase_all_tags(ui->mp3splt_state, &err);
-        print_status_bar_confirmation(err);
+        print_status_bar_confirmation(err, ui->gui);
         err = SPLT_OK;
         mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
-        print_status_bar_confirmation(err);
+        print_status_bar_confirmation(err, ui->gui);
 
         exit_threads();
       }
@@ -189,7 +189,7 @@ gpointer split_it(gpointer data)
   
   enter_threads();
 
-  print_status_bar_confirmation(confirmation);
+  print_status_bar_confirmation(confirmation, ui->gui);
   
   //see the cancel button
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);

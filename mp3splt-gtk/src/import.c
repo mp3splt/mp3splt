@@ -196,7 +196,7 @@ static gpointer add_audacity_labels_splitpoints(gpointer data)
     update_splitpoints_from_mp3splt_state();
   }
  
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
  
   exit_threads();
 
@@ -223,7 +223,7 @@ static gpointer add_cddb_splitpoints(gpointer data)
   {
     update_splitpoints_from_mp3splt_state();
   }
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
 
   exit_threads();
 
@@ -251,7 +251,7 @@ static gpointer add_cue_splitpoints(gpointer data)
   {
     update_splitpoints_from_mp3splt_state();
   }
-  print_status_bar_confirmation(err);
+  print_status_bar_confirmation(err, ui->gui);
 
   // The cue file has provided libmp3splt with a input filename.
   // But since we use the filename from the gui instead we need to set
