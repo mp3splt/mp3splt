@@ -328,8 +328,7 @@ GtkWidget *create_multiple_files_component()
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(multiple_files_tree));
 
   //selection for the tree
-  GtkWidget *multiple_files_tree_selection = (GtkWidget *)
-    gtk_tree_view_get_selection(multiple_files_tree);
+  GtkTreeSelection *multiple_files_tree_selection = gtk_tree_view_get_selection(multiple_files_tree);
   g_signal_connect(G_OBJECT(multiple_files_tree_selection), "changed",
                    G_CALLBACK(multiple_files_selection_changed), NULL);
   gtk_tree_selection_set_mode(GTK_TREE_SELECTION(multiple_files_tree_selection),

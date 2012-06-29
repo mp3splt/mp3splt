@@ -532,8 +532,7 @@ GtkWidget *create_freedb_frame()
 
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(freedb_tree));
   
-  GtkWidget *freedb_tree_selection =
-    (GtkWidget *) gtk_tree_view_get_selection(freedb_tree);
+  GtkTreeSelection *freedb_tree_selection = gtk_tree_view_get_selection(freedb_tree);
   g_signal_connect(G_OBJECT(freedb_tree_selection), "changed",
                     G_CALLBACK(freedb_selection_changed), NULL);
 

@@ -257,9 +257,8 @@ void remove_all_files_button_event(GtkWidget *widget, gpointer data)
 }
 
 //!creates the horizontal queue buttons horizontal box
-GtkWidget *create_queue_buttons_hbox()
+static GtkWidget *create_queue_buttons_hbox()
 {
-  //our horizontal box
   GtkWidget *hbox = wh_hbox_new();
 
   //button for queueing all files
@@ -294,7 +293,7 @@ GtkWidget *create_queue_buttons_hbox()
 
 //! Issued when a row is clicked on
 void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
-    GtkTreeViewColumn *arg2, gpointer data)
+    GtkTreeViewColumn *arg2, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(split_tree);
   GtkTreeSelection *selection = gtk_tree_view_get_selection(split_tree);
@@ -307,7 +306,6 @@ void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
   gtk_tree_model_get_iter(model, &iter, path);
 
   gchar *filename = NULL;
-
   gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
 
   connect_button_event(ui->gui->connect_button, ui);
@@ -318,7 +316,6 @@ void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
   if (filename)
   {
     g_free(filename);
-    filename = NULL;
   }
 }
 
@@ -377,39 +374,30 @@ GtkWidget *create_split_files()
   split_handle_box = gtk_handle_box_new();
   gtk_container_add(GTK_CONTAINER (split_handle_box), 
                     GTK_WIDGET(vbox));
-  //handle event
   g_signal_connect(split_handle_box, "child-detached",
                    G_CALLBACK(handle_split_detached_event),
                    NULL);
 
-  // scrolled window and the tree 
-  //create the tree and add it to the scrolled window
   split_tree = create_split_files_tree();
-  //scrolled window for the tree
   GtkWidget *scrolled_window;
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_AUTOMATIC);
-  gtk_box_pack_start (GTK_BOX (vbox),
-                      scrolled_window, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
   create_split_columns(split_tree);
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(split_tree));
-  g_signal_connect(G_OBJECT(split_tree), "row-activated", G_CALLBACK(split_tree_row_activated), NULL);
+  g_signal_connect(G_OBJECT(split_tree), "row-activated", G_CALLBACK(split_tree_row_activated), ui);
   
   //selection for the tree
-  GtkWidget *split_tree_selection = 
-    (GtkWidget *)gtk_tree_view_get_selection(split_tree);
+  GtkTreeSelection *split_tree_selection = gtk_tree_view_get_selection(split_tree);
   g_signal_connect(G_OBJECT(split_tree_selection), "changed", G_CALLBACK(split_selection_changed), NULL);
   gtk_tree_selection_set_mode(GTK_TREE_SELECTION(split_tree_selection), GTK_SELECTION_MULTIPLE);
   
   // horizontal box with queue buttons
-  GtkWidget *queue_buttons_hbox;
-  queue_buttons_hbox = 
-    (GtkWidget *)create_queue_buttons_hbox();
-  gtk_box_pack_start (GTK_BOX (vbox),
-                      queue_buttons_hbox, FALSE, FALSE, 2);
+  GtkWidget *queue_buttons_hbox = create_queue_buttons_hbox();
+  gtk_box_pack_start(GTK_BOX(vbox), queue_buttons_hbox, FALSE, FALSE, 2);
   
   return split_handle_box;
 }
