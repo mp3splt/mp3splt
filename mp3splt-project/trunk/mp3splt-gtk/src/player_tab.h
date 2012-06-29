@@ -70,15 +70,12 @@ void enable_player_buttons();
 void disable_player_buttons();
 void connect_change_buttons();
 void disconnect_change_buttons();
-void connect_with_song(const gchar *fname, gint i);
-void connect_to_player_with_song(gint i);
+void connect_to_player_with_song(gint i, ui_state *ui);
 void connect_button_event(GtkWidget *widget, gpointer data);
 void check_stream();
 void disconnect_button_event(GtkWidget *widget, gpointer data);
-void play_event(GtkWidget *widget, gpointer data);
 void stop_event(GtkWidget *widget, gpointer data);
 void pause_event(GtkWidget *widget, gpointer data);
-void prev_button_event (GtkWidget *widget, gpointer data);
 void next_button_event (GtkWidget *widget, gpointer data);
 void refresh_drawing_area(gui_state *gui);
 void print_about_the_song();
@@ -119,15 +116,6 @@ gint convert_time_to_pixels(gint width, gfloat time,
 gboolean da_expose_event (GtkWidget      *da,
                           GdkEventExpose *event,
                           gpointer       data);
-gboolean da_press_event (GtkWidget    *da,
-                         GdkEventButton *event,
-                         gpointer     data);
-gboolean da_unpress_event (GtkWidget    *da,
-                           GdkEventButton *event,
-                           gpointer     data);
-gboolean da_notify_event (GtkWidget     *da,
-                          GdkEventMotion *event,
-                          gpointer      data);
 GtkWidget *create_player_control_frame(ui_state *ui);
 
 //moved from the file_tab
@@ -158,7 +146,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
     gint *splitpoint_left, ui_infos *infos);
 void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui);
-void adjust_zoom_coeff();
+void adjust_zoom_coeff(ui_infos *infos);
 
 #endif
 

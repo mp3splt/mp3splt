@@ -49,7 +49,7 @@ void select_splitpoint(gint index, gui_state *gui);
 gint get_splitpoint_time(gint this_splitpoint, ui_state *ui);
 void remove_splitpoint(gint index,gint stop_preview, ui_state *ui);
 void update_splitpoint(gint index, Split_point new_point, ui_state *ui);
-void update_splitpoint_from_time(gint index, gdouble time);
+void update_splitpoint_from_time(gint index, gdouble time, ui_state *ui);
 void update_splitpoint_check(gint index, ui_state *ui);
 void update_add_button(ui_state *ui);
 void update_minutes_from_spinner(GtkWidget *widget, gpointer data);

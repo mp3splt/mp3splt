@@ -1,6 +1,6 @@
 /**********************************************************
- * mp3splt-gtk -- utility based on mp3splt,
  *                for mp3/ogg splitting without decoding
+ * mp3splt-gtk -- utility based on mp3splt,
  *
  *
  * Copyright: (C) 2005-2012 Alexandru Munteanu
@@ -105,8 +105,8 @@ typedef struct {
 
 typedef struct {
   GtkWidget *window;
-  GtkActionGroup *action_group;
 
+  GtkActionGroup *action_group;
   GtkWidget *browse_entry;
   GtkWidget *browse_button;
   GString *input_filename;
@@ -156,6 +156,27 @@ typedef struct {
   GtkToggleButton *names_from_filename;
 
   GtkWidget *pause_button;
+
+  GtkBox *player_buttons_hbox;
+
+  //player button images
+  GtkWidget *Go_BegButton_active;
+  GtkWidget *Go_BegButton_inactive;
+  GtkWidget *Go_EndButton_active;
+  GtkWidget *Go_EndButton_inactive;
+  GtkWidget *PlayButton_active;
+  GtkWidget *PlayButton_inactive;
+  GtkWidget *StopButton_active;
+  GtkWidget *StopButton_inactive;
+  GtkWidget *PauseButton_active;
+  GtkWidget *PauseButton_inactive;
+
+  //player buttons
+  GtkWidget *play_button;
+  GtkWidget *stop_button;
+  GtkWidget *player_add_button;
+  GtkWidget *go_beg_button;
+  GtkWidget *go_end_button;
 } gui_state;
 
 typedef struct {

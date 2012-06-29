@@ -374,28 +374,27 @@ void gstreamer_start()
 #endif
 
   play = gst_element_factory_make("playbin", "play");
-  if (play)
+  if (!play)
   {
-    gtk_widget_show_all(ui->gui->playlist_box);
-
-    _gstreamer_is_running = TRUE;
-    bus = gst_pipeline_get_bus (GST_PIPELINE (play));
-    gst_bus_add_watch(bus, bus_call, NULL);
-    gst_object_unref(bus);
-
-    //add the current filename
-    const gchar *fname =  get_input_filename(ui->gui);
-    GList *song_list = NULL;
-    song_list = g_list_append(song_list, strdup(fname));
-    gstreamer_add_files(song_list);
-    //TODO: free memory from GList *song_list
+    enter_threads();
+    put_status_message(_(" error: cannot create gstreamer playbin\n"), ui->gui);
+    exit_threads();
+    return;
   }
-	else
-	{
-		enter_threads();
-		put_status_message(_(" error: cannot create gstreamer playbin\n"), ui->gui);
-		exit_threads();
-	}
+
+  gtk_widget_show_all(ui->gui->playlist_box);
+
+  _gstreamer_is_running = TRUE;
+  bus = gst_pipeline_get_bus (GST_PIPELINE (play));
+  gst_bus_add_watch(bus, bus_call, NULL);
+  gst_object_unref(bus);
+
+  //add the current filename
+  const gchar *fname =  get_input_filename(ui->gui);
+  GList *song_list = NULL;
+  song_list = g_list_append(song_list, strdup(fname));
+  gstreamer_add_files(song_list);
+  //TODO: free memory from GList *song_list
 }
 
 //!selects the last file in the playlist
@@ -413,40 +412,34 @@ void gstreamer_play_last_file()
 //!add files to the gstreamer playlist
 void gstreamer_add_files(GList *list)
 {
-  gchar *song = NULL;
+  if (song_title) { song_title = NULL; }
+  if (song_artist) { song_artist = NULL; }
+
+  if (!play)
+  {
+    return;
+  }
+
   gint i = 0;
-  gchar *uri = NULL;
-  int len_uri = 20;
-
-  if (song_title)
+  gchar *song = NULL;
+  while ((song = g_list_nth_data(list, i)) != NULL)
   {
-    song_title = NULL;
-  }
-  if (song_artist)
-  {
-    song_artist = NULL;
-  }
-
-	if (play)
-  {
-    while ((song = g_list_nth_data(list, i)) != NULL)
+    if (!song)
     {
-      if (song)
-      {
-        //add file to playlist
-        add_playlist_file(song);
-        len_uri += strlen(song);
-        uri = malloc(sizeof(char) * len_uri);
-        g_snprintf(uri,len_uri,"file://%s",song);
-        g_object_set(G_OBJECT(play), "uri", uri, NULL);
-        if (uri)
-        {
-          g_free(uri);
-          uri = NULL;
-        }
-      }
       i++;
+      continue;
     }
+
+    add_playlist_file(song);
+    int len_uri = 20 + strlen(song);
+    gchar *uri = malloc(sizeof(char) * len_uri);
+    g_snprintf(uri, len_uri, "file://%s",song);
+
+    g_object_set(G_OBJECT(play), "uri", uri, NULL);
+
+    if (uri) { g_free(uri); }
+
+    i++;
   }
 }
 
@@ -533,10 +526,12 @@ void gstreamer_play()
 //!stops a song
 void gstreamer_stop()
 {
-	if (play)
-	{
-		gst_element_set_state(play, GST_STATE_NULL);
-	}
+  if (!play)
+  {
+    return;
+  }
+
+  gst_element_set_state(play, GST_STATE_NULL);
 }
 
 //!pause a song

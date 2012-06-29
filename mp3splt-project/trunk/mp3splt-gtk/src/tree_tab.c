@@ -523,17 +523,13 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
 \param index The split point's number
 \param time the new time value
 */
-void update_splitpoint_from_time(gint index, gdouble time)
+void update_splitpoint_from_time(gint index, gdouble time, ui_state *ui)
 {
-  //if we have another splitpoint on the same place
-  //we don't add it
   Split_point new_point;
-  get_hundr_secs_mins_time((gint)time,
-                           &new_point.hundr_secs,
-                           &new_point.secs,
-                           &new_point.mins);
+  get_hundr_secs_mins_time((gint)time, &new_point.hundr_secs, &new_point.secs, &new_point.mins);
   Split_point old_point = g_array_index(ui->splitpoints, Split_point, index);
   new_point.checked = old_point.checked;
+
   update_splitpoint(index, new_point, ui);
 }
 
@@ -1530,7 +1526,7 @@ gpointer split_preview(gpointer data)
         split_file = NULL;
 
         //starts playing, 0 means start playing
-        connect_to_player_with_song(0);
+        connect_to_player_with_song(0, ui);
       }
     }
 

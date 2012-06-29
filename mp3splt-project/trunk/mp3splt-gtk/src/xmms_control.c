@@ -149,30 +149,25 @@ gint myxmms_get_time_elapsed()
 //!starts xmms
 void myxmms_start()
 {
-  gint timer;
-  time_t lt;
-  
-  static gchar *exec_command;
-  exec_command = "audacious";
+  static gchar *exec_command = "audacious";
   gchar *exec_this = g_strdup_printf("%s &", exec_command);
   system(exec_this);
-  
-  timer = time(&lt);
-  while (!audacious_remote_is_running(dbus_proxy) 
-         && ((time(&lt) - timer) < 4))
-    {
-      usleep(0);
-    }
-  
+
+  time_t lt;
+  gint timer = time(&lt);
+  while (!audacious_remote_is_running(dbus_proxy) && ((time(&lt) - timer) < 4))
+  {
+    usleep(0);
+  }
+
   g_free(exec_this);
 }
 
 //!selects the last file in the playlist
 void myxmms_select_last_file()
 {
-  gint number;
-  number = audacious_remote_get_playlist_length(dbus_proxy);
-  audacious_remote_set_playlist_pos(dbus_proxy,(number-1));
+  gint number = audacious_remote_get_playlist_length(dbus_proxy);
+  audacious_remote_set_playlist_pos(dbus_proxy, number - 1);
 }
 
 //!plays the last file of the playlist
@@ -185,22 +180,12 @@ void myxmms_play_last_file()
 //!add files to the xmms playlist
 void myxmms_add_files(GList *list)
 {
-  //change filenames into URLs
   GList *list_pos = list;
-
-  //for each element of the list
   while (list_pos)
   {
-    //duplicate the filename
     gchar *dup_filename = strdup(list_pos->data);
-    //free the GList data content
-    //g_free(list_pos->data);
-    //put the new GList data content
     list_pos->data = g_filename_to_uri(dup_filename,NULL,NULL);
-    //free the duplicated filename
     g_free(dup_filename);
-    dup_filename = NULL;
-    //move to the next element
     list_pos = g_list_next(list_pos);
   }
 

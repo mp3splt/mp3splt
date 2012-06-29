@@ -49,8 +49,6 @@ gint file_in_entry = FALSE;
 //handle box for detaching window
 GtkWidget *file_handle_box;
 
-GtkWidget *player_buttons_hbox = NULL;
-
 //if we have selected a correct file
 gint incorrect_selected_file = FALSE;
 
@@ -77,19 +75,9 @@ gboolean stream = FALSE;
 GtkWidget *connect_button;
 GtkWidget *disconnect_button;
 
-//player buttons
-GtkWidget *play_button;
-GtkWidget *stop_button;
-GtkWidget *player_add_button;
-GtkWidget *go_beg_button;
-GtkWidget *go_end_button;
-
 //silence wave
 GtkWidget *silence_wave_check_button = NULL;
 gint we_scan_for_silence = FALSE;
-
-//id of the timeout, used to stop it
-gint timeout_id;
 
 //handle for detaching
 GtkWidget *player_handle;
@@ -108,29 +96,10 @@ gint timeout_value = DEFAULT_TIMEOUT_VALUE;
 
 gint only_press_pause = FALSE;
 
-//our playlist tree
 GtkTreeView *playlist_tree = NULL;
 gint playlist_tree_number = 0;
 
-/*! \defgroup Playerbuttons Button images for the player
-
-\@{
-*/
-GtkWidget *Go_BegButton_active;
-GtkWidget *Go_BegButton_inactive;
-GtkWidget *Go_EndButton_active;
-GtkWidget *Go_EndButton_inactive;
-GtkWidget *PlayButton_active;
-GtkWidget *PlayButton_inactive;
-GtkWidget *StopButton_active;
-GtkWidget *StopButton_inactive;
-GtkWidget *PauseButton_active;
-GtkWidget *PauseButton_inactive;
-//@}
-
-//remove file button
 GtkWidget *playlist_remove_file_button;
-//remove file button
 GtkWidget *playlist_remove_all_files_button;
 
 gdouble douglas_peucker_thresholds[5] = { 2.0, 5.0, 8.0, 11.0, 15.0 };
@@ -389,21 +358,21 @@ void clear_data_player()
 //!enables the buttons of the player
 void enable_player_buttons()
 {
-  gtk_widget_set_sensitive(stop_button, TRUE);
-  gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_active));
+  gtk_widget_set_sensitive(ui->gui->stop_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->stop_button), g_object_ref(ui->gui->StopButton_active));
   
   gtk_widget_set_sensitive(ui->gui->pause_button, TRUE);
-  gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(PauseButton_active));
+  gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(ui->gui->PauseButton_active));
  
  if (selected_player != PLAYER_GSTREAMER)
   {
-    gtk_widget_set_sensitive(go_beg_button, TRUE);
-    gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_active));
-    gtk_widget_set_sensitive(go_end_button, TRUE);
-    gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_active));
+    gtk_widget_set_sensitive(ui->gui->go_beg_button, TRUE);
+    gtk_button_set_image(GTK_BUTTON(ui->gui->go_beg_button), g_object_ref(ui->gui->Go_BegButton_active));
+    gtk_widget_set_sensitive(ui->gui->go_end_button, TRUE);
+    gtk_button_set_image(GTK_BUTTON(ui->gui->go_end_button), g_object_ref(ui->gui->Go_EndButton_active));
   }
-  gtk_widget_set_sensitive(play_button, TRUE);
-  gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
+  gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_active));
 
   player_key_actions_set_sensitivity(TRUE, ui->gui);
 }
@@ -411,17 +380,17 @@ void enable_player_buttons()
 //!disables the buttons of the player
 void disable_player_buttons()
 {
-  gtk_widget_set_sensitive(stop_button, FALSE);
-  gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
+  gtk_widget_set_sensitive(ui->gui->stop_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->stop_button), g_object_ref(ui->gui->StopButton_inactive));
   gtk_widget_set_sensitive(ui->gui->pause_button, FALSE);
-  gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(PauseButton_inactive));
-  gtk_widget_set_sensitive(go_beg_button, FALSE);
-  gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_inactive));
-  gtk_widget_set_sensitive(go_end_button, FALSE);
-  gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_inactive));
-  gtk_widget_set_sensitive(play_button, FALSE);
-  gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_inactive));
-  gtk_widget_set_sensitive(player_add_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(ui->gui->PauseButton_inactive));
+  gtk_widget_set_sensitive(ui->gui->go_beg_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->go_beg_button), g_object_ref(ui->gui->Go_BegButton_inactive));
+  gtk_widget_set_sensitive(ui->gui->go_end_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->go_end_button), g_object_ref(ui->gui->Go_EndButton_inactive));
+  gtk_widget_set_sensitive(ui->gui->play_button, FALSE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_inactive));
+  gtk_widget_set_sensitive(ui->gui->player_add_button, FALSE);
   gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
 
   player_key_actions_set_sensitivity(FALSE, ui->gui);
@@ -454,60 +423,69 @@ void disconnect_change_buttons()
 -  start playing
 - else dont start playing right now.
 */
-void connect_with_song(const gchar *fname, gint start_playing)
+static void connect_with_song(const gchar *fname, gint start_playing, ui_state *ui)
 {
-  //list with songs
-  GList *song_list = NULL;
-
-  if (fname != NULL)
+  if (fname == NULL)
   {
-    song_list = g_list_append(song_list, strdup(fname));
+    return;
+  }
 
-    //if we must also play the song
-    if (start_playing == 0)
+  gui_status *status = ui->status;
+
+  GList *song_list = NULL;
+  song_list = g_list_append(song_list, strdup(fname));
+
+  if (start_playing == 0)
+  {
+    if (!player_is_running())
+    {
+      player_start_play_with_songs(song_list);
+    }
+    else
+    {
+      player_add_play_files(song_list);
+    }
+  }
+  else
+  {
+    if (file_browsed)
     {
       //if the player is not running, start it ,queue to playlist and
       //play the file
       if (!player_is_running())
       {
-        player_start_play_with_songs(song_list);
+        player_start_add_files(song_list);
       }
       else
       {
-        player_add_play_files(song_list);
-      }
-    }
-    else
-    {
-      if (file_browsed)
-      {
-        //if the player is not running, start it ,queue to playlist and
-        //play the file
-        if (!player_is_running())
-          player_start_add_files(song_list);
+        if(!status->playing)
+        {
+          player_add_files_and_select(song_list);
+        }
         else
-          if(!ui->status->playing)
-            player_add_files_and_select(song_list);
-          else
-            player_add_files(song_list);
+        {
+          player_add_files(song_list);
+        }
       }
-    }
-    ui->status->playing = TRUE;
-
-    if (!ui->status->timer_active)
-    {
-      timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
-      ui->status->timer_active = TRUE;
-    }
-
-    enable_player_buttons();
-    if (player_is_running())
-    {
-      connect_change_buttons();
     }
   }
 
-  //TODO: free elements of list
+  status->playing = TRUE;
+
+  if (!status->timer_active)
+  {
+    timeout_id = g_timeout_add(timeout_value, mytimer, NULL);
+    status->timer_active = TRUE;
+  }
+
+  enable_player_buttons();
+
+  if (player_is_running())
+  {
+    connect_change_buttons();
+  }
+
+  g_list_foreach(song_list, (GFunc)g_free, NULL);
   g_list_free(song_list);
 }
 
@@ -516,9 +494,9 @@ void connect_with_song(const gchar *fname, gint start_playing)
   \param i 0 means then start playing, != 0 means dont start playing
   right now
  */
-void connect_to_player_with_song(gint i)
+void connect_to_player_with_song(gint i, ui_state *ui)
 {
-  connect_with_song(get_input_filename(ui->gui), i);
+  connect_with_song(get_input_filename(ui->gui), i, ui);
 }
 
 //!play button event
@@ -544,7 +522,7 @@ void connect_button_event(GtkWidget *widget, gpointer data)
 
   //connect to player with song
   //1 means dont start playing
-  connect_to_player_with_song(1);
+  connect_to_player_with_song(1, ui);
 
   if (selected_player != PLAYER_GSTREAMER)
   {
@@ -660,8 +638,8 @@ void disconnect_button_event(GtkWidget *widget, gpointer data)
   if (file_exists(fname))
   {
     file_in_entry = TRUE;
-    gtk_widget_set_sensitive(play_button, TRUE);
-    gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
+    gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
+    gtk_button_set_image(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_active));
   }
 
   player_quit();
@@ -677,32 +655,34 @@ void restart_player_timer()
 }
 
 //! play button event
-void play_event (GtkWidget *widget, gpointer data)
+static void play_event(GtkWidget *widget, ui_state *ui)
 {
-  if (ui->status->timer_active)
+  gui_state *gui = ui->gui;
+  gui_status *status = ui->status;
+
+  if (status->timer_active)
   {
     if (!player_is_running())
     {
       player_start();
     }
     player_play();
-    ui->status->playing = TRUE;
+    status->playing = TRUE;
   }
   else
   {
-    //connects to player with the song
-    //0 means also start playing
-    connect_to_player_with_song(0);
+    //0 = also start playing
+    connect_to_player_with_song(0, ui);
     if (selected_player != PLAYER_GSTREAMER)
     {
-      gtk_widget_set_sensitive(ui->gui->browse_button, FALSE);
+      gtk_widget_set_sensitive(gui->browse_button, FALSE);
     }
   }
 
-  gtk_widget_set_sensitive(ui->gui->pause_button, TRUE);
-  gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(PauseButton_active));
-  gtk_widget_set_sensitive(stop_button, TRUE);
-  gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_active));
+  gtk_widget_set_sensitive(gui->pause_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(gui->pause_button), g_object_ref(gui->PauseButton_active));
+  gtk_widget_set_sensitive(gui->stop_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(gui->stop_button), g_object_ref(gui->StopButton_active));
 }
 
 //! stop button event
@@ -723,9 +703,9 @@ void stop_event(GtkWidget *widget, gpointer data)
     player_stop();
 
     gtk_widget_set_sensitive(ui->gui->pause_button, FALSE);
-    gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(PauseButton_inactive));
-    gtk_widget_set_sensitive(stop_button, FALSE);
-    gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
+    gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(ui->gui->PauseButton_inactive));
+    gtk_widget_set_sensitive(ui->gui->stop_button, FALSE);
+    gtk_button_set_image(GTK_BUTTON(ui->gui->stop_button), g_object_ref(ui->gui->StopButton_inactive));
   }
 }
 
@@ -740,12 +720,11 @@ void pause_event(GtkWidget *widget, gpointer data)
 }
 
 //! Event for the "previous" button 
-void prev_button_event (GtkWidget *widget, gpointer data)
+static void prev_button_event(GtkWidget *widget, ui_state *ui)
 {
-  //only if connected to player
-  if (ui->status->timer_active)
-    if (player_is_running())
-      player_prev();
+  if (!ui->status->timer_active) { return; }
+  if (!player_is_running()) { return; }
+  player_prev();
 }
 
 //! event for the "next" button
@@ -822,57 +801,57 @@ GtkWidget *create_volume_button()
 //!creates the player buttons hbox
 static GtkWidget *create_player_buttons_hbox()
 {
-  player_buttons_hbox = wh_hbox_new();
+  GtkBox *player_buttons_hbox = GTK_BOX(wh_hbox_new());
+  ui->gui->player_buttons_hbox = player_buttons_hbox;
 
-  //go at the beginning button
   GString *imagefile = g_string_new("");
-
   build_path(imagefile, IMAGEDIR, "backward"ICON_EXT);
-  Go_BegButton_active= gtk_image_new_from_file(imagefile->str);
+  GtkWidget *Go_BegButton_active = gtk_image_new_from_file(imagefile->str);
+  ui->gui->Go_BegButton_active = Go_BegButton_active;
 
   build_path(imagefile, IMAGEDIR, "backward_inactive"ICON_EXT);
-  Go_BegButton_inactive= gtk_image_new_from_file(imagefile->str);
-  go_beg_button = gtk_button_new();
+  GtkWidget *Go_BegButton_inactive = gtk_image_new_from_file(imagefile->str);
+  ui->gui->Go_BegButton_inactive = Go_BegButton_inactive;
+  GtkWidget *go_beg_button = gtk_button_new();
+  ui->gui->go_beg_button = go_beg_button;
   gtk_button_set_image(GTK_BUTTON(go_beg_button), g_object_ref(Go_BegButton_inactive));
 
-  //put the new button in the box
-  gtk_box_pack_start(GTK_BOX(player_buttons_hbox), go_beg_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(player_buttons_hbox, go_beg_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(go_beg_button), GTK_RELIEF_NONE);
-  g_signal_connect(G_OBJECT(go_beg_button), "clicked",
-                   G_CALLBACK(prev_button_event),
-                   NULL);
+  g_signal_connect(G_OBJECT(go_beg_button), "clicked", G_CALLBACK(prev_button_event), ui);
   gtk_widget_set_sensitive(go_beg_button, FALSE);
   gtk_widget_set_tooltip_text(go_beg_button, _("Previous"));
 
   //play button
   build_path(imagefile, IMAGEDIR, "play"ICON_EXT);
-  PlayButton_active= gtk_image_new_from_file(imagefile->str);
+  GtkWidget *PlayButton_active = gtk_image_new_from_file(imagefile->str);
+  ui->gui->PlayButton_active = PlayButton_active;
 
   build_path(imagefile, IMAGEDIR, "play_inactive"ICON_EXT);
-  PlayButton_inactive= gtk_image_new_from_file(imagefile->str);
-  play_button = gtk_button_new();
+  GtkWidget *PlayButton_inactive = gtk_image_new_from_file(imagefile->str);
+  ui->gui->PlayButton_inactive = PlayButton_inactive;
+  GtkWidget *play_button = gtk_button_new();
+  ui->gui->play_button = play_button;
   gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_inactive));
 
-  //put the new button in the box
-  gtk_box_pack_start(GTK_BOX(player_buttons_hbox), play_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(player_buttons_hbox, play_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(play_button), GTK_RELIEF_NONE);
-  g_signal_connect(G_OBJECT(play_button), "clicked",
-                   G_CALLBACK(play_event),
-                   NULL);
+  g_signal_connect(G_OBJECT(play_button), "clicked", G_CALLBACK(play_event), ui);
   gtk_widget_set_sensitive(play_button, FALSE);
   gtk_widget_set_tooltip_text(play_button,_("Play"));
 
   //pause button
   build_path(imagefile, IMAGEDIR, "pause"ICON_EXT);
-  PauseButton_active= gtk_image_new_from_file(imagefile->str);
+  GtkWidget *PauseButton_active = gtk_image_new_from_file(imagefile->str);
+  ui->gui->PauseButton_active = PauseButton_active;
 
   build_path(imagefile, IMAGEDIR, "pause_inactive"ICON_EXT);
-  PauseButton_inactive= gtk_image_new_from_file(imagefile->str);
+  GtkWidget *PauseButton_inactive = gtk_image_new_from_file(imagefile->str);
+  ui->gui->PauseButton_inactive = PauseButton_inactive;
   GtkWidget *pause_button = gtk_toggle_button_new();
   ui->gui->pause_button = pause_button;
   gtk_button_set_image(GTK_BUTTON(pause_button), g_object_ref(PauseButton_inactive));
-  //put the new button in the box
-  gtk_box_pack_start(GTK_BOX(player_buttons_hbox), pause_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(player_buttons_hbox, pause_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(pause_button), GTK_RELIEF_NONE);
   g_signal_connect(G_OBJECT(pause_button), "clicked", G_CALLBACK(pause_event), NULL);
   gtk_widget_set_sensitive(pause_button, FALSE);
@@ -880,57 +859,56 @@ static GtkWidget *create_player_buttons_hbox()
 
   //stop button
   build_path(imagefile, IMAGEDIR, "stop"ICON_EXT);
-  StopButton_active= gtk_image_new_from_file(imagefile->str);
+  GtkWidget *StopButton_active = gtk_image_new_from_file(imagefile->str);
+  ui->gui->StopButton_active = StopButton_active;
 
   build_path(imagefile, IMAGEDIR, "stop_inactive"ICON_EXT);
-  StopButton_inactive= gtk_image_new_from_file(imagefile->str);
-  stop_button = gtk_button_new();
+  GtkWidget *StopButton_inactive = gtk_image_new_from_file(imagefile->str);
+  ui->gui->StopButton_inactive = StopButton_inactive;
+  GtkWidget *stop_button = gtk_button_new();
+  ui->gui->stop_button = stop_button;
   gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
-  //put the new button in the box
-  gtk_box_pack_start(GTK_BOX(player_buttons_hbox), stop_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(player_buttons_hbox, stop_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(stop_button), GTK_RELIEF_NONE);
   g_signal_connect(G_OBJECT(stop_button), "clicked",
-                   G_CALLBACK(stop_event),
-                   NULL);
+                   G_CALLBACK(stop_event), NULL);
   gtk_widget_set_sensitive(stop_button, FALSE);
   gtk_widget_set_tooltip_text(stop_button,_("Stop"));
 
   //go at the end button
   build_path(imagefile, IMAGEDIR, "forward"ICON_EXT);
-  Go_EndButton_active= gtk_image_new_from_file(imagefile->str);
+  GtkWidget *Go_EndButton_active = gtk_image_new_from_file(imagefile->str);
+  ui->gui->Go_EndButton_active = Go_EndButton_active;
 
   build_path(imagefile, IMAGEDIR, "forward_inactive"ICON_EXT);
-  Go_EndButton_inactive= gtk_image_new_from_file(imagefile->str);
-  go_end_button = gtk_button_new();
+  GtkWidget *Go_EndButton_inactive = gtk_image_new_from_file(imagefile->str);
+  ui->gui->Go_EndButton_inactive = Go_EndButton_inactive;
+  GtkWidget *go_end_button = gtk_button_new();
+  ui->gui->go_end_button = go_end_button;
   gtk_button_set_image(GTK_BUTTON(go_end_button), g_object_ref(Go_EndButton_inactive));
-  //put the new button in the box
-  gtk_box_pack_start(GTK_BOX(player_buttons_hbox), go_end_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(player_buttons_hbox, go_end_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(go_end_button), GTK_RELIEF_NONE);
-  g_signal_connect(G_OBJECT(go_end_button), "clicked",
-                   G_CALLBACK(next_button_event),
-                   NULL);
+  g_signal_connect(G_OBJECT(go_end_button), "clicked", G_CALLBACK(next_button_event), NULL);
   gtk_widget_set_sensitive(go_end_button, FALSE);
   gtk_widget_set_tooltip_text(go_end_button,_("Next"));
   g_string_free(imagefile,TRUE);
 
   GtkWidget *vol_button = (GtkWidget *)create_volume_button();
-  gtk_box_pack_start(GTK_BOX(player_buttons_hbox), vol_button, FALSE, FALSE, 5);
+  gtk_box_pack_start(player_buttons_hbox, vol_button, FALSE, FALSE, 5);
  
   //add button
-  player_add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
-  //put the new button in the box
-  gtk_box_pack_start (GTK_BOX(player_buttons_hbox), player_add_button, FALSE, FALSE, 0);
+  GtkWidget *player_add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
+  ui->gui->player_add_button = player_add_button;
+  gtk_box_pack_start(player_buttons_hbox, player_add_button, FALSE, FALSE, 0);
   gtk_button_set_relief(GTK_BUTTON(player_add_button), GTK_RELIEF_NONE);
-  g_signal_connect(G_OBJECT(player_add_button), "clicked",
-                   G_CALLBACK(add_splitpoint_from_player), NULL);
+  g_signal_connect(G_OBJECT(player_add_button), "clicked", G_CALLBACK(add_splitpoint_from_player), NULL);
   gtk_widget_set_sensitive(player_add_button, FALSE);
   gtk_widget_set_tooltip_text(player_add_button,_("Add splitpoint from player"));
   
   //silence wave check button
   silence_wave_check_button = (GtkWidget *)
     gtk_check_button_new_with_mnemonic(_("Amplitude _wave"));
-  gtk_box_pack_end(GTK_BOX(player_buttons_hbox), silence_wave_check_button,
-      FALSE, FALSE, 5);
+  gtk_box_pack_end(player_buttons_hbox, silence_wave_check_button, FALSE, FALSE, 5);
   g_signal_connect(G_OBJECT(silence_wave_check_button), "toggled",
       G_CALLBACK(enable_show_silence_wave), NULL);
   gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
@@ -939,17 +917,16 @@ static GtkWidget *create_player_buttons_hbox()
 
   /* connect player button */
   connect_button = wh_create_cool_button(GTK_STOCK_CONNECT,_("_Connect"), FALSE);
-  g_signal_connect(G_OBJECT(connect_button), "clicked",
-      G_CALLBACK(connect_button_event), NULL);
+  g_signal_connect(G_OBJECT(connect_button), "clicked", G_CALLBACK(connect_button_event), NULL);
   gtk_widget_set_tooltip_text(connect_button,_("Connect to player"));
   
   /* disconnect player button */
   disconnect_button = wh_create_cool_button(GTK_STOCK_DISCONNECT,_("_Disconnect"), FALSE);
-  g_signal_connect(G_OBJECT (disconnect_button), "clicked",
+  g_signal_connect(G_OBJECT(disconnect_button), "clicked",
       G_CALLBACK(disconnect_button_event), NULL);
   gtk_widget_set_tooltip_text(disconnect_button,_("Disconnect from player"));
 
-  return player_buttons_hbox;
+  return GTK_WIDGET(player_buttons_hbox);
 }
 
 //!song information about frequency, rate, stereo, etc
@@ -2494,7 +2471,7 @@ void player_quick_preview(gint splitpoint_to_preview, ui_state *ui)
 }
 
 //!drawing area press event
-gboolean da_press_event(GtkWidget *da, GdkEventButton *event, gpointer data)
+static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *ui)
 {
   if (!ui->status->playing || !ui->status->timer_active)
   {
@@ -2599,170 +2576,160 @@ gboolean da_press_event(GtkWidget *da, GdkEventButton *event, gpointer data)
 }
 
 //!drawing area release event
-gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, gpointer data)
+static gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, ui_state *ui)
 {
-  //only if we are playing
-  //and the timer active(connected to player)
-  if (ui->status->playing && ui->status->timer_active)
-  {
-    if (event->button == 1)
-    {
-      ui->status->button1_pressed = FALSE;
-      //if we move the current _position_
-      if (!ui->status->move_splitpoints && !ui->status->remove_splitpoints &&
-          !ui->status->select_splitpoints && !ui->status->check_splitpoint)
-      {
-        remove_status_message(ui->gui);
-        player_seek((gint)(ui->status->move_time * 10));
-        change_progress_bar(ui);
+  gui_status *status = ui->status;
 
-        //if we have more than 2 splitpoints
-        //if we are outside the split preview, we 
-        //cancel split preview
-        if (ui->status->quick_preview_end_splitpoint == -1)
+  if (!status->playing || !status->timer_active)
+  {
+    goto end;
+  }
+
+  if (event->button == 1)
+  {
+    status->button1_pressed = FALSE;
+
+    //if moving the current _position_
+    if (!status->move_splitpoints && !status->remove_splitpoints &&
+        !status->select_splitpoints && !status->check_splitpoint)
+    {
+      remove_status_message(ui->gui);
+      player_seek((gint)(status->move_time * 10));
+      change_progress_bar(ui);
+
+      //if more than 2 splitpoints & outside the split preview, cancel split preview
+      if (status->quick_preview_end_splitpoint == -1)
+      {
+        if (status->move_time < get_splitpoint_time(status->preview_start_splitpoint, ui))
         {
-          if (ui->status->move_time < get_splitpoint_time(ui->status->preview_start_splitpoint, ui))
-          {
-            cancel_quick_preview_all(ui->status);
-          }
-        }
-        else
-        {
-          if ((ui->status->move_time < get_splitpoint_time(ui->status->preview_start_splitpoint, ui)) ||
-              (ui->status->move_time > get_splitpoint_time(ui->status->quick_preview_end_splitpoint,ui)))
-          {
-            cancel_quick_preview_all(ui->status);
-          }
-          else
-          //if we are inside, we turn on quick preview
-          {
-            //if we don't have a preview with the last
-            //splitpoint
-            if (ui->status->quick_preview_end_splitpoint != -1)
-            {
-              //we unpause the player
-              if (player_is_paused())
-              {
-                player_pause();
-              }
-              ui->status->quick_preview = TRUE;
-            }
-          }
+          cancel_quick_preview_all(status);
         }
       }
       else
       {
-        if (ui->status->move_splitpoints)
+        if ((status->move_time < get_splitpoint_time(status->preview_start_splitpoint, ui)) ||
+            (status->move_time > get_splitpoint_time(status->quick_preview_end_splitpoint,ui)))
         {
-          update_splitpoint_from_time(ui->status->splitpoint_to_move, ui->status->move_time);
-          ui->status->splitpoint_to_move = -1;                
+          cancel_quick_preview_all(status);
+        }
+        else
+        {
+          //if don't have a preview with the last splitpoint
+          if (status->quick_preview_end_splitpoint != -1)
+          {
+            if (player_is_paused())
+            {
+              player_pause();
+            }
+            status->quick_preview = TRUE;
+          }
         }
       }
-
-      ui->status->move_splitpoints = FALSE;
-      ui->status->select_splitpoints = FALSE;
-      ui->status->check_splitpoint = FALSE;
     }
-    else
+    else if (status->move_splitpoints)
     {
-      if (event->button == 3)
-      {
-        ui->status->button2_pressed = FALSE;
-        ui->status->remove_splitpoints = FALSE;
-      }
+      update_splitpoint_from_time(status->splitpoint_to_move, status->move_time, ui);
+      status->splitpoint_to_move = -1;                
     }
+
+    status->move_splitpoints = FALSE;
+    status->select_splitpoints = FALSE;
+    status->check_splitpoint = FALSE;
   }
-  
+  else if (event->button == 3)
+  {
+    status->button2_pressed = FALSE;
+    status->remove_splitpoints = FALSE;
+  }
+
+end:
   refresh_drawing_area(ui->gui);
-  
   return TRUE;
 }
 
 //!on drawing area event
-gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
+static gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, ui_state *ui)
 {
-  //only if we are playing
-  //and the timer active(connected to player)
-  if ((ui->status->playing && ui->status->timer_active) &&
-      (ui->status->button1_pressed || ui->status->button2_pressed))
+  gui_status *status = ui->status;
+  ui_infos *infos = ui->infos;
+
+  if ((status->playing && status->timer_active) &&
+      (status->button1_pressed || status->button2_pressed))
   {
     gint x, y;
     GdkModifierType state;
     wh_get_pointer(event, &x, &y, &state);
 
-    //drawing area width
     gint width = 0;
     wh_get_widget_size(ui->gui->drawing_area, &width, NULL);
     gfloat width_drawing_area = (gfloat) width;
 
-    if (state)
+    if (!state)
     {
-      if (ui->status->button1_pressed)
+      return TRUE;
+    }
+
+    if (status->button1_pressed)
+    {
+      if (status->move_splitpoints)
       {
-        if (ui->status->move_splitpoints)
-        {
-          gdouble splitpoint_time = get_splitpoint_time(ui->status->splitpoint_to_move, ui);
-          ui->status->move_time = splitpoint_time + pixels_to_time(width_drawing_area, (x - ui->status->button_x));
-        }
-        else
-        {
-          //if we remove a splitpoint
-          if (ui->status->remove_splitpoints || 
-              ui->status->select_splitpoints || 
-              ui->status->check_splitpoint)
-          {
-            ui->status->move_time = ui->infos->current_time;
-          }
-          else
-          {
-            ui->status->move_time = ui->infos->current_time +
-              pixels_to_time(width_drawing_area, (x - ui->status->button_x));
-          }
-        }
-
-        if (ui->status->move_time < 0)
-        {
-          ui->status->move_time = 0;
-        }
-        if (ui->status->move_time > ui->infos->total_time)
-        {
-          ui->status->move_time = ui->infos->total_time;
-        }
-
-        refresh_drawing_area(ui->gui);
+        gdouble splitpoint_time = get_splitpoint_time(status->splitpoint_to_move, ui);
+        status->move_time = splitpoint_time + pixels_to_time(width_drawing_area, (x - status->button_x));
       }
       else
       {
-        if (ui->status->button2_pressed)
+        if (status->remove_splitpoints || status->select_splitpoints || status->check_splitpoint)
         {
-          gint diff = -((event->x - ui->status->button_x2) * 1);
-
-          if (diff < (-width_drawing_area + 1))
-          {
-            diff = -width_drawing_area + 1;
-          }
-          if (diff > (width_drawing_area - 1))
-          {
-            diff = width_drawing_area - 1;
-          }
-
-          ui->infos->zoom_coeff = diff / (width_drawing_area);
-
-          if (ui->infos->zoom_coeff < 0)
-          {
-            ui->infos->zoom_coeff = 1/(ui->infos->zoom_coeff+1);
-          }
-          else
-          {
-            ui->infos->zoom_coeff = 1 - ui->infos->zoom_coeff;
-          }
-
-          ui->infos->zoom_coeff = ui->infos->zoom_coeff_old * ui->infos->zoom_coeff;
-
-          adjust_zoom_coeff();
-
-          refresh_drawing_area(ui->gui);
+          status->move_time = infos->current_time;
         }
+        else
+        {
+          status->move_time =
+            infos->current_time + pixels_to_time(width_drawing_area, (x - status->button_x));
+        }
+      }
+
+      if (status->move_time < 0)
+      {
+        status->move_time = 0;
+      }
+      if (status->move_time > infos->total_time)
+      {
+        status->move_time = infos->total_time;
+      }
+
+      refresh_drawing_area(ui->gui);
+    }
+    else
+    {
+      if (status->button2_pressed)
+      {
+        gint diff = -((event->x - status->button_x2) * 1);
+        if (diff < (-width_drawing_area + 1))
+        {
+          diff = -width_drawing_area + 1;
+        }
+        if (diff > (width_drawing_area - 1))
+        {
+          diff = width_drawing_area - 1;
+        }
+
+        infos->zoom_coeff = diff / (width_drawing_area);
+
+        if (infos->zoom_coeff < 0)
+        {
+          infos->zoom_coeff = 1 / (infos->zoom_coeff + 1);
+        }
+        else
+        {
+          infos->zoom_coeff = 1 - infos->zoom_coeff;
+        }
+
+        infos->zoom_coeff = infos->zoom_coeff_old * infos->zoom_coeff;
+
+        adjust_zoom_coeff(infos);
+
+        refresh_drawing_area(ui->gui);
       }
     }
   }
@@ -2770,15 +2737,15 @@ gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, gpointer data)
   return TRUE;
 }
 
-void adjust_zoom_coeff()
+void adjust_zoom_coeff(ui_infos *infos)
 {
-  if (ui->infos->zoom_coeff < 0.2)
+  if (infos->zoom_coeff < 0.2)
   {
-    ui->infos->zoom_coeff = 0.2;
+    infos->zoom_coeff = 0.2;
   }
-  if (ui->infos->zoom_coeff > 10 * ui->infos->total_time / 6000)
+  if (infos->zoom_coeff > 10 * infos->total_time / 6000)
   {
-    ui->infos->zoom_coeff = 10 * ui->infos->total_time / 6000;
+    infos->zoom_coeff = 10 * infos->total_time / 6000;
   }
 }
 
@@ -2823,9 +2790,9 @@ static GtkWidget *create_drawing_area(ui_state *ui)
   g_signal_connect(drawing_area, "draw", G_CALLBACK(da_draw_event), ui);
 #endif
 
-  g_signal_connect(drawing_area, "button_press_event", G_CALLBACK(da_press_event), NULL);
-  g_signal_connect(drawing_area, "button_release_event", G_CALLBACK(da_unpress_event), NULL);
-  g_signal_connect(drawing_area, "motion_notify_event", G_CALLBACK(da_notify_event), NULL);
+  g_signal_connect(drawing_area, "button_press_event", G_CALLBACK(da_press_event), ui);
+  g_signal_connect(drawing_area, "button_release_event", G_CALLBACK(da_unpress_event), ui);
+  g_signal_connect(drawing_area, "motion_notify_event", G_CALLBACK(da_notify_event), ui);
 
   gtk_widget_set_events(drawing_area, gtk_widget_get_events(drawing_area)
       | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK
@@ -2882,46 +2849,48 @@ GtkWidget *create_player_control_frame(ui_state *ui)
 //!add a row to the table
 void add_playlist_file(const gchar *name)
 {
-  if (file_exists(name))
+  if (!file_exists(name))
   {
-    gboolean name_already_exists_in_playlist = FALSE;
+    return;
+  }
 
-    GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
+  gboolean name_already_exists_in_playlist = FALSE;
 
-    gchar *filename = NULL;
+  GtkTreeModel *model = gtk_tree_view_get_model(playlist_tree);
 
-    GtkTreeIter iter;
+  gchar *filename = NULL;
 
-    gint i = 0;
-    while (i < playlist_tree_number)
+  GtkTreeIter iter;
+
+  gint i = 0;
+  while (i < playlist_tree_number)
+  {
+    GtkTreePath *path = gtk_tree_path_new_from_indices(i ,-1);
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+
+    if (strcmp(filename, name) == 0)
     {
-      GtkTreePath *path = gtk_tree_path_new_from_indices(i ,-1);
-      gtk_tree_model_get_iter(model, &iter, path);
-      gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
-
-      if (strcmp(filename,name) == 0)
-      {
-        name_already_exists_in_playlist = TRUE;
-        break;
-      }
-
-      g_free(filename);
-      i++;
+      name_already_exists_in_playlist = TRUE;
+      break;
     }
 
-    if (! name_already_exists_in_playlist)
-    {
-      gtk_widget_set_sensitive(playlist_remove_all_files_button,TRUE);
-      gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    g_free(filename);
+    i++;
+  }
 
-      //sets text in the minute, second and milisecond column
-      gtk_list_store_set (GTK_LIST_STORE(model), 
-          &iter,
-          COL_NAME, get_real_name_from_filename(name),
-          COL_FILENAME,name,
-          -1);
-      playlist_tree_number++;
-    }
+  if (! name_already_exists_in_playlist)
+  {
+    gtk_widget_set_sensitive(playlist_remove_all_files_button,TRUE);
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+
+    //sets text in the minute, second and milisecond column
+    gtk_list_store_set (GTK_LIST_STORE(model), 
+        &iter,
+        COL_NAME, get_real_name_from_filename(name),
+        COL_FILENAME, name,
+        -1);
+    playlist_tree_number++;
   }
 }
 
@@ -3292,7 +3261,7 @@ gint mytimer(gpointer data)
       reset_song_infos(ui->gui);
       reset_label_time(ui->gui);
       reset_inactive_progress_bar();
-      gtk_widget_set_sensitive(player_add_button, FALSE);
+      gtk_widget_set_sensitive(ui->gui->player_add_button, FALSE);
       gtk_widget_set_sensitive(silence_wave_check_button, FALSE);
     }
 
@@ -3306,41 +3275,20 @@ gint mytimer(gpointer data)
 
     if (ui->status->playing)
     {
-      if (!gtk_widget_get_sensitive(player_add_button))
-      {
-        gtk_widget_set_sensitive(player_add_button, TRUE);
-      }
-      if (!gtk_widget_get_sensitive(silence_wave_check_button))
-      {
-        gtk_widget_set_sensitive(silence_wave_check_button, TRUE);
-      }
-
-      if (!gtk_widget_get_sensitive(stop_button))
-      {
-        gtk_widget_set_sensitive(stop_button, TRUE);
-        gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_active));
-      }
-      if (!gtk_widget_get_sensitive(ui->gui->pause_button))
-      {
-        gtk_widget_set_sensitive(ui->gui->pause_button, TRUE);
-        gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(PauseButton_active));
-      }
-
+      gtk_widget_set_sensitive(ui->gui->player_add_button, TRUE);
+      gtk_widget_set_sensitive(silence_wave_check_button, TRUE);
+      gtk_widget_set_sensitive(ui->gui->stop_button, TRUE);
+      gtk_button_set_image(GTK_BUTTON(ui->gui->stop_button), g_object_ref(ui->gui->StopButton_active));
+      gtk_widget_set_sensitive(ui->gui->pause_button, TRUE);
+      gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(ui->gui->PauseButton_active));
       player_key_actions_set_sensitivity(TRUE, ui->gui);
     }
     else
     {
-      if (gtk_widget_get_sensitive(stop_button))
-      {
-        gtk_widget_set_sensitive(stop_button, FALSE);
-        gtk_button_set_image(GTK_BUTTON(stop_button), g_object_ref(StopButton_inactive));
-      }
-      if (gtk_widget_get_sensitive(ui->gui->pause_button))
-      {
-        gtk_widget_set_sensitive(ui->gui->pause_button, FALSE);
-        gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(PauseButton_inactive));
-      }
-  
+      gtk_widget_set_sensitive(ui->gui->stop_button, FALSE);
+      gtk_button_set_image(GTK_BUTTON(ui->gui->stop_button), g_object_ref(ui->gui->StopButton_inactive));
+      gtk_widget_set_sensitive(ui->gui->pause_button, FALSE);
+      gtk_button_set_image(GTK_BUTTON(ui->gui->pause_button), g_object_ref(ui->gui->PauseButton_inactive));
       player_key_actions_set_sensitivity(FALSE, ui->gui);
     }
 
@@ -3349,7 +3297,6 @@ gint mytimer(gpointer data)
   else
   {
     //if connected and player not running, disconnect..
-
     clear_data_player();
     ui->status->playing = FALSE;
     disconnect_button_event(disconnect_button, NULL);
@@ -3372,8 +3319,8 @@ void file_chooser_ok_event(gchar *fname)
 {
   change_current_filename(fname);
   gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
-  gtk_widget_set_sensitive(play_button, TRUE);
-  gtk_button_set_image(GTK_BUTTON(play_button), g_object_ref(PlayButton_active));
+  gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
+  gtk_button_set_image(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_active));
 
   file_browsed = TRUE;
 
@@ -3456,9 +3403,9 @@ void hide_connect_button()
 //! Show the connect button
 void show_connect_button()
 {
-  if (! wh_container_has_child(GTK_CONTAINER(player_buttons_hbox), connect_button))
+  if (!wh_container_has_child(GTK_CONTAINER(ui->gui->player_buttons_hbox), connect_button))
   {
-    gtk_box_pack_start(GTK_BOX(player_buttons_hbox), connect_button, FALSE, FALSE, 7);
+    gtk_box_pack_start(ui->gui->player_buttons_hbox, connect_button, FALSE, FALSE, 7);
   }
   gtk_widget_show_all(connect_button);
 }
@@ -3472,9 +3419,9 @@ void hide_disconnect_button()
 //! Show the disconnec button
 void show_disconnect_button()
 {
-  if (! wh_container_has_child(GTK_CONTAINER(player_buttons_hbox), disconnect_button))
+  if (!wh_container_has_child(GTK_CONTAINER(ui->gui->player_buttons_hbox), disconnect_button))
   {
-    gtk_box_pack_start(GTK_BOX(player_buttons_hbox), disconnect_button, FALSE, FALSE, 7);
+    gtk_box_pack_start(ui->gui->player_buttons_hbox, disconnect_button, FALSE, FALSE, 7);
   }
   gtk_widget_show_all(disconnect_button);
 }

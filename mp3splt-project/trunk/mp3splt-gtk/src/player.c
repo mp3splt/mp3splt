@@ -122,95 +122,95 @@ gint player_is_running()
 void player_start()
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_start();
-    }
+  {
+    snackamp_start();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_start();
+    myxmms_start();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_start();
+    gstreamer_start();
 #endif
-    }
+  }
 }
 
 //!start player and add files to playlist
 void player_start_add_files(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_start_with_songs(list);
-    }
+  {
+    snackamp_start_with_songs(list);
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_start_with_songs(list);
+    myxmms_start_with_songs(list);
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_start_with_songs(list);
+    gstreamer_start_with_songs(list);
 #endif 
-    }
+  }
 }
 
 //!add files to playlist
 void player_add_files(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_add_files(list);
-    }
+  {
+    snackamp_add_files(list);
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_add_files(list);
+    myxmms_add_files(list);
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_add_files(list);
+    gstreamer_add_files(list);
 #endif
-    }
+  }
 }
 
 //!add files to playlist
 void player_add_files_and_select(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_add_files(list);
-      snackamp_select_last_file();
-    }
+  {
+    snackamp_add_files(list);
+    snackamp_select_last_file();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_add_files(list);
-      myxmms_select_last_file();
+    myxmms_add_files(list);
+    myxmms_select_last_file();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_add_files(list);
-      gstreamer_select_last_file();
+    gstreamer_add_files(list);
+    gstreamer_select_last_file();
 #endif
-    }
+  }
 }
 
 //!add files to playlist
@@ -219,52 +219,49 @@ void player_add_play_files(GList *list)
   player_add_files(list);
 
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      //snackamp adds files just after the current one
-      //and not at the end of the playlist
-      snackamp_next();
-      //snackamp_play_last_file();
-    }
+  {
+    snackamp_next();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_play_last_file();
+    myxmms_play_last_file();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_play_last_file();
+    gstreamer_play_last_file();
 #endif
-    }
+  }
 }
 
 //!starts the player
 void player_start_play_with_songs(GList *list)
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_start_with_songs(list);
-      snackamp_play_last_file();
-    }
+  {
+    snackamp_start_with_songs(list);
+    snackamp_play_last_file();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_start_with_songs(list);
-      myxmms_play_last_file();
+    myxmms_start_with_songs(list);
+    myxmms_play_last_file();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_start_with_songs(list);
-      gstreamer_play_last_file();
+    gstreamer_start_with_songs(list);
+    gstreamer_play_last_file();
 #endif
-    }
+  }
 }
 
 //!plays the song
@@ -363,23 +360,23 @@ void player_next()
 void player_prev()
 {
   if (selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_prev();
-    }
+  {
+    snackamp_prev();
+  }
   else if (selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_prev();
+    myxmms_prev();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_prev();
+    gstreamer_prev();
 #endif
-    }
+  }
 }
 
 //!jumps to a position in the song
