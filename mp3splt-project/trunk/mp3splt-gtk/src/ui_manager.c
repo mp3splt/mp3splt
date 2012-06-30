@@ -34,11 +34,13 @@ static void ui_main_window_new(ui_infos *infos);
 static void ui_infos_new(ui_state *ui);
 static gui_status *ui_status_new();
 static gui_state *ui_gui_new();
+static player_infos *ui_player_infos_new();
 
 static void ui_main_window_free(ui_main_window **main_win);
 static void ui_infos_free(ui_infos **infos);
 static void ui_status_free(gui_status **status);
 static void ui_gui_free(gui_state **gui);
+static void ui_player_infos_free(player_infos **pi);
 
 void ui_set_browser_directory(ui_state *ui, const gchar *directory)
 {
@@ -106,6 +108,7 @@ ui_state *ui_state_new()
 
   ui->status = ui_status_new();
   ui->gui = ui_gui_new();
+  ui->pi = ui_player_infos_new();
 
   ui->return_code = EXIT_SUCCESS;
 
@@ -128,6 +131,7 @@ void ui_state_free(ui_state *ui)
 
   ui_status_free(&ui->status);
   ui_gui_free(&ui->gui);
+  ui_player_infos_free(&ui->pi);
 
   g_free(ui);
 }
@@ -365,6 +369,32 @@ static gui_status *ui_status_new(ui_state *ui)
   return status;
 }
 
+static player_infos *ui_player_infos_new()
+{
+  player_infos *pi = g_malloc0(sizeof(player_infos));
+
+#ifndef NO_GSTREAMER
+  pi->song_artist = NULL;
+  pi->song_title = NULL;
+  pi->rate = 0;
+  pi->play = NULL;
+  pi->bus = NULL;
+  pi->_gstreamer_is_running = FALSE;
+#endif
+ 
+#ifndef NO_AUDACIOUS
+  pi->dbus_proxy = NULL;
+  pi->dbus_connection = NULL;
+#endif
+
+  //snackamp
+  pi->in = NULL;
+  pi->out = NULL;
+  pi->connected = FALSE;
+
+  return pi;
+}
+
 static gui_state *ui_gui_new()
 {
   gui_state *gui = g_malloc0(sizeof(gui_state));
@@ -430,6 +460,17 @@ static void ui_status_free(gui_status **status)
 
   g_free(*status);
   *status = NULL;
+}
+
+static void ui_player_infos_free(player_infos **pi)
+{
+  if (!pi || !*pi)
+  {
+    return;
+  }
+
+  g_free(*pi);
+  *pi = NULL;
 }
 
 static void ui_gui_free(gui_state **gui)

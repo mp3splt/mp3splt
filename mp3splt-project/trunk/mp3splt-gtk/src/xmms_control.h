@@ -41,30 +41,30 @@
 #define XMMS_CONTROL_H
 
 #include "external_includes.h"
+#include "ui_types.h"
 
-void myxmms_get_song_infos(gchar *total_infos);
-gchar *myxmms_get_filename();
-gint myxmms_get_playlist_number();
-gchar *myxmms_get_title_song();
-gint myxmms_get_time_elapsed();
-void myxmms_start();
-void myxmms_select_last_file();
-void myxmms_play_last_file();
-void myxmms_add_files(GList *list);
-void myxmms_set_volume(gint volume);
-gint myxmms_get_volume();
-void myxmms_start_with_songs(GList *list);
-gint myxmms_is_running();
-gint myxmms_is_paused();
-void myxmms_play();
-void myxmms_stop();
-void myxmms_pause();
-void myxmms_next();
-void myxmms_prev();
-void myxmms_jump(gint position);
-gint myxmms_get_total_time();
-gint myxmms_is_playing();
-void myxmms_quit();
+void myxmms_get_song_infos(gchar *total_infos, ui_state *ui);
+gchar *myxmms_get_filename(ui_state *ui);
+gint myxmms_get_playlist_number(ui_state *ui);
+gchar *myxmms_get_title_song(ui_state *ui);
+gint myxmms_get_time_elapsed(ui_state *ui);
+void myxmms_start(ui_state *ui);
+void myxmms_select_last_file(ui_state *ui);
+void myxmms_play_last_file(ui_state *ui);
+void myxmms_add_files(GList *list, ui_state *ui);
+void myxmms_set_volume(gint volume, ui_state *ui);
+gint myxmms_get_volume(ui_state *ui);
+void myxmms_start_with_songs(GList *list, ui_state *ui);
+gint myxmms_is_running(ui_state *ui);
+gint myxmms_is_paused(ui_state *ui);
+void myxmms_play(ui_state *ui);
+void myxmms_stop(ui_state *ui);
+void myxmms_pause(ui_state *ui);
+void myxmms_next(ui_state *ui);
+void myxmms_prev(ui_state *ui);
+void myxmms_jump(gint position, ui_state *ui);
+gint myxmms_get_total_time(ui_state *ui);
+gint myxmms_is_playing(ui_state *ui);
 
 #endif
 
