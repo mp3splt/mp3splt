@@ -34,7 +34,28 @@
 
 #include <libmp3splt/mp3splt.h>
 
-#include "preferences_manager.h"
+typedef struct {
+  gchar* main_key;
+  gchar* second_key;
+  gint default_value;
+  GtkWidget *spinner;
+  void (*update_spinner_value_cb)(GtkWidget *spinner, gpointer data);
+  gpointer user_data_for_cb;
+} spinner_int_preference;
+
+typedef struct {
+  gchar* main_key;
+  gchar* second_key;
+  gint default_value;
+  GtkWidget *range;
+  void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data);
+  gpointer user_data_for_cb;
+} range_preference;
+
+typedef struct {
+  GArray *spinner_int_preferences;
+  GArray *range_preferences;
+} preferences_state;
 
 typedef struct
 {
@@ -133,6 +154,8 @@ typedef struct {
   GString *outputdirname;
 
   preview_index_and_data preview_indexes[6];
+
+  gchar *file_to_import;
 } ui_infos;
 
 typedef struct {

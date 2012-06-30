@@ -49,16 +49,14 @@ extern ui_state *ui;
 
   All other options are read out in put_options_from_preferences()
  */
-void update_output_options()
+void update_output_options(ui_state *ui)
 {
   ui->status->filename_to_split = get_input_filename(ui->gui);
   mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
 
   if (get_checked_output_radio_box(ui) == 0)
   {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_FORMAT);
-
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
     const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     gint error = SPLT_OUTPUT_FORMAT_OK;
     mp3splt_set_oformat(ui->mp3splt_state, data, &error);
@@ -66,8 +64,7 @@ void update_output_options()
   }
   else
   {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_DEFAULT);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
@@ -78,7 +75,7 @@ void update_output_options()
   Updates the ui->mp3splt_state structure by reading out the state of the GUI
   controls. The only exception is that all options that are directly
   connected to audio output have been split into a separate function:
-  update_output_options()
+  update_output_options(ui)
  */
 void put_options_from_preferences(ui_state *ui)
 {

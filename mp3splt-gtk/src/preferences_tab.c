@@ -161,7 +161,7 @@ static void output_radio_box_event(GtkToggleButton *radio_b, ui_state *ui)
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //! Create the "select language" box
@@ -172,21 +172,21 @@ static GtkWidget *create_language_box(ui_state *ui)
   GtkWidget *radio_button = gtk_radio_button_new_with_label(NULL, "English");
   ui->gui->radio_button = radio_button;
   g_signal_connect(GTK_TOGGLE_BUTTON(radio_button), "toggled",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(radio_vbox), radio_button, TRUE, TRUE, 0);
 
   radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(radio_button), "Français");
   ui->gui->radio_button = radio_button;
   g_signal_connect(GTK_TOGGLE_BUTTON(radio_button), "toggled",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(radio_vbox), radio_button, TRUE, TRUE, 0);
 
   radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(radio_button), "Deutsch");
   ui->gui->radio_button = radio_button;
   g_signal_connect(GTK_TOGGLE_BUTTON (radio_button), "toggled",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(radio_vbox), radio_button, TRUE, TRUE, 0);
 
   return wh_set_title_and_get_vbox(radio_vbox,
@@ -235,7 +235,7 @@ static void browse_dir_button_event(GtkWidget *widget, ui_state *ui)
     g_free(filename);
     filename = NULL;
 
-    save_preferences(NULL, NULL);
+    ui_save_preferences(NULL, ui);
   }
 
   gtk_widget_destroy(dir_chooser);
@@ -276,7 +276,7 @@ static void adjust_event(GtkToggleButton *adjust_mode, ui_state *ui)
     disable_adjust_spinners(ui->gui);
   }
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //!frame mode event
@@ -287,7 +287,7 @@ static void frame_event(GtkToggleButton *frame_mode, ui_state *ui)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode),FALSE);
   }
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 static void splitpoints_from_filename_event(GtkToggleButton *frame_mode, ui_state *ui)
@@ -302,7 +302,7 @@ static void splitpoints_from_filename_event(GtkToggleButton *frame_mode, ui_stat
     clear_current_description(ui);
   }
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //!action for the set default prefs button
@@ -320,14 +320,14 @@ static void set_default_prefs_event(GtkWidget *widget, ui_state *ui)
       SPLT_DEFAULT_PARAM_GAP);
   gtk_toggle_button_set_active(gui->names_from_filename, FALSE);
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //!events for the "set current song directory"
 static void song_dir_button_event(GtkWidget *widget, ui_state *ui)
 {
   set_output_directory("", ui);
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //!Creates the box the output directory can be choosen in
@@ -383,7 +383,7 @@ static GtkWidget *create_split_options_box(gui_state *gui)
   gui->create_dirs_from_output_files = create_dirs_from_output_files;
   gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
 
   //frame mode option
   GtkWidget *frame_mode =
@@ -419,7 +419,7 @@ static GtkWidget *create_split_options_box(gui_state *gui)
   GtkWidget *spinner_adjust_threshold = gtk_spin_button_new (adj, 0.5, 2);
   gui->spinner_adjust_threshold = spinner_adjust_threshold;
   g_signal_connect(G_OBJECT(spinner_adjust_threshold), "value_changed",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_threshold,
       FALSE, FALSE, 6);
 
@@ -437,7 +437,7 @@ static GtkWidget *create_split_options_box(gui_state *gui)
   GtkWidget *spinner_adjust_offset = gtk_spin_button_new (adj, 0.05, 2);
   gui->spinner_adjust_offset = spinner_adjust_offset;
   g_signal_connect(G_OBJECT(spinner_adjust_offset), "value_changed",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_offset, FALSE, FALSE, 6);
 
   //gap level (seconds)
@@ -453,7 +453,7 @@ static GtkWidget *create_split_options_box(gui_state *gui)
   GtkWidget *spinner_adjust_gap = gtk_spin_button_new (adj, 1, 0);
   gui->spinner_adjust_gap = spinner_adjust_gap;
   g_signal_connect(G_OBJECT(spinner_adjust_gap), "value_changed",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_gap, FALSE, FALSE, 6);
 
   disable_adjust_spinners(ui->gui);
@@ -514,7 +514,7 @@ static void player_combo_box_event(GtkComboBox *widget, ui_state *ui)
   gtk_widget_show(ui->gui->player_box);
   gtk_widget_show(ui->gui->queue_files_button);
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 void update_timeout_value(GtkWidget *spinner, gpointer data)
@@ -522,7 +522,7 @@ void update_timeout_value(GtkWidget *spinner, gpointer data)
   timeout_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
 
   restart_player_timer();
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //!Create the box the player backend can be selected with
@@ -590,7 +590,7 @@ static void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, u
   compute_douglas_peucker_filters(ui);
   refresh_preview_drawing_areas(ui->gui);
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 void refresh_preview_drawing_areas(gui_state *gui)
@@ -802,7 +802,7 @@ static gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event, ui_sta
   remove_status_message(ui->gui);
   print_status_bar_confirmation(error, ui->gui);
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
   
   return FALSE;
 }
@@ -889,7 +889,7 @@ void change_tags_options(GtkToggleButton *button, gpointer data)
     }
   }
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //!Create the box for the Tags options
@@ -931,7 +931,7 @@ static GtkComboBox *create_genre_combo()
     ch_append_to_combo(combo, splt_id3v1_genres[i], 0);
   }
 
-  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), ui);
+  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(ui_save_preferences), ui);
 
   return combo;
 }
@@ -946,7 +946,7 @@ static GtkComboBox *create_text_preferences_combo()
   ch_append_to_combo(combo, _("First uppercase"), SPLT_TO_FIRST_UPPERCASE);
   ch_append_to_combo(combo, _("Word Uppercase"), SPLT_TO_WORD_FIRST_UPPERCASE);
 
-  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), ui);
+  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(ui_save_preferences), ui);
 
   return combo;
 }
@@ -1034,7 +1034,7 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
 {
   GtkWidget *table = wh_new_table();
 
-  GtkWidget *regex_entry = wh_new_entry(save_preferences);
+  GtkWidget *regex_entry = wh_new_entry(ui_save_preferences);
   ui->gui->regex_entry = regex_entry;
   wh_add_in_table_with_label_expand(table, _("Regular expression:"), regex_entry);
 
@@ -1068,7 +1068,7 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
     gtk_check_button_new_with_mnemonic(_("_Replace underscores by spaces"));
   ui->gui->replace_underscore_by_space_check_box = replace_underscore_by_space_check_box;
   g_signal_connect(G_OBJECT(replace_underscore_by_space_check_box), "toggled",
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
  
   wh_add_in_table(table, replace_underscore_by_space_check_box);
 
@@ -1096,7 +1096,7 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
   ui->gui->genre_combo = genre_combo;
   wh_add_in_table_with_label(table, _("Genre tag:"), GTK_WIDGET(genre_combo));
 
-  GtkWidget *comment_tag_entry = wh_new_entry(save_preferences);
+  GtkWidget *comment_tag_entry = wh_new_entry(ui_save_preferences);
   ui->gui->comment_tag_entry = comment_tag_entry;
   wh_add_in_table_with_label_expand(table, _("Comment tag:"), comment_tag_entry);
 
@@ -1112,7 +1112,7 @@ static GtkWidget *create_test_regex_table()
   GtkWidget *table = wh_new_table();
 
   GtkWidget *sample_test_hbox = wh_hbox_new();
-  GtkWidget *test_regex_fname_entry = wh_new_entry(save_preferences);
+  GtkWidget *test_regex_fname_entry = wh_new_entry(ui_save_preferences);
   ui->gui->test_regex_fname_entry = test_regex_fname_entry;
   gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_fname_entry, TRUE, TRUE, 0);
 
@@ -1141,27 +1141,27 @@ static GtkWidget *create_tags_version_box(ui_state *ui)
   gui->tags_version_radio = tags_version_radio;
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(tags_version_radio), _("ID3v2 tags"));
   gui->tags_version_radio = tags_version_radio;
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(tags_version_radio), _("ID3v1 tags"));
   gui->tags_version_radio = tags_version_radio;
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON (tags_version_radio),_("Same tags version as the input file"));
   gui->tags_version_radio = tags_version_radio;
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), ui);
+      G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Tags version (mp3 only)</b>"));

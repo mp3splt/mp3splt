@@ -3214,7 +3214,7 @@ void file_chooser_cancel_event()
 }
 
 //event for the file chooser ok button
-void file_chooser_ok_event(gchar *fname)
+void file_chooser_ok_event(gchar *fname, ui_state *ui)
 {
   change_current_filename(fname, ui);
   gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);

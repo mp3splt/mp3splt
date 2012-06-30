@@ -152,7 +152,7 @@ static void split_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
     deactivate_trim_parameters(ui->gui);
   }
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //! Issued when the track duration for split after every n seconds is changed
@@ -163,7 +163,7 @@ static void spinner_time_changed(GtkSpinButton *spinner, ui_state *ui)
   g_snprintf(time_text, 1024, _("Split every %2d seconds."), time);
   gtk_label_set_text(GTK_LABEL(ui->gui->time_label), time_text);
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //! Issued when the number of tracks for equal length splitting is changed
@@ -174,7 +174,7 @@ static void spinner_equal_tracks_changed(GtkSpinButton *spinner, ui_state *ui)
   g_snprintf(equal_tracks_text, 1024, _("Split in %2d equal time tracks."), equal_tracks);
   gtk_label_set_text(GTK_LABEL(ui->gui->equal_tracks_label), equal_tracks_text);
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //! Issued when channge between single file and batch processing mode is requested
@@ -194,7 +194,7 @@ static void split_file_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
     gtk_widget_set_sensitive(ui->gui->multiple_files_component, FALSE);
   }
 
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 }
 
 //! Creates the split mode window part

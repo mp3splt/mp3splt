@@ -46,9 +46,9 @@ static void build_import_filter(GtkFileChooser *chooser,
     const gchar *filter_name, const gchar *filter_pattern,
     const gchar *filter_pattern_upper, 
     GList **filters, GtkFileFilter *all_filter);
-static gpointer add_audacity_labels_splitpoints(gpointer data);
-static gpointer add_cddb_splitpoints(gpointer data);
-static gpointer add_cue_splitpoints(gpointer data);
+static gpointer add_audacity_labels_splitpoints(ui_state *ui);
+static gpointer add_cddb_splitpoints(ui_state *ui);
+static gpointer add_cue_splitpoints(ui_state *ui);
 
 //! What happens if the "Import" button is pressed
 void import_event(GtkWidget *widget, ui_state *ui)
@@ -71,7 +71,7 @@ void import_event(GtkWidget *widget, ui_state *ui)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
  
-    import_file(filename);
+    import_file(filename, ui);
 
     g_free(filename);
     filename = NULL;
@@ -86,7 +86,7 @@ void import_event(GtkWidget *widget, ui_state *ui)
  
   The file type is determined by the extension of the file.
  */
-void import_file(gchar *filename)
+void import_file(gchar *filename, ui_state *ui)
 {
   if (filename == NULL)
   {
@@ -96,27 +96,33 @@ void import_file(gchar *filename)
   gchar *ext = strrchr(filename, '.');
   GString *ext_str = g_string_new(ext);
 
+  if (ui->file_to_import)
+  {
+    g_free(ui->file_to_import);
+  }
+  ui->file_to_import = strdup(filename);
+
   g_string_ascii_up(ext_str);
 
   if ((strstr(ext_str->str, ".MP3") != NULL) ||
       (strstr(ext_str->str, ".OGG") != NULL))
   {
-    file_chooser_ok_event(filename);
+    file_chooser_ok_event(filename, ui);
     remove_status_message(ui->gui);
   }
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {
-    update_output_options();
-    create_thread(add_cue_splitpoints, strdup(filename), TRUE, NULL);
+    update_output_options(ui);
+    create_thread(add_cue_splitpoints, ui, TRUE, NULL);
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
   {
-    update_output_options();
-    create_thread(add_cddb_splitpoints, strdup(filename), TRUE, NULL);
+    update_output_options(ui);
+    create_thread(add_cddb_splitpoints, ui, TRUE, NULL);
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
-    create_thread(add_audacity_labels_splitpoints, strdup(filename), TRUE, NULL);
+    create_thread(add_audacity_labels_splitpoints, ui, TRUE, NULL);
   }
 
   if (ext_str)
@@ -182,43 +188,37 @@ static void build_import_filter(GtkFileChooser *chooser,
 
 data pointer will be freed by g_free() after doung this.
 */
-static gpointer add_audacity_labels_splitpoints(gpointer data)
+static gpointer add_audacity_labels_splitpoints(ui_state *ui)
 {
-  gchar *filename = data;
+  gchar *filename = ui->file_to_import;
 
   gint err = SPLT_OK;
   mp3splt_put_audacity_labels_splitpoints_from_file(ui->mp3splt_state, filename, &err);
- 
+
   enter_threads();
- 
+
   if (err >= 0)
   {
     update_splitpoints_from_mp3splt_state(ui);
   }
- 
-  print_status_bar_confirmation(err, ui->gui);
- 
-  exit_threads();
 
-  if (filename)
-  {
-    g_free(filename);
-    filename = NULL;
-  }
+  print_status_bar_confirmation(err, ui->gui);
+
+  exit_threads();
 
   return NULL;
 }
 
 //! Add splitpoints from cddb
-static gpointer add_cddb_splitpoints(gpointer data)
+static gpointer add_cddb_splitpoints(ui_state *ui)
 {
-  gchar *filename = data;
+  gchar *filename = ui->file_to_import;
 
   gint err = SPLT_OK;
   mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, &err);
 
   enter_threads();
- 
+
   if (err >= 0)
   {
     update_splitpoints_from_mp3splt_state(ui);
@@ -227,19 +227,13 @@ static gpointer add_cddb_splitpoints(gpointer data)
 
   exit_threads();
 
-  if (filename)
-  {
-    g_free(filename);
-    filename = NULL;
-  }
-
   return NULL;
 }
 
 //! Add splitpoints from cue file
-static gpointer add_cue_splitpoints(gpointer data)
+static gpointer add_cue_splitpoints(ui_state *ui)
 {
-  gchar *filename = data;
+  gchar *filename = ui->file_to_import;
 
   gint err = SPLT_OK;
   mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
@@ -261,7 +255,7 @@ static gpointer add_cue_splitpoints(gpointer data)
   {
     set_input_filename(filename_to_split, ui->gui);
   }
-  
+
   exit_threads();
 
   enable_player_buttons(ui->gui);

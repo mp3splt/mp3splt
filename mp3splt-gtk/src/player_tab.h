@@ -100,7 +100,7 @@ GtkWidget *create_player_control_frame(ui_state *ui);
 
 //moved from the file_tab
 void file_chooser_cancel_event();
-void file_chooser_ok_event(gchar *fname);
+void file_chooser_ok_event(gchar *fname, ui_state *ui);
 void close_file_popup_window_event( GtkWidget *window,
                                     gpointer data );
 

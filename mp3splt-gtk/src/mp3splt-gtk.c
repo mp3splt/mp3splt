@@ -229,7 +229,7 @@ void exit_threads()
 //close the window and exit button function
 void exit_application(GtkWidget *widget, gpointer *data)
 {
-  save_preferences(NULL, NULL);
+  ui_save_preferences(NULL, ui);
 
   if (ui->status->splitting)
   {
@@ -330,7 +330,7 @@ static void init_i18n_and_plugin_paths(ui_state *ui)
 #endif
 }
 
-static void parse_command_line_options(gint argc, gchar * argv[])
+static void parse_command_line_options(gint argc, gchar * argv[], ui_state *ui)
 {
   opterr = 0;
   int option;
@@ -376,10 +376,10 @@ static void parse_command_line_options(gint argc, gchar * argv[])
 
 #ifndef __WIN32__
   char *input_filename = realpath(argv[optind],NULL);
-  import_file(input_filename);
+  import_file(input_filename, ui);
   free(input_filename);
 #else
-  import_file(argv[optind]);
+  import_file(argv[optind], ui);
 #endif
 }
 
@@ -452,7 +452,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 
   create_application(ui);
 
-  parse_command_line_options(argc, argv);
+  parse_command_line_options(argc, argv, ui);
 
   enter_threads();
   gtk_main();

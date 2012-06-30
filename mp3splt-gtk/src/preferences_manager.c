@@ -44,7 +44,7 @@
 
 extern ui_state *ui;
 
-static void check_pref_file_and_write_default();
+static void check_pref_file_and_write_default(ui_state *ui);
 static void pm_free_spinner_int_preferences(GArray *spinner_int_preferences);
 static void pm_free_range_preferences(GArray *range_preferences);
 static void pm_load_spinner_int_preferences(GKeyFile *key_file, preferences_state *pm);
@@ -112,19 +112,19 @@ void pm_free(preferences_state **pm)
   *pm = NULL;
 }
 
-void pm_load(GKeyFile *key_file, preferences_state *pm)
+static void pm_load(GKeyFile *key_file, preferences_state *pm)
 {
   pm_load_spinner_int_preferences(key_file, pm);
   pm_load_range_preferences(key_file, pm);
 }
 
-void pm_save(GKeyFile *key_file, preferences_state *pm)
+static void pm_save(GKeyFile *key_file, preferences_state *pm)
 {
   pm_save_spinner_int_preferences(key_file, pm);
   pm_save_range_preferences(key_file, pm);
 }
 
-void pm_write_default(GKeyFile *key_file, preferences_state *pm)
+static void pm_write_default(GKeyFile *key_file, preferences_state *pm)
 {
   pm_write_default_spinner_int_preferences(key_file, pm);
   pm_write_default_range_preferences(key_file, pm);
@@ -205,21 +205,17 @@ gchar *get_preferences_filename()
 
 /*! \brief Read the preferences from the preferences file.
  */
-void load_preferences()
+void load_preferences(ui_state *ui)
 {
-  check_pref_file_and_write_default();
- 
+  check_pref_file_and_write_default(ui);
+
   GKeyFile *key_file = g_key_file_new();
 
   gchar *filename = get_preferences_filename();
-
-  //load config
   g_key_file_load_from_file(key_file, filename, G_KEY_FILE_KEEP_COMMENTS, NULL);
-
   if (filename)
   {
     g_free(filename);
-    filename = NULL;
   }
 
 #ifdef __WIN32__
@@ -229,20 +225,17 @@ void load_preferences()
 
   //0 = german, 1 = french, 2 = english
   gint list_number = 2;
-  if (g_string_equal(lang,g_string_new("de")) ||
-      g_string_equal(lang,g_string_new("de_DE")))
+  if (g_string_equal(lang,g_string_new("de")) || g_string_equal(lang,g_string_new("de_DE")))
   {
     list_number = 0;
   }
-  else if (g_string_equal(lang, g_string_new("fr")) ||
-      g_string_equal(lang, g_string_new("fr_FR")))
+  else if (g_string_equal(lang, g_string_new("fr")) || g_string_equal(lang, g_string_new("fr_FR")))
   {
     list_number = 1;
   }
 
   GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_button));
-  GtkWidget *our_button = (GtkWidget *)
-    g_slist_nth_data(radio_button_list, list_number);
+  GtkWidget *our_button = GTK_WIDGET(g_slist_nth_data(radio_button_list, list_number));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_button), TRUE);
 
   g_free(file_string);
@@ -269,8 +262,8 @@ void load_preferences()
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
   ch_set_active_value(GTK_COMBO_BOX(ui->gui->player_combo_box), item);
 
-  ui_load_preferences(key_file, ui);
- 
+  pm_load(key_file, ui->preferences);
+
   //frame mode
   item = g_key_file_get_boolean(key_file, "split", "frame_mode", NULL);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode), item);
@@ -297,8 +290,7 @@ void load_preferences()
   //adjust offset
   item = g_key_file_get_integer(key_file, "split", "adjust_offset", NULL);
   item2 = item/100 + (item%100)/100.;
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset),
-      item2);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset), item2);
   //adjust gap
   item = g_key_file_get_integer(key_file, "split", "adjust_gap", NULL);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap), item);
@@ -310,16 +302,8 @@ void load_preferences()
 
   //replace underscores by spaces
   item = g_key_file_get_boolean(key_file, "split", "replace_underscore_by_space", NULL);
-  if (item)
-  {
-    gtk_toggle_button_set_active(
-        GTK_TOGGLE_BUTTON(ui->gui->replace_underscore_by_space_check_box), TRUE);
-  }
-  else
-  {
-    gtk_toggle_button_set_active(
-        GTK_TOGGLE_BUTTON(ui->gui->replace_underscore_by_space_check_box), FALSE);
-  }
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->replace_underscore_by_space_check_box), 
+      item);
 
   //artist text properties
   item = g_key_file_get_integer(key_file, "split", "artist_text_properties",NULL);
@@ -408,18 +392,18 @@ void load_preferences()
 
   GSList *tags_version_radio_button_list = 
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->tags_version_radio));
-  GtkWidget *the_selection = 
-    (GtkWidget *)g_slist_nth_data(tags_version_radio_button_list, tag_pref_file);
+  GtkWidget *the_selection =
+    GTK_WIDGET(g_slist_nth_data(tags_version_radio_button_list, tag_pref_file));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(the_selection), TRUE);
 
   //default output format or not
-  gint default_output_format = g_key_file_get_boolean(key_file, "output",
-      "default_output_format", NULL);
+  gint default_output_format = 
+    g_key_file_get_boolean(key_file, "output", "default_output_format", NULL);
   GSList *output_radio_button_list = 
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_output));
-  GtkWidget *our_selection = 
-    (GtkWidget *)g_slist_nth_data(output_radio_button_list, default_output_format);
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(our_selection), TRUE);
+  GtkWidget *our_selection =
+    GTK_WIDGET(g_slist_nth_data(output_radio_button_list, default_output_format));
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_selection), TRUE);
   if (default_output_format)
   {
     gtk_widget_set_sensitive(ui->gui->output_entry, FALSE);
@@ -473,8 +457,7 @@ void load_preferences()
     ui_set_main_win_size(ui, width, height);
   }
 
-  gchar *browser_directory =
-    g_key_file_get_string(key_file, "gui", "browser_directory", NULL);
+  gchar *browser_directory = g_key_file_get_string(key_file, "gui", "browser_directory", NULL);
   if (browser_directory)
   {
     ui_set_browser_directory(ui, browser_directory);
@@ -485,7 +468,7 @@ void load_preferences()
   key_file = NULL;
 }
 
-void save_preferences(GtkWidget *widget, gpointer data)
+void save_preferences(ui_state *ui)
 {
   gchar *filename = get_preferences_filename();
 
@@ -498,7 +481,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
   //player
   g_key_file_set_integer(my_key_file, "player", "default_player", ui->infos->selected_player);
 
-  ui_save_preferences(my_key_file, ui);
+  pm_save(my_key_file, ui->preferences);
  
 #ifdef __WIN32__
   GString *selected_lang = get_checked_language(ui);
@@ -633,7 +616,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
 
 Also is used to write good values on a bad existing configuration file
 */
-void write_default_preferences_file()
+static void write_default_preferences_file(ui_state *ui)
 {
   gchar *filename = get_preferences_filename();
 
@@ -641,20 +624,17 @@ void write_default_preferences_file()
   g_key_file_load_from_file(my_key_file, filename, G_KEY_FILE_KEEP_COMMENTS, NULL);
 
 #ifdef __WIN32__
-  gchar *file_string = NULL;
-
   //default language
   if (!g_key_file_has_key(my_key_file, "general", "language",NULL))
   {
     g_key_file_set_string(my_key_file, "general", "language", "en");
     g_key_file_set_comment(my_key_file, "general", "language",
-        "\n language of the gui: en = english, fr = french, de = german",
-        NULL);
+        "\n language of the gui: en = english, fr = french, de = german", NULL);
   }
   //if we have the key, but we have ugly values
   else
   {
-    file_string = g_key_file_get_string(my_key_file, "general", "language", NULL);
+    gchar *file_string = g_key_file_get_string(my_key_file, "general", "language", NULL);
     GString * lang_char = g_string_new(file_string);
 
     if((!g_string_equal(lang_char,g_string_new("en")))
@@ -666,8 +646,7 @@ void write_default_preferences_file()
     {
       g_key_file_set_string(my_key_file, "general", "language", "en");
       g_key_file_set_comment(my_key_file, "general", "language",
-          "\n language of the gui: en = english, fr_FR = french, de_DE = german",
-          NULL);
+          "\n language of the gui: en = english, fr_FR = french, de_DE = german", NULL);
     }
 
     g_free(file_string);
@@ -741,12 +720,9 @@ void write_default_preferences_file()
   else
   {
     item = g_key_file_get_integer(my_key_file, "split", "adjust_gap", NULL);
-
-    //if ugly values
     if ((item < 0) || (item > 2000))
     {
-      g_key_file_set_integer(my_key_file, "split", "adjust_gap",
-          SPLT_DEFAULT_PARAM_GAP);
+      g_key_file_set_integer(my_key_file, "split", "adjust_gap", SPLT_DEFAULT_PARAM_GAP);
     }
   }
 
@@ -785,8 +761,7 @@ void write_default_preferences_file()
     if (the_player == PLAYER_AUDACIOUS)
     {
 #ifdef NO_AUDACIOUS
-      g_key_file_set_integer(my_key_file, "player", "default_player",
-          PLAYER_SNACKAMP);
+      g_key_file_set_integer(my_key_file, "player", "default_player", PLAYER_SNACKAMP);
 #endif
     }
     //if the value do not make sense
@@ -797,18 +772,16 @@ void write_default_preferences_file()
     }
   }
 
-  ui_write_default_preferences(my_key_file, ui);
+  pm_write_default(my_key_file, ui->preferences);
 
   //output format
   if (!g_key_file_has_key(my_key_file, "output", "output_format",NULL))
   {
-    g_key_file_set_string(my_key_file, "output", "output_format",
-        SPLT_DEFAULT_OUTPUT);
+    g_key_file_set_string(my_key_file, "output", "output_format", SPLT_DEFAULT_OUTPUT);
     g_key_file_set_comment (my_key_file, "output", "output_format",
         "\n the output format, contains @a,"
         "@b, @g, @p, @t and @n, see the program for"
-        " more details",
-        NULL);
+        " more details", NULL);
   }
 
   //default output path boolean
@@ -818,8 +791,7 @@ void write_default_preferences_file()
     g_key_file_set_comment(my_key_file, "output", "default_output_format",
         "\n can be true or false"
         " - if we use the default output or"
-        " not for cddb, cue and freedb search",
-        NULL);
+        " not for cddb, cue and freedb search", NULL);
   }
 
   //frame mode
@@ -872,8 +844,7 @@ void write_default_preferences_file()
   {
     g_key_file_set_integer(my_key_file, "split", "split_mode_time_value", 60);
     g_key_file_set_comment(my_key_file, "split", "split_mode_time_value",
-        "\n value in seconds to split every X seconds (for the time split)",
-        NULL);
+        "\n value in seconds to split every X seconds (for the time split)", NULL);
   }
 
   //type of split: file mode
@@ -881,8 +852,7 @@ void write_default_preferences_file()
   {
     g_key_file_set_integer(my_key_file, "split", "file_mode", 1);
     g_key_file_set_comment(my_key_file, "split", "file_mode",
-        "\n 0 - multiple files, 1 - single file",
-        NULL);
+        "\n 0 - multiple files, 1 - single file", NULL);
   }
 
   //equal time tracks
@@ -890,26 +860,21 @@ void write_default_preferences_file()
   {
     g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks", 10);
     g_key_file_set_comment(my_key_file, "split", "split_mode_equal_time_tracks",
-        "\n number of tracks when to split in X tracks (for the equal time tracks split)",
-        NULL);
+        "\n number of tracks when to split in X tracks (for the equal time tracks split)", NULL);
   }
 
   gchar *key_data = g_key_file_to_data(my_key_file, NULL, NULL);
 
-  //write content to the preferences file
   FILE *preferences_file = (FILE *)fopen(filename,"w");
   g_fprintf(preferences_file,"%s", key_data);
   fclose(preferences_file);
-  preferences_file = NULL;
 
   if (filename)
   {
     g_free(filename);
-    filename = NULL;
   }
 
   g_free(key_data);
-  key_data = NULL;
   g_key_file_free(my_key_file);
 }
 
@@ -917,25 +882,19 @@ void write_default_preferences_file()
 
 checks if preferences file exists and if it does not, create it
 */
-static void check_pref_file_and_write_default()
+static void check_pref_file_and_write_default(ui_state *ui)
 {
-  //used to see if the file exists
-  struct stat buffer;
-  gint         status;
-  
   gchar *pref_file = get_preferences_filename();
-  
-  status = stat(pref_file, &buffer);
+
+  struct stat buffer;
+  gint status = stat(pref_file, &buffer);
   if ((status == 0) &&
       (S_ISREG(buffer.st_mode) == 0) && 
       (S_ISDIR(buffer.st_mode) != 0))
   {
-    //backup the directory
     gint malloc_number = strlen(pref_file)+5;
     gchar *backup_dir = malloc(malloc_number * sizeof(gchar *));
-    snprintf(backup_dir,malloc_number,
-        "%s%s",pref_file,".bak");
-    //rename the directory
+    snprintf(backup_dir,malloc_number, "%s%s", pref_file, ".bak");
     g_rename(pref_file, backup_dir);
     g_free(backup_dir);
     backup_dir = NULL;
@@ -947,7 +906,7 @@ static void check_pref_file_and_write_default()
     pref_file = NULL;
   }
 
-  write_default_preferences_file();
+  write_default_preferences_file(ui);
 }
 
 static void pm_free_spinner_int_preferences(GArray *spinner_int_preferences)
