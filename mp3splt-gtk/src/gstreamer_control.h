@@ -29,11 +29,11 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: xmms_control.h
+ * Filename: audacious_control.h
  *
- * header to xmms_control.c
+ * header to audacious_control.c
  *
- * xmms_control.c controls the xmms player
+ * audacious_control.c controls the audacious player
  *
  *********************************************************/
 

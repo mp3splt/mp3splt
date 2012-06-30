@@ -46,7 +46,7 @@
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
-#include "main_win.h"
+#include "main_window.h"
 
 static void main_window_drag_data_received(GtkWidget *window,
     GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint

@@ -95,8 +95,7 @@ void lmanager_put_split_filename(const char *filename, int progress_data, void *
 }
 
 //!prints a message from the library
-static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type, 
-    void *data)
+static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type, void *data)
 {
   ui_state *ui = (ui_state *) data;
 

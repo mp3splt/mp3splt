@@ -31,14 +31,12 @@
 /*!********************************************************
  * \file
  *
- * header of tree_tab.c
- * the tree_tab.c file is used for the Splitpoints tab
- * (for the splitpoints table)
+ * header of splitpoints_window.c
  *********************************************************/
 
-#ifndef TREE_TAB_H
+#ifndef SPLITPOINTS_WINDOW_H
 
-#define TREE_TAB_H
+#define SPLITPOINTS_WINDOW_H
 
 #include "all_includes.h"
 

@@ -59,7 +59,9 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->split.current_split_file_number = 1;
   state->split.get_silence_level = NULL;
   state->split.put_message = NULL;
+  state->split.put_message_cb_data = NULL;
   state->split.file_split = NULL;
+  state->split.file_split_cb_data = NULL;
   state->split.p_bar->progress_text_max_char = 40;
   snprintf(state->split.p_bar->filename_shorted,512, "%s","");
   state->split.p_bar->percent_progress = 0;
@@ -70,6 +72,7 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->split.p_bar->silence_db_level = 0;
   state->split.p_bar->user_data = 0;
   state->split.p_bar->progress = NULL;
+  state->split.p_bar->progress_cb_data = NULL;
   state->cancel_split = SPLT_FALSE;
 
   splt_original_tags *original_tags = &state->original_tags;

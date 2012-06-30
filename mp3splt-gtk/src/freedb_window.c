@@ -37,7 +37,7 @@
  *   (for searching on freedb)
  *********************************************************/
 
-#include "freedb_tab.h"
+#include "freedb_window.h"
 
 enum {
   ALBUM_NAME,

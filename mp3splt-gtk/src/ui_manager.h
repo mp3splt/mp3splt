@@ -35,7 +35,7 @@
 
 #include "external_includes.h"
 #include "ui_types.h"
-#include "player_tab.h"
+#include "player_window.h"
 
 #define UI_DEFAULT_WIDTH 550
 #define UI_DEFAULT_HEIGHT 420

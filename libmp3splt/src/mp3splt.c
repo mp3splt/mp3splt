@@ -392,13 +392,15 @@ int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_t
 \return The error code if any error occours
 */
 int mp3splt_set_message_function(splt_state *state, 
-    void (*message_cb)(const char *, splt_message_type))
+    void (*message_cb)(const char *, splt_message_type, void *), 
+    void *cb_data)
 {
   int error = SPLT_OK;
 
   if (state != NULL)
   {
     state->split.put_message = message_cb;
+    state->split.put_message_cb_data = cb_data;
   }
   else
   {
@@ -415,13 +417,14 @@ int mp3splt_set_message_function(splt_state *state,
 \return The error code if any error occours
 */
 int mp3splt_set_split_filename_function(splt_state *state,
-    void (*file_cb)(const char *,int b))
+    void (*file_cb)(const char *, int, void *), void *cb_data)
 {
   int error = SPLT_OK;
 
   if (state != NULL)
   {
     state->split.file_split = file_cb;
+    state->split.file_split_cb_data = cb_data;
   }
   else
   {
@@ -438,13 +441,14 @@ int mp3splt_set_split_filename_function(splt_state *state,
 \return The error code if any error occours
 */
 int mp3splt_set_progress_function(splt_state *state,
-    void (*progress_cb)(splt_progress *p_bar))
+    void (*progress_cb)(splt_progress *p_bar, void *), void *cb_data)
 {
   int error = SPLT_OK;
 
   if (state != NULL)
   {
     state->split.p_bar->progress = progress_cb;
+    state->split.p_bar->progress_cb_data = cb_data;
   }
   else
   {
@@ -460,9 +464,10 @@ int mp3splt_set_progress_function(splt_state *state,
 \param state The central structure this library keeps all its data in
 \param get_silence_cb The callback function
 \return The error code if any error occours
-*/int mp3splt_set_silence_level_function(splt_state *state,
-  void (*get_silence_cb)(long time, float level, void *user_data),
-  void *data)
+*/
+int mp3splt_set_silence_level_function(splt_state *state,
+    void (*get_silence_cb)(long time, float level, void *user_data),
+    void *data)
 {
   int error = SPLT_OK;
 

@@ -37,7 +37,7 @@
  * (which in turn contains the splitpoints table)
  **********************************************************/
 
-#include "tree_tab.h"
+#include "splitpoints_window.h"
 
 //! checks if splitpoints exists in the table and is different from current_split
 static gboolean check_if_splitpoint_does_not_exists(gint minutes, gint seconds, gint hundr_secs, 

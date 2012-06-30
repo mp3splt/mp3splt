@@ -3,8 +3,8 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *                for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2005-2012 Alexandru Munteanu - io_fx@yahoo.fr
- *
+ * Copyright: (C) 2005-2012 Alexandru Munteanu
+ * Contact: io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net/
  *
@@ -22,34 +22,27 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * along with this program; if not, write to the Free Software
  * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
  *
  *********************************************************/
 
-#ifndef SPECIAL_SPLIT_H
+/**********************************************************
+ * Filename: messages_window.h
+ *
+ * header of messages_window.c
+ *********************************************************/
 
-#define SPECIAL_SPLIT_H
+#ifndef MESSAGES_WINDOW_H
 
-#include "all_includes.h"
+#define MESSAGES_WINDOW_H
 
-#define FILE_MODE_SINGLE 1
-#define FILE_MODE_MULTIPLE 0
+#include "widgets_helper.h"
 
-#define SELECTED_SPLIT_TRIM_SILENCE 6
-#define SELECTED_SPLIT_SILENCE 5
-#define SELECTED_SPLIT_EQUAL_TIME_TRACKS 4
-#define SELECTED_SPLIT_NORMAL 3
-#define SELECTED_SPLIT_TIME 2
-#define SELECTED_SPLIT_WRAP 1
-#define SELECTED_SPLIT_ERROR 0
-
-#define NUMBER_OF_SPLIT_MODES 6
-
-void select_split_mode(int split_mode, ui_state *ui);
-GtkWidget *create_special_split_page(ui_state *ui);
+void put_message_in_history(const gchar *message, splt_message_type mess_type, ui_state *ui);
+void create_mess_history_dialog(ui_state *ui);
 
 #endif
 

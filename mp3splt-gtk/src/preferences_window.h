@@ -3,8 +3,7 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *                for mp3/ogg splitting without decoding
  *
- * Copyright: (C) 2005-2012 Alexandru Munteanu
- * Contact: io_fx@yahoo.fr
+ * Copyright (c) 2005-2012 Alexandru Munteanu - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net/
  *
@@ -30,20 +29,31 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: messages.h
+ * Filename: preferences_window.h
  *
- * header of messages.c
- *
+ * heder of preferences_window.c
  *********************************************************/
 
-#ifndef MESSAGES_H
+#ifndef PREFERENCES_WINDOW_H
 
-#define MESSAGES_H
+#define PREFERENCES_WINDOW_H
 
-#include "widgets_helper.h"
+#include "all_includes.h"
 
-void put_message_in_history(const gchar *message, splt_message_type mess_type, ui_state *ui);
-void create_mess_history_dialog(ui_state *ui);
+#define NUMBER_OF_TAGS_MODES 4
+
+#define NO_TAGS 0
+#define DEFAULT_TAGS 1
+#define ORIGINAL_FILE_TAGS 2
+#define TAGS_FROM_FILENAME 3
+
+gboolean get_checked_output_radio_box(ui_state *ui);
+gint get_checked_tags_version_radio_box(gui_state *gui);
+GString *get_checked_language(ui_state *ui);
+GtkWidget *create_choose_preferences(ui_state *ui);
+void set_output_directory(gchar *dirname, ui_state *ui);
+gchar *get_output_directory(ui_state *ui);
+void refresh_preview_drawing_areas(gui_state *gui);
 
 #endif
 

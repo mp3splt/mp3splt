@@ -37,7 +37,7 @@
  * window
  **********************************************************/
 
-#include "split_files.h"
+#include "split_files_window.h"
 
 //!split files enumeration
 enum

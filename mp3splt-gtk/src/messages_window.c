@@ -34,7 +34,7 @@
  * The messages history dialog
  *********************************************************/
 
-#include "messages.h"
+#include "messages_window.h"
 
 //! Returns the current local time in form of a string
 static const char *get_current_system_time()
