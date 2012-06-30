@@ -104,10 +104,12 @@ void ch_set_active_str_value(GtkComboBox *combo, gchar *new_value)
     if (strcmp(value, new_value) == 0)
     {
       gtk_combo_box_set_active_iter(combo, &iter);
+      g_free(value);
       return;
     }
 
     valid_row = gtk_tree_model_iter_next(store, &iter);
+    g_free(value);
   }
 }
 

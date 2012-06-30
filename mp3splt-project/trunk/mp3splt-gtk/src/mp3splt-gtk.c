@@ -221,7 +221,7 @@ void exit_threads()
 }
 
 //close the window and exit button function
-void exit_application(GtkWidget *widget, ui_state *ui)
+void exit_application(GtkWidget *widget, gpointer data)
 {
   ui_save_preferences(NULL, ui);
 
@@ -235,6 +235,11 @@ void exit_application(GtkWidget *widget, ui_state *ui)
   if (player_is_running(ui))
   {
     player_quit(ui);
+  }
+
+  while (gtk_events_pending())
+  {
+    gtk_main_iteration();
   }
 
   gtk_main_quit();

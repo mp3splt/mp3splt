@@ -428,6 +428,12 @@ static void ui_infos_free(ui_infos **infos)
 
   ui_main_window_free(&(*infos)->main_win);
 
+  if ((*infos)->browser_directory)
+  {
+    g_free((*infos)->browser_directory);
+    (*infos)->browser_directory = NULL;
+  }
+
   if ((*infos)->text_options_list)
   {
     g_list_free((*infos)->text_options_list);
