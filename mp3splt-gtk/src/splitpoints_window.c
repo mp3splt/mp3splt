@@ -276,7 +276,7 @@ gint get_first_splitpoint_selected(gui_state *gui)
 }
 
 //!row selection event
-static void row_selection_event(ui_state *ui)
+static void row_selection_event(GtkTreeSelection *selection, ui_state *ui)
 {
   gtk_widget_set_sensitive(ui->gui->remove_row_button, TRUE); 
 }

@@ -116,11 +116,11 @@ static void lmanager_put_message_from_library(const char *message, splt_message_
     put_status_message_with_type(mess, mess_type, ui);
 
 #ifdef __WIN32__
-  while (gtk_events_pending())
-  {
-	  gtk_main_iteration();
-  }
-  gdk_flush();
+    while (gtk_events_pending())
+    {
+      gtk_main_iteration();
+    }
+    gdk_flush();
 #endif
 
     exit_threads();

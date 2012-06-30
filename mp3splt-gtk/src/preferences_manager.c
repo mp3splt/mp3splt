@@ -543,6 +543,7 @@ void save_preferences(ui_state *ui)
   if (genre_value != NULL)
   {
     g_key_file_set_string(my_key_file, "split", "genre", genre_value);
+    g_free(genre_value);
   }
 
   const gchar *comment = gtk_entry_get_text(GTK_ENTRY(ui->gui->comment_tag_entry));
