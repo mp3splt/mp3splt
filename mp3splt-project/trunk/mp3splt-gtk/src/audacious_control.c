@@ -33,13 +33,13 @@
 
 /*!********************************************************
  * \file 
- * xmms control
+ * audacious control
  *
- * this file contains the functions that control the xmms
+ * this file contains the functions that control the audacious
  * player
  ********************************************************/
 
-#include "xmms_control.h"
+#include "audacious_control.h"
 
 #ifndef NO_AUDACIOUS
 
@@ -47,7 +47,7 @@
 #include <audacious/dbus.h>
 
 //!Acquires informations about the song
-void myxmms_get_song_infos(gchar *total_infos, ui_state *ui)
+void myaudacious_get_song_infos(gchar *total_infos, ui_state *ui)
 {
   gint freq, rate, nch;
   audacious_remote_get_info(ui->pi->dbus_proxy, &rate, &freq, &nch);
@@ -84,7 +84,7 @@ void myxmms_get_song_infos(gchar *total_infos, ui_state *ui)
 
 The filename is allocated by this function and must be g_free'ed after use.
 */
-gchar *myxmms_get_filename(ui_state *ui)
+gchar *myaudacious_get_filename(ui_state *ui)
 {
   gint playlist_position = audacious_remote_get_playlist_pos(ui->pi->dbus_proxy);
   gchar *fname = audacious_remote_get_playlist_file(ui->pi->dbus_proxy, playlist_position);
@@ -96,7 +96,7 @@ gchar *myxmms_get_filename(ui_state *ui)
 }
 
 //!returns the number of songs in the playlist
-gint myxmms_get_playlist_number(ui_state *ui)
+gint myaudacious_get_playlist_number(ui_state *ui)
 {
   return audacious_remote_get_playlist_length(ui->pi->dbus_proxy);
 }
@@ -105,20 +105,20 @@ gint myxmms_get_playlist_number(ui_state *ui)
 
 The filename is allocated by this function and must be g_free'ed after use.
 */
-gchar *myxmms_get_title_song(ui_state *ui)
+gchar *myaudacious_get_title_song(ui_state *ui)
 {
   gint playlist_position = audacious_remote_get_playlist_pos(ui->pi->dbus_proxy);
   return audacious_remote_get_playlist_title(ui->pi->dbus_proxy, playlist_position);
 }
 
 //!returns elapsed time
-gint myxmms_get_time_elapsed(ui_state *ui)
+gint myaudacious_get_time_elapsed(ui_state *ui)
 {
   return audacious_remote_get_output_time(ui->pi->dbus_proxy);
 }
 
-//!starts xmms
-void myxmms_start(ui_state *ui)
+//!starts audacious
+void myaudacious_start(ui_state *ui)
 {
   static gchar *exec_command = "audacious";
   gchar *exec_this = g_strdup_printf("%s &", exec_command);
@@ -135,21 +135,21 @@ void myxmms_start(ui_state *ui)
 }
 
 //!selects the last file in the playlist
-void myxmms_select_last_file(ui_state *ui)
+void myaudacious_select_last_file(ui_state *ui)
 {
   gint number = audacious_remote_get_playlist_length(ui->pi->dbus_proxy);
   audacious_remote_set_playlist_pos(ui->pi->dbus_proxy, number - 1);
 }
 
 //!plays the last file of the playlist
-void myxmms_play_last_file(ui_state *ui)
+void myaudacious_play_last_file(ui_state *ui)
 {
-  myxmms_select_last_file(ui);
+  myaudacious_select_last_file(ui);
   audacious_remote_play(ui->pi->dbus_proxy);
 }
 
-//!add files to the xmms playlist
-void myxmms_add_files(GList *list, ui_state *ui)
+//!add files to the audacious playlist
+void myaudacious_add_files(GList *list, ui_state *ui)
 {
   GList *list_pos = list;
   while (list_pos)
@@ -164,30 +164,30 @@ void myxmms_add_files(GList *list, ui_state *ui)
 }
 
 //!sets the volume level
-void myxmms_set_volume(gint volume, ui_state *ui)
+void myaudacious_set_volume(gint volume, ui_state *ui)
 {
   audacious_remote_set_main_volume(ui->pi->dbus_proxy, volume);
 }
 
 //!returns volume level
-gint myxmms_get_volume(ui_state *ui)
+gint myaudacious_get_volume(ui_state *ui)
 {
   return audacious_remote_get_main_volume(ui->pi->dbus_proxy);
 }
 
-/*!starts xmms with songs
+/*!starts audacious with songs
 
-  \param list The list of the songs to start xmms with
+  \param list The list of the songs to start audacious with
   \todo Which format is this list in?
  */
-void myxmms_start_with_songs(GList *list, ui_state *ui)
+void myaudacious_start_with_songs(GList *list, ui_state *ui)
 {
-  myxmms_start(ui);
-  myxmms_add_files(list, ui);
+  myaudacious_start(ui);
+  myaudacious_add_files(list, ui);
 }
 
-//!returns TRUE if xmms is running; if not, FALSE 
-gint myxmms_is_running(ui_state *ui)
+//!returns TRUE if audacious is running; if not, FALSE 
+gint myaudacious_is_running(ui_state *ui)
 {
   if (!ui->pi->dbus_connection)
   {
@@ -210,8 +210,8 @@ gint myxmms_is_running(ui_state *ui)
   return TRUE;
 }
 
-//!returns TRUE if xmms is paused, if not, FALSE 
-gint myxmms_is_paused(ui_state *ui)
+//!returns TRUE if audacious is paused, if not, FALSE 
+gint myaudacious_is_paused(ui_state *ui)
 {
   if (!audacious_remote_is_paused(ui->pi->dbus_proxy))
   {
@@ -222,50 +222,50 @@ gint myxmms_is_paused(ui_state *ui)
 }
 
 //!Start playing the current song
-void myxmms_play(ui_state *ui)
+void myaudacious_play(ui_state *ui)
 {
   audacious_remote_play(ui->pi->dbus_proxy);
 }
 
 //!Stop playing the current song
-void myxmms_stop(ui_state *ui)
+void myaudacious_stop(ui_state *ui)
 {
   audacious_remote_stop(ui->pi->dbus_proxy);
 }
 
 //!Pause playing the current song
-void myxmms_pause(ui_state *ui)
+void myaudacious_pause(ui_state *ui)
 {
   audacious_remote_pause(ui->pi->dbus_proxy);
 }
 
 //!Switch to the next song
-void myxmms_next(ui_state *ui)
+void myaudacious_next(ui_state *ui)
 {
   audacious_remote_playlist_next(ui->pi->dbus_proxy);
 }
 
 //!Switch to the previous song
-void myxmms_prev(ui_state *ui)
+void myaudacious_prev(ui_state *ui)
 {
   audacious_remote_playlist_prev(ui->pi->dbus_proxy);
 }
 
 //!jump to time
-void myxmms_jump(gint position, ui_state *ui)
+void myaudacious_jump(gint position, ui_state *ui)
 {
   audacious_remote_jump_to_time(ui->pi->dbus_proxy, position);
 }
 
 //!returns the total duration of the current song
-gint myxmms_get_total_time(ui_state *ui)
+gint myaudacious_get_total_time(ui_state *ui)
 {
   gint playlist_position = audacious_remote_get_playlist_pos(ui->pi->dbus_proxy);
   return audacious_remote_get_playlist_time(ui->pi->dbus_proxy, playlist_position);
 }
 
-//!returns TRUE if xmms is playing, else FALSE
-gint myxmms_is_playing(ui_state *ui)
+//!returns TRUE if audacious is playing, else FALSE
+gint myaudacious_is_playing(ui_state *ui)
 {
   if (audacious_remote_is_playing(ui->pi->dbus_proxy))
   {

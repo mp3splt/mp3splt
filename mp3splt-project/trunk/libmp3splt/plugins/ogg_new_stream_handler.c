@@ -77,7 +77,7 @@ void splt_ogg_nsh_free(splt_ogg_new_stream_handler **nsh)
 }
 
 void splt_ogg_initialise_for_new_stream(splt_ogg_new_stream_handler *nsh, 
-    ogg_page *page, long *cutpoint, long previous_granulepos)
+    const ogg_page *page, long *cutpoint, long previous_granulepos)
 {
   splt_ogg_state *oggstate = nsh->oggstate;
 
@@ -89,7 +89,7 @@ void splt_ogg_initialise_for_new_stream(splt_ogg_new_stream_handler *nsh,
 
   ogg_stream_clear(stream_in);
   ogg_stream_init(stream_in, ogg_page_serialno(page));
-  oggstate->saved_serial = ogg_page_serialno(&page);
+  oggstate->saved_serial = ogg_page_serialno(page);
 
   if (cutpoint != NULL && *cutpoint != 0)
   {

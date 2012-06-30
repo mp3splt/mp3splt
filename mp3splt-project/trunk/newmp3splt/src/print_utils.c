@@ -46,7 +46,7 @@ void print_error(const char *e)
   fflush(console_err);
 }
 
-void put_library_message(const char *message, splt_message_type mess_type)
+void put_library_message(const char *message, splt_message_type mess_type, void *data)
 {
   if (mess_type == SPLT_MESSAGE_INFO)
   {
@@ -60,7 +60,7 @@ void put_library_message(const char *message, splt_message_type mess_type)
   }
 }
 
-void put_split_file(const char *file, int progress_data)
+void put_split_file(const char *file, int progress_data, void *data)
 {
   char temp[1024] = "";
   int this_spaces = strlen(file)+16;
@@ -76,7 +76,7 @@ void put_split_file(const char *file, int progress_data)
   fflush(console_out);
 }
 
-void put_progress_bar(splt_progress *p_bar)
+void put_progress_bar(splt_progress *p_bar, void *data)
 {
   char progress_text[2048] = " ";
 

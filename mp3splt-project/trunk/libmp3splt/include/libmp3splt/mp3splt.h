@@ -334,7 +334,8 @@ typedef struct splt_progres {
   */
   int user_data;
   //! A pointer to the callback function
-  void (*progress)(struct splt_progres*);
+  void (*progress)(struct splt_progres*, void *);
+  void *progress_cb_data;
 } splt_progress;
 
 //!proxy information
@@ -390,7 +391,9 @@ typedef struct {
       the char* is the filename that is currently
       being split.
   */
-  void (*file_split)(const char *,int);
+  void (*file_split)(const char *,int, void *);
+  void *file_split_cb_data;
+
   //!All infos for the progress bar
   splt_progress *p_bar;
   //!callback for sending the silence level to the client
@@ -398,7 +401,8 @@ typedef struct {
   //!user data set by the client for the 'get_silence_level' function
   void *silence_level_client_data;
   //!sends a message to the main program to tell what we are doing
-  void (*put_message)(const char *, splt_message_type );
+  void (*put_message)(const char *, splt_message_type, void *);
+  void *put_message_cb_data;
   //!structure in which we have all the splitpoints
   splt_point *points;
   //!how many tags do we have?
@@ -1466,7 +1470,7 @@ int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_t
 @return The error code
  */
 int mp3splt_set_message_function(splt_state *state, 
-    void (*message_cb)(const char *, splt_message_type));
+    void (*message_cb)(const char *, splt_message_type, void *), void *cb_data);
 
 /** Register the function that is to be called on creation of a output file
 
@@ -1475,7 +1479,7 @@ int mp3splt_set_message_function(splt_state *state,
 @return The error code
  */
 int mp3splt_set_split_filename_function(splt_state *state,
-    void (*file_cb)(const char *,int));
+    void (*file_cb)(const char *, int, void *), void *data);
 
 /** Register the progress bar callback
 
@@ -1484,7 +1488,7 @@ int mp3splt_set_split_filename_function(splt_state *state,
 @return The error code
  */
 int mp3splt_set_progress_function(splt_state *state,
-    void (*progress_cb)(splt_progress *p_bar));
+    void (*progress_cb)(splt_progress *p_bar, void *), void *cb_data);
 
 int mp3splt_set_silence_level_function(splt_state *state,
   void (*get_silence_cb)(long time, float level, void *user_data),

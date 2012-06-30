@@ -5,7 +5,6 @@
  *
  * Copyright (c) 2005-2012 Alexandru Munteanu - io_fx@yahoo.fr
  *
- *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
@@ -30,23 +29,42 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: multiple_files.h
+ * Filename: audacious_control.h
  *
+ * header to audacious_control.c
+ *
+ * audacious_control.c controls the audacious player
  *********************************************************/
 
-#ifndef MULTIPLE_FILES_H
+#ifndef audacious_CONTROL_H
 
-#define MULTIPLE_FILES_H
+#define audacious_CONTROL_H
 
-#include "widgets_helper.h"
+#include "external_includes.h"
 #include "ui_types.h"
 
-enum {
-  MULTIPLE_COL_FILENAME,
-  MULTIPLE_FILES_COLUMNS
-};
-
-GtkWidget *create_multiple_files_component(ui_state *ui);
+void myaudacious_get_song_infos(gchar *total_infos, ui_state *ui);
+gchar *myaudacious_get_filename(ui_state *ui);
+gint myaudacious_get_playlist_number(ui_state *ui);
+gchar *myaudacious_get_title_song(ui_state *ui);
+gint myaudacious_get_time_elapsed(ui_state *ui);
+void myaudacious_start(ui_state *ui);
+void myaudacious_select_last_file(ui_state *ui);
+void myaudacious_play_last_file(ui_state *ui);
+void myaudacious_add_files(GList *list, ui_state *ui);
+void myaudacious_set_volume(gint volume, ui_state *ui);
+gint myaudacious_get_volume(ui_state *ui);
+void myaudacious_start_with_songs(GList *list, ui_state *ui);
+gint myaudacious_is_running(ui_state *ui);
+gint myaudacious_is_paused(ui_state *ui);
+void myaudacious_play(ui_state *ui);
+void myaudacious_stop(ui_state *ui);
+void myaudacious_pause(ui_state *ui);
+void myaudacious_next(ui_state *ui);
+void myaudacious_prev(ui_state *ui);
+void myaudacious_jump(gint position, ui_state *ui);
+gint myaudacious_get_total_time(ui_state *ui);
+gint myaudacious_is_playing(ui_state *ui);
 
 #endif
 

@@ -30,15 +30,15 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: main_win.h
+ * Filename: main_window.h
  *
- * header of main_win.c
+ * header of main_window.c
  *
  *********************************************************/
 
-#ifndef MAIN_WIN_H
+#ifndef MAIN_WINDOW_H
 
-#define MAIN_WIN_H
+#define MAIN_WINDOW_H
 
 #include "all_includes.h"
 

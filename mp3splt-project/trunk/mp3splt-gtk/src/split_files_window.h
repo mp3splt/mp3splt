@@ -3,8 +3,7 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *                for mp3/ogg splitting without decoding
  *
- * Copyright: (C) 2005-2012 Alexandru Munteanu
- * Contact: io_fx@yahoo.fr
+ * Copyright (c) 2005-2012 Alexandru Munteanu - io_fx@yahoo.fr
  *
  * http://mp3splt.sourceforge.net/
  *
@@ -30,21 +29,23 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: cddb_tab.h
+ * Filename: split_files_window.h
  *
- * this file is the header of cddb_tab.c
- *
+ * header of split_files_window.c
  *********************************************************/
 
-#ifndef FREEDB_TAB_H
+#ifndef SPLIT_FILES_WINDOW_H
 
-#define FREEDB_TAB_H
+#define SPLIT_FILES_WINDOW_H
 
 #include "all_includes.h"
 
-void update_splitpoints_from_mp3splt_state(ui_state *ui);
-GtkWidget *create_freedb_frame(ui_state *ui);
-void hide_freedb_spinner(gui_state *gui);
+void remove_all_split_rows(ui_state *ui);
+void add_split_row(const gchar *name, ui_state *ui);
+void split_tree_row_activated(GtkTreeView *split_tree,
+    GtkTreePath *arg1, GtkTreeViewColumn *arg2, ui_state *ui);
+GtkWidget *create_split_files_frame(ui_state *ui);
+gchar *get_filename_from_split_files(gint number, gui_state *gui);
 
 #endif
 

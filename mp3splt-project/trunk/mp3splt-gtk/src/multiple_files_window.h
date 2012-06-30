@@ -5,6 +5,7 @@
  *
  * Copyright (c) 2005-2012 Alexandru Munteanu - io_fx@yahoo.fr
  *
+ *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
@@ -29,42 +30,22 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: xmms_control.h
- *
- * header to xmms_control.c
- *
- * xmms_control.c controls the xmms player
+ * Filename: multiple_files_window.h
  *********************************************************/
 
-#ifndef XMMS_CONTROL_H
+#ifndef MULTIPLE_FILES_WINDOW_H
 
-#define XMMS_CONTROL_H
+#define MULTIPLE_FILES_WINDOW_H
 
-#include "external_includes.h"
+#include "widgets_helper.h"
 #include "ui_types.h"
 
-void myxmms_get_song_infos(gchar *total_infos, ui_state *ui);
-gchar *myxmms_get_filename(ui_state *ui);
-gint myxmms_get_playlist_number(ui_state *ui);
-gchar *myxmms_get_title_song(ui_state *ui);
-gint myxmms_get_time_elapsed(ui_state *ui);
-void myxmms_start(ui_state *ui);
-void myxmms_select_last_file(ui_state *ui);
-void myxmms_play_last_file(ui_state *ui);
-void myxmms_add_files(GList *list, ui_state *ui);
-void myxmms_set_volume(gint volume, ui_state *ui);
-gint myxmms_get_volume(ui_state *ui);
-void myxmms_start_with_songs(GList *list, ui_state *ui);
-gint myxmms_is_running(ui_state *ui);
-gint myxmms_is_paused(ui_state *ui);
-void myxmms_play(ui_state *ui);
-void myxmms_stop(ui_state *ui);
-void myxmms_pause(ui_state *ui);
-void myxmms_next(ui_state *ui);
-void myxmms_prev(ui_state *ui);
-void myxmms_jump(gint position, ui_state *ui);
-gint myxmms_get_total_time(ui_state *ui);
-gint myxmms_is_playing(ui_state *ui);
+enum {
+  MULTIPLE_COL_FILENAME,
+  MULTIPLE_FILES_COLUMNS
+};
+
+GtkWidget *create_multiple_files_component(ui_state *ui);
 
 #endif
 

@@ -31,20 +31,19 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: player.h
+ * Filename: player_control.h
  *
- * header of player.c, defines constants, etc..
- *
+ * header of player_control.c, defines constants, etc..
  *********************************************************/
 
-#ifndef PLAYER_H
+#ifndef PLAYER_CONTROL_H
 
-#define PLAYER_H
+#define PLAYER_CONTROL_H
 
 #include "external_includes.h"
 
 #include "snackamp_control.h"    
-#include "xmms_control.h"   
+#include "audacious_control.h"   
 #include "gstreamer_control.h"
 
 #define PLAYER_AUDACIOUS 1

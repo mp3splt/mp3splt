@@ -39,7 +39,7 @@
  * snackamp
  **********************************************************/
 
-#include "player.h"
+#include "player_control.h"
 
 //!returns the elapsed time of the player
 gint player_get_elapsed_time(ui_state *ui)
@@ -52,7 +52,7 @@ gint player_get_elapsed_time(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_get_time_elapsed(ui);
+    return myaudacious_get_time_elapsed(ui);
 #endif
 #endif
   }
@@ -77,7 +77,7 @@ gint player_get_total_time(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_get_total_time(ui);
+    return myaudacious_get_total_time(ui);
 #endif
 #endif
   }
@@ -102,7 +102,7 @@ gint player_is_running(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_is_running(ui);
+    return myaudacious_is_running(ui);
 #endif
 #endif
   }
@@ -127,7 +127,7 @@ void player_start(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_start(ui);
+    myaudacious_start(ui);
 #endif
 #endif
   }
@@ -150,7 +150,7 @@ void player_start_add_files(GList *list, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_start_with_songs(list, ui);
+    myaudacious_start_with_songs(list, ui);
 #endif
 #endif
   }
@@ -173,7 +173,7 @@ void player_add_files(GList *list, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_add_files(list, ui);
+    myaudacious_add_files(list, ui);
 #endif
 #endif
   }
@@ -197,8 +197,8 @@ void player_add_files_and_select(GList *list, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_add_files(list, ui);
-    myxmms_select_last_file(ui);
+    myaudacious_add_files(list, ui);
+    myaudacious_select_last_file(ui);
 #endif
 #endif
   }
@@ -224,7 +224,7 @@ void player_add_play_files(GList *list, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_play_last_file(ui);
+    myaudacious_play_last_file(ui);
 #endif
 #endif
   }
@@ -248,8 +248,8 @@ void player_start_play_with_songs(GList *list, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_start_with_songs(list, ui);
-    myxmms_play_last_file(ui);
+    myaudacious_start_with_songs(list, ui);
+    myaudacious_play_last_file(ui);
 #endif
 #endif
   }
@@ -273,7 +273,7 @@ void player_play(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_play(ui);
+    myaudacious_play(ui);
 #endif
 #endif
   }
@@ -296,7 +296,7 @@ void player_stop(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_stop(ui);
+    myaudacious_stop(ui);
 #endif
 #endif
   }
@@ -319,7 +319,7 @@ void player_pause(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_pause(ui);
+    myaudacious_pause(ui);
 #endif
 #endif
   }
@@ -342,7 +342,7 @@ void player_next(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_next(ui);
+    myaudacious_next(ui);
 #endif
 #endif
   }
@@ -365,7 +365,7 @@ void player_prev(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_prev(ui);
+    myaudacious_prev(ui);
 #endif
 #endif
   }
@@ -388,7 +388,7 @@ void player_seek(gint position, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_jump(position, ui);
+    myaudacious_jump(position, ui);
 #endif
 #endif
   }
@@ -414,7 +414,7 @@ void player_get_song_infos(gchar *total_infos, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_get_song_infos(total_infos, ui);
+    myaudacious_get_song_infos(total_infos, ui);
 #endif
 #endif
   }
@@ -437,7 +437,7 @@ gint player_is_playing(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_is_playing(ui);
+    return myaudacious_is_playing(ui);
 #endif
 #endif
   }
@@ -462,7 +462,7 @@ gint player_is_paused(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_is_paused(ui);
+    return myaudacious_is_paused(ui);
 #endif
 #endif
   }
@@ -490,7 +490,7 @@ gchar *player_get_filename(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_get_filename(ui);
+    return myaudacious_get_filename(ui);
 #endif
 #endif
   }
@@ -518,7 +518,7 @@ gchar *player_get_title(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_get_title_song(ui);
+    return myaudacious_get_title_song(ui);
 #endif
 #endif
   }
@@ -543,7 +543,7 @@ gint player_get_volume(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_get_volume(ui);
+    return myaudacious_get_volume(ui);
 #endif
 #endif
   }
@@ -568,7 +568,7 @@ void player_set_volume(gint volume, ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    myxmms_set_volume(volume, ui);
+    myaudacious_set_volume(volume, ui);
 #endif
 #endif
   }
@@ -591,7 +591,7 @@ gint player_get_playlist_number(ui_state *ui)
   {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-    return myxmms_get_playlist_number(ui);
+    return myaudacious_get_playlist_number(ui);
 #endif
 #endif
   }

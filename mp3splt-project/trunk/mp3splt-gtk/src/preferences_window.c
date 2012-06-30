@@ -37,7 +37,7 @@
  * the preferences can be chosen.
  ********************************************************/
 
-#include "preferences_tab.h"
+#include "preferences_window.h"
 
 static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui);
 static GtkWidget *create_test_regex_table(ui_state *ui);

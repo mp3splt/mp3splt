@@ -120,10 +120,10 @@ int main(int argc, char **orig_argv)
   signal(SIGINT, sigint_handler);
 
   //callback for the library messages
-  mp3splt_set_message_function(state, put_library_message);
+  mp3splt_set_message_function(state, put_library_message, NULL);
   mp3splt_set_silence_level_function(state, get_silence_level, data->sl);
   //callback for the split files
-  mp3splt_set_split_filename_function(state, put_split_file);
+  mp3splt_set_split_filename_function(state, put_split_file, NULL);
 
   //default we write mins_secs_hundr for normal split
   mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
@@ -365,7 +365,7 @@ int main(int argc, char **orig_argv)
   //callback for the progress bar
   if (!opt->q_option && !opt->X_option)
   {
-    mp3splt_set_progress_function(state, put_progress_bar);
+    mp3splt_set_progress_function(state, put_progress_bar, NULL);
   }
 
   //if quiet, does not write authors and other

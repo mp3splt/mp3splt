@@ -37,7 +37,7 @@
  * split modes can be selected
  *..*******************************************************/
 
-#include "special_split.h"
+#include "split_mode_window.h"
 
 //! Get the split mode
 static gint get_selected_split_mode(GtkToggleButton *radio_b)

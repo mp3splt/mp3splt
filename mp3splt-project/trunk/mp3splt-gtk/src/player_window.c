@@ -36,7 +36,7 @@
  * this file is used for the player control tab
  **********************************************************/
 
-#include "player_tab.h"
+#include "player_window.h"
 
 #define DRAWING_AREA_WIDTH 400
 #define DRAWING_AREA_HEIGHT 123 

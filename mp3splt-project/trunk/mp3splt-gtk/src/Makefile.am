@@ -20,21 +20,21 @@ EXTRA_DIST = $(appicon_DATA) $(image_DATA)
 bin_PROGRAMS = mp3splt-gtk
 
 mp3splt_gtk_SOURCES = \
-	tree_tab.c tree_tab.h \
-	main_win.c main_win.h \
-	xmms_control.c xmms_control.h \
+	splitpoints_window.c splitpoints_window.h \
+	main_window.c main_window.h \
+	audacious_control.c audacious_control.h \
 	gstreamer_control.c gstreamer_control.h \
-	player.c player.h \
-	player_tab.c player_tab.h \
-	preferences_tab.c preferences_tab.h \
+	player_control.c player_control.h \
+	player_window.c player_window.h \
+	preferences_window.c preferences_window.h \
 	utilities.c utilities.h \
-	split_files.c split_files.h \
-	freedb_tab.c freedb_tab.h \
+	split_files_window.c split_files_window.h \
+	freedb_window.c freedb_window.h \
 	snackamp_control.c snackamp_control.h \
-	special_split.c special_split.h\
+	split_mode_window.c split_mode_window.h \
 	mp3splt-gtk.c mp3splt-gtk.h \
-	multiple_files.c multiple_files.h \
-	messages.c messages.h \
+	multiple_files_window.c multiple_files_window.h \
+	messages_window.c messages_window.h \
 	import.c import.h \
 	options_manager.c options_manager.h \
 	preferences_manager.c preferences_manager.h \

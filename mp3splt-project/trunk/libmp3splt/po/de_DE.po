@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-06-24 10:53+0200\n"
+"POT-Creation-Date: 2012-06-30 18:59+0200\n"
 "PO-Revision-Date: 2011-09-16 00:13+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:840
+#: src/mp3splt.c:845
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Info: Verknüpfter Dateiname wird in »%s« aufgelöst\n"
 
-#: src/mp3splt.c:905
+#: src/mp3splt.c:910
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Info: Datei passt zum Plugin »%s«\n"
 
-#: src/mp3splt.c:913
+#: src/mp3splt.c:918
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " M3U-Datei »%s« wird erstellt.\n"
 
-#: src/mp3splt.c:934
+#: src/mp3splt.c:939
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -41,7 +41,7 @@ msgstr ""
 "Mit SILENCE AUTO-ADJUST wird gearbeitet (Ansprechschwelle: %.1f dB Pause: %d "
 "s Versatz: %.2f)\n"
 
-#: src/mp3splt.c:1734 src/tags_parser.c:108
+#: src/mp3splt.c:1739 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"

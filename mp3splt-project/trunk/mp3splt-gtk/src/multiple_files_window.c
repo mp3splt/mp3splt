@@ -37,7 +37,7 @@
  * mode that currently allows only for batch processing.
  *********************************************************/
 
-#include "multiple_files.h"
+#include "multiple_files_window.h"
 
 #define MY_GTK_RESPONSE 200
 

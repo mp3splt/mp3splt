@@ -213,7 +213,7 @@ static gboolean snackamp_is_connected(ui_state *ui)
 //!gets informations about the song
 void snackamp_get_song_infos(gchar *total_infos, ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_info\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_get_info\n", ui);
   result = cut_begin_end(result);
 
   //stereo/mono
@@ -279,7 +279,7 @@ void snackamp_get_song_infos(gchar *total_infos, ui_state *ui)
 //!returns current song position in the playlist
 static gint snackamp_get_playlist_pos(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_pos\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_get_playlist_pos\n", ui);
   gint number = get_integer_from_string(result);
   g_free(result);
   return number;
@@ -295,7 +295,7 @@ gchar *snackamp_get_filename(ui_state *ui)
   
   //we get the current file
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_get_playlist_file", playlist_pos);
+  g_snprintf(temp, 100, "%s %d\n", "audacious_remote_get_playlist_file", playlist_pos);
  
   gchar *result = snackamp_socket_send_message(temp, ui);
   result = cut_begin_end(result);
@@ -306,14 +306,14 @@ gchar *snackamp_get_filename(ui_state *ui)
 //!stops playing a song
 void snackamp_stop(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_stop\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_stop\n", ui);
   g_free(result);
 }
 
 //!returns the number of songs of the playlist
 gint snackamp_get_playlist_number(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_length\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_get_playlist_length\n", ui);
   gint number = get_integer_from_string(result);
   g_free(result);
 
@@ -334,7 +334,7 @@ gchar *snackamp_get_title_song(ui_state *ui)
   gint playlist_pos = snackamp_get_playlist_pos(ui);
   
   gchar temp[100];
-  g_snprintf(temp, 100,"%s %d\n", "xmms_remote_get_playlist_title",playlist_pos);
+  g_snprintf(temp, 100,"%s %d\n", "audacious_remote_get_playlist_title",playlist_pos);
 
   gchar *result = snackamp_socket_send_message(temp, ui);
   result = cut_begin_end(result);
@@ -345,7 +345,7 @@ gchar *snackamp_get_title_song(ui_state *ui)
 //!returns elapsed time
 gint snackamp_get_time_elapsed(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_output_time\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_get_output_time\n", ui);
   gint pos = get_integer_from_string(result);
   g_free(result);
 
@@ -373,7 +373,7 @@ void snackamp_start(ui_state *ui)
 static void snackamp_set_playlist_pos(gint pos, ui_state *ui)
 {
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_playlist_pos",pos);
+  g_snprintf(temp, 100, "%s %d\n", "audacious_remote_set_playlist_pos",pos);
   gchar *result = snackamp_socket_send_message(temp, ui);
   g_free(result);
 }
@@ -388,7 +388,7 @@ void snackamp_select_last_file(ui_state *ui)
 //!plays a song
 void snackamp_play(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_play\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_play\n", ui);
   g_free(result);
 }
 
@@ -408,7 +408,7 @@ void snackamp_add_files(GList *list, ui_state *ui)
   {
     gint malloc_int = strlen(song) + 30;
     gchar *local = malloc(malloc_int * sizeof(gchar *));
-    g_snprintf(local, malloc_int, "%s {%s}\n", "xmms_remote_playlist_add ", song);
+    g_snprintf(local, malloc_int, "%s {%s}\n", "audacious_remote_playlist_add ", song);
 
     gchar *result = snackamp_socket_send_message(local, ui);
     g_free(result);
@@ -422,7 +422,7 @@ void snackamp_add_files(GList *list, ui_state *ui)
 void snackamp_set_volume(gint volume, ui_state *ui)
 {
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_main_volume", volume);
+  g_snprintf(temp, 100, "%s %d\n", "audacious_remote_set_main_volume", volume);
   gchar *result = snackamp_socket_send_message(temp, ui);
   g_free(result);
 }
@@ -430,7 +430,7 @@ void snackamp_set_volume(gint volume, ui_state *ui)
 //!returns volume
 gint snackamp_get_volume(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_main_volume\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_get_main_volume\n", ui);
   gint vol = get_integer_from_string(result);
   g_free(result);
  
@@ -463,14 +463,14 @@ gint snackamp_is_running(ui_state *ui)
 //!pause a song
 void snackamp_pause(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_pause\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_pause\n", ui);
   g_free(result);
 }
 
 //!changes to next song
 void snackamp_next(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_playlist_next\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_playlist_next\n", ui);
   g_free(result);
 }
 
@@ -481,7 +481,7 @@ void snackamp_prev(ui_state *ui)
 
   if (playlist_pos > 0)
   {
-    gchar *result = snackamp_socket_send_message("xmms_remote_playlist_prev\n", ui);
+    gchar *result = snackamp_socket_send_message("audacious_remote_playlist_prev\n", ui);
     g_free(result);
     return;
   }
@@ -504,7 +504,7 @@ void snackamp_jump(gint position, ui_state *ui)
   total_pos /= 100;
 
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %f\n", "xmms_remote_jump_to_time", total_pos);
+  g_snprintf(temp, 100, "%s %f\n", "audacious_remote_jump_to_time", total_pos);
 
   gchar *result = snackamp_socket_send_message(temp, ui);
   g_free(result);
@@ -513,7 +513,7 @@ void snackamp_jump(gint position, ui_state *ui)
 //!returns total time of the current song
 gint snackamp_get_total_time(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_time\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_get_playlist_time\n", ui);
   gint hundr_secs = get_integer_from_string(result) * 1000;
   g_free(result);
 
@@ -528,7 +528,7 @@ gint snackamp_is_playing(ui_state *ui)
     return FALSE;
   }
 
-  gchar *result = snackamp_socket_send_message("xmms_remote_is_playing\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_is_playing\n", ui);
   gint i = atoi(result);
   g_free(result);
 
@@ -551,7 +551,7 @@ gint snackamp_is_paused(ui_state *ui)
     return FALSE;
   }
 
-  gchar *result = snackamp_socket_send_message("xmms_remote_is_paused\n", ui);
+  gchar *result = snackamp_socket_send_message("audacious_remote_is_paused\n", ui);
   result = cut_begin_end(result);
 
   gint i = atoi(result);

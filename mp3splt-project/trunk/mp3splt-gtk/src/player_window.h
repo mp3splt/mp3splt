@@ -29,15 +29,15 @@
  *********************************************************/
 
 /**********************************************************
- * Filename: player_tab.h
+ * Filename: player_window.h
  *
- * header of player_tab.c
+ * header of player_window.c
  *
  *********************************************************/
 
-#ifndef PLAYER_TAB_H
+#ifndef PLAYER_WINDOW_H
 
-#define PLAYER_TAB_H
+#define PLAYER_WINDOW_H
 
 #include "all_includes.h"
 

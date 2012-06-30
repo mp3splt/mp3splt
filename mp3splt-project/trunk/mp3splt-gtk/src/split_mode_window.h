@@ -5,6 +5,7 @@
  *
  * Copyright (c) 2005-2012 Alexandru Munteanu - io_fx@yahoo.fr
  *
+ *
  * http://mp3splt.sourceforge.net/
  *
  *********************************************************/
@@ -21,40 +22,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
+ * You should have received a copy of the GNU General Public License
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: preferences_tab.h
- *
- * heder of preferences_tab.c
- *
- *********************************************************/
+#ifndef SPLIT_MODE_WINDOW_H
 
-#ifndef PREFERENCES_TAB_H
-
-#define PREFERENCES_TAB_H
+#define SPLIT_MODE_WINDOW_H
 
 #include "all_includes.h"
 
-#define NUMBER_OF_TAGS_MODES 4
+#define FILE_MODE_SINGLE 1
+#define FILE_MODE_MULTIPLE 0
 
-#define NO_TAGS 0
-#define DEFAULT_TAGS 1
-#define ORIGINAL_FILE_TAGS 2
-#define TAGS_FROM_FILENAME 3
+#define SELECTED_SPLIT_TRIM_SILENCE 6
+#define SELECTED_SPLIT_SILENCE 5
+#define SELECTED_SPLIT_EQUAL_TIME_TRACKS 4
+#define SELECTED_SPLIT_NORMAL 3
+#define SELECTED_SPLIT_TIME 2
+#define SELECTED_SPLIT_WRAP 1
+#define SELECTED_SPLIT_ERROR 0
 
-gboolean get_checked_output_radio_box(ui_state *ui);
-gint get_checked_tags_version_radio_box(gui_state *gui);
-GString *get_checked_language(ui_state *ui);
-GtkWidget *create_choose_preferences(ui_state *ui);
-void set_output_directory(gchar *dirname, ui_state *ui);
-gchar *get_output_directory(ui_state *ui);
-void refresh_preview_drawing_areas(gui_state *gui);
+#define NUMBER_OF_SPLIT_MODES 6
+
+void select_split_mode(int split_mode, ui_state *ui);
+GtkWidget *create_special_split_page(ui_state *ui);
 
 #endif
 

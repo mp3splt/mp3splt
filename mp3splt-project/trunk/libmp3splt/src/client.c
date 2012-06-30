@@ -45,7 +45,7 @@ int splt_c_put_split_file(splt_state *state, const char *filename)
 
   if (state->split.file_split != NULL)
   {
-    state->split.file_split(filename, state->split.p_bar->user_data);
+    state->split.file_split(filename, state->split.p_bar->user_data, state->split.file_split_cb_data);
     error = splt_c_append_to_m3u_file(state, filename);
   }
   else
@@ -126,7 +126,7 @@ void splt_c_update_progress(splt_state *state, double current_point,
       p_bar->percent_progress = 1;
     }
 
-    p_bar->progress(p_bar);
+    p_bar->progress(p_bar, p_bar->progress_cb_data);
     splt_o_set_iopt(state, SPLT_INTERNAL_PROGRESS_RATE, 0);
   }
   else
@@ -143,7 +143,7 @@ static void splt_c_put_message_to_client(splt_state *state, const char *message,
   {
     if (state->split.put_message != NULL)
     {
-      state->split.put_message(message, mess_type);
+      state->split.put_message(message, mess_type, state->split.put_message_cb_data);
     }
     else
     {

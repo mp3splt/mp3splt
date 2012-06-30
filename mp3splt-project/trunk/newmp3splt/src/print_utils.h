@@ -30,9 +30,9 @@
 void print_message(const char *m);
 void print_warning(const char *w);
 void print_error(const char *e);
-void put_library_message(const char *message, splt_message_type mess_type);
-void put_split_file(const char *file, int progress_data);
-void put_progress_bar(splt_progress *p_bar);
+void put_library_message(const char *message, splt_message_type mess_type, void *data);
+void put_split_file(const char *file, int progress_data, void *data);
+void put_progress_bar(splt_progress *p_bar, void *data);
 void print_version(FILE *std);
 void print_authors(FILE *std);
 void print_no_warranty(FILE *std);
