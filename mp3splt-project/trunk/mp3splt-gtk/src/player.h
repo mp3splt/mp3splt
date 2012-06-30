@@ -51,30 +51,30 @@
 #define PLAYER_SNACKAMP 2
 #define PLAYER_GSTREAMER 3
 
-gint player_get_elapsed_time();
-gint player_get_total_time();
-gint player_is_running();
-void player_start();
-void player_start_add_files(GList *list);
-void player_add_files(GList *list);
-void player_add_files_and_select(GList *list);
-void player_add_play_files(GList *list);
-void player_start_play_with_songs(GList *list);
-void player_play();
-void player_stop();
-void player_pause();
-void player_next();
-void player_prev();
-void player_seek(gint position);
-void player_get_song_infos(gchar *total_infos);
-gint player_is_playing();
-gint player_is_paused();
-gchar *player_get_filename();
-gchar *player_get_title();
-gint player_get_volume();
-void player_set_volume(gint volume);
-gint player_get_playlist_number();
-gint player_quit();
+gint player_get_elapsed_time(ui_state *ui);
+gint player_get_total_time(ui_state *ui);
+gint player_is_running(ui_state *ui);
+void player_start(ui_state *ui);
+void player_start_add_files(GList *list, ui_state *ui);
+void player_add_files(GList *list, ui_state *ui);
+void player_add_files_and_select(GList *list, ui_state *ui);
+void player_add_play_files(GList *list, ui_state *ui);
+void player_start_play_with_songs(GList *list, ui_state *ui);
+void player_play(ui_state *ui);
+void player_stop(ui_state *ui);
+void player_pause(ui_state *ui);
+void player_next(ui_state *ui);
+void player_prev(ui_state *ui);
+void player_seek(gint position, ui_state *ui);
+void player_get_song_infos(gchar *total_infos, ui_state *ui);
+gint player_is_playing(ui_state *ui);
+gint player_is_paused(ui_state *ui);
+gchar *player_get_filename(ui_state *ui);
+gchar *player_get_title(ui_state *ui);
+gint player_get_volume(ui_state *ui);
+void player_set_volume(gint volume, ui_state *ui);
+gint player_get_playlist_number(ui_state *ui);
+gint player_quit(ui_state *ui);
 
 #endif
 

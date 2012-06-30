@@ -42,8 +42,6 @@
 
 #include "all_includes.h"
 
-extern ui_state *ui;
-
 static void check_pref_file_and_write_default(ui_state *ui);
 static void pm_free_spinner_int_preferences(GArray *spinner_int_preferences);
 static void pm_free_range_preferences(GArray *range_preferences);
@@ -425,7 +423,7 @@ void load_preferences(ui_state *ui)
 
   //type of split: split mode
   gint split_mode = g_key_file_get_integer(key_file, "split", "split_mode", NULL);
-  select_split_mode(split_mode);
+  select_split_mode(split_mode, ui);
 
   //time value
   gint time_value = g_key_file_get_integer(key_file, "split", "split_mode_time_value", NULL);

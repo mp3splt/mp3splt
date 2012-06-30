@@ -39,20 +39,6 @@
 
 #include "tree_tab.h"
 
-//if we have a skippoint or a splitpoint
-gint splitpoint_checked = TRUE;
-
-/*! A bool that helps us catch the case that we add splitpoints during preview
-
-if we add a new splitpoint at the left and we are currently
-previewing, we should increment quick_preview start and end
-*/
-gboolean new_left_splitpoint_added = FALSE;
-
-extern gchar *filename_path_of_split;
-
-extern ui_state *ui;
-
 //! checks if splitpoints exists in the table and is different from current_split
 static gboolean check_if_splitpoint_does_not_exists(gint minutes, gint seconds, gint hundr_secs, 
     gint current_split, ui_state *ui)
@@ -370,7 +356,7 @@ void select_splitpoint(gint index, gui_state *gui)
 
   gtk_tree_path_free(path);
 
-  remove_status_message(ui->gui);
+  remove_status_message(gui);
 }
 
 /*! removes a splitpoint
@@ -456,7 +442,7 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
     }
     else
     {
-      put_status_message(_(" error: you already have the splitpoint in table"), ui->gui);
+      put_status_message(_(" error: you already have the splitpoint in table"), ui);
     }
   }
 }
@@ -791,7 +777,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui)
   }
   else
   {
-    put_status_message(_(" error: you already have the splitpoint in table"), ui->gui);
+    put_status_message(_(" error: you already have the splitpoint in table"), ui);
   }
 
   if (gtk_toggle_button_get_active(ui->gui->names_from_filename))
@@ -828,9 +814,9 @@ static void add_row_clicked(GtkWidget *button, ui_state *ui)
 }
 
 //!set splitpints from silence detection
-gpointer detect_silence_and_set_splitpoints(gpointer data)
+static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
 {
-  gint should_trim = GPOINTER_TO_INT(data);
+  gint should_trim = ui->status->should_trim; 
 
   gint err = SPLT_OK;
 
@@ -858,7 +844,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   }
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
-  mp3splt_set_split_filename_function(ui->mp3splt_state, NULL);
+  mp3splt_set_split_filename_function(ui->mp3splt_state, NULL, ui);
   int old_split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
   int old_tags_option = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
@@ -879,7 +865,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, old_tags_option);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_FALSE);
-  mp3splt_set_split_filename_function(ui->mp3splt_state, lmanager_put_split_filename);
+  mp3splt_set_split_filename_function(ui->mp3splt_state, lmanager_put_split_filename, ui);
  
   enter_threads();
 
@@ -888,7 +874,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
     update_splitpoints_from_mp3splt_state(ui);
   }
 
-  print_status_bar_confirmation(err, ui->gui);
+  print_status_bar_confirmation(err, ui);
 
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
   gtk_widget_set_sensitive(ui->gui->scan_silence_button, TRUE);
@@ -900,14 +886,16 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 }
 
 //!start thread with 'set splitpints from silence detection'
-void detect_silence_and_add_splitpoints_start_thread()
+static void detect_silence_and_add_splitpoints_start_thread(ui_state *ui)
 {
-  create_thread(detect_silence_and_set_splitpoints, GINT_TO_POINTER(SPLT_FALSE), TRUE, NULL);
+  ui->status->should_trim = FALSE;
+  create_thread((GThreadFunc)detect_silence_and_set_splitpoints, ui, TRUE, NULL);
 }
 
-void detect_silence_and_add_trim_splitpoints_start_thread()
+static void detect_silence_and_add_trim_splitpoints_start_thread(ui_state *ui)
 {
-  create_thread(detect_silence_and_set_splitpoints, GINT_TO_POINTER(SPLT_TRUE), TRUE, NULL);
+  ui->status->should_trim = TRUE;
+  create_thread((GThreadFunc)detect_silence_and_set_splitpoints, ui, TRUE, NULL);
 }
 
 //!update silence parameters when 'widget' changes
@@ -1005,7 +993,7 @@ static void create_trim_silence_window(GtkWidget *button, ui_state *ui)
 
   if (result == GTK_RESPONSE_YES)
   {
-    detect_silence_and_add_trim_splitpoints_start_thread();
+    detect_silence_and_add_trim_splitpoints_start_thread(ui);
   }
 }
 
@@ -1158,7 +1146,7 @@ static void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, 
 
   if (result == GTK_RESPONSE_YES)
   {
-    detect_silence_and_add_splitpoints_start_thread();
+    detect_silence_and_add_splitpoints_start_thread(ui);
   }
 }
 
@@ -1213,7 +1201,7 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
 
 //!creates and and initialise a spinner
 static GtkWidget *create_init_spinner(GtkWidget *bottomhbox1, gint min, gint max, 
-    gchar *label_text, gint type)
+    gchar *label_text, gint type, ui_state *ui)
 {
   GtkWidget *spinner_box = wh_vbox_new(); 
   GtkWidget *label = gtk_label_new(label_text);
@@ -1252,11 +1240,11 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
   //0 means spinner minutes
-  ui->gui->spinner_minutes = create_init_spinner(hbox, 0, INT_MAX/6000, _("Minutes:"), 0);
+  ui->gui->spinner_minutes = create_init_spinner(hbox, 0, INT_MAX/6000, _("Minutes:"), 0, ui);
   //1 means spinner seconds
-  ui->gui->spinner_seconds = create_init_spinner(hbox, 0, 59, _("Seconds:"), 1);
+  ui->gui->spinner_seconds = create_init_spinner(hbox, 0, 59, _("Seconds:"), 1, ui);
   //2 means spinner hundredth
-  ui->gui->spinner_hundr_secs = create_init_spinner(hbox, 0, 99, _("Hundredths:"), 2);
+  ui->gui->spinner_hundr_secs = create_init_spinner(hbox, 0, 99, _("Hundredths:"), 2, ui);
 
   /* add button */
   GtkWidget *add_button = wh_create_cool_button(GTK_STOCK_ADD, _("_Add"), FALSE);
@@ -1374,7 +1362,7 @@ static gpointer split_preview(ui_state *ui)
   if (ui->status->preview_row + 1 == ui->infos->splitnumber)
   {
     enter_threads();
-    put_status_message(_(" cannot split preview last splitpoint"), ui->gui);
+    put_status_message(_(" cannot split preview last splitpoint"), ui);
     exit_threads();
     return NULL;
   }
@@ -1411,7 +1399,7 @@ static gpointer split_preview(ui_state *ui)
 
   enter_threads();
 
-  print_status_bar_confirmation(confirmation, ui->gui);
+  print_status_bar_confirmation(confirmation, ui);
 
   gchar *split_file = get_filename_from_split_files(1, ui->gui);
   if (split_file != NULL && confirmation > 0)
@@ -1448,7 +1436,7 @@ static void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
 
   if (!ui->status->timer_active)
   {
-    put_status_message(_(" cannot preview, not connected to player"), ui->gui);
+    put_status_message(_(" cannot preview, not connected to player"), ui);
     return;
   }
 
@@ -1500,8 +1488,10 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
 }
 
 //!creates columns for the tree
-static void create_columns(gui_state *gui)
+static void create_columns(ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   GtkTreeView *tree_view = gui->tree_view;
 
   GtkCellRendererText *renderer;
@@ -1634,10 +1624,10 @@ static void handle_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, ui
 }
 
 //!creates the tree view
-static void create_tree_view(gui_state *gui)
+static void create_tree_view(ui_state *ui)
 {
   GtkTreeView *tree_view = GTK_TREE_VIEW(gtk_tree_view_new_with_model(create_model()));
-  gui->tree_view = tree_view;
+  ui->gui->tree_view = tree_view;
 
   g_signal_connect(tree_view, "row-activated", G_CALLBACK(preview_song), ui);
 
@@ -1653,7 +1643,8 @@ buttons
 GtkWidget *create_splitpoints_frame(ui_state *ui)
 {
   gui_state *gui = ui->gui;
-  create_tree_view(gui);
+
+  create_tree_view(ui);
 
   /* choose splitpoins vbox */
   GtkWidget *choose_splitpoints_vbox = wh_vbox_new();
@@ -1682,7 +1673,7 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
 
   GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->tree_view);
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
-  create_columns(gui);
+  create_columns(ui);
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(gui->tree_view));
 
   /* special buttons like 'set silence from silence detection' */
@@ -1692,7 +1683,7 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
   return handle_box;
 }
 
-static void garray_to_array(GArray *spltpoints, glong *hundredth)
+static void garray_to_array(GArray *spltpoints, glong *hundredth, ui_state *ui)
 {
   gint i = 0;
   for(i = 0; i < ui->infos->splitnumber; i++ )
@@ -1711,21 +1702,20 @@ static void garray_to_array(GArray *spltpoints, glong *hundredth)
 }
 
 //!puts the splitpoints into the state
-void put_splitpoints_in_mp3splt_state(splt_state *state)
+void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui)
 {
   glong hundr[ui->infos->splitnumber];
-  garray_to_array(ui->splitpoints, hundr);
-  gint i;
+  garray_to_array(ui->splitpoints, hundr, ui);
 
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
-  GtkTreeIter iter;
-  GtkTreePath *path = NULL;
-  gchar *description = NULL;
 
+  gint i;
   for (i = 0; i < ui->infos->splitnumber; i++)
   {
-    path = gtk_tree_path_new_from_indices(i ,-1);
+    GtkTreePath *path = gtk_tree_path_new_from_indices(i ,-1);
+    GtkTreeIter iter;
     gtk_tree_model_get_iter(model, &iter, path);
+    gchar *description = NULL;
     gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
         COL_DESCRIPTION,&description,
         -1);
@@ -1746,4 +1736,5 @@ void put_splitpoints_in_mp3splt_state(splt_state *state)
     gtk_tree_path_free(path);
   }
 }
+
 

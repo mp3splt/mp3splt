@@ -41,7 +41,7 @@
 #include "all_includes.h"
 
 void remove_all_split_rows(ui_state *ui);
-void add_split_row(const gchar *name);
+void add_split_row(const gchar *name, ui_state *ui);
 void split_tree_row_activated(GtkTreeView *split_tree,
     GtkTreePath *arg1, GtkTreeViewColumn *arg2, ui_state *ui);
 GtkWidget *create_split_files_frame(ui_state *ui);

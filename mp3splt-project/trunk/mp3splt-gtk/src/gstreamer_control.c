@@ -44,8 +44,6 @@
 #include <gst/gst.h>
 #include "gstreamer_control.h"
 
-extern ui_state *ui;
-
 const gchar *song_artist = NULL;
 const gchar *song_title = NULL;
 gint rate = 0;
@@ -54,11 +52,11 @@ GstElement *play = NULL;
 GstBus *bus = NULL;
 gint _gstreamer_is_running = FALSE;
 
-extern void add_playlist_file(const gchar *name);
-
 //! Send a call over the dbus
 static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   switch (GST_MESSAGE_TYPE(msg))
   {
     case GST_MESSAGE_ERROR:
@@ -80,7 +78,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           g_snprintf(message, malloc_size,_("gstreamer error: %s"),error->message);
 
           enter_threads();
-          put_status_message(message, ui->gui);
+          put_status_message(message, ui);
           exit_threads();
 
           g_free(message);
@@ -108,7 +106,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           g_snprintf(message, malloc_size,_("Warning: %s"),error->message);
 
           enter_threads();
-          put_status_message(message, ui->gui);
+          put_status_message(message, ui);
           exit_threads();
 
           g_free(message);
@@ -136,7 +134,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           g_snprintf(message, malloc_size,_("Info: %s"),error->message);
 
           enter_threads();
-          put_status_message(message, ui->gui);
+          put_status_message(message, ui);
           exit_threads();
 
           g_free(message);
@@ -185,7 +183,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
 }
 
 //!Gets information about the< song
-void gstreamer_get_song_infos(gchar *total_infos)
+void gstreamer_get_song_infos(gchar *total_infos, ui_state *ui)
 {
   if (!play)
   {
@@ -260,13 +258,13 @@ void gstreamer_get_song_infos(gchar *total_infos)
 
 The result must be g_free'd after use.
 */
-gchar *gstreamer_get_filename()
+gchar *gstreamer_get_filename(ui_state *ui)
 {
   return strdup(get_input_filename(ui->gui));
 }
 
 //!returns the number of songs of the playlist
-gint gstreamer_get_playlist_number()
+gint gstreamer_get_playlist_number(ui_state *ui)
 {
   return 1;
 }
@@ -275,7 +273,7 @@ gint gstreamer_get_playlist_number()
 
 The result must be g_free'd after use
 */
-gchar *gstreamer_get_title_song()
+gchar *gstreamer_get_title_song(ui_state *ui)
 {
   if (song_artist || song_title)
   {
@@ -310,7 +308,7 @@ gchar *gstreamer_get_title_song()
     return title;
   }
 
-  gchar *fname = gstreamer_get_filename();
+  gchar *fname = gstreamer_get_filename(ui);
   if (fname != NULL)
   {
     gchar *file = strrchr(fname, G_DIR_SEPARATOR);
@@ -333,34 +331,32 @@ gchar *gstreamer_get_title_song()
 }
 
 //!returns elapsed time
-gint gstreamer_get_time_elapsed()
+gint gstreamer_get_time_elapsed(ui_state *ui)
 {
-	if (play)
-	{
-		GstQuery *query = gst_query_new_position(GST_FORMAT_TIME);
-		gint64 time = 0;
+  if (!play)
+  {
+    return 0;
+  }
 
-		if (gst_element_query(play, query))
-		{
-			gst_query_parse_position(query, NULL, &time);
-		}
+  GstQuery *query = gst_query_new_position(GST_FORMAT_TIME);
+  gint64 time = 0;
 
-		gst_query_unref(query);
+  if (gst_element_query(play, query))
+  {
+    gst_query_parse_position(query, NULL, &time);
+  }
 
-		return (gint) (time / GST_MSECOND);
-	}
-	else
-	{
-		return 0;
-	}
+  gst_query_unref(query);
+
+  return (gint) (time / GST_MSECOND);
 }
 
 //!starts gstreamer
-void gstreamer_start()
+void gstreamer_start(ui_state *ui)
 {
   if (play)
   {
-    gstreamer_quit();
+    gstreamer_quit(ui);
     gst_object_unref(play);
   }
 
@@ -374,7 +370,7 @@ void gstreamer_start()
   if (!play)
   {
     enter_threads();
-    put_status_message(_(" error: cannot create gstreamer playbin\n"), ui->gui);
+    put_status_message(_(" error: cannot create gstreamer playbin\n"), ui);
     exit_threads();
     return;
   }
@@ -383,31 +379,31 @@ void gstreamer_start()
 
   _gstreamer_is_running = TRUE;
   bus = gst_pipeline_get_bus (GST_PIPELINE (play));
-  gst_bus_add_watch(bus, bus_call, NULL);
+  gst_bus_add_watch(bus, bus_call, ui);
   gst_object_unref(bus);
 
   //add the current filename
   const gchar *fname =  get_input_filename(ui->gui);
   GList *song_list = NULL;
   song_list = g_list_append(song_list, strdup(fname));
-  gstreamer_add_files(song_list);
+  gstreamer_add_files(song_list, ui);
   //TODO: free memory from GList *song_list
 }
 
 //!selects the last file in the playlist
-void gstreamer_select_last_file()
+void gstreamer_select_last_file(ui_state *ui)
 {
 }
 
 //!plays the last file of the playlist
-void gstreamer_play_last_file()
+void gstreamer_play_last_file(ui_state *ui)
 {
-  gstreamer_stop();
-  gstreamer_play();
+  gstreamer_stop(ui);
+  gstreamer_play(ui);
 }
 
 //!add files to the gstreamer playlist
-void gstreamer_add_files(GList *list)
+void gstreamer_add_files(GList *list, ui_state *ui)
 {
   if (song_title) { song_title = NULL; }
   if (song_artist) { song_artist = NULL; }
@@ -427,7 +423,7 @@ void gstreamer_add_files(GList *list)
       continue;
     }
 
-    add_playlist_file(song);
+    add_playlist_file(song, ui);
     int len_uri = 20 + strlen(song);
     gchar *uri = malloc(sizeof(char) * len_uri);
     g_snprintf(uri, len_uri, "file://%s",song);
@@ -441,7 +437,7 @@ void gstreamer_add_files(GList *list)
 }
 
 //!sets volume
-void gstreamer_set_volume(gint volume)
+void gstreamer_set_volume(gint volume, ui_state *ui)
 {
 	if (play)
 	{
@@ -452,7 +448,7 @@ void gstreamer_set_volume(gint volume)
 }
 
 //!returns volume
-gint gstreamer_get_volume()
+gint gstreamer_get_volume(ui_state *ui)
 {
   if (!play)
   {
@@ -467,21 +463,21 @@ gint gstreamer_get_volume()
 }
 
 //!starts gstreamer with songs
-void gstreamer_start_with_songs(GList *list)
+void gstreamer_start_with_songs(GList *list, ui_state *ui)
 {
-  gstreamer_start();
-  gstreamer_add_files(list);
-  gstreamer_play();
+  gstreamer_start(ui);
+  gstreamer_add_files(list, ui);
+  gstreamer_play(ui);
 }
 
 //!returns TRUE if gstreamer is running; if not, FALSE 
-gint gstreamer_is_running()
+gint gstreamer_is_running(ui_state *ui)
 {
   return _gstreamer_is_running;
 }
 
 //!returns TRUE if gstreamer is paused, if not, FALSE 
-gint gstreamer_is_paused()
+gint gstreamer_is_paused(ui_state *ui)
 {
   if (!play)
   {
@@ -500,7 +496,7 @@ gint gstreamer_is_paused()
 }
 
 //!plays a song
-void gstreamer_play()
+void gstreamer_play(ui_state *ui)
 {
   if (!play)
   {
@@ -511,14 +507,14 @@ void gstreamer_play()
   gst_element_get_state(play, &state, NULL, GST_CLOCK_TIME_NONE);
   if (state == GST_STATE_PLAYING)
   {
-    gstreamer_jump(0);
+    gstreamer_jump(0, ui);
   }
 
   gst_element_set_state(play, GST_STATE_PLAYING);
 }
 
 //!stops a song
-void gstreamer_stop()
+void gstreamer_stop(ui_state *ui)
 {
   if (!play)
   {
@@ -529,7 +525,7 @@ void gstreamer_stop()
 }
 
 //!pause a song
-void gstreamer_pause()
+void gstreamer_pause(ui_state *ui)
 {
   if (!play)
   {
@@ -545,22 +541,22 @@ void gstreamer_pause()
   }
   else
   {
-    gstreamer_play();
+    gstreamer_play(ui);
   }
 }
 
 //!changes to next song
-void gstreamer_next()
+void gstreamer_next(ui_state *ui)
 {
 }
 
 //!changes to previous song
-void gstreamer_prev()
+void gstreamer_prev(ui_state *ui)
 {
 }
 
 //!jump to time
-void gstreamer_jump(gint position)
+void gstreamer_jump(gint position, ui_state *ui)
 {
   if (!play)
   {
@@ -573,7 +569,7 @@ void gstreamer_jump(gint position)
 }
 
 //!returns total time of the current song
-gint gstreamer_get_total_time()
+gint gstreamer_get_total_time(ui_state *ui)
 {
   if (!play)
   {
@@ -596,7 +592,7 @@ gint gstreamer_get_total_time()
 }
 
 //!returns TRUE if gstreamer is playing, else FALSE
-gint gstreamer_is_playing()
+gint gstreamer_is_playing(ui_state *ui)
 {
   if (!play)
   {
@@ -614,7 +610,7 @@ gint gstreamer_is_playing()
 }
 
 //!quits player
-void gstreamer_quit()
+void gstreamer_quit(ui_state *ui)
 {
   if (play)
   {

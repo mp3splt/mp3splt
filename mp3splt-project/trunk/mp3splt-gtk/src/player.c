@@ -41,35 +41,33 @@
 
 #include "player.h"
 
-extern ui_state *ui;
-
 //!returns the elapsed time of the player
-gint player_get_elapsed_time()
+gint player_get_elapsed_time(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
-    {
-      return snackamp_get_time_elapsed();
-    }
+  {
+    return snackamp_get_time_elapsed();
+  }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      return myxmms_get_time_elapsed();
+    return myxmms_get_time_elapsed();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      return gstreamer_get_time_elapsed();
+    return gstreamer_get_time_elapsed(ui);
 #endif
-    }
+  }
 
   return 0;
 }
 
 //!returns total time of the song
-gint player_get_total_time()
+gint player_get_total_time(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -86,7 +84,7 @@ gint player_get_total_time()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_get_total_time();
+    return gstreamer_get_total_time(ui);
 #endif
   }
 
@@ -94,7 +92,7 @@ gint player_get_total_time()
 }
 
 //!returns FALSE if the player is not running, else TRUE
-gint player_is_running()
+gint player_is_running(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -111,7 +109,7 @@ gint player_is_running()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_is_running();
+    return gstreamer_is_running(ui);
 #endif
   }
 
@@ -119,7 +117,7 @@ gint player_is_running()
 }
 
 //!starts the player
-void player_start()
+void player_start(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -136,13 +134,13 @@ void player_start()
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_start();
+    gstreamer_start(ui);
 #endif
   }
 }
 
 //!start player and add files to playlist
-void player_start_add_files(GList *list)
+void player_start_add_files(GList *list, ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -159,13 +157,13 @@ void player_start_add_files(GList *list)
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_start_with_songs(list);
+    gstreamer_start_with_songs(list, ui);
 #endif 
   }
 }
 
 //!add files to playlist
-void player_add_files(GList *list)
+void player_add_files(GList *list, ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -182,13 +180,13 @@ void player_add_files(GList *list)
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_add_files(list);
+    gstreamer_add_files(list, ui);
 #endif
   }
 }
 
 //!add files to playlist
-void player_add_files_and_select(GList *list)
+void player_add_files_and_select(GList *list, ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -207,16 +205,16 @@ void player_add_files_and_select(GList *list)
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_add_files(list);
-    gstreamer_select_last_file();
+    gstreamer_add_files(list, ui);
+    gstreamer_select_last_file(ui);
 #endif
   }
 }
 
 //!add files to playlist
-void player_add_play_files(GList *list)
+void player_add_play_files(GList *list, ui_state *ui)
 {
-  player_add_files(list);
+  player_add_files(list, ui);
 
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -233,13 +231,13 @@ void player_add_play_files(GList *list)
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_play_last_file();
+    gstreamer_play_last_file(ui);
 #endif
   }
 }
 
 //!starts the player
-void player_start_play_with_songs(GList *list)
+void player_start_play_with_songs(GList *list, ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -258,14 +256,14 @@ void player_start_play_with_songs(GList *list)
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_start_with_songs(list);
-    gstreamer_play_last_file();
+    gstreamer_start_with_songs(list, ui);
+    gstreamer_play_last_file(ui);
 #endif
   }
 }
 
 //!plays the song
-void player_play()
+void player_play(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -282,36 +280,36 @@ void player_play()
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_play();
+    gstreamer_play(ui);
 #endif
   }
 }
 
 //!stops the song
-void player_stop()
+void player_stop(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_stop();
-    }
+  {
+    snackamp_stop();
+  }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_stop();
+    myxmms_stop();
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_stop();
+    gstreamer_stop(ui);
 #endif
-    }
+  }
 }
 
 //!pause the song
-void player_pause()
+void player_pause(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -328,13 +326,13 @@ void player_pause()
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_pause();
+    gstreamer_pause(ui);
 #endif
   }
 }
 
 //!pass to the next song
-void player_next()
+void player_next(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -351,13 +349,13 @@ void player_next()
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_next();
+    gstreamer_next(ui);
 #endif
   }
 }
 
 //!pass to the previous song
-void player_prev()
+void player_prev(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -374,13 +372,13 @@ void player_prev()
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_prev();
+    gstreamer_prev(ui);
 #endif
   }
 }
 
 //!jumps to a position in the song
-void player_seek(gint position)
+void player_seek(gint position, ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -397,7 +395,7 @@ void player_seek(gint position)
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_jump(position);
+    gstreamer_jump(position, ui);
 #endif
   }
 }
@@ -406,7 +404,7 @@ void player_seek(gint position)
 
 \param total_infos The result of this function call
 */
-void player_get_song_infos(gchar *total_infos)
+void player_get_song_infos(gchar *total_infos, ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -423,13 +421,13 @@ void player_get_song_infos(gchar *total_infos)
   else
   {
 #ifndef NO_GSTREAMER
-    gstreamer_get_song_infos(total_infos);
+    gstreamer_get_song_infos(total_infos, ui);
 #endif
   }
 }
 
 //!returns TRUE if the player is playing, else FALSE
-gint player_is_playing()
+gint player_is_playing(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -446,7 +444,7 @@ gint player_is_playing()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_is_playing();
+    return gstreamer_is_playing(ui);
 #endif
   }
 
@@ -454,7 +452,7 @@ gint player_is_playing()
 }
 
 //! Check if the player is paused
-gint player_is_paused()
+gint player_is_paused(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -471,7 +469,7 @@ gint player_is_paused()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_is_paused();
+    return gstreamer_is_paused(ui);
 #endif
   }
 
@@ -482,7 +480,7 @@ gint player_is_paused()
 
 The returned string must be g_free'd after use
 */
-gchar *player_get_filename()
+gchar *player_get_filename(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -499,7 +497,7 @@ gchar *player_get_filename()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_get_filename();
+    return gstreamer_get_filename(ui);
 #endif
   }
 
@@ -510,7 +508,7 @@ gchar *player_get_filename()
 
 The returned string must be g_freed after use
 */
-gchar *player_get_title()
+gchar *player_get_title(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -527,7 +525,7 @@ gchar *player_get_title()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_get_title_song();
+    return gstreamer_get_title_song(ui);
 #endif
   }
 
@@ -535,7 +533,7 @@ gchar *player_get_title()
 }
 
 //!gets the volume of the player
-gint player_get_volume()
+gint player_get_volume(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -552,7 +550,7 @@ gint player_get_volume()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_get_volume();
+    return gstreamer_get_volume(ui);
 #endif
   }
 
@@ -560,30 +558,30 @@ gint player_get_volume()
 }
 
 //!sets the volume of the player
-void player_set_volume(gint volume)
+void player_set_volume(gint volume, ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
-    {
-      snackamp_set_volume(volume);
-    }
+  {
+    snackamp_set_volume(volume);
+  }
   else if (ui->infos->selected_player == PLAYER_AUDACIOUS)
-    {
+  {
 #ifndef __WIN32__
 #ifndef NO_AUDACIOUS
-      myxmms_set_volume(volume);
+    myxmms_set_volume(volume);
 #endif
 #endif
-    }
-    else
-    {
+  }
+  else
+  {
 #ifndef NO_GSTREAMER
-      gstreamer_set_volume(volume);
+    gstreamer_set_volume(volume, ui);
 #endif
-    }
+  }
 }
 
 //!returns the number of songs in the playlist
-gint player_get_playlist_number()
+gint player_get_playlist_number(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
@@ -600,7 +598,7 @@ gint player_get_playlist_number()
   else
   {
 #ifndef NO_GSTREAMER
-    return gstreamer_get_playlist_number();
+    return gstreamer_get_playlist_number(ui);
 #endif
   }
 
@@ -608,12 +606,12 @@ gint player_get_playlist_number()
 }
 
 //!quits the player
-gint player_quit()
+gint player_quit(ui_state *ui)
 {
   if (ui->infos->selected_player == PLAYER_GSTREAMER)
   {
 #ifndef NO_GSTREAMER
-    gstreamer_quit();
+    gstreamer_quit(ui);
 #endif
   }
 

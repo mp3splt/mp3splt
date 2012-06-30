@@ -144,6 +144,8 @@ typedef struct {
   gint split_files;
   gint split_table_number;
   gint freedb_table_number;
+  gint playlist_tree_number;
+  gint multiple_files_tree_number;
 
   gint freedb_selected_id;
 
@@ -156,6 +158,10 @@ typedef struct {
   preview_index_and_data preview_indexes[6];
 
   gchar *file_to_import;
+
+  gint timeout_value;
+
+  gchar *filename_path_of_split;
 } ui_infos;
 
 typedef struct {
@@ -345,6 +351,11 @@ typedef struct {
 
   GtkWidget *mess_history_dialog;
   GtkWidget *mess_hist_view;
+
+  GtkTreeView *multiple_files_tree;
+
+  GtkWidget *multiple_files_remove_file_button;
+  GtkWidget *multiple_files_remove_all_files_button;
 } gui_state;
 
 typedef struct {
@@ -405,6 +416,7 @@ typedef struct {
   gint selected_split_mode;
 
   gboolean freedb_lock;
+  gint should_trim;
 } gui_status;
 
 typedef struct {

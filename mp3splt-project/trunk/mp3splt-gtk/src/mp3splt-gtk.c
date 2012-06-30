@@ -39,16 +39,13 @@
 
 #include "mp3splt-gtk.h"
 
-extern gchar *filename_path_of_split;
-
-extern GtkWidget *multiple_files_tree;
-extern gint multiple_files_tree_number;
-
-ui_state *ui = NULL;
+ui_state *ui;
 
 //! Split the file
 gpointer split_it(gpointer data)
 {
+  ui_state *ui = (ui_state *) data;
+
   gint confirmation = SPLT_OK;
   
   enter_threads();
@@ -73,7 +70,7 @@ gpointer split_it(gpointer data)
     mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
 
   enter_threads();
-  print_status_bar_confirmation(err, ui->gui);
+  print_status_bar_confirmation(err, ui);
   
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
   exit_threads();
@@ -95,7 +92,7 @@ gpointer split_it(gpointer data)
         SPLT_OUTPUT_CUSTOM);
   }
 
-  mp3splt_set_path_of_split(ui->mp3splt_state,filename_path_of_split);
+  mp3splt_set_path_of_split(ui->mp3splt_state, ui->infos->filename_path_of_split);
 
   gint multiple_files_error = SPLT_FALSE;
   if (ui->infos->split_file_mode == FILE_MODE_SINGLE)
@@ -104,10 +101,10 @@ gpointer split_it(gpointer data)
 
     if (split_mode == SPLT_OPTION_NORMAL_MODE)
     {
-      put_splitpoints_in_mp3splt_state(ui->mp3splt_state);
+      put_splitpoints_in_mp3splt_state(ui->mp3splt_state, ui);
     }
 
-    print_processing_file(ui->status->filename_to_split);
+    print_processing_file(ui->status->filename_to_split, ui);
     exit_threads();
 
     mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
@@ -115,23 +112,24 @@ gpointer split_it(gpointer data)
   }
   else
   {
-    if (multiple_files_tree_number > 0)
+    if (ui->infos->multiple_files_tree_number > 0)
     {
       enter_threads();
 
       gchar *filename = NULL;
-      GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(multiple_files_tree));
+      GtkTreeModel *model =
+        gtk_tree_view_get_model(GTK_TREE_VIEW(ui->gui->multiple_files_tree));
 
       exit_threads();
 
       gint row_number = 0;
-      while (row_number < multiple_files_tree_number)
+      while (row_number < ui->infos->multiple_files_tree_number)
       {
         enter_threads();
 
         if (split_mode == SPLT_OPTION_NORMAL_MODE)
         {
-          put_splitpoints_in_mp3splt_state(ui->mp3splt_state);
+          put_splitpoints_in_mp3splt_state(ui->mp3splt_state, ui);
         }
 
         GtkTreePath *path = gtk_tree_path_new_from_indices(row_number ,-1);
@@ -141,7 +139,7 @@ gpointer split_it(gpointer data)
         gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME,
             &filename, -1);
 
-        print_processing_file(filename);
+        print_processing_file(filename, ui);
 
         exit_threads();
 
@@ -164,10 +162,10 @@ gpointer split_it(gpointer data)
         enter_threads();
 
         mp3splt_erase_all_tags(ui->mp3splt_state, &err);
-        print_status_bar_confirmation(err, ui->gui);
+        print_status_bar_confirmation(err, ui);
         err = SPLT_OK;
         mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
-        print_status_bar_confirmation(err, ui->gui);
+        print_status_bar_confirmation(err, ui);
 
         exit_threads();
       }
@@ -177,7 +175,7 @@ gpointer split_it(gpointer data)
       multiple_files_error = SPLT_TRUE;
 
       enter_threads();
-      put_status_message(_(" error: no files found in multiple files mode"), ui->gui);
+      put_status_message(_(" error: no files found in multiple files mode"), ui);
       exit_threads();
     }
   }
@@ -188,14 +186,14 @@ gpointer split_it(gpointer data)
   
   enter_threads();
 
-  print_status_bar_confirmation(confirmation, ui->gui);
+  print_status_bar_confirmation(confirmation, ui);
   
   //see the cancel button
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
   
   if (ui->status->quit_main_program)
   {
-    exit_application(NULL, NULL);
+    exit_application(NULL, ui);
   }
   
   if (confirmation >= 0 && !multiple_files_error)
@@ -227,7 +225,7 @@ void exit_threads()
 }
 
 //close the window and exit button function
-void exit_application(GtkWidget *widget, gpointer *data)
+void exit_application(GtkWidget *widget, ui_state *ui)
 {
   ui_save_preferences(NULL, ui);
 
@@ -235,12 +233,12 @@ void exit_application(GtkWidget *widget, gpointer *data)
   {
     lmanager_stop_split(ui);
     ui->status->quit_main_program = TRUE;
-    put_status_message(_(" info: stopping the split process before exiting"), ui->gui);
+    put_status_message(_(" info: stopping the split process before exiting"), ui);
   }
 
-  if (player_is_running())
+  if (player_is_running(ui))
   {
-    player_quit();
+    player_quit(ui);
   }
 
   gtk_main_quit();
@@ -251,16 +249,19 @@ static void sigint_handler(gint sig)
 {
   if (!sigint_called)
   {
+    //TODO
     sigint_called = TRUE;
     ui->status->quit_main_program = TRUE;
-    exit_application(NULL, NULL);
+    exit_application(NULL, ui);
   }
 }
 
 #ifndef __WIN32__
 static void sigpipe_handler(gint sig)
 {
-  if (player_is_running() && ui->infos->selected_player == PLAYER_SNACKAMP)
+  //TODO
+  if (player_is_running(ui) &&
+      ui->infos->selected_player == PLAYER_SNACKAMP)
   {
     disconnect_snackamp();
   }

@@ -37,8 +37,6 @@
 
 #include "export.h"
 
-extern ui_state *ui;
-
 /*! Export the current split points into a cue file
 
 \param filename The name of the file to write to.
@@ -51,26 +49,25 @@ extern ui_state *ui;
    this? (we output the extension in the "FILE" line.)
  - Is there really no simple C/GTK+ function for quoting quotes?
 */
-void export_file(const gchar* filename)
+void export_file(const gchar* filename, ui_state *ui)
 {
   FILE *outfile;
-  GtkTreeIter iter;
 
-  if((outfile=fopen(filename,"w"))==0)
+  if ((outfile = fopen(filename,"w"))==0)
   {
-    put_status_message((gchar *)strerror(errno), ui->gui);
+    put_status_message((gchar *)strerror(errno), ui);
     return;
   };
 
-  if(fprintf(outfile,"REM CREATOR \"MP3SPLT_GTK\"\n")<0)
+  if (fprintf(outfile,"REM CREATOR \"MP3SPLT_GTK\"\n") < 0)
   {
-    put_status_message((gchar *)strerror(errno), ui->gui);
+    put_status_message((gchar *)strerror(errno), ui);
     return;
   }
 
-  if(fprintf(outfile,"REM SPLT_TITLE_IS_FILENAME\n")<0)
+  if (fprintf(outfile,"REM SPLT_TITLE_IS_FILENAME\n") < 0)
   {
-    put_status_message((gchar *)strerror(errno), ui->gui);
+    put_status_message((gchar *)strerror(errno), ui);
     return;
   }
 
@@ -83,11 +80,12 @@ void export_file(const gchar* filename)
 
   if (fprintf(outfile,"FILE \"%s\" %s\n", get_input_filename(ui->gui), extension) < 0)
   {
-    put_status_message((gchar *)strerror(errno), ui->gui);
+    put_status_message((gchar *)strerror(errno), ui);
     return;
-  };
+  }
 
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+  GtkTreeIter iter;
   if (!gtk_tree_model_get_iter_first(model, &iter))
   {
     goto end;
@@ -95,81 +93,78 @@ void export_file(const gchar* filename)
 
   gint count = 1;
 
-  do 
-  {
+  do {
     // All information we need for this track
     gchar *description;
     gint mins,secs,hundr;
     gboolean keep;
 
     gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-        COL_DESCRIPTION,&description,
-        COL_MINUTES, &mins,
-        COL_SECONDS, &secs,
-        COL_HUNDR_SECS, &hundr,
-        COL_CHECK, &keep,
-        -1);
+        COL_DESCRIPTION, &description,
+        COL_MINUTES, &mins, COL_SECONDS, &secs, COL_HUNDR_SECS, &hundr, COL_CHECK, &keep, -1);
 
     // Sometimes libmp3splt introduces an additional split point
     // way below the end of the file --- that breaks cue import
     // later => skip all points with extremely high time values.
-    if(mins < 357850)
+    if (mins >= 357850)
     {
-      // Output the track header
-      if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
-      {
-        put_status_message((gchar *)strerror(errno), ui->gui);
-        return;
-      };
+      continue;
+    }
 
+    // Output the track header
+    if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
+    {
+      put_status_message((gchar *)strerror(errno), ui);
+      return;
+    };
 
-      // Output the track description escaping any quotes
-      if(fprintf(outfile,"\t\tTITLE \"")<0)
-      {
-        put_status_message((gchar *)strerror(errno), ui->gui);
-        return;
-      }
+    // Output the track description escaping any quotes
+    if(fprintf(outfile,"\t\tTITLE \"")<0)
+    {
+      put_status_message((gchar *)strerror(errno), ui);
+      return;
+    }
 
-      gchar *outputchar;
-      for(outputchar=description;*outputchar!='\0';outputchar++)
+    gchar *outputchar;
+    for (outputchar = description; *outputchar!='\0'; outputchar++)
+    {
+      if (*outputchar == '"')
       {
-        if(*outputchar=='"')
+        if (fprintf(outfile,"\\\"") < 0)
         {
-          if(fprintf(outfile,"\\\"")<0)
-          {
-            put_status_message((gchar *)strerror(errno), ui->gui);
-            return;
-          }
-        }
-        else
-        {
-          if(fprintf(outfile,"%c",*outputchar)<0)
-          {
-            put_status_message((gchar *)strerror(errno), ui->gui);
-            return;
-          }
-        }
-      }    
-      if(fprintf(outfile,"\" \n")<0)
-      {
-        put_status_message((gchar *)strerror(errno), ui->gui);
-        return;
-      };
-
-      if(!keep)
-      {
-        if(fprintf(outfile,"\t\tREM NOKEEP\n")<0)
-        {
-          put_status_message((gchar *)strerror(errno), ui->gui);
+          put_status_message((gchar *)strerror(errno), ui);
           return;
         }
       }
-
-      if(fprintf(outfile,"\t\tINDEX 01 %d:%02d:%02d\n",mins,secs,hundr)<0)
+      else
       {
-        put_status_message((gchar *)strerror(errno), ui->gui);
+        if (fprintf(outfile, "%c", *outputchar)<0)
+        {
+          put_status_message((gchar *)strerror(errno), ui);
+          return;
+        }
+      }
+    }
+
+    if (fprintf(outfile, "\" \n") < 0)
+    {
+      put_status_message((gchar *)strerror(errno), ui);
+      return;
+    }
+
+    if(!keep)
+    {
+      if (fprintf(outfile, "\t\tREM NOKEEP\n") < 0)
+      {
+        put_status_message((gchar *)strerror(errno), ui);
         return;
       }
+    }
+
+    if (fprintf(outfile, "\t\tINDEX 01 %d:%02d:%02d\n", mins, secs, hundr) < 0)
+    {
+      put_status_message((gchar *)strerror(errno), ui);
+      return;
     }
   } while(gtk_tree_model_iter_next(model, &iter));
 
@@ -191,16 +186,16 @@ void ChooseCueExportFile(GtkWidget *widget, ui_state *ui)
 
   wh_set_browser_directory_handler(ui, file_chooser);
 
-  GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("cue files (*.cue)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.cue");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  GtkFileFilter *our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name (our_filter, _("cue files (*.cue)"));
+  gtk_file_filter_add_pattern(our_filter, "*.cue");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
   gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(file_chooser),TRUE);
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-    export_file(filename);
+    export_file(filename, ui);
     g_free(filename);
   }
 

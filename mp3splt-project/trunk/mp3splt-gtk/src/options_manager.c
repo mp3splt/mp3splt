@@ -40,8 +40,6 @@
 
 #include "options_manager.h"
 
-extern ui_state *ui;
-
 /*! Update the output options
 
   Update the output options in ui->mp3splt_state by reading out the state of
@@ -60,7 +58,7 @@ void update_output_options(ui_state *ui)
     const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     gint error = SPLT_OUTPUT_FORMAT_OK;
     mp3splt_set_oformat(ui->mp3splt_state, data, &error);
-    print_status_bar_confirmation(error, ui->gui);
+    print_status_bar_confirmation(error, ui);
   }
   else
   {

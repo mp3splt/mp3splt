@@ -48,8 +48,8 @@
 
 #define NUMBER_OF_SPLIT_MODES 6
 
-void select_split_mode(int split_mode);
-GtkWidget *create_special_split_page();
+void select_split_mode(int split_mode, ui_state *ui);
+GtkWidget *create_special_split_page(ui_state *ui);
 
 #endif
 

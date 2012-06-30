@@ -276,6 +276,8 @@ static void ui_infos_new(ui_state *ui)
   infos->split_table_number = 0;
   infos->freedb_table_number = 0;
   infos->freedb_selected_id = -1;
+  infos->playlist_tree_number = 0;
+  infos->multiple_files_tree_number = 0;
 
   infos->freedb_search_results = NULL;
 
@@ -291,6 +293,8 @@ static void ui_infos_new(ui_state *ui)
   }
 
   infos->file_to_import = NULL;
+  
+  infos->timeout_value = DEFAULT_TIMEOUT_VALUE;
 
   ui->infos = infos;
 }

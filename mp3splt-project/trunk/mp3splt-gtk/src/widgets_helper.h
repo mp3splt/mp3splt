@@ -62,8 +62,8 @@ GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
     gdouble minimum_value, gdouble maximum_value, 
     gdouble step_increment, gdouble page_increment,
     gchar *after_newline_label, 
-    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
-    gpointer user_data_for_cb,
+    void (*spinner_callback)(GtkWidget *spinner, ui_state *ui),
+    ui_state *ui,
     GtkWidget *box);
 
 GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gchar *after_label,
@@ -71,8 +71,8 @@ GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gcha
     gdouble minimum_value, gdouble maximum_value, 
     gdouble step_increment, gdouble page_increment,
     gchar *after_newline_label, 
-    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
-    gpointer user_data_for_cb,
+    void (*spinner_callback)(GtkWidget *spinner, ui_state *ui),
+    ui_state *ui,
     GtkWidget *box, gint top_width);
 
 GtkWidget *wh_hbox_new();

@@ -39,24 +39,13 @@
 
 #include "multiple_files.h"
 
-extern ui_state *ui;
-
-GtkTreeView *multiple_files_tree = NULL;
-gint multiple_files_tree_number = 0;
-
-GtkWidget *multiple_files_remove_file_button = NULL;
-GtkWidget *multiple_files_remove_all_files_button = NULL;
-
 #define MY_GTK_RESPONSE 200
 
 //!Create the model for the batch processing file list
 static GtkTreeModel *create_multiple_files_model()
 {
   GtkListStore *model =
-    gtk_list_store_new(MULTIPLE_FILES_COLUMNS,
-        G_TYPE_STRING,
-        G_TYPE_STRING);
-
+    gtk_list_store_new(MULTIPLE_FILES_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
   return GTK_TREE_MODEL(model);
 }
 
@@ -67,11 +56,9 @@ static GtkTreeView *create_multiple_files_tree()
 
 static void create_multiple_files_columns(GtkTreeView *multiple_files_tree)
 {
-  GtkCellRendererText *renderer =
-    GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+  GtkCellRendererText *renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   GtkTreeViewColumn *filename_column = gtk_tree_view_column_new_with_attributes 
-    (_("Complete filename"), GTK_CELL_RENDERER(renderer),
-     "text", MULTIPLE_COL_FILENAME, NULL);
+    (_("Complete filename"), GTK_CELL_RENDERER(renderer), "text", MULTIPLE_COL_FILENAME, NULL);
   gtk_tree_view_insert_column(multiple_files_tree,
       GTK_TREE_VIEW_COLUMN(filename_column), MULTIPLE_COL_FILENAME);
 
@@ -86,17 +73,14 @@ static void multiple_files_open_button_event(GtkWidget *widget, gpointer data)
   gtk_dialog_response(GTK_DIALOG(data), MY_GTK_RESPONSE);
 }
 
-static void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
+static void multiple_files_add_button_event(GtkWidget *widget, ui_state *ui)
 {
-  GtkWidget *file_chooser;
-  GtkWidget *our_filter;
- 
-  file_chooser = gtk_file_chooser_dialog_new(_("Choose file or directory"),
-                                              NULL,
-                                              GTK_FILE_CHOOSER_ACTION_OPEN,
-                                              GTK_STOCK_CANCEL,
-                                              GTK_RESPONSE_CANCEL,
-                                              NULL);
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose file or directory"),
+      NULL,
+      GTK_FILE_CHOOSER_ACTION_OPEN,
+      GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL,
+      NULL);
 
   wh_set_browser_directory_handler(ui, file_chooser);
 
@@ -109,158 +93,139 @@ static void multiple_files_add_button_event(GtkWidget *widget, gpointer data)
       G_CALLBACK(multiple_files_open_button_event), file_chooser);
 
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(file_chooser), TRUE);
- 
+
   //mp3 & ogg filter
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files (*.mp3 *.ogg)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  GtkFileFilter *our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name(our_filter, _("mp3 and ogg files (*.mp3 *.ogg)"));
+  gtk_file_filter_add_pattern(our_filter, "*.mp3");
+  gtk_file_filter_add_pattern(our_filter, "*.MP3");
+  gtk_file_filter_add_pattern(our_filter, "*.ogg");
+  gtk_file_filter_add_pattern(our_filter, "*.OGG");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
   //mp3 filter
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files (*.mp3)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name(our_filter, _("mp3 files (*.mp3)"));
+  gtk_file_filter_add_pattern(our_filter, "*.mp3");
+  gtk_file_filter_add_pattern(our_filter, "*.MP3");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
   //ogg filter
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files (*.ogg)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name(our_filter, _("ogg files (*.ogg)"));
+  gtk_file_filter_add_pattern(our_filter, "*.ogg");
+  gtk_file_filter_add_pattern(our_filter, "*.OGG");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 
   //all files filter
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("All Files"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name(our_filter, _("All Files"));
+  gtk_file_filter_add_pattern(our_filter, "*");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 
-  //we push open, ..
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == MY_GTK_RESPONSE)
   {
     GSList *files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(file_chooser));
-    if (files)
+    if (!files)
     {
-      gchar *filename = NULL;
+      gtk_widget_destroy(file_chooser);
+      return;
+    }
 
-      GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
+    GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
+    while (files)
+    {
+      gchar *filename = files->data;
 
-      while (files)
+      int err = SPLT_OK;
+      int num_of_files_found = 0;
+      char **splt_filenames =
+        mp3splt_find_filenames(ui->mp3splt_state, filename, &num_of_files_found, &err);
+
+      if (splt_filenames)
       {
-        filename = files->data;
-
-        int err = SPLT_OK;
-        int num_of_files_found = 0;
-        char **splt_filenames =
-          mp3splt_find_filenames(ui->mp3splt_state, filename, &num_of_files_found, &err);
-        
-        if (splt_filenames)
+        int i = 0;
+        for (i = 0;i < num_of_files_found;i++)
         {
-          int i = 0;
-          for (i = 0;i < num_of_files_found;i++)
+          GtkTreeIter iter;
+          gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+
+          gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+              MULTIPLE_COL_FILENAME, splt_filenames[i], -1);
+          ui->infos->multiple_files_tree_number++;
+
+          if (splt_filenames[i])
           {
-            GtkTreeIter iter;
-            gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-
-            gtk_list_store_set (GTK_LIST_STORE(model), &iter,
-                MULTIPLE_COL_FILENAME, splt_filenames[i],
-                -1);
-            multiple_files_tree_number++;
-
-            if (splt_filenames[i])
-            {
-              free(splt_filenames[i]);
-              splt_filenames[i] = NULL;
-            }
+            free(splt_filenames[i]);
+            splt_filenames[i] = NULL;
           }
-
-          free(splt_filenames);
-          splt_filenames = NULL;
         }
 
-        g_free(filename);
-        filename = NULL;
-
-        files = g_slist_next(files);
+        free(splt_filenames);
+        splt_filenames = NULL;
       }
-      g_slist_free(files);
 
-      if (multiple_files_tree_number > 0)
-      {
-        gtk_widget_set_sensitive(multiple_files_remove_all_files_button, TRUE);
-      }
+      g_free(filename);
+      filename = NULL;
+
+      files = g_slist_next(files);
+    }
+    g_slist_free(files);
+
+    if (ui->infos->multiple_files_tree_number > 0)
+    {
+      gtk_widget_set_sensitive(ui->gui->multiple_files_remove_all_files_button, TRUE);
     }
   }
 
   gtk_widget_destroy(file_chooser);
 }
 
-static void multiple_files_remove_button_event(GtkWidget *widget, gpointer data)
+static void multiple_files_remove_button_event(GtkWidget *widget, ui_state *ui)
 {
-  GtkTreeIter iter;
-  GtkTreePath *path;
-  GList *current_element = NULL;
-  
-  GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(multiple_files_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->multiple_files_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
-  
-  //the name of the file that we have clicked on
-  gchar *filename = NULL;
-  
+
   while (g_list_length(selected_list) > 0)
   {
-    //get the last element
-    current_element = g_list_last(selected_list);
-    path = current_element->data;
-    //get the iter correspondig to the path
+    GList *current_element = g_list_last(selected_list);
+    GtkTreePath *path = current_element->data;
+    GtkTreeIter iter;
     gtk_tree_model_get_iter(model, &iter, path);
-    gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME, &filename, -1);
-    //remove the path from the selected list
+
     gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
     selected_list = g_list_remove(selected_list, path);
-    multiple_files_tree_number--;
+    ui->infos->multiple_files_tree_number--;
 
-    //free memory
     gtk_tree_path_free(path);
-    g_free(filename);
   }
-  
-  if (multiple_files_tree_number == 0)
+
+  if (ui->infos->multiple_files_tree_number == 0)
   {
-    gtk_widget_set_sensitive(multiple_files_remove_all_files_button, FALSE);
+    gtk_widget_set_sensitive(ui->gui->multiple_files_remove_all_files_button, FALSE);
   }
-  
-  gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
-  
-  //free the selected elements
+
+  gtk_widget_set_sensitive(ui->gui->multiple_files_remove_file_button,FALSE);
+
   g_list_foreach(selected_list, (GFunc)gtk_tree_path_free, NULL);
   g_list_free(selected_list);  
 }
 
-static void multiple_files_remove_all_button_event(GtkWidget *widget, gpointer data)
+static void multiple_files_remove_all_button_event(GtkWidget *widget, ui_state *ui)
 {
-  GtkTreeIter iter;
-
-  GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
-  
-  gchar *filename = NULL;
-  while (multiple_files_tree_number > 0)
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
+  while (ui->infos->multiple_files_tree_number > 0)
   {
+    GtkTreeIter iter;
     gtk_tree_model_get_iter_first(model, &iter);
-    gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME, &filename, -1);
     gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-    multiple_files_tree_number--;
-    g_free(filename);
+    ui->infos->multiple_files_tree_number--;
   }
   
-  gtk_widget_set_sensitive(multiple_files_remove_all_files_button,FALSE);
-  gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
+  gtk_widget_set_sensitive(ui->gui->multiple_files_remove_all_files_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->multiple_files_remove_file_button, FALSE);
 }
 
-static GtkWidget *create_multiple_files_buttons_hbox()
+static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
 {
   GtkWidget *hbox = wh_hbox_new();
 
@@ -270,20 +235,22 @@ static GtkWidget *create_multiple_files_buttons_hbox()
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
   g_signal_connect(G_OBJECT(multiple_files_add_button), "clicked",
-                   G_CALLBACK(multiple_files_add_button_event), NULL);
+                   G_CALLBACK(multiple_files_add_button_event), ui);
 
   //button for removing a file
-  multiple_files_remove_file_button =
+  GtkWidget *multiple_files_remove_file_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("_Remove selected entries"),FALSE);
+  ui->gui->multiple_files_remove_file_button = multiple_files_remove_file_button;
   gtk_box_pack_start(GTK_BOX(hbox),
       multiple_files_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
   g_signal_connect(G_OBJECT(multiple_files_remove_file_button), "clicked",
-                   G_CALLBACK(multiple_files_remove_button_event), NULL);
+                   G_CALLBACK(multiple_files_remove_button_event), ui);
   
   //button for removing a file
-  multiple_files_remove_all_files_button =
+  GtkWidget *multiple_files_remove_all_files_button =
     wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all entries"),FALSE);
+  ui->gui->multiple_files_remove_all_files_button = multiple_files_remove_all_files_button;
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
       FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_all_files_button,FALSE);
@@ -293,27 +260,28 @@ static GtkWidget *create_multiple_files_buttons_hbox()
   return hbox;
 }
 
-static void multiple_files_selection_changed(GtkTreeSelection *selec, gpointer data)
+static void multiple_files_selection_changed(GtkTreeSelection *selec, ui_state *ui)
 {
-  GtkTreeModel *model = gtk_tree_view_get_model(multiple_files_tree);
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(multiple_files_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->multiple_files_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
 
   if (g_list_length(selected_list) > 0)
   {
-    gtk_widget_set_sensitive(multiple_files_remove_file_button,TRUE);
+    gtk_widget_set_sensitive(ui->gui->multiple_files_remove_file_button, TRUE);
   }
   else
   {
-    gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
+    gtk_widget_set_sensitive(ui->gui->multiple_files_remove_file_button, FALSE);
   }
 }
 
-GtkWidget *create_multiple_files_component()
+GtkWidget *create_multiple_files_component(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();
 
-  multiple_files_tree = create_multiple_files_tree();
+  GtkTreeView *multiple_files_tree = create_multiple_files_tree();
+  ui->gui->multiple_files_tree = multiple_files_tree;
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
@@ -330,12 +298,11 @@ GtkWidget *create_multiple_files_component()
   //selection for the tree
   GtkTreeSelection *multiple_files_tree_selection = gtk_tree_view_get_selection(multiple_files_tree);
   g_signal_connect(G_OBJECT(multiple_files_tree_selection), "changed",
-                   G_CALLBACK(multiple_files_selection_changed), NULL);
+      G_CALLBACK(multiple_files_selection_changed), ui);
   gtk_tree_selection_set_mode(GTK_TREE_SELECTION(multiple_files_tree_selection),
-                              GTK_SELECTION_MULTIPLE);
+      GTK_SELECTION_MULTIPLE);
 
-  //bottom horizontal box with buttons
-  GtkWidget *buttons_hbox = (GtkWidget *)create_multiple_files_buttons_hbox();
+  GtkWidget *buttons_hbox = create_multiple_files_buttons_hbox(ui);
   gtk_box_pack_start(GTK_BOX(vbox), buttons_hbox, FALSE, FALSE, 2);
 
   return vbox;

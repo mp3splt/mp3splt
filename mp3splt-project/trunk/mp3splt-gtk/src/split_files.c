@@ -39,8 +39,6 @@
 
 #include "split_files.h"
 
-extern ui_state *ui;
-
 //!split files enumeration
 enum
 {
@@ -106,7 +104,7 @@ const gchar *get_real_name_from_filename(const gchar *filename)
 }
 
 //!add a row to the table
-void add_split_row(const gchar *name)
+void add_split_row(const gchar *name, ui_state *ui)
 {
   GtkTreeIter iter;
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
@@ -167,7 +165,7 @@ static void queue_files_button_event(GtkWidget *widget, ui_state *ui)
 
   if (file_list != NULL)
   {
-    player_add_files(file_list);
+    player_add_files(file_list, ui);
   }
 
   g_list_foreach(file_list, (GFunc)g_free, NULL);
