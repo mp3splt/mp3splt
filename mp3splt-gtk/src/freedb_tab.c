@@ -45,11 +45,9 @@ enum {
   FREEDB_TABLE
 };
 
-extern ui_state *ui;
-
 //!add a row to the table
 static void add_freedb_row(gchar *album_name, gint album_id,
-                    gint *revisions, gint revisions_number)
+    gint *revisions, gint revisions_number, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->freedb_tree);
 
@@ -175,7 +173,7 @@ static gpointer freedb_search(ui_state *ui)
   gtk_widget_set_sensitive(gui->freedb_add_button, FALSE);
   gtk_editable_set_editable(GTK_EDITABLE(gui->freedb_entry), FALSE);
 
-  put_status_message(_("please wait... contacting tracktype.org"), gui);
+  put_status_message(_("please wait... contacting tracktype.org"), ui);
 
   const gchar *freedb_search_value = gtk_entry_get_text(GTK_ENTRY(gui->freedb_entry));
 
@@ -188,7 +186,7 @@ static gpointer freedb_search(ui_state *ui)
 
   enter_threads();
 
-  print_status_bar_confirmation(err, gui);
+  print_status_bar_confirmation(err, ui);
 
   remove_all_freedb_rows(ui);
 
@@ -203,7 +201,7 @@ static gpointer freedb_search(ui_state *ui)
       add_freedb_row(infos->freedb_search_results->results[i].name,
           infos->freedb_search_results->results[i].id,
           infos->freedb_search_results->results[i].revisions,
-          infos->freedb_search_results->results[i].revision_number);
+          infos->freedb_search_results->results[i].revision_number, ui);
     }
 
     if (infos->freedb_search_results->number > 0)
@@ -256,11 +254,11 @@ static void freedb_entry_activate_event(GtkEntry *entry, ui_state *ui)
   freedb_search_start_thread(ui);
 }
 
-static void write_freedbfile(int *err)
+static void write_freedbfile(int *err, ui_state *ui)
 {
   enter_threads();
    
-  put_status_message(_("please wait... contacting tracktype.org"), ui->gui);
+  put_status_message(_("please wait... contacting tracktype.org"), ui);
   
   gchar mp3splt_dir[14] = ".mp3splt-gtk";
 
@@ -277,7 +275,7 @@ static void write_freedbfile(int *err)
       filename, err, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
 
   enter_threads();
-  print_status_bar_confirmation(*err, ui->gui);
+  print_status_bar_confirmation(*err, ui);
   exit_threads();
 
   if (get_checked_output_radio_box(ui))
@@ -292,7 +290,7 @@ static void write_freedbfile(int *err)
     gint error = SPLT_OUTPUT_FORMAT_OK;
     mp3splt_set_oformat(ui->mp3splt_state, data, &error);
     enter_threads();
-    print_status_bar_confirmation(error, ui->gui);
+    print_status_bar_confirmation(error, ui);
     exit_threads();
   }
 
@@ -328,7 +326,7 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
   const splt_point *points = mp3splt_get_splitpoints(ui->mp3splt_state, &max_splits, &err);
   enter_threads();
 
-  print_status_bar_confirmation(err, ui->gui);
+  print_status_bar_confirmation(err, ui);
 
   if (max_splits <= 0)
   {
@@ -394,12 +392,12 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->freedb_add_button, FALSE);  
   exit_threads();
 
-  write_freedbfile(&err);
+  write_freedbfile(&err, ui);
 
   enter_threads();
 
   update_splitpoints_from_mp3splt_state(ui);
-  print_status_bar_confirmation(err, ui->gui);
+  print_status_bar_confirmation(err, ui);
   gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
 
   exit_threads();

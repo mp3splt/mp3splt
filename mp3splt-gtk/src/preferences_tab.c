@@ -39,14 +39,9 @@
 
 #include "preferences_tab.h"
 
-extern gint timeout_value;
-
-static GtkWidget *create_extract_tags_from_filename_options_box();
-static GtkWidget *create_test_regex_table();
-
-static void update_wave_preview_label_markup(gint index, gint interpolation_level);
-
-extern ui_state *ui;
+static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui);
+static GtkWidget *create_test_regex_table(ui_state *ui);
+static void update_wave_preview_label_markup(gint index, gint interpolation_level, ui_state *ui);
 
 /*!Returns the selected language
 
@@ -331,8 +326,10 @@ static void song_dir_button_event(GtkWidget *widget, ui_state *ui)
 }
 
 //!Creates the box the output directory can be choosen in
-static GtkWidget *create_directory_box(gui_state *gui)
+static GtkWidget *create_directory_box(ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   GtkWidget *dir_hbox = wh_hbox_new();
 
   GtkWidget *directory_entry = gtk_entry_new();
@@ -365,8 +362,10 @@ static GtkWidget *create_directory_box(gui_state *gui)
 }
 
 //! Creates the box for split mode selection
-static GtkWidget *create_split_options_box(gui_state *gui)
+static GtkWidget *create_split_options_box(ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   GtkWidget *vbox = wh_vbox_new();
 
   //names from filename
@@ -485,10 +484,10 @@ static GtkWidget *create_pref_splitpoints_page(ui_state *ui)
   GtkWidget *inside_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(inside_hbox), inside_vbox, TRUE, TRUE, 5);
 
-  GtkWidget *dir_box = create_directory_box(ui->gui);
+  GtkWidget *dir_box = create_directory_box(ui);
   gtk_box_pack_start(GTK_BOX(inside_vbox), dir_box, FALSE, FALSE, 2);
 
-  GtkWidget *split_options_box = create_split_options_box(ui->gui);
+  GtkWidget *split_options_box = create_split_options_box(ui);
   gtk_box_pack_start(GTK_BOX(inside_vbox), split_options_box, FALSE, FALSE, 1);
 
   return general_hbox;
@@ -517,11 +516,11 @@ static void player_combo_box_event(GtkComboBox *widget, ui_state *ui)
   ui_save_preferences(NULL, ui);
 }
 
-void update_timeout_value(GtkWidget *spinner, gpointer data)
+static void update_timeout_value(GtkWidget *spinner, ui_state *ui)
 {
-  timeout_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+  ui->infos->timeout_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
 
-  restart_player_timer();
+  restart_player_timer(ui);
   ui_save_preferences(NULL, ui);
 }
 
@@ -554,9 +553,10 @@ static GtkWidget *create_player_options_box(ui_state *ui)
       _("milliseconds."),
       (gdouble)DEFAULT_TIMEOUT_VALUE, 20.0, 1000.0, 10.0, 100.0,
       _("\t(higher refresh rate decreases CPU usage - default is 200)"),
-      update_timeout_value, NULL, vbox);
+      update_timeout_value, ui, vbox);
   ui_register_spinner_int_preference("player", "refresh_rate", DEFAULT_TIMEOUT_VALUE,
-      spinner, update_timeout_value, NULL, ui);
+      spinner, (void (*)(GtkWidget *, gpointer)) update_timeout_value,
+      ui, ui);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
 }
@@ -604,6 +604,16 @@ void refresh_preview_drawing_areas(gui_state *gui)
   gtk_widget_queue_draw(gui->player_scrolled_window);
 }
 
+static gint get_wave_preview_width_drawing_area(ui_state *ui)
+{
+  if (ui->infos->width_drawing_area < 50)
+  {
+    return 500;
+  }
+
+  return ui->infos->width_drawing_area;
+}
+
 #if GTK_MAJOR_VERSION <= 2
 static gboolean wave_quality_draw_event(GtkWidget *drawing_area, GdkEventExpose *event,
     preview_index_and_data *data)
@@ -618,7 +628,7 @@ static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_
   ui_state *ui = data->data;
   gint index = data->index;
 
-  gint width = get_wave_preview_width_drawing_area();
+  gint width = get_wave_preview_width_drawing_area(ui);
   gtk_widget_set_size_request(drawing_area, width, 70);
 
   gint expected_drawing_time_int = g_array_index(ui->infos->preview_time_windows, gint, index);
@@ -647,25 +657,15 @@ static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_
   gint interpolation_level = draw_silence_wave((gint)left_time, (gint)right_time, width / 2, 50,
       drawing_time, width, 0,
       current_time, ui->infos->total_time, zoom_coeff,
-      drawing_area, cairo_surface);
+      drawing_area, cairo_surface, ui);
 
-  update_wave_preview_label_markup(index, interpolation_level);
+  update_wave_preview_label_markup(index, interpolation_level, ui);
 
 #if GTK_MAJOR_VERSION <= 2
   cairo_destroy(cairo_surface);
 #endif
 
   return TRUE;
-}
-
-gint get_wave_preview_width_drawing_area()
-{
-  if (ui->infos->width_drawing_area < 50)
-  {
-    return 500;
-  }
-
-  return ui->infos->width_drawing_area;
 }
 
 static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
@@ -704,7 +704,7 @@ static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
 
     GtkWidget *minutes_label = gtk_label_new(NULL);
     g_ptr_array_add(ui->gui->wave_preview_labels, minutes_label);
-    update_wave_preview_label_markup(i, -1);
+    update_wave_preview_label_markup(i, -1, ui);
 
     wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(minutes_label, vbox, 0, 4);
   }
@@ -712,7 +712,7 @@ static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
   return vbox;
 }
 
-static void update_wave_preview_label_markup(gint index, gint interpolation_level)
+static void update_wave_preview_label_markup(gint index, gint interpolation_level, ui_state *ui)
 {
   gint time_window = g_array_index(ui->infos->preview_time_windows, gint, index);
 
@@ -800,7 +800,7 @@ static gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event, ui_sta
   gint error = SPLT_OUTPUT_FORMAT_OK;
   mp3splt_set_oformat(ui->mp3splt_state, data, &error);
   remove_status_message(ui->gui);
-  print_status_bar_confirmation(error, ui->gui);
+  print_status_bar_confirmation(error, ui);
 
   ui_save_preferences(NULL, ui);
   
@@ -875,8 +875,10 @@ static GtkWidget *create_pref_output_page(ui_state *ui)
   return output_hbox;
 }
 
-void change_tags_options(GtkToggleButton *button, gpointer data)
+static void change_tags_options(GtkToggleButton *button, gpointer data)
 {
+  ui_state *ui = (ui_state *)data;
+
   if (ui->gui->extract_tags_box != NULL)
   {
     if (rh_get_active_value(ui->gui->tags_radio) == TAGS_FROM_FILENAME)
@@ -901,19 +903,19 @@ static GtkWidget *create_tags_options_box(ui_state *ui)
 
   GtkWidget *tags_radio = NULL;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Original file tags"),
-      ORIGINAL_FILE_TAGS, change_tags_options, vbox);
+      ORIGINAL_FILE_TAGS, change_tags_options, ui, vbox);
   gui->tags_radio = tags_radio;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Default tags (cddb or cue tags)"),
-      DEFAULT_TAGS, change_tags_options, vbox);
+      DEFAULT_TAGS, change_tags_options, ui, vbox);
   gui->tags_radio = tags_radio;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("No tags"),
-      NO_TAGS, change_tags_options, vbox);
+      NO_TAGS, change_tags_options, ui, vbox);
   gui->tags_radio = tags_radio;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Extract tags from filename"),
-      TAGS_FROM_FILENAME, change_tags_options, vbox);
+      TAGS_FROM_FILENAME, change_tags_options, ui, vbox);
   gui->tags_radio = tags_radio;
 
-  GtkWidget *extract_tags_box = create_extract_tags_from_filename_options_box();
+  GtkWidget *extract_tags_box = create_extract_tags_from_filename_options_box(ui);
   gui->extract_tags_box = extract_tags_box;
   gtk_widget_set_sensitive(extract_tags_box, SPLT_FALSE);
   gtk_box_pack_start(GTK_BOX(vbox), extract_tags_box, FALSE, FALSE, 2);
@@ -921,7 +923,7 @@ static GtkWidget *create_tags_options_box(ui_state *ui)
   return wh_set_title_and_get_vbox(vbox, _("<b>Split files tags</b>"));
 }
 
-static GtkComboBox *create_genre_combo()
+static GtkComboBox *create_genre_combo(ui_state *ui)
 {
   GtkComboBox *combo = ch_new_combo();
 
@@ -936,7 +938,7 @@ static GtkComboBox *create_genre_combo()
   return combo;
 }
 
-static GtkComboBox *create_text_preferences_combo()
+static GtkComboBox *create_text_preferences_combo(ui_state *ui)
 {
   GtkComboBox *combo = ch_new_combo();
 
@@ -960,7 +962,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
 
   gint error = SPLT_OK;
   splt_tags *tags = mp3splt_parse_filename_regex(ui->mp3splt_state, &error);
-  print_status_bar_confirmation(error, ui->gui);
+  print_status_bar_confirmation(error, ui);
 
   if (error >= 0)
   {
@@ -1030,7 +1032,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
   mp3splt_free_one_tag(tags);
 }
 
-static GtkWidget *create_extract_tags_from_filename_options_box()
+static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui)
 {
   GtkWidget *table = wh_new_table();
 
@@ -1072,27 +1074,27 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
  
   wh_add_in_table(table, replace_underscore_by_space_check_box);
 
-  GtkComboBox *artist_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *artist_text_properties_combo = create_text_preferences_combo(ui);
   ui->gui->artist_text_properties_combo = artist_text_properties_combo;
   wh_add_in_table_with_label(table, 
       _("Artist text properties:"), GTK_WIDGET(artist_text_properties_combo));
 
-  GtkComboBox *album_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *album_text_properties_combo = create_text_preferences_combo(ui);
   ui->gui->album_text_properties_combo = album_text_properties_combo;
   wh_add_in_table_with_label(table,
       _("Album text properties:"), GTK_WIDGET(album_text_properties_combo));
 
-  GtkComboBox *title_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *title_text_properties_combo = create_text_preferences_combo(ui);
   ui->gui->title_text_properties_combo = title_text_properties_combo;
   wh_add_in_table_with_label(table,
       _("Title text properties:"), GTK_WIDGET(title_text_properties_combo));
 
-  GtkComboBox *comment_text_properties_combo = create_text_preferences_combo();
+  GtkComboBox *comment_text_properties_combo = create_text_preferences_combo(ui);
   ui->gui->comment_text_properties_combo = comment_text_properties_combo;
   wh_add_in_table_with_label(table,
       _("Comment text properties:"), GTK_WIDGET(comment_text_properties_combo));
 
-  GtkComboBox *genre_combo = create_genre_combo();
+  GtkComboBox *genre_combo = create_genre_combo(ui);
   ui->gui->genre_combo = genre_combo;
   wh_add_in_table_with_label(table, _("Genre tag:"), GTK_WIDGET(genre_combo));
 
@@ -1101,13 +1103,13 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
   wh_add_in_table_with_label_expand(table, _("Comment tag:"), comment_tag_entry);
 
   GtkWidget *test_regex_expander = gtk_expander_new(_("Regular expression test"));
-  gtk_container_add(GTK_CONTAINER(test_regex_expander), create_test_regex_table());
+  gtk_container_add(GTK_CONTAINER(test_regex_expander), create_test_regex_table(ui));
   wh_add_in_table(table, test_regex_expander);
 
   return wh_put_in_new_hbox_with_margin_level(GTK_WIDGET(table), 3);
 }
 
-static GtkWidget *create_test_regex_table()
+static GtkWidget *create_test_regex_table(ui_state *ui)
 {
   GtkWidget *table = wh_new_table();
 

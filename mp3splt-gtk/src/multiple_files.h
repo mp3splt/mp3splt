@@ -39,8 +39,9 @@
 #define MULTIPLE_FILES_H
 
 #include "widgets_helper.h"
+#include "ui_types.h"
 
-GtkWidget *create_multiple_files_component();
+GtkWidget *create_multiple_files_component(ui_state *ui);
 
 enum {
   /*COL_NAME,*/

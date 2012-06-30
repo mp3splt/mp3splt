@@ -36,8 +36,6 @@
 
 #include "messages.h"
 
-extern ui_state *ui;
-
 //! Returns the current local time in form of a string
 static const char *get_current_system_time()
 {
@@ -51,8 +49,10 @@ static const char *get_current_system_time()
 }
 
 //! Record this message in the message history
-void put_message_in_history(const gchar *message, splt_message_type mess_type, gui_state *gui)
+void put_message_in_history(const gchar *message, splt_message_type mess_type, ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   if (mess_type == SPLT_MESSAGE_INFO ||
       (mess_type == SPLT_MESSAGE_DEBUG && ui->infos->debug_is_active))
   {

@@ -173,9 +173,8 @@ GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gcha
     gdouble minimum_value, gdouble maximum_value, 
     gdouble step_increment, gdouble page_increment,
     gchar *after_newline_label, 
-    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
-    gpointer user_data_for_cb,
-    GtkWidget *box, gint top_width)
+    void (*spinner_callback)(GtkWidget *spinner, ui_state *ui),
+    ui_state *ui, GtkWidget *box, gint top_width)
 {
   GtkWidget *horiz_fake = wh_hbox_new();
   GtkWidget *label = gtk_label_new(before_label);
@@ -187,8 +186,7 @@ GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gcha
   GtkWidget *spinner = gtk_spin_button_new(adj, 0, 0);
  
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(spinner), TRUE);
-  g_signal_connect(G_OBJECT(spinner), "value_changed",
-      G_CALLBACK(spinner_callback), user_data_for_cb);
+  g_signal_connect(G_OBJECT(spinner), "value_changed", G_CALLBACK(spinner_callback), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner, FALSE, FALSE, 5);
 
   if (after_label != NULL)
@@ -219,13 +217,13 @@ GtkWidget *wh_create_int_spinner_in_box(gchar *before_label, gchar *after_label,
     gdouble minimum_value, gdouble maximum_value, 
     gdouble step_increment, gdouble page_increment,
     gchar *after_newline_label, 
-    void (*spinner_callback)(GtkWidget *spinner, gpointer data),
-    gpointer user_data_for_cb,
+    void (*spinner_callback)(GtkWidget *spinner, ui_state *ui),
+    ui_state *ui,
     GtkWidget *box)
 {
   return wh_create_int_spinner_in_box_with_top_width(before_label, after_label,
       initial_value, minimum_value, maximum_value, step_increment, page_increment,
-      after_newline_label, spinner_callback, user_data_for_cb, box, 2);
+      after_newline_label, spinner_callback, ui, box, 2);
 }
 
 GtkWidget *wh_hbox_new()
@@ -312,9 +310,8 @@ gboolean wh_container_has_child(GtkContainer *container, GtkWidget *my_child)
   return FALSE;
 }
 
-static void _wh_folder_changed_event(GtkFileChooser *chooser, gpointer data)
+static void _wh_folder_changed_event(GtkFileChooser *chooser, ui_state *ui)
 {
-  ui_state *ui = (ui_state *) data;
   ui_set_browser_directory(ui, gtk_file_chooser_get_current_folder(chooser));
 }
 

@@ -39,8 +39,6 @@
 
 #include "special_split.h"
 
-extern ui_state *ui;
-
 //! Get the split mode
 static gint get_selected_split_mode(GtkToggleButton *radio_b)
 {
@@ -60,7 +58,7 @@ static gint get_selected_split_mode(GtkToggleButton *radio_b)
 }
 
 //! Set the split mode
-void select_split_mode(int split_mode)
+void select_split_mode(int split_mode, ui_state *ui)
 {
   GSList *split_mode_radio_button_list =
     gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->split_mode_radio_button));
@@ -198,7 +196,7 @@ static void split_file_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
 }
 
 //! Creates the split mode window part
-static GtkWidget *create_split_mode()
+static GtkWidget *create_split_mode(ui_state *ui)
 {
   GtkWidget *local_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
@@ -425,7 +423,7 @@ static GtkWidget *create_split_mode()
   g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
       GINT_TO_POINTER(SELECTED_SPLIT_ERROR));
  
-  select_split_mode(SELECTED_SPLIT_NORMAL);
+  select_split_mode(SELECTED_SPLIT_NORMAL, ui);
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
@@ -435,7 +433,7 @@ static GtkWidget *create_split_mode()
 }
 
 //! Creates the selection between single file split and batch processing
-static GtkWidget *create_single_multiple_split_modes()
+static GtkWidget *create_single_multiple_split_modes(ui_state *ui)
 {
   GtkWidget *local_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
@@ -458,7 +456,7 @@ static GtkWidget *create_single_multiple_split_modes()
   GtkWidget *multiple_files_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(local_vbox), multiple_files_hbox, TRUE, TRUE, 2);
 
-  GtkWidget *multiple_files_component = create_multiple_files_component();
+  GtkWidget *multiple_files_component = create_multiple_files_component(ui);
   gtk_widget_set_sensitive(multiple_files_component, FALSE);
   gtk_box_pack_start(GTK_BOX(multiple_files_hbox), multiple_files_component, TRUE, TRUE, 5);
   ui->gui->multiple_files_component = multiple_files_component;
@@ -471,7 +469,7 @@ static GtkWidget *create_single_multiple_split_modes()
 }
 
 //!creates the special split page
-GtkWidget *create_special_split_page()
+GtkWidget *create_special_split_page(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();;
 
@@ -483,11 +481,11 @@ GtkWidget *create_special_split_page()
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
 
   GtkWidget *notebook_label = gtk_label_new(_("Split mode"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_split_mode(), notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_split_mode(ui), notebook_label);
 
   notebook_label = gtk_label_new(_("File mode"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
-      create_single_multiple_split_modes(), notebook_label);
+      create_single_multiple_split_modes(ui), notebook_label);
 
   return vbox;
 }

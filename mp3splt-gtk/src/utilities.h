@@ -39,7 +39,7 @@ gint directory_exists(const gchar *directory);
 gint file_exists(const gchar *fname);
 
 gint check_if_we_have_player();
-void print_processing_file(gchar *filename);
+void print_processing_file(gchar *filename, ui_state *ui);
 void remove_end_slash_n_r_from_filename(char *filename);
 gchar *transform_to_utf8(gchar *text, gint free_or_not, gint *must_be_freed);
 

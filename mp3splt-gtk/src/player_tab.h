@@ -62,35 +62,18 @@ void check_update_down_progress_bar(ui_state *ui);
 void set_preview_active_if_needed();
 void cancel_quick_preview_all(gui_status *status);
 void cancel_quick_preview(gui_status *status);
-void enable_player_buttons();
+void enable_player_buttons(ui_state *ui);
 void connect_to_player_with_song(gint i, ui_state *ui);
 void connect_button_event(GtkWidget *widget, ui_state *ui);
 void disconnect_button_event(GtkWidget *widget, ui_state *ui);
 void pause_event(GtkWidget *widget, ui_state *ui);
 void refresh_drawing_area(gui_state *gui);
-void change_volume_event(GtkScaleButton *volume_button, gdouble value, gpointer data);
-
-gboolean volume_button_unclick_event (GtkWidget *widget,
-                                   GdkEventCrossing *event,
-                                   gpointer user_data);
-gboolean volume_button_click_event (GtkWidget *widget,
-                                 GdkEventCrossing *event,
-                                 gpointer user_data);
-gboolean volume_button_enter_event (GtkWidget *widget,
-                                 GdkEventCrossing *event,
-                                 gpointer user_data);
-gboolean volume_button_leave_event (GtkWidget *widget,
-                                 GdkEventCrossing *event,
-                                 gpointer user_data);
-gboolean volume_button_scroll_event (GtkWidget *widget,
-                                  GdkEventScroll *event,
-                                  gpointer user_data);
 GtkWidget *create_volume_control_box();
 gfloat get_right_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 gfloat get_left_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 
-gfloat pixels_to_time(gfloat width,
-                      gint pixels);
+gfloat pixels_to_time(gfloat width, gint pixels, ui_state *ui);
+
 gint convert_time_to_pixels(gint width, gfloat time, 
     gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 gboolean da_expose_event (GtkWidget      *da,
@@ -98,8 +81,7 @@ gboolean da_expose_event (GtkWidget      *da,
                           gpointer       data);
 GtkWidget *create_player_control_frame(ui_state *ui);
 
-//moved from the file_tab
-void file_chooser_cancel_event();
+void file_chooser_cancel_event(ui_state *ui);
 void file_chooser_ok_event(gchar *fname, ui_state *ui);
 void close_file_popup_window_event( GtkWidget *window,
                                     gpointer data );
@@ -110,7 +92,7 @@ GtkWidget *create_player_playlist_frame(ui_state *ui);
 void hide_connect_button(gui_state *gui);
 void show_connect_button(gui_state *gui);
 
-void restart_player_timer();
+void restart_player_timer(ui_state *ui);
 
 void compute_douglas_peucker_filters(ui_state *ui);
 
@@ -118,12 +100,14 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     gint interpolation_text_x, gint interpolation_text_y,
     gfloat draw_time, gint width_drawing_area, gint y_margin,
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
-    GtkWidget *da, cairo_t *gc);
+    GtkWidget *da, cairo_t *gc, ui_state *ui);
 
 void get_current_splitpoints_time_left_right(gint *time_left, gint *time_right, 
-    gint *splitpoint_left, ui_infos *infos);
+    gint *splitpoint_left, ui_state *ui);
 void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui);
 void adjust_zoom_coeff(ui_infos *infos);
+
+void add_playlist_file(const gchar *name, ui_state *ui);
 
 #endif
 

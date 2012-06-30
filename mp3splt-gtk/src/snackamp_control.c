@@ -374,12 +374,10 @@ gchar *snackamp_get_title_song()
 //!returns elapsed time
 gint snackamp_get_time_elapsed()
 {
-  gchar *result;
-  gint pos;
-  result = snackamp_socket_send_message("xmms_remote_get_output_time\n");
-  pos = get_integer_from_string(result);
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_output_time\n");
+  gint pos = get_integer_from_string(result);
   g_free(result);
-  
+
   return pos;
 }
 

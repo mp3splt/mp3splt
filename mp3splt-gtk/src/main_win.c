@@ -48,23 +48,9 @@
 
 #include "main_win.h"
 
-//if we are on the preferences tab, then TRUE
-gint preferences_tab = FALSE;
-
-//the split freedb button
-GtkWidget *split_freedb_button;
-
-gchar *filename_path_of_split;
-
-extern GtkWidget *da;
-
-extern gint max_split_files;
-
-extern ui_state *ui;
-
-void main_window_drag_data_received(GtkWidget *window,
+static void main_window_drag_data_received(GtkWidget *window,
     GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint
-    info, guint time, gpointer user_data)
+    info, guint time, ui_state *ui)
 {
   const gchar *received_data = (gchar *) gtk_selection_data_get_text(data);
   if (received_data == NULL)
@@ -162,19 +148,19 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
   return FALSE;
 }
 
-static void initialize_window(gui_state *gui)
+static void initialize_window(ui_state *ui)
 {
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gui->window = window;
+  ui->gui->window = window;
 
   g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(configure_window_callback), ui);
 
   gtk_window_set_title(GTK_WINDOW(window), PACKAGE_NAME" "VERSION);
   gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
-  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(exit_application), NULL);
+  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(exit_application), ui);
   g_signal_connect(G_OBJECT(window), "drag-data-received",
-      G_CALLBACK(main_window_drag_data_received), NULL);
+      G_CALLBACK(main_window_drag_data_received), ui);
   gtk_drag_dest_set(window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
       drop_types, 3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
  
@@ -240,7 +226,7 @@ void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
         if (! CreateProcess(NULL, browser_command,
               NULL, NULL, FALSE, 0, NULL, NULL, &si, &pinf))
         {
-          put_status_message(_("Error launching external command"), ui->gui);
+          put_status_message(_("Error launching external command"), ui);
         }
 
         CloseHandle(pinf.hProcess);
@@ -332,9 +318,9 @@ If you don't want that use put_status_message instead.
 \param text The text that has to be displayed.
 */
 
-void put_status_message(const gchar *text, gui_state *gui)
+void put_status_message(const gchar *text, ui_state *ui)
 {
-  put_status_message_with_type(text, SPLT_MESSAGE_INFO, gui);
+  put_status_message_with_type(text, SPLT_MESSAGE_INFO, ui);
 }
 
 /*! Output a message to the status message bar.
@@ -346,8 +332,10 @@ If the type is to be set to SPLT_MESSAGE_INFO put_status_message
 can be used instead; The enum for the message types is defined in
 libmp3splt.h
  */
-void put_status_message_with_type(const gchar *text, splt_message_type mess_type, gui_state *gui)
+void put_status_message_with_type(const gchar *text, splt_message_type mess_type, ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   if (mess_type == SPLT_MESSAGE_INFO)
   {
     guint status_id = gtk_statusbar_get_context_id(gui->status_bar, "mess");
@@ -355,7 +343,7 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
     gtk_statusbar_push(gui->status_bar, status_id, text);
   }
 
-  put_message_in_history(text, mess_type, gui);
+  put_message_in_history(text, mess_type, ui);
 }
 
 //!event for the cancel button
@@ -368,7 +356,7 @@ void cancel_button_event(GtkWidget *widget, ui_state *ui)
     gtk_widget_set_sensitive(widget, FALSE);
   }
 
-  put_status_message(_(" info: stopping the split process.. please wait"), ui->gui);
+  put_status_message(_(" info: stopping the split process.. please wait"), ui);
 }
 
 //!event for the split button
@@ -376,7 +364,7 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
 {
   if (ui->status->splitting)
   {
-    put_status_message(_(" error: split in progress..."), ui->gui);
+    put_status_message(_(" error: split in progress..."), ui);
     return;
   }
 
@@ -395,9 +383,8 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
   }
 
   ui->status->filename_to_split = get_input_filename(ui->gui);
-  filename_path_of_split = get_output_directory(ui);
-
-  if (filename_path_of_split != NULL)
+  ui->infos->filename_path_of_split = get_output_directory(ui);
+  if (ui->infos->filename_path_of_split != NULL)
   {
     ui->status->splitting = TRUE;
     create_thread(split_it, ui, TRUE, NULL);
@@ -405,12 +392,12 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
   }
   else
   {
-    put_status_message(_(" error: no file selected"), ui->gui);
+    put_status_message(_(" error: no file selected"), ui);
   }
 }
 
 //!creates the toolbar
-static GtkWidget *create_toolbar()
+static GtkWidget *create_toolbar(ui_state *ui)
 {
   GtkWidget *box = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(box), 0);
@@ -467,7 +454,7 @@ static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 + 2./100. * total_time * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
-  player_seek(new_time);
+  player_seek(new_time, ui);
 }
  
 static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
@@ -475,7 +462,7 @@ static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 - 2./100. * total_time * 10;
   if (new_time <= 0) { new_time = 0; }
-  player_seek(new_time);
+  player_seek(new_time, ui);
 }
 
 static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
@@ -483,7 +470,7 @@ static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 + 15./100. * total_time * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
-  player_seek(new_time);
+  player_seek(new_time, ui);
 }
  
 static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
@@ -491,7 +478,7 @@ static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 - 15./100. * total_time * 10;
   if (new_time <= 0) { new_time = 0; }
-  player_seek(new_time);
+  player_seek(new_time, ui);
 }
 
 static void player_small_seek_forward_action(GtkWidget *widget, ui_state *ui)
@@ -499,25 +486,25 @@ static void player_small_seek_forward_action(GtkWidget *widget, ui_state *ui)
   gfloat total_time = ui->infos->total_time;
   gfloat new_time = ui->infos->current_time * 10 + 100 * 3 * 10;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
-  player_seek(new_time);
+  player_seek(new_time, ui);
 }
  
 static void player_small_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat new_time = ui->infos->current_time * 10 - 100 * 3 * 10;
   if (new_time <= 0) { new_time = 0; }
-  player_seek(new_time);
+  player_seek(new_time, ui);
 }
 
 static void player_seek_to_next_splitpoint_action(GtkWidget *widget, ui_state *ui)
 {
   gint time_left = -1;
   gint time_right = -1;
-  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui->infos);
+  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui);
 
   if (time_right != -1)
   {
-    player_seek(time_right * 10);
+    player_seek(time_right * 10, ui);
   }
 }
 
@@ -525,11 +512,11 @@ static void player_seek_to_previous_splitpoint_action(GtkWidget *widget, ui_stat
 {
   gint time_left = -1;
   gint time_right = -1;
-  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui->infos);
+  get_current_splitpoints_time_left_right(&time_left, &time_right, NULL, ui);
 
   if (time_left != -1)
   {
-    player_seek(time_left * 10);
+    player_seek(time_left * 10, ui);
   }
 }
 
@@ -640,25 +627,25 @@ static void browse_button_event(GtkWidget *widget, ui_state *ui)
 
   wh_set_browser_directory_handler(ui, file_chooser);
 
-  GtkWidget *our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 and ogg files (*.mp3 *.ogg)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  GtkFileFilter *our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name(our_filter, _("mp3 and ogg files (*.mp3 *.ogg)"));
+  gtk_file_filter_add_pattern(our_filter, "*.mp3");
+  gtk_file_filter_add_pattern(our_filter, "*.ogg");
+  gtk_file_filter_add_pattern(our_filter, "*.MP3");
+  gtk_file_filter_add_pattern(our_filter, "*.OGG");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("mp3 files (*.mp3)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.mp3");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.MP3");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name (our_filter, _("mp3 files (*.mp3)"));
+  gtk_file_filter_add_pattern(our_filter, "*.mp3");
+  gtk_file_filter_add_pattern(our_filter, "*.MP3");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 
-  our_filter = (GtkWidget *)gtk_file_filter_new();
-  gtk_file_filter_set_name (GTK_FILE_FILTER(our_filter), _("ogg files (*.ogg)"));
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.ogg");
-  gtk_file_filter_add_pattern(GTK_FILE_FILTER(our_filter), "*.OGG");
-  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), GTK_FILE_FILTER(our_filter));
+  our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name (our_filter, _("ogg files (*.ogg)"));
+  gtk_file_filter_add_pattern(our_filter, "*.ogg");
+  gtk_file_filter_add_pattern(our_filter, "*.OGG");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
@@ -672,7 +659,7 @@ static void browse_button_event(GtkWidget *widget, ui_state *ui)
   }
   else
   {
-    file_chooser_cancel_event();
+    file_chooser_cancel_event(ui);
   }
 
   gtk_widget_destroy(file_chooser);
@@ -806,7 +793,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
  
   GtkWidget *menu_box = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(menu_box), gtk_ui_manager_get_widget(uim, "/MenuBar"), FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(menu_box), create_toolbar(), TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(menu_box), create_toolbar(ui), TRUE, TRUE, 0);
  
   player_key_actions_set_sensitivity(FALSE, ui->gui);
 
@@ -897,7 +884,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   /* special split page */
   GtkWidget *special_split_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(special_split_vbox), 0);
-  frame = create_special_split_page();
+  frame = create_special_split_page(ui);
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
   notebook_label = gtk_label_new(_("Type of split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
@@ -974,7 +961,7 @@ static void move_and_resize_main_window(ui_state *ui)
 
 void create_application(ui_state *ui)
 {
-  initialize_window(ui->gui);
+  initialize_window(ui);
 
   GtkWidget *window_vbox = wh_vbox_new();
   gtk_container_add(GTK_CONTAINER(ui->gui->window), window_vbox);
@@ -1000,12 +987,12 @@ void create_application(ui_state *ui)
 
   \param The error number from the library.
  */
-void print_status_bar_confirmation(gint error, gui_state *gui)
+void print_status_bar_confirmation(gint error, ui_state *ui)
 {
   char *error_from_library = mp3splt_get_strerror(ui->mp3splt_state, error);
   if (error_from_library == NULL) { return; }
 
-  put_status_message(error_from_library, ui->gui);
+  put_status_message(error_from_library, ui);
   free(error_from_library);
   error_from_library = NULL;
 }

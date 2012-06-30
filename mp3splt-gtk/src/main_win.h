@@ -71,11 +71,11 @@ static const GtkTargetEntry drop_types[] = {
 };
 
 void remove_status_message(gui_state *gui);
-void put_status_message(const gchar *text, gui_state *gui);
+void put_status_message(const gchar *text, ui_state *ui);
 void put_status_message_with_type(const gchar *text,
-    splt_message_type mess_type, gui_state *gui);
+    splt_message_type mess_type, ui_state *ui);
 void create_application();
-void print_status_bar_confirmation(gint error, gui_state *gui);
+void print_status_bar_confirmation(gint error, ui_state *ui);
 void cancel_button_event(GtkWidget *widget, ui_state *ui);
 
 gchar* get_input_filename(gui_state *gui);

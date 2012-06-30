@@ -43,29 +43,29 @@
 
 #include "all_includes.h"
 
-void gstreamer_get_song_infos(gchar *total_infos);
-gchar *gstreamer_get_filename();
-gint gstreamer_get_playlist_number();
-gchar *gstreamer_get_title_song();
-gint gstreamer_get_time_elapsed();
-void gstreamer_start();
-void gstreamer_select_last_file();
-void gstreamer_play_last_file();
-void gstreamer_add_files(GList *list);
-void gstreamer_set_volume(gint volume);
-gint gstreamer_get_volume();
-void gstreamer_start_with_songs(GList *list);
-gint gstreamer_is_running();
-gint gstreamer_is_paused();
-void gstreamer_play();
-void gstreamer_stop();
-void gstreamer_pause();
-void gstreamer_next();
-void gstreamer_prev();
-void gstreamer_jump(gint position);
-gint gstreamer_get_total_time();
-gint gstreamer_is_playing();
-void gstreamer_quit();
+void gstreamer_get_song_infos(gchar *total_infos, ui_state *ui);
+gchar *gstreamer_get_filename(ui_state *ui);
+gint gstreamer_get_playlist_number(ui_state *ui);
+gchar *gstreamer_get_title_song(ui_state *ui);
+gint gstreamer_get_time_elapsed(ui_state *ui);
+void gstreamer_start(ui_state *ui);
+void gstreamer_select_last_file(ui_state *ui);
+void gstreamer_play_last_file(ui_state *ui);
+void gstreamer_add_files(GList *list, ui_state *ui);
+void gstreamer_set_volume(gint volume, ui_state *ui);
+gint gstreamer_get_volume(ui_state *ui);
+void gstreamer_start_with_songs(GList *list, ui_state *ui);
+gint gstreamer_is_running(ui_state *ui);
+gint gstreamer_is_paused(ui_state *ui);
+void gstreamer_play(ui_state *ui);
+void gstreamer_stop(ui_state *ui);
+void gstreamer_pause(ui_state *ui);
+void gstreamer_next(ui_state *ui);
+void gstreamer_prev(ui_state *ui);
+void gstreamer_jump(gint position, ui_state *ui);
+gint gstreamer_get_total_time(ui_state *ui);
+gint gstreamer_is_playing(ui_state *ui);
+void gstreamer_quit(ui_state *ui);
 
 #endif
 

@@ -38,8 +38,7 @@
 #include "radio_helper.h"
 
 GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
-    gint value,
-    void (*callback)(GtkToggleButton *, gpointer),
+    gint value, void (*callback)(GtkToggleButton *, gpointer), gpointer callback_data, 
     GtkWidget *vbox)
 {
   GtkWidget *new_radio_button =
@@ -49,7 +48,7 @@ GtkWidget *rh_append_radio_to_vbox(GtkWidget *radio_button, const gchar *text,
   if (callback)
   {
     g_signal_connect(GTK_TOGGLE_BUTTON(new_radio_button), "toggled", G_CALLBACK(callback),
-        NULL);
+        callback_data);
   }
 
   g_object_set_data(G_OBJECT(new_radio_button), "value", GINT_TO_POINTER(value));

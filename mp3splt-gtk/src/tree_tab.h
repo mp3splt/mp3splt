@@ -62,7 +62,7 @@ void sort_tree(GtkTreeView *tree_view);
 void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui);
 void add_row(gint checked, ui_state *ui);
 GtkWidget *create_splitpoints_frame(ui_state *ui);
-void put_splitpoints_in_mp3splt_state(splt_state *state);
+void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui);
 
 void clear_current_description(ui_state *ui);
 void copy_filename_to_current_description(const gchar *fname, ui_state *ui);

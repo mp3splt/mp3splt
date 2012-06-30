@@ -42,7 +42,7 @@
 
 #include "widgets_helper.h"
 
-void put_message_in_history(const gchar *message, splt_message_type mess_type, gui_state *gui);
+void put_message_in_history(const gchar *message, splt_message_type mess_type, ui_state *ui);
 void create_mess_history_dialog(ui_state *ui);
 
 #endif

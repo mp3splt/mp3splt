@@ -39,8 +39,6 @@
 
 #include "import.h"
 
-extern ui_state *ui;
-
 static void set_import_filters(GtkFileChooser *chooser);
 static void build_import_filter(GtkFileChooser *chooser,
     const gchar *filter_name, const gchar *filter_pattern,
@@ -64,7 +62,6 @@ void import_event(GtkWidget *widget, ui_state *ui)
         NULL);
 
   wh_set_browser_directory_handler(ui, file_chooser);
-
   set_import_filters(GTK_FILE_CHOOSER(file_chooser));
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
@@ -96,11 +93,11 @@ void import_file(gchar *filename, ui_state *ui)
   gchar *ext = strrchr(filename, '.');
   GString *ext_str = g_string_new(ext);
 
-  if (ui->file_to_import)
+  if (ui->infos->file_to_import)
   {
-    g_free(ui->file_to_import);
+    g_free(ui->infos->file_to_import);
   }
-  ui->file_to_import = strdup(filename);
+  ui->infos->file_to_import = strdup(filename);
 
   g_string_ascii_up(ext_str);
 
@@ -113,16 +110,16 @@ void import_file(gchar *filename, ui_state *ui)
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {
     update_output_options(ui);
-    create_thread(add_cue_splitpoints, ui, TRUE, NULL);
+    create_thread((GThreadFunc)add_cue_splitpoints, ui, TRUE, NULL);
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
   {
     update_output_options(ui);
-    create_thread(add_cddb_splitpoints, ui, TRUE, NULL);
+    create_thread((GThreadFunc)add_cddb_splitpoints, ui, TRUE, NULL);
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
-    create_thread(add_audacity_labels_splitpoints, ui, TRUE, NULL);
+    create_thread((GThreadFunc)add_audacity_labels_splitpoints, ui, TRUE, NULL);
   }
 
   if (ext_str)
@@ -164,7 +161,6 @@ static void build_import_filter(GtkFileChooser *chooser,
 {
   GtkFileFilter *filter = gtk_file_filter_new();
   gtk_file_filter_set_name(GTK_FILE_FILTER(filter), filter_name);
-
   gtk_file_filter_add_pattern(GTK_FILE_FILTER(filter), filter_pattern);
 
   if (filter_pattern_upper)
@@ -190,7 +186,7 @@ data pointer will be freed by g_free() after doung this.
 */
 static gpointer add_audacity_labels_splitpoints(ui_state *ui)
 {
-  gchar *filename = ui->file_to_import;
+  gchar *filename = ui->infos->file_to_import;
 
   gint err = SPLT_OK;
   mp3splt_put_audacity_labels_splitpoints_from_file(ui->mp3splt_state, filename, &err);
@@ -202,7 +198,7 @@ static gpointer add_audacity_labels_splitpoints(ui_state *ui)
     update_splitpoints_from_mp3splt_state(ui);
   }
 
-  print_status_bar_confirmation(err, ui->gui);
+  print_status_bar_confirmation(err, ui);
 
   exit_threads();
 
@@ -212,7 +208,7 @@ static gpointer add_audacity_labels_splitpoints(ui_state *ui)
 //! Add splitpoints from cddb
 static gpointer add_cddb_splitpoints(ui_state *ui)
 {
-  gchar *filename = ui->file_to_import;
+  gchar *filename = ui->infos->file_to_import;
 
   gint err = SPLT_OK;
   mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, &err);
@@ -223,7 +219,7 @@ static gpointer add_cddb_splitpoints(ui_state *ui)
   {
     update_splitpoints_from_mp3splt_state(ui);
   }
-  print_status_bar_confirmation(err, ui->gui);
+  print_status_bar_confirmation(err, ui);
 
   exit_threads();
 
@@ -233,7 +229,7 @@ static gpointer add_cddb_splitpoints(ui_state *ui)
 //! Add splitpoints from cue file
 static gpointer add_cue_splitpoints(ui_state *ui)
 {
-  gchar *filename = ui->file_to_import;
+  gchar *filename = ui->infos->file_to_import;
 
   gint err = SPLT_OK;
   mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
@@ -245,7 +241,7 @@ static gpointer add_cue_splitpoints(ui_state *ui)
   {
     update_splitpoints_from_mp3splt_state(ui);
   }
-  print_status_bar_confirmation(err, ui->gui);
+  print_status_bar_confirmation(err, ui);
 
   // The cue file has provided libmp3splt with a input filename.
   // But since we use the filename from the gui instead we need to set
@@ -258,7 +254,7 @@ static gpointer add_cue_splitpoints(ui_state *ui)
 
   exit_threads();
 
-  enable_player_buttons(ui->gui);
+  enable_player_buttons(ui);
 
   return NULL;
 }
