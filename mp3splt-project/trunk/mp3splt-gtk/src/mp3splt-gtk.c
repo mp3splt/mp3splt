@@ -237,11 +237,6 @@ void exit_application(GtkWidget *widget, gpointer data)
     player_quit(ui);
   }
 
-  while (gtk_events_pending())
-  {
-    gtk_main_iteration();
-  }
-
   gtk_main_quit();
 }
 
