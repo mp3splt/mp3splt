@@ -49,9 +49,9 @@
 
 #ifdef __WIN32__
 
+#include <winsock2.h>
 #include <windows.h>
 #include <shlwapi.h>
-#include <winsock2.h>
 #define usleep(x) Sleep(x/1000)
 
 #else

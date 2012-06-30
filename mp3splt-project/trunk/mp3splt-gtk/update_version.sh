@@ -36,10 +36,10 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 sed -i "s/\[ AC_MSG_ERROR(libmp3splt version .* needed/\
 \[ AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
 #source code
-#./src/main_win.c:#define VERSION "0.3.1"
-#./src/main_win.c:  g_snprintf(b3, 100, "-release of 27/02/06-\n%s libmp3splt...
-sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/main_win.c || exit 1
-sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_win.c || exit 1
+#./src/main_window.c:#define VERSION "0.3.1"
+#./src/main_window.c:  g_snprintf(b3, 100, "-release of 27/02/06-\n%s libmp3splt...
+sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/main_window.c || exit 1
+sed -i "s/release of .* libmp3splt/release of $DATE-\\\n%s libmp3splt/" ./src/main_window.c || exit 1
 
 DATE=$(date +%d\\/%m\\/%y)
 #./src/mp3splt-gtk.h:#define MP3SPLT_GTK_DATE "14/04/2006"

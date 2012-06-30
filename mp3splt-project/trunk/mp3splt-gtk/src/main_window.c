@@ -42,7 +42,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "0.7.2.1030"
+#define VERSION "0.7.2.1058"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 
@@ -171,7 +171,7 @@ static void initialize_window(ui_state *ui)
   g_string_free(imagefile, TRUE);
 }
 
-void activate_url(GtkAboutDialog *about, const gchar *link, gpointer data)
+static void activate_url(GtkAboutDialog *about, const gchar *link, ui_state *ui)
 {
 #ifdef __WIN32__
   char default_browser[512] = { '\0' };
@@ -287,7 +287,7 @@ static void about_window(GtkWidget *widget, ui_state *ui)
                                 "Suite 330, Boston, MA  02111-1307, "
                                 "USA.");
 
-  g_signal_connect(G_OBJECT(dialog), "activate-link", G_CALLBACK(activate_url), NULL);
+  g_signal_connect(G_OBJECT(dialog), "activate-link", G_CALLBACK(activate_url), ui);
 
   gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog),
       "http://mp3splt.sourceforge.net");
