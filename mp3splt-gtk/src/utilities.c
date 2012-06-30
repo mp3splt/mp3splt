@@ -134,28 +134,28 @@ chunk of memory to have somewhere to put the output string in - which
 means that the memory the output string is in has to be freed after usage. 
 \return 
 */
-gchar *transform_to_utf8(gchar *text, gint free_or_not,
-    gint *must_be_freed)
+gchar *transform_to_utf8(gchar *text, gint free_or_not, gint *must_be_freed)
 {
   gchar *temp;
 
   gsize bytes_read;
   gsize bytes_written;
 
-  if(!(g_utf8_validate (text, -1,NULL)) &&
-     (text != NULL))
+  if (!(g_utf8_validate (text, -1,NULL)) && (text != NULL))
+  {
+    temp = g_convert(text, -1, "UTF-8", "ISO-8859-1", &bytes_read, &bytes_written, NULL);
+    if (free_or_not)
     {
-      temp = g_convert(text, -1, "UTF-8", "ISO-8859-1", &bytes_read, &bytes_written, NULL);
-      if (free_or_not)
-        g_free(text);
-          
-      *must_be_freed = TRUE;
-          
-      return temp;
+      g_free(text);
     }
-  
+
+    *must_be_freed = TRUE;
+
+    return temp;
+  }
+
   *must_be_freed = FALSE;
-  
+
   return text;
 }
 

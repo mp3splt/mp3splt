@@ -117,6 +117,13 @@ typedef struct {
 
   gint split_files;
   gint split_table_number;
+  gint freedb_table_number;
+
+  gint freedb_selected_id;
+
+  const splt_freedb_results *freedb_search_results;
+
+  gint split_file_mode;
 } ui_infos;
 
 typedef struct {
@@ -283,6 +290,20 @@ typedef struct {
 
   GtkWidget *freedb_handle_box;
   GtkWidget *freedb_entry;
+  GtkWidget *freedb_search_button;
+  GtkWidget *freedb_spinner;
+  GtkTreeView *freedb_tree;
+  GtkWidget *freedb_add_button;
+
+  GtkWidget *radio_output;
+
+  GtkWidget *split_mode_radio_button;
+  GtkWidget *file_mode_radio_button;
+
+  GtkWidget *time_label;
+  GtkWidget *equal_tracks_label;
+
+  GtkWidget *multiple_files_component;
 } gui_state;
 
 typedef struct {

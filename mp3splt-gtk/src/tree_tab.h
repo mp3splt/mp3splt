@@ -60,7 +60,7 @@ void exchange_elements_from_array(gint element_number1,
 void exchange_rows_in_the_tree(gint i, gint j, GtkTreeView *tree_view);
 void sort_tree(GtkTreeView *tree_view);
 void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui);
-void add_row(gint checked);
+void add_row(gint checked, ui_state *ui);
 GtkWidget *create_splitpoints_frame(ui_state *ui);
 void put_splitpoints_in_mp3splt_state(splt_state *state);
 

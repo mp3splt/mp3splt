@@ -55,17 +55,12 @@ GtkWidget *player_combo_box = NULL;
 //!the language radio button
 GtkWidget *radio_button = NULL;
 
-//!radio button for choosing default or custom output options
-GtkWidget *radio_output = NULL;
-
 gint preview_indexes[6] = { 0 };
 GPtrArray *wave_preview_labels = NULL;
 
 gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
 
 extern gint timeout_value;
-
-extern gint split_file_mode;
 
 static GtkWidget *create_extract_tags_from_filename_options_box();
 static GtkWidget *create_test_regex_table();
@@ -103,26 +98,22 @@ GString *get_checked_language()
 }
 
 //!returns the checked output radio box
-gboolean get_checked_output_radio_box()
+gboolean get_checked_output_radio_box(ui_state *ui)
 {
-  //get the radio buttons
-  GSList *radio_button_list;
-  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_output));
-  //we check which bubble is checked
-  GtkToggleButton *test;
-  gint i, selected = 0;
+  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_output));
   //O = default output mode
   //1 = custom output mode
+  gint i;
   for(i = 0; i<2;i++)
   {
-    test = (GtkToggleButton *)g_slist_nth_data(radio_button_list,i);
+    GtkToggleButton *test = (GtkToggleButton *)g_slist_nth_data(radio_button_list,i);
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(test)))
     {
-      selected = i;
+      return i;
     }
   }
 
-  return selected;
+  return 0;
 }
 
 //!returns the checked tags radio box
@@ -181,7 +172,7 @@ void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
 {
   GtkWidget *output_label = (GtkWidget *)data;
 
-  gint selected = get_checked_output_radio_box();
+  gint selected = get_checked_output_radio_box(ui);
 
   //custom output mode
   if (selected == 0)
@@ -860,11 +851,13 @@ GtkWidget *create_output_filename_box()
   GtkWidget *vbox = wh_vbox_new();
 
   //default/custom radio buttons
-  radio_output = gtk_radio_button_new_with_label(NULL, _("Default format"));
+  GtkWidget *radio_output = gtk_radio_button_new_with_label(NULL, _("Default format"));
+  ui->gui->radio_output = radio_output;
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
   radio_output = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(radio_output), _("Custom format"));
+  ui->gui->radio_output = radio_output;
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
   //output entry
@@ -892,7 +885,7 @@ GtkWidget *create_output_filename_box()
   ui->gui->output_label = output_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_label, FALSE, FALSE, 0);
 
-  g_signal_connect(GTK_TOGGLE_BUTTON(radio_output),
+  g_signal_connect(GTK_TOGGLE_BUTTON(ui->gui->radio_output),
       "toggled", G_CALLBACK(output_radio_box_event), output_label);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format</b>"));
@@ -1175,29 +1168,31 @@ GtkWidget *create_tags_version_box()
   GtkWidget *vbox = wh_vbox_new();
 
   GtkWidget *tags_version_radio = gtk_radio_button_new_with_label(NULL, _("ID3v1 & ID3v2 tags"));
+  ui->gui->tags_version_radio = tags_version_radio;
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(tags_version_radio), _("ID3v2 tags"));
+  ui->gui->tags_version_radio = tags_version_radio;
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(tags_version_radio), _("ID3v1 tags"));
+  ui->gui->tags_version_radio = tags_version_radio;
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON (tags_version_radio),_("Same tags version as the input file"));
+  ui->gui->tags_version_radio = tags_version_radio;
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
       G_CALLBACK(save_preferences), NULL);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
-
-  ui->gui->tags_version_radio = tags_version_radio;
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Tags version (mp3 only)</b>"));
 }
@@ -1226,50 +1221,45 @@ GtkWidget *create_pref_tags_page()
 }
 
 //!creates the preferences tab
-GtkWidget *create_choose_preferences()
+GtkWidget *create_choose_preferences(ui_state *ui)
 {
-  //our preferences vbox
   GtkWidget *pref_vbox = wh_vbox_new();
 
   GtkWidget *notebook = gtk_notebook_new();
   gtk_box_pack_start(GTK_BOX(pref_vbox), notebook, TRUE, TRUE, 0);
-  
+
   gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
   gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);
   gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
-  
+
   /* split preferences */
-  GtkWidget *splitpoints_prefs = (GtkWidget *)create_pref_splitpoints_page();
+  GtkWidget *splitpoints_prefs = create_pref_splitpoints_page();
   GtkWidget *notebook_label = gtk_label_new(_("Split"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), splitpoints_prefs,
-                           (GtkWidget *)notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), splitpoints_prefs, notebook_label);
 
   /* tags preferences */
-  GtkWidget *tags_prefs = (GtkWidget *)create_pref_tags_page();
+  GtkWidget *tags_prefs = create_pref_tags_page();
   notebook_label = gtk_label_new(_("Tags"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), tags_prefs,
-                           (GtkWidget *)notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), tags_prefs, notebook_label);
 
   /* output preferences */
-  GtkWidget *output_prefs = (GtkWidget *)create_pref_output_page();
+  GtkWidget *output_prefs = create_pref_output_page();
   notebook_label = gtk_label_new(_("Output"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs,
-                           (GtkWidget *)notebook_label);
-  
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs, notebook_label);
+
   /* player preferences */
-  GtkWidget *player_prefs = (GtkWidget *)create_pref_player_page();
+  GtkWidget *player_prefs = create_pref_player_page();
   notebook_label = gtk_label_new(_("Player"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_prefs,
-                           (GtkWidget *)notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_prefs, notebook_label);
 
   /* language preferences page */
 #ifdef __WIN32__
-  GtkWidget *language_prefs = (GtkWidget *)create_pref_language_page();
+  GtkWidget *language_prefs = create_pref_language_page();
   notebook_label = gtk_label_new(_("Language"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), language_prefs,
-                           (GtkWidget *)notebook_label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), language_prefs, notebook_label);
 #endif
-  
+
   return pref_vbox;
 }
+

@@ -42,29 +42,9 @@
 
 #include "all_includes.h"
 
-void add_freedb_row(gchar *album_name, 
-                    gint album_id,
-                    gint *revisions,
-                    gint revisions_number);
-GtkTreeModel *create_freedb_model();
-GtkTreeView *create_freedb_tree();
-void create_freedb_columns (GtkTreeView *freedb_tree);
-void freedb_selection_changed(GtkTreeSelection *selection,
-                              gpointer data);
-void remove_all_freedb_rows();
-gchar *transform_to_utf8(gchar *text, 
-                         gint free_or_not,
-                         gint *must_be_freed);
-gint write_freedbfile_and_get_splitpoints(int *err);
-void get_secs_mins_hundr(gfloat time,
-                         gint *mins,gint *secs, 
-                         gint *hundr);
-void update_splitpoints_from_mp3splt_state();
-void freedb_add_button_clicked_event(GtkButton *button,
-                                     gpointer data);
+void update_splitpoints_from_mp3splt_state(ui_state *ui);
 GtkWidget *create_freedb_frame(ui_state *ui);
-
-void hide_freedb_spinner();
+void hide_freedb_spinner(gui_state *gui);
 
 #endif
 

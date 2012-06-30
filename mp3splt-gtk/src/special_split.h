@@ -49,10 +49,6 @@
 #define NUMBER_OF_SPLIT_MODES 6
 
 void select_split_mode(int split_mode);
-
-void deactivate_silence_parameters();
-void activate_silence_parameters();
-void split_mode_changed (GtkToggleButton *radio_b, gpointer data);
 GtkWidget *create_special_split_page();
 
 #endif

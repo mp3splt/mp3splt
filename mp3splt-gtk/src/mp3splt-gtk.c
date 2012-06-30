@@ -41,7 +41,6 @@
 
 extern gchar *filename_path_of_split;
 
-extern gint split_file_mode;
 extern GtkWidget *multiple_files_tree;
 extern gint multiple_files_tree_number;
 
@@ -65,7 +64,7 @@ gpointer split_it(gpointer data)
   //we erase previous tags if we don't have the option
   //splt_current_tags
   if ((mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err) !=
-        (SPLT_CURRENT_TAGS) || split_file_mode == FILE_MODE_MULTIPLE))
+        (SPLT_CURRENT_TAGS) || ui->infos->split_file_mode == FILE_MODE_MULTIPLE))
   {
     mp3splt_erase_all_tags(ui->mp3splt_state,&err);
   }
@@ -99,7 +98,7 @@ gpointer split_it(gpointer data)
   mp3splt_set_path_of_split(ui->mp3splt_state,filename_path_of_split);
 
   gint multiple_files_error = SPLT_FALSE;
-  if (split_file_mode == FILE_MODE_SINGLE)
+  if (ui->infos->split_file_mode == FILE_MODE_SINGLE)
   {
     enter_threads();
 

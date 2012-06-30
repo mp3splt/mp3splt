@@ -809,7 +809,7 @@ void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui)
 }
 
 //!adds a row to the table
-void add_row(gboolean checked)
+void add_row(gboolean checked, ui_state *ui)
 {
   gui_status *status = ui->status;
 
@@ -824,7 +824,7 @@ void add_row(gboolean checked)
 
 static void add_row_clicked(GtkWidget *button, ui_state *ui)
 {
-  add_row(TRUE);
+  add_row(TRUE, ui);
 }
 
 //!set splitpints from silence detection
@@ -847,7 +847,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
   mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
   mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
 
-  if (get_checked_output_radio_box() == 0)
+  if (get_checked_output_radio_box(ui) == 0)
   {
     mp3splt_set_oformat(ui->mp3splt_state, format, &err);
   }
@@ -885,7 +885,7 @@ gpointer detect_silence_and_set_splitpoints(gpointer data)
 
   if (err >= 0)
   {
-    update_splitpoints_from_mp3splt_state();
+    update_splitpoints_from_mp3splt_state(ui);
   }
 
   print_status_bar_confirmation(err, ui->gui);

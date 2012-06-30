@@ -39,102 +39,68 @@
 
 #include "freedb_tab.h"
 
-GtkTreeView *freedb_tree;
-gint freedb_table_number = 0;
-
 enum {
   ALBUM_NAME,
   NUMBER,
   FREEDB_TABLE
 };
 
-//results of the freedb search
-const splt_freedb_results *search_results;
-//the selected entry id
-gint selected_id = -1;
-
-//the add splitpoint button
-GtkWidget *freedb_add_button;
-GtkWidget *freedb_search_button;
-GtkWidget *spinner;
-
 extern ui_state *ui;
 
 //!add a row to the table
-void add_freedb_row(gchar *album_name, 
-                    gint album_id,
-                    gint *revisions,
-                    gint revisions_number)
+static void add_freedb_row(gchar *album_name, gint album_id,
+                    gint *revisions, gint revisions_number)
 {
-  //father iter
-  GtkTreeIter iter;
-  //children iter
-  GtkTreeIter child_iter;
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->freedb_tree);
 
-  GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
-  
+  GtkTreeIter iter;
   gtk_tree_store_append (GTK_TREE_STORE(model), &iter,NULL);
-  //sets the father
-  gtk_tree_store_set (GTK_TREE_STORE(model), &iter,
-                      ALBUM_NAME, album_name,
-                      NUMBER, album_id,
-                      -1);
-  
-  gchar *number;
+  gtk_tree_store_set(GTK_TREE_STORE(model), &iter,
+      ALBUM_NAME, album_name, NUMBER, album_id, -1);
+
   gint malloc_number = strlen(album_name) + 20;
-  //allocate memory
-  number = malloc(malloc_number * sizeof(gchar *));
+  gchar *number = malloc(malloc_number * sizeof(gchar *));
   gint i;
   for(i = 0; i < revisions_number; i++)
-    {
-      g_snprintf(number,malloc_number,
-          _("%s Revision %d"),album_name, revisions[i]);
+  {
+    g_snprintf(number,malloc_number, _("%s Revision %d"),album_name, revisions[i]);
 
-      //sets the children..
-      gtk_tree_store_append (GTK_TREE_STORE(model),
-                             &child_iter, &iter);
-      gtk_tree_store_set (GTK_TREE_STORE(model),
-                          &child_iter,
-                          ALBUM_NAME, number,
-                          NUMBER, album_id+i+1,
-                          -1);
-    }
-  freedb_table_number++;
-  //free memory
+    GtkTreeIter child_iter;
+    gtk_tree_store_append(GTK_TREE_STORE(model), &child_iter, &iter);
+    gtk_tree_store_set(GTK_TREE_STORE(model), &child_iter,
+        ALBUM_NAME, number, NUMBER, album_id + i + 1, -1);
+  }
+
+  ui->infos->freedb_table_number++;
   g_free(number);
 }
 
 //!creates the model for the freedb tree
-GtkTreeModel *create_freedb_model()
+static GtkTreeModel *create_freedb_model()
 {
   GtkTreeStore *model = gtk_tree_store_new(FREEDB_TABLE, G_TYPE_STRING, G_TYPE_INT);
   return GTK_TREE_MODEL(model);
 }
 
 //!creates the freedb tree
-GtkTreeView *create_freedb_tree()
+static GtkTreeView *create_freedb_tree()
 {
-  GtkTreeModel *model = (GtkTreeModel *)create_freedb_model();
+  GtkTreeModel *model = create_freedb_model();
   return GTK_TREE_VIEW(gtk_tree_view_new_with_model(model));
 }
 
 //!creates freedb columns
-void create_freedb_columns(GtkTreeView *freedb_tree)
+static void create_freedb_columns(GtkTreeView *freedb_tree)
 {
-  GtkCellRendererText *renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new ());
+  GtkCellRendererText *renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
   g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(ALBUM_NAME));
   GtkTreeViewColumn *name_column = gtk_tree_view_column_new_with_attributes 
-    (_("Album title"), GTK_CELL_RENDERER(renderer),
-     "text", ALBUM_NAME, NULL);
+    (_("Album title"), GTK_CELL_RENDERER(renderer), "text", ALBUM_NAME, NULL);
 
-  //appends columns to the list of columns of freedb_tree
-  gtk_tree_view_insert_column(freedb_tree,
-      GTK_TREE_VIEW_COLUMN(name_column), ALBUM_NAME);
+  gtk_tree_view_insert_column(freedb_tree, GTK_TREE_VIEW_COLUMN(name_column), ALBUM_NAME);
 
-  //middle alignment of the column name
   gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(name_column), 0.5);
-  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column),
-                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sizing(GTK_TREE_VIEW_COLUMN(name_column), GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
 
   gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
@@ -160,88 +126,90 @@ static void handle_freedb_detached_event(GtkHandleBox *handlebox, GtkWidget *wid
 }
 
 //!freedb selection has changed
-void freedb_selection_changed(GtkTreeSelection *selection, gpointer data)
+static void freedb_selection_changed(GtkTreeSelection *selection, ui_state *ui)
 {
-  GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->freedb_tree);
 
   GtkTreeIter iter;
   if (gtk_tree_selection_get_selected(selection, &model, &iter))
   {
     gchar *info;
-    gtk_tree_model_get(model, &iter, ALBUM_NAME, &info, NUMBER, &selected_id, -1);
-
+    gtk_tree_model_get(model, &iter, ALBUM_NAME, &info, 
+        NUMBER, &ui->infos->freedb_selected_id, -1);
     g_free(info);
-    gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
+    gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
   }
   else
   {
-    gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
+    gtk_widget_set_sensitive(ui->gui->freedb_add_button, FALSE);
   }
 }
 
 //!removes all rows from the freedb table
-void remove_all_freedb_rows()
+static void remove_all_freedb_rows(ui_state *ui)
 {
-  GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
-
-  while (freedb_table_number > 0)
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->freedb_tree);
+  while (ui->infos->freedb_table_number > 0)
   {
     GtkTreeIter iter;
     gtk_tree_model_get_iter_first(model, &iter);
     gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-    freedb_table_number--;
+    ui->infos->freedb_table_number--;
   }
 }
 
 //!search the freedb.org
-gpointer freedb_search(gpointer data)
+static gpointer freedb_search(ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+  ui_infos *infos = ui->infos;
+
   enter_threads();
 
   ui->status->freedb_lock = TRUE;
- 
-  gtk_widget_hide(freedb_search_button);
-  gtk_widget_show(spinner);
-  gtk_spinner_start(GTK_SPINNER(spinner));
 
-  gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
-  gtk_editable_set_editable(GTK_EDITABLE(ui->gui->freedb_entry), FALSE);
- 
-  put_status_message(_("please wait... contacting tracktype.org"), ui->gui);
- 
-  const gchar *freedb_search = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
-  
+  gtk_widget_hide(gui->freedb_search_button);
+  gtk_widget_show(gui->freedb_spinner);
+  gtk_spinner_start(GTK_SPINNER(gui->freedb_spinner));
+
+  gtk_widget_set_sensitive(gui->freedb_add_button, FALSE);
+  gtk_editable_set_editable(GTK_EDITABLE(gui->freedb_entry), FALSE);
+
+  put_status_message(_("please wait... contacting tracktype.org"), gui);
+
+  const gchar *freedb_search_value = gtk_entry_get_text(GTK_ENTRY(gui->freedb_entry));
+
   exit_threads();
-  
+
   gint err = SPLT_OK;
-  search_results = mp3splt_get_freedb_search(ui->mp3splt_state, freedb_search, &err,
-      SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0",-1);
- 
+  infos->freedb_search_results = 
+    mp3splt_get_freedb_search(ui->mp3splt_state, freedb_search_value, &err,
+        SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0",-1);
+
   enter_threads();
 
-  print_status_bar_confirmation(err, ui->gui);
- 
-  remove_all_freedb_rows();
- 
+  print_status_bar_confirmation(err, gui);
+
+  remove_all_freedb_rows(ui);
+
   if (err >= 0)
   {
     gint i = 0;
-    for (i = 0; i< search_results->number;i++)
+    for (i = 0; i < infos->freedb_search_results->number;i++)
     {
       gint must_be_free = SPLT_FALSE;
-      search_results->results[i].name =
-        transform_to_utf8(search_results->results[i].name,
-            TRUE, &must_be_free);
-      add_freedb_row(search_results->results[i].name,
-          search_results->results[i].id,
-          search_results->results[i].revisions,
-          search_results->results[i].revision_number);
+      infos->freedb_search_results->results[i].name =
+        transform_to_utf8(infos->freedb_search_results->results[i].name, TRUE, &must_be_free);
+      add_freedb_row(infos->freedb_search_results->results[i].name,
+          infos->freedb_search_results->results[i].id,
+          infos->freedb_search_results->results[i].revisions,
+          infos->freedb_search_results->results[i].revision_number);
     }
 
-    if (search_results->number > 0)
+    if (infos->freedb_search_results->number > 0)
     {
-      GtkTreeSelection *selection = gtk_tree_view_get_selection(freedb_tree);
-      GtkTreeModel *model = gtk_tree_view_get_model(freedb_tree);
+      GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->freedb_tree);
+      GtkTreeModel *model = gtk_tree_view_get_model(gui->freedb_tree);
       GtkTreePath *path = gtk_tree_path_new_from_indices (0 ,-1);
 
       GtkTreeIter iter;
@@ -250,13 +218,13 @@ gpointer freedb_search(gpointer data)
       gtk_tree_path_free(path);
     }
   }
- 
-  gtk_widget_show(freedb_search_button);
-  gtk_spinner_stop(GTK_SPINNER(spinner));
-  gtk_widget_hide(spinner);
 
-  gtk_editable_set_editable(GTK_EDITABLE(ui->gui->freedb_entry), TRUE);
- 
+  gtk_widget_show(gui->freedb_search_button);
+  gtk_spinner_stop(GTK_SPINNER(gui->freedb_spinner));
+  gtk_widget_hide(gui->freedb_spinner);
+
+  gtk_editable_set_editable(GTK_EDITABLE(gui->freedb_entry), TRUE);
+
   ui->status->freedb_lock = FALSE;
 
   exit_threads();
@@ -270,11 +238,11 @@ static void freedb_search_start_thread(ui_state *ui)
   if (ui->status->freedb_lock) { return; }
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  create_thread(freedb_search, ui, TRUE, NULL);
+  create_thread((GThreadFunc)freedb_search, ui, TRUE, NULL);
 }
 
 //!we push the search button
-void freedb_search_button_event(GtkWidget *widget, ui_state *ui)
+static void freedb_search_button_event(GtkWidget *widget, ui_state *ui)
 {
   freedb_search_start_thread(ui);
 }
@@ -288,41 +256,31 @@ static void freedb_entry_activate_event(GtkEntry *entry, ui_state *ui)
   freedb_search_start_thread(ui);
 }
 
-void write_freedbfile(int *err)
+static void write_freedbfile(int *err)
 {
-  gchar *filename = NULL;
- 
   enter_threads();
    
   put_status_message(_("please wait... contacting tracktype.org"), ui->gui);
   
-  //we suppose directory exists
-  //it should be created when mp3splt-gtk starts
   gchar mp3splt_dir[14] = ".mp3splt-gtk";
 
   const gchar *home_dir = g_get_home_dir();
   gint malloc_number = strlen(mp3splt_dir) + strlen(home_dir) + 20;
-  filename = malloc(malloc_number * sizeof(gchar *));
-  
-  g_snprintf(filename,malloc_number,
-             "%s%s%s%s%s", home_dir,
-             G_DIR_SEPARATOR_S, mp3splt_dir,
-             G_DIR_SEPARATOR_S, "query.cddb");
+  gchar *filename = malloc(malloc_number * sizeof(gchar));
+  g_snprintf(filename, malloc_number, "%s%s%s%s%s", home_dir,
+      G_DIR_SEPARATOR_S, mp3splt_dir,
+      G_DIR_SEPARATOR_S, "query.cddb");
  
   exit_threads();
 
-  //we write the freedb file ...
-  mp3splt_write_freedb_file_result(ui->mp3splt_state, selected_id,
-                                   filename, err,
-                                   //for now cddb.cgi get file type
-                                   SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI,
-                                   "\0",-1);
+  mp3splt_write_freedb_file_result(ui->mp3splt_state, ui->infos->freedb_selected_id, 
+      filename, err, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
 
   enter_threads();
   print_status_bar_confirmation(*err, ui->gui);
   exit_threads();
 
-  if(get_checked_output_radio_box())
+  if (get_checked_output_radio_box(ui))
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
@@ -338,7 +296,7 @@ void write_freedbfile(int *err)
     exit_threads();
   }
 
-  mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state,filename, err);
+  mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, err);
  
   if (filename)
   {
@@ -348,7 +306,7 @@ void write_freedbfile(int *err)
 }
 
 //!returns the seconds, minutes, and hudreths
-void get_secs_mins_hundr(gfloat time, gint *mins,gint *secs, gint *hundr)
+static void get_secs_mins_hundr(gfloat time, gint *mins,gint *secs, gint *hundr)
 {
   *mins = (gint)(time / 6000);
   *secs = (gint)(time - (*mins * 6000)) / 100;
@@ -361,104 +319,99 @@ Takes the splitpoints from the table displayed in the gui
 
 max_splits is the maximum number of splitpoints to update
 */
-void update_splitpoints_from_mp3splt_state()
+void update_splitpoints_from_mp3splt_state(ui_state *ui)
 {
   gint max_splits = 0;
   gint err = SPLT_OK;
 
   exit_threads();
-  const splt_point *points = mp3splt_get_splitpoints(ui->mp3splt_state, &max_splits,&err);
+  const splt_point *points = mp3splt_get_splitpoints(ui->mp3splt_state, &max_splits, &err);
   enter_threads();
 
   print_status_bar_confirmation(err, ui->gui);
-  
-  if (max_splits > 0)
+
+  if (max_splits <= 0)
   {
-    remove_all_rows(NULL, ui);
-    gint i;
+    return;
+  }
 
-    //for each splitpoint, we put it in the table
-    for(i = 0; i < max_splits;i++)
+  remove_all_rows(ui->gui->remove_all_button, ui);
+  gint i;
+  for (i = 0; i < max_splits;i++)
+  {
+    //ugly hack because we use maximum ints in the GUI
+    //-GUI must be changed to accept long values
+    long old_point_value = points[i].value;
+    int point_value = (int) old_point_value;
+    if (old_point_value > INT_MAX)
     {
-      //ugly hack because we use maximum ints in the GUI
-      //-GUI must be changed to accept long values
-      long old_point_value = points[i].value;
-      int point_value = (int) old_point_value;
-      if (old_point_value > INT_MAX)
-      {
-        point_value = INT_MAX;
-      }
-
-      //we get the minutes, seconds and hundreths
-      get_secs_mins_hundr(point_value, 
-          &ui->status->spin_mins, &ui->status->spin_secs, &ui->status->spin_hundr_secs);
-
-      gint must_be_free = FALSE;
-      gchar *result_utf8 = points[i].name;
-
-      if (result_utf8 != NULL)
-      {
-        result_utf8 = transform_to_utf8(result_utf8, 
-            FALSE, &must_be_free);
-
-        g_snprintf(ui->status->current_description, 255, "%s", result_utf8);
-      }
-      else
-      {
-        g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
-      }
-
-      if (must_be_free)
-      {
-        g_free(result_utf8);
-        result_utf8 = NULL;
-      }
-
-      //we add the row
-      if (points[i].type == SPLT_SPLITPOINT)
-      {
-        add_row(TRUE);
-      }
-      else if (points[i].type == SPLT_SKIPPOINT)
-      {
-        add_row(FALSE);
-      }
+      point_value = INT_MAX;
     }
 
-    g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
+    get_secs_mins_hundr(point_value, 
+        &ui->status->spin_mins, &ui->status->spin_secs, &ui->status->spin_hundr_secs);
 
-    update_minutes_from_spinner(NULL, ui);
-    update_seconds_from_spinner(NULL, ui);
-    update_hundr_secs_from_spinner(NULL, ui);
+    gint must_be_free = FALSE;
+    gchar *result_utf8 = points[i].name;
+    if (result_utf8 != NULL)
+    {
+      result_utf8 = transform_to_utf8(result_utf8, FALSE, &must_be_free);
+      g_snprintf(ui->status->current_description, 255, "%s", result_utf8);
+    }
+    else
+    {
+      g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
+    }
+
+    if (must_be_free)
+    {
+      g_free(result_utf8);
+      result_utf8 = NULL;
+    }
+
+    if (points[i].type == SPLT_SPLITPOINT)
+    {
+      add_row(TRUE, ui);
+    }
+    else if (points[i].type == SPLT_SKIPPOINT)
+    {
+      add_row(FALSE, ui);
+    }
   }
+
+  g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
+
+  update_minutes_from_spinner(ui->gui->spinner_minutes, ui);
+  update_seconds_from_spinner(ui->gui->spinner_seconds, ui);
+  update_hundr_secs_from_spinner(ui->gui->spinner_hundr_secs, ui);
 }
 
-gpointer put_freedb_splitpoints(gpointer data)
+static gpointer put_freedb_splitpoints(ui_state *ui)
 {
   gint err = SPLT_OK;
 
   enter_threads();
-  gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);  
+  gtk_widget_set_sensitive(ui->gui->freedb_add_button, FALSE);  
   exit_threads();
- 
+
   write_freedbfile(&err);
- 
+
   enter_threads();
- 
-  update_splitpoints_from_mp3splt_state();
+
+  update_splitpoints_from_mp3splt_state(ui);
   print_status_bar_confirmation(err, ui->gui);
-  gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), TRUE);
+  gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
 
   exit_threads();
-  
+
   return NULL;
 }
 
 //!event for the freedb add button when clicked
-void freedb_add_button_clicked_event(GtkButton *button, gpointer data)
+static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  create_thread(put_freedb_splitpoints, ui, TRUE, NULL);
+  create_thread((GThreadFunc)put_freedb_splitpoints, ui, TRUE, NULL);
 }
 
 //!creates the freedb box
@@ -491,21 +444,24 @@ GtkWidget *create_freedb_frame(ui_state *ui)
   g_signal_connect(G_OBJECT(freedb_entry), "activate",
       G_CALLBACK(freedb_entry_activate_event), ui);
 
-  freedb_search_button = wh_create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
+  GtkWidget *freedb_search_button = wh_create_cool_button(GTK_STOCK_FIND, _("_Search"),FALSE);
+  ui->gui->freedb_search_button = freedb_search_button;
   g_signal_connect(G_OBJECT(freedb_search_button), "clicked",
       G_CALLBACK(freedb_search_button_event), ui);
   gtk_box_pack_start(GTK_BOX(search_hbox), freedb_search_button, FALSE, FALSE, 0);
  
-  spinner = gtk_spinner_new();
-  gtk_box_pack_start(GTK_BOX(search_hbox), spinner, FALSE, FALSE, 4);
+  GtkWidget *freedb_spinner = gtk_spinner_new();
+  ui->gui->freedb_spinner = freedb_spinner;
+  gtk_box_pack_start(GTK_BOX(search_hbox), freedb_spinner, FALSE, FALSE, 4);
 
   /* freedb scrolled window and the tree */
-  freedb_tree = create_freedb_tree();
+  GtkTreeView *freedb_tree = create_freedb_tree();
+  ui->gui->freedb_tree = freedb_tree;
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+      GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(freedb_vbox), scrolled_window, TRUE, TRUE, 1);
 
   create_freedb_columns(freedb_tree);
@@ -514,26 +470,27 @@ GtkWidget *create_freedb_frame(ui_state *ui)
   
   GtkTreeSelection *freedb_tree_selection = gtk_tree_view_get_selection(freedb_tree);
   g_signal_connect(G_OBJECT(freedb_tree_selection), "changed",
-                    G_CALLBACK(freedb_selection_changed), NULL);
+                    G_CALLBACK(freedb_selection_changed), ui);
 
   /* add button */
   GtkWidget *selected_hbox = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 2);
 
-  freedb_add_button = wh_create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
+  GtkWidget *freedb_add_button = wh_create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
+  ui->gui->freedb_add_button = freedb_add_button;
 
-  gtk_widget_set_sensitive(GTK_WIDGET(freedb_add_button), FALSE);
+  gtk_widget_set_sensitive(freedb_add_button, FALSE);
   g_signal_connect(G_OBJECT(freedb_add_button), "clicked",
-      G_CALLBACK(freedb_add_button_clicked_event), NULL);
+      G_CALLBACK(freedb_add_button_clicked_event), ui);
   gtk_box_pack_start(GTK_BOX(selected_hbox), freedb_add_button, FALSE, FALSE, 0);
-  gtk_widget_set_tooltip_text(freedb_add_button, 
-      _("Set splitpoints to the splitpoints table"));
+  gtk_widget_set_tooltip_text(freedb_add_button, _("Set splitpoints to the splitpoints table"));
   
   return freedb_handle_box;
 }
 
-void hide_freedb_spinner()
+void hide_freedb_spinner(gui_state *gui)
 {
-  gtk_widget_hide(spinner);
+  gtk_widget_hide(gui->freedb_spinner);
 }
+
 

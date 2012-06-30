@@ -66,7 +66,7 @@ void combo_remove_unavailable_players();
 void player_combo_box_event(GtkComboBox *widget, gpointer data);
 GtkWidget *create_choose_player_combo();
 GtkWidget *create_pref_player_page();
-GtkWidget *create_choose_preferences();
+GtkWidget *create_choose_preferences(ui_state *ui);
 void set_output_directory(gchar *dirname);
 gchar *outputdirectory_get();
 

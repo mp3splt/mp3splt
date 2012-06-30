@@ -45,12 +45,6 @@
 extern GtkWidget *player_combo_box;
 extern GtkWidget *radio_button;
 
-extern GtkWidget *file_mode_radio_button;
-
-extern GtkWidget *radio_output;
-
-extern gint split_file_mode;
-
 extern ui_state *ui;
 
 static void check_pref_file_and_write_default();
@@ -249,8 +243,7 @@ void load_preferences()
     list_number = 1;
   }
 
-  GSList *radio_button_list =
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
+  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
   GtkWidget *our_button = (GtkWidget *)
     g_slist_nth_data(radio_button_list, list_number);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_button), TRUE);
@@ -426,7 +419,7 @@ void load_preferences()
   gint default_output_format = g_key_file_get_boolean(key_file, "output",
       "default_output_format", NULL);
   GSList *output_radio_button_list = 
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_output));
+    gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_output));
   GtkWidget *our_selection = 
     (GtkWidget *)g_slist_nth_data(output_radio_button_list, default_output_format);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(our_selection), TRUE);
@@ -460,7 +453,7 @@ void load_preferences()
   //file mode
   gint file_mode = g_key_file_get_integer(key_file, "split", "file_mode", NULL);
   GSList *file_mode_radio_button_list = 
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(file_mode_radio_button));
+    gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->file_mode_radio_button));
   our_selection = (GtkWidget *)g_slist_nth_data(file_mode_radio_button_list, file_mode);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_selection), TRUE);
 
@@ -546,7 +539,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
       gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
   //default output format
   g_key_file_set_boolean(my_key_file, "output", "default_output_format",
-      get_checked_output_radio_box());
+      get_checked_output_radio_box(ui));
   g_key_file_set_boolean(my_key_file, "output", "create_dirs_if_needed",
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->create_dirs_from_output_files)));
 
@@ -605,7 +598,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
   g_key_file_set_integer(my_key_file, "split", "split_mode_time_value",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_time)));
   //type of split: file mode
-  g_key_file_set_integer(my_key_file, "split", "file_mode", split_file_mode);
+  g_key_file_set_integer(my_key_file, "split", "file_mode", ui->infos->split_file_mode);
   //equal time tracks value
   g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_equal_tracks)));
