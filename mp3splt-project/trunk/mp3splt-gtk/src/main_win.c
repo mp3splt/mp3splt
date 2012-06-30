@@ -60,8 +60,6 @@ extern GtkWidget *mess_history_dialog;
 
 extern GtkWidget *da;
 
-extern gint selected_id;
-extern splt_freedb_results *search_results;
 extern gint max_split_files;
 
 extern ui_state *ui;
@@ -390,14 +388,11 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
 
   put_options_from_preferences(ui);
 
-  //output format
-  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err)
-      != SPLT_OPTION_NORMAL_MODE)
+  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err) != SPLT_OPTION_NORMAL_MODE)
   {
-    if (!get_checked_output_radio_box())
+    if (!get_checked_output_radio_box(ui))
     {
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-          SPLT_OUTPUT_FORMAT);
+      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
     }
   }
 
@@ -903,20 +898,18 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), freedb_vbox, notebook_label);
   
   /* special split page */
-  GtkWidget *special_split_vbox;
-  special_split_vbox = wh_vbox_new();
-  gtk_container_set_border_width (GTK_CONTAINER (special_split_vbox), 0);
+  GtkWidget *special_split_vbox = wh_vbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER(special_split_vbox), 0);
   frame = create_special_split_page();
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
   notebook_label = gtk_label_new(_("Type of split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
   /* preferences page */
-  GtkWidget *preferences_vbox;
-  preferences_vbox = wh_vbox_new();
-  gtk_container_set_border_width (GTK_CONTAINER (preferences_vbox), 0);
+  GtkWidget *preferences_vbox = wh_vbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER(preferences_vbox), 0);
 
-  frame = create_choose_preferences();
+  frame = create_choose_preferences(ui);
   gtk_box_pack_start(GTK_BOX(preferences_vbox), frame, TRUE, TRUE, 0);
 
   notebook_label = gtk_label_new(_("Preferences"));
@@ -1003,7 +996,7 @@ void create_application(ui_state *ui)
     gtk_widget_hide(ui->gui->playlist_box);
   }
 
-  hide_freedb_spinner();
+  hide_freedb_spinner(ui->gui);
 }
 
 /*!Output an error message from libmp3splt to the status bar

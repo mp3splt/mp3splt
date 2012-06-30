@@ -193,7 +193,7 @@ static gpointer add_audacity_labels_splitpoints(gpointer data)
  
   if (err >= 0)
   {
-    update_splitpoints_from_mp3splt_state();
+    update_splitpoints_from_mp3splt_state(ui);
   }
  
   print_status_bar_confirmation(err, ui->gui);
@@ -221,7 +221,7 @@ static gpointer add_cddb_splitpoints(gpointer data)
  
   if (err >= 0)
   {
-    update_splitpoints_from_mp3splt_state();
+    update_splitpoints_from_mp3splt_state(ui);
   }
   print_status_bar_confirmation(err, ui->gui);
 
@@ -249,7 +249,7 @@ static gpointer add_cue_splitpoints(gpointer data)
  
   if (err >= 0)
   {
-    update_splitpoints_from_mp3splt_state();
+    update_splitpoints_from_mp3splt_state(ui);
   }
   print_status_bar_confirmation(err, ui->gui);
 

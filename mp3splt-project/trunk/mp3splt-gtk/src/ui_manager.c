@@ -279,6 +279,12 @@ static void ui_infos_new(ui_state *ui)
 
   infos->split_files = 0;
   infos->split_table_number = 0;
+  infos->freedb_table_number = 0;
+  infos->freedb_selected_id = -1;
+
+  infos->freedb_search_results = NULL;
+
+  infos->split_file_mode = FILE_MODE_SINGLE;
 
   ui->infos = infos;
 }
