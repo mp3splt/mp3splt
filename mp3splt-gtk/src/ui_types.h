@@ -57,6 +57,11 @@ typedef struct {
 } silence_wave;
 
 typedef struct {
+  gint index;
+  gpointer data;
+} preview_index_and_data;
+
+typedef struct {
   gchar *browser_directory;
   ui_main_window *main_win;
   GList *text_options_list;
@@ -124,6 +129,10 @@ typedef struct {
   const splt_freedb_results *freedb_search_results;
 
   gint split_file_mode;
+
+  GString *outputdirname;
+
+  preview_index_and_data preview_indexes[6];
 } ui_infos;
 
 typedef struct {
@@ -304,6 +313,15 @@ typedef struct {
   GtkWidget *equal_tracks_label;
 
   GtkWidget *multiple_files_component;
+
+  GtkWidget *directory_entry;
+  GtkWidget *player_combo_box;
+  GtkWidget *radio_button;
+
+  GPtrArray *wave_preview_labels;
+
+  GtkWidget *mess_history_dialog;
+  GtkWidget *mess_hist_view;
 } gui_state;
 
 typedef struct {

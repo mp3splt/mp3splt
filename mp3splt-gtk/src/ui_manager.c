@@ -143,7 +143,7 @@ void ui_register_spinner_int_preference(gchar *main_key, gchar *second_key,
 
 void ui_register_range_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *range,
-    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
+    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data),
     gpointer user_data_for_cb, ui_state *ui)
 {
   pm_register_range_preference(main_key, second_key,
@@ -285,6 +285,15 @@ static void ui_infos_new(ui_state *ui)
   infos->freedb_search_results = NULL;
 
   infos->split_file_mode = FILE_MODE_SINGLE;
+
+  infos->outputdirname = NULL;
+
+  gint i = 0;
+  for (i = 0; i < 6;i++)
+  {
+    infos->preview_indexes[i].index = 0;
+    infos->preview_indexes[i].data = NULL;
+  }
 
   ui->infos = infos;
 }

@@ -39,59 +39,34 @@
 
 #include "preferences_tab.h"
 
-/*! The name of the output directory.
-
-  Can be accessed by void set_output_directory() and 
-  outputdirectory_get().
- */
-GString *outputdirname = NULL;
-
-//! The textbox that shows the name of the output directory
-GtkWidget *directory_entry = NULL;
-
-//!choose the player box
-GtkWidget *player_combo_box = NULL;
-
-//!the language radio button
-GtkWidget *radio_button = NULL;
-
-gint preview_indexes[6] = { 0 };
-GPtrArray *wave_preview_labels = NULL;
-
-gint douglas_peucker_indexes[5] = { 0, 1, 2, 3, 4};
-
 extern gint timeout_value;
 
 static GtkWidget *create_extract_tags_from_filename_options_box();
 static GtkWidget *create_test_regex_table();
 
-extern ui_state *ui;
-
 static void update_wave_preview_label_markup(gint index, gint interpolation_level);
+
+extern ui_state *ui;
 
 /*!Returns the selected language
 
 must be free() the result after using it.
 */
-GString *get_checked_language()
+GString *get_checked_language(ui_state *ui)
 {
-  GSList *radio_button_list;
-  radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
-  GtkWidget *our_button;
+  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_button));
 
   //0 = german, 1 = french, 2 = english
-  our_button = (GtkWidget *)g_slist_nth_data(radio_button_list, 0);
-  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(our_button)))
+  GtkWidget *our_button = GTK_WIDGET(g_slist_nth_data(radio_button_list, 0));
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(our_button)))
   {
     return g_string_new("de_DE");
   }
-  else 
+
+  our_button = GTK_WIDGET(g_slist_nth_data(radio_button_list, 1));
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(our_button)))
   {
-    our_button = (GtkWidget *)g_slist_nth_data(radio_button_list, 1);
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(our_button)))
-    {
-      return g_string_new("fr_FR");
-    }
+    return g_string_new("fr_FR");
   }
 
   return g_string_new("en");
@@ -137,20 +112,20 @@ gint get_checked_tags_version_radio_box(gui_state *gui)
 }
 
 //! Set the name of the output directory
-void set_output_directory(gchar *dirname)
+void set_output_directory(gchar *dirname, ui_state *ui)
 {
   if (dirname == NULL)
   {
     return;
   }
 
-  if (outputdirname != NULL)
+  if (ui->infos->outputdirname != NULL)
   {
-    g_string_free(outputdirname,TRUE);
+    g_string_free(ui->infos->outputdirname, TRUE);
   }
-  outputdirname = g_string_new(dirname);
+  ui->infos->outputdirname = g_string_new(dirname);
 
-  gtk_entry_set_text(GTK_ENTRY(directory_entry), dirname);
+  gtk_entry_set_text(GTK_ENTRY(ui->gui->directory_entry), dirname);
 }
 
 /*! Get the name of the output directory
@@ -159,22 +134,20 @@ void set_output_directory(gchar *dirname)
  - The name of the output directory, if a directory is set.
  - NULL, otherwise.
 */
-gchar* outputdirectory_get()
+gchar *get_output_directory(ui_state *ui)
 {
-  if(outputdirname!=NULL)
-    return(outputdirname->str);
-  else
-    return NULL;
+  if (ui->infos->outputdirname != NULL)
+  {
+    return ui->infos->outputdirname->str;
+  }
+
+  return NULL;
 }
 
 //!cddb and cue output mode radio box event
-void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
+static void output_radio_box_event(GtkToggleButton *radio_b, ui_state *ui)
 {
-  GtkWidget *output_label = (GtkWidget *)data;
-
   gint selected = get_checked_output_radio_box(ui);
-
-  //custom output mode
   if (selected == 0)
   {
     gtk_widget_set_sensitive(ui->gui->output_entry, TRUE);
@@ -192,25 +165,28 @@ void output_radio_box_event(GtkToggleButton *radio_b, gpointer data)
 }
 
 //! Create the "select language" box
-GtkWidget *create_language_box()
+static GtkWidget *create_language_box(ui_state *ui)
 {
   GtkWidget *radio_vbox = wh_vbox_new();
 
-  radio_button = gtk_radio_button_new_with_label(NULL, "English");
+  GtkWidget *radio_button = gtk_radio_button_new_with_label(NULL, "English");
+  ui->gui->radio_button = radio_button;
   g_signal_connect(GTK_TOGGLE_BUTTON(radio_button), "toggled",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(radio_vbox), radio_button, TRUE, TRUE, 0);
 
   radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(radio_button), "Français");
+  ui->gui->radio_button = radio_button;
   g_signal_connect(GTK_TOGGLE_BUTTON(radio_button), "toggled",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(radio_vbox), radio_button, TRUE, TRUE, 0);
 
   radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(radio_button), "Deutsch");
+  ui->gui->radio_button = radio_button;
   g_signal_connect(GTK_TOGGLE_BUTTON (radio_button), "toggled",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(radio_vbox), radio_button, TRUE, TRUE, 0);
 
   return wh_set_title_and_get_vbox(radio_vbox,
@@ -218,32 +194,27 @@ GtkWidget *create_language_box()
 }
 
 //! Creates the language preferences page
-GtkWidget *create_pref_language_page()
+static GtkWidget *create_pref_language_page(ui_state *ui)
 {
   GtkWidget *language_hbox = wh_hbox_new();;
- 
-  //vertical box inside the scrolled window
   GtkWidget *language_inside_hbox = wh_hbox_new();;
 
-  //scrolled window
-  GtkWidget *scrolled_window;
-  scrolled_window = wh_create_scrolled_window();
+  GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-                                        GTK_WIDGET(language_inside_hbox));
+      GTK_WIDGET(language_inside_hbox));
   gtk_box_pack_start(GTK_BOX(language_hbox), scrolled_window, TRUE, TRUE, 0);
- 
-  //vertical box inside the horizontal box from the scrolled window
+
   GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(language_inside_hbox), vbox, TRUE, TRUE, 10);
 
-  GtkWidget *lang_box = create_language_box();
+  GtkWidget *lang_box = create_language_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), lang_box, FALSE, FALSE, 10);
-  
+
   return language_hbox;
 }
 
 //! Events for browse dir button
-void browse_dir_button_event(GtkWidget *widget, gpointer data)
+static void browse_dir_button_event(GtkWidget *widget, ui_state *ui)
 {
   GtkWidget *dir_chooser = gtk_file_chooser_dialog_new(_("Choose split directory"),
       NULL,
@@ -259,7 +230,7 @@ void browse_dir_button_event(GtkWidget *widget, gpointer data)
   if (gtk_dialog_run(GTK_DIALOG(dir_chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dir_chooser));
-    set_output_directory(filename);
+    set_output_directory(filename, ui);
 
     g_free(filename);
     filename = NULL;
@@ -271,45 +242,45 @@ void browse_dir_button_event(GtkWidget *widget, gpointer data)
 }
 
 //!disables adjust parameters
-void disable_adjust_spinners()
+static void disable_adjust_spinners(gui_state *gui)
 {
-  gtk_widget_set_sensitive(ui->gui->spinner_adjust_threshold, FALSE);
-  gtk_widget_set_sensitive(ui->gui->spinner_adjust_offset, FALSE);
-  gtk_widget_set_sensitive(ui->gui->spinner_adjust_gap, FALSE);
-  gtk_widget_set_sensitive(ui->gui->threshold_label, FALSE);
-  gtk_widget_set_sensitive(ui->gui->offset_label, FALSE);
-  gtk_widget_set_sensitive(ui->gui->gap_label, FALSE);
+  gtk_widget_set_sensitive(gui->spinner_adjust_threshold, FALSE);
+  gtk_widget_set_sensitive(gui->spinner_adjust_offset, FALSE);
+  gtk_widget_set_sensitive(gui->spinner_adjust_gap, FALSE);
+  gtk_widget_set_sensitive(gui->threshold_label, FALSE);
+  gtk_widget_set_sensitive(gui->offset_label, FALSE);
+  gtk_widget_set_sensitive(gui->gap_label, FALSE);
 }
 
 //!enables adjust parameters
-void enable_adjust_spinners()
+static void enable_adjust_spinners(gui_state *gui)
 {
-  gtk_widget_set_sensitive(ui->gui->spinner_adjust_threshold, TRUE);
-  gtk_widget_set_sensitive(ui->gui->spinner_adjust_offset, TRUE);
-  gtk_widget_set_sensitive(ui->gui->spinner_adjust_gap, TRUE);
-  gtk_widget_set_sensitive(ui->gui->threshold_label, TRUE);
-  gtk_widget_set_sensitive(ui->gui->offset_label, TRUE);
-  gtk_widget_set_sensitive(ui->gui->gap_label, TRUE);
+  gtk_widget_set_sensitive(gui->spinner_adjust_threshold, TRUE);
+  gtk_widget_set_sensitive(gui->spinner_adjust_offset, TRUE);
+  gtk_widget_set_sensitive(gui->spinner_adjust_gap, TRUE);
+  gtk_widget_set_sensitive(gui->threshold_label, TRUE);
+  gtk_widget_set_sensitive(gui->offset_label, TRUE);
+  gtk_widget_set_sensitive(gui->gap_label, TRUE);
 }
 
 //!adjust event
-void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data)
+static void adjust_event(GtkToggleButton *adjust_mode, ui_state *ui)
 {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
   {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode),TRUE);
-    enable_adjust_spinners();
+    enable_adjust_spinners(ui->gui);
   }
   else
   {
-    disable_adjust_spinners();
+    disable_adjust_spinners(ui->gui);
   }
 
   save_preferences(NULL, NULL);
 }
 
 //!frame mode event
-void frame_event(GtkToggleButton *frame_mode, gpointer user_data)
+static void frame_event(GtkToggleButton *frame_mode, ui_state *ui)
 {
   if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(frame_mode)))
   {
@@ -319,19 +290,9 @@ void frame_event(GtkToggleButton *frame_mode, gpointer user_data)
   save_preferences(NULL, NULL);
 }
 
-void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_data)
+static void splitpoints_from_filename_event(GtkToggleButton *frame_mode, ui_state *ui)
 {
-  gint splitpoints_from_filename = FALSE;
-
-  if (!gtk_toggle_button_get_active(ui->gui->names_from_filename))
-  {
-    splitpoints_from_filename = FALSE;
-  }
-  else
-  {
-    splitpoints_from_filename = TRUE;
-  }
-
+  gint splitpoints_from_filename = gtk_toggle_button_get_active(ui->gui->names_from_filename);
   if (splitpoints_from_filename == TRUE && ui->status->file_browsed == TRUE)
   {
     copy_filename_to_current_description(get_input_filename(ui->gui), ui);
@@ -345,196 +306,196 @@ void splitpoints_from_filename_event(GtkToggleButton *frame_mode, gpointer user_
 }
 
 //!action for the set default prefs button
-void set_default_prefs_event(GtkWidget *widget, gpointer data)
+static void set_default_prefs_event(GtkWidget *widget, ui_state *ui)
 {
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode), FALSE);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->adjust_mode), FALSE);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_threshold),
-                            SPLT_DEFAULT_PARAM_THRESHOLD);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_offset),
-                            SPLT_DEFAULT_PARAM_OFFSET);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap),
-                            SPLT_DEFAULT_PARAM_GAP);
-  gtk_toggle_button_set_active(ui->gui->names_from_filename, FALSE);
+  gui_state *gui = ui->gui;
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->frame_mode), FALSE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->adjust_mode), FALSE);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_threshold),
+      SPLT_DEFAULT_PARAM_THRESHOLD);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_offset),
+      SPLT_DEFAULT_PARAM_OFFSET);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_gap),
+      SPLT_DEFAULT_PARAM_GAP);
+  gtk_toggle_button_set_active(gui->names_from_filename, FALSE);
 
   save_preferences(NULL, NULL);
 }
 
 //!events for the "set current song directory"
-void song_dir_button_event(GtkWidget *widget, gpointer data)
+static void song_dir_button_event(GtkWidget *widget, ui_state *ui)
 {
-  set_output_directory("");
+  set_output_directory("", ui);
   save_preferences(NULL, NULL);
 }
 
 //!Creates the box the output directory can be choosen in
-GtkWidget *create_directory_box()
+static GtkWidget *create_directory_box(gui_state *gui)
 {
   GtkWidget *dir_hbox = wh_hbox_new();
-  
-  //directory entry
-  directory_entry = gtk_entry_new();
+
+  GtkWidget *directory_entry = gtk_entry_new();
+  gui->directory_entry = directory_entry;
   gtk_editable_set_editable(GTK_EDITABLE(directory_entry), FALSE);
   gtk_box_pack_start(GTK_BOX(dir_hbox), directory_entry, TRUE, TRUE, 0);
+
   // Put the right text into the text box containing the output directory
   // name if this name was provided on command line
-  if(outputdirectory_get()!=NULL)
-    gtk_entry_set_text(GTK_ENTRY(directory_entry), outputdirectory_get());
-  
+  if (get_output_directory(ui) != NULL)
+  {
+    gtk_entry_set_text(GTK_ENTRY(directory_entry), get_output_directory(ui));
+  }
+
   //browse dir button
   GtkWidget *browse_dir_button =
     wh_create_cool_button(GTK_STOCK_DIRECTORY,_("Br_owse dir"), FALSE);
   g_signal_connect(G_OBJECT(browse_dir_button), "clicked",
-      G_CALLBACK(browse_dir_button_event), NULL);
+      G_CALLBACK(browse_dir_button_event), ui);
   gtk_box_pack_start(GTK_BOX(dir_hbox), browse_dir_button, FALSE, FALSE, 8);
-  
-  //to set the directory for split files to the current song
-  //directory
+
+  //to set the directory for split files to the current song directory
   GtkWidget *song_dir_button =
     wh_create_cool_button(GTK_STOCK_CLEAR, _("_Song dir"), FALSE);
   g_signal_connect(G_OBJECT(song_dir_button), "clicked",
-      G_CALLBACK(song_dir_button_event), NULL);
+      G_CALLBACK(song_dir_button_event), ui);
   gtk_box_pack_start(GTK_BOX(dir_hbox), song_dir_button, FALSE, FALSE, 0);
 
   return wh_set_title_and_get_vbox(dir_hbox, _("<b>Directory for split files</b>"));
 }
 
 //! Creates the box for split mode selection
-GtkWidget *create_split_options_box()
+static GtkWidget *create_split_options_box(gui_state *gui)
 {
   GtkWidget *vbox = wh_vbox_new();
 
   //names from filename
   GtkToggleButton *names_from_filename = 
     GTK_TOGGLE_BUTTON(gtk_check_button_new_with_mnemonic(_("_Splitpoint name from filename (testing)")));
-  ui->gui->names_from_filename = names_from_filename;
+  gui->names_from_filename = names_from_filename;
 
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(names_from_filename), FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(names_from_filename), "toggled",
-      G_CALLBACK(splitpoints_from_filename_event), NULL);
+      G_CALLBACK(splitpoints_from_filename_event), ui);
 
   GtkWidget *create_dirs_from_output_files =
     gtk_check_button_new_with_mnemonic(_("_Create directories from filenames "));
-  ui->gui->create_dirs_from_output_files = create_dirs_from_output_files;
+  gui->create_dirs_from_output_files = create_dirs_from_output_files;
   gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
 
   //frame mode option
   GtkWidget *frame_mode =
     gtk_check_button_new_with_mnemonic(_("F_rame mode (useful for mp3 VBR) (mp3 only)"));
-  ui->gui->frame_mode = frame_mode;
+  gui->frame_mode = frame_mode;
   gtk_box_pack_start(GTK_BOX(vbox), frame_mode, FALSE, FALSE, 0);
-  g_signal_connect(G_OBJECT(frame_mode), "toggled", G_CALLBACK(frame_event), NULL);
+  g_signal_connect(G_OBJECT(frame_mode), "toggled", G_CALLBACK(frame_event), ui);
 
   //auto adjust option
   GtkWidget *adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (uses"
         " silence detection to auto-adjust splitpoints)"));
-  ui->gui->adjust_mode = adjust_mode;
+  gui->adjust_mode = adjust_mode;
   gtk_box_pack_start(GTK_BOX(vbox), adjust_mode, FALSE, FALSE, 0);
-  g_signal_connect(G_OBJECT(adjust_mode), "toggled",
-      G_CALLBACK(adjust_event), NULL);
-  
+  g_signal_connect(G_OBJECT(adjust_mode), "toggled", G_CALLBACK(adjust_event), ui);
+
   //parameters for the adjust option
   GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
-  
+
   GtkWidget *param_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
-  
+
   //threshold level
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
-  
+
   GtkWidget *threshold_label = gtk_label_new(_("Threshold level (dB):"));
-  ui->gui->threshold_label = threshold_label;
+  gui->threshold_label = threshold_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), threshold_label, FALSE, FALSE, 0);
-  
+
   GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0,
       0.5, 10.0, 0.0);
   GtkWidget *spinner_adjust_threshold = gtk_spin_button_new (adj, 0.5, 2);
-  ui->gui->spinner_adjust_threshold = spinner_adjust_threshold;
+  gui->spinner_adjust_threshold = spinner_adjust_threshold;
   g_signal_connect(G_OBJECT(spinner_adjust_threshold), "value_changed",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_threshold,
-                      FALSE, FALSE, 6);
-  
+      FALSE, FALSE, 6);
+
   //offset level
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
-  
+
   GtkWidget *offset_label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence "
         "and 1 the end):"));
-  ui->gui->offset_label = offset_label;
+  gui->offset_label = offset_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), offset_label, FALSE, FALSE, 0);
-  
+
   //adjustement for the offset spinner
   adj = (GtkAdjustment *)gtk_adjustment_new(0.0, -2, 2, 0.05, 10.0, 0.0);
   GtkWidget *spinner_adjust_offset = gtk_spin_button_new (adj, 0.05, 2);
-  ui->gui->spinner_adjust_offset = spinner_adjust_offset;
+  gui->spinner_adjust_offset = spinner_adjust_offset;
   g_signal_connect(G_OBJECT(spinner_adjust_offset), "value_changed",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_offset, FALSE, FALSE, 6);
-  
+
   //gap level (seconds)
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
-  
-  GtkWidget *gap_label = gtk_label_new(_("Gap level (seconds around splitpoint to "
-        "search for silence):"));
-  ui->gui->gap_label = gap_label;
+
+  GtkWidget *gap_label = 
+    gtk_label_new(_("Gap level (seconds around splitpoint to search for silence):"));
+  gui->gap_label = gap_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), gap_label, FALSE, FALSE, 0);
-  
+
   adj = (GtkAdjustment *) gtk_adjustment_new(0.0, 0, 2000, 1.0, 10.0, 0.0);
   GtkWidget *spinner_adjust_gap = gtk_spin_button_new (adj, 1, 0);
-  ui->gui->spinner_adjust_gap = spinner_adjust_gap;
+  gui->spinner_adjust_gap = spinner_adjust_gap;
   g_signal_connect(G_OBJECT(spinner_adjust_gap), "value_changed",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_gap, FALSE, FALSE, 6);
-  
-  disable_adjust_spinners();
- 
+
+  disable_adjust_spinners(ui->gui);
+
   //set default preferences button
-  //horizontal box fake for the gap level
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
-  
+
   GtkWidget *set_default_prefs_button =
     wh_create_cool_button(GTK_STOCK_PREFERENCES, _("Set _default split" " options"),FALSE); 
   g_signal_connect(G_OBJECT(set_default_prefs_button), "clicked",
-      G_CALLBACK(set_default_prefs_event), NULL);
-  gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button,
-                      FALSE, FALSE, 5);
+      G_CALLBACK(set_default_prefs_event), ui);
+  gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button, FALSE, FALSE, 5);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Split options</b>"));
 }
 
 //!creates the splitpoints preferences page
-GtkWidget *create_pref_splitpoints_page()
+static GtkWidget *create_pref_splitpoints_page(ui_state *ui)
 {
   GtkWidget *general_hbox = wh_hbox_new();
   GtkWidget *inside_hbox = wh_hbox_new();
-  
+
   GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-                                        GTK_WIDGET(inside_hbox));
+      GTK_WIDGET(inside_hbox));
   gtk_box_pack_start(GTK_BOX(general_hbox), scrolled_window, TRUE, TRUE, 0);
- 
-  //vertical box inside the horizontal box from the scrolled window
+
   GtkWidget *inside_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(inside_hbox), inside_vbox, TRUE, TRUE, 5);
- 
-  GtkWidget *dir_box = create_directory_box();
+
+  GtkWidget *dir_box = create_directory_box(ui->gui);
   gtk_box_pack_start(GTK_BOX(inside_vbox), dir_box, FALSE, FALSE, 2);
 
-  GtkWidget *split_options_box = create_split_options_box();
+  GtkWidget *split_options_box = create_split_options_box(ui->gui);
   gtk_box_pack_start(GTK_BOX(inside_vbox), split_options_box, FALSE, FALSE, 1);
- 
+
   return general_hbox;
 }
 
 //!event when changing the combo box player
-void player_combo_box_event(GtkComboBox *widget, gpointer data)
+static void player_combo_box_event(GtkComboBox *widget, ui_state *ui)
 {
   disconnect_button_event(ui->gui->disconnect_button, ui);
 
@@ -549,7 +510,7 @@ void player_combo_box_event(GtkComboBox *widget, gpointer data)
     show_connect_button(ui->gui);
     gtk_widget_hide(ui->gui->playlist_box);
   }
-  
+
   gtk_widget_show(ui->gui->player_box);
   gtk_widget_show(ui->gui->queue_files_button);
 
@@ -565,16 +526,16 @@ void update_timeout_value(GtkWidget *spinner, gpointer data)
 }
 
 //!Create the box the player backend can be selected with
-GtkWidget *create_player_options_box()
+static GtkWidget *create_player_options_box(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();
-
   GtkWidget *horiz_fake = wh_hbox_new();
 
   GtkWidget *label = gtk_label_new(_("Player:"));
   gtk_box_pack_start(GTK_BOX(horiz_fake), label, FALSE, FALSE, 0);
 
-  player_combo_box = GTK_WIDGET(ch_new_combo());
+  GtkWidget *player_combo_box = GTK_WIDGET(ch_new_combo());
+  ui->gui->player_combo_box = player_combo_box;
 
 #ifndef NO_AUDACIOUS
   ch_append_to_combo(GTK_COMBO_BOX(player_combo_box), "Audacious", PLAYER_AUDACIOUS);
@@ -584,8 +545,7 @@ GtkWidget *create_player_options_box()
   ch_append_to_combo(GTK_COMBO_BOX(player_combo_box), "GStreamer", PLAYER_GSTREAMER);
 #endif
 
-  g_signal_connect(G_OBJECT(player_combo_box), "changed",
-      G_CALLBACK(player_combo_box_event), NULL);
+  g_signal_connect(G_OBJECT(player_combo_box), "changed", G_CALLBACK(player_combo_box_event), ui);
 
   gtk_box_pack_start(GTK_BOX(horiz_fake), player_combo_box, FALSE, FALSE, 5);
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
@@ -597,11 +557,11 @@ GtkWidget *create_player_options_box()
       update_timeout_value, NULL, vbox);
   ui_register_spinner_int_preference("player", "refresh_rate", DEFAULT_TIMEOUT_VALUE,
       spinner, update_timeout_value, NULL, ui);
- 
+
   return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
 }
 
-void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, gpointer user_data)
+static void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, ui_state *ui)
 {
   gint quality_level = (gint)gtk_adjustment_get_value(GTK_ADJUSTMENT(wave_quality_adjustment));
 
@@ -645,19 +605,23 @@ void refresh_preview_drawing_areas(gui_state *gui)
 }
 
 #if GTK_MAJOR_VERSION <= 2
-gboolean wave_quality_draw_event(GtkWidget *drawing_area, GdkEventExpose *event, gpointer data)
+static gboolean wave_quality_draw_event(GtkWidget *drawing_area, GdkEventExpose *event,
+    preview_index_and_data *data)
 {
   cairo_t *cairo_surface = gdk_cairo_create(drawing_area->window);
 #else
-gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface, gpointer data)
+static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface,
+    preview_index_and_data *data)
 {
 #endif
+
+  ui_state *ui = data->data;
+  gint index = data->index;
+
   gint width = get_wave_preview_width_drawing_area();
   gtk_widget_set_size_request(drawing_area, width, 70);
 
-  gint *index = (gint *)data;
-  gint expected_drawing_time_int =
-    g_array_index(ui->infos->preview_time_windows, gint, *index);
+  gint expected_drawing_time_int = g_array_index(ui->infos->preview_time_windows, gint, index);
   gfloat expected_drawing_time = (gfloat)(expected_drawing_time_int);
 
   dh_set_white_color(cairo_surface);
@@ -685,7 +649,7 @@ gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_surface
       current_time, ui->infos->total_time, zoom_coeff,
       drawing_area, cairo_surface);
 
-  update_wave_preview_label_markup(*index, interpolation_level);
+  update_wave_preview_label_markup(index, interpolation_level);
 
 #if GTK_MAJOR_VERSION <= 2
   cairo_destroy(cairo_surface);
@@ -704,7 +668,7 @@ gint get_wave_preview_width_drawing_area()
   return ui->infos->width_drawing_area;
 }
 
-GtkWidget *create_wave_quality_preview_box()
+static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();
 
@@ -719,26 +683,27 @@ GtkWidget *create_wave_quality_preview_box()
   gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 4);
 
   ui->gui->wave_quality_das = g_ptr_array_new();
-  wave_preview_labels = g_ptr_array_new();
+  ui->gui->wave_preview_labels = g_ptr_array_new();
 
   gint i = 0;
   for (i = 0; i < ui->infos->preview_time_windows->len; i++)
   {
     GtkWidget *wave_quality_da = gtk_drawing_area_new(); 
     g_ptr_array_add(ui->gui->wave_quality_das, (gpointer)wave_quality_da);
-    preview_indexes[i] = i;
+    ui->infos->preview_indexes[i].index = i;
+    ui->infos->preview_indexes[i].data = ui;
 
 #if GTK_MAJOR_VERSION <= 2
-    g_signal_connect(wave_quality_da, "expose_event", G_CALLBACK(wave_quality_draw_event), 
-        &preview_indexes[i]);
+    g_signal_connect(wave_quality_da, "expose_event", G_CALLBACK(wave_quality_draw_event),
+        &ui->infos->preview_indexes[i]);
 #else
-    g_signal_connect(wave_quality_da, "draw", G_CALLBACK(wave_quality_draw_event), 
-        &preview_indexes[i]);
+    g_signal_connect(wave_quality_da, "draw", G_CALLBACK(wave_quality_draw_event),
+        &ui->infos->preview_indexes[i]);
 #endif
     wh_put_in_hbox_and_attach_to_vbox(wave_quality_da, vbox, 0);
 
     GtkWidget *minutes_label = gtk_label_new(NULL);
-    g_ptr_array_add(wave_preview_labels, minutes_label);
+    g_ptr_array_add(ui->gui->wave_preview_labels, minutes_label);
     update_wave_preview_label_markup(i, -1);
 
     wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(minutes_label, vbox, 0, 4);
@@ -769,11 +734,11 @@ static void update_wave_preview_label_markup(gint index, gint interpolation_leve
       "<span color='#DD0000'>%s</span> - <span>%s</span>",
       minutes_text, interpolation_text);
 
-  GtkWidget *text_label = g_ptr_array_index(wave_preview_labels, index);
+  GtkWidget *text_label = g_ptr_array_index(ui->gui->wave_preview_labels, index);
   gtk_label_set_markup(GTK_LABEL(text_label), final_text_with_color);
 }
 
-GtkWidget *create_wave_options_box()
+static GtkWidget *create_wave_options_box(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();
   GtkWidget *range_hbox = wh_hbox_new();
@@ -790,11 +755,11 @@ GtkWidget *create_wave_options_box()
   gtk_range_set_increments(GTK_RANGE(wave_quality_hscale), 1.0, 1.0);
 
   ui_register_range_preference("player", "wave_quality", 0.0,
-      wave_quality_hscale, wave_quality_changed_event, NULL, ui);
+      wave_quality_hscale, (void (*)(GtkAdjustment *,gpointer))wave_quality_changed_event, ui, ui);
 
   GtkAdjustment *wave_quality_adjustment = gtk_range_get_adjustment(GTK_RANGE(wave_quality_hscale));
   g_signal_connect(G_OBJECT(wave_quality_adjustment), "value-changed",
-      G_CALLBACK(wave_quality_changed_event), NULL);
+      G_CALLBACK(wave_quality_changed_event), ui);
 
   gtk_box_pack_start(GTK_BOX(vbox), range_hbox, FALSE, FALSE, 0);
 
@@ -802,37 +767,34 @@ GtkWidget *create_wave_options_box()
 }
 
 //!creates the player preferences page
-GtkWidget *create_pref_player_page()
+static GtkWidget *create_pref_player_page(ui_state *ui)
 {
   GtkWidget *player_hbox = wh_hbox_new();;
-
   GtkWidget *inside_vbox = wh_vbox_new();;
-  
+
   GtkWidget *player_scrolled_window = wh_create_scrolled_window();
   ui->gui->player_scrolled_window = player_scrolled_window;
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(player_scrolled_window), 
-                                        GTK_WIDGET(inside_vbox));
+      GTK_WIDGET(inside_vbox));
   gtk_box_pack_start(GTK_BOX(player_hbox), player_scrolled_window, TRUE, TRUE, 0);
-  
-  //vertical box inside the horizontal box from the scrolled window
+
   GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(inside_vbox), vbox, TRUE, TRUE, 5);
-  
-  //choose player combo box
-  GtkWidget *player_options_box = create_player_options_box();
+
+  GtkWidget *player_options_box = create_player_options_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 3);
-  GtkWidget *wave_options_box = create_wave_options_box();
+
+  GtkWidget *wave_options_box = create_wave_options_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), wave_options_box, FALSE, FALSE, 3);
 
-  GtkWidget *wave_quality_box = create_wave_quality_preview_box();
+  GtkWidget *wave_quality_box = create_wave_quality_preview_box(ui);
   gtk_box_pack_start(GTK_BOX(inside_vbox), wave_quality_box, FALSE, FALSE, 0);
- 
+
   return player_hbox;
 }
 
 //!update the save buttons on an output entry event
-gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
-    gpointer user_data)
+static gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event, ui_state *ui)
 {
   const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
   gint error = SPLT_OUTPUT_FORMAT_OK;
@@ -846,18 +808,20 @@ gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event,
 }
 
 //!Create the box the output file name is displayed in
-GtkWidget *create_output_filename_box()
+static GtkWidget *create_output_filename_box(ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   GtkWidget *vbox = wh_vbox_new();
 
   //default/custom radio buttons
   GtkWidget *radio_output = gtk_radio_button_new_with_label(NULL, _("Default format"));
-  ui->gui->radio_output = radio_output;
+  gui->radio_output = radio_output;
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
   radio_output = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(radio_output), _("Custom format"));
-  ui->gui->radio_output = radio_output;
+  gui->radio_output = radio_output;
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
   //output entry
@@ -865,9 +829,9 @@ GtkWidget *create_output_filename_box()
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
   GtkWidget *output_entry = gtk_entry_new();
-  ui->gui->output_entry = output_entry;
+  gui->output_entry = output_entry;
   gtk_editable_set_editable(GTK_EDITABLE(output_entry), TRUE);
-  g_signal_connect(G_OBJECT(output_entry), "key_release_event", G_CALLBACK(output_entry_event), NULL);
+  g_signal_connect(G_OBJECT(output_entry), "key_release_event", G_CALLBACK(output_entry_event), ui);
   gtk_entry_set_max_length(GTK_ENTRY(output_entry),244);
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_entry, TRUE, TRUE, 0);
 
@@ -882,30 +846,30 @@ GtkWidget *create_output_filename_box()
         "    @t - song title\n"
         "    @g - genre\n"
         "    @n - track number"));
-  ui->gui->output_label = output_label;
+  gui->output_label = output_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_label, FALSE, FALSE, 0);
 
-  g_signal_connect(GTK_TOGGLE_BUTTON(ui->gui->radio_output),
-      "toggled", G_CALLBACK(output_radio_box_event), output_label);
+  g_signal_connect(GTK_TOGGLE_BUTTON(gui->radio_output),
+      "toggled", G_CALLBACK(output_radio_box_event), ui);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format</b>"));
 }
 
 //!creates the output preferences page
-GtkWidget *create_pref_output_page()
+static GtkWidget *create_pref_output_page(ui_state *ui)
 {
   GtkWidget *output_hbox = wh_hbox_new();;
   GtkWidget *output_inside_hbox = wh_hbox_new();;
-  
+
   GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-                                        GTK_WIDGET(output_inside_hbox));
+      GTK_WIDGET(output_inside_hbox));
   gtk_box_pack_start(GTK_BOX(output_hbox), scrolled_window, TRUE, TRUE, 0);
- 
+
   GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(output_inside_hbox), vbox, TRUE, TRUE, 5);
 
-  GtkWidget *output_fname_box = create_output_filename_box();
+  GtkWidget *output_fname_box = create_output_filename_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), output_fname_box, FALSE, FALSE, 2);
 
   return output_hbox;
@@ -929,23 +893,28 @@ void change_tags_options(GtkToggleButton *button, gpointer data)
 }
 
 //!Create the box for the Tags options
-GtkWidget *create_tags_options_box()
+static GtkWidget *create_tags_options_box(ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   GtkWidget *vbox = wh_vbox_new();
 
   GtkWidget *tags_radio = NULL;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Original file tags"),
       ORIGINAL_FILE_TAGS, change_tags_options, vbox);
+  gui->tags_radio = tags_radio;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Default tags (cddb or cue tags)"),
       DEFAULT_TAGS, change_tags_options, vbox);
+  gui->tags_radio = tags_radio;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("No tags"),
       NO_TAGS, change_tags_options, vbox);
+  gui->tags_radio = tags_radio;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Extract tags from filename"),
       TAGS_FROM_FILENAME, change_tags_options, vbox);
-  ui->gui->tags_radio = tags_radio;
+  gui->tags_radio = tags_radio;
 
   GtkWidget *extract_tags_box = create_extract_tags_from_filename_options_box();
-  ui->gui->extract_tags_box = extract_tags_box;
+  gui->extract_tags_box = extract_tags_box;
   gtk_widget_set_sensitive(extract_tags_box, SPLT_FALSE);
   gtk_box_pack_start(GTK_BOX(vbox), extract_tags_box, FALSE, FALSE, 2);
 
@@ -962,7 +931,7 @@ static GtkComboBox *create_genre_combo()
     ch_append_to_combo(combo, splt_id3v1_genres[i], 0);
   }
 
-  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), NULL);
+  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), ui);
 
   return combo;
 }
@@ -977,12 +946,12 @@ static GtkComboBox *create_text_preferences_combo()
   ch_append_to_combo(combo, _("First uppercase"), SPLT_TO_FIRST_UPPERCASE);
   ch_append_to_combo(combo, _("Word Uppercase"), SPLT_TO_WORD_FIRST_UPPERCASE);
 
-  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), NULL);
+  g_signal_connect(G_OBJECT(combo), "changed", G_CALLBACK(save_preferences), ui);
 
   return combo;
 }
 
-void test_regex_event(GtkWidget *widget, gpointer data)
+static void test_regex_event(GtkWidget *widget, ui_state *ui)
 {
   put_tags_from_filename_regex_options(ui);
 
@@ -1099,7 +1068,7 @@ static GtkWidget *create_extract_tags_from_filename_options_box()
     gtk_check_button_new_with_mnemonic(_("_Replace underscores by spaces"));
   ui->gui->replace_underscore_by_space_check_box = replace_underscore_by_space_check_box;
   g_signal_connect(G_OBJECT(replace_underscore_by_space_check_box), "toggled",
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
  
   wh_add_in_table(table, replace_underscore_by_space_check_box);
 
@@ -1149,8 +1118,7 @@ static GtkWidget *create_test_regex_table()
 
   GtkWidget *test_regex_button = wh_new_button(_("_Test"));
   gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_button, FALSE, FALSE, 5);
-  g_signal_connect(G_OBJECT(test_regex_button), "clicked",
-      G_CALLBACK(test_regex_event), NULL);
+  g_signal_connect(G_OBJECT(test_regex_button), "clicked", G_CALLBACK(test_regex_event), ui);
 
   wh_add_in_table_with_label_expand(table, _("Sample filename:"), sample_test_hbox);
 
@@ -1163,60 +1131,62 @@ static GtkWidget *create_test_regex_table()
 }
 
 //!Create the box we can select with if to create ID1 and/or ID2 Tags
-GtkWidget *create_tags_version_box()
+static GtkWidget *create_tags_version_box(ui_state *ui)
 {
+  gui_state *gui = ui->gui;
+
   GtkWidget *vbox = wh_vbox_new();
 
   GtkWidget *tags_version_radio = gtk_radio_button_new_with_label(NULL, _("ID3v1 & ID3v2 tags"));
-  ui->gui->tags_version_radio = tags_version_radio;
+  gui->tags_version_radio = tags_version_radio;
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(tags_version_radio), _("ID3v2 tags"));
-  ui->gui->tags_version_radio = tags_version_radio;
+  gui->tags_version_radio = tags_version_radio;
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(tags_version_radio), _("ID3v1 tags"));
-  ui->gui->tags_version_radio = tags_version_radio;
+  gui->tags_version_radio = tags_version_radio;
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
 
   tags_version_radio = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON (tags_version_radio),_("Same tags version as the input file"));
-  ui->gui->tags_version_radio = tags_version_radio;
+  gui->tags_version_radio = tags_version_radio;
   g_signal_connect(GTK_TOGGLE_BUTTON(tags_version_radio), "toggled", 
-      G_CALLBACK(save_preferences), NULL);
+      G_CALLBACK(save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_radio, FALSE, FALSE, 0);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Tags version (mp3 only)</b>"));
 }
 
 //! Create the tags settings tab
-GtkWidget *create_pref_tags_page()
+static GtkWidget *create_pref_tags_page(ui_state *ui)
 {
   GtkWidget *outside_vbox = wh_vbox_new();;
   GtkWidget *inside_hbox = wh_hbox_new();
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-                                        GTK_WIDGET(inside_hbox));
+      GTK_WIDGET(inside_hbox));
   gtk_box_pack_start(GTK_BOX(outside_vbox), scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *vbox = wh_vbox_new();;
   gtk_box_pack_start(GTK_BOX(inside_hbox), vbox, TRUE, TRUE, 5);
 
-  GtkWidget *tags_version_box = create_tags_version_box();
+  GtkWidget *tags_version_box = create_tags_version_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), tags_version_box, FALSE, FALSE, 2);
 
-  GtkWidget *tags_opts_box = create_tags_options_box();
+  GtkWidget *tags_opts_box = create_tags_options_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), tags_opts_box, FALSE, FALSE, 1);
-  
+
   return outside_vbox;
 }
 
@@ -1234,28 +1204,28 @@ GtkWidget *create_choose_preferences(ui_state *ui)
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
 
   /* split preferences */
-  GtkWidget *splitpoints_prefs = create_pref_splitpoints_page();
+  GtkWidget *splitpoints_prefs = create_pref_splitpoints_page(ui);
   GtkWidget *notebook_label = gtk_label_new(_("Split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), splitpoints_prefs, notebook_label);
 
   /* tags preferences */
-  GtkWidget *tags_prefs = create_pref_tags_page();
+  GtkWidget *tags_prefs = create_pref_tags_page(ui);
   notebook_label = gtk_label_new(_("Tags"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), tags_prefs, notebook_label);
 
   /* output preferences */
-  GtkWidget *output_prefs = create_pref_output_page();
+  GtkWidget *output_prefs = create_pref_output_page(ui);
   notebook_label = gtk_label_new(_("Output"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs, notebook_label);
 
   /* player preferences */
-  GtkWidget *player_prefs = create_pref_player_page();
+  GtkWidget *player_prefs = create_pref_player_page(ui);
   notebook_label = gtk_label_new(_("Player"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_prefs, notebook_label);
 
   /* language preferences page */
 #ifdef __WIN32__
-  GtkWidget *language_prefs = create_pref_language_page();
+  GtkWidget *language_prefs = create_pref_language_page(ui);
   notebook_label = gtk_label_new(_("Language"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), language_prefs, notebook_label);
 #endif

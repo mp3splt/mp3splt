@@ -42,9 +42,6 @@
 
 #include "all_includes.h"
 
-extern GtkWidget *player_combo_box;
-extern GtkWidget *radio_button;
-
 extern ui_state *ui;
 
 static void check_pref_file_and_write_default();
@@ -76,7 +73,7 @@ void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
 
 void pm_register_range_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *range,
-    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
+    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data),
     gpointer user_data_for_cb, preferences_state *pm)
 {
   range_preference preference;
@@ -243,7 +240,7 @@ void load_preferences()
     list_number = 1;
   }
 
-  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button));
+  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->radio_button));
   GtkWidget *our_button = (GtkWidget *)
     g_slist_nth_data(radio_button_list, list_number);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_button), TRUE);
@@ -254,15 +251,15 @@ void load_preferences()
   lang = NULL;
 #endif
 
-  // If outputdirectory_get()!=NULL the path where to output the split file
+  // If get_output_directory()!=NULL the path where to output the split file
   // to has been set from command line
-  if (outputdirectory_get() == NULL)
+  if (get_output_directory(ui) == NULL)
   {
     // No output_path from command-line => get the path from the preferences
     gchar *save_path = g_key_file_get_string(key_file, "split", "save_path", NULL);
     if (save_path != NULL)
     {
-      set_output_directory(save_path);
+      set_output_directory(save_path, ui);
     }
     g_free(save_path);
     save_path = NULL;
@@ -270,7 +267,7 @@ void load_preferences()
 
   //player
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
-  ch_set_active_value(GTK_COMBO_BOX(player_combo_box), item);
+  ch_set_active_value(GTK_COMBO_BOX(ui->gui->player_combo_box), item);
 
   ui_load_preferences(key_file, ui);
  
@@ -496,8 +493,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
   g_key_file_load_from_file(my_key_file, filename, G_KEY_FILE_KEEP_COMMENTS, NULL);
 
   //save_path
-  g_key_file_set_string(my_key_file, "split", "save_path",
-			outputdirectory_get());
+  g_key_file_set_string(my_key_file, "split", "save_path", get_output_directory(ui));
 
   //player
   g_key_file_set_integer(my_key_file, "player", "default_player", ui->infos->selected_player);
@@ -505,9 +501,7 @@ void save_preferences(GtkWidget *widget, gpointer data)
   ui_save_preferences(my_key_file, ui);
  
 #ifdef __WIN32__
-  //language
-  GString *selected_lang;
-  selected_lang = (GString *)get_checked_language();
+  GString *selected_lang = get_checked_language(ui);
   g_key_file_set_string(my_key_file, "general", "language", selected_lang->str);
   g_string_free(selected_lang, TRUE);
   selected_lang = NULL;
