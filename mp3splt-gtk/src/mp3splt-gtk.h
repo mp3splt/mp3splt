@@ -47,7 +47,7 @@ void enter_threads();
 void exit_threads();
 void exit_application(GtkWidget *widget, gpointer data);
 
-#define MP3SPLT_GTK_DATE "24/06/12"
+#define MP3SPLT_GTK_DATE "30/06/12"
 
 #endif
 

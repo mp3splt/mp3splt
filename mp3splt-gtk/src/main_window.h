@@ -50,11 +50,11 @@
 #define WINDOW_X 700
 #define WINDOW_Y 450
 
-#ifdef GDK_KEY_Left
+#ifndef GDK_Left
 #define GDK_Left GDK_KEY_Left
 #endif
 
-#ifdef GDK_KEY_Right
+#ifndef GDK_Right
 #define GDK_Right GDK_KEY_Right
 #endif
 

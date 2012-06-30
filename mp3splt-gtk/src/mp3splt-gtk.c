@@ -275,7 +275,7 @@ static void register_application_signals()
 #endif
 }
 
-static void init_i18n_and_plugin_paths(ui_state *ui)
+static void init_i18n_and_plugin_paths(gchar *argv[], ui_state *ui)
 {
   setlocale(LC_ALL, "");
   textdomain("mp3splt-gtk");
@@ -440,7 +440,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
   gdk_threads_init();
 
   register_application_signals();
-  init_i18n_and_plugin_paths(ui);
+  init_i18n_and_plugin_paths(argv, ui);
 
   gtk_init(&argc, &argv);
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-06-30 19:00+0200\n"
+"POT-Creation-Date: 2012-06-30 21:17+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -441,27 +441,27 @@ msgstr " fini"
 msgid " info: stopping the split process before exiting"
 msgstr " info : arrêt du processus de découpage avant de sortir"
 
-#: src/mp3splt-gtk.c:337
+#: src/mp3splt-gtk.c:342
 #, fuzzy, c-format
 msgid "Setting the output directory to %s.\n"
 msgstr "Essaie d'utiliser le dossier de sortie %s.\n"
 
-#: src/mp3splt-gtk.c:351
+#: src/mp3splt-gtk.c:356
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr "L'option -%c doit être suivie d'un paramètre.\n"
 
-#: src/mp3splt-gtk.c:353
+#: src/mp3splt-gtk.c:358
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr "Option inconnue `-%c'.\n"
 
-#: src/mp3splt-gtk.c:355
+#: src/mp3splt-gtk.c:360
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr "Caractère d'option inconnu `\\x%x'.\n"
 
-#: src/mp3splt-gtk.c:369
+#: src/mp3splt-gtk.c:374
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr "Impossible d'ouvrir le fichier %s.\n"

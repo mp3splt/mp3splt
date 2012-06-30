@@ -43,6 +43,11 @@
   #include <audacious/dbus.h>
 #endif
 
+#ifdef __WIN32__
+  #include <winsock2.h>
+  #include <windows.h>
+#endif
+
 typedef struct {
   gchar* main_key;
   gchar* second_key;
