@@ -94,7 +94,7 @@ void main_window_drag_data_received(GtkWidget *window,
 
     if (file_exists(filename))
     {
-      import_file(filename);
+      import_file(filename, ui);
     }
 
     if (filename)
@@ -662,11 +662,8 @@ static void browse_button_event(GtkWidget *widget, ui_state *ui)
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    gchar *filename =
-      gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-
-    file_chooser_ok_event(filename);
-
+    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+    file_chooser_ok_event(filename, ui);
     if (filename)
     {
       g_free(filename);
@@ -956,7 +953,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   return main_vbox;
 }
 
-static void move_and_resize_main_window()
+static void move_and_resize_main_window(ui_state *ui)
 {
   const ui_main_window *main_win = ui_get_main_window_infos(ui);
 
@@ -978,16 +975,16 @@ static void move_and_resize_main_window()
 void create_application(ui_state *ui)
 {
   initialize_window(ui->gui);
- 
+
   GtkWidget *window_vbox = wh_vbox_new();
   gtk_container_add(GTK_CONTAINER(ui->gui->window), window_vbox);
 
   gtk_box_pack_start(GTK_BOX(window_vbox), create_menu_bar(ui), FALSE, FALSE, 0);  
   gtk_box_pack_start(GTK_BOX(window_vbox), create_main_vbox(ui), TRUE, TRUE, 0);
- 
-  load_preferences();
 
-  move_and_resize_main_window();
+  ui_load_preferences(ui);
+
+  move_and_resize_main_window(ui);
 
   gtk_widget_show_all(ui->gui->window);
 

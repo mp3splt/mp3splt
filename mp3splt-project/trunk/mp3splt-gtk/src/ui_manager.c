@@ -150,19 +150,14 @@ void ui_register_range_preference(gchar *main_key, gchar *second_key,
       default_value, range, update_adjustment_value, user_data_for_cb, ui->preferences);
 }
 
-void ui_load_preferences(GKeyFile *key_file, ui_state *ui)
+void ui_load_preferences(ui_state *ui)
 {
-  pm_load(key_file, ui->preferences);
+  load_preferences(ui);
 }
 
-void ui_save_preferences(GKeyFile *key_file, ui_state *ui)
+void ui_save_preferences(GtkWidget *dummy_widget, ui_state *ui)
 {
-  pm_save(key_file, ui->preferences);
-}
-
-void ui_write_default_preferences(GKeyFile *key_file, ui_state *ui)
-{
-  pm_write_default(key_file, ui->preferences);
+  save_preferences(ui);
 }
 
 void ui_fail(ui_state *ui, const gchar *message, ...)
@@ -295,6 +290,8 @@ static void ui_infos_new(ui_state *ui)
     infos->preview_indexes[i].data = NULL;
   }
 
+  infos->file_to_import = NULL;
+
   ui->infos = infos;
 }
 
@@ -410,6 +407,11 @@ static void ui_infos_free(ui_infos **infos)
   }
 
   g_array_free((*infos)->preview_time_windows, TRUE);
+
+  if ((*infos)->file_to_import)
+  {
+    g_free((*infos)->file_to_import);
+  }
 
   g_free(*infos);
   *infos = NULL;

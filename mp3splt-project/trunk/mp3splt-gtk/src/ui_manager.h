@@ -60,9 +60,8 @@ void ui_register_range_preference(gchar *main_key, gchar *second_key,
     void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
     gpointer user_data_for_cb, ui_state *ui);
 
-void ui_load_preferences(GKeyFile *key_file, ui_state *ui);
-void ui_save_preferences(GKeyFile *key_file, ui_state *ui);
-void ui_write_default_preferences(GKeyFile *key_file, ui_state *ui);
+void ui_load_preferences(ui_state *ui);
+void ui_save_preferences(GtkWidget *dummy_widget, ui_state *ui);
 
 void ui_fail(ui_state *ui, const gchar *message, ...);
 

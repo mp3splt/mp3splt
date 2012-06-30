@@ -35,7 +35,7 @@
 #include "all_includes.h"
 
 void import_event(GtkWidget *widget, ui_state *ui);
-void import_file(gchar *filename);
+void import_file(gchar *filename, ui_state *ui);
 
 #endif
 
