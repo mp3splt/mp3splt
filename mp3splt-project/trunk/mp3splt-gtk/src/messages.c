@@ -36,28 +36,22 @@
 
 #include "messages.h"
 
-GtkWidget *mess_history_dialog = NULL;
-GtkWidget *mess_hist_view = NULL;
-
 extern ui_state *ui;
 
-void create_mess_history_dialog();
-
 //! Returns the current local time in form of a string
-const char *get_current_system_time()
+static const char *get_current_system_time()
 {
-  time_t cur_time = { 0 };
-  static char time_str[128] = { '\0' };
-  cur_time = time(NULL);
+  time_t cur_time = time(NULL);
   const struct tm *tm = localtime(&cur_time);
+
+  static char time_str[128] = { '\0' };
   strftime(time_str, sizeof(time_str), "(%H:%M:%S) ", tm);
 
   return time_str;
 }
 
 //! Record this message in the message history
-void put_message_in_history(const gchar *message, splt_message_type mess_type, 
-    gui_state *gui)
+void put_message_in_history(const gchar *message, splt_message_type mess_type, gui_state *gui)
 {
   if (mess_type == SPLT_MESSAGE_INFO ||
       (mess_type == SPLT_MESSAGE_DEBUG && ui->infos->debug_is_active))
@@ -77,44 +71,12 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type,
     gtk_text_iter_set_line_offset(&iter, 0);
     GtkTextMark *mark = gtk_text_buffer_get_mark(ui->gui->mess_hist_buffer, "end");
     gtk_text_buffer_move_mark(ui->gui->mess_hist_buffer, mark, &iter);
-    gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(mess_hist_view), mark);
+    gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(ui->gui->mess_hist_view), mark);
   }
 }
 
-//! Hide the message history dialog
-void mess_history_hide(GtkDialog *dialog, gint response_id, gpointer data)
-{
-  gtk_widget_hide(mess_history_dialog);
-}
-
-/*! Hide the message history dialog
-
-Takes less arguments than mess_history_hide. 
-\todo Do we really still need both functions doing the same? They
-do not seem to use the arguments they differ in at all
- */
-void mess_history_hide2(GtkWidget *widget, gpointer data)
-{
-  mess_history_hide(NULL, 0, NULL);
-  //TODO: ugly HACK!
-  create_mess_history_dialog();
-}
-
-//! Add tags to the message history entry
-void add_mess_hist_tags()
-{
-  GtkTextTag *tag = gtk_text_tag_new("gray_bold");
-
-  GValue fg_val = { 0 };
-  g_value_init(&fg_val, G_TYPE_STRING);
-  g_value_set_static_string(&fg_val, "gray");
-  g_object_set_property(G_OBJECT(tag), "foreground", &fg_val);
-
-  gtk_text_tag_table_add(ui->gui->mess_hist_tag_table, tag);
-}
-
 //! The event that is issued if the user clicks on a message tag
-void debug_check_event(GtkToggleButton *debug_toggle, gpointer user_data)
+static void debug_check_event(GtkToggleButton *debug_toggle, ui_state *ui)
 {
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(debug_toggle)))
   {
@@ -126,17 +88,30 @@ void debug_check_event(GtkToggleButton *debug_toggle, gpointer user_data)
 }
 
 //! The event issued when the "Clear messages" button is clicked
-void clear_messages_event(GtkWidget *widget, gpointer data)
+static void clear_messages_event(GtkWidget *widget, ui_state *ui)
 {
   GtkTextIter start_iter;
-  GtkTextIter end_iter;
   gtk_text_buffer_get_start_iter(ui->gui->mess_hist_buffer, &start_iter);
+  GtkTextIter end_iter;
   gtk_text_buffer_get_end_iter(ui->gui->mess_hist_buffer, &end_iter);
   gtk_text_buffer_delete(ui->gui->mess_hist_buffer, &start_iter, &end_iter);
 }
 
+//! Add tags to the message history entry
+static void add_mess_hist_tags(GtkTextTagTable *mess_hist_tag_table)
+{
+  GtkTextTag *tag = gtk_text_tag_new("gray_bold");
+
+  GValue fg_val = { 0 };
+  g_value_init(&fg_val, G_TYPE_STRING);
+  g_value_set_static_string(&fg_val, "gray");
+  g_object_set_property(G_OBJECT(tag), "foreground", &fg_val);
+
+  gtk_text_tag_table_add(mess_hist_tag_table, tag);
+}
+
 //! The portion of the message history dialog that contains the messages
-GtkWidget *create_text_component()
+static GtkWidget *create_text_component(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 3);
@@ -144,7 +119,7 @@ GtkWidget *create_text_component()
   //text view
   GtkTextTagTable *mess_hist_tag_table = gtk_text_tag_table_new();
   ui->gui->mess_hist_tag_table = mess_hist_tag_table;
-  add_mess_hist_tags();
+  add_mess_hist_tags(mess_hist_tag_table);
 
   GtkTextBuffer *mess_hist_buffer = gtk_text_buffer_new(mess_hist_tag_table);
   ui->gui->mess_hist_buffer = mess_hist_buffer;
@@ -152,7 +127,8 @@ GtkWidget *create_text_component()
   GtkTextIter iter;
   gtk_text_buffer_get_end_iter(ui->gui->mess_hist_buffer, &iter);
   gtk_text_buffer_create_mark(ui->gui->mess_hist_buffer, "end", &iter, TRUE);
-  mess_hist_view = gtk_text_view_new_with_buffer(ui->gui->mess_hist_buffer);
+  GtkWidget *mess_hist_view = gtk_text_view_new_with_buffer(ui->gui->mess_hist_buffer);
+  ui->gui->mess_hist_view = mess_hist_view;
 
   gtk_text_view_set_editable(GTK_TEXT_VIEW(mess_hist_view), FALSE);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(mess_hist_view), FALSE);
@@ -170,38 +146,31 @@ GtkWidget *create_text_component()
   //debug option
   GtkWidget *debug_check_button =
     gtk_check_button_new_with_mnemonic(_("Enable _debug messages"));
-  g_signal_connect(G_OBJECT(debug_check_button), "toggled",
-      G_CALLBACK(debug_check_event), NULL);
+  g_signal_connect(G_OBJECT(debug_check_button), "toggled", G_CALLBACK(debug_check_event), ui);
   gtk_box_pack_start(GTK_BOX(hbox), debug_check_button, FALSE, FALSE, 0);
 
   //clear button
   GtkWidget *clear_button = wh_create_cool_button(GTK_STOCK_CLEAR, _("C_lear"), FALSE);
-  g_signal_connect(G_OBJECT(clear_button), "clicked",
-      G_CALLBACK(clear_messages_event), NULL);
+  g_signal_connect(G_OBJECT(clear_button), "clicked", G_CALLBACK(clear_messages_event), ui);
   gtk_box_pack_end(GTK_BOX(hbox), clear_button, FALSE, FALSE, 0);
 
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 3);
-  
+
   return vbox;
 }
 
 //! Create the message history dialog
-void create_mess_history_dialog()
+void create_mess_history_dialog(ui_state *ui)
 {
-  mess_history_dialog = gtk_dialog_new_with_buttons(_("Messages history"), NULL,
+  GtkWidget *mess_history_dialog = gtk_dialog_new_with_buttons(_("Messages history"), NULL,
       GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+  ui->gui->mess_history_dialog = mess_history_dialog;
 
   gtk_window_set_default_size(GTK_WINDOW(mess_history_dialog), 550, 300);
-
-  g_signal_connect_swapped(mess_history_dialog, "response",
-    G_CALLBACK(mess_history_hide), NULL);
-  g_signal_connect(G_OBJECT(mess_history_dialog), "delete_event",
-      G_CALLBACK(mess_history_hide2), NULL);
-
   gtk_window_set_position(GTK_WINDOW(mess_history_dialog), GTK_WIN_POS_CENTER);
 
-  GtkWidget *text_component = create_text_component();
+  GtkWidget *text_component = create_text_component(ui);
   GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(mess_history_dialog));
   gtk_box_pack_start(GTK_BOX(area), text_component, TRUE, TRUE, 0);
 }

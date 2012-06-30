@@ -340,7 +340,7 @@ static void parse_command_line_options(gint argc, gchar * argv[])
     {
       case 'd':
         fprintf(stdout, _("Setting the output directory to %s.\n"), optarg);
-        set_output_directory((gchar *)optarg);
+        set_output_directory((gchar *)optarg, ui);
 #ifdef __WIN32__
         mkdir(optarg);
 #else

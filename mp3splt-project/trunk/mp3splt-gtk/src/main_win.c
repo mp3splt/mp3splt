@@ -56,8 +56,6 @@ GtkWidget *split_freedb_button;
 
 gchar *filename_path_of_split;
 
-extern GtkWidget *mess_history_dialog;
-
 extern GtkWidget *da;
 
 extern gint max_split_files;
@@ -397,7 +395,7 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
   }
 
   ui->status->filename_to_split = get_input_filename(ui->gui);
-  filename_path_of_split = outputdirectory_get();
+  filename_path_of_split = get_output_directory(ui);
 
   if (filename_path_of_split != NULL)
   {
@@ -441,7 +439,9 @@ static GtkWidget *create_toolbar()
 //!event for the "messages history" button
 static void show_messages_history_dialog(GtkWidget *widget, ui_state *ui)
 {
-  gtk_widget_show_all(GTK_WIDGET(mess_history_dialog));
+  gtk_widget_show_all(ui->gui->mess_history_dialog);
+  gtk_dialog_run(GTK_DIALOG(ui->gui->mess_history_dialog));
+  gtk_widget_hide(ui->gui->mess_history_dialog);
 }
 
 #ifndef NO_GNOME
@@ -938,7 +938,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(main_vbox), hbox, FALSE, FALSE, 2);
 
   /* show messages history dialog */
-  create_mess_history_dialog();
+  create_mess_history_dialog(ui);
  
   /* statusbar */
   GtkStatusbar *status_bar = GTK_STATUSBAR(gtk_statusbar_new());

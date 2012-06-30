@@ -48,27 +48,12 @@
 #define ORIGINAL_FILE_TAGS 2
 #define TAGS_FROM_FILENAME 3
 
-gboolean get_checked_output_radio_box();
+gboolean get_checked_output_radio_box(ui_state *ui);
 gint get_checked_tags_version_radio_box(gui_state *gui);
-void radio_box_changed_event(GtkToggleButton *radio_b, gpointer data);
-GtkWidget *create_pref_general_page();
-void browse_dir_button_event(GtkWidget *widget, gpointer data);
-void disable_adjust_spinners();
-void enables_adjust_spinners();
-void adjust_event(GtkToggleButton *adjust_mode, gpointer user_data);
-void frame_event(GtkToggleButton *frame_mode, gpointer user_data);
-void set_default_prefs_event(GtkWidget *widget, gpointer data);
-void song_dir_button_event(GtkWidget *widget, gpointer data);
-GtkWidget *create_pref_splitpoints_page();
-GString *get_checked_language();
-GtkWidget *create_save_buttons_hbox();
-void combo_remove_unavailable_players();
-void player_combo_box_event(GtkComboBox *widget, gpointer data);
-GtkWidget *create_choose_player_combo();
-GtkWidget *create_pref_player_page();
+GString *get_checked_language(ui_state *ui);
 GtkWidget *create_choose_preferences(ui_state *ui);
-void set_output_directory(gchar *dirname);
-gchar *outputdirectory_get();
+void set_output_directory(gchar *dirname, ui_state *ui);
+gchar *get_output_directory(ui_state *ui);
 
 void refresh_preview_drawing_areas(gui_state *gui);
 

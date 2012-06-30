@@ -48,7 +48,7 @@ typedef struct {
   gchar* second_key;
   gint default_value;
   GtkWidget *range;
-  void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data);
+  void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data);
   gpointer user_data_for_cb;
 } range_preference;
 
@@ -72,7 +72,7 @@ void pm_register_spinner_int_preference(gchar *main_key, gchar *second_key,
 
 void pm_register_range_preference(gchar *main_key, gchar *second_key,
     gint default_value, GtkWidget *range,
-    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer user_data),
+    void (*update_adjustment_value)(GtkAdjustment *adjustment, gpointer data),
     gpointer user_data_for_cb, preferences_state *pm);
 
 void pm_load(GKeyFile *key_file, preferences_state *pm);
