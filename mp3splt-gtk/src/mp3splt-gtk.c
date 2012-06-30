@@ -249,7 +249,6 @@ static void sigint_handler(gint sig)
 {
   if (!sigint_called)
   {
-    //TODO
     sigint_called = TRUE;
     ui->status->quit_main_program = TRUE;
     exit_application(NULL, ui);
@@ -259,11 +258,10 @@ static void sigint_handler(gint sig)
 #ifndef __WIN32__
 static void sigpipe_handler(gint sig)
 {
-  //TODO
   if (player_is_running(ui) &&
       ui->infos->selected_player == PLAYER_SNACKAMP)
   {
-    disconnect_snackamp();
+    disconnect_snackamp(ui);
   }
 }
 #endif

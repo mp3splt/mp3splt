@@ -504,7 +504,7 @@ void connect_button_event(GtkWidget *widget, ui_state *ui)
   {
     if (ui->infos->selected_player == PLAYER_SNACKAMP)
     {
-      connect_snackamp(8775);
+      connect_snackamp(8775, ui);
     }
 
     status->timeout_id = g_timeout_add(ui->infos->timeout_value, (GSourceFunc)mytimer, ui);
@@ -598,7 +598,7 @@ void disconnect_button_event(GtkWidget *widget, ui_state *ui)
   {
     if (ui->infos->selected_player == PLAYER_SNACKAMP)
     {
-      disconnect_snackamp();
+      disconnect_snackamp(ui);
     }
 
     g_source_remove(ui->status->timeout_id);

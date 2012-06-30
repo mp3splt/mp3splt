@@ -39,99 +39,70 @@
 
 #include "snackamp_control.h"
 
-//file descriptors for line buffering
-FILE *in, *out;
-//if we are connected or not
-gboolean connected = FALSE;
-
-#ifdef __WIN32__
-SOCKET socket_id;
-#else
-gint socket_id;
-#endif
-
 /*!connecting to the player to the port port
 
 Might possibley return an error
 */
-gint connect_snackamp(gint port)
+gint connect_snackamp(gint port, ui_state *ui)
 {
-  //socket and internet structures
   struct sockaddr_in host;
   struct hostent *h;
   gint return_err = 0;
-  
+
 #ifdef __WIN32__
   long winsockinit;
   WSADATA winsock;
   winsockinit = WSAStartup(0x0101,&winsock);
 #endif
-  
-  //prepare host..
+
   if((h = gethostbyname("localhost"))==NULL)
-    {
-      //fprintf(stderr, "could not get host by name\n");
-      return_err = 1;
-    }
-  
-  //we prepare socket
+  {
+    return_err = 1;
+  }
+
   host.sin_family = AF_INET;
-  host.sin_addr.s_addr = 
-    ((struct in_addr *) (h->h_addr)) ->s_addr;
+  host.sin_addr.s_addr = ((struct in_addr *) (h->h_addr)) ->s_addr;
   host.sin_port=htons(port);
-  
-  //if no error, continue
+
   if (return_err == 0)
+  {
+    if ((ui->pi->socket_id = socket(AF_INET, SOCK_STREAM, 0))==-1)
     {
-      //initialize socket
-      if((socket_id=socket(AF_INET, SOCK_STREAM, 0))==-1)
-        {
-          //fprintf(stderr, "error initialising socket\n");
-          return_err = 2;
-        }
+      return_err = 2;
     }
-  
-  //if no error, continue
+  }
+
   if (return_err == 0)
+  {
+    if ((connect(ui->pi->socket_id, (void *)&host, sizeof(host)))==-1)
     {
-      //make connection
-      if ((connect(socket_id,
-                   (void *)&host, sizeof(host)))==-1)
-        {
-          //fprintf(stderr, "cannot connect to host\n");
-          return_err = 3;
-        }
+      return_err = 3;
     }
-  
-  //if no error, continue
+  }
+
   if (return_err == 0)
-    {
-      /* !@Crap */
+  {
 #ifdef __WIN32__
 #else
-      //we prepare file descriptors for 
-      //
-      if (NULL==(in=fdopen(socket_id, "r")) || 
-          NULL==(out=fdopen(socket_id, "w")))
-        {
-          //fprintf(stderr, "cannot prepare file descriptors..\n");
-          return_err = 4;
-        }
-#endif  
-    }
-  
-  //if no err
-  if (return_err == 0)
+    if (NULL == (ui->pi->in = fdopen(ui->pi->socket_id, "r")) || 
+        NULL == (ui->pi->out = fdopen(ui->pi->socket_id, "w")))
     {
-      //we set the line buffering
-      setvbuf(out, NULL, _IOLBF, 0);
-      connected = TRUE;
+      return_err = 4;
     }
-  
-  //if socket errors, disconnect snackamp
+#endif  
+  }
+
+  if (return_err == 0)
+  {
+    setvbuf(ui->pi->out, NULL, _IOLBF, 0);
+    ui->pi->connected = TRUE;
+  }
+
   if (return_err >= 2)
-    disconnect_snackamp();
-  
+  {
+    disconnect_snackamp(ui);
+  }
+
   return return_err;
 }
 
@@ -156,13 +127,13 @@ static gchar *cut_begin_end(gchar *result)
 /*! disconnecting with the player
 possibly returns an error
 */
-gint disconnect_snackamp()
+gint disconnect_snackamp(ui_state *ui)
 {
-  connected = FALSE;
+  ui->pi->connected = FALSE;
 #ifdef __WIN32__
-  return closesocket(socket_id);
+  return closesocket(ui->pi->socket_id);
 #else
-  return close(socket_id);
+  return close(ui->pi->socket_id);
 #endif
 }
 
@@ -171,7 +142,7 @@ gint disconnect_snackamp()
 \return the result; must be g_freed after use
 \todo rewrite this function
 */
-static gchar *snackamp_socket_send_message(gchar *message)
+static gchar *snackamp_socket_send_message(gchar *message, ui_state *ui)
 {
   gchar *result = malloc(1024 * sizeof(gchar *));
   strcpy(result,"disconnected");
@@ -179,23 +150,23 @@ static gchar *snackamp_socket_send_message(gchar *message)
 #ifdef __WIN32__
   gboolean r = TRUE;
 
-  gint err1 = send(socket_id, message, strlen(message), 0);
+  gint err1 = send(ui->pi->socket_id, message, strlen(message), 0);
   if (err1 <= 0)
   {
-    disconnect_snackamp();
+    disconnect_snackamp(ui);
   }
   else
   {
-    gint err = recv(socket_id, result, 1024, 0);
+    gint err = recv(ui->pi->socket_id, result, 1024, 0);
     if (err <= 0)
     {
-      disconnect_snackamp();
+      disconnect_snackamp(ui);
       r = FALSE;
     }
   }
 #else
-  fputs(message, out);
-  fgets(result, 1024, in);
+  fputs(message, ui->pi->out);
+  fgets(result, 1024, ui->pi->in);
 #endif
 
   //if on win32 we put the \0 when we find \n because no line buffering
@@ -215,7 +186,7 @@ static gchar *snackamp_socket_send_message(gchar *message)
 }
 
 //!gets an integer from the string
-gint get_integer_from_string(gchar *result)
+static gint get_integer_from_string(gchar *result)
 {
   gint our_integer = 0;
   gint i = 0;
@@ -234,15 +205,15 @@ gint get_integer_from_string(gchar *result)
 }
 
 //!Test if we are connected to snackamp
-gboolean snackamp_is_connected()
+gboolean snackamp_is_connected(ui_state *ui)
 {
-  return connected;
+  return ui->pi->connected;
 }
 
 //!gets informations about the song
-void snackamp_get_song_infos(gchar *total_infos)
+void snackamp_get_song_infos(gchar *total_infos, ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_info\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_info\n", ui);
   result = cut_begin_end(result);
 
   //stereo/mono
@@ -309,46 +280,46 @@ void snackamp_get_song_infos(gchar *total_infos)
 
 The result of this query must be freed after use.
 */
-gchar *snackamp_get_filename()
+gchar *snackamp_get_filename(ui_state *ui)
 {
-  gint playlist_pos = snackamp_get_playlist_pos();
+  gint playlist_pos = snackamp_get_playlist_pos(ui);
   
   //we get the current file
   gchar temp[100];
   g_snprintf(temp, 100, "%s %d\n", "xmms_remote_get_playlist_file", playlist_pos);
  
-  gchar *result = snackamp_socket_send_message(temp);
+  gchar *result = snackamp_socket_send_message(temp, ui);
   result = cut_begin_end(result);
 
   return result;
 }
 
 //!returns current song position in the playlist
-gint snackamp_get_playlist_pos()
+gint snackamp_get_playlist_pos(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_pos\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_pos\n", ui);
   gint number = get_integer_from_string(result);
   g_free(result);
   return number;
 }
 
 //!stops playing a song
-void snackamp_stop()
+void snackamp_stop(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_stop\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_stop\n", ui);
   g_free(result);
 }
 
 //!returns the number of songs of the playlist
-gint snackamp_get_playlist_number()
+gint snackamp_get_playlist_number(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_length\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_length\n", ui);
   gint number = get_integer_from_string(result);
   g_free(result);
 
   if (number == -1)
   {
-    snackamp_stop();
+    snackamp_stop(ui);
   }
 
   return number;
@@ -358,23 +329,23 @@ gint snackamp_get_playlist_number()
 
 The return value must be g_free'd after use.
 */
-gchar *snackamp_get_title_song()
+gchar *snackamp_get_title_song(ui_state *ui)
 {
-  gint playlist_pos = snackamp_get_playlist_pos();
+  gint playlist_pos = snackamp_get_playlist_pos(ui);
   
   gchar temp[100];
   g_snprintf(temp, 100,"%s %d\n", "xmms_remote_get_playlist_title",playlist_pos);
 
-  gchar *result = snackamp_socket_send_message(temp);
+  gchar *result = snackamp_socket_send_message(temp, ui);
   result = cut_begin_end(result);
   
   return result;
 }
 
 //!returns elapsed time
-gint snackamp_get_time_elapsed()
+gint snackamp_get_time_elapsed(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_output_time\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_output_time\n", ui);
   gint pos = get_integer_from_string(result);
   g_free(result);
 
@@ -382,7 +353,7 @@ gint snackamp_get_time_elapsed()
 }
 
 //!starts snackamp
-void snackamp_start()
+void snackamp_start(ui_state *ui)
 {
   static gchar *exec_command = "snackAmp";
   gchar *exec_this = g_strdup_printf("%s &", exec_command);
@@ -390,7 +361,7 @@ void snackamp_start()
   
   time_t lt;
   gint timer = time(&lt);
-  while ((!snackamp_is_running()) && ((time(&lt) - timer) < 8))
+  while ((!snackamp_is_running(ui)) && ((time(&lt) - timer) < 8))
   {
     usleep(0);
   }
@@ -399,37 +370,37 @@ void snackamp_start()
 }
 
 //!jumps to the position pos in the playlist
-void snackamp_set_playlist_pos(gint pos)
+void snackamp_set_playlist_pos(gint pos, ui_state *ui)
 {
   gchar temp[100];
   g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_playlist_pos",pos);
-  gchar *result = snackamp_socket_send_message(temp);
+  gchar *result = snackamp_socket_send_message(temp, ui);
   g_free(result);
 }
 
 //!selects the last file in the playlist
-void snackamp_select_last_file()
+void snackamp_select_last_file(ui_state *ui)
 {
-  gint last_song = snackamp_get_playlist_number();
-  snackamp_set_playlist_pos(last_song-1);
+  gint last_song = snackamp_get_playlist_number(ui);
+  snackamp_set_playlist_pos(last_song - 1, ui);
 }
 
 //!plays a song
-void snackamp_play()
+void snackamp_play(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_play\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_play\n", ui);
   g_free(result);
 }
 
 //!plays the last file of the playlist
-void snackamp_play_last_file()
+void snackamp_play_last_file(ui_state *ui)
 {
-  snackamp_select_last_file();
-  snackamp_play();
+  snackamp_select_last_file(ui);
+  snackamp_play(ui);
 }
 
 //!add files to the snackamp playlist
-void snackamp_add_files(GList *list)
+void snackamp_add_files(GList *list, ui_state *ui)
 {
   gint i = 0;
   gchar *song = NULL;
@@ -439,7 +410,7 @@ void snackamp_add_files(GList *list)
     gchar *local = malloc(malloc_int * sizeof(gchar *));
     g_snprintf(local, malloc_int, "%s {%s}\n", "xmms_remote_playlist_add ", song);
 
-    gchar *result = snackamp_socket_send_message(local);
+    gchar *result = snackamp_socket_send_message(local, ui);
     g_free(result);
 
     g_free(local);
@@ -448,18 +419,18 @@ void snackamp_add_files(GList *list)
 }
 
 //!sets volume
-void snackamp_set_volume(gint volume)
+void snackamp_set_volume(gint volume, ui_state *ui)
 {
   gchar temp[100];
-  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_main_volume",volume);
-  gchar *result = snackamp_socket_send_message(temp);
+  g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_main_volume", volume);
+  gchar *result = snackamp_socket_send_message(temp, ui);
   g_free(result);
 }
 
 //!returns volume
-gint snackamp_get_volume()
+gint snackamp_get_volume(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_main_volume\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_main_volume\n", ui);
   gint vol = get_integer_from_string(result);
   g_free(result);
  
@@ -467,21 +438,21 @@ gint snackamp_get_volume()
 }
 
 //!starts snackamp with songs
-void snackamp_start_with_songs(GList *list)
+void snackamp_start_with_songs(GList *list, ui_state *ui)
 {
-  snackamp_start();
-  snackamp_add_files(list);
+  snackamp_start(ui);
+  snackamp_add_files(list, ui);
 }
 
 //!returns TRUE if snackamp is running; if not, FALSE 
-gint snackamp_is_running()
+gint snackamp_is_running(ui_state *ui)
 {
-  if (connected)
+  if (ui->pi->connected)
   {
     return TRUE;
   }
 
-  if (connect_snackamp(8775) == 0)
+  if (connect_snackamp(8775, ui) == 0)
   {
     return TRUE;
   }
@@ -490,36 +461,36 @@ gint snackamp_is_running()
 }
 
 //!pause a song
-void snackamp_pause()
+void snackamp_pause(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_pause\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_pause\n", ui);
   g_free(result);
 }
 
 //!changes to next song
-void snackamp_next()
+void snackamp_next(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_playlist_next\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_playlist_next\n", ui);
   g_free(result);
 }
 
 //!changes to previous song
-void snackamp_prev()
+void snackamp_prev(ui_state *ui)
 {
-  gint playlist_pos = snackamp_get_playlist_pos();
+  gint playlist_pos = snackamp_get_playlist_pos(ui);
 
   if (playlist_pos > 0)
   {
-    gchar *result = snackamp_socket_send_message("xmms_remote_playlist_prev\n");
+    gchar *result = snackamp_socket_send_message("xmms_remote_playlist_prev\n", ui);
     g_free(result);
     return;
   }
 
-  snackamp_play_last_file();
+  snackamp_play_last_file(ui);
 }
 
 //!jump to time
-void snackamp_jump(gint position)
+void snackamp_jump(gint position, ui_state *ui)
 {
   gint hundr_secs_pos = position / 10;
   gint hundr_secs = hundr_secs_pos % 100;
@@ -535,14 +506,14 @@ void snackamp_jump(gint position)
   gchar temp[100];
   g_snprintf(temp, 100, "%s %f\n", "xmms_remote_jump_to_time", total_pos);
 
-  gchar *result = snackamp_socket_send_message(temp);
+  gchar *result = snackamp_socket_send_message(temp, ui);
   g_free(result);
 }
 
 //!returns total time of the current song
-gint snackamp_get_total_time()
+gint snackamp_get_total_time(ui_state *ui)
 {
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_time\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_time\n", ui);
   gint hundr_secs = get_integer_from_string(result) * 1000;
   g_free(result);
 
@@ -550,14 +521,14 @@ gint snackamp_get_total_time()
 }
 
 //!returns TRUE if snackamp is playing, else FALSE
-gint snackamp_is_playing()
+gint snackamp_is_playing(ui_state *ui)
 {
-  if (!snackamp_is_connected())
+  if (!snackamp_is_connected(ui))
   {
     return FALSE;
   }
 
-  gchar *result = snackamp_socket_send_message("xmms_remote_is_playing\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_is_playing\n", ui);
   gint i = atoi(result);
   g_free(result);
 
@@ -573,14 +544,14 @@ gint snackamp_is_playing()
 
 not yet implemented in snackamp
 */
-gint snackamp_is_paused()
+gint snackamp_is_paused(ui_state *ui)
 {
-  if (!snackamp_is_connected())
+  if (!snackamp_is_connected(ui))
   {
     return FALSE;
   }
 
-  gchar *result = snackamp_socket_send_message("xmms_remote_is_paused\n");
+  gchar *result = snackamp_socket_send_message("xmms_remote_is_paused\n", ui);
   result = cut_begin_end(result);
 
   gint i = atoi(result);
@@ -594,9 +565,3 @@ gint snackamp_is_paused()
   return FALSE;
 }
 
-/*//quits player
-gint snackamp_quit()
-{
-  return 1;
-}
-*/

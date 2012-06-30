@@ -34,6 +34,15 @@
 
 #include <libmp3splt/mp3splt.h>
 
+#ifndef NO_GSTREAMER
+  #include <gst/gst.h>
+#endif
+
+#ifndef NO_AUDACIOUS
+  #include <audacious/audctrl.h>
+  #include <audacious/dbus.h>
+#endif
+
 typedef struct {
   gchar* main_key;
   gchar* second_key;
@@ -163,6 +172,33 @@ typedef struct {
 
   gchar *filename_path_of_split;
 } ui_infos;
+
+typedef struct {
+#ifndef NO_GSTREAMER
+  const gchar *song_artist;
+  const gchar *song_title;
+  gint rate;
+  GstElement *play;
+  GstBus *bus;
+  gint _gstreamer_is_running;
+#endif
+
+#ifndef NO_AUDACIOUS
+  DBusGProxy *dbus_proxy;
+  DBusGConnection *dbus_connection;
+#endif
+
+  //snackamp
+  FILE *in;
+  FILE *out;
+  gboolean connected;
+#ifdef __WIN32__
+  SOCKET socket_id;
+#else
+  gint socket_id;
+#endif
+
+} player_infos;
 
 typedef struct {
   GtkWidget *window;
@@ -429,6 +465,7 @@ typedef struct {
   GArray *splitpoints;
   gui_state *gui;
   gui_status *status;
+  player_infos *pi;
 } ui_state;
 
 #endif
