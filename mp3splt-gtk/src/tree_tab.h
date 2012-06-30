@@ -42,7 +42,19 @@
 
 #include "all_includes.h"
 
-void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui);
+//!The enum telling which item is kept in which column of the splitpoint tree
+enum {
+  COL_CHECK,
+  COL_DESCRIPTION,
+  COL_MINUTES,
+  COL_SECONDS,
+  COL_HUNDR_SECS,
+  COL_NUMBER,
+  COL_PREVIEW,
+  COL_SPLIT_PREVIEW,
+  NUM_COLUMNS = 8
+} tree_columns;
+
 gchar *get_splitpoint_name(gint index, ui_state *ui);
 gint get_first_splitpoint_selected(gui_state *gui);
 void select_splitpoint(gint index, gui_state *gui);
@@ -51,42 +63,15 @@ void remove_splitpoint(gint index,gint stop_preview, ui_state *ui);
 void update_splitpoint(gint index, Split_point new_point, ui_state *ui);
 void update_splitpoint_from_time(gint index, gdouble time, ui_state *ui);
 void update_splitpoint_check(gint index, ui_state *ui);
-void update_add_button(ui_state *ui);
 void update_minutes_from_spinner(GtkWidget *widget, ui_state *ui);
 void update_seconds_from_spinner(GtkWidget *widget, ui_state *ui);
 void update_hundr_secs_from_spinner(GtkWidget *widget, ui_state *ui);
-void exchange_elements_from_array(gint element_number1,
-                                  gint element_number2);
-void exchange_rows_in_the_tree(gint i, gint j, GtkTreeView *tree_view);
-void sort_tree(GtkTreeView *tree_view);
 void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui);
 void add_row(gint checked, ui_state *ui);
 GtkWidget *create_splitpoints_frame(ui_state *ui);
 void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui);
-
 void clear_current_description(ui_state *ui);
 void copy_filename_to_current_description(const gchar *fname, ui_state *ui);
-
-//!The enum telling which item is kept in which column of the splitpoint tree
-enum {
-  /*! if we enable this splitpoint for split */
-  COL_CHECK,
-  /*! the filename of the split */
-  COL_DESCRIPTION,
-  /*! minutes*/
-  COL_MINUTES,
-  /*! seconds*/
-  COL_SECONDS,
-  /*! hundreths of a second */
-  COL_HUNDR_SECS,
-  /*! length of the split song */
-  COL_NUMBER,
-  /*! preview button */
-  COL_PREVIEW,
-  /*! split preview button */
-  COL_SPLIT_PREVIEW,
-  NUM_COLUMNS = 8
-} tree_columns;
 
 #endif
 

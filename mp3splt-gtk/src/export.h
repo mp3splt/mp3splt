@@ -34,7 +34,6 @@
 
 #include "all_includes.h"
 
-void export_file(const gchar* filename, ui_state *ui);
 void ChooseCueExportFile(GtkWidget *widget, ui_state *ui);
 
 #endif

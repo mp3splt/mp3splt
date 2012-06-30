@@ -41,13 +41,12 @@
 #include "widgets_helper.h"
 #include "ui_types.h"
 
-GtkWidget *create_multiple_files_component(ui_state *ui);
-
 enum {
-  /*COL_NAME,*/
   MULTIPLE_COL_FILENAME,
   MULTIPLE_FILES_COLUMNS
 };
+
+GtkWidget *create_multiple_files_component(ui_state *ui);
 
 #endif
 

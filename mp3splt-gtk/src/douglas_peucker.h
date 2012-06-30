@@ -46,9 +46,9 @@ typedef struct {
 
 GPtrArray *splt_douglas_peucker(GArray *gdk_points, void (*callback)(ui_state *ui),
     ui_state *ui, gdouble threshold_to_discard_points, ...);
-
 void splt_douglas_peucker_free(GPtrArray *douglas_peucker_ptr_array);
 
+//for unit tests
 gdouble splt_find_distance(GdkPoint first, GdkPoint second);
 gdouble splt_find_perpendicular_distance(GdkPoint point,
     GdkPoint segment_begin_point, GdkPoint segment_end_point);

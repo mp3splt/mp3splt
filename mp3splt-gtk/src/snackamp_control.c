@@ -205,7 +205,7 @@ static gint get_integer_from_string(gchar *result)
 }
 
 //!Test if we are connected to snackamp
-gboolean snackamp_is_connected(ui_state *ui)
+static gboolean snackamp_is_connected(ui_state *ui)
 {
   return ui->pi->connected;
 }
@@ -276,6 +276,15 @@ void snackamp_get_song_infos(gchar *total_infos, ui_state *ui)
   g_free(result);
 }
 
+//!returns current song position in the playlist
+static gint snackamp_get_playlist_pos(ui_state *ui)
+{
+  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_pos\n", ui);
+  gint number = get_integer_from_string(result);
+  g_free(result);
+  return number;
+}
+
 /*!returns the filename
 
 The result of this query must be freed after use.
@@ -292,15 +301,6 @@ gchar *snackamp_get_filename(ui_state *ui)
   result = cut_begin_end(result);
 
   return result;
-}
-
-//!returns current song position in the playlist
-gint snackamp_get_playlist_pos(ui_state *ui)
-{
-  gchar *result = snackamp_socket_send_message("xmms_remote_get_playlist_pos\n", ui);
-  gint number = get_integer_from_string(result);
-  g_free(result);
-  return number;
 }
 
 //!stops playing a song
@@ -370,7 +370,7 @@ void snackamp_start(ui_state *ui)
 }
 
 //!jumps to the position pos in the playlist
-void snackamp_set_playlist_pos(gint pos, ui_state *ui)
+static void snackamp_set_playlist_pos(gint pos, ui_state *ui)
 {
   gchar temp[100];
   g_snprintf(temp, 100, "%s %d\n", "xmms_remote_set_playlist_pos",pos);

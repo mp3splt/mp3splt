@@ -1,5 +1,16 @@
+
 INCLUDES = $(CUTTER_CFLAGS) $(GTK_CFLAGS) -I$(top_srcdir)/src
 LIBS = $(CUTTER_LIBS) $(GTK_LIBS) -lm
+
+if AUDACIOUS
+LIBS += @AUDACIOUS_LIBS@
+INCLUDES += @AUDACIOUS_CFLAGS@ -I/usr/include/dbus-1.0 -I/usr/include/dbus-1.0/include
+endif
+
+if GSTREAMER
+LIBS += @GST_LIBS@
+INCLUDES += @GST_CFLAGS@
+endif
 
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -no-undefined
 

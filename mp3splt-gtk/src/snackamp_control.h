@@ -44,16 +44,13 @@
 
 gint connect_snackamp(gint port, ui_state *ui);
 gint disconnect_snackamp(ui_state *ui);
-gboolean snackamp_is_connected(ui_state *ui);
 void snackamp_get_song_infos(gchar *total_infos, ui_state *ui);
 gchar *snackamp_get_filename(ui_state *ui);
-gint snackamp_get_playlist_pos(ui_state *ui);
 void snackamp_stop(ui_state *ui);
 gint snackamp_get_playlist_number(ui_state *ui);
 gchar *snackamp_get_title_song(ui_state *ui);
 gint snackamp_get_time_elapsed(ui_state *ui);
 void snackamp_start(ui_state *ui);
-void snackamp_set_playlist_pos(gint pos, ui_state *ui);
 void snackamp_select_last_file(ui_state *ui);
 void snackamp_play(ui_state *ui);
 void snackamp_play_last_file(ui_state *ui);

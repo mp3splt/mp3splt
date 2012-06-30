@@ -59,7 +59,6 @@
 
 void player_quick_preview(gint splitpoint_to_preview, ui_state *ui);
 void check_update_down_progress_bar(ui_state *ui);
-void set_preview_active_if_needed();
 void cancel_quick_preview_all(gui_status *status);
 void cancel_quick_preview(gui_status *status);
 void enable_player_buttons(ui_state *ui);
@@ -68,23 +67,13 @@ void connect_button_event(GtkWidget *widget, ui_state *ui);
 void disconnect_button_event(GtkWidget *widget, ui_state *ui);
 void pause_event(GtkWidget *widget, ui_state *ui);
 void refresh_drawing_area(gui_state *gui);
-GtkWidget *create_volume_control_box();
 gfloat get_right_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 gfloat get_left_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 
-gfloat pixels_to_time(gfloat width, gint pixels, ui_state *ui);
-
-gint convert_time_to_pixels(gint width, gfloat time, 
-    gfloat current_time, gfloat total_time, gfloat zoom_coeff);
-gboolean da_expose_event (GtkWidget      *da,
-                          GdkEventExpose *event,
-                          gpointer       data);
 GtkWidget *create_player_control_frame(ui_state *ui);
 
 void file_chooser_cancel_event(ui_state *ui);
 void file_chooser_ok_event(gchar *fname, ui_state *ui);
-void close_file_popup_window_event( GtkWidget *window,
-                                    gpointer data );
 
 void change_current_filename(const gchar *fname, ui_state *ui);
 GtkWidget *create_player_playlist_frame(ui_state *ui);

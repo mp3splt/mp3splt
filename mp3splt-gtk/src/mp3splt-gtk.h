@@ -42,7 +42,6 @@
 #include "all_includes.h"
 
 gpointer split_it(gpointer data);
-
 GThread *create_thread(GThreadFunc func, gpointer data, gboolean joinable, GError **error);
 void enter_threads();
 void exit_threads();
