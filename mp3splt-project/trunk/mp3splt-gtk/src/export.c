@@ -49,7 +49,7 @@
    this? (we output the extension in the "FILE" line.)
  - Is there really no simple C/GTK+ function for quoting quotes?
 */
-void export_file(const gchar* filename, ui_state *ui)
+static void export_file(const gchar* filename, ui_state *ui)
 {
   FILE *outfile;
 

@@ -1378,7 +1378,7 @@ static gchar *get_time_for_drawing(gchar *str, gint time, gboolean hundr_or_not,
 }
 
 //transform pixels to time
-gfloat pixels_to_time(gfloat width, gint pixels, ui_state *ui)
+static gfloat pixels_to_time(gfloat width, gint pixels, ui_state *ui)
 {
   return (ui->infos->total_time * (gfloat)pixels)/(width * ui->infos->zoom_coeff);
 }
@@ -1393,7 +1393,7 @@ static gint time_to_pixels(gint width, gfloat time, gfloat total_time, gfloat zo
 \param width The width of the drawing 
 \param The time in hundreths of a second
 */
-gint convert_time_to_pixels(gint width, gfloat time, 
+static gint convert_time_to_pixels(gint width, gfloat time, 
     gfloat current_time, gfloat total_time, gfloat zoom_coeff)
 {
   return width/2 + time_to_pixels(width, time - current_time, total_time, zoom_coeff);

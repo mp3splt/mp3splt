@@ -54,7 +54,6 @@ GString *get_checked_language(ui_state *ui);
 GtkWidget *create_choose_preferences(ui_state *ui);
 void set_output_directory(gchar *dirname, ui_state *ui);
 gchar *get_output_directory(ui_state *ui);
-
 void refresh_preview_drawing_areas(gui_state *gui);
 
 #endif

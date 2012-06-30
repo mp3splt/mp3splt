@@ -47,13 +47,11 @@ gpointer split_it(gpointer data)
   ui_state *ui = (ui_state *) data;
 
   gint confirmation = SPLT_OK;
-  
+
   enter_threads();
-
   remove_all_split_rows(ui);
-
   exit_threads();
- 
+
   gint err = SPLT_OK;
 
   mp3splt_erase_all_splitpoints(ui->mp3splt_state,&err);
@@ -71,7 +69,6 @@ gpointer split_it(gpointer data)
 
   enter_threads();
   print_status_bar_confirmation(err, ui);
-  
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
   exit_threads();
 
@@ -81,11 +78,11 @@ gpointer split_it(gpointer data)
     free(format);
     format = NULL;
   }
- 
+
   //if we have the normal split mode, enable default output
   gint output_filenames = 
-    mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,&err);
-  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err)
+    mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
+  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err)
       == SPLT_OPTION_NORMAL_MODE)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
@@ -98,7 +95,6 @@ gpointer split_it(gpointer data)
   if (ui->infos->split_file_mode == FILE_MODE_SINGLE)
   {
     enter_threads();
-
     if (split_mode == SPLT_OPTION_NORMAL_MODE)
     {
       put_splitpoints_in_mp3splt_state(ui->mp3splt_state, ui);
@@ -183,19 +179,19 @@ gpointer split_it(gpointer data)
   /*! reenable default output if necessary
    */
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
-  
+
   enter_threads();
 
   print_status_bar_confirmation(confirmation, ui);
-  
+
   //see the cancel button
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
-  
+
   if (ui->status->quit_main_program)
   {
     exit_application(NULL, ui);
   }
-  
+
   if (confirmation >= 0 && !multiple_files_error)
   {
     gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
@@ -205,7 +201,7 @@ gpointer split_it(gpointer data)
   ui->status->splitting = FALSE;
 
   exit_threads();
- 
+
   return NULL;
 }
 

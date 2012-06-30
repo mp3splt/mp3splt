@@ -91,7 +91,7 @@ static gboolean check_if_splitpoint_does_not_exists(gint minutes, gint seconds, 
 Makes the add button show whether the spinners splitpoint is already
 in the table or not
 */
-void update_add_button(ui_state *ui)
+static void update_add_button(ui_state *ui)
 {
   gui_status *status = ui->status;
   if (check_if_splitpoint_does_not_exists(status->spin_mins, status->spin_secs, status->spin_hundr_secs,-1, ui))
@@ -403,6 +403,198 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
   refresh_drawing_area(ui->gui);
 }
 
+/*! adds a splitpoint
+
+\param my_split_point The data for our new split point
+\param old_index used when we update a splitpoint to see where we had
+the play_preview point 
+*/
+static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui)
+{
+  if (check_if_splitpoint_does_not_exists(my_split_point.mins,
+        my_split_point.secs, my_split_point.hundr_secs,-1, ui))
+  {
+    gint k = 0;
+
+    gchar *temp = g_strdup(ui->status->current_description);
+    update_current_description(temp, -1, ui);
+    if (temp)
+    {
+      free(temp);
+      temp = NULL;
+    }
+
+    GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+
+    GtkTreeIter iter;
+    if (gtk_tree_model_get_iter_first(model, &iter))
+    {
+      while (k < ui->infos->splitnumber)
+      {
+        gint tree_minutes;
+        gint tree_seconds;
+        gint tree_hundr_secs;
+        gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+            COL_MINUTES, &tree_minutes,
+            COL_SECONDS, &tree_seconds,
+            COL_HUNDR_SECS, &tree_hundr_secs,
+            -1);
+
+        if (my_split_point.mins < tree_minutes)
+        {
+          break;
+        }
+        else if (my_split_point.mins == tree_minutes)
+        {
+          if (my_split_point.secs < tree_seconds)
+          {
+            break;
+          }
+          else if (my_split_point.secs == tree_seconds)
+          {
+            if (my_split_point.hundr_secs < tree_hundr_secs)
+            {
+              break;
+            }
+          }
+        }
+
+        gtk_tree_model_iter_next(model, &iter);
+        k++;
+      }
+
+      gtk_list_store_insert(GTK_LIST_STORE(model), &iter,k--);
+      g_array_insert_val(ui->splitpoints, k+1, my_split_point);     
+    }
+    else
+    {
+      gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+      g_array_append_val(ui->splitpoints, my_split_point);
+    }
+
+    ui->infos->splitnumber++;
+
+    //we keep the selection on the previous splipoint
+    if ((ui->status->first_splitpoint_selected == old_index) &&
+        (old_index != -1))
+    {
+      GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+      gtk_tree_view_set_cursor(ui->gui->tree_view, path, NULL, FALSE);
+      gtk_tree_path_free(path);
+    }
+
+    if (ui->status->quick_preview)
+    {
+      //if we move the current start preview splitpoint
+      //at the right of the current time, we cancel preview
+      if (old_index == ui->status->preview_start_splitpoint)
+      {
+        if (ui->infos->current_time < get_splitpoint_time(ui->status->preview_start_splitpoint, ui))
+        {
+          cancel_quick_preview(ui->status);
+        }
+      }
+    }
+
+    //we manage the play preview here
+    if (old_index != -1)
+    {
+      //if we have a split preview on going
+      //if we move the point from the left to the right of the
+      //the start preview splitpoint
+      if ((old_index < ui->status->preview_start_splitpoint))
+      {
+        if ((k+1) >= ui->status->preview_start_splitpoint)
+        {
+          ui->status->preview_start_splitpoint--;
+          ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+        }
+      }
+      else
+      {
+        //if we move from the right of the split preview to his left
+        if ((old_index > ui->status->preview_start_splitpoint))
+        {
+          if ((k+1) <= ui->status->preview_start_splitpoint)
+          {
+            ui->status->preview_start_splitpoint++;
+            ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+          }
+        }
+        else
+        {
+          //if we move the start splitpoint on the right of the end splitpoint
+          if (old_index == ui->status->preview_start_splitpoint)
+          {
+            if ((k+1) > ui->status->preview_start_splitpoint)
+            {
+              ui->status->preview_start_splitpoint += (k+1) - ui->status->preview_start_splitpoint;
+              ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+            }
+            else
+            {
+              //if we move the start splitpoint at the left
+              if ((k+1) < ui->status->preview_start_splitpoint)
+              {
+                ui->status->preview_start_splitpoint -= ui->status->preview_start_splitpoint - (k + 1);
+                ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+              }
+            }
+          }
+        }
+      }
+
+      if (ui->status->preview_start_splitpoint == (ui->infos->splitnumber-1))
+      {
+        cancel_quick_preview_all(ui->status);
+      }
+    }
+    else
+    {
+      //if we add a splitpoint at the left of the quick
+      //preview start, add 1
+      if ((k+1) <= ui->status->preview_start_splitpoint)
+      {
+        ui->status->preview_start_splitpoint++;
+        ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+      }
+    }
+
+    //put values in the line
+    //sets text in the minute, second and milisecond column
+    gtk_list_store_set(GTK_LIST_STORE(model), 
+        &iter,
+        COL_CHECK, my_split_point.checked,
+        COL_DESCRIPTION, ui->status->current_description,
+        COL_MINUTES, my_split_point.mins,
+        COL_SECONDS, my_split_point.secs,
+        COL_HUNDR_SECS, my_split_point.hundr_secs,
+        -1);
+
+    gtk_widget_set_sensitive(ui->gui->remove_all_button, TRUE);
+
+    recompute_length_column(ui);
+    remove_status_message(ui->gui);
+  }
+  else
+  {
+    put_status_message(_(" error: you already have the splitpoint in table"), ui);
+  }
+
+  if (gtk_toggle_button_get_active(ui->gui->names_from_filename))
+  {
+    copy_filename_to_current_description(get_input_filename(ui->gui), ui);
+  }
+  else
+  {
+    g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
+  }
+
+  update_add_button(ui);
+  refresh_drawing_area(ui->gui);
+  check_update_down_progress_bar(ui);
+}
+
 /*!Set all values of a split point
 
 \param new_point All values for this split point
@@ -600,198 +792,6 @@ void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui)
   my_split_point.checked = TRUE;
 
   add_splitpoint(my_split_point, -1, ui);
-}
-
-/*! adds a splitpoint
-
-\param my_split_point The data for our new split point
-\param old_index used when we update a splitpoint to see where we had
-the play_preview point 
-*/
-void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui)
-{
-  if (check_if_splitpoint_does_not_exists(my_split_point.mins,
-        my_split_point.secs, my_split_point.hundr_secs,-1, ui))
-  {
-    gint k = 0;
-
-    gchar *temp = g_strdup(ui->status->current_description);
-    update_current_description(temp, -1, ui);
-    if (temp)
-    {
-      free(temp);
-      temp = NULL;
-    }
-
-    GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
-
-    GtkTreeIter iter;
-    if (gtk_tree_model_get_iter_first(model, &iter))
-    {
-      while (k < ui->infos->splitnumber)
-      {
-        gint tree_minutes;
-        gint tree_seconds;
-        gint tree_hundr_secs;
-        gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-            COL_MINUTES, &tree_minutes,
-            COL_SECONDS, &tree_seconds,
-            COL_HUNDR_SECS, &tree_hundr_secs,
-            -1);
-
-        if (my_split_point.mins < tree_minutes)
-        {
-          break;
-        }
-        else if (my_split_point.mins == tree_minutes)
-        {
-          if (my_split_point.secs < tree_seconds)
-          {
-            break;
-          }
-          else if (my_split_point.secs == tree_seconds)
-          {
-            if (my_split_point.hundr_secs < tree_hundr_secs)
-            {
-              break;
-            }
-          }
-        }
-
-        gtk_tree_model_iter_next(model, &iter);
-        k++;
-      }
-
-      gtk_list_store_insert(GTK_LIST_STORE(model), &iter,k--);
-      g_array_insert_val(ui->splitpoints, k+1, my_split_point);     
-    }
-    else
-    {
-      gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-      g_array_append_val(ui->splitpoints, my_split_point);
-    }
-
-    ui->infos->splitnumber++;
-
-    //we keep the selection on the previous splipoint
-    if ((ui->status->first_splitpoint_selected == old_index) &&
-        (old_index != -1))
-    {
-      GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-      gtk_tree_view_set_cursor(ui->gui->tree_view, path, NULL, FALSE);
-      gtk_tree_path_free(path);
-    }
-
-    if (ui->status->quick_preview)
-    {
-      //if we move the current start preview splitpoint
-      //at the right of the current time, we cancel preview
-      if (old_index == ui->status->preview_start_splitpoint)
-      {
-        if (ui->infos->current_time < get_splitpoint_time(ui->status->preview_start_splitpoint, ui))
-        {
-          cancel_quick_preview(ui->status);
-        }
-      }
-    }
-
-    //we manage the play preview here
-    if (old_index != -1)
-    {
-      //if we have a split preview on going
-      //if we move the point from the left to the right of the
-      //the start preview splitpoint
-      if ((old_index < ui->status->preview_start_splitpoint))
-      {
-        if ((k+1) >= ui->status->preview_start_splitpoint)
-        {
-          ui->status->preview_start_splitpoint--;
-          ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
-        }
-      }
-      else
-      {
-        //if we move from the right of the split preview to his left
-        if ((old_index > ui->status->preview_start_splitpoint))
-        {
-          if ((k+1) <= ui->status->preview_start_splitpoint)
-          {
-            ui->status->preview_start_splitpoint++;
-            ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
-          }
-        }
-        else
-        {
-          //if we move the start splitpoint on the right of the end splitpoint
-          if (old_index == ui->status->preview_start_splitpoint)
-          {
-            if ((k+1) > ui->status->preview_start_splitpoint)
-            {
-              ui->status->preview_start_splitpoint += (k+1) - ui->status->preview_start_splitpoint;
-              ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
-            }
-            else
-            {
-              //if we move the start splitpoint at the left
-              if ((k+1) < ui->status->preview_start_splitpoint)
-              {
-                ui->status->preview_start_splitpoint -= ui->status->preview_start_splitpoint - (k + 1);
-                ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
-              }
-            }
-          }
-        }
-      }
-
-      if (ui->status->preview_start_splitpoint == (ui->infos->splitnumber-1))
-      {
-        cancel_quick_preview_all(ui->status);
-      }
-    }
-    else
-    {
-      //if we add a splitpoint at the left of the quick
-      //preview start, add 1
-      if ((k+1) <= ui->status->preview_start_splitpoint)
-      {
-        ui->status->preview_start_splitpoint++;
-        ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
-      }
-    }
-
-    //put values in the line
-    //sets text in the minute, second and milisecond column
-    gtk_list_store_set(GTK_LIST_STORE(model), 
-        &iter,
-        COL_CHECK, my_split_point.checked,
-        COL_DESCRIPTION, ui->status->current_description,
-        COL_MINUTES, my_split_point.mins,
-        COL_SECONDS, my_split_point.secs,
-        COL_HUNDR_SECS, my_split_point.hundr_secs,
-        -1);
-
-    gtk_widget_set_sensitive(ui->gui->remove_all_button, TRUE);
-
-    recompute_length_column(ui);
-    remove_status_message(ui->gui);
-  }
-  else
-  {
-    put_status_message(_(" error: you already have the splitpoint in table"), ui);
-  }
-
-  if (gtk_toggle_button_get_active(ui->gui->names_from_filename))
-  {
-    copy_filename_to_current_description(get_input_filename(ui->gui), ui);
-  }
-  else
-  {
-    g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
-  }
-
-  update_add_button(ui);
-  refresh_drawing_area(ui->gui);
-  check_update_down_progress_bar(ui);
 }
 
 //!adds a row to the table
