@@ -209,8 +209,7 @@ typedef struct {
   GtkWidget *window;
 
   GtkActionGroup *action_group;
-  GtkWidget *browse_entry;
-  GtkWidget *browse_button;
+  GtkWidget *open_file_chooser_button;
   GString *input_filename;
 
   GtkWidget *player_box;

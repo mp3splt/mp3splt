@@ -294,8 +294,6 @@ static void reset_song_name_label(gui_state *gui)
 //!clear song data and makes inactive progress bar
 static void clear_data_player(gui_state *gui)
 {
-  gtk_widget_set_sensitive(gui->browse_button, TRUE);
-
   reset_song_name_label(gui);
   reset_song_infos(gui);
   reset_inactive_volume_button(gui);
@@ -447,7 +445,7 @@ static void connect_with_song(const gchar *fname, gint start_playing, ui_state *
       }
       else
       {
-        if(!status->playing)
+        if (!status->playing)
         {
           player_add_files_and_select(song_list, ui);
         }
@@ -514,11 +512,6 @@ void connect_button_event(GtkWidget *widget, ui_state *ui)
   //connect to player with song
   //1 means dont start playing
   connect_to_player_with_song(1, ui);
-
-  if (ui->infos->selected_player != PLAYER_GSTREAMER)
-  {
-    gtk_widget_set_sensitive(ui->gui->browse_button, FALSE);
-  }
 
   enable_player_buttons(ui);
 
@@ -606,7 +599,6 @@ void disconnect_button_event(GtkWidget *widget, ui_state *ui)
   }
 
   clear_data_player(gui);
-  gtk_widget_set_sensitive(gui->browse_button, TRUE);
   disconnect_change_buttons(ui);
   disable_player_buttons(gui);
 
@@ -655,10 +647,6 @@ static void play_event(GtkWidget *widget, ui_state *ui)
   {
     //0 = also start playing
     connect_to_player_with_song(0, ui);
-    if (ui->infos->selected_player != PLAYER_GSTREAMER)
-    {
-      gtk_widget_set_sensitive(gui->browse_button, FALSE);
-    }
   }
 
   gtk_widget_set_sensitive(gui->pause_button, TRUE);
@@ -3195,20 +3183,10 @@ static gint mytimer(ui_state *ui)
   return TRUE;
 }
 
-/*!event for the file chooser cancel button
-
-Moved here from the file tab
-*/
-void file_chooser_cancel_event(ui_state *ui)
-{
-  gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
-}
-
 //event for the file chooser ok button
 void file_chooser_ok_event(gchar *fname, ui_state *ui)
 {
   change_current_filename(fname, ui);
-  gtk_widget_set_sensitive(ui->gui->browse_button, TRUE);
   gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
   gtk_button_set_image(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_active));
 
@@ -3218,7 +3196,22 @@ void file_chooser_ok_event(gchar *fname, ui_state *ui)
   {
     GList *song_list = NULL;
     song_list = g_list_append(song_list, fname);
-    player_start_add_files(song_list, ui);
+
+    if (!player_is_running(ui))
+    {
+      player_start(ui);
+    }
+    else if (ui->status->playing)
+    {
+      player_stop(ui);
+    }
+
+    player_add_files_and_select(song_list, ui);
+
+    if (ui->status->playing && !player_is_paused(ui))
+    {
+      player_play(ui);
+    }
   }
 }
 

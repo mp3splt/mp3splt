@@ -377,9 +377,10 @@ void gstreamer_start(ui_state *ui)
 
   //add the current filename
   const gchar *fname =  get_input_filename(ui->gui);
-  GList *song_list = g_list_append(song_list, strdup(fname));
+  GList *song_list = g_list_append(NULL, strdup(fname));
   gstreamer_add_files(song_list, ui);
-  //TODO: free memory from GList *song_list
+  g_list_foreach(song_list, (GFunc)g_free, NULL);
+  g_list_free(song_list);
 }
 
 //!selects the last file in the playlist
