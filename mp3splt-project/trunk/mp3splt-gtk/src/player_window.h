@@ -72,7 +72,6 @@ gfloat get_left_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom
 
 GtkWidget *create_player_control_frame(ui_state *ui);
 
-void file_chooser_cancel_event(ui_state *ui);
 void file_chooser_ok_event(gchar *fname, ui_state *ui);
 
 void change_current_filename(const gchar *fname, ui_state *ui);

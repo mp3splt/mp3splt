@@ -115,9 +115,9 @@ void set_input_filename(const gchar *filename, gui_state *gui)
   }
   gui->input_filename = g_string_new(filename);
 
-  if (gui->browse_entry != NULL)
+  if (gui->open_file_chooser_button != NULL)
   {
-    gtk_entry_set_text(GTK_ENTRY(gui->browse_entry), filename);
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(gui->open_file_chooser_button), filename);
   }
 }
 
@@ -574,6 +574,7 @@ static void zoom_in(GtkWidget *widget, ui_state *ui)
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff += fraction;
   adjust_zoom_coeff(ui->infos);
+  refresh_drawing_area(ui->gui);
 }
 
 static void zoom_out(GtkWidget *widget, ui_state *ui)
@@ -581,6 +582,7 @@ static void zoom_out(GtkWidget *widget, ui_state *ui)
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff -= fraction; 
   adjust_zoom_coeff(ui->infos);
+  refresh_drawing_area(ui->gui);
 }
 
 static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui_state *ui)
@@ -605,28 +607,9 @@ static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui
   }
 }
 
-/*! \brief Events for browse button
 
-Also used for the cddb and cue browses.
-*/
-static void browse_button_event(GtkWidget *widget, ui_state *ui)
+static void add_filters_to_file_chooser(GtkWidget *file_chooser)
 {
-  if (GTK_IS_WIDGET(widget))
-  {
-    gtk_widget_set_sensitive(widget, FALSE);
-  }
-
-  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"),
-      NULL,
-      GTK_FILE_CHOOSER_ACTION_OPEN,
-      GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL,
-      GTK_STOCK_OPEN,
-      GTK_RESPONSE_ACCEPT,
-      NULL);
-
-  wh_set_browser_directory_handler(ui, file_chooser);
-
   GtkFileFilter *our_filter = gtk_file_filter_new();
   gtk_file_filter_set_name(our_filter, _("mp3 and ogg files (*.mp3 *.ogg)"));
   gtk_file_filter_add_pattern(our_filter, "*.mp3");
@@ -646,6 +629,23 @@ static void browse_button_event(GtkWidget *widget, ui_state *ui)
   gtk_file_filter_add_pattern(our_filter, "*.ogg");
   gtk_file_filter_add_pattern(our_filter, "*.OGG");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
+}
+
+/*! \brief Events for browse button
+
+Also used for the cddb and cue browses.
+*/
+static void open_file_button_event(GtkWidget *widget, ui_state *ui)
+{
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose File"), NULL,
+      GTK_FILE_CHOOSER_ACTION_OPEN,
+      GTK_STOCK_CANCEL,
+      GTK_RESPONSE_CANCEL,
+      GTK_STOCK_OPEN,
+      GTK_RESPONSE_ACCEPT, NULL);
+
+  add_filters_to_file_chooser(file_chooser);
+  wh_set_browser_directory_handler(ui, file_chooser);
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
@@ -656,10 +656,6 @@ static void browse_button_event(GtkWidget *widget, ui_state *ui)
       g_free(filename);
       filename = NULL;
     }
-  }
-  else
-  {
-    file_chooser_cancel_event(ui);
   }
 
   gtk_widget_destroy(file_chooser);
@@ -676,7 +672,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "HelpMenu", NULL, N_("_Help"), NULL, NULL },
 
     { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
-      G_CALLBACK(browse_button_event) },
+      G_CALLBACK(open_file_button_event) },
 
     { "Import", GTK_STOCK_FILE, N_("_Import splitpoints..."), "<Ctrl>I", N_("Import"),
       G_CALLBACK(import_event) },
@@ -685,8 +681,6 @@ static GtkWidget *create_menu_bar(ui_state *ui)
 
     { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
       G_CALLBACK(split_button_event) },
-    { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
-      G_CALLBACK(show_messages_history_dialog) },
 
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
       G_CALLBACK(exit_application) },
@@ -696,16 +690,19 @@ static GtkWidget *create_menu_bar(ui_state *ui)
       G_CALLBACK(ShowHelp)},
 #endif
 
+    { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
+      G_CALLBACK(show_messages_history_dialog) },
+
     { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
       G_CALLBACK(about_window)},
 
     //player key bindings
-    { "Player_pause", NULL, N_("P_ause/Play"), "space", N_("Pause/Play"),
+    { "Player_pause", NULL, N_("P_ause / Play"), "space", N_("Pause/Play"),
       G_CALLBACK(player_pause_action)},
 
-    { "Player_forward", NULL, N_("Seek _forward"), "Right", N_("Seek forward"),
+    { "Player_forward", GTK_STOCK_MEDIA_FORWARD, N_("Seek _forward"), "Right", N_("Seek forward"),
       G_CALLBACK(player_seek_forward_action)},
-    { "Player_backward", NULL, N_("Seek _backward"), "Left", N_("Seek backward"),
+    { "Player_backward", GTK_STOCK_MEDIA_REWIND, N_("Seek _backward"), "Left", N_("Seek backward"),
       G_CALLBACK(player_seek_backward_action)},
 
     { "Player_small_forward", NULL, N_("Small seek f_orward"), "<Alt>Right", N_("Small seek forward"),
@@ -715,22 +712,22 @@ static GtkWidget *create_menu_bar(ui_state *ui)
 
     { "Player_big_forward", NULL, N_("Big seek fo_rward"), "<Shift>Right", N_("Big seek forward"),
       G_CALLBACK(player_big_seek_forward_action)},
-    { "Player_big_backward", NULL, N_("Big Seek bac_kward"), "<Shift>Left", N_("Big seek backward"),
+    { "Player_big_backward", NULL, N_("Big seek bac_kward"), "<Shift>Left", N_("Big seek backward"),
       G_CALLBACK(player_big_seek_backward_action)},
 
-    { "Player_next_splitpoint", NULL, N_("Seek to _next splitpoint"), "<Ctrl>Right", 
+    { "Player_next_splitpoint", GTK_STOCK_MEDIA_NEXT, N_("Seek to _next splitpoint"), "<Ctrl>Right", 
       N_("Seek to next splitpoint"), G_CALLBACK(player_seek_to_next_splitpoint_action)},
-    { "Player_previous_splitpoint", NULL, N_("Seek to _previous splitpoint"), "<Ctrl>Left", 
+    { "Player_previous_splitpoint", GTK_STOCK_MEDIA_PREVIOUS, N_("Seek to _previous splitpoint"), "<Ctrl>Left", 
       N_("Seek to previous splitpoint"), G_CALLBACK(player_seek_to_previous_splitpoint_action)},
 
-    { "Add_splitpoint", NULL, N_("Add _splitpoint"), "s", 
+    { "Add_splitpoint", GTK_STOCK_ADD, N_("Add _splitpoint"), "s", 
       N_("Add splitpoint"), G_CALLBACK(add_splitpoint_from_player)},
 
-    { "Delete_closest_splitpoint", NULL, N_("_Delete closest splitpoint"), "d", 
+    { "Delete_closest_splitpoint", GTK_STOCK_REMOVE, N_("_Delete closest splitpoint"), "d", 
       N_("Delete closest splitpoint"), G_CALLBACK(delete_closest_splitpoint)},
 
-    { "Zoom_in", NULL, N_("Zoom _in"), "<Ctrl>plus", N_("Zoom in"), G_CALLBACK(zoom_in)},
-    { "Zoom_out", NULL, N_("Zoom _out"), "<Ctrl>minus", N_("Zoom out"), G_CALLBACK(zoom_out)},
+    { "Zoom_in", GTK_STOCK_ZOOM_IN, N_("Zoom _in"), "<Ctrl>plus", N_("Zoom in"), G_CALLBACK(zoom_in)},
+    { "Zoom_out", GTK_STOCK_ZOOM_OUT, N_("Zoom _out"), "<Ctrl>minus", N_("Zoom out"), G_CALLBACK(zoom_out)},
   };
 
   static const gchar *ui_info = 
@@ -743,7 +740,6 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     "      <menuitem action='Export'/>"
     "      <separator/>"
     "      <menuitem action='Split'/>"
-    "      <menuitem action='Messages history'/>"
     "      <separator/>"
     "      <menuitem action='Quit'/>"
     "    </menu>"
@@ -768,7 +764,10 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     "    <menu action='HelpMenu'>"
 #ifndef NO_GNOME
     "      <menuitem action='Contents'/>"
+    "      <separator/>"
 #endif
+    "      <menuitem action='Messages history'/>"
+    "      <separator/>"
     "      <menuitem action='About'/>"
     "    </menu>"
     "  </menubar>"
@@ -800,28 +799,51 @@ static GtkWidget *create_menu_bar(ui_state *ui)
   return menu_box;
 }
 
+static void file_selection_changed(GtkFileChooser *open_file_chooser, ui_state *ui)
+{
+  fprintf(stdout,"here\n");
+  fflush(stdout);
+  gchar *filename = gtk_file_chooser_get_filename(open_file_chooser);
+  if (filename)
+  {
+    file_chooser_ok_event(filename, ui);
+    g_free(filename);
+    filename = NULL;
+  }
+  //TODO: file empty ! ?
+/*  else
+  {
+    gchar *fname = get_input_filename(ui->gui);
+    if (fname != NULL && strlen(fname) != 0)
+    {
+      gtk_file_chooser_set_filename(open_file_chooser, get_input_filename(ui->gui));
+    }
+  }*/
+}
+
+static void file_set_event(GtkFileChooserButton *open_file_chooser_button, ui_state *ui)
+{
+  file_selection_changed(GTK_FILE_CHOOSER(open_file_chooser_button), ui);
+}
+
 static GtkWidget *create_choose_file_frame(ui_state *ui)
 {
-  GtkWidget *hbox = wh_hbox_new();
+  GtkWidget *open_file_chooser_button = gtk_file_chooser_button_new(("_Open..."), GTK_FILE_CHOOSER_ACTION_OPEN);
+  ui->gui->open_file_chooser_button = open_file_chooser_button;
+  add_filters_to_file_chooser(open_file_chooser_button);
+  wh_set_browser_directory_handler(ui, open_file_chooser_button);
 
-  GtkWidget *browse_entry = gtk_entry_new();
-  ui->gui->browse_entry = browse_entry;
+  g_signal_connect(G_OBJECT(open_file_chooser_button), "file-set", G_CALLBACK(file_set_event), ui);
+  g_signal_connect(G_OBJECT(open_file_chooser_button), "selection-changed",
+      G_CALLBACK(file_selection_changed), ui);
 
-  gtk_editable_set_editable(GTK_EDITABLE(browse_entry), FALSE);
-  gtk_box_pack_start(GTK_BOX(hbox), browse_entry, TRUE, TRUE, 4);
-  if (get_input_filename(ui->gui) != NULL)
+  gchar *fname = get_input_filename(ui->gui);
+  if (fname != NULL && strlen(fname) != 0)
   {
-    gtk_entry_set_text(GTK_ENTRY(browse_entry), get_input_filename(ui->gui));
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(open_file_chooser_button), get_input_filename(ui->gui));
   }
 
-  GtkWidget *browse_button = wh_create_cool_button(GTK_STOCK_OPEN, _("_Browse"), FALSE);
-  ui->gui->browse_button = browse_button;
-
-  g_signal_connect(G_OBJECT(browse_button), "clicked", G_CALLBACK(browse_button_event), ui);
-  gtk_box_pack_start(GTK_BOX(hbox), browse_button, FALSE, FALSE, 4);
-  gtk_widget_set_tooltip_text(browse_button, _("Select file"));
- 
-  return hbox;
+  return open_file_chooser_button;
 }
 
 //!main vbox
@@ -927,13 +949,6 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   /* statusbar */
   GtkStatusbar *status_bar = GTK_STATUSBAR(gtk_statusbar_new());
   ui->gui->status_bar = status_bar;
-
-  GtkWidget *mess_history_button = wh_create_cool_button(GTK_STOCK_INFO, NULL, FALSE);
-  gtk_button_set_relief(GTK_BUTTON(mess_history_button), GTK_RELIEF_NONE);
-  gtk_widget_set_tooltip_text(mess_history_button,_("Messages history"));
-  gtk_box_pack_start(GTK_BOX(status_bar), mess_history_button, FALSE, FALSE, 0);
-  g_signal_connect(G_OBJECT(mess_history_button), "clicked",
-      G_CALLBACK(show_messages_history_dialog), ui);
 
   gtk_box_pack_start(GTK_BOX(main_vbox), GTK_WIDGET(status_bar), FALSE, FALSE, 0);
 
