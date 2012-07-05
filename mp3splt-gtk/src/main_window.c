@@ -801,24 +801,27 @@ static GtkWidget *create_menu_bar(ui_state *ui)
 
 static void file_selection_changed(GtkFileChooser *open_file_chooser, ui_state *ui)
 {
-  fprintf(stdout,"here\n");
-  fflush(stdout);
   gchar *filename = gtk_file_chooser_get_filename(open_file_chooser);
-  if (filename)
+  gchar *previous_fname = get_input_filename(ui->gui);
+  if (previous_fname != NULL && filename != NULL && 
+      strcmp(filename, previous_fname) == 0)
+  {
+    return;
+  }
+
+  if (filename != NULL)
   {
     file_chooser_ok_event(filename, ui);
     g_free(filename);
     filename = NULL;
+    return;
   }
-  //TODO: file empty ! ?
-/*  else
+
+  if (previous_fname != NULL && strlen(previous_fname) != 0)
   {
-    gchar *fname = get_input_filename(ui->gui);
-    if (fname != NULL && strlen(fname) != 0)
-    {
-      gtk_file_chooser_set_filename(open_file_chooser, get_input_filename(ui->gui));
-    }
-  }*/
+    //gtk_file_chooser_set_filename() does not work here.
+    ui->status->queue_set_filename_to_file_chooser_button = TRUE;
+  }
 }
 
 static void file_set_event(GtkFileChooserButton *open_file_chooser_button, ui_state *ui)

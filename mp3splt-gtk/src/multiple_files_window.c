@@ -255,7 +255,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
       FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_remove_all_files_button,FALSE);
   g_signal_connect(G_OBJECT(multiple_files_remove_all_files_button), "clicked",
-                   G_CALLBACK(multiple_files_remove_all_button_event), NULL);
+                   G_CALLBACK(multiple_files_remove_all_button_event), ui);
 
   return hbox;
 }

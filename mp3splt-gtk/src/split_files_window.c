@@ -277,8 +277,8 @@ static GtkWidget *create_queue_buttons_hbox(ui_state *ui)
 void split_tree_row_activated(GtkTreeView *split_tree, GtkTreePath *arg1,
     GtkTreeViewColumn *arg2, ui_state *ui)
 {
-  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
-  GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->split_tree);
+  GtkTreeModel *model = gtk_tree_view_get_model(split_tree);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(split_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
 
   GList *current_element = g_list_first(selected_list);
@@ -313,36 +313,10 @@ static void split_selection_changed(GtkTreeSelection *selec, ui_state *ui)
   }
 }
 
-//!Issued when closing the new window after detaching
-static void close_split_popup_window_event(GtkWidget *window, ui_state *ui)
-{
-  GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(window));
-  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(ui->gui->split_handle_box));
-  gtk_widget_destroy(window);
-}
-
-//!Issued when we detach the handle
-static void handle_split_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, ui_state *ui)
-{
-  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
-
-  g_signal_connect(G_OBJECT(window), "delete_event", 
-      G_CALLBACK(close_split_popup_window_event), ui);
-  gtk_widget_show(GTK_WIDGET(window));
-}
-
 //!creates the split files tab
 GtkWidget *create_split_files_frame(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();
-
-  /* handle box for detaching */
-  GtkWidget *split_handle_box = gtk_handle_box_new();
-  ui->gui->split_handle_box = split_handle_box;
-  gtk_container_add(GTK_CONTAINER(split_handle_box), GTK_WIDGET(vbox));
-  g_signal_connect(split_handle_box, "child-detached",
-                   G_CALLBACK(handle_split_detached_event), ui);
 
   GtkTreeView *split_tree = create_split_files_tree();
   ui->gui->split_tree = split_tree;
@@ -365,6 +339,6 @@ GtkWidget *create_split_files_frame(ui_state *ui)
   GtkWidget *queue_buttons_hbox = create_queue_buttons_hbox(ui);
   gtk_box_pack_start(GTK_BOX(vbox), queue_buttons_hbox, FALSE, FALSE, 2);
   
-  return split_handle_box;
+  return vbox;
 }
 

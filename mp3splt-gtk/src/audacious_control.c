@@ -51,7 +51,7 @@ void myaudacious_get_song_infos(gchar *total_infos, ui_state *ui)
 {
   gint freq, rate, nch;
   audacious_remote_get_info(ui->pi->dbus_proxy, &rate, &freq, &nch);
-  
+
   gchar rate_str[32] = { '\0' };
   gchar freq_str[32] = { '\0' };
   gchar nch_str[32] = { '\0' };
@@ -73,7 +73,7 @@ void myaudacious_get_song_infos(gchar *total_infos, ui_state *ui)
 
   if (rate != 0)
   {
-    g_snprintf(total_infos,512, "%s %s     %s %s    %s", rate_str,_Kbps,freq_str, _Khz,nch_str);
+    g_snprintf(total_infos, 512, "%s %s     %s %s    %s", rate_str,_Kbps,freq_str, _Khz,nch_str);
     return;
   }
 

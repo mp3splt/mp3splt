@@ -344,8 +344,6 @@ typedef struct {
 
   GtkTreeView *split_tree;
 
-  GtkWidget *handle_box;
-
   GtkWidget *spinner_minutes;
   GtkWidget *spinner_seconds;
   GtkWidget *spinner_hundr_secs;
@@ -360,13 +358,10 @@ typedef struct {
   GtkWidget *spinner_silence_threshold;
   GtkWidget *silence_remove_silence;
 
-  GtkWidget *split_handle_box;
-
   GtkWidget *queue_files_button;
   GtkWidget *remove_file_button;
   GtkWidget *remove_all_files_button;
 
-  GtkWidget *freedb_handle_box;
   GtkWidget *freedb_entry;
   GtkWidget *freedb_search_button;
   GtkWidget *freedb_spinner;
@@ -457,6 +452,8 @@ typedef struct {
 
   gboolean freedb_lock;
   gint should_trim;
+
+  gint queue_set_filename_to_file_chooser_button;
 } gui_status;
 
 typedef struct {

@@ -121,7 +121,6 @@ void *wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, Gt
   }
 }
 
-
 GtkWidget *wh_new_entry(void *callback)
 {
   GtkWidget *entry = gtk_entry_new();
@@ -278,12 +277,11 @@ void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *st
 //!creates a scrolled window
 GtkWidget *wh_create_scrolled_window()
 {
-  GtkWidget *scrolled_window;
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-                                  GTK_POLICY_AUTOMATIC,
-                                  GTK_POLICY_AUTOMATIC);
+  GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+      GTK_POLICY_AUTOMATIC,
+      GTK_POLICY_AUTOMATIC);
   return scrolled_window;
 }
 
@@ -308,6 +306,11 @@ gboolean wh_container_has_child(GtkContainer *container, GtkWidget *my_child)
   }
 
   return FALSE;
+}
+
+void wh_set_image_on_button(GtkButton *button, GtkWidget *image)
+{
+  gtk_button_set_image(button, image);
 }
 
 static void _wh_folder_changed_event(GtkFileChooser *chooser, ui_state *ui)
