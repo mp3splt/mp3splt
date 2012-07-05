@@ -770,16 +770,19 @@ static GtkWidget *create_wave_options_box(ui_state *ui)
 static GtkWidget *create_pref_player_page(ui_state *ui)
 {
   GtkWidget *player_hbox = wh_hbox_new();;
+  GtkWidget *inside_hbox = wh_hbox_new();;
+
   GtkWidget *inside_vbox = wh_vbox_new();;
+  gtk_box_pack_start(GTK_BOX(inside_hbox), inside_vbox, TRUE, TRUE, 5);
 
   GtkWidget *player_scrolled_window = wh_create_scrolled_window();
   ui->gui->player_scrolled_window = player_scrolled_window;
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(player_scrolled_window), 
-      GTK_WIDGET(inside_vbox));
+      GTK_WIDGET(inside_hbox));
   gtk_box_pack_start(GTK_BOX(player_hbox), player_scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *vbox = wh_vbox_new();;
-  gtk_box_pack_start(GTK_BOX(inside_vbox), vbox, TRUE, TRUE, 5);
+  gtk_box_pack_start(GTK_BOX(inside_vbox), vbox, TRUE, TRUE, 0);
 
   GtkWidget *player_options_box = create_player_options_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), player_options_box, FALSE, FALSE, 3);

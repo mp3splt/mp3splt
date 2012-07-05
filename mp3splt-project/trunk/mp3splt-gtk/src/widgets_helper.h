@@ -88,5 +88,7 @@ gboolean wh_container_has_child(GtkContainer *cont, GtkWidget *my_child);
 GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
     gint toggle_or_not);
 
+void wh_set_image_on_button(GtkButton *button, GtkWidget *image);
+
 #endif
 

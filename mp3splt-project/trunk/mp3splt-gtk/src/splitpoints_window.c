@@ -1605,24 +1605,6 @@ static void create_columns(ui_state *ui)
   gtk_tree_view_column_set_expand(column_description, TRUE);
 }
 
-//!Issued when closing the new window after detaching
-static void close_popup_window_event(GtkWidget *window, ui_state *ui)
-{
-  GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(window));
-  gtk_widget_reparent(GTK_WIDGET(window_child), GTK_WIDGET(ui->gui->handle_box));
-  gtk_widget_destroy(window);
-}
-
-//!Issued when we detach the handle
-static void handle_detached_event(GtkHandleBox *handlebox, GtkWidget *widget, ui_state *ui)
-{
-  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
-
-  g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(close_popup_window_event), ui);
-  gtk_widget_show(GTK_WIDGET(window));
-}
-
 //!creates the tree view
 static void create_tree_view(ui_state *ui)
 {
@@ -1650,12 +1632,6 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
   GtkWidget *choose_splitpoints_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(choose_splitpoints_vbox), 0);
 
-  /* handle box for detaching */
-  GtkWidget *handle_box = gtk_handle_box_new();
-  gui->handle_box = handle_box;
-  gtk_container_add(GTK_CONTAINER(handle_box), GTK_WIDGET(choose_splitpoints_vbox));
-  g_signal_connect(handle_box, "child-detached", G_CALLBACK(handle_detached_event), ui);
-
   /* spinner buttons hbox */
   GtkWidget *spinners_buttons_hbox = create_init_spinners_buttons(ui);
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), spinners_buttons_hbox, FALSE, FALSE, 3);
@@ -1680,7 +1656,7 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
   GtkWidget *special_buttons_hbox = create_init_special_buttons(ui);
   gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), special_buttons_hbox, FALSE, FALSE, 2);
 
-  return handle_box;
+  return choose_splitpoints_vbox;
 }
 
 static void garray_to_array(GArray *spltpoints, glong *hundredth, ui_state *ui)

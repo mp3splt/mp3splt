@@ -104,25 +104,6 @@ static void create_freedb_columns(GtkTreeView *freedb_tree)
   gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
 }
 
-//!when closing the new window after detaching
-static void close_freedb_popup_window_event(GtkWidget *window, ui_state *ui)
-{
-  GtkWidget *window_child = gtk_bin_get_child(GTK_BIN(window));
-  gtk_widget_reparent(GTK_WIDGET(window_child), ui->gui->freedb_handle_box);
-  gtk_widget_destroy(window);
-}
-
-//!when we detach the handle
-static void handle_freedb_detached_event(GtkHandleBox *handlebox, GtkWidget *widget,
-    ui_state *ui)
-{
-  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_widget_reparent(GTK_WIDGET(widget), GTK_WIDGET(window));
-  g_signal_connect(G_OBJECT(window), "delete_event",
-      G_CALLBACK(close_freedb_popup_window_event), ui);
-  gtk_widget_show(GTK_WIDGET(window));
-}
-
 //!freedb selection has changed
 static void freedb_selection_changed(GtkTreeSelection *selection, ui_state *ui)
 {
@@ -418,13 +399,6 @@ GtkWidget *create_freedb_frame(ui_state *ui)
   GtkWidget *freedb_hbox = wh_hbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(freedb_hbox), 0);
  
-  /* handle box for detaching */
-  GtkWidget *freedb_handle_box = gtk_handle_box_new();
-  ui->gui->freedb_handle_box = freedb_handle_box;
-  gtk_container_add(GTK_CONTAINER(freedb_handle_box), GTK_WIDGET(freedb_hbox));
-  g_signal_connect(freedb_handle_box, "child-detached",
-      G_CALLBACK(handle_freedb_detached_event), ui);
-  
   GtkWidget *freedb_vbox = wh_vbox_new();
   gtk_box_pack_start(GTK_BOX(freedb_hbox), freedb_vbox, TRUE, TRUE, 4);
   
@@ -483,7 +457,7 @@ GtkWidget *create_freedb_frame(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(selected_hbox), freedb_add_button, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(freedb_add_button, _("Set splitpoints to the splitpoints table"));
   
-  return freedb_handle_box;
+  return freedb_hbox;
 }
 
 void hide_freedb_spinner(gui_state *gui)
