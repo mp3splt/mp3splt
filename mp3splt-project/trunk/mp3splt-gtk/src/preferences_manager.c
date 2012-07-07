@@ -429,13 +429,6 @@ void load_preferences(ui_state *ui)
   gint time_value = g_key_file_get_integer(key_file, "split", "split_mode_time_value", NULL);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_time), time_value);
 
-  //file mode
-  gint file_mode = g_key_file_get_integer(key_file, "split", "file_mode", NULL);
-  GSList *file_mode_radio_button_list = 
-    gtk_radio_button_get_group(GTK_RADIO_BUTTON(ui->gui->file_mode_radio_button));
-  our_selection = (GtkWidget *)g_slist_nth_data(file_mode_radio_button_list, file_mode);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(our_selection), TRUE);
-
   //equal time tracks value
   gint equal_tracks = g_key_file_get_integer(key_file, "split",
       "split_mode_equal_time_tracks", NULL);
@@ -573,8 +566,6 @@ void save_preferences(ui_state *ui)
   //time value
   g_key_file_set_integer(my_key_file, "split", "split_mode_time_value",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_time)));
-  //type of split: file mode
-  g_key_file_set_integer(my_key_file, "split", "file_mode", ui->infos->split_file_mode);
   //equal time tracks value
   g_key_file_set_integer(my_key_file, "split", "split_mode_equal_time_tracks",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_equal_tracks)));
@@ -844,14 +835,6 @@ static void write_default_preferences_file(ui_state *ui)
     g_key_file_set_integer(my_key_file, "split", "split_mode_time_value", 60);
     g_key_file_set_comment(my_key_file, "split", "split_mode_time_value",
         "\n value in seconds to split every X seconds (for the time split)", NULL);
-  }
-
-  //type of split: file mode
-  if (!g_key_file_has_key(my_key_file, "split", "file_mode",NULL))
-  {
-    g_key_file_set_integer(my_key_file, "split", "file_mode", 1);
-    g_key_file_set_comment(my_key_file, "split", "file_mode",
-        "\n 0 - multiple files, 1 - single file", NULL);
   }
 
   //equal time tracks

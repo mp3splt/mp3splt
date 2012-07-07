@@ -353,7 +353,7 @@ static GtkWidget *create_directory_box(ui_state *ui)
 
   //to set the directory for split files to the current song directory
   GtkWidget *song_dir_button =
-    wh_create_cool_button(GTK_STOCK_CLEAR, _("_Song dir"), FALSE);
+    wh_create_cool_button(GTK_STOCK_CLEAR, _("So_ng dir"), FALSE);
   g_signal_connect(G_OBJECT(song_dir_button), "clicked",
       G_CALLBACK(song_dir_button_event), ui);
   gtk_box_pack_start(GTK_BOX(dir_hbox), song_dir_button, FALSE, FALSE, 0);
@@ -378,7 +378,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
       G_CALLBACK(splitpoints_from_filename_event), ui);
 
   GtkWidget *create_dirs_from_output_files =
-    gtk_check_button_new_with_mnemonic(_("_Create directories from filenames "));
+    gtk_check_button_new_with_mnemonic(_("Create directories from _filenames "));
   gui->create_dirs_from_output_files = create_dirs_from_output_files;
   gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",

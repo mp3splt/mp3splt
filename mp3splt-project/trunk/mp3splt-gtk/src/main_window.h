@@ -80,6 +80,9 @@ void cancel_button_event(GtkWidget *widget, ui_state *ui);
 
 gchar* get_input_filename(gui_state *gui);
 void set_input_filename(const gchar *filename, gui_state *gui);
+void add_filters_to_file_chooser(GtkWidget *file_chooser);
+
+void split_button_event(GtkWidget *widget, ui_state *ui);
 
 #endif
 

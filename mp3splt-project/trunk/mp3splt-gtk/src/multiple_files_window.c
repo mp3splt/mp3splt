@@ -225,6 +225,12 @@ static void multiple_files_remove_all_button_event(GtkWidget *widget, ui_state *
   gtk_widget_set_sensitive(ui->gui->multiple_files_remove_file_button, FALSE);
 }
 
+void batch_file_mode_split_button_event(GtkWidget *widget, ui_state *ui)
+{
+  ui->infos->split_file_mode = FILE_MODE_MULTIPLE;
+  split_button_event(widget, ui);
+}
+
 static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
 {
   GtkWidget *hbox = wh_hbox_new();
@@ -239,23 +245,28 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
 
   //button for removing a file
   GtkWidget *multiple_files_remove_file_button =
-    wh_create_cool_button(GTK_STOCK_DELETE, _("_Remove selected entries"),FALSE);
+    wh_create_cool_button(GTK_STOCK_REMOVE, _("_Remove selected"),FALSE);
   ui->gui->multiple_files_remove_file_button = multiple_files_remove_file_button;
   gtk_box_pack_start(GTK_BOX(hbox),
       multiple_files_remove_file_button, FALSE, FALSE, 5);
-  gtk_widget_set_sensitive(multiple_files_remove_file_button,FALSE);
+  gtk_widget_set_sensitive(multiple_files_remove_file_button, FALSE);
   g_signal_connect(G_OBJECT(multiple_files_remove_file_button), "clicked",
                    G_CALLBACK(multiple_files_remove_button_event), ui);
   
   //button for removing a file
   GtkWidget *multiple_files_remove_all_files_button =
-    wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all entries"),FALSE);
+    wh_create_cool_button(GTK_STOCK_REMOVE, _("R_emove all"),FALSE);
   ui->gui->multiple_files_remove_all_files_button = multiple_files_remove_all_files_button;
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
       FALSE, FALSE, 5);
-  gtk_widget_set_sensitive(multiple_files_remove_all_files_button,FALSE);
+  gtk_widget_set_sensitive(multiple_files_remove_all_files_button, FALSE);
   g_signal_connect(G_OBJECT(multiple_files_remove_all_files_button), "clicked",
                    G_CALLBACK(multiple_files_remove_all_button_event), ui);
+
+  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_APPLY,_("Batch split"), FALSE);
+  g_signal_connect(G_OBJECT(split_button), "clicked",
+      G_CALLBACK(batch_file_mode_split_button_event), ui);
+  gtk_box_pack_end(GTK_BOX(hbox), split_button, FALSE, FALSE, 4);
 
   return hbox;
 }
