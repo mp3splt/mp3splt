@@ -307,9 +307,6 @@ void enable_player_buttons(ui_state *ui)
 {
   gui_state *gui = ui->gui;
 
-  fprintf(stdout, "enable player buttons");
-  fflush(stdout);
-
   gtk_widget_set_sensitive(gui->stop_button, TRUE);
   wh_set_image_on_button(GTK_BUTTON(gui->stop_button), g_object_ref(gui->StopButton_active));
 
@@ -2790,7 +2787,8 @@ static GtkWidget *create_drawing_area(ui_state *ui)
 
   gtk_container_add(GTK_CONTAINER(frame), drawing_area);
 
-  GtkWidget *drawing_area_expander = gtk_expander_new_with_mnemonic(_("Splitpoints _view"));
+  GtkWidget *drawing_area_expander =
+    gtk_expander_new_with_mnemonic(_("Splitpoints and amplitude wave _view"));
   ui->gui->drawing_area_expander = drawing_area_expander;
   gtk_expander_set_expanded(GTK_EXPANDER(drawing_area_expander), TRUE);
   g_signal_connect(drawing_area_expander, "notify::expanded",
@@ -3045,7 +3043,7 @@ GtkWidget *create_player_playlist_frame(ui_state *ui)
   GtkWidget *delete_buttons_hbox = create_delete_buttons_hbox(ui);
   gtk_box_pack_start(GTK_BOX(vbox), delete_buttons_hbox, FALSE, FALSE, 2);
 
-  GtkWidget *history_expander = gtk_expander_new_with_mnemonic(_("H_istory"));
+  GtkWidget *history_expander = gtk_expander_new_with_mnemonic(_("Files h_istory"));
   gtk_expander_set_expanded(GTK_EXPANDER(history_expander), FALSE);
   gtk_container_add(GTK_CONTAINER(history_expander), vbox);
 

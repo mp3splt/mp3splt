@@ -391,6 +391,15 @@ typedef struct {
 
   GtkWidget *multiple_files_remove_file_button;
   GtkWidget *multiple_files_remove_all_files_button;
+
+  GtkWidget *preferences_widget;
+  GtkWidget *preferences_dialog;
+
+  GtkWidget *split_files_widget;
+  GtkWidget *split_files_dialog;
+ 
+  GtkWidget *freedb_widget;
+  GtkWidget *freedb_dialog;
 } gui_state;
 
 typedef struct {

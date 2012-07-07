@@ -408,6 +408,10 @@ static gui_state *ui_gui_new()
   gui->real_checkbox_length = 12;
   gui->real_wave_length = 96;
 
+  gui->preferences_dialog = NULL;
+  gui->split_files_dialog = NULL;
+  gui->freedb_dialog = NULL;
+
   return gui;
 }
 
