@@ -2808,7 +2808,6 @@ GtkWidget *create_player_control_frame(ui_state *ui)
 
   //filename player hbox
   GtkWidget *hbox = create_filename_player_hbox(ui->gui);
-  //gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
   //the song informations

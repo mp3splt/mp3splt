@@ -367,7 +367,7 @@ static void show_preferences_window(GtkWidget *widget, ui_state *ui)
         GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
     ui->gui->preferences_dialog = preferences_dialog;
 
-    gtk_window_set_default_size(GTK_WINDOW(preferences_dialog), 650, 380);
+    gtk_window_set_default_size(GTK_WINDOW(preferences_dialog), 600, 400);
     gtk_window_set_position(GTK_WINDOW(preferences_dialog), GTK_WIN_POS_CENTER);
 
     GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(preferences_dialog));
@@ -434,8 +434,35 @@ static void show_split_files_window(GtkWidget *widget, ui_state *ui)
   gtk_widget_hide(ui->gui->split_files_dialog);
 }
 
+static void show_splitpoints_window(GtkWidget *widget, ui_state *ui)
+{
+  if (ui->gui->splitpoints_dialog == NULL)
+  {
+    GtkWidget *splitpoints_dialog = gtk_dialog_new_with_buttons(_("Splitpoints"), NULL,
+        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+    ui->gui->splitpoints_dialog = splitpoints_dialog;
+
+    gtk_window_set_default_size(GTK_WINDOW(splitpoints_dialog), 500, 300);
+    gtk_window_set_position(GTK_WINDOW(splitpoints_dialog), GTK_WIN_POS_CENTER);
+
+    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(splitpoints_dialog));
+    gtk_box_pack_start(GTK_BOX(area), ui->gui->splitpoints_widget, TRUE, TRUE, 0);
+
+    GtkWidget *action_area = gtk_dialog_get_action_area(GTK_DIALOG(splitpoints_dialog));
+    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->scan_trim_silence_button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->scan_silence_button, FALSE, FALSE, 0);
+
+    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->scan_trim_silence_button, 0);
+    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->scan_silence_button, 1);
+  }
+
+  gtk_widget_show_all(ui->gui->splitpoints_dialog);
+  gtk_dialog_run(GTK_DIALOG(ui->gui->splitpoints_dialog));
+  gtk_widget_hide(ui->gui->splitpoints_dialog);
+}
+
 //!event for the split button
-static void split_button_event(GtkWidget *widget, ui_state *ui)
+void split_button_event(GtkWidget *widget, ui_state *ui)
 {
   if (ui->status->splitting)
   {
@@ -471,31 +498,10 @@ static void split_button_event(GtkWidget *widget, ui_state *ui)
   }
 }
 
-//!creates the toolbar
-static GtkWidget *create_toolbar(ui_state *ui)
+static void single_file_mode_split_button_event(GtkWidget *widget, ui_state *ui)
 {
-  GtkWidget *box = wh_hbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(box), 0);
-  gtk_box_pack_start(GTK_BOX(box), 
-      gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_SMALL_TOOLBAR), 
-      FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(box), gtk_label_new(_("Split !")), FALSE, FALSE, 0);
-
-  GtkWidget *split_button = gtk_button_new();
-  gtk_container_add(GTK_CONTAINER(split_button), box);
-  gtk_widget_set_tooltip_text(split_button,_("Split !"));
-  gtk_container_set_border_width(GTK_CONTAINER(split_button), 0);
-  gtk_button_set_relief(GTK_BUTTON(split_button), GTK_RELIEF_HALF);
-
-  g_signal_connect(G_OBJECT(split_button), "clicked", G_CALLBACK(split_button_event), ui);
-
-  GtkWidget *hbox = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(hbox), split_button, TRUE, FALSE, 0);
-
-  GtkWidget *vbox = wh_vbox_new();
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-  return vbox;
+  ui->infos->split_file_mode = FILE_MODE_SINGLE;
+  split_button_event(widget, ui);
 }
 
 //!event for the "messages history" button
@@ -682,8 +688,7 @@ static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui
   }
 }
 
-
-static void add_filters_to_file_chooser(GtkWidget *file_chooser)
+void add_filters_to_file_chooser(GtkWidget *file_chooser)
 {
   GtkFileFilter *our_filter = gtk_file_filter_new();
   gtk_file_filter_set_name(our_filter, _("mp3 and ogg files (*.mp3 *.ogg)"));
@@ -753,7 +758,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "Import", GTK_STOCK_FILE, N_("_Import splitpoints from file..."), "<Ctrl>I", 
       N_("Import splitpoints from file..."), G_CALLBACK(import_event) },
 
-    { "ImportFromTrackType", GTK_STOCK_FIND, N_("_Import splitpoints from TrackType.org..."), "<Ctrl>T",
+    { "ImportFromTrackType", GTK_STOCK_FIND, N_("Import splitpoints from _TrackType.org..."), "<Ctrl>T",
       N_("Import splitpoints from TrackType.org..."),
       G_CALLBACK(show_tracktype_window) },
 
@@ -766,8 +771,14 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "SplitFiles", NULL, N_("Split _Files"), "<Ctrl>F", N_("Split Files"),
       G_CALLBACK(show_split_files_window) },
 
-    { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
-      G_CALLBACK(split_button_event) },
+    { "Splitpoints", NULL, N_("_Splitpoints"), "<Ctrl>L", N_("Splitpoints"),
+      G_CALLBACK(show_splitpoints_window) },
+
+    { "Split", GTK_STOCK_APPLY, N_("_Split"), "<Ctrl>S", N_("Split"),
+      G_CALLBACK(single_file_mode_split_button_event) },
+
+    { "BatchSplit", GTK_STOCK_APPLY, N_("_Batch split"), "<Ctrl>B", N_("Batch split"),
+      G_CALLBACK(batch_file_mode_split_button_event) },
 
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
       G_CALLBACK(exit_application) },
@@ -830,10 +841,12 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     "      <menuitem action='Preferences'/>"
     "      <separator/>"
     "      <menuitem action='Split'/>"
+    "      <menuitem action='BatchSplit'/>"
     "      <separator/>"
     "      <menuitem action='Quit'/>"
     "    </menu>"
     "    <menu action='ViewMenu'>"
+    "      <menuitem action='Splitpoints'/>"
     "      <menuitem action='SplitFiles'/>"
     "    </menu>"
     "    <menu action='PlayerMenu'>"
@@ -885,7 +898,6 @@ static GtkWidget *create_menu_bar(ui_state *ui)
  
   GtkWidget *menu_box = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(menu_box), gtk_ui_manager_get_widget(uim, "/MenuBar"), FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(menu_box), create_toolbar(ui), TRUE, TRUE, 0);
  
   player_key_actions_set_sensitivity(FALSE, ui->gui);
 
@@ -948,9 +960,6 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   GtkWidget *main_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(main_vbox), 0);
 
-  gtk_box_pack_start(GTK_BOX(main_vbox), 
-      create_choose_file_frame(ui), FALSE, FALSE, 0);
-
   /* tabbed notebook */
   GtkWidget *notebook = gtk_notebook_new();
   gtk_box_pack_start(GTK_BOX(main_vbox), notebook, TRUE, TRUE, 0);
@@ -961,7 +970,20 @@ static GtkWidget *create_main_vbox(ui_state *ui)
    
   /* player page */
   GtkWidget *player_vbox = wh_vbox_new();
-  GtkWidget *notebook_label = gtk_label_new(_("Player"));
+  GtkWidget *notebook_label = gtk_label_new(_("Manual single file split"));
+
+  //file & split button hbox
+  GtkWidget *top_hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(player_vbox), top_hbox, FALSE, FALSE, 0);
+
+  //choose file
+  gtk_box_pack_start(GTK_BOX(top_hbox), create_choose_file_frame(ui), TRUE, TRUE, 0);
+
+  //single mode split button
+  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_APPLY,_("Split"), FALSE);
+  g_signal_connect(G_OBJECT(split_button), "clicked",
+      G_CALLBACK(single_file_mode_split_button_event), ui);
+  gtk_box_pack_start(GTK_BOX(top_hbox), split_button, FALSE, FALSE, 4);
 
   ui->gui->player_box = create_player_control_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->player_box, FALSE, FALSE, 0);
@@ -972,12 +994,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox, notebook_label);
 
   /* splitpoints page */
-  GtkWidget *splitpoints_vbox = wh_vbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(splitpoints_vbox), 0);
-  gtk_box_pack_start(GTK_BOX(splitpoints_vbox), create_splitpoints_frame(ui), TRUE, TRUE, 0);
- 
-  notebook_label = gtk_label_new(_("Splitpoints"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), splitpoints_vbox, notebook_label);
+  ui->gui->splitpoints_widget = create_splitpoints_frame(ui);
 
   /* split files page */
   ui->gui->split_files_widget = create_split_files_frame(ui);
@@ -990,7 +1007,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_container_set_border_width(GTK_CONTAINER(special_split_vbox), 0);
   GtkWidget *frame = create_special_split_page(ui);
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
-  notebook_label = gtk_label_new(_("Type of split"));
+  notebook_label = gtk_label_new(_("Batch automatic split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
   /* preferences widget */

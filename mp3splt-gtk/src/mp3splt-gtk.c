@@ -171,7 +171,7 @@ gpointer split_it(gpointer data)
       multiple_files_error = SPLT_TRUE;
 
       enter_threads();
-      put_status_message(_(" error: no files found in multiple files mode"), ui);
+      put_status_message(_(" error: no files found in batch mode"), ui);
       exit_threads();
     }
   }

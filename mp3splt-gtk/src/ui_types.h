@@ -371,7 +371,6 @@ typedef struct {
   GtkWidget *radio_output;
 
   GtkWidget *split_mode_radio_button;
-  GtkWidget *file_mode_radio_button;
 
   GtkWidget *time_label;
   GtkWidget *equal_tracks_label;
@@ -400,6 +399,9 @@ typedef struct {
  
   GtkWidget *freedb_widget;
   GtkWidget *freedb_dialog;
+
+  GtkWidget *splitpoints_widget;
+  GtkWidget *splitpoints_dialog;
 } gui_state;
 
 typedef struct {

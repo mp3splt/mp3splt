@@ -175,26 +175,6 @@ static void spinner_equal_tracks_changed(GtkSpinButton *spinner, ui_state *ui)
   ui_save_preferences(NULL, ui);
 }
 
-//! Issued when channge between single file and batch processing mode is requested
-static void split_file_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
-{
-  GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
-  GtkToggleButton *current_radio_button = GTK_TOGGLE_BUTTON(g_slist_nth_data(radio_button_list,0));
-
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(current_radio_button)))
-  {
-    ui->infos->split_file_mode = FILE_MODE_MULTIPLE;
-    gtk_widget_set_sensitive(ui->gui->multiple_files_component, TRUE);
-  }
-  else
-  {
-    ui->infos->split_file_mode = FILE_MODE_SINGLE;
-    gtk_widget_set_sensitive(ui->gui->multiple_files_component, FALSE);
-  }
-
-  ui_save_preferences(NULL, ui);
-}
-
 //! Creates the split mode window part
 static GtkWidget *create_split_mode(ui_state *ui)
 {
@@ -202,7 +182,8 @@ static GtkWidget *create_split_mode(ui_state *ui)
   gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
 
   //normal split
-  GtkWidget *split_mode_radio_button = gtk_radio_button_new_with_label(NULL, _("Normal"));
+  GtkWidget *split_mode_radio_button =
+    gtk_radio_button_new_with_label(NULL, _("Use manual single file splitpoints"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button),
@@ -436,29 +417,13 @@ static GtkWidget *create_split_mode(ui_state *ui)
 static GtkWidget *create_single_multiple_split_modes(ui_state *ui)
 {
   GtkWidget *local_vbox = wh_vbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 3);
-
-  //single file
-  GtkWidget *file_mode_radio_button = gtk_radio_button_new_with_label(NULL, _("Single file"));
-  gtk_box_pack_start(GTK_BOX(local_vbox), file_mode_radio_button, FALSE, FALSE, 2);
-  g_signal_connect(GTK_TOGGLE_BUTTON(file_mode_radio_button),
-      "toggled", G_CALLBACK(split_file_mode_changed), ui);
- 
-  //multiple files
-  file_mode_radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(file_mode_radio_button), _("Batch processing"));
-  gtk_box_pack_start(GTK_BOX(local_vbox), file_mode_radio_button, FALSE, FALSE, 2);
-  g_signal_connect(GTK_TOGGLE_BUTTON(file_mode_radio_button),
-      "toggled", G_CALLBACK(split_file_mode_changed), ui);
-
-  ui->gui->file_mode_radio_button = file_mode_radio_button;
+  gtk_container_set_border_width(GTK_CONTAINER(local_vbox), 0);
 
   GtkWidget *multiple_files_hbox = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(local_vbox), multiple_files_hbox, TRUE, TRUE, 2);
+  gtk_box_pack_start(GTK_BOX(local_vbox), multiple_files_hbox, TRUE, TRUE, 0);
 
   GtkWidget *multiple_files_component = create_multiple_files_component(ui);
-  gtk_widget_set_sensitive(multiple_files_component, FALSE);
-  gtk_box_pack_start(GTK_BOX(multiple_files_hbox), multiple_files_component, TRUE, TRUE, 5);
+  gtk_box_pack_start(GTK_BOX(multiple_files_hbox), multiple_files_component, TRUE, TRUE, 0);
   ui->gui->multiple_files_component = multiple_files_component;
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
@@ -480,10 +445,12 @@ GtkWidget *create_special_split_page(ui_state *ui)
   gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
 
-  GtkWidget *notebook_label = gtk_label_new(_("Split mode"));
+  GtkWidget *notebook_label = NULL;
+
+  notebook_label = gtk_label_new(_("Split mode"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_split_mode(ui), notebook_label);
 
-  notebook_label = gtk_label_new(_("File mode"));
+  notebook_label = gtk_label_new(_("Files"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
       create_single_multiple_split_modes(ui), notebook_label);
 

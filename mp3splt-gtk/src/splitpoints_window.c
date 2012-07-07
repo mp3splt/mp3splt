@@ -1280,11 +1280,8 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
 }
 
 //!special buttons like 'set silence from silence detection'
-static GtkWidget *create_init_special_buttons(ui_state *ui)
+static void create_init_special_buttons(ui_state *ui)
 {
-  GtkWidget *hbox = wh_hbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
-
   /* set splitpoints from trim silence detection */
   GtkWidget *scan_trim_silence_button =
     wh_create_cool_button(GTK_STOCK_CUT, _("_Trim splitpoints"), FALSE);
@@ -1292,7 +1289,6 @@ static GtkWidget *create_init_special_buttons(ui_state *ui)
   gtk_widget_set_sensitive(scan_trim_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
       G_CALLBACK(create_trim_silence_window), ui);
-  gtk_box_pack_start(GTK_BOX(hbox), scan_trim_silence_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(scan_trim_silence_button,
       _("Set trim splitpoints using silence detection"));
 
@@ -1303,11 +1299,8 @@ static GtkWidget *create_init_special_buttons(ui_state *ui)
   gtk_widget_set_sensitive(scan_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
       G_CALLBACK(create_detect_silence_and_add_splitpoints_window), ui);
-  gtk_box_pack_start(GTK_BOX(hbox), scan_silence_button, FALSE, FALSE, 5);
   gtk_widget_set_tooltip_text(scan_silence_button,
       _("Set splitpoints from silence detection"));
-
-  return hbox;
 }
 
 /*! returns the name of the splitpoint
@@ -1653,8 +1646,7 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(gui->tree_view));
 
   /* special buttons like 'set silence from silence detection' */
-  GtkWidget *special_buttons_hbox = create_init_special_buttons(ui);
-  gtk_box_pack_start(GTK_BOX(choose_splitpoints_vbox), special_buttons_hbox, FALSE, FALSE, 2);
+  create_init_special_buttons(ui);
 
   return choose_splitpoints_vbox;
 }
