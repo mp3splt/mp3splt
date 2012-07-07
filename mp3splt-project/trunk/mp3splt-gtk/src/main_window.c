@@ -359,6 +359,81 @@ void cancel_button_event(GtkWidget *widget, ui_state *ui)
   put_status_message(_(" info: stopping the split process.. please wait"), ui);
 }
 
+static void show_preferences_window(GtkWidget *widget, ui_state *ui)
+{
+  if (ui->gui->preferences_dialog == NULL)
+  {
+    GtkWidget *preferences_dialog = gtk_dialog_new_with_buttons(_("Preferences"), NULL,
+        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+    ui->gui->preferences_dialog = preferences_dialog;
+
+    gtk_window_set_default_size(GTK_WINDOW(preferences_dialog), 650, 380);
+    gtk_window_set_position(GTK_WINDOW(preferences_dialog), GTK_WIN_POS_CENTER);
+
+    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(preferences_dialog));
+    gtk_box_pack_start(GTK_BOX(area), ui->gui->preferences_widget, TRUE, TRUE, 0);
+  }
+
+  gtk_widget_show_all(ui->gui->preferences_dialog);
+  gtk_dialog_run(GTK_DIALOG(ui->gui->preferences_dialog));
+  gtk_widget_hide(ui->gui->preferences_dialog);
+}
+
+static void show_tracktype_window(GtkWidget *widget, ui_state *ui)
+{
+  if (ui->gui->freedb_dialog == NULL)
+  {
+    GtkWidget *freedb_dialog = gtk_dialog_new_with_buttons(_("TrackType"), NULL,
+        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+    ui->gui->freedb_dialog = freedb_dialog;
+
+    gtk_window_set_default_size(GTK_WINDOW(freedb_dialog), 500, 300);
+    gtk_window_set_position(GTK_WINDOW(freedb_dialog), GTK_WIN_POS_CENTER);
+
+    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(freedb_dialog));
+    gtk_box_pack_start(GTK_BOX(area), ui->gui->freedb_widget, TRUE, TRUE, 0);
+
+    GtkWidget *action_area = gtk_dialog_get_action_area(GTK_DIALOG(freedb_dialog));
+    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->freedb_add_button, FALSE, FALSE, 0);
+
+    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->freedb_add_button, 0);
+  }
+
+  gtk_widget_show_all(ui->gui->freedb_dialog);
+  hide_freedb_spinner(ui->gui);
+  gtk_dialog_run(GTK_DIALOG(ui->gui->freedb_dialog));
+  gtk_widget_hide(ui->gui->freedb_dialog);
+}
+
+static void show_split_files_window(GtkWidget *widget, ui_state *ui)
+{
+  if (ui->gui->split_files_dialog == NULL)
+  {
+    GtkWidget *split_files_dialog = gtk_dialog_new_with_buttons(_("Split files"), NULL,
+        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+    ui->gui->split_files_dialog = split_files_dialog;
+
+    gtk_window_set_default_size(GTK_WINDOW(split_files_dialog), 500, 300);
+    gtk_window_set_position(GTK_WINDOW(split_files_dialog), GTK_WIN_POS_CENTER);
+
+    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(split_files_dialog));
+    gtk_box_pack_start(GTK_BOX(area), ui->gui->split_files_widget, TRUE, TRUE, 0);
+
+    GtkWidget *action_area = gtk_dialog_get_action_area(GTK_DIALOG(split_files_dialog));
+    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->queue_files_button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->remove_file_button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->remove_all_files_button, FALSE, FALSE, 0);
+
+    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->queue_files_button, 0);
+    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->remove_file_button, 1);
+    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->remove_all_files_button, 2);
+  }
+
+  gtk_widget_show_all(ui->gui->split_files_dialog);
+  gtk_dialog_run(GTK_DIALOG(ui->gui->split_files_dialog));
+  gtk_widget_hide(ui->gui->split_files_dialog);
+}
+
 //!event for the split button
 static void split_button_event(GtkWidget *widget, ui_state *ui)
 {
@@ -668,16 +743,28 @@ static GtkWidget *create_menu_bar(ui_state *ui)
   static const GtkActionEntry entries[] = {
     //name, stock id, label, accelerator, tooltip
     { "FileMenu", NULL, N_("_File"), NULL, NULL },
+    { "ViewMenu", NULL, N_("_View"), NULL, NULL },
     { "PlayerMenu", NULL, N_("_Player"), NULL, NULL },
     { "HelpMenu", NULL, N_("_Help"), NULL, NULL },
 
     { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
       G_CALLBACK(open_file_button_event) },
 
-    { "Import", GTK_STOCK_FILE, N_("_Import splitpoints..."), "<Ctrl>I", N_("Import"),
-      G_CALLBACK(import_event) },
-    { "Export", GTK_STOCK_SAVE_AS, N_("_Export splitpoints..."), "<Ctrl>E", N_("Export"),
-      G_CALLBACK(ChooseCueExportFile) },
+    { "Import", GTK_STOCK_FILE, N_("_Import splitpoints from file..."), "<Ctrl>I", 
+      N_("Import splitpoints from file..."), G_CALLBACK(import_event) },
+
+    { "ImportFromTrackType", GTK_STOCK_FIND, N_("_Import splitpoints from TrackType.org..."), "<Ctrl>T",
+      N_("Import splitpoints from TrackType.org..."),
+      G_CALLBACK(show_tracktype_window) },
+
+    { "Export", GTK_STOCK_SAVE_AS, N_("_Export splitpoints..."), "<Ctrl>E",
+      N_("Export splitpoints"), G_CALLBACK(ChooseCueExportFile) },
+
+    { "Preferences", GTK_STOCK_PREFERENCES, N_("_Preferences"), "<Ctrl>P", N_("Preferences"),
+      G_CALLBACK(show_preferences_window) },
+
+    { "SplitFiles", NULL, N_("Split _Files"), "<Ctrl>F", N_("Split Files"),
+      G_CALLBACK(show_split_files_window) },
 
     { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split"),
       G_CALLBACK(split_button_event) },
@@ -737,11 +824,17 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     "      <menuitem action='Open'/>"
     "      <separator/>"
     "      <menuitem action='Import'/>"
+    "      <menuitem action='ImportFromTrackType'/>"
     "      <menuitem action='Export'/>"
+    "      <separator/>"
+    "      <menuitem action='Preferences'/>"
     "      <separator/>"
     "      <menuitem action='Split'/>"
     "      <separator/>"
     "      <menuitem action='Quit'/>"
+    "    </menu>"
+    "    <menu action='ViewMenu'>"
+    "      <menuitem action='SplitFiles'/>"
     "    </menu>"
     "    <menu action='PlayerMenu'>"
     "      <menuitem action='Player_pause'/>"
@@ -887,43 +980,22 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), splitpoints_vbox, notebook_label);
 
   /* split files page */
-  GtkWidget *split_files_vbox = wh_vbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(split_files_vbox), 0);
-  
-  GtkWidget *frame = create_split_files_frame(ui);
-  gtk_box_pack_start(GTK_BOX(split_files_vbox), frame, TRUE, TRUE, 0);
-
-  notebook_label = gtk_label_new(_("Split files"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), split_files_vbox, notebook_label);
+  ui->gui->split_files_widget = create_split_files_frame(ui);
   
   /* freedb page */
-  GtkWidget *freedb_vbox = wh_vbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(freedb_vbox), 0);
-  
-  frame = create_freedb_frame(ui);
-  gtk_box_pack_start(GTK_BOX(freedb_vbox), frame, TRUE, TRUE, 0);
-
-  notebook_label = gtk_label_new(_("FreeDB"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), freedb_vbox, notebook_label);
+  ui->gui->freedb_widget = create_freedb_frame(ui);
   
   /* special split page */
   GtkWidget *special_split_vbox = wh_vbox_new();
   gtk_container_set_border_width(GTK_CONTAINER(special_split_vbox), 0);
-  frame = create_special_split_page(ui);
+  GtkWidget *frame = create_special_split_page(ui);
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
   notebook_label = gtk_label_new(_("Type of split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
-  /* preferences page */
-  GtkWidget *preferences_vbox = wh_vbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(preferences_vbox), 0);
+  /* preferences widget */
+  ui->gui->preferences_widget = create_choose_preferences(ui);
 
-  frame = create_choose_preferences(ui);
-  gtk_box_pack_start(GTK_BOX(preferences_vbox), frame, TRUE, TRUE, 0);
-
-  notebook_label = gtk_label_new(_("Preferences"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), preferences_vbox, notebook_label);
- 
   /* progress bar */
   GtkProgressBar *percent_progress_bar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   ui->gui->percent_progress_bar = percent_progress_bar;

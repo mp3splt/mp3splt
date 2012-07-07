@@ -239,38 +239,31 @@ static void remove_all_files_button_event(GtkWidget *widget, ui_state *ui)
 }
 
 //!creates the horizontal queue buttons horizontal box
-static GtkWidget *create_queue_buttons_hbox(ui_state *ui)
+static void create_queue_buttons(ui_state *ui)
 {
-  GtkWidget *hbox = wh_hbox_new();
-
   //button for queueing all files
   GtkWidget *queue_files_button =
-    wh_create_cool_button(GTK_STOCK_UNINDENT, _("_Queue files to player"),FALSE);
+    wh_create_cool_button(GTK_STOCK_UNINDENT, _("_Queue to player"),FALSE);
   ui->gui->queue_files_button = queue_files_button;
-  gtk_box_pack_start(GTK_BOX(hbox), queue_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(queue_files_button, FALSE);
   g_signal_connect(G_OBJECT(queue_files_button), "clicked",
       G_CALLBACK(queue_files_button_event), ui);
-  
+
   //button for removing a file
   GtkWidget *remove_file_button =
-    wh_create_cool_button(GTK_STOCK_DELETE, _("_Delete selected files"),FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("_Delete selected"), FALSE);
   ui->gui->remove_file_button = remove_file_button;
-  gtk_box_pack_start(GTK_BOX(hbox), remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(remove_file_button, FALSE);
   g_signal_connect(G_OBJECT(remove_file_button), "clicked",
       G_CALLBACK(remove_file_button_event), ui);
-  
+
   //button for removing a file
   GtkWidget *remove_all_files_button =
-    wh_create_cool_button(GTK_STOCK_DELETE, _("D_elete all files"), FALSE);
+    wh_create_cool_button(GTK_STOCK_DELETE, _("D_elete all"), FALSE);
   ui->gui->remove_all_files_button = remove_all_files_button;
-  gtk_box_pack_start(GTK_BOX(hbox), remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(remove_all_files_button, FALSE);
   g_signal_connect(G_OBJECT(remove_all_files_button), "clicked",
       G_CALLBACK(remove_all_files_button_event), ui);
-  
-  return hbox;
 }
 
 //! Issued when a row is clicked on
@@ -335,9 +328,7 @@ GtkWidget *create_split_files_frame(ui_state *ui)
       G_CALLBACK(split_selection_changed), ui);
   gtk_tree_selection_set_mode(GTK_TREE_SELECTION(split_tree_selection), GTK_SELECTION_MULTIPLE);
   
-  // horizontal box with queue buttons
-  GtkWidget *queue_buttons_hbox = create_queue_buttons_hbox(ui);
-  gtk_box_pack_start(GTK_BOX(vbox), queue_buttons_hbox, FALSE, FALSE, 2);
+  create_queue_buttons(ui);
   
   return vbox;
 }

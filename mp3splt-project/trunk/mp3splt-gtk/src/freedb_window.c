@@ -445,18 +445,14 @@ GtkWidget *create_freedb_frame(ui_state *ui)
                     G_CALLBACK(freedb_selection_changed), ui);
 
   /* add button */
-  GtkWidget *selected_hbox = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(freedb_vbox), selected_hbox , FALSE, FALSE, 2);
-
   GtkWidget *freedb_add_button = wh_create_cool_button(GTK_STOCK_ADD,_("_Add splitpoints"), FALSE);
   ui->gui->freedb_add_button = freedb_add_button;
 
   gtk_widget_set_sensitive(freedb_add_button, FALSE);
   g_signal_connect(G_OBJECT(freedb_add_button), "clicked",
       G_CALLBACK(freedb_add_button_clicked_event), ui);
-  gtk_box_pack_start(GTK_BOX(selected_hbox), freedb_add_button, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text(freedb_add_button, _("Set splitpoints to the splitpoints table"));
-  
+ 
   return freedb_hbox;
 }
 
