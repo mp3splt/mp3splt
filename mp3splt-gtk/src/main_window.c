@@ -361,104 +361,58 @@ void cancel_button_event(GtkWidget *widget, ui_state *ui)
 
 static void show_preferences_window(GtkWidget *widget, ui_state *ui)
 {
-  if (ui->gui->preferences_dialog == NULL)
+  if (ui->gui->preferences_window == NULL)
   {
-    GtkWidget *preferences_dialog = gtk_dialog_new_with_buttons(_("Preferences"), NULL,
-        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-    ui->gui->preferences_dialog = preferences_dialog;
-
-    gtk_window_set_default_size(GTK_WINDOW(preferences_dialog), 600, 400);
-    gtk_window_set_position(GTK_WINDOW(preferences_dialog), GTK_WIN_POS_CENTER);
-
-    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(preferences_dialog));
-    gtk_box_pack_start(GTK_BOX(area), ui->gui->preferences_widget, TRUE, TRUE, 0);
+    ui->gui->preferences_window = 
+      wh_create_window_with_close_button(_("Preferences"), 600, 400, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window), ui->gui->preferences_widget, NULL);
   }
 
-  gtk_widget_show_all(ui->gui->preferences_dialog);
-  gtk_dialog_run(GTK_DIALOG(ui->gui->preferences_dialog));
-  gtk_widget_hide(ui->gui->preferences_dialog);
+  wh_show_window(ui->gui->preferences_window);
 }
 
 static void show_tracktype_window(GtkWidget *widget, ui_state *ui)
 {
-  if (ui->gui->freedb_dialog == NULL)
+  if (ui->gui->freedb_window == NULL)
   {
-    GtkWidget *freedb_dialog = gtk_dialog_new_with_buttons(_("TrackType"), NULL,
-        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-    ui->gui->freedb_dialog = freedb_dialog;
-
-    gtk_window_set_default_size(GTK_WINDOW(freedb_dialog), 500, 300);
-    gtk_window_set_position(GTK_WINDOW(freedb_dialog), GTK_WIN_POS_CENTER);
-
-    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(freedb_dialog));
-    gtk_box_pack_start(GTK_BOX(area), ui->gui->freedb_widget, TRUE, TRUE, 0);
-
-    GtkWidget *action_area = gtk_dialog_get_action_area(GTK_DIALOG(freedb_dialog));
-    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->freedb_add_button, FALSE, FALSE, 0);
-
-    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->freedb_add_button, 0);
+    ui->gui->freedb_window = 
+      wh_create_window_with_close_button(_("TrackType"), 500, 300, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window),
+          ui->gui->freedb_widget, 
+          ui->gui->freedb_add_button, NULL);
   }
 
-  gtk_widget_show_all(ui->gui->freedb_dialog);
+  wh_show_window(ui->gui->freedb_window);
   hide_freedb_spinner(ui->gui);
-  gtk_dialog_run(GTK_DIALOG(ui->gui->freedb_dialog));
-  gtk_widget_hide(ui->gui->freedb_dialog);
 }
 
 static void show_split_files_window(GtkWidget *widget, ui_state *ui)
 {
-  if (ui->gui->split_files_dialog == NULL)
+  if (ui->gui->split_files_window == NULL)
   {
-    GtkWidget *split_files_dialog = gtk_dialog_new_with_buttons(_("Split files"), NULL,
-        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-    ui->gui->split_files_dialog = split_files_dialog;
-
-    gtk_window_set_default_size(GTK_WINDOW(split_files_dialog), 500, 300);
-    gtk_window_set_position(GTK_WINDOW(split_files_dialog), GTK_WIN_POS_CENTER);
-
-    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(split_files_dialog));
-    gtk_box_pack_start(GTK_BOX(area), ui->gui->split_files_widget, TRUE, TRUE, 0);
-
-    GtkWidget *action_area = gtk_dialog_get_action_area(GTK_DIALOG(split_files_dialog));
-    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->queue_files_button, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->remove_file_button, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->remove_all_files_button, FALSE, FALSE, 0);
-
-    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->queue_files_button, 0);
-    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->remove_file_button, 1);
-    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->remove_all_files_button, 2);
+    ui->gui->split_files_window = 
+      wh_create_window_with_close_button(_("Split files"), 500, 300, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window),
+          ui->gui->split_files_widget, 
+          ui->gui->queue_files_button, ui->gui->remove_file_button,
+          ui->gui->remove_all_files_button, NULL);
   }
 
-  gtk_widget_show_all(ui->gui->split_files_dialog);
-  gtk_dialog_run(GTK_DIALOG(ui->gui->split_files_dialog));
-  gtk_widget_hide(ui->gui->split_files_dialog);
+  wh_show_window(ui->gui->split_files_window);
 }
 
 static void show_splitpoints_window(GtkWidget *widget, ui_state *ui)
 {
-  if (ui->gui->splitpoints_dialog == NULL)
+  if (ui->gui->splitpoints_window == NULL)
   {
-    GtkWidget *splitpoints_dialog = gtk_dialog_new_with_buttons(_("Splitpoints"), NULL,
-        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-    ui->gui->splitpoints_dialog = splitpoints_dialog;
-
-    gtk_window_set_default_size(GTK_WINDOW(splitpoints_dialog), 500, 300);
-    gtk_window_set_position(GTK_WINDOW(splitpoints_dialog), GTK_WIN_POS_CENTER);
-
-    GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(splitpoints_dialog));
-    gtk_box_pack_start(GTK_BOX(area), ui->gui->splitpoints_widget, TRUE, TRUE, 0);
-
-    GtkWidget *action_area = gtk_dialog_get_action_area(GTK_DIALOG(splitpoints_dialog));
-    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->scan_trim_silence_button, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(action_area), ui->gui->scan_silence_button, FALSE, FALSE, 0);
-
-    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->scan_trim_silence_button, 0);
-    gtk_box_reorder_child(GTK_BOX(action_area), ui->gui->scan_silence_button, 1);
+    ui->gui->splitpoints_window = 
+      wh_create_window_with_close_button(_("Splitpoints"), 500, 300, GTK_WIN_POS_CENTER, 
+          GTK_WINDOW(ui->gui->window),
+          ui->gui->splitpoints_widget, 
+          ui->gui->scan_trim_silence_button, ui->gui->scan_silence_button, NULL);
   }
 
-  gtk_widget_show_all(ui->gui->splitpoints_dialog);
-  gtk_dialog_run(GTK_DIALOG(ui->gui->splitpoints_dialog));
-  gtk_widget_hide(ui->gui->splitpoints_dialog);
+  wh_show_window(ui->gui->splitpoints_window);
 }
 
 //!event for the split button
@@ -494,7 +448,7 @@ void split_button_event(GtkWidget *widget, ui_state *ui)
   }
   else
   {
-    put_status_message(_(" error: no file selected"), ui);
+    put_status_message(_(" error: no path of split selected"), ui);
   }
 }
 
@@ -505,11 +459,9 @@ static void single_file_mode_split_button_event(GtkWidget *widget, ui_state *ui)
 }
 
 //!event for the "messages history" button
-static void show_messages_history_dialog(GtkWidget *widget, ui_state *ui)
+static void show_messages_history_window(GtkWidget *widget, ui_state *ui)
 {
-  gtk_widget_show_all(ui->gui->mess_history_dialog);
-  gtk_dialog_run(GTK_DIALOG(ui->gui->mess_history_dialog));
-  gtk_widget_hide(ui->gui->mess_history_dialog);
+  wh_show_window(ui->gui->mess_history_window);
 }
 
 #ifndef NO_GNOME
@@ -668,7 +620,7 @@ static void zoom_out(GtkWidget *widget, ui_state *ui)
 
 static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui_state *ui)
 {
-  if (event->type != GDK_KEY_PRESS) { return; }
+  if (event->type != GDK_KEY_PRESS) { return FALSE; }
 
   if (event->state != 0)
   {
@@ -746,11 +698,11 @@ static void open_file_button_event(GtkWidget *widget, ui_state *ui)
 static GtkWidget *create_menu_bar(ui_state *ui)
 {
   static const GtkActionEntry entries[] = {
-    //name, stock id, label, accelerator, tooltip
-    { "FileMenu", NULL, N_("_File"), NULL, NULL },
-    { "ViewMenu", NULL, N_("_View"), NULL, NULL },
-    { "PlayerMenu", NULL, N_("_Player"), NULL, NULL },
-    { "HelpMenu", NULL, N_("_Help"), NULL, NULL },
+    //name, stock id, label, accelerator, tooltip, callback
+    { "FileMenu", NULL, N_("_File"), NULL, NULL, NULL },
+    { "ViewMenu", NULL, N_("_View"), NULL, NULL, NULL },
+    { "PlayerMenu", NULL, N_("_Player"), NULL, NULL, NULL },
+    { "HelpMenu", NULL, N_("_Help"), NULL, NULL, NULL },
 
     { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
       G_CALLBACK(open_file_button_event) },
@@ -789,7 +741,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
 #endif
 
     { "Messages history", GTK_STOCK_INFO, N_("Messages _history"), "<Ctrl>H", N_("Messages history"),
-      G_CALLBACK(show_messages_history_dialog) },
+      G_CALLBACK(show_messages_history_window) },
 
     { "About", GTK_STOCK_ABOUT, N_("_About"), "<Ctrl>A", N_("About"),
       G_CALLBACK(about_window)},
@@ -1007,7 +959,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_container_set_border_width(GTK_CONTAINER(special_split_vbox), 0);
   GtkWidget *frame = create_special_split_page(ui);
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
-  notebook_label = gtk_label_new(_("Batch automatic split"));
+  notebook_label = gtk_label_new(_("Batch & Automatic split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
   /* preferences widget */
@@ -1036,7 +988,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(main_vbox), hbox, FALSE, FALSE, 2);
 
   /* show messages history dialog */
-  create_mess_history_dialog(ui);
+  create_mess_history_window(ui);
  
   /* statusbar */
   GtkStatusbar *status_bar = GTK_STATUSBAR(gtk_statusbar_new());

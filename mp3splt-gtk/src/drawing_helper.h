@@ -54,5 +54,7 @@ void dh_draw_line(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
 void dh_draw_line_with_width(cairo_t *cairo, gint x1, gint y1, gint x2, gint y2,
     gboolean line_is_dashed, gboolean stroke, double line_width);
 
+void draw_point(cairo_t *cairo, gint x, gint y);
+
 #endif
 
