@@ -43,6 +43,8 @@ static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
     guint start_column, guint end_column, guint row, int expand);
 static void _wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
     GtkWidget *widget, int expand);
+static void hide_window_from_cross(GtkWidget *window, gpointer data);
+static void hide_window_from_button(GtkWidget *window, gpointer data);
 
 /*! Generates a window portion containing a caption and a vbox
 
@@ -102,12 +104,12 @@ GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_l
   return _wh_put_in_new_hbox_with_margin(widget, 6 * margin_level);
 }
 
-void *wh_put_in_hbox_and_attach_to_vbox(GtkWidget *widget, GtkWidget *vbox, gint vertical_margin)
+void wh_put_in_hbox_and_attach_to_vbox(GtkWidget *widget, GtkWidget *vbox, gint vertical_margin)
 {
   wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(widget, vbox, vertical_margin, -1);
 }
 
-void *wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, GtkWidget *vbox,
+void wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, GtkWidget *vbox,
     gint vertical_margin, gint bottom_margin)
 {
   GtkWidget *hbox = wh_hbox_new();
@@ -340,24 +342,20 @@ void wh_set_browser_directory_handler(ui_state *ui, GtkWidget* dialog)
 GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
     gint toggle_or_not)
 {
-  GtkWidget *box;
-  GtkWidget *label;
-  GtkWidget *image;
-  GtkWidget *button;
+  GtkWidget *box = wh_hbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER(box), 2);
 
-  box = wh_hbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER (box), 2);
-
-  image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
+  GtkWidget *image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
   gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 3);
 
   if (label_text != NULL)
   {
-    label = gtk_label_new (label_text);
+    GtkWidget *label = gtk_label_new(label_text);
     gtk_label_set_text_with_mnemonic(GTK_LABEL(label),label_text);
-    gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 3);
+    gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 3);
   }
-  
+
+  GtkWidget *button;
   if (toggle_or_not)
   {
     button = gtk_toggle_button_new();
@@ -366,10 +364,69 @@ GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
   {
     button = gtk_button_new();
   }
- 
+
   gtk_container_add(GTK_CONTAINER(button),box);
- 
+
   return button;
+}
+
+GtkWidget *wh_create_window_with_close_button(gchar *title, gint width, gint height,
+    GtkWindowPosition position, GtkWindow *parent_window,
+    GtkWidget *main_area_widget, GtkWidget *bottom_widget, ...)
+{
+  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  g_signal_connect(G_OBJECT(window), "delete_event", 
+      G_CALLBACK(hide_window_from_cross), window);
+  gtk_window_set_title(GTK_WINDOW(window), title);
+  gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
+  gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+
+  GtkWidget *vbox = wh_vbox_new();
+  gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
+  gtk_container_add(GTK_CONTAINER(window), vbox);
+  gtk_box_pack_start(GTK_BOX(vbox), main_area_widget, TRUE, TRUE, 2);
+
+  GtkWidget *bottom_hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(vbox), bottom_hbox, FALSE, FALSE, 3);
+
+  va_list ap;
+  va_start(ap, bottom_widget);
+  while (bottom_widget)
+  {
+    gtk_box_pack_start(GTK_BOX(bottom_hbox), bottom_widget, FALSE, FALSE, 3);
+    bottom_widget = va_arg(ap, GtkWidget *);
+  }
+  va_end(ap);
+
+  GtkWidget *close_button = wh_create_cool_button(GTK_STOCK_CLOSE, _("_Close"), FALSE);
+  gtk_box_pack_end(GTK_BOX(bottom_hbox), close_button, FALSE, FALSE, 3);
+  g_signal_connect(G_OBJECT(close_button), "clicked",
+      G_CALLBACK(hide_window_from_button), window);
+
+  return window;
+}
+
+void wh_show_window(GtkWidget *window)
+{
+  if (!gtk_widget_get_visible(window))
+  {
+    gtk_widget_show_all(window);
+    return;
+  }
+
+  gtk_window_present(GTK_WINDOW(window));
+}
+
+static void hide_window_from_cross(GtkWidget *window, gpointer data)
+{
+  gtk_widget_hide(window);
+}
+
+static void hide_window_from_button(GtkWidget *widget, gpointer data)
+{
+  GtkWidget *window = (GtkWidget *)data;
+  gtk_widget_hide(window);
 }
 
 static guint _wh_add_row_to_table(GtkWidget *table)

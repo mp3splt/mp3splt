@@ -587,7 +587,7 @@ void connect_button_event(GtkWidget *widget, ui_state *ui)
 //!checks if we have a stream
 static void check_stream(ui_state *ui)
 {
-  if (ui->infos->total_time == -1)
+  if (((gint)ui->infos->total_time) == -1)
   {
     ui->status->stream = TRUE;
     reset_inactive_progress_bar(ui->gui);
@@ -1036,7 +1036,6 @@ void check_update_down_progress_bar(ui_state *ui)
     return;
   }
 
-  gfloat total_interval = 0;
   gfloat progress_time = 0;
   gint splitpoint_time_left = -1;
   gint splitpoint_time_right = -1;
@@ -1047,7 +1046,7 @@ void check_update_down_progress_bar(ui_state *ui)
   if ((splitpoint_time_left != -1) && (splitpoint_time_right != -1))
   {
     gfloat total_interval = splitpoint_time_right - splitpoint_time_left;
-    if (total_interval != 0)
+    if (((gint)total_interval) != 0)
     {
       progress_time = (ui->infos->current_time-splitpoint_time_left) / total_interval;
     }
@@ -1057,7 +1056,7 @@ void check_update_down_progress_bar(ui_state *ui)
     if (splitpoint_time_right == -1)
     {
       gfloat total_interval = ui->infos->total_time - splitpoint_time_left;
-      if (total_interval != 0)
+      if (((gint)total_interval) != 0)
       {
         progress_time = (ui->infos->current_time-splitpoint_time_left)/ total_interval;
       }
@@ -1065,7 +1064,7 @@ void check_update_down_progress_bar(ui_state *ui)
     else
     {
       gfloat total_interval = splitpoint_time_right;
-      if (total_interval != 0)
+      if (((gint)total_interval) != 0)
       {
         progress_time = ui->infos->current_time/total_interval;
       }
@@ -1940,7 +1939,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
   if (gui->drawing_area_expander != NULL &&
       !gtk_expander_get_expanded(GTK_EXPANDER(gui->drawing_area_expander)))
   {
-    return;
+    return TRUE;
   }
 
   gint old_width_drawing_area = infos->width_drawing_area;
@@ -2038,7 +2037,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
     dh_set_color(gc, &color);
     dh_draw_text(gc, _(" left click on rectangle checks/unchecks 'keep splitpoint'"),
         0, gui->splitpoint_ypos + 1);
-    return;
+    return TRUE;
   }
 
   gfloat left_time = get_left_drawing_time(infos->current_time, infos->total_time, infos->zoom_coeff);
@@ -2384,8 +2383,6 @@ static gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type, 
     margin2 = ui->gui->splitpoint_ypos + ui->gui->margin + ui->gui->real_checkbox_length;
   }
 
-  gint splitpoint_returned = -1;
-  
   //area outside the split move
   if ((but_y < margin1) || (but_y > margin2))
   {

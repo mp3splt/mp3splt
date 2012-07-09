@@ -106,55 +106,62 @@ void put_options_from_preferences(ui_state *ui)
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_FALSE);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
 
-  switch (ui->status->selected_split_mode)
+  if (ui->infos->split_file_mode == FILE_MODE_SINGLE)
   {
-    case SELECTED_SPLIT_NORMAL:
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
-      break;
-    case SELECTED_SPLIT_WRAP:
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_WRAP_MODE);
-      break;
-    case SELECTED_SPLIT_TIME:
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
-      mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_SPLIT_TIME,
-          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_time)));
-      break;
-    case SELECTED_SPLIT_EQUAL_TIME_TRACKS:
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_LENGTH_MODE);
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER,
-          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_equal_tracks)));
-      break;
-    case SELECTED_SPLIT_SILENCE:
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
-      mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
-          gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_threshold)));
-      mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET,
-          gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_offset)));
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS,
-          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->all_spinner_silence_number_tracks)));
-      mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH,
-          gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_minimum)));
-      mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
-          gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_track_minimum)));
-      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->all_silence_remove_silence)))
-      {
-        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_TRUE);
-      }
-      else
-      {
-        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_FALSE);
-      }
-      break;
-    case SELECTED_SPLIT_TRIM_SILENCE:
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
-      mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
-          gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_trim_silence_threshold)));
-      break;
-    case SELECTED_SPLIT_ERROR:
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_ERROR_MODE);
-      break;
-    default:
-      break;
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
+  }
+  else
+  {
+    switch (ui->status->selected_split_mode)
+    {
+      case SELECTED_SPLIT_NORMAL:
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
+        break;
+      case SELECTED_SPLIT_WRAP:
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_WRAP_MODE);
+        break;
+      case SELECTED_SPLIT_TIME:
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
+        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_SPLIT_TIME,
+            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_time)));
+        break;
+      case SELECTED_SPLIT_EQUAL_TIME_TRACKS:
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_LENGTH_MODE);
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER,
+            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_equal_tracks)));
+        break;
+      case SELECTED_SPLIT_SILENCE:
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_SILENCE_MODE);
+        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
+            gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_threshold)));
+        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET,
+            gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_offset)));
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS,
+            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->all_spinner_silence_number_tracks)));
+        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH,
+            gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_silence_minimum)));
+        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
+            gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_track_minimum)));
+        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->all_silence_remove_silence)))
+        {
+          mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_TRUE);
+        }
+        else
+        {
+          mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE, SPLT_FALSE);
+        }
+        break;
+      case SELECTED_SPLIT_TRIM_SILENCE:
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TRIM_SILENCE_MODE);
+        mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
+            gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_trim_silence_threshold)));
+        break;
+      case SELECTED_SPLIT_ERROR:
+        mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_ERROR_MODE);
+        break;
+      default:
+        break;
+    }
   }
 
   gint selected_tags_value = rh_get_active_value(gui->tags_radio);

@@ -37,9 +37,9 @@
 
 GtkWidget *wh_set_title_and_get_vbox(GtkWidget *widget, const gchar *title);
 
-void *wh_put_in_hbox_and_attach_to_vbox(GtkWidget *widget, GtkWidget *vbox, gint vertical_margin);
+void wh_put_in_hbox_and_attach_to_vbox(GtkWidget *widget, GtkWidget *vbox, gint vertical_margin);
 GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_level);
-void *wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, GtkWidget *vbox,
+void wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, GtkWidget *vbox,
     gint vertical_margin, gint bottom_margin);
 
 GtkWidget *wh_new_table();
@@ -89,6 +89,11 @@ GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
     gint toggle_or_not);
 
 void wh_set_image_on_button(GtkButton *button, GtkWidget *image);
+
+GtkWidget *wh_create_window_with_close_button(gchar *title, gint width, gint height,
+    GtkWindowPosition position, GtkWindow *parent_window,
+    GtkWidget *main_area_widget, GtkWidget *bottom_widget, ...);
+void wh_show_window(GtkWidget *window);
 
 #endif
 

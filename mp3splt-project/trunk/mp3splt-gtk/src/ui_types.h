@@ -383,7 +383,7 @@ typedef struct {
 
   GPtrArray *wave_preview_labels;
 
-  GtkWidget *mess_history_dialog;
+  GtkWidget *mess_history_window;
   GtkWidget *mess_hist_view;
 
   GtkTreeView *multiple_files_tree;
@@ -392,16 +392,16 @@ typedef struct {
   GtkWidget *multiple_files_remove_all_files_button;
 
   GtkWidget *preferences_widget;
-  GtkWidget *preferences_dialog;
+  GtkWidget *preferences_window;
 
   GtkWidget *split_files_widget;
-  GtkWidget *split_files_dialog;
+  GtkWidget *split_files_window;
  
   GtkWidget *freedb_widget;
-  GtkWidget *freedb_dialog;
+  GtkWidget *freedb_window;
 
   GtkWidget *splitpoints_widget;
-  GtkWidget *splitpoints_dialog;
+  GtkWidget *splitpoints_window;
 } gui_state;
 
 typedef struct {

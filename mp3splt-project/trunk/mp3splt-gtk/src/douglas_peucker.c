@@ -109,8 +109,8 @@ static GArray *splt_douglas_peucker_for_one_threshold(GArray *input_douglas_poin
 
 static gint douglas_points_sort(gconstpointer first, gconstpointer second)
 {
-  douglas_point *first_douglas_point = (douglas_point *)first;
-  douglas_point *second_douglas_point = (douglas_point *)second;
+  const douglas_point *first_douglas_point = (douglas_point *)first;
+  const douglas_point *second_douglas_point = (douglas_point *)second;
 
   return first_douglas_point->index - second_douglas_point->index;
 }
@@ -195,7 +195,7 @@ static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, void (*cal
   distance_and_index *max_distance_point =
     splt_find_point_with_maximum_distance(douglas_points, first_point.point, last_point.point);
 
-  if (max_distance_point == NULL || max_distance_point->distance == 0)
+  if (max_distance_point == NULL || ((gint)max_distance_point->distance) == 0)
   {
     new_points = splt_copy_as_new_array(douglas_points);
     g_array_free(douglas_points, TRUE);

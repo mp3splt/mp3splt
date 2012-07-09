@@ -104,6 +104,8 @@ gint get_checked_tags_version_radio_box(gui_state *gui)
       return i;
     }
   }
+
+  return 0;
 }
 
 //! Set the name of the output directory
@@ -159,6 +161,8 @@ static void output_radio_box_event(GtkToggleButton *radio_b, ui_state *ui)
   ui_save_preferences(NULL, ui);
 }
 
+#ifdef __WIN32__
+
 //! Create the "select language" box
 static GtkWidget *create_language_box(ui_state *ui)
 {
@@ -207,6 +211,7 @@ static GtkWidget *create_pref_language_page(ui_state *ui)
 
   return language_hbox;
 }
+#endif
 
 //! Events for browse dir button
 static void browse_dir_button_event(GtkWidget *widget, ui_state *ui)
@@ -644,7 +649,7 @@ static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_
 
   gfloat left_time = 0;
   gfloat right_time = 0;
-  while ((drawing_time == 0) || (drawing_time > expected_drawing_time))
+  while ((((gint)drawing_time) == 0) || (drawing_time > expected_drawing_time))
   {
     left_time = get_left_drawing_time(current_time, ui->infos->total_time, zoom_coeff);
     right_time = get_right_drawing_time(current_time, ui->infos->total_time, zoom_coeff);

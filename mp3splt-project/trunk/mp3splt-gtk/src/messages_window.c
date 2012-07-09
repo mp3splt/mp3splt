@@ -161,17 +161,12 @@ static GtkWidget *create_text_component(ui_state *ui)
 }
 
 //! Create the message history dialog
-void create_mess_history_dialog(ui_state *ui)
+void create_mess_history_window(ui_state *ui)
 {
-  GtkWidget *mess_history_dialog = gtk_dialog_new_with_buttons(_("Messages history"), NULL,
-      GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-  ui->gui->mess_history_dialog = mess_history_dialog;
-
-  gtk_window_set_default_size(GTK_WINDOW(mess_history_dialog), 550, 300);
-  gtk_window_set_position(GTK_WINDOW(mess_history_dialog), GTK_WIN_POS_CENTER);
-
   GtkWidget *text_component = create_text_component(ui);
-  GtkWidget *area = gtk_dialog_get_content_area(GTK_DIALOG(mess_history_dialog));
-  gtk_box_pack_start(GTK_BOX(area), text_component, TRUE, TRUE, 0);
+  ui->gui->mess_history_window = 
+    wh_create_window_with_close_button(_("Messages history"), 550, 300,
+        GTK_WIN_POS_CENTER, GTK_WINDOW(ui->gui->window),
+        text_component, NULL);
 }
 
