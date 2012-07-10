@@ -922,7 +922,6 @@ static GtkWidget *create_main_vbox(ui_state *ui)
    
   /* player page */
   GtkWidget *player_vbox = wh_vbox_new();
-  GtkWidget *notebook_label = gtk_label_new(_("Manual single file split"));
 
   //file & split button hbox
   GtkWidget *top_hbox = wh_hbox_new();
@@ -943,6 +942,8 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   ui->gui->playlist_box = create_player_playlist_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->playlist_box, TRUE, TRUE, 0);
 
+  //TODO: add icon
+  GtkWidget *notebook_label = gtk_label_new(_("Manual single file split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox, notebook_label);
 
   /* splitpoints page */
@@ -959,7 +960,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_container_set_border_width(GTK_CONTAINER(special_split_vbox), 0);
   GtkWidget *frame = create_special_split_page(ui);
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
-  notebook_label = gtk_label_new(_("Batch & Automatic split"));
+  notebook_label = gtk_label_new(_("Batch & automatic split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
   /* preferences widget */
