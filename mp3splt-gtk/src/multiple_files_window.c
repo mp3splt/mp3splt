@@ -298,7 +298,7 @@ GtkWidget *create_multiple_files_component(ui_state *ui)
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 2);
 
   //create columns
   create_multiple_files_columns(multiple_files_tree);

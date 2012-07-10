@@ -438,21 +438,13 @@ GtkWidget *create_special_split_page(ui_state *ui)
 {
   GtkWidget *vbox = wh_vbox_new();;
 
-  GtkWidget *notebook = gtk_notebook_new();
-  gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
-  gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
-  gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);
-  gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
-  gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
+  GtkWidget *paned_widget = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_box_pack_start(GTK_BOX(vbox), paned_widget, TRUE, TRUE, 0);
 
-  GtkWidget *notebook_label = NULL;
+  gtk_paned_add1(GTK_PANED(paned_widget), create_single_multiple_split_modes(ui));
+  gtk_paned_add2(GTK_PANED(paned_widget), create_split_mode(ui));
 
-  notebook_label = gtk_label_new(_("Split mode"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_split_mode(ui), notebook_label);
-
-  notebook_label = gtk_label_new(_("Files"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
-      create_single_multiple_split_modes(ui), notebook_label);
+  gtk_paned_set_position(GTK_PANED(paned_widget), 150);
 
   return vbox;
 }
