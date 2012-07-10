@@ -253,7 +253,7 @@ static void about_window(GtkWidget *widget, ui_state *ui)
   gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), (gchar *)PACKAGE_NAME);
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), VERSION);
   gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog),
-                                 PACKAGE_NAME" : Copyright © 2005-2011 Alexandru"
+                                 PACKAGE_NAME" : Copyright © 2005-2012 Alexandru"
                                  " Munteanu \n mp3splt : Copyright © 2002-2005 Matteo Trotta");
 
   gchar b3[100] = { '\0' };
