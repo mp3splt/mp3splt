@@ -465,6 +465,7 @@ typedef struct {
   gint should_trim;
 
   gint queue_set_filename_to_file_chooser_button;
+  gint file_selection_changed;
 } gui_status;
 
 typedef struct {

@@ -228,7 +228,7 @@ void change_current_filename(const gchar *fname, ui_state *ui)
   const gchar *old_fname = get_input_filename(ui->gui);
   if (!old_fname)
   {
-    set_input_filename(fname, ui->gui);
+    set_input_filename(fname, ui);
 
     if (ui->status->show_silence_wave)
     {
@@ -248,7 +248,7 @@ void change_current_filename(const gchar *fname, ui_state *ui)
     return;
   }
 
-  set_input_filename(fname, ui->gui);
+  set_input_filename(fname, ui);
   if (ui->status->show_silence_wave)
   {
     scan_for_silence_wave(ui);
@@ -1309,8 +1309,10 @@ static void change_progress_bar(ui_state *ui)
   gui_status *status = ui->status;
   ui_infos *infos = ui->infos;
 
-  if (!player_is_running(ui) || status->mouse_on_progress_bar)
+  if (!player_is_running(ui) || status->mouse_on_progress_bar || 
+      ui->status->splitting)
   {
+    refresh_drawing_area(ui->gui);
     return;
   }
 

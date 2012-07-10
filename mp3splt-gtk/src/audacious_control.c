@@ -89,6 +89,11 @@ gchar *myaudacious_get_filename(ui_state *ui)
   gint playlist_position = audacious_remote_get_playlist_pos(ui->pi->dbus_proxy);
   gchar *fname = audacious_remote_get_playlist_file(ui->pi->dbus_proxy, playlist_position);
 
+  if (fname == NULL)
+  {
+    return NULL;
+  }
+
   gchar *fname2 = g_filename_from_uri(fname, NULL, NULL);
   g_free(fname);
 

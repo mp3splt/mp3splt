@@ -251,7 +251,13 @@ The result must be g_free'd after use.
 */
 gchar *gstreamer_get_filename(ui_state *ui)
 {
-  return strdup(get_input_filename(ui->gui));
+  gchar *fname =  get_input_filename(ui->gui);
+  if (fname == NULL)
+  {
+    return NULL;
+  }
+
+  return strdup(fname);
 }
 
 //!returns the number of songs of the playlist
