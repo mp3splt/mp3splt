@@ -111,6 +111,7 @@ static void lmanager_put_message_from_library(const char *message, splt_message_
         mess[i] = ' ';
       }
     }
+
     enter_threads();
 
     put_status_message_with_type(mess, mess_type, ui);
@@ -124,6 +125,7 @@ static void lmanager_put_message_from_library(const char *message, splt_message_
 #endif
 
     exit_threads();
+
     g_free(mess);
     mess = NULL;
   }

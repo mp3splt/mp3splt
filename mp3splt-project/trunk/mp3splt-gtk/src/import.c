@@ -249,7 +249,7 @@ static gpointer add_cue_splitpoints(ui_state *ui)
   char *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
   if (file_exists(filename_to_split))
   {
-    set_input_filename(filename_to_split, ui->gui);
+    set_input_filename(filename_to_split, ui);
   }
 
   exit_threads();

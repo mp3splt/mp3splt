@@ -56,8 +56,7 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type, u
   if (mess_type == SPLT_MESSAGE_INFO ||
       (mess_type == SPLT_MESSAGE_DEBUG && ui->infos->debug_is_active))
   {
-    GtkTextTag *gray_tag =
-      gtk_text_tag_table_lookup(gui->mess_hist_tag_table, "gray_bold");
+    GtkTextTag *gray_tag = gtk_text_tag_table_lookup(gui->mess_hist_tag_table, "gray_bold");
 
     GtkTextIter iter;
     gtk_text_buffer_get_end_iter(ui->gui->mess_hist_buffer, &iter);
@@ -69,6 +68,7 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type, u
     gtk_text_buffer_insert(ui->gui->mess_hist_buffer, &iter, "\n", -1);
 
     gtk_text_iter_set_line_offset(&iter, 0);
+
     GtkTextMark *mark = gtk_text_buffer_get_mark(ui->gui->mess_hist_buffer, "end");
     gtk_text_buffer_move_mark(ui->gui->mess_hist_buffer, mark, &iter);
     gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(ui->gui->mess_hist_view), mark);

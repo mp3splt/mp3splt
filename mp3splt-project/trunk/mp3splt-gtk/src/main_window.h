@@ -79,7 +79,7 @@ void print_status_bar_confirmation(gint error, ui_state *ui);
 void cancel_button_event(GtkWidget *widget, ui_state *ui);
 
 gchar* get_input_filename(gui_state *gui);
-void set_input_filename(const gchar *filename, gui_state *gui);
+void set_input_filename(const gchar *filename, ui_state *ui);
 void add_filters_to_file_chooser(GtkWidget *file_chooser);
 
 void split_button_event(GtkWidget *widget, ui_state *ui);

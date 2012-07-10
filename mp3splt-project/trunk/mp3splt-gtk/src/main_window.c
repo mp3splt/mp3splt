@@ -102,22 +102,22 @@ static void main_window_drag_data_received(GtkWidget *window,
 }
 
 //! Set the name of the input file
-void set_input_filename(const gchar *filename, gui_state *gui)
+void set_input_filename(const gchar *filename, ui_state *ui)
 {
   if (filename == NULL)
   {
     return;
   }
 
-  if (gui->input_filename != NULL)
+  if (ui->gui->input_filename != NULL)
   {
-    g_string_free(gui->input_filename,TRUE);
+    g_string_free(ui->gui->input_filename,TRUE);
   }
-  gui->input_filename = g_string_new(filename);
+  ui->gui->input_filename = g_string_new(filename);
 
-  if (gui->open_file_chooser_button != NULL)
+  if (ui->gui->open_file_chooser_button != NULL && !ui->status->file_selection_changed)
   {
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(gui->open_file_chooser_button), filename);
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(ui->gui->open_file_chooser_button), filename);
   }
 }
 
@@ -320,6 +320,8 @@ If you don't want that use put_status_message instead.
 
 void put_status_message(const gchar *text, ui_state *ui)
 {
+  if (ui->status->currently_scanning_for_silence) { return; }
+
   put_status_message_with_type(text, SPLT_MESSAGE_INFO, ui);
 }
 
@@ -868,7 +870,10 @@ static void file_selection_changed(GtkFileChooser *open_file_chooser, ui_state *
 
   if (filename != NULL)
   {
+    ui->status->file_selection_changed = TRUE;
     file_chooser_ok_event(filename, ui);
+    ui->status->file_selection_changed = FALSE;
+
     g_free(filename);
     filename = NULL;
     return;
@@ -888,7 +893,7 @@ static void file_set_event(GtkFileChooserButton *open_file_chooser_button, ui_st
 
 static GtkWidget *create_choose_file_frame(ui_state *ui)
 {
-  GtkWidget *open_file_chooser_button = gtk_file_chooser_button_new(("_Open..."), GTK_FILE_CHOOSER_ACTION_OPEN);
+  GtkWidget *open_file_chooser_button = gtk_file_chooser_button_new(_("Open file ..."), GTK_FILE_CHOOSER_ACTION_OPEN);
   ui->gui->open_file_chooser_button = open_file_chooser_button;
   add_filters_to_file_chooser(open_file_chooser_button);
   wh_set_browser_directory_handler(ui, open_file_chooser_button);
