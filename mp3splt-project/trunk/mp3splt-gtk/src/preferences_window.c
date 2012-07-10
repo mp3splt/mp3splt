@@ -860,7 +860,7 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
   g_signal_connect(GTK_TOGGLE_BUTTON(gui->radio_output),
       "toggled", G_CALLBACK(output_radio_box_event), ui);
 
-  return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format</b>"));
+  return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format for batch split</b>"));
 }
 
 //!creates the output preferences page
@@ -1225,7 +1225,7 @@ GtkWidget *create_choose_preferences(ui_state *ui)
 
   /* output preferences */
   GtkWidget *output_prefs = create_pref_output_page(ui);
-  notebook_label = gtk_label_new(_("Output"));
+  notebook_label = gtk_label_new(_("Output for batch"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs, notebook_label);
 
   /* player preferences */
