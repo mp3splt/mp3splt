@@ -243,7 +243,7 @@ static void create_queue_buttons(ui_state *ui)
 {
   //button for queueing all files
   GtkWidget *queue_files_button =
-    wh_create_cool_button(GTK_STOCK_UNINDENT, _("_Queue to player"),FALSE);
+    wh_create_cool_button(GTK_STOCK_INDEX, _("_Queue to player"),FALSE);
   ui->gui->queue_files_button = queue_files_button;
   gtk_widget_set_sensitive(queue_files_button, FALSE);
   g_signal_connect(G_OBJECT(queue_files_button), "clicked",

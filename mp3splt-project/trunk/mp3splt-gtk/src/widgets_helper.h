@@ -49,7 +49,7 @@ void wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
 void wh_add_in_table_with_label_expand(GtkWidget *table, const gchar *label_text,
     GtkWidget *widget);
 
-GtkWidget *wh_new_entry(gpointer callback);
+GtkWidget *wh_new_entry(gpointer callback, ui_state *ui);
 
 GtkWidget *wh_new_button(const gchar *button_label);
 

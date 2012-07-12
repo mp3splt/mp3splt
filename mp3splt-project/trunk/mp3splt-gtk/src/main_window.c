@@ -722,16 +722,16 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "Preferences", GTK_STOCK_PREFERENCES, N_("_Preferences"), "<Ctrl>P", N_("Preferences"),
       G_CALLBACK(show_preferences_window) },
 
-    { "SplitFiles", NULL, N_("Split _Files"), "<Ctrl>F", N_("Split Files"),
+    { "SplitFiles", NULL, N_("Split _files"), "<Ctrl>F", N_("Split files"),
       G_CALLBACK(show_split_files_window) },
 
-    { "Splitpoints", NULL, N_("_Splitpoints"), "<Ctrl>L", N_("Splitpoints"),
+    { "Splitpoints", GTK_STOCK_EDIT, N_("_Splitpoints"), "<Ctrl>L", N_("Splitpoints"),
       G_CALLBACK(show_splitpoints_window) },
 
     { "Split", GTK_STOCK_APPLY, N_("_Split"), "<Ctrl>S", N_("Split"),
       G_CALLBACK(single_file_mode_split_button_event) },
 
-    { "BatchSplit", GTK_STOCK_APPLY, N_("_Batch split"), "<Ctrl>B", N_("Batch split"),
+    { "BatchSplit", GTK_STOCK_EXECUTE, N_("_Batch split"), "<Ctrl>B", N_("Batch split"),
       G_CALLBACK(batch_file_mode_split_button_event) },
 
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
@@ -985,7 +985,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(percent_progress_bar), TRUE, TRUE, 0);
 
   //stop button
-  GtkWidget *cancel_button = wh_create_cool_button(GTK_STOCK_CANCEL,_("S_top"), FALSE);
+  GtkWidget *cancel_button = wh_create_cool_button(GTK_STOCK_STOP,_("S_top"), FALSE);
   ui->gui->cancel_button = cancel_button;
   g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_button_event), ui);
   gtk_box_pack_start(GTK_BOX(hbox), cancel_button, FALSE, TRUE, 3);

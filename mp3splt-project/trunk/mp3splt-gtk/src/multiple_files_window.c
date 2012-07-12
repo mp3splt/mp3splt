@@ -255,7 +255,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
   
   //button for removing a file
   GtkWidget *multiple_files_remove_all_files_button =
-    wh_create_cool_button(GTK_STOCK_REMOVE, _("R_emove all"),FALSE);
+    wh_create_cool_button(GTK_STOCK_CLEAR, _("R_emove all"),FALSE);
   ui->gui->multiple_files_remove_all_files_button = multiple_files_remove_all_files_button;
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_remove_all_files_button,
       FALSE, FALSE, 5);
@@ -263,7 +263,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
   g_signal_connect(G_OBJECT(multiple_files_remove_all_files_button), "clicked",
                    G_CALLBACK(multiple_files_remove_all_button_event), ui);
 
-  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_APPLY,_("Batch split"), FALSE);
+  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_EXECUTE,_("Batch split"), FALSE);
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(batch_file_mode_split_button_event), ui);
   gtk_box_pack_end(GTK_BOX(hbox), split_button, FALSE, FALSE, 4);

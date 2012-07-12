@@ -72,5 +72,8 @@ void clear_current_description(ui_state *ui);
 void copy_filename_to_current_description(const gchar *fname, ui_state *ui);
 void remove_all_rows(GtkWidget *widget, ui_state *ui);
 
+void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_state *ui);
+void create_trim_silence_window(GtkWidget *button, ui_state *ui);
+
 #endif
 
