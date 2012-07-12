@@ -381,6 +381,13 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
     cancel_quick_preview_all(ui->status);
   }
 
+  //if we remove a point at the left of the play preview, move the indexes
+  if (index < ui->status->preview_start_splitpoint)
+  {
+    ui->status->preview_start_splitpoint--;
+    ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+  }
+
   gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
   gtk_tree_path_free(path);
 
@@ -823,7 +830,9 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
   enter_threads();
 
   gtk_widget_set_sensitive(ui->gui->scan_silence_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->scan_silence_button_player, FALSE);
   gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button_player, FALSE);
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   ui->status->filename_to_split = get_input_filename(ui->gui);
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
@@ -878,7 +887,9 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
 
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
   gtk_widget_set_sensitive(ui->gui->scan_silence_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->scan_silence_button_player, TRUE);
   gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button_player, TRUE);
 
   exit_threads();
 
@@ -939,7 +950,7 @@ static void silence_remove_silence_checked(GtkToggleButton *button, ui_state *ui
   update_silence_parameters(GTK_WIDGET(button), ui);
 }
 
-static void create_trim_silence_window(GtkWidget *button, ui_state *ui)
+void create_trim_silence_window(GtkWidget *button, ui_state *ui)
 {
   GtkWidget *silence_detection_window =
     gtk_dialog_new_with_buttons(_("Set trim splitpoints using silence detection"),
@@ -998,7 +1009,7 @@ static void create_trim_silence_window(GtkWidget *button, ui_state *ui)
 }
 
 //!event for clicking the 'detect silence and add splitpoints' button
-static void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_state *ui)
+void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_state *ui)
 {
   ui_infos *infos = ui->infos;
   gui_state *gui = ui->gui;
@@ -1267,7 +1278,7 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   gtk_widget_set_tooltip_text(remove_row_button, _("Remove rows"));
 
   /* remove all rows button */
-  GtkWidget *remove_all_button = wh_create_cool_button(GTK_STOCK_DELETE, _("R_emove all"), FALSE);
+  GtkWidget *remove_all_button = wh_create_cool_button(GTK_STOCK_CLEAR, _("R_emove all"), FALSE);
   ui->gui->remove_all_button = remove_all_button;
 
   gtk_button_set_relief(GTK_BUTTON(remove_all_button), GTK_RELIEF_NONE);
@@ -1294,7 +1305,7 @@ static void create_init_special_buttons(ui_state *ui)
 
   /* set splitpoints from silence detection */
   GtkWidget *scan_silence_button =
-    wh_create_cool_button(GTK_STOCK_ADD, _("_Silence detection"), FALSE);
+    wh_create_cool_button(GTK_STOCK_FIND_AND_REPLACE, _("_Silence detection"), FALSE);
   ui->gui->scan_silence_button = scan_silence_button;
   gtk_widget_set_sensitive(scan_silence_button, TRUE);
   g_signal_connect(G_OBJECT(scan_silence_button), "clicked",

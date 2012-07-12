@@ -885,7 +885,7 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   gtk_button_set_relief(GTK_BUTTON(play_button), GTK_RELIEF_NONE);
   g_signal_connect(G_OBJECT(play_button), "clicked", G_CALLBACK(play_event), ui);
   gtk_widget_set_sensitive(play_button, FALSE);
-  gtk_widget_set_tooltip_text(play_button,_("Play"));
+  gtk_widget_set_tooltip_text(play_button, _("Play"));
 
   //pause button
   build_path(imagefile, IMAGEDIR, "pause"ICON_EXT);
@@ -951,7 +951,29 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
       G_CALLBACK(add_splitpoint_from_player), ui);
   gtk_widget_set_sensitive(player_add_button, FALSE);
   gtk_widget_set_tooltip_text(player_add_button,_("Add splitpoint from player"));
-  
+
+  //set splitpoints from trim silence button
+  GtkWidget *scan_trim_silence_button = wh_create_cool_button(GTK_STOCK_CUT, NULL, FALSE);
+  ui->gui->scan_trim_silence_button_player = scan_trim_silence_button;
+  gtk_widget_set_sensitive(scan_trim_silence_button, TRUE);
+  g_signal_connect(G_OBJECT(scan_trim_silence_button), "clicked",
+      G_CALLBACK(create_trim_silence_window), ui);
+  gtk_widget_set_tooltip_text(scan_trim_silence_button,
+      _("Set trim splitpoints using silence detection"));
+  gtk_box_pack_start(player_buttons_hbox, scan_trim_silence_button, FALSE, FALSE, 0);
+  gtk_button_set_relief(GTK_BUTTON(scan_trim_silence_button), GTK_RELIEF_NONE);
+ 
+  //set splitpoints from silence button
+  GtkWidget *scan_silence_button = wh_create_cool_button(GTK_STOCK_FIND_AND_REPLACE, NULL, FALSE);
+  ui->gui->scan_silence_button_player = scan_silence_button;
+  gtk_widget_set_sensitive(scan_silence_button, TRUE);
+  g_signal_connect(G_OBJECT(scan_silence_button), "clicked",
+      G_CALLBACK(create_detect_silence_and_add_splitpoints_window), ui);
+  gtk_widget_set_tooltip_text(scan_silence_button,
+      _("Set splitpoints from silence detection"));
+  gtk_box_pack_start(player_buttons_hbox, scan_silence_button, FALSE, FALSE, 0);
+  gtk_button_set_relief(GTK_BUTTON(scan_silence_button), GTK_RELIEF_NONE);
+
   //silence wave check button
   GtkWidget *silence_wave_check_button = gtk_check_button_new_with_mnemonic(_("Amplitude _wave"));
   ui->gui->silence_wave_check_button = silence_wave_check_button;
@@ -2993,7 +3015,7 @@ static GtkWidget *create_delete_buttons_hbox(ui_state *ui)
   GtkWidget *hbox = wh_hbox_new();
 
   GtkWidget *playlist_remove_file_button = 
-    wh_create_cool_button(GTK_STOCK_DELETE, _("_Erase selected entries"), FALSE);
+    wh_create_cool_button(GTK_STOCK_REMOVE, _("_Erase selected entries"), FALSE);
   ui->gui->playlist_remove_file_button = playlist_remove_file_button;
   gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_file_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_file_button,FALSE);
@@ -3001,7 +3023,7 @@ static GtkWidget *create_delete_buttons_hbox(ui_state *ui)
                    G_CALLBACK(playlist_remove_file_button_event), ui);
  
   GtkWidget *playlist_remove_all_files_button =
-    wh_create_cool_button(GTK_STOCK_DELETE, _("E_rase all history"),FALSE);
+    wh_create_cool_button(GTK_STOCK_CLEAR, _("E_rase all history"),FALSE);
   ui->gui->playlist_remove_all_files_button = playlist_remove_all_files_button;
   gtk_box_pack_start(GTK_BOX(hbox), playlist_remove_all_files_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(playlist_remove_all_files_button,FALSE);

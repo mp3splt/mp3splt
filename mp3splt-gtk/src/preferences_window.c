@@ -319,6 +319,7 @@ static void set_default_prefs_event(GtkWidget *widget, ui_state *ui)
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_gap),
       SPLT_DEFAULT_PARAM_GAP);
   gtk_toggle_button_set_active(gui->names_from_filename, FALSE);
+  gtk_toggle_button_set_active(gui->create_dirs_from_output_files, TRUE);
 
   ui_save_preferences(NULL, ui);
 }
@@ -375,7 +376,8 @@ static GtkWidget *create_split_options_box(ui_state *ui)
 
   //names from filename
   GtkToggleButton *names_from_filename = 
-    GTK_TOGGLE_BUTTON(gtk_check_button_new_with_mnemonic(_("_Splitpoint name from filename (testing)")));
+    GTK_TOGGLE_BUTTON(gtk_check_button_new_with_mnemonic(
+          _("_Splitpoint name from filename (manual single file split only)")));
   gui->names_from_filename = names_from_filename;
 
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(names_from_filename), FALSE, FALSE, 0);
@@ -467,7 +469,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
   GtkWidget *set_default_prefs_button =
-    wh_create_cool_button(GTK_STOCK_PREFERENCES, _("Set _default split" " options"),FALSE); 
+    wh_create_cool_button(GTK_STOCK_PROPERTIES, _("Set _default split options"),FALSE); 
   g_signal_connect(G_OBJECT(set_default_prefs_button), "clicked",
       G_CALLBACK(set_default_prefs_event), ui);
   gtk_box_pack_start (GTK_BOX (horiz_fake), set_default_prefs_button, FALSE, FALSE, 5);
@@ -1044,7 +1046,7 @@ static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui)
 {
   GtkWidget *table = wh_new_table();
 
-  GtkWidget *regex_entry = wh_new_entry(ui_save_preferences);
+  GtkWidget *regex_entry = wh_new_entry(ui_save_preferences, ui);
   ui->gui->regex_entry = regex_entry;
   wh_add_in_table_with_label_expand(table, _("Regular expression:"), regex_entry);
 
@@ -1106,7 +1108,7 @@ static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui)
   ui->gui->genre_combo = genre_combo;
   wh_add_in_table_with_label(table, _("Genre tag:"), GTK_WIDGET(genre_combo));
 
-  GtkWidget *comment_tag_entry = wh_new_entry(ui_save_preferences);
+  GtkWidget *comment_tag_entry = wh_new_entry(ui_save_preferences, ui);
   ui->gui->comment_tag_entry = comment_tag_entry;
   wh_add_in_table_with_label_expand(table, _("Comment tag:"), comment_tag_entry);
 
@@ -1122,7 +1124,7 @@ static GtkWidget *create_test_regex_table(ui_state *ui)
   GtkWidget *table = wh_new_table();
 
   GtkWidget *sample_test_hbox = wh_hbox_new();
-  GtkWidget *test_regex_fname_entry = wh_new_entry(ui_save_preferences);
+  GtkWidget *test_regex_fname_entry = wh_new_entry(ui_save_preferences, ui);
   ui->gui->test_regex_fname_entry = test_regex_fname_entry;
   gtk_box_pack_start(GTK_BOX(sample_test_hbox), test_regex_fname_entry, TRUE, TRUE, 0);
 
@@ -1223,15 +1225,15 @@ GtkWidget *create_choose_preferences(ui_state *ui)
   notebook_label = gtk_label_new(_("Tags"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), tags_prefs, notebook_label);
 
-  /* output preferences */
-  GtkWidget *output_prefs = create_pref_output_page(ui);
-  notebook_label = gtk_label_new(_("Output for batch"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs, notebook_label);
-
   /* player preferences */
   GtkWidget *player_prefs = create_pref_player_page(ui);
   notebook_label = gtk_label_new(_("Player"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_prefs, notebook_label);
+
+  /* output preferences */
+  GtkWidget *output_prefs = create_pref_output_page(ui);
+  notebook_label = gtk_label_new(_("Output for batch split"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs, notebook_label);
 
   /* language preferences page */
 #ifdef __WIN32__

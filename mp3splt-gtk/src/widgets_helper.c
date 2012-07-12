@@ -123,14 +123,14 @@ void wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, Gtk
   }
 }
 
-GtkWidget *wh_new_entry(void *callback)
+GtkWidget *wh_new_entry(gpointer callback, ui_state *ui)
 {
   GtkWidget *entry = gtk_entry_new();
   gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
   
   if (callback)
   {
-    g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(callback), NULL);
+    g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(callback), ui);
   }
 
   return entry;
@@ -343,10 +343,10 @@ GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
     gint toggle_or_not)
 {
   GtkWidget *box = wh_hbox_new();
-  gtk_container_set_border_width(GTK_CONTAINER(box), 2);
+  gtk_container_set_border_width(GTK_CONTAINER(box), 0);
 
   GtkWidget *image = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
-  gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 3);
+  gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
 
   if (label_text != NULL)
   {
@@ -365,7 +365,7 @@ GtkWidget *wh_create_cool_button(gchar *stock_id, gchar *label_text,
     button = gtk_button_new();
   }
 
-  gtk_container_add(GTK_CONTAINER(button),box);
+  gtk_container_add(GTK_CONTAINER(button), box);
 
   return button;
 }

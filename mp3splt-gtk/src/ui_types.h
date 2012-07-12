@@ -348,8 +348,10 @@ typedef struct {
   GtkWidget *spinner_seconds;
   GtkWidget *spinner_hundr_secs;
 
-  GtkWidget *scan_silence_button;
   GtkWidget *scan_trim_silence_button;
+  GtkWidget *scan_trim_silence_button_player;
+  GtkWidget *scan_silence_button;
+  GtkWidget *scan_silence_button_player;
 
   GtkWidget *spinner_silence_number_tracks;
   GtkWidget *spinner_silence_minimum;
