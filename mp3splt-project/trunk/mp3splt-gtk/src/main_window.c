@@ -52,7 +52,7 @@ static void main_window_drag_data_received(GtkWidget *window,
     GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint
     info, guint time, ui_state *ui)
 {
-  const gchar *received_data = (gchar *) gtk_selection_data_get_text(data);
+  const gchar *received_data = (gchar *)gtk_selection_data_get_text(data);
   if (received_data == NULL)
   {
     return;

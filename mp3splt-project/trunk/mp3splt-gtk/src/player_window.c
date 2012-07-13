@@ -157,6 +157,11 @@ static gpointer detect_silence(ui_state *ui)
   ui_infos *infos = ui->infos;
   gui_status *status = ui->status;
 
+  if (status->currently_scanning_for_silence || status->currently_compute_douglas_peucker_filters)
+  {
+    return;
+  }
+
   gint err = SPLT_OK;
 
   if (infos->silence_points)
@@ -1053,6 +1058,7 @@ void refresh_drawing_area(gui_state *gui)
 void check_update_down_progress_bar(ui_state *ui)
 {
   if (ui->status->splitting || 
+      ui->status->currently_scanning_for_silence ||
       ui->status->currently_compute_douglas_peucker_filters)
   {
     return;
@@ -2809,7 +2815,7 @@ static GtkWidget *create_drawing_area(ui_state *ui)
   gtk_container_add(GTK_CONTAINER(frame), drawing_area);
 
   GtkWidget *drawing_area_expander =
-    gtk_expander_new_with_mnemonic(_("Splitpoints and amplitude wave _view"));
+    gtk_expander_new_with_mnemonic(_("Splitpoints and amplitude wave v_iew"));
   ui->gui->drawing_area_expander = drawing_area_expander;
   gtk_expander_set_expanded(GTK_EXPANDER(drawing_area_expander), TRUE);
   g_signal_connect(drawing_area_expander, "notify::expanded",

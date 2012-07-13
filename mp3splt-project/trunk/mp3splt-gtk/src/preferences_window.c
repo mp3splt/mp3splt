@@ -319,7 +319,7 @@ static void set_default_prefs_event(GtkWidget *widget, ui_state *ui)
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_gap),
       SPLT_DEFAULT_PARAM_GAP);
   gtk_toggle_button_set_active(gui->names_from_filename, FALSE);
-  gtk_toggle_button_set_active(gui->create_dirs_from_output_files, TRUE);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->create_dirs_from_output_files), TRUE);
 
   ui_save_preferences(NULL, ui);
 }
