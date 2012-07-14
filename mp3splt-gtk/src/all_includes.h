@@ -49,8 +49,8 @@
 #include "player_control.h"
 #include "freedb_window.h"
 #include "import.h"
-#include "options_manager.h"
 #include "export.h"
+#include "options_manager.h"
 #include "split_files_window.h"
 #include "split_mode_window.h"
 #include "messages_window.h"
@@ -63,6 +63,7 @@
 #include "radio_helper.h"
 #include "drawing_helper.h"
 #include "douglas_peucker.h"
+#include "drag_and_drop.h"
 
 #endif
 

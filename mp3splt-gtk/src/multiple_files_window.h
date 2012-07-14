@@ -47,6 +47,8 @@ enum {
 
 GtkWidget *create_multiple_files_component(ui_state *ui);
 void batch_file_mode_split_button_event(GtkWidget *widget, ui_state *ui);
+void multiple_files_add_button_event(GtkWidget *widget, ui_state *ui);
+void multiple_files_add_filename(const gchar *filename, ui_state *ui);
 
 #endif
 

@@ -48,59 +48,6 @@
 
 #include "main_window.h"
 
-static void main_window_drag_data_received(GtkWidget *window,
-    GdkDragContext *drag_context, gint x, gint y, GtkSelectionData *data, guint
-    info, guint time, ui_state *ui)
-{
-  const gchar *received_data = (gchar *)gtk_selection_data_get_text(data);
-  if (received_data == NULL)
-  {
-    return;
-  }
-
-  gchar **drop_filenames = g_strsplit(received_data, "\n", 0);
-
-  gint current_index = 0;
-  gchar *current_filename = drop_filenames[current_index];
-  while (current_filename != NULL)
-  {
-    gchar *filename = NULL;
-    if (strstr(current_filename, "file:") == current_filename)
-    {
-      filename = g_filename_from_uri(current_filename, NULL, NULL);
-    }
-    else
-    {
-      gint fname_malloc_size = strlen(current_filename) + 1;
-      filename = g_malloc(sizeof(gchar) * fname_malloc_size);
-      g_snprintf(filename, fname_malloc_size, "%s", current_filename);
-    }
-
-    remove_end_slash_n_r_from_filename(filename);
-
-    if (file_exists(filename))
-    {
-      import_file(filename, ui);
-    }
-
-    if (filename)
-    {
-      g_free(filename);
-      filename = NULL;
-    }
-
-    g_free(current_filename);
-    current_index++;
-    current_filename = drop_filenames[current_index];
-  }
-
-  if (drop_filenames)
-  {
-    g_free(drop_filenames);
-    drop_filenames = NULL;
-  }
-}
-
 //! Set the name of the input file
 void set_input_filename(const gchar *filename, ui_state *ui)
 {
@@ -159,11 +106,7 @@ static void initialize_window(ui_state *ui)
   gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
   g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(exit_application), ui);
-  g_signal_connect(G_OBJECT(window), "drag-data-received",
-      G_CALLBACK(main_window_drag_data_received), ui);
-  gtk_drag_dest_set(window, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP,
-      drop_types, 3, GDK_ACTION_COPY | GDK_ACTION_MOVE);
- 
+
   GString *imagefile = g_string_new("");
   build_path(imagefile, PIXMAP_PATH, "mp3splt-gtk_ico"ICON_EXT);
   GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(imagefile->str, NULL);
@@ -709,6 +652,11 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
       G_CALLBACK(open_file_button_event) },
 
+    { "AddFilesToBatch", GTK_STOCK_DIRECTORY,
+      N_("_Add files or directories to batch ..."), "<Ctrl>D", 
+      N_("Add files or directories to batch"),
+      G_CALLBACK(multiple_files_add_button_event) },
+
     { "Import", GTK_STOCK_FILE, N_("_Import splitpoints from file..."), "<Ctrl>I", 
       N_("Import splitpoints from file..."), G_CALLBACK(import_event) },
 
@@ -728,10 +676,10 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "Splitpoints", GTK_STOCK_EDIT, N_("_Splitpoints"), "<Ctrl>L", N_("Splitpoints"),
       G_CALLBACK(show_splitpoints_window) },
 
-    { "Split", GTK_STOCK_APPLY, N_("_Split"), "<Ctrl>S", N_("Split"),
+    { "Split", GTK_STOCK_APPLY, N_("_Split !"), "<Ctrl>S", N_("Split !"),
       G_CALLBACK(single_file_mode_split_button_event) },
 
-    { "BatchSplit", GTK_STOCK_EXECUTE, N_("_Batch split"), "<Ctrl>B", N_("Batch split"),
+    { "BatchSplit", GTK_STOCK_EXECUTE, N_("_Batch split !"), "<Ctrl>B", N_("Batch split !"),
       G_CALLBACK(batch_file_mode_split_button_event) },
 
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
@@ -787,6 +735,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     "  <menubar name='MenuBar'>"
     "    <menu action='FileMenu'>"
     "      <menuitem action='Open'/>"
+    "      <menuitem action='AddFilesToBatch'/>"
     "      <separator/>"
     "      <menuitem action='Import'/>"
     "      <menuitem action='ImportFromTrackType'/>"
@@ -862,6 +811,7 @@ static void file_selection_changed(GtkFileChooser *open_file_chooser, ui_state *
 {
   gchar *filename = gtk_file_chooser_get_filename(open_file_chooser);
   gchar *previous_fname = get_input_filename(ui->gui);
+
   if (previous_fname != NULL && filename != NULL && 
       strcmp(filename, previous_fname) == 0)
   {
@@ -878,12 +828,6 @@ static void file_selection_changed(GtkFileChooser *open_file_chooser, ui_state *
     filename = NULL;
     return;
   }
-
-  if (previous_fname != NULL && strlen(previous_fname) != 0)
-  {
-    //gtk_file_chooser_set_filename() does not work here.
-    ui->status->queue_set_filename_to_file_chooser_button = TRUE;
-  }
 }
 
 static void file_set_event(GtkFileChooserButton *open_file_chooser_button, ui_state *ui)
@@ -894,6 +838,8 @@ static void file_set_event(GtkFileChooserButton *open_file_chooser_button, ui_st
 static GtkWidget *create_choose_file_frame(ui_state *ui)
 {
   GtkWidget *open_file_chooser_button = gtk_file_chooser_button_new(_("Open file ..."), GTK_FILE_CHOOSER_ACTION_OPEN);
+  dnd_add_drag_data_received_to_widget(open_file_chooser_button, DND_SINGLE_MODE_AUDIO_FILE, ui);
+
   ui->gui->open_file_chooser_button = open_file_chooser_button;
   add_filters_to_file_chooser(open_file_chooser_button);
   wh_set_browser_directory_handler(ui, open_file_chooser_button);
@@ -919,6 +865,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
 
   /* tabbed notebook */
   GtkWidget *notebook = gtk_notebook_new();
+
   gtk_box_pack_start(GTK_BOX(main_vbox), notebook, TRUE, TRUE, 0);
   gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
   gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);
@@ -936,7 +883,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(top_hbox), create_choose_file_frame(ui), TRUE, TRUE, 0);
 
   //single mode split button
-  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_APPLY,_("Split"), FALSE);
+  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_APPLY,_("Split !"), FALSE);
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(single_file_mode_split_button_event), ui);
   gtk_box_pack_start(GTK_BOX(top_hbox), split_button, FALSE, FALSE, 4);
@@ -947,8 +894,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   ui->gui->playlist_box = create_player_playlist_frame(ui);
   gtk_box_pack_start(GTK_BOX(player_vbox), ui->gui->playlist_box, TRUE, TRUE, 0);
 
-  //TODO: add icon
-  GtkWidget *notebook_label = gtk_label_new(_("Manual single file split"));
+  GtkWidget *notebook_label = wh_create_cool_label(GTK_STOCK_APPLY, _("Manual single file split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), player_vbox, notebook_label);
 
   /* splitpoints page */
@@ -965,7 +911,8 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_container_set_border_width(GTK_CONTAINER(special_split_vbox), 0);
   GtkWidget *frame = create_special_split_page(ui);
   gtk_box_pack_start(GTK_BOX(special_split_vbox), frame, TRUE, TRUE, 0);
-  notebook_label = gtk_label_new(_("Batch & automatic split"));
+
+  notebook_label = wh_create_cool_label(GTK_STOCK_EXECUTE, _("Batch & automatic split"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), special_split_vbox, notebook_label);
  
   /* preferences widget */

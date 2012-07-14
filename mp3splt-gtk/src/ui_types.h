@@ -2,8 +2,8 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *
  *
- * Copyright: (C) 2005-2012 Alexandru Munteanu
  * Contact: io_fx@yahoo.fr
+ * Copyright: (C) 2005-2012 Alexandru Munteanu
  *
  * http://mp3splt.sourceforge.net/
  *
@@ -375,7 +375,9 @@ typedef struct {
   GtkWidget *split_mode_radio_button;
 
   GtkWidget *time_label;
+  GtkWidget *time_label_after;
   GtkWidget *equal_tracks_label;
+  GtkWidget *equal_tracks_label_after;
 
   GtkWidget *multiple_files_component;
 
@@ -466,7 +468,6 @@ typedef struct {
   gboolean freedb_lock;
   gint should_trim;
 
-  gint queue_set_filename_to_file_chooser_button;
   gint file_selection_changed;
 } gui_status;
 

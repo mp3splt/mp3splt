@@ -1613,6 +1613,8 @@ static void create_columns(ui_state *ui)
 static void create_tree_view(ui_state *ui)
 {
   GtkTreeView *tree_view = GTK_TREE_VIEW(gtk_tree_view_new_with_model(create_model()));
+  dnd_add_drag_data_received_to_widget(GTK_WIDGET(tree_view), DND_DATA_FILES, ui);
+ 
   ui->gui->tree_view = tree_view;
 
   g_signal_connect(tree_view, "row-activated", G_CALLBACK(preview_song), ui);

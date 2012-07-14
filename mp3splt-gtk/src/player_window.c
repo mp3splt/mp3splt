@@ -2793,6 +2793,9 @@ static GtkWidget *create_drawing_area(ui_state *ui)
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 
   GtkWidget *drawing_area = gtk_drawing_area_new();
+  dnd_add_drag_data_received_to_widget(drawing_area, 
+      DND_SINGLE_MODE_AUDIO_FILE_AND_DATA_FILES, ui);
+
   ui->gui->drawing_area = drawing_area;
 
   gtk_widget_set_size_request(drawing_area, DRAWING_AREA_WIDTH, DRAWING_AREA_HEIGHT);
@@ -3047,6 +3050,8 @@ GtkWidget *create_player_playlist_frame(ui_state *ui)
   //scrolled window and the tree 
   //create the tree and add it to the scrolled window
   GtkTreeView *playlist_tree = create_playlist_tree();
+  dnd_add_drag_data_received_to_widget(GTK_WIDGET(playlist_tree), DND_SINGLE_MODE_AUDIO_FILE, ui);
+
   ui->gui->playlist_tree = playlist_tree;
   GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_NONE);
@@ -3058,7 +3063,7 @@ GtkWidget *create_player_playlist_frame(ui_state *ui)
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(playlist_tree));
   g_signal_connect(G_OBJECT(playlist_tree), "row-activated",
                    G_CALLBACK(split_tree_row_activated), ui);
-
+ 
   //selection for the tree
   GtkTreeSelection *playlist_tree_selection = gtk_tree_view_get_selection(playlist_tree);
   g_signal_connect(G_OBJECT(playlist_tree_selection), "changed",
@@ -3117,14 +3122,14 @@ static gint mytimer(ui_state *ui)
   gui_state *gui = ui->gui;
   gui_status *status = ui->status;
 
-  if (status->queue_set_filename_to_file_chooser_button)
+  if (gui->open_file_chooser_button != NULL)
   {
-    if (gui->open_file_chooser_button != NULL)
+    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(gui->open_file_chooser_button));
+    if (filename == NULL)
     {
       gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(gui->open_file_chooser_button), 
           get_input_filename(ui->gui));
     }
-    status->queue_set_filename_to_file_chooser_button = FALSE;
   }
 
   if (!player_is_running(ui))

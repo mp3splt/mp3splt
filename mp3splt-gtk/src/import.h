@@ -36,6 +36,7 @@
 
 void import_event(GtkWidget *widget, ui_state *ui);
 void import_file(gchar *filename, ui_state *ui);
+void import_files_to_batch_and_free(GSList *files, ui_state *ui);
 
 #endif
 

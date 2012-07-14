@@ -370,7 +370,7 @@ static void parse_command_line_options(gint argc, gchar * argv[], ui_state *ui)
   }
 
 #ifndef __WIN32__
-  char *input_filename = realpath(argv[optind],NULL);
+  char *input_filename = realpath(argv[optind], NULL);
   import_file(input_filename, ui);
   free(input_filename);
 #else
