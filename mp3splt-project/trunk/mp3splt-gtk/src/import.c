@@ -128,6 +128,53 @@ void import_file(gchar *filename, ui_state *ui)
   }
 }
 
+void import_files_to_batch_and_free(GSList *files, ui_state *ui)
+{
+  GSList *current_file = files;
+  while (current_file)
+  {
+    gchar *filename = current_file->data;
+
+    int err = SPLT_OK;
+    int num_of_files_found = 0;
+
+    char **splt_filenames =
+      mp3splt_find_filenames(ui->mp3splt_state, filename, &num_of_files_found, &err);
+
+    if (splt_filenames)
+    {
+      gint i = 0;
+      for (i = 0;i < num_of_files_found;i++)
+      {
+        if (!splt_filenames[i])
+        {
+          continue;
+        }
+
+        multiple_files_add_filename(splt_filenames[i], ui);
+
+        free(splt_filenames[i]);
+        splt_filenames[i] = NULL;
+      }
+
+      free(splt_filenames);
+      splt_filenames = NULL;
+    }
+
+    g_free(filename);
+    filename = NULL;
+
+    current_file = g_slist_next(current_file);
+  }
+
+  g_slist_free(files);
+
+  if (ui->infos->multiple_files_tree_number > 0)
+  {
+    gtk_widget_set_sensitive(ui->gui->multiple_files_remove_all_files_button, TRUE);
+  }
+}
+
 //! Set the file chooser filters to "splitpoint file"
 static void set_import_filters(GtkFileChooser *chooser)
 {
@@ -234,9 +281,9 @@ static gpointer add_cue_splitpoints(ui_state *ui)
   gint err = SPLT_OK;
   mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
   mp3splt_put_cue_splitpoints_from_file(ui->mp3splt_state, filename, &err);
- 
+
   enter_threads();
- 
+
   if (err >= 0)
   {
     update_splitpoints_from_mp3splt_state(ui);
@@ -249,12 +296,10 @@ static gpointer add_cue_splitpoints(ui_state *ui)
   char *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
   if (file_exists(filename_to_split))
   {
-    set_input_filename(filename_to_split, ui);
+    file_chooser_ok_event(filename_to_split, ui);
   }
 
   exit_threads();
-
-  enable_player_buttons(ui);
 
   return NULL;
 }

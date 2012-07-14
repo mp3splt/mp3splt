@@ -367,7 +367,6 @@ static gui_status *ui_status_new(ui_state *ui)
   status->freedb_lock = FALSE;
   status->should_trim = FALSE;
 
-  status->queue_set_filename_to_file_chooser_button = FALSE;
   status->file_selection_changed = FALSE;
 
   return status;

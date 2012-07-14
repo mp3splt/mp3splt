@@ -41,6 +41,8 @@
 
 #define MY_GTK_RESPONSE 200
 
+static gboolean file_exists_in_multiple_files_table(const gchar *filename, ui_state *ui);
+
 //!Create the model for the batch processing file list
 static GtkTreeModel *create_multiple_files_model()
 {
@@ -73,9 +75,9 @@ static void multiple_files_open_button_event(GtkWidget *widget, gpointer data)
   gtk_dialog_response(GTK_DIALOG(data), MY_GTK_RESPONSE);
 }
 
-static void multiple_files_add_button_event(GtkWidget *widget, ui_state *ui)
+void multiple_files_add_button_event(GtkWidget *widget, ui_state *ui)
 {
-  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose file or directory"),
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Choose files or directories"),
       NULL,
       GTK_FILE_CHOOSER_ACTION_OPEN,
       GTK_STOCK_CANCEL,
@@ -130,53 +132,64 @@ static void multiple_files_add_button_event(GtkWidget *widget, ui_state *ui)
       return;
     }
 
-    GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
-    while (files)
-    {
-      gchar *filename = files->data;
-
-      int err = SPLT_OK;
-      int num_of_files_found = 0;
-      char **splt_filenames =
-        mp3splt_find_filenames(ui->mp3splt_state, filename, &num_of_files_found, &err);
-
-      if (splt_filenames)
-      {
-        int i = 0;
-        for (i = 0;i < num_of_files_found;i++)
-        {
-          GtkTreeIter iter;
-          gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-
-          gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-              MULTIPLE_COL_FILENAME, splt_filenames[i], -1);
-          ui->infos->multiple_files_tree_number++;
-
-          if (splt_filenames[i])
-          {
-            free(splt_filenames[i]);
-            splt_filenames[i] = NULL;
-          }
-        }
-
-        free(splt_filenames);
-        splt_filenames = NULL;
-      }
-
-      g_free(filename);
-      filename = NULL;
-
-      files = g_slist_next(files);
-    }
-    g_slist_free(files);
-
-    if (ui->infos->multiple_files_tree_number > 0)
-    {
-      gtk_widget_set_sensitive(ui->gui->multiple_files_remove_all_files_button, TRUE);
-    }
+    import_files_to_batch_and_free(files, ui);
   }
 
   gtk_widget_destroy(file_chooser);
+}
+
+void multiple_files_add_filename(const gchar *filename, ui_state *ui)
+{
+  if (file_exists_in_multiple_files_table(filename, ui))
+  {
+    return;
+  }
+
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
+
+  GtkTreeIter iter;
+  gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, MULTIPLE_COL_FILENAME, filename, -1);
+
+  ui->infos->multiple_files_tree_number++;
+}
+
+static gboolean file_exists_in_multiple_files_table(const gchar *filename, ui_state *ui)
+{
+  if (filename == NULL)
+  {
+    return;
+  }
+
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
+
+  GtkTreeIter iter;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+  {
+    return FALSE;
+  }
+
+  while (TRUE)
+  {
+    gchar *fname = NULL;
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        MULTIPLE_COL_FILENAME, &fname, -1); 
+
+    if (strcmp(filename, fname) == 0)
+    {
+      g_free(fname);
+      return TRUE;
+    }
+
+    g_free(fname);
+
+    if (!gtk_tree_model_iter_next(model, &iter))
+    {
+      break;
+    }
+  }
+
+  return FALSE;
 }
 
 static void multiple_files_remove_button_event(GtkWidget *widget, ui_state *ui)
@@ -237,7 +250,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
 
   //button for adding file(s)
   GtkWidget *multiple_files_add_button =
-    wh_create_cool_button(GTK_STOCK_ADD, _("_Add files"), FALSE);
+    wh_create_cool_button(GTK_STOCK_DIRECTORY, _("_Add files or directories"), FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
   g_signal_connect(G_OBJECT(multiple_files_add_button), "clicked",
@@ -263,7 +276,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
   g_signal_connect(G_OBJECT(multiple_files_remove_all_files_button), "clicked",
                    G_CALLBACK(multiple_files_remove_all_button_event), ui);
 
-  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_EXECUTE,_("Batch split"), FALSE);
+  GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_EXECUTE,_("Batch split !"), FALSE);
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(batch_file_mode_split_button_event), ui);
   gtk_box_pack_end(GTK_BOX(hbox), split_button, FALSE, FALSE, 4);
@@ -292,6 +305,7 @@ GtkWidget *create_multiple_files_component(ui_state *ui)
   GtkWidget *vbox = wh_vbox_new();
 
   GtkTreeView *multiple_files_tree = create_multiple_files_tree();
+  dnd_add_drag_data_received_to_widget(GTK_WIDGET(multiple_files_tree), DND_BATCH_MODE_AUDIO_FILES, ui);
   ui->gui->multiple_files_tree = multiple_files_tree;
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);

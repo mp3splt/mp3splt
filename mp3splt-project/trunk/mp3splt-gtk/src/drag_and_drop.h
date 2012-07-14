@@ -29,45 +29,32 @@
  *
  *********************************************************/
 
-/**********************************************************
- * Filename: main_window.h
- *
- * header of main_window.c
- *
- *********************************************************/
+#ifndef DRAG_AND_DROP_H
 
-#ifndef MAIN_WINDOW_H
-
-#define MAIN_WINDOW_H
+#define DRAG_AND_DROP_H
 
 #include "all_includes.h"
 
-#ifdef __WIN32__
-#define PIXMAP_PATH ""
-#define IMAGEDIR ""
-#endif
+typedef enum {
+  DND_SINGLE_MODE_AUDIO_FILE,
+  DND_BATCH_MODE_AUDIO_FILES,
+  DND_DATA_FILES,
+  DND_SINGLE_MODE_AUDIO_FILE_AND_DATA_FILES,
+} drop_type;
 
-#ifndef GDK_Left
-#define GDK_Left GDK_KEY_Left
-#endif
+enum {
+  DROP_PLAIN,
+  DROP_STRING,
+  DROP_URI_LIST
+};
 
-#ifndef GDK_Right
-#define GDK_Right GDK_KEY_Right
-#endif
+static const GtkTargetEntry drop_types[] = {
+  { "text/plain", 0, DROP_PLAIN },
+  { "STRING", 0, DROP_STRING },
+  { "text/uri-list", 0, DROP_URI_LIST }
+};
 
-void remove_status_message(gui_state *gui);
-void put_status_message(const gchar *text, ui_state *ui);
-void put_status_message_with_type(const gchar *text,
-    splt_message_type mess_type, ui_state *ui);
-void create_application();
-void print_status_bar_confirmation(gint error, ui_state *ui);
-void cancel_button_event(GtkWidget *widget, ui_state *ui);
-
-gchar* get_input_filename(gui_state *gui);
-void set_input_filename(const gchar *filename, ui_state *ui);
-void add_filters_to_file_chooser(GtkWidget *file_chooser);
-
-void split_button_event(GtkWidget *widget, ui_state *ui);
+void dnd_add_drag_data_received_to_widget(GtkWidget *widget, drop_type type, ui_state *ui);
 
 #endif
 

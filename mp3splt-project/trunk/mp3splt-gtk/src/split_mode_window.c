@@ -127,10 +127,12 @@ static void split_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
   int enable_time = (selected_split_mode == SELECTED_SPLIT_TIME);
   gtk_widget_set_sensitive(ui->gui->spinner_time, enable_time);
   gtk_widget_set_sensitive(ui->gui->time_label, enable_time);
+  gtk_widget_set_sensitive(ui->gui->time_label_after, enable_time);
 
   int enable_split_equal_time = (selected_split_mode == SELECTED_SPLIT_EQUAL_TIME_TRACKS);
   gtk_widget_set_sensitive(ui->gui->spinner_equal_tracks, enable_split_equal_time);
   gtk_widget_set_sensitive(ui->gui->equal_tracks_label, enable_split_equal_time);
+  gtk_widget_set_sensitive(ui->gui->equal_tracks_label_after, enable_split_equal_time);
 
   if (selected_split_mode == SELECTED_SPLIT_SILENCE)
   {
@@ -156,22 +158,12 @@ static void split_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
 //! Issued when the track duration for split after every n seconds is changed
 static void spinner_time_changed(GtkSpinButton *spinner, ui_state *ui)
 {
-  gint time = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-  gchar time_text[1024] = { '\0' };
-  g_snprintf(time_text, 1024, _("Split every %2d seconds."), time);
-  gtk_label_set_text(GTK_LABEL(ui->gui->time_label), time_text);
-
   ui_save_preferences(NULL, ui);
 }
 
 //! Issued when the number of tracks for equal length splitting is changed
 static void spinner_equal_tracks_changed(GtkSpinButton *spinner, ui_state *ui)
 {
-  gint equal_tracks = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-  gchar equal_tracks_text[1024] = { '\0' };
-  g_snprintf(equal_tracks_text, 1024, _("Split in %2d equal time tracks."), equal_tracks);
-  gtk_label_set_text(GTK_LABEL(ui->gui->equal_tracks_label), equal_tracks_text);
-
   ui_save_preferences(NULL, ui);
 }
 
@@ -210,9 +202,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   
   gint default_time = 60;
 
-  gchar time_text[1024] = { '\0' };
-  g_snprintf(time_text, 1024, _("Split every %2d seconds."), default_time);
-  GtkWidget *time_label = gtk_label_new(time_text);
+  GtkWidget *time_label = gtk_label_new(_("Split every"));
   ui->gui->time_label = time_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), time_label, FALSE, FALSE, 0);
   
@@ -224,6 +214,11 @@ static GtkWidget *create_split_mode(ui_state *ui)
   gtk_widget_set_sensitive(GTK_WIDGET(spinner_time), FALSE);
   gtk_widget_set_sensitive(time_label, FALSE);
   g_signal_connect(G_OBJECT(spinner_time), "value-changed", G_CALLBACK(spinner_time_changed), ui);
+
+  GtkWidget *time_label_after = gtk_label_new(_("seconds."));
+  ui->gui->time_label_after = time_label_after;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), time_label_after, FALSE, FALSE, 0);
+  gtk_widget_set_sensitive(time_label_after, FALSE);
 
   //split in equal length
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
@@ -244,9 +239,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   
   gint default_tracks = 10;
 
-  gchar equal_length_text[1024] = { '\0' };
-  g_snprintf(equal_length_text, 1024, _("Split in %2d equal time tracks."), default_tracks);
-  GtkWidget *equal_tracks_label = gtk_label_new(time_text);
+  GtkWidget *equal_tracks_label = gtk_label_new(_("Split in"));
   ui->gui->equal_tracks_label = equal_tracks_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), equal_tracks_label, FALSE, FALSE, 0);
   
@@ -260,6 +253,11 @@ static GtkWidget *create_split_mode(ui_state *ui)
   g_signal_connect(G_OBJECT(spinner_equal_tracks), "value-changed",
       G_CALLBACK(spinner_equal_tracks_changed), ui);
 
+  GtkWidget *equal_tracks_label_after = gtk_label_new(_("equal tracks."));
+  ui->gui->equal_tracks_label_after = equal_tracks_label_after;
+  gtk_box_pack_start(GTK_BOX(horiz_fake), equal_tracks_label_after, FALSE, FALSE, 0);
+  gtk_widget_set_sensitive(equal_tracks_label_after, FALSE);
+ 
   //trim using silence detection
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Trim using silence detection"));

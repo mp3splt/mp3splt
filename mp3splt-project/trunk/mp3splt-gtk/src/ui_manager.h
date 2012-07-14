@@ -37,7 +37,7 @@
 #include "ui_types.h"
 #include "player_window.h"
 
-#define UI_DEFAULT_WIDTH 600
+#define UI_DEFAULT_WIDTH 650
 #define UI_DEFAULT_HEIGHT 420
 
 ui_state *ui_state_new();
