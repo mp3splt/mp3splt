@@ -3122,7 +3122,8 @@ static gint mytimer(ui_state *ui)
   gui_state *gui = ui->gui;
   gui_status *status = ui->status;
 
-  if (gui->open_file_chooser_button != NULL)
+  //TODO: file from file chooser can be NULL and != from the real filename of mp3splt-gtk.
+  /*if (gui->open_file_chooser_button != NULL)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(gui->open_file_chooser_button));
     if (filename == NULL)
@@ -3130,7 +3131,7 @@ static gint mytimer(ui_state *ui)
       gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(gui->open_file_chooser_button), 
           get_input_filename(ui->gui));
     }
-  }
+  }*/
 
   if (!player_is_running(ui))
   {
