@@ -1350,7 +1350,7 @@ static const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
 /**
  * @brief Package version
  */
-#define SPLT_PACKAGE_VERSION "0.7.2.1058"
+#define SPLT_PACKAGE_VERSION "0.7.2.1074"
 #endif
 /**
  * @brief Package authors
@@ -1654,6 +1654,8 @@ int mp3splt_u_check_if_directory(const char *fname);
 
 void mp3splt_free_one_tag(splt_tags *tags);
 splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error);
+
+int mp3splt_library_is_locked(splt_state *state);
 
 #define MP3SPLT_MP3SPLT_H
 
