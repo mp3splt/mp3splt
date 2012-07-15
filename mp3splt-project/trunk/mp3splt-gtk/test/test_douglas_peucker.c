@@ -163,15 +163,13 @@ void test_douglas_peucker()
   //segment point
 
   //distance on the left part
-
   distance = splt_find_perpendicular_distance(first_point, first_segment_point, third_point);
   cut_assert_equal_double(4.0, DOUBLE_PRECISION, distance);
 
   distance = splt_find_perpendicular_distance(second_point, first_segment_point, third_point);
-
   cut_assert_equal_double(2.0, DOUBLE_PRECISION, distance);
-  //distance on the right part
 
+  //distance on the right part
   distance = splt_find_perpendicular_distance(fourth_point, third_point, second_segment_point);
   cut_assert_equal_double(0.316227766, DOUBLE_PRECISION, distance);
 
