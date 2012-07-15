@@ -177,4 +177,9 @@ void build_path(GString *path, const gchar *dir, const gchar *filename)
 #endif
 }
 
+gboolean double_equals(gdouble double_to_compare, gdouble compared_value)
+{
+  return fabs(double_to_compare - compared_value) < DOUBLE_PRECISION;
+}
+
 

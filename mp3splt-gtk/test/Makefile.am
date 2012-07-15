@@ -17,7 +17,7 @@ AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -no-undefined
 noinst_LTLIBRARIES = test_douglas_peucker.la
 
 test_douglas_peucker_la_SOURCES = test_douglas_peucker.c tests.h \
-../src/douglas_peucker.c ../src/douglas_peucker.h
+../src/douglas_peucker.c ../src/douglas_peucker.h ../src/utilities.c ../src/utilities.h
 
 TESTS = run-tests.sh
 TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)"

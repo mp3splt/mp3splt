@@ -32,6 +32,8 @@
 
 #define UTILITIES_H
 
+#define DOUBLE_PRECISION 0.00000001
+
 #include "external_includes.h"
 #include "ui_types.h"
 #include "main_window.h"
@@ -42,6 +44,8 @@ void print_processing_file(gchar *filename, ui_state *ui);
 void remove_end_slash_n_r_from_filename(char *filename);
 gchar *transform_to_utf8(gchar *text, gint free_or_not, gint *must_be_freed);
 void build_path(GString *path, const gchar *dir, const gchar *filename);
+
+gboolean double_equals(gdouble double_to_compare, gdouble compared_value);
 
 #endif
 
