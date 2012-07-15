@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-06-30 21:17+0200\n"
+"POT-Creation-Date: 2012-07-15 09:45+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: optimix <io_fx@yahoo.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,29 +57,29 @@ msgstr "%s версия %d"
 msgid "Album title"
 msgstr "Название альбома"
 
-#: src/freedb_window.c:176 src/freedb_window.c:261
+#: src/freedb_window.c:157 src/freedb_window.c:242
 msgid "please wait... contacting tracktype.org"
 msgstr "Пожалуйста, подождите ... cвязь с tracktype.org"
 
-#: src/freedb_window.c:361 src/freedb_window.c:380
-#: src/splitpoints_window.c:590 src/splitpoints_window.c:670
-#: src/splitpoints_window.c:720 src/ui_manager.c:346
+#: src/freedb_window.c:342 src/freedb_window.c:361
+#: src/splitpoints_window.c:597 src/splitpoints_window.c:677
+#: src/splitpoints_window.c:727 src/ui_manager.c:346
 msgid "description here"
 msgstr "здесь могло быть описание"
 
-#: src/freedb_window.c:435
+#: src/freedb_window.c:409
 msgid "Search tracktype.org:"
 msgstr "Поиск в tracktype.org:"
 
-#: src/freedb_window.c:445
+#: src/freedb_window.c:419
 msgid "_Search"
 msgstr "_Поиск"
 
-#: src/freedb_window.c:477
+#: src/freedb_window.c:448
 msgid "_Add splitpoints"
 msgstr "_Добавить точки разделения"
 
-#: src/freedb_window.c:484
+#: src/freedb_window.c:454
 msgid "Set splitpoints to the splitpoints table"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgstr "Предупреждение: %s"
 msgid "Info: %s"
 msgstr "Информация:%s"
 
-#: src/gstreamer_control.c:366
+#: src/gstreamer_control.c:372
 msgid " error: cannot create gstreamer playbin\n"
 msgstr ""
 
@@ -106,23 +106,23 @@ msgstr ""
 msgid "Choose file to import"
 msgstr "Выберите файл для импорта"
 
-#: src/import.c:136
+#: src/import.c:183
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr "CDDB (*.cddb), CUE (*.cue), Метки Audacity (*.txt)"
 
-#: src/import.c:140
+#: src/import.c:187
 msgid "CDDB files (*.cddb)"
 msgstr "Файлы CDDB (*.cddb)"
 
-#: src/import.c:142
+#: src/import.c:189
 msgid "CUE files (*.cue)"
 msgstr "Файлы CUE (*.cue)"
 
-#: src/import.c:144
+#: src/import.c:191
 msgid "Audacity labels files (*.txt)"
 msgstr "Файлы меток Audacity (*.txt)"
 
-#: src/import.c:146
+#: src/import.c:193
 msgid "All files"
 msgstr "Все файлы"
 
@@ -131,293 +131,337 @@ msgstr "Все файлы"
 msgid " File '%s' created"
 msgstr "Файл '%s' создан"
 
-#: src/libmp3splt_manager.c:142
+#: src/libmp3splt_manager.c:144
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/libmp3splt_manager.c:148
+#: src/libmp3splt_manager.c:150
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/libmp3splt_manager.c:154
+#: src/libmp3splt_manager.c:156
 msgid " searching for sync errors..."
 msgstr ""
 
-#: src/libmp3splt_manager.c:159
+#: src/libmp3splt_manager.c:161
 msgid "Computing amplitude wave data..."
 msgstr ""
 
-#: src/libmp3splt_manager.c:164
+#: src/libmp3splt_manager.c:166
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr ""
 
-#: src/main_window.c:229
+#: src/main_window.c:172
 msgid "Error launching external command"
 msgstr "Ошибка при запуске внешней команды"
 
-#: src/main_window.c:260
+#: src/main_window.c:203
 msgid "using"
 msgstr "использование"
 
-#: src/main_window.c:264
+#: src/main_window.c:207
 msgid "release of "
 msgstr ""
 
-#: src/main_window.c:359
+#: src/main_window.c:304
 msgid " info: stopping the split process.. please wait"
 msgstr ""
 
-#: src/main_window.c:367
+#: src/main_window.c:312 src/main_window.c:670
+msgid "Preferences"
+msgstr "Параметры"
+
+#: src/main_window.c:324
+msgid "TrackType"
+msgstr ""
+
+#: src/main_window.c:339 src/main_window.c:673
+msgid "Split files"
+msgstr "Разделённые файлы"
+
+#: src/main_window.c:354 src/main_window.c:676
+msgid "Splitpoints"
+msgstr "Точки разделения"
+
+#: src/main_window.c:368
 msgid " error: split in progress..."
 msgstr ""
 
-#: src/main_window.c:395
-msgid " error: no file selected"
+#: src/main_window.c:396
+#, fuzzy
+msgid " error: no path of split selected"
 msgstr "ошибка: файл не выбран"
 
-#: src/main_window.c:407 src/main_window.c:411
-msgid "Split !"
-msgstr "Разделить"
-
-#: src/main_window.c:619
-msgid "Choose File"
-msgstr "Выберите Файл"
-
-#: src/main_window.c:631 src/multiple_files_window.c:99
+#: src/main_window.c:591 src/multiple_files_window.c:101
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "mp3 и ogg файлы (*.mp3 *.ogg)"
 
-#: src/main_window.c:639 src/multiple_files_window.c:107
+#: src/main_window.c:599 src/multiple_files_window.c:109
 msgid "mp3 files (*.mp3)"
 msgstr "mp3 файлы (*.mp3)"
 
-#: src/main_window.c:645 src/multiple_files_window.c:113
+#: src/main_window.c:605 src/multiple_files_window.c:115
 msgid "ogg files (*.ogg)"
 msgstr "ogg файлы (*.ogg)"
 
-#: src/main_window.c:674
+#: src/main_window.c:617
+msgid "Choose File"
+msgstr "Выберите Файл"
+
+#: src/main_window.c:647
 msgid "_File"
 msgstr "_Файл"
 
-#: src/main_window.c:675
+#: src/main_window.c:648
+msgid "_View"
+msgstr ""
+
+#: src/main_window.c:649
 #, fuzzy
 msgid "_Player"
 msgstr "Плеер"
 
-#: src/main_window.c:676
+#: src/main_window.c:650
 msgid "_Help"
 msgstr "_Справка"
 
-#: src/main_window.c:678
+#: src/main_window.c:652
 msgid "_Open..."
 msgstr "_Открыть"
 
-#: src/main_window.c:678
+#: src/main_window.c:652
 msgid "Open"
 msgstr "Открыть"
 
-#: src/main_window.c:681
-msgid "_Import splitpoints..."
+#: src/main_window.c:656
+msgid "_Add files or directories to batch ..."
+msgstr ""
+
+#: src/main_window.c:657
+msgid "Add files or directories to batch"
+msgstr ""
+
+#: src/main_window.c:660
+#, fuzzy
+msgid "_Import splitpoints from file..."
 msgstr "_Импортировать точки разделения..."
 
-#: src/main_window.c:681
-msgid "Import"
-msgstr "Импорт"
+#: src/main_window.c:661
+#, fuzzy
+msgid "Import splitpoints from file..."
+msgstr "_Импортировать точки разделения..."
 
-#: src/main_window.c:683
+#: src/main_window.c:663
+#, fuzzy
+msgid "Import splitpoints from _TrackType.org..."
+msgstr "_Импортировать точки разделения..."
+
+#: src/main_window.c:664
+#, fuzzy
+msgid "Import splitpoints from TrackType.org..."
+msgstr "_Импортировать точки разделения..."
+
+#: src/main_window.c:667
 msgid "_Export splitpoints..."
 msgstr "_Экспортировать точки разделения..."
 
-#: src/main_window.c:683
-msgid "Export"
-msgstr "Экспорт"
+#: src/main_window.c:668
+#, fuzzy
+msgid "Export splitpoints"
+msgstr "_Экспортировать точки разделения..."
 
-#: src/main_window.c:686
+#: src/main_window.c:670
+#, fuzzy
+msgid "_Preferences"
+msgstr "Параметры"
+
+#: src/main_window.c:673
+#, fuzzy
+msgid "Split _files"
+msgstr "Разделённые файлы"
+
+#: src/main_window.c:676
+#, fuzzy
+msgid "_Splitpoints"
+msgstr "Точки разделения"
+
+#: src/main_window.c:679
 msgid "_Split !"
 msgstr "_Разделить!"
 
-#: src/main_window.c:686 src/preferences_window.c:1210
-msgid "Split"
-msgstr "Разделение"
+#: src/main_window.c:679 src/main_window.c:886
+msgid "Split !"
+msgstr "Разделить"
 
-#: src/main_window.c:688
-msgid "Messages _history"
-msgstr "_История сообщений"
+#: src/main_window.c:682
+#, fuzzy
+msgid "_Batch split !"
+msgstr "_Разделить!"
 
-#: src/main_window.c:688 src/main_window.c:933 src/messages_window.c:166
-msgid "Messages history"
-msgstr "История сообщений"
+#: src/main_window.c:682 src/multiple_files_window.c:279
+#, fuzzy
+msgid "Batch split !"
+msgstr "Разделить"
 
-#: src/main_window.c:691
+#: src/main_window.c:685
 msgid "_Quit"
 msgstr "_Выход"
 
-#: src/main_window.c:691
+#: src/main_window.c:685
 msgid "Quit"
 msgstr "ВЫход"
 
-#: src/main_window.c:695
+#: src/main_window.c:689
 msgid "_Contents"
 msgstr "_Контент"
 
-#: src/main_window.c:695
+#: src/main_window.c:689
 msgid "Contents"
 msgstr "Контент"
 
-#: src/main_window.c:699
+#: src/main_window.c:693
+msgid "Messages _history"
+msgstr "_История сообщений"
+
+#: src/main_window.c:693 src/messages_window.c:168
+msgid "Messages history"
+msgstr "История сообщений"
+
+#: src/main_window.c:696
 msgid "_About"
 msgstr "_О программе"
 
-#: src/main_window.c:699
+#: src/main_window.c:696
 msgid "About"
 msgstr "О программе"
 
-#: src/main_window.c:703
+#: src/main_window.c:700
 #, fuzzy
-msgid "P_ause/Play"
+msgid "P_ause / Play"
 msgstr "Пауза"
 
-#: src/main_window.c:703
+#: src/main_window.c:700
 #, fuzzy
 msgid "Pause/Play"
 msgstr "Пауза"
 
-#: src/main_window.c:706
+#: src/main_window.c:703
 msgid "Seek _forward"
 msgstr ""
 
-#: src/main_window.c:706
+#: src/main_window.c:703
 msgid "Seek forward"
 msgstr ""
 
-#: src/main_window.c:708
+#: src/main_window.c:705
 msgid "Seek _backward"
 msgstr ""
 
-#: src/main_window.c:708
+#: src/main_window.c:705
 msgid "Seek backward"
 msgstr ""
 
-#: src/main_window.c:711
+#: src/main_window.c:708
 msgid "Small seek f_orward"
 msgstr ""
 
-#: src/main_window.c:711
+#: src/main_window.c:708
 msgid "Small seek forward"
 msgstr ""
 
-#: src/main_window.c:713
+#: src/main_window.c:710
 msgid "Small seek back_ward"
 msgstr ""
 
-#: src/main_window.c:713
+#: src/main_window.c:710
 msgid "Small seek backward"
 msgstr ""
 
-#: src/main_window.c:716
+#: src/main_window.c:713
 msgid "Big seek fo_rward"
 msgstr ""
 
-#: src/main_window.c:716
+#: src/main_window.c:713
 msgid "Big seek forward"
 msgstr ""
 
-#: src/main_window.c:718
-msgid "Big Seek bac_kward"
+#: src/main_window.c:715
+msgid "Big seek bac_kward"
 msgstr ""
 
-#: src/main_window.c:718
+#: src/main_window.c:715
 msgid "Big seek backward"
 msgstr ""
 
-#: src/main_window.c:721
+#: src/main_window.c:718
 #, fuzzy
 msgid "Seek to _next splitpoint"
 msgstr "_Вернуть исходные параметры"
 
-#: src/main_window.c:722
+#: src/main_window.c:719
 #, fuzzy
 msgid "Seek to next splitpoint"
 msgstr "_Вернуть исходные параметры"
 
-#: src/main_window.c:723
+#: src/main_window.c:720
 #, fuzzy
 msgid "Seek to _previous splitpoint"
 msgstr "О_брезать точки разделения"
 
-#: src/main_window.c:724
+#: src/main_window.c:721
 msgid "Seek to previous splitpoint"
 msgstr ""
 
-#: src/main_window.c:726
+#: src/main_window.c:723
 #, fuzzy
 msgid "Add _splitpoint"
 msgstr "Добавить точку разделения"
 
-#: src/main_window.c:727 src/splitpoints_window.c:1257
+#: src/main_window.c:724 src/splitpoints_window.c:1268
 msgid "Add splitpoint"
 msgstr "Добавить точку разделения"
 
-#: src/main_window.c:729
+#: src/main_window.c:726
 msgid "_Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:730
+#: src/main_window.c:727
 msgid "Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:732
+#: src/main_window.c:729
 msgid "Zoom _in"
 msgstr ""
 
-#: src/main_window.c:732
+#: src/main_window.c:729
 msgid "Zoom in"
 msgstr ""
 
-#: src/main_window.c:733
+#: src/main_window.c:730
 msgid "Zoom _out"
 msgstr ""
 
-#: src/main_window.c:733
+#: src/main_window.c:730
 msgid "Zoom out"
 msgstr ""
 
-#: src/main_window.c:817
-msgid "_Browse"
-msgstr "_Обзор"
+#: src/main_window.c:840
+#, fuzzy
+msgid "Open file ..."
+msgstr "_Открыть"
 
-#: src/main_window.c:822
-msgid "Select file"
-msgstr "Выделить файл"
+#: src/main_window.c:897
+msgid "Manual single file split"
+msgstr ""
 
-#: src/main_window.c:846 src/preferences_window.c:1225
-msgid "Player"
-msgstr "Плеер"
+#: src/main_window.c:915
+msgid "Batch & automatic split"
+msgstr ""
 
-#: src/main_window.c:861
-msgid "Splitpoints"
-msgstr "Точки разделения"
-
-#: src/main_window.c:871
-msgid "Split files"
-msgstr "Разделённые файлы"
-
-#: src/main_window.c:881
-msgid "FreeDB"
-msgstr "FreeDB"
-
-#: src/main_window.c:889
-msgid "Type of split"
-msgstr "Тип разделения"
-
-#: src/main_window.c:899
-msgid "Preferences"
-msgstr "Параметры"
-
-#: src/main_window.c:916
+#: src/main_window.c:935
 msgid "S_top"
 msgstr "_Стоп"
 
@@ -430,10 +474,11 @@ msgid "C_lear"
 msgstr "О_чистить"
 
 #: src/mp3splt-gtk.c:174
-msgid " error: no files found in multiple files mode"
-msgstr ""
+#, fuzzy
+msgid " error: no files found in batch mode"
+msgstr "ошибка: файл не выбран"
 
-#: src/mp3splt-gtk.c:198 src/splitpoints_window.c:1419
+#: src/mp3splt-gtk.c:198 src/splitpoints_window.c:1423
 msgid " finished"
 msgstr "завершенный"
 
@@ -441,61 +486,64 @@ msgstr "завершенный"
 msgid " info: stopping the split process before exiting"
 msgstr ""
 
-#: src/mp3splt-gtk.c:342
+#: src/mp3splt-gtk.c:337
 #, fuzzy, c-format
 msgid "Setting the output directory to %s.\n"
 msgstr "Попытка установить выходной каталог на %s.\n"
 
-#: src/mp3splt-gtk.c:356
+#: src/mp3splt-gtk.c:351
 #, c-format
 msgid "Option -%c requires an argument.\n"
 msgstr "Опция -%c требует значение.\n"
 
-#: src/mp3splt-gtk.c:358
+#: src/mp3splt-gtk.c:353
 #, c-format
 msgid "Unknown option `-%c'.\n"
 msgstr "Неизвестная опция `-%c'.\n"
 
-#: src/mp3splt-gtk.c:360
+#: src/mp3splt-gtk.c:355
 #, c-format
 msgid "Unknown option character `\\x%x'.\n"
 msgstr "Неизвестный символ опции `\\x%x'.\n"
 
-#: src/mp3splt-gtk.c:374
+#: src/mp3splt-gtk.c:369
 #, c-format
 msgid "Cannot open input file %s\n"
 msgstr "Не могу открыть входной файл %s\n"
 
-#: src/multiple_files_window.c:61
+#: src/multiple_files_window.c:63
 msgid "Complete filename"
 msgstr "Полное имя файла"
 
-#: src/multiple_files_window.c:78
-msgid "Choose file or directory"
+#: src/multiple_files_window.c:80
+#, fuzzy
+msgid "Choose files or directories"
 msgstr "Выберите файл или каталог"
 
-#: src/multiple_files_window.c:120
+#: src/multiple_files_window.c:122
 msgid "All Files"
 msgstr "Все файлы"
 
-#: src/multiple_files_window.c:234
-msgid "_Add files"
-msgstr "_Добавить файлы"
+#: src/multiple_files_window.c:253
+#, fuzzy
+msgid "_Add files or directories"
+msgstr "Выберите файл или каталог"
 
-#: src/multiple_files_window.c:242
-msgid "_Remove selected entries"
+#: src/multiple_files_window.c:261
+#, fuzzy
+msgid "_Remove selected"
 msgstr "_Удалить выбранные записи"
 
-#: src/multiple_files_window.c:252
-msgid "R_emove all entries"
-msgstr "У_далить все записи"
+#: src/multiple_files_window.c:271 src/splitpoints_window.c:1281
+msgid "R_emove all"
+msgstr "Удалить все"
 
 #: src/player_window.c:115
 #, fuzzy
 msgid "Processing Douglas-Peucker filters ..."
 msgstr "Обработка файла '%s' ..."
 
-#: src/player_window.c:540
+#: src/player_window.c:546
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -514,7 +562,7 @@ msgid ""
 " After that, restart snackamp and mp3splt-gtk should work.\n"
 msgstr ""
 
-#: src/player_window.c:555
+#: src/player_window.c:561
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -525,243 +573,258 @@ msgid ""
 "connect.\n"
 msgstr ""
 
-#: src/player_window.c:563 src/player_window.c:567
+#: src/player_window.c:569 src/player_window.c:573
 msgid "Cannot connect to player"
 msgstr "Не удается подключиться к плееру"
 
-#: src/player_window.c:857
+#: src/player_window.c:875
 msgid "Previous"
 msgstr "Предыдущая"
 
-#: src/player_window.c:875
+#: src/player_window.c:893
 msgid "Play"
 msgstr "Слушать"
 
-#: src/player_window.c:892
+#: src/player_window.c:910
 msgid "Pause"
 msgstr "Пауза"
 
-#: src/player_window.c:909
+#: src/player_window.c:927
 msgid "Stop"
 msgstr "Остановить"
 
-#: src/player_window.c:926
+#: src/player_window.c:944
 msgid "Next"
 msgstr "Следующая"
 
-#: src/player_window.c:933 src/splitpoints_window.c:1250
+#: src/player_window.c:951 src/splitpoints_window.c:1261
 msgid "_Add"
 msgstr "Добавить"
 
-#: src/player_window.c:940
+#: src/player_window.c:958
 msgid "Add splitpoint from player"
 msgstr "Добавить точку разделения из плеера"
 
-#: src/player_window.c:943
+#: src/player_window.c:967 src/splitpoints_window.c:956
+#: src/splitpoints_window.c:1304
+msgid "Set trim splitpoints using silence detection"
+msgstr ""
+
+#: src/player_window.c:978 src/splitpoints_window.c:1018
+#: src/splitpoints_window.c:1314
+msgid "Set splitpoints from silence detection"
+msgstr ""
+
+#: src/player_window.c:983
 msgid "Amplitude _wave"
 msgstr ""
 
-#: src/player_window.c:949
+#: src/player_window.c:989
 msgid "Shows the amplitude level wave"
 msgstr "Показывает уровень амплитуды волны"
 
-#: src/player_window.c:952
+#: src/player_window.c:992
 msgid "_Connect"
 msgstr "Сединение"
 
-#: src/player_window.c:955
+#: src/player_window.c:995
 msgid "Connect to player"
 msgstr "Подключение к плееру"
 
-#: src/player_window.c:958
+#: src/player_window.c:998
 msgid "_Disconnect"
 msgstr "Отключение"
 
-#: src/player_window.c:961
+#: src/player_window.c:1001
 msgid "Disconnect from player"
 msgstr "Отключение от плеера"
 
-#: src/player_window.c:1084
+#: src/player_window.c:1124
 #, c-format
 msgid "before %s"
 msgstr "до %s"
 
-#: src/player_window.c:1790
+#: src/player_window.c:1840
 msgid "No available wave"
 msgstr ""
 
-#: src/player_window.c:1857 src/preferences_window.c:729
+#: src/player_window.c:1907 src/preferences_window.c:736
 msgid "No wave interpolation"
 msgstr ""
 
-#: src/player_window.c:1863
+#: src/player_window.c:1913
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr ""
 
-#: src/player_window.c:2002
+#: src/player_window.c:2052
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 " щелчок левой клавишей мыши выделяет точку разделения, правой — удаляет её"
 
-#: src/player_window.c:2007
+#: src/player_window.c:2057
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " щелчок левой клавишей мыши и перемещение меняет позицию, правой — меняет "
 "масштаб"
 
-#: src/player_window.c:2013
+#: src/player_window.c:2063
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " щелчок левой клавишей мыши по точке меняет её позицию, правой — включает "
 "прослушивание"
 
-#: src/player_window.c:2018
+#: src/player_window.c:2068
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 " щелчок левой клавишей мыши по прямоугольнику переключает сохранение точки "
 "разделения"
 
-#: src/player_window.c:2425
+#: src/player_window.c:2473
 msgid " quick preview..."
 msgstr "быстрый просмотр ..."
 
-#: src/player_window.c:2769
-msgid "Splitpoints _view"
-msgstr ""
+#: src/player_window.c:2821
+#, fuzzy
+msgid "Splitpoints and amplitude wave v_iew"
+msgstr "Показывает уровень амплитуды волны"
 
-#: src/player_window.c:2886
+#: src/player_window.c:2937
 msgid "History"
 msgstr "История"
 
-#: src/player_window.c:2976
+#: src/player_window.c:3027
 msgid "_Erase selected entries"
 msgstr "_Удалить выделенные записи"
 
-#: src/player_window.c:2984
+#: src/player_window.c:3035
 msgid "E_rase all history"
 msgstr "У_далить всю историю"
 
-#: src/player_window.c:3024
-msgid "H_istory"
-msgstr ""
+#: src/player_window.c:3077
+#, fuzzy
+msgid "Files h_istory"
+msgstr "История сообщений"
 
-#: src/player_window.c:3128
+#: src/player_window.c:3195
 msgid " quick preview finished, song paused"
 msgstr "быстрый просмотр закончен, проигрование приостановлено"
 
-#: src/preferences_window.c:188
+#: src/preferences_window.c:192
 msgid "<b>Choose language (requires restart)</b>"
 msgstr "<b>Выбрать язык (необходима перезагрузка)</b>"
 
-#: src/preferences_window.c:214
+#: src/preferences_window.c:219
 msgid "Choose split directory"
 msgstr "Выберите каталог для разделённых файлов"
 
-#: src/preferences_window.c:349
+#: src/preferences_window.c:355
 msgid "Br_owse dir"
 msgstr "Обзор каталога"
 
-#: src/preferences_window.c:356
-msgid "_Song dir"
+#: src/preferences_window.c:362
+#, fuzzy
+msgid "So_ng dir"
 msgstr "Каталог композиции"
 
-#: src/preferences_window.c:361
+#: src/preferences_window.c:367
 msgid "<b>Directory for split files</b>"
 msgstr "<b>Каталог для разделённых файлов</b>"
 
-#: src/preferences_window.c:373
-msgid "_Splitpoint name from filename (testing)"
+#: src/preferences_window.c:380
+#, fuzzy
+msgid "_Splitpoint name from filename (manual single file split only)"
 msgstr "_Имя точки разделения от имени файла (экспериментально)"
 
-#: src/preferences_window.c:381
-msgid "_Create directories from filenames "
+#: src/preferences_window.c:388
+#, fuzzy
+msgid "Create directories from _filenames "
 msgstr "_Создать каталоги по именам файлов"
 
-#: src/preferences_window.c:389
+#: src/preferences_window.c:396
 msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
 msgstr "По_кадровый режим (использовать для VBR) (только MP3)"
 
-#: src/preferences_window.c:395
+#: src/preferences_window.c:402
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr "Режим _автокоррекции точек разделения с помощью определения тишины"
 
-#: src/preferences_window.c:412 src/splitpoints_window.c:970
-#: src/splitpoints_window.c:1029
+#: src/preferences_window.c:419 src/splitpoints_window.c:981
+#: src/splitpoints_window.c:1040
 msgid "Threshold level (dB):"
 msgstr "Пороговый уровень (дБ):"
 
-#: src/preferences_window.c:429
+#: src/preferences_window.c:436
 msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
 msgstr ""
 
-#: src/preferences_window.c:447
+#: src/preferences_window.c:454
 msgid "Gap level (seconds around splitpoint to search for silence):"
 msgstr "На сколько секунд вокруг точки разделения искать искать тишину:"
 
-#: src/preferences_window.c:465
+#: src/preferences_window.c:472
 msgid "Set _default split options"
 msgstr "_Вернуть исходные параметры"
 
-#: src/preferences_window.c:470
+#: src/preferences_window.c:477
 msgid "<b>Split options</b>"
 msgstr "<b>Параметры разделения</b>"
 
-#: src/preferences_window.c:533
+#: src/preferences_window.c:540
 msgid "Player:"
 msgstr ""
 
-#: src/preferences_window.c:552
+#: src/preferences_window.c:559
 msgid "Refresh player every "
 msgstr ""
 
-#: src/preferences_window.c:553
+#: src/preferences_window.c:560
 msgid "milliseconds."
 msgstr ""
 
-#: src/preferences_window.c:555
+#: src/preferences_window.c:562
 msgid "\t(higher refresh rate decreases CPU usage - default is 200)"
 msgstr ""
 
-#: src/preferences_window.c:561
+#: src/preferences_window.c:568
 msgid "<b>Player options</b>"
 msgstr "<b>Настройки плеера</b>"
 
-#: src/preferences_window.c:680
+#: src/preferences_window.c:687
 msgid ""
 "Wave preview is only available if the amplitude wave is ticked in the player"
 msgstr ""
 
-#: src/preferences_window.c:720
+#: src/preferences_window.c:727
 #, c-format
 msgid "%d minute(s) window"
 msgstr ""
 
-#: src/preferences_window.c:725
+#: src/preferences_window.c:732
 #, c-format
 msgid "Wave interpolation level %d with threshold of %.1lf"
 msgstr ""
 
-#: src/preferences_window.c:747
+#: src/preferences_window.c:754
 msgid "Wave quality (higher is better but consumes more CPU):"
 msgstr ""
 
-#: src/preferences_window.c:766
+#: src/preferences_window.c:773
 #, fuzzy
 msgid "<b>Amplitude wave options</b>"
 msgstr "<b>Параметры разделения</b>"
 
-#: src/preferences_window.c:818
+#: src/preferences_window.c:828
 msgid "Default format"
 msgstr "Формат по умолчанию "
 
-#: src/preferences_window.c:823
+#: src/preferences_window.c:833
 msgid "Custom format"
 msgstr "Пользовательский формат"
 
-#: src/preferences_window.c:841
+#: src/preferences_window.c:851
 msgid ""
 "    @f - file name\n"
 "    @a - artist name\n"
@@ -779,83 +842,84 @@ msgstr ""
 "    @g — жанр\n"
 "    @n — номер дорожки"
 
-#: src/preferences_window.c:855
-msgid "<b>Output filename format</b>"
+#: src/preferences_window.c:865
+#, fuzzy
+msgid "<b>Output filename format for batch split</b>"
 msgstr "<b>Выходной формат файла</b>"
 
-#: src/preferences_window.c:905
+#: src/preferences_window.c:915
 msgid "Original file tags"
 msgstr "Исходные теги файлов"
 
-#: src/preferences_window.c:908
+#: src/preferences_window.c:918
 msgid "Default tags (cddb or cue tags)"
 msgstr "Теги по умолчанию (CDDB или из Cue)"
 
-#: src/preferences_window.c:911
+#: src/preferences_window.c:921
 msgid "No tags"
 msgstr "Нет меток"
 
-#: src/preferences_window.c:914
+#: src/preferences_window.c:924
 msgid "Extract tags from filename"
 msgstr "Извлечь метки из имени файла"
 
-#: src/preferences_window.c:923
+#: src/preferences_window.c:933
 msgid "<b>Split files tags</b>"
 msgstr "<b>Теги разделённых файлов</b>"
 
-#: src/preferences_window.c:945
+#: src/preferences_window.c:955
 msgid "No change"
 msgstr "Без изменений"
 
-#: src/preferences_window.c:946
+#: src/preferences_window.c:956
 msgid "lowercase"
 msgstr "строчные"
 
-#: src/preferences_window.c:947
+#: src/preferences_window.c:957
 msgid "UPPERCASE"
 msgstr "ЗАГЛАВНЫЕ"
 
-#: src/preferences_window.c:948
+#: src/preferences_window.c:958
 msgid "First uppercase"
 msgstr "Первый заглавный символ"
 
-#: src/preferences_window.c:949
+#: src/preferences_window.c:959
 msgid "Word Uppercase"
 msgstr "Слово из заглавных букв"
 
-#: src/preferences_window.c:971
+#: src/preferences_window.c:981
 msgid "<artist>: "
 msgstr ""
 
-#: src/preferences_window.c:978
+#: src/preferences_window.c:988
 msgid "<album>: "
 msgstr ""
 
-#: src/preferences_window.c:986
+#: src/preferences_window.c:996
 msgid "<title>: "
 msgstr ""
 
-#: src/preferences_window.c:993
+#: src/preferences_window.c:1003
 msgid "<genre>: "
 msgstr ""
 
-#: src/preferences_window.c:1000
+#: src/preferences_window.c:1010
 msgid "<comment>: "
 msgstr ""
 
-#: src/preferences_window.c:1007
+#: src/preferences_window.c:1017
 msgid "<year>: "
 msgstr ""
 
-#: src/preferences_window.c:1014
+#: src/preferences_window.c:1024
 msgid "<track>: "
 msgstr ""
 
-#: src/preferences_window.c:1041
+#: src/preferences_window.c:1051
 msgid "Regular expression:"
 msgstr "Регулярное выражение:"
 
-#: src/preferences_window.c:1044
+#: src/preferences_window.c:1054
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -878,175 +942,180 @@ msgstr ""
 "    (?<genre>)    — жанр\n"
 "    (?<comment>)  — комментарий"
 
-#: src/preferences_window.c:1070
+#: src/preferences_window.c:1080
 msgid "_Replace underscores by spaces"
 msgstr "_Заменить подчёркивания на пробелы"
 
-#: src/preferences_window.c:1080
+#: src/preferences_window.c:1090
 msgid "Artist text properties:"
 msgstr "Свойства имени исполнителя:"
 
-#: src/preferences_window.c:1085
+#: src/preferences_window.c:1095
 msgid "Album text properties:"
 msgstr "Свойства названия альбома:"
 
-#: src/preferences_window.c:1090
+#: src/preferences_window.c:1100
 msgid "Title text properties:"
 msgstr "Свойства названия композиции:"
 
-#: src/preferences_window.c:1095
+#: src/preferences_window.c:1105
 msgid "Comment text properties:"
 msgstr "Свойства текста комментариев"
 
-#: src/preferences_window.c:1099
+#: src/preferences_window.c:1109
 msgid "Genre tag:"
 msgstr "Тег жанра:"
 
-#: src/preferences_window.c:1103
+#: src/preferences_window.c:1113
 msgid "Comment tag:"
 msgstr "Метки комментариев"
 
-#: src/preferences_window.c:1105
+#: src/preferences_window.c:1115
 msgid "Regular expression test"
 msgstr "Тест регулярных выражений"
 
-#: src/preferences_window.c:1121
+#: src/preferences_window.c:1131
 msgid "_Test"
 msgstr "_Проверить"
 
-#: src/preferences_window.c:1125
+#: src/preferences_window.c:1135
 msgid "Sample filename:"
 msgstr "Пример имени файла:"
 
-#: src/preferences_window.c:1130
+#: src/preferences_window.c:1140
 msgid "Sample result:"
 msgstr "Пример результата:"
 
-#: src/preferences_window.c:1142
+#: src/preferences_window.c:1152
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Теги ID3v1 и ID3v2"
 
-#: src/preferences_window.c:1149
+#: src/preferences_window.c:1159
 msgid "ID3v2 tags"
 msgstr "Теги ID3v2"
 
-#: src/preferences_window.c:1156
+#: src/preferences_window.c:1166
 msgid "ID3v1 tags"
 msgstr "Теги ID3v1"
 
-#: src/preferences_window.c:1163
+#: src/preferences_window.c:1173
 msgid "Same tags version as the input file"
 msgstr "Та же, что у исходных файлов"
 
-#: src/preferences_window.c:1169
+#: src/preferences_window.c:1179
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Версия тегов (только MP3)</b>"
 
-#: src/preferences_window.c:1215
+#: src/preferences_window.c:1220
+msgid "Split"
+msgstr "Разделение"
+
+#: src/preferences_window.c:1225
 msgid "Tags"
 msgstr "Теги"
 
-#: src/preferences_window.c:1220
-msgid "Output"
-msgstr "Вывод"
+#: src/preferences_window.c:1230
+msgid "Player"
+msgstr "Плеер"
 
-#: src/preferences_window.c:1231
+#: src/preferences_window.c:1235
+msgid "Output for batch split"
+msgstr ""
+
+#: src/preferences_window.c:1241
 msgid "Language"
 msgstr "Язык"
 
-#: src/split_files_window.c:69 src/splitpoints_window.c:1523
+#: src/split_files_window.c:69 src/splitpoints_window.c:1527
 msgid "Filename"
 msgstr "Имя файла"
 
-#: src/split_files_window.c:248
-msgid "_Queue files to player"
+#: src/split_files_window.c:246
+#, fuzzy
+msgid "_Queue to player"
 msgstr "Список файлов в плеере"
 
-#: src/split_files_window.c:257
-msgid "_Delete selected files"
+#: src/split_files_window.c:254
+#, fuzzy
+msgid "_Delete selected"
 msgstr "Удалить выделенные файлы"
 
-#: src/split_files_window.c:266
-msgid "D_elete all files"
+#: src/split_files_window.c:262
+#, fuzzy
+msgid "D_elete all"
 msgstr "Удалить все файлы"
 
-#: src/split_mode_window.c:161 src/split_mode_window.c:233
-#, c-format
-msgid "Split every %2d seconds."
+#: src/split_mode_window.c:178
+msgid "Use manual single file splitpoints"
 msgstr ""
 
-#: src/split_mode_window.c:172 src/split_mode_window.c:267
-#, c-format
-msgid "Split in %2d equal time tracks."
-msgstr ""
-
-#: src/split_mode_window.c:205
-msgid "Normal"
-msgstr "Нормальный"
-
-#: src/split_mode_window.c:215
+#: src/split_mode_window.c:188
 msgid "Time"
 msgstr "Время"
 
-#: src/split_mode_window.c:249
+#: src/split_mode_window.c:205
+#, fuzzy
+msgid "Split every"
+msgstr "Разделить"
+
+#: src/split_mode_window.c:218
+#, fuzzy
+msgid "seconds."
+msgstr "Секунды:"
+
+#: src/split_mode_window.c:225
 msgid "Equal time tracks"
 msgstr "Одинаковая длительность дорожек"
 
-#: src/split_mode_window.c:284
+#: src/split_mode_window.c:242
+#, fuzzy
+msgid "Split in"
+msgstr "Разделить"
+
+#: src/split_mode_window.c:256
+#, fuzzy
+msgid "equal tracks."
+msgstr "Одинаковая длительность дорожек"
+
+#: src/split_mode_window.c:263
 msgid "Trim using silence detection"
 msgstr "Обрезать с помощью вычисления тишины"
 
-#: src/split_mode_window.c:301 src/split_mode_window.c:329
+#: src/split_mode_window.c:280 src/split_mode_window.c:308
 msgid "Threshold level (dB) : "
 msgstr "Уровень порога (Дб): "
 
-#: src/split_mode_window.c:312
+#: src/split_mode_window.c:291
 msgid "Silence - split with silence detection"
 msgstr "Тишина — разделить, найдя тишину"
 
-#: src/split_mode_window.c:341
+#: src/split_mode_window.c:320
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
 msgstr "Смещение точки разреза (0 — начало тишины. 1 — конец): "
 
-#: src/split_mode_window.c:353
+#: src/split_mode_window.c:332
 msgid "Number of tracks (0 means all tracks) : "
 msgstr "Количество дорожек (0 значит все): "
 
-#: src/split_mode_window.c:365
+#: src/split_mode_window.c:344
 msgid "Minimum silence length (seconds) : "
 msgstr "Мин. длительность тишины (секунды) : "
 
-#: src/split_mode_window.c:377
+#: src/split_mode_window.c:356
 msgid "Minimum track length (seconds) : "
 msgstr ""
 
-#: src/split_mode_window.c:387
+#: src/split_mode_window.c:366
 msgid "Remove silence between tracks"
 msgstr "Убрать задержку между дорожками"
 
-#: src/split_mode_window.c:408
+#: src/split_mode_window.c:387
 msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
 msgstr ""
 
-#: src/split_mode_window.c:418
+#: src/split_mode_window.c:397
 msgid "Error mode (mp3 only)"
 msgstr "Режим ошибок (только mp3)"
-
-#: src/split_mode_window.c:442
-msgid "Single file"
-msgstr "Один файл"
-
-#: src/split_mode_window.c:449
-msgid "Batch processing"
-msgstr "Пакетная обработка"
-
-#: src/split_mode_window.c:483
-msgid "Split mode"
-msgstr "Режим разделения"
-
-#: src/split_mode_window.c:486
-msgid "File mode"
-msgstr "Режим файла"
 
 #: src/splitpoints_window.c:313
 msgid "_part"
@@ -1057,107 +1126,95 @@ msgstr "_часть"
 msgid "%s_part%d"
 msgstr "%s_часть%d"
 
-#: src/splitpoints_window.c:581 src/splitpoints_window.c:637
+#: src/splitpoints_window.c:588 src/splitpoints_window.c:644
 msgid " error: you already have the splitpoint in table"
 msgstr ""
 
-#: src/splitpoints_window.c:945 src/splitpoints_window.c:1297
-msgid "Set trim splitpoints using silence detection"
-msgstr ""
-
-#: src/splitpoints_window.c:1007 src/splitpoints_window.c:1308
-msgid "Set splitpoints from silence detection"
-msgstr ""
-
-#: src/splitpoints_window.c:1043
+#: src/splitpoints_window.c:1054
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 
-#: src/splitpoints_window.c:1057
+#: src/splitpoints_window.c:1068
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Количество дорожек (0 означает все дорожки):"
 
-#: src/splitpoints_window.c:1069
+#: src/splitpoints_window.c:1080
 msgid "Minimum silence length (seconds):"
 msgstr "Минимальная длина задержки (секунды): "
 
-#: src/splitpoints_window.c:1081
+#: src/splitpoints_window.c:1092
 msgid "Minimum track length (seconds):"
 msgstr ""
 
-#: src/splitpoints_window.c:1091
+#: src/splitpoints_window.c:1102
 msgid "_Remove silence between tracks"
 msgstr "Убрать задержку между треками"
 
-#: src/splitpoints_window.c:1243
+#: src/splitpoints_window.c:1254
 msgid "Minutes:"
 msgstr "Минуты:"
 
-#: src/splitpoints_window.c:1245
+#: src/splitpoints_window.c:1256
 msgid "Seconds:"
 msgstr "Секунды:"
 
-#: src/splitpoints_window.c:1247
+#: src/splitpoints_window.c:1258
 msgid "Hundredths:"
 msgstr "Миллисекунды:"
 
-#: src/splitpoints_window.c:1260
+#: src/splitpoints_window.c:1271
 msgid "_Remove"
 msgstr "Удалить"
 
-#: src/splitpoints_window.c:1267
+#: src/splitpoints_window.c:1278
 msgid "Remove rows"
 msgstr "Удалить строки"
 
-#: src/splitpoints_window.c:1270
-msgid "R_emove all"
-msgstr "Удалить все"
-
-#: src/splitpoints_window.c:1277
+#: src/splitpoints_window.c:1288
 msgid "Remove all rows"
 msgstr "Удалить все строки"
 
-#: src/splitpoints_window.c:1290
+#: src/splitpoints_window.c:1298
 msgid "_Trim splitpoints"
 msgstr "О_брезать точки разделения"
 
-#: src/splitpoints_window.c:1301
+#: src/splitpoints_window.c:1308
 msgid "_Silence detection"
 msgstr "О_пределение тишины"
 
-#: src/splitpoints_window.c:1365
+#: src/splitpoints_window.c:1369
 msgid " cannot split preview last splitpoint"
 msgstr ""
 
-#: src/splitpoints_window.c:1439
+#: src/splitpoints_window.c:1443
 msgid " cannot preview, not connected to player"
 msgstr ""
 
-#: src/splitpoints_window.c:1515
+#: src/splitpoints_window.c:1519
 msgid "Keep"
 msgstr "Сохранить"
 
-#: src/splitpoints_window.c:1531
+#: src/splitpoints_window.c:1535
 msgid "Secs"
 msgstr "С"
 
-#: src/splitpoints_window.c:1539
+#: src/splitpoints_window.c:1543
 msgid "Mins"
 msgstr "мин"
 
-#: src/splitpoints_window.c:1547
+#: src/splitpoints_window.c:1551
 msgid "Hundr"
 msgstr "мс"
 
-#: src/splitpoints_window.c:1555
+#: src/splitpoints_window.c:1559
 msgid "Length"
 msgstr "Длительность"
 
-#: src/splitpoints_window.c:1562
+#: src/splitpoints_window.c:1566
 msgid "LiveP"
 msgstr ""
 
-#: src/splitpoints_window.c:1570
+#: src/splitpoints_window.c:1574
 msgid "SplitP"
 msgstr ""
 
@@ -1165,6 +1222,52 @@ msgstr ""
 #, c-format
 msgid "Processing file '%s' ..."
 msgstr "Обработка файла '%s' ..."
+
+#: src/widgets_helper.c:422
+msgid "_Close"
+msgstr ""
+
+#~ msgid "Import"
+#~ msgstr "Импорт"
+
+#~ msgid "Export"
+#~ msgstr "Экспорт"
+
+#~ msgid "_Browse"
+#~ msgstr "_Обзор"
+
+#~ msgid "Select file"
+#~ msgstr "Выделить файл"
+
+#~ msgid "FreeDB"
+#~ msgstr "FreeDB"
+
+#~ msgid "Type of split"
+#~ msgstr "Тип разделения"
+
+#~ msgid "_Add files"
+#~ msgstr "_Добавить файлы"
+
+#~ msgid "R_emove all entries"
+#~ msgstr "У_далить все записи"
+
+#~ msgid "Output"
+#~ msgstr "Вывод"
+
+#~ msgid "Normal"
+#~ msgstr "Нормальный"
+
+#~ msgid "Single file"
+#~ msgstr "Один файл"
+
+#~ msgid "Batch processing"
+#~ msgstr "Пакетная обработка"
+
+#~ msgid "Split mode"
+#~ msgstr "Режим разделения"
+
+#~ msgid "File mode"
+#~ msgstr "Режим файла"
 
 #~ msgid "_Fix ogg stream"
 #~ msgstr "_Фиксированный ogg поток"
