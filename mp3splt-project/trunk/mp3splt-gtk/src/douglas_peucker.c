@@ -195,7 +195,7 @@ static GArray *splt_recursive_douglas_peucker(GArray *douglas_points, void (*cal
   distance_and_index *max_distance_point =
     splt_find_point_with_maximum_distance(douglas_points, first_point.point, last_point.point);
 
-  if (max_distance_point == NULL || ((gint)max_distance_point->distance) == 0)
+  if (max_distance_point == NULL || double_equals(max_distance_point->distance, 0))
   {
     new_points = splt_copy_as_new_array(douglas_points);
     g_array_free(douglas_points, TRUE);
