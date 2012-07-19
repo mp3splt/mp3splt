@@ -3123,6 +3123,7 @@ static gint mytimer(ui_state *ui)
   gui_status *status = ui->status;
 
   //TODO: file from file chooser can be NULL and != from the real filename of mp3splt-gtk.
+  //but this does not work: the user can no longer select a folder if we do this 
   /*if (gui->open_file_chooser_button != NULL)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(gui->open_file_chooser_button));

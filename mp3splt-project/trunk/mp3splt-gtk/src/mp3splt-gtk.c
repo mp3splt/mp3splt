@@ -58,14 +58,13 @@ gpointer split_it(gpointer data)
 
   //we erase previous tags if we don't have the option
   //splt_current_tags
-  if ((mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err) !=
-        (SPLT_CURRENT_TAGS) || ui->infos->split_file_mode == FILE_MODE_MULTIPLE))
+  if ((mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err) != SPLT_CURRENT_TAGS ||
+        ui->infos->split_file_mode == FILE_MODE_MULTIPLE))
   {
     mp3splt_erase_all_tags(ui->mp3splt_state,&err);
   }
 
-  gint split_mode =
-    mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
+  gint split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
 
   enter_threads();
   print_status_bar_confirmation(err, ui);
@@ -80,13 +79,11 @@ gpointer split_it(gpointer data)
   }
 
   //if we have the normal split mode, enable default output
-  gint output_filenames = 
-    mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
-  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err)
-      == SPLT_OPTION_NORMAL_MODE)
+  gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
+  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) == SPLT_OPTION_NORMAL_MODE &&
+      ui->infos->split_file_mode == FILE_MODE_SINGLE)
   {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES,
-        SPLT_OUTPUT_CUSTOM);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
   }
 
   mp3splt_set_path_of_split(ui->mp3splt_state, ui->infos->filename_path_of_split);

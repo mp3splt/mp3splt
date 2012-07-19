@@ -309,7 +309,7 @@ static void show_preferences_window(GtkWidget *widget, ui_state *ui)
   if (ui->gui->preferences_window == NULL)
   {
     ui->gui->preferences_window = 
-      wh_create_window_with_close_button(_("Preferences"), 600, 400, GTK_WIN_POS_CENTER, 
+      wh_create_window_with_close_button(_("Preferences"), 600, 450, GTK_WIN_POS_CENTER, 
           GTK_WINDOW(ui->gui->window), ui->gui->preferences_widget, NULL);
   }
 
@@ -375,12 +375,9 @@ void split_button_event(GtkWidget *widget, ui_state *ui)
 
   put_options_from_preferences(ui);
 
-  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE,&err) != SPLT_OPTION_NORMAL_MODE)
+  if (!get_checked_output_radio_box(ui))
   {
-    if (!get_checked_output_radio_box(ui))
-    {
-      mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-    }
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
   }
 
   ui->status->filename_to_split = get_input_filename(ui->gui);
