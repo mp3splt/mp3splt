@@ -150,12 +150,14 @@ static void output_radio_box_event(GtkToggleButton *radio_b, ui_state *ui)
     gtk_widget_set_sensitive(ui->gui->output_entry, TRUE);
     gtk_widget_set_sensitive(ui->gui->output_label, TRUE);
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
+    gtk_widget_set_sensitive(ui->gui->output_default_label, FALSE);
   }
   else
   {
     gtk_widget_set_sensitive(ui->gui->output_entry, FALSE);
     gtk_widget_set_sensitive(ui->gui->output_label, FALSE);
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
+    gtk_widget_set_sensitive(ui->gui->output_default_label, TRUE);
   }
 
   ui_save_preferences(NULL, ui);
@@ -829,13 +831,45 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
   gui->radio_output = radio_output;
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
-  //GtkWidget *horiz_fake = wh_hbox_new();
-  //gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
+  GtkWidget *horiz_fake = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
-  //TODO: show default outputs
-  //g_string_new(_(""));
-  //GtkWidget *default_label = gtk_label_new(_(" test"));
-  //gtk_box_pack_start(GTK_BOX(horiz_fake), default_label, FALSE, FALSE, 0);
+  GString *outputs_str = g_string_new(_("  Default output: "));
+  g_string_append(outputs_str, "<span color='#222288'>");
+  g_string_append(outputs_str, SPLT_DEFAULT_OUTPUT);
+  g_string_append(outputs_str, "</span>");
+
+  g_string_append(outputs_str, "\n");
+  g_string_append(outputs_str, _("  CDDB, CUE and tracktype.org default: "));
+  g_string_append(outputs_str, "<span color='#222288'>");
+  g_string_append(outputs_str, SPLT_DEFAULT_CDDB_CUE_OUTPUT);
+  g_string_append(outputs_str, "</span>");
+
+  g_string_append(outputs_str, "\n");
+  g_string_append(outputs_str, _("  Split with silence detection default: "));
+  g_string_append(outputs_str, "<span color='#222288'>");
+  g_string_append(outputs_str, SPLT_DEFAULT_SILENCE_OUTPUT);
+  g_string_append(outputs_str, "</span>");
+
+  g_string_append(outputs_str, "\n");
+  g_string_append(outputs_str, _("  Trim using silence detection default: "));
+  g_string_append(outputs_str, "<span color='#222288'>");
+  g_string_append(outputs_str, SPLT_DEFAULT_TRIM_SILENCE_OUTPUT);
+  g_string_append(outputs_str, "</span>");
+
+  g_string_append(outputs_str, "\n");
+  g_string_append(outputs_str, _("  Error mode default: "));
+  g_string_append(outputs_str, "<span color='#222288'>");
+  g_string_append(outputs_str, SPLT_DEFAULT_SYNCERROR_OUTPUT);
+  g_string_append(outputs_str, "</span>");
+
+  GtkWidget *default_label = gtk_label_new(NULL);
+  gui->output_default_label = default_label;
+  gtk_label_set_markup(GTK_LABEL(default_label), outputs_str->str);
+  gtk_label_set_selectable(GTK_LABEL(default_label), TRUE);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), default_label, FALSE, FALSE, 0);
+
+  g_string_free(outputs_str, TRUE);
 
   //second radio button
   radio_output = gtk_radio_button_new_with_label_from_widget
@@ -844,7 +878,7 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
   //output entry
-  GtkWidget *horiz_fake = wh_hbox_new();
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
   GtkWidget *output_entry = gtk_entry_new();
@@ -875,6 +909,7 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
         "  @M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint **\n"
         "\n"
         "    (**) a digit may follow for the number of digits to output\n"));
+  gtk_label_set_selectable(GTK_LABEL(output_label), TRUE);
   gui->output_label = output_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_label, FALSE, FALSE, 0);
 
@@ -1079,6 +1114,7 @@ static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui)
         "    (?<year>)     - year of emission\n"
         "    (?<genre>)    - genre\n"
         "    (?<comment>)  - comment"));
+  gtk_label_set_selectable(GTK_LABEL(regex_label), TRUE);
   gtk_misc_set_alignment(GTK_MISC(regex_label), 0.0, 0.5);
   wh_add_in_table(table, wh_put_in_new_hbox_with_margin_level(regex_label, 2));
 
