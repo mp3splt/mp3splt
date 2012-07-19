@@ -1368,6 +1368,7 @@ static void change_progress_bar(ui_state *ui)
 static GtkWidget *create_filename_player_hbox(gui_state *gui)
 {
   GtkWidget *song_name_label = gtk_label_new("");
+  gtk_label_set_selectable(GTK_LABEL(song_name_label), TRUE);
   gui->song_name_label = song_name_label;
 
   g_object_set(G_OBJECT(song_name_label), "selectable", FALSE, NULL);

@@ -341,6 +341,7 @@ typedef struct {
 
   GtkWidget *output_entry;
   GtkWidget *output_label;
+  GtkWidget *output_default_label;
 
   GtkTreeView *split_tree;
 

@@ -407,6 +407,10 @@ void load_preferences(ui_state *ui)
     gtk_widget_set_sensitive(ui->gui->output_entry, FALSE);
     gtk_widget_set_sensitive(ui->gui->output_label, FALSE);
   }
+  else
+  {
+    gtk_widget_set_sensitive(ui->gui->output_default_label, FALSE);
+  }
 
   //output format
   gchar *output_format = g_key_file_get_string(key_file, "output", "output_format", NULL);
