@@ -829,6 +829,15 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
   gui->radio_output = radio_output;
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
+  //GtkWidget *horiz_fake = wh_hbox_new();
+  //gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
+
+  //TODO: show default outputs
+  //g_string_new(_(""));
+  //GtkWidget *default_label = gtk_label_new(_(" test"));
+  //gtk_box_pack_start(GTK_BOX(horiz_fake), default_label, FALSE, FALSE, 0);
+
+  //second radio button
   radio_output = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(radio_output), _("Custom format"));
   gui->radio_output = radio_output;
@@ -848,21 +857,31 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
   //output label
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
-  GtkWidget *output_label = gtk_label_new(_("    @f - file name\n"
-        "    @a - artist name\n"
-        "    @p - performer of each song (does not"
-        " always exist)\n"
-        "    @b - album title\n"
-        "    @t - song title\n"
-        "    @g - genre\n"
-        "    @n - track number"));
+  GtkWidget *output_label = gtk_label_new(_(
+        "  @A: performer if found, otherwise artist\n"
+        "  @a: artist name\n"
+        "  @p: performer of each song (only with .cue)\n"
+        "  @b: album title\n"
+        "  @g: genre\n"
+        "  @t: song title\n"
+        "  @n: track number identifier (not the real ID3 track number) **\n"
+        "  @N: track tag number **\n"
+        "  @l: track number identifier as lowercase letter (not the real ID3 track number) **\n"
+        "  @L: track tag number as lowercase letter **\n"
+        "  @u: track number identifier as uppercase letter (not the real ID3 track number) **\n"
+        "  @U: track tag number as uppercase letter **\n"
+        "  @f: input filename (without extension)\n"
+        "  @m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint **\n"
+        "  @M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint **\n"
+        "\n"
+        "    (**) a digit may follow for the number of digits to output\n"));
   gui->output_label = output_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), output_label, FALSE, FALSE, 0);
 
   g_signal_connect(GTK_TOGGLE_BUTTON(gui->radio_output),
       "toggled", G_CALLBACK(output_radio_box_event), ui);
 
-  return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format for batch split</b>"));
+  return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format for batch split, CUE, CDDB and tracktype.org</b>"));
 }
 
 //!creates the output preferences page
@@ -1232,7 +1251,7 @@ GtkWidget *create_choose_preferences(ui_state *ui)
 
   /* output preferences */
   GtkWidget *output_prefs = create_pref_output_page(ui);
-  notebook_label = gtk_label_new(_("Output for batch split"));
+  notebook_label = gtk_label_new(_("Output filename format"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs, notebook_label);
 
   /* language preferences page */
