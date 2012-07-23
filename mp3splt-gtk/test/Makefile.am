@@ -12,6 +12,17 @@ LIBS += @GST_LIBS@
 INCLUDES += @GST_CFLAGS@
 endif
 
+DEFS=
+if !GNOME
+DEFS += -DNO_GNOME
+endif
+if !AUDACIOUS
+DEFS += -DNO_AUDACIOUS
+endif
+if !GSTREAMER
+DEFS += -DNO_GSTREAMER
+endif
+
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -no-undefined
 
 noinst_LTLIBRARIES = test_douglas_peucker.la
