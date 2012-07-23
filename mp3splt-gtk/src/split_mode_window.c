@@ -437,7 +437,7 @@ GtkWidget *create_special_split_page(ui_state *ui)
   GtkWidget *vbox = wh_vbox_new();;
 
 #if GTK_MAJOR_VERSION <= 2
-  GtkWidget *paned_widget = gtk_hpaned_new();
+  GtkWidget *paned_widget = gtk_vpaned_new();
 #else
   GtkWidget *paned_widget = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
 #endif
