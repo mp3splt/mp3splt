@@ -116,11 +116,13 @@ void set_output_directory(gchar *dirname, ui_state *ui)
     return;
   }
 
+  g_mutex_lock(&ui->variables_mutex);
   if (ui->infos->outputdirname != NULL)
   {
     g_string_free(ui->infos->outputdirname, TRUE);
   }
   ui->infos->outputdirname = g_string_new(dirname);
+  g_mutex_unlock(&ui->variables_mutex);
 
   gtk_entry_set_text(GTK_ENTRY(ui->gui->directory_entry), dirname);
 }

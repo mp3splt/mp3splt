@@ -60,46 +60,68 @@ void lmanager_stop_split(ui_state *ui)
   print_status_bar_confirmation(err, ui);
 }
 
-//! Add another file to the split_file tab
-void lmanager_put_split_filename(const char *filename, int progress_data, void *data)
+static gboolean lmanager_put_split_filename_idle(ui_with_fname *ui_fname)
 {
-  ui_state *ui = (ui_state *)data;
-
-  enter_threads();
-
-  gtk_widget_set_sensitive(ui->gui->queue_files_button, TRUE);
-  gtk_widget_set_sensitive(ui->gui->remove_all_files_button,TRUE);
+  char *filename = ui_fname->fname;
+  ui_state *ui = ui_fname->ui;
 
   add_split_row(filename, ui);
-  ui->infos->split_files++;
 
   gint fname_status_size = (strlen(filename) + 255);
   gchar *fname_status = g_malloc(sizeof(char) * fname_status_size);
   g_snprintf(fname_status, fname_status_size, _(" File '%s' created"), filename);
+
   put_status_message(fname_status, ui);
+
   if (fname_status)
   {
     free(fname_status);
     fname_status = NULL;
   }
 
+  gtk_widget_set_sensitive(ui->gui->queue_files_button, TRUE);
+  gtk_widget_set_sensitive(ui->gui->remove_all_files_button, TRUE);
+
 #ifdef __WIN32__
   while (gtk_events_pending())
   {
-	  gtk_main_iteration();
+    gtk_main_iteration();
   }
   gdk_flush();
 #endif
 
-  exit_threads();
+  if (filename)
+  {
+    g_free(filename);
+  }
+  g_free(ui_fname);
+
+  return FALSE;
 }
 
-//!prints a message from the library
-static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type, void *data)
+//! Add another file to the split_file tab
+void lmanager_put_split_filename(const char *filename, int progress_data, void *data)
 {
-  ui_state *ui = (ui_state *) data;
+  ui_state *ui = (ui_state *)data;
 
-  gchar *mess = g_strdup(message);
+  ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+  ui_fname->ui = ui;
+  ui_fname->fname = NULL;
+  if (filename)
+  {
+    ui_fname->fname = strdup(filename);
+  }
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)lmanager_put_split_filename_idle, ui_fname, NULL);
+}
+
+static gboolean lmanager_put_message_from_library_idle(ui_with_message *ui_message)
+{
+  splt_message_type mess_type = ui_message->mess_type;
+  ui_state *ui = ui_message->ui;
+
+  char *mess = ui_message->message;
   if (mess)
   {
     gint i = 0;
@@ -112,8 +134,6 @@ static void lmanager_put_message_from_library(const char *message, splt_message_
       }
     }
 
-    enter_threads();
-
     put_status_message_with_type(mess, mess_type, ui);
 
 #ifdef __WIN32__
@@ -124,39 +144,58 @@ static void lmanager_put_message_from_library(const char *message, splt_message_
     gdk_flush();
 #endif
 
-    exit_threads();
-
     g_free(mess);
     mess = NULL;
   }
+
+  g_free(ui_message);
+
+  return FALSE;
 }
 
-//!Allows to set the value shown by the progress bar
-static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data)
+//!prints a message from the library
+static void lmanager_put_message_from_library(const char *message, splt_message_type mess_type, void *data)
 {
-  ui_state *ui = (ui_state *) data;
+  ui_state *ui = (ui_state *)data;
+
+  ui_with_message *ui_message = g_malloc0(sizeof(ui_with_message));
+  ui_message->ui = ui;
+  ui_message->message = NULL;
+  if (message)
+  {
+    ui_message->message = strdup(message);
+  }
+  ui_message->mess_type = mess_type;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)lmanager_put_message_from_library_idle, ui_message, NULL);
+}
+
+static gboolean lmanager_change_window_progress_bar_idle(ui_with_p_bar *ui_p_bar)
+{
+  ui_state *ui = ui_p_bar->ui;
 
   gchar progress_text[1024] = " ";
 
-  switch (p_bar->progress_type)
+  switch (ui_p_bar->progress_type)
   {
     case SPLT_PROGRESS_PREPARE:
       g_snprintf(progress_text,1023, _(" preparing \"%s\" (%d of %d)"),
-          p_bar->filename_shorted,
-          p_bar->current_split,
-          p_bar->max_splits);
+          ui_p_bar->filename_shorted,
+          ui_p_bar->current_split,
+          ui_p_bar->max_splits);
       break;
     case SPLT_PROGRESS_CREATE:
       g_snprintf(progress_text,1023, _(" creating \"%s\" (%d of %d)"),
-          p_bar->filename_shorted,
-          p_bar->current_split,
-          p_bar->max_splits);
+          ui_p_bar->filename_shorted,
+          ui_p_bar->current_split,
+          ui_p_bar->max_splits);
       break;
     case SPLT_PROGRESS_SEARCH_SYNC:
       g_snprintf(progress_text,1023, _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE:
-      if (ui->status->currently_scanning_for_silence)
+      if (get_currently_scanning_for_silence_safe(ui))
       {
         g_snprintf(progress_text,1023, _("Computing amplitude wave data..."));
       }
@@ -164,7 +203,7 @@ static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data
       {
         g_snprintf(progress_text,1023,
             _("S: %02d, Level: %.2f dB; scanning for silence..."),
-            p_bar->silence_found_tracks, p_bar->silence_db_level);
+            ui_p_bar->silence_found_tracks, ui_p_bar->silence_db_level);
       }
       break;
     default:
@@ -173,21 +212,49 @@ static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data
   }
 
   gchar printed_value[1024] = { '\0' };
+  g_snprintf(printed_value, 1023, "%6.2f %% %s", ui_p_bar->percent_progress * 100, progress_text);
 
-  enter_threads();
-
-  gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, p_bar->percent_progress);
-  g_snprintf(printed_value, 1023, "%6.2f %% %s", p_bar->percent_progress * 100, progress_text);
+  gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, ui_p_bar->percent_progress);
   gtk_progress_bar_set_text(ui->gui->percent_progress_bar, printed_value);
 
 #ifdef __WIN32__
   while (gtk_events_pending())
   {
-	  gtk_main_iteration();
+    gtk_main_iteration();
   }
   gdk_flush();
 #endif
 
-  exit_threads();
+  if (ui_p_bar->filename_shorted)
+  {
+    g_free(ui_p_bar->filename_shorted);
+  }
+  g_free(ui_p_bar);
+
+  return FALSE;
+}
+
+//!Allows to set the value shown by the progress bar
+static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data)
+{
+  ui_state *ui = (ui_state *) data;
+
+  ui_with_p_bar *ui_p_bar = g_malloc0(sizeof(ui_with_p_bar));
+  ui_p_bar->ui = ui;
+
+  ui_p_bar->progress_type = p_bar->progress_type;
+  ui_p_bar->filename_shorted = NULL;
+  if (p_bar->filename_shorted[0] != '\0')
+  {
+    ui_p_bar->filename_shorted = strdup(p_bar->filename_shorted);
+  }
+  ui_p_bar->current_split = p_bar->current_split;
+  ui_p_bar->max_splits = p_bar->max_splits;
+  ui_p_bar->silence_found_tracks = p_bar->silence_found_tracks;
+  ui_p_bar->silence_db_level = p_bar->silence_db_level;
+  ui_p_bar->percent_progress = p_bar->percent_progress;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)lmanager_change_window_progress_bar_idle, ui_p_bar, NULL);
 }
 

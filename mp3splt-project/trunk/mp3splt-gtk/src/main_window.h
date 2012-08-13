@@ -69,5 +69,15 @@ void add_filters_to_file_chooser(GtkWidget *file_chooser);
 
 void split_button_event(GtkWidget *widget, ui_state *ui);
 
+void print_status_bar_confirmation_in_idle(gint error, ui_state *ui);
+
+void set_stop_split_safe(gboolean value, ui_state *ui);
+
+gint get_is_splitting_safe(ui_state *ui);
+void set_is_splitting_safe(gboolean value, ui_state *ui);
+
+void set_split_file_mode_safe(gint file_mode, ui_state *ui);
+gint get_split_file_mode_safe(ui_state *ui);
+
 #endif
 

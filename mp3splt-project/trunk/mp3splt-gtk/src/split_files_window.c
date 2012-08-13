@@ -80,13 +80,10 @@ static void create_split_columns(GtkTreeView *split_tree)
 void remove_all_split_rows(ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
-  while (ui->infos->split_table_number > 0)
+  GtkTreeIter iter;
+  while (gtk_tree_model_get_iter_first(model, &iter))
   {
-    GtkTreeIter iter;
-    gtk_tree_model_get_iter_first(model, &iter);
     gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-
-    ui->infos->split_table_number--;
   }
 }
 
@@ -113,7 +110,6 @@ void add_split_row(const gchar *name, ui_state *ui)
   gtk_list_store_set(GTK_LIST_STORE(model), &iter,
       COL_NAME, get_real_name_from_filename(name),
       COL_FILENAME, name, -1);
-  ui->infos->split_table_number++;
 }
 
 //!return the n_th filename from the split files
@@ -145,22 +141,13 @@ static void queue_files_button_event(GtkWidget *widget, ui_state *ui)
   GList *file_list = NULL;
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
 
-  gint number = ui->infos->split_files;
-  while (number >= 0)
+  GtkTreeIter iter;
+  while (gtk_tree_model_get_iter_first(model, &iter))
   {
-    GtkTreePath *path = gtk_tree_path_new_from_indices(number ,-1);
-
-    GtkTreeIter iter;
-    if (gtk_tree_model_get_iter(model, &iter, path))
-    {
-      gchar *filename = NULL;
-      gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
-      file_list = g_list_append(file_list, strdup(filename));
-      g_free(filename);
-    }
-
-    gtk_tree_path_free(path);
-    number--;
+    gchar *filename = NULL;
+    gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
+    file_list = g_list_append(file_list, strdup(filename));
+    g_free(filename);
   }
 
   if (file_list != NULL)
@@ -175,6 +162,7 @@ static void queue_files_button_event(GtkWidget *widget, ui_state *ui)
 //!event for the remove file button
 static void remove_file_button_event(GtkWidget *widget, ui_state *ui)
 {
+  GtkTreeIter iter;
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
   GtkTreeSelection *selection = gtk_tree_view_get_selection(ui->gui->split_tree);
   GList *selected_list = gtk_tree_selection_get_selected_rows(selection, &model);
@@ -184,25 +172,20 @@ static void remove_file_button_event(GtkWidget *widget, ui_state *ui)
     GList *current_element = g_list_last(selected_list);
     GtkTreePath *path = current_element->data;
 
-    GtkTreeIter iter;
     gtk_tree_model_get_iter(model, &iter, path);
 
     gchar *filename = NULL;
     gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
     g_remove(filename);
 
-    //remove the path from the selected list
     gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
     selected_list = g_list_remove(selected_list, path);
-
-    //remove 1 to the row number of the table
-    ui->infos->split_table_number--;
 
     gtk_tree_path_free(path);
     g_free(filename);
   }
 
-  if (ui->infos->split_table_number == 0)
+  if (!gtk_tree_model_get_iter_first(model, &iter))
   {
     gtk_widget_set_sensitive(ui->gui->queue_files_button, FALSE);
     gtk_widget_set_sensitive(ui->gui->remove_all_files_button, FALSE);
@@ -218,18 +201,15 @@ static void remove_file_button_event(GtkWidget *widget, ui_state *ui)
 static void remove_all_files_button_event(GtkWidget *widget, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
+  GtkTreeIter iter;
 
-  while (ui->infos->split_table_number > 0)
+  while (gtk_tree_model_get_iter_first(model, &iter))
   {
-    GtkTreeIter iter;
-    gtk_tree_model_get_iter_first(model, &iter);
-
     gchar *filename;
     gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
     g_remove(filename);
 
     gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-    ui->infos->split_table_number--;
     g_free(filename);
   }
 
@@ -303,6 +283,10 @@ static void split_selection_changed(GtkTreeSelection *selec, ui_state *ui)
   if (g_list_length(selected_list) > 0)
   {
     gtk_widget_set_sensitive(ui->gui->remove_file_button, TRUE);
+  }
+  else
+  {
+    gtk_widget_set_sensitive(ui->gui->remove_file_button, FALSE);
   }
 }
 

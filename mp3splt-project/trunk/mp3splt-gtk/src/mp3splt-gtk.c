@@ -41,170 +41,218 @@
 
 ui_state *ui;
 
-//! Split the file
-gpointer split_it(gpointer data)
-{
-  ui_state *ui = (ui_state *) data;
+static gpointer split_collected_files(ui_state *ui);
+static gboolean collect_files_to_split(ui_state *ui);
 
-  gint confirmation = SPLT_OK;
+void split_action(ui_state *ui)
+{
+  if (!collect_files_to_split(ui))
+  {
+    return;
+  }
+
+  create_thread((GThreadFunc)split_collected_files, ui);
+}
+
+static gboolean collect_files_to_split(ui_state *ui)
+{
+  //clean
+  GPtrArray *files_to_split = ui->files_to_split;
+  if (files_to_split && files_to_split->len > 0)
+  {
+    gint length = files_to_split->len;
+    gint i = 0;
+    for (i = 0;i < length;i++)
+    {
+      g_free(g_ptr_array_index(files_to_split, i));
+    }
+    g_ptr_array_free(ui->files_to_split, TRUE);
+  }
+  ui->files_to_split = g_ptr_array_new();
+
+  //collect
+  if (get_split_file_mode_safe(ui) == FILE_MODE_SINGLE)
+  {
+    g_ptr_array_add(ui->files_to_split, g_strdup(get_input_filename(ui->gui)));
+  }
+  else if (ui->infos->multiple_files_tree_number > 0)
+  {
+    GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(ui->gui->multiple_files_tree));
+    gint row_number = 0;
+    while (row_number < ui->infos->multiple_files_tree_number)
+    {
+      GtkTreePath *path = gtk_tree_path_new_from_indices(row_number ,-1);
+
+      GtkTreeIter iter;
+      gtk_tree_model_get_iter(model, &iter, path);
+
+      gchar *filename = NULL;
+      gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME, &filename, -1);
+
+      g_ptr_array_add(ui->files_to_split, filename);
+
+      row_number++;
+    }
+  }
+  else
+  {
+    put_status_message(_(" error: no files found in batch mode"), ui);
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+static gboolean split_it_end(ui_with_err *ui_err)
+{
+  gint err = ui_err->err;
+  ui_state *ui = ui_err->ui;
+
+  gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
+
+  if (err >= 0)
+  {
+    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
+    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
+  }
+
+  set_is_splitting_safe(FALSE, ui);
+
+  g_mutex_unlock(&ui->only_one_thread_mutex);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+static gint get_stop_split_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint stop_split = ui->status->stop_split;
+  g_mutex_unlock(&ui->variables_mutex);
+  return stop_split;
+}
+
+//! Split the file
+static gpointer split_collected_files(ui_state *ui)
+{
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  enter_threads();
+
+  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
+
+  put_options_from_preferences(ui);
+
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
+  if (!get_checked_output_radio_box(ui))
+  {
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
+  }
+
+  exit_threads();
+
+  set_is_splitting_safe(TRUE, ui);
+
+  gint split_file_mode = get_split_file_mode_safe(ui);
+
+  g_mutex_lock(&ui->variables_mutex);
+  mp3splt_set_path_of_split(ui->mp3splt_state, get_output_directory(ui));
+  g_mutex_unlock(&ui->variables_mutex);
 
   enter_threads();
   remove_all_split_rows(ui);
   exit_threads();
 
   gint err = SPLT_OK;
+  mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
 
-  mp3splt_erase_all_splitpoints(ui->mp3splt_state,&err);
-
-  //we erase previous tags if we don't have the option
-  //splt_current_tags
+  //we erase previous tags if we don't have the option splt_current_tags
   if ((mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err) != SPLT_CURRENT_TAGS ||
-        ui->infos->split_file_mode == FILE_MODE_MULTIPLE))
+        split_file_mode == FILE_MODE_MULTIPLE))
   {
-    mp3splt_erase_all_tags(ui->mp3splt_state,&err);
+    mp3splt_erase_all_tags(ui->mp3splt_state, &err);
   }
 
   gint split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
+  print_status_bar_confirmation_in_idle(err, ui);
 
   enter_threads();
-  print_status_bar_confirmation(err, ui);
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
   exit_threads();
 
   mp3splt_set_oformat(ui->mp3splt_state, format, &err);
+
   if (format)
   {
     free(format);
     format = NULL;
   }
 
-  //if we have the normal split mode, enable default output
-  gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
   if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) == SPLT_OPTION_NORMAL_MODE &&
-      ui->infos->split_file_mode == FILE_MODE_SINGLE)
+      split_file_mode == FILE_MODE_SINGLE)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
   }
 
-  mp3splt_set_path_of_split(ui->mp3splt_state, ui->infos->filename_path_of_split);
-
-  gint multiple_files_error = SPLT_FALSE;
-  if (ui->infos->split_file_mode == FILE_MODE_SINGLE)
+  if (split_mode == SPLT_OPTION_NORMAL_MODE)
   {
     enter_threads();
-    if (split_mode == SPLT_OPTION_NORMAL_MODE)
-    {
-      put_splitpoints_in_mp3splt_state(ui->mp3splt_state, ui);
-    }
+    put_splitpoints_in_mp3splt_state(ui->mp3splt_state, ui);
+    exit_threads();
+  }
 
-    print_processing_file(ui->status->filename_to_split, ui);
+  err = SPLT_OK;
+  gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
+
+  //files_to_split will not have a read/write issue because the 'splitting' boolean, which does not
+  //allow us to modify it while we read it here - no mutex needed
+  GPtrArray *files_to_split = ui->files_to_split;
+  gint length = files_to_split->len;
+  gint i = 0;
+  for (i = 0;i < length;i++)
+  {
+    gchar *filename = g_ptr_array_index(files_to_split, i);
+
+    enter_threads();
+    print_processing_file(filename, ui);
     exit_threads();
 
-    mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
-    confirmation = mp3splt_split(ui->mp3splt_state);
-  }
-  else
-  {
-    if (ui->infos->multiple_files_tree_number > 0)
+    mp3splt_set_filename_to_split(ui->mp3splt_state, filename);
+
+    gint err = mp3splt_split(ui->mp3splt_state);
+    print_status_bar_confirmation_in_idle(err, ui);
+
+    err = SPLT_OK;
+    mp3splt_erase_all_tags(ui->mp3splt_state, &err);
+    print_status_bar_confirmation_in_idle(err, ui);
+
+    err = SPLT_OK;
+    mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
+    print_status_bar_confirmation_in_idle(err, ui);
+
+    if (get_stop_split_safe(ui))
     {
-      enter_threads();
-
-      gchar *filename = NULL;
-      GtkTreeModel *model =
-        gtk_tree_view_get_model(GTK_TREE_VIEW(ui->gui->multiple_files_tree));
-
-      exit_threads();
-
-      gint row_number = 0;
-      while (row_number < ui->infos->multiple_files_tree_number)
-      {
-        enter_threads();
-
-        if (split_mode == SPLT_OPTION_NORMAL_MODE)
-        {
-          put_splitpoints_in_mp3splt_state(ui->mp3splt_state, ui);
-        }
-
-        GtkTreePath *path = gtk_tree_path_new_from_indices(row_number ,-1);
-
-        GtkTreeIter iter;
-        gtk_tree_model_get_iter(model, &iter, path);
-        gtk_tree_model_get(model, &iter, MULTIPLE_COL_FILENAME,
-            &filename, -1);
-
-        print_processing_file(filename, ui);
-
-        exit_threads();
-
-        mp3splt_set_filename_to_split(ui->mp3splt_state, filename);
-        confirmation = mp3splt_split(ui->mp3splt_state);
-
-        if (filename)
-        {
-          g_free(filename);
-          filename = NULL;
-        }
-
-        if (confirmation < 0)
-        {
-          break;
-        }
-
-        row_number++;
-
-        enter_threads();
-
-        mp3splt_erase_all_tags(ui->mp3splt_state, &err);
-        print_status_bar_confirmation(err, ui);
-        err = SPLT_OK;
-        mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
-        print_status_bar_confirmation(err, ui);
-
-        exit_threads();
-      }
-    }
-    else
-    {
-      multiple_files_error = SPLT_TRUE;
-
-      enter_threads();
-      put_status_message(_(" error: no files found in batch mode"), ui);
-      exit_threads();
+      set_stop_split_safe(FALSE, ui);
+      break;
     }
   }
 
-  /*! reenable default output if necessary
-   */
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
 
-  enter_threads();
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = err;
+  ui_err->ui = ui;
 
-  print_status_bar_confirmation(confirmation, ui);
-
-  //see the cancel button
-  gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
-
-  if (ui->status->quit_main_program)
-  {
-    exit_application(NULL, ui);
-  }
-
-  if (confirmation >= 0 && !multiple_files_error)
-  {
-    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
-    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
-  }
-
-  ui->status->splitting = FALSE;
-
-  exit_threads();
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_it_end, ui_err, NULL);
 
   return NULL;
 }
 
-GThread *create_thread(GThreadFunc func, gpointer data, gboolean joinable, GError **error)
+GThread *create_thread(GThreadFunc func, ui_state *ui)
 {
-  return g_thread_create(func, data, joinable, error);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
+  return g_thread_create(func, ui, TRUE, NULL);
 }
 
 void enter_threads()
@@ -222,10 +270,9 @@ void exit_application(GtkWidget *widget, gpointer data)
 {
   ui_save_preferences(NULL, ui);
 
-  if (ui->status->splitting)
+  if (get_is_splitting_safe(ui))
   {
     lmanager_stop_split(ui);
-    ui->status->quit_main_program = TRUE;
     put_status_message(_(" info: stopping the split process before exiting"), ui);
   }
 
@@ -243,7 +290,6 @@ static void sigint_handler(gint sig)
   if (!sigint_called)
   {
     sigint_called = TRUE;
-    ui->status->quit_main_program = TRUE;
     exit_application(NULL, ui);
   }
 }

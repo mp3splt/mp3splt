@@ -41,8 +41,8 @@
 
 #include "all_includes.h"
 
-gpointer split_it(gpointer data);
-GThread *create_thread(GThreadFunc func, gpointer data, gboolean joinable, GError **error);
+void split_action(ui_state *ui);
+GThread *create_thread(GThreadFunc func, ui_state *ui);
 void enter_threads();
 void exit_threads();
 void exit_application(GtkWidget *widget, gpointer data);

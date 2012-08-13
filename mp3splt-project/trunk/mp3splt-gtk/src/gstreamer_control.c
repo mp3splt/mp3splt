@@ -48,6 +48,8 @@
 //! Send a call over the dbus
 static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
 {
+  enter_threads();
+
   ui_state *ui = (ui_state *) data;
 
   switch (GST_MESSAGE_TYPE(msg))
@@ -70,9 +72,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("gstreamer error: %s"),error->message);
 
-          enter_threads();
           put_status_message(message, ui);
-          exit_threads();
 
           g_free(message);
         }
@@ -98,9 +98,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("Warning: %s"),error->message);
 
-          enter_threads();
           put_status_message(message, ui);
-          exit_threads();
 
           g_free(message);
         }
@@ -126,9 +124,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("Info: %s"),error->message);
 
-          enter_threads();
           put_status_message(message, ui);
-          exit_threads();
 
           g_free(message);
         }
@@ -171,6 +167,8 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
     default:
       break;
   }
+
+  exit_threads();
 
   return TRUE;
 }
@@ -368,9 +366,7 @@ void gstreamer_start(ui_state *ui)
   ui->pi->play = gst_element_factory_make("playbin", "play");
   if (!ui->pi->play)
   {
-    enter_threads();
     put_status_message(_(" error: cannot create gstreamer playbin\n"), ui);
-    exit_threads();
     return;
   }
 

@@ -56,6 +56,7 @@ void set_input_filename(const gchar *filename, ui_state *ui)
     return;
   }
 
+  g_mutex_lock(&ui->variables_mutex);
   if (ui->gui->input_filename != NULL)
   {
     g_string_free(ui->gui->input_filename,TRUE);
@@ -66,6 +67,7 @@ void set_input_filename(const gchar *filename, ui_state *ui)
   {
     gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(ui->gui->open_file_chooser_button), filename);
   }
+  g_mutex_unlock(&ui->variables_mutex);
 }
 
 /*! Get the name of the input file
@@ -260,11 +262,8 @@ The message type is automatically set to SPLT_MESSAGE_INFO.
 If you don't want that use put_status_message instead.
 \param text The text that has to be displayed.
 */
-
 void put_status_message(const gchar *text, ui_state *ui)
 {
-  if (ui->status->currently_scanning_for_silence) { return; }
-
   put_status_message_with_type(text, SPLT_MESSAGE_INFO, ui);
 }
 
@@ -291,10 +290,19 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
   put_message_in_history(text, mess_type, ui);
 }
 
+void set_stop_split_safe(gboolean value, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);  
+  ui->status->stop_split = value;
+  g_mutex_unlock(&ui->variables_mutex);  
+}
+
 //!event for the cancel button
 void cancel_button_event(GtkWidget *widget, ui_state *ui)
 {
   lmanager_stop_split(ui);
+
+  set_stop_split_safe(TRUE, ui);
 
   if (widget != NULL)
   {
@@ -360,33 +368,33 @@ static void show_splitpoints_window(GtkWidget *widget, ui_state *ui)
   wh_show_window(ui->gui->splitpoints_window);
 }
 
+void set_is_splitting_safe(gboolean value, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  ui->status->splitting = value;
+  g_mutex_unlock(&ui->variables_mutex);
+}
+
+gint get_is_splitting_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint is_splitting = ui->status->splitting;
+  g_mutex_unlock(&ui->variables_mutex);
+  return is_splitting;
+}
+
 //!event for the split button
 void split_button_event(GtkWidget *widget, ui_state *ui)
 {
-  if (ui->status->splitting)
+  if (get_is_splitting_safe(ui))
   {
     put_status_message(_(" error: split in progress..."), ui);
     return;
   }
 
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
-
-  gint err = SPLT_OK;
-
-  put_options_from_preferences(ui);
-
-  if (!get_checked_output_radio_box(ui))
+  if (get_output_directory(ui) != NULL)
   {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-  }
-
-  ui->status->filename_to_split = get_input_filename(ui->gui);
-  ui->infos->filename_path_of_split = get_output_directory(ui);
-  if (ui->infos->filename_path_of_split != NULL)
-  {
-    ui->status->splitting = TRUE;
-    create_thread(split_it, ui, TRUE, NULL);
-    gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
+    split_action(ui);
   }
   else
   {
@@ -394,9 +402,25 @@ void split_button_event(GtkWidget *widget, ui_state *ui)
   }
 }
 
+void set_split_file_mode_safe(gint file_mode, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  ui->infos->split_file_mode = file_mode;
+  g_mutex_unlock(&ui->variables_mutex);
+}
+
+gint get_split_file_mode_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint file_mode = ui->infos->split_file_mode;
+  g_mutex_unlock(&ui->variables_mutex);
+
+  return file_mode;
+}
+
 static void single_file_mode_split_button_event(GtkWidget *widget, ui_state *ui)
 {
-  ui->infos->split_file_mode = FILE_MODE_SINGLE;
+  set_split_file_mode_safe(FILE_MODE_SINGLE, ui);
   split_button_event(widget, ui);
 }
 
@@ -1004,5 +1028,22 @@ void print_status_bar_confirmation(gint error, ui_state *ui)
   put_status_message(error_from_library, ui);
   free(error_from_library);
   error_from_library = NULL;
+}
+
+static gboolean print_status_bar_confirmation_idle(ui_with_err *ui_err)
+{
+  print_status_bar_confirmation(ui_err->err, ui_err->ui);
+  g_free(ui_err);
+  return FALSE;
+}
+
+void print_status_bar_confirmation_in_idle(gint error, ui_state *ui)
+{
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = error;
+  ui_err->ui = ui;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)print_status_bar_confirmation_idle, ui_err, NULL);
 }
 

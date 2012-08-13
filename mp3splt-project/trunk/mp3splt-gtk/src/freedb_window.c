@@ -104,6 +104,21 @@ static void create_freedb_columns(GtkTreeView *freedb_tree)
   gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
 }
 
+static void set_freedb_selected_id_safe(gint selected_id, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  ui->infos->freedb_selected_id = selected_id;
+  g_mutex_unlock(&ui->variables_mutex);
+}
+
+static gint get_freedb_selected_id_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint selected_id = ui->infos->freedb_selected_id;
+  g_mutex_unlock(&ui->variables_mutex);
+  return selected_id;
+}
+
 //!freedb selection has changed
 static void freedb_selection_changed(GtkTreeSelection *selection, ui_state *ui)
 {
@@ -113,9 +128,12 @@ static void freedb_selection_changed(GtkTreeSelection *selection, ui_state *ui)
   if (gtk_tree_selection_get_selected(selection, &model, &iter))
   {
     gchar *info;
-    gtk_tree_model_get(model, &iter, ALBUM_NAME, &info, 
-        NUMBER, &ui->infos->freedb_selected_id, -1);
+    gint selected_id;
+    gtk_tree_model_get(model, &iter, ALBUM_NAME, &info, NUMBER, &selected_id, -1);
     g_free(info);
+
+    set_freedb_selected_id_safe(selected_id, ui);
+
     gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
   }
   else
@@ -137,41 +155,31 @@ static void remove_all_freedb_rows(ui_state *ui)
   }
 }
 
-//!search the freedb.org
-static gpointer freedb_search(ui_state *ui)
+static gboolean freedb_search_start(ui_state *ui)
 {
   gui_state *gui = ui->gui;
-  ui_infos *infos = ui->infos;
-
-  enter_threads();
-
-  ui->status->freedb_lock = TRUE;
 
   gtk_widget_hide(gui->freedb_search_button);
   gtk_widget_show(gui->freedb_spinner);
   gtk_spinner_start(GTK_SPINNER(gui->freedb_spinner));
 
   gtk_widget_set_sensitive(gui->freedb_add_button, FALSE);
-  gtk_editable_set_editable(GTK_EDITABLE(gui->freedb_entry), FALSE);
+  gtk_widget_set_sensitive(gui->freedb_entry, FALSE);
+  gtk_widget_set_sensitive(GTK_WIDGET(gui->freedb_tree), FALSE);
 
   put_status_message(_("please wait... contacting tracktype.org"), ui);
 
-  const gchar *freedb_search_value = gtk_entry_get_text(GTK_ENTRY(gui->freedb_entry));
+  return FALSE;
+}
 
-  exit_threads();
+static gboolean freedb_search_end(ui_with_err *ui_err)
+{
+  gui_state *gui = ui_err->ui->gui;
+  ui_infos *infos = ui_err->ui->infos;
 
-  gint err = SPLT_OK;
-  infos->freedb_search_results = 
-    mp3splt_get_freedb_search(ui->mp3splt_state, freedb_search_value, &err,
-        SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0",-1);
+  remove_all_freedb_rows(ui_err->ui);
 
-  enter_threads();
-
-  print_status_bar_confirmation(err, ui);
-
-  remove_all_freedb_rows(ui);
-
-  if (err >= 0)
+  if (ui_err->err >= 0 && infos->freedb_search_results)
   {
     gint i = 0;
     for (i = 0; i < infos->freedb_search_results->number;i++)
@@ -182,7 +190,7 @@ static gpointer freedb_search(ui_state *ui)
       add_freedb_row(infos->freedb_search_results->results[i].name,
           infos->freedb_search_results->results[i].id,
           infos->freedb_search_results->results[i].revisions,
-          infos->freedb_search_results->results[i].revision_number, ui);
+          infos->freedb_search_results->results[i].revision_number, ui_err->ui);
     }
 
     if (infos->freedb_search_results->number > 0)
@@ -202,11 +210,40 @@ static gpointer freedb_search(ui_state *ui)
   gtk_spinner_stop(GTK_SPINNER(gui->freedb_spinner));
   gtk_widget_hide(gui->freedb_spinner);
 
-  gtk_editable_set_editable(GTK_EDITABLE(gui->freedb_entry), TRUE);
+  gtk_widget_set_sensitive(gui->freedb_entry, TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(gui->freedb_tree), TRUE);
 
-  ui->status->freedb_lock = FALSE;
+  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
 
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+//!search the freedb.org
+static gpointer freedb_search(ui_state *ui)
+{
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_start, ui, NULL);
+
+  gint err = SPLT_OK;
+
+  enter_threads();
+  const gchar *freedb_search_value = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
   exit_threads();
+
+  //freedb_search_results is only used in the idle of the end of the thread, so no mutex needed
+  ui->infos->freedb_search_results = 
+    mp3splt_get_freedb_search(ui->mp3splt_state, freedb_search_value, &err,
+        SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0", -1);
+
+  print_status_bar_confirmation_in_idle(err, ui);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = err;
+  ui_err->ui = ui;
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_end, ui_err, NULL);
 
   return NULL;
 }
@@ -214,10 +251,7 @@ static gpointer freedb_search(ui_state *ui)
 //! Start a thread for the freedb search
 static void freedb_search_start_thread(ui_state *ui)
 {
-  if (ui->status->freedb_lock) { return; }
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  create_thread((GThreadFunc)freedb_search, ui, TRUE, NULL);
+  create_thread((GThreadFunc)freedb_search, ui);
 }
 
 //!we push the search button
@@ -233,55 +267,6 @@ when we push Enter for the search entry
 static void freedb_entry_activate_event(GtkEntry *entry, ui_state *ui)
 {
   freedb_search_start_thread(ui);
-}
-
-static void write_freedbfile(int *err, ui_state *ui)
-{
-  enter_threads();
-   
-  put_status_message(_("please wait... contacting tracktype.org"), ui);
-  
-  gchar mp3splt_dir[14] = ".mp3splt-gtk";
-
-  const gchar *home_dir = g_get_home_dir();
-  gint malloc_number = strlen(mp3splt_dir) + strlen(home_dir) + 20;
-  gchar *filename = malloc(malloc_number * sizeof(gchar));
-  g_snprintf(filename, malloc_number, "%s%s%s%s%s", home_dir,
-      G_DIR_SEPARATOR_S, mp3splt_dir,
-      G_DIR_SEPARATOR_S, "query.cddb");
- 
-  exit_threads();
-
-  mp3splt_write_freedb_file_result(ui->mp3splt_state, ui->infos->freedb_selected_id, 
-      filename, err, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
-
-  enter_threads();
-  print_status_bar_confirmation(*err, ui);
-  exit_threads();
-
-  if (get_checked_output_radio_box(ui))
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
-  }
-  else
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-
-    const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-    gint error = SPLT_OUTPUT_FORMAT_OK;
-    mp3splt_set_oformat(ui->mp3splt_state, data, &error);
-    enter_threads();
-    print_status_bar_confirmation(error, ui);
-    exit_threads();
-  }
-
-  mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, err);
- 
-  if (filename)
-  {
-    g_free(filename);
-    filename = NULL;
-  }
 }
 
 //!returns the seconds, minutes, and hudreths
@@ -301,12 +286,9 @@ max_splits is the maximum number of splitpoints to update
 void update_splitpoints_from_mp3splt_state(ui_state *ui)
 {
   gint max_splits = 0;
+
   gint err = SPLT_OK;
-
-  exit_threads();
   const splt_point *points = mp3splt_get_splitpoints(ui->mp3splt_state, &max_splits, &err);
-  enter_threads();
-
   print_status_bar_confirmation(err, ui);
 
   if (max_splits <= 0)
@@ -365,23 +347,81 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
   update_hundr_secs_from_spinner(ui->gui->spinner_hundr_secs, ui);
 }
 
+static gboolean put_freedb_splitpoints_start(ui_state *ui)
+{
+  gtk_widget_set_sensitive(ui->gui->freedb_add_button, FALSE);  
+  gtk_widget_set_sensitive(GTK_WIDGET(ui->gui->freedb_tree), FALSE);
+
+  put_status_message(_("please wait... contacting tracktype.org"), ui);
+
+  return FALSE;
+}
+
+static gboolean put_freedb_splitpoints_end(ui_state *ui)
+{
+  update_splitpoints_from_mp3splt_state(ui);
+
+  gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
+  gtk_widget_set_sensitive(GTK_WIDGET(ui->gui->freedb_tree), TRUE);
+
+  g_mutex_unlock(&ui->only_one_thread_mutex);
+
+  return FALSE;
+}
+
 static gpointer put_freedb_splitpoints(ui_state *ui)
 {
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  gint selected_id = get_freedb_selected_id_safe(ui);
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)put_freedb_splitpoints_start, ui, NULL);
+
+  gchar mp3splt_dir[14] = ".mp3splt-gtk";
+  const gchar *home_dir = g_get_home_dir();
+  gint malloc_number = strlen(mp3splt_dir) + strlen(home_dir) + 20;
+  gchar *filename = malloc(malloc_number * sizeof(gchar));
+  g_snprintf(filename, malloc_number, "%s%s%s%s%s", home_dir,
+      G_DIR_SEPARATOR_S, mp3splt_dir,
+      G_DIR_SEPARATOR_S, "query.cddb");
+
   gint err = SPLT_OK;
 
-  enter_threads();
-  gtk_widget_set_sensitive(ui->gui->freedb_add_button, FALSE);  
-  exit_threads();
-
-  write_freedbfile(&err, ui);
+  mp3splt_write_freedb_file_result(ui->mp3splt_state, selected_id,
+      filename, &err, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
+  print_status_bar_confirmation_in_idle(err, ui);
 
   enter_threads();
+  if (get_checked_output_radio_box(ui))
+  {
+    exit_threads(); 
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
+  }
+  else
+  {
+    const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
+    exit_threads(); 
 
-  update_splitpoints_from_mp3splt_state(ui);
-  print_status_bar_confirmation(err, ui);
-  gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
 
-  exit_threads();
+    gint error = SPLT_OUTPUT_FORMAT_OK;
+    mp3splt_set_oformat(ui->mp3splt_state, data, &error);
+    print_status_bar_confirmation_in_idle(error, ui);
+  }
+
+  err = SPLT_OK;
+  mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, &err);
+  print_status_bar_confirmation_in_idle(err, ui);
+
+  if (filename)
+  {
+    g_free(filename);
+    filename = NULL;
+  }
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)put_freedb_splitpoints_end, ui, NULL);
 
   return NULL;
 }
@@ -389,8 +429,7 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
 //!event for the freedb add button when clicked
 static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  create_thread((GThreadFunc)put_freedb_splitpoints, ui, TRUE, NULL);
+  create_thread((GThreadFunc)put_freedb_splitpoints, ui);
 }
 
 //!creates the freedb box

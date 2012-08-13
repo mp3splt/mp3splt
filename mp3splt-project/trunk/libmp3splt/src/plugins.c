@@ -950,6 +950,8 @@ int splt_p_scan_trim_silence(splt_state *state, int *error)
 
 void splt_p_set_original_tags(splt_state *state, int *error)
 {
+  splt_tu_set_original_tags_last_plugin_used(state, -100);
+
   splt_plugins *pl = state->plug;
   int current_plugin = splt_p_get_current_plugin(state);
   if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
@@ -961,6 +963,7 @@ void splt_p_set_original_tags(splt_state *state, int *error)
   {
     if (pl->data[current_plugin].func->set_original_tags != NULL)
     {
+      splt_tu_set_original_tags_last_plugin_used(state, current_plugin);
       pl->data[current_plugin].func->set_original_tags(state, error);
     }
   }
@@ -969,7 +972,12 @@ void splt_p_set_original_tags(splt_state *state, int *error)
 void splt_p_clear_original_tags(splt_state *state, int *error)
 {
   splt_plugins *pl = state->plug;
-  int current_plugin = splt_p_get_current_plugin(state);
+  int current_plugin = splt_tu_get_original_tags_last_plugin_used(state);
+  if (current_plugin == -100)
+  {
+    return;
+  }
+
   if ((current_plugin < 0) || (current_plugin >= pl->number_of_plugins_found))
   {
     *error = SPLT_ERROR_NO_PLUGIN_FOUND;

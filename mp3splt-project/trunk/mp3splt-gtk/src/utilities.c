@@ -94,9 +94,6 @@ void print_processing_file(gchar *filename, ui_state *ui)
 }
 
 /*! Removes trailing \\r or \\n characters from a filename
-
-\todo Cannot find any code that removes a trailing slash as this
-function would suggest
  */
 void remove_end_slash_n_r_from_filename(char *filename)
 {

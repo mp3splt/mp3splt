@@ -255,6 +255,7 @@ typedef struct {
 typedef struct {
   splt_tags tags;
   void *all_original_tags;
+  int last_plugin_used;
 } splt_original_tags;
 
 /**
