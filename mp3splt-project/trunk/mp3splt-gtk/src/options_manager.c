@@ -49,9 +49,9 @@
  */
 void update_output_options(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   if (get_checked_output_radio_box(ui) == 0)
   {

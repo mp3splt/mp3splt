@@ -47,7 +47,8 @@ mp3splt_gtk_SOURCES = \
   douglas_peucker.c douglas_peucker.h \
   libmp3splt_manager.c libmp3splt_manager.h \
   external_includes.h ui_types.h all_includes.h \
-  drag_and_drop.c drag_and_drop.h
+  drag_and_drop.c drag_and_drop.h \
+  mutex.c mutex.h
 
 INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
 

@@ -103,7 +103,7 @@ static gboolean collect_files_to_split(ui_state *ui)
   return TRUE;
 }
 
-static gboolean split_it_end(ui_with_err *ui_err)
+static gboolean split_collected_files_end(ui_with_err *ui_err)
 {
   gint err = ui_err->err;
   ui_state *ui = ui_err->ui;
@@ -118,7 +118,7 @@ static gboolean split_it_end(ui_with_err *ui_err)
 
   set_is_splitting_safe(FALSE, ui);
 
-  g_mutex_unlock(&ui->only_one_thread_mutex);
+  unlock_mutex(&ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -127,16 +127,16 @@ static gboolean split_it_end(ui_with_err *ui_err)
 
 static gint get_stop_split_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint stop_split = ui->status->stop_split;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
   return stop_split;
 }
 
 //! Split the file
 static gpointer split_collected_files(ui_state *ui)
 {
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   enter_threads();
 
@@ -156,9 +156,9 @@ static gpointer split_collected_files(ui_state *ui)
 
   gint split_file_mode = get_split_file_mode_safe(ui);
 
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   mp3splt_set_path_of_split(ui->mp3splt_state, get_output_directory(ui));
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   enter_threads();
   remove_all_split_rows(ui);
@@ -244,7 +244,7 @@ static gpointer split_collected_files(ui_state *ui)
   ui_err->err = err;
   ui_err->ui = ui;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_it_end, ui_err, NULL);
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_collected_files_end, ui_err, NULL);
 
   return NULL;
 }

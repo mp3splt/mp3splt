@@ -29,42 +29,17 @@
  *
  *********************************************************/
 
-#ifndef ALL_INCLUDES_H
+#ifndef MUTEX_H 
 
-#define ALL_INCLUDES_H
+#define MUTEX_H
 
 #include "external_includes.h"
-
 #include "ui_types.h"
 
-#include "ui_manager.h"
-#include "preferences_manager.h"
-#include "main_window.h"
-#include "player_window.h"
-#include "splitpoints_window.h"
-#include "widgets_helper.h"
-#include "preferences_window.h"
-#include "utilities.h"
-#include "mp3splt-gtk.h"
-#include "player_control.h"
-#include "freedb_window.h"
-#include "import.h"
-#include "export.h"
-#include "options_manager.h"
-#include "split_files_window.h"
-#include "split_mode_window.h"
-#include "messages_window.h"
-#include "snackamp_control.h"
-#include "audacious_control.h"
-#include "gstreamer_control.h"
-#include "multiple_files_window.h"
-#include "libmp3splt_manager.h"
-#include "combo_helper.h"
-#include "radio_helper.h"
-#include "drawing_helper.h"
-#include "douglas_peucker.h"
-#include "drag_and_drop.h"
-#include "mutex.h"
+void init_mutex(SPLT_MUTEX *mutex);
+void clear_mutex(SPLT_MUTEX *mutex);
+void lock_mutex(SPLT_MUTEX *mutex);
+void unlock_mutex(SPLT_MUTEX *mutex);
 
 #endif
 

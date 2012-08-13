@@ -93,7 +93,7 @@ void import_file(gchar *filename, ui_state *ui)
   gchar *ext = strrchr(filename, '.');
   GString *ext_str = g_string_new(ext);
 
-  g_mutex_lock(&ui->import_file_mutex);
+  lock_mutex(&ui->import_file_mutex);
   if (ui->infos->file_to_import)
   {
     g_free(ui->infos->file_to_import);
@@ -105,7 +105,7 @@ void import_file(gchar *filename, ui_state *ui)
   if ((strstr(ext_str->str, ".MP3") != NULL) ||
       (strstr(ext_str->str, ".OGG") != NULL))
   {
-    g_mutex_unlock(&ui->import_file_mutex);
+    unlock_mutex(&ui->import_file_mutex);
     file_chooser_ok_event(filename, ui);
     remove_status_message(ui->gui);
   }
@@ -123,7 +123,7 @@ void import_file(gchar *filename, ui_state *ui)
   }
   else
   {
-    g_mutex_unlock(&ui->import_file_mutex);
+    unlock_mutex(&ui->import_file_mutex);
   }
 
   if (ext_str)
@@ -243,7 +243,7 @@ static gboolean add_audacity_labels_splitpoints_end(ui_with_err *ui_err)
 
   print_status_bar_confirmation(err, ui);
 
-  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -253,9 +253,9 @@ static gboolean add_audacity_labels_splitpoints_end(ui_with_err *ui_err)
 static gpointer add_audacity_labels_splitpoints(ui_state *ui)
 {
   gchar *filename = strdup(ui->infos->file_to_import);
-  g_mutex_unlock(&ui->import_file_mutex);
+  unlock_mutex(&ui->import_file_mutex);
 
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   gint err = SPLT_OK;
 
@@ -284,7 +284,7 @@ static gboolean add_cddb_splitpoints_end(ui_with_err *ui_err)
 
   print_status_bar_confirmation(err, ui);
 
-  g_mutex_unlock(&ui->only_one_thread_mutex);
+  unlock_mutex(&ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -295,9 +295,9 @@ static gboolean add_cddb_splitpoints_end(ui_with_err *ui_err)
 static gpointer add_cddb_splitpoints(ui_state *ui)
 {
   gchar *filename = strdup(ui->infos->file_to_import);
-  g_mutex_unlock(&ui->import_file_mutex);
+  unlock_mutex(&ui->import_file_mutex);
 
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   enter_threads();
   update_output_options(ui);
@@ -336,7 +336,7 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
     file_chooser_ok_event(filename_to_split, ui);
   }
 
-  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -347,9 +347,9 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
 static gpointer add_cue_splitpoints(ui_state *ui)
 {
   gchar *filename = strdup(ui->infos->file_to_import);
-  g_mutex_unlock(&ui->import_file_mutex);
+  unlock_mutex(&ui->import_file_mutex);
 
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   enter_threads();
   update_output_options(ui);

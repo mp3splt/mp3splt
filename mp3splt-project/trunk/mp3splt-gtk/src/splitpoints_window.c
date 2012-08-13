@@ -843,7 +843,7 @@ static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)
 
   set_is_splitting_safe(FALSE, ui);
 
-  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -852,23 +852,23 @@ static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)
 
 static void set_should_trim_safe(gboolean value, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->status->should_trim = value;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 static gint get_should_trim_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint should_trim = ui->status->should_trim;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
   return should_trim;
 }
 
 //!set splitpints from silence detection
 static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
 {
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   gint err = SPLT_OK;
 
@@ -881,9 +881,9 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
 
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   gint checked_output_radio_box = get_checked_output_radio_box(ui);
 
@@ -1425,7 +1425,7 @@ static gboolean split_preview_end(ui_with_err *ui_err)
     gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
   }
 
-  g_mutex_unlock(&ui->only_one_thread_mutex);
+  unlock_mutex(&ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -1434,7 +1434,7 @@ static gboolean split_preview_end(ui_with_err *ui_err)
 
 static gpointer split_preview(ui_state *ui)
 {
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   int err = 0;
   mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
@@ -1449,9 +1449,9 @@ static gpointer split_preview(ui_state *ui)
       get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui),
       NULL, SPLT_SKIPPOINT);
 
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
