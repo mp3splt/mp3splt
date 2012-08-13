@@ -106,16 +106,16 @@ static void create_freedb_columns(GtkTreeView *freedb_tree)
 
 static void set_freedb_selected_id_safe(gint selected_id, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->infos->freedb_selected_id = selected_id;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 static gint get_freedb_selected_id_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint selected_id = ui->infos->freedb_selected_id;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
   return selected_id;
 }
 
@@ -213,7 +213,7 @@ static gboolean freedb_search_end(ui_with_err *ui_err)
   gtk_widget_set_sensitive(gui->freedb_entry, TRUE);
   gtk_widget_set_sensitive(GTK_WIDGET(gui->freedb_tree), TRUE);
 
-  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -223,7 +223,7 @@ static gboolean freedb_search_end(ui_with_err *ui_err)
 //!search the freedb.org
 static gpointer freedb_search(ui_state *ui)
 {
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_start, ui, NULL);
 
@@ -364,14 +364,14 @@ static gboolean put_freedb_splitpoints_end(ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
   gtk_widget_set_sensitive(GTK_WIDGET(ui->gui->freedb_tree), TRUE);
 
-  g_mutex_unlock(&ui->only_one_thread_mutex);
+  unlock_mutex(&ui->only_one_thread_mutex);
 
   return FALSE;
 }
 
 static gpointer put_freedb_splitpoints(ui_state *ui)
 {
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   gint selected_id = get_freedb_selected_id_safe(ui);
 

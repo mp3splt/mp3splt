@@ -174,16 +174,16 @@ void compute_douglas_peucker_filters(ui_state *ui)
 
 void set_currently_scanning_for_silence_safe(gint value, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->status->currently_scanning_for_silence = value;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 gint get_currently_scanning_for_silence_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint currently_scanning_for_silence = ui->status->currently_scanning_for_silence;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   return currently_scanning_for_silence;
 }
@@ -205,7 +205,7 @@ static gboolean detect_silence_end(ui_with_err *ui_err)
   refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas(ui->gui);
 
-  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
 
   g_free(ui_err);
 
@@ -214,7 +214,7 @@ static gboolean detect_silence_end(ui_with_err *ui_err)
 
 static gpointer detect_silence(ui_state *ui)
 {
-  g_mutex_lock(&ui->only_one_thread_mutex);
+  lock_mutex(&ui->only_one_thread_mutex);
 
   set_is_splitting_safe(TRUE, ui);
   set_currently_scanning_for_silence_safe(TRUE, ui);
@@ -230,9 +230,9 @@ static gpointer detect_silence(ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   exit_threads();
 
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   mp3splt_set_silence_level_function(ui->mp3splt_state, get_silence_level, ui);
 
@@ -1358,16 +1358,16 @@ static void change_volume_button(ui_state *ui)
 
 void set_quick_preview_end_splitpoint_safe(gint value, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->status->quick_preview_end_splitpoint = value;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 gint get_quick_preview_end_splitpoint_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint quick_preview_end_splitpoint = ui->status->quick_preview_end_splitpoint;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
   return quick_preview_end_splitpoint;
 }
 
@@ -2487,16 +2487,16 @@ static gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type, 
 
 void set_preview_start_position_safe(gint value, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->status->preview_start_position = value;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 gint get_preview_start_position_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint preview_start_position = ui->status->preview_start_position;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   return preview_start_position;
 }

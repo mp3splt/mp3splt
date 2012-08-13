@@ -468,6 +468,8 @@ typedef struct {
   gint stop_split;
 } gui_status;
 
+#define SPLT_MUTEX GMutex
+
 typedef struct {
   gint return_code;
 
@@ -480,12 +482,11 @@ typedef struct {
   gui_status *status;
   player_infos *pi;
 
-  GMutex only_one_thread_mutex;
-
   GPtrArray *files_to_split;
 
-  GMutex variables_mutex;
-  GMutex import_file_mutex;
+  SPLT_MUTEX only_one_thread_mutex;
+  SPLT_MUTEX variables_mutex;
+  SPLT_MUTEX import_file_mutex;
 } ui_state;
 
 typedef struct {

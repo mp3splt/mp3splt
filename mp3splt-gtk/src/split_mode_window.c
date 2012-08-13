@@ -78,17 +78,17 @@ void select_split_mode(int split_mode, ui_state *ui)
 
 gint get_selected_split_mode_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint selected_split_mode = ui->status->selected_split_mode;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
   return selected_split_mode;
 }
 
 void set_selected_split_mode_safe(gint value, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->status->selected_split_mode = value;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 static void deactivate_silence_parameters(gui_state *gui)

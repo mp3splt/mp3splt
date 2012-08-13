@@ -56,7 +56,7 @@ void set_input_filename(const gchar *filename, ui_state *ui)
     return;
   }
 
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   if (ui->gui->input_filename != NULL)
   {
     g_string_free(ui->gui->input_filename,TRUE);
@@ -67,7 +67,7 @@ void set_input_filename(const gchar *filename, ui_state *ui)
   {
     gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(ui->gui->open_file_chooser_button), filename);
   }
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 /*! Get the name of the input file
@@ -292,9 +292,9 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
 
 void set_stop_split_safe(gboolean value, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);  
+  lock_mutex(&ui->variables_mutex);  
   ui->status->stop_split = value;
-  g_mutex_unlock(&ui->variables_mutex);  
+  unlock_mutex(&ui->variables_mutex);  
 }
 
 //!event for the cancel button
@@ -370,16 +370,16 @@ static void show_splitpoints_window(GtkWidget *widget, ui_state *ui)
 
 void set_is_splitting_safe(gboolean value, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->status->splitting = value;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 gint get_is_splitting_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint is_splitting = ui->status->splitting;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
   return is_splitting;
 }
 
@@ -404,16 +404,16 @@ void split_button_event(GtkWidget *widget, ui_state *ui)
 
 void set_split_file_mode_safe(gint file_mode, ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   ui->infos->split_file_mode = file_mode;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 }
 
 gint get_split_file_mode_safe(ui_state *ui)
 {
-  g_mutex_lock(&ui->variables_mutex);
+  lock_mutex(&ui->variables_mutex);
   gint file_mode = ui->infos->split_file_mode;
-  g_mutex_unlock(&ui->variables_mutex);
+  unlock_mutex(&ui->variables_mutex);
 
   return file_mode;
 }

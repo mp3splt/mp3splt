@@ -107,16 +107,15 @@ ui_state *ui_state_new()
   ui->splitpoints = g_array_new(FALSE, FALSE, sizeof(Split_point));
   ui->files_to_split = NULL;
 
-  g_mutex_init(&ui->variables_mutex);
-  g_mutex_init(&ui->import_file_mutex);
-
   ui->status = ui_status_new();
   ui->gui = ui_gui_new();
   ui->pi = ui_player_infos_new();
 
   ui->return_code = EXIT_SUCCESS;
 
-  g_mutex_init(&ui->only_one_thread_mutex);
+  init_mutex(&ui->variables_mutex);
+  init_mutex(&ui->import_file_mutex);
+  init_mutex(&ui->only_one_thread_mutex);
 
   return ui;
 }
@@ -139,9 +138,9 @@ void ui_state_free(ui_state *ui)
   ui_gui_free(&ui->gui);
   ui_player_infos_free(&ui->pi);
 
-  g_mutex_clear(&ui->only_one_thread_mutex);
-  g_mutex_clear(&ui->variables_mutex);
-  g_mutex_clear(&ui->import_file_mutex);
+  clear_mutex(&ui->only_one_thread_mutex);
+  clear_mutex(&ui->variables_mutex);
+  clear_mutex(&ui->import_file_mutex);
 
   g_free(ui);
 }
