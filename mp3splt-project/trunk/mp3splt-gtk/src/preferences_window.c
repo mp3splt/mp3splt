@@ -688,7 +688,7 @@ static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
 
   gchar wave_availability[256] = { '\0' };
   g_snprintf(wave_availability, 256, "<span style='italic' color='#0000AA'>%s</span>",
-      _("Wave preview is only available if the amplitude wave is ticked in the player"));
+      _("Wave preview is only available if the amplitude wave was ticked in the player"));
   gtk_label_set_markup(GTK_LABEL(wave_preview_label), wave_availability);
   gtk_box_pack_start(GTK_BOX(label_hbox), wave_preview_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 4);
