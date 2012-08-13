@@ -76,6 +76,21 @@ void select_split_mode(int split_mode, ui_state *ui)
   }
 }
 
+gint get_selected_split_mode_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint selected_split_mode = ui->status->selected_split_mode;
+  g_mutex_unlock(&ui->variables_mutex);
+  return selected_split_mode;
+}
+
+void set_selected_split_mode_safe(gint value, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  ui->status->selected_split_mode = value;
+  g_mutex_unlock(&ui->variables_mutex);
+}
+
 static void deactivate_silence_parameters(gui_state *gui)
 {
   gtk_widget_set_sensitive(gui->all_spinner_silence_number_tracks, FALSE);
@@ -122,7 +137,7 @@ static void activate_trim_parameters(gui_state *gui)
 static void split_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
 {
   gint selected_split_mode = get_selected_split_mode(radio_b);
-  ui->status->selected_split_mode = selected_split_mode;
+  set_selected_split_mode_safe(selected_split_mode, ui);
 
   int enable_time = (selected_split_mode == SELECTED_SPLIT_TIME);
   gtk_widget_set_sensitive(ui->gui->spinner_time, enable_time);

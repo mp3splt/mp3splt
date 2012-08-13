@@ -49,8 +49,9 @@
  */
 void update_output_options(ui_state *ui)
 {
-  ui->status->filename_to_split = get_input_filename(ui->gui);
-  mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
+  g_mutex_lock(&ui->variables_mutex);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
+  g_mutex_unlock(&ui->variables_mutex);
 
   if (get_checked_output_radio_box(ui) == 0)
   {
@@ -64,8 +65,6 @@ void update_output_options(ui_state *ui)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
 }
 
 /*! Update the ui->mp3splt_state structure
@@ -106,13 +105,13 @@ void put_options_from_preferences(ui_state *ui)
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_FALSE);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
 
-  if (ui->infos->split_file_mode == FILE_MODE_SINGLE)
+  if (get_split_file_mode_safe(ui) == FILE_MODE_SINGLE)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
   }
   else
   {
-    switch (ui->status->selected_split_mode)
+    switch (get_selected_split_mode_safe(ui))
     {
       case SELECTED_SPLIT_NORMAL:
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
@@ -199,8 +198,6 @@ void put_options_from_preferences(ui_state *ui)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_FORCE_TAGS_VERSION, 12);
   }
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, 
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gui->create_dirs_from_output_files)));

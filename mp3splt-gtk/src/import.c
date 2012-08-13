@@ -93,6 +93,7 @@ void import_file(gchar *filename, ui_state *ui)
   gchar *ext = strrchr(filename, '.');
   GString *ext_str = g_string_new(ext);
 
+  g_mutex_lock(&ui->import_file_mutex);
   if (ui->infos->file_to_import)
   {
     g_free(ui->infos->file_to_import);
@@ -104,22 +105,25 @@ void import_file(gchar *filename, ui_state *ui)
   if ((strstr(ext_str->str, ".MP3") != NULL) ||
       (strstr(ext_str->str, ".OGG") != NULL))
   {
+    g_mutex_unlock(&ui->import_file_mutex);
     file_chooser_ok_event(filename, ui);
     remove_status_message(ui->gui);
   }
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {
-    update_output_options(ui);
-    create_thread((GThreadFunc)add_cue_splitpoints, ui, TRUE, NULL);
+    create_thread((GThreadFunc)add_cue_splitpoints, ui);
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
   {
-    update_output_options(ui);
-    create_thread((GThreadFunc)add_cddb_splitpoints, ui, TRUE, NULL);
+    create_thread((GThreadFunc)add_cddb_splitpoints, ui);
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
-    create_thread((GThreadFunc)add_audacity_labels_splitpoints, ui, TRUE, NULL);
+    create_thread((GThreadFunc)add_audacity_labels_splitpoints, ui);
+  }
+  else
+  {
+    g_mutex_unlock(&ui->import_file_mutex);
   }
 
   if (ext_str)
@@ -227,18 +231,10 @@ static void build_import_filter(GtkFileChooser *chooser,
   *filters = g_list_append(*filters, filter);
 }
 
-/*! Add splitpoints from audacity
-
-data pointer will be freed by g_free() after doung this.
-*/
-static gpointer add_audacity_labels_splitpoints(ui_state *ui)
+static gboolean add_audacity_labels_splitpoints_end(ui_with_err *ui_err)
 {
-  gchar *filename = ui->infos->file_to_import;
-
-  gint err = SPLT_OK;
-  mp3splt_put_audacity_labels_splitpoints_from_file(ui->mp3splt_state, filename, &err);
-
-  enter_threads();
+  ui_state *ui = ui_err->ui;
+  gint err = ui_err->err;
 
   if (err >= 0)
   {
@@ -247,59 +243,130 @@ static gpointer add_audacity_labels_splitpoints(ui_state *ui)
 
   print_status_bar_confirmation(err, ui);
 
-  exit_threads();
+  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+static gpointer add_audacity_labels_splitpoints(ui_state *ui)
+{
+  gchar *filename = strdup(ui->infos->file_to_import);
+  g_mutex_unlock(&ui->import_file_mutex);
+
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  gint err = SPLT_OK;
+
+  mp3splt_put_audacity_labels_splitpoints_from_file(ui->mp3splt_state, filename, &err);
+  g_free(filename);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->ui = ui;
+  ui_err->err = err;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_audacity_labels_splitpoints_end,
+      ui_err, NULL);
 
   return NULL;
+}
+
+static gboolean add_cddb_splitpoints_end(ui_with_err *ui_err)
+{
+  ui_state *ui = ui_err->ui;
+  gint err = ui_err->err;
+
+  if (err >= 0)
+  {
+    update_splitpoints_from_mp3splt_state(ui);
+  }
+
+  print_status_bar_confirmation(err, ui);
+
+  g_mutex_unlock(&ui->only_one_thread_mutex);
+
+  g_free(ui_err);
+
+  return FALSE;
 }
 
 //! Add splitpoints from cddb
 static gpointer add_cddb_splitpoints(ui_state *ui)
 {
-  gchar *filename = ui->infos->file_to_import;
+  gchar *filename = strdup(ui->infos->file_to_import);
+  g_mutex_unlock(&ui->import_file_mutex);
+
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  enter_threads();
+  update_output_options(ui);
+  exit_threads();
 
   gint err = SPLT_OK;
   mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, &err);
+  g_free(filename);
 
-  enter_threads();
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->ui = ui;
+  ui_err->err = err;
 
-  if (err >= 0)
-  {
-    update_splitpoints_from_mp3splt_state(ui);
-  }
-  print_status_bar_confirmation(err, ui);
-
-  exit_threads();
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_cddb_splitpoints_end,
+      ui_err, NULL);
 
   return NULL;
 }
 
-//! Add splitpoints from cue file
-static gpointer add_cue_splitpoints(ui_state *ui)
+static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
 {
-  gchar *filename = ui->infos->file_to_import;
+  ui_state *ui = ui_err->ui;
 
-  gint err = SPLT_OK;
-  mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
-  mp3splt_put_cue_splitpoints_from_file(ui->mp3splt_state, filename, &err);
-
-  enter_threads();
-
-  if (err >= 0)
+  if (ui_err->err >= 0)
   {
     update_splitpoints_from_mp3splt_state(ui);
   }
-  print_status_bar_confirmation(err, ui);
+  print_status_bar_confirmation(ui_err->err, ui);
 
-  // The cue file has provided libmp3splt with a input filename.
-  // But since we use the filename from the gui instead we need to set
-  // the value the gui uses, too, which we do in the next line.
+  //The cue file has provided libmp3splt with a input filename.
+  //But since we use the filename from the gui instead we need to set
+  //the value the gui uses, too, which we do in the next line.
   char *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
   if (file_exists(filename_to_split))
   {
     file_chooser_ok_event(filename_to_split, ui);
   }
 
+  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+//! Add splitpoints from cue file
+static gpointer add_cue_splitpoints(ui_state *ui)
+{
+  gchar *filename = strdup(ui->infos->file_to_import);
+  g_mutex_unlock(&ui->import_file_mutex);
+
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  enter_threads();
+  update_output_options(ui);
   exit_threads();
+
+  mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
+
+  gint err = SPLT_OK;
+  mp3splt_put_cue_splitpoints_from_file(ui->mp3splt_state, filename, &err);
+  g_free(filename);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->ui = ui;
+  ui_err->err = err;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_cue_splitpoints_end,
+      ui_err, NULL);
 
   return NULL;
 }

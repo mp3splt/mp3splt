@@ -51,5 +51,8 @@
 void select_split_mode(int split_mode, ui_state *ui);
 GtkWidget *create_special_split_page(ui_state *ui);
 
+gint get_selected_split_mode_safe(ui_state *ui);
+void set_selected_split_mode_safe(gint value, ui_state *ui);
+
 #endif
 

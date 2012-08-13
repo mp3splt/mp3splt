@@ -183,7 +183,6 @@ gint myaudacious_get_volume(ui_state *ui)
 /*!starts audacious with songs
 
   \param list The list of the songs to start audacious with
-  \todo Which format is this list in?
  */
 void myaudacious_start_with_songs(GList *list, ui_state *ui)
 {

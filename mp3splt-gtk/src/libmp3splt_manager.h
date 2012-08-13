@@ -39,5 +39,27 @@ void lmanager_init_and_find_plugins(ui_state *ui);
 void lmanager_put_split_filename(const char *filename, int progress_data, void *data);
 void lmanager_stop_split(ui_state *ui);
 
+typedef struct {
+  ui_state *ui;
+  int progress_type;
+  char *filename_shorted;
+  int current_split;
+  int max_splits;
+  int silence_found_tracks;
+  float silence_db_level;
+  float percent_progress;
+} ui_with_p_bar;
+
+typedef struct {
+  ui_state *ui;
+  char *fname;
+} ui_with_fname;
+
+typedef struct {
+  ui_state *ui;
+  char *message;
+  splt_message_type mess_type;
+} ui_with_message;
+
 #endif
 

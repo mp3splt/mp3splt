@@ -155,8 +155,6 @@ typedef struct {
   gfloat silence_minimum_track_length;
   gboolean silence_remove_silence_between_tracks;
 
-  gint split_files;
-  gint split_table_number;
   gint freedb_table_number;
   gint playlist_tree_number;
   gint multiple_files_tree_number;
@@ -174,8 +172,6 @@ typedef struct {
   gchar *file_to_import;
 
   gint timeout_value;
-
-  gchar *filename_path_of_split;
 } ui_infos;
 
 typedef struct {
@@ -411,7 +407,6 @@ typedef struct {
 
 typedef struct {
   gint splitting;
-  gint quit_main_program;
   gint mouse_on_progress_bar;
   gint currently_compute_douglas_peucker_filters;
   gint show_silence_wave;
@@ -466,10 +461,11 @@ typedef struct {
   gint preview_row;
   gint selected_split_mode;
 
-  gboolean freedb_lock;
   gint should_trim;
 
   gint file_selection_changed;
+
+  gint stop_split;
 } gui_status;
 
 typedef struct {
@@ -483,7 +479,19 @@ typedef struct {
   gui_state *gui;
   gui_status *status;
   player_infos *pi;
+
+  GMutex only_one_thread_mutex;
+
+  GPtrArray *files_to_split;
+
+  GMutex variables_mutex;
+  GMutex import_file_mutex;
 } ui_state;
+
+typedef struct {
+  gint err;
+  ui_state *ui;
+} ui_with_err;
 
 #endif
 

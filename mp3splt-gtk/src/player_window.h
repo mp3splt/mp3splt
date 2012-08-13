@@ -59,7 +59,7 @@
 
 void player_quick_preview(gint splitpoint_to_preview, ui_state *ui);
 void check_update_down_progress_bar(ui_state *ui);
-void cancel_quick_preview_all(gui_status *status);
+void cancel_quick_preview_all(ui_state *ui);
 void cancel_quick_preview(gui_status *status);
 void enable_player_buttons(ui_state *ui);
 void connect_to_player_with_song(gint i, ui_state *ui);
@@ -96,6 +96,21 @@ void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui);
 void adjust_zoom_coeff(ui_infos *infos);
 
 void add_playlist_file(const gchar *name, ui_state *ui);
+
+void set_preview_start_position_safe(gint value, ui_state *ui);
+gint get_preview_start_position_safe(ui_state *ui);
+
+void set_quick_preview_end_splitpoint_safe(gint value, ui_state *ui);
+gint get_quick_preview_end_splitpoint_safe(ui_state *ui);
+
+void set_currently_scanning_for_silence_safe(gint value, ui_state *ui);
+gint get_currently_scanning_for_silence_safe(ui_state *ui);
+
+typedef struct {
+  ui_state *ui;
+  float level;
+  long time;
+} ui_with_time_and_level;
 
 #endif
 

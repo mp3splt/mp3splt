@@ -105,12 +105,18 @@ ui_state *ui_state_new()
   }
 
   ui->splitpoints = g_array_new(FALSE, FALSE, sizeof(Split_point));
+  ui->files_to_split = NULL;
+
+  g_mutex_init(&ui->variables_mutex);
+  g_mutex_init(&ui->import_file_mutex);
 
   ui->status = ui_status_new();
   ui->gui = ui_gui_new();
   ui->pi = ui_player_infos_new();
 
   ui->return_code = EXIT_SUCCESS;
+
+  g_mutex_init(&ui->only_one_thread_mutex);
 
   return ui;
 }
@@ -132,6 +138,10 @@ void ui_state_free(ui_state *ui)
   ui_status_free(&ui->status);
   ui_gui_free(&ui->gui);
   ui_player_infos_free(&ui->pi);
+
+  g_mutex_clear(&ui->only_one_thread_mutex);
+  g_mutex_clear(&ui->variables_mutex);
+  g_mutex_clear(&ui->import_file_mutex);
 
   g_free(ui);
 }
@@ -276,10 +286,9 @@ static void ui_infos_new(ui_state *ui)
   infos->silence_minimum_track_length = SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH;
   infos->silence_remove_silence_between_tracks = FALSE;
 
-  infos->split_files = 0;
-  infos->split_table_number = 0;
   infos->freedb_table_number = 0;
   infos->freedb_selected_id = -1;
+
   infos->playlist_tree_number = 0;
   infos->multiple_files_tree_number = 0;
 
@@ -308,7 +317,6 @@ static gui_status *ui_status_new(ui_state *ui)
   gui_status *status = g_malloc0(sizeof(gui_status));
 
   status->splitting = FALSE;
-  status->quit_main_program = FALSE;
   status->mouse_on_progress_bar = FALSE;
 
   status->currently_compute_douglas_peucker_filters = FALSE;
@@ -364,10 +372,11 @@ static gui_status *ui_status_new(ui_state *ui)
   status->preview_row = 0;
   status->selected_split_mode = SELECTED_SPLIT_NORMAL;
 
-  status->freedb_lock = FALSE;
   status->should_trim = FALSE;
 
   status->file_selection_changed = FALSE;
+
+  status->stop_split = FALSE;
 
   return status;
 }

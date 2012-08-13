@@ -449,6 +449,16 @@ void *splt_tu_get_original_tags_data(splt_state *state)
   return state->original_tags.all_original_tags;
 }
 
+int splt_tu_get_original_tags_last_plugin_used(splt_state *state)
+{
+  return state->original_tags.last_plugin_used;
+}
+
+void splt_tu_set_original_tags_last_plugin_used(splt_state *state, int plugin_used)
+{
+  state->original_tags.last_plugin_used = plugin_used;
+}
+
 splt_tags *splt_tu_get_original_tags_tags(splt_state *state)
 {
   return &state->original_tags.tags;

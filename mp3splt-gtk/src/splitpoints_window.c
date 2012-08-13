@@ -375,17 +375,17 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
 
   //cancel quick preview if necessary
   if (((index == ui->status->preview_start_splitpoint) && stop_preview) ||
-      ((index == ui->status->quick_preview_end_splitpoint) &&
-       (ui->status->quick_preview_end_splitpoint == (ui->infos->splitnumber-1)) && stop_preview))
+      ((index == get_quick_preview_end_splitpoint_safe(ui)) &&
+       (get_quick_preview_end_splitpoint_safe(ui) == (ui->infos->splitnumber-1)) && stop_preview))
   {
-    cancel_quick_preview_all(ui->status);
+    cancel_quick_preview_all(ui);
   }
 
   //if we remove a point at the left of the play preview, move the indexes
   if (index < ui->status->preview_start_splitpoint)
   {
     ui->status->preview_start_splitpoint--;
-    ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+    set_quick_preview_end_splitpoint_safe(ui->status->preview_start_splitpoint + 1, ui);
   }
 
   gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
@@ -514,7 +514,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
         if ((k+1) >= ui->status->preview_start_splitpoint)
         {
           ui->status->preview_start_splitpoint--;
-          ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+          set_quick_preview_end_splitpoint_safe(ui->status->preview_start_splitpoint + 1, ui);
         }
       }
       else
@@ -525,7 +525,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
           if ((k+1) <= ui->status->preview_start_splitpoint)
           {
             ui->status->preview_start_splitpoint++;
-            ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+            set_quick_preview_end_splitpoint_safe(ui->status->preview_start_splitpoint + 1, ui);
           }
         }
         else
@@ -536,7 +536,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
             if ((k+1) > ui->status->preview_start_splitpoint)
             {
               ui->status->preview_start_splitpoint += (k+1) - ui->status->preview_start_splitpoint;
-              ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+              set_quick_preview_end_splitpoint_safe(ui->status->preview_start_splitpoint + 1, ui);
             }
             else
             {
@@ -544,7 +544,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
               if ((k+1) < ui->status->preview_start_splitpoint)
               {
                 ui->status->preview_start_splitpoint -= ui->status->preview_start_splitpoint - (k + 1);
-                ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+                set_quick_preview_end_splitpoint_safe(ui->status->preview_start_splitpoint + 1, ui);
               }
             }
           }
@@ -553,7 +553,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
 
       if (ui->status->preview_start_splitpoint == (ui->infos->splitnumber-1))
       {
-        cancel_quick_preview_all(ui->status);
+        cancel_quick_preview_all(ui);
       }
     }
     else
@@ -563,7 +563,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
       if ((k+1) <= ui->status->preview_start_splitpoint)
       {
         ui->status->preview_start_splitpoint++;
-        ui->status->quick_preview_end_splitpoint = ui->status->preview_start_splitpoint + 1;
+        set_quick_preview_end_splitpoint_safe(ui->status->preview_start_splitpoint + 1, ui);
       }
     }
 
@@ -820,63 +820,13 @@ static void add_row_clicked(GtkWidget *button, ui_state *ui)
   add_row(TRUE, ui);
 }
 
-//!set splitpints from silence detection
-static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
+static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)
 {
-  gint should_trim = ui->status->should_trim; 
+  gint err = ui_err->err;
+  ui_state *ui = ui_err->ui;
 
-  gint err = SPLT_OK;
-
-  enter_threads();
-
-  gtk_widget_set_sensitive(ui->gui->scan_silence_button, FALSE);
-  gtk_widget_set_sensitive(ui->gui->scan_silence_button_player, FALSE);
-  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, FALSE);
-  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button_player, FALSE);
-  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-  ui->status->filename_to_split = get_input_filename(ui->gui);
-  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
-
-  exit_threads();
-
-  mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
-  mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
-
-  if (get_checked_output_radio_box(ui) == 0)
-  {
-    mp3splt_set_oformat(ui->mp3splt_state, format, &err);
-  }
-  if (format)
-  {
-    free(format);
-    format = NULL;
-  }
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
-  mp3splt_set_split_filename_function(ui->mp3splt_state, NULL, ui);
-  int old_split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
-  int old_tags_option = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
-  if (err >= 0)
-  {
-    ui->status->splitting = TRUE;
-    if (should_trim)
-    {
-      mp3splt_set_trim_silence_points(ui->mp3splt_state, &err);
-    }
-    else
-    {
-      mp3splt_set_silence_points(ui->mp3splt_state, &err);
-    }
-    ui->status->splitting = FALSE;
-  }
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, old_tags_option);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_FALSE);
   mp3splt_set_split_filename_function(ui->mp3splt_state, lmanager_put_split_filename, ui);
- 
-  enter_threads();
 
   if (err >= 0)
   {
@@ -891,22 +841,116 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, TRUE);
   gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button_player, TRUE);
 
+  set_is_splitting_safe(FALSE, ui);
+
+  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+static void set_should_trim_safe(gboolean value, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  ui->status->should_trim = value;
+  g_mutex_unlock(&ui->variables_mutex);
+}
+
+static gint get_should_trim_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint should_trim = ui->status->should_trim;
+  g_mutex_unlock(&ui->variables_mutex);
+  return should_trim;
+}
+
+//!set splitpints from silence detection
+static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
+{
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  gint err = SPLT_OK;
+
+  enter_threads();
+
+  gtk_widget_set_sensitive(ui->gui->scan_silence_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->scan_silence_button_player, FALSE);
+  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, FALSE);
+  gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button_player, FALSE);
+  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
+  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
+
+  g_mutex_lock(&ui->variables_mutex);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
+  g_mutex_unlock(&ui->variables_mutex);
+
+  gint checked_output_radio_box = get_checked_output_radio_box(ui);
+
   exit_threads();
 
+  set_is_splitting_safe(TRUE, ui);
+
+  mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
+
+  if (checked_output_radio_box == 0)
+  {
+    mp3splt_set_oformat(ui->mp3splt_state, format, &err);
+  }
+  if (format)
+  {
+    free(format);
+    format = NULL;
+  }
+
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PRETEND_TO_SPLIT, SPLT_TRUE);
+  mp3splt_set_split_filename_function(ui->mp3splt_state, NULL, ui);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, SPLT_TAGS_ORIGINAL_FILE);
+
+  print_status_bar_confirmation_in_idle(err, ui);
+
+  err = SPLT_OK;
+  int old_split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
+  int old_tags_option = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err);
+
+  if (get_should_trim_safe(ui))
+  {
+    mp3splt_set_trim_silence_points(ui->mp3splt_state, &err);
+  }
+  else
+  {
+    mp3splt_set_silence_points(ui->mp3splt_state, &err);
+  }
+
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, old_tags_option);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = err;
+  ui_err->ui = ui;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, 
+      (GSourceFunc)detect_silence_and_set_splitpoints_end, ui_err, NULL);
+
   return NULL;
+}
+
+static void detect_silence_and_set_splitpoints_action(ui_state *ui)
+{
+  create_thread((GThreadFunc)detect_silence_and_set_splitpoints, ui);
 }
 
 //!start thread with 'set splitpints from silence detection'
 static void detect_silence_and_add_splitpoints_start_thread(ui_state *ui)
 {
-  ui->status->should_trim = FALSE;
-  create_thread((GThreadFunc)detect_silence_and_set_splitpoints, ui, TRUE, NULL);
+  set_should_trim_safe(FALSE, ui);
+  detect_silence_and_set_splitpoints_action(ui);
 }
 
 static void detect_silence_and_add_trim_splitpoints_start_thread(ui_state *ui)
 {
-  ui->status->should_trim = TRUE;
-  create_thread((GThreadFunc)detect_silence_and_set_splitpoints, ui, TRUE, NULL);
+  set_should_trim_safe(TRUE, ui);
+  detect_silence_and_set_splitpoints_action(ui);
 }
 
 //!update silence parameters when 'widget' changes
@@ -996,14 +1040,11 @@ void create_trim_silence_window(GtkWidget *button, ui_state *ui)
 
   gint result = gtk_dialog_run(GTK_DIALOG(silence_detection_window));
 
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui->infos->silence_threshold_value);
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-
   gtk_widget_destroy(silence_detection_window);
 
   if (result == GTK_RESPONSE_YES)
   {
+    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui->infos->silence_threshold_value);
     detect_silence_and_add_trim_splitpoints_start_thread(ui);
   }
 }
@@ -1138,25 +1179,23 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
 
   gint result = gtk_dialog_run(GTK_DIALOG(silence_detection_window));
 
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, 
-      infos->silence_threshold_value);
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, 
-      infos->silence_offset_value);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, 
-      infos->silence_number_of_tracks);
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, 
-      infos->silence_minimum_length);
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
-      infos->silence_minimum_track_length);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
-      infos->silence_remove_silence_between_tracks);
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-
   gtk_widget_destroy(silence_detection_window);
 
   if (result == GTK_RESPONSE_YES)
   {
+    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, 
+        infos->silence_threshold_value);
+    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, 
+        infos->silence_offset_value);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, 
+        infos->silence_number_of_tracks);
+    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, 
+        infos->silence_minimum_length);
+    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
+        infos->silence_minimum_track_length);
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
+        infos->silence_remove_silence_between_tracks);
+
     detect_silence_and_add_splitpoints_start_thread(ui);
   }
 }
@@ -1204,7 +1243,7 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->remove_row_button, FALSE);
   
   remove_status_message(ui->gui);
-  cancel_quick_preview_all(ui->status);
+  cancel_quick_preview_all(ui);
   update_add_button(ui);
   refresh_drawing_area(ui->gui);
   check_update_down_progress_bar(ui);
@@ -1361,35 +1400,64 @@ gint get_splitpoint_time(gint splitpoint_index, ui_state *ui)
   return point.mins * 6000 + point.secs * 100 + point.hundr_secs;
 }
 
+static gboolean split_preview_end(ui_with_err *ui_err)
+{
+  gint err = ui_err->err;
+  ui_state *ui = ui_err->ui;
+
+  print_status_bar_confirmation(err, ui);
+
+  gchar *split_file = get_filename_from_split_files(1, ui->gui);
+  if (split_file != NULL && err > 0)
+  {
+    connect_button_event(ui->gui->connect_button, ui);
+
+    change_current_filename(split_file, ui);
+    g_free(split_file);
+
+    //0 means start playing
+    connect_to_player_with_song(0, ui);
+  }
+
+  if (err > 0)
+  {
+    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
+    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
+  }
+
+  g_mutex_unlock(&ui->only_one_thread_mutex);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
 static gpointer split_preview(ui_state *ui)
 {
-  if (ui->status->preview_row + 1 == ui->infos->splitnumber)
-  {
-    enter_threads();
-    put_status_message(_(" cannot split preview last splitpoint"), ui);
-    exit_threads();
-    return NULL;
-  }
+  g_mutex_lock(&ui->only_one_thread_mutex);
 
   int err = 0;
   mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
   mp3splt_erase_all_tags(ui->mp3splt_state, &err);
 
-  mp3splt_append_splitpoint(ui->mp3splt_state, ui->status->preview_start_position,
+  enter_threads();
+
+  mp3splt_append_splitpoint(ui->mp3splt_state, get_preview_start_position_safe(ui),
       "preview", SPLT_SPLITPOINT);
+
   mp3splt_append_splitpoint(ui->mp3splt_state,
-      get_splitpoint_time(ui->status->quick_preview_end_splitpoint, ui),
+      get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui),
       NULL, SPLT_SKIPPOINT);
+
+  g_mutex_lock(&ui->variables_mutex);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
+  g_mutex_unlock(&ui->variables_mutex);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
 
-  enter_threads();
-
   put_options_from_preferences(ui);
-
   remove_all_split_rows(ui);
-  ui->status->filename_to_split = get_input_filename(ui->gui);
 
   exit_threads();
 
@@ -1398,34 +1466,20 @@ static gpointer split_preview(ui_state *ui)
   mp3splt_set_path_of_split(ui->mp3splt_state, fname_path);
   if (fname_path) { g_free(fname_path); }
 
-  mp3splt_set_filename_to_split(ui->mp3splt_state, ui->status->filename_to_split);
-  gint confirmation = mp3splt_split(ui->mp3splt_state);
+  err = mp3splt_split(ui->mp3splt_state);
 
-  enter_threads();
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = err;
+  ui_err->ui = ui;
 
-  print_status_bar_confirmation(confirmation, ui);
-
-  gchar *split_file = get_filename_from_split_files(1, ui->gui);
-  if (split_file != NULL && confirmation > 0)
-  {
-    connect_button_event(ui->gui->connect_button, ui);
-
-    change_current_filename(split_file, ui);
-    g_free(split_file);
-
-    //starts playing, 0 means start playing
-    connect_to_player_with_song(0, ui);
-  }
-
-  if (confirmation > 0)
-  {
-    gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
-    gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
-  }
-
-  exit_threads();
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_preview_end, ui_err, NULL);
 
   return NULL;
+}
+
+static void split_preview_action(ui_state *ui)
+{
+  create_thread((GThreadFunc)split_preview, ui);
 }
 
 //!the row clicked event, preview the song
@@ -1453,9 +1507,16 @@ static void preview_song(GtkTreeView *tree_view, GtkTreePath *path,
   }
   else if (number == COL_SPLIT_PREVIEW)
   {
-    ui->status->preview_start_position = get_splitpoint_time(preview_row, ui);
-    ui->status->quick_preview_end_splitpoint = preview_row + 1;
-    create_thread((GThreadFunc)split_preview, ui, TRUE, NULL);
+    set_preview_start_position_safe(get_splitpoint_time(preview_row, ui), ui);
+    set_quick_preview_end_splitpoint_safe(preview_row + 1, ui);
+
+    if (ui->status->preview_row + 1 == ui->infos->splitnumber)
+    {
+      put_status_message(_(" cannot split preview last splitpoint"), ui);
+      return;
+    }
+
+    split_preview_action(ui);
   }
 }
 
@@ -1710,9 +1771,7 @@ void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui)
       splitpoint_type = SPLT_SKIPPOINT;
     }
 
-    exit_threads();
     mp3splt_append_splitpoint(state,hundr[i], description, splitpoint_type);
-    enter_threads();
 
     gtk_tree_path_free(path);
   }

@@ -53,16 +53,11 @@ static void draw_small_rectangle(gint time_left, gint time_right,
     GdkColor color, cairo_t *cairo_surface, ui_state *ui);
 static gint mytimer(ui_state *ui);
 
-//!function called from the library when scanning for the silence level
-void get_silence_level(long time, float level, void *user_data)
+static gboolean get_silence_level_idle(ui_with_time_and_level *ui_time_level)
 {
-  ui_state *ui = (ui_state *) user_data;
-
-  gint converted_level = (gint)floorf(abs(level));
-  if (converted_level < 0)
-  {
-    return;
-  }
+  ui_state *ui = ui_time_level->ui;
+  float level = ui_time_level->level;
+  long time = ui_time_level->time;
 
   if (!ui->infos->silence_points)
   {
@@ -80,6 +75,30 @@ void get_silence_level(long time, float level, void *user_data)
   ui->infos->silence_points[ui->infos->number_of_silence_points].level = abs(level);
 
   ui->infos->number_of_silence_points++;
+
+  g_free(ui_time_level);
+
+  return FALSE;
+}
+
+//!function called from the library when scanning for the silence level
+static void get_silence_level(long time, float level, void *user_data)
+{
+  ui_state *ui = (ui_state *)user_data;
+
+  gint converted_level = (gint)floorf(abs(level));
+  if (converted_level < 0)
+  {
+    return;
+  }
+
+  ui_with_time_and_level *ui_time_level = g_malloc0(sizeof(ui_with_time_and_level));
+  ui_time_level->ui = ui;
+  ui_time_level->level = level;
+  ui_time_level->time = time;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)get_silence_level_idle, ui_time_level, NULL);
 }
 
 static GArray *build_gdk_points_for_douglas_peucker(ui_infos *infos)
@@ -124,7 +143,7 @@ static void douglas_peucker_callback(ui_state *ui)
 
 void compute_douglas_peucker_filters(ui_state *ui)
 {
-  if (!ui->status->show_silence_wave)
+  if (!ui->status->show_silence_wave || ui->status->currently_compute_douglas_peucker_filters)
   {
     return;
   }
@@ -132,8 +151,9 @@ void compute_douglas_peucker_filters(ui_state *ui)
   ui_infos *infos = ui->infos;
   gui_status *status = ui->status;
 
-  status->douglas_callback_counter = 0;
   status->currently_compute_douglas_peucker_filters = TRUE;
+
+  status->douglas_callback_counter = 0;
 
   GArray *gdk_points_for_douglas_peucker = build_gdk_points_for_douglas_peucker(infos);
 
@@ -147,63 +167,90 @@ void compute_douglas_peucker_filters(ui_state *ui)
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
 
-  status->currently_compute_douglas_peucker_filters = FALSE;
-
   check_update_down_progress_bar(ui);
+
+  status->currently_compute_douglas_peucker_filters = FALSE;
 }
 
-static gpointer detect_silence(ui_state *ui)
+void set_currently_scanning_for_silence_safe(gint value, ui_state *ui)
 {
-  ui_infos *infos = ui->infos;
-  gui_status *status = ui->status;
+  g_mutex_lock(&ui->variables_mutex);
+  ui->status->currently_scanning_for_silence = value;
+  g_mutex_unlock(&ui->variables_mutex);
+}
 
-  if (status->currently_scanning_for_silence || status->currently_compute_douglas_peucker_filters)
-  {
-    return;
-  }
+gint get_currently_scanning_for_silence_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint currently_scanning_for_silence = ui->status->currently_scanning_for_silence;
+  g_mutex_unlock(&ui->variables_mutex);
 
-  gint err = SPLT_OK;
+  return currently_scanning_for_silence;
+}
 
-  if (infos->silence_points)
-  {
-    g_free(infos->silence_points);
-    infos->silence_points = NULL;
-    infos->number_of_silence_points = 0;
-  }
-
-  enter_threads();
-
-  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-  status->filename_to_split = get_input_filename(ui->gui);
-
-  exit_threads();
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  mp3splt_set_filename_to_split(ui->mp3splt_state, status->filename_to_split);
-
-  mp3splt_set_silence_level_function(ui->mp3splt_state, get_silence_level, ui);
-  status->splitting = TRUE;
-  status->currently_scanning_for_silence = TRUE;
-
-  mp3splt_set_silence_points(ui->mp3splt_state, &err);
+static gboolean detect_silence_end(ui_with_err *ui_err)
+{
+  ui_state *ui = ui_err->ui;
 
   mp3splt_set_silence_level_function(ui->mp3splt_state, NULL, NULL);
-  status->splitting = FALSE;
-  status->currently_scanning_for_silence = FALSE;
 
-  enter_threads();
+  set_is_splitting_safe(FALSE, ui);
+  set_currently_scanning_for_silence_safe(FALSE, ui);
 
   compute_douglas_peucker_filters(ui);
 
-  print_status_bar_confirmation(err, ui);
+  print_status_bar_confirmation(ui_err->err, ui);
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
 
   refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas(ui->gui);
 
+  g_mutex_unlock(&ui_err->ui->only_one_thread_mutex);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+static gpointer detect_silence(ui_state *ui)
+{
+  g_mutex_lock(&ui->only_one_thread_mutex);
+
+  set_is_splitting_safe(TRUE, ui);
+  set_currently_scanning_for_silence_safe(TRUE, ui);
+
+  if (ui->infos->silence_points)
+  {
+    g_free(ui->infos->silence_points);
+    ui->infos->silence_points = NULL;
+    ui->infos->number_of_silence_points = 0;
+  }
+
+  enter_threads();
+  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   exit_threads();
 
+  g_mutex_lock(&ui->variables_mutex);
+  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
+  g_mutex_unlock(&ui->variables_mutex);
+
+  mp3splt_set_silence_level_function(ui->mp3splt_state, get_silence_level, ui);
+
+  gint err = SPLT_OK;
+  mp3splt_set_silence_points(ui->mp3splt_state, &err);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = err;
+  ui_err->ui = ui;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)detect_silence_end, ui_err, NULL);
+
   return NULL;
+}
+
+static void detect_silence_action(ui_state *ui)
+{
+  create_thread((GThreadFunc)detect_silence, ui);
 }
 
 /*! Initialize scanning for silence in the background.
@@ -212,14 +259,14 @@ static gpointer detect_silence(ui_state *ui)
  */
 static void scan_for_silence_wave(ui_state *ui)
 {
-  if (ui->status->currently_scanning_for_silence)
+  if (get_currently_scanning_for_silence_safe(ui))
   {
     cancel_button_event(ui->gui->cancel_button, ui);
   }
 
   if (ui->status->timer_active)
   {
-    create_thread((GThreadFunc)detect_silence, ui, TRUE, NULL);
+    detect_silence_action(ui);
   }
 }
 
@@ -624,7 +671,7 @@ void disconnect_button_event(GtkWidget *widget, ui_state *ui)
   disable_player_buttons(gui);
 
   //update bottom progress bar to 0 and ""
-  if (!ui->status->splitting)
+  if (!get_is_splitting_safe(ui))
   {
     gtk_progress_bar_set_fraction(gui->percent_progress_bar, 0);
     gtk_progress_bar_set_text(gui->percent_progress_bar, "");
@@ -639,7 +686,7 @@ void disconnect_button_event(GtkWidget *widget, ui_state *ui)
 
   player_quit(ui);
 
-  if (ui->status->currently_scanning_for_silence)
+  if (get_currently_scanning_for_silence_safe(ui))
   {
     cancel_button_event(ui->gui->cancel_button, ui);
   }
@@ -764,26 +811,15 @@ static void toggle_show_silence_wave(GtkToggleButton *show_silence_toggle_button
   if (gtk_toggle_button_get_active(show_silence_toggle_button))
   {
     status->show_silence_wave = TRUE;
-    if (infos->number_of_silence_points == 0)
-    {
-      scan_for_silence_wave(ui);
-    }
-
+    scan_for_silence_wave(ui);
     return;
   }
 
   status->show_silence_wave = FALSE;
-  if (ui->status->currently_scanning_for_silence)
+  if (get_currently_scanning_for_silence_safe(ui))
   {
     cancel_button_event(ui->gui->cancel_button, ui);
   }
-
-  if (infos->silence_points != NULL)
-  {
-    g_free(infos->silence_points);
-    infos->silence_points = NULL;
-  }
-  infos->number_of_silence_points = 0;
 
   refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas(ui->gui);
@@ -1057,8 +1093,8 @@ void refresh_drawing_area(gui_state *gui)
 //!updates bottom progress bar
 void check_update_down_progress_bar(ui_state *ui)
 {
-  if (ui->status->splitting || 
-      ui->status->currently_scanning_for_silence ||
+  if (get_is_splitting_safe(ui) ||
+      get_currently_scanning_for_silence_safe(ui) ||
       ui->status->currently_compute_douglas_peucker_filters)
   {
     return;
@@ -1145,16 +1181,10 @@ void check_update_down_progress_bar(ui_state *ui)
     {
       gchar *fname = get_input_filename(ui->gui);
       g_snprintf(description_shorted, 60, "%s", get_real_name_from_filename(fname));
-      if (fname != NULL && strlen(fname) > 60)
-      {
-        description_shorted[strlen(description_shorted)-1] = '.';
-        description_shorted[strlen(description_shorted)-2] = '.';
-        description_shorted[strlen(description_shorted)-3] = '.';
-      }
     }
   }
 
-  if (progress_description != NULL && strlen(progress_description) > 60)
+  if (strlen(description_shorted) > 3)
   {
     description_shorted[strlen(description_shorted)-1] = '.';
     description_shorted[strlen(description_shorted)-2] = '.';
@@ -1168,11 +1198,6 @@ void check_update_down_progress_bar(ui_state *ui)
 //!event when the progress bar value changed
 static void progress_bar_value_changed_event(GtkRange *range, ui_state *ui)
 {
-  if (ui->status->currently_compute_douglas_peucker_filters)
-  {
-    return;
-  }
-
   refresh_drawing_area(ui->gui);
 
   ui_infos *infos = ui->infos;
@@ -1331,14 +1356,28 @@ static void change_volume_button(ui_state *ui)
   gtk_scale_button_set_value(GTK_SCALE_BUTTON(ui->gui->volume_button), volume / 100.0);
 }
 
+void set_quick_preview_end_splitpoint_safe(gint value, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  ui->status->quick_preview_end_splitpoint = value;
+  g_mutex_unlock(&ui->variables_mutex);
+}
+
+gint get_quick_preview_end_splitpoint_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint quick_preview_end_splitpoint = ui->status->quick_preview_end_splitpoint;
+  g_mutex_unlock(&ui->variables_mutex);
+  return quick_preview_end_splitpoint;
+}
+
 //!progress bar synchronisation with player
 static void change_progress_bar(ui_state *ui)
 {
   gui_status *status = ui->status;
   ui_infos *infos = ui->infos;
 
-  if (!player_is_running(ui) || status->mouse_on_progress_bar || 
-      ui->status->splitting)
+  if (!player_is_running(ui) || status->mouse_on_progress_bar)
   {
     refresh_drawing_area(ui->gui);
     return;
@@ -1355,7 +1394,7 @@ static void change_progress_bar(ui_state *ui)
 
   infos->current_time = get_elapsed_time(ui);
 
-  gint stop_splitpoint = get_splitpoint_time(status->quick_preview_end_splitpoint, ui);
+  gint stop_splitpoint = get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui);
   gint start_splitpoint = get_splitpoint_time(status->preview_start_splitpoint, ui);
   if ((stop_splitpoint < (gint)(infos->current_time-150)) ||
       (start_splitpoint > (gint)(infos->current_time+150)))
@@ -1527,11 +1566,11 @@ static void draw_marks(gint time_interval, gint left_mark,
 }
 
 //!full cancel of the quick preview
-void cancel_quick_preview_all(gui_status *status)
+void cancel_quick_preview_all(ui_state *ui)
 {
-  cancel_quick_preview(status);
-  status->quick_preview_end_splitpoint = -1;
-  status->preview_start_splitpoint = -1;
+  cancel_quick_preview(ui->status);
+  set_quick_preview_end_splitpoint_safe(-1, ui);
+  ui->status->preview_start_splitpoint = -1;
 }
 
 //!cancels quick preview
@@ -1777,6 +1816,11 @@ static gint get_silence_filtered_presence_index(gfloat draw_time, ui_infos *info
 
 static gint point_is_filtered(gint index, gint filtered_index, ui_infos *infos)
 {
+  if (!infos->filtered_points_presence)
+  {
+    return TRUE;
+  }
+
   GArray *points_presence = g_ptr_array_index(infos->filtered_points_presence, filtered_index);
   return !g_array_index(points_presence, gint, index);
 }
@@ -1831,10 +1875,15 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, 
     GtkWidget *da, cairo_t *gc, ui_state *ui)
 {
+  if (ui->status->currently_compute_douglas_peucker_filters ||
+      get_currently_scanning_for_silence_safe(ui))
+  {
+    return -1;
+  }
+
   GdkColor color;
 
-  if (!ui->infos->silence_points || ui->status->currently_scanning_for_silence || 
-      ui->status->currently_compute_douglas_peucker_filters)
+  if (!ui->infos->silence_points)
   {
     color.red = 0;color.green = 0;color.blue = 0;
     dh_set_color(gc, &color);
@@ -2099,11 +2148,11 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
   dh_set_color(gc, &color);
 
   //if it's the first splitpoint from play preview
-  if (status->quick_preview_end_splitpoint != -1)
+  if (get_quick_preview_end_splitpoint_safe(ui) != -1)
   {
     gint right_pixel =
       convert_time_to_pixels(infos->width_drawing_area,
-          get_splitpoint_time(status->quick_preview_end_splitpoint, ui),
+          get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui),
           infos->current_time, infos->total_time, infos->zoom_coeff);
     gint left_pixel =
       convert_time_to_pixels(infos->width_drawing_area,
@@ -2436,6 +2485,22 @@ static gint get_splitpoint_clicked(gint button_y, gint type_clicked, gint type, 
   return -1;
 }
 
+void set_preview_start_position_safe(gint value, ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  ui->status->preview_start_position = value;
+  g_mutex_unlock(&ui->variables_mutex);
+}
+
+gint get_preview_start_position_safe(ui_state *ui)
+{
+  g_mutex_lock(&ui->variables_mutex);
+  gint preview_start_position = ui->status->preview_start_position;
+  g_mutex_unlock(&ui->variables_mutex);
+
+  return preview_start_position;
+}
+
 //!makes a quick preview of the song
 void player_quick_preview(gint splitpoint_to_preview, ui_state *ui)
 {
@@ -2446,7 +2511,7 @@ void player_quick_preview(gint splitpoint_to_preview, ui_state *ui)
 
   gui_status *status = ui->status;
 
-  status->preview_start_position = get_splitpoint_time(splitpoint_to_preview, ui);
+  set_preview_start_position_safe(get_splitpoint_time(splitpoint_to_preview, ui), ui);
   status->preview_start_splitpoint = splitpoint_to_preview;
 
   if (!player_is_playing(ui))
@@ -2462,26 +2527,26 @@ void player_quick_preview(gint splitpoint_to_preview, ui_state *ui)
 
   if (splitpoint_to_preview < ui->infos->splitnumber-1)
   {
-    status->quick_preview_end_splitpoint = splitpoint_to_preview + 1;
+    set_quick_preview_end_splitpoint_safe(splitpoint_to_preview + 1, ui);
   }
   else
   {
-    status->quick_preview_end_splitpoint = -1;
+    set_quick_preview_end_splitpoint_safe(-1, ui);
   }
 
-  player_seek(status->preview_start_position * 10, ui);
+  player_seek(get_preview_start_position_safe(ui) * 10, ui);
   change_progress_bar(ui);
   put_status_message(_(" quick preview..."), ui);
 
   status->quick_preview = FALSE;
-  if (status->quick_preview_end_splitpoint != -1)
+  if (get_quick_preview_end_splitpoint_safe(ui) != -1)
   {
     status->quick_preview = TRUE;
   }
 
   if (status->preview_start_splitpoint == (ui->infos->splitnumber-1))
   {
-    cancel_quick_preview_all(status);
+    cancel_quick_preview_all(ui);
   }
 }
 
@@ -2613,24 +2678,24 @@ static gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, ui_state 
       change_progress_bar(ui);
 
       //if more than 2 splitpoints & outside the split preview, cancel split preview
-      if (status->quick_preview_end_splitpoint == -1)
+      if (get_quick_preview_end_splitpoint_safe(ui) == -1)
       {
         if (status->move_time < get_splitpoint_time(status->preview_start_splitpoint, ui))
         {
-          cancel_quick_preview_all(status);
+          cancel_quick_preview_all(ui);
         }
       }
       else
       {
         if ((status->move_time < get_splitpoint_time(status->preview_start_splitpoint, ui)) ||
-            (status->move_time > get_splitpoint_time(status->quick_preview_end_splitpoint,ui)))
+            (status->move_time > get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui),ui)))
         {
-          cancel_quick_preview_all(status);
+          cancel_quick_preview_all(ui);
         }
         else
         {
           //if don't have a preview with the last splitpoint
-          if (status->quick_preview_end_splitpoint != -1)
+          if (get_quick_preview_end_splitpoint_safe(ui) != -1)
           {
             if (player_is_paused(ui))
             {
@@ -3114,11 +3179,6 @@ Examples are the elapsed time and if it uses variable bitrate
 */
 static gint mytimer(ui_state *ui)
 {
-  if (ui->status->currently_compute_douglas_peucker_filters)
-  {
-    return TRUE;
-  }
-
   ui_infos *infos = ui->infos;
   gui_state *gui = ui->gui;
   gui_status *status = ui->status;
@@ -3174,13 +3234,13 @@ static gint mytimer(ui_state *ui)
         //previewed one, update quick_preview_end
         if (status->preview_start_splitpoint + 1 < infos->splitnumber)
         {
-          status->quick_preview_end_splitpoint = status->preview_start_splitpoint+1;
+          set_quick_preview_end_splitpoint_safe(status->preview_start_splitpoint + 1, ui);
         }
         else
         {
           if (status->preview_start_splitpoint + 1 == infos->splitnumber)
           {
-            status->quick_preview_end_splitpoint = -1;
+            set_quick_preview_end_splitpoint_safe(-1, ui);
           }
         }
       }
@@ -3188,10 +3248,10 @@ static gint mytimer(ui_state *ui)
       //if we have a preview, stop if needed
       if (status->quick_preview)
       {
-        gint stop_splitpoint = get_splitpoint_time(status->quick_preview_end_splitpoint, ui);
+        gint stop_splitpoint = get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui);
 
         if ((stop_splitpoint < (gint)infos->current_time)
-            && (status->quick_preview_end_splitpoint != -1))
+            && (get_quick_preview_end_splitpoint_safe(ui) != -1))
         {
           gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->pause_button), TRUE);
           cancel_quick_preview(status);

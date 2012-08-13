@@ -566,7 +566,7 @@ void save_preferences(ui_state *ui)
       get_checked_tags_version_radio_box(ui->gui));
 
   //type of split: split mode
-  g_key_file_set_integer(my_key_file, "split", "split_mode", ui->status->selected_split_mode);
+  g_key_file_set_integer(my_key_file, "split", "split_mode", get_selected_split_mode_safe(ui));
   //time value
   g_key_file_set_integer(my_key_file, "split", "split_mode_time_value",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(ui->gui->spinner_time)));

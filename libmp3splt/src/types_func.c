@@ -78,6 +78,7 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   splt_original_tags *original_tags = &state->original_tags;
   splt_tu_reset_tags(&original_tags->tags);
   original_tags->all_original_tags = NULL;
+  original_tags->last_plugin_used = -100;
 
   splt_w_set_wrap_default_values(state);
   splt_se_set_sync_errors_default_values(state);

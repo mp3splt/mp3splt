@@ -498,9 +498,6 @@ static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
   splt_tp_get_original_tags(state, error);
   if (*error < 0) { goto end; }
 
-  int err = splt_tu_append_original_tags(state);
-  if (err < 0) { *error = err; goto end; }
-
   if (tpu->set_all_tags)
   {
     splt_tags last_tags = splt_tu_get_last_tags(state);
@@ -531,6 +528,9 @@ static void splt_tp_get_original_tags(splt_state *state, int *error)
   if (*error < 0) { return; }
 
   splt_tu_get_original_tags(state, error);
+
+  int err = splt_tu_append_original_tags(state);
+  if (err < 0) { *error = err; }
 
   splt_p_end(state, error);
 
