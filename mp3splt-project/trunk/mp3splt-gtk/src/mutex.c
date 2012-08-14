@@ -34,21 +34,21 @@
 
 void init_mutex(SPLT_MUTEX *mutex)
 {
-  g_mutex_init(mutex);
+  g_static_mutex_init(mutex);
 }
 
 void clear_mutex(SPLT_MUTEX *mutex)
 {
-  g_mutex_clear(mutex);
+  g_static_mutex_free(mutex);
 }
 
 void lock_mutex(SPLT_MUTEX *mutex)
 {
-  g_mutex_lock(mutex);
+  g_static_mutex_lock(mutex);
 }
 
 void unlock_mutex(SPLT_MUTEX *mutex)
 {
-  g_mutex_unlock(mutex);
+  g_static_mutex_unlock(mutex);
 }
 
