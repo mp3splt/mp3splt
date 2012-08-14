@@ -468,7 +468,7 @@ typedef struct {
   gint stop_split;
 } gui_status;
 
-#define SPLT_MUTEX GMutex
+#define SPLT_MUTEX GStaticMutex
 
 typedef struct {
   gint return_code;

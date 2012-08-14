@@ -94,7 +94,7 @@ echo -n "Formatting language files with msgfmt... " && \
       echo -n "Running glibtoolize (in case we use the cutter testing framework) ... "
       glibtoolize -c --force
     else
-      echo -n "Running glibtoolize (in case we use the cutter testing framework) ... "
+      echo -n "Running libtoolize (in case we use the cutter testing framework) ... "
       libtoolize -c --force
     fi
 } && echo "done"
