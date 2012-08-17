@@ -43,9 +43,11 @@
 
 void split_action(ui_state *ui);
 GThread *create_thread(GThreadFunc func, ui_state *ui);
+GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname);
 void enter_threads();
 void exit_threads();
-void exit_application(GtkWidget *widget, gpointer data);
+gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data);
+void exit_application_bis(GtkWidget *widget, gpointer data);
 
 #define MP3SPLT_GTK_DATE "15/07/12"
 

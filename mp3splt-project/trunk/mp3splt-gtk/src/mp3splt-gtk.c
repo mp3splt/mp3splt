@@ -46,10 +46,13 @@ static gboolean collect_files_to_split(ui_state *ui);
 
 void split_action(ui_state *ui)
 {
+  set_is_splitting_safe(TRUE, ui);
   if (!collect_files_to_split(ui))
   {
+    set_is_splitting_safe(FALSE, ui);
     return;
   }
+  set_is_splitting_safe(FALSE, ui);
 
   create_thread((GThreadFunc)split_collected_files, ui);
 }
@@ -118,7 +121,7 @@ static gboolean split_collected_files_end(ui_with_err *ui_err)
 
   set_is_splitting_safe(FALSE, ui);
 
-  unlock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
 
   g_free(ui_err);
 
@@ -136,7 +139,7 @@ static gint get_stop_split_safe(ui_state *ui)
 //! Split the file
 static gpointer split_collected_files(ui_state *ui)
 {
-  lock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(TRUE, ui);
 
   enter_threads();
 
@@ -151,8 +154,6 @@ static gpointer split_collected_files(ui_state *ui)
   }
 
   exit_threads();
-
-  set_is_splitting_safe(TRUE, ui);
 
   gint split_file_mode = get_split_file_mode_safe(ui);
 
@@ -255,19 +256,26 @@ GThread *create_thread(GThreadFunc func, ui_state *ui)
   return g_thread_create(func, ui, TRUE, NULL);
 }
 
+GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname)
+{
+  mp3splt_set_int_option(ui_fname->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_fname->ui->infos->debug_is_active);
+  return g_thread_create(func, ui_fname, TRUE, NULL);
+}
+
 void enter_threads()
 {
-	gdk_threads_enter();
+  gdk_threads_enter();
 }
 
 void exit_threads()
 {
-	gdk_threads_leave();
+  gdk_threads_leave();
 }
 
-//close the window and exit button function
-void exit_application(GtkWidget *widget, gpointer data)
+gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data)
 {
+  ui_state *ui = (ui_state *)data;
+
   ui_save_preferences(NULL, ui);
 
   if (get_is_splitting_safe(ui))
@@ -284,13 +292,19 @@ void exit_application(GtkWidget *widget, gpointer data)
   gtk_main_quit();
 }
 
+void exit_application_bis(GtkWidget *widget, gpointer data)
+{
+  exit_application(widget, NULL, data);
+}
+
+
 static gboolean sigint_called = FALSE;
 static void sigint_handler(gint sig)
 {
   if (!sigint_called)
   {
     sigint_called = TRUE;
-    exit_application(NULL, ui);
+    exit_application(NULL, NULL, ui);
   }
 }
 

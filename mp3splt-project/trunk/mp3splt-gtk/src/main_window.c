@@ -383,6 +383,43 @@ gint get_is_splitting_safe(ui_state *ui)
   return is_splitting;
 }
 
+void set_process_in_progress_and_wait_safe(gboolean value, ui_state *ui)
+{
+  if (value == TRUE)
+  {
+    while (get_process_in_progress_safe(ui))
+    {
+      g_usleep(G_USEC_PER_SEC / 4);
+    }
+  }
+
+  set_process_in_progress_safe(value, ui);
+}
+
+void set_process_in_progress_safe(gboolean value, ui_state *ui)
+{
+#ifdef __WIN32__
+  lock_mutex(&ui->variables_mutex);
+  if (value)
+  {
+    ui->status->process_in_progress++;
+  }
+  else
+  {
+    ui->status->process_in_progress--;
+  }
+  unlock_mutex(&ui->variables_mutex);
+#endif
+}
+
+gint get_process_in_progress_safe(ui_state *ui)
+{
+  lock_mutex(&ui->variables_mutex);
+  gint process_in_progress = ui->status->process_in_progress;
+  unlock_mutex(&ui->variables_mutex);
+  return process_in_progress > 0;
+}
+
 //!event for the split button
 void split_button_event(GtkWidget *widget, ui_state *ui)
 {
@@ -704,7 +741,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
       G_CALLBACK(batch_file_mode_split_button_event) },
 
     { "Quit", GTK_STOCK_QUIT, N_("_Quit"), "<Ctrl>Q", N_("Quit"),
-      G_CALLBACK(exit_application) },
+      G_CALLBACK(exit_application_bis) },
 
 #ifndef NO_GNOME
     { "Contents", GTK_STOCK_HELP, N_("_Contents"), "F1", N_("Contents"),

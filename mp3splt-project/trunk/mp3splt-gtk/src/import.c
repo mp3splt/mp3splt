@@ -44,9 +44,9 @@ static void build_import_filter(GtkFileChooser *chooser,
     const gchar *filter_name, const gchar *filter_pattern,
     const gchar *filter_pattern_upper, 
     GList **filters, GtkFileFilter *all_filter);
-static gpointer add_audacity_labels_splitpoints(ui_state *ui);
-static gpointer add_cddb_splitpoints(ui_state *ui);
-static gpointer add_cue_splitpoints(ui_state *ui);
+static gpointer add_audacity_labels_splitpoints(ui_with_fname *ui_fname);
+static gpointer add_cddb_splitpoints(ui_with_fname *ui_fname);
+static gpointer add_cue_splitpoints(ui_with_fname *ui_fname);
 
 //! What happens if the "Import" button is pressed
 void import_event(GtkWidget *widget, ui_state *ui)
@@ -93,37 +93,34 @@ void import_file(gchar *filename, ui_state *ui)
   gchar *ext = strrchr(filename, '.');
   GString *ext_str = g_string_new(ext);
 
-  lock_mutex(&ui->import_file_mutex);
-  if (ui->infos->file_to_import)
-  {
-    g_free(ui->infos->file_to_import);
-  }
-  ui->infos->file_to_import = strdup(filename);
-
   g_string_ascii_up(ext_str);
 
   if ((strstr(ext_str->str, ".MP3") != NULL) ||
       (strstr(ext_str->str, ".OGG") != NULL))
   {
-    unlock_mutex(&ui->import_file_mutex);
     file_chooser_ok_event(filename, ui);
     remove_status_message(ui->gui);
   }
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {
-    create_thread((GThreadFunc)add_cue_splitpoints, ui);
+    ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+    ui_fname->ui = ui;
+    ui_fname->fname = strdup(filename);
+    create_thread_with_fname((GThreadFunc)add_cue_splitpoints, ui_fname);
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
   {
-    create_thread((GThreadFunc)add_cddb_splitpoints, ui);
+    ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+    ui_fname->ui = ui;
+    ui_fname->fname = strdup(filename);
+    create_thread_with_fname((GThreadFunc)add_cddb_splitpoints, ui_fname);
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
-    create_thread((GThreadFunc)add_audacity_labels_splitpoints, ui);
-  }
-  else
-  {
-    unlock_mutex(&ui->import_file_mutex);
+    ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+    ui_fname->ui = ui;
+    ui_fname->fname = strdup(filename);
+    create_thread_with_fname((GThreadFunc)add_audacity_labels_splitpoints, ui_fname);
   }
 
   if (ext_str)
@@ -243,19 +240,21 @@ static gboolean add_audacity_labels_splitpoints_end(ui_with_err *ui_err)
 
   print_status_bar_confirmation(err, ui);
 
-  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
 
   g_free(ui_err);
 
   return FALSE;
 }
 
-static gpointer add_audacity_labels_splitpoints(ui_state *ui)
+static gpointer add_audacity_labels_splitpoints(ui_with_fname *ui_fname)
 {
-  gchar *filename = strdup(ui->infos->file_to_import);
-  unlock_mutex(&ui->import_file_mutex);
+  ui_state *ui = ui_fname->ui;
 
-  lock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  gchar *filename = ui_fname->fname;
+  g_free(ui_fname);
 
   gint err = SPLT_OK;
 
@@ -284,7 +283,7 @@ static gboolean add_cddb_splitpoints_end(ui_with_err *ui_err)
 
   print_status_bar_confirmation(err, ui);
 
-  unlock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(FALSE, ui);
 
   g_free(ui_err);
 
@@ -292,12 +291,14 @@ static gboolean add_cddb_splitpoints_end(ui_with_err *ui_err)
 }
 
 //! Add splitpoints from cddb
-static gpointer add_cddb_splitpoints(ui_state *ui)
+static gpointer add_cddb_splitpoints(ui_with_fname *ui_fname)
 {
-  gchar *filename = strdup(ui->infos->file_to_import);
-  unlock_mutex(&ui->import_file_mutex);
+  ui_state *ui = ui_fname->ui;
 
-  lock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  gchar *filename = ui_fname->fname;
+  g_free(ui_fname);
 
   enter_threads();
   update_output_options(ui);
@@ -336,7 +337,7 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
     file_chooser_ok_event(filename_to_split, ui);
   }
 
-  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
 
   g_free(ui_err);
 
@@ -344,12 +345,14 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
 }
 
 //! Add splitpoints from cue file
-static gpointer add_cue_splitpoints(ui_state *ui)
+static gpointer add_cue_splitpoints(ui_with_fname *ui_fname)
 {
-  gchar *filename = strdup(ui->infos->file_to_import);
-  unlock_mutex(&ui->import_file_mutex);
+  ui_state *ui = ui_fname->ui;
 
-  lock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  gchar *filename = ui_fname->fname;
+  g_free(ui_fname);
 
   enter_threads();
   update_output_options(ui);

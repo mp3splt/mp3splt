@@ -79,5 +79,9 @@ void set_is_splitting_safe(gboolean value, ui_state *ui);
 void set_split_file_mode_safe(gint file_mode, ui_state *ui);
 gint get_split_file_mode_safe(ui_state *ui);
 
+void set_process_in_progress_and_wait_safe(gboolean value, ui_state *ui);
+void set_process_in_progress_safe(gboolean value, ui_state *ui);
+gint get_process_in_progress_safe(ui_state *ui);
+
 #endif
 

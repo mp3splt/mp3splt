@@ -169,8 +169,6 @@ typedef struct {
 
   preview_index_and_data preview_indexes[6];
 
-  gchar *file_to_import;
-
   gint timeout_value;
 } ui_infos;
 
@@ -407,6 +405,7 @@ typedef struct {
 
 typedef struct {
   gint splitting;
+  gint process_in_progress;
   gint mouse_on_progress_bar;
   gint currently_compute_douglas_peucker_filters;
   gint show_silence_wave;
@@ -484,15 +483,18 @@ typedef struct {
 
   GPtrArray *files_to_split;
 
-  SPLT_MUTEX only_one_thread_mutex;
   SPLT_MUTEX variables_mutex;
-  SPLT_MUTEX import_file_mutex;
 } ui_state;
 
 typedef struct {
   gint err;
   ui_state *ui;
 } ui_with_err;
+
+typedef struct {
+  ui_state *ui;
+  char *fname;
+} ui_with_fname;
 
 #endif
 

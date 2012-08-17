@@ -106,11 +106,5 @@ gint get_quick_preview_end_splitpoint_safe(ui_state *ui);
 void set_currently_scanning_for_silence_safe(gint value, ui_state *ui);
 gint get_currently_scanning_for_silence_safe(ui_state *ui);
 
-typedef struct {
-  ui_state *ui;
-  float level;
-  long time;
-} ui_with_time_and_level;
-
 #endif
 

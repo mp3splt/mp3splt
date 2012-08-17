@@ -38,6 +38,7 @@
 
 void init_mutex(SPLT_MUTEX *mutex);
 void clear_mutex(SPLT_MUTEX *mutex);
+
 void lock_mutex(SPLT_MUTEX *mutex);
 void unlock_mutex(SPLT_MUTEX *mutex);
 
