@@ -52,11 +52,6 @@ typedef struct {
 
 typedef struct {
   ui_state *ui;
-  char *fname;
-} ui_with_fname;
-
-typedef struct {
-  ui_state *ui;
   char *message;
   splt_message_type mess_type;
 } ui_with_message;

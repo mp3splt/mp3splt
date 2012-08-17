@@ -843,7 +843,7 @@ static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)
 
   set_is_splitting_safe(FALSE, ui);
 
-  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(FALSE, ui);
 
   g_free(ui_err);
 
@@ -868,7 +868,9 @@ static gint get_should_trim_safe(ui_state *ui)
 //!set splitpints from silence detection
 static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
 {
-  lock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  set_is_splitting_safe(TRUE, ui);
 
   gint err = SPLT_OK;
 
@@ -888,8 +890,6 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
   gint checked_output_radio_box = get_checked_output_radio_box(ui);
 
   exit_threads();
-
-  set_is_splitting_safe(TRUE, ui);
 
   mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
 
@@ -1425,7 +1425,7 @@ static gboolean split_preview_end(ui_with_err *ui_err)
     gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
   }
 
-  unlock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
 
   g_free(ui_err);
 
@@ -1434,7 +1434,7 @@ static gboolean split_preview_end(ui_with_err *ui_err)
 
 static gpointer split_preview(ui_state *ui)
 {
-  lock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(TRUE, ui);
 
   int err = 0;
   mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);

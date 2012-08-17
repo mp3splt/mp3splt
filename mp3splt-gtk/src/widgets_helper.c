@@ -43,7 +43,6 @@ static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
     guint start_column, guint end_column, guint row, int expand);
 static void _wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
     GtkWidget *widget, int expand);
-static void hide_window_from_cross(GtkWidget *window, gpointer data);
 static void hide_window_from_button(GtkWidget *window, gpointer data);
 
 /*! Generates a window portion containing a caption and a vbox
@@ -396,7 +395,7 @@ GtkWidget *wh_create_window_with_close_button(gchar *title, gint width, gint hei
 {
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   g_signal_connect(G_OBJECT(window), "delete_event", 
-      G_CALLBACK(hide_window_from_cross), window);
+		   G_CALLBACK(gtk_widget_hide_on_delete), window);
   gtk_window_set_title(GTK_WINDOW(window), title);
   gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
   gtk_window_set_default_size(GTK_WINDOW(window), width, height);
@@ -436,11 +435,6 @@ void wh_show_window(GtkWidget *window)
   }
 
   gtk_window_present(GTK_WINDOW(window));
-}
-
-static void hide_window_from_cross(GtkWidget *window, gpointer data)
-{
-  gtk_widget_hide(window);
 }
 
 static void hide_window_from_button(GtkWidget *widget, gpointer data)

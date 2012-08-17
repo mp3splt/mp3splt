@@ -53,11 +53,19 @@ static void draw_small_rectangle(gint time_left, gint time_right,
     GdkColor color, cairo_t *cairo_surface, ui_state *ui);
 static gint mytimer(ui_state *ui);
 
-static gboolean get_silence_level_idle(ui_with_time_and_level *ui_time_level)
+//!function called from the library when scanning for the silence level
+static void get_silence_level(long time, float level, void *user_data)
 {
-  ui_state *ui = ui_time_level->ui;
-  float level = ui_time_level->level;
-  long time = ui_time_level->time;
+  ui_state *ui = (ui_state *)user_data;
+
+  gint converted_level = (gint)floorf(abs(level));
+  if (converted_level < 0)
+  {
+    return;
+  }
+
+  //TODO: using an idle here does not work.
+  //      At least on windows idles are not executed in order
 
   if (!ui->infos->silence_points)
   {
@@ -75,30 +83,6 @@ static gboolean get_silence_level_idle(ui_with_time_and_level *ui_time_level)
   ui->infos->silence_points[ui->infos->number_of_silence_points].level = abs(level);
 
   ui->infos->number_of_silence_points++;
-
-  g_free(ui_time_level);
-
-  return FALSE;
-}
-
-//!function called from the library when scanning for the silence level
-static void get_silence_level(long time, float level, void *user_data)
-{
-  ui_state *ui = (ui_state *)user_data;
-
-  gint converted_level = (gint)floorf(abs(level));
-  if (converted_level < 0)
-  {
-    return;
-  }
-
-  ui_with_time_and_level *ui_time_level = g_malloc0(sizeof(ui_with_time_and_level));
-  ui_time_level->ui = ui;
-  ui_time_level->level = level;
-  ui_time_level->time = time;
-
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
-      (GSourceFunc)get_silence_level_idle, ui_time_level, NULL);
 }
 
 static GArray *build_gdk_points_for_douglas_peucker(ui_infos *infos)
@@ -205,7 +189,7 @@ static gboolean detect_silence_end(ui_with_err *ui_err)
   refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas(ui->gui);
 
-  unlock_mutex(&ui_err->ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
 
   g_free(ui_err);
 
@@ -214,7 +198,7 @@ static gboolean detect_silence_end(ui_with_err *ui_err)
 
 static gpointer detect_silence(ui_state *ui)
 {
-  lock_mutex(&ui->only_one_thread_mutex);
+  set_process_in_progress_and_wait_safe(TRUE, ui);
 
   set_is_splitting_safe(TRUE, ui);
   set_currently_scanning_for_silence_safe(TRUE, ui);
@@ -1184,11 +1168,12 @@ void check_update_down_progress_bar(ui_state *ui)
     }
   }
 
-  if (strlen(description_shorted) > 3)
+  if (strlen(description_shorted) > 55)
   {
-    description_shorted[strlen(description_shorted)-1] = '.';
-    description_shorted[strlen(description_shorted)-2] = '.';
-    description_shorted[strlen(description_shorted)-3] = '.';
+    description_shorted[56] = '.';
+    description_shorted[57] = '.';
+    description_shorted[58] = '.';
+    description_shorted[59] = '\0';
   }
 
   gtk_progress_bar_set_text(ui->gui->percent_progress_bar, description_shorted);
@@ -2012,13 +1997,44 @@ static gboolean da_draw_event(GtkWidget *da, GdkEventExpose *event, ui_state *ui
 static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
 {
 #endif
+
   ui_infos *infos = ui->infos;
   gui_state *gui = ui->gui;
   gui_status *status = ui->status;
 
+#ifdef __WIN32__
+  if ((status->playing || status->timer_active) &&
+      get_process_in_progress_safe(ui))
+  {
+    GdkColor mycolor;
+    mycolor.red = 255 * 0; mycolor.green = 255 * 0; mycolor.blue = 255 * 255;
+    dh_set_color(gc, &mycolor);
+    dh_draw_text_with_size(gc, _(" Please wait for the process to finish ..."),
+        30, gui->margin - 3, 13);
+
+    return TRUE;
+  }
+#endif
+
+  set_process_in_progress_safe(TRUE, ui);
+
   if (gui->drawing_area_expander != NULL &&
       !gtk_expander_get_expanded(GTK_EXPANDER(gui->drawing_area_expander)))
   {
+    set_process_in_progress_safe(FALSE, ui);
+    return TRUE;
+  }
+
+  //on a slow hardware, this improves a lot the computing performance
+  if (status->currently_compute_douglas_peucker_filters)
+  {
+    GdkColor mycolor;
+    mycolor.red = 255 * 0; mycolor.green = 255 * 0; mycolor.blue = 255 * 255;
+    dh_set_color(gc, &mycolor);
+    dh_draw_text_with_size(gc, _(" Please wait ... currently computing Douglas Peucker filters."),
+        30, gui->margin - 3, 13);
+
+    set_process_in_progress_safe(FALSE, ui);
     return TRUE;
   }
 
@@ -2117,6 +2133,8 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
     dh_set_color(gc, &color);
     dh_draw_text(gc, _(" left click on rectangle checks/unchecks 'keep splitpoint'"),
         0, gui->splitpoint_ypos + 1);
+
+    set_process_in_progress_safe(FALSE, ui);
     return TRUE;
   }
 
@@ -2336,6 +2354,8 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
 #if GTK_MAJOR_VERSION <= 2
   cairo_destroy(gc);
 #endif
+
+  set_process_in_progress_safe(FALSE, ui);
 
   return TRUE;
 }
@@ -3179,6 +3199,15 @@ Examples are the elapsed time and if it uses variable bitrate
 */
 static gint mytimer(ui_state *ui)
 {
+#ifdef __WIN32__
+  if (get_process_in_progress_safe(ui))
+  {
+    return TRUE;
+  }
+#endif
+
+  set_process_in_progress_safe(TRUE, ui);
+
   ui_infos *infos = ui->infos;
   gui_state *gui = ui->gui;
   gui_status *status = ui->status;
@@ -3203,6 +3232,7 @@ static gint mytimer(ui_state *ui)
     status->playing = FALSE;
     disconnect_button_event(gui->disconnect_button, ui);
 
+    set_process_in_progress_safe(FALSE, ui);
     return FALSE;
   }
 
@@ -3323,6 +3353,8 @@ static gint mytimer(ui_state *ui)
 
     player_key_actions_set_sensitivity(FALSE, gui);
   }
+
+  set_process_in_progress_safe(FALSE, ui);
 
   return TRUE;
 }

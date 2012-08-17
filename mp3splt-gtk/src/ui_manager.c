@@ -114,8 +114,6 @@ ui_state *ui_state_new()
   ui->return_code = EXIT_SUCCESS;
 
   init_mutex(&ui->variables_mutex);
-  init_mutex(&ui->import_file_mutex);
-  init_mutex(&ui->only_one_thread_mutex);
 
   return ui;
 }
@@ -138,9 +136,7 @@ void ui_state_free(ui_state *ui)
   ui_gui_free(&ui->gui);
   ui_player_infos_free(&ui->pi);
 
-  clear_mutex(&ui->only_one_thread_mutex);
   clear_mutex(&ui->variables_mutex);
-  clear_mutex(&ui->import_file_mutex);
 
   g_free(ui);
 }
@@ -304,8 +300,6 @@ static void ui_infos_new(ui_state *ui)
     infos->preview_indexes[i].data = NULL;
   }
 
-  infos->file_to_import = NULL;
-  
   infos->timeout_value = DEFAULT_TIMEOUT_VALUE;
 
   ui->infos = infos;
@@ -316,6 +310,7 @@ static gui_status *ui_status_new(ui_state *ui)
   gui_status *status = g_malloc0(sizeof(gui_status));
 
   status->splitting = FALSE;
+  status->process_in_progress = FALSE;
   status->mouse_on_progress_bar = FALSE;
 
   status->currently_compute_douglas_peucker_filters = FALSE;
@@ -463,11 +458,6 @@ static void ui_infos_free(ui_infos **infos)
   }
 
   g_array_free((*infos)->preview_time_windows, TRUE);
-
-  if ((*infos)->file_to_import)
-  {
-    g_free((*infos)->file_to_import);
-  }
 
   g_free(*infos);
   *infos = NULL;
