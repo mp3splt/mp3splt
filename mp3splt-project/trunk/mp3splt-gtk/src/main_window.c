@@ -383,22 +383,8 @@ gint get_is_splitting_safe(ui_state *ui)
   return is_splitting;
 }
 
-void set_process_in_progress_and_wait_safe(gboolean value, ui_state *ui)
+static void _set_process_in_progress_safe(gboolean value, ui_state *ui)
 {
-  if (value == TRUE)
-  {
-    while (get_process_in_progress_safe(ui))
-    {
-      g_usleep(G_USEC_PER_SEC / 4);
-    }
-  }
-
-  set_process_in_progress_safe(value, ui);
-}
-
-void set_process_in_progress_safe(gboolean value, ui_state *ui)
-{
-#ifdef __WIN32__
   lock_mutex(&ui->variables_mutex);
   if (value)
   {
@@ -409,6 +395,25 @@ void set_process_in_progress_safe(gboolean value, ui_state *ui)
     ui->status->process_in_progress--;
   }
   unlock_mutex(&ui->variables_mutex);
+}
+
+void set_process_in_progress_and_wait_safe(gboolean value, ui_state *ui)
+{
+  if (value == TRUE)
+  {
+    while (get_process_in_progress_safe(ui))
+    {
+      g_usleep(G_USEC_PER_SEC / 4);
+    }
+  }
+
+  _set_process_in_progress_safe(value, ui);
+}
+
+void set_process_in_progress_safe(gboolean value, ui_state *ui)
+{
+#ifdef __WIN32__
+  _set_process_in_progress_safe(value, ui);
 #endif
 }
 
