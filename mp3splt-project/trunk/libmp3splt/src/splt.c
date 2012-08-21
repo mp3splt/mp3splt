@@ -163,6 +163,12 @@ void splt_s_multiple_split(splt_state *state, int *error)
   int i = 0;
   int number_of_splitpoints = splt_t_get_splitnumber(state);
 
+  int save_end_point = SPLT_TRUE;
+  if (splt_o_get_long_option(state, SPLT_OPT_OVERLAP_TIME) > 0)
+  {
+    save_end_point = SPLT_FALSE;
+  }
+
   while (i  < number_of_splitpoints - 1)
   {
     splt_t_set_current_split(state, i);
@@ -189,9 +195,12 @@ void splt_s_multiple_split(splt_state *state, int *error)
 
       int end_point_index = i+1;
       long new_end_point = splt_s_split(state, i, end_point_index, error);
-      splt_pair *index_end_point =
-        splt_pair_new((void *) &end_point_index, (void *) &new_end_point);
-      splt_array_append(new_end_points, (void *)index_end_point);
+
+      if (save_end_point)
+      {
+        splt_il_pair *index_end_point = splt_il_pair_new(end_point_index, new_end_point);
+        splt_array_append(new_end_points, (void *)index_end_point);
+      }
 
       splt_sp_set_splitpoint_value(state, i + 1, saved_end_point);
 
@@ -212,13 +221,13 @@ void splt_s_multiple_split(splt_state *state, int *error)
 end:
   for (i = 0;i < splt_array_length(new_end_points);i++)
   {
-    splt_pair *index_end_point = (splt_pair *) splt_array_get(new_end_points, i);
+    splt_il_pair *index_end_point = (splt_il_pair *) splt_array_get(new_end_points, i);
 
     splt_sp_set_splitpoint_value(state,
-        *((int*) splt_pair_first(index_end_point)),
-        *((long*) splt_pair_second(index_end_point)));
+        splt_il_pair_first(index_end_point),
+        splt_il_pair_second(index_end_point));
 
-    splt_pair_free(&index_end_point);
+    splt_il_pair_free(&index_end_point);
   }
 
   splt_array_free(&new_end_points);
@@ -435,20 +444,23 @@ static void splt_s_split_by_time(splt_state *state, int *error,
 
           double new_sec_end_point = splt_p_split(state, final_fname,
               begin, overlapped_end, error, save_end_point);
-          long new_end_point = 0;
-          if (new_sec_end_point == -1.0)
-          {
-            new_end_point = LONG_MAX;
-          }
-          else
-          {
-            new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
-          }
 
-          int end_point_index = current_split + 1;
-          splt_pair *index_end_point =
-            splt_pair_new((void *) &end_point_index, (void *) &new_end_point);
-          splt_array_append(new_end_points, (void *) index_end_point);
+          if (save_end_point)
+          {
+            long new_end_point = 0;
+            if (new_sec_end_point == -1.0)
+            {
+              new_end_point = LONG_MAX;
+            }
+            else
+            {
+              new_end_point = splt_co_time_to_long_ceil(new_sec_end_point);
+            }
+
+            int end_point_index = current_split + 1;
+            splt_il_pair *index_end_point = splt_il_pair_new(end_point_index, new_end_point);
+            splt_array_append(new_end_points, (void *) index_end_point);
+          }
 
           //if no error for the split, put the split file
           if (*error >= 0)
@@ -499,13 +511,13 @@ static void splt_s_split_by_time(splt_state *state, int *error,
       int i = 0;
       for (i = 0;i < splt_array_length(new_end_points);i++)
       {
-        splt_pair *index_end_point = (splt_pair *) splt_array_get(new_end_points, i);
+        splt_il_pair *index_end_point = (splt_il_pair *) splt_array_get(new_end_points, i);
 
         splt_sp_set_splitpoint_value(state,
-            *((int*) splt_pair_first(index_end_point)),
-            *((long*) splt_pair_second(index_end_point)));
+            splt_il_pair_first(index_end_point),
+            splt_il_pair_second(index_end_point));
 
-        splt_pair_free(&index_end_point);
+        splt_il_pair_free(&index_end_point);
       }
 
       splt_array_free(&new_end_points);
@@ -760,18 +772,50 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     snprintf(auto_user_str,128,_("Auto"));
   }
 
-  if (! splt_o_get_int_option(state,SPLT_OPT_QUIET_MODE))
+  if (! splt_o_get_int_option(state, SPLT_OPT_QUIET_MODE))
   {
-    splt_c_put_info_message_to_client(state, 
+    char *other_options = NULL;
+
+    if (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN) > 0)
+    {
+      char *min_track_join = 
+        splt_su_get_formatted_message(state, ", %s: %.2f", "Min track join",
+            splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN));
+
+      int err = splt_su_append_str(&other_options, min_track_join, NULL);
+      if (err < 0) { *error = err; goto end; }
+
+      free(min_track_join);
+    }
+
+    if (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN) > 0)
+    {
+      char *min_track_join_min = 
+        splt_su_get_formatted_message(state, ", %s: %.2f", "Min track join min",
+            splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN));
+
+      int err = splt_su_append_str(&other_options, min_track_join_min, NULL);
+      if (err < 0) { *error = err; goto end; }
+
+      free(min_track_join_min);
+    }
+
+    splt_c_put_info_message_to_client(state,
         _(" Silence split type: %s mode (Th: %.1f dB,"
-          " Off: %.2f, Min: %.2f, Remove: %s, Min track: %.2f, Shots: %d)\n"),
+          " Off: %.2f, Min: %.2f, Remove: %s, Min track: %.2f, Shots: %d%s)\n"),
         auto_user_str,
         splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
         splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH),
         remove_str,
         splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH),
-        splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS));
+        splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS), 
+        other_options == NULL ? "" : other_options);
+
+    if (other_options)
+    {
+      free(other_options);
+    }
   }
  
   short read_silence_from_logs = SPLT_FALSE;
@@ -920,6 +964,9 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
         if (append_error != SPLT_OK) { *error = append_error; }
       }
 
+      splt_sp_join_minimum_tracks_splitpoints(state, error);
+      if (*error < 0) { goto end; }
+
       splt_sp_skip_minimum_track_length_splitpoints(state, error);
     }
     else
@@ -974,8 +1021,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     }
   }
 
+end:
   splt_siu_ssplit_free(&state->silence_list);
-
   splt_t_set_splitnumber(state, splitpoints_appended + 1);
 
   return found;

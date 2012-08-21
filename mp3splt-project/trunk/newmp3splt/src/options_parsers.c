@@ -27,7 +27,8 @@
 #include "utils.h"
 
 int parse_silence_options(char *arg, float *th, int *gap,
-    int *nt, float *off, int *rm, float *min, float *min_track_length, int *shots)
+    int *nt, float *off, int *rm, float *min, float *min_track_length, int *shots,
+    float *min_track_join, float *min_track_join_min)
 {
   char *ptr = NULL;
   int found = 0;
@@ -58,6 +59,36 @@ int parse_silence_options(char *arg, float *th, int *gap,
       else 
       {
         print_warning(_("bad shots argument. It will be ignored !"));
+      }
+    }
+  }
+
+  if ((min_track_join != NULL) && ((ptr = strstr(arg, "mintrackjoin"))!=NULL))
+  {
+    if ((ptr=strchr(ptr, '='))!=NULL)
+    {
+      if (sscanf(ptr+1, "%f", min_track_join)==1)
+      {
+        found++;
+      }
+      else 
+      {
+        print_warning(_("bad mintrackjoin argument. It will be ignored !"));
+      }
+    }
+  }
+
+  if ((min_track_join_min != NULL) && ((ptr = strstr(arg, "mintrackjoinmin"))!=NULL))
+  {
+    if ((ptr=strchr(ptr, '='))!=NULL)
+    {
+      if (sscanf(ptr+1, "%f", min_track_join_min)==1)
+      {
+        found++;
+      }
+      else 
+      {
+        print_warning(_("bad mintrackjoinmin argument. It will be ignored !"));
       }
     }
   }

@@ -491,6 +491,14 @@ typedef enum {
  */
 #define SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH 0.0
 /**
+ * @brief Default value for the #SPLT_OPT_PARAM_MIN_TRACK_JOIN option
+ */
+#define SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN 0.0
+/**
+ * @brief Default value for the #SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN option
+ */
+#define SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN_MIN 0.0
+/**
  * @brief Default value for the #SPLT_OPT_PARAM_GAP option
  */
 #define SPLT_DEFAULT_PARAM_GAP 30
@@ -660,6 +668,13 @@ typedef struct {
     a valid splitpoint
   */
   float parameter_min_track_length;
+
+  /*! TODO
+  */
+  float parameter_min_track_join;
+  /*! TODO
+  */
+  float parameter_min_track_join_min;
 
   //!possible values are #splt_str_format
   int artist_tag_format;
@@ -1207,6 +1222,18 @@ typedef enum {
    * Default is #SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH
    */
   SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
+  /**
+   * TODO
+   *
+   * Default is #SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN
+   */
+  SPLT_OPT_PARAM_MIN_TRACK_JOIN,
+  /**
+   * TODO
+   *
+   * Default is #SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN_MIN
+   */
+  SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN,
   /**
    * Format of the artist tag from filename.
    * Possible values are #splt_str_format

@@ -324,6 +324,89 @@ void splt_sp_skip_minimum_track_length_splitpoints(splt_state *state, int *error
   }
 }
 
+splt_array *splt_sp_find_intervals_between_two_consecutive_big_tracks(splt_state *state,
+    int min_track_join, int *error)
+{
+  splt_array *intervals = splt_array_new();
+  if (!intervals) { return NULL; }
+
+  int previous_was_big_track = SPLT_FALSE;
+  int start_interval = 0;
+  int fix_start_point = SPLT_FALSE;
+  int end_interval = 1;
+
+  if (state->split.real_splitnumber == 1)
+  {
+    splt_int_pair *pair = splt_int_pair_new(start_interval, end_interval);
+    splt_array_append(intervals, (void *)pair);
+    return intervals;
+  }
+
+  int i = 1;
+  for (i = 1;i < state->split.real_splitnumber; i++)
+  {
+    int begin_index = i-1;
+    int end_index = i;
+
+    long begin_track_point = splt_sp_get_splitpoint_value(state, begin_index, error);
+    if (*error < 0) { splt_array_free(&intervals); return NULL; }
+    long end_track_point = splt_sp_get_splitpoint_value(state, end_index, error);
+    if (*error < 0) { splt_array_free(&intervals); return NULL; }
+
+    long track_length = end_track_point - begin_track_point;
+    if (track_length >= min_track_join)
+    {
+      if (previous_was_big_track)
+      {
+        if (!fix_start_point)
+        {
+          start_interval = begin_index;
+        }
+        else
+        {
+          end_interval = begin_index;
+
+          splt_int_pair *pair = splt_int_pair_new(start_interval, end_interval);
+          splt_array_append(intervals, (void *) pair);
+
+          fix_start_point = SPLT_FALSE;
+          start_interval = end_interval;
+        }
+      }
+
+      previous_was_big_track = SPLT_TRUE;
+    }
+    else
+    {
+      fix_start_point = SPLT_TRUE;
+      previous_was_big_track = SPLT_FALSE;
+
+      if (i == state->split.real_splitnumber - 1 || i == state->split.real_splitnumber - 2)
+      {
+        end_interval = state->split.real_splitnumber - 1;
+        splt_int_pair *pair = splt_int_pair_new(start_interval, end_interval);
+        splt_array_append(intervals, (void *) pair);
+      }
+    }
+  }
+
+  return intervals;
+}
+
+void splt_sp_join_minimum_tracks_splitpoints(splt_state *state, int *error)
+{
+  if (state->split.real_splitnumber <= 0) { return; }
+
+  long min_track_join = 
+    splt_co_time_to_long(splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN));
+
+  splt_array *intervals = 
+    splt_sp_find_intervals_between_two_consecutive_big_tracks(state, min_track_join, error);
+  if (!intervals) { return; }
+
+  //TODO
+}
+
 long splt_sp_overlap_time(splt_state *state, int splitpoint_index)
 {
   int error = SPLT_OK;
