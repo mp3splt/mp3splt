@@ -33,17 +33,24 @@
 #ifndef SPLT_PAIR_H
 
 typedef struct {
-  void *first;
-  void *second;
-} splt_pair;
+  int first;
+  int second;
+} splt_int_pair;
 
-splt_pair *splt_pair_new(void *first, void *second);
+splt_int_pair *splt_int_pair_new(int first, int second);
+void splt_int_pair_free(splt_int_pair **pair);
+int splt_int_pair_first(splt_int_pair *pair);
+int splt_int_pair_second(splt_int_pair *pair);
 
-void splt_pair_free(splt_pair **pair);
+typedef struct {
+  int first;
+  long second;
+} splt_il_pair;
 
-void *splt_pair_first(splt_pair *pair);
-
-void *splt_pair_second(splt_pair *pair);
+splt_il_pair *splt_il_pair_new(int first, long second);
+void splt_il_pair_free(splt_il_pair **pair);
+int splt_il_pair_first(splt_il_pair *pair);
+long splt_il_pair_second(splt_il_pair *pair);
 
 #define SPLT_PAIR_H
 

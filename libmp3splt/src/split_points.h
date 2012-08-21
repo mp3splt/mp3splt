@@ -52,11 +52,15 @@ int splt_sp_cut_splitpoint_extension(splt_state *state, int index);
 
 void splt_sp_order_splitpoints(splt_state *state, int len);
 void splt_sp_skip_minimum_track_length_splitpoints(splt_state *state, int *error);
+void splt_sp_join_minimum_tracks_splitpoints(splt_state *state, int *error);
 
 void splt_sp_get_mins_secs_hundr_from_splitpoint(long splitpoint,
     long *mins, long *secs, long *hudr);
 
 long splt_sp_overlap_time(splt_state *state, int splitpoint_index);
+
+splt_array *splt_sp_find_intervals_between_two_consecutive_big_tracks(splt_state *state,
+    int min_track_join, int *error);
 
 #define SPLT_SPLIT_POINTS_H
 

@@ -54,6 +54,8 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.parameter_shots = SPLT_DEFAULT_PARAM_SHOTS;
   state->options.parameter_minimum_length = SPLT_DEFAULT_PARAM_MINIMUM_LENGTH;
   state->options.parameter_min_track_length = SPLT_DEFAULT_PARAM_MINIMUM_TRACK_LENGTH;
+  state->options.parameter_min_track_join = SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN;
+  state->options.parameter_min_track_join_min = SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN_MIN;
 
   state->options.artist_tag_format = SPLT_NO_CONVERSION;
   state->options.album_tag_format = SPLT_NO_CONVERSION;
@@ -159,6 +161,12 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
     case SPLT_OPT_PARAM_MIN_TRACK_LENGTH:
       state->options.parameter_min_track_length = *((float *)data);
       break;
+    case SPLT_OPT_PARAM_MIN_TRACK_JOIN:
+      state->options.parameter_min_track_join = *((float *)data);
+      break;
+    case SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN:
+      state->options.parameter_min_track_join_min = *((float *)data);
+      break;
     case SPLT_OPT_ARTIST_TAG_FORMAT:
       state->options.artist_tag_format = *((int *)data);
       break;
@@ -254,6 +262,10 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.parameter_minimum_length;
     case SPLT_OPT_PARAM_MIN_TRACK_LENGTH:
       return &state->options.parameter_min_track_length;
+    case SPLT_OPT_PARAM_MIN_TRACK_JOIN:
+      return &state->options.parameter_min_track_join;
+    case SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN:
+      return &state->options.parameter_min_track_join_min;
     case SPLT_OPT_ARTIST_TAG_FORMAT:
       return &state->options.artist_tag_format;
     case SPLT_OPT_ALBUM_TAG_FORMAT:

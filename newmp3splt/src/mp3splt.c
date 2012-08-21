@@ -414,32 +414,42 @@ int main(int argc, char **orig_argv)
   //if we have parameter options
   if (opt->p_option)
   {
-    float th = -200,off = -200,min = -200, min_track_length = -200;
-    int gap = -200,nt = -200,rm = -200, shots = -200;
+    float th = -200, off = -200, min = -200, min_track_length = -200;
+    int gap = -200, nt = -200, rm = -200, shots = -200;
+    float min_track_join = -200, min_track_join_min = -200;
     int parsed_p_options = 
-      parse_silence_options(opt->param_args, &th, &gap, &nt, &off, &rm, &min, &min_track_length, &shots);
+      parse_silence_options(opt->param_args, &th, &gap, &nt, &off, &rm, &min, &min_track_length,
+          &shots, &min_track_join, &min_track_join_min);
     if (parsed_p_options < 1)
     {
       print_error_exit(_("bad argument for -p option. No valid value was recognized !"), data);
     }
 
+    if (min_track_join > 0)
+    {
+      mp3splt_set_int_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN, min_track_join);
+    }
+    if (min_track_join_min > 0)
+    {
+      mp3splt_set_int_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN, min_track_join_min);
+    }
     if (shots != -200)
     {
       mp3splt_set_int_option(state, SPLT_OPT_PARAM_SHOTS, shots);
     }
-    if (th != -200)
+    if (th > -100)
     {
       mp3splt_set_float_option(state, SPLT_OPT_PARAM_THRESHOLD, th);
     }
-    if (off != -200)
+    if (off > -3)
     {
       mp3splt_set_float_option(state, SPLT_OPT_PARAM_OFFSET, off);
     }
-    if (min != -200)
+    if (min >= 0)
     {
       mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH, min);
     }
-    if (min_track_length != -200)
+    if (min_track_length > 0)
     {
       mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH, min_track_length);
     }
