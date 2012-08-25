@@ -427,11 +427,11 @@ int main(int argc, char **orig_argv)
 
     if (min_track_join > 0)
     {
-      mp3splt_set_int_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN, min_track_join);
+      mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN, min_track_join);
     }
     if (min_track_join_min > 0)
     {
-      mp3splt_set_int_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN, min_track_join_min);
+      mp3splt_set_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN, min_track_join_min);
     }
     if (shots != -200)
     {
