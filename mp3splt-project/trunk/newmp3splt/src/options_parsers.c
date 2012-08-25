@@ -63,7 +63,7 @@ int parse_silence_options(char *arg, float *th, int *gap,
     }
   }
 
-  if ((min_track_join != NULL) && ((ptr = strstr(arg, "mintrackjoin"))!=NULL))
+  if ((min_track_join != NULL) && ((ptr = strstr(arg, "trackjoin"))!=NULL))
   {
     if ((ptr=strchr(ptr, '='))!=NULL)
     {
@@ -73,12 +73,12 @@ int parse_silence_options(char *arg, float *th, int *gap,
       }
       else 
       {
-        print_warning(_("bad mintrackjoin argument. It will be ignored !"));
+        print_warning(_("bad trackjoin argument. It will be ignored !"));
       }
     }
   }
 
-  if ((min_track_join_min != NULL) && ((ptr = strstr(arg, "mintrackjoinmin"))!=NULL))
+  if ((min_track_join_min != NULL) && ((ptr = strstr(arg, "jointrackmin"))!=NULL))
   {
     if ((ptr=strchr(ptr, '='))!=NULL)
     {
@@ -88,7 +88,7 @@ int parse_silence_options(char *arg, float *th, int *gap,
       }
       else 
       {
-        print_warning(_("bad mintrackjoinmin argument. It will be ignored !"));
+        print_warning(_("bad jointrackmin argument. It will be ignored !"));
       }
     }
   }

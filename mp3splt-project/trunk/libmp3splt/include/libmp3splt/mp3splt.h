@@ -385,6 +385,8 @@ typedef struct {
   int splitnumber;
   //!how many splitpoints do we have?
   int real_splitnumber;
+  //!allocated space for the number of splitpoints
+  int allocated_splitnumber;
   /*! Pointer to the fallback function that is 
       called when the library starts to split
       a new file.
