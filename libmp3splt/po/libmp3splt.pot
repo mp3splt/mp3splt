@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-07-15 19:29+0200\n"
+"POT-Creation-Date: 2012-08-25 13:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,81 +77,81 @@ msgstr ""
 msgid " info: starting normal split\n"
 msgstr ""
 
-#: src/splt.c:242
+#: src/splt.c:251
 msgid " info: starting error mode split\n"
 msgstr ""
 
-#: src/splt.c:551
+#: src/splt.c:563
 msgid " info: starting time mode split\n"
 msgstr ""
 
-#: src/splt.c:570
+#: src/splt.c:582
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr ""
 
-#: src/splt.c:612
+#: src/splt.c:624
 #, c-format
 msgid " Trim silence split - Th: %.1f dB\n"
 msgstr ""
 
-#: src/splt.c:746
+#: src/splt.c:758
 #, c-format
 msgid "YES"
 msgstr ""
 
-#: src/splt.c:750
+#: src/splt.c:762
 #, c-format
 msgid "NO"
 msgstr ""
 
-#: src/splt.c:756
+#: src/splt.c:768
 #, c-format
 msgid "User"
 msgstr ""
 
-#: src/splt.c:760
+#: src/splt.c:772
 #, c-format
 msgid "Auto"
 msgstr ""
 
-#: src/splt.c:766
+#: src/splt.c:804
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
-"Min track: %.2f, Shots: %d)\n"
+"Min track: %.2f, Shots: %d%s)\n"
 msgstr ""
 
-#: src/splt.c:786
+#: src/splt.c:830
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)\n"
 msgstr ""
 
-#: src/splt.c:815
+#: src/splt.c:859
 #, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 
-#: src/splt.c:827
+#: src/splt.c:871
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr ""
 
-#: src/splt.c:937
+#: src/splt.c:984
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr ""
 
-#: src/splt.c:993
+#: src/splt.c:1040
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1041
+#: src/splt.c:1088
 msgid " info: starting trim using silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1088
+#: src/splt.c:1135
 msgid " info: starting wrap mode split\n"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-07-15 19:29+0200\n"
+"POT-Creation-Date: 2012-08-25 13:49+0200\n"
 "PO-Revision-Date: 2011-09-16 00:13+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -85,53 +85,53 @@ msgstr "  Album: %s\n"
 msgid " info: starting normal split\n"
 msgstr " Info: Teilung im normalen Modus wird gestartet\n"
 
-#: src/splt.c:242
+#: src/splt.c:251
 msgid " info: starting error mode split\n"
 msgstr " Info: Teilung im Fehlermodus wird gestartet\n"
 
-#: src/splt.c:551
+#: src/splt.c:563
 msgid " info: starting time mode split\n"
 msgstr " Info: Teilung im Zeitmodus wird gestartet\n"
 
-#: src/splt.c:570
+#: src/splt.c:582
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr " Info: Teilung im Modus »Gleich große Teile« wird gestartet\n"
 
-#: src/splt.c:612
+#: src/splt.c:624
 #, c-format
 msgid " Trim silence split - Th: %.1f dB\n"
 msgstr "Trimmen nach Stille-Erkennung - Ansprechschwelle: %.1f dB\n"
 
-#: src/splt.c:746
+#: src/splt.c:758
 #, c-format
 msgid "YES"
 msgstr "JA"
 
-#: src/splt.c:750
+#: src/splt.c:762
 #, c-format
 msgid "NO"
 msgstr "NEIN"
 
-#: src/splt.c:756
+#: src/splt.c:768
 #, c-format
 msgid "User"
 msgstr "Benutzer"
 
-#: src/splt.c:760
+#: src/splt.c:772
 #, c-format
 msgid "Auto"
 msgstr "Automatisch"
 
-#: src/splt.c:766
+#: src/splt.c:804
 #, fuzzy, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
-"Min track: %.2f, Shots: %d)\n"
+"Min track: %.2f, Shots: %d%s)\n"
 msgstr ""
 " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: "
 "%.2f, Entfernen: %s, Min-Titel: %.2f)\n"
 
-#: src/splt.c:786
+#: src/splt.c:830
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -140,30 +140,30 @@ msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden die "
 "Teilungspunkte aus dieser Datei gelesen ;)\n"
 
-#: src/splt.c:815
+#: src/splt.c:859
 #, c-format
 msgid " Total silence points found: %d."
 msgstr " Insgesamt gefundene Teilungspunkte: %d."
 
-#: src/splt.c:827
+#: src/splt.c:871
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d Titel ausgewählt)\n"
 
-#: src/splt.c:937
+#: src/splt.c:984
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr "Stille-Protokolldatei »%s« wird geschrieben …\n"
 
-#: src/splt.c:993
+#: src/splt.c:1040
 msgid " info: starting silence mode split\n"
 msgstr " Info: Teilung im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:1041
+#: src/splt.c:1088
 msgid " info: starting trim using silence mode split\n"
 msgstr " Info: Trimmen im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:1088
+#: src/splt.c:1135
 msgid " info: starting wrap mode split\n"
 msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 

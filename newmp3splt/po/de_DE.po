@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: newmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-07-15 19:29+0200\n"
+"POT-Creation-Date: 2012-08-25 13:50+0200\n"
 "PO-Revision-Date: 2011-09-15 23:27+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -44,33 +44,33 @@ msgstr ""
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "Lesen Sie die Handbuchseite oder geben Sie »mp3splt -h« ein."
 
-#: src/mp3splt.c:423
+#: src/mp3splt.c:425
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "Falsches Argument für Option -p. Kein gültiger Wert erkannt!"
 
-#: src/mp3splt.c:557
+#: src/mp3splt.c:567
 msgid "no input filename(s)."
 msgstr "Kein(e) Name(n) für Eingabedateien."
 
-#: src/mp3splt.c:570
+#: src/mp3splt.c:580
 msgid "multiple splitpoints with stdout !"
 msgstr "Mehrere Teilungspunkte mit Standardausgabe!"
 
-#: src/mp3splt.c:574
+#: src/mp3splt.c:584
 msgid "using time mode with stdout !"
 msgstr "Zeitmodus mit Standardausgabe wird verwendet!"
 
-#: src/mp3splt.c:615
+#: src/mp3splt.c:625
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr " Teilung der Datei »%s« wird simuliert …\n"
 
-#: src/mp3splt.c:619
+#: src/mp3splt.c:629
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Datei »%s« wird verarbeitet …\n"
 
-#: src/mp3splt.c:626 src/options_checker.c:49
+#: src/mp3splt.c:636 src/options_checker.c:49
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p"
@@ -78,20 +78,20 @@ msgstr ""
 "Option -k (oder STDIN) kann nicht mit einer der folgenden Optionen verwendet "
 "werden : -S -s -r -w -l -e -i -a -p"
 
-#: src/mp3splt.c:682
+#: src/mp3splt.c:692
 msgid "freedb query format ambigous !"
 msgstr "Format der Freedb-Abfrage ist nicht eindeutig!"
 
-#: src/mp3splt.c:726
+#: src/mp3splt.c:736
 msgid "tags format ambiguous !"
 msgstr "Tag-Format ist nicht eindeutig!"
 
-#: src/mp3splt.c:758
+#: src/mp3splt.c:768
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr " Durchschnittlicher Pegel der Stille: %.2f dB"
 
-#: src/mp3splt.c:775
+#: src/mp3splt.c:785
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -329,53 +329,63 @@ msgid "the -O option cannot be used with -w, -e, -l or -i"
 msgstr ""
 "Die Option -O kann nicht zusammen mit -w, -e, -l oder -i verwendet werden"
 
-#: src/options_parsers.c:45
+#: src/options_parsers.c:46
 msgid "bad gap argument. It will be ignored !"
 msgstr "Falsches gap-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:60
+#: src/options_parsers.c:61
 #, fuzzy
 msgid "bad shots argument. It will be ignored !"
 msgstr "Falsches threshold-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:75
+#: src/options_parsers.c:76
+#, fuzzy
+msgid "bad trackjoin argument. It will be ignored !"
+msgstr "Falsches tracknumber-Argument. Wird ignoriert!"
+
+#: src/options_parsers.c:91
+#, fuzzy
+msgid "bad jointrackmin argument. It will be ignored !"
+msgstr "Falsches tracknumber-Argument. Wird ignoriert!"
+
+#: src/options_parsers.c:106
 msgid "bad threshold argument. It will be ignored !"
 msgstr "Falsches threshold-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:90
+#: src/options_parsers.c:121
 msgid "bad tracknumber argument. It will be ignored !"
 msgstr "Falsches tracknumber-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:114
+#: src/options_parsers.c:145
 msgid "bad offset argument. It will be ignored!"
 msgstr "Falsches offset-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:129
+#: src/options_parsers.c:160
 msgid "bad minimum track length argument. It will be ignored !"
 msgstr "Falsches Argument zur minimalen Titellänge. Wird ignoriert!"
 
-#: src/options_parsers.c:148
+#: src/options_parsers.c:179
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr "Falsches minimum silence length-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:171
+#: src/options_parsers.c:202
 msgid "no regular expression found as argument."
 msgstr "Kein regulärer Ausdruck als Argument gefunden."
 
-#: src/options_parsers.c:347
+#: src/options_parsers.c:378
 msgid "found non digits characters in port ! (switched to default)"
 msgstr "Keine verwertbaren Zeichen im Port gefunden! (Vorgabe wird benutzt)"
 
-#: src/options_parsers.c:372
+#: src/options_parsers.c:403
 msgid "unknown search type ! (switched to default)"
 msgstr "Unbekannter Suchtyp! (Vorgabe wird benutzt)"
 
-#: src/options_parsers.c:388
+#: src/options_parsers.c:419
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
 "Die Freedb-Websuche wird noch nicht unterstützt! (Vorgabe wird verwendet)"
 
-#: src/options_parsers.c:394
+#: src/options_parsers.c:425
 msgid "unknown get type ! (switched to default)"
 msgstr "Unbekannter Ermittlungstyp (Vorgabe wird verwendet)"
 
