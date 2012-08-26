@@ -740,6 +740,134 @@ function test_silence_with_rm_and_trackmin
   echo
 }
 
+function test_silence_with_trackjoin_no_join_done
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode - trackjoin & no join"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00, Shots: 25, Min track join: 64.00)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackjoin=64 -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  _check_silence_output_files
+
+  expected="songs/La_Verue__Today_silence.mp3
+-48.00\t0.00\t25
+56.840000\t66.790001\t995
+168.350006\t177.240005\t889"
+  check_file_content "mp3splt.log" "$expected"
+
+  print_ok
+  echo
+}
+
+function test_silence_with_trackjoin_one_file_joined
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode - trackjoin & one file joined"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00, Shots: 25, Min track join: 65.00)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackjoin=65 -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_1.mp3"
+  check_current_mp3_length "02.55"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "4936870"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
+  check_current_mp3_length "01.10"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "1975986"
+
+  expected="songs/La_Verue__Today_silence.mp3
+-48.00\t0.00\t25
+56.840000\t66.790001\t995
+168.350006\t177.240005\t889"
+  check_file_content "mp3splt.log" "$expected"
+
+  print_ok
+  echo
+}
+
+function test_silence_with_trackjoin_all_files_joined
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode - trackjoin & all files joined"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00, Shots: 25, Min track join: 71.00)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackjoin=71 -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_1.mp3"
+  check_current_mp3_length "04.05"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "6911225"
+
+  expected="songs/La_Verue__Today_silence.mp3
+-48.00\t0.00\t25
+56.840000\t66.790001\t995
+168.350006\t177.240005\t889"
+  check_file_content "mp3splt.log" "$expected"
+
+  print_ok
+  echo
+}
+
 function run_silence_mode_tests
 {
   p_blue " SILENCE tests ..."

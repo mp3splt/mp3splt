@@ -788,18 +788,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       free(min_track_join);
     }
 
-    if (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN) > 0)
-    {
-      char *min_track_join_min = 
-        splt_su_get_formatted_message(state, ", %s: %.2f", "Min track join min",
-            splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN));
-
-      int err = splt_su_append_str(&other_options, min_track_join_min, NULL);
-      if (err < 0) { *error = err; goto end; }
-
-      free(min_track_join_min);
-    }
-
     splt_c_put_info_message_to_client(state,
         _(" Silence split type: %s mode (Th: %.1f dB,"
           " Off: %.2f, Min: %.2f, Remove: %s, Min track: %.2f, Shots: %d%s)\n"),

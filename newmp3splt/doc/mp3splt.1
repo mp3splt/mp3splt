@@ -350,6 +350,13 @@ Does not require an additional number and it used to remove silence when using \
 Positive float of the minimum number of seconds for a track to be written out.
 Tracks shorter than trackmin will be skipped during the output phase.
 The default value 0.0 means to not skip any tracks.
+.IP \fBtrackjoin=FLOAT\fP
+Positive float of the minimum number of seconds for a track to be written out.
+Tracks shorter than trackjoin will be joined with others. The main difference between this parameter
+and trackmin is that using this one, no part of the original file will be lost.
+The default value of 0.0 means to not join any tracks.
+If using both trackmin and trackjoin, tracks shorter than trackmin will be discarded, but after the
+join.
 
 .IP "\fBOnly \-a\fP"
 

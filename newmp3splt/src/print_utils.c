@@ -251,7 +251,7 @@ void show_small_help_exit(main_data *data)
   print_message(_(" -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
         " -f   Frame mode (mp3 only): process all frames. For higher precision and VBR.\n"
         " -a   Auto-Adjust splitpoints with silence detection. (Use -p for arguments)"));
-  print_message(_(" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots): user arguments for -s and -a.\n"
+  print_message(_(" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots, trackjoin): user arguments for -s and -a.\n"
         " -o + FORMAT: output filename pattern. Can contain those variables:\n"
         "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
         "      @t: title tag, @n: track number identifier, @N: track tag number\n"

@@ -4,6 +4,18 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.7.3
+
+- redesigned the mp3splt-gtk user interface
+- added option to specify the wave quality in the parameters (for performance reasons)
+- wave interpolation is now much correct - we use the douglas peucker algorithm instead of the previous one which was stupid
+- added gray areas where no splitpoints - regarding #3520736
+- added seek key shortcuts to the player - #1811400 & #3528001
+- heavy refactoring of mp3splt-gtk code
+- fixed bug: removing TLEN id3v2 tag from the split files (libmp3splt)
+- fixed bug #3530488 - regression introduced with ogg multiple logical streams (libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.7.2
 
 - fixed an important bug of memory leak in player drawing when using GTK+-2

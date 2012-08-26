@@ -497,10 +497,6 @@ typedef enum {
  */
 #define SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN 0.0
 /**
- * @brief Default value for the #SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN option
- */
-#define SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN_MIN 0.0
-/**
  * @brief Default value for the #SPLT_OPT_PARAM_GAP option
  */
 #define SPLT_DEFAULT_PARAM_GAP 30
@@ -671,12 +667,12 @@ typedef struct {
   */
   float parameter_min_track_length;
 
-  /*! TODO
+  /*! The minimum track length for option_silence_mode [in seconds] to be kept as a valid segment.
+  
+    A positive float of the minimum number of seconds to be left as output file. Smaller
+    segments will be joined among others.
   */
   float parameter_min_track_join;
-  /*! TODO
-  */
-  float parameter_min_track_join_min;
 
   //!possible values are #splt_str_format
   int artist_tag_format;
@@ -1225,17 +1221,16 @@ typedef enum {
    */
   SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
   /**
-   * TODO
+   * Minimum number of seconds to be considered a valid track\n
+   * All tracks shorter than this value are joined with others.
+   * The difference between #SPLT_OPT_PARAM_MIN_TRACK_LENGTH is that using this option,
+   * no part from the original file is lost.
+   *
+   * The option can take positive float values.
    *
    * Default is #SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN
    */
   SPLT_OPT_PARAM_MIN_TRACK_JOIN,
-  /**
-   * TODO
-   *
-   * Default is #SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN_MIN
-   */
-  SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN,
   /**
    * Format of the artist tag from filename.
    * Possible values are #splt_str_format

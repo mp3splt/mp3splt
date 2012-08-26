@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-08-25 13:50+0200\n"
+"POT-Creation-Date: 2012-08-26 23:31+0200\n"
 "PO-Revision-Date: 2011-09-11 11:11+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,48 +42,48 @@ msgstr ""
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 
-#: src/mp3splt.c:567
+#: src/mp3splt.c:563
 msgid "no input filename(s)."
 msgstr ""
 
-#: src/mp3splt.c:580
+#: src/mp3splt.c:576
 msgid "multiple splitpoints with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:584
+#: src/mp3splt.c:580
 msgid "using time mode with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:625
+#: src/mp3splt.c:621
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:629
+#: src/mp3splt.c:625
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:636 src/options_checker.c:49
+#: src/mp3splt.c:632 src/options_checker.c:49
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p"
 msgstr ""
 
-#: src/mp3splt.c:692
+#: src/mp3splt.c:688
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:736
+#: src/mp3splt.c:732
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:768
+#: src/mp3splt.c:764
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:785
+#: src/mp3splt.c:781
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -277,46 +277,42 @@ msgid "bad trackjoin argument. It will be ignored !"
 msgstr ""
 
 #: src/options_parsers.c:91
-msgid "bad jointrackmin argument. It will be ignored !"
-msgstr ""
-
-#: src/options_parsers.c:106
 msgid "bad threshold argument. It will be ignored !"
 msgstr ""
 
-#: src/options_parsers.c:121
+#: src/options_parsers.c:106
 msgid "bad tracknumber argument. It will be ignored !"
 msgstr ""
 
-#: src/options_parsers.c:145
+#: src/options_parsers.c:130
 msgid "bad offset argument. It will be ignored!"
 msgstr ""
 
-#: src/options_parsers.c:160
+#: src/options_parsers.c:145
 msgid "bad minimum track length argument. It will be ignored !"
 msgstr ""
 
-#: src/options_parsers.c:179
+#: src/options_parsers.c:164
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr ""
 
-#: src/options_parsers.c:202
+#: src/options_parsers.c:187
 msgid "no regular expression found as argument."
 msgstr ""
 
-#: src/options_parsers.c:378
+#: src/options_parsers.c:363
 msgid "found non digits characters in port ! (switched to default)"
 msgstr ""
 
-#: src/options_parsers.c:403
+#: src/options_parsers.c:388
 msgid "unknown search type ! (switched to default)"
 msgstr ""
 
-#: src/options_parsers.c:419
+#: src/options_parsers.c:404
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
 
-#: src/options_parsers.c:425
+#: src/options_parsers.c:410
 msgid "unknown get type ! (switched to default)"
 msgstr ""
 
@@ -440,8 +436,8 @@ msgstr ""
 
 #: src/print_utils.c:254
 msgid ""
-" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots): user "
-"arguments for -s and -a.\n"
+" -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots, trackjoin): "
+"user arguments for -s and -a.\n"
 " -o + FORMAT: output filename pattern. Can contain those variables:\n"
 "      @a: artist tag, @p: performer tag (might not exists), @b: album tag\n"
 "      @t: title tag, @n: track number identifier, @N: track tag number\n"

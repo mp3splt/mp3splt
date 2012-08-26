@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-08-25 13:49+0200\n"
+"POT-Creation-Date: 2012-08-26 23:31+0200\n"
 "PO-Revision-Date: 2012-04-15 12:44+0000\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,7 +120,7 @@ msgstr "Korisnik"
 msgid "Auto"
 msgstr "Auto"
 
-#: src/splt.c:804
+#: src/splt.c:792
 #, fuzzy, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
@@ -129,7 +129,7 @@ msgstr ""
 " Vrsta podjele tišine: %s način (Th: %.1f dB, Isključeno: %.2f, Min: %.2f, "
 "Ukloni: %s, Min pjesma: %.2f, Pogotci: %d)\n"
 
-#: src/splt.c:830
+#: src/splt.c:818
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -138,30 +138,30 @@ msgstr ""
 " Peonađena datoteka popisa tišine '%s' ! Očitavnje točaka tišine iz "
 "datoteke, radi bržeg očitavanja ;)\n"
 
-#: src/splt.c:859
+#: src/splt.c:847
 #, c-format
 msgid " Total silence points found: %d."
 msgstr "Pronađeno ukupno točaka tišine: %d."
 
-#: src/splt.c:871
+#: src/splt.c:859
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (Odabrano %d pjesama)\n"
 
-#: src/splt.c:984
+#: src/splt.c:972
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr " Zapisujem datoteku popisa tišine '%s' ...\n"
 
-#: src/splt.c:1040
+#: src/splt.c:1028
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1088
+#: src/splt.c:1076
 msgid " info: starting trim using silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1135
+#: src/splt.c:1123
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
