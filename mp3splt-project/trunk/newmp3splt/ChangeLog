@@ -7,6 +7,12 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.4.3
+
+- added the trackjoin parameter for silence detection split: tracks shorter than trackjoin will be joined with others
+- fixed bug: removing TLEN id3v2 tag from the split files (libmp3splt)
+- fixed bug #3530488 - regression introduced with ogg multiple logical streams (libmp3splt)
+
 #mp3splt version 2.4.2
 
 - fixed error when ID3v2 was containing what appears a valid frame; make sure we skip the ID3v2 after looking for the first frames (libmp3splt)

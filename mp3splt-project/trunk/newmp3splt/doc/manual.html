@@ -200,8 +200,7 @@ with consecutive tracks (such as live performances) might be only a waste of tim
 <BR>&nbsp;&nbsp;The&nbsp;next&nbsp;lines&nbsp;contain&nbsp;each&nbsp;one&nbsp;three&nbsp;columns:
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;first&nbsp;column&nbsp;is&nbsp;the&nbsp;start&nbsp;position&nbsp;of&nbsp;the&nbsp;found&nbsp;silence&nbsp;(in&nbsp;seconds.fractions)
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;second&nbsp;column&nbsp;is&nbsp;the&nbsp;end&nbsp;position&nbsp;of&nbsp;the&nbsp;found&nbsp;silence&nbsp;(in&nbsp;seconds.fractions)
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;third&nbsp;column&nbsp;is&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;silence&nbsp;in&nbsp;hundreths&nbsp;of&nbsp;seconds
-<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(second_column&nbsp;*&nbsp;100&nbsp;-&nbsp;first_column&nbsp;*&nbsp;100)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;third&nbsp;column&nbsp;is&nbsp;the&nbsp;order&nbsp;of&nbsp;magnitude&nbsp;of&nbsp;the&nbsp;silence&nbsp;length;&nbsp;it&nbsp;is&nbsp;useful&nbsp;to&nbsp;find&nbsp;out&nbsp;most&nbsp;probable&nbsp;silence&nbsp;points
 <P>
 <DT><B>-c SOURCE</B>         <DD>
 <B>CDDB mode</B>. To get splitpoints and filenames automatically from SOURCE, that is the name
@@ -324,6 +323,13 @@ Does not require an additional number and it used to remove silence when using -
 Positive float of the minimum number of seconds for a track to be written out.
 Tracks shorter than trackmin will be skipped during the output phase.
 The default value 0.0 means to not skip any tracks.
+<DT><B>trackjoin=FLOAT</B><DD>
+Positive float of the minimum number of seconds for a track to be written out.
+Tracks shorter than trackjoin will be joined with others. The main difference between this parameter
+and trackmin is that using this one, no part of the original file will be lost.
+The default value of 0.0 means to not join any tracks.
+If using both trackmin and trackjoin, tracks shorter than trackmin will be discarded, but after the
+join.
 <P>
 <DT><B>Only -a</B><DD>
 <P>
@@ -738,6 +744,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 21:09:44 GMT, May 11, 2012
+Time: 21:31:59 GMT, August 26, 2012
 </BODY>
 </HTML>

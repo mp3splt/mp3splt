@@ -245,12 +245,6 @@ void splt_check_set_correct_options(splt_state *state)
       splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN,
           SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN);
     }
-
-    if (splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN) < 0.f)
-    {
-      splt_o_set_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN_MIN,
-          SPLT_DEFAULT_PARAM_MIN_TRACK_JOIN_MIN);
-    }
   }
 
   if (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST))

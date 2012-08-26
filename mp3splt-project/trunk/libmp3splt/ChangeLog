@@ -2,6 +2,13 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.7.3
+-------------------------------------------------------------
+
+- added the trackjoin parameter for silence detection split: tracks shorter than trackjoin will be joined with others
+- fixed bug: removing TLEN id3v2 tag from the split files
+- fixed bug #3530488 - regression introduced with ogg multiple logical streams 
+
 libmp3splt version 0.7.2
 -------------------------------------------------------------
 
