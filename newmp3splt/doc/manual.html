@@ -181,7 +181,9 @@ silence (rm) which allows you to remove the silence between split tracks. If you
 mp3splt will use the default values. Of course if you specify the number of tracks to split,
 you will help mp3splt to understand what are the most probable split points,
 anyway once you scan a file with -s option, mp3splt will write a file named &quot;mp3splt.log&quot; in which
-it saves all silence points found. This allows you to run mp3splt with different parameters (except th and min)
+it saves all silence points found. If this file exists in the current working directory, mp3splt
+will read the splitpoints from this file and will not recompute the silence splitpoints.
+This allows you to run mp3splt with different parameters (except th and min)
 without decoding the file again. Finally, if the number of silence points is
 not correct, you have many chances to achieve right result. For example if a silence point
 was not detected because too short, you can manually split the long track in the two smaller ones.
@@ -744,6 +746,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 21:31:59 GMT, August 26, 2012
+Time: 22:13:15 GMT, August 26, 2012
 </BODY>
 </HTML>
