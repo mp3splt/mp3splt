@@ -1,0 +1,22 @@
+This package was debianized by Bruce Forsberg <bruce.forsberg@gmail.com> on
+Sat, 26 Sep 2009 12:52:07 -0700.
+
+It was downloaded from mp3splt.sourceforge.net
+
+Upstream Author: Munteanu Alexandru Ionut (io_alex_2002@yahoo.fr), Matteo Trotta <mtrotta@users.sourceforge.net>
+
+Copyright: <put the year(s) of the copyright, and the names of the
+            copyright holder(s) here>
+
+License: GPL Version 2
+
+<Put the license of the package here>
+
+
+The Debian packaging is (C) 2009, Bruce Forsberg <bruce.forsberg@gmail.com> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.
+

@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+override_dh_makeshlibs:
+	dh_makeshlibs -Nlibmp3splt0 -n
+	dh_makeshlibs -plibmp3splt0 -V "$(shell sh ./debian/shlibs-string.sh)"
+
+.PHONY: override_dh_makeshlibs
+
+%:
+	dh $@

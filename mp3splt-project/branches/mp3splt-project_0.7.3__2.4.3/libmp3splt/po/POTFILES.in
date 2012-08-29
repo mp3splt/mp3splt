@@ -1,0 +1,20 @@
+# List of files which contain translatable strings.
+src/mp3splt.c
+src/checks.c
+src/cddb.c
+src/types_func.c
+src/splt.c
+src/utils.c
+src/plugins.c
+src/cue.c
+src/freedb.c
+src/cddb_cue_common.c
+src/splt_array.c
+src/audacity.c
+src/errors.c
+src/filename_regex.c
+src/string_utils.c
+src/tags_parser.c
+plugins/mp3.c
+plugins/ogg.c
+
