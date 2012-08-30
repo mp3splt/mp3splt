@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-08-27 22:29+0200\n"
+"POT-Creation-Date: 2012-08-30 23:31+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,26 +104,25 @@ msgid " Trim silence split - Th: %.1f dB\n"
 msgstr ""
 
 #: src/splt.c:758
-#, c-format
 msgid "YES"
 msgstr "OUI"
 
-#: src/splt.c:762
+#: src/splt.c:764
 #, c-format
 msgid "NO"
 msgstr "NON"
 
-#: src/splt.c:768
+#: src/splt.c:770
 #, c-format
 msgid "User"
 msgstr "Utilisateur"
 
-#: src/splt.c:772
+#: src/splt.c:774
 #, c-format
 msgid "Auto"
 msgstr "Automatique"
 
-#: src/splt.c:792
+#: src/splt.c:794
 #, fuzzy, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
@@ -132,7 +131,7 @@ msgstr ""
 " Division avec recherche du silence : mode %s (Seuil : %.1f dB, Ecart : "
 "%.2f, Min : %.2f, Suppression : %s)\n"
 
-#: src/splt.c:818
+#: src/splt.c:820
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -141,31 +140,31 @@ msgstr ""
 "Fichier journal silence trouvé '%s' ! Lecture des points silence points pour "
 "gagner du temps ;)\n"
 
-#: src/splt.c:847
+#: src/splt.c:849
 #, c-format
 msgid " Total silence points found: %d."
 msgstr "Total des points silence trouvés  : %d."
 
-#: src/splt.c:859
+#: src/splt.c:861
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d pistes sélectionnées)\n"
 
-#: src/splt.c:972
+#: src/splt.c:979
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr " Ecriture du fichier de log avec les points de silence '%s' ...\n"
 
-#: src/splt.c:1028
+#: src/splt.c:1035
 msgid " info: starting silence mode split\n"
 msgstr " info : début de la division avec recherche de silence\n"
 
-#: src/splt.c:1076
+#: src/splt.c:1083
 #, fuzzy
 msgid " info: starting trim using silence mode split\n"
 msgstr " info : début de la division avec recherche de silence\n"
 
-#: src/splt.c:1123
+#: src/splt.c:1130
 msgid " info: starting wrap mode split\n"
 msgstr " info : début de la division 'wrap'\n"
 

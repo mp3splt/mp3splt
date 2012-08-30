@@ -119,6 +119,12 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
     case SPLT_OPT_PARAM_REMOVE_SILENCE:
       state->options.parameter_remove_silence = *((int *)data);
       break;
+    case SPLT_OPT_KEEP_SILENCE_LEFT:
+      state->options.keep_silence_left = *((float *)data);
+      break;
+    case SPLT_OPT_KEEP_SILENCE_RIGHT:
+      state->options.keep_silence_right = *((float *)data);
+      break;
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = *((int *)data);
       break;
@@ -232,6 +238,10 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.parameter_shots;
     case SPLT_OPT_PARAM_REMOVE_SILENCE:
       return &state->options.parameter_remove_silence;
+    case SPLT_OPT_KEEP_SILENCE_LEFT:
+      return &state->options.keep_silence_left;
+    case SPLT_OPT_KEEP_SILENCE_RIGHT:
+      return &state->options.keep_silence_right;
     case SPLT_OPT_PARAM_GAP:
       return &state->options.parameter_gap;
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:

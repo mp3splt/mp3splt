@@ -396,7 +396,7 @@ function test_silence_rm
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -453,7 +453,7 @@ function test_silence_rm_and_output_format
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -492,7 +492,7 @@ function test_silence_rm_and_overlap
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -532,7 +532,7 @@ function test_silence_rm_and_custom_tags
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -574,7 +574,7 @@ function test_silence_rm_and_custom_tags_and_output_format
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -704,7 +704,7 @@ function test_silence_with_rm_and_trackmin
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 57.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 57.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  info: track too short (0.56.84 < 0.57.0); skipped.

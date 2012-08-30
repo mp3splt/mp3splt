@@ -28,7 +28,7 @@
 
 int parse_silence_options(char *arg, float *th, int *gap,
     int *nt, float *off, int *rm, float *min, float *min_track_length, int *shots,
-    float *min_track_join)
+    float *min_track_join, float *keep_silence_left, float *keep_silence_right)
 {
   char *ptr = NULL;
   int found = 0;
@@ -108,9 +108,18 @@ int parse_silence_options(char *arg, float *th, int *gap,
     }
   }
 
-  if (rm!=NULL)
+  if (rm != NULL)
   {
-    if ((ptr=strstr(arg, "rm"))!=NULL)
+    if ((ptr = strstr(arg, "rm=")) != NULL)
+    {
+      if (sscanf(ptr+1, "%f_%f", keep_silence_left, keep_silence_right) != 2)
+      {
+        print_warning(_("Bad values for the rm argument. rm parameter will be ignored!"));
+      }
+      found++;
+      *rm = 1;
+    }
+    else if ((ptr = strstr(arg, "rm")) != NULL)
     {
       found++;
       *rm = 1;
