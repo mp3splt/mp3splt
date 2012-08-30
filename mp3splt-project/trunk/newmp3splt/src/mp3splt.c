@@ -417,12 +417,22 @@ int main(int argc, char **orig_argv)
     float th = -200, off = -200, min = -200, min_track_length = -200;
     int gap = -200, nt = -200, rm = -200, shots = -200;
     float min_track_join = -200;
+    float keep_silence_left = -200, keep_silence_right = -200;
     int parsed_p_options = 
       parse_silence_options(opt->param_args, &th, &gap, &nt, &off, &rm, &min, &min_track_length,
-          &shots, &min_track_join);
+          &shots, &min_track_join, &keep_silence_left, &keep_silence_right);
     if (parsed_p_options < 1)
     {
       print_error_exit(_("bad argument for -p option. No valid value was recognized !"), data);
+    }
+
+    if (keep_silence_left >= 0)
+    {
+      mp3splt_set_float_option(state, SPLT_OPT_KEEP_SILENCE_LEFT, keep_silence_left);
+    }
+    if (keep_silence_right >= 0)
+    {
+      mp3splt_set_float_option(state, SPLT_OPT_KEEP_SILENCE_RIGHT, keep_silence_right);
     }
 
     if (min_track_join > 0)

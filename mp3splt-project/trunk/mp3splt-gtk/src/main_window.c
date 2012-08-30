@@ -42,7 +42,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "0.7.3"
+#define VERSION "0.7.3.1095"
 #define PACKAGE_NAME "mp3splt-gtk"
 #endif
 

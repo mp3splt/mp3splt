@@ -501,6 +501,14 @@ typedef enum {
  */
 #define SPLT_DEFAULT_PARAM_GAP 30
 /**
+ * @brief Default value for the #SPLT_OPT_KEEP_SILENCE_LEFT option
+ */
+#define SPLT_DEFAULT_KEEP_SILENCE_LEFT 0
+/**
+ * @brief Default value for the #SPLT_OPT_KEEP_SILENCE_RIGHT option
+ */
+#define SPLT_DEFAULT_KEEP_SILENCE_RIGHT 0
+/**
  * @brief Default value for the #SPLT_OPT_PARAM_NUMBER_TRACKS option
  */
 #define SPLT_DEFAULT_PARAM_TRACKS 0
@@ -691,6 +699,12 @@ typedef struct {
 
   //!true=remove the silence between split tracks
   int parameter_remove_silence;
+
+  //!when using the 'remove silence' parameter, number of seconds to keep at the beginning
+  float keep_silence_left;
+
+  //!when using the 'remove silence' parameter, number of seconds to keep at the end 
+  float keep_silence_right;
 
   //PARAMETERS for option_auto_adjust:
   /*! Auto-Adjust: the gap value around splitpoint to search for
@@ -1135,6 +1149,20 @@ typedef enum {
    */
   SPLT_OPT_PARAM_REMOVE_SILENCE,
   /**
+   * When using the #SPLT_OPT_PARAM_REMOVE_SILENCE, this option allows you to keep some
+   * number of seconds of silence from the beginning of the silence segment.
+   *
+   * Default is #SPLT_DEFAULT_KEEP_SILENCE_LEFT
+   */
+  SPLT_OPT_KEEP_SILENCE_LEFT,
+  /**
+   * When using the #SPLT_OPT_PARAM_REMOVE_SILENCE, this option allows you to keep some
+   * number of seconds of silence from the end of the silence segment.
+   *
+   * Default is #SPLT_DEFAULT_KEEP_SILENCE_RIGHT
+   */
+  SPLT_OPT_KEEP_SILENCE_RIGHT,
+  /**
    * The time to auto-adjust before and after splitpoint
    * when having the #SPLT_OPT_AUTO_ADJUST option
    *
@@ -1375,7 +1403,7 @@ static const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
 /**
  * @brief Package version
  */
-#define SPLT_PACKAGE_VERSION "0.7.3"
+#define SPLT_PACKAGE_VERSION "0.7.3.1095"
 #endif
 /**
  * @brief Package authors

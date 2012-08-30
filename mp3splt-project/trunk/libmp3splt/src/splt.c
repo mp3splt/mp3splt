@@ -755,11 +755,13 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
   char remove_str[128] = { '\0' };
   if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
   {
-    snprintf(remove_str,128,_("YES"));
+    snprintf(remove_str, 128, "%s(%.2f-%.2f)", _ ("YES"),
+        splt_o_get_float_option(state, SPLT_OPT_KEEP_SILENCE_LEFT),
+        splt_o_get_float_option(state, SPLT_OPT_KEEP_SILENCE_RIGHT));
   }
   else
   {
-    snprintf(remove_str,128,_("NO"));
+    snprintf(remove_str, 128 ,_("NO"));
   }
 
   char auto_user_str[128] = { '\0' };
@@ -880,8 +882,6 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 
       int i;
 
-      //we take all splitpoints found and we remove silence 
-      //if needed
       for (i = 1; i < found; i++)
       {
         if (temp == NULL)
@@ -890,49 +890,56 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           break;
         }
 
-        long end_track_point = 0;
-        long end_track_point_after_silence = 0;
-        if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
-        {
-          end_track_point = splt_co_time_to_long(temp->begin_position);
-          end_track_point_after_silence = splt_co_time_to_long(temp->end_position);
-        }
-        else 
-        {
-          end_track_point = splt_co_time_to_long(splt_siu_silence_position(temp, offset));
-        }
-
         if (i == 1)
         {
           append_error = splt_sp_append_splitpoint(state, 0, NULL, SPLT_SPLITPOINT);
           if (append_error < 0) { *error = append_error; found = i; break;}
+
+          splitpoints_appended++;
         }
 
         if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
         {
-          append_error = splt_sp_append_splitpoint(state, end_track_point, NULL, SPLT_SKIPPOINT);
-          if (append_error < 0) { *error = append_error; found = i; break;}
-          append_error =
-            splt_sp_append_splitpoint(state, end_track_point_after_silence, NULL, SPLT_SPLITPOINT);
-          if (append_error < 0) { *error = append_error; found = i; break;}
+          long end_track_point = splt_co_time_to_long(temp->begin_position);
+          long end_track_point_after_silence = splt_co_time_to_long(temp->end_position);
+          long silence_length = end_track_point_after_silence - end_track_point;
+
+          float keep_silence_left = splt_o_get_float_option(state, SPLT_OPT_KEEP_SILENCE_LEFT);
+          float keep_silence_right = splt_o_get_float_option(state, SPLT_OPT_KEEP_SILENCE_RIGHT);
+          long keep_silence_total = splt_co_time_to_long(keep_silence_left + keep_silence_right);
+
+          if (silence_length > keep_silence_total)
+          {
+            long adjusted_silence_left = splt_co_time_to_long(temp->begin_position + keep_silence_left);
+            long adjusted_silence_right = splt_co_time_to_long(temp->end_position - keep_silence_right);
+
+            append_error = splt_sp_append_splitpoint(state, adjusted_silence_left, NULL, SPLT_SKIPPOINT);
+            if (append_error < 0) { *error = append_error; found = i; break;}
+            append_error =
+              splt_sp_append_splitpoint(state, adjusted_silence_right, NULL, SPLT_SPLITPOINT);
+            if (append_error < 0) { *error = append_error; found = i; break;}
+
+            splitpoints_appended += 2;
+          }
+          else
+          {
+            float offset = keep_silence_left / (keep_silence_left + keep_silence_right);
+            long end_track_point = splt_co_time_to_long(splt_siu_silence_position(temp, offset));
+            append_error = splt_sp_append_splitpoint(state, end_track_point, NULL, SPLT_SPLITPOINT);
+            if (append_error < 0) { *error = append_error; found = i; break;}
+            splitpoints_appended++;
+          }
         }
         else
         {
+          long end_track_point = splt_co_time_to_long(splt_siu_silence_position(temp, offset));
           append_error = splt_sp_append_splitpoint(state, end_track_point, NULL, SPLT_SPLITPOINT);
           if (append_error != SPLT_OK) { *error = append_error; found = i; break; }
+
+          splitpoints_appended++;
         }
 
         temp = temp->next;
-      }
-
-      //we order the splitpoints
-      if (splt_o_get_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE))
-      {
-        splitpoints_appended = (found-1)*2+1;
-      }
-      else 
-      {
-        splitpoints_appended = found;
       }
 
       splt_d_print_debug(state,"Order splitpoints...\n");

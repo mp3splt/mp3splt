@@ -389,7 +389,7 @@ function test_silence_rm
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -445,7 +445,7 @@ function test_silence_rm_and_output_format
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -483,7 +483,7 @@ function test_silence_rm_and_overlap
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -522,7 +522,7 @@ function test_silence_rm_and_custom_tags
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
@@ -566,7 +566,7 @@ function test_silence_rm_and_custom_tags_and_output_format
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting silence mode split
- Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES, Min track: 0.00, Shots: 25)
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(0.00-0.00), Min track: 0.00, Shots: 25)
 
  Total silence points found: 2. (Selected 3 tracks)
  Writing silence log file 'mp3splt.log' ...
