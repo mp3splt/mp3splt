@@ -112,8 +112,10 @@ int parse_silence_options(char *arg, float *th, int *gap,
   {
     if ((ptr = strstr(arg, "rm=")) != NULL)
     {
-      if (sscanf(ptr+1, "%f_%f", keep_silence_left, keep_silence_right) != 2)
+      if (sscanf(ptr+3, "%f_%f", keep_silence_left, keep_silence_right) != 2)
       {
+        *keep_silence_left = -200;
+        *keep_silence_right = -200;
         print_warning(_("Bad values for the rm argument. rm parameter will be ignored!"));
       }
       found++;
