@@ -910,8 +910,8 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
 
           if (silence_length > keep_silence_total)
           {
-            long adjusted_silence_left = splt_co_time_to_long(temp->begin_position + keep_silence_left);
-            long adjusted_silence_right = splt_co_time_to_long(temp->end_position - keep_silence_right);
+            long adjusted_silence_left = splt_co_time_to_long(temp->begin_position + keep_silence_right);
+            long adjusted_silence_right = splt_co_time_to_long(temp->end_position - keep_silence_left);
 
             append_error = splt_sp_append_splitpoint(state, adjusted_silence_left, NULL, SPLT_SKIPPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
@@ -923,7 +923,7 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
           }
           else
           {
-            float offset = keep_silence_left / (keep_silence_left + keep_silence_right);
+            float offset = keep_silence_right / (keep_silence_left + keep_silence_right);
             long end_track_point = splt_co_time_to_long(splt_siu_silence_position(temp, offset));
             append_error = splt_sp_append_splitpoint(state, end_track_point, NULL, SPLT_SPLITPOINT);
             if (append_error < 0) { *error = append_error; found = i; break;}
