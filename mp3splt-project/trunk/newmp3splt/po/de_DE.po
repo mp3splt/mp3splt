@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: newmp3splt\n"
 "Report-Msgid-Bugs-To: io_fx@yahoo.fr\n"
-"POT-Creation-Date: 2012-08-30 23:32+0200\n"
+"POT-Creation-Date: 2012-09-02 13:52+0200\n"
 "PO-Revision-Date: 2011-09-15 23:27+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -351,41 +351,41 @@ msgstr "Falsches threshold-Argument. Wird ignoriert!"
 msgid "bad tracknumber argument. It will be ignored !"
 msgstr "Falsches tracknumber-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:117
+#: src/options_parsers.c:119
 #, fuzzy
 msgid "Bad values for the rm argument. rm parameter will be ignored!"
 msgstr "Falsches threshold-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:139
+#: src/options_parsers.c:141
 msgid "bad offset argument. It will be ignored!"
 msgstr "Falsches offset-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:154
+#: src/options_parsers.c:156
 msgid "bad minimum track length argument. It will be ignored !"
 msgstr "Falsches Argument zur minimalen Titellänge. Wird ignoriert!"
 
-#: src/options_parsers.c:173
+#: src/options_parsers.c:175
 msgid "bad minimum silence length argument. It will be ignored !"
 msgstr "Falsches minimum silence length-Argument. Wird ignoriert!"
 
-#: src/options_parsers.c:196
+#: src/options_parsers.c:198
 msgid "no regular expression found as argument."
 msgstr "Kein regulärer Ausdruck als Argument gefunden."
 
-#: src/options_parsers.c:372
+#: src/options_parsers.c:374
 msgid "found non digits characters in port ! (switched to default)"
 msgstr "Keine verwertbaren Zeichen im Port gefunden! (Vorgabe wird benutzt)"
 
-#: src/options_parsers.c:397
+#: src/options_parsers.c:399
 msgid "unknown search type ! (switched to default)"
 msgstr "Unbekannter Suchtyp! (Vorgabe wird benutzt)"
 
-#: src/options_parsers.c:413
+#: src/options_parsers.c:415
 msgid "freedb web search not implemented yet ! (switched to default)"
 msgstr ""
 "Die Freedb-Websuche wird noch nicht unterstützt! (Vorgabe wird verwendet)"
 
-#: src/options_parsers.c:419
+#: src/options_parsers.c:421
 msgid "unknown get type ! (switched to default)"
 msgstr "Unbekannter Ermittlungstyp (Vorgabe wird verwendet)"
 
