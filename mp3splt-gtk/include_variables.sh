@@ -8,10 +8,10 @@
 #build architecture
 ARCH=${ARCH:=`uname -m`}
 #mp3splt-gtk version
-MP3SPLT_GTK_VERSION=0.7.3.1095
+MP3SPLT_GTK_VERSION=0.7.3.1098
 #the libmp3splt version (if mp3splt-gtk is only compatible with this
 #libmp3splt version)
-LIBMP3SPLT_VERSION=0.7.3.1095
+LIBMP3SPLT_VERSION=0.7.3.1098
 #the mp3splt-gtk documentation files
 MP3SPLT_GTK_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 #the mp3splt-gtk installed files (needed for openbsd, freebsd, ...)
