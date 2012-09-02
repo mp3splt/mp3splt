@@ -439,6 +439,120 @@ function test_silence_rm
   echo
 }
 
+function test_silence_rm_with_keep_left_and_right_parameter_values_and_silence_length_bigger_than_values
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode & rm & keep left - right parameter values & silence length bigger than values"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(2.00-6.00), Min track: 0.00, Shots: 25)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p rm=2_6 -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_1.mp3"
+  check_current_mp3_length "01.02"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1747671"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
+  check_current_mp3_length "01.49"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "3122272"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
+  check_current_mp3_length "01.10"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "1982038"
+
+  expected="songs/La_Verue__Today_silence.mp3
+-48.00\t0.00\t25
+56.840000\t66.790001\t995
+168.350006\t177.240005\t889"
+  check_file_content "mp3splt.log" "$expected"
+
+  print_ok
+  echo
+}
+
+function test_silence_rm_with_keep_left_and_right_parameter_values_and_silence_length_lesser_than_values
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode & rm & keep left - right parameter values & silence length lesser than values"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: YES(10.00-20.00), Min track: 0.00, Shots: 25)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p rm=10_20 -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_1.mp3"
+  check_current_mp3_length "01.03"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1762279"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_2.mp3"
+  check_current_mp3_length "01.50"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "3149196"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_silence_3.mp3"
+  check_current_mp3_length "01.11"
+  check_current_file_has_xing
+  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "3" "http://www.jamendo.com/"
+  check_current_file_size "2003012"
+
+  expected="songs/La_Verue__Today_silence.mp3
+-48.00\t0.00\t25
+56.840000\t66.790001\t995
+168.350006\t177.240005\t889"
+  check_file_content "mp3splt.log" "$expected"
+
+  print_ok
+  echo
+}
+
 function test_silence_rm_and_output_format
 {
   rm -f mp3splt.log

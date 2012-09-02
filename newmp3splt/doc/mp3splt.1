@@ -346,8 +346,16 @@ and '...' a segment of the audio file (silence or audio)
 Positive integer number of tracks to be split when using \-s option. By default all tracks are split.
 .IP \fBmin=FLOAT\fP
 Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded. Default is 0.
-.IP \fBrm\fP
-Does not require an additional number and it used to remove silence when using \-s option.
+.IP \fBrm[=FLOAT_FLOAT]\fP
+It is used to remove silence when using the \-s option.
+Can be used without additional numbers - by default it will cut all the silence found.
+Users can keep some of the silence found by passing the number of seconds to be kept at the
+beginning of the output files and at the end of the output files. For example, 'rm=2_6' will keep 2
+seconds of silence at the beginning of the split files and 6 seconds at the end.
+If the silence length is less than the sum of the number of seconds passed to the rm parameter,
+the split will convert the values to a percentage of the silence length. Taking the previous example, if
+the silence length is less than 8 seconds, the split will be done at 75% of the silence segment starting from
+the beginning of the silence ( 75% = 6/(2+6) ).
 .IP \fBtrackmin=FLOAT\fP
 Positive float of the minimum number of seconds for a track to be written out.
 Tracks shorter than trackmin will be skipped during the output phase.
