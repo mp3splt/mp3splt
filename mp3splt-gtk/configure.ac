@@ -40,7 +40,6 @@ AC_INIT(mp3splt-gtk, 0.7.3, mp3splt.sf.net)
 # One of this files is gnome-doc-utils.make, which is needed to 
 # compile the help files.
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_AUX_DIR([libltdl/config])
 
 AC_CONFIG_MACRO_DIR([m4])
 
