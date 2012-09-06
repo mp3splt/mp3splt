@@ -46,6 +46,8 @@
 #include <audacious/audctrl.h>
 #include <audacious/dbus.h>
 
+#include <dbus/dbus-glib.h>
+
 //!Acquires informations about the song
 void myaudacious_get_song_infos(gchar *total_infos, ui_state *ui)
 {
