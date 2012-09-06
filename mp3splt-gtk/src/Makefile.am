@@ -71,8 +71,8 @@ DEFS += -DPIXMAP_PATH=\"$(appicondir)\" -DIMAGEDIR=\"$(imagedir)\"
 endif
 
 if AUDACIOUS
-mp3splt_gtk_LDADD += @AUDACIOUS_LIBS@
-INCLUDES += @AUDACIOUS_CFLAGS@ -I/usr/include/dbus-1.0 -I/usr/include/dbus-1.0/include
+mp3splt_gtk_LDADD += @AUDACIOUS_LIBS@ @DBUS_GLIB_LIBS@
+INCLUDES += @AUDACIOUS_CFLAGS@ @DBUS_GLIB_CFLAGS@
 else
 DEFS += -DNO_AUDACIOUS
 endif
