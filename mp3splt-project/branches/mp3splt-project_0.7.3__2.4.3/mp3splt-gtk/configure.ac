@@ -238,6 +238,7 @@ if test "x$enable_audacious" = xyes;then
     For GTK 2.x, you will need audacious < 3.0.
     You can force the GTK version using --enable-gtk3 and --disable-gtk3.
 ]) ])
+  PKG_CHECK_MODULES(DBUS_GLIB, dbus-glib-1)
 fi
 
 
