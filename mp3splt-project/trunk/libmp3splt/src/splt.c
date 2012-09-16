@@ -562,14 +562,14 @@ void splt_s_time_split(splt_state *state, int *error)
 {
   splt_c_put_info_message_to_client(state, _(" info: starting time mode split\n"));
 
-  double split_time_length = (double) splt_o_get_float_option(state, SPLT_OPT_SPLIT_TIME);
-  if (((long)split_time_length) == 0)
+  long split_time_length = splt_o_get_long_option(state, SPLT_OPT_SPLIT_TIME);
+  if (split_time_length == 0)
   {
     *error = SPLT_ERROR_TIME_SPLIT_VALUE_INVALID;
     return;
   }
 
-  splt_s_split_by_time(state, error, split_time_length, -1);
+  splt_s_split_by_time(state, error, split_time_length / 100.0, -1);
 }
 
 /*! function used with the -L option (length split)

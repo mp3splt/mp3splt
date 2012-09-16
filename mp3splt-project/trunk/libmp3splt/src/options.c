@@ -152,7 +152,7 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       break;
 
     case SPLT_OPT_SPLIT_TIME:
-      state->options.split_time = *((float *)data);
+      state->options.split_time = *((long *)data);
       break;
     case SPLT_OPT_PARAM_THRESHOLD:
       state->options.parameter_threshold = *((float *)data);

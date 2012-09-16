@@ -288,8 +288,7 @@ int main(int argc, char **orig_argv)
 
         if (converted_time != -LONG_MAX)
         {
-          float split_time = (float)converted_time / 100.0;
-          mp3splt_set_float_option(state, SPLT_OPT_SPLIT_TIME, split_time);
+          mp3splt_set_long_option(state, SPLT_OPT_SPLIT_TIME, converted_time);
         }
         else
         {
@@ -651,17 +650,21 @@ int main(int argc, char **orig_argv)
     if (opt->l_option)
     {
       //if no error when putting the filename to split
-      const splt_wrap *wrap_files;
-      wrap_files = mp3splt_get_wrap_files(state,&err);
+      const splt_wrap *wrap_files = mp3splt_get_wrap_files(state, &err);
       process_confirmation_error(err, data);
 
       //if no error when getting the wrap files
-      int wrap_files_number = wrap_files->wrap_files_num;
+      int wrap_files_number = mp3splt_wrap_get_total_number(wrap_files);
       int i = 0;
       fprintf(stdout,"\n");
       for (i = 0;i < wrap_files_number;i++)
       {
-        fprintf(stdout,"%s\n",wrap_files->wrap_files[i]);
+        char *wrap_file = mp3splt_wrap_get_wrapped_file(wrap_files, i);
+        if (wrap_file)
+        {
+          fprintf(stdout,"%s\n", wrap_file);
+          free(wrap_file);
+        }
       }
       fprintf(stdout,"\n");
       fflush(stdout);

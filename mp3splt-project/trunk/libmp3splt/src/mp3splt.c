@@ -458,6 +458,56 @@ int mp3splt_set_progress_function(splt_state *state,
   return error;
 }
 
+int mp3splt_progress_get_type(const splt_progress *p_bar)
+{
+  return p_bar->progress_type;
+}
+
+char *mp3splt_progress_get_filename_shorted(const splt_progress *p_bar)
+{
+  if (p_bar->filename_shorted)
+  {
+    return strdup(p_bar->filename_shorted);
+  }
+
+  return NULL;
+}
+
+int mp3splt_progress_get_current_split(const splt_progress *p_bar)
+{
+  return p_bar->current_split;
+}
+
+int mp3splt_progress_get_max_splits(const splt_progress *p_bar)
+{
+  return p_bar->max_splits;
+}
+
+int mp3splt_progress_get_silence_found_tracks(const splt_progress *p_bar)
+{
+  return p_bar->silence_found_tracks;
+}
+
+float mp3splt_progress_get_silence_db_level(const splt_progress *p_bar)
+{
+  return p_bar->silence_db_level;
+}
+
+float mp3splt_progress_get_percent_progress(const splt_progress *p_bar)
+{
+  return p_bar->percent_progress;
+}
+
+void mp3splt_progress_set_int_user_data(splt_progress *p_bar, int user_data)
+{
+  p_bar->user_data = user_data;
+}
+
+int mp3splt_progress_get_int_user_data(const splt_progress *p_bar)
+{
+  return p_bar->user_data;
+}
+
 /*! Register the callback for the function that calculates silence
     levels 
 
@@ -549,6 +599,26 @@ const splt_point *mp3splt_get_splitpoints(splt_state *state,
   }
 }
 
+long mp3splt_points_get_value(const splt_point *points, int index)
+{
+  return points[index].value;
+}
+
+int mp3splt_points_get_type(const splt_point *points, int index)
+{
+  return points[index].type;
+}
+
+char *mp3splt_points_get_name(const splt_point *points, int index)
+{
+  if (points[index].name)
+  {
+    return strdup(points[index].name);
+  }
+
+  return NULL;
+}
+
 /*! erase all the splitpoints
 
 \param state The structure this library keeps all its data in
@@ -634,6 +704,71 @@ const splt_tags *mp3splt_get_tags(splt_state *state,
     *err = SPLT_ERROR_STATE_NULL;
     return NULL;
   }
+}
+
+char *mp3splt_tags_get_artist(splt_tags *tags)
+{
+  if (tags->artist)
+  {
+    return strdup(tags->artist);
+  }
+
+  return NULL;
+}
+
+char *mp3splt_tags_get_album(splt_tags *tags)
+{
+  if (tags->album)
+  {
+    return strdup(tags->album);
+  }
+
+  return NULL;
+}
+
+char *mp3splt_tags_get_title(splt_tags *tags)
+{
+  if (tags->title)
+  {
+    return strdup(tags->title);
+  }
+
+  return NULL;
+}
+
+char *mp3splt_tags_get_genre(splt_tags *tags)
+{
+  if (tags->genre)
+  {
+    return strdup(tags->genre);
+  }
+
+  return NULL;
+}
+
+char *mp3splt_tags_get_comment(splt_tags *tags)
+{
+  if (tags->comment)
+  {
+    return strdup(tags->comment);
+  }
+
+  return NULL;
+}
+
+char *mp3splt_tags_get_year(splt_tags *tags)
+{
+  if (tags->year)
+  {
+    return strdup(tags->year);
+  }
+
+  return NULL;
+}
+
+int mp3splt_tags_get_track(splt_tags *tags)
+{
+  return tags->track;
 }
 
 //!puts tags from a string
@@ -1200,6 +1335,31 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
   }
 }
 
+int mp3splt_freedb_get_total_number(const splt_freedb_results *results)
+{
+  return results->number;
+}
+
+int mp3splt_freedb_get_id(const splt_freedb_results *results, int index)
+{
+  return results->results[index].id;
+}
+
+char *mp3splt_freedb_get_name(const splt_freedb_results *results, int index)
+{
+  if (results->results[index].name)
+  {
+    return strdup(results->results[index].name);
+  }
+
+  return NULL;
+}
+
+int mp3splt_freedb_get_number_of_revisions(const splt_freedb_results *results, int index)
+{
+  return results->results[index].revision_number;
+}
+
 /*! returns the content of a cddb file
 
 must only be called \emph{after} running get_freedb_search
@@ -1354,65 +1514,6 @@ void mp3splt_set_oformat(splt_state *state,
 /************************************/
 /* Other utilities                  */
 
-/*! Determines if syncerrors are found
-
-  \param state The splt_state structure containing the split points
-  \param error The error code
-*/
-const splt_syncerrors *mp3splt_get_syncerrors(splt_state *state,
-    int *error)
-{
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
-  {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      //we check the format of the filename
-      splt_check_file_type(state, err);
-
-      if (*err >= 0)
-      {
-        splt_o_lock_messages(state);
-        splt_p_init(state, err);
-        if (*err >= 0)
-        {
-          splt_o_unlock_messages(state);
-          splt_p_search_syncerrors(state, err);
-          splt_p_end(state, err);
-        }
-        else
-        {
-          splt_o_unlock_messages(state);
-        }
-      }
-
-      splt_o_unlock_library(state);
-
-      if (*err < 0)
-      {
-        return NULL;
-      }
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-      return NULL;
-    }
-
-    return state->serrors;
-  }
-  else
-  {
-    *err = SPLT_ERROR_STATE_NULL;
-    return NULL;
-  }
-}
-
 /*! Split a file that has been generated by mp3wrap
 
   \param state The splt_state structure containing the split points
@@ -1467,6 +1568,21 @@ const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
     *err = SPLT_ERROR_STATE_NULL;
     return NULL;
   }
+}
+
+int mp3splt_wrap_get_total_number(const splt_wrap *wrap_files)
+{
+  return wrap_files->wrap_files_num;
+}
+
+char *mp3splt_wrap_get_wrapped_file(const splt_wrap *wrap_files, int index)
+{
+  if (wrap_files->wrap_files[index])
+  {
+    return strdup(wrap_files->wrap_files[index]);
+  }
+
+  return NULL;
 }
 
 //!set the silence splitpoints without actually splitting
@@ -1570,7 +1686,7 @@ int mp3splt_count_silence_points(splt_state *state, int *error)
 //!returns libmp3splt version, max 20 chars
 void mp3splt_get_version(char *version)
 {
-  snprintf(version,20,"%s",SPLT_PACKAGE_VERSION);
+  snprintf(version, 20, "%s", SPLT_PACKAGE_VERSION);
 }
 
 /*! Returns the error string that matches an error code

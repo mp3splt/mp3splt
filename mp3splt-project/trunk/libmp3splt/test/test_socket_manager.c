@@ -1,5 +1,7 @@
 #include <cutter.h>
 
+#include <stdio.h>
+
 #include "libmp3splt/mp3splt.h"
 #include "socket_manager.h"
 

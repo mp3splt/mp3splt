@@ -242,17 +242,13 @@ static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data
   ui_with_p_bar *ui_p_bar = g_malloc0(sizeof(ui_with_p_bar));
   ui_p_bar->ui = ui;
 
-  ui_p_bar->progress_type = p_bar->progress_type;
-  ui_p_bar->filename_shorted = NULL;
-  if (p_bar->filename_shorted[0] != '\0')
-  {
-    ui_p_bar->filename_shorted = strdup(p_bar->filename_shorted);
-  }
-  ui_p_bar->current_split = p_bar->current_split;
-  ui_p_bar->max_splits = p_bar->max_splits;
-  ui_p_bar->silence_found_tracks = p_bar->silence_found_tracks;
-  ui_p_bar->silence_db_level = p_bar->silence_db_level;
-  ui_p_bar->percent_progress = p_bar->percent_progress;
+  ui_p_bar->progress_type = mp3splt_progress_get_type(p_bar);
+  ui_p_bar->filename_shorted = mp3splt_progress_get_filename_shorted(p_bar);
+  ui_p_bar->current_split = mp3splt_progress_get_current_split(p_bar);
+  ui_p_bar->max_splits = mp3splt_progress_get_max_splits(p_bar);
+  ui_p_bar->silence_found_tracks = mp3splt_progress_get_silence_found_tracks(p_bar);
+  ui_p_bar->silence_db_level = mp3splt_progress_get_silence_db_level(p_bar);
+  ui_p_bar->percent_progress = mp3splt_progress_get_percent_progress(p_bar);
 
   gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)lmanager_change_window_progress_bar_idle, ui_p_bar, NULL);
