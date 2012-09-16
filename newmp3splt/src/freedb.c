@@ -104,17 +104,19 @@ void do_freedb_search(main_data *data)
       opt->freedb_search_server,opt->freedb_search_port, search_type);
   fflush(console_out);
 
-  const splt_freedb_results *f_results = NULL;
+  const splt_freedb_results *f_results =
+    mp3splt_get_freedb_search(state, freedb_search_string,
+        &err, opt->freedb_search_type,
+        opt->freedb_search_server,
+        opt->freedb_search_port);
 
-  f_results = mp3splt_get_freedb_search(state, freedb_search_string,
-      &err, opt->freedb_search_type,
-      opt->freedb_search_server,
-      opt->freedb_search_port);
   process_confirmation_error(err, data);
   if (!f_results)
   {
     print_message_exit(_("No results found"), data);
   }
+
+  int number_of_results = mp3splt_freedb_get_total_number(f_results);
 
   //if we don't have an auto-select the result X from the arguments:
   // (query{artist}(resultX)
@@ -127,20 +129,23 @@ void do_freedb_search(main_data *data)
 
     int cd_number = 0;
     short end = SPLT_FALSE;
-    while (cd_number < f_results->number) {
-      fprintf(console_out,"%3d) %s\n",
-          f_results->results[cd_number].id,
-          f_results->results[cd_number].name);
+    while (cd_number < number_of_results) {
+      int cd_id = mp3splt_freedb_get_id(f_results, cd_number);
+
+      char *cd_name = mp3splt_freedb_get_name(f_results, cd_number);
+      fprintf(console_out,"%3d) %s\n", cd_id, cd_name);
+      free(cd_name);
 
       int i = 0;
-      for(i = 0; i < f_results->results[cd_number].revision_number; i++)
+      int number_of_revisions = mp3splt_freedb_get_number_of_revisions(f_results, cd_number);
+      for(i = 0; i < number_of_revisions; i++)
       {
         fprintf(console_out, "  |\\=>");
-        fprintf(console_out, "%3d) ", f_results->results[cd_number].id+i+1);
+        fprintf(console_out, "%3d) ", cd_id+i+1);
         fprintf(console_out, _("Revision: %d\n"), i+2);
 
         //break at 22
-        if (((f_results->results[cd_number].id+i+2)%22)==0)
+        if (((cd_id+i+2) % 22) == 0)
         {
           //duplicate, see below
           char junk[18];
@@ -158,7 +163,7 @@ void do_freedb_search(main_data *data)
 
       //we read result from the char, q tu select cd or
       //enter to show more results
-      if (((f_results->results[cd_number].id+1)%22)==0)
+      if (((cd_id + 1) % 22) == 0)
       {
         //duplicate, see ^^
         char junk[18];
@@ -217,13 +222,13 @@ end:
         selected_cd = atoi(sel_cd_input);
       }
 
-    } while ((selected_cd >= f_results->number) 
+    } while ((selected_cd >= number_of_results)
         || (selected_cd < 0));
   }
   else
   {
     selected_cd = opt->freedb_arg_result_option;
-    if (selected_cd >= f_results->number)
+    if (selected_cd >= number_of_results)
     {
       selected_cd = 0;
     }

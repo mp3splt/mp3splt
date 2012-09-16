@@ -79,38 +79,42 @@ void put_split_file(const char *file, int progress_data, void *data)
 void put_progress_bar(splt_progress *p_bar, void *data)
 {
   char progress_text[2048] = " ";
+  char *filename_shorted = mp3splt_progress_get_filename_shorted(p_bar);
 
-  switch (p_bar->progress_type)
+  switch (mp3splt_progress_get_type(p_bar))
   {
     case SPLT_PROGRESS_PREPARE:
       snprintf(progress_text,2047,
           _(" preparing \"%s\" (%d of %d)"),
-          p_bar->filename_shorted,
-          p_bar->current_split,
-          p_bar->max_splits);
+          filename_shorted,
+          mp3splt_progress_get_current_split(p_bar),
+          mp3splt_progress_get_max_splits(p_bar));
       break;
     case SPLT_PROGRESS_CREATE:
       snprintf(progress_text,2047,
           _(" creating \"%s\" (%d of %d)"),
-          p_bar->filename_shorted,
-          p_bar->current_split,
-          p_bar->max_splits);
+          filename_shorted,
+          mp3splt_progress_get_current_split(p_bar),
+          mp3splt_progress_get_max_splits(p_bar));
       break;
     case SPLT_PROGRESS_SEARCH_SYNC:
       snprintf(progress_text,2047,
           _(" searching for sync errors..."));
       break;
     case SPLT_PROGRESS_SCAN_SILENCE:
-      if (p_bar->silence_found_tracks > 0)
+      ;
+      int silence_found_tracks = mp3splt_progress_get_silence_found_tracks(p_bar);
+      float silence_db_level = mp3splt_progress_get_silence_db_level(p_bar);
+      if (silence_found_tracks > 0)
       {
         snprintf(progress_text,2047,
             _("S: %02d, Level: %.2f dB; scanning for silence..."),
-            p_bar->silence_found_tracks, p_bar->silence_db_level);
+            silence_found_tracks, silence_db_level);
       }
       else {
         snprintf(progress_text,2047,
             _("Level: %.2f dB; scanning for silence..."),
-            p_bar->silence_db_level);
+            silence_db_level);
       }
       break;
     default:
@@ -118,23 +122,25 @@ void put_progress_bar(splt_progress *p_bar, void *data)
       break;
   }
 
+  float percent_progress = mp3splt_progress_get_percent_progress(p_bar);
+
   char printed_value[2048] = "";
   //we update the progress
-  if (p_bar->percent_progress <= 0.01)
+  if (percent_progress <= 0.01)
   {
     snprintf(printed_value,2047," [ - %%] %s", progress_text);
   }
   else
   {
-    snprintf(printed_value,2047," [ %.2f %%] %s",
-        p_bar->percent_progress * 100, progress_text);
+    snprintf(printed_value,2047," [ %.2f %%] %s", percent_progress * 100, progress_text);
   }
 
   //we put necessary spaces
   char temp[2048] = "";
   int this_spaces = strlen(printed_value);
   int counter = strlen(printed_value);
-  while (counter <= p_bar->user_data)
+  int user_data = mp3splt_progress_get_int_user_data(p_bar);
+  while (counter <= user_data)
   {
     temp[counter-this_spaces] = ' ';
     counter++;
@@ -144,7 +150,9 @@ void put_progress_bar(splt_progress *p_bar, void *data)
   fprintf(console_progress,"%s%s\r",printed_value,temp);
   fflush(console_progress);
 
-  p_bar->user_data = strlen(printed_value)+1;
+  mp3splt_progress_set_int_user_data(p_bar, strlen(printed_value) + 1);
+
+  free(filename_shorted);
 }
 
 void print_version(FILE *std)

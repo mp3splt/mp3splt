@@ -388,7 +388,7 @@ If you obtain some sync errors, try also to split with \-e option.
 
 .IP "\fB\-k\fP         " 10
 \fBInput not seekable\fP. Consider input not seekable (default when using STDIN as input).
-This allows you to split mp3 and ogg streams which can be read only one time and can't be
+This allows you to split mp3 streams which can be read only one time and can't be
 seeked. Both framemode and standard mode are available, but framemode can be really slow if used with big
 files, because to seek splitpoints we need to process all bytes and all frames. \-k option
 (so STDIN as input too) can't be used together with \-s \-a \-w \-e, because input must be seekable for

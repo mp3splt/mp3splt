@@ -46,8 +46,7 @@ enum {
 };
 
 //!add a row to the table
-static void add_freedb_row(gchar *album_name, gint album_id,
-    gint *revisions, gint revisions_number, ui_state *ui)
+static void add_freedb_row(gchar *album_name, gint album_id, gint revisions_number, ui_state *ui)
 {
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->freedb_tree);
 
@@ -61,7 +60,7 @@ static void add_freedb_row(gchar *album_name, gint album_id,
   gint i;
   for(i = 0; i < revisions_number; i++)
   {
-    g_snprintf(number,malloc_number, _("%s Revision %d"),album_name, revisions[i]);
+    g_snprintf(number,malloc_number, _("%s Revision %d"),album_name, i);
 
     GtkTreeIter child_iter;
     gtk_tree_store_append(GTK_TREE_STORE(model), &child_iter, &iter);
@@ -182,18 +181,20 @@ static gboolean freedb_search_end(ui_with_err *ui_err)
   if (ui_err->err >= 0 && infos->freedb_search_results)
   {
     gint i = 0;
-    for (i = 0; i < infos->freedb_search_results->number;i++)
+    for (i = 0; i < mp3splt_freedb_get_total_number(infos->freedb_search_results);i++)
     {
       gint must_be_free = SPLT_FALSE;
-      infos->freedb_search_results->results[i].name =
-        transform_to_utf8(infos->freedb_search_results->results[i].name, TRUE, &must_be_free);
-      add_freedb_row(infos->freedb_search_results->results[i].name,
-          infos->freedb_search_results->results[i].id,
-          infos->freedb_search_results->results[i].revisions,
-          infos->freedb_search_results->results[i].revision_number, ui_err->ui);
+
+      char *name = mp3splt_freedb_get_name(infos->freedb_search_results, i);
+      name = transform_to_utf8(name, TRUE, &must_be_free);
+      add_freedb_row(name,
+          mp3splt_freedb_get_id(infos->freedb_search_results, i),
+          mp3splt_freedb_get_number_of_revisions(infos->freedb_search_results, i),
+          ui_err->ui);
+      free(name);
     }
 
-    if (infos->freedb_search_results->number > 0)
+    if (mp3splt_freedb_get_total_number(infos->freedb_search_results) > 0)
     {
       GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->freedb_tree);
       GtkTreeModel *model = gtk_tree_view_get_model(gui->freedb_tree);
@@ -302,7 +303,7 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
   {
     //ugly hack because we use maximum ints in the GUI
     //-GUI must be changed to accept long values
-    long old_point_value = points[i].value;
+    long old_point_value = mp3splt_points_get_value(points, i);
     int point_value = (int) old_point_value;
     if (old_point_value > INT_MAX)
     {
@@ -312,10 +313,10 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
     get_secs_mins_hundr(point_value, 
         &ui->status->spin_mins, &ui->status->spin_secs, &ui->status->spin_hundr_secs);
 
-    gint must_be_free = FALSE;
-    gchar *result_utf8 = points[i].name;
+    gchar *result_utf8 = mp3splt_points_get_name(points, i);
     if (result_utf8 != NULL)
     {
+      gint must_be_free = FALSE;
       result_utf8 = transform_to_utf8(result_utf8, FALSE, &must_be_free);
       g_snprintf(ui->status->current_description, 255, "%s", result_utf8);
     }
@@ -324,17 +325,15 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
       g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
     }
 
-    if (must_be_free)
-    {
-      g_free(result_utf8);
-      result_utf8 = NULL;
-    }
+    g_free(result_utf8);
+    result_utf8 = NULL;
 
-    if (points[i].type == SPLT_SPLITPOINT)
+    int type = mp3splt_points_get_type(points, i);
+    if (type == SPLT_SPLITPOINT)
     {
       add_row(TRUE, ui);
     }
-    else if (points[i].type == SPLT_SKIPPOINT)
+    else if (type == SPLT_SKIPPOINT)
     {
       add_row(FALSE, ui);
     }

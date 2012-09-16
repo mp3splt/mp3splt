@@ -1035,52 +1035,65 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     GString *regex_result = g_string_new(NULL);
 
     g_string_append(regex_result, _("<artist>: "));
-    if (tags->artist)
+    char *artist = mp3splt_tags_get_artist(tags);
+    if (artist)
     {
-      g_string_append(regex_result, tags->artist);
+      g_string_append(regex_result, artist);
+      free(artist);
     }
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<album>: "));
-    if (tags->album)
+    char *album = mp3splt_tags_get_album(tags);
+    if (album)
     {
-      g_string_append(regex_result, tags->album);
+      g_string_append(regex_result, album);
+      free(album);
     }
     g_string_append(regex_result, "\n");
 
 
     g_string_append(regex_result, _("<title>: "));
-    if (tags->title)
+    char *title = mp3splt_tags_get_title(tags);
+    if (title)
     {
-      g_string_append(regex_result, tags->title);
+      g_string_append(regex_result, title);
+      free(title);
     }
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<genre>: "));
-    if (tags->genre)
+    char *genre = mp3splt_tags_get_genre(tags);
+    if (genre)
     {
-      g_string_append(regex_result, tags->genre);
+      g_string_append(regex_result, genre);
+      free(genre);
     }
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<comment>: "));
-    if (tags->comment)
+    char *comment = mp3splt_tags_get_comment(tags);
+    if (comment)
     {
-      g_string_append(regex_result, tags->comment);
+      g_string_append(regex_result, comment);
+      free(comment);
     }
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<year>: "));
-    if (tags->year)
+    char *year = mp3splt_tags_get_year(tags);
+    if (year)
     {
-      g_string_append(regex_result, tags->year);
+      g_string_append(regex_result, year);
+      free(year);
     }
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<track>: "));
-    if (tags->track >= 0)
+    int track = mp3splt_tags_get_track(tags);
+    if (track >= 0)
     {
-      g_string_append_printf(regex_result, "%d", tags->track);
+      g_string_append_printf(regex_result, "%d", track);
     }
 
     gchar *regex_result_text = g_string_free(regex_result, FALSE);

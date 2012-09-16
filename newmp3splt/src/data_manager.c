@@ -22,6 +22,8 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "data_manager.h"
 #include "utils.h"
