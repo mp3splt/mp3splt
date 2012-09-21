@@ -157,11 +157,11 @@ void put_progress_bar(splt_progress *p_bar, void *data)
 
 void print_version(FILE *std)
 {
-  char version[128] = { '\0' };
-  mp3splt_get_version(version);
+  char *version = mp3splt_get_version();
   fprintf(std, PACKAGE_NAME" "VERSION" ("MP3SPLT_DATE") -"
-      " %s libmp3splt %s\n",_("using"),version);
+      " %s libmp3splt %s\n",_("using"), version);
   fflush(std);
+  free(version);
 }
 
 void print_authors(FILE *std)

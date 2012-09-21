@@ -203,10 +203,11 @@ static void about_window(GtkWidget *widget, ui_state *ui)
 
   gchar b3[100] = { '\0' };
   gchar *b1 = _("using");
-  gchar library_version[20] = { '\0' };
-  mp3splt_get_version(library_version);
+
+  char *library_version = mp3splt_get_version();
   g_snprintf(b3, 100, "-%s-\n%s libmp3splt %s",
              _("release of "MP3SPLT_GTK_DATE), b1, library_version);
+  free(library_version);
   
   gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), b3);
   

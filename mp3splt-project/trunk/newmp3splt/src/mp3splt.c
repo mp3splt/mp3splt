@@ -516,7 +516,7 @@ int main(int argc, char **orig_argv)
     }
     else
     {
-      if (mp3splt_u_check_if_directory(argument))
+      if (mp3splt_check_if_directory(argument))
       {
         we_had_directory_as_argument = SPLT_TRUE;
 
@@ -676,7 +676,7 @@ int main(int argc, char **orig_argv)
       if (opt->i_option)
       {
         err = SPLT_OK;
-        mp3splt_count_silence_points(state, &err);
+        mp3splt_set_silence_points(state, &err);
         process_confirmation_error(err, data);
       }
       else
