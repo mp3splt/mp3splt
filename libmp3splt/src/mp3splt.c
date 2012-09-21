@@ -1675,18 +1675,10 @@ void mp3splt_set_trim_silence_points(splt_state *state, int *error)
   }
 }
 
-//!count how many silence splitpoints silence detection results in
-int mp3splt_count_silence_points(splt_state *state, int *error)
+//!returns libmp3splt version; result must be freed
+char *mp3splt_get_version()
 {
-  int number_of_tracks = mp3splt_set_silence_points(state, error) - 1;
-
-  return number_of_tracks;
-}
-
-//!returns libmp3splt version, max 20 chars
-void mp3splt_get_version(char *version)
-{
-  snprintf(version, 20, "%s", SPLT_PACKAGE_VERSION);
+  return strdup(SPLT_PACKAGE_VERSION);
 }
 
 /*! Returns the error string that matches an error code
@@ -1825,7 +1817,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 //@}
 
 //! Checks if a name points to a directory
-int mp3splt_u_check_if_directory(const char *fname)
+int mp3splt_check_if_directory(const char *fname)
 {
   return splt_io_check_if_directory(fname);
 }
