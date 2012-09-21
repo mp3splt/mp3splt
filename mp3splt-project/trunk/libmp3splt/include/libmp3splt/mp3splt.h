@@ -33,7 +33,7 @@
  *********************************************************/
 
 /**
- * \file  mp3splt.h
+ * \file mp3splt.h
  * 
  * \brief libmp3splt API 
  */
@@ -48,6 +48,63 @@
  * @brief False value
  */
 #define SPLT_FALSE 0
+
+/************************************/
+/*! @defgroup splt_state Initialisation of the main state
+
+@{
+ */
+
+/**
+ * @brief Main structure used in libmp3splt.
+ * All members are private.
+ *
+ * @see #mp3splt_new_state, #mp3splt_free_state
+ */
+typedef struct _splt_state splt_state;
+
+/**
+ * @brief Creates a new #splt_state structure.
+ * 
+ * @param[out] error Possible error; can be NULL.
+ * @return A newly allocated #splt_state.
+ *
+ * @see #mp3splt_free_state
+ */
+splt_state *mp3splt_new_state(int *error);
+
+/**
+ * @brief Free the memory of \p state.
+ *
+ * @param[in] state Main state to be freed.
+ * @param[out] error Possible error; can be NULL.
+ *
+ * @see #mp3splt_new_state
+ */
+void mp3splt_free_state(splt_state *state, int *error);
+
+/**
+ * @brief Appends an additional directory where plugins are searched.
+ *
+ * @param[in] state Main state.
+ * @param[in] dir Additional directory where plugins will be searched.
+ * @return Possible error.
+ *
+ * @see #mp3splt_find_plugins
+ */
+int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir);
+
+/**
+ * @brief Finds the plugins in the plugins directories.
+ *
+ * @param[in] state Main state.
+ * @return Possible error.
+ *
+ * @see #mp3splt_append_plugins_scan_dir
+ */
+int mp3splt_find_plugins(splt_state *state);
+
+//@}
 
 /************************************/
 /*! @defgroup splt_error_codes Confirmation and error codes
@@ -158,62 +215,14 @@ typedef enum {
   SPLT_REGEX_UNAVAILABLE = -802,
 } splt_code;
 
-//@}
-
-/************************************/
-/*! @defgroup splt_state Initialisation of the main state
-
-@{
- */
-
 /**
- * @brief Main structure used in libmp3splt.
- * All members are private.
- *
- * @see #mp3splt_new_state, #mp3splt_free_state
- */
-typedef struct _splt_state splt_state;
-
-/**
- * @brief Creates a new #splt_state structure.
- * 
- * @param[out] error Possible error; can be NULL.
- * @return A newly allocated #splt_state.
- *
- * @see #mp3splt_free_state
- */
-splt_state *mp3splt_new_state(int *error);
-
-/**
- * @brief Free the memory of \p state.
- *
- * @param[in] state Main state to be freed.
- * @param[out] error Possible error; can be NULL.
- *
- * @see #mp3splt_new_state
- */
-void mp3splt_free_state(splt_state *state, int *error);
-
-/**
- * @brief Appends an additional directory where plugins are searched.
+ * @brief Returns the error message of the \p error_code.
  *
  * @param[in] state Main state.
- * @param[in] dir Additional directory where plugins will be searched.
- * @return Possible error.
- *
- * @see #mp3splt_find_plugins
+ * @param[in] error_code Error code to be checked.
+ * @return Error message of the \p error_code. Result must be freed.
  */
-int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir);
-
-/**
- * @brief Finds the plugins in the plugins directories.
- *
- * @param[in] state Main state.
- * @return Possible error.
- *
- * @see #mp3splt_append_plugins_scan_dir
- */
-int mp3splt_find_plugins(splt_state *state);
+char *mp3splt_get_strerror(splt_state *state, int error_code);
 
 //@}
 
@@ -226,8 +235,10 @@ int mp3splt_find_plugins(splt_state *state);
 /**
  * @brief Options
  *
- * Use #mp3splt_set_int_option #mp3splt_set_long_option and #mp3splt_set_float_option to set those options
- * Use #mp3splt_get_int_option #mp3splt_get_long_option and #mp3splt_get_float_option to get those options
+ * Use #mp3splt_set_int_option #mp3splt_set_long_option and #mp3splt_set_float_option to set those
+ * options.
+ * Use #mp3splt_get_int_option #mp3splt_get_long_option and #mp3splt_get_float_option to get those
+ * options.
  */
 typedef enum {
   /**
@@ -396,7 +407,7 @@ typedef enum {
   SPLT_OPT_LENGTH_SPLIT_FILE_NUMBER,
   /**
    * Enables or disables replacing tags in tags.
-   * If set to #SPLT_TRUE with an album 'myalbum_@t' and a title 'mysong'
+   * If set to #SPLT_TRUE with an album 'myalbum_\@t' and a title 'mysong'
    * will result in album 'myalbum_mysong'.
    *
    * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
@@ -592,7 +603,9 @@ typedef enum {
  * @brief Values for the #SPLT_OPT_OUTPUT_FILENAMES option
  */
 typedef enum {
-  //!Output filename format specified by #mp3splt_set_oformat.
+  /**
+   * @brief Output filename format specified by #mp3splt_set_oformat.
+   */
   SPLT_OUTPUT_FORMAT,
   /**
    * @brief The default output. depends of the type of the split.
@@ -786,6 +799,15 @@ long mp3splt_get_long_option(splt_state *state, int option, int *error);
  */
 float mp3splt_get_float_option(splt_state *state, int option, int *error);
 
+/**
+ * @brief Set the output format when using #SPLT_OUTPUT_FORMAT.
+ *
+ * @param[in] state Main state.
+ * @param[in] format Format of the output files.
+ * @param[out] error Possible error; can be NULL.
+ */
+void mp3splt_set_oformat(splt_state *state, const char *format, int *error);
+
 //@}
 
 /************************************/
@@ -900,9 +922,9 @@ typedef enum {
  *
  * Parameters of the callback \p message_cb function:
  *
- * @param message Text message received.
- * @param type Type of the text message received.
- * @param cb_data The user data passed to the #mp3splt_set_message_function.
+ * \p message Text message received.
+ * \p type Type of the text message received.
+ * \p cb_data The user data passed to the #mp3splt_set_message_function.
  *
  * @see #splt_message_type
  */
@@ -919,9 +941,9 @@ int mp3splt_set_message_function(splt_state *state,
  *
  * Parameters of the callback \p file_cb function:
  *
- * @param filename Output filename that has been created.
- * @param progress_user_data User data set with #mp3splt_progress_set_int_user_data.
- * @param cb_data The user data passed to the #mp3splt_set_split_filename_function.
+ * \p filename Output filename that has been created.
+ * \p progress_user_data User data set with #mp3splt_progress_set_int_user_data.
+ * \p cb_data The user data passed to the #mp3splt_set_split_filename_function.
  */
 int mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *filename, int progress_user_data, void *cb_data),
@@ -980,8 +1002,8 @@ typedef struct splt_progres splt_progress;
  *
  * Parameters of the callback \p progress_cb function:
  *
- * @param p_bar Progress bar informations.
- * @param cb_data The user data passed to the #mp3splt_set_progress_function.
+ * \p p_bar Progress bar informations.
+ * \p cb_data The user data passed to the #mp3splt_set_progress_function.
  */
 int mp3splt_set_progress_function(splt_state *state,
     void (*progress_cb)(splt_progress *p_bar, void *cb_data), void *cb_data);
@@ -1045,9 +1067,9 @@ int mp3splt_progress_get_int_user_data(const splt_progress *p_bar);
  *
  * Parameters of the callback \p get_silence_cb function:
  *
- * @param time Current time in hundreths of seconds.
- * @param level Current silence level.
- * @param user_data The user data passed to the #mp3splt_set_silence_level_function.
+ * \p time Current time in hundreths of seconds.
+ * \p level Current silence level.
+ * \p user_data The user data passed to the #mp3splt_set_silence_level_function.
  */
 int mp3splt_set_silence_level_function(splt_state *state,
   void (*get_silence_cb)(long time, float level, void *user_data),
@@ -1168,7 +1190,7 @@ void mp3splt_erase_all_splitpoints(splt_state *state, int *error);
 #define SPLT_UNDEFINED_GENRE "Other"
 
 /**
- * @brief Total number of ID3v1 genres of #splt_id3v1_genres.
+ * @brief Number of ID3v1 genres.
  */
 #define SPLT_ID3V1_NUMBER_OF_GENRES 127
 
@@ -1259,8 +1281,8 @@ int mp3splt_append_tags(splt_state *state,
  * @brief Returns an array containing the tags of the \p state.
  *
  * @param[in] state Main state.
- * @param[out] tags_number Total number of returned tags.
- * @param[out] Possible error; can be NULL.
+ * @param[out] tags_number Number of returned tags.
+ * @param[out] error Possible error; can be NULL.
  * @return Array with the tags of the \p state.
  */
 const splt_tags *mp3splt_get_tags(splt_state *state,
@@ -1301,21 +1323,21 @@ int mp3splt_tags_get_track(splt_tags *tags);
  * \p tags should contain one or more square brackets pairs [].
  * The tags defined in the first pair of square brackets will be set on the first split file.
  * Those defined in the second pair of square brackets will be set on the second split file, ...
- * Inside a pair of square brackets, each tag is defined as @variable=value and they tags are 
+ * Inside a pair of square brackets, each tag is defined as \@variable=value and they tags are 
  * separated by commas. If a percent sign % is found before the open square bracket character, 
  * then the pair of square brackets following the % character will define the default tags in 
  * the following files. Multiple '%' can be defined.
  * An optional 'r' character can be placed at the start, to replace tags in tags.
  * The 'replace tags in tags' option is not recursive.
  *
- * Variables can be: @a - artist, @b - album, @t - title, @y - year, @c - comment, @g - genre, 
- * @n - track number, @o - set original tags, @N - auto increment track number.
- * Variables for the start splitpoint: @m - minutes, @s - seconds, @h - hundreths of seconds.
- * Variables for the end splitpoint: @M - minutes, @S - seconds, @H - hundreths of seconds.
+ * Variables can be: \@a - artist, \@b - album, \@t - title, \@y - year, \@c - comment, \@g - genre, 
+ * \@n - track number, \@o - set original tags, \@N - auto increment track number.
+ * Variables for the start splitpoint: \@m - minutes, \@s - seconds, \@h - hundreths of seconds.
+ * Variables for the end splitpoint: \@M - minutes, \@S - seconds, \@H - hundreths of seconds.
  *
  * Using the 'replace tags in tags' option, you can also use the following variables, which are 
- * replaced by the data from the original tags: #a, #b, #t, #y, #c, #g.
- * Note that this will only work if @o has been found before. 
+ * replaced by the data from the original tags: \#a, \#b, \#t, \#y, \#c, \#g.
+ * Note that this will only work if \@o has been found before. 
  *
  * @param[in] state Main state.
  * @param[in] tags String containing tags to be parsed and appended.
@@ -1337,9 +1359,9 @@ void mp3splt_erase_all_tags(splt_state *state, int *error);
  * @brief Defines the regex that will be used for #SPLT_TAGS_FROM_FILENAME_REGEX.
  *
  * Tags will be extracted using the following variables:
- *   (?<artist>), (?<album>), (?<title>), (?<tracknum>), (?<year>), (?<comment>), (?<genre>).
+ *   (?\<artist>), (?\<album>), (?\<title>), (?\<tracknum>), (?\<year>), (?\<comment>), (?\<genre>).
  *
- * Example: (?<artist>.*?) _ (?<album>.*?) will extract
+ * Example: (?\<artist>.*?) _ (?\<album>.*?) will extract
  * 'one artist' and 'one album' from 'one artist _ one album'.
  *
  * @param[in] state Main state.
@@ -1370,6 +1392,29 @@ int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comme
  */
 int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_tag);
 
+/**
+ * @brief Parse the filename provided with #mp3splt_set_filename_to_split using regex 
+ * provided by #mp3splt_set_input_filename_regex and returns the parsed tags.
+ *
+ * @param[in] state Main state.
+ * @param[out] error Possible error; can be NULL.
+ * @return Parsed tags; must be freed with #mp3splt_free_one_tag
+ *
+ * @see #mp3splt_set_filename_to_split
+ * @see #mp3splt_set_input_filename_regex
+ * @see #mp3splt_free_one_tag
+ */
+splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error);
+
+/**
+ * @brief Free the memory of one #splt_tags
+ *
+ * @param[in] tags Pointer to a #splt_tags.
+ *
+ * @see #mp3splt_parse_filename_regex
+ */
+void mp3splt_free_one_tag(splt_tags *tags);
+
 //@}
 
 /************************************/
@@ -1380,11 +1425,11 @@ int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_t
 
 /**
  * @brief Executes the main split process.
-//TODO
  *
  * @param[in] state Main state.
  * @return Possible error.
  *
+ * @see #mp3splt_stop_split
  * @see #mp3splt_new_state
  * @see #mp3splt_set_filename_to_split
  * @see #splt_options
@@ -1392,150 +1437,312 @@ int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_t
  */
 int mp3splt_split(splt_state *state);
 
-//cancel split function
-//returns possible error
+/**
+ * @brief Stops the main split process.
+ *
+ * @param[in] state Main state.
+ * @param[out] error Possible error; can be NULL.
+ *
+ * @see #mp3splt_split
+ */
 void mp3splt_stop_split(splt_state *state, int *error);
+
+/**
+ * @brief Recursive search of all the filenames matching the loaded plugins.
+ *
+ * @param[in] state Main state.
+ * @param[in] filename Directory to be looked for recursive search.
+ * @param[out] num_of_files_found Number of files found.
+ * @param[out] error Possible error; can be NULL.
+ * @return Newly allocated array of found files that must be freed.
+ *
+ * @see #mp3splt_set_filename_to_split and #mp3splt_split
+ */
+char **mp3splt_find_filenames(splt_state *state, const char *filename,
+    int *num_of_files_found, int *error);
 
 //@}
 
 /************************************/
-/*    Cddb and Cue functions        */
+/*! @defgroup splt_import_ CDDB, CUE, Audacity labels & Tracktype import
 
-//get the cue splitpoints from a file and puts them in the state
+@{
+ */
+
+/**
+ * @brief Import splitpoints from the CUE \p file into the \p state.
+ *
+ * @param[in] state Main state.
+ * @param[in] file CUE file to import.
+ * @param[out] error Possible error; can be NULL.
+ *
+ * @see #mp3splt_split
+ */
 void mp3splt_put_cue_splitpoints_from_file(splt_state *state,
-    const char *cue_file, int *error);
+    const char *file, int *error);
 
-//read cddb splitpoints from file and puts them in the state
+/**
+ * @brief Import splitpoints from the CDDB \p file into the \p state.
+ *
+ * @param[in] state Main state.
+ * @param[in] file CDDB file to import.
+ * @param[out] error Possible error; can be NULL.
+ *
+ * @see #mp3splt_split
+ */
 void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
-    const char *cddb_file, int *error);
+    const char *file, int *error);
 
+/**
+ * @brief Import splitpoints from the audacity labels \p file into the \p state.
+ *
+ * @param[in] state Main state.
+ * @param[in] file Audacity labels file to import.
+ * @param[out] error Possible error; can be NULL.
+ *
+ * @see #mp3splt_split
+ */
 void mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state,
     const char *file, int *error);
 
-/************************************/
-/*    Freedb */
-
-/*
- * tracktype.org search type
+/**
+ * @brief tracktype.org internet search type.
+ *
+ * @see #mp3splt_get_freedb_search
  */
 #define SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI 1
-/*
- * freedb search type: not implemented yet
- */
-#define SPLT_FREEDB_SEARCH_TYPE_CDDB 2
-/*
- * get file from tracktype.org
+
+/**
+ * @brief Get CDDB file using CDDB CGI protocol (tracktype.org or freedb.org).
+ *
+ * @see #mp3splt_write_freedb_file_result
  */
 #define SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI 3
-/*
- * get file from freedb
+
+/**
+ * @brief Get CDDB file using freedb.org CDDB protocol.
+ *
+ * @see #mp3splt_write_freedb_file_result
  */
 #define SPLT_FREEDB_GET_FILE_TYPE_CDDB 4
+
 /**
- * default tracktype.org port
+ * @brief Default port.
+ *
+ * @see #mp3splt_get_freedb_search
+ * @see #mp3splt_write_freedb_file_result
  */
 #define SPLT_FREEDB_CDDB_CGI_PORT 80
+
 /**
- * default freedb port
+ * @brief URL of tracktype.org when using #SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI and
+ * #SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI types.
+ * 
+ * @see #mp3splt_get_freedb_search
+ * @see #mp3splt_write_freedb_file_result
  */
-#define SPLT_FREEDB_CDDB_PORT 8880
-/**
- * urls of tracktype.org and freedb.org
- */
-#define SPLT_FREEDB_CGI_SITE "freedb.org/~cddb/cddb.cgi"
 #define SPLT_FREEDB2_CGI_SITE "tracktype.org/~cddb/cddb.cgi"
 
-
 /**
- * @brief All the freedb search results
+ * @brief Structure containing the freedb search results.
+ * All members are private.
  *
  * @see mp3splt_get_freedb_search
+ * @see #mp3splt_freedb_get_total_number
+ * @see #mp3splt_freedb_get_id
+ * @see #mp3splt_freedb_get_name
+ * @see #mp3splt_freedb_get_number_of_revisions
  */
 typedef struct _splt_freedb_results splt_freedb_results;
 
-//returns the freedb results and possible error
 /**
- * @brief test
+ * @brief Search on the internet for the \p searched_string and returns the results.
+ *
+ * @param[in] state Main state.
+ * @param[in] searched_string Search string - might be artist or album.
+ * @param[out] error Possible error; can be NULL.
+ * @param[in] search_type Type of the search.
+ *                        Only #SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI is supported for the moment
+ * @param[in] search_server You can use #SPLT_FREEDB2_CGI_SITE as search server.
+ * @param[in] port Port of the \p search_server. Can be #SPLT_FREEDB_CDDB_CGI_PORT.
+ * @return The search results.
+ *
+ * @see #mp3splt_write_freedb_file_result
  */
 const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     const char *searched_string, int *error,
     int search_type, const char *search_server, int port);
 
-//splt_freedb_results access functions
+/**
+ * @brief Returns the number of the results.
+ */
 int mp3splt_freedb_get_total_number(const splt_freedb_results *results);
-int mp3splt_freedb_get_id(const splt_freedb_results *results, int index);
-char *mp3splt_freedb_get_name(const splt_freedb_results *results, int index);
-int mp3splt_freedb_get_number_of_revisions(const splt_freedb_results *results, int index);
-
-void mp3splt_write_freedb_file_result(splt_state *state,
-    int disc_id, const char *cddb_file, int *error,
-    int cddb_get_type, const char *cddb_get_server, int port);
-
-void mp3splt_export_to_cue(splt_state *state, const char *out_file,
-    short stop_at_total_time, int *error);
-
-void mp3splt_set_oformat(splt_state *state,
-    const char *format_string, int *error);
-
-/************************************/
-/* Other utilities                  */
-
-//counts the number of tracks found with silence detection
-int mp3splt_count_silence_points(splt_state *state, int *error);
-
-int mp3splt_set_silence_points(splt_state *state, int *error);
-void mp3splt_set_trim_silence_points(splt_state *state, int *error);
-
-//returns the version of libmp3splt (20 chars max)
-void mp3splt_get_version(char *version);
-
-//result must be freed
-char *mp3splt_get_strerror(splt_state *state, int error_code);
 
 /**
- * @brief The wrapped filenames found inside a file
+ * @brief Returns the ID of the result found at the \p index.
+ * You will need this ID when using #mp3splt_write_freedb_file_result.
+ */
+int mp3splt_freedb_get_id(const splt_freedb_results *results, int index);
+
+/**
+ * @brief Returns the name of the result stored at the \p index.
+ */
+char *mp3splt_freedb_get_name(const splt_freedb_results *results, int index);
+
+/**
+ * @brief Returns the number of revisions of the result stored at the \p index.
+ */
+int mp3splt_freedb_get_number_of_revisions(const splt_freedb_results *results, int index);
+
+/**
+ * @brief Downloads the CDDB file of the \p disc_id and writes it to a file.
+ *
+ * @param[in] state Main state.
+ * @param[in] disc_id ID of the chosen disc provided by #mp3splt_freedb_get_id.
+ * @param[in] output_file Name of the output CDDB file that will be written.
+ * @param[out] error Possible error; can be NULL.
+ * @param[in] cddb_get_type Type of the download.
+ *            Can be #SPLT_FREEDB_GET_FILE_TYPE_CDDB or #SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI.
+ * @param[in] cddb_get_server Name of the server from the file is downloaded.
+ *            Can be #SPLT_FREEDB2_CGI_SITE (or freedb.org or freedb.org/~cddb/cddb.cgi).
+ * @param[in] port Port of the \p cddb_get_server.
+ *                 Can be #SPLT_FREEDB_CDDB_CGI_PORT (or 8880) for example.
+ *
+ * @see #mp3splt_get_freedb_search
+ */
+void mp3splt_write_freedb_file_result(splt_state *state,
+    int disc_id, const char *output_file, int *error,
+    int cddb_get_type, const char *cddb_get_server, int port);
+
+//@}
+
+/************************************/
+/*! @defgroup splt_export_ CUE export
+
+@{
+ */
+
+/**
+ * @brief Export splitpoints from the \p state into \p out_file as CUE.
+ *
+ * @param[in] state Main state.
+ * @param[in] file File to be written as CUE with splitpoints from the \p state.
+ * @param[in] stop_at_total_time If #SPLT_TRUE, don't export splitpoints after the total time
+ *                               of the input file.
+ * @param[out] error Possible error; can be NULL.
+ */
+void mp3splt_export_to_cue(splt_state *state, const char *file,
+    short stop_at_total_time, int *error);
+
+//@}
+
+/************************************/
+/*! @defgroup splt_wrap_ Wrap utilities
+
+@{
+ */
+
+/**
+ * @brief Structure containg the wrapped filenames found inside a file.
+ * All members are private.
  *
  * @see mp3splt_get_wrap_files
+ * @see #mp3splt_wrap_get_total_number
+ * @see #mp3splt_wrap_get_wrapped_file
  */
 typedef struct _splt_wrap splt_wrap;
 
-//returns the wrapped files found
+/**
+ * @brief Returns the wrapped files found from the input filename set with
+ * #mp3splt_set_filename_to_split.
+ *
+ * @param[in] state Main state.
+ * @param[out] error Possible error; can be NULL.
+ * @return Wrapped files found.
+ *
+ * @see #mp3splt_wrap_get_total_number
+ * @see #mp3splt_wrap_get_wrapped_file
+ */
 const splt_wrap *mp3splt_get_wrap_files(splt_state *state, int *error);
 
-//splt_wrap access functions
+/**
+ * @brief Returns the number of wrapped files of \p wrap_files.
+ */
 int mp3splt_wrap_get_total_number(const splt_wrap *wrap_files);
+
+/**
+ * @brief Returns the wrapped file of \p wrap_files at the \p index.
+ */
 char *mp3splt_wrap_get_wrapped_file(const splt_wrap *wrap_files, int index);
 
+//@}
+
+/************************************/
+/*! @defgroup splt_other_ Other utilities
+
+@{
+ */
+
+/**
+ * @brief Scan for silence and set silence splitpoints in the \p state.
+ *
+ * @param[in] state Main state.
+ * @param[out] error Possible error; can be NULL.
+ * @return The number of silence spots found.
+ */
+int mp3splt_set_silence_points(splt_state *state, int *error);
+
+/**
+ * @brief Scan for silence and set silence trim splitpoints in the \p state.
+ *
+ * @param[in] state Main state.
+ * @param[out] error Possible error; can be NULL.
+ */
+void mp3splt_set_trim_silence_points(splt_state *state, int *error);
+
+/**
+ * @brief Returns the version of libmp3splt. Result must be freed.
+ */
+char *mp3splt_get_version();
+
 #ifdef __WIN32__
+/**
+ * @brief Returns \p source converted from UTF-16 to UTF-8.
+ */
 char *mp3splt_win32_utf16_to_utf8(const wchar_t *source);
 #endif
 
-char **mp3splt_find_filenames(splt_state *state, const char *filename,
-    int *num_of_files_found, int *error);
+/**
+ * @brief Returns #SPLT_TRUE if \p fname is a directory.
+ */
+int mp3splt_check_if_directory(const char *fname);
 
-int mp3splt_u_check_if_directory(const char *fname);
-
-void mp3splt_free_one_tag(splt_tags *tags);
-splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error);
-
-/* other useful variables */
-
-#define MP3SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"
-
-//backslash character
 #ifndef SPLT_DIRCHAR
 #ifdef __WIN32__
 #define SPLT_DIRCHAR '\\'
 #define SPLT_DIRSTR "\\"
-#define SPLT_NDIRCHAR '/'
 #else
+/**
+ * @brief Path separator as character (/ or \)
+ */
 #define SPLT_DIRCHAR '/'
+/**
+ * @brief Path separator as string (/ or \)
+ */
 #define SPLT_DIRSTR "/"
-#define SPLT_NDIRCHAR '\\'
 #endif
 #endif
 
+/**
+ * @brief Used in mp3splt and mp3splt-gtk.
+ */
+#define MP3SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"
+
+//@}
+
+/**
+ * @brief Allow several inclusions of this file.
+ */
 #define MP3SPLT_MP3SPLT_H
-
 #endif
 

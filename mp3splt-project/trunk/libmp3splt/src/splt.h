@@ -792,6 +792,18 @@ void splt_s_wrap_split(splt_state *state, int *error);
  */
 #define SPLT_WEBSITE "http://mp3splt.sourceforge.net"
 
+/**
+ * @brief Freedb search type: NOT IMPLEMENTED yet
+ */
+#define SPLT_FREEDB_SEARCH_TYPE_CDDB 2
+
+#ifndef SPLT_NDIRCHAR
+#ifdef __WIN32__
+#define SPLT_NDIRCHAR '/'
+#else
+#define SPLT_NDIRCHAR '\\'
+#endif
+#endif
 
 #define MP3SPLT_SPLT_H
 
