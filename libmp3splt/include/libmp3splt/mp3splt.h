@@ -820,7 +820,7 @@ void mp3splt_set_oformat(splt_state *state, const char *format, int *error);
  * @brief Sets the input filename to split.
  *
  * @param[in] state Main state.
- * @param filename Input filename to be split.
+ * @param[in] filename Input filename to be split.
  * @return Possible error.
  */
 int mp3splt_set_filename_to_split(splt_state *state, const char *filename);
@@ -1562,7 +1562,7 @@ typedef struct _splt_freedb_results splt_freedb_results;
  * @param[in] searched_string Search string - might be artist or album.
  * @param[out] error Possible error; can be NULL.
  * @param[in] search_type Type of the search.
- *                        Only #SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI is supported for the moment
+ *                        Only #SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI is supported for the moment.
  * @param[in] search_server You can use #SPLT_FREEDB2_CGI_SITE as search server.
  * @param[in] port Port of the \p search_server. Can be #SPLT_FREEDB_CDDB_CGI_PORT.
  * @return The search results.
