@@ -137,9 +137,8 @@ splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *re
       SPLT_TAGS_YEAR, tags, SPLT_NO_CONVERSION, SPLT_FALSE, error);
   if (*error < 0) { goto error; }
 
-  char *pattern = NULL;
   format = splt_o_get_int_option(state, SPLT_OPT_COMMENT_TAG_FORMAT);
-  pattern = splt_fr_get_pattern(re, filename, ovector, rc, "comment");
+  char *pattern = splt_fr_get_pattern(re, filename, ovector, rc, "comment");
   if (pattern)
   {
     splt_fr_set_char_field_on_tags_and_convert(tags, SPLT_TAGS_COMMENT,

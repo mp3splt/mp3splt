@@ -580,7 +580,6 @@ struct splt_ssplit {
   struct splt_ssplit *next;
 };
 
-//!structure for the splt state
 struct _splt_state {
   //!setting to SPLT_TRUE cancels the split
   int cancel_split;
