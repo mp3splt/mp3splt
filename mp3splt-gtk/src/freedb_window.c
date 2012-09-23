@@ -385,10 +385,8 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
       G_DIR_SEPARATOR_S, mp3splt_dir,
       G_DIR_SEPARATOR_S, "query.cddb");
 
-  gint err = SPLT_OK;
-
-  mp3splt_write_freedb_file_result(ui->mp3splt_state, selected_id,
-      filename, &err, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
+  gint err = mp3splt_write_freedb_file_result(ui->mp3splt_state, selected_id,
+      filename, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
   print_status_bar_confirmation_in_idle(err, ui);
 
   enter_threads();
@@ -404,13 +402,11 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
 
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
 
-    gint error = SPLT_OUTPUT_FORMAT_OK;
-    mp3splt_set_oformat(ui->mp3splt_state, data, &error);
+    gint error = mp3splt_set_oformat(ui->mp3splt_state, data);
     print_status_bar_confirmation_in_idle(error, ui);
   }
 
-  err = SPLT_OK;
-  mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename, &err);
+  err = mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename);
   print_status_bar_confirmation_in_idle(err, ui);
 
   if (filename)

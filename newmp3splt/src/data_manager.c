@@ -67,7 +67,7 @@ void free_main_struct(main_data **d)
     if (data)
     {
       //try to stop the split
-      mp3splt_stop_split(data->state, NULL);
+      mp3splt_stop_split(data->state);
       //free options
       free_options(&data->opt);
 
@@ -115,8 +115,7 @@ void free_main_struct(main_data **d)
       }
 #endif 
 
-      //free left variables in the state
-      mp3splt_free_state(data->state, NULL);
+      mp3splt_free_state(data->state);
       data->state = NULL;
 
       free(data);

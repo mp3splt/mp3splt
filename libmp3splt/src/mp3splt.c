@@ -71,6 +71,44 @@ Documentation can be found at several points:
 
 #include "splt.h"
 
+const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25] = {
+  {"Blues"},
+  {"Classic Rock"}, {"Country"}, {"Dance"}, 
+  {"Disco"},{"Funk"},{"Grunge"},{"Hip-Hop"},{"Jazz"},
+  {"Metal"},{"New Age"},{"Oldies"}, {"Other"}, {"Pop"},
+  {"R&B"}, {"Rap"}, {"Reggae"}, {"Rock"}, {"Techno"},
+  {"Industrial"}, {"Alternative"}, {"Ska"}, {"Death metal"},
+  {"Pranks"}, {"Soundtrack"}, {"Euro-Techno"},
+  {"Ambient"}, {"Trip-hop"}, {"Vocal"}, {"Jazz+Funk"},
+  {"Fusion"}, {"Trance"}, {"Classical"}, {"Instrumental"},
+  {"Acid"}, {"House"}, {"Game"}, {"Sound clip"}, {"Gospel"},
+  {"Noise"}, {"Alt. Rock"}, {"Bass"}, {"Soul"}, {"Punk"}, 
+  {"Space"}, {"Meditative"}, {"Instrumental pop"}, 
+  {"Instrumental rock"}, {"Ethnic"}, {"Gothic"},{"Darkwave"},
+  {"Techno-Industrial"},{"Electronic"},{"Pop-Folk"},{"Eurodance"},
+  {"Dream"},{"Southern Rock"},{"Comedy"}, {"Cult"},{"Gangsta"},
+  {"Top 40"},{"Christian Rap"},{"Pop/Funk"}, {"Jungle"},
+  {"Native American"},{"Cabaret"},{"New Wave"}, {"Psychedelic"},
+  {"Rave"},{"Showtunes"},{"Trailer"}, {"Lo-Fi"},{"Tribal"},
+  {"Acid Punk"},{"Acid Jazz"}, {"Polka"}, {"Retro"},
+  {"Musical"},{"Rock & Roll"},{"Hard Rock"},
+
+  {"Folk"}, {"Folk-Rock"}, {"National Folk"}, {"Swing"},
+  {"Fast Fusion"}, {"Bebob"}, {"Latin"}, {"Revival"},
+  {"Celtic"}, {"Bluegrass"}, {"Avantgarde"}, {"Gothic Rock"},
+  {"Progressive Rock"}, {"Psychedelic Rock"}, {"Symphonic Rock"},
+  {"Slow Rock"}, {"Big Band"}, {"Chorus"}, {"Easy Listening"},
+  {"Acoustic"}, {"Humour"}, {"Speech"}, {"Chanson"}, {"Opera"},
+  {"Chamber Music"}, {"Sonata"}, {"Symphony"}, {"Booty Bass"},
+  {"Primus"}, {"Porn Groove"}, {"Satire"}, {"Slow Jam"},
+  {"Club"}, {"Tango"}, {"Samba"}, {"Folklore"}, {"Ballad"},
+  {"Power Ballad"}, {"Rhythmic Soul"}, {"Freestyle"}, {"Duet"},
+  {"Punk Rock"}, {"Drum Solo"}, {"A capella"}, {"Euro-House"},
+  {"Dance Hall"},
+
+  {"misc"},
+};
+
 int global_debug = SPLT_FALSE;
 
 /*! 
@@ -95,7 +133,7 @@ accessed by the user
 
  \param error Contains the error code if an error occours.
 */
-splt_state *mp3splt_new_state(int *error)
+splt_state *mp3splt_new_state(splt_code *error)
 {
   splt_state *state = NULL;
 
@@ -127,7 +165,7 @@ splt_state *mp3splt_new_state(int *error)
 
 \return The error code if necessary
 */
-int mp3splt_find_plugins(splt_state *state)
+splt_code mp3splt_find_plugins(splt_state *state)
 {
   return splt_p_find_get_plugins_data(state);
 }
@@ -141,38 +179,28 @@ and don't forget to call it.
 \param state the splt_state structure that keeps all data for 
  our library
 */
-void mp3splt_free_state(splt_state *state, int *error)
+splt_code mp3splt_free_state(splt_state *state)
 {
   if (!state)
   {
-    return;
+    return SPLT_ERROR_STATE_NULL;
   }
 
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (!splt_o_library_locked(state))
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_t_free_state(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    splt_o_lock_library(state);
+    splt_t_free_state(state);
   }
   else
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  return SPLT_OK;
 }
 
 //! Set the output path
-int mp3splt_set_path_of_split(splt_state *state, const char *path)
+splt_code mp3splt_set_path_of_split(splt_state *state, const char *path)
 {
   int error = SPLT_OK;
 
@@ -204,7 +232,7 @@ int mp3splt_set_path_of_split(splt_state *state, const char *path)
 \param state the splt_state structure that keeps all our data
 \param filename Constains the file name that is to be set
  */
-int mp3splt_set_m3u_filename(splt_state *state, const char *filename)
+splt_code mp3splt_set_m3u_filename(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
 
@@ -232,7 +260,7 @@ int mp3splt_set_m3u_filename(splt_state *state, const char *filename)
 }
 
 //!sets the m3u filename
-int mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
+splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
 
@@ -273,7 +301,7 @@ char *mp3splt_get_filename_to_split(splt_state *state)
 \param state The central data structure this library keeps its data in
 \param filename The filename we want to save in state
 */
-int mp3splt_set_filename_to_split(splt_state *state, const char *filename)
+splt_code mp3splt_set_filename_to_split(splt_state *state, const char *filename)
 {
   int error = SPLT_OK;
 
@@ -300,7 +328,7 @@ int mp3splt_set_filename_to_split(splt_state *state, const char *filename)
   return error;
 }
 
-int mp3splt_set_input_filename_regex(splt_state *state, const char *regex)
+splt_code mp3splt_set_input_filename_regex(splt_state *state, const char *regex)
 {
   int error = SPLT_OK;
 
@@ -327,7 +355,7 @@ int mp3splt_set_input_filename_regex(splt_state *state, const char *regex)
   return error;
 }
 
-int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comment)
+splt_code mp3splt_set_default_comment_tag(splt_state *state, const char *default_comment)
 {
   int error = SPLT_OK;
 
@@ -354,7 +382,7 @@ int mp3splt_set_default_comment_tag(splt_state *state, const char *default_comme
   return error;
 }
 
-int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_tag)
+splt_code mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_tag)
 {
   int error = SPLT_OK;
 
@@ -391,7 +419,7 @@ int mp3splt_set_default_genre_tag(splt_state *state, const char *default_genre_t
 \param message_cb The callback function
 \return The error code if any error occours
 */
-int mp3splt_set_message_function(splt_state *state, 
+splt_code mp3splt_set_message_function(splt_state *state, 
     void (*message_cb)(const char *, splt_message_type, void *), 
     void *cb_data)
 {
@@ -416,7 +444,7 @@ int mp3splt_set_message_function(splt_state *state,
 \param file_cb The callback function
 \return The error code if any error occours
 */
-int mp3splt_set_split_filename_function(splt_state *state,
+splt_code mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *, int, void *), void *cb_data)
 {
   int error = SPLT_OK;
@@ -440,7 +468,7 @@ int mp3splt_set_split_filename_function(splt_state *state,
 \param progress_cb The callback function
 \return The error code if any error occours
 */
-int mp3splt_set_progress_function(splt_state *state,
+splt_code mp3splt_set_progress_function(splt_state *state,
     void (*progress_cb)(splt_progress *p_bar, void *), void *cb_data)
 {
   int error = SPLT_OK;
@@ -515,7 +543,7 @@ int mp3splt_progress_get_int_user_data(const splt_progress *p_bar)
 \param get_silence_cb The callback function
 \return The error code if any error occours
 */
-int mp3splt_set_silence_level_function(splt_state *state,
+splt_code mp3splt_set_silence_level_function(splt_state *state,
     void (*get_silence_cb)(long time, float level, void *user_data),
     void *data)
 {
@@ -546,8 +574,8 @@ data in
 seconds. If this walue is LONG_MAX we put the splitpoint to the end of
 the song (EOF)
 */
-int mp3splt_append_splitpoint(splt_state *state,
-    long split_value, const char *name, int type)
+splt_code mp3splt_append_splitpoint(splt_state *state,
+    long split_value, const char *name, splt_type_of_splitpoint type)
 {
   int error = SPLT_OK;
 
@@ -582,7 +610,7 @@ this function
 \param error Is set to the error code if any error occours
  */
 const splt_point *mp3splt_get_splitpoints(splt_state *state,
-    int *splitpoints_number, int *error)
+    int *splitpoints_number, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -624,38 +652,30 @@ char *mp3splt_points_get_name(const splt_point *points, int index)
 \param state The structure this library keeps all its data in
 \param error Is set to the error code if any error occours
 */
-void mp3splt_erase_all_splitpoints(splt_state *state, int *error)
+splt_code mp3splt_erase_all_splitpoints(splt_state *state)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_sp_free_splitpoints(state);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+  splt_sp_free_splitpoints(state);
+  splt_o_unlock_library(state);
+
+  return SPLT_OK;
 }
 
 /************************************/
 /* Tags                             */
 
 //!append tags
-int mp3splt_append_tags(splt_state *state, 
+splt_code mp3splt_append_tags(splt_state *state, 
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
@@ -689,7 +709,7 @@ int mp3splt_append_tags(splt_state *state,
 
 //!returns a list containing all the tags
 const splt_tags *mp3splt_get_tags(splt_state *state,
-    int *tags_number, int *error)
+    int *tags_number, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -772,7 +792,7 @@ int mp3splt_tags_get_track(splt_tags *tags)
 }
 
 //!puts tags from a string
-int mp3splt_put_tags_from_string(splt_state *state, const char *tags, int *error)
+int mp3splt_put_tags_from_string(splt_state *state, const char *tags, splt_code *error)
 {
   int ambigous = SPLT_FALSE;
   int erro = SPLT_OK;
@@ -803,31 +823,23 @@ int mp3splt_put_tags_from_string(splt_state *state, const char *tags, int *error
 }
 
 //!erase all the tags
-void mp3splt_erase_all_tags(splt_state *state, int *error)
+splt_code mp3splt_erase_all_tags(splt_state *state)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_tu_free_tags(state);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+  splt_tu_free_tags(state);
+  splt_o_unlock_library(state);
+
+  return SPLT_OK;
 }
 
 /************************************/
@@ -860,22 +872,22 @@ static int mp3splt_set_option(splt_state *state, int option_name, void *value)
   return error;
 }
 
-int mp3splt_set_int_option(splt_state *state, int option_name, int value)
+splt_code mp3splt_set_int_option(splt_state *state, int option_name, int value)
 {
   return mp3splt_set_option(state, option_name, &value);
 }
 
-int mp3splt_set_long_option(splt_state *state, int option_name, long value)
+splt_code mp3splt_set_long_option(splt_state *state, int option_name, long value)
 {
   return mp3splt_set_option(state, option_name, &value);
 }
 
-int mp3splt_set_float_option(splt_state *state, int option_name, float value)
+splt_code mp3splt_set_float_option(splt_state *state, int option_name, float value)
 {
   return mp3splt_set_option(state, option_name, &value);
 }
 
-int mp3splt_get_int_option(splt_state *state, int option_name, int *error)
+int mp3splt_get_int_option(splt_state *state, int option_name, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -892,7 +904,7 @@ int mp3splt_get_int_option(splt_state *state, int option_name, int *error)
   }
 }
 
-long mp3splt_get_long_option(splt_state *state, int option_name, int *error)
+long mp3splt_get_long_option(splt_state *state, int option_name, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -909,7 +921,7 @@ long mp3splt_get_long_option(splt_state *state, int option_name, int *error)
   }
 }
 
-float mp3splt_get_float_option(splt_state *state, int option_name, int *error)
+float mp3splt_get_float_option(splt_state *state, int option_name, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -934,7 +946,7 @@ float mp3splt_get_float_option(splt_state *state, int option_name, int *error)
 state-> splitnumber tells how many splits to do
 \return the error code if any error has occoured
 */
-int mp3splt_split(splt_state *state)
+splt_code mp3splt_split(splt_state *state)
 {
   int error = SPLT_OK;
 
@@ -1151,20 +1163,16 @@ function_end:
 /*! cancels the current split
 \return The error code if any error occours
 */
-void mp3splt_stop_split(splt_state *state, int *error)
+splt_code mp3splt_stop_split(splt_state *state)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
+  if (state == NULL)
+  {
+    return SPLT_ERROR_STATE_NULL;
+  }
 
-  if (state != NULL)
-  {
-    splt_t_set_stop_split(state, SPLT_TRUE);
-  }
-  else
-  {
-    *err = SPLT_ERROR_STATE_NULL;
-  }
+  splt_t_set_stop_split(state, SPLT_TRUE);
+
+  return SPLT_OK;
 }
 
 /************************************/
@@ -1176,32 +1184,25 @@ uses
 \param file The name of the input file
 \param error Is set to the error code this action results in
 */
-void mp3splt_put_cue_splitpoints_from_file(splt_state *state,
-    const char *file, int *error)
+splt_code mp3splt_put_cue_splitpoints_from_file(splt_state *state,
+    const char *file)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_cue_put_splitpoints(file, state, err);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+  int err = SPLT_OK;
+  splt_cue_put_splitpoints(file, state, &err);
+  splt_o_unlock_library(state);
+
+  return err;
 }
 
 /*! get the cddb splitpoints from the file
@@ -1211,32 +1212,25 @@ uses
 \param file The name of the input file
 \param error Is set to the error code this action results in
 */
-void mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
-    const char *file, int *error)
+splt_code mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
+    const char *file)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_cddb_put_splitpoints(file, state, err);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+  int err = SPLT_OK;
+  splt_cddb_put_splitpoints(file, state, &err);
+  splt_o_unlock_library(state);
+
+  return err;
 }
 
 /*! get the splitpoints from a audacity splitpoint file
@@ -1246,32 +1240,24 @@ uses
 \param file The name of the input file
 \param error Is set to the error code this action results in
 */
-void mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state,
-    const char *file, int *error)
+splt_code mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state, const char *file)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_audacity_put_splitpoints(file, state, err);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+  int err = SPLT_OK;
+  splt_audacity_put_splitpoints(file, state, &err);
+  splt_o_unlock_library(state);
+
+  return err;
 }
 
 /************************************/
@@ -1293,7 +1279,7 @@ the default
  */
 const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     const char *search_string,
-    int *error,
+    splt_code *error,
     int search_type,
     const char search_server[256],
     int port)
@@ -1368,26 +1354,15 @@ otherwise, it will fail (seg fault!?)
 you need to write the cddb entry to the disk in 
 a cddb file to use it be able to use it
 
-\param state The central structure that keeps all data this library
-uses 
-\param error Is set to the error code this action results in
-\param disc_id The freedb disc ID.
-\param cddb_get_type specifies the type of the get:
-  it can be SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI (that works for both
-  freedb and freedb2 at the moment - 18_10_06)
-  or SPLT_FREEDB_GET_FILE_TYPE_CDDB (that only work for freedb at
-  the moment - 18_10_06)
-
 \attention result is malloc'ed and must be freed by the caller after
 use.
 */
-void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
-    const char *cddb_file, int *error, int cddb_get_type,
+splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
+    const char *cddb_file, int cddb_get_type,
     const char cddb_get_server[256], int port)
 {
   int erro = SPLT_OK;
   int *err = &erro;
-  if (error != NULL) { err = error; }
 
   if (state != NULL)
   {
@@ -1442,6 +1417,8 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
   {
     *err = SPLT_ERROR_STATE_NULL;
   }
+
+  return *err;
 }
 
 /*! Export our split points to a cue file
@@ -1454,61 +1431,48 @@ void mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
   last splitpoint can be slightly beyond the calculated end of audio
   data.
 */
-void mp3splt_export_to_cue(splt_state *state, const char *out_file,
-    short stop_at_total_time, int *error)
+splt_code mp3splt_export_to_cue(splt_state *state, const char *out_file,
+    short stop_at_total_time)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_cue_export_to_file(state, out_file, stop_at_total_time, err);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+  int err = SPLT_OK;
+  splt_cue_export_to_file(state, out_file, stop_at_total_time, &err);
+  splt_o_unlock_library(state);
+
+  return err;
 }
 
 //! Sets the output format
-void mp3splt_set_oformat(splt_state *state,
-    const char *format_string, int *error)
+splt_code mp3splt_set_oformat(splt_state *state, const char *format_string)
 {
-  int erro = SPLT_OK;
-  int *err = &erro;
-  if (error != NULL) { err = error; }
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      splt_of_set_oformat(state, format_string, err, SPLT_FALSE);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      *err = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+
+  int err = SPLT_OK;
+  splt_of_set_oformat(state, format_string, &err, SPLT_FALSE);
+
+  splt_o_unlock_library(state);
+
+  return err;
 }
 
 /************************************/
@@ -1519,8 +1483,7 @@ void mp3splt_set_oformat(splt_state *state,
   \param state The splt_state structure containing the split points
   \param error The error code
 */
-const splt_wrap *mp3splt_get_wrap_files(splt_state *state,
-    int *error)
+const splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1586,7 +1549,7 @@ char *mp3splt_wrap_get_wrapped_file(const splt_wrap *wrap_files, int index)
 }
 
 //!set the silence splitpoints without actually splitting
-int mp3splt_set_silence_points(splt_state *state, int *error)
+int mp3splt_set_silence_points(splt_state *state, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1633,11 +1596,10 @@ int mp3splt_set_silence_points(splt_state *state, int *error)
 }
 
 //!set the trim silence splitpoints without actually splitting
-void mp3splt_set_trim_silence_points(splt_state *state, int *error)
+splt_code mp3splt_set_trim_silence_points(splt_state *state)
 {
   int erro = SPLT_OK;
   int *err = &erro;
-  if (error != NULL) { err = error; }
 
   int silence_mode = SPLT_OPTION_TRIM_SILENCE_MODE;
   mp3splt_set_option(state, SPLT_OPT_SPLIT_MODE, &silence_mode);
@@ -1673,6 +1635,8 @@ void mp3splt_set_trim_silence_points(splt_state *state, int *error)
   {
     *err = SPLT_ERROR_STATE_NULL;
   }
+
+  return *err;
 }
 
 //!returns libmp3splt version; result must be freed
@@ -1691,7 +1655,7 @@ for our library
 caller after use.
 */
 
-char *mp3splt_get_strerror(splt_state *state, int error_code)
+char *mp3splt_get_strerror(splt_state *state, splt_code error_code)
 {
   return splt_e_strerror(state, error_code);
 }
@@ -1702,7 +1666,7 @@ char *mp3splt_get_strerror(splt_state *state, int error_code)
 for our library
 \return The error code in case that anything goes wrong, else SPLT_OK
 */
-int mp3splt_append_plugins_scan_dir(splt_state *state, char *dir)
+splt_code mp3splt_append_plugins_scan_dir(splt_state *state, char *dir)
 {
   return splt_p_append_plugin_scan_dir(state, dir);
 }
@@ -1734,7 +1698,7 @@ caller after use.
 \todo What does this function do?
 */
 char **mp3splt_find_filenames(splt_state *state, const char *filename,
-    int *num_of_files_found, int *error)
+    int *num_of_files_found, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1827,7 +1791,7 @@ void mp3splt_free_one_tag(splt_tags *tags)
   splt_tu_free_one_tags(&tags);
 }
 
-splt_tags *mp3splt_parse_filename_regex(splt_state *state, int *error)
+splt_tags *mp3splt_parse_filename_regex(splt_state *state, splt_code *error)
 {
   splt_tags *tags = NULL;
   int erro = SPLT_OK;

@@ -891,12 +891,13 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
 
   exit_threads();
 
-  mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
+  err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
 
   if (checked_output_radio_box == 0)
   {
-    mp3splt_set_oformat(ui->mp3splt_state, format, &err);
+    err = mp3splt_set_oformat(ui->mp3splt_state, format);
   }
+
   if (format)
   {
     free(format);
@@ -915,7 +916,7 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
 
   if (get_should_trim_safe(ui))
   {
-    mp3splt_set_trim_silence_points(ui->mp3splt_state, &err);
+    err = mp3splt_set_trim_silence_points(ui->mp3splt_state);
   }
   else
   {
@@ -1436,9 +1437,8 @@ static gpointer split_preview(ui_state *ui)
 {
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  int err = 0;
-  mp3splt_erase_all_splitpoints(ui->mp3splt_state, &err);
-  mp3splt_erase_all_tags(ui->mp3splt_state, &err);
+  int err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
+  err = mp3splt_erase_all_tags(ui->mp3splt_state);
 
   enter_threads();
 

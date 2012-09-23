@@ -127,7 +127,7 @@ void ui_state_free(ui_state *ui)
 
   if (ui->mp3splt_state)
   {
-    mp3splt_free_state(ui->mp3splt_state, NULL);
+    mp3splt_free_state(ui->mp3splt_state);
   }
 
   g_array_free(ui->splitpoints, TRUE);

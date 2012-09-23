@@ -55,8 +55,7 @@ void lmanager_init_and_find_plugins(ui_state *ui)
 
 void lmanager_stop_split(ui_state *ui)
 {
-  gint err = SPLT_OK;
-  mp3splt_stop_split(ui->mp3splt_state, &err);
+  gint err = mp3splt_stop_split(ui->mp3splt_state);
   print_status_bar_confirmation(err, ui);
 }
 

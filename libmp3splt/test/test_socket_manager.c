@@ -24,7 +24,7 @@ void cut_setup()
 
 void cut_teardown()
 {
-  mp3splt_free_state(state, NULL);
+  mp3splt_free_state(state);
 }
 
 void test_sm_receive_and_process()

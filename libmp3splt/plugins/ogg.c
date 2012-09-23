@@ -72,7 +72,6 @@ The Plug-in that handles ogg vorbis files
 /* some function prototypes */
 
 splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error);
-static void splt_ogg_clear_sync_in(splt_ogg_state *oggstate);
 static void splt_ogg_clear_sync_in_and_free(splt_ogg_state *oggstate);
 
 /****************************/

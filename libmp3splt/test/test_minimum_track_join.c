@@ -18,7 +18,7 @@ void cut_setup()
 
 void cut_teardown()
 {
-  mp3splt_free_state(state, NULL);
+  mp3splt_free_state(state);
 }
 
 void test_find_intervals_with_no_splitpoint()
