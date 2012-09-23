@@ -146,7 +146,6 @@ static int splt_audacity_set_name(splt_audacity *sa, const char *name)
 
 static long to_hundreths(char *str)
 {
-  long hun = 0;
   long seconds = 0, hundreths = 0;
   sscanf(str, "%ld.%4ld", &seconds, &hundreths);
 

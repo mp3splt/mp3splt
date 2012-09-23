@@ -45,7 +45,7 @@ splt_state *state;
 
 void sigint_handler(int sig)
 {
-  mp3splt_stop_split(state, NULL);
+  mp3splt_stop_split(state);
   exit(1);
 }
 
@@ -476,7 +476,7 @@ int main(int argc, char **orig_argv)
   if (opt->o_option)
   {
     mp3splt_set_int_option(state, SPLT_OPT_CREATE_DIRS_FROM_FILENAMES, SPLT_TRUE);
-    mp3splt_set_oformat(state, opt->output_format,&output_format_error);
+    output_format_error = mp3splt_set_oformat(state, opt->output_format);
     process_confirmation_error(output_format_error, data);
   }
 
@@ -686,7 +686,7 @@ int main(int argc, char **orig_argv)
           if ((strstr(opt->cddb_arg, ".cue")!=NULL)||
               (strstr(opt->cddb_arg, ".CUE")!=NULL))
           {
-            mp3splt_put_cue_splitpoints_from_file(state, opt->cddb_arg, &err);
+            err = mp3splt_put_cue_splitpoints_from_file(state, opt->cddb_arg);
             process_confirmation_error(err, data);
           }
           else
@@ -704,19 +704,19 @@ int main(int argc, char **orig_argv)
                 do_freedb_search(data);
               }
 
-              mp3splt_put_cddb_splitpoints_from_file(state, MP3SPLT_CDDBFILE, &err);
+              err = mp3splt_put_cddb_splitpoints_from_file(state, MP3SPLT_CDDBFILE);
               process_confirmation_error(err, data);
             }
             else
             {
-              mp3splt_put_cddb_splitpoints_from_file(state, opt->cddb_arg, &err);
+              err = mp3splt_put_cddb_splitpoints_from_file(state, opt->cddb_arg);
               process_confirmation_error(err, data);
             }
           }
         }
         else if (opt->audacity_labels_arg)
         {
-          mp3splt_put_audacity_labels_splitpoints_from_file(state, opt->audacity_labels_arg, &err);
+          err = mp3splt_put_audacity_labels_splitpoints_from_file(state, opt->audacity_labels_arg);
           process_confirmation_error(err, data);
         }
         else if (normal_split)
@@ -784,8 +784,7 @@ int main(int argc, char **orig_argv)
 
     if (opt->E_option)
     {
-      err = SPLT_OK;
-      mp3splt_export_to_cue(state, opt->export_cue_arg, SPLT_TRUE, &err);
+      err = mp3splt_export_to_cue(state, opt->export_cue_arg, SPLT_TRUE);
       process_confirmation_error(err, data);
     }
 
@@ -810,12 +809,10 @@ int main(int argc, char **orig_argv)
       fflush(console_out);
     }
 
-    err = SPLT_OK;
-    mp3splt_erase_all_tags(state, &err);
+    err = mp3splt_erase_all_tags(state);
     process_confirmation_error(err, data);
 
-    err = SPLT_OK;
-    mp3splt_erase_all_splitpoints(state,&err);
+    err = mp3splt_erase_all_splitpoints(state);
     process_confirmation_error(err, data);
   }
 

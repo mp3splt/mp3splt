@@ -18,7 +18,7 @@ void cut_setup()
 
 void cut_teardown()
 {
-  mp3splt_free_state(state, NULL);
+  mp3splt_free_state(state);
   if (converted_str)
   {
     free(converted_str);

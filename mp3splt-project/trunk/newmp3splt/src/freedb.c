@@ -238,8 +238,8 @@ end:
       opt->freedb_get_server,opt->freedb_get_port, get_type);
   fflush(console_out);
 
-  mp3splt_write_freedb_file_result(state, selected_cd,
-      MP3SPLT_CDDBFILE, &err, opt->freedb_get_type,
+  err = mp3splt_write_freedb_file_result(state, selected_cd,
+      MP3SPLT_CDDBFILE, opt->freedb_get_type,
       opt->freedb_get_server, opt->freedb_get_port);
   process_confirmation_error(err, data);
 }

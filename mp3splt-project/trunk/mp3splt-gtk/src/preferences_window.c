@@ -811,8 +811,7 @@ static GtkWidget *create_pref_player_page(ui_state *ui)
 static gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event, ui_state *ui)
 {
   const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-  gint error = SPLT_OUTPUT_FORMAT_OK;
-  mp3splt_set_oformat(ui->mp3splt_state, data, &error);
+  gint error = mp3splt_set_oformat(ui->mp3splt_state, data);
   remove_status_message(ui->gui);
   print_status_bar_confirmation(error, ui);
 

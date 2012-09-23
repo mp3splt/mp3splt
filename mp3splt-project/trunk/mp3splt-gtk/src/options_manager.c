@@ -57,8 +57,7 @@ void update_output_options(ui_state *ui)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
     const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-    gint error = SPLT_OUTPUT_FORMAT_OK;
-    mp3splt_set_oformat(ui->mp3splt_state, data, &error);
+    gint error = mp3splt_set_oformat(ui->mp3splt_state, data);
     print_status_bar_confirmation(error, ui);
   }
   else
