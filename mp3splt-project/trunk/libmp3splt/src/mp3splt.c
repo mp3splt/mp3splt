@@ -565,6 +565,55 @@ splt_code mp3splt_set_silence_level_function(splt_state *state,
 /************************************/
 /* Splitpoints                      */
 
+splt_point *mp3splt_new_splitpoint(long splitpoint_value, splt_code *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  splt_point *point = malloc(sizeof(splt_point));
+  if (point == NULL)
+  {
+    *err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return;
+  }
+
+  point->value = splitpoint_value;
+  point->name = NULL;
+  point->type = SPLT_SPLITPOINT;
+
+  return point;
+}
+
+splt_code mp3splt_set_splitpoint_name(splt_point *splitpoint, const char *name)
+{
+  if (splitpoint == NULL || name == NULL)
+  {
+    return SPLT_OK;
+  }
+
+  splitpoint->name = strdup(name);
+
+  if (splitpoint->name == NULL)
+  {
+    return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+  }
+
+  return SPLT_OK;
+}
+
+splt_code mp3splt_set_splitpoint_type(splt_point *splitpoint, splt_type_of_splitpoint type)
+{
+  if (splitpoint == NULL)
+  {
+    return SPLT_OK;
+  }
+
+  splitpoint->type = type;
+
+  return SPLT_OK;
+}
+
 /*! puts a splitpoint in the state 
 
 \param state The central data structure this library keeps all its
@@ -574,8 +623,7 @@ data in
 seconds. If this walue is LONG_MAX we put the splitpoint to the end of
 the song (EOF)
 */
-splt_code mp3splt_append_splitpoint(splt_state *state,
-    long split_value, const char *name, splt_type_of_splitpoint type)
+splt_code mp3splt_append_splitpoint(splt_state *state, splt_point *splitpoint)
 {
   int error = SPLT_OK;
 
@@ -585,7 +633,10 @@ splt_code mp3splt_append_splitpoint(splt_state *state,
     {
       splt_o_lock_library(state);
 
-      error = splt_sp_append_splitpoint(state, split_value, name, type);
+      error = splt_sp_append_splitpoint(state, 
+          splitpoint->value, splitpoint->name, splitpoint->type);
+
+      free(splitpoint);
 
       splt_o_unlock_library(state);
     }
@@ -609,22 +660,19 @@ splt_code mp3splt_append_splitpoint(splt_state *state,
 this function
 \param error Is set to the error code if any error occours
  */
-const splt_point *mp3splt_get_splitpoints(splt_state *state,
-    int *splitpoints_number, splt_code *error)
+const splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  if (state != NULL)
-  {
-    return splt_sp_get_splitpoints(state, splitpoints_number);
-  }
-  else
+  if (state == NULL)
   {
     *err = SPLT_ERROR_STATE_NULL;
-    return 0;
+    return NULL;
   }
+
+  return splt_sp_get_splitpoints(state);
 }
 
 long mp3splt_points_get_value(const splt_point *points, int index)
@@ -974,7 +1022,15 @@ splt_code mp3splt_split(splt_state *state)
 
       //we put the real splitnumber in the splitnumber variable
       //that could be changed (see splitnumber in mp3splt.h)
-      state->split.splitnumber = state->split.real_splitnumber;
+      if (!state->split.points)
+      {
+        state->split.splitnumber = 0;
+      }
+      else
+      {
+        state->split.splitnumber = state->split.points->real_splitnumber;
+      }
+
       splt_t_set_current_split(state,0);
 
       if (!splt_io_check_if_file(state, fname_to_split))

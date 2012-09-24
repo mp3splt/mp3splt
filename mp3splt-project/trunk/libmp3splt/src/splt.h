@@ -215,6 +215,11 @@ struct _splt_point {
   int type;
 };
 
+struct _splt_points {
+  splt_point *points;
+  int real_splitnumber;
+};
+
 /**
  * @brief The data structure for the progress bar
  */
@@ -288,13 +293,9 @@ typedef struct {
     this is updated only by
     check_splitpts_inf_song_length()
     If this function has not been called
-    look at real_splitnumber instead.
+    look at points->real_splitnumber instead.
   */
   int splitnumber;
-  //!how many splitpoints do we have?
-  int real_splitnumber;
-  //!allocated space for the number of splitpoints
-  int allocated_splitnumber;
   /*! Pointer to the fallback function that is 
       called when the library starts to split
       a new file.
@@ -315,7 +316,7 @@ typedef struct {
   void (*put_message)(const char *, splt_message_type, void *);
   void *put_message_cb_data;
   //!structure in which we have all the splitpoints
-  splt_point *points;
+  splt_points *points;
   //!how many tags do we have?
   int real_tagsnumber;
   //!structure in which we have all the tags
