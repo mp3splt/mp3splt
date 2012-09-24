@@ -205,7 +205,7 @@ splt_code mp3splt_free_state(splt_state *state);
  *
  * @see #mp3splt_find_plugins
  */
-splt_code mp3splt_append_plugins_scan_dir(splt_state *state, char *directory);
+splt_code mp3splt_append_plugins_scan_dir(splt_state *state, const char *directory);
 
 /**
  * @brief Finds the plugins in the plugins directories.
@@ -242,10 +242,10 @@ char *mp3splt_get_strerror(splt_state *state, splt_code error);
 /**
  * @brief Split options.
  *
- * Use #mp3splt_set_int_option #mp3splt_set_long_option and #mp3splt_set_float_option to set those
+ * Use #mp3splt_set_int_option, #mp3splt_set_long_option and #mp3splt_set_float_option to set those
  * options.
  *
- * Use #mp3splt_get_int_option #mp3splt_get_long_option and #mp3splt_get_float_option to get those
+ * Use #mp3splt_get_int_option, #mp3splt_get_long_option and #mp3splt_get_float_option to get those
  * options.
  */
 typedef enum {
@@ -619,7 +619,7 @@ typedef enum {
    *
    * Some defaults are #SPLT_DEFAULT_OUTPUT, #SPLT_DEFAULT_CDDB_CUE_OUTPUT,
    * #SPLT_DEFAULT_SYNCERROR_OUTPUT, #SPLT_DEFAULT_SILENCE_OUTPUT and 
-   * #SPLT_DEFAULT_TRIM_SILENCE_OUTPUT
+   * #SPLT_DEFAULT_TRIM_SILENCE_OUTPUT.
    */
   SPLT_OUTPUT_DEFAULT,
   /**
@@ -699,7 +699,7 @@ typedef enum {
 #define SPLT_DEFAULT_OUTPUT "@f_@mm_@ss_@hh__@Mm_@Ss_@Hh"
 
 /**
- * @brief Output filename format for cddb and cue when using #SPLT_OUTPUT_DEFAULT.
+ * @brief Output filename format for CDDB and CUE when using #SPLT_OUTPUT_DEFAULT.
  * @see #mp3splt_set_oformat, #SPLT_OPT_OUTPUT_FILENAMES
  */
 #define SPLT_DEFAULT_CDDB_CUE_OUTPUT "@A - @n - @t"
@@ -755,7 +755,7 @@ typedef enum {
  * @param[in] value Value for the \p option.
  * @return Possible error.
  */
-splt_code mp3splt_set_int_option(splt_state *state, int option, int value);
+splt_code mp3splt_set_int_option(splt_state *state, splt_options option, int value);
 
 /**
  * @brief Sets the value of a long option in the \p state.
@@ -765,7 +765,7 @@ splt_code mp3splt_set_int_option(splt_state *state, int option, int value);
  * @param[in] value Value for the \p option.
  * @return Possible error.
  */
-splt_code mp3splt_set_long_option(splt_state *state, int option, long value);
+splt_code mp3splt_set_long_option(splt_state *state, splt_options option, long value);
 
 /**
  * @brief Sets the value of a float option in the \p state.
@@ -775,7 +775,7 @@ splt_code mp3splt_set_long_option(splt_state *state, int option, long value);
  * @param[in] value Value for the \p option.
  * @return Possible error.
  */
-splt_code mp3splt_set_float_option(splt_state *state, int option, float value);
+splt_code mp3splt_set_float_option(splt_state *state, splt_options option, float value);
 
 /**
  * @brief Returns the value of an int option from the \p state.
@@ -785,7 +785,7 @@ splt_code mp3splt_set_float_option(splt_state *state, int option, float value);
  * @param[out] error Possible error; can be NULL.
  * @return Option value
  */
-int mp3splt_get_int_option(splt_state *state, int option, splt_code *error);
+int mp3splt_get_int_option(splt_state *state, splt_options option, splt_code *error);
 
 /**
  * @brief Returns the value of a long option from the \p state.
@@ -795,7 +795,7 @@ int mp3splt_get_int_option(splt_state *state, int option, splt_code *error);
  * @param[out] error Possible error; can be NULL.
  * @return Option value
  */
-long mp3splt_get_long_option(splt_state *state, int option, splt_code *error);
+long mp3splt_get_long_option(splt_state *state, splt_options option, splt_code *error);
 
 /**
  * @brief Returns the value of a float option from the \p state.
@@ -805,7 +805,7 @@ long mp3splt_get_long_option(splt_state *state, int option, splt_code *error);
  * @param[out] error Possible error; can be NULL.
  * @return Option value
  */
-float mp3splt_get_float_option(splt_state *state, int option, splt_code *error);
+float mp3splt_get_float_option(splt_state *state, splt_options option, splt_code *error);
 
 /**
  * @brief Set the output format when using #SPLT_OUTPUT_FORMAT.
@@ -851,7 +851,7 @@ splt_code mp3splt_set_path_of_split(splt_state *state, const char *path_of_split
  *
  * @see #SPLT_OPT_SET_FILE_FROM_CUE_IF_FILE_TAG_FOUND
  */
-char *mp3splt_get_filename_to_split(splt_state *state);
+const char *mp3splt_get_filename_to_split(splt_state *state);
 
 /**
  * @brief Output filename for a M3U file that will be created in the output path.
@@ -1125,6 +1125,8 @@ typedef struct _splt_point splt_point;
  * @param[in] name Name of the splitpoint. Useful when using #SPLT_OUTPUT_CUSTOM.
  * @param[in] type Type of the splitpoint.
  * @return Possible error.
+ *
+ * \todo See if we can give a builder as parameter instead of split_value, name and splt_type_of_splitpoint
 */
 splt_code mp3splt_append_splitpoint(splt_state *state, long split_value, const char *name,
     splt_type_of_splitpoint type);
@@ -1248,7 +1250,7 @@ typedef struct _splt_tags splt_tags;
  * @param[in] genre Genre of the appended tags.
  * @return Possible error.
  *
- * \todo replace this ugly function with KEY, VALUE, KEY, VALUE, ...
+ * \todo replace this ugly function with a Builder or a KEY, VALUE, KEY, VALUE, ...
  */
 splt_code mp3splt_append_tags(splt_state *state, 
     const char *title, const char *artist,
@@ -1269,40 +1271,40 @@ const splt_tags *mp3splt_get_tags(splt_state *state,
     int *tags_number, splt_code *error);
 
 /**
- * @brief Returns the arist of the \p tags.
+ * @brief Returns the arist of the \p tags. Result must be freed.
  *
  * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
  */
-char *mp3splt_tags_get_artist(splt_tags *tags);
+char *mp3splt_tags_get_artist(const splt_tags *tags);
 /**
- * @brief Returns the album of the \p tags.
+ * @brief Returns the album of the \p tags. Result must be freed.
  * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
  */
-char *mp3splt_tags_get_album(splt_tags *tags);
+char *mp3splt_tags_get_album(const splt_tags *tags);
 /**
- * @brief Returns the title of the \p tags.
+ * @brief Returns the title of the \p tags. Result must be freed.
  * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
  */
-char *mp3splt_tags_get_title(splt_tags *tags);
+char *mp3splt_tags_get_title(const splt_tags *tags);
 /**
- * @brief Returns the genre of the \p tags.
+ * @brief Returns the genre of the \p tags. Result must be freed.
  * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
  */
-char *mp3splt_tags_get_genre(splt_tags *tags);
+char *mp3splt_tags_get_genre(const splt_tags *tags);
 /**
- * @brief Returns the comment of the \p tags.
+ * @brief Returns the comment of the \p tags. Result must be freed.
  * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
  */
-char *mp3splt_tags_get_comment(splt_tags *tags);
+char *mp3splt_tags_get_comment(const splt_tags *tags);
 /**
- * @brief Returns the year of the \p tags.
+ * @brief Returns the year of the \p tags. Result must be freed.
  * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
  */
-char *mp3splt_tags_get_year(splt_tags *tags);
+char *mp3splt_tags_get_year(const splt_tags *tags);
 /**
  * @brief Returns the track of the \p tags.
  */
-int mp3splt_tags_get_track(splt_tags *tags);
+int mp3splt_tags_get_track(const splt_tags *tags);
 
 /**
  * @brief Fill the \p state with tags parsed from the \p tags string.
@@ -1600,7 +1602,7 @@ int mp3splt_freedb_get_number_of_revisions(const splt_freedb_results *results, i
  *            Can be #SPLT_FREEDB2_CGI_SITE (or freedb.org or freedb.org/~cddb/cddb.cgi).
  * @param[in] port Port of the \p cddb_get_server.
  *                 Can be #SPLT_FREEDB_CDDB_CGI_PORT (or 8880) for example.
- * @return error Possible error.
+ * @return Possible error.
  *
  * @see #mp3splt_get_freedb_search
  */
@@ -1624,7 +1626,7 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state,
  * @return Possible error.
  */
 splt_code mp3splt_export_to_cue(splt_state *state, const char *file,
-    short stop_at_total_time);
+    int stop_at_total_time);
 
 //@}
 

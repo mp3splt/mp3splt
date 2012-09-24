@@ -291,7 +291,7 @@ splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filena
 
   
  */
-char *mp3splt_get_filename_to_split(splt_state *state)
+const char *mp3splt_get_filename_to_split(splt_state *state)
 {
   return splt_t_get_filename_to_split(state); 
 }
@@ -726,7 +726,7 @@ const splt_tags *mp3splt_get_tags(splt_state *state,
   }
 }
 
-char *mp3splt_tags_get_artist(splt_tags *tags)
+char *mp3splt_tags_get_artist(const splt_tags *tags)
 {
   if (tags->artist)
   {
@@ -736,7 +736,7 @@ char *mp3splt_tags_get_artist(splt_tags *tags)
   return NULL;
 }
 
-char *mp3splt_tags_get_album(splt_tags *tags)
+char *mp3splt_tags_get_album(const splt_tags *tags)
 {
   if (tags->album)
   {
@@ -746,7 +746,7 @@ char *mp3splt_tags_get_album(splt_tags *tags)
   return NULL;
 }
 
-char *mp3splt_tags_get_title(splt_tags *tags)
+char *mp3splt_tags_get_title(const splt_tags *tags)
 {
   if (tags->title)
   {
@@ -756,7 +756,7 @@ char *mp3splt_tags_get_title(splt_tags *tags)
   return NULL;
 }
 
-char *mp3splt_tags_get_genre(splt_tags *tags)
+char *mp3splt_tags_get_genre(const splt_tags *tags)
 {
   if (tags->genre)
   {
@@ -766,7 +766,7 @@ char *mp3splt_tags_get_genre(splt_tags *tags)
   return NULL;
 }
 
-char *mp3splt_tags_get_comment(splt_tags *tags)
+char *mp3splt_tags_get_comment(const splt_tags *tags)
 {
   if (tags->comment)
   {
@@ -776,7 +776,7 @@ char *mp3splt_tags_get_comment(splt_tags *tags)
   return NULL;
 }
 
-char *mp3splt_tags_get_year(splt_tags *tags)
+char *mp3splt_tags_get_year(const splt_tags *tags)
 {
   if (tags->year)
   {
@@ -786,7 +786,7 @@ char *mp3splt_tags_get_year(splt_tags *tags)
   return NULL;
 }
 
-int mp3splt_tags_get_track(splt_tags *tags)
+int mp3splt_tags_get_track(const splt_tags *tags)
 {
   return tags->track;
 }
@@ -845,7 +845,7 @@ splt_code mp3splt_erase_all_tags(splt_state *state)
 /************************************/
 /* Options                          */
 
-static int mp3splt_set_option(splt_state *state, int option_name, void *value)
+static int mp3splt_set_option(splt_state *state, splt_options option_name, void *value)
 {
   int error = SPLT_OK;
 
@@ -872,22 +872,22 @@ static int mp3splt_set_option(splt_state *state, int option_name, void *value)
   return error;
 }
 
-splt_code mp3splt_set_int_option(splt_state *state, int option_name, int value)
+splt_code mp3splt_set_int_option(splt_state *state, splt_options option_name, int value)
 {
   return mp3splt_set_option(state, option_name, &value);
 }
 
-splt_code mp3splt_set_long_option(splt_state *state, int option_name, long value)
+splt_code mp3splt_set_long_option(splt_state *state, splt_options option_name, long value)
 {
   return mp3splt_set_option(state, option_name, &value);
 }
 
-splt_code mp3splt_set_float_option(splt_state *state, int option_name, float value)
+splt_code mp3splt_set_float_option(splt_state *state, splt_options option_name, float value)
 {
   return mp3splt_set_option(state, option_name, &value);
 }
 
-int mp3splt_get_int_option(splt_state *state, int option_name, splt_code *error)
+int mp3splt_get_int_option(splt_state *state, splt_options option_name, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -904,7 +904,7 @@ int mp3splt_get_int_option(splt_state *state, int option_name, splt_code *error)
   }
 }
 
-long mp3splt_get_long_option(splt_state *state, int option_name, splt_code *error)
+long mp3splt_get_long_option(splt_state *state, splt_options option_name, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -921,7 +921,7 @@ long mp3splt_get_long_option(splt_state *state, int option_name, splt_code *erro
   }
 }
 
-float mp3splt_get_float_option(splt_state *state, int option_name, splt_code *error)
+float mp3splt_get_float_option(splt_state *state, splt_options option_name, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1432,7 +1432,7 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
   data.
 */
 splt_code mp3splt_export_to_cue(splt_state *state, const char *out_file,
-    short stop_at_total_time)
+    int stop_at_total_time)
 {
   if (state == NULL)
   {
@@ -1666,7 +1666,7 @@ char *mp3splt_get_strerror(splt_state *state, splt_code error_code)
 for our library
 \return The error code in case that anything goes wrong, else SPLT_OK
 */
-splt_code mp3splt_append_plugins_scan_dir(splt_state *state, char *dir)
+splt_code mp3splt_append_plugins_scan_dir(splt_state *state, const char *dir)
 {
   return splt_p_append_plugin_scan_dir(state, dir);
 }
