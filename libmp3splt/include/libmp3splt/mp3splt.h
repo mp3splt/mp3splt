@@ -1118,24 +1118,55 @@ typedef enum {
 typedef struct _splt_point splt_point;
 
 /**
- * @brief Append a new splitpoint.
+ * @brief Creates a new splitpoint with the \p splitpoint_value.
  *
- * @param[in] state Main state.
- * @param[in] split_value The time of the splitpoint in hundreths of seconds.
- * @param[in] name Name of the splitpoint. Useful when using #SPLT_OUTPUT_CUSTOM.
+ * By default, the splitpoint has no name and it has the type #SPLT_SPLITPOINT.
+ *
+ * @param[in] splitpoint_value The time of the splitpoint in hundreths of seconds.
+ * @param[out] error Possible error; can be NULL.
+ * @return Newly allocated point.
+ *
+ * @see #mp3splt_set_splitpoint_name
+ * @see #mp3splt_set_splitpoint_type
+ * @see #mp3splt_append_splitpoint
+ */
+splt_point *mp3splt_new_splitpoint(long splitpoint_value, splt_code *error);
+
+/**
+ * @brief Sets the name on the \p splitpoint.
+ *
+ * @param[in] splitpoint Splitpoint to be changed.
+ * @param[in] name Name of the splitpoint to be set. Useful when using #SPLT_OUTPUT_CUSTOM.
+ * @return Possible error.
+ */
+splt_code mp3splt_set_splitpoint_name(splt_point *splitpoint, const char *name);
+
+/**
+ * @brief Sets the name on the \p splitpoint.
+ *
+ * @param[in] splitpoint Splitpoint to be changed.
  * @param[in] type Type of the splitpoint.
  * @return Possible error.
+ */
+splt_code mp3splt_set_splitpoint_type(splt_point *splitpoint, splt_type_of_splitpoint type);
+
+/**
+ * @brief Append a new splitpoint to the \p state.
  *
- * \todo See if we can give a builder as parameter instead of split_value, name and splt_type_of_splitpoint
+ * @param[in] state Main state.
+ * @param[in] splitpoint Splitpoint to be appended; splitpoint is freed afterwards.
+ * @return Possible error.
+ *
+ * @see #mp3splt_new_splitpoint
 */
-splt_code mp3splt_append_splitpoint(splt_state *state, long split_value, const char *name,
-    splt_type_of_splitpoint type);
+splt_code mp3splt_append_splitpoint(splt_state *state, splt_point *splitpoint);
+
+typedef struct _splt_points splt_points;
 
 /**
  * @brief Returns all the splitpoints from the \p state.
  *
  * @param[in] state Main state.
- * @param[out] splitpoints_number The number of returned splitpoints.
  * @param[out] error Possible error; can be NULL.
  * @return The splitpoints from the \p state.
  *
@@ -1143,7 +1174,7 @@ splt_code mp3splt_append_splitpoint(splt_state *state, long split_value, const c
  * @see #mp3splt_points_get_type
  * @see #mp3splt_points_get_name
  */
-const splt_point *mp3splt_get_splitpoints(splt_state *state, int *splitpoints_number, splt_code *error);
+const splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error);
 
 /**
  * @brief Returns the time value of the splitpoint at index \p index from \p points.

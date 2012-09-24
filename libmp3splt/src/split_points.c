@@ -41,7 +41,8 @@ checking, of this split point already exists,...)
 
 int splt_sp_splitpoint_exists(splt_state *state, int index)
 {
-  if ((index >= 0) && (index < state->split.real_splitnumber))
+  if (state->split.points &&
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
     return SPLT_TRUE;
   }
@@ -61,28 +62,34 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
   splt_d_print_debug(state,"Appending splitpoint _%s_ with value _%ld_\n",
       name, split_value);
 
-  split->real_splitnumber++;
-
   if (!split->points)
   {
-    split->allocated_splitnumber = split->real_splitnumber;
-    if ((split->points = malloc(sizeof(splt_point))) == NULL)
+    split->points = malloc(sizeof(splt_points));
+    if (split->points == NULL)
+    {
+      return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    }
+
+    split->points->real_splitnumber = 0;
+
+    if ((split->points->points = malloc(sizeof(splt_point))) == NULL)
     {
       return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
   }
-  else if (split->real_splitnumber > split->allocated_splitnumber)
+  else
   {
-    split->allocated_splitnumber = split->real_splitnumber;
-    if ((split->points = 
-          realloc(split->points, split->allocated_splitnumber * sizeof(splt_point))) == NULL)
+    if ((split->points->points =
+          realloc(split->points->points, (split->points->real_splitnumber + 1) * sizeof(splt_point))) == NULL)
     {
       return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
   }
 
-  int index = split->real_splitnumber - 1;
-  split->points[index].name = NULL;
+  split->points->real_splitnumber++;
+
+  int index = split->points->real_splitnumber - 1;
+  split->points->points[index].name = NULL;
 
   error = splt_sp_set_splitpoint_value(state, index, split_value);
   if (error != SPLT_OK) { return error; }
@@ -102,21 +109,22 @@ int splt_sp_remove_splitpoint(splt_state *state, int index)
 
   int error = SPLT_OK;
 
-  if ((index >= 0) && (index < state->split.real_splitnumber))
+  if (state->split.points &&
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
-    if (state->split.points[index].name)
+    if (state->split.points->points[index].name)
     {
-      free(state->split.points[index].name);
-      state->split.points[index].name = NULL;
+      free(state->split.points->points[index].name);
+      state->split.points->points[index].name = NULL;
     }
 
     int i;
-    for (i = index + 1; i < state->split.real_splitnumber;i++)
+    for (i = index + 1; i < state->split.points->real_splitnumber;i++)
     {
-      state->split.points[i - 1] = state->split.points[i];
+      state->split.points->points[i - 1] = state->split.points->points[i];
     }
 
-    state->split.real_splitnumber--;
+    state->split.points->real_splitnumber--;
   }
   else
   {
@@ -126,11 +134,9 @@ int splt_sp_remove_splitpoint(splt_state *state, int index)
   return error;
 }
 
-splt_point *splt_sp_get_splitpoints(splt_state *state, int *splitpoints_number)
+splt_points *splt_sp_get_splitpoints(splt_state *state)
 {
-  splt_struct *split = &state->split;
-  *splitpoints_number = split->real_splitnumber;
-  return split->points;
+  return state->split.points;
 }
 
 void splt_sp_free_splitpoints(splt_state *state)
@@ -140,21 +146,23 @@ void splt_sp_free_splitpoints(splt_state *state)
   if (split->points)
   {
     int i = 0;
-    for (i = 0; i < split->real_splitnumber; i++)
+    for (i = 0; i < split->points->real_splitnumber; i++)
     {
-      if (split->points[i].name)
+      if (split->points->points[i].name)
       {
-        free(split->points[i].name);
-        split->points[i].name = NULL;
+        free(split->points->points[i].name);
+        split->points->points[i].name = NULL;
       }
     }
+
+    free(split->points->points);
+    split->points->points = NULL;
 
     free(split->points);
     split->points = NULL;
   }
 
   split->splitnumber = 0;
-  split->real_splitnumber = 0;
 }
 
 int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
@@ -163,10 +171,10 @@ int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
 
   int error = SPLT_OK;
 
-  if ((index >= 0) &&
-      (index < state->split.real_splitnumber))
+  if (state->split.points &&
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
-    state->split.points[index].value = split_value;
+    state->split.points->points[index].value = split_value;
   }
   else
   {
@@ -181,9 +189,10 @@ int splt_sp_set_splitpoint_name(splt_state *state, int index, const char *name)
   splt_d_print_debug(state,"Splitpoint name at _%d_ is _%s_\n", index, name);
 
   int error = SPLT_OK;
-  splt_point *points = state->split.points;
+  splt_point *points = state->split.points->points;
 
-  if ((index >= 0) && (index < state->split.real_splitnumber))
+  if (state->split.points && 
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
     error = splt_su_copy(name, &points[index].name);
   }
@@ -199,9 +208,10 @@ int splt_sp_set_splitpoint_type(splt_state *state, int index, int type)
 {
   int error = SPLT_OK;
 
-  if ((index >= 0) && (index < state->split.real_splitnumber))
+  if (state->split.points &&
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
-    state->split.points[index].type = type;
+    state->split.points->points[index].type = type;
   }
   else
   {
@@ -213,9 +223,10 @@ int splt_sp_set_splitpoint_type(splt_state *state, int index, int type)
 
 long splt_sp_get_splitpoint_value(splt_state *state, int index, int *error)
 {
-  if ((index >= 0) && (index < state->split.real_splitnumber))
+  if (state->split.points && 
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
-    return state->split.points[index].value;
+    return state->split.points->points[index].value;
   }
   else
   {
@@ -226,9 +237,10 @@ long splt_sp_get_splitpoint_value(splt_state *state, int index, int *error)
 
 const char *splt_sp_get_splitpoint_name(splt_state *state, int index, int *error)
 {
-  if ((index >= 0) && (index < state->split.real_splitnumber))
+  if (state->split.points &&
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
-    return state->split.points[index].name;
+    return state->split.points->points[index].name;
   }
   else
   {
@@ -239,9 +251,10 @@ const char *splt_sp_get_splitpoint_name(splt_state *state, int index, int *error
 
 int splt_sp_get_splitpoint_type(splt_state *state, int index, int *error)
 {
-  if ((index >= 0) && (index < state->split.real_splitnumber))
+  if (state->split.points && 
+      (index >= 0) && (index < state->split.points->real_splitnumber))
   {
-    return state->split.points[index].type;
+    return state->split.points->points[index].type;
   }
   else
   {
@@ -308,19 +321,28 @@ static int splt_point_value_sort(const void *p1, const void *p2)
 
 void splt_sp_order_splitpoints(splt_state *state, int len)
 {
-  qsort(state->split.points, state->split.real_splitnumber, 
-      sizeof *state->split.points, splt_point_value_sort);
+  if (!state->split.points)
+  {
+    return;
+  }
+
+  qsort(state->split.points->points, state->split.points->real_splitnumber, 
+      sizeof *state->split.points->points, splt_point_value_sort);
 }
 
 void splt_sp_skip_minimum_track_length_splitpoints(splt_state *state, int *error)
 {
-  if (state->split.real_splitnumber <= 0) { return; }
+  if (!state->split.points ||
+      (state->split.points->real_splitnumber <= 0))
+  {
+    return;
+  }
 
   long min_track_length = 
     splt_co_time_to_long(splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH));
 
   int i = 1;
-  for (i = 1;i < state->split.real_splitnumber; i++)
+  for (i = 1;i < state->split.points->real_splitnumber; i++)
   {
     int begin_index = i-1;
     int end_index = i;
@@ -363,20 +385,21 @@ splt_array *splt_sp_find_intervals_between_two_consecutive_big_tracks(splt_state
   splt_array *intervals = splt_array_new();
   if (!intervals) { return NULL; }
 
+  if (!state->split.points ||
+      state->split.points->real_splitnumber == 1)
+  {
+    return intervals;
+  }
+
   int previous_was_big_track = SPLT_FALSE;
   int start_interval = 0;
   int fix_start_point = SPLT_FALSE;
   int end_interval = 1;
 
-  if (state->split.real_splitnumber == 1)
-  {
-    return intervals;
-  }
-
   int appended_last = SPLT_FALSE;
 
   int i = 1;
-  for (i = 1;i < state->split.real_splitnumber; i++)
+  for (i = 1;i < state->split.points->real_splitnumber; i++)
   {
     int begin_index = i-1;
     int end_index = i;
@@ -415,9 +438,9 @@ splt_array *splt_sp_find_intervals_between_two_consecutive_big_tracks(splt_state
       previous_was_big_track = SPLT_FALSE;
 
       if (!appended_last && 
-          (i == state->split.real_splitnumber - 1 || i == state->split.real_splitnumber - 2))
+          (i == state->split.points->real_splitnumber - 1 || i == state->split.points->real_splitnumber - 2))
       {
-        end_interval = state->split.real_splitnumber - 1;
+        end_interval = state->split.points->real_splitnumber - 1;
         splt_int_pair *pair = splt_int_pair_new(start_interval, end_interval);
         splt_array_append(intervals, (void *) pair);
         appended_last = SPLT_TRUE;
@@ -449,7 +472,11 @@ static int backward_sort(const void *a, const void *b)
 
 void splt_sp_join_minimum_tracks_splitpoints(splt_state *state, int *error)
 {
-  if (state->split.real_splitnumber <= 0) { return; }
+  if (!state->split.points ||
+      (state->split.points->real_splitnumber <= 0))
+  {
+    return;
+  }
 
   float min_track_join_f = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_TRACK_JOIN);
   long min_track_join = splt_co_time_to_long(min_track_join_f);
@@ -464,7 +491,7 @@ void splt_sp_join_minimum_tracks_splitpoints(splt_state *state, int *error)
   {
     long number_of_intervals = splt_array_length(intervals);
 
-    int indexes_to_remove[state->split.real_splitnumber];
+    int indexes_to_remove[state->split.points->real_splitnumber];
     int number_of_indexes_to_remove = 0;
 
     long i = 0;
@@ -551,7 +578,7 @@ void splt_sp_join_minimum_tracks_splitpoints(splt_state *state, int *error)
       if (err < 0) { *error = err; goto end; }
     }
 
-    if (state->split.real_splitnumber == 2)
+    if (state->split.points->real_splitnumber == 2)
     {
       break;
     }

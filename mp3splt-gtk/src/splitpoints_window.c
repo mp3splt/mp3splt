@@ -1442,12 +1442,15 @@ static gpointer split_preview(ui_state *ui)
 
   enter_threads();
 
-  mp3splt_append_splitpoint(ui->mp3splt_state, get_preview_start_position_safe(ui),
-      "preview", SPLT_SPLITPOINT);
+  splt_point *splitpoint = mp3splt_new_splitpoint(get_preview_start_position_safe(ui), NULL);
+  mp3splt_set_splitpoint_name(splitpoint, "preview");
+  mp3splt_set_splitpoint_type(splitpoint, SPLT_SPLITPOINT);
+  mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
 
-  mp3splt_append_splitpoint(ui->mp3splt_state,
-      get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui),
-      NULL, SPLT_SKIPPOINT);
+  splitpoint = mp3splt_new_splitpoint(
+      get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui), NULL);
+  mp3splt_set_splitpoint_type(splitpoint, SPLT_SKIPPOINT);
+  mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
 
   lock_mutex(&ui->variables_mutex);
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
@@ -1771,7 +1774,10 @@ void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui)
       splitpoint_type = SPLT_SKIPPOINT;
     }
 
-    mp3splt_append_splitpoint(state,hundr[i], description, splitpoint_type);
+    splt_point *splitpoint = mp3splt_new_splitpoint(hundr[i], NULL);
+    mp3splt_set_splitpoint_name(splitpoint, description);
+    mp3splt_set_splitpoint_type(splitpoint, splitpoint_type);
+    mp3splt_append_splitpoint(state, splitpoint);
 
     gtk_tree_path_free(path);
   }

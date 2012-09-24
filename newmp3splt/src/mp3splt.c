@@ -724,8 +724,10 @@ int main(int argc, char **orig_argv)
           //we set the splitpoints to the library
           for (i = 0;i < data->number_of_splitpoints; i++)
           {
-            long point = data->splitpoints[i];
-            err = mp3splt_append_splitpoint(state, point, NULL, SPLT_SPLITPOINT);
+            splt_point *splitpoint = mp3splt_new_splitpoint(data->splitpoints[i], &err);
+            process_confirmation_error(err, data);
+
+            err = mp3splt_append_splitpoint(state, splitpoint);
             process_confirmation_error(err, data);
           }
         }

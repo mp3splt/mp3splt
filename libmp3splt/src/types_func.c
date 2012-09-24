@@ -54,7 +54,6 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->silence_log_fname = NULL;
 
   state->split.real_tagsnumber = 0;
-  state->split.real_splitnumber = 0;
   state->split.splitnumber = 0;
   state->split.current_split_file_number = 1;
   state->split.get_silence_level = NULL;
