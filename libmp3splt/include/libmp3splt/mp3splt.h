@@ -1093,7 +1093,7 @@ splt_code mp3splt_set_silence_level_function(splt_state *state,
 
 /**
  * @brief Type of the splitpoint.
- * @see #mp3splt_append_splitpoint, #mp3splt_points_get_type
+ * @see #mp3splt_append_splitpoint, #mp3splt_point_get_type
  */
 typedef enum {
   /**
@@ -1126,11 +1126,11 @@ typedef struct _splt_point splt_point;
  * @param[out] error Possible error; can be NULL.
  * @return Newly allocated point.
  *
- * @see #mp3splt_set_splitpoint_name
- * @see #mp3splt_set_splitpoint_type
+ * @see #mp3splt_point_set_name
+ * @see #mp3splt_point_set_type
  * @see #mp3splt_append_splitpoint
  */
-splt_point *mp3splt_new_splitpoint(long splitpoint_value, splt_code *error);
+splt_point *mp3splt_point_new(long splitpoint_value, splt_code *error);
 
 /**
  * @brief Sets the name on the \p splitpoint.
@@ -1139,7 +1139,7 @@ splt_point *mp3splt_new_splitpoint(long splitpoint_value, splt_code *error);
  * @param[in] name Name of the splitpoint to be set. Useful when using #SPLT_OUTPUT_CUSTOM.
  * @return Possible error.
  */
-splt_code mp3splt_set_splitpoint_name(splt_point *splitpoint, const char *name);
+splt_code mp3splt_point_set_name(splt_point *splitpoint, const char *name);
 
 /**
  * @brief Sets the name on the \p splitpoint.
@@ -1148,7 +1148,7 @@ splt_code mp3splt_set_splitpoint_name(splt_point *splitpoint, const char *name);
  * @param[in] type Type of the splitpoint.
  * @return Possible error.
  */
-splt_code mp3splt_set_splitpoint_type(splt_point *splitpoint, splt_type_of_splitpoint type);
+splt_code mp3splt_point_set_type(splt_point *splitpoint, splt_type_of_splitpoint type);
 
 /**
  * @brief Append a new splitpoint to the \p state.
@@ -1157,10 +1157,17 @@ splt_code mp3splt_set_splitpoint_type(splt_point *splitpoint, splt_type_of_split
  * @param[in] splitpoint Splitpoint to be appended; splitpoint is freed afterwards.
  * @return Possible error.
  *
- * @see #mp3splt_new_splitpoint
+ * @see #mp3splt_point_new
 */
 splt_code mp3splt_append_splitpoint(splt_state *state, splt_point *splitpoint);
 
+/**
+ * @brief Structure containing several #splt_point.
+ * All members are private.
+ *
+ * @see #mp3splt_points_init_iterator
+ * @see #mp3splt_points_next
+ */
 typedef struct _splt_points splt_points;
 
 /**
@@ -1170,51 +1177,62 @@ typedef struct _splt_points splt_points;
  * @param[out] error Possible error; can be NULL.
  * @return The splitpoints from the \p state.
  *
- * @see #mp3splt_points_get_value
- * @see #mp3splt_points_get_type
- * @see #mp3splt_points_get_name
+ * @see #mp3splt_points_init_iterator
+ * @see #mp3splt_points_next
  */
-const splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error);
+splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error);
 
 /**
- * @brief Returns the time value of the splitpoint at index \p index from \p points.
+ * @brief Initialisation of the iterator for use with #mp3splt_points_next.
  *
- * @param[in] points Array of splitpoints.
- * @param[in] index The index of the splitpoint to be looked for from the \p points.
- * @return The time value of the requested splitpoint.
+ * @param[in] splitpoints Splitpoints returned with #mp3splt_get_splitpoints.
  *
- * \todo create an iterator instead of passing index
+ * @see #mp3splt_points_next
+ */
+void mp3splt_points_init_iterator(splt_points *splitpoints);
+
+/**
+ * @brief Returns the next splitpoint from the \p splitpoints.
+ *
+ * @param[in] splitpoints Splitpoints to be processed.
+ * @return Next splitpoint of \p splitpoints or NULL if none found or no point remains.
+ *
+ * @see #mp3splt_point_get_value
+ * @see #mp3splt_point_get_type
+ * @see #mp3splt_point_get_name
+ */
+const splt_point *mp3splt_points_next(splt_points *splitpoints);
+
+/**
+ * @brief Returns the time value of the splitpoint \p point.
+ *
+ * @param[in] point Splitpoint to be queried.
+ * @return The time value of the splitpoint.
  *
  * @see #mp3splt_get_splitpoints
  */
-long mp3splt_points_get_value(const splt_point *points, int index);
+long mp3splt_point_get_value(const splt_point *point);
 
 /**
- * @brief Returns the type of the splitpoint at index \p index from \p points.
+ * @brief Returns the type of the splitpoint \p point.
  * Type can be #splt_type_of_splitpoint.
  *
- * @param[in] points Array of splitpoints.
- * @param[in] index The index of the splitpoint to be looked for from the \p points.
+ * @param[in] point Splitpoint to be queried.
  * @return The type of the requested splitpoint.
  *
- * \todo create an iterator instead of passing index
- *
  * @see #mp3splt_get_splitpoints
  */
-int mp3splt_points_get_type(const splt_point *points, int index);
+splt_type_of_splitpoint mp3splt_point_get_type(const splt_point *point);
 
 /**
- * @brief Returns the name of the splitpoint at index \p index from \p points.
+ * @brief Returns the name of the splitpoint \p point.
  *
- * @param[in] points Array of splitpoints.
- * @param[in] index The index of the splitpoint to be looked for from the \p points.
+ * @param[in] point Splitpoint to be queried.
  * @return The name of the requested splitpoint. Result must be freed.
- *
- * \todo create an iterator instead of passing index
  *
  * @see #mp3splt_get_splitpoints
  */
-char *mp3splt_points_get_name(const splt_point *points, int index);
+char *mp3splt_point_get_name(const splt_point *point);
 
 /**
  * @brief Erase all splitpoints from the \p state.
@@ -1289,7 +1307,6 @@ splt_code mp3splt_append_tags(splt_state *state,
     const char *year, const char *comment,
     int track, const char *genre);
 
-//returns a pointer to all the current tags
 /**
  * @brief Returns an array containing the tags of the \p state.
  *

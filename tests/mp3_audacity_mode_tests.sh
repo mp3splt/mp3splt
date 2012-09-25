@@ -7,7 +7,7 @@ function _create_audacity_file
   echo $'10.000000\t67.000000\tzero
 67.000000\t127.000000\tfirst\n
 149.000000\t206.000000\tsecond
-206.000000\t236.000000\t' > $AUDACITY_FILE
+206.000000\t236.000000\tthird' > $AUDACITY_FILE
 }
 
 function test_audacity
@@ -30,7 +30,7 @@ function test_audacity
    File \"$OUTPUT_DIR/zero.mp3\" created
    File \"$OUTPUT_DIR/first.mp3\" created
    File \"$OUTPUT_DIR/second.mp3\" created
-   File \"$OUTPUT_DIR/.mp3\" created
+   File \"$OUTPUT_DIR/third.mp3\" created
  Processed 9036 frames - Sync errors: 0
  file split"
   mp3splt_args="-d $OUTPUT_DIR -A $AUDACITY_FILE $MP3_FILE" 
@@ -51,7 +51,7 @@ function test_audacity
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
 
-  current_file="$OUTPUT_DIR/.mp3"
+  current_file="$OUTPUT_DIR/third.mp3"
   check_current_mp3_length "00.30"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
@@ -80,7 +80,7 @@ function test_audacity_and_pretend
    File \"$OUTPUT_DIR/zero.mp3\" created
    File \"$OUTPUT_DIR/first.mp3\" created
    File \"$OUTPUT_DIR/second.mp3\" created
-   File \"$OUTPUT_DIR/.mp3\" created
+   File \"$OUTPUT_DIR/third.mp3\" created
  Processed 9036 frames - Sync errors: 0
  file split"
   mp3splt_args="-P -d $OUTPUT_DIR -A $AUDACITY_FILE $MP3_FILE" 
@@ -112,7 +112,7 @@ function test_audacity_and_cue_export
    File \"$OUTPUT_DIR/zero.mp3\" created
    File \"$OUTPUT_DIR/first.mp3\" created
    File \"$OUTPUT_DIR/second.mp3\" created
-   File \"$OUTPUT_DIR/.mp3\" created
+   File \"$OUTPUT_DIR/third.mp3\" created
  Processed 9036 frames - Sync errors: 0
  file split
  CUE file 'output/output_out.cue' created."
@@ -162,7 +162,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "3" "http://www.jamendo.com/"
 
-  current_file="$OUTPUT_DIR/.mp3"
+  current_file="$OUTPUT_DIR/third.mp3"
   check_current_mp3_length "00.30"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
@@ -191,7 +191,7 @@ function test_audacity_and_pretend_and_cue_export
    File \"$OUTPUT_DIR/zero.mp3\" created
    File \"$OUTPUT_DIR/first.mp3\" created
    File \"$OUTPUT_DIR/second.mp3\" created
-   File \"$OUTPUT_DIR/.mp3\" created
+   File \"$OUTPUT_DIR/third.mp3\" created
  Processed 9036 frames - Sync errors: 0
  file split
  CUE file 'output/output_out.cue' created."
@@ -294,7 +294,7 @@ function test_audacity_and_custom_tags
    File \"$OUTPUT_DIR/zero.mp3\" created
    File \"$OUTPUT_DIR/first.mp3\" created
    File \"$OUTPUT_DIR/second.mp3\" created
-   File \"$OUTPUT_DIR/.mp3\" created
+   File \"$OUTPUT_DIR/third.mp3\" created
  Processed 9036 frames - Sync errors: 0
  file split"
   mp3splt_args="-d $OUTPUT_DIR -g \"%[@o,@N=6,@t=title1][@t=tit2][@t=tit3]\" -A $AUDACITY_FILE $MP3_FILE" 
@@ -315,7 +315,7 @@ function test_audacity_and_custom_tags
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "tit3"\
   "2007" "Rock" "17" "8" "http://www.jamendo.com/"
 
-  current_file="$OUTPUT_DIR/.mp3"
+  current_file="$OUTPUT_DIR/third.mp3"
   check_current_mp3_length "00.30"
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "title1"\
   "2007" "Rock" "17" "9" "http://www.jamendo.com/"

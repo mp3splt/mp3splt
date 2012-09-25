@@ -3360,7 +3360,7 @@ static gint mytimer(ui_state *ui)
 }
 
 //event for the file chooser ok button
-void file_chooser_ok_event(gchar *fname, ui_state *ui)
+void file_chooser_ok_event(const gchar *fname, ui_state *ui)
 {
   change_current_filename(fname, ui);
   gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
@@ -3371,7 +3371,7 @@ void file_chooser_ok_event(gchar *fname, ui_state *ui)
   if (ui->status->timer_active)
   {
     GList *song_list = NULL;
-    song_list = g_list_append(song_list, fname);
+    song_list = g_list_append(song_list, g_strdup(fname));
 
     if (!player_is_running(ui))
     {
@@ -3388,6 +3388,9 @@ void file_chooser_ok_event(gchar *fname, ui_state *ui)
     {
       player_play(ui);
     }
+
+    g_list_foreach(song_list, (GFunc)g_free, NULL);
+    g_list_free(song_list);
   }
 }
 

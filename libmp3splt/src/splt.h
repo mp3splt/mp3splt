@@ -218,6 +218,7 @@ struct _splt_point {
 struct _splt_points {
   splt_point *points;
   int real_splitnumber;
+  int iterator_counter;
 };
 
 /**

@@ -71,6 +71,7 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
     }
 
     split->points->real_splitnumber = 0;
+    split->points->iterator_counter = 0;
 
     if ((split->points->points = malloc(sizeof(splt_point))) == NULL)
     {

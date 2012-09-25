@@ -381,15 +381,19 @@ void test_join_tracks_with_only_small_segments()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(2, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(4, mp3splt_points_get_value(points, 1));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(4, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_with_only_big_segments()
@@ -406,18 +410,28 @@ void test_join_tracks_with_only_big_segments()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(5, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(10, mp3splt_points_get_value(points, 1));
-  cut_assert_equal_int(20, mp3splt_points_get_value(points, 2));
-  cut_assert_equal_int(30, mp3splt_points_get_value(points, 3));
-  cut_assert_equal_int(40, mp3splt_points_get_value(points, 4));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(10, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(20, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(30, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(40, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_with_small_segments_at_start()
@@ -437,16 +451,22 @@ void test_join_tracks_with_small_segments_at_start()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(3, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(30, mp3splt_points_get_value(points, 1));
-  cut_assert_equal_int(40, mp3splt_points_get_value(points, 2));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(30, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(40, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_with_small_segments_in_the_middle()
@@ -468,18 +488,28 @@ void test_join_tracks_with_small_segments_in_the_middle()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(5, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(10, mp3splt_points_get_value(points, 1));
-  cut_assert_equal_int(21, mp3splt_points_get_value(points, 2));
-  cut_assert_equal_int(30, mp3splt_points_get_value(points, 3));
-  cut_assert_equal_int(40, mp3splt_points_get_value(points, 4));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(10, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(21, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(30, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(40, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_complex()
@@ -507,19 +537,31 @@ void test_join_tracks_complex()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(6, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(10, mp3splt_points_get_value(points, 1));
-  cut_assert_equal_int(21, mp3splt_points_get_value(points, 2));
-  cut_assert_equal_int(30, mp3splt_points_get_value(points, 3));
-  cut_assert_equal_int(40, mp3splt_points_get_value(points, 4));
-  cut_assert_equal_int(50, mp3splt_points_get_value(points, 5));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(10, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(21, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(30, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(40, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(50, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_even_more_complex()
@@ -558,19 +600,31 @@ void test_join_tracks_even_more_complex()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(6, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(10, mp3splt_points_get_value(points, 1));
-  cut_assert_equal_int(21, mp3splt_points_get_value(points, 2));
-  cut_assert_equal_int(30, mp3splt_points_get_value(points, 3));
-  cut_assert_equal_int(40, mp3splt_points_get_value(points, 4));
-  cut_assert_equal_int(53, mp3splt_points_get_value(points, 5));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(10, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(21, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(30, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(40, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(53, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_small_parts_joined_bigger_than_big_part()
@@ -597,17 +651,25 @@ void test_join_tracks_small_parts_joined_bigger_than_big_part()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(4, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(10, mp3splt_points_get_value(points, 1));
-  cut_assert_equal_int(16, mp3splt_points_get_value(points, 2));
-  cut_assert_equal_int(30, mp3splt_points_get_value(points, 3));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(10, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(16, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(30, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_with_two_splitpoints()
@@ -621,15 +683,19 @@ void test_join_tracks_with_two_splitpoints()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(2, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(2, mp3splt_points_get_value(points, 1));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(2, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
 void test_join_tracks_with_three_splitpoints()
@@ -647,14 +713,18 @@ void test_join_tracks_with_three_splitpoints()
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  int splitpoints_number;
-  const splt_point *points = mp3splt_get_splitpoints(state, &splitpoints_number, &error);
+  splt_points *points = mp3splt_get_splitpoints(state, &error);
 
   cut_assert_equal_int(SPLT_OK, error);
 
-  cut_assert_equal_int(2, splitpoints_number);
+  mp3splt_points_init_iterator(points);
 
-  cut_assert_equal_int(0, mp3splt_points_get_value(points, 0));
-  cut_assert_equal_int(2, mp3splt_points_get_value(points, 1));
+  const splt_point *point = mp3splt_points_next(points);
+  cut_assert_equal_int(0, mp3splt_point_get_value(point));
+
+  point = mp3splt_points_next(points);
+  cut_assert_equal_int(2, mp3splt_point_get_value(point));
+
+  cut_assert_null(mp3splt_points_next(points));
 }
 
