@@ -328,7 +328,7 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
   //The cue file has provided libmp3splt with a input filename.
   //But since we use the filename from the gui instead we need to set
   //the value the gui uses, too, which we do in the next line.
-  char *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
+  const gchar *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
   if (file_exists(filename_to_split))
   {
     file_chooser_ok_event(filename_to_split, ui);

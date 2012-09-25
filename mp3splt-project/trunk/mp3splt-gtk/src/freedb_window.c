@@ -286,24 +286,24 @@ max_splits is the maximum number of splitpoints to update
 */
 void update_splitpoints_from_mp3splt_state(ui_state *ui)
 {
-  gint max_splits = 0;
-
   gint err = SPLT_OK;
-  const splt_point *points = mp3splt_get_splitpoints(ui->mp3splt_state, &max_splits, &err);
+  splt_points *points = mp3splt_get_splitpoints(ui->mp3splt_state, &err);
   print_status_bar_confirmation(err, ui);
 
-  if (max_splits <= 0)
+  if (points == NULL)
   {
     return;
   }
 
   remove_all_rows(ui->gui->remove_all_button, ui);
-  gint i;
-  for (i = 0; i < max_splits;i++)
+
+  mp3splt_points_init_iterator(points);
+  const splt_point *point = NULL;
+  while ((point = mp3splt_points_next(points)))
   {
     //ugly hack because we use maximum ints in the GUI
     //-GUI must be changed to accept long values
-    long old_point_value = mp3splt_points_get_value(points, i);
+    long old_point_value = mp3splt_point_get_value(point);
     int point_value = (int) old_point_value;
     if (old_point_value > INT_MAX)
     {
@@ -313,7 +313,7 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
     get_secs_mins_hundr(point_value, 
         &ui->status->spin_mins, &ui->status->spin_secs, &ui->status->spin_hundr_secs);
 
-    gchar *result_utf8 = mp3splt_points_get_name(points, i);
+    gchar *result_utf8 = mp3splt_point_get_name(point);
     if (result_utf8 != NULL)
     {
       gint must_be_free = FALSE;
@@ -328,7 +328,7 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
     g_free(result_utf8);
     result_utf8 = NULL;
 
-    int type = mp3splt_points_get_type(points, i);
+    splt_type_of_splitpoint type = mp3splt_point_get_type(point);
     if (type == SPLT_SPLITPOINT)
     {
       add_row(TRUE, ui);

@@ -565,7 +565,7 @@ splt_code mp3splt_set_silence_level_function(splt_state *state,
 /************************************/
 /* Splitpoints                      */
 
-splt_point *mp3splt_new_splitpoint(long splitpoint_value, splt_code *error)
+splt_point *mp3splt_point_new(long splitpoint_value, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -585,7 +585,7 @@ splt_point *mp3splt_new_splitpoint(long splitpoint_value, splt_code *error)
   return point;
 }
 
-splt_code mp3splt_set_splitpoint_name(splt_point *splitpoint, const char *name)
+splt_code mp3splt_point_set_name(splt_point *splitpoint, const char *name)
 {
   if (splitpoint == NULL || name == NULL)
   {
@@ -602,7 +602,7 @@ splt_code mp3splt_set_splitpoint_name(splt_point *splitpoint, const char *name)
   return SPLT_OK;
 }
 
-splt_code mp3splt_set_splitpoint_type(splt_point *splitpoint, splt_type_of_splitpoint type)
+splt_code mp3splt_point_set_type(splt_point *splitpoint, splt_type_of_splitpoint type)
 {
   if (splitpoint == NULL)
   {
@@ -660,7 +660,7 @@ splt_code mp3splt_append_splitpoint(splt_state *state, splt_point *splitpoint)
 this function
 \param error Is set to the error code if any error occours
  */
-const splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error)
+splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -675,21 +675,48 @@ const splt_points *mp3splt_get_splitpoints(splt_state *state, splt_code *error)
   return splt_sp_get_splitpoints(state);
 }
 
-long mp3splt_points_get_value(const splt_point *points, int index)
+void mp3splt_points_init_iterator(splt_points *splitpoints)
 {
-  return points[index].value;
-}
-
-int mp3splt_points_get_type(const splt_point *points, int index)
-{
-  return points[index].type;
-}
-
-char *mp3splt_points_get_name(const splt_point *points, int index)
-{
-  if (points[index].name)
+  if (splitpoints == NULL)
   {
-    return strdup(points[index].name);
+    return;
+  }
+
+  splitpoints->iterator_counter = 0;
+}
+
+const splt_point *mp3splt_points_next(splt_points *splitpoints)
+{
+  if (splitpoints == NULL)
+  {
+    return NULL;
+  }
+
+  if (splitpoints->iterator_counter < 0 || 
+      splitpoints->iterator_counter >= splitpoints->real_splitnumber)
+  {
+    splitpoints->iterator_counter++;
+    return NULL;
+  }
+
+  return &splitpoints->points[splitpoints->iterator_counter++];
+}
+
+long mp3splt_point_get_value(const splt_point *point)
+{
+  return point->value;
+}
+
+splt_type_of_splitpoint mp3splt_point_get_type(const splt_point *point)
+{
+  return point->type;
+}
+
+char *mp3splt_point_get_name(const splt_point *point)
+{
+  if (point->name)
+  {
+    return strdup(point->name);
   }
 
   return NULL;
