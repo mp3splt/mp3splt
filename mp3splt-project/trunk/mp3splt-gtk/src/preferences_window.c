@@ -1034,7 +1034,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     GString *regex_result = g_string_new(NULL);
 
     g_string_append(regex_result, _("<artist>: "));
-    char *artist = mp3splt_tags_get_artist(tags);
+    char *artist = mp3splt_tags_get(tags, SPLT_TAGS_ARTIST);
     if (artist)
     {
       g_string_append(regex_result, artist);
@@ -1043,7 +1043,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<album>: "));
-    char *album = mp3splt_tags_get_album(tags);
+    char *album = mp3splt_tags_get(tags, SPLT_TAGS_ALBUM);
     if (album)
     {
       g_string_append(regex_result, album);
@@ -1053,7 +1053,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
 
 
     g_string_append(regex_result, _("<title>: "));
-    char *title = mp3splt_tags_get_title(tags);
+    char *title = mp3splt_tags_get(tags, SPLT_TAGS_TITLE);
     if (title)
     {
       g_string_append(regex_result, title);
@@ -1062,7 +1062,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<genre>: "));
-    char *genre = mp3splt_tags_get_genre(tags);
+    char *genre = mp3splt_tags_get(tags, SPLT_TAGS_GENRE);
     if (genre)
     {
       g_string_append(regex_result, genre);
@@ -1071,7 +1071,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<comment>: "));
-    char *comment = mp3splt_tags_get_comment(tags);
+    char *comment = mp3splt_tags_get(tags, SPLT_TAGS_COMMENT);
     if (comment)
     {
       g_string_append(regex_result, comment);
@@ -1080,7 +1080,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<year>: "));
-    char *year = mp3splt_tags_get_year(tags);
+    char *year = mp3splt_tags_get(tags, SPLT_TAGS_YEAR);
     if (year)
     {
       g_string_append(regex_result, year);
@@ -1089,10 +1089,11 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     g_string_append(regex_result, "\n");
 
     g_string_append(regex_result, _("<track>: "));
-    int track = mp3splt_tags_get_track(tags);
-    if (track >= 0)
+    gchar *track = mp3splt_tags_get(tags, SPLT_TAGS_TRACK);
+    if (track)
     {
-      g_string_append_printf(regex_result, "%d", track);
+      g_string_append(regex_result, track);
+      free(track);
     }
 
     gchar *regex_result_text = g_string_free(regex_result, FALSE);
