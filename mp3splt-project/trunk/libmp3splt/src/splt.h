@@ -179,6 +179,12 @@ struct _splt_tags {
   int set_original_tags;
 };
 
+struct _splt_tags_group {
+  splt_tags *tags;
+  int real_tagsnumber;
+  int iterator_counter;
+};
+
 #define SPLT_MAXOLEN 255
 #define SPLT_OUTNUM  20
 
@@ -318,11 +324,10 @@ typedef struct {
   void *put_message_cb_data;
   //!structure in which we have all the splitpoints
   splt_points *points;
-  //!how many tags do we have?
-  int real_tagsnumber;
-  //!structure in which we have all the tags
-  splt_tags *tags;
+
   splt_tags tags_like_x;
+
+  splt_tags_group *tags_group;
 } splt_struct;
 
 //!structure with all the options supplied to split the file
@@ -752,17 +757,9 @@ void splt_s_wrap_split(splt_state *state, int *error);
 #define SPLT_IERROR_SET_ORIGINAL_TAGS -2
 #define SPLT_IERROR_CHAR -3
 
-//tags options
-#define SPLT_TAGS_TITLE 0
-#define SPLT_TAGS_ARTIST 1
-#define SPLT_TAGS_ALBUM 2
-#define SPLT_TAGS_YEAR 3
-#define SPLT_TAGS_COMMENT 4
-#define SPLT_TAGS_TRACK 5
-#define SPLT_TAGS_GENRE 6
-#define SPLT_TAGS_PERFORMER 7
-#define SPLT_TAGS_VERSION 8
-#define SPLT_TAGS_ORIGINAL 9
+//following mp3splt.h->#tag_key
+#define SPLT_TAGS_VERSION 800
+#define SPLT_TAGS_ORIGINAL 900
 
 #define SPLT_ORIGINAL_TAGS_DEFAULT "%[@o,@N=1]"
 

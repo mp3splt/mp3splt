@@ -206,7 +206,13 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
     }
     else if (tpu->we_had_all_tags && !tpu->original_tags_found)
     {
-      int index = state->split.real_tagsnumber - 1;
+      int real_tags_number = 0;
+      if (state->split.tags_group)
+      {
+        real_tags_number = state->split.tags_group->real_tagsnumber;
+      }
+
+      int index = real_tags_number - 1;
       splt_tu_set_new_tags_where_current_tags_are_null(state, 
           tpu->current_tags, tpu->all_tags, index, error);
       if (*error < 0) { goto end; }
@@ -586,10 +592,10 @@ static tags_parser_utils *splt_tp_tpu_new(splt_state *state, int *error)
   tpu->set_all_tags = SPLT_FALSE;
   tpu->we_had_all_tags = SPLT_FALSE;
 
-  tpu->all_tags = splt_tu_new_tags(state, error);
+  tpu->all_tags = splt_tu_new_tags(error);
   if (*error < 0) { goto mem_error; }
 
-  tpu->current_tags = splt_tu_new_tags(state, error);
+  tpu->current_tags = splt_tu_new_tags(error);
   if (*error < 0) { goto mem_error; }
 
   tpu->current_tracknumber = NULL;

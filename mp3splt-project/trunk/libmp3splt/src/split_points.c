@@ -75,6 +75,8 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
 
     if ((split->points->points = malloc(sizeof(splt_point))) == NULL)
     {
+      free(split->points);
+      split->points = NULL;
       return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     }
   }

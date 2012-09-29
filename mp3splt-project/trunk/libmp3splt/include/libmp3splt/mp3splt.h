@@ -1171,7 +1171,7 @@ splt_code mp3splt_append_splitpoint(splt_state *state, splt_point *splitpoint);
 typedef struct _splt_points splt_points;
 
 /**
- * @brief Returns all the splitpoints from the \p state.
+ * @brief Returns all the splitpoints of the \p state.
  *
  * @param[in] state Main state.
  * @param[out] error Possible error; can be NULL.
@@ -1265,12 +1265,27 @@ splt_code mp3splt_erase_all_splitpoints(splt_state *state);
 extern const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25];
 
 /**
- * @brief Structure containing the tags of one splitpoint.
+ * @brief Key tags useful with #mp3splt_append_tags.
+ */
+typedef enum {
+  SPLT_TAGS_TITLE = 1,
+  SPLT_TAGS_ARTIST = 2,
+  SPLT_TAGS_ALBUM = 3,
+  SPLT_TAGS_YEAR = 4,
+  SPLT_TAGS_COMMENT = 5,
+  SPLT_TAGS_TRACK = 6,
+  SPLT_TAGS_GENRE = 7,
+  SPLT_TAGS_PERFORMER = 8,
+} tag_key;
+
+/**
+ * @brief Structure containing the tags for one output file.
  * All members are private.
  *
  * The structure contains the tags that we can set to one generated file.
  * Tags may also define the output filenames.
  *
+ * @see mp3splt_tags_set
  * @see mp3splt_tags_get_artist
  * @see mp3splt_tags_get_album
  * @see mp3splt_tags_get_title
@@ -1282,77 +1297,89 @@ extern const char splt_id3v1_genres[SPLT_ID3V1_NUMBER_OF_GENRES][25];
 typedef struct _splt_tags splt_tags;
 
 /**
- * @brief Appends tags in the \p state.
+ * @brief Creates a new tags structure.
+ *
+ * @param[in] error Possible error; can be NULL.
+ * @return Newly allocated tags.
+ *
+ * @see #mp3splt_tags_set
+ * @see #mp3splt_append_tags
+ */
+splt_tags *mp3splt_tags_new(splt_code *error);
+
+/**
+ * @brief Set tags values in the \p tags.
+ *
+ * The ... parameters are pairs of (key, value); arguments must end with 0, where key is a #tag_key
+ * and value is const char *.
+ *
+ * Example:
+ * \code{.c}
+ *   mp3splt_tags_set(tags, SPLT_TAGS_ARTIST, "my_artist", SPLT_TAGS_ALBUM, "my_album", 0);
+ * \endcode
+ *
+ * @param[in] tags Tags to be changed.
+ * @return Possible error.
+ *
+ * @see #mp3splt_append_tags
+ */
+splt_code mp3splt_tags_set(splt_tags *tags, ...);
+
+/**
+ * @brief Append the \p tags in the \p state.
  *
  * Tags must be appended in the same order as the splitpoints.
+ *
  * First appended tags are mapped to the segment between the first two splitpoints.
  * Second appended tags are mapped to the second segment between the second and third splitpoints.
  *
  * @param[in] state Main state.
- * @param[in] title Title of the appended tags.
- * @param[in] artist Artist of the appended tags.
- * @param[in] album Album of the appended tags.
- * @param[in] performer Performer of the appended tags.
- * @param[in] year Year of the appended tags.
- * @param[in] comment Comment of the appended tags.
- * @param[in] track Track of the appended tags.
- * @param[in] genre Genre of the appended tags.
+ * @param[in] tags Tags to be appended to the \p state.
  * @return Possible error.
- *
- * \todo replace this ugly function with a Builder or a KEY, VALUE, KEY, VALUE, ...
  */
-splt_code mp3splt_append_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, const char *genre);
+splt_code mp3splt_append_tags(splt_state *state, splt_tags *tags);
 
 /**
- * @brief Returns an array containing the tags of the \p state.
+ * @brief Structure containing a group of tags.
+ * All members are private.
+ */
+typedef struct _splt_tags_group splt_tags_group;
+
+/**
+ * @brief Returns all the tags of the \p state.
  *
  * @param[in] state Main state.
- * @param[out] tags_number Number of returned tags.
  * @param[out] error Possible error; can be NULL.
- * @return Array with the tags of the \p state.
+ * @return The tags group of the \p state.
+ *
+ * @see #mp3splt_tags_group_init_iterator
+ * @see #mp3splt_tags_group_next
  */
-const splt_tags *mp3splt_get_tags(splt_state *state,
-    int *tags_number, splt_code *error);
+splt_tags_group *mp3splt_get_tags_group(splt_state *state, splt_code *error);
 
 /**
- * @brief Returns the arist of the \p tags. Result must be freed.
+ * @brief Initialisation of the iterator for use with #mp3splt_tags_group_next.
  *
- * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
+ * @param[in] tags_group Group of tags returned with #mp3splt_get_tags_group.
+ *
+ * @see #mp3splt_tags_group_next
  */
-char *mp3splt_tags_get_artist(const splt_tags *tags);
+void mp3splt_tags_group_init_iterator(splt_tags_group *tags_group);
+
 /**
- * @brief Returns the album of the \p tags. Result must be freed.
- * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
+ * @brief Returns the next tags from the \p tags_group.
+ *
+ * @param[in] tags_group Tags group to be processed.
+ * @return Next tags of \p tags_group or NULL if none found or no tags remains.
+ *
+ * @see #mp3splt_tags_get
  */
-char *mp3splt_tags_get_album(const splt_tags *tags);
+splt_tags *mp3splt_tags_group_next(splt_tags_group *tags_group);
+
 /**
- * @brief Returns the title of the \p tags. Result must be freed.
- * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
+ * @brief Returns the value of \p key from the \p tags. Result must be freed.
  */
-char *mp3splt_tags_get_title(const splt_tags *tags);
-/**
- * @brief Returns the genre of the \p tags. Result must be freed.
- * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
- */
-char *mp3splt_tags_get_genre(const splt_tags *tags);
-/**
- * @brief Returns the comment of the \p tags. Result must be freed.
- * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
- */
-char *mp3splt_tags_get_comment(const splt_tags *tags);
-/**
- * @brief Returns the year of the \p tags. Result must be freed.
- * \todo replace with mp3splt_tags_get(splt_tags *tags, KEY);
- */
-char *mp3splt_tags_get_year(const splt_tags *tags);
-/**
- * @brief Returns the track of the \p tags.
- */
-int mp3splt_tags_get_track(const splt_tags *tags);
+char *mp3splt_tags_get(splt_tags *tags, tag_key key);
 
 /**
  * @brief Fill the \p state with tags parsed from the \p tags string.

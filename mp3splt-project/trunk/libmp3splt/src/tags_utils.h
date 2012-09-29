@@ -36,7 +36,7 @@ void splt_tu_free_original_tags(splt_state *state);
 void splt_tu_auto_increment_tracknumber(splt_state *state);
 int splt_tu_append_original_tags(splt_state *state);
 void splt_tu_reset_tags(splt_tags *tags);
-splt_tags *splt_tu_new_tags(splt_state *state, int *error);
+splt_tags *splt_tu_new_tags(int *error);
 void splt_tu_free_one_tags(splt_tags **tags);
 void splt_tu_free_one_tags_content(splt_tags *tags);
 int splt_tu_has_one_tag_set(splt_tags *tags);
@@ -51,13 +51,14 @@ int splt_tu_set_original_tags_field(splt_state *state,
     int tags_field, const void *data);
 void splt_tu_set_original_tags_data(splt_state *state, void *data);
 void *splt_tu_get_original_tags_data(splt_state *state);
-splt_tags *splt_tu_get_tags(splt_state *state, int *tags_number);
+splt_tags_group *splt_tu_get_tags_group(splt_state *state);
 splt_tags *splt_tu_get_original_tags_tags(splt_state *state);
 
 int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index);
 splt_tags splt_tu_get_last_tags(splt_state *state);
 void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field);
+void *splt_tu_get_tags_value(splt_tags *tags, tag_key tags_field);
 void splt_tu_free_tags(splt_state *state);
 splt_tags *splt_tu_get_tags_like_x(splt_state *state);
 splt_tags *splt_tu_get_current_tags(splt_state *state);
@@ -67,13 +68,15 @@ char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags);
 
 int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks);
 
-int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data);
+int splt_tu_set_char_field_on_tag(splt_tags *tags, tag_key key, const char *value);
 
 int splt_tu_append_tags(splt_state *state, 
     const char *title, const char *artist,
     const char *album, const char *performer,
     const char *year, const char *comment,
     int track, const char *genre, int set_original_tags);
+
+int splt_tu_append_or_set_tag(splt_state *state, int tags_index, tag_key key, const char *value);
 
 void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
     int append_null_tags, int *error);
