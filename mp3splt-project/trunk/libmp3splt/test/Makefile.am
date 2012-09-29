@@ -10,7 +10,9 @@ test_pair.la \
 test_string_utils.la \
 test_filename_regex.la \
 test_socket_manager.la \
-test_minimum_track_join.la
+test_minimum_track_join.la \
+test_splitpoints_handling.la \
+test_tags_handling.la
 
 test_splt_array_la_SOURCES = test_splt_array.c tests.h
 
@@ -23,6 +25,10 @@ test_filename_regex_la_SOURCES = test_filename_regex.c tests.c tests.h
 test_socket_manager_la_SOURCES = test_socket_manager.c tests.h
 
 test_minimum_track_join_la_SOURCES = test_minimum_track_join.c tests.h
+
+test_splitpoints_handling_la_SOURCES = test_splitpoints_handling.c
+
+test_tags_handling_la_SOURCES = test_tags_handling.c
 
 TESTS = run-tests.sh
 TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)"
