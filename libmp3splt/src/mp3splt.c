@@ -699,7 +699,11 @@ const splt_point *mp3splt_points_next(splt_points *splitpoints)
     return NULL;
   }
 
-  return &splitpoints->points[splitpoints->iterator_counter++];
+  splt_point *point = &splitpoints->points[splitpoints->iterator_counter];
+
+  splitpoints->iterator_counter++;
+
+  return point;
 }
 
 long mp3splt_point_get_value(const splt_point *point)

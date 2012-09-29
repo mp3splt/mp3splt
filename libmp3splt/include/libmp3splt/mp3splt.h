@@ -1692,6 +1692,8 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state,
  * @param[in] stop_at_total_time If #SPLT_TRUE, don't export splitpoints after the total time
  *                               of the input file.
  * @return Possible error.
+ *
+ * \todo create mp3splt_export();
  */
 splt_code mp3splt_export_to_cue(splt_state *state, const char *file,
     int stop_at_total_time);
