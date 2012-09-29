@@ -42,7 +42,7 @@ split.
 
 static void splt_t_set_default_state_values(splt_state *state, int *error)
 {
-  state->split.tags = NULL;
+  state->split.tags_group = NULL;
   splt_tu_reset_tags(splt_tu_get_tags_like_x(state));
   state->split.points = NULL;
   state->fname_to_split = NULL;
@@ -53,7 +53,6 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->default_genre_tag = NULL;
   state->silence_log_fname = NULL;
 
-  state->split.real_tagsnumber = 0;
   state->split.splitnumber = 0;
   state->split.current_split_file_number = 1;
   state->split.get_silence_level = NULL;

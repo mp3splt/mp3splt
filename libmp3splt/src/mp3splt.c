@@ -749,56 +749,58 @@ splt_code mp3splt_erase_all_splitpoints(splt_state *state)
 /************************************/
 /* Tags                             */
 
-//!append tags
-splt_code mp3splt_append_tags(splt_state *state, 
-    const char *title, const char *artist,
-    const char *album, const char *performer,
-    const char *year, const char *comment,
-    int track, const char *genre)
-{
-  int error = SPLT_OK;
-
-  if (state != NULL)
-  {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      error = splt_tu_append_tags(state, title, artist,
-          album, performer, year, comment, track, genre, SPLT_FALSE);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
-  }
-  else
-  {
-    error = SPLT_ERROR_STATE_NULL;
-  }
-
-  return error;
-}
-
-//!returns a list containing all the tags
-const splt_tags *mp3splt_get_tags(splt_state *state,
-    int *tags_number, splt_code *error)
+splt_tags *mp3splt_tags_new(splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  if (state != NULL)
+  return splt_tu_new_tags(err);
+}
+
+splt_code mp3splt_tags_set(splt_tags *tags, ...)
+{
+  if (tags == NULL)
   {
-    return splt_tu_get_tags(state,tags_number);
+    return SPLT_OK;
   }
-  else
+
+  int error = SPLT_OK;
+
+  va_list ap;
+  va_start(ap, tags);
+
+  tag_key current_key = 0;
+  while ((current_key = va_arg(ap, tag_key)))
   {
-    *err = SPLT_ERROR_STATE_NULL;
+    const char *current_value = va_arg(ap, const char *);
+    error = splt_tu_set_char_field_on_tag(tags, current_key, current_value);
+    if (error < 0) { break; }
+  }
+
+  va_end(ap);
+
+  return error;
+}
+
+char *mp3splt_tags_get(splt_tags *tags, tag_key key)
+{
+  if (key == SPLT_TAGS_TRACK)
+  {
+    int *track = (int *) splt_tu_get_tags_value(tags, SPLT_TAGS_TRACK);
+    char *track_str = malloc(sizeof(char) * 24);
+    if (!track_str) { return NULL; }
+    snprintf(track_str, 24, "%d", *track);
+    return track_str;
+  }
+
+  char *value = (char *) splt_tu_get_tags_value(tags, key);
+  if (value == NULL)
+  {
     return NULL;
   }
+
+  return strdup(value);
 }
 
 char *mp3splt_tags_get_artist(const splt_tags *tags)
@@ -864,6 +866,73 @@ char *mp3splt_tags_get_year(const splt_tags *tags)
 int mp3splt_tags_get_track(const splt_tags *tags)
 {
   return tags->track;
+}
+
+
+splt_code mp3splt_append_tags(splt_state *state, splt_tags *tags)
+{
+  int error = SPLT_OK;
+
+  if (state == NULL)
+  {
+    return SPLT_ERROR_STATE_NULL;
+  }
+
+  if (splt_o_library_locked(state))
+  {
+    return SPLT_ERROR_LIBRARY_LOCKED;
+  }
+
+  splt_o_lock_library(state);
+  splt_tu_append_tags_to_state(state, tags, SPLT_TRUE, &error);
+  splt_o_unlock_library(state);
+
+  return error;
+}
+
+//!returns a list containing all the tags
+splt_tags_group *mp3splt_get_tags_group(splt_state *state, splt_code *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  if (state != NULL)
+  {
+    return splt_tu_get_tags_group(state);
+  }
+  else
+  {
+    *err = SPLT_ERROR_STATE_NULL;
+    return NULL;
+  }
+}
+
+void mp3splt_tags_group_init_iterator(splt_tags_group *tags_group)
+{
+  if (tags_group == NULL)
+  {
+    return;
+  }
+
+  tags_group->iterator_counter = 0;
+}
+
+splt_tags *mp3splt_tags_group_next(splt_tags_group *tags_group)
+{
+  if (tags_group == NULL)
+  {
+    return NULL;
+  }
+
+  if (tags_group->iterator_counter < 0 || 
+      tags_group->iterator_counter >= tags_group->real_tagsnumber)
+  {
+    tags_group->iterator_counter++;
+    return NULL;
+  }
+
+  return &tags_group->tags[tags_group->iterator_counter++];
 }
 
 //!puts tags from a string

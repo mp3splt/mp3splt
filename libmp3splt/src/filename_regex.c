@@ -112,7 +112,7 @@ splt_tags *splt_fr_parse(splt_state *state, const char *filename, const char *re
     return NULL;
   }
 
-  splt_tags *tags = splt_tu_new_tags(state, error);
+  splt_tags *tags = splt_tu_new_tags(error);
   if (*error < 0)
   {
     pcre_free(re);

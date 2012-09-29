@@ -371,9 +371,14 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
   int fm_length = 0;
 
   //if we get the tags from the first file
-  int remaining_tags_like_x = 
-    splt_o_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
-  if ((tags_index >= state->split.real_tagsnumber) &&
+  int remaining_tags_like_x = splt_o_get_int_option(state,SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X);
+  int real_tags_number = 0;
+  if (state->split.tags_group)
+  {
+    real_tags_number = state->split.tags_group->real_tagsnumber;
+  }
+
+  if ((tags_index >= real_tags_number) &&
       (remaining_tags_like_x != -1))
   {
     tags_index = remaining_tags_like_x;
