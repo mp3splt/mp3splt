@@ -1286,13 +1286,6 @@ typedef enum {
  * Tags may also define the output filenames.
  *
  * @see mp3splt_tags_set
- * @see mp3splt_tags_get_artist
- * @see mp3splt_tags_get_album
- * @see mp3splt_tags_get_title
- * @see mp3splt_tags_get_genre
- * @see mp3splt_tags_get_comment
- * @see mp3splt_tags_get_year
- * @see mp3splt_tags_get_track
  */
 typedef struct _splt_tags splt_tags;
 
