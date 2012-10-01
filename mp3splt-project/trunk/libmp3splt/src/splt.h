@@ -42,7 +42,7 @@
 
 #include "mp3splt.h"
 
-typedef struct {
+struct _splt_freedb_one_result {
   /**
    * @brief Name of the album for this result
    */
@@ -65,7 +65,7 @@ typedef struct {
    * the consecutive numbers starting at 2 (you might not need it)
    */
   int *revisions;
-} splt_freedb_one_result;
+};
 
 struct _splt_freedb_results {
   /**
@@ -76,6 +76,7 @@ struct _splt_freedb_results {
    * @brief How many results we have
    */
   int number;
+  int iterator_counter;
 };
 
 /**

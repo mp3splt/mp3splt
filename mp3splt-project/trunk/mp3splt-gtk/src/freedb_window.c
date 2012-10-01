@@ -180,21 +180,26 @@ static gboolean freedb_search_end(ui_with_err *ui_err)
 
   if (ui_err->err >= 0 && infos->freedb_search_results)
   {
-    gint i = 0;
-    for (i = 0; i < mp3splt_freedb_get_total_number(infos->freedb_search_results);i++)
+    gboolean we_have_results = FALSE;
+
+    mp3splt_freedb_init_iterator(infos->freedb_search_results);
+    const splt_freedb_one_result *result = NULL;
+    while ((result = mp3splt_freedb_next(infos->freedb_search_results)))
     {
       gint must_be_free = SPLT_FALSE;
 
-      char *name = mp3splt_freedb_get_name(infos->freedb_search_results, i);
+      char *name = mp3splt_freedb_get_name(result);
       name = transform_to_utf8(name, TRUE, &must_be_free);
       add_freedb_row(name,
-          mp3splt_freedb_get_id(infos->freedb_search_results, i),
-          mp3splt_freedb_get_number_of_revisions(infos->freedb_search_results, i),
+          mp3splt_freedb_get_id(result),
+          mp3splt_freedb_get_number_of_revisions(result),
           ui_err->ui);
       free(name);
+
+      we_have_results = TRUE;
     }
 
-    if (mp3splt_freedb_get_total_number(infos->freedb_search_results) > 0)
+    if (we_have_results)
     {
       GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->freedb_tree);
       GtkTreeModel *model = gtk_tree_view_get_model(gui->freedb_tree);
