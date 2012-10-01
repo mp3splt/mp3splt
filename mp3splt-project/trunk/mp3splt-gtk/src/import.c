@@ -256,7 +256,7 @@ static gpointer add_audacity_labels_splitpoints(ui_with_fname *ui_fname)
   gchar *filename = ui_fname->fname;
   g_free(ui_fname);
 
-  gint err = mp3splt_put_audacity_labels_splitpoints_from_file(ui->mp3splt_state, filename);
+  gint err = mp3splt_import(ui->mp3splt_state, AUDACITY_LABELS_IMPORT, filename);
   g_free(filename);
 
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
@@ -302,7 +302,7 @@ static gpointer add_cddb_splitpoints(ui_with_fname *ui_fname)
   update_output_options(ui);
   exit_threads();
 
-  gint err = mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename);
+  gint err = mp3splt_import(ui->mp3splt_state, CDDB_IMPORT, filename);
   g_free(filename);
 
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
@@ -357,7 +357,7 @@ static gpointer add_cue_splitpoints(ui_with_fname *ui_fname)
 
   mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
 
-  gint err = mp3splt_put_cue_splitpoints_from_file(ui->mp3splt_state, filename);
+  gint err = mp3splt_import(ui->mp3splt_state, CUE_IMPORT, filename);
   g_free(filename);
 
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));

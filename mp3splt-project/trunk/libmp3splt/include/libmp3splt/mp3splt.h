@@ -227,6 +227,9 @@ splt_code mp3splt_find_plugins(splt_state *state);
 /**
  * @brief Returns the error message of the \p error.
  *
+ * Please note that you have to call this function right after receiving the \p error because the
+ * returned error message can contain information that is replaced if other error occurs.
+ *
  * @param[in] state Main state.
  * @param[in] error Error code to be checked.
  * @return Error message of the \p error. Result must be freed.
@@ -1518,48 +1521,32 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 
 //@}
 
-/** @defgroup splt_import_ CDDB, CUE, Audacity labels & Tracktype import
+/** @defgroup splt_import_ Import splitpoints
 @{
  */
 
 /**
- * @brief Import splitpoints from the CUE \p file into the \p state.
+ * @brief Type of the import.
  *
- * @param[in] state Main state.
- * @param[in] file CUE file to import.
- * @return Possible error.
- *
- * \todo replace with mp3splt_import_splitpoints_from_file(state, TYPE, file).
- *
- * @see #mp3splt_split
+ * @see #mp3splt_import
  */
-splt_code mp3splt_put_cue_splitpoints_from_file(splt_state *state, const char *file);
+typedef enum {
+  CUE_IMPORT,
+  CDDB_IMPORT,
+  AUDACITY_LABELS_IMPORT
+} import_type;
 
 /**
- * @brief Import splitpoints from the CDDB \p file into the \p state.
+ * @brief Import splitpoints from the \p file having the \p type into the \p state.
  *
  * @param[in] state Main state.
- * @param[in] file CDDB file to import.
+ * @param[in] type Type of the import.
+ * @param[in] file File to import.
  * @return Possible error.
- *
- * \todo replace with mp3splt_import_splitpoints_from_file(state, TYPE, file).
  *
  * @see #mp3splt_split
  */
-splt_code mp3splt_put_cddb_splitpoints_from_file(splt_state *state, const char *file);
-
-/**
- * @brief Import splitpoints from the audacity labels \p file into the \p state.
- *
- * @param[in] state Main state.
- * @param[in] file Audacity labels file to import.
- * @return Possible error.
- *
- * \todo replace with mp3splt_import_splitpoints_from_file(state, TYPE, file).
- *
- * @see #mp3splt_split
- */
-splt_code mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state, const char *file);
+splt_code mp3splt_import(splt_state *state, import_type type, const char *file);
 
 /**
  * @brief Search CDDB file using CDDB CGI protocol (tracktype.org).
@@ -1680,23 +1667,31 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state,
 
 //@}
 
-/** @defgroup splt_export_ CUE export
+/** @defgroup splt_export_ Export splitpoints
 @{
  */
 
 /**
- * @brief Export splitpoints from the \p state into \p out_file as CUE.
+ * @brief Type of the export.
+ *
+ * @see #mp3splt_export
+ */
+typedef enum {
+  CUE_EXPORT
+} export_type;
+
+/**
+ * @brief Export splitpoints from the \p state into the \p file saved as \p type.
  *
  * @param[in] state Main state.
- * @param[in] file File to be written as CUE with splitpoints from the \p state.
+ * @param[in] type Export type.
+ * @param[in] file File to be written with splitpoints from the \p state.
  * @param[in] stop_at_total_time If #SPLT_TRUE, don't export splitpoints after the total time
  *                               of the input file.
  * @return Possible error.
- *
- * \todo create mp3splt_export();
  */
-splt_code mp3splt_export_to_cue(splt_state *state, const char *file,
-    int stop_at_total_time);
+splt_code mp3splt_export(splt_state *state, export_type type, 
+    const char *file, int stop_at_total_time);
 
 //@}
 

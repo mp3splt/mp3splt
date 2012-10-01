@@ -406,7 +406,7 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
     print_status_bar_confirmation_in_idle(error, ui);
   }
 
-  err = mp3splt_put_cddb_splitpoints_from_file(ui->mp3splt_state, filename);
+  err = mp3splt_import(ui->mp3splt_state, CDDB_IMPORT, filename);
   print_status_bar_confirmation_in_idle(err, ui);
 
   if (filename)
