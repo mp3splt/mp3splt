@@ -1268,14 +1268,9 @@ splt_code mp3splt_stop_split(splt_state *state)
 /************************************/
 /*    Cddb and Cue functions        */
 
-/*! Fetch the splitpoints from a cue file
-\param state The central structure that keeps all data this library
-uses 
-\param file The name of the input file
-\param error Is set to the error code this action results in
+/*! Fetch the splitpoints from an input file.
 */
-splt_code mp3splt_put_cue_splitpoints_from_file(splt_state *state,
-    const char *file)
+splt_code mp3splt_import(splt_state *state, import_type type, const char *file)
 {
   if (state == NULL)
   {
@@ -1289,62 +1284,20 @@ splt_code mp3splt_put_cue_splitpoints_from_file(splt_state *state,
 
   splt_o_lock_library(state);
   int err = SPLT_OK;
-  splt_cue_put_splitpoints(file, state, &err);
-  splt_o_unlock_library(state);
 
-  return err;
-}
-
-/*! get the cddb splitpoints from the file
-
-\param state The central structure that keeps all data this library
-uses 
-\param file The name of the input file
-\param error Is set to the error code this action results in
-*/
-splt_code mp3splt_put_cddb_splitpoints_from_file(splt_state *state,
-    const char *file)
-{
-  if (state == NULL)
+  if (type == CUE_IMPORT)
   {
-    return SPLT_ERROR_STATE_NULL;
+    splt_cue_put_splitpoints(file, state, &err);
+  }
+  else if (type == CDDB_IMPORT)
+  {
+    splt_cddb_put_splitpoints(file, state, &err);
+  }
+  else if (type == AUDACITY_LABELS_IMPORT)
+  {
+    splt_audacity_put_splitpoints(file, state, &err);
   }
 
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
-
-  splt_o_lock_library(state);
-  int err = SPLT_OK;
-  splt_cddb_put_splitpoints(file, state, &err);
-  splt_o_unlock_library(state);
-
-  return err;
-}
-
-/*! get the splitpoints from a audacity splitpoint file
-
-\param state The central structure that keeps all data this library
-uses 
-\param file The name of the input file
-\param error Is set to the error code this action results in
-*/
-splt_code mp3splt_put_audacity_labels_splitpoints_from_file(splt_state *state, const char *file)
-{
-  if (state == NULL)
-  {
-    return SPLT_ERROR_STATE_NULL;
-  }
-
-  if (splt_o_library_locked(state))
-  {
-    return SPLT_ERROR_LIBRARY_LOCKED;
-  }
-
-  splt_o_lock_library(state);
-  int err = SPLT_OK;
-  splt_audacity_put_splitpoints(file, state, &err);
   splt_o_unlock_library(state);
 
   return err;
@@ -1512,17 +1465,9 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
 }
 
 /*! Export our split points to a cue file
-
-  \param out_file The name of the file to output the split points to
-  \param state The splt_state structure containing the split points
-  \param error Contains the error code if anything goes wrong
-  \param stop_at_total_time If this parameter is !=0 we don't output
-  splitpoints that lie beyond the end of the audio data. Note that the
-  last splitpoint can be slightly beyond the calculated end of audio
-  data.
 */
-splt_code mp3splt_export_to_cue(splt_state *state, const char *out_file,
-    int stop_at_total_time)
+splt_code mp3splt_export(splt_state *state, export_type type,
+    const char *out_file, int stop_at_total_time)
 {
   if (state == NULL)
   {
@@ -1536,7 +1481,12 @@ splt_code mp3splt_export_to_cue(splt_state *state, const char *out_file,
 
   splt_o_lock_library(state);
   int err = SPLT_OK;
-  splt_cue_export_to_file(state, out_file, stop_at_total_time, &err);
+
+  if (type == CUE_EXPORT)
+  {
+    splt_cue_export_to_file(state, out_file, stop_at_total_time, &err);
+  }
+
   splt_o_unlock_library(state);
 
   return err;

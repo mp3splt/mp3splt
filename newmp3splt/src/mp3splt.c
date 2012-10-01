@@ -686,7 +686,7 @@ int main(int argc, char **orig_argv)
           if ((strstr(opt->cddb_arg, ".cue")!=NULL)||
               (strstr(opt->cddb_arg, ".CUE")!=NULL))
           {
-            err = mp3splt_put_cue_splitpoints_from_file(state, opt->cddb_arg);
+            err = mp3splt_import(state, CUE_IMPORT, opt->cddb_arg);
             process_confirmation_error(err, data);
           }
           else
@@ -704,19 +704,19 @@ int main(int argc, char **orig_argv)
                 do_freedb_search(data);
               }
 
-              err = mp3splt_put_cddb_splitpoints_from_file(state, MP3SPLT_CDDBFILE);
+              err = mp3splt_import(state, CDDB_IMPORT, MP3SPLT_CDDBFILE);
               process_confirmation_error(err, data);
             }
             else
             {
-              err = mp3splt_put_cddb_splitpoints_from_file(state, opt->cddb_arg);
+              err = mp3splt_import(state, CDDB_IMPORT, opt->cddb_arg);
               process_confirmation_error(err, data);
             }
           }
         }
         else if (opt->audacity_labels_arg)
         {
-          err = mp3splt_put_audacity_labels_splitpoints_from_file(state, opt->audacity_labels_arg);
+          err = mp3splt_import(state, AUDACITY_LABELS_IMPORT, opt->audacity_labels_arg);
           process_confirmation_error(err, data);
         }
         else if (normal_split)
@@ -786,7 +786,7 @@ int main(int argc, char **orig_argv)
 
     if (opt->E_option)
     {
-      err = mp3splt_export_to_cue(state, opt->export_cue_arg, SPLT_TRUE);
+      err = mp3splt_export(state, CUE_EXPORT, opt->export_cue_arg, SPLT_TRUE);
       process_confirmation_error(err, data);
     }
 
