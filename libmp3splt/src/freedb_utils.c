@@ -88,6 +88,7 @@ int splt_fu_freedb_init_search(splt_state *state)
     {
       fdb->search_results->number = 0;
       fdb->search_results->results = NULL;
+      fdb->search_results->iterator_counter = 0;
     }
   }
 
@@ -221,6 +222,7 @@ static void splt_fu_free_freedb_search(splt_state *state)
     }
 
     res->number = 0;
+    res->iterator_counter = 0;
 
     free(state->fdb.search_results);
     state->fdb.search_results = NULL;

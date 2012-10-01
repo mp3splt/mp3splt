@@ -1591,12 +1591,19 @@ splt_code mp3splt_import(splt_state *state, import_type type, const char *file);
  * All members are private.
  *
  * @see mp3splt_get_freedb_search
- * @see #mp3splt_freedb_get_total_number
+ * @see #mp3splt_freedb_init_iterator
+ * @see #mp3splt_freedb_next
+ */
+typedef struct _splt_freedb_results splt_freedb_results;
+
+/**
+ * @brief Structure containing only one freedb result.
+ *
  * @see #mp3splt_freedb_get_id
  * @see #mp3splt_freedb_get_name
  * @see #mp3splt_freedb_get_number_of_revisions
  */
-typedef struct _splt_freedb_results splt_freedb_results;
+typedef struct _splt_freedb_one_result splt_freedb_one_result;
 
 /**
  * @brief Search on the internet for the \p searched_string and returns the results.
@@ -1610,40 +1617,50 @@ typedef struct _splt_freedb_results splt_freedb_results;
  * @param[in] port Port of the \p search_server. Can be #SPLT_FREEDB_CDDB_CGI_PORT.
  * @return The search results.
  *
+ * @see #mp3splt_freedb_init_iterator
+ * @see #mp3splt_freedb_next
  * @see #mp3splt_write_freedb_file_result
  */
-const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
+splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     const char *searched_string, splt_code *error,
     int search_type, const char *search_server, int port);
 
 /**
- * @brief Returns the number of the results.
+ * @brief Initialisation of the iterator for use with #mp3splt_freedb_next
  *
- * \todo create an iterator instead of this
+ * @param[in] freedb_results Freedb results returned with #mp3splt_get_freedb_search.
+ *
+ * @see #mp3splt_freedb_next
  */
-int mp3splt_freedb_get_total_number(const splt_freedb_results *results);
+void mp3splt_freedb_init_iterator(splt_freedb_results *freedb_results);
 
 /**
- * @brief Returns the ID of the result found at the \p index.
- * You will need this ID when using #mp3splt_write_freedb_file_result.
+ * @brief Returns the next freedb result from the \p freedb_results.
  *
- * \todo create an iterator instead of this
+ * @param[in] freedb_results Freedb results to be processed.
+ * @return Next freedb result of \p freedb_results or NULL if none found or no result remains.
+ *
+ * @see #mp3splt_freedb_get_id
+ * @see #mp3splt_freedb_get_name
+ * @see #mp3splt_freedb_get_number_of_revisions
  */
-int mp3splt_freedb_get_id(const splt_freedb_results *results, int index);
+const splt_freedb_one_result *mp3splt_freedb_next(splt_freedb_results *freedb_results);
 
 /**
- * @brief Returns the name of the result stored at the \p index.
- *
- * \todo create an iterator instead of this
+ * @brief Returns the ID of the \p result.
+ * The ID is needed when using #mp3splt_write_freedb_file_result.
  */
-char *mp3splt_freedb_get_name(const splt_freedb_results *results, int index);
+int mp3splt_freedb_get_id(const splt_freedb_one_result *result);
 
 /**
- * @brief Returns the number of revisions of the result stored at the \p index.
- *
- * \todo create an iterator instead of this
+ * @brief Returns the name of the \p result.
  */
-int mp3splt_freedb_get_number_of_revisions(const splt_freedb_results *results, int index);
+char *mp3splt_freedb_get_name(const splt_freedb_one_result *result);
+
+/**
+ * @brief Returns the number of revisions of the \p result.
+ */
+int mp3splt_freedb_get_number_of_revisions(const splt_freedb_one_result *result);
 
 /**
  * @brief Downloads the CDDB file of the \p disc_id and writes it to a file.

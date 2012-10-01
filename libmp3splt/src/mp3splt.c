@@ -1320,7 +1320,7 @@ the default
 \param port The port on the server. -1 means default (Which should be
 80). 
  */
-const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
+splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
     const char *search_string,
     splt_code *error,
     int search_type,
@@ -1364,29 +1364,50 @@ const splt_freedb_results *mp3splt_get_freedb_search(splt_state *state,
   }
 }
 
-int mp3splt_freedb_get_total_number(const splt_freedb_results *results)
+void mp3splt_freedb_init_iterator(splt_freedb_results *freedb_results)
 {
-  return results->number;
-}
-
-int mp3splt_freedb_get_id(const splt_freedb_results *results, int index)
-{
-  return results->results[index].id;
-}
-
-char *mp3splt_freedb_get_name(const splt_freedb_results *results, int index)
-{
-  if (results->results[index].name)
+  if (freedb_results == NULL)
   {
-    return strdup(results->results[index].name);
+    return;
   }
 
-  return NULL;
+  freedb_results->iterator_counter = 0;
 }
 
-int mp3splt_freedb_get_number_of_revisions(const splt_freedb_results *results, int index)
+const splt_freedb_one_result *mp3splt_freedb_next(splt_freedb_results *freedb_results)
 {
-  return results->results[index].revision_number;
+  if (freedb_results == NULL)
+  {
+    return NULL;
+  }
+
+  if (freedb_results->iterator_counter < 0 || 
+      freedb_results->iterator_counter >= freedb_results->number)
+  {
+    freedb_results->iterator_counter++;
+    return NULL;
+  }
+
+  splt_freedb_one_result *result = &freedb_results->results[freedb_results->iterator_counter];
+
+  freedb_results->iterator_counter++;
+
+  return result;
+}
+
+int mp3splt_freedb_get_id(const splt_freedb_one_result *result)
+{
+  return result->id;
+}
+
+char *mp3splt_freedb_get_name(const splt_freedb_one_result *result)
+{
+  return result->name;
+}
+
+int mp3splt_freedb_get_number_of_revisions(const splt_freedb_one_result *result)
+{
+  return result->revision_number;
 }
 
 /*! returns the content of a cddb file

@@ -104,7 +104,7 @@ void do_freedb_search(main_data *data)
       opt->freedb_search_server,opt->freedb_search_port, search_type);
   fflush(console_out);
 
-  const splt_freedb_results *f_results =
+  splt_freedb_results *f_results =
     mp3splt_get_freedb_search(state, freedb_search_string,
         &err, opt->freedb_search_type,
         opt->freedb_search_server,
@@ -115,8 +115,6 @@ void do_freedb_search(main_data *data)
   {
     print_message_exit(_("No results found"), data);
   }
-
-  int number_of_results = mp3splt_freedb_get_total_number(f_results);
 
   //if we don't have an auto-select the result X from the arguments:
   // (query{artist}(resultX)
@@ -129,15 +127,18 @@ void do_freedb_search(main_data *data)
 
     int cd_number = 0;
     short end = SPLT_FALSE;
-    while (cd_number < number_of_results) {
-      int cd_id = mp3splt_freedb_get_id(f_results, cd_number);
 
-      char *cd_name = mp3splt_freedb_get_name(f_results, cd_number);
+    mp3splt_freedb_init_iterator(f_results);
+    const splt_freedb_one_result *f_result = NULL;
+    while ((f_result = mp3splt_freedb_next(f_results))) {
+      int cd_id = mp3splt_freedb_get_id(f_result);
+
+      char *cd_name = mp3splt_freedb_get_name(f_result);
       fprintf(console_out,"%3d) %s\n", cd_id, cd_name);
       free(cd_name);
 
       int i = 0;
-      int number_of_revisions = mp3splt_freedb_get_number_of_revisions(f_results, cd_number);
+      int number_of_revisions = mp3splt_freedb_get_number_of_revisions(f_result);
       for(i = 0; i < number_of_revisions; i++)
       {
         fprintf(console_out, "  |\\=>");
@@ -222,16 +223,11 @@ end:
         selected_cd = atoi(sel_cd_input);
       }
 
-    } while ((selected_cd >= number_of_results)
-        || (selected_cd < 0));
+    } while ((selected_cd < 0) || (selected_cd >= cd_number));
   }
   else
   {
     selected_cd = opt->freedb_arg_result_option;
-    if (selected_cd >= number_of_results)
-    {
-      selected_cd = 0;
-    }
   }
 
   fprintf(console_out, _("\nGetting file from %s on port %d using %s ...\n"),

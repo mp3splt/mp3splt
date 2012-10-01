@@ -161,7 +161,7 @@ typedef struct {
 
   gint freedb_selected_id;
 
-  const splt_freedb_results *freedb_search_results;
+  splt_freedb_results *freedb_search_results;
 
   gint split_file_mode;
 
