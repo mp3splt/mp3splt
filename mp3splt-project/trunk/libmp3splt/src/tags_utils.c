@@ -195,7 +195,7 @@ int splt_tu_append_tags(splt_state *state,
   return error;
 }
 
-int splt_tu_set_char_field_on_tag(splt_tags *tags, tag_key key, const char *value)
+int splt_tu_set_char_field_on_tag(splt_tags *tags, splt_tag_key key, const char *value)
 {
   if (key == SPLT_TAGS_TRACK)
   {
@@ -1050,7 +1050,7 @@ void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
   return NULL;
 }
 
-void *splt_tu_get_tags_value(splt_tags *tags, tag_key tags_field)
+void *splt_tu_get_tags_value(splt_tags *tags, splt_tag_key tags_field)
 {
   switch (tags_field)
   {

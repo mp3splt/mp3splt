@@ -36,7 +36,7 @@
 #include "all_includes.h"
 
 void lmanager_init_and_find_plugins(ui_state *ui);
-void lmanager_put_split_filename(const char *filename, int progress_data, void *data);
+void lmanager_put_split_filename(const char *filename, void *data);
 void lmanager_stop_split(ui_state *ui);
 
 typedef struct {

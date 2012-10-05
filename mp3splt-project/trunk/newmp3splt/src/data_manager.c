@@ -56,6 +56,8 @@ main_data *create_main_struct(int argc, char **orig_argv)
   data->argv = orig_argv;
 #endif
 
+  data->printed_value_length = 0;
+
   return data;
 }
 

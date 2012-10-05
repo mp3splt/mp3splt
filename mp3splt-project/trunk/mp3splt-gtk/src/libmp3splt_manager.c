@@ -99,7 +99,7 @@ static gboolean lmanager_put_split_filename_idle(ui_with_fname *ui_fname)
 }
 
 //! Add another file to the split_file tab
-void lmanager_put_split_filename(const char *filename, int progress_data, void *data)
+void lmanager_put_split_filename(const char *filename, void *data)
 {
   ui_state *ui = (ui_state *)data;
 

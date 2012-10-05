@@ -123,7 +123,7 @@ int main(int argc, char **orig_argv)
   mp3splt_set_message_function(state, put_library_message, NULL);
   mp3splt_set_silence_level_function(state, get_silence_level, data->sl);
   //callback for the split files
-  mp3splt_set_split_filename_function(state, put_split_file, NULL);
+  mp3splt_set_split_filename_function(state, put_split_file, data);
 
   //default we write mins_secs_hundr for normal split
   mp3splt_set_int_option(state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
@@ -364,7 +364,7 @@ int main(int argc, char **orig_argv)
   //callback for the progress bar
   if (!opt->q_option && !opt->X_option)
   {
-    mp3splt_set_progress_function(state, put_progress_bar, NULL);
+    mp3splt_set_progress_function(state, put_progress_bar, data);
   }
 
   //if quiet, does not write authors and other
@@ -650,16 +650,17 @@ int main(int argc, char **orig_argv)
     if (opt->l_option)
     {
       //if no error when putting the filename to split
-      const splt_wrap *wrap_files = mp3splt_get_wrap_files(state, &err);
+      splt_wrap *wrap_files = mp3splt_get_wrap_files(state, &err);
       process_confirmation_error(err, data);
 
       //if no error when getting the wrap files
-      int wrap_files_number = mp3splt_wrap_get_total_number(wrap_files);
+      mp3splt_wrap_init_iterator(wrap_files);
       int i = 0;
       fprintf(stdout,"\n");
-      for (i = 0;i < wrap_files_number;i++)
+      const splt_one_wrap *one_wrap = NULL;
+      while ((one_wrap = mp3splt_wrap_next(wrap_files)))
       {
-        char *wrap_file = mp3splt_wrap_get_wrapped_file(wrap_files, i);
+        char *wrap_file = mp3splt_wrap_get_wrapped_file(one_wrap);
         if (wrap_file)
         {
           fprintf(stdout,"%s\n", wrap_file);

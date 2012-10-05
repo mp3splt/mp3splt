@@ -38,6 +38,7 @@ int splt_sp_append_splitpoint(splt_state *state, long split_value,
     const char *name, int type);
 splt_points *splt_sp_get_splitpoints(splt_state *state);
 void splt_sp_free_splitpoints(splt_state *state);
+void splt_sp_free_one_splitpoint(splt_point *point);
 
 int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value);
 int splt_sp_set_splitpoint_name(splt_state *state, int index, const char *name);
