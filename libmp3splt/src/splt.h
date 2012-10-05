@@ -108,6 +108,8 @@ typedef struct {
   splt_cd_state *cdstate;
 } splt_freedb;
 
+typedef char _splt_one_wrap;
+
 struct _splt_wrap {
   /**
    * @brief How many filenames we have
@@ -117,6 +119,7 @@ struct _splt_wrap {
    * @brief The filenames
    */
   char **wrap_files;
+  int iterator_counter;
 };
 
 struct _splt_syncerrors {
@@ -257,12 +260,6 @@ struct splt_progres {
   int silence_found_tracks;
   //! The silence leven in dB
   float silence_db_level;
-  /*! use this variable as you wish
-
-    this variable will not be modified by the library
-    but it will be 0 at the start
-  */
-  int user_data;
   //! A pointer to the callback function
   void (*progress)(struct splt_progres*, void *);
   void *progress_cb_data;
@@ -311,7 +308,7 @@ typedef struct {
       the char* is the filename that is currently
       being split.
   */
-  void (*file_split)(const char *,int, void *);
+  void (*file_split)(const char *, void *);
   void *file_split_cb_data;
 
   //!All infos for the progress bar
@@ -758,7 +755,7 @@ void splt_s_wrap_split(splt_state *state, int *error);
 #define SPLT_IERROR_SET_ORIGINAL_TAGS -2
 #define SPLT_IERROR_CHAR -3
 
-//following mp3splt.h->#tag_key
+//following mp3splt.h->#splt_tag_key
 #define SPLT_TAGS_VERSION 800
 #define SPLT_TAGS_ORIGINAL 900
 

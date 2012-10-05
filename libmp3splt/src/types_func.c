@@ -68,7 +68,6 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->split.p_bar->progress_type = SPLT_PROGRESS_PREPARE;
   state->split.p_bar->silence_found_tracks = 0;
   state->split.p_bar->silence_db_level = 0;
-  state->split.p_bar->user_data = 0;
   state->split.p_bar->progress = NULL;
   state->split.p_bar->progress_cb_data = NULL;
   state->cancel_split = SPLT_FALSE;

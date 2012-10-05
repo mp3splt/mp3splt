@@ -53,6 +53,7 @@ typedef struct
   //keep the ones transformed to utf8 and free them later
   char **argv;
   int argc;
+  int printed_value_length;
 } main_data;
 
 

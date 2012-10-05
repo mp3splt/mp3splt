@@ -950,13 +950,10 @@ splt_code mp3splt_set_message_function(splt_state *state,
  * Parameters of the callback \p file_cb function:
  *
  * \p filename Output filename that has been created.\n
- * \p progress_user_data User data set with #mp3splt_progress_set_int_user_data.\n
  * \p cb_data The user data passed to the #mp3splt_set_split_filename_function.
- *
- * \todo remove the \p progress_user_data parameter.
  */
 splt_code mp3splt_set_split_filename_function(splt_state *state,
-    void (*file_cb)(const char *filename, int progress_user_data, void *cb_data),
+    void (*file_cb)(const char *filename, void *cb_data),
     void *cb_data);
 
 /**
@@ -997,8 +994,6 @@ typedef enum {
  * @see #mp3splt_progress_get_silence_found_tracks
  * @see #mp3splt_progress_get_silence_db_level
  * @see #mp3splt_progress_get_percent_progress
- * @see #mp3splt_progress_set_int_user_data
- * @see #mp3splt_progress_get_int_user_data
  */
 typedef struct splt_progres splt_progress;
 
@@ -1052,22 +1047,6 @@ float mp3splt_progress_get_silence_db_level(const splt_progress *p_bar);
  * @return The progress percentage between 0 and 1.
  */
 float mp3splt_progress_get_percent_progress(const splt_progress *p_bar);
-
-/**
- * @brief Sets int user data into \p p_bar.
- *
- * @param[in] p_bar Progress bar structure.
- * @param[in] user_data User data to store.
- *
- * \todo Remove this function.
- */
-void mp3splt_progress_set_int_user_data(splt_progress *p_bar, int user_data);
-
-/**
- * @return The user data set with #mp3splt_progress_set_int_user_data.
- * \todo Remove this function.
- */
-int mp3splt_progress_get_int_user_data(const splt_progress *p_bar);
 
 /**
  * @brief Register callback function that is called when looking for
@@ -1279,7 +1258,7 @@ typedef enum {
   SPLT_TAGS_TRACK = 6,
   SPLT_TAGS_GENRE = 7,
   SPLT_TAGS_PERFORMER = 8,
-} tag_key;
+} splt_tag_key;
 
 /**
  * @brief Structure containing the tags for one output file.
@@ -1306,7 +1285,7 @@ splt_tags *mp3splt_tags_new(splt_code *error);
 /**
  * @brief Set tags values in the \p tags.
  *
- * The ... parameters are pairs of (key, value); arguments must end with 0, where key is a #tag_key
+ * The ... parameters are pairs of (key, value); arguments must end with 0, where key is a #splt_tag_key
  * and value is const char *.
  *
  * Example:
@@ -1375,7 +1354,7 @@ splt_tags *mp3splt_tags_group_next(splt_tags_group *tags_group);
 /**
  * @brief Returns the value of \p key from the \p tags. Result must be freed.
  */
-char *mp3splt_tags_get(splt_tags *tags, tag_key key);
+char *mp3splt_tags_get(splt_tags *tags, splt_tag_key key);
 
 /**
  * @brief Fill the \p state with tags parsed from the \p tags string.
@@ -1534,7 +1513,7 @@ typedef enum {
   CUE_IMPORT,
   CDDB_IMPORT,
   AUDACITY_LABELS_IMPORT
-} import_type;
+} splt_import_type;
 
 /**
  * @brief Import splitpoints from the \p file having the \p type into the \p state.
@@ -1546,7 +1525,7 @@ typedef enum {
  *
  * @see #mp3splt_split
  */
-splt_code mp3splt_import(splt_state *state, import_type type, const char *file);
+splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *file);
 
 /**
  * @brief Search CDDB file using CDDB CGI protocol (tracktype.org).
@@ -1695,7 +1674,7 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state,
  */
 typedef enum {
   CUE_EXPORT
-} export_type;
+} splt_export_type;
 
 /**
  * @brief Export splitpoints from the \p state into the \p file saved as \p type.
@@ -1707,7 +1686,7 @@ typedef enum {
  *                               of the input file.
  * @return Possible error.
  */
-splt_code mp3splt_export(splt_state *state, export_type type, 
+splt_code mp3splt_export(splt_state *state, splt_export_type type, 
     const char *file, int stop_at_total_time);
 
 //@}
@@ -1717,14 +1696,22 @@ splt_code mp3splt_export(splt_state *state, export_type type,
  */
 
 /**
- * @brief Structure containg the wrapped filenames found inside a file.
+ * @brief Structure containg the wrapped filenames found inside the input filename.
  * All members are private.
  *
- * @see mp3splt_get_wrap_files
- * @see #mp3splt_wrap_get_total_number
- * @see #mp3splt_wrap_get_wrapped_file
+ * @see #mp3splt_get_wrap_files
+ * @see #mp3splt_wrap_init_iterator
+ * @see #mp3splt_wrap_next
  */
 typedef struct _splt_wrap splt_wrap;
+
+/**
+ * @brief Structure containing one wrapped file 
+ * All members are private
+ *
+ * @see #mp3splt_wrap_get_wrapped_file
+ */
+typedef struct _splt_one_wrap splt_one_wrap;
 
 /**
  * @brief Returns the wrapped files found from the input filename set with
@@ -1734,24 +1721,34 @@ typedef struct _splt_wrap splt_wrap;
  * @param[out] error Possible error; can be NULL.
  * @return Wrapped files found.
  *
- * @see #mp3splt_wrap_get_total_number
+ * @see #mp3splt_wrap_init_iterator
+ * @see #mp3splt_wrap_next
+ */
+splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error);
+
+/**
+ * @brief Initialisation of the iterator for use with #mp3splt_wrap_next.
+ *
+ * @param[in] wrap Wrapped files returned with #mp3splt_get_wrap_files.
+ *
+ * @see #mp3splt_wrap_next
+ */
+void mp3splt_wrap_init_iterator(splt_wrap *wrap);
+
+/**
+ * @brief Returns the next wrapped file from the \p wrap.
+ *
+ * @param[in] wrap Wrapped files to be processed.
+ * @return Next wrapped file of \p wrap or NULL if none found or no wrapped file remains.
+ *
  * @see #mp3splt_wrap_get_wrapped_file
  */
-const splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error);
+const splt_one_wrap *mp3splt_wrap_next(splt_wrap *wrap);
 
 /**
- * @brief Returns the number of wrapped files of \p wrap_files.
- *
- * \todo replace with iterator
+ * @brief Returns the wrapped file from \p one_wrap. Result must be freed.
  */
-int mp3splt_wrap_get_total_number(const splt_wrap *wrap_files);
-
-/**
- * @brief Returns the wrapped file of \p wrap_files at the \p index.
- *
- * \todo replace with iterator
- */
-char *mp3splt_wrap_get_wrapped_file(const splt_wrap *wrap_files, int index);
+char *mp3splt_wrap_get_wrapped_file(const splt_one_wrap *one_wrap);
 
 //@}
 

@@ -168,6 +168,17 @@ void splt_sp_free_splitpoints(splt_state *state)
   split->splitnumber = 0;
 }
 
+void splt_sp_free_one_splitpoint(splt_point *point)
+{
+  if (!point) { return; }
+
+  if (point->name)
+  {
+    free(point->name);
+  }
+  free(point);
+}
+
 int splt_sp_set_splitpoint_value(splt_state *state, int index, long split_value)
 {
   splt_d_print_debug(state,"Splitpoint at _%d_ is %ld_\n", index, split_value);

@@ -445,7 +445,7 @@ splt_code mp3splt_set_message_function(splt_state *state,
 \return The error code if any error occours
 */
 splt_code mp3splt_set_split_filename_function(splt_state *state,
-    void (*file_cb)(const char *, int, void *), void *cb_data)
+    void (*file_cb)(const char *, void *), void *cb_data)
 {
   int error = SPLT_OK;
 
@@ -526,16 +526,6 @@ float mp3splt_progress_get_percent_progress(const splt_progress *p_bar)
   return p_bar->percent_progress;
 }
 
-void mp3splt_progress_set_int_user_data(splt_progress *p_bar, int user_data)
-{
-  p_bar->user_data = user_data;
-}
-
-int mp3splt_progress_get_int_user_data(const splt_progress *p_bar)
-{
-  return p_bar->user_data;
-}
-
 /*! Register the callback for the function that calculates silence
     levels 
 
@@ -592,8 +582,12 @@ splt_code mp3splt_point_set_name(splt_point *splitpoint, const char *name)
     return SPLT_OK;
   }
 
-  splitpoint->name = strdup(name);
+  if (splitpoint->name)
+  {
+    free(splitpoint->name);
+  }
 
+  splitpoint->name = strdup(name);
   if (splitpoint->name == NULL)
   {
     return SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -636,7 +630,7 @@ splt_code mp3splt_append_splitpoint(splt_state *state, splt_point *splitpoint)
       error = splt_sp_append_splitpoint(state, 
           splitpoint->value, splitpoint->name, splitpoint->type);
 
-      free(splitpoint);
+      splt_sp_free_one_splitpoint(splitpoint);
 
       splt_o_unlock_library(state);
     }
@@ -774,8 +768,8 @@ splt_code mp3splt_tags_set(splt_tags *tags, ...)
   va_list ap;
   va_start(ap, tags);
 
-  tag_key current_key = 0;
-  while ((current_key = va_arg(ap, tag_key)))
+  splt_tag_key current_key = 0;
+  while ((current_key = va_arg(ap, splt_tag_key)))
   {
     const char *current_value = va_arg(ap, const char *);
     error = splt_tu_set_char_field_on_tag(tags, current_key, current_value);
@@ -787,7 +781,7 @@ splt_code mp3splt_tags_set(splt_tags *tags, ...)
   return error;
 }
 
-char *mp3splt_tags_get(splt_tags *tags, tag_key key)
+char *mp3splt_tags_get(splt_tags *tags, splt_tag_key key)
 {
   if (key == SPLT_TAGS_TRACK)
   {
@@ -1270,7 +1264,7 @@ splt_code mp3splt_stop_split(splt_state *state)
 
 /*! Fetch the splitpoints from an input file.
 */
-splt_code mp3splt_import(splt_state *state, import_type type, const char *file)
+splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *file)
 {
   if (state == NULL)
   {
@@ -1487,7 +1481,7 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state, int disc_id,
 
 /*! Export our split points to a cue file
 */
-splt_code mp3splt_export(splt_state *state, export_type type,
+splt_code mp3splt_export(splt_state *state, splt_export_type type,
     const char *out_file, int stop_at_total_time)
 {
   if (state == NULL)
@@ -1544,7 +1538,7 @@ splt_code mp3splt_set_oformat(splt_state *state, const char *format_string)
   \param state The splt_state structure containing the split points
   \param error The error code
 */
-const splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error)
+splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error)
 {
   int erro = SPLT_OK;
   int *err = &erro;
@@ -1594,19 +1588,45 @@ const splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error)
   }
 }
 
-int mp3splt_wrap_get_total_number(const splt_wrap *wrap_files)
+void mp3splt_wrap_init_iterator(splt_wrap *wrap)
 {
-  return wrap_files->wrap_files_num;
-}
-
-char *mp3splt_wrap_get_wrapped_file(const splt_wrap *wrap_files, int index)
-{
-  if (wrap_files->wrap_files[index])
+  if (!wrap)
   {
-    return strdup(wrap_files->wrap_files[index]);
+    return;
   }
 
-  return NULL;
+  wrap->iterator_counter = 0;
+}
+
+const splt_one_wrap *mp3splt_wrap_next(splt_wrap *wrap)
+{
+  if (!wrap)
+  {
+    return NULL;
+  }
+
+  if (wrap->iterator_counter < 0 || 
+      wrap->iterator_counter >= wrap->wrap_files_num)
+  {
+    wrap->iterator_counter++;
+    return NULL;
+  }
+
+  splt_one_wrap *one_wrap = (splt_one_wrap *) wrap->wrap_files[wrap->iterator_counter];
+
+  wrap->iterator_counter++;
+
+  return one_wrap;
+}
+
+char *mp3splt_wrap_get_wrapped_file(const splt_one_wrap *one_wrap)
+{
+  if (!one_wrap)
+  {
+    return NULL;
+  }
+
+  return strdup((const char *)one_wrap);
 }
 
 //!set the silence splitpoints without actually splitting

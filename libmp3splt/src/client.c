@@ -45,7 +45,7 @@ int splt_c_put_split_file(splt_state *state, const char *filename)
 
   if (state->split.file_split != NULL)
   {
-    state->split.file_split(filename, state->split.p_bar->user_data, state->split.file_split_cb_data);
+    state->split.file_split(filename, state->split.file_split_cb_data);
     error = splt_c_append_to_m3u_file(state, filename);
   }
   else

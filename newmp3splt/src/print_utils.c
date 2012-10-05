@@ -60,12 +60,14 @@ void put_library_message(const char *message, splt_message_type mess_type, void 
   }
 }
 
-void put_split_file(const char *file, int progress_data, void *data)
+void put_split_file(const char *file, void *user_data)
 {
+  main_data *data = (main_data *) user_data;
+
   char temp[1024] = "";
   int this_spaces = strlen(file)+16;
   int counter = strlen(file)+16;
-  while (counter <= progress_data)
+  while (counter <= data->printed_value_length)
   {
     temp[counter-this_spaces] = ' ';
     counter++;
@@ -76,8 +78,10 @@ void put_split_file(const char *file, int progress_data, void *data)
   fflush(console_out);
 }
 
-void put_progress_bar(splt_progress *p_bar, void *data)
+void put_progress_bar(splt_progress *p_bar, void *user_data)
 {
+  main_data *data = (main_data *)user_data;
+
   char progress_text[2048] = " ";
   char *filename_shorted = mp3splt_progress_get_filename_shorted(p_bar);
 
@@ -139,8 +143,7 @@ void put_progress_bar(splt_progress *p_bar, void *data)
   char temp[2048] = "";
   int this_spaces = strlen(printed_value);
   int counter = strlen(printed_value);
-  int user_data = mp3splt_progress_get_int_user_data(p_bar);
-  while (counter <= user_data)
+  while (counter <= data->printed_value_length)
   {
     temp[counter-this_spaces] = ' ';
     counter++;
@@ -150,7 +153,7 @@ void put_progress_bar(splt_progress *p_bar, void *data)
   fprintf(console_progress,"%s%s\r",printed_value,temp);
   fflush(console_progress);
 
-  mp3splt_progress_set_int_user_data(p_bar, strlen(printed_value) + 1);
+  data->printed_value_length = strlen(printed_value) + 1;
 
   free(filename_shorted);
 }
