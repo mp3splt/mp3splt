@@ -38,6 +38,39 @@
  * \brief libmp3splt API 
  */
 
+/** \mainpage Using libmp3splt
+
+This is the documentation for the library that stands behind mp3splt (version >= 2.2) and mp3splt-gtk.\n
+Source code and binaries can be found on the <a
+href="http://mp3splt.sourceforge.net/mp3splt_page/home.php">mp3splt-project home page</a>.\n
+
+Some of the features include:
+ - losslessly split of mp3 (using <a href="http://www.underbit.com/products/mad/">libmad</a>) and
+   ogg vorbis (using <a href="http://xiph.org/vorbis/">libvorbis</a>) files
+ - extensibility to other audio formats using "plugins"
+ - querying tags from <a href="http://tracktype.org">tracktype.org</a>
+ - split on silences
+ - trim using silence detection
+ - split by a fixed time or equal time length
+ - CDDB, CUE, audacity labels import
+ - CUE export
+ - extract tracks created with <a href="http://mp3wrap.sourceforge.net">Mp3Wrap</a> or AlbumWrap
+
+If you want to use the library in your project:
+- You can start with the \ref splt_state_ section, continue with \ref splt_filepaths_ and
+  \ref splt_callback_ and then finish with \ref splt_splitpoints_ and \ref splt_split_.
+- A list of <a href="modules.html">all modules</a> is also available.
+- A minimal example on how to use this library can be found in \ref minimal.c
+- For any other example or question, please contact Alexandru Munteanu at m@ioalex.net.
+
+If you want to write a plugin to support other file type:
+-
+ */
+
+/** \example minimal.c
+ *  A minimal usage example.
+ */
+
 #ifndef MP3SPLT_MP3SPLT_H
 
 /**
@@ -231,7 +264,7 @@ splt_code mp3splt_find_plugins(splt_state *state);
  * returned error message can contain information that is replaced if other error occurs.
  *
  * @param[in] state Main state.
- * @param[in] error Error code to be checked.
+ * @param[in] error Possible error; can be NULL.
  * @return Error message of the \p error. Result must be freed.
  */
 char *mp3splt_get_strerror(splt_state *state, splt_code error);
@@ -1810,6 +1843,188 @@ int mp3splt_check_if_directory(const char *filename);
  * @brief Used in mp3splt and mp3splt-gtk.
  */
 #define MP3SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"
+
+//@}
+
+/** @defgroup splt_plugin_api Libmp3splt plugin API
+ * See #splt_plugin_func for detailed description.
+@{
+ */
+
+/**
+ * @brief Structure containing plugin information, like the version, the name and file extension.
+ */
+typedef struct {
+  /**
+   * @brief Plugin version.
+   */
+  float version;
+  /**
+   * @brief Plugin name.
+   */
+  char *name;
+  /**
+   * @brief File extension handled by the plugin
+   */
+  char *extension;
+  /**
+   * @brief File extension handled by the plugin as uppercase.
+   */
+  char *upper_extension;
+} splt_plugin_info;
+
+/**
+ * @brief Structure containing the original tags of the input file.
+ */
+typedef struct _splt_original_tags splt_original_tags;
+
+/**
+ * @brief Libmp3splt plugin API.
+ *
+ * \warning Because only mp3 and ogg plugins exist and are integrated with the library, the plugin
+ * API might change.
+ *
+ * In order to create a plugin for libmp3splt, the following functions can be implemented.\n
+ * Mandatory functions are #splt_pl_init, #splt_pl_end, #splt_pl_check_plugin_is_for_file,
+ * #splt_pl_set_plugin_info and #splt_pl_split.
+ *
+ * Two examples can be found for the <a
+ * href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/mp3.c">mp3</a> and
+ * <a href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/ogg.c">ogg</a> implementations.
+ */
+typedef struct {
+  /**
+   * @brief Initialise the plugin. Mandatory.
+   *
+   * Create the plugin data, open the input file and read headers.\n
+   * Use the \p state->codec pointer to store the plugin data.
+   *
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   */
+  void (*splt_pl_init)(splt_state *state, splt_code *error);
+  /**
+   * @brief Unitialise the plugin. Mandatory.
+   *
+   * Close the input file, free the plugin data.\n
+   * 
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   */
+  void (*splt_pl_end)(splt_state *state, splt_code *error);
+  /**
+   * @brief Checks if the plugin matches the input file. Mandatory.
+   *
+   * If stdin is supported, don't forget to check if the input filename is stdin.
+   * 
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   * @return #SPLT_TRUE if the plugin matches the input file.
+   */
+  int (*splt_pl_check_plugin_is_for_file)(splt_state *state, splt_code *error);
+  /**
+   * @brief Set plugin information into the \p information structure. Mandatory.
+   *
+   * Information like the plugin version, plugin name and file extension must be filled.\n
+   *
+   * @param[in] splt_plugin_info Plugin information to be filled. Parameter is already allocated.
+   * @param[out] error Fill in possible error.
+   */
+  void (*splt_pl_set_plugin_info)(splt_plugin_info *information, splt_code *error);
+  /**
+   * @brief Main split function. Mandatory.
+   *
+   * @param[in] state Main state.
+   * @param[in] final_fname Output filename to be written for this split.
+   * @param[in] begin_point Begin point where the split starts as seconds.hundreths.
+   * @param[in] end_point End point where the split ends as seconds.hundreths.
+   * @param[out] error Fill in possible error.
+   * @param[in] save_end_point Is equal to #SPLT_TRUE if optimisation can be done for saving the
+   * end point seek for the next call to this function. This avoids looking for the next begin point
+   * seek since it will be equal to the previous saved end point seek.
+   * @return The real end point split; in most cases, it is equal to the \p end_point.
+   */
+  double (*splt_pl_split)(splt_state *state, const char *final_fname, double begin_point,
+      double end_point, splt_code *error, int save_end_point);
+  /**
+   * @brief Set the original tags into the \p state from the input file.
+   *
+   * \p splt_tu_set_original_tags_field has to be used to set the original tags.\n
+   * You can also save all the original tags in the \p state using \p
+   * splt_tu_set_original_tags_data, in case you want to write them all in the output file,
+   * for the tags that are not supported by the library's structure.
+   *
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   */
+  void (*splt_pl_set_original_tags)(splt_state *state, splt_code *error);
+  /**
+   * @brief Frees the memory of the tags previously set in the #splt_pl_set_original_tags function.
+   *
+   * Free the \p original_tags->all_original_tags data previously set with
+   * \p splt_tu_set_original_tags_data.
+   *
+   * @param[in] original_tags Original tags structure containing the original tags data to be freed.
+   */
+  void (*splt_pl_clear_original_tags)(splt_original_tags *original_tags);
+  /**
+   * @brief Scan the input file for silence.
+   *
+   * The input file has to be scanned for silence and for each time/audio level, a generic silence
+   * processor will be called.\n
+   * The processor handles the mp3splt silence detection logic.
+   *
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   * @return The number of silence spots found.
+   */
+  int (*splt_pl_scan_silence)(splt_state *state, splt_code *error);
+  /**
+   * @brief Scan the input file for trimming using silence detection.
+   *
+   * The implementation of this function is straight forward after implementing
+   * #splt_pl_scan_silence, since the silence detection is the same.\n
+   * Only the generic silence processor changes.
+   *
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   * @return The number of silence spots found.
+   */
+  int (*splt_pl_scan_trim_silence)(splt_state *state, splt_code *error);
+  /**
+   * @brief Search for synchronisation errors.
+   *
+   * Currently only mp3 supports synchronisation errors split.
+   *
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   */
+  void (*splt_pl_search_syncerrors)(splt_state *state, splt_code *error);
+  /**
+   * @brief Split the input filename by offsets.
+   *
+   * Currently only used when splitting mp3 files using the synchronisation error mode.
+   *
+   * @param[in] state Main state.
+   * @param[in] output_fname Output filename.
+   * @param[in] begin Begin offset of the portion to be split.
+   * @param[in] end End offset of the portion to be split.
+   * @return Possible error.
+   */
+  int (*splt_pl_offset_split)(splt_state *state, const char *output_fname, off_t begin, off_t end);
+  /**
+   * @brief Unwrap the input file into the directory \p dir.
+   *
+   * Currently only mp3 supports wrapped files.
+   *
+   * @param[in] state Main state.
+   * @param[in] listonly If equal to #SPLT_TRUE, then the wrapped files found are stored in the \p
+   * state without actually splitting.
+   * @param[in] dir Output directory where the wrapped files have to be stored.
+   * @param[out] error Fill in possible error.
+   */
+  void (*splt_pl_dewrap)(splt_state *state, int listonly, const char *dir, splt_code *error);
+} splt_plugin_func;
 
 //@}
 

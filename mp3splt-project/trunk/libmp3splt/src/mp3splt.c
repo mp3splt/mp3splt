@@ -43,27 +43,6 @@ the first parameter etc. Actually changing the library to be c++
 should therefore not be too hard a task...
  */
 
-/*! \mainpage Using libmp3splt
-
-This is the documentation for the library that stands behind
-mp3splt-gtk and mp3splt.\n
-Features include
- - losslessly editing mp3 and og files
- - extensibility to other formats using plug-ins
- - freedb search
-
-Documentation can be found at several points:
-- A minimal example on how to use this library can be found in \ref test_library.c
-- There is a \ref API
-- For plug-in writers there is a \ref PluginAPI_MP3
-- And --- also for plugin-writers there is a \ref PluginAPI_MP3 as well.
- */
-
-/*!   \example test_library.c
-
-  A minimal usage example
- */
-
 #include <sys/stat.h>
 #include <string.h>
 
