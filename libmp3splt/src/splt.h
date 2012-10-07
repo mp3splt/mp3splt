@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2012 Alexandru Munteanu - io_fx@yahoo.fr
+ * Copyright (c) 2005-2012 Alexandru Munteanu - m@ioalex.net
  *
  * http://mp3splt.sourceforge.net
  *
@@ -754,7 +754,7 @@ void splt_s_wrap_split(splt_state *state, int *error);
  * @brief Package authors
  */
 #define SPLT_AUTHOR "Matteo Trotta | Munteanu Alexandru"
-#define SPLT_EMAIL "<mtrotta@users.sourceforge.net> | <io_fx@yahoo.fr>"
+#define SPLT_EMAIL "<mtrotta@users.sourceforge.net> | <m@ioalex.net>"
 /**
  * @brief Package website
  */
