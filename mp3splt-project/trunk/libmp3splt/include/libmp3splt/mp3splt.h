@@ -40,14 +40,14 @@
 
 /** \mainpage Using libmp3splt
 
-This is the documentation for the library that stands behind mp3splt (version >= 2.2) and mp3splt-gtk.\n
+This is the documentation of the library that stands behind mp3splt (version >= 2.2) and mp3splt-gtk.\n
 Source code and binaries can be found on the <a
 href="http://mp3splt.sourceforge.net/mp3splt_page/home.php">mp3splt-project home page</a>.\n
 
-Some of the features include:
+Some of the library features include:
  - losslessly split of mp3 (using <a href="http://www.underbit.com/products/mad/">libmad</a>) and
    ogg vorbis (using <a href="http://xiph.org/vorbis/">libvorbis</a>) files
- - extensibility to other audio formats using "plugins"
+ - extensibility to other audio formats using plugins
  - querying tags from <a href="http://tracktype.org">tracktype.org</a>
  - split on silences
  - trim using silence detection
@@ -56,15 +56,15 @@ Some of the features include:
  - CUE export
  - extract tracks created with <a href="http://mp3wrap.sourceforge.net">Mp3Wrap</a> or AlbumWrap
 
-If you want to use the library in your project:
-- You can start with the \ref splt_state_ section, continue with \ref splt_filepaths_ and
+In order to use the library in another project:
+- Start with the \ref splt_state_ section, continue with \ref splt_filepaths_ and
   \ref splt_callback_ and then finish with \ref splt_splitpoints_ and \ref splt_split_.
 - A list of <a href="modules.html">all modules</a> is also available.
 - A minimal example on how to use this library can be found in \ref minimal.c
 - For any other example or question, please contact Alexandru Munteanu at m@ioalex.net.
 
-If you want to write a plugin to support other file type:
--
+For writing a plugin to support other file type:
+- Look at the #splt_plugin_func from the \ref splt_plugin_api.
  */
 
 /** \example minimal.c
