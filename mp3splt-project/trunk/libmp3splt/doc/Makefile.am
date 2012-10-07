@@ -5,6 +5,20 @@ html: doc
 
 doc: doxyfile.temp
 
+api_doc: doxyfile_api.temp
+
+doxyfile_api.temp:
+	cat Doxyfile_api.in >Doxyfile
+if HAVE_GRAPHVIZ
+	echo "HAVE_DOT = YES" >> Doxyfile
+else
+	echo "HAVE_DOT = NO" >> Doxyfile
+endif
+	echo "STRIP_FROM_PATH = $(top_builddir)" >> Doxyfile
+	@echo "Running doxygen to generate the API documentation"
+	doxygen
+	echo temporary > doxyfile.temp
+
 doxyfile.temp:
 	cat Doxyfile.in >Doxyfile
 if HAVE_GRAPHVIZ
@@ -17,7 +31,7 @@ endif
 	doxygen
 	echo temporary > doxyfile.temp
 
-CLEANFILES=doxyfile.temp
+CLEANFILES=doxyfile.temp doxyfile_api.temp
 
 all-local: html 
 

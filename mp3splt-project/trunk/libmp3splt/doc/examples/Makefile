@@ -8,5 +8,5 @@ clean_all:
 	rm -rf minimal
 
 compile_all:
-	gcc $(CFLAGS) minimal.c -g -Wall -g -o minimal -lmp3splt $(LDFLAGS)
+	gcc $(CFLAGS) minimal.c -Wall -g -o minimal -lmp3splt $(LDFLAGS)
 

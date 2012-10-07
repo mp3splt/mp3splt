@@ -9,6 +9,8 @@ static void print_split_filename(const char *filename, void *data);
 
 //Main program
 //Please note that not all errors are handled in this example.
+//Compile with:
+//    $ gcc minimal.c -o minimal -lmp3splt
 int main(int argc, char *argv[])
 {
   if (argc != 2)
