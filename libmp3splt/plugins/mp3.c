@@ -3335,7 +3335,7 @@ double splt_pl_split(splt_state *state, const char *final_fname,
 }
 
 //! Plugin API: Output a portion of the file
-int splt_pl_simple_split(splt_state *state, char *output_fname, off_t begin, off_t end)
+int splt_pl_offset_split(splt_state *state, char *output_fname, off_t begin, off_t end)
 {
   int error = SPLT_OK;
 

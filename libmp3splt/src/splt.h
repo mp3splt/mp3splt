@@ -183,6 +183,12 @@ struct _splt_tags {
   int set_original_tags;
 };
 
+struct _splt_original_tags {
+  splt_tags tags;
+  void *all_original_tags;
+  int last_plugin_used;
+};
+
 struct _splt_tags_group {
   splt_tags *tags;
   int real_tagsnumber;
@@ -202,12 +208,6 @@ typedef struct {
   //format for the cddb cue output
   char format[SPLT_OUTNUM+1][SPLT_MAXOLEN];
 } splt_oformat;
-
-typedef struct {
-  struct _splt_tags tags;
-  void *all_original_tags;
-  int last_plugin_used;
-} splt_original_tags;
 
 struct _splt_point {
   /**
@@ -520,35 +520,6 @@ typedef enum {
   SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X = 10000,
   SPLT_OPT_AUTO_INCREMENT_TRACKNUMBER_TAGS,
 } splt_internal_options;
-
-/**
- * Structure containing information about one plugin.
- * Is filled with values at plugin initialisation.
- */
-typedef struct {
-  float version;
-  char *name;
-  char *extension;
-  char *upper_extension;
-} splt_plugin_info;
-
-//!contains pointers to the plugin functions
-typedef struct {
-  int (*check_plugin_is_for_file)(void *state, int *error);
-  void (*set_plugin_info)(splt_plugin_info *info, int *error);
-  void (*search_syncerrors)(void *state, int *error);
-  void (*dewrap)(void *state, int listonly, const char *dir, int *error);
-  void (*set_total_time)(void *state, int *error);
-  int (*simple_split)(void *state, const char *output_fname, off_t begin, off_t end);
-  double (*split)(void *state, const char *final_fname, double begin_point,
-      double end_point, int *error, int save_end_point);
-  int (*scan_silence)(void *state, int *error);
-  int (*scan_trim_silence)(void *state, int *error);
-  void (*set_original_tags)(void *state, int *error);
-  void (*clear_original_tags)(splt_original_tags *original_tags);
-  void (*init)(void *state, int *error);
-  void (*end)(void *state, int *error);
-} splt_plugin_func;
 
 //!structure containing all the data about a plugin
 typedef struct {
