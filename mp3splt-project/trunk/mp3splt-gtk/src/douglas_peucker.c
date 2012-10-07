@@ -4,7 +4,7 @@
  * mp3splt-gtk -- utility based on mp3splt,
  *
  * Copyright: (C) 2005-2012 Alexandru Munteanu
- * Contact: io_fx@yahoo.fr
+ * Contact: m@ioalex.net
  *
  * http://mp3splt.sourceforge.net/
  *

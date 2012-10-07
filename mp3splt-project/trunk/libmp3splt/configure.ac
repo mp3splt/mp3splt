@@ -4,7 +4,7 @@
 # *               for mp3/ogg splitting without decoding
 # *
 # * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
-# * Copyright (c) 2005-2012 Munteanu Alexandru - io_fx@yahoo.fr
+# * Copyright (c) 2005-2012 Munteanu Alexandru - m@ioalex.net
 # *
 # * http://mp3splt.sourceforge.net
 # *
@@ -33,7 +33,7 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT([libmp3splt],[0.7.3.1098],[io_fx@yahoo.fr])
+AC_INIT([libmp3splt],[0.7.3.1098],[m@ioalex.net])
 AC_CONFIG_AUX_DIR([libltdl/config])
 AM_INIT_AUTOMAKE(libmp3splt, 0.7.3.1098)
 AC_CONFIG_HEADERS([config.h])

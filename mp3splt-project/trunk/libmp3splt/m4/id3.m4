@@ -1,4 +1,4 @@
-# Alexandru Munteanu <io_fx@yahoo.fr>
+# Alexandru Munteanu <m@ioalex.net>
 # Slightly modified 'ogg.m4'
 
 AC_DEFUN([ID3_CHECK],
