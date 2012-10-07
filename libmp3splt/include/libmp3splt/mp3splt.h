@@ -38,7 +38,7 @@
  * \brief libmp3splt API 
  */
 
-/** \mainpage Using libmp3splt
+/** \mainpage API documentation
 
 This is the documentation of the library that stands behind mp3splt (version >= 2.2) and mp3splt-gtk.\n
 Source code and binaries can be found on the <a
@@ -59,16 +59,21 @@ Some of the library features include:
 In order to use the library in another project:
 - Start with the \ref splt_state_ section, continue with \ref splt_filepaths_ and
   \ref splt_callback_ and then finish with \ref splt_splitpoints_ and \ref splt_split_.
-- A list of <a href="modules.html">all modules</a> is also available.
 - A minimal example on how to use this library can be found in \ref minimal.c
-- For any other example or question, please contact Alexandru Munteanu at m@ioalex.net.
+- For any other example or question, contact Alexandru Munteanu at m@ioalex.net.
 
 For writing a plugin to support other file type:
 - Look at the #splt_plugin_func from the \ref splt_plugin_api.
+
+A list of <a href="modules.html">all modules</a> is also available.
  */
 
 /** \example minimal.c
  *  A minimal usage example.
+ */
+
+/**
+ * \defgroup using_libmp3splt Using libmp3splt
  */
 
 #ifndef MP3SPLT_MP3SPLT_H
@@ -82,7 +87,9 @@ For writing a plugin to support other file type:
  */
 #define SPLT_FALSE 0
 
-/** @defgroup splt_error_codes_ Confirmation and error codes
+/** 
+ * \ingroup using_libmp3splt
+ * @defgroup splt_error_codes_ Confirmation and error codes
 @{
  */
 
@@ -195,7 +202,9 @@ typedef enum {
 
 //@}
 
-/** @defgroup splt_state_ Initialisation of the main state
+/** 
+ * \ingroup using_libmp3splt
+ * @defgroup splt_state_ Initialisation of the main state
 //@{
  */
 
@@ -271,7 +280,9 @@ char *mp3splt_get_strerror(splt_state *state, splt_code error);
 
 //@}
 
-/** @defgroup splt_options_ Options
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_options_ Options
 @{
  */
 
@@ -854,7 +865,9 @@ splt_code mp3splt_set_oformat(splt_state *state, const char *format);
 
 //@}
 
-/** @defgroup splt_filepaths_ Input filename and paths
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_filepaths_ Input filename and paths
 @{
  */
 
@@ -933,7 +946,9 @@ splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filena
 
 //@}
 
-/** @defgroup splt_callback_ Registering callback functions
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_callback_ Registering callback functions
 @{
  */
 
@@ -1102,7 +1117,9 @@ splt_code mp3splt_set_silence_level_function(splt_state *state,
 
 //!@}
 
-/** @defgroup splt_splitpoints_ Splitpoints handling
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_splitpoints_ Splitpoints handling
 @{
  */
 
@@ -1259,7 +1276,9 @@ splt_code mp3splt_erase_all_splitpoints(splt_state *state);
 
 //@}
 
-/** @defgroup splt_tags_ Tags handling
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_tags_ Tags handling
 @{
  */
 
@@ -1489,7 +1508,9 @@ void mp3splt_free_one_tag(splt_tags *tags);
 
 //@}
 
-/** @defgroup splt_split_ Split functions
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_split_ Split functions
 @{
  */
 
@@ -1533,7 +1554,9 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 
 //@}
 
-/** @defgroup splt_import_ Import splitpoints
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_import_ Import splitpoints
 @{
  */
 
@@ -1696,7 +1719,9 @@ splt_code mp3splt_write_freedb_file_result(splt_state *state,
 
 //@}
 
-/** @defgroup splt_export_ Export splitpoints
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_export_ Export splitpoints
 @{
  */
 
@@ -1724,7 +1749,9 @@ splt_code mp3splt_export(splt_state *state, splt_export_type type,
 
 //@}
 
-/** @defgroup splt_wrap_ Wrap utilities
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_wrap_ Wrap utilities
 @{
  */
 
@@ -1785,7 +1812,9 @@ char *mp3splt_wrap_get_wrapped_file(const splt_one_wrap *one_wrap);
 
 //@}
 
-/** @defgroup splt_other_ Other utilities
+/**
+ * \ingroup using_libmp3splt
+ * @defgroup splt_other_ Other utilities
 @{
  */
 
@@ -1846,7 +1875,7 @@ int mp3splt_check_if_directory(const char *filename);
 
 //@}
 
-/** @defgroup splt_plugin_api Libmp3splt plugin API
+/** @defgroup splt_plugin_api Creating libmp3splt plugins
  * See #splt_plugin_func for detailed description.
 @{
  */

@@ -8,6 +8,8 @@ Release instructions:
 3) check documentation in 'newmp3splt/doc/mp3splt.1'
 4) convert documentation to html:
     $ ./newmp3splt/doc/generate_manual.sh
+4') generate libmp3splt API documentation:
+    $ make -C libmp3splt/doc api_doc
 5) translate (string freeze)
     (with 'poedit' for example)
 5') update transifex translations 
