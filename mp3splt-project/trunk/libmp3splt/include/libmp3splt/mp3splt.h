@@ -41,6 +41,8 @@
 /** \mainpage API documentation
 
 This is the documentation of the library that stands behind mp3splt (version >= 2.2) and mp3splt-gtk.\n
+Libmp3splt is licensed under the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU General
+Public License version 2</a>.\n
 Source code and binaries can be found on the <a
 href="http://mp3splt.sourceforge.net/mp3splt_page/home.php">mp3splt-project home page</a>.\n
 
