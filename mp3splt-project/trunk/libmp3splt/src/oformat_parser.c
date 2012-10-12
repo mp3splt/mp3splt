@@ -40,6 +40,9 @@ Automatic generation of filenams for split files from tags.
 
 #include "splt.h"
 
+static void splt_of_trim_on_separator_characters(char *filename);
+static const char *splt_of_goto_last_non_separator_character(const char *format);
+
 /*! \brief Is a placeholder char valid in a filename format string?
 
 \param v The character that is to be tested
@@ -190,15 +193,28 @@ int splt_of_parse_outformat(char *s, splt_state *state)
   return amb;
 }
 
-static const char *splt_u_get_format_ptr(const char *format, char *temp)
+static const char *splt_u_get_format_ptr(const char *format, char *temp,
+    int *number_of_digits_to_output)
 {
   int format_length = strlen(format);
   const char *format_ptr = format;
 
   if ((format_length > 2) && isdigit(format[2]))
   {
+    if (number_of_digits_to_output)
+    {
+      sscanf(&format[2], "%d", number_of_digits_to_output);
+    }
+
     temp[2] = format[2];
     format_ptr = format + 1;
+  }
+  else
+  {
+    if (number_of_digits_to_output)
+    {
+      *number_of_digits_to_output = -1;
+    }
   }
 
   return format_ptr;
@@ -403,6 +419,7 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
     {
       break;
     }
+
     //if we have some % in the format (@ has been converted to %)
     if (state->oformat.format[i][0] == '%')
     {
@@ -484,7 +501,7 @@ put_value:
               {
                 if (char_variable == 'h')
                 {
-                  format = state->oformat.format[i]+2;
+                  format = state->oformat.format[i] + 4;
                   offset = 0;
                 }
                 else
@@ -495,14 +512,29 @@ put_value:
               }
               else
               {
-                format = splt_u_get_format_ptr(state->oformat.format[i], temp);
+                int number_of_digits_to_output = 0;
+                const char *new_format = 
+                  splt_u_get_format_ptr(state->oformat.format[i], temp, &number_of_digits_to_output);
+
+                if (number_of_digits_to_output == 0 && mMsShH_value == 0)
+                {
+                  const char *start_format = state->oformat.format[i] + 3;
+                  format = splt_of_goto_last_non_separator_character(start_format);
+                  offset = 0;
+
+                  splt_of_trim_on_separator_characters(output_filename);
+                }
+                else
+                {
+                  format = new_format + 2;
+                }
               }
 
               int requested_num_of_digits = 0;
               int max_number_of_digits = splt_u_get_requested_num_of_digits(state,
                   state->oformat.format[i], &requested_num_of_digits, SPLT_FALSE);
 
-              snprintf(temp + offset, temp_len, format + 2);
+              snprintf(temp + offset, temp_len, format);
 
               fm_length = strlen(temp) + 1 + max_number_of_digits;
               if ((fm = malloc(fm_length * sizeof(char))) == NULL)
@@ -832,7 +864,8 @@ put_value:
           int is_numeric = toupper(state->oformat.format[i][1]) == 'N';
           if (is_numeric)
           {
-            const char *format = splt_u_get_format_ptr(state->oformat.format[i], temp);
+            const char *format =
+              splt_u_get_format_ptr(state->oformat.format[i], temp, NULL);
 
             snprintf(temp + 4, temp_len, format + 2);
             fm_length = strlen(temp) + 1 + max_num_of_digits;
@@ -967,5 +1000,58 @@ end:
   }
 
   return error;
+}
+
+static void splt_of_trim_on_separator_characters(char *filename)
+{
+  if (!filename)
+  {
+    return;
+  }
+
+  int last_index = strlen(filename)-1;
+  if (last_index < 0)
+  {
+    return;
+  }
+
+  while (last_index >= 0)
+  {
+    char last_char = filename[last_index];
+    if (last_char == ':' || last_char == '_' ||
+        last_char == '-' || last_char == '.')
+    {
+      filename[last_index] = '\0';
+    }
+    else
+    {
+      return;
+    }
+
+    last_index--;
+  }
+}
+
+static const char *splt_of_goto_last_non_separator_character(const char *format)
+{
+  if (!format)
+  {
+    return format;
+  }
+
+  int counter = 0;
+  int max_length = strlen(format);
+  while (counter < max_length)
+  {
+    if (format[counter] == ':' || format[counter] == '_' ||
+        format[counter] == '-' || format[counter] == '.')
+    {
+      break;
+    }
+
+    counter++;
+  }
+
+  return format + counter;
 }
 
