@@ -51,7 +51,7 @@ static const char *splt_of_goto_last_non_separator_character(const char *format)
 
 \todo Why do we need amb?
  */
-static short splt_u_output_variable_is_valid(char v, int *amb)
+static short splt_of_output_variable_is_valid(char v, int *amb)
 {
   switch (v)
   {
@@ -155,7 +155,7 @@ int splt_of_parse_outformat(char *s, splt_state *state)
       len = SPLT_MAXOLEN;
     }
 
-    if (!splt_u_output_variable_is_valid(cf, &amb))
+    if (!splt_of_output_variable_is_valid(cf, &amb))
     {
       err[0] = cf;
       splt_e_set_error_data(state, err);
@@ -170,7 +170,7 @@ int splt_of_parse_outformat(char *s, splt_state *state)
   if (last_ptre && *last_ptre != '\0')
   {
     char v = *(last_ptre+1);
-    if (!splt_u_output_variable_is_valid(v, &amb))
+    if (!splt_of_output_variable_is_valid(v, &amb))
     {
       err[0] = v;
       splt_e_set_error_data(state, err);
@@ -494,40 +494,21 @@ put_value:
               const char *format = NULL;
               int offset = 5;
 
-              //don't print out @h or @H if 0 for default output
-              if ((strcmp(state->oformat.format_string, SPLT_DEFAULT_OUTPUT) == 0) &&
-                  (mMsShH_value == 0) &&
-                  (char_variable == 'h' || char_variable == 'H'))
+              int number_of_digits_to_output = 0;
+              const char *new_format = 
+                splt_u_get_format_ptr(state->oformat.format[i], temp, &number_of_digits_to_output);
+
+              if (number_of_digits_to_output == 0 && mMsShH_value == 0)
               {
-                if (char_variable == 'h')
-                {
-                  format = state->oformat.format[i] + 4;
-                  offset = 0;
-                }
-                else
-                {
-                  output_filename[strlen(output_filename)-1] = '\0';
-                  break;
-                }
+                const char *start_format = state->oformat.format[i] + 3;
+                format = splt_of_goto_last_non_separator_character(start_format);
+                offset = 0;
+
+                splt_of_trim_on_separator_characters(output_filename);
               }
               else
               {
-                int number_of_digits_to_output = 0;
-                const char *new_format = 
-                  splt_u_get_format_ptr(state->oformat.format[i], temp, &number_of_digits_to_output);
-
-                if (number_of_digits_to_output == 0 && mMsShH_value == 0)
-                {
-                  const char *start_format = state->oformat.format[i] + 3;
-                  format = splt_of_goto_last_non_separator_character(start_format);
-                  offset = 0;
-
-                  splt_of_trim_on_separator_characters(output_filename);
-                }
-                else
-                {
-                  format = new_format + 2;
-                }
+                format = new_format + 2;
               }
 
               int requested_num_of_digits = 0;
