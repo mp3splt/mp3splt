@@ -442,7 +442,18 @@ It can contain name variables, that must begin with @ char and that can be:
 .br
 @M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint**
 
-(**) a digit may follow for the number of digits to output
+(**) One digit may follow defining the number of digits to output.
+.br
+If the digit is 0, then a special rule is applied when the pattern value is equal to 0:
+.br
+- the pattern is discarded
+.br
+- all characters like : _ . and -. preceding it are discarded
+.br
+- all characters following it are discarded up to the next @ or a separator like : _ . and -
+.br
+This rule is useful for discarding the last part of the time when equal to 0.
+For example @m_@s_@h0hundreths__@M_@S will only output @m_@s__@M_@S if the hundreths of seconds are 0.
 
 When split files are more than one, at least one of @t, @n, @N, @l, @L, @u or
 @U (*) must be present to avoid ambiguous names.  You can put any prefix,
