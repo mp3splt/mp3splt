@@ -1070,6 +1070,64 @@ function test_normal_vbr_output_fnames_and_custom_tags_and_dirs
   echo
 }
 
+function test_output_fnames_with_digit_after_pattern
+{
+  remove_output_dir
+
+  test_name="vbr output fnames & digit after pattern"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/0001_00_000 0002_00_020 1.mp3\" created
+   File \"$OUTPUT_DIR/0002_00_020 0003_05_000 2.mp3\" created
+   File \"$OUTPUT_DIR/0003_05_000 0004_05_058 3.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  output_option="@m4_@s2_@h3 @M4_@S2_@H3 @n"
+  mp3splt_args="-o '$output_option' -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_file_exist "$OUTPUT_DIR/0001_00_000 0002_00_020 1.mp3"
+  check_if_file_exist "$OUTPUT_DIR/0002_00_020 0003_05_000 2.mp3"
+  check_if_file_exist "$OUTPUT_DIR/0003_05_000 0004_05_058 3.mp3"
+
+  print_ok
+  echo
+}
+
+function test_output_fnames_with_digit_after_pattern_equal_to_zero
+{
+  remove_output_dir
+
+  test_name="vbr output fnames & digit after pattern"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/1m__2m_20h__1.mp3\" created
+   File \"$OUTPUT_DIR/2m_20h__3m_5s__2.mp3\" created
+   File \"$OUTPUT_DIR/3m_5s__4m_5s_58h__3.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  output_option="@m0m_@s0s_@h0h__@M0m_@S0s_@H0h__@n"
+  mp3splt_args="-o '$output_option' -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_if_file_exist "$OUTPUT_DIR/1m__2m_20h__1.mp3"
+  check_if_file_exist "$OUTPUT_DIR/2m_20h__3m_5s__2.mp3"
+  check_if_file_exist "$OUTPUT_DIR/3m_5s__4m_5s_58h__3.mp3"
+
+  print_ok
+  echo
+}
+
 function test_normal_vbr_stdout
 {
   remove_output_dir

@@ -745,7 +745,7 @@ typedef enum {
  * @brief Default output for #SPLT_OPTION_NORMAL_MODE when using #SPLT_OUTPUT_DEFAULT.
  * @see #mp3splt_set_oformat
  */
-#define SPLT_DEFAULT_OUTPUT "@f_@mm_@ss_@hh__@Mm_@Ss_@Hh"
+#define SPLT_DEFAULT_OUTPUT "@f_@mm_@ss_@h0h__@Mm_@Ss_@H0h"
 
 /**
  * @brief Output filename format for CDDB and CUE when using #SPLT_OUTPUT_DEFAULT.
