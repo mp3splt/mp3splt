@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-09-02 13:52+0200\n"
+"POT-Creation-Date: 2012-10-13 22:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,29 +17,29 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:845
+#: src/mp3splt.c:1055
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:910
+#: src/mp3splt.c:1120
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:918
+#: src/mp3splt.c:1128
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:939
+#: src/mp3splt.c:1149
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
 "%.2f)\n"
 msgstr ""
 
-#: src/mp3splt.c:1739 src/tags_parser.c:108
+#: src/mp3splt.c:1871 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -173,7 +173,7 @@ msgstr ""
 msgid " CUE file '%s' created.\n"
 msgstr ""
 
-#: src/audacity.c:237
+#: src/audacity.c:236
 #, c-format
 msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr ""
@@ -588,7 +588,7 @@ msgstr ""
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1424 plugins/ogg.c:134
+#: plugins/mp3.c:1424 plugins/ogg.c:133
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
@@ -624,11 +624,11 @@ msgstr ""
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr ""
 
-#: plugins/ogg.c:126
+#: plugins/ogg.c:125
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:1460
+#: plugins/ogg.c:1459
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""

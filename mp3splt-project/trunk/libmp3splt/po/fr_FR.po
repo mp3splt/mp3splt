@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-09-02 13:52+0200\n"
+"POT-Creation-Date: 2012-10-13 22:09+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: src/mp3splt.c:845
+#: src/mp3splt.c:1055
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " info: le fichier du lien symbolique est '%s'\n"
 
-#: src/mp3splt.c:910
+#: src/mp3splt.c:1120
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " info : le fichier correspond au module '%s'\n"
 
-#: src/mp3splt.c:918
+#: src/mp3splt.c:1128
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " Le fichier M3U '%s' sera créé.\n"
 
-#: src/mp3splt.c:939
+#: src/mp3splt.c:1149
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -41,7 +41,7 @@ msgstr ""
 " Avec ajustement du silence (Seuil : %.1f dB Ecart : %d sec Compensation : "
 "%.2f)\n"
 
-#: src/mp3splt.c:1739 src/tags_parser.c:108
+#: src/mp3splt.c:1871 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -187,7 +187,7 @@ msgstr "description"
 msgid " CUE file '%s' created.\n"
 msgstr " Fichier CUE '%s' créé.\n"
 
-#: src/audacity.c:237
+#: src/audacity.c:236
 #, c-format
 msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr ""
@@ -606,7 +606,7 @@ msgstr " - NS - %d Kb/s"
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1424 plugins/ogg.c:134
+#: plugins/mp3.c:1424 plugins/ogg.c:133
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
@@ -645,12 +645,12 @@ msgstr ""
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
 
-#: plugins/ogg.c:126
+#: plugins/ogg.c:125
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " info : flux Ogg Vorbis - %ld - %ld Kb/s - %d canaux"
 
-#: plugins/ogg.c:1460
+#: plugins/ogg.c:1459
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux ogg.\n"

@@ -80,6 +80,8 @@ A list of <a href="modules.html">all modules</a> is also available.
 
 #ifndef MP3SPLT_MP3SPLT_H
 
+#include <sys/types.h>
+
 /**
  * @brief True value
  */
