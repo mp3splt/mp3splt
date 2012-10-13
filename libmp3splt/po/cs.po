@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-09-02 13:52+0200\n"
+"POT-Creation-Date: 2012-10-13 22:09+0200\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: src/mp3splt.c:845
+#: src/mp3splt.c:1055
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Informace: Spojený název souboru je vyřešen do »%s«\n"
 
-#: src/mp3splt.c:910
+#: src/mp3splt.c:1120
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Informace: Soubor odpovídá přídavnému modulu »%s«\n"
 
-#: src/mp3splt.c:918
+#: src/mp3splt.c:1128
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " Soubor M3U »%s« bude vytvořen.\n"
 
-#: src/mp3splt.c:939
+#: src/mp3splt.c:1149
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -40,7 +40,7 @@ msgid ""
 msgstr ""
 "Pracuje se s SILENCE AUTO-ADJUST (Práh: %.1f dB Mezera: %d s Posun: %.2f)\n"
 
-#: src/mp3splt.c:1739 src/tags_parser.c:108
+#: src/mp3splt.c:1871 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -186,7 +186,7 @@ msgstr "Popis zde"
 msgid " CUE file '%s' created.\n"
 msgstr " Byl vytvořen soubor CUE »%s«.\n"
 
-#: src/audacity.c:237
+#: src/audacity.c:236
 #, c-format
 msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr " Čtou se informace ze souboru se štítky Audacity '%s …\n"
@@ -608,7 +608,7 @@ msgstr " - NS - %d kB/s"
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1424 plugins/ogg.c:134
+#: plugins/mp3.c:1424 plugins/ogg.c:133
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Celkový čas: %dm.%02ds"
@@ -644,11 +644,11 @@ msgstr " Varování: Předpokládá se, že stdin »-« je datový proud mp3.\n"
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " Byly zpracovány snímky %lu - Chyby při seřizování: %lu\n"
 
-#: plugins/ogg.c:126
+#: plugins/ogg.c:125
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Informace: Datový proud OggVorbis - %ld - %ld kB/s - %d kanály"
 
-#: plugins/ogg.c:1460
+#: plugins/ogg.c:1459
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »o-« je datový proud Ogg.\n"
