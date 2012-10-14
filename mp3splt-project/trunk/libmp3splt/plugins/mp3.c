@@ -1137,6 +1137,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state, int fr
   do
   {
     int ret = splt_mp3_get_frame(mp3state);
+    mad_frame_finish(&mp3state->frame);
 
     if (ret == -2)
     {
@@ -1330,9 +1331,8 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state, int fr
   }
 
 function_end:
-  //we free memory allocated by mad_frame_decode(..)
   //TODO: memory leak
-  //splt_mp3_finish_stream_frame(mp3state);
+  //mad_stream_finish(&mp3state->stream);
   mad_synth_finish(&mp3state->synth);
 
   return mp3state;

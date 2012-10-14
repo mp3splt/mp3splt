@@ -39,233 +39,246 @@ void check_args(int argc, main_data *data)
   {
     console_out = stderr;
     show_small_help_exit(data);
+    return;
   }
-  else
+
+  if (opt->k_option)
   {
-    if (opt->k_option)
+    if (we_have_incompatible_stdin_option(opt))
     {
-      if (we_have_incompatible_stdin_option(opt))
-      {
-        print_error_exit(_("cannot use -k option (or STDIN) with"
-              " one of the following options: -S -s -r -w -l -e -i -a -p"), data);
-      }
+      print_error_exit(_("cannot use -k option (or STDIN) with"
+            " one of the following options: -S -s -r -w -l -e -i -a -p -F"), data);
     }
+  }
 
-    if (opt->w_option)
+  if (opt->w_option)
+  {
+    if (opt->t_option || opt->c_option ||
+        opt->s_option || opt->l_option ||
+        opt->e_option || opt->i_option ||
+        opt->f_option || opt->a_option ||
+        opt->p_option || opt->o_option ||
+        opt->g_option || opt->n_option ||
+        opt->x_option || opt->A_option ||
+        opt->E_option || opt->S_option ||
+        opt->G_option || opt->r_option ||
+        opt->F_option)
     {
-      if (opt->t_option || opt->c_option ||
-          opt->s_option || opt->l_option ||
-          opt->e_option || opt->i_option ||
-          opt->f_option || opt->a_option ||
-          opt->p_option || opt->o_option ||
-          opt->g_option || opt->n_option ||
-          opt->x_option || opt->A_option ||
-          opt->E_option || opt->S_option ||
-          opt->G_option || opt->r_option)
-      {
-        print_error_exit(_("the -w option can only be used with -m, -d, -q and -Q"), data);
-      }
+      print_error_exit(_("the -w option can only be used with -m, -d, -q and -Q"), data);
     }
+  }
 
-    if (opt->l_option)
+  if (opt->l_option)
+  {
+    if (opt->t_option || opt->c_option ||
+        opt->s_option || opt->e_option ||
+        opt->i_option || opt->m_option ||
+        opt->f_option || opt->a_option ||
+        opt->p_option || opt->o_option ||
+        opt->g_option || opt->d_option ||
+        opt->n_option || opt->qq_option ||
+        opt->x_option || opt->A_option ||
+        opt->S_option || opt->G_option ||
+        opt->r_option || opt->F_option)
     {
-      if (opt->t_option || opt->c_option ||
-          opt->s_option || opt->e_option ||
-          opt->i_option || opt->m_option ||
-          opt->f_option || opt->a_option ||
-          opt->p_option || opt->o_option ||
-          opt->g_option || opt->d_option ||
-          opt->n_option || opt->qq_option ||
-          opt->x_option || opt->A_option ||
-          opt->S_option || opt->G_option || opt->r_option)
-      {
-        print_error_exit(_("the -l option can only be used with -q"), data);
-      }
+      print_error_exit(_("the -l option can only be used with -q"), data);
     }
+  }
 
-    if (opt->e_option)
+  if (opt->e_option)
+  {
+    if (opt->t_option || opt->c_option || 
+        opt->s_option || opt->i_option || 
+        opt->a_option || opt->p_option ||
+        opt->g_option || opt->n_option ||
+        opt->A_option || opt->E_option ||
+        opt->S_option || opt->G_option ||
+        opt->r_option || opt->F_option)
     {
-      if (opt->t_option || opt->c_option || 
-          opt->s_option || opt->i_option || 
-          opt->a_option || opt->p_option ||
-          opt->g_option || opt->n_option ||
-          opt->A_option || opt->E_option ||
-          opt->S_option || opt->G_option ||
-          opt->r_option)
-      {
-        print_error_exit(_("the -e option can only be used with -m, -f, -o, -d, -q, -Q"), data);
-      }
+      print_error_exit(_("the -e option can only be used with -m, -f, -o, -d, -q, -Q"), data);
     }
+  }
 
-    if (opt->f_option)
+  if (opt->f_option)
+  {
+  }
+
+  if (opt->c_option)
+  {
+    if (opt->t_option || opt->s_option ||
+        opt->i_option || opt->g_option ||
+        opt->A_option || opt->S_option ||
+        opt->G_option || opt->r_option ||
+        opt->F_option)
     {
+      print_error_exit(_("the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i, -S or -F"), data);
     }
+  }
 
-    if (opt->c_option)
+  if (opt->A_option)
+  {
+    if (opt->t_option || opt->s_option ||
+        opt->i_option || opt->S_option || 
+        opt->r_option || opt->F_option)
     {
-      if (opt->t_option || opt->s_option ||
-          opt->i_option || opt->g_option ||
-          opt->A_option || opt->S_option ||
-          opt->G_option || opt->r_option)
-      {
-        print_error_exit(_("the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i or -S"), data);
-      }
+      print_error_exit(_("the -A option cannot be used with -t, -s, -r, -i, -S or -F"), data);
     }
+  }
 
-    if (opt->A_option)
+  if (opt->t_option)
+  {
+    if (opt->s_option || opt->i_option ||
+        opt->S_option || opt->r_option ||
+        opt->F_option)
     {
-      if (opt->t_option || opt->s_option || opt->i_option || opt->S_option || opt->r_option)
-      {
-        print_error_exit(_("the -A option cannot be used with -t, -s, -r, -i or -S"), data);
-      }
+      print_error_exit(_("the -t option cannot be used with -s, -r, -i, -S or -F"), data);
     }
+  }
 
-    if (opt->t_option)
+  if (opt->s_option)
+  {
+    if (opt->a_option || opt->i_option ||
+        opt->S_option || opt->r_option)
     {
-      if (opt->s_option || opt->i_option || opt->S_option || opt->r_option)
-      {
-        print_error_exit(_("the -t option cannot be used with -s, -r, -i or -S"), data);
-      }
+      print_error_exit(_("-s option cannot be used with -a, -r, -i or -S"), data);
     }
+  }
 
-    if (opt->s_option)
-    {
-      if (opt->a_option || opt->i_option || opt->S_option || opt->r_option)
-      {
-        print_error_exit(_("-s option cannot be used with -a, -r, -i or -S"), data);
-      }
-    }
-
-    if (opt->a_option)
-    {
-      if (opt->i_option)
-      {
-        print_error_exit(_("-a option cannot be used with -i"), data);
-      }
-    }
-
-    if (opt->S_option)
-    {
-    }
-
-    if (opt->p_option)
-    {
-      if (!opt->a_option && !opt->s_option && !opt->i_option && !opt->r_option)
-      {
-        print_error_exit(_("the -p option cannot be used without -a, -s, -r  or -i"), data);
-      }
-    }
-
-    if (opt->o_option)
-    {
-      if (opt->i_option)
-      {
-        print_error_exit(_("the -o option cannot be used with -i"), data);
-      }
-      if (opt->output_format)
-      {
-        if ((strcmp(opt->output_format,"-") == 0) && (opt->m_option || opt->d_option))
-        {
-          print_error_exit(_("cannot use '-o -' (STDOUT) with -m or -d"), data);
-        }
-      }
-    }
-
-    if (opt->g_option)
-    {
-      if (opt->i_option || opt->n_option || opt->G_option)
-      {
-        print_error_exit(_("the -g option cannot be used with -n, -i or -G"), data);
-      }
-    }
-
-    if (opt->d_option)
-    {
-      if (opt->i_option)
-      {
-        print_error_exit(_("the -d option cannot be used with -i"), data);
-      }
-    }
-
-    if (opt->n_option)
-    {
-      if (opt->i_option || opt->T_option)
-      {
-        print_error_exit(_("the -n option cannot be used with -i or -T"), data);
-      }
-    }
-
-    if (opt->m_option)
-    {
-      if (opt->i_option)
-      {
-        print_error_exit(_("the -m option cannot be used with -i"), data);
-      }
-    }
-
+  if (opt->a_option)
+  {
     if (opt->i_option)
     {
+      print_error_exit(_("-a option cannot be used with -i"), data);
     }
+  }
 
-    if (opt->q_option)
+  if (opt->S_option)
+  {
+  }
+
+  if (opt->p_option)
+  {
+    if (!opt->a_option && !opt->s_option && !opt->i_option && !opt->r_option)
     {
+      print_error_exit(_("the -p option cannot be used without -a, -s, -r  or -i"), data);
     }
+  }
 
-    if (opt->qq_option)
+  if (opt->o_option)
+  {
+    if (opt->i_option)
     {
-      if (opt->o_option)
-      {
-        if (strcmp(opt->output_format,"-") == 0)
-        {
-          print_error_exit(_("the -Q option cannot be used with"
-                " STDOUT output ('-o -')"), data);
-        }
-      }
-      if (opt->c_option)
-      {
-        if (strncmp(opt->cddb_arg,"query",5) == 0)
-        {
-          print_error_exit(_("the -Q option cannot be used with"
-                " interactive freedb query ('-c query')"), data);
-        }
-      }
+      print_error_exit(_("the -o option cannot be used with -i"), data);
     }
-
-    if (opt->N_option)
+    if (opt->output_format)
     {
-      if (!opt->s_option)
+      if ((strcmp(opt->output_format,"-") == 0) && (opt->m_option || opt->d_option))
       {
-        print_error_exit(_("the -N option must be used with"
-              " silence detection (-s option)"), data);
+        print_error_exit(_("cannot use '-o -' (STDOUT) with -m or -d"), data);
       }
     }
+  }
 
-    if (opt->O_option)
+  if (opt->g_option)
+  {
+    if (opt->i_option || opt->n_option || opt->G_option)
     {
-      if (opt->w_option || opt->e_option ||
-          opt->l_option || opt->i_option)
+      print_error_exit(_("the -g option cannot be used with -n, -i or -G"), data);
+    }
+  }
+
+  if (opt->d_option)
+  {
+    if (opt->i_option)
+    {
+      print_error_exit(_("the -d option cannot be used with -i"), data);
+    }
+  }
+
+  if (opt->n_option)
+  {
+    if (opt->i_option || opt->T_option)
+    {
+      print_error_exit(_("the -n option cannot be used with -i or -T"), data);
+    }
+  }
+
+  if (opt->m_option)
+  {
+    if (opt->i_option)
+    {
+      print_error_exit(_("the -m option cannot be used with -i"), data);
+    }
+  }
+
+  if (opt->i_option)
+  {
+  }
+
+  if (opt->q_option)
+  {
+  }
+
+  if (opt->qq_option)
+  {
+    if (opt->o_option)
+    {
+      if (strcmp(opt->output_format,"-") == 0)
       {
-        print_error_exit(_("the -O option cannot be used with"
-              " -w, -e, -l or -i"), data);
+        print_error_exit(_("the -Q option cannot be used with"
+              " STDOUT output ('-o -')"), data);
       }
     }
-
-    if (opt->x_option)
+    if (opt->c_option)
     {
-    }
-
-    if (opt->T_option)
-    {
-      int force_tags_version = opt->T_option_value;
-      if ((force_tags_version != 1) && (force_tags_version != 2) &&
-          (force_tags_version != 12))
+      if (strncmp(opt->cddb_arg,"query",5) == 0)
       {
-        print_error_exit("the -T option can only have values 1, 2 or 12", data);
+        print_error_exit(_("the -Q option cannot be used with"
+              " interactive freedb query ('-c query')"), data);
       }
     }
+  }
 
-    if (opt->G_option)
+  if (opt->N_option)
+  {
+    if (!opt->s_option)
     {
+      print_error_exit(_("the -N option must be used with silence detection (-s option)"), data);
+    }
+  }
+
+  if (opt->O_option)
+  {
+    if (opt->w_option || opt->e_option ||
+        opt->l_option || opt->i_option)
+    {
+      print_error_exit(_("the -O option cannot be used with -w, -e, -l or -i"), data);
+    }
+  }
+
+  if (opt->x_option)
+  {
+  }
+
+  if (opt->T_option)
+  {
+    int force_tags_version = opt->T_option_value;
+    if ((force_tags_version != 1) && (force_tags_version != 2) &&
+        (force_tags_version != 12))
+    {
+      print_error_exit("the -T option can only have values 1, 2 or 12", data);
+    }
+  }
+
+  if (opt->G_option)
+  {
+  }
+
+  if (opt->F_option)
+  {
+    if (!opt->s_option)
+    {
+      print_error_exit(_("the -F option cannot be used without -s"), data);
     }
   }
 }
@@ -275,6 +288,6 @@ int we_have_incompatible_stdin_option(options *opt)
   return opt->s_option || opt->w_option ||
     opt->l_option || opt->e_option ||
     opt->i_option || opt->a_option ||
-    opt->p_option || opt->S_option || opt->r_option;
+    opt->p_option || opt->S_option || opt->r_option || opt->F_option;
 }
 

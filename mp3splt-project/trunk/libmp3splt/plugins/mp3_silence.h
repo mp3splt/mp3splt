@@ -35,6 +35,6 @@
 
 int splt_mp3_scan_silence(splt_state *state, off_t begin, unsigned long length,
     float threshold, float min, int shots, short output, int *error,
-    short silence_processor(double time, int silence_was_found, short must_flush,
+    short silence_processor(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error));
 

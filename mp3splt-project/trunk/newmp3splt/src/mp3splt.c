@@ -132,7 +132,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   while ((option = getopt(data->argc, data->argv,
-          "m:O:Dvifkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:")) != -1)
+          "m:O:Dvifkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:F:")) != -1)
   {
     switch (option)
     {
@@ -233,6 +233,11 @@ int main(int argc, char **orig_argv)
         opt->m_option = SPLT_TRUE;
         opt->m3u_arg = strdup(optarg);
         mp3splt_set_m3u_filename(state, opt->m3u_arg);
+        break;
+      case 'F':
+        opt->F_option = SPLT_TRUE;
+        opt->full_log_arg = strdup(optarg);
+        mp3splt_set_silence_full_log_filename(state, opt->full_log_arg);
         break;
       case 'S':
         opt->S_option = SPLT_TRUE;

@@ -61,6 +61,9 @@ char *splt_t_get_default_genre_tag(splt_state *state);
 
 int splt_t_set_silence_log_fname(splt_state *state, const char *filename);
 char *splt_t_get_silence_log_fname(splt_state *state);
+int splt_t_set_silence_full_log_fname(splt_state *state, const char *filename);
+char *splt_t_get_silence_full_log_fname(splt_state *state);
+FILE *splt_t_get_silence_full_log_file_descriptor(splt_state *state);
 
 int splt_t_set_filename_to_split(splt_state *state, const char *filename);
 char *splt_t_get_filename_to_split(splt_state *state);

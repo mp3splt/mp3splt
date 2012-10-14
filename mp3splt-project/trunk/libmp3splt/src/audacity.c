@@ -45,7 +45,6 @@ Input splitpoints from audacity.
 
 #include "splt.h"
 
-
 static long splt_audacity_get_begin(splt_audacity *sa)
 {
   return sa->begin;

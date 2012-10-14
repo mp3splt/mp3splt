@@ -200,7 +200,7 @@ int splt_mp3_get_frame(splt_mp3_state *mp3state)
   }
 
   //mad_frame_decode() returns -1 if error, 0 if no error
-  return mad_frame_decode(&mp3state->frame,&mp3state->stream);
+  return mad_frame_decode(&mp3state->frame, &mp3state->stream);
 }
 
 /*! used by mp3split and mp3_scan_silence

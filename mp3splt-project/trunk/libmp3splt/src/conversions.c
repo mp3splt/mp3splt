@@ -80,7 +80,7 @@ long splt_co_convert_to_hundreths(const char *s)
 }
 
 //! Convert a factor to the corresponding dB value
-float splt_co_convert_to_dB(double input)
+float splt_co_convert_to_db(double input)
 {
   float level;
   if (input <= 0.0)
@@ -96,7 +96,7 @@ float splt_co_convert_to_dB(double input)
 }
 
 //! Convert a dB value to a factor
-double splt_co_convert_from_dB(float input)
+double splt_co_convert_from_db(float input)
 {
   double amp;
   if (input <- 96.0)
