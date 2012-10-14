@@ -46,7 +46,7 @@
 int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold, 
     float min, int shots, short output, ogg_page *page, ogg_int64_t granpos,
     int *error, ogg_int64_t first_cut_granpos,
-    short silence_processor(double time, int silence_was_found, short must_flush,
+    short silence_processor(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error));
 
 #define MP3SPLT_OGG_SILENCE_H

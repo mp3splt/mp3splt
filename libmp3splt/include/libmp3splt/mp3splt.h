@@ -921,8 +921,7 @@ const char *mp3splt_get_filename_to_split(splt_state *state);
 splt_code mp3splt_set_m3u_filename(splt_state *state, const char *m3u_filename);
 
 /**
- * @brief Log filename for the #SPLT_OPTION_SILENCE_MODE split mode that will be created in the
- *        output path.
+ * @brief Log filename for the #SPLT_OPTION_SILENCE_MODE split mode that will be created.
  *
  * The log filename is useful to find out the silence splitpoints with different parameters
  * without having to detect silence every time.
@@ -947,6 +946,40 @@ splt_code mp3splt_set_m3u_filename(splt_state *state, const char *m3u_filename);
  * @see #mp3splt_set_path_of_split
  */
 splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filename);
+
+/**
+ * @brief Full log filename for the #SPLT_OPTION_SILENCE_MODE split mode that will be created.
+ *
+ * The full log filename is useful to draw the amplitude wave of the input file (in dB) in order
+ * to choose a threshold. If this function is not called, no full log is written.
+ *
+ * \note <i>Full log file structure:</i>\n
+ *   The first column is a dummy column which is always zero, for plotting on zero axis purposes.\n
+ *   The second column is the time in seconds as double.\n
+ *   The third column is the dB level.\n
+ *   The fourth column is the silences shots counter.\n
+ *   The five column is the number of splitpoints found.\n
+ *   The sixth column is the start time of the silence spot found.\n
+ *   The seventh column is the end time of the silence spot found.
+ *
+ * Example of plotting the full log file with gnuplot:
+ * \code
+ *  gnuplot -e "file='silence_logs.txt'; set decimalsign locale;
+ *  plot file using 2:3 title 'Threshold',
+ *       file using 2:4 title 'Silence shots' with linespoints,
+ *       file using 2:5 title 'Number of silence points found' with fsteps,
+ *       file using 6:1 title 'Begin of silence',
+ *       file using 7:1 title 'End of silence' with points;
+ *  pause -1"
+ * \endcode
+ *
+ * @param[in] state Main state.
+ * @param[in] filename Full log filename when detecting splitpoints from silence.
+ * @return Possible error.
+ *
+ * @see #mp3splt_set_path_of_split
+ */
+splt_code mp3splt_set_silence_full_log_filename(splt_state *state, const char *filename);
 
 //@}
 

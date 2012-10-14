@@ -48,7 +48,7 @@
 
 static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
     float max_threshold, ogg_page *page,  ogg_int64_t granpos, ogg_int64_t first_cut_granpos,
-    short process_silence(double time, int silence_was_found, short must_flush,
+    short process_silence(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error),
     splt_scan_silence_data *ssd, int *error);
 static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, float threshold);
@@ -56,7 +56,7 @@ static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, floa
 int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold, 
     float min, int shots, short output, ogg_page *page, ogg_int64_t granpos,
     int *error, ogg_int64_t first_cut_granpos,
-    short silence_processor(double time, int silence_was_found, short must_flush,
+    short silence_processor(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error))
 {
   splt_scan_silence_data *ssd = splt_scan_silence_data_new(state, output, min, shots, SPLT_FALSE);
@@ -82,7 +82,7 @@ int splt_ogg_scan_silence(splt_state *state, short seconds, float threshold,
 
 static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
     float max_threshold, ogg_page *page,  ogg_int64_t granpos, ogg_int64_t first_cut_granpos,
-    short process_silence(double time, int silence_was_found, short must_flush,
+    short process_silence(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error),
     splt_scan_silence_data *ssd, int *error)
 {
@@ -108,7 +108,7 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 
   ogg_page og;
 
-  float threshold = splt_co_convert_from_dB(max_threshold);
+  float threshold = splt_co_convert_from_db(max_threshold);
 
   int result = 0;
 
@@ -253,7 +253,10 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
             time_in_double = (double) (pos - first_cut_granpos);
             time_in_double /= oggstate->vi->rate;
             time_in_double += previous_streams_time_in_double;
-            int stop = process_silence(time_in_double, silence_was_found, must_flush, ssd, &found, &err);
+
+            float level = splt_co_convert_to_db(oggstate->temp_level);
+
+            int stop = process_silence(time_in_double, level, silence_was_found, must_flush, ssd, &found, &err);
             if (stop || stop == -1)
             {
               eos = 1;
@@ -293,7 +296,7 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 //        fflush(stdout);
 //      }
 
-      float level = splt_co_convert_to_dB(oggstate->temp_level);
+      float level = splt_co_convert_to_db(oggstate->temp_level);
       if (state->split.get_silence_level)
       {
         long time = (long) (((double) pos / oggstate->vi->rate) * 100.0);
@@ -332,7 +335,7 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 
   int junk;
   int err = SPLT_OK;
-  process_silence(-1, SPLT_FALSE, SPLT_FALSE, ssd, &junk, &err);
+  process_silence(-1, -96, SPLT_FALSE, SPLT_FALSE, ssd, &junk, &err);
   if (err < 0) { *error = err; }
 
 function_end:

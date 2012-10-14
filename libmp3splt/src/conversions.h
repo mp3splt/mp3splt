@@ -33,8 +33,8 @@
 #ifndef SPLT_CONVERSIONS_H
 
 long splt_co_convert_to_hundreths (const char *s);
-float splt_co_convert_to_dB(double input);
-double splt_co_convert_from_dB(float input);
+float splt_co_convert_to_db(double input);
+double splt_co_convert_from_db(float input);
 void splt_co_get_mins_secs_hundr(long split_hundr, long *mins, long *secs, long *hundr);
 long splt_co_time_to_long(double time);
 long splt_co_time_to_long_ceil(double time);

@@ -86,6 +86,12 @@ void free_options(options **opt)
         (*opt)->m3u_arg = NULL;
       }
 
+      if ((*opt)->full_log_arg)
+      {
+        free((*opt)->full_log_arg);
+        (*opt)->full_log_arg = NULL;
+      }
+
       if ((*opt)->param_args)
       {
         free((*opt)->param_args);
@@ -139,6 +145,7 @@ options *new_options()
   opt->qq_option = SPLT_FALSE;
   opt->A_option = SPLT_FALSE;
   opt->m_option = SPLT_FALSE;
+  opt->F_option = SPLT_FALSE;
   opt->S_option = SPLT_FALSE;
   opt->S_option_value = 0;
   opt->tags_from_fname_regex_arg = NULL;
@@ -146,8 +153,9 @@ options *new_options()
   opt->dir_arg = NULL;
   opt->export_cue_arg = NULL;
   opt->audacity_labels_arg = NULL;
-  opt->param_args = NULL;
   opt->m3u_arg = NULL;
+  opt->full_log_arg = NULL;
+  opt->param_args = NULL;
   opt->output_format = NULL;
 
   opt->custom_tags = NULL;

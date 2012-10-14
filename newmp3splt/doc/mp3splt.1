@@ -584,6 +584,30 @@ used with STDOUT output.
 \fBExport to .cue file\fP. Creates a .cue file containing the splitpoints.
 Use \-P to export the splitpoints without actually splitting.
 
+.IP "\fB\-F FULL_SILENCE_LOG_FILE\fP         " 10
+\fBExport the full log of silence detection\fP. The full log filename is useful to draw the
+amplitude wave of the input file (in dB) in order to choose a threshold.
+
+\fBNote about the file structure:\fP 
+
+     \(hythe first column is a dummy column which is always zero, for plotting on zero axis purposes
+     \(hythe second column is the time in seconds as double
+     \(hythe third column is the dB level
+     \(hythe fourth column is the silences shots counter
+     \(hythe five column is the number of splitpoints found
+     \(hythe sixth column is the start time of the silence spot found
+     \(hythe seventh column is the end time of the silence spot found
+
+Example of plotting the full log file with gnuplot: 
+
+gnuplot -e "file='silence_logs.txt'; set decimalsign locale;
+plot file using 2:3 title 'Threshold',
+file using 2:4 title 'Silence shots' with linespoints,
+file using 2:5 title 'Number of silence points found' with fsteps,
+file using 6:1 title 'Begin of silence',
+file using 7:1 title 'End of silence' with points;
+pause -1"
+
 .IP "\fB\-P\fP         " 10
 \fBPretend to split\fP. Simulation of the process without creating any
 files or directories.

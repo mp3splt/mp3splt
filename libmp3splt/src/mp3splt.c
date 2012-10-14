@@ -238,30 +238,44 @@ splt_code mp3splt_set_m3u_filename(splt_state *state, const char *filename)
   return error;
 }
 
-//!sets the m3u filename
 splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filename)
 {
-  int error = SPLT_OK;
-
-  if (state != NULL)
+  if (state == NULL)
   {
-    if (!splt_o_library_locked(state))
-    {
-      splt_o_lock_library(state);
-
-      error = splt_t_set_silence_log_fname(state, filename);
-
-      splt_o_unlock_library(state);
-    }
-    else
-    {
-      error = SPLT_ERROR_LIBRARY_LOCKED;
-    }
+    return SPLT_ERROR_STATE_NULL;
   }
-  else
+
+  if (splt_o_library_locked(state))
   {
-    error = SPLT_ERROR_STATE_NULL;
+    return SPLT_ERROR_LIBRARY_LOCKED;
   }
+
+  splt_o_lock_library(state);
+
+  int error = splt_t_set_silence_log_fname(state, filename);
+
+  splt_o_unlock_library(state);
+
+  return error;
+}
+
+splt_code mp3splt_set_silence_full_log_filename(splt_state *state, const char *filename)
+{
+  if (state == NULL)
+  {
+    return SPLT_ERROR_STATE_NULL;
+  }
+
+  if (splt_o_library_locked(state))
+  {
+    return SPLT_ERROR_LIBRARY_LOCKED;
+  }
+
+  splt_o_lock_library(state);
+
+  int error = splt_t_set_silence_full_log_fname(state, filename);
+
+  splt_o_unlock_library(state);
 
   return error;
 }

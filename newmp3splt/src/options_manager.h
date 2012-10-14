@@ -52,6 +52,7 @@ typedef struct {
   //info -i option, m3u file option
   short i_option;
   short m_option;
+  short F_option;
   short S_option;
   int S_option_value;
   char *tags_from_fname_regex_arg;
@@ -59,10 +60,10 @@ typedef struct {
   char *cddb_arg; char *dir_arg; char *param_args;
   char *export_cue_arg;
   char *audacity_labels_arg;
-  //the m3u filename
-  char *m3u_arg;
   //custom tags with -g
   char *custom_tags;
+  char *m3u_arg;
+  char *full_log_arg;
   //output format (-o)
   char *output_format;
   //the parsed freedb_search_type

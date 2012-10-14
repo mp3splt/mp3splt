@@ -41,8 +41,12 @@ Actually split the input file
 
 #include "splt.h"
 
+static splt_code splt_s_open_full_log_filename(splt_state *state);
+static void splt_s_close_full_log_filename(splt_state *state);
+
 /****************************/
 /*! normal split */
+
 static long splt_s_real_split(double splt_beg, double splt_end, 
     int save_end_point, int *error, splt_state *state)
 {
@@ -835,7 +839,13 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
     {
       state->split.get_silence_level(0, INT_MAX, state->split.silence_level_client_data);
     }
+
+    int err = splt_s_open_full_log_filename(state);
+    if (err < 0) { *error = err; goto end; }
+
     found = splt_p_scan_silence(state, error);
+
+    splt_s_close_full_log_filename(state);
   }
 
   //if no error
@@ -975,11 +985,10 @@ int splt_s_set_silence_splitpoints(splt_state *state, int *error)
       //if we write the silence points log file
       if (splt_o_get_int_option(state, SPLT_OPT_ENABLE_SILENCE_LOG))
       {
-        splt_c_put_info_message_to_client(state, 
-            _(" Writing silence log file '%s' ...\n"),
-            splt_t_get_silence_log_fname(state));
-
         char *fname = splt_t_get_silence_log_fname(state);
+
+        splt_c_put_info_message_to_client(state, _(" Writing silence log file '%s' ...\n"), fname);
+
         if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
         {
           FILE *log_file = NULL;
@@ -1113,6 +1122,36 @@ void splt_s_trim_silence_split(splt_state *state, int *error)
     default:
       break;
   }
+}
+
+static splt_code splt_s_open_full_log_filename(splt_state *state)
+{
+  char *fname = splt_t_get_silence_full_log_fname(state);
+  if (!fname || fname[0] == '\0')
+  {
+    return;
+  }
+
+  state->full_log_file_descriptor = splt_io_fopen(fname, "w");
+  if (!state->full_log_file_descriptor)
+  {
+    splt_e_set_strerror_msg_with_data(state, fname);
+    return SPLT_ERROR_CANNOT_OPEN_FILE;
+  }
+
+  return SPLT_OK;
+}
+
+static void splt_s_close_full_log_filename(splt_state *state)
+{
+  if (!state->full_log_file_descriptor)
+  {
+    return;
+  }
+
+  fflush(state->full_log_file_descriptor);
+  fclose(state->full_log_file_descriptor);
+  state->full_log_file_descriptor = NULL;
 }
 
 /****************************/

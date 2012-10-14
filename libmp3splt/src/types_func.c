@@ -52,6 +52,8 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->default_comment_tag = NULL;
   state->default_genre_tag = NULL;
   state->silence_log_fname = NULL;
+  state->silence_full_log_fname = NULL;
+  state->full_log_file_descriptor = NULL;
 
   state->split.splitnumber = 0;
   state->split.current_split_file_number = 1;
@@ -177,6 +179,11 @@ static void splt_t_free_state_struct(splt_state *state)
     {
       free(state->silence_log_fname);
       state->silence_log_fname = NULL;
+    }
+    if (state->silence_full_log_fname)
+    {
+      free(state->silence_full_log_fname);
+      state->silence_full_log_fname = NULL;
     }
     if (state->wrap)
     {
@@ -352,6 +359,22 @@ int splt_t_set_silence_log_fname(splt_state *state, const char *filename)
 char *splt_t_get_silence_log_fname(splt_state *state)
 {
   return state->silence_log_fname;
+}
+
+int splt_t_set_silence_full_log_fname(splt_state *state, const char *filename)
+{
+  splt_d_print_debug(state,"Setting silence full log fname to _%s_\n", filename);
+  return splt_su_copy(filename, &state->silence_full_log_fname);
+}
+
+char *splt_t_get_silence_full_log_fname(splt_state *state)
+{
+  return state->silence_full_log_fname;
+}
+
+FILE *splt_t_get_silence_full_log_file_descriptor(splt_state *state)
+{
+  return state->full_log_file_descriptor;
 }
 
 //! Sets the name of the file that has to be split.

@@ -618,6 +618,8 @@ struct _splt_state {
 
   //!filename of the silence log: 'mp3splt.log' in the original mp3splt
   char *silence_log_fname;
+  char *silence_full_log_fname;
+  FILE *full_log_file_descriptor;
 };
 
 #include "pair.h"
