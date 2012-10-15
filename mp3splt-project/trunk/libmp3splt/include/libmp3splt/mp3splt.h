@@ -964,7 +964,7 @@ splt_code mp3splt_set_silence_log_filename(splt_state *state, const char *filena
  *
  * Example of plotting the full log file with gnuplot:
  * \code
- *  gnuplot -e "file='silence_logs.txt'; set decimalsign locale;
+ *  gnuplot -e "file='silence_logs.txt'; set decimalsign locale; set xlabel 'Time in seconds';
  *  plot file using 2:3 title 'Threshold',
  *       file using 2:4 title 'Silence shots' with linespoints,
  *       file using 2:5 title 'Number of silence points found' with fsteps,

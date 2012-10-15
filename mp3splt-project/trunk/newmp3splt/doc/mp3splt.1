@@ -600,7 +600,7 @@ amplitude wave of the input file (in dB) in order to choose a threshold.
 
 Example of plotting the full log file with gnuplot: 
 
-gnuplot -e "file='silence_logs.txt'; set decimalsign locale;
+gnuplot -e "file='silence_logs.txt'; set decimalsign locale; set xlabel 'Time in seconds';
 plot file using 2:3 title 'Threshold',
 file using 2:4 title 'Silence shots' with linespoints,
 file using 2:5 title 'Number of silence points found' with fsteps,
