@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-13 22:09+0200\n"
+"POT-Creation-Date: 2012-10-15 21:33+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,29 +17,29 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:1055
+#: src/mp3splt.c:1069
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:1120
+#: src/mp3splt.c:1134
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:1128
+#: src/mp3splt.c:1142
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:1149
+#: src/mp3splt.c:1163
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
 "%.2f)\n"
 msgstr ""
 
-#: src/mp3splt.c:1871 src/tags_parser.c:108
+#: src/mp3splt.c:1885 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -73,84 +73,84 @@ msgstr ""
 msgid "  Album: %s\n"
 msgstr ""
 
-#: src/splt.c:154
+#: src/splt.c:158
 msgid " info: starting normal split\n"
 msgstr ""
 
-#: src/splt.c:251
+#: src/splt.c:255
 msgid " info: starting error mode split\n"
 msgstr ""
 
-#: src/splt.c:563
+#: src/splt.c:567
 msgid " info: starting time mode split\n"
 msgstr ""
 
-#: src/splt.c:582
+#: src/splt.c:586
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr ""
 
-#: src/splt.c:624
+#: src/splt.c:628
 #, c-format
 msgid " Trim silence split - Th: %.1f dB\n"
 msgstr ""
 
-#: src/splt.c:758
+#: src/splt.c:762
 msgid "YES"
 msgstr "SÍ"
 
-#: src/splt.c:764
+#: src/splt.c:768
 #, c-format
 msgid "NO"
 msgstr "NO"
 
-#: src/splt.c:770
+#: src/splt.c:774
 #, c-format
 msgid "User"
 msgstr "Usuario"
 
-#: src/splt.c:774
+#: src/splt.c:778
 #, c-format
 msgid "Auto"
 msgstr "Auto"
 
-#: src/splt.c:794
+#: src/splt.c:798
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
 "Min track: %.2f, Shots: %d%s)\n"
 msgstr ""
 
-#: src/splt.c:820
+#: src/splt.c:824
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)\n"
 msgstr ""
 
-#: src/splt.c:849
+#: src/splt.c:859
 #, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 
-#: src/splt.c:861
+#: src/splt.c:871
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr ""
 
-#: src/splt.c:979
+#: src/splt.c:990
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr ""
 
-#: src/splt.c:1035
+#: src/splt.c:1044
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1083
+#: src/splt.c:1092
 msgid " info: starting trim using silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1130
+#: src/splt.c:1169
 msgid " info: starting wrap mode split\n"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid " CUE file '%s' created.\n"
 msgstr ""
 
-#: src/audacity.c:236
+#: src/audacity.c:235
 #, c-format
 msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr ""
@@ -553,13 +553,13 @@ msgstr ""
 msgid "not enough memory"
 msgstr ""
 
-#: plugins/mp3.c:1159
+#: plugins/mp3.c:1160
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1255
+#: plugins/mp3.c:1256
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 

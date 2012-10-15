@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-13 22:10+0200\n"
+"POT-Creation-Date: 2012-10-15 21:33+0200\n"
 "PO-Revision-Date: 2011-09-11 11:11+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,72 +18,72 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: src/mp3splt.c:257 src/utils.c:36 src/utils.c:52
+#: src/mp3splt.c:262 src/utils.c:36 src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "Nelze přidělit paměť!"
 
-#: src/mp3splt.c:278
+#: src/mp3splt.c:283
 msgid ""
 "bad overlap time expression.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:295
+#: src/mp3splt.c:300
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:358
+#: src/mp3splt.c:363
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr ""
 
-#: src/mp3splt.c:425
+#: src/mp3splt.c:430
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 
-#: src/mp3splt.c:572
+#: src/mp3splt.c:577
 msgid "no input filename(s)."
 msgstr ""
 
-#: src/mp3splt.c:585
+#: src/mp3splt.c:590
 msgid "multiple splitpoints with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:589
+#: src/mp3splt.c:594
 msgid "using time mode with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:630
+#: src/mp3splt.c:635
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:634
+#: src/mp3splt.c:639
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:641 src/options_checker.c:49
+#: src/mp3splt.c:646
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p"
 msgstr ""
 
-#: src/mp3splt.c:702
+#: src/mp3splt.c:707
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:748
+#: src/mp3splt.c:753
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:780
+#: src/mp3splt.c:785
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:796
+#: src/mp3splt.c:801
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -188,80 +188,90 @@ msgid ""
 "Getting file from %s on port %d using %s ...\n"
 msgstr ""
 
-#: src/options_checker.c:66
+#: src/options_checker.c:49
+msgid ""
+"cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
+"w -l -e -i -a -p -F"
+msgstr ""
+
+#: src/options_checker.c:67
 msgid "the -w option can only be used with -m, -d, -q and -Q"
 msgstr ""
 
-#: src/options_checker.c:82
+#: src/options_checker.c:84
 msgid "the -l option can only be used with -q"
 msgstr ""
 
-#: src/options_checker.c:96
+#: src/options_checker.c:98
 msgid "the -e option can only be used with -m, -f, -o, -d, -q, -Q"
 msgstr ""
 
-#: src/options_checker.c:111
-msgid "the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i or -S"
+#: src/options_checker.c:114
+msgid "the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i, -S or -F"
 msgstr ""
 
-#: src/options_checker.c:119
-msgid "the -A option cannot be used with -t, -s, -r, -i or -S"
+#: src/options_checker.c:124
+msgid "the -A option cannot be used with -t, -s, -r, -i, -S or -F"
 msgstr ""
 
-#: src/options_checker.c:127
-msgid "the -t option cannot be used with -s, -r, -i or -S"
-msgstr ""
-
-#: src/options_checker.c:135
-msgid "-s option cannot be used with -a, -r, -i or -S"
+#: src/options_checker.c:134
+msgid "the -t option cannot be used with -s, -r, -i, -S or -F"
 msgstr ""
 
 #: src/options_checker.c:143
+msgid "-s option cannot be used with -a, -r, -i or -S"
+msgstr ""
+
+#: src/options_checker.c:151
 msgid "-a option cannot be used with -i"
 msgstr ""
 
-#: src/options_checker.c:155
+#: src/options_checker.c:163
 msgid "the -p option cannot be used without -a, -s, -r  or -i"
 msgstr ""
 
-#: src/options_checker.c:163
+#: src/options_checker.c:171
 msgid "the -o option cannot be used with -i"
 msgstr ""
 
-#: src/options_checker.c:169
+#: src/options_checker.c:177
 msgid "cannot use '-o -' (STDOUT) with -m or -d"
 msgstr ""
 
-#: src/options_checker.c:178
+#: src/options_checker.c:186
 msgid "the -g option cannot be used with -n, -i or -G"
 msgstr ""
 
-#: src/options_checker.c:186
+#: src/options_checker.c:194
 msgid "the -d option cannot be used with -i"
 msgstr ""
 
-#: src/options_checker.c:194
+#: src/options_checker.c:202
 msgid "the -n option cannot be used with -i or -T"
 msgstr ""
 
-#: src/options_checker.c:202
+#: src/options_checker.c:210
 msgid "the -m option cannot be used with -i"
 msgstr ""
 
-#: src/options_checker.c:220
+#: src/options_checker.c:228
 msgid "the -Q option cannot be used with STDOUT output ('-o -')"
 msgstr ""
 
-#: src/options_checker.c:228
+#: src/options_checker.c:236
 msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
 msgstr ""
 
-#: src/options_checker.c:238
+#: src/options_checker.c:246
 msgid "the -N option must be used with silence detection (-s option)"
 msgstr ""
 
-#: src/options_checker.c:248
+#: src/options_checker.c:255
 msgid "the -O option cannot be used with -w, -e, -l or -i"
+msgstr ""
+
+#: src/options_checker.c:281
+msgid "the -F option cannot be used without -s"
 msgstr ""
 
 #: src/options_parsers.c:46
