@@ -982,6 +982,40 @@ function test_silence_with_trackjoin_all_files_joined
   echo
 }
 
+function test_silence_full_log
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="silence mode - check full log file silence_logs.txt"
+
+  silence_logs_file="silence_logs.txt"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting silence mode split
+ Silence split type: Auto mode (Th: -48.0 dB, Off: 0.80, Min: 0.00, Remove: NO, Min track: 0.00, Shots: 25)
+
+ Total silence points found: 2. (Selected 3 tracks)
+ Writing silence log file 'mp3splt.log' ...
+   File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
+ silence split ok
+ Average silence level: -23.08 dB"
+  mp3splt_args="-T 2 -F $silence_logs_file -d $OUTPUT_DIR -s $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_files_content "expected_silence_logs.txt" "$silence_logs_file"
+
+  print_ok
+  echo
+}
+
 function run_silence_mode_tests
 {
   p_blue " SILENCE tests ..."

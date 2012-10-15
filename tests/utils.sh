@@ -84,7 +84,7 @@ function check_file_content
   file=$1
   expected=$2
   echo -e "$expected" > $EXPECTED_FILE
-  _check_files_content $EXPECTED_FILE $file
+  check_files_content $EXPECTED_FILE $file
 }
 
 function check_output_directory_is_empty
@@ -350,7 +350,7 @@ function _diff_files
   fi
 }
 
-function _check_files_content
+function check_files_content
 {
   expected_f=$1
   actual_f=$2
@@ -369,7 +369,7 @@ function _check_equal_variables
   echo -e "$expected_v" > $EXPECTED_FILE
   echo -e "$actual_v" > $ACTUAL_FILE
 
-  _check_files_content $EXPECTED_FILE $ACTUAL_FILE
+  check_files_content $EXPECTED_FILE $ACTUAL_FILE
 }
 
 function _mp3_get_tag_value
@@ -537,7 +537,7 @@ function _run_check_output
   eval "$program $mp3splt_args" > $ACTUAL_FILE 2>&1
 
   if [[ ! -z $expected ]];then
-    _check_files_content $EXPECTED_FILE $ACTUAL_FILE
+    check_files_content $EXPECTED_FILE $ACTUAL_FILE
   fi
 }
 
