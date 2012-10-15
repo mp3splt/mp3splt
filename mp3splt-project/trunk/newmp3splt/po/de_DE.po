@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: newmp3splt\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-13 22:10+0200\n"
+"POT-Creation-Date: 2012-10-15 21:33+0200\n"
 "PO-Revision-Date: 2011-09-15 23:27+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:257 src/utils.c:36 src/utils.c:52
+#: src/mp3splt.c:262 src/utils.c:36 src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "Speicher kann nicht zugewiesen werden!"
 
-#: src/mp3splt.c:278
+#: src/mp3splt.c:283
 #, fuzzy
 msgid ""
 "bad overlap time expression.\n"
@@ -31,7 +31,7 @@ msgstr ""
 "\tMuss in min.sec[.0-99] oder EOF-min.sec[.0-99] angegeben werden, bitte die "
 "Handbuchseite lesen."
 
-#: src/mp3splt.c:295
+#: src/mp3splt.c:300
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
@@ -40,37 +40,37 @@ msgstr ""
 "\tMuss in min.sec[.0-99] oder EOF-min.sec[.0-99] angegeben werden, bitte die "
 "Handbuchseite lesen."
 
-#: src/mp3splt.c:358
+#: src/mp3splt.c:363
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "Lesen Sie die Handbuchseite oder geben Sie »mp3splt -h« ein."
 
-#: src/mp3splt.c:425
+#: src/mp3splt.c:430
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "Falsches Argument für Option -p. Kein gültiger Wert erkannt!"
 
-#: src/mp3splt.c:572
+#: src/mp3splt.c:577
 msgid "no input filename(s)."
 msgstr "Kein(e) Name(n) für Eingabedateien."
 
-#: src/mp3splt.c:585
+#: src/mp3splt.c:590
 msgid "multiple splitpoints with stdout !"
 msgstr "Mehrere Teilungspunkte mit Standardausgabe!"
 
-#: src/mp3splt.c:589
+#: src/mp3splt.c:594
 msgid "using time mode with stdout !"
 msgstr "Zeitmodus mit Standardausgabe wird verwendet!"
 
-#: src/mp3splt.c:630
+#: src/mp3splt.c:635
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr " Teilung der Datei »%s« wird simuliert …\n"
 
-#: src/mp3splt.c:634
+#: src/mp3splt.c:639
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Datei »%s« wird verarbeitet …\n"
 
-#: src/mp3splt.c:641 src/options_checker.c:49
+#: src/mp3splt.c:646
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p"
@@ -78,20 +78,20 @@ msgstr ""
 "Option -k (oder STDIN) kann nicht mit einer der folgenden Optionen verwendet "
 "werden : -S -s -r -w -l -e -i -a -p"
 
-#: src/mp3splt.c:702
+#: src/mp3splt.c:707
 msgid "freedb query format ambigous !"
 msgstr "Format der Freedb-Abfrage ist nicht eindeutig!"
 
-#: src/mp3splt.c:748
+#: src/mp3splt.c:753
 msgid "tags format ambiguous !"
 msgstr "Tag-Format ist nicht eindeutig!"
 
-#: src/mp3splt.c:780
+#: src/mp3splt.c:785
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr " Durchschnittlicher Pegel der Stille: %.2f dB"
 
-#: src/mp3splt.c:796
+#: src/mp3splt.c:801
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -241,93 +241,110 @@ msgstr ""
 "\n"
 "Holen der Datei von %s auf Port %d mittels %s ...\n"
 
-#: src/options_checker.c:66
+#: src/options_checker.c:49
+#, fuzzy
+msgid ""
+"cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
+"w -l -e -i -a -p -F"
+msgstr ""
+"Option -k (oder STDIN) kann nicht mit einer der folgenden Optionen verwendet "
+"werden : -S -s -r -w -l -e -i -a -p"
+
+#: src/options_checker.c:67
 msgid "the -w option can only be used with -m, -d, -q and -Q"
 msgstr "Die Option -w kann nur zusammen mit -m, -d, -q und -Q verwendet werden"
 
-#: src/options_checker.c:82
+#: src/options_checker.c:84
 msgid "the -l option can only be used with -q"
 msgstr "Die Option -l kann nur zusammen mit -q verwendet werden"
 
-#: src/options_checker.c:96
+#: src/options_checker.c:98
 msgid "the -e option can only be used with -m, -f, -o, -d, -q, -Q"
 msgstr ""
 "Die Option -e kann nur zusammen mit -m, -f, -o, -d, -q, -Q verwendet werden"
 
-#: src/options_checker.c:111
-msgid "the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i or -S"
+#: src/options_checker.c:114
+#, fuzzy
+msgid "the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i, -S or -F"
 msgstr ""
 "Die Option -c kann nicht zusammen mit -t, -g, -G, -s, -r, -A, -i oder -S "
 "verwendet werden"
 
-#: src/options_checker.c:119
-msgid "the -A option cannot be used with -t, -s, -r, -i or -S"
+#: src/options_checker.c:124
+#, fuzzy
+msgid "the -A option cannot be used with -t, -s, -r, -i, -S or -F"
 msgstr ""
 "Die Option -A kann nicht zusammen mit -t, -s, -r, -i oder -S verwendet werden"
 
-#: src/options_checker.c:127
-msgid "the -t option cannot be used with -s, -r, -i or -S"
+#: src/options_checker.c:134
+#, fuzzy
+msgid "the -t option cannot be used with -s, -r, -i, -S or -F"
 msgstr ""
 "Die Option -t kann nicht zusammen mit -s, -r, -i oder -S verwendet werden"
 
-#: src/options_checker.c:135
+#: src/options_checker.c:143
 msgid "-s option cannot be used with -a, -r, -i or -S"
 msgstr ""
 "Die Option -s kann nicht zusammen mit -a, -r, -i oder -S verwendet werden"
 
-#: src/options_checker.c:143
+#: src/options_checker.c:151
 msgid "-a option cannot be used with -i"
 msgstr "Die Option -a kann nicht zusammen mit -i verwendet werden"
 
-#: src/options_checker.c:155
+#: src/options_checker.c:163
 msgid "the -p option cannot be used without -a, -s, -r  or -i"
 msgstr "Die Option -p kann nicht ohne -a, -s, -r oder -i verwendet werden"
 
-#: src/options_checker.c:163
+#: src/options_checker.c:171
 msgid "the -o option cannot be used with -i"
 msgstr "Die Option -o kann nicht zusammen mit -i verwendet werden"
 
-#: src/options_checker.c:169
+#: src/options_checker.c:177
 msgid "cannot use '-o -' (STDOUT) with -m or -d"
 msgstr ""
 "»-o« (Standardausgabe) kann nicht zusammen mit -m oder -d verwendet werden"
 
-#: src/options_checker.c:178
+#: src/options_checker.c:186
 msgid "the -g option cannot be used with -n, -i or -G"
 msgstr "Die Option -g kann nicht zusammen mit -n, -i oder -G verwendet werden"
 
-#: src/options_checker.c:186
+#: src/options_checker.c:194
 msgid "the -d option cannot be used with -i"
 msgstr "Die Option -d kann nicht zusammen mit -i verwendet werden"
 
-#: src/options_checker.c:194
+#: src/options_checker.c:202
 msgid "the -n option cannot be used with -i or -T"
 msgstr "Die Option -n kann nicht zusammen mit -i oder -T verwendet werden"
 
-#: src/options_checker.c:202
+#: src/options_checker.c:210
 msgid "the -m option cannot be used with -i"
 msgstr "Die Option -m kann nicht zusammen mit -i verwendet werden"
 
-#: src/options_checker.c:220
+#: src/options_checker.c:228
 msgid "the -Q option cannot be used with STDOUT output ('-o -')"
 msgstr ""
 "Die Option -Q kann nicht zusammen mit -o verwendet werden (Standardausgabe)"
 
-#: src/options_checker.c:228
+#: src/options_checker.c:236
 msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
 msgstr ""
 "Die Option -Q kann nicht zusammen mit -c verwendet werden (interaktive "
 "Freedb-Abfrage)"
 
-#: src/options_checker.c:238
+#: src/options_checker.c:246
 msgid "the -N option must be used with silence detection (-s option)"
 msgstr ""
 "Die Option -N muss zusammen mit -s verwendet werden (Erkennung von Stille)"
 
-#: src/options_checker.c:248
+#: src/options_checker.c:255
 msgid "the -O option cannot be used with -w, -e, -l or -i"
 msgstr ""
 "Die Option -O kann nicht zusammen mit -w, -e, -l oder -i verwendet werden"
+
+#: src/options_checker.c:281
+#, fuzzy
+msgid "the -F option cannot be used without -s"
+msgstr "Die Option -o kann nicht zusammen mit -i verwendet werden"
 
 #: src/options_parsers.c:46
 msgid "bad gap argument. It will be ignored !"

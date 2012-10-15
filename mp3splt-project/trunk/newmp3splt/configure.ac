@@ -33,10 +33,10 @@
 #################################################
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt, 2.4.4.1128, mtrotta@users.sourceforge.net)
+AC_INIT(mp3splt, 2.4.4.1133, mtrotta@users.sourceforge.net)
 
 AC_CONFIG_SRCDIR([src/mp3splt.c])
-AM_INIT_AUTOMAKE(mp3splt, 2.4.4.1128)
+AM_INIT_AUTOMAKE(mp3splt, 2.4.4.1133)
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE([enable])
 
@@ -89,7 +89,7 @@ AC_MSG_RESULT($HOST)
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 1.0.1128 needed :
+MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 1.0.1133 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])

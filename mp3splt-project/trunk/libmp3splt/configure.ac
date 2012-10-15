@@ -33,9 +33,9 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT([libmp3splt],[1.0.1128],[m@ioalex.net])
+AC_INIT([libmp3splt],[1.0.1133],[m@ioalex.net])
 AC_CONFIG_AUX_DIR([libltdl/config])
-AM_INIT_AUTOMAKE(libmp3splt, 1.0.1128)
+AM_INIT_AUTOMAKE(libmp3splt, 1.0.1133)
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
 
