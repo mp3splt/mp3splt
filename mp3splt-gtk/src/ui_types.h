@@ -318,6 +318,11 @@ typedef struct {
   GtkWidget *tags_radio;
   GtkWidget *tags_version_radio;
 
+  GtkWidget *output_dir_radio;
+  GtkWidget *custom_dir_file_chooser_button;
+  GtkWidget *example_output_dir_entry;
+  GtkWidget *example_output_dir_box;
+
   GtkWidget *replace_underscore_by_space_check_box;
   GtkComboBox *artist_text_properties_combo;
   GtkComboBox *album_text_properties_combo;
@@ -375,7 +380,6 @@ typedef struct {
 
   GtkWidget *multiple_files_component;
 
-  GtkWidget *directory_entry;
   GtkWidget *player_combo_box;
   GtkWidget *radio_button;
 

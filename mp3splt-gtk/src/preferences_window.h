@@ -47,13 +47,17 @@
 #define ORIGINAL_FILE_TAGS 2
 #define TAGS_FROM_FILENAME 3
 
+#define CUSTOM_DIRECTORY 0
+#define FILE_DIRECTORY 1
+
 gboolean get_checked_output_radio_box(ui_state *ui);
 gint get_checked_tags_version_radio_box(gui_state *gui);
 GString *get_checked_language(ui_state *ui);
 GtkWidget *create_choose_preferences(ui_state *ui);
-void set_output_directory(gchar *dirname, ui_state *ui);
+void set_output_directory_and_update_ui(gchar *dirname, ui_state *ui);
 gchar *get_output_directory(ui_state *ui);
 void refresh_preview_drawing_areas(gui_state *gui);
+void update_example_output_dir_for_single_file_split(ui_state *ui);
 
 #endif
 

@@ -67,6 +67,9 @@ void set_input_filename(const gchar *filename, ui_state *ui)
   {
     gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(ui->gui->open_file_chooser_button), filename);
   }
+
+  update_example_output_dir_for_single_file_split(ui);
+
   unlock_mutex(&ui->variables_mutex);
 }
 

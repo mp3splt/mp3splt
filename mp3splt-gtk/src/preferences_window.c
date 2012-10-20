@@ -108,8 +108,7 @@ gint get_checked_tags_version_radio_box(gui_state *gui)
   return 0;
 }
 
-//! Set the name of the output directory
-void set_output_directory(gchar *dirname, ui_state *ui)
+static void set_output_directory(gchar *dirname, ui_state *ui)
 {
   if (dirname == NULL)
   {
@@ -123,8 +122,62 @@ void set_output_directory(gchar *dirname, ui_state *ui)
   }
   ui->infos->outputdirname = g_string_new(dirname);
   unlock_mutex(&ui->variables_mutex);
+}
 
-  gtk_entry_set_text(GTK_ENTRY(ui->gui->directory_entry), dirname);
+static void change_output_dir_options(GtkToggleButton *button, gpointer data)
+{
+  ui_state *ui = (ui_state *)data;
+
+  GtkWidget *dir_file_chooser_button = ui->gui->custom_dir_file_chooser_button;
+  if (!dir_file_chooser_button || !ui->gui->example_output_dir_box)
+  {
+    return;
+  }
+
+  if (rh_get_active_value(ui->gui->output_dir_radio) == CUSTOM_DIRECTORY)
+  {
+    gchar *directory = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dir_file_chooser_button));
+    set_output_directory(directory, ui);
+    gtk_widget_set_sensitive(dir_file_chooser_button, SPLT_TRUE);
+    gtk_widget_set_sensitive(ui->gui->example_output_dir_box, SPLT_FALSE);
+  }
+  else
+  {
+    set_output_directory("", ui);
+    gtk_widget_set_sensitive(dir_file_chooser_button, SPLT_FALSE);
+    gtk_widget_set_sensitive(ui->gui->example_output_dir_box, SPLT_TRUE);
+  }
+
+  ui_save_preferences(NULL, ui);
+}
+
+static void update_output_directory_in_gui(ui_state *ui, char *output_dir)
+{
+  GtkWidget *custom_dir_file_chooser_button = ui->gui->custom_dir_file_chooser_button;
+
+  if (output_dir == NULL || output_dir[0] == '\0')
+  {
+    rh_set_radio_value(ui->gui->output_dir_radio, FILE_DIRECTORY, TRUE);
+  }
+  else
+  {
+    rh_set_radio_value(ui->gui->output_dir_radio, CUSTOM_DIRECTORY, TRUE);
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(custom_dir_file_chooser_button), output_dir);
+  }
+
+  change_output_dir_options(GTK_TOGGLE_BUTTON(ui->gui->output_dir_radio), ui);
+}
+
+void set_output_directory_and_update_ui(gchar *dirname, ui_state *ui)
+{
+  if (dirname == NULL)
+  {
+    return;
+  }
+
+  set_output_directory(dirname, ui);
+
+  update_output_directory_in_gui(ui, dirname);
 }
 
 /*! Get the name of the output directory
@@ -217,34 +270,6 @@ static GtkWidget *create_pref_language_page(ui_state *ui)
 }
 #endif
 
-//! Events for browse dir button
-static void browse_dir_button_event(GtkWidget *widget, ui_state *ui)
-{
-  GtkWidget *dir_chooser = gtk_file_chooser_dialog_new(_("Choose split directory"),
-      NULL,
-      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-      GTK_STOCK_CANCEL,
-      GTK_RESPONSE_CANCEL,
-      GTK_STOCK_OPEN,
-      GTK_RESPONSE_ACCEPT,
-      NULL);
-
-  wh_set_browser_directory_handler(ui, dir_chooser);
-
-  if (gtk_dialog_run(GTK_DIALOG(dir_chooser)) == GTK_RESPONSE_ACCEPT)
-  {
-    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dir_chooser));
-    set_output_directory(filename, ui);
-
-    g_free(filename);
-    filename = NULL;
-
-    ui_save_preferences(NULL, ui);
-  }
-
-  gtk_widget_destroy(dir_chooser);
-}
-
 //!disables adjust parameters
 static void disable_adjust_parameters(gui_state *gui)
 {
@@ -320,11 +345,63 @@ static void set_default_prefs_event(GtkWidget *widget, ui_state *ui)
   ui_save_preferences(NULL, ui);
 }
 
-//!events for the "set current song directory"
-static void song_dir_button_event(GtkWidget *widget, ui_state *ui)
+static void custom_directory_changed(GtkFileChooser *custom_dir_file_chooser, ui_state *ui)
 {
-  set_output_directory("", ui);
+  gchar *filename = gtk_file_chooser_get_filename(custom_dir_file_chooser);
+  set_output_directory(filename, ui);
   ui_save_preferences(NULL, ui);
+}
+
+static GtkWidget *create_custom_directory_box(ui_state *ui)
+{
+  GtkWidget *custom_dir_file_chooser_button =
+    gtk_file_chooser_button_new(_("Browse directory ..."), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+  wh_set_browser_directory_handler(ui, custom_dir_file_chooser_button);
+
+  g_signal_connect(G_OBJECT(custom_dir_file_chooser_button), "selection-changed",
+      G_CALLBACK(custom_directory_changed), ui);
+
+  ui->gui->custom_dir_file_chooser_button = custom_dir_file_chooser_button;
+
+  GtkWidget *hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(hbox), custom_dir_file_chooser_button, TRUE, TRUE, 20);
+
+  return hbox;
+}
+
+static GtkWidget *create_input_file_directory_example_box(ui_state *ui)
+{
+  GtkWidget *vbox = wh_vbox_new();
+
+  GtkWidget *example_output_dir_label = gtk_label_new(_("Example for the single file split:"));
+  GtkWidget *fake_hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(fake_hbox), example_output_dir_label, FALSE, FALSE, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox), fake_hbox, FALSE, FALSE, 0);
+
+  GtkWidget *example_output_dir_entry = gtk_entry_new();
+  gtk_editable_set_editable(GTK_EDITABLE(example_output_dir_entry), FALSE);
+  gtk_box_pack_start(GTK_BOX(vbox), example_output_dir_entry, TRUE, TRUE, 5);
+  ui->gui->example_output_dir_entry = example_output_dir_entry;
+
+  GtkWidget *hbox_for_margin = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(hbox_for_margin), vbox, TRUE, TRUE, 20);
+
+  ui->gui->example_output_dir_box = hbox_for_margin;
+
+  return hbox_for_margin;
+}
+
+void update_example_output_dir_for_single_file_split(ui_state *ui)
+{
+  if (!ui->gui->example_output_dir_entry)
+  {
+    return;
+  }
+
+  gchar *dirname = g_path_get_dirname(get_input_filename(ui->gui));
+  gtk_entry_set_text(GTK_ENTRY(ui->gui->example_output_dir_entry), dirname);
+  g_free(dirname);
 }
 
 //!Creates the box the output directory can be choosen in
@@ -332,35 +409,23 @@ static GtkWidget *create_directory_box(ui_state *ui)
 {
   gui_state *gui = ui->gui;
 
-  GtkWidget *dir_hbox = wh_hbox_new();
+  GtkWidget *vbox = wh_vbox_new();
 
-  GtkWidget *directory_entry = gtk_entry_new();
-  gui->directory_entry = directory_entry;
-  gtk_editable_set_editable(GTK_EDITABLE(directory_entry), FALSE);
-  gtk_box_pack_start(GTK_BOX(dir_hbox), directory_entry, TRUE, TRUE, 0);
+  GtkWidget *output_dir_radio = NULL;
+  output_dir_radio = rh_append_radio_to_vbox(output_dir_radio, _("Custom directory"),
+      CUSTOM_DIRECTORY, change_output_dir_options, ui, vbox);
 
-  // Put the right text into the text box containing the output directory
-  // name if this name was provided on command line
-  if (get_output_directory(ui) != NULL)
-  {
-    gtk_entry_set_text(GTK_ENTRY(directory_entry), get_output_directory(ui));
-  }
+  GtkWidget *custom_dir_box = create_custom_directory_box(ui);
+  gtk_box_pack_start(GTK_BOX(vbox), custom_dir_box, FALSE, FALSE, 0);
 
-  //browse dir button
-  GtkWidget *browse_dir_button =
-    wh_create_cool_button(GTK_STOCK_DIRECTORY,_("Br_owse dir"), FALSE);
-  g_signal_connect(G_OBJECT(browse_dir_button), "clicked",
-      G_CALLBACK(browse_dir_button_event), ui);
-  gtk_box_pack_start(GTK_BOX(dir_hbox), browse_dir_button, FALSE, FALSE, 8);
+  output_dir_radio = rh_append_radio_to_vbox(output_dir_radio, _("Input file directory"),
+      FILE_DIRECTORY, change_output_dir_options, ui, vbox);
+  gui->output_dir_radio = output_dir_radio;
 
-  //to set the directory for split files to the current song directory
-  GtkWidget *song_dir_button =
-    wh_create_cool_button(GTK_STOCK_CLEAR, _("So_ng dir"), FALSE);
-  g_signal_connect(G_OBJECT(song_dir_button), "clicked",
-      G_CALLBACK(song_dir_button_event), ui);
-  gtk_box_pack_start(GTK_BOX(dir_hbox), song_dir_button, FALSE, FALSE, 0);
+  GtkWidget *input_file_directory_example_box = create_input_file_directory_example_box(ui);
+  gtk_box_pack_start(GTK_BOX(vbox), input_file_directory_example_box, FALSE, FALSE, 0);
 
-  return wh_set_title_and_get_vbox(dir_hbox, _("<b>Directory for split files</b>"));
+  return wh_set_title_and_get_vbox(vbox, _("<b>Directory for split files</b>"));
 }
 
 //! Creates the box for split mode selection
