@@ -246,25 +246,15 @@ static void browse_dir_button_event(GtkWidget *widget, ui_state *ui)
 }
 
 //!disables adjust parameters
-static void disable_adjust_spinners(gui_state *gui)
+static void disable_adjust_parameters(gui_state *gui)
 {
-  gtk_widget_set_sensitive(gui->spinner_adjust_threshold, FALSE);
-  gtk_widget_set_sensitive(gui->spinner_adjust_offset, FALSE);
-  gtk_widget_set_sensitive(gui->spinner_adjust_gap, FALSE);
-  gtk_widget_set_sensitive(gui->threshold_label, FALSE);
-  gtk_widget_set_sensitive(gui->offset_label, FALSE);
-  gtk_widget_set_sensitive(gui->gap_label, FALSE);
+  gtk_widget_set_sensitive(gui->adjust_param_vbox, FALSE);
 }
 
 //!enables adjust parameters
-static void enable_adjust_spinners(gui_state *gui)
+static void enable_adjust_parameters(gui_state *gui)
 {
-  gtk_widget_set_sensitive(gui->spinner_adjust_threshold, TRUE);
-  gtk_widget_set_sensitive(gui->spinner_adjust_offset, TRUE);
-  gtk_widget_set_sensitive(gui->spinner_adjust_gap, TRUE);
-  gtk_widget_set_sensitive(gui->threshold_label, TRUE);
-  gtk_widget_set_sensitive(gui->offset_label, TRUE);
-  gtk_widget_set_sensitive(gui->gap_label, TRUE);
+  gtk_widget_set_sensitive(gui->adjust_param_vbox, TRUE);
 }
 
 //!adjust event
@@ -273,11 +263,11 @@ static void adjust_event(GtkToggleButton *adjust_mode, ui_state *ui)
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(adjust_mode)))
   {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->frame_mode),TRUE);
-    enable_adjust_spinners(ui->gui);
+    enable_adjust_parameters(ui->gui);
   }
   else
   {
-    disable_adjust_spinners(ui->gui);
+    disable_adjust_parameters(ui->gui);
   }
 
   ui_save_preferences(NULL, ui);
@@ -322,6 +312,8 @@ static void set_default_prefs_event(GtkWidget *widget, ui_state *ui)
       SPLT_DEFAULT_PARAM_OFFSET);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_gap),
       SPLT_DEFAULT_PARAM_GAP);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spinner_adjust_min),
+      SPLT_DEFAULT_PARAM_MINIMUM_LENGTH);
   gtk_toggle_button_set_active(gui->names_from_filename, FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->create_dirs_from_output_files), TRUE);
 
@@ -414,6 +406,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
   GtkWidget *param_vbox = wh_vbox_new();
+  gui->adjust_param_vbox = param_vbox;
   gtk_box_pack_start(GTK_BOX(horiz_fake), param_vbox, FALSE, FALSE, 25);
 
   //threshold level
@@ -421,16 +414,30 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
 
   GtkWidget *threshold_label = gtk_label_new(_("Threshold level (dB):"));
-  gui->threshold_label = threshold_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), threshold_label, FALSE, FALSE, 0);
 
-  GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0,
-      0.5, 10.0, 0.0);
+  GtkAdjustment *adj =
+    (GtkAdjustment *) gtk_adjustment_new(0.0, -96.0, 0.0, 0.5, 10.0, 0.0);
   GtkWidget *spinner_adjust_threshold = gtk_spin_button_new (adj, 0.5, 2);
   gui->spinner_adjust_threshold = spinner_adjust_threshold;
   g_signal_connect(G_OBJECT(spinner_adjust_threshold), "value_changed",
       G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_threshold,
+      FALSE, FALSE, 6);
+
+  //min level
+  horiz_fake = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(param_vbox), horiz_fake, FALSE, FALSE, 0);
+
+  GtkWidget *min_label = gtk_label_new(_("Minimum silence length (seconds):"));
+  gtk_box_pack_start(GTK_BOX(horiz_fake), min_label, FALSE, FALSE, 0);
+
+  adj = (GtkAdjustment *)gtk_adjustment_new(0.0, 0, 2000, 0.5, 10.0, 0.0);
+  GtkWidget *spinner_adjust_min = gtk_spin_button_new(adj, 1, 2);
+  gui->spinner_adjust_min = spinner_adjust_min;
+  g_signal_connect(G_OBJECT(spinner_adjust_min), "value_changed",
+      G_CALLBACK(ui_save_preferences), ui);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_min,
       FALSE, FALSE, 6);
 
   //offset level
@@ -439,7 +446,6 @@ static GtkWidget *create_split_options_box(ui_state *ui)
 
   GtkWidget *offset_label = gtk_label_new(_("Cutpoint offset (0 is the begin of silence "
         "and 1 the end):"));
-  gui->offset_label = offset_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), offset_label, FALSE, FALSE, 0);
 
   //adjustement for the offset spinner
@@ -456,7 +462,6 @@ static GtkWidget *create_split_options_box(ui_state *ui)
 
   GtkWidget *gap_label = 
     gtk_label_new(_("Gap level (seconds around splitpoint to search for silence):"));
-  gui->gap_label = gap_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), gap_label, FALSE, FALSE, 0);
 
   adj = (GtkAdjustment *) gtk_adjustment_new(0.0, 0, 2000, 1.0, 10.0, 0.0);
@@ -466,7 +471,7 @@ static GtkWidget *create_split_options_box(ui_state *ui)
       G_CALLBACK(ui_save_preferences), ui);
   gtk_box_pack_start(GTK_BOX(horiz_fake), spinner_adjust_gap, FALSE, FALSE, 6);
 
-  disable_adjust_spinners(ui->gui);
+  disable_adjust_parameters(ui->gui);
 
   //set default preferences button
   horiz_fake = wh_hbox_new();

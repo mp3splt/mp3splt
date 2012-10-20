@@ -1413,7 +1413,7 @@ function test_normal_vbr_with_auto_adjust
  info: file matches the plugin 'mp3 (libmad)'
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
- Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 30 sec Offset: 0.80)
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 30 sec Offset: 0.80 Min: 0.00 sec)
  info: starting normal split
    File \"$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3\" created
@@ -1432,7 +1432,7 @@ function test_normal_vbr_with_auto_adjust
   check_current_file_size "1792357"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3" 
-  check_current_mp3_length "01.00"
+  check_current_mp3_length "00.55"
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "2" "http://www.jamendo.com/"
@@ -1446,7 +1446,7 @@ function test_normal_vbr_with_auto_adjust
   check_current_file_size "1561672"
   
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_05s_69h.mp3" 
-  check_current_mp3_length "01.05"
+  check_current_mp3_length "01.10"
   check_current_file_has_xing
   check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "4" "http://www.jamendo.com/"
@@ -1455,6 +1455,81 @@ function test_normal_vbr_with_auto_adjust
   print_ok
   echo
 }
+
+function test_normal_vbr_with_auto_adjust_min_length
+{
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="normal with auto adjust & min length parameter"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 80 sec Offset: 0.00 Min: 9.00 sec)
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__04m_05s_69h.mp3\" created
+ Processed 9406 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-a -p off=0,gap=80,min=9 -d $OUTPUT_DIR $SILENCE_MP3_FILE 0.0 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_00s.mp3" 
+  check_current_mp3_length "00.56"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "1615571"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__04m_05s_69h.mp3" 
+  check_current_mp3_length "03.08"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "5297541"
+
+  print_ok
+  echo
+}
+
+function test_normal_vbr_with_auto_adjust_min_length_no_change
+{
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="normal with auto adjust & min length parameter no change"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 80 sec Offset: 0.00 Min: 10.00 sec)
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__04m_05s_69h.mp3\" created
+ Processed 9406 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-a -p off=0,gap=80,min=10 -d $OUTPUT_DIR $SILENCE_MP3_FILE 0.0 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_00s.mp3" 
+  check_current_mp3_length "02.00"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "1" "http://www.jamendo.com/"
+  check_current_file_size "3377085"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__04m_05s_69h.mp3" 
+  check_current_mp3_length "02.05"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "2" "http://www.jamendo.com/"
+  check_current_file_size "3536027"
+
+  print_ok
+  echo
+}
+
 
 function test_normal_vbr_with_negative_splitpoints
 {

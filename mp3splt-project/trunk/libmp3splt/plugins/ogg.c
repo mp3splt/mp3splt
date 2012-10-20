@@ -793,8 +793,8 @@ error:
 //Warning ! cutpoint is not the end cutpoint, but the length between the
 //begin and the end
 static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *stream,
-    FILE *in, FILE *f, ogg_int64_t cutpoint, int adjust, float threshold, int shots,
-    int *error, const char *output_fname, int save_end_point,
+    FILE *in, FILE *f, ogg_int64_t cutpoint, int adjust, float threshold, float min_length,
+    int shots, int *error, const char *output_fname, int save_end_point,
     double *sec_split_time_length)
 {
   splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
@@ -1026,7 +1026,7 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
             if (adjust)
             {
               if (splt_ogg_scan_silence(state,
-                    (2 * adjust), threshold, 0.f, shots, 0, &page, current_granpos, error, first_cut_granpos,
+                    (2 * adjust), threshold, min_length, shots, 0, &page, current_granpos, error, first_cut_granpos,
                     splt_scan_silence_processor) > 0)
               {
                 cutpoint = (splt_siu_silence_position(state->silence_list, 
@@ -1231,7 +1231,7 @@ error:
 
 double splt_ogg_split(const char *output_fname, splt_state *state,
     double sec_begin, double sec_end, short seekable, 
-    int adjust, float threshold, int shots, int *error, int save_end_point)
+    int adjust, float threshold, float min_length, int shots, int *error, int save_end_point)
 {
   splt_ogg_state *oggstate = state->codec;
 
@@ -1321,7 +1321,7 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
 
   double sec_split_time_length = sec_end - sec_begin;
   splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
-      oggstate->out, cutpoint, adjust, threshold, shots, error, output_fname,
+      oggstate->out, cutpoint, adjust, threshold, min_length, shots, error, output_fname,
       save_end_point, &sec_split_time_length);
   sec_end_time = sec_begin + sec_split_time_length;
 
@@ -1489,11 +1489,12 @@ double splt_pl_split(splt_state *state, const char *final_fname,
     int gap = splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP);
     float threshold = splt_o_get_int_option(state, SPLT_OPT_PARAM_THRESHOLD);
     int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
-    
+    float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
+ 
     int input_not_seekable = splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE);
 
     return splt_ogg_split(final_fname, state, begin_point, end_point, 
-        input_not_seekable, gap, threshold, shots, error, save_end_point);
+        input_not_seekable, gap, threshold, min_length, shots, error, save_end_point);
   }
 
   return end_point;

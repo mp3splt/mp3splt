@@ -106,6 +106,7 @@ typedef struct {
   unsigned long frames;
   int syncdetect;
   off_t end;
+  unsigned long fend;
   off_t end_non_zero;
   off_t end2;
   off_t bytes;

@@ -123,6 +123,9 @@ short splt_scan_silence_processor(double time, float level, int silence_was_foun
 
       if ((end_position - begin_position - ssd->min) >= 0.f)
       {
+        /*fprintf(stdout, "silence begin = %lf\n", begin_position);
+        fprintf(stdout, "silence end = %lf\n", end_position);
+        fflush(stdout);*/
         if (splt_siu_ssplit_new(&ssd->state->silence_list,
               begin_position, end_position, ssd->len, error) == -1)
         {

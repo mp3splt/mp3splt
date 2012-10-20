@@ -292,11 +292,10 @@ typedef struct {
 
   GtkWidget *spinner_adjust_offset;
   GtkWidget *spinner_adjust_gap;
+  GtkWidget *spinner_adjust_min;
   GtkWidget *spinner_adjust_threshold;
 
-  GtkWidget *gap_label;
-  GtkWidget *offset_label;
-  GtkWidget *threshold_label;
+  GtkWidget *adjust_param_vbox;
 
   GtkWidget *spinner_time;
   GtkWidget *spinner_equal_tracks;

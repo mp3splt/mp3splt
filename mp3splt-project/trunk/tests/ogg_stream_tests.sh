@@ -259,7 +259,7 @@ function test_stream_auto_adjust_silence
   expected=" Processing file 'songs/${O_FILE}.ogg' ...
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 62 Kb/s - 2 channels - Total time: 2m.29s
- Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 30 sec Offset: 0.80)
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 30 sec Offset: 0.80 Min: 0.00 sec)
  info: starting normal split
  warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF to fix.
    File \"$OUTPUT_DIR/${O_FILE}_00m_00s__00m_07s.ogg\" created
