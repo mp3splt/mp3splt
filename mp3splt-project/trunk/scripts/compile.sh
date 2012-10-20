@@ -191,7 +191,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="natty oneiric precise"
+    UBUNTU_FLAVORS="oneiric precise quantal"
 
     echo
     print_yellow "Creating ubuntu packages..."
