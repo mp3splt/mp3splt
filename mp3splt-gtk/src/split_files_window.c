@@ -142,12 +142,16 @@ static void queue_files_button_event(GtkWidget *widget, ui_state *ui)
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->split_tree);
 
   GtkTreeIter iter;
-  while (gtk_tree_model_get_iter_first(model, &iter))
+
+  gboolean valid_row = gtk_tree_model_get_iter_first(model, &iter);
+  while (valid_row)
   {
     gchar *filename = NULL;
     gtk_tree_model_get(model, &iter, COL_FILENAME, &filename, -1);
     file_list = g_list_append(file_list, strdup(filename));
     g_free(filename);
+
+    valid_row = gtk_tree_model_iter_next(model, &iter);
   }
 
   if (file_list != NULL)

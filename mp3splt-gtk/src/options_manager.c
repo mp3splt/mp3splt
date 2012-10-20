@@ -95,6 +95,8 @@ void put_options_from_preferences(ui_state *ui)
         gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_adjust_gap)));
     mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD,
         gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_threshold)));
+    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH,
+        gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_min)));
   }
   else
   {

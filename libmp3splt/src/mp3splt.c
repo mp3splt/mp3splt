@@ -1161,10 +1161,11 @@ splt_code mp3splt_split(splt_state *state)
         {
           splt_c_put_info_message_to_client(state, 
               _(" Working with SILENCE AUTO-ADJUST (Threshold:"
-                " %.1f dB Gap: %d sec Offset: %.2f)\n"),
+                " %.1f dB Gap: %d sec Offset: %.2f Min: %.2f sec)\n"),
               splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
               splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP),
-              splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET));
+              splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET),
+              splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
         }
       }
 

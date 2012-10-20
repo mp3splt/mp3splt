@@ -292,6 +292,9 @@ void load_preferences(ui_state *ui)
   //adjust gap
   item = g_key_file_get_integer(key_file, "split", "adjust_gap", NULL);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap), item);
+  //adjust min
+  item = g_key_file_get_integer(key_file, "split", "adjust_min", NULL);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_min), item);
 
   //tags options
   gint tag_pref_file = g_key_file_get_integer(key_file, "split", "tags", NULL);
@@ -502,6 +505,9 @@ void save_preferences(ui_state *ui)
   //adjust gap
   g_key_file_set_integer(my_key_file, "split", "adjust_gap",
       gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_gap)));
+  //adjust min
+  g_key_file_set_integer(my_key_file, "split", "adjust_min",
+      gtk_spin_button_get_value(GTK_SPIN_BUTTON(ui->gui->spinner_adjust_min)));
 
   g_key_file_set_boolean(my_key_file, "output", "splitpoint_names_from_filename",
       gtk_toggle_button_get_active(ui->gui->names_from_filename));

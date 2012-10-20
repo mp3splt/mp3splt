@@ -122,17 +122,19 @@ static const unsigned long splt_mp3_crctab[256] = {
 };
 
 static void splt_mp3_save_end_point(splt_state *state, splt_mp3_state *mp3state,
-    int save_end_point, off_t end)
+    int save_end_point, off_t end, unsigned long fend)
 {
   mp3state->end_non_zero = end;
 
   if (save_end_point)
   {
     mp3state->end = end;
+    mp3state->fend = fend;
   }
   else
   {
     mp3state->end = 0;
+    mp3state->fend = 0;
   }
 }
 
@@ -1111,6 +1113,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state, int fr
 
   mp3state->frames = 1;
   mp3state->end = 0;
+  mp3state->fend = 0;
   mp3state->end_non_zero = 0;
   mp3state->first = 1;
   mp3state->file_input = file_input;
@@ -1715,6 +1718,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
   int adjustoption = splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP);
   short seekable = ! splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE);
   float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+  float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
   int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
 
   short fend_sec_is_not_eof =
@@ -2018,7 +2022,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
             (double)(end-split_begin_point), 1,0,SPLT_DEFAULT_PROGRESS_RATE);
       }
 
-      splt_mp3_save_end_point(state, mp3state, save_end_point, end);
+      splt_mp3_save_end_point(state, mp3state, save_end_point, end, 0);
 
       if (!eof)
       {
@@ -2222,6 +2226,7 @@ bloc_end:
       else
       {
         begin = mp3state->end;
+        fbegin = mp3state->fend;
       }
 
       splt_d_print_debug(state,"Begin is _%ld_\n", begin);
@@ -2312,22 +2317,26 @@ bloc_end:
         if ((adjust) && (mp3state->frames >= fend))
         {
           int silence_points_found =
-            splt_mp3_scan_silence(state, end, 2 * adjust, threshold, 0.f, shots, 0, error,
-                splt_scan_silence_processor);
+            splt_mp3_scan_silence(state, end, 2 * adjust, threshold, min_length,
+                shots, 0, error, splt_scan_silence_processor);
+
           //if error, go out
           if (silence_points_found == -1)
           {
             goto bloc_end2;
           }
-          else if (silence_points_found > 0)
+
+          if (silence_points_found > 0)
           {
-            adjust = (unsigned long) (splt_siu_silence_position(state->silence_list, mp3state->off) 
-                * mp3state->mp3file.fps);
+            float silence_position = 
+              splt_siu_silence_position(state->silence_list, mp3state->off);
+            adjust = (unsigned long) (silence_position * mp3state->mp3file.fps);
           }
           else
           {
             adjust = (unsigned long) (adjustoption * mp3state->mp3file.fps);
           }
+
           fend += adjust;
           end = splt_mp3_findhead(mp3state, end);
 
@@ -2341,22 +2350,23 @@ bloc_end:
         }
       }
 
-      splt_mp3_save_end_point(state, mp3state, save_end_point, end);
+      splt_mp3_save_end_point(state, mp3state, save_end_point, end, fend);
 
       //if xing, we get xing
       if (mp3state->mp3file.xing > 0)
       {
-        unsigned long headw;
-        headw = (unsigned long) (mp3state->frames - fbegin + 1); // Frames
+        unsigned long headw = (unsigned long) (mp3state->frames - fbegin + 1); // Frames
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+4] = (headw >> 24) & 0xFF;
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+5] = (headw >> 16) & 0xFF;
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+6] = (headw >> 8) & 0xFF;
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+7] = headw  & 0xFF;
-        //we put the length of the file if end is -1
+
+        //put the length of the file if end is -1
         if (end == -1)
         {
           end = mp3state->mp3file.len;
         }
+
         headw = (unsigned long) (end - begin + mp3state->mp3file.xing); // Bytes
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+8] = (headw >> 24) & 0xFF;
         mp3state->mp3file.xingbuffer[mp3state->mp3file.xing_offset+9] = (headw >> 16) & 0xFF;
@@ -2422,7 +2432,7 @@ bloc_end:
         end = -1;
       }
 
-      splt_mp3_save_end_point(state, mp3state, save_end_point, end);
+      splt_mp3_save_end_point(state, mp3state, save_end_point, end, 0);
     }
 
     //seekable real split

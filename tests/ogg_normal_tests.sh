@@ -1095,7 +1095,7 @@ function test_normal_with_auto_adjust
   expected=" Processing file 'songs/${O_FILE}.ogg' ...
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
- Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 30 sec Offset: 0.80)
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 30 sec Offset: 0.80 Min: 0.00 sec)
  info: starting normal split
    File \"$OUTPUT_DIR/${O_FILE}_01m_00s__02m_00s.ogg\" created
    File \"$OUTPUT_DIR/${O_FILE}_02m_00s__03m_00s.ogg\" created
@@ -1124,6 +1124,80 @@ function test_normal_with_auto_adjust
                      "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "3"\
                      "http://www.jamendo.com"
   check_current_file_size "328066"
+
+  print_ok
+  echo
+}
+
+function test_normal_with_auto_adjust_min_length
+{
+  remove_output_dir
+
+  test_name="normal with auto adjust & min length parameter"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_silence"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 40 sec Offset: 0.00 Min: 9.00 sec)
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_00m_00s__01m_20s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_01m_20s__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $SILENCE_OGG_FILE -p gap=40,min=9,off=0 -a 0.0 1.20 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_00s__01m_20s.ogg"
+  check_current_ogg_length "0m:50.417s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "948149"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_20s__03m_04s_85h.ogg" 
+  check_current_ogg_length "2m:14.435s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "2070064"
+
+  print_ok
+  echo
+}
+
+function test_normal_with_auto_adjust_min_length_no_change
+{
+  remove_output_dir
+
+  test_name="normal with auto adjust & min length parameter no change"
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_silence"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 40 sec Offset: 0.00 Min: 10.00 sec)
+ info: starting normal split
+   File \"$OUTPUT_DIR/${O_FILE}_00m_00s__01m_20s.ogg\" created
+   File \"$OUTPUT_DIR/${O_FILE}_01m_20s__03m_04s_85h.ogg\" created
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR $SILENCE_OGG_FILE -p gap=40,min=10,off=0 -a 0.0 1.20 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_00m_00s__01m_20s.ogg"
+  check_current_ogg_length "1m:20.000s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "1"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1310298"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_01m_20s__03m_04s_85h.ogg" 
+  check_current_ogg_length "1m:44.853s"
+  check_all_ogg_tags "Kelly Allyn" "Getting Back From Where I've Been"\
+                     "Whiskey Can" "2007-07-10 15:45:07" "Southern Rock" "2"\
+                     "http://www.jamendo.com"
+  check_current_file_size "1708429"
 
   print_ok
   echo

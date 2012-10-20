@@ -296,6 +296,8 @@ It accepts some parameters with \-p option (see below for a detailed description
 level (th) which is the sound level to be considered silence, cutpoint
 .I offset
 (off) which is the offset of cutpoint in silence,
+.I min
+(min) which is the minimum silence length in seconds,
 .I gap
 (gap) which is the gap value around splitpoint to search for silence.
 If you don't specify any parameter, mp3splt will use the default values.
@@ -324,6 +326,9 @@ closer silence points.
 
 .IP "\fBBoth -s and -a\fP"
 
+.IP \fBmin=FLOAT\fP
+Positive float of the minimum number of seconds to be considered as valid silence. All silences shorter than min are discarded. Default is 0.
+
 .IP \fBoff=FLOAT\fP
 Float number between \-2 and 2 and allows
 you to adjust the offset of cutpoint in silence time. 0 is the begin of silence, and 1 the end. Default is 0.8.
@@ -345,8 +350,6 @@ and '...' a segment of the audio file (silence or audio)
 
 .IP \fBnt=INTEGER\fP
 Positive integer number of tracks to be split when using \-s option. By default all tracks are split.
-.IP \fBmin=FLOAT\fP
-Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded. Default is 0.
 .IP \fBrm[=FLOAT_FLOAT]\fP
 It is used to remove silence when using the \-s option.
 Can be used without additional numbers - by default it will cut all the silence found.
