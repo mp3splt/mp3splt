@@ -250,7 +250,7 @@ void load_preferences(ui_state *ui)
     gchar *save_path = g_key_file_get_string(key_file, "split", "save_path", NULL);
     if (save_path != NULL)
     {
-      set_output_directory(save_path, ui);
+      set_output_directory_and_update_ui(save_path, ui);
     }
     g_free(save_path);
     save_path = NULL;
@@ -298,8 +298,7 @@ void load_preferences(ui_state *ui)
 
   //tags options
   gint tag_pref_file = g_key_file_get_integer(key_file, "split", "tags", NULL);
-  GtkWidget *radio = rh_get_radio_from_value(ui->gui->tags_radio, tag_pref_file);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
+  rh_set_radio_value(ui->gui->tags_radio, tag_pref_file, TRUE);
 
   //replace underscores by spaces
   item = g_key_file_get_boolean(key_file, "split", "replace_underscore_by_space", NULL);
@@ -814,7 +813,7 @@ static void write_default_preferences_file(ui_state *ui)
     gint status = g_stat(default_dir, &buffer);
     if ((status == 0) && (S_ISDIR(buffer.st_mode) == 0))
     {
-      g_snprintf(default_dir,dir_malloc_number, "%s",home_dir);
+      g_snprintf(default_dir, dir_malloc_number, "%s",home_dir);
     }
 #else
     const gchar *default_dir = g_get_home_dir();
