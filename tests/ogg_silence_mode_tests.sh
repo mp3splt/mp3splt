@@ -694,7 +694,7 @@ function test_trim_silence
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
  info: starting trim using silence mode split
- Trim silence split - Th: -48.0 dB
+ Trim silence split - Th: -48.0 dB, Min: 0.00 sec
    File \"$OUTPUT_DIR/${O_FILE}_trimmed.ogg\" created
  trim using silence split ok"
   mp3splt_args="-d $OUTPUT_DIR -r $SILENCE_OGG_FILE" 
@@ -703,6 +703,60 @@ function test_trim_silence
   current_file="$OUTPUT_DIR/${O_FILE}_trimmed.ogg"
   check_current_ogg_length "2m:59.000s"
   check_current_file_size "2959191"
+
+  print_ok
+  echo
+}
+
+function test_trim_silence_with_min_length
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_silence"
+
+  test_name="trim silence mode & min length parameter"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting trim using silence mode split
+ Trim silence split - Th: -48.0 dB, Min: 1.00 sec
+   File \"$OUTPUT_DIR/${O_FILE}_trimmed.ogg\" created
+ trim using silence split ok"
+  mp3splt_args="-d $OUTPUT_DIR -p min=1 -r $SILENCE_OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_trimmed.ogg"
+  check_current_ogg_length "3m:00.379s"
+  check_current_file_size "2979476"
+
+  print_ok
+  echo
+}
+
+function test_trim_silence_with_min_length_huge
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_silence"
+
+  test_name="trim silence mode & min length parameter huge"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting trim using silence mode split
+ Trim silence split - Th: -48.0 dB, Min: 20.00 sec
+   File \"$OUTPUT_DIR/${O_FILE}_trimmed.ogg\" created
+ trim using silence split ok"
+  mp3splt_args="-d $OUTPUT_DIR -p min=20 -r $SILENCE_OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_trimmed.ogg"
+  check_current_ogg_length "3m:04.849s"
+  check_current_file_size "3013020"
 
   print_ok
   echo

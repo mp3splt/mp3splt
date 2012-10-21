@@ -44,6 +44,7 @@ typedef struct {
   short set_new_length;
 
   short continue_after_silence;
+  double previous_time;
 } splt_scan_silence_data;
 
 short splt_scan_silence_processor(double time, float level, int silence_was_found, short must_flush, 

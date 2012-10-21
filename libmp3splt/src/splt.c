@@ -625,8 +625,9 @@ int splt_s_set_trim_silence_splitpoints(splt_state *state, int *error)
   if (! splt_o_get_int_option(state,SPLT_OPT_QUIET_MODE))
   {
     splt_c_put_info_message_to_client(state, 
-        _(" Trim silence split - Th: %.1f dB\n"),
-        splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD));
+        _(" Trim silence split - Th: %.1f dB, Min: %.2f sec\n"),
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD),
+        splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH));
   }
 
   if (state->split.get_silence_level)
