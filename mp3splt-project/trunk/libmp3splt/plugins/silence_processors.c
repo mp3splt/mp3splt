@@ -53,6 +53,7 @@ splt_scan_silence_data *splt_scan_silence_data_new(splt_state *state, short firs
   ssd->shot = shots;
   ssd->silence_begin_was_found = SPLT_FALSE;
   ssd->continue_after_silence = SPLT_FALSE;
+  ssd->previous_time = 0;
 
   return ssd;
 }
@@ -123,9 +124,6 @@ short splt_scan_silence_processor(double time, float level, int silence_was_foun
 
       if ((end_position - begin_position - ssd->min) >= 0.f)
       {
-        /*fprintf(stdout, "silence begin = %lf\n", begin_position);
-        fprintf(stdout, "silence end = %lf\n", end_position);
-        fflush(stdout);*/
         if (splt_siu_ssplit_new(&ssd->state->silence_list,
               begin_position, end_position, ssd->len, error) == -1)
         {
@@ -209,7 +207,22 @@ static short splt_detect_where_begin_silence_ends(double time, float level, int 
 
   if (ssd->shot <= 0)
   {
-    if (splt_siu_ssplit_new(&ssd->state->silence_list, ssd->silence_end, ssd->silence_end, 0, error) == -1)
+    double silence_end = ssd->silence_end;
+
+    float min_length = splt_o_get_float_option(ssd->state, SPLT_OPT_PARAM_MIN_LENGTH);
+    if (min_length > 0)
+    {
+      if (silence_end > min_length)
+      {
+        silence_end -= min_length;
+      }
+      else
+      {
+        silence_end = 0;
+      }
+    }
+ 
+    if (splt_siu_ssplit_new(&ssd->state->silence_list, silence_end, silence_end, 0, error) == -1)
     {
       return SPLT_TRUE;
     }
@@ -232,7 +245,22 @@ static short splt_detect_where_end_silence_begins(double time, float level, int 
 {
   if (time < 0)
   {
-    if (splt_siu_ssplit_new(&ssd->state->silence_list, ssd->silence_begin, ssd->silence_begin, 0, error) == -1)
+    double silence_begin = ssd->silence_begin;
+
+    float min_length = splt_o_get_float_option(ssd->state, SPLT_OPT_PARAM_MIN_LENGTH);
+    if (min_length > 0)
+    {
+      if (ssd->previous_time - silence_begin > min_length)
+      {
+        silence_begin += min_length;
+      }
+      else
+      {
+        silence_begin = ssd->previous_time;
+      }
+    }
+
+    if (splt_siu_ssplit_new(&ssd->state->silence_list, silence_begin, silence_begin, 0, error) == -1)
     {
       return SPLT_TRUE;
     }
@@ -241,6 +269,8 @@ static short splt_detect_where_end_silence_begins(double time, float level, int 
 
     return SPLT_TRUE;
   }
+
+  ssd->previous_time = time;
 
   if (silence_was_found)
   {

@@ -1030,7 +1030,7 @@ function test_trim_silence
  info: found Xing or Info header. Switching to frame mode... 
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting trim using silence mode split
- Trim silence split - Th: -48.0 dB
+ Trim silence split - Th: -48.0 dB, Min: 0.00 sec
    File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
  trim using silence split ok"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -r $SILENCE_MP3_FILE" 
@@ -1039,6 +1039,62 @@ function test_trim_silence
   current_file="$OUTPUT_DIR/${M_FILE}_trimmed.mp3"
   check_current_mp3_length "04.01"
   check_current_file_size "6809389"
+
+  print_ok
+  echo
+}
+
+function test_trim_silence_with_min_length
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="trim silence mode & min length parameter"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting trim using silence mode split
+ Trim silence split - Th: -48.0 dB, Min: 1.50 sec
+   File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
+ trim using silence split ok"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p min=1.5 -r $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_trimmed.mp3"
+  check_current_mp3_length "04.03"
+  check_current_file_size "6865107"
+
+  print_ok
+  echo
+}
+
+function test_trim_silence_with_min_length_huge
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="trim silence mode & min length parameter huge"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting trim using silence mode split
+ Trim silence split - Th: -48.0 dB, Min: 20.00 sec
+   File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
+ trim using silence split ok"
+  mp3splt_args="-d $OUTPUT_DIR -p min=20 -r $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_trimmed.mp3"
+  check_current_mp3_length "04.05"
+  check_current_file_size "6911353"
 
   print_ok
   echo
