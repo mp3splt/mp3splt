@@ -1016,6 +1016,34 @@ function test_silence_full_log
   echo
 }
 
+function test_trim_silence
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="trim silence mode"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting trim using silence mode split
+ Trim silence split - Th: -48.0 dB
+   File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
+ trim using silence split ok"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -r $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_trimmed.mp3"
+  check_current_mp3_length "04.01"
+  check_current_file_size "6809389"
+
+  print_ok
+  echo
+}
+
 function run_silence_mode_tests
 {
   p_blue " SILENCE tests ..."

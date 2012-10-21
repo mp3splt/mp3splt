@@ -681,6 +681,33 @@ function test_silence_with_trackmin
   echo
 }
 
+function test_trim_silence
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  O_FILE="Kelly_Allyn__Whiskey_Can_silence"
+
+  test_name="trim silence mode"
+
+  expected=" Processing file 'songs/${O_FILE}.ogg' ...
+ info: file matches the plugin 'ogg vorbis (libvorbis)'
+ info: Ogg Vorbis Stream - 44100 - 156 Kb/s - 2 channels - Total time: 3m.04s
+ info: starting trim using silence mode split
+ Trim silence split - Th: -48.0 dB
+   File \"$OUTPUT_DIR/${O_FILE}_trimmed.ogg\" created
+ trim using silence split ok"
+  mp3splt_args="-d $OUTPUT_DIR -r $SILENCE_OGG_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${O_FILE}_trimmed.ogg"
+  check_current_ogg_length "2m:59.000s"
+  check_current_file_size "2959191"
+
+  print_ok
+  echo
+}
+
 function run_silence_mode_tests
 {
   p_blue " SILENCE ogg tests ..."
