@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-20 22:34+0200\n"
+"POT-Creation-Date: 2012-10-21 14:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,66 +91,66 @@ msgstr ""
 
 #: src/splt.c:628
 #, c-format
-msgid " Trim silence split - Th: %.1f dB\n"
+msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
 msgstr ""
 
-#: src/splt.c:762
+#: src/splt.c:763
 msgid "YES"
 msgstr ""
 
-#: src/splt.c:768
+#: src/splt.c:769
 #, c-format
 msgid "NO"
 msgstr ""
 
-#: src/splt.c:774
+#: src/splt.c:775
 #, c-format
 msgid "User"
 msgstr ""
 
-#: src/splt.c:778
+#: src/splt.c:779
 #, c-format
 msgid "Auto"
 msgstr ""
 
-#: src/splt.c:798
+#: src/splt.c:799
 #, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
 "Min track: %.2f, Shots: %d%s)\n"
 msgstr ""
 
-#: src/splt.c:824
+#: src/splt.c:825
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
 "time ;)\n"
 msgstr ""
 
-#: src/splt.c:859
+#: src/splt.c:860
 #, c-format
 msgid " Total silence points found: %d."
 msgstr ""
 
-#: src/splt.c:871
+#: src/splt.c:872
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr ""
 
-#: src/splt.c:990
+#: src/splt.c:991
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr ""
 
-#: src/splt.c:1044
+#: src/splt.c:1045
 msgid " info: starting silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1092
+#: src/splt.c:1093
 msgid " info: starting trim using silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1169
+#: src/splt.c:1170
 msgid " info: starting wrap mode split\n"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-20 22:34+0200\n"
+"POT-Creation-Date: 2012-10-21 14:53+0200\n"
 "PO-Revision-Date: 2011-09-16 00:13+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -98,30 +98,30 @@ msgid " info: starting 'split in equal tracks' mode\n"
 msgstr " Info: Teilung im Modus »Gleich große Teile« wird gestartet\n"
 
 #: src/splt.c:628
-#, c-format
-msgid " Trim silence split - Th: %.1f dB\n"
+#, fuzzy, c-format
+msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
 msgstr "Trimmen nach Stille-Erkennung - Ansprechschwelle: %.1f dB\n"
 
-#: src/splt.c:762
+#: src/splt.c:763
 msgid "YES"
 msgstr "JA"
 
-#: src/splt.c:768
+#: src/splt.c:769
 #, c-format
 msgid "NO"
 msgstr "NEIN"
 
-#: src/splt.c:774
+#: src/splt.c:775
 #, c-format
 msgid "User"
 msgstr "Benutzer"
 
-#: src/splt.c:778
+#: src/splt.c:779
 #, c-format
 msgid "Auto"
 msgstr "Automatisch"
 
-#: src/splt.c:798
+#: src/splt.c:799
 #, fuzzy, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
@@ -130,7 +130,7 @@ msgstr ""
 " Stille-Teilungstyp: Modus %s (Ansprechschwelle: %.1f dB, Aus: %.2f, Min: "
 "%.2f, Entfernen: %s, Min-Titel: %.2f)\n"
 
-#: src/splt.c:824
+#: src/splt.c:825
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -139,30 +139,30 @@ msgstr ""
 " Stille-Protokolldatei »%s« wurde gefunden! Um Zeit zu sparen, werden die "
 "Teilungspunkte aus dieser Datei gelesen ;)\n"
 
-#: src/splt.c:859
+#: src/splt.c:860
 #, c-format
 msgid " Total silence points found: %d."
 msgstr " Insgesamt gefundene Teilungspunkte: %d."
 
-#: src/splt.c:871
+#: src/splt.c:872
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d Titel ausgewählt)\n"
 
-#: src/splt.c:990
+#: src/splt.c:991
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr "Stille-Protokolldatei »%s« wird geschrieben …\n"
 
-#: src/splt.c:1044
+#: src/splt.c:1045
 msgid " info: starting silence mode split\n"
 msgstr " Info: Teilung im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:1092
+#: src/splt.c:1093
 msgid " info: starting trim using silence mode split\n"
 msgstr " Info: Trimmen im Stille-Modus wird gestartet\n"
 
-#: src/splt.c:1169
+#: src/splt.c:1170
 msgid " info: starting wrap mode split\n"
 msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 
