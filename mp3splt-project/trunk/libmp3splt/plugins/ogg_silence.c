@@ -265,6 +265,43 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
               if (stop == -1)
                 break;
             }
+
+            //BEGIN silence callbacks
+            if (state->split.get_silence_level)
+            {
+              long time = (long) (((double) pos / oggstate->vi->rate) * 100.0);
+              if (is_stream && stream_time0 == 0 && time != 0)
+              {
+                stream_time0 = time;
+                //          fprintf(stdout, "stream_time0 = %ld\n", stream_time0);
+                //          fflush(stdout);
+              }
+
+              //        fprintf(stdout, "level = %f, time = %ld, time - stream_time0 = %ld\n", 
+              //            level, time, (long) (time - stream_time0));
+              //        fflush(stdout);
+
+              state->split.get_silence_level(time - stream_time0, level,
+                  state->split.silence_level_client_data);
+            }
+            state->split.p_bar->silence_db_level = level;
+            state->split.p_bar->silence_found_tracks = found;
+
+            if (option_silence_mode)
+            {
+              if (splt_t_split_is_canceled(state))
+              {
+                eos = 1;
+              }
+              splt_c_update_progress(state,(double)pos * 100,
+                  (double)(oggstate->len), 1,0,SPLT_DEFAULT_PROGRESS_RATE2);
+            }
+            else
+            {
+              splt_c_update_progress(state,(double)begin, (double)end, 2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
+            }
+            //END silence callbacks
+
           }
         }
       }
@@ -295,41 +332,6 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
 //        fprintf(stdout,"Y page number = %ld\n", page_number);
 //        fflush(stdout);
 //      }
-
-      float level = splt_co_convert_to_db(oggstate->temp_level);
-      if (state->split.get_silence_level)
-      {
-        long time = (long) (((double) pos / oggstate->vi->rate) * 100.0);
-        if (is_stream && stream_time0 == 0 && time != 0)
-        {
-          stream_time0 = time;
-//          fprintf(stdout, "stream_time0 = %ld\n", stream_time0);
-//          fflush(stdout);
-        }
-
-//        fprintf(stdout, "level = %f, time = %ld, time - stream_time0 = %ld\n", 
-//            level, time, (long) (time - stream_time0));
-//        fflush(stdout);
-
-        state->split.get_silence_level(time - stream_time0, level,
-            state->split.silence_level_client_data);
-      }
-      state->split.p_bar->silence_db_level = level;
-      state->split.p_bar->silence_found_tracks = found;
-
-      if (option_silence_mode)
-      {
-        if (splt_t_split_is_canceled(state))
-        {
-          eos = 1;
-        }
-        splt_c_update_progress(state,(double)pos * 100,
-            (double)(oggstate->len), 1,0,SPLT_DEFAULT_PROGRESS_RATE2);
-      }
-      else
-      {
-        splt_c_update_progress(state,(double)begin, (double)end, 2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
-      }
     }
   }
 
