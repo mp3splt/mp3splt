@@ -8,7 +8,7 @@ if HAS_CUTTER
 SUBDIRS += test
 endif
 
-EXTRA_DIST = mp3splt-gtk.desktop.in autogen.sh m4 debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
+EXTRA_DIST = mp3splt-gtk.desktop.in autogen.sh debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
 
 appsdir = $(datadir)/applications
 apps_DATA = mp3splt-gtk.desktop
