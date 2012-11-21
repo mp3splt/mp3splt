@@ -30,36 +30,23 @@
  *
  *********************************************************/
 
-#ifndef FREEDB_H
+#ifndef MP3SPLT_PROXY_H
 
-typedef struct {
-  int err;
-  char *file;
-  int stop_on_dot;
-} splt_get_file;
+void splt_pr_set_default_values(splt_state *state);
+void splt_pr_free(splt_state *state);
 
-int splt_freedb_process_search(splt_state *state, char *search, 
-    int search_type, const char *cddb_get_server,
-    int port);
-char *splt_freedb_get_file(splt_state *state, int i, int *error,
-    int get_type, const char *cddb_get_server, int port);
+splt_code splt_pr_use_proxy(splt_state *state, const char *proxy_address, int proxy_port);
+splt_code splt_pr_use_base64_authentification(splt_state *state, const char *base64_authentification);
+char *splt_pr_base64(const unsigned char *source);
 
-//global freedb, ports and buffersize
-#define SPLT_FREEDB_BUFFERSIZE 8192
+int splt_pr_has_proxy(splt_state *state);
+int splt_pr_has_proxy_authentification(splt_state *state);
 
-#define SPLT_FREEDB2_SITE "tracktype.org"
-#define SPLT_FREEDB_SITE "freedb.org"
+const char *splt_pr_get_proxy_address(splt_state *state);
+int splt_pr_get_proxy_port(splt_state *state);
+const char *splt_pr_get_proxy_authentification(splt_state *state);
 
-//cddb protocol
-#define SPLT_FREEDB_HELLO "CDDB HELLO nouser mp3splt.sf.net "SPLT_PACKAGE_NAME" "SPLT_PACKAGE_VERSION"\n"
-#define SPLT_FREEDB_GET_FILE "CDDB READ %s %s\n"
-
-//cddb.cgi
-#define SPLT_FREEDB2_SEARCH "GET %s?cmd=cddb+album+%s"SPLT_FREEDB_HELLO_PROTO
-#define SPLT_FREEDB_HELLO_PROTO "&hello=nouser+mp3splt.sf.net+"SPLT_PACKAGE_NAME"+"SPLT_PACKAGE_VERSION"&proto=5"
-#define SPLT_FREEDB_CDDB_CGI_GET_FILE "GET %s?cmd=cddb+read+%s+%s"SPLT_FREEDB_HELLO_PROTO
-
-#define FREEDB_H
+#define MP3SPLT_PROXY_H
 
 #endif
 

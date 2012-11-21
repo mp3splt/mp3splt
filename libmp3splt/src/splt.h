@@ -265,26 +265,6 @@ struct splt_progres {
   void *progress_cb_data;
 };
 
-//TODO
-/*
-//!proxy information
-typedef struct {
-  //! True if we use a proxy
-  int use_proxy;
-  //! The name of the proxy
-  char hostname[256];
-  //! The port we use to access the procy
-  int port;
-  //! True if we need authentification
-  int authentification;
-  //! the username needed for authentification
-  char user[256];
-  //! the password needed for authentification
-  char password[256];
-} splt_proxy;
-*/
-
-
 //! The data libmp3splt keeps all its internal data in
 typedef struct {
   //! total time of the song
@@ -556,6 +536,12 @@ struct splt_ssplit {
   struct splt_ssplit *next;
 };
 
+typedef struct {
+  char *proxy_address;
+  int proxy_port;
+  char *authentification;
+} splt_proxy;
+
 struct _splt_state {
   //!setting to SPLT_TRUE cancels the split
   int cancel_split;
@@ -602,9 +588,7 @@ struct _splt_state {
   //!see the ssplit structure
   struct splt_ssplit *silence_list;
 
-  //proxy infos
-  //TODO
-  //splt_proxy proxy;
+  splt_proxy proxy;
 
   //!file format states, mp3,ogg..
   void *codec;
@@ -651,6 +635,7 @@ struct _splt_state {
 #include "debug.h"
 #include "filename_regex.h"
 #include "win32.h"
+#include "proxy.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

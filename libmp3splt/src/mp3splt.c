@@ -1294,6 +1294,38 @@ splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *f
 /************************************/
 /*    Freedb functions              */
 
+splt_code mp3splt_use_proxy(splt_state *state, const char *proxy_address, int proxy_port)
+{
+  return splt_pr_use_proxy(state, proxy_address, proxy_port);
+}
+
+splt_code mp3splt_use_base64_authentification(splt_state *state, 
+    const char *base64_authentification)
+{
+  return splt_pr_use_base64_authentification(state, base64_authentification);
+}
+
+char *mp3splt_encode_in_base64(splt_state *state, const char *input, int *error)
+{
+  int erro = SPLT_OK;
+  int *err = &erro;
+  if (error != NULL) { err = error; }
+
+  char *input_as_base64 = splt_pr_base64(input);
+  if (input_as_base64 == NULL)
+  {
+    *err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  return input_as_base64;
+}
+
+void mp3splt_clear_proxy(splt_state *state)
+{
+  splt_pr_free(state);
+}
+
 /*!Do a freedb search
 
 After dong the search continue by calling
@@ -1388,7 +1420,7 @@ int mp3splt_freedb_get_id(const splt_freedb_one_result *result)
   return result->id;
 }
 
-char *mp3splt_freedb_get_name(const splt_freedb_one_result *result)
+const char *mp3splt_freedb_get_name(const splt_freedb_one_result *result)
 {
   return result->name;
 }

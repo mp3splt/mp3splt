@@ -1678,6 +1678,50 @@ typedef struct _splt_freedb_results splt_freedb_results;
 typedef struct _splt_freedb_one_result splt_freedb_one_result;
 
 /**
+ * @brief Use proxy when accessing the internet.
+ *
+ * @param[in] state Main state.
+ * @param[in] proxy_address Proxy address.
+ * @param[in] proxy_port Port of the \p proxy_address.
+ * @return Possible error.
+ */
+splt_code mp3splt_use_proxy(splt_state *state, const char *proxy_address, int proxy_port);
+
+/**
+ * @brief Use proxy with base64 authentification.
+ *
+ * @param[in] state Main state.
+ * @param[in] base64_authentification Authentification credentials encoded in base64.
+ * @return Possible error.
+ *
+ * @see #mp3splt_encode_in_base64
+ * @see #mp3splt_clear_proxy
+ * @see #mp3splt_use_proxy
+ */
+splt_code mp3splt_use_base64_authentification(splt_state *state, 
+    const char *base64_authentification);
+
+/**
+ * @brief Encode the \p input in base64.
+ *
+ * @param[in] state Main state.
+ * @param[in] input Input to be encoded in base64.
+ * @param[in] error Possible error; can be NULL.
+ * @return The \p input encoded as base64.
+ *
+ * @see #mp3splt_use_base64_authentification
+ */
+char *mp3splt_encode_in_base64(splt_state *state, const char *input, int *error);
+
+/**
+ * @brief Clears the proxy data from the \p state.
+ *        For security purposes, use this function as soon as the proxy is not needed any more.
+ *
+ * @param[in] state Main state.
+ */
+void mp3splt_clear_proxy(splt_state *state);
+
+/**
  * @brief Search on the internet for the \p searched_string and returns the results.
  *
  * @param[in] state Main state.
@@ -1727,7 +1771,7 @@ int mp3splt_freedb_get_id(const splt_freedb_one_result *result);
 /**
  * @brief Returns the name of the \p result.
  */
-char *mp3splt_freedb_get_name(const splt_freedb_one_result *result);
+const char *mp3splt_freedb_get_name(const splt_freedb_one_result *result);
 
 /**
  * @brief Returns the number of revisions of the \p result.

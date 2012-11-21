@@ -65,7 +65,8 @@ libmp3splt_la_SOURCES = \
   pair.c pair.h \
   debug.c debug.h \
   filename_regex.c filename_regex.h \
-  socket_manager.c socket_manager.h
+  socket_manager.c socket_manager.h \
+  proxy.c proxy.h
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale
