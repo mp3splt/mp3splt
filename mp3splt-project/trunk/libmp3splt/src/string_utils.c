@@ -109,9 +109,9 @@ error:
   return NULL;
 }
 
-int splt_su_append_str(char **str, const char *to_append, ...)
+splt_code splt_su_append_str(char **str, const char *to_append, ...)
 {
-  int err = SPLT_OK;
+  splt_code err = SPLT_OK;
   va_list ap;
 
   va_start(ap, to_append);

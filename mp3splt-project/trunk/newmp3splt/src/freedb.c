@@ -21,37 +21,62 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111, USA.
  */
 
+#include <unistd.h>
+
 #include "common.h"
+#include "utils.h"
 #include "print_utils.h"
 
 #include "freedb.h"
 
+static void handle_proxy(main_data *data);
+static void query_for_proxy_and_write_configuration_file(main_data *data);
+static void read_proxy_settings_from_configuration_file(main_data *data);
+static char *get_configuration_filename();
+static char *query_for_proxy_login();
+static char *encode_in_base64(const char *authentification);
+static char *get_input_line(FILE *input_file, char *key);
+
 extern FILE *console_out;
+
+#if defined(__BEOS__) && !defined (HAS_GETPASS)
+#warning Faking getpass() !!!
+char *getpass(char *p)
+{
+  char *ret = malloc(30);
+  if (!ret)
+    return NULL;
+  puts(p);
+  fgets(ret, 30, stdin);
+  return ret;
+}
+#endif
 
 void do_freedb_search(main_data *data)
 {
+  handle_proxy(data);
+
   int err = SPLT_OK;
   options *opt = data->opt;
   splt_state *state = data->state;
 
-  //we find out what search and get type we have
   char search_type[30] = "";
   char get_type[30] = "";
   if (opt->freedb_search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI)
   {
-    snprintf(search_type,30,"%s","cddb_cgi");
+    snprintf(search_type, 30, "%s", "cddb_cgi");
   }
   else
   {
-    snprintf(search_type,30,"%s","web_search");
+    snprintf(search_type, 30 ,"%s", "web_search");
   }
   if (opt->freedb_get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI)
   {
-    snprintf(get_type,30,"%s","cddb_cgi");
+    snprintf(get_type, 30, "%s", "cddb_cgi");
   }
   else
   {
-    snprintf(get_type,30,"%s","cddb_protocol");
+    snprintf(get_type, 30, "%s", "cddb_protocol");
   }
 
   //print out infos about the servers
@@ -67,12 +92,9 @@ void do_freedb_search(main_data *data)
   //if we haven't chosen to search from the arguments, interactive search
   if (opt->freedb_arg_search_string[0] == '\0')
   {
-    //freedb search
-    print_message(_("CDDB QUERY. Insert album and"
-          " artist informations to find cd."));
+    print_message(_("CDDB QUERY. Insert album and artist informations to find cd."));
 
     short first_time = SPLT_TRUE;
-    //here we search freedb
     do {
       if (!first_time)
       {
@@ -89,7 +111,6 @@ void do_freedb_search(main_data *data)
       first_time = SPLT_FALSE;
 
       freedb_input[strlen(freedb_input)-1] = '\0';
-
     } while (strlen(freedb_input)==0);
 
     freedb_search_string = freedb_input;
@@ -133,9 +154,8 @@ void do_freedb_search(main_data *data)
     while ((f_result = mp3splt_freedb_next(f_results))) {
       int cd_id = mp3splt_freedb_get_id(f_result);
 
-      char *cd_name = mp3splt_freedb_get_name(f_result);
+      const char *cd_name = mp3splt_freedb_get_name(f_result);
       fprintf(console_out,"%3d) %s\n", cd_id, cd_name);
-      free(cd_name);
 
       int i = 0;
       int number_of_revisions = mp3splt_freedb_get_number_of_revisions(f_result);
@@ -238,6 +258,238 @@ end:
       MP3SPLT_CDDBFILE, opt->freedb_get_type,
       opt->freedb_get_server, opt->freedb_get_port);
   process_confirmation_error(err, data);
+
+  mp3splt_clear_proxy(data->state);
 }
 
+static void handle_proxy(main_data *data)
+{
+  mp3splt_clear_proxy(data->state);
+  query_for_proxy_and_write_configuration_file(data);
+  read_proxy_settings_from_configuration_file(data);
+}
+
+static void read_proxy_settings_from_configuration_file(main_data *data)
+{
+  char *config_file = get_configuration_filename();
+
+  FILE *input_file = fopen(config_file, "r");
+  if (!input_file)
+  {
+    free(config_file);
+    return;
+  }
+  free(config_file);
+
+  fseek(input_file, 0, SEEK_SET);
+
+  char *proxy_address = get_input_line(input_file, "PROXYADDR");
+  if (!proxy_address) { goto end; }
+
+  char *proxy_port = get_input_line(input_file, "PROXYPORT");
+  if (!proxy_port) { free(proxy_address); goto end; }
+  int port = atoi(proxy_port);
+
+  fprintf(stderr, " Using proxy %s on port %d\n", proxy_address, port);
+
+  mp3splt_use_proxy(data->state, proxy_address, port);
+
+  if (proxy_address != NULL)
+  {
+    free(proxy_address);
+  }
+  if (proxy_port != NULL)
+  {
+    free(proxy_port);
+  }
+
+  char *use_proxy_auth = get_input_line(input_file, "PROXYAUTH");
+  if (!use_proxy_auth) { goto end; }
+  if (use_proxy_auth[0] != '1')
+  {
+    free(use_proxy_auth);
+    goto end;
+  }
+  free(use_proxy_auth);
+
+  char *authentification = get_input_line(input_file, NULL);
+  if (authentification)
+  {
+    mp3splt_use_base64_authentification(data->state, authentification);
+    free(authentification);
+  }
+  else
+  {
+    char *proxy_authentification = query_for_proxy_login();
+    mp3splt_use_base64_authentification(data->state, proxy_authentification);
+    free(proxy_authentification);
+  }
+
+end:
+  fclose(input_file);
+}
+
+static char *get_input_line(FILE *input_file, char *key)
+{
+  char *line = NULL;
+  size_t length = 0;
+  if (getline(&line, &length, input_file) == -1)
+  {
+    if (line) { free(line); }
+    return NULL;
+  }
+
+  if (!line) { return NULL; }
+
+  int line_length = strlen(line);
+  if (line_length < 3)
+  {
+    free(line);
+    return NULL;
+  }
+
+  line[line_length-1] = '\0';
+  if (line[line_length-2] == '\r')
+  {
+    line[line_length-2] = '\0';
+  }
+
+  if (key == NULL)
+  {
+    return line;
+  }
+
+  if (strstr(line, key) == NULL) {
+    free(line);
+    return NULL;
+  }
+
+  char *value_start = NULL;
+  if ((value_start = strchr(line, '=')) == NULL) {
+    print_warning(_("the configuration file is malformed !"));
+    free(line);
+    return NULL;
+  }
+
+  char *value = strdup(value_start + 1);
+  if (!value)
+  {
+    print_warning(_("cannot allocate memory !"));
+  }
+
+  free(line);
+
+  return value;
+}
+
+static void query_for_proxy_and_write_configuration_file(main_data *data)
+{
+  char *config_file = get_configuration_filename();
+
+  FILE *output_file = NULL;
+  if ((output_file = fopen(config_file, "r"))) {
+    free(config_file);
+    fclose(output_file);
+    return;
+  }
+
+  if (!(output_file = fopen(config_file, "w+"))) {
+    free(config_file);
+    print_warning(_("can't open the configuration file !"));
+    return;
+  }
+  free(config_file);
+
+  int user_input_length = 1024;
+  char user_input[1024] = { '\0' };
+
+  fprintf(stderr, _("Will you use a proxy ? (y/n): "));
+  fgets(user_input, user_input_length, stdin);
+  if (user_input[0] != 'y') {
+    goto close_file;
+  }
+
+  fprintf(stderr, _("Proxy Address: "));
+  fgets(user_input, user_input_length, stdin);
+  fprintf(output_file, "PROXYADDR=%s", user_input);
+
+  fprintf(stderr, _("Proxy Port: "));
+  fgets(user_input, user_input_length, stdin);
+  fprintf(output_file, "PROXYPORT=%s", user_input);
+
+  fprintf(stderr, _("Need authentication ? (y/n): "));
+  fgets(user_input, user_input_length, stdin);
+  if (user_input[0] != 'y') {
+    goto close_file;
+  }
+
+  fprintf(output_file, "PROXYAUTH=1\n");
+  fprintf(stderr, _("Would you like to save the password (insecure) ? (y/n): "));
+  fgets(user_input, user_input_length, stdin);
+  if (user_input[0] != 'y') {
+    goto close_file;
+  }
+
+  char *authentification = query_for_proxy_login();
+
+  splt_code error = SPLT_OK;
+  char *authentification_as_base64 = 
+    mp3splt_encode_in_base64(data->state, authentification, &error);
+  process_confirmation_error(error, data);
+
+  memset(authentification, 0x00, strlen(authentification));
+  free(authentification);
+
+  fprintf(output_file, "%s\n", authentification_as_base64);
+
+  memset(authentification_as_base64, 0x00, strlen(authentification_as_base64));
+  free(authentification_as_base64);
+
+close_file:
+  fclose(output_file);
+}
+
+static char *query_for_proxy_login()
+{
+  char user_input[130];
+  fprintf(console_out, _("Username: "));
+  fgets(user_input, 128, stdin);
+  user_input[strlen(user_input)-1] = '\0';
+
+  char *pass = getpass(_("Password: "));
+
+  size_t login_size = strlen(user_input) + strlen(pass) + 2;
+  char *login = my_malloc(sizeof(char) * login_size);
+  snprintf(login, login_size, "%s:%s", user_input, pass);
+
+  memset(pass, 0x00, strlen(pass));
+  free(pass);
+
+  return login;
+}
+
+static char *get_configuration_filename()
+{
+  char *home_directory = getenv("HOME");
+
+  size_t home_directory_length = 0;
+  if (home_directory)
+  {
+    home_directory_length = strlen(home_directory);
+  }
+
+  size_t maximum_length = home_directory_length + strlen(PROXY_CONFIG_FILE) + 2;
+  char *config_file = my_malloc(sizeof(char) * maximum_length);
+
+  if (home_directory != NULL)
+  {
+    snprintf(config_file, maximum_length, "%s%c"PROXY_CONFIG_FILE, home_directory, SPLT_DIRCHAR);
+  }
+  else
+  {
+    snprintf(config_file, maximum_length, PROXY_CONFIG_FILE);
+  }
+
+  return config_file;
+}
 

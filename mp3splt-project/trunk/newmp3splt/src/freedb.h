@@ -25,6 +25,8 @@
 
 #include "data_manager.h"
 
+#define PROXY_CONFIG_FILE ".mp3splt"
+
 void do_freedb_search(main_data *data);
 
 #define FREEDB_H

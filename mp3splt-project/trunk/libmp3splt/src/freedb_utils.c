@@ -200,7 +200,7 @@ static void splt_fu_free_freedb_search(splt_state *state)
   if (res)
   {
     int i = 0;
-    for(i = 0; i < res->number;i++)
+    for (i = 0; i < res->number;i++)
     {
       if (res->results[i].revisions)
       {

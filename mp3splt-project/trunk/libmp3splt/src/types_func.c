@@ -87,6 +87,7 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   splt_o_set_options_default_values(state);
   splt_o_set_ioptions_default_values(state);
   splt_p_set_default_values(state);
+  splt_pr_set_default_values(state);
 }
 
 splt_state *splt_t_new_state(splt_state *state, int *error)
@@ -224,6 +225,7 @@ void splt_t_free_state(splt_state *state)
       state->split.p_bar = NULL;
     }
     splt_e_free_errors(state);
+    splt_pr_free(state);
     splt_t_free_state_struct(state);
   }
 }
