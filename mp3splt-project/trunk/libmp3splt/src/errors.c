@@ -244,6 +244,9 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
       return splt_su_get_formatted_message(state,
           _(" freedb error: cannot receive message from server '%s' (%s)"),
           state->err.error_data, state->err.strerror_msg);
+    case SPLT_FREEDB_ERROR_PROXY_NOT_SUPPORTED:
+      return splt_su_get_formatted_message(state,
+          _(" proxy not supported with this type of protocol"));
     case SPLT_INVALID_CUE_FILE:
       return splt_su_get_formatted_message(state, _(" cue error: invalid cue file '%s'"),
           state->err.error_data);
@@ -255,7 +258,7 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
           _(" freedb error: No such CD entry in database"));
     case SPLT_FREEDB_ERROR_SITE:
       return splt_su_get_formatted_message(state,
-          _(" freedb error: site returned an unknown error"));
+          _(" freedb error: bad response from remote host"));
       //
     case SPLT_DEWRAP_OK:
       return splt_su_get_formatted_message(state, _(" wrap split ok"));

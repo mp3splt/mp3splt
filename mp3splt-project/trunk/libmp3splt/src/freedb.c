@@ -51,6 +51,9 @@ that is meant to be used directly are all in mp3splt.c.
 #define DONT_SKIP_LINES 0
 #define SKIP_ONE_LINE 1
 
+static void splt_freedb_handle_response_and_free(char **first_line, 
+    splt_socket_handler *sh, splt_state *state);
+
 char *get_cgi_path_and_cut_server(int type, const char *search_server)
 {
   char *cgi_path = NULL;
@@ -169,6 +172,8 @@ int splt_freedb_process_search(splt_state *state, char *search,
   char *server = splt_freedb_get_server(search_server);
   int port = splt_freedb_get_port(port_number);
 
+  char *first_line = NULL;
+
   splt_sm_connect(sh, server, port, state);
   if (sh->error < 0) { error = sh->error; goto end; }
 
@@ -186,8 +191,11 @@ int splt_freedb_process_search(splt_state *state, char *search,
     err = splt_fu_freedb_init_search(state);
     if (err < 0) { error = err; goto disconnect; }
 
-    splt_sm_receive_and_process_without_headers(sh, state,
+    first_line = splt_sm_receive_and_process_without_headers(sh, state, 
         splt_freedb_search_result_processor, state, SKIP_ONE_LINE);
+    if (sh->error < 0) { error = sh->error; goto disconnect; }
+
+    splt_freedb_handle_response_and_free(&first_line, sh, state);
     if (sh->error < 0) { error = sh->error; goto disconnect; }
   }
   else if (search_type == SPLT_FREEDB_SEARCH_TYPE_CDDB)
@@ -203,9 +211,9 @@ int splt_freedb_process_search(splt_state *state, char *search,
   else if (found_cds == -1) 
   {
     splt_e_set_error_data(state, server);
-    error = SPLT_FREEDB_ERROR_GETTING_INFOS;
   }
   else if (found_cds == SPLT_MAXCD) 
+    error = SPLT_FREEDB_ERROR_GETTING_INFOS;
   {
     error = SPLT_FREEDB_MAX_CD_REACHED;
   }
@@ -231,6 +239,11 @@ end:
   {
     free(message);
     message = NULL;
+  }
+  if (first_line)
+  {
+    free(first_line);
+    first_line = NULL;
   }
 
   return error;
@@ -338,6 +351,8 @@ char *splt_freedb_get_file(splt_state *state, int disc_id, int *error,
   char *server = splt_freedb_get_server(cddb_get_server);
   int port = splt_freedb_get_port(port_number);
 
+  char *first_line = NULL;
+
   const char *cd_category = splt_fu_freedb_get_disc_category(state, disc_id);
   const char *cd_id = splt_fu_freedb_get_disc_id(state, disc_id);
 
@@ -352,13 +367,22 @@ char *splt_freedb_get_file(splt_state *state, int disc_id, int *error,
     splt_sm_send_http_message(sh, message, state);
     if (sh->error < 0) { *error = sh->error; goto disconnect; }
 
-    splt_sm_receive_and_process_without_headers(sh, state,
+    first_line = splt_sm_receive_and_process_without_headers(sh, state,
         splt_freedb_process_get_file, get_file, DONT_SKIP_LINES);
     if (get_file->err < 0) { *error = get_file->err; goto disconnect; }
+    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+
+    splt_freedb_handle_response_and_free(&first_line, sh, state);
     if (sh->error < 0) { *error = sh->error; goto disconnect; }
   }
   else if (get_type == SPLT_FREEDB_GET_FILE_TYPE_CDDB)
   {
+    if (splt_pr_has_proxy(state))
+    {
+      *error = SPLT_FREEDB_ERROR_PROXY_NOT_SUPPORTED;
+      goto disconnect;
+    }
+
     get_file->stop_on_dot = SPLT_TRUE;
 
     splt_sm_send_http_message(sh, SPLT_FREEDB_HELLO, state);
@@ -376,6 +400,9 @@ char *splt_freedb_get_file(splt_state *state, int disc_id, int *error,
 
     splt_sm_receive_and_process(sh, state, splt_freedb_process_get_file, get_file);
     if (get_file->err < 0) { *error = get_file->err; goto disconnect; }
+    if (sh->error < 0) { *error = sh->error; goto disconnect; }
+
+    splt_sm_send_http_message(sh, "quit", state);
     if (sh->error < 0) { *error = sh->error; goto disconnect; }
   }
 
@@ -401,6 +428,11 @@ end:
     free(message);
     message = NULL;
   }
+  if (first_line)
+  {
+    free(first_line);
+    first_line = NULL;
+  }
 
   if (get_file)
   {
@@ -413,5 +445,25 @@ end:
   }
 
   return NULL;
+}
+
+static void splt_freedb_handle_response_and_free(char **first_line, splt_socket_handler *sh, splt_state *state)
+{
+  if (!first_line) { return; }
+  if (!*first_line) { return; }
+
+  if ((strstr(*first_line, "50") != NULL) ||
+      (strstr(*first_line, "40") != NULL))
+  {
+    const char *ptr = NULL;
+    if ((ptr = strchr(*first_line, ' ')))
+    {
+      splt_c_put_info_message_to_client(state, "Host response: %s\n", ptr + 1);
+    }
+    sh->error = SPLT_FREEDB_ERROR_SITE;
+  }
+
+  free(*first_line);
+  *first_line = NULL;
 }
 

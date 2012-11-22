@@ -320,9 +320,20 @@ static void read_proxy_settings_from_configuration_file(main_data *data)
   }
   else
   {
+    splt_code error = SPLT_OK;
+
     char *proxy_authentification = query_for_proxy_login();
-    mp3splt_use_base64_authentification(data->state, proxy_authentification);
+    char *authentification_as_base64 = 
+      mp3splt_encode_in_base64(data->state, proxy_authentification, &error);
+    process_confirmation_error(error, data);
+
+    memset(proxy_authentification, 0x00, strlen(proxy_authentification));
     free(proxy_authentification);
+
+    mp3splt_use_base64_authentification(data->state, authentification_as_base64);
+
+    memset(authentification_as_base64, 0x00, strlen(authentification_as_base64));
+    free(authentification_as_base64);
   }
 
 end:

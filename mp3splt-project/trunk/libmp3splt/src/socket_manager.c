@@ -256,7 +256,7 @@ int splt_sm_process_without_headers_functor(const char *received_line,
   return SPLT_TRUE;
 }
 
-void splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler *sh, 
+char *splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler *sh, 
     splt_state *state,
     ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
@@ -276,19 +276,21 @@ void splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler *
   sm_fd->line_number_after_headers = 1;
   sm_fd->line_number = 1;
 
-  splt_sm_receive_and_process_with_recv(sh, state, 
+  char *first_line = splt_sm_receive_and_process_with_recv(sh, state, 
       recv_func, splt_sm_process_without_headers_functor, sm_fd);
 
   free(sm_fd);
   sm_fd = NULL;
+
+  return first_line;
 }
 
-void splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, 
+char *splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, 
     splt_state *state, 
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data, int number_of_lines_to_skip_after_headers)
 {
-  splt_sm_receive_and_process_without_headers_with_recv(sh, state, recv,
+  return splt_sm_receive_and_process_without_headers_with_recv(sh, state, recv,
       process_functor, user_data, number_of_lines_to_skip_after_headers);
 }
 
@@ -296,10 +298,16 @@ void splt_sm_receive_and_process(splt_socket_handler *sh, splt_state *state,
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data)
 {
-  splt_sm_receive_and_process_with_recv(sh, state, recv, process_functor, user_data);
+  char *first_line = 
+    splt_sm_receive_and_process_with_recv(sh, state, recv, process_functor, user_data);
+
+  if (first_line)
+  {
+    free(first_line);
+  }
 }
 
-void splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *state,
+char *splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *state,
     ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data)
@@ -307,6 +315,7 @@ void splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *
   splt_d_print_debug(state, "\nWaiting for response ...");
 
   int err = SPLT_OK;
+  char *first_line = NULL;
 
   char *lines = NULL;
 
@@ -371,6 +380,12 @@ void splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *
 
       splt_d_print_debug(state, "Received line _%s_\n", line);
 
+      if (line_number == 1)
+      {
+        err = splt_su_copy(line, &first_line);
+        if (err < 0) { sh->error = err; goto end; }
+      }
+
       int we_continue = process_functor(line, line_number, user_data);
 
       line_number++;
@@ -405,6 +420,8 @@ end:
     free(remaining_line);
     remaining_line = NULL;
   }
+
+  return first_line;
 }
 
 void splt_sm_close(splt_socket_handler *sh, splt_state *state)
