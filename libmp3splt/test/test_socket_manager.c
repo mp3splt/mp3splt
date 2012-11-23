@@ -34,7 +34,12 @@ void test_sm_receive_and_process()
   splt_socket_handler *sh = splt_sm_socket_handler_new(&error);
   cut_assert_equal_int(SPLT_OK, error);
 
-  splt_sm_receive_and_process_with_recv(sh, state, &recv_without_headers, &process_functor, NULL);
+  char *first_line = 
+    splt_sm_receive_and_process_with_recv(sh, state, &recv_without_headers, &process_functor, NULL);
+
+  cut_assert_equal_string("x", first_line);
+
+  free(first_line);
 
   splt_sm_socket_handler_free(&sh);
 }
@@ -46,8 +51,9 @@ void test_sm_receive_and_process_with_headers_skipped()
   splt_socket_handler *sh = splt_sm_socket_handler_new(&error);
   cut_assert_equal_int(SPLT_OK, error);
 
-  splt_sm_receive_and_process_without_headers_with_recv(sh, state, &recv_with_headers,
+  char *first_line = splt_sm_receive_and_process_without_headers_with_recv(sh, state, &recv_with_headers,
       &process_functor_with_skip_line, NULL, 1); 
+  free(first_line);
 
   splt_sm_socket_handler_free(&sh);
 }
@@ -57,8 +63,9 @@ void test_sm_receive_and_process_with_continue_processor_false()
   splt_socket_handler *sh = splt_sm_socket_handler_new(&error);
   cut_assert_equal_int(SPLT_OK, error);
 
-  splt_sm_receive_and_process_without_headers_with_recv(sh, state, &recv_with_headers,
+  char *first_line = splt_sm_receive_and_process_without_headers_with_recv(sh, state, &recv_with_headers,
       &processor_with_continue_false, NULL, 1); 
+  free(first_line);
 
   splt_sm_socket_handler_free(&sh);
 }
@@ -100,7 +107,7 @@ int process_functor(const char *received_line, int line_number, void *user_data)
   if (counter == 11)
   {
     cut_assert_equal_int(1, line_number);
-    cut_assert_equal_string("", received_line);
+    cut_assert_equal_string("x", received_line);
   }
   if (counter == 21)
   {
@@ -167,7 +174,14 @@ ssize_t recv_without_headers(int descriptor, void *buffer, size_t buffer_size, i
   }
   else
   {
-    snprintf(buffer, buffer_size, "\n");
+    if (counter == 10)
+    {
+      snprintf(buffer, buffer_size, "x\n");
+    }
+    else
+    {
+      snprintf(buffer, buffer_size, "\n");
+    }
   }
 
   counter++;

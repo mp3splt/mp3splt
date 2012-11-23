@@ -66,7 +66,7 @@ void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port,
 void splt_sm_send_http_message(splt_socket_handler *sh, const char *message,
     splt_state *state);
 
-char *splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, splt_state *state,
+void splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, splt_state *state,
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data, int number_of_lines_to_skip_after_headers);
 char *splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler *sh, 
