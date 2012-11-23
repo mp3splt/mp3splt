@@ -55,6 +55,9 @@ Manages a socket connection
 #define SPLT_BUFFER_SIZE 1024
 #define SPLT_MAXIMUM_NUMBER_OF_LINES_READ 1000
 
+static void splt_sm_handle_response_and_free(char **first_line, splt_socket_handler *sh,
+    splt_state *state);
+
 static char *get_message_decorated_with_http(splt_socket_handler *sh, const char *message,
     splt_state *state);
 static char *get_message_with_proxy(splt_socket_handler *sh, const char *message, splt_state *state);
@@ -285,26 +288,26 @@ char *splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler 
   return first_line;
 }
 
-char *splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, 
+void splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, 
     splt_state *state, 
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data, int number_of_lines_to_skip_after_headers)
 {
-  return splt_sm_receive_and_process_without_headers_with_recv(sh, state, recv,
-      process_functor, user_data, number_of_lines_to_skip_after_headers);
+  char *first_line = 
+    splt_sm_receive_and_process_without_headers_with_recv(sh, state, recv,
+        process_functor, user_data, number_of_lines_to_skip_after_headers);
+
+  splt_sm_handle_response_and_free(&first_line, sh, state);
 }
 
 void splt_sm_receive_and_process(splt_socket_handler *sh, splt_state *state,
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data)
 {
-  char *first_line = 
+  char *first_line =
     splt_sm_receive_and_process_with_recv(sh, state, recv, process_functor, user_data);
 
-  if (first_line)
-  {
-    free(first_line);
-  }
+  splt_sm_handle_response_and_free(&first_line, sh, state);
 }
 
 char *splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *state,
@@ -468,5 +471,25 @@ void splt_sm_socket_handler_free(splt_socket_handler **sh)
 
   free(*sh);
   *sh = NULL;
+}
+
+static void splt_sm_handle_response_and_free(char **first_line, splt_socket_handler *sh, splt_state *state)
+{
+  if (!first_line) { return; }
+  if (!*first_line) { return; }
+
+  if ((strstr(*first_line, "50") != NULL) ||
+      (strstr(*first_line, "40") != NULL))
+  {
+    const char *ptr = NULL;
+    if ((ptr = strchr(*first_line, ' ')))
+    {
+      splt_c_put_info_message_to_client(state, "Host response: %s\n", ptr + 1);
+    }
+    sh->error = SPLT_FREEDB_ERROR_SITE;
+  }
+
+  free(*first_line);
+  *first_line = NULL;
 }
 
