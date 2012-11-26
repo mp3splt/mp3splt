@@ -275,6 +275,14 @@ server to get the selected album and (if no problem occurs) will
 write a file named "query.cddb" from which will get splitpoints and
 filenames.
 
+\fBProxy support:\fP
+The first time that the user queries the internet (and if the quiet mode is not enabled), mp3splt asks
+for some information about proxy usage. Mp3splt has basic authentification support using base64 for HTTP
+proxies. A file named \'.mp3splt\' is created in the user home directory containing the informations
+provided by the user. Deleting this file will make mp3splt to query the user again. Please note that
+the authentification storage is not secure. The 'username:password' is stored as base64 and can be
+easily decoded.
+
 \fBIMPORTANT NOTE FOR CDDB\fP: File split with this option can be not very precise due to:
 
 1) Who extracts CD tracks may use "Remove silence" option. This means
@@ -287,7 +295,7 @@ that the large file is shorter than CD Total time. Never use this option.
 4) There are several entries of the same cd on CDDB. In mp3splt they appears with "\\=>" symbol.
 Try some of them and find the best for yours; usually you can find the correct splitpoints, so good luck!
 
-\fBYOU CAN USE \-a OPTION TO ADJUST SPLITPOINTS!\fP
+\fBYOU CAN USE THE \-a OPTION TO ADJUST SPLITPOINTS!\fP
 
 .IP "\fB-a\fP         " 10
 \fBAuto-adjust mode\fP.
