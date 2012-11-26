@@ -398,13 +398,20 @@ static void query_for_proxy_and_write_configuration_file(main_data *data)
   char *config_file = get_configuration_filename();
 
   FILE *output_file = NULL;
-  if ((output_file = fopen(config_file, "r"))) {
+  if ((output_file = fopen(config_file, "r")))
+  {
     free(config_file);
     fclose(output_file);
     return;
   }
 
-  if (!(output_file = fopen(config_file, "w+"))) {
+  if (data->opt->q_option)
+  {
+    return;
+  }
+
+  if (!(output_file = fopen(config_file, "w+")))
+  {
     free(config_file);
     print_warning(_("can't open the configuration file !"));
     return;
@@ -416,7 +423,8 @@ static void query_for_proxy_and_write_configuration_file(main_data *data)
 
   fprintf(stderr, _("Will you use a proxy ? (y/n): "));
   fgets(user_input, user_input_length, stdin);
-  if (user_input[0] != 'y') {
+  if (user_input[0] != 'y')
+  {
     goto close_file;
   }
 
@@ -430,14 +438,16 @@ static void query_for_proxy_and_write_configuration_file(main_data *data)
 
   fprintf(stderr, _("Need authentication ? (y/n): "));
   fgets(user_input, user_input_length, stdin);
-  if (user_input[0] != 'y') {
+  if (user_input[0] != 'y')
+  {
     goto close_file;
   }
 
   fprintf(output_file, "PROXYAUTH=1\n");
   fprintf(stderr, _("Would you like to save the password (insecure) ? (y/n): "));
   fgets(user_input, user_input_length, stdin);
-  if (user_input[0] != 'y') {
+  if (user_input[0] != 'y')
+  {
     goto close_file;
   }
 
