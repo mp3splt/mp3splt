@@ -205,9 +205,9 @@ int splt_freedb_process_search(splt_state *state, char *search,
   else if (found_cds == -1) 
   {
     splt_e_set_error_data(state, server);
+    error = SPLT_FREEDB_ERROR_GETTING_INFOS;
   }
   else if (found_cds == SPLT_MAXCD) 
-    error = SPLT_FREEDB_ERROR_GETTING_INFOS;
   {
     error = SPLT_FREEDB_MAX_CD_REACHED;
   }
