@@ -1,6 +1,7 @@
 #!/bin/bash
 
 RUN_INTERNET_TESTS=1
+RUN_PROXY_TESTS=1
 FAIL_FAST=1
 
 DIFF_CMD="diff"
@@ -10,6 +11,9 @@ GRAPHIC_DIFF_CMD="meld"
 
 MP3SPLT="./mp3splt -X"
 SONGS_DIR="songs"
+
+PROXY_HOST="localhost"
+PROXY_PORT="3177"
 
 #MP3
 MP3_FILE="$SONGS_DIR/La_Verue__Today.mp3"
