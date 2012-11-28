@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-21 14:53+0200\n"
+"POT-Creation-Date: 2012-11-28 19:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgid ""
 "%.2f Min: %.2f sec)\n"
 msgstr ""
 
-#: src/mp3splt.c:1886 src/tags_parser.c:108
+#: src/mp3splt.c:1918 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -282,266 +282,270 @@ msgstr ""
 msgid " freedb error: cannot receive message from server '%s' (%s)"
 msgstr ""
 
-#: src/errors.c:248
-#, c-format
-msgid " cue error: invalid cue file '%s'"
+#: src/errors.c:249
+msgid " proxy not supported with this type of protocol"
 msgstr ""
 
 #: src/errors.c:251
 #, c-format
+msgid " cue error: invalid cue file '%s'"
+msgstr ""
+
+#: src/errors.c:254
+#, c-format
 msgid " cddb error: invalid cddb file '%s'"
 msgstr ""
 
-#: src/errors.c:255
+#: src/errors.c:258
 msgid " freedb error: No such CD entry in database"
 msgstr ""
 
-#: src/errors.c:258
-msgid " freedb error: site returned an unknown error"
-msgstr ""
-
 #: src/errors.c:261
-msgid " wrap split ok"
+msgid " freedb error: bad response from remote host"
 msgstr ""
 
 #: src/errors.c:264
-msgid " wrap error: incorrect file length"
+msgid " wrap split ok"
 msgstr ""
 
 #: src/errors.c:267
-msgid " wrap error: libmp3splt version too old for this wrap file"
+msgid " wrap error: incorrect file length"
 msgstr ""
 
 #: src/errors.c:270
-msgid " wrap error: no file found or bad index"
+msgid " wrap error: libmp3splt version too old for this wrap file"
 msgstr ""
 
 #: src/errors.c:273
+msgid " wrap error: no file found or bad index"
+msgstr ""
+
+#: src/errors.c:276
 #, c-format
 msgid " wrap error: file '%s' damaged or incomplete"
 msgstr ""
 
-#: src/errors.c:277
+#: src/errors.c:280
 msgid " wrap error: maybe not a wrapped file or wrap file damaged"
 msgstr ""
 
-#: src/errors.c:280
+#: src/errors.c:283
 msgid " file split (EOF)"
 msgstr ""
 
-#: src/errors.c:282
+#: src/errors.c:285
 msgid " no silence splitpoints found"
 msgstr ""
 
-#: src/errors.c:284
+#: src/errors.c:287
 msgid " time split ok"
 msgstr ""
 
-#: src/errors.c:286
+#: src/errors.c:289
 msgid " split in equal tracks ok"
 msgstr ""
 
-#: src/errors.c:288
+#: src/errors.c:291
 msgid " silence split ok"
 msgstr ""
 
-#: src/errors.c:290
+#: src/errors.c:293
 msgid " trim using silence split ok"
 msgstr ""
 
-#: src/errors.c:293
+#: src/errors.c:296
 msgid " file split, splitpoints bigger than length"
 msgstr ""
 
-#: src/errors.c:295
+#: src/errors.c:298
 msgid " file split"
 msgstr ""
 
-#: src/errors.c:299
+#: src/errors.c:302
 msgid " error: not enough splitpoints (<2)"
 msgstr ""
 
-#: src/errors.c:302
+#: src/errors.c:305
 #, c-format
 msgid " error: cannot open file '%s': %s"
 msgstr ""
 
-#: src/errors.c:306
+#: src/errors.c:309
 #, c-format
 msgid " error: cannot close file '%s': %s"
 msgstr ""
 
-#: src/errors.c:313
+#: src/errors.c:316
 #, c-format
 msgid " error: invalid input file '%s' for '%s' plugin"
 msgstr ""
 
-#: src/errors.c:317
+#: src/errors.c:320
 #, c-format
 msgid " error: splitpoints are equal (%s)"
 msgstr ""
 
-#: src/errors.c:320
+#: src/errors.c:323
 msgid " error: invalid time split value"
 msgstr ""
 
-#: src/errors.c:323
+#: src/errors.c:326
 msgid " error: invalid number of files for equal length split"
 msgstr ""
 
-#: src/errors.c:326
+#: src/errors.c:329
 msgid " error: cannot get total audio length"
 msgstr ""
 
-#: src/errors.c:329
-msgid " error: unknown error while setting tags with libid3"
-msgstr ""
-
 #: src/errors.c:332
-#, c-format
-msgid " error: the splitpoints are not in order (%s)"
+msgid " error: unknown error while setting tags with libid3"
 msgstr ""
 
 #: src/errors.c:335
 #, c-format
+msgid " error: the splitpoints are not in order (%s)"
+msgstr ""
+
+#: src/errors.c:338
+#, c-format
 msgid " error: negative splitpoint (%s)"
 msgstr ""
 
-#: src/errors.c:339
+#: src/errors.c:342
 #, c-format
 msgid " error: bad destination folder '%s' (%s)"
 msgstr ""
 
-#: src/errors.c:342
+#: src/errors.c:345
 msgid " error: incompatible options"
 msgstr ""
 
-#: src/errors.c:345
+#: src/errors.c:348
 #, c-format
 msgid " input and output are the same file ('%s')"
 msgstr ""
 
-#: src/errors.c:348
+#: src/errors.c:351
 msgid " error: cannot allocate memory"
 msgstr ""
 
-#: src/errors.c:351
+#: src/errors.c:354
 #, c-format
 msgid " error: cannot open destination file '%s': %s"
 msgstr ""
 
-#: src/errors.c:355
+#: src/errors.c:358
 #, c-format
 msgid " error: cannot write to output file '%s'"
 msgstr ""
 
-#: src/errors.c:359
+#: src/errors.c:362
 #, c-format
 msgid " error: error while reading file '%s': %s"
 msgstr ""
 
-#: src/errors.c:362
+#: src/errors.c:365
 #, c-format
 msgid " error: cannot seek file '%s'"
 msgstr ""
 
-#: src/errors.c:365
+#: src/errors.c:368
 msgid " error: begin point out of file"
 msgstr ""
 
-#: src/errors.c:367
+#: src/errors.c:370
 #, c-format
 msgid " error: inexistent file '%s': %s"
 msgstr ""
 
-#: src/errors.c:370
+#: src/errors.c:373
 msgid " split process cancelled"
 msgstr ""
 
-#: src/errors.c:372
+#: src/errors.c:375
 msgid " error: library locked"
 msgstr ""
 
-#: src/errors.c:375
+#: src/errors.c:378
 msgid " error: the state has not been initialized with 'mp3splt_new_state'"
 msgstr ""
 
-#: src/errors.c:377
+#: src/errors.c:380
 msgid " error: negative time split"
 msgstr ""
 
-#: src/errors.c:380
+#: src/errors.c:383
 #, c-format
 msgid " error: cannot create directory '%s'"
 msgstr ""
 
-#: src/errors.c:383
+#: src/errors.c:386
 msgid " error: no plugin found"
 msgstr ""
 
-#: src/errors.c:385
+#: src/errors.c:388
 msgid " error: cannot initiate libltdl"
 msgstr ""
 
-#: src/errors.c:387
+#: src/errors.c:390
 msgid " error: CRC failed"
 msgstr ""
 
-#: src/errors.c:390
+#: src/errors.c:393
 #, c-format
 msgid " error: no plugin matches the file '%s'"
 msgstr ""
 
-#: src/errors.c:397
+#: src/errors.c:400
 msgid " warning: output format ambiguous (@t or @n missing)"
 msgstr ""
 
-#: src/errors.c:403
+#: src/errors.c:406
 #, c-format
 msgid " error: illegal variable '@%s' in output format"
 msgstr ""
 
-#: src/errors.c:408
+#: src/errors.c:411
 msgid " error: invalid output format"
 msgstr ""
 
-#: src/errors.c:412
+#: src/errors.c:415
 msgid " error: inexistent splitpoint"
 msgstr ""
 
-#: src/errors.c:415
+#: src/errors.c:418
 #, c-format
 msgid " plugin error: '%s'"
 msgstr ""
 
-#: src/errors.c:423
+#: src/errors.c:426
 #, c-format
 msgid " error: unsupported feature for the plugin '%s'"
 msgstr ""
 
-#: src/errors.c:426
+#: src/errors.c:429
 msgid " audacity labels file processed"
 msgstr ""
 
-#: src/errors.c:429
+#: src/errors.c:432
 #, c-format
 msgid " audacity error: invalid audacity labels file '%s'"
 msgstr ""
 
-#: src/errors.c:433
+#: src/errors.c:436
 #, c-format
 msgid " regular expression error: %s"
 msgstr ""
 
-#: src/errors.c:435
+#: src/errors.c:438
 msgid " regular expressions are not supported"
 msgstr ""
 
-#: src/errors.c:437
+#: src/errors.c:440
 msgid " regular expression error: no match"
 msgstr ""
 
-#: src/errors.c:439
+#: src/errors.c:442
 msgid " regular expression ok"
 msgstr ""
 

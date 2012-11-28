@@ -52,6 +52,38 @@ char *getpass(char *p)
 }
 #endif
 
+#ifdef __WIN32__
+char *getpass(char *s)
+{
+  char *pass, c;
+  int i=0;
+  fputs(s, stdout);
+  pass = malloc(100);
+  do {
+    c = getch();
+    if (c!='\r') {
+      if (c=='\b') {
+        if (i>0) {
+          printf ("\b \b");
+          i--;
+        }
+      }
+      else {
+        printf ("*");
+        pass[i++] = c;
+      }
+    }
+    else break;
+  } while (i<100);
+
+  pass[i]='\0';
+
+  printf("\n");
+
+  return pass;
+}
+#endif
+
 void do_freedb_search(main_data *data)
 {
   handle_proxy(data);
@@ -344,11 +376,22 @@ static char *get_input_line(FILE *input_file, char *key)
 {
   char *line = NULL;
   size_t length = 0;
+
+#ifdef __WIN32__
+  char junk[512];
+  fgets(junk, 512, stdin);
+  junk[strlen(junk)-1] = '\0';
+
+  length = strlen(junk) + 1;
+  line = my_malloc(sizeof(char) * length);
+  snprintf(line, length, junk);
+#else
   if (getline(&line, &length, input_file) == -1)
   {
     if (line) { free(line); }
     return NULL;
   }
+#endif
 
   if (!line) { return NULL; }
 
