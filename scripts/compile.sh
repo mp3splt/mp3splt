@@ -6,9 +6,9 @@ LIBMP3SPLT_DIR=libmp3splt
 MP3SPLT_DIR=newmp3splt
 MP3SPLT_GTK_DIR=mp3splt-gtk
 
-LIBMP3SPLT_REAL_VERSION="1.0.1141"
-MP3SPLT_REAL_VERSION="2.4.4.1141"
-MP3SPLT_GTK_REAL_VERSION="0.7.4.1141"
+LIBMP3SPLT_REAL_VERSION="1.0.1149"
+MP3SPLT_REAL_VERSION="2.4.4.1149"
+MP3SPLT_GTK_REAL_VERSION="0.7.4.1149"
 
 BUILD_SOURCE_PACKAGES=1
 
@@ -445,14 +445,14 @@ fi
 ###################################
 #build packages
 
+if [[ $BUILD_WINDOWS_PACKAGES -eq 1 ]];then
+  windows_cross_installers
+fi
 if [[ $BUILD_DEBIAN_PACKAGES -eq 1 ]];then
   debian_packages
 fi
 if [[ $BUILD_UBUNTU_PACKAGES -eq 1 ]];then
   ubuntu_packages
-fi
-if [[ $BUILD_WINDOWS_PACKAGES -eq 1 ]];then
-  windows_cross_installers
 fi
 
 ##gentoo_packages

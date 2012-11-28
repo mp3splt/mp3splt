@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-21 14:53+0200\n"
+"POT-Creation-Date: 2012-11-28 19:41+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgstr ""
 " Avec ajustement du silence (Seuil : %.1f dB Ecart : %d sec Compensation : "
 "%.2f)\n"
 
-#: src/mp3splt.c:1886 src/tags_parser.c:108
+#: src/mp3splt.c:1918 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -297,269 +297,274 @@ msgstr "pas de CD trouvé pour cette recherche"
 msgid " freedb error: cannot receive message from server '%s' (%s)"
 msgstr "erreur freedb : impossible de recevoir un message du serveur '%s' (%s)"
 
-#: src/errors.c:248
+#: src/errors.c:249
+msgid " proxy not supported with this type of protocol"
+msgstr ""
+
+#: src/errors.c:251
 #, c-format
 msgid " cue error: invalid cue file '%s'"
 msgstr "erreur cue : fichier cue incorrect '%s'"
 
-#: src/errors.c:251
+#: src/errors.c:254
 #, c-format
 msgid " cddb error: invalid cddb file '%s'"
 msgstr "erreur cddb : fichier cddb incorrect '%s'"
 
-#: src/errors.c:255
+#: src/errors.c:258
 msgid " freedb error: No such CD entry in database"
 msgstr "erreur freedb : pas de CD correspondant dans la base"
 
-#: src/errors.c:258
-msgid " freedb error: site returned an unknown error"
-msgstr "erreur freedb : le site retourne une erreur"
-
 #: src/errors.c:261
+#, fuzzy
+msgid " freedb error: bad response from remote host"
+msgstr "erreur freedb : impossible de se connecter à l'hôte '%s' (%s)"
+
+#: src/errors.c:264
 msgid " wrap split ok"
 msgstr "découpage 'wrap' ok"
 
-#: src/errors.c:264
+#: src/errors.c:267
 msgid " wrap error: incorrect file length"
 msgstr "erreur 'wrap' : longueur fichier incorrecte"
 
-#: src/errors.c:267
+#: src/errors.c:270
 msgid " wrap error: libmp3splt version too old for this wrap file"
 msgstr ""
 "erreur 'wrap' : version libmp3splt trop ancienne pour ce fichier 'wrap'"
 
-#: src/errors.c:270
+#: src/errors.c:273
 msgid " wrap error: no file found or bad index"
 msgstr "erreur 'wrap' : fichier non trouvé ou index incorrect"
 
-#: src/errors.c:273
+#: src/errors.c:276
 #, c-format
 msgid " wrap error: file '%s' damaged or incomplete"
 msgstr "erreur 'wrap' : fichier '%s' endommagé ou incomplet"
 
-#: src/errors.c:277
+#: src/errors.c:280
 msgid " wrap error: maybe not a wrapped file or wrap file damaged"
 msgstr "erreur 'wrap' :  fichier non 'wrap' ou fichier 'wrap' endommagé"
 
-#: src/errors.c:280
+#: src/errors.c:283
 msgid " file split (EOF)"
 msgstr "fichier découpé (fin de fichier)"
 
-#: src/errors.c:282
+#: src/errors.c:285
 msgid " no silence splitpoints found"
 msgstr "aucun silence trouvé pour découper"
 
-#: src/errors.c:284
+#: src/errors.c:287
 msgid " time split ok"
 msgstr "découpage 'durée' ok"
 
-#: src/errors.c:286
+#: src/errors.c:289
 msgid " split in equal tracks ok"
 msgstr "découpage morceaux ok"
 
-#: src/errors.c:288
+#: src/errors.c:291
 msgid " silence split ok"
 msgstr "découpage 'silence' ok"
 
-#: src/errors.c:290
+#: src/errors.c:293
 #, fuzzy
 msgid " trim using silence split ok"
 msgstr "découpage 'silence' ok"
 
-#: src/errors.c:293
+#: src/errors.c:296
 msgid " file split, splitpoints bigger than length"
 msgstr "découpage fichier, point de découpage trop loin"
 
-#: src/errors.c:295
+#: src/errors.c:298
 msgid " file split"
 msgstr "découpage fichier"
 
-#: src/errors.c:299
+#: src/errors.c:302
 msgid " error: not enough splitpoints (<2)"
 msgstr "erreur : pas assez de points de découpage (<2)"
 
-#: src/errors.c:302
+#: src/errors.c:305
 #, c-format
 msgid " error: cannot open file '%s': %s"
 msgstr "erreur : impossible d'ouvrir le fichier '%s': %s"
 
-#: src/errors.c:306
+#: src/errors.c:309
 #, c-format
 msgid " error: cannot close file '%s': %s"
 msgstr "erreur: impossible de fermer le fichier '%s': %s"
 
-#: src/errors.c:313
+#: src/errors.c:316
 #, c-format
 msgid " error: invalid input file '%s' for '%s' plugin"
 msgstr "erreur : fichier d'entrée incorrect '%s' pour le plugin '%s'"
 
-#: src/errors.c:317
+#: src/errors.c:320
 #, c-format
 msgid " error: splitpoints are equal (%s)"
 msgstr "erreur : points de découpage identiques (%s)"
 
-#: src/errors.c:320
+#: src/errors.c:323
 msgid " error: invalid time split value"
 msgstr "erreur : valeur de durée de découpage incorrecte"
 
-#: src/errors.c:323
+#: src/errors.c:326
 msgid " error: invalid number of files for equal length split"
 msgstr "erreur : nombre de morceaux incorrect"
 
-#: src/errors.c:326
+#: src/errors.c:329
 msgid " error: cannot get total audio length"
 msgstr "erreur : impossible d'obtenir la durée totale audio"
 
-#: src/errors.c:329
+#: src/errors.c:332
 msgid " error: unknown error while setting tags with libid3"
 msgstr ""
 
-#: src/errors.c:332
+#: src/errors.c:335
 #, c-format
 msgid " error: the splitpoints are not in order (%s)"
 msgstr "erreur : points de découpage dans le désordre (%s)"
 
-#: src/errors.c:335
+#: src/errors.c:338
 #, c-format
 msgid " error: negative splitpoint (%s)"
 msgstr "erreur : point de découpage négatif (%s)"
 
-#: src/errors.c:339
+#: src/errors.c:342
 #, c-format
 msgid " error: bad destination folder '%s' (%s)"
 msgstr "erreur : dossier destination incorrect '%s' (%s)"
 
-#: src/errors.c:342
+#: src/errors.c:345
 msgid " error: incompatible options"
 msgstr "erreur : options incompatibles"
 
-#: src/errors.c:345
+#: src/errors.c:348
 #, c-format
 msgid " input and output are the same file ('%s')"
 msgstr "fichiers source et destination identiques ('%s')"
 
-#: src/errors.c:348
+#: src/errors.c:351
 msgid " error: cannot allocate memory"
 msgstr "erreur : allocation mémoire impossible"
 
-#: src/errors.c:351
+#: src/errors.c:354
 #, c-format
 msgid " error: cannot open destination file '%s': %s"
 msgstr "erreur : ouverture du fichier destination impossible '%s': %s"
 
-#: src/errors.c:355
+#: src/errors.c:358
 #, c-format
 msgid " error: cannot write to output file '%s'"
 msgstr "erreur : impossible d'écrire dans le fichier destination '%s'"
 
-#: src/errors.c:359
+#: src/errors.c:362
 #, c-format
 msgid " error: error while reading file '%s': %s"
 msgstr "erreur : pendant la lecture du fichier '%s': %s"
 
-#: src/errors.c:362
+#: src/errors.c:365
 #, c-format
 msgid " error: cannot seek file '%s'"
 msgstr "erreur : impossible de trouver le fichier '%s'"
 
-#: src/errors.c:365
+#: src/errors.c:368
 msgid " error: begin point out of file"
 msgstr "erreur : premier point hors fichier"
 
-#: src/errors.c:367
+#: src/errors.c:370
 #, c-format
 msgid " error: inexistent file '%s': %s"
 msgstr " erreur: fichier inexistant '%s': %s"
 
-#: src/errors.c:370
+#: src/errors.c:373
 msgid " split process cancelled"
 msgstr "découpage interrompu"
 
-#: src/errors.c:372
+#: src/errors.c:375
 msgid " error: library locked"
 msgstr "erreur : bibliothèque verrouillée"
 
-#: src/errors.c:375
+#: src/errors.c:378
 msgid " error: the state has not been initialized with 'mp3splt_new_state'"
 msgstr "erreur : l'état n'a pas été initialisé avec 'mp3splt_new_state'"
 
-#: src/errors.c:377
+#: src/errors.c:380
 msgid " error: negative time split"
 msgstr "erreur : temps découpage négatif"
 
-#: src/errors.c:380
+#: src/errors.c:383
 #, c-format
 msgid " error: cannot create directory '%s'"
 msgstr "erreur : impossible de créer le dossier '%s'"
 
-#: src/errors.c:383
+#: src/errors.c:386
 msgid " error: no plugin found"
 msgstr "erreur : plugin non trouvé"
 
-#: src/errors.c:385
+#: src/errors.c:388
 msgid " error: cannot initiate libltdl"
 msgstr "erreur : impossible de démarrer libltdl"
 
-#: src/errors.c:387
+#: src/errors.c:390
 msgid " error: CRC failed"
 msgstr "erreur : CRC faux"
 
-#: src/errors.c:390
+#: src/errors.c:393
 #, c-format
 msgid " error: no plugin matches the file '%s'"
 msgstr "erreur : aucun plugin correspondant au fichier '%s'"
 
-#: src/errors.c:397
+#: src/errors.c:400
 msgid " warning: output format ambiguous (@t or @n missing)"
 msgstr "avertissement : format de sortie ambigu (@t ou @n manquant)"
 
-#: src/errors.c:403
+#: src/errors.c:406
 #, c-format
 msgid " error: illegal variable '@%s' in output format"
 msgstr "erreur : variable incorrecte '@%s' dans le format de sortie"
 
-#: src/errors.c:408
+#: src/errors.c:411
 msgid " error: invalid output format"
 msgstr "erreur : format de sortie incorrect"
 
-#: src/errors.c:412
+#: src/errors.c:415
 msgid " error: inexistent splitpoint"
 msgstr "erreur : aucun point de découpage"
 
-#: src/errors.c:415
+#: src/errors.c:418
 #, c-format
 msgid " plugin error: '%s'"
 msgstr "erreur plugin : '%s'"
 
-#: src/errors.c:423
+#: src/errors.c:426
 #, c-format
 msgid " error: unsupported feature for the plugin '%s'"
 msgstr "erreur : fonctionnalité non supportée par le plugin '%s'"
 
-#: src/errors.c:426
+#: src/errors.c:429
 msgid " audacity labels file processed"
 msgstr "fichier de marqueurs audacity traité"
 
-#: src/errors.c:429
+#: src/errors.c:432
 #, c-format
 msgid " audacity error: invalid audacity labels file '%s'"
 msgstr "audacity erreur : fichier marqueurs audacity incorrect '%s'"
 
-#: src/errors.c:433
+#: src/errors.c:436
 #, c-format
 msgid " regular expression error: %s"
 msgstr "erreur expression régulière : %s"
 
-#: src/errors.c:435
+#: src/errors.c:438
 #, fuzzy
 msgid " regular expressions are not supported"
 msgstr "erreur expression régulière : %s"
 
-#: src/errors.c:437
+#: src/errors.c:440
 msgid " regular expression error: no match"
 msgstr "erreur expression régulière : aucune correspondance"
 
-#: src/errors.c:439
+#: src/errors.c:442
 msgid " regular expression ok"
 msgstr "expression régulière ok"
 
@@ -654,6 +659,9 @@ msgstr " info : flux Ogg Vorbis - %ld - %ld Kb/s - %d canaux"
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux ogg.\n"
+
+#~ msgid " freedb error: site returned an unknown error"
+#~ msgstr "erreur freedb : le site retourne une erreur"
 
 #~ msgid ""
 #~ " warning: unexpected position in ogg vorbis stream - split from 0.0 to "

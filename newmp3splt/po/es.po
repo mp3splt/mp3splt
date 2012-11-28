@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-10-21 14:53+0200\n"
+"POT-Creation-Date: 2012-11-28 19:42+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:262 src/utils.c:36 src/utils.c:52
+#: src/mp3splt.c:262 src/freedb.c:431 src/utils.c:36 src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "no puede asignar memoria!"
 
@@ -119,85 +119,127 @@ msgid ""
 "+\n"
 msgstr ""
 
-#: src/freedb.c:58
+#: src/freedb.c:115
 #, c-format
 msgid " Freedb search type: %s , Site: %s , Port: %d\n"
 msgstr ""
 
-#: src/freedb.c:61
+#: src/freedb.c:118
 #, c-format
 msgid " Freedb get type: %s , Site: %s , Port: %d\n"
 msgstr ""
 
-#: src/freedb.c:71
+#: src/freedb.c:127
 msgid "CDDB QUERY. Insert album and artist informations to find cd."
 msgstr ""
 "PREGUNTA CDDB. Introduzca la información de álbum y artista para encontrar "
 "cd."
 
-#: src/freedb.c:79
+#: src/freedb.c:133
 msgid ""
 "\n"
 "Please search something ..."
 msgstr ""
 
-#: src/freedb.c:85
+#: src/freedb.c:139
 #, c-format
 msgid "\r Search: ["
 msgstr "Búsqueda: ["
 
-#: src/freedb.c:102
+#: src/freedb.c:155
 #, c-format
 msgid ""
 "\n"
 "  Search string: %s\n"
 msgstr ""
 
-#: src/freedb.c:103
+#: src/freedb.c:156
 #, c-format
 msgid ""
 "\n"
 "Searching from %s on port %d using %s ...\n"
 msgstr ""
 
-#: src/freedb.c:116
+#: src/freedb.c:169
 msgid "No results found"
 msgstr ""
 
-#: src/freedb.c:126
+#: src/freedb.c:179
 msgid "List of found cd:"
 msgstr "Lista de cd que se encuentran:"
 
-#: src/freedb.c:146
+#: src/freedb.c:198
 #, c-format
 msgid "Revision: %d\n"
 msgstr ""
 
-#: src/freedb.c:153
+#: src/freedb.c:205
 #, c-format
 msgid "-- 'q' to select cd, Enter for more:"
 msgstr "- 'Q' para seleccionar cd, Enter para más:"
 
-#: src/freedb.c:171
+#: src/freedb.c:223
 #, c-format
 msgid "-- 'q' to select cd, Enter for more: "
 msgstr "- 'Q' para seleccionar cd, Enter para más:"
 
-#: src/freedb.c:198
+#: src/freedb.c:250
 #, c-format
 msgid "Select cd #: "
 msgstr "Seleccione cd #:"
 
-#: src/freedb.c:213
+#: src/freedb.c:265
 #, c-format
 msgid "Please "
 msgstr "Por favor,"
 
-#: src/freedb.c:233
+#: src/freedb.c:285
 #, c-format
 msgid ""
 "\n"
 "Getting file from %s on port %d using %s ...\n"
+msgstr ""
+
+#: src/freedb.c:423
+msgid "the configuration file is malformed !"
+msgstr ""
+
+#: src/freedb.c:459
+msgid "can't open the configuration file !"
+msgstr ""
+
+#: src/freedb.c:467
+#, c-format
+msgid "Will you use a proxy ? (y/n): "
+msgstr ""
+
+#: src/freedb.c:474
+#, c-format
+msgid "Proxy Address: "
+msgstr ""
+
+#: src/freedb.c:478
+#, c-format
+msgid "Proxy Port: "
+msgstr ""
+
+#: src/freedb.c:482
+#, c-format
+msgid "Need authentication ? (y/n): "
+msgstr ""
+
+#: src/freedb.c:490
+#, c-format
+msgid "Would you like to save the password (insecure) ? (y/n): "
+msgstr ""
+
+#: src/freedb.c:519
+#, c-format
+msgid "Username: "
+msgstr ""
+
+#: src/freedb.c:523
+msgid "Password: "
 msgstr ""
 
 #: src/options_checker.c:49
