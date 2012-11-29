@@ -379,8 +379,8 @@ static char *get_input_line(FILE *input_file, char *key)
 
 #ifdef __WIN32__
   char junk[512];
-  fgets(junk, 512, stdin);
-  junk[strlen(junk)-1] = '\0';
+  fgets(junk, 511, input_file);
+  junk[strlen(junk)] = '\0';
 
   length = strlen(junk) + 1;
   line = my_malloc(sizeof(char) * length);
