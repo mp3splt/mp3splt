@@ -421,12 +421,9 @@ void gstreamer_add_files(GList *list, ui_state *ui)
     }
 
     add_playlist_file(song, ui);
-    int len_uri = 20 + strlen(song);
-    gchar *uri = malloc(sizeof(char) * len_uri);
-    g_snprintf(uri, len_uri, "file://%s",song);
 
+    gchar *uri = g_filename_to_uri(song, NULL, NULL);
     g_object_set(G_OBJECT(ui->pi->play), "uri", uri, NULL);
-
     if (uri) { g_free(uri); }
 
     i++;
