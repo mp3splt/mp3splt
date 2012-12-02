@@ -46,12 +46,62 @@ void print_error(const char *e)
   fflush(console_err);
 }
 
-void put_library_message(const char *message, splt_message_type mess_type, void *data)
+static void print_with_spaces_after(const char *printed_value, int print_carriage_return, 
+    FILE *file, main_data *data)
+{
+  char *value = strdup(printed_value);
+  if (!value)
+  {
+    print_warning(_("cannot allocate memory !"));
+  }
+
+  char temp[2048] = "";
+  int this_spaces = strlen(value);
+  int counter = strlen(value);
+  while (counter <= data->printed_value_length)
+  {
+    temp[counter-this_spaces] = ' ';
+    counter++;
+  }
+  temp[counter] = '\0';
+
+  if (print_carriage_return)
+  {
+    fprintf(file, "%s%s\r", value, temp);
+  }
+  else
+  {
+    int has_slash_n = SPLT_FALSE;
+    if (strlen(value) > 1)
+    {
+      if (value[strlen(value)-1] == '\n')
+      {
+        has_slash_n = SPLT_TRUE;
+      }
+    }
+
+    if (has_slash_n)
+    {
+      value[strlen(value)-1] = '\0';
+      fprintf(file, "%s%s\n", value, temp);
+    }
+    else
+    {
+      fprintf(file, "%s%s", value, temp);
+    }
+  }
+
+  fflush(file);
+
+  free(value);
+}
+
+void put_library_message(const char *message, splt_message_type mess_type, void *user_data)
 {
   if (mess_type == SPLT_MESSAGE_INFO)
   {
-    fprintf(console_out,"%s",message);
-    fflush(console_out);
+    main_data *data = (main_data *) user_data;
+    print_with_spaces_after(message, SPLT_FALSE, console_out, data);
   }
   else if (mess_type == SPLT_MESSAGE_DEBUG)
   {
@@ -139,20 +189,7 @@ void put_progress_bar(splt_progress *p_bar, void *user_data)
     snprintf(printed_value,2047," [ %.2f %%] %s", percent_progress * 100, progress_text);
   }
 
-  //we put necessary spaces
-  char temp[2048] = "";
-  int this_spaces = strlen(printed_value);
-  int counter = strlen(printed_value);
-  while (counter <= data->printed_value_length)
-  {
-    temp[counter-this_spaces] = ' ';
-    counter++;
-  }
-  temp[counter] = '\0';
-
-  fprintf(console_progress,"%s%s\r",printed_value,temp);
-  fflush(console_progress);
-
+  print_with_spaces_after(printed_value, SPLT_TRUE, console_progress, data);
   data->printed_value_length = strlen(printed_value) + 1;
 
   free(filename_shorted);

@@ -809,7 +809,7 @@ splt_code mp3splt_append_tags(splt_state *state, splt_tags *tags)
   }
 
   splt_o_lock_library(state);
-  splt_tu_append_tags_to_state(state, tags, SPLT_TRUE, &error);
+  splt_tu_append_tags_to_state(state, tags, SPLT_TRUE, SPLT_FALSE, &error);
   splt_o_unlock_library(state);
 
   return error;

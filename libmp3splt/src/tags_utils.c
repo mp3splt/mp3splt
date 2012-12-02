@@ -807,7 +807,7 @@ void splt_tu_free_one_tags_content(splt_tags *tags)
 }
 
 void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
-    int append_new_tags, int *error)
+    int append_new_tags, int original_tags_value, int *error)
 {
   int err = SPLT_OK;
 
@@ -822,7 +822,7 @@ void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags,
     err = splt_tu_append_only_non_null_previous_tags(state, tags->title,
         tags->artist, tags->album, tags->performer, tags->year, 
         tags->comment, tags->track, tags->genre,
-        SPLT_TRUE);
+        original_tags_value);
   }
 
   if (err < 0)

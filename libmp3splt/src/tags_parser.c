@@ -56,8 +56,8 @@ static void splt_tp_process_auto_increment_tracknumber_variable(
 static void splt_tp_check_ambigous_next_position(const char *tag_variable_start,
     tags_parser_utils *tpu);
 static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
-    splt_state *state, int *error);
-static void splt_tp_get_original_tags(splt_state *state, int *error);
+    splt_state *state, int *error, int set_original_tags);
+static void splt_tp_get_original_tags_and_append(splt_state *state, int *error);
 static int splt_tp_tpu_has_one_current_tag_set(tags_parser_utils *tpu);
 static char *splt_tp_look_for_end_paranthesis(tags_parser_utils *tpu);
 static void splt_tp_look_for_all_tags_char(const char *tags,
@@ -194,7 +194,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
     if (*error < 0) { goto end; }
 
     splt_tu_append_tags_to_state(state, tpu->current_tags,
-        !tpu->original_tags_found, error);
+        !tpu->original_tags_found, tpu->original_tags_value, error);
     if (*error < 0) { goto end; }
 
     if (tpu->set_all_tags)
@@ -350,7 +350,11 @@ static void splt_tp_process_tag_variable(const char *tag_variable_start,
   switch (tag_variable)
   {
     case 'o':
-      splt_tp_process_original_tags_variable(tpu, state, error);
+      splt_tp_process_original_tags_variable(tpu, state, error, SPLT_TRUE);
+      if (*error < 0) { return; }
+      break;
+    case 'O':
+      splt_tp_process_original_tags_variable(tpu, state, error, SAME_BYTES_AS_TAGS);
       if (*error < 0) { return; }
       break;
     case 'a':
@@ -487,7 +491,7 @@ static void splt_tp_check_ambigous_next_position(const char *tag_variable_start,
 }
 
 static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
-    splt_state *state, int *error)
+    splt_state *state, int *error, int set_original_tags)
 {
   if (tpu->original_tags_found)
   {
@@ -501,18 +505,20 @@ static void splt_tp_process_original_tags_variable(tags_parser_utils *tpu,
 
   splt_o_lock_messages(state);
 
-  splt_tp_get_original_tags(state, error);
+  splt_tp_get_original_tags_and_append(state, error);
   if (*error < 0) { goto end; }
+
+  splt_tags appended_tags = splt_tu_get_last_tags(state);
+  splt_tu_set_field_on_tags(&appended_tags, SPLT_TAGS_ORIGINAL, &set_original_tags);
 
   if (tpu->set_all_tags)
   {
-    splt_tags last_tags = splt_tu_get_last_tags(state);
-    splt_tu_copy_tags(&last_tags, tpu->all_tags, error);
-    tpu->all_tags->set_original_tags = SPLT_TRUE;
+    splt_tu_copy_tags(&appended_tags, tpu->all_tags, error);
     if (*error < 0) { goto end; }
   }
 
   tpu->original_tags_found = SPLT_TRUE;
+  tpu->original_tags_value = set_original_tags;
 
   if (splt_tp_tpu_has_one_current_tag_set(tpu))
   {
@@ -523,7 +529,7 @@ end:
   splt_o_unlock_messages(state);
 }
 
-static void splt_tp_get_original_tags(splt_state *state, int *error)
+static void splt_tp_get_original_tags_and_append(splt_state *state, int *error)
 {
   splt_check_file_type(state, error);
   if (*error < 0) { return; }
@@ -628,6 +634,7 @@ static void splt_tp_tpu_reset_for_new_tags(splt_state *state, tags_parser_utils 
   splt_tu_free_one_tags_content(tpu->current_tags);
 
   tpu->original_tags_found = SPLT_FALSE;
+  tpu->original_tags_value = SPLT_FALSE;
 
   if (tpu->current_tracknumber)
   {

@@ -117,15 +117,16 @@ might fix the issues.
 the split files with one exception: the track number starts at 1 and is incremented along
 split files. When copying the original file tags, only one artist, album, title are supported.
 Custom tags for the split files can be set with the \-g option.
-Setting exactly the same tags as the original file is possible with \-g %[@o].
+Setting exactly the same tags as the original file is possible with \-g %[@O] (mp3 only) or \-g %[@o].
 
 \fBNOTE about MP3 TAGS:\fP in order to extract the original tags from mp3 files,
 libmp3splt must be compiled with 'id3tag' support. By default, the output
 files will have the same ID3 tag version as the input file; this behaviour can be changed
 with the \-T option. If the input file has no tags and the \-g option is used, then both
 ID3v1 and ID3v2 are written. Total tracknumber is not yet supported.
-Only writing ID3v2.4 is supported; note that some software only support ID3v2.3 and will not
-be able to read them.
+Only writing ID3v2.4 is supported for custom tags; note that some software only support ID3v2.3
+and will not be able to read them. However, it is possible to write the exact original tags using
+%[@O], keeping the same tags version as in the original file.
 
 \fBNOTE about the OUTPUT DIRECTORY:\fP by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
@@ -537,6 +538,8 @@ replace tags in tags. The 'replace tags in tags' option is not recursive. The va
 .br
 @o: set original tags
 .br
+@O: set exactly the same original tags (mp3 only)
+.br
 @N: auto increment track number: 
 this variable has to be placed inside the %[] field in order to have the track
 number auto incremented for all the split files following it
@@ -544,6 +547,12 @@ number auto incremented for all the split files following it
 @m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint
 .br
 @M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint
+
+The @O option will act as follows:
+- if the input file has only ID3v1 or ID3v2, the original file tags will be copied to the
+generated without any other change, ignoring other user variables
+- if the input file has both ID3v1 and ID3v2, only ID3v2 will be copied to the generated without any
+other change and ID3v1 will be built again
 
 Using the 'replace tags in tags' option, you can also use the following variables,
 which are replaced by the data from the original tags: #a, #b, #t, #y, #c, #g.

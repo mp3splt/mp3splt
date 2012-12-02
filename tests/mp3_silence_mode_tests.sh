@@ -1016,7 +1016,7 @@ function test_silence_full_log
   echo
 }
 
-function test_trim_silence
+function test_silence_trim
 {
   rm -f mp3splt.log
   remove_output_dir
@@ -1044,7 +1044,7 @@ function test_trim_silence
   echo
 }
 
-function test_trim_silence_with_min_length
+function test_silence_trim_with_min_length
 {
   rm -f mp3splt.log
   remove_output_dir
@@ -1059,6 +1059,8 @@ function test_trim_silence_with_min_length
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting trim using silence mode split
  Trim silence split - Th: -48.0 dB, Min: 1.50 sec
+ info: trim begin split at 0m_00s_00h
+ info: trim end split at 4m_03s_68h
    File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
  trim using silence split ok"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p min=1.5 -r $SILENCE_MP3_FILE" 
@@ -1072,7 +1074,37 @@ function test_trim_silence_with_min_length
   echo
 }
 
-function test_trim_silence_with_min_length_huge
+function test_silence_trim_with_min_length_small
+{
+  rm -f mp3splt.log
+  remove_output_dir
+
+  M_FILE="La_Verue__Today_silence"
+
+  test_name="trim silence mode & min length parameter small"
+
+  expected=" Processing file 'songs/La_Verue__Today_silence.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting trim using silence mode split
+ Trim silence split - Th: -48.0 dB, Min: 0.50 sec
+ info: trim begin split at 0m_00s_43h
+ info: trim end split at 4m_02s_68h
+   File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
+ trim using silence split ok"
+  mp3splt_args="-T 2 -d $OUTPUT_DIR -p min=0.5 -r $SILENCE_MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_trimmed.mp3"
+  check_current_mp3_length "04.02"
+  check_current_file_size "6833179"
+
+  print_ok
+  echo
+}
+
+function test_silence_trim_with_min_length_huge
 {
   rm -f mp3splt.log
   remove_output_dir
@@ -1087,6 +1119,8 @@ function test_trim_silence_with_min_length_huge
  info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
  info: starting trim using silence mode split
  Trim silence split - Th: -48.0 dB, Min: 20.00 sec
+ info: trim begin split at 0m_00s_00h
+ info: trim end split at 4m_05s_68h
    File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
  trim using silence split ok"
   mp3splt_args="-d $OUTPUT_DIR -p min=20 -r $SILENCE_MP3_FILE" 
