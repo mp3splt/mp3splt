@@ -120,7 +120,7 @@ int main(int argc, char **orig_argv)
   signal(SIGINT, sigint_handler);
 
   //callback for the library messages
-  mp3splt_set_message_function(state, put_library_message, NULL);
+  mp3splt_set_message_function(state, put_library_message, data);
   mp3splt_set_silence_level_function(state, get_silence_level, data->sl);
   //callback for the split files
   mp3splt_set_split_filename_function(state, put_split_file, data);

@@ -59,6 +59,7 @@
 typedef struct {
   id3_byte_t *tag_bytes;
   id3_length_t tag_length;
+  unsigned int version;
 } tag_bytes_and_size;
 #endif
 

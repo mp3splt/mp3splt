@@ -32,6 +32,8 @@
 
 #ifndef MP3SPLT_TAGS_UTILS_H
 
+#define SAME_BYTES_AS_TAGS 2
+
 void splt_tu_free_original_tags(splt_state *state);
 void splt_tu_auto_increment_tracknumber(splt_state *state);
 int splt_tu_append_original_tags(splt_state *state);
@@ -79,7 +81,7 @@ int splt_tu_append_tags(splt_state *state,
 int splt_tu_append_or_set_tag(splt_state *state, int tags_index, splt_tag_key key, const char *value);
 
 void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
-    int append_null_tags, int *error);
+    int append_new_tags, int original_tags_value, int *error);
 
 void splt_tu_set_new_tags_where_current_tags_are_null(splt_state *state,
     splt_tags *current_tags, splt_tags *new_tags, 

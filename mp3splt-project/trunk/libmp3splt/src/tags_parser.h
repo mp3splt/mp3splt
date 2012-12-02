@@ -49,6 +49,7 @@ typedef struct {
   int genre_counter;
 
   int original_tags_found;
+  int original_tags_value;
 
   int auto_increment_tracknumber;
 
