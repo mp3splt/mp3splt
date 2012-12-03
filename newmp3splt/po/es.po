@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-11-28 19:42+0100\n"
+"POT-Creation-Date: 2012-12-02 23:56+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:262 src/freedb.c:431 src/utils.c:36 src/utils.c:52
+#: src/mp3splt.c:262 src/freedb.c:431 src/print_utils.c:55 src/utils.c:36
+#: src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "no puede asignar memoria!"
 
@@ -411,53 +412,53 @@ msgstr ""
 msgid " Error: %s\n"
 msgstr ""
 
-#: src/print_utils.c:77
+#: src/print_utils.c:127
 #, c-format
 msgid "   File \"%s\" created%s\n"
 msgstr ""
 
-#: src/print_utils.c:92
+#: src/print_utils.c:142
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/print_utils.c:99
+#: src/print_utils.c:149
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/print_utils.c:106
+#: src/print_utils.c:156
 #, c-format
 msgid " searching for sync errors..."
 msgstr "en busca de errores de sincronización ..."
 
-#: src/print_utils.c:115
+#: src/print_utils.c:165
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr ""
 
-#: src/print_utils.c:120
+#: src/print_utils.c:170
 #, c-format
 msgid "Level: %.2f dB; scanning for silence..."
 msgstr ""
 
-#: src/print_utils.c:165
+#: src/print_utils.c:202
 msgid "using"
 msgstr "utilizando"
 
-#: src/print_utils.c:178
+#: src/print_utils.c:215
 #, c-format
 msgid ""
 "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n"
 msgstr ""
 
-#: src/print_utils.c:227
+#: src/print_utils.c:264
 msgid ""
 "\n"
 "All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
 msgstr ""
 
-#: src/print_utils.c:236
+#: src/print_utils.c:273
 msgid ""
 "\n"
 "USAGE:\n"
@@ -467,7 +468,7 @@ msgid ""
 "                   or EOF-min.sec[.0-99] (or EOF for End Of File). "
 msgstr ""
 
-#: src/print_utils.c:241
+#: src/print_utils.c:278
 msgid ""
 "\n"
 "OPTIONS (split mode options)\n"
@@ -479,7 +480,7 @@ msgid ""
 "      Use -a to auto-adjust splitpoints."
 msgstr ""
 
-#: src/print_utils.c:246
+#: src/print_utils.c:283
 msgid ""
 " -s   Silence detection: automatically find splitpoint. (Use -p for "
 "arguments)\n"
@@ -493,21 +494,21 @@ msgstr ""
 "envuelto mp3)-e modo de error: dividir mp3 con la detección de errores de "
 "sincronización. (Para concatenados mp3)"
 
-#: src/print_utils.c:250
+#: src/print_utils.c:287
 msgid " -r   Trim using silence detection (Use -p for arguments)"
 msgstr ""
 
-#: src/print_utils.c:252
+#: src/print_utils.c:289
 msgid ""
 " -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
 msgstr ""
 "-A + AUDACITY_FILE: se separó de splitpoints del archivo audacia etiquetas"
 
-#: src/print_utils.c:253
+#: src/print_utils.c:290
 msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"
 msgstr "-S + SPLIT_NUMBER: dividir en archivos SPLIT_NUMBER el mismo tiempo"
 
-#: src/print_utils.c:258
+#: src/print_utils.c:295
 msgid ""
 "\n"
 "(other options)\n"
@@ -517,7 +518,7 @@ msgid ""
 "      (default is to set the same version as the file to split)"
 msgstr ""
 
-#: src/print_utils.c:262
+#: src/print_utils.c:299
 msgid ""
 " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
 " -f   Frame mode (mp3 only): process all frames. For higher precision and "
@@ -529,7 +530,7 @@ msgstr ""
 "precisión y VBR. -Un auto-ajuste splitpoints con detección de silencio. (Uso-"
 "p para los argumentos)"
 
-#: src/print_utils.c:265
+#: src/print_utils.c:302
 msgid ""
 " -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots, trackjoin): "
 "user arguments for -s, -a, -t.\n"
@@ -541,7 +542,7 @@ msgid ""
 "      @f: original filename, @g: genre"
 msgstr ""
 
-#: src/print_utils.c:272
+#: src/print_utils.c:309
 msgid ""
 " -g + TAGS: custom tags for the split files.\n"
 "      TAGS can contain those variables: \n"
@@ -551,7 +552,7 @@ msgid ""
 "       (% means that we set the tags for all remaining files)"
 msgstr ""
 
-#: src/print_utils.c:278
+#: src/print_utils.c:315
 msgid ""
 " -G + regex=REGEX: set tags from input filename. REGEX defines how to "
 "extract\n"
@@ -560,7 +561,7 @@ msgid ""
 "<comment>), (?<genre>)"
 msgstr ""
 
-#: src/print_utils.c:282
+#: src/print_utils.c:319
 msgid ""
 " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
 " -k   Consider input not seekable (slower). Default when input is STDIN "
@@ -572,7 +573,7 @@ msgstr ""
 "cuando la entrada es STDIN (-). -O + TIME: Los archivos de superposición "
 "dividir con el tiempo (más lento)."
 
-#: src/print_utils.c:285
+#: src/print_utils.c:322
 msgid ""
 " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean "
 "files.\n"
@@ -586,7 +587,7 @@ msgstr ""
 "desea concatenar el dividir los archivos-N No cree el archivo 'mp3splt.log' "
 "registro cuando se utiliza '-s'."
 
-#: src/print_utils.c:289
+#: src/print_utils.c:326
 msgid ""
 " -P   Pretend to split: simulation of the process, without creating any\n"
 "      files or directories"
@@ -594,13 +595,13 @@ msgstr ""
 "-P Pretende dividida: la simulación del proceso, sin crear archivos o "
 "directorios"
 
-#: src/print_utils.c:291
+#: src/print_utils.c:328
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
 msgstr ""
 "-E + CUE_FILE: splitpoints exportación a archivo CUE (uso con-P, si es "
 "necesario)"
 
-#: src/print_utils.c:292
+#: src/print_utils.c:329
 msgid ""
 " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
 " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
