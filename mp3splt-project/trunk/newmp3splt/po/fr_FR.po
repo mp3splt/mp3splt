@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-11-28 19:42+0100\n"
+"POT-Creation-Date: 2012-12-02 23:56+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: peterpall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: src/mp3splt.c:262 src/freedb.c:431 src/utils.c:36 src/utils.c:52
+#: src/mp3splt.c:262 src/freedb.c:431 src/print_utils.c:55 src/utils.c:36
+#: src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "impossible d'allouer de la mémoire !"
 
@@ -446,41 +447,41 @@ msgstr " Attention : %s\n"
 msgid " Error: %s\n"
 msgstr " Erreur : %s\n"
 
-#: src/print_utils.c:77
+#: src/print_utils.c:127
 #, c-format
 msgid "   File \"%s\" created%s\n"
 msgstr "   Fichier \"%s\" créé%s\n"
 
-#: src/print_utils.c:92
+#: src/print_utils.c:142
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr " préparation de \"%s\" (%d sur %d)"
 
-#: src/print_utils.c:99
+#: src/print_utils.c:149
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr " création de \"%s\" (%d sur %d)"
 
-#: src/print_utils.c:106
+#: src/print_utils.c:156
 #, c-format
 msgid " searching for sync errors..."
 msgstr " recherche des erreurs de synchronisation ..."
 
-#: src/print_utils.c:115
+#: src/print_utils.c:165
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
-#: src/print_utils.c:120
+#: src/print_utils.c:170
 #, fuzzy, c-format
 msgid "Level: %.2f dB; scanning for silence..."
 msgstr "S : %02d, Niveau : %.2f dB; recherche du silence..."
 
-#: src/print_utils.c:165
+#: src/print_utils.c:202
 msgid "using"
 msgstr "utilisant"
 
-#: src/print_utils.c:178
+#: src/print_utils.c:215
 #, c-format
 msgid ""
 "THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK!\n"
@@ -488,7 +489,7 @@ msgstr ""
 "CE PROGRAMME EST FOURNI SANS AUCUNE GARANTIE ! UTILISEZ-LE SOUS VOTRE "
 "RESPONSABILITE !\n"
 
-#: src/print_utils.c:227
+#: src/print_utils.c:264
 msgid ""
 "\n"
 "All files have been split correctly. Visit http://mp3wrap.sourceforge.net!"
@@ -497,7 +498,7 @@ msgstr ""
 "Tous les fichiers ont été divisés avec succès. Visitez http://mp3wrap."
 "sourceforge.net!"
 
-#: src/print_utils.c:236
+#: src/print_utils.c:273
 #, fuzzy
 msgid ""
 "\n"
@@ -515,7 +516,7 @@ msgstr ""
 "59\n"
 "                    (ou EOF pour la fin du fichier). "
 
-#: src/print_utils.c:241
+#: src/print_utils.c:278
 msgid ""
 "\n"
 "OPTIONS (split mode options)\n"
@@ -536,7 +537,7 @@ msgstr ""
 "d'internet (\"query\").\n"
 "      Utiliser -a pour ajuster les points de coupure en fonction du silence."
 
-#: src/print_utils.c:246
+#: src/print_utils.c:283
 msgid ""
 " -s   Silence detection: automatically find splitpoint. (Use -p for "
 "arguments)\n"
@@ -554,20 +555,20 @@ msgstr ""
 "les fichiers mp3\n"
 "      concaténés)"
 
-#: src/print_utils.c:250
+#: src/print_utils.c:287
 msgid " -r   Trim using silence detection (Use -p for arguments)"
 msgstr ""
 
-#: src/print_utils.c:252
+#: src/print_utils.c:289
 msgid ""
 " -A + AUDACITY_FILE: split with splitpoints from the audacity labels file"
 msgstr " -A + FICHIER_AUDACITY : division à partir de marqueurs audacity"
 
-#: src/print_utils.c:253
+#: src/print_utils.c:290
 msgid " -S + SPLIT_NUMBER: split in SPLIT_NUMBER equal time files"
 msgstr " -S + NOMBRE : diviser en NOMBRE morceaux egaux"
 
-#: src/print_utils.c:258
+#: src/print_utils.c:295
 msgid ""
 "\n"
 "(other options)\n"
@@ -582,7 +583,7 @@ msgstr ""
 "      comme 1, 2 ou 1 et 2. VERSION_TAGS peut être 1, 2 ou 12\n"
 "      (par défaut: la même version que dans le fichier d'entrée)"
 
-#: src/print_utils.c:262
+#: src/print_utils.c:299
 msgid ""
 " -m + M3U_FILE: Appends to the specified m3u file the split filenames.\n"
 " -f   Frame mode (mp3 only): process all frames. For higher precision and "
@@ -597,7 +598,7 @@ msgstr ""
 " -a   Ajustement des points de coupure avec recherche du silence.\n"
 "      (Utiliser -p pour les arguments)"
 
-#: src/print_utils.c:265
+#: src/print_utils.c:302
 msgid ""
 " -p + PARAMETERS (th, nt, off, min, rm, gap, trackmin, shots, trackjoin): "
 "user arguments for -s, -a, -t.\n"
@@ -609,7 +610,7 @@ msgid ""
 "      @f: original filename, @g: genre"
 msgstr ""
 
-#: src/print_utils.c:272
+#: src/print_utils.c:309
 msgid ""
 " -g + TAGS: custom tags for the split files.\n"
 "      TAGS can contain those variables: \n"
@@ -619,7 +620,7 @@ msgid ""
 "       (% means that we set the tags for all remaining files)"
 msgstr ""
 
-#: src/print_utils.c:278
+#: src/print_utils.c:315
 msgid ""
 " -G + regex=REGEX: set tags from input filename. REGEX defines how to "
 "extract\n"
@@ -628,7 +629,7 @@ msgid ""
 "<comment>), (?<genre>)"
 msgstr ""
 
-#: src/print_utils.c:282
+#: src/print_utils.c:319
 msgid ""
 " -d + DIRNAME: to put all output files in the directory DIRNAME.\n"
 " -k   Consider input not seekable (slower). Default when input is STDIN "
@@ -643,7 +644,7 @@ msgstr ""
 " -O + TEMPS : Chevaucher les fichiers créés sur un intervalle de TEMPS (plus "
 "lent)."
 
-#: src/print_utils.c:285
+#: src/print_utils.c:322
 msgid ""
 " -n   No Tag: does not write ID3v1 or vorbis comment. If you need clean "
 "files.\n"
@@ -660,7 +661,7 @@ msgstr ""
 " -N   Ne pas créer le fichier de log 'mp3splt.log' avec les points desilence "
 "quand -s est utilisé."
 
-#: src/print_utils.c:289
+#: src/print_utils.c:326
 msgid ""
 " -P   Pretend to split: simulation of the process, without creating any\n"
 "      files or directories"
@@ -668,12 +669,12 @@ msgstr ""
 " -P   Simulation du processus de division, sans créer des fichiers ou\n"
 "      des répertoires"
 
-#: src/print_utils.c:291
+#: src/print_utils.c:328
 msgid " -E + CUE_FILE: export splitpoints to CUE file (use with -P if needed)"
 msgstr ""
 " -E + FICHIER_CUE : exporter les points vers un fichier CUE (voir aussi -P)"
 
-#: src/print_utils.c:292
+#: src/print_utils.c:329
 msgid ""
 " -q   Quiet mode: try not to prompt (if possible) and print less messages.\n"
 " -Q   Very quiet mode: don't print anything to stdout and no progress bar\n"
