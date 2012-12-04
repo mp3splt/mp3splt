@@ -35,6 +35,11 @@ The Plug-in that handles mp3 files
 #include "mp3_silence.h"
 #include "mp3_utils.h"
 
+static void splt_mp3_free_bytes_and_size(tag_bytes_and_size *bytes_and_size);
+static tag_bytes_and_size *splt_mp3_new_bytes_and_size();
+static char *splt_mp3_get_same_bytes_tags(int version, tag_bytes_and_size *bytes_and_size, 
+    unsigned long *number_of_bytes, int *error);
+
 /****************************/
 /* mp3 constants */
 
@@ -385,66 +390,75 @@ static id3_byte_t *splt_mp3_get_id3v1_tag_bytes(FILE *file, id3_length_t *length
 \param tags_version Is filled with the version of the tag by this function.
 \return The string containing the tags
 */
-static id3_byte_t *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *filename,
-    id3_length_t *length, int *error, int *tags_version, int *bytes_tags_version)
+static tag_bytes_and_size *splt_mp3_get_id3_tag_bytes(splt_state *state, const char *filename, 
+    int *error)
 {
-  *length = 0;
+  id3_length_t length = 0;
+  int tags_version = 0;
   id3_byte_t *bytes = NULL;
+  tag_bytes_and_size *bytes_and_size = NULL;
 
   FILE *file = splt_io_fopen(filename, "rb");
-
-  if (! file)
+  if (!file)
   {
     splt_e_set_strerror_msg_with_data(state, filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     goto end;
   }
+
+  bytes_and_size = splt_mp3_new_bytes_and_size();
+  if (bytes_and_size == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    goto end;
+  }
+
+  id3_length_t id3v1_length = 0;
+  id3_byte_t *id3v1_bytes = splt_mp3_get_id3v1_tag_bytes(file, &id3v1_length);
+
+  id3_length_t id3v2_length = 0;
+  id3_byte_t *id3v2_bytes = splt_mp3_get_id3v2_tag_bytes(file, &id3v2_length);
+
+  if (id3v2_bytes)
+  {
+    bytes = id3v2_bytes;
+    length = id3v2_length;
+    tags_version = 2;
+
+    if (id3v1_bytes)
+    {
+      bytes_and_size->tag_bytes_v1 = id3v1_bytes;
+      bytes_and_size->tag_length_v1 = id3v1_length;
+      tags_version = 12;
+    }
+  }
+  else if (id3v1_bytes)
+  {
+    bytes = id3v1_bytes;
+    length = id3v1_length;
+    tags_version = 1;
+  }
+
+  bytes_and_size->tag_bytes = bytes;
+  bytes_and_size->tag_length = length;
+  bytes_and_size->version = tags_version;
+
+  if (tags_version == 12)
+  {
+    bytes_and_size->bytes_tags_version = 2;
+  }
   else
   {
-    id3_length_t id3v1_length = 0;
-    id3_byte_t *id3v1_bytes = splt_mp3_get_id3v1_tag_bytes(file, &id3v1_length);
-
-    id3_length_t id3v2_length = 0;
-    id3_byte_t *id3v2_bytes = splt_mp3_get_id3v2_tag_bytes(file, &id3v2_length);
-
-    if (id3v2_bytes)
-    {
-      *tags_version = 2;
-      *bytes_tags_version = 2;
-      bytes = id3v2_bytes;
-      *length = id3v2_length;
-
-      if (id3v1_bytes)
-      {
-        *tags_version = 12;
-        free(id3v1_bytes);
-        id3v1_bytes = NULL;
-      }
-    }
-    else if (id3v1_bytes)
-    {
-      *tags_version = 1;
-      *bytes_tags_version = 1;
-      bytes = id3v1_bytes;
-      *length = id3v1_length;
-    }
+    bytes_and_size->bytes_tags_version = tags_version;
   }
 
 end:
   if (file)
   {
-    if (fclose(file) != 0)
-    {
-      if (bytes)
-      {
-        free(bytes);
-        bytes = NULL;
-      }
-      return NULL;
-    }
+    fclose(file);
   }
 
-  return bytes;
+  return bytes_and_size;
 }
 
 //!puts a original field on id3 conforming to frame_type
@@ -554,75 +568,58 @@ at compilation time
 static void splt_mp3_get_original_tags(const char *filename,
     splt_state *state, int *tag_error)
 {
-  int err = SPLT_OK;
-
-  //we get the id3 from the original file using libid3tag
+  tag_bytes_and_size *bytes_and_size = NULL;
   struct id3_tag *id3tag = NULL;
 
-  //get out the tags from the file; id3_file_open doesn't work with win32 utf16 filenames
-  id3_length_t id3_tag_length = 0;
-  int tags_version = 0;
-  int bytes_tags_version = 0;
-  id3_byte_t *id3_tag_bytes =
-    splt_mp3_get_id3_tag_bytes(state, filename, &id3_tag_length, tag_error,
-        &tags_version, &bytes_tags_version);
+  int err = SPLT_OK;
 
-  if (*tag_error >= 0)
+  bytes_and_size = splt_mp3_get_id3_tag_bytes(state, filename, tag_error);
+  if (*tag_error < 0) { goto error; }
+  if (!bytes_and_size->tag_bytes) { goto error; }
+
+  id3tag = id3_tag_parse(bytes_and_size->tag_bytes, bytes_and_size->tag_length);
+  if (!id3tag) { goto error; }
+
+  err = splt_tu_set_original_tags_field(state, SPLT_TAGS_VERSION,
+      &bytes_and_size->version);
+  if (err < 0) { *tag_error = err; goto error; };
+  err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_ARTIST,
+      SPLT_MP3_ID3_ARTIST);
+  if (err < 0) { *tag_error = err; goto error; };
+  err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_ALBUM,
+      SPLT_MP3_ID3_ALBUM);
+  if (err < 0) { *tag_error = err; goto error; };
+  err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_TITLE,
+      SPLT_MP3_ID3_TITLE);
+  if (err < 0) { *tag_error = err; goto error; };
+  err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_YEAR,
+      SPLT_MP3_ID3_YEAR);
+  if (err < 0) { *tag_error = err; goto error; };
+  err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_GENRE,
+      SPLT_MP3_ID3_GENRE);
+  if (err < 0) { *tag_error = err; goto error; };
+  err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_COMMENT,
+      SPLT_MP3_ID3_COMMENT);
+  if (err < 0) { *tag_error = err; goto error; };
+  err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_TRACK,
+      SPLT_MP3_ID3_TRACK);
+  if (err < 0) { *tag_error = err; goto error; };
+
+  id3_tag_delete(id3tag);
+
+  splt_tu_set_original_tags_data(state, bytes_and_size);
+
+  return;
+
+error: 
+  if (id3tag)
   {
-    if (id3_tag_bytes)
-    {
-      id3tag = id3_tag_parse(id3_tag_bytes, id3_tag_length);
-
-      if (id3tag)
-      {
-        err = splt_tu_set_original_tags_field(state, SPLT_TAGS_VERSION, &tags_version);
-        MP3_VERIFY_ERROR();
-        err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_ARTIST,
-            SPLT_MP3_ID3_ARTIST);
-        MP3_VERIFY_ERROR();
-        err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_ALBUM,
-            SPLT_MP3_ID3_ALBUM);
-        MP3_VERIFY_ERROR();
-        err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_TITLE,
-            SPLT_MP3_ID3_TITLE);
-        MP3_VERIFY_ERROR();
-        err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_YEAR,
-            SPLT_MP3_ID3_YEAR);
-        MP3_VERIFY_ERROR();
-        err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_GENRE,
-            SPLT_MP3_ID3_GENRE);
-        MP3_VERIFY_ERROR();
-        err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_COMMENT,
-            SPLT_MP3_ID3_COMMENT);
-        MP3_VERIFY_ERROR();
-        err = splt_mp3_put_original_libid3_frame(state, id3tag, ID3_FRAME_TRACK,
-            SPLT_MP3_ID3_TRACK);
-        MP3_VERIFY_ERROR();
-
-        id3_tag_delete(id3tag);
-      }
-
-      tag_bytes_and_size *bytes_and_size = malloc(sizeof(tag_bytes_and_size));
-      if (bytes_and_size == NULL)
-      {
-        err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-        MP3_VERIFY_ERROR();
-      }
-
-      bytes_and_size->tag_bytes = id3_tag_bytes;
-      bytes_and_size->tag_length = id3_tag_length;
-      bytes_and_size->version = bytes_tags_version;
-
-      splt_tu_set_original_tags_data(state, bytes_and_size);
-    }
-
-end: 
-    ;
+    id3_tag_delete(id3tag);
   }
-  else if (id3_tag_bytes)
+  
+  if (bytes_and_size)
   {
-    free(id3_tag_bytes);
-    id3_tag_bytes = NULL;
+    splt_mp3_free_bytes_and_size(bytes_and_size);
   }
 }
 
@@ -935,21 +932,9 @@ static char *splt_mp3_build_id3_tags(splt_state *state,
 #else
 
   tag_bytes_and_size *bytes_and_size = (tag_bytes_and_size *)splt_tu_get_original_tags_data(state);
-  if (bytes_and_size && 
-      (set_original_tags == SAME_BYTES_AS_TAGS) &&
-      version == bytes_and_size->version)
+  if (bytes_and_size && (set_original_tags == SAME_BYTES_AS_TAGS))
   {
-    char *data = malloc(bytes_and_size->tag_length);
-    if (data == NULL)
-    {
-      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      return NULL;
-    }
-
-    memcpy(data, bytes_and_size->tag_bytes, bytes_and_size->tag_length);
-    *number_of_bytes = bytes_and_size->tag_length;
-
-    return data;
+    return splt_mp3_get_same_bytes_tags(version, bytes_and_size, number_of_bytes, error);
   }
 
   if (version == 1)
@@ -3439,7 +3424,18 @@ void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 #ifndef NO_ID3TAG
   tag_bytes_and_size *bytes_and_size = (tag_bytes_and_size *) original_tags->all_original_tags;
 
-  if (!bytes_and_size) {
+  splt_mp3_free_bytes_and_size(bytes_and_size);
+
+  free(original_tags->all_original_tags);
+  original_tags->all_original_tags = NULL;
+#endif
+}
+
+#ifndef NO_ID3TAG
+static void splt_mp3_free_bytes_and_size(tag_bytes_and_size *bytes_and_size)
+{
+  if (!bytes_and_size)
+  {
     return;
   }
 
@@ -3449,12 +3445,65 @@ void splt_pl_clear_original_tags(splt_original_tags *original_tags)
     bytes_and_size->tag_bytes = NULL;
   }
 
-  bytes_and_size->tag_length = 0;
-  bytes_and_size->version = 0;
+  if (bytes_and_size->tag_bytes_v1)
+  {
+    free(bytes_and_size->tag_bytes_v1);
+    bytes_and_size->tag_bytes_v1 = NULL;
+  }
 
-  free(original_tags->all_original_tags);
-  original_tags->all_original_tags = NULL;
-#endif
+  bytes_and_size->tag_length = 0;
+  bytes_and_size->tag_length_v1 = 0;
+  bytes_and_size->version = 0;
 }
+
+static tag_bytes_and_size *splt_mp3_new_bytes_and_size()
+{
+  tag_bytes_and_size *bytes_and_size = malloc(sizeof(tag_bytes_and_size));
+  if (bytes_and_size == NULL) { return NULL; }
+
+  bytes_and_size->tag_bytes = NULL;
+  bytes_and_size->tag_length = 0;
+  bytes_and_size->tag_bytes_v1 = NULL;
+  bytes_and_size->tag_length_v1 = 0;
+  bytes_and_size->version = 0;
+}
+
+static char *splt_mp3_get_same_bytes_tags(int version, tag_bytes_and_size *bytes_and_size, 
+    unsigned long *number_of_bytes, int *error)
+{
+  if (version == bytes_and_size->bytes_tags_version)
+  {
+    char *data = malloc(bytes_and_size->tag_length);
+    if (data == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
+    }
+
+    memcpy(data, bytes_and_size->tag_bytes, bytes_and_size->tag_length);
+    *number_of_bytes = bytes_and_size->tag_length;
+
+    return data;
+  }
+
+  if (version == 1 && bytes_and_size->bytes_tags_version == 2)
+  {
+    char *data = malloc(bytes_and_size->tag_length_v1);
+    if (data == NULL)
+    {
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+      return NULL;
+    }
+
+    memcpy(data, bytes_and_size->tag_bytes_v1, bytes_and_size->tag_length_v1);
+    *number_of_bytes = bytes_and_size->tag_length_v1;
+
+    return data;
+  }
+
+  return NULL;
+}
+
+#endif
 
 //@}

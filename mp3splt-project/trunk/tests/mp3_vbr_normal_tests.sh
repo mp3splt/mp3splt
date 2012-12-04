@@ -4,7 +4,7 @@
 
 #normal mode functional tests
 
-function test_normal_vbr
+function _test_normal_vbr
 {
   local tags_version=$1
 
@@ -91,9 +91,9 @@ function test_normal_vbr
   echo
 }
 
-function test_normal_vbr_no_tags { test_normal_vbr -1; }
-function test_normal_vbr_id3v1 { test_normal_vbr 1; }
-function test_normal_vbr_id3v2 { test_normal_vbr 2; }
+function test_normal_vbr_no_tags { _test_normal_vbr -1; }
+function test_normal_vbr_id3v1 { _test_normal_vbr 1; }
+function test_normal_vbr_id3v2 { _test_normal_vbr 2; }
 
 function test_normal_vbr_pretend
 {
@@ -1643,7 +1643,7 @@ function test_normal_vbr_custom_tags_with_replace_tags_in_tags_and_time_variable
   echo
 }
 
-function test_normal_with_sync_errors
+function test_normal_vbr_with_sync_errors
 {
   local tags_version=$1
 
@@ -1687,13 +1687,47 @@ function test_normal_with_sync_errors
   echo
 }
 
+function test_normal_vbr_same_tag_bytes_in_output_file
+{
+  remove_output_dir
+
+  test_name="vbr & same tag bytes in output file"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-g %[@O] -d $OUTPUT_DIR $MP3_FILE 0.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$MP3_FILE"
+  check_current_file_size "5656852"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__04m_05s_58h.mp3" 
+  check_current_mp3_length "04.05"
+  check_current_file_size "5656852"
+
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "8/14" "http://www.jamendo.com/"
+
+  check_all_mp3_tags_with_version 1 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "0" "http://www.jamendo.com/"
+
+  print_ok
+  echo
+}
 
 function run_normal_vbr_tests
 {
   p_blue " NORMAL VBR mp3 tests ..."
   echo
 
-  normal_test_functions=$(declare -F | grep " test_normal_vbr_" | awk '{ print $3 }')
+  normal_test_functions=$(declare -F | grep " test_normal_" | awk '{ print $3 }')
 
   for test_func in $normal_test_functions;do
     eval $test_func
