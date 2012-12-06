@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-12-02 23:57+0100\n"
+"POT-Creation-Date: 2012-12-06 22:23+0100\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,8 +62,8 @@ msgid "please wait... contacting tracktype.org"
 msgstr "Počkejte, prosím - probíhá spojování se s tracktype.org"
 
 #: src/freedb_window.c:330 src/freedb_window.c:347
-#: src/splitpoints_window.c:597 src/splitpoints_window.c:677
-#: src/splitpoints_window.c:727 src/ui_manager.c:348
+#: src/splitpoints_window.c:652 src/splitpoints_window.c:732
+#: src/splitpoints_window.c:782 src/ui_manager.c:348
 msgid "description here"
 msgstr "Zadejte, prosím, název"
 
@@ -421,7 +421,7 @@ msgstr " Náhled na poslední bod rozdělení není možný"
 msgid "Add _splitpoint"
 msgstr "Přidat bod rozdělení"
 
-#: src/main_window.c:791 src/splitpoints_window.c:1308
+#: src/main_window.c:791 src/splitpoints_window.c:1363
 msgid "Add splitpoint"
 msgstr "Přidat bod rozdělení"
 
@@ -479,7 +479,7 @@ msgstr "_Smazat"
 msgid " error: no files found in batch mode"
 msgstr " Chyba: Pro režim více souborů nebyly nalezeny žádné soubory"
 
-#: src/mp3splt-gtk.c:119 src/splitpoints_window.c:1426
+#: src/mp3splt-gtk.c:119 src/splitpoints_window.c:1481
 msgid " finished"
 msgstr " Dokončeno"
 
@@ -535,7 +535,7 @@ msgstr "Vybrat soubor nebo adresář"
 msgid "_Remove selected"
 msgstr "_Odstranit vybrané záznamy"
 
-#: src/multiple_files_window.c:271 src/splitpoints_window.c:1321
+#: src/multiple_files_window.c:271 src/splitpoints_window.c:1376
 msgid "R_emove all"
 msgstr "Odstranit _vše"
 
@@ -623,7 +623,7 @@ msgstr "Zastavit"
 msgid "Next"
 msgstr "Další"
 
-#: src/player_window.c:971 src/splitpoints_window.c:1301
+#: src/player_window.c:971 src/splitpoints_window.c:1356
 msgid "_Add"
 msgstr "_Přidat"
 
@@ -631,13 +631,13 @@ msgstr "_Přidat"
 msgid "Add splitpoint from player"
 msgstr "Přidat bod rozdělení zde"
 
-#: src/player_window.c:987 src/splitpoints_window.c:1001
-#: src/splitpoints_window.c:1344
+#: src/player_window.c:987 src/splitpoints_window.c:1056
+#: src/splitpoints_window.c:1399
 msgid "Set trim splitpoints using silence detection"
 msgstr "Nastavit zastřižení bodů rozdělení s pomocí zjištění ticha"
 
-#: src/player_window.c:998 src/splitpoints_window.c:1060
-#: src/splitpoints_window.c:1354
+#: src/player_window.c:998 src/splitpoints_window.c:1115
+#: src/splitpoints_window.c:1409
 msgid "Set splitpoints from silence detection"
 msgstr "Nastavit body rozdělení s pomocí zjištění ticha"
 
@@ -791,12 +791,12 @@ msgstr "Režim F_rame (užitečný pro mp3-VBR) (jen pro mp3)"
 msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
 msgstr "_Automatické přesné nastavení bodu rozdělení pomocí zjištění ticha"
 
-#: src/preferences_window.c:481 src/splitpoints_window.c:1026
-#: src/splitpoints_window.c:1082
+#: src/preferences_window.c:481 src/splitpoints_window.c:1081
+#: src/splitpoints_window.c:1137
 msgid "Threshold level (dB):"
 msgstr "Úroveň prahu (dB):"
 
-#: src/preferences_window.c:497 src/splitpoints_window.c:1122
+#: src/preferences_window.c:497 src/splitpoints_window.c:1177
 msgid "Minimum silence length (seconds):"
 msgstr "Nejmenší délka ticha (sekundy):"
 
@@ -1101,7 +1101,7 @@ msgstr "<b>Formát výstupního souboru</b>"
 msgid "Language"
 msgstr "Jazyk"
 
-#: src/split_files_window.c:69 src/splitpoints_window.c:1591
+#: src/split_files_window.c:69 src/splitpoints_window.c:1646
 msgid "Filename"
 msgstr "Název souboru"
 
@@ -1201,91 +1201,91 @@ msgstr "_part"
 msgid "%s_part%d"
 msgstr "%s_part%d"
 
-#: src/splitpoints_window.c:588 src/splitpoints_window.c:644
+#: src/splitpoints_window.c:633 src/splitpoints_window.c:699
 msgid " error: you already have the splitpoint in table"
 msgstr " Chyba: bod rozdělení již existuje"
 
-#: src/splitpoints_window.c:1096
+#: src/splitpoints_window.c:1151
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec):"
 
-#: src/splitpoints_window.c:1110
+#: src/splitpoints_window.c:1165
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Počet skladeb (0 znamená všechny skladby):"
 
-#: src/splitpoints_window.c:1134
+#: src/splitpoints_window.c:1189
 msgid "Minimum track length (seconds):"
 msgstr "Nejmenší délka skladby (sekundy):"
 
-#: src/splitpoints_window.c:1144
+#: src/splitpoints_window.c:1199
 msgid "_Remove silence between tracks"
 msgstr "_Odstranit ticho mezi skladbami"
 
-#: src/splitpoints_window.c:1294
+#: src/splitpoints_window.c:1349
 msgid "Minutes:"
 msgstr "Minuty:"
 
-#: src/splitpoints_window.c:1296
+#: src/splitpoints_window.c:1351
 msgid "Seconds:"
 msgstr "Sekundy:"
 
-#: src/splitpoints_window.c:1298
+#: src/splitpoints_window.c:1353
 msgid "Hundredths:"
 msgstr "Setina:"
 
-#: src/splitpoints_window.c:1311
+#: src/splitpoints_window.c:1366
 msgid "_Remove"
 msgstr "_Odstranit"
 
-#: src/splitpoints_window.c:1318
+#: src/splitpoints_window.c:1373
 msgid "Remove rows"
 msgstr "Odstranit řádky"
 
-#: src/splitpoints_window.c:1328
+#: src/splitpoints_window.c:1383
 msgid "Remove all rows"
 msgstr "Odstranit všechny řádky"
 
-#: src/splitpoints_window.c:1338
+#: src/splitpoints_window.c:1393
 msgid "_Trim splitpoints"
 msgstr "Zastřihnout body rozdělení"
 
-#: src/splitpoints_window.c:1348
+#: src/splitpoints_window.c:1403
 msgid "_Silence detection"
 msgstr "_Zjištění ticha"
 
-#: src/splitpoints_window.c:1500
+#: src/splitpoints_window.c:1555
 msgid " cannot preview, not connected to player"
 msgstr " Náhled není možný: Žádné spojení s přehrávacím programem"
 
-#: src/splitpoints_window.c:1518
+#: src/splitpoints_window.c:1573
 msgid " cannot split preview last splitpoint"
 msgstr " Náhled na poslední bod rozdělení není možný"
 
-#: src/splitpoints_window.c:1583
+#: src/splitpoints_window.c:1638
 msgid "Keep"
 msgstr "Ponechat"
 
-#: src/splitpoints_window.c:1599
+#: src/splitpoints_window.c:1654
 msgid "Secs"
 msgstr "Sek"
 
-#: src/splitpoints_window.c:1607
+#: src/splitpoints_window.c:1662
 msgid "Mins"
 msgstr "Min"
 
-#: src/splitpoints_window.c:1615
+#: src/splitpoints_window.c:1670
 msgid "Hundr"
 msgstr "1/100s"
 
-#: src/splitpoints_window.c:1623
+#: src/splitpoints_window.c:1678
 msgid "Length"
 msgstr "Délka"
 
-#: src/splitpoints_window.c:1630
+#: src/splitpoints_window.c:1685
 msgid "LiveP"
 msgstr "LiveP"
 
-#: src/splitpoints_window.c:1638
+#: src/splitpoints_window.c:1693
 msgid "SplitP"
 msgstr "SplitP"
 
