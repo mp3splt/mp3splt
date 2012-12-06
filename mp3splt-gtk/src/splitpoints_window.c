@@ -359,6 +359,50 @@ void select_splitpoint(gint index, gui_state *gui)
   remove_status_message(gui);
 }
 
+static void order_all_splitpoints_from_table(const char *current_description_base, 
+    GtkTreeModel *model, ui_state *ui)
+{
+  GtkTreeIter iter;
+  if (!gtk_tree_model_get_iter_first(model, &iter))
+  {
+    return;
+  }
+
+  int description_base_length = strlen(current_description_base);
+
+  gint i = 0;
+  while (i < ui->infos->splitnumber)
+  {
+    gchar *description = NULL;
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        COL_DESCRIPTION, &description,
+        -1);
+
+    int length = strlen(description);
+    if (length >= description_base_length)
+    {
+      if (strncmp(description, current_description_base, description_base_length) == 0)
+      {
+        GString *new_description = g_string_new("");
+        g_string_append_printf(new_description, "%s_part%d", current_description_base, i + 1);
+        gchar *new_desc = g_string_free(new_description, FALSE);
+
+        gtk_list_store_set(GTK_LIST_STORE(model), 
+            &iter,
+            COL_DESCRIPTION, new_desc,
+            -1);
+
+        g_free(new_desc);
+      }
+    }
+
+    g_free(description);
+
+    gtk_tree_model_iter_next(model, &iter);
+    i++;
+  }
+}
+
 /*! removes a splitpoint
 \param index Number of the split point
 \param stop_preview means we stop preview if necessary
@@ -403,6 +447,11 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
     gtk_widget_set_sensitive(ui->gui->remove_all_button, FALSE);
   }
 
+  if (stop_preview)
+  {
+    order_all_splitpoints_from_table(ui->status->current_description, model, ui);
+  }
+
   recompute_length_column(ui);
   remove_status_message(ui->gui);
   update_add_button(ui);
@@ -418,20 +467,16 @@ the play_preview point
 */
 static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui)
 {
+  gchar *current_description_base = g_strdup(ui->status->current_description);
+
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+
   if (check_if_splitpoint_does_not_exists(my_split_point.mins,
         my_split_point.secs, my_split_point.hundr_secs,-1, ui))
   {
     gint k = 0;
 
-    gchar *temp = g_strdup(ui->status->current_description);
-    update_current_description(temp, -1, ui);
-    if (temp)
-    {
-      free(temp);
-      temp = NULL;
-    }
-
-    GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+    update_current_description(current_description_base, -1, ui);
 
     GtkTreeIter iter;
     if (gtk_tree_model_get_iter_first(model, &iter))
@@ -586,6 +631,16 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
   else
   {
     put_status_message(_(" error: you already have the splitpoint in table"), ui);
+  }
+
+  if (old_index == -1)
+  {
+    order_all_splitpoints_from_table(current_description_base, model, ui);
+  }
+
+  if (current_description_base)
+  {
+    g_free(current_description_base);
   }
 
   if (gtk_toggle_button_get_active(ui->gui->names_from_filename))
