@@ -109,8 +109,11 @@ static void splt_mp3_scan_silence_and_process(splt_state *state, off_t begin_off
   do {
     int mad_err = SPLT_OK;
 
-    switch (splt_mp3_get_valid_frame(state, &mad_err))
+    int result = splt_mp3_get_valid_frame(state, &mad_err);
+
+    switch (result)
     {
+      case -1:
       case 1:
         //1 we have a valid frame
         mad_timer_add(&mp3state->timer, mp3state->frame.header.duration);
@@ -162,13 +165,15 @@ static void splt_mp3_scan_silence_and_process(splt_state *state, off_t begin_off
                 (double)(mp3state->mp3file.len), 1,0,SPLT_DEFAULT_PROGRESS_RATE);
           }
         }
+
+        //-1 means eof
+        if (result == -1)
+        {
+          stop = SPLT_TRUE;
+        }
         break;
       case 0:
         //0 do nothing
-        break;
-      case -1:
-        //-1 means eof
-        stop = SPLT_TRUE;
         break;
       case -3:
         //error from libmad
