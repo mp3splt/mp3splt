@@ -3,13 +3,13 @@ Section: sound
 Priority: optional
 Maintainer: Ryan Niebur <ryanryan52@gmail.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= 1.0.1155), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev, gnome-doc-utils, libgnomeui-dev, rarian-compat
+Build-Depends: debhelper (>= 7.0), libmp3splt-dev (>= 1.0.1158), libgtk2.0-dev, libgstreamer0.10-dev, libgstreamer-plugins-base0.10-dev, audacious-dev, gnome-doc-utils, libgnomeui-dev, rarian-compat
 Standards-Version: 3.9.1
 Homepage: http://mp3splt.sourceforge.net/
 
 Package: mp3splt-gtk
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libmp3splt0 (>= 1.0.1155), libmp3splt0-mp3 | libmp3splt-plugin
+Depends: ${shlibs:Depends}, ${misc:Depends}, libmp3splt0 (>= 1.0.1158), libmp3splt0-mp3 | libmp3splt-plugin
 Recommends: gstreamer0.10-plugins-good, libmp3splt0-ogg
 Suggests: audacious
 Description: Gnome application for lossless linear editing of audio files
