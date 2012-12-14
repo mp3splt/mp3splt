@@ -48,7 +48,7 @@ function test_silence
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -110,7 +110,7 @@ function test_silence_and_pretend
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-P -d $OUTPUT_DIR -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -143,7 +143,7 @@ function test_silence_and_cue_export
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB
+ Average silence level: -23.09 dB
  CUE file 'output/output_out.cue' created."
   mp3splt_args="-T 2 -E output/out.cue -d $OUTPUT_DIR -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
@@ -198,7 +198,7 @@ function test_silence_and_pretend_and_cue_export
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB
+ Average silence level: -23.09 dB
  CUE file 'output/output_out.cue' created."
   mp3splt_args="-P -E output/out.cue -d $OUTPUT_DIR -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
@@ -232,7 +232,7 @@ function test_silence_offset
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p off=0 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -290,7 +290,7 @@ function test_silence_threshold
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_4.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p th=-18 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -354,7 +354,7 @@ function test_silence_nt
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p nt=2 -s $SILENCE_MP3_FILE"
   run_check_output "$mp3splt_args" "$expected"
 
@@ -404,7 +404,7 @@ function test_silence_rm
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p rm -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -461,7 +461,7 @@ function test_silence_rm_with_keep_left_and_right_parameter_values_and_silence_l
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p rm=2_6 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -518,7 +518,7 @@ function test_silence_rm_with_keep_left_and_right_parameter_values_and_silence_l
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p rm=10_20 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -575,7 +575,7 @@ function test_silence_rm_and_output_format
    File \"$OUTPUT_DIR/silence_2_01:06:79 02:48:35.mp3\" created
    File \"$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -o \"silence_@n_@m:@s:@h+@M:@S:@H\" -p rm -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -615,7 +615,7 @@ function test_silence_rm_and_overlap
    File \"$OUTPUT_DIR/silence_2_01:06:79 02:58:35.mp3\" created
    File \"$OUTPUT_DIR/silence_3_02:57:24 04:05:69.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -O 0.10 -o \"silence_@n_@m:@s:@h+@M:@S:@H\" -p rm -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -654,7 +654,7 @@ function test_silence_rm_and_custom_tags
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -g %[@o,@N=1,@t=title1][@t=title2][@a=artist3] -p rm -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -696,7 +696,7 @@ function test_silence_rm_and_custom_tags_and_output_format
    File \"$OUTPUT_DIR/La Verue__Riez Noir__title2_2.mp3\" created
    File \"$OUTPUT_DIR/artist3__Riez Noir__title1_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -g %[@o,@N=1,@t=title1][@t=title2][@a=artist3] -o @a__@b__@t_@n -p rm -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -734,7 +734,7 @@ function test_silence_min
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p min=9 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -783,7 +783,7 @@ function test_silence_with_trackmin
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackmin=71 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -826,7 +826,7 @@ function test_silence_with_rm_and_trackmin
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p rm,trackmin=57 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -876,7 +876,7 @@ function test_silence_with_trackjoin_no_join_done
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackjoin=64 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -913,7 +913,7 @@ function test_silence_with_trackjoin_one_file_joined
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackjoin=65 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -961,7 +961,7 @@ function test_silence_with_trackjoin_all_files_joined
  Writing silence log file 'mp3splt.log' ...
    File \"$OUTPUT_DIR/${M_FILE}_silence_1.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -d $OUTPUT_DIR -p trackjoin=71 -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -1006,7 +1006,7 @@ function test_silence_full_log
    File \"$OUTPUT_DIR/${M_FILE}_silence_2.mp3\" created
    File \"$OUTPUT_DIR/${M_FILE}_silence_3.mp3\" created
  silence split ok
- Average silence level: -23.08 dB"
+ Average silence level: -23.09 dB"
   mp3splt_args="-T 2 -F $silence_logs_file -d $OUTPUT_DIR -s $SILENCE_MP3_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
@@ -1120,7 +1120,7 @@ function test_silence_trim_with_min_length_huge
  info: starting trim using silence mode split
  Trim silence split - Th: -48.0 dB, Min: 20.00 sec
  info: trim begin split at 0m_00s_00h
- info: trim end split at 4m_05s_68h
+ info: trim end split at 4m_05s_70h
    File \"$OUTPUT_DIR/${M_FILE}_trimmed.mp3\" created
  trim using silence split ok"
   mp3splt_args="-d $OUTPUT_DIR -p min=20 -r $SILENCE_MP3_FILE" 
