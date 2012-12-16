@@ -8,10 +8,10 @@
 #build architecture
 ARCH=${ARCH:=`uname -m`}
 #mp3splt version
-MP3SPLT_VERSION=2.4.4.1158
+MP3SPLT_VERSION=2.4.4.1160
 #the libmp3splt version (if mp3splt is only compatible with this
 #libmp3splt version)
-LIBMP3SPLT_VERSION=1.0.1158
+LIBMP3SPLT_VERSION=1.0.1160
 #the mp3splt documentation files
 MP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO)
 #the mp3splt installed files (needed for openbsd, freebsd, ...)
