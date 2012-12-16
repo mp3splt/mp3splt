@@ -69,7 +69,7 @@ make -C trunk/mp3splt-gtk/libltdl
 #we compile mp3splt-gtk
 cd trunk/mp3splt-gtk &&\
 cp ../../libs/lib/libmp3splt.a . && cp ../../libs/lib/libmp3splt.a ./src &&\
-./configure --disable-gtk3 --disable-cutter --disable-audacious --disable-gnome --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
+./configure --enable-optimise --disable-gtk3 --disable-cutter --disable-audacious --disable-gnome --prefix=`pwd`/../../libs --host=$HOST --disable-gtktest &&\
 make clean && make && make install &&\
 ${HOST}-strip ./src/mp3splt-gtk.exe || exit 1
 

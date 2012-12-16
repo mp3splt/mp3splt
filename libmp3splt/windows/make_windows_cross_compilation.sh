@@ -60,6 +60,6 @@ make -C trunk/libmp3splt/libltdl
 
 #we compile and install libmp3splt
 cd trunk/libmp3splt &&\
-    ./configure --prefix=`pwd`/../../libs --host=$HOST --target=$HOST --disable-cutter --disable-oggtest --disable-vorbistest\
+    ./configure --enable-optimise --prefix=`pwd`/../../libs --host=$HOST --target=$HOST --disable-cutter --disable-oggtest --disable-vorbistest\
     && make clean && make && make install || exit 1
 
