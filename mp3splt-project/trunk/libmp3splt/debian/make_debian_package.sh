@@ -23,7 +23,7 @@ DIST_FILE="../libmp3splt_${DEBIAN_VERSION}_${ARCH}.deb"
 if [[ ! -f $DIST_FILE ]];then
 
     #prepare & clean
-    ./autogen.sh && ./configure --prefix=/usr && make clean && \
+    ./autogen.sh && ./configure --enable-optimise --prefix=/usr && make clean && \
     #create the debian package
     debuild -i -us -uc -b &&\
     #install for mp3splt and mp3splt-gtk

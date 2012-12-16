@@ -39,7 +39,7 @@ export PATH="`pwd`/libs/bin:$PATH"
 cd trunk/newmp3splt &&\
 cp ../../libs/lib/libmp3splt.a . &&\
 cp ../../libs/lib/libmp3splt.a ./src &&\
-./configure --prefix=`pwd`/../../libs --host=$HOST &&\
+./configure --enable-optimise --prefix=`pwd`/../../libs --host=$HOST &&\
 make clean && make && make install &&\
 ${HOST}-strip ./src/mp3splt.exe || exit 1
 

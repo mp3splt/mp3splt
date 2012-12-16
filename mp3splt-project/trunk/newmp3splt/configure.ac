@@ -120,7 +120,7 @@ fi
 AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--enable-optimise],[ Enable O2 optimise. ]) ],
     [enable_optimise=$enableval],[enable_optimise="no"])
 if test "x$enable_optimise" = xyes;then
-  CFLAGS="$CFLAGS -O2"
+  CFLAGS="$CFLAGS -O3"
 fi
 
 AC_ARG_ENABLE(extra-warnings, [AC_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],

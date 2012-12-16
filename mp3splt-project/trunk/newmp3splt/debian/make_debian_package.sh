@@ -23,7 +23,7 @@ if [[ ! -f $DIST_FILE ]];then
     export CFLAGS="-I/tmp/temp/usr/include $CFLAGS" &&\
     export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS" &&\
     sudo /sbin/ldconfig &&\
-    ./autogen.sh && ./configure --prefix=/usr && make clean && \
+    ./autogen.sh && ./configure --enable-optimise --prefix=/usr && make clean && \
     debuild -i -us -uc -b -d || exit 1
 else
     put_is_package_warning "We already have the $DIST_FILE distribution file !"
