@@ -20,9 +20,9 @@ AC_ARG_ENABLE(mp3splttest, [AC_HELP_STRING([--disable-mp3splttest],
 if test "x$mp3splt_libraries" != "x"; then
   MP3SPLT_LIBS="-L$mp3splt_libraries"
 elif test "x$mp3splt_prefix" != "x"; then
-  MP3SPLT_LIBS="-L$mp3splt_prefix/lib"
+  MP3SPLT_LIBS="-L$mp3splt_prefix/${libdir#$exec_prefix/}"
 elif test "x$prefix" != "xNONE"; then
-  MP3SPLT_LIBS="-L$prefix/lib"
+  MP3SPLT_LIBS="-L$prefix/${libdir#$exec_prefix/}"
 fi
 
 MP3SPLT_LIBS="$MP3SPLT_LIBS -lmp3splt"
