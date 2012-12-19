@@ -63,6 +63,17 @@ if test "x$win" = x; then {
   && echo "done"
 }; fi
 
+{
+   `which glibtoolize 2>&1 >/dev/null`
+    if [ $? -eq 0 ]; then
+      echo -n "Running glibtoolize (in case we use the cutter testing framework) ... "
+      glibtoolize -c --force
+    else
+      echo -n "Running libtoolize (in case we use the cutter testing framework) ... "
+      libtoolize -c --force
+    fi
+} && echo "done"
+
 echo -n "Running autoconf... " \
 && autoconf && echo "done" \
 && if test "x$win" = x; then {
@@ -86,16 +97,5 @@ echo -n "Formatting language files with msgfmt... " && \
         fi
     done
     cd ..
-} && echo "done"
-
-{
-   `which glibtoolize 2>&1 >/dev/null`
-    if [ $? -eq 0 ]; then
-      echo -n "Running glibtoolize (in case we use the cutter testing framework) ... "
-      glibtoolize -c --force
-    else
-      echo -n "Running libtoolize (in case we use the cutter testing framework) ... "
-      libtoolize -c --force
-    fi
 } && echo "done"
 
