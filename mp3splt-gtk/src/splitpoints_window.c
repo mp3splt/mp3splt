@@ -465,7 +465,8 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
 \param old_index used when we update a splitpoint to see where we had
 the play_preview point 
 */
-static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui)
+static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui, 
+    gint reorder_names)
 {
   gchar *current_description_base = g_strdup(ui->status->current_description);
 
@@ -633,7 +634,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
     put_status_message(_(" error: you already have the splitpoint in table"), ui);
   }
 
-  if (old_index == -1)
+  if (old_index == -1 && reorder_names)
   {
     order_all_splitpoints_from_table(current_description_base, model, ui);
   }
@@ -683,7 +684,7 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
     g_free(description);
 
     remove_splitpoint(index, FALSE, ui);
-    add_splitpoint(new_point, index, ui);
+    add_splitpoint(new_point, index, ui, TRUE);
   }
   else
   {
@@ -853,7 +854,7 @@ void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui)
   my_split_point.hundr_secs = ui->infos->player_hundr_secs;
   my_split_point.checked = TRUE;
 
-  add_splitpoint(my_split_point, -1, ui);
+  add_splitpoint(my_split_point, -1, ui, TRUE);
 }
 
 //!adds a row to the table
@@ -867,12 +868,20 @@ void add_row(gboolean checked, ui_state *ui)
   my_split_point.hundr_secs = status->spin_hundr_secs;
   my_split_point.checked = checked;
   
-  add_splitpoint(my_split_point, -1, ui);
+  add_splitpoint(my_split_point, -1, ui, FALSE);
 }
 
 static void add_row_clicked(GtkWidget *button, ui_state *ui)
 {
-  add_row(TRUE, ui);
+  gui_status *status = ui->status;
+
+  Split_point my_split_point;
+  my_split_point.mins = status->spin_mins;
+  my_split_point.secs = status->spin_secs;
+  my_split_point.hundr_secs = status->spin_hundr_secs;
+  my_split_point.checked = TRUE;
+  
+  add_splitpoint(my_split_point, -1, ui, TRUE);
 }
 
 static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)

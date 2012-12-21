@@ -75,6 +75,39 @@ splt_tags_group *splt_tu_get_tags_group(splt_state *state)
   return state->split.tags_group;
 }
 
+static splt_tags *splt_tu_duplicate_tags(splt_state *state, splt_code *error, int *tags_number)
+{
+  *tags_number = 0;
+
+  int total_tags = state->split.tags_group->real_tagsnumber;
+  if (total_tags == 0) { return NULL; }
+
+  splt_tags *tags = malloc(sizeof(splt_tags) * total_tags);
+  if (tags == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  int i = 0;
+  for (i = 0;i < total_tags;i++)
+  {
+    splt_tu_reset_tags(&tags[i]);
+    splt_tu_copy_tags(&state->split.tags_group->tags[i], &tags[i], error);
+    (*tags_number)++;
+
+    if (*error < 0)
+    {
+      int j = 0;
+      for (j = 0; i < i; j++) { splt_tu_free_one_tags_content(&tags[i]); }
+      *tags_number = 0;
+      return NULL;
+    }
+  }
+
+  return tags;
+}
+
 void splt_tu_auto_increment_tracknumber(splt_state *state)
 {
   int current_split = splt_t_get_current_split_file_number(state) - 1;
@@ -1095,23 +1128,29 @@ splt_tags *splt_tu_get_tags_like_x(splt_state *state)
   return &state->split.tags_like_x;
 }
 
-void splt_tu_free_tags(splt_state *state)
+void splt_tu_free_tags_group(splt_tags_group **tags_group)
 {
-  if (state->split.tags_group)
+  if (!tags_group || !*tags_group)
   {
-    int i = 0;
-    for (i = 0; i < state->split.tags_group->real_tagsnumber; i++)
-    {
-      splt_tu_free_one_tags_content(&state->split.tags_group->tags[i]);
-    }
-
-    free(state->split.tags_group->tags);
-    state->split.tags_group->tags = NULL;
-
-    free(state->split.tags_group);
-    state->split.tags_group = NULL;
+    return;
   }
 
+  int i = 0;
+  for (i = 0; i < (*tags_group)->real_tagsnumber; i++)
+  {
+    splt_tu_free_one_tags_content(&(*tags_group)->tags[i]);
+  }
+
+  free((*tags_group)->tags);
+  (*tags_group)->tags = NULL;
+
+  free(*tags_group);
+  *tags_group = NULL;
+}
+
+void splt_tu_free_tags(splt_state *state)
+{
+  splt_tu_free_tags_group(&state->split.tags_group);
   splt_tu_free_one_tags_content(splt_tu_get_tags_like_x(state));
 }
 
@@ -1269,4 +1308,36 @@ int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data)
   return err;
 }
 
+splt_code splt_tu_remove_tags_of_skippoints(splt_state *state)
+{
+  splt_code error = SPLT_OK;
+
+  int number;
+  splt_tags *tags = splt_tu_duplicate_tags(state, &error, &number);
+  if (error < 0 || tags == NULL) { return error; }
+
+  splt_tu_free_tags_group(&state->split.tags_group);
+
+  int splitpoints_number = state->split.points->real_splitnumber;
+  int i = 0;
+  for (i = 0;i < splitpoints_number;i++)
+  {
+    if (i >= number) { continue; }
+
+    if (splt_sp_get_splitpoint_type(state, i, &error) != SPLT_SKIPPOINT)
+    {
+      splt_tu_append_tags_to_state(state, &tags[i], SPLT_TRUE, SPLT_FALSE, &error);
+    }
+    if (error < 0) { goto end; }
+  }
+
+end:
+  for (i = 0;i < number;i++)
+  {
+    splt_tu_free_one_tags_content(&tags[i]);
+  }
+  free(tags);
+
+  return error;
+}
 

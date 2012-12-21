@@ -41,6 +41,27 @@ FILE ${Q}xx$MP3_FILE${Q} MP3
 " > $CUE_FILE
 }
 
+function _create_mp3splt_gtk_exported_cue
+{
+  echo "REM CREATOR "MP3SPLT_GTK"
+REM SPLT_TITLE_IS_FILENAME
+FILE ""
+        TRACK 01 AUDIO
+                TITLE "first"
+                INDEX 01 0:00:00
+        TRACK 02 AUDIO
+                TITLE "skip"
+                REM NOKEEP
+                INDEX 01 1:00:00
+        TRACK 03 AUDIO
+                TITLE "second"
+                INDEX 01 1:43:00
+        TRACK 04 AUDIO
+                TITLE "third"
+                INDEX 01 3:01:00
+" > $CUE_FILE
+}
+
 function _test_cue_mode
 {
   with_quotes=$1
@@ -397,6 +418,46 @@ function test_cue_mode_and_output_format
  
   current_file="$OUTPUT_DIR/GNU_Linux/3/003-GNU_Linux-Third performer-Gentoo-Our laptop.mp3"
   check_current_mp3_length "00.45"
+
+  print_ok
+  echo
+}
+
+function test_exported_mp3splt_gtk_cue_mode_and_output_format
+{
+  _create_mp3splt_gtk_exported_cue
+
+  remove_output_dir
+
+  M_FILE="La_Verue__Today"
+
+  test_name="exported mp3splt-gtk cue & output format"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ reading informations from CUE file songs/test.cue ...
+  Tracks: 4
+
+ cue file processed
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/1_first.mp3\" created
+   File \"$OUTPUT_DIR/2_second.mp3\" created
+   File \"$OUTPUT_DIR/3_third.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args="-d $OUTPUT_DIR -o @n_@t -q -c $CUE_FILE $MP3_FILE" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/1_first.mp3"
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/2_second.mp3"
+  check_current_mp3_length "01.18"
+ 
+  current_file="$OUTPUT_DIR/3_third.mp3"
+  check_current_mp3_length "01.04"
 
   print_ok
   echo
