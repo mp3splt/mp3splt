@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-12-16 15:21+0100\n"
+"POT-Creation-Date: 2012-12-21 22:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,20 +70,20 @@ msgid ""
 "w -l -e -i -a -p"
 msgstr ""
 
-#: src/mp3splt.c:707
+#: src/mp3splt.c:716
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:753
+#: src/mp3splt.c:762
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:785
+#: src/mp3splt.c:794
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:801
+#: src/mp3splt.c:810
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"

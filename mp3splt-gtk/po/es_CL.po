@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2012-12-16 15:21+0100\n"
+"POT-Creation-Date: 2012-12-21 22:42+0100\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Ricardo A. Hermosilla Carrillo <ra.hermosillac@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,8 +60,8 @@ msgid "please wait... contacting tracktype.org"
 msgstr "por favor espere... conectando a tracktype.org"
 
 #: src/freedb_window.c:330 src/freedb_window.c:347
-#: src/splitpoints_window.c:652 src/splitpoints_window.c:732
-#: src/splitpoints_window.c:782 src/ui_manager.c:348
+#: src/splitpoints_window.c:653 src/splitpoints_window.c:733
+#: src/splitpoints_window.c:783 src/ui_manager.c:348
 msgid "description here"
 msgstr "descripción aquí"
 
@@ -419,7 +419,7 @@ msgstr " vista previa no disponible para el último punto de división"
 msgid "Add _splitpoint"
 msgstr "Añadir punto e división"
 
-#: src/main_window.c:791 src/splitpoints_window.c:1363
+#: src/main_window.c:791 src/splitpoints_window.c:1372
 msgid "Add splitpoint"
 msgstr "Añadir punto e división"
 
@@ -477,7 +477,7 @@ msgstr "_Limpiar"
 msgid " error: no files found in batch mode"
 msgstr " error: no hay archivos encontrados en el modo múltiples archivos"
 
-#: src/mp3splt-gtk.c:119 src/splitpoints_window.c:1481
+#: src/mp3splt-gtk.c:119 src/splitpoints_window.c:1490
 msgid " finished"
 msgstr " terminado"
 
@@ -533,7 +533,7 @@ msgstr "Seleccione un archivo o directorio"
 msgid "_Remove selected"
 msgstr "_Remover entradas seleccionadas"
 
-#: src/multiple_files_window.c:271 src/splitpoints_window.c:1376
+#: src/multiple_files_window.c:271 src/splitpoints_window.c:1385
 msgid "R_emove all"
 msgstr "R_emover todo"
 
@@ -619,7 +619,7 @@ msgstr "Detener"
 msgid "Next"
 msgstr "Siguiente"
 
-#: src/player_window.c:971 src/splitpoints_window.c:1356
+#: src/player_window.c:971 src/splitpoints_window.c:1365
 msgid "_Add"
 msgstr "_Añadir"
 
@@ -627,13 +627,13 @@ msgstr "_Añadir"
 msgid "Add splitpoint from player"
 msgstr "Añadir punto de división desde el reproductor"
 
-#: src/player_window.c:987 src/splitpoints_window.c:1056
-#: src/splitpoints_window.c:1399
+#: src/player_window.c:987 src/splitpoints_window.c:1065
+#: src/splitpoints_window.c:1408
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/player_window.c:998 src/splitpoints_window.c:1115
-#: src/splitpoints_window.c:1409
+#: src/player_window.c:998 src/splitpoints_window.c:1124
+#: src/splitpoints_window.c:1418
 msgid "Set splitpoints from silence detection"
 msgstr "Establecer puntos de divisiones desde detección de silencio"
 
@@ -786,12 +786,12 @@ msgstr ""
 "Modo _Auto-ajustar (utiliza detección de silencios para auto-ajustar puntos "
 "de división)"
 
-#: src/preferences_window.c:481 src/splitpoints_window.c:1081
-#: src/splitpoints_window.c:1137
+#: src/preferences_window.c:481 src/splitpoints_window.c:1090
+#: src/splitpoints_window.c:1146
 msgid "Threshold level (dB):"
 msgstr "Umbral (dB):"
 
-#: src/preferences_window.c:497 src/splitpoints_window.c:1177
+#: src/preferences_window.c:497 src/splitpoints_window.c:1186
 msgid "Minimum silence length (seconds):"
 msgstr "Duración mínima de silencio (segundos):"
 
@@ -1088,7 +1088,7 @@ msgstr "<b>Nombre de archivo del formato de salida</b>"
 msgid "Language"
 msgstr "Idioma"
 
-#: src/split_files_window.c:69 src/splitpoints_window.c:1646
+#: src/split_files_window.c:69 src/splitpoints_window.c:1655
 msgid "Filename"
 msgstr "Nombre de archivo"
 
@@ -1188,92 +1188,92 @@ msgstr ""
 msgid "%s_part%d"
 msgstr ""
 
-#: src/splitpoints_window.c:633 src/splitpoints_window.c:699
+#: src/splitpoints_window.c:634 src/splitpoints_window.c:700
 msgid " error: you already have the splitpoint in table"
 msgstr " error: usted ya tiene el punto de división en la tabla"
 
-#: src/splitpoints_window.c:1151
+#: src/splitpoints_window.c:1160
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 "Punto de corte de desplazamiento (0 es el inicio de silencio y 1 el final):"
 
-#: src/splitpoints_window.c:1165
+#: src/splitpoints_window.c:1174
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Número de pistas (0 significa todas las pistas):"
 
-#: src/splitpoints_window.c:1189
+#: src/splitpoints_window.c:1198
 msgid "Minimum track length (seconds):"
 msgstr ""
 
-#: src/splitpoints_window.c:1199
+#: src/splitpoints_window.c:1208
 msgid "_Remove silence between tracks"
 msgstr "_Remover silencio entre pistas"
 
-#: src/splitpoints_window.c:1349
+#: src/splitpoints_window.c:1358
 msgid "Minutes:"
 msgstr "Minutos:"
 
-#: src/splitpoints_window.c:1351
+#: src/splitpoints_window.c:1360
 msgid "Seconds:"
 msgstr "Segundos:"
 
-#: src/splitpoints_window.c:1353
+#: src/splitpoints_window.c:1362
 msgid "Hundredths:"
 msgstr "Centésimas:"
 
-#: src/splitpoints_window.c:1366
+#: src/splitpoints_window.c:1375
 msgid "_Remove"
 msgstr "_Remover"
 
-#: src/splitpoints_window.c:1373
+#: src/splitpoints_window.c:1382
 msgid "Remove rows"
 msgstr "Eliminar filas"
 
-#: src/splitpoints_window.c:1383
+#: src/splitpoints_window.c:1392
 msgid "Remove all rows"
 msgstr "Eliminar todas las filas"
 
-#: src/splitpoints_window.c:1393
+#: src/splitpoints_window.c:1402
 msgid "_Trim splitpoints"
 msgstr ""
 
-#: src/splitpoints_window.c:1403
+#: src/splitpoints_window.c:1412
 msgid "_Silence detection"
 msgstr "Detección de _Silencio"
 
-#: src/splitpoints_window.c:1555
+#: src/splitpoints_window.c:1564
 msgid " cannot preview, not connected to player"
 msgstr " vista previa no disponible, no está conectado al reproductor"
 
-#: src/splitpoints_window.c:1573
+#: src/splitpoints_window.c:1582
 msgid " cannot split preview last splitpoint"
 msgstr " vista previa no disponible para el último punto de división"
 
-#: src/splitpoints_window.c:1638
+#: src/splitpoints_window.c:1647
 msgid "Keep"
 msgstr "Mantener"
 
-#: src/splitpoints_window.c:1654
+#: src/splitpoints_window.c:1663
 msgid "Secs"
 msgstr "Segs"
 
-#: src/splitpoints_window.c:1662
+#: src/splitpoints_window.c:1671
 msgid "Mins"
 msgstr "Mins"
 
-#: src/splitpoints_window.c:1670
+#: src/splitpoints_window.c:1679
 msgid "Hundr"
 msgstr "Cents"
 
-#: src/splitpoints_window.c:1678
+#: src/splitpoints_window.c:1687
 msgid "Length"
 msgstr "Duración"
 
-#: src/splitpoints_window.c:1685
+#: src/splitpoints_window.c:1694
 msgid "LiveP"
 msgstr "LiveP"
 
-#: src/splitpoints_window.c:1693
+#: src/splitpoints_window.c:1702
 msgid "SplitP"
 msgstr "SplitP"
 
