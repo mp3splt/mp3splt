@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-12-16 15:20+0100\n"
+"POT-Creation-Date: 2012-12-21 22:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,29 +17,29 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:1069
+#: src/mp3splt.c:1074
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:1134
+#: src/mp3splt.c:1139
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr ""
 
-#: src/mp3splt.c:1142
+#: src/mp3splt.c:1147
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr ""
 
-#: src/mp3splt.c:1163
+#: src/mp3splt.c:1168
 #, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
 "%.2f Min: %.2f sec)\n"
 msgstr ""
 
-#: src/mp3splt.c:1918 src/tags_parser.c:108
+#: src/mp3splt.c:1923 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
-#: src/cddb.c:125 src/cue.c:539
+#: src/cddb.c:125 src/cue.c:531
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -159,16 +159,12 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: src/cue.c:435
+#: src/cue.c:434
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:487
-msgid "description here"
-msgstr ""
-
-#: src/cue.c:700
+#: src/cue.c:692
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr ""

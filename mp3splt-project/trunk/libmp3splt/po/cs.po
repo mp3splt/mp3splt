@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-12-16 15:20+0100\n"
+"POT-Creation-Date: 2012-12-21 22:41+0100\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: src/mp3splt.c:1069
+#: src/mp3splt.c:1074
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Informace: Spojený název souboru je vyřešen do »%s«\n"
 
-#: src/mp3splt.c:1134
+#: src/mp3splt.c:1139
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Informace: Soubor odpovídá přídavnému modulu »%s«\n"
 
-#: src/mp3splt.c:1142
+#: src/mp3splt.c:1147
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " Soubor M3U »%s« bude vytvořen.\n"
 
-#: src/mp3splt.c:1163
+#: src/mp3splt.c:1168
 #, fuzzy, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -40,7 +40,7 @@ msgid ""
 msgstr ""
 "Pracuje se s SILENCE AUTO-ADJUST (Práh: %.1f dB Mezera: %d s Posun: %.2f)\n"
 
-#: src/mp3splt.c:1918 src/tags_parser.c:108
+#: src/mp3splt.c:1923 src/tags_parser.c:108
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -57,7 +57,7 @@ msgstr "Adresář neexistuje"
 msgid " reading informations from CDDB file %s ...\n"
 msgstr " Čtou se informace ze souboru CDDB %s …\n"
 
-#: src/cddb.c:125 src/cue.c:539
+#: src/cddb.c:125 src/cue.c:531
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -172,16 +172,12 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
-#: src/cue.c:435
+#: src/cue.c:434
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " Čtou se informace ze souboru CUE %s …\n"
 
-#: src/cue.c:487
-msgid "description here"
-msgstr "Popis zde"
-
-#: src/cue.c:700
+#: src/cue.c:692
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " Byl vytvořen soubor CUE »%s«.\n"
@@ -657,6 +653,9 @@ msgstr " Informace: Datový proud OggVorbis - %ld - %ld kB/s - %d kanály"
 #: plugins/ogg.c:1459
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »o-« je datový proud Ogg.\n"
+
+#~ msgid "description here"
+#~ msgstr "Popis zde"
 
 #~ msgid " freedb error: site returned an unknown error"
 #~ msgstr " Chyba FreeDB: Stránka vrátila neznámou chybu"
