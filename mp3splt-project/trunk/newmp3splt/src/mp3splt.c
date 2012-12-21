@@ -694,6 +694,15 @@ int main(int argc, char **orig_argv)
           {
             err = mp3splt_import(state, CUE_IMPORT, opt->cddb_arg);
             process_confirmation_error(err, data);
+
+            err = SPLT_OK;
+            splt_point *splitpoint = mp3splt_point_new(LONG_MAX, &err);
+            process_confirmation_error(err, data);
+            err = mp3splt_append_splitpoint(state, splitpoint);
+            process_confirmation_error(err, data);
+
+            err = mp3splt_remove_tags_of_skippoints(state);
+            process_confirmation_error(err, data);
           }
           else
           {

@@ -41,21 +41,15 @@ typedef struct {
   int performer;
   int title;
   /*! \brief cue input filename
-  */
+   */
   const char *file;
   int counter;
   /*! \brief Do we have to build the file name from the tags?
 
     - SPLT_FALSE means we build a filename from the tags 
     - SPLT_TRUE means filename is track name
-  */
+   */
   int title_is_filename;
-
-  /*! \brief Has this file been created by us?
-
-    If not we append a splitpoint at the end of the file.
-  */
-  int file_has_been_created_by_us;
 
   /*! \brief The type of the current track.
 

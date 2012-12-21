@@ -833,6 +833,11 @@ splt_tags_group *mp3splt_get_tags_group(splt_state *state, splt_code *error)
   }
 }
 
+splt_code mp3splt_remove_tags_of_skippoints(splt_state *state)
+{
+  return splt_tu_remove_tags_of_skippoints(state);
+}
+
 void mp3splt_tags_group_init_iterator(splt_tags_group *tags_group)
 {
   if (tags_group == NULL)

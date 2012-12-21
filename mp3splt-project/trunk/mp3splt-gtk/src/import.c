@@ -336,6 +336,9 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
 
   set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
 
+  splt_code err = mp3splt_remove_tags_of_skippoints(ui->mp3splt_state);
+  print_status_bar_confirmation(err, ui);
+
   g_free(ui_err);
 
   return FALSE;

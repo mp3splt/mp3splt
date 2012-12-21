@@ -96,6 +96,8 @@ int splt_tu_append_only_non_null_previous_tags(splt_state *state,
 void splt_tu_set_original_tags_last_plugin_used(splt_state *state, int plugin_used);
 int splt_tu_get_original_tags_last_plugin_used(splt_state *state);
 
+splt_code splt_tu_remove_tags_of_skippoints(splt_state *state);
+
 #define MP3SPLT_TAGS_UTILS_H
 
 #endif

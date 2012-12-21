@@ -267,7 +267,7 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
 
     if(strstr(linetail,"MP3SPLT_GTK")!=NULL)
     {
-      cu->file_has_been_created_by_us = SPLT_TRUE;
+      //cu->file_has_been_created_by_us = SPLT_TRUE;
     }
   }
   else if((linetail=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
@@ -392,7 +392,6 @@ static cue_utils *splt_cue_cu_new(int *error)
   cu->error = SPLT_OK;
   cu->current_track_type = SPLT_SPLITPOINT;
   cu->title_is_filename = SPLT_FALSE;
-  cu->file_has_been_created_by_us = SPLT_FALSE;
 
   return cu;
 }
@@ -479,13 +478,6 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
     if (cu->error < 0) { *error = cu->error; goto function_end; }
   }
 
-  // Append a split point at the end of the file
-  // If the file has been created by us this has already been done
-  // and we can skip this step.
-  if(!cu->file_has_been_created_by_us)
-    err = splt_sp_append_splitpoint(state, LONG_MAX,
-				    _("description here"), cu->current_track_type);
-  
   if (cu->counter == 0)
   {
     splt_e_set_error_data(state, file);

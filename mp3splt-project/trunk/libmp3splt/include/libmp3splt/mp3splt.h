@@ -1423,6 +1423,14 @@ typedef struct _splt_tags_group splt_tags_group;
 splt_tags_group *mp3splt_get_tags_group(splt_state *state, splt_code *error);
 
 /**
+ * @brief Removes all the tags of the \p state for the skippoints.
+ *
+ * @param[in] state Main state.
+ * @return Possible error.
+ */
+splt_code mp3splt_remove_tags_of_skippoints(splt_state *state);
+
+/**
  * @brief Initialisation of the iterator for use with #mp3splt_tags_group_next.
  *
  * @param[in] tags_group Group of tags returned with #mp3splt_get_tags_group.
