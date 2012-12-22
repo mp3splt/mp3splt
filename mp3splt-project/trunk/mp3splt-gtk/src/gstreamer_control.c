@@ -287,7 +287,7 @@ gchar *gstreamer_get_title_song(ui_state *ui)
     }
 
     gchar *title = malloc(sizeof(char) * title_size);
-    memset(title, title_size, '\0');
+    memset(title, '\0', title_size);
 
     if (pi->song_artist && pi->song_title)
     {

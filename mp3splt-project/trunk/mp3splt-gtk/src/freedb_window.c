@@ -186,15 +186,26 @@ static gboolean freedb_search_end(ui_with_err *ui_err)
     const splt_freedb_one_result *result = NULL;
     while ((result = mp3splt_freedb_next(infos->freedb_search_results)))
     {
-      gint must_be_free = SPLT_FALSE;
+      const char *old_name = mp3splt_freedb_get_name(result);
+      if (old_name == NULL)
+      {
+        add_freedb_row("",
+            mp3splt_freedb_get_id(result),
+            mp3splt_freedb_get_number_of_revisions(result),
+            ui_err->ui);
+        we_have_results = TRUE;
+        continue;
+      }
 
-      char *name = mp3splt_freedb_get_name(result);
-      name = transform_to_utf8(name, TRUE, &must_be_free);
+      char *name = strdup(old_name);
+
+      gint must_be_freed = SPLT_FALSE;
+      name = transform_to_utf8(name, TRUE, &must_be_freed);
       add_freedb_row(name,
           mp3splt_freedb_get_id(result),
           mp3splt_freedb_get_number_of_revisions(result),
           ui_err->ui);
-      free(name);
+      if (must_be_freed) { free(name); }
 
       we_have_results = TRUE;
     }

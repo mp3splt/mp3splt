@@ -287,13 +287,14 @@ gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data)
   }
 
   gtk_main_quit();
+
+  return FALSE;
 }
 
 void exit_application_bis(GtkWidget *widget, gpointer data)
 {
   exit_application(widget, NULL, data);
 }
-
 
 static gboolean sigint_called = FALSE;
 static void sigint_handler(gint sig)
