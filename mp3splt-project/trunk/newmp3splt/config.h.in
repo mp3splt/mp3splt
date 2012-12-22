@@ -41,6 +41,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* libmp3splt library with soname */
+#undef LIBMP3SPLT_WITH_SONAME
+
 /* Name of package */
 #undef PACKAGE
 

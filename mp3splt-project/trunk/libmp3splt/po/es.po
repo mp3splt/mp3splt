@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-12-21 22:41+0100\n"
+"POT-Creation-Date: 2012-12-22 22:37+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,146 +17,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:1074
-#, c-format
-msgid " info: resolving linked filename to '%s'\n"
-msgstr ""
-
-#: src/mp3splt.c:1139
-#, c-format
-msgid " info: file matches the plugin '%s'\n"
-msgstr ""
-
-#: src/mp3splt.c:1147
-#, c-format
-msgid " M3U file '%s' will be created.\n"
-msgstr ""
-
-#: src/mp3splt.c:1168
-#, c-format
-msgid ""
-" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
-"%.2f Min: %.2f sec)\n"
-msgstr ""
-
-#: src/mp3splt.c:1923 src/tags_parser.c:108
-msgid ""
-" warning: cannot set tags from filename regular expression - compiled "
-"without pcre support\n"
-msgstr ""
-
-#: src/checks.c:158
-msgid "directory does not exists"
-msgstr ""
-
-#: src/cddb.c:63
-#, c-format
-msgid " reading informations from CDDB file %s ...\n"
-msgstr ""
-
-#: src/cddb.c:125 src/cue.c:531
-#, c-format
-msgid ""
-"  Tracks: %d\n"
-"\n"
-msgstr ""
-
-#: src/cddb.c:259 src/cue.c:135
+#: src/cue.c:135 src/cddb.c:259
 #, c-format
 msgid ""
 "\n"
 "  Artist: %s\n"
 msgstr ""
 
-#: src/cddb.c:262 src/cue.c:139
+#: src/cue.c:139 src/cddb.c:262
 #, c-format
 msgid "  Album: %s\n"
-msgstr ""
-
-#: src/splt.c:158
-msgid " info: starting normal split\n"
-msgstr ""
-
-#: src/splt.c:255
-msgid " info: starting error mode split\n"
-msgstr ""
-
-#: src/splt.c:567
-msgid " info: starting time mode split\n"
-msgstr ""
-
-#: src/splt.c:586
-msgid " info: starting 'split in equal tracks' mode\n"
-msgstr ""
-
-#: src/splt.c:628
-#, c-format
-msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
-msgstr ""
-
-#: src/splt.c:763
-msgid "YES"
-msgstr "SÍ"
-
-#: src/splt.c:769
-#, c-format
-msgid "NO"
-msgstr "NO"
-
-#: src/splt.c:775
-#, c-format
-msgid "User"
-msgstr "Usuario"
-
-#: src/splt.c:779
-#, c-format
-msgid "Auto"
-msgstr "Auto"
-
-#: src/splt.c:799
-#, c-format
-msgid ""
-" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
-"Min track: %.2f, Shots: %d%s)\n"
-msgstr ""
-
-#: src/splt.c:825
-#, c-format
-msgid ""
-" Found silence log file '%s' ! Reading silence points from file to save "
-"time ;)\n"
-msgstr ""
-
-#: src/splt.c:860
-#, c-format
-msgid " Total silence points found: %d."
-msgstr ""
-
-#: src/splt.c:872
-#, c-format
-msgid " (Selected %d tracks)\n"
-msgstr ""
-
-#: src/splt.c:991
-#, c-format
-msgid " Writing silence log file '%s' ...\n"
-msgstr ""
-
-#: src/splt.c:1045
-msgid " info: starting silence mode split\n"
-msgstr ""
-
-#: src/splt.c:1093
-msgid " info: starting trim using silence mode split\n"
-msgstr ""
-
-#: src/splt.c:1170
-msgid " info: starting wrap mode split\n"
-msgstr ""
-
-#: src/utils.c:71
-#, c-format
-msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
 #: src/cue.c:434
@@ -164,14 +34,16 @@ msgstr ""
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
+#: src/cue.c:531 src/cddb.c:125
+#, c-format
+msgid ""
+"  Tracks: %d\n"
+"\n"
+msgstr ""
+
 #: src/cue.c:692
 #, c-format
 msgid " CUE file '%s' created.\n"
-msgstr ""
-
-#: src/audacity.c:235
-#, c-format
-msgid " reading informations from audacity labels file '%s' ...\n"
 msgstr ""
 
 #: src/errors.c:129
@@ -545,12 +417,145 @@ msgstr ""
 msgid " regular expression ok"
 msgstr ""
 
-#: src/filename_regex.c:90
-msgid "no regular expression provided"
+#: src/mp3splt.c:1074
+#, c-format
+msgid " info: resolving linked filename to '%s'\n"
+msgstr ""
+
+#: src/mp3splt.c:1139
+#, c-format
+msgid " info: file matches the plugin '%s'\n"
+msgstr ""
+
+#: src/mp3splt.c:1147
+#, c-format
+msgid " M3U file '%s' will be created.\n"
+msgstr ""
+
+#: src/mp3splt.c:1168
+#, c-format
+msgid ""
+" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
+"%.2f Min: %.2f sec)\n"
+msgstr ""
+
+#: src/mp3splt.c:1923 src/tags_parser.c:108
+msgid ""
+" warning: cannot set tags from filename regular expression - compiled "
+"without pcre support\n"
+msgstr ""
+
+#: src/checks.c:158
+msgid "directory does not exists"
+msgstr ""
+
+#: src/cddb.c:63
+#, c-format
+msgid " reading informations from CDDB file %s ...\n"
 msgstr ""
 
 #: src/string_utils.c:639 src/string_utils.c:660
 msgid "not enough memory"
+msgstr ""
+
+#: src/audacity.c:235
+#, c-format
+msgid " reading informations from audacity labels file '%s' ...\n"
+msgstr ""
+
+#: src/filename_regex.c:90
+msgid "no regular expression provided"
+msgstr ""
+
+#: src/splt.c:158
+msgid " info: starting normal split\n"
+msgstr ""
+
+#: src/splt.c:255
+msgid " info: starting error mode split\n"
+msgstr ""
+
+#: src/splt.c:567
+msgid " info: starting time mode split\n"
+msgstr ""
+
+#: src/splt.c:586
+msgid " info: starting 'split in equal tracks' mode\n"
+msgstr ""
+
+#: src/splt.c:628
+#, c-format
+msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
+msgstr ""
+
+#: src/splt.c:763
+msgid "YES"
+msgstr "SÍ"
+
+#: src/splt.c:769
+#, c-format
+msgid "NO"
+msgstr "NO"
+
+#: src/splt.c:775
+#, c-format
+msgid "User"
+msgstr "Usuario"
+
+#: src/splt.c:779
+#, c-format
+msgid "Auto"
+msgstr "Auto"
+
+#: src/splt.c:799
+#, c-format
+msgid ""
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
+"Min track: %.2f, Shots: %d%s)\n"
+msgstr ""
+
+#: src/splt.c:825
+#, c-format
+msgid ""
+" Found silence log file '%s' ! Reading silence points from file to save "
+"time ;)\n"
+msgstr ""
+
+#: src/splt.c:860
+#, c-format
+msgid " Total silence points found: %d."
+msgstr ""
+
+#: src/splt.c:872
+#, c-format
+msgid " (Selected %d tracks)\n"
+msgstr ""
+
+#: src/splt.c:991
+#, c-format
+msgid " Writing silence log file '%s' ...\n"
+msgstr ""
+
+#: src/splt.c:1045
+msgid " info: starting silence mode split\n"
+msgstr ""
+
+#: src/splt.c:1093
+msgid " info: starting trim using silence mode split\n"
+msgstr ""
+
+#: src/splt.c:1170
+msgid " info: starting wrap mode split\n"
+msgstr ""
+
+#: src/split_points.c:389
+#, c-format
+msgid " info: track too short (%ld.%ld.%ld < %ld.%ld.%ld); skipped.\n"
+msgstr ""
+
+#: src/utils.c:71
+#, c-format
+msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
 #: plugins/mp3.c:1172
@@ -615,11 +620,11 @@ msgstr ""
 msgid " Total files: %d\n"
 msgstr ""
 
-#: plugins/mp3.c:3271
+#: plugins/mp3.c:3273
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 
-#: plugins/mp3.c:3298
+#: plugins/mp3.c:3300
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr ""
@@ -631,4 +636,20 @@ msgstr ""
 
 #: plugins/ogg.c:1459
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
+msgstr ""
+
+#: plugins/ogg_utils.c:84
+msgid ""
+" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
+"to fix.\n"
+msgstr ""
+
+#: plugins/silence_processors.c:227
+#, c-format
+msgid " info: trim begin split at %ldm_%.2lds_%.2ldh\n"
+msgstr ""
+
+#: plugins/silence_processors.c:270
+#, c-format
+msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr ""

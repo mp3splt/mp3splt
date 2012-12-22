@@ -99,7 +99,7 @@ int main(int argc, char **orig_argv)
   }
 
   bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, "translations");
-  bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, "translations");
+  bindtextdomain(LIBMP3SPLT_WITH_SONAME, "translations");
 
 # else
   bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, LOCALEDIR);
