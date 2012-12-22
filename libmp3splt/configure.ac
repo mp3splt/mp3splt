@@ -58,6 +58,10 @@ AM_GNU_GETTEXT_VERSION([0.13.1])
 AC_C_BIGENDIAN
 AC_C_CONST
 
+SONAME=0
+AC_SUBST(SONAME)
+AC_DEFINE_UNQUOTED([SPLT_SONAME], "$SONAME", [library SONAME])
+
 #################################################################
 # Enable libtool, check for libltdl and define @LIBLTDL@ and @INCLTDL@
 #################################################################
@@ -315,6 +319,14 @@ echo
 # Generate Makefile
 #################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile po/Makefile.in plugins/Makefile test/Makefile m4/Makefile doc/Makefile])
+AC_CONFIG_FILES([Makefile
+src/Makefile
+po/Makefile.in
+plugins/Makefile
+test/Makefile
+m4/Makefile
+doc/Makefile
+po/Makevars.version])
+
 AC_OUTPUT
 

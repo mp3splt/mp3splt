@@ -1958,11 +1958,6 @@ int mp3splt_check_if_directory(const char *filename);
 #endif
 #endif
 
-/**
- * @brief Used in mp3splt and mp3splt-gtk.
- */
-#define MP3SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"
-
 //@}
 
 /** @defgroup splt_plugin_api Creating libmp3splt plugins

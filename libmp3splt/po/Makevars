@@ -1,7 +1,12 @@
 # Makefile variables for PO directory in any package using GNU gettext.
 
-VERSION = 0.5.6
-PACKAGE = libmp3splt
+#inspired by xine
+include Makevars.version
+
+DISTFILES += Makevars.version.in
+
+VERSION = 0.7
+PACKAGE = libmp3splt$(SONAME)
 
 # Usually the message domain is the same as the package name.
 DOMAIN = $(PACKAGE)

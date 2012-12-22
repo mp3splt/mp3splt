@@ -662,6 +662,8 @@ struct _splt_state {
 
 #endif
 
+#define MP3SPLT_LIB_GETTEXT_DOMAIN "libmp3splt"SPLT_SONAME
+
 #ifdef ENABLE_NLS
 #  define _(STR) dgettext(MP3SPLT_LIB_GETTEXT_DOMAIN, STR)
 #else

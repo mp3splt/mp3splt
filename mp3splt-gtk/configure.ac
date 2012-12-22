@@ -70,6 +70,8 @@ AC_CHECK_HEADERS([unistd.h])
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.13.1])
 
+AC_DEFINE_UNQUOTED([LIBMP3SPLT_WITH_SONAME], "libmp3splt0", [libmp3splt with soname])
+
 #################################################################
 # Enable libtool, check for libltdl and define @LIBLTDL@ and @INCLTDL@
 #################################################################

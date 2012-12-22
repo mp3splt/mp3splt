@@ -360,7 +360,7 @@ static void init_i18n_and_plugin_paths(gchar *argv[], ui_state *ui)
     }
   }
 
-  bindtextdomain(MP3SPLT_LIB_GETTEXT_DOMAIN, "translations");
+  bindtextdomain(LIBMP3SPLT_WITH_SONAME, "translations");
   bindtextdomain("mp3splt-gtk", "translations");
 #else
   bindtextdomain("mp3splt-gtk", LOCALEDIR);

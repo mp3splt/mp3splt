@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-12-21 22:41+0100\n"
+"POT-Creation-Date: 2012-12-22 22:37+0100\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,56 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: src/mp3splt.c:1074
-#, c-format
-msgid " info: resolving linked filename to '%s'\n"
-msgstr " Informace: Spojený název souboru je vyřešen do »%s«\n"
-
-#: src/mp3splt.c:1139
-#, c-format
-msgid " info: file matches the plugin '%s'\n"
-msgstr " Informace: Soubor odpovídá přídavnému modulu »%s«\n"
-
-#: src/mp3splt.c:1147
-#, c-format
-msgid " M3U file '%s' will be created.\n"
-msgstr " Soubor M3U »%s« bude vytvořen.\n"
-
-#: src/mp3splt.c:1168
-#, fuzzy, c-format
-msgid ""
-" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
-"%.2f Min: %.2f sec)\n"
-msgstr ""
-"Pracuje se s SILENCE AUTO-ADJUST (Práh: %.1f dB Mezera: %d s Posun: %.2f)\n"
-
-#: src/mp3splt.c:1923 src/tags_parser.c:108
-msgid ""
-" warning: cannot set tags from filename regular expression - compiled "
-"without pcre support\n"
-msgstr ""
-" Varování: Značky nelze naplnit z regulárního výrazu souboru  - sestaveno "
-"bez podpory pcre\n"
-
-#: src/checks.c:158
-msgid "directory does not exists"
-msgstr "Adresář neexistuje"
-
-#: src/cddb.c:63
-#, c-format
-msgid " reading informations from CDDB file %s ...\n"
-msgstr " Čtou se informace ze souboru CDDB %s …\n"
-
-#: src/cddb.c:125 src/cue.c:531
-#, c-format
-msgid ""
-"  Tracks: %d\n"
-"\n"
-msgstr ""
-"  Skladby: %d\n"
-"\n"
-
-#: src/cddb.c:259 src/cue.c:135
+#: src/cue.c:135 src/cddb.c:259
 #, c-format
 msgid ""
 "\n"
@@ -75,117 +26,29 @@ msgstr ""
 "\n"
 "  Umělec: %s\n"
 
-#: src/cddb.c:262 src/cue.c:139
+#: src/cue.c:139 src/cddb.c:262
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album: %s\n"
-
-#: src/splt.c:158
-msgid " info: starting normal split\n"
-msgstr " Informace: Spouští se dělení v obvyklém režimu\n"
-
-#: src/splt.c:255
-msgid " info: starting error mode split\n"
-msgstr " Informace: Spouští se dělení v chybovém režimu\n"
-
-#: src/splt.c:567
-msgid " info: starting time mode split\n"
-msgstr " Informace: Spouští se dělení v časovém režimu\n"
-
-#: src/splt.c:586
-msgid " info: starting 'split in equal tracks' mode\n"
-msgstr ""
-" Informace: Spouští se dělení v režimu »dělení na stejně dlouhé skladby«\n"
-
-#: src/splt.c:628
-#, c-format
-msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
-msgstr ""
-
-#: src/splt.c:763
-msgid "YES"
-msgstr "Ano"
-
-#: src/splt.c:769
-#, c-format
-msgid "NO"
-msgstr "Ne"
-
-#: src/splt.c:775
-#, c-format
-msgid "User"
-msgstr "Uživatel"
-
-#: src/splt.c:779
-#, c-format
-msgid "Auto"
-msgstr "Automaticky"
-
-#: src/splt.c:799
-#, fuzzy, c-format
-msgid ""
-" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
-"Min track: %.2f, Shots: %d%s)\n"
-msgstr ""
-" Typ dělení pomocí zjištění ticha: Režim %s (Práh: %.1f dB, Posun: %.2f, "
-"Min: %.2f, Odstranění: %s)\n"
-
-#: src/splt.c:825
-#, c-format
-msgid ""
-" Found silence log file '%s' ! Reading silence points from file to save "
-"time ;)\n"
-msgstr ""
-" Byl nalezen soubor se zápisem pro ticho »%s«! Aby se ušetřil čas, jsou body "
-"rozdělení čteny z tohoto souboru ;)\n"
-
-#: src/splt.c:860
-#, c-format
-msgid " Total silence points found: %d."
-msgstr " Celkem nalezeno bodů ticha: %d."
-
-#: src/splt.c:872
-#, c-format
-msgid " (Selected %d tracks)\n"
-msgstr " (%d skladeb vybráno)\n"
-
-#: src/splt.c:991
-#, c-format
-msgid " Writing silence log file '%s' ...\n"
-msgstr " Zapisuje se soubor se zápisem o tichu »%s« …\n"
-
-#: src/splt.c:1045
-msgid " info: starting silence mode split\n"
-msgstr " Informace: Začíná se s dělením v režimu ticha\n"
-
-#: src/splt.c:1093
-msgid " info: starting trim using silence mode split\n"
-msgstr ""
-
-#: src/splt.c:1170
-msgid " info: starting wrap mode split\n"
-msgstr ""
-" Informace: Začíná se s dělením v režimu automatického zalomení (wrap)\n"
-
-#: src/utils.c:71
-#, c-format
-msgid " info: overlapping split files with %ld.%ld.%ld\n"
-msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
 #: src/cue.c:434
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " Čtou se informace ze souboru CUE %s …\n"
 
+#: src/cue.c:531 src/cddb.c:125
+#, c-format
+msgid ""
+"  Tracks: %d\n"
+"\n"
+msgstr ""
+"  Skladby: %d\n"
+"\n"
+
 #: src/cue.c:692
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " Byl vytvořen soubor CUE »%s«.\n"
-
-#: src/audacity.c:235
-#, c-format
-msgid " reading informations from audacity labels file '%s' ...\n"
-msgstr " Čtou se informace ze souboru se štítky Audacity '%s …\n"
 
 #: src/errors.c:129
 msgid "Network error"
@@ -565,13 +428,155 @@ msgstr " Chyba regulárního výrazu: žádná shoda"
 msgid " regular expression ok"
 msgstr " Regulární výraz OK"
 
-#: src/filename_regex.c:90
-msgid "no regular expression provided"
-msgstr "Neposkytnut žádný regulární výraz"
+#: src/mp3splt.c:1074
+#, c-format
+msgid " info: resolving linked filename to '%s'\n"
+msgstr " Informace: Spojený název souboru je vyřešen do »%s«\n"
+
+#: src/mp3splt.c:1139
+#, c-format
+msgid " info: file matches the plugin '%s'\n"
+msgstr " Informace: Soubor odpovídá přídavnému modulu »%s«\n"
+
+#: src/mp3splt.c:1147
+#, c-format
+msgid " M3U file '%s' will be created.\n"
+msgstr " Soubor M3U »%s« bude vytvořen.\n"
+
+#: src/mp3splt.c:1168
+#, fuzzy, c-format
+msgid ""
+" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
+"%.2f Min: %.2f sec)\n"
+msgstr ""
+"Pracuje se s SILENCE AUTO-ADJUST (Práh: %.1f dB Mezera: %d s Posun: %.2f)\n"
+
+#: src/mp3splt.c:1923 src/tags_parser.c:108
+msgid ""
+" warning: cannot set tags from filename regular expression - compiled "
+"without pcre support\n"
+msgstr ""
+" Varování: Značky nelze naplnit z regulárního výrazu souboru  - sestaveno "
+"bez podpory pcre\n"
+
+#: src/checks.c:158
+msgid "directory does not exists"
+msgstr "Adresář neexistuje"
+
+#: src/cddb.c:63
+#, c-format
+msgid " reading informations from CDDB file %s ...\n"
+msgstr " Čtou se informace ze souboru CDDB %s …\n"
 
 #: src/string_utils.c:639 src/string_utils.c:660
 msgid "not enough memory"
 msgstr "Nedostatek paměti"
+
+#: src/audacity.c:235
+#, c-format
+msgid " reading informations from audacity labels file '%s' ...\n"
+msgstr " Čtou se informace ze souboru se štítky Audacity '%s …\n"
+
+#: src/filename_regex.c:90
+msgid "no regular expression provided"
+msgstr "Neposkytnut žádný regulární výraz"
+
+#: src/splt.c:158
+msgid " info: starting normal split\n"
+msgstr " Informace: Spouští se dělení v obvyklém režimu\n"
+
+#: src/splt.c:255
+msgid " info: starting error mode split\n"
+msgstr " Informace: Spouští se dělení v chybovém režimu\n"
+
+#: src/splt.c:567
+msgid " info: starting time mode split\n"
+msgstr " Informace: Spouští se dělení v časovém režimu\n"
+
+#: src/splt.c:586
+msgid " info: starting 'split in equal tracks' mode\n"
+msgstr ""
+" Informace: Spouští se dělení v režimu »dělení na stejně dlouhé skladby«\n"
+
+#: src/splt.c:628
+#, c-format
+msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
+msgstr ""
+
+#: src/splt.c:763
+msgid "YES"
+msgstr "Ano"
+
+#: src/splt.c:769
+#, c-format
+msgid "NO"
+msgstr "Ne"
+
+#: src/splt.c:775
+#, c-format
+msgid "User"
+msgstr "Uživatel"
+
+#: src/splt.c:779
+#, c-format
+msgid "Auto"
+msgstr "Automaticky"
+
+#: src/splt.c:799
+#, fuzzy, c-format
+msgid ""
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
+"Min track: %.2f, Shots: %d%s)\n"
+msgstr ""
+" Typ dělení pomocí zjištění ticha: Režim %s (Práh: %.1f dB, Posun: %.2f, "
+"Min: %.2f, Odstranění: %s)\n"
+
+#: src/splt.c:825
+#, c-format
+msgid ""
+" Found silence log file '%s' ! Reading silence points from file to save "
+"time ;)\n"
+msgstr ""
+" Byl nalezen soubor se zápisem pro ticho »%s«! Aby se ušetřil čas, jsou body "
+"rozdělení čteny z tohoto souboru ;)\n"
+
+#: src/splt.c:860
+#, c-format
+msgid " Total silence points found: %d."
+msgstr " Celkem nalezeno bodů ticha: %d."
+
+#: src/splt.c:872
+#, c-format
+msgid " (Selected %d tracks)\n"
+msgstr " (%d skladeb vybráno)\n"
+
+#: src/splt.c:991
+#, c-format
+msgid " Writing silence log file '%s' ...\n"
+msgstr " Zapisuje se soubor se zápisem o tichu »%s« …\n"
+
+#: src/splt.c:1045
+msgid " info: starting silence mode split\n"
+msgstr " Informace: Začíná se s dělením v režimu ticha\n"
+
+#: src/splt.c:1093
+msgid " info: starting trim using silence mode split\n"
+msgstr ""
+
+#: src/splt.c:1170
+msgid " info: starting wrap mode split\n"
+msgstr ""
+" Informace: Začíná se s dělením v režimu automatického zalomení (wrap)\n"
+
+#: src/split_points.c:389
+#, c-format
+msgid " info: track too short (%ld.%ld.%ld < %ld.%ld.%ld); skipped.\n"
+msgstr ""
+
+#: src/utils.c:71
+#, c-format
+msgid " info: overlapping split files with %ld.%ld.%ld\n"
+msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
 #: plugins/mp3.c:1172
 msgid ""
@@ -636,11 +641,11 @@ msgstr " Zjištěný soubor vytvořen: AlbumWrap\n"
 msgid " Total files: %d\n"
 msgstr " Celkem souborů: %d\n"
 
-#: plugins/mp3.c:3271
+#: plugins/mp3.c:3273
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »-« je datový proud mp3.\n"
 
-#: plugins/mp3.c:3298
+#: plugins/mp3.c:3300
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " Byly zpracovány snímky %lu - Chyby při seřizování: %lu\n"
@@ -653,6 +658,22 @@ msgstr " Informace: Datový proud OggVorbis - %ld - %ld kB/s - %d kanály"
 #: plugins/ogg.c:1459
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »o-« je datový proud Ogg.\n"
+
+#: plugins/ogg_utils.c:84
+msgid ""
+" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
+"to fix.\n"
+msgstr ""
+
+#: plugins/silence_processors.c:227
+#, fuzzy, c-format
+msgid " info: trim begin split at %ldm_%.2lds_%.2ldh\n"
+msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
+
+#: plugins/silence_processors.c:270
+#, fuzzy, c-format
+msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
+msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
 #~ msgid "description here"
 #~ msgstr "Popis zde"

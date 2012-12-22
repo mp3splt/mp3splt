@@ -2,11 +2,11 @@ includedir = $(prefix)/include/libmp3splt/
 
 include_HEADERS = $(top_srcdir)/include/libmp3splt/mp3splt.h
 
-INCLUDES=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt\" @INCLTDL@
+INCLUDES=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt$(SONAME)\" @INCLTDL@
 
 lib_LTLIBRARIES = libmp3splt.la
 
-libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:5:0
+libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:7:0
 libmp3splt_la_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt
 libmp3splt_la_LIBADD = @LIBINTL@ -lm
 

@@ -1,4 +1,4 @@
-plugindir=$(libdir)/libmp3splt
+plugindir=$(libdir)/libmp3splt$(SONAME)
 
 plugin_LTLIBRARIES = 
 
