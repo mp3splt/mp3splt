@@ -2907,6 +2907,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 while ((j<2048) && ((c = fgetc(mp3state->file_input))!='['))
                   if (c!='.') junk[j++] = c;
                   else k = j;
+                if (j >= 2048) j = 2047;
                 junk[j] = '\0';
                 begin = (off_t) atol (junk);
                 k = j - k;
@@ -2990,6 +2991,7 @@ static void splt_mp3_dewrap(int listonly, const char *dir, int *error, splt_stat
                 while ((j<2048) && ((c = fgetc(mp3state->file_input))!='['))
                   if (c!='.') junk[j++] = c;
                   else k = j;
+                if (j >= 2048) j = 2047;
                 junk[j] = '\0';
                 end = (off_t) atol (junk);
                 k = j - k;
