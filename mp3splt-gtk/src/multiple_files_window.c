@@ -158,7 +158,7 @@ static gboolean file_exists_in_multiple_files_table(const gchar *filename, ui_st
 {
   if (filename == NULL)
   {
-    return;
+    return FALSE;
   }
 
   GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->multiple_files_tree);
