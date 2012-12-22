@@ -382,7 +382,7 @@ splt_tags *splt_tu_new_tags(int *error)
     return NULL;
   }
 
-  memset(tags, sizeof(splt_tags), '\0');
+  memset(tags, '\0', sizeof(splt_tags));
 
   splt_tu_reset_tags(tags);
 
@@ -612,7 +612,7 @@ static char *splt_tu_get_replaced_with_tags(const char *word,
       err = splt_su_append(&word_with_tags, buffer, counter, NULL);
       if (err != SPLT_OK) { goto error; }
 
-      memset(buffer, 256, '\0');
+      memset(buffer, '\0', 256);
       counter = 0;
 
       ptr++;
@@ -760,7 +760,7 @@ put_value:
       {
         err = splt_su_append(&word_with_tags, buffer, counter, NULL);
         if (err != SPLT_OK) { goto error; }
-        memset(buffer, 256, '\0');
+        memset(buffer, '\0', 256);
         counter = 0;
       }
     }
