@@ -1130,7 +1130,7 @@ static splt_code splt_s_open_full_log_filename(splt_state *state)
   char *fname = splt_t_get_silence_full_log_fname(state);
   if (!fname || fname[0] == '\0')
   {
-    return;
+    return SPLT_OK;
   }
 
   state->full_log_file_descriptor = splt_io_fopen(fname, "w");

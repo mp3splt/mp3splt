@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2012 Munteanu Alexandru - m@ioalex.net
+ * Copyright (c) 2005-2012 Alexandru Munteanu - m@ioalex.net
  *
  * http://mp3splt.sourceforge.net
  *
@@ -45,6 +45,7 @@ void splt_e_clean_strerror_msg(splt_state *state);
 
 void splt_e_set_strerr_msg_with_data(splt_state *state, const char *message, const char *data);
 void splt_e_set_strerror_msg_with_data(splt_state *state, const char *data);
+void splt_e_set_strerr_msg(splt_state *state, const char *message);
 
 void splt_e_error(int error_type, const char *function, int arg_int, const char *arg_char);
 

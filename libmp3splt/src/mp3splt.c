@@ -4,7 +4,7 @@
  *               for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
- * Copyright (c) 2005-2006 Alexandru Munteanu - io_alex_2002@yahoo.fr
+ * Copyright (c) 2005-2012 Alexandru Munteanu - m@ioalex.net
  *
  * http://mp3splt.sourceforge.net
  *
@@ -558,7 +558,7 @@ splt_point *mp3splt_point_new(long splitpoint_value, splt_code *error)
   if (point == NULL)
   {
     *err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return;
+    return NULL;
   }
 
   point->value = splitpoint_value;
@@ -1316,7 +1316,7 @@ char *mp3splt_encode_in_base64(splt_state *state, const char *input, int *error)
   int *err = &erro;
   if (error != NULL) { err = error; }
 
-  char *input_as_base64 = splt_pr_base64(input);
+  char *input_as_base64 = splt_pr_base64((unsigned char *)input);
   if (input_as_base64 == NULL)
   {
     *err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;

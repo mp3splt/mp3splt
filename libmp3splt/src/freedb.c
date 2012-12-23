@@ -169,8 +169,6 @@ int splt_freedb_process_search(splt_state *state, char *search,
   char *server = splt_freedb_get_server(search_server);
   int port = splt_freedb_get_port(port_number);
 
-  char *first_line = NULL;
-
   splt_sm_connect(sh, server, port, state);
   if (sh->error < 0) { error = sh->error; goto end; }
 

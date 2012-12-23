@@ -38,14 +38,6 @@
  *
  *********************************************************/
 
-//we include the "config.h" file from the config options
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#else
-#define VERSION "0.7.4.1166"
-#define PACKAGE_NAME "mp3splt-gtk"
-#endif
-
 #include "main_window.h"
 
 //! Set the name of the input file

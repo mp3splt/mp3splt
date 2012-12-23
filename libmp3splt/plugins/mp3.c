@@ -3468,6 +3468,8 @@ static tag_bytes_and_size *splt_mp3_new_bytes_and_size()
   bytes_and_size->tag_bytes_v1 = NULL;
   bytes_and_size->tag_length_v1 = 0;
   bytes_and_size->version = 0;
+
+  return bytes_and_size;
 }
 
 static char *splt_mp3_get_same_bytes_tags(int version, tag_bytes_and_size *bytes_and_size, 

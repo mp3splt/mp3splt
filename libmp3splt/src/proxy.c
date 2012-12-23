@@ -36,8 +36,6 @@
 
 static void splt_pr_free_proxy_address(splt_state *state);
 static void splt_pr_free_proxy_authentification(splt_state *state);
-static splt_code splt_pr_store_authentification(splt_state *state, 
-    const char *username, const char *password);
 static char *splt_pr_encode3to4(const unsigned char *source, int srcoffset, int num, 
     char *destination, int destoffset);
 
@@ -91,6 +89,8 @@ splt_code splt_pr_use_base64_authentification(splt_state *state,
 
   splt_pr_free_proxy_authentification(state);
   splt_su_copy(base64_authentification, &state->proxy.authentification);
+
+  return SPLT_OK;
 }
 
 void splt_pr_set_default_values(splt_state *state)
@@ -109,7 +109,7 @@ void splt_pr_free(splt_state *state)
 
 char *splt_pr_base64(const unsigned char *source)
 {
-  int len = strlen(source);
+  int len = strlen((char *)source);
 
   int d = ((len*4/3)+((len%3)>0?4:0));
 

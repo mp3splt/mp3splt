@@ -1,9 +1,10 @@
 /*
  * audacity.h -- Audacity label file parser portion of the Mp3Splt utility
- *                    Utility for mp3/ogg splitting without decoding
+ *               Utility for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2004 M. Trotta - <matteo.trotta@lib.unimib.it>
  * Copyright (c) 2007 Federico Grau - <donfede@casagrau.org>
+ * Copyright (c) 2005-2012 Alexandru Munteanu <m@ioalex.net>
  *
  * http://mp3splt.sourceforge.net
  * http://audacity.sourceforge.net/

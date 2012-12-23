@@ -1,13 +1,13 @@
-/*
- * audacity.h -- Audacity label file parser portion of the Mp3Splt utility
- *                    Utility for mp3/ogg splitting without decoding
+/**
+ * libmp3splt 
+ *
+ *        Utility for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2004 M. Trotta - <matteo.trotta@lib.unimib.it>
- * Copyright (c) 2007 Federico Grau - <donfede@casagrau.org>
+ * Copyright (c) 2005-2012 Alexandru Munteanu <m@ioalex.net>
  *
  * http://mp3splt.sourceforge.net
- * http://audacity.sourceforge.net/
- */
+ **/
 
 /**********************************************************
  *
@@ -69,14 +69,17 @@ void splt_sm_send_http_message(splt_socket_handler *sh, const char *message,
 void splt_sm_receive_and_process_without_headers(splt_socket_handler *sh, splt_state *state,
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data, int number_of_lines_to_skip_after_headers);
+
 char *splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler *sh, 
     splt_state *state,
     ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data, int number_of_lines_to_skip_after_headers);
+
 void splt_sm_receive_and_process(splt_socket_handler *sh, splt_state *state,
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data);
+
 char *splt_sm_receive_and_process_with_recv(splt_socket_handler *sh, splt_state *state,
     ssize_t (*recv_func)(int fd, void *buf, size_t len, int flags),
     int (*process_functor)(const char *received_line, int line_number, void *user_data),

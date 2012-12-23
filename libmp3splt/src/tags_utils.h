@@ -60,7 +60,7 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index);
 splt_tags splt_tu_get_last_tags(splt_state *state);
 void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field);
-void *splt_tu_get_tags_value(splt_tags *tags, splt_tag_key tags_field);
+void *splt_tu_get_tags_value(splt_tags *tags, int tags_field);
 void splt_tu_free_tags(splt_state *state);
 splt_tags *splt_tu_get_tags_like_x(splt_state *state);
 splt_tags *splt_tu_get_current_tags(splt_state *state);
@@ -97,6 +97,8 @@ void splt_tu_set_original_tags_last_plugin_used(splt_state *state, int plugin_us
 int splt_tu_get_original_tags_last_plugin_used(splt_state *state);
 
 splt_code splt_tu_remove_tags_of_skippoints(splt_state *state);
+
+int splt_tu_set_field_on_tags(splt_tags *tags, int tags_field, const void *data);
 
 #define MP3SPLT_TAGS_UTILS_H
 

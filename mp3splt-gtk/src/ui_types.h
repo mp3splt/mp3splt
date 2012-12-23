@@ -44,8 +44,8 @@
 #endif
 
 #ifdef __WIN32__
-  #include <winsock2.h>
   #include <windows.h>
+  #include <winsock2.h>
 #endif
 
 typedef struct {
