@@ -36,7 +36,7 @@
 #include "splt.h"
 
 #ifdef __WIN32__
-#include "windows.h"
+#include <windows.h>
 #endif
 
 static void close_files(splt_state *state, const char *file1, FILE **f1,

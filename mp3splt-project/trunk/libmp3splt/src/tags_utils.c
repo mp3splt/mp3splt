@@ -30,6 +30,7 @@
 #include "splt.h"
 #include "tags_utils.h"
 
+
 void splt_tu_free_original_tags(splt_state *state)
 {
   splt_tags *tags = &state->original_tags.tags;
@@ -1083,7 +1084,7 @@ void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
   return NULL;
 }
 
-void *splt_tu_get_tags_value(splt_tags *tags, splt_tag_key tags_field)
+void *splt_tu_get_tags_value(splt_tags *tags, int tags_field)
 {
   switch (tags_field)
   {

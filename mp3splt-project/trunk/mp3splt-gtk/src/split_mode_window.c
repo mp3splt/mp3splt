@@ -252,8 +252,6 @@ static GtkWidget *create_split_mode(ui_state *ui)
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(big_horiz_fake), horiz_fake, FALSE, FALSE, 25);
   
-  gint default_tracks = 10;
-
   GtkWidget *equal_tracks_label = gtk_label_new(_("Split in"));
   ui->gui->equal_tracks_label = equal_tracks_label;
   gtk_box_pack_start(GTK_BOX(horiz_fake), equal_tracks_label, FALSE, FALSE, 0);

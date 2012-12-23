@@ -660,7 +660,6 @@ int main(int argc, char **orig_argv)
 
       //if no error when getting the wrap files
       mp3splt_wrap_init_iterator(wrap_files);
-      int i = 0;
       fprintf(stdout,"\n");
       const splt_one_wrap *one_wrap = NULL;
       while ((one_wrap = mp3splt_wrap_next(wrap_files)))

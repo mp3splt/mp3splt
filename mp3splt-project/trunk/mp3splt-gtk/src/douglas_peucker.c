@@ -37,6 +37,7 @@
  **********************************************************/
 
 #include "douglas_peucker.h"
+#include "utilities.h"
 
 static GArray *splt_copy_as_new_array(GArray *array);
 static GArray *splt_merge_arrays_with_bounds(GArray *first, gint first_end_bound, 

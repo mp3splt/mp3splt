@@ -1,11 +1,11 @@
 /**********************************************************
  *
  * audacity.c -- Audacity label file parser portion of the Mp3Splt utility
- *                    Utility for mp3/ogg splitting without decoding
+ *               Utility for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2004 M. Trotta - <matteo.trotta@lib.unimib.it>
  * Copyright (c) 2007 Federico Grau - <donfede@casagrau.org>
- * Copyright (c) 2010-2012 Alexandru Munteanu <m@ioalex.net>
+ * Copyright (c) 2005-2012 Alexandru Munteanu - <m@ioalex.net>
  *
  * http://mp3splt.sourceforge.net
  * http://audacity.sourceforge.net/
@@ -219,6 +219,9 @@ error:
 
 int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *error)
 {
+  char *line = NULL;
+  splt_audacity *previous_aud = NULL;
+
 	int tracks = -1;
 
   if (file == NULL)
@@ -254,10 +257,8 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
   int err = SPLT_OK;
 
   splt_audacity *aud = NULL;
-  splt_audacity *previous_aud = NULL;
 
   tracks = 0;
-  char *line = NULL;
   while ((line = splt_io_readline(file_input, error)) != NULL)
   {
     if (*error < 0) { goto end; }
@@ -269,8 +270,7 @@ int splt_audacity_put_splitpoints(const char *file, splt_state *state, int *erro
       continue;
     }
 
-    aud = splt_audacity_process_line(state, line, previous_aud,
-        &append_begin_point, &err);
+    aud = splt_audacity_process_line(state, line, previous_aud, &append_begin_point, &err);
     if (err < 0) { goto end; }
 
     if (previous_aud)

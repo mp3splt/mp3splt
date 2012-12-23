@@ -47,8 +47,6 @@ that is meant to be used directly are all in mp3splt.c.
 
 #include "splt.h"
 
-static void splt_e_set_strerr_msg(splt_state *state, const char *message);
-
 void splt_e_set_errors_default_values(splt_state *state)
 {
   splt_error *err = &state->err;
@@ -445,7 +443,7 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
   return NULL;
 }
 
-static void splt_e_set_strerr_msg(splt_state *state, const char *message)
+void splt_e_set_strerr_msg(splt_state *state, const char *message)
 {
   splt_su_copy(message, &state->err.strerror_msg);
 }

@@ -33,6 +33,13 @@
 
 #define EXTERNAL_INCLUDES_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define VERSION "0.7.4.1166"
+#define PACKAGE_NAME "mp3splt-gtk"
+#endif
+
 #include <signal.h>
 #include <string.h>
 #include <stdlib.h>
@@ -49,8 +56,11 @@
 
 #ifdef __WIN32__
 
-#include <winsock2.h>
 #include <windows.h>
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 #include <shlwapi.h>
 #define usleep(x) Sleep(x/1000)
 

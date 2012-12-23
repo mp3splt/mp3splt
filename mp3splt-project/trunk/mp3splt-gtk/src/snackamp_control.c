@@ -37,6 +37,8 @@
  * player
  **********************************************************/
 
+#define _WIN32_WINNT 0x0501
+
 #include "snackamp_control.h"
 
 /*!connecting to the player to the port port
@@ -45,8 +47,6 @@ Might possibley return an error
 */
 gint connect_snackamp(gint port, ui_state *ui)
 {
-  struct sockaddr_in host;
-  struct hostent *h;
   gint return_err = 0;
 
 #ifdef __WIN32__
@@ -55,29 +55,45 @@ gint connect_snackamp(gint port, ui_state *ui)
   winsockinit = WSAStartup(0x0101,&winsock);
 #endif
 
-  if((h = gethostbyname("localhost"))==NULL)
-  {
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+
+  struct addrinfo *result;
+
+  char *port_as_string = alloca(16);
+  snprintf(port_as_string, 16, "%d", port);
+
+  int return_code = getaddrinfo("localhost", port_as_string, &hints, &result);
+  if (return_code != 0) {
     return_err = 1;
   }
 
-  host.sin_family = AF_INET;
-  host.sin_addr.s_addr = ((struct in_addr *) (h->h_addr)) ->s_addr;
-  host.sin_port=htons(port);
-
   if (return_err == 0)
   {
-    if ((ui->pi->socket_id = socket(AF_INET, SOCK_STREAM, 0))==-1)
+    struct addrinfo *result_p;
+    for (result_p = result; result_p != NULL; result_p = result_p->ai_next)
     {
-      return_err = 2;
-    }
-  }
+      return_err = 0;
 
-  if (return_err == 0)
-  {
-    if ((connect(ui->pi->socket_id, (void *)&host, sizeof(host)))==-1)
-    {
+      ui->pi->socket_id = socket(result_p->ai_family, result_p->ai_socktype, result_p->ai_protocol);
+      if (ui->pi->socket_id == -1)
+      {
+        return_err = 2;
+        continue;
+      }
+
+      if (connect(ui->pi->socket_id, result_p->ai_addr, result_p->ai_addrlen) != -1)
+      {
+        break;
+      }
+
       return_err = 3;
+      close(ui->pi->socket_id);
     }
+
+    freeaddrinfo(result);
   }
 
   if (return_err == 0)
@@ -106,6 +122,60 @@ gint connect_snackamp(gint port, ui_state *ui)
   return return_err;
 }
 
+/*gint connect_snackamp(gint port, ui_state *ui)
+{
+  struct sockaddr_in host;
+  struct hostent *h;
+  gint return_err = 0;
+#ifdef __WIN32__
+  long winsockinit;
+  WSADATA winsock;
+  winsockinit = WSAStartup(0x0101,&winsock);
+#endif
+  if((h = gethostbyname("localhost"))==NULL)
+  {
+    return_err = 1;
+  }
+  host.sin_family = AF_INET;
+  host.sin_addr.s_addr = ((struct in_addr *) (h->h_addr)) ->s_addr;
+  host.sin_port=htons(port);
+  if (return_err == 0)
+  {
+    if ((ui->pi->socket_id = socket(AF_INET, SOCK_STREAM, 0))==-1)
+    {
+      return_err = 2;
+    }
+  }
+  if (return_err == 0)
+  {
+    if ((connect(ui->pi->socket_id, (void *)&host, sizeof(host)))==-1)
+    {
+      return_err = 3;
+    }
+  }
+  if (return_err == 0)
+  {
+#ifdef __WIN32__
+#else
+    if (NULL == (ui->pi->in = fdopen(ui->pi->socket_id, "r")) ||
+      NULL == (ui->pi->out = fdopen(ui->pi->socket_id, "w")))
+    {
+      return_err = 4;
+    }
+#endif
+  }
+  if (return_err == 0)
+  {
+    setvbuf(ui->pi->out, NULL, _IOLBF, 0);
+    ui->pi->connected = TRUE;
+  }
+  if (return_err >= 2)
+  {
+    disconnect_snackamp(ui);
+  }
+  return return_err;
+}*/
+
 static gchar *cut_begin_end(gchar *result)
 {
   if (strchr(result,' ') != NULL)
@@ -131,7 +201,9 @@ gint disconnect_snackamp(ui_state *ui)
 {
   ui->pi->connected = FALSE;
 #ifdef __WIN32__
-  return closesocket(ui->pi->socket_id);
+  gint result = closesocket(ui->pi->socket_id);
+  WSACleanup();
+  return result;
 #else
   return close(ui->pi->socket_id);
 #endif

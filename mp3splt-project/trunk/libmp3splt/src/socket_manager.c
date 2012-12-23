@@ -1,14 +1,12 @@
 /**********************************************************
  *
- * audacity.c -- Audacity label file parser portion of the Mp3Splt utility
+ * socket_manager.c -- Socket Manager file handler portion of the Mp3Splt utility
  *                    Utility for mp3/ogg splitting without decoding
  *
  * Copyright (c) 2002-2004 M. Trotta - <matteo.trotta@lib.unimib.it>
- * Copyright (c) 2007 Federico Grau - <donfede@casagrau.org>
- * Copyright (c) 2010-2012 Alexandru Munteanu <m@ioalex.net>
+ * Copyright (c) 2005-2012 Alexandru Munteanu - m@ioalex.net
  *
  * http://mp3splt.sourceforge.net
- * http://audacity.sourceforge.net/
  */
 
 /**********************************************************
@@ -39,12 +37,20 @@ Manages a socket connection
 #include <unistd.h>
 
 #ifdef __WIN32__
-#include <conio.h>
-#include <winsock.h>
+#define _WIN32_WINNT 0x0501
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #else
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#endif
+
+#ifdef __WIN32__
+#include <malloc.h>
+#else
+#include <alloca.h>
 #endif
 
 #include <string.h>
@@ -76,8 +82,6 @@ void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port, sp
 
   splt_d_print_debug(state, "\nConnecting on host %s:%d\n", real_hostname, real_port);
 
-  struct hostent *host_entity = NULL;
-  
   int err = splt_su_copy(hostname, &sh->hostname);
   if (err < 0) { sh->error = err; return; }
 
@@ -92,37 +96,51 @@ void splt_sm_connect(splt_socket_handler *sh, const char *hostname, int port, sp
   }
 #endif
 
-  host_entity = gethostbyname(real_hostname);
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
 
-  if (host_entity == NULL)
-  {
-    splt_e_set_strherror_msg(state);
+  struct addrinfo *result;
+
+  char *port_as_string = alloca(16);
+  snprintf(port_as_string, 16, "%d", real_port);
+
+  int return_code = getaddrinfo(real_hostname, port_as_string, &hints, &result);
+  if (return_code != 0) {
+    splt_e_set_strerr_msg(state, gai_strerror(return_code));
     splt_e_set_error_data(state, real_hostname);
     sh->error = SPLT_FREEDB_ERROR_CANNOT_GET_HOST;
     return;
   }
 
-  struct sockaddr_in my_socket;
-  memset(&my_socket, 0x0, sizeof(my_socket));
-  my_socket.sin_family = AF_INET;
-  my_socket.sin_addr.s_addr = ((struct in_addr *) (host_entity->h_addr)) ->s_addr;
-  my_socket.sin_port = htons(real_port);
-
-  sh->fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (sh->fd == -1)
+  struct addrinfo *result_p;
+  for (result_p = result; result_p != NULL; result_p = result_p->ai_next)
   {
+    sh->fd = socket(result_p->ai_family, result_p->ai_socktype, result_p->ai_protocol);
+    if (sh->fd == -1)
+    {
+      splt_e_set_strerror_msg(state);
+      continue;
+    }
+
+    if (connect(sh->fd, result_p->ai_addr, result_p->ai_addrlen) != -1)
+    {
+      break;
+    }
+
     splt_e_set_strerror_msg(state);
-    sh->error = SPLT_FREEDB_ERROR_CANNOT_OPEN_SOCKET;
-    return;
+    close(sh->fd);
   }
 
-  if (connect(sh->fd, (void *)&my_socket, sizeof(my_socket)) < 0)
-  {
-    splt_e_set_strerror_msg(state);
+  if (result_p == NULL) {
     splt_e_set_error_data(state, real_hostname);
     sh->error = SPLT_FREEDB_ERROR_CANNOT_CONNECT;
+    freeaddrinfo(result);
     return;
   }
+
+  freeaddrinfo(result);
 
   splt_d_print_debug(state, " ... connected.\n");
 }
@@ -269,7 +287,7 @@ char *splt_sm_receive_and_process_without_headers_with_recv(splt_socket_handler 
   if (!sm_fd)
   {
     sh->error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    return;
+    return NULL;
   }
 
   sm_fd->functor = process_functor;
@@ -293,9 +311,16 @@ void splt_sm_receive_and_process_without_headers(splt_socket_handler *sh,
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data, int number_of_lines_to_skip_after_headers)
 {
+
+#ifdef __WIN32__
+  char *first_line = 
+    splt_sm_receive_and_process_without_headers_with_recv(sh, state, NULL,
+        process_functor, user_data, number_of_lines_to_skip_after_headers);
+#else
   char *first_line = 
     splt_sm_receive_and_process_without_headers_with_recv(sh, state, recv,
         process_functor, user_data, number_of_lines_to_skip_after_headers);
+#endif
 
   splt_sm_handle_response_and_free(&first_line, sh, state);
 }
@@ -304,8 +329,13 @@ void splt_sm_receive_and_process(splt_socket_handler *sh, splt_state *state,
     int (*process_functor)(const char *received_line, int line_number, void *user_data),
     void *user_data)
 {
+#ifdef __WIN32__
+  char *first_line =
+    splt_sm_receive_and_process_with_recv(sh, state, NULL, process_functor, user_data);
+#else
   char *first_line =
     splt_sm_receive_and_process_with_recv(sh, state, recv, process_functor, user_data);
+#endif
 
   splt_sm_handle_response_and_free(&first_line, sh, state);
 }

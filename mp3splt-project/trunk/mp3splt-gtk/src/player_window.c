@@ -789,7 +789,6 @@ static void change_song_position(ui_state *ui)
 //!adds a splitpoint from the player
 static void toggle_show_silence_wave(GtkToggleButton *show_silence_toggle_button, ui_state *ui)
 {
-  ui_infos *infos = ui->infos;
   gui_status *status = ui->status;
 
   if (gtk_toggle_button_get_active(show_silence_toggle_button))

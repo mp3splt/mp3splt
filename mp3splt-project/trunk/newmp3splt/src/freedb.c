@@ -23,6 +23,10 @@
 
 #include <unistd.h>
 
+#ifdef __WIN32__
+#include <conio.h>
+#endif
+
 #include "common.h"
 #include "utils.h"
 #include "print_utils.h"
@@ -34,7 +38,6 @@ static void query_for_proxy_and_write_configuration_file(main_data *data);
 static void read_proxy_settings_from_configuration_file(main_data *data);
 static char *get_configuration_filename();
 static char *query_for_proxy_login();
-static char *encode_in_base64(const char *authentification);
 static char *get_input_line(FILE *input_file, char *key);
 
 extern FILE *console_out;
@@ -60,7 +63,7 @@ char *getpass(char *s)
   fputs(s, stdout);
   pass = malloc(100);
   do {
-    c = getch();
+    c = _getch();
     if (c!='\r') {
       if (c=='\b') {
         if (i>0) {
