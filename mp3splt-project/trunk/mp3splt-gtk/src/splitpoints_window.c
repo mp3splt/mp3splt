@@ -135,8 +135,8 @@ static GtkTreeModel *create_model()
       G_TYPE_INT, 
       G_TYPE_INT, 
       G_TYPE_STRING,
-      GDK_TYPE_PIXBUF,
-      GDK_TYPE_PIXBUF);
+      G_TYPE_STRING,
+      G_TYPE_STRING);
 
   return GTK_TREE_MODEL(model);
 }
@@ -1688,18 +1688,18 @@ static void create_columns(ui_state *ui)
 
   /* column preview */
   renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
-  g_object_set(renderer_pix,"stock-id",GTK_STOCK_MEDIA_PLAY,
-      "stock-size",GTK_ICON_SIZE_MENU,NULL);
+  g_object_set(renderer_pix, "stock-id", GTK_STOCK_MEDIA_PLAY,
+      "stock-size", GTK_ICON_SIZE_MENU, NULL);
   column_preview = gtk_tree_view_column_new_with_attributes 
-    (_("LiveP"), GTK_CELL_RENDERER(renderer_pix), "pixbuf",COL_PREVIEW, NULL);
+    (_("LiveP"), GTK_CELL_RENDERER(renderer_pix), NULL);
   g_object_set_data(G_OBJECT(column_preview), "col", GINT_TO_POINTER(COL_PREVIEW));
 
   /* split preview */
   renderer_pix = GTK_CELL_RENDERER_PIXBUF(gtk_cell_renderer_pixbuf_new());
-  g_object_set(renderer_pix,"stock-id",GTK_STOCK_MEDIA_PLAY,
-      "stock-size",GTK_ICON_SIZE_MENU,NULL);
+  g_object_set(renderer_pix, "stock-id", GTK_STOCK_MEDIA_PLAY,
+      "stock-size", GTK_ICON_SIZE_MENU, NULL);
   column_split_preview = gtk_tree_view_column_new_with_attributes 
-    (_("SplitP"), GTK_CELL_RENDERER(renderer_pix), "pixbuf",COL_SPLIT_PREVIEW, NULL);
+    (_("SplitP"), GTK_CELL_RENDERER(renderer_pix), NULL);
   g_object_set_data(G_OBJECT(column_split_preview), "col", GINT_TO_POINTER(COL_SPLIT_PREVIEW));
 
   gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), column_check, COL_CHECK);
