@@ -1066,6 +1066,16 @@ splt_code mp3splt_split(splt_state *state)
         return error;
       }
 
+      //if the new_filename_path is "", we put the directory of
+      //the current song
+      new_filename_path = splt_check_put_dir_of_cur_song(fname_to_split,
+          splt_t_get_path_of_split(state), &error);
+      if (error < 0)
+      {
+        splt_o_unlock_library(state);
+        return error;
+      }
+
 #ifndef __WIN32__
       char *linked_fname = splt_io_get_linked_fname(fname_to_split, NULL);
       if (linked_fname)
@@ -1080,16 +1090,6 @@ splt_code mp3splt_split(splt_state *state)
         linked_fname = NULL;
       }
 #endif
-
-      //if the new_filename_path is "", we put the directory of
-      //the current song
-      new_filename_path = splt_check_put_dir_of_cur_song(fname_to_split,
-          splt_t_get_path_of_split(state), &error);
-      if (error < 0)
-      {
-        splt_o_unlock_library(state);
-        return error;
-      }
 
       //checks and sets correct options
       splt_check_set_correct_options(state);
