@@ -45,6 +45,32 @@ function test_misc_create_directories
   echo
 }
 
+function test_misc_with_no_output_dir
+{
+  remove_output_dir
+
+  test_name="no output dir"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file '$SONGS_DIR/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$SONGS_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3\" created
+   File \"$SONGS_DIR/${M_FILE}_02m_00s_20h__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ file split (EOF)"
+  mp3splt_args=" $MP3_FILE 1.0 2.0.2 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f $SONGS_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3
+  rm -f $SONGS_DIR/${M_FILE}_02m_00s_20h__04m_05s_58h.mp3
+
+  print_ok
+  echo
+}
+
 function test_misc_with_symlink_input_dir
 {
   remove_output_dir
@@ -102,6 +128,104 @@ function test_misc_with_symlink_input_file
   echo
 }
 
+function test_misc_with_symlink_input_file_and_symlink_output_dir
+{
+  remove_output_dir
+
+  rm -f $SONGS_DIR/symlink_file
+
+  test_name="symlink input file & symlink output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cd $SONGS_DIR && ln -s $CBR_MP3 symlink_file && cd - &> /dev/null
+  ln -s $OUTPUT_DIR output_symlink
+
+  expected=" Processing file 'songs/symlink_file' ...
+ info: resolving linked filename to 'songs/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"output_symlink/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"output_symlink/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d output_symlink $SONGS_DIR/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f output_symlink/${M_FILE}_00m_30s__02m_00s.mp3
+  rm -f output_symlink/${M_FILE}_02m_00s__03m_43s_81h.mp3
+  rm -f output_symlink
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_file_and_output_dir_in_symlink_dir
+{
+  remove_output_dir
+
+  rm -f $SONGS_DIR/symlink_file
+
+  test_name="symlink input file & output dir in symlink dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cd $SONGS_DIR && ln -s $CBR_MP3 symlink_file && cd - &> /dev/null
+  ln -s $OUTPUT_DIR output_symlink
+  mkdir output_symlink/out
+
+  expected=" Processing file 'songs/symlink_file' ...
+ info: resolving linked filename to 'songs/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"output_symlink/out/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"output_symlink/out/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d output_symlink/out $SONGS_DIR/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f output_symlink/out/${M_FILE}_00m_30s__02m_00s.mp3
+  rm -f output_symlink/out/${M_FILE}_02m_00s__03m_43s_81h.mp3
+  rmdir output_symlink/out
+  rm -f output_symlink
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_file_in_other_directory
+{
+  remove_output_dir
+
+  rm -f $SONGS_DIR/symlink_file
+
+  test_name="symlink input file in other directory and no output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  mkdir -p songs_temporary
+  ln -s ../$SONGS_DIR/$CBR_MP3 songs_temporary/symlink_file
+
+  expected=" Processing file 'songs_temporary/symlink_file' ...
+ info: resolving linked filename to 'songs_temporary/../songs/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"songs_temporary/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"songs_temporary/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="songs_temporary/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f songs_temporary/${M_FILE}*.mp3
+  rm -f songs_temporary/symlink_file
+  rmdir songs_temporary
+
+  print_ok
+  echo
+}
+
 function test_misc_with_symlink_input_dir_and_symlink_input_file
 {
   remove_output_dir
@@ -134,6 +258,104 @@ function test_misc_with_symlink_input_dir_and_symlink_input_file
   echo
 }
 
+function test_misc_with_symlink_input_dir_and_symlink_input_file_and_no_output_dir
+{
+  remove_output_dir
+
+  rm -f $SONGS_DIR/symlink_file
+  rm -f symlink_dir
+
+  test_name="symlink input dir & symlink input file & no output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cd $SONGS_DIR && ln -s $CBR_MP3 symlink_file && cd - &> /dev/null
+  ln -s $SONGS_DIR symlink_dir
+
+  expected=" Processing file 'symlink_dir/symlink_file' ...
+ info: resolving linked filename to 'symlink_dir/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"symlink_dir/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"symlink_dir/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="symlink_dir/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f $SONGS_DIR/symlink_file
+  rm -f symlink_dir
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_dir_and_symlink_input_file_and_symlink_output_dir
+{
+  remove_output_dir
+
+  test_name="symlink input dir & symlink input file & symlink output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cd $SONGS_DIR && ln -s $CBR_MP3 symlink_file && cd - &> /dev/null
+  ln -s $SONGS_DIR symlink_dir
+  ln -s $OUTPUT_DIR my_output
+
+  expected=" Processing file 'symlink_dir/symlink_file' ...
+ info: resolving linked filename to 'symlink_dir/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"my_output/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"my_output/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d my_output symlink_dir/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f $SONGS_DIR/symlink_file
+  rm -f symlink_dir
+  rm -f my_output
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_dir_and_symlink_input_file_and_output_dir_in_symlink_output_dir
+{
+  remove_output_dir
+
+  test_name="symlink input dir & symlink input file & symlink output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cd $SONGS_DIR && ln -s $CBR_MP3 symlink_file && cd - &> /dev/null
+  ln -s $SONGS_DIR symlink_dir
+  ln -s $OUTPUT_DIR my_output
+  mkdir my_output/out
+
+  expected=" Processing file 'symlink_dir/symlink_file' ...
+ info: resolving linked filename to 'symlink_dir/${M_FILE}.mp3'
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"my_output/out/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"my_output/out/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d my_output/out symlink_dir/symlink_file 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f $SONGS_DIR/symlink_file
+  rm -f symlink_dir
+  rm -f my_output/out/${M_FILE}_00m_30s__02m_00s.mp3
+  rm -f my_output/out/${M_FILE}_02m_00s__03m_43s_81h.mp3
+  rmdir my_output/out
+  rm -f my_output
+
+  print_ok
+  echo
+}
+
 function test_misc_with_symlink_output_dir
 {
   remove_output_dir
@@ -157,6 +379,128 @@ function test_misc_with_symlink_output_dir
   run_check_output "$mp3splt_args" "$expected"
 
   rm -f symlink_dir
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_dir_in_normal_dir
+{
+  remove_output_dir
+
+  mkdir songs_temporary
+  ln -s ../songs songs_temporary/songs
+
+  test_name="symlink input dir in normal dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" Processing file 'songs_temporary/songs/Merci_Bonsoir__Je_veux_Only_love.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"output/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"output/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-d $OUTPUT_DIR songs_temporary/songs/$CBR_MP3 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f songs_temporary/songs
+  rmdir songs_temporary
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_dir_in_normal_dir_and_no_output_dir
+{
+  remove_output_dir
+
+  mkdir songs_temporary
+  ln -s ../songs songs_temporary/songs
+
+  test_name="symlink input dir in normal dir and no output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" Processing file 'songs_temporary/songs/Merci_Bonsoir__Je_veux_Only_love.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"songs_temporary/songs/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"songs_temporary/songs/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="songs_temporary/songs/$CBR_MP3 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f songs_temporary/songs/${M_FILE}_00m_30s__02m_00s.mp3
+  rm -f songs_temporary/songs/${M_FILE}_02m_00s__03m_43s_81h.mp3
+  rm -f songs_temporary/songs
+  rmdir songs_temporary
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_dir_in_normal_dir_and_symlink_output_dir
+{
+  remove_output_dir
+
+  mkdir songs_temporary
+  ln -s ../songs songs_temporary/songs
+  ln -s $OUTPUT_DIR my_output
+
+  test_name="symlink input dir in normal dir and symlink output dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" Processing file 'songs/Merci_Bonsoir__Je_veux_Only_love.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"my_output/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"my_output/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args=" -d my_output $SONGS_DIR/$CBR_MP3 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f songs_temporary/songs
+  rmdir songs_temporary
+  rm -f my_output
+
+  print_ok
+  echo
+}
+
+function test_misc_with_symlink_input_dir_in_normal_dir_and_output_dir_in_symlink_dir
+{
+  remove_output_dir
+
+  mkdir songs_temporary
+  ln -s ../songs songs_temporary/songs
+  ln -s $OUTPUT_DIR my_output
+  mkdir my_output/out
+
+  test_name="symlink input dir in normal dir and output dir in symlink dir"
+
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  expected=" Processing file 'songs/Merci_Bonsoir__Je_veux_Only_love.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"my_output/out/${M_FILE}_00m_30s__02m_00s.mp3\" created
+   File \"my_output/out/${M_FILE}_02m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args=" -d my_output/out $SONGS_DIR/$CBR_MP3 0.30 2.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  rm -f my_output/out/${M_FILE}_00m_30s__02m_00s.mp3
+  rm -f my_output/out/${M_FILE}_02m_00s__03m_43s_81h.mp3
+  rmdir my_output/out
+  rm -f songs_temporary/songs
+  rmdir songs_temporary
+  rm -f my_output
 
   print_ok
   echo

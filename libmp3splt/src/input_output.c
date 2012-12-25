@@ -126,7 +126,7 @@ static char *splt_io_readlink(const char *fname)
   return NULL;
 }
 
-char *splt_io_get_linked_fname(const char *fname, int *number_of_symlinks)
+static char *splt_io_get_linked_fname_one_level(const char *fname, int *number_of_symlinks)
 {
   char *previous_linked_fname = NULL;
 
@@ -206,6 +206,26 @@ char *splt_io_get_linked_fname(const char *fname, int *number_of_symlinks)
   linked_fname = NULL;
 
   return linked_fname_with_path;
+}
+
+char *splt_io_get_linked_fname(const char *fname, int *number_of_symlinks)
+{
+  int num_of_symlinks = 0;
+
+  char *output_fname = splt_io_get_linked_fname_one_level(fname, number_of_symlinks);
+  while (output_fname != NULL && splt_io_file_type_is(output_fname, S_IFLNK))
+  {
+    char *new_output_fname = splt_io_get_linked_fname_one_level(output_fname, &num_of_symlinks);
+    free(output_fname);
+    output_fname = new_output_fname;
+
+    if (num_of_symlinks == MAX_SYMLINKS)
+    {
+      break;
+    }
+  }
+
+  return output_fname;
 }
 
 static int splt_io_linked_file_type_is(const char *fname, int file_type)
