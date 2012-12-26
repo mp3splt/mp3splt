@@ -466,7 +466,7 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
 the play_preview point 
 */
 static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state *ui, 
-    gint reorder_names)
+    gint reorder_names, gchar *old_description)
 {
   gchar *current_description_base = g_strdup(ui->status->current_description);
 
@@ -634,15 +634,20 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
     put_status_message(_(" error: you already have the splitpoint in table"), ui);
   }
 
-  if (old_index == -1 && reorder_names)
+  if (reorder_names)
   {
-    order_all_splitpoints_from_table(current_description_base, model, ui);
+    if (old_description)
+    {
+      order_all_splitpoints_from_table(old_description, model, ui);
+    }
+    else
+    {
+      order_all_splitpoints_from_table(current_description_base, model, ui);
+    }
   }
 
-  if (current_description_base)
-  {
-    g_free(current_description_base);
-  }
+  if (old_description) { g_free(old_description); }
+  if (current_description_base) { g_free(current_description_base); }
 
   if (gtk_toggle_button_get_active(ui->gui->names_from_filename))
   {
@@ -679,12 +684,14 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
   {
     ui->status->first_splitpoint_selected = get_first_splitpoint_selected(ui->gui);
 
+    gchar *old_description = g_strdup(ui->status->current_description);
+
     gchar *description = get_splitpoint_name(index, ui);
     g_snprintf(ui->status->current_description, 255, "%s", description);
     g_free(description);
 
     remove_splitpoint(index, FALSE, ui);
-    add_splitpoint(new_point, index, ui, TRUE);
+    add_splitpoint(new_point, index, ui, TRUE, old_description);
   }
   else
   {
@@ -854,7 +861,7 @@ void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui)
   my_split_point.hundr_secs = ui->infos->player_hundr_secs;
   my_split_point.checked = TRUE;
 
-  add_splitpoint(my_split_point, -1, ui, TRUE);
+  add_splitpoint(my_split_point, -1, ui, TRUE, NULL);
 }
 
 //!adds a row to the table
@@ -868,7 +875,7 @@ void add_row(gboolean checked, ui_state *ui)
   my_split_point.hundr_secs = status->spin_hundr_secs;
   my_split_point.checked = checked;
   
-  add_splitpoint(my_split_point, -1, ui, FALSE);
+  add_splitpoint(my_split_point, -1, ui, FALSE, NULL);
 }
 
 static void add_row_clicked(GtkWidget *button, ui_state *ui)
@@ -881,7 +888,7 @@ static void add_row_clicked(GtkWidget *button, ui_state *ui)
   my_split_point.hundr_secs = status->spin_hundr_secs;
   my_split_point.checked = TRUE;
   
-  add_splitpoint(my_split_point, -1, ui, TRUE);
+  add_splitpoint(my_split_point, -1, ui, TRUE, NULL);
 }
 
 static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)
