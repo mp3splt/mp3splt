@@ -1950,13 +1950,18 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     }
     else
     {
-      gint64 *time_key = g_new(gint64, 1);
+      /*gint64 *time_key = g_new(gint64, 1);
       *time_key = time;
       if (previous_distance_by_time != NULL)
       {
         gint *previous_diff = g_hash_table_lookup(previous_distance_by_time, time_key);
         if (previous_diff != NULL && *previous_diff >= 0)
         {
+          if (abs(x - (previous_x + *previous_diff)) > 30)
+          {
+            fprintf(stdout, "%d\t%d\n", x, previous_x + *previous_diff);
+            fflush(stdout);
+          }
           x = previous_x + *previous_diff;
         }
       }
@@ -1971,7 +1976,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
       {
         g_free(time_key);
       }
-      previous_x = x;
+      previous_x = x;*/
 
       cairo_line_to(gc, x, y);
     }
