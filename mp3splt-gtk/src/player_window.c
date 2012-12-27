@@ -53,9 +53,9 @@ static void draw_small_rectangle(gint time_left, gint time_right,
     GdkColor color, cairo_t *cairo_surface, ui_state *ui);
 static gint mytimer(ui_state *ui);
 
-static GHashTable *previous_distance_by_time = NULL;
+GHashTable *previous_distance_by_time = NULL;
 static gfloat previous_zoom_coeff = -2;
-static gfloat previous_current_time = -2;
+static gint previous_interpolation_level = -2;
 
 //!function called from the library when scanning for the silence level
 static void get_silence_level(long time, float level, void *user_data)
@@ -1909,7 +1909,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
   gint stroke_counter = 0;
 
   if (zoom_coeff != previous_zoom_coeff ||
-      abs(current_time - previous_current_time) > 200)
+      interpolation_level != previous_interpolation_level)
   {
     if (previous_distance_by_time != NULL)
     {
@@ -1918,7 +1918,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     }
   }
   previous_zoom_coeff = zoom_coeff;
-  previous_current_time = current_time;
+  previous_interpolation_level = interpolation_level;
 
   GHashTable* distance_by_time = g_hash_table_new_full(g_int64_hash, g_int64_equal, g_free, g_free);
 
@@ -1950,33 +1950,25 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     }
     else
     {
-      /*gint64 *time_key = g_new(gint64, 1);
-      *time_key = time;
-      if (previous_distance_by_time != NULL)
+      if (stroke_counter >= 4)
       {
-        gint *previous_diff = g_hash_table_lookup(previous_distance_by_time, time_key);
-        if (previous_diff != NULL && *previous_diff >= 0)
-        {
-          if (abs(x - (previous_x + *previous_diff)) > 30)
-          {
-            fprintf(stdout, "%d\t%d\n", x, previous_x + *previous_diff);
-            fflush(stdout);
-          }
-          x = previous_x + *previous_diff;
-        }
-      }
+        gint64 *time_key = g_new(gint64, 1);
+        *time_key = time;
 
-      if (x - previous_x < 10)
-      {
+        if (previous_distance_by_time != NULL)
+        {
+          gint *previous_diff = g_hash_table_lookup(previous_distance_by_time, time_key);
+          if (previous_diff != NULL)
+          {
+            x = previous_x + *previous_diff;
+          }
+        }
+
         gint *diff = g_new(gint, 1);
         *diff = x - previous_x;
         g_hash_table_insert(distance_by_time, time_key, diff);
       }
-      else
-      {
-        g_free(time_key);
-      }
-      previous_x = x;*/
+      previous_x = x;
 
       cairo_line_to(gc, x, y);
     }
@@ -3430,7 +3422,7 @@ static gint mytimer(ui_state *ui)
 
 //event for the file chooser ok button
 void file_chooser_ok_event(const gchar *fname, ui_state *ui)
-{
+{ 
   change_current_filename(fname, ui);
   gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
   wh_set_image_on_button(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_active));
