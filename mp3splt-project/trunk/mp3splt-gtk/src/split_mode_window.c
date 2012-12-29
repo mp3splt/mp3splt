@@ -191,6 +191,8 @@ static GtkWidget *create_split_mode(ui_state *ui)
   //normal split
   GtkWidget *split_mode_radio_button =
     gtk_radio_button_new_with_label(NULL, _("Use manual single file splitpoints"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button,
+      _("Split files using the manually defined splitpoints"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button),
@@ -201,6 +203,8 @@ static GtkWidget *create_split_mode(ui_state *ui)
   //time split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Time"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button,
+      _("Split every fixed time length; last track will most likely be smaller"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
@@ -238,6 +242,8 @@ static GtkWidget *create_split_mode(ui_state *ui)
   //split in equal length
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Equal time tracks"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button,
+      _("Create smaller tracks having exactly the same time length"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
@@ -274,6 +280,9 @@ static GtkWidget *create_split_mode(ui_state *ui)
   //trim using silence detection
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Trim using silence detection"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button,
+      _("Split by discarding silence from the begin and from the end\n"
+        "If no silence is found, the output file is still created"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
@@ -302,6 +311,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   //silence split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
     (GTK_RADIO_BUTTON(split_mode_radio_button), _("Silence - split with silence detection"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button, _("Split where silence is found"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
@@ -407,7 +417,10 @@ static GtkWidget *create_split_mode(ui_state *ui)
   
   //error mode split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Error mode (mp3 only)"));
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Synchronisation error mode (mp3 only)"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button,
+      _("Split where synchronisation errors are found\n"
+        "Useful for splitting concatenated files"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",

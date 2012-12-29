@@ -933,7 +933,6 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   GtkWidget *notebook = gtk_notebook_new();
 
   gtk_box_pack_start(GTK_BOX(main_vbox), notebook, TRUE, TRUE, 0);
-  gtk_notebook_popup_enable(GTK_NOTEBOOK(notebook));
   gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), TRUE);
   gtk_notebook_set_show_border(GTK_NOTEBOOK(notebook), FALSE);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
@@ -952,6 +951,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_APPLY,_("Split !"), FALSE);
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(single_file_mode_split_button_event), ui);
+  gtk_widget_set_tooltip_text(split_button, _("Split the current file"));
   gtk_box_pack_start(GTK_BOX(top_hbox), split_button, FALSE, FALSE, 4);
 
   ui->gui->player_box = create_player_control_frame(ui);
@@ -998,7 +998,7 @@ static GtkWidget *create_main_vbox(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(percent_progress_bar), TRUE, TRUE, 0);
 
   //stop button
-  GtkWidget *cancel_button = wh_create_cool_button(GTK_STOCK_STOP,_("S_top"), FALSE);
+  GtkWidget *cancel_button = wh_create_cool_button(GTK_STOCK_STOP, _("S_top"), FALSE);
   ui->gui->cancel_button = cancel_button;
   g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_button_event), ui);
   gtk_box_pack_start(GTK_BOX(hbox), cancel_button, FALSE, TRUE, 3);
