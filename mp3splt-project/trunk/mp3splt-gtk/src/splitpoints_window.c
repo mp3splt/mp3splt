@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
  * USA.
  *
  *********************************************************/
@@ -1386,7 +1386,7 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   gtk_widget_set_sensitive(remove_row_button, FALSE);
   g_signal_connect(G_OBJECT(remove_row_button), "clicked", G_CALLBACK(remove_row), ui);
   gtk_box_pack_start(GTK_BOX(hbox), remove_row_button, FALSE, FALSE, 5);
-  gtk_widget_set_tooltip_text(remove_row_button, _("Remove rows"));
+  gtk_widget_set_tooltip_text(remove_row_button, _("Remove selected splitpoints"));
 
   /* remove all rows button */
   GtkWidget *remove_all_button = wh_create_cool_button(GTK_STOCK_CLEAR, _("R_emove all"), FALSE);
@@ -1396,7 +1396,7 @@ static GtkWidget *create_init_spinners_buttons(ui_state *ui)
   gtk_widget_set_sensitive(remove_all_button, FALSE);
   g_signal_connect(G_OBJECT(remove_all_button), "clicked", G_CALLBACK(remove_all_rows), ui);
   gtk_box_pack_start(GTK_BOX(hbox), remove_all_button, FALSE, FALSE, 5);
-  gtk_widget_set_tooltip_text(remove_all_button, _("Remove all rows"));
+  gtk_widget_set_tooltip_text(remove_all_button, _("Remove all splitpoints"));
 
   return hbox;
 }
