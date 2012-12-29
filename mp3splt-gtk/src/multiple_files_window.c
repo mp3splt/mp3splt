@@ -251,6 +251,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
   //button for adding file(s)
   GtkWidget *multiple_files_add_button =
     wh_create_cool_button(GTK_STOCK_DIRECTORY, _("_Add files or directories"), FALSE);
+  gtk_widget_set_tooltip_text(multiple_files_add_button, _("Only the supported file types are added"));
   gtk_box_pack_start(GTK_BOX(hbox), multiple_files_add_button, FALSE, FALSE, 5);
   gtk_widget_set_sensitive(multiple_files_add_button, TRUE);
   g_signal_connect(G_OBJECT(multiple_files_add_button), "clicked",
@@ -277,6 +278,7 @@ static GtkWidget *create_multiple_files_buttons_hbox(ui_state *ui)
                    G_CALLBACK(multiple_files_remove_all_button_event), ui);
 
   GtkWidget *split_button = wh_create_cool_button(GTK_STOCK_EXECUTE,_("Batch split !"), FALSE);
+  gtk_widget_set_tooltip_text(split_button, _("Split all the files"));
   g_signal_connect(G_OBJECT(split_button), "clicked",
       G_CALLBACK(batch_file_mode_split_button_event), ui);
   gtk_box_pack_end(GTK_BOX(hbox), split_button, FALSE, FALSE, 4);

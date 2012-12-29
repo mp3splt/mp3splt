@@ -414,12 +414,15 @@ static GtkWidget *create_directory_box(ui_state *ui)
   GtkWidget *output_dir_radio = NULL;
   output_dir_radio = rh_append_radio_to_vbox(output_dir_radio, _("Custom directory"),
       CUSTOM_DIRECTORY, change_output_dir_options, ui, vbox);
+  gtk_widget_set_tooltip_text(output_dir_radio, _("Create split files in a custom directory"));
 
   GtkWidget *custom_dir_box = create_custom_directory_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), custom_dir_box, FALSE, FALSE, 0);
 
   output_dir_radio = rh_append_radio_to_vbox(output_dir_radio, _("Input file directory"),
       FILE_DIRECTORY, change_output_dir_options, ui, vbox);
+  gtk_widget_set_tooltip_text(output_dir_radio,
+      _("Create split files in the same directory as the file being split"));
   gui->output_dir_radio = output_dir_radio;
 
   GtkWidget *input_file_directory_example_box = create_input_file_directory_example_box(ui);
@@ -439,6 +442,8 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   GtkToggleButton *names_from_filename = 
     GTK_TOGGLE_BUTTON(gtk_check_button_new_with_mnemonic(
           _("_Splitpoint name from filename (manual single file split only)")));
+  gtk_widget_set_tooltip_text(GTK_WIDGET(names_from_filename),
+      _("Name newly added splitpoints as the input file"));
   gui->names_from_filename = names_from_filename;
 
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(names_from_filename), FALSE, FALSE, 0);
@@ -460,13 +465,19 @@ static GtkWidget *create_split_options_box(ui_state *ui)
   //frame mode option
   GtkWidget *frame_mode =
     gtk_check_button_new_with_mnemonic(_("F_rame mode (useful for mp3 VBR) (mp3 only)"));
+  gtk_widget_set_tooltip_text(frame_mode,
+      _("The split is slower with this option, but some mp3 files having\n"
+        "Variable Bit Rate need this mode to be enabled"));
   gui->frame_mode = frame_mode;
   gtk_box_pack_start(GTK_BOX(vbox), frame_mode, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(frame_mode), "toggled", G_CALLBACK(frame_event), ui);
 
   //auto adjust option
-  GtkWidget *adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (uses"
+  GtkWidget *adjust_mode = gtk_check_button_new_with_mnemonic(_("_Auto-adjust mode (use"
         " silence detection to auto-adjust splitpoints)"));
+  gtk_widget_set_tooltip_text(adjust_mode,
+      _("Splitpoints will be adjusted to match silences (if found)\n"
+        "This mode requires the frame mode"));
   gui->adjust_mode = adjust_mode;
   gtk_box_pack_start(GTK_BOX(vbox), adjust_mode, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(adjust_mode), "toggled", G_CALLBACK(adjust_event), ui);
@@ -902,12 +913,26 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
 
   GtkWidget *vbox = wh_vbox_new();
 
+  GtkWidget *horiz_fake = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
+
+  GString *note_str = g_string_new("");
+  g_string_append(note_str, "<span style='italic' color='#0000AA'>");
+  g_string_append(note_str, _("Options have no effect when the imported file is an exported mp3splt-gtk CUE file"));
+  g_string_append(note_str, "</span>");
+
+  GtkWidget *top_note = gtk_label_new(NULL);
+  gtk_label_set_markup(GTK_LABEL(top_note), note_str->str);
+  gtk_box_pack_start(GTK_BOX(horiz_fake), top_note, FALSE, FALSE, 0);
+
+  g_string_free(note_str, TRUE);
+
   //default/custom radio buttons
   GtkWidget *radio_output = gtk_radio_button_new_with_label(NULL, _("Default format"));
   gui->radio_output = radio_output;
   gtk_box_pack_start(GTK_BOX(vbox), radio_output, FALSE, FALSE, 0);
 
-  GtkWidget *horiz_fake = wh_hbox_new();
+  horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
   GString *outputs_str = g_string_new(_("  Default output: "));
@@ -992,7 +1017,8 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
   g_signal_connect(GTK_TOGGLE_BUTTON(gui->radio_output),
       "toggled", G_CALLBACK(output_radio_box_event), ui);
 
-  return wh_set_title_and_get_vbox(vbox, _("<b>Output filename format for batch split, CUE, CDDB and tracktype.org</b>"));
+  return wh_set_title_and_get_vbox(vbox,
+      _("<b>Output format for batch split and when importing splitpoints</b>"));
 }
 
 //!creates the output preferences page
@@ -1377,7 +1403,7 @@ GtkWidget *create_choose_preferences(ui_state *ui)
 
   /* output preferences */
   GtkWidget *output_prefs = create_pref_output_page(ui);
-  notebook_label = gtk_label_new(_("Output filename format"));
+  notebook_label = gtk_label_new(_("Output format"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), output_prefs, notebook_label);
 
   /* language preferences page */
