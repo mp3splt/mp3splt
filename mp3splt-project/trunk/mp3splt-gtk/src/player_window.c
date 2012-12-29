@@ -1232,7 +1232,7 @@ static gboolean progress_bar_leave_event(GtkWidget *widget, GdkEventCrossing *ev
 static GtkWidget *create_song_bar_hbox(ui_state *ui)
 {
   GtkAdjustment *progress_adj = 
-    GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 100001.0, 0, 10000, 1000));
+    GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 100001.0, 0, 10000, 1));
   ui->gui->progress_adj = progress_adj;
 
   GtkWidget *progress_bar = wh_hscale_new(progress_adj);
