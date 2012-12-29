@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
  * USA.
  *
  *********************************************************/
@@ -232,9 +232,8 @@ static void about_window(GtkWidget *widget, ui_state *ui)
                                 "You should have received a copy of the GNU General Public License\n"
                                 "along with this program; if not, write "
                                 "to the Free Software\n"
-                                "Foundation, Inc., 59 Temple Place -"
-                                "Suite 330, Boston, MA  02111-1307, "
-                                "USA.");
+                                "Foundation, Inc., "
+                                "51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.");
 
   g_signal_connect(G_OBJECT(dialog), "activate-link", G_CALLBACK(activate_url), ui);
 
@@ -716,7 +715,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "PlayerMenu", NULL, N_("_Player"), NULL, NULL, NULL },
     { "HelpMenu", NULL, N_("_Help"), NULL, NULL, NULL },
 
-    { "Open", GTK_STOCK_OPEN, N_("_Open..."), "<Ctrl>O", N_("Open"),
+    { "Open", GTK_STOCK_OPEN, N_("_Open single file..."), "<Ctrl>O", N_("Open"),
       G_CALLBACK(open_file_button_event) },
 
     { "AddFilesToBatch", GTK_STOCK_DIRECTORY,

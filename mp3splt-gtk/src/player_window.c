@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
  * USA.
  *
  *********************************************************/
@@ -901,7 +901,7 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   gtk_button_set_relief(GTK_BUTTON(go_beg_button), GTK_RELIEF_NONE);
   g_signal_connect(G_OBJECT(go_beg_button), "clicked", G_CALLBACK(prev_button_event), ui);
   gtk_widget_set_sensitive(go_beg_button, FALSE);
-  gtk_widget_set_tooltip_text(go_beg_button, _("Previous"));
+  gtk_widget_set_tooltip_text(go_beg_button, _("Previous track"));
 
   //play button
   build_path(imagefile, IMAGEDIR, "play"ICON_EXT);
@@ -970,7 +970,7 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   gtk_button_set_relief(GTK_BUTTON(go_end_button), GTK_RELIEF_NONE);
   g_signal_connect(G_OBJECT(go_end_button), "clicked", G_CALLBACK(next_button_event), ui);
   gtk_widget_set_sensitive(go_end_button, FALSE);
-  gtk_widget_set_tooltip_text(go_end_button,_("Next"));
+  gtk_widget_set_tooltip_text(go_end_button,_("Next track"));
   g_string_free(imagefile,TRUE);
 
   GtkWidget *vol_button = create_volume_button(ui);
@@ -984,7 +984,7 @@ static GtkWidget *create_player_buttons_hbox(ui_state *ui)
   g_signal_connect(G_OBJECT(player_add_button), "clicked",
       G_CALLBACK(add_splitpoint_from_player), ui);
   gtk_widget_set_sensitive(player_add_button, FALSE);
-  gtk_widget_set_tooltip_text(player_add_button,_("Add splitpoint from player"));
+  gtk_widget_set_tooltip_text(player_add_button,_("Add splitpoint at the current player position"));
 
   //set splitpoints from trim silence button
   GtkWidget *scan_trim_silence_button = wh_create_cool_button(GTK_STOCK_CUT, NULL, FALSE);

@@ -24,7 +24,7 @@
  *
  * along with this program; if not, write to the Free Software
  * You should have received a copy of the GNU General Public License
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
  * USA.
  *
  *********************************************************/
@@ -447,6 +447,11 @@ static GtkWidget *create_split_options_box(ui_state *ui)
 
   GtkWidget *create_dirs_from_output_files =
     gtk_check_button_new_with_mnemonic(_("Create directories from _filenames "));
+
+  gtk_widget_set_tooltip_text(create_dirs_from_output_files,
+      _("If the splitpoint name is 'a/b/output', the directory chain 'a/b' is created in the"
+        " output\ndirectory and the file 'output.<extension>' is written in the"
+        " '<output_directory>/a/b' directory"));
   gui->create_dirs_from_output_files = create_dirs_from_output_files;
   gtk_box_pack_start(GTK_BOX(vbox), create_dirs_from_output_files, FALSE, FALSE, 0);
   g_signal_connect(G_OBJECT(create_dirs_from_output_files), "toggled",
