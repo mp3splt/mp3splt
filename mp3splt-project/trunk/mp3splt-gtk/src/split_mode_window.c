@@ -450,11 +450,7 @@ static GtkWidget *create_single_multiple_split_modes(ui_state *ui)
   gtk_box_pack_start(GTK_BOX(multiple_files_hbox), multiple_files_component, TRUE, TRUE, 0);
   ui->gui->multiple_files_component = multiple_files_component;
 
-  GtkWidget *scrolled_window = wh_create_scrolled_window();
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-      GTK_WIDGET(local_vbox));
-
-  return scrolled_window;
+  return local_vbox;
 }
 
 //!creates the special split page

@@ -897,6 +897,52 @@ function test_time_vbr_with_sync_errors
   echo
 }
 
+function test_time_vbr_with_auto_adjust
+{
+  remove_output_dir
+
+  test_name="vbr time with auto adjust"
+  M_FILE="La_Verue__Today_silence"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Stereo - FRAME MODE - Total time: 4m.05s
+ Working with SILENCE AUTO-ADJUST (Threshold: -48.0 dB Gap: 15 sec Offset: 0.80 Min: 0.00 sec)
+ info: starting time mode split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__00m_50s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_00m_50s__01m_40s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_40s__02m_30s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_30s__03m_20s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_20s__04m_05s_69h.mp3\" created
+ Processed 9406 frames - Sync errors: 1
+ time split ok"
+  mp3splt_args="-d $OUTPUT_DIR $SILENCE_MP3_FILE -a -p gap=15 -t 0.50"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__00m_50s.mp3"
+  check_current_mp3_length "01.03"
+  check_current_file_size "1759381"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_50s__01m_40s.mp3"
+  check_current_mp3_length "00.36"
+  check_current_file_size "1047524"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_40s__02m_30s.mp3"
+  check_current_mp3_length "00.50"
+  check_current_file_size "1443318"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_30s__03m_20s.mp3"
+  check_current_mp3_length "00.50"
+  check_current_file_size "1408364"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_20s__04m_05s_69h.mp3"
+  check_current_mp3_length "00.45"
+  check_current_file_size "1259802"
+
+  print_ok
+  echo
+}
 
 function run_time_vbr_tests
 {
@@ -917,7 +963,8 @@ function run_time_vbr_tests
 export LC_ALL="C"
 start_date=$(date +%s)
 
-run_time_vbr_tests
+#run_time_vbr_tests
+test_time_vbr_with_auto_adjust
 
 p_failed_tests
 
