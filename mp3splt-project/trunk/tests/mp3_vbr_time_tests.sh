@@ -963,8 +963,7 @@ function run_time_vbr_tests
 export LC_ALL="C"
 start_date=$(date +%s)
 
-#run_time_vbr_tests
-test_time_vbr_with_auto_adjust
+run_time_vbr_tests
 
 p_failed_tests
 
