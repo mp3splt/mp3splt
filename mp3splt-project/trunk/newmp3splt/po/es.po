@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-12-21 22:42+0100\n"
+"POT-Creation-Date: 2012-12-30 15:20+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/mp3splt.c:262 src/freedb.c:431 src/print_utils.c:55 src/utils.c:36
+#: src/mp3splt.c:262 src/print_utils.c:55 src/freedb.c:434 src/utils.c:36
 #: src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "no puede asignar memoria!"
@@ -81,20 +81,20 @@ msgstr ""
 "no puede utilizar la opción-k (o STDIN) con una de las siguientes opciones:-"
 "S-s-w-l-e-i-p-"
 
-#: src/mp3splt.c:716
+#: src/mp3splt.c:715
 msgid "freedb query format ambigous !"
 msgstr "freedb ambigua consulta formato!"
 
-#: src/mp3splt.c:762
+#: src/mp3splt.c:761
 msgid "tags format ambiguous !"
 msgstr "Etiquetas de formato ambiguo!"
 
-#: src/mp3splt.c:794
+#: src/mp3splt.c:793
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:810
+#: src/mp3splt.c:809
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -119,288 +119,6 @@ msgid ""
 " +-----------------------------------------------------------------------------"
 "+\n"
 msgstr ""
-
-#: src/freedb.c:115
-#, c-format
-msgid " Freedb search type: %s , Site: %s , Port: %d\n"
-msgstr ""
-
-#: src/freedb.c:118
-#, c-format
-msgid " Freedb get type: %s , Site: %s , Port: %d\n"
-msgstr ""
-
-#: src/freedb.c:127
-msgid "CDDB QUERY. Insert album and artist informations to find cd."
-msgstr ""
-"PREGUNTA CDDB. Introduzca la información de álbum y artista para encontrar "
-"cd."
-
-#: src/freedb.c:133
-msgid ""
-"\n"
-"Please search something ..."
-msgstr ""
-
-#: src/freedb.c:139
-#, c-format
-msgid "\r Search: ["
-msgstr "Búsqueda: ["
-
-#: src/freedb.c:155
-#, c-format
-msgid ""
-"\n"
-"  Search string: %s\n"
-msgstr ""
-
-#: src/freedb.c:156
-#, c-format
-msgid ""
-"\n"
-"Searching from %s on port %d using %s ...\n"
-msgstr ""
-
-#: src/freedb.c:169
-msgid "No results found"
-msgstr ""
-
-#: src/freedb.c:179
-msgid "List of found cd:"
-msgstr "Lista de cd que se encuentran:"
-
-#: src/freedb.c:198
-#, c-format
-msgid "Revision: %d\n"
-msgstr ""
-
-#: src/freedb.c:205
-#, c-format
-msgid "-- 'q' to select cd, Enter for more:"
-msgstr "- 'Q' para seleccionar cd, Enter para más:"
-
-#: src/freedb.c:223
-#, c-format
-msgid "-- 'q' to select cd, Enter for more: "
-msgstr "- 'Q' para seleccionar cd, Enter para más:"
-
-#: src/freedb.c:250
-#, c-format
-msgid "Select cd #: "
-msgstr "Seleccione cd #:"
-
-#: src/freedb.c:265
-#, c-format
-msgid "Please "
-msgstr "Por favor,"
-
-#: src/freedb.c:285
-#, c-format
-msgid ""
-"\n"
-"Getting file from %s on port %d using %s ...\n"
-msgstr ""
-
-#: src/freedb.c:423
-msgid "the configuration file is malformed !"
-msgstr ""
-
-#: src/freedb.c:459
-msgid "can't open the configuration file !"
-msgstr ""
-
-#: src/freedb.c:467
-#, c-format
-msgid "Will you use a proxy ? (y/n): "
-msgstr ""
-
-#: src/freedb.c:474
-#, c-format
-msgid "Proxy Address: "
-msgstr ""
-
-#: src/freedb.c:478
-#, c-format
-msgid "Proxy Port: "
-msgstr ""
-
-#: src/freedb.c:482
-#, c-format
-msgid "Need authentication ? (y/n): "
-msgstr ""
-
-#: src/freedb.c:490
-#, c-format
-msgid "Would you like to save the password (insecure) ? (y/n): "
-msgstr ""
-
-#: src/freedb.c:519
-#, c-format
-msgid "Username: "
-msgstr ""
-
-#: src/freedb.c:523
-msgid "Password: "
-msgstr ""
-
-#: src/options_checker.c:49
-#, fuzzy
-msgid ""
-"cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
-"w -l -e -i -a -p -F"
-msgstr ""
-"no puede utilizar la opción-k (o STDIN) con una de las siguientes opciones:-"
-"S-s-w-l-e-i-p-"
-
-#: src/options_checker.c:67
-msgid "the -w option can only be used with -m, -d, -q and -Q"
-msgstr ""
-
-#: src/options_checker.c:84
-msgid "the -l option can only be used with -q"
-msgstr "la opción-l sólo puede ser utilizado con-q"
-
-#: src/options_checker.c:98
-msgid "the -e option can only be used with -m, -f, -o, -d, -q, -Q"
-msgstr "la opción-e sólo se puede utilizar con-m, f,-o,-d,-q,-Q"
-
-#: src/options_checker.c:114
-#, fuzzy
-msgid "the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i, -S or -F"
-msgstr "la opción-A no se puede utilizar con-t,-s,-i o S-"
-
-#: src/options_checker.c:124
-#, fuzzy
-msgid "the -A option cannot be used with -t, -s, -r, -i, -S or -F"
-msgstr "la opción-A no se puede utilizar con-t,-s,-i o S-"
-
-#: src/options_checker.c:134
-#, fuzzy
-msgid "the -t option cannot be used with -s, -r, -i, -S or -F"
-msgstr "la opción-t no se puede utilizar con-s,-i o S-"
-
-#: src/options_checker.c:143
-#, fuzzy
-msgid "-s option cannot be used with -a, -r, -i or -S"
-msgstr "Opción-s no se puede utilizar con-a,-i o S-"
-
-#: src/options_checker.c:151
-msgid "-a option cannot be used with -i"
-msgstr "-Una opción no puede utilizarse con-i"
-
-#: src/options_checker.c:163
-#, fuzzy
-msgid "the -p option cannot be used without -a, -s, -r  or -i"
-msgstr "la opción-p no se puede utilizar sin-a,-s o-i"
-
-#: src/options_checker.c:171
-msgid "the -o option cannot be used with -i"
-msgstr "la opción-o no se puede utilizar con-i"
-
-#: src/options_checker.c:177
-msgid "cannot use '-o -' (STDOUT) with -m or -d"
-msgstr "No se puede utilizar \"-o - '(STDOUT) m-o-d"
-
-#: src/options_checker.c:186
-msgid "the -g option cannot be used with -n, -i or -G"
-msgstr ""
-
-#: src/options_checker.c:194
-msgid "the -d option cannot be used with -i"
-msgstr "la opción-d no se puede utilizar con-i"
-
-#: src/options_checker.c:202
-msgid "the -n option cannot be used with -i or -T"
-msgstr "la opción-n no se puede utilizar con-i o-T"
-
-#: src/options_checker.c:210
-msgid "the -m option cannot be used with -i"
-msgstr "la opción-m no se puede utilizar con-i"
-
-#: src/options_checker.c:228
-msgid "the -Q option cannot be used with STDOUT output ('-o -')"
-msgstr "la opción-Q-no se puede utilizar con salida STDOUT ('-o -')"
-
-#: src/options_checker.c:236
-msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
-msgstr ""
-"la opción-Q-no se puede utilizar con la consulta interactiva freedb ('c-"
-"consulta')"
-
-#: src/options_checker.c:246
-msgid "the -N option must be used with silence detection (-s option)"
-msgstr ""
-"opción de la N-debe ser utilizado con la detección de silencio (opción-s)"
-
-#: src/options_checker.c:255
-msgid "the -O option cannot be used with -w, -e, -l or -i"
-msgstr ""
-
-#: src/options_checker.c:281
-#, fuzzy
-msgid "the -F option cannot be used without -s"
-msgstr "la opción-o no se puede utilizar con-i"
-
-#: src/options_parsers.c:46
-msgid "bad gap argument. It will be ignored !"
-msgstr "argumento brecha mal. Será tenida en cuenta!"
-
-#: src/options_parsers.c:61
-#, fuzzy
-msgid "bad shots argument. It will be ignored !"
-msgstr "argumento umbral mal. Será tenida en cuenta!"
-
-#: src/options_parsers.c:76
-#, fuzzy
-msgid "bad trackjoin argument. It will be ignored !"
-msgstr "argumento de número de pista mal. Será tenida en cuenta!"
-
-#: src/options_parsers.c:91
-msgid "bad threshold argument. It will be ignored !"
-msgstr "argumento umbral mal. Será tenida en cuenta!"
-
-#: src/options_parsers.c:106
-msgid "bad tracknumber argument. It will be ignored !"
-msgstr "argumento de número de pista mal. Será tenida en cuenta!"
-
-#: src/options_parsers.c:119
-#, fuzzy
-msgid "Bad values for the rm argument. rm parameter will be ignored!"
-msgstr "argumento umbral mal. Será tenida en cuenta!"
-
-#: src/options_parsers.c:141
-msgid "bad offset argument. It will be ignored!"
-msgstr "mal argumento de compensación. Será tenida en cuenta!"
-
-#: src/options_parsers.c:156
-#, fuzzy
-msgid "bad minimum track length argument. It will be ignored !"
-msgstr "mala silencio mínimo argumento de longitud. Será tenida en cuenta!"
-
-#: src/options_parsers.c:175
-msgid "bad minimum silence length argument. It will be ignored !"
-msgstr "mala silencio mínimo argumento de longitud. Será tenida en cuenta!"
-
-#: src/options_parsers.c:198
-msgid "no regular expression found as argument."
-msgstr ""
-
-#: src/options_parsers.c:374
-msgid "found non digits characters in port ! (switched to default)"
-msgstr ""
-"dígitos que se encuentran personajes no en el puerto! (Activado por defecto)"
-
-#: src/options_parsers.c:399
-msgid "unknown search type ! (switched to default)"
-msgstr "tipo de búsqueda desconocido! (Activado por defecto)"
-
-#: src/options_parsers.c:415
-msgid "freedb web search not implemented yet ! (switched to default)"
-msgstr "búsqueda freedb web no se ha aplicado todavía! (Activado por defecto)"
-
-#: src/options_parsers.c:421
-msgid "unknown get type ! (switched to default)"
-msgstr "desconocidos obtener el tipo! (Activado por defecto)"
 
 #: src/print_utils.c:39
 #, c-format
@@ -611,6 +329,227 @@ msgid ""
 "      Please read man page for complete documentation.\n"
 msgstr ""
 
+#: src/options_checker.c:49
+#, fuzzy
+msgid ""
+"cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
+"w -l -e -i -a -p -F"
+msgstr ""
+"no puede utilizar la opción-k (o STDIN) con una de las siguientes opciones:-"
+"S-s-w-l-e-i-p-"
+
+#: src/options_checker.c:67
+msgid "the -w option can only be used with -m, -d, -q and -Q"
+msgstr ""
+
+#: src/options_checker.c:84
+msgid "the -l option can only be used with -q"
+msgstr "la opción-l sólo puede ser utilizado con-q"
+
+#: src/options_checker.c:98
+msgid "the -e option can only be used with -m, -f, -o, -d, -q, -Q"
+msgstr "la opción-e sólo se puede utilizar con-m, f,-o,-d,-q,-Q"
+
+#: src/options_checker.c:114
+#, fuzzy
+msgid "the -c option cannot be used with -t, -g, -G, -s, -r, -A, -i, -S or -F"
+msgstr "la opción-A no se puede utilizar con-t,-s,-i o S-"
+
+#: src/options_checker.c:124
+#, fuzzy
+msgid "the -A option cannot be used with -t, -s, -r, -i, -S or -F"
+msgstr "la opción-A no se puede utilizar con-t,-s,-i o S-"
+
+#: src/options_checker.c:134
+#, fuzzy
+msgid "the -t option cannot be used with -s, -r, -i, -S or -F"
+msgstr "la opción-t no se puede utilizar con-s,-i o S-"
+
+#: src/options_checker.c:143
+#, fuzzy
+msgid "-s option cannot be used with -a, -r, -i or -S"
+msgstr "Opción-s no se puede utilizar con-a,-i o S-"
+
+#: src/options_checker.c:151
+msgid "-a option cannot be used with -i"
+msgstr "-Una opción no puede utilizarse con-i"
+
+#: src/options_checker.c:163
+#, fuzzy
+msgid "the -p option cannot be used without -a, -s, -r  or -i"
+msgstr "la opción-p no se puede utilizar sin-a,-s o-i"
+
+#: src/options_checker.c:171
+msgid "the -o option cannot be used with -i"
+msgstr "la opción-o no se puede utilizar con-i"
+
+#: src/options_checker.c:177
+msgid "cannot use '-o -' (STDOUT) with -m or -d"
+msgstr "No se puede utilizar \"-o - '(STDOUT) m-o-d"
+
+#: src/options_checker.c:186
+msgid "the -g option cannot be used with -n, -i or -G"
+msgstr ""
+
+#: src/options_checker.c:194
+msgid "the -d option cannot be used with -i"
+msgstr "la opción-d no se puede utilizar con-i"
+
+#: src/options_checker.c:202
+msgid "the -n option cannot be used with -i or -T"
+msgstr "la opción-n no se puede utilizar con-i o-T"
+
+#: src/options_checker.c:210
+msgid "the -m option cannot be used with -i"
+msgstr "la opción-m no se puede utilizar con-i"
+
+#: src/options_checker.c:228
+msgid "the -Q option cannot be used with STDOUT output ('-o -')"
+msgstr "la opción-Q-no se puede utilizar con salida STDOUT ('-o -')"
+
+#: src/options_checker.c:236
+msgid "the -Q option cannot be used with interactive freedb query ('-c query')"
+msgstr ""
+"la opción-Q-no se puede utilizar con la consulta interactiva freedb ('c-"
+"consulta')"
+
+#: src/options_checker.c:246
+msgid "the -N option must be used with silence detection (-s option)"
+msgstr ""
+"opción de la N-debe ser utilizado con la detección de silencio (opción-s)"
+
+#: src/options_checker.c:255
+msgid "the -O option cannot be used with -w, -e, -l or -i"
+msgstr ""
+
+#: src/options_checker.c:281
+#, fuzzy
+msgid "the -F option cannot be used without -s"
+msgstr "la opción-o no se puede utilizar con-i"
+
+#: src/freedb.c:118
+#, c-format
+msgid " Freedb search type: %s , Site: %s , Port: %d\n"
+msgstr ""
+
+#: src/freedb.c:121
+#, c-format
+msgid " Freedb get type: %s , Site: %s , Port: %d\n"
+msgstr ""
+
+#: src/freedb.c:130
+msgid "CDDB QUERY. Insert album and artist informations to find cd."
+msgstr ""
+"PREGUNTA CDDB. Introduzca la información de álbum y artista para encontrar "
+"cd."
+
+#: src/freedb.c:136
+msgid ""
+"\n"
+"Please search something ..."
+msgstr ""
+
+#: src/freedb.c:142
+#, c-format
+msgid "\r Search: ["
+msgstr "Búsqueda: ["
+
+#: src/freedb.c:158
+#, c-format
+msgid ""
+"\n"
+"  Search string: %s\n"
+msgstr ""
+
+#: src/freedb.c:159
+#, c-format
+msgid ""
+"\n"
+"Searching from %s on port %d using %s ...\n"
+msgstr ""
+
+#: src/freedb.c:172
+msgid "No results found"
+msgstr ""
+
+#: src/freedb.c:182
+msgid "List of found cd:"
+msgstr "Lista de cd que se encuentran:"
+
+#: src/freedb.c:201
+#, c-format
+msgid "Revision: %d\n"
+msgstr ""
+
+#: src/freedb.c:208
+#, c-format
+msgid "-- 'q' to select cd, Enter for more:"
+msgstr "- 'Q' para seleccionar cd, Enter para más:"
+
+#: src/freedb.c:226
+#, c-format
+msgid "-- 'q' to select cd, Enter for more: "
+msgstr "- 'Q' para seleccionar cd, Enter para más:"
+
+#: src/freedb.c:253
+#, c-format
+msgid "Select cd #: "
+msgstr "Seleccione cd #:"
+
+#: src/freedb.c:268
+#, c-format
+msgid "Please "
+msgstr "Por favor,"
+
+#: src/freedb.c:288
+#, c-format
+msgid ""
+"\n"
+"Getting file from %s on port %d using %s ...\n"
+msgstr ""
+
+#: src/freedb.c:426
+msgid "the configuration file is malformed !"
+msgstr ""
+
+#: src/freedb.c:462
+msgid "can't open the configuration file !"
+msgstr ""
+
+#: src/freedb.c:470
+#, c-format
+msgid "Will you use a proxy ? (y/n): "
+msgstr ""
+
+#: src/freedb.c:477
+#, c-format
+msgid "Proxy Address: "
+msgstr ""
+
+#: src/freedb.c:481
+#, c-format
+msgid "Proxy Port: "
+msgstr ""
+
+#: src/freedb.c:485
+#, c-format
+msgid "Need authentication ? (y/n): "
+msgstr ""
+
+#: src/freedb.c:493
+#, c-format
+msgid "Would you like to save the password (insecure) ? (y/n): "
+msgstr ""
+
+#: src/freedb.c:522
+#, c-format
+msgid "Username: "
+msgstr ""
+
+#: src/freedb.c:526
+msgid "Password: "
+msgstr ""
+
 #: src/utils.c:127
 msgid "List of found files:\n"
 msgstr ""
@@ -634,6 +573,67 @@ msgid ""
 "\n"
 "-- 's' to split, 'c' to cancel:"
 msgstr ""
+
+#: src/options_parsers.c:46
+msgid "bad gap argument. It will be ignored !"
+msgstr "argumento brecha mal. Será tenida en cuenta!"
+
+#: src/options_parsers.c:61
+#, fuzzy
+msgid "bad shots argument. It will be ignored !"
+msgstr "argumento umbral mal. Será tenida en cuenta!"
+
+#: src/options_parsers.c:76
+#, fuzzy
+msgid "bad trackjoin argument. It will be ignored !"
+msgstr "argumento de número de pista mal. Será tenida en cuenta!"
+
+#: src/options_parsers.c:91
+msgid "bad threshold argument. It will be ignored !"
+msgstr "argumento umbral mal. Será tenida en cuenta!"
+
+#: src/options_parsers.c:106
+msgid "bad tracknumber argument. It will be ignored !"
+msgstr "argumento de número de pista mal. Será tenida en cuenta!"
+
+#: src/options_parsers.c:119
+#, fuzzy
+msgid "Bad values for the rm argument. rm parameter will be ignored!"
+msgstr "argumento umbral mal. Será tenida en cuenta!"
+
+#: src/options_parsers.c:141
+msgid "bad offset argument. It will be ignored!"
+msgstr "mal argumento de compensación. Será tenida en cuenta!"
+
+#: src/options_parsers.c:156
+#, fuzzy
+msgid "bad minimum track length argument. It will be ignored !"
+msgstr "mala silencio mínimo argumento de longitud. Será tenida en cuenta!"
+
+#: src/options_parsers.c:175
+msgid "bad minimum silence length argument. It will be ignored !"
+msgstr "mala silencio mínimo argumento de longitud. Será tenida en cuenta!"
+
+#: src/options_parsers.c:198
+msgid "no regular expression found as argument."
+msgstr ""
+
+#: src/options_parsers.c:374
+msgid "found non digits characters in port ! (switched to default)"
+msgstr ""
+"dígitos que se encuentran personajes no en el puerto! (Activado por defecto)"
+
+#: src/options_parsers.c:399
+msgid "unknown search type ! (switched to default)"
+msgstr "tipo de búsqueda desconocido! (Activado por defecto)"
+
+#: src/options_parsers.c:415
+msgid "freedb web search not implemented yet ! (switched to default)"
+msgstr "búsqueda freedb web no se ha aplicado todavía! (Activado por defecto)"
+
+#: src/options_parsers.c:421
+msgid "unknown get type ! (switched to default)"
+msgstr "desconocidos obtener el tipo! (Activado por defecto)"
 
 #: src/windows_utils.c:49
 msgid "CommandLineToArgvW failed (oh !)"
