@@ -663,7 +663,7 @@ static void wave_quality_changed_event(GtkAdjustment *wave_quality_adjustment, u
   gint quality_level = (gint)gtk_adjustment_get_value(GTK_ADJUSTMENT(wave_quality_adjustment));
 
   gint level = 0;
-  for (level = 0; level <= 4; level++)
+  for (level = 0; level <= 5; level++)
   {
     gdouble default_value = ui->infos->douglas_peucker_thresholds_defaults[level];
     gdouble final_value = default_value - quality_level;
@@ -746,7 +746,7 @@ static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_
     left_time = get_left_drawing_time(current_time, ui->infos->total_time, zoom_coeff);
     right_time = get_right_drawing_time(current_time, ui->infos->total_time, zoom_coeff);
     drawing_time = right_time - left_time;
-    zoom_coeff += 0.2;
+    zoom_coeff += 0.01;
 
     if (zoom_coeff > 100) { break; }
   }

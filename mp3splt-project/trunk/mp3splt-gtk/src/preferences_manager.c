@@ -260,6 +260,10 @@ void load_preferences(ui_state *ui)
   gint item = g_key_file_get_integer(key_file, "player", "default_player",NULL);
   ch_set_active_value(GTK_COMBO_BOX(ui->gui->player_combo_box), item);
 
+  item = g_key_file_get_boolean(key_file, "player", "amplitude_wave_ticked", NULL);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->silence_wave_check_button), item);
+  ui->status->show_silence_wave = item;
+
   pm_load(key_file, ui->preferences);
 
   //frame mode
@@ -477,6 +481,9 @@ void save_preferences(ui_state *ui)
 
   //player
   g_key_file_set_integer(my_key_file, "player", "default_player", ui->infos->selected_player);
+
+  g_key_file_set_boolean(my_key_file, "player", "amplitude_wave_ticked",
+  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui->gui->silence_wave_check_button)));
 
   pm_save(my_key_file, ui->preferences);
  
