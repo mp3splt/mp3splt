@@ -260,17 +260,19 @@ static void ui_infos_new(ui_state *ui)
 
   infos->selected_player = PLAYER_GSTREAMER;
 
-  infos->douglas_peucker_thresholds[0] = 2.0;
-  infos->douglas_peucker_thresholds[1] = 5.0;
-  infos->douglas_peucker_thresholds[2] = 8.0;
-  infos->douglas_peucker_thresholds[3] = 11.0;
-  infos->douglas_peucker_thresholds[4] = 15.0;
-  
   infos->douglas_peucker_thresholds_defaults[0] = 2.0;
   infos->douglas_peucker_thresholds_defaults[1] = 5.0;
   infos->douglas_peucker_thresholds_defaults[2] = 8.0;
   infos->douglas_peucker_thresholds_defaults[3] = 11.0;
   infos->douglas_peucker_thresholds_defaults[4] = 15.0;
+  infos->douglas_peucker_thresholds_defaults[5] = 22.0;
+
+  infos->douglas_peucker_thresholds[0] = infos->douglas_peucker_thresholds_defaults[0];
+  infos->douglas_peucker_thresholds[1] = infos->douglas_peucker_thresholds_defaults[1];
+  infos->douglas_peucker_thresholds[2] = infos->douglas_peucker_thresholds_defaults[2];
+  infos->douglas_peucker_thresholds[3] = infos->douglas_peucker_thresholds_defaults[3];
+  infos->douglas_peucker_thresholds[4] = infos->douglas_peucker_thresholds_defaults[4];
+  infos->douglas_peucker_thresholds[5] = infos->douglas_peucker_thresholds_defaults[5];
 
   infos->debug_is_active = FALSE;
 
@@ -372,6 +374,10 @@ static gui_status *ui_status_new(ui_state *ui)
 
   status->stop_split = FALSE;
 
+  status->previous_distance_by_time = NULL;
+  status->previous_zoom_coeff = -2;
+  status->previous_interpolation_level = -2;
+
   return status;
 }
 
@@ -468,6 +474,12 @@ static void ui_status_free(gui_status **status)
   if (!status || !*status)
   {
     return;
+  }
+
+  if ((*status)->previous_distance_by_time != NULL)
+  {
+    g_hash_table_destroy((*status)->previous_distance_by_time);
+    (*status)->previous_distance_by_time = NULL; 
   }
 
   g_free(*status);

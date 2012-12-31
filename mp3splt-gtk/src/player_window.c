@@ -53,10 +53,6 @@ static void draw_small_rectangle(gint time_left, gint time_right,
     GdkColor color, cairo_t *cairo_surface, ui_state *ui);
 static gint mytimer(ui_state *ui);
 
-GHashTable *previous_distance_by_time = NULL;
-static gfloat previous_zoom_coeff = -2;
-static gint previous_interpolation_level = -2;
-
 //!function called from the library when scanning for the silence level
 static void get_silence_level(long time, float level, void *user_data)
 {
@@ -151,14 +147,15 @@ void compute_douglas_peucker_filters(ui_state *ui)
     splt_douglas_peucker(gdk_points_for_douglas_peucker, douglas_peucker_callback, ui,
         infos->douglas_peucker_thresholds[0], infos->douglas_peucker_thresholds[1],
         infos->douglas_peucker_thresholds[2], infos->douglas_peucker_thresholds[3],
-        infos->douglas_peucker_thresholds[4], -1.0);
+        infos->douglas_peucker_thresholds[4], infos->douglas_peucker_thresholds[5],
+        -1.0);
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
 
-  if (previous_distance_by_time != NULL)
+  if (status->previous_distance_by_time != NULL)
   {
-    g_hash_table_destroy(previous_distance_by_time);
-    previous_distance_by_time = NULL; 
+    g_hash_table_destroy(status->previous_distance_by_time);
+    status->previous_distance_by_time = NULL; 
   }
 
   check_update_down_progress_bar(ui);
@@ -716,6 +713,11 @@ static void play_event(GtkWidget *widget, ui_state *ui)
   {
     //0 = also start playing
     connect_to_player_with_song(0, ui);
+    if (ui->infos->selected_player == PLAYER_GSTREAMER &&
+        ui->status->show_silence_wave)
+    {
+      scan_for_silence_wave(ui);
+    }
   }
 
   gtk_widget_set_sensitive(gui->pause_button, TRUE);
@@ -816,6 +818,8 @@ static void toggle_show_silence_wave(GtkToggleButton *show_silence_toggle_button
 
   refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas(ui->gui);
+
+  ui_save_preferences(NULL, ui);
 }
 
 //!when we unclick the volume bar
@@ -1829,7 +1833,7 @@ static gint adjust_filtered_index_according_to_number_of_points(gint filtered_in
 {
   ui_infos *infos = ui->infos;
 
-  if (filtered_index == 4)
+  if (filtered_index == 5)
   {
     return filtered_index;
   }
@@ -1903,22 +1907,21 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
   gint filtered_index = get_silence_filtered_presence_index(draw_time, ui->infos);
   gint interpolation_level = 
-    adjust_filtered_index_according_to_number_of_points(filtered_index, 
-        left_mark, right_mark, ui);
+    adjust_filtered_index_according_to_number_of_points(filtered_index, left_mark, right_mark, ui);
 
   gint stroke_counter = 0;
 
-  if (zoom_coeff != previous_zoom_coeff ||
-      interpolation_level != previous_interpolation_level)
+  if (zoom_coeff != ui->status->previous_zoom_coeff ||
+      interpolation_level != ui->status->previous_interpolation_level)
   {
-    if (previous_distance_by_time != NULL)
+    if (ui->status->previous_distance_by_time != NULL)
     {
-      g_hash_table_destroy(previous_distance_by_time);
-      previous_distance_by_time = NULL; 
+      g_hash_table_destroy(ui->status->previous_distance_by_time);
+      ui->status->previous_distance_by_time = NULL; 
     }
   }
-  previous_zoom_coeff = zoom_coeff;
-  previous_interpolation_level = interpolation_level;
+  ui->status->previous_zoom_coeff = zoom_coeff;
+  ui->status->previous_interpolation_level = interpolation_level;
 
   GHashTable* distance_by_time = g_hash_table_new_full(g_int64_hash, g_int64_equal, g_free, g_free);
 
@@ -1955,9 +1958,10 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
         gint64 *time_key = g_new(gint64, 1);
         *time_key = time;
 
-        if (previous_distance_by_time != NULL)
+        if (ui->status->previous_distance_by_time != NULL)
         {
-          gint *previous_diff = g_hash_table_lookup(previous_distance_by_time, time_key);
+          gint *previous_diff = 
+            g_hash_table_lookup(ui->status->previous_distance_by_time, time_key);
           if (previous_diff != NULL)
           {
             x = previous_x + *previous_diff;
@@ -1981,11 +1985,11 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     }
   }
 
-  if (previous_distance_by_time != NULL)
+  if (ui->status->previous_distance_by_time != NULL)
   {
-    g_hash_table_destroy(previous_distance_by_time);
+    g_hash_table_destroy(ui->status->previous_distance_by_time);
   }
-  previous_distance_by_time = distance_by_time;
+  ui->status->previous_distance_by_time = distance_by_time;
 
   cairo_stroke(gc);
 
@@ -2796,10 +2800,10 @@ static gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, ui_state 
     status->button2_pressed = FALSE;
     status->remove_splitpoints = FALSE;
 
-    if (previous_distance_by_time != NULL)
+    if (status->previous_distance_by_time != NULL)
     {
-      g_hash_table_destroy(previous_distance_by_time);
-      previous_distance_by_time = NULL; 
+      g_hash_table_destroy(status->previous_distance_by_time);
+      status->previous_distance_by_time = NULL; 
     }
   }
 

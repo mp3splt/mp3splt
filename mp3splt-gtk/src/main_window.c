@@ -40,8 +40,6 @@
 
 #include "main_window.h"
 
-extern GHashTable *previous_distance_by_time;
-
 //! Set the name of the input file
 void set_input_filename(const gchar *filename, ui_state *ui)
 {
@@ -91,10 +89,10 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
   refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas(ui->gui);
 
-  if (previous_distance_by_time != NULL)
+  if (ui->status->previous_distance_by_time != NULL)
   {
-    g_hash_table_destroy(previous_distance_by_time);
-    previous_distance_by_time = NULL; 
+    g_hash_table_destroy(ui->status->previous_distance_by_time);
+    ui->status->previous_distance_by_time = NULL; 
   }
 
   return FALSE;

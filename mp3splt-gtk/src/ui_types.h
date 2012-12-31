@@ -143,8 +143,8 @@ typedef struct {
 
   gint selected_player;
 
-  gdouble douglas_peucker_thresholds[5];
-  gdouble douglas_peucker_thresholds_defaults[5];
+  gdouble douglas_peucker_thresholds[6];
+  gdouble douglas_peucker_thresholds_defaults[6];
 
   gint debug_is_active;
 
@@ -468,6 +468,10 @@ typedef struct {
   gint file_selection_changed;
 
   gint stop_split;
+
+  GHashTable *previous_distance_by_time;
+  gfloat previous_zoom_coeff;
+  gint previous_interpolation_level;
 } gui_status;
 
 #define SPLT_MUTEX GStaticMutex
