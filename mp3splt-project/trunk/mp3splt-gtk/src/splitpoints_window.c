@@ -136,6 +136,14 @@ static GtkTreeModel *create_model()
       G_TYPE_INT, 
       G_TYPE_STRING,
       G_TYPE_STRING,
+      G_TYPE_STRING,
+      //tags
+      G_TYPE_STRING,
+      G_TYPE_STRING,
+      G_TYPE_STRING,
+      G_TYPE_STRING,
+      G_TYPE_INT,
+      G_TYPE_INT,
       G_TYPE_STRING);
 
   return GTK_TREE_MODEL(model);
@@ -690,8 +698,39 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
     g_snprintf(ui->status->current_description, 255, "%s", description);
     g_free(description);
 
+    //backup tags
+    GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+    GtkTreePath *path = gtk_tree_path_new_from_indices(index ,-1);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(model, &iter, path);
+
+    gint year = 0, track = 0;
+    gchar *title = NULL, *artist = NULL, *album = NULL, *genre = NULL, *comment = NULL;
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        COL_TITLE, &title,
+        COL_ARTIST, &artist,
+        COL_ALBUM, &album,
+        COL_GENRE, &genre,
+        COL_COMMENT, &comment,
+        COL_YEAR, &year,
+        COL_TRACK, &track,
+        -1);
+
     remove_splitpoint(index, FALSE, ui);
     add_splitpoint(new_point, index, ui, TRUE, old_description);
+
+    //restore tags
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_path_free(path);
+
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TITLE, title, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ARTIST, artist, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ALBUM, album, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_GENRE, genre, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_COMMENT, comment, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_YEAR, year, -1);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TRACK, track, -1);
+    free(title); free(artist); free(album); free(genre); free(comment);
   }
   else
   {
@@ -841,7 +880,12 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
 
       update_splitpoint(i, new_point, ui);
       break;
+    case COL_YEAR:
+    case COL_TRACK:
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, col, atoi(new_text), -1);
+      break;
     default:
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, col, new_text, -1);
       break;
   }
 
@@ -1451,7 +1495,7 @@ gchar *get_splitpoint_name(gint index, ui_state *ui)
     GtkTreePath *path = gtk_tree_path_new_from_indices(index ,-1);
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-        COL_DESCRIPTION,&description,
+        COL_DESCRIPTION, &description,
         -1);
     gtk_tree_path_free(path);
   }
@@ -1742,6 +1786,54 @@ static void create_columns(ui_state *ui)
   gtk_tree_view_column_set_reorderable(column_split_preview, TRUE);
 
   gtk_tree_view_column_set_expand(column_description, TRUE);
+
+  gint i = 0;
+  for (i = COL_TITLE;i < NUM_COLUMNS;i++)
+  {
+    renderer = GTK_CELL_RENDERER_TEXT(gtk_cell_renderer_text_new());
+    g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited_event), ui);
+    g_object_set(renderer, "editable", TRUE, NULL);
+    g_object_set_data(G_OBJECT(renderer), "col", GINT_TO_POINTER(i));
+
+    gchar column_name[255] = { '\0' };
+    gint minimum_width = 100;
+    switch (i)
+    {
+      case COL_TITLE:
+        g_snprintf(column_name, 255, _("Title"));
+        break;
+      case COL_ARTIST:
+        g_snprintf(column_name, 255, _("Artist"));
+        break;
+      case COL_ALBUM:
+        g_snprintf(column_name, 255, _("Album"));
+        break;
+      case COL_GENRE:
+        g_snprintf(column_name, 255, _("Genre"));
+        minimum_width = 70;
+        break;
+      case COL_COMMENT:
+        g_snprintf(column_name, 255, _("Comment"));
+        break;
+      case COL_YEAR:
+        g_snprintf(column_name, 255, _("Year"));
+        minimum_width = 40;
+        break;
+      case COL_TRACK:
+        g_snprintf(column_name, 255, _("Track"));
+        minimum_width = 20;
+        break;
+    }
+
+    GtkTreeViewColumn *tag_column = gtk_tree_view_column_new_with_attributes
+      (column_name, GTK_CELL_RENDERER(renderer), "text", i, NULL);
+
+    gtk_tree_view_insert_column(GTK_TREE_VIEW(tree_view), tag_column, i);
+    gtk_tree_view_column_set_alignment(tag_column, 0.5);
+    gtk_tree_view_column_set_resizable(tag_column, TRUE);
+    gtk_tree_view_column_set_reorderable(tag_column, TRUE);
+    gtk_tree_view_column_set_min_width(tag_column, minimum_width);
+  }
 }
 
 //!creates the tree view
@@ -1818,7 +1910,7 @@ static void garray_to_array(GArray *spltpoints, glong *hundredth, ui_state *ui)
 }
 
 //!puts the splitpoints into the state
-void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui)
+void put_splitpoints_and_tags_in_mp3splt_state(splt_state *state, ui_state *ui)
 {
   glong hundr[ui->infos->splitnumber];
   garray_to_array(ui->splitpoints, hundr, ui);
@@ -1831,10 +1923,10 @@ void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui)
     GtkTreePath *path = gtk_tree_path_new_from_indices(i ,-1);
     GtkTreeIter iter;
     gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_path_free(path);
+
     gchar *description = NULL;
-    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-        COL_DESCRIPTION,&description,
-        -1);
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, COL_DESCRIPTION, &description, -1);
 
     //get the 'checked' value from the current splitpoint
     Split_point point = g_array_index(ui->splitpoints, Split_point, i);
@@ -1847,10 +1939,61 @@ void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui)
 
     splt_point *splitpoint = mp3splt_point_new(hundr[i], NULL);
     mp3splt_point_set_name(splitpoint, description);
+    g_free(description);
     mp3splt_point_set_type(splitpoint, splitpoint_type);
     mp3splt_append_splitpoint(state, splitpoint);
 
-    gtk_tree_path_free(path);
+    if (splitpoint_type == SPLT_SKIPPOINT)
+    {
+      continue;
+    }
+
+    gint year = 0, track = 0;
+    gchar *title = NULL, *artist = NULL, *album = NULL, *genre = NULL, *comment = NULL;
+
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+        COL_TITLE, &title,
+        COL_ARTIST, &artist,
+        COL_ALBUM, &album,
+        COL_GENRE, &genre,
+        COL_COMMENT, &comment,
+        COL_YEAR, &year,
+        COL_TRACK, &track,
+        -1);
+
+    if ((title == NULL || strcmp(title, "") == 0) &&
+        (artist == NULL || strcmp(artist, "") == 0) &&
+        (album == NULL || strcmp(album, "") == 0) &&
+        (genre == NULL || strcmp(genre, "") == 0) &&
+        (comment == NULL || strcmp(comment, "") == 0) &&
+        year == 0 && track == 0)
+    {
+      continue;
+    }
+
+    splt_tags *tags = mp3splt_tags_new(NULL);
+    if (year > 0)
+    {
+      gchar year_str[10] = { '\0' };
+      g_snprintf(year_str, 10, "%d", year);
+      mp3splt_tags_set(tags, SPLT_TAGS_YEAR, year_str, 0);
+    }
+
+    if (track <= 0) { track = -2; }
+    gchar track_str[10] = { '\0' };
+    g_snprintf(track_str, 10, "%d", track);
+    mp3splt_tags_set(tags, SPLT_TAGS_TRACK, track_str, 0);
+
+    mp3splt_tags_set(tags,
+        SPLT_TAGS_TITLE, title,
+        SPLT_TAGS_ARTIST, artist,
+        SPLT_TAGS_ALBUM, album,
+        SPLT_TAGS_GENRE, genre,
+        SPLT_TAGS_COMMENT, comment,
+        0);
+    mp3splt_append_tags(state, tags);
+
+    free(title); free(artist); free(album); free(genre); free(comment);
   }
 }
 
