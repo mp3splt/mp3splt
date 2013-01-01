@@ -1911,7 +1911,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
   gint stroke_counter = 0;
 
-  if (zoom_coeff != ui->status->previous_zoom_coeff ||
+  if (!double_equals(zoom_coeff, ui->status->previous_zoom_coeff) ||
       interpolation_level != ui->status->previous_interpolation_level)
   {
     if (ui->status->previous_distance_by_time != NULL)
@@ -1956,7 +1956,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
       if (stroke_counter >= 4)
       {
         gint64 *time_key = g_new(gint64, 1);
-        *time_key = time;
+        *time_key = (gint64)time;
 
         if (ui->status->previous_distance_by_time != NULL)
         {
@@ -1970,6 +1970,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
         gint *diff = g_new(gint, 1);
         *diff = x - previous_x;
+
         g_hash_table_insert(distance_by_time, time_key, diff);
       }
       previous_x = x;
@@ -3062,8 +3063,8 @@ void add_playlist_file(const gchar *name, ui_state *ui)
   }
 }
 
-static GtkTreeModel *create_playlist_model()
 //!creates the model for the playlist
+static GtkTreeModel *create_playlist_model()
 {
   GtkListStore * model = gtk_list_store_new(PLAYLIST_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
   return GTK_TREE_MODEL(model);
