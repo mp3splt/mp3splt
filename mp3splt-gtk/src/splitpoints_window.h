@@ -42,15 +42,23 @@
 
 //!The enum telling which item is kept in which column of the splitpoint tree
 enum {
-  COL_CHECK,
-  COL_DESCRIPTION,
-  COL_MINUTES,
-  COL_SECONDS,
-  COL_HUNDR_SECS,
-  COL_NUMBER,
-  COL_PREVIEW,
-  COL_SPLIT_PREVIEW,
-  NUM_COLUMNS = 8
+  COL_CHECK = 0,
+  COL_DESCRIPTION = 1,
+  COL_MINUTES = 2,
+  COL_SECONDS = 3,
+  COL_HUNDR_SECS = 4,
+  COL_NUMBER = 5,
+  COL_PREVIEW = 6,
+  COL_SPLIT_PREVIEW = 7,
+  //tags
+  COL_TITLE = 8,
+  COL_ARTIST = 9,
+  COL_ALBUM = 10,
+  COL_GENRE = 11,
+  COL_YEAR = 12,
+  COL_TRACK = 13,
+  COL_COMMENT = 14,
+  NUM_COLUMNS = 15
 } tree_columns;
 
 gchar *get_splitpoint_name(gint index, ui_state *ui);
@@ -67,7 +75,7 @@ void update_hundr_secs_from_spinner(GtkWidget *widget, ui_state *ui);
 void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui);
 void add_row(gint checked, ui_state *ui);
 GtkWidget *create_splitpoints_frame(ui_state *ui);
-void put_splitpoints_in_mp3splt_state(splt_state *state, ui_state *ui);
+void put_splitpoints_and_tags_in_mp3splt_state(splt_state *state, ui_state *ui);
 void clear_current_description(ui_state *ui);
 void copy_filename_to_current_description(const gchar *fname, ui_state *ui);
 void remove_all_rows(GtkWidget *widget, ui_state *ui);

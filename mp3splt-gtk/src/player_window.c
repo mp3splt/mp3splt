@@ -3054,7 +3054,7 @@ void add_playlist_file(const gchar *name, ui_state *ui)
     gtk_list_store_append(GTK_LIST_STORE(model), &iter);
 
     //sets text in the minute, second and milisecond column
-    gtk_list_store_set (GTK_LIST_STORE(model), 
+    gtk_list_store_set(GTK_LIST_STORE(model), 
         &iter,
         COL_NAME, get_real_name_from_filename(name),
         COL_FILENAME, name,

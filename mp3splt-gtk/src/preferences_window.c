@@ -1071,7 +1071,7 @@ static GtkWidget *create_tags_options_box(ui_state *ui)
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("Original file tags"),
       ORIGINAL_FILE_TAGS, change_tags_options, ui, vbox);
   gui->tags_radio = tags_radio;
-  tags_radio = rh_append_radio_to_vbox(tags_radio, _("Default tags (cddb or cue tags)"),
+  tags_radio = rh_append_radio_to_vbox(tags_radio, _("Custom tags (from the splitpoints table)"),
       DEFAULT_TAGS, change_tags_options, ui, vbox);
   gui->tags_radio = tags_radio;
   tags_radio = rh_append_radio_to_vbox(tags_radio, _("No tags"),

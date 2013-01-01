@@ -1005,6 +1005,39 @@ function test_normal_vbr_output_fnames_and_custom_tags
   echo
 }
 
+function test_normal_vbr_output_fnames_and_custom_tags_with_no_track_genre
+{
+  remove_output_dir
+
+  test_name="vbr output fnames & custom tags"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/a1_b1_t1_1__${M_FILE} 00:05:00 01:00:30.mp3\" created
+   File \"$OUTPUT_DIR/___2_2_${M_FILE} 01:00:30 01:05:00.mp3\" created
+   File \"$OUTPUT_DIR/La Verue_album_Today_3_7_${M_FILE} 01:05:00 02:00:00.mp3\" created
+ Processed 4595 frames - Sync errors: 0
+ file split"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=-2][]%[@o,@b=album,@N=7]"
+  output_option="\"@a_@b_@t_@n_@N_@f+@m:@s:@h @M:@S:@H\""
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" -o $output_option $MP3_FILE 0.5 1.0.30 1.5 2.0"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/a1_b1_t1_1__${M_FILE} 00:05:00 01:00:30.mp3" 
+  check_current_mp3_length "00.55"
+  check_all_mp3_tags_with_version 2 "a1" "b1" "t1" "2000" "" "" "" "my_comment"
+
+  check_if_file_exist "$OUTPUT_DIR/___2_2_${M_FILE} 01:00:30 01:05:00.mp3"
+  check_if_file_exist "$OUTPUT_DIR/La Verue_album_Today_3_7_${M_FILE} 01:05:00 02:00:00.mp3"
+
+  print_ok
+  echo
+}
+
 function test_normal_vbr_output_fnames_and_dirs
 {
   remove_output_dir

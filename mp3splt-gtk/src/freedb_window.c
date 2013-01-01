@@ -294,6 +294,83 @@ static void get_secs_mins_hundr(gfloat time, gint *mins,gint *secs, gint *hundr)
   *hundr = (gint)(time - (*mins * 6000) - (*secs * 100));
 }
 
+static void update_tags_from_mp3splt_state(gint number_of_rows, ui_state *ui)
+{
+  gint err = SPLT_OK;
+  splt_tags_group *tags_group = mp3splt_get_tags_group(ui->mp3splt_state, &err);
+  print_status_bar_confirmation(err, ui);
+
+  if (tags_group == NULL)
+  {
+    return;
+  }
+
+  mp3splt_tags_group_init_iterator(tags_group);
+
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+
+  splt_tags *tags = NULL;
+  gint current_row = 0;
+  while ((tags = mp3splt_tags_group_next(tags_group)))
+  {
+    if ((current_row + 1) > number_of_rows)
+    {
+      break;
+    }
+
+    GtkTreePath *path = gtk_tree_path_new_from_indices(current_row, -1);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_path_free(path);
+
+    char *year_str = mp3splt_tags_get(tags, SPLT_TAGS_YEAR);
+    if (year_str != NULL)
+    {
+      gint year = atoi(year_str);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_YEAR, year, -1);
+    }
+
+    char *track_str = mp3splt_tags_get(tags, SPLT_TAGS_TRACK);
+    if (track_str != NULL)
+    {
+      gint track = atoi(track_str);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TRACK, track, -1);
+    }
+
+    char *title = mp3splt_tags_get(tags, SPLT_TAGS_TITLE);
+    if (title != NULL)
+    {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TITLE, title, -1);
+    }
+
+    char *artist = mp3splt_tags_get(tags, SPLT_TAGS_ARTIST);
+    if (artist != NULL)
+    {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ARTIST, artist, -1);
+    }
+
+    char *album = mp3splt_tags_get(tags, SPLT_TAGS_ALBUM);
+    if (album != NULL)
+    {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ALBUM, album, -1);
+    }
+
+    char *genre = mp3splt_tags_get(tags, SPLT_TAGS_GENRE);
+    if (genre != NULL)
+    {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_GENRE, genre, -1);
+    }
+
+    char *comment = mp3splt_tags_get(tags, SPLT_TAGS_COMMENT);
+    if (comment != NULL)
+    {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_COMMENT, comment, -1);
+    }
+
+    current_row++;
+  }
+}
+
 /*!updates the current splitpoints in ui->mp3splt_state
 
 Takes the splitpoints from the table displayed in the gui
@@ -315,6 +392,7 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
 
   mp3splt_points_init_iterator(points);
   const splt_point *point = NULL;
+  gint number_of_rows = 0;
   while ((point = mp3splt_points_next(points)))
   {
     //ugly hack because we use maximum ints in the GUI
@@ -353,7 +431,11 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
     {
       add_row(FALSE, ui);
     }
+
+    number_of_rows++;
   }
+
+  update_tags_from_mp3splt_state(number_of_rows, ui);
 
   g_snprintf(ui->status->current_description, 255, "%s", _("description here"));
 

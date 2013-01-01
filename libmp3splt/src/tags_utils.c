@@ -999,6 +999,10 @@ int splt_tu_set_tags_in_tags(splt_state *state, int current_split)
   {
     track = tags->track;
   }
+  else if (tags->track == -2)
+  {
+    track = -2;
+  }
   else if (splt_tu_has_one_tag_set(tags))
   {
     if (current_split != -1)

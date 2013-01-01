@@ -753,12 +753,11 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
   if (*error < 0) { goto error; }
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_COMMENT, 3, comment, error);
   if (*error < 0) { goto error; }
-  if (track != -1)
+  if (track != -1 && track != -2)
   {
     char track_str[255] = { '\0' };
-    snprintf(track_str,254,"%d",track);
-    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1,
-        track_str, error);
+    snprintf(track_str, 254, "%d", track);
+    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1, track_str, error);
     if (*error < 0) { goto error; }
   }
 

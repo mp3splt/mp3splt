@@ -312,6 +312,13 @@ static void splt_tp_set_track_from_parsed_tracknumber(tags_parser_utils *tpu,
 {
   const char *tracknumber = splt_tp_tpu_get_tracknumber(tpu);
 
+  if (tracknumber != NULL && strcmp(tracknumber, "-2") == 0)
+  {
+    int track = -2;
+    splt_tp_tpu_set_tags_value(tpu, SPLT_TAGS_TRACK, &track);
+    return;
+  }
+
   if (tracknumber)
   {
     int is_number = SPLT_TRUE;

@@ -826,7 +826,7 @@ put_value:
             if (splt_tu_tags_exists(state, tags_index))
             {
               int *tags_track = (int *)splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_TRACK);
-              if (tags_track && *tags_track > 0)
+              if (tags_track && *tags_track != -1)
               {
                 tracknumber = *tags_track;
               }
@@ -862,14 +862,24 @@ put_value:
           }
           memset(fm, '\0', fm_length);
 
-          if (is_numeric)
+          if (tracknumber == -2)
           {
-            snprintf(fm, fm_length, temp, tracknumber);
+            temp[1] = 's';
+            temp[2] = '%';
+            temp[3] = 's';
+            snprintf(fm, fm_length, temp, "", "");
           }
           else
           {
-            splt_u_alpha_track(state, i, fm, fm_length,
-                alpha_requested_num_of_digits, tracknumber);
+            if (is_numeric)
+            {
+              snprintf(fm, fm_length, temp, tracknumber);
+            }
+            else
+            {
+              splt_u_alpha_track(state, i, fm, fm_length,
+                  alpha_requested_num_of_digits, tracknumber);
+            }
           }
           break;
         case 'f':

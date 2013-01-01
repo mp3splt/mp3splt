@@ -166,13 +166,7 @@ static gpointer split_collected_files(ui_state *ui)
   exit_threads();
 
   gint err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
-
-  //we erase previous tags if we don't have the option splt_current_tags
-  if ((mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err) != SPLT_CURRENT_TAGS ||
-        split_file_mode == FILE_MODE_MULTIPLE))
-  {
-    err = mp3splt_erase_all_tags(ui->mp3splt_state);
-  }
+  err = mp3splt_erase_all_tags(ui->mp3splt_state);
 
   gint split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
   print_status_bar_confirmation_in_idle(err, ui);
@@ -198,7 +192,7 @@ static gpointer split_collected_files(ui_state *ui)
   if (split_mode == SPLT_OPTION_NORMAL_MODE)
   {
     enter_threads();
-    put_splitpoints_in_mp3splt_state(ui->mp3splt_state, ui);
+    put_splitpoints_and_tags_in_mp3splt_state(ui->mp3splt_state, ui);
     exit_threads();
   }
 
