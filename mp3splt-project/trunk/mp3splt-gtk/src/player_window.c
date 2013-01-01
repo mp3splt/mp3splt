@@ -1942,8 +1942,8 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
     float level = ui->infos->silence_points[i].level;
 
-    gint x = convert_time_to_pixels(width_drawing_area, (gfloat)time,
-        current_time, total_time, zoom_coeff);
+    gint x = convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, 
+        total_time, zoom_coeff);
     gint y = y_margin + (gint)floorf(level);
 
     if (first_time)
@@ -1982,8 +1982,8 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     if (stroke_counter % 4 == 0)
     {
       cairo_stroke(gc);
-      cairo_move_to(gc, x, y);
     }
+    cairo_move_to(gc, x, y);
   }
 
   if (ui->status->previous_distance_by_time != NULL)
