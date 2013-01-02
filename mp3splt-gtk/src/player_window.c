@@ -1944,39 +1944,42 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
     gint x = convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, 
         total_time, zoom_coeff);
+
     gint y = y_margin + (gint)floorf(level);
 
     if (first_time)
     {
       cairo_move_to(gc, x, y);
       first_time = SPLT_FALSE;
+      continue;
     }
-    else
+
+    if (stroke_counter >= 4)
     {
-      if (stroke_counter >= 4)
+      gint64 *time_key = g_new(gint64, 1);
+      *time_key = (gint64)time;
+
+      gint *has_distance = g_hash_table_lookup(distance_by_time, time_key);
+      if (has_distance != NULL) { continue; }
+
+      if (ui->status->previous_distance_by_time != NULL)
       {
-        gint64 *time_key = g_new(gint64, 1);
-        *time_key = (gint64)time;
-
-        if (ui->status->previous_distance_by_time != NULL)
+        gint *previous_diff = 
+          g_hash_table_lookup(ui->status->previous_distance_by_time, time_key);
+        if (previous_diff != NULL)
         {
-          gint *previous_diff = 
-            g_hash_table_lookup(ui->status->previous_distance_by_time, time_key);
-          if (previous_diff != NULL)
-          {
-            x = previous_x + *previous_diff;
-          }
+          x = previous_x + *previous_diff;
         }
-
-        gint *diff = g_new(gint, 1);
-        *diff = x - previous_x;
-
-        g_hash_table_insert(distance_by_time, time_key, diff);
       }
-      previous_x = x;
 
-      cairo_line_to(gc, x, y);
+      gint *diff = g_new(gint, 1);
+      *diff = x - previous_x;
+
+      g_hash_table_insert(distance_by_time, time_key, diff);
     }
+    previous_x = x;
+
+    cairo_line_to(gc, x, y);
 
     stroke_counter++;
     if (stroke_counter % 4 == 0)
@@ -2707,6 +2710,7 @@ static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *u
     status->button_x2 = event->x;
     status->button_y2 = event->y;
     status->button2_pressed = TRUE;
+
     infos->zoom_coeff_old = infos->zoom_coeff;
 
     if ((status->button_y2 > gui->progress_ylimit + gui->margin) &&
