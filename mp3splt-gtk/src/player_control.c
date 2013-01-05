@@ -380,6 +380,8 @@ void player_prev(ui_state *ui)
 //!jumps to a position in the song
 void player_seek(gint position, ui_state *ui)
 {
+  clear_previous_distances(ui);
+
   if (ui->infos->selected_player == PLAYER_SNACKAMP)
   {
     snackamp_jump(position, ui);

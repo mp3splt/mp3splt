@@ -89,11 +89,7 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
   refresh_drawing_area(ui->gui);
   refresh_preview_drawing_areas(ui->gui);
 
-  if (ui->status->previous_distance_by_time != NULL)
-  {
-    g_hash_table_destroy(ui->status->previous_distance_by_time);
-    ui->status->previous_distance_by_time = NULL; 
-  }
+  clear_previous_distances(ui);
 
   return FALSE;
 }
