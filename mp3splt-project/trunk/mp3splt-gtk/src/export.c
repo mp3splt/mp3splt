@@ -37,145 +37,30 @@
 
 #include "export.h"
 
-/*! Export the current split points into a cue file
-
-\param filename The name of the file to write to.
-\todo 
- - If we have previously imported the file... ...do we 
-   want to handle all the tags we do not use --- but that
-   have been there? And if yes: How do we handle them best?
- - Is there any file format that better suits us than a cue file?
- - if our input file does not have an extension... ...how to handle
-   this? (we output the extension in the "FILE" line.)
- - Is there really no simple C/GTK+ function for quoting quotes?
-*/
+//! Export the current split points into a cue file
 static void export_file(const gchar* filename, ui_state *ui)
 {
-  FILE *outfile;
+  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
 
-  if ((outfile = fopen(filename,"w"))==0)
-  {
-    put_status_message((gchar *)strerror(errno), ui);
-    return;
-  };
+  gchar *directory = g_path_get_dirname(filename);
+  mp3splt_set_path_of_split(ui->mp3splt_state, directory);
+  g_free(directory);
 
-  if (fprintf(outfile,"REM CREATOR \"MP3SPLT_GTK\"\n") < 0)
-  {
-    put_status_message((gchar *)strerror(errno), ui);
-    return;
-  }
+  mp3splt_erase_all_splitpoints(ui->mp3splt_state);
+  mp3splt_erase_all_tags(ui->mp3splt_state);
 
-  if (fprintf(outfile,"REM SPLT_TITLE_IS_FILENAME\n") < 0)
-  {
-    put_status_message((gchar *)strerror(errno), ui);
-    return;
-  }
+  put_splitpoints_and_tags_in_mp3splt_state(ui->mp3splt_state, ui);
 
-  gchar *extension = get_input_filename(ui->gui);
-  gchar *tmp;
-  while ((tmp = strchr(extension,'.')))
-  {
-    extension = ++tmp;
-  }
-
-  if (fprintf(outfile,"FILE \"%s\" %s\n", get_input_filename(ui->gui), extension) < 0)
-  {
-    put_status_message((gchar *)strerror(errno), ui);
-    return;
-  }
-
-  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
-  GtkTreeIter iter;
-  if (!gtk_tree_model_get_iter_first(model, &iter))
-  {
-    goto end;
-  }
-
-  gint count = 1;
-
-  do {
-    // All information we need for this track
-    gchar *description;
-    gint mins,secs,hundr;
-    gboolean keep;
-
-    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-        COL_DESCRIPTION, &description,
-        COL_MINUTES, &mins, COL_SECONDS, &secs, COL_HUNDR_SECS, &hundr, COL_CHECK, &keep, -1);
-
-    // Sometimes libmp3splt introduces an additional split point
-    // way below the end of the file --- that breaks cue import
-    // later => skip all points with extremely high time values.
-    if (mins >= 357850)
-    {
-      continue;
-    }
-
-    // Output the track header
-    if(fprintf(outfile,"\tTRACK %02i AUDIO\n",count++)<0)
-    {
-      put_status_message((gchar *)strerror(errno), ui);
-      return;
-    };
-
-    // Output the track description escaping any quotes
-    if(fprintf(outfile,"\t\tTITLE \"")<0)
-    {
-      put_status_message((gchar *)strerror(errno), ui);
-      return;
-    }
-
-    gchar *outputchar;
-    for (outputchar = description; *outputchar!='\0'; outputchar++)
-    {
-      if (*outputchar == '"')
-      {
-        if (fprintf(outfile,"\\\"") < 0)
-        {
-          put_status_message((gchar *)strerror(errno), ui);
-          return;
-        }
-      }
-      else
-      {
-        if (fprintf(outfile, "%c", *outputchar)<0)
-        {
-          put_status_message((gchar *)strerror(errno), ui);
-          return;
-        }
-      }
-    }
-
-    if (fprintf(outfile, "\" \n") < 0)
-    {
-      put_status_message((gchar *)strerror(errno), ui);
-      return;
-    }
-
-    if(!keep)
-    {
-      if (fprintf(outfile, "\t\tREM NOKEEP\n") < 0)
-      {
-        put_status_message((gchar *)strerror(errno), ui);
-        return;
-      }
-    }
-
-    if (fprintf(outfile, "\t\tINDEX 01 %d:%02d:%02d\n", mins, secs, hundr) < 0)
-    {
-      put_status_message((gchar *)strerror(errno), ui);
-      return;
-    }
-  } while(gtk_tree_model_iter_next(model, &iter));
-
-end:
-  fclose(outfile);
+  gchar *file = g_path_get_basename(filename);
+  splt_code err = mp3splt_export(ui->mp3splt_state, CUE_EXPORT, file, SPLT_FALSE);
+  print_status_bar_confirmation(err, ui);
+  g_free(file);
 }
 
 //! Choose the file to save the session to
-void ChooseCueExportFile(GtkWidget *widget, ui_state *ui)
+void export_cue_file_event(GtkWidget *widget, ui_state *ui)
 {
-  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Select cue file name"),
+  GtkWidget *file_chooser = gtk_file_chooser_dialog_new(_("Cue filename to export"),
       NULL,
       GTK_FILE_CHOOSER_ACTION_SAVE,
       GTK_STOCK_CANCEL,
@@ -189,6 +74,7 @@ void ChooseCueExportFile(GtkWidget *widget, ui_state *ui)
   GtkFileFilter *our_filter = gtk_file_filter_new();
   gtk_file_filter_set_name (our_filter, _("cue files (*.cue)"));
   gtk_file_filter_add_pattern(our_filter, "*.cue");
+  gtk_file_filter_add_pattern(our_filter, "*.CUE");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
   gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(file_chooser),TRUE);
 

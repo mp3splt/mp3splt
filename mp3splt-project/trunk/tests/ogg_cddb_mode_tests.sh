@@ -151,21 +151,33 @@ $auto_adjust_warning"
 
   check_output_directory_number_of_files 4
 
-  check_file_content "output/output_out.cue" "TITLE \"Hack me\"
-PERFORMER \"Don't worry\"
-FILE \"songs/Kelly_Allyn__Whiskey_Can.ogg\" OGG
+  check_file_content "output/output_out.cue" 'TITLE "Hack me"
+PERFORMER "Don'\''t worry"
+FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
-    TITLE \"A famous title\"
-    PERFORMER \"Don't worry\"
+    TITLE "A famous title"
+    PERFORMER "Don'\''t worry"
+    REM ALBUM "Hack me"
+    REM GENRE "Other"
+    REM DATE "2009"
+    REM TRACK "1"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
-    TITLE \"Yeah, split me !\"
-    PERFORMER \"Don't worry\"
+    TITLE "Yeah, split me !"
+    PERFORMER "Don'\''t worry"
+    REM ALBUM "Hack me"
+    REM GENRE "Other"
+    REM DATE "2009"
+    REM TRACK "2"
     INDEX 01 01:04:67
   TRACK 03 AUDIO
-    TITLE \"7 sins campaign\"
-    PERFORMER \"MS\"
-    INDEX 01 02:11:34"
+    TITLE "7 sins campaign"
+    PERFORMER "MS"
+    REM ALBUM "Hack me"
+    REM GENRE "Other"
+    REM DATE "2009"
+    REM TRACK "3"
+    INDEX 01 02:11:34'
 
   current_file="$OUTPUT_DIR/Don't worry - 1 - A famous title.ogg"
   check_current_ogg_length "1m:04.670s"
@@ -218,21 +230,33 @@ $auto_adjust_warning"
 
   check_output_directory_number_of_files 1
 
-  check_file_content "output/output_out.cue" "TITLE \"Hack me\"
-PERFORMER \"Don't worry\"
-FILE \"songs/Kelly_Allyn__Whiskey_Can.ogg\" OGG
+  check_file_content "output/output_out.cue" 'TITLE "Hack me"
+PERFORMER "Don'\''t worry"
+FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
-    TITLE \"A famous title\"
-    PERFORMER \"Don't worry\"
+    TITLE "A famous title"
+    PERFORMER "Don'\''t worry"
+    REM ALBUM "Hack me"
+    REM GENRE "Other"
+    REM DATE "2009"
+    REM TRACK "1"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
-    TITLE \"Yeah, split me !\"
-    PERFORMER \"Don't worry\"
+    TITLE "Yeah, split me !"
+    PERFORMER "Don'\''t worry"
+    REM ALBUM "Hack me"
+    REM GENRE "Other"
+    REM DATE "2009"
+    REM TRACK "2"
     INDEX 01 01:04:67
   TRACK 03 AUDIO
-    TITLE \"7 sins campaign\"
-    PERFORMER \"MS\"
-    INDEX 01 02:11:34"
+    TITLE "7 sins campaign"
+    PERFORMER "MS"
+    REM ALBUM "Hack me"
+    REM GENRE "Other"
+    REM DATE "2009"
+    REM TRACK "3"
+    INDEX 01 02:11:34'
 
   print_ok
   echo

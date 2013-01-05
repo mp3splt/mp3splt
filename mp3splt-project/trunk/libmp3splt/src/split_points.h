@@ -32,6 +32,7 @@
 #ifndef SPLT_SPLIT_POINTS_H
 
 int splt_sp_splitpoint_exists(splt_state *state, int index);
+int splt_sp_get_real_splitpoints_number(splt_state *state);
 
 int splt_sp_append_splitpoint(splt_state *state, long split_value,
     const char *name, int type);

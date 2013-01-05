@@ -1286,7 +1286,10 @@ static void print_player_filename(ui_state *ui)
   if (title != NULL)
   {
     gtk_label_set_text(GTK_LABEL(ui->gui->song_name_label), title);
-    g_free(title);
+    if (title != NULL)
+    {
+      g_free(title);
+    }
   }
 }
 

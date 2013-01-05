@@ -151,6 +151,9 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
       previous_track = *prev_track;
     }
     splt_tu_set_tags_field(state, remaining_tags_like_x, SPLT_TAGS_TRACK, &previous_track);
+
+    splt_tags *tags_like_x = splt_tu_get_tags_like_x(state);
+    tags_like_x->was_auto_incremented = SPLT_TRUE;
   }
 
   if (old_current_split != current_split)
@@ -166,7 +169,13 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
     }
     int new_tracknumber = tracknumber + 1;
     splt_tu_set_tags_field(state, current_split, SPLT_TAGS_TRACK, &new_tracknumber);
+    splt_tags *tags = splt_tu_get_tags_at(state, current_split);
+    tags->was_auto_incremented = SPLT_TRUE;
+
     splt_tu_set_like_x_tags_field(state, SPLT_TAGS_TRACK, &new_tracknumber);
+
+    splt_tags *tags_like_x = splt_tu_get_tags_like_x(state);
+    tags_like_x->was_auto_incremented = SPLT_TRUE;
   }
 }
 
@@ -370,6 +379,7 @@ void splt_tu_reset_tags(splt_tags *tags)
   tags->genre = NULL;
   tags->tags_version = 0;
   tags->set_original_tags = SPLT_FALSE;
+  tags->was_auto_incremented = SPLT_FALSE;
 }
 
 splt_tags *splt_tu_new_tags(int *error)

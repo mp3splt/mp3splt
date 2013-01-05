@@ -725,7 +725,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
       G_CALLBACK(show_tracktype_window) },
 
     { "Export", GTK_STOCK_SAVE_AS, N_("_Export splitpoints..."), "<Ctrl>E",
-      N_("Export splitpoints"), G_CALLBACK(ChooseCueExportFile) },
+      N_("Export splitpoints"), G_CALLBACK(export_cue_file_event) },
 
     { "Preferences", GTK_STOCK_PREFERENCES, N_("_Preferences"), "<Ctrl>P", N_("Preferences"),
       G_CALLBACK(show_preferences_window) },

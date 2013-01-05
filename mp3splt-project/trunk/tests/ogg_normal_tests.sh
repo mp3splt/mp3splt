@@ -171,14 +171,26 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 01:00:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:01:20
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 03:00:10'
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_01s_20h.ogg"
@@ -234,14 +246,26 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 01:00:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:01:20
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 03:00:10'
 
   print_ok
@@ -311,14 +335,26 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 01:00:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:01:20
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 03:00:10'
 
   current_file="$OUTPUT_DIR/${O_FILE}_01m_00s__02m_31s_20h.ogg"
@@ -502,20 +538,39 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
     TITLE "t1"
     PERFORMER "a1"
+    REM ALBUM "b1"
+    REM DATE "2000"
+    REM TRACK "10"
+    REM COMMENT "my_comment"
     INDEX 01 00:05:00
   TRACK 02 AUDIO
     INDEX 01 00:30:00
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "album"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM TRACK "7"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 01:00:00
   TRACK 04 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "custom_artist"
+    REM ALBUM "album"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM TRACK "8"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:01:20
   TRACK 05 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM TRACK "20"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 03:00:10'
 
   current_file="$OUTPUT_DIR/${O_FILE}_00m_05s__00m_30s.ogg"

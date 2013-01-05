@@ -601,6 +601,9 @@ used with STDOUT output.
 .IP "\fB\-E CUE_FILE\fP         " 10
 \fBExport to .cue file\fP. Creates a .cue file containing the splitpoints.
 Use \-P to export the splitpoints without actually splitting.
+The cue file contains the tags of the splitpoints as comments (for example REM ALBUM, REM GENRE, REM
+DATE). There is however one limitation: REM TRACK is not written if the track was auto incremented
+without user defined tags.
 
 .IP "\fB\-F FULL_SILENCE_LOG_FILE\fP         " 10
 \fBExport the full log of silence detection\fP. The full log filename is useful to draw the

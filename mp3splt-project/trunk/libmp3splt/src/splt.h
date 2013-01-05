@@ -180,6 +180,7 @@ struct _splt_tags {
   int tags_version;
 
   int set_original_tags;
+  int was_auto_incremented;
 };
 
 struct _splt_original_tags {

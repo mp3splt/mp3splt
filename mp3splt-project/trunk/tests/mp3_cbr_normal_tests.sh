@@ -151,14 +151,26 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 00:30:00
   TRACK 02 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:04:50
   TRACK 03 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 03:00:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_30s__02m_04s_50h.mp3" 
@@ -216,14 +228,26 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 00:30:00
   TRACK 02 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:04:50
   TRACK 03 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 03:00:00'
 
   print_ok
@@ -256,14 +280,26 @@ FILE "songs/Merci_Bonsoir__Je_veux_Only_love.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 01:00:00
   TRACK 02 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:00:20
   TRACK 03 AUDIO
     TITLE "Je veux (only love)"
     PERFORMER "Merci Bonsoir"
+    REM ALBUM "Merci album"
+    REM GENRE "Rock"
+    REM DATE "2009"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 03:30:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
