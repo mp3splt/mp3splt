@@ -152,11 +152,7 @@ void compute_douglas_peucker_filters(ui_state *ui)
 
   g_array_free(gdk_points_for_douglas_peucker, TRUE);
 
-  if (status->previous_distance_by_time != NULL)
-  {
-    g_hash_table_destroy(status->previous_distance_by_time);
-    status->previous_distance_by_time = NULL; 
-  }
+  clear_previous_distances(ui);
 
   check_update_down_progress_bar(ui);
 
@@ -1903,8 +1899,6 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
   color.red = 0;color.green = 0;color.blue = 0;
   dh_set_color(gc, &color);
 
-  gint first_time = SPLT_TRUE;
-
   gint filtered_index = get_silence_filtered_presence_index(draw_time, ui->infos);
   gint interpolation_level = 
     adjust_filtered_index_according_to_number_of_points(filtered_index, left_mark, right_mark, ui);
@@ -1914,11 +1908,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
   if (!double_equals(zoom_coeff, ui->status->previous_zoom_coeff) ||
       interpolation_level != ui->status->previous_interpolation_level)
   {
-    if (ui->status->previous_distance_by_time != NULL)
-    {
-      g_hash_table_destroy(ui->status->previous_distance_by_time);
-      ui->status->previous_distance_by_time = NULL; 
-    }
+    clear_previous_distances(ui);
   }
   ui->status->previous_zoom_coeff = zoom_coeff;
   ui->status->previous_interpolation_level = interpolation_level;
@@ -1927,6 +1917,10 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
   gint i = 0;
   gint previous_x = 0;
+  long second_splitpoint_time = -2;
+  gint second_splitpoint_time_displayed = 0;
+  gint missed_lookups = 0;
+  gint time_counter = 0;
   for (i = 0;i < ui->infos->number_of_silence_points;i++)
   {
     if (interpolation_level >= 0 && point_is_filtered(i, interpolation_level, ui->infos))
@@ -1935,6 +1929,12 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     }
 
     long time = ui->infos->silence_points[i].time;
+    if (time_counter == 1)
+    {
+      second_splitpoint_time = time;
+    }
+    time_counter++;
+
     if ((time > right_mark) || (time < left_mark)) 
     {
       continue;
@@ -1942,19 +1942,11 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
     float level = ui->infos->silence_points[i].level;
 
-    gint x = convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, 
-        total_time, zoom_coeff);
-
+    gint x =
+      convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, total_time, zoom_coeff);
     gint y = y_margin + (gint)floorf(level);
 
-    if (first_time)
-    {
-      cairo_move_to(gc, x, y);
-      first_time = SPLT_FALSE;
-      continue;
-    }
-
-    if (stroke_counter >= 4)
+    if (time > second_splitpoint_time && second_splitpoint_time > -2)
     {
       gint64 *time_key = g_new(gint64, 1);
       *time_key = (gint64)time;
@@ -1966,17 +1958,62 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
       {
         gint *previous_diff = 
           g_hash_table_lookup(ui->status->previous_distance_by_time, time_key);
-        if (previous_diff != NULL)
+
+        //if we miss some lookups at the start, invalid distances
+        if (previous_diff == NULL && stroke_counter < 20)
+        {
+          missed_lookups++;
+          if (missed_lookups > 3)
+          {
+            clear_previous_distances(ui);
+          }
+        }
+
+        if (previous_diff != NULL && stroke_counter > 0)
         {
           x = previous_x + *previous_diff;
+          if (stroke_counter == 1)
+          {
+            ui->status->previous_second_x_drawed = x;
+            ui->status->previous_second_time_drawed = time;
+          }
+        }
+        else if (stroke_counter == 0 && !second_splitpoint_time_displayed)
+        {
+          if (x < 0) { x = 0; }
+
+          //the first point always needs to grow up
+          if (time == ui->status->previous_first_time_drawed && 
+              x > ui->status->previous_first_x_drawed)
+          {
+            x = ui->status->previous_first_x_drawed;
+          }
+          else
+          {
+            //when the second point becomes the first point, dont make it grow
+            if (time == ui->status->previous_second_time_drawed && 
+                x > ui->status->previous_second_x_drawed)
+            {
+              x = ui->status->previous_second_x_drawed;
+            }
+
+            ui->status->previous_first_time_drawed = time;
+            ui->status->previous_first_x_drawed = x;
+          }
         }
       }
 
       gint *diff = g_new(gint, 1);
       *diff = x - previous_x;
+      if (*diff < 0) { *diff = 0; }
 
       g_hash_table_insert(distance_by_time, time_key, diff);
     }
+    else if (time == second_splitpoint_time)
+    {
+      second_splitpoint_time_displayed = 1;
+    }
+
     previous_x = x;
 
     cairo_line_to(gc, x, y);
@@ -2013,6 +2050,22 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
   }
 
   return interpolation_level;
+}
+
+void clear_previous_distances(ui_state *ui)
+{
+  gui_status *status = ui->status;
+
+  if (status->previous_distance_by_time != NULL)
+  {
+    g_hash_table_destroy(status->previous_distance_by_time);
+    status->previous_distance_by_time = NULL; 
+  }
+
+  status->previous_first_time_drawed = -2;
+  status->previous_first_x_drawed = -2;
+  status->previous_second_x_drawed = -2;
+  status->previous_second_time_drawed = -2;
 }
 
 static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface, ui_state *ui)
@@ -2804,12 +2857,6 @@ static gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, ui_state 
   {
     status->button2_pressed = FALSE;
     status->remove_splitpoints = FALSE;
-
-    if (status->previous_distance_by_time != NULL)
-    {
-      g_hash_table_destroy(status->previous_distance_by_time);
-      status->previous_distance_by_time = NULL; 
-    }
   }
 
 end:

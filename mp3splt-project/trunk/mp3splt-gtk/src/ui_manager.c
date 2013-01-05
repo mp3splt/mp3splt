@@ -377,6 +377,10 @@ static gui_status *ui_status_new(ui_state *ui)
   status->previous_distance_by_time = NULL;
   status->previous_zoom_coeff = -2;
   status->previous_interpolation_level = -2;
+  status->previous_first_time_drawed = -2;
+  status->previous_first_x_drawed = -2;
+  status->previous_second_x_drawed = -2;
+  status->previous_second_time_drawed = -2;
 
   return status;
 }

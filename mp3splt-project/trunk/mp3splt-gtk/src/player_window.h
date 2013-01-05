@@ -106,5 +106,7 @@ gint get_quick_preview_end_splitpoint_safe(ui_state *ui);
 void set_currently_scanning_for_silence_safe(gint value, ui_state *ui);
 gint get_currently_scanning_for_silence_safe(ui_state *ui);
 
+void clear_previous_distances(ui_state *ui);
+
 #endif
 

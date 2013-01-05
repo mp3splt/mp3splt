@@ -469,6 +469,10 @@ typedef struct {
 
   gint stop_split;
 
+  long previous_first_time_drawed;
+  gint previous_first_x_drawed;
+  long previous_second_time_drawed;
+  gint previous_second_x_drawed;
   GHashTable *previous_distance_by_time;
   gfloat previous_zoom_coeff;
   gint previous_interpolation_level;
