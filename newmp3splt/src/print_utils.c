@@ -182,15 +182,22 @@ void put_progress_bar(splt_progress *p_bar, void *user_data)
   //we update the progress
   if (percent_progress <= 0.01)
   {
-    snprintf(printed_value,2047," [ - %%] %s", progress_text);
+    snprintf(printed_value, 2047," [ - %%] %s", progress_text);
   }
   else
   {
-    snprintf(printed_value,2047," [ %.2f %%] %s", percent_progress * 100, progress_text);
+    snprintf(printed_value, 2047," [ %.2f %%] %s", percent_progress * 100, progress_text);
   }
 
   print_with_spaces_after(printed_value, SPLT_TRUE, console_progress, data);
-  data->printed_value_length = strlen(printed_value) + 1;
+  if (percent_progress >= 1.0)
+  {
+    data->printed_value_length = 0;
+  }
+  else
+  {
+    data->printed_value_length = strlen(printed_value) + 1;
+  }
 
   free(filename_shorted);
 }

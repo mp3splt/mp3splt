@@ -207,22 +207,42 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 01:00:00
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 02:00:00
   TRACK 04 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 03:00:00
   TRACK 05 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 04:00:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3" 
@@ -302,22 +322,42 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 01:00:00
   TRACK 03 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 02:00:00
   TRACK 04 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 03:00:00
   TRACK 05 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 04:00:00'
 
   print_ok
@@ -381,10 +421,18 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Today"
     PERFORMER "La Verue"
+    REM ALBUM "Riez Noir"
+    REM GENRE "Rock"
+    REM DATE "2007"
+    REM COMMENT "http://www.jamendo.com/"
     INDEX 01 02:00:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__02m_30s.mp3"

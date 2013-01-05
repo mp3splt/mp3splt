@@ -119,22 +119,43 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 00:10:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 01:07:13
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
+    REM NOKEEP
     INDEX 01 02:07:00
   TRACK 04 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:29:00
   TRACK 05 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:46:00'
 
   current_file="$OUTPUT_DIR/zero.ogg"
@@ -169,7 +190,7 @@ function test_audacity_and_pretend_and_cue_export
 
   O_FILE="Kelly_Allyn__Whiskey_Can"
 
-  test_name="audacity mode & cue export"
+  test_name="audacity mode & pretend & cue export"
 
   expected=" Pretending to split file 'songs/${O_FILE}.ogg' ...
  reading informations from audacity labels file '$AUDACITY_FILE' ...
@@ -192,22 +213,43 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
   TRACK 01 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 00:10:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 01:07:13
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
+    REM NOKEEP
     INDEX 01 02:07:00
   TRACK 04 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:29:00
   TRACK 05 AUDIO
     TITLE "Whiskey Can"
     PERFORMER "Kelly Allyn"
+    REM ALBUM "Getting Back From Where I'\''ve Been"
+    REM GENRE "Southern Rock"
+    REM DATE "2007-07-10 15:45:07"
+    REM COMMENT "http://www.jamendo.com"
     INDEX 01 02:46:00'
 
   check_output_directory_number_of_files 1

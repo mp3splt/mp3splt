@@ -882,7 +882,10 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
       break;
     case COL_YEAR:
     case COL_TRACK:
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, col, atoi(new_text), -1);
+      ;
+      gint value = (gint) atoi(new_text);
+      if (value < 0) { value = 0; }
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, col, value, -1);
       break;
     default:
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, col, new_text, -1);

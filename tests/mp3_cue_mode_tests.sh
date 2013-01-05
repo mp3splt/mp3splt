@@ -204,14 +204,23 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Our piano"
     PERFORMER "First performer"
+    REM ALBUM "Gentoo"
+    REM GENRE "Other"
+    REM TRACK "1"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Our guitar"
     PERFORMER "GNU_Linux"
+    REM ALBUM "Gentoo"
+    REM GENRE "Other"
+    REM TRACK "2"
     INDEX 01 01:43:00
   TRACK 03 AUDIO
     TITLE "Our laptop"
     PERFORMER "Third performer"
+    REM ALBUM "Gentoo"
+    REM GENRE "Other"
+    REM TRACK "3"
     INDEX 01 03:20:00'
 
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.mp3"
@@ -279,14 +288,23 @@ FILE "songs/La_Verue__Today.mp3" MP3
   TRACK 01 AUDIO
     TITLE "Our piano"
     PERFORMER "First performer"
+    REM ALBUM "Gentoo"
+    REM GENRE "Other"
+    REM TRACK "1"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Our guitar"
     PERFORMER "GNU_Linux"
+    REM ALBUM "Gentoo"
+    REM GENRE "Other"
+    REM TRACK "2"
     INDEX 01 01:43:00
   TRACK 03 AUDIO
     TITLE "Our laptop"
     PERFORMER "Third performer"
+    REM ALBUM "Gentoo"
+    REM GENRE "Other"
+    REM TRACK "3"
     INDEX 01 03:20:00'
 
   print_ok

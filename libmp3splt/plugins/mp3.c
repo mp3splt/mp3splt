@@ -520,6 +520,10 @@ static int splt_mp3_put_original_libid3_frame(splt_state *state,
             char *genre = (char *)tag_value;
 
             int id3v1 = atoi(genre);
+            if (id3v1 == 0 && genre[0] == '(')
+            {
+              id3v1 = atoi(genre+1);
+            }
             if ((id3v1 > 0) &&
                 (id3v1 < SPLT_ID3V1_NUMBER_OF_GENRES) &&
                 (state->original_tags.tags.genre == NULL))

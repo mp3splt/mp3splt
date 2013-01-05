@@ -254,30 +254,25 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
 {
   char *linetail;
 
-  // Skip the word REM
+  //skip the word REM
   line_content += 3;
 
-  // Skip all leading whitespace after the word REM
-  while ((*line_content==' ')||(*line_content=='\t')) line_content++;
-
-  if((linetail=strstr(line_content,"CREATOR"))!=NULL)
+  //skip all leading whitespace after the word REM
+  while ((*line_content == ' ') || (*line_content == '\t'))
   {
-    // Skip the word "CREATOR"
-    linetail += 7;
-
-    if(strstr(linetail,"MP3SPLT_GTK")!=NULL)
-    {
-      //cu->file_has_been_created_by_us = SPLT_TRUE;
-    }
+    line_content++;
   }
-  else if((linetail=strstr(line_content,"SPLT_TITLE_IS_FILENAME"))!=NULL)
+
+  if ((linetail = strstr(line_content, "SPLT_TITLE_IS_FILENAME")) != NULL)
   {
     cu->title_is_filename = SPLT_TRUE;
   }
-  else if((linetail=strstr(line_content,"NOKEEP"))!=NULL)
+  else if ((linetail = strstr(line_content, "NOKEEP")) != NULL)
   {
     if (cu->tracks >= 0)
-      cu->current_track_type=SPLT_SKIPPOINT;
+    {
+      cu->current_track_type = SPLT_SKIPPOINT;
+    }
   }
 }
 
@@ -500,15 +495,15 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   // Which means we have to correct this by copying the
   // TITLE tags to the filenames.
 
-    if(cu->title_is_filename)
-      {
-    	int i;
-    	for(i=0;i<tracks;i++)
-    	  {
-    	    splt_sp_set_splitpoint_name(state, i,
-    					splt_tu_get_tags_field(state, i, SPLT_TAGS_TITLE));
-    	  }
-      }
+  if(cu->title_is_filename)
+  {
+    int i;
+    for(i = 0; i < tracks; i++)
+    {
+      splt_sp_set_splitpoint_name(state, i,
+          splt_tu_get_tags_field(state, i, SPLT_TAGS_TITLE));
+    }
+  }
 
 function_end:
   splt_cue_cu_free(&cu);
@@ -556,38 +551,78 @@ static void splt_cue_write_title_performer(splt_state *state, FILE *file_output,
     tags = splt_tu_get_current_tags(state);
   }
 
-  if (tags)
-  {
-    if (write_album)
-    {
-      if (tags->album)
-      {
-        if (with_spaces) { fprintf(file_output, "    "); }
-        fprintf(file_output, "TITLE \"%s\"\n", tags->album);
-      }
-    }
-    else
-    {
-      if (tags->title)
-      {
-        if (with_spaces) { fprintf(file_output, "    "); }
-        fprintf(file_output, "TITLE \"%s\"\n", tags->title);
-      }
-    }
-
-    char *performer = splt_tu_get_artist_or_performer_ptr(tags);
-    if (performer)
-    {
-      if (with_spaces) { fprintf(file_output, "    "); }
-      fprintf(file_output, "PERFORMER \"%s\"\n", performer);
-    }
-  }
-  else
+  if (!tags)
   {
     if (with_spaces) { fprintf(file_output, "    "); }
     fprintf(file_output, "TITLE \"\"\n");
     if (with_spaces) { fprintf(file_output, "    "); }
     fprintf(file_output, "PERFORMER \"\"\n");
+    return;
+  }
+
+  if (write_album)
+  {
+    const char *album = splt_tu_get_tags_value(tags, SPLT_TAGS_ALBUM);
+    if (album)
+    {
+      if (with_spaces) { fprintf(file_output, "    "); }
+      fprintf(file_output, "TITLE \"%s\"\n", album);
+    }
+  }
+  else
+  {
+    const char *title = splt_tu_get_tags_value(tags, SPLT_TAGS_TITLE);
+    if (title)
+    {
+      if (with_spaces) { fprintf(file_output, "    "); }
+      fprintf(file_output, "TITLE \"%s\"\n", title);
+    }
+  }
+
+  char *performer = splt_tu_get_artist_or_performer_ptr(tags);
+  if (performer)
+  {
+    if (with_spaces) { fprintf(file_output, "    "); }
+    fprintf(file_output, "PERFORMER \"%s\"\n", performer);
+  }
+}
+
+static void splt_cue_write_other_tags(splt_state *state, FILE *file_output)
+{
+  splt_tags *tags = splt_tu_get_current_tags(state);
+  if (!tags) { return; }
+
+  const char *album = splt_tu_get_tags_value(tags, SPLT_TAGS_ALBUM);
+  if (album != NULL && (strcmp(album, "") != 0))
+  {
+    fprintf(file_output, "    REM ALBUM \"%s\"\n", album);
+  }
+
+  const char *genre = splt_tu_get_tags_value(tags, SPLT_TAGS_GENRE);
+  if (genre != NULL && (strcmp(genre, "") != 0))
+  {
+    fprintf(file_output, "    REM GENRE \"%s\"\n", genre);
+  }
+
+  const char *year = splt_tu_get_tags_value(tags, SPLT_TAGS_YEAR);
+  if (year != NULL && (strcmp(year, "") != 0))
+  {
+    fprintf(file_output, "    REM DATE \"%s\"\n", year);
+  }
+
+  if (!tags->was_auto_incremented)
+  {
+    int *track = splt_tu_get_tags_value(tags, SPLT_TAGS_TRACK);
+    if (track != NULL && *track > 0)
+    {
+      fprintf(file_output, "    REM TRACK \"%d\"\n", *track);
+    }
+  }
+
+  const char *comment = splt_tu_get_tags_value(tags, SPLT_TAGS_COMMENT);
+  if (comment != NULL && (strcmp(comment, "") != 0))
+  {
+    fprintf(file_output, "    REM COMMENT \"%s\"\n", comment);
   }
 }
 
@@ -606,7 +641,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 {
   int err = SPLT_OK;
 
-  int num_of_splitpoints = splt_t_get_splitnumber(state);
+  int num_of_splitpoints = splt_sp_get_real_splitpoints_number(state);
   if (num_of_splitpoints <= 0)
   {
     return;
@@ -638,21 +673,33 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 
   char *fname = splt_t_get_filename_to_split(state);
 
-  char new_upper_ext[10] = { '\0' };
-  const char *upper_ext = splt_p_get_upper_extension(state, &err);
-  int i = 0;
-  for (i = 1;i < strlen(upper_ext);i++)
+  const char *extension = strrchr(fname, '.');
+  if (extension != NULL)
   {
-    new_upper_ext[i-1] = upper_ext[i];
+    char upper_extension[5] = { '\0' };
+    int i = 1;
+    for (i = 1;i < strlen(extension);i++)
+    {
+      upper_extension[i-1] = (char) toupper((int)extension[i]);
+    }
+
+    fprintf(file_output, "FILE \"%s\" %s\n", fname, upper_extension);
+    if (err < 0) { *error = err; goto end; }
+  }
+  else
+  {
+    fprintf(file_output, "FILE \"%s\"\n", fname);
+    if (err < 0) { *error = err; goto end; }
   }
 
-  fprintf(file_output, "FILE \"%s\" %s\n", fname, new_upper_ext);
-  if (err < 0) { *error = err; goto end; }
-
   splt_t_set_current_split(state, 0);
+  int i;
   for (i = 0;i < num_of_splitpoints;i++)
   {
     long splitpoint = splt_sp_get_splitpoint_value(state, i, &err);
+    if (err < 0) { *error = err; break; }
+
+    int splitpoint_type = splt_sp_get_splitpoint_type(state, i, &err);
     if (err < 0) { *error = err; break; }
 
     //todo: splitpoint can be slightly != than total_time sometimes
@@ -667,12 +714,18 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 
     splt_cue_write_title_performer(state, file_output, -1, SPLT_TRUE, SPLT_FALSE);
 
+    splt_cue_write_other_tags(state, file_output);
+
+    if (splitpoint_type == SPLT_SKIPPOINT)
+    {
+      fprintf(file_output, "    REM NOKEEP\n");
+    }
+
     long mins = 0, secs = 0, hundr = 0;
     if (splitpoint == LONG_MAX)
     {
       splitpoint = total_time;
     }
-
     splt_sp_get_mins_secs_hundr_from_splitpoint(splitpoint, &mins, &secs, &hundr);
     fprintf(file_output, "    INDEX 01 %02ld:%02ld:%02ld\n", mins, secs, hundr);
 
@@ -688,8 +741,7 @@ end:
   }
   file_output = NULL;
 
-  splt_c_put_info_message_to_client(state, 
-      _(" CUE file '%s' created.\n"), cue_out_file);
+  splt_c_put_info_message_to_client(state, _(" CUE file '%s' created.\n"), cue_out_file);
 
   if (cue_out_file)
   {
