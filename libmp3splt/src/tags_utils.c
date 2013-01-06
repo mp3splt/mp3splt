@@ -1,4 +1,5 @@
 /**********************************************************
+
  * libmp3splt -- library based on mp3splt,
  *               for mp3/ogg splitting without decoding
  *

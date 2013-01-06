@@ -396,7 +396,7 @@ static void splt_t_set_current_split_file_number(splt_state *state, int index)
   state->split.current_split_file_number = index;
 }
 
-static void splt_t_set_current_split_file_number_next(splt_state *state)
+void splt_t_set_current_split_file_number_next(splt_state *state)
 {
   splt_t_set_current_split_file_number(state, state->split.current_split_file_number+1);
 }
