@@ -165,6 +165,7 @@ FILE "songs/La_Verue__Today_silence.mp3" MP3
     REM ALBUM "Riez Noir"
     REM GENRE "Rock"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_silence_silence_1"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Today"
@@ -172,6 +173,7 @@ FILE "songs/La_Verue__Today_silence.mp3" MP3
     REM ALBUM "Riez Noir"
     REM GENRE "Rock"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_silence_silence_2"
     INDEX 01 01:04:80
   TRACK 03 AUDIO
     TITLE "Today"
@@ -179,6 +181,7 @@ FILE "songs/La_Verue__Today_silence.mp3" MP3
     REM ALBUM "Riez Noir"
     REM GENRE "Rock"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_silence_silence_3"
     INDEX 01 02:55:46'
 
   print_ok

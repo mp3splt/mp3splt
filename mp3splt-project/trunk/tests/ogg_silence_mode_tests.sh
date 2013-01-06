@@ -164,6 +164,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can_silence.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "Kelly_Allyn__Whiskey_Can_silence_silence_1"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
@@ -172,6 +173,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can_silence.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "Kelly_Allyn__Whiskey_Can_silence_silence_2"
     INDEX 01 00:58:61
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
@@ -180,6 +182,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can_silence.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "Kelly_Allyn__Whiskey_Can_silence_silence_3"
     INDEX 01 01:44:39'
 
   print_ok

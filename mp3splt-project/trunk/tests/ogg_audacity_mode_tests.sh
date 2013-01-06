@@ -123,6 +123,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "zero"
     INDEX 01 00:10:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
@@ -131,6 +132,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "first"
     INDEX 01 01:07:13
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
@@ -139,6 +141,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "skip"
     REM NOKEEP
     INDEX 01 02:07:00
   TRACK 04 AUDIO
@@ -148,6 +151,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "second"
     INDEX 01 02:29:00
   TRACK 05 AUDIO
     TITLE "Whiskey Can"
@@ -156,6 +160,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME ""
     INDEX 01 02:46:00'
 
   current_file="$OUTPUT_DIR/zero.ogg"
@@ -217,6 +222,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "zero"
     INDEX 01 00:10:00
   TRACK 02 AUDIO
     TITLE "Whiskey Can"
@@ -225,6 +231,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "first"
     INDEX 01 01:07:13
   TRACK 03 AUDIO
     TITLE "Whiskey Can"
@@ -233,6 +240,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "skip"
     REM NOKEEP
     INDEX 01 02:07:00
   TRACK 04 AUDIO
@@ -242,6 +250,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME "second"
     INDEX 01 02:29:00
   TRACK 05 AUDIO
     TITLE "Whiskey Can"
@@ -250,6 +259,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Southern Rock"
     REM DATE "2007-07-10 15:45:07"
     REM COMMENT "http://www.jamendo.com"
+    REM NAME ""
     INDEX 01 02:46:00'
 
   check_output_directory_number_of_files 1

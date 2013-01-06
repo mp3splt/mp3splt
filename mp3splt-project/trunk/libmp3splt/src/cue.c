@@ -702,6 +702,9 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
     int splitpoint_type = splt_sp_get_splitpoint_type(state, i, &err);
     if (err < 0) { *error = err; break; }
 
+    const char *name = splt_sp_get_splitpoint_name(state, i, &err);
+    if (err < 0) { *error = err; break; }
+
     //todo: splitpoint can be slightly != than total_time sometimes
     // (test with silence and cue)
     if (stop_at_total_time &&
@@ -715,6 +718,11 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
     splt_cue_write_title_performer(state, file_output, -1, SPLT_TRUE, SPLT_FALSE);
 
     splt_cue_write_other_tags(state, file_output);
+
+    if (name != NULL)
+    {
+      fprintf(file_output, "    REM NAME \"%s\"\n", name);
+    }
 
     if (splitpoint_type == SPLT_SKIPPOINT)
     {
