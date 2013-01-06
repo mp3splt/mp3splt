@@ -1946,11 +1946,6 @@ void put_splitpoints_and_tags_in_mp3splt_state(splt_state *state, ui_state *ui)
     mp3splt_point_set_type(splitpoint, splitpoint_type);
     mp3splt_append_splitpoint(state, splitpoint);
 
-    if (splitpoint_type == SPLT_SKIPPOINT)
-    {
-      continue;
-    }
-
     gint year = 0, track = 0;
     gchar *title = NULL, *artist = NULL, *album = NULL, *genre = NULL, *comment = NULL;
 
@@ -1964,17 +1959,8 @@ void put_splitpoints_and_tags_in_mp3splt_state(splt_state *state, ui_state *ui)
         COL_TRACK, &track,
         -1);
 
-    if ((title == NULL || strcmp(title, "") == 0) &&
-        (artist == NULL || strcmp(artist, "") == 0) &&
-        (album == NULL || strcmp(album, "") == 0) &&
-        (genre == NULL || strcmp(genre, "") == 0) &&
-        (comment == NULL || strcmp(comment, "") == 0) &&
-        year == 0 && track == 0)
-    {
-      continue;
-    }
-
     splt_tags *tags = mp3splt_tags_new(NULL);
+
     if (year > 0)
     {
       gchar year_str[10] = { '\0' };
