@@ -183,6 +183,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"1\"
+    REM NAME \"Don't worry - 1 - A famous title\"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE \"Yeah, split me !\"
@@ -191,6 +192,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"2\"
+    REM NAME \"Don't worry - 2 - Yeah, split me !\"
     INDEX 01 01:04:67
   TRACK 03 AUDIO
     TITLE \"7 sins campaign\"
@@ -199,6 +201,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"3\"
+    REM NAME \"MS - 3 - 7 sins campaign\"
     INDEX 01 02:11:34
   TRACK 04 AUDIO
     TITLE \"What the hack _\"
@@ -207,6 +210,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"4\"
+    REM NAME \"Don't worry - 4 - What the hack _\"
     INDEX 01 03:34:40
   TRACK 05 AUDIO
     TITLE \"\"
@@ -290,6 +294,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"1\"
+    REM NAME \"Don't worry - 1 - A famous title\"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE \"Yeah, split me !\"
@@ -298,6 +303,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"2\"
+    REM NAME \"Don't worry - 2 - Yeah, split me !\"
     INDEX 01 01:04:67
   TRACK 03 AUDIO
     TITLE \"7 sins campaign\"
@@ -306,6 +312,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"3\"
+    REM NAME \"MS - 3 - 7 sins campaign\"
     INDEX 01 02:11:34
   TRACK 04 AUDIO
     TITLE \"What the hack _\"
@@ -314,6 +321,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM GENRE \"Other\"
     REM DATE \"2009\"
     REM TRACK \"4\"
+    REM NAME \"Don't worry - 4 - What the hack _\"
     INDEX 01 03:34:40
   TRACK 05 AUDIO
     TITLE \"\"

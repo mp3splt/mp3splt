@@ -154,6 +154,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_01m_00s__02m_00s_20h"
     INDEX 01 01:00:00
   TRACK 02 AUDIO
     TITLE "Today"
@@ -162,6 +163,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_02m_00s_20h__03m_05s"
     INDEX 01 02:00:20
   TRACK 03 AUDIO
     TITLE "Today"
@@ -170,6 +172,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_03m_05s__04m_05s_58h"
     INDEX 01 03:05:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
@@ -230,6 +233,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_01m_00s__02m_00s_20h"
     INDEX 01 01:00:00
   TRACK 02 AUDIO
     TITLE "Today"
@@ -238,6 +242,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_02m_00s_20h__03m_05s"
     INDEX 01 02:00:20
   TRACK 03 AUDIO
     TITLE "Today"
@@ -246,6 +251,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_03m_05s__04m_05s_58h"
     INDEX 01 03:05:00'
 
   print_ok
@@ -320,6 +326,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_01m_00s__02m_30s_20h"
     INDEX 01 01:00:00
   TRACK 02 AUDIO
     TITLE "Today"
@@ -328,6 +335,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_02m_00s_20h__04m_00s"
     INDEX 01 02:00:20
   TRACK 03 AUDIO
     TITLE "Today"
@@ -336,6 +344,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM GENRE "Rock"
     REM DATE "2007"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_03m_30s__04m_05s_58h"
     INDEX 01 03:30:00'
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_30s_20h.mp3"
@@ -741,8 +750,10 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM DATE "2000"
     REM TRACK "10"
     REM COMMENT "my_comment"
+    REM NAME "La_Verue__Today_00m_05s__01m_00s"
     INDEX 01 00:05:00
   TRACK 02 AUDIO
+    REM NAME "La_Verue__Today_01m_00s__01m_05s"
     INDEX 01 01:00:00
   TRACK 03 AUDIO
     TITLE "Today"
@@ -752,6 +763,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM DATE "2007"
     REM TRACK "7"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_01m_05s__02m_00s"
     INDEX 01 01:05:00
   TRACK 04 AUDIO
     TITLE "Today"
@@ -761,6 +773,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM DATE "2007"
     REM TRACK "8"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_02m_00s__03m_00s"
     INDEX 01 02:00:00
   TRACK 05 AUDIO
     TITLE "Today"
@@ -770,6 +783,7 @@ FILE "songs/La_Verue__Today.mp3" MP3
     REM DATE "2007"
     REM TRACK "20"
     REM COMMENT "http://www.jamendo.com/"
+    REM NAME "La_Verue__Today_03m_00s__03m_05s"
     INDEX 01 03:00:00
   TRACK 06 AUDIO
     TITLE "Today"

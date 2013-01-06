@@ -161,6 +161,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Other"
     REM DATE "2009"
     REM TRACK "1"
+    REM NAME "Don'\''t worry - 1 - A famous title"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Yeah, split me !"
@@ -169,6 +170,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Other"
     REM DATE "2009"
     REM TRACK "2"
+    REM NAME "Don'\''t worry - 2 - Yeah, split me !"
     INDEX 01 01:04:67
   TRACK 03 AUDIO
     TITLE "7 sins campaign"
@@ -177,6 +179,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Other"
     REM DATE "2009"
     REM TRACK "3"
+    REM NAME "MS - 3 - 7 sins campaign"
     INDEX 01 02:11:34'
 
   current_file="$OUTPUT_DIR/Don't worry - 1 - A famous title.ogg"
@@ -240,6 +243,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Other"
     REM DATE "2009"
     REM TRACK "1"
+    REM NAME "Don'\''t worry - 1 - A famous title"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Yeah, split me !"
@@ -248,6 +252,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Other"
     REM DATE "2009"
     REM TRACK "2"
+    REM NAME "Don'\''t worry - 2 - Yeah, split me !"
     INDEX 01 01:04:67
   TRACK 03 AUDIO
     TITLE "7 sins campaign"
@@ -256,6 +261,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM GENRE "Other"
     REM DATE "2009"
     REM TRACK "3"
+    REM NAME "MS - 3 - 7 sins campaign"
     INDEX 01 02:11:34'
 
   print_ok

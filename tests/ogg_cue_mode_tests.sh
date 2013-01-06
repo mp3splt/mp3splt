@@ -174,6 +174,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM ALBUM "Gentoo"
     REM GENRE "Other"
     REM TRACK "1"
+    REM NAME "First performer - 1 - Our piano"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Our guitar"
@@ -181,6 +182,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM ALBUM "Gentoo"
     REM GENRE "Other"
     REM TRACK "2"
+    REM NAME "GNU_Linux - 2 - Our guitar"
     INDEX 01 01:43:00
   TRACK 03 AUDIO
     TITLE "Our laptop"
@@ -188,6 +190,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM ALBUM "Gentoo"
     REM GENRE "Other"
     REM TRACK "3"
+    REM NAME "Third performer - 3 - Our laptop"
     INDEX 01 03:01:00'
 
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.ogg"
@@ -250,6 +253,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM ALBUM "Gentoo"
     REM GENRE "Other"
     REM TRACK "1"
+    REM NAME "First performer - 1 - Our piano"
     INDEX 01 00:00:00
   TRACK 02 AUDIO
     TITLE "Our guitar"
@@ -257,6 +261,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM ALBUM "Gentoo"
     REM GENRE "Other"
     REM TRACK "2"
+    REM NAME "GNU_Linux - 2 - Our guitar"
     INDEX 01 01:43:00
   TRACK 03 AUDIO
     TITLE "Our laptop"
@@ -264,6 +269,7 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     REM ALBUM "Gentoo"
     REM GENRE "Other"
     REM TRACK "3"
+    REM NAME "Third performer - 3 - Our laptop"
     INDEX 01 03:01:00'
 
   print_ok
