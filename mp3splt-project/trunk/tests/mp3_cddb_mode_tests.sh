@@ -93,7 +93,7 @@ $auto_adjust_warning"
   check_current_mp3_length "00.30"
   check_current_file_has_xing
   check_current_file_size "690906"
-  check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "What the hack _"\
+  check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "What the hack ?"\
   "2009" "Other" "12" "4" ""
 
   print_ok
@@ -204,7 +204,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM NAME \"MS - 3 - 7 sins campaign\"
     INDEX 01 02:11:34
   TRACK 04 AUDIO
-    TITLE \"What the hack _\"
+    TITLE \"What the hack ?\"
     PERFORMER \"Don't worry\"
     REM ALBUM \"Hack me\"
     REM GENRE \"Other\"
@@ -242,7 +242,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
   check_current_mp3_length "00.30"
   check_current_file_has_xing
   check_current_file_size "690906"
-  check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "What the hack _"\
+  check_all_mp3_tags_with_version "2" "Don't worry" "Hack me" "What the hack ?"\
   "2009" "Other" "12" "4" ""
 
   print_ok
@@ -315,7 +315,7 @@ FILE \"songs/La_Verue__Today.mp3\" MP3
     REM NAME \"MS - 3 - 7 sins campaign\"
     INDEX 01 02:11:34
   TRACK 04 AUDIO
-    TITLE \"What the hack _\"
+    TITLE \"What the hack ?\"
     PERFORMER \"Don't worry\"
     REM ALBUM \"Hack me\"
     REM GENRE \"Other\"

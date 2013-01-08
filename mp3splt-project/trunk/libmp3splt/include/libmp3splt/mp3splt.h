@@ -616,6 +616,15 @@ typedef enum {
    * Default is #SPLT_DEFAULT_KEEP_SILENCE_RIGHT
    */
   SPLT_OPT_KEEP_SILENCE_RIGHT,
+  /**
+   * When importing a cue file, use the REM NAME comment for each TRACK to set the
+   * splitpoint names instead of setting the splitpoint names from the tags.
+   *
+   * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
+   *
+   * Default is #SPLT_FALSE
+   */
+  SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME
 } splt_options;
 
 /**

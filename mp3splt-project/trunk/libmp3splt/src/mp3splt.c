@@ -777,14 +777,14 @@ char *mp3splt_tags_get(splt_tags *tags, splt_tag_key key)
 {
   if (key == SPLT_TAGS_TRACK)
   {
-    int *track = (int *) splt_tu_get_tags_value(tags, SPLT_TAGS_TRACK);
+    const int *track = splt_tu_get_tags_value(tags, SPLT_TAGS_TRACK);
     char *track_str = malloc(sizeof(char) * 24);
     if (!track_str) { return NULL; }
     snprintf(track_str, 24, "%d", *track);
     return track_str;
   }
 
-  char *value = (char *) splt_tu_get_tags_value(tags, key);
+  const char *value = splt_tu_get_tags_value(tags, key);
   if (value == NULL)
   {
     return NULL;

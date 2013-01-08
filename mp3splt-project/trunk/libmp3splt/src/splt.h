@@ -480,6 +480,8 @@ typedef struct {
    */
   int length_split_file_number;
   int replace_tags_in_tags;
+
+  int cue_set_splitpoint_names_from_rem_name;
 } splt_options_variables;
 
 //internal structures

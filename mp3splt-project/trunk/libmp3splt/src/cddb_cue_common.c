@@ -38,9 +38,10 @@ in common.
   What we deem to be a sensible file name can be controlled by the
   user using the format that is handled by oformat_parser.c
  */
-void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error)
+void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error, 
+    const splt_tags *all_tags)
 {
-  int err = splt_tu_copy_first_common_tags_on_all_tracks(state, tracks);
+  int err = splt_tu_copy_tags_on_all_tracks(state, tracks, all_tags);
   if (err < 0) { *error = err; return; }
 
   if (splt_o_get_int_option(state, SPLT_OPT_OUTPUT_FILENAMES) == SPLT_OUTPUT_DEFAULT)

@@ -58,8 +58,8 @@ splt_tags *splt_tu_get_original_tags_tags(splt_state *state);
 int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index);
 splt_tags splt_tu_get_last_tags(splt_state *state);
-void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field);
-void *splt_tu_get_tags_value(splt_tags *tags, int tags_field);
+const void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field);
+const void *splt_tu_get_tags_value(const splt_tags *tags, int tags_field);
 void splt_tu_free_tags(splt_state *state);
 splt_tags *splt_tu_get_tags_like_x(splt_state *state);
 splt_tags *splt_tu_get_current_tags(splt_state *state);
@@ -67,7 +67,7 @@ void splt_tu_get_original_tags(splt_state *state, int *err);
 
 char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags);
 
-int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks);
+int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_tags *all_tags);
 
 int splt_tu_set_char_field_on_tag(splt_tags *tags, splt_tag_key key, const char *value);
 

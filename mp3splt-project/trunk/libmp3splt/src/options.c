@@ -63,6 +63,8 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.set_file_from_cue_if_file_tag_found = SPLT_FALSE;
 
   state->options.parameter_remove_silence = SPLT_FALSE;
+  state->options.keep_silence_right = SPLT_DEFAULT_KEEP_SILENCE_RIGHT;
+  state->options.keep_silence_left = SPLT_DEFAULT_KEEP_SILENCE_LEFT;
   state->options.parameter_gap = SPLT_DEFAULT_PARAM_GAP;
   state->options.remaining_tags_like_x = -1;
   state->options.auto_increment_tracknumber_tags = 0;
@@ -70,6 +72,7 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.force_tags_version = 0;
   state->options.length_split_file_number = 1;
   state->options.replace_tags_in_tags = SPLT_FALSE;
+  state->options.cue_set_splitpoint_names_from_rem_name = SPLT_FALSE;
 }
 
 void splt_o_set_option(splt_state *state, int option_name, const void *data)
@@ -123,6 +126,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       break;
     case SPLT_OPT_KEEP_SILENCE_RIGHT:
       state->options.keep_silence_right = *((float *)data);
+      break;
+    case SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME:
+      state->options.cue_set_splitpoint_names_from_rem_name = *((int *)data);
       break;
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = *((int *)data);
@@ -241,6 +247,8 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.keep_silence_left;
     case SPLT_OPT_KEEP_SILENCE_RIGHT:
       return &state->options.keep_silence_right;
+    case SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME:
+      return &state->options.cue_set_splitpoint_names_from_rem_name;
     case SPLT_OPT_PARAM_GAP:
       return &state->options.parameter_gap;
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:

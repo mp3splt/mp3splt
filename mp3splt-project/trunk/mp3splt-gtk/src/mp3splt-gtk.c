@@ -193,6 +193,9 @@ static gpointer split_collected_files(ui_state *ui)
   {
     enter_threads();
     put_splitpoints_and_tags_in_mp3splt_state(ui->mp3splt_state, ui);
+
+    err = mp3splt_remove_tags_of_skippoints(ui->mp3splt_state);
+    print_status_bar_confirmation_in_idle(err, ui);
     exit_threads();
   }
 

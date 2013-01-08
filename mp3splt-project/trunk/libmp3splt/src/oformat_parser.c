@@ -42,6 +42,25 @@ Automatic generation of filenams for split files from tags.
 static void splt_of_trim_on_separator_characters(char *filename);
 static const char *splt_of_goto_last_non_separator_character(const char *format);
 
+static char *duplicate_and_clean(splt_state *state, const char *str, int *error)
+{
+  char *dup = strdup(str);
+  if (!dup)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    return NULL;
+  }
+
+  splt_su_clean_string(state, dup, error);
+  if (error < 0)
+  {
+    free(dup);
+    return NULL;
+  }
+
+  return dup;
+}
+
 /*! \brief Is a placeholder char valid in a filename format string?
 
 \param v The character that is to be tested
@@ -351,12 +370,12 @@ int splt_of_put_output_format_filename(splt_state *state, int current_split)
   char *output_filename = NULL;
   int output_filename_size = 0;
 
-  char *title = NULL;
-  char *artist = NULL;
-  char *album = NULL;
-  char *genre = NULL;
-  char *performer = NULL;
-  char *artist_or_performer = NULL;
+  const char *title = NULL;
+  const char *artist = NULL;
+  const char *album = NULL;
+  const char *genre = NULL;
+  const char *performer = NULL;
+  const char *artist_or_performer = NULL;
   char *original_filename = NULL;
 
   int split_file_number = splt_t_get_current_split_file_number(state);
@@ -528,19 +547,12 @@ put_value:
           }
           break;
         case 'A':
-          if (splt_tu_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state, tags_index))
           {
-            artist_or_performer =
-              (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_PERFORMER);
-            splt_su_clean_string(state, artist_or_performer, &error);
-            if (error < 0) { goto end; };
-
+            artist_or_performer = splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_PERFORMER);
             if (artist_or_performer == NULL || artist_or_performer[0] == '\0')
             {
-              artist_or_performer = 
-                (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_ARTIST);
-              splt_su_clean_string(state, artist_or_performer, &error);
-              if (error < 0) { goto end; };
+              artist_or_performer = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_ARTIST);
             }
           }
           else
@@ -572,7 +584,10 @@ put_value:
           //
           if (artist_or_performer != NULL)
           {
-            snprintf(fm, fm_length, temp, artist_or_performer);
+            char *dup = duplicate_and_clean(state, artist_or_performer, &error);
+            if (!dup) { goto end; }
+            snprintf(fm, fm_length, temp, dup);
+            free(dup);
           }
           else
           {
@@ -581,13 +596,9 @@ put_value:
 
           break;
         case 'a':
-          if (splt_tu_tags_exists(state,tags_index))
+          if (splt_tu_tags_exists(state, tags_index))
           {
-            //we get the artist
-            artist =
-              (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_ARTIST);
-            splt_su_clean_string(state, artist, &error);
-            if (error < 0) { goto end; };
+            artist = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_ARTIST);
           }
           else
           {
@@ -618,7 +629,10 @@ put_value:
           //
           if (artist != NULL)
           {
-            snprintf(fm, fm_length, temp, artist);
+            char *dup = duplicate_and_clean(state, artist, &error);
+            if (!dup) { goto end; }
+            snprintf(fm, fm_length, temp, dup);
+            free(dup);
           }
           else
           {
@@ -628,11 +642,7 @@ put_value:
         case 'b':
           if (splt_tu_tags_exists(state,tags_index))
           {
-            //we get the album
-            album =
-              (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_ALBUM);
-            splt_su_clean_string(state, album, &error);
-            if (error < 0) { goto end; };
+            album = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_ALBUM);
           }
           else
           {
@@ -663,7 +673,10 @@ put_value:
           //
           if (album != NULL)
           {
-            snprintf(fm, fm_length, temp, album);
+            char *dup = duplicate_and_clean(state, album, &error);
+            if (!dup) { goto end; }
+            snprintf(fm, fm_length, temp, dup);
+            free(dup);
           }
           else
           {
@@ -673,11 +686,7 @@ put_value:
         case 'g':
           if (splt_tu_tags_exists(state,tags_index))
           {
-            //we get the genre
-            genre =
-              (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_GENRE);
-            splt_su_clean_string(state, genre, &error);
-            if (error < 0) { goto end; };
+            genre = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_GENRE);
           }
           else
           {
@@ -708,7 +717,10 @@ put_value:
           //
           if (genre != NULL)
           {
-            snprintf(fm, fm_length, temp, genre);
+            char *dup = duplicate_and_clean(state, genre, &error);
+            if (!dup) { goto end; }
+            snprintf(fm, fm_length, temp, dup);
+            free(dup);
           }
           else
           {
@@ -718,9 +730,7 @@ put_value:
         case 't':
           if (splt_tu_tags_exists(state,tags_index))
           {
-            title = (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_TITLE);
-            splt_su_clean_string(state, title, &error);
-            if (error < 0) { goto end; };
+            title = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_TITLE);
           }
           else
           {
@@ -751,7 +761,10 @@ put_value:
           //
           if (title != NULL)
           {
-            snprintf(fm, fm_length, temp, title);
+            char *dup = duplicate_and_clean(state, title, &error);
+            if (!dup) { goto end; }
+            snprintf(fm, fm_length, temp, dup);
+            free(dup);
           }
           else
           {
@@ -761,9 +774,7 @@ put_value:
         case 'p':
           if (splt_tu_tags_exists(state,tags_index))
           {
-            performer = (char *)splt_tu_get_tags_field(state,tags_index, SPLT_TAGS_PERFORMER);
-            splt_su_clean_string(state, performer, &error);
-            if (error < 0) { goto end; };
+            performer = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_PERFORMER);
           }
           else
           {
@@ -793,7 +804,10 @@ put_value:
 
           if (performer != NULL)
           {
-            snprintf(fm, fm_length, temp, performer);
+            char *dup = duplicate_and_clean(state, performer, &error);
+            if (!dup) { goto end; }
+            snprintf(fm, fm_length, temp, dup);
+            free(dup);
           }
           else
           {
@@ -825,7 +839,7 @@ put_value:
           {
             if (splt_tu_tags_exists(state, tags_index))
             {
-              int *tags_track = (int *)splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_TRACK);
+              const int *tags_track = splt_tu_get_tags_field(state, tags_index, SPLT_TAGS_TRACK);
               if (tags_track && *tags_track != -1)
               {
                 tracknumber = *tags_track;
@@ -946,8 +960,7 @@ put_value:
     else
     {
       output_filename_size += fm_size+1;
-      if ((output_filename = realloc(output_filename, output_filename_size
-              * sizeof(char))) == NULL)
+      if ((output_filename = realloc(output_filename, output_filename_size * sizeof(char))) == NULL)
       {
         error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
         goto end;
