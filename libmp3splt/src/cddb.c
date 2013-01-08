@@ -75,13 +75,15 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   if (err < 0) { *error = err; return tracks; }
   cdu->file = file;
 
-  if (!(file_input=splt_io_fopen(file, "r")))
+  if (!(file_input = splt_io_fopen(file, "r")))
   {
     splt_cddb_cdu_free(&cdu);
     splt_e_set_strerror_msg_with_data(state, file);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
     return tracks;
   }
+
+  splt_tags *all_tags = splt_tu_new_tags(error);
 
   if (fseek(file_input, 0, SEEK_SET) != 0)
   {
@@ -102,9 +104,15 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
     if (cdu->error < 0) { *error = cdu->error; goto function_end; }
   }
 
-  splt_cc_put_filenames_from_tags(state, tracks, error);
+  if (*error < 0) { goto function_end; }
+  splt_tags *tags_at_0 = splt_tu_get_tags_at(state, 0);
+  splt_tu_copy_tags(tags_at_0, all_tags, error);
+  if (*error < 0) { goto function_end; }
+
+  splt_cc_put_filenames_from_tags(state, tracks, error, all_tags);
 
 function_end:
+  splt_tu_free_one_tags(&all_tags);
   splt_cddb_cdu_free(&cdu);
 
   if (line)

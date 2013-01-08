@@ -145,7 +145,7 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
       (old_current_split-1 < real_tags_number) && 
       (old_current_split != remaining_tags_like_x))
   {
-    int *prev_track = (int *)splt_tu_get_tags_field(state, old_current_split - 1, SPLT_TAGS_TRACK);
+    const int *prev_track = splt_tu_get_tags_field(state, old_current_split - 1, SPLT_TAGS_TRACK);
     int previous_track = 0;
     if (prev_track != NULL)
     {
@@ -162,7 +162,7 @@ void splt_tu_auto_increment_tracknumber(splt_state *state)
     int tracknumber = 1;
     if (splt_tu_tags_exists(state, current_split))
     {
-      int *track = (int *)splt_tu_get_tags_field(state, current_split, SPLT_TAGS_TRACK);
+      const int *track = splt_tu_get_tags_field(state, current_split, SPLT_TAGS_TRACK);
       if (track != NULL)
       {
         tracknumber = *track;
@@ -934,6 +934,11 @@ int splt_tu_has_one_tag_set(splt_tags *tags)
 
 void splt_tu_copy_tags(splt_tags *from, splt_tags *to, int *error)
 {
+  if (!from)
+  {
+    return;
+  }
+
   int err = SPLT_OK;
 
   err = splt_tu_set_field_on_tags(to, SPLT_TAGS_TITLE, from->title);
@@ -1077,7 +1082,7 @@ splt_tags splt_tu_get_last_tags(splt_state *state)
   return state->split.tags_group->tags[state->split.tags_group->real_tagsnumber-1];
 }
 
-void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
+const void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
 {
   int real_tags_number = 0;
   if (state->split.tags_group)
@@ -1098,7 +1103,7 @@ void *splt_tu_get_tags_field(splt_state *state, int index, int tags_field)
   return NULL;
 }
 
-void *splt_tu_get_tags_value(splt_tags *tags, int tags_field)
+const void *splt_tu_get_tags_value(const splt_tags *tags, int tags_field)
 {
   switch (tags_field)
   {
@@ -1210,70 +1215,29 @@ char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags)
   return artist_or_performer;
 }
 
-int splt_tu_copy_first_common_tags_on_all_tracks(splt_state *state, int tracks)
+int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_tags *all_tags)
 {
   int err = SPLT_OK;
 
-  char *artist0 = NULL;
-  char *album0 = NULL;
-  char *year0 = NULL;
-  char *genre0 = NULL;
-
-  char *first_artist = (char *)splt_tu_get_tags_field(state, 0, SPLT_TAGS_ARTIST);
-  err = splt_su_copy(first_artist, &artist0);
-  if (err < 0) { goto function_end; }
-
-  char *first_album = (char *)splt_tu_get_tags_field(state, 0, SPLT_TAGS_ALBUM);
-  err = splt_su_copy(first_album, &album0);
-  if (err < 0) { goto function_end; }
-
-  char *first_year = (char *)splt_tu_get_tags_field(state, 0, SPLT_TAGS_YEAR);
-  err = splt_su_copy(first_year, &year0);
-  if (err < 0) { goto function_end; }
-
-  char *first_genre = (char *)splt_tu_get_tags_field(state, 0, SPLT_TAGS_GENRE);
-  err = splt_su_copy(first_genre, &genre0);
-  if (err < 0) { goto function_end; }
+  const char *all_artist = splt_tu_get_tags_value(all_tags, SPLT_TAGS_ARTIST);
+  const char *all_album = splt_tu_get_tags_value(all_tags, SPLT_TAGS_ALBUM);
+  const char *all_year = splt_tu_get_tags_value(all_tags, SPLT_TAGS_YEAR);
+  const char *all_genre = splt_tu_get_tags_value(all_tags, SPLT_TAGS_GENRE);
 
   int i = 0;
   for (i = 0; i < tracks;i++)
   {
-    if (i != 0)
-    {
-      err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ARTIST, artist0);
-      if (err != SPLT_OK) { break; }
+    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ARTIST, all_artist);
+    if (err != SPLT_OK) { break; }
 
-      err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ALBUM, album0);
-      if (err != SPLT_OK) { break; }
+    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ALBUM, all_album);
+    if (err != SPLT_OK) { break; }
 
-      err = splt_tu_set_tags_field(state, i, SPLT_TAGS_YEAR, year0);
-      if (err != SPLT_OK) { break; }
+    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_YEAR, all_year);
+    if (err != SPLT_OK) { break; }
 
-      err = splt_tu_set_tags_field(state, i, SPLT_TAGS_GENRE, genre0);
-      if (err != SPLT_OK) { break; }
-    }
-  }
-
-function_end:
-  if (artist0)
-  {
-    free(artist0);
-    artist0 = NULL;
-  }
-  if (album0)
-  {
-    free(album0);
-    album0 = NULL;
-  }
-  if (year0)
-  {
-    free(year0);
-    year0 = NULL;
-  }
-  if (genre0)
-  {
-    free(genre0);
-    genre0 = NULL;
+    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_GENRE, all_genre);
+    if (err != SPLT_OK) { break; }
   }
 
   return err;

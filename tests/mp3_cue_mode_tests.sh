@@ -102,23 +102,23 @@ $auto_adjust_warning"
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.mp3"
   check_current_mp3_length "01.43"
   check_current_file_has_xing
-  check_current_file_size "2292252"
+  check_current_file_size "2292229"
   check_all_mp3_tags_with_version "2" "First performer" "Gentoo" "Our piano"\
-  "None" "Other" "12" "1" ""
+  "None" "" "" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3"
   check_current_mp3_length "01.37"
   check_current_file_has_xing
-  check_current_file_size "2287989"
+  check_current_file_size "2287966"
   check_all_mp3_tags_with_version "2" "GNU_Linux" "Gentoo" "Our guitar"\
-  "None" "Other" "12" "2" ""
+  "None" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3"
   check_current_mp3_length "00.45"
   check_current_file_has_xing
-  check_current_file_size "1031950"
+  check_current_file_size "1031927"
   check_all_mp3_tags_with_version "2" "Third performer" "Gentoo" "Our laptop"\
-  "None" "Other" "12" "3" ""
+  "None" "" "" "3" ""
 
   print_ok
   echo
@@ -205,7 +205,6 @@ FILE "songs/La_Verue__Today.mp3" MP3
     TITLE "Our piano"
     PERFORMER "First performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "1"
     REM NAME "First performer - 1 - Our piano"
     INDEX 01 00:00:00
@@ -213,7 +212,6 @@ FILE "songs/La_Verue__Today.mp3" MP3
     TITLE "Our guitar"
     PERFORMER "GNU_Linux"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "2"
     REM NAME "GNU_Linux - 2 - Our guitar"
     INDEX 01 01:43:00
@@ -221,7 +219,6 @@ FILE "songs/La_Verue__Today.mp3" MP3
     TITLE "Our laptop"
     PERFORMER "Third performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "3"
     REM NAME "Third performer - 3 - Our laptop"
     INDEX 01 03:20:00'
@@ -229,23 +226,23 @@ FILE "songs/La_Verue__Today.mp3" MP3
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.mp3"
   check_current_mp3_length "01.43"
   check_current_file_has_xing
-  check_current_file_size "2292252"
+  check_current_file_size "2292229"
   check_all_mp3_tags_with_version "2" "First performer" "Gentoo" "Our piano"\
-  "None" "Other" "12" "1" ""
+  "None" "" "" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.mp3"
   check_current_mp3_length "01.37"
   check_current_file_has_xing
-  check_current_file_size "2287989"
+  check_current_file_size "2287966"
   check_all_mp3_tags_with_version "2" "GNU_Linux" "Gentoo" "Our guitar"\
-  "None" "Other" "12" "2" ""
+  "None" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3"
   check_current_mp3_length "00.45"
   check_current_file_has_xing
-  check_current_file_size "1031950"
+  check_current_file_size "1031927"
   check_all_mp3_tags_with_version "2" "Third performer" "Gentoo" "Our laptop"\
-  "None" "Other" "12" "3" ""
+  "None" "" "" "3" ""
 
   print_ok
   echo
@@ -292,7 +289,6 @@ FILE "songs/La_Verue__Today.mp3" MP3
     TITLE "Our piano"
     PERFORMER "First performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "1"
     REM NAME "First performer - 1 - Our piano"
     INDEX 01 00:00:00
@@ -300,7 +296,6 @@ FILE "songs/La_Verue__Today.mp3" MP3
     TITLE "Our guitar"
     PERFORMER "GNU_Linux"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "2"
     REM NAME "GNU_Linux - 2 - Our guitar"
     INDEX 01 01:43:00
@@ -308,7 +303,6 @@ FILE "songs/La_Verue__Today.mp3" MP3
     TITLE "Our laptop"
     PERFORMER "Third performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "3"
     REM NAME "Third performer - 3 - Our laptop"
     INDEX 01 03:20:00'
@@ -352,19 +346,19 @@ $auto_adjust_warning"
   check_current_mp3_length "01.43"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "First performer" "Gentoo" "Our piano"\
-  "None" "Other" "12" "1" ""
+  "None" "" "" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - .mp3"
   check_current_mp3_length "01.37"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "GNU_Linux" "Gentoo" ""\
-  "None" "Other" "12" "2" ""
+  "None" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.mp3"
   check_current_mp3_length "00.45"
   check_current_file_has_xing
   check_all_mp3_tags_with_version "2" "Third performer" "Gentoo" "Our laptop"\
-  "None" "Other" "12" "3" ""
+  "None" "" "" "3" ""
 
   print_ok
   echo

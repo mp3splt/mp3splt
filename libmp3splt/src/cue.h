@@ -37,18 +37,10 @@ typedef struct {
   int tracks;
   int time_for_track;
   int error;
-  int performer;
-  int title;
   /*! \brief cue input filename
    */
   const char *file;
   int counter;
-  /*! \brief Do we have to build the file name from the tags?
-
-    - SPLT_FALSE means we build a filename from the tags 
-    - SPLT_TRUE means filename is track name
-   */
-  int title_is_filename;
 
   /*! \brief The type of the current track.
 
@@ -58,6 +50,9 @@ typedef struct {
 
    */
   int current_track_type;
+  char *current_name;
+
+  splt_tags *all_tags;
 } cue_utils;
 
 int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error);

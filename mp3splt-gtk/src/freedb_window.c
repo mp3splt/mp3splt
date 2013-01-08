@@ -334,6 +334,7 @@ static void update_tags_from_mp3splt_state(gint number_of_rows, ui_state *ui)
     if (track_str != NULL)
     {
       gint track = atoi(track_str);
+      if (track < 0) { track = 0; }
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TRACK, track, -1);
     }
 

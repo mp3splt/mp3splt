@@ -31,8 +31,8 @@
 
 #ifndef CDDB_CUE_COMMON_H
 
-void splt_cc_put_filenames_from_tags(splt_state *state,
-    int tracks, int *error);
+void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error,
+    const splt_tags *all_tags);
 
 #define CDDB_CUE_COMMON_H
 

@@ -78,18 +78,18 @@ $auto_adjust_warning"
 
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.ogg"
   check_current_ogg_length "1m:43.000s"
-  check_current_file_size "2784325"
-  check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "Other" "1" ""
+  check_current_file_size "2784310"
+  check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.ogg"
   check_current_ogg_length "1m:18.000s"
-  check_current_file_size "2011390"
-  check_all_ogg_tags "GNU_Linux" "Gentoo" "Our guitar" "" "Other" "2" ""
+  check_current_file_size "2011375"
+  check_all_ogg_tags "GNU_Linux" "Gentoo" "Our guitar" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg"
   check_current_ogg_length "0m:03.853s"
-  check_current_file_size "33272"
-  check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
+  check_current_file_size "33257"
+  check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "" "3" ""
 
   print_ok
   echo
@@ -172,7 +172,6 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     TITLE "Our piano"
     PERFORMER "First performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "1"
     REM NAME "First performer - 1 - Our piano"
     INDEX 01 00:00:00
@@ -180,7 +179,6 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     TITLE "Our guitar"
     PERFORMER "GNU_Linux"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "2"
     REM NAME "GNU_Linux - 2 - Our guitar"
     INDEX 01 01:43:00
@@ -188,25 +186,24 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     TITLE "Our laptop"
     PERFORMER "Third performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "3"
     REM NAME "Third performer - 3 - Our laptop"
     INDEX 01 03:01:00'
 
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.ogg"
   check_current_ogg_length "1m:43.000s"
-  check_current_file_size "2784325"
-  check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "Other" "1" ""
+  check_current_file_size "2784310"
+  check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - Our guitar.ogg"
   check_current_ogg_length "1m:18.000s"
-  check_current_file_size "2011390"
-  check_all_ogg_tags "GNU_Linux" "Gentoo" "Our guitar" "" "Other" "2" ""
+  check_current_file_size "2011375"
+  check_all_ogg_tags "GNU_Linux" "Gentoo" "Our guitar" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg"
   check_current_ogg_length "0m:03.853s"
-  check_current_file_size "33272"
-  check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
+  check_current_file_size "33257"
+  check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "" "3" ""
 
   print_ok
   echo
@@ -251,7 +248,6 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     TITLE "Our piano"
     PERFORMER "First performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "1"
     REM NAME "First performer - 1 - Our piano"
     INDEX 01 00:00:00
@@ -259,7 +255,6 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     TITLE "Our guitar"
     PERFORMER "GNU_Linux"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "2"
     REM NAME "GNU_Linux - 2 - Our guitar"
     INDEX 01 01:43:00
@@ -267,7 +262,6 @@ FILE "songs/Kelly_Allyn__Whiskey_Can.ogg" OGG
     TITLE "Our laptop"
     PERFORMER "Third performer"
     REM ALBUM "Gentoo"
-    REM GENRE "Other"
     REM TRACK "3"
     REM NAME "Third performer - 3 - Our laptop"
     INDEX 01 03:01:00'
@@ -307,15 +301,15 @@ $auto_adjust_warning"
 
   current_file="$OUTPUT_DIR/First performer - 1 - Our piano.ogg"
   check_current_ogg_length "1m:43.000s"
-  check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "Other" "1" ""
+  check_all_ogg_tags "First performer" "Gentoo" "Our piano" "" "" "1" ""
 
   current_file="$OUTPUT_DIR/GNU_Linux - 2 - .ogg"
   check_current_ogg_length "1m:18.000s"
-  check_all_ogg_tags "GNU_Linux" "Gentoo" "" "" "Other" "2" ""
+  check_all_ogg_tags "GNU_Linux" "Gentoo" "" "" "" "2" ""
 
   current_file="$OUTPUT_DIR/Third performer - 3 - Our laptop.ogg"
   check_current_ogg_length "0m:03.853s"
-  check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "Other" "3" ""
+  check_all_ogg_tags "Third performer" "Gentoo" "Our laptop" "" "" "3" ""
 
   print_ok
   echo
