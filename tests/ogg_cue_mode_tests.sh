@@ -368,20 +368,20 @@ function test_cue_mode_and_output_format
  info: file matches the plugin 'ogg vorbis (libvorbis)'
  info: Ogg Vorbis Stream - 44100 - 218 Kb/s - 2 channels - Total time: 3m.04s
  info: starting normal split
-   File \"$OUTPUT_DIR/GNU_Linux/1/001-GNU_Linux-First performer-Gentoo-Our piano.ogg\" created
+   File \"$OUTPUT_DIR/First performer/1/001-First performer-First performer-Gentoo-Our piano.ogg\" created
    File \"$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux--Gentoo-Our guitar.ogg\" created
-   File \"$OUTPUT_DIR/GNU_Linux/3/003-GNU_Linux-Third performer-Gentoo-Our laptop.ogg\" created
+   File \"$OUTPUT_DIR/Third performer/3/003-Third performer-Third performer-Gentoo-Our laptop.ogg\" created
  file split (EOF)"
   mp3splt_args="-d $OUTPUT_DIR -o @a/@n/@n3-@a-@p-@b-@t -q -c $CUE_FILE $OGG_FILE" 
   run_check_output "$mp3splt_args" "$expected"
 
-  current_file="$OUTPUT_DIR/GNU_Linux/1/001-GNU_Linux-First performer-Gentoo-Our piano.ogg"
+  current_file="$OUTPUT_DIR/First performer/1/001-First performer-First performer-Gentoo-Our piano.ogg"
   check_current_ogg_length "1m:43.000s"
 
   current_file="$OUTPUT_DIR/GNU_Linux/2/002-GNU_Linux--Gentoo-Our guitar.ogg"
   check_current_ogg_length "1m:18.000s"
  
-  current_file="$OUTPUT_DIR/GNU_Linux/3/003-GNU_Linux-Third performer-Gentoo-Our laptop.ogg"
+  current_file="$OUTPUT_DIR/Third performer/3/003-Third performer-Third performer-Gentoo-Our laptop.ogg"
   check_current_ogg_length "0m:03.853s"
 
   print_ok
