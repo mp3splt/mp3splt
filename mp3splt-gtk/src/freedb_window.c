@@ -383,11 +383,9 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
   gint err = SPLT_OK;
   splt_points *points = mp3splt_get_splitpoints(ui->mp3splt_state, &err);
   print_status_bar_confirmation(err, ui);
+  if (points == NULL) { return; }
 
-  if (points == NULL)
-  {
-    return;
-  }
+  ui->status->lock_cue_export = SPLT_TRUE;
 
   remove_all_rows(ui->gui->remove_all_button, ui);
 
@@ -443,6 +441,10 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
   update_minutes_from_spinner(ui->gui->spinner_minutes, ui);
   update_seconds_from_spinner(ui->gui->spinner_seconds, ui);
   update_hundr_secs_from_spinner(ui->gui->spinner_hundr_secs, ui);
+
+  ui->status->lock_cue_export = SPLT_FALSE;
+
+  export_cue_file_in_configuration_directory(ui);
 }
 
 static gboolean put_freedb_splitpoints_start(ui_state *ui)
@@ -476,13 +478,12 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
   gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)put_freedb_splitpoints_start, ui, NULL);
 
-  gchar mp3splt_dir[14] = ".mp3splt-gtk";
-  const gchar *home_dir = g_get_home_dir();
-  gint malloc_number = strlen(mp3splt_dir) + strlen(home_dir) + 20;
+  gchar *configuration_directory = get_configuration_directory();
+  gint malloc_number = strlen(configuration_directory) + 20;
   gchar *filename = malloc(malloc_number * sizeof(gchar));
-  g_snprintf(filename, malloc_number, "%s%s%s%s%s", home_dir,
-      G_DIR_SEPARATOR_S, mp3splt_dir,
-      G_DIR_SEPARATOR_S, "query.cddb");
+  g_snprintf(filename, malloc_number, "%s%s%s", configuration_directory, G_DIR_SEPARATOR_S,
+      "query.cddb");
+  g_free(configuration_directory);
 
   gint err = mp3splt_write_freedb_file_result(ui->mp3splt_state, selected_id,
       filename, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);

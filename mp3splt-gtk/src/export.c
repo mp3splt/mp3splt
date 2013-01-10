@@ -40,6 +40,10 @@
 //! Export the current split points into a cue file
 static void export_file(const gchar* filename, ui_state *ui)
 {
+  const gchar *old_fname = mp3splt_get_filename_to_split(ui->mp3splt_state);
+  gchar *fname = NULL;
+  if (old_fname != NULL) { fname = g_strdup(old_fname); }
+
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
 
   gchar *directory = g_path_get_dirname(filename);
@@ -55,6 +59,26 @@ static void export_file(const gchar* filename, ui_state *ui)
   splt_code err = mp3splt_export(ui->mp3splt_state, CUE_EXPORT, file, SPLT_FALSE);
   print_status_bar_confirmation(err, ui);
   g_free(file);
+
+  mp3splt_set_filename_to_split(ui->mp3splt_state, fname);
+  if (fname != NULL) { g_free(fname); }
+}
+
+void export_cue_file_in_configuration_directory(ui_state *ui)
+{
+  if (ui->status->lock_cue_export) { return; }
+
+  gchar *configuration_directory = get_configuration_directory();
+
+  gsize filename_size = strlen(configuration_directory) + 20;
+  gchar *splitpoints_cue_filename = g_malloc(filename_size * sizeof(gchar));
+  g_snprintf(splitpoints_cue_filename, filename_size, "%s%s%s", configuration_directory,
+      G_DIR_SEPARATOR_S, "splitpoints.cue");
+
+  export_file(splitpoints_cue_filename, ui);
+
+  g_free(configuration_directory);
+  g_free(splitpoints_cue_filename);
 }
 
 //! Choose the file to save the session to

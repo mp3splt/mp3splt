@@ -3481,7 +3481,7 @@ static gint mytimer(ui_state *ui)
 
 //event for the file chooser ok button
 void file_chooser_ok_event(const gchar *fname, ui_state *ui)
-{ 
+{
   change_current_filename(fname, ui);
   gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
   wh_set_image_on_button(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_active));

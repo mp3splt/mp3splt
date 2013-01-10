@@ -499,6 +499,8 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 
   create_application(ui);
 
+  import_cue_file_from_the_configuration_directory(ui);
+
   parse_command_line_options(argc, argv, ui);
 
   enter_threads();

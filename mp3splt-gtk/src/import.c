@@ -129,6 +129,24 @@ void import_file(gchar *filename, ui_state *ui)
   }
 }
 
+void import_cue_file_from_the_configuration_directory(ui_state *ui)
+{
+  gchar *configuration_directory = get_configuration_directory();
+
+  gsize filename_size = strlen(configuration_directory) + 20;
+  gchar *splitpoints_cue_filename = g_malloc(filename_size * sizeof(gchar));
+  g_snprintf(splitpoints_cue_filename, filename_size, "%s%s%s", configuration_directory,
+      G_DIR_SEPARATOR_S, "splitpoints.cue");
+
+  mp3splt_set_int_option(ui->mp3splt_state,
+      SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE);
+
+  import_file(splitpoints_cue_filename, ui);
+
+  g_free(configuration_directory);
+  g_free(splitpoints_cue_filename);
+}
+
 void import_files_to_batch_and_free(GSList *files, ui_state *ui)
 {
   GSList *current_file = files;
@@ -335,6 +353,9 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
   }
 
   set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
+
+  mp3splt_set_int_option(ui->mp3splt_state,
+      SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_FALSE);
 
   g_free(ui_err);
 

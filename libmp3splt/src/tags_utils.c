@@ -1227,17 +1227,41 @@ int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_ta
   int i = 0;
   for (i = 0; i < tracks;i++)
   {
-    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ARTIST, all_artist);
-    if (err != SPLT_OK) { break; }
+    if (all_artist != NULL)
+    {
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_ARTIST) == NULL)
+      {
+        err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ARTIST, all_artist);
+        if (err != SPLT_OK) { break; }
+      }
+    }
 
-    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ALBUM, all_album);
-    if (err != SPLT_OK) { break; }
+    if (all_album != NULL)
+    {
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_ALBUM) == NULL)
+      {
+        err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ALBUM, all_album);
+        if (err != SPLT_OK) { break; }
+      }
+    }
 
-    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_YEAR, all_year);
-    if (err != SPLT_OK) { break; }
+    if (all_year != NULL)
+    {
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_YEAR) == NULL)
+      {
+        err = splt_tu_set_tags_field(state, i, SPLT_TAGS_YEAR, all_year);
+        if (err != SPLT_OK) { break; }
+      }
+    }
 
-    err = splt_tu_set_tags_field(state, i, SPLT_TAGS_GENRE, all_genre);
-    if (err != SPLT_OK) { break; }
+    if (all_genre != NULL)
+    {
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_GENRE) == NULL)
+      {
+        err = splt_tu_set_tags_field(state, i, SPLT_TAGS_GENRE, all_genre);
+        if (err != SPLT_OK) { break; }
+      }
+    }
   }
 
   return err;

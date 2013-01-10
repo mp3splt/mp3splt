@@ -53,6 +53,11 @@ int splt_sp_splitpoint_exists(splt_state *state, int index)
 
 int splt_sp_get_real_splitpoints_number(splt_state *state)
 {
+  if (state->split.points == NULL)
+  {
+    return 0;
+  }
+
   return state->split.points->real_splitnumber;
 }
 

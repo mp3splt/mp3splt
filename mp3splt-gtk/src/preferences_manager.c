@@ -128,15 +128,7 @@ static void pm_write_default(GKeyFile *key_file, preferences_state *pm)
   pm_write_default_range_preferences(key_file, pm);
 }
 
-/*! Get the name of the preferences file.
-
-\attention filename returned must be freed after
-that functions also checks if we have a directory .mp3splt-gtk and
-if not it creates it. if we have a file .mp3splt-gtk, it makes a
-backup and then creates the directory
-result must be freed!!!!
-*/
-gchar *get_preferences_filename()
+gchar *get_configuration_directory()
 {
   gchar mp3splt_dir[14] = ".mp3splt-gtk";
 
@@ -162,15 +154,10 @@ gchar *get_preferences_filename()
     home_dir = NULL;
   }
 
-  gint fname_malloc_number = strlen(mp3splt_dir_with_path) + 30;
-  gchar *filename = malloc(fname_malloc_number * sizeof(gchar));
-
   struct stat buffer;
   gint status = g_stat(mp3splt_dir_with_path, &buffer);
-  //if it is not a directory
   if ((status != 0) || (S_ISDIR(buffer.st_mode) == 0))
   {
-    //if its a file
     if ((status == 0) && (S_ISREG(buffer.st_mode) != 0))
     {
       gint malloc_number = strlen(mp3splt_dir_with_path) + 5;
@@ -189,7 +176,25 @@ gchar *get_preferences_filename()
 #endif
   }
 
-  g_snprintf(filename,fname_malloc_number, "%s%smp3splt-gtk_prefs",
+  return mp3splt_dir_with_path;
+}
+
+/*! Get the name of the preferences file.
+
+\attention filename returned must be freed after
+that functions also checks if we have a directory .mp3splt-gtk and
+if not it creates it. if we have a file .mp3splt-gtk, it makes a
+backup and then creates the directory
+result must be freed!!!!
+*/
+gchar *get_preferences_filename()
+{
+  gchar *mp3splt_dir_with_path = get_configuration_directory();
+
+  gint fname_malloc_number = strlen(mp3splt_dir_with_path) + 30;
+  gchar *filename = malloc(fname_malloc_number * sizeof(gchar));
+
+  g_snprintf(filename, fname_malloc_number, "%s%smp3splt-gtk_prefs",
       mp3splt_dir_with_path, G_DIR_SEPARATOR_S);
 
   if (mp3splt_dir_with_path)

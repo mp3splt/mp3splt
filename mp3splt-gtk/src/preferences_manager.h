@@ -37,6 +37,7 @@
 #include "ui_types.h"
 
 gchar *get_preferences_filename();
+gchar *get_configuration_directory();
 void load_preferences(ui_state *ui);
 void save_preferences(ui_state *ui);
 
