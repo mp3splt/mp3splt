@@ -465,6 +465,8 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
   update_add_button(ui);
   check_update_down_progress_bar(ui);
   refresh_drawing_area(ui->gui);
+
+  export_cue_file_in_configuration_directory(ui);
 }
 
 /*! adds a splitpoint
@@ -669,6 +671,8 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
   update_add_button(ui);
   refresh_drawing_area(ui->gui);
   check_update_down_progress_bar(ui);
+
+  export_cue_file_in_configuration_directory(ui);
 }
 
 /*!Set all values of a split point
@@ -893,6 +897,8 @@ static void cell_edited_event(GtkCellRendererText *cell, gchar *path_string, gch
   }
 
   gtk_tree_path_free(path);
+
+  export_cue_file_in_configuration_directory(ui);
 }
 
 void add_splitpoint_from_player(GtkWidget *widget, ui_state *ui)
@@ -1353,7 +1359,7 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
   {
     GtkTreeIter iter;
     gtk_tree_model_get_iter_first(model, &iter);
-    gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+    gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
     g_array_remove_index(ui->splitpoints, (ui->infos->splitnumber-1));
     ui->infos->splitnumber--;
   }
@@ -1366,6 +1372,8 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
   update_add_button(ui);
   refresh_drawing_area(ui->gui);
   check_update_down_progress_bar(ui);
+
+  export_cue_file_in_configuration_directory(ui);
 }
 
 //!creates and and initialise a spinner

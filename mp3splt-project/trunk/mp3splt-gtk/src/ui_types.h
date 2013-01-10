@@ -476,6 +476,8 @@ typedef struct {
   GHashTable *previous_distance_by_time;
   gfloat previous_zoom_coeff;
   gint previous_interpolation_level;
+
+  gint lock_cue_export;
 } gui_status;
 
 #define SPLT_MUTEX GStaticMutex

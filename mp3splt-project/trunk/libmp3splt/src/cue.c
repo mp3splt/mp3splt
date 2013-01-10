@@ -36,6 +36,8 @@ All that is needed in order to be able to read and write cue files.
 
 #include "cue.h"
 
+static void splt_cue_cu_free(cue_utils **cu);
+
 //! Process the rest of a cue line that begins with the word TRACK
 static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_state *state)
 {
@@ -288,11 +290,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
     line_content += 5;
     const char *album = splt_cue_parse_value(line_content, SPLT_FALSE);
     err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_ALBUM, album);
-    if (err != SPLT_OK)
-    {
-      cu->error = err;
-      return;
-    }
+    if (err != SPLT_OK) { cu->error = err; return; }
+    return;
   }
 
   if (strncmp(line_content, "GENRE", 5) == 0)
@@ -300,11 +299,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
     line_content += 5;
     const char *genre = splt_cue_parse_value(line_content, SPLT_FALSE);
     err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_GENRE, genre);
-    if (err != SPLT_OK)
-    {
-      cu->error = err;
-      return;
-    }
+    if (err != SPLT_OK) { cu->error = err; return; }
+    return;
   }
 
   if (strncmp(line_content, "DATE", 4) == 0)
@@ -312,11 +308,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
     line_content += 4;
     const char *year = splt_cue_parse_value(line_content, SPLT_FALSE);
     err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_YEAR, year);
-    if (err != SPLT_OK)
-    {
-      cu->error = err;
-      return;
-    }
+    if (err != SPLT_OK) { cu->error = err; return; }
+    return;
   }
 
   if (strncmp(line_content, "TRACK", 5) == 0)
@@ -325,11 +318,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
     const char *track = splt_cue_parse_value(line_content, SPLT_FALSE);
     int tracknumber = atoi(track);
     err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_TRACK, &tracknumber);
-    if (err != SPLT_OK)
-    {
-      cu->error = err;
-      return;
-    }
+    if (err != SPLT_OK) { cu->error = err; return; }
+    return;
   }
 
   if (strncmp(line_content, "COMMENT", 7) == 0)
@@ -337,11 +327,8 @@ static void splt_cue_process_rem_line(char *line_content, cue_utils *cu, splt_st
     line_content += 7;
     const char *comment = splt_cue_parse_value(line_content, SPLT_FALSE);
     err = splt_tu_set_tags_field(state, cu->tracks-1, SPLT_TAGS_COMMENT, comment);
-    if (err != SPLT_OK)
-    {
-      cu->error = err;
-      return;
-    }
+    if (err != SPLT_OK) { cu->error = err; return; }
+    return;
   }
 
 
@@ -476,7 +463,7 @@ static cue_utils *splt_cue_cu_new(int *error)
   if (err < 0)
   {
     *error = err;
-    splt_cue_free(&cu);
+    splt_cue_cu_free(&cu);
     return NULL;
   }
 
@@ -532,13 +519,6 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
   
   if (err < 0) { *error = err; return tracks; }
   cu->file = file;
-
-  err = splt_tu_set_tags_field(state, 0, SPLT_TAGS_GENRE, SPLT_UNDEFINED_GENRE);
-  if (err != SPLT_OK)
-  {
-    *error = err;
-    return tracks;
-  }
 
   if (!(file_input = splt_io_fopen(file, "r")))
   {
@@ -716,12 +696,6 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
 {
   int err = SPLT_OK;
 
-  int num_of_splitpoints = splt_sp_get_real_splitpoints_number(state);
-  if (num_of_splitpoints <= 0)
-  {
-    return;
-  }
-
   long total_time = splt_t_get_total_time(state);
   FILE *file_output = NULL;
 
@@ -768,6 +742,7 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
   }
 
   splt_t_set_current_split(state, 0);
+  int num_of_splitpoints = splt_sp_get_real_splitpoints_number(state);
   int i;
   for (i = 0;i < num_of_splitpoints;i++)
   {
@@ -815,7 +790,6 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
     splt_t_set_current_split_file_number_next(state);
   }
 
-end:
   fflush(file_output);
   if (fclose(file_output) != 0)
   {
@@ -824,6 +798,7 @@ end:
   }
   file_output = NULL;
 
+end:
   splt_c_put_info_message_to_client(state, _(" CUE file '%s' created.\n"), cue_out_file);
 
   if (cue_out_file)

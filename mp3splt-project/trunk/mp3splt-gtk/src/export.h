@@ -34,6 +34,7 @@
 
 #include "all_includes.h"
 
+void export_cue_file_in_configuration_directory(ui_state *ui);
 void export_cue_file_event(GtkWidget *widget, ui_state *ui);
 
 #endif
