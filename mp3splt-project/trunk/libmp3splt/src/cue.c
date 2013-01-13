@@ -799,7 +799,10 @@ void splt_cue_export_to_file(splt_state *state, const char *out_file,
   file_output = NULL;
 
 end:
-  splt_c_put_info_message_to_client(state, _(" CUE file '%s' created.\n"), cue_out_file);
+  if (!splt_o_get_int_option(state, SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE))
+  {
+    splt_c_put_info_message_to_client(state, _(" CUE file '%s' created.\n"), cue_out_file);
+  }
 
   if (cue_out_file)
   {

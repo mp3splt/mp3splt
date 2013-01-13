@@ -694,6 +694,8 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
   if (splitpoint_does_not_exists ||
       (old_point.checked != new_point.checked))
   {
+    ui->status->lock_cue_export = SPLT_TRUE;
+
     ui->status->first_splitpoint_selected = get_first_splitpoint_selected(ui->gui);
 
     gchar *old_description = g_strdup(ui->status->current_description);
@@ -735,6 +737,10 @@ void update_splitpoint(gint index, Split_point new_point, ui_state *ui)
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_YEAR, year, -1);
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TRACK, track, -1);
     free(title); free(artist); free(album); free(genre); free(comment);
+
+    ui->status->lock_cue_export = SPLT_FALSE;
+
+    export_cue_file_in_configuration_directory(ui);
   }
   else
   {

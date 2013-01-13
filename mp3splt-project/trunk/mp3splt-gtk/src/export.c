@@ -38,7 +38,7 @@
 #include "export.h"
 
 //! Export the current split points into a cue file
-static void export_file(const gchar* filename, ui_state *ui)
+static void export_to_cue_file(const gchar* filename, ui_state *ui)
 {
   const gchar *old_fname = mp3splt_get_filename_to_split(ui->mp3splt_state);
   gchar *fname = NULL;
@@ -68,6 +68,9 @@ void export_cue_file_in_configuration_directory(ui_state *ui)
 {
   if (ui->status->lock_cue_export) { return; }
 
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE,
+      SPLT_TRUE);
+
   gchar *configuration_directory = get_configuration_directory();
 
   gsize filename_size = strlen(configuration_directory) + 20;
@@ -75,10 +78,13 @@ void export_cue_file_in_configuration_directory(ui_state *ui)
   g_snprintf(splitpoints_cue_filename, filename_size, "%s%s%s", configuration_directory,
       G_DIR_SEPARATOR_S, "splitpoints.cue");
 
-  export_file(splitpoints_cue_filename, ui);
+  export_to_cue_file(splitpoints_cue_filename, ui);
 
   g_free(configuration_directory);
   g_free(splitpoints_cue_filename);
+
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE,
+      SPLT_FALSE);
 }
 
 //! Choose the file to save the session to
@@ -105,7 +111,7 @@ void export_cue_file_event(GtkWidget *widget, ui_state *ui)
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-    export_file(filename, ui);
+    export_to_cue_file(filename, ui);
     g_free(filename);
   }
 

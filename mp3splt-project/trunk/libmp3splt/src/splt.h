@@ -482,6 +482,7 @@ typedef struct {
   int replace_tags_in_tags;
 
   int cue_set_splitpoint_names_from_rem_name;
+  int cue_disable_cue_file_created_message;
 } splt_options_variables;
 
 //internal structures

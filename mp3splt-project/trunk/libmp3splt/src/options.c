@@ -73,6 +73,7 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.length_split_file_number = 1;
   state->options.replace_tags_in_tags = SPLT_FALSE;
   state->options.cue_set_splitpoint_names_from_rem_name = SPLT_FALSE;
+  state->options.cue_disable_cue_file_created_message = SPLT_FALSE;
 }
 
 void splt_o_set_option(splt_state *state, int option_name, const void *data)
@@ -129,6 +130,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       break;
     case SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME:
       state->options.cue_set_splitpoint_names_from_rem_name = *((int *)data);
+      break;
+    case SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE:
+      state->options.cue_disable_cue_file_created_message = *((int *)data);
       break;
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = *((int *)data);
@@ -249,6 +253,8 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.keep_silence_right;
     case SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME:
       return &state->options.cue_set_splitpoint_names_from_rem_name;
+    case SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE:
+      return &state->options.cue_disable_cue_file_created_message;
     case SPLT_OPT_PARAM_GAP:
       return &state->options.parameter_gap;
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:
