@@ -624,7 +624,15 @@ typedef enum {
    *
    * Default is #SPLT_FALSE
    */
-  SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME
+  SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME,
+  /**
+   * Output or not a message that the CUE file has been created.
+   *
+   * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
+   *
+   * Default is #SPLT_FALSE
+   */
+  SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE,
 } splt_options;
 
 /**
