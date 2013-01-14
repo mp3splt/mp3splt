@@ -916,17 +916,6 @@ static GtkWidget *create_output_filename_box(ui_state *ui)
   GtkWidget *horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 5);
 
-  GString *note_str = g_string_new("");
-  g_string_append(note_str, "<span style='italic' color='#0000AA'>");
-  g_string_append(note_str, _("Options have no effect when the imported file is an exported mp3splt-gtk CUE file"));
-  g_string_append(note_str, "</span>");
-
-  GtkWidget *top_note = gtk_label_new(NULL);
-  gtk_label_set_markup(GTK_LABEL(top_note), note_str->str);
-  gtk_box_pack_start(GTK_BOX(horiz_fake), top_note, FALSE, FALSE, 0);
-
-  g_string_free(note_str, TRUE);
-
   //default/custom radio buttons
   GtkWidget *radio_output = gtk_radio_button_new_with_label(NULL, _("Default format"));
   gui->radio_output = radio_output;
