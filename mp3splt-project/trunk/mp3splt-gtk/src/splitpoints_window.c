@@ -1687,6 +1687,236 @@ static void toggled_splitpoint_event(GtkCellRendererToggle *cell,
   gtk_tree_path_free(path);
 }
 
+static void clone_tag(ui_state *ui, gint column)
+{
+  gui_state *gui = ui->gui;
+
+  GtkTreeModel *model = gtk_tree_view_get_model(gui->tree_view);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(gui->tree_view);
+
+  GList *selected_list = 
+    gtk_tree_selection_get_selected_rows(GTK_TREE_SELECTION(selection), &model);
+
+  if (g_list_length(selected_list) <= 0)
+  {
+    return;
+  }
+
+  GList *current_element = g_list_first(selected_list);
+  GtkTreePath *path = current_element->data;
+  GtkTreeIter iter;
+  gtk_tree_model_get_iter(model, &iter, path);
+
+  gchar *value = NULL;
+  gint int_value = 0;
+  if (column == COL_YEAR || column == COL_TRACK)
+  {
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, column, &int_value, -1);
+  }
+  else
+  {
+    gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, column, &value, -1);
+  }
+
+  gint number = 0;
+  for (number = 0;number < ui->infos->splitnumber; number++)
+  {
+    GtkTreePath *path2 = gtk_tree_path_new_from_indices(number ,-1);
+    GtkTreeIter iter2;
+    gtk_tree_model_get_iter(model, &iter2, path2);
+    gtk_tree_path_free(path2);
+
+    if (column == COL_YEAR || column == COL_TRACK)
+    {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter2, column, int_value, -1);
+    }
+    else
+    {
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter2, column, value, -1);
+    }
+  }
+
+  if (value) { g_free(value); }
+
+  g_list_foreach(selected_list, (GFunc)gtk_tree_path_free, NULL);
+  g_list_free(selected_list);
+}
+
+static void clone_all_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_TITLE);
+  clone_tag(ui, COL_ARTIST);
+  clone_tag(ui, COL_ALBUM);
+  clone_tag(ui, COL_GENRE);
+  clone_tag(ui, COL_YEAR);
+  clone_tag(ui, COL_TRACK);
+  clone_tag(ui, COL_COMMENT);
+
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void clone_title_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_TITLE);
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void clone_artist_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_ARTIST);
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void clone_album_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_ALBUM);
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void clone_genre_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_GENRE);
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void clone_year_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_YEAR);
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void clone_track_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_TRACK);
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void clone_comment_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  clone_tag(ui, COL_COMMENT);
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void auto_increment_track_event(GtkMenuItem *menuitem, ui_state *ui)
+{
+  GtkTreeModel *model = gtk_tree_view_get_model(ui->gui->tree_view);
+ 
+  gint number = 0;
+  for (number = 0;number < ui->infos->splitnumber; number++)
+  {
+    GtkTreePath *path2 = gtk_tree_path_new_from_indices(number ,-1);
+    GtkTreeIter iter2;
+    gtk_tree_model_get_iter(model, &iter2, path2);
+    gtk_tree_path_free(path2);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter2, COL_TRACK, GINT_TO_POINTER(number + 1), -1);
+  }
+
+  export_cue_file_in_configuration_directory(ui);
+}
+
+static void build_and_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, ui_state *ui)
+{
+  GtkWidget *menu = gtk_menu_new();
+
+  GtkWidget *item = gtk_image_menu_item_new_with_label(_("Clone all tags"));
+  GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_all_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+  item = gtk_image_menu_item_new_with_label(_("Clone title"));
+  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_title_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  item = gtk_image_menu_item_new_with_label(_("Clone artist"));
+  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_artist_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  item = gtk_image_menu_item_new_with_label(_("Clone album"));
+  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_album_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  item = gtk_image_menu_item_new_with_label(_("Clone genre"));
+  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_genre_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  item = gtk_image_menu_item_new_with_label(_("Clone year"));
+  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_year_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  item = gtk_image_menu_item_new_with_label(_("Clone track"));
+  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_track_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  item = gtk_image_menu_item_new_with_label(_("Clone comment"));
+  image = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(clone_comment_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+  item = gtk_image_menu_item_new_with_label(_("Auto-increment track"));
+  image = gtk_image_new_from_stock(GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+  g_signal_connect(item, "activate", G_CALLBACK(auto_increment_track_event), ui);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+  gtk_widget_show_all(menu);
+
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+      (event != NULL) ? event->button : 0, gdk_event_get_time((GdkEvent*)event));
+}
+
+static gboolean show_popup(GtkWidget *treeview, ui_state *ui)
+{
+  build_and_show_popup_menu(treeview, NULL, ui);
+  return TRUE;
+}
+
+static gboolean select_and_show_popup(GtkWidget *treeview, GdkEventButton *event, ui_state *ui)
+{
+  if (event->type != GDK_BUTTON_PRESS || event->button != 3)
+  {
+    return FALSE;
+  }
+
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+  if (gtk_tree_selection_count_selected_rows(selection)  <= 1)
+  {
+    GtkTreePath *path;
+    if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview),
+          (gint) event->x, (gint) event->y, &path, NULL, NULL, NULL))
+    {
+      gtk_tree_selection_unselect_all(selection);
+      gtk_tree_selection_select_path(selection, path);
+      gtk_tree_path_free(path);
+    }
+    else
+    {
+      return FALSE;
+    }
+  }
+
+  build_and_show_popup_menu(treeview, event, ui);
+
+  return TRUE;
+}
+
 //!creates columns for the tree
 static void create_columns(ui_state *ui)
 {
@@ -1901,6 +2131,9 @@ GtkWidget *create_splitpoints_frame(ui_state *ui)
   gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
   create_columns(ui);
   gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(gui->tree_view));
+
+  g_signal_connect(gui->tree_view, "popup-menu", G_CALLBACK(show_popup), ui);
+  g_signal_connect(gui->tree_view, "button-press-event", G_CALLBACK(select_and_show_popup), ui);
 
   /* special buttons like 'set silence from silence detection' */
   create_init_special_buttons(ui);
