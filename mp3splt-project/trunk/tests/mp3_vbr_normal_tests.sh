@@ -7,17 +7,22 @@
 function _test_normal_vbr
 {
   local tags_version=$1
+  local M_FILE=$2
+  local extra=$3
 
   remove_output_dir
 
-  M_FILE="La_Verue__Today"
+  local version_of_tags=$tags_version;
+  if [[ $version_of_tags -eq 22 ]];then
+    version_of_tags=2
+  fi
 
   if [[ $tags_version -eq -1 ]];then
     tags_option="-n"
-    test_name="vbr no tags"
+    test_name="vbr $extra no tags"
   else
-    test_name="vbr id3v$tags_version"
-    tags_option="-T $tags_version"
+    test_name="vbr id3v$version_of_tags"
+    tags_option="-T $version_of_tags"
   fi
 
   expected=" Processing file 'songs/${M_FILE}.mp3' ...
@@ -30,7 +35,7 @@ function _test_normal_vbr
    File \"$OUTPUT_DIR/${M_FILE}_03m_05s__04m_05s_58h.mp3\" created
  Processed 9402 frames - Sync errors: 0
  file split (EOF)"
-  mp3splt_args="$tags_option -d $OUTPUT_DIR $MP3_FILE 1.0 2.0.2 3.5 EOF" 
+  mp3splt_args="$tags_option -d $OUTPUT_DIR $SONGS_DIR/${M_FILE}.mp3 1.0 2.0.2 3.5 EOF" 
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s_20h.mp3" 
@@ -41,11 +46,13 @@ function _test_normal_vbr
     check_current_mp3_no_tags
     check_current_file_size "1366334"
   else
-    check_all_mp3_tags_with_version $tags_version "La Verue" "Riez Noir" "Today"\
+    check_all_mp3_tags_with_version $version_of_tags "La Verue" "Riez Noir" "Today"\
     "2007" "Rock" "17" "1" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
       check_current_file_size "1412518"
+    elif [[ $tags_version -eq 22 ]];then
+      check_current_file_size "1366550"
     else
       check_current_file_size "1366462"
     fi
@@ -59,11 +66,13 @@ function _test_normal_vbr
     check_current_mp3_no_tags
     check_current_file_size "1521748"
   else
-    check_all_mp3_tags_with_version $tags_version "La Verue" "Riez Noir"\
+    check_all_mp3_tags_with_version $version_of_tags "La Verue" "Riez Noir"\
     "Today" "2007" "Rock" "17" "2" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
       check_current_file_size "1567932"
+    elif [[ $tags_version -eq 22 ]];then
+      check_current_file_size "1521964"
     else
       check_current_file_size "1521876"
     fi
@@ -77,11 +86,13 @@ function _test_normal_vbr
     check_current_mp3_no_tags
     check_current_file_size "1399171"
   else
-    check_all_mp3_tags_with_version $tags_version "La Verue" "Riez Noir" "Today"\
+    check_all_mp3_tags_with_version $version_of_tags "La Verue" "Riez Noir" "Today"\
       "2007" "Rock" "17" "3" "http://www.jamendo.com/"
 
     if [[ $tags_version -eq 2 ]];then
       check_current_file_size "1445355"
+    elif [[ $tags_version -eq 22 ]];then
+      check_current_file_size "1399387"
     else
       check_current_file_size "1399299"
     fi
@@ -91,9 +102,24 @@ function _test_normal_vbr
   echo
 }
 
-function test_normal_vbr_no_tags { _test_normal_vbr -1; }
-function test_normal_vbr_id3v1 { _test_normal_vbr 1; }
-function test_normal_vbr_id3v2 { _test_normal_vbr 2; }
+function test_normal_vbr_no_tags { _test_normal_vbr -1 "La_Verue__Today"; }
+function test_normal_vbr_id3v1 { _test_normal_vbr 1 "La_Verue__Today"; }
+function test_normal_vbr_id3v2 { _test_normal_vbr 2 "La_Verue__Today"; }
+
+function test_normal_vbr_input_with_only_id3v1_and_output_no_tags
+{
+  _test_normal_vbr -1 "La_Verue__Today_id3v1_only" "input with only id3v1 and output";
+}
+
+function test_normal_vbr_input_with_only_id3v1_and_output_id3v1
+{
+  _test_normal_vbr 1 "La_Verue__Today_id3v1_only" "input with only id3v1 and output";
+}
+
+function test_normal_vbr_input_with_only_id3v1_and_output_id3v2
+{
+  _test_normal_vbr 22 "La_Verue__Today_id3v1_only" "input with only id3v1 and output";
+}
 
 function test_normal_vbr_pretend
 {
