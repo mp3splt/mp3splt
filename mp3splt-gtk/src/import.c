@@ -138,10 +138,12 @@ void import_cue_file_from_the_configuration_directory(ui_state *ui)
   g_snprintf(splitpoints_cue_filename, filename_size, "%s%s%s", configuration_directory,
       G_DIR_SEPARATOR_S, "splitpoints.cue");
 
-  mp3splt_set_int_option(ui->mp3splt_state,
-      SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE);
-
-  import_file(splitpoints_cue_filename, ui);
+  if (file_exists(splitpoints_cue_filename))
+  {
+    mp3splt_set_int_option(ui->mp3splt_state,
+        SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE);
+    import_file(splitpoints_cue_filename, ui);
+  }
 
   g_free(configuration_directory);
   g_free(splitpoints_cue_filename);
