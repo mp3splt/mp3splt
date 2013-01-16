@@ -1083,7 +1083,18 @@ int splt_mp3_get_output_tags_version(splt_state *state)
     char *filename = splt_t_get_filename_to_split(state);
     if (strcmp(filename, "-") != 0)
     {
-      output_tags_version = 12;
+      int err = SPLT_OK;
+      tag_bytes_and_size *bytes_and_size = splt_mp3_get_id3_tag_bytes(state, filename, &err);
+      if (err >= 0 && bytes_and_size)
+      {
+        output_tags_version = bytes_and_size->version;
+        splt_mp3_free_bytes_and_size(bytes_and_size);
+      }
+
+      if (output_tags_version == 0)
+      {
+        output_tags_version = 12;
+      }
     }
   }
 

@@ -673,23 +673,69 @@ function test_normal_vbr_custom_tags
   run_check_output "$mp3splt_args" "$expected"
 
   current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "a1" "b1" "t1" "2000"\
+  check_all_mp3_tags_with_version "1 2" "a1" "b1" "t1" "2000"\
   "Slow Rock" "95" "10" "my_comment"
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
   check_current_mp3_no_tags
 
   current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "La Verue" "album" "Today"\
+  check_all_mp3_tags_with_version "1 2" "La Verue" "album" "Today"\
   "2007" "Humour" "100" "7" "http://www.jamendo.com/"
 
   current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
-  check_all_mp3_tags_with_version "2" "custom_artist" "album" "Today"\
+  check_all_mp3_tags_with_version "1 2" "custom_artist" "album" "Today"\
   "2007" "Humour" "100" "8" "http://www.jamendo.com/"
 
   current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3"
-  check_all_mp3_tags_with_version "2" "La Verue" "Riez Noir" "Today"\
+  check_all_mp3_tags_with_version "1 2" "La Verue" "Riez Noir" "Today"\
   "2007" "Rock" "17" "20" "http://www.jamendo.com/"
+
+  print_ok
+  echo
+}
+
+function test_normal_vbr_custom_tags_without_original_tags
+{
+  remove_output_dir
+
+  test_name="vbr custom tags & without original tags"
+  M_FILE="La_Verue__Today_id3v1_only"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3\" created
+ Processed 7084 frames - Sync errors: 0
+ file split"
+  tags_option="[@a=a1,@b=b1,@t=t1,@y=2000,@c=my_comment,@n=10,@g=Slow Rock][]%[@b=album,@N=7,@g=Humour][@a=custom_artist][@n=20]"
+  mp3splt_args="-d $OUTPUT_DIR -g \"$tags_option\" $SONGS_DIR/${M_FILE}.mp3 0.5 1.0 1.5 2.0 3.0 3.5"
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_05s__01m_00s.mp3"
+  check_all_mp3_tags_with_version "1" "a1" "b1" "t1" "2000" "Slow Rock" "95" "10" "my_comment"
+  check_current_mp3_no_id3v2_tags
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__01m_05s.mp3"
+  check_current_mp3_no_tags
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_05s__02m_00s.mp3"
+  check_all_mp3_tags_with_version "1" "" "album" "" "" "Humour" "100" "7" ""
+  check_current_mp3_no_id3v2_tags
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3"
+  check_all_mp3_tags_with_version "1" "custom_artist" "album" "" "" "Humour" "100" "8" ""
+  check_current_mp3_no_id3v2_tags
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__03m_05s.mp3"
+  check_all_mp3_tags_with_version "1" "" "album" "" "" "Humour" "100" "20" ""
+  check_current_mp3_no_id3v2_tags
 
   print_ok
   echo
@@ -1874,7 +1920,8 @@ function run_normal_vbr_tests
 export LC_ALL="C"
 start_date=$(date +%s)
 
-run_normal_vbr_tests
+#run_normal_vbr_tests
+test_normal_vbr_custom_tags_without_original_tags
 
 p_failed_tests
 
