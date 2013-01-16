@@ -1087,7 +1087,7 @@ int splt_mp3_get_output_tags_version(splt_state *state)
     }
   }
 
-  splt_d_print_debug(state,"Output tags version is ID3v _%d_\n", output_tags_version);
+  splt_d_print_debug(state, "Output tags version is ID3v _%d_\n", output_tags_version);
 
   return output_tags_version;
 #endif
