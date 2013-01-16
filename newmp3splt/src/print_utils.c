@@ -72,7 +72,7 @@ static void print_with_spaces_after(const char *printed_value, int print_carriag
   else
   {
     int has_slash_n = SPLT_FALSE;
-    if (strlen(value) > 1)
+    if (strlen(value) > 0)
     {
       if (value[strlen(value)-1] == '\n')
       {
