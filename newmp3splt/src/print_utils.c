@@ -190,14 +190,7 @@ void put_progress_bar(splt_progress *p_bar, void *user_data)
   }
 
   print_with_spaces_after(printed_value, SPLT_TRUE, console_progress, data);
-  if (percent_progress >= 1.0)
-  {
-    data->printed_value_length = 0;
-  }
-  else
-  {
-    data->printed_value_length = strlen(printed_value) + 1;
-  }
+  data->printed_value_length = strlen(printed_value) + 1;
 
   free(filename_shorted);
 }
