@@ -108,11 +108,7 @@ function check_output_directory_number_of_files
 
 function check_current_mp3_no_tags
 {
-  _run_command "eyeD3 -2 --no-color $current_file " "eyeD3 command" 1
-
-  id3v2=$command_output
-  no_id3_line=$(echo "$id3v2" | grep "No ID3 v2.x tag found!" | sed 's/\s\+$//g')
-  _check_equal_variables "No ID3 v2.x tag found!" "$no_id3_line"
+  check_current_mp3_no_id3v2_tags
 
   _run_command "id3 -R -l \"$current_file\"" "id3 command"
   id3v1=$command_output
@@ -121,6 +117,15 @@ function check_current_mp3_no_tags
     _check_mp3_tags $current_file 1 "$tag" "" "$id3v1"
   done
   _check_mp3_tags $current_file 1 "Genre" "Unknown (255)" "$id3v1"
+}
+
+function check_current_mp3_no_id3v2_tags
+{
+  _run_command "eyeD3 -2 --no-color $current_file " "eyeD3 command" 1
+
+  id3v2=$command_output
+  no_id3_line=$(echo "$id3v2" | grep "No ID3 v2.x tag found!" | sed 's/\s\+$//g')
+  _check_equal_variables "No ID3 v2.x tag found!" "$no_id3_line"
 }
 
 function check_current_ogg_no_tags
