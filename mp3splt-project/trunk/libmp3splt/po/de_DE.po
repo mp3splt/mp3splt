@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2012-12-30 12:48+0100\n"
+"POT-Creation-Date: 2013-01-16 23:32+0100\n"
 "PO-Revision-Date: 2011-09-16 00:13+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -17,7 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/cue.c:135 src/cddb.c:259
+#: src/cue.c:169 src/cddb.c:270
+#, c-format
+msgid "  Album: %s\n"
+msgstr "  Album: %s\n"
+
+#: src/cue.c:203 src/cddb.c:267
 #, c-format
 msgid ""
 "\n"
@@ -26,17 +31,12 @@ msgstr ""
 "\n"
 "  Künstler: %s\n"
 
-#: src/cue.c:139 src/cddb.c:262
-#, c-format
-msgid "  Album: %s\n"
-msgstr "  Album: %s\n"
-
-#: src/cue.c:434
+#: src/cue.c:507
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " Informationen aus CUE-Datei %s werden gelesen …\n"
 
-#: src/cue.c:531 src/cddb.c:125
+#: src/cue.c:581 src/cddb.c:133
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -45,7 +45,7 @@ msgstr ""
 "  Titel: %d\n"
 "\n"
 
-#: src/cue.c:692
+#: src/cue.c:804
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " CUE-Datei »%s« wurde erstellt.\n"
@@ -566,7 +566,7 @@ msgstr " Info: Trimmen im Stille-Modus wird gestartet\n"
 msgid " info: starting wrap mode split\n"
 msgstr " Info: Teilung im Wrap-Modus wird gestartet\n"
 
-#: src/split_points.c:388
+#: src/split_points.c:398
 #, c-format
 msgid " info: track too short (%ld.%ld.%ld < %ld.%ld.%ld); skipped.\n"
 msgstr ""
@@ -576,74 +576,74 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " Info: Überlappung der Dateiteilung mit %ld.%ld.%ld\n"
 
-#: plugins/mp3.c:1171
+#: plugins/mp3.c:1186
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1267
+#: plugins/mp3.c:1282
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 " Hinweis: Xing- oder Info-Header wurde gefunden. Wechsel zum Frame-Modus…\n"
 
-#: plugins/mp3.c:1405
+#: plugins/mp3.c:1420
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " Info: MPEG %d Layer %d - %d Hz - %s"
 
-#: plugins/mp3.c:1413
+#: plugins/mp3.c:1428
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - FRAME-MODUS NS"
 
-#: plugins/mp3.c:1417
+#: plugins/mp3.c:1432
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - FRAME-MODUS"
 
-#: plugins/mp3.c:1422
+#: plugins/mp3.c:1437
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d kB/s"
 
-#: plugins/mp3.c:1427
+#: plugins/mp3.c:1442
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1435 plugins/ogg.c:132
+#: plugins/mp3.c:1450 plugins/ogg.c:132
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Zeit gesamt: %dm.%02ds"
 
-#: plugins/mp3.c:2756
+#: plugins/mp3.c:2769
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Erkannte Datei erzeugt mit: Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2794
+#: plugins/mp3.c:2807
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Integritätsprüfung der Datei: CRC wird berechnet, bitte warten …"
 
-#: plugins/mp3.c:2813
+#: plugins/mp3.c:2826
 msgid " OK\n"
 msgstr " OK\n"
 
-#: plugins/mp3.c:2832
+#: plugins/mp3.c:2845
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Erkannte Datei erzeugt mit: AlbumWrap\n"
 
-#: plugins/mp3.c:2854
+#: plugins/mp3.c:2867
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Dateien gesamt: %d\n"
 
-#: plugins/mp3.c:3272
+#: plugins/mp3.c:3285
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Warnung: stdin »-« wird als mp3-Datenstrom angenommen.\n"
 
-#: plugins/mp3.c:3299
+#: plugins/mp3.c:3312
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"
