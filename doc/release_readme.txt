@@ -8,8 +8,6 @@ Release instructions:
 3) check documentation in 'newmp3splt/doc/mp3splt.1'
 4) convert documentation to html:
     $ ./newmp3splt/doc/generate_manual.sh
-4') generate libmp3splt API documentation:
-    $ make -C libmp3splt/doc api_doc
 5) translate (string freeze)
     (with 'poedit' for example)
 5') update transifex translations 
@@ -27,9 +25,11 @@ Release instructions:
 9) create the distribution files:
      $ ./scripts/compile.sh
 10) upload to sourceforge
+10') generate libmp3splt API documentation:
+    $ make -C libmp3splt/doc api_doc
 11) change web site & upload web pages to sourceforge
 12) update debian repository
 13) make release announcement on sourceforge
 14) make release announcement on mailing list
-15) create branch ?
+15) create release branch
 
