@@ -4,6 +4,35 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.8
+
+- done issue #37 - nicer GUI for the 'Same output directory as the input file'
+- fixed amplitude wave to be more precise with ogg vorbis files (libmp3splt)
+- fixed important bug on mp3splt-gtk 'Queue to player' button
+- fixed bug #128 - hash symbol in filename breaks the player
+- done feature #38 - reorder filenames in mp3splt-gtk (description_here_partXX)
+- fixed bug #133 - updated GPLv2 COPYING file
+- fixed bug #137 - autogen.sh should run libtoolize before aclocal/automake
+- fixed bug #143 - be able to add splitpoint at the end from the player
+- fixed bug #136 - various compilation issues
+- fixed issue #90 - added back the icons to split preview and play preview in the splitpoints table
+- better amplitude wave display (wave does not shake anymore)
+- added a lot of tooltip and GUI renamings
+- done feature #91 - amplitude wave now persists in preferences
+- added one more interpolation level for the amplitude wave (level 6)
+- more precise wave preview in preferences
+- added tags edition from the splitpoints table
+- added cloning features for mass copying of tags using right click on the splitpoints table
+- enhanced the CUE export to export the tags as REM comments and also the splitpoint names
+- automatically save & restore splitpoints in '~/.mp3splt-gtk/splitpoints.cue'
+- fixed bug when detecting the input tags version - output had no tags when the input only had ID3v1
+(libmp3splt)
+- fixed bug #141 - when input file is a symlink and output directory is the one of the input file
+(libmp3splt)
+- amplitude more precise with ogg vorbis files (libmp3splt)
+- fixed bug on mp3 trim silence scan: last frame was skipped (libmp3splt)
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.7.3
 
 - redesigned the mp3splt-gtk user interface

@@ -2,8 +2,32 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
-libmp3splt version 0.7.3
+libmp3splt version 0.8
 -------------------------------------------------------------
+
+- rewritten libmp3splt public API to target future 1.0 stable release
+- written complete documentation of the public API
+- done issues #40 and #85 - added minimum silence length parameter for auto adjust
+- implemented back the proxy feature with basic authentification
+- added option to generate exactly the same input tags bytes using @O
+- added minimum silence length for trim silence mode (minimum silence to trigger a trimming)
+- done issue #12 - added option to output the full silence log useful to plot a graph
+- enhanced the CUE export to export the tags as REM comments and also the splitpoint names
+- fixed bug when detecting the input tags version - output had no tags when the input only had ID3v1
+- fixed bug: output tags versions was not equal to the input file tags versions when the user was
+setting custom tags without any @o to get the original tags
+- done issue #79 - added 0 to the number of digits to output in order to be able to support
+the old mp3splt output format
+- fixed bug #141 - when input file is a symlink and output directory is the one of the input file
+- amplitude more precise with ogg vorbis files
+- plugins are now installed in $(libdir)/libmp3splt$(SONAME) instead of $(libdir)/libmp3splt
+- fixed bug #131 - use /usr/lib64 instead of /usr/lib on x64 in mp3splt.m4
+- fixed bug #133 - updated GPLv2 COPYING file
+- fixed bug on mp3 trim silence scan: last frame was skipped
+- fixed bug #134 - use of deprecated gethostbyname()
+
+-------------------------------------------------------------
+libmp3splt version 0.7.3
 
 - added the trackjoin parameter for silence detection split: tracks shorter than trackjoin will be joined with others
 - fixed bug: removing TLEN id3v2 tag from the split files
