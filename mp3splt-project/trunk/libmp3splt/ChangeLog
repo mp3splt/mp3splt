@@ -8,7 +8,7 @@ libmp3splt version 0.8
 - rewritten libmp3splt public API to target future 1.0 stable release
 - written complete documentation of the public API
 - done issues #40 and #85 - added minimum silence length parameter for auto adjust
-- implemented back the proxy feature with basic authentification
+- implemented back the proxy feature with basic authentification - feature #50
 - added option to generate exactly the same input tags bytes using @O
 - added minimum silence length for trim silence mode (minimum silence to trigger a trimming)
 - done issue #12 - added option to output the full silence log useful to plot a graph

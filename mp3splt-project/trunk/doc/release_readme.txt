@@ -6,30 +6,28 @@ Release instructions:
     $ ./scripts/update_translation_files.sh 
 2) check documentation of 'mp3splt -h'
 3) check documentation in 'newmp3splt/doc/mp3splt.1'
-4) convert documentation to html:
-    $ ./newmp3splt/doc/generate_manual.sh
-5) translate (string freeze)
-    (with 'poedit' for example)
-5') update transifex translations 
-6) update the following files if necessary:
+4) translate (string freeze) (with 'poedit' for example)
+5) update the following files if necessary:
      ChangeLog
      NEWS
      AUTHORS
      INSTALL
-7) edit 'scripts/compile.sh' file and modify the following variables as needed:
+6) edit 'scripts/compile.sh' file and modify the following variables as needed:
      LIBMP3SPLT_REAL_VERSION=0.7
      MP3SPLT_REAL_VERSION=2.4
      MP3SPLT_GTK_REAL_VERSION=0.7
      BUILD_BINARY_PACKAGES=0
-8) optional: update debian/ubuntu chroot installation for binary packages
-9) create the distribution files:
+7) optional: update debian/ubuntu chroot installation for binary packages
+8) create the distribution files:
      $ ./scripts/compile.sh
-10) upload to sourceforge
-10') generate libmp3splt API documentation:
+9) upload to sourceforge
+10) generate libmp3splt API documentation:
     $ make -C libmp3splt/doc api_doc
-11) change web site & upload web pages to sourceforge
-12) update debian repository
-13) make release announcement on sourceforge
-14) make release announcement on mailing list
-15) create release branch
+11) convert documentation to html:
+    $ ./newmp3splt/doc/generate_manual.sh
+12) change web site & upload web pages to sourceforge
+13) update debian repository
+14) make release announcement on sourceforge
+15) make release announcement on mailing list
+16) create release branch
 
