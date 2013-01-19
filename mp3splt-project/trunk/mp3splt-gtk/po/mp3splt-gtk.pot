@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-16 23:33+0100\n"
+"POT-Creation-Date: 2013-01-19 14:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,7 +112,7 @@ msgstr ""
 msgid "Next track"
 msgstr ""
 
-#: src/player_window.c:980 src/splitpoints_window.c:1433
+#: src/player_window.c:980 src/splitpoints_window.c:1436
 msgid "_Add"
 msgstr ""
 
@@ -120,13 +120,13 @@ msgstr ""
 msgid "Add splitpoint at the current player position"
 msgstr ""
 
-#: src/player_window.c:996 src/splitpoints_window.c:1131
-#: src/splitpoints_window.c:1476
+#: src/player_window.c:996 src/splitpoints_window.c:1134
+#: src/splitpoints_window.c:1479
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/player_window.c:1007 src/splitpoints_window.c:1190
-#: src/splitpoints_window.c:1486
+#: src/player_window.c:1007 src/splitpoints_window.c:1193
+#: src/splitpoints_window.c:1489
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
@@ -262,7 +262,7 @@ msgstr ""
 msgid "_Remove selected"
 msgstr ""
 
-#: src/multiple_files_window.c:272 src/splitpoints_window.c:1453
+#: src/multiple_files_window.c:272 src/splitpoints_window.c:1456
 msgid "R_emove all"
 msgstr ""
 
@@ -286,7 +286,7 @@ msgstr ""
 msgid "Messages history"
 msgstr ""
 
-#: src/split_files_window.c:69 src/splitpoints_window.c:1953
+#: src/split_files_window.c:69 src/splitpoints_window.c:1956
 msgid "Filename"
 msgstr ""
 
@@ -316,8 +316,8 @@ msgid "please wait... contacting tracktype.org"
 msgstr ""
 
 #: src/freedb_window.c:418 src/freedb_window.c:439 src/ui_manager.c:350
-#: src/splitpoints_window.c:668 src/splitpoints_window.c:789
-#: src/splitpoints_window.c:839
+#: src/splitpoints_window.c:671 src/splitpoints_window.c:792
+#: src/splitpoints_window.c:842
 msgid "description here"
 msgstr ""
 
@@ -346,172 +346,172 @@ msgstr ""
 msgid "%s_part%d"
 msgstr ""
 
-#: src/splitpoints_window.c:644 src/splitpoints_window.c:756
+#: src/splitpoints_window.c:647 src/splitpoints_window.c:759
 msgid " error: you already have the splitpoint in table"
 msgstr ""
 
-#: src/splitpoints_window.c:1156 src/splitpoints_window.c:1212
+#: src/splitpoints_window.c:1159 src/splitpoints_window.c:1215
 #: src/preferences_window.c:497
 msgid "Threshold level (dB):"
 msgstr ""
 
-#: src/splitpoints_window.c:1226
+#: src/splitpoints_window.c:1229
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 
-#: src/splitpoints_window.c:1240
+#: src/splitpoints_window.c:1243
 msgid "Number of tracks (0 means all tracks):"
 msgstr ""
 
-#: src/splitpoints_window.c:1252 src/preferences_window.c:513
+#: src/splitpoints_window.c:1255 src/preferences_window.c:513
 msgid "Minimum silence length (seconds):"
 msgstr ""
 
-#: src/splitpoints_window.c:1264
+#: src/splitpoints_window.c:1267
 msgid "Minimum track length (seconds):"
 msgstr ""
 
-#: src/splitpoints_window.c:1274
+#: src/splitpoints_window.c:1277
 msgid "_Remove silence between tracks"
 msgstr ""
 
-#: src/splitpoints_window.c:1426
+#: src/splitpoints_window.c:1429
 msgid "Minutes:"
 msgstr ""
 
-#: src/splitpoints_window.c:1428
+#: src/splitpoints_window.c:1431
 msgid "Seconds:"
 msgstr ""
 
-#: src/splitpoints_window.c:1430
+#: src/splitpoints_window.c:1433
 msgid "Hundredths:"
 msgstr ""
 
-#: src/splitpoints_window.c:1440 src/main_window.c:786
+#: src/splitpoints_window.c:1443 src/main_window.c:786
 msgid "Add splitpoint"
 msgstr ""
 
-#: src/splitpoints_window.c:1443
+#: src/splitpoints_window.c:1446
 msgid "_Remove"
 msgstr ""
 
-#: src/splitpoints_window.c:1450
+#: src/splitpoints_window.c:1453
 msgid "Remove selected splitpoints"
 msgstr ""
 
-#: src/splitpoints_window.c:1460
+#: src/splitpoints_window.c:1463
 msgid "Remove all splitpoints"
 msgstr ""
 
-#: src/splitpoints_window.c:1470
+#: src/splitpoints_window.c:1473
 msgid "_Trim splitpoints"
 msgstr ""
 
-#: src/splitpoints_window.c:1480
+#: src/splitpoints_window.c:1483
 msgid "_Silence detection"
 msgstr ""
 
-#: src/splitpoints_window.c:1558 src/mp3splt-gtk.c:119
+#: src/splitpoints_window.c:1561 src/mp3splt-gtk.c:119
 msgid " finished"
 msgstr ""
 
-#: src/splitpoints_window.c:1632
+#: src/splitpoints_window.c:1635
 msgid " cannot preview, not connected to player"
 msgstr ""
 
-#: src/splitpoints_window.c:1650
+#: src/splitpoints_window.c:1653
 msgid " cannot split preview last splitpoint"
 msgstr ""
 
-#: src/splitpoints_window.c:1821
+#: src/splitpoints_window.c:1824
 msgid "Clone all tags"
 msgstr ""
 
-#: src/splitpoints_window.c:1829
+#: src/splitpoints_window.c:1832
 msgid "Clone title"
 msgstr ""
 
-#: src/splitpoints_window.c:1835
+#: src/splitpoints_window.c:1838
 msgid "Clone artist"
 msgstr ""
 
-#: src/splitpoints_window.c:1841
+#: src/splitpoints_window.c:1844
 msgid "Clone album"
 msgstr ""
 
-#: src/splitpoints_window.c:1847
+#: src/splitpoints_window.c:1850
 msgid "Clone genre"
 msgstr ""
 
-#: src/splitpoints_window.c:1853
+#: src/splitpoints_window.c:1856
 msgid "Clone year"
 msgstr ""
 
-#: src/splitpoints_window.c:1859
+#: src/splitpoints_window.c:1862
 msgid "Clone track"
 msgstr ""
 
-#: src/splitpoints_window.c:1865
+#: src/splitpoints_window.c:1868
 msgid "Clone comment"
 msgstr ""
 
-#: src/splitpoints_window.c:1873
+#: src/splitpoints_window.c:1876
 msgid "Auto-increment track"
 msgstr ""
 
-#: src/splitpoints_window.c:1945
+#: src/splitpoints_window.c:1948
 msgid "Keep"
 msgstr ""
 
-#: src/splitpoints_window.c:1961
+#: src/splitpoints_window.c:1964
 msgid "Secs"
 msgstr ""
 
-#: src/splitpoints_window.c:1969
+#: src/splitpoints_window.c:1972
 msgid "Mins"
 msgstr ""
 
-#: src/splitpoints_window.c:1977
+#: src/splitpoints_window.c:1980
 msgid "Hundr"
 msgstr ""
 
-#: src/splitpoints_window.c:1985
+#: src/splitpoints_window.c:1988
 msgid "Length"
 msgstr ""
 
-#: src/splitpoints_window.c:1992
+#: src/splitpoints_window.c:1995
 msgid "LiveP"
 msgstr ""
 
-#: src/splitpoints_window.c:2000
+#: src/splitpoints_window.c:2003
 msgid "SplitP"
 msgstr ""
 
-#: src/splitpoints_window.c:2050
+#: src/splitpoints_window.c:2053
 msgid "Title"
 msgstr ""
 
-#: src/splitpoints_window.c:2053
+#: src/splitpoints_window.c:2056
 msgid "Artist"
 msgstr ""
 
-#: src/splitpoints_window.c:2056
+#: src/splitpoints_window.c:2059
 msgid "Album"
 msgstr ""
 
-#: src/splitpoints_window.c:2059
+#: src/splitpoints_window.c:2062
 msgid "Genre"
 msgstr ""
 
-#: src/splitpoints_window.c:2063
+#: src/splitpoints_window.c:2066
 msgid "Comment"
 msgstr ""
 
-#: src/splitpoints_window.c:2066
+#: src/splitpoints_window.c:2069
 msgid "Year"
 msgstr ""
 
-#: src/splitpoints_window.c:2070
+#: src/splitpoints_window.c:2073
 msgid "Track"
 msgstr ""
 
