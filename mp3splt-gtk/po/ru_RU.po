@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-16 23:33+0100\n"
+"POT-Creation-Date: 2013-01-19 14:09+0100\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: optimix <m@ioalex.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,7 +119,7 @@ msgstr "Остановить"
 msgid "Next track"
 msgstr "Одинаковая длительность дорожек"
 
-#: src/player_window.c:980 src/splitpoints_window.c:1433
+#: src/player_window.c:980 src/splitpoints_window.c:1436
 msgid "_Add"
 msgstr "Добавить"
 
@@ -128,13 +128,13 @@ msgstr "Добавить"
 msgid "Add splitpoint at the current player position"
 msgstr "Добавить точку разделения из плеера"
 
-#: src/player_window.c:996 src/splitpoints_window.c:1131
-#: src/splitpoints_window.c:1476
+#: src/player_window.c:996 src/splitpoints_window.c:1134
+#: src/splitpoints_window.c:1479
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/player_window.c:1007 src/splitpoints_window.c:1190
-#: src/splitpoints_window.c:1486
+#: src/player_window.c:1007 src/splitpoints_window.c:1193
+#: src/splitpoints_window.c:1489
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
@@ -283,7 +283,7 @@ msgstr ""
 msgid "_Remove selected"
 msgstr "_Удалить выбранные записи"
 
-#: src/multiple_files_window.c:272 src/splitpoints_window.c:1453
+#: src/multiple_files_window.c:272 src/splitpoints_window.c:1456
 msgid "R_emove all"
 msgstr "Удалить все"
 
@@ -309,7 +309,7 @@ msgstr "О_чистить"
 msgid "Messages history"
 msgstr "История сообщений"
 
-#: src/split_files_window.c:69 src/splitpoints_window.c:1953
+#: src/split_files_window.c:69 src/splitpoints_window.c:1956
 msgid "Filename"
 msgstr "Имя файла"
 
@@ -342,8 +342,8 @@ msgid "please wait... contacting tracktype.org"
 msgstr "Пожалуйста, подождите ... cвязь с tracktype.org"
 
 #: src/freedb_window.c:418 src/freedb_window.c:439 src/ui_manager.c:350
-#: src/splitpoints_window.c:668 src/splitpoints_window.c:789
-#: src/splitpoints_window.c:839
+#: src/splitpoints_window.c:671 src/splitpoints_window.c:792
+#: src/splitpoints_window.c:842
 msgid "description here"
 msgstr "здесь могло быть описание"
 
@@ -372,179 +372,179 @@ msgstr "_часть"
 msgid "%s_part%d"
 msgstr "%s_часть%d"
 
-#: src/splitpoints_window.c:644 src/splitpoints_window.c:756
+#: src/splitpoints_window.c:647 src/splitpoints_window.c:759
 msgid " error: you already have the splitpoint in table"
 msgstr ""
 
-#: src/splitpoints_window.c:1156 src/splitpoints_window.c:1212
+#: src/splitpoints_window.c:1159 src/splitpoints_window.c:1215
 #: src/preferences_window.c:497
 msgid "Threshold level (dB):"
 msgstr "Пороговый уровень (дБ):"
 
-#: src/splitpoints_window.c:1226
+#: src/splitpoints_window.c:1229
 msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
 msgstr ""
 
-#: src/splitpoints_window.c:1240
+#: src/splitpoints_window.c:1243
 msgid "Number of tracks (0 means all tracks):"
 msgstr "Количество дорожек (0 означает все дорожки):"
 
-#: src/splitpoints_window.c:1252 src/preferences_window.c:513
+#: src/splitpoints_window.c:1255 src/preferences_window.c:513
 msgid "Minimum silence length (seconds):"
 msgstr "Минимальная длина задержки (секунды): "
 
-#: src/splitpoints_window.c:1264
+#: src/splitpoints_window.c:1267
 msgid "Minimum track length (seconds):"
 msgstr ""
 
-#: src/splitpoints_window.c:1274
+#: src/splitpoints_window.c:1277
 msgid "_Remove silence between tracks"
 msgstr "Убрать задержку между треками"
 
-#: src/splitpoints_window.c:1426
+#: src/splitpoints_window.c:1429
 msgid "Minutes:"
 msgstr "Минуты:"
 
-#: src/splitpoints_window.c:1428
+#: src/splitpoints_window.c:1431
 msgid "Seconds:"
 msgstr "Секунды:"
 
-#: src/splitpoints_window.c:1430
+#: src/splitpoints_window.c:1433
 msgid "Hundredths:"
 msgstr "Миллисекунды:"
 
-#: src/splitpoints_window.c:1440 src/main_window.c:786
+#: src/splitpoints_window.c:1443 src/main_window.c:786
 msgid "Add splitpoint"
 msgstr "Добавить точку разделения"
 
-#: src/splitpoints_window.c:1443
+#: src/splitpoints_window.c:1446
 msgid "_Remove"
 msgstr "Удалить"
 
-#: src/splitpoints_window.c:1450
+#: src/splitpoints_window.c:1453
 #, fuzzy
 msgid "Remove selected splitpoints"
 msgstr "_Удалить выбранные записи"
 
-#: src/splitpoints_window.c:1460
+#: src/splitpoints_window.c:1463
 #, fuzzy
 msgid "Remove all splitpoints"
 msgstr "Удалить все строки"
 
-#: src/splitpoints_window.c:1470
+#: src/splitpoints_window.c:1473
 msgid "_Trim splitpoints"
 msgstr "О_брезать точки разделения"
 
-#: src/splitpoints_window.c:1480
+#: src/splitpoints_window.c:1483
 msgid "_Silence detection"
 msgstr "О_пределение тишины"
 
-#: src/splitpoints_window.c:1558 src/mp3splt-gtk.c:119
+#: src/splitpoints_window.c:1561 src/mp3splt-gtk.c:119
 msgid " finished"
 msgstr "завершенный"
 
-#: src/splitpoints_window.c:1632
+#: src/splitpoints_window.c:1635
 msgid " cannot preview, not connected to player"
 msgstr ""
 
-#: src/splitpoints_window.c:1650
+#: src/splitpoints_window.c:1653
 msgid " cannot split preview last splitpoint"
 msgstr ""
 
-#: src/splitpoints_window.c:1821
+#: src/splitpoints_window.c:1824
 msgid "Clone all tags"
 msgstr ""
 
-#: src/splitpoints_window.c:1829
+#: src/splitpoints_window.c:1832
 #, fuzzy
 msgid "Clone title"
 msgstr "Название альбома"
 
-#: src/splitpoints_window.c:1835
+#: src/splitpoints_window.c:1838
 msgid "Clone artist"
 msgstr ""
 
-#: src/splitpoints_window.c:1841
+#: src/splitpoints_window.c:1844
 msgid "Clone album"
 msgstr ""
 
-#: src/splitpoints_window.c:1847
+#: src/splitpoints_window.c:1850
 msgid "Clone genre"
 msgstr ""
 
-#: src/splitpoints_window.c:1853
+#: src/splitpoints_window.c:1856
 msgid "Clone year"
 msgstr ""
 
-#: src/splitpoints_window.c:1859
+#: src/splitpoints_window.c:1862
 #, fuzzy
 msgid "Clone track"
 msgstr "Одинаковая длительность дорожек"
 
-#: src/splitpoints_window.c:1865
+#: src/splitpoints_window.c:1868
 msgid "Clone comment"
 msgstr ""
 
-#: src/splitpoints_window.c:1873
+#: src/splitpoints_window.c:1876
 msgid "Auto-increment track"
 msgstr ""
 
-#: src/splitpoints_window.c:1945
+#: src/splitpoints_window.c:1948
 msgid "Keep"
 msgstr "Сохранить"
 
-#: src/splitpoints_window.c:1961
+#: src/splitpoints_window.c:1964
 msgid "Secs"
 msgstr "С"
 
-#: src/splitpoints_window.c:1969
+#: src/splitpoints_window.c:1972
 msgid "Mins"
 msgstr "мин"
 
-#: src/splitpoints_window.c:1977
+#: src/splitpoints_window.c:1980
 msgid "Hundr"
 msgstr "мс"
 
-#: src/splitpoints_window.c:1985
+#: src/splitpoints_window.c:1988
 msgid "Length"
 msgstr "Длительность"
 
-#: src/splitpoints_window.c:1992
+#: src/splitpoints_window.c:1995
 msgid "LiveP"
 msgstr ""
 
-#: src/splitpoints_window.c:2000
+#: src/splitpoints_window.c:2003
 msgid "SplitP"
 msgstr ""
 
-#: src/splitpoints_window.c:2050
+#: src/splitpoints_window.c:2053
 msgid "Title"
 msgstr ""
 
-#: src/splitpoints_window.c:2053
+#: src/splitpoints_window.c:2056
 msgid "Artist"
 msgstr ""
 
-#: src/splitpoints_window.c:2056
+#: src/splitpoints_window.c:2059
 #, fuzzy
 msgid "Album"
 msgstr "Название альбома"
 
-#: src/splitpoints_window.c:2059
+#: src/splitpoints_window.c:2062
 #, fuzzy
 msgid "Genre"
 msgstr "Тег жанра:"
 
-#: src/splitpoints_window.c:2063
+#: src/splitpoints_window.c:2066
 #, fuzzy
 msgid "Comment"
 msgstr "Метки комментариев"
 
-#: src/splitpoints_window.c:2066
+#: src/splitpoints_window.c:2069
 msgid "Year"
 msgstr ""
 
-#: src/splitpoints_window.c:2070
+#: src/splitpoints_window.c:2073
 msgid "Track"
 msgstr ""
 
