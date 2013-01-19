@@ -379,6 +379,7 @@ static void order_all_splitpoints_from_table(const char *current_description_bas
   int description_base_length = strlen(current_description_base);
 
   gint i = 0;
+  gint description_counter = 0;
   while (i < ui->infos->splitnumber)
   {
     gchar *description = NULL;
@@ -392,7 +393,8 @@ static void order_all_splitpoints_from_table(const char *current_description_bas
       if (strncmp(description, current_description_base, description_base_length) == 0)
       {
         GString *new_description = g_string_new("");
-        g_string_append_printf(new_description, "%s_part%d", current_description_base, i + 1);
+        g_string_append_printf(new_description, "%s_part%d", current_description_base,
+            i + 1);
         gchar *new_desc = g_string_free(new_description, FALSE);
 
         gtk_list_store_set(GTK_LIST_STORE(model), 
@@ -401,6 +403,7 @@ static void order_all_splitpoints_from_table(const char *current_description_bas
             -1);
 
         g_free(new_desc);
+        description_counter++;
       }
     }
 
