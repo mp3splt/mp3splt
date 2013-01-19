@@ -10,12 +10,12 @@ Known issues :
 #mp3splt version 2.5
 
 - done issues #40 and #85 - added minimum silence length parameter for auto adjust (mainly libmp3splt)
-- implemented back the proxy feature with basic authentification (mainly libmp3splt)
-- added option to generate exactly the same input tags bytes using @O (mainly libmp3splt)
 - added minimum silence length for trim silence mode (minimum silence to trigger a trimming)
 (mainly libmp3splt)
 - done issue #12 - added option to output the full silence log useful to plot a graph
 (mainly libmp3splt)
+- implemented back the proxy feature with basic authentification - feature #50 (mainly libmp3splt)
+- added option to generate exactly the same input tags bytes using @O (mainly libmp3splt)
 - enhanced the CUE export to export the tags as REM comments and also the splitpoint names (libmp3splt)
 - fixed bug when detecting the input tags version - output had no tags when the input only had ID3v1
 (libmp3splt)
