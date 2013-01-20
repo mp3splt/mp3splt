@@ -81,17 +81,19 @@ ogg vorbis streams correctly. Splitting the input file from 0.0 to EOF
 might fix the issues.
 <P>
 <B>NOTES about TAGS:</B> by default, mp3splt will put the original tags in
-the split files. Custom tags for the split files can be set with the -g option.
-When copying the original file tags, only one artist, album, title are
-supported.
+the split files with one exception: the track number starts at 1 and is incremented along
+split files. When copying the original file tags, only one artist, album, title are supported.
+Custom tags for the split files can be set with the -g option.
+Setting exactly the same tags as the original file is possible with -g %[@O] (mp3 only) or -g %[@o].
 <P>
 <B>NOTE about MP3 TAGS:</B> in order to extract the original tags from mp3 files,
 libmp3splt must be compiled with 'id3tag' support. By default, the output
 files will have the same ID3 tag version as the input file; this behaviour can be changed
 with the -T option. If the input file has no tags and the -g option is used, then both
 ID3v1 and ID3v2 are written. Total tracknumber is not yet supported.
-Only writing ID3v2.4 is supported; note that some software only support ID3v2.3 and will not
-be able to read them.
+Only writing ID3v2.4 is supported for custom tags; note that some software only support ID3v2.3
+and will not be able to read them. However, it is possible to write the exact original tags using
+%[@O], keeping the same tags version as in the original file.
 <P>
 <B>NOTE about the OUTPUT DIRECTORY:</B> by default, mp3splt will put the
 split files in the directory of the input file. In order to change the
@@ -154,8 +156,11 @@ files, so this option can be really slow if used with big files.
 It accepts some parameters with -p option (see below for a detailed description):
 <I>threshold</I>
 
-level (th) which is the sound level to be considered silence. This feature is new and
-probably still needs tweaking; please report any bugs, suggestions, ...
+level (th) which is the sound level to be considered silence,
+<I>min</I>
+
+(min) which is the minimum silence length to trigger a trimming; this amount of silence will be kept
+in the split file at the beginning and at the end.
 <P>
 <DT><B>-s</B>         <DD>
 <B>Silence mode</B>,
@@ -250,6 +255,14 @@ server to get the selected album and (if no problem occurs) will
 write a file named &quot;query.cddb&quot; from which will get splitpoints and
 filenames.
 <P>
+<B>Proxy support:</B>
+The first time that the user queries the internet (and if the quiet mode is not enabled), mp3splt asks
+for some information about proxy usage. Mp3splt has basic authentification support using base64 for HTTP
+proxies. A file named '.mp3splt' is created in the user home directory containing the informations
+provided by the user. Deleting this file will make mp3splt to query the user again. Please note that
+the authentification storage is not secure. The 'username:password' is stored as base64 and can be
+easily decoded.
+<P>
 <B>IMPORTANT NOTE FOR CDDB</B>: File split with this option can be not very precise due to:
 <P>
 1) Who extracts CD tracks may use &quot;Remove silence&quot; option. This means
@@ -265,7 +278,7 @@ that the large file is shorter than CD Total time. Never use this option.
 4) There are several entries of the same cd on CDDB. In mp3splt they appears with &quot;\=&gt;&quot; symbol.
 Try some of them and find the best for yours; usually you can find the correct splitpoints, so good luck!
 <P>
-<B>YOU CAN USE -a OPTION TO ADJUST SPLITPOINTS!</B>
+<B>YOU CAN USE THE -a OPTION TO ADJUST SPLITPOINTS!</B>
 <P>
 <DT><B>-a</B>         <DD>
 <B>Auto-adjust mode</B>.
@@ -278,6 +291,9 @@ level (th) which is the sound level to be considered silence, cutpoint
 <I>offset</I>
 
 (off) which is the offset of cutpoint in silence,
+<I>min</I>
+
+(min) which is the minimum silence length in seconds,
 <I>gap</I>
 
 (gap) which is the gap value around splitpoint to search for silence.
@@ -305,6 +321,11 @@ Positive integer of  the minimum number of shots to be found as non silence
 after the silence. Default is 25. Decrease this value if you need to split files having
 closer silence points.
 <P>
+<DT><B>min=FLOAT</B><DD>
+Positive float of the minimum number of seconds to be considered as valid silence. All silences shorter than min are discarded. Default is 0.
+For the trim silence split, it is the minimum silence length to trigger a trimming; this amount of
+silence will be kept in the split file at the beginning and at the end.
+<P>
 <DT><B>Both -s and -a</B><DD>
 <P>
 <DT><B>off=FLOAT</B><DD>
@@ -317,10 +338,16 @@ In most cases, you will only need to use a value between 0 and 1.
 <P>
 <DT><B>nt=INTEGER</B><DD>
 Positive integer number of tracks to be split when using -s option. By default all tracks are split.
-<DT><B>min=FLOAT</B><DD>
-Positive float of the minimum number of seconds to be considered a valid splitpoint. All silences shorter than min are discarded. Default is 0.
-<DT><B>rm</B><DD>
-Does not require an additional number and it used to remove silence when using -s option.
+<DT><B>rm[=FLOAT_FLOAT]</B><DD>
+It is used to remove silence when using the -s option.
+Can be used without additional numbers - by default it will cut all the silence found.
+Users can keep some of the silence found by passing the number of seconds to be kept at the
+beginning of the output files and at the end of the output files. For example, 'rm=2_6' will keep 2
+seconds of silence at the beginning of the split files and 6 seconds at the end.
+If the silence length is less than the sum of the number of seconds passed to the rm parameter,
+the split will convert the values to a percentage of the silence length. Taking the previous example, if
+the silence length is less than 8 seconds, the split will be done at 75% of the silence segment starting from
+the beginning of the silence ( 75% = 6/(2+6) ).
 <DT><B>trackmin=FLOAT</B><DD>
 Positive float of the minimum number of seconds for a track to be written out.
 Tracks shorter than trackmin will be skipped during the output phase.
@@ -352,7 +379,7 @@ If you obtain some sync errors, try also to split with -e option.
 <P>
 <DT><B>-k</B>         <DD>
 <B>Input not seekable</B>. Consider input not seekable (default when using STDIN as input).
-This allows you to split mp3 and ogg streams which can be read only one time and can't be
+This allows you to split mp3 streams which can be read only one time and can't be
 seeked. Both framemode and standard mode are available, but framemode can be really slow if used with big
 files, because to seek splitpoints we need to process all bytes and all frames. -k option
 (so STDIN as input too) can't be used together with -s -a -w -e, because input must be seekable for
@@ -420,7 +447,23 @@ It can contain name variables, that must begin with @ char and that can be:
 
 @M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint**
 <P>
-(**) a digit may follow for the number of digits to output
+(**) One digit may follow defining the number of digits to output.
+<BR>
+
+If the digit is 0, then a special rule is applied when the pattern value is equal to 0:
+<BR>
+
+- the pattern is discarded
+<BR>
+
+- all characters like : _ . and -. preceding it are discarded
+<BR>
+
+- all characters following it are discarded up to the next @ or a separator like : _ . and -
+<BR>
+
+This rule is useful for discarding the last part of the time when equal to 0.
+For example @m_@<A HREF="mailto:s_@h0hundreths__">s_@h0hundreths__</A>@M_@S will only output @m_@s__@M_@S if the hundreths of seconds are 0.
 <P>
 When split files are more than one, at least one of @t, @n, @N, @l, @L, @u or
 @U (*) must be present to avoid ambiguous names.  You can put any prefix,
@@ -494,10 +537,13 @@ replace tags in tags. The 'replace tags in tags' option is not recursive. The va
 @g: genre
 <BR>
 
-@n: track number
+@n: track number (set to -2 for none)
 <BR>
 
 @o: set original tags
+<BR>
+
+@O: set exactly the same original tag bytes and discard other variables (mp3 only)
 <BR>
 
 @N: auto increment track number: 
@@ -564,6 +610,33 @@ used with STDOUT output.
 <DT><B>-E CUE_FILE</B>         <DD>
 <B>Export to .cue file</B>. Creates a .cue file containing the splitpoints.
 Use -P to export the splitpoints without actually splitting.
+The cue file contains the tags of the splitpoints as comments (for example REM ALBUM, REM GENRE, REM
+DATE). There is however one limitation: REM TRACK is not written if the track was auto incremented
+without user defined tags.
+<P>
+<DT><B>-F FULL_SILENCE_LOG_FILE</B>         <DD>
+<B>Export the full log of silence detection</B>. The full log filename is useful to draw the
+amplitude wave of the input file (in dB) in order to choose a threshold.
+<P>
+<B>Note about the file structure:</B> 
+<P>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;first&nbsp;column&nbsp;is&nbsp;a&nbsp;dummy&nbsp;column&nbsp;which&nbsp;is&nbsp;always&nbsp;zero,&nbsp;for&nbsp;plotting&nbsp;on&nbsp;zero&nbsp;axis&nbsp;purposes
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;second&nbsp;column&nbsp;is&nbsp;the&nbsp;time&nbsp;in&nbsp;seconds&nbsp;as&nbsp;double
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;third&nbsp;column&nbsp;is&nbsp;the&nbsp;dB&nbsp;level
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;fourth&nbsp;column&nbsp;is&nbsp;the&nbsp;silences&nbsp;shots&nbsp;counter
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;five&nbsp;column&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;splitpoints&nbsp;found
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;sixth&nbsp;column&nbsp;is&nbsp;the&nbsp;start&nbsp;time&nbsp;of&nbsp;the&nbsp;silence&nbsp;spot&nbsp;found
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;seventh&nbsp;column&nbsp;is&nbsp;the&nbsp;end&nbsp;time&nbsp;of&nbsp;the&nbsp;silence&nbsp;spot&nbsp;found
+<P>
+Example of plotting the full log file with gnuplot: 
+<P>
+gnuplot -e &quot;file='silence_logs.txt'; set decimalsign locale; set xlabel 'Time in seconds';
+plot file using 2:3 title 'Threshold',
+file using 2:4 title 'Silence shots' with linespoints,
+file using 2:5 title 'Number of silence points found' with fsteps,
+file using 6:1 title 'Begin of silence',
+file using 7:1 title 'End of silence' with points;
+pause -1&quot;
 <P>
 <DT><B>-P</B>         <DD>
 <B>Pretend to split</B>. Simulation of the process without creating any
@@ -581,9 +654,6 @@ to STDOUT. This option cannot be used with STDOUT output.
 <DT><B>-D</B>         <DD>
 <B>Debug mode</B>. Experimental debug support. Print extra informations
 about what is being done. Current print doesn't have a nice format.
-<P>
-<DT><B>-i</B>         <DD>
-<B>Count silence mode.</B> Print the number of silence splitpoints found with silence detection. Use -p for arguments.
 <P>
 <DT><B>-v</B>         <DD>
 <B>Print version.</B> Print the version of mp3splt and libmp3splt and exit.
@@ -699,7 +769,7 @@ contributions are welcome.
 Matteo Trotta &lt;<A HREF="mailto:mtrotta@users.sourceforge.net">mtrotta@users.sourceforge.net</A>&gt;
 <BR>
 
-Alexandru Ionut Munteanu &lt;<A HREF="mailto:m@ioalex.net">m@ioalex.net</A>&gt;
+Alexandru Ionut Munteanu &lt;m@ioalex.net&gt;
 <A NAME="lbAJ">&nbsp;</A>
 <H2>DISTRIBUTION</H2>
 
@@ -746,6 +816,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 22:13:15 GMT, August 26, 2012
+Time: 08:29:38 GMT, January 20, 2013
 </BODY>
 </HTML>
