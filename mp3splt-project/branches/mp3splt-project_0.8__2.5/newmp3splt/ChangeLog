@@ -1,0 +1,608 @@
+Check http://mp3splt.sourceforge.net for the latest release.
+
+Please read the ChangeLog of libmp3splt for more information.
+Some changes are implemented in libmp3splt, but reported here for convenience.
+
+Known issues :
+
+- translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
+
+#mp3splt version 2.5
+
+- done issues #40 and #85 - added minimum silence length parameter for auto adjust (mainly libmp3splt)
+- added minimum silence length for trim silence mode (minimum silence to trigger a trimming)
+(mainly libmp3splt)
+- done issue #12 - added option to output the full silence log useful to plot a graph
+(mainly libmp3splt)
+- implemented back the proxy feature with basic authentification - feature #50 (mainly libmp3splt)
+- added option to generate exactly the same input tags bytes using @O (mainly libmp3splt)
+- enhanced the CUE export to export the tags as REM comments and also the splitpoint names (libmp3splt)
+- fixed bug when detecting the input tags version - output had no tags when the input only had ID3v1
+(libmp3splt)
+- fixed bug: output tags versions was not equal to the input file tags versions when the user was
+setting custom tags without any @o to get the original tags (libmp3splt)
+- done issue #79 - added 0 to the number of digits to output in order to be able to support
+the old mp3splt output format (libmp3splt)
+- fixed bug #141 - when input file is a symlink and output directory is the one of the input file
+(libmp3splt)
+- fixed bug on mp3 trim silence scan: last frame was skipped (libmp3splt)
+- fixed bug #133 - updated GPLv2 COPYING file
+- fixed bug #142 - skipped splitpoints were handled wrong by '-c'
+
+#mp3splt version 2.4.3
+
+- added the trackjoin parameter for silence detection split: tracks shorter than trackjoin will be joined with others
+- fixed bug: removing TLEN id3v2 tag from the split files (libmp3splt)
+- fixed bug #3530488 - regression introduced with ogg multiple logical streams (libmp3splt)
+
+#mp3splt version 2.4.2
+
+- fixed error when ID3v2 was containing what appears a valid frame; make sure we skip the ID3v2 after looking for the first frames (libmp3splt)
+- added the shots parameter to silence detection
+(-p shots=INTEGER - minimum number of shots to be found as non silence after the silence)
+
+#mp3splt version 2.4.1
+
+- added minimum track length option for silence scan: 'trackmin' parameter to '-p' - closes #2393766
+- added option to set original tags when using 'replace tags in tags' - use of #t, #a, ... - closes #3407314
+- fixed #3399950 - regression on windows regarding the current working directory
+- fixed some regression regarding mp3splt v2.1c - removed some checks relative to the total
+- fixed #3385833 - don't apply debugging flags or warnings flags by default:
+added --enable-c-debug --enable-optimise --enable-extra-warnings
+- fixed #3424143 - added a small check for the -O option
+- added support for multiple ogg/vorbis logical streams (mail) (libmp3splt)
+- fixed mp3 frame mode with skippoint when skippoint too small (on the same frame as previous) (libmp3splt)
+- fixed several audacity labels issues (libmp3splt)
+- fixed inconsistency (extra 0 padding) between @n of -g and @n of -o (mail)
+time - we cannot rely on the total time - for example with concatenated mp3s (libmp3splt)
+
+#mp3splt version 2.4
+
+- added negative splitpoints support with EOF-min.sec[.0-99] (only works when the input is not seekable)
+- added trimming using silence detection with -r (use with -p th to set the threshold)
+- fixed bug #3034474: genre tag problem + original tags are now correctly copied, with two exceptions: (libmp3splt)
+* only one artist, album, title are supported
+* for mp3's, the total tracknumber is not yet supported
+- fixed windows bug to take translations from the current directory (+libmp3splt)
+- fixed windows bug with wide characters in directory path of executable (+libmp3splt)
+
+#mp3splt version 2.3a
+
+- fixed tracktype.org issue (libmp3splt)
+
+#mp3splt version 2.3
+
+- new '-G' option: set tags from filename regular expression
+- more translations (project mp3splt-gtk on transifex)
+- added genre tag to custom tags and to output format (libmp3splt)
+- support for the FILE attribute in CUE files - #1353726 (libmp3splt)
+- fixed CUE import bug - spaces at the end are now correctly wiped out (libmp3splt)
+- fixed bug #3114384: introduced back the 'file might be VBR' warning (libmp3splt)
+- fixed bug #3034474: genre tag problems (libmp3splt)
+- fixed ogg stream issues - #2861898 & #1078018 (libmp3splt)
+
+#mp3splt version 2.2.9
+
+- allow auto adjusting when splitting in equal parts
+- fixed bug #3028775 & #3028078: naming conventions for files > 100 minutes confuses sort (libmp3splt)
+- fixed bug #3025671: getting original ID3v2 tags was not working on Windows (libmp3splt)
+- fixed bug #2969223: 'invalid dir I:' (libmp3splt)
+- added > 2Gb support on Windows (libmp3splt)
+
+#mp3splt version 2.2.8
+
+- added '-E CUE_FILE' cue export option
+- added '-P' pretend to split option
+- added '-S SPLIT_NUMBER' split in equal time parts option
+- added replace tags in tags option with '-g': 'r%[@o,@N=1,@a=artist_@N]' outputs artists as 'artist_1', 'artist_2', ...
+- changed '-q' option not to output progress bar
+- fixed important problem with ogg comments not written in the output files (related to #2925104) (libmp3splt)
+- fixed bugs with symlink issues - #2913697 and #2943791 (libmp3splt)
+
+#mp3splt version 2.2.7a
+
+- fixed ogg streams stdin time mode bug (libmp3splt)
+
+#mp3splt version 2.2.7
+
+- added '-A AUDACITY_FILE' option for audacity labels support
+- fixed bug with wrong time on silence level detection for mp3 streams (libmp3splt)
+- fixed bug with sync error mode & output format (not creating output files) (libmp3splt)
+- fixed important bug with the 'rm' parameter - SPLT_SKIPPOINT in general (libmp3splt)
+- fixed issue with mp3 frame mode: frame mode is not any more enabled by default (libmp3splt)
+- fixed mp3 non seekable stdin bug (libmp3splt)
+- fixed bug #1078018 with ogg negative granulepos packets (libmp3splt)
+- fixed ogg streams bug #2801293 (libmp3splt)
+- both ID3v1 & ID3v2 are now written if the input file contains both (libmp3splt)
+- small adjustment on the mp3 seekable non frame mode & non seekable frame mode (libmp3splt)
+- removed unuseful 'frame mode enabled' message for dewrapping & sync error mode (libmp3splt)
+- fixed bug #2881113: crash when no genre (libmp3splt)
+- fixed cue mode bug when no PERFORMER or TITLE (libmp3splt)
+
+#mp3splt version 2.2.6a
+
+- fixed important regression bug with the gap parameter of auto adjust (libmp3splt)
+
+#mp3splt v. 2.2.6
+
+- multiple files split : split recursively files from directories
+- added internationalization support (gettext) + french & german translations
+- added patch for output format variables @u, @U, @l, @L (libmp3splt)
+- added support to output both ID3v1 and ID3v2 tags
+- fixed bug #2809816 with cue file : artist tags were the same (libmp3splt)
+- fixed important bug when detecting the total time : the last split file was shorter (libmp3splt)
+- replaced -1 & -2 with -T 1 & -T 2 + added -T 12 for both ID3v1 and ID3v2 output
+- by default, output tags 12 when using -g and no tags in input files
+- fixed compilation bug for libmp3splt detection to look for 'libmp3splt/mp3splt.h' instead of mp3splt.h (libmp3splt)
+- fixed uninstall hook for ogg symlinks
+- added oggsplt symlink to doc
+
+#mp3splt v. 2.2.5
+
+- added -x option to not write Xing header
+
+mostly libmp3splt (but important for mp3splt users) :
+- fixed bug with -g and multiple usages of @o (libmp3splt)
+- fixed a small bug with genre in -g 
+- Xing header is now written even if -n option is used (libmp3splt)
+- fixed bug with stdin & id3v2 & xing
+- fixed critical bug with overlap splitpoints not working (feature #1530782 => bug)
+- fixed critical bug with mp3 stdin (& framemode)
+- fixed some warning messages & added some more
+- fixed dewrap error message
+- fixed dewrap bug to not attempt to create output directories when '-d' option is used
+- fixed minor bug #2790952 : time mode creating an empty file (at the end)
+
+#mp3splt v. 2.2.4
+
+- fixed issue with CUE file not being imported correctly : \r and \n
+problem (bug #2778717)
+- fixed bug #2691576 - CUE file seg fault if no artist
+- fixed segfault when output format was empty
+- fixed bug with ID3v1 and '@N' (was 1,3,5,... instead of 1,2,3,...)
+- fixed time split with '0.0' was infinite looping
+- fixed empty output format '' seg fault
+- small fixes in the man page
+- re-enabled mp3splt ogg symlink configure option
+- added options @m,@M,@s,@S,@H,@h + no @h or @H in output filenames if hundreths are 0
+- added default custom tags as %[@o,@N=1]
+- print to stdout is now on stderr for the '-l' option, except for the filenames
+- added --with-mp3splt(-libraries|-includes)?, --disable-mp3splttest configure options
+- added overlapping split files with the -O option (feature request #1530782)
+
+# mp3splt v. 2.2.3
+
+- the default behaviour of the tags on the split files has changed :
+by default, we set the tags version of the file to split in the
+split files (for example if the file for split has ID3 version X, the
+tags in the split files will be ID3vX)
+- added -1 (force tags in output files to be ID3v1) and -2 (force tags in
+output files to be ID3v2) options
+- implemented query{search_string}(chosen_result_int) for the -c option :
+windows users should use this instead of -c query when searching using a
+"unicode" string
+- fixed all tags/filenames "unicode" encoding issues on windows
+- fixed small track issue in tags
+- fixed issue when the output is the same as the original file
+
+# mp3splt v. 2.2.2
+
+- added ID3v2 support (for known tags like title, artist, album, track
+number, ...)
+- added '@nX' to '-o' option to specify the number of digits (X) in the
+output track identifier number
+- added '-N' option for Not writing mp3splt.log file
+- added the '@N' variable when using the '-g' option for auto incrementing
+the track number in the tags
+- created a completely new windows installer allowing to install only some
+components and to uninstall only the installed files
+- added some more documentation about the 'off' parameter
+- updated to check for illegal characters in output filenames
+- fixed bug with mp3splt not searching for plugins in its directory on
+Windows (it will now search in the directory of the 'mp3splt' executable
+if we detect a path from the launch command and in the installation directory
+written in the registry)
+- fixed the zeroes not being added before the number when using @n
+- fixed small bug about '-Q' not working right
+
+# mp3splt v. 2.2.1
+
+- corrected the -g option to be more intuitive
+- fixed bug in the man page (from wrong '-t' to wrong '-g')
+- changed small usage error on '-g' option
+
+# mp3splt v. 2.2
+
+- mp3splt is now using libmp3splt
+- checks for compatibilities between options
+- added 'm-' for mp3 STDIN
+- possibility to specify the server and port for freedb search;
+(now using tracktype.org by default)
+
+Examples :
+query[search=cddb_cgi://tracktype.org/~cddb/cddb.cgi:80,get=cddb_cgi://tracktype.org/~
+query[get=cddb_protocol://freedb.org:8880]
+query[get=cddb_cgi://freedb.org/~cddb/cddb.cgi:80]
+
+- original id3v1 for mp3 tags are kept in the split files and also
+ogg vorbis tags
+- add custom tags with the new '-g' option
+
+Example of tags format :
+[@a=foo,@b=bar][@t=footitle,@n=3]%[@o,@b=special_album]
+In this example, the first split file will have the artist tag 'foo' and the
+album tag 'bar'; the second split file will have the title tag 'footitle'
+and the track number tag '3'; all the other files will have their original
+tags of the file to split with the album changed to 'special_album'.
+
+- '-o' option now creates the specified directories if '-d' option is not
+specified
+- added '-Q' option which enables the '-q' option and does not print
+anything to STDOUT
+- added experimental '-D' debug mode option
+- added '-i' option for counting the number of silence splitpoints
+- also added '-h' option which shows a small usage
+
+Please read man page for more detail.
+
+//////////////////////////////////////////	
+------------------------------------------	
+Release break up	
+------------------------------------------	
+//////////////////////////////////////////	
+
+# Mp3splt v. 2.1
+
+---------------------------------------------------------------
+NOTE for people who already used mp3splt
+
+From this version some important changes took place:
+
+- A new option (-p) has been introduced to read
+user parameters for -s and -a options, both without
+arguments now. Not using -p is equivalent to use
+-s auto or -a auto in the old version.
+
+NO:  mp3splt -s auto file.mp3
+YES: mp3splt -s file.mp3
+
+NO:  mp3splt -s off=1,rm file.mp3
+YES: mp3splt -s -p off=1,rm file.mp3
+
+- Threshold parameter (th) is now in dB. It's always
+a negative number between -96 dB and 0 dB.
+
+Please read man page for more detail
+---------------------------------------------------------------
+
+- bug fixed (not exatctly a bug of mp3splt, but let's call it like this...):
+  "correct" handling of misplaced Xing header of CRC-protected mp3
+- feature improved: -p option introduced. Some order in the caos... ;-)
+- feature improved: threshold is now in dB
+- feature improved: sound level showed during silence detection
+- feature improved (Thanks Marco): when using -q, no more check
+  on presence of ALBW or MP3WRAP string.
+- sources (Thanks Marco): each error is different with a own ret number.
+
+# Mp3splt v. 2.0e
+
+- bug fixed: filenamed specified with -o was truncated after 10 chars.
+- bug fixed: max number of albums per search increased to 512.
+
+# Mp3splt v. 2.0d
+
+- bug fixed: long filename for performer in CUE file caused seg fault
+- bug fixed: bad parsing of CUE files (again.. ;), for global artist and album
+- bug fixed: "EOF" string introduced to reach end of file. Now minimum
+  splitpoint number changed back to 2.
+
+# Mp3splt v. 2.0c
+
+- feature improved: number of digits for @n number optimized.
+- feature improved: new parameter ("min") for -s to specify a minimum length.
+- feature improved: number of found silence points displayed during process.
+- important bug fixed: corrected CUE time parsing and hundredths calculation.
+- bug fixed: answering 'n' to -e option question, didn't abort ;-)
+
+# Mp3splt v. 2.0
+
+---------------------------------------------------------------
+NOTE for people who already used mp3splt
+
+From this version some important changes took place:
+
+- to specify output filename:
+NO:  mp3splt file.mp3 0.0 1.0 output.mp3
+YES: mp3splt file.mp3 0.0 1.0 -o output.mp3
+
+- silence option with user threshold and track number:
+NO:  mp3splt -s 0.45 file.mp3 10
+YES: mp3splt -s th=0.45,nt=10 file.mp3
+
+- "mp3splt.log" file with -s option changed format, old logs
+are now incompatible with new version, and viceversa.
+
+Please read man page for more detail
+---------------------------------------------------------------
+
+- new feature added: new option -k, for input not seekable.
+- feature improved: now it's allowed to specify STDIN and STDOUT ("-")
+- feature improved: now also parameters for -s option must be specified in
+  unic argument using th, nt, off, rm. Keep in order! ;-)
+- feature improved: it is possible to remove silence with -s option. ("rm")
+- feature improved: new parameter ("off") for -s and -a to adjust splitpoint
+- feature improved: mp3info() completely rewritten using mad library.
+- feature improved: more than one file can be specified on command line
+- feature improved: now -o option extended to all uses for filename format.
+- feature improved: possibility to specify only one split time to mean to
+  split from time to end of file.
+- feature improved: no more [outputfile], you always have to use -o option,
+  even for one single file.
+- "bug" fixed: original vorbis comment preserved for all split files.
+- bug fixed (Thanks Lukasz Czarniecki): now performer for cue is taken in
+  account for ID3.
+- bug fixed: better handling of files with Xing header. Also "bytes" field is taken
+- bug fixed: corrected dirty bug for cue files with minutes over 99.
+- bug fixed: missing break instruction in a switch() statement ;-)
+- bug fixed: error notice if input and output files are the same file.
+- bug fixed: MAXTRACKS redefined to 1000 (do you really want to split more
+  than 1000 files?? ;-)
+
+# Mp3splt v. 1.9
+
+NOTE: From this version an important change for auto-adjust took place:
+Don't use -sc any more to adjust splitpoints wiith cddb, but -a and -c:
+NO:  mp3splt -sc file.cddb file.mp3
+YES: mp3splt -a auto -c file.cddb file.mp3
+YES: mp3splt -a gap=20,th=1.0 -c file.cddb file.mp3
+Please read man page for more details.
+
+- new feature added: -t option introduced. To split by time length.
+- feature improved: -a introduced instead of -sc, now can be used to adjust also in manual mode.
+- feature improved: -a option allows to specify threshold and gap for all uses.
+- feature improved: -s option now allows to specify a threshold value.
+- feature improved: output file can be "-" to indicate standard out (stdout).
+- feature improved: now "End of file reached" displayed.
+- feature improved: flength() now more elegant (and correct).
+- bug fixed: CUE files parsing was wrong, now works better.
+- bug fixed: when outputfile was specified, ID3 had "From: To:" blank
+
+# Mp3splt v. 1.8
+
+- new feature added: -d option introduced. To put output files in a directory.
+- new feature added: -o option introduced. For a user output filename creation with c.
+- feature improved: output filenames now are automatically zero padded for a correct order.
+- feature improved: no limits to minutes and c_seconds() more readable.
+- feature improved: now performer field of cue files is saved for use with @p.
+- bug fixed: cleanstring now cleans '\r' for cddb and cue file in DOS format.
+- bug fixed: fixed search of xing header for variable position of xing informations.
+- bug fixed: cddb files parsing now understands multi-line song titles.
+- bug fixed: smarter option handler, now options can be specified at any point.
+- bug fixed: better error management, splt_abort() introduced.
+- bug fixed: now serial numbers of ogg files are a bit more randomic (were all the same :D)
+
+# Mp3splt v. 1.7
+
+- new important feature added: -s option introduced. To split mp3 
+  and ogg files using silence detection.
+- new important feature added: now it is possible to autoadjust  
+  splitpoints using -sc option with silence detection.
+- new feature added: -e option introduced. To split concatenated mp3 
+  or damaged wrapped files.
+- bug fixed: in ogg.c, fixed find_end_cutpoint() for multiple 
+  split points. s->intialgranpos is now correct.
+
+# Mp3splt v. 1.6
+Not public. Experimental split of ogg files using silence detection.
+
+# Mp3splt v. 1.5
+Not public. Experimental split of mp3 files using silence detection.
+
+# Mp3splt v. 1.4
+
+- new important feature added: Ogg files now supported! You can split them like mp3.
+- new feature added: multiple time split can be specified in command line.
+- new feature added: noID3 option added. If you need clean files.
+- feature improved: in cddb mode, last track has end = -1; split() now understands what to do.
+- bug fixed: added check for AlbumWrap files to prevent infinite while loop when file is damaged.
+- bug fixed: in cddb query, added mem clean for dest.hostname.
+- bug fixed: cleanstring() modified to trim strings for cddb.
+- bug fixed: getword() redefined (another time ;) with the possibility to give errors.
+- bug fixed: little bug in filename creation if file did not contain .mp3 (rare case)
+- bug fixed: now handles config file open failure: standard connection without proxy.
+- optimizations:
+   + IMPORTANT optimization of split(), now faster using fread/fwrite instead of fgetc/fputc, with
+      no len information, instead use of feof() to understand end of stream.
+   + less importance to mp3file.len, only for Total time
+   + IMPORTANT code clean-up: all functions are now reentrant, no more global varables, instead large
+      use of state structures to fill informations on split process.
+   + findhead() optimized: valid header found is saved in mp3_state, 
+     no redundant call of getword() 
+   + mp3splt.c source cleaned. All mp3 related functions exported to mp3.c. 
+   + changed mp3info() to have similar behaviour as ogginfo().
+   + improved output informations of split process. (and less intro lines...)
+   + no more encoder guessing (no use). Instead channels informations (same as ogg)
+   + standard ID3 title field has old filename information
+   + id3option removed! I think it was useless and dirty for mp3splt. 
+     Use other better programs to edit id3!
+   + automatic filename creation now discards directory informations. 
+     File will be created in current directory
+ 
+# Mp3splt v. 1.3
+
+- feature improved: added support for 2GB files, you need fseeko(). 
+  (This time it's true, at least in Linux version ;)
+- feature improved: Lame header supported. I don't know if will keep 
+  this feature. It forces frame mode also for CBR!
+- bug fixed: Xing header has now correct informations on all 
+  fields (I forgot bytes field :p)
+- bug fixed: now id3option is always ignored when in quiet mode.
+  Even if you specify -qi
+- bug fixed: check for all mp3wrap case combinations. People should 
+  not put his own mp3wrap string, grr...
+- bug fixed (Thanks ~WHEREamI): wrong coefficient in getid3v2(). 
+  Bug would appear for ID3 bigger than 2^21 bytes.
+- bug fixed: in getopt(); now -c option can specified after filename. 
+  (mp3splt file.mp3 -c f.cddb)
+- bug fixed: MAXSYNC redefined to 300. This should be safe also for Mp3Wrap files.
+- optimizations:
+  + mp3 informations optimized: Informations are printed before split 
+    process starts. Total time is only
+    minutes.seconds (useful when splitting). No more vbr average 
+    bitrate (useless), instead
+    Total time for VBR with a Xing Header printed. Sync errors printed 
+    at the end of process.
+  + Check on time format before starting to analyse mp3 file.
+  + Added other checks for header validity.
+  + Some code clean-up
+
+# Mp3splt v. 1.2
+
+- new feature added: now mp3splt supports files created with Mp3Wrap v. 0.5 or higher that uses CRC
+- new feature added: now mp3splt supports .cue files! Follow the 
+  instructions in man page.
+- new feature added (Thanks François Revol): list option introduced for wrap mode
+  Both with Mp3Wrap and AlbumWrap it only lists files without extraction.
+- new feature added: quiet option introduced. Allows to run mp3splt 
+  without any kind of user interaction.
+- feature improved: VBR split files now begin with a Xing header
+- feature improved (Thanks François Revol): added support of BeOS platform
+- feature improved: frame mode warns about sync errors. Too many could mean a not valid mp3 file.
+- feature improved: in wrap mode, now searches for mp3wrap index for 16384 bytes. This should be enough.
+- feature improved: added check for "mp3wrap" string in lower case for mp3wrap file identification.
+- bug fixed: ID3v2 detection is now compatible with newer versions of ID3v2 tags.
+- bug fixed: wrong error notice when split failed and not in cddb mode
+- bug fixed: cleanstring() added also for id.artist field
+- bug fixed: added check for "Search" string len when querying CDDB. This fixed another mysterious
+  bug in WIN32 version when using proxy authentication (not all Windows version).
+  My fake getpass() didn't give the possibility to enter the Search keyword when querying CDDB.
+- bug fixed: in WIN32 version, bug in proxy authentication due to missing mem clean
+- optimizations:
+   + some IMPORTANT opt. of findhead(), makehead() and mp3info(). Lot of redundant
+      code cleaned. Now mp3splt is 5 time faster when it searches for a valid header.
+   + now mp3splt notices file absence before querying CDDB.
+
+# Mp3splt v. 1.1
+
+- feature improved: when splitting using CDDB, ID3v1 tag contains track number
+- feature improved: higher precision with hundreds selection
+- bug fixed: now program automatically discards invalid characters when querying CDDB
+
+# Mp3splt v. 1.0
+
+- package has now the configure script to compile sources under several platforms
+- each source file is now independent for easy mantainance
+- feature improved: percentage added also for cddb mode
+- bug fixed: added check for file wrapped with Windows using '\' for dirs.
+- bug fixed: sometimes wrong use of strncpy() for artist field
+- bug fixed: optimization of getword()
+- bug fixed: fixed compile error for some distributions, included netinet/in.h
+- bug fixed: memory clear for login()
+
+# Mp3splt v. 0.9 beta
+
+- New important feature introduced:
+  Now splitpoints and filenames can be determined automatically by querying CDDB.
+  You can use this feature with  -c option with two possibilities:
+  1) Directly contact Freedb server, search the wanted album, and get informations. (-c query)
+  2) Get informations from a local cddb file. (Which must be specified after -c).
+  Please read man page for more infos and for some warning about using this option.
+- proxy support added
+- vbr splitting improved: FPS (frame per second) calculation more 
+  precise (Thanks Robert Hegemann)
+- wrap option improved: now can split archive where files are wrapped 
+  in subfolders
+- bug fixed: now program exits when an invalid option is specified.
+- bug fixed: now getword() is not invoked when file is not long enough.
+- bug fixed: if begin and first valid frame were at 0, program always 
+  discarded the first frame.
+- bug fixed: in frame mode program jumped over the first byte because
+  of wrong initialization of begin variable.
+- some code optimizations
+
+# Mp3splt v. 0.8 beta
+Not public. Experimental use of cddb.
+
+# Mp3splt v. 0.7 beta
+
+- feature improved: now minutes can be up to 9999
+- bug fixed: added check on file integrity in wrap option
+- bug fixed: probable bug for bad minutes[] variable definition
+- bug fixed: now if filename does not contain ".mp3" is not truncated
+
+# Mp3splt v. 0.6 beta
+
+- New feature added: Wrap mode introduced.
+
+	Mp3splt v. 0.6 will automatically detect wrap method between:
+
+    +	Mp3Wrap: you can now split a mp3 file created with Mp3Wrap
+	Mp3Wrap is an utility that joins two or more mp3 files
+	in one large mp3, without loosing filename, and ID3
+	informations. Usally mp3wrap files end with .._MP3WRAP.mp3
+	With mp3splt you can now split albums in few seconds!
+	Mp3Wrap is FAST, CLEAN, and of course FREE (GPL).
+	You can find it at: http://mp3wrap.sourceforge.net
+
+    +	AlbumWrap: mp3splt is compatible also with this utility, which is
+	quite used on the Internet. You can split mp3 files created
+	with this utility. Usually have filenames like .._ALBW.mp3
+
+- bug fixed: file creation failure for filenames shorter than 4 letters
+- bug fixed: anomalous behaviour with empty files
+
+# Mp3splt v. 0.5 beta
+Not public. Experimental split of Mp3Wrap files
+
+# Mp3splt v. 0.4 beta
+
+- New feature added: min.sec[.tenth] introduced.
+  Higher precision to find split points with 1/10 of second.
+- bug fixed: large files up to 4 GB are now supported
+- bug fixed: better check on length of ID3's artist field
+- bug fixed: added another check on time format in command line
+- documentation: man page added to package with complete informations
+
+# Mp3splt v. 0.3 beta
+
+- New feature added: output file can be specified by user
+- Now ID3 has informations on split points (in Album field)
+- bug fixed: better check on minute format in command line
+- bug fixed: VBR average bitrate was wrong
+
+# Mp3splt v. 0.2 beta
+
+- Many bugs and errors corrected. Now in beta testing.
+- bug fixed: problems with searching a valid header
+
+# Mp3Splt v. 0.2 alpha2
+
+- bug fixed: more efficient frame searching
+
+# Mp3splt v. 0.2 alpha1
+
+- Variable bitrate splitting now supported!
+- "Frame mode" introduced. More precise splitting
+- ID3v1 detection avoid to write 2 or more tags
+- ID3v2 detection increases speed for search of first valid header
+- Now files end with a complete frame
+- Other infos on mp3 (i.e. Frequence, Encoder Guess, etc.)
+- important bug fixed: wrong bitrate detection
+- bug fixed: time format in command line now accepts min > 99
+- bug fixed: added many checks of mp3 validity
+- buf fixed: wrong id3v1 creation with long strings
+
+# Mp3splt v. 0.1b
+
+- More clean mp3 files (new split files begin only with a valid header)
+- bugs fixed
+
+# Mp3splt v. 0.1
+
+- Automatic bitrate detection
+- ID3 Writing (Auto or Manual)
+- bugs fixed
+
+# Mp3splt v. 0.0
+
+- first release

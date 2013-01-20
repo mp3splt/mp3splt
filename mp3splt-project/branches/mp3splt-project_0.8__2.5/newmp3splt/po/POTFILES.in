@@ -1,0 +1,10 @@
+# List of files which contain translatable strings.
+src/mp3splt.c
+src/print_utils.c
+src/options_manager.c
+src/options_checker.c
+src/freedb.c
+src/utils.c
+src/options_parsers.c
+src/windows_utils.c
+src/data_manager.c

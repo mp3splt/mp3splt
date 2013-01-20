@@ -1,0 +1,33 @@
+Don't read this !
+
+_***_Libmp3splt and Mp3splt-gtk roadmap:
+
+*Splitpoints tab:
+ -put splitpoints every X time (useful for preview, instead of time split)
+ -put a group column to split in a group
+ -save splitpoints on exit
+
+*Cddb & Cue tab:
+ -see if we can detect FILE from .cue files and add it to the player tab
+ -option to remove splitpoints or not when putting them in the splitpoints tab
+
+*Split files tab:
+ -save split files for the next session
+ -keep all split files : make difference from one split to another
+ with a date column or a coloured column
+ (double click the coloured column selects all split files from the same split)
+ -make groups for split files as folders on disk
+ (if the split directory changed, remove groups and files from the
+ split files tab)
+ -drag'n'drop rows to move from one group to another
+
+*Freedb tab:
+ -option to remove splitpoints or not when putting them in the
+ splitpoints tab
+ -option to put artist, title automatically on the entry when we click
+ on the freedb tab
+
+*Other:
+ -library documentation and user manual for mp3splt-gtk
+ -export splitpoints in cue files
+
