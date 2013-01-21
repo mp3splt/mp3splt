@@ -633,6 +633,14 @@ typedef enum {
    * Default is #SPLT_FALSE
    */
   SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE,
+  /**
+   * Defines the encoding of the ID3V2 tags.
+   *
+   * Int option that can take the values from #splt_id3v2_encoding.
+   *
+   * Default is #SPLT_ID3V2_UTF16
+   */
+  SPLT_OPT_ID3V2_ENCODING,
 } splt_options;
 
 /**
@@ -673,6 +681,21 @@ typedef enum {
    */
   SPLT_OPTION_LENGTH_MODE,
 } splt_split_mode_options;
+
+typedef enum {
+  /**
+   * Latin1 (ISO-8859-1) encoding for ID3V2 tags for option #SPLT_OPT_ID3V2_ENCODING
+   */
+  SPLT_ID3V2_LATIN1,
+  /**
+   * UTF-8 encoding for ID3V2 tags for option #SPLT_OPT_ID3V2_ENCODING
+   */
+  SPLT_ID3V2_UTF8,
+  /**
+   * UTF-16 encoding for ID3V2 tags for option #SPLT_OPT_ID3V2_ENCODING
+   */
+  SPLT_ID3V2_UTF16,
+} splt_id3v2_encoding;
 
 /**
  * @brief Values for the #SPLT_OPT_OUTPUT_FILENAMES option

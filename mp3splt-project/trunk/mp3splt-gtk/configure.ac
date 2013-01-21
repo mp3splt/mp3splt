@@ -318,7 +318,7 @@ AC_ARG_WITH([no_images_dir],
 AC_ARG_ENABLE(c-debug, [AC_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
     [enable_c_debug=$enableval],[enable_c_debug="no"])
 if test "x$enable_c_debug" = xyes;then
-  CFLAGS="$CFLAGS -g"
+  CFLAGS="$CFLAGS -g -Wall"
 fi
 
 AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--enable-optimise],[ Enable O2 optimise. ]) ],

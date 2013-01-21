@@ -639,60 +639,59 @@ static void splt_mp3_delete_existing_frames(struct id3_tag *id, const char *fram
 }
 
 static void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
-    const char *frame_type, int field_number, const char *content, int *error)
+    const char *frame_type, int field_number, const char *content, int *error,
+    int id3_field_textencoding)
 {
+  if (!content) { return; }
+
   struct id3_frame *id_frame = NULL;
   id3_ucs4_t *field_content = NULL;
   union id3_field *id_field = NULL;
 
-  if (content)
+  splt_mp3_delete_existing_frames(id, frame_type);
+
+  id_frame = id3_frame_new(frame_type);
+  if (!id_frame)
   {
-    splt_mp3_delete_existing_frames(id, frame_type);
-
-    id_frame = id3_frame_new(frame_type);
-    if (!id_frame)
-    {
-      goto error;
-    }
-
-    id_field = id3_frame_field(id_frame, field_number);
-
-    id3_field_settextencoding(id3_frame_field(id_frame, 0),
-        ID3_FIELD_TEXTENCODING_UTF_16);
-
-    field_content = id3_utf8_ucs4duplicate((signed char *)content);
-    if (! field_content)
-    {
-      goto error;
-    }
-
-    //1 is usually a string list
-    if (field_number == 1)
-    {
-      if (id3_field_addstring(id_field, field_content) == -1)
-      {
-        goto error;
-      }
-    }
-    //the comment is a full string: field number 3
-    else if (field_number == 3)
-    {
-      if (id3_field_setfullstring(id_field, field_content) == -1)
-      {
-        goto error;
-      }
-    }
-
-    free(field_content);
-    field_content = NULL;
-
-    if (id3_tag_attachframe(id, id_frame) == -1)
-    {
-      goto error;
-    }
-
-    id3_frame_delete(id_frame);
+    goto error;
   }
+
+  id_field = id3_frame_field(id_frame, field_number);
+
+  id3_field_settextencoding(id3_frame_field(id_frame, 0), id3_field_textencoding);
+
+  field_content = id3_utf8_ucs4duplicate((signed char *)content);
+  if (! field_content)
+  {
+    goto error;
+  }
+
+  //1 is usually a string list
+  if (field_number == 1)
+  {
+    if (id3_field_addstring(id_field, field_content) == -1)
+    {
+      goto error;
+    }
+  }
+  //the comment is a full string: field number 3
+  else if (field_number == 3)
+  {
+    if (id3_field_setfullstring(id_field, field_content) == -1)
+    {
+      goto error;
+    }
+  }
+
+  free(field_content);
+  field_content = NULL;
+
+  if (id3_tag_attachframe(id, id_frame) == -1)
+  {
+    goto error;
+  }
+
+  id3_frame_delete(id_frame);
 
   return;
 
@@ -748,25 +747,50 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
     id3_tag_options(id, ID3_TAG_OPTION_ID3V1, 0);
   }
 
-  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TITLE, 1, title, error);
+  int id3v2_encoding = splt_o_get_int_option(state, SPLT_OPT_ID3V2_ENCODING);
+  int id3_field_textencoding;
+  switch(id3v2_encoding)
+  {
+    case SPLT_ID3V2_LATIN1:
+      id3_field_textencoding = ID3_FIELD_TEXTENCODING_ISO_8859_1;
+      break;
+    case SPLT_ID3V2_UTF8:
+      id3_field_textencoding = ID3_FIELD_TEXTENCODING_UTF_8;
+      break;
+    case SPLT_ID3V2_UTF16:
+      id3_field_textencoding = ID3_FIELD_TEXTENCODING_UTF_16;
+      break;
+    default:
+      id3_field_textencoding = ID3_FIELD_TEXTENCODING_UTF_16;
+      break;
+  }
+
+  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TITLE, 1, title, error, 
+      id3_field_textencoding);
   if (*error < 0) { goto error; }
-  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_ARTIST, 1, artist, error);
+  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_ARTIST, 1, artist, error,
+      id3_field_textencoding);
   if (*error < 0) { goto error; }
-  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_ALBUM, 1, album, error);
+  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_ALBUM, 1, album, error,
+      id3_field_textencoding);
   if (*error < 0) { goto error; }
-  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_YEAR, 1, year, error);
+  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_YEAR, 1, year, error,
+      id3_field_textencoding);
   if (*error < 0) { goto error; }
-  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_COMMENT, 3, comment, error);
+  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_COMMENT, 3, comment, error,
+      id3_field_textencoding);
   if (*error < 0) { goto error; }
   if (track != -1 && track != -2)
   {
     char track_str[255] = { '\0' };
     snprintf(track_str, 254, "%d", track);
-    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1, track_str, error);
+    splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1, track_str, error,
+        id3_field_textencoding);
     if (*error < 0) { goto error; }
   }
 
-  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1, genre, error);
+  splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1, genre, error,
+      id3_field_textencoding);
   if (*error < 0) { goto error; }
 
   //get the number of bytes needed for the tags

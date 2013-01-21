@@ -776,6 +776,8 @@ char *splt_su_convert(const char *str, splt_str_format format, int *error)
       }
       return new_str;
       break;
+    default:
+      break;
   }
 
   return NULL;

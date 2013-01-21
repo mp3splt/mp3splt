@@ -132,7 +132,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   while ((option = getopt(data->argc, data->argv,
-          "m:O:Dvifkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:F:")) != -1)
+          "m:O:Dvifkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:F:C:")) != -1)
   {
     switch (option)
     {
@@ -156,8 +156,7 @@ int main(int argc, char **orig_argv)
         break;
       case 'T':
         opt->T_option_value = atoi(optarg);
-        mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION,
-            opt->T_option_value);
+        mp3splt_set_int_option(state, SPLT_OPT_FORCE_TAGS_VERSION, opt->T_option_value);
         opt->T_option = SPLT_TRUE;
         break;
       case 'D':
@@ -216,6 +215,22 @@ int main(int argc, char **orig_argv)
         mp3splt_set_int_option(state, SPLT_OPT_TAGS, SPLT_CURRENT_TAGS);
         opt->c_option = SPLT_TRUE;
         opt->cddb_arg = strdup(optarg);
+        break;
+      case 'C':
+        ;
+        int intarg = atoi(optarg);
+        if (intarg == 8)
+        {
+          mp3splt_set_int_option(state, SPLT_OPT_ID3V2_ENCODING, SPLT_ID3V2_UTF8);
+        }
+        else if (intarg == 16)
+        {
+          mp3splt_set_int_option(state, SPLT_OPT_ID3V2_ENCODING, SPLT_ID3V2_UTF16);
+        }
+        else if (intarg == 1)
+        {
+          mp3splt_set_int_option(state, SPLT_OPT_ID3V2_ENCODING, SPLT_ID3V2_LATIN1);
+        }
         break;
       case 'P':
         opt->P_option = SPLT_TRUE;
