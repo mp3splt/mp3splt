@@ -1,4 +1,4 @@
-EXTRA_DIST = Doxyfile.in
+EXTRA_DIST = Doxyfile.in empty_footer.html
 
 if HAVE_DOXYGEN
 html: doc
