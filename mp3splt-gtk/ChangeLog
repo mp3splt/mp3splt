@@ -4,6 +4,13 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.8.1
+
+- fixed important bug: application was crashing when pushing the split button without any
+splitpoint (libmp3splt)
+- fixed important bug: split by time was in hundreths of seconds instead of seconds
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.8
 
 - added tags edition from the splitpoints table - closes feature #92
