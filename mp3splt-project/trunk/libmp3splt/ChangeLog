@@ -2,6 +2,11 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.8.1
+-------------------------------------------------------------
+
+- fixed a bug - was crashing when removing tags from skippoints
+
 libmp3splt version 0.8
 -------------------------------------------------------------
 

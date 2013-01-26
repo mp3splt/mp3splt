@@ -7,6 +7,10 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.5.1
+
+- fixed a bug when removing the tags from skippoints (libmp3splt)
+
 #mp3splt version 2.5
 
 - done issues #40 and #85 - added minimum silence length parameter for auto adjust (mainly libmp3splt)

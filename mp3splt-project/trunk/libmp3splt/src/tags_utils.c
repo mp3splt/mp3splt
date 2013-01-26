@@ -80,6 +80,8 @@ static splt_tags *splt_tu_duplicate_tags(splt_state *state, splt_code *error, in
 {
   *tags_number = 0;
 
+  if (state->split.tags_group == NULL) { return NULL; }
+
   int total_tags = state->split.tags_group->real_tagsnumber;
   if (total_tags == 0) { return NULL; }
 

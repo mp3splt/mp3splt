@@ -123,7 +123,7 @@ void put_options_from_preferences(ui_state *ui)
       case SELECTED_SPLIT_TIME:
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
         mp3splt_set_long_option(ui->mp3splt_state, SPLT_OPT_SPLIT_TIME,
-            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_time)));
+            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_time)) * 100);
         break;
       case SELECTED_SPLIT_EQUAL_TIME_TRACKS:
         mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_LENGTH_MODE);
