@@ -66,9 +66,7 @@ int main(int argc, char **orig_argv)
 
   main_data *data = create_main_struct(argc, orig_argv);
 
-#ifdef ENABLE_NLS
-
-# ifdef __WIN32__
+#ifdef __WIN32__
   char mp3splt_uninstall_file[2048] = { '\0' };
   DWORD dwType, dwSize = sizeof(mp3splt_uninstall_file) - 1;
   SHGetValue(HKEY_LOCAL_MACHINE,
@@ -98,13 +96,22 @@ int main(int argc, char **orig_argv)
     }
   }
 
+# ifdef ENABLE_NLS
   bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, "translations");
   bindtextdomain(LIBMP3SPLT_WITH_SONAME, "translations");
-
 # else
+  #error No NLS detected
+# endif
+
+#else
+
+# ifdef ENABLE_NLS
   bindtextdomain(MP3SPLT_GETTEXT_DOMAIN, LOCALEDIR);
 # endif
 
+#endif
+
+#ifdef ENABLE_NLS
   bind_textdomain_codeset(MP3SPLT_GETTEXT_DOMAIN, "UTF-8");
 #endif
 

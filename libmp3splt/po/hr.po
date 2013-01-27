@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-01-16 23:32+0100\n"
+"POT-Creation-Date: 2013-01-26 22:57+0100\n"
 "PO-Revision-Date: 2012-04-15 12:44+0000\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -568,73 +568,73 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: plugins/mp3.c:1186
+#: plugins/mp3.c:1210
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1282
+#: plugins/mp3.c:1306
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr " info: nađeno Xing ili Info zaglavlje. Prebacujem u način okvira... \n"
 
-#: plugins/mp3.c:1420
+#: plugins/mp3.c:1444
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " info: MPEG %d Layer %d - %d Hz - %s"
 
-#: plugins/mp3.c:1428
+#: plugins/mp3.c:1452
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - NAČIN OKVIRA NS"
 
-#: plugins/mp3.c:1432
+#: plugins/mp3.c:1456
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - NAČIN OKVIRA"
 
-#: plugins/mp3.c:1437
+#: plugins/mp3.c:1461
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d Kb/s"
 
-#: plugins/mp3.c:1442
+#: plugins/mp3.c:1466
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1450 plugins/ogg.c:132
+#: plugins/mp3.c:1474 plugins/ogg.c:132
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Ukupno vrijeme: %dm.%02ds"
 
-#: plugins/mp3.c:2769
+#: plugins/mp3.c:2793
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Otkrivrna datoteka je stvorena sa: Mp3Wrap i. %c.%c\n"
 
-#: plugins/mp3.c:2807
+#: plugins/mp3.c:2831
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Provjera integriteta datoteke: CRC izračunavanje, molim pričekajte..."
 
-#: plugins/mp3.c:2826
+#: plugins/mp3.c:2850
 msgid " OK\n"
 msgstr " U redu\n"
 
-#: plugins/mp3.c:2845
+#: plugins/mp3.c:2869
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Otkrivrna datoteka je stvorena sa: AlbumWrap\n"
 
-#: plugins/mp3.c:2867
+#: plugins/mp3.c:2891
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Ukupno datoteka: %d\n"
 
-#: plugins/mp3.c:3285
+#: plugins/mp3.c:3309
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " upozorenje: stdin '-' trebao bi biti mp3 stream.\n"
 
-#: plugins/mp3.c:3312
+#: plugins/mp3.c:3336
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " Obrađeno %lu okvira - Greška usklađivanja: %lu\n"
