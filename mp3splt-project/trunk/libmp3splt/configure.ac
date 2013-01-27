@@ -327,6 +327,7 @@ plugins/Makefile
 test/Makefile
 m4/Makefile
 doc/Makefile
+doc/examples/Makefile
 po/Makevars.version])
 
 AC_OUTPUT
