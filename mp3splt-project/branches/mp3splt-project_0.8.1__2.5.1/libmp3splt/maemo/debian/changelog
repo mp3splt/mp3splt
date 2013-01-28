@@ -1,0 +1,24 @@
+libmp3splt (0.5.7a-maemo4) stable; urgency=low
+
+  * Cleanup of debian directory.
+
+ -- Bruce Forsberg <bruce.forsberg@gmail.com>  Sat, 31 Oct 2009 12:52:07 -0700
+
+libmp3splt (0.5.7a-maemo3) stable; urgency=low
+
+  * Fix mp3.c. Don't allow genre to exceed genre array.
+
+ -- Bruce Forsberg <bruce.forsberg@gmail.com>  Sat, 17 Oct 2009 12:52:07 -0700
+
+libmp3splt (0.5.7a-maemo2) stable; urgency=low
+
+  * Fix debian directory.
+
+ -- Bruce Forsberg <bruce.forsberg@gmail.com>  Sat, 10 Oct 2009 12:52:07 -0700
+
+libmp3splt (0.5.7a-maemo1) stable; urgency=low
+
+  * Port of mp3splt library mp3splt.sourceforge.net.
+
+ -- Bruce Forsberg <bruce.forsberg@gmail.com>  Sat, 26 Sep 2009 12:52:07 -0700
+

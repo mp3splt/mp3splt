@@ -1,0 +1,268 @@
+NORMAL MODE
+**************************
+
+  MP3 FILES
+  ----------------------------
+
+  Frame Mode (VBR file)
+  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+  OK:
+
+  - EOF with tags version of input file
+  - no tags (-n)
+  - tags v1 (-T 1)
+  - tags v2 (-T 2)
+  - tags v1 & v2 (-T 12)
+  - no xing (-x)
+  - m3u file (-m)
+  - output directory (-d)
+  - custom tags (-g)
+  - overlap splitpoints (-O)
+  - stdin : input not seekable (-k)
+  - output filename (-o) + create directories
+  - stdout (+ multiple splitpoints & EOF)
+  - no tags in input file (+ -g option)
+  - pretend
+  - cue export
+  - pretend + cue export
+  - pretend + m3u
+  - cue export + overlap
+    (TODO: add warning when export + overlap)
+  - cue export + custom tags
+
+  NOT DONE:
+
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
+  - don't create 'mp3splt.log' file (-N)
+  - pretend + auto adjust
+
+  Non Frame Mode (CBR file)
+  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+  OK:
+  - EOF with tags version of input file
+  - no tags (-n)
+  - tags v1 (-T 1)
+  - tags v2 (-T 2)
+  - tags v1 & v2 (-T 12)
+  - overlap splitpoints (-O)
+  - stdout (+ multiple splitpoints & EOF)
+  - stdin : input not seekable (-k)
+  - pretend
+  - cue export
+  - pretend + cue export
+  - cue export + overlap
+
+  NOT DONE:
+  - no xing (-x)
+  - m3u file (-m)
+  - output directory (-d)
+  - custom tags (-g)
+  - output filename (-o) + create directories
+  - no tags in input file (+ -g option)
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
+  - don't create 'mp3splt.log' file (-N)
+  - pretend + auto adjust
+
+TIME MODE
+**************************
+
+  MP3 FILES
+  ----------------------------
+
+  Frame Mode (VBR file)
+  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+  OK:
+  - EOF & tags version of input file
+  - no tags (-n)
+  - tags v1 (-T 1)
+  - tags v2 (-T 2)
+  - tags v1 & v2 (-T 12)
+  - no xing (-x)
+  - m3u file (-m)
+  - output directory (-d)
+  - custom tags (-g)
+  - overlap splitpoints (-O)
+  - stdin : input not seekable (-k)
+  - output filename (-o) + create directories
+  - stdout (+ multiple splitpoints & EOF)
+  - pretend
+  - cue export + overlap
+  - pretend + cue export
+
+  IN PROGRESS:
+
+  #TODO: BUG: splitpoint starting at 0 ?
+  #TODO: BUG2 - bad CUE filename reported at the end ? (probably fake)
+  - cue export
+
+  NOT DONE:
+  - no tags in input file (+ -g option)
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
+  - don't create 'mp3splt.log' file (-N)
+  - pretend + auto adjust
+
+
+  Non Frame Mode (CBR file)
+  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+  NOT DONE:
+  - with tags version of input file
+  - no tags (-n)
+  - tags v1 (-T 1)
+  - tags v2 (-T 2)
+  - tags v1 & v2 (-T 12)
+  - no xing (-x)
+  - m3u file (-m)
+  - output directory (-d)
+  - custom tags (-g)
+  - overlap splitpoints (-O)
+  - stdin : input not seekable (-k)
+  - output filename (-o) + create directories
+  - stdout (+ multiple splitpoints & EOF)
+  - no tags in input file (+ -g option)
+  - auto adjust
+  - auto adjust & th
+  - auto adjust & off
+  - auto adjust & gap
+  - don't create 'mp3splt.log' file (-N)
+  - pretend + auto adjust
+  - pretend
+  - cue export
+  - pretend + cue export
+  - cue export + overlap
+
+WRAP MODE (MP3 only)
+**************************
+
+  DONE:
+  - dewrap files
+  - list wrapped files (with absolute path)
+  - dewrap files with absolute path
+  - dewrap files with create output directories
+  - dewrap files and create m3u file
+  - pretend
+
+
+ERROR MODE (MP3 only)
+**************************
+
+  DONE:
+  - sync error mode
+  - sync error mode + output format
+  - sync error mode + create output dir
+  - sync error mode + output format + create output dir
+  - sync error mode + m3u
+  - pretend
+
+MISC
+**************************
+
+  DONE:
+  - version
+
+CDDB MODE
+**************************
+
+  DONE:
+  - cddb mode
+  - cddb mode & output format & create output dirs
+  - cddb mode & quiet mode
+  - cddb mode & output format
+  - pretend
+  - cue export #TODO bug: cue export starting at 0 ?
+  - pretend + cue export
+
+CUE MODE
+**************************
+
+  DONE:
+  - cue mode
+  - cue mode & quotes
+  - cue mode & quiet mode
+  - cue mode & output format & create output dirs
+  - pretend
+  - cue export #TODO bug: cue files not equal
+  - pretend + cue export
+
+FREEDB MODE
+**************************
+
+  DONE:
+  - freedb mode - search tracktype & get cgi freedb
+  - freedb mode - search tracktype & get cddb freedb
+
+  IN PROGRESS:
+  - freedb mode - search & get cgi tracktype (TODO: print Error: file
+      is damaged or this is not the right cddb if OK EOF)
+  TODO: change to 'freedb.freedb.org' (random server) instead of 'freedb.org'
+ 
+  TODO:
+
+  - pretend
+  - pretend + auto adjust
+  - cue export
+  - pretend + cue export
+
+SILENCE MODE
+**************************
+
+  MP3 FILES
+  ----------------------------
+
+  NOTE: rm is special because it makes use of SKIPPOINT
+
+  DONE:
+  - silence mode & threshold
+  - silence mode & offset
+  - silence mode & nt
+  - silence mode & min
+  - silence mode & rm
+  - silence mode & rm & output format
+  - silence mode & rm & overlap
+  - silence mode & rm & custom tags
+  - silence mode & rm & custom tags & output format
+  - silence mode & mp3splt.log
+  - silence mode & pretend
+  - silence mode & cue export
+  - silence mode + pretend & cue export
+
+  Fixed IMPORTANT BUGS : last track is not split + output format
+
+  NOT DONE:
+  - don't create 'mp3splt.log' file (-N)
+
+
+AUDACITY MODE
+**************************
+
+  MP3 FILES
+  ----------------------------
+
+  DONE:
+  - audacity mode
+  - audacity & output format
+  - audacity & custom tags
+  - audacity & custom tags & output format
+  - pretend
+  - cue export
+  - pretend + cue export
+
+  NOT DONE:
+  - pretend + auto adjust
+
+TESTS TODO: tests ID3v2 UTF16
+TODO: print if output will have ID3v1 or ID3v2
+TODO: print if no xing is written
+
