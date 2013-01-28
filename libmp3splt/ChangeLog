@@ -2,6 +2,14 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.8.1a
+-------------------------------------------------------------
+
+- corrected ChangeLog file of 0.8.1 release
+- added minimal.c in the distribution for the doxygen documentation
+- added libmp3splt_ico.svg in the distribution for the doxygen documentation
+- added something in the empty_footer.html file to avoid doxygen segfault
+
 libmp3splt version 0.8.1
 -------------------------------------------------------------
 
