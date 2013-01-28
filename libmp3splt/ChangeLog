@@ -6,8 +6,6 @@ libmp3splt version 0.8.1
 -------------------------------------------------------------
 
 - fixed a bug - was crashing when removing tags from skippoints
-- added option to set output ID3v2 tags encoded in latin1, UTF-8 or UTF16
-- forgot to add 'empty_footer.html' in the distribution
 
 libmp3splt version 0.8
 -------------------------------------------------------------

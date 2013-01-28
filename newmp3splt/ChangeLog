@@ -10,7 +10,6 @@ Known issues :
 #mp3splt version 2.5.1
 
 - fixed a bug when removing the tags from skippoints (libmp3splt)
-- added option to set output ID3v2 tags encoded in latin1, UTF-8 or UTF16
 
 #mp3splt version 2.5
 

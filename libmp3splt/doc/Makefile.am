@@ -1,6 +1,4 @@
-SUBDIRS = examples
-
-EXTRA_DIST = Doxyfile.in empty_footer.html libmp3splt_ico.svg
+EXTRA_DIST = Doxyfile.in empty_footer.html
 
 if HAVE_DOXYGEN
 html: doc
