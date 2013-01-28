@@ -55,6 +55,7 @@ install-data-local:
 	-$(INSTALL_DATA) doxygen/*.map $(doxygen_target_dir)
 	-$(INSTALL_DATA) doxygen/*.js $(doxygen_target_dir)
 	-$(INSTALL_DATA) doxygen/*.css $(doxygen_target_dir)
+	-$(INSTALL_DATA) libmp3splt*svg $(doxygen_target_dir)
 
 uninstall-local:
 	-rm -f $(doxygen_target_dir)/*.html
@@ -63,6 +64,7 @@ uninstall-local:
 	-rm -f $(doxygen_target_dir)/*.map
 	-rm -f $(doxygen_target_dir)/*.js
 	-rm -f $(doxygen_target_dir)/*.css
+	-rm -f $(doxygen_target_dir)/*.svg
 	-rmdir $(doxygen_target_dir)
 
 else
