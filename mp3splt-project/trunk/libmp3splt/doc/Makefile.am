@@ -44,6 +44,7 @@ clean-local:
 	-rm -f $(top_srcdir)/doc/doxygen/*.map
 	-rm -f $(top_srcdir)/doc/doxygen/*.js
 	-rm -f $(top_srcdir)/doc/doxygen/*.css
+	-rm -f $(top_srcdir)/doc/doxygen/*.svg
 
 doxygen_target_dir=$(DESTDIR)$(docdir)/doxygen
 
@@ -55,16 +56,16 @@ install-data-local:
 	-$(INSTALL_DATA) doxygen/*.map $(doxygen_target_dir)
 	-$(INSTALL_DATA) doxygen/*.js $(doxygen_target_dir)
 	-$(INSTALL_DATA) doxygen/*.css $(doxygen_target_dir)
-	-$(INSTALL_DATA) libmp3splt*svg $(doxygen_target_dir)
+	-$(INSTALL_DATA) libmp3splt_ico.svg $(doxygen_target_dir)
 
 uninstall-local:
-	-rm -f $(doxygen_target_dir)/*.html
-	-rm -f $(doxygen_target_dir)/*.png
-	-rm -f $(doxygen_target_dir)/*.md5
-	-rm -f $(doxygen_target_dir)/*.map
-	-rm -f $(doxygen_target_dir)/*.js
-	-rm -f $(doxygen_target_dir)/*.css
-	-rm -f $(doxygen_target_dir)/*.svg
+	-rm $(doxygen_target_dir)/*.html
+	-rm $(doxygen_target_dir)/*.png
+	-rm $(doxygen_target_dir)/*.md5
+	-rm $(doxygen_target_dir)/*.map
+	-rm $(doxygen_target_dir)/*.js
+	-rm $(doxygen_target_dir)/*.css
+	-rm $(doxygen_target_dir)/libmp3splt_ico.svg
 	-rmdir $(doxygen_target_dir)
 
 else
