@@ -330,8 +330,7 @@ m4/Makefile
 doc/Makefile
 doc/Doxyfile_all
 doc/Doxyfile_api
-doc/examples/Makefile
-po/Makevars.version])
+doc/examples/Makefile])
 
 AC_OUTPUT
 

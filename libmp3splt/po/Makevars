@@ -1,12 +1,7 @@
 # Makefile variables for PO directory in any package using GNU gettext.
 
-#inspired by xine
-include Makevars.version
-
-DISTFILES += Makevars.version.in
-
 VERSION = $(VERSION)
-PACKAGE = libmp3splt$(SONAME)
+PACKAGE = libmp3splt0
 
 # Usually the message domain is the same as the package name.
 DOMAIN = $(PACKAGE)
@@ -49,3 +44,4 @@ MSGID_BUGS_ADDRESS = m@ioalex.net
 # This is the list of locale categories, beyond LC_MESSAGES, for which the
 # message catalogs shall be used.  It is usually empty.
 EXTRA_LOCALE_CATEGORIES =
+
