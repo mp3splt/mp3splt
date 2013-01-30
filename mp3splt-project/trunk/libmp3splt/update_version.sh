@@ -36,9 +36,5 @@ sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
 #./src/mp3splt.c:void mp3splt_v0_3_1
 sed -i "s/void mp3splt_v.*/void mp3splt_v$NEW_LIBMP3SPLT_VER()/" ./src/mp3splt.c || exit 1
 
-#./doc/Doxyfile:PROJECT_NUMBER=0.7.3
-sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./doc/Doxyfile || exit 1
-sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./doc/Doxyfile.in || exit 1
-sed -i "s/PROJECT_NUMBER=.*/PROJECT_NUMBER=$VERSION/" ./doc/Doxyfile_api.in || exit 1
-
 echo "Finished setting up $PROGRAM to version $VERSION."
+

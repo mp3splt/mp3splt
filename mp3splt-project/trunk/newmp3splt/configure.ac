@@ -93,7 +93,7 @@ AC_MSG_RESULT($HOST)
 
 PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt >= 0.8.2],
 [],
-[ AC_MSG_ERROR(libmp3splt version >= 0.8.2 needed :
+[ AC_MSG_ERROR(libmp3splt version 0.8.2 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
