@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export BASE_DIR="`dirname $0`"
+export BASE_DIR="../test"
 top_dir="$BASE_DIR/.."
 
 if test -z "$NO_MAKE"; then

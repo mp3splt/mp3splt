@@ -2,8 +2,8 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src plugins test m4 po doc
 
-m4datadir = $(datadir)/aclocal
-m4data_DATA = mp3splt.m4
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libmp3splt.pc
 
-EXTRA_DIST = mp3splt.m4 LIMITS autogen.sh debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
+EXTRA_DIST = LIMITS autogen.sh debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
 

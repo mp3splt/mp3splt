@@ -1,4 +1,6 @@
 
+EXTRA_DIST = run-tests.sh
+
 INCLUDES = $(CUTTER_CFLAGS) -I$(top_srcdir)/include -I$(top_srcdir)/src
 LIBS = $(CUTTER_LIBS) $(top_builddir)/src/libmp3splt.la
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -no-undefined
@@ -30,7 +32,7 @@ test_splitpoints_handling_la_SOURCES = test_splitpoints_handling.c
 
 test_tags_handling_la_SOURCES = test_tags_handling.c
 
-TESTS = run-tests.sh
+TESTS = $(top_srcdir)/test/run-tests.sh
 TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)"
 
 echo-cutter:

@@ -682,17 +682,20 @@ typedef enum {
   SPLT_OPTION_LENGTH_MODE,
 } splt_split_mode_options;
 
+/**
+ * @brief Values for the #SPLT_OPT_ID3V2_ENCODING
+ */
 typedef enum {
   /**
-   * Latin1 (ISO-8859-1) encoding for ID3V2 tags for option #SPLT_OPT_ID3V2_ENCODING
+   * Latin1 (ISO-8859-1) encoding for ID3v2 tags
    */
   SPLT_ID3V2_LATIN1,
   /**
-   * UTF-8 encoding for ID3V2 tags for option #SPLT_OPT_ID3V2_ENCODING
+   * UTF-8 encoding for ID3v2 tags
    */
   SPLT_ID3V2_UTF8,
   /**
-   * UTF-16 encoding for ID3V2 tags for option #SPLT_OPT_ID3V2_ENCODING
+   * UTF-16 encoding for ID3v2 tags
    */
   SPLT_ID3V2_UTF16,
 } splt_id3v2_encoding;

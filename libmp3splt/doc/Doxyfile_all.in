@@ -32,7 +32,7 @@ PROJECT_NAME           = libmp3splt
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER=0.8.1a
+PROJECT_NUMBER=0.8.2
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer
@@ -45,7 +45,7 @@ PROJECT_BRIEF          = "Lossless library for splitting audio formats like mp3 
 # exceed 55 pixels and the maximum width should not exceed 200 pixels.
 # Doxygen will copy the logo to the output directory.
 
-PROJECT_LOGO           = libmp3splt_ico.svg
+PROJECT_LOGO           = @top_srcdir@/doc/libmp3splt_ico.svg
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -128,7 +128,7 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH        =
+STRIP_FROM_PATH        = @top_srcdir@
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -655,8 +655,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = ../src ../include/libmp3splt ../plugins
-#INPUT                  = ../include/libmp3splt/mp3splt.h
+INPUT                  = @top_srcdir@/src @top_srcdir@/include/libmp3splt @top_srcdir@/plugins
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -866,7 +865,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = doxygen
+HTML_OUTPUT            = @top_builddir@/doc/libmp3splt_doc
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank
@@ -891,7 +890,7 @@ HTML_HEADER            =
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER            = empty_footer.html
+HTML_FOOTER            = @top_srcdir@/empty_footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
@@ -1594,13 +1593,6 @@ MSCGEN_PATH            =
 # or is not a class.
 
 HIDE_UNDOC_RELATIONS   = NO
-
-# If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
-# available from the path. This tool is part of Graphviz, a graph visualization
-# toolkit from AT&T and Lucent Bell Labs. The other options in this section
-# have no effect if this option is set to NO (the default)
-
-HAVE_DOT               = NO
 
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is
 # allowed to run in parallel. When set to 0 (the default) doxygen will

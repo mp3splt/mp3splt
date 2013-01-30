@@ -12,8 +12,8 @@ mp3splt_SOURCES = \
 	common.h \
 	mp3splt.c
 
-INCLUDES = @MP3SPLT_CFLAGS@
-mp3splt_LDADD = @MP3SPLT_LIBS@ @LIBINTL@
+INCLUDES = @LIBMP3SPLT_CFLAGS@
+mp3splt_LDADD = @LIBMP3SPLT_LIBS@ @LIBINTL@
 
 if WIN32
   mp3splt_LDADD += -lwsock32 -lshlwapi 

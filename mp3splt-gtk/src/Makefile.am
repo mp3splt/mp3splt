@@ -50,9 +50,9 @@ mp3splt_gtk_SOURCES = \
   drag_and_drop.c drag_and_drop.h \
   mutex.c mutex.h
 
-INCLUDES = @GTK_CFLAGS@ @MP3SPLT_CFLAGS@
+INCLUDES = @GTK_CFLAGS@ @LIBMP3SPLT_CFLAGS@
 
-mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @MP3SPLT_LIBS@ -lm
+mp3splt_gtk_LDADD = @GTK_LIBS@ -lgthread-2.0 @LIBMP3SPLT_LIBS@ -lm
 
 # Define a C macro LOCALEDIR indicating where catalogs will be installed.
 localedir = $(datadir)/locale
