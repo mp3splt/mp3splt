@@ -34,9 +34,9 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT([libmp3splt],[0.8.1a],[m@ioalex.net])
+AC_INIT([libmp3splt],[0.8.2],[m@ioalex.net])
 AC_CONFIG_AUX_DIR([libltdl/config])
-AM_INIT_AUTOMAKE(libmp3splt, 0.8.1a)
+AM_INIT_AUTOMAKE(libmp3splt, 0.8.2)
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
 
@@ -321,12 +321,15 @@ echo
 #################################################
 
 AC_CONFIG_FILES([Makefile
+libmp3splt.pc
 src/Makefile
 po/Makefile.in
 plugins/Makefile
 test/Makefile
 m4/Makefile
 doc/Makefile
+doc/Doxyfile_all
+doc/Doxyfile_api
 doc/examples/Makefile
 po/Makevars.version])
 

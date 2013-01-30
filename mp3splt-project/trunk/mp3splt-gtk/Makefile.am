@@ -2,11 +2,7 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = m4 po doc src
-
-if HAS_CUTTER
-SUBDIRS += test
-endif
+SUBDIRS = m4 po doc src test
 
 EXTRA_DIST = mp3splt-gtk.desktop.in autogen.sh debian/changelog debian/compat debian/control debian/copyright debian/dirs debian/docs debian/rules
 
@@ -23,6 +19,8 @@ if GNOME
 EXTRA_DIST += build-aux/gnome-doc-utils.make
 SUBDIRS += help
 endif
+
+CLEANFILES = mp3splt-gtk.desktop
 
 # A make target that always needs to be rebuilt
 FORCE:

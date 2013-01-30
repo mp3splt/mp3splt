@@ -6,29 +6,36 @@ html: doc
 
 doc: doxyfile.temp
 
+BUILD_DOC_DIR=$(top_builddir)/doc
+
 doxyfile.temp:
-	cat Doxyfile.in >Doxyfile
 if HAVE_GRAPHVIZ
-	echo "HAVE_DOT = YES" >> Doxyfile
+	echo "HAVE_DOT = YES" >> $(BUILD_DOC_DIR)/Doxyfile
 else
-	echo "HAVE_DOT = NO" >> Doxyfile
+	echo "HAVE_DOT = NO" >> $(BUILD_DOC_DIR)/Doxyfile
 endif
-	echo "STRIP_FROM_PATH = $(top_builddir)" >> Doxyfile
 	@echo "Running doxygen to generate the code documentation"
 	doxygen
-	echo temporary > doxyfile.temp
+	echo temporary > $(BUILD_DOC_DIR)/doxyfile.temp
 
-CLEANFILES=doxyfile.temp
+CLEANFILES=$(BUILD_DOC_DIR)/doxyfile.temp $(BUILD_DOC_DIR)/Doxyfile
 
 all-local: html 
 
 clean-local:
-	-rm -f $(top_srcdir)/doc/doxygen/*.html
-	-rm -f $(top_srcdir)/doc/doxygen/*.png
-	-rm -f $(top_srcdir)/doc/doxygen/*.md5
-	-rm -f $(top_srcdir)/doc/doxygen/*.map
-	-rm -f $(top_srcdir)/doc/doxygen/*.js
-	-rm -f $(top_srcdir)/doc/doxygen/*.css
+	-rm $(top_builddir)/doc/doxygen/search/*.css
+	-rm $(top_builddir)/doc/doxygen/search/*.html
+	-rm $(top_builddir)/doc/doxygen/search/*.js
+	-rm $(top_builddir)/doc/doxygen/search/*.png
+	-rmdir $(top_builddir)/doc/doxygen/search
+	-rm $(top_builddir)/doc/doxygen/*.html
+	-rm $(top_builddir)/doc/doxygen/*.png
+	-rm $(top_builddir)/doc/doxygen/*.md5
+	-rm $(top_builddir)/doc/doxygen/*.map
+	-rm $(top_builddir)/doc/doxygen/*.js
+	-rm $(top_builddir)/doc/doxygen/*.css
+	-rm $(top_builddir)/doc/doxygen/*.svg
+	-rmdir $(top_builddir)/doc/doxygen
 
 doxygen_target_dir=$(DESTDIR)$(docdir)/doxygen
 
@@ -40,14 +47,24 @@ install-data-local:
 	-$(INSTALL_DATA) doxygen/*.map $(doxygen_target_dir)
 	-$(INSTALL_DATA) doxygen/*.js $(doxygen_target_dir)
 	-$(INSTALL_DATA) doxygen/*.css $(doxygen_target_dir)
+	-$(MKDIR_P) $(doxygen_target_dir)/search
+	-$(INSTALL_DATA) doxygen/search/*.css $(doxygen_target_dir)/search
+	-$(INSTALL_DATA) doxygen/search/*.html $(doxygen_target_dir)/search
+	-$(INSTALL_DATA) doxygen/search/*.js $(doxygen_target_dir)/search
+	-$(INSTALL_DATA) doxygen/search/*.png $(doxygen_target_dir)/search
 
 uninstall-local:
-	-rm -f $(doxygen_target_dir)/*.html
-	-rm -f $(doxygen_target_dir)/*.png
-	-rm -f $(doxygen_target_dir)/*.md5
-	-rm -f $(doxygen_target_dir)/*.map
-	-rm -f $(doxygen_target_dir)/*.js
-	-rm -f $(doxygen_target_dir)/*.css
+	-rm $(doxygen_target_dir)/search/*.css
+	-rm $(doxygen_target_dir)/search/*.html
+	-rm $(doxygen_target_dir)/search/*.js
+	-rm $(doxygen_target_dir)/search/*.png
+	-rmdir $(doxygen_target_dir)/search
+	-rm $(doxygen_target_dir)/*.html
+	-rm $(doxygen_target_dir)/*.png
+	-rm $(doxygen_target_dir)/*.md5
+	-rm $(doxygen_target_dir)/*.map
+	-rm $(doxygen_target_dir)/*.js
+	-rm $(doxygen_target_dir)/*.css
 	-rmdir $(doxygen_target_dir)
 
 else

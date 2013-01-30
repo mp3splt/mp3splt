@@ -33,7 +33,7 @@
 #################################################
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.8.1, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.8.2, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
@@ -48,7 +48,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
 
 # Initialize automake
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.8.1)
+AM_INIT_AUTOMAKE(mp3splt-gtk, 0.8.2)
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
@@ -215,11 +215,12 @@ fi
 #################################################
 #Check for libmp3splt
 
-MP3SPLT_CHECK(,[ AC_MSG_ERROR(libmp3splt version 0.8.1 needed :
+PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt >= 0.8.2],
+[],
+[ AC_MSG_ERROR(libmp3splt version >= 0.8.2 needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
-
 
 #################################################
 #Check for audacious
@@ -363,7 +364,7 @@ fi
 # Generate Makefiles
 #################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile help/Makefile test/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile doc/Doxyfile help/Makefile test/Makefile])
 
 #################################################
 # Define some useful constants
