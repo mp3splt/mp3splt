@@ -11,3 +11,7 @@
 
 %:
 	dh $@ 
+
+override_dh_auto_configure:
+	dh_auto_configure -- PKG_CONFIG_PATH=/tmp/temp/usr/lib/pkgconfig
+
