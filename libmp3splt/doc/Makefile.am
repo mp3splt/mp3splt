@@ -39,18 +39,18 @@ $(BUILD_DOC_DIR)/Doxyfile
 all-local: html 
 
 clean-local:
-	-rm $(top_builddir)/doc/doxygen/search/*.css
-	-rm $(top_builddir)/doc/doxygen/search/*.html
-	-rm $(top_builddir)/doc/doxygen/search/*.js
-	-rm $(top_builddir)/doc/doxygen/search/*.png
+	-rm -f $(top_builddir)/doc/doxygen/search/*.css
+	-rm -f $(top_builddir)/doc/doxygen/search/*.html
+	-rm -f $(top_builddir)/doc/doxygen/search/*.js
+	-rm -f $(top_builddir)/doc/doxygen/search/*.png
 	-rmdir $(top_builddir)/doc/doxygen/search
-	-rm $(top_builddir)/doc/doxygen/*.html
-	-rm $(top_builddir)/doc/doxygen/*.png
-	-rm $(top_builddir)/doc/doxygen/*.md5
-	-rm $(top_builddir)/doc/doxygen/*.map
-	-rm $(top_builddir)/doc/doxygen/*.js
-	-rm $(top_builddir)/doc/doxygen/*.css
-	-rm $(top_builddir)/doc/doxygen/*.svg
+	-rm -f $(top_builddir)/doc/doxygen/*.html
+	-rm -f $(top_builddir)/doc/doxygen/*.png
+	-rm -f $(top_builddir)/doc/doxygen/*.md5
+	-rm -f $(top_builddir)/doc/doxygen/*.map
+	-rm -f $(top_builddir)/doc/doxygen/*.js
+	-rm -f $(top_builddir)/doc/doxygen/*.css
+	-rm -f $(top_builddir)/doc/doxygen/*.svg
 	-rmdir $(top_builddir)/doc/doxygen
 
 doxygen_target_dir=$(DESTDIR)$(docdir)/doxygen

@@ -364,7 +364,7 @@ fi
 # Generate Makefiles
 #################################################
 
-AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile doc/Doxyfile help/Makefile test/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile m4/Makefile po/Makefile.in doc/Makefile doc/Doxyfile_all help/Makefile test/Makefile])
 
 #################################################
 # Define some useful constants
