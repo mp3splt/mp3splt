@@ -10,7 +10,11 @@
 #export DH_VERBOSE=1
 
 
-DEB_CONFIGURE_EXTRA_FLAGS := --enable-oggsplt_symlink 
+DEB_CONFIGURE_EXTRA_FLAGS := --enable-oggsplt_symlink
 
 %:
 	dh $@ 
+
+override_dh_auto_configure:
+	dh_auto_configure -- PKG_CONFIG_PATH=/tmp/temp/usr/lib/pkgconfig
+

@@ -22,7 +22,6 @@ DIST_FILE="../mp3splt-gtk_${DEBIAN_VERSION}_${ARCH}.deb"
 if [[ ! -f $DIST_FILE ]];then
     export CFLAGS="-I/tmp/temp/usr/include $CFLAGS" &&\
     export LDFLAGS="-L/tmp/temp/usr/lib $LDFLAGS" &&\
-    export PKG_CONFIG_PATH="/tmp/temp/usr/lib/pkgconfig:$PKG_CONFIG_PATH" &&\
     sudo /sbin/ldconfig &&\
     ./autogen.sh && ./configure --enable-optimise --prefix=/usr && make clean && \
     debuild -i -us -uc -b -d || exit 1
