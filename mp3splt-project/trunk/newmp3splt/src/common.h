@@ -43,7 +43,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define VERSION "2.5.2.1244"
+#define VERSION "2.5.2.1249"
 #define PACKAGE_NAME "mp3splt"
 #endif
 
