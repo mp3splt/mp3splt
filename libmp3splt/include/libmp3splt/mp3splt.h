@@ -1070,7 +1070,7 @@ splt_code mp3splt_set_message_function(splt_state *state,
 /** 
  * @brief Register callback function that is called when an output file is created.
  *
- * @param[in] state The central struct libmp3splt keeps all its data in
+ * @param[in] state Main state.
  * @param[in] file_cb Callback function to be called.
  * @param[in] cb_data User data sent through \p file_cb.
  * @return Possible error.
@@ -1083,6 +1083,28 @@ splt_code mp3splt_set_message_function(splt_state *state,
 splt_code mp3splt_set_split_filename_function(splt_state *state,
     void (*file_cb)(const char *filename, void *cb_data),
     void *cb_data);
+
+/** 
+ * @brief Register callback function that is called when #SPLT_OPT_PRETEND_TO_SPLIT is
+ * #SPLT_TRUE.
+ *
+ * This callback function allows getting the bytes that would have been written.
+ *
+ * @param[in] state Main state.
+ * @param[in] write_cb Callback function to be called.
+ * @param[in] cb_data User data sent through \p write_cb.
+ * @return Possible error.
+ *
+ * Parameters of the callback \p write_cb function:
+ *
+ * \p ptr Bytes that would have been written to the output file.\n
+ * \p size Size of one element stored in \p ptr.
+ * \p nmemb Number of elements to be written from \p ptr.
+ * \p cb_data The user data passed to the #mp3splt_set_pretend_to_split_write_function.
+ */
+splt_code mp3splt_set_pretend_to_split_write_function(splt_state *state,
+   void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void cb_data),
+   void *cb_data);
 
 /**
  * @brief Type of messages sent to the client using the callback registered with

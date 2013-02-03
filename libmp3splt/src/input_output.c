@@ -708,11 +708,14 @@ end:
   }
 }
 
-size_t splt_io_fwrite(splt_state *state, const void *ptr,
-    size_t size, size_t nmemb, FILE *stream)
+size_t splt_io_fwrite(splt_state *state, const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
   if (splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
   {
+    if (state->split.write_cb != NULL)
+    {
+      state->split.write_cb(ptr, size, nmemb, state->split.write_cb_data);
+    }
     return size * nmemb;
   }
   else

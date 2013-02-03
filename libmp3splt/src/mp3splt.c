@@ -454,6 +454,21 @@ splt_code mp3splt_set_split_filename_function(splt_state *state,
   return error;
 }
 
+splt_code mp3splt_set_pretend_to_split_write_function(splt_state *state,
+   void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void cb_data),
+   void *cb_data)
+{
+  if (state == NULL)
+  {
+    return SPLT_ERROR_STATE_NULL;
+  }
+
+  state->split.write_cb = write_cb;
+  state->split.write_cb_data = cb_data;
+
+  return SPLT_OK;
+}
+
 /*! Register the callback called with progress messages
 
 \param state The central structure this library keeps all its data in

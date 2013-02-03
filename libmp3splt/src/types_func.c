@@ -61,6 +61,8 @@ static void splt_t_set_default_state_values(splt_state *state, int *error)
   state->split.put_message_cb_data = NULL;
   state->split.file_split = NULL;
   state->split.file_split_cb_data = NULL;
+  state->split.write_cb = NULL;
+  state->split.write_cb_data = NULL;
   state->split.p_bar->progress_text_max_char = 40;
   snprintf(state->split.p_bar->filename_shorted,512, "%s","");
   state->split.p_bar->percent_progress = 0;
