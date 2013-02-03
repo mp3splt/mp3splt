@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-01-30 23:00+0100\n"
+"POT-Creation-Date: 2013-02-03 13:26+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -425,22 +425,22 @@ msgstr "erreur expression régulière : aucune correspondance"
 msgid " regular expression ok"
 msgstr "expression régulière ok"
 
-#: src/mp3splt.c:1083
+#: src/mp3splt.c:1098
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " info: le fichier du lien symbolique est '%s'\n"
 
-#: src/mp3splt.c:1138
+#: src/mp3splt.c:1153
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " info : le fichier correspond au module '%s'\n"
 
-#: src/mp3splt.c:1146
+#: src/mp3splt.c:1161
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " Le fichier M3U '%s' sera créé.\n"
 
-#: src/mp3splt.c:1167
+#: src/mp3splt.c:1182
 #, fuzzy, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -449,7 +449,7 @@ msgstr ""
 " Avec ajustement du silence (Seuil : %.1f dB Ecart : %d sec Compensation : "
 "%.2f)\n"
 
-#: src/mp3splt.c:1922 src/tags_parser.c:107
+#: src/mp3splt.c:1937 src/tags_parser.c:107
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"

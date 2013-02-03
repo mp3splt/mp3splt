@@ -1103,8 +1103,8 @@ splt_code mp3splt_set_split_filename_function(splt_state *state,
  * \p cb_data The user data passed to the #mp3splt_set_pretend_to_split_write_function.
  */
 splt_code mp3splt_set_pretend_to_split_write_function(splt_state *state,
-   void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void cb_data),
-   void *cb_data);
+    void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void *cb_data),
+    void *cb_data);
 
 /**
  * @brief Type of messages sent to the client using the callback registered with
