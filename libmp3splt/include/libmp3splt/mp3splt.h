@@ -1098,8 +1098,8 @@ splt_code mp3splt_set_split_filename_function(splt_state *state,
  * Parameters of the callback \p write_cb function:
  *
  * \p ptr Bytes that would have been written to the output file.\n
- * \p size Size of one element stored in \p ptr.
- * \p nmemb Number of elements to be written from \p ptr.
+ * \p size Size of one element stored in \p ptr.\n
+ * \p nmemb Number of elements to be written from \p ptr.\n
  * \p cb_data The user data passed to the #mp3splt_set_pretend_to_split_write_function.
  */
 splt_code mp3splt_set_pretend_to_split_write_function(splt_state *state,
