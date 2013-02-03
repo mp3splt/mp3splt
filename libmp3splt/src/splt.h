@@ -291,7 +291,7 @@ typedef struct {
   void (*file_split)(const char *, void *);
   void *file_split_cb_data;
 
-  void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void cb_data);
+  void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void *cb_data);
   void *write_cb_data;
 
   //!All infos for the progress bar

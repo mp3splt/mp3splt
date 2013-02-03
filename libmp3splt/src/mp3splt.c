@@ -455,7 +455,7 @@ splt_code mp3splt_set_split_filename_function(splt_state *state,
 }
 
 splt_code mp3splt_set_pretend_to_split_write_function(splt_state *state,
-   void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void cb_data),
+   void (*write_cb)(const void *ptr, size_t size, size_t nmemb, void *cb_data),
    void *cb_data)
 {
   if (state == NULL)
