@@ -49,7 +49,7 @@ void exit_threads();
 gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data);
 void exit_application_bis(GtkWidget *widget, gpointer data);
 
-#define MP3SPLT_GTK_DATE "02/02/13"
+#define MP3SPLT_GTK_DATE "03/02/13"
 
 #endif
 
