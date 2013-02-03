@@ -36,8 +36,8 @@ NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 #./configure.ac:        [ AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
 sed -i "s/\[ AC_MSG_ERROR(libmp3splt version .* needed/\
 \[ AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
-sed -i "s/\[libmp3splt >= .*\]/\
-\[libmp3splt >= $LIBMP3SPLT_VERSION\]/" ./configure.ac || exit 1
+sed -i "s/\[libmp3splt = .*\]/\
+\[libmp3splt = $LIBMP3SPLT_VERSION\]/" ./configure.ac || exit 1
 #source code
 #./src/common.h:#define VERSION "2.2"
 sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/common.h || exit 1
