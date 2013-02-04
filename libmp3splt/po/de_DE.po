@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libmp3splt\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-02-03 13:26+0100\n"
+"POT-Creation-Date: 2013-02-04 23:06+0100\n"
 "PO-Revision-Date: 2011-09-16 00:13+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: src/cue.c:169 src/cddb.c:270
+#: src/cue.c:175 src/cddb.c:276
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album: %s\n"
 
-#: src/cue.c:203 src/cddb.c:267
+#: src/cue.c:209 src/cddb.c:273
 #, c-format
 msgid ""
 "\n"
@@ -31,12 +31,12 @@ msgstr ""
 "\n"
 "  Künstler: %s\n"
 
-#: src/cue.c:507
+#: src/cue.c:513
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " Informationen aus CUE-Datei %s werden gelesen …\n"
 
-#: src/cue.c:581 src/cddb.c:133
+#: src/cue.c:587 src/cddb.c:133
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -45,7 +45,7 @@ msgstr ""
 "  Titel: %d\n"
 "\n"
 
-#: src/cue.c:804
+#: src/cue.c:810
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " CUE-Datei »%s« wurde erstellt.\n"
@@ -427,22 +427,22 @@ msgstr "Fehler bei regulärem Ausdruck: kein Treffer"
 msgid " regular expression ok"
 msgstr " Regulärer Ausdruck OK"
 
-#: src/mp3splt.c:1098
+#: src/mp3splt.c:1138
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Info: Verknüpfter Dateiname wird in »%s« aufgelöst\n"
 
-#: src/mp3splt.c:1153
+#: src/mp3splt.c:1193
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Info: Datei passt zum Plugin »%s«\n"
 
-#: src/mp3splt.c:1161
+#: src/mp3splt.c:1201
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " M3U-Datei »%s« wird erstellt.\n"
 
-#: src/mp3splt.c:1182
+#: src/mp3splt.c:1222
 #, fuzzy, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -451,7 +451,7 @@ msgstr ""
 "Mit SILENCE AUTO-ADJUST wird gearbeitet (Ansprechschwelle: %.1f dB Pause: %d "
 "s Versatz: %.2f)\n"
 
-#: src/mp3splt.c:1937 src/tags_parser.c:107
+#: src/mp3splt.c:1977 src/tags_parser.c:107
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -576,74 +576,74 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " Info: Überlappung der Dateiteilung mit %ld.%ld.%ld\n"
 
-#: plugins/mp3.c:1210
+#: plugins/mp3.c:1221
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1306
+#: plugins/mp3.c:1317
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 " Hinweis: Xing- oder Info-Header wurde gefunden. Wechsel zum Frame-Modus…\n"
 
-#: plugins/mp3.c:1444
+#: plugins/mp3.c:1455
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " Info: MPEG %d Layer %d - %d Hz - %s"
 
-#: plugins/mp3.c:1452
+#: plugins/mp3.c:1463
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - FRAME-MODUS NS"
 
-#: plugins/mp3.c:1456
+#: plugins/mp3.c:1467
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - FRAME-MODUS"
 
-#: plugins/mp3.c:1461
+#: plugins/mp3.c:1472
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d kB/s"
 
-#: plugins/mp3.c:1466
+#: plugins/mp3.c:1477
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1474 plugins/ogg.c:132
+#: plugins/mp3.c:1485 plugins/ogg.c:132
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Zeit gesamt: %dm.%02ds"
 
-#: plugins/mp3.c:2793
+#: plugins/mp3.c:2804
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Erkannte Datei erzeugt mit: Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2831
+#: plugins/mp3.c:2842
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Integritätsprüfung der Datei: CRC wird berechnet, bitte warten …"
 
-#: plugins/mp3.c:2850
+#: plugins/mp3.c:2861
 msgid " OK\n"
 msgstr " OK\n"
 
-#: plugins/mp3.c:2869
+#: plugins/mp3.c:2880
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Erkannte Datei erzeugt mit: AlbumWrap\n"
 
-#: plugins/mp3.c:2891
+#: plugins/mp3.c:2902
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Dateien gesamt: %d\n"
 
-#: plugins/mp3.c:3309
+#: plugins/mp3.c:3320
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Warnung: stdin »-« wird als mp3-Datenstrom angenommen.\n"
 
-#: plugins/mp3.c:3336
+#: plugins/mp3.c:3347
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu Frames wurden verarbeitet - Synchronisationsfehler: %lu\n"

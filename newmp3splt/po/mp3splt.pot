@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-02-03 13:32+0100\n"
+"POT-Creation-Date: 2013-02-04 23:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,73 +17,73 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mp3splt.c:284 src/print_utils.c:55 src/freedb.c:434 src/utils.c:36
+#: src/mp3splt.c:292 src/print_utils.c:55 src/freedb.c:434 src/utils.c:36
 #: src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr ""
 
-#: src/mp3splt.c:305
+#: src/mp3splt.c:313
 msgid ""
 "bad overlap time expression.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:322
+#: src/mp3splt.c:330
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:385
+#: src/mp3splt.c:393
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr ""
 
-#: src/mp3splt.c:452
+#: src/mp3splt.c:459
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 
-#: src/mp3splt.c:599
+#: src/mp3splt.c:606
 msgid "no input filename(s)."
 msgstr ""
 
-#: src/mp3splt.c:612
+#: src/mp3splt.c:619
 msgid "multiple splitpoints with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:616
+#: src/mp3splt.c:623
 msgid "using time mode with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:657
+#: src/mp3splt.c:664
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:661
+#: src/mp3splt.c:668
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:668
+#: src/mp3splt.c:674
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
-"w -l -e -i -a -p"
+"w -l -e -i -a -p -K"
 msgstr ""
 
-#: src/mp3splt.c:737
+#: src/mp3splt.c:750
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:783
+#: src/mp3splt.c:796
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:815
+#: src/mp3splt.c:828
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:831
+#: src/mp3splt.c:844
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
@@ -380,6 +380,10 @@ msgstr ""
 
 #: src/options_checker.c:281
 msgid "the -F option cannot be used without -s"
+msgstr ""
+
+#: src/options_checker.c:289
+msgid "the -K option cannot be used without -c"
 msgstr ""
 
 #: src/freedb.c:118

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-02-03 13:26+0100\n"
+"POT-Creation-Date: 2013-02-04 23:06+0100\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: src/cue.c:169 src/cddb.c:270
+#: src/cue.c:175 src/cddb.c:276
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album: %s\n"
 
-#: src/cue.c:203 src/cddb.c:267
+#: src/cue.c:209 src/cddb.c:273
 #, c-format
 msgid ""
 "\n"
@@ -31,12 +31,12 @@ msgstr ""
 "\n"
 "  Umělec: %s\n"
 
-#: src/cue.c:507
+#: src/cue.c:513
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr " Čtou se informace ze souboru CUE %s …\n"
 
-#: src/cue.c:581 src/cddb.c:133
+#: src/cue.c:587 src/cddb.c:133
 #, c-format
 msgid ""
 "  Tracks: %d\n"
@@ -45,7 +45,7 @@ msgstr ""
 "  Skladby: %d\n"
 "\n"
 
-#: src/cue.c:804
+#: src/cue.c:810
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " Byl vytvořen soubor CUE »%s«.\n"
@@ -428,22 +428,22 @@ msgstr " Chyba regulárního výrazu: žádná shoda"
 msgid " regular expression ok"
 msgstr " Regulární výraz OK"
 
-#: src/mp3splt.c:1098
+#: src/mp3splt.c:1138
 #, c-format
 msgid " info: resolving linked filename to '%s'\n"
 msgstr " Informace: Spojený název souboru je vyřešen do »%s«\n"
 
-#: src/mp3splt.c:1153
+#: src/mp3splt.c:1193
 #, c-format
 msgid " info: file matches the plugin '%s'\n"
 msgstr " Informace: Soubor odpovídá přídavnému modulu »%s«\n"
 
-#: src/mp3splt.c:1161
+#: src/mp3splt.c:1201
 #, c-format
 msgid " M3U file '%s' will be created.\n"
 msgstr " Soubor M3U »%s« bude vytvořen.\n"
 
-#: src/mp3splt.c:1182
+#: src/mp3splt.c:1222
 #, fuzzy, c-format
 msgid ""
 " Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
@@ -451,7 +451,7 @@ msgid ""
 msgstr ""
 "Pracuje se s SILENCE AUTO-ADJUST (Práh: %.1f dB Mezera: %d s Posun: %.2f)\n"
 
-#: src/mp3splt.c:1937 src/tags_parser.c:107
+#: src/mp3splt.c:1977 src/tags_parser.c:107
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -578,74 +578,74 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
-#: plugins/mp3.c:1210
+#: plugins/mp3.c:1221
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1306
+#: plugins/mp3.c:1317
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 " Informace: Nalezena hlavička Xing nebo Info. Přepíná se do režimu snímků…\n"
 
-#: plugins/mp3.c:1444
+#: plugins/mp3.c:1455
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " Informace: MPEG %d Layer %d - %d Hz - %s"
 
-#: plugins/mp3.c:1452
+#: plugins/mp3.c:1463
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - REŽIM SNÍMKŮ NS"
 
-#: plugins/mp3.c:1456
+#: plugins/mp3.c:1467
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - REŽIM SNÍMKŮ"
 
-#: plugins/mp3.c:1461
+#: plugins/mp3.c:1472
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d kB/s"
 
-#: plugins/mp3.c:1466
+#: plugins/mp3.c:1477
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1474 plugins/ogg.c:132
+#: plugins/mp3.c:1485 plugins/ogg.c:132
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Celkový čas: %dm.%02ds"
 
-#: plugins/mp3.c:2793
+#: plugins/mp3.c:2804
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Zjištěný soubor vytvořen: Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2831
+#: plugins/mp3.c:2842
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Ověření celistvosti souboru: Počítá se CRC, prosím, počkejte …"
 
-#: plugins/mp3.c:2850
+#: plugins/mp3.c:2861
 msgid " OK\n"
 msgstr " OK\n"
 
-#: plugins/mp3.c:2869
+#: plugins/mp3.c:2880
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Zjištěný soubor vytvořen: AlbumWrap\n"
 
-#: plugins/mp3.c:2891
+#: plugins/mp3.c:2902
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Celkem souborů: %d\n"
 
-#: plugins/mp3.c:3309
+#: plugins/mp3.c:3320
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »-« je datový proud mp3.\n"
 
-#: plugins/mp3.c:3336
+#: plugins/mp3.c:3347
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " Byly zpracovány snímky %lu - Chyby při seřizování: %lu\n"
