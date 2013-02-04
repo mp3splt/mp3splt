@@ -80,7 +80,7 @@ int splt_tu_append_tags(splt_state *state,
 int splt_tu_append_or_set_tag(splt_state *state, int tags_index, splt_tag_key key, const char *value);
 
 void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
-    int append_new_tags, int original_tags_value, int *error);
+    int append_new_tags, int original_tags_value, int use_original_tags_set, int *error);
 
 void splt_tu_set_new_tags_where_current_tags_are_null(splt_state *state,
     splt_tags *current_tags, splt_tags *new_tags, 

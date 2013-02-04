@@ -60,6 +60,12 @@ static void splt_cue_process_track_line(char *line_content, cue_utils *cu, splt_
   cu->current_track_type = SPLT_SPLITPOINT;
 
   splt_tu_new_tags_if_necessary(state, cu->tracks - 1);
+
+  if (splt_o_get_int_option(state, SPLT_OPT_CUE_CDDB_ADD_TAGS_WITH_KEEP_ORIGINAL_TAGS))
+  {
+    int true_value = SPLT_TRUE;
+    splt_tu_set_tags_field(state, cu->tracks - 1, SPLT_TAGS_ORIGINAL, &true_value);
+  }
 }
 
 static void remove_trailing_spaces_and_quote(char *ptr_e, char *in)

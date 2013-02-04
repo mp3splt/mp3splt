@@ -718,8 +718,7 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
 {
   struct id3_tag *id = NULL;
 
-  tag_bytes_and_size *bytes_and_size = 
-    (tag_bytes_and_size *) splt_tu_get_original_tags_data(state);
+  tag_bytes_and_size *bytes_and_size = (tag_bytes_and_size *) splt_tu_get_original_tags_data(state);
 
   if (set_original_tags && bytes_and_size && bytes_and_size->version != 1)
   {
@@ -728,6 +727,17 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
   }
   else
   {
+    if (set_original_tags && bytes_and_size)
+    {
+      splt_tags *tags = &state->original_tags.tags;
+      if (title == NULL) { title = splt_tu_get_tags_value(tags, SPLT_TAGS_TITLE); }
+      if (artist == NULL) { artist = splt_tu_get_tags_value(tags, SPLT_TAGS_ARTIST); }
+      if (album == NULL) { album = splt_tu_get_tags_value(tags, SPLT_TAGS_ALBUM); }
+      if (year == NULL) { year = splt_tu_get_tags_value(tags, SPLT_TAGS_YEAR); }
+      if (genre == NULL) { genre = splt_tu_get_tags_value(tags, SPLT_TAGS_GENRE); }
+      if (comment == NULL) { comment = splt_tu_get_tags_value(tags, SPLT_TAGS_COMMENT); }
+    }
+
     id = id3_tag_new();
   }
 
@@ -1113,6 +1123,7 @@ int splt_mp3_get_output_tags_version(splt_state *state)
       {
         output_tags_version = bytes_and_size->version;
         splt_mp3_free_bytes_and_size(bytes_and_size);
+        free(bytes_and_size);
       }
 
       if (output_tags_version == 0)

@@ -225,7 +225,7 @@ static void splt_cddb_process_ttitle_line(const char *line_content, cddb_utils *
     *slash = '\0';
 
     char *performer = splt_su_trim_spaces(equal_ptr + 1);
-   err = splt_tu_set_tags_field(state, index, SPLT_TAGS_PERFORMER, performer);
+    err = splt_tu_set_tags_field(state, index, SPLT_TAGS_PERFORMER, performer);
     if (err < 0) { cdu->error = err; return; }
   }
   else
@@ -233,6 +233,12 @@ static void splt_cddb_process_ttitle_line(const char *line_content, cddb_utils *
     char *title = splt_su_trim_spaces(equal_ptr + 1);
     err = splt_tu_set_tags_field(state, index, SPLT_TAGS_TITLE, title);
     if (err < 0) { cdu->error = err; return; }
+  }
+
+  if (splt_o_get_int_option(state, SPLT_OPT_CUE_CDDB_ADD_TAGS_WITH_KEEP_ORIGINAL_TAGS))
+  {
+    int true_value = SPLT_TRUE;
+    splt_tu_set_tags_field(state, index, SPLT_TAGS_ORIGINAL, &true_value);
   }
 }
 

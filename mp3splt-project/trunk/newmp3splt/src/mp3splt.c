@@ -49,6 +49,11 @@ void sigint_handler(int sig)
   exit(1);
 }
 
+static int is_stdin(const char *current_filename)
+{
+  return strcmp(current_filename, "-") == 0 || strcmp(current_filename, "o-") == 0;
+}
+
 int main(int argc, char **orig_argv)
 {
   setlocale(LC_ALL, "");
@@ -139,7 +144,7 @@ int main(int argc, char **orig_argv)
   //parse command line options
   int option;
   while ((option = getopt(data->argc, data->argv,
-          "m:O:Dvifkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:F:C:")) != -1)
+          "m:O:DvifKkwleqnasrc:d:o:t:p:g:hQN12T:XxPE:A:S:G:F:C:")) != -1)
   {
     switch (option)
     {
@@ -182,6 +187,9 @@ int main(int argc, char **orig_argv)
       case 'k':
         mp3splt_set_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE, SPLT_TRUE);
         opt->k_option = SPLT_TRUE;
+        break;
+      case 'K':
+        opt->K_option = SPLT_TRUE;
         break;
       case 'w':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_WRAP_MODE);
@@ -382,8 +390,7 @@ int main(int argc, char **orig_argv)
         fclose(stdout);
         break;
       default:
-        print_error_exit(_("read man page for documentation"
-              " or type 'mp3splt -h'."), data);
+        print_error_exit(_("read man page for documentation or type 'mp3splt -h'."), data);
         break;
     }
   }
@@ -662,16 +669,22 @@ int main(int argc, char **orig_argv)
     }
     fflush(console_out);
 
-    if ((strcmp(current_filename, "-") == 0 || strcmp(current_filename, "o-") == 0) &&
-        we_have_incompatible_stdin_option(opt))
+    if (is_stdin(current_filename) && we_have_incompatible_stdin_option(opt))
     {
       print_error_exit(_("cannot use -k option (or STDIN) with"
-            " one of the following options: -S -s -r -w -l -e -i -a -p"), data);
+            " one of the following options: -S -s -r -w -l -e -i -a -p -K"), data);
     }
 
     //we put the filename
     err = mp3splt_set_filename_to_split(state, current_filename);
     process_confirmation_error(err, data);
+
+    if (opt->K_option)
+    {
+      mp3splt_read_original_tags(state);
+      mp3splt_set_int_option(state, SPLT_OPT_CUE_CDDB_ADD_TAGS_WITH_KEEP_ORIGINAL_TAGS,
+          SPLT_TRUE);
+    }
 
     //if we list wrap files
     if (opt->l_option)
@@ -727,7 +740,7 @@ int main(int argc, char **orig_argv)
           }
           else
           {
-            if (strncmp(opt->cddb_arg, "query", 5)==0)
+            if (strncmp(opt->cddb_arg, "query", 5) == 0)
             {
               if (j == 0)
               {

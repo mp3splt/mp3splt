@@ -634,6 +634,15 @@ typedef enum {
    */
   SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE,
   /**
+   * When adding cue or cddb tags, keep the option #SPLT_TAGS_ORIGINAL.
+   * When enabling this option, #mp3splt_read_original_tags must also be called.
+   *
+   * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
+   *
+   * Default is #SPLT_FALSE
+   */
+  SPLT_OPT_CUE_CDDB_ADD_TAGS_WITH_KEEP_ORIGINAL_TAGS,
+  /**
    * Defines the encoding of the ID3V2 tags.
    *
    * Int option that can take the values from #splt_id3v2_encoding.
@@ -1412,6 +1421,11 @@ typedef enum {
   SPLT_TAGS_TRACK = 6,
   SPLT_TAGS_GENRE = 7,
   SPLT_TAGS_PERFORMER = 8,
+  /**
+   * @brief Use this to set original tags.
+   * You must call #mp3splt_read_original_tags in order to use this.
+   */
+  SPLT_TAGS_ORIGINAL = 900
 } splt_tag_key;
 
 /**
@@ -1446,6 +1460,9 @@ splt_tags *mp3splt_tags_new(splt_code *error);
  * \code{.c}
  *   mp3splt_tags_set(tags, SPLT_TAGS_ARTIST, "my_artist", SPLT_TAGS_ALBUM, "my_album", 0);
  * \endcode
+ *
+ * When using #SPLT_TAGS_ORIGINAL, the only possible values are "true" or "false".
+ * In order to use #SPLT_TAGS_ORIGINAL, you have to call #mp3splt_read_original_tags before.
  *
  * @param[in] tags Tags to be changed.
  * @return Possible error.
@@ -1547,6 +1564,16 @@ char *mp3splt_tags_get(splt_tags *tags, splt_tag_key key);
  * Tags might be ambiguous if the input does not seem to be valid or if \@t or \@n is missing.
  */
 int mp3splt_put_tags_from_string(splt_state *state, const char *tags, splt_code *error);
+
+/**
+ * @brief Parses the original tags from the input file and stores them for the future split.
+ *
+ * This function must be called when using #SPLT_TAGS_ORIGINAL called by #mp3splt_tags_set.
+ *
+ * @param[in] state Main state.
+ * @return Possible error.
+ */
+splt_code mp3splt_read_original_tags(splt_state *state);
 
 /**
  * @brief Erase all the tags from the \p state.
