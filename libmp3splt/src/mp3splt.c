@@ -823,7 +823,10 @@ splt_code mp3splt_append_tags(splt_state *state, splt_tags *tags)
   }
 
   splt_o_lock_library(state);
-  splt_tu_append_tags_to_state(state, tags, SPLT_TRUE, SPLT_FALSE, &error);
+
+  splt_tu_append_tags_to_state(state, tags, SPLT_TRUE, SPLT_FALSE, SPLT_TRUE, &error);
+  mp3splt_free_one_tag(tags);
+
   splt_o_unlock_library(state);
 
   return error;
@@ -877,6 +880,43 @@ splt_tags *mp3splt_tags_group_next(splt_tags_group *tags_group)
   }
 
   return &tags_group->tags[tags_group->iterator_counter++];
+}
+
+splt_code mp3splt_read_original_tags(splt_state *state)
+{
+  int error = SPLT_OK;
+
+  if (state == NULL)
+  {
+    return SPLT_ERROR_STATE_NULL;
+  }
+
+  if (splt_o_library_locked(state))
+  {
+    return SPLT_ERROR_LIBRARY_LOCKED;
+  }
+
+  splt_o_lock_library(state);
+
+  splt_check_file_type(state, &error);
+  if (error < 0) { goto end; }
+
+  splt_o_lock_messages(state);
+
+  splt_p_init(state, &error);
+  if (error < 0) { goto end; }
+
+  splt_tu_get_original_tags(state, &error);
+  if (error < 0) { goto end; }
+
+  splt_p_end(state, &error);
+  if (error < 0) { goto end; }
+
+end:
+  splt_o_unlock_messages(state);
+  splt_o_unlock_library(state);
+
+  return error;
 }
 
 //!puts tags from a string

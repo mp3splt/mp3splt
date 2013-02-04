@@ -37,6 +37,8 @@ typedef struct {
   short r_option;
   //output filename, output directory, seekable
   short o_option; short d_option; short k_option;
+  //keep original tags when using cddb or cue import
+  short K_option;
   //custom tags, no tags, quiet option
   short g_option; short n_option; short q_option;
   short E_option;

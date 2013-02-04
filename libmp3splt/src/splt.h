@@ -486,6 +486,7 @@ typedef struct {
 
   int cue_set_splitpoint_names_from_rem_name;
   int cue_disable_cue_file_created_message;
+  int cue_cddb_add_tags_with_keep_original_tags;
   int id3v2_encoding;
 } splt_options_variables;
 
@@ -724,7 +725,6 @@ void splt_s_wrap_split(splt_state *state, int *error);
 
 //following mp3splt.h->#splt_tag_key
 #define SPLT_TAGS_VERSION 800
-#define SPLT_TAGS_ORIGINAL 900
 
 #define SPLT_ORIGINAL_TAGS_DEFAULT "%[@o,@N=1]"
 

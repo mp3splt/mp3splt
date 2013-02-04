@@ -231,7 +231,7 @@ void check_args(int argc, main_data *data)
     }
     if (opt->c_option)
     {
-      if (strncmp(opt->cddb_arg,"query",5) == 0)
+      if (strncmp(opt->cddb_arg, "query", 5) == 0)
       {
         print_error_exit(_("the -Q option cannot be used with"
               " interactive freedb query ('-c query')"), data);
@@ -281,6 +281,14 @@ void check_args(int argc, main_data *data)
       print_error_exit(_("the -F option cannot be used without -s"), data);
     }
   }
+
+  if (opt->K_option)
+  {
+    if (!opt->c_option)
+    {
+      print_error_exit(_("the -K option cannot be used without -c"), data);
+    }
+  }
 }
 
 int we_have_incompatible_stdin_option(options *opt)
@@ -288,6 +296,6 @@ int we_have_incompatible_stdin_option(options *opt)
   return opt->s_option || opt->w_option ||
     opt->l_option || opt->e_option ||
     opt->i_option || opt->a_option ||
-    opt->p_option || opt->S_option || opt->r_option || opt->F_option;
+    opt->p_option || opt->S_option || opt->r_option || opt->F_option || opt->K_option;
 }
 

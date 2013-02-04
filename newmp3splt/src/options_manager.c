@@ -134,6 +134,7 @@ options *new_options()
   opt->r_option = SPLT_FALSE;
   opt->p_option = SPLT_FALSE; opt->o_option = SPLT_FALSE;
   opt->d_option = SPLT_FALSE; opt->k_option = SPLT_FALSE;
+  opt->K_option = SPLT_FALSE;
   opt->g_option = SPLT_FALSE; opt->n_option = SPLT_FALSE;
   opt->q_option = SPLT_FALSE; opt->i_option = SPLT_FALSE;
   opt->N_option = SPLT_FALSE; opt->O_option = SPLT_FALSE;

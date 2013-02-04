@@ -1,5 +1,5 @@
-/**********************************************************
 
+/**********************************************************
  * libmp3splt -- library based on mp3splt,
  *               for mp3/ogg splitting without decoding
  *
@@ -29,7 +29,6 @@
 
 #include "splt.h"
 #include "tags_utils.h"
-
 
 void splt_tu_free_original_tags(splt_state *state)
 {
@@ -246,6 +245,18 @@ int splt_tu_set_char_field_on_tag(splt_tags *tags, splt_tag_key key, const char 
   {
     int track = atoi(value);
     return splt_tu_set_field_on_tags(tags, key, &track);
+  }
+
+  if (key == SPLT_TAGS_ORIGINAL)
+  {
+    if (strcmp("true", value) == 0)
+    {
+      int true_value = SPLT_TRUE;
+      return splt_tu_set_field_on_tags(tags, key, &true_value);
+    }
+
+    int false_value = SPLT_FALSE;
+    return splt_tu_set_field_on_tags(tags, key, &false_value);
   }
 
   return splt_tu_set_field_on_tags(tags, key, value);
@@ -853,15 +864,18 @@ void splt_tu_free_one_tags_content(splt_tags *tags)
 }
 
 void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags, 
-    int append_new_tags, int original_tags_value, int *error)
+    int append_new_tags, int original_tags_value, int use_original_tags_set, int *error)
 {
   int err = SPLT_OK;
 
   if (append_new_tags)
   {
+    int original_tags = SPLT_FALSE;
+    if (use_original_tags_set) { original_tags = tags->set_original_tags; }
+
     err = splt_tu_append_tags(state, tags->title, tags->artist, tags->album,
         tags->performer, tags->year, tags->comment, tags->track, tags->genre,
-        SPLT_FALSE);
+        original_tags);
   }
   else
   {
@@ -871,10 +885,7 @@ void splt_tu_append_tags_to_state(splt_state *state, splt_tags *tags,
         original_tags_value);
   }
 
-  if (err < 0)
-  {
-    *error = err;
-  }
+  if (err < 0) { *error = err; }
 }
 
 void splt_tu_set_new_tags_where_current_tags_are_null(splt_state *state,
@@ -1331,7 +1342,7 @@ splt_code splt_tu_remove_tags_of_skippoints(splt_state *state)
 
     if (splt_sp_get_splitpoint_type(state, i, &error) != SPLT_SKIPPOINT)
     {
-      splt_tu_append_tags_to_state(state, &tags[i], SPLT_TRUE, SPLT_FALSE, &error);
+      splt_tu_append_tags_to_state(state, &tags[i], SPLT_TRUE, SPLT_FALSE, SPLT_TRUE, &error);
     }
     if (error < 0) { goto end; }
   }

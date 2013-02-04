@@ -193,7 +193,7 @@ int splt_tp_put_tags_from_string(splt_state *state, const char *tags, int *error
     if (*error < 0) { goto end; }
 
     splt_tu_append_tags_to_state(state, tpu->current_tags,
-        !tpu->original_tags_found, tpu->original_tags_value, error);
+        !tpu->original_tags_found, tpu->original_tags_value, SPLT_FALSE, error);
     if (*error < 0) { goto end; }
 
     if (tpu->set_all_tags)
