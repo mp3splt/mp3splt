@@ -1098,6 +1098,8 @@ splt_code mp3splt_set_split_filename_function(splt_state *state,
  * #SPLT_TRUE.
  *
  * This callback function allows getting the bytes that would have been written.
+ * Please note that currently the mp3 Xing header is skipped when setting the input
+ * not seekable with #SPLT_OPT_INPUT_NOT_SEEKABLE.
  *
  * @param[in] state Main state.
  * @param[in] write_cb Callback function to be called.
