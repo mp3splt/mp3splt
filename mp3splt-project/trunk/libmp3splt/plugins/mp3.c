@@ -1021,8 +1021,7 @@ static char *splt_mp3_build_tags(const char *filename, splt_state *state, int *e
 }
 
 //!writes id3v1 tags to 'file_output'
-int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output,
-    const char *output_fname)
+int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output, const char *output_fname)
 {
   const char *filename = splt_t_get_filename_to_split(state);
   unsigned long number_of_bytes = 0;
@@ -1034,19 +1033,17 @@ int splt_mp3_write_id3v1_tags(splt_state *state, FILE *file_output,
   {
     if (file_output)
     {
-      if (fseeko(file_output, splt_mp3_getid3v1_offset(file_output), SEEK_END)!=-1)
-      {
-        if (splt_io_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
-        {
-          splt_e_set_error_data(state, output_fname);
-          error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
-        }
-      }
-      else
+      if (fseeko(file_output, splt_mp3_getid3v1_offset(file_output), SEEK_END) == -1)
       {
         splt_e_set_strerror_msg_with_data(state, output_fname);
         error = SPLT_ERROR_SEEKING_FILE;
       }
+    }
+
+    if (splt_io_fwrite(state, id3_tags, 1, number_of_bytes, file_output) < number_of_bytes)
+    {
+      splt_e_set_error_data(state, output_fname);
+      error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
     }
   }
 
@@ -1806,7 +1803,7 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
   //if not seekable
   if (!seekable)
   {
-    if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+    if (!splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
     {
       file_output = splt_mp3_open_file_write(state, output_fname, error);
       if (*error < 0) { return sec_end_time; };
@@ -2144,16 +2141,16 @@ static double splt_mp3_split(const char *output_fname, splt_state *state,
           goto bloc_end;
         }
       }
+    }
 
-      //write id3 tags version 1 at the end of the file
-      if (output_tags_version == 1 || output_tags_version == 12)
+    //write id3 tags version 1 at the end of the file
+    if (output_tags_version == 1 || output_tags_version == 12)
+    {
+      int err = SPLT_OK;
+      if ((err = splt_mp3_write_id3v1_tags(state, file_output, output_fname)) < 0)
       {
-        int err = SPLT_OK;
-        if ((err = splt_mp3_write_id3v1_tags(state, file_output, output_fname)) < 0)
-        {
-          *error = err;
-          goto bloc_end;
-        }
+        *error = err;
+        goto bloc_end;
       }
     }
 

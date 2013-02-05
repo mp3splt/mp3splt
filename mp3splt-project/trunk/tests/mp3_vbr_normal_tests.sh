@@ -1920,8 +1920,7 @@ function run_normal_vbr_tests
 export LC_ALL="C"
 start_date=$(date +%s)
 
-#run_normal_vbr_tests
-test_normal_vbr_custom_tags_without_original_tags
+run_normal_vbr_tests
 
 p_failed_tests
 
