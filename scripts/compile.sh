@@ -206,18 +206,6 @@ function ubuntu_packages()
 ############# end ubuntu packages ##########################
 
 
-############# gentoo ebuilds ################
-function gentoo_packages()
-{
-  echo
-  print_yellow "Creating gentoo ebuilds..."
-  echo
-
-  dchroot $CHROOT_FLAGS -c gentoo "make -s gentoo_ebuilds" || exit 1
-  cd $PROJECT_DIR
-}
-############# end gentoo ebuilds ################
-
 ############# windows installers ################
 function windows_cross_installers()
 {
@@ -246,133 +234,6 @@ function windows_cross_installers()
   cd $PROJECT_DIR
 }
 ############# end windows installers ################
-
-############# RPM packages creation ################
-function rpm_packages()
-{
-    echo
-    print_yellow "Creating RPMs..."
-    
-    make -s rpm_packages || exit 1
-    cd $PROJECT_DIR
-}
-############# end RPM packages creation ################
-
-############# archlinux packages #########
-function archlinux_packages()
-{
-    echo
-    print_yellow "Creating archlinux packages..."
-    echo
-    
-    dchroot $CHROOT_FLAGS -c arch "make -s arch_packages" || exit 1
-    cd $PROJECT_DIR
-}
-############# end archlinux packages #########
-
-############# slackware packages #########
-function slackware_packages()
-{
-    echo
-    print_yellow "Creating slackware packages..."
-    echo
-    
-    dchroot $CHROOT_FLAGS -c slackware "make -s slackware_fakeroot_packages" || exit 1
-    cd $PROJECT_DIR
-}
-############# end slackware packages #####
-
-############# openbsd packages #####
-function openbsd_packages()
-{
-  echo
-  print_yellow "Creating openbsd packages..."
-
-  #if we don't have the distribution file
-  DIST_FILE1="libmp3splt_obsd_i386-${LIBMP3SPLT_VERSION}.tgz"
-  DIST_FILE2="mp3splt_obsd_i386-${MP3SPLT_VERSION}.tgz"
-  DIST_FILE3="mp3splt-gtk_obsd_i386-${MP3SPLT_GTK_VERSION}.tgz"
-  #if the 3 files do not exist
-  if ! [[ -f $DIST_FILE1 || -f $DIST_FILE2 || -f $DIST_FILE3 ]];then
-    cd /mnt/personal/systems/bsd-based/openbsd && ./openbsd || exit 1
-    cd $PROJECT_DIR
-  else
-    echo
-    print_cyan "We already have the OpenBSD packages !"
-  fi
-}
-############# end openbsd packages #####
-
-############# netbsd packages #####
-function netbsd_packages()
-{
-  echo
-  print_yellow "Creating netbsd packages..."
-
-  #if we don't have the distribution file
-  DIST_FILE1="libmp3splt_nbsd_i386-${LIBMP3SPLT_VERSION}.tgz"
-  DIST_FILE2="mp3splt_nbsd_i386-${MP3SPLT_VERSION}.tgz"
-  DIST_FILE3="mp3splt-gtk_nbsd_i386-${MP3SPLT_GTK_VERSION}.tgz"
-  if [[ ! -f $DIST_FILE1 || ! -f $DIST_FILE2 || ! -f $DIST_FILE3 ]];then
-    cd /mnt/personal/systems/bsd-based/netbsd && ./netbsd || exit 1
-    cd $PROJECT_DIR
-  else
-    echo
-    print_cyan "We already have the NetBSD packages !"
-  fi
-}
-############# end netbsd packages #####
-
-############# freebsd packages #####
-function freebsd_packages
-{
-  echo
-  print_yellow "Creating freebsd packages..."
-
-  #we change 2.2_rc1 to 2.2.r1
-  TEMP_MP3SPLT_VERSION=${MP3SPLT_VERSION/_/.}
-  NEW_MP3SPLT_VERSION=${TEMP_MP3SPLT_VERSION/rc/r}
-  #we change 0.4_rc1 to 0.4.r1
-  TEMP_LIBMP3SPLT_VERSION=${LIBMP3SPLT_VERSION/_/.}
-  NEW_LIBMP3SPLT_VERSION=${TEMP_LIBMP3SPLT_VERSION/rc/r}
-  #we change 0.4_rc1 to 0.4.r1
-  TEMP_MP3SPLT_GTK_VERSION=${MP3SPLT_GTK_VERSION/_/.}
-  NEW_MP3SPLT_GTK_VERSION=${TEMP_MP3SPLT_GTK_VERSION/rc/r}
-
-  #if we don't have the distribution file
-  DIST_FILE1="./libmp3splt_fbsd_i386-${NEW_LIBMP3SPLT_VERSION}.tbz"
-  DIST_FILE2="./mp3splt_fbsd_i386-${NEW_MP3SPLT_VERSION}.tbz"
-  DIST_FILE3="./mp3splt-gtk_fbsd_i386-${NEW_MP3SPLT_GTK_VERSION}.tbz"
-  if [[ ! -f $DIST_FILE1 || ! -f $DIST_FILE2 || ! -f $DIST_FILE3 ]];then
-    cd /mnt/personal/systems/bsd-based/freebsd && ./freebsd || exit 1
-    cd $PROJECT_DIR
-  else
-    echo
-    print_cyan "We already have the FreeBSD packages !"
-  fi
-}
-############# end freebsd packages #####
-
-############# nexenta gnu/opensolaris packages #####
-function nexenta_packages()
-{
-  echo
-  print_yellow "Creating nexenta gnu/opensolaris packages..."
-  echo
-
-  #if we don't have the distribution file
-  DIST_FILE1="./libmp3splt_${LIBMP3SPLT_VERSION}_solaris-i386.deb"
-  DIST_FILE2="./mp3splt_${MP3SPLT_VERSION}_solaris-i386.deb"
-  DIST_FILE3="./mp3splt-gtk_${MP3SPLT_GTK_VERSION}_solaris-i386.deb"
-  if [[ ! -f $DIST_FILE1 || ! -f $DIST_FILE2 || ! -f $DIST_FILE3 ]];then
-    cd /mnt/personal/systems/opensolaris/ && ./nexenta || exit 1
-    cd $PROJECT_DIR
-  else
-    echo
-    print_cyan "We already have the Nexenta packages !"
-  fi
-}
-############# end nexenta gnu/opensolaris packages #####
 
 function run_functional_tests
 {
@@ -454,18 +315,6 @@ fi
 if [[ $BUILD_UBUNTU_PACKAGES -eq 1 ]];then
   ubuntu_packages
 fi
-
-##gentoo_packages
-##rpm_packages
-##archlinux_packages
-##slackware_packages
-##amd64 gnu/linux packages :
-##i386 bsd-like packages :
-##openbsd_packages
-##netbsd_packages
-##freebsd_packages
-##i386 gnu/opensolaris packages :
-##nexenta_packages #slow
 
 ###################################
 #finish packaging ...

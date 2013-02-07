@@ -27,14 +27,8 @@ AC_INIT(\[$PROGRAM\],\[$VERSION\],/" ./configure.ac || exit 1
 sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
 AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac || exit 1   
 
-NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
-
-#libmp3splt source code
-#./src/mp3splt_types.h:#define SPLT_PACKAGE_VERSION "0.3.1"
 sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
-#define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./include/libmp3splt/mp3splt.h || exit 1
-#./src/mp3splt.c:void mp3splt_v0_3_1
-sed -i "s/void mp3splt_v.*/void mp3splt_v$NEW_LIBMP3SPLT_VER()/" ./src/mp3splt.c || exit 1
+#define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./src/splt.h || exit 1
 
 echo "Finished setting up $PROGRAM to version $VERSION."
 

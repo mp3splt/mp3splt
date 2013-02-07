@@ -30,7 +30,6 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac || exit 1
 
 #current date, we need it
 DATE=$(date +%d\\/%m\\/%y)
-NEW_LIBMP3SPLT_VER=${LIBMP3SPLT_VERSION//./_}
 
 #configure.ac libmp3splt version check
 #./configure.ac:        [ AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
@@ -44,9 +43,6 @@ sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/common.h |
 #./src/common.h:#define MP3SPLT_DATE "14/04/2006"
 sed -i "s/#define MP3SPLT_DATE \".*\"/#define MP3SPLT_DATE \"$DATE\"/" ./src/common.h || exit 1
 
-#slackware description
-cd ./slackware
-sed -i "s/libmp3splt version .*/libmp3splt version $LIBMP3SPLT_VERSION,/" ./slack-desc || exit 1
-
 echo "Finished setting up $PROGRAM to version $VERSION with\
  libmp3splt version $LIBMP3SPLT_VERSION."
+
