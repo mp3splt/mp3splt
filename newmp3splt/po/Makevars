@@ -1,6 +1,5 @@
 # Makefile variables for PO directory in any package using GNU gettext.
 
-VERSION = 0.5.6
 PACKAGE = mp3splt
 
 # Usually the message domain is the same as the package name.
