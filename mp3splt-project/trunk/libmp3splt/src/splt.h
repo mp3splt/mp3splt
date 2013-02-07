@@ -743,7 +743,7 @@ void splt_s_wrap_split(splt_state *state, int *error);
 /**
  * @brief Package version
  */
-#define SPLT_PACKAGE_VERSION "0.7.3.1098"
+#define SPLT_PACKAGE_VERSION "0.8.2.1261"
 #endif
 
 /**
