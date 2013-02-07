@@ -1,7 +1,0 @@
-debian/tmp/usr/include/libmp3splt/mp3splt.h /usr/include/libmp3splt
-debian/tmp/usr/lib/libmp3splt.a /usr/lib
-debian/tmp/usr/lib/libmp3splt.so /usr/lib
-debian/tmp/usr/lib/libmp3splt.la /usr/lib
-debian/tmp/usr/lib/libmp3splt/lib*.a /usr/lib/libmp3splt
-debian/tmp/usr/lib/libmp3splt/lib*.la /usr/lib/libmp3splt
-debian/tmp/usr/lib/libmp3splt/lib*.so /usr/lib/libmp3splt
