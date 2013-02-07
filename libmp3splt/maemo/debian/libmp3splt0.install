@@ -1,3 +1,0 @@
-debian/tmp/usr/lib/libmp3splt.so.* /usr/lib
-debian/tmp/usr/lib/libmp3splt/lib*.so.* /usr/lib/libmp3splt
-
