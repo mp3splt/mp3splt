@@ -30,5 +30,17 @@ AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac || exit 1
 sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
 #define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./src/splt.h || exit 1
 
+versions=(${VERSION//./ })
+major_version=${versions[0]}
+minor_version=${versions[1]}
+micro_version=${versions[2]}
+
+sed -i "s/#define LIBMP3SPLT_MAJOR_VERSION .*/#define LIBMP3SPLT_MAJOR_VERSION $major_version/" \
+./include/libmp3splt/mp3splt.h
+sed -i "s/#define LIBMP3SPLT_MINOR_VERSION .*/#define LIBMP3SPLT_MINOR_VERSION $minor_version/" \
+./include/libmp3splt/mp3splt.h
+sed -i "s/#define LIBMP3SPLT_MICRO_VERSION .*/#define LIBMP3SPLT_MICRO_VERSION $micro_version/" \
+./include/libmp3splt/mp3splt.h
+
 echo "Finished setting up $PROGRAM to version $VERSION."
 
