@@ -302,7 +302,7 @@ fi
 
 echo
 echo "---------------------------------------------------------"
-echo "Configuration:"
+echo "Configuration for libmp3splt version "libmp3splt_version" :"
 echo
 echo "    install path:            $prefix"
 echo
