@@ -19,28 +19,19 @@ sed -i "1,4s/libmp3splt (\(.*\))/libmp3splt ($VERSION)/" ./debian/changelog || e
 #README
 #./README:       libmp3splt version 0.3.1
 sed -i "s/\s*$PROGRAM version.*/\t$PROGRAM version $VERSION/" README || exit 1
-#configure.ac
-#./configure.ac:AC_INIT(libmp3splt, 0.3.1, io_alex_2002@yahoo.fr)
-#./configure.ac:AM_INIT_AUTOMAKE(libmp3splt, 0.3.1)
-sed -i "s/AC_INIT(\[$PROGRAM\],\[.*\],/\
-AC_INIT(\[$PROGRAM\],\[$VERSION\],/" ./configure.ac || exit 1
-sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
-AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac || exit 1   
-
-sed -i "s/#define SPLT_PACKAGE_VERSION \".*\"/\
-#define SPLT_PACKAGE_VERSION \"$VERSION\"/" ./src/splt.h || exit 1
 
 versions=(${VERSION//./ })
 major_version=${versions[0]}
 minor_version=${versions[1]}
-micro_version=${versions[2]}
+if [ -z "${versions[3]}" ];then
+ micro_version=${versions[2]}
+else
+ micro_version=${versions[2]}"."${versions[3]}
+fi
 
-sed -i "s/#define LIBMP3SPLT_MAJOR_VERSION .*/#define LIBMP3SPLT_MAJOR_VERSION $major_version/" \
-./include/libmp3splt/mp3splt.h
-sed -i "s/#define LIBMP3SPLT_MINOR_VERSION .*/#define LIBMP3SPLT_MINOR_VERSION $minor_version/" \
-./include/libmp3splt/mp3splt.h
-sed -i "s/#define LIBMP3SPLT_MICRO_VERSION .*/#define LIBMP3SPLT_MICRO_VERSION $micro_version/" \
-./include/libmp3splt/mp3splt.h
+sed -i "s/libmp3splt_major_version\], \[.*\])/libmp3splt_major_version\], \[$major_version\])/" ./configure.ac
+sed -i "s/libmp3splt_minor_version\], \[.*\])/libmp3splt_minor_version\], \[$minor_version\])/" ./configure.ac
+sed -i "s/libmp3splt_micro_version\], \[.*\])/libmp3splt_micro_version\], \[$micro_version\])/" ./configure.ac
 
 echo "Finished setting up $PROGRAM to version $VERSION."
 

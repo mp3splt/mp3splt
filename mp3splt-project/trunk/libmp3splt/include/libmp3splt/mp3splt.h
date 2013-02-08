@@ -79,11 +79,9 @@ A list of <a href="modules.html">all modules</a> is also available.
 
 #ifndef MP3SPLT_MP3SPLT_H
 
-#define LIBMP3SPLT_MAJOR_VERSION 0
-#define LIBMP3SPLT_MINOR_VERSION 8
-#define LIBMP3SPLT_MICRO_VERSION 2
-
 #include <sys/types.h>
+
+#include "version.h"
 
 /**
  * @brief True value

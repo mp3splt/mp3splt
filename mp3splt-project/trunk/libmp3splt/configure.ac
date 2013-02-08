@@ -33,12 +33,26 @@
 # Basic initialisations 
 #################################################
 
-AC_PREREQ(2.62)
-AC_INIT([libmp3splt],[0.8.2.1261],[m@ioalex.net])
+#inspired from gtk sources
+m4_define([libmp3splt_major_version], [0])
+m4_define([libmp3splt_minor_version], [8])
+m4_define([libmp3splt_micro_version], [2.1261])
+m4_define([libmp3splt_version],
+          [libmp3splt_major_version.libmp3splt_minor_version.libmp3splt_micro_version])
+
+AC_PREREQ([2.62])
+AC_INIT([libmp3splt],[libmp3splt_version],[m@ioalex.net])
 AC_CONFIG_AUX_DIR([libltdl/config])
-AM_INIT_AUTOMAKE(libmp3splt, 0.8.2.1261)
+AM_INIT_AUTOMAKE([libmp3splt], [libmp3splt_version])
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
+
+LIBMP3SPLT_MAJOR_VERSION=libmp3splt_major_version
+AC_SUBST(LIBMP3SPLT_MAJOR_VERSION)
+LIBMP3SPLT_MINOR_VERSION=libmp3splt_minor_version
+AC_SUBST(LIBMP3SPLT_MINOR_VERSION)
+LIBMP3SPLT_MICRO_VERSION=libmp3splt_micro_version
+AC_SUBST(LIBMP3SPLT_MICRO_VERSION)
 
 #################################################
 # Check for programs
@@ -330,7 +344,8 @@ m4/Makefile
 doc/Makefile
 doc/Doxyfile_all
 doc/Doxyfile_api
-doc/examples/Makefile])
+doc/examples/Makefile
+include/libmp3splt/version.h])
 
 AC_OUTPUT
 
