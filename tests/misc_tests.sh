@@ -8,7 +8,7 @@ function _test_misc_version
 
   expected="mp3splt 2.2.7 (25/09/09) - using libmp3splt 0.5.8
 \tMatteo Trotta <mtrotta AT users.sourceforge.net>
-\tAlexandru Munteanu <io_fx AT yahoo.fr>"
+\tAlexandru Munteanu <m AT ioalex.net>"
   mp3splt_args=" -v" 
   run_check_output "$mp3splt_args" "$expected"
 
