@@ -62,7 +62,7 @@
 #define MP3SPLT_AUTHOR1 "Matteo Trotta"
 #define MP3SPLT_AUTHOR2 "Alexandru Munteanu"
 #define MP3SPLT_EMAIL1 "<mtrotta AT users.sourceforge.net>"
-#define MP3SPLT_EMAIL2 "<io_fx AT yahoo.fr>"
+#define MP3SPLT_EMAIL2 "<m AT ioalex.net>"
 #define MP3SPLT_CDDBFILE "query.cddb"
 
 #define COMMON_H
