@@ -743,7 +743,7 @@ void splt_s_wrap_split(splt_state *state, int *error);
 /**
  * @brief Package version
  */
-#define SPLT_PACKAGE_VERSION "0.8.2.1261"
+#define SPLT_PACKAGE_VERSION LIBMP3SPLT_VERSION
 #endif
 
 /**

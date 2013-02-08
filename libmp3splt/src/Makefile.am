@@ -1,8 +1,9 @@
 includedir = $(prefix)/include/libmp3splt/
 
-include_HEADERS = $(top_srcdir)/include/libmp3splt/mp3splt.h
+include_HEADERS = $(top_srcdir)/include/libmp3splt/mp3splt.h \
+$(top_srcdir)/include/libmp3splt/version.h
 
-INCLUDES=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt$(SONAME)\" @INCLTDL@
+INCLUDES=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt$(SONAME)\" -DLIBMP3SPLT_VERSION=\"$(VERSION)\" @INCLTDL@
 
 lib_LTLIBRARIES = libmp3splt.la
 
@@ -37,6 +38,7 @@ libmp3splt_la_SOURCES = \
   types_func.c types_func.h \
   splt.c splt.h  \
   mp3splt.c $(top_srcdir)/include/libmp3splt/mp3splt.h \
+  $(top_srcdir)/include/libmp3splt/version.h \
   cddb.c cddb.h \
   checks.c checks.h \
   utils.c utils.h \
