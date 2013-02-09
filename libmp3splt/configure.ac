@@ -36,7 +36,7 @@
 #inspired from gtk sources
 m4_define([libmp3splt_major_version], [0])
 m4_define([libmp3splt_minor_version], [8])
-m4_define([libmp3splt_micro_version], [2.1261])
+m4_define([libmp3splt_micro_version], [2.1268])
 m4_define([libmp3splt_version],
           [libmp3splt_major_version.libmp3splt_minor_version.libmp3splt_micro_version])
 
