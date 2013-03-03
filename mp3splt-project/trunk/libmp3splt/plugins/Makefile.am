@@ -42,3 +42,15 @@ libsplt_ogg_la_LDFLAGS = $(common_LDFLAGS) @VORBISFILE_LIBS@ @VORBIS_LIBS@ @OGG_
 
 endif
 
+#FLAC plugin
+if FLAC_PLUGIN
+
+plugin_LTLIBRARIES += libsplt_flac.la
+libsplt_flac_la_SOURCES = flac_frame_reader.c flac_frame_reader.h flac_utils.c flac_utils.h \
+from_flac_library.c from_flac_library.h flac.c flac.h flac_metadata_utils.c flac_metadata_utils.h
+
+libsplt_flac_la_CPPFLAGS = $(common_CPPFLAGS) @FLAC_CFLAGS@
+libsplt_flac_la_LDFLAGS = $(common_LDFLAGS) @FLAC_LIBS@
+
+endif
+
