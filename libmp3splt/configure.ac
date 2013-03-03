@@ -220,6 +220,24 @@ if test "x$enable_ogg_plugin" = xyes;then
       AC_MSG_WARN(Vorbis not found! Will build without ogg/vorbis support.))
 fi
 
+
+#################################################################
+# Check flac plugin libraries
+#################################################################
+
+#check for --disable-flac & flac libraries
+AM_CONDITIONAL(FLAC_PLUGIN,false)
+flac="no" 
+AC_ARG_ENABLE(flac, [AC_HELP_STRING([--disable-flac],[ Disable flac plugin. ]) ],
+    [enable_flac_plugin=$enableval],[enable_flac_plugin="yes"])
+
+if test "x$enable_flac_plugin" = xyes;then
+  PKG_PROG_PKG_CONFIG
+  PKG_CHECK_MODULES([FLAC], [flac >= 1.2.1],
+      [AM_CONDITIONAL(FLAC_PLUGIN, true) flac="yes" ],
+      [AC_MSG_WARN([libFLAC is not found. Will build without flac support.])])
+fi
+
 #################################################################
 # Check for cutter
 #################################################################
@@ -308,8 +326,9 @@ echo "    install path:            $prefix"
 echo
 echo " Plugins :"
 echo
-echo "    libmad (.mp3 format)                                    $mp3"
-echo "    libogg, libvorbis (.ogg/vorbis format)                  $ogg"
+echo "    libmad (mp3 format)                                    $mp3"
+echo "    libogg, libvorbis (ogg/vorbis format)                  $ogg"
+echo "    libFLAC (flac format)                                  $flac"
 echo
 echo " Other :"
 echo
