@@ -129,3 +129,15 @@ void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, 
   }
 }
 
+unsigned char *splt_flac_mu_build_metadata_header(unsigned char type, unsigned char is_last,
+    unsigned length)
+{
+  unsigned char *metadata_header = malloc(4);
+  if (metadata_header == NULL) { return NULL; }
+
+  metadata_header[0] = type | (is_last << 7);
+  splt_flac_l_pack_uint32(length, metadata_header + 1, 3); 
+
+  return metadata_header;
+}
+

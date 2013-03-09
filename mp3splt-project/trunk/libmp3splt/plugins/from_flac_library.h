@@ -61,6 +61,8 @@
 
 #include "flac_frame_reader.h"
 
+#define SPLT_FLAC_STREAMINFO_LENGTH 34
+
 extern unsigned splt_flac_l_crc16_table[256];
 extern unsigned char const splt_flac_l_crc8_table[256];
 
@@ -73,7 +75,9 @@ uint64_t splt_flac_l_read_utf8_uint64(splt_flac_frame_reader *fr, splt_flac_code
     unsigned char *number_of_bytes);
 
 void splt_flac_l_convert_to_streaminfo(FLAC__StreamMetadata_StreamInfo *block, unsigned char *bytes);
+unsigned char *splt_flac_l_convert_from_streaminfo(FLAC__StreamMetadata_StreamInfo *block);
 FLAC__uint32 splt_flac_l_unpack_uint32(FLAC__byte *b, unsigned bytes);
+void splt_flac_l_pack_uint32(FLAC__uint32 val, FLAC__byte *b, unsigned bytes);
 
 unsigned char *splt_flac_l_convert_to_utf8(FLAC__uint64 val, unsigned char *utf8_used_bytes);
 

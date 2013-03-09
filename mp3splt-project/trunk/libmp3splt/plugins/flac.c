@@ -118,8 +118,14 @@ double splt_pl_split(splt_state *state, const char *output_fname,
   }
 
   splt_fr_read_and_write_frames(state, flacstate->in, output_file,
-      flacstate->streaminfo.min_blocksize, flacstate->streaminfo.max_blocksize,
-      flacstate->streaminfo.bits_per_sample, error);
+      flacstate->streaminfo.min_blocksize, 
+      flacstate->streaminfo.max_blocksize,
+      flacstate->streaminfo.bits_per_sample,
+      flacstate->streaminfo.sample_rate,
+      flacstate->streaminfo.channels,
+      flacstate->streaminfo.min_framesize,
+      flacstate->streaminfo.max_framesize,
+      error);
 
   if (output_file)
   {
