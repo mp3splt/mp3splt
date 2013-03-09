@@ -260,6 +260,7 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   unsigned char crc8 = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
 
+  fprintf(stdout, "COMPUTED crc8 = %x\n", computed_crc8);
   fprintf(stdout, "REAL crc8 = %x\n", crc8);
   fflush(stdout);
 
@@ -684,6 +685,9 @@ static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_len
   }
   modified_frame[j] = new_crc8;
 
+  fprintf(stdout, "new crc8 = %x\n", new_crc8);
+  fflush(stdout);
+
   //compute and set new crc16
   unsigned new_crc16 = 0;
   for (j = 0;j < modified_frame_length - 2;j++)
@@ -694,6 +698,16 @@ static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_len
   unsigned char last_byte_of_new_crc16 = (unsigned char) ((new_crc16 << 8) >> 8);
   modified_frame[j] = first_byte_of_new_crc16;
   modified_frame[j+1] = last_byte_of_new_crc16;
+
+/*  fprintf(stdout, "modified frame length = %llu\n", (long long unsigned) modified_frame_length);
+  fprintf(stdout, "frame length = %llu\n", (long long unsigned) frame_length);
+  fflush(stdout);
+
+  for (j = 0;j < frame_length;j++)
+  {
+    fprintf(stdout, "Ox%x\tNx%x\n", frame[j], modified_frame[j]);
+    fflush(stdout);
+  }*/
 
   //TODO: change with splt_io_fwrite
   if (fwrite(modified_frame, modified_frame_length, 1, fr->out) != 1)
@@ -785,6 +799,14 @@ void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
   fr->out_streaminfo.sample_rate = sample_rate;
   fr->out_streaminfo.channels = channels;
   fr->out_streaminfo.bits_per_sample = bits_per_sample;
+
+  unsigned char space[4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH] = {'\0'};
+  int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
+  if (fwrite(space, space_size, 1, fr->out) != 1)
+  {
+    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
+    goto end;
+  }
 
   while (1)
   {
