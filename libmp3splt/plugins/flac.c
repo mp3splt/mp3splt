@@ -109,7 +109,7 @@ double splt_pl_split(splt_state *state, const char *output_fname,
 {
   splt_flac_state *flacstate = state->codec;
 
-  FILE *output_file = splt_io_fopen(output_fname, "wb");
+  FILE *output_file = splt_io_fopen(output_fname, "wb+");
   if (output_file == NULL)
   {
     splt_e_set_strerror_msg_with_data(state, output_fname);
