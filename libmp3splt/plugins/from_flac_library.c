@@ -261,7 +261,7 @@ FLAC__uint32 splt_flac_l_unpack_uint32(FLAC__byte *b, unsigned bytes)
   return ret;
 }
 
-static FLAC__uint64 unpack_uint64_(FLAC__byte *b, unsigned bytes)
+static FLAC__uint64 splt_flac_l_unpack_uint64_(FLAC__byte *b, unsigned bytes)
 {
   FLAC__uint64 ret = 0;
   unsigned i;
@@ -270,6 +270,18 @@ static FLAC__uint64 unpack_uint64_(FLAC__byte *b, unsigned bytes)
     ret = (ret << 8) | (FLAC__uint64)(*b++);
 
   return ret;
+}
+
+void splt_flac_l_pack_uint32(FLAC__uint32 val, FLAC__byte *b, unsigned bytes)
+{
+  unsigned i;
+
+  b += bytes;
+
+  for(i = 0; i < bytes; i++) {
+    *(--b) = (FLAC__byte)(val & 0xff);
+    val >>= 8;
+  }
 }
 
 void splt_flac_l_convert_to_streaminfo(FLAC__StreamMetadata_StreamInfo *block, unsigned char *bytes)
@@ -283,8 +295,30 @@ void splt_flac_l_convert_to_streaminfo(FLAC__StreamMetadata_StreamInfo *block, u
   block->sample_rate = (splt_flac_l_unpack_uint32(b, 2) << 4) | ((unsigned)(b[2] & 0xf0) >> 4);
   block->channels = (unsigned)((b[2] & 0x0e) >> 1) + 1;
   block->bits_per_sample = ((((unsigned)(b[2] & 0x01)) << 4) | (((unsigned)(b[3] & 0xf0)) >> 4)) + 1;
-  block->total_samples = (((FLAC__uint64)(b[3] & 0x0f)) << 32) | unpack_uint64_(b+4, 4);
+  block->total_samples = (((FLAC__uint64)(b[3] & 0x0f)) << 32) | splt_flac_l_unpack_uint64_(b+4, 4);
   memcpy(block->md5sum, b+8, 16);
+}
+
+unsigned char *splt_flac_l_convert_from_streaminfo(FLAC__StreamMetadata_StreamInfo *block)
+{
+  unsigned char *bytes = malloc(SPLT_FLAC_STREAMINFO_LENGTH);
+  if (bytes == NULL) { return NULL; }
+
+  const unsigned channels1 = block->channels - 1;
+  const unsigned bps1 = block->bits_per_sample - 1;
+
+  splt_flac_l_pack_uint32(block->min_blocksize, bytes, 2);
+  splt_flac_l_pack_uint32(block->max_blocksize, bytes+2, 2);
+  splt_flac_l_pack_uint32(block->min_framesize, bytes+4, 3);
+  splt_flac_l_pack_uint32(block->max_framesize, bytes+7, 3);
+  bytes[10] = (block->sample_rate >> 12) & 0xff;
+  bytes[11] = (block->sample_rate >> 4) & 0xff;
+  bytes[12] = ((block->sample_rate & 0x0f) << 4) | (channels1 << 1) | (bps1 >> 4);
+  bytes[13] = (FLAC__byte)(((bps1 & 0x0f) << 4) | ((block->total_samples >> 32) & 0x0f));
+  splt_flac_l_pack_uint32((FLAC__uint32)block->total_samples, bytes+14, 4);
+  memcpy(bytes+18, block->md5sum, 16);
+
+  return bytes;
 }
 
 unsigned char *splt_flac_l_convert_to_utf8(FLAC__uint64 val, unsigned char *utf8_used_bytes)

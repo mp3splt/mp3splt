@@ -61,6 +61,7 @@ typedef struct {
   //output buffer
   unsigned char *output_buffer;
   unsigned output_buffer_times;
+  FLAC__StreamMetadata_StreamInfo out_streaminfo;
 
   //computed crc8 and crc16 for checking purposes
   unsigned char crc8;
@@ -98,8 +99,10 @@ typedef struct {
 } splt_flac_frame_reader;
 
 void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
-    unsigned min_blocksize, unsigned max_blocksize, unsigned bits_per_sample, 
-    int *frame_reader_error);
+    unsigned min_blocksize, unsigned max_blocksize, 
+    unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
+    unsigned min_framesize, unsigned max_framesize,
+    int *error);
 
 #define SPLT_FLAC_FR_BUFFER_SIZE 2048
 

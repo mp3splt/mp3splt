@@ -35,6 +35,8 @@
 #include "from_flac_library.h"
 
 void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, splt_code *error);
+unsigned char *splt_flac_mu_build_metadata_header(unsigned char type, unsigned char is_last,
+    unsigned length);
 
 #define SPLT_FLAC_METADATA_STREAMINFO 0
 #define SPLT_FLAC_METADATA_PADDING 1
@@ -43,6 +45,8 @@ void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, 
 #define SPLT_FLAC_METADATA_VORBIS_COMMENT 4
 #define SPLT_FLAC_METADATA_CUESHEET 5
 #define SPLT_FLAC_METADATA_PICTURE 6
+
+#define SPLT_FLAC_METADATA_HEADER_LENGTH 4
 
 #define MP3SPLT_FLAC_METADATA_UTILS_H
 
