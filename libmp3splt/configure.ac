@@ -134,8 +134,8 @@ if test "x$enable_c_debug" = xyes;then
   CFLAGS="$CFLAGS -g -Wall"
 fi
 
-AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--enable-optimise],[ Enable O2 optimise. ]) ],
-    [enable_optimise=$enableval],[enable_optimise="no"])
+AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--disable-optimise],[ Disable O3 optimise. ]) ],
+    [enable_optimise=$enableval],[enable_optimise="yes"])
 if test "x$enable_optimise" = xyes;then
   CFLAGS="$CFLAGS -O3"
 fi

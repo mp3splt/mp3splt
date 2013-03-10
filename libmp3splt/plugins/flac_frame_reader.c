@@ -816,6 +816,12 @@ void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
     splt_flac_fr_read_frame(fr, min_blocksize, max_blocksize, bits_per_sample, 
         &frame_reader_error_code);
     if (frame_reader_error_code < 0) { goto end; }
+  
+    long time = (long) ((double) fr->sample_number / (double) sample_rate * 100.0);
+    long mins, secs, hundr;
+    splt_co_get_mins_secs_hundr(time, &mins, &secs, &hundr);
+    fprintf(stdout, "time = %2ld.%2ld.%2ld\n", mins, secs, hundr);
+    fflush(stdout);
 
     splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code,
         splt_fr_write_frame_processor, fr);
