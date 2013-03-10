@@ -183,7 +183,7 @@ static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, splt_code *e
   double total_time =
     ((double) flacstate->streaminfo.total_samples / 
      (double) flacstate->streaminfo.sample_rate) * 100.0;
-  splt_t_set_total_time(state, total_time);
+  splt_t_set_total_time(state, (long)total_time);
 
   return flacstate;
 }
