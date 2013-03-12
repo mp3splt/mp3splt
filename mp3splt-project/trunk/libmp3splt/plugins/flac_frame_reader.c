@@ -39,90 +39,6 @@
 #include "from_flac_library.h"
 #include "flac_metadata_utils.h"
 
-static splt_flac_frame_reader *splt_flac_fr_new(FILE *in, FILE *out, splt_flac_code *error)
-{
-  splt_flac_frame_reader *fr = malloc(sizeof(splt_flac_frame_reader));
-  if (fr == NULL)
-  {
-    *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
-    return NULL;
-  }
-
-  fr->in = in;
-  fr->out = out;
-
-  fr->crc8 = 0;
-  fr->crc16 = 0;
-
-  fr->bits_per_sample = 0;
-  fr->blocksize = 0;
-  fr->blocking_strategy = 0;
-
-  fr->channels = 0;
-  fr->channel_assignment = 0;
-
-  fr->remaining_bits = 0;
-  fr->last_byte = 0;
-  fr->next_byte = SPLT_FLAC_FR_BUFFER_SIZE;
-  fr->read_bytes = 0;
-
-  fr->buffer = NULL;
-
-  fr->output_buffer = NULL;
-  fr->output_buffer_times = 0;
-
-  fr->out_streaminfo.min_blocksize = 0;
-  fr->out_streaminfo.max_blocksize = 0;
-  fr->out_streaminfo.min_framesize = 0;
-  fr->out_streaminfo.max_framesize = 0;
-  fr->out_streaminfo.total_samples = 0;
-
-  int i = 0;
-  for (i = 0;i < 16; i++)
-  {
-    fr->out_streaminfo.md5sum[i] = 0;
-  }
-
-  fr->out_streaminfo.sample_rate = 0;
-  fr->out_streaminfo.channels = 0;
-  fr->out_streaminfo.bits_per_sample = 0;
-
-  fr->frame_number = 0;
-  fr->frame_number_as_utf8 =
-    splt_flac_l_convert_to_utf8(fr->frame_number, &fr->frame_number_as_utf8_length);
-  if (fr->frame_number_as_utf8 == NULL)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    free(fr);
-    return NULL;
-  }
-
-  fr->sample_number = 0;
-  fr->sample_number_as_utf8 = 
-    splt_flac_l_convert_to_utf8(fr->sample_number, &fr->sample_number_as_utf8_length);
-  if (fr->sample_number_as_utf8 == NULL)
-  {
-    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-    free(fr->frame_number_as_utf8);
-    free(fr);
-    return NULL;
-  }
-
-  return fr;
-}
-
-static void splt_flac_fr_free(splt_flac_frame_reader *fr)
-{
-  if (fr == NULL) { return; }
-
-  if (fr->frame_number_as_utf8) { free(fr->frame_number_as_utf8); }
-  if (fr->sample_number_as_utf8) { free(fr->sample_number_as_utf8); }
-  if (fr->buffer) { free(fr->buffer); }
-  if (fr->output_buffer) { free(fr->output_buffer); }
-
-  free(fr);
-}
-
 static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
     unsigned min_blocksize, unsigned max_blocksize, unsigned metadata_bits_per_sample, 
     splt_flac_code *error)
@@ -136,6 +52,8 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   if (*error < 0) { return; }
   unsigned char blocksize_and_sample_rate = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
+
+  unsigned previous_blocksize = fr->blocksize;
 
   unsigned char blocksize_bits = blocksize_and_sample_rate >> 4;
   if (blocksize_bits == 1)
@@ -192,17 +110,14 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   fr->blocking_strategy = blocking_strategy || min_blocksize != max_blocksize;
   if (fr->blocking_strategy)
   {
-    uint64_t sample_number = splt_flac_l_read_utf8_uint64(fr, error, &fr->sample_number_bytes);
+    fr->current_sample_number = splt_flac_l_read_utf8_uint64(fr, error, &fr->sample_number_bytes);
     if (*error < 0) { return; }
-    fprintf(stdout, "sample number = %llu\n", (long long unsigned) sample_number);
-    fflush(stdout);
   }
   else
   {
     uint32_t frame_number = splt_flac_l_read_utf8_uint32(fr, error, &fr->frame_number_bytes);
     if (*error < 0) { return; }
-    fprintf(stdout, "frame number = %llu\n", (long long unsigned) frame_number);
-    fflush(stdout);
+    fr->current_sample_number = frame_number * previous_blocksize;
   }
 
   if (blocksize_bits == 6)
@@ -234,11 +149,6 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   {
     fr->out_streaminfo.max_blocksize = fr->blocksize;
   }
-
-  //TODO ?
-  fr->out_streaminfo.total_samples += fr->blocksize;
-  fprintf(stdout, "adding blocksize = %llu\n", (long long unsigned) fr->blocksize);
-  fflush(stdout);
 
   unsigned char sample_bits = blocksize_and_sample_rate & 0x0f;
   if (sample_bits == 12)
@@ -651,6 +561,8 @@ static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_len
 
   //frame or sample utf8 number
   int i = 0;
+  /*fprintf(stdout, "frame or sample utf8 length = %d\n", frame_or_sample_utf8_length);
+  fflush(stdout);*/
   for (;i < frame_or_sample_utf8_length;i++)
   {
     modified_frame[4 + i] = frame_or_sample_utf8_bytes[i];
@@ -659,25 +571,30 @@ static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_len
 
   //copy everything else
   size_t length_up_to_including_frame_number = 4 + frame_or_sample_read_length;
+  /*fprintf(stdout, "frame number length = %d\n", frame_or_sample_read_length);
+  fflush(stdout);*/
 
   memcpy(ptr + 1,
       frame + length_up_to_including_frame_number,
       frame_length - length_up_to_including_frame_number);
 
-  unsigned crc16 = 0;
+  /*unsigned crc16 = 0;
   crc16 |= ((unsigned)modified_frame[modified_frame_length - 2]) << 8;
   fprintf(stdout, "crc16 from modified frame = 0x%x\n", 
       crc16 | ((unsigned)modified_frame[modified_frame_length - 1]));
-  fflush(stdout);
+  fflush(stdout);*/
 
-  fprintf(stdout, "bytes between frame number and crc8 = %d\n",
+  /*fprintf(stdout, "bytes between frame number and crc8 = %d\n",
       fr->bytes_between_frame_number_and_crc8);
-  fflush(stdout);
+  fflush(stdout);*/
 
   //compute and set new crc8
   size_t j = 0;
   size_t before_crc8_length = 
-    length_up_to_including_frame_number + fr->bytes_between_frame_number_and_crc8;
+    4 + frame_or_sample_utf8_length + fr->bytes_between_frame_number_and_crc8;
+  /*fprintf(stdout, "bytes between frame number and crc8 = %ld\n", fr->bytes_between_frame_number_and_crc8);
+  fprintf(stdout, "before crc8 length = %ld\n", (long int) before_crc8_length);
+  fflush(stdout);*/
   unsigned char new_crc8 = 0;
   for (;j < before_crc8_length;j++)
   {
@@ -685,8 +602,8 @@ static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_len
   }
   modified_frame[j] = new_crc8;
 
-  fprintf(stdout, "new crc8 = %x\n", new_crc8);
-  fflush(stdout);
+  /*fprintf(stdout, "new crc8 = %x\n", new_crc8);
+  fflush(stdout);*/
 
   //compute and set new crc16
   unsigned new_crc16 = 0;
@@ -699,7 +616,7 @@ static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_len
   modified_frame[j] = first_byte_of_new_crc16;
   modified_frame[j+1] = last_byte_of_new_crc16;
 
-/*  fprintf(stdout, "modified frame length = %llu\n", (long long unsigned) modified_frame_length);
+  /*fprintf(stdout, "modified frame length = %llu\n", (long long unsigned) modified_frame_length);
   fprintf(stdout, "frame length = %llu\n", (long long unsigned) frame_length);
   fflush(stdout);
 
@@ -785,7 +702,82 @@ end:
       fflush(stdout);*/
 }
 
-void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
+splt_flac_frame_reader *splt_flac_fr_new(FILE *in)
+{
+  splt_flac_frame_reader *fr = malloc(sizeof(splt_flac_frame_reader));
+  if (fr == NULL) { return NULL; }
+
+  fr->in = in;
+  fr->out = NULL;
+
+  fr->crc8 = 0;
+  fr->crc16 = 0;
+
+  fr->bits_per_sample = 0;
+  fr->blocksize = 0;
+  fr->blocking_strategy = 0;
+
+  fr->channels = 0;
+  fr->channel_assignment = 0;
+
+  fr->remaining_bits = 0;
+  fr->last_byte = 0;
+  fr->next_byte = SPLT_FLAC_FR_BUFFER_SIZE;
+  fr->read_bytes = 0;
+
+  fr->buffer = NULL;
+
+  fr->output_buffer = NULL;
+  fr->output_buffer_times = 0;
+
+  fr->out_streaminfo.min_blocksize = 0;
+  fr->out_streaminfo.max_blocksize = 0;
+  fr->out_streaminfo.min_framesize = 0;
+  fr->out_streaminfo.max_framesize = 0;
+  fr->out_streaminfo.total_samples = 0;
+
+  int i = 0;
+  for (i = 0;i < 16; i++)
+  {
+    fr->out_streaminfo.md5sum[i] = 0;
+  }
+
+  fr->out_streaminfo.sample_rate = 0;
+  fr->out_streaminfo.channels = 0;
+  fr->out_streaminfo.bits_per_sample = 0;
+
+  fr->frame_number = 0;
+  fr->frame_number_as_utf8 =
+    splt_flac_l_convert_to_utf8(fr->frame_number, &fr->frame_number_as_utf8_length);
+  if (fr->frame_number_as_utf8 == NULL) { free(fr); return NULL; }
+
+  fr->sample_number = 0;
+  fr->sample_number_as_utf8 = 
+    splt_flac_l_convert_to_utf8(fr->sample_number, &fr->sample_number_as_utf8_length);
+  if (fr->sample_number_as_utf8 == NULL)
+  {
+    free(fr->frame_number_as_utf8);
+    free(fr);
+    return NULL;
+  }
+
+  return fr;
+}
+
+void splt_flac_fr_free(splt_flac_frame_reader *fr)
+{
+  if (fr == NULL) { return; }
+
+  if (fr->frame_number_as_utf8) { free(fr->frame_number_as_utf8); }
+  if (fr->sample_number_as_utf8) { free(fr->sample_number_as_utf8); }
+  if (fr->buffer) { free(fr->buffer); }
+  if (fr->output_buffer) { free(fr->output_buffer); }
+
+  free(fr);
+}
+
+void splt_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr, FILE *out,
+    double begin_point, double end_point,
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
     unsigned min_framesize, unsigned max_framesize,
@@ -793,12 +785,13 @@ void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
 {
   int frame_reader_error_code = SPLT_FLAC_OK;
 
-  splt_flac_frame_reader *fr = splt_flac_fr_new(in, out, &frame_reader_error_code);
-  if (fr == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
+  fr->out = out;
 
   fr->out_streaminfo.sample_rate = sample_rate;
   fr->out_streaminfo.channels = channels;
   fr->out_streaminfo.bits_per_sample = bits_per_sample;
+
+  fr->out_streaminfo.total_samples = 0;
 
   unsigned char space[4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH] = {'\0'};
   int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
@@ -808,7 +801,8 @@ void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
     goto end;
   }
 
-  while (1)
+  int we_continue = 1;
+  while (we_continue)
   {
     unsigned frame_byte_buffer_start = 0;
     if (fr->buffer != NULL) { frame_byte_buffer_start = fr->next_byte; }
@@ -816,24 +810,45 @@ void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
     splt_flac_fr_read_frame(fr, min_blocksize, max_blocksize, bits_per_sample, 
         &frame_reader_error_code);
     if (frame_reader_error_code < 0) { goto end; }
-  
-    long time = (long) ((double) fr->sample_number / (double) sample_rate * 100.0);
-    long mins, secs, hundr;
-    splt_co_get_mins_secs_hundr(time, &mins, &secs, &hundr);
-    fprintf(stdout, "time = %2ld.%2ld.%2ld\n", mins, secs, hundr);
+
+    double time = (double) fr->current_sample_number / (double) sample_rate;
+    fprintf(stdout, "%lf\t%lf\t%lf\n", time, begin_point, end_point);
     fflush(stdout);
 
-    splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code,
-        splt_fr_write_frame_processor, fr);
-    if (frame_reader_error_code < 0) { goto end; }
+    //long time = (long) ((double) fr->sample_number / (double) sample_rate * 100.0);
+    //long mins, secs, hundr;
+    //splt_co_get_mins_secs_hundr(time, &mins, &secs, &hundr);
+    //fprintf(stdout, "time = %2ld.%2ld.%2ld\n", mins, secs, hundr);
+    //fflush(stdout);
+
+    if (time >= begin_point && (time < end_point || end_point < 0))
+    {
+      fprintf(stdout, "WRITE\n");
+      fflush(stdout);
+      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code,
+          splt_fr_write_frame_processor, fr);
+      if (frame_reader_error_code < 0) { goto end; }
+
+      splt_fr_set_next_frame_and_sample_numbers(fr, &frame_reader_error_code);
+      if (frame_reader_error_code < 0) { goto end; }
+
+      fr->out_streaminfo.total_samples += fr->blocksize;
+    }
+    else if (end_point > 0 && time >= end_point)
+    {
+      //TODO: backup frame
+      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code, NULL, fr);
+      we_continue = 0;
+    }
+    else
+    {
+      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code, NULL, fr);
+    }
 
     if (feof(fr->in) && fr->next_byte >= fr->read_bytes)
     {
       break;
     }
-
-    splt_fr_set_next_frame_and_sample_numbers(fr, &frame_reader_error_code);
-    if (frame_reader_error_code < 0) { goto end; }
   }
 
   splt_fr_finish_and_write_streaminfo(state, min_blocksize, max_blocksize,
@@ -843,7 +858,6 @@ end:
   ;
   splt_code err = splt_fr_convert_flac_error_to_splt_error(state, frame_reader_error_code);
   if (err < 0) { *error = err; }
-  splt_flac_fr_free(fr);
 }
 
 

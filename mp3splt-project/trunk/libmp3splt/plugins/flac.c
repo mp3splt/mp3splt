@@ -31,7 +31,6 @@
 
 #include "splt.h"
 
-#include "flac_frame_reader.h"
 #include "flac_metadata_utils.h"
 #include "flac.h"
 
@@ -117,7 +116,8 @@ double splt_pl_split(splt_state *state, const char *output_fname,
     return end_point;
   }
 
-  splt_fr_read_and_write_frames(state, flacstate->in, output_file,
+  splt_fr_read_and_write_frames(state, flacstate->fr, output_file,
+      begin_point, end_point,
       flacstate->streaminfo.min_blocksize, 
       flacstate->streaminfo.max_blocksize,
       flacstate->streaminfo.bits_per_sample,
@@ -169,11 +169,17 @@ static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, splt_code *e
   splt_flac_state *flacstate = splt_flac_state_new(error);
   if (flacstate == NULL) { return NULL; }
 
-  flacstate->in = in;
+  flacstate->fr = splt_flac_fr_new(in);
+  if (flacstate->fr == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    splt_flac_state_free(flacstate);
+    return NULL;
+  }
 
   //TODO: stdin check ?
 
-  splt_flac_mu_read(flacstate, state, flacstate->in, error);
+  splt_flac_mu_read(flacstate, state, in, error);
   if (*error < 0)
   {
     splt_flac_state_free(flacstate);
@@ -219,6 +225,12 @@ static splt_flac_state *splt_flac_state_new(splt_code *error)
 static void splt_flac_state_free(splt_flac_state *flacstate)
 {
   if (!flacstate) { return; }
+
+  if (flacstate->fr)
+  {
+    splt_flac_fr_free(flacstate->fr);
+    flacstate->fr = NULL;
+  }
 
   free(flacstate);
 }
