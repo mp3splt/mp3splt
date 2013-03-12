@@ -85,6 +85,9 @@ typedef struct {
   //sample and frame number to be written to the modified frame
   FLAC__uint64 frame_number;
   FLAC__uint64 sample_number;
+
+  uint64_t current_sample_number;
+
   unsigned char *frame_number_as_utf8;
   unsigned char frame_number_as_utf8_length;
   unsigned char *sample_number_as_utf8;
@@ -98,7 +101,12 @@ typedef struct {
   int bytes_between_frame_number_and_crc8;
 } splt_flac_frame_reader;
 
-void splt_fr_read_and_write_frames(splt_state *state, FILE *in, FILE *out,
+splt_flac_frame_reader *splt_flac_fr_new(FILE *in);
+void splt_flac_fr_free(splt_flac_frame_reader *fr);
+
+void splt_fr_read_and_write_frames(splt_state *state,
+    splt_flac_frame_reader *fr, FILE *out,
+    double begin_point, double end_point,
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
     unsigned min_framesize, unsigned max_framesize,

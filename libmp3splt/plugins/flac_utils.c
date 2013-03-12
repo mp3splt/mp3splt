@@ -121,16 +121,19 @@ void splt_flac_u_process_frame(splt_flac_frame_reader *fr, unsigned frame_byte_b
   splt_flac_u_append_input_buffer_to_output_buffer(fr, error);
   if (*error < 0) { return; }
 
-  unsigned frame_byte_cut_end = 0;
-  if (fr->next_byte < SPLT_FLAC_FR_BUFFER_SIZE)
+  if (frame_processor != NULL)
   {
-    frame_byte_cut_end = SPLT_FLAC_FR_BUFFER_SIZE - fr->next_byte;
+    unsigned frame_byte_cut_end = 0;
+    if (fr->next_byte < SPLT_FLAC_FR_BUFFER_SIZE)
+    {
+      frame_byte_cut_end = SPLT_FLAC_FR_BUFFER_SIZE - fr->next_byte;
+    }
+
+    size_t total_length =
+      (fr->output_buffer_times * SPLT_FLAC_FR_BUFFER_SIZE) - frame_byte_buffer_start - frame_byte_cut_end;
+
+    frame_processor(fr->output_buffer + frame_byte_buffer_start, total_length, error, user_data);
   }
-
-  size_t total_length =
-    (fr->output_buffer_times * SPLT_FLAC_FR_BUFFER_SIZE) - frame_byte_buffer_start - frame_byte_cut_end;
-
-  frame_processor(fr->output_buffer + frame_byte_buffer_start, total_length, error, user_data);
 
   free(fr->output_buffer);
   fr->output_buffer = NULL;
