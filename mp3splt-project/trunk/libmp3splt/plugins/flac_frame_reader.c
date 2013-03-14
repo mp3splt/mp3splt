@@ -472,7 +472,7 @@ static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
   fflush(stdout);
 }
 
-static splt_code splt_fr_convert_flac_error_to_splt_error(splt_state *state, int frame_reader_error_code)
+static splt_code splt_flac_fr_convert_flac_error_to_splt_error(splt_state *state, int frame_reader_error_code)
 {
   if (frame_reader_error_code >= -1)
   {
@@ -488,7 +488,7 @@ static splt_code splt_fr_convert_flac_error_to_splt_error(splt_state *state, int
   //TODO: set filename ?
 }
 
-static void splt_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reader *fr, int *error)
+static void splt_flac_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reader *fr, int *error)
 {
   fr->frame_number++;
   fr->sample_number = fr->frame_number * fr->blocksize;
@@ -504,7 +504,7 @@ static void splt_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reader *fr
   if (fr->sample_number_as_utf8 == NULL) { *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY; return; }
 }
 
-static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_length,
+static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t frame_length,
     splt_flac_code *error, void *user_data)
 {
   splt_flac_frame_reader *fr = (splt_flac_frame_reader *) user_data;
@@ -635,7 +635,18 @@ static void splt_fr_write_frame_processor(unsigned char *frame, size_t frame_len
   free(modified_frame);
 }
 
-static void splt_fr_finish_and_write_streaminfo(splt_state *state,
+static void splt_flac_fr_backup_frame_processor(unsigned char *frame, size_t frame_length,
+    splt_flac_code *error, void *user_data)
+{
+  splt_flac_frame_reader *fr = (splt_flac_frame_reader *) user_data;
+
+  if (fr->previous_frame) { free(fr->previous_frame); }
+  fr->previous_frame = malloc(sizeof(unsigned char) * frame_length);
+  memcpy(fr->previous_frame, frame, frame_length);
+  fr->previous_frame_length = frame_length;
+}
+
+static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
     unsigned min_blocksize, unsigned max_blocksize,
     unsigned min_framesize, unsigned max_framesize,
     splt_flac_frame_reader *fr, splt_flac_code *error)
@@ -702,13 +713,52 @@ end:
       fflush(stdout);*/
 }
 
+static splt_flac_frame_reader *splt_flac_fr_reset_for_new_file(splt_flac_frame_reader *fr)
+{
+  fr->out = NULL;
+
+  fr->out_streaminfo.min_blocksize = 0;
+  fr->out_streaminfo.max_blocksize = 0;
+  fr->out_streaminfo.min_framesize = 0;
+  fr->out_streaminfo.max_framesize = 0;
+  fr->out_streaminfo.total_samples = 0;
+
+  int i = 0;
+  for (i = 0;i < 16; i++)
+  {
+    fr->out_streaminfo.md5sum[i] = 0;
+  }
+
+  fr->out_streaminfo.sample_rate = 0;
+  fr->out_streaminfo.channels = 0;
+  fr->out_streaminfo.bits_per_sample = 0;
+
+  fr->frame_number = 0;
+  if (fr->frame_number_as_utf8) { free(fr->frame_number_as_utf8); }
+  fr->frame_number_as_utf8 =
+    splt_flac_l_convert_to_utf8(fr->frame_number, &fr->frame_number_as_utf8_length);
+  if (fr->frame_number_as_utf8 == NULL) { free(fr); return NULL; }
+
+  fr->sample_number = 0;
+  if (fr->sample_number_as_utf8) { free(fr->sample_number_as_utf8); }
+  fr->sample_number_as_utf8 = 
+    splt_flac_l_convert_to_utf8(fr->sample_number, &fr->sample_number_as_utf8_length);
+  if (fr->sample_number_as_utf8 == NULL)
+  {
+    free(fr->frame_number_as_utf8);
+    free(fr);
+    return NULL;
+  }
+
+  return fr;
+}
+
 splt_flac_frame_reader *splt_flac_fr_new(FILE *in)
 {
   splt_flac_frame_reader *fr = malloc(sizeof(splt_flac_frame_reader));
   if (fr == NULL) { return NULL; }
 
   fr->in = in;
-  fr->out = NULL;
 
   fr->crc8 = 0;
   fr->crc16 = 0;
@@ -730,36 +780,13 @@ splt_flac_frame_reader *splt_flac_fr_new(FILE *in)
   fr->output_buffer = NULL;
   fr->output_buffer_times = 0;
 
-  fr->out_streaminfo.min_blocksize = 0;
-  fr->out_streaminfo.max_blocksize = 0;
-  fr->out_streaminfo.min_framesize = 0;
-  fr->out_streaminfo.max_framesize = 0;
-  fr->out_streaminfo.total_samples = 0;
-
-  int i = 0;
-  for (i = 0;i < 16; i++)
+  if (splt_flac_fr_reset_for_new_file(fr) == NULL)
   {
-    fr->out_streaminfo.md5sum[i] = 0;
-  }
-
-  fr->out_streaminfo.sample_rate = 0;
-  fr->out_streaminfo.channels = 0;
-  fr->out_streaminfo.bits_per_sample = 0;
-
-  fr->frame_number = 0;
-  fr->frame_number_as_utf8 =
-    splt_flac_l_convert_to_utf8(fr->frame_number, &fr->frame_number_as_utf8_length);
-  if (fr->frame_number_as_utf8 == NULL) { free(fr); return NULL; }
-
-  fr->sample_number = 0;
-  fr->sample_number_as_utf8 = 
-    splt_flac_l_convert_to_utf8(fr->sample_number, &fr->sample_number_as_utf8_length);
-  if (fr->sample_number_as_utf8 == NULL)
-  {
-    free(fr->frame_number_as_utf8);
-    free(fr);
     return NULL;
   }
+
+  fr->previous_frame = NULL;
+  fr->previous_frame_length = 0;
 
   return fr;
 }
@@ -772,12 +799,40 @@ void splt_flac_fr_free(splt_flac_frame_reader *fr)
   if (fr->sample_number_as_utf8) { free(fr->sample_number_as_utf8); }
   if (fr->buffer) { free(fr->buffer); }
   if (fr->output_buffer) { free(fr->output_buffer); }
+  if (fr->previous_frame) { free(fr->previous_frame); }
 
   free(fr);
 }
 
-void splt_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr, FILE *out,
-    double begin_point, double end_point,
+static void splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(splt_flac_frame_reader *fr,
+    const char *output_fname, splt_flac_code *error)
+{
+  if (fr->out_streaminfo.total_samples != 0)
+  {
+    return;
+  }
+
+  fprintf(stdout, "open file\n");
+  fflush(stdout);
+
+  fr->out = splt_io_fopen(output_fname, "wb+");
+  if (fr->out == NULL)
+  {
+    *error = SPLT_FLAC_ERR_FAILED_TO_OPEN_FILE;
+    return;
+  }
+
+  unsigned char space[4+SPLT_FLAC_METADATA_HEADER_LENGTH+SPLT_FLAC_STREAMINFO_LENGTH]={'\0'};
+  int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
+  if (fwrite(space, space_size, 1, fr->out) != 1)
+  {
+    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
+  }
+}
+
+void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr, 
+    const char *output_fname,
+    double begin_point, double end_point, int save_end_point,
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
     unsigned min_framesize, unsigned max_framesize,
@@ -785,20 +840,31 @@ void splt_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr
 {
   int frame_reader_error_code = SPLT_FLAC_OK;
 
-  fr->out = out;
+  if (splt_flac_fr_reset_for_new_file(fr) == NULL)
+  {
+    frame_reader_error_code = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
+    goto end;
+  }
 
   fr->out_streaminfo.sample_rate = sample_rate;
   fr->out_streaminfo.channels = channels;
   fr->out_streaminfo.bits_per_sample = bits_per_sample;
 
-  fr->out_streaminfo.total_samples = 0;
-
-  unsigned char space[4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH] = {'\0'};
-  int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
-  if (fwrite(space, space_size, 1, fr->out) != 1)
+  if (save_end_point && fr->previous_frame)
   {
-    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
-    goto end;
+    splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, 
+        &frame_reader_error_code);
+
+    splt_flac_fr_write_frame_processor(fr->previous_frame, fr->previous_frame_length,
+        &frame_reader_error_code, fr);
+    free(fr->previous_frame);
+    fr->previous_frame = NULL;
+    fr->previous_frame_length = 0;
+
+    splt_flac_fr_set_next_frame_and_sample_numbers(fr, &frame_reader_error_code);
+    if (frame_reader_error_code < 0) { goto end; }
+
+    fr->out_streaminfo.total_samples += fr->blocksize;
   }
 
   int we_continue = 1;
@@ -812,32 +878,24 @@ void splt_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr
     if (frame_reader_error_code < 0) { goto end; }
 
     double time = (double) fr->current_sample_number / (double) sample_rate;
-    fprintf(stdout, "%lf\t%lf\t%lf\n", time, begin_point, end_point);
-    fflush(stdout);
-
-    //long time = (long) ((double) fr->sample_number / (double) sample_rate * 100.0);
-    //long mins, secs, hundr;
-    //splt_co_get_mins_secs_hundr(time, &mins, &secs, &hundr);
-    //fprintf(stdout, "time = %2ld.%2ld.%2ld\n", mins, secs, hundr);
-    //fflush(stdout);
-
     if (time >= begin_point && (time < end_point || end_point < 0))
     {
-      fprintf(stdout, "WRITE\n");
-      fflush(stdout);
+      splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, 
+          &frame_reader_error_code);
+
       splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code,
-          splt_fr_write_frame_processor, fr);
+          splt_flac_fr_write_frame_processor, fr);
       if (frame_reader_error_code < 0) { goto end; }
 
-      splt_fr_set_next_frame_and_sample_numbers(fr, &frame_reader_error_code);
+      splt_flac_fr_set_next_frame_and_sample_numbers(fr, &frame_reader_error_code);
       if (frame_reader_error_code < 0) { goto end; }
 
       fr->out_streaminfo.total_samples += fr->blocksize;
     }
     else if (end_point > 0 && time >= end_point)
     {
-      //TODO: backup frame
-      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code, NULL, fr);
+      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code, 
+          splt_flac_fr_backup_frame_processor, fr);
       we_continue = 0;
     }
     else
@@ -851,13 +909,30 @@ void splt_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr
     }
   }
 
-  splt_fr_finish_and_write_streaminfo(state, min_blocksize, max_blocksize,
-      min_framesize, max_framesize, fr, &frame_reader_error_code);
+  if (fr->out_streaminfo.total_samples != 0)
+  {
+    splt_flac_fr_finish_and_write_streaminfo(state, min_blocksize, max_blocksize,
+        min_framesize, max_framesize, fr, &frame_reader_error_code);
+  }
+  else
+  {
+    frame_reader_error_code = SPLT_FLAC_ERR_BEGIN_OUT_OF_FILE;
+  }
 
 end:
   ;
-  splt_code err = splt_fr_convert_flac_error_to_splt_error(state, frame_reader_error_code);
+
+  if (fr->out)
+  {
+    if (fclose(fr->out) != 0)
+    {
+      splt_e_set_strerror_msg_with_data(state, output_fname);
+      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
+      return;
+    }
+  }
+
+  splt_code err = splt_flac_fr_convert_flac_error_to_splt_error(state, frame_reader_error_code);
   if (err < 0) { *error = err; }
 }
-
 

@@ -108,16 +108,8 @@ double splt_pl_split(splt_state *state, const char *output_fname,
 {
   splt_flac_state *flacstate = state->codec;
 
-  FILE *output_file = splt_io_fopen(output_fname, "wb+");
-  if (output_file == NULL)
-  {
-    splt_e_set_strerror_msg_with_data(state, output_fname);
-    *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
-    return end_point;
-  }
-
-  splt_fr_read_and_write_frames(state, flacstate->fr, output_file,
-      begin_point, end_point,
+  splt_flac_fr_read_and_write_frames(state, flacstate->fr, output_fname,
+      begin_point, end_point, save_end_point,
       flacstate->streaminfo.min_blocksize, 
       flacstate->streaminfo.max_blocksize,
       flacstate->streaminfo.bits_per_sample,
@@ -126,16 +118,6 @@ double splt_pl_split(splt_state *state, const char *output_fname,
       flacstate->streaminfo.min_framesize,
       flacstate->streaminfo.max_framesize,
       error);
-
-  if (output_file)
-  {
-    //TODO check != stdout
-    if (fclose(output_file) != 0)
-    {
-      splt_e_set_strerror_msg_with_data(state, output_fname);
-      *error = SPLT_ERROR_CANNOT_CLOSE_FILE;
-    }
-  }
 
   return end_point;
 }
