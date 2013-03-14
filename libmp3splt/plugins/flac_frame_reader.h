@@ -37,6 +37,8 @@
 #include "splt.h"
 
 typedef enum {
+  SPLT_FLAC_ERR_FAILED_TO_OPEN_FILE = -12,
+  SPLT_FLAC_ERR_BEGIN_OUT_OF_FILE = -11,
   SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE = -10,
   SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY = -9,
   SPLT_FLAC_ERR_ZERO_BIT_OF_SUBFRAME_HEADER_IS_WRONG = -8,
@@ -97,16 +99,20 @@ typedef struct {
   unsigned char sample_number_bytes;
   unsigned char frame_number_bytes;
 
-  //
   int bytes_between_frame_number_and_crc8;
+
+  //we have to read 1 more frame for each file to know where to stop the split
+  //and we backup this frame here for the next file split
+  unsigned char *previous_frame;
+  size_t previous_frame_length;
 } splt_flac_frame_reader;
 
 splt_flac_frame_reader *splt_flac_fr_new(FILE *in);
 void splt_flac_fr_free(splt_flac_frame_reader *fr);
 
-void splt_fr_read_and_write_frames(splt_state *state,
-    splt_flac_frame_reader *fr, FILE *out,
-    double begin_point, double end_point,
+void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,
+    const char *output_fname,
+    double begin_point, double end_point, int save_end_point,
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
     unsigned min_framesize, unsigned max_framesize,
