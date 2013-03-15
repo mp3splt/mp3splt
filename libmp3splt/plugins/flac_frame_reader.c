@@ -170,28 +170,18 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   unsigned char crc8 = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
 
-  fprintf(stdout, "COMPUTED crc8 = %x\n", computed_crc8);
-  fprintf(stdout, "REAL crc8 = %x\n", crc8);
-  fflush(stdout);
-
   if (crc8 != computed_crc8) { *error = SPLT_FLAC_ERR_BAD_CRC8; }
 }
 
 static void splt_flac_fr_read_constant_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
     splt_flac_code *error)
 {
-  //fprintf(stdout, "reading constant subframe ...\n");
-  //fflush(stdout);
-
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample, error);
 }
 
 static void splt_flac_fr_read_verbatim_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
     splt_flac_code *error)
 {
-  //fprintf(stdout, "reading verbatim subframe ...\n");
-  //fflush(stdout);
-
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * fr->blocksize, error);
 }
 
@@ -209,32 +199,16 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
     rice_method = 5;
   }
 
-  //fprintf(stdout, "rice method %d\n", rice_method);
-  //fflush(stdout);
-
   unsigned char rice_partition_order = splt_flac_u_read_bits(fr, 4, error);
   if (*error < 0) { return; }
 
-  //fprintf(stdout, "RICE ORDER %u\n", rice_partition_order);
-  //fflush(stdout);
-
   unsigned order_partition_number = pow(2, rice_partition_order);
-
-  //fprintf(stdout, "order partition number = %lu\n", order_partition_number);
-  //fflush(stdout);
 
   unsigned partition_number;
   for (partition_number = 1;partition_number <= order_partition_number; partition_number++)
   {
-    //fprintf(stdout, "rice partition number = %d\n", partition_number);
-    //fflush(stdout);
-
     unsigned char rice_parameter_or_escape_code = splt_flac_u_read_bits(fr, rice_method, error);
     if (*error < 0) { return; }
-
-    //fprintf(stdout, "bits to read rice param = %u\n", rice_method);
-    //fprintf(stdout, "rice parameter = %u\n", rice_parameter_or_escape_code);
-    //fflush(stdout);
 
     register unsigned char rice_parameter = rice_parameter_or_escape_code;
     if ((rice_method == 4 && ((rice_parameter_or_escape_code & 0x0f) == 0x0f)) ||
@@ -258,9 +232,6 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
       number_of_samples = (fr->blocksize / order_partition_number) - order;
     }
 
-    //fprintf(stdout, "num of samples = %u\n", number_of_samples);
-    //fflush(stdout);
-
     unsigned i;
     for (i = 0;i < number_of_samples;i++)
     {
@@ -279,9 +250,6 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
 static void splt_flac_fr_read_fixed_subframe(splt_flac_frame_reader *fr, unsigned order, 
     unsigned bits_per_sample, splt_flac_code *error)
 {
-  //fprintf(stdout, "reading fixed subframe ...\n");
-  //fflush(stdout);
-
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * order, error);
   if (*error < 0) { return; }
 
@@ -291,9 +259,6 @@ static void splt_flac_fr_read_fixed_subframe(splt_flac_frame_reader *fr, unsigne
 static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned order, 
     unsigned bits_per_sample, splt_flac_code *error)
 {
-  //fprintf(stdout, "reading lpc subframe with %u bps ...\n", bits_per_sample);
-  //fflush(stdout);
-
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * order, error);
   if (*error < 0) { return; }
 
@@ -302,25 +267,14 @@ static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned 
 
   if ((quantized_linear_predictor & 0x0f) == 0x0f)
   {
+    //TODO: error
     fprintf(stderr, "error in lpc subframe quantized predictor\n");
     fflush(stderr);
   }
 
   char qlp_coeff_precision = ((char) quantized_linear_predictor) + 1;
-
-  //fprintf(stdout, "qlp coeff precision = %d\n", qlp_coeff_precision);
-  //fflush(stdout);
-
-  //qlp_coeff_shift
   char qlp_coeff_shift = (char) splt_flac_u_read_bits(fr, 5, error);
   if (*error < 0) { return; }
-
-  //fprintf(stdout, "qlp coeff shift = %d\n", qlp_coeff_shift);
-  //fflush(stdout);
-
-  //fprintf(stdout, "ORDER = %d\n", order);
-  //fprintf(stdout, "COEFF_PRECISION = %d\n", qlp_coeff_precision);
-  //fflush(stdout);
 
   splt_flac_u_read_up_to_total_bits(fr, qlp_coeff_precision * order, error);
   if (*error < 0) { return; }
@@ -356,9 +310,6 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
   unsigned char bit_padding_subframe_type_and_wasted_bit = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
 
-  //fprintf(stdout, "subframe start = 0x%x\n", bit_padding_subframe_type_and_wasted_bit);
-  //fflush(stdout);
-
   unsigned char zero_bit = bit_padding_subframe_type_and_wasted_bit >> 7;
   if (zero_bit != 0)
   {
@@ -378,14 +329,10 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
     } while (bit != 1);
 
     wasted_bits_per_sample = k;
-    //fprintf(stdout, "wasted bits per sample = %d\n", wasted_bits_per_sample);
-    //fflush(stdout);
   }
 
   bit_padding_subframe_type_and_wasted_bit &= 0xfe;
   unsigned char subframe_type = bit_padding_subframe_type_and_wasted_bit;
-  //fprintf(stdout, "subframe type = %u\n", subframe_type);
-  //fflush(stdout);
 
   int sf_type = 0;
   unsigned order = 0;
@@ -425,9 +372,6 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
     order = ((bit_padding_subframe_type_and_wasted_bit >> 1) & 31) + 1;
   }
 
-  //fprintf(stdout, "ORDER = %u\n", order);
-  //fflush(stdout);
-
   splt_flac_fr_read_subframe_content(fr, sf_type, order, bits_per_sample - wasted_bits_per_sample, error);
 }
 
@@ -440,9 +384,6 @@ static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
   splt_flac_fr_read_header(fr, min_blocksize, max_blocksize, metadata_bits_per_sample, error);
   if (*error < 0) { return; }
 
-  //fprintf(stdout, "channels = %d\n", fr->channels);
-  //fflush(stdout);
-
   unsigned channel = 0;
   for (channel = 0; channel < fr->channels; channel++)
   {
@@ -451,9 +392,6 @@ static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
         (fr->channel_assignment == SPLT_FLAC_RIGHT_SIDE && channel == 0) ||
         (fr->channel_assignment == SPLT_FLAC_MID_SIDE && channel == 1))
       bits_per_sample++;
-
-    //fprintf(stdout, "read subframe ...\n");
-    //fflush(stdout);
 
     splt_flac_fr_read_subframe(fr, bits_per_sample, error);
     if (*error < 0) { return; }
@@ -467,9 +405,6 @@ static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
   if (*error < 0) { return; }
 
   if (crc16 != computed_crc16) { *error = SPLT_FLAC_ERR_BAD_CRC16; }
-
-  fprintf(stdout, "crc16 = 0x%x\n", computed_crc16);
-  fflush(stdout);
 }
 
 static splt_code splt_flac_fr_convert_flac_error_to_splt_error(splt_state *state, int frame_reader_error_code)
@@ -561,8 +496,6 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
 
   //frame or sample utf8 number
   int i = 0;
-  /*fprintf(stdout, "frame or sample utf8 length = %d\n", frame_or_sample_utf8_length);
-  fflush(stdout);*/
   for (;i < frame_or_sample_utf8_length;i++)
   {
     modified_frame[4 + i] = frame_or_sample_utf8_bytes[i];
@@ -571,39 +504,21 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
 
   //copy everything else
   size_t length_up_to_including_frame_number = 4 + frame_or_sample_read_length;
-  /*fprintf(stdout, "frame number length = %d\n", frame_or_sample_read_length);
-  fflush(stdout);*/
 
   memcpy(ptr + 1,
       frame + length_up_to_including_frame_number,
       frame_length - length_up_to_including_frame_number);
 
-  /*unsigned crc16 = 0;
-  crc16 |= ((unsigned)modified_frame[modified_frame_length - 2]) << 8;
-  fprintf(stdout, "crc16 from modified frame = 0x%x\n", 
-      crc16 | ((unsigned)modified_frame[modified_frame_length - 1]));
-  fflush(stdout);*/
-
-  /*fprintf(stdout, "bytes between frame number and crc8 = %d\n",
-      fr->bytes_between_frame_number_and_crc8);
-  fflush(stdout);*/
-
   //compute and set new crc8
   size_t j = 0;
   size_t before_crc8_length = 
     4 + frame_or_sample_utf8_length + fr->bytes_between_frame_number_and_crc8;
-  /*fprintf(stdout, "bytes between frame number and crc8 = %ld\n", fr->bytes_between_frame_number_and_crc8);
-  fprintf(stdout, "before crc8 length = %ld\n", (long int) before_crc8_length);
-  fflush(stdout);*/
   unsigned char new_crc8 = 0;
   for (;j < before_crc8_length;j++)
   {
     SPLT_FLAC_UPDATE_CRC8(new_crc8, modified_frame[j]);
   }
   modified_frame[j] = new_crc8;
-
-  /*fprintf(stdout, "new crc8 = %x\n", new_crc8);
-  fflush(stdout);*/
 
   //compute and set new crc16
   unsigned new_crc16 = 0;
@@ -615,16 +530,6 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
   unsigned char last_byte_of_new_crc16 = (unsigned char) ((new_crc16 << 8) >> 8);
   modified_frame[j] = first_byte_of_new_crc16;
   modified_frame[j+1] = last_byte_of_new_crc16;
-
-  /*fprintf(stdout, "modified frame length = %llu\n", (long long unsigned) modified_frame_length);
-  fprintf(stdout, "frame length = %llu\n", (long long unsigned) frame_length);
-  fflush(stdout);
-
-  for (j = 0;j < frame_length;j++)
-  {
-    fprintf(stdout, "Ox%x\tNx%x\n", frame[j], modified_frame[j]);
-    fflush(stdout);
-  }*/
 
   //TODO: change with splt_io_fwrite
   if (fwrite(modified_frame, modified_frame_length, 1, fr->out) != 1)
@@ -701,16 +606,6 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
 end:
   free(metadata_header);
   free(streaminfo_bytes);
-
-  /*  fprintf(stdout, "min blocksize = %u\n", fr->out_streaminfo.min_blocksize);
-      fprintf(stdout, "max blocksize = %u\n", fr->out_streaminfo.max_blocksize);
-      fprintf(stdout, "min framesize = %u\n", fr->out_streaminfo.min_framesize);
-      fprintf(stdout, "max framesize = %u\n", fr->out_streaminfo.max_framesize);
-      fprintf(stdout, "sample rate = %u\n", fr->out_streaminfo.sample_rate);
-      fprintf(stdout, "channels = %u\n", fr->out_streaminfo.channels);
-      fprintf(stdout, "bits per sample = %u\n", fr->out_streaminfo.bits_per_sample);
-      fprintf(stdout, "total_samples = %llu\n", (long long unsigned) fr->out_streaminfo.total_samples);
-      fflush(stdout);*/
 }
 
 static splt_flac_frame_reader *splt_flac_fr_reset_for_new_file(splt_flac_frame_reader *fr)
@@ -811,9 +706,6 @@ static void splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(sp
   {
     return;
   }
-
-  fprintf(stdout, "open file\n");
-  fflush(stdout);
 
   fr->out = splt_io_fopen(output_fname, "wb+");
   if (fr->out == NULL)
