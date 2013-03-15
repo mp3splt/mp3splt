@@ -46,7 +46,8 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   fr->crc8 = 0;
   fr->bytes_between_frame_number_and_crc8 = 0;
 
-  unsigned char sync_code_start = splt_flac_u_read_next_byte(fr, error);
+  //sync code start
+  splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
   unsigned char sync_code_end = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
@@ -272,10 +273,11 @@ static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned 
     fflush(stderr);
   }
 
-  char qlp_coeff_precision = ((char) quantized_linear_predictor) + 1;
-  char qlp_coeff_shift = (char) splt_flac_u_read_bits(fr, 5, error);
+  //qlp_coeff_shift
+  splt_flac_u_read_bits(fr, 5, error);
   if (*error < 0) { return; }
 
+  char qlp_coeff_precision = ((char) quantized_linear_predictor) + 1;
   splt_flac_u_read_up_to_total_bits(fr, qlp_coeff_precision * order, error);
   if (*error < 0) { return; }
 
@@ -652,6 +654,7 @@ splt_flac_frame_reader *splt_flac_fr_new(FILE *in)
 {
   splt_flac_frame_reader *fr = malloc(sizeof(splt_flac_frame_reader));
   if (fr == NULL) { return NULL; }
+  memset(fr, 0x0, sizeof(splt_flac_frame_reader));
 
   fr->in = in;
 
