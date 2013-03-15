@@ -115,9 +115,6 @@ void splt_flac_u_process_frame(splt_flac_frame_reader *fr, unsigned frame_byte_b
       splt_flac_code *error, void *user_data),
     void *user_data)
 {
-  //fprintf(stdout, "%u\t%u\t", frame_byte_buffer_start, fr->next_byte + 1);
-  //fflush(stdout);
-
   splt_flac_u_append_input_buffer_to_output_buffer(fr, error);
   if (*error < 0) { return; }
 
@@ -224,9 +221,6 @@ unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_flac_c
 void splt_flac_u_read_up_to_total_bits(splt_flac_frame_reader *fr, unsigned total_bits,
     splt_flac_code *error)
 {
-  //fprintf(stdout, "reading total = %u\n", total_bits);
-  //fflush(stdout);
-
   if (total_bits <= fr->remaining_bits)
   {
     fr->remaining_bits -= total_bits;
