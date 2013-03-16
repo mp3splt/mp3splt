@@ -428,7 +428,7 @@ static splt_code splt_flac_fr_convert_flac_error_to_splt_error(splt_state *state
 static void splt_flac_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reader *fr, int *error)
 {
   fr->frame_number++;
-  fr->sample_number = fr->frame_number * fr->blocksize;
+  fr->sample_number = fr->sample_number + fr->blocksize;
 
   if (fr->frame_number_as_utf8) { free(fr->frame_number_as_utf8); }
   fr->frame_number_as_utf8 =
