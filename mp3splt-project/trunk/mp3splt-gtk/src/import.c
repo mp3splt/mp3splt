@@ -340,7 +340,7 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
   ui_state *ui = ui_err->ui;
 
   splt_point *splitpoint = mp3splt_point_new(INT_MAX, NULL);
-  mp3splt_point_set_name(splitpoint, "--- last cue splitpoint ---");
+  mp3splt_point_set_name(splitpoint, _("--- last cue splitpoint ---"));
   mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
 
   if (ui_err->err >= 0)

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-17 18:00+0100\n"
+"POT-Creation-Date: 2013-03-17 20:56+0100\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1433,6 +1433,11 @@ msgstr "Soubory Audacity label (*.txt)"
 #: src/import.c:214
 msgid "All files"
 msgstr "Všechny soubory"
+
+#: src/import.c:343
+#, fuzzy
+msgid "--- last cue splitpoint ---"
+msgstr "Nastavit výchozí volby pro rozdělení"
 
 #: src/gstreamer_control.c:73
 #, c-format
