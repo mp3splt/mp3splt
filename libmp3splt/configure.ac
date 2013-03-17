@@ -43,7 +43,7 @@ m4_define([libmp3splt_version],
 AC_PREREQ([2.62])
 AC_INIT([libmp3splt],[libmp3splt_version],[m@ioalex.net])
 AC_CONFIG_AUX_DIR([libltdl/config])
-AM_INIT_AUTOMAKE([libmp3splt], [libmp3splt_version])
+AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE([enable])
 

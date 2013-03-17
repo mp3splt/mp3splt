@@ -32,6 +32,8 @@
 # Basic initialisations 
 #################################################
 
+MINIMUM_LIBMP3SPLT_VERSION=0.8.2.1268
+
 AC_PREREQ(2.62)
 AC_INIT(mp3splt-gtk, 0.8.2.1268, mp3splt.sf.net)
 
@@ -40,15 +42,12 @@ AC_INIT(mp3splt-gtk, 0.8.2.1268, mp3splt.sf.net)
 # One of this files is gnome-doc-utils.make, which is needed to 
 # compile the help files.
 AC_CONFIG_AUX_DIR([build-aux])
-
 AC_CONFIG_MACRO_DIR([m4])
-
 # tell which file by being there indicates we are run from the
 # right directory
 AC_CONFIG_SRCDIR([src/mp3splt-gtk.c])
-
 # Initialize automake
-AM_INIT_AUTOMAKE(mp3splt-gtk, 0.8.2.1268)
+AM_INIT_AUTOMAKE
 
 # Tell autoconf where to put the output file that contains all
 # definitions our C program will need
@@ -215,9 +214,9 @@ fi
 #################################################
 #Check for libmp3splt
 
-PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt = 0.8.2.1268],
+PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt = ${MINIMUM_LIBMP3SPLT_VERSION}],
 [],
-[ AC_MSG_ERROR(libmp3splt version 0.8.2.1268 needed :
+[ AC_MSG_ERROR(libmp3splt version ${MINIMUM_LIBMP3SPLT_VERSION} needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
