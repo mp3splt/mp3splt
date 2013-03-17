@@ -587,6 +587,7 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   rewind(fr->out);
 
   unsigned char flac_word[4] = { 0x66, 0x4C, 0x61, 0x43 };
+  //TODO: change with splt_io_fwrite
   if (fwrite(flac_word, 4, 1, fr->out) != 1)
   {
     *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
@@ -594,12 +595,14 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   }
 
   //TODO: change is_last from 1 to 0 when writing other metadata types ...
+  //TODO: change with splt_io_fwrite
   if (fwrite(metadata_header, SPLT_FLAC_METADATA_HEADER_LENGTH, 1, fr->out) != 1)
   {
     *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
     goto end;
   }
 
+  //TODO: change with splt_io_fwrite
   if (fwrite(streaminfo_bytes, SPLT_FLAC_STREAMINFO_LENGTH, 1, fr->out) != 1)
   {
     *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
@@ -719,6 +722,7 @@ static void splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(sp
 
   unsigned char space[4+SPLT_FLAC_METADATA_HEADER_LENGTH+SPLT_FLAC_STREAMINFO_LENGTH]={'\0'};
   int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
+  //TODO: change with splt_io_fwrite
   if (fwrite(space, space_size, 1, fr->out) != 1)
   {
     *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
