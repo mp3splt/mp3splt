@@ -32,10 +32,10 @@
 # Basic initialisations 
 #################################################
 
-MINIMUM_LIBMP3SPLT_VERSION=0.8.2.1268
+m4_define([minimum_libmp3splt_version],[0.8.2.1283])
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt, 2.5.2.1268, mtrotta@users.sourceforge.net)
+AC_INIT(mp3splt, 2.5.2.1283, mtrotta@users.sourceforge.net)
 
 AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE
@@ -93,9 +93,9 @@ AC_MSG_RESULT($HOST)
 #################################################
 #Check for libmp3splt
 
-PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt = ${MINIMUM_LIBMP3SPLT_VERSION}],
+PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt = minimum_libmp3splt_version],
 [],
-[ AC_MSG_ERROR(libmp3splt version ${MINIMUM_LIBMP3SPLT_VERSION} needed :
+[ AC_MSG_ERROR(libmp3splt version minimum_libmp3splt_version needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])

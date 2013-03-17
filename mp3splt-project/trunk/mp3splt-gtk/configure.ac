@@ -32,10 +32,10 @@
 # Basic initialisations 
 #################################################
 
-MINIMUM_LIBMP3SPLT_VERSION=0.8.2.1268
+m4_define([minimum_libmp3splt_version],[0.8.2.1282])
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.8.2.1268, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.8.2.1282, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
@@ -214,9 +214,9 @@ fi
 #################################################
 #Check for libmp3splt
 
-PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt = ${MINIMUM_LIBMP3SPLT_VERSION}],
+PKG_CHECK_MODULES([LIBMP3SPLT], [libmp3splt = minimum_libmp3splt_version],
 [],
-[ AC_MSG_ERROR(libmp3splt version ${MINIMUM_LIBMP3SPLT_VERSION} needed :
+[ AC_MSG_ERROR(libmp3splt version minimum_libmp3splt_version needed :
 
 Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])

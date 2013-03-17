@@ -25,7 +25,7 @@ sed -i "s/AC_INIT($PROGRAM, .*,/\
 AC_INIT($PROGRAM, $VERSION,/" ./configure.ac || exit 1
 
 #configure.ac libmp3splt version
-sed -i "s/MINIMUM_LIBMP3SPLT_VERSION=.*/MINIMUM_LIBMP3SPLT_VERSION=$LIBMP3SPLT_VERSION/" ./configure.ac || exit 1
+sed -i "s/minimum_libmp3splt_version\],\[.*\]/minimum_libmp3splt_version],[$LIBMP3SPLT_VERSION]/" ./configure.ac || exit 1
 
 #source code
 #./src/external_includes.h:#define VERSION "0.3.1"
