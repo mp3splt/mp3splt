@@ -6,7 +6,7 @@
 ################# variables to set ############
 
 ARCH=${ARCH:=`uname -m`}
-LIBMP3SPLT_VERSION=0.8.2.1268
+LIBMP3SPLT_VERSION=0.8.2.1283
 LIBMP3SPLT_DOC_FILES=(AUTHORS ChangeLog COPYING INSTALL NEWS README TODO LIMITS)
 
 #we put i386 if i686 except for archlinux, where we set i686 inside

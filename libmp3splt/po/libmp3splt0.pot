@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-02-05 20:59+0100\n"
+"POT-Creation-Date: 2013-03-17 17:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -593,7 +593,7 @@ msgstr ""
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1482 plugins/ogg.c:132
+#: plugins/mp3.c:1482 plugins/ogg.c:132 plugins/flac.c:143
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
@@ -652,4 +652,9 @@ msgstr ""
 #: plugins/silence_processors.c:269
 #, c-format
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
+msgstr ""
+
+#: plugins/flac.c:135
+#, c-format
+msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""
