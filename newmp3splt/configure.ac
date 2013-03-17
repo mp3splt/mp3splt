@@ -57,6 +57,12 @@ AM_GNU_GETTEXT_VERSION([0.13.1])
 AC_DEFINE_UNQUOTED([LIBMP3SPLT_WITH_SONAME], "libmp3splt0", [libmp3splt library with soname])
 
 #################################################################
+# Check for functions
+#################################################################
+
+AC_CHECK_FUNCS([getline])
+
+#################################################################
 # Check for the type of the host
 #################################################################
 

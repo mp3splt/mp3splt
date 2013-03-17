@@ -380,7 +380,7 @@ static char *get_input_line(FILE *input_file, char *key)
   char *line = NULL;
   size_t length = 0;
 
-#ifdef __WIN32__
+#ifndef HAVE_GETLINE
   char junk[512];
   fgets(junk, 511, input_file);
   junk[strlen(junk)] = '\0';

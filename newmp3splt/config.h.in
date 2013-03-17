@@ -8,6 +8,9 @@
    */
 #undef HAVE_DCGETTEXT
 
+/* Define to 1 if you have the `getline' function. */
+#undef HAVE_GETLINE
+
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
 
