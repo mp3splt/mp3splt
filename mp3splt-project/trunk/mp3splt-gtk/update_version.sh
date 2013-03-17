@@ -21,30 +21,18 @@ sed -i "1,4s/mp3splt-gtk (\(.*\))/mp3splt-gtk ($VERSION)/" ./debian/changelog
 sed -i "s/\s*$PROGRAM version.*/\t$PROGRAM version $VERSION/" README || exit 1
 #configure.ac
 #./configure.ac:AC_INIT(libmp3splt, 0.3.1, io_alex_2002@yahoo.fr)
-#./configure.ac:AM_INIT_AUTOMAKE(libmp3splt, 0.3.1)
 sed -i "s/AC_INIT($PROGRAM, .*,/\
 AC_INIT($PROGRAM, $VERSION,/" ./configure.ac || exit 1
-sed -i "s/AM_INIT_AUTOMAKE($PROGRAM, .*)/\
-AM_INIT_AUTOMAKE($PROGRAM, $VERSION)/" ./configure.ac || exit 1   
 
-#current date, we need it
-DATE=$(date +%d\\/%m\\/%y)
-
-#configure.ac libmp3splt version check
-#./configure.ac:        [AC_MSG_ERROR(libmp3splt version 0.3.5 needed :
-sed -i "s/\[ AC_MSG_ERROR(libmp3splt version .* needed/\
-\[ AC_MSG_ERROR(libmp3splt version $LIBMP3SPLT_VERSION needed/" ./configure.ac || exit 1
-sed -i "s/\[libmp3splt = .*\]/\
-\[libmp3splt = $LIBMP3SPLT_VERSION\]/" ./configure.ac || exit 1
+#configure.ac libmp3splt version
+sed -i "s/MINIMUM_LIBMP3SPLT_VERSION=.*/MINIMUM_LIBMP3SPLT_VERSION=$LIBMP3SPLT_VERSION/" ./configure.ac || exit 1
 
 #source code
 #./src/external_includes.h:#define VERSION "0.3.1"
 sed -i "s/#define VERSION \".*\"/#define VERSION \"$VERSION\"/" ./src/external_includes.h || exit 1
-
 DATE=$(date +%d\\/%m\\/%y)
 #./src/mp3splt-gtk.h:#define MP3SPLT_GTK_DATE "14/04/2006"
 sed -i "s/#define MP3SPLT_GTK_DATE \".*\"/#define MP3SPLT_GTK_DATE \"$DATE\"/" ./src/mp3splt-gtk.h || exit 1
 
-echo "Finished setting up $PROGRAM to version $VERSION with\
- libmp3splt version $LIBMP3SPLT_VERSION."
+echo "Finished setting up $PROGRAM to version $VERSION with libmp3splt version $LIBMP3SPLT_VERSION."
 
