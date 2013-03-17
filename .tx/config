@@ -5,7 +5,7 @@ source_lang = en
 
 [mp3splt-gtk.libmp3splt]
 file_filter = libmp3splt/po/<lang>.po
-source_file = libmp3splt/po/libmp3splt.pot
+source_file = libmp3splt/po/libmp3splt0.pot
 source_lang = en
 
 [mp3splt-gtk.ButtonsAndMessages]
