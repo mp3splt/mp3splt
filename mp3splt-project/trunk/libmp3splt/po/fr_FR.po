@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-02-05 20:59+0100\n"
+"POT-Creation-Date: 2013-03-17 17:36+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -612,7 +612,7 @@ msgstr " - NS - %d Kb/s"
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1482 plugins/ogg.c:132
+#: plugins/mp3.c:1482 plugins/ogg.c:132 plugins/flac.c:143
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
@@ -678,6 +678,11 @@ msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 #, fuzzy, c-format
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
+
+#: plugins/flac.c:135
+#, c-format
+msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
+msgstr ""
 
 #~ msgid "description here"
 #~ msgstr "description"

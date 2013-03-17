@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-02-05 20:59+0100\n"
+"POT-Creation-Date: 2013-03-17 17:36+0100\n"
 "PO-Revision-Date: 2012-04-15 12:44+0000\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -603,7 +603,7 @@ msgstr " - NS - %d Kb/s"
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1482 plugins/ogg.c:132
+#: plugins/mp3.c:1482 plugins/ogg.c:132 plugins/flac.c:143
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Ukupno vrijeme: %dm.%02ds"
@@ -662,6 +662,11 @@ msgstr ""
 #: plugins/silence_processors.c:269
 #, c-format
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
+msgstr ""
+
+#: plugins/flac.c:135
+#, c-format
+msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""
 
 #~ msgid "description here"
