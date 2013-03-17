@@ -40,3 +40,8 @@ plugins/ogg_utils.c
 plugins/mp3_utils.c
 plugins/ogg_new_stream_handler.c
 plugins/silence_processors.c
+plugins/flac.c
+plugins/flac_frame_reader.c
+plugins/flac_metadata_utils.c
+plugins/flac_utils.c
+plugins/from_flac_library.c

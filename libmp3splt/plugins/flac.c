@@ -42,7 +42,7 @@ static void splt_flac_state_free(splt_flac_state *flacstate);
 
 void splt_pl_set_plugin_info(splt_plugin_info *info, int *error)
 {
-  info->version = 0.1;
+  info->version = 1.0;
 
   info->name = malloc(40);
   if (info->name == NULL)
