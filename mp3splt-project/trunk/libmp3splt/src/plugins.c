@@ -293,8 +293,7 @@ static int splt_p_scan_dir_for_plugins(splt_state *state, splt_plugins *pl, cons
       }
       memset(pl->data[pl->number_of_plugins_found].func, 0, sizeof(splt_plugin_func));
 
-      splt_su_copy(dir_and_fname, 
-          &pl->data[pl->number_of_plugins_found].plugin_filename);
+      splt_su_copy(dir_and_fname, &pl->data[pl->number_of_plugins_found].plugin_filename);
 
       pl->number_of_plugins_found++;
 
@@ -413,6 +412,8 @@ static void splt_p_free_plugin_data(splt_plugin_data *pl_data)
 int splt_p_move_replace_plugin_data(splt_state *state, int old, int new)
 {
   splt_plugins *pl = state->plug;
+  fprintf(stdout, "move old %d to new %d\n", old, new);
+  fflush(stdout);
 
   splt_p_free_plugin_data(&pl->data[new]);
 
@@ -442,6 +443,12 @@ static int splt_p_shift_left_plugins_data(splt_state *state, int index)
 {
   int i = 0;
   splt_plugins *pl = state->plug;
+
+  if (index == pl->number_of_plugins_found - 1)
+  {
+    splt_p_free_plugin_data(&pl->data[index]);
+    return SPLT_OK;
+  }
 
   for (i = index+1;i < pl->number_of_plugins_found;i++)
   {
