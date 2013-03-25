@@ -640,13 +640,13 @@ static void splt_mp3_delete_existing_frames(struct id3_tag *id, const char *fram
 
 static void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
     const char *frame_type, int field_number, const char *content, int *error,
-    int id3_field_textencoding)
+    int id3_field_textencoding, splt_state *state)
 {
   if (!content) { return; }
 
   struct id3_frame *id_frame = NULL;
-  id3_ucs4_t *field_content = NULL;
   union id3_field *id_field = NULL;
+  id3_ucs4_t *field_content = NULL;
 
   splt_mp3_delete_existing_frames(id, frame_type);
 
@@ -660,7 +660,23 @@ static void splt_mp3_put_libid3_frame_in_tag_with_content(struct id3_tag *id,
 
   id3_field_settextencoding(id3_frame_field(id_frame, 0), id3_field_textencoding);
 
-  field_content = id3_utf8_ucs4duplicate((signed char *)content);
+  int input_tags_encoding = splt_o_get_int_option(state, SPLT_OPT_INPUT_TAGS_ENCODING);
+  switch (input_tags_encoding)
+  {
+    case SPLT_ID3V2_LATIN1:
+      field_content = id3_latin1_ucs4duplicate((id3_latin1_t *)content);
+      break;
+    case SPLT_ID3V2_UTF8:
+      field_content = id3_utf8_ucs4duplicate((id3_utf8_t *)content);
+      break;
+    case SPLT_ID3V2_UTF16:
+      field_content = id3_utf16_ucs4duplicate((id3_utf16_t *)content);
+      break;
+    default:
+      field_content = id3_utf8_ucs4duplicate((id3_utf8_t *)content);
+      break;
+  }
+
   if (! field_content)
   {
     goto error;
@@ -776,31 +792,31 @@ static char *splt_mp3_build_libid3tag(const char *title, const char *artist,
   }
 
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TITLE, 1, title, error, 
-      id3_field_textencoding);
+      id3_field_textencoding, state);
   if (*error < 0) { goto error; }
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_ARTIST, 1, artist, error,
-      id3_field_textencoding);
+      id3_field_textencoding, state);
   if (*error < 0) { goto error; }
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_ALBUM, 1, album, error,
-      id3_field_textencoding);
+      id3_field_textencoding, state);
   if (*error < 0) { goto error; }
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_YEAR, 1, year, error,
-      id3_field_textencoding);
+      id3_field_textencoding, state);
   if (*error < 0) { goto error; }
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_COMMENT, 3, comment, error,
-      id3_field_textencoding);
+      id3_field_textencoding, state);
   if (*error < 0) { goto error; }
   if (track != -1 && track != -2)
   {
     char track_str[255] = { '\0' };
     snprintf(track_str, 254, "%d", track);
     splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_TRACK, 1, track_str, error,
-        id3_field_textencoding);
+        id3_field_textencoding, state);
     if (*error < 0) { goto error; }
   }
 
   splt_mp3_put_libid3_frame_in_tag_with_content(id, ID3_FRAME_GENRE, 1, genre, error,
-      id3_field_textencoding);
+      id3_field_textencoding, state);
   if (*error < 0) { goto error; }
 
   //get the number of bytes needed for the tags

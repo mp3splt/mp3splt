@@ -76,6 +76,7 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.cue_disable_cue_file_created_message = SPLT_FALSE;
   state->options.cue_cddb_add_tags_with_keep_original_tags = SPLT_FALSE;
   state->options.id3v2_encoding = SPLT_ID3V2_UTF16;
+  state->options.input_tags_encoding = SPLT_ID3V2_UTF8;
 }
 
 void splt_o_set_option(splt_state *state, int option_name, const void *data)
@@ -141,6 +142,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
       break;
     case SPLT_OPT_ID3V2_ENCODING:
       state->options.id3v2_encoding = *((int *) data);
+      break;
+    case SPLT_OPT_INPUT_TAGS_ENCODING:
+      state->options.input_tags_encoding = *((int *) data); 
       break;
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = *((int *)data);
@@ -267,6 +271,8 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.cue_cddb_add_tags_with_keep_original_tags;
     case SPLT_OPT_ID3V2_ENCODING:
       return &state->options.id3v2_encoding;
+    case SPLT_OPT_INPUT_TAGS_ENCODING:
+      return &state->options.input_tags_encoding;
     case SPLT_OPT_PARAM_GAP:
       return &state->options.parameter_gap;
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:

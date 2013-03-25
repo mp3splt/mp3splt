@@ -488,6 +488,7 @@ typedef struct {
   int cue_disable_cue_file_created_message;
   int cue_cddb_add_tags_with_keep_original_tags;
   int id3v2_encoding;
+  int input_tags_encoding;
 } splt_options_variables;
 
 //internal structures
