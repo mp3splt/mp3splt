@@ -649,9 +649,17 @@ typedef enum {
    *
    * Int option that can take the values from #splt_id3v2_encoding.
    *
-   * Default is #SPLT_ID3V2_UTF16
+   * Default is #SPLT_ID3V2_UTF8
    */
   SPLT_OPT_ID3V2_ENCODING,
+  /**
+   * Defines the encoding of the input tags - used only for generating ID3V2 tags.
+   *
+   * Int option that can take the values from #splt_id3v2_encoding.
+   *
+   * Default is #SPLT_ID3V2_UTF8
+   */
+  SPLT_OPT_INPUT_TAGS_ENCODING,
 } splt_options;
 
 /**
