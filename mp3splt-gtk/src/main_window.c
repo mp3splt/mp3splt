@@ -560,7 +560,7 @@ static void player_seek_to_previous_splitpoint_action(GtkWidget *widget, ui_stat
   }
 }
 
-static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+static int find_closest_splitpoint(ui_state *ui)
 {
   gint left_index_point = -1;
   gint right_index_point = -1;
@@ -575,7 +575,7 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
       continue;
     }
 
-    if (current_point_hundr_secs > ui->infos->current_time + (DELTA * 2))
+    if (current_point_hundr_secs >= ui->infos->current_time)
     {
       right_index_point = i;
       break;
@@ -584,7 +584,7 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
 
   if (left_index_point == -1 && right_index_point == -1)
   {
-    return;
+    return -1;
   }
 
   gint time_to_left = INT_MAX;
@@ -601,12 +601,50 @@ static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
 
   if (time_to_right > time_to_left)
   {
-    remove_splitpoint(left_index_point, TRUE, ui);
+    return left_index_point;
+  }
+
+  return right_index_point;
+}
+
+static void delete_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+{
+  int closest_splitpoint_index = find_closest_splitpoint(ui);
+  if (closest_splitpoint_index == -1)
+  {
+    return;
+  }
+
+  remove_splitpoint(closest_splitpoint_index, TRUE, ui);
+}
+
+static void player_seek_before_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+{
+  int closest_splitpoint_index = find_closest_splitpoint(ui);
+  if (closest_splitpoint_index == -1) { return; }
+
+  gint current_point_hundr_secs = get_splitpoint_time(closest_splitpoint_index, ui);
+  player_seek((current_point_hundr_secs * 10) - 100 * 3 * 10, ui);
+
+  if (closest_splitpoint_index == 0) { return; }
+
+  set_preview_start_position_safe(get_splitpoint_time(closest_splitpoint_index - 1, ui), ui);
+  ui->status->preview_start_splitpoint = closest_splitpoint_index - 1;
+  if (closest_splitpoint_index < ui->infos->splitnumber)
+  {
+    set_quick_preview_end_splitpoint_safe(closest_splitpoint_index, ui);
   }
   else
   {
-    remove_splitpoint(right_index_point, TRUE, ui);
+    set_quick_preview_end_splitpoint_safe(-1, ui);
   }
+
+  if (player_is_paused(ui))
+  {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->pause_button), FALSE);
+  }
+
+  ui->status->quick_preview = TRUE;
 }
 
 static void zoom_in(GtkWidget *widget, ui_state *ui)
@@ -782,6 +820,10 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     { "Player_previous_splitpoint", GTK_STOCK_MEDIA_PREVIOUS, N_("Seek to _previous splitpoint"), "<Ctrl>Left", 
       N_("Seek to previous splitpoint"), G_CALLBACK(player_seek_to_previous_splitpoint_action)},
 
+    { "Player_before_closest_splitpoint", GTK_STOCK_JUMP_TO,
+      N_("_Quick preview before closest splitpoint"), "<Ctrl>Down", N_("Quick preview before closest splitpoint"),
+      G_CALLBACK(player_seek_before_closest_splitpoint)},
+
     { "Add_splitpoint", GTK_STOCK_ADD, N_("Add _splitpoint"), "s", 
       N_("Add splitpoint"), G_CALLBACK(add_splitpoint_from_player)},
 
@@ -825,6 +867,7 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     "      <menuitem action='Player_big_backward'/>"
     "      <menuitem action='Player_next_splitpoint'/>"
     "      <menuitem action='Player_previous_splitpoint'/>"
+    "      <menuitem action='Player_before_closest_splitpoint'/>"
     "      <separator/>"
     "      <menuitem action='Add_splitpoint'/>"
     "      <menuitem action='Delete_closest_splitpoint'/>"
