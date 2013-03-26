@@ -3307,6 +3307,7 @@ void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui)
   action_set_sensitivity("Player_big_backward", sensitivity, gui);
   action_set_sensitivity("Player_next_splitpoint", sensitivity, gui);
   action_set_sensitivity("Player_previous_splitpoint", sensitivity, gui);
+  action_set_sensitivity("Player_before_closest_splitpoint", sensitivity, gui);
   action_set_sensitivity("Add_splitpoint", sensitivity, gui);
   action_set_sensitivity("Delete_closest_splitpoint", sensitivity, gui);
   action_set_sensitivity("Zoom_in", sensitivity, gui);

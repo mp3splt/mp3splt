@@ -497,6 +497,8 @@ typedef struct {
   GPtrArray *files_to_split;
 
   SPLT_MUTEX variables_mutex;
+
+  int importing_cue_from_configuration_directory;
 } ui_state;
 
 typedef struct {

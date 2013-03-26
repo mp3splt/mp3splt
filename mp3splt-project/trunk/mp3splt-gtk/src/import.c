@@ -140,6 +140,8 @@ void import_cue_file_from_the_configuration_directory(ui_state *ui)
 
   if (file_exists(splitpoints_cue_filename))
   {
+    ui->importing_cue_from_configuration_directory = TRUE;
+
     mp3splt_set_int_option(ui->mp3splt_state,
         SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE);
     import_file(splitpoints_cue_filename, ui);
@@ -339,9 +341,16 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
 {
   ui_state *ui = ui_err->ui;
 
-  splt_point *splitpoint = mp3splt_point_new(INT_MAX, NULL);
-  mp3splt_point_set_name(splitpoint, _("--- last cue splitpoint ---"));
-  mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
+  if (!ui->importing_cue_from_configuration_directory)
+  {
+    splt_point *splitpoint = mp3splt_point_new(600000 - 1, NULL);
+    mp3splt_point_set_name(splitpoint, _("--- last cue splitpoint ---"));
+    mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
+  }
+  else
+  {
+    ui->importing_cue_from_configuration_directory = FALSE;
+  }
 
   if (ui_err->err >= 0)
   {

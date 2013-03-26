@@ -115,6 +115,8 @@ ui_state *ui_state_new()
 
   init_mutex(&ui->variables_mutex);
 
+  ui->importing_cue_from_configuration_directory = FALSE;
+
   return ui;
 }
 
