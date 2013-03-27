@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-17 21:38+0100\n"
+"POT-Creation-Date: 2013-03-27 23:07+0100\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -261,7 +261,7 @@ msgstr "_Gesamte Chronik löschen"
 msgid "Files h_istory"
 msgstr "Chronik der Meldungen"
 
-#: src/player_window.c:3408
+#: src/player_window.c:3409
 msgid " quick preview finished, song paused"
 msgstr "Schnellvorschau beendet, Wiedergabe pausiert"
 
@@ -274,15 +274,15 @@ msgstr ""
 msgid "Choose files or directories"
 msgstr "Datei oder Ordner wählen"
 
-#: src/multiple_files_window.c:101 src/main_window.c:653
+#: src/multiple_files_window.c:101 src/main_window.c:691
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr "mp3- und ogg-Dateien (*.mp3 *.ogg)"
 
-#: src/multiple_files_window.c:109 src/main_window.c:661
+#: src/multiple_files_window.c:109 src/main_window.c:699
 msgid "mp3 files (*.mp3)"
 msgstr "mp3-Dateien (*.mp3)"
 
-#: src/multiple_files_window.c:115 src/main_window.c:667
+#: src/multiple_files_window.c:115 src/main_window.c:705
 msgid "ogg files (*.ogg)"
 msgstr "ogg-Dateien (*.ogg)"
 
@@ -308,7 +308,7 @@ msgstr "Ausgewählte _Einträge löschen"
 msgid "R_emove all"
 msgstr "_Alle löschen"
 
-#: src/multiple_files_window.c:280 src/main_window.c:744
+#: src/multiple_files_window.c:280 src/main_window.c:782
 #, fuzzy
 msgid "Batch split !"
 msgstr "Teilen!"
@@ -326,7 +326,7 @@ msgstr ""
 msgid "C_lear"
 msgstr "_Löschen"
 
-#: src/messages_window.c:168 src/main_window.c:755
+#: src/messages_window.c:168 src/main_window.c:793
 msgid "Messages history"
 msgstr "Chronik der Meldungen"
 
@@ -358,29 +358,29 @@ msgstr "%s Revision %d"
 msgid "Album title"
 msgstr "Albumtitel"
 
-#: src/freedb_window.c:169 src/freedb_window.c:455
+#: src/freedb_window.c:169 src/freedb_window.c:477
 msgid "please wait... contacting tracktype.org"
 msgstr "Bitte warten - tracktype.org wird kontaktiert"
 
-#: src/freedb_window.c:418 src/freedb_window.c:439 src/ui_manager.c:350
+#: src/freedb_window.c:440 src/freedb_window.c:461 src/ui_manager.c:352
 #: src/splitpoints_window.c:671 src/splitpoints_window.c:792
 #: src/splitpoints_window.c:842
 msgid "description here"
 msgstr "Bitte Name eingeben"
 
-#: src/freedb_window.c:543
+#: src/freedb_window.c:565
 msgid "Search tracktype.org:"
 msgstr "Suchen auf tracktype.org:"
 
-#: src/freedb_window.c:553
+#: src/freedb_window.c:575
 msgid "_Search"
 msgstr "_Suchen"
 
-#: src/freedb_window.c:582
+#: src/freedb_window.c:604
 msgid "_Add splitpoints"
 msgstr "Teilungspunkte hinzu_fügen"
 
-#: src/freedb_window.c:588
+#: src/freedb_window.c:610
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Teilungspunkte zur Tabelle hinzufügen"
 
@@ -434,7 +434,7 @@ msgstr "Sekunden:"
 msgid "Hundredths:"
 msgstr "Hundertstel:"
 
-#: src/splitpoints_window.c:1443 src/main_window.c:786
+#: src/splitpoints_window.c:1443 src/main_window.c:828
 msgid "Add splitpoint"
 msgstr "Schnittpunkt hinzufügen"
 
@@ -1090,7 +1090,7 @@ msgstr ""
 msgid " info: stopping the split process.. please wait"
 msgstr " Info: Teilungsvorgang wird beendet, bitte warten"
 
-#: src/main_window.c:319 src/main_window.c:732
+#: src/main_window.c:319 src/main_window.c:770
 msgid "Preferences"
 msgstr "Einstellungen"
 
@@ -1098,11 +1098,11 @@ msgstr "Einstellungen"
 msgid "TrackType"
 msgstr ""
 
-#: src/main_window.c:346 src/main_window.c:735
+#: src/main_window.c:346 src/main_window.c:773
 msgid "Split files"
 msgstr ""
 
-#: src/main_window.c:361 src/main_window.c:738
+#: src/main_window.c:361 src/main_window.c:776
 msgid "Splitpoints"
 msgstr "Teilungspunkte"
 
@@ -1115,254 +1115,264 @@ msgstr " Fehler: Teilung läuft..."
 msgid " error: no path of split selected"
 msgstr " Fehler: Keine Datei ausgewählt"
 
-#: src/main_window.c:679
+#: src/main_window.c:717
 msgid "Choose File"
 msgstr "Datei wählen"
 
-#: src/main_window.c:709
+#: src/main_window.c:747
 msgid "_File"
 msgstr "_Datei"
 
-#: src/main_window.c:710
+#: src/main_window.c:748
 msgid "_View"
 msgstr ""
 
-#: src/main_window.c:711
+#: src/main_window.c:749
 #, fuzzy
 msgid "_Player"
 msgstr "Abspieler"
 
-#: src/main_window.c:712
+#: src/main_window.c:750
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: src/main_window.c:714
+#: src/main_window.c:752
 #, fuzzy
 msgid "_Open single file..."
 msgstr "_Öffnen"
 
-#: src/main_window.c:714
+#: src/main_window.c:752
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/main_window.c:718
+#: src/main_window.c:756
 msgid "_Add files or directories to batch ..."
 msgstr ""
 
-#: src/main_window.c:719
+#: src/main_window.c:757
 msgid "Add files or directories to batch"
 msgstr ""
 
-#: src/main_window.c:722
+#: src/main_window.c:760
 #, fuzzy
 msgid "_Import splitpoints from file..."
 msgstr "Teilungspunkte h_inzufügen"
 
-#: src/main_window.c:723
+#: src/main_window.c:761
 #, fuzzy
 msgid "Import splitpoints from file..."
 msgstr "Teilungspunkte h_inzufügen"
 
-#: src/main_window.c:725
+#: src/main_window.c:763
 #, fuzzy
 msgid "Import splitpoints from _TrackType.org..."
 msgstr "Teilungspunkte h_inzufügen"
 
-#: src/main_window.c:726
+#: src/main_window.c:764
 #, fuzzy
 msgid "Import splitpoints from TrackType.org..."
 msgstr "Teilungspunkte h_inzufügen"
 
-#: src/main_window.c:729
+#: src/main_window.c:767
 msgid "_Export splitpoints..."
 msgstr "_Exportiere die Teilungspunkte..."
 
-#: src/main_window.c:730
+#: src/main_window.c:768
 #, fuzzy
 msgid "Export splitpoints"
 msgstr "_Exportiere die Teilungspunkte..."
 
-#: src/main_window.c:732
+#: src/main_window.c:770
 #, fuzzy
 msgid "_Preferences"
 msgstr "Einstellungen"
 
-#: src/main_window.c:735
+#: src/main_window.c:773
 #, fuzzy
 msgid "Split _files"
 msgstr "Datei wählen"
 
-#: src/main_window.c:738
+#: src/main_window.c:776
 #, fuzzy
 msgid "_Splitpoints"
 msgstr "Teilungspunkte"
 
-#: src/main_window.c:741
+#: src/main_window.c:779
 msgid "_Split !"
 msgstr "_Teilen!"
 
-#: src/main_window.c:741 src/main_window.c:947
+#: src/main_window.c:779 src/main_window.c:990
 msgid "Split !"
 msgstr "Teilen!"
 
-#: src/main_window.c:744
+#: src/main_window.c:782
 #, fuzzy
 msgid "_Batch split !"
 msgstr "_Teilen!"
 
-#: src/main_window.c:747
+#: src/main_window.c:785
 msgid "_Quit"
 msgstr "_Beenden"
 
-#: src/main_window.c:747
+#: src/main_window.c:785
 msgid "Quit"
 msgstr "Beenden"
 
-#: src/main_window.c:751
+#: src/main_window.c:789
 msgid "_Contents"
 msgstr "_Inhalt"
 
-#: src/main_window.c:751
+#: src/main_window.c:789
 msgid "Contents"
 msgstr "Inhalt"
 
-#: src/main_window.c:755
+#: src/main_window.c:793
 msgid "Messages _history"
 msgstr "C_hronik der Meldungen"
 
-#: src/main_window.c:758
+#: src/main_window.c:796
 msgid "_About"
 msgstr "_Info"
 
-#: src/main_window.c:758
+#: src/main_window.c:796
 msgid "About"
 msgstr "Info"
 
-#: src/main_window.c:762
+#: src/main_window.c:800
 #, fuzzy
 msgid "P_ause / Play"
 msgstr "Pause"
 
-#: src/main_window.c:762
+#: src/main_window.c:800
 #, fuzzy
 msgid "Pause/Play"
 msgstr "Pause"
 
-#: src/main_window.c:765
+#: src/main_window.c:803
 msgid "Seek _forward"
 msgstr ""
 
-#: src/main_window.c:765
+#: src/main_window.c:803
 msgid "Seek forward"
 msgstr ""
 
-#: src/main_window.c:767
+#: src/main_window.c:805
 msgid "Seek _backward"
 msgstr ""
 
-#: src/main_window.c:767
+#: src/main_window.c:805
 msgid "Seek backward"
 msgstr ""
 
-#: src/main_window.c:770
+#: src/main_window.c:808
 msgid "Small seek f_orward"
 msgstr ""
 
-#: src/main_window.c:770
+#: src/main_window.c:808
 msgid "Small seek forward"
 msgstr ""
 
-#: src/main_window.c:772
+#: src/main_window.c:810
 msgid "Small seek back_ward"
 msgstr ""
 
-#: src/main_window.c:772
+#: src/main_window.c:810
 msgid "Small seek backward"
 msgstr ""
 
-#: src/main_window.c:775
+#: src/main_window.c:813
 msgid "Big seek fo_rward"
 msgstr ""
 
-#: src/main_window.c:775
+#: src/main_window.c:813
 msgid "Big seek forward"
 msgstr ""
 
-#: src/main_window.c:777
+#: src/main_window.c:815
 msgid "Big seek bac_kward"
 msgstr ""
 
-#: src/main_window.c:777
+#: src/main_window.c:815
 msgid "Big seek backward"
 msgstr ""
 
-#: src/main_window.c:780
+#: src/main_window.c:818
 #, fuzzy
 msgid "Seek to _next splitpoint"
 msgstr "Standard-_Teilungsoptionen festlegen"
 
-#: src/main_window.c:781
+#: src/main_window.c:819
 #, fuzzy
 msgid "Seek to next splitpoint"
 msgstr "Standard-_Teilungsoptionen festlegen"
 
-#: src/main_window.c:782
+#: src/main_window.c:820
 #, fuzzy
 msgid "Seek to _previous splitpoint"
 msgstr " Vorschau für letzten Teilungspunkt nicht möglich"
 
-#: src/main_window.c:783
+#: src/main_window.c:821
 #, fuzzy
 msgid "Seek to previous splitpoint"
 msgstr " Vorschau für letzten Teilungspunkt nicht möglich"
 
-#: src/main_window.c:785
+#: src/main_window.c:824
+#, fuzzy
+msgid "_Quick preview before closest splitpoint"
+msgstr " Vorschau für letzten Teilungspunkt nicht möglich"
+
+#: src/main_window.c:824
+#, fuzzy
+msgid "Quick preview before closest splitpoint"
+msgstr " Vorschau für letzten Teilungspunkt nicht möglich"
+
+#: src/main_window.c:827
 #, fuzzy
 msgid "Add _splitpoint"
 msgstr "Schnittpunkt hinzufügen"
 
-#: src/main_window.c:788
+#: src/main_window.c:830
 msgid "_Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:789
+#: src/main_window.c:831
 msgid "Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:791
+#: src/main_window.c:833
 msgid "Zoom _in"
 msgstr ""
 
-#: src/main_window.c:791
+#: src/main_window.c:833
 msgid "Zoom in"
 msgstr ""
 
-#: src/main_window.c:792
+#: src/main_window.c:834
 msgid "Zoom _out"
 msgstr ""
 
-#: src/main_window.c:792
+#: src/main_window.c:834
 msgid "Zoom out"
 msgstr ""
 
-#: src/main_window.c:902
+#: src/main_window.c:945
 #, fuzzy
 msgid "Open file ..."
 msgstr "_Öffnen"
 
-#: src/main_window.c:950
+#: src/main_window.c:993
 msgid "Split the current file"
 msgstr ""
 
-#: src/main_window.c:959
+#: src/main_window.c:1002
 msgid "Manual single file split"
 msgstr ""
 
-#: src/main_window.c:977
+#: src/main_window.c:1020
 msgid "Batch & automatic split"
 msgstr ""
 
-#: src/main_window.c:997
+#: src/main_window.c:1040
 msgid "S_top"
 msgstr "S_top"
 
@@ -1398,27 +1408,27 @@ msgstr "S: %02d, Pegel: %.2f dB; nach Stille wird gesucht …"
 msgid "Choose file to import"
 msgstr "Datei zum Importieren wählen"
 
-#: src/import.c:204
+#: src/import.c:206
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr "CDDB (*.cddb), CUE (*.cue), Audacity-Labels (*.txt)"
 
-#: src/import.c:208
+#: src/import.c:210
 msgid "CDDB files (*.cddb)"
 msgstr "CDDB-Dateien (*.cddb)"
 
-#: src/import.c:210
+#: src/import.c:212
 msgid "CUE files (*.cue)"
 msgstr "CUE-Dateien (*.cue)"
 
-#: src/import.c:212
+#: src/import.c:214
 msgid "Audacity labels files (*.txt)"
 msgstr "Audacity-Labeldateien (*.txt)"
 
-#: src/import.c:214
+#: src/import.c:216
 msgid "All files"
 msgstr "Alle Dateien"
 
-#: src/import.c:343
+#: src/import.c:347
 #, fuzzy
 msgid "--- last cue splitpoint ---"
 msgstr "Standard-_Teilungsoptionen festlegen"
