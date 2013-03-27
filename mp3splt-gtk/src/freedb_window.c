@@ -323,17 +323,24 @@ static void update_tags_from_mp3splt_state(gint number_of_rows, ui_state *ui)
     gtk_tree_model_get_iter(model, &iter, path);
     gtk_tree_path_free(path);
 
+    char *utf8_str;
     char *year_str = mp3splt_tags_get(tags, SPLT_TAGS_YEAR);
     if (year_str != NULL)
     {
-      gint year = atoi(year_str);
+      gint must_be_freed = SPLT_FALSE;
+      utf8_str = transform_to_utf8(year_str, TRUE, &must_be_freed);
+      gint year = atoi(utf8_str);
+      if (must_be_freed) { free(utf8_str); }
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_YEAR, year, -1);
     }
 
     char *track_str = mp3splt_tags_get(tags, SPLT_TAGS_TRACK);
     if (track_str != NULL)
     {
-      gint track = atoi(track_str);
+      gint must_be_freed = SPLT_FALSE;
+      utf8_str = transform_to_utf8(track_str, TRUE, &must_be_freed);
+      gint track = atoi(utf8_str);
+      if (must_be_freed) { free(utf8_str); }
       if (track < 0) { track = 0; }
       gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TRACK, track, -1);
     }
@@ -341,31 +348,46 @@ static void update_tags_from_mp3splt_state(gint number_of_rows, ui_state *ui)
     char *title = mp3splt_tags_get(tags, SPLT_TAGS_TITLE);
     if (title != NULL)
     {
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TITLE, title, -1);
+      gint must_be_freed = SPLT_FALSE;
+      utf8_str = transform_to_utf8(title, TRUE, &must_be_freed);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_TITLE, utf8_str, -1);
+      if (must_be_freed) { free(utf8_str); }
     }
 
     char *artist = mp3splt_tags_get(tags, SPLT_TAGS_ARTIST);
     if (artist != NULL)
     {
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ARTIST, artist, -1);
+      gint must_be_freed = SPLT_FALSE;
+      utf8_str = transform_to_utf8(artist, TRUE, &must_be_freed);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ARTIST, utf8_str, -1);
+      if (must_be_freed) { free(utf8_str); }
     }
 
     char *album = mp3splt_tags_get(tags, SPLT_TAGS_ALBUM);
     if (album != NULL)
     {
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ALBUM, album, -1);
+      gint must_be_freed = SPLT_FALSE;
+      utf8_str = transform_to_utf8(album, TRUE, &must_be_freed);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_ALBUM, utf8_str, -1);
+      if (must_be_freed) { free(utf8_str); }
     }
 
     char *genre = mp3splt_tags_get(tags, SPLT_TAGS_GENRE);
     if (genre != NULL)
     {
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_GENRE, genre, -1);
+      gint must_be_freed = SPLT_FALSE;
+      utf8_str = transform_to_utf8(genre, TRUE, &must_be_freed);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_GENRE, utf8_str, -1);
+      if (must_be_freed) { free(utf8_str); }
     }
 
     char *comment = mp3splt_tags_get(tags, SPLT_TAGS_COMMENT);
     if (comment != NULL)
     {
-      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_COMMENT, comment, -1);
+      gint must_be_freed = SPLT_FALSE;
+      utf8_str = transform_to_utf8(comment, TRUE, &must_be_freed);
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter, COL_COMMENT, utf8_str, -1);
+      if (must_be_freed) { free(utf8_str); }
     }
 
     current_row++;
