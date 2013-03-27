@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-03-17 17:36+0100\n"
+"POT-Creation-Date: 2013-03-27 23:05+0100\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -558,73 +558,73 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: plugins/mp3.c:1218
+#: plugins/mp3.c:1234
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1314
+#: plugins/mp3.c:1330
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 
-#: plugins/mp3.c:1452
+#: plugins/mp3.c:1468
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr ""
 
-#: plugins/mp3.c:1460
+#: plugins/mp3.c:1476
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr ""
 
-#: plugins/mp3.c:1464
+#: plugins/mp3.c:1480
 #, c-format
 msgid " - FRAME MODE"
 msgstr ""
 
-#: plugins/mp3.c:1469
+#: plugins/mp3.c:1485
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1474
+#: plugins/mp3.c:1490
 #, c-format
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1482 plugins/ogg.c:132 plugins/flac.c:143
+#: plugins/mp3.c:1498 plugins/ogg.c:132 plugins/flac.c:143
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
 
-#: plugins/mp3.c:2801
+#: plugins/mp3.c:2817
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr ""
 
-#: plugins/mp3.c:2839
+#: plugins/mp3.c:2855
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 
-#: plugins/mp3.c:2858
+#: plugins/mp3.c:2874
 msgid " OK\n"
 msgstr ""
 
-#: plugins/mp3.c:2877
+#: plugins/mp3.c:2893
 msgid " Detected file created with: AlbumWrap\n"
 msgstr ""
 
-#: plugins/mp3.c:2899
+#: plugins/mp3.c:2915
 #, c-format
 msgid " Total files: %d\n"
 msgstr ""
 
-#: plugins/mp3.c:3317
+#: plugins/mp3.c:3333
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 
-#: plugins/mp3.c:3344
+#: plugins/mp3.c:3360
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr ""

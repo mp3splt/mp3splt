@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-17 21:38+0100\n"
+"POT-Creation-Date: 2013-03-28 00:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -222,7 +222,7 @@ msgstr ""
 msgid "Files h_istory"
 msgstr ""
 
-#: src/player_window.c:3408
+#: src/player_window.c:3409
 msgid " quick preview finished, song paused"
 msgstr ""
 
@@ -234,15 +234,15 @@ msgstr ""
 msgid "Choose files or directories"
 msgstr ""
 
-#: src/multiple_files_window.c:101 src/main_window.c:653
+#: src/multiple_files_window.c:101 src/main_window.c:691
 msgid "mp3 and ogg files (*.mp3 *.ogg)"
 msgstr ""
 
-#: src/multiple_files_window.c:109 src/main_window.c:661
+#: src/multiple_files_window.c:109 src/main_window.c:699
 msgid "mp3 files (*.mp3)"
 msgstr ""
 
-#: src/multiple_files_window.c:115 src/main_window.c:667
+#: src/multiple_files_window.c:115 src/main_window.c:705
 msgid "ogg files (*.ogg)"
 msgstr ""
 
@@ -266,7 +266,7 @@ msgstr ""
 msgid "R_emove all"
 msgstr ""
 
-#: src/multiple_files_window.c:280 src/main_window.c:744
+#: src/multiple_files_window.c:280 src/main_window.c:782
 msgid "Batch split !"
 msgstr ""
 
@@ -282,7 +282,7 @@ msgstr ""
 msgid "C_lear"
 msgstr ""
 
-#: src/messages_window.c:168 src/main_window.c:755
+#: src/messages_window.c:168 src/main_window.c:793
 msgid "Messages history"
 msgstr ""
 
@@ -311,29 +311,29 @@ msgstr ""
 msgid "Album title"
 msgstr ""
 
-#: src/freedb_window.c:169 src/freedb_window.c:455
+#: src/freedb_window.c:169 src/freedb_window.c:477
 msgid "please wait... contacting tracktype.org"
 msgstr ""
 
-#: src/freedb_window.c:418 src/freedb_window.c:439 src/ui_manager.c:350
+#: src/freedb_window.c:440 src/freedb_window.c:461 src/ui_manager.c:352
 #: src/splitpoints_window.c:671 src/splitpoints_window.c:792
 #: src/splitpoints_window.c:842
 msgid "description here"
 msgstr ""
 
-#: src/freedb_window.c:543
+#: src/freedb_window.c:565
 msgid "Search tracktype.org:"
 msgstr ""
 
-#: src/freedb_window.c:553
+#: src/freedb_window.c:575
 msgid "_Search"
 msgstr ""
 
-#: src/freedb_window.c:582
+#: src/freedb_window.c:604
 msgid "_Add splitpoints"
 msgstr ""
 
-#: src/freedb_window.c:588
+#: src/freedb_window.c:610
 msgid "Set splitpoints to the splitpoints table"
 msgstr ""
 
@@ -387,7 +387,7 @@ msgstr ""
 msgid "Hundredths:"
 msgstr ""
 
-#: src/splitpoints_window.c:1443 src/main_window.c:786
+#: src/splitpoints_window.c:1443 src/main_window.c:828
 msgid "Add splitpoint"
 msgstr ""
 
@@ -1017,7 +1017,7 @@ msgstr ""
 msgid " info: stopping the split process.. please wait"
 msgstr ""
 
-#: src/main_window.c:319 src/main_window.c:732
+#: src/main_window.c:319 src/main_window.c:770
 msgid "Preferences"
 msgstr ""
 
@@ -1025,11 +1025,11 @@ msgstr ""
 msgid "TrackType"
 msgstr ""
 
-#: src/main_window.c:346 src/main_window.c:735
+#: src/main_window.c:346 src/main_window.c:773
 msgid "Split files"
 msgstr ""
 
-#: src/main_window.c:361 src/main_window.c:738
+#: src/main_window.c:361 src/main_window.c:776
 msgid "Splitpoints"
 msgstr ""
 
@@ -1041,235 +1041,243 @@ msgstr ""
 msgid " error: no path of split selected"
 msgstr ""
 
-#: src/main_window.c:679
+#: src/main_window.c:717
 msgid "Choose File"
 msgstr ""
 
-#: src/main_window.c:709
+#: src/main_window.c:747
 msgid "_File"
 msgstr ""
 
-#: src/main_window.c:710
+#: src/main_window.c:748
 msgid "_View"
 msgstr ""
 
-#: src/main_window.c:711
+#: src/main_window.c:749
 msgid "_Player"
 msgstr ""
 
-#: src/main_window.c:712
+#: src/main_window.c:750
 msgid "_Help"
 msgstr ""
 
-#: src/main_window.c:714
+#: src/main_window.c:752
 msgid "_Open single file..."
 msgstr ""
 
-#: src/main_window.c:714
+#: src/main_window.c:752
 msgid "Open"
 msgstr ""
 
-#: src/main_window.c:718
+#: src/main_window.c:756
 msgid "_Add files or directories to batch ..."
 msgstr ""
 
-#: src/main_window.c:719
+#: src/main_window.c:757
 msgid "Add files or directories to batch"
 msgstr ""
 
-#: src/main_window.c:722
+#: src/main_window.c:760
 msgid "_Import splitpoints from file..."
 msgstr ""
 
-#: src/main_window.c:723
+#: src/main_window.c:761
 msgid "Import splitpoints from file..."
 msgstr ""
 
-#: src/main_window.c:725
+#: src/main_window.c:763
 msgid "Import splitpoints from _TrackType.org..."
 msgstr ""
 
-#: src/main_window.c:726
+#: src/main_window.c:764
 msgid "Import splitpoints from TrackType.org..."
 msgstr ""
 
-#: src/main_window.c:729
+#: src/main_window.c:767
 msgid "_Export splitpoints..."
 msgstr ""
 
-#: src/main_window.c:730
+#: src/main_window.c:768
 msgid "Export splitpoints"
 msgstr ""
 
-#: src/main_window.c:732
+#: src/main_window.c:770
 msgid "_Preferences"
 msgstr ""
 
-#: src/main_window.c:735
+#: src/main_window.c:773
 msgid "Split _files"
 msgstr ""
 
-#: src/main_window.c:738
+#: src/main_window.c:776
 msgid "_Splitpoints"
 msgstr ""
 
-#: src/main_window.c:741
+#: src/main_window.c:779
 msgid "_Split !"
 msgstr ""
 
-#: src/main_window.c:741 src/main_window.c:947
+#: src/main_window.c:779 src/main_window.c:990
 msgid "Split !"
 msgstr ""
 
-#: src/main_window.c:744
+#: src/main_window.c:782
 msgid "_Batch split !"
 msgstr ""
 
-#: src/main_window.c:747
+#: src/main_window.c:785
 msgid "_Quit"
 msgstr ""
 
-#: src/main_window.c:747
+#: src/main_window.c:785
 msgid "Quit"
 msgstr ""
 
-#: src/main_window.c:751
+#: src/main_window.c:789
 msgid "_Contents"
 msgstr ""
 
-#: src/main_window.c:751
+#: src/main_window.c:789
 msgid "Contents"
 msgstr ""
 
-#: src/main_window.c:755
+#: src/main_window.c:793
 msgid "Messages _history"
 msgstr ""
 
-#: src/main_window.c:758
+#: src/main_window.c:796
 msgid "_About"
 msgstr ""
 
-#: src/main_window.c:758
+#: src/main_window.c:796
 msgid "About"
 msgstr ""
 
-#: src/main_window.c:762
+#: src/main_window.c:800
 msgid "P_ause / Play"
 msgstr ""
 
-#: src/main_window.c:762
+#: src/main_window.c:800
 msgid "Pause/Play"
 msgstr ""
 
-#: src/main_window.c:765
+#: src/main_window.c:803
 msgid "Seek _forward"
 msgstr ""
 
-#: src/main_window.c:765
+#: src/main_window.c:803
 msgid "Seek forward"
 msgstr ""
 
-#: src/main_window.c:767
+#: src/main_window.c:805
 msgid "Seek _backward"
 msgstr ""
 
-#: src/main_window.c:767
+#: src/main_window.c:805
 msgid "Seek backward"
 msgstr ""
 
-#: src/main_window.c:770
+#: src/main_window.c:808
 msgid "Small seek f_orward"
 msgstr ""
 
-#: src/main_window.c:770
+#: src/main_window.c:808
 msgid "Small seek forward"
 msgstr ""
 
-#: src/main_window.c:772
+#: src/main_window.c:810
 msgid "Small seek back_ward"
 msgstr ""
 
-#: src/main_window.c:772
+#: src/main_window.c:810
 msgid "Small seek backward"
 msgstr ""
 
-#: src/main_window.c:775
+#: src/main_window.c:813
 msgid "Big seek fo_rward"
 msgstr ""
 
-#: src/main_window.c:775
+#: src/main_window.c:813
 msgid "Big seek forward"
 msgstr ""
 
-#: src/main_window.c:777
+#: src/main_window.c:815
 msgid "Big seek bac_kward"
 msgstr ""
 
-#: src/main_window.c:777
+#: src/main_window.c:815
 msgid "Big seek backward"
 msgstr ""
 
-#: src/main_window.c:780
+#: src/main_window.c:818
 msgid "Seek to _next splitpoint"
 msgstr ""
 
-#: src/main_window.c:781
+#: src/main_window.c:819
 msgid "Seek to next splitpoint"
 msgstr ""
 
-#: src/main_window.c:782
+#: src/main_window.c:820
 msgid "Seek to _previous splitpoint"
 msgstr ""
 
-#: src/main_window.c:783
+#: src/main_window.c:821
 msgid "Seek to previous splitpoint"
 msgstr ""
 
-#: src/main_window.c:785
+#: src/main_window.c:824
+msgid "_Quick preview before closest splitpoint"
+msgstr ""
+
+#: src/main_window.c:824
+msgid "Quick preview before closest splitpoint"
+msgstr ""
+
+#: src/main_window.c:827
 msgid "Add _splitpoint"
 msgstr ""
 
-#: src/main_window.c:788
+#: src/main_window.c:830
 msgid "_Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:789
+#: src/main_window.c:831
 msgid "Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:791
+#: src/main_window.c:833
 msgid "Zoom _in"
 msgstr ""
 
-#: src/main_window.c:791
+#: src/main_window.c:833
 msgid "Zoom in"
 msgstr ""
 
-#: src/main_window.c:792
+#: src/main_window.c:834
 msgid "Zoom _out"
 msgstr ""
 
-#: src/main_window.c:792
+#: src/main_window.c:834
 msgid "Zoom out"
 msgstr ""
 
-#: src/main_window.c:902
+#: src/main_window.c:945
 msgid "Open file ..."
 msgstr ""
 
-#: src/main_window.c:950
+#: src/main_window.c:993
 msgid "Split the current file"
 msgstr ""
 
-#: src/main_window.c:959
+#: src/main_window.c:1002
 msgid "Manual single file split"
 msgstr ""
 
-#: src/main_window.c:977
+#: src/main_window.c:1020
 msgid "Batch & automatic split"
 msgstr ""
 
-#: src/main_window.c:997
+#: src/main_window.c:1040
 msgid "S_top"
 msgstr ""
 
@@ -1305,27 +1313,27 @@ msgstr ""
 msgid "Choose file to import"
 msgstr ""
 
-#: src/import.c:204
+#: src/import.c:206
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr ""
 
-#: src/import.c:208
+#: src/import.c:210
 msgid "CDDB files (*.cddb)"
 msgstr ""
 
-#: src/import.c:210
+#: src/import.c:212
 msgid "CUE files (*.cue)"
 msgstr ""
 
-#: src/import.c:212
+#: src/import.c:214
 msgid "Audacity labels files (*.txt)"
 msgstr ""
 
-#: src/import.c:214
+#: src/import.c:216
 msgid "All files"
 msgstr ""
 
-#: src/import.c:343
+#: src/import.c:347
 msgid "--- last cue splitpoint ---"
 msgstr ""
 
