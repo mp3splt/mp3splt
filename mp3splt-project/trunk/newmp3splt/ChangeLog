@@ -7,6 +7,18 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.5.2
+
+- added option -I to specify the input tags encoding for when writing ID3v2 tags (ISO-8859-1, UTF-8
+or UTF-16)
+- added option -K to keep the original tags and just replace them when importing a CUE or CDDB file
+(feature request #95)
+- fixed bug #149 - use of getline() on mac
+- libmp3splt check is now more correct and checks for the exact version of libmp3splt with = instead
+of >=; will be changed to >= when final version of libmp3splt will be released
+- now using pkg-config instead of mp3splt.m4 (bug #145)
+- corrected build files (configure.ac, Makefile.am, ...) and check using 'make distcheck' (bug #147)
+
 #mp3splt version 2.5.1
 
 - fixed a bug when removing the tags from skippoints (libmp3splt)
