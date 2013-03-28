@@ -508,12 +508,22 @@ tags version as the tags version of the input file.
 ID3V2_TEXT_ENCODING can be 1 for latin1 (iso-8859-1), 8 for UTF-8 or 16 for UTF-16.
 Default is UTF-16.
 <P>
+<DT><B>-I INPUT_TAGS_ENCODING_FOR_ID3V2</B>         <DD>
+<B>Set encoding of the input tags for mp3 files</B>.
+INPUT_TAGS_ENCODING_FOR_ID3V2 can be 1 for latin1 (iso-8859-1), 8 for UTF-8 or 16 for UTF-16.
+Default is UTF-8.
+<P>
 <DT><B>-N</B>         <DD>
 <B>No silence log file</B>. Don't create the 'mp3splt.log' log file when using
 silence detection. This option cannot be used without the '-s' option.
 <P>
+<DT><B>-K</B>         <DD>
+<B>Keep original tags for CDDB or CUE</B>. When importing a CDDB or CUE file, set the original
+input file tags and then replace them with those read from the imported file.
+<P>
 <DT><B>-g TAGS</B>         <DD>
 <B>Custom tags</B>. Set custom tags to the split files.
+If you want to set spaces in tags, you might need to double quote the whole TAGS.
 TAGS should contain a list of square brackets pairs <B>[]</B>. The tags defined in the first
 pair of square brackets will be set on the first split file, those defined in the
 second pair of square brackets will be set on the second split file, ... Inside
@@ -821,6 +831,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 08:34:39 GMT, January 27, 2013
+Time: 22:40:33 GMT, March 28, 2013
 </BODY>
 </HTML>

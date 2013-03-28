@@ -2,6 +2,23 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.8.2
+-------------------------------------------------------------
+
+- added option to specify the input tags encoding for when writing ID3v2 tags
+(SPLT_OPT_INPUT_TAGS_ENCODING)
+- enable -O3 by default
+- added LIBMP3SPLT_MAJOR_VERSION, LIBMP3SPLT_MINOR_VERSION and LIBMP3SPLT_MICRO_VERSION
+(feature request #96)
+- added option SPLT_TAGS_ORIGINAL for mp3splt_tags_set 
+- added option to keep the original tags and just replace them when importing a CUE or CDDB file
+(SPLT_OPT_CUE_CDDB_ADD_TAGS_WITH_KEEP_ORIGINAL_TAGS) (feature request #95)
+- added 'split into memory' ability with a callback function for use with 'pretend to split'
+(feature request #94)
+- replaced mp3splt.m4 with pkg-config (bug #145)
+- corrected build files (configure.ac, Makefile.am, ...) and check using 'make distcheck' (bug #147)
+- fixed a lot of doxygen issues
+
 libmp3splt version 0.8.1a
 -------------------------------------------------------------
 
