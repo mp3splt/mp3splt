@@ -63,7 +63,7 @@ static void splt_flac_mu_read_streaminfo(splt_flac_state *flacstate,
   free(bytes);
 }
 
-static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, 
+static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, splt_state *state,
     unsigned char block_type, FLAC__uint32 total_block_length, FILE *in, splt_code *error)
 {
   switch (block_type)
@@ -90,8 +90,8 @@ static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate,
       splt_flac_mu_skip_metadata(total_block_length, in, error);
       return;
     case 127:
+      splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
       *error = SPLT_ERROR_INVALID;
-      //TODO: set filename ?
       return;
     default:
       splt_flac_mu_skip_metadata(total_block_length, in, error);
@@ -107,6 +107,7 @@ void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, 
   if (flac_stream_marker[0] != 'f' || flac_stream_marker[1] != 'L' ||
       flac_stream_marker[2] != 'a' || flac_stream_marker[3] != 'C')
   {
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
     *error = SPLT_ERROR_INVALID;
     return;
   }
@@ -124,7 +125,7 @@ void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, 
     fread(block_length, 1, 3, in);
     FLAC__uint32 total_block_length = splt_flac_l_unpack_uint32(block_length, 3);
 
-    splt_flac_mu_read_metadata_of_type(flacstate, block_type, total_block_length, in, error);
+    splt_flac_mu_read_metadata_of_type(flacstate, state, block_type, total_block_length, in, error);
     if (*error < 0) { return; }
   }
 }

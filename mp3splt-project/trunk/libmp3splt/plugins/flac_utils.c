@@ -35,10 +35,10 @@
 
 static const unsigned char splt_flac_u_bit_access_table[] = { 0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f };
 
-static void splt_flac_u_read_byte_skip(splt_flac_frame_reader *fr, splt_flac_code *error);
+static void splt_flac_u_read_byte_skip(splt_flac_frame_reader *fr, splt_code *error);
 
 static void splt_flac_u_read_bits_skip(splt_flac_frame_reader *fr, unsigned char bits_number,
-    splt_flac_code *error)
+    splt_code *error)
 {
   if (bits_number > fr->remaining_bits)
   {
@@ -51,7 +51,7 @@ static void splt_flac_u_read_bits_skip(splt_flac_frame_reader *fr, unsigned char
 }
 
 unsigned char splt_flac_u_read_bits(splt_flac_frame_reader *fr, unsigned char bits_number,
-    splt_flac_code *error)
+    splt_code *error)
 {
   if (bits_number > fr->remaining_bits)
   {
@@ -65,7 +65,7 @@ unsigned char splt_flac_u_read_bits(splt_flac_frame_reader *fr, unsigned char bi
   return bits >> (8 - bits_number);
 }
 
-static void splt_flac_u_read_bit_skip(splt_flac_frame_reader *fr, splt_flac_code *error)
+static void splt_flac_u_read_bit_skip(splt_flac_frame_reader *fr, splt_code *error)
 {
   if (fr->remaining_bits == 0)
   {
@@ -77,7 +77,7 @@ static void splt_flac_u_read_bit_skip(splt_flac_frame_reader *fr, splt_flac_code
   fr->remaining_bits--;
 }
 
-unsigned char splt_flac_u_read_bit(splt_flac_frame_reader *fr, splt_flac_code *error)
+unsigned char splt_flac_u_read_bit(splt_flac_frame_reader *fr, splt_code *error)
 {
   if (fr->remaining_bits == 0)
   {
@@ -92,7 +92,7 @@ unsigned char splt_flac_u_read_bit(splt_flac_frame_reader *fr, splt_flac_code *e
 }
 
 static void splt_flac_u_append_input_buffer_to_output_buffer(splt_flac_frame_reader *fr,
-    splt_flac_code *error)
+    splt_code *error)
 {
   if (fr->buffer == NULL) { return; }
 
@@ -100,7 +100,7 @@ static void splt_flac_u_append_input_buffer_to_output_buffer(splt_flac_frame_rea
   fr->output_buffer = realloc(fr->output_buffer, existing_size + SPLT_FLAC_FR_BUFFER_SIZE);
   if (fr->output_buffer == NULL)
   {
-    *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return;
   }
 
@@ -110,9 +110,9 @@ static void splt_flac_u_append_input_buffer_to_output_buffer(splt_flac_frame_rea
 }
 
 void splt_flac_u_process_frame(splt_flac_frame_reader *fr, unsigned frame_byte_buffer_start,
-    splt_flac_code *error,
+    splt_state *state, splt_code *error,
     void (*frame_processor)(unsigned char *frame, size_t frame_length,
-      splt_flac_code *error, void *user_data),
+      splt_state *state, splt_code *error, void *user_data),
     void *user_data)
 {
   splt_flac_u_append_input_buffer_to_output_buffer(fr, error);
@@ -129,7 +129,7 @@ void splt_flac_u_process_frame(splt_flac_frame_reader *fr, unsigned frame_byte_b
     size_t total_length =
       (fr->output_buffer_times * SPLT_FLAC_FR_BUFFER_SIZE) - frame_byte_buffer_start - frame_byte_cut_end;
 
-    frame_processor(fr->output_buffer + frame_byte_buffer_start, total_length, error, user_data);
+    frame_processor(fr->output_buffer + frame_byte_buffer_start, total_length, state, error, user_data);
   }
 
   free(fr->output_buffer);
@@ -137,13 +137,13 @@ void splt_flac_u_process_frame(splt_flac_frame_reader *fr, unsigned frame_byte_b
   fr->output_buffer_times = 0;
 }
 
-static void splt_flac_u_sync_buffer_to_next_byte(splt_flac_frame_reader *fr, splt_flac_code *error)
+static void splt_flac_u_sync_buffer_to_next_byte(splt_flac_frame_reader *fr, splt_code *error)
 {
   if (fr->next_byte >= SPLT_FLAC_FR_BUFFER_SIZE)
   {
     if (feof(fr->in))
     {
-      *error = SPLT_FLAC_EOF;
+      *error = SPLT_OK_SPLIT_EOF;
       return;
     }
 
@@ -154,7 +154,7 @@ static void splt_flac_u_sync_buffer_to_next_byte(splt_flac_frame_reader *fr, spl
     fr->buffer = calloc(SPLT_FLAC_FR_BUFFER_SIZE, 1);
     if (fr->buffer == NULL)
     {
-      *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
+      *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
       return;
     }
 
@@ -173,7 +173,7 @@ static void splt_flac_u_sync_buffer_to_next_byte(splt_flac_frame_reader *fr, spl
   SPLT_FLAC_UPDATE_CRC16(fr->crc16, fr->last_byte); 
 }
 
-void splt_flac_u_read_zeroes_and_the_next_one(splt_flac_frame_reader *fr, splt_flac_code *error)
+void splt_flac_u_read_zeroes_and_the_next_one(splt_flac_frame_reader *fr, splt_code *error)
 {
   if (fr->remaining_bits > 0)
   {
@@ -200,26 +200,26 @@ void splt_flac_u_read_zeroes_and_the_next_one(splt_flac_frame_reader *fr, splt_f
   }
 }
 
-static void splt_flac_u_read_byte_skip(splt_flac_frame_reader *fr, splt_flac_code *error)
+static void splt_flac_u_read_byte_skip(splt_flac_frame_reader *fr, splt_code *error)
 {
   splt_flac_u_sync_buffer_to_next_byte(fr, error);
   SPLT_FLAC_UPDATE_CRC8(fr->crc8, fr->last_byte);
 }
 
-static unsigned char splt_flac_u_read_byte(splt_flac_frame_reader *fr, splt_flac_code *error)
+static unsigned char splt_flac_u_read_byte(splt_flac_frame_reader *fr, splt_code *error)
 {
   splt_flac_u_read_byte_skip(fr, error);
   return fr->last_byte;
 }
 
-unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_flac_code *error)
+unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_code *error)
 {
   if (fr->remaining_bits == 0) { return splt_flac_u_read_byte(fr, error); }
   return (fr->last_byte << (8 - fr->remaining_bits)) | (splt_flac_u_read_byte(fr, error) >> fr->remaining_bits);
 }
 
 void splt_flac_u_read_up_to_total_bits(splt_flac_frame_reader *fr, unsigned total_bits,
-    splt_flac_code *error)
+    splt_code *error)
 {
   if (total_bits <= fr->remaining_bits)
   {
@@ -249,7 +249,7 @@ void splt_flac_u_read_up_to_total_bits(splt_flac_frame_reader *fr, unsigned tota
   }
 }
 
-unsigned splt_flac_u_read_unsigned(splt_flac_frame_reader *fr, splt_flac_code *error)
+unsigned splt_flac_u_read_unsigned(splt_flac_frame_reader *fr, splt_code *error)
 {
   unsigned word = 0;
   word |= ((unsigned) splt_flac_u_read_next_byte(fr, error)) << 8;

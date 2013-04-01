@@ -134,7 +134,7 @@ unsigned splt_flac_l_crc16_table[256] = {
 	0x8213,  0x0216,  0x021c,  0x8219,  0x0208,  0x820d,  0x8207,  0x0202
 };
 
-uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_flac_code *error, 
+uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_code *error, 
     unsigned char *number_of_bytes)
 {
   uint32_t val = 0;
@@ -190,7 +190,7 @@ uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_flac_code
   return val;
 }
 
-uint64_t splt_flac_l_read_utf8_uint64(splt_flac_frame_reader *fr, splt_flac_code *error,
+uint64_t splt_flac_l_read_utf8_uint64(splt_flac_frame_reader *fr, splt_code *error,
     unsigned char *number_of_bytes)
 {
   uint64_t val = 0;

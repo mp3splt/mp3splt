@@ -36,27 +36,12 @@
 
 #include "splt.h"
 
-typedef enum {
-  SPLT_FLAC_ERR_FAILED_TO_OPEN_FILE = -12,
-  SPLT_FLAC_ERR_BEGIN_OUT_OF_FILE = -11,
-  SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE = -10,
-  SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY = -9,
-  SPLT_FLAC_ERR_ZERO_BIT_OF_SUBFRAME_HEADER_IS_WRONG = -8,
-  SPLT_FLAC_ERR_BAD_SUBFRAME_TYPE = -7,
-  SPLT_FLAC_ERR_BAD_CRC16 = -6,
-  SPLT_FLAC_ERR_BAD_CRC8 = -5,
-  SPLT_FLAC_ERR_LOST_SYNC = -2,
-
-  SPLT_FLAC_EOF = -1,
-
-  SPLT_FLAC_OK = 1,
-} splt_flac_code;
-
 typedef struct {
   //input file
   FILE *in;
   //input buffer
   unsigned char *buffer;
+  char *output_fname;
 
   //output file
   FILE *out;
@@ -107,7 +92,7 @@ typedef struct {
   size_t previous_frame_length;
 } splt_flac_frame_reader;
 
-splt_flac_frame_reader *splt_flac_fr_new(FILE *in);
+splt_flac_frame_reader *splt_flac_fr_new(FILE *in, const char *input_filename);
 void splt_flac_fr_free(splt_flac_frame_reader *fr);
 
 void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,

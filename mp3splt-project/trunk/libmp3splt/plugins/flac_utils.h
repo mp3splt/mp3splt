@@ -31,21 +31,21 @@
 
 #include "flac_frame_reader.h"
 
-unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_flac_code *error);
-unsigned char splt_flac_u_read_bit(splt_flac_frame_reader *fr, splt_flac_code *error);
+unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_code *error);
+unsigned char splt_flac_u_read_bit(splt_flac_frame_reader *fr, splt_code *error);
 unsigned char splt_flac_u_read_bits(splt_flac_frame_reader *fr, unsigned char bits_number,
-    splt_flac_code *error);
+    splt_code *error);
 
 void splt_flac_u_read_up_to_total_bits(splt_flac_frame_reader *fr, unsigned total_bits,
-    splt_flac_code *error);
-unsigned splt_flac_u_read_unsigned(splt_flac_frame_reader *fr, splt_flac_code *error);
+    splt_code *error);
+unsigned splt_flac_u_read_unsigned(splt_flac_frame_reader *fr, splt_code *error);
 
-void splt_flac_u_read_zeroes_and_the_next_one(splt_flac_frame_reader *fr, splt_flac_code *error);
+void splt_flac_u_read_zeroes_and_the_next_one(splt_flac_frame_reader *fr, splt_code *error);
 
 void splt_flac_u_process_frame(splt_flac_frame_reader *fr,
-    unsigned frame_byte_buffer_start, splt_flac_code *error,
+    unsigned frame_byte_buffer_start, splt_state *state, splt_code *error,
     void (*frame_processor)(unsigned char *frame, size_t frame_length, 
-      splt_flac_code *error, void *user_data),
+      splt_state *state, splt_code *error, void *user_data),
     void *user_data);
 
 #define MP3SPLT_FLAC_UTILS_H

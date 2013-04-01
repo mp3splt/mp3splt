@@ -34,8 +34,8 @@
 #include "flac_metadata_utils.h"
 #include "flac.h"
 
-static void splt_flac_get_info(splt_state *state, FILE *file_input, splt_code *error);
-static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, splt_code *error);
+static void splt_flac_get_info(splt_state *state, FILE *file_input, const char *input_filename, splt_code *error);
+static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, const char *input_filename, splt_code *error);
 static FILE *splt_flac_open_file_read(splt_state *state, const char *filename, splt_code *error);
 static splt_flac_state *splt_flac_state_new(splt_code *error);
 static void splt_flac_state_free(splt_flac_state *flacstate);
@@ -89,7 +89,7 @@ void splt_pl_init(splt_state *state, int *error)
   FILE *file_input = splt_flac_open_file_read(state, input_filename, error);
   if (file_input == NULL) { return; }
 
-  splt_flac_get_info(state, file_input, error);
+  splt_flac_get_info(state, file_input, input_filename, error);
 }
 
 void splt_pl_end(splt_state *state, int *error)
@@ -119,12 +119,14 @@ double splt_pl_split(splt_state *state, const char *output_fname,
       flacstate->streaminfo.max_framesize,
       error);
 
+  if (*error == SPLT_OK) { *error = SPLT_OK_SPLIT; }
+
   return end_point;
 }
 
-static void splt_flac_get_info(splt_state *state, FILE *file_input, splt_code *error)
+static void splt_flac_get_info(splt_state *state, FILE *file_input, const char *input_filename, splt_code *error)
 {
-  splt_flac_state *flacstate = splt_flac_info(file_input, state, error);
+  splt_flac_state *flacstate = splt_flac_info(file_input, state, input_filename, error);
   state->codec = flacstate;
   if (*error < 0) { return; }
 
@@ -146,12 +148,12 @@ static void splt_flac_get_info(splt_state *state, FILE *file_input, splt_code *e
   }
 }
 
-static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, splt_code *error)
+static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, const char *input_filename, splt_code *error)
 {
   splt_flac_state *flacstate = splt_flac_state_new(error);
   if (flacstate == NULL) { return NULL; }
 
-  flacstate->fr = splt_flac_fr_new(in);
+  flacstate->fr = splt_flac_fr_new(in, input_filename);
   if (flacstate->fr == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;

@@ -486,8 +486,7 @@ static int splt_ogg_read_headers_and_save_them(splt_state *state, splt_ogg_state
     }
     if (ogg_sync_wrote(oggstate->sync_in, bytes) != 0)
     {
-      *error = SPLT_ERROR_INVALID;
-      goto error;
+      goto error_invalid_file;
     }
   }
 
@@ -522,7 +521,7 @@ splt_ogg_state *splt_ogg_info(FILE *in, splt_state *state, int *error)
     int ret = ov_open(oggstate->in, &oggstate->vf, NULL, 0);
     if(ret < 0)
     {
-      splt_e_set_error_data(state,filename);
+      splt_e_set_error_data(state, filename);
       switch (ret)
       {
         case OV_EREAD:
