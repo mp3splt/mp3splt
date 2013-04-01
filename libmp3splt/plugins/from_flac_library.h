@@ -69,9 +69,9 @@ extern unsigned char const splt_flac_l_crc8_table[256];
 #define SPLT_FLAC_UPDATE_CRC16(crc16, data) crc16 = ((crc16<<8) ^ splt_flac_l_crc16_table[(crc16>>8) ^ data]) & 0xffff
 #define SPLT_FLAC_UPDATE_CRC8(crc8, data) crc8 = splt_flac_l_crc8_table[crc8 ^ data]
 
-uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_flac_code *error, 
+uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_code *error, 
     unsigned char *number_of_bytes);
-uint64_t splt_flac_l_read_utf8_uint64(splt_flac_frame_reader *fr, splt_flac_code *error,
+uint64_t splt_flac_l_read_utf8_uint64(splt_flac_frame_reader *fr, splt_code *error,
     unsigned char *number_of_bytes);
 
 void splt_flac_l_convert_to_streaminfo(FLAC__StreamMetadata_StreamInfo *block, unsigned char *bytes);

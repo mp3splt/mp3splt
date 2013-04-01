@@ -41,7 +41,7 @@
 
 static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
     unsigned min_blocksize, unsigned max_blocksize, unsigned metadata_bits_per_sample, 
-    splt_flac_code *error)
+    splt_state *state, splt_code *error)
 {
   fr->crc8 = 0;
   fr->bytes_between_frame_number_and_crc8 = 0;
@@ -171,23 +171,27 @@ static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
   unsigned char crc8 = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
 
-  if (crc8 != computed_crc8) { *error = SPLT_FLAC_ERR_BAD_CRC8; }
+  if (crc8 != computed_crc8)
+  {
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
+  }
 }
 
 static void splt_flac_fr_read_constant_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
-    splt_flac_code *error)
+    splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample, error);
 }
 
 static void splt_flac_fr_read_verbatim_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
-    splt_flac_code *error)
+    splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * fr->blocksize, error);
 }
 
 static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned order,
-    splt_flac_code *error)
+    splt_code *error)
 {
   unsigned char rice_method = 4;
 
@@ -249,7 +253,7 @@ static void splt_flac_fr_read_rice_residual(splt_flac_frame_reader *fr, unsigned
 }
 
 static void splt_flac_fr_read_fixed_subframe(splt_flac_frame_reader *fr, unsigned order, 
-    unsigned bits_per_sample, splt_flac_code *error)
+    unsigned bits_per_sample, splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * order, error);
   if (*error < 0) { return; }
@@ -258,7 +262,7 @@ static void splt_flac_fr_read_fixed_subframe(splt_flac_frame_reader *fr, unsigne
 }
 
 static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned order, 
-    unsigned bits_per_sample, splt_flac_code *error)
+    unsigned bits_per_sample, splt_state *state, splt_code *error)
 {
   splt_flac_u_read_up_to_total_bits(fr, bits_per_sample * order, error);
   if (*error < 0) { return; }
@@ -268,9 +272,8 @@ static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned 
 
   if ((quantized_linear_predictor & 0x0f) == 0x0f)
   {
-    //TODO: error
-    fprintf(stderr, "error in lpc subframe quantized predictor\n");
-    fflush(stderr);
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
   }
 
   //qlp_coeff_shift
@@ -285,7 +288,7 @@ static void splt_flac_fr_read_lpc_subframe(splt_flac_frame_reader *fr, unsigned 
 }
 
 static void splt_flac_fr_read_subframe_content(splt_flac_frame_reader *fr, int sf_type, unsigned order,
-    unsigned bits_per_sample, splt_flac_code *error)
+    unsigned bits_per_sample, splt_state *state, splt_code *error)
 {
   switch (sf_type)
   {
@@ -299,15 +302,16 @@ static void splt_flac_fr_read_subframe_content(splt_flac_frame_reader *fr, int s
       splt_flac_fr_read_fixed_subframe(fr, order, bits_per_sample, error);
       return;
     case SPLT_FLAC_SUBFRAME_LPC:
-      splt_flac_fr_read_lpc_subframe(fr, order, bits_per_sample, error);
+      splt_flac_fr_read_lpc_subframe(fr, order, bits_per_sample, state, error);
       return;
   }
 
-  *error = SPLT_FLAC_ERR_BAD_SUBFRAME_TYPE;
+  splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+  *error = SPLT_ERROR_INVALID;
 }
 
 static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits_per_sample,
-    splt_flac_code *error)
+    splt_state *state, splt_code *error)
 {
   unsigned char bit_padding_subframe_type_and_wasted_bit = splt_flac_u_read_next_byte(fr, error);
   if (*error < 0) { return; }
@@ -315,7 +319,8 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
   unsigned char zero_bit = bit_padding_subframe_type_and_wasted_bit >> 7;
   if (zero_bit != 0)
   {
-    *error = SPLT_FLAC_ERR_ZERO_BIT_OF_SUBFRAME_HEADER_IS_WRONG;
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
     return;
   }
 
@@ -341,7 +346,8 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
 
   if (subframe_type & 0x80)
   {
-    *error = SPLT_FLAC_ERR_LOST_SYNC;
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
     return;
   }
 
@@ -355,7 +361,8 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
   }
   else if (subframe_type < 16)
   {
-    *error = SPLT_FLAC_ERR_LOST_SYNC;
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
     return;
   }
   else if (subframe_type <= 24)
@@ -365,7 +372,8 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
   }
   else if (subframe_type < 64)
   {
-    *error = SPLT_FLAC_ERR_LOST_SYNC;
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
     return;
   }
   else
@@ -374,16 +382,17 @@ static void splt_flac_fr_read_subframe(splt_flac_frame_reader *fr, unsigned bits
     order = ((bit_padding_subframe_type_and_wasted_bit >> 1) & 31) + 1;
   }
 
-  splt_flac_fr_read_subframe_content(fr, sf_type, order, bits_per_sample - wasted_bits_per_sample, error);
+  splt_flac_fr_read_subframe_content(fr, sf_type, order, bits_per_sample - wasted_bits_per_sample,
+      state, error);
 }
 
 static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
     unsigned min_blocksize, unsigned max_blocksize, unsigned metadata_bits_per_sample,
-    splt_flac_code *error)
+    splt_state *state, splt_code *error)
 {
   fr->crc16 = 0;
 
-  splt_flac_fr_read_header(fr, min_blocksize, max_blocksize, metadata_bits_per_sample, error);
+  splt_flac_fr_read_header(fr, min_blocksize, max_blocksize, metadata_bits_per_sample, state, error);
   if (*error < 0) { return; }
 
   unsigned channel = 0;
@@ -395,7 +404,7 @@ static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
         (fr->channel_assignment == SPLT_FLAC_MID_SIDE && channel == 1))
       bits_per_sample++;
 
-    splt_flac_fr_read_subframe(fr, bits_per_sample, error);
+    splt_flac_fr_read_subframe(fr, bits_per_sample, state, error);
     if (*error < 0) { return; }
   }
 
@@ -406,26 +415,14 @@ static void splt_flac_fr_read_frame(splt_flac_frame_reader *fr,
   unsigned crc16 = splt_flac_u_read_unsigned(fr, error);
   if (*error < 0) { return; }
 
-  if (crc16 != computed_crc16) { *error = SPLT_FLAC_ERR_BAD_CRC16; }
-}
-
-static splt_code splt_flac_fr_convert_flac_error_to_splt_error(splt_state *state, int frame_reader_error_code)
-{
-  if (frame_reader_error_code >= -1)
+  if (crc16 != computed_crc16)
   {
-    //TODO: EOF
-    return SPLT_OK;
+    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+    *error = SPLT_ERROR_INVALID;
   }
-
-  splt_d_print_debug(state, "flac error code %d\n", frame_reader_error_code);
-
-  //TODO: switch case ...
-
-  return SPLT_ERROR_INVALID;
-  //TODO: set filename ?
 }
 
-static void splt_flac_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reader *fr, int *error)
+static void splt_flac_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reader *fr, splt_code *error)
 {
   fr->frame_number++;
   fr->sample_number = fr->sample_number + fr->blocksize;
@@ -433,16 +430,16 @@ static void splt_flac_fr_set_next_frame_and_sample_numbers(splt_flac_frame_reade
   if (fr->frame_number_as_utf8) { free(fr->frame_number_as_utf8); }
   fr->frame_number_as_utf8 =
     splt_flac_l_convert_to_utf8((FLAC__uint64) fr->frame_number, &fr->frame_number_as_utf8_length);
-  if (fr->frame_number_as_utf8 == NULL) { *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY; return; }
+  if (fr->frame_number_as_utf8 == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
 
   if (fr->sample_number_as_utf8) { free(fr->sample_number_as_utf8); }
   fr->sample_number_as_utf8 =
     splt_flac_l_convert_to_utf8((FLAC__uint64) fr->sample_number, &fr->sample_number_as_utf8_length);
-  if (fr->sample_number_as_utf8 == NULL) { *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY; return; }
+  if (fr->sample_number_as_utf8 == NULL) { *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY; return; }
 }
 
 static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t frame_length,
-    splt_flac_code *error, void *user_data)
+    splt_state *state, splt_code *error, void *user_data)
 {
   splt_flac_frame_reader *fr = (splt_flac_frame_reader *) user_data;
 
@@ -482,7 +479,7 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
   unsigned char *modified_frame = malloc(sizeof(unsigned char) * modified_frame_length);
   if (modified_frame == NULL)
   {
-    *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return;
   }
 
@@ -533,17 +530,17 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
   modified_frame[j] = first_byte_of_new_crc16;
   modified_frame[j+1] = last_byte_of_new_crc16;
 
-  //TODO: change with splt_io_fwrite
-  if (fwrite(modified_frame, modified_frame_length, 1, fr->out) != 1)
+  if (splt_io_fwrite(state, modified_frame, modified_frame_length, 1, fr->out) != 1)
   {
-    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
+    splt_e_set_error_data(state, fr->output_fname);
+    *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   }
 
   free(modified_frame);
 }
 
 static void splt_flac_fr_backup_frame_processor(unsigned char *frame, size_t frame_length,
-    splt_flac_code *error, void *user_data)
+    splt_state *state, splt_code *error, void *user_data)
 {
   splt_flac_frame_reader *fr = (splt_flac_frame_reader *) user_data;
 
@@ -556,7 +553,7 @@ static void splt_flac_fr_backup_frame_processor(unsigned char *frame, size_t fra
 static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
     unsigned min_blocksize, unsigned max_blocksize,
     unsigned min_framesize, unsigned max_framesize,
-    splt_flac_frame_reader *fr, splt_flac_code *error)
+    splt_flac_frame_reader *fr, splt_code *error)
 {
   if (min_framesize == 0) { fr->out_streaminfo.min_framesize = 0; }
   if (max_framesize == 0) { fr->out_streaminfo.max_framesize = 0; }
@@ -570,7 +567,7 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   unsigned char *streaminfo_bytes = splt_flac_l_convert_from_streaminfo(&fr->out_streaminfo);
   if (streaminfo_bytes == NULL)
   {
-    *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return;
   }
 
@@ -579,7 +576,7 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   if (metadata_header == NULL)
   {
     free(streaminfo_bytes);
-    *error = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     return;
   }
 
@@ -587,25 +584,25 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   rewind(fr->out);
 
   unsigned char flac_word[4] = { 0x66, 0x4C, 0x61, 0x43 };
-  //TODO: change with splt_io_fwrite
-  if (fwrite(flac_word, 4, 1, fr->out) != 1)
+  if (splt_io_fwrite(state, flac_word, 4, 1, fr->out) != 1)
   {
-    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
+    splt_e_set_error_data(state, fr->output_fname);
+    *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
     goto end;
   }
 
   //TODO: change is_last from 1 to 0 when writing other metadata types ...
-  //TODO: change with splt_io_fwrite
-  if (fwrite(metadata_header, SPLT_FLAC_METADATA_HEADER_LENGTH, 1, fr->out) != 1)
+  if (splt_io_fwrite(state, metadata_header, SPLT_FLAC_METADATA_HEADER_LENGTH, 1, fr->out) != 1)
   {
-    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
+    splt_e_set_error_data(state, fr->output_fname);
+    *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
     goto end;
   }
 
-  //TODO: change with splt_io_fwrite
-  if (fwrite(streaminfo_bytes, SPLT_FLAC_STREAMINFO_LENGTH, 1, fr->out) != 1)
+  if (splt_io_fwrite(state, streaminfo_bytes, SPLT_FLAC_STREAMINFO_LENGTH, 1, fr->out) != 1)
   {
-    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
+    splt_e_set_error_data(state, fr->output_fname);
+    *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   }
 
 end:
@@ -650,10 +647,13 @@ static splt_flac_frame_reader *splt_flac_fr_reset_for_new_file(splt_flac_frame_r
     return NULL;
   }
 
+  if (fr->output_fname) { free(fr->output_fname); }
+  fr->output_fname = NULL;
+
   return fr;
 }
 
-splt_flac_frame_reader *splt_flac_fr_new(FILE *in)
+splt_flac_frame_reader *splt_flac_fr_new(FILE *in, const char *input_filename)
 {
   splt_flac_frame_reader *fr = malloc(sizeof(splt_flac_frame_reader));
   if (fr == NULL) { return NULL; }
@@ -701,12 +701,13 @@ void splt_flac_fr_free(splt_flac_frame_reader *fr)
   if (fr->buffer) { free(fr->buffer); }
   if (fr->output_buffer) { free(fr->output_buffer); }
   if (fr->previous_frame) { free(fr->previous_frame); }
+  if (fr->output_fname) { free(fr->output_fname); }
 
   free(fr);
 }
 
 static void splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(splt_flac_frame_reader *fr,
-    const char *output_fname, splt_flac_code *error)
+    const char *output_fname, splt_state *state, splt_code *error)
 {
   if (fr->out_streaminfo.total_samples != 0)
   {
@@ -716,16 +717,17 @@ static void splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(sp
   fr->out = splt_io_fopen(output_fname, "wb+");
   if (fr->out == NULL)
   {
-    *error = SPLT_FLAC_ERR_FAILED_TO_OPEN_FILE;
+    splt_e_set_strerror_msg_with_data(state, output_fname);
+    *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
     return;
   }
 
   unsigned char space[4+SPLT_FLAC_METADATA_HEADER_LENGTH+SPLT_FLAC_STREAMINFO_LENGTH]={'\0'};
   int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
-  //TODO: change with splt_io_fwrite
-  if (fwrite(space, space_size, 1, fr->out) != 1)
+  if (splt_io_fwrite(state, space, space_size, 1, fr->out) != 1)
   {
-    *error = SPLT_FLAC_ERR_FAILED_TO_WRITE_OUTPUT_FILE;
+    splt_e_set_error_data(state, fr->output_fname);
+    *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   }
 }
 
@@ -735,13 +737,11 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
     unsigned min_framesize, unsigned max_framesize,
-    int *error)
+    splt_code *error)
 {
-  int frame_reader_error_code = SPLT_FLAC_OK;
-
   if (splt_flac_fr_reset_for_new_file(fr) == NULL)
   {
-    frame_reader_error_code = SPLT_FLAC_ERR_CANNOT_ALLOCATE_MEMORY;
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     goto end;
   }
 
@@ -749,19 +749,19 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
   fr->out_streaminfo.channels = channels;
   fr->out_streaminfo.bits_per_sample = bits_per_sample;
 
+  splt_su_copy(output_fname, &fr->output_fname);
+
   if (save_end_point && fr->previous_frame)
   {
-    splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, 
-        &frame_reader_error_code);
+    splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, state, error);
 
-    splt_flac_fr_write_frame_processor(fr->previous_frame, fr->previous_frame_length,
-        &frame_reader_error_code, fr);
+    splt_flac_fr_write_frame_processor(fr->previous_frame, fr->previous_frame_length, state, error, fr);
     free(fr->previous_frame);
     fr->previous_frame = NULL;
     fr->previous_frame_length = 0;
 
-    splt_flac_fr_set_next_frame_and_sample_numbers(fr, &frame_reader_error_code);
-    if (frame_reader_error_code < 0) { goto end; }
+    splt_flac_fr_set_next_frame_and_sample_numbers(fr, error);
+    if (*error < 0) { goto end; }
 
     fr->out_streaminfo.total_samples += fr->blocksize;
   }
@@ -772,38 +772,37 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     unsigned frame_byte_buffer_start = 0;
     if (fr->buffer != NULL) { frame_byte_buffer_start = fr->next_byte; }
 
-    splt_flac_fr_read_frame(fr, min_blocksize, max_blocksize, bits_per_sample, 
-        &frame_reader_error_code);
-    if (frame_reader_error_code < 0) { goto end; }
+    splt_flac_fr_read_frame(fr, min_blocksize, max_blocksize, bits_per_sample, state, error);
+    if (*error < 0) { goto end; }
 
     double time = (double) fr->current_sample_number / (double) sample_rate;
     if (time >= begin_point && (time < end_point || end_point < 0))
     {
-      splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, 
-          &frame_reader_error_code);
+      splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, state, error);
 
-      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code,
+      splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
           splt_flac_fr_write_frame_processor, fr);
-      if (frame_reader_error_code < 0) { goto end; }
+      if (*error < 0) { goto end; }
 
-      splt_flac_fr_set_next_frame_and_sample_numbers(fr, &frame_reader_error_code);
-      if (frame_reader_error_code < 0) { goto end; }
+      splt_flac_fr_set_next_frame_and_sample_numbers(fr, error);
+      if (*error < 0) { goto end; }
 
       fr->out_streaminfo.total_samples += fr->blocksize;
     }
     else if (end_point > 0 && time >= end_point)
     {
-      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code, 
+      splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
           splt_flac_fr_backup_frame_processor, fr);
       we_continue = 0;
     }
     else
     {
-      splt_flac_u_process_frame(fr, frame_byte_buffer_start, &frame_reader_error_code, NULL, fr);
+      splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error, NULL, fr);
     }
 
     if (feof(fr->in) && fr->next_byte >= fr->read_bytes)
     {
+      *error = SPLT_OK_SPLIT_EOF;
       break;
     }
   }
@@ -811,11 +810,11 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
   if (fr->out_streaminfo.total_samples != 0)
   {
     splt_flac_fr_finish_and_write_streaminfo(state, min_blocksize, max_blocksize,
-        min_framesize, max_framesize, fr, &frame_reader_error_code);
+        min_framesize, max_framesize, fr, error);
   }
   else
   {
-    frame_reader_error_code = SPLT_FLAC_ERR_BEGIN_OUT_OF_FILE;
+    *error = SPLT_ERROR_BEGIN_OUT_OF_FILE;
   }
 
 end:
@@ -830,8 +829,5 @@ end:
       return;
     }
   }
-
-  splt_code err = splt_flac_fr_convert_flac_error_to_splt_error(state, frame_reader_error_code);
-  if (err < 0) { *error = err; }
 }
 
