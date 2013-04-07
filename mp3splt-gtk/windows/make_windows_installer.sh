@@ -318,6 +318,7 @@ mp3splt-gtk\src\.libs\mp3splt-gtk.exe
 libmp3splt\src\.libs\libmp3splt${DLL_SUFFIX}.dll
 libltdl-7.dll
 pcre3.dll
+LIBMP3SPLT_README_LICENSES_SOURCES.txt
 mp3splt-gtk\windows\mp3splt-gtk.ico
 mp3splt-gtk\src\mp3splt-gtk.png
 mp3splt-gtk\src\mp3splt-gtk_ico.svg
@@ -345,6 +346,9 @@ Section "mp3splt-gtk (with libmp3splt, gtk & gstreamer)" main_section
 set_out_path '$INSTDIR'
 copy_files $MAIN_SECTION_FILES
 recursive_copy_files_from_directory "../../mp3splt-gtk_runtime"
+recursive_copy_files_from_directory "../../libmp3splt_libs_licenses" ""
+
+set_out_path '$INSTDIR'
 
 echo '
   WriteUninstaller "${PROGRAM_NAME}_uninst.exe"
@@ -386,6 +390,17 @@ start_section "ogg vorbis plugin" "ogg_plugin_section" "no"
 set_out_path '$INSTDIR'
 copy_files $OGG_PLUGIN_FILES
 end_section "ogg_plugin_section" "no"
+
+#flac plugin section
+FLAC_PLUGIN_FILES="
+libFLAC.dll
+libmp3splt\plugins\.libs\libsplt_flac${DLL_SUFFIX}.dll
+"
+
+start_section "flac plugin" "flac_plugin_section" "no"
+set_out_path '$INSTDIR'
+copy_files $FLAC_PLUGIN_FILES
+end_section "flac_plugin_section" "no"
 
 echo 'SubSectionEnd' >> $WIN_INSTALLER_FILE
 

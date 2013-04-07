@@ -31,6 +31,7 @@ mp3splt-gtk/src/.libs/mp3splt-gtk.exe
 libmp3splt/src/.libs/libmp3splt${DLL_SUFFIX}.dll
 libltdl-7.dll
 pcre3.dll
+LIBMP3SPLT_README_LICENSES_SOURCES.txt
 mp3splt-gtk/src/mp3splt-gtk.png
 mp3splt-gtk/src/mp3splt-gtk_ico.svg
 mp3splt-gtk/src/backward.svg
@@ -60,6 +61,11 @@ libvorbisfile-3.dll
 libmp3splt/plugins/.libs/libsplt_ogg${DLL_SUFFIX}.dll
 "
 
+FLAC_PLUGIN_FILES="
+libFLAC.dll
+libmp3splt/plugins/.libs/libsplt_flac${DLL_SUFFIX}.dll
+"
+
 MP3SPLT_DOC_FILES="
 mp3splt-gtk/README
 mp3splt-gtk/COPYING
@@ -80,7 +86,7 @@ libmp3splt/TODO
 libmp3splt/AUTHORS
 "
 
-MAIN_FILES="$BASIC_FILES $MP3_PLUGIN_FILES $OGG_PLUGIN_FILES"
+MAIN_FILES="$BASIC_FILES $MP3_PLUGIN_FILES $OGG_PLUGIN_FILES $FLAC_PLUGIN_FILES"
 
 TEMP_DIR="mp3splt-gtk_${MP3SPLT_GTK_VERSION}_$ARCH"
 
@@ -105,6 +111,8 @@ done
 for lang in $LANGUAGES;do
   cp -r translations/$lang/translations/$lang $TEMP_DIR/translations
 done
+
+cp -r ../libs/libmp3splt_libs_licenses $TEMP_DIR
 
 if [[ ! -z $we_dont_cross_compile ]];then
   cd ../libs &&\
