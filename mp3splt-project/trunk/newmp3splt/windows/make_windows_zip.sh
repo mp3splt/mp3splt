@@ -35,6 +35,7 @@ iconv.dll
 libltdl-7.dll
 zlib1.dll
 pcre3.dll
+LIBMP3SPLT_README_LICENSES_SOURCES.txt
 "
 
 MP3_PLUGIN_FILES="
@@ -49,6 +50,11 @@ libvorbis-0.dll
 libvorbisenc-2.dll
 libvorbisfile-3.dll
 libmp3splt/plugins/.libs/libsplt_ogg${DLL_SUFFIX}.dll
+"
+
+FLAC_PLUGIN_FILES="
+libFLAC.dll
+libmp3splt/plugins/.libs/libsplt_flac${DLL_SUFFIX}.dll
 "
 
 MP3SPLT_DOC_FILES="
@@ -72,7 +78,7 @@ libmp3splt/TODO
 libmp3splt/AUTHORS
 "
 
-MAIN_FILES="$BASIC_FILES $MP3_PLUGIN_FILES $OGG_PLUGIN_FILES"
+MAIN_FILES="$BASIC_FILES $MP3_PLUGIN_FILES $OGG_PLUGIN_FILES $FLAC_PLUGIN_FILES"
 
 TEMP_DIR="mp3splt_${MP3SPLT_VERSION}_$ARCH"
 
@@ -97,6 +103,8 @@ done
 for lang in $LANGUAGES;do
   cp -r translations/$lang/translations/$lang $TEMP_DIR/translations
 done
+
+cp -r ../libs/libmp3splt_libs_licenses $TEMP_DIR
 
 echo "cmd /K .\mp3splt.exe" > $TEMP_DIR/mp3splt.bat
 

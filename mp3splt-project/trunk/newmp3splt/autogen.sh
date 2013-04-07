@@ -1,4 +1,5 @@
 #!/bin/sh
+win=$1
 
 #autopoint check
 (autopoint --version) > /dev/null 2>&1 ||
@@ -34,11 +35,15 @@ HAS_MSGFMT=yes
   HAS_MSGFMT=no
 }
 
+if ! test -z $win ;then
+ WIN_ACLOCAL_FLAGS="-I /usr/share/aclocal"
+fi
+
 #we run aclocal, autoconf and automake
 echo -n "1/5 Running autopoint... " \
 && autopoint -f && echo "done" \
 && echo -n "2/5 Running aclocal... " \
-&& aclocal -I m4 $ACLOCAL_FLAGS && echo "done" \
+&& aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
 && echo -n "3/5 Running autoheader... " \
 && autoheader && echo "done" \
 && echo -n "4/5 Running autoconf... " \

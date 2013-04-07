@@ -30,6 +30,7 @@ sed -i 's/-luuid//' lib/libltdl.la
 #
 cp bin/libltdl-7.dll ../trunk/ || exit 1
 cp bin/libogg-0.dll ../trunk/ || exit 1
+cp lib/libFLAC*.dll ../trunk/ || exit 1
 cp bin/libvorbis-0.dll ../trunk/ || exit 1
 cp bin/libvorbisenc-2.dll ../trunk/ || exit 1
 cp bin/libvorbisfile-3.dll ../trunk/ || exit 1
