@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-03-27 23:05+0100\n"
+"POT-Creation-Date: 2013-04-07 23:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -593,7 +593,7 @@ msgstr ""
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1498 plugins/ogg.c:132 plugins/flac.c:143
+#: plugins/mp3.c:1498 plugins/ogg.c:132 plugins/flac.c:145
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
@@ -634,7 +634,7 @@ msgstr ""
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:1458
+#: plugins/ogg.c:1457
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
 
@@ -654,7 +654,7 @@ msgstr ""
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr ""
 
-#: plugins/flac.c:135
+#: plugins/flac.c:137
 #, c-format
 msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""

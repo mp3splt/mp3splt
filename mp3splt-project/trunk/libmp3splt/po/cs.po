@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-03-27 23:05+0100\n"
+"POT-Creation-Date: 2013-04-07 23:08+0200\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -614,7 +614,7 @@ msgstr " - NS - %d kB/s"
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1498 plugins/ogg.c:132 plugins/flac.c:143
+#: plugins/mp3.c:1498 plugins/ogg.c:132 plugins/flac.c:145
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Celkový čas: %dm.%02ds"
@@ -655,7 +655,7 @@ msgstr " Byly zpracovány snímky %lu - Chyby při seřizování: %lu\n"
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " Informace: Datový proud OggVorbis - %ld - %ld kB/s - %d kanály"
 
-#: plugins/ogg.c:1458
+#: plugins/ogg.c:1457
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " Varování: Předpokládá se, že stdin »o-« je datový proud Ogg.\n"
 
@@ -675,7 +675,7 @@ msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
-#: plugins/flac.c:135
+#: plugins/flac.c:137
 #, c-format
 msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""

@@ -1,4 +1,4 @@
-#!/bin/sh
+et!/bin/sh
 #we should have done '!/bin/bash', but it won't work on msys+mingw
 
 #if the first argument of the script is not empty, then we consider a cross
@@ -23,6 +23,9 @@ if [[ -z $we_dont_cross_compile ]];then
 else
   put_package "cross_windows_installer"
 fi
+
+mkdir -p ../../libmp3splt_libs_licenses
+cp -a `pwd`/../../../libs/libmp3splt_libs_licenses ../../libmp3splt_libs_licenses || exit 1
 
 LANGUAGES="fr_FR de_DE"
 
