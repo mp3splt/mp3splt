@@ -96,7 +96,8 @@ void import_file(gchar *filename, ui_state *ui)
   g_string_ascii_up(ext_str);
 
   if ((strstr(ext_str->str, ".MP3") != NULL) ||
-      (strstr(ext_str->str, ".OGG") != NULL))
+      (strstr(ext_str->str, ".OGG") != NULL) ||
+      (strstr(ext_str->str, ".FLAC") != NULL))
   {
     file_chooser_ok_event(filename, ui);
     remove_status_message(ui->gui);

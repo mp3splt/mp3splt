@@ -133,7 +133,8 @@ static void dnd_data_received(GtkWidget *window, GdkDragContext *drag_context,
       GString *ext_str = g_string_new(ext);
       g_string_ascii_up(ext_str);
       if ((strstr(ext_str->str, ".MP3") != NULL) ||
-          (strstr(ext_str->str, ".OGG") != NULL))
+          (strstr(ext_str->str, ".OGG") != NULL) ||
+          (strstr(ext_str->str, ".FLAC") != NULL))
       {
         filenames = g_slist_append(filenames, filename);
       }

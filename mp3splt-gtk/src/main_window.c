@@ -688,11 +688,13 @@ static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui
 void add_filters_to_file_chooser(GtkWidget *file_chooser)
 {
   GtkFileFilter *our_filter = gtk_file_filter_new();
-  gtk_file_filter_set_name(our_filter, _("mp3 and ogg files (*.mp3 *.ogg)"));
+  gtk_file_filter_set_name(our_filter, _("mp3, ogg vorbis and flac files (*.mp3 *.ogg *.flac)"));
   gtk_file_filter_add_pattern(our_filter, "*.mp3");
   gtk_file_filter_add_pattern(our_filter, "*.ogg");
+  gtk_file_filter_add_pattern(our_filter, "*.flac");
   gtk_file_filter_add_pattern(our_filter, "*.MP3");
   gtk_file_filter_add_pattern(our_filter, "*.OGG");
+  gtk_file_filter_add_pattern(our_filter, "*.FLAC");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 
   our_filter = gtk_file_filter_new();
@@ -702,9 +704,15 @@ void add_filters_to_file_chooser(GtkWidget *file_chooser)
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 
   our_filter = gtk_file_filter_new();
-  gtk_file_filter_set_name (our_filter, _("ogg files (*.ogg)"));
+  gtk_file_filter_set_name (our_filter, _("ogg vorbis files (*.ogg)"));
   gtk_file_filter_add_pattern(our_filter, "*.ogg");
   gtk_file_filter_add_pattern(our_filter, "*.OGG");
+  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
+
+  our_filter = gtk_file_filter_new();
+  gtk_file_filter_set_name (our_filter, _("flac files (*.flac)"));
+  gtk_file_filter_add_pattern(our_filter, "*.flac");
+  gtk_file_filter_add_pattern(our_filter, "*.FLAC");
   gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_chooser), our_filter);
 }
 
