@@ -27,10 +27,18 @@ install-exec-hook:
 if DO_OGG_SYMLINK
 	-cd $(DESTDIR)/$(bindir) && $(LN_S) mp3splt oggsplt
 endif
+if DO_FLAC_SYMLINK
+	-cd $(DESTDIR)/$(bindir) && $(LN_S) mp3splt flacsplt
+endif
 uninstall-hook:
 if DO_OGG_SYMLINK
 	if [ -L $(DESTDIR)/$(bindir)/oggsplt ];then \
 	  echo "The $(DESTDIR)/$(bindir)/oggsplt symlink still exists. You may want to remove it."; \
+	fi
+endif
+if DO_FLAC_SYMLINK
+	if [ -L $(DESTDIR)/$(bindir)/flacsplt ];then \
+	  echo "The $(DESTDIR)/$(bindir)/flacsplt symlink still exists. You may want to remove it."; \
 	fi
 endif
 
