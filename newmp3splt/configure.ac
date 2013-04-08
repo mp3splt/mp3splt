@@ -107,17 +107,31 @@ Download the latest version of libmp3splt at http://mp3splt.sourceforge.net/
 ) ])
 
 #################################################
-#Check for --enable-oggsplt
+#Check for --enable-oggsplt_symlink
 
 AC_ARG_ENABLE(oggsplt_symlink,
 AC_HELP_STRING([--enable-oggsplt_symlink], [Enable symlink of oggsplt to mp3splt. ]),
 [enable_ogg_symlink=$enableval],[enable_ogg_symlink="no"])
 
 if test "x$enable_ogg_symlink" = xyes;then
-  AM_CONDITIONAL(DO_SYMLINK, true)
+  AM_CONDITIONAL(DO_OGG_SYMLINK, true)
 else
-  AM_CONDITIONAL(DO_SYMLINK, false)
+  AM_CONDITIONAL(DO_OGG_SYMLINK, false)
 fi
+
+#################################################
+#Check for --enable-flacsplt_symlink
+
+AC_ARG_ENABLE(flacsplt_symlink,
+AC_HELP_STRING([--enable-flacsplt_symlink], [Enable symlink of flacsplt to mp3splt. ]),
+[enable_flac_symlink=$enableval],[enable_flac_symlink="no"])
+
+if test "x$enable_flac_symlink" = xyes;then
+  AM_CONDITIONAL(DO_FLAC_SYMLINK, true)
+else
+  AM_CONDITIONAL(DO_FLAC_SYMLINK, false)
+fi
+
 
 #################################################################
 # Check for some debugging, warnings and optimise options
@@ -157,6 +171,7 @@ echo "Configuration:"
 echo
 echo "    install path:            ${prefix}"
 echo "    oggsplt symlink:         ${enable_ogg_symlink}"
+echo "    flacsplt symlink:        ${enable_flac_symlink}"
 echo
 echo "---------------------------------------------------------"
 echo

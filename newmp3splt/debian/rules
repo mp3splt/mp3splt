@@ -10,7 +10,7 @@
 #export DH_VERBOSE=1
 
 
-DEB_CONFIGURE_EXTRA_FLAGS := --enable-oggsplt_symlink
+DEB_CONFIGURE_EXTRA_FLAGS := --enable-oggsplt_symlink --enable-flacsplt_symlink
 
 %:
 	dh $@ 
