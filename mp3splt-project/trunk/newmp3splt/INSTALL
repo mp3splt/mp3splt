@@ -50,6 +50,7 @@ mp3splt - INSTALLATION INFORMATION
 
 	    Main configure options :
         --enable-oggsplt_symlink
+        --enable-flacsplt_symlink
 
 	    Other configure options :
         --with-mp3splt=PFX
