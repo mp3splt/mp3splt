@@ -30,6 +30,7 @@ endif
 if DO_FLAC_SYMLINK
 	-cd $(DESTDIR)/$(bindir) && $(LN_S) mp3splt flacsplt
 endif
+
 uninstall-hook:
 if DO_OGG_SYMLINK
 	if [ -L $(DESTDIR)/$(bindir)/oggsplt ];then \
