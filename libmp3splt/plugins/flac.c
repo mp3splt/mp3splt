@@ -108,7 +108,8 @@ double splt_pl_split(splt_state *state, const char *output_fname,
 {
   splt_flac_state *flacstate = state->codec;
 
-  splt_flac_fr_read_and_write_frames(state, flacstate->fr, output_fname,
+  splt_flac_fr_read_and_write_frames(state, flacstate->fr, 
+      flacstate->metadatas, output_fname,
       begin_point, end_point, save_end_point,
       flacstate->streaminfo.min_blocksize, 
       flacstate->streaminfo.max_blocksize,
@@ -155,6 +156,14 @@ static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, const char *
 
   flacstate->fr = splt_flac_fr_new(in, input_filename);
   if (flacstate->fr == NULL)
+  {
+    *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
+    splt_flac_state_free(flacstate);
+    return NULL;
+  }
+
+  flacstate->metadatas = splt_flac_m_new();
+  if (flacstate->metadatas == NULL)
   {
     *error = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
     splt_flac_state_free(flacstate);
@@ -214,6 +223,12 @@ static void splt_flac_state_free(splt_flac_state *flacstate)
   {
     splt_flac_fr_free(flacstate->fr);
     flacstate->fr = NULL;
+  }
+
+  if (flacstate->metadatas)
+  {
+    splt_flac_m_free(flacstate->metadatas);
+    flacstate->metadatas = NULL;
   }
 
   free(flacstate);

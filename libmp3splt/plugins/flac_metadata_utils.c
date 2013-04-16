@@ -53,6 +53,15 @@ static void splt_flac_mu_skip_metadata(FLAC__uint32 total_block_length, FILE *in
   free(bytes);
 }
 
+static void splt_flac_mu_save_metadata(splt_flac_state *flacstate, 
+    unsigned char block_type, FLAC__uint32 total_block_length, FILE *in, splt_code *error)
+{
+  unsigned char *bytes = splt_flac_mu_read_metadata(total_block_length, in, error);
+  if (*error < 0 || !bytes) { return; }
+
+  splt_flac_m_append_metadata(block_type, total_block_length, bytes, flacstate->metadatas, error);
+}
+
 static void splt_flac_mu_read_streaminfo(splt_flac_state *flacstate,
     FLAC__uint32 total_block_length, FILE *in, splt_code *error)
 {
@@ -72,10 +81,10 @@ static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, splt_
       splt_flac_mu_read_streaminfo(flacstate, total_block_length, in, error);
       return;
     case SPLT_FLAC_METADATA_PADDING:
-      splt_flac_mu_skip_metadata(total_block_length, in, error);
+      splt_flac_mu_save_metadata(flacstate, block_type, total_block_length, in, error);
       return;
     case SPLT_FLAC_METADATA_APPLICATION:
-      splt_flac_mu_skip_metadata(total_block_length, in, error);
+      splt_flac_mu_save_metadata(flacstate, block_type, total_block_length, in, error);
       return;
     case SPLT_FLAC_METADATA_SEEKTABLE:
       splt_flac_mu_skip_metadata(total_block_length, in, error);
@@ -87,7 +96,7 @@ static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, splt_
       splt_flac_mu_skip_metadata(total_block_length, in, error);
       return;
     case SPLT_FLAC_METADATA_PICTURE:
-      splt_flac_mu_skip_metadata(total_block_length, in, error);
+      splt_flac_mu_save_metadata(flacstate, block_type, total_block_length, in, error);
       return;
     case 127:
       splt_e_set_error_data(state, splt_t_get_filename_to_split(state));

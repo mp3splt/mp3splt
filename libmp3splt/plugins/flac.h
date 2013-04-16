@@ -32,12 +32,14 @@
 #include <FLAC/all.h>
 
 #include "flac_frame_reader.h"
+#include "flac_metadata.h"
 
 #define SPLT_FLAC_EXT ".flac"
 
 typedef struct {
   FLAC__StreamMetadata_StreamInfo streaminfo;
   splt_flac_frame_reader *fr;
+  splt_flac_metadatas *metadatas;
 } splt_flac_state;
 
 #define MP3SPLT_FLAC_H
