@@ -33,6 +33,7 @@
 
 #include "flac.h"
 #include "from_flac_library.h"
+#include "flac_metadata.h"
 
 void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, splt_code *error);
 unsigned char *splt_flac_mu_build_metadata_header(unsigned char type, unsigned char is_last,

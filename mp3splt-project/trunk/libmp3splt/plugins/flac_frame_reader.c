@@ -553,7 +553,7 @@ static void splt_flac_fr_backup_frame_processor(unsigned char *frame, size_t fra
 static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
     unsigned min_blocksize, unsigned max_blocksize,
     unsigned min_framesize, unsigned max_framesize,
-    splt_flac_frame_reader *fr, splt_code *error)
+    const splt_flac_metadatas *metadatas, splt_flac_frame_reader *fr, splt_code *error)
 {
   if (min_framesize == 0) { fr->out_streaminfo.min_framesize = 0; }
   if (max_framesize == 0) { fr->out_streaminfo.max_framesize = 0; }
@@ -571,8 +571,11 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
     return;
   }
 
+  int last = 1;
+  if (metadatas->number_of_datas > 0) { last = 0; }
+
   unsigned char *metadata_header =
-    splt_flac_mu_build_metadata_header(SPLT_FLAC_METADATA_STREAMINFO, 1, SPLT_FLAC_STREAMINFO_LENGTH);
+    splt_flac_mu_build_metadata_header(SPLT_FLAC_METADATA_STREAMINFO, last, SPLT_FLAC_STREAMINFO_LENGTH);
   if (metadata_header == NULL)
   {
     free(streaminfo_bytes);
@@ -591,7 +594,6 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
     goto end;
   }
 
-  //TODO: change is_last from 1 to 0 when writing other metadata types ...
   if (splt_io_fwrite(state, metadata_header, SPLT_FLAC_METADATA_HEADER_LENGTH, 1, fr->out) != 1)
   {
     splt_e_set_error_data(state, fr->output_fname);
@@ -706,8 +708,38 @@ void splt_flac_fr_free(splt_flac_frame_reader *fr)
   free(fr);
 }
 
-static void splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(splt_flac_frame_reader *fr,
-    const char *output_fname, splt_state *state, splt_code *error)
+static void splt_flac_fr_write_metadatas(splt_flac_frame_reader *fr,
+    const splt_flac_metadatas *metadatas, const char *output_fname, splt_state *state, splt_code *error)
+{
+  int i = 0;
+  for (;i < metadatas->number_of_datas; i++)
+  {
+    splt_flac_one_metadata *one_metadata = &metadatas->datas[i];
+
+    unsigned char block_flag_and_block_type = one_metadata->block_type;
+    if (i == metadatas->number_of_datas - 1)
+    {
+      block_flag_and_block_type |= 0x80;
+    }
+
+    FLAC__uint32 block_length = one_metadata->block_length;
+    FLAC__byte block_lengths[3];
+    splt_flac_l_pack_uint32(block_length, block_lengths, 3);
+
+    if (splt_io_fwrite(state, &block_flag_and_block_type, 1, 1, fr->out) != 1) { goto error; }
+    if (splt_io_fwrite(state, block_lengths, 3, 1, fr->out) != 1) { goto error; }
+    if (splt_io_fwrite(state, one_metadata->bytes, block_length, 1, fr->out) != 1) { goto error; }
+  }
+
+  return;
+
+error:
+  splt_e_set_error_data(state, fr->output_fname);
+  *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
+}
+
+static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_frame_reader *fr,
+    const splt_flac_metadatas *metadatas, const char *output_fname, splt_state *state, splt_code *error)
 {
   if (fr->out_streaminfo.total_samples != 0)
   {
@@ -722,17 +754,19 @@ static void splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(sp
     return;
   }
 
-  unsigned char space[4+SPLT_FLAC_METADATA_HEADER_LENGTH+SPLT_FLAC_STREAMINFO_LENGTH]={'\0'};
+  unsigned char space[4+SPLT_FLAC_METADATA_HEADER_LENGTH+SPLT_FLAC_STREAMINFO_LENGTH] = {'\0'};
   int space_size= 4 + SPLT_FLAC_METADATA_HEADER_LENGTH + SPLT_FLAC_STREAMINFO_LENGTH;
   if (splt_io_fwrite(state, space, space_size, 1, fr->out) != 1)
   {
     splt_e_set_error_data(state, fr->output_fname);
     *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   }
+
+  splt_flac_fr_write_metadatas(fr, metadatas, output_fname, state, error);
 }
 
-void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr, 
-    const char *output_fname,
+void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,
+    const splt_flac_metadatas *metadatas, const char *output_fname,
     double begin_point, double end_point, int save_end_point,
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
@@ -753,7 +787,8 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
 
   if (save_end_point && fr->previous_frame)
   {
-    splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, state, error);
+    splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, output_fname,
+        state, error);
 
     splt_flac_fr_write_frame_processor(fr->previous_frame, fr->previous_frame_length, state, error, fr);
     free(fr->previous_frame);
@@ -778,7 +813,8 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     double time = (double) fr->current_sample_number / (double) sample_rate;
     if (time >= begin_point && (time < end_point || end_point < 0))
     {
-      splt_flac_fr_open_file_and_reserve_streaminfo_space_if_first_time(fr, output_fname, state, error);
+      splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, output_fname, 
+          state, error);
 
       splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
           splt_flac_fr_write_frame_processor, fr);
@@ -810,7 +846,7 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
   if (fr->out_streaminfo.total_samples != 0)
   {
     splt_flac_fr_finish_and_write_streaminfo(state, min_blocksize, max_blocksize,
-        min_framesize, max_framesize, fr, error);
+        min_framesize, max_framesize, metadatas, fr, error);
   }
   else
   {
