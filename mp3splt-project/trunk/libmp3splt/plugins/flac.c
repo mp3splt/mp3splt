@@ -125,6 +125,22 @@ double splt_pl_split(splt_state *state, const char *output_fname,
   return end_point;
 }
 
+void splt_pl_set_original_tags(splt_state *state, splt_code *error)
+{
+  splt_flac_state *flacstate = state->codec;
+  if (flacstate->flac_tags == NULL) { return; }
+
+  splt_d_print_debug(state, "Getting original tags for flac ...");
+
+  splt_tags *tags = flacstate->flac_tags->original_tags;
+  splt_tu_set_to_original_tags(state, tags, error);
+}
+
+void splt_pl_clear_original_tags(splt_original_tags *original_tags)
+{
+  //TODO
+}
+
 static void splt_flac_get_info(splt_state *state, FILE *file_input, const char *input_filename, splt_code *error)
 {
   splt_flac_state *flacstate = splt_flac_info(file_input, state, input_filename, error);
@@ -169,6 +185,8 @@ static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, const char *
     splt_flac_state_free(flacstate);
     return NULL;
   }
+
+  flacstate->flac_tags = NULL;
 
   //TODO: stdin check ?
 
@@ -229,6 +247,11 @@ static void splt_flac_state_free(splt_flac_state *flacstate)
   {
     splt_flac_m_free(flacstate->metadatas);
     flacstate->metadatas = NULL;
+  }
+
+  if (flacstate->flac_tags)
+  {
+    splt_flac_t_free(&flacstate->flac_tags);
   }
 
   free(flacstate);

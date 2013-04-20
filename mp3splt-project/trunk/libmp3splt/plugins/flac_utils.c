@@ -212,6 +212,11 @@ static unsigned char splt_flac_u_read_byte(splt_flac_frame_reader *fr, splt_code
   return fr->last_byte;
 }
 
+unsigned char splt_flac_u_read_next_byte_(void *flac_frame_reader, splt_code *error)
+{
+  return splt_flac_u_read_next_byte((splt_flac_frame_reader *) flac_frame_reader, error);
+}
+
 unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_code *error)
 {
   if (fr->remaining_bits == 0) { return splt_flac_u_read_byte(fr, error); }

@@ -27,29 +27,22 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_FLAC_UTILS_H
+#ifndef MP3SPLT_FLAC_TAGS_H
 
-#include "flac_frame_reader.h"
+#include <FLAC/all.h>
 
-unsigned char splt_flac_u_read_next_byte(splt_flac_frame_reader *fr, splt_code *error);
-unsigned char splt_flac_u_read_next_byte_(void *flac_frame_reader, splt_code *error);
-unsigned char splt_flac_u_read_bit(splt_flac_frame_reader *fr, splt_code *error);
-unsigned char splt_flac_u_read_bits(splt_flac_frame_reader *fr, unsigned char bits_number,
-    splt_code *error);
+#include "splt.h"
+#include "from_flac_library.h"
 
-void splt_flac_u_read_up_to_total_bits(splt_flac_frame_reader *fr, unsigned total_bits,
-    splt_code *error);
-unsigned splt_flac_u_read_unsigned(splt_flac_frame_reader *fr, splt_code *error);
+typedef struct {
+  splt_tags *original_tags;
+  char *vendor_string;
+} splt_flac_tags;
 
-void splt_flac_u_read_zeroes_and_the_next_one(splt_flac_frame_reader *fr, splt_code *error);
+splt_flac_tags *splt_flac_t_new(unsigned char *comments, splt_code *error);
+void splt_flac_t_free(splt_flac_tags **flac_tags);
 
-void splt_flac_u_process_frame(splt_flac_frame_reader *fr,
-    unsigned frame_byte_buffer_start, splt_state *state, splt_code *error,
-    void (*frame_processor)(unsigned char *frame, size_t frame_length, 
-      splt_state *state, splt_code *error, void *user_data),
-    void *user_data);
-
-#define MP3SPLT_FLAC_UTILS_H
+#define MP3SPLT_FLAC_TAGS_H
 
 #endif
 

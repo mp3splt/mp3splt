@@ -72,6 +72,22 @@ static void splt_flac_mu_read_streaminfo(splt_flac_state *flacstate,
   free(bytes);
 }
 
+static void splt_flac_mu_read_vorbis_comment(splt_flac_state *flacstate,
+    FLAC__uint32 total_block_length, FILE *in, splt_code *error)
+{
+  unsigned char *comments = splt_flac_mu_read_metadata(total_block_length, in, error);
+  if (*error < 0 || !comments) { return; }
+
+  if (flacstate->flac_tags)
+  {
+    splt_flac_t_free(&flacstate->flac_tags);
+  }
+
+  flacstate->flac_tags = splt_flac_t_new(comments, error);
+
+  free(comments);
+}
+
 static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, splt_state *state,
     unsigned char block_type, FLAC__uint32 total_block_length, FILE *in, splt_code *error)
 {
@@ -90,7 +106,7 @@ static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, splt_
       splt_flac_mu_skip_metadata(total_block_length, in, error);
       return;
     case SPLT_FLAC_METADATA_VORBIS_COMMENT:
-      splt_flac_mu_skip_metadata(total_block_length, in, error);
+      splt_flac_mu_read_vorbis_comment(flacstate, total_block_length, in, error);
       return;
     case SPLT_FLAC_METADATA_CUESHEET:
       splt_flac_mu_skip_metadata(total_block_length, in, error);

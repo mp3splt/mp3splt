@@ -30,6 +30,9 @@
 #include "splt.h"
 #include "tags_utils.h"
 
+static void splt_tu_copy_tags_without_original_and_version(splt_tags *from, splt_tags *to, 
+    int *error);
+
 void splt_tu_free_original_tags(splt_state *state)
 {
   splt_tags *tags = &state->original_tags.tags;
@@ -530,6 +533,11 @@ int splt_tu_set_original_tags_field(splt_state *state, int tags_field, const voi
   return splt_tu_set_field_on_tags(&state->original_tags.tags, tags_field, data);
 }
 
+void splt_tu_set_to_original_tags(splt_state *state, splt_tags *tags, int *error)
+{
+  splt_tu_copy_tags_without_original_and_version(tags, &state->original_tags.tags, error);
+}
+
 void splt_tu_set_original_tags_data(splt_state *state, void *data)
 {
   state->original_tags.all_original_tags = data;
@@ -945,7 +953,8 @@ int splt_tu_has_one_tag_set(splt_tags *tags)
   return SPLT_FALSE;
 }
 
-void splt_tu_copy_tags(splt_tags *from, splt_tags *to, int *error)
+static void splt_tu_copy_all_tags(splt_tags *from, splt_tags *to, int *error,
+    int copy_original_and_version)
 {
   if (!from)
   {
@@ -975,19 +984,32 @@ void splt_tu_copy_tags(splt_tags *from, splt_tags *to, int *error)
   err = splt_tu_set_field_on_tags(to, SPLT_TAGS_TRACK, &from->track);
   if (err < 0) { goto error; }
 
-  err = splt_tu_set_field_on_tags(to, SPLT_TAGS_ORIGINAL, &from->set_original_tags);
-  if (err < 0) { goto error; }
-
   err = splt_tu_set_field_on_tags(to, SPLT_TAGS_GENRE, from->genre);
   if (err < 0) { goto error; }
 
-  err = splt_tu_set_field_on_tags(to, SPLT_TAGS_VERSION, &from->tags_version);
-  if (err < 0) { goto error; }
+  if (copy_original_and_version)
+  {
+    err = splt_tu_set_field_on_tags(to, SPLT_TAGS_ORIGINAL, &from->set_original_tags);
+    if (err < 0) { goto error; }
+
+    err = splt_tu_set_field_on_tags(to, SPLT_TAGS_VERSION, &from->tags_version);
+    if (err < 0) { goto error; }
+  }
 
   return;
 
 error:
   *error = err;
+}
+
+static void splt_tu_copy_tags_without_original_and_version(splt_tags *from, splt_tags *to, int *error)
+{
+  splt_tu_copy_all_tags(from, to, error, SPLT_FALSE);
+}
+
+void splt_tu_copy_tags(splt_tags *from, splt_tags *to, int *error)
+{
+  splt_tu_copy_all_tags(from, to, error, SPLT_TRUE);
 }
 
 static splt_tags *splt_tu_get_tags_to_replace_in_tags(splt_state *state)
