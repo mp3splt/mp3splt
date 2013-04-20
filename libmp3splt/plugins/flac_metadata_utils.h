@@ -32,6 +32,7 @@
 #include "splt.h"
 
 #include "flac.h"
+#include "flac_tags.h"
 #include "from_flac_library.h"
 #include "flac_metadata.h"
 

@@ -134,13 +134,13 @@ unsigned splt_flac_l_crc16_table[256] = {
 	0x8213,  0x0216,  0x021c,  0x8219,  0x0208,  0x820d,  0x8207,  0x0202
 };
 
-uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_code *error, 
+uint32_t splt_flac_l_read_utf8_uint32(void *flac_frame_reader, splt_code *error, 
     unsigned char *number_of_bytes)
 {
   uint32_t val = 0;
   unsigned i;
 
-  uint32_t byte = splt_flac_u_read_next_byte(fr, error);
+  uint32_t byte = splt_flac_u_read_next_byte_(flac_frame_reader, error);
   if (*error < 0) { *number_of_bytes = 0; return 0xffffffff; }
   *number_of_bytes = 1;
 
@@ -174,7 +174,7 @@ uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_code *err
   }
 
   for ( ; i; i--) {
-    byte = splt_flac_u_read_next_byte(fr, error);
+    byte = splt_flac_u_read_next_byte_(flac_frame_reader, error);
     if (*error < 0) { *number_of_bytes = 0; return 0xffffffff; }
     *number_of_bytes = *number_of_bytes + 1;
 
@@ -190,13 +190,13 @@ uint32_t splt_flac_l_read_utf8_uint32(splt_flac_frame_reader *fr, splt_code *err
   return val;
 }
 
-uint64_t splt_flac_l_read_utf8_uint64(splt_flac_frame_reader *fr, splt_code *error,
+uint64_t splt_flac_l_read_utf8_uint64(void *flac_frame_reader, splt_code *error,
     unsigned char *number_of_bytes)
 {
   uint64_t val = 0;
   unsigned i;
 
-  uint32_t byte = splt_flac_u_read_next_byte(fr, error);
+  uint32_t byte = splt_flac_u_read_next_byte_(flac_frame_reader, error);
   if (*error < 0) { *number_of_bytes = 0; return 0xffffffffffffffffLLU; }
   *number_of_bytes = 1;
 
@@ -234,7 +234,7 @@ uint64_t splt_flac_l_read_utf8_uint64(splt_flac_frame_reader *fr, splt_code *err
   }
 
   for ( ; i; i--) {
-    byte = splt_flac_u_read_next_byte(fr, error);
+    byte = splt_flac_u_read_next_byte_(flac_frame_reader, error);
     if (*error < 0) { *number_of_bytes = 0; return 0xffffffffffffffffLLU; }
     *number_of_bytes = *number_of_bytes + 1;
 
@@ -280,6 +280,29 @@ void splt_flac_l_pack_uint32(FLAC__uint32 val, FLAC__byte *b, unsigned bytes)
 
   for(i = 0; i < bytes; i++) {
     *(--b) = (FLAC__byte)(val & 0xff);
+    val >>= 8;
+  }
+}
+
+FLAC__uint32 splt_flac_l_unpack_uint32_little_endian(FLAC__byte *b, unsigned bytes)
+{
+  FLAC__uint32 ret = 0;
+  unsigned i;
+
+  b += bytes;
+
+  for(i = 0; i < bytes; i++)
+    ret = (ret << 8) | (FLAC__uint32)(*--b);
+
+  return ret;
+}
+
+void splt_flac_l_pack_uint32_little_endian(FLAC__uint32 val, FLAC__byte *b, unsigned bytes)
+{
+  unsigned i;
+
+  for(i = 0; i < bytes; i++) {
+    *(b++) = (FLAC__byte)(val & 0xff);
     val >>= 8;
   }
 }

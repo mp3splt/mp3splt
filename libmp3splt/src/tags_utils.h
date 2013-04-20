@@ -55,6 +55,8 @@ void *splt_tu_get_original_tags_data(splt_state *state);
 splt_tags_group *splt_tu_get_tags_group(splt_state *state);
 splt_tags *splt_tu_get_original_tags_tags(splt_state *state);
 
+void splt_tu_set_to_original_tags(splt_state *state, splt_tags *tags, int *error);
+
 int splt_tu_set_tags_in_tags(splt_state *state, int current_tags);
 splt_tags *splt_tu_get_tags_at(splt_state *state, int tags_index);
 splt_tags splt_tu_get_last_tags(splt_state *state);
