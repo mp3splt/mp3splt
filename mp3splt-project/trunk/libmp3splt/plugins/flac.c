@@ -108,8 +108,17 @@ double splt_pl_split(splt_state *state, const char *output_fname,
 {
   splt_flac_state *flacstate = state->codec;
 
+  splt_tags *tags_to_write = splt_tu_get_current_tags(state);
+
+  splt_flac_tags *flac_tags = flacstate->flac_tags;
+  if (splt_o_get_int_option(state, SPLT_OPT_TAGS) == SPLT_NO_TAGS ||
+      tags_to_write == NULL)
+  {
+    flac_tags = NULL;
+  }
+
   splt_flac_fr_read_and_write_frames(state, flacstate->fr, 
-      flacstate->metadatas, output_fname,
+      flacstate->metadatas, flac_tags, tags_to_write, output_fname,
       begin_point, end_point, save_end_point,
       flacstate->streaminfo.min_blocksize, 
       flacstate->streaminfo.max_blocksize,
@@ -132,13 +141,12 @@ void splt_pl_set_original_tags(splt_state *state, splt_code *error)
 
   splt_d_print_debug(state, "Getting original tags for flac ...");
 
-  splt_tags *tags = flacstate->flac_tags->original_tags;
-  splt_tu_set_to_original_tags(state, tags, error);
+  splt_tu_set_to_original_tags(state, flacstate->flac_tags->original_tags, error);
 }
 
 void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 {
-  //TODO
+  //nothing to do - we never store original tags in the splt_state, only in the splt_flac_state
 }
 
 static void splt_flac_get_info(splt_state *state, FILE *file_input, const char *input_filename, splt_code *error)

@@ -709,7 +709,8 @@ void splt_flac_fr_free(splt_flac_frame_reader *fr)
 }
 
 static void splt_flac_fr_write_metadatas(splt_flac_frame_reader *fr,
-    const splt_flac_metadatas *metadatas, const char *output_fname, splt_state *state, splt_code *error)
+    const splt_flac_metadatas *metadatas, const int set_last_as_last,
+    const char *output_fname, splt_state *state, splt_code *error)
 {
   int i = 0;
   for (;i < metadatas->number_of_datas; i++)
@@ -717,7 +718,7 @@ static void splt_flac_fr_write_metadatas(splt_flac_frame_reader *fr,
     splt_flac_one_metadata *one_metadata = &metadatas->datas[i];
 
     unsigned char block_flag_and_block_type = one_metadata->block_type;
-    if (i == metadatas->number_of_datas - 1)
+    if (set_last_as_last && (i == metadatas->number_of_datas - 1))
     {
       block_flag_and_block_type |= 0x80;
     }
@@ -738,8 +739,92 @@ error:
   *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
 }
 
+static void splt_flac_fr_write_tags(splt_flac_frame_reader *fr, const splt_flac_tags *flac_tags,
+    const splt_tags *tags, const char *output_fname, splt_state *state, splt_code *error)
+{
+  splt_flac_vorbis_tags *vorbis_tags = splt_flac_vorbis_tags_new(error);
+  if (*error < 0) { return; }
+
+  splt_flac_vorbis_tags_append_with_prefix(vorbis_tags, "TITLE=", tags->title, error);
+  if (*error < 0) { goto end; }
+  char *artist_or_performer = splt_tu_get_artist_or_performer_ptr(tags);
+  splt_flac_vorbis_tags_append_with_prefix(vorbis_tags, "ARTIST=", artist_or_performer, error);
+  if (*error < 0) { goto end; }
+  splt_flac_vorbis_tags_append_with_prefix(vorbis_tags, "ALBUM=", tags->album, error);
+  if (*error < 0) { goto end; }
+  splt_flac_vorbis_tags_append_with_prefix(vorbis_tags, "DATE=", tags->year, error);
+  if (*error < 0) { goto end; }
+  splt_flac_vorbis_tags_append_with_prefix(vorbis_tags, "GENRE=", tags->genre, error);
+  if (*error < 0) { goto end; }
+  splt_flac_vorbis_tags_append_with_prefix(vorbis_tags, "COMMENT=", tags->comment, error);
+  if (*error < 0) { goto end; }
+  char track_str[255] = { '\0' };
+  snprintf(track_str, 254, "%d", tags->track);
+  splt_flac_vorbis_tags_append_with_prefix(vorbis_tags, "TRACKNUMBER=", track_str, error);
+  if (*error < 0) { goto end; }
+
+  if (tags->set_original_tags && flac_tags->other_tags)
+  {
+    FLAC__uint32 j;
+    for (;j < flac_tags->other_tags->number_of_tags; j++)
+    {
+      splt_flac_vorbis_tags_append(vorbis_tags, flac_tags->other_tags->tags[j], error);
+      if (*error < 0) { goto end; }
+    }
+  }
+
+  //4 is VORBIS_COMMENT metadata block type
+  unsigned char block_flag_and_block_type = 4;
+  //set as true the last metadata block flag
+  block_flag_and_block_type |= 0x80;
+
+  FLAC__uint32 total_bytes = 4 + flac_tags->vendor_length + 4 + vorbis_tags->total_bytes;
+
+  FLAC__byte block_length[3];
+  splt_flac_l_pack_uint32(total_bytes, block_length, 3);
+
+  //metadata block header
+  if (splt_io_fwrite(state, &block_flag_and_block_type, 1, 1, fr->out) != 1) { goto error; }
+  if (splt_io_fwrite(state, block_length, 3, 1, fr->out) != 1) { goto error; }
+
+  //metadata vorbis block
+  FLAC__byte uint32_bytes[4];
+
+  //vendor length and string
+  splt_flac_l_pack_uint32_little_endian(flac_tags->vendor_length, uint32_bytes, 4);
+  if (splt_io_fwrite(state, uint32_bytes, 4, 1, fr->out) != 1) { goto error; }
+  if (splt_io_fwrite(state, flac_tags->vendor_string, flac_tags->vendor_length, 1, fr->out) != 1)
+  {
+    goto error;
+  }
+
+  //number of comments
+  splt_flac_l_pack_uint32_little_endian(vorbis_tags->number_of_tags, uint32_bytes, 4);
+  if (splt_io_fwrite(state, uint32_bytes, 4, 1, fr->out) != 1) { goto error; }
+
+  FLAC__uint32 i = 0;
+  for (;i < vorbis_tags->number_of_tags;i++)
+  {
+    FLAC__uint32 comment_length = (FLAC__uint32) strlen(vorbis_tags->tags[i]);
+    splt_flac_l_pack_uint32_little_endian(comment_length, uint32_bytes, 4);
+    //comment length and value
+    if (splt_io_fwrite(state, uint32_bytes, 4, 1, fr->out) != 1) { goto error; }
+    if (splt_io_fwrite(state, vorbis_tags->tags[i], comment_length, 1, fr->out) != 1) { goto error; }
+  }
+
+end:
+  splt_flac_vorbis_tags_free(&vorbis_tags); 
+  return;
+
+error:
+  splt_e_set_error_data(state, fr->output_fname);
+  *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
+  splt_flac_vorbis_tags_free(&vorbis_tags); 
+}
+
 static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_frame_reader *fr,
-    const splt_flac_metadatas *metadatas, const char *output_fname, splt_state *state, splt_code *error)
+    const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags, 
+    const splt_tags *tags_to_write, const char *output_fname, splt_state *state, splt_code *error)
 {
   if (fr->out_streaminfo.total_samples != 0)
   {
@@ -762,11 +847,25 @@ static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_fr
     *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   }
 
-  splt_flac_fr_write_metadatas(fr, metadatas, output_fname, state, error);
+  int need_to_write_tags = SPLT_TRUE;
+  if (flac_tags == NULL || tags_to_write == NULL)
+  {
+    need_to_write_tags = SPLT_FALSE;
+  }
+
+  splt_flac_fr_write_metadatas(fr, metadatas, !need_to_write_tags, output_fname, state, error);
+  if (*error < 0) { return; }
+
+  if (need_to_write_tags)
+  {
+    splt_flac_fr_write_tags(fr, flac_tags, tags_to_write, output_fname, state, error);
+  }
 }
 
 void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,
-    const splt_flac_metadatas *metadatas, const char *output_fname,
+    const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags,
+    const splt_tags *tags_to_write,
+    const char *output_fname,
     double begin_point, double end_point, int save_end_point,
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
@@ -787,8 +886,8 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
 
   if (save_end_point && fr->previous_frame)
   {
-    splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, output_fname,
-        state, error);
+    splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, flac_tags,
+        tags_to_write, output_fname, state, error);
 
     splt_flac_fr_write_frame_processor(fr->previous_frame, fr->previous_frame_length, state, error, fr);
     free(fr->previous_frame);
@@ -813,8 +912,8 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     double time = (double) fr->current_sample_number / (double) sample_rate;
     if (time >= begin_point && (time < end_point || end_point < 0))
     {
-      splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, output_fname, 
-          state, error);
+      splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, flac_tags,
+          tags_to_write, output_fname, state, error);
 
       splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
           splt_flac_fr_write_frame_processor, fr);
