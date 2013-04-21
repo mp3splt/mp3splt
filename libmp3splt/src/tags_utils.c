@@ -36,39 +36,7 @@ static void splt_tu_copy_tags_without_original_and_version(splt_tags *from, splt
 void splt_tu_free_original_tags(splt_state *state)
 {
   splt_tags *tags = &state->original_tags.tags;
-
-  if (tags->year)
-  {
-    free(tags->year);
-    tags->year = NULL;
-  }
-  if (tags->artist)
-  {
-    free(tags->artist);
-    tags->artist = NULL;
-  }
-  if (tags->album)
-  {
-    free(tags->album);
-    tags->album = NULL;
-  }
-  if (tags->title)
-  {
-    free(tags->title);
-    tags->title = NULL;
-  }
-  if (tags->comment)
-  {
-    free(tags->comment);
-    tags->comment = NULL;
-  }
-  if (tags->genre)
-  {
-    free(tags->genre);
-    tags->genre = NULL;
-  }
-  tags->track = -1;
-
+  splt_tu_free_one_tags_content(tags);
   int err = SPLT_OK;
   splt_p_clear_original_tags(state, &err);
 }
@@ -1228,7 +1196,7 @@ splt_tags *splt_tu_get_current_tags(splt_state *state)
   return splt_tu_get_tags_at(state, current_tags_number);
 }
 
-char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags)
+char *splt_tu_get_artist_or_performer_ptr(const splt_tags *tags)
 {
   if (!tags)
   {

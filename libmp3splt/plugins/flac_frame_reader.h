@@ -37,6 +37,7 @@
 #include "splt.h"
 
 #include "flac_metadata.h"
+#include "flac_tags.h"
 
 typedef struct {
   //input file
@@ -98,7 +99,9 @@ splt_flac_frame_reader *splt_flac_fr_new(FILE *in, const char *input_filename);
 void splt_flac_fr_free(splt_flac_frame_reader *fr);
 
 void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,
-    const splt_flac_metadatas *metadatas, const char *output_fname,
+    const splt_flac_metadatas *metadatas, 
+    const splt_flac_tags *flac_tags, const splt_tags *tags_to_write,
+    const char *output_fname,
     double begin_point, double end_point, int save_end_point,
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 

@@ -83,7 +83,7 @@ static void splt_flac_mu_read_vorbis_comment(splt_flac_state *flacstate,
     splt_flac_t_free(&flacstate->flac_tags);
   }
 
-  flacstate->flac_tags = splt_flac_t_new(comments, error);
+  flacstate->flac_tags = splt_flac_t_new(comments, total_block_length, error);
 
   free(comments);
 }
@@ -107,6 +107,10 @@ static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, splt_
       return;
     case SPLT_FLAC_METADATA_VORBIS_COMMENT:
       splt_flac_mu_read_vorbis_comment(flacstate, total_block_length, in, error);
+      if (*error == SPLT_ERROR_INVALID)
+      {
+        splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+      }
       return;
     case SPLT_FLAC_METADATA_CUESHEET:
       splt_flac_mu_skip_metadata(total_block_length, in, error);

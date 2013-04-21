@@ -67,7 +67,7 @@ splt_tags *splt_tu_get_tags_like_x(splt_state *state);
 splt_tags *splt_tu_get_current_tags(splt_state *state);
 void splt_tu_get_original_tags(splt_state *state, int *err);
 
-char *splt_tu_get_artist_or_performer_ptr(splt_tags *tags);
+char *splt_tu_get_artist_or_performer_ptr(const splt_tags *tags);
 
 int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_tags *all_tags);
 
