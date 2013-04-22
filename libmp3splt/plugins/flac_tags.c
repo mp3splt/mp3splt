@@ -189,7 +189,7 @@ static void splt_flac_t_parse_and_store_comment(char *comment,
 static void splt_flac_t_parse_comments(unsigned char *comments,
     FLAC__uint32 total_block_length, splt_flac_tags *flac_tags, splt_code *error)
 {
-  int counter;
+  int counter = 0;
   unsigned char *ptr = comments;
   FLAC__uint32 vendor_length = splt_flac_t_read_unsigned_integer_of_32_bits(ptr);
   ptr += 4;
