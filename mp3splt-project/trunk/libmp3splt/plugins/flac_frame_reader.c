@@ -765,7 +765,7 @@ static void splt_flac_fr_write_tags(splt_flac_frame_reader *fr, const splt_flac_
 
   if (tags->set_original_tags && flac_tags->other_tags)
   {
-    FLAC__uint32 j;
+    FLAC__uint32 j = 0;
     for (;j < flac_tags->other_tags->number_of_tags; j++)
     {
       splt_flac_vorbis_tags_append(vorbis_tags, flac_tags->other_tags->tags[j], error);
