@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-07 23:11+0200\n"
+"POT-Creation-Date: 2013-04-23 21:14+0200\n"
 "PO-Revision-Date: 2012-05-11 08:29+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -277,46 +277,53 @@ msgstr "Úplný název souboru"
 msgid "Choose files or directories"
 msgstr "Vybrat soubor nebo adresář"
 
-#: src/multiple_files_window.c:101 src/main_window.c:691
-msgid "mp3 and ogg files (*.mp3 *.ogg)"
+#: src/multiple_files_window.c:100 src/main_window.c:691
+#, fuzzy
+msgid "mp3, ogg vorbis and flac files (*.mp3 *.ogg *.flac)"
 msgstr "Soubory mp3 a ogg (*.mp3 *.ogg)"
 
-#: src/multiple_files_window.c:109 src/main_window.c:699
+#: src/multiple_files_window.c:110 src/main_window.c:701
 msgid "mp3 files (*.mp3)"
 msgstr "Soubory mp3 (*.mp3)"
 
-#: src/multiple_files_window.c:115 src/main_window.c:705
-msgid "ogg files (*.ogg)"
+#: src/multiple_files_window.c:116 src/main_window.c:707
+#, fuzzy
+msgid "ogg vorbis files (*.ogg)"
 msgstr "Soubory ogg (*.ogg)"
 
-#: src/multiple_files_window.c:122
+#: src/multiple_files_window.c:122 src/main_window.c:713
+#, fuzzy
+msgid "flac files (*.flac)"
+msgstr "Soubory CUE (*.cue)"
+
+#: src/multiple_files_window.c:129
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: src/multiple_files_window.c:253
+#: src/multiple_files_window.c:260
 #, fuzzy
 msgid "_Add files or directories"
 msgstr "Vybrat soubor nebo adresář"
 
-#: src/multiple_files_window.c:254
+#: src/multiple_files_window.c:261
 msgid "Only the supported file types are added"
 msgstr ""
 
-#: src/multiple_files_window.c:262
+#: src/multiple_files_window.c:269
 #, fuzzy
 msgid "_Remove selected"
 msgstr "_Odstranit vybrané záznamy"
 
-#: src/multiple_files_window.c:272 src/splitpoints_window.c:1456
+#: src/multiple_files_window.c:279 src/splitpoints_window.c:1456
 msgid "R_emove all"
 msgstr "Odstranit _vše"
 
-#: src/multiple_files_window.c:280 src/main_window.c:782
+#: src/multiple_files_window.c:287 src/main_window.c:790
 #, fuzzy
 msgid "Batch split !"
 msgstr "Rozdělit!"
 
-#: src/multiple_files_window.c:281
+#: src/multiple_files_window.c:288
 #, fuzzy
 msgid "Split all the files"
 msgstr "Rozdělené soubory"
@@ -329,7 +336,7 @@ msgstr ""
 msgid "C_lear"
 msgstr "_Smazat"
 
-#: src/messages_window.c:168 src/main_window.c:793
+#: src/messages_window.c:168 src/main_window.c:801
 msgid "Messages history"
 msgstr "Historie zpráv"
 
@@ -437,7 +444,7 @@ msgstr "Sekundy:"
 msgid "Hundredths:"
 msgstr "Setina:"
 
-#: src/splitpoints_window.c:1443 src/main_window.c:828
+#: src/splitpoints_window.c:1443 src/main_window.c:836
 msgid "Add splitpoint"
 msgstr "Přidat bod rozdělení"
 
@@ -1105,7 +1112,7 @@ msgstr "vydání "
 msgid " info: stopping the split process.. please wait"
 msgstr " Informace: Proces rozdělení se zastavuje, prosím, čekejte"
 
-#: src/main_window.c:319 src/main_window.c:770
+#: src/main_window.c:319 src/main_window.c:778
 msgid "Preferences"
 msgstr "Nastavení"
 
@@ -1113,11 +1120,11 @@ msgstr "Nastavení"
 msgid "TrackType"
 msgstr ""
 
-#: src/main_window.c:346 src/main_window.c:773
+#: src/main_window.c:346 src/main_window.c:781
 msgid "Split files"
 msgstr "Rozdělené soubory"
 
-#: src/main_window.c:361 src/main_window.c:776
+#: src/main_window.c:361 src/main_window.c:784
 msgid "Splitpoints"
 msgstr "Body rozdělení"
 
@@ -1130,265 +1137,265 @@ msgstr " Chyba: Probíhá rozdělování..."
 msgid " error: no path of split selected"
 msgstr " Chyba: Není vybrán žádný soubor"
 
-#: src/main_window.c:717
+#: src/main_window.c:725
 msgid "Choose File"
 msgstr "Vybrat soubor"
 
-#: src/main_window.c:747
+#: src/main_window.c:755
 msgid "_File"
 msgstr "_Soubor"
 
-#: src/main_window.c:748
+#: src/main_window.c:756
 msgid "_View"
 msgstr ""
 
-#: src/main_window.c:749
+#: src/main_window.c:757
 #, fuzzy
 msgid "_Player"
 msgstr "Přehrávač"
 
-#: src/main_window.c:750
+#: src/main_window.c:758
 msgid "_Help"
 msgstr "_Nápověda"
 
-#: src/main_window.c:752
+#: src/main_window.c:760
 #, fuzzy
 msgid "_Open single file..."
 msgstr "_Otevřít..."
 
-#: src/main_window.c:752
+#: src/main_window.c:760
 msgid "Open"
 msgstr "Otevřít"
 
-#: src/main_window.c:756
+#: src/main_window.c:764
 msgid "_Add files or directories to batch ..."
 msgstr ""
 
-#: src/main_window.c:757
+#: src/main_window.c:765
 msgid "Add files or directories to batch"
 msgstr ""
 
-#: src/main_window.c:760
+#: src/main_window.c:768
 #, fuzzy
 msgid "_Import splitpoints from file..."
 msgstr "_Zavést body rozdělení..."
 
-#: src/main_window.c:761
+#: src/main_window.c:769
 #, fuzzy
 msgid "Import splitpoints from file..."
 msgstr "_Zavést body rozdělení..."
 
-#: src/main_window.c:763
+#: src/main_window.c:771
 #, fuzzy
 msgid "Import splitpoints from _TrackType.org..."
 msgstr "_Zavést body rozdělení..."
 
-#: src/main_window.c:764
+#: src/main_window.c:772
 #, fuzzy
 msgid "Import splitpoints from TrackType.org..."
 msgstr "_Zavést body rozdělení..."
 
-#: src/main_window.c:767
+#: src/main_window.c:775
 msgid "_Export splitpoints..."
 msgstr "_Vyvést body rozdělení..."
 
-#: src/main_window.c:768
+#: src/main_window.c:776
 #, fuzzy
 msgid "Export splitpoints"
 msgstr "_Vyvést body rozdělení..."
 
-#: src/main_window.c:770
+#: src/main_window.c:778
 #, fuzzy
 msgid "_Preferences"
 msgstr "Nastavení"
 
-#: src/main_window.c:773
+#: src/main_window.c:781
 #, fuzzy
 msgid "Split _files"
 msgstr "Rozdělené soubory"
 
-#: src/main_window.c:776
+#: src/main_window.c:784
 #, fuzzy
 msgid "_Splitpoints"
 msgstr "Body rozdělení"
 
-#: src/main_window.c:779
+#: src/main_window.c:787
 msgid "_Split !"
 msgstr "_Rozdělit!"
 
-#: src/main_window.c:779 src/main_window.c:990
+#: src/main_window.c:787 src/main_window.c:998
 msgid "Split !"
 msgstr "Rozdělit!"
 
-#: src/main_window.c:782
+#: src/main_window.c:790
 #, fuzzy
 msgid "_Batch split !"
 msgstr "_Rozdělit!"
 
-#: src/main_window.c:785
+#: src/main_window.c:793
 msgid "_Quit"
 msgstr "_Ukončit"
 
-#: src/main_window.c:785
+#: src/main_window.c:793
 msgid "Quit"
 msgstr "Ukončit"
 
-#: src/main_window.c:789
+#: src/main_window.c:797
 msgid "_Contents"
 msgstr "_Obsah"
 
-#: src/main_window.c:789
+#: src/main_window.c:797
 msgid "Contents"
 msgstr "Obsah"
 
-#: src/main_window.c:793
+#: src/main_window.c:801
 msgid "Messages _history"
 msgstr "_Historie zpráv"
 
-#: src/main_window.c:796
+#: src/main_window.c:804
 msgid "_About"
 msgstr "_O programu"
 
-#: src/main_window.c:796
+#: src/main_window.c:804
 msgid "About"
 msgstr "O programu"
 
-#: src/main_window.c:800
+#: src/main_window.c:808
 #, fuzzy
 msgid "P_ause / Play"
 msgstr "Pozastavit"
 
-#: src/main_window.c:800
+#: src/main_window.c:808
 #, fuzzy
 msgid "Pause/Play"
 msgstr "Pozastavit"
 
-#: src/main_window.c:803
+#: src/main_window.c:811
 msgid "Seek _forward"
 msgstr ""
 
-#: src/main_window.c:803
+#: src/main_window.c:811
 msgid "Seek forward"
 msgstr ""
 
-#: src/main_window.c:805
+#: src/main_window.c:813
 msgid "Seek _backward"
 msgstr ""
 
-#: src/main_window.c:805
+#: src/main_window.c:813
 msgid "Seek backward"
 msgstr ""
 
-#: src/main_window.c:808
+#: src/main_window.c:816
 msgid "Small seek f_orward"
 msgstr ""
 
-#: src/main_window.c:808
+#: src/main_window.c:816
 msgid "Small seek forward"
 msgstr ""
 
-#: src/main_window.c:810
+#: src/main_window.c:818
 msgid "Small seek back_ward"
 msgstr ""
 
-#: src/main_window.c:810
+#: src/main_window.c:818
 msgid "Small seek backward"
 msgstr ""
 
-#: src/main_window.c:813
+#: src/main_window.c:821
 msgid "Big seek fo_rward"
 msgstr ""
 
-#: src/main_window.c:813
+#: src/main_window.c:821
 msgid "Big seek forward"
 msgstr ""
 
-#: src/main_window.c:815
+#: src/main_window.c:823
 msgid "Big seek bac_kward"
 msgstr ""
 
-#: src/main_window.c:815
+#: src/main_window.c:823
 msgid "Big seek backward"
 msgstr ""
 
-#: src/main_window.c:818
+#: src/main_window.c:826
 #, fuzzy
 msgid "Seek to _next splitpoint"
 msgstr "Nastavit výchozí volby pro rozdělení"
 
-#: src/main_window.c:819
+#: src/main_window.c:827
 #, fuzzy
 msgid "Seek to next splitpoint"
 msgstr "Nastavit výchozí volby pro rozdělení"
 
-#: src/main_window.c:820
+#: src/main_window.c:828
 #, fuzzy
 msgid "Seek to _previous splitpoint"
 msgstr "Zastřihnout body rozdělení"
 
-#: src/main_window.c:821
+#: src/main_window.c:829
 #, fuzzy
 msgid "Seek to previous splitpoint"
 msgstr " Náhled na poslední bod rozdělení není možný"
 
-#: src/main_window.c:824
+#: src/main_window.c:832
 #, fuzzy
 msgid "_Quick preview before closest splitpoint"
 msgstr " Náhled na poslední bod rozdělení není možný"
 
-#: src/main_window.c:824
+#: src/main_window.c:832
 #, fuzzy
 msgid "Quick preview before closest splitpoint"
 msgstr " Náhled na poslední bod rozdělení není možný"
 
-#: src/main_window.c:827
+#: src/main_window.c:835
 #, fuzzy
 msgid "Add _splitpoint"
 msgstr "Přidat bod rozdělení"
 
-#: src/main_window.c:830
+#: src/main_window.c:838
 msgid "_Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:831
+#: src/main_window.c:839
 msgid "Delete closest splitpoint"
 msgstr ""
 
-#: src/main_window.c:833
+#: src/main_window.c:841
 msgid "Zoom _in"
 msgstr ""
 
-#: src/main_window.c:833
+#: src/main_window.c:841
 msgid "Zoom in"
 msgstr ""
 
-#: src/main_window.c:834
+#: src/main_window.c:842
 msgid "Zoom _out"
 msgstr ""
 
-#: src/main_window.c:834
+#: src/main_window.c:842
 msgid "Zoom out"
 msgstr ""
 
-#: src/main_window.c:945
+#: src/main_window.c:953
 #, fuzzy
 msgid "Open file ..."
 msgstr "_Otevřít..."
 
-#: src/main_window.c:993
+#: src/main_window.c:1001
 #, fuzzy
 msgid "Split the current file"
 msgstr "Rozdělené soubory"
 
-#: src/main_window.c:1002
+#: src/main_window.c:1010
 msgid "Manual single file split"
 msgstr ""
 
-#: src/main_window.c:1020
+#: src/main_window.c:1028
 msgid "Batch & automatic split"
 msgstr ""
 
-#: src/main_window.c:1040
+#: src/main_window.c:1048
 msgid "S_top"
 msgstr "Za_stavit"
 
@@ -1424,27 +1431,27 @@ msgstr "S: %02d, Úroveň: %.2f dB; hledá se ticho…"
 msgid "Choose file to import"
 msgstr "Vybrat soubor pro zavedení"
 
-#: src/import.c:206
+#: src/import.c:207
 msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 msgstr "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 
-#: src/import.c:210
+#: src/import.c:211
 msgid "CDDB files (*.cddb)"
 msgstr "Soubory CDDB (*.cddb)"
 
-#: src/import.c:212
+#: src/import.c:213
 msgid "CUE files (*.cue)"
 msgstr "Soubory CUE (*.cue)"
 
-#: src/import.c:214
+#: src/import.c:215
 msgid "Audacity labels files (*.txt)"
 msgstr "Soubory Audacity label (*.txt)"
 
-#: src/import.c:216
+#: src/import.c:217
 msgid "All files"
 msgstr "Všechny soubory"
 
-#: src/import.c:347
+#: src/import.c:348
 #, fuzzy
 msgid "--- last cue splitpoint ---"
 msgstr "Nastavit výchozí volby pro rozdělení"
