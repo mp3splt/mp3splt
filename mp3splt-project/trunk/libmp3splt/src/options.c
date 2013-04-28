@@ -77,6 +77,7 @@ void splt_o_set_options_default_values(splt_state *state)
   state->options.cue_cddb_add_tags_with_keep_original_tags = SPLT_FALSE;
   state->options.id3v2_encoding = SPLT_ID3V2_UTF16;
   state->options.input_tags_encoding = SPLT_ID3V2_UTF8;
+  state->options.time_minimum_length = 0;
 }
 
 void splt_o_set_option(splt_state *state, int option_name, const void *data)
@@ -146,6 +147,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
     case SPLT_OPT_INPUT_TAGS_ENCODING:
       state->options.input_tags_encoding = *((int *) data); 
       break;
+    case SPLT_OPT_TIME_MINIMUM_THEORETICAL_LENGTH:
+      state->options.time_minimum_length = *((long *) data);
+      break;
     case SPLT_OPT_PARAM_GAP:
       state->options.parameter_gap = *((int *)data);
       break;
@@ -167,11 +171,9 @@ void splt_o_set_option(splt_state *state, int option_name, const void *data)
     case SPLT_OPT_REPLACE_TAGS_IN_TAGS:
       state->options.replace_tags_in_tags = *((int *)data);
       break;
-
     case SPLT_OPT_OVERLAP_TIME:
       state->options.overlap_time = *((long *)data);
       break;
-
     case SPLT_OPT_SPLIT_TIME:
       state->options.split_time = *((long *)data);
       break;
@@ -273,6 +275,8 @@ static void *splt_o_get_option(splt_state *state, int option_name)
       return &state->options.id3v2_encoding;
     case SPLT_OPT_INPUT_TAGS_ENCODING:
       return &state->options.input_tags_encoding;
+    case SPLT_OPT_TIME_MINIMUM_THEORETICAL_LENGTH:
+      return &state->options.time_minimum_length;
     case SPLT_OPT_PARAM_GAP:
       return &state->options.parameter_gap;
     case SPLT_OPT_ALL_REMAINING_TAGS_LIKE_X:

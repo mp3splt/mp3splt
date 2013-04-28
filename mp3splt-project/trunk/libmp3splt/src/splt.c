@@ -371,6 +371,34 @@ bloc_end:
 /************************************/
 /*! time and length split           */
 
+static double splt_s_get_real_end_time_splitpoint(splt_state *state, 
+    int current_split, long total_time)
+{
+  long overlapped_time = splt_sp_overlap_time(state, current_split+1);
+  double overlapped_end = -1;
+  if (overlapped_time == LONG_MAX)
+  {
+    return overlapped_end;
+  }
+
+  overlapped_end = (double) ((double) overlapped_time / 100.0);
+
+  if (total_time <= 0)
+  {
+    return overlapped_end;
+  }
+
+  long minimum_length = splt_o_get_long_option(state, SPLT_OPT_TIME_MINIMUM_THEORETICAL_LENGTH);
+  long remaining_time = total_time - overlapped_time;
+  if (remaining_time > 0 && remaining_time < minimum_length)
+  {
+    splt_sp_set_splitpoint_value(state, current_split + 1, total_time);
+    return -1.0;
+  }
+
+  return overlapped_end;
+}
+
 static void splt_s_split_by_time(splt_state *state, int *error,
     double split_time_length, int number_of_files)
 {
@@ -432,12 +460,8 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           long end_splitpoint = splt_co_time_to_long_ceil(end);
           splt_sp_set_splitpoint_value(state, current_split+1, end_splitpoint);
 
-          long overlapped_time = splt_sp_overlap_time(state, current_split+1);
-          double overlapped_end = -1;
-          if (overlapped_time != LONG_MAX)
-          {
-            overlapped_end = (double) ((double) overlapped_time / 100.0);
-          }
+          double real_end_splitpoint =
+            splt_s_get_real_end_time_splitpoint(state, current_split, total_time);
 
           err = splt_u_finish_tags_and_put_output_format_filename(state, -1);
           if (err < 0) { *error = err; break; }
@@ -446,7 +470,7 @@ static void splt_s_split_by_time(splt_state *state, int *error,
           if (err < 0) { *error = err; break; }
 
           double new_sec_end_point = splt_p_split(state, final_fname,
-              begin, overlapped_end, error, save_end_point);
+              begin, real_end_splitpoint, error, save_end_point);
 
           if (save_end_point)
           {
