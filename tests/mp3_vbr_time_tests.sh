@@ -150,6 +150,89 @@ function test_time_vbr_no_tags { test_time_vbr -1; }
 function test_time_vbr_id3v1 { test_time_vbr 1; }
 function test_time_vbr_id3v2 { test_time_vbr 2; }
 
+function test_time_vbr_with_minimum_track_length_accepted
+{
+  remove_output_dir
+
+  test_name="vbr time with minimum track length accepted"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting time mode split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ time split ok"
+  mp3splt_args="-d $OUTPUT_DIR $MP3_FILE -t \"1.0>0.06\""
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_05s_58h.mp3" 
+  check_current_mp3_length "01.05"
+  check_all_mp3_tags_with_version 2 "La Verue" "Riez Noir" "Today"\
+  "2007" "Rock" "17" "4" "http://www.jamendo.com/"
+
+  print_ok
+  echo
+}
+
+function test_time_vbr_with_minimum_track_length_not_accepted
+{
+  remove_output_dir
+
+  test_name="vbr time with minimum track length not accepted"
+  M_FILE="La_Verue__Today"
+
+  expected=" Processing file 'songs/${M_FILE}.mp3' ...
+ info: file matches the plugin 'mp3 (libmad)'
+ info: found Xing or Info header. Switching to frame mode... 
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - FRAME MODE - Total time: 4m.05s
+ info: starting time mode split
+   File \"$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3\" created
+ Processed 9402 frames - Sync errors: 0
+ time split ok"
+  mp3splt_args="-d $OUTPUT_DIR $MP3_FILE -t \"1.0>0.04\""
+  run_check_output "$mp3splt_args" "$expected"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_00m_00s__01m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_01m_00s__02m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_02m_00s__03m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_03m_00s__04m_00s.mp3" 
+  check_current_mp3_length "01.00"
+
+  current_file="$OUTPUT_DIR/${M_FILE}_04m_00s__04m_05s_58h.mp3" 
+  check_current_mp3_length "00.05"
+
+  print_ok
+  echo
+}
+
 function test_time_vbr_pretend
 {
   remove_output_dir

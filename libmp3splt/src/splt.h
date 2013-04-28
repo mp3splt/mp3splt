@@ -489,6 +489,7 @@ typedef struct {
   int cue_cddb_add_tags_with_keep_original_tags;
   int id3v2_encoding;
   int input_tags_encoding;
+  long time_minimum_length;
 } splt_options_variables;
 
 //internal structures

@@ -335,8 +335,12 @@ int main(int argc, char **orig_argv)
         break;
       case 't':
         mp3splt_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_TIME_MODE);
-        long converted_time = c_hundreths(optarg);
 
+        // Token will point to "SEVERAL".
+        char *first = strtok(optarg, ">");
+        char *second = strtok(NULL, ">");
+
+        long converted_time = c_hundreths(first);
         if (converted_time != -LONG_MAX)
         {
           mp3splt_set_long_option(state, SPLT_OPT_SPLIT_TIME, converted_time);
@@ -346,6 +350,20 @@ int main(int argc, char **orig_argv)
           print_error_exit(_("bad time expression for the time split.\n"
                 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."), data);
         }
+
+        if (second != NULL)
+        {
+          long time_minimum_length = c_hundreths(second);
+          if (time_minimum_length == -LONG_MAX)
+          {
+            print_error_exit(_("bad minimum time expression.\n"
+                  "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."), data);
+          }
+
+          mp3splt_set_long_option(state, SPLT_OPT_TIME_MINIMUM_THEORETICAL_LENGTH,
+              time_minimum_length);
+        }
+
         opt->t_option = SPLT_TRUE;
         break;
       case 'p':

@@ -173,11 +173,13 @@ labels file (in seconds):
    67.000000 127.000000 second_file
    149.000000  206.000000 third_file
 
-.IP "\fB-t TIME\fP         " 10
+.IP "\fB-t TIME[>MIN_TIME]\fP         " 10
 \fBTime mode\fP.
 This option will create an indefinite number of smaller files with a fixed time length specified by TIME (which has the same format
 described above). It is useful to split long files into smaller (for example with the time length of a CD). Adjust option (\-a)
-can be used to adjust splitpoints with silence detection.
+can be used to adjust splitpoints with silence detection. >MIN_TIME can be used to specify the
+theoretical minimum track length of the last segment; it allows avoiding to create very small files
+as the last segment. Make sure to quote the argument when using MIN_TIME - "TIME>MIN_TIME".
 
 .IP "\fB-S SPLIT_NUMBER\fP         " 10
 \fBEqual time tracks mode\fP.

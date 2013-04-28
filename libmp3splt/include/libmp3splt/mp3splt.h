@@ -660,6 +660,17 @@ typedef enum {
    * Default is #SPLT_ID3V2_UTF8
    */
   SPLT_OPT_INPUT_TAGS_ENCODING,
+  /**
+   * Defines the minimum theoretical time length to be created when using
+   * #SPLT_OPTION_TIME_MODE.
+   * It is useful to avoid creating the last segment too small.
+   * Time unit is in hundreths of seconds.
+   *
+   * Long option that can take positive values.
+   *
+   * Default is 0.
+   */
+  SPLT_OPT_TIME_MINIMUM_THEORETICAL_LENGTH,
 } splt_options;
 
 /**
