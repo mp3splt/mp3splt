@@ -32,10 +32,10 @@
 # Basic initialisations 
 #################################################
 
-m4_define([minimum_libmp3splt_version],[0.9.1318])
+m4_define([minimum_libmp3splt_version],[0.9.1320])
 
 AC_PREREQ(2.56)
-AC_INIT(mp3splt, 2.6.1318, mtrotta@users.sourceforge.net)
+AC_INIT(mp3splt, 2.6.1320, mtrotta@users.sourceforge.net)
 
 AC_CONFIG_SRCDIR([src/mp3splt.c])
 AM_INIT_AUTOMAKE

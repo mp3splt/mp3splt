@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-04-25 00:48+0200\n"
+"POT-Creation-Date: 2013-04-28 11:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,62 +28,68 @@ msgid ""
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:346
+#: src/mp3splt.c:350
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:409
+#: src/mp3splt.c:359
+msgid ""
+"bad minimum time expression.\n"
+"\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
+msgstr ""
+
+#: src/mp3splt.c:427
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr ""
 
-#: src/mp3splt.c:475
+#: src/mp3splt.c:493
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr ""
 
-#: src/mp3splt.c:622
+#: src/mp3splt.c:640
 msgid "no input filename(s)."
 msgstr ""
 
-#: src/mp3splt.c:635
+#: src/mp3splt.c:653
 msgid "multiple splitpoints with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:639
+#: src/mp3splt.c:657
 msgid "using time mode with stdout !"
 msgstr ""
 
-#: src/mp3splt.c:680
+#: src/mp3splt.c:698
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:684
+#: src/mp3splt.c:702
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:690
+#: src/mp3splt.c:708
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p -K"
 msgstr ""
 
-#: src/mp3splt.c:766
+#: src/mp3splt.c:784
 msgid "freedb query format ambigous !"
 msgstr ""
 
-#: src/mp3splt.c:812
+#: src/mp3splt.c:830
 msgid "tags format ambiguous !"
 msgstr ""
 
-#: src/mp3splt.c:844
+#: src/mp3splt.c:862
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:860
+#: src/mp3splt.c:878
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"

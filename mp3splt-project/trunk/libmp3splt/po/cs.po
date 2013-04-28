@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-04-23 00:17+0200\n"
+"POT-Creation-Date: 2013-04-28 11:24+0200\n"
 "PO-Revision-Date: 2011-07-03 00:37+0000\n"
 "Last-Translator: fri <pavelfric@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -489,40 +489,40 @@ msgstr " Informace: Spouští se dělení v obvyklém režimu\n"
 msgid " info: starting error mode split\n"
 msgstr " Informace: Spouští se dělení v chybovém režimu\n"
 
-#: src/splt.c:566
+#: src/splt.c:590
 msgid " info: starting time mode split\n"
 msgstr " Informace: Spouští se dělení v časovém režimu\n"
 
-#: src/splt.c:585
+#: src/splt.c:609
 msgid " info: starting 'split in equal tracks' mode\n"
 msgstr ""
 " Informace: Spouští se dělení v režimu »dělení na stejně dlouhé skladby«\n"
 
-#: src/splt.c:627
+#: src/splt.c:651
 #, c-format
 msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
 msgstr ""
 
-#: src/splt.c:762
+#: src/splt.c:786
 msgid "YES"
 msgstr "Ano"
 
-#: src/splt.c:768
+#: src/splt.c:792
 #, c-format
 msgid "NO"
 msgstr "Ne"
 
-#: src/splt.c:774
+#: src/splt.c:798
 #, c-format
 msgid "User"
 msgstr "Uživatel"
 
-#: src/splt.c:778
+#: src/splt.c:802
 #, c-format
 msgid "Auto"
 msgstr "Automaticky"
 
-#: src/splt.c:798
+#: src/splt.c:822
 #, fuzzy, c-format
 msgid ""
 " Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
@@ -531,7 +531,7 @@ msgstr ""
 " Typ dělení pomocí zjištění ticha: Režim %s (Práh: %.1f dB, Posun: %.2f, "
 "Min: %.2f, Odstranění: %s)\n"
 
-#: src/splt.c:824
+#: src/splt.c:848
 #, c-format
 msgid ""
 " Found silence log file '%s' ! Reading silence points from file to save "
@@ -540,30 +540,30 @@ msgstr ""
 " Byl nalezen soubor se zápisem pro ticho »%s«! Aby se ušetřil čas, jsou body "
 "rozdělení čteny z tohoto souboru ;)\n"
 
-#: src/splt.c:859
+#: src/splt.c:883
 #, c-format
 msgid " Total silence points found: %d."
 msgstr " Celkem nalezeno bodů ticha: %d."
 
-#: src/splt.c:871
+#: src/splt.c:895
 #, c-format
 msgid " (Selected %d tracks)\n"
 msgstr " (%d skladeb vybráno)\n"
 
-#: src/splt.c:990
+#: src/splt.c:1014
 #, c-format
 msgid " Writing silence log file '%s' ...\n"
 msgstr " Zapisuje se soubor se zápisem o tichu »%s« …\n"
 
-#: src/splt.c:1044
+#: src/splt.c:1068
 msgid " info: starting silence mode split\n"
 msgstr " Informace: Začíná se s dělením v režimu ticha\n"
 
-#: src/splt.c:1092
+#: src/splt.c:1116
 msgid " info: starting trim using silence mode split\n"
 msgstr ""
 
-#: src/splt.c:1169
+#: src/splt.c:1193
 msgid " info: starting wrap mode split\n"
 msgstr ""
 " Informace: Začíná se s dělením v režimu automatického zalomení (wrap)\n"
