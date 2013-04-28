@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-04-25 00:48+0200\n"
+"POT-Creation-Date: 2013-04-28 11:26+0200\n"
 "PO-Revision-Date: 2011-02-22 00:08+0000\n"
 "Last-Translator: nemecis1000 <nemecis000@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 "other\" title=\"Ficha\">»Debe</span> ser min.sec, lea la página man para más "
 "detalles."
 
-#: src/mp3splt.c:346
+#: src/mp3splt.c:350
 #, fuzzy
 msgid ""
 "bad time expression for the time split.\n"
@@ -42,37 +42,47 @@ msgstr ""
 "other\" title=\"Ficha\">»Debe</span> ser min.sec, lea la página man para más "
 "detalles."
 
-#: src/mp3splt.c:409
+#: src/mp3splt.c:359
+#, fuzzy
+msgid ""
+"bad minimum time expression.\n"
+"\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
+msgstr ""
+"expresión mal momento para la división del tiempo. <span class=\"whitespace "
+"other\" title=\"Ficha\">»Debe</span> ser min.sec, lea la página man para más "
+"detalles."
+
+#: src/mp3splt.c:427
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "lea la página del manual de documentación o de tipo 'Mp3Splt-h'."
 
-#: src/mp3splt.c:475
+#: src/mp3splt.c:493
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "mal argumento para la opción-p. No fue reconocido valor válido!"
 
-#: src/mp3splt.c:622
+#: src/mp3splt.c:640
 msgid "no input filename(s)."
 msgstr "sin entrada de nombre de archivo (s)."
 
-#: src/mp3splt.c:635
+#: src/mp3splt.c:653
 msgid "multiple splitpoints with stdout !"
 msgstr "splitpoints múltiples con la salida estándar!"
 
-#: src/mp3splt.c:639
+#: src/mp3splt.c:657
 msgid "using time mode with stdout !"
 msgstr "usando el modo de tiempo con la salida estándar!"
 
-#: src/mp3splt.c:680
+#: src/mp3splt.c:698
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:684
+#: src/mp3splt.c:702
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:690
+#: src/mp3splt.c:708
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
@@ -81,20 +91,20 @@ msgstr ""
 "no puede utilizar la opción-k (o STDIN) con una de las siguientes opciones:-"
 "S-s-w-l-e-i-p-"
 
-#: src/mp3splt.c:766
+#: src/mp3splt.c:784
 msgid "freedb query format ambigous !"
 msgstr "freedb ambigua consulta formato!"
 
-#: src/mp3splt.c:812
+#: src/mp3splt.c:830
 msgid "tags format ambiguous !"
 msgstr "Etiquetas de formato ambiguo!"
 
-#: src/mp3splt.c:844
+#: src/mp3splt.c:862
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:860
+#: src/mp3splt.c:878
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"
