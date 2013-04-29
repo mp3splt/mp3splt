@@ -254,6 +254,8 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
             time_in_double += previous_streams_time_in_double;
 
             float level = splt_co_convert_to_db(oggstate->temp_level);
+            if (level < -96.0) { level = -96.0; }
+            if (level > 0) { level = 0; }
 
             int stop = process_silence(time_in_double, level, silence_was_found, must_flush, ssd, &found, &err);
             if (stop || stop == -1)
@@ -385,7 +387,8 @@ static int splt_ogg_silence(splt_ogg_state *oggstate, vorbis_dsp_state *vd, floa
         }
         for(j = 0; j < samples; j++)
         {
-          sample = fabs(mono[j]);
+          float single_mono = mono[j];
+          sample = fabs(single_mono);
           oggstate->temp_level = oggstate->temp_level * 0.999 + sample * 0.001;
           if (sample > threshold)
           {

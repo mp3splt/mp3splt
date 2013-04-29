@@ -1,8 +1,10 @@
 /**********************************************************
  *
- * libmp3splt flac plugin 
+ * libmp3splt -- library based on mp3splt,
+ *               for mp3/ogg splitting without decoding
  *
- * Copyright (c) 2013 Alexandru Munteanu - <m@ioalex.net>
+ * Copyright (c) 2002-2005 M. Trotta - <mtrotta@users.sourceforge.net>
+ * Copyright (c) 2005-2013 Alexandru Munteanu - m@ioalex.net
  *
  * http://mp3splt.sourceforge.net
  *
@@ -27,27 +29,27 @@
  *
  *********************************************************/
 
-#ifndef MP3SPLT_FLAC_H
+#ifndef MP3SPLT_FLAC_SILENCE_H
 
-#include <FLAC/all.h>
+#include "flac.h"
+#include "silence_processors.h"
+#include "splt.h"
 
-#include "flac_frame_reader.h"
-#include "flac_metadata.h"
-#include "flac_tags.h"
-
-#define SPLT_FLAC_EXT ".flac"
+int splt_flac_scan_silence(splt_state *state, unsigned long length,
+    float threshold, float min, int shots, short output, int *error,
+    short silence_processor(double time, float level, int silence_was_found, short must_flush,
+      splt_scan_silence_data *ssd, int *found, int *error));
 
 typedef struct {
-  FLAC__StreamMetadata_StreamInfo streaminfo;
-  splt_flac_frame_reader *fr;
-  splt_flac_metadatas *metadatas;
-  splt_flac_tags *flac_tags;
-  //offset
-  float off;
-  float temp_level;
-} splt_flac_state;
+  int error;
+  splt_state *state;
+  splt_flac_state *flacstate;
+  double time;
+  int silence_found;
+  float threshold;
+} splt_flac_silence_data;
 
-#define MP3SPLT_FLAC_H
+#define MP3SPLT_FLAC_SILENCE_H
 
 #endif
 
