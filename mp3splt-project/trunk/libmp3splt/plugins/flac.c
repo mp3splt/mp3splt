@@ -31,6 +31,7 @@
 
 #include "splt.h"
 
+#include "flac_silence.h"
 #include "flac_metadata_utils.h"
 #include "flac.h"
 
@@ -134,6 +135,35 @@ double splt_pl_split(splt_state *state, const char *output_fname,
   return end_point;
 }
 
+int splt_pl_scan_silence(splt_state *state, int *error)
+{
+  float offset = splt_o_get_float_option(state,SPLT_OPT_PARAM_OFFSET);
+  float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+  float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
+  int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
+
+  splt_flac_state *flacstate = state->codec;
+  flacstate->off = offset;
+
+  int found = splt_flac_scan_silence(state, 0, threshold, min_length, 
+      shots, 1, error, splt_scan_silence_processor);
+  if (*error < 0) { return -1; }
+
+  return found;
+}
+
+int splt_pl_scan_trim_silence(splt_state *state, int *error)
+{
+  float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+  int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
+
+  int found = splt_flac_scan_silence(state, 0, threshold, 0,
+      shots, 1, error, splt_trim_silence_processor);
+  if (*error < 0) { return -1; }
+
+  return found;
+}
+
 void splt_pl_set_original_tags(splt_state *state, splt_code *error)
 {
   splt_flac_state *flacstate = state->codec;
@@ -195,6 +225,7 @@ static splt_flac_state *splt_flac_info(FILE *in, splt_state *state, const char *
   }
 
   flacstate->flac_tags = NULL;
+  flacstate->off = splt_o_get_float_option(state, SPLT_OPT_PARAM_OFFSET);
 
   //TODO: stdin check ?
 

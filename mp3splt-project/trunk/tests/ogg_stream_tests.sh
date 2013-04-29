@@ -198,7 +198,7 @@ function test_stream_silence_mode
    File \"$OUTPUT_DIR/${O_FILE}_silence_3.ogg\" created
    File \"$OUTPUT_DIR/${O_FILE}_silence_4.ogg\" created
  silence split ok
- Average silence level: -74.85 dB"
+ Average silence level: -23.65 dB"
   mp3splt_args="-s -p th=-16 -d $OUTPUT_DIR $STREAM_OGG_SILENCE_FILE"
   run_check_output "$mp3splt_args" "$expected"
 
