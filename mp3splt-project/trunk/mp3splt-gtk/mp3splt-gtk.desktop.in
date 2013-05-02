@@ -6,7 +6,7 @@ Comment=Split mp3 and ogg files without decoding
 Icon=PREFIX/mp3splt-gtk_ico.svg
 
 Type=Application
-Categories=Application;AudioVideo;Audio;AudioVideoEditing;
+Categories=AudioVideo;Audio;AudioVideoEditing;
 
 Exec=mp3splt-gtk
 StartupNotify=false
