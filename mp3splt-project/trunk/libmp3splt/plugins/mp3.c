@@ -34,10 +34,12 @@ The Plug-in that handles mp3 files
 #include "mp3_silence.h"
 #include "mp3_utils.h"
 
+#ifndef NO_ID3TAG
 static void splt_mp3_free_bytes_and_size(tag_bytes_and_size *bytes_and_size);
 static tag_bytes_and_size *splt_mp3_new_bytes_and_size();
 static char *splt_mp3_get_same_bytes_tags(int version, tag_bytes_and_size *bytes_and_size, 
     unsigned long *number_of_bytes, int *error);
+#endif
 
 /****************************/
 /* mp3 constants */
