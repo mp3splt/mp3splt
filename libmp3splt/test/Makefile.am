@@ -32,11 +32,14 @@ test_splitpoints_handling_la_SOURCES = test_splitpoints_handling.c
 
 test_tags_handling_la_SOURCES = test_tags_handling.c
 
-TESTS = $(top_srcdir)/test/run-tests.sh
-TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)"
+TESTS = run-tests.sh
+TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)" TESTS_DIR="$(top_builddir)/test"
 
 echo-cutter:
 	@echo $(CUTTER)
+
+echo-tests-dir:
+	@echo $(top_builddir)/test
 
 endif
 
