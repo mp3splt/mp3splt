@@ -38,6 +38,8 @@
 #include "flac_utils.h"
 #include "from_flac_library.h"
 #include "flac_metadata_utils.h"
+#include "silence_processors.h"
+#include "flac_silence.h"
 
 static void splt_flac_fr_read_header(splt_flac_frame_reader *fr,
     unsigned min_blocksize, unsigned max_blocksize, unsigned metadata_bits_per_sample, 
@@ -862,6 +864,36 @@ static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_fr
   }
 }
 
+static double splt_flac_fr_back_end_point_according_to_auto_adjust(splt_state *state, 
+    double begin_point, double end_point, int *adjust_gap_secs)
+{
+  if (!*adjust_gap_secs)
+  {
+    return end_point;
+  }
+
+  double new_end_point = end_point;
+
+  double adj = (double) (*adjust_gap_secs);
+  double len = (end_point - begin_point);
+  if (adj > len)
+  {
+    adj = len;
+  }
+
+  if (end_point > adj)
+  {
+    new_end_point -= adj;
+    *adjust_gap_secs = (int) adj;
+  }
+  else
+  {
+    *adjust_gap_secs = 0;
+  }
+
+  return new_end_point;
+}
+
 void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,
     const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags,
     const splt_tags *tags_to_write,
@@ -900,6 +932,14 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     fr->out_streaminfo.total_samples += fr->blocksize;
   }
 
+  //TODO
+  /*int adjust_gap_secs = splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP);
+  end_point = splt_flac_fr_back_end_point_according_to_auto_adjust(state,
+      begin_point, end_point, &adjust_gap_secs);
+  unsigned long adjust_gap_hundr = (unsigned long) adjust_gap_secs * 100;*/
+
+  off_t last_offset = 0;
+
   int we_continue = 1;
   while (we_continue)
   {
@@ -926,9 +966,51 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     }
     else if (end_point > 0 && time >= end_point)
     {
-      splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
-          splt_flac_fr_backup_frame_processor, fr);
-      we_continue = 0;
+      //TODO
+      //auto adjust
+    /*  if (adjust_gap_hundr)
+      {
+        float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
+        float min_length = splt_o_get_float_option(state, SPLT_OPT_PARAM_MIN_LENGTH);
+        int shots = splt_o_get_int_option(state, SPLT_OPT_PARAM_SHOTS);
+
+        unsigned long length = 2 * adjust_gap_hundr;
+
+        int silence_points_found = splt_flac_scan_silence(state, length, threshold,
+            min_length, shots, 0, error, splt_scan_silence_processor);
+
+        if (silence_points_found > 0)
+        {
+          //TODO: set offset
+          end_point = (double) splt_siu_silence_position(state->silence_list, 0.8);
+        }
+        else
+        {
+          end_point += (double) adjust_gap_secs;
+        }
+
+        splt_siu_ssplit_free(&state->silence_list);
+        adjust_gap_hundr = 0;
+      }*/
+
+      if (end_point > 0 && time >= end_point)
+      {
+        splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
+            splt_flac_fr_backup_frame_processor, fr);
+        we_continue = 0;
+      }
+      else
+      {
+        //process frame if auto adjust changed the end point
+        splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error,
+            splt_flac_fr_write_frame_processor, fr);
+        if (*error < 0) { goto end; }
+
+        splt_flac_fr_set_next_frame_and_sample_numbers(fr, error);
+        if (*error < 0) { goto end; }
+
+        fr->out_streaminfo.total_samples += fr->blocksize;
+      }
     }
     else
     {
@@ -940,6 +1022,8 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
       *error = SPLT_OK_SPLIT_EOF;
       break;
     }
+
+    last_offset = ftello(fr->in);
   }
 
   if (fr->out_streaminfo.total_samples != 0)
