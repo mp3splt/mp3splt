@@ -2223,6 +2223,10 @@ bloc_end:
             {
               fend_sec -= adj;
             }
+            else 
+            {
+              adj = 0;
+            }
             adjust = (unsigned long) (adj * 100.f);
           }
           else 

@@ -134,7 +134,7 @@ static void splt_flac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__S
 }
 
 static void splt_flac_scan_silence_and_process(splt_state *state, float max_threshold,
-    unsigned long length, 
+    unsigned long length,
     short process_silence(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error),
     splt_scan_silence_data *ssd, int *error)
@@ -163,7 +163,15 @@ static void splt_flac_scan_silence_and_process(splt_state *state, float max_thre
 
   FLAC__StreamDecoderInitStatus status;
   char *input_filename = splt_t_get_filename_to_split(state);
-  status = FLAC__stream_decoder_init_file(decoder, input_filename,
+  FILE *file = splt_io_fopen(input_filename, "rb");
+  if (file == NULL)
+  {
+    splt_e_set_strerror_msg_with_data(state, input_filename);
+    *error = SPLT_ERROR_CANNOT_OPEN_FILE;
+    goto end;
+  }
+
+  status = FLAC__stream_decoder_init_FILE(decoder, file,
       splt_flac_write_callback, NULL, splt_flac_error_callback, silence_data);
   if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK)
   {
