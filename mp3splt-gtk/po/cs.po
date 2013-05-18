@@ -1,1460 +1,89 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
-# fri <pavelfric@seznam.cz>, 2011.
-# Pavel Fric <fripohled.blogspot.com>, 2011.
-#   <pavelfric@seznam.cz>, 2011, 2012.
+# jui <appukonrad@gmail.com>, 2012
+# fri <pavelfric@seznam.cz>, 2011
+# Pavel Fric <fripohled.blogspot.com>, 2011
+# fri <pavelfric@seznam.cz>, 2013
+# fri <pavelfric@seznam.cz>, 2011-2012
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-28 11:26+0200\n"
-"PO-Revision-Date: 2012-05-11 08:29+0000\n"
-"Last-Translator: fri <pavelfric@seznam.cz>\n"
+"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
+"POT-Creation-Date: 2012-09-02 13:53+0200\n"
+"PO-Revision-Date: 2013-04-29 08:45+0000\n"
+"Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: src/audacious_control.c:66 src/snackamp_control.c:337
-#: src/gstreamer_control.c:228
+#: src/audacious_control.c:64 src/gstreamer_control.c:228
+#: src/snackamp_control.c:265
 msgid "stereo"
 msgstr "Stereo"
 
-#: src/audacious_control.c:70 src/snackamp_control.c:341
-#: src/gstreamer_control.c:232
+#: src/audacious_control.c:68 src/gstreamer_control.c:232
+#: src/snackamp_control.c:269
 msgid "mono"
 msgstr "Mono"
 
-#: src/audacious_control.c:73 src/snackamp_control.c:344
-#: src/gstreamer_control.c:198
+#: src/audacious_control.c:71 src/gstreamer_control.c:198
+#: src/snackamp_control.c:272
 msgid "Kbps"
 msgstr "kbit/s"
 
-#: src/audacious_control.c:74 src/snackamp_control.c:345
-#: src/gstreamer_control.c:199
+#: src/audacious_control.c:72 src/gstreamer_control.c:199
+#: src/snackamp_control.c:273
 msgid "Khz"
 msgstr "kHz"
 
-#: src/utilities.c:87
-#, c-format
-msgid "Processing file '%s' ..."
-msgstr "Zpracovává se soubor »%s«…"
+#: src/export.c:178
+msgid "Select cue file name"
+msgstr "Vybrat soubor CUE"
 
-#: src/export.c:93
-#, fuzzy
-msgid "Cue filename to export"
-msgstr "Vybrat soubor pro zavedení"
-
-#: src/export.c:105
+#: src/export.c:190
 msgid "cue files (*.cue)"
 msgstr "Soubory CUE (*.cue)"
 
-#: src/widgets_helper.c:421
-msgid "_Close"
-msgstr ""
-
-#: src/player_window.c:118
-#, fuzzy
-msgid "Processing Douglas-Peucker filters ..."
-msgstr "Zpracovává se soubor »%s«…"
-
-#: src/player_window.c:580
-msgid ""
-"\n"
-" Cannot connect to snackAmp player.\n"
-" Please download and install snackamp from\n"
-"\thttp://snackamp.sourceforge.net\n"
-"\n"
-" Verify that snackamp is running.\n"
-" Verify that your snackamp version is >= 3.1.3\n"
-"\n"
-" Verify that you have enabled socket interface in snackamp:\n"
-" You have to go to\n"
-"\tTools->Preferences->Miscellaneous\n"
-" from the snackamp menu and check\n"
-"\tEnable Socket Interface\n"
-" Only default port is supported for now(8775)\n"
-" After that, restart snackamp and mp3splt-gtk should work.\n"
-msgstr ""
-"\n"
-" Žádné spojení s přehrávacím programem SnackAmp.\n"
-" Stáhněte si, prosím, SnackAmp ze stránek\n"
-"\thttp://snackamp.sourceforge.net\n"
-" a nainstalujte jej.\n"
-"\n"
-" Ujistěte se, že SnackAmp běží\n"
-" a že jej máte alespoň ve verzi 3.1.3\n"
-"\n"
-" Ujistěte se, že máte v SnacAmpu zapnuto\n"
-" rozhraní zdířky (socket): Musíte jít do\n"
-"\tNástroje->Nastavení->Různé\n"
-" v nabídce SnackAmpu a zapnout povolení rozhraní\n"
-"\tzdířky (socket)\n"
-" Nyní je podporována pouze výchozí přípojka (8775)\n"
-" Potom spusťte SnackAmp znovu a mp3splt-gtk\n"
-" by měl pracovat.\n"
-
-#: src/player_window.c:595
-msgid ""
-"\n"
-" Cannot connect to Audacious player.\n"
-" Verify that you have installed audacious.\n"
-"\n"
-" Put in your PATH variable the directory where the audacious executable is.\n"
-" If you don't know how to do that, start audacious manually and then try to "
-"connect.\n"
-msgstr ""
-"\n"
-" Žádné spojení s přehrávacím programem Audacious.\n"
-" Ujistěte se, že je Audacious nainstalován.\n"
-"\n"
-" Přidejte do proměnné CESTY místo instalace spustitelného\n"
-" souboru pro Audacious. V případě že nevíte,\n"
-" jak se to má udělat, spusťte Audacious ručně\n"
-" a pokuste se spojení vytvořit.\n"
-
-#: src/player_window.c:603 src/player_window.c:607
-msgid "Cannot connect to player"
-msgstr "Žádné spojení s přehrávacím programem"
-
-#: src/player_window.c:904
-#, fuzzy
-msgid "Previous track"
-msgstr "Předchozí"
-
-#: src/player_window.c:922
-msgid "Play"
-msgstr "Přehrát"
-
-#: src/player_window.c:939
-msgid "Pause"
-msgstr "Pozastavit"
-
-#: src/player_window.c:956
-msgid "Stop"
-msgstr "Zastavit"
-
-#: src/player_window.c:973
-#, fuzzy
-msgid "Next track"
-msgstr "Skladby se stejnou délkou"
-
-#: src/player_window.c:980 src/splitpoints_window.c:1436
-msgid "_Add"
-msgstr "_Přidat"
-
-#: src/player_window.c:987
-#, fuzzy
-msgid "Add splitpoint at the current player position"
-msgstr "Přidat bod rozdělení zde"
-
-#: src/player_window.c:996 src/splitpoints_window.c:1134
-#: src/splitpoints_window.c:1479
-msgid "Set trim splitpoints using silence detection"
-msgstr "Nastavit zastřižení bodů rozdělení s pomocí zjištění ticha"
-
-#: src/player_window.c:1007 src/splitpoints_window.c:1193
-#: src/splitpoints_window.c:1489
-msgid "Set splitpoints from silence detection"
-msgstr "Nastavit body rozdělení s pomocí zjištění ticha"
-
-#: src/player_window.c:1012
-msgid "Amplitude _wave"
-msgstr ""
-
-#: src/player_window.c:1018
-msgid "Shows the amplitude level wave"
-msgstr "Ukáže vlnu s rozkmitem zvuku"
-
-#: src/player_window.c:1021
-msgid "_Connect"
-msgstr "_Spojit"
-
-#: src/player_window.c:1024
-msgid "Connect to player"
-msgstr "Spojit s přehrávačem"
-
-#: src/player_window.c:1027
-msgid "_Disconnect"
-msgstr "_Odpojit"
-
-#: src/player_window.c:1030
-msgid "Disconnect from player"
-msgstr "Odpojit od přehrávače"
-
-#: src/player_window.c:1153
-#, c-format
-msgid "before %s"
-msgstr "před %s"
-
-#: src/player_window.c:1892
-msgid "No available wave"
-msgstr ""
-
-#: src/player_window.c:2045 src/preferences_window.c:826
-msgid "No wave interpolation"
-msgstr ""
-
-#: src/player_window.c:2051
-#, c-format
-msgid "Wave interpolation level %d"
-msgstr ""
-
-#: src/player_window.c:2131
-msgid " Please wait for the process to finish ..."
-msgstr ""
-
-#: src/player_window.c:2153
-#, fuzzy
-msgid " Please wait ... currently computing Douglas Peucker filters."
-msgstr "Zpracovává se soubor »%s«…"
-
-#: src/player_window.c:2237
-msgid " left click on splitpoint selects it, right click erases it"
-msgstr ""
-"Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení "
-"jej vymaže"
-
-#: src/player_window.c:2242
-msgid ""
-" left click + move changes song position, right click + move changes zoom"
-msgstr ""
-"Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní "
-"násobek zvětšení"
-
-#: src/player_window.c:2248
-msgid ""
-" left click on point + move changes point position, right click play preview"
-msgstr ""
-"Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje "
-"náhled"
-
-#: src/player_window.c:2253
-msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
-msgstr "Levé klepnutí na obdélník zapne/vypne »Ponechat bod rozdělení«"
-
-#: src/player_window.c:2678
-msgid " quick preview..."
-msgstr " Rychlý náhled..."
-
-#: src/player_window.c:3027
-#, fuzzy
-msgid "Splitpoints and amplitude wave v_iew"
-msgstr "Ukáže vlnu s rozkmitem zvuku"
-
-#: src/player_window.c:3143
-msgid "History"
-msgstr "Historie"
-
-#: src/player_window.c:3233
-msgid "_Erase selected entries"
-msgstr "Vymazat vybrané _záznamy"
-
-#: src/player_window.c:3241
-msgid "E_rase all history"
-msgstr "Vymazat celou _historii"
-
-#: src/player_window.c:3283
-#, fuzzy
-msgid "Files h_istory"
-msgstr "Historie zpráv"
-
-#: src/player_window.c:3409
-msgid " quick preview finished, song paused"
-msgstr "Rychlý náhled ukončen, přehrávání pozastaveno"
-
-#: src/multiple_files_window.c:63
-msgid "Complete filename"
-msgstr "Úplný název souboru"
-
-#: src/multiple_files_window.c:80
-#, fuzzy
-msgid "Choose files or directories"
-msgstr "Vybrat soubor nebo adresář"
-
-#: src/multiple_files_window.c:100 src/main_window.c:691
-#, fuzzy
-msgid "mp3, ogg vorbis and flac files (*.mp3 *.ogg *.flac)"
-msgstr "Soubory mp3 a ogg (*.mp3 *.ogg)"
-
-#: src/multiple_files_window.c:110 src/main_window.c:701
-msgid "mp3 files (*.mp3)"
-msgstr "Soubory mp3 (*.mp3)"
-
-#: src/multiple_files_window.c:116 src/main_window.c:707
-#, fuzzy
-msgid "ogg vorbis files (*.ogg)"
-msgstr "Soubory ogg (*.ogg)"
-
-#: src/multiple_files_window.c:122 src/main_window.c:713
-#, fuzzy
-msgid "flac files (*.flac)"
-msgstr "Soubory CUE (*.cue)"
-
-#: src/multiple_files_window.c:129
-msgid "All Files"
-msgstr "Všechny soubory"
-
-#: src/multiple_files_window.c:260
-#, fuzzy
-msgid "_Add files or directories"
-msgstr "Vybrat soubor nebo adresář"
-
-#: src/multiple_files_window.c:261
-msgid "Only the supported file types are added"
-msgstr ""
-
-#: src/multiple_files_window.c:269
-#, fuzzy
-msgid "_Remove selected"
-msgstr "_Odstranit vybrané záznamy"
-
-#: src/multiple_files_window.c:279 src/splitpoints_window.c:1456
-msgid "R_emove all"
-msgstr "Odstranit _vše"
-
-#: src/multiple_files_window.c:287 src/main_window.c:790
-#, fuzzy
-msgid "Batch split !"
-msgstr "Rozdělit!"
-
-#: src/multiple_files_window.c:288
-#, fuzzy
-msgid "Split all the files"
-msgstr "Rozdělené soubory"
-
-#: src/messages_window.c:148
-msgid "Enable _debug messages"
-msgstr ""
-
-#: src/messages_window.c:153
-msgid "C_lear"
-msgstr "_Smazat"
-
-#: src/messages_window.c:168 src/main_window.c:801
-msgid "Messages history"
-msgstr "Historie zpráv"
-
-#: src/split_files_window.c:69 src/splitpoints_window.c:1956
-msgid "Filename"
-msgstr "Název souboru"
-
-#: src/split_files_window.c:230
-#, fuzzy
-msgid "_Queue to player"
-msgstr "_Zařadit soubory pro přehrání"
-
-#: src/split_files_window.c:238
-#, fuzzy
-msgid "_Delete selected"
-msgstr "_Smazat vybrané soubory"
-
-#: src/split_files_window.c:246
-#, fuzzy
-msgid "D_elete all"
-msgstr "S_mazat všechny soubory"
-
-#: src/freedb_window.c:63
+#: src/freedb_window.c:64
 #, c-format
 msgid "%s Revision %d"
 msgstr "%s revize %d"
 
-#: src/freedb_window.c:95
+#: src/freedb_window.c:96
 msgid "Album title"
 msgstr "Název alba"
 
-#: src/freedb_window.c:169 src/freedb_window.c:477
+#: src/freedb_window.c:170 src/freedb_window.c:355
 msgid "please wait... contacting tracktype.org"
 msgstr "Počkejte, prosím - probíhá spojování se s tracktype.org"
 
-#: src/freedb_window.c:440 src/freedb_window.c:461 src/ui_manager.c:352
-#: src/splitpoints_window.c:671 src/splitpoints_window.c:792
-#: src/splitpoints_window.c:842
+#: src/freedb_window.c:324 src/freedb_window.c:343
+#: src/splitpoints_window.c:597 src/splitpoints_window.c:677
+#: src/splitpoints_window.c:727 src/ui_manager.c:348
 msgid "description here"
 msgstr "Zadejte, prosím, název"
 
-#: src/freedb_window.c:565
+#: src/freedb_window.c:448
 msgid "Search tracktype.org:"
 msgstr "Hledat na tracktype.org:"
 
-#: src/freedb_window.c:575
+#: src/freedb_window.c:458
 msgid "_Search"
 msgstr "_Hledání"
 
-#: src/freedb_window.c:604
+#: src/freedb_window.c:487
 msgid "_Add splitpoints"
 msgstr "_Přidat body rozdělení"
 
-#: src/freedb_window.c:610
+#: src/freedb_window.c:493
 msgid "Set splitpoints to the splitpoints table"
 msgstr "Přidat body rozdělení do tabulky s body rozdělení"
-
-#: src/splitpoints_window.c:321
-msgid "_part"
-msgstr "_part"
-
-#: src/splitpoints_window.c:332
-#, c-format
-msgid "%s_part%d"
-msgstr "%s_part%d"
-
-#: src/splitpoints_window.c:647 src/splitpoints_window.c:759
-msgid " error: you already have the splitpoint in table"
-msgstr " Chyba: bod rozdělení již existuje"
-
-#: src/splitpoints_window.c:1159 src/splitpoints_window.c:1215
-#: src/preferences_window.c:497
-msgid "Threshold level (dB):"
-msgstr "Úroveň prahu (dB):"
-
-#: src/splitpoints_window.c:1229
-msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
-msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec):"
-
-#: src/splitpoints_window.c:1243
-msgid "Number of tracks (0 means all tracks):"
-msgstr "Počet skladeb (0 znamená všechny skladby):"
-
-#: src/splitpoints_window.c:1255 src/preferences_window.c:513
-msgid "Minimum silence length (seconds):"
-msgstr "Nejmenší délka ticha (sekundy):"
-
-#: src/splitpoints_window.c:1267
-msgid "Minimum track length (seconds):"
-msgstr "Nejmenší délka skladby (sekundy):"
-
-#: src/splitpoints_window.c:1277
-msgid "_Remove silence between tracks"
-msgstr "_Odstranit ticho mezi skladbami"
-
-#: src/splitpoints_window.c:1429
-msgid "Minutes:"
-msgstr "Minuty:"
-
-#: src/splitpoints_window.c:1431
-msgid "Seconds:"
-msgstr "Sekundy:"
-
-#: src/splitpoints_window.c:1433
-msgid "Hundredths:"
-msgstr "Setina:"
-
-#: src/splitpoints_window.c:1443 src/main_window.c:836
-msgid "Add splitpoint"
-msgstr "Přidat bod rozdělení"
-
-#: src/splitpoints_window.c:1446
-msgid "_Remove"
-msgstr "_Odstranit"
-
-#: src/splitpoints_window.c:1453
-#, fuzzy
-msgid "Remove selected splitpoints"
-msgstr "_Odstranit vybrané záznamy"
-
-#: src/splitpoints_window.c:1463
-#, fuzzy
-msgid "Remove all splitpoints"
-msgstr "Odstranit všechny řádky"
-
-#: src/splitpoints_window.c:1473
-msgid "_Trim splitpoints"
-msgstr "Zastřihnout body rozdělení"
-
-#: src/splitpoints_window.c:1483
-msgid "_Silence detection"
-msgstr "_Zjištění ticha"
-
-#: src/splitpoints_window.c:1561 src/mp3splt-gtk.c:119
-msgid " finished"
-msgstr " Dokončeno"
-
-#: src/splitpoints_window.c:1635
-msgid " cannot preview, not connected to player"
-msgstr " Náhled není možný: Žádné spojení s přehrávacím programem"
-
-#: src/splitpoints_window.c:1653
-msgid " cannot split preview last splitpoint"
-msgstr " Náhled na poslední bod rozdělení není možný"
-
-#: src/splitpoints_window.c:1824
-msgid "Clone all tags"
-msgstr ""
-
-#: src/splitpoints_window.c:1832
-#, fuzzy
-msgid "Clone title"
-msgstr "Název alba"
-
-#: src/splitpoints_window.c:1838
-msgid "Clone artist"
-msgstr ""
-
-#: src/splitpoints_window.c:1844
-msgid "Clone album"
-msgstr ""
-
-#: src/splitpoints_window.c:1850
-msgid "Clone genre"
-msgstr ""
-
-#: src/splitpoints_window.c:1856
-msgid "Clone year"
-msgstr ""
-
-#: src/splitpoints_window.c:1862
-#, fuzzy
-msgid "Clone track"
-msgstr "Skladby se stejnou délkou"
-
-#: src/splitpoints_window.c:1868
-msgid "Clone comment"
-msgstr ""
-
-#: src/splitpoints_window.c:1876
-msgid "Auto-increment track"
-msgstr ""
-
-#: src/splitpoints_window.c:1948
-msgid "Keep"
-msgstr "Ponechat"
-
-#: src/splitpoints_window.c:1964
-msgid "Secs"
-msgstr "Sek"
-
-#: src/splitpoints_window.c:1972
-msgid "Mins"
-msgstr "Min"
-
-#: src/splitpoints_window.c:1980
-msgid "Hundr"
-msgstr "1/100s"
-
-#: src/splitpoints_window.c:1988
-msgid "Length"
-msgstr "Délka"
-
-#: src/splitpoints_window.c:1995
-msgid "LiveP"
-msgstr "LiveP"
-
-#: src/splitpoints_window.c:2003
-msgid "SplitP"
-msgstr "SplitP"
-
-#: src/splitpoints_window.c:2053
-msgid "Title"
-msgstr ""
-
-#: src/splitpoints_window.c:2056
-#, fuzzy
-msgid "Artist"
-msgstr "<artist>: "
-
-#: src/splitpoints_window.c:2059
-#, fuzzy
-msgid "Album"
-msgstr "Název alba"
-
-#: src/splitpoints_window.c:2062
-#, fuzzy
-msgid "Genre"
-msgstr "Značka žánru:"
-
-#: src/splitpoints_window.c:2066
-#, fuzzy
-msgid "Comment"
-msgstr "Značka poznámky:"
-
-#: src/splitpoints_window.c:2069
-msgid "Year"
-msgstr ""
-
-#: src/splitpoints_window.c:2073
-msgid "Track"
-msgstr ""
-
-#: src/preferences_window.c:249
-msgid "<b>Choose language (requires restart)</b>"
-msgstr "<b>Vybrat jazyk (vyžaduje nové spuštění)</b>"
-
-#: src/preferences_window.c:358
-#, fuzzy
-msgid "Browse directory ..."
-msgstr "_Vybrat adresář"
-
-#: src/preferences_window.c:376
-msgid "Example for the single file split:"
-msgstr ""
-
-#: src/preferences_window.c:415
-#, fuzzy
-msgid "Custom directory"
-msgstr "Vybrat výstupní adresář"
-
-#: src/preferences_window.c:417
-msgid "Create split files in a custom directory"
-msgstr ""
-
-#: src/preferences_window.c:422
-#, fuzzy
-msgid "Input file directory"
-msgstr "Vybrat soubor nebo adresář"
-
-#: src/preferences_window.c:425
-msgid "Create split files in the same directory as the file being split"
-msgstr ""
-
-#: src/preferences_window.c:431
-msgid "<b>Directory for split files</b>"
-msgstr "<b>Adresář pro rozdělené soubory</b>"
-
-#: src/preferences_window.c:444
-#, fuzzy
-msgid "_Splitpoint name from filename (manual single file split only)"
-msgstr "_Bod rozdělení z názvu souboru (zkušební)"
-
-#: src/preferences_window.c:446
-#, fuzzy
-msgid "Name newly added splitpoints as the input file"
-msgstr "Stejná verze značky jako u vstupního souboru"
-
-#: src/preferences_window.c:454
-#, fuzzy
-msgid "Create directories from _filenames "
-msgstr "_Vytvořit adresáře z názvů souborů"
-
-#: src/preferences_window.c:457
-msgid ""
-"If the splitpoint name is 'a/b/output', the directory chain 'a/b' is created "
-"in the output\n"
-"directory and the file 'output.<extension>' is written in the "
-"'<output_directory>/a/b' directory"
-msgstr ""
-
-#: src/preferences_window.c:467
-msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
-msgstr "Režim F_rame (užitečný pro mp3-VBR) (jen pro mp3)"
-
-#: src/preferences_window.c:469
-msgid ""
-"The split is slower with this option, but some mp3 files having\n"
-"Variable Bit Rate need this mode to be enabled"
-msgstr ""
-
-#: src/preferences_window.c:476
-#, fuzzy
-msgid "_Auto-adjust mode (use silence detection to auto-adjust splitpoints)"
-msgstr "_Automatické přesné nastavení bodu rozdělení pomocí zjištění ticha"
-
-#: src/preferences_window.c:479
-msgid ""
-"Splitpoints will be adjusted to match silences (if found)\n"
-"This mode requires the frame mode"
-msgstr ""
-
-#: src/preferences_window.c:528
-msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
-msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec):"
-
-#: src/preferences_window.c:545
-msgid "Gap level (seconds around splitpoint to search for silence):"
-msgstr "Přestávka (sekundy okolo bodu rozdělení k prohledání na ticho):"
-
-#: src/preferences_window.c:562
-msgid "Set _default split options"
-msgstr "Nastavit výchozí volby pro rozdělení"
-
-#: src/preferences_window.c:567
-msgid "<b>Split options</b>"
-msgstr "<b>Volby pro rozdělení</b>"
-
-#: src/preferences_window.c:630
-msgid "Player:"
-msgstr ""
-
-#: src/preferences_window.c:649
-msgid "Refresh player every "
-msgstr ""
-
-#: src/preferences_window.c:650
-msgid "milliseconds."
-msgstr ""
-
-#: src/preferences_window.c:652
-msgid "\t(higher refresh rate decreases CPU usage - default is 200)"
-msgstr ""
-
-#: src/preferences_window.c:658
-msgid "<b>Player options</b>"
-msgstr "<b>Volby pro přehrávač</b>"
-
-#: src/preferences_window.c:777
-msgid ""
-"Wave preview is only available if the amplitude wave is shown in the player"
-msgstr ""
-
-#: src/preferences_window.c:817
-#, c-format
-msgid "%d minute(s) window"
-msgstr ""
-
-#: src/preferences_window.c:822
-#, c-format
-msgid "Wave interpolation level %d with threshold of %.1lf"
-msgstr ""
-
-#: src/preferences_window.c:844
-msgid "Wave quality (higher is better but consumes more CPU):"
-msgstr ""
-
-#: src/preferences_window.c:863
-#, fuzzy
-msgid "<b>Amplitude wave options</b>"
-msgstr "<b>Volby pro rozdělení</b>"
-
-#: src/preferences_window.c:920
-msgid "Default format"
-msgstr "Výchozí formát"
-
-#: src/preferences_window.c:927
-#, fuzzy
-msgid "  Default output: "
-msgstr "Výchozí formát"
-
-#: src/preferences_window.c:933
-msgid "  CDDB, CUE and tracktype.org default: "
-msgstr ""
-
-#: src/preferences_window.c:939
-#, fuzzy
-msgid "  Split with silence detection default: "
-msgstr "Ticho - vytvořit body rozdělení s pomocí zjištění ticha"
-
-#: src/preferences_window.c:945
-#, fuzzy
-msgid "  Trim using silence detection default: "
-msgstr "Zastřihnout s pomocí zjištění ticha"
-
-#: src/preferences_window.c:951
-msgid "  Error mode default: "
-msgstr ""
-
-#: src/preferences_window.c:966
-msgid "Custom format"
-msgstr "Vlastní formát"
-
-#: src/preferences_window.c:985
-msgid ""
-"  @A: performer if found, otherwise artist\n"
-"  @a: artist name\n"
-"  @p: performer of each song (only with .cue)\n"
-"  @b: album title\n"
-"  @g: genre\n"
-"  @t: song title\n"
-"  @n: track number identifier (not the real ID3 track number) **\n"
-"  @N: track tag number **\n"
-"  @l: track number identifier as lowercase letter (not the real ID3 track "
-"number) **\n"
-"  @L: track tag number as lowercase letter **\n"
-"  @u: track number identifier as uppercase letter (not the real ID3 track "
-"number) **\n"
-"  @U: track tag number as uppercase letter **\n"
-"  @f: input filename (without extension)\n"
-"  @m, @s or @h: the number of minutes, seconds or hundreths of seconds of "
-"the start splitpoint **\n"
-"  @M, @S or @H: the number of minutes, seconds or hundreths of seconds of "
-"the end splitpoint **\n"
-"\n"
-"    (**) a digit may follow for the number of digits to output\n"
-msgstr ""
-
-#: src/preferences_window.c:1010
-#, fuzzy
-msgid "<b>Output format for batch split and when importing splitpoints</b>"
-msgstr "<b>Formát výstupního souboru</b>"
-
-#: src/preferences_window.c:1060
-msgid "Original file tags"
-msgstr "Původní značky k souboru"
-
-#: src/preferences_window.c:1063
-#, fuzzy
-msgid "Custom tags (from the splitpoints table)"
-msgstr "Přidat body rozdělení do tabulky s body rozdělení"
-
-#: src/preferences_window.c:1066
-msgid "No tags"
-msgstr "Žádné značky"
-
-#: src/preferences_window.c:1069
-msgid "Extract tags from filename"
-msgstr "Vytáhnout značky z názvu souboru"
-
-#: src/preferences_window.c:1078
-msgid "<b>Split files tags</b>"
-msgstr "<b>Značky v rozdělených souborech</b>"
-
-#: src/preferences_window.c:1100
-msgid "No change"
-msgstr "Žádná změna"
-
-#: src/preferences_window.c:1101
-msgid "lowercase"
-msgstr "Malá písmena"
-
-#: src/preferences_window.c:1102
-msgid "UPPERCASE"
-msgstr "VELKÁ PÍSMENA"
-
-#: src/preferences_window.c:1103
-msgid "First uppercase"
-msgstr "První písmeno velké"
-
-#: src/preferences_window.c:1104
-msgid "Word Uppercase"
-msgstr "Písmena slov velká"
-
-#: src/preferences_window.c:1126
-msgid "<artist>: "
-msgstr "<artist>: "
-
-#: src/preferences_window.c:1135
-msgid "<album>: "
-msgstr "<album>: "
-
-#: src/preferences_window.c:1145
-msgid "<title>: "
-msgstr "<title>: "
-
-#: src/preferences_window.c:1154
-msgid "<genre>: "
-msgstr "<genre>: "
-
-#: src/preferences_window.c:1163
-msgid "<comment>: "
-msgstr "<comment>: "
-
-#: src/preferences_window.c:1172
-msgid "<year>: "
-msgstr "<year>: "
-
-#: src/preferences_window.c:1181
-msgid "<track>: "
-msgstr "<track>: "
-
-#: src/preferences_window.c:1210
-msgid "Regular expression:"
-msgstr "Regulární výraz:"
-
-#: src/preferences_window.c:1213
-msgid ""
-"Above enter PERL-like regular expression using named subgroups.\n"
-"Following names are recognized:\n"
-"    (?<artist>)   - artist name\n"
-"    (?<album>)    - album title\n"
-"    (?<title>)    - track title\n"
-"    (?<tracknum>) - current track number\n"
-"    (?<year>)     - year of emission\n"
-"    (?<genre>)    - genre\n"
-"    (?<comment>)  - comment"
-msgstr ""
-"Výše zadejte regulární výraz jako PERL za použití jmenovaných podskupin.\n"
-"Jsou rozpoznána následující klíčová slova:\n"
-"    (?<artist>)   - jméno umělce\n"
-"    (?<album>)    - název alba\n"
-"    (?<title>)    - název skladby\n"
-"    (?<tracknum>) - číslo současné skladby\n"
-"    (?<year>)     - rok vydání\n"
-"    (?<genre>)    - žánr\n"
-"    (?<comment>)  - poznámka"
-
-#: src/preferences_window.c:1240
-msgid "_Replace underscores by spaces"
-msgstr "_Nahradit podtržítka mezerami"
-
-#: src/preferences_window.c:1250
-msgid "Artist text properties:"
-msgstr "Vlastnosti textu umělce:"
-
-#: src/preferences_window.c:1255
-msgid "Album text properties:"
-msgstr "Vlastnosti textu alba:"
-
-#: src/preferences_window.c:1260
-msgid "Title text properties:"
-msgstr "Vlastnosti textu názvu:"
-
-#: src/preferences_window.c:1265
-msgid "Comment text properties:"
-msgstr "Vlastnosti textu poznámky:"
-
-#: src/preferences_window.c:1269
-msgid "Genre tag:"
-msgstr "Značka žánru:"
-
-#: src/preferences_window.c:1273
-msgid "Comment tag:"
-msgstr "Značka poznámky:"
-
-#: src/preferences_window.c:1275
-msgid "Regular expression test"
-msgstr "Zkouška regulárního výrazu"
-
-#: src/preferences_window.c:1291
-msgid "_Test"
-msgstr "_Zkouška"
-
-#: src/preferences_window.c:1295
-msgid "Sample filename:"
-msgstr "Název souboru s příkladem:"
-
-#: src/preferences_window.c:1300
-msgid "Sample result:"
-msgstr "Výsledek příkladu:"
-
-#: src/preferences_window.c:1312
-msgid "ID3v1 & ID3v2 tags"
-msgstr "Značky ID3v1 a ID3v2"
-
-#: src/preferences_window.c:1319
-msgid "ID3v2 tags"
-msgstr "Značky ID3v2"
-
-#: src/preferences_window.c:1326
-msgid "ID3v1 tags"
-msgstr "Značky ID3v1"
-
-#: src/preferences_window.c:1333
-msgid "Same tags version as the input file"
-msgstr "Stejná verze značky jako u vstupního souboru"
-
-#: src/preferences_window.c:1339
-msgid "<b>Tags version (mp3 only)</b>"
-msgstr "<b>Verze značky (jen pro mp3)</b>"
-
-#: src/preferences_window.c:1380
-msgid "Split"
-msgstr "Rozdělení"
-
-#: src/preferences_window.c:1385
-msgid "Tags"
-msgstr "Značky"
-
-#: src/preferences_window.c:1390
-msgid "Player"
-msgstr "Přehrávač"
-
-#: src/preferences_window.c:1395
-#, fuzzy
-msgid "Output format"
-msgstr "<b>Formát výstupního souboru</b>"
-
-#: src/preferences_window.c:1401
-msgid "Language"
-msgstr "Jazyk"
-
-#: src/split_mode_window.c:193
-msgid "Use manual single file splitpoints"
-msgstr ""
-
-#: src/split_mode_window.c:195
-msgid "Split files using the manually defined splitpoints"
-msgstr ""
-
-#: src/split_mode_window.c:205
-msgid "Time"
-msgstr "Čas"
-
-#: src/split_mode_window.c:207
-msgid "Split every fixed time length; last track will most likely be smaller"
-msgstr ""
-
-#: src/split_mode_window.c:224
-#, fuzzy
-msgid "Split every"
-msgstr "Rozdělit!"
-
-#: src/split_mode_window.c:237
-#, fuzzy
-msgid "seconds."
-msgstr "Sekundy:"
-
-#: src/split_mode_window.c:244
-msgid "Equal time tracks"
-msgstr "Skladby se stejnou délkou"
-
-#: src/split_mode_window.c:246
-msgid "Create smaller tracks having exactly the same time length"
-msgstr ""
-
-#: src/split_mode_window.c:261
-#, fuzzy
-msgid "Split in"
-msgstr "Rozdělit!"
-
-#: src/split_mode_window.c:275
-#, fuzzy
-msgid "equal tracks."
-msgstr "Skladby se stejnou délkou"
-
-#: src/split_mode_window.c:282
-msgid "Trim using silence detection"
-msgstr "Zastřihnout s pomocí zjištění ticha"
-
-#: src/split_mode_window.c:284
-msgid ""
-"Split by discarding silence from the begin and from the end\n"
-"If no silence is found, the output file is still created"
-msgstr ""
-
-#: src/split_mode_window.c:302 src/split_mode_window.c:331
-msgid "Threshold level (dB) : "
-msgstr "Úroveň prahu (dB): "
-
-#: src/split_mode_window.c:313
-msgid "Silence - split with silence detection"
-msgstr "Ticho - vytvořit body rozdělení s pomocí zjištění ticha"
-
-#: src/split_mode_window.c:314
-#, fuzzy
-msgid "Split where silence is found"
-msgstr "Ticho - vytvořit body rozdělení s pomocí zjištění ticha"
-
-#: src/split_mode_window.c:343
-msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
-msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec): "
-
-#: src/split_mode_window.c:355
-msgid "Number of tracks (0 means all tracks) : "
-msgstr "Počet skladeb (0 znamená všechny skladby): "
-
-#: src/split_mode_window.c:367
-msgid "Minimum silence length (seconds) : "
-msgstr "Nejmenší délka ticha (sekundy): "
-
-#: src/split_mode_window.c:379
-msgid "Minimum track length (seconds) : "
-msgstr "Nejmenší délka skladby (sekundy): "
-
-#: src/split_mode_window.c:389
-msgid "Remove silence between tracks"
-msgstr "Odstranit ticho mezi skladbami"
-
-#: src/split_mode_window.c:410
-msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
-msgstr "Obal - rozdělit soubory vytvořené s mp3wrap nebo albumwrap (jen mp3)"
-
-#: src/split_mode_window.c:420
-#, fuzzy
-msgid "Synchronisation error mode (mp3 only)"
-msgstr "Chybový režim (jen pro mp3)"
-
-#: src/split_mode_window.c:422
-msgid ""
-"Split where synchronisation errors are found\n"
-"Useful for splitting concatenated files"
-msgstr ""
-
-#: src/mp3splt-gtk.c:102
-#, fuzzy
-msgid " error: no files found in batch mode"
-msgstr " Chyba: Pro režim více souborů nebyly nalezeny žádné soubory"
-
-#: src/mp3splt-gtk.c:278
-msgid " info: stopping the split process before exiting"
-msgstr " Informace: Proces rozdělení se zastavuje před ukončením"
-
-#: src/mp3splt-gtk.c:389
-#, fuzzy, c-format
-msgid "Setting the output directory to %s.\n"
-msgstr "Zkouší se nastavit %s jako výstupní adresář.\n"
-
-#: src/mp3splt-gtk.c:403
-#, c-format
-msgid "Option -%c requires an argument.\n"
-msgstr "Volba -%c vyžaduje argument.\n"
-
-#: src/mp3splt-gtk.c:405
-#, c-format
-msgid "Unknown option `-%c'.\n"
-msgstr "Neznámá volba »-%c«.\n"
-
-#: src/mp3splt-gtk.c:407
-#, c-format
-msgid "Unknown option character `\\x%x'.\n"
-msgstr "Neznámý znak ve volbě »\\x%x«.\n"
-
-#: src/mp3splt-gtk.c:421
-#, c-format
-msgid "Cannot open input file %s\n"
-msgstr "Vstupní soubor %s nelze otevřít\n"
-
-#: src/main_window.c:173
-msgid "Error launching external command"
-msgstr "Chyba při spuštění vnějšího příkazu"
-
-#: src/main_window.c:204
-msgid "using"
-msgstr "za použití"
-
-#: src/main_window.c:208
-msgid "release of "
-msgstr "vydání "
-
-#: src/main_window.c:311
-msgid " info: stopping the split process.. please wait"
-msgstr " Informace: Proces rozdělení se zastavuje, prosím, čekejte"
-
-#: src/main_window.c:319 src/main_window.c:778
-msgid "Preferences"
-msgstr "Nastavení"
-
-#: src/main_window.c:331
-msgid "TrackType"
-msgstr ""
-
-#: src/main_window.c:346 src/main_window.c:781
-msgid "Split files"
-msgstr "Rozdělené soubory"
-
-#: src/main_window.c:361 src/main_window.c:784
-msgid "Splitpoints"
-msgstr "Body rozdělení"
-
-#: src/main_window.c:432
-msgid " error: split in progress..."
-msgstr " Chyba: Probíhá rozdělování..."
-
-#: src/main_window.c:442
-#, fuzzy
-msgid " error: no path of split selected"
-msgstr " Chyba: Není vybrán žádný soubor"
-
-#: src/main_window.c:725
-msgid "Choose File"
-msgstr "Vybrat soubor"
-
-#: src/main_window.c:755
-msgid "_File"
-msgstr "_Soubor"
-
-#: src/main_window.c:756
-msgid "_View"
-msgstr ""
-
-#: src/main_window.c:757
-#, fuzzy
-msgid "_Player"
-msgstr "Přehrávač"
-
-#: src/main_window.c:758
-msgid "_Help"
-msgstr "_Nápověda"
-
-#: src/main_window.c:760
-#, fuzzy
-msgid "_Open single file..."
-msgstr "_Otevřít..."
-
-#: src/main_window.c:760
-msgid "Open"
-msgstr "Otevřít"
-
-#: src/main_window.c:764
-msgid "_Add files or directories to batch ..."
-msgstr ""
-
-#: src/main_window.c:765
-msgid "Add files or directories to batch"
-msgstr ""
-
-#: src/main_window.c:768
-#, fuzzy
-msgid "_Import splitpoints from file..."
-msgstr "_Zavést body rozdělení..."
-
-#: src/main_window.c:769
-#, fuzzy
-msgid "Import splitpoints from file..."
-msgstr "_Zavést body rozdělení..."
-
-#: src/main_window.c:771
-#, fuzzy
-msgid "Import splitpoints from _TrackType.org..."
-msgstr "_Zavést body rozdělení..."
-
-#: src/main_window.c:772
-#, fuzzy
-msgid "Import splitpoints from TrackType.org..."
-msgstr "_Zavést body rozdělení..."
-
-#: src/main_window.c:775
-msgid "_Export splitpoints..."
-msgstr "_Vyvést body rozdělení..."
-
-#: src/main_window.c:776
-#, fuzzy
-msgid "Export splitpoints"
-msgstr "_Vyvést body rozdělení..."
-
-#: src/main_window.c:778
-#, fuzzy
-msgid "_Preferences"
-msgstr "Nastavení"
-
-#: src/main_window.c:781
-#, fuzzy
-msgid "Split _files"
-msgstr "Rozdělené soubory"
-
-#: src/main_window.c:784
-#, fuzzy
-msgid "_Splitpoints"
-msgstr "Body rozdělení"
-
-#: src/main_window.c:787
-msgid "_Split !"
-msgstr "_Rozdělit!"
-
-#: src/main_window.c:787 src/main_window.c:998
-msgid "Split !"
-msgstr "Rozdělit!"
-
-#: src/main_window.c:790
-#, fuzzy
-msgid "_Batch split !"
-msgstr "_Rozdělit!"
-
-#: src/main_window.c:793
-msgid "_Quit"
-msgstr "_Ukončit"
-
-#: src/main_window.c:793
-msgid "Quit"
-msgstr "Ukončit"
-
-#: src/main_window.c:797
-msgid "_Contents"
-msgstr "_Obsah"
-
-#: src/main_window.c:797
-msgid "Contents"
-msgstr "Obsah"
-
-#: src/main_window.c:801
-msgid "Messages _history"
-msgstr "_Historie zpráv"
-
-#: src/main_window.c:804
-msgid "_About"
-msgstr "_O programu"
-
-#: src/main_window.c:804
-msgid "About"
-msgstr "O programu"
-
-#: src/main_window.c:808
-#, fuzzy
-msgid "P_ause / Play"
-msgstr "Pozastavit"
-
-#: src/main_window.c:808
-#, fuzzy
-msgid "Pause/Play"
-msgstr "Pozastavit"
-
-#: src/main_window.c:811
-msgid "Seek _forward"
-msgstr ""
-
-#: src/main_window.c:811
-msgid "Seek forward"
-msgstr ""
-
-#: src/main_window.c:813
-msgid "Seek _backward"
-msgstr ""
-
-#: src/main_window.c:813
-msgid "Seek backward"
-msgstr ""
-
-#: src/main_window.c:816
-msgid "Small seek f_orward"
-msgstr ""
-
-#: src/main_window.c:816
-msgid "Small seek forward"
-msgstr ""
-
-#: src/main_window.c:818
-msgid "Small seek back_ward"
-msgstr ""
-
-#: src/main_window.c:818
-msgid "Small seek backward"
-msgstr ""
-
-#: src/main_window.c:821
-msgid "Big seek fo_rward"
-msgstr ""
-
-#: src/main_window.c:821
-msgid "Big seek forward"
-msgstr ""
-
-#: src/main_window.c:823
-msgid "Big seek bac_kward"
-msgstr ""
-
-#: src/main_window.c:823
-msgid "Big seek backward"
-msgstr ""
-
-#: src/main_window.c:826
-#, fuzzy
-msgid "Seek to _next splitpoint"
-msgstr "Nastavit výchozí volby pro rozdělení"
-
-#: src/main_window.c:827
-#, fuzzy
-msgid "Seek to next splitpoint"
-msgstr "Nastavit výchozí volby pro rozdělení"
-
-#: src/main_window.c:828
-#, fuzzy
-msgid "Seek to _previous splitpoint"
-msgstr "Zastřihnout body rozdělení"
-
-#: src/main_window.c:829
-#, fuzzy
-msgid "Seek to previous splitpoint"
-msgstr " Náhled na poslední bod rozdělení není možný"
-
-#: src/main_window.c:832
-#, fuzzy
-msgid "_Quick preview before closest splitpoint"
-msgstr " Náhled na poslední bod rozdělení není možný"
-
-#: src/main_window.c:832
-#, fuzzy
-msgid "Quick preview before closest splitpoint"
-msgstr " Náhled na poslední bod rozdělení není možný"
-
-#: src/main_window.c:835
-#, fuzzy
-msgid "Add _splitpoint"
-msgstr "Přidat bod rozdělení"
-
-#: src/main_window.c:838
-msgid "_Delete closest splitpoint"
-msgstr ""
-
-#: src/main_window.c:839
-msgid "Delete closest splitpoint"
-msgstr ""
-
-#: src/main_window.c:841
-msgid "Zoom _in"
-msgstr ""
-
-#: src/main_window.c:841
-msgid "Zoom in"
-msgstr ""
-
-#: src/main_window.c:842
-msgid "Zoom _out"
-msgstr ""
-
-#: src/main_window.c:842
-msgid "Zoom out"
-msgstr ""
-
-#: src/main_window.c:953
-#, fuzzy
-msgid "Open file ..."
-msgstr "_Otevřít..."
-
-#: src/main_window.c:1001
-#, fuzzy
-msgid "Split the current file"
-msgstr "Rozdělené soubory"
-
-#: src/main_window.c:1010
-msgid "Manual single file split"
-msgstr ""
-
-#: src/main_window.c:1028
-msgid "Batch & automatic split"
-msgstr ""
-
-#: src/main_window.c:1048
-msgid "S_top"
-msgstr "Za_stavit"
-
-#: src/libmp3splt_manager.c:71
-#, c-format
-msgid " File '%s' created"
-msgstr "Soubor »%s« byl vytvořen"
-
-#: src/libmp3splt_manager.c:182
-#, c-format
-msgid " preparing \"%s\" (%d of %d)"
-msgstr "»%s« se připravuje (%d z %d)"
-
-#: src/libmp3splt_manager.c:188
-#, c-format
-msgid " creating \"%s\" (%d of %d)"
-msgstr "»%s« se vytváří (%d z %d)"
-
-#: src/libmp3splt_manager.c:194
-msgid " searching for sync errors..."
-msgstr " Hledají se chyby v seřízení…"
-
-#: src/libmp3splt_manager.c:199
-msgid "Computing amplitude wave data..."
-msgstr ""
-
-#: src/libmp3splt_manager.c:204
-#, c-format
-msgid "S: %02d, Level: %.2f dB; scanning for silence..."
-msgstr "S: %02d, Úroveň: %.2f dB; hledá se ticho…"
-
-#: src/import.c:55
-msgid "Choose file to import"
-msgstr "Vybrat soubor pro zavedení"
-
-#: src/import.c:207
-msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
-msgstr "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
-
-#: src/import.c:211
-msgid "CDDB files (*.cddb)"
-msgstr "Soubory CDDB (*.cddb)"
-
-#: src/import.c:213
-msgid "CUE files (*.cue)"
-msgstr "Soubory CUE (*.cue)"
-
-#: src/import.c:215
-msgid "Audacity labels files (*.txt)"
-msgstr "Soubory Audacity label (*.txt)"
-
-#: src/import.c:217
-msgid "All files"
-msgstr "Všechny soubory"
-
-#: src/import.c:348
-#, fuzzy
-msgid "--- last cue splitpoint ---"
-msgstr "Nastavit výchozí volby pro rozdělení"
 
 #: src/gstreamer_control.c:73
 #, c-format
@@ -1475,86 +104,1104 @@ msgstr "Informace: %s"
 msgid " error: cannot create gstreamer playbin\n"
 msgstr "Chyba: gstreamer-playbin nelze vytvořit\n"
 
-#~ msgid "Select cue file name"
-#~ msgstr "Vybrat soubor CUE"
+#: src/import.c:55
+msgid "Choose file to import"
+msgstr "Vybrat soubor pro zavedení"
 
-#~ msgid "Default tags (cddb or cue tags)"
-#~ msgstr "Výchozí značky (cddb nebo značky cue)"
+#: src/import.c:184
+msgid "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
+msgstr "CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"
 
-#~ msgid "_Open..."
-#~ msgstr "_Otevřít..."
+#: src/import.c:188
+msgid "CDDB files (*.cddb)"
+msgstr "Soubory CDDB (*.cddb)"
 
-#~ msgid "Next"
-#~ msgstr "Další"
+#: src/import.c:190
+msgid "CUE files (*.cue)"
+msgstr "Soubory CUE (*.cue)"
 
-#~ msgid "Remove rows"
-#~ msgstr "Odstranit řádky"
+#: src/import.c:192
+msgid "Audacity labels files (*.txt)"
+msgstr "Soubory Audacity label (*.txt)"
 
-#, fuzzy
-#~ msgid "So_ng dir"
-#~ msgstr "Adresář _pro skladbu"
+#: src/import.c:194
+msgid "All files"
+msgstr "Všechny soubory"
 
-#~ msgid ""
-#~ "    @f - file name\n"
-#~ "    @a - artist name\n"
-#~ "    @p - performer of each song (does not always exist)\n"
-#~ "    @b - album title\n"
-#~ "    @t - song title\n"
-#~ "    @g - genre\n"
-#~ "    @n - track number"
-#~ msgstr ""
-#~ "    @f - název souboru\n"
-#~ "    @a - jméno umělce\n"
-#~ "    @p - účinkující u každé skladby (ne vždy je)\n"
-#~ "    @b - název alba\n"
-#~ "    @t - název písně\n"
-#~ "    @g - žánr\n"
-#~ "    @n - číslo skladby"
+#: src/libmp3splt_manager.c:72
+#, c-format
+msgid " File '%s' created"
+msgstr "Soubor »%s« byl vytvořen"
 
-#~ msgid "Import"
-#~ msgstr "Zavést"
+#: src/libmp3splt_manager.c:183
+#, c-format
+msgid " preparing \"%s\" (%d of %d)"
+msgstr "»%s« se připravuje (%d z %d)"
 
-#~ msgid "Export"
-#~ msgstr "Vyvést"
+#: src/libmp3splt_manager.c:189
+#, c-format
+msgid " creating \"%s\" (%d of %d)"
+msgstr "»%s« se vytváří (%d z %d)"
 
-#~ msgid "_Browse"
-#~ msgstr "_Procházet"
+#: src/libmp3splt_manager.c:195
+msgid " searching for sync errors..."
+msgstr " Hledají se chyby v seřízení…"
 
-#~ msgid "Select file"
-#~ msgstr "Vybrat soubor"
+#: src/libmp3splt_manager.c:200
+msgid "Computing amplitude wave data..."
+msgstr "Počítají se data vlny rozkmitu"
 
-#~ msgid "FreeDB"
-#~ msgstr "FreeDB"
+#: src/libmp3splt_manager.c:205
+#, c-format
+msgid "S: %02d, Level: %.2f dB; scanning for silence..."
+msgstr "S: %02d, Úroveň: %.2f dB; hledá se ticho…"
 
-#~ msgid "Type of split"
-#~ msgstr "Druh rozdělení"
+#: src/main_window.c:174
+msgid "Error launching external command"
+msgstr "Chyba při spuštění vnějšího příkazu"
 
-#~ msgid "_Add files"
-#~ msgstr "_Přidat soubory"
+#: src/main_window.c:205
+msgid "using"
+msgstr "za použití"
 
-#~ msgid "R_emove all entries"
-#~ msgstr "Odstranit _všechny záznamy"
+#: src/main_window.c:209
+msgid "release of "
+msgstr "vydání "
 
-#~ msgid "Output"
-#~ msgstr "Výstup"
+#: src/main_window.c:312
+msgid " info: stopping the split process.. please wait"
+msgstr " Informace: Proces rozdělení se zastavuje, prosím, čekejte"
 
-#~ msgid "Normal"
-#~ msgstr "Obvyklé"
+#: src/main_window.c:320 src/main_window.c:733
+msgid "Preferences"
+msgstr "Nastavení"
 
-#~ msgid "Single file"
-#~ msgstr "Jednotlivý soubor"
+#: src/main_window.c:332
+msgid "TrackType"
+msgstr "TrackType"
 
-#~ msgid "Batch processing"
-#~ msgstr "Dávkové zpracování"
+#: src/main_window.c:347 src/main_window.c:736
+msgid "Split files"
+msgstr "Rozdělené soubory"
 
-#~ msgid "Split mode"
-#~ msgstr "Režim dělení"
+#: src/main_window.c:362 src/main_window.c:739
+msgid "Splitpoints"
+msgstr "Body rozdělení"
 
-#~ msgid "File mode"
-#~ msgstr "Souborový režim"
+#: src/main_window.c:433
+msgid " error: split in progress..."
+msgstr " Chyba: Probíhá rozdělování..."
 
-#~ msgid "_Fix ogg stream"
-#~ msgstr "_Opravit datový proud ogg"
+#: src/main_window.c:443
+msgid " error: no path of split selected"
+msgstr "Chyba: Nebyla vybrána žádná cesta rozdělení"
 
-#~ msgid "Error: The specified output directory is inaccessible!\n"
-#~ msgstr "Chyba: Přístup k zadanému výstupnímu adresáři není možný!\n"
+#: src/main_window.c:654 src/multiple_files_window.c:101
+msgid "mp3 and ogg files (*.mp3 *.ogg)"
+msgstr "Soubory mp3 a ogg (*.mp3 *.ogg)"
+
+#: src/main_window.c:662 src/multiple_files_window.c:109
+msgid "mp3 files (*.mp3)"
+msgstr "Soubory mp3 (*.mp3)"
+
+#: src/main_window.c:668 src/multiple_files_window.c:115
+msgid "ogg files (*.ogg)"
+msgstr "Soubory ogg (*.ogg)"
+
+#: src/main_window.c:680
+msgid "Choose File"
+msgstr "Vybrat soubor"
+
+#: src/main_window.c:710
+msgid "_File"
+msgstr "_Soubor"
+
+#: src/main_window.c:711
+msgid "_View"
+msgstr "Po_hled"
+
+#: src/main_window.c:712
+msgid "_Player"
+msgstr "_Přehrávač"
+
+#: src/main_window.c:713
+msgid "_Help"
+msgstr "_Nápověda"
+
+#: src/main_window.c:715
+msgid "_Open..."
+msgstr "_Otevřít..."
+
+#: src/main_window.c:715
+msgid "Open"
+msgstr "Otevřít"
+
+#: src/main_window.c:719
+msgid "_Add files or directories to batch ..."
+msgstr "Př_idat soubory nebo adresáře do dávkového zpracování..."
+
+#: src/main_window.c:720
+msgid "Add files or directories to batch"
+msgstr "Přidat soubory nebo adresáře do dávkového zpracování"
+
+#: src/main_window.c:723
+msgid "_Import splitpoints from file..."
+msgstr "_Zavést body rozdělení ze souboru..."
+
+#: src/main_window.c:724
+msgid "Import splitpoints from file..."
+msgstr "Zavést body rozdělení ze souboru..."
+
+#: src/main_window.c:726
+msgid "Import splitpoints from _TrackType.org..."
+msgstr "Zavést body rozdělení z _TrackType.org..."
+
+#: src/main_window.c:727
+msgid "Import splitpoints from TrackType.org..."
+msgstr "Zavést body rozdělení z TrackType.org..."
+
+#: src/main_window.c:730
+msgid "_Export splitpoints..."
+msgstr "_Vyvést body rozdělení..."
+
+#: src/main_window.c:731
+msgid "Export splitpoints"
+msgstr "Vyvést body rozdělení"
+
+#: src/main_window.c:733
+msgid "_Preferences"
+msgstr "_Nastavení"
+
+#: src/main_window.c:736
+msgid "Split _files"
+msgstr "Rozdělit _soubory"
+
+#: src/main_window.c:739
+msgid "_Splitpoints"
+msgstr "_Body rozdělení"
+
+#: src/main_window.c:742
+msgid "_Split !"
+msgstr "_Rozdělit!"
+
+#: src/main_window.c:742 src/main_window.c:949
+msgid "Split !"
+msgstr "Rozdělit!"
+
+#: src/main_window.c:745
+msgid "_Batch split !"
+msgstr "_Dávkové rozdělení!"
+
+#: src/main_window.c:745 src/multiple_files_window.c:279
+msgid "Batch split !"
+msgstr "Dávkové rozdělení!"
+
+#: src/main_window.c:748
+msgid "_Quit"
+msgstr "_Ukončit"
+
+#: src/main_window.c:748
+msgid "Quit"
+msgstr "Ukončit"
+
+#: src/main_window.c:752
+msgid "_Contents"
+msgstr "_Obsah"
+
+#: src/main_window.c:752
+msgid "Contents"
+msgstr "Obsah"
+
+#: src/main_window.c:756
+msgid "Messages _history"
+msgstr "_Historie zpráv"
+
+#: src/main_window.c:756 src/messages_window.c:168
+msgid "Messages history"
+msgstr "Historie zpráv"
+
+#: src/main_window.c:759
+msgid "_About"
+msgstr "_O programu"
+
+#: src/main_window.c:759
+msgid "About"
+msgstr "O programu"
+
+#: src/main_window.c:763
+msgid "P_ause / Play"
+msgstr "Př_ehrát/Pozastavit"
+
+#: src/main_window.c:763
+msgid "Pause/Play"
+msgstr "Pozastavit/Přehrát"
+
+#: src/main_window.c:766
+msgid "Seek _forward"
+msgstr "Hledat _dopředu"
+
+#: src/main_window.c:766
+msgid "Seek forward"
+msgstr "Hledat dopředu"
+
+#: src/main_window.c:768
+msgid "Seek _backward"
+msgstr "Hledat _dozadu"
+
+#: src/main_window.c:768
+msgid "Seek backward"
+msgstr "Hledat dozadu"
+
+#: src/main_window.c:771
+msgid "Small seek f_orward"
+msgstr "Malé hledání d_opředu"
+
+#: src/main_window.c:771
+msgid "Small seek forward"
+msgstr "Malé hledání dopředu"
+
+#: src/main_window.c:773
+msgid "Small seek back_ward"
+msgstr "Malé hledání doz_adu"
+
+#: src/main_window.c:773
+msgid "Small seek backward"
+msgstr "Malé hledání dozadu"
+
+#: src/main_window.c:776
+msgid "Big seek fo_rward"
+msgstr "Velké hledání do_předu"
+
+#: src/main_window.c:776
+msgid "Big seek forward"
+msgstr "Velké hledání dopředu"
+
+#: src/main_window.c:778
+msgid "Big seek bac_kward"
+msgstr "Velké hledání dozad_u"
+
+#: src/main_window.c:778
+msgid "Big seek backward"
+msgstr "Velké hledání do_zadu"
+
+#: src/main_window.c:781
+msgid "Seek to _next splitpoint"
+msgstr "Velké hledání dozadu"
+
+#: src/main_window.c:782
+msgid "Seek to next splitpoint"
+msgstr "Hledat po další bod rozdělení"
+
+#: src/main_window.c:783
+msgid "Seek to _previous splitpoint"
+msgstr "Hledat po _předchozí bod rozdělení"
+
+#: src/main_window.c:784
+msgid "Seek to previous splitpoint"
+msgstr "Hledat po předchozí bod rozdělení"
+
+#: src/main_window.c:786
+msgid "Add _splitpoint"
+msgstr "Přidat _bod rozdělení"
+
+#: src/main_window.c:787 src/splitpoints_window.c:1307
+msgid "Add splitpoint"
+msgstr "Přidat bod rozdělení"
+
+#: src/main_window.c:789
+msgid "_Delete closest splitpoint"
+msgstr "_Smazat nejbližší bod rozdělení"
+
+#: src/main_window.c:790
+msgid "Delete closest splitpoint"
+msgstr "Smazat nejbližší bod rozdělení"
+
+#: src/main_window.c:792
+msgid "Zoom _in"
+msgstr "_Přiblížit"
+
+#: src/main_window.c:792
+msgid "Zoom in"
+msgstr "Přiblížit"
+
+#: src/main_window.c:793
+msgid "Zoom _out"
+msgstr "_Oddálit"
+
+#: src/main_window.c:793
+msgid "Zoom out"
+msgstr "Oddálit"
+
+#: src/main_window.c:903
+msgid "Open file ..."
+msgstr "Otevřít soubor..."
+
+#: src/main_window.c:960
+msgid "Manual single file split"
+msgstr "Ruční rozdělení jednoho souboru"
+
+#: src/main_window.c:978
+msgid "Batch & automatic split"
+msgstr "Dávkové a automatické rozdělení"
+
+#: src/main_window.c:998
+msgid "S_top"
+msgstr "Za_stavit"
+
+#: src/messages_window.c:148
+msgid "Enable _debug messages"
+msgstr "Povolit zprávy o _ladění"
+
+#: src/messages_window.c:153
+msgid "C_lear"
+msgstr "_Smazat"
+
+#: src/mp3splt-gtk.c:102
+msgid " error: no files found in batch mode"
+msgstr "Chyba: V dávkovém režimu nebyly nalezeny žádné soubory"
+
+#: src/mp3splt-gtk.c:119 src/splitpoints_window.c:1425
+msgid " finished"
+msgstr " Dokončeno"
+
+#: src/mp3splt-gtk.c:284
+msgid " info: stopping the split process before exiting"
+msgstr " Informace: Proces rozdělení se zastavuje před ukončením"
+
+#: src/mp3splt-gtk.c:394
+#, c-format
+msgid "Setting the output directory to %s.\n"
+msgstr "Výstupní adresář se nastavuje na %s.\n"
+
+#: src/mp3splt-gtk.c:408
+#, c-format
+msgid "Option -%c requires an argument.\n"
+msgstr "Volba -%c vyžaduje argument.\n"
+
+#: src/mp3splt-gtk.c:410
+#, c-format
+msgid "Unknown option `-%c'.\n"
+msgstr "Neznámá volba »-%c«.\n"
+
+#: src/mp3splt-gtk.c:412
+#, c-format
+msgid "Unknown option character `\\x%x'.\n"
+msgstr "Neznámý znak ve volbě »\\x%x«.\n"
+
+#: src/mp3splt-gtk.c:426
+#, c-format
+msgid "Cannot open input file %s\n"
+msgstr "Vstupní soubor %s nelze otevřít\n"
+
+#: src/multiple_files_window.c:63
+msgid "Complete filename"
+msgstr "Úplný název souboru"
+
+#: src/multiple_files_window.c:80
+msgid "Choose files or directories"
+msgstr "Vybrat soubory nebo adresáře"
+
+#: src/multiple_files_window.c:122
+msgid "All Files"
+msgstr "Všechny soubory"
+
+#: src/multiple_files_window.c:253
+msgid "_Add files or directories"
+msgstr "Přid_at soubory nebo adresáře"
+
+#: src/multiple_files_window.c:261
+msgid "_Remove selected"
+msgstr "Ods_tranit vybrané"
+
+#: src/multiple_files_window.c:271 src/splitpoints_window.c:1320
+msgid "R_emove all"
+msgstr "Odstranit _vše"
+
+#: src/player_window.c:118
+msgid "Processing Douglas-Peucker filters ..."
+msgstr "Zpracovávají se Douglas-Peuckerovy filtry ..."
+
+#: src/player_window.c:577
+msgid ""
+"\n"
+" Cannot connect to snackAmp player.\n"
+" Please download and install snackamp from\n"
+"\thttp://snackamp.sourceforge.net\n"
+"\n"
+" Verify that snackamp is running.\n"
+" Verify that your snackamp version is >= 3.1.3\n"
+"\n"
+" Verify that you have enabled socket interface in snackamp:\n"
+" You have to go to\n"
+"\tTools->Preferences->Miscellaneous\n"
+" from the snackamp menu and check\n"
+"\tEnable Socket Interface\n"
+" Only default port is supported for now(8775)\n"
+" After that, restart snackamp and mp3splt-gtk should work.\n"
+msgstr "\n Žádné spojení s přehrávacím programem SnackAmp.\n Stáhněte si, prosím, SnackAmp ze stránek\n\thttp://snackamp.sourceforge.net\n a nainstalujte jej.\n\n Ujistěte se, že SnackAmp běží\n a že jej máte alespoň ve verzi 3.1.3\n\n Ujistěte se, že máte v SnacAmpu zapnuto\n rozhraní zdířky (socket): Musíte jít do\n\tNástroje->Nastavení->Různé\n v nabídce SnackAmpu a zapnout povolení rozhraní\n\tzdířky (socket)\n Nyní je podporována pouze výchozí přípojka (8775)\n Potom spusťte SnackAmp znovu a mp3splt-gtk\n by měl pracovat.\n"
+
+#: src/player_window.c:592
+msgid ""
+"\n"
+" Cannot connect to Audacious player.\n"
+" Verify that you have installed audacious.\n"
+"\n"
+" Put in your PATH variable the directory where the audacious executable is.\n"
+" If you don't know how to do that, start audacious manually and then try to connect.\n"
+msgstr "\n Žádné spojení s přehrávacím programem Audacious.\n Ujistěte se, že je Audacious nainstalován.\n\n Přidejte do proměnné CESTY místo instalace spustitelného\n souboru pro Audacious. V případě že nevíte,\n jak se to má udělat, spusťte Audacious ručně\n a pokuste se spojení vytvořit.\n"
+
+#: src/player_window.c:600 src/player_window.c:604
+msgid "Cannot connect to player"
+msgstr "Žádné spojení s přehrávacím programem"
+
+#: src/player_window.c:895
+msgid "Previous"
+msgstr "Předchozí"
+
+#: src/player_window.c:913
+msgid "Play"
+msgstr "Přehrát"
+
+#: src/player_window.c:930
+msgid "Pause"
+msgstr "Pozastavit"
+
+#: src/player_window.c:947
+msgid "Stop"
+msgstr "Zastavit"
+
+#: src/player_window.c:964
+msgid "Next"
+msgstr "Další"
+
+#: src/player_window.c:971 src/splitpoints_window.c:1300
+msgid "_Add"
+msgstr "_Přidat"
+
+#: src/player_window.c:978
+msgid "Add splitpoint from player"
+msgstr "Přidat bod rozdělení zde"
+
+#: src/player_window.c:987 src/splitpoints_window.c:1000
+#: src/splitpoints_window.c:1343
+msgid "Set trim splitpoints using silence detection"
+msgstr "Nastavit zastřižení bodů rozdělení s pomocí zjištění ticha"
+
+#: src/player_window.c:998 src/splitpoints_window.c:1059
+#: src/splitpoints_window.c:1353
+msgid "Set splitpoints from silence detection"
+msgstr "Nastavit body rozdělení s pomocí zjištění ticha"
+
+#: src/player_window.c:1003
+msgid "Amplitude _wave"
+msgstr "_Vlna rozkmitu"
+
+#: src/player_window.c:1009
+msgid "Shows the amplitude level wave"
+msgstr "Ukáže vlnu s rozkmitem zvuku"
+
+#: src/player_window.c:1012
+msgid "_Connect"
+msgstr "_Spojit"
+
+#: src/player_window.c:1015
+msgid "Connect to player"
+msgstr "Spojit s přehrávačem"
+
+#: src/player_window.c:1018
+msgid "_Disconnect"
+msgstr "_Odpojit"
+
+#: src/player_window.c:1021
+msgid "Disconnect from player"
+msgstr "Odpojit od přehrávače"
+
+#: src/player_window.c:1144
+#, c-format
+msgid "before %s"
+msgstr "před %s"
+
+#: src/player_window.c:1875
+msgid "No available wave"
+msgstr "Žádná dostupná vlna"
+
+#: src/player_window.c:1942 src/preferences_window.c:740
+msgid "No wave interpolation"
+msgstr "Žádná interpolace vlny"
+
+#: src/player_window.c:1948
+#, c-format
+msgid "Wave interpolation level %d"
+msgstr "Úroveň interpolace vlny %d"
+
+#: src/player_window.c:2012
+msgid " Please wait for the process to finish ..."
+msgstr "Počkejte prosím, na dokončení procesu ..."
+
+#: src/player_window.c:2034
+msgid " Please wait ... currently computing Douglas Peucker filters."
+msgstr "Prosím počkejte ... v současné době probíhá výpočet Douglas Peucker filtrů."
+
+#: src/player_window.c:2118
+msgid " left click on splitpoint selects it, right click erases it"
+msgstr "Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení jej vymaže"
+
+#: src/player_window.c:2123
+msgid ""
+" left click + move changes song position, right click + move changes zoom"
+msgstr "Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní násobek zvětšení"
+
+#: src/player_window.c:2129
+msgid ""
+" left click on point + move changes point position, right click play preview"
+msgstr "Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje náhled"
+
+#: src/player_window.c:2134
+msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
+msgstr "Levé klepnutí na obdélník zapne/vypne »Ponechat bod rozdělení«"
+
+#: src/player_window.c:2559
+msgid " quick preview..."
+msgstr " Rychlý náhled..."
+
+#: src/player_window.c:2907
+msgid "Splitpoints and amplitude wave v_iew"
+msgstr "Pohled s body rozdělení a vlnou rozkmitu"
+
+#: src/player_window.c:3023
+msgid "History"
+msgstr "Historie"
+
+#: src/player_window.c:3113
+msgid "_Erase selected entries"
+msgstr "Vymazat vybrané _záznamy"
+
+#: src/player_window.c:3121
+msgid "E_rase all history"
+msgstr "Vymazat celou _historii"
+
+#: src/player_window.c:3163
+msgid "Files h_istory"
+msgstr "_Historie souborů"
+
+#: src/player_window.c:3288
+msgid " quick preview finished, song paused"
+msgstr "Rychlý náhled ukončen, přehrávání pozastaveno"
+
+#: src/preferences_window.c:196
+msgid "<b>Choose language (requires restart)</b>"
+msgstr "<b>Vybrat jazyk (vyžaduje nové spuštění)</b>"
+
+#: src/preferences_window.c:223
+msgid "Choose split directory"
+msgstr "Vybrat výstupní adresář"
+
+#: src/preferences_window.c:359
+msgid "Br_owse dir"
+msgstr "_Vybrat adresář"
+
+#: src/preferences_window.c:366
+msgid "So_ng dir"
+msgstr "Adresář s pís_ní"
+
+#: src/preferences_window.c:371
+msgid "<b>Directory for split files</b>"
+msgstr "<b>Adresář pro rozdělené soubory</b>"
+
+#: src/preferences_window.c:384
+msgid "_Splitpoint name from filename (manual single file split only)"
+msgstr "Název bo_du rozdělení z názvu souboru (pouze ruční rozdělení jednoho souboru)"
+
+#: src/preferences_window.c:392
+msgid "Create directories from _filenames "
+msgstr "Vytvořit adresáře z názvů sou_borů"
+
+#: src/preferences_window.c:400
+msgid "F_rame mode (useful for mp3 VBR) (mp3 only)"
+msgstr "Režim F_rame (užitečný pro mp3-VBR) (jen pro mp3)"
+
+#: src/preferences_window.c:406
+msgid "_Auto-adjust mode (uses silence detection to auto-adjust splitpoints)"
+msgstr "_Automatické přesné nastavení bodu rozdělení pomocí zjištění ticha"
+
+#: src/preferences_window.c:423 src/splitpoints_window.c:1025
+#: src/splitpoints_window.c:1081
+msgid "Threshold level (dB):"
+msgstr "Úroveň prahu (dB):"
+
+#: src/preferences_window.c:440
+msgid "Cutpoint offset (0 is the begin of silence and 1 the end):"
+msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec):"
+
+#: src/preferences_window.c:458
+msgid "Gap level (seconds around splitpoint to search for silence):"
+msgstr "Přestávka (sekundy okolo bodu rozdělení k prohledání na ticho):"
+
+#: src/preferences_window.c:476
+msgid "Set _default split options"
+msgstr "Nastavit výchozí volby pro rozdělení"
+
+#: src/preferences_window.c:481
+msgid "<b>Split options</b>"
+msgstr "<b>Volby pro rozdělení</b>"
+
+#: src/preferences_window.c:544
+msgid "Player:"
+msgstr "Přehrávač:"
+
+#: src/preferences_window.c:563
+msgid "Refresh player every "
+msgstr "Obnovit přehrávač každých:"
+
+#: src/preferences_window.c:564
+msgid "milliseconds."
+msgstr "milisekund."
+
+#: src/preferences_window.c:566
+msgid "\t(higher refresh rate decreases CPU usage - default is 200)"
+msgstr "»(vyšší obnovovací rychlost sníží užití CPU  - výchozí je 200)"
+
+#: src/preferences_window.c:572
+msgid "<b>Player options</b>"
+msgstr "<b>Volby pro přehrávač</b>"
+
+#: src/preferences_window.c:691
+msgid ""
+"Wave preview is only available if the amplitude wave was ticked in the "
+"player"
+msgstr "Wave náhled je k dispozici pouze v případě, že se amplituda vlny označí v přehrávači"
+
+#: src/preferences_window.c:731
+#, c-format
+msgid "%d minute(s) window"
+msgstr "okno %d minut(a)"
+
+#: src/preferences_window.c:736
+#, c-format
+msgid "Wave interpolation level %d with threshold of %.1lf"
+msgstr "Úroveň interpolace vlny %d s prahem %.1lf"
+
+#: src/preferences_window.c:758
+msgid "Wave quality (higher is better but consumes more CPU):"
+msgstr "Jakost vlny (vyšší je lepší, ale spotřebuje více CPU):"
+
+#: src/preferences_window.c:777
+msgid "<b>Amplitude wave options</b>"
+msgstr "<b>Volby pro vlnu rozkmitu</b>"
+
+#: src/preferences_window.c:832
+msgid "Default format"
+msgstr "Výchozí formát"
+
+#: src/preferences_window.c:839
+msgid "  Default output: "
+msgstr "Výchozí výstup:"
+
+#: src/preferences_window.c:845
+msgid "  CDDB, CUE and tracktype.org default: "
+msgstr "Výchozí  CDDB, CUE a tracktype.org: "
+
+#: src/preferences_window.c:851
+msgid "  Split with silence detection default: "
+msgstr "Rozdělit s pomocí výchozího zjištění ticha:"
+
+#: src/preferences_window.c:857
+msgid "  Trim using silence detection default: "
+msgstr "Zastřihnout pomocí výchozího zjištění ticha:"
+
+#: src/preferences_window.c:863
+msgid "  Error mode default: "
+msgstr "Výchozí nastavení chybového režimu:"
+
+#: src/preferences_window.c:878
+msgid "Custom format"
+msgstr "Vlastní formát"
+
+#: src/preferences_window.c:897
+msgid ""
+"  @A: performer if found, otherwise artist\n"
+"  @a: artist name\n"
+"  @p: performer of each song (only with .cue)\n"
+"  @b: album title\n"
+"  @g: genre\n"
+"  @t: song title\n"
+"  @n: track number identifier (not the real ID3 track number) **\n"
+"  @N: track tag number **\n"
+"  @l: track number identifier as lowercase letter (not the real ID3 track number) **\n"
+"  @L: track tag number as lowercase letter **\n"
+"  @u: track number identifier as uppercase letter (not the real ID3 track number) **\n"
+"  @U: track tag number as uppercase letter **\n"
+"  @f: input filename (without extension)\n"
+"  @m, @s or @h: the number of minutes, seconds or hundreths of seconds of the start splitpoint **\n"
+"  @M, @S or @H: the number of minutes, seconds or hundreths of seconds of the end splitpoint **\n"
+"\n"
+"    (**) a digit may follow for the number of digits to output\n"
+msgstr "  @A: účinkující, pokud nalezen, jinak umělec\n  @a: jméno umělce\n  @p: účinkující každé písně (jen s .cue)\n  @b: název alba\n  @g: žánr\n  @t: název písně\n  @n: identifikátor čísla skladby (ne skutečné číslo skladby ID3) **\n  @N: číslo značky skladbyr **\n  @l: identifikátor čísla skladby jako malé písmeno (ne skutečné číslo skladby ID) **\n  @L: identifikátor čísla skladby jako malé písmeno **\n  @u: identifikátor čísla skladby jako velké písmeno (ne skutečné číslo skladby ID) **\n  @U: identifikátor čísla skladby jako velké písmeno **\n  @f: název vstupního souboru (bez přípony)\n  @m, @s nebo @h: počet minut, sekund nebo setin sekund začátečního bodu rozdělení **\n  @M, @S nebo @H: počet minut, sekund nebo setin sekund koncového bodu rozdělení **\n\n    (**) může následovat číslice pro počet číslic do výstupu\n"
+
+#: src/preferences_window.c:921
+msgid ""
+"<b>Output filename format for batch split, CUE, CDDB and tracktype.org</b>"
+msgstr "<b>Formát názvu výstupního souboru pro dávkové rozdělení, CUE, CDDB ad tracktype.org</b>"
+
+#: src/preferences_window.c:971
+msgid "Original file tags"
+msgstr "Původní značky k souboru"
+
+#: src/preferences_window.c:974
+msgid "Default tags (cddb or cue tags)"
+msgstr "Výchozí značky (cddb nebo značky cue)"
+
+#: src/preferences_window.c:977
+msgid "No tags"
+msgstr "Žádné značky"
+
+#: src/preferences_window.c:980
+msgid "Extract tags from filename"
+msgstr "Vytáhnout značky z názvu souboru"
+
+#: src/preferences_window.c:989
+msgid "<b>Split files tags</b>"
+msgstr "<b>Značky v rozdělených souborech</b>"
+
+#: src/preferences_window.c:1011
+msgid "No change"
+msgstr "Žádná změna"
+
+#: src/preferences_window.c:1012
+msgid "lowercase"
+msgstr "Malá písmena"
+
+#: src/preferences_window.c:1013
+msgid "UPPERCASE"
+msgstr "VELKÁ PÍSMENA"
+
+#: src/preferences_window.c:1014
+msgid "First uppercase"
+msgstr "První písmeno velké"
+
+#: src/preferences_window.c:1015
+msgid "Word Uppercase"
+msgstr "Písmena slov velká"
+
+#: src/preferences_window.c:1037
+msgid "<artist>: "
+msgstr "<artist>: "
+
+#: src/preferences_window.c:1044
+msgid "<album>: "
+msgstr "<album>: "
+
+#: src/preferences_window.c:1052
+msgid "<title>: "
+msgstr "<title>: "
+
+#: src/preferences_window.c:1059
+msgid "<genre>: "
+msgstr "<genre>: "
+
+#: src/preferences_window.c:1066
+msgid "<comment>: "
+msgstr "<comment>: "
+
+#: src/preferences_window.c:1073
+msgid "<year>: "
+msgstr "<year>: "
+
+#: src/preferences_window.c:1080
+msgid "<track>: "
+msgstr "<track>: "
+
+#: src/preferences_window.c:1107
+msgid "Regular expression:"
+msgstr "Regulární výraz:"
+
+#: src/preferences_window.c:1110
+msgid ""
+"Above enter PERL-like regular expression using named subgroups.\n"
+"Following names are recognized:\n"
+"    (?<artist>)   - artist name\n"
+"    (?<album>)    - album title\n"
+"    (?<title>)    - track title\n"
+"    (?<tracknum>) - current track number\n"
+"    (?<year>)     - year of emission\n"
+"    (?<genre>)    - genre\n"
+"    (?<comment>)  - comment"
+msgstr "Výše zadejte regulární výraz jako PERL za použití jmenovaných podskupin.\nJsou rozpoznána následující klíčová slova:\n    (?<artist>)   - jméno umělce\n    (?<album>)    - název alba\n    (?<title>)    - název skladby\n    (?<tracknum>) - číslo současné skladby\n    (?<year>)     - rok vydání\n    (?<genre>)    - žánr\n    (?<comment>)  - poznámka"
+
+#: src/preferences_window.c:1137
+msgid "_Replace underscores by spaces"
+msgstr "_Nahradit podtržítka mezerami"
+
+#: src/preferences_window.c:1147
+msgid "Artist text properties:"
+msgstr "Vlastnosti textu umělce:"
+
+#: src/preferences_window.c:1152
+msgid "Album text properties:"
+msgstr "Vlastnosti textu alba:"
+
+#: src/preferences_window.c:1157
+msgid "Title text properties:"
+msgstr "Vlastnosti textu názvu:"
+
+#: src/preferences_window.c:1162
+msgid "Comment text properties:"
+msgstr "Vlastnosti textu poznámky:"
+
+#: src/preferences_window.c:1166
+msgid "Genre tag:"
+msgstr "Značka žánru:"
+
+#: src/preferences_window.c:1170
+msgid "Comment tag:"
+msgstr "Značka poznámky:"
+
+#: src/preferences_window.c:1172
+msgid "Regular expression test"
+msgstr "Zkouška regulárního výrazu"
+
+#: src/preferences_window.c:1188
+msgid "_Test"
+msgstr "_Zkouška"
+
+#: src/preferences_window.c:1192
+msgid "Sample filename:"
+msgstr "Název souboru s příkladem:"
+
+#: src/preferences_window.c:1197
+msgid "Sample result:"
+msgstr "Výsledek příkladu:"
+
+#: src/preferences_window.c:1209
+msgid "ID3v1 & ID3v2 tags"
+msgstr "Značky ID3v1 a ID3v2"
+
+#: src/preferences_window.c:1216
+msgid "ID3v2 tags"
+msgstr "Značky ID3v2"
+
+#: src/preferences_window.c:1223
+msgid "ID3v1 tags"
+msgstr "Značky ID3v1"
+
+#: src/preferences_window.c:1230
+msgid "Same tags version as the input file"
+msgstr "Stejná verze značky jako u vstupního souboru"
+
+#: src/preferences_window.c:1236
+msgid "<b>Tags version (mp3 only)</b>"
+msgstr "<b>Verze značky (jen pro mp3)</b>"
+
+#: src/preferences_window.c:1277
+msgid "Split"
+msgstr "Rozdělení"
+
+#: src/preferences_window.c:1282
+msgid "Tags"
+msgstr "Značky"
+
+#: src/preferences_window.c:1287
+msgid "Player"
+msgstr "Přehrávač"
+
+#: src/preferences_window.c:1292
+msgid "Output filename format"
+msgstr "Formát názvu výstupního souboru"
+
+#: src/preferences_window.c:1298
+msgid "Language"
+msgstr "Jazyk"
+
+#: src/split_files_window.c:69 src/splitpoints_window.c:1588
+msgid "Filename"
+msgstr "Název souboru"
+
+#: src/split_files_window.c:226
+msgid "_Queue to player"
+msgstr "_Zařadit do přehrávače"
+
+#: src/split_files_window.c:234
+msgid "_Delete selected"
+msgstr "S_mazat vybrané"
+
+#: src/split_files_window.c:242
+msgid "D_elete all"
+msgstr "_Smazat vše"
+
+#: src/split_mode_window.c:193
+msgid "Use manual single file splitpoints"
+msgstr "Použít ruční body rozdělení jednoho souboru"
+
+#: src/split_mode_window.c:203
+msgid "Time"
+msgstr "Čas"
+
+#: src/split_mode_window.c:220
+msgid "Split every"
+msgstr "Rozdělit každých"
+
+#: src/split_mode_window.c:233
+msgid "seconds."
+msgstr "sekund."
+
+#: src/split_mode_window.c:240
+msgid "Equal time tracks"
+msgstr "Skladby se stejnou délkou"
+
+#: src/split_mode_window.c:257
+msgid "Split in"
+msgstr "Rozdělit na"
+
+#: src/split_mode_window.c:271
+msgid "equal tracks."
+msgstr "stejné skladby"
+
+#: src/split_mode_window.c:278
+msgid "Trim using silence detection"
+msgstr "Zastřihnout s pomocí zjištění ticha"
+
+#: src/split_mode_window.c:295 src/split_mode_window.c:323
+msgid "Threshold level (dB) : "
+msgstr "Úroveň prahu (dB): "
+
+#: src/split_mode_window.c:306
+msgid "Silence - split with silence detection"
+msgstr "Ticho - vytvořit body rozdělení s pomocí zjištění ticha"
+
+#: src/split_mode_window.c:335
+msgid "Cutpoint offset (0 is the begin of silence,and 1 the end) : "
+msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec): "
+
+#: src/split_mode_window.c:347
+msgid "Number of tracks (0 means all tracks) : "
+msgstr "Počet skladeb (0 znamená všechny skladby): "
+
+#: src/split_mode_window.c:359
+msgid "Minimum silence length (seconds) : "
+msgstr "Nejmenší délka ticha (sekundy): "
+
+#: src/split_mode_window.c:371
+msgid "Minimum track length (seconds) : "
+msgstr "Nejmenší délka skladby (sekundy): "
+
+#: src/split_mode_window.c:381
+msgid "Remove silence between tracks"
+msgstr "Odstranit ticho mezi skladbami"
+
+#: src/split_mode_window.c:402
+msgid "Wrap - split files created with mp3wrap or albumwrap (mp3 only)"
+msgstr "Obal - rozdělit soubory vytvořené s mp3wrap nebo albumwrap (jen mp3)"
+
+#: src/split_mode_window.c:412
+msgid "Error mode (mp3 only)"
+msgstr "Chybový režim (jen pro mp3)"
+
+#: src/splitpoints_window.c:313
+msgid "_part"
+msgstr "_part"
+
+#: src/splitpoints_window.c:324
+#, c-format
+msgid "%s_part%d"
+msgstr "%s_part%d"
+
+#: src/splitpoints_window.c:588 src/splitpoints_window.c:644
+msgid " error: you already have the splitpoint in table"
+msgstr " Chyba: bod rozdělení již existuje"
+
+#: src/splitpoints_window.c:1095
+msgid "Cutpoint offset (0 is the begin of silence,and 1 the end):"
+msgstr "Odsazení bodu rozdělení (0=začátek ticha 1=konec):"
+
+#: src/splitpoints_window.c:1109
+msgid "Number of tracks (0 means all tracks):"
+msgstr "Počet skladeb (0 znamená všechny skladby):"
+
+#: src/splitpoints_window.c:1121
+msgid "Minimum silence length (seconds):"
+msgstr "Nejmenší délka ticha (sekundy):"
+
+#: src/splitpoints_window.c:1133
+msgid "Minimum track length (seconds):"
+msgstr "Nejmenší délka skladby (sekundy):"
+
+#: src/splitpoints_window.c:1143
+msgid "_Remove silence between tracks"
+msgstr "_Odstranit ticho mezi skladbami"
+
+#: src/splitpoints_window.c:1293
+msgid "Minutes:"
+msgstr "Minuty:"
+
+#: src/splitpoints_window.c:1295
+msgid "Seconds:"
+msgstr "Sekundy:"
+
+#: src/splitpoints_window.c:1297
+msgid "Hundredths:"
+msgstr "Setina:"
+
+#: src/splitpoints_window.c:1310
+msgid "_Remove"
+msgstr "_Odstranit"
+
+#: src/splitpoints_window.c:1317
+msgid "Remove rows"
+msgstr "Odstranit řádky"
+
+#: src/splitpoints_window.c:1327
+msgid "Remove all rows"
+msgstr "Odstranit všechny řádky"
+
+#: src/splitpoints_window.c:1337
+msgid "_Trim splitpoints"
+msgstr "Zastřihnout body rozdělení"
+
+#: src/splitpoints_window.c:1347
+msgid "_Silence detection"
+msgstr "_Zjištění ticha"
+
+#: src/splitpoints_window.c:1497
+msgid " cannot preview, not connected to player"
+msgstr " Náhled není možný: Žádné spojení s přehrávacím programem"
+
+#: src/splitpoints_window.c:1515
+msgid " cannot split preview last splitpoint"
+msgstr " Náhled na poslední bod rozdělení není možný"
+
+#: src/splitpoints_window.c:1580
+msgid "Keep"
+msgstr "Ponechat"
+
+#: src/splitpoints_window.c:1596
+msgid "Secs"
+msgstr "Sek"
+
+#: src/splitpoints_window.c:1604
+msgid "Mins"
+msgstr "Min"
+
+#: src/splitpoints_window.c:1612
+msgid "Hundr"
+msgstr "1/100s"
+
+#: src/splitpoints_window.c:1620
+msgid "Length"
+msgstr "Délka"
+
+#: src/splitpoints_window.c:1627
+msgid "LiveP"
+msgstr "LiveP"
+
+#: src/splitpoints_window.c:1635
+msgid "SplitP"
+msgstr "SplitP"
+
+#: src/utilities.c:87
+#, c-format
+msgid "Processing file '%s' ..."
+msgstr "Zpracovává se soubor »%s«…"
+
+#: src/widgets_helper.c:421
+msgid "_Close"
+msgstr "Za_vřít"
