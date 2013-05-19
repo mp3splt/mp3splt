@@ -35,7 +35,7 @@
 #include "silence_processors.h"
 #include "splt.h"
 
-int splt_flac_scan_silence(splt_state *state, unsigned long length,
+int splt_flac_scan_silence(splt_state *state, off_t start_offset, unsigned long length,
     float threshold, float min, int shots, short output, int *error,
     short silence_processor(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error));

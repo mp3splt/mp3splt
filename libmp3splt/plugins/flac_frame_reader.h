@@ -93,6 +93,8 @@ typedef struct {
   //and we backup this frame here for the next file split
   unsigned char *previous_frame;
   size_t previous_frame_length;
+
+  double end_point;
 } splt_flac_frame_reader;
 
 splt_flac_frame_reader *splt_flac_fr_new(FILE *in, const char *input_filename);
@@ -106,6 +108,7 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     unsigned min_blocksize, unsigned max_blocksize, 
     unsigned bits_per_sample, unsigned sample_rate, unsigned channels, 
     unsigned min_framesize, unsigned max_framesize,
+    float offset,
     int *error);
 
 #define SPLT_FLAC_FR_BUFFER_SIZE 2048
