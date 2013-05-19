@@ -29,13 +29,13 @@
 
 #include "flac_silence.h"
 
-static void splt_flac_scan_silence_and_process(splt_state *state, float max_threshold,
-    unsigned long length, 
+static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_offset,
+    float max_threshold, unsigned long length, 
     short process_silence(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error),
     splt_scan_silence_data *ssd, int *error);
 
-int splt_flac_scan_silence(splt_state *state, unsigned long length,
+int splt_flac_scan_silence(splt_state *state, off_t start_offset, unsigned long length,
     float threshold, float min, int shots, short output, int *error,
     short silence_processor(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error))
@@ -47,7 +47,7 @@ int splt_flac_scan_silence(splt_state *state, unsigned long length,
     return -1;
   }
 
-  splt_flac_scan_silence_and_process(state, threshold, length, silence_processor, ssd, error);
+  splt_flac_scan_silence_and_process(state, start_offset, threshold, length, silence_processor, ssd, error);
 
   int found = ssd->found;
 
@@ -133,8 +133,8 @@ static void splt_flac_error_callback(const FLAC__StreamDecoder *decoder, FLAC__S
       FLAC__StreamDecoderErrorStatusString[status]);
 }
 
-static void splt_flac_scan_silence_and_process(splt_state *state, float max_threshold,
-    unsigned long length,
+static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_offset,
+    float max_threshold, unsigned long length,
     short process_silence(double time, float level, int silence_was_found, short must_flush,
       splt_scan_silence_data *ssd, int *found, int *error),
     splt_scan_silence_data *ssd, int *error)
@@ -168,7 +168,20 @@ static void splt_flac_scan_silence_and_process(splt_state *state, float max_thre
   {
     splt_e_set_strerror_msg_with_data(state, input_filename);
     *error = SPLT_ERROR_CANNOT_OPEN_FILE;
-    goto end;
+    splt_flac_silence_data_free(silence_data);
+    return;
+  }
+
+  if (start_offset > 0)
+  {
+    if (fseeko(file, start_offset, SEEK_SET) == -1)
+    {
+      splt_e_set_strerror_msg_with_data(state, input_filename);
+      *error = SPLT_ERROR_SEEKING_FILE;
+      splt_flac_silence_data_free(silence_data);
+      fclose(file);
+      return;
+    }
   }
 
   status = FLAC__stream_decoder_init_FILE(decoder, file,
