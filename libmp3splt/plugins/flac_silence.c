@@ -215,6 +215,13 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
       if (err < 0) { *error = err; goto end; }
       break;
     }
+
+    if (state->split.get_silence_level)
+    {
+      state->split.get_silence_level(silence_data->time * 100.0, level, state->split.silence_level_client_data);
+    }
+    state->split.p_bar->silence_db_level = level;
+    state->split.p_bar->silence_found_tracks = found;
   }
 
   if (silence_data->error < 0)
