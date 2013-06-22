@@ -34,11 +34,14 @@ test_douglas_peucker_la_SOURCES = test_douglas_peucker.c tests.h \
 $(top_srcdir)/src/douglas_peucker.c $(top_srcdir)/src/douglas_peucker.h \
 $(top_srcdir)/src/utilities.c $(top_srcdir)/src/utilities.h
 
-TESTS = $(top_srcdir)/test/run-tests.sh
-TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)"
+TESTS = run-tests.sh
+TESTS_ENVIRONMENT = NO_MAKE=yes CUTTER="$(CUTTER)" TESTS_DIR="$(top_builddir)/test"
 
 echo-cutter:
 	@echo $(CUTTER)
+
+echo-tests-dir:
+	@echo $(top_builddir)/test
 
 endif
 
