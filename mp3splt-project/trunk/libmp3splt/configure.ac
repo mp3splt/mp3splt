@@ -40,7 +40,7 @@ m4_define([libmp3splt_micro_version], [1320])
 m4_define([libmp3splt_version],
           [libmp3splt_major_version.libmp3splt_minor_version.libmp3splt_micro_version])
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.62])
 AC_INIT([libmp3splt],[libmp3splt_version],[m@ioalex.net])
 AC_CONFIG_AUX_DIR([libltdl/config])
 AM_INIT_AUTOMAKE
@@ -87,9 +87,9 @@ ifdef([LT_CONFIG_LTDL_DIR],
 
 ifdef([LT_INIT],
       [ LT_INIT([win32-dll]) ],
-      [ LT_INIT([dlopen]) ])
+      [ AC_PROG_LIBTOOL ])
 
-LTDL_INIT([])
+AC_WITH_LTDL
 
 #################################################################
 # Check for the type of the host
@@ -128,19 +128,19 @@ AC_MSG_RESULT($HOST)
 # Check for some debugging, warnings and optimise options
 #################################################################
 
-AC_ARG_ENABLE(c-debug, [AS_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
+AC_ARG_ENABLE(c-debug, [AC_HELP_STRING([--enable-c-debug],[ Enable debugging symbols. ]) ],
     [enable_c_debug=$enableval],[enable_c_debug="no"])
 if test "x$enable_c_debug" = xyes;then
   CFLAGS="$CFLAGS -g -Wall"
 fi
 
-AC_ARG_ENABLE(optimise, [AS_HELP_STRING([--disable-optimise],[ Disable O3 optimise. ]) ],
+AC_ARG_ENABLE(optimise, [AC_HELP_STRING([--disable-optimise],[ Disable O3 optimise. ]) ],
     [enable_optimise=$enableval],[enable_optimise="yes"])
 if test "x$enable_optimise" = xyes;then
   CFLAGS="$CFLAGS -O3"
 fi
 
-AC_ARG_ENABLE(extra-warnings, [AS_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
+AC_ARG_ENABLE(extra-warnings, [AC_HELP_STRING([--enable-extra-warnings],[ Enable extra warnings. ]) ],
     [enable_extra_warnings=$enableval],[enable_extra_warnings="no"])
 if test "x$enable_extra_warnings" = xyes;then
   CFLAGS="$CFLAGS -Wall -Wextra -Wswitch-enum -Wswitch-default -Wfloat-equal -Wbad-function-cast -Wcast-qual -Wunreachable-code"
@@ -170,7 +170,7 @@ AC_CHECK_LIB(ltdl, lt_dlopen, [ hasltdl="yes" ], [ AC_MSG_ERROR([libltdl not fou
 
 AM_CONDITIONAL(IS_ON_WINDOWS, false)
 
-AC_ARG_ENABLE(win, [AS_HELP_STRING([--enable-win],[ Enable if compiling on windows with mingw. ]) ],
+AC_ARG_ENABLE(win, [AC_HELP_STRING([--enable-win],[ Enable if compiling on windows with mingw. ]) ],
     [enable_win=$enableval],[enable_win="no"])
 
 if test "x$enable_win" = xyes;then
@@ -184,7 +184,7 @@ fi
 #check for --disable-mp3 & mad library
 AM_CONDITIONAL(MP3_PLUGIN,false)
 mp3="no" 
-AC_ARG_ENABLE(mp3, [AS_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ], 
+AC_ARG_ENABLE(mp3, [AC_HELP_STRING([--disable-mp3],[ Disable mp3 plugin. ]) ], 
     [enable_mp3_plugin=$enableval],[enable_mp3_plugin="yes"])
 
 if test "x$enable_mp3_plugin" = xyes;then
@@ -195,7 +195,7 @@ fi
 #check for --disable-id3tag & id3tag library
 AM_CONDITIONAL(ID3TAG,false)
 id3="no";
-AC_ARG_ENABLE(id3tag, [AS_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
+AC_ARG_ENABLE(id3tag, [AC_HELP_STRING([--disable-id3tag],[ Disable id3tag support for the mp3 plugin. ]) ],
     [enable_id3tag=$enableval],[enable_id3tag="yes"])
 
 if test "x$enable_id3tag" = xyes;then
@@ -211,7 +211,7 @@ fi
 #check for --disable-ogg & ogg libraries
 AM_CONDITIONAL(OGG_PLUGIN,false)
 ogg="no" 
-AC_ARG_ENABLE(ogg, [AS_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
+AC_ARG_ENABLE(ogg, [AC_HELP_STRING([--disable-ogg],[ Disable Ogg Vorbis plugin. ]) ],
     [enable_ogg_plugin=$enableval],[enable_ogg_plugin="yes"])
 
 if test "x$enable_ogg_plugin" = xyes;then
@@ -228,7 +228,7 @@ fi
 #check for --disable-flac & flac libraries
 AM_CONDITIONAL(FLAC_PLUGIN,false)
 flac="no" 
-AC_ARG_ENABLE(flac, [AS_HELP_STRING([--disable-flac],[ Disable flac plugin. ]) ],
+AC_ARG_ENABLE(flac, [AC_HELP_STRING([--disable-flac],[ Disable flac plugin. ]) ],
     [enable_flac_plugin=$enableval],[enable_flac_plugin="yes"])
 
 if test "x$enable_flac_plugin" = xyes;then
@@ -244,7 +244,7 @@ fi
 
 AM_CONDITIONAL(HAS_CUTTER, false)
 
-AC_ARG_ENABLE(cutter, [AS_HELP_STRING([--disable-cutter],[ Disable Cutter unit testing. ]) ],
+AC_ARG_ENABLE(cutter, [AC_HELP_STRING([--disable-cutter],[ Disable Cutter unit testing. ]) ],
     [enable_cutter=$enableval],[enable_cutter="yes"])
 
 if test "x$enable_cutter" = xyes;then
@@ -268,7 +268,7 @@ fi
 
 AM_CONDITIONAL(PCRE, false)
 pcre="no"
-AC_ARG_ENABLE(pcre, AS_HELP_STRING([--disable-pcre],[Disable pcre support to set tags from input filename. ]),
+AC_ARG_ENABLE(pcre, AC_HELP_STRING([--disable-pcre], [Disable pcre support to set tags from input filename. ]),
     [enable_pcre=$enableval],[enable_pcre="yes"])
 
 if test "x$enable_pcre" = xyes;then
@@ -287,7 +287,7 @@ fi
 
 doxygen_doc="no" 
 with_graphviz="no"
-AC_ARG_ENABLE(doxygen_doc, [AS_HELP_STRING([--disable-doxygen_doc],[ Disable doxygen code documentation. ]) ], 
+AC_ARG_ENABLE(doxygen_doc, [AC_HELP_STRING([--disable-doxygen_doc],[ Disable doxygen code documentation. ]) ], 
     [enable_doxygen_doc=$enableval],[enable_doxygen_doc="yes"])
 
 AM_CONDITIONAL(HAVE_DOXYGEN, false)
