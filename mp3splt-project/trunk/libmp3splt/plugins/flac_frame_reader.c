@@ -835,6 +835,8 @@ static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_fr
     return;
   }
 
+  splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
+
   fr->out = splt_io_fopen(output_fname, "wb+");
   if (fr->out == NULL)
   {
@@ -896,6 +898,23 @@ static double splt_flac_fr_back_end_point_according_to_auto_adjust(splt_state *s
   return new_end_point;
 }
 
+static void update_progress(splt_state *state, double first_time, double time, double end_point)
+{
+  double current = time - first_time;
+  double total = end_point - first_time;
+
+  if ((splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_SILENCE_MODE) ||
+      (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_TRIM_SILENCE_MODE) ||
+      (!splt_o_get_int_option(state, SPLT_OPT_AUTO_ADJUST)))
+  {
+    splt_c_update_progress(state, current, total, 1, 0, SPLT_DEFAULT_PROGRESS_RATE2);
+  }
+  else
+  {
+    splt_c_update_progress(state, current, total, 2, 0, SPLT_DEFAULT_PROGRESS_RATE2);
+  }
+}
+
 void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reader *fr,
     const splt_flac_metadatas *metadatas, const splt_flac_tags *flac_tags,
     const splt_tags *tags_to_write,
@@ -948,6 +967,7 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
   off_t previous_offset = 0;
 
   int we_continue = 1;
+  double first_time = -1;
   while (we_continue)
   {
     unsigned frame_byte_buffer_start = 0;
@@ -957,6 +977,10 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     if (*error < 0) { goto end; }
 
     double time = (double) fr->current_sample_number / (double) sample_rate;
+    if (first_time < 0) { first_time = time; }
+
+    update_progress(state, first_time, time, end_point);
+
     if (time >= begin_point && (time < end_point || end_point < 0))
     {
       splt_flac_fr_open_file_and_write_metadata_if_first_time(fr, metadatas, flac_tags,
@@ -1019,6 +1043,7 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     }
     else
     {
+      splt_c_put_progress_text(state, SPLT_PROGRESS_PREPARE);
       splt_flac_u_process_frame(fr, frame_byte_buffer_start, state, error, NULL, fr);
     }
 

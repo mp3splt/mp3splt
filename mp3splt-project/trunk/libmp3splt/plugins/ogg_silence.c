@@ -299,6 +299,9 @@ static void splt_ogg_scan_silence_and_process(splt_state *state, short seconds,
             }
             else
             {
+              //fprintf(stdout, "%lf/%lf\n", (double)begin, (double)end);
+              //fflush(stdout);
+              //TODO: bug
               splt_c_update_progress(state,(double)begin, (double)end, 2,0.5,SPLT_DEFAULT_PROGRESS_RATE2);
             }
             //END silence callbacks
