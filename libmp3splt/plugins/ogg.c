@@ -990,16 +990,12 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                       (splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_TRIM_SILENCE_MODE) ||
                       (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
                   {
-                    fprintf(stdout, "%lf\t%lf\tx\n", (double)page_granpos, (double)cutpoint);
-                    fflush(stdout);
                     splt_c_update_progress(state, (double)page_granpos,
                         (double)cutpoint,
                         1,0,SPLT_DEFAULT_PROGRESS_RATE);
                   }
                   else
                   {
-                    fprintf(stdout, "%lf\t%lf\n", (double)page_granpos, (double)cutpoint);
-                    fflush(stdout);
                     splt_c_update_progress(state, (double)page_granpos,
                         (double)cutpoint,
                         2,0,SPLT_DEFAULT_PROGRESS_RATE);

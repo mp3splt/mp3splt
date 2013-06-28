@@ -194,12 +194,6 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
     goto end;
   }
 
-  int split_type = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
-  short option_silence_mode =
-    (split_type == SPLT_OPTION_SILENCE_MODE || split_type == SPLT_OPTION_TRIM_SILENCE_MODE);
-
-  long total_time = splt_t_get_total_time(state);
-
   int found = 0;
   while (FLAC__STREAM_DECODER_END_OF_STREAM != FLAC__stream_decoder_get_state(decoder))
   {
@@ -228,17 +222,6 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
     }
     state->split.p_bar->silence_db_level = level;
     state->split.p_bar->silence_found_tracks = found;
-
-    if (option_silence_mode)
-    {
-      if (splt_t_split_is_canceled(state)) { break; }
-      splt_c_update_progress(state, silence_data->time * 100.0, (double)total_time, 1, 0, SPLT_DEFAULT_PROGRESS_RATE2);
-    }
-    else
-    {
-      //TODO:
-      splt_c_update_progress(state, silence_data->time, (double)length, 2, 0.5, SPLT_DEFAULT_PROGRESS_RATE2);
-    }
   }
 
   if (silence_data->error < 0)
