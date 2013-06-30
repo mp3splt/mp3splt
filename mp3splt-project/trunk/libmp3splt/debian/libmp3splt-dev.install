@@ -4,3 +4,4 @@ usr/lib/libmp3splt0/lib*.a
 usr/lib/lib*.so
 usr/lib/*.la
 usr/lib/libmp3splt0/*.la
+usr/lib/pkgconfig/libmp3splt.pc
