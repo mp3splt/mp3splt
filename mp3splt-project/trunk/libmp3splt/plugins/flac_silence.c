@@ -194,6 +194,14 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
     goto end;
   }
 
+  int split_type = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
+  short option_silence_mode =
+    (split_type == SPLT_OPTION_SILENCE_MODE || split_type == SPLT_OPTION_TRIM_SILENCE_MODE);
+
+  long total_time = splt_t_get_total_time(state);
+
+  int first_time = SPLT_TRUE;
+  long time0 = 0;
   int found = 0;
   while (FLAC__STREAM_DECODER_END_OF_STREAM != FLAC__stream_decoder_get_state(decoder))
   {
@@ -202,11 +210,20 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
       break;
     }
 
+    if (first_time)
+    {
+      time0 = silence_data->time;
+    }
+
+    first_time = SPLT_FALSE;
+
     float level = splt_co_convert_to_db(flacstate->temp_level);
     if (level < -96.0) { level = -96.0; }
     if (level > 0) { level = 0; }
 
-    short must_flush = (length > 0 && silence_data->time >= length);
+    long current_time = (long) ((silence_data->time - time0) * 100);
+
+    short must_flush = length > 0 && current_time >= length;
     int err = SPLT_OK;
     short stop = process_silence(silence_data->time, level, 
         silence_data->silence_found, must_flush, ssd, &found, &err);
@@ -218,10 +235,20 @@ static void splt_flac_scan_silence_and_process(splt_state *state, off_t start_of
 
     if (state->split.get_silence_level)
     {
-      state->split.get_silence_level(silence_data->time * 100.0, level, state->split.silence_level_client_data);
+      state->split.get_silence_level((long) (silence_data->time * 100.0), level, state->split.silence_level_client_data);
     }
     state->split.p_bar->silence_db_level = level;
     state->split.p_bar->silence_found_tracks = found;
+
+    if (option_silence_mode)
+    {
+      if (splt_t_split_is_canceled(state)) { break; }
+      splt_c_update_progress(state, silence_data->time * 100.0, (double)total_time, 1, 0, SPLT_DEFAULT_PROGRESS_RATE2);
+    }
+    else
+    {
+      splt_c_update_progress(state, (double) current_time, (double)length, 4, 0.5, SPLT_DEFAULT_PROGRESS_RATE2);
+    }
   }
 
   if (silence_data->error < 0)

@@ -813,6 +813,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
   ogg_page page;
   int eos=0;
   int result = 0;
+  int after_adjust = 0;
+  ogg_int64_t up_to_adjust_granpos = 0;
   ogg_int64_t page_granpos = 0, current_granpos = 0, prev_granpos = 0;
   ogg_int64_t packetnum = 0; /* Should this start from 0 or 2 ? */
 
@@ -990,15 +992,26 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
                       (splt_o_get_int_option(state,SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_TRIM_SILENCE_MODE) ||
                       (!splt_o_get_int_option(state,SPLT_OPT_AUTO_ADJUST)))
                   {
+                    /*fprintf(stdout, "%lf\t%lf\tx\n", (double)page_granpos, (double)cutpoint);
+                    fflush(stdout);*/
                     splt_c_update_progress(state, (double)page_granpos,
                         (double)cutpoint,
                         1,0,SPLT_DEFAULT_PROGRESS_RATE);
                   }
                   else
                   {
-                    splt_c_update_progress(state, (double)page_granpos,
-                        (double)cutpoint,
-                        2,0,SPLT_DEFAULT_PROGRESS_RATE);
+                    /*fprintf(stdout, "%lf\t%lf\to\n", (double)page_granpos, (double)cutpoint);
+                    fflush(stdout);*/
+                    int progress_stage = 2;
+                    float progress_start = 0;
+                    if (after_adjust)
+                    {
+                      progress_stage = 4;
+                      progress_start = 0.75;
+                    }
+                    splt_c_update_progress(state, (double)(page_granpos - up_to_adjust_granpos),
+                        (double)(cutpoint - up_to_adjust_granpos),
+                        progress_stage, progress_start, SPLT_DEFAULT_PROGRESS_RATE);
                   }
 
                   ogg_stream_packetin(stream, &packet);
@@ -1046,6 +1059,8 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
 
               splt_siu_ssplit_free(&state->silence_list);
               adjust = 0;
+              after_adjust = 1;
+              up_to_adjust_granpos = page_granpos;
               splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
 
               if (*error < 0) { goto error; }
