@@ -967,10 +967,17 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     begin_point = fr->end_point;
   }
 
+  unsigned long adjust_gap_hundr = 0;
   int adjust_gap_secs = splt_o_get_int_option(state, SPLT_OPT_PARAM_GAP);
-  end_point = splt_flac_fr_back_end_point_according_to_auto_adjust(state,
-      begin_point, end_point, &adjust_gap_secs);
-  unsigned long adjust_gap_hundr = (unsigned long) adjust_gap_secs * 100;
+
+  short end_point_is_eof = splt_u_fend_sec_is_bigger_than_total_time(state, end_point);
+  double total_time = splt_t_get_total_time_as_double_secs(state);
+  if (!end_point_is_eof && end_point < total_time)
+  {
+    end_point = splt_flac_fr_back_end_point_according_to_auto_adjust(state,
+        begin_point, end_point, &adjust_gap_secs);
+    adjust_gap_hundr = (unsigned long) adjust_gap_secs * 100;
+  }
 
   off_t previous_offset = 0;
 
@@ -1007,7 +1014,6 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
     }
     else if (end_point > 0 && time >= end_point)
     {
-      //auto adjust
       if (adjust_gap_hundr)
       {
         float threshold = splt_o_get_float_option(state, SPLT_OPT_PARAM_THRESHOLD);
