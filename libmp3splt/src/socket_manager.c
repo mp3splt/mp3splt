@@ -48,6 +48,8 @@ Manages a socket connection
 
 #ifdef __WIN32__
 #include <malloc.h>
+#elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+#include <stdlib.h>
 #else
 #include <alloca.h>
 #endif
