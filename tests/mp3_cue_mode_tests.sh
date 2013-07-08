@@ -44,11 +44,11 @@ FILE ${Q}xx$MP3_FILE${Q} MP3
 function _create_mp3splt_gtk_exported_cue
 {
   echo "REM CREATOR "MP3SPLT_GTK"
-REM SPLT_TITLE_IS_FILENAME
 FILE ""
         TRACK 01 AUDIO
                 TITLE "first"
                 INDEX 01 0:00:00
+                REM NAME "first_name"
         TRACK 02 AUDIO
                 TITLE "skip"
                 REM NOKEEP
@@ -441,7 +441,7 @@ function test_cue_mode_and_output_format
   echo
 }
 
-function test_exported_mp3splt_gtk_cue_mode_and_output_format
+function test_cue_exported_mp3splt_gtk_cue_mode_and_output_format
 {
   _create_mp3splt_gtk_exported_cue
 

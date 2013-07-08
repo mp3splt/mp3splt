@@ -39,7 +39,7 @@ in common.
   user using the format that is handled by oformat_parser.c
  */
 void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error, 
-    const splt_tags *all_tags)
+    const splt_tags *all_tags, int only_set_name_if_null)
 {
   int err = splt_tu_copy_tags_on_all_tracks(state, tracks, all_tags);
   if (err < 0) { *error = err; return; }
@@ -61,8 +61,12 @@ void splt_cc_put_filenames_from_tags(splt_state *state, int tracks, int *error,
   int current_split = 0;
 
   do {
-    err = splt_u_finish_tags_and_put_output_format_filename(state, current_split);
-    if (err != SPLT_OK) { *error = err; return; }
+    const char *splitpoint_name = splt_sp_get_splitpoint_name(state, current_split, &err);
+    if (!only_set_name_if_null || (splitpoint_name == NULL))
+    {
+      err = splt_u_finish_tags_and_put_output_format_filename(state, current_split);
+      if (err != SPLT_OK) { *error = err; return; }
+    }
 
     splt_t_current_split_next(state);
     current_split = splt_t_get_current_split(state);
