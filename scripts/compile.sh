@@ -174,7 +174,7 @@ function make_debian_flavor()
 
 function debian_packages()
 {
-    DEBIAN_FLAVORS="squeeze wheezy unstable"
+    DEBIAN_FLAVORS="wheezy jessie unstable"
 
     echo
     print_yellow "Creating debian packages..."
@@ -191,7 +191,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="oneiric precise quantal"
+    UBUNTU_FLAVORS="precise quantal rarian"
 
     echo
     print_yellow "Creating ubuntu packages..."
