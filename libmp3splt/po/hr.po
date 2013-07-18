@@ -1,286 +1,163 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Munteanu Alexandru
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # gogo <trebelnik2@gmail.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
-"Report-Msgid-Bugs-To: http://sourceforge.net/tracker/?atid=476061&group_id=55130&func=browse\n"
-"POT-Creation-Date: 2012-09-02 13:52+0200\n"
+"Report-Msgid-Bugs-To: m@ioalex.net\n"
+"POT-Creation-Date: 2013-07-13 09:40+0200\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: hr\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: src/mp3splt.c:845
-#, c-format
-msgid " info: resolving linked filename to '%s'\n"
-msgstr " info: rješavanje povezanog naziva datoteke u '%s'\n"
-
-#: src/mp3splt.c:910
-#, c-format
-msgid " info: file matches the plugin '%s'\n"
-msgstr "info: datoteka se podudara s priključkom '%s'\n"
-
-#: src/mp3splt.c:918
-#, c-format
-msgid " M3U file '%s' will be created.\n"
-msgstr " M3U datoteka '%s' biti će  izrađena.\n"
-
-#: src/mp3splt.c:939
-#, c-format
-msgid ""
-" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
-"%.2f)\n"
-msgstr ""
-
-#: src/mp3splt.c:1739 src/tags_parser.c:108
-msgid ""
-" warning: cannot set tags from filename regular expression - compiled "
-"without pcre support\n"
-msgstr ""
-
-#: src/checks.c:158
-msgid "directory does not exists"
-msgstr "direktorij ne postoji"
-
-#: src/cddb.c:63
-#, c-format
-msgid " reading informations from CDDB file %s ...\n"
-msgstr " čitanje informacija iz CDDB datoteke %s ...\n"
-
-#: src/cddb.c:125 src/cue.c:539
-#, c-format
-msgid ""
-"  Tracks: %d\n"
-"\n"
-msgstr "  Pjesme: %d\n\n"
-
-#: src/cddb.c:259 src/cue.c:135
-#, c-format
-msgid ""
-"\n"
-"  Artist: %s\n"
-msgstr "\n  Izvođač: %s\n"
-
-#: src/cddb.c:262 src/cue.c:139
+#: src/cue.c:175 src/cddb.c:276
 #, c-format
 msgid "  Album: %s\n"
 msgstr "  Album: %s\n"
 
-#: src/splt.c:154
-msgid " info: starting normal split\n"
-msgstr " info: pokretanje normalne podjele\n"
-
-#: src/splt.c:251
-msgid " info: starting error mode split\n"
-msgstr " info: pokretanje načina greške\n"
-
-#: src/splt.c:563
-msgid " info: starting time mode split\n"
-msgstr " info: pokretanje načina vremena\n"
-
-#: src/splt.c:582
-msgid " info: starting 'split in equal tracks' mode\n"
-msgstr " info: pokretanje načina 'podijeli na jednake pjesme'\n"
-
-#: src/splt.c:624
-#, c-format
-msgid " Trim silence split - Th: %.1f dB\n"
-msgstr ""
-
-#: src/splt.c:758
-msgid "YES"
-msgstr "DA"
-
-#: src/splt.c:764
-#, c-format
-msgid "NO"
-msgstr "NE"
-
-#: src/splt.c:770
-#, c-format
-msgid "User"
-msgstr "Korisnik"
-
-#: src/splt.c:774
-#, c-format
-msgid "Auto"
-msgstr "Auto"
-
-#: src/splt.c:794
+#: src/cue.c:209 src/cddb.c:273
 #, c-format
 msgid ""
-" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s,"
-" Min track: %.2f, Shots: %d%s)\n"
+"\n"
+"  Artist: %s\n"
 msgstr ""
+"\n"
+"  Izvođač: %s\n"
 
-#: src/splt.c:820
-#, c-format
-msgid ""
-" Found silence log file '%s' ! Reading silence points from file to save time"
-" ;)\n"
-msgstr " Peonađena datoteka popisa tišine '%s' ! Očitavnje točaka tišine iz datoteke, radi bržeg očitavanja ;)\n"
-
-#: src/splt.c:849
-#, c-format
-msgid " Total silence points found: %d."
-msgstr "Pronađeno ukupno točaka tišine: %d."
-
-#: src/splt.c:861
-#, c-format
-msgid " (Selected %d tracks)\n"
-msgstr " (Odabrano %d pjesama)\n"
-
-#: src/splt.c:979
-#, c-format
-msgid " Writing silence log file '%s' ...\n"
-msgstr " Zapisujem datoteku popisa tišine '%s' ...\n"
-
-#: src/splt.c:1035
-msgid " info: starting silence mode split\n"
-msgstr ""
-
-#: src/splt.c:1083
-msgid " info: starting trim using silence mode split\n"
-msgstr ""
-
-#: src/splt.c:1130
-msgid " info: starting wrap mode split\n"
-msgstr ""
-
-#: src/utils.c:71
-#, c-format
-msgid " info: overlapping split files with %ld.%ld.%ld\n"
-msgstr ""
-
-#: src/cue.c:435
+#: src/cue.c:513
 #, c-format
 msgid " reading informations from CUE file %s ...\n"
 msgstr ""
 
-#: src/cue.c:487
-msgid "description here"
+#: src/cue.c:587 src/cddb.c:133
+#, c-format
+msgid ""
+"  Tracks: %d\n"
+"\n"
 msgstr ""
+"  Pjesme: %d\n"
+"\n"
 
-#: src/cue.c:700
+#: src/cue.c:810
 #, c-format
 msgid " CUE file '%s' created.\n"
 msgstr " CUE datoteka '%s' izrađena\n"
 
-#: src/audacity.c:237
-#, c-format
-msgid " reading informations from audacity labels file '%s' ...\n"
-msgstr ""
-
-#: src/errors.c:129
+#: src/errors.c:126
 msgid "Network error"
 msgstr "Greška mreže"
 
-#: src/errors.c:179
+#: src/errors.c:176
 msgid " warning: might be VBR, use frame mode"
 msgstr ""
 
-#: src/errors.c:181
+#: src/errors.c:178
 msgid " error mode ok"
 msgstr " način rada greške"
 
-#: src/errors.c:183
+#: src/errors.c:180
 msgid " error: unknown sync error"
 msgstr " greška: nepoznata greška usklađivanja"
 
-#: src/errors.c:185
+#: src/errors.c:182
 msgid " no sync errors found"
 msgstr " nema grešaka usklađivanja"
 
-#: src/errors.c:188
+#: src/errors.c:185
 msgid " sync error: too many sync errors"
 msgstr " greška usklađivanja: previše grešaka usklađivanja"
 
-#: src/errors.c:192
+#: src/errors.c:189
 msgid " maximum number of found CD reached"
 msgstr " maksimalana broj pronađenih CD-a dostignut"
 
-#: src/errors.c:194
+#: src/errors.c:191
 msgid " cue file processed"
 msgstr " cue datoteke obrađena"
 
-#: src/errors.c:196
+#: src/errors.c:193
 msgid " cddb file processed"
 msgstr " cddb datoteka obrađena"
 
-#: src/errors.c:198
+#: src/errors.c:195
 msgid " freedb file downloaded"
 msgstr " freedb datoteka preuzeta"
 
-#: src/errors.c:200
+#: src/errors.c:197
 msgid " freedb search processed"
 msgstr " freedb pretraga obrađena"
 
-#: src/errors.c:204
+#: src/errors.c:201
 #, c-format
 msgid " freedb error: cannot initialise socket (%s)"
 msgstr ""
 
-#: src/errors.c:208
+#: src/errors.c:205
 #, c-format
 msgid " freedb error: cannot get host '%s' by name (%s)"
 msgstr ""
 
-#: src/errors.c:212
+#: src/errors.c:209
 #, c-format
 msgid " freedb error: cannot open socket (%s)"
 msgstr ""
 
-#: src/errors.c:215
+#: src/errors.c:212
 #, c-format
 msgid " freedb error: cannot connect to host '%s' (%s)"
 msgstr ""
 
-#: src/errors.c:219
+#: src/errors.c:216
 #, c-format
 msgid " freedb error: cannot disconnect from host (%s)"
 msgstr ""
 
-#: src/errors.c:223
+#: src/errors.c:220
 #, c-format
 msgid " freedb error: cannot send message to host '%s' (%s)"
 msgstr ""
 
-#: src/errors.c:227
+#: src/errors.c:224
 msgid " freedb error: invalid server answer"
 msgstr ""
 
-#: src/errors.c:230
+#: src/errors.c:227
 msgid " freedb error: site returned code 201"
 msgstr ""
 
-#: src/errors.c:233
+#: src/errors.c:230
 msgid " freedb error: site returned code 200"
 msgstr ""
 
-#: src/errors.c:236
+#: src/errors.c:233
 msgid " freedb error: bad communication with site"
 msgstr ""
 
-#: src/errors.c:239
+#: src/errors.c:236
 #, c-format
 msgid " freedb error: could not get infos from site '%s'"
 msgstr ""
 
-#: src/errors.c:242
+#: src/errors.c:239
 msgid " no CD found for this search"
 msgstr " nema  pronađenih CD-a za ovu pretragu"
 
-#: src/errors.c:245
+#: src/errors.c:242
 #, c-format
 msgid " freedb error: cannot receive message from server '%s' (%s)"
+msgstr ""
+
+#: src/errors.c:246
+msgid " proxy not supported with this type of protocol"
 msgstr ""
 
 #: src/errors.c:248
@@ -298,7 +175,7 @@ msgid " freedb error: No such CD entry in database"
 msgstr ""
 
 #: src/errors.c:258
-msgid " freedb error: site returned an unknown error"
+msgid " freedb error: bad response from remote host"
 msgstr ""
 
 #: src/errors.c:261
@@ -546,90 +423,246 @@ msgstr " greška regularnog izraza: nema podudaranja "
 msgid " regular expression ok"
 msgstr " regularni izraz"
 
+#: src/mp3splt.c:1138
+#, c-format
+msgid " info: resolving linked filename to '%s'\n"
+msgstr " info: rješavanje povezanog naziva datoteke u '%s'\n"
+
+#: src/mp3splt.c:1193
+#, c-format
+msgid " info: file matches the plugin '%s'\n"
+msgstr "info: datoteka se podudara s priključkom '%s'\n"
+
+#: src/mp3splt.c:1201
+#, c-format
+msgid " M3U file '%s' will be created.\n"
+msgstr " M3U datoteka '%s' biti će  izrađena.\n"
+
+#: src/mp3splt.c:1222
+#, c-format
+msgid ""
+" Working with SILENCE AUTO-ADJUST (Threshold: %.1f dB Gap: %d sec Offset: "
+"%.2f Min: %.2f sec)\n"
+msgstr ""
+
+#: src/mp3splt.c:1977 src/tags_parser.c:107
+msgid ""
+" warning: cannot set tags from filename regular expression - compiled "
+"without pcre support\n"
+msgstr ""
+
+#: src/checks.c:157
+msgid "directory does not exists"
+msgstr "direktorij ne postoji"
+
+#: src/cddb.c:63
+#, c-format
+msgid " reading informations from CDDB file %s ...\n"
+msgstr " čitanje informacija iz CDDB datoteke %s ...\n"
+
+#: src/string_utils.c:638 src/string_utils.c:659
+msgid "not enough memory"
+msgstr "nedovoljno memorije"
+
+#: src/audacity.c:237
+#, c-format
+msgid " reading informations from audacity labels file '%s' ...\n"
+msgstr ""
+
 #: src/filename_regex.c:90
 msgid "no regular expression provided"
 msgstr " regularni izraz nije osiguran"
 
-#: src/string_utils.c:639 src/string_utils.c:660
-msgid "not enough memory"
-msgstr "nedovoljno memorije"
+#: src/splt.c:157
+msgid " info: starting normal split\n"
+msgstr " info: pokretanje normalne podjele\n"
 
-#: plugins/mp3.c:1159
-msgid ""
-" warning: lost sync and compiled without id3tag support - the split might be"
-" corrupt\n"
+#: src/splt.c:254
+msgid " info: starting error mode split\n"
+msgstr " info: pokretanje načina greške\n"
+
+#: src/splt.c:590
+msgid " info: starting time mode split\n"
+msgstr " info: pokretanje načina vremena\n"
+
+#: src/splt.c:609
+msgid " info: starting 'split in equal tracks' mode\n"
+msgstr " info: pokretanje načina 'podijeli na jednake pjesme'\n"
+
+#: src/splt.c:651
+#, c-format
+msgid " Trim silence split - Th: %.1f dB, Min: %.2f sec\n"
 msgstr ""
 
-#: plugins/mp3.c:1255
+#: src/splt.c:786
+msgid "YES"
+msgstr "DA"
+
+#: src/splt.c:792
+#, c-format
+msgid "NO"
+msgstr "NE"
+
+#: src/splt.c:798
+#, c-format
+msgid "User"
+msgstr "Korisnik"
+
+#: src/splt.c:802
+#, c-format
+msgid "Auto"
+msgstr "Auto"
+
+#: src/splt.c:822
+#, c-format
+msgid ""
+" Silence split type: %s mode (Th: %.1f dB, Off: %.2f, Min: %.2f, Remove: %s, "
+"Min track: %.2f, Shots: %d%s)\n"
+msgstr ""
+
+#: src/splt.c:848
+#, c-format
+msgid ""
+" Found silence log file '%s' ! Reading silence points from file to save "
+"time ;)\n"
+msgstr ""
+" Peonađena datoteka popisa tišine '%s' ! Očitavnje točaka tišine iz "
+"datoteke, radi bržeg očitavanja ;)\n"
+
+#: src/splt.c:883
+#, c-format
+msgid " Total silence points found: %d."
+msgstr "Pronađeno ukupno točaka tišine: %d."
+
+#: src/splt.c:895
+#, c-format
+msgid " (Selected %d tracks)\n"
+msgstr " (Odabrano %d pjesama)\n"
+
+#: src/splt.c:1014
+#, c-format
+msgid " Writing silence log file '%s' ...\n"
+msgstr " Zapisujem datoteku popisa tišine '%s' ...\n"
+
+#: src/splt.c:1068
+msgid " info: starting silence mode split\n"
+msgstr ""
+
+#: src/splt.c:1116
+msgid " info: starting trim using silence mode split\n"
+msgstr ""
+
+#: src/splt.c:1193
+msgid " info: starting wrap mode split\n"
+msgstr ""
+
+#: src/split_points.c:398
+#, c-format
+msgid " info: track too short (%ld.%ld.%ld < %ld.%ld.%ld); skipped.\n"
+msgstr ""
+
+#: src/utils.c:70
+#, c-format
+msgid " info: overlapping split files with %ld.%ld.%ld\n"
+msgstr ""
+
+#: plugins/mp3.c:1236
+msgid ""
+" warning: lost sync and compiled without id3tag support - the split might be "
+"corrupt\n"
+msgstr ""
+
+#: plugins/mp3.c:1332
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr " info: nađeno Xing ili Info zaglavlje. Prebacujem u način okvira... \n"
 
-#: plugins/mp3.c:1394
+#: plugins/mp3.c:1470
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " info: MPEG %d Layer %d - %d Hz - %s"
 
-#: plugins/mp3.c:1402
+#: plugins/mp3.c:1478
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - NAČIN OKVIRA NS"
 
-#: plugins/mp3.c:1406
+#: plugins/mp3.c:1482
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - NAČIN OKVIRA"
 
-#: plugins/mp3.c:1411
+#: plugins/mp3.c:1487
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d Kb/s"
 
-#: plugins/mp3.c:1416
+#: plugins/mp3.c:1492
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1424 plugins/ogg.c:134
+#: plugins/mp3.c:1500 plugins/ogg.c:132 plugins/flac.c:201
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Ukupno vrijeme: %dm.%02ds"
 
-#: plugins/mp3.c:2738
+#: plugins/mp3.c:2823
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Otkrivrna datoteka je stvorena sa: Mp3Wrap i. %c.%c\n"
 
-#: plugins/mp3.c:2776
+#: plugins/mp3.c:2861
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr " Provjera integriteta datoteke: CRC izračunavanje, molim pričekajte..."
 
-#: plugins/mp3.c:2795
+#: plugins/mp3.c:2880
 msgid " OK\n"
 msgstr " U redu\n"
 
-#: plugins/mp3.c:2814
+#: plugins/mp3.c:2899
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Otkrivrna datoteka je stvorena sa: AlbumWrap\n"
 
-#: plugins/mp3.c:2836
+#: plugins/mp3.c:2921
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Ukupno datoteka: %d\n"
 
-#: plugins/mp3.c:3252
+#: plugins/mp3.c:3339
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr " upozorenje: stdin '-' trebao bi biti mp3 stream.\n"
 
-#: plugins/mp3.c:3279
+#: plugins/mp3.c:3366
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " Obrađeno %lu okvira - Greška usklađivanja: %lu\n"
 
-#: plugins/ogg.c:126
+#: plugins/ogg.c:124
 #, c-format
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr " info: Ogg Vorbis stream - %ld - %ld Kb/s - %d kanala"
 
-#: plugins/ogg.c:1460
+#: plugins/ogg.c:1472
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr " upozorenje: stdin '-' trebao bi biti ogg stream.\n"
+
+#: plugins/ogg_utils.c:83
+msgid ""
+" warning: unexpected position in ogg vorbis stream - split from 0.0 to EOF "
+"to fix.\n"
+msgstr ""
+
+#: plugins/silence_processors.c:226
+#, c-format
+msgid " info: trim begin split at %ldm_%.2lds_%.2ldh\n"
+msgstr ""
+
+#: plugins/silence_processors.c:269
+#, c-format
+msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
+msgstr ""
+
+#: plugins/flac.c:193
+#, c-format
+msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
+msgstr ""

@@ -6,9 +6,9 @@ LIBMP3SPLT_DIR=libmp3splt
 MP3SPLT_DIR=newmp3splt
 MP3SPLT_GTK_DIR=mp3splt-gtk
 
-LIBMP3SPLT_REAL_VERSION="0.9.1320"
-MP3SPLT_REAL_VERSION="2.6.1320"
-MP3SPLT_GTK_REAL_VERSION="0.9.1320"
+LIBMP3SPLT_REAL_VERSION="0.9.1343"
+MP3SPLT_REAL_VERSION="2.6.1343"
+MP3SPLT_GTK_REAL_VERSION="0.9.1343"
 
 BUILD_SOURCE_PACKAGES=1
 
@@ -64,7 +64,7 @@ function confirmation_question()
           exit 0
         fi
     done
-    
+ 
     #don't run the script as root
     if [[ `id -u` == 0 ]]; then
         print_red "The script must not be run as root"
@@ -191,7 +191,7 @@ function debian_packages()
 ############# ubuntu packages ##########################
 function ubuntu_packages()
 {
-    UBUNTU_FLAVORS="precise quantal rarian"
+    UBUNTU_FLAVORS="precise quantal raring"
 
     echo
     print_yellow "Creating ubuntu packages..."

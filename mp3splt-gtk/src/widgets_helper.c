@@ -75,9 +75,16 @@ GtkWidget *wh_set_title_and_get_vbox(GtkWidget *widget, const gchar *title)
 
 GtkWidget *wh_new_table()
 {
+#if GTK_MAJOR_VERSION >= 3
+  GtkWidget *table = gtk_grid_new();
+  g_object_set_data(G_OBJECT(table), "rows", GINT_TO_POINTER(0));
+  gtk_grid_set_column_spacing(GTK_GRID(table), 5);
+  gtk_grid_set_row_spacing(GTK_GRID(table), 4);
+#else
   GtkWidget *table = gtk_table_new(1, 2, FALSE);
   gtk_table_set_col_spacing(GTK_TABLE(table), 0, 0);
   gtk_table_set_col_spacing(GTK_TABLE(table), 1, 5);
+#endif
   return table;
 }
 
@@ -445,6 +452,13 @@ static void hide_window_from_button(GtkWidget *widget, gpointer data)
 
 static guint _wh_add_row_to_table(GtkWidget *table)
 {
+#if GTK_MAJOR_VERSION >= 3
+  int number_of_rows = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(table), "rows"));
+  number_of_rows++;
+  g_object_set_data(G_OBJECT(table), "rows", GINT_TO_POINTER(number_of_rows));
+  gtk_grid_insert_row(GTK_GRID(table), number_of_rows);
+  return number_of_rows;
+#else
   guint rows;
   guint columns;
 
@@ -459,6 +473,7 @@ static guint _wh_add_row_to_table(GtkWidget *table)
   gtk_table_set_row_spacing(GTK_TABLE(table), new_rows - 1, 4);
 
   return new_rows;
+#endif
 }
 
 static GtkWidget *_wh_put_in_new_hbox_with_margin(GtkWidget *widget, gint margin)
@@ -486,10 +501,18 @@ static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
   GtkWidget *my_widget = widget;
   GtkWidget *hbox;
 
+#if GTK_MAJOR_VERSION >= 3
+  gtk_widget_set_halign(my_widget, GTK_ALIGN_FILL);
+#else
   GtkAttachOptions xoptions = GTK_FILL;
+#endif
   if (expand)
   {
+#if GTK_MAJOR_VERSION >= 3
+    gtk_widget_set_hexpand(my_widget, TRUE);
+#else
     xoptions |= GTK_EXPAND;
+#endif
   }
   else
   {
@@ -498,9 +521,13 @@ static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
     my_widget = hbox;
   }
 
+#if GTK_MAJOR_VERSION >= 3
+  gtk_grid_attach(GTK_GRID(table), my_widget, start_column, row - 1, end_column - start_column, 1);
+#else
   gtk_table_attach(GTK_TABLE(table), my_widget,
       start_column, end_column, row-1, row,
       xoptions, GTK_FILL | GTK_EXPAND,
       0, 0);
+#endif
 }
 
