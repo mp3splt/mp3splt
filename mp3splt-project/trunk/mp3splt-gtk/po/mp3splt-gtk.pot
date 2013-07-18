@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-28 11:26+0200\n"
+"POT-Creation-Date: 2013-07-17 21:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,7 +50,7 @@ msgstr ""
 msgid "cue files (*.cue)"
 msgstr ""
 
-#: src/widgets_helper.c:421
+#: src/widgets_helper.c:428
 msgid "_Close"
 msgstr ""
 
@@ -202,27 +202,27 @@ msgstr ""
 msgid " quick preview..."
 msgstr ""
 
-#: src/player_window.c:3027
+#: src/player_window.c:3022
 msgid "Splitpoints and amplitude wave v_iew"
 msgstr ""
 
-#: src/player_window.c:3143
+#: src/player_window.c:3138
 msgid "History"
 msgstr ""
 
-#: src/player_window.c:3233
+#: src/player_window.c:3228
 msgid "_Erase selected entries"
 msgstr ""
 
-#: src/player_window.c:3241
+#: src/player_window.c:3236
 msgid "E_rase all history"
 msgstr ""
 
-#: src/player_window.c:3283
+#: src/player_window.c:3278
 msgid "Files h_istory"
 msgstr ""
 
-#: src/player_window.c:3409
+#: src/player_window.c:3404
 msgid " quick preview finished, song paused"
 msgstr ""
 

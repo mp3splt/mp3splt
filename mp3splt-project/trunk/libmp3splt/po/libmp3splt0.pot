@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-04-28 11:24+0200\n"
+"POT-Creation-Date: 2013-07-13 09:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -558,73 +558,73 @@ msgstr ""
 msgid " info: overlapping split files with %ld.%ld.%ld\n"
 msgstr ""
 
-#: plugins/mp3.c:1234
+#: plugins/mp3.c:1236
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
 msgstr ""
 
-#: plugins/mp3.c:1330
+#: plugins/mp3.c:1332
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr ""
 
-#: plugins/mp3.c:1468
+#: plugins/mp3.c:1470
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr ""
 
-#: plugins/mp3.c:1476
+#: plugins/mp3.c:1478
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr ""
 
-#: plugins/mp3.c:1480
+#: plugins/mp3.c:1482
 #, c-format
 msgid " - FRAME MODE"
 msgstr ""
 
-#: plugins/mp3.c:1485
+#: plugins/mp3.c:1487
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1490
+#: plugins/mp3.c:1492
 #, c-format
 msgid " - %d Kb/s"
 msgstr ""
 
-#: plugins/mp3.c:1498 plugins/ogg.c:132 plugins/flac.c:170
+#: plugins/mp3.c:1500 plugins/ogg.c:132 plugins/flac.c:201
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr ""
 
-#: plugins/mp3.c:2817
+#: plugins/mp3.c:2823
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr ""
 
-#: plugins/mp3.c:2855
+#: plugins/mp3.c:2861
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 
-#: plugins/mp3.c:2874
+#: plugins/mp3.c:2880
 msgid " OK\n"
 msgstr ""
 
-#: plugins/mp3.c:2893
+#: plugins/mp3.c:2899
 msgid " Detected file created with: AlbumWrap\n"
 msgstr ""
 
-#: plugins/mp3.c:2915
+#: plugins/mp3.c:2921
 #, c-format
 msgid " Total files: %d\n"
 msgstr ""
 
-#: plugins/mp3.c:3333
+#: plugins/mp3.c:3339
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 
-#: plugins/mp3.c:3360
+#: plugins/mp3.c:3366
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr ""
@@ -634,7 +634,7 @@ msgstr ""
 msgid " info: Ogg Vorbis Stream - %ld - %ld Kb/s - %d channels"
 msgstr ""
 
-#: plugins/ogg.c:1457
+#: plugins/ogg.c:1472
 msgid " warning: stdin 'o-' is supposed to be ogg stream.\n"
 msgstr ""
 
@@ -654,7 +654,7 @@ msgstr ""
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr ""
 
-#: plugins/flac.c:162
+#: plugins/flac.c:193
 #, c-format
 msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""

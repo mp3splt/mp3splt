@@ -2992,15 +2992,10 @@ static GtkWidget *create_drawing_area(ui_state *ui)
 {
   GtkWidget *frame = gtk_frame_new(NULL);
  
-  GdkColor color;
-  color.red = 65000; color.green = 0; color.blue = 0;
-  gtk_widget_modify_bg(frame, GTK_STATE_NORMAL, &color);
-
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 
   GtkWidget *drawing_area = gtk_drawing_area_new();
-  dnd_add_drag_data_received_to_widget(drawing_area, 
-      DND_SINGLE_MODE_AUDIO_FILE_AND_DATA_FILES, ui);
+  dnd_add_drag_data_received_to_widget(drawing_area, DND_SINGLE_MODE_AUDIO_FILE_AND_DATA_FILES, ui);
 
   ui->gui->drawing_area = drawing_area;
 
