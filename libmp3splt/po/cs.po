@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-07-13 09:40+0200\n"
+"POT-Creation-Date: 2013-07-20 08:58+0200\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -618,7 +618,7 @@ msgstr " - NS - %d kB/s"
 msgid " - %d Kb/s"
 msgstr " - %d kB/s"
 
-#: plugins/mp3.c:1500 plugins/ogg.c:132 plugins/flac.c:201
+#: plugins/mp3.c:1500 plugins/ogg.c:132 plugins/flac.c:214
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Celkový čas: %dm.%02ds"
@@ -679,7 +679,7 @@ msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr " Informace: Překrytí dělení souborů %ld.%ld.%ld\n"
 
-#: plugins/flac.c:193
+#: plugins/flac.c:206
 #, c-format
 msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""
