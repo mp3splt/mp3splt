@@ -51,7 +51,9 @@ void sigint_handler(int sig)
 
 static int is_stdin(const char *current_filename)
 {
-  return strcmp(current_filename, "-") == 0 || strcmp(current_filename, "o-") == 0;
+  return strcmp(current_filename, "-") == 0 ||
+    strcmp(current_filename, "o-") == 0 ||
+    strcmp(current_filename, "f-") == 0;
 }
 
 int main(int argc, char **orig_argv)
