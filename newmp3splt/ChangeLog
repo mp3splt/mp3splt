@@ -7,6 +7,12 @@ Known issues :
 
 - translated 'mp3splt -h' doesn't show complete message on utf8 on windows: won't fix ?
 
+#mp3splt version 2.6
+
+- experimental FLAC support added - stdin and stdout are not yet implemented
+- new --enable-flacsplt_symlink configure option to mp3splt
+- fixed progress bar of ogg vorbis when using the auto adjust option (libmp3splt)
+
 #mp3splt version 2.5.2
 
 - added option -I to specify the input tags encoding for when writing ID3v2 tags (ISO-8859-1, UTF-8

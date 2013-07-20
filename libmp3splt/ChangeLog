@@ -2,6 +2,14 @@ Known issues :
 
 - C library error messages not translated on windows : won't fix
 
+libmp3splt version 0.9
+-------------------------------------------------------------
+- experimental FLAC support added - stdin and stdout are not yet implemented
+- done patch tracker #6 Please support *BSD - Under *BSD, alloca(3) is defined in stdlib.h
+- fixed progress bar of ogg vorbis when using the auto adjust option
+- fixed bug #152 libmp3splt trunk: ./autogen.sh does not create file test/Makefile.in
+- fixed bug #150 - compile error if no libmp3tag around
+
 libmp3splt version 0.8.2
 -------------------------------------------------------------
 
