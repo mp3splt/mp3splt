@@ -4,6 +4,15 @@ Please read the ChangeLog of libmp3splt for more information.
 Some changes are implemented in libmp3splt, but reported here for convenience.
 
 -------------------------------------------------------------
+mp3splt-gtk version 0.9
+
+- experimental FLAC support added
+- fixed bug: when importing the exported cue file, set splitpoint name if REM NAME found (libmp3splt)
+- fixed progress bar of ogg vorbis when using the auto adjust option (libmp3splt)
+- applied patch of #153 [PATCH] mp3splt-gtk 0.8.2 has issues with Automake 1.13(.1), too
+- fixed bug #151 - remove deprecated category 'Application' from mp3splt-gtk .desktop file
+
+-------------------------------------------------------------
 mp3splt-gtk version 0.8.2
 
 - fixed important bug in mp3splt-gtk: split using cue file was not splitting the last part
