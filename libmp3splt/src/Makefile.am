@@ -7,7 +7,7 @@ INCLUDES=-DSPLT_PLUGINS_DIR=\"$(libdir)/libmp3splt$(SONAME)\" -DLIBMP3SPLT_VERSI
 
 lib_LTLIBRARIES = libmp3splt.la
 
-libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:8:0
+libmp3splt_la_LDFLAGS = -no-undefined -version-info 0:9:0
 libmp3splt_la_CPPFLAGS = -I$(top_srcdir)/include/libmp3splt
 libmp3splt_la_LIBADD = @LIBINTL@ -lm
 

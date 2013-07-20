@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-07-17 21:34+0200\n"
+"POT-Creation-Date: 2013-07-20 08:50+0200\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,12 +19,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/mp3splt.c:308 src/print_utils.c:55 src/freedb.c:434 src/utils.c:36
+#: src/mp3splt.c:310 src/print_utils.c:55 src/freedb.c:434 src/utils.c:36
 #: src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "Speicher kann nicht zugewiesen werden!"
 
-#: src/mp3splt.c:329
+#: src/mp3splt.c:331
 msgid ""
 "bad overlap time expression.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
@@ -32,7 +32,7 @@ msgstr ""
 "bad overlap time expression.⏎ »Must be min.sec[.0-99] or EOF-min.sec[.0-99], "
 "read man page for details."
 
-#: src/mp3splt.c:350
+#: src/mp3splt.c:352
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
@@ -40,7 +40,7 @@ msgstr ""
 "bad time expression for the time split.⏎ »Must be min.sec[.0-99] or EOF-min."
 "sec[.0-99], read man page for details."
 
-#: src/mp3splt.c:359
+#: src/mp3splt.c:361
 #, fuzzy
 msgid ""
 "bad minimum time expression.\n"
@@ -49,37 +49,37 @@ msgstr ""
 "bad overlap time expression.⏎ »Must be min.sec[.0-99] or EOF-min.sec[.0-99], "
 "read man page for details."
 
-#: src/mp3splt.c:427
+#: src/mp3splt.c:429
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "Lesen Sie die Handbuchseite oder geben Sie »mp3splt -h« ein."
 
-#: src/mp3splt.c:493
+#: src/mp3splt.c:495
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "Falsches Argument für Option -p. Kein gültiger Wert erkannt!"
 
-#: src/mp3splt.c:640
+#: src/mp3splt.c:642
 msgid "no input filename(s)."
 msgstr "Kein(e) Name(n) für Eingabedateien."
 
-#: src/mp3splt.c:653
+#: src/mp3splt.c:655
 msgid "multiple splitpoints with stdout !"
 msgstr "Mehrere Teilungspunkte mit Standardausgabe!"
 
-#: src/mp3splt.c:657
+#: src/mp3splt.c:659
 msgid "using time mode with stdout !"
 msgstr "Zeitmodus mit Standardausgabe wird verwendet!"
 
-#: src/mp3splt.c:698
+#: src/mp3splt.c:700
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr " Teilung der Datei »%s« wird simuliert …\n"
 
-#: src/mp3splt.c:702
+#: src/mp3splt.c:704
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr " Datei »%s« wird verarbeitet …\n"
 
-#: src/mp3splt.c:708
+#: src/mp3splt.c:710
 #, fuzzy
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
@@ -88,20 +88,20 @@ msgstr ""
 "die -k option (oder STDIN) kann mit einer der folgenden Optionen nicht "
 "verwendet werden: -S -s -r -w -l -e -i -a -p"
 
-#: src/mp3splt.c:784
+#: src/mp3splt.c:786
 msgid "freedb query format ambigous !"
 msgstr "Format der Freedb-Abfrage ist nicht eindeutig!"
 
-#: src/mp3splt.c:830
+#: src/mp3splt.c:832
 msgid "tags format ambiguous !"
 msgstr "Tag-Format ist nicht eindeutig!"
 
-#: src/mp3splt.c:862
+#: src/mp3splt.c:864
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr " Durchschnittlicher Pegel der Stille: %.2f dB"
 
-#: src/mp3splt.c:878
+#: src/mp3splt.c:880
 msgid ""
 "\n"
 " +-----------------------------------------------------------------------------"

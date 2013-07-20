@@ -11,7 +11,7 @@
 <H2>NAME</H2>
 
 <P>
-mp3splt, oggsplt - utility for mp3/ogg vorbis splitting without decoding
+mp3splt, oggsplt, flacsplt - utility for mp3, ogg vorbis and native flac splitting without decoding
 <A NAME="lbAC">&nbsp;</A>
 <H2>SYNOPSIS</H2>
 
@@ -20,7 +20,7 @@ mp3splt, oggsplt - utility for mp3/ogg vorbis splitting without decoding
 <B>mp3splt [OPTIONS] FILE_OR_DIR1 [FILE_OR_DIR2] ... [BEGIN_TIME] [TIME2] ... [END_TIME]</B>
 <P>
 
-<B>FILE_OR_DIR</B>: mp3/ogg file to be split or a directory.
+<B>FILE_OR_DIR</B>: mp3, ogg vorbis, native flac file to be split or a directory.
 If you want to specify STDIN as input, you can use &quot;m-&quot; (or &quot;-&quot;)
 when input is mp3, and &quot;o-&quot; when ogg. Multiple files can be specified, all files will be split
 with the same criterion. If a directory is specified, a recursive scan is performed in that
@@ -53,9 +53,9 @@ EOF-minutes.seconds[.hundredths] only works when input is seekable.
 <P>
 
 <B>mp3splt</B> is a free command-line utility that allows you to
-split mp3 and ogg files from several splitpoints,
+split mp3, ogg vorbis and native flac files from several splitpoints,
 without need of decoding and reencoding.
-It is useful to split large mp3/ogg to make smaller files or to split
+It is useful to split large mp3, ogg vorbis and native flac to make smaller files or to split
 entire albums to obtain original tracks.
 <P>
 If you are splitting an album you can get splitpoints and filenames
@@ -70,6 +70,10 @@ Or if you have a file created either with Mp3Wrap or AlbumWrap, you can easily s
 just with one command (see -w option).
 <P>
 
+<P>
+<B>IMPORTANT NOTE for FLAC:</B> FLAC support is still experimental. Please use with caution. Missing
+FLAC features are stdin (input not seekable) and stdout.
+<P>
 <B>NOTE for MP3:</B> usually mp3splt understands if mp3 is VBR by checking the presence
 of a Xing or Info header and will consequently start in framemode, but if this is not present,
 mp3splt will start in standard mode.
@@ -139,11 +143,13 @@ labels file (in seconds):
 <BR>&nbsp;&nbsp;&nbsp;67.000000&nbsp;127.000000&nbsp;second_file
 <BR>&nbsp;&nbsp;&nbsp;149.000000&nbsp;&nbsp;206.000000&nbsp;third_file
 <P>
-<DT><B>-t TIME</B>         <DD>
+<DT><B>-t TIME[&gt;MIN_TIME]</B>         <DD>
 <B>Time mode</B>.
 This option will create an indefinite number of smaller files with a fixed time length specified by TIME (which has the same format
 described above). It is useful to split long files into smaller (for example with the time length of a CD). Adjust option (-a)
-can be used to adjust splitpoints with silence detection.
+can be used to adjust splitpoints with silence detection. &gt;MIN_TIME can be used to specify the
+theoretical minimum track length of the last segment; it allows avoiding to create very small files
+as the last segment. Make sure to quote the argument when using MIN_TIME - &quot;TIME&gt;MIN_TIME&quot;.
 <P>
 <DT><B>-S SPLIT_NUMBER</B>         <DD>
 <B>Equal time tracks mode</B>.
@@ -634,7 +640,6 @@ without user defined tags.
 amplitude wave of the input file (in dB) in order to choose a threshold.
 <P>
 <B>Note about the file structure:</B> 
-<P>
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;first&nbsp;column&nbsp;is&nbsp;a&nbsp;dummy&nbsp;column&nbsp;which&nbsp;is&nbsp;always&nbsp;zero,&nbsp;for&nbsp;plotting&nbsp;on&nbsp;zero&nbsp;axis&nbsp;purposes
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;second&nbsp;column&nbsp;is&nbsp;the&nbsp;time&nbsp;in&nbsp;seconds&nbsp;as&nbsp;double
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-the&nbsp;third&nbsp;column&nbsp;is&nbsp;the&nbsp;dB&nbsp;level
@@ -831,6 +836,6 @@ This can be found as COPYING in mp3splt packages.
 This document was created by
 man2html
 using the manual pages.<BR>
-Time: 22:40:33 GMT, March 28, 2013
+Time: 06:53:27 GMT, July 20, 2013
 </BODY>
 </HTML>
