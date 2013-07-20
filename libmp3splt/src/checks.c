@@ -314,6 +314,11 @@ void splt_check_file_type(splt_state *state, int *error)
     splt_d_print_debug(state,"No plugin found !\n");
     splt_d_print_debug(state,"Verifying if the file _%s_ is a file ...\n", filename);
 
+    if (splt_io_input_is_stdin(state))
+    {
+      return;
+    }
+
     FILE *test = NULL;
     if ((test = splt_io_fopen(filename,"r")) == NULL)
     {

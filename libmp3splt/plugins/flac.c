@@ -69,6 +69,12 @@ int splt_pl_check_plugin_is_for_file(splt_state *state, int *error)
   char *input_filename = splt_t_get_filename_to_split(state);
 
   //TODO: stdin
+  if (strcmp(input_filename,"f-") == 0)
+  {
+    splt_c_put_info_message_to_client(state, " stdin is not yet supported for flac\n");
+    *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
+    return SPLT_FALSE;
+  }
 
   FLAC__StreamMetadata stream_info;
   if (!FLAC__metadata_get_streaminfo(input_filename, &stream_info))
@@ -107,6 +113,13 @@ void splt_pl_end(splt_state *state, int *error)
 double splt_pl_split(splt_state *state, const char *output_fname,
     double begin_point, double end_point, int *error, int save_end_point) 
 {
+  if (strcmp(output_fname, "-") == 0)
+  {
+    splt_c_put_info_message_to_client(state, " stdout is not yet supported for flac\n");
+    *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
+    return end_point;
+  }
+
   splt_flac_state *flacstate = state->codec;
 
   splt_tags *tags_to_write = splt_tu_get_current_tags(state);
