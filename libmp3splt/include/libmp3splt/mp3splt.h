@@ -46,8 +46,9 @@ Source code and binaries can be found on the <a
 href="http://mp3splt.sourceforge.net/mp3splt_page/home.php">mp3splt-project home page</a>.\n
 
 Some of the library features include:
- - losslessly split of mp3 (using <a href="http://www.underbit.com/products/mad/">libmad</a>) and
-   ogg vorbis (using <a href="http://xiph.org/vorbis/">libvorbis</a>) files
+ - losslessly split of mp3 (using <a href="http://www.underbit.com/products/mad/">libmad</a>),
+   ogg vorbis (using <a href="http://xiph.org/vorbis/">libvorbis</a>),
+   <a href="https://xiph.org/flac/">FLAC</a> files
  - extensibility to other audio formats using plugins
  - querying tags from <a href="http://tracktype.org">tracktype.org</a>
  - split on silences
@@ -2109,16 +2110,17 @@ typedef struct _splt_original_tags splt_original_tags;
 /**
  * @brief Libmp3splt plugin API.
  *
- * \warning Because only mp3 and ogg plugins exist and are integrated with the library, the plugin
- * API might change.
+ * \warning The plugin API might still change.
  *
  * In order to create a plugin for libmp3splt, the following functions can be implemented.\n
  * Mandatory functions are #splt_pl_init, #splt_pl_end, #splt_pl_check_plugin_is_for_file,
  * #splt_pl_set_plugin_info and #splt_pl_split.
  *
- * Two examples can be found for the <a
- * href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/mp3.c">mp3</a> and
- * <a href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/ogg.c">ogg</a> implementations.
+ * Examples can be found for the <a
+ * href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/mp3.c">mp3</a>,
+ * <a href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/ogg.c">ogg vorbis</a>
+ * <a href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/flac.c">FLAC</a>
+ * implementations.
  */
 typedef struct {
   /**
