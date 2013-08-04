@@ -877,19 +877,20 @@ int main(int argc, char **orig_argv)
       process_confirmation_error(err, data);
     }
 
-    if (opt->c_option && err >= 0 && !opt->q_option)
+    if (opt->c_option && err >= 0 && !opt->q_option &&
+        !(strncmp(opt->cddb_arg, "internal_sheet", 14) == 0))
     {
-      print_message(_("\n +-----------------------------------------------------------------------------+\n"
-            " |NOTE: When you use cddb/cue, split files might be not very precise due to:|\n"
-            " |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n"
-            " |   the large mp3 file is shorter than CD Total time. Never use this option.  |\n"
-            " |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n"
-            " |3) Encoders might add some padding frames so  that  file is longer than CD.  |\n"
-            " |4) There are several entries of the same cd on CDDB, find the best for yours.|\n"
-            " |   Usually you can find the correct splitpoints, so good luck!  |\n"
-            " +-----------------------------------------------------------------------------+\n"
-            " | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n"
-            " +-----------------------------------------------------------------------------+\n"));
+      print_message(_("\n +------------------------------------------------------------------------------+\n"
+            " | NOTE: When you use cddb/cue, split files might be not very precise due to:   |\n"
+            " | 1) Who extracts CD tracks might use \"Remove silence\" option. This means that |\n"
+            " |    the large mp3 file is shorter than CD Total time. Never use this option.  |\n"
+            " | 2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |\n"
+            " | 3) Encoders might add some padding frames so  that  file is longer than CD.  |\n"
+            " | 4) There are several entries of the same cd on CDDB, find the best for yours.|\n"
+            " |    Usually you can find the correct splitpoints, so good luck!               |\n"
+            " +------------------------------------------------------------------------------+\n"
+            " |  TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |\n"
+            " +------------------------------------------------------------------------------+\n"));
     }
 
     if (data->number_of_filenames > 1)
