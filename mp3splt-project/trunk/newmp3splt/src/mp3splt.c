@@ -774,29 +774,31 @@ int main(int argc, char **orig_argv)
             err = mp3splt_remove_tags_of_skippoints(state);
             process_confirmation_error(err, data);
           }
-          else
+          else if (strncmp(opt->cddb_arg, "query", 5) == 0)
           {
-            if (strncmp(opt->cddb_arg, "query", 5) == 0)
+            if (j == 0)
             {
-              if (j == 0)
+              int ambigous = parse_query_arg(opt,opt->cddb_arg);
+              if (ambigous)
               {
-                int ambigous = parse_query_arg(opt,opt->cddb_arg);
-                if (ambigous)
-                {
-                  print_warning(_("freedb query format ambigous !"));
-                }
-
-                do_freedb_search(data);
+                print_warning(_("freedb query format ambigous !"));
               }
 
-              err = mp3splt_import(state, CDDB_IMPORT, MP3SPLT_CDDBFILE);
-              process_confirmation_error(err, data);
+              do_freedb_search(data);
             }
-            else
-            {
-              err = mp3splt_import(state, CDDB_IMPORT, opt->cddb_arg);
-              process_confirmation_error(err, data);
-            }
+
+            err = mp3splt_import(state, CDDB_IMPORT, MP3SPLT_CDDBFILE);
+            process_confirmation_error(err, data);
+          }
+          else if (strncmp(opt->cddb_arg, "internal_sheet", 14) == 0)
+          {
+            err = mp3splt_import(state, PLUGIN_INTERNAL_IMPORT, opt->cddb_arg);
+            process_confirmation_error(err, data);
+          }
+          else
+          {
+            err = mp3splt_import(state, CDDB_IMPORT, opt->cddb_arg);
+            process_confirmation_error(err, data);
           }
         }
         else if (opt->audacity_labels_arg)

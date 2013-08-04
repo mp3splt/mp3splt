@@ -187,6 +187,8 @@ typedef enum {
   SPLT_FREEDB_ERROR_SITE = -119,
   SPLT_FREEDB_ERROR_CANNOT_DISCONNECT = -120,
   SPLT_FREEDB_ERROR_PROXY_NOT_SUPPORTED = -121,
+  SPLT_ERROR_INTERNAL_SHEET = -122,
+  SPLT_ERROR_INTERNAL_SHEET_TYPE_NOT_SUPPORTED = -123,
 
   SPLT_DEWRAP_ERR_FILE_LENGTH = -200,
   SPLT_DEWRAP_ERR_VERSION_OLD = -201,
@@ -1729,7 +1731,8 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 typedef enum {
   CUE_IMPORT,
   CDDB_IMPORT,
-  AUDACITY_LABELS_IMPORT
+  AUDACITY_LABELS_IMPORT,
+  PLUGIN_INTERNAL_IMPORT
 } splt_import_type;
 
 /**
@@ -2254,6 +2257,13 @@ typedef struct {
    * @param[out] error Fill in possible error.
    */
   void (*splt_pl_dewrap)(splt_state *state, int listonly, const char *dir, splt_code *error);
+  /**
+   * @brief Import splitpoints from internal sheets.
+   *
+   * @param[in] state Main state.
+   * @param[out] error Fill in possible error.
+   */
+  void (*splt_pl_import_internal_sheets)(splt_state *state, splt_code *error);
 } splt_plugin_func;
 
 //@}
