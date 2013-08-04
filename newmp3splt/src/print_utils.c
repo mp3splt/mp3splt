@@ -277,9 +277,9 @@ void show_small_help_exit(main_data *data)
         "                   or EOF-min.sec[.0-99] (or EOF for End Of File). "));
   print_message(_("\nOPTIONS (split mode options)\n"
         " -t + TIME: to split files every fixed time len. (TIME format same as above). \n"
-        " -c + file.cddb, file.cue or \"query\" or \"query{album}\". Get splitpoints and\n"
-        "      filenames from a .cddb or .cue file or from Internet (\"query\").\n"
-        "      Use -a to auto-adjust splitpoints."));
+        " -c + file.cddb, file.cue or \"query\" or \"query{album}\" or \"internal_sheet\".\n"
+        "      Get splitpoints and filenames from a .cddb or .cue file or from Internet\n"
+        "      (\"query\"). Use -a to auto-adjust splitpoints."));
   print_message(_(" -s   Silence detection: automatically find splitpoint. (Use -p for arguments)\n"
         " -w   Splits wrapped files created with Mp3Wrap or AlbumWrap.\n"
         " -l   Lists the tracks from file without extraction. (Only for wrapped mp3)\n"
