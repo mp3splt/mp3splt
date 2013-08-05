@@ -716,7 +716,7 @@ size_t splt_io_fwrite(splt_state *state, const void *ptr, size_t size, size_t nm
     {
       state->split.write_cb(ptr, size, nmemb, state->split.write_cb_data);
     }
-    return size * nmemb;
+    return nmemb;
   }
   else
   {
