@@ -47,6 +47,7 @@ static void build_import_filter(GtkFileChooser *chooser,
 static gpointer add_audacity_labels_splitpoints(ui_with_fname *ui_fname);
 static gpointer add_cddb_splitpoints(ui_with_fname *ui_fname);
 static gpointer add_cue_splitpoints(ui_with_fname *ui_fname);
+static gpointer add_plugin_internal_cue_splitpoints(ui_with_fname *ui_fname);
 
 //! What happens if the "Import" button is pressed
 void import_event(GtkWidget *widget, ui_state *ui)
@@ -68,7 +69,7 @@ void import_event(GtkWidget *widget, ui_state *ui)
   {
     gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
  
-    import_file(filename, ui);
+    import_file(filename, ui, TRUE);
 
     g_free(filename);
     filename = NULL;
@@ -83,7 +84,7 @@ void import_event(GtkWidget *widget, ui_state *ui)
  
   The file type is determined by the extension of the file.
  */
-void import_file(gchar *filename, ui_state *ui)
+void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
 {
   if (filename == NULL)
   {
@@ -95,9 +96,10 @@ void import_file(gchar *filename, ui_state *ui)
 
   g_string_ascii_up(ext_str);
 
-  if ((strstr(ext_str->str, ".MP3") != NULL) ||
-      (strstr(ext_str->str, ".OGG") != NULL) ||
-      (strstr(ext_str->str, ".FLAC") != NULL))
+  if (!force_import_cue &&
+      ((strstr(ext_str->str, ".MP3") != NULL) ||
+       (strstr(ext_str->str, ".OGG") != NULL) ||
+       (strstr(ext_str->str, ".FLAC") != NULL)))
   {
     file_chooser_ok_event(filename, ui);
     remove_status_message(ui->gui);
@@ -123,6 +125,13 @@ void import_file(gchar *filename, ui_state *ui)
     ui_fname->fname = strdup(filename);
     create_thread_with_fname((GThreadFunc)add_audacity_labels_splitpoints, ui_fname);
   }
+  else
+  {
+    ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+    ui_fname->ui = ui;
+    ui_fname->fname = strdup(filename);
+    create_thread_with_fname((GThreadFunc)add_plugin_internal_cue_splitpoints, ui_fname);
+  }
 
   if (ext_str)
   {
@@ -145,7 +154,7 @@ void import_cue_file_from_the_configuration_directory(ui_state *ui)
 
     mp3splt_set_int_option(ui->mp3splt_state,
         SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE);
-    import_file(splitpoints_cue_filename, ui);
+    import_file(splitpoints_cue_filename, ui, FALSE);
   }
 
   g_free(configuration_directory);
@@ -204,7 +213,7 @@ static void set_import_filters(GtkFileChooser *chooser)
 {
   GtkFileFilter *all_filter = gtk_file_filter_new();
   gtk_file_filter_set_name(GTK_FILE_FILTER(all_filter),
-      _("CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt)"));
+      _("CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt), internal sheet (*.flac)"));
 
   GList *filters = NULL;
 
@@ -213,6 +222,8 @@ static void set_import_filters(GtkFileChooser *chooser)
   build_import_filter(chooser, _("CUE files (*.cue)"), "*.cue", "*.CUE",
       &filters, all_filter);
   build_import_filter(chooser, _("Audacity labels files (*.txt)"), "*.txt", "*.TXT",
+      &filters, all_filter);
+  build_import_filter(chooser, _("FLAC internal sheet (*.flac)"), "*.flac", "*.FLAC",
       &filters, all_filter);
   build_import_filter(chooser, _("All files"), "*", NULL, &filters, NULL);
 
@@ -287,6 +298,51 @@ static gpointer add_audacity_labels_splitpoints(ui_with_fname *ui_fname)
   ui_err->err = err;
 
   gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_audacity_labels_splitpoints_end,
+      ui_err, NULL);
+
+  return NULL;
+}
+
+static gboolean add_plugin_internal_cue_splitpoints_end(ui_with_err *ui_err)
+{
+  ui_state *ui = ui_err->ui;
+  gint err = ui_err->err;
+
+  if (err >= 0)
+  {
+    update_splitpoints_from_mp3splt_state(ui);
+  }
+
+  print_status_bar_confirmation(err, ui);
+
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+static gpointer add_plugin_internal_cue_splitpoints(ui_with_fname *ui_fname)
+{
+  ui_state *ui = ui_fname->ui;
+
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  gchar *filename = ui_fname->fname;
+  g_free(ui_fname);
+
+  enter_threads();
+  update_output_options(ui);
+  exit_threads();
+
+  gint err = mp3splt_import(ui->mp3splt_state, PLUGIN_INTERNAL_IMPORT, filename);
+  g_free(filename);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->ui = ui;
+  ui_err->err = err;
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_plugin_internal_cue_splitpoints_end,
       ui_err, NULL);
 
   return NULL;
