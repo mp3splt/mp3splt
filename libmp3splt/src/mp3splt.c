@@ -1359,6 +1359,7 @@ splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *f
     splt_check_file_type_and_set_plugin(state, SPLT_TRUE, &err);
     if (err >= 0)
     {
+      splt_t_free_splitpoints_tags(state);
       splt_p_import_internal_sheets(state, &err);
     }
 
