@@ -792,7 +792,7 @@ int main(int argc, char **orig_argv)
           }
           else if (strncmp(opt->cddb_arg, "internal_sheet", 14) == 0)
           {
-            err = mp3splt_import(state, PLUGIN_INTERNAL_IMPORT, opt->cddb_arg);
+            err = mp3splt_import(state, PLUGIN_INTERNAL_IMPORT, current_filename);
             process_confirmation_error(err, data);
           }
           else
