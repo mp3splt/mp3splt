@@ -1363,8 +1363,7 @@ splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *f
       splt_p_import_internal_sheets(state, &err);
     }
 
-    err = splt_t_set_filename_to_split(state, old_filename_to_split);
-    if (err < 0) { goto end; }
+    splt_t_set_filename_to_split(state, old_filename_to_split);
   }
 
 end:
