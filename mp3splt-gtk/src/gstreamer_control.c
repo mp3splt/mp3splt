@@ -184,12 +184,8 @@ void gstreamer_get_song_infos(gchar *total_infos, ui_state *ui)
   gint freq = 0;
   gint nch = 0;
 
-  gint number_of_stream = 0;
-  g_object_get(ui->pi->play, "current-audio", &number_of_stream, NULL);
-
-  //get the stream info
-  GList *streaminfo = NULL;
-  g_object_get(ui->pi->play, "stream-info", &streaminfo, NULL);
+  gint current_audio_stream = 0;
+  g_object_get(ui->pi->play, "current-audio", &current_audio_stream, NULL);
 
   gchar rate_str[32] = { '\0' };
   gchar freq_str[32] = { '\0' };
@@ -198,27 +194,24 @@ void gstreamer_get_song_infos(gchar *total_infos, ui_state *ui)
   gchar *_Kbps = _("Kbps");
   gchar *_Khz = _("Khz");
 
-  GObject *object = g_list_nth_data(streaminfo, number_of_stream); 
-  if (object)
+  GstCaps *caps = NULL;
+
+  GstPad *pad = NULL;
+  g_signal_emit_by_name(ui->pi->play, "get-audio-pad", current_audio_stream, &pad);
+  if (pad)
   {
-    GstObject *obj = NULL; 
-    g_object_get(G_OBJECT(object), "object", &obj, NULL);
+    caps = gst_pad_get_current_caps(pad);
+  }
 
-    //get the caps from the first element
-    GstCaps *caps = NULL;
-    g_object_get(obj, "caps", &caps, NULL);
-    if (caps)
-    {
-      //get the structure from the caps
-      GstStructure *structure = NULL;
-      structure = gst_caps_get_structure(caps, number_of_stream);
+  if (caps)
+  {
+    GstStructure *structure = NULL;
+    structure = gst_caps_get_structure(caps, 0);
 
-      //get the rate and the number of channels from the structure
-      gst_structure_get_int(structure, "rate", &freq);
-      gst_structure_get_int(structure, "channels", &nch);
+    gst_structure_get_int(structure, "rate", &freq);
+    gst_structure_get_int(structure, "channels", &nch);
 
-      gst_caps_unref(caps);
-    }
+    gst_caps_unref(caps);
 
     g_snprintf(rate_str, 32, "%d", ui->pi->rate / 1000);
     g_snprintf(freq_str, 32, "%d", freq / 1000);
@@ -363,7 +356,7 @@ void gstreamer_start(ui_state *ui)
   gst_default_registry_add_path("./");
 #endif
 
-  ui->pi->play = gst_element_factory_make("playbin", "play");
+  ui->pi->play = gst_element_factory_make("playbin", "playbin");
   if (!ui->pi->play)
   {
     put_status_message(_(" error: cannot create gstreamer playbin\n"), ui);

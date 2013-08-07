@@ -278,7 +278,7 @@ void wh_get_pointer(GdkEventMotion *event, gint *x, gint *y, GdkModifierType *st
 #if GTK_MAJOR_VERSION <= 2
   gdk_window_get_pointer(event->window, x, y, state);
 #else
-  gdk_window_get_device_position(event->window, event->device, x, y, state);
+  gdk_window_get_device_position(event->window, event->device, x, y, state); 
 #endif
 }
 
