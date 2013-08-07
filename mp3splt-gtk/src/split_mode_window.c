@@ -428,6 +428,43 @@ static GtkWidget *create_split_mode(ui_state *ui)
   g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
       GINT_TO_POINTER(SELECTED_SPLIT_ERROR));
  
+  //internal sheet mode split
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Internal CUE sheet mode (FLAC only)"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button, _("Split using internal CUE sheet"));
+  ui->gui->split_mode_radio_button = split_mode_radio_button;
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+      G_CALLBACK(split_mode_changed), ui);
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_INTERNAL_SHEET));
+ 
+  //CUE file with the same name as the input file
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Use CUE file with similar name as the input file"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button,
+      _("Split using CUE file having similar name as the input file\n"
+        "Example: test.cue will be looked for when splitting test.mp3"));
+  ui->gui->split_mode_radio_button = split_mode_radio_button;
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+      G_CALLBACK(split_mode_changed), ui);
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_CUE_FILE));
+
+  //CDDB file with the same name as the input file
+  split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Use CDDB file with similar name as the input file"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button,
+      _("Split using CDDB file having similar name as the input file\n"
+        "Example: test.cddb will be looked for when splitting test.mp3"));
+  ui->gui->split_mode_radio_button = split_mode_radio_button;
+  gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
+  g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",
+      G_CALLBACK(split_mode_changed), ui);
+  g_object_set_data(G_OBJECT(split_mode_radio_button), "split_type_id",
+      GINT_TO_POINTER(SELECTED_SPLIT_CDDB_FILE));
+
   select_split_mode(SELECTED_SPLIT_NORMAL, ui);
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();

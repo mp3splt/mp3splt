@@ -1122,20 +1122,36 @@ void print_status_bar_confirmation(gint error, ui_state *ui)
   error_from_library = NULL;
 }
 
-static gboolean print_status_bar_confirmation_idle(ui_with_err *ui_err)
+static gboolean put_status_message_idle(ui_with_fname *ui_fname)
 {
-  print_status_bar_confirmation(ui_err->err, ui_err->ui);
-  g_free(ui_err);
+  put_status_message(ui_fname->fname, ui_fname->ui);
+
+  g_free(ui_fname->fname);
+  g_free(ui_fname);
+
   return FALSE;
+}
+
+void put_status_message_in_idle(const gchar *text, ui_state *ui)
+{
+  if (text == NULL) { return; }
+
+  ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+  ui_fname->ui = ui;
+  ui_fname->fname = strdup(text);
+  if (ui_fname->fname == NULL)
+  {
+    g_free(ui_fname);
+    return;
+  }
+
+  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+      (GSourceFunc)put_status_message_idle, ui_fname, NULL);
 }
 
 void print_status_bar_confirmation_in_idle(gint error, ui_state *ui)
 {
-  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
-  ui_err->err = error;
-  ui_err->ui = ui;
-
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
-      (GSourceFunc)print_status_bar_confirmation_idle, ui_err, NULL);
+  char *error_from_library = mp3splt_get_strerror(ui->mp3splt_state, error);
+  put_status_message_in_idle(error_from_library, ui);
 }
 

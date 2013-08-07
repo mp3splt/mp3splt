@@ -52,7 +52,6 @@ void split_action(ui_state *ui)
     set_is_splitting_safe(FALSE, ui);
     return;
   }
-  set_is_splitting_safe(FALSE, ui);
 
   create_thread((GThreadFunc)split_collected_files, ui);
 }
@@ -202,6 +201,13 @@ static gpointer split_collected_files(ui_state *ui)
   err = SPLT_OK;
   gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
 
+  gint selected_split_mode = get_selected_split_mode_safe(ui);
+  gboolean is_single_file_mode = FALSE;
+  if (get_split_file_mode_safe(ui) == FILE_MODE_SINGLE)
+  {
+    is_single_file_mode = TRUE;
+  }
+
   //files_to_split will not have a read/write issue because the 'splitting' boolean, which does not
   //allow us to modify it while we read it here - no mutex needed
   GPtrArray *files_to_split = ui->files_to_split;
@@ -217,7 +223,44 @@ static gpointer split_collected_files(ui_state *ui)
 
     mp3splt_set_filename_to_split(ui->mp3splt_state, filename);
 
-    gint err = mp3splt_split(ui->mp3splt_state);
+    gint err = SPLT_OK;
+
+    if (!is_single_file_mode)
+    {
+      if (selected_split_mode == SELECTED_SPLIT_INTERNAL_SHEET)
+      {
+        err = mp3splt_import(ui->mp3splt_state, PLUGIN_INTERNAL_IMPORT, filename);
+        print_status_bar_confirmation_in_idle(err, ui);
+        if (err < 0) { continue; }
+      }
+      else if ((selected_split_mode == SELECTED_SPLIT_CUE_FILE) ||
+          (selected_split_mode == SELECTED_SPLIT_CDDB_FILE))
+      {
+        gchar *cue_or_cddb = g_strdup(filename);
+        gchar *last_ext = g_strrstr(cue_or_cddb, ".");
+        *last_ext = '\0';
+
+        GString *cue_or_cddb_file = g_string_new(cue_or_cddb);
+        g_free(cue_or_cddb);
+
+        if (selected_split_mode == SELECTED_SPLIT_CUE_FILE)
+        {
+          g_string_append(cue_or_cddb_file, ".cue");
+          err = mp3splt_import(ui->mp3splt_state, CUE_IMPORT, cue_or_cddb_file->str);
+        }
+        else
+        {
+          g_string_append(cue_or_cddb_file, ".cddb");
+          err = mp3splt_import(ui->mp3splt_state, CDDB_IMPORT, cue_or_cddb_file->str);
+        }
+
+        print_status_bar_confirmation_in_idle(err, ui);
+        g_string_free(cue_or_cddb_file, SPLT_TRUE);
+        if (err < 0) { continue; }
+      }
+    }
+
+    err = mp3splt_split(ui->mp3splt_state);
     print_status_bar_confirmation_in_idle(err, ui);
 
     err = mp3splt_erase_all_tags(ui->mp3splt_state);
