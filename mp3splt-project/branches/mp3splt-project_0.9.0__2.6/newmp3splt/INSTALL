@@ -1,0 +1,85 @@
+
+mp3splt - INSTALLATION INFORMATION
+
+====================================================================
+
+	To install the program, you can to compile the source code.
+
+  Installing the program using the binary '.deb' debian packages :
+
+    0) Installation on Debian GNU/Linux
+
+	Installing the program on GNU/Linux is made in 3 steps :
+
+    1) Install needed libraries
+
+		2) Compile the source
+
+		3) Install the binary
+
+
+--------------------------------------------------------------------
+0) Installation on Debian GNU/Linux :
+
+  Download the libmp3splt debian package from the mp3splt site
+  (http://mp3splt.sourceforge.net) and install it with :
+
+    dpkg -i libmp3splt.deb
+
+  Download the mp3splt debian package from the mp3splt site and
+  install it with :
+
+    dpkg -i mp3splt.deb
+
+
+--------------------------------------------------------------------
+1) Install needed libraries :
+
+  Before compiling the source code, verify that you have the following
+  libraries installed :
+
+    libmp3splt (http://mp3splt.sourceforge.net)
+
+
+--------------------------------------------------------------------
+2) Compiling the source :
+
+	Move into the mp3splt directory and type :
+	
+		./configure
+
+	    Main configure options :
+        --enable-oggsplt_symlink
+        --enable-flacsplt_symlink
+
+	    Other configure options :
+        --with-mp3splt=PFX
+        --with-mp3splt-libraries=DIR
+        --with-mp3splt-includes=DIR
+
+        --disable-mp3splttest
+
+
+	This will create the Makefile used to compile the program
+
+	After that, type :
+	
+		make
+
+
+--------------------------------------------------------------------
+3) Install the binary :
+
+	To install the binary type :
+	
+		make install
+
+
+///////////////////////////////////////////
+for any suggestion, bugs, etc... contact us.
+
+Matteo Trotta - <mtrotta@users.sourceforge.net>
+Alexandru Munteanu - <m@ioalex.net>
+
+///////////////////////////////////////////
+

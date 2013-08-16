@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone="no"?>
+<omf>
+  <resource>
+    <subject category="GNOME|Applications|Sound and Video"/>
+    <type>manual</type>
+    <relation seriesid="a5718520-9459-4012-a1a3-89464e66de14"/>
+    <rights type="GNU FDL" license.version="1.1" holder="Matteo Trotta and Alexandru Ionut Munteanu"/>
+  </resource>
+</omf>
