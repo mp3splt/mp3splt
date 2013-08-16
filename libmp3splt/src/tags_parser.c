@@ -537,7 +537,7 @@ end:
 
 static void splt_tp_get_original_tags_and_append(splt_state *state, int *error)
 {
-  splt_check_file_type_and_set_plugin(state, SPLT_FALSE, error);
+  splt_check_file_type(state, error);
   if (*error < 0) { return; }
 
   splt_o_lock_messages(state);

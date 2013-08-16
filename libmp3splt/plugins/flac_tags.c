@@ -125,21 +125,21 @@ static void splt_flac_t_parse_and_store_comment(char *comment,
   int err = SPLT_OK;
   splt_tags *tags = flac_tags->original_tags;
 
-  if (strncasecmp(comment, "TITLE=", 6) == 0)
+  if (strncmp(comment, "TITLE=", 6) == 0)
   {
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_TITLE, comment + 6);
     if (err < 0) { *error = err; }
     return;
   }
 
-  if (strncasecmp(comment, "ALBUM=", 6) == 0)
+  if (strncmp(comment, "ALBUM=", 6) == 0)
   {
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_ALBUM, comment + 6);
     if (err < 0) { *error = err; }
     return;
   }
 
-  if (strncasecmp(comment, "TRACKNUMBER=", 12) == 0)
+  if (strncmp(comment, "TRACKNUMBER=", 12) == 0)
   {
     int track = atoi(comment + 12);
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_TRACK, &track);
@@ -147,28 +147,28 @@ static void splt_flac_t_parse_and_store_comment(char *comment,
     return;
   }
 
-  if (strncasecmp(comment, "ARTIST=", 7) == 0)
+  if (strncmp(comment, "ARTIST=", 7) == 0)
   {
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_ARTIST, comment + 7);
     if (err < 0) { *error = err; }
     return;
   }
 
-  /*if (strncasecmp(comment, "PERFORMER=", 10) == 0)
+  /*if (strncmp(comment, "PERFORMER=", 10) == 0)
   {
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_PERFORMER, comment + 10);
     if (err < 0) { *error = err; }
     return;
   }*/
 
-  if (strncasecmp(comment, "GENRE=", 6) == 0)
+  if (strncmp(comment, "GENRE=", 6) == 0)
   {
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_GENRE, comment + 6);
     if (err < 0) { *error = err; }
     return;
   }
 
-  if (strncasecmp(comment, "DATE=", 5) == 0)
+  if (strncmp(comment, "DATE=", 5) == 0)
   {
     //TODO: different date formats
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_YEAR, comment + 5);
@@ -176,7 +176,7 @@ static void splt_flac_t_parse_and_store_comment(char *comment,
     return;
   }
 
-  if (strncasecmp(comment, "COMMENT=", 8) == 0)
+  if (strncmp(comment, "COMMENT=", 8) == 0)
   {
     err = splt_tu_set_field_on_tags(tags, SPLT_TAGS_COMMENT, comment + 8);
     if (err < 0) { *error = err; }

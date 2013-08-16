@@ -46,9 +46,8 @@ Source code and binaries can be found on the <a
 href="http://mp3splt.sourceforge.net/mp3splt_page/home.php">mp3splt-project home page</a>.\n
 
 Some of the library features include:
- - losslessly split of mp3 (using <a href="http://www.underbit.com/products/mad/">libmad</a>),
-   ogg vorbis (using <a href="http://xiph.org/vorbis/">libvorbis</a>),
-   <a href="https://xiph.org/flac/">FLAC</a> files
+ - losslessly split of mp3 (using <a href="http://www.underbit.com/products/mad/">libmad</a>) and
+   ogg vorbis (using <a href="http://xiph.org/vorbis/">libvorbis</a>) files
  - extensibility to other audio formats using plugins
  - querying tags from <a href="http://tracktype.org">tracktype.org</a>
  - split on silences
@@ -187,8 +186,6 @@ typedef enum {
   SPLT_FREEDB_ERROR_SITE = -119,
   SPLT_FREEDB_ERROR_CANNOT_DISCONNECT = -120,
   SPLT_FREEDB_ERROR_PROXY_NOT_SUPPORTED = -121,
-  SPLT_ERROR_INTERNAL_SHEET = -122,
-  SPLT_ERROR_INTERNAL_SHEET_TYPE_NOT_SUPPORTED = -123,
 
   SPLT_DEWRAP_ERR_FILE_LENGTH = -200,
   SPLT_DEWRAP_ERR_VERSION_OLD = -201,
@@ -1731,8 +1728,7 @@ char **mp3splt_find_filenames(splt_state *state, const char *filename,
 typedef enum {
   CUE_IMPORT,
   CDDB_IMPORT,
-  AUDACITY_LABELS_IMPORT,
-  PLUGIN_INTERNAL_IMPORT
+  AUDACITY_LABELS_IMPORT
 } splt_import_type;
 
 /**
@@ -2113,17 +2109,16 @@ typedef struct _splt_original_tags splt_original_tags;
 /**
  * @brief Libmp3splt plugin API.
  *
- * \warning The plugin API might still change.
+ * \warning Because only mp3 and ogg plugins exist and are integrated with the library, the plugin
+ * API might change.
  *
  * In order to create a plugin for libmp3splt, the following functions can be implemented.\n
  * Mandatory functions are #splt_pl_init, #splt_pl_end, #splt_pl_check_plugin_is_for_file,
  * #splt_pl_set_plugin_info and #splt_pl_split.
  *
- * Examples can be found for the <a
- * href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/mp3.c">mp3</a>,
- * <a href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/ogg.c">ogg vorbis</a>
- * <a href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/flac.c">FLAC</a>
- * implementations.
+ * Two examples can be found for the <a
+ * href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/mp3.c">mp3</a> and
+ * <a href="http://svn.code.sf.net/p/mp3splt/code/mp3splt-project/trunk/libmp3splt/plugins/ogg.c">ogg</a> implementations.
  */
 typedef struct {
   /**
@@ -2257,13 +2252,6 @@ typedef struct {
    * @param[out] error Fill in possible error.
    */
   void (*splt_pl_dewrap)(splt_state *state, int listonly, const char *dir, splt_code *error);
-  /**
-   * @brief Import splitpoints from internal sheets.
-   *
-   * @param[in] state Main state.
-   * @param[out] error Fill in possible error.
-   */
-  void (*splt_pl_import_internal_sheets)(splt_state *state, splt_code *error);
 } splt_plugin_func;
 
 //@}

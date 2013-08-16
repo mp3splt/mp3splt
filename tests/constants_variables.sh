@@ -54,15 +54,15 @@ command_output=""
 failed_tests=0
 
 auto_adjust_warning="
- +------------------------------------------------------------------------------+
- | NOTE: When you use cddb/cue, split files might be not very precise due to:   |
- | 1) Who extracts CD tracks might use \"Remove silence\" option. This means that |
- |    the large mp3 file is shorter than CD Total time. Never use this option.  |
- | 2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |
- | 3) Encoders might add some padding frames so  that  file is longer than CD.  |
- | 4) There are several entries of the same cd on CDDB, find the best for yours.|
- |    Usually you can find the correct splitpoints, so good luck!               |
- +------------------------------------------------------------------------------+
- |  TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |
- +------------------------------------------------------------------------------+
+ +-----------------------------------------------------------------------------+
+ |NOTE: When you use cddb/cue, split files might be not very precise due to:|
+ |1) Who extracts CD tracks might use \"Remove silence\" option. This means that |
+ |   the large mp3 file is shorter than CD Total time. Never use this option.  |
+ |2) Who burns CD might add extra pause seconds between tracks.  Never do it.  |
+ |3) Encoders might add some padding frames so  that  file is longer than CD.  |
+ |4) There are several entries of the same cd on CDDB, find the best for yours.|
+ |   Usually you can find the correct splitpoints, so good luck!  |
+ +-----------------------------------------------------------------------------+
+ | TRY TO ADJUST SPLITS POINT WITH -a OPTION. Read man page for more details!  |
+ +-----------------------------------------------------------------------------+
 "

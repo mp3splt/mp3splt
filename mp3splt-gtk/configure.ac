@@ -254,9 +254,11 @@ AC_ARG_ENABLE(gstreamer, AC_HELP_STRING([--disable-gstreamer], [Disable gstreame
     [enable_gstreamer=$enableval],[enable_gstreamer="yes"])
 
 if test "x$enable_gstreamer" = xyes;then
-  PKG_CHECK_MODULES(GST, [gstreamer-1.0 >= 1.0],
+  PKG_CHECK_MODULES(GST, [gstreamer-0.10 >= 0.10
+      gstreamer-base-0.10 >= 0.10
+      gstreamer-plugins-base-0.10 >= 0.10],
       [AM_CONDITIONAL(GSTREAMER,true) gstreamer="yes"],
-      [AC_MSG_ERROR([GStreamer >= 1.0 development files are not installed.
+      [AC_MSG_ERROR([GStreamer >= 0.10 development files are not installed.
 
     Install it or configure with "--disable-gstreamer".])])
 fi

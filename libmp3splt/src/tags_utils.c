@@ -1226,16 +1226,13 @@ int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_ta
   const char *all_album = splt_tu_get_tags_value(all_tags, SPLT_TAGS_ALBUM);
   const char *all_year = splt_tu_get_tags_value(all_tags, SPLT_TAGS_YEAR);
   const char *all_genre = splt_tu_get_tags_value(all_tags, SPLT_TAGS_GENRE);
-  const char *all_title = splt_tu_get_tags_value(all_tags, SPLT_TAGS_TITLE);
-  const char *all_comment = splt_tu_get_tags_value(all_tags, SPLT_TAGS_COMMENT);
 
   int i = 0;
   for (i = 0; i < tracks;i++)
   {
     if (all_artist != NULL)
     {
-      if (!splt_tu_tags_exists(state, i) ||
-          splt_tu_get_tags_field(state, i, SPLT_TAGS_ARTIST) == NULL)
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_ARTIST) == NULL)
       {
         err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ARTIST, all_artist);
         if (err != SPLT_OK) { break; }
@@ -1244,8 +1241,7 @@ int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_ta
 
     if (all_album != NULL)
     {
-      if (!splt_tu_tags_exists(state, i) ||
-          splt_tu_get_tags_field(state, i, SPLT_TAGS_ALBUM) == NULL)
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_ALBUM) == NULL)
       {
         err = splt_tu_set_tags_field(state, i, SPLT_TAGS_ALBUM, all_album);
         if (err != SPLT_OK) { break; }
@@ -1254,8 +1250,7 @@ int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_ta
 
     if (all_year != NULL)
     {
-      if (!splt_tu_tags_exists(state, i) ||
-          splt_tu_get_tags_field(state, i, SPLT_TAGS_YEAR) == NULL)
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_YEAR) == NULL)
       {
         err = splt_tu_set_tags_field(state, i, SPLT_TAGS_YEAR, all_year);
         if (err != SPLT_OK) { break; }
@@ -1264,30 +1259,9 @@ int splt_tu_copy_tags_on_all_tracks(splt_state *state, int tracks, const splt_ta
 
     if (all_genre != NULL)
     {
-      if (!splt_tu_tags_exists(state, i) ||
-          splt_tu_get_tags_field(state, i, SPLT_TAGS_GENRE) == NULL)
+      if (splt_tu_get_tags_field(state, i, SPLT_TAGS_GENRE) == NULL)
       {
         err = splt_tu_set_tags_field(state, i, SPLT_TAGS_GENRE, all_genre);
-        if (err != SPLT_OK) { break; }
-      }
-    }
-
-    if (all_title != NULL)
-    {
-      if (!splt_tu_tags_exists(state, i) ||
-          splt_tu_get_tags_field(state, i, SPLT_TAGS_TITLE) == NULL)
-      {
-        err = splt_tu_set_tags_field(state, i, SPLT_TAGS_TITLE, all_title);
-        if (err != SPLT_OK) { break; }
-      }
-    }
-
-    if (all_comment != NULL)
-    {
-      if (!splt_tu_tags_exists(state, i) ||
-          splt_tu_get_tags_field(state, i, SPLT_TAGS_COMMENT) == NULL)
-      {
-        err = splt_tu_set_tags_field(state, i, SPLT_TAGS_COMMENT, all_comment);
         if (err != SPLT_OK) { break; }
       }
     }

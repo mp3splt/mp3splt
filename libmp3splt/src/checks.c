@@ -262,8 +262,7 @@ void splt_check_set_correct_options(splt_state *state)
   }
 }
 
-void splt_check_file_type_and_set_plugin(splt_state *state,
-    short force_check_by_extension, int *error)
+void splt_check_file_type(splt_state *state, int *error)
 {
   int err = SPLT_OK;
 
@@ -280,9 +279,8 @@ void splt_check_file_type_and_set_plugin(splt_state *state,
     splt_p_set_current_plugin(state, i);
     err = SPLT_OK;
 
-    if (force_check_by_extension ||
-        (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE) &&
-         !splt_io_input_is_stdin(state)))
+    if (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE) &&
+        ! splt_io_input_is_stdin(state))
     {
       const char *extension = splt_p_get_extension(state, &err);
       const char *upper_extension = splt_p_get_extension(state, &err);

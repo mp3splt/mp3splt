@@ -256,13 +256,6 @@ char *splt_e_strerror(splt_state *state, splt_code error_code)
     case SPLT_FREEDB_ERROR_SITE:
       return splt_su_get_formatted_message(state,
           _(" freedb error: bad response from remote host"));
-    case SPLT_ERROR_INTERNAL_SHEET:
-      return splt_su_get_formatted_message(state,
-          _(" internal sheet error: no internal sheet or invalid sheet"));
-    case SPLT_ERROR_INTERNAL_SHEET_TYPE_NOT_SUPPORTED:
-      return splt_su_get_formatted_message(state,
-          _(" internal sheet error: internal sheet type not supported"));
-
       //
     case SPLT_DEWRAP_OK:
       return splt_su_get_formatted_message(state, _(" wrap split ok"));

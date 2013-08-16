@@ -38,9 +38,6 @@
 #define FILE_MODE_SINGLE 1
 #define FILE_MODE_MULTIPLE 0
 
-#define SELECTED_SPLIT_INTERNAL_SHEET 9
-#define SELECTED_SPLIT_CUE_FILE 8
-#define SELECTED_SPLIT_CDDB_FILE 7
 #define SELECTED_SPLIT_TRIM_SILENCE 6
 #define SELECTED_SPLIT_SILENCE 5
 #define SELECTED_SPLIT_EQUAL_TIME_TRACKS 4
@@ -49,7 +46,7 @@
 #define SELECTED_SPLIT_WRAP 1
 #define SELECTED_SPLIT_ERROR 0
 
-#define NUMBER_OF_SPLIT_MODES 9
+#define NUMBER_OF_SPLIT_MODES 6
 
 void select_split_mode(int split_mode, ui_state *ui);
 GtkWidget *create_special_split_page(ui_state *ui);

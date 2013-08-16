@@ -898,7 +898,7 @@ splt_code mp3splt_read_original_tags(splt_state *state)
 
   splt_o_lock_library(state);
 
-  splt_check_file_type_and_set_plugin(state, SPLT_FALSE, &error);
+  splt_check_file_type(state, &error);
   if (error < 0) { goto end; }
 
   splt_o_lock_messages(state);
@@ -1170,7 +1170,7 @@ splt_code mp3splt_split(splt_state *state)
       if (error < 0) { goto function_end; }
 
       //we check if mp3 or ogg
-      splt_check_file_type_and_set_plugin(state, SPLT_FALSE, &error);
+      splt_check_file_type(state, &error);
       if (error < 0) { goto function_end; }
 
       int tags_option = splt_o_get_int_option(state, SPLT_OPT_TAGS);
@@ -1344,29 +1344,7 @@ splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *f
   {
     splt_audacity_put_splitpoints(file, state, &err);
   }
-  else if (type == PLUGIN_INTERNAL_IMPORT)
-  {
-    const char *old_filename_to_split = strdup(mp3splt_get_filename_to_split(state));
-    if (old_filename_to_split == NULL)
-    {
-      err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
-      goto end;
-    }
 
-    err = splt_t_set_filename_to_split(state, file);
-    if (err < 0) { goto end; }
-
-    splt_check_file_type_and_set_plugin(state, SPLT_TRUE, &err);
-    if (err >= 0)
-    {
-      splt_t_free_splitpoints_tags(state);
-      splt_p_import_internal_sheets(state, &err);
-    }
-
-    splt_t_set_filename_to_split(state, old_filename_to_split);
-  }
-
-end:
   splt_o_unlock_library(state);
 
   return err;
@@ -1658,7 +1636,7 @@ splt_wrap *mp3splt_get_wrap_files(splt_state *state, splt_code *error)
       splt_o_lock_library(state);
 
       //we check the format of the filename
-      splt_check_file_type_and_set_plugin(state, SPLT_FALSE, err);
+      splt_check_file_type(state, err);
 
       int old_split_mode = splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE);
       splt_o_set_int_option(state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_WRAP_MODE);
@@ -1756,7 +1734,7 @@ int mp3splt_set_silence_points(splt_state *state, splt_code *error)
 
       splt_t_set_stop_split(state, SPLT_FALSE);
 
-      splt_check_file_type_and_set_plugin(state, SPLT_FALSE, err);
+      splt_check_file_type(state, err);
 
       if (*err >= 0)
       {
@@ -1800,7 +1778,7 @@ splt_code mp3splt_set_trim_silence_points(splt_state *state)
 
       splt_t_set_stop_split(state, SPLT_FALSE);
 
-      splt_check_file_type_and_set_plugin(state, SPLT_FALSE, err);
+      splt_check_file_type(state, err);
 
       if (*err >= 0)
       {

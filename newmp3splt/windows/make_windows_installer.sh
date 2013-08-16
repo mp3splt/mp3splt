@@ -1,4 +1,4 @@
-#!/bin/sh
+et!/bin/sh
 #we should have done '!/bin/bash', but it won't work on msys+mingw
 
 #if the first argument of the script is not empty, then we consider a cross
@@ -25,11 +25,7 @@ else
 fi
 
 mkdir -p ../../libmp3splt_libs_licenses
-if [[ -z $we_dont_cross_compile ]];then
-  cp -a `pwd`/../../libmp3splt_libs_licenses ../libmp5splt_libs_licenses || exit 1
-else
-  cp -a `pwd`/../../../libs/libmp3splt_libs_licenses ../../libmp3splt_libs_licenses || exit 1
-fi
+cp -a `pwd`/../../../libs/libmp3splt_libs_licenses ../../libmp3splt_libs_licenses || exit 1
 
 LANGUAGES="fr_FR de_DE"
 

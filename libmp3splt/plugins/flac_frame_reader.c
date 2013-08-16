@@ -586,10 +586,7 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   }
 
   //TODO: remove fseek for stdout; how to ?
-  if (fr->out != NULL)
-  {
-    rewind(fr->out);
-  }
+  rewind(fr->out);
 
   unsigned char flac_word[4] = { 0x66, 0x4C, 0x61, 0x43 };
   if (splt_io_fwrite(state, flac_word, 4, 1, fr->out) != 1)
@@ -840,15 +837,12 @@ static void splt_flac_fr_open_file_and_write_metadata_if_first_time(splt_flac_fr
 
   splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
 
-  if (! splt_o_get_int_option(state, SPLT_OPT_PRETEND_TO_SPLIT))
+  fr->out = splt_io_fopen(output_fname, "wb+");
+  if (fr->out == NULL)
   {
-    fr->out = splt_io_fopen(output_fname, "wb+");
-    if (fr->out == NULL)
-    {
-      splt_e_set_strerror_msg_with_data(state, output_fname);
-      *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
-      return;
-    }
+    splt_e_set_strerror_msg_with_data(state, output_fname);
+    *error = SPLT_ERROR_CANNOT_OPEN_DEST_FILE;
+    return;
   }
 
   unsigned char space[4+SPLT_FLAC_METADATA_HEADER_LENGTH+SPLT_FLAC_STREAMINFO_LENGTH] = {'\0'};

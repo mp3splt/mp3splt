@@ -30,7 +30,6 @@
 #include <string.h>
 
 #include "splt.h"
-#include "cddb_cue_common.h"
 
 #include "flac_silence.h"
 #include "flac_metadata_utils.h"
@@ -192,64 +191,6 @@ void splt_pl_set_original_tags(splt_state *state, splt_code *error)
 void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 {
   //nothing to do - we never store original tags in the splt_state, only in the splt_flac_state
-}
-
-void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
-{
-  char *input_filename = splt_t_get_filename_to_split(state);
-
-  FLAC__StreamMetadata *cuesheet = NULL;
-  FLAC__bool cuesheet_read_ok = FLAC__metadata_get_cuesheet(input_filename, &cuesheet);
-  if (!cuesheet_read_ok)
-  {
-    *error = SPLT_ERROR_INTERNAL_SHEET;
-    return;
-  }
-
-  const FLAC__StreamMetadata_CueSheet *cue_sheet = &cuesheet->data.cue_sheet;
-  unsigned track_number;
-  for (track_number = 0; track_number < cue_sheet->num_tracks - 1; track_number++)
-  {
-    const FLAC__StreamMetadata_CueSheet_Track *cue_track = cue_sheet->tracks + track_number;
-
-    int start_index = 0;
-    if (cue_track->num_indices > 1) { start_index++; }
-
-    //TODO: only take INDEX 01 or INDEX 00 if INDEX 01 does not exists
-    const FLAC__StreamMetadata_CueSheet_Index *cue_index = cue_track->indices + start_index;
-    if (cue_sheet->is_cd)
-    {
-      long offset = (long) ((cue_track->offset + cue_index->offset) / (44100 / 75)) * 100;
-      long hundreths = offset / 75;
-      //long mins, secs, hundr;
-      //splt_co_get_mins_secs_hundr(hundreths, &mins, &secs, &hundr);
-      //fprintf(stdout, "%02lu:%02lu:%02lu\n", mins, secs, hundr);
-      //fflush(stdout);
-      splt_sp_append_splitpoint(state, hundreths, NULL, SPLT_SPLITPOINT);
-    }
-    else
-    {
-      *error = SPLT_ERROR_INTERNAL_SHEET_TYPE_NOT_SUPPORTED;
-      goto end;
-    }
-  }
-
-end:
-  FLAC__metadata_object_delete(cuesheet);
-  if (*error < 0) { return; }
-
-  splt_o_lock_messages(state);
-  splt_pl_init(state, error);
-  splt_o_unlock_messages(state);
-  if (*error < 0) { return; }
-
-  splt_flac_state *flacstate = state->codec;
-  const splt_tags *our_tags = flacstate->flac_tags->original_tags;
-  splt_cc_put_filenames_from_tags(state, track_number, error, our_tags, SPLT_FALSE);
-
-  int err = SPLT_OK;
-  splt_pl_end(state, &err);
-  if (err < 0 && *error >= 0) { *error = err; }
 }
 
 static void splt_flac_get_info(splt_state *state, FILE *file_input, const char *input_filename, splt_code *error)
