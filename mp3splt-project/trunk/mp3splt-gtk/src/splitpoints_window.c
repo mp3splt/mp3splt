@@ -1063,7 +1063,7 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
   ui_err->err = err;
   ui_err->ui = ui;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, 
+  add_idle(G_PRIORITY_HIGH_IDLE, 
       (GSourceFunc)detect_silence_and_set_splitpoints_end, ui_err, NULL);
 
   return NULL;
@@ -1610,7 +1610,7 @@ static gpointer split_preview(ui_state *ui)
   ui_err->err = err;
   ui_err->ui = ui;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_preview_end, ui_err, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_preview_end, ui_err, NULL);
 
   return NULL;
 }

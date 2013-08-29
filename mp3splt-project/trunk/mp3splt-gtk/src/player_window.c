@@ -230,7 +230,7 @@ static gpointer detect_silence(ui_state *ui)
   ui_err->err = err;
   ui_err->ui = ui;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)detect_silence_end, ui_err, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)detect_silence_end, ui_err, NULL);
 
   return NULL;
 }

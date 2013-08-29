@@ -282,7 +282,7 @@ static gpointer split_collected_files(ui_state *ui)
   ui_err->err = err;
   ui_err->ui = ui;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_collected_files_end, ui_err, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_collected_files_end, ui_err, NULL);
 
   return NULL;
 }
@@ -297,6 +297,11 @@ GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname)
 {
   mp3splt_set_int_option(ui_fname->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_fname->ui->infos->debug_is_active);
   return g_thread_create(func, ui_fname, TRUE, NULL);
+}
+
+void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify)
+{
+  gdk_threads_add_idle_full(priority, function, data, notify);
 }
 
 void enter_threads()
@@ -525,9 +530,6 @@ static void set_language_env_variable_from_preferences()
 gint main(gint argc, gchar *argv[], gchar **envp)
 {
   ui = ui_state_new();
-
-  g_thread_init(NULL);
-  gdk_threads_init();
 
   register_application_signals();
   init_i18n_and_plugin_paths(argv, ui);
