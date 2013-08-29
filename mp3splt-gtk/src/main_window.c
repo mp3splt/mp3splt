@@ -1145,7 +1145,7 @@ void put_status_message_in_idle(const gchar *text, ui_state *ui)
     return;
   }
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+  add_idle(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)put_status_message_idle, ui_fname, NULL);
 }
 

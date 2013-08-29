@@ -297,7 +297,7 @@ static gpointer add_audacity_labels_splitpoints(ui_with_fname *ui_fname)
   ui_err->ui = ui;
   ui_err->err = err;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_audacity_labels_splitpoints_end,
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_audacity_labels_splitpoints_end,
       ui_err, NULL);
 
   return NULL;
@@ -342,7 +342,7 @@ static gpointer add_plugin_internal_cue_splitpoints(ui_with_fname *ui_fname)
   ui_err->ui = ui;
   ui_err->err = err;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_plugin_internal_cue_splitpoints_end,
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_plugin_internal_cue_splitpoints_end,
       ui_err, NULL);
 
   return NULL;
@@ -388,7 +388,7 @@ static gpointer add_cddb_splitpoints(ui_with_fname *ui_fname)
   ui_err->ui = ui;
   ui_err->err = err;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_cddb_splitpoints_end,
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_cddb_splitpoints_end,
       ui_err, NULL);
 
   return NULL;
@@ -457,7 +457,7 @@ static gpointer add_cue_splitpoints(ui_with_fname *ui_fname)
   ui_err->ui = ui;
   ui_err->err = err;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_cue_splitpoints_end,
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)add_cue_splitpoints_end,
       ui_err, NULL);
 
   return NULL;

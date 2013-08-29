@@ -44,6 +44,8 @@
 void split_action(ui_state *ui);
 GThread *create_thread(GThreadFunc func, ui_state *ui);
 GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname);
+void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify);
+
 void enter_threads();
 void exit_threads();
 gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data);

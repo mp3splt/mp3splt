@@ -352,10 +352,6 @@ void gstreamer_start(ui_state *ui)
 
   gst_init(NULL, NULL);
 
-#ifdef __WIN32__
-  gst_default_registry_add_path("./");
-#endif
-
   ui->pi->play = gst_element_factory_make("playbin", "playbin");
   if (!ui->pi->play)
   {

@@ -242,7 +242,7 @@ static gpointer freedb_search(ui_state *ui)
 {
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_start, ui, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_start, ui, NULL);
 
   gint err = SPLT_OK;
 
@@ -260,7 +260,7 @@ static gpointer freedb_search(ui_state *ui)
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
   ui_err->err = err;
   ui_err->ui = ui;
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_end, ui_err, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_end, ui_err, NULL);
 
   return NULL;
 }
@@ -497,7 +497,7 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
 
   gint selected_id = get_freedb_selected_id_safe(ui);
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+  add_idle(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)put_freedb_splitpoints_start, ui, NULL);
 
   gchar *configuration_directory = get_configuration_directory();
@@ -537,7 +537,7 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
     filename = NULL;
   }
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+  add_idle(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)put_freedb_splitpoints_end, ui, NULL);
 
   return NULL;

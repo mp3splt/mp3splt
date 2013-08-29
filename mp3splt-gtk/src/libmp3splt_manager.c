@@ -111,7 +111,7 @@ void lmanager_put_split_filename(const char *filename, void *data)
     ui_fname->fname = strdup(filename);
   }
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+  add_idle(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)lmanager_put_split_filename_idle, ui_fname, NULL);
 }
 
@@ -166,7 +166,7 @@ static void lmanager_put_message_from_library(const char *message, splt_message_
   }
   ui_message->mess_type = mess_type;
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+  add_idle(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)lmanager_put_message_from_library_idle, ui_message, NULL);
 }
 
@@ -249,7 +249,7 @@ static void lmanager_change_window_progress_bar(splt_progress *p_bar, void *data
   ui_p_bar->silence_db_level = mp3splt_progress_get_silence_db_level(p_bar);
   ui_p_bar->percent_progress = mp3splt_progress_get_percent_progress(p_bar);
 
-  gdk_threads_add_idle_full(G_PRIORITY_HIGH_IDLE,
+  add_idle(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)lmanager_change_window_progress_bar_idle, ui_p_bar, NULL);
 }
 
