@@ -36,6 +36,8 @@
  * this file is used for the player control tab
  **********************************************************/
 
+#include <sys/timeb.h>
+
 #include "player_window.h"
 
 #define DRAWING_AREA_WIDTH 400
@@ -1557,12 +1559,10 @@ static void draw_marks(gint time_interval, gint left_mark,
   }
 
   gint i;
-  gint i_pixel;
   for (i = left2; i <= right_mark; i += time_interval)
   {
-    i_pixel = convert_time_to_pixels(ui->infos->width_drawing_area, i,
+    gint i_pixel = convert_time_to_pixels(ui->infos->width_drawing_area, i,
         ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff);
-
     draw_motif(da, gc, ylimit, i_pixel, time_interval);
   }
 }
@@ -1870,6 +1870,16 @@ static gint adjust_filtered_index_according_to_number_of_points(gint filtered_in
   return filtered_index;
 }
 
+static void line_and_move(gint x, gint y, gint stroke_counter, cairo_t *gc)
+{
+  cairo_line_to(gc, x, y);
+  if (stroke_counter % 4 == 0)
+  {
+    cairo_stroke(gc);
+  }
+  cairo_move_to(gc, x, y);
+}
+
 //! Draws the silence wave
 gint draw_silence_wave(gint left_mark, gint right_mark, 
     gint interpolation_text_x, gint interpolation_text_y,
@@ -1924,6 +1934,11 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
   gint second_splitpoint_time_displayed = 0;
   gint missed_lookups = 0;
   gint time_counter = 0;
+
+  gint min_y = INT_MAX;
+  gint max_y = 0;
+  gint same_x_count = 1;
+  gint previous_y = 0;
   for (i = 0;i < ui->infos->number_of_silence_points;i++)
   {
     if (interpolation_level >= 0 && point_is_filtered(i, interpolation_level, ui->infos))
@@ -2017,16 +2032,39 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
       second_splitpoint_time_displayed = 1;
     }
 
-    previous_x = x;
-
-    cairo_line_to(gc, x, y);
-
-    stroke_counter++;
-    if (stroke_counter % 4 == 0)
+    if (x != previous_x ||
+        i == ui->infos->number_of_silence_points - 1)
     {
-      cairo_stroke(gc);
+      stroke_counter++;
+
+      if (same_x_count == 1)
+      {
+        line_and_move(x, y, stroke_counter, gc);
+      }
+      else
+      {
+        if (max_y != min_y)
+        {
+          cairo_move_to(gc, previous_x, min_y);
+          cairo_line_to(gc, previous_x, max_y);
+          cairo_move_to(gc, previous_x, previous_y);
+        }
+        line_and_move(x, y, stroke_counter, gc);
+      }
+
+      min_y = y;
+      max_y = y;
+      same_x_count = 1;
     }
-    cairo_move_to(gc, x, y);
+    else
+    {
+      if (y < min_y) { min_y = y; }
+      if (y > max_y) { max_y = y; }
+      same_x_count++;
+    }
+
+    previous_x = x;
+    previous_y = y;
   }
 
   if (ui->status->previous_distance_by_time != NULL)

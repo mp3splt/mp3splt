@@ -265,9 +265,9 @@ static void ui_infos_new(ui_state *ui)
   infos->douglas_peucker_thresholds_defaults[0] = 2.0;
   infos->douglas_peucker_thresholds_defaults[1] = 5.0;
   infos->douglas_peucker_thresholds_defaults[2] = 8.0;
-  infos->douglas_peucker_thresholds_defaults[3] = 11.0;
-  infos->douglas_peucker_thresholds_defaults[4] = 15.0;
-  infos->douglas_peucker_thresholds_defaults[5] = 22.0;
+  infos->douglas_peucker_thresholds_defaults[3] = 10.0;
+  infos->douglas_peucker_thresholds_defaults[4] = 12.0;
+  infos->douglas_peucker_thresholds_defaults[5] = 15.0;
 
   infos->douglas_peucker_thresholds[0] = infos->douglas_peucker_thresholds_defaults[0];
   infos->douglas_peucker_thresholds[1] = infos->douglas_peucker_thresholds_defaults[1];
