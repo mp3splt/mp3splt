@@ -49,15 +49,12 @@
  */
 void update_output_options(ui_state *ui)
 {
-  lock_mutex(&ui->variables_mutex);
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-  unlock_mutex(&ui->variables_mutex);
 
   if (get_checked_output_radio_box(ui) == 0)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-    const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-    gint error = mp3splt_set_oformat(ui->mp3splt_state, data);
+    gint error = mp3splt_set_oformat(ui->mp3splt_state, ui->infos->output_entry_data);
     print_status_bar_confirmation(error, ui);
   }
   else

@@ -246,13 +246,9 @@ static gpointer freedb_search(ui_state *ui)
 
   gint err = SPLT_OK;
 
-  enter_threads();
-  const gchar *freedb_search_value = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
-  exit_threads();
-
   //freedb_search_results is only used in the idle of the end of the thread, so no mutex needed
   ui->infos->freedb_search_results = 
-    mp3splt_get_freedb_search(ui->mp3splt_state, freedb_search_value, &err,
+    mp3splt_get_freedb_search(ui->mp3splt_state, ui->infos->freedb_search_value, &err,
         SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0", -1);
 
   print_status_bar_confirmation_in_idle(err, ui);
@@ -268,6 +264,7 @@ static gpointer freedb_search(ui_state *ui)
 //! Start a thread for the freedb search
 static void freedb_search_start_thread(ui_state *ui)
 {
+  ui->infos->freedb_search_value = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
   create_thread((GThreadFunc)freedb_search, ui);
 }
 
@@ -511,20 +508,14 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
       filename, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
   print_status_bar_confirmation_in_idle(err, ui);
 
-  enter_threads();
-  if (get_checked_output_radio_box(ui))
+  if (ui->infos->is_checked_output_radio_box)
   {
-    exit_threads(); 
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
   else
   {
-    const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-    exit_threads(); 
-
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-
-    gint error = mp3splt_set_oformat(ui->mp3splt_state, data);
+    gint error = mp3splt_set_oformat(ui->mp3splt_state, ui->infos->output_entry_text);
     print_status_bar_confirmation_in_idle(error, ui);
   }
 
@@ -546,6 +537,8 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
 //!event for the freedb add button when clicked
 static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
+  ui->infos->is_checked_output_radio_box = get_checked_output_radio_box(ui);
+  ui->infos->output_entry_text = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
   create_thread((GThreadFunc)put_freedb_splitpoints, ui);
 }
 

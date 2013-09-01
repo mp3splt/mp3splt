@@ -215,10 +215,6 @@ static gpointer detect_silence(ui_state *ui)
     ui->infos->number_of_silence_points = 0;
   }
 
-  enter_threads();
-  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-  exit_threads();
-
   lock_mutex(&ui->variables_mutex);
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
   unlock_mutex(&ui->variables_mutex);
@@ -239,6 +235,7 @@ static gpointer detect_silence(ui_state *ui)
 
 static void detect_silence_action(ui_state *ui)
 {
+  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
   create_thread((GThreadFunc)detect_silence, ui);
 }
 

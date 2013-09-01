@@ -170,6 +170,14 @@ typedef struct {
   preview_index_and_data preview_indexes[6];
 
   gint timeout_value;
+
+  //freedb search thread
+  const gchar *freedb_search_value;
+  //put freedb splitpoints thread
+  gint is_checked_output_radio_box;
+  const char *output_entry_text;
+  //cddb, cue, internal cue import
+  const char *output_entry_data;
 } ui_infos;
 
 typedef struct {
@@ -480,7 +488,7 @@ typedef struct {
   gint lock_cue_export;
 } gui_status;
 
-#define SPLT_MUTEX GStaticMutex
+#define SPLT_MUTEX GMutex
 
 typedef struct {
   gint return_code;

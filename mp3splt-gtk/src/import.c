@@ -109,6 +109,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
+    ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     create_thread_with_fname((GThreadFunc)add_cue_splitpoints, ui_fname);
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
@@ -116,6 +117,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
+    ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     create_thread_with_fname((GThreadFunc)add_cddb_splitpoints, ui_fname);
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
@@ -130,6 +132,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
+    ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     create_thread_with_fname((GThreadFunc)add_plugin_internal_cue_splitpoints, ui_fname);
   }
 
@@ -328,12 +331,10 @@ static gpointer add_plugin_internal_cue_splitpoints(ui_with_fname *ui_fname)
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
+  update_output_options(ui);
+
   gchar *filename = ui_fname->fname;
   g_free(ui_fname);
-
-  enter_threads();
-  update_output_options(ui);
-  exit_threads();
 
   gint err = mp3splt_import(ui->mp3splt_state, PLUGIN_INTERNAL_IMPORT, filename);
   g_free(filename);
@@ -374,12 +375,10 @@ static gpointer add_cddb_splitpoints(ui_with_fname *ui_fname)
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
+  update_output_options(ui);
+
   gchar *filename = ui_fname->fname;
   g_free(ui_fname);
-
-  enter_threads();
-  update_output_options(ui);
-  exit_threads();
 
   gint err = mp3splt_import(ui->mp3splt_state, CDDB_IMPORT, filename);
   g_free(filename);
@@ -441,12 +440,10 @@ static gpointer add_cue_splitpoints(ui_with_fname *ui_fname)
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
+  update_output_options(ui);
+
   gchar *filename = ui_fname->fname;
   g_free(ui_fname);
-
-  enter_threads();
-  update_output_options(ui);
-  exit_threads();
 
   mp3splt_set_filename_to_split(ui->mp3splt_state, NULL);
 

@@ -53,6 +53,52 @@ void split_action(ui_state *ui)
     return;
   }
 
+  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
+
+  put_options_from_preferences(ui);
+
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
+  if (!get_checked_output_radio_box(ui))
+  {
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
+  }
+
+  gint split_file_mode = get_split_file_mode_safe(ui);
+
+  mp3splt_set_path_of_split(ui->mp3splt_state, get_output_directory(ui));
+
+  remove_all_split_rows(ui);
+
+  gint err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
+  err = mp3splt_erase_all_tags(ui->mp3splt_state);
+
+  gint split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
+  print_status_bar_confirmation(err, ui);
+
+  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
+
+  err = mp3splt_set_oformat(ui->mp3splt_state, format);
+
+  if (format)
+  {
+    free(format);
+    format = NULL;
+  }
+
+  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) == SPLT_OPTION_NORMAL_MODE &&
+      split_file_mode == FILE_MODE_SINGLE)
+  {
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
+  }
+
+  if (split_mode == SPLT_OPTION_NORMAL_MODE)
+  {
+    put_splitpoints_and_tags_in_mp3splt_state(ui->mp3splt_state, ui);
+
+    err = mp3splt_remove_tags_of_skippoints(ui->mp3splt_state);
+    print_status_bar_confirmation(err, ui);
+  }
+
   create_thread((GThreadFunc)split_collected_files, ui);
 }
 
@@ -140,65 +186,7 @@ static gpointer split_collected_files(ui_state *ui)
 {
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  enter_threads();
-
-  gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-
-  put_options_from_preferences(ui);
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
-  if (!get_checked_output_radio_box(ui))
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-  }
-
-  exit_threads();
-
-  gint split_file_mode = get_split_file_mode_safe(ui);
-
-  lock_mutex(&ui->variables_mutex);
-  mp3splt_set_path_of_split(ui->mp3splt_state, get_output_directory(ui));
-  unlock_mutex(&ui->variables_mutex);
-
-  enter_threads();
-  remove_all_split_rows(ui);
-  exit_threads();
-
-  gint err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
-  err = mp3splt_erase_all_tags(ui->mp3splt_state);
-
-  gint split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
-  print_status_bar_confirmation_in_idle(err, ui);
-
-  enter_threads();
-  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
-  exit_threads();
-
-  err = mp3splt_set_oformat(ui->mp3splt_state, format);
-
-  if (format)
-  {
-    free(format);
-    format = NULL;
-  }
-
-  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) == SPLT_OPTION_NORMAL_MODE &&
-      split_file_mode == FILE_MODE_SINGLE)
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
-  }
-
-  if (split_mode == SPLT_OPTION_NORMAL_MODE)
-  {
-    enter_threads();
-    put_splitpoints_and_tags_in_mp3splt_state(ui->mp3splt_state, ui);
-
-    err = mp3splt_remove_tags_of_skippoints(ui->mp3splt_state);
-    print_status_bar_confirmation_in_idle(err, ui);
-    exit_threads();
-  }
-
-  err = SPLT_OK;
+  gint err = SPLT_OK;
   gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
 
   gint selected_split_mode = get_selected_split_mode_safe(ui);
@@ -217,9 +205,7 @@ static gpointer split_collected_files(ui_state *ui)
   {
     gchar *filename = g_ptr_array_index(files_to_split, i);
 
-    enter_threads();
     print_processing_file(filename, ui);
-    exit_threads();
 
     mp3splt_set_filename_to_split(ui->mp3splt_state, filename);
 
@@ -290,28 +276,18 @@ static gpointer split_collected_files(ui_state *ui)
 GThread *create_thread(GThreadFunc func, ui_state *ui)
 {
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  return g_thread_create(func, ui, TRUE, NULL);
+  return g_thread_new("mp3splt-gtk-thread", func, ui);
 }
 
 GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname)
 {
   mp3splt_set_int_option(ui_fname->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_fname->ui->infos->debug_is_active);
-  return g_thread_create(func, ui_fname, TRUE, NULL);
+  return g_thread_new("mp3splt-gtk-thread", func, ui_fname);
 }
 
 void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify)
 {
   gdk_threads_add_idle_full(priority, function, data, notify);
-}
-
-void enter_threads()
-{
-  gdk_threads_enter();
-}
-
-void exit_threads()
-{
-  gdk_threads_leave();
 }
 
 gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data)
@@ -548,9 +524,7 @@ gint main(gint argc, gchar *argv[], gchar **envp)
 
   parse_command_line_options(argc, argv, ui);
 
-  enter_threads();
   gtk_main();
-  exit_threads();
 
   gint return_code = ui->return_code;
   ui_state_free(ui);
