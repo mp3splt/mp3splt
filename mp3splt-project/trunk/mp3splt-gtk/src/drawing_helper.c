@@ -33,7 +33,12 @@
 
 void dh_set_color(cairo_t *cairo, GdkColor *color)
 {
-  gdk_cairo_set_source_color(cairo, color);
+  GdkRGBA rgba_color;
+  rgba_color.red = ((double) color->red) / 65535.0;
+  rgba_color.green = ((double) color->green) / 65535.0;
+  rgba_color.blue = ((double) color->blue) / 65535.0;
+  rgba_color.alpha = 1.0;
+  gdk_cairo_set_source_rgba(cairo, &rgba_color);
 }
 
 void dh_set_white_color(cairo_t *cairo_surface)

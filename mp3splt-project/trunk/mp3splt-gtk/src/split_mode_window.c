@@ -468,8 +468,7 @@ static GtkWidget *create_split_mode(ui_state *ui)
   select_split_mode(SELECTED_SPLIT_NORMAL, ui);
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
-      GTK_WIDGET(local_vbox));
+  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(local_vbox));
 
   return scrolled_window;
 }

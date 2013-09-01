@@ -48,8 +48,6 @@
 //! Send a call over the dbus
 static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
 {
-  enter_threads();
-
   ui_state *ui = (ui_state *) data;
 
   switch (GST_MESSAGE_TYPE(msg))
@@ -72,7 +70,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("gstreamer error: %s"),error->message);
 
-          put_status_message(message, ui);
+          put_status_message_in_idle(message, ui);
 
           g_free(message);
         }
@@ -98,7 +96,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("Warning: %s"),error->message);
 
-          put_status_message(message, ui);
+          put_status_message_in_idle(message, ui);
 
           g_free(message);
         }
@@ -124,7 +122,7 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
           memset(message,'\0',malloc_size);
           g_snprintf(message, malloc_size,_("Info: %s"),error->message);
 
-          put_status_message(message, ui);
+          put_status_message_in_idle(message, ui);
 
           g_free(message);
         }
@@ -168,12 +166,10 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data)
       break;
   }
 
-  exit_threads();
-
   return TRUE;
 }
 
-//!Gets information about the< song
+//!Gets information about the song
 void gstreamer_get_song_infos(gchar *total_infos, ui_state *ui)
 {
   if (!ui->pi->play)
