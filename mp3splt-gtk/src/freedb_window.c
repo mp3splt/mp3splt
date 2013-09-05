@@ -265,7 +265,7 @@ static gpointer freedb_search(ui_state *ui)
 static void freedb_search_start_thread(ui_state *ui)
 {
   ui->infos->freedb_search_value = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
-  create_thread((GThreadFunc)freedb_search, ui);
+  create_thread_and_unref((GThreadFunc)freedb_search, ui, "freedb search");
 }
 
 //!we push the search button
@@ -539,7 +539,7 @@ static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
   ui->infos->is_checked_output_radio_box = get_checked_output_radio_box(ui);
   ui->infos->output_entry_text = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-  create_thread((GThreadFunc)put_freedb_splitpoints, ui);
+  create_thread_and_unref((GThreadFunc)put_freedb_splitpoints, ui, "put_freedb_points");
 }
 
 //!creates the freedb box

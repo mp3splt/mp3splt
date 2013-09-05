@@ -93,13 +93,21 @@ void split_action(ui_state *ui)
 
   if (split_mode == SPLT_OPTION_NORMAL_MODE)
   {
-    put_splitpoints_and_tags_in_mp3splt_state(ui->mp3splt_state, ui);
+    points_and_tags *pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
+    gint i = 0;
+    for (i = 0;i < pat->splitpoints->len; i++)
+    {
+      splt_point *point = g_ptr_array_index(pat->splitpoints, i);
+      mp3splt_append_splitpoint(ui->mp3splt_state, point);
+      splt_tags *tags = g_ptr_array_index(pat->tags, i);
+      mp3splt_append_tags(ui->mp3splt_state, tags);
+    }
 
     err = mp3splt_remove_tags_of_skippoints(ui->mp3splt_state);
     print_status_bar_confirmation(err, ui);
   }
 
-  create_thread((GThreadFunc)split_collected_files, ui);
+  create_thread_and_unref((GThreadFunc)split_collected_files, ui, "split");
 }
 
 static gboolean collect_files_to_split(ui_state *ui)
@@ -273,16 +281,37 @@ static gpointer split_collected_files(ui_state *ui)
   return NULL;
 }
 
-GThread *create_thread(GThreadFunc func, ui_state *ui)
+static GThread *create_thread(GThreadFunc func, ui_state *ui, const char *name)
 {
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  return g_thread_new("mp3splt-gtk-thread", func, ui);
+  return g_thread_new(name, func, ui);
 }
 
-GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname)
+void create_thread_and_unref(GThreadFunc func, ui_state *ui, const char *name)
+{
+  g_thread_unref(create_thread(func, ui, name));
+}
+
+static GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname, const char *name)
 {
   mp3splt_set_int_option(ui_fname->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_fname->ui->infos->debug_is_active);
-  return g_thread_new("mp3splt-gtk-thread", func, ui_fname);
+  return g_thread_new(name, func, ui_fname);
+}
+
+GThread *create_thread_with_pat(GThreadFunc func, ui_with_pat *ui_pat, const char *name)
+{
+  mp3splt_set_int_option(ui_pat->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_pat->ui->infos->debug_is_active);
+  return g_thread_new(name, func, ui_pat);
+}
+
+void create_thread_with_pat_and_unref(GThreadFunc func, ui_with_pat *ui_pat, const char *name)
+{
+  g_thread_unref(create_thread_with_pat(func, ui_pat, name));
+}
+
+void create_thread_with_fname_and_unref(GThreadFunc func, ui_with_fname *ui_fname, const char *name)
+{
+  g_thread_unref(create_thread_with_fname(func, ui_fname, name));
 }
 
 void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify)

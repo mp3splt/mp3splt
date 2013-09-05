@@ -110,7 +110,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
     ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-    create_thread_with_fname((GThreadFunc)add_cue_splitpoints, ui_fname);
+    create_thread_with_fname_and_unref((GThreadFunc)add_cue_splitpoints, ui_fname, "import_cue");
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
   {
@@ -118,14 +118,15 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
     ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-    create_thread_with_fname((GThreadFunc)add_cddb_splitpoints, ui_fname);
+    create_thread_with_fname_and_unref((GThreadFunc)add_cddb_splitpoints, ui_fname, "import_cddb");
   }
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
-    create_thread_with_fname((GThreadFunc)add_audacity_labels_splitpoints, ui_fname);
+    create_thread_with_fname_and_unref((GThreadFunc)add_audacity_labels_splitpoints, ui_fname,
+        "import_audacity");
   }
   else
   {
@@ -133,7 +134,8 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
     ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-    create_thread_with_fname((GThreadFunc)add_plugin_internal_cue_splitpoints, ui_fname);
+    create_thread_with_fname_and_unref((GThreadFunc)add_plugin_internal_cue_splitpoints, ui_fname,
+        "import_internal");
   }
 
   if (ext_str)
@@ -414,19 +416,20 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
   }
   print_status_bar_confirmation(ui_err->err, ui);
 
+  mp3splt_set_int_option(ui->mp3splt_state,
+      SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_FALSE);
+
   //The cue file has provided libmp3splt with a input filename.
   //But since we use the filename from the gui instead we need to set
   //the value the gui uses, too, which we do in the next line.
   const gchar *filename_to_split = mp3splt_get_filename_to_split(ui->mp3splt_state);
+
   if (file_exists(filename_to_split))
   {
     file_chooser_ok_event(filename_to_split, ui);
   }
 
   set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
-
-  mp3splt_set_int_option(ui->mp3splt_state,
-      SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_FALSE);
 
   g_free(ui_err);
 

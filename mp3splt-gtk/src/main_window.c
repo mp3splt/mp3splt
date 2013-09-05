@@ -48,7 +48,6 @@ void set_input_filename(const gchar *filename, ui_state *ui)
     return;
   }
 
-  lock_mutex(&ui->variables_mutex);
   if (ui->gui->input_filename != NULL)
   {
     g_string_free(ui->gui->input_filename,TRUE);
@@ -63,8 +62,6 @@ void set_input_filename(const gchar *filename, ui_state *ui)
   update_example_output_dir_for_single_file_split(ui);
 
   export_cue_file_in_configuration_directory(ui);
-
-  unlock_mutex(&ui->variables_mutex);
 }
 
 /*! Get the name of the input file

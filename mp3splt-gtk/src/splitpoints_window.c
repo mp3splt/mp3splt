@@ -980,6 +980,8 @@ static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)
 
   g_free(ui_err);
 
+  export_cue_file_in_configuration_directory(ui);
+
   return FALSE;
 }
 
@@ -1067,7 +1069,7 @@ static void detect_silence_and_set_splitpoints_action(ui_state *ui)
     format = NULL;
   }
 
-  create_thread((GThreadFunc)detect_silence_and_set_splitpoints, ui);
+  create_thread_and_unref((GThreadFunc)detect_silence_and_set_splitpoints, ui, "detect_silence");
 }
 
 //!start thread with 'set splitpints from silence detection'
@@ -1534,6 +1536,8 @@ gint get_splitpoint_time(gint splitpoint_index, ui_state *ui)
 
 static gboolean split_preview_end(ui_with_err *ui_err)
 {
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
+
   gint err = ui_err->err;
   ui_state *ui = ui_err->ui;
 
@@ -1556,8 +1560,6 @@ static gboolean split_preview_end(ui_with_err *ui_err)
     gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, 1.0);
     gtk_progress_bar_set_text(ui->gui->percent_progress_bar, _(" finished"));
   }
-
-  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
 
   g_free(ui_err);
 
@@ -1609,7 +1611,7 @@ static void split_preview_action(ui_state *ui)
   put_options_from_preferences(ui);
   remove_all_split_rows(ui);
 
-  create_thread((GThreadFunc)split_preview, ui);
+  create_thread_and_unref((GThreadFunc)split_preview, ui, "split_preview");
 }
 
 //!the row clicked event, preview the song
@@ -2154,9 +2156,10 @@ static void garray_to_array(GArray *spltpoints, glong *hundredth, ui_state *ui)
   }
 }
 
-//!puts the splitpoints into the state
-void put_splitpoints_and_tags_in_mp3splt_state(splt_state *state, ui_state *ui)
+points_and_tags *get_splitpoints_and_tags_for_mp3splt_state(ui_state *ui)
 {
+  points_and_tags *pat = new_points_and_tags();
+
   glong hundr[ui->infos->splitnumber];
   garray_to_array(ui->splitpoints, hundr, ui);
 
@@ -2186,7 +2189,7 @@ void put_splitpoints_and_tags_in_mp3splt_state(splt_state *state, ui_state *ui)
     mp3splt_point_set_name(splitpoint, description);
     g_free(description);
     mp3splt_point_set_type(splitpoint, splitpoint_type);
-    mp3splt_append_splitpoint(state, splitpoint);
+    append_point_to_pat(splitpoint, pat);
 
     gint year = 0, track = 0;
     gchar *title = NULL, *artist = NULL, *album = NULL, *genre = NULL, *comment = NULL;
@@ -2222,10 +2225,11 @@ void put_splitpoints_and_tags_in_mp3splt_state(splt_state *state, ui_state *ui)
         SPLT_TAGS_GENRE, genre,
         SPLT_TAGS_COMMENT, comment,
         0);
-    mp3splt_append_tags(state, tags);
+    append_tags_to_pat(tags, pat);
 
     free(title); free(artist); free(album); free(genre); free(comment);
   }
-}
 
+  return pat;
+}
 

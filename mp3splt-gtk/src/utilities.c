@@ -178,4 +178,34 @@ gboolean double_equals(gdouble double_to_compare, gdouble compared_value)
   return fabs(double_to_compare - compared_value) < DOUBLE_PRECISION;
 }
 
+//points and tags utilities
+
+points_and_tags *new_points_and_tags()
+{
+  points_and_tags *pat = g_malloc(sizeof(points_and_tags));
+  pat->splitpoints = g_ptr_array_new();
+  pat->tags = g_ptr_array_new();
+  return pat;
+}
+
+void free_points_and_tags(points_and_tags **pat)
+{
+  if (!pat || !*pat) { return; }
+  g_ptr_array_free((*pat)->splitpoints, SPLT_TRUE);
+  (*pat)->splitpoints = NULL;
+  g_ptr_array_free((*pat)->tags, SPLT_TRUE);
+  (*pat)->tags = NULL;
+  g_free(*pat);
+  *pat = NULL;
+}
+
+void append_point_to_pat(splt_point *point, points_and_tags *pat)
+{
+  g_ptr_array_add(pat->splitpoints, point);
+}
+
+void append_tags_to_pat(splt_tags *tags, points_and_tags *pat)
+{
+  g_ptr_array_add(pat->tags, tags);
+}
 

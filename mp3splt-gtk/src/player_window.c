@@ -236,7 +236,7 @@ static gpointer detect_silence(ui_state *ui)
 static void detect_silence_action(ui_state *ui)
 {
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-  create_thread((GThreadFunc)detect_silence, ui);
+  create_thread_and_unref((GThreadFunc)detect_silence, ui, "scan_silence_wave");
 }
 
 /*! Initialize scanning for silence in the background.
@@ -3514,6 +3514,7 @@ static gint mytimer(ui_state *ui)
 void file_chooser_ok_event(const gchar *fname, ui_state *ui)
 {
   change_current_filename(fname, ui);
+
   gtk_widget_set_sensitive(ui->gui->play_button, TRUE);
   wh_set_image_on_button(GTK_BUTTON(ui->gui->play_button), g_object_ref(ui->gui->PlayButton_active));
 
