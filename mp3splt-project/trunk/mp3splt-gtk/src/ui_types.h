@@ -96,6 +96,11 @@ typedef struct {
   gpointer data;
 } preview_index_and_data;
 
+typedef struct points_and_tags {
+  GPtrArray *splitpoints;
+  GPtrArray *tags;
+} points_and_tags;
+
 typedef struct {
   gchar *browser_directory;
   ui_main_window *main_win;
@@ -178,6 +183,11 @@ typedef struct {
   const char *output_entry_text;
   //cddb, cue, internal cue import
   const char *output_entry_data;
+  //cue export
+  points_and_tags *pat;
+  char *export_cue_filename;
+  //make threads execute in order
+  GThread *previous_export_thread;
 } ui_infos;
 
 typedef struct {
@@ -518,6 +528,12 @@ typedef struct {
   ui_state *ui;
   char *fname;
 } ui_with_fname;
+
+typedef struct {
+  ui_state *ui;
+  points_and_tags *pat;
+  GThread *previous_thread;
+} ui_with_pat;
 
 #endif
 

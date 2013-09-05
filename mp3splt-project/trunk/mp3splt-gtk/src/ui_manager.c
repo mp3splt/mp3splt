@@ -305,6 +305,7 @@ static void ui_infos_new(ui_state *ui)
   }
 
   infos->timeout_value = DEFAULT_TIMEOUT_VALUE;
+  infos->previous_export_thread = NULL;
 
   ui->infos = infos;
 }
@@ -314,7 +315,7 @@ static gui_status *ui_status_new(ui_state *ui)
   gui_status *status = g_malloc0(sizeof(gui_status));
 
   status->splitting = FALSE;
-  status->process_in_progress = FALSE;
+  status->process_in_progress = 0;
   status->mouse_on_progress_bar = FALSE;
 
   status->currently_compute_douglas_peucker_filters = FALSE;

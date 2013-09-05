@@ -38,7 +38,7 @@
 #include "export.h"
 
 //! Export the current split points into a cue file
-static void export_to_cue_file(const gchar* filename, ui_state *ui)
+static void export_to_cue_file(const gchar* filename, ui_state *ui, points_and_tags *pat)
 {
   const gchar *old_fname = mp3splt_get_filename_to_split(ui->mp3splt_state);
   gchar *fname = NULL;
@@ -53,7 +53,15 @@ static void export_to_cue_file(const gchar* filename, ui_state *ui)
   mp3splt_erase_all_splitpoints(ui->mp3splt_state);
   mp3splt_erase_all_tags(ui->mp3splt_state);
 
-  put_splitpoints_and_tags_in_mp3splt_state(ui->mp3splt_state, ui);
+  gint i = 0;
+  for (i = 0;i < pat->splitpoints->len; i++)
+  {
+    splt_point *point = g_ptr_array_index(pat->splitpoints, i);
+    mp3splt_append_splitpoint(ui->mp3splt_state, point);
+    splt_tags *tags = g_ptr_array_index(pat->tags, i);
+    mp3splt_append_tags(ui->mp3splt_state, tags);
+  }
+  free_points_and_tags(&ui->infos->pat);
 
   gchar *file = g_path_get_basename(filename);
   splt_code err = mp3splt_export(ui->mp3splt_state, CUE_EXPORT, file, SPLT_FALSE);
@@ -64,9 +72,16 @@ static void export_to_cue_file(const gchar* filename, ui_state *ui)
   if (fname != NULL) { g_free(fname); }
 }
 
-void export_cue_file_in_configuration_directory(ui_state *ui)
+static gpointer export_cue_in_configuration_directory_for_thread(ui_with_pat *ui_pat)
 {
-  if (ui->status->lock_cue_export) { return; }
+  if (ui_pat->previous_thread)
+  {
+    g_thread_join(ui_pat->previous_thread);
+  }
+
+  ui_state *ui = ui_pat->ui;
+
+  set_process_in_progress_and_wait_safe(TRUE, ui);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE,
       SPLT_TRUE);
@@ -78,13 +93,58 @@ void export_cue_file_in_configuration_directory(ui_state *ui)
   g_snprintf(splitpoints_cue_filename, filename_size, "%s%s%s", configuration_directory,
       G_DIR_SEPARATOR_S, "splitpoints.cue");
 
-  export_to_cue_file(splitpoints_cue_filename, ui);
+  export_to_cue_file(splitpoints_cue_filename, ui, ui_pat->pat);
 
   g_free(configuration_directory);
   g_free(splitpoints_cue_filename);
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_CUE_DISABLE_CUE_FILE_CREATED_MESSAGE,
       SPLT_FALSE);
+
+  set_process_in_progress_and_wait_safe(FALSE, ui);
+
+  g_free(ui_pat);
+
+  return NULL;
+}
+
+void export_cue_file_in_configuration_directory(ui_state *ui)
+{
+  if (ui->status->lock_cue_export) { return; }
+
+  ui_with_pat *ui_pat = g_malloc0(sizeof(ui_with_pat));
+  ui_pat->ui = ui;
+  ui_pat->pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
+  if (ui->infos->previous_export_thread != NULL)
+  {
+    ui_pat->previous_thread = ui->infos->previous_export_thread;
+  }
+  else
+  {
+    ui_pat->previous_thread = NULL;
+  }
+
+  ui->infos->previous_export_thread =
+    create_thread_with_pat((GThreadFunc) export_cue_in_configuration_directory_for_thread, 
+        ui_pat, "export_cue_auto");
+}
+
+static gpointer export_to_cue_file_for_thread(ui_with_pat *ui_pat)
+{
+  if (ui_pat->previous_thread)
+  {
+    g_thread_join(ui_pat->previous_thread);
+  }
+
+  set_process_in_progress_and_wait_safe(TRUE, ui_pat->ui);
+
+  export_to_cue_file(ui_pat->ui->infos->export_cue_filename, ui_pat->ui, ui_pat->pat);
+
+  set_process_in_progress_and_wait_safe(FALSE, ui_pat->ui);
+
+  g_free(ui_pat);
+
+  return NULL;
 }
 
 //! Choose the file to save the session to
@@ -110,9 +170,28 @@ void export_cue_file_event(GtkWidget *widget, ui_state *ui)
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-    export_to_cue_file(filename, ui);
-    g_free(filename);
+    //similar to export_cue_in_configuration_directory_for_thread
+    if (ui->infos->export_cue_filename)
+    {
+      free(ui->infos->export_cue_filename);
+      ui->infos->export_cue_filename = NULL;
+    }
+    ui->infos->export_cue_filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+
+    ui_with_pat *ui_pat = g_malloc0(sizeof(ui_with_pat));
+    ui_pat->ui = ui;
+    ui_pat->pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
+    if (ui->infos->previous_export_thread != NULL)
+    {
+      ui_pat->previous_thread = ui->infos->previous_export_thread;
+    }
+    else
+    {
+      ui_pat->previous_thread = NULL;
+    }
+
+    ui->infos->previous_export_thread = 
+      create_thread_with_pat((GThreadFunc) export_to_cue_file_for_thread, ui_pat, "export_cue");
   }
 
   gtk_widget_destroy(file_chooser);
