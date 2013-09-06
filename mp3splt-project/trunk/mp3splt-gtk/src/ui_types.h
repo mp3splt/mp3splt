@@ -535,5 +535,59 @@ typedef struct {
   GThread *previous_thread;
 } ui_with_pat;
 
+typedef struct {
+  ui_state *ui;
+
+  int frame_mode;
+
+  //adjust options
+  int adjust_mode;
+  float adjust_offset;
+  int adjust_gap;
+  float adjust_threshold;
+  float adjust_min;
+
+  //single or batch
+  int split_file_mode;
+
+  //type of split
+  int selected_split_mode;
+
+  long time_split_value;
+  int equal_tracks_value;
+
+  //split by silence options
+  float silence_threshold;
+  float silence_offset;
+  int silence_number;
+  float silence_minimum_length; 
+  float silence_minimum_track_length; 
+  int silence_remove;
+
+  float trim_silence_threshold;
+
+  //no_tags, default_tags, ...
+  int selected_tags_value;
+  //version of tags
+  int tags_version;
+
+  int create_dirs_from_filenames;
+
+  //tags from filename regex
+  int regex_replace_underscores;
+  int regex_artist_tag_format;
+  int regex_album_tag_format;
+  int regex_title_tag_format;
+  int regex_comment_tag_format;
+  gchar *regex;
+  gchar *regex_default_comment;
+  gchar *regex_default_genre;
+
+  points_and_tags *pat;
+  gchar *output_format;
+  gboolean is_checked_output_radio_box;
+  gchar *output_directory;
+} ui_for_split;
+
 #endif
 

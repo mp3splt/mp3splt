@@ -46,6 +46,8 @@ void create_thread_and_unref(GThreadFunc func, ui_state *ui, const char *name);
 void create_thread_with_fname_and_unref(GThreadFunc func, ui_with_fname *ui_fname, const char *name);
 GThread *create_thread_with_pat(GThreadFunc func, ui_with_pat *ui_pat, const char *name);
 void create_thread_with_pat_and_unref(GThreadFunc func, ui_with_pat *ui_pat, const char *name);
+void create_thread_for_split_and_unref(GThreadFunc func, ui_for_split *ui_fs, const char *name);
+
 void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify);
 
 gboolean exit_application(GtkWidget *widget, GdkEvent  *event, gpointer data);

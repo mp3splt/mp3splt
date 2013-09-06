@@ -65,7 +65,7 @@ static void export_to_cue_file(const gchar* filename, ui_state *ui, points_and_t
 
   gchar *file = g_path_get_basename(filename);
   splt_code err = mp3splt_export(ui->mp3splt_state, CUE_EXPORT, file, SPLT_FALSE);
-  print_status_bar_confirmation(err, ui);
+  print_status_bar_confirmation_in_idle(err, ui);
   g_free(file);
 
   mp3splt_set_filename_to_split(ui->mp3splt_state, fname);
