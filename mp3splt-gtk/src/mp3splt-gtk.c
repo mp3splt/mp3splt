@@ -41,7 +41,7 @@
 
 ui_state *ui;
 
-static gpointer split_collected_files(ui_state *ui);
+static gpointer split_collected_files(ui_for_split *ui_fs);
 static gboolean collect_files_to_split(ui_state *ui);
 
 void split_action(ui_state *ui)
@@ -54,60 +54,12 @@ void split_action(ui_state *ui)
   }
 
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-
-  put_options_from_preferences(ui);
-
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
-  if (!get_checked_output_radio_box(ui))
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-  }
-
-  gint split_file_mode = get_split_file_mode_safe(ui);
-
-  mp3splt_set_path_of_split(ui->mp3splt_state, get_output_directory(ui));
-
   remove_all_split_rows(ui);
 
-  gint err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
-  err = mp3splt_erase_all_tags(ui->mp3splt_state);
+  ui_for_split *ui_fs = build_ui_for_split(ui);
+  ui_fs->pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
 
-  gint split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
-  print_status_bar_confirmation(err, ui);
-
-  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
-
-  err = mp3splt_set_oformat(ui->mp3splt_state, format);
-
-  if (format)
-  {
-    free(format);
-    format = NULL;
-  }
-
-  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) == SPLT_OPTION_NORMAL_MODE &&
-      split_file_mode == FILE_MODE_SINGLE)
-  {
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
-  }
-
-  if (split_mode == SPLT_OPTION_NORMAL_MODE)
-  {
-    points_and_tags *pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
-    gint i = 0;
-    for (i = 0;i < pat->splitpoints->len; i++)
-    {
-      splt_point *point = g_ptr_array_index(pat->splitpoints, i);
-      mp3splt_append_splitpoint(ui->mp3splt_state, point);
-      splt_tags *tags = g_ptr_array_index(pat->tags, i);
-      mp3splt_append_tags(ui->mp3splt_state, tags);
-    }
-
-    err = mp3splt_remove_tags_of_skippoints(ui->mp3splt_state);
-    print_status_bar_confirmation(err, ui);
-  }
-
-  create_thread_and_unref((GThreadFunc)split_collected_files, ui, "split");
+  create_thread_for_split_and_unref((GThreadFunc)split_collected_files, ui_fs, "split");
 }
 
 static gboolean collect_files_to_split(ui_state *ui)
@@ -190,11 +142,51 @@ static gint get_stop_split_safe(ui_state *ui)
 }
 
 //! Split the file
-static gpointer split_collected_files(ui_state *ui)
+static gpointer split_collected_files(ui_for_split *ui_fs)
 {
+  ui_state *ui = ui_fs->ui;
+
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  gint err = SPLT_OK;
+  put_options_from_preferences(ui_fs);
+
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
+  if (!ui_fs->is_checked_output_radio_box)
+  {
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
+  }
+
+  mp3splt_set_path_of_split(ui->mp3splt_state, ui_fs->output_directory);
+
+  gint err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
+  err = mp3splt_erase_all_tags(ui->mp3splt_state);
+
+  gint split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
+  print_status_bar_confirmation_in_idle(err, ui);
+
+  err = mp3splt_set_oformat(ui->mp3splt_state, ui_fs->output_format);
+
+  if (mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err) == SPLT_OPTION_NORMAL_MODE &&
+      ui_fs->split_file_mode == FILE_MODE_SINGLE)
+  {
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
+  }
+
+  if (split_mode == SPLT_OPTION_NORMAL_MODE)
+  {
+    gint i = 0;
+    for (i = 0;i < ui_fs->pat->splitpoints->len; i++)
+    {
+      splt_point *point = g_ptr_array_index(ui_fs->pat->splitpoints, i);
+      mp3splt_append_splitpoint(ui->mp3splt_state, point);
+      splt_tags *tags = g_ptr_array_index(ui_fs->pat->tags, i);
+      mp3splt_append_tags(ui->mp3splt_state, tags);
+    }
+
+    err = mp3splt_remove_tags_of_skippoints(ui->mp3splt_state);
+    print_status_bar_confirmation_in_idle(err, ui);
+  }
+
   gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
 
   gint selected_split_mode = get_selected_split_mode_safe(ui);
@@ -272,6 +264,8 @@ static gpointer split_collected_files(ui_state *ui)
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, output_filenames);
 
+  free_ui_for_split(ui_fs);
+
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
   ui_err->err = err;
   ui_err->ui = ui;
@@ -312,6 +306,12 @@ void create_thread_with_pat_and_unref(GThreadFunc func, ui_with_pat *ui_pat, con
 void create_thread_with_fname_and_unref(GThreadFunc func, ui_with_fname *ui_fname, const char *name)
 {
   g_thread_unref(create_thread_with_fname(func, ui_fname, name));
+}
+
+void create_thread_for_split_and_unref(GThreadFunc func, ui_for_split *ui_fs, const char *name)
+{
+  mp3splt_set_int_option(ui_fs->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_fs->ui->infos->debug_is_active);
+  g_thread_unref(g_thread_new(name, func, ui_fs));
 }
 
 void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify)

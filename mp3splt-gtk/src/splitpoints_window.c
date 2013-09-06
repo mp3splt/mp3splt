@@ -1061,6 +1061,7 @@ static void detect_silence_and_set_splitpoints_action(ui_state *ui)
   {
     err = mp3splt_set_oformat(ui->mp3splt_state, format);
   }
+  //TODO: _in_idle
   print_status_bar_confirmation(err, ui);
 
   if (format)
@@ -1566,32 +1567,17 @@ static gboolean split_preview_end(ui_with_err *ui_err)
   return FALSE;
 }
 
-static gpointer split_preview(ui_state *ui)
+static gpointer split_preview(ui_for_split *ui_fs)
 {
+  ui_state *ui = ui_fs->ui;
+
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  gchar *fname_path = get_preferences_filename();
-  fname_path[strlen(fname_path) - 18] = '\0';
-  mp3splt_set_path_of_split(ui->mp3splt_state, fname_path);
-  if (fname_path) { g_free(fname_path); }
-
-  gint err = mp3splt_split(ui->mp3splt_state);
-
-  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
-  ui_err->err = err;
-  ui_err->ui = ui;
-
-  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_preview_end, ui_err, NULL);
-
-  return NULL;
-}
-
-static void split_preview_action(ui_state *ui)
-{
   int err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
-  print_status_bar_confirmation(err, ui);
+  print_status_bar_confirmation_in_idle(err, ui);
+
   err = mp3splt_erase_all_tags(ui->mp3splt_state);
-  print_status_bar_confirmation(err, ui);
+  print_status_bar_confirmation_in_idle(err, ui);
 
   splt_point *splitpoint = mp3splt_point_new(get_preview_start_position_safe(ui), NULL);
   mp3splt_point_set_name(splitpoint, "preview");
@@ -1608,10 +1594,33 @@ static void split_preview_action(ui_state *ui)
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
 
-  put_options_from_preferences(ui);
+  put_options_from_preferences(ui_fs);
+
+  gchar *fname_path = get_preferences_filename();
+  fname_path[strlen(fname_path) - 18] = '\0';
+  mp3splt_set_path_of_split(ui->mp3splt_state, fname_path);
+  if (fname_path) { g_free(fname_path); }
+
+  err = mp3splt_split(ui->mp3splt_state);
+
+  free_ui_for_split(ui_fs);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = err;
+  ui_err->ui = ui;
+
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)split_preview_end, ui_err, NULL);
+
+  return NULL;
+}
+
+static void split_preview_action(ui_state *ui)
+{
+  ui_for_split *ui_fs = build_ui_for_split(ui);
+
   remove_all_split_rows(ui);
 
-  create_thread_and_unref((GThreadFunc)split_preview, ui, "split_preview");
+  create_thread_for_split_and_unref((GThreadFunc)split_preview, ui_fs, "split_preview");
 }
 
 //!the row clicked event, preview the song

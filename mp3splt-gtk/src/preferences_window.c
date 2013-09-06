@@ -1106,14 +1106,16 @@ static GtkComboBox *create_text_preferences_combo(ui_state *ui)
 
 static void test_regex_event(GtkWidget *widget, ui_state *ui)
 {
-  put_tags_from_filename_regex_options(ui);
+  ui_for_split *ui_fs = build_ui_for_split(ui);
+  put_tags_from_filename_regex_options(ui_fs);
 
   const gchar *test_regex_filename = gtk_entry_get_text(GTK_ENTRY(ui->gui->test_regex_fname_entry));
   mp3splt_set_filename_to_split(ui->mp3splt_state, test_regex_filename);
 
   gint error = SPLT_OK;
   splt_tags *tags = mp3splt_parse_filename_regex(ui->mp3splt_state, &error);
-  print_status_bar_confirmation(error, ui);
+  //TODO: _in_idle
+  print_status_bar_confirmation_in_idle(error, ui);
 
   if (error >= 0)
   {
@@ -1195,6 +1197,8 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
   }
 
   mp3splt_free_one_tag(tags);
+
+  free_ui_for_split(ui_fs);
 }
 
 static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui)

@@ -37,8 +37,11 @@
 #include "all_includes.h"
 
 void update_output_options(ui_state *ui);
-void put_options_from_preferences(ui_state *ui);
-void put_tags_from_filename_regex_options(ui_state *ui);
+void put_options_from_preferences(ui_for_split *ui_fs);
+void put_tags_from_filename_regex_options(ui_for_split *ui_fs);
+
+ui_for_split *build_ui_for_split(ui_state *ui);
+void free_ui_for_split(ui_for_split *ui_fs);
 
 #endif
 
