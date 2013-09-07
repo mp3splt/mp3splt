@@ -1001,13 +1001,31 @@ static gint get_should_trim_safe(ui_state *ui)
 }
 
 //!set splitpints from silence detection
-static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
+static gpointer detect_silence_and_set_splitpoints(ui_for_split *ui_fs)
 {
+  ui_state *ui = ui_fs->ui;
+
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
   set_is_splitting_safe(TRUE, ui);
 
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->silence_threshold);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, ui_fs->silence_offset);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, ui_fs->silence_number);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, 
+      ui_fs->silence_minimum_length);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
+      ui_fs->silence_minimum_track_length);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
+      ui_fs->silence_remove);
+
+  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
   gint err = SPLT_OK;
+  if (ui_fs->is_checked_output_radio_box == 0)
+  {
+    err = mp3splt_set_oformat(ui->mp3splt_state, ui_fs->output_format);
+  }
+  print_status_bar_confirmation_in_idle(err, ui);
 
   err = mp3splt_erase_all_splitpoints(ui->mp3splt_state);
   print_status_bar_confirmation_in_idle(err, ui);
@@ -1033,6 +1051,8 @@ static gpointer detect_silence_and_set_splitpoints(ui_state *ui)
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, old_tags_option);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, old_split_mode);
 
+  free_ui_for_split(ui_fs);
+
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
   ui_err->err = err;
   ui_err->ui = ui;
@@ -1050,27 +1070,11 @@ static void detect_silence_and_set_splitpoints_action(ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button, FALSE);
   gtk_widget_set_sensitive(ui->gui->scan_trim_silence_button_player, FALSE);
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-  gchar *format = strdup(gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry)));
 
-  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
+  ui_for_split *ui_fs = build_ui_for_split(ui);
 
-  gint checked_output_radio_box = get_checked_output_radio_box(ui);
-
-  gint err = SPLT_OK;
-  if (checked_output_radio_box == 0)
-  {
-    err = mp3splt_set_oformat(ui->mp3splt_state, format);
-  }
-  //TODO: _in_idle
-  print_status_bar_confirmation(err, ui);
-
-  if (format)
-  {
-    free(format);
-    format = NULL;
-  }
-
-  create_thread_and_unref((GThreadFunc)detect_silence_and_set_splitpoints, ui, "detect_silence");
+  create_thread_for_split_and_unref((GThreadFunc)detect_silence_and_set_splitpoints, 
+      ui_fs, "detect_silence");
 }
 
 //!start thread with 'set splitpints from silence detection'
@@ -1314,23 +1318,12 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
 
   gtk_widget_destroy(silence_detection_window);
 
-  if (result == GTK_RESPONSE_YES)
+  if (result != GTK_RESPONSE_YES)
   {
-    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, 
-        infos->silence_threshold_value);
-    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, 
-        infos->silence_offset_value);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, 
-        infos->silence_number_of_tracks);
-    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, 
-        infos->silence_minimum_length);
-    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
-        infos->silence_minimum_track_length);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
-        infos->silence_remove_silence_between_tracks);
-
-    detect_silence_and_add_splitpoints_start_thread(ui);
+    return;
   }
+
+  detect_silence_and_add_splitpoints_start_thread(ui);
 }
 
 //!remove a row from the table
