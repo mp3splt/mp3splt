@@ -109,6 +109,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
+    ui_fname->is_checked_output_radio_box = get_checked_output_radio_box(ui);
     ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     create_thread_with_fname_and_unref((GThreadFunc)add_cue_splitpoints, ui_fname, "import_cue");
   }
@@ -117,6 +118,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
+    ui_fname->is_checked_output_radio_box = get_checked_output_radio_box(ui);
     ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     create_thread_with_fname_and_unref((GThreadFunc)add_cddb_splitpoints, ui_fname, "import_cddb");
   }
@@ -125,6 +127,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
+    ui_fname->is_checked_output_radio_box = get_checked_output_radio_box(ui);
     create_thread_with_fname_and_unref((GThreadFunc)add_audacity_labels_splitpoints, ui_fname,
         "import_audacity");
   }
@@ -133,6 +136,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
     ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
     ui_fname->ui = ui;
     ui_fname->fname = strdup(filename);
+    ui_fname->is_checked_output_radio_box = get_checked_output_radio_box(ui);
     ui->infos->output_entry_data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
     create_thread_with_fname_and_unref((GThreadFunc)add_plugin_internal_cue_splitpoints, ui_fname,
         "import_internal");
@@ -333,7 +337,7 @@ static gpointer add_plugin_internal_cue_splitpoints(ui_with_fname *ui_fname)
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  update_output_options(ui);
+  update_output_options(ui, ui_fname->is_checked_output_radio_box);
 
   gchar *filename = ui_fname->fname;
   g_free(ui_fname);
@@ -377,7 +381,7 @@ static gpointer add_cddb_splitpoints(ui_with_fname *ui_fname)
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  update_output_options(ui);
+  update_output_options(ui, ui_fname->is_checked_output_radio_box);
 
   gchar *filename = ui_fname->fname;
   g_free(ui_fname);
@@ -443,7 +447,7 @@ static gpointer add_cue_splitpoints(ui_with_fname *ui_fname)
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  update_output_options(ui);
+  update_output_options(ui, ui_fname->is_checked_output_radio_box);
 
   gchar *filename = ui_fname->fname;
   g_free(ui_fname);

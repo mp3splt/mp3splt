@@ -1073,7 +1073,7 @@ static void detect_silence_and_set_splitpoints_action(ui_state *ui)
 
   ui_for_split *ui_fs = build_ui_for_split(ui);
 
-  create_thread_for_split_and_unref((GThreadFunc)detect_silence_and_set_splitpoints, 
+  create_thread_for_split_and_unref((GThreadFunc)detect_silence_and_set_splitpoints,
       ui_fs, "detect_silence");
 }
 
@@ -1179,11 +1179,9 @@ void create_trim_silence_window(GtkWidget *button, ui_state *ui)
 
   gtk_widget_destroy(silence_detection_window);
 
-  if (result == GTK_RESPONSE_YES)
-  {
-    mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui->infos->silence_threshold_value);
-    detect_silence_and_add_trim_splitpoints_start_thread(ui);
-  }
+  if (result != GTK_RESPONSE_YES) { return; }
+
+  detect_silence_and_add_trim_splitpoints_start_thread(ui);
 }
 
 //!event for clicking the 'detect silence and add splitpoints' button
@@ -1318,10 +1316,7 @@ void create_detect_silence_and_add_splitpoints_window(GtkWidget *button, ui_stat
 
   gtk_widget_destroy(silence_detection_window);
 
-  if (result != GTK_RESPONSE_YES)
-  {
-    return;
-  }
+  if (result != GTK_RESPONSE_YES) { return; }
 
   detect_silence_and_add_splitpoints_start_thread(ui);
 }

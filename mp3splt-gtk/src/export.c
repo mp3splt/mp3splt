@@ -61,7 +61,7 @@ static void export_to_cue_file(const gchar* filename, ui_state *ui, points_and_t
     splt_tags *tags = g_ptr_array_index(pat->tags, i);
     mp3splt_append_tags(ui->mp3splt_state, tags);
   }
-  free_points_and_tags(&ui->infos->pat);
+  free_points_and_tags(&pat);
 
   gchar *file = g_path_get_basename(filename);
   splt_code err = mp3splt_export(ui->mp3splt_state, CUE_EXPORT, file, SPLT_FALSE);
@@ -138,7 +138,9 @@ static gpointer export_to_cue_file_for_thread(ui_with_pat *ui_pat)
 
   set_process_in_progress_and_wait_safe(TRUE, ui_pat->ui);
 
-  export_to_cue_file(ui_pat->ui->infos->export_cue_filename, ui_pat->ui, ui_pat->pat);
+  export_to_cue_file(ui_pat->export_filename, ui_pat->ui, ui_pat->pat);
+
+  g_free(ui_pat->export_filename);
 
   set_process_in_progress_and_wait_safe(FALSE, ui_pat->ui);
 
@@ -170,17 +172,11 @@ void export_cue_file_event(GtkWidget *widget, ui_state *ui)
 
   if (gtk_dialog_run(GTK_DIALOG(file_chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    //similar to export_cue_in_configuration_directory_for_thread
-    if (ui->infos->export_cue_filename)
-    {
-      free(ui->infos->export_cue_filename);
-      ui->infos->export_cue_filename = NULL;
-    }
-    ui->infos->export_cue_filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-
     ui_with_pat *ui_pat = g_malloc0(sizeof(ui_with_pat));
     ui_pat->ui = ui;
     ui_pat->pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
+    ui_pat->export_filename = 
+      g_strdup(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser)));
     if (ui->infos->previous_export_thread != NULL)
     {
       ui_pat->previous_thread = ui->infos->previous_export_thread;

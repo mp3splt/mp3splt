@@ -1104,101 +1104,132 @@ static GtkComboBox *create_text_preferences_combo(ui_state *ui)
   return combo;
 }
 
-static void test_regex_event(GtkWidget *widget, ui_state *ui)
+static gboolean test_regex_end(ui_with_fname *ui_fname)
 {
-  ui_for_split *ui_fs = build_ui_for_split(ui);
-  put_tags_from_filename_regex_options(ui_fs);
+  ui_state *ui = ui_fname->ui;
 
-  const gchar *test_regex_filename = gtk_entry_get_text(GTK_ENTRY(ui->gui->test_regex_fname_entry));
-  mp3splt_set_filename_to_split(ui->mp3splt_state, test_regex_filename);
-
-  gint error = SPLT_OK;
-  splt_tags *tags = mp3splt_parse_filename_regex(ui->mp3splt_state, &error);
-  //TODO: _in_idle
-  print_status_bar_confirmation_in_idle(error, ui);
-
-  if (error >= 0)
+  if (ui_fname->fname)
   {
-    GString *regex_result = g_string_new(NULL);
-
-    g_string_append(regex_result, _("<artist>: "));
-    char *artist = mp3splt_tags_get(tags, SPLT_TAGS_ARTIST);
-    if (artist)
-    {
-      g_string_append(regex_result, artist);
-      free(artist);
-    }
-    g_string_append(regex_result, "\n");
-
-    g_string_append(regex_result, _("<album>: "));
-    char *album = mp3splt_tags_get(tags, SPLT_TAGS_ALBUM);
-    if (album)
-    {
-      g_string_append(regex_result, album);
-      free(album);
-    }
-    g_string_append(regex_result, "\n");
-
-
-    g_string_append(regex_result, _("<title>: "));
-    char *title = mp3splt_tags_get(tags, SPLT_TAGS_TITLE);
-    if (title)
-    {
-      g_string_append(regex_result, title);
-      free(title);
-    }
-    g_string_append(regex_result, "\n");
-
-    g_string_append(regex_result, _("<genre>: "));
-    char *genre = mp3splt_tags_get(tags, SPLT_TAGS_GENRE);
-    if (genre)
-    {
-      g_string_append(regex_result, genre);
-      free(genre);
-    }
-    g_string_append(regex_result, "\n");
-
-    g_string_append(regex_result, _("<comment>: "));
-    char *comment = mp3splt_tags_get(tags, SPLT_TAGS_COMMENT);
-    if (comment)
-    {
-      g_string_append(regex_result, comment);
-      free(comment);
-    }
-    g_string_append(regex_result, "\n");
-
-    g_string_append(regex_result, _("<year>: "));
-    char *year = mp3splt_tags_get(tags, SPLT_TAGS_YEAR);
-    if (year)
-    {
-      g_string_append(regex_result, year);
-      free(year);
-    }
-    g_string_append(regex_result, "\n");
-
-    g_string_append(regex_result, _("<track>: "));
-    gchar *track = mp3splt_tags_get(tags, SPLT_TAGS_TRACK);
-    if (track)
-    {
-      g_string_append(regex_result, track);
-      free(track);
-    }
-
-    gchar *regex_result_text = g_string_free(regex_result, FALSE);
-    if (regex_result_text)
-    {
-      gtk_label_set_text(GTK_LABEL(ui->gui->sample_result_label), regex_result_text);
-      g_free(regex_result_text);
-    }
+    gtk_label_set_text(GTK_LABEL(ui->gui->sample_result_label), ui_fname->fname);
+    g_free(ui_fname->fname);
   }
   else
   {
     gtk_label_set_text(GTK_LABEL(ui->gui->sample_result_label), "");
   }
 
-  mp3splt_free_one_tag(tags);
+  g_free(ui_fname);
 
+  set_process_in_progress_and_wait_safe(FALSE, ui);
+
+  return FALSE;
+}
+
+static gpointer test_regex_thread(ui_for_split *ui_fs)
+{
+  ui_state *ui = ui_fs->ui;
+
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  put_tags_from_filename_regex_options(ui_fs);
+
+  mp3splt_set_filename_to_split(ui->mp3splt_state, ui_fs->test_regex_filename);
+
+  gint error = SPLT_OK;
+  splt_tags *tags = mp3splt_parse_filename_regex(ui->mp3splt_state, &error);
+  print_status_bar_confirmation_in_idle(error, ui);
+
+  if (error < 0) { goto end; }
+
+  GString *regex_result = g_string_new(NULL);
+
+  g_string_append(regex_result, _("<artist>: "));
+  char *artist = mp3splt_tags_get(tags, SPLT_TAGS_ARTIST);
+  if (artist)
+  {
+    g_string_append(regex_result, artist);
+    free(artist);
+  }
+  g_string_append(regex_result, "\n");
+
+  g_string_append(regex_result, _("<album>: "));
+  char *album = mp3splt_tags_get(tags, SPLT_TAGS_ALBUM);
+  if (album)
+  {
+    g_string_append(regex_result, album);
+    free(album);
+  }
+  g_string_append(regex_result, "\n");
+
+
+  g_string_append(regex_result, _("<title>: "));
+  char *title = mp3splt_tags_get(tags, SPLT_TAGS_TITLE);
+  if (title)
+  {
+    g_string_append(regex_result, title);
+    free(title);
+  }
+  g_string_append(regex_result, "\n");
+
+  g_string_append(regex_result, _("<genre>: "));
+  char *genre = mp3splt_tags_get(tags, SPLT_TAGS_GENRE);
+  if (genre)
+  {
+    g_string_append(regex_result, genre);
+    free(genre);
+  }
+  g_string_append(regex_result, "\n");
+
+  g_string_append(regex_result, _("<comment>: "));
+  char *comment = mp3splt_tags_get(tags, SPLT_TAGS_COMMENT);
+  if (comment)
+  {
+    g_string_append(regex_result, comment);
+    free(comment);
+  }
+  g_string_append(regex_result, "\n");
+
+  g_string_append(regex_result, _("<year>: "));
+  char *year = mp3splt_tags_get(tags, SPLT_TAGS_YEAR);
+  if (year)
+  {
+    g_string_append(regex_result, year);
+    free(year);
+  }
+  g_string_append(regex_result, "\n");
+
+  g_string_append(regex_result, _("<track>: "));
+  gchar *track = mp3splt_tags_get(tags, SPLT_TAGS_TRACK);
+  if (track)
+  {
+    g_string_append(regex_result, track);
+    free(track);
+  }
+
+end:
+  mp3splt_free_one_tag(tags);
   free_ui_for_split(ui_fs);
+
+  ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+  ui_fname->ui = ui;
+  ui_fname->fname = g_string_free(regex_result, FALSE);
+
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)test_regex_end, ui_fname, NULL);
+
+  return NULL;
+}
+
+static void test_regex_event(GtkWidget *widget, ui_state *ui)
+{
+  ui_for_split *ui_fs = build_ui_for_split(ui);
+
+  const gchar *test_regex_filename = gtk_entry_get_text(GTK_ENTRY(ui->gui->test_regex_fname_entry));
+  if (test_regex_filename != NULL)
+  {
+    ui_fs->test_regex_filename = g_strdup(test_regex_filename);
+  }
+
+  create_thread_for_split_and_unref((GThreadFunc)test_regex_thread, ui_fs, "test_regex");
 }
 
 static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui)
