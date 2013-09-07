@@ -488,8 +488,10 @@ static gboolean put_freedb_splitpoints_end(ui_state *ui)
   return FALSE;
 }
 
-static gpointer put_freedb_splitpoints(ui_state *ui)
+static gpointer put_freedb_splitpoints(ui_for_split *ui_fs)
 {
+  ui_state *ui = ui_fs->ui;
+
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
   gint selected_id = get_freedb_selected_id_safe(ui);
@@ -508,14 +510,14 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
       filename, SPLT_FREEDB_GET_FILE_TYPE_CDDB_CGI, "\0",-1);
   print_status_bar_confirmation_in_idle(err, ui);
 
-  if (ui->infos->is_checked_output_radio_box)
+  if (ui_fs->is_checked_output_radio_box)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
   }
   else
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-    gint error = mp3splt_set_oformat(ui->mp3splt_state, ui->infos->output_entry_text);
+    gint error = mp3splt_set_oformat(ui->mp3splt_state, ui_fs->output_format);
     print_status_bar_confirmation_in_idle(error, ui);
   }
 
@@ -531,15 +533,17 @@ static gpointer put_freedb_splitpoints(ui_state *ui)
   add_idle(G_PRIORITY_HIGH_IDLE,
       (GSourceFunc)put_freedb_splitpoints_end, ui, NULL);
 
+  free_ui_for_split(ui_fs);
+
   return NULL;
 }
 
 //!event for the freedb add button when clicked
 static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
-  ui->infos->is_checked_output_radio_box = get_checked_output_radio_box(ui);
-  ui->infos->output_entry_text = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-  create_thread_and_unref((GThreadFunc)put_freedb_splitpoints, ui, "put_freedb_points");
+  ui_for_split *ui_fs = build_ui_for_split(ui);
+  create_thread_for_split_and_unref((GThreadFunc)put_freedb_splitpoints,
+      ui_fs, "put_freedb_points");
 }
 
 //!creates the freedb box

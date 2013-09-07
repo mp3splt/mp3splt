@@ -178,15 +178,11 @@ typedef struct {
 
   //freedb search thread
   const gchar *freedb_search_value;
-  //put freedb splitpoints thread
-  gint is_checked_output_radio_box;
-  const char *output_entry_text;
   //cddb, cue, internal cue import
   const char *output_entry_data;
   //cue export
-  points_and_tags *pat;
   char *export_cue_filename;
-  //make threads execute in order
+  //make export threads to execute in order
   GThread *previous_export_thread;
 } ui_infos;
 
@@ -527,12 +523,14 @@ typedef struct {
 typedef struct {
   ui_state *ui;
   char *fname;
+  gboolean is_checked_output_radio_box;
 } ui_with_fname;
 
 typedef struct {
   ui_state *ui;
   points_and_tags *pat;
   GThread *previous_thread;
+  gchar *export_filename;
 } ui_with_pat;
 
 typedef struct {
@@ -587,6 +585,8 @@ typedef struct {
   gchar *output_format;
   gboolean is_checked_output_radio_box;
   gchar *output_directory;
+
+  gchar *test_regex_filename;
 } ui_for_split;
 
 #endif
