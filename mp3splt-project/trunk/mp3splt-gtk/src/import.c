@@ -122,7 +122,7 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
   else if ((strstr(ext_str->str, ".CUE") != NULL))
   {
     ui_with_fname *ui_fname = create_ui_with_fname(ui, filename);
-    create_thread_and_unref((GThreadFunc)add_cue_splitpoints, 
+    create_thread_and_unref((GThreadFunc)add_cue_splitpoints,
         (gpointer) ui_fname, ui, "import_cue");
   }
   else if ((strstr(ext_str->str, ".CDDB") != NULL))
@@ -134,13 +134,13 @@ void import_file(gchar *filename, ui_state *ui, gboolean force_import_cue)
   else if ((strstr(ext_str->str, ".TXT") != NULL))
   {
     ui_with_fname *ui_fname = create_ui_with_fname(ui, filename);
-    create_thread_and_unref((GThreadFunc)add_audacity_labels_splitpoints, 
+    create_thread_and_unref((GThreadFunc)add_audacity_labels_splitpoints,
         (gpointer) ui_fname, ui, "import_audacity");
   }
   else
   {
     ui_with_fname *ui_fname = create_ui_with_fname(ui, filename);
-    create_thread_and_unref((GThreadFunc)add_plugin_internal_cue_splitpoints, 
+    create_thread_and_unref((GThreadFunc)add_plugin_internal_cue_splitpoints,
         (gpointer) ui_fname, ui, "import_internal");
   }
 
@@ -169,9 +169,52 @@ void import_cue_file_from_the_configuration_directory(ui_state *ui)
   g_free(splitpoints_cue_filename);
 }
 
-void import_files_to_batch_and_free(GSList *files, ui_state *ui)
+static gboolean import_files_to_batch(ui_with_fnames *ui_wf)
 {
-  GSList *current_file = files;
+  ui_state *ui = ui_wf->ui;
+  char **splt_filenames = ui_wf->filenames;
+
+  gint i = 0;
+  for (i = 0;i < ui_wf->num_of_filenames;i++)
+  {
+    if (!splt_filenames[i])
+    {
+      continue;
+    }
+
+    multiple_files_add_filename(splt_filenames[i], ui);
+
+    free(splt_filenames[i]);
+    splt_filenames[i] = NULL;
+  }
+
+  free(splt_filenames);
+  splt_filenames = NULL;
+
+  g_free(ui_wf);
+
+  return FALSE;
+}
+
+static gboolean import_files_to_batch_end(ui_state *ui)
+{
+  if (ui->infos->multiple_files_tree_number > 0)
+  {
+    gtk_widget_set_sensitive(ui->gui->multiple_files_remove_all_files_button, TRUE);
+  }
+
+  set_process_in_progress_and_wait_safe(FALSE, ui);
+
+  return FALSE;
+}
+
+static gpointer import_files_to_batch_thread(ui_with_list *ui_wl)
+{
+  ui_state *ui = ui_wl->ui;
+
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  GSList *current_file = ui_wl->list;
   while (current_file)
   {
     gchar *filename = current_file->data;
@@ -184,22 +227,12 @@ void import_files_to_batch_and_free(GSList *files, ui_state *ui)
 
     if (splt_filenames)
     {
-      gint i = 0;
-      for (i = 0;i < num_of_files_found;i++)
-      {
-        if (!splt_filenames[i])
-        {
-          continue;
-        }
+      ui_with_fnames *ui_wf = g_malloc0(sizeof(ui_with_fnames));
+      ui_wf->ui = ui;
+      ui_wf->filenames = splt_filenames;
+      ui_wf->num_of_filenames = num_of_files_found;
 
-        multiple_files_add_filename(splt_filenames[i], ui);
-
-        free(splt_filenames[i]);
-        splt_filenames[i] = NULL;
-      }
-
-      free(splt_filenames);
-      splt_filenames = NULL;
+      add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)import_files_to_batch, ui_wf, NULL);
     }
 
     g_free(filename);
@@ -208,12 +241,23 @@ void import_files_to_batch_and_free(GSList *files, ui_state *ui)
     current_file = g_slist_next(current_file);
   }
 
-  g_slist_free(files);
+  g_slist_free(ui_wl->list);
 
-  if (ui->infos->multiple_files_tree_number > 0)
-  {
-    gtk_widget_set_sensitive(ui->gui->multiple_files_remove_all_files_button, TRUE);
-  }
+  g_free(ui_wl);
+
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)import_files_to_batch_end, ui, NULL);
+
+  return NULL;
+}
+
+void import_files_to_batch_and_free(GSList *files, ui_state *ui)
+{
+  ui_with_list *ui_wl = g_malloc0(sizeof(ui_with_list));
+  ui_wl->ui = ui;
+  ui_wl->list = files;
+
+  create_thread_and_unref((GThreadFunc)import_files_to_batch_thread,
+      (gpointer) ui_wl, ui, "import_to_batch");
 }
 
 //! Set the file chooser filters to "splitpoint file"
