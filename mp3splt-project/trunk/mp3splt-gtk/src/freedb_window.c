@@ -238,8 +238,10 @@ static gboolean freedb_search_end(ui_with_err *ui_err)
 }
 
 //!search the freedb.org
-static gpointer freedb_search(ui_state *ui)
+static gpointer freedb_search(ui_with_fname *ui_fname)
 {
+  ui_state *ui = ui_fname->ui;
+
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
   add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_start, ui, NULL);
@@ -248,7 +250,7 @@ static gpointer freedb_search(ui_state *ui)
 
   //freedb_search_results is only used in the idle of the end of the thread, so no mutex needed
   ui->infos->freedb_search_results = 
-    mp3splt_get_freedb_search(ui->mp3splt_state, ui->infos->freedb_search_value, &err,
+    mp3splt_get_freedb_search(ui->mp3splt_state, ui_fname->fname, &err,
         SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0", -1);
 
   print_status_bar_confirmation_in_idle(err, ui);
@@ -258,14 +260,24 @@ static gpointer freedb_search(ui_state *ui)
   ui_err->ui = ui;
   add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)freedb_search_end, ui_err, NULL);
 
+  g_free(ui_fname->fname);
+  g_free(ui_fname);
+
   return NULL;
 }
 
 //! Start a thread for the freedb search
 static void freedb_search_start_thread(ui_state *ui)
 {
-  ui->infos->freedb_search_value = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
-  create_thread_and_unref((GThreadFunc)freedb_search, ui, "freedb search");
+  ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+  ui_fname->ui = ui;
+
+  const gchar *freedb_search_value = gtk_entry_get_text(GTK_ENTRY(ui->gui->freedb_entry));
+  if (freedb_search_value)
+  {
+    ui_fname->fname = g_strdup(freedb_search_value);
+    create_thread_and_unref((GThreadFunc)freedb_search, (gpointer)ui_fname, ui, "freedb search");
+  }
 }
 
 //!we push the search button
@@ -542,8 +554,8 @@ static gpointer put_freedb_splitpoints(ui_for_split *ui_fs)
 static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
   ui_for_split *ui_fs = build_ui_for_split(ui);
-  create_thread_for_split_and_unref((GThreadFunc)put_freedb_splitpoints,
-      ui_fs, "put_freedb_points");
+  create_thread_and_unref((GThreadFunc)put_freedb_splitpoints, 
+      (gpointer)ui_fs, ui, "put_freedb_points");
 }
 
 //!creates the freedb box

@@ -47,14 +47,14 @@
 
   All other options are read out in put_options_from_preferences()
  */
-void update_output_options(ui_state *ui, gboolean is_checked_output_radio_box)
+void update_output_options(ui_state *ui, gboolean is_checked_output_radio_box, gchar *output_format)
 {
   mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
 
   if (!is_checked_output_radio_box)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
-    gint error = mp3splt_set_oformat(ui->mp3splt_state, ui->infos->output_entry_data);
+    gint error = mp3splt_set_oformat(ui->mp3splt_state, output_format);
     print_status_bar_confirmation_in_idle(error, ui);
   }
   else

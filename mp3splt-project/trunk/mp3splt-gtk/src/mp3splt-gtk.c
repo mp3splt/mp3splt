@@ -59,7 +59,8 @@ void split_action(ui_state *ui)
   ui_for_split *ui_fs = build_ui_for_split(ui);
   ui_fs->pat = get_splitpoints_and_tags_for_mp3splt_state(ui);
 
-  create_thread_for_split_and_unref((GThreadFunc)split_collected_files, ui_fs, "split");
+  create_thread_and_unref((GThreadFunc)split_collected_files,
+      (gpointer) ui_fs, ui, "split");
 }
 
 static gboolean collect_files_to_split(ui_state *ui)
@@ -275,43 +276,46 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
   return NULL;
 }
 
-static GThread *create_thread(GThreadFunc func, ui_state *ui, const char *name)
+static gpointer thread_wrapper_function(gpointer data)
 {
+  ui_with_data *ui_wd = (ui_with_data *) data;
+  ui_state *ui = ui_wd->ui;
+
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  //some general options
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
-  return g_thread_new(name, func, ui);
+  if (ui_wd->is_checked_output_radio_box)
+  {
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
+  }
+  else
+  {
+    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
+  }
+
+  set_process_in_progress_and_wait_safe(FALSE, ui);
+
+  gpointer returned_value = ui_wd->thread(ui_wd->data);
+
+  g_free(ui_wd);
+
+  return returned_value;
 }
 
-void create_thread_and_unref(GThreadFunc func, ui_state *ui, const char *name)
+GThread *create_thread(GThreadFunc func, gpointer data, ui_state *ui, const char *name)
 {
-  g_thread_unref(create_thread(func, ui, name));
+  ui_with_data *ui_wd = g_malloc0(sizeof(ui_with_data));
+  ui_wd->ui = ui;
+  ui_wd->data = data;
+  ui_wd->thread = func;
+  ui_wd->is_checked_output_radio_box = get_checked_output_radio_box(ui);
+  return g_thread_new(name, thread_wrapper_function, ui_wd);
 }
 
-static GThread *create_thread_with_fname(GThreadFunc func, ui_with_fname *ui_fname, const char *name)
+void create_thread_and_unref(GThreadFunc func, gpointer data, ui_state *ui, const char *name)
 {
-  mp3splt_set_int_option(ui_fname->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_fname->ui->infos->debug_is_active);
-  return g_thread_new(name, func, ui_fname);
-}
-
-GThread *create_thread_with_pat(GThreadFunc func, ui_with_pat *ui_pat, const char *name)
-{
-  mp3splt_set_int_option(ui_pat->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_pat->ui->infos->debug_is_active);
-  return g_thread_new(name, func, ui_pat);
-}
-
-void create_thread_with_pat_and_unref(GThreadFunc func, ui_with_pat *ui_pat, const char *name)
-{
-  g_thread_unref(create_thread_with_pat(func, ui_pat, name));
-}
-
-void create_thread_with_fname_and_unref(GThreadFunc func, ui_with_fname *ui_fname, const char *name)
-{
-  g_thread_unref(create_thread_with_fname(func, ui_fname, name));
-}
-
-void create_thread_for_split_and_unref(GThreadFunc func, ui_for_split *ui_fs, const char *name)
-{
-  mp3splt_set_int_option(ui_fs->ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui_fs->ui->infos->debug_is_active);
-  g_thread_unref(g_thread_new(name, func, ui_fs));
+  g_thread_unref(create_thread(func, data, ui, name));
 }
 
 void add_idle(gint priority, GSourceFunc function, gpointer data, GDestroyNotify notify)

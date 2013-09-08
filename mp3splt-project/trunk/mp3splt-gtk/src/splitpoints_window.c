@@ -1073,8 +1073,8 @@ static void detect_silence_and_set_splitpoints_action(ui_state *ui)
 
   ui_for_split *ui_fs = build_ui_for_split(ui);
 
-  create_thread_for_split_and_unref((GThreadFunc)detect_silence_and_set_splitpoints,
-      ui_fs, "detect_silence");
+  create_thread_and_unref((GThreadFunc)detect_silence_and_set_splitpoints, 
+      (gpointer) ui_fs, ui, "detect_silence");
 }
 
 //!start thread with 'set splitpints from silence detection'
@@ -1608,7 +1608,7 @@ static void split_preview_action(ui_state *ui)
 
   remove_all_split_rows(ui);
 
-  create_thread_for_split_and_unref((GThreadFunc)split_preview, ui_fs, "split_preview");
+  create_thread_and_unref((GThreadFunc)split_preview, (gpointer) ui_fs, ui, "split_preview");
 }
 
 //!the row clicked event, preview the song

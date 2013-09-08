@@ -176,12 +176,6 @@ typedef struct {
 
   gint timeout_value;
 
-  //freedb search thread
-  const gchar *freedb_search_value;
-  //cddb, cue, internal cue import
-  const char *output_entry_data;
-  //cue export
-  char *export_cue_filename;
   //make export threads to execute in order
   GThread *previous_export_thread;
 } ui_infos;
@@ -522,8 +516,16 @@ typedef struct {
 
 typedef struct {
   ui_state *ui;
+  gpointer data;
+  GThreadFunc thread;
+  gint is_checked_output_radio_box;
+} ui_with_data;
+
+typedef struct {
+  ui_state *ui;
   char *fname;
   gboolean is_checked_output_radio_box;
+  gchar *output_format;
 } ui_with_fname;
 
 typedef struct {

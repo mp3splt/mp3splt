@@ -204,14 +204,12 @@ static void output_radio_box_event(GtkToggleButton *radio_b, ui_state *ui)
   {
     gtk_widget_set_sensitive(ui->gui->output_entry, TRUE);
     gtk_widget_set_sensitive(ui->gui->output_label, TRUE);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
     gtk_widget_set_sensitive(ui->gui->output_default_label, FALSE);
   }
   else
   {
     gtk_widget_set_sensitive(ui->gui->output_entry, FALSE);
     gtk_widget_set_sensitive(ui->gui->output_label, FALSE);
-    mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_DEFAULT);
     gtk_widget_set_sensitive(ui->gui->output_default_label, TRUE);
   }
 
@@ -890,16 +888,56 @@ static GtkWidget *create_pref_player_page(ui_state *ui)
   return player_hbox;
 }
 
+static gboolean check_output_format_end(ui_with_err *ui_err)
+{
+  ui_state *ui = ui_err->ui;
+
+  remove_status_message(ui->gui);
+  print_status_bar_confirmation_in_idle(ui_err->err, ui);
+
+  set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
+
+  g_free(ui_err);
+
+  return FALSE;
+}
+
+static gpointer check_output_format_thread(ui_with_fname *ui_fname)
+{
+  ui_state *ui = ui_fname->ui;
+
+  set_process_in_progress_and_wait_safe(TRUE, ui);
+
+  gint error = mp3splt_set_oformat(ui->mp3splt_state, ui_fname->fname);
+
+  ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
+  ui_err->err = error;
+  ui_err->ui = ui;
+
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)check_output_format_end, ui_err, NULL);
+
+  g_free(ui_fname->fname);
+  g_free(ui_fname);
+
+  return NULL;
+}
+
 //!update the save buttons on an output entry event
 static gboolean output_entry_event(GtkWidget *widget, GdkEventKey *event, ui_state *ui)
 {
   const char *data = gtk_entry_get_text(GTK_ENTRY(ui->gui->output_entry));
-  gint error = mp3splt_set_oformat(ui->mp3splt_state, data);
-  remove_status_message(ui->gui);
-  print_status_bar_confirmation(error, ui);
+  if (data)
+  {
+    ui_with_fname *ui_fname = g_malloc0(sizeof(ui_with_fname));
+    ui_fname->ui = ui;
+    ui_fname->fname = strdup(data);
+
+    create_thread_and_unref((GThreadFunc)check_output_format_thread,
+        (gpointer) ui_fname, ui, "check_output_format");
+  }
 
   ui_save_preferences(NULL, ui);
-  
+
   return FALSE;
 }
 
@@ -1229,7 +1267,7 @@ static void test_regex_event(GtkWidget *widget, ui_state *ui)
     ui_fs->test_regex_filename = g_strdup(test_regex_filename);
   }
 
-  create_thread_for_split_and_unref((GThreadFunc)test_regex_thread, ui_fs, "test_regex");
+  create_thread_and_unref((GThreadFunc)test_regex_thread, (gpointer) ui_fs, ui, "test_regex");
 }
 
 static GtkWidget *create_extract_tags_from_filename_options_box(ui_state *ui)
