@@ -36,7 +36,7 @@
 
 #include "all_includes.h"
 
-void update_output_options(ui_state *ui, gboolean is_checked_output_radio_box);
+void update_output_options(ui_state *ui, gboolean is_checked_output_radio_box, gchar *output_format);
 void put_options_from_preferences(ui_for_split *ui_fs);
 void put_tags_from_filename_regex_options(ui_for_split *ui_fs);
 

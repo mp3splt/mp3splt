@@ -236,7 +236,7 @@ static gpointer detect_silence(ui_state *ui)
 static void detect_silence_action(ui_state *ui)
 {
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
-  create_thread_and_unref((GThreadFunc)detect_silence, ui, "scan_silence_wave");
+  create_thread_and_unref((GThreadFunc)detect_silence, (gpointer) ui, ui, "scan_silence_wave");
 }
 
 /*! Initialize scanning for silence in the background.

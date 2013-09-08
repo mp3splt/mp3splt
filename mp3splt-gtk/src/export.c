@@ -74,12 +74,12 @@ static void export_to_cue_file(const gchar* filename, ui_state *ui, points_and_t
 
 static gpointer export_cue_in_configuration_directory_for_thread(ui_with_pat *ui_pat)
 {
+  ui_state *ui = ui_pat->ui;
+
   if (ui_pat->previous_thread)
   {
     g_thread_join(ui_pat->previous_thread);
   }
-
-  ui_state *ui = ui_pat->ui;
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
@@ -125,8 +125,8 @@ void export_cue_file_in_configuration_directory(ui_state *ui)
   }
 
   ui->infos->previous_export_thread =
-    create_thread_with_pat((GThreadFunc) export_cue_in_configuration_directory_for_thread, 
-        ui_pat, "export_cue_auto");
+    create_thread((GThreadFunc) export_cue_in_configuration_directory_for_thread, 
+        ui_pat, ui, "export_cue_auto");
 }
 
 static gpointer export_to_cue_file_for_thread(ui_with_pat *ui_pat)
@@ -187,7 +187,7 @@ void export_cue_file_event(GtkWidget *widget, ui_state *ui)
     }
 
     ui->infos->previous_export_thread = 
-      create_thread_with_pat((GThreadFunc) export_to_cue_file_for_thread, ui_pat, "export_cue");
+      create_thread((GThreadFunc) export_to_cue_file_for_thread, ui_pat, ui, "export_cue");
   }
 
   gtk_widget_destroy(file_chooser);
