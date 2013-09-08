@@ -537,6 +537,17 @@ typedef struct {
 
 typedef struct {
   ui_state *ui;
+  GSList *list;
+} ui_with_list;
+
+typedef struct {
+  ui_state *ui;
+  char **filenames;
+  int num_of_filenames;
+} ui_with_fnames;
+
+typedef struct {
+  ui_state *ui;
 
   int frame_mode;
 
