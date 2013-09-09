@@ -215,10 +215,6 @@ static gpointer detect_silence(ui_state *ui)
     ui->infos->number_of_silence_points = 0;
   }
 
-  lock_mutex(&ui->variables_mutex);
-  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-  unlock_mutex(&ui->variables_mutex);
-
   mp3splt_set_silence_level_function(ui->mp3splt_state, get_silence_level, ui);
 
   gint err = SPLT_OK;

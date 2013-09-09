@@ -252,7 +252,6 @@ static gpointer freedb_search(ui_with_fname *ui_fname)
   ui->infos->freedb_search_results = 
     mp3splt_get_freedb_search(ui->mp3splt_state, ui_fname->fname, &err,
         SPLT_FREEDB_SEARCH_TYPE_CDDB_CGI, "\0", -1);
-
   print_status_bar_confirmation_in_idle(err, ui);
 
   ui_with_err *ui_err = g_malloc0(sizeof(ui_with_err));
@@ -554,7 +553,7 @@ static gpointer put_freedb_splitpoints(ui_for_split *ui_fs)
 static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
   ui_for_split *ui_fs = build_ui_for_split(ui);
-  create_thread_and_unref((GThreadFunc)put_freedb_splitpoints, 
+  create_thread_and_unref((GThreadFunc)put_freedb_splitpoints,
       (gpointer)ui_fs, ui, "put_freedb_points");
 }
 

@@ -985,20 +985,6 @@ static gboolean detect_silence_and_set_splitpoints_end(ui_with_err *ui_err)
   return FALSE;
 }
 
-static void set_should_trim_safe(gboolean value, ui_state *ui)
-{
-  lock_mutex(&ui->variables_mutex);
-  ui->status->should_trim = value;
-  unlock_mutex(&ui->variables_mutex);
-}
-
-static gint get_should_trim_safe(ui_state *ui)
-{
-  lock_mutex(&ui->variables_mutex);
-  gint should_trim = ui->status->should_trim;
-  unlock_mutex(&ui->variables_mutex);
-  return should_trim;
-}
 
 //!set splitpints from silence detection
 static gpointer detect_silence_and_set_splitpoints(ui_for_split *ui_fs)
@@ -1009,17 +995,16 @@ static gpointer detect_silence_and_set_splitpoints(ui_for_split *ui_fs)
 
   set_is_splitting_safe(TRUE, ui);
 
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->silence_threshold);
-  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, ui_fs->silence_offset);
-  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, ui_fs->silence_number);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_THRESHOLD, ui_fs->single_silence_threshold);
+  mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_OFFSET, ui_fs->single_silence_offset);
+  mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_NUMBER_TRACKS, ui_fs->single_silence_number);
   mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_LENGTH, 
-      ui_fs->silence_minimum_length);
+      ui_fs->single_silence_minimum_length);
   mp3splt_set_float_option(ui->mp3splt_state, SPLT_OPT_PARAM_MIN_TRACK_LENGTH,
-      ui_fs->silence_minimum_track_length);
+      ui_fs->single_silence_minimum_track_length);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_PARAM_REMOVE_SILENCE,
-      ui_fs->silence_remove);
+      ui_fs->single_silence_remove);
 
-  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
   gint err = SPLT_OK;
   if (ui_fs->is_checked_output_radio_box == 0)
   {
@@ -1038,7 +1023,7 @@ static gpointer detect_silence_and_set_splitpoints(ui_for_split *ui_fs)
   int old_split_mode = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, &err);
   int old_tags_option = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_TAGS, &err);
 
-  if (get_should_trim_safe(ui))
+  if (ui_fs->should_trim)
   {
     err = mp3splt_set_trim_silence_points(ui->mp3splt_state);
   }
@@ -1063,7 +1048,7 @@ static gpointer detect_silence_and_set_splitpoints(ui_for_split *ui_fs)
   return NULL;
 }
 
-static void detect_silence_and_set_splitpoints_action(ui_state *ui)
+static void detect_silence_and_set_splitpoints_action(ui_state *ui, gboolean should_trim)
 {
   gtk_widget_set_sensitive(ui->gui->scan_silence_button, FALSE);
   gtk_widget_set_sensitive(ui->gui->scan_silence_button_player, FALSE);
@@ -1072,6 +1057,7 @@ static void detect_silence_and_set_splitpoints_action(ui_state *ui)
   gtk_widget_set_sensitive(ui->gui->cancel_button, TRUE);
 
   ui_for_split *ui_fs = build_ui_for_split(ui);
+  ui_fs->should_trim = should_trim;
 
   create_thread_and_unref((GThreadFunc)detect_silence_and_set_splitpoints, 
       (gpointer) ui_fs, ui, "detect_silence");
@@ -1080,14 +1066,12 @@ static void detect_silence_and_set_splitpoints_action(ui_state *ui)
 //!start thread with 'set splitpints from silence detection'
 static void detect_silence_and_add_splitpoints_start_thread(ui_state *ui)
 {
-  set_should_trim_safe(FALSE, ui);
-  detect_silence_and_set_splitpoints_action(ui);
+  detect_silence_and_set_splitpoints_action(ui, FALSE);
 }
 
 static void detect_silence_and_add_trim_splitpoints_start_thread(ui_state *ui)
 {
-  set_should_trim_safe(TRUE, ui);
-  detect_silence_and_set_splitpoints_action(ui);
+  detect_silence_and_set_splitpoints_action(ui, TRUE);
 }
 
 //!update silence parameters when 'widget' changes
@@ -1576,8 +1560,6 @@ static gpointer split_preview(ui_for_split *ui_fs)
       get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui), NULL);
   mp3splt_point_set_type(splitpoint, SPLT_SKIPPOINT);
   mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
-
-  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
 
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_CUSTOM);
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_SPLIT_MODE, SPLT_OPTION_NORMAL_MODE);
