@@ -49,8 +49,6 @@
  */
 void update_output_options(ui_state *ui, gboolean is_checked_output_radio_box, gchar *output_format)
 {
-  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-
   if (!is_checked_output_radio_box)
   {
     mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, SPLT_OUTPUT_FORMAT);
@@ -102,6 +100,13 @@ ui_for_split *build_ui_for_split(ui_state *ui)
 
   ui_fs->trim_silence_threshold =
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->all_spinner_trim_silence_threshold));
+
+  ui_fs->single_silence_threshold = ui->infos->silence_threshold_value;
+  ui_fs->single_silence_offset = ui->infos->silence_offset_value;
+  ui_fs->single_silence_number = ui->infos->silence_number_of_tracks;
+  ui_fs->single_silence_minimum_length = ui->infos->silence_minimum_length;
+  ui_fs->single_silence_minimum_track_length = ui->infos->silence_minimum_track_length;
+  ui_fs->single_silence_remove = ui->infos->silence_remove_silence_between_tracks;
 
   ui_fs->selected_tags_value = rh_get_active_value(gui->tags_radio);
   ui_fs->tags_version = get_checked_tags_version_radio_box(gui);

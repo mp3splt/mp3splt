@@ -471,8 +471,6 @@ typedef struct {
   gint preview_row;
   gint selected_split_mode;
 
-  gint should_trim;
-
   gint file_selection_changed;
 
   gint stop_split;
@@ -519,6 +517,7 @@ typedef struct {
   gpointer data;
   GThreadFunc thread;
   gint is_checked_output_radio_box;
+  gchar *filename_to_split;
 } ui_with_data;
 
 typedef struct {
@@ -567,7 +566,7 @@ typedef struct {
   long time_split_value;
   int equal_tracks_value;
 
-  //split by silence options
+  //batch split by silence options
   float silence_threshold;
   float silence_offset;
   int silence_number;
@@ -576,6 +575,14 @@ typedef struct {
   int silence_remove;
 
   float trim_silence_threshold;
+
+  //single split by silence options
+  float single_silence_threshold;
+  float single_silence_offset;
+  int single_silence_number;
+  float single_silence_minimum_length; 
+  float single_silence_minimum_track_length; 
+  int single_silence_remove;
 
   //no_tags, default_tags, ...
   int selected_tags_value;
@@ -600,6 +607,7 @@ typedef struct {
   gchar *output_directory;
 
   gchar *test_regex_filename;
+  gboolean should_trim;
 } ui_for_split;
 
 #endif

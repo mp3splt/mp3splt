@@ -371,8 +371,6 @@ static gui_status *ui_status_new(ui_state *ui)
   status->preview_row = 0;
   status->selected_split_mode = SELECTED_SPLIT_NORMAL;
 
-  status->should_trim = FALSE;
-
   status->file_selection_changed = FALSE;
 
   status->stop_split = FALSE;

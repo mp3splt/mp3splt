@@ -44,8 +44,6 @@ static void export_to_cue_file(const gchar* filename, ui_state *ui, points_and_t
   gchar *fname = NULL;
   if (old_fname != NULL) { fname = g_strdup(old_fname); }
 
-  mp3splt_set_filename_to_split(ui->mp3splt_state, get_input_filename(ui->gui));
-
   gchar *directory = g_path_get_dirname(filename);
   mp3splt_set_path_of_split(ui->mp3splt_state, directory);
   g_free(directory);

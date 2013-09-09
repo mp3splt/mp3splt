@@ -284,6 +284,11 @@ static gpointer thread_wrapper_function(gpointer data)
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
   //some general options
+  if (ui_wd->filename_to_split != NULL)
+  {
+    mp3splt_set_filename_to_split(ui->mp3splt_state, ui_wd->filename_to_split);
+  }
+
   mp3splt_set_int_option(ui->mp3splt_state, SPLT_OPT_DEBUG_MODE, ui->infos->debug_is_active);
   if (ui_wd->is_checked_output_radio_box)
   {
@@ -298,6 +303,7 @@ static gpointer thread_wrapper_function(gpointer data)
 
   gpointer returned_value = ui_wd->thread(ui_wd->data);
 
+  if (ui_wd->filename_to_split) { g_free(ui_wd->filename_to_split); }
   g_free(ui_wd);
 
   return returned_value;
@@ -310,6 +316,11 @@ GThread *create_thread(GThreadFunc func, gpointer data, ui_state *ui, const char
   ui_wd->data = data;
   ui_wd->thread = func;
   ui_wd->is_checked_output_radio_box = get_checked_output_radio_box(ui);
+  gchar *input_filename = get_input_filename(ui->gui);
+  if (input_filename != NULL)
+  {
+    ui_wd->filename_to_split = g_strdup(input_filename);
+  }
   return g_thread_new(name, thread_wrapper_function, ui_wd);
 }
 
