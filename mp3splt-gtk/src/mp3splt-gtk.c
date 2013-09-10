@@ -80,7 +80,7 @@ static gboolean collect_files_to_split(ui_state *ui)
   ui->files_to_split = g_ptr_array_new();
 
   //collect
-  if (get_split_file_mode_safe(ui) == FILE_MODE_SINGLE)
+  if (get_split_file_mode(ui) == FILE_MODE_SINGLE)
   {
     g_ptr_array_add(ui->files_to_split, g_strdup(get_input_filename(ui->gui)));
   }
@@ -190,9 +190,9 @@ static gpointer split_collected_files(ui_for_split *ui_fs)
 
   gint output_filenames = mp3splt_get_int_option(ui->mp3splt_state, SPLT_OPT_OUTPUT_FILENAMES, &err);
 
-  gint selected_split_mode = get_selected_split_mode_safe(ui);
+  gint selected_split_mode = ui_fs->selected_split_mode;
   gboolean is_single_file_mode = FALSE;
-  if (get_split_file_mode_safe(ui) == FILE_MODE_SINGLE)
+  if (ui_fs->split_file_mode == FILE_MODE_SINGLE)
   {
     is_single_file_mode = TRUE;
   }

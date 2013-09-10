@@ -103,19 +103,9 @@ static void create_freedb_columns(GtkTreeView *freedb_tree)
   gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(name_column), TRUE);
 }
 
-static void set_freedb_selected_id_safe(gint selected_id, ui_state *ui)
+static void set_freedb_selected_id(gint selected_id, ui_state *ui)
 {
-  lock_mutex(&ui->variables_mutex);
   ui->infos->freedb_selected_id = selected_id;
-  unlock_mutex(&ui->variables_mutex);
-}
-
-static gint get_freedb_selected_id_safe(ui_state *ui)
-{
-  lock_mutex(&ui->variables_mutex);
-  gint selected_id = ui->infos->freedb_selected_id;
-  unlock_mutex(&ui->variables_mutex);
-  return selected_id;
 }
 
 //!freedb selection has changed
@@ -131,7 +121,7 @@ static void freedb_selection_changed(GtkTreeSelection *selection, ui_state *ui)
     gtk_tree_model_get(model, &iter, ALBUM_NAME, &info, NUMBER, &selected_id, -1);
     g_free(info);
 
-    set_freedb_selected_id_safe(selected_id, ui);
+    ui->infos->freedb_selected_id = selected_id;
 
     gtk_widget_set_sensitive(ui->gui->freedb_add_button, TRUE);
   }
@@ -505,10 +495,9 @@ static gpointer put_freedb_splitpoints(ui_for_split *ui_fs)
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
 
-  gint selected_id = get_freedb_selected_id_safe(ui);
+  gint selected_id = ui_fs->freedb_selected_id;
 
-  add_idle(G_PRIORITY_HIGH_IDLE,
-      (GSourceFunc)put_freedb_splitpoints_start, ui, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)put_freedb_splitpoints_start, ui, NULL);
 
   gchar *configuration_directory = get_configuration_directory();
   gint malloc_number = strlen(configuration_directory) + 20;
@@ -541,8 +530,7 @@ static gpointer put_freedb_splitpoints(ui_for_split *ui_fs)
     filename = NULL;
   }
 
-  add_idle(G_PRIORITY_HIGH_IDLE,
-      (GSourceFunc)put_freedb_splitpoints_end, ui, NULL);
+  add_idle(G_PRIORITY_HIGH_IDLE, (GSourceFunc)put_freedb_splitpoints_end, ui, NULL);
 
   free_ui_for_split(ui_fs);
 
@@ -553,6 +541,7 @@ static gpointer put_freedb_splitpoints(ui_for_split *ui_fs)
 static void freedb_add_button_clicked_event(GtkButton *button, ui_state *ui)
 {
   ui_for_split *ui_fs = build_ui_for_split(ui);
+  ui_fs->freedb_selected_id = ui->infos->freedb_selected_id;
   create_thread_and_unref((GThreadFunc)put_freedb_splitpoints,
       (gpointer)ui_fs, ui, "put_freedb_points");
 }

@@ -608,6 +608,7 @@ typedef struct {
 
   gchar *test_regex_filename;
   gboolean should_trim;
+  gint freedb_selected_id;
 } ui_for_split;
 
 #endif
