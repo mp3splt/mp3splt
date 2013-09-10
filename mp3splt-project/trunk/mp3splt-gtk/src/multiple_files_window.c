@@ -247,7 +247,7 @@ static void multiple_files_remove_all_button_event(GtkWidget *widget, ui_state *
 
 void batch_file_mode_split_button_event(GtkWidget *widget, ui_state *ui)
 {
-  set_split_file_mode_safe(FILE_MODE_MULTIPLE, ui);
+  set_split_file_mode(FILE_MODE_MULTIPLE, ui);
   split_button_event(widget, ui);
 }
 

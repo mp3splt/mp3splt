@@ -440,25 +440,19 @@ void split_button_event(GtkWidget *widget, ui_state *ui)
   }
 }
 
-void set_split_file_mode_safe(gint file_mode, ui_state *ui)
+void set_split_file_mode(gint file_mode, ui_state *ui)
 {
-  lock_mutex(&ui->variables_mutex);
   ui->infos->split_file_mode = file_mode;
-  unlock_mutex(&ui->variables_mutex);
 }
 
-gint get_split_file_mode_safe(ui_state *ui)
+gint get_split_file_mode(ui_state *ui)
 {
-  lock_mutex(&ui->variables_mutex);
-  gint file_mode = ui->infos->split_file_mode;
-  unlock_mutex(&ui->variables_mutex);
-
-  return file_mode;
+  return ui->infos->split_file_mode;
 }
 
 static void single_file_mode_split_button_event(GtkWidget *widget, ui_state *ui)
 {
-  set_split_file_mode_safe(FILE_MODE_SINGLE, ui);
+  set_split_file_mode(FILE_MODE_SINGLE, ui);
   split_button_event(widget, ui);
 }
 

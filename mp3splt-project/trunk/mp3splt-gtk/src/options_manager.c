@@ -77,9 +77,9 @@ ui_for_split *build_ui_for_split(ui_state *ui)
     gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_threshold));
   ui_fs->adjust_min = gtk_spin_button_get_value(GTK_SPIN_BUTTON(gui->spinner_adjust_min));
 
-  ui_fs->split_file_mode = get_split_file_mode_safe(ui);
+  ui_fs->split_file_mode = get_split_file_mode(ui);
 
-  ui_fs->selected_split_mode = get_selected_split_mode_safe(ui);
+  ui_fs->selected_split_mode = get_selected_split_mode(ui);
 
   ui_fs->time_split_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spinner_time));
   ui_fs->equal_tracks_value = 

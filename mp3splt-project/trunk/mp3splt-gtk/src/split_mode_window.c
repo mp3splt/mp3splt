@@ -40,7 +40,7 @@
 #include "split_mode_window.h"
 
 //! Get the split mode
-static gint get_selected_split_mode(GtkToggleButton *radio_b)
+static gint get_selected_split_mode_(GtkToggleButton *radio_b)
 {
   GSList *radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_b));
 
@@ -76,19 +76,14 @@ void select_split_mode(int split_mode, ui_state *ui)
   }
 }
 
-gint get_selected_split_mode_safe(ui_state *ui)
+gint get_selected_split_mode(ui_state *ui)
 {
-  lock_mutex(&ui->variables_mutex);
-  gint selected_split_mode = ui->status->selected_split_mode;
-  unlock_mutex(&ui->variables_mutex);
-  return selected_split_mode;
+  return ui->status->selected_split_mode;
 }
 
-void set_selected_split_mode_safe(gint value, ui_state *ui)
+void set_selected_split_mode(gint value, ui_state *ui)
 {
-  lock_mutex(&ui->variables_mutex);
   ui->status->selected_split_mode = value;
-  unlock_mutex(&ui->variables_mutex);
 }
 
 static void deactivate_silence_parameters(gui_state *gui)
@@ -136,8 +131,8 @@ static void activate_trim_parameters(gui_state *gui)
 //! Issued when the split mode selection changed
 static void split_mode_changed(GtkToggleButton *radio_b, ui_state *ui)
 {
-  gint selected_split_mode = get_selected_split_mode(radio_b);
-  set_selected_split_mode_safe(selected_split_mode, ui);
+  gint selected_split_mode = get_selected_split_mode_(radio_b);
+  set_selected_split_mode(selected_split_mode, ui);
 
   int enable_time = (selected_split_mode == SELECTED_SPLIT_TIME);
   gtk_widget_set_sensitive(ui->gui->spinner_time, enable_time);
