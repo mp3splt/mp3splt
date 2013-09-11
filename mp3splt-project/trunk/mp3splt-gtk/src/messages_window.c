@@ -53,7 +53,7 @@ void put_message_in_history(const gchar *message, splt_message_type mess_type, u
 {
   gui_state *gui = ui->gui;
 
-  if (mess_type == SPLT_MESSAGE_INFO ||
+  if (mess_type == SPLT_MESSAGE_INFO || mess_type == SPLT_MESSAGE_WARNING ||
       (mess_type == SPLT_MESSAGE_DEBUG && ui->infos->debug_is_active))
   {
     GtkTextTag *gray_tag = gtk_text_tag_table_lookup(gui->mess_hist_tag_table, "gray_bold");

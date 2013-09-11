@@ -793,7 +793,7 @@ error:
 static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *stream,
     FILE *in, FILE *f, ogg_int64_t cutpoint, int adjust, float threshold, float min_length,
     int shots, int *error, const char *output_fname, int save_end_point,
-    double *sec_split_time_length)
+    double *sec_split_time_length, double sec_end)
 {
   splt_c_put_progress_text(state, SPLT_PROGRESS_CREATE);
 
@@ -1046,6 +1046,9 @@ static int splt_ogg_find_end_cutpoint(splt_state *state, ogg_stream_state *strea
               else
               {
                 cutpoint = (cutpoint + (adjust * oggstate->vi->rate));
+
+                *error = splt_u_process_no_auto_adjust_found(state, sec_end + adjust);
+                if (*error < 0) { goto error; }
               }
 
               if (first_cut_granpos == 0 && oggstate->first_granpos != 0)
@@ -1335,7 +1338,7 @@ double splt_ogg_split(const char *output_fname, splt_state *state,
   double sec_split_time_length = sec_end - sec_begin;
   splt_ogg_find_end_cutpoint(state, &stream_out, oggstate->in, 
       oggstate->out, cutpoint, adjust, threshold, min_length, shots, error, output_fname,
-      save_end_point, &sec_split_time_length);
+      save_end_point, &sec_split_time_length, sec_end);
   sec_end_time = sec_begin + sec_split_time_length;
 
 end:

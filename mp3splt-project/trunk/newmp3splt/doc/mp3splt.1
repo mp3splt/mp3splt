@@ -401,6 +401,12 @@ Positive integer for the time to decode before and after splitpoint, increase if
 are completely wrong, or decrease if wrong for only few seconds. Of course the smaller the gap, the faster the process.
 Default gap is 30 seconds (so for each song, total decode time is one minute).
 
+.IP \fBwarn_if_no_aa\fP
+Print a warning for each splitpoint if it has not been auto-adjusted.
+
+.IP \fBerror_if_no_aa\fP
+Stop the split process with error if one of the splitpoints has not been auto-adjusted.
+
 .IP "\fB\-f\fP         " 10
 \fBFrame mode (mp3 only)\fP. Process all frames, seeking split positions by counting frames and not
 with bitrate guessing. In this mode you have higher precision and you can

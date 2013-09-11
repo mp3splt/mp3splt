@@ -34,6 +34,7 @@
 int splt_u_finish_tags_and_put_output_format_filename(splt_state *state, int current_split);
 void splt_u_print_overlap_time(splt_state *state);
 short splt_u_fend_sec_is_bigger_than_total_time(splt_state *state, double fend_sec);
+splt_code splt_u_process_no_auto_adjust_found(splt_state *state, double point);
 
 #define SPLT_UTILS_H
 

@@ -207,6 +207,8 @@ typedef enum {
   SPLT_INVALID_REGEX = -800,
   SPLT_REGEX_NO_MATCH = -801,
   SPLT_REGEX_UNAVAILABLE = -802,
+
+  SPLT_ERROR_NO_AUTO_ADJUST_FOUND = -900,
 } splt_code;
 
 //@}
@@ -674,6 +676,24 @@ typedef enum {
    * Default is 0.
    */
   SPLT_OPT_TIME_MINIMUM_THEORETICAL_LENGTH,
+  /**
+   * If #SPLT_TRUE, raise a warning when no auto-adjust silence is found when
+   * using the #SPLT_OPT_AUTO_ADJUST option.
+   *
+   * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
+   *
+   * Default is #SPLT_FALSE.
+   */
+  SPLT_OPT_WARN_IF_NO_AUTO_ADJUST_FOUND,
+  /**
+   * If #SPLT_TRUE, stop with error when no auto-adjust silence is found when
+   * using the #SPLT_OPT_AUTO_ADJUST option.
+   *
+   * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
+   *
+   * Default is #SPLT_FALSE.
+   */
+  SPLT_OPT_STOP_IF_NO_AUTO_ADJUST_FOUND,
 } splt_options;
 
 /**
@@ -1075,6 +1095,10 @@ typedef enum {
    * @brief Info message
    */
   SPLT_MESSAGE_INFO,
+  /**
+   * @brief Warning message
+   */
+  SPLT_MESSAGE_WARNING,
   /**
    * @brief Debug message
    */

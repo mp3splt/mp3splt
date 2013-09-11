@@ -67,40 +67,41 @@ void splt_c_put_progress_text(splt_state *state, int type)
   p_bar->progress_type = type;
 }
 
-void splt_c_put_info_message_to_client(splt_state *state, const char *message, ...)
+static void splt_c_put_message_to_clientv(splt_state *state, splt_message_type type, 
+    const char *message, va_list ap)
 {
-  va_list ap;
-  char *mess = NULL;
-
-  va_start(ap, message);
-  mess = splt_su_format_messagev(state, message, ap);
-  va_end(ap);
-
+  char *mess = splt_su_format_messagev(state, message, ap);
   if (mess)
   {
-    splt_c_put_message_to_client(state, mess, SPLT_MESSAGE_INFO);
+    splt_c_put_message_to_client(state, mess, type);
 
     free(mess);
     mess = NULL;
   }
 }
 
+void splt_c_put_info_message_to_client(splt_state *state, const char *message, ...)
+{
+  va_list ap;
+  va_start(ap, message);
+  splt_c_put_message_to_clientv(state, SPLT_MESSAGE_INFO, message, ap);
+  va_end(ap);
+}
+
+void splt_c_put_warning_message_to_client(splt_state *state, const char *message, ...)
+{
+  va_list ap;
+  va_start(ap, message);
+  splt_c_put_message_to_clientv(state, SPLT_MESSAGE_WARNING, message, ap);
+  va_end(ap);
+}
+
 void splt_c_put_debug_message_to_client(splt_state *state, const char *message, ...)
 {
   va_list ap;
-  char *mess = NULL;
-
   va_start(ap, message);
-  mess = splt_su_format_messagev(state, message, ap);
+  splt_c_put_message_to_clientv(state, SPLT_MESSAGE_DEBUG, message, ap);
   va_end(ap);
-
-  if (mess)
-  {
-    splt_c_put_message_to_client(state, mess, SPLT_MESSAGE_DEBUG);
-
-    free(mess);
-    mess = NULL;
-  }
 }
 
 void splt_c_update_progress(splt_state *state, double current_point,

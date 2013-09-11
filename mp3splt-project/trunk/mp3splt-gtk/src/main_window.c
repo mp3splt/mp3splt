@@ -276,7 +276,7 @@ void put_status_message_with_type(const gchar *text, splt_message_type mess_type
 {
   gui_state *gui = ui->gui;
 
-  if (mess_type == SPLT_MESSAGE_INFO)
+  if (mess_type == SPLT_MESSAGE_INFO || mess_type == SPLT_MESSAGE_WARNING)
   {
     guint status_id = gtk_statusbar_get_context_id(gui->status_bar, "mess");
     gtk_statusbar_pop(gui->status_bar, status_id);
