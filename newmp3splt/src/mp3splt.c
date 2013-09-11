@@ -487,9 +487,11 @@ int main(int argc, char **orig_argv)
     int gap = -200, nt = -200, rm = -200, shots = -200;
     float min_track_join = -200;
     float keep_silence_left = -200, keep_silence_right = -200;
+    int warn_if_no_auto_adjust = -200, err_if_no_auto_adjust = -200;
     int parsed_p_options = 
       parse_silence_options(opt->param_args, &th, &gap, &nt, &off, &rm, &min, &min_track_length,
-          &shots, &min_track_join, &keep_silence_left, &keep_silence_right);
+          &shots, &min_track_join, &keep_silence_left, &keep_silence_right,
+          &warn_if_no_auto_adjust, &err_if_no_auto_adjust);
     if (parsed_p_options < 1)
     {
       print_error_exit(_("bad argument for -p option. No valid value was recognized !"), data);
@@ -539,6 +541,14 @@ int main(int argc, char **orig_argv)
     if (rm != -200)
     {
       mp3splt_set_int_option(state, SPLT_OPT_PARAM_REMOVE_SILENCE, rm);
+    }
+    if (warn_if_no_auto_adjust != -200)
+    {
+      mp3splt_set_int_option(state, SPLT_OPT_WARN_IF_NO_AUTO_ADJUST_FOUND, SPLT_TRUE);
+    }
+    if (err_if_no_auto_adjust != -200)
+    {
+      mp3splt_set_int_option(state, SPLT_OPT_STOP_IF_NO_AUTO_ADJUST_FOUND, SPLT_TRUE);
     }
   }
 

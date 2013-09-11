@@ -487,6 +487,8 @@ typedef struct {
   int cue_set_splitpoint_names_from_rem_name;
   int cue_disable_cue_file_created_message;
   int cue_cddb_add_tags_with_keep_original_tags;
+  int warn_if_no_auto_adjust_found;
+  int stop_if_no_auto_adjust_found;
   int id3v2_encoding;
   int input_tags_encoding;
   long time_minimum_length;

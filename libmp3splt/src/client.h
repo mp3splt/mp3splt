@@ -34,14 +34,12 @@
 int splt_c_put_split_file(splt_state *state, const char *filename);
 void splt_c_put_progress_text(splt_state *state,int type);
 
-void splt_c_put_info_message_to_client(splt_state *state,
-    const char *message, ...);
-void splt_c_put_debug_message_to_client(splt_state *state,
-    const char *message, ...);
+void splt_c_put_info_message_to_client(splt_state *state, const char *message, ...);
+void splt_c_put_warning_message_to_client(splt_state *state, const char *message, ...);
+void splt_c_put_debug_message_to_client(splt_state *state, const char *message, ...);
 
 void splt_c_update_progress(splt_state *state, double current_point,
-    double total_points, int progress_stage,
-    float progress_start, int refresh_rate);
+    double total_points, int progress_stage, float progress_start, int refresh_rate);
 
 #define SPLT_CLIENT_H
 

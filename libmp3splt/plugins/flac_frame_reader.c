@@ -1038,6 +1038,9 @@ void splt_flac_fr_read_and_write_frames(splt_state *state, splt_flac_frame_reade
         else
         {
           end_point += (double) adjust_gap_secs;
+
+          *error = splt_u_process_no_auto_adjust_found(state, end_point);
+          if (*error < 0) { goto end; }
         }
 
         splt_siu_ssplit_free(&state->silence_list);

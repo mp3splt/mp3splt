@@ -1694,8 +1694,7 @@ static int splt_mp3_simple_split(splt_state *state, const char *output_fname,
       }
       else
       {
-        if (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE)
-            == SPLT_OPTION_TIME_MODE)
+        if (splt_o_get_int_option(state, SPLT_OPT_SPLIT_MODE) == SPLT_OPTION_TIME_MODE)
         {
           temp_end = end;
           //for the last split
@@ -2410,6 +2409,9 @@ bloc_end:
           else
           {
             adjust = (unsigned long) (adjustoption * mp3state->mp3file.fps);
+
+            *error = splt_u_process_no_auto_adjust_found(state, fend_sec + adjustoption);
+            if (*error < 0) { goto bloc_end2; }
           }
 
           fend += adjust;

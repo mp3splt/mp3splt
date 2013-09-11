@@ -28,7 +28,8 @@
 
 int parse_silence_options(char *arg, float *th, int *gap,
     int *nt, float *off, int *rm, float *min, float *min_track_length, int *shots,
-    float *min_track_join, float *keep_silence_left, float *keep_silence_right)
+    float *min_track_join, float *keep_silence_left, float *keep_silence_right,
+    int *warn_if_no_auto_adjust, int *err_if_no_auto_adjust)
 {
   char *ptr = NULL;
   int found = 0;
@@ -174,6 +175,24 @@ int parse_silence_options(char *arg, float *th, int *gap,
       {
         print_warning(_("bad minimum silence length argument. It will be ignored !"));
       }
+    }
+  }
+
+  if (warn_if_no_auto_adjust != NULL)
+  {
+    if ((ptr = strstr(arg, "warn_if_no_aa")) != NULL)
+    {
+      found++;
+      *warn_if_no_auto_adjust = 1;
+    }
+  }
+
+  if (err_if_no_auto_adjust != NULL)
+  {
+    if ((ptr = strstr(arg, "error_if_no_aa")) != NULL)
+    {
+      found++;
+      *err_if_no_auto_adjust = 1;
     }
   }
 

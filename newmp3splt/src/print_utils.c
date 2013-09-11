@@ -103,6 +103,11 @@ void put_library_message(const char *message, splt_message_type mess_type, void 
     main_data *data = (main_data *) user_data;
     print_with_spaces_after(message, SPLT_FALSE, console_out, data);
   }
+  else if (mess_type == SPLT_MESSAGE_WARNING)
+  {
+    main_data *data = (main_data *) user_data;
+    print_with_spaces_after(message, SPLT_FALSE, console_err, data);
+  }
   else if (mess_type == SPLT_MESSAGE_DEBUG)
   {
     fprintf(stderr, "%s", message);
@@ -238,28 +243,33 @@ void print_message_exit(const char *m, main_data *data)
   exit(0);
 }
 
-void process_confirmation_error(int conf, main_data *data)
+void process_confirmation_error(int error, main_data *data)
 {
   char *error_from_library = NULL;
-  error_from_library = mp3splt_get_strerror(data->state, conf);
+  error_from_library = mp3splt_get_strerror(data->state, error);
   if (error_from_library != NULL)
   {
-    if (conf >= 0)
+    if (error >= 0)
     {
       print_message(error_from_library);
       free(error_from_library);
     }
     else
     {
-      fprintf(console_err,"%s\n",error_from_library);
-      fflush(console_err);
+      int size = strlen(error_from_library) + 10;
+      char *error_with_slash_n = malloc(sizeof(char) * size);
+      snprintf(error_with_slash_n, size, "Error:%s\n", error_from_library);
+      print_with_spaces_after(error_with_slash_n, SPLT_FALSE, console_err, data);
+      free(error_with_slash_n);
+
       free(error_from_library);
       free_main_struct(&data);
       exit(1);
     }
     error_from_library = NULL;
   }
-  if (conf == SPLT_DEWRAP_OK)
+
+  if (error == SPLT_DEWRAP_OK)
   {
     print_message(_("\nAll files have been split correctly."
           " Visit http://mp3wrap.sourceforge.net!"));

@@ -28,7 +28,8 @@
 
 int parse_silence_options(char *arg, float *th, int *gap,
     int *nt, float *off, int *rm, float *min, float *min_track_length, int *shots,
-    float *min_track_join, float *keep_silence_left, float *keep_silence_right);
+    float *min_track_join, float *keep_silence_left, float *keep_silence_right,
+    int *warn_if_no_auto_adjust, int *err_if_no_auto_adjust);
 int parse_query_arg(options *opt, const char *query);
 regex_options *parse_tags_from_fname_regex_options(const char *parameters, int *error);
 
