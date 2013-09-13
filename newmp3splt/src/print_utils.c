@@ -258,7 +258,7 @@ void process_confirmation_error(int error, main_data *data)
     {
       int size = strlen(error_from_library) + 10;
       char *error_with_slash_n = malloc(sizeof(char) * size);
-      snprintf(error_with_slash_n, size, "Error:%s\n", error_from_library);
+      snprintf(error_with_slash_n, size, "%s\n", error_from_library);
       print_with_spaces_after(error_with_slash_n, SPLT_FALSE, console_err, data);
       free(error_with_slash_n);
 
