@@ -54,6 +54,7 @@ enum {
 static void draw_small_rectangle(gint time_left, gint time_right, 
     GdkColor color, cairo_t *cairo_surface, ui_state *ui);
 static gint mytimer(ui_state *ui);
+static gint remaining_time_to_stop_timer(ui_state *ui);
 
 //!function called from the library when scanning for the silence level
 static void get_silence_level(long time, float level, void *user_data)
@@ -3340,6 +3341,15 @@ void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui)
   action_set_sensitivity("Zoom_out", sensitivity, gui);
 }
 
+static gint remaining_time_to_stop_timer(ui_state *ui)
+{
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->pause_button), TRUE);
+  cancel_quick_preview(ui->status);
+  put_status_message(_(" quick preview finished, song paused"), ui);
+
+  return FALSE;
+}
+
 /*! timer used to print infos about the song
 
 Examples are the elapsed time and if it uses variable bitrate
@@ -3426,13 +3436,13 @@ static gint mytimer(ui_state *ui)
       if (status->quick_preview)
       {
         gint stop_splitpoint = get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui);
+        double rounded = round((double)ui->infos->timeout_value / 10.0);
+        gint compared_time = (gint)infos->current_time + (gint) rounded;
 
-        if ((stop_splitpoint < (gint)infos->current_time)
-            && (get_quick_preview_end_splitpoint_safe(ui) != -1))
+        if ((stop_splitpoint <= compared_time) && (get_quick_preview_end_splitpoint_safe(ui) != -1))
         {
-          gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->pause_button), TRUE);
-          cancel_quick_preview(status);
-          put_status_message(_(" quick preview finished, song paused"), ui);
+          gint remaining_time_to_stop = (stop_splitpoint - (gint) infos->current_time) * 10;
+          g_timeout_add(remaining_time_to_stop, (GSourceFunc)remaining_time_to_stop_timer, ui);
         }
       }
 
