@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-09-16 22:30+0200\n"
+"POT-Creation-Date: 2013-09-21 17:43+0200\n"
 "PO-Revision-Date: 2013-04-29 21:06+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,11 +57,11 @@ msgstr "Fichiers cue (*.cue)"
 msgid "_Close"
 msgstr "_Fermer"
 
-#: src/player_window.c:120
+#: src/player_window.c:121
 msgid "Processing Douglas-Peucker filters ..."
 msgstr "Traitement du filtre Douglas-Peucker..."
 
-#: src/player_window.c:575
+#: src/player_window.c:576
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -95,7 +95,7 @@ msgstr ""
 " Seulement le port par défaut fonctionne (8775)\n"
 " Après, redémarrer snackamp et réessayer.\n"
 
-#: src/player_window.c:590
+#: src/player_window.c:591
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -109,148 +109,148 @@ msgstr ""
 " Impossible de se connecter au lecteur Audacious.\n"
 " Vérifiez l'installation d'audacious.\n"
 
-#: src/player_window.c:598 src/player_window.c:602
+#: src/player_window.c:599 src/player_window.c:603
 msgid "Cannot connect to player"
 msgstr "Impossible de se connecter au lecteur"
 
-#: src/player_window.c:899
+#: src/player_window.c:900
 #, fuzzy
 msgid "Previous track"
 msgstr "Précédent"
 
-#: src/player_window.c:917
+#: src/player_window.c:918
 msgid "Play"
 msgstr "Lecture"
 
-#: src/player_window.c:934
+#: src/player_window.c:935
 msgid "Pause"
 msgstr "Pause"
 
-#: src/player_window.c:951
+#: src/player_window.c:952
 msgid "Stop"
 msgstr "Arrêt"
 
-#: src/player_window.c:968
+#: src/player_window.c:969
 #, fuzzy
 msgid "Next track"
 msgstr "pistes de même taille."
 
-#: src/player_window.c:975 src/splitpoints_window.c:1407
+#: src/player_window.c:976 src/splitpoints_window.c:1407
 msgid "_Add"
 msgstr "Aj_outer"
 
-#: src/player_window.c:982
+#: src/player_window.c:983
 #, fuzzy
 msgid "Add splitpoint at the current player position"
 msgstr "Ajouter point de découpage depuis le lecteur"
 
-#: src/player_window.c:991 src/splitpoints_window.c:1121
+#: src/player_window.c:992 src/splitpoints_window.c:1121
 #: src/splitpoints_window.c:1450
 msgid "Set trim splitpoints using silence detection"
 msgstr "Définir un point de troncature grâce à la détection de silence"
 
-#: src/player_window.c:1002 src/splitpoints_window.c:1178
+#: src/player_window.c:1003 src/splitpoints_window.c:1178
 #: src/splitpoints_window.c:1460
 msgid "Set splitpoints from silence detection"
 msgstr "Points à partir de la recherche du silence"
 
-#: src/player_window.c:1007
+#: src/player_window.c:1008
 msgid "Amplitude _wave"
 msgstr "_Signal d'amplitude"
 
-#: src/player_window.c:1013
+#: src/player_window.c:1014
 msgid "Shows the amplitude level wave"
 msgstr "Montre le niveau du signal audio"
 
-#: src/player_window.c:1016
+#: src/player_window.c:1017
 msgid "_Connect"
 msgstr "_Connecter"
 
-#: src/player_window.c:1019
+#: src/player_window.c:1020
 msgid "Connect to player"
 msgstr "Se connecter au lecteur"
 
-#: src/player_window.c:1022
+#: src/player_window.c:1023
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: src/player_window.c:1025
+#: src/player_window.c:1026
 msgid "Disconnect from player"
 msgstr "Se déconnecter du lecteur"
 
-#: src/player_window.c:1148
+#: src/player_window.c:1149
 #, c-format
 msgid "before %s"
 msgstr "avant %s"
 
-#: src/player_window.c:1895
+#: src/player_window.c:1896
 msgid "No available wave"
 msgstr "Pas de signal disponible"
 
-#: src/player_window.c:2076 src/preferences_window.c:822
+#: src/player_window.c:2077 src/preferences_window.c:822
 msgid "No wave interpolation"
 msgstr "Pas d'interpolation de signal"
 
-#: src/player_window.c:2082
+#: src/player_window.c:2083
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr "Niveau d'interpolation de signal  à %d"
 
-#: src/player_window.c:2162
+#: src/player_window.c:2163
 msgid " Please wait for the process to finish ..."
 msgstr "Attendre la fin du traitement svp..."
 
-#: src/player_window.c:2184
+#: src/player_window.c:2185
 msgid " Please wait ... currently computing Douglas Peucker filters."
 msgstr "Attendre svp, traitement des filtres Douglas-Peucker."
 
-#: src/player_window.c:2268
+#: src/player_window.c:2269
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr " clic gauche sur le point le sélectionne, clic droit l'efface"
 
-#: src/player_window.c:2273
+#: src/player_window.c:2274
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " clic gauche + déplacement change la position, clic droit + déplacement "
 "change le zoom"
 
-#: src/player_window.c:2279
+#: src/player_window.c:2280
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " clic gauche sur le point + déplacement change la position du point, clic "
 "droit aperçu"
 
-#: src/player_window.c:2284
+#: src/player_window.c:2285
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr " clic gauche sur rectangle coche/décoche 'garder le point'"
 
-#: src/player_window.c:2709
+#: src/player_window.c:2710
 msgid " quick preview..."
 msgstr " aperçu rapide..."
 
-#: src/player_window.c:3053
+#: src/player_window.c:3054
 msgid "Splitpoints and amplitude wave v_iew"
 msgstr "Afficher points de découpages et _signal d'amplitude"
 
-#: src/player_window.c:3169
+#: src/player_window.c:3170
 msgid "History"
 msgstr "Historique"
 
-#: src/player_window.c:3259
+#: src/player_window.c:3260
 msgid "_Erase selected entries"
 msgstr "_Effacer les éléments sélectionnés"
 
-#: src/player_window.c:3267
+#: src/player_window.c:3268
 msgid "E_rase all history"
 msgstr "Effa_cer tout l'historique"
 
-#: src/player_window.c:3309
+#: src/player_window.c:3310
 msgid "Files h_istory"
 msgstr "Historique des fichiers"
 
-#: src/player_window.c:3435
+#: src/player_window.c:3348
 msgid " quick preview finished, song paused"
 msgstr " aperçu rapide fini, lecteur sur pause"
 

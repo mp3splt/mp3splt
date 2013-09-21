@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-09-16 22:30+0200\n"
+"POT-Creation-Date: 2013-09-21 17:43+0200\n"
 "PO-Revision-Date: 2013-04-29 08:45+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,11 +60,11 @@ msgstr "Soubory CUE (*.cue)"
 msgid "_Close"
 msgstr "Za_vřít"
 
-#: src/player_window.c:120
+#: src/player_window.c:121
 msgid "Processing Douglas-Peucker filters ..."
 msgstr "Zpracovávají se Douglas-Peuckerovy filtry ..."
 
-#: src/player_window.c:575
+#: src/player_window.c:576
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -100,7 +100,7 @@ msgstr ""
 " Potom spusťte SnackAmp znovu a mp3splt-gtk\n"
 " by měl pracovat.\n"
 
-#: src/player_window.c:590
+#: src/player_window.c:591
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -119,151 +119,151 @@ msgstr ""
 " jak se to má udělat, spusťte Audacious ručně\n"
 " a pokuste se spojení vytvořit.\n"
 
-#: src/player_window.c:598 src/player_window.c:602
+#: src/player_window.c:599 src/player_window.c:603
 msgid "Cannot connect to player"
 msgstr "Žádné spojení s přehrávacím programem"
 
-#: src/player_window.c:899
+#: src/player_window.c:900
 #, fuzzy
 msgid "Previous track"
 msgstr "Předchozí"
 
-#: src/player_window.c:917
+#: src/player_window.c:918
 msgid "Play"
 msgstr "Přehrát"
 
-#: src/player_window.c:934
+#: src/player_window.c:935
 msgid "Pause"
 msgstr "Pozastavit"
 
-#: src/player_window.c:951
+#: src/player_window.c:952
 msgid "Stop"
 msgstr "Zastavit"
 
-#: src/player_window.c:968
+#: src/player_window.c:969
 #, fuzzy
 msgid "Next track"
 msgstr "stejné skladby"
 
-#: src/player_window.c:975 src/splitpoints_window.c:1407
+#: src/player_window.c:976 src/splitpoints_window.c:1407
 msgid "_Add"
 msgstr "_Přidat"
 
-#: src/player_window.c:982
+#: src/player_window.c:983
 #, fuzzy
 msgid "Add splitpoint at the current player position"
 msgstr "Přidat bod rozdělení zde"
 
-#: src/player_window.c:991 src/splitpoints_window.c:1121
+#: src/player_window.c:992 src/splitpoints_window.c:1121
 #: src/splitpoints_window.c:1450
 msgid "Set trim splitpoints using silence detection"
 msgstr "Nastavit zastřižení bodů rozdělení s pomocí zjištění ticha"
 
-#: src/player_window.c:1002 src/splitpoints_window.c:1178
+#: src/player_window.c:1003 src/splitpoints_window.c:1178
 #: src/splitpoints_window.c:1460
 msgid "Set splitpoints from silence detection"
 msgstr "Nastavit body rozdělení s pomocí zjištění ticha"
 
-#: src/player_window.c:1007
+#: src/player_window.c:1008
 msgid "Amplitude _wave"
 msgstr "_Vlna rozkmitu"
 
-#: src/player_window.c:1013
+#: src/player_window.c:1014
 msgid "Shows the amplitude level wave"
 msgstr "Ukáže vlnu s rozkmitem zvuku"
 
-#: src/player_window.c:1016
+#: src/player_window.c:1017
 msgid "_Connect"
 msgstr "_Spojit"
 
-#: src/player_window.c:1019
+#: src/player_window.c:1020
 msgid "Connect to player"
 msgstr "Spojit s přehrávačem"
 
-#: src/player_window.c:1022
+#: src/player_window.c:1023
 msgid "_Disconnect"
 msgstr "_Odpojit"
 
-#: src/player_window.c:1025
+#: src/player_window.c:1026
 msgid "Disconnect from player"
 msgstr "Odpojit od přehrávače"
 
-#: src/player_window.c:1148
+#: src/player_window.c:1149
 #, c-format
 msgid "before %s"
 msgstr "před %s"
 
-#: src/player_window.c:1895
+#: src/player_window.c:1896
 msgid "No available wave"
 msgstr "Žádná dostupná vlna"
 
-#: src/player_window.c:2076 src/preferences_window.c:822
+#: src/player_window.c:2077 src/preferences_window.c:822
 msgid "No wave interpolation"
 msgstr "Žádná interpolace vlny"
 
-#: src/player_window.c:2082
+#: src/player_window.c:2083
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr "Úroveň interpolace vlny %d"
 
-#: src/player_window.c:2162
+#: src/player_window.c:2163
 msgid " Please wait for the process to finish ..."
 msgstr "Počkejte prosím, na dokončení procesu ..."
 
-#: src/player_window.c:2184
+#: src/player_window.c:2185
 msgid " Please wait ... currently computing Douglas Peucker filters."
 msgstr ""
 "Prosím počkejte ... v současné době probíhá výpočet Douglas Peucker filtrů."
 
-#: src/player_window.c:2268
+#: src/player_window.c:2269
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 "Levé klepnutí na bod rozdělení jej vybere, pravé klepnutí na bod rozdělení "
 "jej vymaže"
 
-#: src/player_window.c:2273
+#: src/player_window.c:2274
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 "Levé klepnutí + posunutí změní polohu názvu, pravé klepnutí + posunutí změní "
 "násobek zvětšení"
 
-#: src/player_window.c:2279
+#: src/player_window.c:2280
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 "Levé klepnutí na bod + posunutí změní polohu bodu, pravé klepnutí přehraje "
 "náhled"
 
-#: src/player_window.c:2284
+#: src/player_window.c:2285
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr "Levé klepnutí na obdélník zapne/vypne »Ponechat bod rozdělení«"
 
-#: src/player_window.c:2709
+#: src/player_window.c:2710
 msgid " quick preview..."
 msgstr " Rychlý náhled..."
 
-#: src/player_window.c:3053
+#: src/player_window.c:3054
 msgid "Splitpoints and amplitude wave v_iew"
 msgstr "Pohled s body rozdělení a vlnou rozkmitu"
 
-#: src/player_window.c:3169
+#: src/player_window.c:3170
 msgid "History"
 msgstr "Historie"
 
-#: src/player_window.c:3259
+#: src/player_window.c:3260
 msgid "_Erase selected entries"
 msgstr "Vymazat vybrané _záznamy"
 
-#: src/player_window.c:3267
+#: src/player_window.c:3268
 msgid "E_rase all history"
 msgstr "Vymazat celou _historii"
 
-#: src/player_window.c:3309
+#: src/player_window.c:3310
 msgid "Files h_istory"
 msgstr "_Historie souborů"
 
-#: src/player_window.c:3435
+#: src/player_window.c:3348
 msgid " quick preview finished, song paused"
 msgstr "Rychlý náhled ukončen, přehrávání pozastaveno"
 
