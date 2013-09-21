@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-09-16 22:30+0200\n"
+"POT-Creation-Date: 2013-09-21 17:43+0200\n"
 "PO-Revision-Date: 2013-04-29 08:45+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,11 +56,11 @@ msgstr ""
 msgid "_Close"
 msgstr ""
 
-#: src/player_window.c:120
+#: src/player_window.c:121
 msgid "Processing Douglas-Peucker filters ..."
 msgstr ""
 
-#: src/player_window.c:575
+#: src/player_window.c:576
 msgid ""
 "\n"
 " Cannot connect to snackAmp player.\n"
@@ -79,7 +79,7 @@ msgid ""
 " After that, restart snackamp and mp3splt-gtk should work.\n"
 msgstr ""
 
-#: src/player_window.c:590
+#: src/player_window.c:591
 msgid ""
 "\n"
 " Cannot connect to Audacious player.\n"
@@ -90,141 +90,141 @@ msgid ""
 "connect.\n"
 msgstr ""
 
-#: src/player_window.c:598 src/player_window.c:602
+#: src/player_window.c:599 src/player_window.c:603
 msgid "Cannot connect to player"
 msgstr ""
 
-#: src/player_window.c:899
+#: src/player_window.c:900
 msgid "Previous track"
 msgstr ""
 
-#: src/player_window.c:917
+#: src/player_window.c:918
 msgid "Play"
 msgstr ""
 
-#: src/player_window.c:934
+#: src/player_window.c:935
 msgid "Pause"
 msgstr ""
 
-#: src/player_window.c:951
+#: src/player_window.c:952
 msgid "Stop"
 msgstr ""
 
-#: src/player_window.c:968
+#: src/player_window.c:969
 msgid "Next track"
 msgstr ""
 
-#: src/player_window.c:975 src/splitpoints_window.c:1407
+#: src/player_window.c:976 src/splitpoints_window.c:1407
 msgid "_Add"
 msgstr ""
 
-#: src/player_window.c:982
+#: src/player_window.c:983
 msgid "Add splitpoint at the current player position"
 msgstr ""
 
-#: src/player_window.c:991 src/splitpoints_window.c:1121
+#: src/player_window.c:992 src/splitpoints_window.c:1121
 #: src/splitpoints_window.c:1450
 msgid "Set trim splitpoints using silence detection"
 msgstr ""
 
-#: src/player_window.c:1002 src/splitpoints_window.c:1178
+#: src/player_window.c:1003 src/splitpoints_window.c:1178
 #: src/splitpoints_window.c:1460
 msgid "Set splitpoints from silence detection"
 msgstr ""
 
-#: src/player_window.c:1007
+#: src/player_window.c:1008
 msgid "Amplitude _wave"
 msgstr ""
 
-#: src/player_window.c:1013
+#: src/player_window.c:1014
 msgid "Shows the amplitude level wave"
 msgstr ""
 
-#: src/player_window.c:1016
+#: src/player_window.c:1017
 msgid "_Connect"
 msgstr ""
 
-#: src/player_window.c:1019
+#: src/player_window.c:1020
 msgid "Connect to player"
 msgstr ""
 
-#: src/player_window.c:1022
+#: src/player_window.c:1023
 msgid "_Disconnect"
 msgstr ""
 
-#: src/player_window.c:1025
+#: src/player_window.c:1026
 msgid "Disconnect from player"
 msgstr ""
 
-#: src/player_window.c:1148
+#: src/player_window.c:1149
 #, c-format
 msgid "before %s"
 msgstr ""
 
-#: src/player_window.c:1895
+#: src/player_window.c:1896
 msgid "No available wave"
 msgstr ""
 
-#: src/player_window.c:2076 src/preferences_window.c:822
+#: src/player_window.c:2077 src/preferences_window.c:822
 msgid "No wave interpolation"
 msgstr ""
 
-#: src/player_window.c:2082
+#: src/player_window.c:2083
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr ""
 
-#: src/player_window.c:2162
+#: src/player_window.c:2163
 msgid " Please wait for the process to finish ..."
 msgstr ""
 
-#: src/player_window.c:2184
+#: src/player_window.c:2185
 msgid " Please wait ... currently computing Douglas Peucker filters."
 msgstr ""
 
-#: src/player_window.c:2268
+#: src/player_window.c:2269
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 
-#: src/player_window.c:2273
+#: src/player_window.c:2274
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 
-#: src/player_window.c:2279
+#: src/player_window.c:2280
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 
-#: src/player_window.c:2284
+#: src/player_window.c:2285
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 
-#: src/player_window.c:2709
+#: src/player_window.c:2710
 msgid " quick preview..."
 msgstr ""
 
-#: src/player_window.c:3053
+#: src/player_window.c:3054
 msgid "Splitpoints and amplitude wave v_iew"
 msgstr ""
 
-#: src/player_window.c:3169
+#: src/player_window.c:3170
 msgid "History"
 msgstr ""
 
-#: src/player_window.c:3259
+#: src/player_window.c:3260
 msgid "_Erase selected entries"
 msgstr ""
 
-#: src/player_window.c:3267
+#: src/player_window.c:3268
 msgid "E_rase all history"
 msgstr ""
 
-#: src/player_window.c:3309
+#: src/player_window.c:3310
 msgid "Files h_istory"
 msgstr ""
 
-#: src/player_window.c:3435
+#: src/player_window.c:3348
 msgid " quick preview finished, song paused"
 msgstr ""
 
