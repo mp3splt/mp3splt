@@ -395,6 +395,10 @@ void gstreamer_add_files(GList *list, ui_state *ui)
     return;
   }
 
+  GstState state;
+  gst_element_get_state(ui->pi->play, &state, NULL, GST_CLOCK_TIME_NONE);
+  gst_element_set_state(ui->pi->play, GST_STATE_NULL);
+
   gint i = 0;
   gchar *song = NULL;
   while ((song = g_list_nth_data(list, i)) != NULL)
@@ -412,6 +416,15 @@ void gstreamer_add_files(GList *list, ui_state *ui)
     if (uri) { g_free(uri); }
 
     i++;
+  }
+
+  if (state == GST_STATE_PLAYING)
+  {
+    gst_element_set_state(ui->pi->play, GST_STATE_PLAYING);
+  }
+  else if (state == GST_STATE_PAUSED)
+  {
+    gst_element_set_state(ui->pi->play, GST_STATE_PAUSED);
   }
 }
 
@@ -516,12 +529,17 @@ void gstreamer_pause(ui_state *ui)
 
   if (state == GST_STATE_PLAYING)
   {
+    //gint time = gstreamer_get_time_elapsed(ui);
+
     gst_element_set_state(ui->pi->play, GST_STATE_PAUSED);
+
+    /*gst_element_seek(ui->pi->play,
+        1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
+        GST_SEEK_TYPE_SET, time * GST_MSECOND, 0, 0);*/
+    return;
   }
-  else
-  {
-    gstreamer_play(ui);
-  }
+
+  gstreamer_play(ui);
 }
 
 //!changes to next song
