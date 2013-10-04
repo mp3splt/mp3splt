@@ -483,7 +483,9 @@ static void player_pause_action(GtkWidget *widget, ui_state *ui)
 static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat total_time = ui->infos->total_time;
-  gfloat new_time = ui->infos->current_time * 10 + 2./100. * total_time * 10;
+  gfloat new_time = ui->infos->current_time * 10 + 
+    (ui->infos->seek_jump_value != 0 ? ui->infos->seek_jump_value :
+     2./100. * total_time * 10);
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_seek(new_time, ui);
 }
@@ -491,7 +493,9 @@ static void player_seek_forward_action(GtkWidget *widget, ui_state *ui)
 static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat total_time = ui->infos->total_time;
-  gfloat new_time = ui->infos->current_time * 10 - 2./100. * total_time * 10;
+  gfloat new_time = ui->infos->current_time * 10 - 
+    (ui->infos->seek_jump_value != 0 ? ui->infos->seek_jump_value :
+     2./100. * total_time * 10);
   if (new_time <= 0) { new_time = 0; }
   player_seek(new_time, ui);
 }
@@ -499,7 +503,9 @@ static void player_seek_backward_action(GtkWidget *widget, ui_state *ui)
 static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat total_time = ui->infos->total_time;
-  gfloat new_time = ui->infos->current_time * 10 + 15./100. * total_time * 10;
+  gfloat new_time = ui->infos->current_time * 10 + 
+    (ui->infos->big_seek_jump_value != 0 ? ui->infos->big_seek_jump_value :
+     15./100. * total_time * 10);
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_seek(new_time, ui);
 }
@@ -507,7 +513,9 @@ static void player_big_seek_forward_action(GtkWidget *widget, ui_state *ui)
 static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat total_time = ui->infos->total_time;
-  gfloat new_time = ui->infos->current_time * 10 - 15./100. * total_time * 10;
+  gfloat new_time = ui->infos->current_time * 10 - 
+    (ui->infos->big_seek_jump_value != 0 ? ui->infos->big_seek_jump_value :
+     15./100. * total_time * 10);
   if (new_time <= 0) { new_time = 0; }
   player_seek(new_time, ui);
 }
@@ -515,14 +523,14 @@ static void player_big_seek_backward_action(GtkWidget *widget, ui_state *ui)
 static void player_small_seek_forward_action(GtkWidget *widget, ui_state *ui)
 {
   gfloat total_time = ui->infos->total_time;
-  gfloat new_time = ui->infos->current_time * 10 + 100 * 3 * 10;
+  gfloat new_time = ui->infos->current_time * 10 + ui->infos->small_seek_jump_value;
   if (new_time > total_time * 10) { new_time = total_time * 10; }
   player_seek(new_time, ui);
 }
  
 static void player_small_seek_backward_action(GtkWidget *widget, ui_state *ui)
 {
-  gfloat new_time = ui->infos->current_time * 10 - 100 * 3 * 10;
+  gfloat new_time = ui->infos->current_time * 10 - ui->infos->small_seek_jump_value;
   if (new_time <= 0) { new_time = 0; }
   player_seek(new_time, ui);
 }
