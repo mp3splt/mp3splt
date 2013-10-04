@@ -175,6 +175,9 @@ typedef struct {
   preview_index_and_data preview_indexes[6];
 
   gint timeout_value;
+  gint small_seek_jump_value;
+  gint seek_jump_value;
+  gint big_seek_jump_value;
 
   //make export threads to execute in order
   GThread *previous_export_thread;

@@ -176,8 +176,7 @@ void wh_get_widget_size(GtkWidget *widget, gint *width, gint *height)
 }
 
 GtkWidget *wh_create_int_spinner_in_box_with_top_width(gchar *before_label, gchar *after_label,
-    gdouble initial_value,
-    gdouble minimum_value, gdouble maximum_value, 
+    gdouble initial_value, gdouble minimum_value, gdouble maximum_value, 
     gdouble step_increment, gdouble page_increment,
     gchar *after_newline_label, 
     void (*spinner_callback)(GtkWidget *spinner, ui_state *ui),

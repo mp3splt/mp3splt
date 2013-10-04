@@ -617,6 +617,27 @@ static void update_timeout_value(GtkWidget *spinner, ui_state *ui)
   ui_save_preferences(NULL, ui);
 }
 
+static void update_small_seek_jump_value(GtkWidget *spinner, ui_state *ui)
+{
+  ui->infos->small_seek_jump_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+
+  ui_save_preferences(NULL, ui);
+}
+
+static void update_seek_jump_value(GtkWidget *spinner, ui_state *ui)
+{
+  ui->infos->seek_jump_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+
+  ui_save_preferences(NULL, ui);
+}
+
+static void update_big_seek_jump_value(GtkWidget *spinner, ui_state *ui)
+{
+  ui->infos->big_seek_jump_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+
+  ui_save_preferences(NULL, ui);
+}
+
 //!Create the box the player backend can be selected with
 static GtkWidget *create_player_options_box(ui_state *ui)
 {
@@ -649,6 +670,33 @@ static GtkWidget *create_player_options_box(ui_state *ui)
       update_timeout_value, ui, vbox);
   ui_register_spinner_int_preference("player", "refresh_rate", DEFAULT_TIMEOUT_VALUE,
       spinner, (void (*)(GtkWidget *, gpointer)) update_timeout_value,
+      ui, ui);
+
+  GtkWidget *small_seek_jump = wh_create_int_spinner_in_box(_("Small seek jumps for "),
+      _("milliseconds."),
+      (gdouble)DEFAULT_SMALL_SEEK_JUMP_VALUE, 0.0, (gdouble)G_MAXINT, 100.0, 1000.0,
+      NULL,
+      update_small_seek_jump_value, ui, vbox);
+  ui_register_spinner_int_preference("player", "small_seek_jump", DEFAULT_SMALL_SEEK_JUMP_VALUE,
+      small_seek_jump, (void (*)(GtkWidget *, gpointer)) update_small_seek_jump_value,
+      ui, ui);
+
+  GtkWidget *seek_jump = wh_create_int_spinner_in_box(_("Seek jumps for "),
+      _("milliseconds. (0=auto)"),
+      (gdouble)DEFAULT_SEEK_JUMP_VALUE, 0.0, (gdouble)G_MAXINT, 1000.0, 10000.0,
+      NULL,
+      update_seek_jump_value, ui, vbox);
+  ui_register_spinner_int_preference("player", "seek_jump", DEFAULT_SEEK_JUMP_VALUE,
+      seek_jump, (void (*)(GtkWidget *, gpointer)) update_seek_jump_value,
+      ui, ui);
+
+  GtkWidget *big_seek_jump = wh_create_int_spinner_in_box(_("Big seek jumps for "),
+      _("milliseconds. (0=auto)"),
+      (gdouble)DEFAULT_BIG_SEEK_JUMP_VALUE, 0.0, (gdouble)G_MAXINT, 1000.0, 60000.0,
+      NULL,
+      update_big_seek_jump_value, ui, vbox);
+  ui_register_spinner_int_preference("player", "big_seek_jump", DEFAULT_BIG_SEEK_JUMP_VALUE,
+      big_seek_jump, (void (*)(GtkWidget *, gpointer)) update_big_seek_jump_value,
       ui, ui);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
