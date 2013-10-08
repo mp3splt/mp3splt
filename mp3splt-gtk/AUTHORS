@@ -14,6 +14,7 @@ People who contributed to mp3splt-project development :
   - Federico Grau <donfede@casagrau.org>: audacity labels support
   - David Belohrad <david.belohrad@cern.ch>: set tags from filename regular expression
   - Gunter Königsmann <ubuntu@peterpall.de>: gui improvement and debian packaging
+  - Sašo Živanović <avani42@users.sf.net>: added customizable seek times in preferences of mp3splt-gtk
 
   and others ...
 
