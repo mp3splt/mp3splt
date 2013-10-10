@@ -1573,6 +1573,7 @@ void cancel_quick_preview_all(ui_state *ui)
 void cancel_quick_preview(gui_status *status)
 {
   status->quick_preview = FALSE;
+  status->stop_preview_right_after_start = SPLT_FALSE;
 }
 
 /*!motif for splitpoints
@@ -2660,6 +2661,7 @@ void set_preview_start_position_safe(gint value, ui_state *ui)
 {
   lock_mutex(&ui->variables_mutex);
   ui->status->preview_start_position = value;
+  ui->status->stop_preview_right_after_start = FALSE;
   unlock_mutex(&ui->variables_mutex);
 }
 
@@ -3335,6 +3337,7 @@ void player_key_actions_set_sensitivity(gboolean sensitivity, gui_state *gui)
   action_set_sensitivity("Player_next_splitpoint", sensitivity, gui);
   action_set_sensitivity("Player_previous_splitpoint", sensitivity, gui);
   action_set_sensitivity("Player_closest_splitpoint", sensitivity, gui);
+  action_set_sensitivity("Player_closest_splitpoint_and_pause", sensitivity, gui);
   action_set_sensitivity("Player_before_closest_splitpoint", sensitivity, gui);
   action_set_sensitivity("Add_splitpoint", sensitivity, gui);
   action_set_sensitivity("Delete_closest_splitpoint", sensitivity, gui);
@@ -3353,6 +3356,25 @@ static gint remaining_time_to_stop_timer(ui_state *ui)
 {
   pause_quick_preview_now(ui);
   return FALSE;
+}
+
+static gint get_preview_end_time(ui_state *ui)
+{
+  gint preview_end_point = get_quick_preview_end_splitpoint_safe(ui);
+  if (preview_end_point < 0) {
+    return -1;
+  }
+
+  if (ui->status->stop_preview_right_after_start)
+  {
+    if (ui->status->preview_start_splitpoint < 0) { return -1; }
+    gint start_time = get_splitpoint_time(ui->status->preview_start_splitpoint, ui);
+    return start_time + 100 * 3;
+  }
+
+  gint stop_splitpoint_time = get_splitpoint_time(preview_end_point, ui);
+
+  return stop_splitpoint_time;
 }
 
 /*! timer used to print infos about the song
@@ -3438,21 +3460,19 @@ static gint mytimer(ui_state *ui)
       }
 
       //if we have a preview, stop if needed
-      if (status->quick_preview)
+      gint preview_end_time = get_preview_end_time(ui);
+      if (status->quick_preview && preview_end_time >= 0)
       {
-        gint stop_splitpoint = get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui);
         if (ui->infos->selected_player == PLAYER_GSTREAMER)
         {
-          stop_splitpoint -= (ui->infos->gstreamer_stop_before_end / 10);
+          preview_end_time -= (ui->infos->gstreamer_stop_before_end / 10);
         }
 
         double rounded = round((double)ui->infos->timeout_value / 10.0);
         gint compared_time = (gint)infos->current_time + (gint) rounded;
-
-        gint should_stop = (stop_splitpoint <= compared_time);
-        if (should_stop && (get_quick_preview_end_splitpoint_safe(ui) != -1))
+        if (preview_end_time <= compared_time)
         {
-          gint remaining_time_to_stop = (stop_splitpoint - (gint) infos->current_time) * 10;
+          gint remaining_time_to_stop = (preview_end_time - (gint) infos->current_time) * 10;
           g_timeout_add(remaining_time_to_stop, (GSourceFunc)remaining_time_to_stop_timer, ui);
         }
       }
