@@ -617,24 +617,27 @@ static void update_timeout_value(GtkWidget *spinner, ui_state *ui)
   ui_save_preferences(NULL, ui);
 }
 
+static void update_gstreamer_stop_before_end_value(GtkWidget *spinner, ui_state *ui)
+{
+  ui->infos->gstreamer_stop_before_end = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
+  ui_save_preferences(NULL, ui);
+}
+
 static void update_small_seek_jump_value(GtkWidget *spinner, ui_state *ui)
 {
   ui->infos->small_seek_jump_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-
   ui_save_preferences(NULL, ui);
 }
 
 static void update_seek_jump_value(GtkWidget *spinner, ui_state *ui)
 {
   ui->infos->seek_jump_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-
   ui_save_preferences(NULL, ui);
 }
 
 static void update_big_seek_jump_value(GtkWidget *spinner, ui_state *ui)
 {
   ui->infos->big_seek_jump_value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-
   ui_save_preferences(NULL, ui);
 }
 
@@ -672,6 +675,18 @@ static GtkWidget *create_player_options_box(ui_state *ui)
       spinner, (void (*)(GtkWidget *, gpointer)) update_timeout_value,
       ui, ui);
 
+#ifndef NO_GSTREAMER
+  GtkWidget *gstreamer_stop_before_end =
+    wh_create_int_spinner_in_box(_("Stop GStreamer preview"), _("milliseconds before the end."),
+        (gdouble)DEFAULT_GSTREAMER_STOP_BEFORE_END_VALUE, 0.0, 1000.0, 50.0, 100.0,
+        NULL, update_gstreamer_stop_before_end_value, ui, vbox);
+  ui_register_spinner_int_preference("player", "gstreamer_stop_before_end",
+      DEFAULT_GSTREAMER_STOP_BEFORE_END_VALUE, gstreamer_stop_before_end,
+      (void (*)(GtkWidget *, gpointer)) update_gstreamer_stop_before_end_value, ui, ui);
+#endif
+
+  //Seek times
+
   GtkWidget *seek_vbox = wh_vbox_new(); 
 
   GtkWidget *small_seek_jump = wh_create_int_spinner_in_box(_("Small seek jumps for "),
@@ -704,7 +719,10 @@ static GtkWidget *create_player_options_box(ui_state *ui)
   GtkWidget *seek_times_frame = gtk_frame_new(_("Seek times"));
   gtk_container_add(GTK_CONTAINER(seek_times_frame), seek_vbox);
 
-  gtk_box_pack_start(GTK_BOX(vbox), seek_times_frame, FALSE, FALSE, 0);
+  horiz_fake = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(horiz_fake), seek_times_frame, FALSE, FALSE, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox), horiz_fake, FALSE, FALSE, 0);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Player options</b>"));
 }
@@ -825,7 +843,7 @@ static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
 
   gchar wave_availability[256] = { '\0' };
   g_snprintf(wave_availability, 256, "<span style='italic' color='#0000AA'>%s</span>",
-      _("Wave preview is only available if the amplitude wave is shown in the player"));
+      _("Only available if the amplitude wave is shown in the player"));
   gtk_label_set_markup(GTK_LABEL(wave_preview_label), wave_availability);
   gtk_box_pack_start(GTK_BOX(label_hbox), wave_preview_label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), label_hbox, FALSE, FALSE, 4);
@@ -857,7 +875,11 @@ static GtkWidget *create_wave_quality_preview_box(ui_state *ui)
     wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(minutes_label, vbox, 0, 4);
   }
 
-  return vbox;
+  GtkWidget *hbox_for_margin = wh_put_in_new_hbox(vbox, 6, FALSE, FALSE);
+
+  GtkWidget *wave_preview_frame = gtk_frame_new(_("Wave preview"));
+  gtk_container_add(GTK_CONTAINER(wave_preview_frame), hbox_for_margin);
+  return wh_put_in_new_hbox(wave_preview_frame, 0, FALSE, FALSE);
 }
 
 static void update_wave_preview_label_markup(gint index, gint interpolation_level, ui_state *ui)
@@ -894,7 +916,7 @@ static GtkWidget *create_wave_options_box(ui_state *ui)
   GtkWidget *wave_quality_label =
     gtk_label_new(_("Wave quality (higher is better but consumes more CPU):"));
   gtk_box_pack_start(GTK_BOX(range_hbox), wave_quality_label, FALSE, FALSE, 0);
- 
+
   GtkWidget *wave_quality_hscale = wh_hscale_new_with_range(-6.0, 6.0, 1.0);
   gtk_scale_set_draw_value(GTK_SCALE(wave_quality_hscale), TRUE);
   gtk_box_pack_start(GTK_BOX(range_hbox), wave_quality_hscale, FALSE, FALSE, 4);
@@ -910,6 +932,9 @@ static GtkWidget *create_wave_options_box(ui_state *ui)
       G_CALLBACK(wave_quality_changed_event), ui);
 
   gtk_box_pack_start(GTK_BOX(vbox), range_hbox, FALSE, FALSE, 0);
+
+  GtkWidget *wave_quality_box = create_wave_quality_preview_box(ui);
+  gtk_box_pack_start(GTK_BOX(vbox), wave_quality_box, FALSE, FALSE, 0);
 
   return wh_set_title_and_get_vbox(vbox, _("<b>Amplitude wave options</b>"));
 }
@@ -936,9 +961,6 @@ static GtkWidget *create_pref_player_page(ui_state *ui)
 
   GtkWidget *wave_options_box = create_wave_options_box(ui);
   gtk_box_pack_start(GTK_BOX(vbox), wave_options_box, FALSE, FALSE, 3);
-
-  GtkWidget *wave_quality_box = create_wave_quality_preview_box(ui);
-  gtk_box_pack_start(GTK_BOX(inside_vbox), wave_quality_box, FALSE, FALSE, 0);
 
   return player_hbox;
 }

@@ -313,7 +313,7 @@ static void show_preferences_window(GtkWidget *widget, ui_state *ui)
   if (ui->gui->preferences_window == NULL)
   {
     ui->gui->preferences_window = 
-      wh_create_window_with_close_button(_("Preferences"), 600, 450, GTK_WIN_POS_CENTER, 
+      wh_create_window_with_close_button(_("Preferences"), 750, 450, GTK_WIN_POS_CENTER, 
           GTK_WINDOW(ui->gui->window), ui->gui->preferences_widget, NULL);
   }
 
@@ -856,11 +856,11 @@ static GtkWidget *create_menu_bar(ui_state *ui)
       N_("Seek to previous splitpoint"), G_CALLBACK(player_seek_to_previous_splitpoint_action)},
 
     { "Player_before_closest_splitpoint", NULL,
-      N_("_Quick preview before closest splitpoint"), "<Ctrl>Down", N_("Quick preview before closest splitpoint"),
+      N_("Preview before c_losest splitpoint"), "<Ctrl>Down", N_("Preview before closest splitpoint"),
       G_CALLBACK(player_seek_before_closest_splitpoint)},
 
     { "Player_closest_splitpoint", NULL,
-      N_("Q_uick preview closest splitpoint"), "<Ctrl>Up", N_("Quick preview closest splitpoint"),
+      N_("Preview _closest splitpoint"), "<Ctrl>Up", N_("Preview closest splitpoint"),
       G_CALLBACK(player_seek_closest_splitpoint)},
 
     { "Add_splitpoint", GTK_STOCK_ADD, N_("Add _splitpoint"), "s", 

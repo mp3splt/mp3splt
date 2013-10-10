@@ -428,7 +428,7 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
   GtkTreeIter iter;
   gtk_tree_model_get_iter(model, &iter, path);
 
-  //cancel quick preview if necessary
+  //cancel preview if necessary
   if (((index == ui->status->preview_start_splitpoint) && stop_preview) ||
       ((index == get_quick_preview_end_splitpoint_safe(ui)) &&
        (get_quick_preview_end_splitpoint_safe(ui) == (ui->infos->splitnumber-1)) && stop_preview))

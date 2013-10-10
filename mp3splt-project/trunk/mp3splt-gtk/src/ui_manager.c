@@ -305,9 +305,13 @@ static void ui_infos_new(ui_state *ui)
   }
 
   infos->timeout_value = DEFAULT_TIMEOUT_VALUE;
+
+  infos->gstreamer_stop_before_end = DEFAULT_GSTREAMER_STOP_BEFORE_END_VALUE;
+
   infos->small_seek_jump_value = DEFAULT_SMALL_SEEK_JUMP_VALUE;
   infos->seek_jump_value = DEFAULT_SEEK_JUMP_VALUE;
   infos->big_seek_jump_value = DEFAULT_BIG_SEEK_JUMP_VALUE;
+
   infos->previous_export_thread = NULL;
 
   ui->infos = infos;
