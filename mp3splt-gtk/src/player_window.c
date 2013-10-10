@@ -1561,7 +1561,7 @@ static void draw_marks(gint time_interval, gint left_mark,
   }
 }
 
-//!full cancel of the quick preview
+//!full cancel of the preview
 void cancel_quick_preview_all(ui_state *ui)
 {
   cancel_quick_preview(ui->status);
@@ -1569,7 +1569,7 @@ void cancel_quick_preview_all(ui_state *ui)
   ui->status->preview_start_splitpoint = -1;
 }
 
-//!cancels quick preview
+//!cancels preview
 void cancel_quick_preview(gui_status *status)
 {
   status->quick_preview = FALSE;
@@ -2333,7 +2333,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
     //top buttons
     dh_draw_rectangle(gc, TRUE, left_pixel, gui->progress_ylimit-2, preview_splitpoint_length, 3);
 
-    //for quick preview, put red bar
+    //for preview, put red bar
     if (status->quick_preview)
     {
       color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
@@ -2353,7 +2353,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
             infos->current_time, infos->total_time, infos->zoom_coeff);
       dh_draw_rectangle(gc, TRUE, left_pixel, gui->progress_ylimit-2, infos->width_drawing_area-left_pixel, 3);
 
-      //red bar quick preview
+      //red bar preview
       if (status->quick_preview)
       {
         color.red = 255 * 255;color.green = 255 * 160;color.blue = 255 * 160;
@@ -2672,7 +2672,7 @@ gint get_preview_start_position_safe(ui_state *ui)
   return preview_start_position;
 }
 
-//!makes a quick preview of the song
+//!makes a preview of the song
 void player_quick_preview(gint splitpoint_to_preview, ui_state *ui)
 {
   if (splitpoint_to_preview == -1)
@@ -2707,7 +2707,7 @@ void player_quick_preview(gint splitpoint_to_preview, ui_state *ui)
 
   player_seek(get_preview_start_position_safe(ui) * 10, ui);
   change_progress_bar(ui);
-  put_status_message(_(" quick preview..."), ui);
+  put_status_message(_(" preview..."), ui);
 
   status->quick_preview = FALSE;
   if (get_quick_preview_end_splitpoint_safe(ui) != -1)
@@ -3346,7 +3346,7 @@ static void pause_quick_preview_now(ui_state *ui)
 {
   cancel_quick_preview(ui->status);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->gui->pause_button), TRUE);
-  put_status_message(_(" quick preview finished, song paused"), ui);
+  put_status_message(_(" preview finished, song paused"), ui);
 }
 
 static gint remaining_time_to_stop_timer(ui_state *ui)
@@ -3419,7 +3419,7 @@ static gint mytimer(ui_state *ui)
         change_progress_bar(ui);
       }
 
-      //part of quick preview
+      //part of preview
       if (status->preview_start_splitpoint != -1)
       {
         //if we have a splitpoint after the current
@@ -3446,7 +3446,7 @@ static gint mytimer(ui_state *ui)
 
         gint should_stop = (stop_splitpoint <= compared_time);
         //ugly hack for gstreamer to a little bit earlier
-        int gstreamer_threshold = 300;
+        int gstreamer_threshold = ui->infos->gstreamer_stop_before_end;
         if (ui->infos->selected_player == PLAYER_GSTREAMER)
         {
           should_stop = ((stop_splitpoint - compared_time) * 10) <= gstreamer_threshold;

@@ -39,6 +39,7 @@ GtkWidget *wh_set_title_and_get_vbox(GtkWidget *widget, const gchar *title);
 
 void wh_put_in_hbox_and_attach_to_vbox(GtkWidget *widget, GtkWidget *vbox, gint vertical_margin);
 GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_level);
+GtkWidget *wh_put_in_new_hbox(GtkWidget *widget, gint margin, gboolean expand, gboolean fill);
 void wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, GtkWidget *vbox,
     gint vertical_margin, gint bottom_margin);
 

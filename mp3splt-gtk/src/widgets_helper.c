@@ -38,7 +38,6 @@
 #include "widgets_helper.h"
 
 static guint _wh_add_row_to_table();
-static GtkWidget *_wh_put_in_new_hbox_with_margin(GtkWidget *widget, gint margin);
 static void _wh_attach_to_table(GtkWidget *table, GtkWidget *widget,
     guint start_column, guint end_column, guint row, int expand);
 static void _wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
@@ -107,7 +106,14 @@ void wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text, GtkWi
 
 GtkWidget *wh_put_in_new_hbox_with_margin_level(GtkWidget *widget, gint margin_level)
 {
-  return _wh_put_in_new_hbox_with_margin(widget, 6 * margin_level);
+  return wh_put_in_new_hbox(widget, 6 * margin_level, TRUE, TRUE);
+}
+
+GtkWidget *wh_put_in_new_hbox(GtkWidget *widget, gint margin, gboolean expand, gboolean fill)
+{
+  GtkWidget *hbox = wh_hbox_new();
+  gtk_box_pack_start(GTK_BOX(hbox), widget, expand, fill, margin);
+  return hbox;
 }
 
 void wh_put_in_hbox_and_attach_to_vbox(GtkWidget *widget, GtkWidget *vbox, gint vertical_margin)
@@ -473,13 +479,6 @@ static guint _wh_add_row_to_table(GtkWidget *table)
 
   return new_rows;
 #endif
-}
-
-static GtkWidget *_wh_put_in_new_hbox_with_margin(GtkWidget *widget, gint margin)
-{
-  GtkWidget *hbox = wh_hbox_new();
-  gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, margin);
-  return hbox;
 }
 
 static void _wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
