@@ -3441,37 +3441,19 @@ static gint mytimer(ui_state *ui)
       if (status->quick_preview)
       {
         gint stop_splitpoint = get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui);
+        if (ui->infos->selected_player == PLAYER_GSTREAMER)
+        {
+          stop_splitpoint -= (ui->infos->gstreamer_stop_before_end / 10);
+        }
+
         double rounded = round((double)ui->infos->timeout_value / 10.0);
         gint compared_time = (gint)infos->current_time + (gint) rounded;
 
         gint should_stop = (stop_splitpoint <= compared_time);
-        //ugly hack for gstreamer to a little bit earlier
-        int gstreamer_threshold = ui->infos->gstreamer_stop_before_end;
-        if (ui->infos->selected_player == PLAYER_GSTREAMER)
-        {
-          should_stop = ((stop_splitpoint - compared_time) * 10) <= gstreamer_threshold;
-        }
-
         if (should_stop && (get_quick_preview_end_splitpoint_safe(ui) != -1))
         {
           gint remaining_time_to_stop = (stop_splitpoint - (gint) infos->current_time) * 10;
-
-          //ugly hack for gstreamer to stop a little bit earlier
-          if (ui->infos->selected_player == PLAYER_GSTREAMER)
-          {
-            if (remaining_time_to_stop <= gstreamer_threshold)
-            {
-              pause_quick_preview_now(ui);
-            }
-            else
-            {
-              g_timeout_add(remaining_time_to_stop - gstreamer_threshold, (GSourceFunc)remaining_time_to_stop_timer, ui);
-            }
-          }
-          else
-          {
-            g_timeout_add(remaining_time_to_stop, (GSourceFunc)remaining_time_to_stop_timer, ui);
-          }
+          g_timeout_add(remaining_time_to_stop, (GSourceFunc)remaining_time_to_stop_timer, ui);
         }
       }
 
