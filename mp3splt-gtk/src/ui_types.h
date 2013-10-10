@@ -396,6 +396,7 @@ typedef struct {
 
   GtkWidget *player_combo_box;
   GtkWidget *radio_button;
+  GtkWidget *gstreamer_stop_before_end_box;
 
   GPtrArray *wave_preview_labels;
 

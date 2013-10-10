@@ -596,11 +596,13 @@ static void player_combo_box_event(GtkComboBox *widget, ui_state *ui)
   {
     hide_connect_button(ui->gui);
     gtk_widget_show(ui->gui->playlist_box);
+    gtk_widget_set_sensitive(ui->gui->gstreamer_stop_before_end_box, TRUE);
   }
   else
   {
     show_connect_button(ui->gui);
     gtk_widget_hide(ui->gui->playlist_box);
+    gtk_widget_set_sensitive(ui->gui->gstreamer_stop_before_end_box, FALSE);
   }
 
   gtk_widget_show(ui->gui->player_box);
@@ -675,14 +677,19 @@ static GtkWidget *create_player_options_box(ui_state *ui)
       spinner, (void (*)(GtkWidget *, gpointer)) update_timeout_value,
       ui, ui);
 
+  GtkWidget *gstreamer_vbox = wh_vbox_new();
+  ui->gui->gstreamer_stop_before_end_box = gstreamer_vbox;
+
 #ifndef NO_GSTREAMER
   GtkWidget *gstreamer_stop_before_end =
     wh_create_int_spinner_in_box(_("Stop GStreamer preview"), _("milliseconds before the end."),
         (gdouble)DEFAULT_GSTREAMER_STOP_BEFORE_END_VALUE, 0.0, 1000.0, 50.0, 100.0,
-        NULL, update_gstreamer_stop_before_end_value, ui, vbox);
+        NULL, update_gstreamer_stop_before_end_value, ui, gstreamer_vbox);
   ui_register_spinner_int_preference("player", "gstreamer_stop_before_end",
       DEFAULT_GSTREAMER_STOP_BEFORE_END_VALUE, gstreamer_stop_before_end,
       (void (*)(GtkWidget *, gpointer)) update_gstreamer_stop_before_end_value, ui, ui);
+
+  gtk_box_pack_start(GTK_BOX(vbox), gstreamer_vbox, TRUE, TRUE, 0);
 #endif
 
   //Seek times
@@ -716,8 +723,10 @@ static GtkWidget *create_player_options_box(ui_state *ui)
       big_seek_jump, (void (*)(GtkWidget *, gpointer)) update_big_seek_jump_value,
       ui, ui);
 
+  GtkWidget *hbox_for_margin = wh_put_in_new_hbox(seek_vbox, 3, FALSE, FALSE);
+
   GtkWidget *seek_times_frame = gtk_frame_new(_("Seek times"));
-  gtk_container_add(GTK_CONTAINER(seek_times_frame), seek_vbox);
+  gtk_container_add(GTK_CONTAINER(seek_times_frame), hbox_for_margin);
 
   horiz_fake = wh_hbox_new();
   gtk_box_pack_start(GTK_BOX(horiz_fake), seek_times_frame, FALSE, FALSE, 0);
