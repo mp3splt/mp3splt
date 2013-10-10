@@ -432,6 +432,7 @@ typedef struct {
 
   gint quick_preview_end_splitpoint;
   gint preview_start_splitpoint;
+  gboolean stop_preview_right_after_start;
 
   gfloat move_time;
 

@@ -332,6 +332,7 @@ static gui_status *ui_status_new(ui_state *ui)
   status->timer_active = FALSE;
   status->quick_preview_end_splitpoint = -1;
   status->preview_start_splitpoint = -1;
+  status->stop_preview_right_after_start = FALSE;
 
   status->move_time = 0;
 

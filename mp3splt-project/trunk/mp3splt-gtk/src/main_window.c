@@ -646,7 +646,7 @@ static void player_seek_before_closest_splitpoint(GtkWidget *widget, ui_state *u
   ui->status->quick_preview = TRUE;
 }
 
-static void player_seek_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+static void player_seek_closest_splitpoint_no_pause(GtkWidget *widget, ui_state *ui)
 {
   int closest_splitpoint_index = find_closest_splitpoint(ui);
   if (closest_splitpoint_index == -1) { return; }
@@ -672,6 +672,12 @@ static void player_seek_closest_splitpoint(GtkWidget *widget, ui_state *ui)
   }
 
   ui->status->quick_preview = TRUE;
+}
+
+static void player_seek_closest_splitpoint(GtkWidget *widget, ui_state *ui)
+{
+  player_seek_closest_splitpoint_no_pause(widget, ui);
+  ui->status->stop_preview_right_after_start = TRUE;
 }
 
 static void zoom_in(GtkWidget *widget, ui_state *ui)
@@ -860,7 +866,11 @@ static GtkWidget *create_menu_bar(ui_state *ui)
       G_CALLBACK(player_seek_before_closest_splitpoint)},
 
     { "Player_closest_splitpoint", NULL,
-      N_("Preview _closest splitpoint"), "<Ctrl>Up", N_("Preview closest splitpoint"),
+      N_("Preview clos_est splitpoint"), "<Shift>Up", N_("Preview closest splitpoint"),
+      G_CALLBACK(player_seek_closest_splitpoint_no_pause)},
+
+    { "Player_closest_splitpoint_and_pause", NULL,
+      N_("Preview _closest splitpoint & pause"), "<Ctrl>Up", N_("Preview closest splitpoint & pause"),
       G_CALLBACK(player_seek_closest_splitpoint)},
 
     { "Add_splitpoint", GTK_STOCK_ADD, N_("Add _splitpoint"), "s", 
@@ -906,7 +916,9 @@ static GtkWidget *create_menu_bar(ui_state *ui)
     "      <menuitem action='Player_big_backward'/>"
     "      <menuitem action='Player_next_splitpoint'/>"
     "      <menuitem action='Player_previous_splitpoint'/>"
+    "      <separator/>"
     "      <menuitem action='Player_closest_splitpoint'/>"
+    "      <menuitem action='Player_closest_splitpoint_and_pause'/>"
     "      <menuitem action='Player_before_closest_splitpoint'/>"
     "      <separator/>"
     "      <menuitem action='Add_splitpoint'/>"
