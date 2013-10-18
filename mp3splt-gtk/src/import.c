@@ -162,6 +162,9 @@ void import_cue_file_from_the_configuration_directory(ui_state *ui)
   if (file_exists(splitpoints_cue_filename))
   {
     ui->importing_cue_from_configuration_directory = TRUE;
+
+    mp3splt_set_int_option(ui->mp3splt_state,
+        SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE); 
     import_file(splitpoints_cue_filename, ui, FALSE);
   }
 
@@ -492,9 +495,6 @@ static gpointer add_cue_splitpoints(ui_with_fname *ui_fname)
   ui_state *ui = ui_fname->ui;
 
   set_process_in_progress_and_wait_safe(TRUE, ui);
-
-  mp3splt_set_int_option(ui->mp3splt_state,
-      SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME, SPLT_TRUE);
 
   update_output_options(ui, ui_fname->is_checked_output_radio_box, ui_fname->output_format);
 
