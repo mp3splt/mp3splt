@@ -77,7 +77,7 @@ function test_freedb_search_tracktype_get_cgi_freedb
   _test_freedb_search_get_cgi_tracktype "cddb_cgi" "freedb.org/~cddb/cddb.cgi" "80"
 }
 
-function test_freedb_search_tracktype_get_cddb_protocol_freedb
+function _test_freedb_search_tracktype_get_cddb_protocol_freedb
 {
   test_name="freedb mode - search tracktype & get cddb protocol freedb"
 
@@ -98,7 +98,7 @@ function test_proxy_freedb_search_tracktype_get_cgi_freedb
   _test_freedb_search_get_cgi_tracktype "cddb_cgi" "freedb.org/~cddb/cddb.cgi" "80" "$PROXY_TEXT"
 }
 
-function test_proxy_freedb_search_tracktype_get_cddb_protocol_freedb
+function _test_proxy_freedb_search_tracktype_get_cddb_protocol_freedb
 {
   test_name="freedb proxy mode - search tracktype & get cddb protocol not supported"
 
