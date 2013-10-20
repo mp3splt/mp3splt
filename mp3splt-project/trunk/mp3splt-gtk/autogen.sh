@@ -46,7 +46,7 @@ if test "x$win" != x;then
 fi
 
 echo -n "Running autopoint... ";
-autopoint -f && echo "done";
+autopoint --ver 0.13.1 -f && echo "done";
 echo -n "Running aclocal... " \
 && aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
 && echo -n "Running autoheader... " \
@@ -86,6 +86,10 @@ echo -n "Running autoconf... " \
 && echo -n "Running automake... " \
 && automake -a -c && echo "done"
 
+if ! test -z $win ;then
+  touch build-aux/config.rpath
+  automake -a -c
+fi
 
 echo -n "Formatting language files with msgfmt... " && \
 {

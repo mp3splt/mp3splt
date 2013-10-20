@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ ! -f /etc/fstab ];then
+  echo "C:\mp3splt_mingw\    /mingw" > /etc/fstab
+fi
+
 echo "unarchiving libmp3splt required libs ..."
 tar jxf ../libmp3splt_mingw_required_libs.tar.bz2 -C / || exit 1
 echo "unarchiving mp3splt-gtk required libs ..."
@@ -28,6 +32,9 @@ cp -a ./mp3splt-gtk_runtime/*.dll /usr/bin
 mkdir -p /lib/.libs
 cp /lib/libvorbis* /lib/libmad* /lib/libid3tag* /lib/libFLAC* /lib/.libs
 cp /bin/libvorbis* /bin/libmad* /bin/libid3tag* /lib/.libs
+
+cp /lib/libintl.la /mingw/lib/
+cp /lib/libiconv.la /mingw/lib/
 
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig"
 

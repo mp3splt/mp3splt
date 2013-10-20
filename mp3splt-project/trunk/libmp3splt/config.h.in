@@ -31,6 +31,14 @@
 /* Define to 1 if you have the `argz_stringify' function. */
 #undef HAVE_ARGZ_STRINGIFY
 
+/* Define to 1 if you have the Mac OS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYCURRENT
+
+/* Define to 1 if you have the Mac OS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
 /* Define to 1 if you have the `closedir' function. */
 #undef HAVE_CLOSEDIR
 
@@ -72,7 +80,7 @@
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
 
-/* Define if you have the iconv() function. */
+/* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV
 
 /* Define to 1 if you have the <inttypes.h> header file. */
@@ -160,9 +168,6 @@
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
-
-/* Define to the shared library suffix, say, ".dylib". */
-#undef LT_SHARED_EXT
 
 /* Define if dlsym() requires a leading underscore in symbol names. */
 #undef NEED_USCORE

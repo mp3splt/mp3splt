@@ -56,10 +56,9 @@
 
 #ifdef __WIN32__
 
-#include <windows.h>
-
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <windows.h>
 
 #include <shlwapi.h>
 #define usleep(x) Sleep(x/1000)

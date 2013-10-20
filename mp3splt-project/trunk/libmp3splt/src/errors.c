@@ -39,7 +39,7 @@ that is meant to be used directly are all in mp3splt.c.
 #include <errno.h>
 
 #ifdef __WIN32__
-#include <winsock.h>
+#include <winsock2.h>
 #else
 #include <netdb.h>
 #endif
