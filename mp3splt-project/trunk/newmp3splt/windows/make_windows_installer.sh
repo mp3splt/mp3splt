@@ -326,7 +326,7 @@ iconv.dll
 libltdl-7.dll
 zlib1.dll
 pcre3.dll
-LIBMP3SPLT_README_LICENSES_SOURCES.txt
+LIBMP3SPLT_LIBS_README_LICENSES_SOURCES.txt
 "
 
 echo '
