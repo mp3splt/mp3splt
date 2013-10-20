@@ -31,7 +31,8 @@ mp3splt-gtk/src/.libs/mp3splt-gtk.exe
 libmp3splt/src/.libs/libmp3splt${DLL_SUFFIX}.dll
 libltdl-7.dll
 pcre3.dll
-LIBMP3SPLT_README_LICENSES_SOURCES.txt
+LIBMP3SPLT_LIBS_README_LICENSES_SOURCES.txt
+MP3SPLT-GTK_LIBS_README_LICENSES_SOURCES.txt
 mp3splt-gtk/src/mp3splt-gtk.png
 mp3splt-gtk/src/mp3splt-gtk_ico.svg
 mp3splt-gtk/src/backward.svg
@@ -113,6 +114,7 @@ for lang in $LANGUAGES;do
 done
 
 cp -r ../libs/libmp3splt_libs_licenses $TEMP_DIR
+cp -r ../libs/mp3splt-gtk_libs_licenses $TEMP_DIR
 
 if [[ ! -z $we_dont_cross_compile ]];then
   cd ../libs &&\

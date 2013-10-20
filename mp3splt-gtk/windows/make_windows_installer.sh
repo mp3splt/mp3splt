@@ -318,7 +318,8 @@ mp3splt-gtk\src\.libs\mp3splt-gtk.exe
 libmp3splt\src\.libs\libmp3splt${DLL_SUFFIX}.dll
 libltdl-7.dll
 pcre3.dll
-LIBMP3SPLT_README_LICENSES_SOURCES.txt
+LIBMP3SPLT_LIBS_README_LICENSES_SOURCES.txt
+MP3SPLT-GTK_LIBS_README_LICENSES_SOURCES.txt
 mp3splt-gtk\windows\mp3splt-gtk.ico
 mp3splt-gtk\src\mp3splt-gtk.png
 mp3splt-gtk\src\mp3splt-gtk_ico.svg
@@ -347,6 +348,7 @@ set_out_path '$INSTDIR'
 copy_files $MAIN_SECTION_FILES
 recursive_copy_files_from_directory "../../mp3splt-gtk_runtime"
 recursive_copy_files_from_directory "../../libmp3splt_libs_licenses" ""
+recursive_copy_files_from_directory "../../mp3splt-gtk_libs_licenses" ""
 
 set_out_path '$INSTDIR'
 
