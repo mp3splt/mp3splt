@@ -29,6 +29,7 @@ cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
     lib/libvorbisfile.a ../trunk/mp3splt-gtk/ || exit 1
 cp lib/libmad.a lib/libvorbis.a lib/libogg.a lib/libid3tag.a lib/libz.a \
     lib/libvorbisfile.a ../trunk/mp3splt-gtk/src || exit 1
+cp MP3SPLT-GTK_LIBS_README_LICENSES_SOURCES.txt ../trunk || exit 1
 
 sed -i 's/\/mingw\/lib\/libltdl.la/-lltdl/g' lib/libmp3splt.la || exit 1
 
