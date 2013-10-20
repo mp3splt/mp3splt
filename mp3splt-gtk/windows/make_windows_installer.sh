@@ -24,6 +24,13 @@ else
   put_package "cross_windows_installer"
 fi
 
+mkdir -p ../../mp3splt-gtk_libs_licenses
+if [[ -z $we_dont_cross_compile ]];then
+  cp -a `pwd`/../../mp3splt-gtk_libs_licenses ../mp3splt-gtk_libs_licenses || exit 1
+else
+  cp -a `pwd`/../../../libs/mp3splt-gtk_libs_licenses ../../mp3splt-gtk_libs_licenses || exit 1
+fi
+
 LANGUAGES="fr_FR de_DE"
 
 for lang in $LANGUAGES;do
