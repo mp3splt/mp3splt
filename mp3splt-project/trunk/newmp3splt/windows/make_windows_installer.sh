@@ -26,7 +26,7 @@ fi
 
 mkdir -p ../../libmp3splt_libs_licenses
 if [[ -z $we_dont_cross_compile ]];then
-  cp -a `pwd`/../../libmp3splt_libs_licenses ../libmp5splt_libs_licenses || exit 1
+  cp -a `pwd`/../../libmp3splt_libs_licenses ../libmp3splt_libs_licenses || exit 1
 else
   cp -a `pwd`/../../../libs/libmp3splt_libs_licenses ../../libmp3splt_libs_licenses || exit 1
 fi
