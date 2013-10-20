@@ -41,7 +41,7 @@ fi
 
 #we run aclocal, autoconf and automake
 echo -n "1/5 Running autopoint... " \
-&& autopoint -f && echo "done" \
+&& autopoint --ver 0.13.1 -f && echo "done" \
 && echo -n "2/5 Running aclocal... " \
 && aclocal -I m4 $WIN_ACLOCAL_FLAGS $ACLOCAL_FLAGS && echo "done" \
 && echo -n "3/5 Running autoheader... " \
@@ -50,6 +50,11 @@ echo -n "1/5 Running autopoint... " \
 && autoconf && echo "done" \
 && echo -n "5/5 Running automake... " \
 && automake -a -c && echo "done"
+
+if ! test -z $win ;then
+  touch config.rpath
+  automake -a -c
+fi
 
 if test "x$HAS_MSGFMT" = xyes;then
 

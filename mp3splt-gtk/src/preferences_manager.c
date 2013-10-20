@@ -38,9 +38,9 @@
  * start of the program.
  ********************************************************/
 
-#include "preferences_manager.h"
-
 #include "all_includes.h"
+
+#include "preferences_manager.h"
 
 static void check_pref_file_and_write_default(ui_state *ui);
 static void pm_free_spinner_int_preferences(GArray *spinner_int_preferences);

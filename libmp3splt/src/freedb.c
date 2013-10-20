@@ -37,7 +37,7 @@ that is meant to be used directly are all in mp3splt.c.
 
 #ifdef __WIN32__
 #include <conio.h>
-#include <winsock.h>
+#include <winsock2.h>
 #else
 #include <netdb.h>
 #include <sys/socket.h>
