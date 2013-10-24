@@ -298,6 +298,13 @@ GtkWidget *wh_create_scrolled_window()
   return scrolled_window;
 }
 
+void wh_add_box_to_scrolled_window(GtkWidget *box, GtkWidget *scrolled_window)
+{
+  GtkWidget *viewport = gtk_viewport_new(NULL, NULL);
+  gtk_container_add(GTK_CONTAINER(viewport), box);
+  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(viewport));
+}
+
 /*! Does this GtkContainer contain that object?
 
 \param GtkContainer The Container that has to be searched for the
