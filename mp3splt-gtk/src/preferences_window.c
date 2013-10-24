@@ -254,7 +254,7 @@ static GtkWidget *create_pref_language_page(ui_state *ui)
   GtkWidget *language_inside_hbox = wh_hbox_new();;
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
-  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(language_inside_hbox));
+  wh_add_box_to_scrolled_window(language_inside_hbox, scrolled_window);
   gtk_box_pack_start(GTK_BOX(language_hbox), scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *vbox = wh_vbox_new();;
@@ -571,7 +571,7 @@ static GtkWidget *create_pref_splitpoints_page(ui_state *ui)
   GtkWidget *inside_hbox = wh_hbox_new();
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
-  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(inside_hbox));
+  wh_add_box_to_scrolled_window(inside_hbox, scrolled_window);
   gtk_box_pack_start(GTK_BOX(general_hbox), scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *inside_vbox = wh_vbox_new();
@@ -959,7 +959,7 @@ static GtkWidget *create_pref_player_page(ui_state *ui)
 
   GtkWidget *player_scrolled_window = wh_create_scrolled_window();
   ui->gui->player_scrolled_window = player_scrolled_window;
-  gtk_container_add(GTK_CONTAINER(player_scrolled_window), GTK_WIDGET(inside_hbox));
+  wh_add_box_to_scrolled_window(inside_hbox, player_scrolled_window);
   gtk_box_pack_start(GTK_BOX(player_hbox), player_scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *vbox = wh_vbox_new();;
@@ -1138,7 +1138,7 @@ static GtkWidget *create_pref_output_page(ui_state *ui)
   GtkWidget *output_inside_hbox = wh_hbox_new();;
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
-  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(output_inside_hbox));
+  wh_add_box_to_scrolled_window(output_inside_hbox, scrolled_window);
   gtk_box_pack_start(GTK_BOX(output_hbox), scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *vbox = wh_vbox_new();;
@@ -1501,7 +1501,7 @@ static GtkWidget *create_pref_tags_page(ui_state *ui)
   GtkWidget *inside_hbox = wh_hbox_new();
 
   GtkWidget *scrolled_window = wh_create_scrolled_window();
-  gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(inside_hbox));
+  wh_add_box_to_scrolled_window(inside_hbox, scrolled_window);
   gtk_box_pack_start(GTK_BOX(outside_vbox), scrolled_window, TRUE, TRUE, 0);
 
   GtkWidget *vbox = wh_vbox_new();;
