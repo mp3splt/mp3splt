@@ -120,10 +120,13 @@ static void douglas_peucker_callback(ui_state *ui)
   gtk_progress_bar_set_text(ui->gui->percent_progress_bar, 
       _("Processing Douglas-Peucker filters ..."));
   gtk_widget_queue_draw(GTK_WIDGET(ui->gui->percent_progress_bar));
+
+#ifndef __WIN32__
   while (gtk_events_pending())
   {
     gtk_main_iteration();
   }
+#endif
 
   ui->status->douglas_callback_counter = 0;
 }
