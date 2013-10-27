@@ -81,14 +81,6 @@ static gboolean lmanager_put_split_filename_idle(ui_with_fname *ui_fname)
   gtk_widget_set_sensitive(ui->gui->queue_files_button, TRUE);
   gtk_widget_set_sensitive(ui->gui->remove_all_files_button, TRUE);
 
-#ifdef __WIN32__
-  while (gtk_events_pending())
-  {
-    gtk_main_iteration();
-  }
-  gdk_flush();
-#endif
-
   if (filename)
   {
     g_free(filename);
@@ -134,14 +126,6 @@ static gboolean lmanager_put_message_from_library_idle(ui_with_message *ui_messa
     }
 
     put_status_message_with_type(mess, mess_type, ui);
-
-#ifdef __WIN32__
-    while (gtk_events_pending())
-    {
-      gtk_main_iteration();
-    }
-    gdk_flush();
-#endif
 
     g_free(mess);
     mess = NULL;
@@ -215,14 +199,6 @@ static gboolean lmanager_change_window_progress_bar_idle(ui_with_p_bar *ui_p_bar
 
   gtk_progress_bar_set_fraction(ui->gui->percent_progress_bar, ui_p_bar->percent_progress);
   gtk_progress_bar_set_text(ui->gui->percent_progress_bar, printed_value);
-
-#ifdef __WIN32__
-  while (gtk_events_pending())
-  {
-    gtk_main_iteration();
-  }
-  gdk_flush();
-#endif
 
   if (ui_p_bar->filename_shorted)
   {
