@@ -123,6 +123,35 @@ function test_normal_cbr_pretend
   echo
 }
 
+function test_normal_cbr_pretend_with_wrong_extension
+{
+  remove_output_dir
+
+  test_name="cbr normal & wrong extension"
+  M_FILE="Merci_Bonsoir__Je_veux_Only_love"
+
+  cp $CBR_MP3_FILE ${CBR_MP3_FILE}.ogg
+
+  expected=" Pretending to split file 'songs/${M_FILE}.mp3.ogg' ...
+ warning: detected as .mp3 but extension does not match
+ info: file matches the plugin 'mp3 (libmad)'
+ info: MPEG 1 Layer 3 - 44100 Hz - Joint Stereo - 128 Kb/s - Total time: 3m.43s
+ info: starting normal split
+   File \"$OUTPUT_DIR/${M_FILE}.mp3_00m_30s__02m_04s_50h.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}.mp3_02m_04s_50h__03m_00s.mp3\" created
+   File \"$OUTPUT_DIR/${M_FILE}.mp3_03m_00s__03m_43s_81h.mp3\" created
+ file split"
+  mp3splt_args="-P -d $OUTPUT_DIR ${CBR_MP3_FILE}.ogg 0.30 2.04.50 3.0 EOF" 
+  run_check_output "$mp3splt_args" "$expected"
+
+  check_output_directory_is_empty
+
+  rm -f ${CBR_MP3_FILE}.ogg
+
+  print_ok
+  echo
+}
+
 function test_normal_cbr_cue_export
 {
   remove_output_dir
