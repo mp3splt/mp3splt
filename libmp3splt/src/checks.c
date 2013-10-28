@@ -262,8 +262,25 @@ void splt_check_set_correct_options(splt_state *state)
   }
 }
 
+static int splt_check_if_file_matches_plugin_extension(const char *filename, splt_state *state,
+    int *error)
+{
+  const char *extension = splt_p_get_extension(state, error);
+  if (*error < 0) { return SPLT_FALSE; }
+  const char *upper_extension = splt_p_get_upper_extension(state, error);
+  if (*error < 0) { return SPLT_FALSE; }
+
+  if (splt_su_str_ends_with(filename, extension) ||
+      splt_su_str_ends_with(filename, upper_extension))
+  {
+    return SPLT_TRUE;
+  }
+
+  return SPLT_FALSE;
+}
+
 void splt_check_file_type_and_set_plugin(splt_state *state,
-    short force_check_by_extension, int *error)
+    short force_check_by_extension, short show_warnings, int *error)
 {
   int err = SPLT_OK;
 
@@ -275,42 +292,56 @@ void splt_check_file_type_and_set_plugin(splt_state *state,
   splt_plugins *pl = state->plug;
   int plugin_found = SPLT_FALSE;
   int i = 0;
+  int last_plugin_found_without_extension = -1;
   for (i = 0;i < pl->number_of_plugins_found;i++)
   {
     splt_p_set_current_plugin(state, i);
     err = SPLT_OK;
 
+    int file_matches_plugin_extension =
+      splt_check_if_file_matches_plugin_extension(filename, state, &err);
+    if (err < 0) { *error = err; return; }
+
     if (force_check_by_extension ||
         (splt_o_get_int_option(state, SPLT_OPT_INPUT_NOT_SEEKABLE) &&
          !splt_io_input_is_stdin(state)))
     {
-      const char *extension = splt_p_get_extension(state, &err);
-      const char *upper_extension = splt_p_get_extension(state, &err);
-      if (err == SPLT_OK)
+      if (file_matches_plugin_extension)
       {
-        if (splt_su_str_ends_with(filename, extension) ||
-            splt_su_str_ends_with(filename, upper_extension))
-        {
-          plugin_found = SPLT_TRUE;
-          break;
-        }
+        plugin_found = SPLT_TRUE;
+        break;
       }
+      continue;
     }
-    else
+
+    if (splt_p_check_plugin_is_for_file(state, &err))
     {
-      if (splt_p_check_plugin_is_for_file(state, &err))
+      if (!splt_io_input_is_stdin(state) && !file_matches_plugin_extension)
       {
-        if (err == SPLT_OK)
+        if (show_warnings)
         {
-          plugin_found = SPLT_TRUE;
-          break;
+          const char *extension = splt_p_get_extension(state, error);
+          splt_c_put_warning_message_to_client(state,
+              _(" warning: detected as %s but extension does not match\n"), extension);
         }
+        last_plugin_found_without_extension = i;
+      }
+      else if (err == SPLT_OK)
+      {
+        plugin_found = SPLT_TRUE;
+        break;
       }
     }
   }
 
   if (! plugin_found)
   {
+    if (last_plugin_found_without_extension >= 0)
+    {
+      splt_p_set_current_plugin(state, last_plugin_found_without_extension);
+      return;
+    }
+
     splt_e_set_error_data(state, filename);
     *error = SPLT_ERROR_NO_PLUGIN_FOUND_FOR_FILE;
     splt_d_print_debug(state,"No plugin found !\n");

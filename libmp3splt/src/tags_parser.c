@@ -103,7 +103,7 @@ void splt_tp_put_tags_from_filename(splt_state *state, int *error)
 
   splt_tu_free_one_tags(&tags);
 #else
-  splt_c_put_info_message_to_client(state,
+  splt_c_put_warning_message_to_client(state,
       _(" warning: cannot set tags from filename regular expression - compiled without pcre support\n"));
 #endif
 }
@@ -537,7 +537,7 @@ end:
 
 static void splt_tp_get_original_tags_and_append(splt_state *state, int *error)
 {
-  splt_check_file_type_and_set_plugin(state, SPLT_FALSE, error);
+  splt_check_file_type_and_set_plugin(state, SPLT_FALSE, SPLT_FALSE, error);
   if (*error < 0) { return; }
 
   splt_o_lock_messages(state);

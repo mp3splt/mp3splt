@@ -1232,7 +1232,7 @@ static splt_mp3_state *splt_mp3_info(FILE *file_input, splt_state *state, int fr
         mad_stream_skip(&mp3state->stream, tag_size);
       }
 #else
-      splt_c_put_info_message_to_client(state,
+      splt_c_put_warning_message_to_client(state,
           _(" warning: lost sync and compiled without id3tag support - the split might be corrupt\n"));
 #endif
     }
@@ -3337,7 +3337,7 @@ void splt_pl_init(splt_state *state, int *error)
     char *filename = splt_t_get_filename_to_split(state);
     if (filename[1] == '\0')
     {
-      splt_c_put_info_message_to_client(state, 
+      splt_c_put_warning_message_to_client(state, 
           _(" warning: stdin '-' is supposed to be mp3 stream.\n"));
     }
   }
