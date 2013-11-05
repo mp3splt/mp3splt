@@ -314,6 +314,14 @@ static void ui_infos_new(ui_state *ui)
 
   infos->previous_export_thread = NULL;
 
+  infos->previous_mark_time = 0;
+  infos->previous_mark_pixel = 0;
+  infos->pixels_diff_regarding_previous = -1;
+  infos->previous_pixel_by_time = 
+    g_hash_table_new_full(g_double_hash, g_double_equal, g_free, g_free);
+  infos->pixel_moved_by_time =
+    g_hash_table_new_full(g_double_hash, g_double_equal, g_free, g_free);
+
   ui->infos = infos;
 }
 
@@ -474,6 +482,18 @@ static void ui_infos_free(ui_infos **infos)
     g_free((*infos)->silence_points);
     (*infos)->silence_points = NULL;
     (*infos)->number_of_silence_points = 0;
+  }
+
+  if ((*infos)->previous_pixel_by_time != NULL)
+  {
+    g_hash_table_destroy((*infos)->previous_pixel_by_time);
+    (*infos)->previous_pixel_by_time = NULL; 
+  }
+
+  if ((*infos)->pixel_moved_by_time != NULL)
+  {
+    g_hash_table_destroy((*infos)->pixel_moved_by_time);
+    (*infos)->pixel_moved_by_time = NULL; 
   }
 
   g_array_free((*infos)->preview_time_windows, TRUE);
