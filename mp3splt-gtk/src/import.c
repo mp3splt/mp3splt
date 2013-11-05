@@ -454,7 +454,23 @@ static gboolean add_cue_splitpoints_end(ui_with_err *ui_err)
 
   if (!ui->importing_cue_from_configuration_directory)
   {
-    splt_point *splitpoint = mp3splt_point_new(600000 - 1, NULL);
+    long max_point = 0;
+
+    splt_code err = SPLT_OK;
+    splt_points *points = mp3splt_get_splitpoints(ui->mp3splt_state, &err);
+    print_status_bar_confirmation(err, ui);
+    if (points != NULL)
+    {
+      mp3splt_points_init_iterator(points);
+      const splt_point *point = NULL;
+      while ((point = mp3splt_points_next(points)))
+      {
+        long point_value = mp3splt_point_get_value(point);
+        if (point_value > max_point) { max_point = point_value; }
+      }
+    }
+
+    splt_point *splitpoint = mp3splt_point_new(max_point + (100 * 60 * 100), NULL);
     mp3splt_point_set_name(splitpoint, _("--- last cue splitpoint ---"));
     mp3splt_append_splitpoint(ui->mp3splt_state, splitpoint);
   }

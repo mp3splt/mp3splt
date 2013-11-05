@@ -184,6 +184,13 @@ typedef struct {
 
   //make export threads to execute in order
   GThread *previous_export_thread;
+
+  //previous right mark time/pixels
+  gint previous_mark_time;
+  gint previous_mark_pixel;
+  gint pixels_diff_regarding_previous;
+  GHashTable *previous_pixel_by_time;
+  GHashTable *pixel_moved_by_time;
 } ui_infos;
 
 typedef struct {

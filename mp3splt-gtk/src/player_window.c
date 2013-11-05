@@ -195,7 +195,7 @@ static gboolean detect_silence_end(ui_with_err *ui_err)
   print_status_bar_confirmation(ui_err->err, ui);
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
 
-  refresh_drawing_area(ui->gui);
+  refresh_drawing_area(ui->gui, ui->infos, TRUE);
   refresh_preview_drawing_areas(ui->gui);
 
   set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
@@ -619,7 +619,7 @@ void connect_button_event(GtkWidget *widget, ui_state *ui)
   }
 
   mytimer(ui);
-  refresh_drawing_area(ui->gui);
+  refresh_drawing_area(ui->gui, ui->infos, TRUE);
 }
 
 //!checks if we have a stream
@@ -677,7 +677,7 @@ void disconnect_button_event(GtkWidget *widget, ui_state *ui)
     cancel_button_event(ui->gui->cancel_button, ui);
   }
 
-  refresh_drawing_area(ui->gui);
+  refresh_drawing_area(ui->gui, ui->infos, TRUE);
 }
 
 void restart_player_timer(ui_state *ui)
@@ -811,7 +811,7 @@ static void toggle_show_silence_wave(GtkToggleButton *show_silence_toggle_button
     cancel_button_event(ui->gui->cancel_button, ui);
   }
 
-  refresh_drawing_area(ui->gui);
+  refresh_drawing_area(ui->gui, ui->infos, TRUE);
   refresh_preview_drawing_areas(ui->gui);
 
   ui_save_preferences(NULL, ui);
@@ -1047,9 +1047,20 @@ static GtkWidget *create_song_informations_hbox(gui_state *gui)
   return song_info_hbox;
 }
 
+static void invalidate_previous_points_caches(ui_infos *infos)
+{
+  g_hash_table_remove_all(infos->previous_pixel_by_time);
+  g_hash_table_remove_all(infos->pixel_moved_by_time);
+
+  infos->previous_mark_time = 0;  
+  infos->previous_mark_pixel = 0;  
+  infos->pixels_diff_regarding_previous = -1;
+}
+
 //!when we unclick the progress bar
 static gboolean progress_bar_unclick_event(GtkWidget *widget, GdkEventCrossing *event, ui_state *ui)
 {
+  invalidate_previous_points_caches(ui->infos);
   change_song_position(ui);
 
   ui_infos *infos = ui->infos;
@@ -1077,8 +1088,13 @@ static gfloat get_elapsed_time(ui_state *ui)
   return (adj_position * ui->infos->total_time) / 100000;
 }
 
-void refresh_drawing_area(gui_state *gui)
+void refresh_drawing_area(gui_state *gui, ui_infos *infos,
+    gboolean invalidate_previous_caches)
 {
+  if (invalidate_previous_caches)
+  {
+    invalidate_previous_points_caches(infos);
+  }
   gtk_widget_queue_draw(gui->drawing_area);
 }
 
@@ -1191,21 +1207,21 @@ void check_update_down_progress_bar(ui_state *ui)
 //!event when the progress bar value changed
 static void progress_bar_value_changed_event(GtkRange *range, ui_state *ui)
 {
-  refresh_drawing_area(ui->gui);
+  refresh_drawing_area(ui->gui, ui->infos, FALSE);
 
   ui_infos *infos = ui->infos;
-  
+
   infos->player_hundr_secs2 = (gint)infos->current_time % 100;
- 
+
   gint tt2 = infos->total_time / 100;
   gfloat adj_position = (gint)gtk_adjustment_get_value(ui->gui->progress_adj);
   infos->current_time = (adj_position * tt2) / 100000;
-  
+
   infos->player_seconds2 = (gint)infos->current_time % 60;
   infos->player_minutes2 = (gint)infos->current_time / 60;
-  
+
   infos->current_time = get_elapsed_time(ui);
-  
+
   check_update_down_progress_bar(ui);
 }
 
@@ -1375,7 +1391,7 @@ static void change_progress_bar(ui_state *ui)
 
   if (!player_is_running(ui) || status->mouse_on_progress_bar)
   {
-    refresh_drawing_area(ui->gui);
+    refresh_drawing_area(ui->gui, ui->infos, TRUE);
     return;
   }
 
@@ -1479,15 +1495,89 @@ static gint time_to_pixels(gint width, gfloat time, gfloat total_time, gfloat zo
   return roundf(time_to_pixels_float(width, time, total_time, zoom_coeff));
 }
 
-/*!returns the position of a time mark on the screen
-
-\param width The width of the drawing 
-\param The time in hundreths of a second
-*/
-static gint convert_time_to_pixels(gint width, gfloat time, 
+static gint convert_time_to_pixels_without_diff(gint width, gfloat time, 
     gfloat current_time, gfloat total_time, gfloat zoom_coeff)
 {
   return width/2 + time_to_pixels(width, time - current_time, total_time, zoom_coeff);
+}
+
+static gint convert_time_to_pixels(gint width, gfloat time, 
+    gfloat current_time, gfloat total_time, gfloat zoom_coeff, ui_infos *infos)
+{
+  return convert_time_to_pixels_without_diff(width, time, current_time, total_time, zoom_coeff);
+  //TODO
+/*  gint *new_pixel = g_new(gint, 1);
+
+  gdouble *time_key = g_new(gdouble, 1);
+  *time_key = (gdouble) time;
+
+  gdouble *second_time_key = g_new(gdouble, 1);
+  *second_time_key = *time_key;
+
+  gint *previous_pixel = g_hash_table_lookup(infos->previous_pixel_by_time, time_key);
+  if (previous_pixel != NULL && infos->pixels_diff_regarding_previous >= 0)
+  {
+    gint diff = infos->pixels_diff_regarding_previous;
+
+    gint *pixel_moved = g_hash_table_lookup(infos->pixel_moved_by_time, second_time_key);
+    if (pixel_moved != NULL)
+    {
+      diff = 0;
+    }
+    *new_pixel = *previous_pixel - diff;
+  }
+  else
+  {
+    gint real_pixel =
+      convert_time_to_pixels_without_diff(width, time, current_time, total_time, zoom_coeff);
+    *new_pixel = real_pixel;
+  }
+
+  g_hash_table_insert(infos->previous_pixel_by_time, time_key, new_pixel);
+
+  gint *yes = g_new(gint, 1);
+  *yes = 1;
+  g_hash_table_insert(infos->pixel_moved_by_time, second_time_key, yes);
+
+  return *new_pixel;*/
+}
+
+static void save_previous_pixels_for_mark(gint mark, ui_infos *infos, gui_status *status)
+{
+  //TODO
+  return;
+  if (status->button2_pressed) { return; }
+
+  gint pixel = convert_time_to_pixels_without_diff(infos->width_drawing_area,
+      mark, infos->current_time, infos->total_time, infos->zoom_coeff);
+  fprintf(stdout, "current time pixel = %d\n", pixel);
+  fflush(stdout);
+
+  infos->previous_mark_time = mark;
+  infos->previous_mark_pixel = pixel;  
+
+  g_hash_table_remove_all(infos->pixel_moved_by_time);
+}
+
+static void compute_pixels_diff_from_previous_mark(ui_infos *infos, gui_status *status)
+{
+  //TODO
+  return;
+  if (status->button2_pressed) { return; }
+
+  gint right_pixel = convert_time_to_pixels_without_diff(infos->width_drawing_area,
+      infos->previous_mark_time, infos->current_time, infos->total_time, infos->zoom_coeff);
+  gint diff = infos->previous_mark_pixel - right_pixel;
+  fprintf(stdout, "diff = %d\n", diff);
+  fflush(stdout);
+  if (diff >= 0)
+  {
+    infos->pixels_diff_regarding_previous = diff;
+  }
+  else
+  {
+    infos->pixels_diff_regarding_previous = -1;
+  }
 }
 
 static void draw_motif(GtkWidget *da, cairo_t *gc, gint ylimit, gint x, gint time_interval)
@@ -1559,7 +1649,8 @@ static void draw_marks(gint time_interval, gint left_mark,
   for (i = left2; i <= right_mark; i += time_interval)
   {
     gint i_pixel = convert_time_to_pixels(ui->infos->width_drawing_area, i,
-        ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff);
+        ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff,
+        ui->infos);
     draw_motif(da, gc, ylimit, i_pixel, time_interval);
   }
 }
@@ -1745,7 +1836,8 @@ static void draw_splitpoints(gint left_mark, gint right_mark, GtkWidget *da, cai
     {
       gint split_pixel = 
         convert_time_to_pixels(ui->infos->width_drawing_area, current_point_hundr_secs, 
-            ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff);
+            ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff,
+            ui->infos);
 
       //the splitpoint that we move, draw it differently
       gboolean draw = TRUE;
@@ -1958,8 +2050,9 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
     float level = ui->infos->silence_points[i].level;
 
-    gint x =
-      convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, total_time, zoom_coeff);
+    gint x = 
+      convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, total_time,
+          zoom_coeff, ui->infos);
     gint y = y_margin + (gint)floorf(level);
 
     if (time > second_splitpoint_time && second_splitpoint_time > -2)
@@ -2105,6 +2198,8 @@ void clear_previous_distances(ui_state *ui)
   status->previous_first_x_drawed = -2;
   status->previous_second_x_drawed = -2;
   status->previous_second_time_drawed = -2;
+
+  invalidate_previous_points_caches(ui->infos);
 }
 
 static void draw_rectangles_between_splitpoints(cairo_t *cairo_surface, ui_state *ui)
@@ -2308,11 +2403,13 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
     right_mark = (gint)infos->total_time;
   }
 
+  compute_pixels_diff_from_previous_mark(infos, status);
+
   gfloat total_draw_time = right_time - left_time;
 
   gchar str[30] = { '\0' };
   gint beg_pixel = convert_time_to_pixels(infos->width_drawing_area, 0,
-      infos->current_time, infos->total_time, infos->zoom_coeff);
+      infos->current_time, infos->total_time, infos->zoom_coeff, infos);
 
   draw_rectangles_between_splitpoints(gc, ui);
 
@@ -2326,11 +2423,11 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
     gint right_pixel =
       convert_time_to_pixels(infos->width_drawing_area,
           get_splitpoint_time(get_quick_preview_end_splitpoint_safe(ui), ui),
-          infos->current_time, infos->total_time, infos->zoom_coeff);
+          infos->current_time, infos->total_time, infos->zoom_coeff, infos);
     gint left_pixel =
       convert_time_to_pixels(infos->width_drawing_area,
           get_splitpoint_time(status->preview_start_splitpoint, ui),
-          infos->current_time, infos->total_time, infos->zoom_coeff);
+          infos->current_time, infos->total_time, infos->zoom_coeff, infos);
 
     gint preview_splitpoint_length = right_pixel - left_pixel + 1;
 
@@ -2354,7 +2451,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
       gint left_pixel =
         convert_time_to_pixels(infos->width_drawing_area,
             get_splitpoint_time(status->preview_start_splitpoint, ui),
-            infos->current_time, infos->total_time, infos->zoom_coeff);
+            infos->current_time, infos->total_time, infos->zoom_coeff, infos);
       dh_draw_rectangle(gc, TRUE, left_pixel, gui->progress_ylimit-2, infos->width_drawing_area-left_pixel, 3);
 
       //red bar preview
@@ -2384,8 +2481,8 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
   }
 
   gint end_pixel = 
-    convert_time_to_pixels(infos->width_drawing_area, infos->total_time, 
-        infos->current_time, infos->total_time, infos->zoom_coeff);
+    convert_time_to_pixels(infos->width_drawing_area, infos->total_time,
+        infos->current_time, infos->total_time, infos->zoom_coeff, infos);
   //song end
   if (right_time >= infos->total_time)
   {
@@ -2438,9 +2535,8 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
   //draw mobile button1 position line
   if (status->button1_pressed)
   {
-    gint move_pixel = convert_time_to_pixels(infos->width_drawing_area, 
-        status->move_time, infos->current_time, 
-        infos->total_time, infos->zoom_coeff);
+    gint move_pixel = convert_time_to_pixels(infos->width_drawing_area,
+        status->move_time, infos->current_time, infos->total_time, infos->zoom_coeff, infos);
 
     if (status->move_splitpoints)
     {
@@ -2506,6 +2602,8 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
 
   draw_splitpoints(left_mark, right_mark, da, gc, ui);
 
+  save_previous_pixels_for_mark(infos->current_time, infos, status);
+
 #if GTK_MAJOR_VERSION <= 2
   cairo_destroy(gc);
 #endif
@@ -2524,9 +2622,9 @@ static void draw_small_rectangle(gint time_left, gint time_right,
   }
 
   gint pixels_left = convert_time_to_pixels(ui->infos->width_drawing_area, time_left, 
-      ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff);
+      ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff, ui->infos);
   gint pixels_right = convert_time_to_pixels(ui->infos->width_drawing_area, time_right, 
-      ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff);
+      ui->infos->current_time, ui->infos->total_time, ui->infos->zoom_coeff, ui->infos);
   gint pixels_length = pixels_right - pixels_left;
 
   dh_set_color(cairo_surface, &color);
@@ -2766,7 +2864,7 @@ static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *u
           status->select_splitpoints = TRUE;
           select_splitpoint(splitpoint_selected, gui);
         }
-        refresh_drawing_area(gui);
+        refresh_drawing_area(gui, ui->infos, TRUE);
       }
       else
       {
@@ -2780,7 +2878,7 @@ static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *u
             status->check_splitpoint = TRUE;
             update_splitpoint_check(splitpoint_selected, ui);
           }
-          refresh_drawing_area(gui);
+          refresh_drawing_area(gui, ui->infos, TRUE);
         }
       }
     }
@@ -2824,7 +2922,7 @@ static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *u
           remove_splitpoint(splitpoint_to_erase, TRUE, ui);
         }
 
-        refresh_drawing_area(gui);
+        refresh_drawing_area(gui, ui->infos, TRUE);
       }
     }
   }
@@ -2900,7 +2998,7 @@ static gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, ui_state 
   }
 
 end:
-  refresh_drawing_area(ui->gui);
+  refresh_drawing_area(ui->gui, ui->infos, TRUE);
   return TRUE;
 }
 
@@ -2956,7 +3054,7 @@ static gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, ui_state *
         status->move_time = infos->total_time;
       }
 
-      refresh_drawing_area(ui->gui);
+      refresh_drawing_area(ui->gui, ui->infos, FALSE);
     }
     else
     {
@@ -2987,7 +3085,7 @@ static gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, ui_state *
 
         adjust_zoom_coeff(infos);
 
-        refresh_drawing_area(ui->gui);
+        refresh_drawing_area(ui->gui, ui->infos, TRUE);
       }
     }
   }

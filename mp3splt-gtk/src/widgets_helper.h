@@ -43,6 +43,8 @@ GtkWidget *wh_put_in_new_hbox(GtkWidget *widget, gint margin, gboolean expand, g
 void wh_put_in_hbox_and_attach_to_vbox_with_bottom_margin(GtkWidget *widget, GtkWidget *vbox,
     gint vertical_margin, gint bottom_margin);
 
+void wh_add_box_to_scrolled_window(GtkWidget *box, GtkWidget *scrolled_window);
+
 GtkWidget *wh_new_table();
 void wh_add_in_table(GtkWidget *table, GtkWidget *widget);
 void wh_add_in_table_with_label(GtkWidget *table, const gchar *label_text,
