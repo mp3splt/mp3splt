@@ -32,10 +32,10 @@
 # Basic initialisations 
 #################################################
 
-m4_define([minimum_libmp3splt_version],[0.9.1.1402])
+m4_define([minimum_libmp3splt_version],[0.9.1.1415])
 
 AC_PREREQ(2.62)
-AC_INIT(mp3splt-gtk, 0.9.1.1402, mp3splt.sf.net)
+AC_INIT(mp3splt-gtk, 0.9.1.1415, mp3splt.sf.net)
 
 # tell autoconf where to put the temporary files and scripts
 # it generates. Seems to be more clean to put them into a subdir;
