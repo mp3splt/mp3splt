@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-09-14 14:50+0200\n"
+"POT-Creation-Date: 2013-11-06 21:01+0100\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -477,6 +477,11 @@ msgstr ""
 #: src/checks.c:157
 msgid "directory does not exists"
 msgstr "Adresář neexistuje"
+
+#: src/checks.c:325
+#, c-format
+msgid " warning: detected as %s but extension does not match\n"
+msgstr ""
 
 #: src/cddb.c:63
 #, c-format

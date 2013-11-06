@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-10-19 14:35+0200\n"
+"POT-Creation-Date: 2013-11-06 21:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,11 +50,11 @@ msgstr ""
 msgid "cue files (*.cue)"
 msgstr ""
 
-#: src/widgets_helper.c:433
+#: src/widgets_helper.c:440
 msgid "_Close"
 msgstr ""
 
-#: src/player_window.c:121
+#: src/player_window.c:118
 msgid "Processing Douglas-Peucker filters ..."
 msgstr ""
 
@@ -154,75 +154,75 @@ msgstr ""
 msgid "Disconnect from player"
 msgstr ""
 
-#: src/player_window.c:1149
+#: src/player_window.c:1165
 #, c-format
 msgid "before %s"
 msgstr ""
 
-#: src/player_window.c:1897
+#: src/player_window.c:1989
 msgid "No available wave"
 msgstr ""
 
-#: src/player_window.c:2078 src/preferences_window.c:908
+#: src/player_window.c:2171 src/preferences_window.c:908
 msgid "No wave interpolation"
 msgstr ""
 
-#: src/player_window.c:2084
+#: src/player_window.c:2177
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr ""
 
-#: src/player_window.c:2164
+#: src/player_window.c:2259
 msgid " Please wait for the process to finish ..."
 msgstr ""
 
-#: src/player_window.c:2186
+#: src/player_window.c:2281
 msgid " Please wait ... currently computing Douglas Peucker filters."
 msgstr ""
 
-#: src/player_window.c:2270
+#: src/player_window.c:2365
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 
-#: src/player_window.c:2275
+#: src/player_window.c:2370
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 
-#: src/player_window.c:2281
+#: src/player_window.c:2376
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 
-#: src/player_window.c:2286
+#: src/player_window.c:2381
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 
-#: src/player_window.c:2712
+#: src/player_window.c:2810
 msgid " preview..."
 msgstr ""
 
-#: src/player_window.c:3056
+#: src/player_window.c:3154
 msgid "Splitpoints and amplitude wave v_iew"
 msgstr ""
 
-#: src/player_window.c:3172
+#: src/player_window.c:3270
 msgid "History"
 msgstr ""
 
-#: src/player_window.c:3262
+#: src/player_window.c:3360
 msgid "_Erase selected entries"
 msgstr ""
 
-#: src/player_window.c:3270
+#: src/player_window.c:3368
 msgid "E_rase all history"
 msgstr ""
 
-#: src/player_window.c:3312
+#: src/player_window.c:3410
 msgid "Files h_istory"
 msgstr ""
 
-#: src/player_window.c:3352
+#: src/player_window.c:3450
 msgid " preview finished, song paused"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgstr ""
 msgid "please wait... contacting tracktype.org"
 msgstr ""
 
-#: src/freedb_window.c:438 src/freedb_window.c:459 src/ui_manager.c:361
+#: src/freedb_window.c:438 src/freedb_window.c:459 src/ui_manager.c:369
 #: src/splitpoints_window.c:671 src/splitpoints_window.c:792
 #: src/splitpoints_window.c:842
 msgid "description here"
@@ -1365,25 +1365,25 @@ msgstr ""
 msgid " File '%s' created"
 msgstr ""
 
-#: src/libmp3splt_manager.c:182
+#: src/libmp3splt_manager.c:166
 #, c-format
 msgid " preparing \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/libmp3splt_manager.c:188
+#: src/libmp3splt_manager.c:172
 #, c-format
 msgid " creating \"%s\" (%d of %d)"
 msgstr ""
 
-#: src/libmp3splt_manager.c:194
+#: src/libmp3splt_manager.c:178
 msgid " searching for sync errors..."
 msgstr ""
 
-#: src/libmp3splt_manager.c:199
+#: src/libmp3splt_manager.c:183
 msgid "Computing amplitude wave data..."
 msgstr ""
 
-#: src/libmp3splt_manager.c:204
+#: src/libmp3splt_manager.c:188
 #, c-format
 msgid "S: %02d, Level: %.2f dB; scanning for silence..."
 msgstr ""
@@ -1417,7 +1417,7 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
-#: src/import.c:458
+#: src/import.c:474
 msgid "--- last cue splitpoint ---"
 msgstr ""
 

@@ -67,9 +67,6 @@ static void get_silence_level(long time, float level, void *user_data)
     return;
   }
 
-  //TODO: using an idle here does not work.
-  //      At least on windows idles are not executed in order
-
   if (!ui->infos->silence_points)
   {
     ui->infos->silence_points = g_malloc(sizeof(silence_wave) * 3000);
