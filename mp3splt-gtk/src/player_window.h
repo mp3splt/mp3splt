@@ -73,8 +73,7 @@ void connect_to_player_with_song(gint i, ui_state *ui);
 void connect_button_event(GtkWidget *widget, ui_state *ui);
 void disconnect_button_event(GtkWidget *widget, ui_state *ui);
 void pause_event(GtkWidget *widget, ui_state *ui);
-void refresh_drawing_area(gui_state *gui, ui_infos *infos, 
-    gboolean invalidate_previous_points_caches);
+void refresh_drawing_area(gui_state *gui, ui_infos *infos);
 gfloat get_right_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 gfloat get_left_drawing_time(gfloat current_time, gfloat total_time, gfloat zoom_coeff);
 

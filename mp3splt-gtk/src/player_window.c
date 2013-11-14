@@ -192,7 +192,7 @@ static gboolean detect_silence_end(ui_with_err *ui_err)
   print_status_bar_confirmation(ui_err->err, ui);
   gtk_widget_set_sensitive(ui->gui->cancel_button, FALSE);
 
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
   refresh_preview_drawing_areas(ui->gui);
 
   set_process_in_progress_and_wait_safe(FALSE, ui_err->ui);
@@ -616,7 +616,7 @@ void connect_button_event(GtkWidget *widget, ui_state *ui)
   }
 
   mytimer(ui);
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
 }
 
 //!checks if we have a stream
@@ -674,7 +674,7 @@ void disconnect_button_event(GtkWidget *widget, ui_state *ui)
     cancel_button_event(ui->gui->cancel_button, ui);
   }
 
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
 }
 
 void restart_player_timer(ui_state *ui)
@@ -808,7 +808,7 @@ static void toggle_show_silence_wave(GtkToggleButton *show_silence_toggle_button
     cancel_button_event(ui->gui->cancel_button, ui);
   }
 
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
   refresh_preview_drawing_areas(ui->gui);
 
   ui_save_preferences(NULL, ui);
@@ -1046,6 +1046,9 @@ static GtkWidget *create_song_informations_hbox(gui_state *gui)
 
 static void invalidate_previous_points_caches(ui_infos *infos)
 {
+  fprintf(stdout, "invalidate previous points caches\n");
+  fflush(stdout);
+
   g_hash_table_remove_all(infos->previous_pixel_by_time);
   g_hash_table_remove_all(infos->pixel_moved_by_time);
 
@@ -1058,7 +1061,7 @@ static void invalidate_previous_points_caches(ui_infos *infos)
 //!when we unclick the progress bar
 static gboolean progress_bar_unclick_event(GtkWidget *widget, GdkEventCrossing *event, ui_state *ui)
 {
-  invalidate_previous_points_caches(ui->infos);
+  //invalidate_previous_points_caches(ui->infos);
   change_song_position(ui);
 
   ui_infos *infos = ui->infos;
@@ -1086,13 +1089,8 @@ static gfloat get_elapsed_time(ui_state *ui)
   return (adj_position * ui->infos->total_time) / 100000;
 }
 
-void refresh_drawing_area(gui_state *gui, ui_infos *infos,
-    gboolean invalidate_previous_caches)
+void refresh_drawing_area(gui_state *gui, ui_infos *infos)
 {
-  if (invalidate_previous_caches)
-  {
-    invalidate_previous_points_caches(infos);
-  }
   gtk_widget_queue_draw(gui->drawing_area);
 }
 
@@ -1205,7 +1203,7 @@ void check_update_down_progress_bar(ui_state *ui)
 //!event when the progress bar value changed
 static void progress_bar_value_changed_event(GtkRange *range, ui_state *ui)
 {
-  refresh_drawing_area(ui->gui, ui->infos, FALSE);
+  refresh_drawing_area(ui->gui, ui->infos);
 
   ui_infos *infos = ui->infos;
 
@@ -1389,7 +1387,7 @@ static void change_progress_bar(ui_state *ui)
 
   if (!player_is_running(ui) || status->mouse_on_progress_bar)
   {
-    refresh_drawing_area(ui->gui, ui->infos, TRUE);
+    refresh_drawing_area(ui->gui, ui->infos);
     return;
   }
 
@@ -2010,24 +2008,16 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
   gint interpolation_level = 
     adjust_filtered_index_according_to_number_of_points(filtered_index, left_mark, right_mark, ui);
 
-  gint stroke_counter = 0;
-
-  if (!double_equals(zoom_coeff, ui->status->previous_zoom_coeff) ||
-      interpolation_level != ui->status->previous_interpolation_level)
+  if (interpolation_level != ui->status->previous_interpolation_level)
   {
     clear_previous_distances(ui);
   }
-  ui->status->previous_zoom_coeff = zoom_coeff;
   ui->status->previous_interpolation_level = interpolation_level;
 
-  GHashTable* distance_by_time = g_hash_table_new_full(g_int64_hash, g_int64_equal, g_free, g_free);
+  gint stroke_counter = 0;
 
   gint i = 0;
   gint previous_x = 0;
-  long second_splitpoint_time = -2;
-  gint second_splitpoint_time_displayed = 0;
-  gint missed_lookups = 0;
-  gint time_counter = 0;
 
   gint min_y = INT_MAX;
   gint max_y = 0;
@@ -2041,12 +2031,6 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     }
 
     long time = ui->infos->silence_points[i].time;
-    if (time_counter == 1)
-    {
-      second_splitpoint_time = time;
-    }
-    time_counter++;
-
     if ((time > right_mark) || (time < left_mark)) 
     {
       continue;
@@ -2059,76 +2043,7 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
           zoom_coeff, ui->infos);
     gint y = y_margin + (gint)floorf(level);
 
-    if (time > second_splitpoint_time && second_splitpoint_time > -2)
-    {
-      gint64 *time_key = g_new(gint64, 1);
-      *time_key = (gint64)time;
-
-      gint *has_distance = g_hash_table_lookup(distance_by_time, time_key);
-      if (has_distance != NULL) { continue; }
-
-      if (ui->status->previous_distance_by_time != NULL)
-      {
-        gint *previous_diff = 
-          g_hash_table_lookup(ui->status->previous_distance_by_time, time_key);
-
-        //if we miss some lookups at the start, invalid distances
-        if (previous_diff == NULL && stroke_counter < 20)
-        {
-          missed_lookups++;
-          if (missed_lookups > 3)
-          {
-            clear_previous_distances(ui);
-          }
-        }
-
-        if (previous_diff != NULL && stroke_counter > 0)
-        {
-          x = previous_x + *previous_diff;
-          if (stroke_counter == 1)
-          {
-            ui->status->previous_second_x_drawed = x;
-            ui->status->previous_second_time_drawed = time;
-          }
-        }
-        else if (stroke_counter == 0 && !second_splitpoint_time_displayed)
-        {
-          if (x < 0) { x = 0; }
-
-          //the first point always needs to grow up
-          if (time == ui->status->previous_first_time_drawed && 
-              x > ui->status->previous_first_x_drawed)
-          {
-            x = ui->status->previous_first_x_drawed;
-          }
-          else
-          {
-            //when the second point becomes the first point, dont make it grow
-            if (time == ui->status->previous_second_time_drawed && 
-                x > ui->status->previous_second_x_drawed)
-            {
-              x = ui->status->previous_second_x_drawed;
-            }
-
-            ui->status->previous_first_time_drawed = time;
-            ui->status->previous_first_x_drawed = x;
-          }
-        }
-      }
-
-      gint *diff = g_new(gint, 1);
-      *diff = x - previous_x;
-      if (*diff < 0) { *diff = 0; }
-
-      g_hash_table_insert(distance_by_time, time_key, diff);
-    }
-    else if (time == second_splitpoint_time)
-    {
-      second_splitpoint_time_displayed = 1;
-    }
-
-    if (x != previous_x ||
-        i == ui->infos->number_of_silence_points - 1)
+    if (x != previous_x || i == ui->infos->number_of_silence_points - 1)
     {
       stroke_counter++;
 
@@ -2162,12 +2077,6 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
     previous_y = y;
   }
 
-  if (ui->status->previous_distance_by_time != NULL)
-  {
-    g_hash_table_destroy(ui->status->previous_distance_by_time);
-  }
-  ui->status->previous_distance_by_time = distance_by_time;
-
   cairo_stroke(gc);
 
   color.red = 0;color.green = 0;color.blue = 0;
@@ -2190,19 +2099,6 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
 void clear_previous_distances(ui_state *ui)
 {
-  gui_status *status = ui->status;
-
-  if (status->previous_distance_by_time != NULL)
-  {
-    g_hash_table_destroy(status->previous_distance_by_time);
-    status->previous_distance_by_time = NULL; 
-  }
-
-  status->previous_first_time_drawed = -2;
-  status->previous_first_x_drawed = -2;
-  status->previous_second_x_drawed = -2;
-  status->previous_second_time_drawed = -2;
-
   invalidate_previous_points_caches(ui->infos);
 }
 
@@ -2587,6 +2483,13 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
   dh_draw_line(gc, infos->width_drawing_area/2, gui->erase_split_ylimit,
       infos->width_drawing_area/2, gui->progress_ylimit, FALSE, TRUE);
 
+  //clear caches if needed
+  if (!double_equals(infos->zoom_coeff, ui->status->previous_zoom_coeff))
+  {
+    clear_previous_distances(ui);
+  }
+  ui->status->previous_zoom_coeff = infos->zoom_coeff;
+
   //silence wave
   if (status->show_silence_wave)
   {
@@ -2868,7 +2771,7 @@ static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *u
           status->select_splitpoints = TRUE;
           select_splitpoint(splitpoint_selected, gui);
         }
-        refresh_drawing_area(gui, ui->infos, TRUE);
+        refresh_drawing_area(gui, ui->infos);
       }
       else
       {
@@ -2882,7 +2785,7 @@ static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *u
             status->check_splitpoint = TRUE;
             update_splitpoint_check(splitpoint_selected, ui);
           }
-          refresh_drawing_area(gui, ui->infos, TRUE);
+          refresh_drawing_area(gui, ui->infos);
         }
       }
     }
@@ -2926,7 +2829,7 @@ static gboolean da_press_event(GtkWidget *da, GdkEventButton *event, ui_state *u
           remove_splitpoint(splitpoint_to_erase, TRUE, ui);
         }
 
-        refresh_drawing_area(gui, ui->infos, TRUE);
+        refresh_drawing_area(gui, ui->infos);
       }
     }
   }
@@ -3002,7 +2905,7 @@ static gboolean da_unpress_event(GtkWidget *da, GdkEventButton *event, ui_state 
   }
 
 end:
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
   return TRUE;
 }
 
@@ -3058,7 +2961,7 @@ static gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, ui_state *
         status->move_time = infos->total_time;
       }
 
-      refresh_drawing_area(ui->gui, ui->infos, FALSE);
+      refresh_drawing_area(ui->gui, ui->infos);
     }
     else
     {
@@ -3089,7 +2992,7 @@ static gboolean da_notify_event(GtkWidget *da, GdkEventMotion *event, ui_state *
 
         adjust_zoom_coeff(infos);
 
-        refresh_drawing_area(ui->gui, ui->infos, TRUE);
+        refresh_drawing_area(ui->gui, ui->infos);
       }
     }
   }
