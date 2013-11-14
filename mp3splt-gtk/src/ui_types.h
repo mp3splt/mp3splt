@@ -187,7 +187,8 @@ typedef struct {
 
   //previous right mark time/pixels
   gint previous_mark_time;
-  gint previous_mark_pixel;
+  gfloat previous_mark_pixel;
+  gfloat accumulated_diff;
   gint pixels_diff_regarding_previous;
   GHashTable *previous_pixel_by_time;
   GHashTable *pixel_moved_by_time;
