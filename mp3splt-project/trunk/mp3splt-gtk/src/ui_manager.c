@@ -315,8 +315,9 @@ static void ui_infos_new(ui_state *ui)
   infos->previous_export_thread = NULL;
 
   infos->previous_mark_time = 0;
-  infos->previous_mark_pixel = 0;
+  infos->previous_mark_pixel = 0.0;
   infos->pixels_diff_regarding_previous = -1;
+  infos->accumulated_diff = 0.0;
   infos->previous_pixel_by_time = 
     g_hash_table_new_full(g_double_hash, g_double_equal, g_free, g_free);
   infos->pixel_moved_by_time =

@@ -1050,8 +1050,9 @@ static void invalidate_previous_points_caches(ui_infos *infos)
   g_hash_table_remove_all(infos->pixel_moved_by_time);
 
   infos->previous_mark_time = 0;  
-  infos->previous_mark_pixel = 0;  
+  infos->previous_mark_pixel = 0.0;
   infos->pixels_diff_regarding_previous = -1;
+  infos->accumulated_diff = 0.0;
 }
 
 //!when we unclick the progress bar
@@ -1489,7 +1490,13 @@ static gfloat time_to_pixels_float(gint width, gfloat time, gfloat total_time, g
 
 static gint time_to_pixels(gint width, gfloat time, gfloat total_time, gfloat zoom_coeff)
 {
-  return roundf(time_to_pixels_float(width, time, total_time, zoom_coeff));
+  return (gint) roundf(time_to_pixels_float(width, time, total_time, zoom_coeff));
+}
+
+static gfloat convert_time_to_pixels_float(gint width, gfloat time, 
+    gfloat current_time, gfloat total_time, gfloat zoom_coeff)
+{
+  return (gfloat) width/2.0 + time_to_pixels_float(width, time - current_time, total_time, zoom_coeff);
 }
 
 static gint convert_time_to_pixels_without_diff(gint width, gfloat time, 
@@ -1501,9 +1508,7 @@ static gint convert_time_to_pixels_without_diff(gint width, gfloat time,
 static gint convert_time_to_pixels(gint width, gfloat time, 
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, ui_infos *infos)
 {
-  return convert_time_to_pixels_without_diff(width, time, current_time, total_time, zoom_coeff);
-  //TODO
-/*  gint *new_pixel = g_new(gint, 1);
+  gint *new_pixel = g_new(gint, 1);
 
   gdouble *time_key = g_new(gdouble, 1);
   *time_key = (gdouble) time;
@@ -1515,13 +1520,18 @@ static gint convert_time_to_pixels(gint width, gfloat time,
   if (previous_pixel != NULL && infos->pixels_diff_regarding_previous >= 0)
   {
     gint diff = infos->pixels_diff_regarding_previous;
-
     gint *pixel_moved = g_hash_table_lookup(infos->pixel_moved_by_time, second_time_key);
-    if (pixel_moved != NULL)
-    {
-      diff = 0;
-    }
+    if (pixel_moved != NULL) { diff = 0; }
+
     *new_pixel = *previous_pixel - diff;
+
+    gint real_pixel =
+      convert_time_to_pixels_without_diff(width, time, current_time, total_time, zoom_coeff);
+
+    if (real_pixel - *new_pixel > 2)
+    {
+      *new_pixel = real_pixel;
+    }
   }
   else
   {
@@ -1536,44 +1546,41 @@ static gint convert_time_to_pixels(gint width, gfloat time,
   *yes = 1;
   g_hash_table_insert(infos->pixel_moved_by_time, second_time_key, yes);
 
-  return *new_pixel;*/
+  return *new_pixel;
 }
 
-static void save_previous_pixels_for_mark(gint mark, ui_infos *infos, gui_status *status)
+static void save_previous_pixels_for_time(gint time, ui_infos *infos, gui_status *status)
 {
-  //TODO
-  return;
   if (status->button2_pressed) { return; }
 
-  gint pixel = convert_time_to_pixels_without_diff(infos->width_drawing_area,
-      mark, infos->current_time, infos->total_time, infos->zoom_coeff);
-  fprintf(stdout, "current time pixel = %d\n", pixel);
-  fflush(stdout);
+  gfloat pixel = convert_time_to_pixels_float(infos->width_drawing_area,
+      time, infos->current_time, infos->total_time, infos->zoom_coeff);
 
-  infos->previous_mark_time = mark;
-  infos->previous_mark_pixel = pixel;  
-
+  infos->previous_mark_time = time;
+  infos->previous_mark_pixel = pixel;
   g_hash_table_remove_all(infos->pixel_moved_by_time);
 }
 
 static void compute_pixels_diff_from_previous_mark(ui_infos *infos, gui_status *status)
 {
-  //TODO
-  return;
   if (status->button2_pressed) { return; }
 
-  gint right_pixel = convert_time_to_pixels_without_diff(infos->width_drawing_area,
+  gfloat previous_pixel = convert_time_to_pixels_float(infos->width_drawing_area,
       infos->previous_mark_time, infos->current_time, infos->total_time, infos->zoom_coeff);
-  gint diff = infos->previous_mark_pixel - right_pixel;
-  fprintf(stdout, "diff = %d\n", diff);
-  fflush(stdout);
-  if (diff >= 0)
+
+  gfloat diff = infos->previous_mark_pixel - previous_pixel;
+  infos->accumulated_diff += diff;
+
+  gint pixels_diff = roundf(infos->accumulated_diff);
+  if (pixels_diff >= 0)
   {
-    infos->pixels_diff_regarding_previous = diff;
+    infos->pixels_diff_regarding_previous = pixels_diff;
+    infos->accumulated_diff -= pixels_diff;
   }
   else
   {
     infos->pixels_diff_regarding_previous = -1;
+    infos->accumulated_diff = 0.0;
   }
 }
 
@@ -2599,7 +2606,7 @@ static gboolean da_draw_event(GtkWidget *da, cairo_t *gc, ui_state *ui)
 
   draw_splitpoints(left_mark, right_mark, da, gc, ui);
 
-  save_previous_pixels_for_mark(infos->current_time, infos, status);
+  save_previous_pixels_for_time(infos->current_time, infos, status);
 
 #if GTK_MAJOR_VERSION <= 2
   cairo_destroy(gc);
