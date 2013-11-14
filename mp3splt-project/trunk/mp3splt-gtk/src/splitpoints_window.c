@@ -467,7 +467,7 @@ void remove_splitpoint(gint index, gint stop_preview, ui_state *ui)
   remove_status_message(ui->gui);
   update_add_button(ui);
   check_update_down_progress_bar(ui);
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
 
   export_cue_file_in_configuration_directory(ui);
 }
@@ -672,7 +672,7 @@ static void add_splitpoint(Split_point my_split_point, gint old_index, ui_state 
   }
 
   update_add_button(ui);
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
   check_update_down_progress_bar(ui);
 
   export_cue_file_in_configuration_directory(ui);
@@ -1350,7 +1350,7 @@ void remove_all_rows(GtkWidget *widget, ui_state *ui)
   remove_status_message(ui->gui);
   cancel_quick_preview_all(ui);
   update_add_button(ui);
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
   check_update_down_progress_bar(ui);
 
   export_cue_file_in_configuration_directory(ui);

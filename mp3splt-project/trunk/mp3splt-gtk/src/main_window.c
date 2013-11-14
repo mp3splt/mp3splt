@@ -85,7 +85,7 @@ static gboolean configure_window_callback(GtkWindow *window, GdkEvent *event, ui
   ui_set_main_win_position(ui, event->configure.x, event->configure.y); 
   ui_set_main_win_size(ui, event->configure.width, event->configure.height);
 
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
   refresh_preview_drawing_areas(ui->gui);
 
   clear_previous_distances(ui);
@@ -685,7 +685,7 @@ static void zoom_in(GtkWidget *widget, ui_state *ui)
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff += fraction;
   adjust_zoom_coeff(ui->infos);
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
 }
 
 static void zoom_out(GtkWidget *widget, ui_state *ui)
@@ -693,7 +693,7 @@ static void zoom_out(GtkWidget *widget, ui_state *ui)
   gdouble fraction = 40./100. * ui->infos->zoom_coeff;
   ui->infos->zoom_coeff -= fraction; 
   adjust_zoom_coeff(ui->infos);
-  refresh_drawing_area(ui->gui, ui->infos, TRUE);
+  refresh_drawing_area(ui->gui, ui->infos);
 }
 
 static gboolean window_key_press_event(GtkWidget *window, GdkEventKey *event, ui_state *ui)
