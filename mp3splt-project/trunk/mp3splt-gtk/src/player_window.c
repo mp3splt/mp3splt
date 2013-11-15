@@ -1046,9 +1046,6 @@ static GtkWidget *create_song_informations_hbox(gui_state *gui)
 
 static void invalidate_previous_points_caches(ui_infos *infos)
 {
-  fprintf(stdout, "invalidate previous points caches\n");
-  fflush(stdout);
-
   g_hash_table_remove_all(infos->previous_pixel_by_time);
   g_hash_table_remove_all(infos->pixel_moved_by_time);
 
@@ -1061,7 +1058,6 @@ static void invalidate_previous_points_caches(ui_infos *infos)
 //!when we unclick the progress bar
 static gboolean progress_bar_unclick_event(GtkWidget *widget, GdkEventCrossing *event, ui_state *ui)
 {
-  //invalidate_previous_points_caches(ui->infos);
   change_song_position(ui);
 
   ui_infos *infos = ui->infos;
@@ -1549,8 +1545,6 @@ static gint convert_time_to_pixels(gint width, gfloat time,
 
 static void save_previous_pixels_for_time(gint time, ui_infos *infos, gui_status *status)
 {
-  if (status->button2_pressed) { return; }
-
   gfloat pixel = convert_time_to_pixels_float(infos->width_drawing_area,
       time, infos->current_time, infos->total_time, infos->zoom_coeff);
 
@@ -1561,8 +1555,6 @@ static void save_previous_pixels_for_time(gint time, ui_infos *infos, gui_status
 
 static void compute_pixels_diff_from_previous_mark(ui_infos *infos, gui_status *status)
 {
-  if (status->button2_pressed) { return; }
-
   gfloat previous_pixel = convert_time_to_pixels_float(infos->width_drawing_area,
       infos->previous_mark_time, infos->current_time, infos->total_time, infos->zoom_coeff);
 
@@ -2038,9 +2030,8 @@ gint draw_silence_wave(gint left_mark, gint right_mark,
 
     float level = ui->infos->silence_points[i].level;
 
-    gint x = 
-      convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, total_time,
-          zoom_coeff, ui->infos);
+    gint x = convert_time_to_pixels(width_drawing_area, (gfloat)time, current_time, 
+        total_time, zoom_coeff, ui->infos);
     gint y = y_margin + (gint)floorf(level);
 
     if (x != previous_x || i == ui->infos->number_of_silence_points - 1)
