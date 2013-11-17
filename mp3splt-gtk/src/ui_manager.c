@@ -323,6 +323,8 @@ static void ui_infos_new(ui_state *ui)
   infos->pixel_moved_by_time =
     g_hash_table_new_full(g_double_hash, g_double_equal, g_free, g_free);
 
+  infos->drawing_preferences_silence_wave = SPLT_FALSE;
+
   ui->infos = infos;
 }
 

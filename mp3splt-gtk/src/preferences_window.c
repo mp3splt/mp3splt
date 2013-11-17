@@ -829,10 +829,14 @@ static gboolean wave_quality_draw_event(GtkWidget *drawing_area, cairo_t *cairo_
     if (zoom_coeff > 100) { break; }
   }
 
+  ui->infos->drawing_preferences_silence_wave = SPLT_TRUE;
+
   gint interpolation_level = draw_silence_wave((gint)left_time, (gint)right_time, width / 2, 50,
       drawing_time, width, 0,
       current_time, ui->infos->total_time, zoom_coeff,
       drawing_area, cairo_surface, ui);
+
+  ui->infos->drawing_preferences_silence_wave = SPLT_FALSE;
 
   update_wave_preview_label_markup(index, interpolation_level, ui);
 
