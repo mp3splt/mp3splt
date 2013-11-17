@@ -192,6 +192,8 @@ typedef struct {
   gint pixels_diff_regarding_previous;
   GHashTable *previous_pixel_by_time;
   GHashTable *pixel_moved_by_time;
+
+  gint drawing_preferences_silence_wave;
 } ui_infos;
 
 typedef struct {

@@ -1502,6 +1502,13 @@ static gint convert_time_to_pixels_without_diff(gint width, gfloat time,
 static gint convert_time_to_pixels(gint width, gfloat time, 
     gfloat current_time, gfloat total_time, gfloat zoom_coeff, ui_infos *infos)
 {
+  gint real_pixel =
+    convert_time_to_pixels_without_diff(width, time, current_time, total_time, zoom_coeff);
+  if (infos->drawing_preferences_silence_wave)
+  {
+    return real_pixel;
+  }
+
   gint *new_pixel = g_new(gint, 1);
 
   gdouble *time_key = g_new(gdouble, 1);
@@ -1519,9 +1526,6 @@ static gint convert_time_to_pixels(gint width, gfloat time,
 
     *new_pixel = *previous_pixel - diff;
 
-    gint real_pixel =
-      convert_time_to_pixels_without_diff(width, time, current_time, total_time, zoom_coeff);
-
     if (real_pixel - *new_pixel > 2)
     {
       *new_pixel = real_pixel;
@@ -1529,8 +1533,6 @@ static gint convert_time_to_pixels(gint width, gfloat time,
   }
   else
   {
-    gint real_pixel =
-      convert_time_to_pixels_without_diff(width, time, current_time, total_time, zoom_coeff);
     *new_pixel = real_pixel;
   }
 
