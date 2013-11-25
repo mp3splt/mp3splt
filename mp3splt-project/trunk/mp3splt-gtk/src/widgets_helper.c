@@ -330,6 +330,8 @@ gboolean wh_container_has_child(GtkContainer *container, GtkWidget *my_child)
 
 void wh_set_image_on_button(GtkButton *button, GtkWidget *image)
 {
+  GtkImage *previous_image = GTK_IMAGE(gtk_button_get_image(button));
+  if (previous_image != NULL && previous_image == GTK_IMAGE(image)) { return; }
   gtk_button_set_image(button, image);
 }
 
