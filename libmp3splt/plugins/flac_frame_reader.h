@@ -38,6 +38,7 @@
 
 #include "flac_metadata.h"
 #include "flac_tags.h"
+#include "flac_md5_decoder.h"
 
 typedef struct {
   //input file
@@ -95,6 +96,8 @@ typedef struct {
   size_t previous_frame_length;
 
   double end_point;
+
+  splt_flac_md5_decoder *flac_md5_d;
 } splt_flac_frame_reader;
 
 splt_flac_frame_reader *splt_flac_fr_new(FILE *in, const char *input_filename);
