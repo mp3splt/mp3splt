@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-11-06 21:23+0100\n"
+"POT-Creation-Date: 2013-11-30 17:13+0100\n"
 "PO-Revision-Date: 2013-04-29 08:36+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,79 +18,79 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/mp3splt.c:310 src/print_utils.c:55 src/freedb.c:434 src/utils.c:36
+#: src/mp3splt.c:314 src/print_utils.c:55 src/freedb.c:434 src/utils.c:36
 #: src/utils.c:52
 msgid "cannot allocate memory !"
 msgstr "no puede asignar memoria!"
 
-#: src/mp3splt.c:331
+#: src/mp3splt.c:335
 msgid ""
 "bad overlap time expression.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:352
+#: src/mp3splt.c:356
 msgid ""
 "bad time expression for the time split.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:361
+#: src/mp3splt.c:365
 msgid ""
 "bad minimum time expression.\n"
 "\tMust be min.sec[.0-99] or EOF-min.sec[.0-99], read man page for details."
 msgstr ""
 
-#: src/mp3splt.c:429
+#: src/mp3splt.c:433
 msgid "read man page for documentation or type 'mp3splt -h'."
 msgstr "lea la página del manual de documentación o de tipo 'Mp3Splt-h'."
 
-#: src/mp3splt.c:497
+#: src/mp3splt.c:501
 msgid "bad argument for -p option. No valid value was recognized !"
 msgstr "mal argumento para la opción-p. No fue reconocido valor válido!"
 
-#: src/mp3splt.c:652
+#: src/mp3splt.c:656
 msgid "no input filename(s)."
 msgstr "sin entrada de nombre de archivo (s)."
 
-#: src/mp3splt.c:665
+#: src/mp3splt.c:669
 msgid "multiple splitpoints with stdout !"
 msgstr "splitpoints múltiples con la salida estándar!"
 
-#: src/mp3splt.c:669
+#: src/mp3splt.c:673
 msgid "using time mode with stdout !"
 msgstr "usando el modo de tiempo con la salida estándar!"
 
-#: src/mp3splt.c:710
+#: src/mp3splt.c:714
 #, c-format
 msgid " Pretending to split file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:714
+#: src/mp3splt.c:718
 #, c-format
 msgid " Processing file '%s' ...\n"
 msgstr ""
 
-#: src/mp3splt.c:720
+#: src/mp3splt.c:724
 msgid ""
 "cannot use -k option (or STDIN) with one of the following options: -S -s -r -"
 "w -l -e -i -a -p -K"
 msgstr ""
 
-#: src/mp3splt.c:794
+#: src/mp3splt.c:798
 msgid "freedb query format ambigous !"
 msgstr "freedb ambigua consulta formato!"
 
-#: src/mp3splt.c:844
+#: src/mp3splt.c:848
 msgid "tags format ambiguous !"
 msgstr "Etiquetas de formato ambiguo!"
 
-#: src/mp3splt.c:876
+#: src/mp3splt.c:880
 #, c-format
 msgid " Average silence level: %.2f dB"
 msgstr ""
 
-#: src/mp3splt.c:893
+#: src/mp3splt.c:897
 msgid ""
 "\n"
 " +------------------------------------------------------------------------------"
