@@ -425,6 +425,15 @@ files, because to seek splitpoints we need to process all bytes and all frames. 
 (so STDIN as input too) can't be used together with \-s \-a \-w \-e, because input must be seekable for
 those options. Copying original tags is not yet supported for the non seekable option.
 
+.IP "\fB\-M\fP         " 10
+\fBWrite MD5 sum (FLAC only)\fP. Using this option, the frames are decoded just before being written in
+the output files and MD5 sum of the unencoded data is computed in order to complete the STREAMINFO 
+metadata block of the created files.
+This option is disabled by default because the decoding process makes the split to be
+much slower (it can be twice slower).
+However, even when using this option, the process remains faster compared to splitting by decoding
+and then re-encoding.
+
 .IP "\fB\-O TIME\fP         " 10
 \fBOverlap split files\fP. TIME will be added to each end splitpoint.
 Current implementation of this option makes the split slower.

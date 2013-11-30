@@ -49,7 +49,7 @@ plugin_LTLIBRARIES += libsplt_flac.la
 libsplt_flac_la_SOURCES = flac_frame_reader.c flac_frame_reader.h flac_utils.c flac_utils.h \
 from_flac_library.c from_flac_library.h flac.c flac.h flac_metadata_utils.c flac_metadata_utils.h \
 flac_metadata.c flac_metadata.h flac_tags.c flac_tags.h flac_silence.c flac_silence.h \
-silence_processors.c silence_processors.h
+silence_processors.c silence_processors.h md5.c md5.h flac_md5_decoder.c flac_md5_decoder.h
 
 libsplt_flac_la_CPPFLAGS = $(common_CPPFLAGS) @FLAC_CFLAGS@
 libsplt_flac_la_LDFLAGS = $(common_LDFLAGS) @FLAC_LIBS@

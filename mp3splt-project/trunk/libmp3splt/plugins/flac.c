@@ -123,6 +123,10 @@ double splt_pl_split(splt_state *state, const char *output_fname,
 
   splt_flac_state *flacstate = state->codec;
 
+  splt_flac_md5_decoder *flac_md5_d = splt_flac_md5_decoder_new_and_init(state, error);
+  if (*error < 0) { return end_point; }
+  flacstate->fr->flac_md5_d = flac_md5_d;
+
   splt_tags *tags_to_write = splt_tu_get_current_tags(state);
 
   splt_flac_tags *flac_tags = flacstate->flac_tags;

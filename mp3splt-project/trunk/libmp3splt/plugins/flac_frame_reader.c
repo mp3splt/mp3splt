@@ -532,12 +532,16 @@ static void splt_flac_fr_write_frame_processor(unsigned char *frame, size_t fram
   modified_frame[j] = first_byte_of_new_crc16;
   modified_frame[j+1] = last_byte_of_new_crc16;
 
+  splt_flac_md5_decode_frame(modified_frame, modified_frame_length, fr->flac_md5_d, error, state);
+  if (*error < 0) { goto end; }
+
   if (splt_io_fwrite(state, modified_frame, modified_frame_length, 1, fr->out) != 1)
   {
     splt_e_set_error_data(state, fr->output_fname);
     *error = SPLT_ERROR_CANT_WRITE_TO_OUTPUT_FILE;
   }
 
+end:
   free(modified_frame);
 }
 
@@ -564,6 +568,18 @@ static void splt_flac_fr_finish_and_write_streaminfo(splt_state *state,
   {
     fr->out_streaminfo.min_blocksize = min_blocksize;
     fr->out_streaminfo.max_blocksize = max_blocksize;
+  }
+
+  unsigned char *md5sum = splt_flac_md5_decoder_free_and_get_md5sum(fr->flac_md5_d);
+  fr->flac_md5_d = NULL;
+  if (md5sum)
+  {
+    int i;
+    for (i = 0; i < 16; i++)
+    {
+      fr->out_streaminfo.md5sum[i] = md5sum[i];
+    }
+    free(md5sum);
   }
 
   unsigned char *streaminfo_bytes = splt_flac_l_convert_from_streaminfo(&fr->out_streaminfo);
@@ -711,6 +727,11 @@ void splt_flac_fr_free(splt_flac_frame_reader *fr)
   if (fr->output_buffer) { free(fr->output_buffer); }
   if (fr->previous_frame) { free(fr->previous_frame); }
   if (fr->output_fname) { free(fr->output_fname); }
+  if (fr->flac_md5_d)
+  {
+    unsigned char *md5sum = splt_flac_md5_decoder_free_and_get_md5sum(fr->flac_md5_d);
+    if (md5sum) { free(md5sum); }
+  }
 
   free(fr);
 }

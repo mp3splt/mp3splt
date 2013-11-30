@@ -694,6 +694,16 @@ typedef enum {
    * Default is #SPLT_FALSE.
    */
   SPLT_OPT_STOP_IF_NO_AUTO_ADJUST_FOUND,
+  /**
+   * If #SPLT_TRUE, decode flac frames before writing them in the output file and compute the md5sum
+   * to be stored in the FLAC header - this option decreases the performance of the split because of
+   * the decoding process - it might be twice slower.
+   *
+   * Int option that can take the values #SPLT_TRUE or #SPLT_FALSE.
+   *
+   * Default is #SPLT_FALSE.
+   */
+  SPLT_OPT_DECODE_AND_WRITE_FLAC_MD5SUM_FOR_CREATED_FILES,
 } splt_options;
 
 /**
