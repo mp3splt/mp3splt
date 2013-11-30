@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-06 21:24+0100\n"
+"POT-Creation-Date: 2013-11-30 17:14+0100\n"
 "PO-Revision-Date: 2013-04-29 08:45+0000\n"
 "Last-Translator: Peter Pall <gunter@peterpall.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr "Выберите файл для импорта"
 msgid "cue files (*.cue)"
 msgstr "cue файлы (*.cue)"
 
-#: src/widgets_helper.c:440
+#: src/widgets_helper.c:442
 msgid "_Close"
 msgstr ""
 
@@ -158,83 +158,83 @@ msgstr "Отключение"
 msgid "Disconnect from player"
 msgstr "Отключение от плеера"
 
-#: src/player_window.c:1165
+#: src/player_window.c:1160
 #, c-format
 msgid "before %s"
 msgstr "до %s"
 
-#: src/player_window.c:1989
+#: src/player_window.c:1988
 msgid "No available wave"
 msgstr ""
 
-#: src/player_window.c:2171 src/preferences_window.c:908
+#: src/player_window.c:2080 src/preferences_window.c:912
 msgid "No wave interpolation"
 msgstr ""
 
-#: src/player_window.c:2177
+#: src/player_window.c:2086
 #, c-format
 msgid "Wave interpolation level %d"
 msgstr ""
 
-#: src/player_window.c:2259
+#: src/player_window.c:2155
 msgid " Please wait for the process to finish ..."
 msgstr ""
 
-#: src/player_window.c:2281
+#: src/player_window.c:2177
 msgid " Please wait ... currently computing Douglas Peucker filters."
 msgstr ""
 
-#: src/player_window.c:2365
+#: src/player_window.c:2261
 msgid " left click on splitpoint selects it, right click erases it"
 msgstr ""
 " щелчок левой клавишей мыши выделяет точку разделения, правой — удаляет её"
 
-#: src/player_window.c:2370
+#: src/player_window.c:2266
 msgid ""
 " left click + move changes song position, right click + move changes zoom"
 msgstr ""
 " щелчок левой клавишей мыши и перемещение меняет позицию, правой — меняет "
 "масштаб"
 
-#: src/player_window.c:2376
+#: src/player_window.c:2272
 msgid ""
 " left click on point + move changes point position, right click play preview"
 msgstr ""
 " щелчок левой клавишей мыши по точке меняет её позицию, правой — включает "
 "прослушивание"
 
-#: src/player_window.c:2381
+#: src/player_window.c:2277
 msgid " left click on rectangle checks/unchecks 'keep splitpoint'"
 msgstr ""
 " щелчок левой клавишей мыши по прямоугольнику переключает сохранение точки "
 "разделения"
 
-#: src/player_window.c:2810
+#: src/player_window.c:2713
 #, fuzzy
 msgid " preview..."
 msgstr "быстрый просмотр ..."
 
-#: src/player_window.c:3154
+#: src/player_window.c:3057
 msgid "Splitpoints and amplitude wave v_iew"
 msgstr ""
 
-#: src/player_window.c:3270
+#: src/player_window.c:3173
 msgid "History"
 msgstr "История"
 
-#: src/player_window.c:3360
+#: src/player_window.c:3263
 msgid "_Erase selected entries"
 msgstr "_Удалить выделенные записи"
 
-#: src/player_window.c:3368
+#: src/player_window.c:3271
 msgid "E_rase all history"
 msgstr "У_далить всю историю"
 
-#: src/player_window.c:3410
+#: src/player_window.c:3313
 msgid "Files h_istory"
 msgstr ""
 
-#: src/player_window.c:3450
+#: src/player_window.c:3353
 #, fuzzy
 msgid " preview finished, song paused"
 msgstr "быстрый просмотр закончен, проигрование приостановлено"
@@ -336,7 +336,7 @@ msgstr "Название альбома"
 msgid "please wait... contacting tracktype.org"
 msgstr "Пожалуйста, подождите ... cвязь с tracktype.org"
 
-#: src/freedb_window.c:438 src/freedb_window.c:459 src/ui_manager.c:369
+#: src/freedb_window.c:438 src/freedb_window.c:459 src/ui_manager.c:372
 #: src/splitpoints_window.c:671 src/splitpoints_window.c:792
 #: src/splitpoints_window.c:842
 msgid "description here"
@@ -680,61 +680,61 @@ msgstr ""
 msgid "<b>Player options</b>"
 msgstr "<b>Настройки плеера</b>"
 
-#: src/preferences_window.c:855
+#: src/preferences_window.c:859
 msgid "Only available if the amplitude wave is shown in the player"
 msgstr ""
 
-#: src/preferences_window.c:889
+#: src/preferences_window.c:893
 msgid "Wave preview"
 msgstr ""
 
-#: src/preferences_window.c:899
+#: src/preferences_window.c:903
 #, c-format
 msgid "%d minute(s) window"
 msgstr ""
 
-#: src/preferences_window.c:904
+#: src/preferences_window.c:908
 #, c-format
 msgid "Wave interpolation level %d with threshold of %.1lf"
 msgstr ""
 
-#: src/preferences_window.c:926
+#: src/preferences_window.c:930
 msgid "Wave quality (higher is better but consumes more CPU):"
 msgstr ""
 
-#: src/preferences_window.c:948
+#: src/preferences_window.c:952
 msgid "<b>Amplitude wave options</b>"
 msgstr ""
 
-#: src/preferences_window.c:1041
+#: src/preferences_window.c:1045
 msgid "Default format"
 msgstr "Формат по умолчанию "
 
-#: src/preferences_window.c:1048
+#: src/preferences_window.c:1052
 msgid "  Default output: "
 msgstr ""
 
-#: src/preferences_window.c:1054
+#: src/preferences_window.c:1058
 msgid "  CDDB, CUE and tracktype.org default: "
 msgstr ""
 
-#: src/preferences_window.c:1060
+#: src/preferences_window.c:1064
 msgid "  Split with silence detection default: "
 msgstr ""
 
-#: src/preferences_window.c:1066
+#: src/preferences_window.c:1070
 msgid "  Trim using silence detection default: "
 msgstr ""
 
-#: src/preferences_window.c:1072
+#: src/preferences_window.c:1076
 msgid "  Error mode default: "
 msgstr ""
 
-#: src/preferences_window.c:1087
+#: src/preferences_window.c:1091
 msgid "Custom format"
 msgstr "Пользовательский формат"
 
-#: src/preferences_window.c:1106
+#: src/preferences_window.c:1110
 msgid ""
 "  @A: performer if found, otherwise artist\n"
 "  @a: artist name\n"
@@ -759,83 +759,83 @@ msgid ""
 "    (**) a digit may follow for the number of digits to output\n"
 msgstr ""
 
-#: src/preferences_window.c:1131
+#: src/preferences_window.c:1135
 msgid "<b>Output format for batch split and when importing splitpoints</b>"
 msgstr ""
 
-#: src/preferences_window.c:1180
+#: src/preferences_window.c:1184
 msgid "Original file tags"
 msgstr "Исходные теги файлов"
 
-#: src/preferences_window.c:1183
+#: src/preferences_window.c:1187
 msgid "Custom tags (from the splitpoints table)"
 msgstr ""
 
-#: src/preferences_window.c:1186
+#: src/preferences_window.c:1190
 msgid "No tags"
 msgstr "Нет меток"
 
-#: src/preferences_window.c:1189
+#: src/preferences_window.c:1193
 msgid "Extract tags from filename"
 msgstr "Извлечь метки из имени файла"
 
-#: src/preferences_window.c:1198
+#: src/preferences_window.c:1202
 msgid "<b>Split files tags</b>"
 msgstr "<b>Теги разделённых файлов</b>"
 
-#: src/preferences_window.c:1220
+#: src/preferences_window.c:1224
 msgid "No change"
 msgstr "Без изменений"
 
-#: src/preferences_window.c:1221
+#: src/preferences_window.c:1225
 msgid "lowercase"
 msgstr "строчные"
 
-#: src/preferences_window.c:1222
+#: src/preferences_window.c:1226
 msgid "UPPERCASE"
 msgstr "ЗАГЛАВНЫЕ"
 
-#: src/preferences_window.c:1223
+#: src/preferences_window.c:1227
 msgid "First uppercase"
 msgstr "Первый заглавный символ"
 
-#: src/preferences_window.c:1224
+#: src/preferences_window.c:1228
 msgid "Word Uppercase"
 msgstr "Слово из заглавных букв"
 
-#: src/preferences_window.c:1270
+#: src/preferences_window.c:1274
 msgid "<artist>: "
 msgstr ""
 
-#: src/preferences_window.c:1279
+#: src/preferences_window.c:1283
 msgid "<album>: "
 msgstr ""
 
-#: src/preferences_window.c:1289
+#: src/preferences_window.c:1293
 msgid "<title>: "
 msgstr ""
 
-#: src/preferences_window.c:1298
+#: src/preferences_window.c:1302
 msgid "<genre>: "
 msgstr ""
 
-#: src/preferences_window.c:1307
+#: src/preferences_window.c:1311
 msgid "<comment>: "
 msgstr ""
 
-#: src/preferences_window.c:1316
+#: src/preferences_window.c:1320
 msgid "<year>: "
 msgstr ""
 
-#: src/preferences_window.c:1325
+#: src/preferences_window.c:1329
 msgid "<track>: "
 msgstr ""
 
-#: src/preferences_window.c:1365
+#: src/preferences_window.c:1369
 msgid "Regular expression:"
 msgstr "Регулярное выражение:"
 
-#: src/preferences_window.c:1368
+#: src/preferences_window.c:1372
 msgid ""
 "Above enter PERL-like regular expression using named subgroups.\n"
 "Following names are recognized:\n"
@@ -858,88 +858,88 @@ msgstr ""
 "    (?<genre>)    — жанр\n"
 "    (?<comment>)  — комментарий"
 
-#: src/preferences_window.c:1395
+#: src/preferences_window.c:1399
 msgid "_Replace underscores by spaces"
 msgstr "_Заменить подчёркивания на пробелы"
 
-#: src/preferences_window.c:1405
+#: src/preferences_window.c:1409
 msgid "Artist text properties:"
 msgstr "Свойства имени исполнителя:"
 
-#: src/preferences_window.c:1410
+#: src/preferences_window.c:1414
 msgid "Album text properties:"
 msgstr "Свойства названия альбома:"
 
-#: src/preferences_window.c:1415
+#: src/preferences_window.c:1419
 msgid "Title text properties:"
 msgstr "Свойства названия композиции:"
 
-#: src/preferences_window.c:1420
+#: src/preferences_window.c:1424
 msgid "Comment text properties:"
 msgstr "Свойства текста комментариев"
 
-#: src/preferences_window.c:1424
+#: src/preferences_window.c:1428
 msgid "Genre tag:"
 msgstr "Тег жанра:"
 
-#: src/preferences_window.c:1428
+#: src/preferences_window.c:1432
 msgid "Comment tag:"
 msgstr "Метки комментариев"
 
-#: src/preferences_window.c:1430
+#: src/preferences_window.c:1434
 msgid "Regular expression test"
 msgstr "Тест регулярных выражений"
 
-#: src/preferences_window.c:1446
+#: src/preferences_window.c:1450
 msgid "_Test"
 msgstr "_Проверить"
 
-#: src/preferences_window.c:1450
+#: src/preferences_window.c:1454
 msgid "Sample filename:"
 msgstr "Пример имени файла:"
 
-#: src/preferences_window.c:1455
+#: src/preferences_window.c:1459
 msgid "Sample result:"
 msgstr "Пример результата:"
 
-#: src/preferences_window.c:1467
+#: src/preferences_window.c:1471
 msgid "ID3v1 & ID3v2 tags"
 msgstr "Теги ID3v1 и ID3v2"
 
-#: src/preferences_window.c:1474
+#: src/preferences_window.c:1478
 msgid "ID3v2 tags"
 msgstr "Теги ID3v2"
 
-#: src/preferences_window.c:1481
+#: src/preferences_window.c:1485
 msgid "ID3v1 tags"
 msgstr "Теги ID3v1"
 
-#: src/preferences_window.c:1488
+#: src/preferences_window.c:1492
 msgid "Same tags version as the input file"
 msgstr "Та же, что у исходных файлов"
 
-#: src/preferences_window.c:1494
+#: src/preferences_window.c:1498
 msgid "<b>Tags version (mp3 only)</b>"
 msgstr "<b>Версия тегов (только MP3)</b>"
 
-#: src/preferences_window.c:1534
+#: src/preferences_window.c:1538
 msgid "Split"
 msgstr "Разделение"
 
-#: src/preferences_window.c:1539
+#: src/preferences_window.c:1543
 msgid "Tags"
 msgstr "Теги"
 
-#: src/preferences_window.c:1544
+#: src/preferences_window.c:1548
 msgid "Player"
 msgstr "Плеер"
 
-#: src/preferences_window.c:1549
+#: src/preferences_window.c:1553
 #, fuzzy
 msgid "Output format"
 msgstr "Пользовательский формат"
 
-#: src/preferences_window.c:1555
+#: src/preferences_window.c:1559
 msgid "Language"
 msgstr "Язык"
 
