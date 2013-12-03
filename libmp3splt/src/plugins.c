@@ -412,8 +412,6 @@ static void splt_p_free_plugin_data(splt_plugin_data *pl_data)
 int splt_p_move_replace_plugin_data(splt_state *state, int old, int new)
 {
   splt_plugins *pl = state->plug;
-  fprintf(stdout, "move old %d to new %d\n", old, new);
-  fflush(stdout);
 
   splt_p_free_plugin_data(&pl->data[new]);
 
