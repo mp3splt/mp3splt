@@ -40,7 +40,10 @@ static unsigned char *splt_flac_mu_read_metadata(FLAC__uint32 total_block_length
     return NULL;
   }
 
-  fread(bytes, 1, total_block_length, in);
+  if (fread(bytes, 1, total_block_length, in) != total_block_length)
+  {
+    *error = SPLT_ERROR_INVALID;
+  }
 
   return bytes;
 }
@@ -130,33 +133,47 @@ static void splt_flac_mu_read_metadata_of_type(splt_flac_state *flacstate, splt_
 
 void splt_flac_mu_read(splt_flac_state *flacstate, splt_state *state, FILE *in, splt_code *error)
 {
+  splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
+
   char flac_stream_marker[4] = { '\0' };
-  fread(&flac_stream_marker, 1, 4, in);
+  if (fread(&flac_stream_marker, 1, 4, in) != 4)
+  {
+    goto invalid_error;
+  }
 
   if (flac_stream_marker[0] != 'f' || flac_stream_marker[1] != 'L' ||
       flac_stream_marker[2] != 'a' || flac_stream_marker[3] != 'C')
   {
-    splt_e_set_error_data(state, splt_t_get_filename_to_split(state));
-    *error = SPLT_ERROR_INVALID;
-    return;
+    goto invalid_error;
   }
 
   unsigned char is_last_block = 0;
   while (!is_last_block)
   {
     unsigned char metadata_block_flag_and_block_type;
-    fread(&metadata_block_flag_and_block_type, 1, 1, in);
+    if (fread(&metadata_block_flag_and_block_type, 1, 1, in) != 1)
+    {
+      goto invalid_error;
+    }
 
     is_last_block = metadata_block_flag_and_block_type >> 7;
     unsigned char block_type = metadata_block_flag_and_block_type & 0x7f;
 
     unsigned char block_length[3];
-    fread(block_length, 1, 3, in);
+    if (fread(block_length, 1, 3, in) != 3)
+    {
+      goto invalid_error;
+    }
     FLAC__uint32 total_block_length = splt_flac_l_unpack_uint32(block_length, 3);
 
     splt_flac_mu_read_metadata_of_type(flacstate, state, block_type, total_block_length, in, error);
     if (*error < 0) { return; }
   }
+
+  return;
+
+invalid_error:
+  *error = SPLT_ERROR_INVALID;
 }
 
 unsigned char *splt_flac_mu_build_metadata_header(unsigned char type, unsigned char is_last,
