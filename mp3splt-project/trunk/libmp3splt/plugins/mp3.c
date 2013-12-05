@@ -29,6 +29,7 @@ The Plug-in that handles mp3 files
 */
 
 #include "splt.h"
+#include "cddb_cue_common.h"
 
 #include "mp3.h"
 #include "mp3_silence.h"
@@ -3498,6 +3499,76 @@ void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 
   free(original_tags->all_original_tags);
   original_tags->all_original_tags = NULL;
+#endif
+}
+
+void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
+{
+#ifndef NO_ID3TAG
+  splt_sp_free_splitpoints(state);
+
+  char *input_filename = splt_t_get_filename_to_split(state);
+  splt_mp3_get_original_tags(input_filename, state, error);
+  if (*error < 0) { return; }
+
+  tag_bytes_and_size *bytes_and_size = (tag_bytes_and_size *) splt_tu_get_original_tags_data(state);
+  if (bytes_and_size == NULL) { return; }
+  if (bytes_and_size->tag_bytes == NULL) { return; }
+
+  struct id3_tag *id3tag =
+    id3_tag_parse(bytes_and_size->tag_bytes, bytes_and_size->tag_length);
+  if (!id3tag) { goto end; }
+
+  struct id3_frame *frame = NULL;
+  int counter = 0;
+  int number_of_splitpoints = 0;
+  while ((frame = id3_tag_findframe(id3tag, "CHAP", counter)))
+  {
+    union id3_field *field = id3_frame_field(frame, 0);
+    if (field->type != ID3_FIELD_TYPE_BINARYDATA) { counter++; continue; }
+
+    id3_byte_t *data = field->binary.data;
+    id3_length_t length = field->binary.length;
+    id3_length_t remaining_length = length;
+
+    //skip element id
+    id3_byte_t *ptr = data;
+    while (*ptr != '\0' && remaining_length > 0)
+    {
+      ptr++;
+      remaining_length--;
+    }
+
+    ptr++;
+    unsigned start_time_in_millis = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
+    ptr++; ptr++; ptr++; ptr++;
+    unsigned end_time_in_millins = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
+
+    long start_time_hundr = (start_time_in_millis / 10);
+    splt_sp_append_splitpoint(state, start_time_hundr, NULL, SPLT_SPLITPOINT);
+    long end_time_hundr = (end_time_in_millins / 10);
+    splt_sp_append_splitpoint(state, end_time_hundr, NULL, SPLT_SKIPPOINT);
+    number_of_splitpoints += 2;
+
+    counter++;
+  }
+
+  splt_tags *original_tags = splt_tu_get_original_tags_tags(state);
+  int track_number = number_of_splitpoints - 1;
+  splt_cc_put_filenames_from_tags(state, track_number, error, original_tags, SPLT_FALSE);
+
+end:
+  if (id3tag)
+  {
+    id3_tag_delete(id3tag);
+  }
+  if (bytes_and_size)
+  {
+    splt_mp3_free_bytes_and_size(bytes_and_size);
+    free(bytes_and_size);
+  }
+#else
+  *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
 #endif
 }
 

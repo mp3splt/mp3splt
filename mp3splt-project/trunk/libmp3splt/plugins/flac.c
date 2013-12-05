@@ -200,6 +200,8 @@ void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 
 void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
 {
+  splt_sp_free_splitpoints(state);
+
   char *input_filename = splt_t_get_filename_to_split(state);
 
   FLAC__StreamMetadata *cuesheet = NULL;

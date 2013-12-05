@@ -1346,7 +1346,7 @@ splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *f
   }
   else if (type == PLUGIN_INTERNAL_IMPORT)
   {
-    const char *old_filename_to_split = strdup(mp3splt_get_filename_to_split(state));
+    char *old_filename_to_split = strdup(mp3splt_get_filename_to_split(state));
     if (old_filename_to_split == NULL)
     {
       err = SPLT_ERROR_CANNOT_ALLOCATE_MEMORY;
@@ -1354,7 +1354,7 @@ splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *f
     }
 
     err = splt_t_set_filename_to_split(state, file);
-    if (err < 0) { goto end; }
+    if (err < 0) { goto end2; }
 
     splt_check_file_type_and_set_plugin(state, SPLT_TRUE, SPLT_FALSE, &err);
     if (err >= 0)
@@ -1364,6 +1364,9 @@ splt_code mp3splt_import(splt_state *state, splt_import_type type, const char *f
     }
 
     splt_t_set_filename_to_split(state, old_filename_to_split);
+
+end2:
+    free(old_filename_to_split);
   }
 
 end:
