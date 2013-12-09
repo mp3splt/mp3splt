@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: io_alex_2004@users.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-03 22:53+0100\n"
+"POT-Creation-Date: 2013-12-09 20:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -315,29 +315,29 @@ msgstr ""
 msgid "Album title"
 msgstr ""
 
-#: src/freedb_window.c:159 src/freedb_window.c:475
+#: src/freedb_window.c:159 src/freedb_window.c:477
 msgid "please wait... contacting tracktype.org"
 msgstr ""
 
-#: src/freedb_window.c:438 src/freedb_window.c:459 src/ui_manager.c:372
+#: src/freedb_window.c:440 src/freedb_window.c:461 src/ui_manager.c:372
 #: src/splitpoints_window.c:671 src/splitpoints_window.c:792
 #: src/splitpoints_window.c:842
 msgid "description here"
 msgstr ""
 
-#: src/freedb_window.c:562
+#: src/freedb_window.c:564
 msgid "Search tracktype.org:"
 msgstr ""
 
-#: src/freedb_window.c:572
+#: src/freedb_window.c:574
 msgid "_Search"
 msgstr ""
 
-#: src/freedb_window.c:601
+#: src/freedb_window.c:603
 msgid "_Add splitpoints"
 msgstr ""
 
-#: src/freedb_window.c:607
+#: src/freedb_window.c:609
 msgid "Set splitpoints to the splitpoints table"
 msgstr ""
 
@@ -1004,11 +1004,11 @@ msgid ""
 msgstr ""
 
 #: src/split_mode_window.c:428
-msgid "Internal CUE sheet mode (FLAC only)"
+msgid "Internal sheet mode (CUE sheet for FLAC and ID3v2 chapters for MP3)"
 msgstr ""
 
 #: src/split_mode_window.c:429
-msgid "Split using internal CUE sheet"
+msgid "Split using internal sheet"
 msgstr ""
 
 #: src/split_mode_window.c:439
@@ -1394,7 +1394,8 @@ msgstr ""
 
 #: src/import.c:271
 msgid ""
-"CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt), internal sheet (*.flac)"
+"CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt), internal sheet (*."
+"flac), chapters (*.mp3)"
 msgstr ""
 
 #: src/import.c:275
@@ -1414,10 +1415,14 @@ msgid "FLAC internal sheet (*.flac)"
 msgstr ""
 
 #: src/import.c:283
+msgid "ID3v2 chapters (*.mp3)"
+msgstr ""
+
+#: src/import.c:285
 msgid "All files"
 msgstr ""
 
-#: src/import.c:474
+#: src/import.c:476
 msgid "--- last cue splitpoint ---"
 msgstr ""
 
