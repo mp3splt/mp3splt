@@ -3522,6 +3522,9 @@ void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
   struct id3_frame *frame = NULL;
   int counter = 0;
   int number_of_splitpoints = 0;
+
+  long previous_end_time = -1;
+  int index = 0;
   while ((frame = id3_tag_findframe(id3tag, "CHAP", counter)))
   {
     union id3_field *field = id3_frame_field(frame, 0);
@@ -3545,12 +3548,22 @@ void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
     unsigned end_time_in_millins = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
 
     long start_time_hundr = (start_time_in_millis / 10);
-    splt_sp_append_splitpoint(state, start_time_hundr, NULL, SPLT_SPLITPOINT);
+    if (start_time_hundr == previous_end_time && index > 0)
+    {
+      splt_sp_set_splitpoint_type(state, index - 1, SPLT_SPLITPOINT);
+    }
+    else {
+      splt_sp_append_splitpoint(state, start_time_hundr, NULL, SPLT_SPLITPOINT);
+    }
+
     long end_time_hundr = (end_time_in_millins / 10);
     splt_sp_append_splitpoint(state, end_time_hundr, NULL, SPLT_SKIPPOINT);
     number_of_splitpoints += 2;
 
+    previous_end_time = (long) end_time_hundr;
+
     counter++;
+    index += 2;
   }
 
   splt_tags *original_tags = splt_tu_get_original_tags_tags(state);
