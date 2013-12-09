@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mp3splt-gtk\n"
 "Report-Msgid-Bugs-To: m@ioalex.net\n"
-"POT-Creation-Date: 2013-11-30 17:12+0100\n"
+"POT-Creation-Date: 2013-12-09 16:40+0100\n"
 "PO-Revision-Date: 2013-04-29 16:15+0000\n"
 "Last-Translator: Chris38 <ch.daudin@free.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -463,7 +463,7 @@ msgstr ""
 "Travail en mode SILENCE AUTO-AJUSTEMENT (Seuil : %.1f dB - Espace : %d sec - "
 "Décalage : %.2f)\n"
 
-#: src/mp3splt.c:1999 src/tags_parser.c:107
+#: src/mp3splt.c:2002 src/tags_parser.c:107
 msgid ""
 " warning: cannot set tags from filename regular expression - compiled "
 "without pcre support\n"
@@ -600,7 +600,7 @@ msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 msgid " warning: splitpoint %ld.%ld.%ld is not auto-adjusted\n"
 msgstr ""
 
-#: plugins/mp3.c:1236
+#: plugins/mp3.c:1237
 msgid ""
 " warning: lost sync and compiled without id3tag support - the split might be "
 "corrupt\n"
@@ -608,70 +608,70 @@ msgstr ""
 "attention : synchronisation perdue et compilation sans l'aide de id3tag - Le "
 "résultat du découpage pourrait être incorrect\n"
 
-#: plugins/mp3.c:1332
+#: plugins/mp3.c:1333
 msgid " info: found Xing or Info header. Switching to frame mode... \n"
 msgstr " info: entête Xing ou Info trouvée. Activation du mode \"frame\"...\n"
 
-#: plugins/mp3.c:1470
+#: plugins/mp3.c:1471
 #, c-format
 msgid " info: MPEG %d Layer %d - %d Hz - %s"
 msgstr " info : MPEG %d couche %d - %d Hz - %s"
 
-#: plugins/mp3.c:1478
+#: plugins/mp3.c:1479
 #, c-format
 msgid " - FRAME MODE NS"
 msgstr " - MODE 'FRAME' NS (sans changement de position)"
 
-#: plugins/mp3.c:1482
+#: plugins/mp3.c:1483
 #, c-format
 msgid " - FRAME MODE"
 msgstr " - MODE 'FRAME'"
 
-#: plugins/mp3.c:1487
+#: plugins/mp3.c:1488
 #, c-format
 msgid " - NS - %d Kb/s"
 msgstr " - NS - %d Kb/s"
 
-#: plugins/mp3.c:1492
+#: plugins/mp3.c:1493
 #, c-format
 msgid " - %d Kb/s"
 msgstr " - %d Kb/s"
 
-#: plugins/mp3.c:1500 plugins/ogg.c:132 plugins/flac.c:277
+#: plugins/mp3.c:1501 plugins/ogg.c:132 plugins/flac.c:286
 #, c-format
 msgid " - Total time: %dm.%02ds"
 msgstr " - Temps total : %dm.%02ds"
 
-#: plugins/mp3.c:2825
+#: plugins/mp3.c:2826
 #, c-format
 msgid " Detected file created with: Mp3Wrap v. %c.%c\n"
 msgstr " Le fichier reconnu a le format Mp3Wrap v. %c.%c\n"
 
-#: plugins/mp3.c:2863
+#: plugins/mp3.c:2864
 msgid " Check for file integrity: calculating CRC please wait... "
 msgstr ""
 " Vérification de l'intégrité du fichier : calcul du CRC (contrôle de "
 "redondance cyclique), veuillez attendre..."
 
-#: plugins/mp3.c:2882
+#: plugins/mp3.c:2883
 msgid " OK\n"
 msgstr " Succès\n"
 
-#: plugins/mp3.c:2901
+#: plugins/mp3.c:2902
 msgid " Detected file created with: AlbumWrap\n"
 msgstr " Le fichier reconnu a le format : AlbumWrap\n"
 
-#: plugins/mp3.c:2923
+#: plugins/mp3.c:2924
 #, c-format
 msgid " Total files: %d\n"
 msgstr " Nombre de fichiers : %d\n"
 
-#: plugins/mp3.c:3341
+#: plugins/mp3.c:3342
 msgid " warning: stdin '-' is supposed to be mp3 stream.\n"
 msgstr ""
 " attention : le flux standard d'entrée '-' est supposé être un flux mp3.\n"
 
-#: plugins/mp3.c:3368
+#: plugins/mp3.c:3369
 #, c-format
 msgid " Processed %lu frames - Sync errors: %lu\n"
 msgstr " %lu 'frames' parcourus - Erreurs de synchronisation : %lu\n"
@@ -702,7 +702,11 @@ msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 msgid " info: trim end split at %ldm_%.2lds_%.2ldh\n"
 msgstr " info : chevauchement des fichiers obtenus avec %ld.%ld.%ld\n"
 
-#: plugins/flac.c:269
+#: plugins/flac.c:247
+msgid "--- last cue splitpoint ---"
+msgstr ""
+
+#: plugins/flac.c:278
 #, c-format
 msgid " info: Native FLAC - %u Hz - %d channels of %d bits"
 msgstr ""
