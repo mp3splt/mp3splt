@@ -425,8 +425,8 @@ static GtkWidget *create_split_mode(ui_state *ui)
  
   //internal sheet mode split
   split_mode_radio_button = gtk_radio_button_new_with_label_from_widget
-    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Internal CUE sheet mode (FLAC only)"));
-  gtk_widget_set_tooltip_text(split_mode_radio_button, _("Split using internal CUE sheet"));
+    (GTK_RADIO_BUTTON(split_mode_radio_button), _("Internal sheet mode (CUE sheet for FLAC and ID3v2 chapters for MP3)"));
+  gtk_widget_set_tooltip_text(split_mode_radio_button, _("Split using internal sheet"));
   ui->gui->split_mode_radio_button = split_mode_radio_button;
   gtk_box_pack_start(GTK_BOX(local_vbox), split_mode_radio_button, FALSE, FALSE, 2);
   g_signal_connect(GTK_TOGGLE_BUTTON(split_mode_radio_button), "toggled",

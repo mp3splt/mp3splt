@@ -414,13 +414,15 @@ void update_splitpoints_from_mp3splt_state(ui_state *ui)
   gint number_of_rows = 0;
   while ((point = mp3splt_points_next(points)))
   {
-    //ugly hack because we use maximum ints in the GUI
-    //-GUI must be changed to accept long values
+    //ugly hack
     long old_point_value = mp3splt_point_get_value(point);
-    int point_value = (int) old_point_value;
+    int point_value = 0;
     if (old_point_value > INT_MAX)
     {
-      point_value = INT_MAX;
+      point_value = 100 * 60 * 10000;
+    }
+    else {
+      point_value = (int) old_point_value;
     }
 
     get_secs_mins_hundr(point_value, 
