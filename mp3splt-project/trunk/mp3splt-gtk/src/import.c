@@ -268,7 +268,7 @@ static void set_import_filters(GtkFileChooser *chooser)
 {
   GtkFileFilter *all_filter = gtk_file_filter_new();
   gtk_file_filter_set_name(GTK_FILE_FILTER(all_filter),
-      _("CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt), internal sheet (*.flac)"));
+      _("CDDB (*.cddb), CUE (*.cue), Audacity labels (*.txt), internal sheet (*.flac), chapters (*.mp3)"));
 
   GList *filters = NULL;
 
@@ -279,6 +279,8 @@ static void set_import_filters(GtkFileChooser *chooser)
   build_import_filter(chooser, _("Audacity labels files (*.txt)"), "*.txt", "*.TXT",
       &filters, all_filter);
   build_import_filter(chooser, _("FLAC internal sheet (*.flac)"), "*.flac", "*.FLAC",
+      &filters, all_filter);
+  build_import_filter(chooser, _("ID3v2 chapters (*.mp3)"), "*.mp3", "*.MP3",
       &filters, all_filter);
   build_import_filter(chooser, _("All files"), "*", NULL, &filters, NULL);
 

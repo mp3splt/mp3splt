@@ -214,6 +214,7 @@ void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
 
   const FLAC__StreamMetadata_CueSheet *cue_sheet = &cuesheet->data.cue_sheet;
   unsigned track_number;
+  long max_hundreths = 0;
   for (track_number = 0; track_number < cue_sheet->num_tracks - 1; track_number++)
   {
     const FLAC__StreamMetadata_CueSheet_Track *cue_track = cue_sheet->tracks + track_number;
@@ -227,6 +228,7 @@ void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
     {
       long offset = (long) ((cue_track->offset + cue_index->offset) / (44100 / 75)) * 100;
       long hundreths = offset / 75;
+      if (hundreths > max_hundreths) { max_hundreths = hundreths; }
       //long mins, secs, hundr;
       //splt_co_get_mins_secs_hundr(hundreths, &mins, &secs, &hundr);
       //fprintf(stdout, "%02lu:%02lu:%02lu\n", mins, secs, hundr);
@@ -238,6 +240,11 @@ void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
       *error = SPLT_ERROR_INTERNAL_SHEET_TYPE_NOT_SUPPORTED;
       goto end;
     }
+  }
+
+  if (track_number > 0)
+  {
+    splt_sp_append_splitpoint(state, LONG_MAX, _("--- last cue splitpoint ---"), SPLT_SPLITPOINT);
   }
 
 end:
