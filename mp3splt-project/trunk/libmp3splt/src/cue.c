@@ -563,7 +563,7 @@ int splt_cue_put_splitpoints(const char *file, splt_state *state, int *error)
 
   if (!splt_o_get_int_option(state, SPLT_OPT_CUE_SET_SPLITPOINT_NAMES_FROM_REM_NAME))
   {
-    splt_cc_put_filenames_from_tags(state, tracks, error, cu->all_tags, SPLT_TRUE);
+    splt_cc_put_filenames_from_tags(state, tracks, error, cu->all_tags, SPLT_TRUE, SPLT_FALSE);
   }
 
 function_end:

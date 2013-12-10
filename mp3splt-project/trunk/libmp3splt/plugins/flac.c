@@ -200,8 +200,6 @@ void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 
 void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
 {
-  splt_sp_free_splitpoints(state);
-
   char *input_filename = splt_t_get_filename_to_split(state);
 
   FLAC__StreamMetadata *cuesheet = NULL;
@@ -258,7 +256,8 @@ end:
 
   splt_flac_state *flacstate = state->codec;
   const splt_tags *our_tags = flacstate->flac_tags->original_tags;
-  splt_cc_put_filenames_from_tags(state, track_number, error, our_tags, SPLT_FALSE);
+  splt_cc_put_filenames_from_tags(state, track_number, error, our_tags, SPLT_FALSE,
+      SPLT_FALSE);
 
   int err = SPLT_OK;
   splt_pl_end(state, &err);
