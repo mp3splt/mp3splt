@@ -3505,8 +3505,6 @@ void splt_pl_clear_original_tags(splt_original_tags *original_tags)
 void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
 {
 #ifndef NO_ID3TAG
-  splt_sp_free_splitpoints(state);
-
   char *input_filename = splt_t_get_filename_to_split(state);
   splt_mp3_get_original_tags(input_filename, state, error);
   if (*error < 0) { return; }
@@ -3548,17 +3546,26 @@ void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
     unsigned end_time_in_millins = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
 
     long start_time_hundr = (start_time_in_millis / 10);
+    if (start_time_hundr < previous_end_time)
+    {
+      splt_c_put_warning_message_to_client(state,
+          _(" warning: overlapped chapters are not yet supported.\n"));
+      *error = SPLT_PLUGIN_ERROR_UNSUPPORTED_FEATURE;
+      goto end;
+    }
+
     if (start_time_hundr == previous_end_time && index > 0)
     {
       splt_sp_set_splitpoint_type(state, index - 1, SPLT_SPLITPOINT);
     }
     else {
       splt_sp_append_splitpoint(state, start_time_hundr, NULL, SPLT_SPLITPOINT);
+      number_of_splitpoints++;
     }
 
     long end_time_hundr = (end_time_in_millins / 10);
     splt_sp_append_splitpoint(state, end_time_hundr, NULL, SPLT_SKIPPOINT);
-    number_of_splitpoints += 2;
+    number_of_splitpoints++;
 
     previous_end_time = (long) end_time_hundr;
 
@@ -3568,7 +3575,8 @@ void splt_pl_import_internal_sheets(splt_state *state, splt_code *error)
 
   splt_tags *original_tags = splt_tu_get_original_tags_tags(state);
   int track_number = number_of_splitpoints - 1;
-  splt_cc_put_filenames_from_tags(state, track_number, error, original_tags, SPLT_FALSE);
+  splt_cc_put_filenames_from_tags(state, track_number, error, original_tags, SPLT_FALSE,
+      SPLT_TRUE);
 
 end:
   if (id3tag)

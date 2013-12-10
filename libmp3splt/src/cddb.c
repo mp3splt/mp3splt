@@ -109,7 +109,7 @@ int splt_cddb_put_splitpoints(const char *file, splt_state *state, int *error)
   splt_tu_copy_tags(tags_at_0, all_tags, error);
   if (*error < 0) { goto function_end; }
 
-  splt_cc_put_filenames_from_tags(state, tracks, error, all_tags, SPLT_FALSE);
+  splt_cc_put_filenames_from_tags(state, tracks, error, all_tags, SPLT_FALSE, SPLT_FALSE);
 
 function_end:
   splt_tu_free_one_tags(&all_tags);
