@@ -36,7 +36,22 @@ struct splt_header splt_mp3_makehead(unsigned long headword,
     struct splt_mp3 mp3f, struct splt_header head, off_t ptr);
 off_t splt_mp3_findhead(splt_mp3_state *mp3state, off_t start);
 off_t splt_mp3_findvalidhead(splt_mp3_state *mp3state, off_t start);
-int splt_mp3_xing_info_off(splt_mp3_state *mp3state);
 int splt_mp3_get_frame(splt_mp3_state *mp3state);
 int splt_mp3_get_valid_frame(splt_state *state, int *error);
+
+void splt_mp3_read_process_side_info_main_data_begin(splt_mp3_state *mp3state, off_t offset);
+void splt_mp3_extract_reservoir_and_build_reservoir_frame(splt_mp3_state *mp3state,
+    splt_state *state, splt_code *error);
+void splt_mp3_build_xing_lame_frame(splt_mp3_state *mp3state, off_t begin, off_t end, 
+    unsigned long fbegin, splt_code *error, splt_state *state);
+
+int splt_mp3_must_handle_bit_reservoir(splt_state *state);
+int splt_mp3_get_mpeg_as_int(int mpgid);
+int splt_mp3_get_samples_per_frame(struct splt_mp3 *mp3file);
+void splt_mp3_parse_xing_lame(splt_mp3_state *mp3state);
+
+unsigned long splt_mp3_find_begin_frame(double fbegin_sec, splt_mp3_state *mp3state,
+    splt_state *state);
+unsigned long splt_mp3_find_end_frame(double fend_sec, splt_mp3_state *mp3state, 
+    splt_state *state);
 

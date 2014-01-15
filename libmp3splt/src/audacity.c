@@ -1,5 +1,4 @@
 /**********************************************************
-      mp3splt_set_int_option(state, , SPLT_TRUE);
  *
  * audacity.c -- Audacity label file parser portion of the Mp3Splt utility
  *               Utility for mp3/ogg splitting without decoding
